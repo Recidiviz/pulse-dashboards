@@ -1,6 +1,6 @@
 # Pulse Dashboard
 
-[![Build Status](https://travis-ci.org/Recidiviz/pulse-dashboards.svg?branch=main)](https://travis-ci.org/Recidiviz/pulse-dashboards) [![Coverage Status](https://coveralls.io/repos/github/Recidiviz/pulse-dashboards/badge.svg?branch=main)](https://coveralls.io/github/Recidiviz/pulse-dashboards?branch=main)
+[![Build Status](https://github.com/Recidiviz/pulse-dashboards/actions/workflows/build.yml/badge.svg)](https://github.com/Recidiviz/pulse-dashboards/actions) [![Coverage Status](https://coveralls.io/repos/github/Recidiviz/pulse-dashboards/badge.svg?branch=main)](https://coveralls.io/github/Recidiviz/pulse-dashboards?branch=main)
 
 Bringing criminal justice analysis to decision makers to help reduce incarceration.
 
@@ -128,7 +128,7 @@ A yarn script is avilable to run lint tests:
 
 `yarn lint`
 
-This script also runs and must pass in Travis CI.
+This script also runs and must pass in the Github Actions test workflow.
 
 To have eslint and Prettier fix violations automatically, run:
 
