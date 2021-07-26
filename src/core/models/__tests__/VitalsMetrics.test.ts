@@ -43,6 +43,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           timely_contact: "80",
           timely_discharge: 97,
           timely_risk_assessment: 88,
+          timely_downgrade: 60,
         },
       ],
       vitals_time_series: [
@@ -96,6 +97,7 @@ describe("VitalsMetrics", () => {
         timelyDischarge: 97,
         timelyContact: 80,
         timelyRiskAssessment: 88,
+        timelyDowngrade: 60,
         overall30Day: 0,
         overall90Day: -1,
       },

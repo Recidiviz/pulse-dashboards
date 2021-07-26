@@ -22,5 +22,5 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
       enableCoreTabNavigation: true,
       enableVitalsDashboard: true,
       enableVitalsOfficerView: true,
-      enableVitalsGoalLine: true,
+      enableVitalsGoalLine: false,
     };

@@ -45,6 +45,7 @@ describe("getPathsFromNavigation", () => {
     const expected = [
       "/facilities/projections",
       "/community/projections",
+      "/community/vitals",
       "/methodology/projections",
     ];
     expect(allowedPaths).toEqual(expected);

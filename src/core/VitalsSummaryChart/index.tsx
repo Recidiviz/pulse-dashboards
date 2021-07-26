@@ -35,6 +35,7 @@ const goals = {
   [METRIC_TYPES.DISCHARGE]: 90,
   [METRIC_TYPES.CONTACT]: 80,
   [METRIC_TYPES.RISK_ASSESSMENT]: 85,
+  [METRIC_TYPES.DOWNGRADE]: 0,
 };
 
 const VitalsSummaryChart: React.FC = () => {

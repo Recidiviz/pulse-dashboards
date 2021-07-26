@@ -61,6 +61,7 @@ const VitalsSummaryBreadcrumbs: React.FC = () => {
 
   switch (entityType) {
     case ENTITY_TYPES.LEVEL_1_SUPERVISION_LOCATION:
+    case ENTITY_TYPES.LEVEL_2_SUPERVISION_LOCATION:
       current = formatOfficeName(entityName);
       state = stateName;
       parent = undefined;

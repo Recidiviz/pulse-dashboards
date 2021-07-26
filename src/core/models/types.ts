@@ -92,7 +92,8 @@ export type MetricValueAccessor =
   | "overall"
   | "timelyDischarge"
   | "timelyContact"
-  | "timelyRiskAssessment";
+  | "timelyRiskAssessment"
+  | "timelyDowngrade";
 export type VitalsSummaryRecord = {
   entityId: string;
   entityName: string; // i.e. "North Dakota" or "Oakes"
@@ -104,12 +105,14 @@ export type VitalsSummaryRecord = {
   timelyDischarge: number;
   timelyContact: number;
   timelyRiskAssessment: number;
+  timelyDowngrade: number;
 };
 
 export type EntityType = keyof typeof ENTITY_TYPES;
 export const ENTITY_TYPES = {
   STATE: "STATE",
   LEVEL_1_SUPERVISION_LOCATION: "LEVEL_1_SUPERVISION_LOCATION",
+  LEVEL_2_SUPERVISION_LOCATION: "LEVEL_2_SUPERVISION_LOCATION",
   PO: "PO",
 } as const;
 

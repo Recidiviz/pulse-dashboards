@@ -37,6 +37,7 @@ import DeltaTableCell from "./DeltaTableCell";
 function getEntityTypeName(entityType: EntityType): string {
   switch (entityType) {
     case ENTITY_TYPES.LEVEL_1_SUPERVISION_LOCATION:
+    case ENTITY_TYPES.LEVEL_2_SUPERVISION_LOCATION:
       return "Office";
     case ENTITY_TYPES.PO:
       return "Officer";
@@ -129,11 +130,11 @@ const VitalsSummaryTable: React.FC = () => {
         ],
       },
       {
-        Header: "Overall performance",
+        Header: "Overall",
         columns: overallColumns,
       },
       {
-        Header: "Performance by metric",
+        Header: "By metric",
         columns: metricColumns,
       },
     ],

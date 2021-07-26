@@ -26,6 +26,7 @@ export const METRIC_TYPES = {
   DISCHARGE: "DISCHARGE",
   CONTACT: "CONTACT",
   RISK_ASSESSMENT: "RISK_ASSESSMENT",
+  DOWNGRADE: "DOWNGRADE",
 } as const;
 
 export type MetricTypeLabel = typeof METRIC_TYPE_LABELS[keyof typeof METRIC_TYPE_LABELS];
@@ -34,6 +35,7 @@ export const METRIC_TYPE_LABELS = {
   DISCHARGE: "Timely discharge",
   CONTACT: "Timely contacts",
   RISK_ASSESSMENT: "Timely risk assessments",
+  DOWNGRADE: "Timely downgrades",
 } as const;
 
 export type VitalsMetric = {
@@ -64,6 +66,7 @@ export type VitalsSummaryTableRow = {
   timelyDischarge: number;
   timelyContact: number;
   timelyRiskAssessment: number;
+  timelyDowngrade: number;
 };
 
 export type SummaryStatus =

@@ -43,6 +43,7 @@ jest.mock("../../models/VitalsMetrics", () => {
         timelyContact: 60,
         timelyDischarge: 63,
         timelyRiskAssessment: 69,
+        timelyDowngrade: 64,
       },
       {
         entityId: "STATE_DOC",
@@ -55,6 +56,7 @@ jest.mock("../../models/VitalsMetrics", () => {
         timelyContact: 90,
         timelyDischarge: 93,
         timelyRiskAssessment: 99,
+        timelyDowngrade: 75,
       },
     ],
   }));

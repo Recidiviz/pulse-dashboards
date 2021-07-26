@@ -140,6 +140,17 @@ function newRevocations(dimensions) {
   };
 }
 
+const VITALS_COLLECTION = {
+  [COLLECTIONS.VITALS]: {
+    vitals_summaries: {
+      filename: "vitals_summaries.txt",
+    },
+    vitals_time_series: {
+      filename: "vitals_time_series.txt",
+    },
+  },
+};
+
 const CORE_COLLECTIONS = {
   [COLLECTIONS.GOALS]: {
     admissions_by_type_by_month: {
@@ -257,14 +268,6 @@ const CORE_COLLECTIONS = {
       filename: "reincarcerations_by_period.txt",
     },
   },
-  [COLLECTIONS.VITALS]: {
-    vitals_summaries: {
-      filename: "vitals_summaries.txt",
-    },
-    vitals_time_series: {
-      filename: "vitals_time_series.txt",
-    },
-  },
 };
 
 function getCollections(stateCode = null) {
@@ -282,9 +285,10 @@ function getCollections(stateCode = null) {
             filename: "population_projection_timeseries.json",
           },
         },
+        ...VITALS_COLLECTION,
       };
     case stateCodes.US_ND:
-      return CORE_COLLECTIONS;
+      return { ...CORE_COLLECTIONS, ...VITALS_COLLECTION };
     default:
       throw new Error(
         `getCollections received an unexpected state code: ${stateCode}`

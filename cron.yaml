@@ -17,7 +17,13 @@ cron:
     schedule: every day 07:00
     target: default
 
-  - description: "Refresh US_ND vitals external cache"
+  - description: "Refresh US_ID vitals external cache"
+    url: /api/US_ID/vitals/refreshCache
+    # Every day at 07:00 UTC / 03:00 EST / 00:00 PST
+    schedule: every day 07:00
+    target: default
+
+    - description: "Refresh US_ND vitals external cache"
     url: /api/US_ND/vitals/refreshCache
     # Every day at 07:00 UTC / 03:00 EST / 00:00 PST
     schedule: every day 07:00

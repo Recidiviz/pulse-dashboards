@@ -102,9 +102,35 @@ const TENANTS: Tenants = {
     enableUserRestrictions: false,
     navigation: {
       facilities: ["projections"],
-      community: ["projections"],
+      community: ["projections", "vitals"],
       methodology: ["projections"],
     },
+    vitalsMetrics: [
+      {
+        name: METRIC_TYPE_LABELS.OVERALL,
+        id: METRIC_TYPES.OVERALL,
+        description: "Average timeliness across all metrics",
+        accessor: "overall",
+      },
+      {
+        name: METRIC_TYPE_LABELS.RISK_ASSESSMENT,
+        id: METRIC_TYPES.RISK_ASSESSMENT,
+        description: `of clients who have an up-to-date risk assessment, according to IDOC policy.`,
+        accessor: "timelyRiskAssessment",
+      },
+      {
+        name: METRIC_TYPE_LABELS.CONTACT,
+        id: METRIC_TYPES.CONTACT,
+        description: `of clients who have an up-to-date contact, according to IDOC policy.`,
+        accessor: "timelyContact",
+      },
+      {
+        name: METRIC_TYPE_LABELS.DOWNGRADE,
+        id: METRIC_TYPES.DOWNGRADE,
+        description: `of clients who’s supervision level is at or below their risk level.`,
+        accessor: "timelyDowngrade",
+      },
+    ],
   },
   [lantern.US_PA]: {
     name: "Pennsylvania",

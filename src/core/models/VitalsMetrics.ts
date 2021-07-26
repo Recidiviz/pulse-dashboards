@@ -39,6 +39,7 @@ export function createVitalsSummaryMetric(
       timelyDischarge: Number(record.timely_discharge),
       timelyContact: Number(record.timely_contact),
       timelyRiskAssessment: Number(record.timely_risk_assessment),
+      timelyDowngrade: Number(record.timely_downgrade),
       overall30Day: Number(record.overall_30d),
       overall90Day: Number(record.overall_90d),
     };

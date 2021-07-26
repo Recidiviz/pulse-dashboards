@@ -44,6 +44,7 @@ jest.mock("../../models/VitalsMetrics", () => {
         timelyContact: 60,
         timelyDischarge: 63,
         timelyRiskAssessment: 69,
+        timelyDowngrade: 64,
       },
       {
         entityId: "STATE_DOC",
@@ -56,6 +57,7 @@ jest.mock("../../models/VitalsMetrics", () => {
         timelyContact: 90,
         timelyDischarge: 93,
         timelyRiskAssessment: 99,
+        timelyDowngrade: 75,
       },
     ],
   }));
@@ -82,12 +84,12 @@ describe("VitalsSummaryTable", () => {
         TENANTS.US_ND.vitalsMetrics?.map((m: VitalsMetric) => m.name) || [];
       metrics.forEach((metric: string) => {
         it(`renders a column with header ${metric}`, () => {
-          const { getByText } = render(
+          const { getAllByText } = render(
             <Router>
               <VitalsSummaryTable />
             </Router>
           );
-          expect(getByText(metric));
+          expect(getAllByText(metric));
         });
       });
     });
