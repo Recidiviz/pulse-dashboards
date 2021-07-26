@@ -86,7 +86,7 @@ module.exports = async function (user, context, cb) {
 
     /** 3. Add the user's restrictions to the app_metadata */
     // Other states do not currently have any sign up or user restrictions
-    const stateCodesWithRestrictions = ["us_mo"];
+    const stateCodesWithRestrictions = ["us_mo", "us_id"];
 
     if (stateCodesWithRestrictions.includes(stateCode.toLowerCase())) {
       const Sentry = require("@sentry/node");
