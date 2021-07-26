@@ -13,7 +13,7 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
       enableRevocationRateByExit: false,
       enableCoreTabNavigation: true,
       enableVitalsDashboard: true,
-      enableVitalsOfficerView: false,
+      enableVitalsOfficerView: true,
       enableVitalsGoalLine: false,
     }
   : {

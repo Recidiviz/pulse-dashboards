@@ -38,8 +38,10 @@ type Tenants = {
   [key in TenantId]: {
     name: string;
     stateCode: string;
+    domain?: string;
     availableStateCodes: string[];
     enableUserRestrictions: boolean;
+    enableVitalsCaseloadButton: boolean;
     navigation?: Navigation;
     vitalsMetrics?: VitalsMetric[];
   };
@@ -51,12 +53,15 @@ const TENANTS: Tenants = {
     stateCode: "MO",
     availableStateCodes: [lantern.US_MO],
     enableUserRestrictions: true,
+    enableVitalsCaseloadButton: false,
   },
   [core.US_ND]: {
     name: "North Dakota",
     stateCode: "ND",
+    domain: "nd.gov",
     availableStateCodes: [core.US_ND],
     enableUserRestrictions: false,
+    enableVitalsCaseloadButton: false,
     navigation: {
       goals: [],
       ...(flags.enableVitalsDashboard
@@ -98,8 +103,10 @@ const TENANTS: Tenants = {
   [core.US_ID]: {
     name: "Idaho",
     stateCode: "ID",
+    domain: "idoc.idaho.gov",
     availableStateCodes: [core.US_ID],
     enableUserRestrictions: false,
+    enableVitalsCaseloadButton: true,
     navigation: {
       facilities: ["projections"],
       community: ["projections", "vitals"],
@@ -137,18 +144,21 @@ const TENANTS: Tenants = {
     stateCode: "PA",
     availableStateCodes: [lantern.US_PA],
     enableUserRestrictions: false,
+    enableVitalsCaseloadButton: false,
   },
   RECIDIVIZ: {
     name: "Recidiviz",
     stateCode: "Recidiviz",
     availableStateCodes: lantern.LANTERN_TENANTS.concat(core.CORE_TENANTS),
     enableUserRestrictions: true,
+    enableVitalsCaseloadButton: true,
   },
   LANTERN: {
     name: "Lantern",
     stateCode: "Lantern",
     availableStateCodes: lantern.LANTERN_TENANTS,
     enableUserRestrictions: false,
+    enableVitalsCaseloadButton: false,
   },
 };
 
