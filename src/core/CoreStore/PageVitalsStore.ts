@@ -180,7 +180,8 @@ export default class PageVitalsStore {
     let labels = [] as string[];
     let ids = [] as string[];
     const datasets = [] as DownloadableDataset[];
-    Object.values(METRIC_TYPES).forEach((metricType: MetricType) => {
+    const metrics = this.metrics.map((m) => m.id);
+    metrics.forEach((metricType: MetricType) => {
       const metricData = this.currentEntityTimeSeries.filter(
         (d: VitalsTimeSeriesRecord) => d.metric === metricType
       );
@@ -220,17 +221,23 @@ export default class PageVitalsStore {
 
     const ids = this.childEntitySummaryRows.map((d) => d.entity.entityName);
     const datasets = [] as DownloadableDataset[];
+
     const downloadableData = this.childEntitySummaryRows.map(
       (d: VitalsSummaryTableRow) => {
+        const metrics = this.metrics.reduce((acc: any, metric) => {
+          if (metric.id !== METRIC_TYPES.OVERALL) {
+            acc[METRIC_TYPE_LABELS[metric.id]] = formatPercent(
+              d[metric.accessor]
+            );
+          }
+          return acc;
+        }, {});
+
         return {
           "Overall score": formatPercent(d.overall),
           "30D change": formatPercent(d.overall30Day),
           "90D change": formatPercent(d.overall90Day),
-          [METRIC_TYPE_LABELS.DISCHARGE]: formatPercent(d.timelyDischarge),
-          [METRIC_TYPE_LABELS.CONTACT]: formatPercent(d.timelyContact),
-          [METRIC_TYPE_LABELS.RISK_ASSESSMENT]: formatPercent(
-            d.timelyRiskAssessment
-          ),
+          ...metrics,
         };
       }
     );

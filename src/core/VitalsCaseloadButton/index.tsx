@@ -17,7 +17,7 @@
 
 import "./VitalsCaseloadButton.scss";
 
-import { Button, Icon, IconSVG } from "@recidiviz/case-triage-components";
+import { Button, Icon, IconSVG } from "@recidiviz/design-system";
 import buildUrl from "build-url";
 import { observer } from "mobx-react-lite";
 import React from "react";

@@ -16,10 +16,11 @@
 // =============================================================================
 import { TenantId } from "../../RootStore/types";
 import { ViewMethodology } from "../models/types";
+import { US_ID } from "./usIdMethodology";
 import { US_ND } from "./usNdMethodology";
 
 type TenantMethodology = {
   [key in TenantId]: ViewMethodology;
 };
 
-export default { US_ND } as TenantMethodology;
+export default { US_ND, US_ID } as TenantMethodology;

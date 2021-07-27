@@ -115,6 +115,20 @@ jest.mock("../../models/VitalsMetrics", () => {
         value: 35.5,
         monthlyAvg: 35.8,
       },
+      {
+        date: "2021-03-11",
+        entityId: "STATE_DOC",
+        metric: "DOWNGRADE",
+        value: 67.5,
+        monthlyAvg: 67.8,
+      },
+      {
+        date: "2021-03-12",
+        entityId: "STATE_DOC",
+        metric: "DOWNGRADE",
+        value: 68.5,
+        monthlyAvg: 68.8,
+      },
     ],
     summaries: [
       {
@@ -128,6 +142,7 @@ jest.mock("../../models/VitalsMetrics", () => {
         timelyContact: 60,
         timelyDischarge: 63,
         timelyRiskAssessment: 69,
+        timelyDowngrade: 67,
       },
       {
         entityId: "OFFICE_B",
@@ -140,6 +155,7 @@ jest.mock("../../models/VitalsMetrics", () => {
         timelyContact: 90,
         timelyDischarge: 93,
         timelyRiskAssessment: 99,
+        timelyDowngrade: 67,
       },
     ],
   }));
@@ -155,148 +171,293 @@ let coreStore: CoreStore;
 let pageVitalsStore: PageVitalsStore;
 
 describe("PageVitalsStore", () => {
-  beforeEach(() => {
-    coreStore = new CoreStore(RootStore);
-    pageVitalsStore = coreStore.pageVitalsStore;
-  });
-
-  describe("getTimeSeriesDownloadableData", () => {
-    // TODO renable as part of #1175
-    xit("returns the data formatted for download", () => {
-      const expected = {
-        chartDatasets: [
-          { data: ["STATE_DOC", "STATE_DOC"], label: "Id" },
-          {
-            data: [
-              {
-                Total: "73%",
-                "30D average": "73%",
-              },
-              {
-                Total: "76%",
-                "30D average": "76%",
-              },
-            ],
-            label: "Overall",
-          },
-          {
-            data: [
-              {
-                Total: "63%",
-                "30D average": "63%",
-              },
-              {
-                Total: "66%",
-                "30D average": "66%",
-              },
-            ],
-            label: "Timely discharge",
-          },
-          {
-            data: [
-              {
-                Total: "43%",
-                "30D average": "43%",
-              },
-              {
-                Total: "46%",
-                "30D average": "46%",
-              },
-            ],
-            label: "Timely contacts",
-          },
-          {
-            data: [
-              {
-                Total: "33%",
-                "30D average": "33%",
-              },
-              {
-                Total: "36%",
-                "30D average": "36%",
-              },
-            ],
-            label: "Timely risk assessments",
-          },
-        ],
-        chartLabels: ["2021-03-11", "2021-03-12"],
-        chartId: "MetricsOverTime",
-        dataExportLabel: "Date",
-      };
-      const result = pageVitalsStore.timeSeriesDownloadableData;
-      expect(result).toEqual(expected);
+  describe("when the tenant is US_ND", () => {
+    beforeEach(() => {
+      coreStore = new CoreStore(RootStore);
+      pageVitalsStore = coreStore.pageVitalsStore;
+      coreStore.tenantStore.currentTenantId = "US_ND";
     });
-  });
 
-  describe("getSummaryDownloadableData", () => {
-    it("returns the data formatted for download", () => {
-      const expected = {
-        chartDatasets: [
-          {
-            data: [
-              {
-                "90D change": "2%",
-                "30D change": "0%",
-                "Overall score": "85%",
-                "Timely contacts": "60%",
-                "Timely discharge": "63%",
-                "Timely risk assessments": "69%",
-              },
-              {
-                "90D change": "2%",
-                "30D change": "0%",
-                "Overall score": "95%",
-                "Timely contacts": "90%",
-                "Timely discharge": "93%",
-                "Timely risk assessments": "99%",
-              },
-            ],
-            label: "",
-          },
-        ],
-        chartLabels: ["Office A", "Office B"],
-        chartId: "MetricsByOffice",
-        dataExportLabel: "Office",
-      };
-      const result = pageVitalsStore.summaryDownloadableData;
-      expect(result).toEqual(expected);
+    describe("getTimeSeriesDownloadableData", () => {
+      it("returns the data formatted for download", () => {
+        const expected = {
+          chartDatasets: [
+            { data: ["STATE_DOC", "STATE_DOC"], label: "Id" },
+            {
+              data: [
+                {
+                  Total: "73%",
+                  "30D average": "73%",
+                },
+                {
+                  Total: "76%",
+                  "30D average": "76%",
+                },
+              ],
+              label: "Overall",
+            },
+            {
+              data: [
+                {
+                  Total: "63%",
+                  "30D average": "63%",
+                },
+                {
+                  Total: "66%",
+                  "30D average": "66%",
+                },
+              ],
+              label: "Timely discharge",
+            },
+            {
+              data: [
+                {
+                  Total: "43%",
+                  "30D average": "43%",
+                },
+                {
+                  Total: "46%",
+                  "30D average": "46%",
+                },
+              ],
+              label: "Timely contacts",
+            },
+            {
+              data: [
+                {
+                  Total: "33%",
+                  "30D average": "33%",
+                },
+                {
+                  Total: "36%",
+                  "30D average": "36%",
+                },
+              ],
+              label: "Timely risk assessments",
+            },
+          ],
+          chartLabels: ["2021-03-11", "2021-03-12"],
+          chartId: "MetricsOverTime",
+          dataExportLabel: "Date",
+        };
+        const result = pageVitalsStore.timeSeriesDownloadableData;
+        expect(result).toEqual(expected);
+      });
     });
-  });
 
-  describe("metrics", () => {
-    it("returns the correct metrics when the tenant is US_ND", () => {
-      const expected = [
-        {
-          accessor: "overall",
-          description: "Average timeliness across all metrics",
-          id: "OVERALL",
-          name: "Overall",
-        },
-        {
-          accessor: "timelyDischarge",
-          description: `of clients were discharged at their earliest projected regular
+    describe("getSummaryDownloadableData", () => {
+      it("returns the data formatted for download", () => {
+        const expected = {
+          chartDatasets: [
+            {
+              data: [
+                {
+                  "90D change": "2%",
+                  "30D change": "0%",
+                  "Overall score": "85%",
+                  "Timely contacts": "60%",
+                  "Timely discharge": "63%",
+                  "Timely risk assessments": "69%",
+                },
+                {
+                  "90D change": "2%",
+                  "30D change": "0%",
+                  "Overall score": "95%",
+                  "Timely contacts": "90%",
+                  "Timely discharge": "93%",
+                  "Timely risk assessments": "99%",
+                },
+              ],
+              label: "",
+            },
+          ],
+          chartLabels: ["Office A", "Office B"],
+          chartId: "MetricsByOffice",
+          dataExportLabel: "Office",
+        };
+        const result = pageVitalsStore.summaryDownloadableData;
+        expect(result).toEqual(expected);
+      });
+    });
+
+    describe("metrics", () => {
+      it("returns the correct metrics", () => {
+        const expected = [
+          {
+            accessor: "overall",
+            description: "Average timeliness across all metrics",
+            id: "OVERALL",
+            name: "Overall",
+          },
+          {
+            accessor: "timelyDischarge",
+            description: `of clients were discharged at their earliest projected regular
         supervision discharge date`,
-          id: "DISCHARGE",
-          name: "Timely discharge",
-        },
-        {
-          accessor: "timelyContact",
-          description: `of clients received initial contact within 30 days of starting
+            id: "DISCHARGE",
+            name: "Timely discharge",
+          },
+          {
+            accessor: "timelyContact",
+            description: `of clients received initial contact within 30 days of starting
         supervision and a F2F contact every subsequent 90, 60, or 30 days for 
         minimum, medium, and maximum supervision levels respectively`,
-          id: "CONTACT",
-          name: "Timely contacts",
-        },
-        {
-          accessor: "timelyRiskAssessment",
-          description: `of clients have had an initial assessment within 30 days and 
+            id: "CONTACT",
+            name: "Timely contacts",
+          },
+          {
+            accessor: "timelyRiskAssessment",
+            description: `of clients have had an initial assessment within 30 days and 
         reassessment within 212 days`,
-          id: "RISK_ASSESSMENT",
-          name: "Timely risk assessments",
-        },
-      ];
-      const result = pageVitalsStore.metrics;
-      expect(result).toEqual(expected);
+            id: "RISK_ASSESSMENT",
+            name: "Timely risk assessments",
+          },
+        ];
+        const result = pageVitalsStore.metrics;
+        expect(result).toEqual(expected);
+      });
+    });
+  });
+
+  describe("when the tenant is US_ID", () => {
+    beforeEach(() => {
+      coreStore = new CoreStore(RootStore);
+      pageVitalsStore = coreStore.pageVitalsStore;
+      coreStore.tenantStore.currentTenantId = "US_ID";
+    });
+
+    describe("getTimeSeriesDownloadableData", () => {
+      it("returns the data formatted for download", () => {
+        const expected = {
+          chartDatasets: [
+            { data: ["STATE_DOC", "STATE_DOC"], label: "Id" },
+            {
+              data: [
+                {
+                  Total: "73%",
+                  "30D average": "73%",
+                },
+                {
+                  Total: "76%",
+                  "30D average": "76%",
+                },
+              ],
+              label: "Overall",
+            },
+            {
+              data: [
+                {
+                  Total: "33%",
+                  "30D average": "33%",
+                },
+                {
+                  Total: "36%",
+                  "30D average": "36%",
+                },
+              ],
+              label: "Timely risk assessments",
+            },
+            {
+              data: [
+                {
+                  Total: "43%",
+                  "30D average": "43%",
+                },
+                {
+                  Total: "46%",
+                  "30D average": "46%",
+                },
+              ],
+              label: "Timely contacts",
+            },
+            {
+              data: [
+                {
+                  Total: "68%",
+                  "30D average": "68%",
+                },
+                {
+                  Total: "69%",
+                  "30D average": "69%",
+                },
+              ],
+              label: "Timely downgrades",
+            },
+          ],
+          chartLabels: ["2021-03-11", "2021-03-12"],
+          chartId: "MetricsOverTime",
+          dataExportLabel: "Date",
+        };
+        const result = pageVitalsStore.timeSeriesDownloadableData;
+        expect(result).toEqual(expected);
+      });
+    });
+
+    describe("getSummaryDownloadableData", () => {
+      it("returns the data formatted for download", () => {
+        const expected = {
+          chartDatasets: [
+            {
+              data: [
+                {
+                  "90D change": "2%",
+                  "30D change": "0%",
+                  "Overall score": "85%",
+                  "Timely contacts": "60%",
+                  "Timely downgrades": "67%",
+                  "Timely risk assessments": "69%",
+                },
+                {
+                  "90D change": "2%",
+                  "30D change": "0%",
+                  "Overall score": "95%",
+                  "Timely contacts": "90%",
+                  "Timely downgrades": "67%",
+                  "Timely risk assessments": "99%",
+                },
+              ],
+              label: "",
+            },
+          ],
+          chartLabels: ["Office A", "Office B"],
+          chartId: "MetricsByOffice",
+          dataExportLabel: "Office",
+        };
+        const result = pageVitalsStore.summaryDownloadableData;
+        expect(result).toEqual(expected);
+      });
+    });
+
+    describe("metrics", () => {
+      it("returns the correct metrics", () => {
+        const expected = [
+          {
+            accessor: "overall",
+            description: "Average timeliness across all metrics",
+            id: "OVERALL",
+            name: "Overall",
+          },
+          {
+            accessor: "timelyRiskAssessment",
+            description: `of clients who have an up-to-date risk assessment, according to IDOC policy.`,
+            id: "RISK_ASSESSMENT",
+            name: "Timely risk assessments",
+          },
+          {
+            accessor: "timelyContact",
+            description: `of clients who have an up-to-date contact, according to IDOC policy.`,
+            id: "CONTACT",
+            name: "Timely contacts",
+          },
+          {
+            accessor: "timelyDowngrade",
+            description: `of clients who’s supervision level is at or below their risk level.`,
+            id: "DOWNGRADE",
+            name: "Timely downgrades",
+          },
+        ];
+        const result = pageVitalsStore.metrics;
+        expect(result).toEqual(expected);
+      });
     });
   });
 });

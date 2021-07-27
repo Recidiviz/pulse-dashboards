@@ -16,7 +16,7 @@
 // =============================================================================
 import "./PercentDelta.scss";
 
-import { Icon, IconSVG } from "@recidiviz/case-triage-components";
+import { Icon, IconSVG } from "@recidiviz/design-system";
 import cn from "classnames";
 import React from "react";
 

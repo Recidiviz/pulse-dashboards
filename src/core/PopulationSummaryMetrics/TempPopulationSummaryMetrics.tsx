@@ -19,7 +19,7 @@
 import "./LoadingMetrics.scss";
 import "./PopulationSummaryMetrics.scss";
 
-import { Card, CardSection } from "@recidiviz/case-triage-components";
+import { Card, CardSection } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import numeral from "numeral";
 import React from "react";

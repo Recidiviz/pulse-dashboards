@@ -16,7 +16,7 @@
 // =============================================================================
 import "./DetailsGroup.scss";
 
-import { Icon, IconSVG } from "@recidiviz/case-triage-components";
+import { Icon, IconSVG } from "@recidiviz/design-system";
 import React from "react";
 import { Link } from "react-router-dom";
 
