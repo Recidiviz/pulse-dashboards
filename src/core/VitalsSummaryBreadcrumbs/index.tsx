@@ -79,9 +79,18 @@ const VitalsSummaryBreadcrumbs: React.FC = () => {
 
   return (
     <div className="VitalsSummaryBreadcrumbs">
-      <Link className="VitalsSummaryBreadcrumbs--state" to="/community/vitals">
-        {state}
-      </Link>
+      {state ? (
+        <Link
+          className="VitalsSummaryBreadcrumbs--state"
+          to="/community/vitals"
+        >
+          {state}
+        </Link>
+      ) : (
+        // Render a placeholder so the header spacing remains
+        // constant with or without a state link
+        <div>&nbsp;</div>
+      )}
       {parent && (
         <div className="VitalsSummaryBreadcrumbs__parent-container">
           <span>/</span>

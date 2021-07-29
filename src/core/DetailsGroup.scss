@@ -19,6 +19,8 @@
 .DetailsGroup {
   display: flex;
   align-items: baseline;
+  align-self: flex-end;
+  margin-bottom: 0.5rem;
 
   &__item {
     color: $slate-80;
