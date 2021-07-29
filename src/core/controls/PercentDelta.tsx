@@ -49,7 +49,7 @@ function getDeltaDirection({
   value?: number;
   improvesOnIncrease?: boolean;
 }): { color: string; rotate: number; direction: DeltaDirections } {
-  if (value === 0 || value === undefined)
+  if (value === 0 || value === undefined || Number.isNaN(value))
     return {
       direction: deltaDirections.noChange,
       color: deltaColorMap.noChange,
@@ -118,7 +118,9 @@ const PercentDelta: React.FC<PropTypes> = ({
         />
       )}
       <div className="PercentDelta__value">
-        {value ? formatPercent(value) : "N/A"}
+        {Number.isNaN(value) || value === undefined
+          ? "N/A"
+          : formatPercent(value)}
       </div>
     </div>
   );

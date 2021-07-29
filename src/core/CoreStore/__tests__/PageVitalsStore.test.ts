@@ -438,19 +438,19 @@ describe("PageVitalsStore", () => {
           },
           {
             accessor: "timelyRiskAssessment",
-            description: `of clients who have an up-to-date risk assessment, according to IDOC policy.`,
+            description: `of clients have an up-to-date risk assessment, according to IDOC policy.`,
             id: "RISK_ASSESSMENT",
             name: "Timely risk assessments",
           },
           {
             accessor: "timelyContact",
-            description: `of clients who have an up-to-date contact, according to IDOC policy.`,
+            description: `of clients have an up-to-date contact, according to IDOC policy`,
             id: "CONTACT",
             name: "Timely contacts",
           },
           {
             accessor: "timelyDowngrade",
-            description: `of clients who’s supervision level is at or below their risk level.`,
+            description: `of clients are at a supervision level that is the same or below their risk level.`,
             id: "DOWNGRADE",
             name: "Timely downgrades",
           },

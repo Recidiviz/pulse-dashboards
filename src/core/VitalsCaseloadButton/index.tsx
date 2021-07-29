@@ -50,16 +50,15 @@ const VitalsCaseloadButton: React.FC = () => {
   return (
     <div className="VitalsCaseloadButton__button">
       <Button
-        onClick={() => {
-          window.location.href = buildUrl(
-            `${process.env.REACT_APP_CASE_TRIAGE_URL}`,
-            {
+        onClick={() =>
+          window.open(
+            buildUrl(`${process.env.REACT_APP_CASE_TRIAGE_URL}`, {
               queryParams: {
                 impersonated_email: officerEmailAddress,
               },
-            }
-          );
-        }}
+            })
+          )
+        }
       >
         View {toPossessive(firstName)} caseload
         <Icon

@@ -136,7 +136,11 @@ export default class PageVitalsStore {
     const selectedTimeSeries = this.timeSeries.filter(
       (d) => d.entityId === this.currentEntityId
     );
-    return selectedTimeSeries;
+    return selectedTimeSeries.sort(
+      (a: VitalsTimeSeriesRecord, b: VitalsTimeSeriesRecord) => {
+        return +new Date(a.date) - +new Date(b.date);
+      }
+    );
   }
 
   get lastUpdatedOn(): string {

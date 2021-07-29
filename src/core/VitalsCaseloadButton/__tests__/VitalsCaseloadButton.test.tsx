@@ -66,11 +66,11 @@ describe("VitalsCaseloadButton", () => {
 
   test("Case Triage read only URL", async () => {
     // delete and re-create the window location object for this test
-    const { location } = window;
+    const { open } = window;
     // @ts-ignore
-    delete window.location;
-    window.location = { ...window.location, href: "original-url" };
+    delete window.open;
 
+    window.open = jest.fn();
     render(<VitalsCaseloadButton />);
 
     const caseloadButton = screen.getByRole("button");
@@ -78,10 +78,10 @@ describe("VitalsCaseloadButton", () => {
 
     // wait for button to be removed, slight delay during navigation
     waitForElementToBeRemoved(screen.queryByRole("button"));
-    expect(window.location.href).toEqual(
+    expect(window.open).toHaveBeenCalledWith(
       "test-case-triage-url?impersonated_email=fflintstone%40bedrock.gov"
     );
     // reset window location to its original object
-    window.location = location;
+    window.open = open;
   });
 });

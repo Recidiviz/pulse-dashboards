@@ -122,19 +122,19 @@ const TENANTS: Tenants = {
       {
         name: METRIC_TYPE_LABELS.RISK_ASSESSMENT,
         id: METRIC_TYPES.RISK_ASSESSMENT,
-        description: `of clients who have an up-to-date risk assessment, according to IDOC policy.`,
+        description: `of clients have an up-to-date risk assessment, according to IDOC policy.`,
         accessor: "timelyRiskAssessment",
       },
       {
         name: METRIC_TYPE_LABELS.CONTACT,
         id: METRIC_TYPES.CONTACT,
-        description: `of clients who have an up-to-date contact, according to IDOC policy.`,
+        description: `of clients have an up-to-date contact, according to IDOC policy`,
         accessor: "timelyContact",
       },
       {
         name: METRIC_TYPE_LABELS.DOWNGRADE,
         id: METRIC_TYPES.DOWNGRADE,
-        description: `of clients who’s supervision level is at or below their risk level.`,
+        description: `of clients are at a supervision level that is the same or below their risk level.`,
         accessor: "timelyDowngrade",
       },
     ],

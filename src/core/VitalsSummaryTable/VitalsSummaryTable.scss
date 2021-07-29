@@ -140,7 +140,7 @@ $border-styles: 1px solid $slate-20;
   &__row--value {
     border-top: $border-styles;
     color: $pine-3;
-    font: $font-ui-sans-16;
+    font: $font-ui-sans-14;
 
     /* All cells except entity */
     td:not(:first-child) {
@@ -148,13 +148,7 @@ $border-styles: 1px solid $slate-20;
       padding: 1.25rem 0 1.25rem 0;
     }
 
-    /* Performance by metric cells */
-    :nth-child(n + 5) {
-      font: $font-ui-sans-14;
-      color: $pine-3;
-    }
-
-    /* 28D Change Cells */
+    /* 90D Change Cells */
     :nth-child(4) {
       border-right: $border-styles;
     }
@@ -221,6 +215,7 @@ $border-styles: 1px solid $slate-20;
     display: flex;
     align-items: center;
     justify-content: center;
+    font: $font-ui-sans-16;
   }
 
   &__sort {

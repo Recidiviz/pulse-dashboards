@@ -41,7 +41,12 @@ import VitalsSummaryTable from "../VitalsSummaryTable/VitalsSummaryTable";
 const PageVitals: React.FC = () => {
   const { metricsStore, pageVitalsStore } = useCoreStore();
   const { isLoading, isError } = metricsStore.vitals;
-  const { currentEntitySummary, lastUpdatedOn, downloadData } = pageVitalsStore;
+  const {
+    currentEntitySummary,
+    lastUpdatedOn,
+    downloadData,
+    childEntitySummaryRows,
+  } = pageVitalsStore;
 
   // TODO: add in Error state
   if (isError || currentEntitySummary === undefined) {
@@ -84,9 +89,8 @@ const PageVitals: React.FC = () => {
         <VitalsCaseloadButton />
       </div>
       <div className="PageVitals__Table">
-        {currentEntitySummary.entityType !== ENTITY_TYPES.PO && (
-          <VitalsSummaryTable />
-        )}
+        {currentEntitySummary.entityType !== ENTITY_TYPES.PO &&
+          childEntitySummaryRows.length > 0 && <VitalsSummaryTable />}
       </div>
     </PageTemplate>
   );

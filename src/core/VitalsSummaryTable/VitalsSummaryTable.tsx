@@ -106,6 +106,19 @@ const VitalsSummaryTable: React.FC = () => {
           {
             Header: getEntityTypeName(entityType),
             accessor: "entity",
+            sortType: (rowA: any, rowB: any) => {
+              if (
+                rowA.original.entity.entityName >
+                rowB.original.entity.entityName
+              )
+                return -1;
+              if (
+                rowB.original.entity.entityName >
+                rowA.original.entity.entityName
+              )
+                return 1;
+              return 0;
+            },
             Cell: ({
               value,
             }: {

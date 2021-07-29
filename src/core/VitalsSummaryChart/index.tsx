@@ -111,39 +111,43 @@ const VitalsSummaryChart: React.FC = () => {
     );
   };
 
+  const averageAnnotations = [
+    {
+      type: "ordinal-line",
+      coordinates: lineCoordinates,
+      lineStyle: {
+        stroke: styles.indigo,
+        strokeWidth: 2,
+      },
+      curve: curveCatmullRom,
+    },
+    {
+      type: "or",
+      ...latestDataPoint,
+    },
+  ];
+  const goalLineAnnotations = flags.enableVitalsGoalLine
+    ? [
+        {
+          type: "react-annotation",
+          date: latestDataPoint.date,
+          value: goal,
+        },
+        {
+          type: "r",
+          value: goal,
+          color: styles.signalLinks,
+          disable: "connector",
+        },
+      ]
+    : ([] as any);
+
   return (
     <div className="VitalsSummaryChart">
       <ResponsiveOrdinalFrame
         responsiveWidth
         hoverAnnotation
-        annotations={
-          flags.enableVitalsGoalLine && [
-            {
-              type: "ordinal-line",
-              coordinates: lineCoordinates,
-              lineStyle: {
-                stroke: styles.indigo,
-                strokeWidth: 2,
-              },
-              curve: curveCatmullRom,
-            },
-            {
-              type: "or",
-              ...latestDataPoint,
-            },
-            {
-              type: "react-annotation",
-              date: latestDataPoint.date,
-              value: goal,
-            },
-            {
-              type: "r",
-              value: goal,
-              color: styles.signalLinks,
-              disable: "connector",
-            },
-          ]
-        }
+        annotations={averageAnnotations.concat(goalLineAnnotations)}
         customHoverBehavior={(piece: any) => {
           if (piece) {
             setHoveredId(piece.index);
