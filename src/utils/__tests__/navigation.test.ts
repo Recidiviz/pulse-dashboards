@@ -47,6 +47,7 @@ describe("getPathsFromNavigation", () => {
       "/community/projections",
       "/community/vitals",
       "/methodology/projections",
+      "/methodology/vitals",
     ];
     expect(allowedPaths).toEqual(expected);
   });

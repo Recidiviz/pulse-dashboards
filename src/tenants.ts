@@ -110,7 +110,7 @@ const TENANTS: Tenants = {
     navigation: {
       facilities: ["projections"],
       community: ["projections", "vitals"],
-      methodology: ["projections"],
+      methodology: ["projections", "vitals"],
     },
     vitalsMetrics: [
       {
