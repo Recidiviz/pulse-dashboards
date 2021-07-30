@@ -36,8 +36,8 @@ export type SimulationCompartment = "SUPERVISION" | "INCARCERATION";
 export type MetricRecord =
   | PopulationProjectionSummaryRecords
   | PopulationProjectionTimeSeriesRecord
-  | VitalsSummaryRecord
-  | VitalsTimeSeriesRecord;
+  | PracticesSummaryRecord
+  | PracticesTimeSeriesRecord;
 
 export type PopulationProjectionSummaryRecords = (
   | HistoricalSummaryRecord
@@ -79,7 +79,7 @@ export type PopulationProjectionTimeSeriesRecord = {
   totalPopulationMin: number;
 };
 
-export type VitalsTimeSeriesRecord = {
+export type PracticesTimeSeriesRecord = {
   date: string;
   entityId: string;
   metric: string;
@@ -94,7 +94,7 @@ export type MetricValueAccessor =
   | "timelyContact"
   | "timelyRiskAssessment"
   | "timelyDowngrade";
-export type VitalsSummaryRecord = {
+export type PracticesSummaryRecord = {
   entityId: string;
   entityName: string; // i.e. "North Dakota" or "Oakes"
   entityType: EntityType;
@@ -122,7 +122,7 @@ export type MethodologyContent = {
 };
 
 export type ViewMethodology = {
-  vitals: {
+  practices: {
     title: string;
     description: string;
     content: MethodologyContent[];

@@ -14,32 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { makeAutoObservable } from "mobx";
+@import "../CoreConstants.scss";
 
-import ProjectionsMetrics from "../models/ProjectionsMetrics";
-import VitalsMetrics from "../models/VitalsMetrics";
-import type CoreStore from ".";
+.PracticesSummaryBreadcrumbs {
+  line-height: 2.67rem;
+  letter-spacing: -0.05rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  text-align: left;
 
-export default class MetricsStore {
-  protected readonly rootStore;
-
-  constructor({ rootStore }: { rootStore: CoreStore }) {
-    makeAutoObservable(this);
-    this.rootStore = rootStore;
+  &--state, &--parent {
+    font: $font-ui-sans-14;
+    color: $slate-80;
+    &:hover {
+      text-decoration-line: underline;
+      color: $signal-links;
+      cursor: pointer;
+    }
   }
 
-  get practices(): VitalsMetrics {
-    return new VitalsMetrics({
-      tenantId: this.rootStore.currentTenantId,
-      sourceEndpoint: "vitals",
-    });
+  &__parent-container {
+    display: inline;
+    span {
+      padding: 0 5px;
+    }
   }
 
-  get projections(): ProjectionsMetrics {
-    return new ProjectionsMetrics({
-      tenantId: this.rootStore.currentTenantId,
-      sourceEndpoint: "projections",
-      rootStore: this.rootStore,
-    });
+  &--current {
+    font: $font-ui-serif-34;
+    color: $pine-3;
   }
 }

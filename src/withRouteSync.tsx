@@ -21,7 +21,7 @@ import React, { ComponentType, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import { useCoreStore } from "./core/CoreStoreProvider";
-import { DEFAULT_ENTITY_ID } from "./core/PageVitals/types";
+import { DEFAULT_ENTITY_ID } from "./core/PagePractices/types";
 import { convertSlugToId } from "./utils/navigation";
 
 type RouteParams = {
@@ -49,12 +49,12 @@ const withRouteSync = <Props extends RouteParams>(
 ): ComponentType<Props> => {
   const WrappedRouteComponent: React.FC<Props> = (props) => {
     const { entityId } = normalizeRouteParams(useParams());
-    const { pageVitalsStore } = useCoreStore();
+    const { pagePracticesStore } = useCoreStore();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(
       action("sync route params", () => {
-        pageVitalsStore.currentEntityId = entityId;
+        pagePracticesStore.currentEntityId = entityId;
       })
     );
 

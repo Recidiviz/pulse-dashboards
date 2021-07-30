@@ -16,7 +16,7 @@
 // =============================================================================
 import RootStore from "../../../RootStore";
 import CoreStore from "..";
-import PageVitalsStore, { getSummaryStatus } from "../PageVitalsStore";
+import PagePracticesStore, { getSummaryStatus } from "../PagePracticesStore";
 
 describe("getSummaryStatus", () => {
   describe("when value is less than 70", () => {
@@ -168,13 +168,13 @@ jest.mock("../../../RootStore/TenantStore", () => {
 });
 
 let coreStore: CoreStore;
-let pageVitalsStore: PageVitalsStore;
+let pagePracticesStore: PagePracticesStore;
 
-describe("PageVitalsStore", () => {
+describe("PagePracticesStore", () => {
   describe("when the tenant is US_ND", () => {
     beforeEach(() => {
       coreStore = new CoreStore(RootStore);
-      pageVitalsStore = coreStore.pageVitalsStore;
+      pagePracticesStore = coreStore.pagePracticesStore;
       coreStore.tenantStore.currentTenantId = "US_ND";
     });
 
@@ -240,7 +240,7 @@ describe("PageVitalsStore", () => {
           chartId: "MetricsOverTime",
           dataExportLabel: "Date",
         };
-        const result = pageVitalsStore.timeSeriesDownloadableData;
+        const result = pagePracticesStore.timeSeriesDownloadableData;
         expect(result).toEqual(expected);
       });
     });
@@ -275,7 +275,7 @@ describe("PageVitalsStore", () => {
           chartId: "MetricsByOffice",
           dataExportLabel: "Office",
         };
-        const result = pageVitalsStore.summaryDownloadableData;
+        const result = pagePracticesStore.summaryDownloadableData;
         expect(result).toEqual(expected);
       });
     });
@@ -312,7 +312,7 @@ describe("PageVitalsStore", () => {
             name: "Timely risk assessments",
           },
         ];
-        const result = pageVitalsStore.metrics;
+        const result = pagePracticesStore.metrics;
         expect(result).toEqual(expected);
       });
     });
@@ -321,7 +321,7 @@ describe("PageVitalsStore", () => {
   describe("when the tenant is US_ID", () => {
     beforeEach(() => {
       coreStore = new CoreStore(RootStore);
-      pageVitalsStore = coreStore.pageVitalsStore;
+      pagePracticesStore = coreStore.pagePracticesStore;
       coreStore.tenantStore.currentTenantId = "US_ID";
     });
 
@@ -387,7 +387,7 @@ describe("PageVitalsStore", () => {
           chartId: "MetricsOverTime",
           dataExportLabel: "Date",
         };
-        const result = pageVitalsStore.timeSeriesDownloadableData;
+        const result = pagePracticesStore.timeSeriesDownloadableData;
         expect(result).toEqual(expected);
       });
     });
@@ -422,7 +422,7 @@ describe("PageVitalsStore", () => {
           chartId: "MetricsByOffice",
           dataExportLabel: "Office",
         };
-        const result = pageVitalsStore.summaryDownloadableData;
+        const result = pagePracticesStore.summaryDownloadableData;
         expect(result).toEqual(expected);
       });
     });
@@ -455,7 +455,7 @@ describe("PageVitalsStore", () => {
             name: "Timely downgrades",
           },
         ];
-        const result = pageVitalsStore.metrics;
+        const result = pagePracticesStore.metrics;
         expect(result).toEqual(expected);
       });
     });

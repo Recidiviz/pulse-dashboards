@@ -21,14 +21,14 @@ import { toTitleCase } from "../../utils/formatStrings";
 import Metric, { BaseMetricProps } from "./Metric";
 import {
   EntityType,
+  PracticesSummaryRecord,
+  PracticesTimeSeriesRecord,
   RawMetricData,
-  VitalsSummaryRecord,
-  VitalsTimeSeriesRecord,
 } from "./types";
 
-export function createVitalsSummaryMetric(
+export function createPracticesSummaryMetric(
   rawRecords: RawMetricData
-): VitalsSummaryRecord[] {
+): PracticesSummaryRecord[] {
   return rawRecords.map((record) => {
     return {
       entityId: record.entity_id,
@@ -46,9 +46,9 @@ export function createVitalsSummaryMetric(
   });
 }
 
-export function createVitalsTimeSeriesMetric(
+export function createPracticesTimeSeriesMetric(
   rawRecords: RawMetricData
-): VitalsTimeSeriesRecord[] {
+): PracticesTimeSeriesRecord[] {
   return rawRecords.map((record) => {
     return {
       date: record.date,
@@ -60,7 +60,7 @@ export function createVitalsTimeSeriesMetric(
   });
 }
 
-type MetricRecords = VitalsSummaryRecord | VitalsTimeSeriesRecord;
+type MetricRecords = PracticesSummaryRecord | PracticesTimeSeriesRecord;
 
 export default class VitalsMetrics extends Metric<MetricRecords> {
   constructor(props: BaseMetricProps) {
@@ -71,23 +71,23 @@ export default class VitalsMetrics extends Metric<MetricRecords> {
     });
   }
 
-  get summaries(): VitalsSummaryRecord[] {
+  get summaries(): PracticesSummaryRecord[] {
     if (!this.apiData) return [];
     const summaries = parseResponseByFileFormat(
       this.apiData,
       "vitals_summaries",
       this.eagerExpand
     );
-    return createVitalsSummaryMetric(summaries.data);
+    return createPracticesSummaryMetric(summaries.data);
   }
 
-  get timeSeries(): VitalsTimeSeriesRecord[] {
+  get timeSeries(): PracticesTimeSeriesRecord[] {
     if (!this.apiData) return [];
     const timeSeries = parseResponseByFileFormat(
       this.apiData,
       "vitals_time_series",
       this.eagerExpand
     );
-    return createVitalsTimeSeriesMetric(timeSeries.data);
+    return createPracticesTimeSeriesMetric(timeSeries.data);
   }
 }

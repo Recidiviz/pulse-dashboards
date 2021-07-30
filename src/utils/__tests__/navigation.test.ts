@@ -23,7 +23,7 @@ import {
 } from "../navigation";
 
 jest.mock("../../flags", () => ({
-  enableVitalsDashboard: true,
+  enablePracticesDashboard: true,
   enableProjectionsDashboard: true,
 }));
 
@@ -33,8 +33,8 @@ describe("getPathsFromNavigation", () => {
     const expected = [
       "/goals",
       "/community/explore",
-      "/community/vitals",
-      "/methodology/vitals",
+      "/community/practices",
+      "/methodology/practices",
       "/facilities/explore",
     ];
     expect(allowedPaths).toEqual(expected);
@@ -45,9 +45,9 @@ describe("getPathsFromNavigation", () => {
     const expected = [
       "/facilities/projections",
       "/community/projections",
-      "/community/vitals",
+      "/community/practices",
       "/methodology/projections",
-      "/methodology/vitals",
+      "/methodology/practices",
     ];
     expect(allowedPaths).toEqual(expected);
   });
@@ -55,12 +55,12 @@ describe("getPathsFromNavigation", () => {
 
 describe("getPathWithoutParams", () => {
   it("returns the full path when given a path without params", () => {
-    const path = "/community/vitals";
+    const path = "/community/practices";
     expect(getPathWithoutParams(path)).toEqual(path);
   });
 
   it("returns the path without params when given a path with params", () => {
-    const basePath = "/community/vitals";
+    const basePath = "/community/practices";
     expect(getPathWithoutParams(`${basePath}/office-a`)).toEqual(basePath);
   });
 });

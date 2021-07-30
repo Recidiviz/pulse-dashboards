@@ -19,15 +19,15 @@ import "./Methodology.scss";
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
 
+import PracticesMethodology from "../PracticesMethodology";
 import ProjectionsMethodology from "../ProjectionsMethodology/Methodology";
-import VitalsMethodology from "../VitalsMethodology";
 
 const PageMethodology: React.FC = () => {
   const { dashboard }: { dashboard: string } = useParams();
   const { push } = useHistory();
 
   const methodologies: { [k: string]: React.FC } = {
-    vitals: VitalsMethodology,
+    practices: PracticesMethodology,
     projections: ProjectionsMethodology,
   };
 

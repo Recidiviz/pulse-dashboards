@@ -14,32 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { makeAutoObservable } from "mobx";
+import PropTypes from "prop-types";
+import React from "react";
 
-import ProjectionsMetrics from "../models/ProjectionsMetrics";
-import VitalsMetrics from "../models/VitalsMetrics";
-import type CoreStore from ".";
+import PercentDelta from "../controls/PercentDelta";
 
-export default class MetricsStore {
-  protected readonly rootStore;
+const DeltaTableCell: React.FC<{ value: number }> = ({ value }) => {
+  return (
+    <div className="PracticesSummaryTable__change">
+      <PercentDelta value={value} width={14} height={12} improvesOnIncrease />
+    </div>
+  );
+};
 
-  constructor({ rootStore }: { rootStore: CoreStore }) {
-    makeAutoObservable(this);
-    this.rootStore = rootStore;
-  }
+DeltaTableCell.propTypes = {
+  value: PropTypes.number.isRequired,
+};
 
-  get practices(): VitalsMetrics {
-    return new VitalsMetrics({
-      tenantId: this.rootStore.currentTenantId,
-      sourceEndpoint: "vitals",
-    });
-  }
-
-  get projections(): ProjectionsMetrics {
-    return new ProjectionsMetrics({
-      tenantId: this.rootStore.currentTenantId,
-      sourceEndpoint: "projections",
-      rootStore: this.rootStore,
-    });
-  }
-}
+export default DeltaTableCell;

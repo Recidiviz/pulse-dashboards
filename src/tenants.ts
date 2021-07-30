@@ -17,8 +17,8 @@
 import {
   METRIC_TYPE_LABELS,
   METRIC_TYPES,
-  VitalsMetric,
-} from "./core/PageVitals/types";
+  PracticesMetric,
+} from "./core/PagePractices/types";
 import flags from "./flags";
 import * as core from "./RootStore/TenantStore/coreTenants";
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
@@ -41,9 +41,9 @@ type Tenants = {
     domain?: string;
     availableStateCodes: string[];
     enableUserRestrictions: boolean;
-    enableVitalsCaseloadButton: boolean;
+    enablePracticesCaseloadButton: boolean;
     navigation?: Navigation;
-    vitalsMetrics?: VitalsMetric[];
+    practicesMetrics?: PracticesMetric[];
   };
 };
 
@@ -53,7 +53,7 @@ const TENANTS: Tenants = {
     stateCode: "MO",
     availableStateCodes: [lantern.US_MO],
     enableUserRestrictions: true,
-    enableVitalsCaseloadButton: false,
+    enablePracticesCaseloadButton: false,
   },
   [core.US_ND]: {
     name: "North Dakota",
@@ -61,15 +61,15 @@ const TENANTS: Tenants = {
     domain: "nd.gov",
     availableStateCodes: [core.US_ND],
     enableUserRestrictions: false,
-    enableVitalsCaseloadButton: false,
+    enablePracticesCaseloadButton: false,
     navigation: {
       goals: [],
-      ...(flags.enableVitalsDashboard
-        ? { community: ["explore", "vitals"], methodology: ["vitals"] }
+      ...(flags.enablePracticesDashboard
+        ? { community: ["explore", "practices"], methodology: ["practices"] }
         : { community: ["explore"] }),
       facilities: ["explore"],
     },
-    vitalsMetrics: [
+    practicesMetrics: [
       {
         name: METRIC_TYPE_LABELS.OVERALL,
         id: METRIC_TYPES.OVERALL,
@@ -106,13 +106,13 @@ const TENANTS: Tenants = {
     domain: "idoc.idaho.gov",
     availableStateCodes: [core.US_ID],
     enableUserRestrictions: false,
-    enableVitalsCaseloadButton: true,
+    enablePracticesCaseloadButton: true,
     navigation: {
       facilities: ["projections"],
-      community: ["projections", "vitals"],
-      methodology: ["projections", "vitals"],
+      community: ["projections", "practices"],
+      methodology: ["projections", "practices"],
     },
-    vitalsMetrics: [
+    practicesMetrics: [
       {
         name: METRIC_TYPE_LABELS.OVERALL,
         id: METRIC_TYPES.OVERALL,
@@ -144,21 +144,21 @@ const TENANTS: Tenants = {
     stateCode: "PA",
     availableStateCodes: [lantern.US_PA],
     enableUserRestrictions: false,
-    enableVitalsCaseloadButton: false,
+    enablePracticesCaseloadButton: false,
   },
   RECIDIVIZ: {
     name: "Recidiviz",
     stateCode: "Recidiviz",
     availableStateCodes: lantern.LANTERN_TENANTS.concat(core.CORE_TENANTS),
     enableUserRestrictions: true,
-    enableVitalsCaseloadButton: true,
+    enablePracticesCaseloadButton: true,
   },
   LANTERN: {
     name: "Lantern",
     stateCode: "Lantern",
     availableStateCodes: lantern.LANTERN_TENANTS,
     enableUserRestrictions: false,
-    enableVitalsCaseloadButton: false,
+    enablePracticesCaseloadButton: false,
   },
 };
 

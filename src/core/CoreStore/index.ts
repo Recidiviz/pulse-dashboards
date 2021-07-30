@@ -23,8 +23,8 @@ import { PopulationFilterValues } from "../types/filters";
 import { CORE_VIEWS, CoreView, getViewFromPathname } from "../views";
 import FiltersStore from "./FiltersStore";
 import MetricsStore from "./MetricsStore";
+import PagePracticesStore from "./PagePracticesStore";
 import PageProjectionsStore from "./PageProjectionsStore";
-import PageVitalsStore from "./PageVitalsStore";
 
 interface CoreStoreProps {
   userStore: UserStore;
@@ -40,7 +40,7 @@ export default class CoreStore {
 
   metricsStore: MetricsStore;
 
-  pageVitalsStore: PageVitalsStore;
+  pagePracticesStore: PagePracticesStore;
 
   pageProjectionsStore: PageProjectionsStore;
 
@@ -57,7 +57,7 @@ export default class CoreStore {
 
     this.metricsStore = new MetricsStore({ rootStore: this });
 
-    this.pageVitalsStore = new PageVitalsStore({
+    this.pagePracticesStore = new PagePracticesStore({
       rootStore: this,
     });
 

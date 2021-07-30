@@ -38,8 +38,8 @@ import CoreLayout from "./core/CoreLayout";
 import UsNdFacilitiesExplore from "./core/facilities/Explore";
 import CoreGoalsView from "./core/goals/CoreGoalsView";
 import PageMethodology from "./core/PageMethodology";
+import PagePractices from "./core/PagePractices";
 import PageProjections from "./core/PageProjections";
-import PageVitals from "./core/PageVitals";
 import { CORE_PATHS } from "./core/views";
 import LanternLayout from "./lantern/LanternLayout";
 import Revocations from "./lantern/Revocations";
@@ -86,7 +86,7 @@ const App = () => (
                 <ProtectedRoute path={CORE_PATHS.communityProjections} component={PageProjections} />
                 <ProtectedRoute path={CORE_PATHS.facilitiesExplore} component={UsNdFacilitiesExplore} />
                 <ProtectedRoute path={CORE_PATHS.facilitiesProjections} component={PageProjections} />
-                <ProtectedRoute path={CORE_PATHS.communityVitals} component={PageVitals}/>
+                <ProtectedRoute path={CORE_PATHS.communityPractices} component={PagePractices}/>
                 <ProtectedRoute path={CORE_PATHS.methodology} component={PageMethodology} />
                 <Route path="/profile" component={Profile} />
                 <RedirectHome />

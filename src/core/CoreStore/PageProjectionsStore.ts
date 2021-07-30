@@ -23,7 +23,7 @@ import {
   toTitleCase,
 } from "../../utils/formatStrings";
 import { PopulationProjectionTimeSeriesRecord } from "../models/types";
-import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
+import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import {
   formatMonthAndYear,
   getRecordDate,

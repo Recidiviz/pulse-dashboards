@@ -17,7 +17,7 @@
 import { ViewMethodology } from "../models/types";
 
 export const US_ND: ViewMethodology = {
-  vitals: {
+  practices: {
     title: "At a Glance",
     description: `The “At a Glance” page provides a snapshot of agency performance on a set of key metrics to proactively identify potential resource constraints and focus attention on operational successes and areas for improvement.`,
     content: [

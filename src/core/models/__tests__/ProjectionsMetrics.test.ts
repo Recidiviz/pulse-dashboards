@@ -119,13 +119,13 @@ describe("ProjectionsMetrics", () => {
   beforeEach(() => {
     metric = new ProjectionsMetrics({
       tenantId: mockTenantId,
-      sourceEndpoint: "vitals",
+      sourceEndpoint: "practices",
     });
   });
 
   it("fetches metrics when initialized", () => {
     expect(callMetricsApi).toHaveBeenCalledWith(
-      `${mockTenantId.toLowerCase()}/vitals`,
+      `${mockTenantId.toLowerCase()}/practices`,
       RootStore.getTokenSilently
     );
   });
@@ -218,7 +218,7 @@ describe("ProjectionsMetrics", () => {
 
     metric = new ProjectionsMetrics({
       tenantId: mockTenantId,
-      sourceEndpoint: "vitals",
+      sourceEndpoint: "practices",
     });
 
     expect(metric.simulationDate).toEqual(new Date(9999, 11, 31));
@@ -229,7 +229,7 @@ describe("ProjectionsMetrics", () => {
       mockCoreStore.filtersStore = filtersStore;
       metric = new ProjectionsMetrics({
         tenantId: mockTenantId,
-        sourceEndpoint: "vitals",
+        sourceEndpoint: "practices",
         rootStore: mockCoreStore,
       });
     });
@@ -257,7 +257,7 @@ describe("ProjectionsMetrics", () => {
 
       metric = new ProjectionsMetrics({
         tenantId: mockTenantId,
-        sourceEndpoint: "vitals",
+        sourceEndpoint: "practices",
         rootStore: mockCoreStore,
       });
     });

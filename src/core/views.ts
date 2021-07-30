@@ -29,11 +29,11 @@ export const CORE_PATHS: Record<string, string> = {
   goals: "/goals",
   communityExplore: "/community/explore",
   communityProjections: "/community/projections",
-  communityVitals: "/community/vitals/:entityId?",
+  communityPractices: "/community/practices/:entityId?",
   facilitiesExplore: "/facilities/explore",
   facilitiesProjections: "/facilities/projections",
   methodology: "/methodology/:dashboard",
-  methodologyVitals: "/methodology/vitals",
+  methodologyPractices: "/methodology/practices",
   methodologyProjections: "/methodology/projections",
 };
 
@@ -41,10 +41,10 @@ const pathnameToView: Record<string, string> = {
   [CORE_PATHS.goals]: CORE_VIEWS.goals,
   [CORE_PATHS.communityExplore]: CORE_VIEWS.community,
   [CORE_PATHS.communityProjections]: CORE_VIEWS.community,
-  [CORE_PATHS.communityVitals]: CORE_VIEWS.community,
+  [CORE_PATHS.communityPractices]: CORE_VIEWS.community,
   [CORE_PATHS.facilitiesExplore]: CORE_VIEWS.facilities,
   [CORE_PATHS.facilitiesProjections]: CORE_VIEWS.facilities,
-  [CORE_PATHS.methodologyVitals]: CORE_VIEWS.methodology,
+  [CORE_PATHS.methodologyPractices]: CORE_VIEWS.methodology,
   [CORE_PATHS.methodologyProjections]: CORE_VIEWS.methodology,
 };
 

@@ -26,8 +26,8 @@ import StoreProvider, { useRootStore } from "../components/StoreProvider";
 import VerificationNeeded from "../components/VerificationNeeded";
 import CoreLayout from "../core/CoreLayout";
 import UsNDCommunityGoals from "../core/goals/CoreGoalsView";
+import PracticesMethodology from "../core/PracticesMethodology";
 import ProjectionsMethodology from "../core/ProjectionsMethodology/Methodology";
-import VitalsMethodology from "../core/VitalsMethodology";
 import LanternLayout from "../lantern/LanternLayout";
 import Revocations from "../lantern/Revocations";
 import { US_ID, US_ND } from "../RootStore/TenantStore/coreTenants";
@@ -48,7 +48,7 @@ jest.mock("../components/StoreProvider");
 jest.mock("../components/ErrorMessage");
 jest.mock("../components/VerificationNeeded");
 jest.mock("../core/ProjectionsMethodology/Methodology");
-jest.mock("../core/VitalsMethodology");
+jest.mock("../core/PracticesMethodology");
 
 describe("App tests", () => {
   const metadataField = `${METADATA_NAMESPACE}app_metadata`;
@@ -60,12 +60,12 @@ describe("App tests", () => {
   const mockErrorId = "error-test-id";
   const mockVerificationNeededId = "verification-needed-test-id";
   const mockProjectionsMethodologyId = "projections-methodology-id";
-  const mockVitalsMethodologyId = "vitals-methodology-id";
+  const mockPracticesMethodologyId = "practices-methodology-id";
 
   const RevocationsMock = Revocations.type;
   const LanternLayoutMock = LanternLayout.type;
   const CoreLayoutMock = CoreLayout.type;
-  const VitalsMethodologyMock = VitalsMethodology.type;
+  const PracticesMethodologyMock = PracticesMethodology.type;
   let userStore = {};
 
   LanternLayoutMock.mockImplementation(({ children }) => children);
@@ -80,8 +80,8 @@ describe("App tests", () => {
   ProjectionsMethodology.mockReturnValue(
     mockWithTestId(mockProjectionsMethodologyId)
   );
-  VitalsMethodologyMock.mockReturnValue(
-    mockWithTestId(mockVitalsMethodologyId)
+  PracticesMethodologyMock.mockReturnValue(
+    mockWithTestId(mockPracticesMethodologyId)
   );
 
   beforeEach(() => {
@@ -192,8 +192,8 @@ describe("App tests", () => {
       expect(getByTestId(mockProjectionsMethodologyId)).toBeInTheDocument();
     });
 
-    it("should render the Vitals Methodology page", () => {
-      window.history.pushState({}, "", "/methodology/vitals");
+    it("should render the Practices Methodology page", () => {
+      window.history.pushState({}, "", "/methodology/practices");
       const user = { [metadataField]: { state_code: US_ND } };
 
       useRootStore.mockReturnValue({
@@ -205,7 +205,7 @@ describe("App tests", () => {
 
       expect(CoreLayoutMock).toHaveBeenCalledTimes(1);
       expect(container.children.length).toBe(1);
-      expect(getByTestId(mockVitalsMethodologyId)).toBeInTheDocument();
+      expect(getByTestId(mockPracticesMethodologyId)).toBeInTheDocument();
     });
   });
 

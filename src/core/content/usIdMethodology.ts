@@ -17,7 +17,7 @@
 import { ViewMethodology } from "../models/types";
 
 export const US_ID: ViewMethodology = {
-  vitals: {
+  practices: {
     title: "Practices",
     description: `The “Practices” page provides a snapshot of key operational metrics to proactively identify potential resource constraints and focus attention on successes and areas for improvement. `,
     content: [
