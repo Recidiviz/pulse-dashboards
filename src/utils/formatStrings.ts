@@ -166,8 +166,12 @@ function toNumber(stringValue: string): null | number {
   return !Number.isNaN(Number(stringValue)) ? Number(stringValue) : null;
 }
 
-function formatPercent(percentage: number): string {
-  return `${numeral(Math.abs(percentage)).format("0")}%`;
+function formatPercent(
+  percentage: number,
+  preserveNegativeValues = false
+): string {
+  const percent = preserveNegativeValues ? percentage : Math.abs(percentage);
+  return `${numeral(percent).format("0")}%`;
 }
 
 function formatISODateString(date: string): string {

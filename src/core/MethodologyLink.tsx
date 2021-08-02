@@ -24,7 +24,11 @@ import * as styles from "./CoreConstants.scss";
 
 const MethodologyLink: React.FC<{ path: string }> = ({ path }) => {
   return (
-    <Link className="MethodologyLink DetailsGroup__button" to={path}>
+    <Link
+      className="MethodologyLink DetailsGroup__button"
+      to={path}
+      target="_blank"
+    >
       <Icon
         className="DetailsGroup__icon"
         kind={IconSVG.Open}

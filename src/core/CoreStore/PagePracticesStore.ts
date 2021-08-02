@@ -194,8 +194,8 @@ export default class PagePracticesStore {
       const downloadableData = metricData.map(
         (d: PracticesTimeSeriesRecord) => {
           return {
-            Total: formatPercent(d.value),
-            "30D average": formatPercent(d.monthlyAvg),
+            Total: formatPercent(d.value, true),
+            "30D average": formatPercent(d.monthlyAvg, true),
           };
         }
       );
@@ -233,16 +233,17 @@ export default class PagePracticesStore {
         const metrics = this.metrics.reduce((acc: any, metric) => {
           if (metric.id !== METRIC_TYPES.OVERALL) {
             acc[METRIC_TYPE_LABELS[metric.id]] = formatPercent(
-              d[metric.accessor]
+              d[metric.accessor],
+              true
             );
           }
           return acc;
         }, {});
 
         return {
-          "Overall score": formatPercent(d.overall),
-          "30D change": formatPercent(d.overall30Day),
-          "90D change": formatPercent(d.overall90Day),
+          "Overall score": formatPercent(d.overall, true),
+          "30D change": formatPercent(d.overall30Day, true),
+          "90D change": formatPercent(d.overall90Day, true),
           ...metrics,
         };
       }

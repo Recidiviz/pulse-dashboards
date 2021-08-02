@@ -261,4 +261,14 @@ describe("formatStrings", () => {
       expect(utils.toNumber("1b2")).toBeNull();
     });
   });
+
+  describe("formatPercent", () => {
+    it("preserves negative numbers when passed true", () => {
+      expect(utils.formatPercent(-5, true)).toBe("-5%");
+    });
+
+    it("formats percentage as an absolute value when not passed true", () => {
+      expect(utils.formatPercent(-5)).toBe("5%");
+    });
+  });
 });

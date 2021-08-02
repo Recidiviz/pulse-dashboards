@@ -67,11 +67,13 @@ const PracticesSummaryTable: React.FC = () => {
       {
         Header: "30D change" as MetricTypeLabel,
         accessor: "overall30Day" as MetricValueAccessor,
+        sortType: "basic",
         Cell: createDeltaTableCell,
       },
       {
         Header: "90D change" as MetricTypeLabel,
         accessor: "overall90Day" as MetricValueAccessor,
+        sortType: "basic",
         Cell: createDeltaTableCell,
       },
     ];
@@ -80,6 +82,7 @@ const PracticesSummaryTable: React.FC = () => {
       .map((m: PracticesMetric) => ({
         Header: m.name,
         accessor: m.accessor,
+        sortType: "basic",
         Cell: createBubbleTableCell,
       }));
     return overallCol.concat(changeCols);
@@ -92,6 +95,7 @@ const PracticesSummaryTable: React.FC = () => {
           Header: m.name,
           id: m.id,
           accessor: m.accessor,
+          sortType: "basic",
           Cell: createBubbleTableCell,
         };
         return col;

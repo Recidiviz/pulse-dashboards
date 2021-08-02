@@ -48,6 +48,45 @@ type Tenants = {
 };
 
 const TENANTS: Tenants = {
+  [core.US_ID]: {
+    name: "Idaho",
+    stateCode: "ID",
+    domain: "idoc.idaho.gov",
+    availableStateCodes: [core.US_ID],
+    enableUserRestrictions: false,
+    enablePracticesCaseloadButton: true,
+    navigation: {
+      community: ["practices", "projections"],
+      facilities: ["projections"],
+      methodology: ["projections", "practices"],
+    },
+    practicesMetrics: [
+      {
+        name: METRIC_TYPE_LABELS.OVERALL,
+        id: METRIC_TYPES.OVERALL,
+        description: "Average timeliness across all metrics",
+        accessor: "overall",
+      },
+      {
+        name: METRIC_TYPE_LABELS.RISK_ASSESSMENT,
+        id: METRIC_TYPES.RISK_ASSESSMENT,
+        description: `of clients have an up-to-date risk assessment, according to IDOC policy.`,
+        accessor: "timelyRiskAssessment",
+      },
+      {
+        name: METRIC_TYPE_LABELS.CONTACT,
+        id: METRIC_TYPES.CONTACT,
+        description: `of clients have an up-to-date contact, according to IDOC policy`,
+        accessor: "timelyContact",
+      },
+      {
+        name: METRIC_TYPE_LABELS.DOWNGRADE,
+        id: METRIC_TYPES.DOWNGRADE,
+        description: `of clients are at a supervision level that is the same or below their risk level.`,
+        accessor: "timelyDowngrade",
+      },
+    ],
+  },
   [lantern.US_MO]: {
     name: "Missouri",
     stateCode: "MO",
@@ -100,45 +139,6 @@ const TENANTS: Tenants = {
       },
     ],
   },
-  [core.US_ID]: {
-    name: "Idaho",
-    stateCode: "ID",
-    domain: "idoc.idaho.gov",
-    availableStateCodes: [core.US_ID],
-    enableUserRestrictions: false,
-    enablePracticesCaseloadButton: true,
-    navigation: {
-      facilities: ["projections"],
-      community: ["projections", "practices"],
-      methodology: ["projections", "practices"],
-    },
-    practicesMetrics: [
-      {
-        name: METRIC_TYPE_LABELS.OVERALL,
-        id: METRIC_TYPES.OVERALL,
-        description: "Average timeliness across all metrics",
-        accessor: "overall",
-      },
-      {
-        name: METRIC_TYPE_LABELS.RISK_ASSESSMENT,
-        id: METRIC_TYPES.RISK_ASSESSMENT,
-        description: `of clients have an up-to-date risk assessment, according to IDOC policy.`,
-        accessor: "timelyRiskAssessment",
-      },
-      {
-        name: METRIC_TYPE_LABELS.CONTACT,
-        id: METRIC_TYPES.CONTACT,
-        description: `of clients have an up-to-date contact, according to IDOC policy`,
-        accessor: "timelyContact",
-      },
-      {
-        name: METRIC_TYPE_LABELS.DOWNGRADE,
-        id: METRIC_TYPES.DOWNGRADE,
-        description: `of clients are at a supervision level that is the same or below their risk level.`,
-        accessor: "timelyDowngrade",
-      },
-    ],
-  },
   [lantern.US_PA]: {
     name: "Pennsylvania",
     stateCode: "PA",
@@ -149,7 +149,7 @@ const TENANTS: Tenants = {
   RECIDIVIZ: {
     name: "Recidiviz",
     stateCode: "Recidiviz",
-    availableStateCodes: lantern.LANTERN_TENANTS.concat(core.CORE_TENANTS),
+    availableStateCodes: core.CORE_TENANTS.concat(lantern.LANTERN_TENANTS),
     enableUserRestrictions: true,
     enablePracticesCaseloadButton: true,
   },

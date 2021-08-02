@@ -252,7 +252,7 @@ describe("PagePracticesStore", () => {
             {
               data: [
                 {
-                  "90D change": "2%",
+                  "90D change": "-2%",
                   "30D change": "0%",
                   "Overall score": "85%",
                   "Timely contacts": "60%",
@@ -260,7 +260,7 @@ describe("PagePracticesStore", () => {
                   "Timely risk assessments": "69%",
                 },
                 {
-                  "90D change": "2%",
+                  "90D change": "-2%",
                   "30D change": "0%",
                   "Overall score": "95%",
                   "Timely contacts": "90%",
@@ -399,7 +399,7 @@ describe("PagePracticesStore", () => {
             {
               data: [
                 {
-                  "90D change": "2%",
+                  "90D change": "-2%",
                   "30D change": "0%",
                   "Overall score": "85%",
                   "Timely contacts": "60%",
@@ -407,7 +407,7 @@ describe("PagePracticesStore", () => {
                   "Timely risk assessments": "69%",
                 },
                 {
-                  "90D change": "2%",
+                  "90D change": "-2%",
                   "30D change": "0%",
                   "Overall score": "95%",
                   "Timely contacts": "90%",

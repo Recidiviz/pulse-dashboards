@@ -43,9 +43,9 @@ describe("getPathsFromNavigation", () => {
   it("returns the correct allowed paths path for US_ID", () => {
     const allowedPaths = getPathsFromNavigation(tenants.US_ID.navigation);
     const expected = [
-      "/facilities/projections",
-      "/community/projections",
       "/community/practices",
+      "/community/projections",
+      "/facilities/projections",
       "/methodology/projections",
       "/methodology/practices",
     ];
