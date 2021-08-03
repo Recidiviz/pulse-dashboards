@@ -26,18 +26,22 @@ import { useRootStore } from "../components/StoreProvider";
 import TopBarUserMenuForAuthenticatedUser from "../components/TopBar/TopBarUserMenuForAuthenticatedUser";
 import flags from "../flags";
 import tenants from "../tenants";
+import { getAllowedNavigation } from "../utils/navigation";
 import CorePageSelector from "./CorePageSelector";
 import CoreSectionSelector from "./CoreSectionSelector";
 import { useCoreStore } from "./CoreStoreProvider";
 
 const CoreNavigation: React.FC = () => {
   const { pathname } = useLocation();
-  const { currentTenantId } = useRootStore();
+  const { currentTenantId, userStore } = useRootStore();
   const { setView } = useCoreStore();
   if (!currentTenantId) return null;
 
-  // @ts-ignore
-  const navigationLayout = tenants[currentTenantId].navigation;
+  const navigationLayout = getAllowedNavigation(
+    // @ts-ignore
+    tenants[currentTenantId].navigation,
+    userStore.userCanAccessPractices
+  );
 
   const [currentSection, currentPage] = pathname.split("/").slice(1, 3);
   // @ts-ignore

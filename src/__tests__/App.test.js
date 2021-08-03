@@ -197,7 +197,7 @@ describe("App tests", () => {
       const user = { [metadataField]: { state_code: US_ND } };
 
       useRootStore.mockReturnValue({
-        userStore: { ...userStore, ...user },
+        userStore: { ...userStore, ...user, userCanAccessPractices: true },
         currentTenantId: US_ND,
       });
 

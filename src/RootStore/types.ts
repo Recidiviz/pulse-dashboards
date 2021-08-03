@@ -39,6 +39,9 @@ export type UserAppMetadata = {
   allowed_supervision_location_level?: string;
   can_access_leadership_dashboard: boolean;
   can_access_case_triage: boolean;
+  routes?: {
+    community_practices: boolean;
+  };
 };
 
 export type LanternMethodologyByTenant = {

@@ -18,16 +18,40 @@ import { TenantId } from "../RootStore/types";
 import TENANTS, { Navigation } from "../tenants";
 
 export function getPathsFromNavigation(
-  navigation: Navigation | undefined
+  navigation: Navigation | undefined,
+  practicesEnabled: boolean
 ): string[] {
   if (!navigation) return [];
-  return Object.entries(navigation).flatMap((navItem) => {
+  const allowedNavigation = getAllowedNavigation(navigation, practicesEnabled);
+
+  return Object.entries(allowedNavigation).flatMap((navItem) => {
     const section: string = navItem[0];
     const pages: string[] = navItem[1] || [];
+
     return pages.length
       ? pages.map((page) => `/${section}/${page}`)
       : [`/${section}`];
   });
+}
+
+export function getAllowedNavigation(
+  navigation: Navigation | undefined,
+  practicesEnabled: boolean
+): Navigation {
+  if (!navigation) return {};
+
+  const allowedNavigation = Object.fromEntries(
+    Object.entries(navigation).map(([section, pages]) => [
+      section,
+      pages?.filter((p) => p !== "practices" || practicesEnabled) ?? [],
+    ])
+  );
+
+  if (allowedNavigation.methodology?.length === 0) {
+    delete allowedNavigation.methodology;
+  }
+
+  return allowedNavigation;
 }
 
 export function getPathWithoutParams(pathname: string): string {

@@ -4,7 +4,6 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
       // TODO(395): Set to true when we have debugged the issues with the exit rate calculations
       enableRevocationRateByExit: false,
       enableCoreTabNavigation: true,
-      enablePracticesDashboard: false,
       enablePracticesOfficerView: false,
       enablePracticesGoalLine: false,
     }
@@ -12,7 +11,6 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
   ? {
       enableRevocationRateByExit: false,
       enableCoreTabNavigation: true,
-      enablePracticesDashboard: true,
       enablePracticesOfficerView: true,
       enablePracticesGoalLine: false,
     }
@@ -20,7 +18,6 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
       // Development
       enableRevocationRateByExit: false,
       enableCoreTabNavigation: true,
-      enablePracticesDashboard: true,
       enablePracticesOfficerView: true,
       enablePracticesGoalLine: false,
     };

@@ -24,9 +24,13 @@ import { getPathsFromNavigation } from "./utils/navigation";
 
 export const RedirectHome: React.FC = ({ ...rest }) => {
   const rootStore = useRootStore();
+  const { userStore } = rootStore;
   // @ts-ignore
   const tenant = tenants[rootStore.currentTenantId];
-  const allowedPaths = getPathsFromNavigation(tenant.navigation);
+  const allowedPaths = getPathsFromNavigation(
+    tenant.navigation,
+    userStore.userCanAccessPractices
+  );
   return <Redirect {...rest} exact from="/" to={allowedPaths[0]} />;
 };
 

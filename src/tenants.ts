@@ -19,7 +19,6 @@ import {
   METRIC_TYPES,
   PracticesMetric,
 } from "./core/PagePractices/types";
-import flags from "./flags";
 import * as core from "./RootStore/TenantStore/coreTenants";
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
 import { TenantId } from "./RootStore/types";
@@ -103,9 +102,8 @@ const TENANTS: Tenants = {
     enablePracticesCaseloadButton: false,
     navigation: {
       goals: [],
-      ...(flags.enablePracticesDashboard
-        ? { community: ["explore", "practices"], methodology: ["practices"] }
-        : { community: ["explore"] }),
+      community: ["explore", "practices"],
+      methodology: ["practices"],
       facilities: ["explore"],
     },
     practicesMetrics: [

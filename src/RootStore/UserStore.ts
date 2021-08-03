@@ -226,6 +226,16 @@ export default class UserStore {
     return this.availableStateCodes.includes(stateCode);
   }
 
+  /**
+   * Returns whether the user is authorized to use the practices tool
+   */
+  get userCanAccessPractices(): boolean {
+    if (this.stateCode === "RECIDIVIZ") return true;
+
+    const routes = this.userAppMetadata?.routes;
+    return routes?.community_practices ?? false;
+  }
+
   setAuthError(error: Error): void {
     this.authError = error;
   }

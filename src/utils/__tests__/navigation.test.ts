@@ -28,8 +28,8 @@ jest.mock("../../flags", () => ({
 }));
 
 describe("getPathsFromNavigation", () => {
-  it("returns the correct allowed paths path for US_ND", () => {
-    const allowedPaths = getPathsFromNavigation(tenants.US_ND.navigation);
+  it("returns the correct allowed paths path for US_ND with practices enabled", () => {
+    const allowedPaths = getPathsFromNavigation(tenants.US_ND.navigation, true);
     const expected = [
       "/goals",
       "/community/explore",
@@ -40,14 +40,36 @@ describe("getPathsFromNavigation", () => {
     expect(allowedPaths).toEqual(expected);
   });
 
-  it("returns the correct allowed paths path for US_ID", () => {
-    const allowedPaths = getPathsFromNavigation(tenants.US_ID.navigation);
+  it("returns the correct allowed paths path for US_ND with practices disabled", () => {
+    const allowedPaths = getPathsFromNavigation(
+      tenants.US_ND.navigation,
+      false
+    );
+    const expected = ["/goals", "/community/explore", "/facilities/explore"];
+    expect(allowedPaths).toEqual(expected);
+  });
+
+  it("returns the correct allowed paths path for US_ID with practices enabled", () => {
+    const allowedPaths = getPathsFromNavigation(tenants.US_ID.navigation, true);
     const expected = [
       "/community/practices",
       "/community/projections",
       "/facilities/projections",
       "/methodology/projections",
       "/methodology/practices",
+    ];
+    expect(allowedPaths).toEqual(expected);
+  });
+
+  it("returns the correct allowed paths path for US_ID with practices disabled", () => {
+    const allowedPaths = getPathsFromNavigation(
+      tenants.US_ID.navigation,
+      false
+    );
+    const expected = [
+      "/community/projections",
+      "/facilities/projections",
+      "/methodology/projections",
     ];
     expect(allowedPaths).toEqual(expected);
   });

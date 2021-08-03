@@ -36,11 +36,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   ...rest
 }) => {
   const rootStore = useRootStore();
+  const { userStore } = rootStore;
   const { pathname } = useLocation();
 
   // @ts-ignore
   const tenant = tenants[rootStore.currentTenantId];
-  const allowedPaths = getPathsFromNavigation(tenant.navigation);
+  const allowedPaths = getPathsFromNavigation(
+    tenant.navigation,
+    userStore.userCanAccessPractices
+  );
   if (!allowedPaths.includes(getPathWithoutParams(pathname))) {
     return <NotFound />;
   }
