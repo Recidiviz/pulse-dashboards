@@ -267,15 +267,15 @@ export default class PagePracticesStore {
     if (timeSeries === undefined)
       return { thirtyDayChange: undefined, ninetyDayChange: undefined };
     const ninetyDaysAgo =
-      timeSeries.length >= 90 ? timeSeries[timeSeries.length - 90] : undefined;
+      timeSeries.length >= 91 ? timeSeries[timeSeries.length - 91] : undefined;
     const thirtyDaysAgo =
-      timeSeries.length >= 30 ? timeSeries[timeSeries.length - 30] : undefined;
+      timeSeries.length >= 31 ? timeSeries[timeSeries.length - 31] : undefined;
     const latestDay = timeSeries[timeSeries.length - 1];
     const thirtyDayChange = thirtyDaysAgo
-      ? latestDay.monthlyAvg - thirtyDaysAgo.monthlyAvg
+      ? latestDay.value - thirtyDaysAgo.value
       : undefined;
     const ninetyDayChange = ninetyDaysAgo
-      ? latestDay.monthlyAvg - ninetyDaysAgo.monthlyAvg
+      ? latestDay.value - ninetyDaysAgo.value
       : undefined;
     return { thirtyDayChange, ninetyDayChange };
   }
