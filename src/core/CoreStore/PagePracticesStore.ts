@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 
 import TENANTS from "../../tenants";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
@@ -50,9 +50,9 @@ export function getSummaryStatus(value: number): SummaryStatus {
 export default class PagePracticesStore {
   protected readonly rootStore;
 
-  currentEntityId: string;
-
   selectedMetricId: MetricType;
+
+  currentEntityId: string;
 
   constructor({ rootStore }: { rootStore: RootStore }) {
     makeAutoObservable(this);
@@ -60,6 +60,14 @@ export default class PagePracticesStore {
     this.currentEntityId = DEFAULT_ENTITY_ID;
     this.selectedMetricId = METRIC_TYPES.OVERALL;
     this.downloadData = this.downloadData.bind(this);
+    reaction(
+      () => this.rootStore.currentTenantId,
+      () => this.setCurrentEntityId(DEFAULT_ENTITY_ID)
+    );
+  }
+
+  setCurrentEntityId(entityId: string): void {
+    this.currentEntityId = entityId;
   }
 
   get summaries(): PracticesSummaryRecord[] {

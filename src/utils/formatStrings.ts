@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import Base64 from "crypto-js/enc-base64";
+import SHA256 from "crypto-js/sha256";
 import { format, parseISO } from "date-fns";
 import lowerCase from "lodash/fp/lowerCase";
 import pipe from "lodash/fp/pipe";
@@ -194,6 +196,10 @@ function generateEmailAddress(id: string, domain?: string): string | undefined {
   return id && domain && `${id}@${domain}`.toLowerCase();
 }
 
+function hashEmailAddress(email: string | undefined): string {
+  return email ? Base64.stringify(SHA256(email)) : "";
+}
+
 export {
   formatDate,
   formatDistrictLabel,
@@ -209,6 +215,7 @@ export {
   getStatePopulations,
   getStatePopulationsLabels,
   getTrailingLabelFromMetricPeriodMonthsFilter,
+  hashEmailAddress,
   humanReadableTitleCase,
   matrixViolationTypeToLabel,
   numberFromOfficerId,

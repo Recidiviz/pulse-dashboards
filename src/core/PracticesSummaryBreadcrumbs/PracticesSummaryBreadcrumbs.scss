@@ -23,7 +23,17 @@
   margin-bottom: 0.5rem;
   text-align: left;
 
-  &--state, &--parent {
+  &--state,
+  &--parent,
+  &--current {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    letter-spacing: -0.05rem;
+  }
+
+  &--state,
+  &--parent {
     font: $font-ui-sans-14;
     color: $slate-80;
     &:hover {

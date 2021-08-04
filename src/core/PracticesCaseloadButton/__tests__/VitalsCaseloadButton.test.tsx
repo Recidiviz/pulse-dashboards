@@ -79,7 +79,7 @@ describe("PracticesCaseloadButton", () => {
     // wait for button to be removed, slight delay during navigation
     waitForElementToBeRemoved(screen.queryByRole("button"));
     expect(window.open).toHaveBeenCalledWith(
-      "test-case-triage-url?impersonated_email=fflintstone%40bedrock.gov"
+      "test-case-triage-url?impersonated_email=NvUtb9XrPyt5wAwzJdhM1nD4CB6FNXFY25iZCqMNcC8%3D"
     );
     // reset window location to its original object
     window.open = open;

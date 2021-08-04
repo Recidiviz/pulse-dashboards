@@ -19,10 +19,8 @@ import "./PracticesSummaryBreadcrumbs.scss";
 
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { Link } from "react-router-dom";
 
 import { toTitleCase } from "../../utils/formatStrings";
-import { convertToSlug } from "../../utils/navigation";
 import { useCoreStore } from "../CoreStoreProvider";
 import { ENTITY_TYPES } from "../models/types";
 import {
@@ -53,7 +51,7 @@ const PracticesSummaryBreadcrumbs: React.FC = () => {
   const { currentEntitySummary, parentEntityName } = pagePracticesStore;
   const { stateName } = tenantStore;
 
-  const { entityName, entityType, parentEntityId } =
+  const { entityName, entityType, parentEntityId, entityId } =
     currentEntitySummary || DefaultEntity;
   let current;
   let state;
@@ -80,12 +78,17 @@ const PracticesSummaryBreadcrumbs: React.FC = () => {
   return (
     <div className="PracticesSummaryBreadcrumbs">
       {state ? (
-        <Link
+        <button
+          role="link"
+          type="button"
+          tabIndex={0}
           className="PracticesSummaryBreadcrumbs--state"
-          to="/community/practices"
+          onClick={() =>
+            pagePracticesStore.setCurrentEntityId(DEFAULT_ENTITY_ID)
+          }
         >
           {state}
-        </Link>
+        </button>
       ) : (
         // Render a placeholder so the header spacing remains
         // constant with or without a state link
@@ -95,12 +98,17 @@ const PracticesSummaryBreadcrumbs: React.FC = () => {
         <div className="PracticesSummaryBreadcrumbs__parent-container">
           <span>/</span>
           {parentEntityId && (
-            <Link
-              className="PracticesSummaryBreadcrumbs--parent"
-              to={`/community/practices/${convertToSlug(parentEntityId)}`}
+            <button
+              role="link"
+              type="button"
+              tabIndex={0}
+              className="PracticesSummaryBreadcrumbs--state"
+              onClick={() =>
+                pagePracticesStore.setCurrentEntityId(parentEntityId)
+              }
             >
               {parent}
-            </Link>
+            </button>
           )}
         </div>
       )}

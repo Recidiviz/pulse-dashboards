@@ -25,6 +25,7 @@ import React from "react";
 import {
   generateEmailAddress,
   getFirstName,
+  hashEmailAddress,
   toPossessive,
 } from "../../utils/formatStrings";
 import * as styles from "../CoreConstants.scss";
@@ -43,6 +44,7 @@ const PracticesCaseloadButton: React.FC = () => {
     entityId,
     tenantStore.domain
   );
+  const hashedEmailAddress = hashEmailAddress(officerEmailAddress);
 
   if (!tenantStore.enablePracticesCaseloadButton || !officerEmailAddress)
     return <div />;
@@ -54,7 +56,7 @@ const PracticesCaseloadButton: React.FC = () => {
           window.open(
             buildUrl(`${process.env.REACT_APP_CASE_TRIAGE_URL}`, {
               queryParams: {
-                impersonated_email: officerEmailAddress,
+                impersonated_email: hashedEmailAddress,
               },
             })
           )

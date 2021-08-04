@@ -22,7 +22,6 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import Loading from "../../components/Loading";
-import withRouteSync from "../../withRouteSync";
 import { useCoreStore } from "../CoreStoreProvider";
 import DetailsGroup from "../DetailsGroup";
 import DownloadDataButton from "../DownloadDataButton";
@@ -96,4 +95,4 @@ const PagePractices: React.FC = () => {
   );
 };
 
-export default withRouteSync(observer(PagePractices));
+export default observer(PagePractices);

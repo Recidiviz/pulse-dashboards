@@ -167,6 +167,10 @@ $border-styles: 1px solid $slate-20;
   /* Entity links */
   &__link {
     color: $pine-3;
+    font: $font-ui-sans-14;
+    border: 0;
+    background-color: transparent;
+    text-align: left;
     &:hover {
       text-decoration-line: underline;
       color: $signal-links;

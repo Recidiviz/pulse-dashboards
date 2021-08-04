@@ -19,11 +19,9 @@ import "./PracticesSummaryTable.scss";
 import cx from "classnames";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
 import { useSortBy, useTable } from "react-table";
 
 import flags from "../../flags";
-import { convertToSlug } from "../../utils/navigation";
 import { useCoreStore } from "../CoreStoreProvider";
 import { ENTITY_TYPES, EntityType, MetricValueAccessor } from "../models/types";
 import {
@@ -53,6 +51,7 @@ const PracticesSummaryTable: React.FC = () => {
     childEntitySummaryRows: summaries,
     metrics,
   } = pagePracticesStore;
+
   const createBubbleTableCell = ({ value }: { value: number }) => (
     <BubbleTableCell value={value} />
   );
@@ -134,12 +133,17 @@ const PracticesSummaryTable: React.FC = () => {
             }) =>
               value.entityType === ENTITY_TYPES.LEVEL_1_SUPERVISION_LOCATION ||
               flags.enablePracticesOfficerView ? (
-                <Link
+                <button
+                  role="link"
+                  type="button"
+                  tabIndex={0}
                   className="PracticesSummaryTable__link"
-                  to={`/community/practices/${convertToSlug(value.entityId)}`}
+                  onClick={() =>
+                    pagePracticesStore.setCurrentEntityId(value.entityId)
+                  }
                 >
                   {value.entityName}
-                </Link>
+                </button>
               ) : (
                 value.entityName
               ),
@@ -155,7 +159,7 @@ const PracticesSummaryTable: React.FC = () => {
         columns: metricColumns,
       },
     ],
-    [entityType, overallColumns, metricColumns]
+    [entityType, overallColumns, metricColumns, pagePracticesStore]
   );
 
   const sortBy = useMemo(() => ({ id: selectedSortBy, desc: false }), [
