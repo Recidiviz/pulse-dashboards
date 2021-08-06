@@ -42,7 +42,6 @@ const PagePractices: React.FC = () => {
   const { isLoading, isError } = metricsStore.practices;
   const {
     currentEntitySummary,
-    lastUpdatedOn,
     downloadData,
     childEntitySummaryRows,
   } = pagePracticesStore;
@@ -65,9 +64,6 @@ const PagePractices: React.FC = () => {
       <div className="PagePractices__header">
         <PracticesSummaryBreadcrumbs />
         <DetailsGroup>
-          <div className="DetailsGroup__item">
-            Last updated on {lastUpdatedOn}
-          </div>
           <DownloadDataButton handleOnClick={downloadData} />
           <MethodologyLink path={CORE_PATHS.methodologyPractices} />
         </DetailsGroup>
