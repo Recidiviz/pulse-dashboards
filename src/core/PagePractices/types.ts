@@ -31,7 +31,7 @@ export const METRIC_TYPES = {
 
 export type MetricTypeLabel = typeof METRIC_TYPE_LABELS[keyof typeof METRIC_TYPE_LABELS];
 export const METRIC_TYPE_LABELS = {
-  OVERALL: "Overall",
+  OVERALL: "Overall across all practices",
   DISCHARGE: "Timely discharge",
   CONTACT: "Timely contacts",
   RISK_ASSESSMENT: "Timely risk assessments",

@@ -194,7 +194,7 @@ describe("PagePracticesStore", () => {
                   "30D average": "76%",
                 },
               ],
-              label: "Overall",
+              label: "Overall across all practices",
             },
             {
               data: [
@@ -254,7 +254,7 @@ describe("PagePracticesStore", () => {
                 {
                   "90D change": "-2%",
                   "30D change": "0%",
-                  "Overall score": "85%",
+                  "Overall across all practices": "85%",
                   "Timely contacts": "60%",
                   "Timely discharge": "63%",
                   "Timely risk assessments": "69%",
@@ -262,7 +262,7 @@ describe("PagePracticesStore", () => {
                 {
                   "90D change": "-2%",
                   "30D change": "0%",
-                  "Overall score": "95%",
+                  "Overall across all practices": "95%",
                   "Timely contacts": "90%",
                   "Timely discharge": "93%",
                   "Timely risk assessments": "99%",
@@ -287,7 +287,7 @@ describe("PagePracticesStore", () => {
             accessor: "overall",
             description: "Average timeliness across all metrics",
             id: "OVERALL",
-            name: "Overall",
+            name: "Overall across all practices",
           },
           {
             accessor: "timelyDischarge",
@@ -341,7 +341,7 @@ describe("PagePracticesStore", () => {
                   "30D average": "76%",
                 },
               ],
-              label: "Overall",
+              label: "Overall across all practices",
             },
             {
               data: [
@@ -401,7 +401,7 @@ describe("PagePracticesStore", () => {
                 {
                   "90D change": "-2%",
                   "30D change": "0%",
-                  "Overall score": "85%",
+                  "Overall across all practices": "85%",
                   "Timely contacts": "60%",
                   "Timely downgrades": "67%",
                   "Timely risk assessments": "69%",
@@ -409,7 +409,7 @@ describe("PagePracticesStore", () => {
                 {
                   "90D change": "-2%",
                   "30D change": "0%",
-                  "Overall score": "95%",
+                  "Overall across all practices": "95%",
                   "Timely contacts": "90%",
                   "Timely downgrades": "67%",
                   "Timely risk assessments": "99%",
@@ -434,7 +434,7 @@ describe("PagePracticesStore", () => {
             accessor: "overall",
             description: "Average timeliness across all metrics",
             id: "OVERALL",
-            name: "Overall",
+            name: "Overall across all practices",
           },
           {
             accessor: "timelyRiskAssessment",

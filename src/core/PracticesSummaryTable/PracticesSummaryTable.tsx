@@ -151,11 +151,11 @@ const PracticesSummaryTable: React.FC = () => {
         ],
       },
       {
-        Header: "Overall",
+        Header: "Overall across all practices",
         columns: overallColumns,
       },
       {
-        Header: "By metric",
+        Header: "Individual practices",
         columns: metricColumns,
       },
     ],

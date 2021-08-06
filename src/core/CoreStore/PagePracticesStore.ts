@@ -249,7 +249,7 @@ export default class PagePracticesStore {
         }, {});
 
         return {
-          "Overall score": formatPercent(d.overall, true),
+          "Overall across all practices": formatPercent(d.overall, true),
           "30D change": formatPercent(d.overall30Day, true),
           "90D change": formatPercent(d.overall90Day, true),
           ...metrics,
