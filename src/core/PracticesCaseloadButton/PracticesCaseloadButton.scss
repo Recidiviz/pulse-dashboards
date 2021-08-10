@@ -22,9 +22,15 @@
   &__button { 
     color: $signal-links;
     font: $font-ui-sans-16;
+    padding-top: 38px;
 
     &:hover {
       text-decoration: none;
+    }
+
+    button {
+      padding: 0.75rem 2.5rem !important;
+      font-weight: 500;
     }
 
   }

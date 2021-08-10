@@ -51,7 +51,7 @@ const PracticesSummaryBreadcrumbs: React.FC = () => {
   const { currentEntitySummary, parentEntityName } = pagePracticesStore;
   const { stateName } = tenantStore;
 
-  const { entityName, entityType, parentEntityId, entityId } =
+  const { entityName, entityType, parentEntityId } =
     currentEntitySummary || DefaultEntity;
   let current;
   let state;

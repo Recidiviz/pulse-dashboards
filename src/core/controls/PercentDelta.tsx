@@ -49,7 +49,7 @@ function getDeltaDirection({
   value?: number;
   improvesOnIncrease?: boolean;
 }): { color: string; rotate: number; direction: DeltaDirections } {
-  if (value === 0 || value === undefined || Number.isNaN(value))
+  if (value === undefined || Number.isNaN(value) || Math.round(value) === 0)
     return {
       direction: deltaDirections.noChange,
       color: deltaColorMap.noChange,

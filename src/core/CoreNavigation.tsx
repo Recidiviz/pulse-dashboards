@@ -82,7 +82,7 @@ const CoreNavigation: React.FC = () => {
             pageOptions={pageOptions}
           />
         )}
-        <TopBarUserMenuForAuthenticatedUser hideUsername />
+        <TopBarUserMenuForAuthenticatedUser />
       </div>
     </nav>
   );

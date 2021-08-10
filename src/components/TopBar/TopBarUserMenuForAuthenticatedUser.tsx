@@ -15,22 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { palette } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React, { useCallback } from "react";
 import { Dropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import styled from "styled-components/macro";
 
 import { useUserStore } from "../StoreProvider";
 
+const UserAvatar = styled.span`
+  background: ${palette.signal.notification};
+  border-radius: 50%;
+  color: white;
+  display: inline-block;
+  line-height: 32px;
+  height: 32px;
+  text-align: center;
+  text-transform: uppercase;
+  width: 32px;
+  cursor: pointer;
+`;
+
 type PropTypes = {
-  hideUsername?: boolean;
   handleOnProfileClick?: () => void;
 };
 
-const TopBarUserMenuForAuthenticatedUser: React.FC<PropTypes> = ({
-  hideUsername = false,
-}) => {
-  const { user, logout, stateName } = useUserStore();
+const TopBarUserMenuForAuthenticatedUser: React.FC<PropTypes> = () => {
+  const { user, logout } = useUserStore();
 
   const onLogout = useCallback(
     (e) => {
@@ -46,15 +58,7 @@ const TopBarUserMenuForAuthenticatedUser: React.FC<PropTypes> = ({
         variant="link"
         className="TopBarUserMenuForAuthenticatedUser no-after peers fxw-nw ai-c lh-1 ta-l"
       >
-        <div className="peer mR-10">
-          <img className="w-2r bdrs-50p" src={user.picture} alt="" />
-        </div>
-        {!hideUsername && (
-          <div className="peer">
-            <ul className="fsz-sm c-grey-900">{user.name}</ul>
-            <ul className="fsz-sm pT-3 c-grey-600">{stateName}</ul>
-          </div>
-        )}
+        <UserAvatar>{user.name && user.name[0]}</UserAvatar>
       </Dropdown.Toggle>
       <Dropdown.Menu renderOnMount as="ul" className="dropdown-menu fsz-sm">
         <Dropdown.Item
