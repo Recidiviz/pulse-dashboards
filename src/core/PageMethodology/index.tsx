@@ -19,12 +19,20 @@ import "./Methodology.scss";
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
 
+import { useRootStore } from "../../components/StoreProvider";
 import PracticesMethodology from "../PracticesMethodology";
 import ProjectionsMethodology from "../ProjectionsMethodology/Methodology";
 
 const PageMethodology: React.FC = () => {
+  const { userStore, tenantStore } = useRootStore();
+  const { userHasAccess } = userStore;
   const { dashboard }: { dashboard: string } = useParams();
-  const { push } = useHistory();
+  const { push, location } = useHistory();
+
+  const stateCode = new URLSearchParams(location.search).get("stateCode");
+  if (stateCode && userHasAccess(stateCode)) {
+    tenantStore.setCurrentTenantId(stateCode);
+  }
 
   const methodologies: { [k: string]: React.FC } = {
     practices: PracticesMethodology,
@@ -33,7 +41,7 @@ const PageMethodology: React.FC = () => {
 
   const Methodology = methodologies[dashboard];
 
-  if (!Methodology) {
+  if (!Methodology || (stateCode && !userHasAccess(stateCode))) {
     push({ pathname: "/" });
   }
 

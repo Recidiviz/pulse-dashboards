@@ -306,7 +306,7 @@ export default class PagePracticesStore {
         this.timeSeriesDownloadableData,
         this.summaryDownloadableData,
       ],
-      chartTitle: `${this.rootStore.tenantStore.stateName} At A Glance`,
+      chartTitle: `${this.rootStore.tenantStore.stateName} Practices`,
       shouldZipDownload: true,
       methodologyContent: practicesMethodology.content,
       getTokenSilently: this.rootStore.userStore.getTokenSilently,

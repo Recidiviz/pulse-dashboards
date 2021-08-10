@@ -37,7 +37,6 @@ const PracticesCaseloadButton: React.FC = () => {
   const { currentEntitySummary } = pagePracticesStore;
 
   if (currentEntitySummary?.entityType !== ENTITY_TYPES.PO) return <div />;
-
   const { entityName, entityId } = currentEntitySummary;
   const firstName = getFirstName(entityName);
   const officerEmailAddress = generateEmailAddress(

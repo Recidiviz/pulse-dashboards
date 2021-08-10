@@ -16,6 +16,19 @@
   h3 {
     margin: 0px;
   }
+  a {
+    color: $signal-links;
+    width: fit-content;
+    &:hover,
+    &:focus {
+      color: $signal-links;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    &:active {
+      color: $signal-links;
+    }
+  }
   &__main-description {
     color: $pine-3;
     font: $font-article-sans-24;
@@ -28,17 +41,6 @@
     }
     &--link {
       font: $font-article-sans-24;
-      color: $signal-links;
-      width: fit-content;
-      &:hover,
-      &:focus {
-        color: $signal-links;
-        cursor: pointer;
-        text-decoration: underline;
-      }
-      &:active {
-        color: $signal-links;
-      }
     }
   }
   &__block {

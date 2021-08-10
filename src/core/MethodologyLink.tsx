@@ -17,16 +17,22 @@
 import "./DetailsGroup.scss";
 
 import { Icon, IconSVG } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link } from "react-router-dom";
 
+import { useRootStore } from "../components/StoreProvider";
 import * as styles from "./CoreConstants.scss";
 
 const MethodologyLink: React.FC<{ path: string }> = ({ path }) => {
+  const { currentTenantId } = useRootStore();
   return (
     <Link
       className="MethodologyLink DetailsGroup__button"
-      to={path}
+      to={{
+        pathname: path,
+        search: `?stateCode=${currentTenantId}`,
+      }}
       target="_blank"
     >
       <Icon
@@ -39,4 +45,4 @@ const MethodologyLink: React.FC<{ path: string }> = ({ path }) => {
   );
 };
 
-export default MethodologyLink;
+export default observer(MethodologyLink);
