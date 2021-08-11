@@ -129,7 +129,10 @@ describe("API GET tests", () => {
       const status = jest.fn().mockImplementation(() => {
         return { send };
       });
-      const res = { send, status };
+      const set = jest.fn().mockImplementation(() => {
+        return { send };
+      });
+      const res = { send, status, set };
       routeHandler(req, res);
     });
   }
@@ -312,7 +315,10 @@ describe("API GET tests", () => {
     const status = jest.fn().mockImplementation(() => {
       return { send };
     });
-    const res = { send, status };
+    const set = jest.fn().mockImplementation(() => {
+      return { send };
+    });
+    const res = { send, status, set };
 
     it("should send error status code 500 when no status is on error", () => {
       const error = "some error";
@@ -361,6 +367,14 @@ describe("API GET tests", () => {
       const callback = responder(res);
       callback(error, null);
       expect(send).toHaveBeenCalledWith(error);
+    });
+
+    it("should set the Cache-Control header", () => {
+      const data = "some data";
+      const callback = responder(res);
+      callback(null, data);
+
+      expect(set).toHaveBeenCalledWith("Cache-Control", "no-store, max-age=0");
     });
   });
 });

@@ -60,6 +60,7 @@ function responder(res) {
         errors: [].concat(errors),
       });
     } else {
+      res.set("Cache-Control", "no-store, max-age=0");
       res.send(data);
     }
   };
