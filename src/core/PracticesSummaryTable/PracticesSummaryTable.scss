@@ -97,13 +97,13 @@ $border-styles: 1px solid $slate-20;
       & > th:not(:first-child) {
         padding: 1rem 2.5rem;
         font-weight: 500;
-        width: 175px;
+        max-width: 175px;
         line-height: 18px;
 
 
         > div.PracticesSummaryTable__sortable-header {
           @media screen and (max-width: $core-breakpoint-md) {
-            width: 113px;
+            max-width: 113px;
           }
         }
       }
@@ -115,11 +115,11 @@ $border-styles: 1px solid $slate-20;
         font-weight: 500;
         text-align: left;
         padding: 1rem 0.5rem 1rem 2.5rem;
-        width: 200px;
+        min-width: 200px;
 
         > div.PracticesSummaryTable__sortable-header {
           @media screen and (max-width: $core-breakpoint-md) {
-            width: 140px;
+            min-width: 140px;
           }
         }
       }
