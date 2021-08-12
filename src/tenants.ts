@@ -123,9 +123,10 @@ const TENANTS: Tenants = {
       {
         name: METRIC_TYPE_LABELS.CONTACT,
         id: METRIC_TYPES.CONTACT,
-        description: `of clients received initial contact within 30 days of starting
-        supervision and a F2F contact every subsequent 90, 60, or 30 days for 
-        minimum, medium, and maximum supervision levels respectively`,
+        description: `of clients received initial contact within 30 days of
+        starting supervision and a F2F contact every subsequent 3 months,
+        2 months, or 1 month for minimum, medium, and maximum supervision
+        levels respectively`,
         accessor: "timelyContact",
       },
       {
