@@ -23,7 +23,7 @@ describe("useSort", () => {
     {
       state_id: "123",
       district: "01",
-      officer: "333: Callie Torres",
+      officer: "Callie Torres",
       risk_level: "HIGH",
       officer_recommendation: "TREATMENT_IN_FIELD",
       violation_record: "1subs",
@@ -32,7 +32,7 @@ describe("useSort", () => {
     {
       state_id: "456",
       district: "01",
-      officer: "444: Arizona Robbins",
+      officer: "Arizona Robbins",
       risk_level: "LOW",
       officer_recommendation: "PLACEMENT_IN_DOC_FACILITY",
       violation_record: "2law;1high_tech",
@@ -42,7 +42,7 @@ describe("useSort", () => {
     {
       state_id: "789",
       district: "01",
-      officer: "555: Derek Shepherd",
+      officer: "Derek Shepherd",
       risk_level: "MEDIUM",
       officer_recommendation: "PLACEMENT_IN_DOC_FACILITY",
       violation_record: "2law;1high_tech",
@@ -52,7 +52,7 @@ describe("useSort", () => {
     {
       state_id: "321",
       district: "01",
-      officer: "666: Christina Yang",
+      officer: "Christina Yang",
       risk_level: "LOW",
       officer_recommendation: "PLACEMENT_IN_DOC_FACILITY",
       violation_record: "2law",
@@ -62,7 +62,7 @@ describe("useSort", () => {
     {
       state_id: "654",
       district: "01",
-      officer: "777: April Kepner",
+      officer: "April Kepner",
       risk_level: "MEDIUM",
       officer_recommendation: "PLACEMENT_IN_DOC_FACILITY",
       violation_record: "2high_tech;1subs;1med_tech",

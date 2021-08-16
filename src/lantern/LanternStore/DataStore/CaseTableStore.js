@@ -20,7 +20,6 @@ import { ADMISSION_TYPE_LABELS } from "../../../RootStore/TenantStore/filterOpti
 import { US_PA } from "../../../RootStore/TenantStore/lanternTenants";
 import { translate } from "../../../utils/i18nSettings";
 import { parseAndFormatViolationRecord } from "../../CaseTable/utils/violationRecord";
-import getNameFromOfficerId from "../../utils/getNameFromOfficerId";
 import BaseDataStore from "./BaseDataStore";
 import { normalizeOfficerRecommendation, nullSafeLabel } from "./helpers";
 
@@ -73,7 +72,7 @@ export default class CaseTableStore extends BaseDataStore {
     return tableData.map((row) => ({
       state_id: nullSafeLabel(row.state_id),
       district: nullSafeLabel(row.district),
-      officer: nullSafeLabel(getNameFromOfficerId(row.officer)),
+      officer: nullSafeLabel(row.officer_full_name),
       risk_level: nullSafeLabel(translate("riskLevelsMap")[row.risk_level]),
       violation_record: nullSafeLabel(
         parseAndFormatViolationRecord(row.violation_record)

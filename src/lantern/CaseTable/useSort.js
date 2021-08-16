@@ -17,7 +17,6 @@
 
 import { useCallback, useState } from "react";
 
-import getNameFromOfficerId from "../utils/getNameFromOfficerId";
 import { compareViolationRecords } from "./utils/compareViolationRecords";
 
 const RISK_LEVEL_PRIORITY = [
@@ -38,19 +37,6 @@ function comparePersonExternalIds(a, b) {
   return 0;
 }
 
-function compareOfficers(a, b) {
-  const aOfficer = getNameFromOfficerId(a);
-  const bOfficer = getNameFromOfficerId(b);
-
-  if (!aOfficer && bOfficer) return 1;
-  if (!bOfficer && aOfficer) return -1;
-
-  if (aOfficer.toLowerCase() > bOfficer.toLowerCase()) return 1;
-  if (aOfficer.toLowerCase() < bOfficer.toLowerCase()) return -1;
-
-  return 0;
-}
-
 function compareRiskLevel(a, b) {
   return RISK_LEVEL_PRIORITY.indexOf(a) - RISK_LEVEL_PRIORITY.indexOf(b);
 }
@@ -59,8 +45,8 @@ function compareStrings(a, b) {
   if (!a && b) return 1;
   if (!b && a) return -1;
 
-  if (String(a) > String(b)) return 1;
-  if (String(a) < String(b)) return -1;
+  if (String(a).toLowerCase() > String(b).toLowerCase()) return 1;
+  if (String(a).toLowerCase() < String(b).toLowerCase()) return -1;
 
   return 0;
 }
@@ -121,7 +107,7 @@ function useSort(formatAdmissionHistory) {
       const fieldComparator = {
         state_id: comparePersonExternalIds,
         district: compareStrings,
-        officer: compareOfficers,
+        officer: compareStrings,
         risk_level: compareRiskLevel,
         officer_recommendation: compareStrings,
         violation_record: compareViolationRecords,
@@ -134,7 +120,7 @@ function useSort(formatAdmissionHistory) {
         (fieldComparator && fieldComparator(a2[sort.field], b2[sort.field])) ||
         // default sorts
         compareStrings(a2.district, b2.district) ||
-        compareOfficers(a2.officer, b2.officer) ||
+        compareStrings(a2.officer, b2.officer) ||
         comparePersonExternalIds(a2.state_id, b2.state_id) ||
         0
       );
