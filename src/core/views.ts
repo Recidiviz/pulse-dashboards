@@ -16,6 +16,13 @@
 // =============================================================================
 import { SimulationCompartment } from "./models/types";
 
+export type Navigation = {
+  goals?: string[];
+  community?: string[];
+  facilities?: string[];
+  methodology?: string[];
+};
+
 export const CORE_VIEWS: Record<string, string> = {
   community: "community",
   facilities: "facilities",

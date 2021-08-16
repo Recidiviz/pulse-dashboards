@@ -14,10 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import tenants from "../../tenants";
+import { Navigation } from "../../core/views";
+import { RoutePermission } from "../../tenants";
 import {
   convertSlugToId,
   convertToSlug,
+  getAllowedNavigation,
   getPathsFromNavigation,
   getPathWithoutParams,
 } from "../navigation";
@@ -28,8 +30,14 @@ jest.mock("../../flags", () => ({
 }));
 
 describe("getPathsFromNavigation", () => {
-  it("returns the correct allowed paths path for US_ND with practices enabled", () => {
-    const allowedPaths = getPathsFromNavigation(tenants.US_ND.navigation, true);
+  it("returns the correct allowed paths paths", () => {
+    const navigation = {
+      goals: [],
+      community: ["explore", "practices"],
+      methodology: ["practices"],
+      facilities: ["explore"],
+    };
+    const allowedPaths = getPathsFromNavigation(navigation);
     const expected = [
       "/goals",
       "/community/explore",
@@ -39,39 +47,69 @@ describe("getPathsFromNavigation", () => {
     ];
     expect(allowedPaths).toEqual(expected);
   });
+});
 
-  it("returns the correct allowed paths path for US_ND with practices disabled", () => {
-    const allowedPaths = getPathsFromNavigation(
-      tenants.US_ND.navigation,
-      false
-    );
-    const expected = ["/goals", "/community/explore", "/facilities/explore"];
-    expect(allowedPaths).toEqual(expected);
+describe("getAllowedNavigation", () => {
+  let tenantAllowedNavigation: Navigation | undefined;
+  let pagesWithRestrictions: string[] | undefined;
+  let routes: RoutePermission[];
+
+  beforeEach(() => {
+    tenantAllowedNavigation = {
+      goals: [],
+      community: ["explore", "practices", "projections"],
+      methodology: ["practices", "projections"],
+      facilities: ["explore"],
+    };
+    pagesWithRestrictions = ["practices"];
   });
 
-  it("returns the correct allowed paths path for US_ID with practices enabled", () => {
-    const allowedPaths = getPathsFromNavigation(tenants.US_ID.navigation, true);
-    const expected = [
-      "/community/practices",
-      "/community/projections",
-      "/facilities/projections",
-      "/methodology/projections",
-      "/methodology/practices",
-    ];
-    expect(allowedPaths).toEqual(expected);
+  it("returns the navigation object minus pagesWithRestrictions when user routes array is empty", () => {
+    routes = [];
+    const expected = {
+      goals: [],
+      community: ["explore", "projections"],
+      facilities: ["explore"],
+      methodology: ["projections"],
+    };
+    const allowedNavigation = getAllowedNavigation(
+      tenantAllowedNavigation,
+      pagesWithRestrictions,
+      routes
+    );
+    expect(allowedNavigation).toEqual(expected);
   });
 
-  it("returns the correct allowed paths path for US_ID with practices disabled", () => {
-    const allowedPaths = getPathsFromNavigation(
-      tenants.US_ID.navigation,
-      false
-    );
-    const expected = [
-      "/community/projections",
-      "/facilities/projections",
-      "/methodology/projections",
+  it("returns the navigation object with restricted page when user routes array includes a restricted page", () => {
+    routes = [
+      ["community_practices", true],
+      ["community_bogus", false],
     ];
-    expect(allowedPaths).toEqual(expected);
+    const expected = {
+      goals: [],
+      community: ["explore", "practices", "projections"],
+      facilities: ["explore"],
+      methodology: ["practices", "projections"],
+    };
+    const allowedNavigation = getAllowedNavigation(
+      tenantAllowedNavigation,
+      pagesWithRestrictions,
+      routes
+    );
+    expect(allowedNavigation).toEqual(expected);
+  });
+
+  it("returns the original navigation object when page not in pagesWithRestrictions is disabled", () => {
+    routes = [
+      ["community_practices", true],
+      ["community_projections", false],
+    ];
+    const allowedPaths = getAllowedNavigation(
+      tenantAllowedNavigation,
+      pagesWithRestrictions,
+      routes
+    );
+    expect(allowedPaths).toEqual(tenantAllowedNavigation);
   });
 });
 

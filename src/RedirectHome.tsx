@@ -18,19 +18,13 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { Redirect } from "react-router-dom";
 
-import { useRootStore } from "./components/StoreProvider";
-import tenants from "./tenants";
+import { useUserStore } from "./components/StoreProvider";
 import { getPathsFromNavigation } from "./utils/navigation";
 
 export const RedirectHome: React.FC = ({ ...rest }) => {
-  const rootStore = useRootStore();
-  const { userStore } = rootStore;
-  // @ts-ignore
-  const tenant = tenants[rootStore.currentTenantId];
-  const allowedPaths = getPathsFromNavigation(
-    tenant.navigation,
-    userStore.userCanAccessPractices
-  );
+  const userStore = useUserStore();
+
+  const allowedPaths = getPathsFromNavigation(userStore.userAllowedNavigation);
   return <Redirect {...rest} exact from="/" to={allowedPaths[0]} />;
 };
 

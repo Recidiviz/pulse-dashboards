@@ -14,20 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { Navigation } from "../core/views";
 import { TenantId } from "../RootStore/types";
-import TENANTS, { Navigation } from "../tenants";
+import TENANTS, { RoutePermission } from "../tenants";
 
 export function getPathsFromNavigation(
-  navigation: Navigation | undefined,
-  practicesEnabled: boolean
+  userAllowedNavigation: Navigation
 ): string[] {
-  if (!navigation) return [];
-  const allowedNavigation = getAllowedNavigation(navigation, practicesEnabled);
-
-  return Object.entries(allowedNavigation).flatMap((navItem) => {
+  if (!userAllowedNavigation) return [];
+  return Object.entries(userAllowedNavigation).flatMap((navItem) => {
     const section: string = navItem[0];
     const pages: string[] = navItem[1] || [];
-
     return pages.length
       ? pages.map((page) => `/${section}/${page}`)
       : [`/${section}`];
@@ -35,16 +32,36 @@ export function getPathsFromNavigation(
 }
 
 export function getAllowedNavigation(
-  navigation: Navigation | undefined,
-  practicesEnabled: boolean
+  tenantAllowedNavigation: Navigation | undefined,
+  pagesWithRestrictions: string[] | undefined,
+  routes: RoutePermission[]
 ): Navigation {
-  if (!navigation) return {};
-
+  if (!tenantAllowedNavigation) return {};
+  const userAllowedNavigation = routes.reduce(
+    (acc, route) => {
+      const [fullRoute, permission] = route;
+      const [section, page] = fullRoute.split("_");
+      if (permission) {
+        // eslint-disable-next-line no-unused-expressions
+        acc[section as keyof Navigation]?.push(page);
+        // eslint-disable-next-line no-unused-expressions
+        acc.methodology?.push(page);
+      }
+      return acc;
+    },
+    { community: [], facilities: [], methodology: [] } as Navigation
+  );
   const allowedNavigation = Object.fromEntries(
-    Object.entries(navigation).map(([section, pages]) => [
-      section,
-      pages?.filter((p) => p !== "practices" || practicesEnabled) ?? [],
-    ])
+    Object.entries(tenantAllowedNavigation).map(([section, pages]) => {
+      return [
+        section,
+        pages?.filter(
+          (p) =>
+            (pagesWithRestrictions && !pagesWithRestrictions.includes(p)) ||
+            userAllowedNavigation[section as keyof Navigation]?.includes(p)
+        ),
+      ];
+    })
   );
 
   if (allowedNavigation.methodology?.length === 0) {

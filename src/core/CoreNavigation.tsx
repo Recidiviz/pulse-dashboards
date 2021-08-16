@@ -25,8 +25,6 @@ import recidivizLogo from "../assets/static/images/Logo.svg";
 import { useRootStore } from "../components/StoreProvider";
 import TopBarUserMenuForAuthenticatedUser from "../components/TopBar/TopBarUserMenuForAuthenticatedUser";
 import flags from "../flags";
-import tenants from "../tenants";
-import { getAllowedNavigation } from "../utils/navigation";
 import CorePageSelector from "./CorePageSelector";
 import CoreSectionSelector from "./CoreSectionSelector";
 import { useCoreStore } from "./CoreStoreProvider";
@@ -37,14 +35,8 @@ const CoreNavigation: React.FC = () => {
   const { setView } = useCoreStore();
   if (!currentTenantId) return null;
 
-  const navigationLayout = getAllowedNavigation(
-    // @ts-ignore
-    tenants[currentTenantId].navigation,
-    userStore.userCanAccessPractices
-  );
-
+  const navigationLayout = userStore.userAllowedNavigation;
   const [currentSection, currentPage] = pathname.split("/").slice(1, 3);
-  // @ts-ignore
   const pageOptions = navigationLayout[currentSection] ?? [];
 
   const menu = Object.entries(navigationLayout).map((entry) => {

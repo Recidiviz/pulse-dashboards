@@ -20,12 +20,14 @@ import createAuth0Client, {
   GetTokenSilentlyOptions,
   User,
 } from "@auth0/auth0-spa-js";
-import { action, makeAutoObservable, runInAction } from "mobx";
+import { action, entries, makeAutoObservable, runInAction } from "mobx";
 import qs from "qs";
 
 import { fetchDemoUser, isDemoMode } from "../api/fetchDemoUser";
 import { ERROR_MESSAGES } from "../constants/errorMessages";
-import tenants from "../tenants";
+import { Navigation } from "../core/views";
+import tenants, { RoutePermission } from "../tenants";
+import { getAllowedNavigation } from "../utils/navigation";
 import type RootStore from ".";
 import { TenantId, UserAppMetadata } from "./types";
 
@@ -184,6 +186,13 @@ export default class UserStore {
     return stateCode.toUpperCase() as TenantId;
   }
 
+  get routes(): RoutePermission[] {
+    if (!this.userAppMetadata?.routes) return [];
+    const routePermissions = entries(this.userAppMetadata?.routes);
+    // @ts-ignore
+    return routePermissions as RoutePermission[];
+  }
+
   /**
    * Returns the allowedSupervisionLocationIds for the given user.
    */
@@ -227,13 +236,23 @@ export default class UserStore {
   }
 
   /**
-   * Returns whether the user is authorized to use the practices tool
+   * Returns the navigation object based on the routes the user is authorized for
    */
-  get userCanAccessPractices(): boolean {
-    if (this.stateCode === "RECIDIVIZ") return true;
+  get userAllowedNavigation(): Navigation | undefined {
+    if (
+      !this.rootStore?.currentTenantId ||
+      !tenants[this.rootStore.currentTenantId].navigation
+    )
+      return {};
 
-    const routes = this.userAppMetadata?.routes;
-    return routes?.community_practices ?? false;
+    if (this.stateCode === "RECIDIVIZ")
+      return tenants[this.rootStore.currentTenantId].navigation;
+
+    return getAllowedNavigation(
+      tenants[this.rootStore.currentTenantId].navigation,
+      tenants[this.rootStore.currentTenantId]?.pagesWithRestrictions,
+      this.routes
+    );
   }
 
   setAuthError(error: Error): void {

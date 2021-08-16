@@ -24,8 +24,8 @@ import Loading from "../components/Loading";
 import NotFound from "../components/NotFound";
 import StoreProvider, { useRootStore } from "../components/StoreProvider";
 import VerificationNeeded from "../components/VerificationNeeded";
+import UsNDCommunityExplore from "../core/community/Explore";
 import CoreLayout from "../core/CoreLayout";
-import UsNDCommunityGoals from "../core/goals/CoreGoalsView";
 import PracticesMethodology from "../core/PracticesMethodology";
 import ProjectionsMethodology from "../core/ProjectionsMethodology/Methodology";
 import LanternLayout from "../lantern/LanternLayout";
@@ -41,7 +41,7 @@ jest.mock("../utils/i18nSettings");
 jest.mock("../lantern/LanternLayout");
 jest.mock("../lantern/Revocations");
 jest.mock("../core/CoreLayout");
-jest.mock("../core/goals/CoreGoalsView");
+jest.mock("../core/community/Explore");
 jest.mock("../components/NotFound");
 jest.mock("../components/Loading");
 jest.mock("../components/StoreProvider");
@@ -54,7 +54,7 @@ describe("App tests", () => {
   const metadataField = `${METADATA_NAMESPACE}app_metadata`;
 
   const mockRevocationsId = "mo-community-revocations-id";
-  const mockNDCommunityGoalsId = "nd-community-goals-id";
+  const mockNDCommunityExploreId = "nd-community-explore-id";
   const mockNotFoundId = "not-found-id";
   const mockLoadingTestId = "loading-test-id";
   const mockErrorId = "error-test-id";
@@ -72,7 +72,9 @@ describe("App tests", () => {
   CoreLayoutMock.mockImplementation(({ children }) => children);
   StoreProvider.mockImplementation(({ children }) => children);
   RevocationsMock.mockReturnValue(mockWithTestId(mockRevocationsId));
-  UsNDCommunityGoals.mockReturnValue(mockWithTestId(mockNDCommunityGoalsId));
+  UsNDCommunityExplore.mockReturnValue(
+    mockWithTestId(mockNDCommunityExploreId)
+  );
   NotFound.mockReturnValue(mockWithTestId(mockNotFoundId));
   Loading.mockReturnValue(mockWithTestId(mockLoadingTestId));
   ErrorMessage.mockReturnValue(mockWithTestId(mockErrorId));
@@ -89,6 +91,10 @@ describe("App tests", () => {
     userStore = {
       isAuthorized: true,
       userAppMetadata: { can_access_leadership_dashboard: true },
+      userAllowedNavigation: {
+        community: ["explore", "practices", "projections"],
+        methodology: ["practices", "projections"],
+      },
     };
   });
 
@@ -131,7 +137,7 @@ describe("App tests", () => {
 
   describe("Core layout", () => {
     it("should render ND Layout with community goals page", () => {
-      window.history.pushState({}, "", "/community/goals");
+      window.history.pushState({}, "", "/community/explore");
       const user = { [metadataField]: { state_code: US_ND } };
 
       useRootStore.mockReturnValue({
@@ -140,10 +146,9 @@ describe("App tests", () => {
       });
 
       const { getByTestId } = render(<App />);
-
       expect(CoreLayoutMock).toHaveBeenCalledTimes(1);
       expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
-      expect(getByTestId(mockNDCommunityGoalsId)).toBeInTheDocument();
+      expect(getByTestId(mockNDCommunityExploreId)).toBeInTheDocument();
     });
   });
 
@@ -197,7 +202,7 @@ describe("App tests", () => {
       const user = { [metadataField]: { state_code: US_ND } };
 
       useRootStore.mockReturnValue({
-        userStore: { ...userStore, ...user, userCanAccessPractices: true },
+        userStore: { ...userStore, ...user },
         currentTenantId: US_ND,
       });
 

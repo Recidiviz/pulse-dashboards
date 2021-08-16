@@ -20,7 +20,6 @@ import { Route, useLocation } from "react-router-dom";
 
 import NotFound from "./components/NotFound";
 import { useRootStore } from "./components/StoreProvider";
-import tenants from "./tenants";
 import {
   getPathsFromNavigation,
   getPathWithoutParams,
@@ -35,16 +34,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   component: Component,
   ...rest
 }) => {
-  const rootStore = useRootStore();
-  const { userStore } = rootStore;
+  const { userStore } = useRootStore();
   const { pathname } = useLocation();
-
-  // @ts-ignore
-  const tenant = tenants[rootStore.currentTenantId];
-  const allowedPaths = getPathsFromNavigation(
-    tenant.navigation,
-    userStore.userCanAccessPractices
-  );
+  const allowedPaths = getPathsFromNavigation(userStore.userAllowedNavigation);
   if (!allowedPaths.includes(getPathWithoutParams(pathname))) {
     return <NotFound />;
   }
