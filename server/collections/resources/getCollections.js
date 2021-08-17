@@ -29,9 +29,6 @@ function newRevocations(dimensions) {
         filename: "state_race_ethnicity_population.json",
       },
       state_gender_population: { filename: "state_gender_population.json" },
-      supervision_location_restricted_access_emails: {
-        filename: "supervision_location_restricted_access_emails.json",
-      },
       revocations_matrix_events_by_month: {
         filename: "revocations_matrix_events_by_month.txt",
         dimensions: {

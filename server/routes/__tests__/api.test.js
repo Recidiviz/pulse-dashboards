@@ -17,16 +17,6 @@
 const mockMetricFiles = {
   file_1: "content_1",
   file_2: "content_2",
-  supervision_location_restricted_access_emails: [
-    {
-      restricted_user_email: "thirteen@state.gov",
-      allowed_level_1_supervision_location_ids: "13",
-    },
-    {
-      restricted_user_email: "one@state.gov",
-      allowed_level_1_supervision_location_ids: "1",
-    },
-  ],
 };
 
 const mockSubsetFilters = {

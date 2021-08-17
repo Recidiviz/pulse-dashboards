@@ -58,7 +58,6 @@ describe("BaseMetrics", () => {
         "revocations_matrix_supervision_location_ids_to_names.json",
         "state_race_ethnicity_population.json",
         "state_gender_population.json",
-        "supervision_location_restricted_access_emails.json",
         "revocations_matrix_events_by_month.txt",
         "revocations_matrix_cells.txt",
         "revocations_matrix_distribution_by_district.txt",
