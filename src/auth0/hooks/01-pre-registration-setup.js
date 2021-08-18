@@ -86,7 +86,7 @@ module.exports = async function (user, context, cb) {
 
     /** 3. Add the user's restrictions to the app_metadata */
     // Other states do not currently have any sign up or user restrictions
-    const stateCodesWithRestrictions = ["us_mo", "us_id"];
+    const stateCodesWithRestrictions = ["us_mo", "us_id", "us_nd"];
 
     if (stateCodesWithRestrictions.includes(stateCode.toLowerCase())) {
       const Sentry = require("@sentry/node");
@@ -116,6 +116,7 @@ module.exports = async function (user, context, cb) {
           can_access_case_triage: restrictions.can_access_case_triage || false,
           can_access_leadership_dashboard:
             restrictions.can_access_leadership_dashboard || false,
+          routes: restrictions.routes || null,
         });
       } catch (apiError) {
         Sentry.captureMessage(

@@ -6,7 +6,7 @@
 */
 exports.onExecutePostLogin = async (event, api) => {
   const stateCode = event.user.app_metadata.state_code.toLowerCase();
-  if (["us_mo", "us_id"].includes(stateCode.toLowerCase())) {
+  if (["us_mo", "us_id", "us_nd"].includes(stateCode.toLowerCase())) {
     const { GoogleAuth } = require('google-auth-library');
     try {
       let credentials = JSON.parse(
@@ -28,6 +28,7 @@ exports.onExecutePostLogin = async (event, api) => {
       api.user.setAppMetadata("allowed_supervision_location_level", restrictions.allowed_supervision_location_level);
       api.user.setAppMetadata("can_access_case_triage", restrictions.can_access_case_triage || false);
       api.user.setAppMetadata("can_access_leadership_dashboard", restrictions.can_access_leadership_dashboard || false);
+      api.user.setAppMetadata("routes", restrictions.routes || null);
     } catch(apiError) {
       api.access.deny('There was a problem authorizing your account. Please contact your organization administrator, if you don’t know your administrator, contact feedback@recidiviz.org.');
     }
