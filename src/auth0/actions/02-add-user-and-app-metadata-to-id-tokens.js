@@ -10,4 +10,5 @@ exports.onExecutePostLogin = async (event, api) => {
   api.idToken.setCustomClaim(`${namespace}/user_metadata`, event.user.user_metadata)
   api.idToken.setCustomClaim(`${namespace}/app_metadata`, event.user.app_metadata)
   api.accessToken.setCustomClaim(`${namespace}/app_metadata`, event.user.app_metadata)
+  api.accessToken.setCustomClaim(`${namespace}/registration_date`, event.user.created_at)
 };
