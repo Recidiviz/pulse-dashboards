@@ -21,7 +21,6 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useMemo } from "react";
 import { useSortBy, useTable } from "react-table";
 
-import flags from "../../flags";
 import { useCoreStore } from "../CoreStoreProvider";
 import { ENTITY_TYPES, EntityType, MetricValueAccessor } from "../models/types";
 import {
@@ -130,23 +129,19 @@ const PracticesSummaryTable: React.FC = () => {
                 entityName: string;
                 entityType: string;
               };
-            }) =>
-              value.entityType === ENTITY_TYPES.LEVEL_1_SUPERVISION_LOCATION ||
-              flags.enablePracticesOfficerView ? (
-                <button
-                  role="link"
-                  type="button"
-                  tabIndex={0}
-                  className="PracticesSummaryTable__link"
-                  onClick={() =>
-                    pagePracticesStore.setCurrentEntityId(value.entityId)
-                  }
-                >
-                  {value.entityName}
-                </button>
-              ) : (
-                value.entityName
-              ),
+            }) => (
+              <button
+                role="link"
+                type="button"
+                tabIndex={0}
+                className="PracticesSummaryTable__link"
+                onClick={() =>
+                  pagePracticesStore.setCurrentEntityId(value.entityId)
+                }
+              >
+                {value.entityName}
+              </button>
+            ),
           },
         ],
       },
