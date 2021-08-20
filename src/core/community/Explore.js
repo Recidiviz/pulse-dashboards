@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Loading } from "@recidiviz/design-system";
 import React, { useState } from "react";
 
-import Loading from "../../components/Loading";
 import WarningIcon from "../../controls/WarningIcon";
 import AdmissionCountsByType from "../AdmissionCountsByType";
 import { isOfficerIdsHidden } from "../bars/utils";

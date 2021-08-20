@@ -21,7 +21,7 @@ import { useLocation } from "react-router-dom";
 import { useCoreStore } from "../CoreStoreProvider";
 import PageTemplate from "../PageTemplate";
 import PopulationFilterBar from "../PopulationFilterBar";
-// TODO(recidiviz-data/issues/6185): Use PopulationSummaryMetrics when data is valid
+// TODO(recidiviz-data/issues/8751): Use PopulationSummaryMetrics when data is valid
 import PopulationSummaryMetrics from "../PopulationSummaryMetrics/TempPopulationSummaryMetrics";
 import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
 import filterOptions from "../utils/filterOptions";
@@ -34,7 +34,7 @@ const PageProjections: React.FC = () => {
   const {
     isLoading,
     isError,
-    // TODO(recidiviz-data/issues/6185): Uncomment when summary table is valid
+    // TODO(recidiviz-data/issues/8751): Uncomment when summary table is valid
     // summaries,
     simulationDate,
   } = metricsStore.projections;

@@ -18,10 +18,10 @@
 import "../DetailsGroup.scss";
 import "./PagePractices.scss";
 
+import { Loading } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import Loading from "../../components/Loading";
 import { useCoreStore } from "../CoreStoreProvider";
 import DetailsGroup from "../DetailsGroup";
 import DownloadDataButton from "../DownloadDataButton";

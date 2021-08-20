@@ -17,6 +17,7 @@
 
 import "./PopulationTimeSeriesChart.scss";
 
+import { Loading } from "@recidiviz/design-system";
 import { scaleTime } from "d3-scale";
 import { observer } from "mobx-react-lite";
 import React from "react";
@@ -24,7 +25,6 @@ import { useLocation } from "react-router-dom";
 import { ResponsiveXYFrame } from "semiotic";
 
 import * as styles from "../CoreConstants.scss";
-import { CoreLoading } from "../CoreLoadingIndicator";
 import { useCoreStore } from "../CoreStoreProvider";
 import { SimulationCompartment } from "../models/types";
 import { getCompartmentFromView, getViewFromPathname } from "../views";
@@ -58,10 +58,10 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({ isLoading = false }) => {
   const { gender, legalStatus } = filtersStore.filters;
   const filteredData = metricsStore.projections.getFilteredDataByView(view);
 
-  if (isLoading) {
+  if (isLoading !== undefined) {
     return (
       <div className="PopulationTimeSeriesChart PopulationTimeSeriesChart--loading">
-        <CoreLoading />
+        <Loading />
       </div>
     );
   }

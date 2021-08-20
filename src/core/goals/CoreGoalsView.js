@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Loading } from "@recidiviz/design-system";
 import React from "react";
 
-import Loading from "../../components/Loading";
 import ChartCard from "../ChartCard";
 import { metrics } from "../community/constants";
 import GeoViewTimeChart from "../GeoViewTimeChart";

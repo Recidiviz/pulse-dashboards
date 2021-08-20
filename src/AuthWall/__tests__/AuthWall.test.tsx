@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { Loading } from "@recidiviz/design-system";
 import { render } from "@testing-library/react";
 import React from "react";
 
 import mockWithTestId from "../../../__helpers__/mockWithTestId";
-import Loading from "../../components/Loading";
 import { useRootStore } from "../../components/StoreProvider";
 import { ERROR_MESSAGES } from "../../constants";
 import AuthWall from "../AuthWall";
 
 jest.mock("../../components/StoreProvider");
-jest.mock("../../components/Loading");
+jest.mock("@recidiviz/design-system");
 const LoadingMock = Loading as jest.Mock;
 
 const mockLoadingTestId = "loading-test-id";

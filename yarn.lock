@@ -2107,10 +2107,10 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
-"@recidiviz/design-system@^2.4.1":
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/@recidiviz/design-system/-/design-system-2.4.1.tgz#fba4c884c891ddbd3b75f801b5bbbe9d57810de0"
-  integrity sha512-cNTWZjBl/ZQcRk4qtmnmbU+WTaaxdDnPPqDsftrkYr1Jj30ugG7sirno0J3/F/jbySITh/8pBLvzOdqzDUu3eA==
+"@recidiviz/design-system@^2.6.0":
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/@recidiviz/design-system/-/design-system-2.6.0.tgz#85afc44abec57c13305983c25b326e094d7e95c2"
+  integrity sha512-kY3Ba1xnwAHfdjIjQ68mBh38pyvL38z0Imj9ee4kmUMXhU4w34co4V4dLf04lWOegGAE5RyDBTqdZ4u/RvmhYw==
   dependencies:
     "@fontsource/libre-baskerville" "^4.1.0"
     "@fontsource/libre-franklin" "^4.1.0"

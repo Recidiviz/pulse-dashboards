@@ -15,18 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Loading } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, Col, Container, Row } from "reactstrap";
 
-import Loading from "./Loading";
 import StateSelector from "./StateSelector";
 import { useRootStore } from "./StoreProvider";
 
 const Profile = () => {
   const { tenantStore, userStore } = useRootStore();
-  const { isLoading, user } = userStore;
+  const { userIsLoading, user } = userStore;
   const { push } = useHistory();
   const [selectedState, setSelectedState] = useState();
 
@@ -39,7 +39,7 @@ const Profile = () => {
     push({ pathname: "/" });
   };
 
-  if (isLoading) {
+  if (userIsLoading) {
     return <Loading />;
   }
 

@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Loading } from "@recidiviz/design-system";
 import { when } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 
-import Loading from "../components/Loading";
 import NotFound from "../components/NotFound";
 import { useRootStore } from "../components/StoreProvider";
 import { ERROR_MESSAGES } from "../constants";

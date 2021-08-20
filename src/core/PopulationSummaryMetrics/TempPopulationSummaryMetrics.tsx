@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-// TODO(recidiviz-data/issues/6185): Remove this component when
-// admissions/releases are validated
+// TODO(recidiviz-data/issues/8751): Remove this component when
+// projections data is stable and auto exported
 import "./LoadingMetrics.scss";
 import "./PopulationSummaryMetrics.scss";
 

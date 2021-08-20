@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { Loading } from "@recidiviz/design-system";
 import { render } from "@testing-library/react";
 import React from "react";
 
 import mockWithTestId from "../../__helpers__/mockWithTestId";
 import App from "../App";
 import ErrorMessage from "../components/ErrorMessage";
-import Loading from "../components/Loading";
 import NotFound from "../components/NotFound";
 import StoreProvider, { useRootStore } from "../components/StoreProvider";
 import VerificationNeeded from "../components/VerificationNeeded";
@@ -43,7 +43,7 @@ jest.mock("../lantern/Revocations");
 jest.mock("../core/CoreLayout");
 jest.mock("../core/community/Explore");
 jest.mock("../components/NotFound");
-jest.mock("../components/Loading");
+jest.mock("@recidiviz/design-system");
 jest.mock("../components/StoreProvider");
 jest.mock("../components/ErrorMessage");
 jest.mock("../components/VerificationNeeded");
