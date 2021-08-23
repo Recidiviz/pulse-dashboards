@@ -32,14 +32,13 @@ const {
 } = require("../core");
 const { isDemoMode } = require("../utils/isDemoMode");
 const { getCacheKey } = require("../utils/cacheKeys");
+const { getAppMetadata } = require("../utils/getAppMetadata");
 const {
   createSubsetFilters,
   createUserRestrictionsFilters,
   getNewRevocationsFiltersByMetricName,
 } = require("../filters");
 const { formatKeysToSnakeCase } = require("../utils");
-
-const { METADATA_NAMESPACE } = process.env;
 
 const BAD_REQUEST = 400;
 const SERVER_ERROR = 500;
@@ -101,10 +100,8 @@ function newRevocationFile(req, res) {
   if (hasErrors) {
     responder(res)({ status: BAD_REQUEST, errors: validations.array() }, null);
   } else {
-    const { user } = req;
     const { stateCode, file: metricName } = req.params;
-    const appMetadata =
-      (user && user[`${METADATA_NAMESPACE}app_metadata`]) || {};
+    const appMetadata = getAppMetadata(req);
 
     const queryParams = formatKeysToSnakeCase(req.query || {});
 

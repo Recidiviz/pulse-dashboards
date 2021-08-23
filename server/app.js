@@ -29,6 +29,7 @@ const devAuthConfig = require("../src/auth_config_dev.json");
 const productionAuthConfig = require("../src/auth_config_production.json");
 const api = require("./routes/api");
 const { newRevocationsParamValidations } = require("./routes/paramsValidation");
+const { validateStateCode } = require("./utils/validateStateCode");
 
 const app = express();
 
@@ -121,6 +122,21 @@ if (isDemoMode) {
   };
 }
 
+const routesExemptFromStateCodeValidation = [
+  "/api/demoUser",
+  "/_ah/warmup",
+  "/api/:stateCode/:metricType/refreshCache",
+  "/file/:name",
+  "/api/generateFileLink",
+];
+
+// Verify that the user has access to state-specific date
+// for all state-specific routes
+app.use(
+  "/api/:stateCode/",
+  validateStateCode(routesExemptFromStateCodeValidation)
+);
+
 app.get("/api/demoUser", validateDemoRequest, api.demoUser);
 app.get(
   "/api/:stateCode/:metricType/refreshCache",
@@ -140,6 +156,7 @@ app.get("/api/:stateCode/projections", checkJwt, api.populationProjections);
 app.get("/api/:stateCode/vitals", checkJwt, api.vitals);
 app.get(
   "/api/:stateCode/projections/methodology.pdf",
+  checkJwt,
   api.populationProjectionsMethodology
 );
 app.post(

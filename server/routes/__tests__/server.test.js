@@ -36,6 +36,13 @@ jest.mock("@sentry/node", () => ({
   },
   init: () => {},
 }));
+jest.mock("../../utils/getAppMetadata", () => {
+  return {
+    getAppMetadata: jest.fn().mockImplementation(() => {
+      return { state_code: "US_MO" };
+    }),
+  };
+});
 
 describe("Server tests", () => {
   let app;
@@ -54,7 +61,7 @@ describe("Server tests", () => {
     process.env = OLD_ENV;
   });
 
-  describe("GET api/:stateCode/goals", () => {
+  describe("GET api/:stateCode/newRevocations", () => {
     beforeEach(() => {
       process.env = Object.assign(process.env, {
         IS_DEMO: "true",
@@ -65,7 +72,7 @@ describe("Server tests", () => {
     });
     it("should respond with a 200 for a valid stateCode", function () {
       return request(app)
-        .get("/api/US_ND/goals")
+        .get("/api/US_MO/newRevocations")
         .then((response) => {
           expect(response.statusCode).toEqual(200);
         });
@@ -100,22 +107,12 @@ describe("Server tests", () => {
     });
 
     it("should respond with a 400 for an invalid stateCode", function () {
-      const expectedErrors = {
-        errors: [
-          {
-            location: "params",
-            msg: "Invalid value",
-            param: "stateCode",
-            value: "HI",
-          },
-        ],
-        status: 400,
-      };
+      const expectedError = "Invalid stateCode value: HI";
       return request(app)
         .get("/api/HI/newRevocations/revocations_matrix_events_by_month")
         .then((response) => {
           expect(response.statusCode).toEqual(400);
-          expect(response.body).toEqual(expectedErrors);
+          expect(response.error.text).toEqual(expectedError);
         });
     });
 
