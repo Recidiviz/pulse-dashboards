@@ -218,9 +218,9 @@ describe("CaseTableStore", () => {
             "01",
             "FRED FLINSTONE",
             "Moderate Risk",
+            "Any Normal Recommendation",
             "1 fel",
             "2",
-            "Any Normal Recommendation",
           ],
         },
       ];

@@ -74,12 +74,6 @@ export default class CaseTableStore extends BaseDataStore {
       district: nullSafeLabel(row.district),
       officer: nullSafeLabel(row.officer_full_name),
       risk_level: nullSafeLabel(translate("riskLevelsMap")[row.risk_level]),
-      violation_record: nullSafeLabel(
-        parseAndFormatViolationRecord(row.violation_record)
-      ),
-      admission_history_description: nullSafeLabel(
-        this.formatAdmissionHistory(row.admission_history_description)
-      ),
       ...(this.includeOfficerRecommendation
         ? {
             officer_recommendation: nullSafeLabel(
@@ -87,6 +81,12 @@ export default class CaseTableStore extends BaseDataStore {
             ),
           }
         : {}),
+      violation_record: nullSafeLabel(
+        parseAndFormatViolationRecord(row.violation_record)
+      ),
+      admission_history_description: nullSafeLabel(
+        this.formatAdmissionHistory(row.admission_history_description)
+      ),
     }));
   }
 
