@@ -211,7 +211,7 @@ export const US_PA_METHODOLOGY: LanternMethodology = {
     {
       id: 6,
       header: "All Recommitments",
-      body: `A list of all recommitments for a recommitted individual during the selected time period, with the most recent recommitment being first.`,
+      body: `A list of all the recommitments for a recommitted individual during the selected time period, with the most recent recommitment being first. Note: all other columns (agent, district, risk level, and violation record) will still only account for their most recent recommitment. For example, the 'violation record' column is only showing the violations that occurred on the period of supervision prior to the most recent recommitment. Similarly, this is the reason that some of the previous recommitments shown in the 'all recommitments' column may have occurred on another agent’s caseload.`,
     },
   ],
 };
