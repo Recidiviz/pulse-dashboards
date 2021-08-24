@@ -58,6 +58,7 @@ const stateApiBaseRoute = "/api/:stateCode(us_[a-z][a-z]|US_[A-Z][A-Z])/";
 
 const routesExemptFromJwtValidation = [
   "/_ah/warmup",
+  "/_ah/start",
   "/api/demoUser",
   "/file/:name",
   `${stateApiBaseRoute}:metricType/refreshCache`,
