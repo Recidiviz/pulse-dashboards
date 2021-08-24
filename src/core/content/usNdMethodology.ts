@@ -33,9 +33,9 @@ export const US_ND: ViewMethodology = {
           </li>
           <li><b>Timely contacts:</b> Sum of the following:
             <ul class="Methodology__block--content">
-            <li>Number of people on Minimum Supervision who have had a face-to-face contact within the last 90 days and a home visit within 90 days of their supervision start.</li>
-            <li>Number of people on Medium Supervision who have had a face-to-face contact within the last 60 days, a home visit within 90 days of their supervision start, and a home visit within the last 365 days.</li>
-            <li>Number of people on Maximum Supervision who have had a face-to-face contact within the last 30 days, a home visit within 90 days of their supervision start, and a home visit within the last 365 days.</li>
+            <li>Number of people on Minimum Supervision who have had a face-to-face contact within the last 3 calendar months and a home visit within 90 days of their supervision start.</li>
+            <li>Number of people on Medium Supervision who have had a face-to-face contact within the last 2 calendar months and a home visit within 90 days of their supervision start, and a home visit within the last calendar year.</li>
+            <li>Number of people on Maximum Supervision who have had a face-to-face contact within the last calendar month, a home visit within 90 days of their supervision start, and a home visit within the last calendar year.</li>
             </ul>
           </li>
           <li><b>Timely risk assessments:</b> Number of people on supervision who have had a risk assessment completed within the last 212 days, or had an assessment within the first 30 days of supervision, if they have been on supervision for fewer than 212 days. This excludes all people on supervision for NC, IC-OUT, and diversion.

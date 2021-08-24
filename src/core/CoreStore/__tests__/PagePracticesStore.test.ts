@@ -381,7 +381,7 @@ describe("PagePracticesStore", () => {
                   "30D average": "69%",
                 },
               ],
-              label: "Timely downgrades",
+              label: "Supervision & risk level match",
             },
           ],
           chartLabels: ["2021-03-11", "2021-03-12"],
@@ -404,7 +404,7 @@ describe("PagePracticesStore", () => {
                   "30D change": "0%",
                   "Overall across all practices": "85%",
                   "Timely contacts": "60%",
-                  "Timely downgrades": "67%",
+                  "Supervision & risk level match": "67%",
                   "Timely risk assessments": "69%",
                 },
                 {
@@ -412,7 +412,7 @@ describe("PagePracticesStore", () => {
                   "30D change": "0%",
                   "Overall across all practices": "95%",
                   "Timely contacts": "90%",
-                  "Timely downgrades": "67%",
+                  "Supervision & risk level match": "67%",
                   "Timely risk assessments": "99%",
                 },
               ],
@@ -453,7 +453,7 @@ describe("PagePracticesStore", () => {
             accessor: "timelyDowngrade",
             description: `of clients are at a supervision level that is the same or below their risk level.`,
             id: "DOWNGRADE",
-            name: "Timely downgrades",
+            name: "Supervision & risk level match",
           },
         ];
         const result = pagePracticesStore.metrics;

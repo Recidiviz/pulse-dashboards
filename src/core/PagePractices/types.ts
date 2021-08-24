@@ -35,7 +35,7 @@ export const METRIC_TYPE_LABELS = {
   DISCHARGE: "Timely discharge",
   CONTACT: "Timely contacts",
   RISK_ASSESSMENT: "Timely risk assessments",
-  DOWNGRADE: "Timely downgrades",
+  DOWNGRADE: "Supervision & risk level match",
 } as const;
 
 export type PracticesMetric = {

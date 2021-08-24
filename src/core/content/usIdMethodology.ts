@@ -48,7 +48,7 @@ export const US_ID: ViewMethodology = {
             <li>Number of people on Sex Offense level three supervision who have had 2 face-to-face contacts within the last 30 days. Note: Within Case Triage, officers will see one contact recommended every 15 days for people on Sex Offense level three supervision, which may cause small differences between the values. See See <a href=${CASE_TRIAGE_METHODOLOGY_URL} target="_blank">Case Triage FAQ and methodology</a> for more details.</li>
             </ul>
           </li>
-          <li><b>Timely downgrades:</b> The number of people on supervision who have a supervision level that is the same or below the risk level designated by their latest risk assessment score.
+          <li><b>Supervision & risk level match:</b> The number of people on supervision who have a supervision level that is the same or below the risk level designated by their latest risk assessment score.
           </li>
         </ul>
         <p class="Methodology__block--content">
