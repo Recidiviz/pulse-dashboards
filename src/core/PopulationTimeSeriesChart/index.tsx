@@ -58,7 +58,7 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({ isLoading = false }) => {
   const { gender, legalStatus } = filtersStore.filters;
   const filteredData = metricsStore.projections.getFilteredDataByView(view);
 
-  if (isLoading !== undefined) {
+  if (isLoading) {
     return (
       <div className="PopulationTimeSeriesChart PopulationTimeSeriesChart--loading">
         <Loading />
