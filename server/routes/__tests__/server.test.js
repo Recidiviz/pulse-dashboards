@@ -107,12 +107,26 @@ describe("Server tests", () => {
     });
 
     it("should respond with a 400 for an invalid stateCode", function () {
-      const expectedError = "Invalid stateCode value: HI";
       return request(app)
         .get("/api/HI/newRevocations/revocations_matrix_events_by_month")
         .then((response) => {
           expect(response.statusCode).toEqual(400);
-          expect(response.error.text).toEqual(expectedError);
+
+          const respError = JSON.parse(response.error.text);
+          expect(respError.errors[0].value).toEqual("HI");
+          expect(respError.errors[0].msg).toEqual("Invalid value");
+        });
+    });
+
+    it("should respond with a 400 for a misformatted stateCode", function () {
+      return request(app)
+        .get("/api/us_ndd/newRevocations/revocations_matrix_events_by_month")
+        .then((response) => {
+          expect(response.statusCode).toEqual(400);
+
+          const respError = JSON.parse(response.error.text);
+          expect(respError.errors[0].value).toEqual("US_NDD");
+          expect(respError.errors[0].msg).toEqual("Invalid value");
         });
     });
 

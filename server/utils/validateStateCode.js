@@ -18,30 +18,14 @@
  *
  */
 
-const { pathToRegexp } = require("path-to-regexp");
+const unless = require("express-unless");
 
 const { getAppMetadata } = require("./getAppMetadata");
 const { lanternStateCodes } = require("../constants/stateCodes");
 
-const validateStateCode = (exemptRoutes) => {
-  return (req, res, next) => {
-    const matchingRoutes = exemptRoutes.filter(
-      (route) => pathToRegexp(route).exec(req.originalUrl) !== null
-    );
-
-    if (matchingRoutes.length > 0) {
-      next();
-      return;
-    }
-
+const validateStateCode = () => {
+  const validator = (req, res, next) => {
     const reqStateCode = req.params.stateCode.toLowerCase();
-    // only filter on state codes (us_xx)
-    if (/us_[a-z][a-z]/.exec(reqStateCode) === null) {
-      res
-        .status(400)
-        .send(`Invalid stateCode value: ${reqStateCode.toUpperCase()}`);
-      return;
-    }
     const metadata = getAppMetadata(req);
     let userStateCode = metadata.state_code || "";
     userStateCode = userStateCode.toLowerCase();
@@ -62,5 +46,10 @@ const validateStateCode = (exemptRoutes) => {
         );
     }
   };
+
+  validator.unless = unless;
+
+  return validator;
 };
+
 module.exports = { validateStateCode };

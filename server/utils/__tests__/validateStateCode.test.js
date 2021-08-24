@@ -21,7 +21,6 @@
 const { validateStateCode } = require("../validateStateCode");
 
 const { METADATA_NAMESPACE } = process.env;
-const exemptRoutes = ["/exempt1", "/api/:var1/:var2/exempt2"];
 
 const makeReq = (url, pathStateCode, userStateCode) => ({
   originalUrl: url,
@@ -39,9 +38,7 @@ const expectSuccess = (req) => {
   const next = jest.fn();
   const resp = { sendStatus: jest.fn() };
 
-  const validator = validateStateCode(exemptRoutes);
-
-  validator(req, resp, next);
+  validateStateCode()(req, resp, next);
 
   expect(next.mock.calls.length).toBe(1);
   expect(resp.sendStatus.mock.calls.length).toBe(0);
@@ -55,9 +52,7 @@ const expectStatus = (req, status) => {
     }),
   };
 
-  const validator = validateStateCode(exemptRoutes);
-
-  validator(req, resp, next);
+  validateStateCode()(req, resp, next);
 
   expect(next.mock.calls.length).toBe(0);
   expect(resp.status.mock.calls.length).toBe(1);
@@ -113,29 +108,5 @@ describe("validateStateCode", () => {
   it("should return 401 if stateCode is lantern and stateCode in request is not US_MO or US_PA", () => {
     const req = makeReq("/api/us_xx/foo", "us_xx", "lantern");
     expectStatus(req, 401);
-  });
-
-  it("should call next() if route is exempted", () => {
-    const req = makeReq("/exempt1", "us_xx", "");
-    delete req.user;
-
-    expectSuccess(req);
-  });
-
-  it("should call next() if route is exempted, part 2", () => {
-    const req = makeReq("/api/us_xx/someMetric/exempt2", "us_xx", "");
-    delete req.user;
-
-    expectSuccess(req);
-  });
-
-  it("should return 400 if /api/ is not followed by a state code", () => {
-    const req = makeReq("/api/some/other/path", "some", "not_some");
-    expectStatus(req, 400);
-  });
-
-  it("should return 400 if /api/ is not followed by a properly formatted state code", () => {
-    const req = makeReq("/api/us_xxx/other/path", "some", "not_some");
-    expectStatus(req, 400);
   });
 });

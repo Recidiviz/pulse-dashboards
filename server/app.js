@@ -25,6 +25,7 @@ const jwt = require("express-jwt");
 const jwksRsa = require("jwks-rsa");
 const Sentry = require("@sentry/node");
 
+const { pathToRegexp } = require("path-to-regexp");
 const devAuthConfig = require("../src/auth_config_dev.json");
 const productionAuthConfig = require("../src/auth_config_production.json");
 const api = require("./routes/api");
@@ -53,6 +54,19 @@ const isDemoMode = process.env.IS_DEMO === "true";
 
 const authEnv = process.env.AUTH_ENV;
 
+const stateApiBaseRoute = "/api/:stateCode(us_[a-z][a-z]|US_[A-Z][A-Z])/";
+
+const routesExemptFromJwtValidation = [
+  "/_ah/warmup",
+  "/api/demoUser",
+  "/file/:name",
+  `${stateApiBaseRoute}:metricType/refreshCache`,
+].map((p) => pathToRegexp(p));
+
+const routesExemptFromStateCodeValidation = [
+  `${stateApiBaseRoute}:metricType/refreshCache`,
+].map((p) => pathToRegexp(p));
+
 let authConfig = null;
 if (authEnv === "production") {
   authConfig = productionAuthConfig;
@@ -76,7 +90,7 @@ if (app.get("env") === "production") {
   app.set("trust proxy", true);
 }
 
-let checkJwt = jwt({
+const checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
     cache: true,
     rateLimit: true,
@@ -116,55 +130,39 @@ function errorHandler(err, _req, res, next) {
   }
 }
 
-if (isDemoMode) {
-  checkJwt = (req, res, next) => {
-    next();
-  };
+if (!isDemoMode) {
+  app.use(checkJwt.unless({ path: routesExemptFromJwtValidation }));
+
+  // Verify that the user has access to state-specific date
+  // for all state-specific routes
+  app.use(
+    stateApiBaseRoute,
+    validateStateCode().unless({ path: routesExemptFromStateCodeValidation })
+  );
 }
-
-const routesExemptFromStateCodeValidation = [
-  "/api/demoUser",
-  "/_ah/warmup",
-  "/api/:stateCode/:metricType/refreshCache",
-  "/file/:name",
-  "/api/generateFileLink",
-];
-
-// Verify that the user has access to state-specific date
-// for all state-specific routes
-app.use(
-  "/api/:stateCode/",
-  validateStateCode(routesExemptFromStateCodeValidation)
-);
 
 app.get("/api/demoUser", validateDemoRequest, api.demoUser);
 app.get(
-  "/api/:stateCode/:metricType/refreshCache",
+  `${stateApiBaseRoute}:metricType/refreshCache`,
   validateCronRequest,
   api.refreshCache
 );
-app.get("/api/:stateCode/newRevocations", checkJwt, api.newRevocations);
+app.get(`${stateApiBaseRoute}newRevocations`, api.newRevocations);
 app.get(
   "/api/:stateCode/newRevocations/:file",
-  [checkJwt, ...newRevocationsParamValidations],
+  newRevocationsParamValidations,
   api.newRevocationFile
 );
-app.get("/api/:stateCode/goals", checkJwt, api.goals);
-app.get("/api/:stateCode/community/explore", checkJwt, api.communityExplore);
-app.get("/api/:stateCode/facilities/explore", checkJwt, api.facilitiesExplore);
-app.get("/api/:stateCode/projections", checkJwt, api.populationProjections);
-app.get("/api/:stateCode/vitals", checkJwt, api.vitals);
+app.get(`${stateApiBaseRoute}goals`, api.goals);
+app.get(`${stateApiBaseRoute}community/explore`, api.communityExplore);
+app.get(`${stateApiBaseRoute}facilities/explore`, api.facilitiesExplore);
+app.get(`${stateApiBaseRoute}projections`, api.populationProjections);
+app.get(`${stateApiBaseRoute}vitals`, api.vitals);
 app.get(
-  "/api/:stateCode/projections/methodology.pdf",
-  checkJwt,
+  `${stateApiBaseRoute}projections/methodology.pdf`,
   api.populationProjectionsMethodology
 );
-app.post(
-  "/api/generateFileLink",
-  checkJwt,
-  upload.single("zip"),
-  api.generateFileLink
-);
+app.post("/api/generateFileLink", upload.single("zip"), api.generateFileLink);
 app.get("/file/:name", api.upload);
 
 // An App Engine-specific API for handling warmup requests on new instance initialization
