@@ -85,6 +85,7 @@ if (!authConfig.domain || !authConfig.audience) {
 
 app.use(morgan("dev"));
 app.use(helmet());
+app.use(helmet.frameguard({ action: "DENY" }));
 
 if (app.get("env") === "production") {
   // This is required to avoid "Unable to verify authorization request state" with Auth0
