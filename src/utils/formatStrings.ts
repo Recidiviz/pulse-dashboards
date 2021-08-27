@@ -66,6 +66,10 @@ const matrixViolationTypeToLabel: Record<string, string> = {
   LAW: "Law",
 } as const;
 
+const nameOverrides: Record<string, string> = {
+  "DISTRICT OFFICE 1, COEUR D'ALENE": "District Office 1, Coeur d'Alene",
+};
+
 function genderValueToHumanReadable(genderValue: string): string {
   return genderValueToLabel[genderValue];
 }
@@ -91,6 +95,10 @@ function toInt(nonInt: string): number {
 }
 
 function toTitleCase(str: string): string {
+  if (nameOverrides[str]) {
+    return nameOverrides[str];
+  }
+
   return (
     str &&
     str.replace(
