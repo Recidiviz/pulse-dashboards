@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2020 Recidiviz, Inc.
+// Copyright (C) 2021 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,14 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-function forceEmailVerification (user, context, callback) {
-  if (!user.email_verified) {
-    context.redirect = {
-        url: "https://dashboard.recidiviz.org/verify"
-    };
-    return callback(null, user, context);
-  } else {
-    return callback(null, user, context);
+/**
+ * Handler that will be called during the execution of a PostLogin flow.
+ *
+ * @param {Event} event - Details about the user and the context in which they are logging in.
+ * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
+ */
+exports.onExecutePostLogin = (event, api) => {
+  const testerEmails = [
+    /* Update test emails used in Auth0 Actions */
+  ];
+  if (
+    testerEmails.includes(event.user.email) &&
+    event.client.name !== "Recidiviz Dashboard Demo"
+  ) {
+    api.access.deny(`Access to ${event.client.name} is not allowed.`);
   }
-}
+};
