@@ -34,11 +34,10 @@ type PropTypes = {
 const PopulationTimeSeriesTooltip: React.FC<PropTypes> = ({ d }) => {
   const { date, value, lowerBound, upperBound } = d;
 
-  if (d.parentSummary !== undefined) {
+  if (d.parentSummary !== undefined || !d) {
     // don't display tooltip for summary block
     return null;
   }
-
   return (
     <div className="PopulationTimeseriesTooltip">
       <div className="PopulationTimeseriesTooltip__Date">
