@@ -26,11 +26,11 @@ Given("I am on the Lantern Dashboard", function () {
 Given(
   "I am a user that has {int} district restrictions",
   function (numRestrictedDistricts) {
-    const demoUserMock = browser.mock("**/api/demoUser");
+    const offlineUserMock = browser.mock("**/api/offlineUser");
     const restrictions = [null, ["TCSTL"], ["13", "TCSTL"]][
       numRestrictedDistricts
     ];
-    const demoUser = {
+    const offlineUser = {
       name: "demo",
       email: "demo",
       [`${process.env.METADATA_NAMESPACE}app_metadata`]: {
@@ -39,7 +39,7 @@ Given(
         allowed_supervision_location_level: "level_1_supervision_location",
       },
     };
-    demoUserMock.respond(demoUser);
+    offlineUserMock.respond(offlineUser);
   }
 );
 
@@ -92,6 +92,7 @@ Then("I should not be able to change the selected district", function () {
 Then(
   "I should see district {string} highlighted on the chart",
   function (districtIds) {
+    setTimeout(() => {}, 10000);
     const chartWrapper = lanternPage.getDistrictChartWrapperByDistrictIds(
       districtIds.split(",")
     );

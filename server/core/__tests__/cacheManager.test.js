@@ -29,7 +29,7 @@ describe("cacheManager", () => {
     describe("in demo mode", () => {
       beforeEach(() => {
         process.env = Object.assign(process.env, {
-          IS_DEMO: "true",
+          IS_OFFLINE: "true",
           NODE_ENV: "development",
         });
         jest.resetModules();
@@ -45,7 +45,7 @@ describe("cacheManager", () => {
     describe("in test env", () => {
       beforeEach(() => {
         process.env = Object.assign(process.env, {
-          IS_DEMO: "false",
+          IS_OFFLINE: "false",
           NODE_ENV: "test",
         });
         jest.resetModules();
@@ -61,7 +61,7 @@ describe("cacheManager", () => {
     describe("all other requests", () => {
       beforeEach(() => {
         process.env = Object.assign(process.env, {
-          IS_DEMO: "false",
+          IS_OFFLINE: "false",
           NODE_ENV: "development",
         });
         jest.resetModules();

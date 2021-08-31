@@ -29,7 +29,7 @@
 const cacheManager = require("cache-manager");
 const redisStore = require("cache-manager-ioredis");
 const Redis = require("ioredis");
-const { isDemoMode } = require("../utils/isDemoMode");
+const { isOfflineMode } = require("../utils/isOfflineMode");
 
 const REDISHOST = process.env.REDISHOST || "localhost";
 const REDISPORT = process.env.REDISPORT || 6379;
@@ -44,7 +44,6 @@ const MEMORY_CACHE_TTL_SECONDS = 60 * 60;
 const MEMORY_REFRESH_SECONDS = 60 * 10;
 
 const testEnv = process.env.NODE_ENV === "test";
-
 const redisInstance = new Redis({
   host: REDISHOST,
   port: REDISPORT,
@@ -54,7 +53,7 @@ const redisInstance = new Redis({
 });
 
 const memoryCache = cacheManager.caching({
-  store: isDemoMode ? "none" : "memory",
+  store: isOfflineMode ? "none" : "memory",
   ttl: MEMORY_CACHE_TTL_SECONDS,
   refreshThreshold: MEMORY_REFRESH_SECONDS,
 });
@@ -73,10 +72,9 @@ if (!testEnv) {
 }
 
 function getCache() {
-  if (testEnv || isDemoMode) {
+  if (testEnv || isOfflineMode) {
     return memoryCache;
   }
-
   return redisCache;
 }
 

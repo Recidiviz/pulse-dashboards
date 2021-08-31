@@ -61,28 +61,10 @@ describe("Server tests", () => {
     process.env = OLD_ENV;
   });
 
-  describe("GET api/:stateCode/newRevocations", () => {
-    beforeEach(() => {
-      process.env = Object.assign(process.env, {
-        IS_DEMO: "true",
-        AUTH_ENV: "test",
-      });
-      jest.resetModules();
-      app = require("../../app").app;
-    });
-    it("should respond with a 200 for a valid stateCode", function () {
-      return request(app)
-        .get("/api/US_MO/newRevocations")
-        .then((response) => {
-          expect(response.statusCode).toEqual(200);
-        });
-    });
-  });
-
   describe("GET api/:stateCode/newRevocations/:file", () => {
     beforeEach(() => {
       process.env = Object.assign(process.env, {
-        IS_DEMO: "true",
+        IS_OFFLINE: "true",
         AUTH_ENV: "test",
       });
       jest.resetModules();
@@ -178,7 +160,7 @@ describe("Server tests", () => {
   describe("GET /api/:stateCode/refreshCache", () => {
     beforeEach(() => {
       process.env = Object.assign(process.env, {
-        IS_DEMO: "false",
+        IS_OFFLINE: "false",
         AUTH_ENV: "test",
       });
       jest.resetModules();
@@ -247,7 +229,7 @@ describe("Server tests", () => {
   describe("When a route handler throws an error", () => {
     beforeEach(() => {
       process.env = Object.assign(process.env, {
-        IS_DEMO: "false",
+        IS_OFFLINE: "false",
         AUTH_ENV: "test",
       });
       jest.resetModules();

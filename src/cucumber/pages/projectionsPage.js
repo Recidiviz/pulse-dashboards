@@ -17,6 +17,11 @@ class ProjectionsPage extends Page {
     option.click();
   }
 
+  selectPage(page) {
+    const pageButton = $(`a*=${page}`);
+    pageButton.click();
+  }
+
   get projectionsChartHeader() {
     return $(".PopulationTimeSeriesChart__Header");
   }

@@ -5,7 +5,8 @@ Feature: Toggle Revocations Charts
     So I can view each chart's data
 
     Background:
-      Given I am viewing the District chart
+      When I click on the profile link
+      And I select the state "Missouri"
 
     Scenario: Viewing the Officer chart
         When I click on the "Officer" revocations link

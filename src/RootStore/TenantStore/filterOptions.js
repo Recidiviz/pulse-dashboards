@@ -28,7 +28,7 @@ import {
   SUPERVISION_TYPE,
   VIOLATION_TYPE,
 } from "../../lantern/utils/constants";
-import { US_MO, US_PA } from "./lanternTenants";
+import { US_DEMO, US_MO, US_PA } from "./lanternTenants";
 
 const METRIC_PERIODS = {
   options: [
@@ -235,7 +235,79 @@ const PAFilterOptions = {
   [LEVEL_2_SUPERVISION_LOCATION]: { defaultValue: "All" },
 };
 
+const DemoFilterOptions = {
+  [ADMISSION_TYPE]: {
+    options: [
+      { value: "All", label: "ALL" },
+      {
+        value: "LEGAL_REVOCATION",
+        label: ADMISSION_TYPE_LABELS.LEGAL_REVOCATION,
+      },
+      {
+        label: "SCI",
+        allSelectedLabel: "All Short Term",
+        options: [
+          {
+            value: "SHOCK_INCARCERATION_0_TO_6_MONTHS",
+            label: ADMISSION_TYPE_LABELS.SHOCK_INCARCERATION_0_TO_6_MONTHS,
+          },
+        ],
+      },
+    ],
+    componentEnabled: true,
+    get defaultOption() {
+      return [this.options[0]];
+    },
+    get defaultValue() {
+      return this.defaultOption.map(({ value }) => value);
+    },
+    get summingOption() {
+      return this.options[0];
+    },
+  },
+  [CHARGE_CATEGORY]: { defaultValue: "All", componentEnabled: false },
+  [VIOLATION_TYPE]: {
+    options: [
+      { key: "low_tech_count", label: "Low tech.", type: "TECHNICAL" },
+      { key: "med_tech_count", label: "Med tech.", type: "TECHNICAL" },
+      {
+        key: "elec_monitoring_count",
+        label: "Elec. monitoring",
+        type: "TECHNICAL",
+      },
+      { key: "substance_count", label: "Subs. use", type: "TECHNICAL" },
+      { key: "absconded_count", label: "Absconsion", type: "TECHNICAL" },
+      { key: "high_tech_count", label: "High tech.", type: "TECHNICAL" },
+      { key: "law_count", label: "Law", type: "LAW" },
+    ],
+    defaultValue: "All",
+  },
+  [METRIC_PERIOD_MONTHS]: METRIC_PERIODS,
+  [SUPERVISION_LEVEL]: {
+    options: [
+      { value: "All", label: "All" },
+      { value: "ENHANCED", label: "Enhanced Supervision" },
+      { value: "MAXIMUM", label: "Maximum Supervision" },
+    ],
+    componentEnabled: true,
+    defaultValue: "All",
+  },
+  [SUPERVISION_TYPE]: {
+    options: [
+      { value: "All", label: "All" },
+      { value: "PROBATION", label: "Probation" },
+      { value: "PAROLE", label: "Parole" },
+    ],
+    defaultValue: "All",
+    componentEnabled: true,
+  },
+  [REPORTED_VIOLATIONS]: { defaultValue: "All" },
+  [LEVEL_1_SUPERVISION_LOCATION]: { defaultValue: "All" },
+  [LEVEL_2_SUPERVISION_LOCATION]: { defaultValue: "All" },
+};
+
 export default {
   [US_MO]: MOFilterOptions,
   [US_PA]: PAFilterOptions,
+  [US_DEMO]: DemoFilterOptions,
 };

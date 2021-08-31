@@ -1,6 +1,7 @@
 {
   "projects": {
     "production": "recidiviz-dashboard",
-    "staging": "recidiviz-dashboard-stag-e1108"
+    "staging": "recidiviz-dashboard-stag-e1108",
+    "demo": "recidiviz-dashboard-demo"
   }
 }

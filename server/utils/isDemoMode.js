@@ -18,7 +18,7 @@
  * Utilities for running the backend in demo mode
  */
 function getIsDemoMode() {
-  return process.env.IS_DEMO === "true";
+  return process.env.AUTH_ENV === "demo";
 }
 
 module.exports = {

@@ -102,7 +102,10 @@ export default class TenantStore {
 
   get enablePracticesCaseloadButton(): boolean {
     if (!this.currentTenantId) return false;
-    return tenants[this.currentTenantId].enablePracticesCaseloadButton;
+    return (
+      tenants[this.currentTenantId].enablePracticesCaseloadButton &&
+      process.env.AUTH_ENV !== "demo"
+    );
   }
 
   get enableUserRestrictions(): boolean {

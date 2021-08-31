@@ -16,10 +16,10 @@
 // =============================================================================
 
 const { query, param } = require("express-validator");
-const { isDemoMode } = require("../utils/isDemoMode");
+const { isOfflineMode } = require("../utils/isOfflineMode");
 
 const VALID_STATE_CODES = ["US_PA", "US_MO", "US_ND"].concat(
-  isDemoMode ? ["US_DEMO"] : []
+  isOfflineMode ? ["US_DEMO"] : []
 );
 const CHARGE_CATEGORIES = [
   "alcohol_drug",

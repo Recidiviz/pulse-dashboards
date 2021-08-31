@@ -263,7 +263,7 @@ describe("API GET tests", () => {
         metricType,
         metricName: file,
         filters: expectedFilters,
-        isDemoMode: false,
+        isOfflineMode: false,
       });
     });
 

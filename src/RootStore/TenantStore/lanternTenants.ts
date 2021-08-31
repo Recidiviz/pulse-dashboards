@@ -21,6 +21,7 @@ import US_PA_TRANSLATIONS from "./us_pa_translations";
 
 export const US_MO = "US_MO";
 export const US_PA = "US_PA";
+export const US_DEMO = "US_DEMO";
 
 export const LANTERN_TENANTS = [US_MO, US_PA];
 

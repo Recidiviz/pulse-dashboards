@@ -48,3 +48,9 @@ dump.rdb
 
 # Typescript build artifacts
 *.tsbuildinfo
+
+# Offline fixture files
+server/core/demo_data/*.json
+server/core/demo_data/*.txt
+!server/core/demo_data/revocations_matrix_events_by_month.metadata.json
+!server/core/demo_data/revocations_matrix_events_by_month.txt

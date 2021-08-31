@@ -5,24 +5,18 @@ Feature: Login as a user with access to all districts
     And see all of the available data
 
     Background:
-        Given I am a user that has 0 district restrictions
-        And I am on the Lantern Dashboard
+        Given I am on the login page
+        And I login as an "admin" user
+        And I click on the profile link
+        And I select the state "Missouri"
 
     Scenario: Viewing the District Filter
         Then I should see "ALL" selected in the district filter
-    
-    Scenario: Selecting a different district in the filter
         When I select district "04" from the District Filter
         Then I should see "04" selected in the district filter
+        And I should see district "04" highlighted on the chart
+        And I should only see cases from district "04"
         When I select district "04B" from the District Filter
         Then I should see "2 Items" selected in the district filter
-
-    Scenario: Viewing the District Chart
-        When I am viewing the District chart
-        And I select district "04B" from the District Filter
-        Then I should see district "04B" highlighted on the chart
-    
-    Scenario: Viewing the Case Table
-        When I am viewing the Case Table
-        And I select district "04" from the District Filter
-        Then I should only see cases from district "04"
+        And I should see district "04,04B" highlighted on the chart
+        And I should only see cases from district "04,04B"

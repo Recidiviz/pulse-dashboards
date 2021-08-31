@@ -28,6 +28,7 @@ const Sentry = require("@sentry/node");
 const { pathToRegexp } = require("path-to-regexp");
 const devAuthConfig = require("../src/auth_config_dev.json");
 const productionAuthConfig = require("../src/auth_config_production.json");
+const demoAuthConfig = require("../src/auth_config_demo.json");
 const api = require("./routes/api");
 const { newRevocationsParamValidations } = require("./routes/paramsValidation");
 const { validateStateCode } = require("./utils/validateStateCode");
@@ -50,7 +51,7 @@ const port = process.env.NODE_ENV === "test" ? 3002 : process.env.PORT || 3001;
 
 app.set("port", port);
 
-const isDemoMode = process.env.IS_DEMO === "true";
+const isOfflineMode = process.env.IS_OFFLINE === "true";
 
 const authEnv = process.env.AUTH_ENV;
 
@@ -71,6 +72,8 @@ const routesExemptFromStateCodeValidation = [
 let authConfig = null;
 if (authEnv === "production") {
   authConfig = productionAuthConfig;
+} else if (authEnv === "demo") {
+  authConfig = demoAuthConfig;
 } else if (authEnv === "development") {
   authConfig = devAuthConfig;
 } else {
@@ -107,15 +110,15 @@ const checkJwt = jwt({
 
 // See: https://cloud.google.com/appengine/docs/standard/nodejs/scheduling-jobs-with-cron-yaml#validating_cron_requests
 function validateCronRequest(req, res, next) {
-  if (req.get("X-Appengine-Cron") !== "true" && !isDemoMode) {
+  if (req.get("X-Appengine-Cron") !== "true" && !isOfflineMode) {
     res.sendStatus(403);
   } else {
     next();
   }
 }
 
-function validateDemoRequest(req, res, next) {
-  if (!isDemoMode) {
+function validateOfflineRequest(req, res, next) {
+  if (!isOfflineMode) {
     res.sendStatus(403);
   } else {
     next();
@@ -132,7 +135,7 @@ function errorHandler(err, _req, res, next) {
   }
 }
 
-if (!isDemoMode) {
+if (!isOfflineMode) {
   app.use(checkJwt.unless({ path: routesExemptFromJwtValidation }));
 
   // Verify that the user has access to state-specific date
@@ -143,7 +146,7 @@ if (!isDemoMode) {
   );
 }
 
-app.get("/api/demoUser", validateDemoRequest, api.demoUser);
+app.get("/api/offlineUser", validateOfflineRequest, api.offlineUser);
 app.get(
   `${stateApiBaseRoute}:metricType/refreshCache`,
   validateCronRequest,

@@ -17,6 +17,7 @@
 import { Auth0ClientOptions, User } from "@auth0/auth0-spa-js";
 import { computed, configure, makeObservable } from "mobx";
 
+import demoAuthConfig from "../auth_config_demo.json";
 import devAuthConfig from "../auth_config_dev.json";
 import productionAuthConfig from "../auth_config_production.json";
 import PageStore from "./PageStore";
@@ -32,6 +33,8 @@ export function getAuthSettings(): Auth0ClientOptions {
   let config: { [k: string]: string };
   if (authEnv === "production") {
     config = productionAuthConfig;
+  } else if (authEnv === "demo") {
+    config = demoAuthConfig;
   } else {
     config = devAuthConfig;
   }

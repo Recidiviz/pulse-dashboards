@@ -27,7 +27,9 @@ import {
 } from "mobx";
 
 import filterOptionsMap from "../../RootStore/TenantStore/filterOptions";
+import { US_DEMO } from "../../RootStore/TenantStore/lanternTenants";
 import getFilters from "../../utils/getFilterDescription";
+import { isDemoMode } from "../../utils/isDemoMode";
 import {
   ADMISSION_TYPE,
   CHARGE_CATEGORY,
@@ -110,7 +112,9 @@ export default class FiltersStore {
 
   get filterOptions() {
     return {
-      ...filterOptionsMap[this.rootStore.currentTenantId],
+      ...filterOptionsMap[
+        isDemoMode ? US_DEMO : this.rootStore.currentTenantId
+      ],
       ...this.districtFilterOptions,
     };
   }

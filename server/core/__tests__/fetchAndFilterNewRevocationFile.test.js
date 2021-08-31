@@ -47,9 +47,9 @@ describe("fetchAndFilterNewRevocationFile", () => {
       "technical",
     ],
   };
-  const isDemoMode = false;
+  const isOfflineMode = false;
   const stateCode = "TEST_ID";
-  const fetchArgs = { stateCode, metricType, isDemoMode };
+  const fetchArgs = { stateCode, metricType, isOfflineMode };
 
   afterAll(() => {
     jest.resetModules();
@@ -68,7 +68,7 @@ describe("fetchAndFilterNewRevocationFile", () => {
       stateCode,
       metricType,
       metricName,
-      isDemoMode
+      isOfflineMode
     );
     expect.hasAssertions();
   });

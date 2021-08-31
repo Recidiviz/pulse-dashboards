@@ -35,9 +35,9 @@ const { default: processMetricFile } = require("./processMetricFile");
 const { default: fetchMetricsFromLocal } = require("./fetchMetricsFromLocal");
 const { default: fetchMetricsFromGCS } = require("./fetchMetricsFromGCS");
 
-function fetchMetrics(stateCode, metricType, metricName, isDemo) {
-  const fetcher = isDemo ? fetchMetricsFromLocal : fetchMetricsFromGCS;
-  const source = isDemo ? "local" : "GCS";
+function fetchMetrics(stateCode, metricType, metricName, isOffline) {
+  const fetcher = isOffline ? fetchMetricsFromLocal : fetchMetricsFromGCS;
+  const source = isOffline ? "local" : "GCS";
 
   console.log(`Fetching ${metricType} metrics from ${source}...`);
   const metricPromises = fetcher(

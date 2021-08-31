@@ -33,7 +33,7 @@ const {
   default: fetchAndFilterNewRevocationFile,
 } = require("./fetchAndFilterNewRevocationFile");
 const { cacheResponse } = require("./cacheManager");
-const { fetchDemoUser } = require("./fetchDemoUser");
+const { fetchOfflineUser } = require("./fetchOfflineUser");
 
 module.exports = {
   fetchMetrics,
@@ -42,5 +42,5 @@ module.exports = {
   fetchAndFilterNewRevocationFile,
   refreshRedisCache,
   cacheResponse,
-  fetchDemoUser,
+  fetchOfflineUser,
 };

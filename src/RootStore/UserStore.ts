@@ -23,10 +23,11 @@ import createAuth0Client, {
 import { action, entries, makeAutoObservable, runInAction } from "mobx";
 import qs from "qs";
 
-import { fetchDemoUser, isDemoMode } from "../api/fetchDemoUser";
+import { fetchOfflineUser } from "../api/fetchOfflineUser";
 import { ERROR_MESSAGES } from "../constants/errorMessages";
 import { Navigation } from "../core/views";
 import tenants, { RoutePermission } from "../tenants";
+import { isOfflineMode } from "../utils/isOfflineMode";
 import { getAllowedNavigation } from "../utils/navigation";
 import type RootStore from ".";
 import { TenantId, UserAppMetadata } from "./types";
@@ -97,9 +98,9 @@ export default class UserStore {
    * Returns an Error if Auth0 configuration is not present.
    */
   async authorize(): Promise<void> {
-    if (isDemoMode()) {
+    if (isOfflineMode()) {
       this.isAuthorized = true;
-      this.user = await fetchDemoUser({});
+      this.user = await fetchOfflineUser({});
       this.userIsLoading = false;
       this.getToken = () => "";
       return;

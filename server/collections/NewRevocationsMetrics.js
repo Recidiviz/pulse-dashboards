@@ -16,6 +16,7 @@
 // =============================================================================
 const { default: BaseMetrics } = require("./BaseMetrics");
 const { COLLECTIONS } = require("../constants/collections");
+const { isDemoMode } = require("../utils/isDemoMode");
 
 class NewRevocationsMetrics extends BaseMetrics {
   constructor(metricType, stateCode) {
@@ -43,7 +44,7 @@ class NewRevocationsMetrics extends BaseMetrics {
     const validDimensions = this.getValidDimensionsForMetric(fileName);
     const invalidDimensions = {};
 
-    if (!validDimensions || !sourceDimensions) {
+    if (!validDimensions || !sourceDimensions || isDemoMode) {
       // eslint-disable-next-line no-console
       console.log(`Skipping dimensions validations for ${fileName}`);
       return;

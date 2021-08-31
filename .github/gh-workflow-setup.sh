@@ -4,3 +4,4 @@
 # lint tests will fail without them
 echo "{ }" >> ./src/auth_config_dev.json
 echo "{ }" >> ./src/auth_config_production.json
+echo "{ }" >> ./src/auth_config_demo.json

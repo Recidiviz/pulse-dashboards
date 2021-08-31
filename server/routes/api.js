@@ -28,9 +28,9 @@ const {
   fetchMetrics,
   cacheResponse,
   fetchAndFilterNewRevocationFile,
-  fetchDemoUser,
+  fetchOfflineUser,
 } = require("../core");
-const { isDemoMode } = require("../utils/isDemoMode");
+const { isOfflineMode } = require("../utils/isOfflineMode");
 const { getCacheKey } = require("../utils/cacheKeys");
 const { getAppMetadata } = require("../utils/getAppMetadata");
 const {
@@ -42,7 +42,6 @@ const { formatKeysToSnakeCase } = require("../utils");
 
 const BAD_REQUEST = 400;
 const SERVER_ERROR = 500;
-
 /**
  * A callback which returns either an error payload or a data payload.
  *
@@ -66,16 +65,16 @@ function responder(res) {
 }
 
 // TODO: Generalize this API to take in the metric type and file as request parameters in all calls
-function demoUser(req, res) {
+function offlineUser(req, res) {
   const options = req.query;
-  const user = fetchDemoUser(options);
+  const user = fetchOfflineUser(options);
   responder(res)(null, user);
 }
 
 function refreshCache(req, res) {
   const { stateCode, metricType } = req.params;
   refreshRedisCache(
-    () => fetchMetrics(stateCode, metricType, null, isDemoMode),
+    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
     stateCode,
     metricType,
     responder(res)
@@ -88,7 +87,7 @@ function newRevocations(req, res) {
   const cacheKey = getCacheKey({ stateCode, metricType });
   cacheResponse(
     cacheKey,
-    () => fetchMetrics(stateCode, metricType, null, isDemoMode),
+    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
     responder(res)
   );
 }
@@ -132,7 +131,7 @@ function newRevocationFile(req, res) {
           metricType,
           metricName,
           filters,
-          isDemoMode,
+          isOfflineMode,
         }),
       responder(res)
     );
@@ -145,7 +144,7 @@ function goals(req, res) {
   const cacheKey = getCacheKey({ stateCode, metricType });
   cacheResponse(
     cacheKey,
-    () => fetchMetrics(stateCode, metricType, null, isDemoMode),
+    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
     responder(res)
   );
 }
@@ -156,7 +155,7 @@ function communityExplore(req, res) {
   const cacheKey = getCacheKey({ stateCode, metricType });
   cacheResponse(
     cacheKey,
-    () => fetchMetrics(stateCode, metricType, null, isDemoMode),
+    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
     responder(res)
   );
 }
@@ -167,7 +166,7 @@ function facilitiesExplore(req, res) {
   const cacheKey = getCacheKey({ stateCode, metricType });
   cacheResponse(
     cacheKey,
-    () => fetchMetrics(stateCode, metricType, null, isDemoMode),
+    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
     responder(res)
   );
 }
@@ -178,7 +177,7 @@ function populationProjections(req, res) {
   const cacheKey = getCacheKey({ stateCode, metricType });
   cacheResponse(
     cacheKey,
-    () => fetchMetrics(stateCode, metricType, null, isDemoMode),
+    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
     responder(res)
   );
 }
@@ -197,7 +196,7 @@ function vitals(req, res) {
   const cacheKey = getCacheKey({ stateCode, metricType });
   cacheResponse(
     cacheKey,
-    () => fetchMetrics(stateCode, metricType, null, isDemoMode),
+    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
     responder(res)
   );
 }
@@ -255,7 +254,7 @@ function upload(req, res) {
 }
 
 module.exports = {
-  demoUser,
+  offlineUser,
   newRevocations,
   newRevocationFile,
   goals,

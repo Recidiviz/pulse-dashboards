@@ -4,6 +4,14 @@ exports.config = {
       username: process.env.TEST_AUTH_USER,
       password: process.env.TEST_AUTH_PASSWORD,
     },
+    restrictedAccessUser1: {
+      username: process.env.TEST_AUTH_RESTRICTED_ACCESS_USER_1,
+      password: process.env.TEST_AUTH_RESTRICTED_ACCESS_USER_1_PASSWORD,
+    },
+    restrictedAccessUser2: {
+      username: process.env.TEST_AUTH_RESTRICTED_ACCESS_USER_2,
+      password: process.env.TEST_AUTH_RESTRICTED_ACCESS_USER_2_PASSWORD,
+    },
   },
   //
   // ====================

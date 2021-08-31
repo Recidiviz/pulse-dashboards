@@ -23,6 +23,10 @@ When("I'm on the {string} view", (view) => {
   projectionsPage.selectView(view);
 });
 
+When("I select the {string} page", (page) => {
+  projectionsPage.selectPage(page);
+});
+
 Then("I should see the projections chart for {string}", (view) => {
   const header = projectionsPage.projectionsChartHeader.getText();
   if (view === "facilities") {

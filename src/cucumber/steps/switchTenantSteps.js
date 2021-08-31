@@ -28,10 +28,6 @@ Then("I should see the Profile page", () => {
   expect(prompt.getText()).toEqual("Current view state:");
 });
 
-When("I am on the Profile page", () => {
-  profilePage.open();
-});
-
 When("I select the state {string}", (stateName) => {
   profilePage.selectStateOption(stateName);
 });

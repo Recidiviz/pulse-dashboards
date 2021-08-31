@@ -11,6 +11,6 @@ Feature: Switch Tenants on Lantern
         Then I should see the Profile page
 
     Scenario: Navigating from the Profile page to a different state
-        When I am on the Profile page
+        When I click on the profile link
         And I select the state "Pennsylvania"
         Then I should see the Pennsylvania dashboard

@@ -8,4 +8,6 @@ Feature: Login with Auth0
 
     Scenario: Logging in with Auth0
         When I login as an "admin" user
+        When I click on the profile link
+        When I select the state "Pennsylvania"
         Then I should see the Lantern landing page

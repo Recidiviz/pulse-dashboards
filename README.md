@@ -72,7 +72,7 @@ Explanation of frontend env files:
 
 - `.env-cmdrc.example` - example file for frontend variables that are required
 - `.env-cmdrc` - JSON files describing all of the env variables needed in each build
-  - Should have 4 keys: `production`, `staging`, `development`, and `e2e`
+  - Should have several keys: `offline`, `server`, `server-demo`, `development`, `development-demo`, `e2e`, `staging`, `staging-demo`, and `production`
 
 Explanation of backend env files:
 
@@ -83,18 +83,21 @@ Expected frontend environment variables include:
 - `REACT_APP_API_URL` - the base URL of the backend API server.
 - `REACT_APP_AUTH_ENV` - a string indicating the "auth environment" used to point to the correct Auth0 tenant. Either "development" or "production". Must match the backend `AUTH_ENV` variable.
 - `REACT_APP_FEEDBACK_URL` - the URL of the Recidiviz Dashboard Feedback form.
-- `REACT_APP_IS_DEMO (OPTIONAL)` - whether or not to run the frontend in demo mode, which will run the app without requiring authentication. This should only be set when running locally and should be provided through the command line, along with the backend sibling below. To run the app in demo mode, use the following command: `./run_in_demo_mode.sh`
+- `REACT_APP_IS_OFFLINE (OPTIONAL)` - whether or not to run the frontend in offline mode, which will run the app without requiring authentication. This should only be set when running locally and should be provided through the command line, along with the backend sibling below. To run the app in offline mode, run `yarn offline`
 - `REACT_APP_INTERCOM_APP_ID` - the APP_ID for Intercom, the customer engagement and support tool. Should be included in local, development, and production environments. The local and development environments point at the 'Recidiviz - [TEST]' Intercom workspace, and production environment points at the live 'Recidiviz' Intercom workspace.
 - `REACT_APP_SENTRY_ENV` - The environment for reporting Sentry errors
 - `REACT_APP_SENTRY_DSN` - The public DSN URL to use for sending Sentry errors, can be found on the Sentry project page.
 - `REACT_APP_DEPLOY_ENV` - The current deploy environment: `production`, `staging`, or `dev`
+- `REACT_APP_CASE_TRIAGE_URL` - URL to the Case Triage app for the caseload redirection
+
 
 Expected backend environment variables include:
 
 - `AUTH_ENV` - a string indicating the "auth environment" used to point to the correct Auth0 tenant. Either "development" or "production". Must match the frontend `REACT_APP_AUTH_ENV` variable.
 - `GOOGLE_APPLICATION_CREDENTIALS` - a relative path pointing to the JSON file containing the credentials of the service account used to communicate with Google Cloud Storage, for metric retrieval.
 - `METRIC_BUCKET` - the name of the Google Cloud Storage bucket where the metrics reside.
-- `IS_DEMO` (OPTIONAL) - whether or not to run the backend in demo mode, which will retrieve static fixture data from the `server/core/demo_data` directory instead of pulling data from dynamic, live sources. This should only be set when running locally and should be provided through the command line, along with the frontend sibling above. To run the app in demo mode, use the following command: `./run_in_demo_mode.sh`
+- `IS_OFFLINE` (OPTIONAL) - whether or not to run the backend in offline mode, which will retrieve static fixture data from the `server/core/demo_data` directory instead of pulling data from dynamic, live sources. This should only be set when running locally and should be provided through the command line, along with the frontend sibling above. To run the app in offline mode, use the following command: `yarn offline`
+
 
 The build process, as described below, ensures that the proper values are compiled and included in the static bundle at build time, for the right environment.
 
@@ -102,7 +105,7 @@ The build process, as described below, ensures that the proper values are compil
 
 The backend API server and most frontend views in the app are authenticated via [Auth0](https://auth0.com/). You can control which views are authenticated by specifying `Route` versus `ProtectedRoute` in `src/App.js`. If you are setting this app up completely fresh, you will need to create your own Auth0 account.
 
-This setup assumes you have two separate Auth0 tenants, one for lower tiers and one for production. The former should be configured in `auth_config_dev.json` and the latter in `auth_config_production.json`. Which file is loaded and used relies on the `AUTH_ENV` environment variable on the backend and the `REACT_APP_AUTH_ENV` environment variable on the frontend. It is important that the same config file be loaded on the backend and frontend servers in a given tier so that API authentication will work.
+This setup assumes you have two separate Auth0 tenants, one for staging/demo/development and one for production. The development and staging environments should be configured in `auth_config_dev.json`, demo environment in `auth_config_demo.json` and production in `auth_config_production.json`. Which file is loaded and used relies on the `AUTH_ENV` environment variable on the backend and the `REACT_APP_AUTH_ENV` environment variable on the frontend. It is important that the same config file be loaded on the backend and frontend servers in a given tier so that API authentication will work.
 
 ### Linting & running tests
 
@@ -140,37 +143,34 @@ To run eslint manually:
 
 > **Note**: we are gradually adding linting enforcement to our existing code, so not everything may be subject to linting yet. Refer to the [ignore file](https://github.com/Recidiviz/pulse-dashboards/.eslintignore) for details. While this transition is underway, if you are adding new files or substantially rewriting existing ones, you are encouraged to whitelist them for linting by updating the configuration file.
 
-### Running the BackEnd application locally
 
-To hit the backend API directly from localhost, you will need to run it in demo mode, which will fetch data files from the `server/core/demo_data` directory. This can be done with the following yarn script:
+### Running the application locally
 
-`yarn server:demo`
-
-You can also run the backend locally to point to the GCS bucket (you may want to do this if you want to view the server and frontend logs separately):
-
-`yarn server:dev`
-
-This will start both the API Express server on port `3001` and the Redis server on port `6379`. You could start the frontend server separately using `yarn spa`.
-
-### Running the FrontEnd application locally
-
-A yarn script is available for starting the development servers. The React frontend is served out of port `3000` and the Node/Express backend is served out of port `3001`. A Redis server will be started on the default port `6379`. This will also automatically open a browser to localhost on the appropriate port, pointing to the frontend.
+A yarn script is available for starting the development servers. The React frontend is served out of port `3000` and the Node/Express backend is served out of port `3001`. A Redis server will be started on the default port `6379`. 
 
 `yarn dev`
+
+This will start both the API Express server on port `3001` and the Redis server on port `6379`. You could start the frontend server separately using `yarn spa`.
 
 The development servers will remain active until you either close your terminal or shut down the entire setup at once using `control+c`.
 
 **Note:** The development servers do not need to be restarted when source code is modified. The assets will automatically be recompiled and the browser will be refreshed (when there's a frontend change). Thanks, Webpack!
 
-### Running the Frontend and Backend together in Demo mode
 
-When running locally, you can run the app in demo mode to point the app to static data contained in `server/core/demo_data`. This is useful for debugging issues that materialize under specific data circumstances, for demonstrating the tool without exposing real data, for development when you don't have Internet access, and other use cases.
+### Running the application locally and fetching from the Demo GCS bucket
 
-You can launch in demo mode locally via: `./run_in_demo_mode.sh`
+Similarlly to running the application locally, the application can be run but the Backend will fetch from a Demo GCS bucket, where all of the data is anonymized and randomized. Non-recidiviz employees should use this option.
 
-Running via that command is important because environment variables are required for both the frontend and backend servers. Running with only one or the other in demo mode produces a fairly broken experience.
+`yarn demo`
 
-If you are running in demo mode to share the app externally, you may need to run through the following steps first:
+
+### Running the Frontend and Backend together in Offline mode
+
+When running locally, you can run the app in offline mode to point the app to static data contained in `server/core/demo_data`. This is useful for debugging issues that materialize under specific data circumstances, for development when you don't have Internet access, and other use cases.
+
+You can launch in offline mode locally via: `yarn offline`
+
+If you are running in offline mode, you may need to run through the following steps first:
 
 1. Ensure that your environment is set up correctly by following steps 1 - 9 in the [Set Up Your Frontend Development doc](https://docs.google.com/document/d/1y-yJwZN6yM1s5OKqTDCk56FN2p7ZA62buwph1YdnJAc/edit). Check the `.nvmrc` to see the latest Node version you'll need to install and use.
 1. Make sure your local repository has all the latest changes from the main branch. Run the following git commands from the `pulse-dashboards/` directory:
@@ -193,7 +193,7 @@ If you are running in demo mode to share the app externally, you may need to run
 
 ## Deploys
 
-As noted above, the Dashboard is two components: a React frontend and a Node/Express backend providing a thin API. The app can be run locally, in staging, and in production. Deploying to staging and production are very similar, as described below.
+As noted above, the Dashboard is two components: a React frontend and a Node/Express backend providing a thin API. The app can be run locally, in staging, in demo, and in production. Deploying to demo, staging and production are very similar, as described below.
 
 ### Deploying a Preview App for Frontend QA
 
@@ -207,7 +207,7 @@ Follow these steps to deploy a Firebase Preview App for QA:
 
 [How to manage preview apps on Firebase](https://firebase.google.com/docs/hosting/manage-hosting-resources?authuser=0)
 
-### Deploying to staging
+### Deploying to staging and demo
 
 #### Frontend
 
@@ -217,11 +217,15 @@ Each time this is run, the `build` directory will be wiped clean. A [bundle anal
 
 You should then test this locally by running `firebase serve`: it will run the staging build locally, pointed to the staging API backend--if you also have backend changes, deploy the backend as described in the next subsection. When you're satisfied, deploy the frontend to staging with `firebase deploy -P staging`. Test vigorously on staging before deploying to production.
 
+Similarly, to generate the demo build of the frontend, run `yarn build-demo` and deploy with `firebase deploy -P demo`
+
 #### Backend
 
-We deploy the backend to Google App Engine with configured yaml files. Copy the `gae.yaml.example` file into files named `gae-staging.yaml` and `gae-production.yaml`, and set environment variables accordingly.
+We deploy the backend to Google App Engine with configured yaml files. Copy the `gae.yaml.example` file into files named `gae-staging.yaml`, `gae-staging-demo.yaml`, and `gae-production.yaml`, and set environment variables accordingly.
 
 Deploy the backend to staging Google App Engine with `gcloud app deploy gae-staging.yaml --project [project_id]`. This will upload any updated backend code/configuration to GAE and start the server (GAE runs `npm start` only once the deploy succeeds and is stable). Test vigorously on staging before continuing to production.
+
+Similarly, deploy the backend to the demo service on staging Google App Engine with `gcloud app deploy gae-staging-demo.yaml --project [project_id]`
 
 ### Deploying to production
 
@@ -249,12 +253,8 @@ TEST_AUTH_PASSWORD=
 To run E2E tests that involve logging in:
 
 1. Start your dev server: `yarn dev`
-2. Run the test suite: `yarn test-e2e-lantern`
+2. Run the test suites: `yarn test-e2e-lantern` or `yarn test-e2e-core` or `yarn test-e2e-users`
 
-To run the E2E tests using a demo server:
-
-1. Start your demo server: `REACT_APP_IS_DEMO=true yarn demo`
-2. Run the test suite: `yarn test-e2e-users`
 
 ## Tooling
 
@@ -272,7 +272,7 @@ See the [Yarn documentation](https://yarnpkg.com/en/docs) for more details and a
 
 ### Redis
 
-We use [Memorystore for Redis](https://cloud.google.com/memorystore/docs/redis/redis-overview) as an external cache for the backend API. When developing locally, the `redis-server` will be started with the `yarn server:demo` script.
+We use [Memorystore for Redis](https://cloud.google.com/memorystore/docs/redis/redis-overview) as an external cache for the backend API. When developing locally, the `redis-server` will be started with the `yarn server:dev` or `yarn offline` scripts.
 
 Here are a few helpful commands for inspecting the local redis cache:
 
