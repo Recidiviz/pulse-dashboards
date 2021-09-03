@@ -26,6 +26,11 @@ import AuthWall from "../AuthWall";
 jest.mock("../../components/StoreProvider");
 jest.mock("@recidiviz/design-system");
 const LoadingMock = Loading as jest.Mock;
+jest.mock("react-router-dom", () => ({
+  useLocation: jest.fn().mockReturnValue({
+    pathname: "/community/revocations",
+  }),
+}));
 
 const mockLoadingTestId = "loading-test-id";
 LoadingMock.mockReturnValue(mockWithTestId(mockLoadingTestId));
@@ -80,7 +85,9 @@ test("renders children when can_access_leadership_dashboard", () => {
   const { getByText } = render(
     <AuthWall>
       {/* @ts-ignore */}
-      <div tenantIds={["US_MO"]}>AUTHORIZED</div>
+      <div tenantIds={["US_MO"]} views={["community"]}>
+        AUTHORIZED
+      </div>
     </AuthWall>
   );
   expect(getByText("AUTHORIZED")).toBeInTheDocument();
@@ -96,7 +103,9 @@ test("renders children when can_access_leadership_dashboard property does not ex
   const { getByText } = render(
     <AuthWall>
       {/* @ts-ignore */}
-      <div tenantIds={["US_MO"]}>AUTHORIZED</div>
+      <div tenantIds={["US_MO"]} views={["community"]}>
+        AUTHORIZED
+      </div>
     </AuthWall>
   );
   expect(getByText("AUTHORIZED")).toBeInTheDocument();
@@ -121,7 +130,9 @@ test("redirects to case triage when !can_access_leadership_dashboard and can_acc
   render(
     <AuthWall>
       {/* @ts-ignore */}
-      <div tenantIds={["US_MO"]}>AUTHORIZED</div>
+      <div tenantIds={["US_MO"]} views={["community"]}>
+        AUTHORIZED
+      </div>
     </AuthWall>
   );
   expect(window.location.href).toMatch("test-case-triage-url");
@@ -142,8 +153,31 @@ test("sets an auth error when !can_access_leadership_dashboard and !can_access_c
   render(
     <AuthWall>
       {/* @ts-ignore */}
-      <div tenantIds={["US_MO"]}>AUTHORIZED</div>
+      <div tenantIds={["US_MO"]} views={["community"]}>
+        AUTHORIZED
+      </div>
     </AuthWall>
   );
   expect(authErrorMock).toHaveBeenCalledWith(ERROR_MESSAGES.unauthorized);
+});
+
+test("returns Not Found when the pathname is not in the layout views", () => {
+  userStore.userAppMetadata = {
+    can_access_leadership_dashboard: false,
+    can_access_case_triage: false,
+  };
+
+  (useRootStore as jest.Mock).mockReturnValue({
+    userStore,
+    currentTenantId: "US_MO",
+  });
+  const { getByText } = render(
+    <AuthWall>
+      {/* @ts-ignore */}
+      <div tenantIds={["US_MO"]} views={["anyOtherView"]}>
+        AUTHORIZED
+      </div>
+    </AuthWall>
+  );
+  expect(getByText("Oops Page Not Found")).toBeInTheDocument();
 });

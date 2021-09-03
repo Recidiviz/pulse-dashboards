@@ -15,19 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-@import "./CoreConstants.scss";
+import { observer } from "mobx-react-lite";
+import React from "react";
 
-.CoreLayout {
-  &__header {
-    border-bottom: 1px solid $core-border-color;
-    display: flex;
-    position: fixed;
-    width: 100%;
-    z-index: 800;
-    height: 5rem;
-  }
+import PathwaysLeftPanel from "../PathwaysLeftPanel";
+import PathwaysPageTemplate from "../PathwaysPageTemplate";
 
-  .Footer {
-    background-color: $marble-3;
-  }
-}
+const PageSupervision: React.FC = () => {
+  return (
+    <PathwaysPageTemplate>
+      <PathwaysLeftPanel />
+      <div>Supervision page</div>
+    </PathwaysPageTemplate>
+  );
+};
+
+export default observer(PageSupervision);

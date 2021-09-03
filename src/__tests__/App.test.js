@@ -26,6 +26,9 @@ import StoreProvider, { useRootStore } from "../components/StoreProvider";
 import VerificationNeeded from "../components/VerificationNeeded";
 import UsNDCommunityExplore from "../core/community/Explore";
 import CoreLayout from "../core/CoreLayout";
+import PagePractices from "../core/PagePractices";
+import PagePrison from "../core/PagePrison";
+import PathwaysLayout from "../core/PathwaysLayout";
 import PracticesMethodology from "../core/PracticesMethodology";
 import ProjectionsMethodology from "../core/ProjectionsMethodology/Methodology";
 import LanternLayout from "../lantern/LanternLayout";
@@ -41,6 +44,7 @@ jest.mock("../utils/i18nSettings");
 jest.mock("../lantern/LanternLayout");
 jest.mock("../lantern/Revocations");
 jest.mock("../core/CoreLayout");
+jest.mock("../core/PathwaysLayout");
 jest.mock("../core/community/Explore");
 jest.mock("../components/NotFound");
 jest.mock("@recidiviz/design-system");
@@ -49,6 +53,8 @@ jest.mock("../components/ErrorMessage");
 jest.mock("../components/VerificationNeeded");
 jest.mock("../core/ProjectionsMethodology/Methodology");
 jest.mock("../core/PracticesMethodology");
+jest.mock("../core/PagePrison");
+jest.mock("../core/PagePractices");
 
 describe("App tests", () => {
   const metadataField = `${METADATA_NAMESPACE}app_metadata`;
@@ -61,20 +67,28 @@ describe("App tests", () => {
   const mockVerificationNeededId = "verification-needed-test-id";
   const mockProjectionsMethodologyId = "projections-methodology-id";
   const mockPracticesMethodologyId = "practices-methodology-id";
+  const mockPathwaysPrisonId = "pathways-prison-id";
+  const mockCommunityPracticesId = "community-practices-id";
 
   const RevocationsMock = Revocations.type;
   const LanternLayoutMock = LanternLayout.type;
   const CoreLayoutMock = CoreLayout.type;
+  const PathwaysLayoutMock = PathwaysLayout.type;
   const PracticesMethodologyMock = PracticesMethodology.type;
+  const PagePrisonMock = PagePrison.type;
+  const PagePracticesMock = PagePractices.type;
   let userStore = {};
 
   LanternLayoutMock.mockImplementation(({ children }) => children);
   CoreLayoutMock.mockImplementation(({ children }) => children);
+  PathwaysLayoutMock.mockImplementation(({ children }) => children);
   StoreProvider.mockImplementation(({ children }) => children);
   RevocationsMock.mockReturnValue(mockWithTestId(mockRevocationsId));
   UsNDCommunityExplore.mockReturnValue(
     mockWithTestId(mockNDCommunityExploreId)
   );
+  PagePrisonMock.mockReturnValue(mockWithTestId(mockPathwaysPrisonId));
+  PagePracticesMock.mockReturnValue(mockWithTestId(mockCommunityPracticesId));
   NotFound.mockReturnValue(mockWithTestId(mockNotFoundId));
   Loading.mockReturnValue(mockWithTestId(mockLoadingTestId));
   ErrorMessage.mockReturnValue(mockWithTestId(mockErrorId));
@@ -94,6 +108,7 @@ describe("App tests", () => {
       userAllowedNavigation: {
         community: ["explore", "practices", "projections"],
         methodology: ["practices", "projections"],
+        pathways: ["prison"],
       },
     };
   });
@@ -116,6 +131,7 @@ describe("App tests", () => {
 
       expect(LanternLayoutMock).toHaveBeenCalledTimes(1);
       expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
+      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
       expect(getByTestId(mockRevocationsId)).toBeInTheDocument();
     });
 
@@ -131,12 +147,13 @@ describe("App tests", () => {
 
       expect(LanternLayoutMock).toHaveBeenCalledTimes(1);
       expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
+      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
       expect(getByTestId(mockRevocationsId)).toBeInTheDocument();
     });
   });
 
   describe("Core layout", () => {
-    it("should render ND Layout with community goals page", () => {
+    it("should render Core Layout for a ND user with community explore page", () => {
       window.history.pushState({}, "", "/community/explore");
       const user = { [metadataField]: { state_code: US_ND } };
 
@@ -148,7 +165,42 @@ describe("App tests", () => {
       const { getByTestId } = render(<App />);
       expect(CoreLayoutMock).toHaveBeenCalledTimes(1);
       expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
+      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
       expect(getByTestId(mockNDCommunityExploreId)).toBeInTheDocument();
+    });
+
+    it("should render Core Layout for a ID user with community practices page", () => {
+      window.history.pushState({}, "", "/community/practices");
+      const user = { [metadataField]: { state_code: US_ID } };
+
+      useRootStore.mockReturnValue({
+        userStore: { ...userStore, ...user },
+        currentTenantId: US_ID,
+      });
+
+      const { getByTestId } = render(<App />);
+      expect(CoreLayoutMock).toHaveBeenCalledTimes(1);
+      expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
+      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
+      expect(getByTestId(mockCommunityPracticesId)).toBeInTheDocument();
+    });
+  });
+
+  describe("Pathways layout", () => {
+    it("should render Pathways Layout for a ID user with pathways prison page", () => {
+      window.history.pushState({}, "", "/pathways/prison");
+      const user = { [metadataField]: { state_code: US_ID } };
+
+      useRootStore.mockReturnValue({
+        userStore: { ...userStore, ...user },
+        currentTenantId: US_ID,
+      });
+
+      const { getByTestId } = render(<App />);
+      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(1);
+      expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
+      expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
+      expect(getByTestId(mockPathwaysPrisonId)).toBeInTheDocument();
     });
   });
 
@@ -178,6 +230,23 @@ describe("App tests", () => {
       expect(container.children.length).toBe(1);
       expect(getByTestId(mockNotFoundId)).toBeInTheDocument();
     });
+
+    it("should be rendered when the path and the layout views do not match", () => {
+      window.history.pushState({}, "", "/some-other-view");
+      const user = { [metadataField]: { state_code: US_ID } };
+
+      useRootStore.mockReturnValue({
+        userStore: { ...userStore, ...user },
+        currentTenantId: US_ID,
+      });
+
+      const { getByTestId, container } = render(<App />);
+      expect(container.children.length).toBe(1);
+      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
+      expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
+      expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
+      expect(getByTestId(mockNotFoundId)).toBeInTheDocument();
+    });
   });
 
   describe("Methodology page", () => {
@@ -193,6 +262,7 @@ describe("App tests", () => {
       const { container, getByTestId } = render(<App />);
 
       expect(CoreLayoutMock).toHaveBeenCalledTimes(1);
+      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
       expect(container.children.length).toBe(1);
       expect(getByTestId(mockProjectionsMethodologyId)).toBeInTheDocument();
     });

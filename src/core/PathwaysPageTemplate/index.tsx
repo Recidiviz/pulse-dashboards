@@ -15,19 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-@import "./CoreConstants.scss";
-
-.CoreLayout {
-  &__header {
-    border-bottom: 1px solid $core-border-color;
-    display: flex;
-    position: fixed;
-    width: 100%;
-    z-index: 800;
-    height: 5rem;
-  }
-
-  .Footer {
-    background-color: $marble-3;
-  }
-}
+export { default } from "./PathwaysPageTemplate";

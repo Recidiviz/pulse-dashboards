@@ -15,19 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-@import "./CoreConstants.scss";
+@import "../CoreConstants";
 
-.CoreLayout {
-  &__header {
-    border-bottom: 1px solid $core-border-color;
-    display: flex;
-    position: fixed;
-    width: 100%;
-    z-index: 800;
-    height: 5rem;
+.PathwaysPageTemplate {
+  @media screen and (max-width: $core-breakpoint-lg) {
+    padding-left: 4rem;
+    padding-right: 4rem;
   }
 
-  .Footer {
-    background-color: $marble-3;
+  @media screen and (max-width: $core-breakpoint-sm) {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: row;
   }
 }

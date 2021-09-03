@@ -29,36 +29,36 @@ type propTypes = {
   onClick: (link: string) => void;
 };
 
-const CoreSectionSelector: React.FC<propTypes> = ({ menu, onClick }) => {
+const CoreViewNavigation: React.FC<propTypes> = ({ menu, onClick }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggle = () => setDropdownOpen((prevState) => !prevState);
 
   const currentPath = useLocation().pathname;
-  const currentLabel = currentPath.split("/")[1];
+  const currentView = currentPath.split("/")[1];
   const selectedItem =
-    menu.find((item) => item.label.toLowerCase() === currentLabel) ?? menu[0];
+    menu.find((item) => item.label.toLowerCase() === currentView) ?? menu[0];
   const filteredMenu = menu.filter((item) => item.label !== selectedItem.label);
 
   // TODO(#919): Return keyboard control to section selector
   return (
     <Dropdown
-      className="CoreSectionSelector"
+      className="CoreViewNavigation"
       isOpen={dropdownOpen}
       toggle={toggle}
     >
       <DropdownToggle
-        className="CoreSectionSelector__toggle dropdown-toggle"
+        className="CoreViewNavigation__toggle dropdown-toggle"
         tag="span"
       >
         {selectedItem.label}
       </DropdownToggle>
       <DropdownMenu
-        className="CoreSectionSelector__menu"
+        className="CoreViewNavigation__menu"
         cssModule={{ transform: "translate3d(0px, 24px, 0px)" }}
       >
         {filteredMenu.map(({ label, link }) => (
           <Link key={label} to={link} onClick={() => onClick(link)}>
-            <DropdownItem className="CoreSectionSelector__item" tag="button">
+            <DropdownItem className="CoreViewNavigation__item" tag="button">
               {label}
             </DropdownItem>
           </Link>
@@ -68,4 +68,4 @@ const CoreSectionSelector: React.FC<propTypes> = ({ menu, onClick }) => {
   );
 };
 
-export default React.memo(CoreSectionSelector);
+export default React.memo(CoreViewNavigation);

@@ -19,6 +19,7 @@ import { Loading } from "@recidiviz/design-system";
 import { when } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 import NotFound from "../components/NotFound";
 import { useRootStore } from "../components/StoreProvider";
@@ -28,6 +29,8 @@ import { ERROR_MESSAGES } from "../constants";
  * Verifies authorization before rendering its children.
  */
 const AuthWall: React.FC = ({ children }) => {
+  const { pathname } = useLocation();
+  const currentView = pathname.split("/")[1];
   const { userStore, currentTenantId } = useRootStore();
   const { userAppMetadata } = userStore;
 
@@ -65,10 +68,12 @@ const AuthWall: React.FC = ({ children }) => {
       userStore.setAuthError(ERROR_MESSAGES.unauthorized);
     }
     const authorizedChildren = React.Children.map(children, (child: any) => {
-      const { tenantIds } = child.props;
-      return tenantIds.includes(currentTenantId) ? child : null;
-    });
+      const { tenantIds, views } = child.props;
 
+      return tenantIds.includes(currentTenantId) && views.includes(currentView)
+        ? child
+        : null;
+    });
     return authorizedChildren && authorizedChildren.length > 0 ? (
       <>{authorizedChildren}</>
     ) : (

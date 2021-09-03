@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2020 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,19 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-@import "./CoreConstants.scss";
+import "./PathwaysPageTemplate.scss";
 
-.CoreLayout {
-  &__header {
-    border-bottom: 1px solid $core-border-color;
-    display: flex;
-    position: fixed;
-    width: 100%;
-    z-index: 800;
-    height: 5rem;
-  }
+import PropTypes from "prop-types";
+import React from "react";
 
-  .Footer {
-    background-color: $marble-3;
-  }
-}
+const PathwaysPageTemplate: React.FC = ({ children }) => (
+  <div className="main-content PathwaysPageTemplate">
+    <div className="PathwaysPageTemplate__body">{children}</div>
+  </div>
+);
+
+PathwaysPageTemplate.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+export default PathwaysPageTemplate;

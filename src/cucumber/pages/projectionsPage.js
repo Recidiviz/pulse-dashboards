@@ -7,12 +7,12 @@ class ProjectionsPage extends Page {
   }
 
   get viewSelector() {
-    return $(".CoreSectionSelector");
+    return $(".CoreViewNavigation");
   }
 
   selectView(view) {
     this.viewSelector.click();
-    const option = $(`button.CoreSectionSelector__item=${view}`);
+    const option = $(`button.CoreViewNavigation__item=${view}`);
     option.waitForClickable();
     option.click();
   }

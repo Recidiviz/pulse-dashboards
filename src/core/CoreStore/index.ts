@@ -20,7 +20,13 @@ import type TenantStore from "../../RootStore/TenantStore";
 import type UserStore from "../../RootStore/UserStore";
 import { TenantId } from "../models/types";
 import { PopulationFilterValues } from "../types/filters";
-import { CORE_VIEWS, CoreView, getViewFromPathname } from "../views";
+import {
+  CORE_VIEWS,
+  CoreView,
+  getViewFromPathname,
+  PATHWAYS_SECTIONS,
+  PathwaysSection,
+} from "../views";
 import FiltersStore from "./FiltersStore";
 import MetricsStore from "./MetricsStore";
 import PagePracticesStore from "./PagePracticesStore";
@@ -46,6 +52,8 @@ export default class CoreStore {
 
   view: CoreView = CORE_VIEWS.facilities;
 
+  section: PathwaysSection = PATHWAYS_SECTIONS.populationOverTime;
+
   constructor({ userStore, tenantStore }: CoreStoreProps) {
     makeAutoObservable(this);
 
@@ -66,10 +74,16 @@ export default class CoreStore {
     });
 
     this.setView = this.setView.bind(this);
+
+    this.setSection = this.setSection.bind(this);
   }
 
   setView(pathname: string): void {
     this.view = getViewFromPathname(pathname);
+  }
+
+  setSection(section: string): void {
+    this.section = section;
   }
 
   get filters(): PopulationFilterValues {

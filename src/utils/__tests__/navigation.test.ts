@@ -14,8 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Navigation } from "../../core/views";
-import { RoutePermission } from "../../tenants";
+import { Navigation, RoutePermission } from "../../core/types/navigation";
 import {
   convertSlugToId,
   convertToSlug,

@@ -16,13 +16,6 @@
 // =============================================================================
 import { SimulationCompartment } from "./models/types";
 
-export type Navigation = {
-  goals?: string[];
-  community?: string[];
-  facilities?: string[];
-  methodology?: string[];
-};
-
 export const CORE_VIEWS: Record<string, string> = {
   community: "community",
   facilities: "facilities",
@@ -32,17 +25,32 @@ export const CORE_VIEWS: Record<string, string> = {
 
 export type CoreView = keyof typeof CORE_VIEWS;
 
+export const PATHWAYS_VIEWS: Record<string, string> = {
+  pathways: "pathways",
+} as const;
+
 export const CORE_PATHS: Record<string, string> = {
   goals: "/goals",
   communityExplore: "/community/explore",
   communityProjections: "/community/projections",
-  communityPractices: "/community/practices/:entityId?",
+  communityPractices: "/community/practices",
   facilitiesExplore: "/facilities/explore",
   facilitiesProjections: "/facilities/projections",
   methodology: "/methodology/:dashboard",
   methodologyPractices: "/methodology/practices",
   methodologyProjections: "/methodology/projections",
 };
+
+export const PATHWAYS_PATHS: Record<string, string> = {
+  pathwaysPrison: "/pathways/prison/:sectionId?",
+  pathwaysSupervision: "/pathways/supervision/:sectionId?",
+};
+
+export const PATHWAYS_SECTIONS: Record<string, string> = {
+  populationOverTime: "populationOverTime",
+};
+
+export type PathwaysSection = keyof typeof PATHWAYS_SECTIONS;
 
 const pathnameToView: Record<string, string> = {
   [CORE_PATHS.goals]: CORE_VIEWS.goals,

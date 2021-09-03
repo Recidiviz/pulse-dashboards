@@ -15,20 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./CorePageSelector.scss";
+import "./PageNavigation.scss";
 
 import cx from "classnames";
 import React from "react";
 import { Link } from "react-router-dom";
 
 type propTypes = {
-  currentSection: string;
+  currentView: string;
   currentPage: string;
   pageOptions: string[];
 };
 
-const CorePageSelector: React.FC<propTypes> = ({
-  currentSection,
+const PageNavigation: React.FC<propTypes> = ({
+  currentView,
   currentPage,
   pageOptions,
 }) => {
@@ -36,13 +36,13 @@ const CorePageSelector: React.FC<propTypes> = ({
     str.charAt(0).toUpperCase() + str.slice(1);
 
   return (
-    <ul className="CorePageSelector">
+    <ul className="PageNavigation">
       {pageOptions.map((page) => (
         <li key={page}>
           <Link
-            to={`/${currentSection}/${page}`}
-            className={cx("CorePageSelector--Option", {
-              "CorePageSelector--Option-Selected":
+            to={`/${currentView}/${page}`}
+            className={cx("PageNavigation--Option", {
+              "PageNavigation--Option-Selected":
                 (currentPage && currentPage.toLowerCase()) === page,
             })}
           >
@@ -54,4 +54,4 @@ const CorePageSelector: React.FC<propTypes> = ({
   );
 };
 
-export default CorePageSelector;
+export default PageNavigation;

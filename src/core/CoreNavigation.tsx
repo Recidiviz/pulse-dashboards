@@ -25,9 +25,10 @@ import recidivizLogo from "../assets/static/images/Logo.svg";
 import { useRootStore } from "../components/StoreProvider";
 import TopBarUserMenuForAuthenticatedUser from "../components/TopBar/TopBarUserMenuForAuthenticatedUser";
 import flags from "../flags";
-import CorePageSelector from "./CorePageSelector";
-import CoreSectionSelector from "./CoreSectionSelector";
 import { useCoreStore } from "./CoreStoreProvider";
+import CoreViewNavigation from "./CoreViewNavigation";
+import PageNavigation from "./PageNavigation";
+import { CORE_VIEWS } from "./views";
 
 const CoreNavigation: React.FC = () => {
   const { pathname } = useLocation();
@@ -36,17 +37,21 @@ const CoreNavigation: React.FC = () => {
   if (!currentTenantId) return null;
 
   const navigationLayout = userStore.userAllowedNavigation;
-  const [currentSection, currentPage] = pathname.split("/").slice(1, 3);
-  const pageOptions = navigationLayout[currentSection] ?? [];
-
-  const menu = Object.entries(navigationLayout).map((entry) => {
+  const [currentView, currentPage] = pathname.split("/").slice(1, 3);
+  const pageOptions = navigationLayout[currentView] ?? [];
+  const menu = [] as {
+    label: string;
+    link: string;
+  }[];
+  Object.entries(navigationLayout).forEach((entry) => {
     const page = entry[0];
     const options = entry[1];
-    return {
+    if (!Object.values(CORE_VIEWS).includes(page)) return;
+    menu.push({
       label: page[0].toUpperCase() + page.slice(1),
       // @ts-ignore
       link: `/${page}${options.length ? `/${options[0]}` : ""}`,
-    };
+    });
   });
 
   return (
@@ -61,15 +66,15 @@ const CoreNavigation: React.FC = () => {
             />
           </Link>
         </div>
-        <CoreSectionSelector
+        <CoreViewNavigation
           onClick={(link: string) => setView(link)}
           menu={menu}
         />
       </div>
       <div className="CoreNavigation__right">
         {flags.enableCoreTabNavigation && (
-          <CorePageSelector
-            currentSection={currentSection}
+          <PageNavigation
+            currentView={currentView}
             currentPage={currentPage ?? ""}
             pageOptions={pageOptions}
           />

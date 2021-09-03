@@ -25,8 +25,8 @@ import qs from "qs";
 
 import { fetchOfflineUser } from "../api/fetchOfflineUser";
 import { ERROR_MESSAGES } from "../constants/errorMessages";
-import { Navigation } from "../core/views";
-import tenants, { RoutePermission } from "../tenants";
+import { Navigation, RoutePermission } from "../core/types/navigation";
+import tenants from "../tenants";
 import { isOfflineMode } from "../utils/isOfflineMode";
 import { getAllowedNavigation } from "../utils/navigation";
 import type RootStore from ".";

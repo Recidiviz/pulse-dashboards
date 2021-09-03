@@ -19,16 +19,16 @@ import { mount } from "enzyme";
 import React from "react";
 import { Link, StaticRouter } from "react-router-dom";
 
-import CorePageSelector from "../CorePageSelector";
+import PageNavigation from "../PageNavigation";
 
 describe("CoreLayout tests", () => {
   const mockSection = "section";
   const mockPageOptions = ["page1", "page2", "page3"];
 
-  const renderCorePageSelector = (currentPage) => {
+  const renderPageNavigation = (currentPage) => {
     return mount(
       <StaticRouter>
-        <CorePageSelector
+        <PageNavigation
           currentPage={currentPage}
           currentSection={mockSection}
           pageOptions={mockPageOptions}
@@ -38,24 +38,24 @@ describe("CoreLayout tests", () => {
   };
 
   it("Should render a link for each page option", () => {
-    const selector = renderCorePageSelector("page1");
+    const selector = renderPageNavigation("page1");
 
     expect(selector.find(Link)).toHaveLength(3);
   });
 
   it("Add bar above current page", () => {
-    const selector = renderCorePageSelector("page1");
+    const selector = renderPageNavigation("page1");
 
-    expect(
-      selector.find("Link.CorePageSelector--Option-Selected")
-    ).toHaveLength(1);
+    expect(selector.find("Link.PageNavigation--Option-Selected")).toHaveLength(
+      1
+    );
   });
 
   it("Don't add bars above any page selectors if not in one", () => {
-    const selector = renderCorePageSelector("page4");
+    const selector = renderPageNavigation("page4");
 
-    expect(
-      selector.find("Link.CorePageSelector--Option-Selected")
-    ).toHaveLength(0);
+    expect(selector.find("Link.PageNavigation--Option-Selected")).toHaveLength(
+      0
+    );
   });
 });

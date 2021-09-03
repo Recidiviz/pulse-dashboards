@@ -19,15 +19,13 @@ import {
   METRIC_TYPES,
   PracticesMetric,
 } from "./core/PagePractices/types";
-import { Navigation } from "./core/views";
+import { Navigation } from "./core/types/navigation";
 import * as core from "./RootStore/TenantStore/coreTenants";
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
 import { TenantId } from "./RootStore/types";
 
 export const RECIDIVIZ_TENANT = "RECIDIVIZ";
 export const LANTERN = "LANTERN";
-
-export type RoutePermission = (string | any)[];
 
 type Tenants = {
   [key in TenantId]: {
@@ -55,8 +53,16 @@ const TENANTS: Tenants = {
       community: ["practices", "projections"],
       facilities: ["projections"],
       methodology: ["projections", "practices"],
+      pathways: ["prison", "supervision"],
+      prison: ["populationOverTime", "gender"],
+      supervision: ["populationOverTime"],
     },
-    pagesWithRestrictions: ["projections", "practices"],
+    pagesWithRestrictions: [
+      "projections",
+      "practices",
+      "prison",
+      "supervision",
+    ],
     practicesMetrics: [
       {
         name: METRIC_TYPE_LABELS.OVERALL,
@@ -104,7 +110,7 @@ const TENANTS: Tenants = {
       methodology: ["practices"],
       facilities: ["explore"],
     },
-    pagesWithRestrictions: ["practices"],
+    pagesWithRestrictions: ["practices", "prison", "supervision"],
     practicesMetrics: [
       {
         name: METRIC_TYPE_LABELS.OVERALL,

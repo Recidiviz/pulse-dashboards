@@ -14,20 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Navigation } from "../core/views";
+import { Navigation, RoutePermission } from "../core/types/navigation";
+import { CORE_VIEWS } from "../core/views";
 import { TenantId } from "../RootStore/types";
-import TENANTS, { RoutePermission } from "../tenants";
+import TENANTS from "../tenants";
 
 export function getPathsFromNavigation(
   userAllowedNavigation: Navigation
 ): string[] {
   if (!userAllowedNavigation) return [];
   return Object.entries(userAllowedNavigation).flatMap((navItem) => {
-    const section: string = navItem[0];
+    const view: string = navItem[0];
     const pages: string[] = navItem[1] || [];
     return pages.length
-      ? pages.map((page) => `/${section}/${page}`)
-      : [`/${section}`];
+      ? pages.map((page) => `/${view}/${page}`)
+      : [`/${view}`];
   });
 }
 
@@ -40,25 +41,34 @@ export function getAllowedNavigation(
   const userAllowedNavigation = routes.reduce(
     (acc, route) => {
       const [fullRoute, permission] = route;
-      const [section, page] = fullRoute.split("_");
+      const [view, page] = fullRoute.split("_");
       if (permission) {
         // eslint-disable-next-line no-unused-expressions
-        acc[section as keyof Navigation]?.push(page);
-        // eslint-disable-next-line no-unused-expressions
-        acc.methodology?.push(page);
+        acc[view as keyof Navigation]?.push(page);
+        if (Object.keys(CORE_VIEWS).includes(view)) {
+          // eslint-disable-next-line no-unused-expressions
+          acc.methodology?.push(page);
+        }
       }
       return acc;
     },
-    { community: [], facilities: [], methodology: [] } as Navigation
+    {
+      community: [],
+      facilities: [],
+      methodology: [],
+      pathways: [],
+      prison: [],
+      supervision: [],
+    } as Navigation
   );
   const allowedNavigation = Object.fromEntries(
-    Object.entries(tenantAllowedNavigation).map(([section, pages]) => {
+    Object.entries(tenantAllowedNavigation).map(([view, pages]) => {
       return [
-        section,
+        view,
         pages?.filter(
           (p) =>
             (pagesWithRestrictions && !pagesWithRestrictions.includes(p)) ||
-            userAllowedNavigation[section as keyof Navigation]?.includes(p)
+            userAllowedNavigation[view as keyof Navigation]?.includes(p)
         ),
       ];
     })
@@ -74,9 +84,9 @@ export function getAllowedNavigation(
 export function getPathWithoutParams(pathname: string): string {
   const navItems = pathname.split("/");
   // navItems[0] is "" because of the leading /
-  const section: string = navItems[1];
+  const view: string = navItems[1];
   const page: string = navItems[2];
-  return page ? `/${section}/${page}` : `/${section}`;
+  return page ? `/${view}/${page}` : `/${view}`;
 }
 
 export function convertToSlug(text: string): string {
