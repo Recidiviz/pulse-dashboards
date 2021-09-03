@@ -191,6 +191,15 @@ If you are running in offline mode, you may need to run through the following st
    :> redis-cli shutdown
    ```
 
+To download data/fixture files to be used offline, run the `download_fixture_with_metadata.sh` script. The only argument to the script is the path to the file in GCS. You must have credentials to access GCS, and `gsutil` installed.
+
+The script may be used to download both ".json" and ".txt" files. If downloading a ".txt" file, it can take some time to download and process the metadata json, so please be patient.
+
+You may also need to install `jq`, a bash command line json processor. It can be installed using homebrew, `brew install jq`.
+
+Example usage:
+`server/core/demo_data/download_fixture_with_metadata.sh gs://some-data-bucket/US_ID/vitals_summaries.txt`
+
 ## Deploys
 
 As noted above, the Dashboard is two components: a React frontend and a Node/Express backend providing a thin API. The app can be run locally, in staging, in demo, and in production. Deploying to demo, staging and production are very similar, as described below.
