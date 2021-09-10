@@ -25,21 +25,17 @@ import { useCoreStore } from "./CoreStoreProvider";
 import DetailsGroup from "./DetailsGroup";
 import DownloadDataButton from "./DownloadDataButton";
 import MethodologyLink from "./MethodologyLink";
-import { PopulationFilters } from "./types/filters";
+import { EnabledFilters, PopulationFilters } from "./types/filters";
 import { getFilterOption } from "./utils/filterOptions";
-import { CORE_PATHS, CORE_VIEWS } from "./views";
+import { CORE_PATHS } from "./views";
 
 const PopulationFilterBar: React.FC<{
-  view: keyof typeof CORE_VIEWS;
   filterOptions: PopulationFilters;
-}> = ({ filterOptions, view }) => {
-  const { filtersStore, pageProjectionsStore } = useCoreStore();
+  handleDownload: () => Promise<void>;
+  enabledFilters?: EnabledFilters;
+}> = ({ filterOptions, handleDownload, enabledFilters = [] }) => {
+  const { filtersStore } = useCoreStore();
   const { filters } = filtersStore;
-  const { downloadData } = pageProjectionsStore;
-  const filterTypes = Object.keys(filterOptions) as Array<
-    keyof PopulationFilters
-  >;
-  const handleDownload = async () => downloadData();
 
   return (
     <FilterBar
@@ -50,12 +46,11 @@ const PopulationFilterBar: React.FC<{
         </DetailsGroup>
       }
     >
-      {filterTypes.map((filterType) => {
+      {enabledFilters.map((filterType) => {
         const filter = filterOptions[filterType];
-        if (!filter.enabledViews.includes(view)) return null;
         return (
           <Filter
-            key={`${view}-${filterType}`}
+            key={`${filterType}`}
             title={filter.title}
             width={filter.width}
           >

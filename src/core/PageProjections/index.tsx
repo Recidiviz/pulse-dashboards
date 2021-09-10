@@ -16,20 +16,17 @@
 // =============================================================================
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { useLocation } from "react-router-dom";
 
 import { useCoreStore } from "../CoreStoreProvider";
 import PageTemplate from "../PageTemplate";
-import PopulationFilterBar from "../PopulationFilterBar";
+import PathwaysFilterBar from "../PathwaysFilterBar";
 // TODO(recidiviz-data/issues/8751): Use PopulationSummaryMetrics when data is valid
 import PopulationSummaryMetrics from "../PopulationSummaryMetrics/TempPopulationSummaryMetrics";
 import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
 import filterOptions from "../utils/filterOptions";
-import { getViewFromPathname } from "../views";
 import PopulationProjectionLastUpdated from "./PopulationProjectionLastUpdated";
 
 const PageProjections: React.FC = () => {
-  const { pathname } = useLocation();
   const { currentTenantId, metricsStore } = useCoreStore();
   const {
     isLoading,
@@ -38,15 +35,18 @@ const PageProjections: React.FC = () => {
     // summaries,
     simulationDate,
   } = metricsStore.projections;
+  const { pageProjectionsStore } = useCoreStore();
+  const { downloadData, enabledFilters } = pageProjectionsStore;
 
   if (isLoading) {
     return (
       <PageTemplate
         filters={
-          <PopulationFilterBar
-            view={getViewFromPathname(pathname)}
+          <PathwaysFilterBar
             // @ts-ignore
             filterOptions={filterOptions[currentTenantId]}
+            enabledFilters={enabledFilters}
+            handleDownload={downloadData}
           />
         }
       >
@@ -60,10 +60,11 @@ const PageProjections: React.FC = () => {
   return (
     <PageTemplate
       filters={
-        <PopulationFilterBar
-          view={getViewFromPathname(pathname)}
+        <PathwaysFilterBar
           // @ts-ignore
           filterOptions={filterOptions[currentTenantId]}
+          enabledFilters={enabledFilters}
+          handleDownload={downloadData}
         />
       }
     >

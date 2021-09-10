@@ -16,8 +16,11 @@
 // =============================================================================
 import { makeAutoObservable } from "mobx";
 
+import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
 import ProjectionsMetrics from "../models/ProjectionsMetrics";
+import { createProjectionTimeSeries } from "../models/utils";
 import VitalsMetrics from "../models/VitalsMetrics";
+import { FILTER_TYPES } from "../utils/constants";
 import type CoreStore from ".";
 
 export default class MetricsStore {
@@ -40,6 +43,20 @@ export default class MetricsStore {
       tenantId: this.rootStore.currentTenantId,
       sourceEndpoint: "projections",
       rootStore: this.rootStore,
+    });
+  }
+
+  get prisonPopulationOverTime(): PopulationOverTimeMetric {
+    return new PopulationOverTimeMetric({
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "prison_population_projection_time_series",
+      rootStore: this.rootStore,
+      dataTransformer: createProjectionTimeSeries,
+      enabledFilters: [
+        FILTER_TYPES.TIME_PERIOD,
+        FILTER_TYPES.LEGAL_STATUS,
+        FILTER_TYPES.GENDER,
+      ],
     });
   }
 }

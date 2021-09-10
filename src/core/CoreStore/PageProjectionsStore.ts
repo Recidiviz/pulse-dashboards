@@ -28,10 +28,10 @@ import {
   formatMonthAndYear,
   getRecordDate,
 } from "../PopulationTimeSeriesChart/helpers";
-import { PopulationFilters } from "../types/filters";
+import { EnabledFilters, PopulationFilters } from "../types/filters";
 import { FILTER_TYPES } from "../utils/constants";
 import filterOptions from "../utils/filterOptions";
-import { getCompartmentFromView } from "../views";
+import { CORE_VIEWS, getCompartmentFromView } from "../views";
 import type CoreStore from ".";
 
 export default class PageProjectionsStore {
@@ -42,6 +42,23 @@ export default class PageProjectionsStore {
     this.rootStore = rootStore;
     this.fetchMethodologyPDF = this.fetchMethodologyPDF.bind(this);
     this.downloadData = this.downloadData.bind(this);
+  }
+
+  get enabledFilters(): EnabledFilters {
+    const { view } = this.rootStore;
+    const enabledFiltersByView = {
+      [CORE_VIEWS.community]: [
+        FILTER_TYPES.TIME_PERIOD,
+        FILTER_TYPES.GENDER,
+        FILTER_TYPES.SUPERVISION_TYPE,
+      ],
+      [CORE_VIEWS.facilities]: [
+        FILTER_TYPES.TIME_PERIOD,
+        FILTER_TYPES.GENDER,
+        FILTER_TYPES.LEGAL_STATUS,
+      ],
+    };
+    return enabledFiltersByView[view];
   }
 
   get timeSeriesDownloadableData(): DownloadableData | undefined {

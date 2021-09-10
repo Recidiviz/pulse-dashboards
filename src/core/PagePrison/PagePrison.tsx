@@ -18,14 +18,32 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { useCoreStore } from "../CoreStoreProvider";
+import ModelHydrator from "../ModelHydrator";
+import PathwaysFilterBar from "../PathwaysFilterBar";
 import PathwaysLeftPanel from "../PathwaysLeftPanel";
 import PathwaysPageTemplate from "../PathwaysPageTemplate";
+import filterOptions from "../utils/filterOptions";
 
 const PagePrison: React.FC = () => {
+  const { currentTenantId, metricsStore } = useCoreStore();
+  const model = metricsStore.prisonPopulationOverTime;
+  const { enabledFilters, dataSeries, download } = model;
+
   return (
     <PathwaysPageTemplate>
-      <PathwaysLeftPanel />
-      <div>Prison page</div>
+      <ModelHydrator model={model}>
+        <div>
+          <PathwaysLeftPanel />
+          <PathwaysFilterBar
+            // @ts-ignore
+            filterOptions={filterOptions[currentTenantId]}
+            enabledFilters={enabledFilters}
+            handleDownload={download}
+          />
+          <div>Prison page</div>
+        </div>
+      </ModelHydrator>
     </PathwaysPageTemplate>
   );
 };

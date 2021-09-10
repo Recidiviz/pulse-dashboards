@@ -11,6 +11,7 @@ function getMetricsByType(metricType, stateCode) {
     case COLLECTIONS.FACILITIES_EXPLORE:
     case COLLECTIONS.POPULATION_PROJECTIONS:
     case COLLECTIONS.VITALS:
+    case COLLECTIONS.PATHWAYS:
       return new BaseMetrics(metricType, stateCode);
     default:
       throw new Error(`No such metric type ${metricType} for ${stateCode}`);

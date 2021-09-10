@@ -70,7 +70,7 @@ export type HistoricalSummaryRecord = {
 export type PopulationProjectionTimeSeriesRecord = {
   year: number;
   month: number;
-  compartment: SimulationCompartment;
+  compartment?: SimulationCompartment;
   legalStatus: string;
   gender: Gender;
   simulationTag: string;
@@ -128,3 +128,14 @@ export type ViewMethodology = {
     content: MethodologyContent[];
   };
 };
+
+/**
+ * Describes the hydration state and mechanism,
+ * but not what the hydrated object will look like
+ * (because it may vary by model)
+ */
+export interface Hydratable {
+  isLoading?: boolean;
+  error?: Error;
+  hydrate: () => void;
+}

@@ -18,6 +18,9 @@ import type FiltersStore from "../CoreStore/FiltersStore";
 import { Gender } from "../models/types";
 import { FILTER_TYPES } from "../utils/constants";
 
+type ValueOf<T> = T[keyof T];
+export type EnabledFilters = ValueOf<typeof FILTER_TYPES>[];
+
 export type PopulationFilterValues = {
   timePeriod: string;
   gender: Gender;

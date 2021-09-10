@@ -50,7 +50,7 @@ export default class CoreStore {
 
   pageProjectionsStore: PageProjectionsStore;
 
-  view: CoreView = CORE_VIEWS.facilities;
+  view: CoreView = CORE_VIEWS.community;
 
   section: PathwaysSection = PATHWAYS_SECTIONS.populationOverTime;
 

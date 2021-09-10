@@ -148,6 +148,14 @@ const VITALS_COLLECTION = {
   },
 };
 
+const PATHWAYS_COLLECTIONS = {
+  [COLLECTIONS.PATHWAYS]: {
+    prison_population_projection_time_series: {
+      filename: "prison_population_projection_time_series.txt",
+    },
+  },
+};
+
 const CORE_COLLECTIONS = {
   [COLLECTIONS.GOALS]: {
     admissions_by_type_by_month: {
@@ -283,6 +291,7 @@ function getCollections(stateCode = null) {
           },
         },
         ...VITALS_COLLECTION,
+        ...PATHWAYS_COLLECTIONS,
       };
     case stateCodes.US_ND:
       return { ...CORE_COLLECTIONS, ...VITALS_COLLECTION };

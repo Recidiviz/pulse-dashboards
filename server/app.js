@@ -167,6 +167,7 @@ app.get(
   `${stateApiBaseRoute}projections/methodology.pdf`,
   api.populationProjectionsMethodology
 );
+app.get(`${stateApiBaseRoute}pathways/:file`, api.pathways);
 app.post("/api/generateFileLink", upload.single("zip"), api.generateFileLink);
 app.get("/file/:name", api.upload);
 

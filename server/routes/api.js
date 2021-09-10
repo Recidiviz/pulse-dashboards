@@ -201,6 +201,17 @@ function vitals(req, res) {
   );
 }
 
+function pathways(req, res) {
+  const { stateCode, file: metricName } = req.params;
+  const metricType = "pathways";
+  const cacheKey = getCacheKey({ stateCode, metricType });
+  cacheResponse(
+    cacheKey,
+    () => fetchMetrics(stateCode, metricType, metricName, isOfflineMode),
+    responder(res)
+  );
+}
+
 function generateFileLink(req, res) {
   const { file } = req;
   const fileName = `${uuid.v4()}-${file.originalname}`;
@@ -263,6 +274,7 @@ module.exports = {
   populationProjections,
   populationProjectionsMethodology,
   vitals,
+  pathways,
   responder,
   refreshCache,
   generateFileLink,
