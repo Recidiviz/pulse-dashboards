@@ -26,6 +26,7 @@ import useIntercom from "../hooks/useIntercom";
 import CoreStoreProvider from "./CoreStoreProvider";
 import ErrorBoundary from "./ErrorBoundary";
 import PathwaysNavigation from "./PathwaysNavigation";
+import ViewNavigation from "./ViewNavigation";
 
 interface Props {
   children: React.ReactElement;
@@ -37,14 +38,15 @@ const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
     <CoreStoreProvider>
       <ErrorBoundary>
         <div id="app" className="PathwaysLayout">
-          <div className="page-container">
+          <ViewNavigation />
+          <div className="PathwaysLayout__main">
             <div className="PathwaysLayout__header">
               <PathwaysNavigation />
             </div>
             <IE11Banner />
             {children}
+            <Footer />
           </div>
-          <Footer />
         </div>
       </ErrorBoundary>
     </CoreStoreProvider>

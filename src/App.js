@@ -90,7 +90,7 @@ const App = () => (
               </Switch>
             </LanternLayout>
 
-            <PathwaysLayout tenantIds={CORE_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat(SHARED_VIEWS)}>
+            <PathwaysLayout tenantIds={CORE_TENANTS} views={Object.values(PATHWAYS_VIEWS)}>
               <Switch>
                 <ProtectedRoute path={PATHWAYS_PATHS.pathwaysPrison} component={PagePrison} />
                 <ProtectedRoute path={PATHWAYS_PATHS.pathwaysSupervision} component={PageSupervision} />

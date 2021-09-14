@@ -15,32 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-@import "./CoreConstants.scss";
-
-.PathwaysLayout {
-  display: flex;
-  min-height: 100vh;
-
-  &__main {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-left: 5rem;
-  }
-
-  &__header {
-    border-bottom: 1px solid $core-border-color;
-    display: flex;
-    width: 100%;
-    height: 5rem;
-  }
-
-  .IE11Banner {
-    padding-top: 0;
-    background-color: $marble-3;
-  }
-
-  .Footer {
-    background-color: $marble-3;
-  }
-}
+export { default } from "./ViewNavigation";
