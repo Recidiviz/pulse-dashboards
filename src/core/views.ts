@@ -29,6 +29,15 @@ export const PATHWAYS_VIEWS: Record<string, string> = {
   pathways: "pathways",
 } as const;
 
+export const PathwaysPageIdList = [
+  "prison",
+  "supervision",
+  "supervisionToLiberty",
+  "supervisionToPrison",
+] as const;
+
+export type PathwaysPageId = typeof PathwaysPageIdList[number];
+
 export const CORE_PATHS: Record<string, string> = {
   goals: "/goals",
   communityExplore: "/community/explore",

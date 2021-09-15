@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { ViewMethodology } from "../models/types";
+import { ViewMethodology } from "../../models/types";
 
 const CASE_TRIAGE_METHODOLOGY_URL =
   "https://drive.google.com/file/d/11e-fmxSlACDzwSm-X6qD1OF7vFi62qOU/view";

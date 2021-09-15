@@ -18,13 +18,16 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { retrievePageContent } from "../content/retrieveContent";
 import PageTemplate from "../PageTemplate";
 import PathwaysLeftPanel from "../PathwaysLeftPanel";
 
 const PageSupervision: React.FC = () => {
+  const { title, summary } = retrievePageContent("supervision");
   return (
     <PageTemplate leftPanel={<PathwaysLeftPanel />}>
-      <div>Supervision page</div>
+      <div>{title} page</div>
+      <div>{summary}</div>
     </PageTemplate>
   );
 };

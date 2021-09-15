@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { ViewMethodology } from "../models/types";
+import { ViewMethodology } from "../../models/types";
 
 export const US_ND: ViewMethodology = {
   practices: {

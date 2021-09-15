@@ -16,8 +16,8 @@
 // =============================================================================
 import { TenantId } from "../../RootStore/types";
 import { ViewMethodology } from "../models/types";
-import { US_ID } from "./usIdMethodology";
-import { US_ND } from "./usNdMethodology";
+import { US_ID } from "./methodology/usIdMethodology";
+import { US_ND } from "./methodology/usNdMethodology";
 
 type TenantMethodology = {
   [key in TenantId]: ViewMethodology;
