@@ -18,24 +18,22 @@
  *
  */
 
-import { PageCopy } from "../../types";
+import { StateSpecificPageCopy } from "../types";
 
-const content: PageCopy = {
+const content: StateSpecificPageCopy = {
   prison: {
-    title: "Prison",
-    summary: "Default prison summary",
+    summary: `This chart includes individuals who are admitted to IDOC facilities
+      and CAPP, including termers, riders, parole violators, and people held in county
+      jails under IDOC jurisdiction.`,
   },
   supervision: {
-    title: "Supervision",
-    summary: "Default supervision summary",
-  },
-  supervisionToLiberty: {
-    title: "Supervision to Liberty",
-    summary: "Default supervision to liberty summary",
+    summary: `This charts includes all individuals that are currently on probation
+      and/or parole, including those in the Limited Supervision Unit.`,
   },
   supervisionToPrison: {
-    title: "Supervision to Prison",
-    summary: "Default supervision to prison summary",
+    summary: `This charts includes people who have been incarcerated in a IDOC facility
+      because their parole or probation was revoked. Revocations are counted when the
+      person was admitted to a facility, not when the violation occurred.`,
   },
 };
 

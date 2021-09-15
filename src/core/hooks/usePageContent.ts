@@ -18,20 +18,28 @@
  *
  */
 
-import { retrievePageContent } from "../retrieveContent";
+import { useRootStore } from "../../components/StoreProvider";
+import { PageContent, StateSpecificPageCopy } from "../content/types";
+import defaultContent from "../content/view/default";
+import IdContent from "../content/view/us_id";
+import { PathwaysPageId } from "../views";
 
-jest.mock("../view/default");
+const contentOverrides: { [category: string]: StateSpecificPageCopy } = {
+  US_ID: IdContent,
+};
 
-describe("Tests for retrieveViewContent()", () => {
-  it("retrieves the default Prison copy.", () => {
-    const { title, summary } = retrievePageContent("prison");
-    expect(title).toBe("Prison");
-    expect(summary).toBe("Prison page summary");
-  });
+export default function usePageContent(viewName: PathwaysPageId): PageContent {
+  const { currentTenantId } = useRootStore();
 
-  it("retrieves the default Supervision to Liberty copy.", () => {
-    const { title, summary } = retrievePageContent("supervisionToLiberty");
-    expect(title).toBe("Supervision to Liberty");
-    expect(summary).toBe("Supervision to Liberty page summary");
-  });
-});
+  if (
+    currentTenantId in contentOverrides &&
+    viewName in contentOverrides[currentTenantId]
+  ) {
+    return {
+      ...defaultContent[viewName],
+      ...contentOverrides[currentTenantId][viewName],
+    };
+  }
+
+  return defaultContent[viewName];
+}

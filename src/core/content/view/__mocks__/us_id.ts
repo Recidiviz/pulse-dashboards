@@ -18,10 +18,18 @@
  *
  */
 
-import { PathwaysPageId } from "../views";
-import { PageContent } from "./types";
-import defaultContent from "./view/default";
+import { StateSpecificPageCopy } from "../../types";
 
-export function retrievePageContent(pageName: PathwaysPageId): PageContent {
-  return defaultContent[pageName];
-}
+const content: StateSpecificPageCopy = {
+  prison: {
+    summary: "ID-specific prison summary",
+  },
+  supervision: {
+    summary: "ID-specific supervision summary",
+  },
+  supervisionToPrison: {
+    summary: "ID-specific supervision to prison summary",
+  },
+};
+
+export default content;

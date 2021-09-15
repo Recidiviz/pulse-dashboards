@@ -28,3 +28,7 @@ export type PageContent = {
 export type PageCopy = {
   [key in PathwaysPageId]: PageContent;
 };
+
+export type StateSpecificPageCopy = {
+  [key in PathwaysPageId]?: Partial<PageContent>;
+};

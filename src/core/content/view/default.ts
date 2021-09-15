@@ -25,7 +25,7 @@ const content: PageCopy = {
     title: "Prison",
     summary: `This chart includes individuals who are admitted to state facilities,
       including termers, riders, parole violators, and people held in county jails
-      under state juristiction.`,
+      under state jurisdiction.`,
   },
   supervision: {
     title: "Supervision",
