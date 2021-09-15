@@ -7,8 +7,6 @@
   font-family: Libre Franklin, sans-serif;
   font-weight: 500;
   letter-spacing: -0.01em;
-  margin-left: 10px;
-  margin-right: 10px;
   width: 100%;
 
 
@@ -28,21 +26,22 @@
 
   &__Title {
     color: $pine-1;
+    font: $font-ui-sans-16;
   }
 
   &__Point {
-    fill: $data-forest;
-    r: 0.25rem;
+    fill: $indigo;
+    r: 0.3rem;
   }
 
   &__HistoricalLine,
   &__ProjectedLine {
-    stroke: $data-forest;
-    stroke-width: 1;
+    stroke: $indigo;
+    stroke-width: 2;
   }
 
   &__ProjectedLine {
-    stroke-dasharray: 7;
+    stroke-dasharray: 7 9;
   }
 
   .data-visualization {
@@ -84,7 +83,7 @@
 
   .annotation-layer {
     .uncertainty {
-      fill: $data-forest-uncertainty;
+      fill: $indigo-10;
     }
 
     .frame-hover {

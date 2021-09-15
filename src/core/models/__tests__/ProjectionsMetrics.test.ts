@@ -33,44 +33,6 @@ jest.mock("../../../RootStore", () => ({
 jest.mock("../../../api/metrics/metricsClient", () => {
   return {
     callMetricsApi: jest.fn().mockResolvedValue({
-      population_projection_summaries: [
-        {
-          admission_count: "400",
-          admission_percent_change: "-5.5",
-          compartment: "INCARCERATION",
-          legal_status: "PROBATION",
-          metric_period_months: "6",
-          population_percent_change: "-12",
-          release_count: "700",
-          release_percent_change: "7",
-          simulation_date: "2021-02-02",
-          gender: "MALE",
-          simulation_tag: "HISTORICAL",
-          state_code: "US_ID",
-          total_population: "13000",
-        },
-        {
-          admission_count: "2100",
-          admission_count_max: "2400",
-          admission_count_min: "1800",
-          admission_percent_change: "-2.8",
-          compartment: "INCARCERATION",
-          legal_status: "PROBATION",
-          metric_period_months: "36",
-          population_percent_change: "-13.1",
-          release_count: "5500",
-          release_count_max: "6000",
-          release_count_min: "5000",
-          release_percent_change: "10",
-          simulation_date: "2021-02-02",
-          gender: "MALE",
-          simulation_tag: "POLICY_A",
-          state_code: "US_ID",
-          total_population: "13000",
-          total_population_count_max: "13540",
-          total_population_count_min: "12460",
-        },
-      ],
       population_projection_timeseries: [
         {
           compartment: "INCARCERATION",
@@ -131,49 +93,11 @@ describe("ProjectionsMetrics", () => {
   });
 
   it("sets apiData to the resolved fetched value", () => {
-    expect(metric.apiData).toHaveProperty("population_projection_summaries");
     expect(metric.apiData).toHaveProperty("population_projection_timeseries");
   });
 
   it("sets isLoading to false", () => {
     expect(metric.isLoading).toEqual(false);
-  });
-
-  it("has a transformed summaries property", () => {
-    expect(metric.summaries).toEqual([
-      {
-        admissionCount: 400,
-        admissionPercentChange: -5.5,
-        compartment: "INCARCERATION",
-        gender: "MALE",
-        legalStatus: "PROBATION",
-        populationPercentChange: -12,
-        releaseCount: 700,
-        releasePercentChange: 7,
-        simulationTag: "HISTORICAL",
-        timePeriod: "6",
-        totalPopulation: 13000,
-      },
-      {
-        admissionCount: 2100,
-        admissionCountMax: 2400,
-        admissionCountMin: 1800,
-        admissionPercentChange: -2.8,
-        compartment: "INCARCERATION",
-        gender: "MALE",
-        legalStatus: "PROBATION",
-        populationPercentChange: -13.1,
-        releaseCount: 5500,
-        releaseCountMax: 6000,
-        releaseCountMin: 5000,
-        releasePercentChange: 10,
-        simulationTag: "POLICY_A",
-        timePeriod: "36",
-        totalPopulation: 13000,
-        totalPopulationCountMax: 13540,
-        totalPopulationCountMin: 12460,
-      },
-    ]);
   });
 
   it("has a transformed timeSeries property", () => {
@@ -211,7 +135,7 @@ describe("ProjectionsMetrics", () => {
     jest.mock("../../../api/metrics/metricsClient", () => {
       return {
         callMetricsApi: jest.fn().mockResolvedValue({
-          population_projection_summaries: [],
+          population_projection_time_series: [],
         }),
       };
     });

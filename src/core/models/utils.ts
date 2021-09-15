@@ -17,52 +17,10 @@
 
 import {
   Gender,
-  PopulationProjectionSummaryRecords,
   PopulationProjectionTimeSeriesRecord,
   RawMetricData,
   SimulationCompartment,
 } from "./types";
-
-export function createProjectionSummaries(
-  rawRecords: RawMetricData
-): PopulationProjectionSummaryRecords {
-  return rawRecords.map((record) => {
-    if (record.simulation_tag === "HISTORICAL") {
-      return {
-        simulationTag: record.simulation_tag,
-        timePeriod: record.metric_period_months,
-        compartment: record.compartment as SimulationCompartment,
-        legalStatus: record.legal_status,
-        gender: record.gender as Gender,
-        admissionCount: Number(record.admission_count),
-        releaseCount: Number(record.release_count),
-        totalPopulation: Number(record.total_population),
-        admissionPercentChange: Number(record.admission_percent_change),
-        releasePercentChange: Number(record.release_percent_change),
-        populationPercentChange: Number(record.population_percent_change),
-      };
-    }
-    return {
-      simulationTag: record.simulation_tag,
-      timePeriod: record.metric_period_months,
-      compartment: record.compartment as SimulationCompartment,
-      legalStatus: record.legal_status,
-      gender: record.gender as Gender,
-      admissionCount: Number(record.admission_count),
-      releaseCount: Number(record.release_count),
-      totalPopulation: Number(record.total_population),
-      admissionPercentChange: Number(record.admission_percent_change),
-      releasePercentChange: Number(record.release_percent_change),
-      populationPercentChange: Number(record.population_percent_change),
-      admissionCountMin: Number(record.admission_count_min),
-      admissionCountMax: Number(record.admission_count_max),
-      releaseCountMin: Number(record.release_count_min),
-      releaseCountMax: Number(record.release_count_max),
-      totalPopulationCountMin: Number(record.total_population_count_min),
-      totalPopulationCountMax: Number(record.total_population_count_max),
-    };
-  });
-}
 
 export function createProjectionTimeSeries(
   rawRecords: RawMetricData

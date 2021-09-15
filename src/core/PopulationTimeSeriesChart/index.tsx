@@ -17,17 +17,17 @@
 
 import "./PopulationTimeSeriesChart.scss";
 
-import { Loading } from "@recidiviz/design-system";
 import { scaleTime } from "d3-scale";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { useLocation } from "react-router-dom";
 import { ResponsiveXYFrame } from "semiotic";
 
 import * as styles from "../CoreConstants.scss";
 import { useCoreStore } from "../CoreStoreProvider";
-import { SimulationCompartment } from "../models/types";
-import { getCompartmentFromView, getViewFromPathname } from "../views";
+import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
+import ProjectionsMetrics from "../models/ProjectionsMetrics";
+import { PopulationProjectionTimeSeriesRecord } from "../models/types";
+import withMetricHydrator from "../withMetricHydrator";
 import {
   ChartPoint,
   formatMonthAndYear,
@@ -48,29 +48,25 @@ type PlotLine = {
 const TOTAL_INCARCERATED_LIMIT = 8008;
 
 type Props = {
-  isLoading?: boolean;
+  metric: PopulationOverTimeMetric | ProjectionsMetrics;
+  title: string;
+  compartment: string;
+  data: PopulationProjectionTimeSeriesRecord[];
 };
 
-const PopulationTimeSeriesChart: React.FC<Props> = ({ isLoading = false }) => {
-  const view = getViewFromPathname(useLocation().pathname);
-  const compartment: SimulationCompartment = getCompartmentFromView(view);
-  const { metricsStore, filtersStore } = useCoreStore();
+const PopulationTimeSeriesChart: React.FC<Props> = ({
+  title,
+  compartment,
+  data,
+}) => {
+  const { filtersStore } = useCoreStore();
   const { gender, legalStatus } = filtersStore.filters;
-  const filteredData = metricsStore.projections.getFilteredDataByView(view);
-
-  if (isLoading) {
-    return (
-      <div className="PopulationTimeSeriesChart PopulationTimeSeriesChart--loading">
-        <Loading />
-      </div>
-    );
-  }
 
   const timePeriod: MonthOptions = parseInt(
     filtersStore.filters.timePeriod
   ) as MonthOptions;
 
-  if (filteredData.length < 1) {
+  if (data.length < 1) {
     // TODO: Error state
     return <div />;
   }
@@ -79,7 +75,7 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({ isLoading = false }) => {
     historicalPopulation,
     projectedPopulation,
     uncertainty,
-  } = prepareData(filteredData);
+  } = prepareData(data);
 
   const { beginDate, endDate } = getDateRange(
     historicalPopulation[0].date,
@@ -115,15 +111,10 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({ isLoading = false }) => {
     data: projectedPopulation,
   };
 
-  const populationType =
-    compartment === "SUPERVISION" ? "Supervised" : "Incarcerated";
-
   return (
     <div className="PopulationTimeSeriesChart">
       <div className="PopulationTimeSeriesChart__Header">
-        <div className="PopulationTimeSeriesChart__Title">
-          Total {populationType} Population
-        </div>
+        <div className="PopulationTimeSeriesChart__Title">{title}</div>
         <PopulationTimeSeriesLegend items={["Actual", "Projected"]} />
       </div>
       <ResponsiveXYFrame
@@ -169,13 +160,13 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({ isLoading = false }) => {
             color: styles.crimsonDark50,
             note: {
               label: `Total Operational Capacity (includes CAPP): ${TOTAL_INCARCERATED_LIMIT.toLocaleString()}`,
-              align: "left",
+              align: "left bottom",
               lineType: null,
               color: styles.crimsonDark,
               wrap: 500,
             },
             dx: -40,
-            dy: -8,
+            dy: 8,
           },
         ]}
         hoverAnnotation
@@ -234,4 +225,4 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({ isLoading = false }) => {
   );
 };
 
-export default observer(PopulationTimeSeriesChart);
+export default withMetricHydrator(observer(PopulationTimeSeriesChart));

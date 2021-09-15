@@ -17,72 +17,116 @@
 import "./PopulationSummaryMetrics.scss";
 
 import { observer } from "mobx-react-lite";
+import numeral from "numeral";
 import React from "react";
 
-import { useFiltersStore } from "../CoreStoreProvider";
-import { recordMatchesSimulationTag } from "../models/ProjectionsMetrics";
-import type {
-  HistoricalSummaryRecord,
-  PopulationProjectionSummaryRecords,
-  ProjectedSummaryRecord,
-} from "../models/types";
-import { PopulationFilterValues } from "../types/filters";
-import HistoricalSummaryMetrics from "./HistoricalSummaryMetrics";
-import ProjectedSummaryMetrics from "./ProjectedSummaryMetrics";
+import { formatLargeNumber } from "../../utils";
+import PercentDelta from "../controls/PercentDelta";
+import { useCoreStore } from "../CoreStoreProvider";
+import MetricsCard from "../MetricsCard";
+import type { PopulationProjectionTimeSeriesRecord } from "../models/types";
 
 type PropTypes = {
+  data: PopulationProjectionTimeSeriesRecord[];
+  simulationDate: Date;
   isLoading?: boolean;
-  isError: boolean;
-  projectionSummaries?: PopulationProjectionSummaryRecords;
+  isError?: Error;
 };
 
-function applyDataFilters(filters: PopulationFilterValues) {
-  return (record: PopulationProjectionSummaryRecords[number]) => {
-    return (
-      record.timePeriod === filters.timePeriod &&
-      record.gender === filters.gender &&
-      // TODO(#941): Remove the check for "all" once fixture data is updated
-      (record.legalStatus === filters.legalStatus ||
-        filters.legalStatus === "all")
-    );
-  };
-}
-
 const PopulationSummaryMetrics: React.FC<PropTypes> = ({
+  data,
+  simulationDate,
   isError,
   isLoading = false,
-  projectionSummaries = [],
 }) => {
-  const filtersStore = useFiltersStore();
-  const dataFilter = applyDataFilters(filtersStore.filters);
+  const { filtersStore } = useCoreStore();
+  const { timePeriodLabel } = filtersStore;
 
-  // TODO: add in Error state
   if (isError) {
     return null;
   }
 
-  if (isLoading) {
-    return (
-      <div className="PopulationSummaryMetrics">
-        <HistoricalSummaryMetrics isLoading />
-        <ProjectedSummaryMetrics isLoading />
-      </div>
-    );
+  const currentData = data.find(
+    (d) =>
+      d.year === simulationDate.getFullYear() &&
+      d.month === simulationDate.getMonth() + 1
+  ) as PopulationProjectionTimeSeriesRecord;
+
+  if (!data.length) {
+    return null;
   }
 
-  // Filter records
-  const historicalData = projectionSummaries
-    .filter(recordMatchesSimulationTag("HISTORICAL"))
-    .find(dataFilter) as HistoricalSummaryRecord;
+  const historicalData = data[0];
 
-  const projectedData = projectionSummaries
-    .filter(recordMatchesSimulationTag("POLICY_A"))
-    .find(dataFilter) as ProjectedSummaryRecord;
+  const projectedData = data[data.length - 1];
+
+  const {
+    totalPopulation: projectedPopulation,
+    totalPopulationMin,
+    totalPopulationMax,
+  } = projectedData;
+  const historicalPercentChange =
+    ((currentData.totalPopulation - historicalData.totalPopulation) /
+      historicalData.totalPopulation) *
+    100;
+
+  const projectedPercentChange =
+    ((projectedPopulation - currentData.totalPopulation) /
+      currentData.totalPopulation) *
+    100;
 
   return (
     <div className="PopulationSummaryMetrics">
-      <HistoricalSummaryMetrics isLoading={isLoading} data={historicalData} />
-      <ProjectedSummaryMetrics isLoading={isLoading} data={projectedData} />
+      <MetricsCard heading={`Past ${timePeriodLabel}`}>
+        <div className="PopulationSummaryMetrics__metric">
+          <div
+            className={`PopulationSummaryMetrics__value${
+              isLoading ? "--loading" : ""
+            }`}
+          >
+            {formatLargeNumber(currentData.totalPopulation)}
+          </div>
+        </div>
+        <PercentDelta
+          className={`PopulationSummaryMetrics__delta${
+            isLoading ? "--loading" : ""
+          }`}
+          value={historicalPercentChange}
+          improvesOnIncrease={false}
+        />
+      </MetricsCard>
+      <MetricsCard heading={`Next ${timePeriodLabel}`} subheading="Projected">
+        <div className="PopulationSummaryMetrics__metric">
+          <div
+            className={`PopulationSummaryMetrics__value${
+              isLoading ? "--loading" : ""
+            }`}
+          >
+            {formatLargeNumber(projectedPopulation)}
+          </div>
+          <div
+            className={`PopulationSummaryMetrics__min-max${
+              isLoading ? "--loading" : ""
+            }`}
+          >
+            <div>
+              (
+              {[
+                numeral(totalPopulationMin).format("0"),
+                numeral(totalPopulationMax).format("0"),
+              ].join(", ")}
+              )
+            </div>
+          </div>
+        </div>
+        <PercentDelta
+          className={`PopulationSummaryMetrics__delta${
+            isLoading ? "--loading" : ""
+          }`}
+          value={projectedPercentChange}
+          improvesOnIncrease={false}
+        />
+      </MetricsCard>
     </div>
   );
 };

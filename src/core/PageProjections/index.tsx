@@ -16,46 +16,30 @@
 // =============================================================================
 import { observer } from "mobx-react-lite";
 import React from "react";
+import { useLocation } from "react-router-dom";
 
 import { useCoreStore } from "../CoreStoreProvider";
+import { SimulationCompartment } from "../models/types";
 import PageTemplate from "../PageTemplate";
 import PathwaysFilterBar from "../PathwaysFilterBar";
-// TODO(recidiviz-data/issues/8751): Use PopulationSummaryMetrics when data is valid
-import PopulationSummaryMetrics from "../PopulationSummaryMetrics/TempPopulationSummaryMetrics";
+import PopulationSummaryMetrics from "../PopulationSummaryMetrics";
 import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
 import filterOptions from "../utils/filterOptions";
+import { getCompartmentFromView, getViewFromPathname } from "../views";
 import PopulationProjectionLastUpdated from "./PopulationProjectionLastUpdated";
 
 const PageProjections: React.FC = () => {
+  const view = getViewFromPathname(useLocation().pathname);
+  const compartment: SimulationCompartment = getCompartmentFromView(view);
   const { currentTenantId, metricsStore } = useCoreStore();
-  const {
-    isLoading,
-    isError,
-    // TODO(recidiviz-data/issues/8751): Uncomment when summary table is valid
-    // summaries,
-    simulationDate,
-  } = metricsStore.projections;
+  const model = metricsStore.projections;
+  const { isLoading, isError, simulationDate } = model;
   const { pageProjectionsStore } = useCoreStore();
   const { downloadData, enabledFilters } = pageProjectionsStore;
+  const filteredData = metricsStore.projections.getFilteredDataByView(view);
 
-  if (isLoading) {
-    return (
-      <PageTemplate
-        filters={
-          <PathwaysFilterBar
-            // @ts-ignore
-            filterOptions={filterOptions[currentTenantId]}
-            enabledFilters={enabledFilters}
-            handleDownload={downloadData}
-          />
-        }
-      >
-        <PopulationSummaryMetrics isLoading isError={isError} />
-        <PopulationProjectionLastUpdated isLoading />
-        <PopulationTimeSeriesChart isLoading />
-      </PageTemplate>
-    );
-  }
+  const populationType =
+    compartment === "SUPERVISION" ? "Supervised" : "Incarcerated";
 
   return (
     <PageTemplate
@@ -68,9 +52,22 @@ const PageProjections: React.FC = () => {
         />
       }
     >
-      <PopulationSummaryMetrics isError={isError} />
-      <PopulationProjectionLastUpdated simulationDate={simulationDate} />
-      <PopulationTimeSeriesChart />
+      <PopulationSummaryMetrics
+        data={filteredData}
+        simulationDate={simulationDate}
+        isError={isError}
+        isLoading={isLoading}
+      />
+      <PopulationProjectionLastUpdated
+        simulationDate={simulationDate}
+        isLoading={isLoading}
+      />
+      <PopulationTimeSeriesChart
+        metric={model}
+        title={`Total ${populationType} Population`}
+        data={filteredData}
+        compartment={compartment}
+      />
     </PageTemplate>
   );
 };

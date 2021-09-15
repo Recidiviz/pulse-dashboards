@@ -15,13 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // ===================== ========================================================
 
+import "./PathwaysLeftPanel.scss";
+
 import React from "react";
 
 import SectionNavigation from "../SectionNavigation";
 
 const PathwaysLeftPanel: React.FC = () => {
   return (
-    <div>
+    <div className="PathwaysLeftPanel">
       <SectionNavigation />
     </div>
   );

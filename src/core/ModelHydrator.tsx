@@ -27,6 +27,7 @@ import { Hydratable } from "./models/types";
 
 const Wrapper = styled.div`
   position: relative;
+  width: 100%;
 `;
 
 const StatusWrapper = styled(animated.div)`

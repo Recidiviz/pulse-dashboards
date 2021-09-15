@@ -14,5 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import "./ChartNote.scss";
 
-export { default } from "./PathwaysPageTemplate";
+import React from "react";
+
+type Props = {
+  note: string;
+  isLoading?: boolean;
+};
+
+const ChartNote: React.FC<Props> = ({ note, isLoading = false }) => {
+  if (isLoading) {
+    return (
+      <div className="ChartNote">
+        <br />
+      </div>
+    );
+  }
+
+  return (
+    <div className="ChartNote">
+      <strong>Note: </strong>
+      {/* TODO add link when methodology is ready */}
+      {note} See full methodology.
+    </div>
+  );
+};
+
+export default ChartNote;

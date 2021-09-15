@@ -15,36 +15,62 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // ===================== ========================================================
 
+import "./PagePrison.scss";
+
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import ChartNote from "../ChartNote";
 import { useCoreStore } from "../CoreStoreProvider";
-import ModelHydrator from "../ModelHydrator";
+import PageTemplate from "../PageTemplate";
 import PathwaysFilterBar from "../PathwaysFilterBar";
 import PathwaysLeftPanel from "../PathwaysLeftPanel";
-import PathwaysPageTemplate from "../PathwaysPageTemplate";
+import PopulationSummaryMetrics from "../PopulationSummaryMetrics";
+import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
 import filterOptions from "../utils/filterOptions";
 
 const PagePrison: React.FC = () => {
   const { currentTenantId, metricsStore } = useCoreStore();
   const model = metricsStore.prisonPopulationOverTime;
-  const { enabledFilters, dataSeries, download } = model;
+  const {
+    enabledFilters,
+    dataSeries,
+    download,
+    chartTitle,
+    error,
+    simulationDate,
+    isLoading,
+    note,
+  } = model;
 
   return (
-    <PathwaysPageTemplate>
-      <ModelHydrator model={model}>
-        <div>
-          <PathwaysLeftPanel />
-          <PathwaysFilterBar
-            // @ts-ignore
-            filterOptions={filterOptions[currentTenantId]}
-            enabledFilters={enabledFilters}
-            handleDownload={download}
-          />
-          <div>Prison page</div>
-        </div>
-      </ModelHydrator>
-    </PathwaysPageTemplate>
+    <PageTemplate
+      leftPanel={<PathwaysLeftPanel />}
+      filters={
+        <PathwaysFilterBar
+          // @ts-ignore
+          filterOptions={filterOptions[currentTenantId]}
+          enabledFilters={enabledFilters}
+          handleDownload={download}
+        />
+      }
+    >
+      <div className="PagePrison">
+        <PopulationSummaryMetrics
+          data={dataSeries}
+          simulationDate={simulationDate}
+          isLoading={isLoading}
+          isError={error}
+        />
+        <PopulationTimeSeriesChart
+          metric={model}
+          title={chartTitle}
+          data={dataSeries}
+          compartment="INCARCERATION"
+        />
+        <ChartNote note={note} isLoading={isLoading} />
+      </div>
+    </PageTemplate>
   );
 };
 

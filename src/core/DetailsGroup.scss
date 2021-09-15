@@ -35,6 +35,7 @@
   &__button {
     color: $signal-links;
     font: $font-ui-sans-16;
+    letter-spacing: -0.01em;
     > :not(:last-child) {
       margin-right: 1.5rem;
     }

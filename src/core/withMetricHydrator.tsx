@@ -14,25 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { observer } from "mobx-react-lite";
+
 import React from "react";
 
-import { useFiltersStore } from "../CoreStoreProvider";
-import MetricsCard from "../MetricsCard";
-import type { HistoricalSummaryRecord } from "../models/types";
-import SummaryMetrics from "./SummaryMetrics";
+import ModelHydrator from "./ModelHydrator";
+import { Hydratable } from "./models/types";
 
-const HistoricalSummaryMetrics: React.FC<{
-  data?: HistoricalSummaryRecord;
-  isLoading: boolean;
-}> = ({ data, isLoading }) => {
-  const { timePeriodLabel } = useFiltersStore();
-
-  return (
-    <MetricsCard heading={`Past ${timePeriodLabel}`}>
-      <SummaryMetrics data={data} isLoading={isLoading} />
-    </MetricsCard>
-  );
+type withMetricHydratorProps = {
+  metric: Hydratable;
 };
 
-export default observer(HistoricalSummaryMetrics);
+const withMetricHydrator = <Props extends withMetricHydratorProps>(
+  OriginalComponent: React.ComponentType<Props>
+): React.ComponentType<Props> => {
+  const ComponentWithHydrator: React.ComponentType<Props> = (props) => {
+    const { metric } = props;
+    return (
+      <ModelHydrator model={metric}>
+        <OriginalComponent {...props} />
+      </ModelHydrator>
+    );
+  };
+
+  return ComponentWithHydrator;
+};
+
+export default withMetricHydrator;

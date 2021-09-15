@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Card, CardSection } from "@recidiviz/design-system";
+import { Card } from "@recidiviz/design-system";
 import React from "react";
 import styled from "styled-components/macro";
 
@@ -25,9 +25,14 @@ const MetricsCardComponent = styled(Card)`
   :first-child {
     margin-right: 1rem;
   }
+  display: flex;
+  flex-flow: row nowrap;
+  min-height: 120px;
+  padding: 20px 40px;
+  justify-content: space-between;
 `;
 
-const MetricHeading = styled.h4`
+const MetricHeading = styled.div`
   color: ${fontStyles.pine1};
   font: ${fontStyles.fontUiSans16};
   letter-spacing: -0.01em;
@@ -41,10 +46,15 @@ const MetricSubHeading = styled.div`
 
 const HeadingContainer = styled.div`
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  padding: 20px 40px;
+  flex-flow: column;
+  justify-content: center;
   height: 64px;
+`;
+
+const CardSection = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 `;
 
 interface MetricsCardProps {
@@ -59,14 +69,14 @@ const MetricsCard: React.FC<MetricsCardProps> = ({
   children,
 }) => {
   return (
-    <MetricsCardComponent stacked>
+    <MetricsCardComponent>
       <CardSection>
         <HeadingContainer>
           <MetricHeading>{heading}</MetricHeading>
           {subheading && <MetricSubHeading>{subheading}</MetricSubHeading>}
         </HeadingContainer>
       </CardSection>
-      {children}
+      <CardSection>{children}</CardSection>
     </MetricsCardComponent>
   );
 };

@@ -22,28 +22,14 @@ import {
 } from "../PopulationTimeSeriesChart/helpers";
 import { getCompartmentFromView } from "../views";
 import Metric, { BaseMetricProps } from "./Metric";
-import {
-  PopulationProjectionSummaryRecords,
-  PopulationProjectionTimeSeriesRecord,
-} from "./types";
-import { createProjectionSummaries, createProjectionTimeSeries } from "./utils";
+import { PopulationProjectionTimeSeriesRecord } from "./types";
+import { createProjectionTimeSeries } from "./utils";
 
-export function recordMatchesSimulationTag(
-  simulationTag: string
-): (record: PopulationProjectionSummaryRecords[number]) => boolean {
-  return (record) => record.simulationTag === simulationTag;
-}
-
-type MetricRecords =
-  | PopulationProjectionSummaryRecords
-  | PopulationProjectionTimeSeriesRecord;
-
-export default class ProjectionsMetrics extends Metric<MetricRecords> {
+export default class ProjectionsMetrics extends Metric<PopulationProjectionTimeSeriesRecord> {
   constructor(props: BaseMetricProps) {
     super(props);
     makeObservable(this, {
       timeSeries: computed,
-      summaries: computed,
       filteredCommunityTimeSeries: computed,
       filteredFacilitiesTimeSeries: computed,
     });
@@ -99,13 +85,6 @@ export default class ProjectionsMetrics extends Metric<MetricRecords> {
       default:
         return this.timeSeries;
     }
-  }
-
-  get summaries(): PopulationProjectionSummaryRecords {
-    if (!this.apiData) return [];
-    return createProjectionSummaries(
-      this.apiData.population_projection_summaries
-    );
   }
 
   get timeSeries(): PopulationProjectionTimeSeriesRecord[] {

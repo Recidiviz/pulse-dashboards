@@ -23,19 +23,24 @@ import React from "react";
 
 import ImportantNotesBar from "./ImportantNotesBar";
 
-const PageTemplate = ({ children, importantNotes, filters = null }) => (
+const PageTemplate = ({
+  children,
+  importantNotes,
+  filters = null,
+  leftPanel = null,
+}) => (
   <div className="main-content PageTemplate">
-    {filters}
-    <div id="mainContent">
-      <div
-        className="row gap-20 pos-r"
-        style={{ overflow: "initial !important" }}
-      >
-        {importantNotes.length !== 0 && (
-          <ImportantNotesBar importantNotes={importantNotes} />
-        )}
+    {leftPanel}
+    <div className="PageTemplate__body">
+      {filters}
+      <div id="mainContent">
+        <div className="row gap-20 pos-r">
+          {importantNotes.length !== 0 && (
+            <ImportantNotesBar importantNotes={importantNotes} />
+          )}
 
-        {children}
+          {children}
+        </div>
       </div>
     </div>
   </div>
@@ -44,6 +49,7 @@ const PageTemplate = ({ children, importantNotes, filters = null }) => (
 PageTemplate.defaultProps = {
   importantNotes: [],
   filters: null,
+  leftPanel: null,
 };
 
 PageTemplate.propTypes = {
@@ -55,6 +61,7 @@ PageTemplate.propTypes = {
     }).isRequired
   ),
   filters: PropTypes.node,
+  leftPanel: PropTypes.node,
 };
 
 export default PageTemplate;

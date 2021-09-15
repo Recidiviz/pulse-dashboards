@@ -20,11 +20,17 @@
 .PageTemplate {
   background: $marble-3;
   display: flex;
-  flex-flow: column;
+  flex-flow: row;
+
+  &__body {
+    display: flex;
+    flex-flow: column;
+    width: 100%;
+  }
 
   @media screen and (max-width: $core-breakpoint-lg) {
-    padding-left: 4rem;
-    padding-right: 4rem;
+    padding-left: 6rem;
+    padding-right: 6rem;
   }
 
   @media screen and (max-width: $core-breakpoint-sm) {

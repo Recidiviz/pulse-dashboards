@@ -283,9 +283,6 @@ function getCollections(stateCode = null) {
     case stateCodes.US_ID:
       return {
         [COLLECTIONS.POPULATION_PROJECTIONS]: {
-          population_projection_summaries: {
-            filename: "population_projection_summaries.json",
-          },
           population_projection_timeseries: {
             filename: "population_projection_timeseries.json",
           },

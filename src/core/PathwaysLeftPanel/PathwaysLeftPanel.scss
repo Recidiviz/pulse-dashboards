@@ -14,21 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import "./LoadingMetrics.scss";
 
-import React from "react";
+@import "../CoreConstants";
 
-const LoadingMetrics: React.FC<{ title: string; showMinMax?: boolean }> = ({
-  title,
-  showMinMax = false,
-}) => {
-  return (
-    <div className="LoadingMetrics">
-      <div className="SummaryMetric__title">{title}</div>
-      <div className="LoadingMetrics__value" />
-      <div className="LoadingMetrics__percent" />
-      {showMinMax && <div className="LoadingMetrics__minMax" />}
-    </div>
-  );
-};
-export default LoadingMetrics;
+.PathwaysLeftPanel {
+  min-width: 24rem;
+  padding-top: 16px;
+}

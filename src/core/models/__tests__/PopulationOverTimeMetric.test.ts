@@ -84,6 +84,7 @@ describe("PopulationOverTimeMetric", () => {
       dataTransformer: createProjectionTimeSeries,
       enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
       rootStore: mockCoreStore,
+      chartTitle: "title",
     });
     metric.hydrate();
   });
@@ -131,6 +132,7 @@ describe("PopulationOverTimeMetric", () => {
       dataTransformer: createProjectionTimeSeries,
       enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
       rootStore: mockCoreStore,
+      chartTitle: "title",
     });
     metric.hydrate();
 
@@ -147,6 +149,7 @@ describe("PopulationOverTimeMetric", () => {
         dataTransformer: createProjectionTimeSeries,
         enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
         rootStore: mockCoreStore,
+        chartTitle: "title",
       });
       metric.hydrate();
     });

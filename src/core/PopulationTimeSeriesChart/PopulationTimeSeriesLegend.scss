@@ -18,13 +18,13 @@
   }
 
   &__Line {
-    stroke: $data-forest;
-    stroke-width: 2;
+    stroke: $indigo;
+    stroke-width: 4;
     width: 100%;
   }
 
   .ProjectedLegend {
-    background: $data-forest-uncertainty;
+    background: $indigo-10;
 
     .PopulationTimeSeriesLegend__Line {
       stroke-dasharray: 3.5, 4.5, 8, 4.5, 3.5;

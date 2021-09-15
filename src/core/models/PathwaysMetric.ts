@@ -26,11 +26,13 @@ import { EnabledFilters } from "../types/filters";
 import { Hydratable, MetricRecord, RawMetricData, TenantId } from "./types";
 
 export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
-  tenantId?: TenantId;
   sourceFilename: string;
   dataTransformer: (d: RawMetricData) => RecordFormat[];
-  rootStore?: CoreStore;
   enabledFilters: EnabledFilters;
+  chartTitle: string;
+  tenantId?: TenantId;
+  rootStore?: CoreStore;
+  noteCopy?: string;
 };
 
 /**
@@ -46,6 +48,10 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
   rootStore?: CoreStore;
 
   readonly tenantId?: TenantId;
+
+  chartTitle: string;
+
+  noteCopy?: string;
 
   // data properties
   protected readonly sourceFilename: string;
@@ -69,6 +75,8 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     sourceFilename,
     dataTransformer,
     enabledFilters,
+    chartTitle,
+    noteCopy,
   }: BaseMetricConstructorOptions<RecordFormat>) {
     makeObservable<PathwaysMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
@@ -78,13 +86,22 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     });
 
     this.rootStore = rootStore;
-
+    this.chartTitle = chartTitle;
+    this.noteCopy = noteCopy;
     this.tenantId = tenantId;
     this.sourceFilename = sourceFilename;
     this.dataTransformer = dataTransformer;
     this.eagerExpand = true;
 
     this.enabledFilters = enabledFilters;
+  }
+
+  /**
+   * Returns the note copy, unformatted. Child metric classes can override this
+   * function and format the note if necessary.
+   */
+  get note(): string | undefined {
+    return this.noteCopy;
   }
 
   /**

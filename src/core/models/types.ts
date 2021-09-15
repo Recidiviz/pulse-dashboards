@@ -34,38 +34,9 @@ export type Gender = "ALL" | "FEMALE" | "MALE";
 export type SimulationCompartment = "SUPERVISION" | "INCARCERATION";
 
 export type MetricRecord =
-  | PopulationProjectionSummaryRecords
   | PopulationProjectionTimeSeriesRecord
   | PracticesSummaryRecord
   | PracticesTimeSeriesRecord;
-
-export type PopulationProjectionSummaryRecords = (
-  | HistoricalSummaryRecord
-  | ProjectedSummaryRecord
-)[];
-
-export type ProjectedSummaryRecord = HistoricalSummaryRecord & {
-  admissionCountMin: number;
-  admissionCountMax: number;
-  releaseCountMin: number;
-  releaseCountMax: number;
-  totalPopulationCountMin: number;
-  totalPopulationCountMax: number;
-};
-
-export type HistoricalSummaryRecord = {
-  timePeriod?: string;
-  compartment?: SimulationCompartment;
-  legalStatus?: string;
-  gender?: Gender;
-  simulationTag?: string;
-  admissionCount: number;
-  releaseCount: number;
-  totalPopulation: number;
-  admissionPercentChange: number;
-  releasePercentChange: number;
-  populationPercentChange: number;
-};
 
 export type PopulationProjectionTimeSeriesRecord = {
   year: number;
@@ -94,6 +65,7 @@ export type MetricValueAccessor =
   | "timelyContact"
   | "timelyRiskAssessment"
   | "timelyDowngrade";
+
 export type PracticesSummaryRecord = {
   entityId: string;
   entityName: string; // i.e. "North Dakota" or "Oakes"

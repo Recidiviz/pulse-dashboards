@@ -14,30 +14,5 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-@mixin loading-value {
-  background-color: #f4f5f5;
-  border-radius: 4px;
-}
 
-.LoadingMetrics {
-  display: flex;
-  flex-flow: column;
-  justify-content: space-between;
-  padding: 20px 40px;
-  width: 30%;
-  &__value {
-    height: 2rem;
-    width: 7rem;
-    @include loading-value;
-  }
-  &__percent {
-    height: 1.5rem;
-    width: 4rem;
-    @include loading-value;
-  }
-  &__minMax {
-    height: 1rem;
-    width: 6rem;
-    @include loading-value;
-  }
-}
+export { default } from "./ChartNote";

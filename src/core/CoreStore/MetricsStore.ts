@@ -57,6 +57,8 @@ export default class MetricsStore {
         FILTER_TYPES.LEGAL_STATUS,
         FILTER_TYPES.GENDER,
       ],
+      chartTitle: "Incarcerated Population",
+      noteCopy: `Historical and projected population data were generated`,
     });
   }
 }

@@ -17,9 +17,9 @@ $crimson: #bf7474;
 $crimson-dark: #a43939;
 $crimson-dark-50: rgba(164, 57, 57, 0.5);
 $data-forest: #25636f;
-$data-forest-uncertainty: rgba(37, 99, 111, 0.15);
 $data-forest-07: rgba(37, 99, 111, 0.07);
-$indigo: #4c6290;
+$indigo: rgba(76, 98, 144, 1);
+$indigo-10: rgba(76, 98, 144, 0.1);
 $marble-3: #f4f5f5;
 $marble-4: #eff1f1;
 $pine-1: rgb(1, 35, 34);
@@ -37,8 +37,6 @@ $slate-30-opaque: #c2cbd0;
 $slate-60: rgba(53, 83, 98, 0.6);
 $slate-80: rgba(53, 83, 98, 0.8);
 $slate-85: rgba(53, 83, 98, 0.85);
-$marble-3: #f4f5f5;
-$marble-4: #eff1f1;
 
 /* Colors missing from system design */
 $core-dropdown-color: #e9ebeb;

@@ -17,6 +17,12 @@
 @import "../CoreConstants";
 @import "../../assets/styles/spec/tools/mixins/mediaQueriesRanges.scss";
 
+@mixin loading-value {
+  background-color: $marble-3;
+  border-radius: 4px;
+}
+
+
 .PopulationSummaryMetrics {
   display: flex;
   flex-flow: row nowrap;
@@ -26,27 +32,11 @@
   @media screen and (max-width: $core-breakpoint-sm) {
     flex-flow: row wrap;
   }
-}
 
-.SummaryMetrics {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-start;
-  height: 168px;
-  padding: 24px 0 32px;
-}
-
-.SummaryMetric {
-  display: flex;
-  flex-flow: column;
-  padding: 0 40px;
-  width: 30%;
-
-  &__title {
-    font: $font-ui-sans-16;
-    color: $slate-80;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
+  &__metric {
+    display: flex;
+    flex-flow: column;
+    margin-right: 1rem;
   }
 
   &__value {
@@ -54,32 +44,36 @@
     letter-spacing: -0.04em;
     color: $pine-3;
     padding: 8px 0 0;
+
+    &--loading {
+      height: 2rem;
+      width: 7rem;
+      @include loading-value;
+    }
   }
 
   &__min-max {
     font: $font-ui-sans-14;
     color: $slate-80;
     white-space: nowrap;
+
+    &--loading {
+      height: 1rem;
+      width: 6rem;
+      @include loading-value;
+    }
   }
 
   &__delta {
     font: $font-ui-sans-14;
     letter-spacing: -0.01em;
     line-height: 1.5rem;
-  }
-}
+    padding-bottom: 1rem;
 
-.MissingProjectionData {
-  align-self: center;
-  align-items: center;
-  display: flex;
-  font-family: "Libre Franklin";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 0.9rem;
-  min-height: 168px;
-  letter-spacing: -0.01em;
-  line-height: 1.5;
-  text-align: center;
-  width: 50%;
+    &--loading {
+      height: 1.5rem;
+      width: 4rem;
+      @include loading-value;
+    }
+  }
 }

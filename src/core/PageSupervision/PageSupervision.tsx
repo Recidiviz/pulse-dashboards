@@ -18,15 +18,14 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import PageTemplate from "../PageTemplate";
 import PathwaysLeftPanel from "../PathwaysLeftPanel";
-import PathwaysPageTemplate from "../PathwaysPageTemplate";
 
 const PageSupervision: React.FC = () => {
   return (
-    <PathwaysPageTemplate>
-      <PathwaysLeftPanel />
+    <PageTemplate leftPanel={<PathwaysLeftPanel />}>
       <div>Supervision page</div>
-    </PathwaysPageTemplate>
+    </PageTemplate>
   );
 };
 
