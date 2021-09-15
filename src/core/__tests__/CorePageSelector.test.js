@@ -46,7 +46,7 @@ describe("CoreLayout tests", () => {
   it("Add bar above current page", () => {
     const selector = renderPageNavigation("page1");
 
-    expect(selector.find("Link.PageNavigation--Option-Selected")).toHaveLength(
+    expect(selector.find("Link.PageNavigation__option--selected")).toHaveLength(
       1
     );
   });
@@ -54,7 +54,7 @@ describe("CoreLayout tests", () => {
   it("Don't add bars above any page selectors if not in one", () => {
     const selector = renderPageNavigation("page4");
 
-    expect(selector.find("Link.PageNavigation--Option-Selected")).toHaveLength(
+    expect(selector.find("Link.PageNavigation__option--selected")).toHaveLength(
       0
     );
   });

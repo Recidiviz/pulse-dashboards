@@ -8,14 +8,8 @@
   padding: 0;
   height: 100%;
 
-  & > li {
-    margin-left: 1rem;
-  }
-
-  &--Option {
+  &__option {
     align-items: center;
-    border-top: 0.25rem solid transparent;
-    color: $pine-3;
     cursor: pointer;
     display: flex;
     font: $font-ui-sans-16;
@@ -23,17 +17,83 @@
     justify-content: center;
     letter-spacing: -0.01em;
     margin: 0;
-    width: 6.33rem;
+  }
 
-    &:hover {
-      color: $signal-highlight;
+  &--Core {
+    & > li {
+      margin-left: 1rem;
     }
 
-    &-Selected {
-      border-top: 0.25rem solid $signal-highlight;
-
-      &:focus {
+    .PageNavigation {
+      &__option {
         color: $pine-3;
+        width: 6.33rem;
+        border-top: 0.25rem solid transparent;
+
+        &:hover {
+          color: $signal-highlight;
+        }
+
+        &--selected {
+          border-top: 0.25rem solid $signal-highlight;
+
+          &:focus {
+            color: $pine-3;
+          }
+        }
+      }
+    }
+  }
+
+  &--Pathways {
+    & > li {
+      flex-grow: 1;
+      flex-basis: 0;
+
+      &:first-child {
+        .PageNavigation {
+          &__option {
+            border-left: none;
+
+            &--selected {
+              border-left: none;
+              border-right: 1px solid $data-forest;
+            }
+          }
+        }
+      }
+
+      &:last-child {
+        .PageNavigation {
+          &__option {
+            border-right: none;
+
+            &--selected {
+              border-right: none;
+              border-left: 1px solid $data-forest;
+            }
+          }
+        }
+      }
+    }
+
+    .PageNavigation {
+      &__option {
+        width: 100%;
+        color: $slate-80;
+        border-right: 1px solid $slate-20;
+        border-left: 1px solid $slate-20;
+
+        &:hover {
+          color: $pine-3;
+        }
+
+        &--selected {
+          color: $pine-3;
+          background: $data-forest-07;
+          border-right: 1px solid $data-forest;
+          border-left: 1px solid $data-forest;
+        }
       }
     }
   }

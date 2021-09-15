@@ -22,7 +22,6 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
-import TopBarUserMenuForAuthenticatedUser from "../../components/TopBar/TopBarUserMenuForAuthenticatedUser";
 import PageNavigation from "../PageNavigation";
 
 const PathwaysNavigation: React.FC = () => {
@@ -37,17 +36,11 @@ const PathwaysNavigation: React.FC = () => {
   return (
     <>
       <nav className="PathwaysNavigation">
-        <div className="PathwaysNavigation__left">
-          <div className="PathwaysNavigation__logo" />
-          <PageNavigation
-            currentView={currentView}
-            currentPage={currentPage ?? ""}
-            pageOptions={pageOptions}
-          />
-        </div>
-        <div className="PathwaysNavigation__right">
-          <TopBarUserMenuForAuthenticatedUser />
-        </div>
+        <PageNavigation
+          currentView={currentView}
+          currentPage={currentPage ?? ""}
+          pageOptions={pageOptions}
+        />
       </nav>
     </>
   );

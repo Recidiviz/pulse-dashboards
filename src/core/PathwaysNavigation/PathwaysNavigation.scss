@@ -21,28 +21,7 @@
   background: $marble-3;
   height: 5rem;
   width: 100%;
-  display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: $core-border-color 1px solid;
-
-  &__logo {
-    margin: 1.5rem 0 2rem 0rem;
-    // min-width hack so IE11 doesn't clobber the logo
-    min-width: 6.5rem;
-
-    &-image {
-      height: 1.5rem;
-    }
-  }
-
-  &__right {
-    align-items: center;
-    list-style: none;
-    margin-bottom: 0;
-    padding-left: 0;
-    position: relative;
-    display: flex;
-    height: 100%;
-  }
 }

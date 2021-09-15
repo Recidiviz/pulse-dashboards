@@ -36,13 +36,20 @@ const PageNavigation: React.FC<propTypes> = ({
     str.charAt(0).toUpperCase() + str.slice(1);
 
   return (
-    <ul className="PageNavigation">
+    <ul
+      className={cx("PageNavigation", {
+        "PageNavigation--Pathways":
+          currentView && currentView.toLowerCase() === "pathways",
+        "PageNavigation--Core":
+          currentView && currentView.toLowerCase() !== "pathways",
+      })}
+    >
       {pageOptions.map((page) => (
         <li key={page}>
           <Link
             to={`/${currentView}/${page}`}
-            className={cx("PageNavigation--Option", {
-              "PageNavigation--Option-Selected":
+            className={cx("PageNavigation__option", {
+              "PageNavigation__option--selected":
                 (currentPage && currentPage.toLowerCase()) === page,
             })}
           >
