@@ -18,14 +18,14 @@ import React from "react";
 
 import TopBar from "../components/TopBar/TopBar";
 import TopBarLogo from "../components/TopBar/TopBarLogo";
-import TopBarUserMenuForAuthenticatedUser from "../components/TopBar/TopBarUserMenuForAuthenticatedUser";
+import UserAvatar from "../components/UserAvatar";
 
 const LanternTopBar: React.FC = () => {
   return (
     <TopBar isHidable isWide>
       <TopBarLogo />
       <ul className="nav-right">
-        <TopBarUserMenuForAuthenticatedUser />
+        <UserAvatar />
       </ul>
     </TopBar>
   );

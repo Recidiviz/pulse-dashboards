@@ -17,23 +17,26 @@
 
 import "./ViewNavigation.scss";
 
+import { Icon, IconSVG } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink } from "react-router-dom";
 
+import { ReactComponent as MethodologyLogo } from "../../assets/static/images/methodology.svg";
 import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathways.svg";
 import { ReactComponent as PracticesLogo } from "../../assets/static/images/practices.svg";
+import UserAvatar from "../../components/UserAvatar";
 
 const ViewNavigation = (): React.ReactElement => {
   return (
     <aside className="ViewNavigation">
       <div className="ViewNavigation__tooltip-box">
         <NavLink
-          activeClassName="ViewNavigation--active"
+          activeClassName="ViewNavigation__navlink--active"
           className="ViewNavigation__navlink"
           to="/pathways"
         >
-          <PathwaysLogo />
+          <PathwaysLogo className="ViewNavigation__icon" />
         </NavLink>
         <div className="ViewNavigation__tooltip">
           <h5 className="ViewNavigation__tooltip-header">Pathways</h5>
@@ -44,17 +47,43 @@ const ViewNavigation = (): React.ReactElement => {
       </div>
       <div className="ViewNavigation__tooltip-box">
         <NavLink
-          activeClassName="ViewNavigation--active"
+          activeClassName="ViewNavigation__navlink--active"
           className="ViewNavigation__navlink"
           to="/community/practices"
         >
-          <PracticesLogo />
+          <PracticesLogo className="ViewNavigation__icon" />
         </NavLink>
         <div className="ViewNavigation__tooltip">
           <h5 className="ViewNavigation__tooltip-header">Practices</h5>
           <div className="ViewNavigation__tooltip-body">
             A birds-eye view of staff- and region-level resources and
             operational trends
+          </div>
+        </div>
+      </div>
+      <div className="ViewNavigation__bottom">
+        <div className="ViewNavigation__tooltip-box">
+          <a
+            className="ViewNavigation__navlink"
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <MethodologyLogo className="ViewNavigation__icon" />
+          </a>
+          <div className="ViewNavigation__tooltip">
+            <div className="ViewNavigation__tooltip-header">
+              Methodology
+              <Icon kind={IconSVG.Open} width={16} />
+            </div>
+          </div>
+        </div>
+        <div className="ViewNavigation__tooltip-box">
+          <div className="ViewNavigation__navlink">
+            <UserAvatar />
+          </div>
+          <div className="ViewNavigation__tooltip">
+            <div className="ViewNavigation__tooltip-header">Profile</div>
           </div>
         </div>
       </div>

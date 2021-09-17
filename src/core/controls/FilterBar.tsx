@@ -20,7 +20,6 @@ import React from "react";
 import Sticky from "react-sticky-fill";
 
 const FILTER_BAR_STYLE = {
-  zIndex: 700,
   top: 79,
 };
 

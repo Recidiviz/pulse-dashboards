@@ -19,7 +19,7 @@ import React from "react";
 
 import mockWithTestId from "../../../__helpers__/mockWithTestId";
 import StoreProvider from "../../components/StoreProvider";
-import TopBarUserMenuForAuthenticatedUser from "../../components/TopBar/TopBarUserMenuForAuthenticatedUser";
+import UserAvatar from "../../components/UserAvatar";
 import useIntercom from "../../hooks/useIntercom";
 import usePageLayout from "../hooks/usePageLayout";
 import LanternLayout from "../LanternLayout";
@@ -35,12 +35,12 @@ jest.mock("react-router-dom", () => {
   };
 });
 jest.mock("../hooks/usePageLayout");
-jest.mock("../../components/TopBar/TopBarUserMenuForAuthenticatedUser");
+jest.mock("../../components/UserAvatar");
 jest.mock("../../hooks/useIntercom");
 jest.mock("../../utils/i18nSettings");
 
 describe("LanternLayout tests", () => {
-  TopBarUserMenuForAuthenticatedUser.mockReturnValue(null);
+  UserAvatar.mockReturnValue(null);
   const mockChildrenId = "children-test-id";
   const mockChildren = mockWithTestId(mockChildrenId);
 

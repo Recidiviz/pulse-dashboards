@@ -21,7 +21,7 @@ import { useLocation } from "react-router-dom";
 
 import mockWithTestId from "../../../__helpers__/mockWithTestId";
 import StoreProvider from "../../components/StoreProvider";
-import TopBarUserMenuForAuthenticatedUser from "../../components/TopBar/TopBarUserMenuForAuthenticatedUser";
+import UserAvatar from "../../components/UserAvatar";
 import useIntercom from "../../hooks/useIntercom";
 import CoreLayout from "../CoreLayout";
 
@@ -36,11 +36,11 @@ jest.mock("react-router-dom", () => ({
   Link: jest.fn().mockReturnValue(null),
   NavLink: jest.fn().mockReturnValue(null),
 }));
-jest.mock("../../components/TopBar/TopBarUserMenuForAuthenticatedUser");
+jest.mock("../../components/UserAvatar");
 jest.mock("../../hooks/useIntercom");
 
 describe("CoreLayout tests", () => {
-  TopBarUserMenuForAuthenticatedUser.mockReturnValue(null);
+  UserAvatar.mockReturnValue(null);
   const mockChildrenId = "children-test-id";
   const mockChildren = mockWithTestId(mockChildrenId);
   const mockPathname = "/some/nested/pathname";

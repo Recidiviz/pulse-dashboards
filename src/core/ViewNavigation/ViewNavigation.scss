@@ -27,10 +27,18 @@
   top: 0;
   left: 0;
   padding: 1.5rem;
+  padding-bottom: 0;
   background: $pine-3;
+  display: flex;
+  flex-direction: column;
 
   &__navlink {
     margin-bottom: 3.5rem;
+    &--active {
+      & svg path {
+        opacity: 1;
+      }
+    }
     &:hover ~ .ViewNavigation__tooltip {
       visibility: visible;
       opacity: 1;
@@ -38,7 +46,7 @@
     }
   }
 
-  & svg {
+  &__icon {
     & path {
       opacity: 0.5;
     }
@@ -47,9 +55,12 @@
     }
   }
 
-  &--active {
-    & svg path {
-      opacity: 1;
+  &__bottom {
+    margin-top: auto;
+    .ViewNavigation {
+      &__navlink {
+        margin-bottom: 2rem;
+      }
     }
   }
 
@@ -60,7 +71,8 @@
     top: -1rem;
     z-index: 4;
     padding: 1.5rem;
-    width: 15.5rem;
+    width: max-content;
+    max-width: 15.5rem;
     background-color: $pine-1;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     border-radius: 0.25rem;
@@ -72,18 +84,19 @@
       visibility: visible;
       opacity: 1;
     }
-
     &-box {
       display: flex;
       flex-direction: column;
+      align-items: center;
       position: relative;
     }
-
     &-header {
       font: $font-ui-sans-16;
       color: $white;
+      & svg {
+        margin-left: 0.5rem;
+      }
     }
-
     &-body {
       font: $font-article-sans-14;
       color: rgba(255, 255, 255, 0.8);

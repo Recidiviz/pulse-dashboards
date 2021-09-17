@@ -23,7 +23,7 @@ import { Link, useLocation } from "react-router-dom";
 
 import recidivizLogo from "../assets/static/images/Logo.svg";
 import { useRootStore } from "../components/StoreProvider";
-import TopBarUserMenuForAuthenticatedUser from "../components/TopBar/TopBarUserMenuForAuthenticatedUser";
+import UserAvatar from "../components/UserAvatar";
 import flags from "../flags";
 import { useCoreStore } from "./CoreStoreProvider";
 import CoreViewNavigation from "./CoreViewNavigation";
@@ -79,7 +79,7 @@ const CoreNavigation: React.FC = () => {
             pageOptions={pageOptions}
           />
         )}
-        <TopBarUserMenuForAuthenticatedUser />
+        <UserAvatar />
       </div>
     </nav>
   );

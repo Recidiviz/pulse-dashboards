@@ -15,33 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-@import "./CoreConstants.scss";
+import "./UserAvatar.scss";
 
-.PathwaysLayout {
-  display: flex;
-  min-height: 100vh;
+import { observer } from "mobx-react-lite";
+import React from "react";
+import { Link } from "react-router-dom";
 
-  &__main {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-left: 5rem;
-  }
+import { useUserStore } from "../StoreProvider";
 
-  &__header {
-    border-bottom: 1px solid $core-border-color;
-    display: flex;
-    width: 100%;
-    height: 5rem;
-    position: fixed;
-    z-index: 2;
-  }
+const UserAvatar = (): React.ReactElement => {
+  const { user } = useUserStore();
 
-  .IE11Banner {
-    background-color: $marble-3;
-  }
+  return (
+    <Link to="/profile">
+      <span className="UserAvatar">{user.name && user.name[0]}</span>
+    </Link>
+  );
+};
 
-  .Footer {
-    background-color: $marble-3;
-  }
-}
+export default observer(UserAvatar);
