@@ -18,6 +18,21 @@
 @import "../CoreConstants";
 
 .PathwaysLeftPanel {
-  min-width: 24rem;
+  min-width: 22rem;
+  max-width: 22rem;
   padding-top: 16px;
+  margin-right: 7rem;
+
+  &__title {
+    font: $font-ui-serif-34;
+    color: $pine-3;
+    letter-spacing: -0.04em;
+    padding-bottom: 1rem;
+  }
+  &__description {
+    font: $font-ui-sans-16;
+    color: $slate-80;
+    letter-spacing: -0.01em;
+    padding-bottom: 0.5rem;
+  }
 }

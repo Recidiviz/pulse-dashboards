@@ -15,33 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-@import "./CoreConstants";
+@import "../CoreConstants";
 
-.PageTemplate {
-  background: $marble-3;
-  display: flex;
-  flex-flow: row;
-  padding-top: 2rem;
-
-  &__body {
+.SectionNavigation {
+  &__title {
+    font: $font-ui-sans-24;
+    color: $slate-85;
+    letter-spacing: -0.02em;
+    border-bottom: 1px solid $slate-20;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    margin-top: 3rem;
+  }
+  &__navlink {
+    font: $font-ui-sans-16;
+    color: $signal-links;
     display: flex;
-    flex-flow: column;
-    width: 100%;
-  }
-
-  @media screen and (max-width: $core-breakpoint-lg) {
-    padding-left: 6rem;
-    padding-right: 6rem;
-  }
-
-  @media screen and (max-width: $core-breakpoint-sm) {
-    padding-left: 3rem;
-    padding-right: 3rem;
-  }
-
-  #mainContent {
-    align-self: center;
-    max-width: $core-max-view-width;
-    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 1rem;
   }
 }

@@ -23,13 +23,20 @@ import { PageCopy } from "../types";
 const content: PageCopy = {
   prison: {
     title: "Prison",
-    summary:
-      "This chart includes individuals who are admitted to state facilities, including termers, riders, parole violators, and people held in county jails under state jurisdiction.",
+    summary: `This chart includes individuals who are admitted to state facilities,
+      including termers, riders, parole violators, and people held in county jails
+      under state jurisdiction.`,
+    sections: {
+      populationOverTime: "Prison population",
+    },
   },
   supervision: {
     title: "Supervision",
     summary:
-      "This chart includes all individuals who are currently on probation and/or parole.",
+      "This chart includes all individuals that are currently on probation and/or parole.",
+    sections: {
+      populationOverTime: "Supervised population",
+    },
   },
   supervisionToLiberty: {
     title: "Supervision to Liberty",

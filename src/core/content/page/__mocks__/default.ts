@@ -24,10 +24,16 @@ const content: PageCopy = {
   prison: {
     title: "Prison",
     summary: "Default prison summary",
+    sections: {
+      sectionId: "Default prison section title",
+    },
   },
   supervision: {
     title: "Supervision",
     summary: "Default supervision summary",
+    sections: {
+      sectionId: "Default supervision section title",
+    },
   },
   supervisionToLiberty: {
     title: "Supervision to Liberty",

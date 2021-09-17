@@ -21,9 +21,14 @@ import React from "react";
 
 import SectionNavigation from "../SectionNavigation";
 
-const PathwaysLeftPanel: React.FC = () => {
+const PathwaysLeftPanel: React.FC<{
+  title: string;
+  description: string;
+}> = ({ title, description }) => {
   return (
     <div className="PathwaysLeftPanel">
+      <div className="PathwaysLeftPanel__title">{title}</div>
+      <div className="PathwaysLeftPanel__description">{description}</div>
       <SectionNavigation />
     </div>
   );

@@ -18,11 +18,16 @@
  *
  */
 
-import { PathwaysPageId } from "../views";
+import { PathwaysPageId, PathwaysSection } from "../views";
 
 export type PageContent = {
   title: string;
   summary: string;
+  sections?: Sections;
+};
+
+export type Sections = {
+  [key in PathwaysSection]: string;
 };
 
 export type PageCopy = {

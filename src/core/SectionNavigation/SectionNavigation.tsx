@@ -15,12 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import "./SectionNavigation.scss";
+
+import { Icon, IconSVG } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { useCoreStore } from "../CoreStoreProvider";
+import usePageContent from "../hooks/usePageContent";
+import { PathwaysPageId } from "../views";
 
 const SectionNavigation: React.FC = () => {
   const { pathname } = useLocation();
@@ -29,21 +34,24 @@ const SectionNavigation: React.FC = () => {
   const navigationLayout = userStore.userAllowedNavigation;
   const [currentView, currentPage] = pathname.split("/").slice(1, 3);
   const enabledSections = navigationLayout[currentPage] ?? [];
+  const { sections } = usePageContent(currentPage as PathwaysPageId);
+
   return (
-    <>
-      <nav className="SectionNavigation">
-        {enabledSections.map((sectionId: string) => (
-          <div key={sectionId}>
-            <Link
-              to={`/${currentView}/${currentPage}/${sectionId}`}
-              onClick={() => setSection(sectionId)}
-            >
-              {sectionId}
-            </Link>
-          </div>
-        ))}
-      </nav>
-    </>
+    <nav className="SectionNavigation">
+      <div className="SectionNavigation__title">Over-Time Trends</div>
+      {enabledSections.map((sectionId: string) => (
+        <div key={sectionId}>
+          <Link
+            className="SectionNavigation__navlink"
+            to={`/${currentView}/${currentPage}/${sectionId}`}
+            onClick={() => setSection(sectionId)}
+          >
+            {sections && sections[sectionId]}
+            <Icon kind={IconSVG.Arrow} width={16} />
+          </Link>
+        </div>
+      ))}
+    </nav>
   );
 };
 

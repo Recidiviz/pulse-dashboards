@@ -54,7 +54,7 @@ const TENANTS: Tenants = {
       facilities: ["projections"],
       methodology: ["projections", "practices"],
       pathways: ["prison", "supervision"],
-      prison: ["populationOverTime", "gender"],
+      prison: ["populationOverTime"],
       supervision: ["populationOverTime"],
     },
     pagesWithRestrictions: [

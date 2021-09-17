@@ -25,7 +25,9 @@ import PathwaysLeftPanel from "../PathwaysLeftPanel";
 const PageSupervision: React.FC = () => {
   const { title, summary } = usePageContent("supervision");
   return (
-    <PageTemplate leftPanel={<PathwaysLeftPanel />}>
+    <PageTemplate
+      leftPanel={<PathwaysLeftPanel title={title} description={summary} />}
+    >
       <div>{title} page</div>
       <div>{summary}</div>
     </PageTemplate>

@@ -22,6 +22,7 @@ import React from "react";
 
 import ChartNote from "../ChartNote";
 import { useCoreStore } from "../CoreStoreProvider";
+import usePageContent from "../hooks/usePageContent";
 import PageTemplate from "../PageTemplate";
 import PathwaysFilterBar from "../PathwaysFilterBar";
 import PathwaysLeftPanel from "../PathwaysLeftPanel";
@@ -30,6 +31,7 @@ import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
 import filterOptions from "../utils/filterOptions";
 
 const PagePrison: React.FC = () => {
+  const { title, summary } = usePageContent("prison");
   const { currentTenantId, metricsStore } = useCoreStore();
   const model = metricsStore.prisonPopulationOverTime;
   const {
@@ -45,7 +47,7 @@ const PagePrison: React.FC = () => {
 
   return (
     <PageTemplate
-      leftPanel={<PathwaysLeftPanel />}
+      leftPanel={<PathwaysLeftPanel title={title} description={summary} />}
       filters={
         <PathwaysFilterBar
           // @ts-ignore
