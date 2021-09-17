@@ -31,7 +31,8 @@
     "spa:demo": "BROWSER=none env-cmd -e development-demo react-scripts start",
     "demo": "npm-run-all --parallel spa:demo server:demo",
     "server:offline": "env-cmd -e server,offline npm-run-all --parallel server:dev",
-    "offline": "env-cmd -e offline,server npm-run-all --parallel spa server redis-server"
+    "offline": "env-cmd -e offline,server npm-run-all --parallel spa server redis-server",
+    "sync-content": "env-cmd -e content-sync ts-node tools/syncContentFromSheets.ts && prettier --write src/core/content/*"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.12.1",
@@ -156,6 +157,7 @@
     "@testing-library/react": "^10.0.1",
     "@testing-library/react-hooks": "^3.4.2",
     "@types/d3-scale": "^3.2.2",
+    "@types/google-spreadsheet": "^3.1.5",
     "@types/html-to-text": "^6.0.0",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.21",
@@ -185,6 +187,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-wdio": "^7.0.0",
+    "google-spreadsheet": "^3.1.15",
     "husky": "^4.2.3",
     "jest-canvas-mock": "^2.3.0",
     "jest-environment-jsdom-sixteen": "^1.0.3",
@@ -194,7 +197,7 @@
     "prettier": "^2.0.2",
     "supertest": "^6.0.1",
     "timekeeper": "^2.2.0",
-    "ts-node": "^9.1.1",
+    "ts-node": "^10.2.1",
     "yarn": "^1.22.10"
   },
   "husky": {

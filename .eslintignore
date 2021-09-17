@@ -5,3 +5,5 @@ public/
 
 src/auth0/**/*.js
 src/core/GeoViewTimeChart.js
+
+**/*.template

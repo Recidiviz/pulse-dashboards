@@ -23,26 +23,23 @@ import { PageCopy } from "../types";
 const content: PageCopy = {
   prison: {
     title: "Prison",
-    summary: `This chart includes individuals who are admitted to state facilities,
-      including termers, riders, parole violators, and people held in county jails
-      under state jurisdiction.`,
+    summary:
+      "This chart includes individuals who are admitted to state facilities, including termers, riders, parole violators, and people held in county jails under state jurisdiction.",
   },
   supervision: {
     title: "Supervision",
     summary:
-      "This chart includes all individuals that are currently on probation and/or parole.",
+      "This chart includes all individuals who are currently on probation and/or parole.",
   },
   supervisionToLiberty: {
     title: "Supervision to Liberty",
-    summary: `These charts show people who were discharged from supervision positively
-      or if their supervision period expired. Individuals are counted in their original
-      month of projected completion, even if terminated earlier.`,
+    summary:
+      "This chart shows people who were discharged from supervision positively or if their supervision period expired.",
   },
   supervisionToPrison: {
     title: "Supervision to Prison",
-    summary: `This charts includes people who have been incarcerated in a state facility
-      because their parole or probation was revoked. Revocations are counted when the person
-      was admitted to a facility, not when the violation occurred.`,
+    summary:
+      "This chart includes people who have been incarcerated in a state facility because their parole or probation was revoked. Revocations are counted when the person was admitted to a facility, not when the violation occurred.",
   },
 };
 

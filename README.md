@@ -72,7 +72,7 @@ Explanation of frontend env files:
 
 - `.env-cmdrc.example` - example file for frontend variables that are required
 - `.env-cmdrc` - JSON files describing all of the env variables needed in each build
-  - Should have several keys: `offline`, `server`, `server-demo`, `development`, `development-demo`, `e2e`, `staging`, `staging-demo`, and `production`
+  - Should have several keys: `offline`, `server`, `server-demo`, `development`, `development-demo`, `e2e`, `staging`, `sync-content`, `staging-demo`, and `production`
 
 Explanation of backend env files:
 
@@ -142,7 +142,10 @@ To run eslint manually:
 `eslint .`
 
 > **Note**: we are gradually adding linting enforcement to our existing code, so not everything may be subject to linting yet. Refer to the [ignore file](https://github.com/Recidiviz/pulse-dashboards/.eslintignore) for details. While this transition is underway, if you are adding new files or substantially rewriting existing ones, you are encouraged to whitelist them for linting by updating the configuration file.
+ 
+### Syncing content
 
+Content found in the folder `src/core/content` can be synced with an external google sheet by running `yarn sync-content`. The ID of the sheet as well as the credentials of a service account with access to it should be stored in the `.env-cmdrc` file.
 
 ### Running the application locally
 
@@ -377,6 +380,7 @@ A quick overview of the directory structure and suggestions on where to put diff
   index.js
 /server/
    server.js
+/tools/
 ```
 
 ### Application root (/)
@@ -438,6 +442,10 @@ Application backend source code. If you're writing it, it should most likely end
 ### server.js
 
 The actual entry point to the backend, i.e. where the Node/Express server, middleware, and routing are defined.
+
+### tools
+
+This is where scripts which help with development but do not need to be shipped with the app live.
 
 ## License
 

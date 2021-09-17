@@ -26,8 +26,8 @@ import RootStore from "../../../RootStore";
 import CoreStore from "../../CoreStore";
 import usePageContent from "../usePageContent";
 
-jest.mock("../../content/view/default");
-jest.mock("../../content/view/us_id");
+jest.mock("../../content/page/default");
+jest.mock("../../content/page/us_id");
 
 const testPageContent = (pageId, expectedTitle, expectedSummary) => {
   const wrapper = ({ children }) => <StoreProvider>{children}</StoreProvider>;
