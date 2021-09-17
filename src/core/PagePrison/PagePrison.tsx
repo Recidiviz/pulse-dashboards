@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // ===================== ========================================================
 
-import "./PagePrison.scss";
-
 import { observer } from "mobx-react-lite";
 import React from "react";
 
@@ -57,21 +55,19 @@ const PagePrison: React.FC = () => {
         />
       }
     >
-      <div className="PagePrison">
-        <PopulationSummaryMetrics
-          data={dataSeries}
-          simulationDate={simulationDate}
-          isLoading={isLoading}
-          isError={error}
-        />
-        <PopulationTimeSeriesChart
-          metric={model}
-          title={chartTitle}
-          data={dataSeries}
-          compartment="INCARCERATION"
-        />
-        <ChartNote note={note} isLoading={isLoading} />
-      </div>
+      <PopulationSummaryMetrics
+        data={dataSeries}
+        simulationDate={simulationDate}
+        isLoading={isLoading}
+        isError={error}
+      />
+      <PopulationTimeSeriesChart
+        metric={model}
+        title={chartTitle}
+        data={dataSeries}
+        compartment="INCARCERATION"
+      />
+      <ChartNote note={note} isLoading={isLoading} />
     </PageTemplate>
   );
 };

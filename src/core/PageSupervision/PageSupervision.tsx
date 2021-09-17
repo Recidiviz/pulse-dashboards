@@ -18,18 +18,56 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import ChartNote from "../ChartNote";
+import { useCoreStore } from "../CoreStoreProvider";
 import usePageContent from "../hooks/usePageContent";
 import PageTemplate from "../PageTemplate";
+import PathwaysFilterBar from "../PathwaysFilterBar";
 import PathwaysLeftPanel from "../PathwaysLeftPanel";
+import PopulationSummaryMetrics from "../PopulationSummaryMetrics";
+import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
+import filterOptions from "../utils/filterOptions";
 
 const PageSupervision: React.FC = () => {
   const { title, summary } = usePageContent("supervision");
+  const { currentTenantId, metricsStore } = useCoreStore();
+  const model = metricsStore.supervisionPopulationOverTime;
+  const {
+    enabledFilters,
+    dataSeries,
+    download,
+    chartTitle,
+    error,
+    simulationDate,
+    isLoading,
+    note,
+  } = model;
+
   return (
     <PageTemplate
       leftPanel={<PathwaysLeftPanel title={title} description={summary} />}
+      filters={
+        <PathwaysFilterBar
+          // @ts-ignore
+          filterOptions={filterOptions[currentTenantId]}
+          enabledFilters={enabledFilters}
+          handleDownload={download}
+        />
+      }
     >
-      <div>{title} page</div>
-      <div>{summary}</div>
+      <PopulationSummaryMetrics
+        data={dataSeries}
+        simulationDate={simulationDate}
+        isLoading={isLoading}
+        isError={error}
+      />
+      <PopulationTimeSeriesChart
+        metric={model}
+        title={chartTitle}
+        data={dataSeries}
+        compartment="SUPERVISION"
+      />
+      <ChartNote note={note} isLoading={isLoading} />
     </PageTemplate>
   );
 };

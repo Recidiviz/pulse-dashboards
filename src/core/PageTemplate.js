@@ -38,8 +38,7 @@ const PageTemplate = ({
           {importantNotes.length !== 0 && (
             <ImportantNotesBar importantNotes={importantNotes} />
           )}
-
-          {children}
+          <div className="PageTemplate__content">{children}</div>
         </div>
       </div>
     </div>

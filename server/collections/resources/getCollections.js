@@ -153,6 +153,9 @@ const PATHWAYS_COLLECTIONS = {
     prison_population_projection_time_series: {
       filename: "prison_population_projection_time_series.txt",
     },
+    supervision_population_projection_time_series: {
+      filename: "supervision_population_projection_time_series.txt",
+    },
   },
 };
 

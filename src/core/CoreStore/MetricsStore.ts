@@ -61,4 +61,20 @@ export default class MetricsStore {
       noteCopy: `Historical and projected population data were generated`,
     });
   }
+
+  get supervisionPopulationOverTime(): PopulationOverTimeMetric {
+    return new PopulationOverTimeMetric({
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_population_projection_time_series",
+      rootStore: this.rootStore,
+      dataTransformer: createProjectionTimeSeries,
+      enabledFilters: [
+        FILTER_TYPES.TIME_PERIOD,
+        FILTER_TYPES.GENDER,
+        FILTER_TYPES.SUPERVISION_TYPE,
+      ],
+      chartTitle: "Supervised Population",
+      noteCopy: `Historical and projected population data were generated`,
+    });
+  }
 }
