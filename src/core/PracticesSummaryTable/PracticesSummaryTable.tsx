@@ -19,8 +19,10 @@ import "./PracticesSummaryTable.scss";
 import cx from "classnames";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { useSortBy, useTable } from "react-table";
 
+import { encrypt } from "../../utils/formatStrings";
 import { useCoreStore } from "../CoreStoreProvider";
 import { ENTITY_TYPES, EntityType, MetricValueAccessor } from "../models/types";
 import {
@@ -130,17 +132,12 @@ const PracticesSummaryTable: React.FC = () => {
                 entityType: string;
               };
             }) => (
-              <button
-                role="link"
-                type="button"
-                tabIndex={0}
+              <Link
                 className="PracticesSummaryTable__link"
-                onClick={() =>
-                  pagePracticesStore.setCurrentEntityId(value.entityId)
-                }
+                to={`/community/practices/${encrypt(value.entityId)}`}
               >
                 {value.entityName}
-              </button>
+              </Link>
             ),
           },
         ],
@@ -154,7 +151,7 @@ const PracticesSummaryTable: React.FC = () => {
         columns: metricColumns,
       },
     ],
-    [entityType, overallColumns, metricColumns, pagePracticesStore]
+    [entityType, overallColumns, metricColumns]
   );
 
   const sortBy = useMemo(() => ({ id: selectedSortBy, desc: false }), [

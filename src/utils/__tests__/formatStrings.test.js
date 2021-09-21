@@ -271,4 +271,24 @@ describe("formatStrings", () => {
       expect(utils.formatPercent(-5)).toBe("5%");
     });
   });
+
+  describe("encrypting and decrypting strings", () => {
+    beforeEach(() => {
+      process.env = Object.assign(process.env, {
+        REACT_APP_CRYPTO_PASSPHRASE: "secret passphrase",
+      });
+    });
+
+    it("enprypting then decrypting returns the same plainText string", () => {
+      const plainText = "string to encrypt";
+      const encrypted = utils.encrypt(plainText);
+      expect(utils.decrypt(encrypted)).toBe(plainText);
+    });
+
+    it("encrypts and decrypts a string with special characters", () => {
+      const plainText = "string_to_encrypt,##*/";
+      const encrypted = utils.encrypt(plainText);
+      expect(utils.decrypt(encrypted)).toBe(plainText);
+    });
+  });
 });

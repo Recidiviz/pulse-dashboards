@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import CryptoJS from "crypto-js";
 import Base64 from "crypto-js/enc-base64";
 import SHA256 from "crypto-js/sha256";
 import { format, parseISO } from "date-fns";
@@ -24,6 +25,8 @@ import moment from "moment";
 import numeral from "numeral";
 
 import { translate } from "./i18nSettings";
+
+const CRYPTO_PASSPHRASE = process.env.REACT_APP_CRYPTO_PASSPHRASE || "";
 
 function getStatePopulations(): string[] {
   return Object.keys(translate("populationChartAttributes"));
@@ -208,7 +211,24 @@ function hashEmailAddress(email: string | undefined): string {
   return email ? Base64.stringify(SHA256(email)) : "";
 }
 
+function encrypt(plainText: string): string {
+  const b64 = CryptoJS.AES.encrypt(plainText, CRYPTO_PASSPHRASE).toString();
+  const e64 = CryptoJS.enc.Base64.parse(b64);
+  const eHex = e64.toString(CryptoJS.enc.Hex);
+  return eHex;
+}
+
+function decrypt(hexString: string): string {
+  const reb64 = CryptoJS.enc.Hex.parse(hexString);
+  const bytes = reb64.toString(CryptoJS.enc.Base64);
+  const decrypted = CryptoJS.AES.decrypt(bytes, CRYPTO_PASSPHRASE);
+  const plainText = decrypted.toString(CryptoJS.enc.Utf8);
+  return plainText;
+}
+
 export {
+  decrypt,
+  encrypt,
   formatDate,
   formatDistrictLabel,
   formatISODateString,

@@ -42,7 +42,7 @@ export const CORE_PATHS: Record<string, string> = {
   goals: "/goals",
   communityExplore: "/community/explore",
   communityProjections: "/community/projections",
-  communityPractices: "/community/practices",
+  communityPractices: "/community/practices/:entityId?",
   facilitiesExplore: "/facilities/explore",
   facilitiesProjections: "/facilities/projections",
   methodology: "/methodology/:dashboard",
