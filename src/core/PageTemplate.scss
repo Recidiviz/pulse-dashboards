@@ -37,13 +37,13 @@
   }
 
   @media screen and (max-width: $core-breakpoint-lg) {
-    padding-left: 6rem;
-    padding-right: 6rem;
+    padding-left: 4.5rem;
+    padding-right: 5rem;
   }
 
   @media screen and (max-width: $core-breakpoint-sm) {
-    padding-left: 3rem;
-    padding-right: 3rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 
   #mainContent {

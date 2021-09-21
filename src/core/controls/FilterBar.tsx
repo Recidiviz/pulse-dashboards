@@ -20,7 +20,7 @@ import React from "react";
 import Sticky from "react-sticky-fill";
 
 const FILTER_BAR_STYLE = {
-  top: 79,
+  top: 64,
 };
 
 const FilterBar: React.FC<{
