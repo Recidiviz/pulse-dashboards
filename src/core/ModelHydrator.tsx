@@ -37,6 +37,10 @@ const StatusWrapper = styled(animated.div)`
   justify-content: center;
   padding: ${rem(32)};
   width: 100%;
+
+  & > div {
+    width: 100%;
+  }
 `;
 /**
  * Creates an atomic status variable for transitions

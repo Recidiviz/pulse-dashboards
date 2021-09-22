@@ -47,7 +47,7 @@ const SectionNavigation: React.FC = () => {
             onClick={() => setSection(sectionId)}
           >
             {sections && sections[sectionId]}
-            <Icon kind={IconSVG.Arrow} width={16} />
+            <Icon kind={IconSVG.Arrow} width={16} height={16} />
           </Link>
         </div>
       ))}

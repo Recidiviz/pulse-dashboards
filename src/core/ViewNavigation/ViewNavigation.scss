@@ -16,6 +16,7 @@
 // =============================================================================
 
 @import "../CoreConstants.scss";
+@import "../../assets/styles/spec/tools/mixins/ie11.scss";
 
 .ViewNavigation {
   height: 100vh;
@@ -73,7 +74,13 @@
     top: -1rem;
     z-index: 4;
     padding: 1.5rem;
+    width: auto;
+    display: inline-block;
+    right:inherit;
     width: max-content;
+    @include ie11 {
+      min-width: 13rem;
+    };
     max-width: 15.5rem;
     background-color: $pine-1;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);

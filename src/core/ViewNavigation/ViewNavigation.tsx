@@ -74,7 +74,7 @@ const ViewNavigation = (): React.ReactElement => {
           <div className="ViewNavigation__tooltip">
             <div className="ViewNavigation__tooltip-header">
               Methodology
-              <Icon kind={IconSVG.Open} width={16} />
+              <Icon kind={IconSVG.Open} width={16} height={16} />
             </div>
           </div>
         </div>

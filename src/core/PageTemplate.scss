@@ -33,7 +33,10 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    row-gap: 16px;
+
+    > :not(:first-child) {
+      margin-top: 16px;
+    }
   }
 
   @media screen and (max-width: $core-breakpoint-lg) {
