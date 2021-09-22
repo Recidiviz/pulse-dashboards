@@ -113,7 +113,7 @@ export default class FiltersStore {
   get filterOptions() {
     return {
       ...filterOptionsMap[
-        isDemoMode ? US_DEMO : this.rootStore.currentTenantId
+        isDemoMode() ? US_DEMO : this.rootStore.currentTenantId
       ],
       ...this.districtFilterOptions,
     };

@@ -11,10 +11,6 @@ export default class Page {
   }
 
   get userMenu() {
-    return $(".TopBarUserMenuForAuthenticatedUser");
-  }
-
-  get profileLink() {
-    return $(".TopBarUserMenuForAuthenticatedUser__profile-link");
+    return $(".UserAvatar");
   }
 }

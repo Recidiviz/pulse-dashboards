@@ -58,8 +58,6 @@ class LanternPage extends Page {
 
   navigateToProfile() {
     this.userMenu.click();
-    this.profileLink.waitForClickable();
-    this.profileLink.click();
     browser.pause(this.redirectPause);
   }
 }
