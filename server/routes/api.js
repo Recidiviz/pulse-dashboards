@@ -204,7 +204,7 @@ function vitals(req, res) {
 function pathways(req, res) {
   const { stateCode, file: metricName } = req.params;
   const metricType = "pathways";
-  const cacheKey = getCacheKey({ stateCode, metricType });
+  const cacheKey = getCacheKey({ stateCode, metricType, metricName });
   cacheResponse(
     cacheKey,
     () => fetchMetrics(stateCode, metricType, metricName, isOfflineMode),
