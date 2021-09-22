@@ -26,8 +26,8 @@ import StoreProvider, { useRootStore } from "../components/StoreProvider";
 import VerificationNeeded from "../components/VerificationNeeded";
 import UsNDCommunityExplore from "../core/community/Explore";
 import CoreLayout from "../core/CoreLayout";
+import PagePathways from "../core/PagePathways";
 import PagePractices from "../core/PagePractices";
-import PagePrison from "../core/PagePrison";
 import PathwaysLayout from "../core/PathwaysLayout";
 import PracticesMethodology from "../core/PracticesMethodology";
 import ProjectionsMethodology from "../core/ProjectionsMethodology/Methodology";
@@ -53,8 +53,8 @@ jest.mock("../components/ErrorMessage");
 jest.mock("../components/VerificationNeeded");
 jest.mock("../core/ProjectionsMethodology/Methodology");
 jest.mock("../core/PracticesMethodology");
-jest.mock("../core/PagePrison");
 jest.mock("../core/PagePractices");
+jest.mock("../core/PagePathways");
 
 describe("App tests", () => {
   const metadataField = `${METADATA_NAMESPACE}app_metadata`;
@@ -75,7 +75,7 @@ describe("App tests", () => {
   const CoreLayoutMock = CoreLayout.type;
   const PathwaysLayoutMock = PathwaysLayout.type;
   const PracticesMethodologyMock = PracticesMethodology.type;
-  const PagePrisonMock = PagePrison.type;
+  const PagePathwaysMock = PagePathways.type;
   const PagePracticesMock = PagePractices.type;
   let userStore = {};
 
@@ -87,7 +87,7 @@ describe("App tests", () => {
   UsNDCommunityExplore.mockReturnValue(
     mockWithTestId(mockNDCommunityExploreId)
   );
-  PagePrisonMock.mockReturnValue(mockWithTestId(mockPathwaysPrisonId));
+  PagePathwaysMock.mockReturnValue(mockWithTestId(mockPathwaysPrisonId));
   PagePracticesMock.mockReturnValue(mockWithTestId(mockCommunityPracticesId));
   NotFound.mockReturnValue(mockWithTestId(mockNotFoundId));
   Loading.mockReturnValue(mockWithTestId(mockLoadingTestId));

@@ -18,7 +18,7 @@
  *
  */
 
-import { PathwaysPageId, PathwaysSection } from "../views";
+import { PathwaysPage, PathwaysSection } from "../views";
 
 export type PageContent = {
   title: string;
@@ -31,9 +31,9 @@ export type Sections = {
 };
 
 export type PageCopy = {
-  [key in PathwaysPageId]: PageContent;
+  [key in PathwaysPage]: PageContent;
 };
 
 export type StateSpecificPageCopy = {
-  [key in PathwaysPageId]?: Partial<PageContent>;
+  [key in PathwaysPage]?: Partial<PageContent>;
 };

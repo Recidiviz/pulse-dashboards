@@ -16,6 +16,7 @@
 // =============================================================================
 import { SimulationCompartment } from "./models/types";
 
+export type CoreView = keyof typeof CORE_VIEWS;
 export const CORE_VIEWS: Record<string, string> = {
   community: "community",
   facilities: "facilities",
@@ -23,20 +24,10 @@ export const CORE_VIEWS: Record<string, string> = {
   methodology: "methodology",
 } as const;
 
-export type CoreView = keyof typeof CORE_VIEWS;
-
+export type PathwaysView = keyof typeof PATHWAYS_VIEWS;
 export const PATHWAYS_VIEWS: Record<string, string> = {
   pathways: "pathways",
 } as const;
-
-export const PathwaysPageIdList = [
-  "prison",
-  "supervision",
-  "supervisionToLiberty",
-  "supervisionToPrison",
-] as const;
-
-export type PathwaysPageId = typeof PathwaysPageIdList[number];
 
 export const CORE_PATHS: Record<string, string> = {
   goals: "/goals",
@@ -51,15 +42,30 @@ export const CORE_PATHS: Record<string, string> = {
 };
 
 export const PATHWAYS_PATHS: Record<string, string> = {
-  pathwaysPrison: "/pathways/prison/:sectionId?",
-  pathwaysSupervision: "/pathways/supervision/:sectionId?",
+  pathways: "/pathways/:pageId/:sectionId?",
 };
 
+export type CorePage = keyof typeof CORE_PAGES;
+export const CORE_PAGES = {
+  explore: "explore",
+  projections: "projections",
+  practices: "practices",
+} as const;
+
+export type PathwaysPage = keyof typeof PATHWAYS_PAGES;
+export const PATHWAYS_PAGES = {
+  prison: "prison",
+  supervision: "supervision",
+  supervisionToLiberty: "supervisionToLiberty",
+  supervisionToPrison: "supervisionToPrison",
+} as const;
+export const PathwaysPageIdList = Object.keys(PATHWAYS_PAGES);
+
+export type PathwaysSection = keyof typeof PATHWAYS_SECTIONS;
 export const PATHWAYS_SECTIONS: Record<string, string> = {
   populationOverTime: "populationOverTime",
 };
-
-export type PathwaysSection = keyof typeof PATHWAYS_SECTIONS;
+export const DEFAULT_PATHWAYS_SECTION = PATHWAYS_SECTIONS.populationOverTime;
 
 const pathnameToView: Record<string, string> = {
   [CORE_PATHS.goals]: CORE_VIEWS.goals,

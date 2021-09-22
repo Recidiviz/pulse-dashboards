@@ -19,30 +19,17 @@ import "./PathwaysNavigation.scss";
 
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
 import PageNavigation from "../PageNavigation";
 
 const PathwaysNavigation: React.FC = () => {
-  const { pathname } = useLocation();
-  const { currentTenantId, userStore } = useRootStore();
+  const { currentTenantId } = useRootStore();
   if (!currentTenantId) return null;
-
-  const navigationLayout = userStore.userAllowedNavigation;
-  const [currentView, currentPage] = pathname.split("/").slice(1, 3);
-  const pageOptions = navigationLayout[currentView] ?? [];
-
   return (
-    <>
-      <nav className="PathwaysNavigation">
-        <PageNavigation
-          currentView={currentView}
-          currentPage={currentPage ?? ""}
-          pageOptions={pageOptions}
-        />
-      </nav>
-    </>
+    <nav className="PathwaysNavigation">
+      <PageNavigation />
+    </nav>
   );
 };
 

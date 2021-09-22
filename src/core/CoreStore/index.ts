@@ -21,11 +21,14 @@ import type UserStore from "../../RootStore/UserStore";
 import { TenantId } from "../models/types";
 import { PopulationFilterValues } from "../types/filters";
 import {
+  CORE_PAGES,
   CORE_VIEWS,
+  CorePage,
   CoreView,
-  getViewFromPathname,
-  PATHWAYS_SECTIONS,
+  DEFAULT_PATHWAYS_SECTION,
+  PathwaysPage,
   PathwaysSection,
+  PathwaysView,
 } from "../views";
 import FiltersStore from "./FiltersStore";
 import MetricsStore from "./MetricsStore";
@@ -52,7 +55,9 @@ export default class CoreStore {
 
   view: CoreView = CORE_VIEWS.community;
 
-  section: PathwaysSection = PATHWAYS_SECTIONS.populationOverTime;
+  page: PathwaysPage | CorePage = CORE_PAGES.practices;
+
+  section: PathwaysSection = DEFAULT_PATHWAYS_SECTION;
 
   constructor({ userStore, tenantStore }: CoreStoreProps) {
     makeAutoObservable(this);
@@ -75,14 +80,20 @@ export default class CoreStore {
 
     this.setView = this.setView.bind(this);
 
+    this.setPage = this.setPage.bind(this);
+
     this.setSection = this.setSection.bind(this);
   }
 
-  setView(pathname: string): void {
-    this.view = getViewFromPathname(pathname);
+  setView(view: PathwaysView | CoreView): void {
+    this.view = view;
   }
 
-  setSection(section: string): void {
+  setPage(page: PathwaysPage | CorePage): void {
+    this.page = page;
+  }
+
+  setSection(section: PathwaysSection): void {
     this.section = section;
   }
 

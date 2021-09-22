@@ -25,7 +25,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useRootStore } from "../../components/StoreProvider";
 import { useCoreStore } from "../CoreStoreProvider";
 import usePageContent from "../hooks/usePageContent";
-import { PathwaysPageId } from "../views";
+import { PathwaysPage } from "../views";
 
 const SectionNavigation: React.FC = () => {
   const { pathname } = useLocation();
@@ -34,7 +34,7 @@ const SectionNavigation: React.FC = () => {
   const navigationLayout = userStore.userAllowedNavigation;
   const [currentView, currentPage] = pathname.split("/").slice(1, 3);
   const enabledSections = navigationLayout[currentPage] ?? [];
-  const { sections } = usePageContent(currentPage as PathwaysPageId);
+  const { sections } = usePageContent(currentPage as PathwaysPage);
 
   return (
     <nav className="SectionNavigation">

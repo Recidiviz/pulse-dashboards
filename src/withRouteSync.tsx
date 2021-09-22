@@ -18,28 +18,37 @@
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { ComponentType, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 import { useCoreStore } from "./core/CoreStoreProvider";
 import { DEFAULT_ENTITY_ID } from "./core/PagePractices/types";
+import {
+  DEFAULT_PATHWAYS_SECTION,
+  PathwaysPage,
+  PathwaysSection,
+} from "./core/views";
 import { decrypt } from "./utils/formatStrings";
 
 type RouteParams = {
+  sectionId?: string;
   entityId?: string;
 };
 
 type NormalizedParams = {
+  sectionId: PathwaysSection;
   entityId: string;
 };
 
 const normalizeRouteParams = (rawParams: RouteParams): NormalizedParams => {
-  const { entityId: rawEntityId } = rawParams;
+  const { entityId: rawEntityId, sectionId: rawSectionId } = rawParams;
   const entityId =
     !rawEntityId || rawEntityId === "STATE_DOC"
       ? rawEntityId
       : decrypt(rawEntityId);
+  const sectionId = rawSectionId as PathwaysSection;
   return {
     entityId: entityId || DEFAULT_ENTITY_ID,
+    sectionId: sectionId || DEFAULT_PATHWAYS_SECTION,
   };
 };
 
@@ -52,13 +61,17 @@ const withRouteSync = <Props extends RouteParams>(
   RouteComponent: ComponentType<Props>
 ): ComponentType<Props> => {
   const WrappedRouteComponent: React.FC<Props> = (props) => {
-    const { entityId } = normalizeRouteParams(useParams());
-    const { pagePracticesStore } = useCoreStore();
+    const { pathname } = useLocation();
+    const pageId = pathname.split("/")[2] as PathwaysPage;
+    const { entityId, sectionId } = normalizeRouteParams(useParams());
+    const { pagePracticesStore, setPage, setSection } = useCoreStore();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(
       action("sync route params", () => {
         pagePracticesStore.setCurrentEntityId(entityId);
+        setSection(sectionId);
+        setPage(pageId);
       })
     );
 

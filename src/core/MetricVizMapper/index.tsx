@@ -15,16 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type RoutePermission = (string | any)[];
-
-export type NavigationSection = keyof Navigation;
-
-export type Navigation = {
-  goals?: string[];
-  community?: string[];
-  facilities?: string[];
-  methodology?: string[];
-  pathways?: string[];
-  prison?: string[];
-  supervision?: string[];
-};
+export { default } from "./MetricVizMapper";

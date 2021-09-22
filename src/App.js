@@ -38,10 +38,9 @@ import CoreLayout from "./core/CoreLayout";
 import UsNdFacilitiesExplore from "./core/facilities/Explore";
 import CoreGoalsView from "./core/goals/CoreGoalsView";
 import PageMethodology from "./core/PageMethodology";
+import PagePathways from "./core/PagePathways";
 import PagePractices from "./core/PagePractices";
-import PagePrison from "./core/PagePrison";
 import PageProjections from "./core/PageProjections";
-import PageSupervision from "./core/PageSupervision";
 import PathwaysLayout from "./core/PathwaysLayout";
 import {
   CORE_PATHS,
@@ -92,8 +91,7 @@ const App = () => (
 
             <PathwaysLayout tenantIds={CORE_TENANTS} views={Object.values(PATHWAYS_VIEWS)}>
               <Switch>
-                <ProtectedRoute path={PATHWAYS_PATHS.pathwaysPrison} component={PagePrison} />
-                <ProtectedRoute path={PATHWAYS_PATHS.pathwaysSupervision} component={PageSupervision} />
+                <ProtectedRoute path={PATHWAYS_PATHS.pathways} component={PagePathways} />
                 <Route path="/profile" component={Profile} />
                 <Redirect from="/pathways" to="/pathways/prison" />
                 <NotFound />

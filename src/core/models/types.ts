@@ -41,7 +41,7 @@ export type MetricRecord =
 export type PopulationProjectionTimeSeriesRecord = {
   year: number;
   month: number;
-  compartment?: SimulationCompartment;
+  compartment: SimulationCompartment;
   legalStatus: string;
   gender: Gender;
   simulationTag: string;

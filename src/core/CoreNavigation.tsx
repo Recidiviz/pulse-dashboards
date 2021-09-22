@@ -19,26 +19,22 @@ import "./CoreNavigation.scss";
 
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import recidivizLogo from "../assets/static/images/Logo.svg";
 import { useRootStore } from "../components/StoreProvider";
 import UserAvatar from "../components/UserAvatar";
-import flags from "../flags";
 import { useCoreStore } from "./CoreStoreProvider";
 import CoreViewNavigation from "./CoreViewNavigation";
 import PageNavigation from "./PageNavigation";
-import { CORE_VIEWS } from "./views";
+import { CORE_VIEWS, getViewFromPathname } from "./views";
 
 const CoreNavigation: React.FC = () => {
-  const { pathname } = useLocation();
   const { currentTenantId, userStore } = useRootStore();
   const { setView } = useCoreStore();
   if (!currentTenantId) return null;
 
   const navigationLayout = userStore.userAllowedNavigation;
-  const [currentView, currentPage] = pathname.split("/").slice(1, 3);
-  const pageOptions = navigationLayout[currentView] ?? [];
   const menu = [] as {
     label: string;
     link: string;
@@ -67,18 +63,12 @@ const CoreNavigation: React.FC = () => {
           </Link>
         </div>
         <CoreViewNavigation
-          onClick={(link: string) => setView(link)}
+          onClick={(link: string) => setView(getViewFromPathname(link))}
           menu={menu}
         />
       </div>
       <div className="CoreNavigation__right">
-        {flags.enableCoreTabNavigation && (
-          <PageNavigation
-            currentView={currentView}
-            currentPage={currentPage ?? ""}
-            pageOptions={pageOptions}
-          />
-        )}
+        <PageNavigation />
         <UserAvatar />
       </div>
     </nav>

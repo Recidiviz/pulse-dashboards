@@ -15,16 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type RoutePermission = (string | any)[];
+import React from "react";
 
-export type NavigationSection = keyof Navigation;
+import PathwaysMetric from "../models/PathwaysMetric";
+import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
+import { MetricRecord } from "../models/types";
+import VizPopulationOverTime from "../VizPopulationOverTime";
 
-export type Navigation = {
-  goals?: string[];
-  community?: string[];
-  facilities?: string[];
-  methodology?: string[];
-  pathways?: string[];
-  prison?: string[];
-  supervision?: string[];
+type MetricVizMapperProps = {
+  metric: PathwaysMetric<MetricRecord>;
 };
+
+const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
+  if (metric instanceof PopulationOverTimeMetric) {
+    return <VizPopulationOverTime metric={metric} />;
+  }
+
+  // there are no other metric types, so this should only be reached when developing new ones
+  throw new Error("unknown metric type");
+};
+
+export default MetricVizMapper;

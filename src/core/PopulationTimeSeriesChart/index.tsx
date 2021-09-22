@@ -50,15 +50,10 @@ const TOTAL_INCARCERATED_LIMIT = 8008;
 type Props = {
   metric: PopulationOverTimeMetric | ProjectionsMetrics;
   title: string;
-  compartment: string;
   data: PopulationProjectionTimeSeriesRecord[];
 };
 
-const PopulationTimeSeriesChart: React.FC<Props> = ({
-  title,
-  compartment,
-  data,
-}) => {
+const PopulationTimeSeriesChart: React.FC<Props> = ({ title, data }) => {
   const { filtersStore } = useCoreStore();
   const { gender, legalStatus } = filtersStore.filters;
 
@@ -71,6 +66,7 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
     return <div />;
   }
 
+  const { compartment } = data[0];
   const {
     historicalPopulation,
     projectedPopulation,
@@ -160,7 +156,7 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
             color: styles.crimsonDark50,
             note: {
               label: `Total Operational Capacity (includes CAPP): ${TOTAL_INCARCERATED_LIMIT.toLocaleString()}`,
-              align: "left bottom",
+              align: "left",
               lineType: null,
               color: styles.crimsonDark,
               wrap: 500,

@@ -18,43 +18,21 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import ChartNote from "../ChartNote";
-import { useCoreStore } from "../CoreStoreProvider";
-import usePageContent from "../hooks/usePageContent";
-import PageTemplate from "../PageTemplate";
-import PathwaysFilterBar from "../PathwaysFilterBar";
-import PathwaysLeftPanel from "../PathwaysLeftPanel";
+import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
 import PopulationSummaryMetrics from "../PopulationSummaryMetrics";
 import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
-import filterOptions from "../utils/filterOptions";
 
-const PagePrison: React.FC = () => {
-  const { title, summary } = usePageContent("prison");
-  const { currentTenantId, metricsStore } = useCoreStore();
-  const model = metricsStore.prisonPopulationOverTime;
-  const {
-    enabledFilters,
-    dataSeries,
-    download,
-    chartTitle,
-    error,
-    simulationDate,
-    isLoading,
-    note,
-  } = model;
+type VizPopulationOverTimeProps = {
+  metric: PopulationOverTimeMetric;
+};
+
+const VizPopulationOverTime: React.FC<VizPopulationOverTimeProps> = ({
+  metric,
+}) => {
+  const { dataSeries, chartTitle, error, simulationDate, isLoading } = metric;
 
   return (
-    <PageTemplate
-      leftPanel={<PathwaysLeftPanel title={title} description={summary} />}
-      filters={
-        <PathwaysFilterBar
-          // @ts-ignore
-          filterOptions={filterOptions[currentTenantId]}
-          enabledFilters={enabledFilters}
-          handleDownload={download}
-        />
-      }
-    >
+    <>
       <PopulationSummaryMetrics
         data={dataSeries}
         simulationDate={simulationDate}
@@ -62,14 +40,12 @@ const PagePrison: React.FC = () => {
         isError={error}
       />
       <PopulationTimeSeriesChart
-        metric={model}
+        metric={metric}
         title={chartTitle}
         data={dataSeries}
-        compartment="INCARCERATION"
       />
-      <ChartNote note={note} isLoading={isLoading} />
-    </PageTemplate>
+    </>
   );
 };
 
-export default observer(PagePrison);
+export default observer(VizPopulationOverTime);

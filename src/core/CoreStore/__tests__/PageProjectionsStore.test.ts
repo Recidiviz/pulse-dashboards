@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import RootStore from "../../../RootStore";
+import { getViewFromPathname } from "../../views";
 import CoreStore from "..";
 import PageProjectionsStore from "../PageProjectionsStore";
 
@@ -106,14 +107,14 @@ describe("PageProjectionsStore", () => {
 
   describe("filtersText", () => {
     it("formats the filters description for the csv file", () => {
-      coreStore.setView("/community/projections");
+      coreStore.setView(getViewFromPathname("/community/projections"));
       expect(pageProjectionsStore.filtersText).toEqual(
         "Supervision - 6 months; Gender: All; Supervision Type: All"
       );
     });
 
     it("formats the filters text according to the view", () => {
-      coreStore.setView("/facilities/projections");
+      coreStore.setView(getViewFromPathname("/facilities/projections"));
       expect(pageProjectionsStore.filtersText).toEqual(
         "Incarceration - 6 months; Gender: All; Legal Status: All"
       );

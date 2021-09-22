@@ -13,35 +13,33 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// =============================================================================
+// ===================== ========================================================
+
+import "./PagePathways.scss";
 
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import withRouteSync from "../../withRouteSync";
 import ChartNote from "../ChartNote";
 import { useCoreStore } from "../CoreStoreProvider";
 import usePageContent from "../hooks/usePageContent";
+import MetricVizMapper from "../MetricVizMapper";
 import PageTemplate from "../PageTemplate";
 import PathwaysFilterBar from "../PathwaysFilterBar";
 import PathwaysLeftPanel from "../PathwaysLeftPanel";
-import PopulationSummaryMetrics from "../PopulationSummaryMetrics";
-import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
 import filterOptions from "../utils/filterOptions";
+import { PathwaysPage } from "../views";
 
-const PageSupervision: React.FC = () => {
-  const { title, summary } = usePageContent("supervision");
-  const { currentTenantId, metricsStore } = useCoreStore();
-  const model = metricsStore.supervisionPopulationOverTime;
-  const {
-    enabledFilters,
-    dataSeries,
-    download,
-    chartTitle,
-    error,
-    simulationDate,
-    isLoading,
-    note,
-  } = model;
+const PagePathways: React.FC = () => {
+  const { currentTenantId, metricsStore, page } = useCoreStore();
+  const pageContent = usePageContent(page as PathwaysPage);
+  if (!pageContent) return <div />;
+
+  const { title, summary } = pageContent;
+
+  const metric = metricsStore.current;
+  const { enabledFilters, download, isLoading, note } = metric;
 
   return (
     <PageTemplate
@@ -55,21 +53,12 @@ const PageSupervision: React.FC = () => {
         />
       }
     >
-      <PopulationSummaryMetrics
-        data={dataSeries}
-        simulationDate={simulationDate}
-        isLoading={isLoading}
-        isError={error}
-      />
-      <PopulationTimeSeriesChart
-        metric={model}
-        title={chartTitle}
-        data={dataSeries}
-        compartment="SUPERVISION"
-      />
-      <ChartNote note={note} isLoading={isLoading} />
+      <div className="PagePathways">
+        <MetricVizMapper metric={metric} />
+        <ChartNote note={note} isLoading={isLoading} />
+      </div>
     </PageTemplate>
   );
 };
 
-export default observer(PageSupervision);
+export default withRouteSync(observer(PagePathways));

@@ -66,7 +66,6 @@ const PageProjections: React.FC = () => {
         metric={model}
         title={`Total ${populationType} Population`}
         data={filteredData}
-        compartment={compartment}
       />
     </PageTemplate>
   );

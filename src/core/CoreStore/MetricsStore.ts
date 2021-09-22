@@ -21,6 +21,7 @@ import ProjectionsMetrics from "../models/ProjectionsMetrics";
 import { createProjectionTimeSeries } from "../models/utils";
 import VitalsMetrics from "../models/VitalsMetrics";
 import { FILTER_TYPES } from "../utils/constants";
+import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../views";
 import type CoreStore from ".";
 
 export default class MetricsStore {
@@ -44,6 +45,21 @@ export default class MetricsStore {
       sourceEndpoint: "projections",
       rootStore: this.rootStore,
     });
+  }
+
+  get current(): any {
+    const { page, section } = this.rootStore;
+    const map = {
+      [PATHWAYS_PAGES.prison]: {
+        [PATHWAYS_SECTIONS.populationOverTime]: this.prisonPopulationOverTime,
+      },
+      [PATHWAYS_PAGES.supervision]: {
+        [PATHWAYS_SECTIONS.populationOverTime]: this
+          .supervisionPopulationOverTime,
+      },
+    };
+    // @ts-ignore
+    return map[page][section];
   }
 
   get prisonPopulationOverTime(): PopulationOverTimeMetric {

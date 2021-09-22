@@ -32,7 +32,7 @@
     "demo": "npm-run-all --parallel spa:demo server:demo",
     "server:offline": "env-cmd -e server,offline npm-run-all --parallel server:dev",
     "offline": "env-cmd -e offline,server npm-run-all --parallel spa server redis-server",
-    "sync-content": "env-cmd -e content-sync ts-node tools/syncContentFromSheets.ts && prettier --write src/core/content/*"
+    "sync-content": "env-cmd -e sync-content ts-node tools/syncContentFromSheets.ts && prettier --write src/core/content/*"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.12.1",

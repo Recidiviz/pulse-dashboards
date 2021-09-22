@@ -18,20 +18,22 @@
 import "./PageNavigation.scss";
 
 import cx from "classnames";
+import { observer } from "mobx-react-lite";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-type propTypes = {
-  currentView: string;
-  currentPage: string;
-  pageOptions: string[];
-};
+import { useRootStore } from "../components/StoreProvider";
+import withRouteSync from "../withRouteSync";
+import { useCoreStore } from "./CoreStoreProvider";
+import { NavigationSection } from "./types/navigation";
 
-const PageNavigation: React.FC<propTypes> = ({
-  currentView,
-  currentPage,
-  pageOptions,
-}) => {
+const PageNavigation: React.FC = () => {
+  const { pathname } = useLocation();
+  const { page } = useCoreStore();
+  const { userStore } = useRootStore();
+  const currentView = pathname.split("/")[1];
+  const navigationLayout = userStore.userAllowedNavigation;
+  const pageOptions = navigationLayout[currentView] ?? [];
   const capitalizeFirstLetter = (str: string) =>
     str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -44,21 +46,20 @@ const PageNavigation: React.FC<propTypes> = ({
           currentView && currentView.toLowerCase() !== "pathways",
       })}
     >
-      {pageOptions.map((page) => (
-        <li key={page}>
+      {pageOptions.map((pageOption: NavigationSection) => (
+        <li key={pageOption}>
           <Link
-            to={`/${currentView}/${page}`}
+            to={`/${currentView}/${pageOption}`}
             className={cx("PageNavigation__option", {
               "PageNavigation__option--selected":
-                (currentPage && currentPage.toLowerCase()) === page,
+                page?.toLowerCase() === pageOption,
             })}
           >
-            {capitalizeFirstLetter(page)}
+            {capitalizeFirstLetter(pageOption)}
           </Link>
         </li>
       ))}
     </ul>
   );
 };
-
-export default PageNavigation;
+export default withRouteSync(observer(PageNavigation));
