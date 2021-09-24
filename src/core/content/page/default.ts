@@ -20,6 +20,7 @@
 
 import { PageCopy } from "../types";
 
+// TODO(#1340): [Pathways] Get sections definition into spreadsheet or remove from content system
 const content: PageCopy = {
   prison: {
     title: "Prison",
@@ -47,6 +48,9 @@ const content: PageCopy = {
     title: "Supervision to Prison",
     summary:
       "This chart includes people who have been incarcerated in a state facility because their parole or probation was revoked. Revocations are counted when the person was admitted to a facility, not when the violation occurred.",
+    sections: {
+      transitionsOverTime: "Admissions to prison from supervision",
+    },
   },
 };
 

@@ -15,16 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
-import { formatDate } from "../../utils/formatStrings";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import {
   formatMonthAndYear,
-  getRecordDate,
   MonthOptions,
 } from "../PopulationTimeSeriesChart/helpers";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PopulationProjectionTimeSeriesRecord } from "./types";
+import { getRecordDate } from "./utils";
 
 export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationProjectionTimeSeriesRecord> {
   constructor(

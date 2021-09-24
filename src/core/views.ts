@@ -64,8 +64,16 @@ export const PathwaysPageIdList = Object.keys(PATHWAYS_PAGES);
 export type PathwaysSection = keyof typeof PATHWAYS_SECTIONS;
 export const PATHWAYS_SECTIONS: Record<string, string> = {
   populationOverTime: "populationOverTime",
+  transitionsOverTime: "transitionsOverTime",
 };
-export const DEFAULT_PATHWAYS_SECTION = PATHWAYS_SECTIONS.populationOverTime;
+
+export const DEFAULT_PATHWAYS_PAGE = PATHWAYS_PAGES.prison;
+export const DEFAULT_PATHWAYS_SECTION_BY_PAGE: Record<string, string> = {
+  [PATHWAYS_PAGES.prison]: PATHWAYS_SECTIONS.populationOverTime,
+  [PATHWAYS_PAGES.supervision]: PATHWAYS_SECTIONS.populationOverTime,
+  [PATHWAYS_PAGES.supervisionToPrison]: PATHWAYS_SECTIONS.transitionsOverTime,
+  [PATHWAYS_PAGES.supervisionToLiberty]: PATHWAYS_SECTIONS.transitionsOverTime,
+};
 
 const pathnameToView: Record<string, string> = {
   [CORE_PATHS.goals]: CORE_VIEWS.goals,

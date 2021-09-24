@@ -23,15 +23,16 @@ import { useLocation, useParams } from "react-router-dom";
 import { useCoreStore } from "./core/CoreStoreProvider";
 import { DEFAULT_ENTITY_ID } from "./core/PagePractices/types";
 import {
-  DEFAULT_PATHWAYS_SECTION,
+  DEFAULT_PATHWAYS_SECTION_BY_PAGE,
   PathwaysPage,
   PathwaysSection,
 } from "./core/views";
-import { decrypt } from "./utils/formatStrings";
+import { decrypt } from "./utils";
 
 type RouteParams = {
   sectionId?: string;
   entityId?: string;
+  pageId?: string;
 };
 
 type NormalizedParams = {
@@ -40,15 +41,21 @@ type NormalizedParams = {
 };
 
 const normalizeRouteParams = (rawParams: RouteParams): NormalizedParams => {
-  const { entityId: rawEntityId, sectionId: rawSectionId } = rawParams;
+  const {
+    entityId: rawEntityId,
+    sectionId: rawSectionId,
+    pageId: rawPageId,
+  } = rawParams;
   const entityId =
     !rawEntityId || rawEntityId === "STATE_DOC"
       ? rawEntityId
       : decrypt(rawEntityId);
   const sectionId = rawSectionId as PathwaysSection;
+  const pageId = rawPageId as PathwaysPage;
   return {
     entityId: entityId || DEFAULT_ENTITY_ID,
-    sectionId: sectionId || DEFAULT_PATHWAYS_SECTION,
+    sectionId:
+      sectionId || (pageId && DEFAULT_PATHWAYS_SECTION_BY_PAGE[pageId]),
   };
 };
 

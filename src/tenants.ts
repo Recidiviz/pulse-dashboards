@@ -20,6 +20,7 @@ import {
   PracticesMetric,
 } from "./core/PagePractices/types";
 import { Navigation } from "./core/types/navigation";
+import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "./core/views";
 import * as core from "./RootStore/TenantStore/coreTenants";
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
 import { TenantId } from "./RootStore/types";
@@ -53,9 +54,14 @@ const TENANTS: Tenants = {
       community: ["practices", "projections"],
       facilities: ["projections"],
       methodology: ["projections", "practices"],
-      pathways: ["prison", "supervision"],
-      prison: ["populationOverTime"],
-      supervision: ["populationOverTime"],
+      pathways: [
+        PATHWAYS_PAGES.prison,
+        PATHWAYS_PAGES.supervision,
+        PATHWAYS_PAGES.supervisionToPrison,
+      ],
+      prison: [PATHWAYS_SECTIONS.populationOverTime],
+      supervision: [PATHWAYS_SECTIONS.populationOverTime],
+      supervisionToPrison: [PATHWAYS_SECTIONS.transitionsOverTime],
     },
     pagesWithRestrictions: [
       "projections",

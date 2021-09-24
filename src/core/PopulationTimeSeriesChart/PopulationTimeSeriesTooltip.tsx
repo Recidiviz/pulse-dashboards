@@ -40,14 +40,14 @@ const PopulationTimeSeriesTooltip: React.FC<PropTypes> = ({ d }) => {
   }
   return (
     <div className="PopulationTimeseriesTooltip">
-      <div className="PopulationTimeseriesTooltip__Date">
+      <div className="PopulationTimeseriesTooltip__date">
         {formatDate(date, "MMMM yyyy")}
       </div>
-      <div className="PopulationTimeseriesTooltip__Value">
+      <div className="PopulationTimeseriesTooltip__value">
         {value.toLocaleString(undefined, { maximumFractionDigits: 0 })}
       </div>
       {lowerBound && upperBound && (
-        <div className="PopulationTimeseriesTooltip__Range">
+        <div className="PopulationTimeseriesTooltip__bottom">
           ({Math.round(lowerBound)}, {Math.round(upperBound)})
         </div>
       )}

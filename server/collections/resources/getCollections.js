@@ -156,6 +156,9 @@ const PATHWAYS_COLLECTIONS = {
     supervision_population_projection_time_series: {
       filename: "supervision_population_projection_time_series.txt",
     },
+    supervision_to_prison_admissions_over_time: {
+      filename: "supervision_to_prison_admissions_over_time.json",
+    },
   },
 };
 

@@ -25,7 +25,8 @@ import {
   CORE_VIEWS,
   CorePage,
   CoreView,
-  DEFAULT_PATHWAYS_SECTION,
+  DEFAULT_PATHWAYS_PAGE,
+  DEFAULT_PATHWAYS_SECTION_BY_PAGE,
   PathwaysPage,
   PathwaysSection,
   PathwaysView,
@@ -57,7 +58,8 @@ export default class CoreStore {
 
   page: PathwaysPage | CorePage = CORE_PAGES.practices;
 
-  section: PathwaysSection = DEFAULT_PATHWAYS_SECTION;
+  section: PathwaysSection =
+    DEFAULT_PATHWAYS_SECTION_BY_PAGE[DEFAULT_PATHWAYS_PAGE];
 
   constructor({ userStore, tenantStore }: CoreStoreProps) {
     makeAutoObservable(this);

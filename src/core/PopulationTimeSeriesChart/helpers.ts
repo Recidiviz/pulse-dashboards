@@ -17,6 +17,7 @@
 
 import { formatDate } from "../../utils/formatStrings";
 import { PopulationProjectionTimeSeriesRecord } from "../models/types";
+import { getRecordDate } from "../models/utils";
 
 export type MonthOptions = 1 | 6 | 12 | 24 | 60;
 
@@ -32,9 +33,6 @@ export type PreparedData = {
   projectedPopulation: ChartPoint[];
   uncertainty: ChartPoint[];
 };
-
-export const getRecordDate = (d: PopulationProjectionTimeSeriesRecord): Date =>
-  new Date(d.year, d.month - 1);
 
 export const prepareData = (
   data: PopulationProjectionTimeSeriesRecord[]

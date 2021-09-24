@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { PathwaysSection } from "../views";
+
 export type RoutePermission = (string | any)[];
 
 export type NavigationSection = keyof Navigation;
@@ -25,6 +27,7 @@ export type Navigation = {
   facilities?: string[];
   methodology?: string[];
   pathways?: string[];
-  prison?: string[];
-  supervision?: string[];
+  prison?: PathwaysSection[];
+  supervision?: PathwaysSection[];
+  supervisionToPrison?: PathwaysSection[];
 };

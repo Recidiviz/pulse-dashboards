@@ -3,13 +3,13 @@
 .PopulationTimeSeriesLegend {
   display: flex;
 
-  &__Item {
+  &__item {
     display: flex;
     padding-left: 1.5rem;
     align-items: center;
   }
 
-  &__Icon {
+  &__icon {
     align-items: center;
     width: 1.5rem;
     height: 1rem;
@@ -17,7 +17,7 @@
     display: flex;
   }
 
-  &__Line {
+  &__line {
     stroke: $indigo;
     stroke-width: 4;
     width: 100%;
@@ -26,8 +26,16 @@
   .ProjectedLegend {
     background: $indigo-10;
 
-    .PopulationTimeSeriesLegend__Line {
+    .PopulationTimeSeriesLegend__line {
       stroke-dasharray: 3.5, 4.5, 8, 4.5, 3.5;
+    }
+  }
+
+  .MonthlyLegend {
+    background: $indigo-10;
+
+    .PopulationTimeSeriesLegend__line {
+      display: none;
     }
   }
 }

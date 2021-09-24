@@ -32,11 +32,13 @@ export const TenantIdList = [US_ND, US_ID] as const;
 export type TenantId = typeof TenantIdList[number];
 export type Gender = "ALL" | "FEMALE" | "MALE";
 export type SimulationCompartment = "SUPERVISION" | "INCARCERATION";
+export type SupervisionType = "PAROLE" | "PROBATION" | "ALL";
 
 export type MetricRecord =
   | PopulationProjectionTimeSeriesRecord
   | PracticesSummaryRecord
-  | PracticesTimeSeriesRecord;
+  | PracticesTimeSeriesRecord
+  | SupervisionCountTimeSeriesRecord;
 
 export type PopulationProjectionTimeSeriesRecord = {
   year: number;
@@ -48,6 +50,15 @@ export type PopulationProjectionTimeSeriesRecord = {
   totalPopulation: number;
   totalPopulationMax: number;
   totalPopulationMin: number;
+};
+
+export type SupervisionCountTimeSeriesRecord = {
+  year: number;
+  month: number;
+  gender: Gender;
+  supervisionType: SupervisionType;
+  count: number;
+  avg90day: number;
 };
 
 export type PracticesTimeSeriesRecord = {

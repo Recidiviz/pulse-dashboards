@@ -18,7 +18,11 @@ import { makeAutoObservable } from "mobx";
 
 import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
 import ProjectionsMetrics from "../models/ProjectionsMetrics";
-import { createProjectionTimeSeries } from "../models/utils";
+import SupervisionCountOverTimeMetric from "../models/SupervisionCountOverTimeMetric";
+import {
+  createProjectionTimeSeries,
+  createSupervisionTransitionTimeSeries,
+} from "../models/utils";
 import VitalsMetrics from "../models/VitalsMetrics";
 import { FILTER_TYPES } from "../utils/constants";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../views";
@@ -57,6 +61,10 @@ export default class MetricsStore {
         [PATHWAYS_SECTIONS.populationOverTime]: this
           .supervisionPopulationOverTime,
       },
+      [PATHWAYS_PAGES.supervisionToPrison]: {
+        [PATHWAYS_SECTIONS.transitionsOverTime]: this
+          .supervisionToPrisonOverTime,
+      },
     };
     // @ts-ignore
     return map[page][section];
@@ -91,6 +99,26 @@ export default class MetricsStore {
       ],
       chartTitle: "Supervised Population",
       noteCopy: `Historical and projected population data were generated`,
+    });
+  }
+
+  get supervisionToPrisonOverTime(): SupervisionCountOverTimeMetric {
+    return new SupervisionCountOverTimeMetric({
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_prison_admissions_over_time",
+      rootStore: this.rootStore,
+      dataTransformer: (data) =>
+        createSupervisionTransitionTimeSeries(data, "admissions"),
+      enabledFilters: [
+        FILTER_TYPES.TIME_PERIOD,
+        FILTER_TYPES.GENDER,
+        FILTER_TYPES.SUPERVISION_TYPE,
+      ],
+      chartTitle: "Admissions to prison from supervision",
+      noteCopy: `The revocation rate is calculated by counting the number of revocations
+                 per month and dividing it by the total supervision population in the
+                 given month or year. In this chart, the total supervision population
+                 includes only those on in-state probation, parole, or dual supervision.`,
     });
   }
 }

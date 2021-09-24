@@ -20,6 +20,8 @@ import {
   PopulationProjectionTimeSeriesRecord,
   RawMetricData,
   SimulationCompartment,
+  SupervisionCountTimeSeriesRecord,
+  SupervisionType,
 } from "./types";
 
 export function createProjectionTimeSeries(
@@ -38,4 +40,31 @@ export function createProjectionTimeSeries(
       totalPopulationMin: Number(record.total_population_min),
     };
   });
+}
+
+export function createSupervisionTransitionTimeSeries(
+  rawRecords: RawMetricData,
+  countField: string
+): SupervisionCountTimeSeriesRecord[] {
+  return rawRecords
+    .map((record) => {
+      return {
+        year: Number(record.year),
+        month: Number(record.month),
+        gender: record.gender as Gender,
+        supervisionType: record.supervision_type as SupervisionType,
+        count: parseInt(record[countField]),
+        avg90day: parseInt(record.avg_90day),
+      };
+    })
+    .sort((a, b) => (a.year - b.year) * 12 + a.month - b.month);
+}
+
+export interface TimeSeriesRecord {
+  month: number;
+  year: number;
+}
+
+export function getRecordDate(d: TimeSeriesRecord): Date {
+  return new Date(d.year, d.month - 1);
 }

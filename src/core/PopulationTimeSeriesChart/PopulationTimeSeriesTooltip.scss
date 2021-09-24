@@ -1,9 +1,13 @@
 @import "../controls/mixins.scss";
+@import "../CoreConstants";
 
 .PopulationTimeseriesTooltip {
   @include chart-tooltip;
-  &__Date,
-  &__Range {
+  &__value {
+    font: $font-ui-sans-16;
+  }
+  &__date,
+  &__bottom {
     opacity: 0.8;
   }
 }

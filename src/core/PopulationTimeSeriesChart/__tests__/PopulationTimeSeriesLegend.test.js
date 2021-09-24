@@ -32,14 +32,14 @@ describe("Tests for PopulationTimeseries Tooltip", () => {
 
   it("displays year and month", () => {
     const tooltip = renderTooltip(baseProps);
-    expect(tooltip.find(".PopulationTimeseriesTooltip__Date").text()).toEqual(
+    expect(tooltip.find(".PopulationTimeseriesTooltip__date").text()).toEqual(
       "February 2021"
     );
   });
 
   it("displays value with commas", () => {
     const tooltip = renderTooltip(baseProps);
-    expect(tooltip.find(".PopulationTimeseriesTooltip__Value").text()).toEqual(
+    expect(tooltip.find(".PopulationTimeseriesTooltip__value").text()).toEqual(
       "7,000"
     );
   });
@@ -50,7 +50,7 @@ describe("Tests for PopulationTimeseries Tooltip", () => {
       upperBound: 8000,
       ...baseProps,
     });
-    expect(tooltip.find(".PopulationTimeseriesTooltip__Range").text()).toEqual(
+    expect(tooltip.find(".PopulationTimeseriesTooltip__bottom").text()).toEqual(
       "(6000, 8000)"
     );
   });

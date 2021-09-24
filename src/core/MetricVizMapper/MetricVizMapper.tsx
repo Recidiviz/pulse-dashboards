@@ -19,7 +19,9 @@ import React from "react";
 
 import PathwaysMetric from "../models/PathwaysMetric";
 import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
+import SupervisionCountOverTimeMetric from "../models/SupervisionCountOverTimeMetric";
 import { MetricRecord } from "../models/types";
+import VizCountOverTimeWithAvg from "../VizCountOverTimeWithAvg";
 import VizPopulationOverTime from "../VizPopulationOverTime";
 
 type MetricVizMapperProps = {
@@ -29,6 +31,10 @@ type MetricVizMapperProps = {
 const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
   if (metric instanceof PopulationOverTimeMetric) {
     return <VizPopulationOverTime metric={metric} />;
+  }
+
+  if (metric instanceof SupervisionCountOverTimeMetric) {
+    return <VizCountOverTimeWithAvg metric={metric} />;
   }
 
   // there are no other metric types, so this should only be reached when developing new ones

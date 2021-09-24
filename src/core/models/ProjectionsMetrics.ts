@@ -16,14 +16,11 @@
 // =============================================================================
 import { computed, makeObservable } from "mobx";
 
-import {
-  getRecordDate,
-  MonthOptions,
-} from "../PopulationTimeSeriesChart/helpers";
+import { MonthOptions } from "../PopulationTimeSeriesChart/helpers";
 import { getCompartmentFromView } from "../views";
 import Metric, { BaseMetricProps } from "./Metric";
 import { PopulationProjectionTimeSeriesRecord } from "./types";
-import { createProjectionTimeSeries } from "./utils";
+import { createProjectionTimeSeries, getRecordDate } from "./utils";
 
 export default class ProjectionsMetrics extends Metric<PopulationProjectionTimeSeriesRecord> {
   constructor(props: BaseMetricProps) {

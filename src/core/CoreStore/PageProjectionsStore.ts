@@ -23,11 +23,9 @@ import {
   toTitleCase,
 } from "../../utils/formatStrings";
 import { PopulationProjectionTimeSeriesRecord } from "../models/types";
+import { getRecordDate } from "../models/utils";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
-import {
-  formatMonthAndYear,
-  getRecordDate,
-} from "../PopulationTimeSeriesChart/helpers";
+import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import { EnabledFilters, PopulationFilters } from "../types/filters";
 import { FILTER_TYPES } from "../utils/constants";
 import filterOptions from "../utils/filterOptions";

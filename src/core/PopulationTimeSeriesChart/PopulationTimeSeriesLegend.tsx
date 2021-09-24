@@ -27,19 +27,24 @@ const PopulationTimeSeriesLegend: React.FC<propTypes> = ({ items }) => {
   return (
     <div className="PopulationTimeSeriesLegend">
       {items.map((label) => (
-        <div className="PopulationTimeSeriesLegend__Item" key={label}>
-          <div className={`PopulationTimeSeriesLegend__Icon ${label}Legend`}>
+        <div className="PopulationTimeSeriesLegend__item" key={label}>
+          <div
+            className={`PopulationTimeSeriesLegend__icon ${label.split(
+              " ",
+              1
+            )}Legend`}
+          >
             <svg height="2" width="24">
               <line
                 x1="0"
                 y1="0"
                 x2="24"
                 y2="0"
-                className="PopulationTimeSeriesLegend__Line"
+                className="PopulationTimeSeriesLegend__line"
               />
             </svg>
           </div>
-          <div className="PopulationTimeSeriesLegend__Text">{label}</div>
+          <div className="PopulationTimeSeriesLegend__text">{label}</div>
         </div>
       ))}
     </div>

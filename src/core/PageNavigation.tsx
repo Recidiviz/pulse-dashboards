@@ -18,6 +18,7 @@
 import "./PageNavigation.scss";
 
 import cx from "classnames";
+import { startCase } from "lodash";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -34,8 +35,8 @@ const PageNavigation: React.FC = () => {
   const currentView = pathname.split("/")[1];
   const navigationLayout = userStore.userAllowedNavigation;
   const pageOptions = navigationLayout[currentView] ?? [];
-  const capitalizeFirstLetter = (str: string) =>
-    str.charAt(0).toUpperCase() + str.slice(1);
+  const formatHeading = (str: string) =>
+    startCase(str.charAt(0).toUpperCase() + str.slice(1));
 
   return (
     <ul
@@ -52,10 +53,10 @@ const PageNavigation: React.FC = () => {
             to={`/${currentView}/${pageOption}`}
             className={cx("PageNavigation__option", {
               "PageNavigation__option--selected":
-                page?.toLowerCase() === pageOption,
+                page?.toLowerCase() === pageOption.toLowerCase(),
             })}
           >
-            {capitalizeFirstLetter(pageOption)}
+            {formatHeading(pageOption)}
           </Link>
         </li>
       ))}
