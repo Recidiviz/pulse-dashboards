@@ -62,8 +62,7 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({ title, data }) => {
   ) as MonthOptions;
 
   if (data.length < 1) {
-    // TODO: Error state
-    return <div />;
+    return null;
   }
 
   const { compartment } = data[0];

@@ -41,8 +41,8 @@ const VizPopulationOverTime: React.FC<VizPopulationOverTimeProps> = ({
       />
       <PopulationTimeSeriesChart
         metric={metric}
-        title={chartTitle}
         data={dataSeries}
+        title={chartTitle}
       />
     </>
   );

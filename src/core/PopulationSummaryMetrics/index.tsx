@@ -16,6 +16,7 @@
 // =============================================================================
 import "./PopulationSummaryMetrics.scss";
 
+import cn from "classnames";
 import { observer } from "mobx-react-lite";
 import numeral from "numeral";
 import React from "react";
@@ -37,13 +38,54 @@ const PopulationSummaryMetrics: React.FC<PropTypes> = ({
   data,
   simulationDate,
   isError,
-  isLoading = false,
+  isLoading = true,
 }) => {
   const { filtersStore } = useCoreStore();
   const { timePeriodLabel } = filtersStore;
+  const noData = data.length < 1;
 
-  if (isError) {
-    return null;
+  if (isLoading || isError || noData) {
+    return (
+      <div className="PopulationSummaryMetrics">
+        <MetricsCard heading={`Past ${timePeriodLabel}`}>
+          <div className="PopulationSummaryMetrics__metric">
+            <div
+              className={cn("PopulationSummaryMetrics__value", {
+                "PopulationSummaryMetrics__value--loading": isLoading,
+              })}
+            />
+          </div>
+          <PercentDelta
+            className={cn("PopulationSummaryMetrics__delta", {
+              "PopulationSummaryMetrics__delta--loading": isLoading,
+              "PopulationSummaryMetrics__delta--error": isError || noData,
+            })}
+            improvesOnIncrease={false}
+          />
+        </MetricsCard>
+        <MetricsCard heading={`Next ${timePeriodLabel}`} subheading="Projected">
+          <div className="PopulationSummaryMetrics__metric">
+            <div
+              className={cn("PopulationSummaryMetrics__value", {
+                "PopulationSummaryMetrics__value--loading": isLoading,
+              })}
+            />
+            <div
+              className={cn("PopulationSummaryMetrics__min-max", {
+                "PopulationSummaryMetrics__min-max--loading": isLoading,
+              })}
+            />
+          </div>
+          <PercentDelta
+            className={cn("PopulationSummaryMetrics__delta", {
+              "PopulationSummaryMetrics__delta--loading": isLoading,
+              "PopulationSummaryMetrics__delta--error": isError || noData,
+            })}
+            improvesOnIncrease={false}
+          />
+        </MetricsCard>
+      </div>
+    );
   }
 
   const currentData = data.find(
@@ -51,10 +93,6 @@ const PopulationSummaryMetrics: React.FC<PropTypes> = ({
       d.year === simulationDate.getFullYear() &&
       d.month === simulationDate.getMonth() + 1
   ) as PopulationProjectionTimeSeriesRecord;
-
-  if (!data.length) {
-    return null;
-  }
 
   const historicalData = data[0];
 
@@ -79,36 +117,22 @@ const PopulationSummaryMetrics: React.FC<PropTypes> = ({
     <div className="PopulationSummaryMetrics">
       <MetricsCard heading={`Past ${timePeriodLabel}`}>
         <div className="PopulationSummaryMetrics__metric">
-          <div
-            className={`PopulationSummaryMetrics__value${
-              isLoading ? "--loading" : ""
-            }`}
-          >
+          <div className="PopulationSummaryMetrics__value">
             {formatLargeNumber(currentData.totalPopulation)}
           </div>
         </div>
         <PercentDelta
-          className={`PopulationSummaryMetrics__delta${
-            isLoading ? "--loading" : ""
-          }`}
+          className="PopulationSummaryMetrics__delta"
           value={historicalPercentChange}
           improvesOnIncrease={false}
         />
       </MetricsCard>
       <MetricsCard heading={`Next ${timePeriodLabel}`} subheading="Projected">
         <div className="PopulationSummaryMetrics__metric">
-          <div
-            className={`PopulationSummaryMetrics__value${
-              isLoading ? "--loading" : ""
-            }`}
-          >
+          <div className="PopulationSummaryMetrics__value">
             {formatLargeNumber(projectedPopulation)}
           </div>
-          <div
-            className={`PopulationSummaryMetrics__min-max${
-              isLoading ? "--loading" : ""
-            }`}
-          >
+          <div className="PopulationSummaryMetrics__min-max">
             <div>
               (
               {[
@@ -120,9 +144,7 @@ const PopulationSummaryMetrics: React.FC<PropTypes> = ({
           </div>
         </div>
         <PercentDelta
-          className={`PopulationSummaryMetrics__delta${
-            isLoading ? "--loading" : ""
-          }`}
+          className="PopulationSummaryMetrics__delta"
           value={projectedPercentChange}
           improvesOnIncrease={false}
         />

@@ -120,5 +120,8 @@ export type ViewMethodology = {
 export interface Hydratable {
   isLoading?: boolean;
   error?: Error;
+  dataSeries?:
+    | PopulationProjectionTimeSeriesRecord[]
+    | SupervisionCountTimeSeriesRecord[];
   hydrate: () => void;
 }

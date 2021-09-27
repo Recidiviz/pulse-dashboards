@@ -1,15 +1,6 @@
 @import "../CoreConstants";
 
 .PopulationTimeSeriesChart {
-  background: $white;
-  border-radius: 0.5rem;
-  box-shadow: $inset-shadow-30;
-  font-family: Libre Franklin, sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  width: 100%;
-
-
   &--loading {
     display: flex;
     align-items: center;

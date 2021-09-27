@@ -23,11 +23,21 @@ import React, { useEffect } from "react";
 import { animated, useTransition } from "react-spring/web.cjs";
 import styled from "styled-components/macro";
 
+import { Error, NoData } from "../components/HydrationStatus";
+import * as styles from "./CoreConstants.scss";
 import { Hydratable } from "./models/types";
 
 const Wrapper = styled.div`
   position: relative;
   width: 100%;
+  height: 100%;
+  min-height: 558px;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: ${styles.insetShadow30};
+  font-family: Libre Franklin, sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 `;
 
 const StatusWrapper = styled(animated.div)`
@@ -45,9 +55,15 @@ const StatusWrapper = styled(animated.div)`
 /**
  * Creates an atomic status variable for transitions
  */
-function getHydrationStatus(model: Hydratable): "pending" | "error" | "done" {
+function getHydrationStatus(
+  model: Hydratable
+): "pending" | "error" | "done" | "no data" {
+  const { dataSeries } = model;
   if (model.isLoading || model.isLoading === undefined) {
     return "pending";
+  }
+  if (dataSeries && dataSeries.length < 1) {
+    return "no data";
   }
   if (model.error) {
     return "error";
@@ -102,8 +118,13 @@ const ModelHydrator = ({
           case "error":
             return (
               <StatusWrapper key={key} style={props}>
-                {/* <HydrationError /> */}
-                Error
+                <Error />
+              </StatusWrapper>
+            );
+          case "no data":
+            return (
+              <StatusWrapper key={key} style={props}>
+                <NoData />
               </StatusWrapper>
             );
           case "done":

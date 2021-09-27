@@ -22,7 +22,6 @@
   border-radius: 4px;
 }
 
-
 .PopulationSummaryMetrics {
   display: flex;
   flex-flow: row nowrap;
@@ -60,6 +59,7 @@
     &--loading {
       height: 1rem;
       width: 6rem;
+      margin-top: 0.5rem;
       @include loading-value;
     }
   }
@@ -70,9 +70,17 @@
     line-height: 1.5rem;
 
     &--loading {
+      text-indent: -9999px;
       height: 1.5rem;
       width: 4rem;
       @include loading-value;
+    }
+
+    &--error {
+      text-indent: -9999px;
+      height: 0;
+      width: 2rem;
+      border: 2px solid $slate-20;
     }
   }
 }
