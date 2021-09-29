@@ -26,16 +26,20 @@ const Profile = () => {
   const { push } = useHistory();
 
   const { tenantStore, userStore } = useRootStore();
-  const { user } = userStore;
+  const { user, logout } = userStore;
   const [selectedState, setSelectedState] = useState();
 
-  const handleOnChange = (option) => setSelectedState(option.value);
-  const handleOnClick = () => {
+  const onChangeTenant = (option) => setSelectedState(option.value);
+
+  const onClickTenant = () => {
     if (selectedState) {
       tenantStore.setCurrentTenantId(selectedState);
     }
     push({ pathname: "/" });
   };
+
+  const onClickLogout = () => logout({ returnTo: window.location.origin });
+
   return (
     <div className="main-content bgc-grey-100">
       <div id="mainContent">
@@ -57,16 +61,23 @@ const Profile = () => {
                   <p className="Profile__prompt lead text-muted">
                     Current view state:
                   </p>
-                  <StateSelector onChange={handleOnChange} />
+                  <StateSelector onChange={onChangeTenant} />
                   <Button
                     className="Profile__submit mt-3"
                     variant="dark"
-                    onClick={handleOnClick}
+                    onClick={onClickTenant}
                   >
                     View dashboard
                   </Button>
                 </div>
               )}
+              <Button
+                className="Profile__submit mt-3"
+                variant="dark"
+                onClick={onClickLogout}
+              >
+                Logout
+              </Button>
             </Col>
           </Row>
         </Container>
