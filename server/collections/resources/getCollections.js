@@ -159,6 +159,9 @@ const PATHWAYS_COLLECTIONS = {
     supervision_to_prison_admissions_over_time: {
       filename: "supervision_to_prison_admissions_over_time.json",
     },
+    supervision_to_liberty_releases_over_time: {
+      filename: "supervision_to_liberty_releases_over_time.json",
+    },
   },
 };
 

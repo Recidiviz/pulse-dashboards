@@ -47,14 +47,14 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
 
   const data = dataSeries.map((d, index) => ({
     index,
-    date: new Date(d.year, d.month),
+    date: new Date(d.year, d.month - 1),
     value: d.count,
     average: d.avg90day,
   }));
 
   const averageData = dataSeries.map((d, index) => ({
     index,
-    date: new Date(d.year, d.month),
+    date: new Date(d.year, d.month - 1),
     value: d.avg90day,
   }));
 

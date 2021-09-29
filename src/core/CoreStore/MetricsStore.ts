@@ -65,6 +65,10 @@ export default class MetricsStore {
         [PATHWAYS_SECTIONS.transitionsOverTime]: this
           .supervisionToPrisonOverTime,
       },
+      [PATHWAYS_PAGES.supervisionToLiberty]: {
+        [PATHWAYS_SECTIONS.transitionsOverTime]: this
+          .supervisionToLibertyOverTime,
+      },
     };
     // @ts-ignore
     return map[page][section];
@@ -115,10 +119,35 @@ export default class MetricsStore {
         FILTER_TYPES.SUPERVISION_TYPE,
       ],
       chartTitle: "Admissions to prison from supervision",
-      noteCopy: `The revocation rate is calculated by counting the number of revocations
-                 per month and dividing it by the total supervision population in the
-                 given month or year. In this chart, the total supervision population
-                 includes only those on in-state probation, parole, or dual supervision.`,
+      noteCopy: `The supervision success rate is calculated by counting 
+                 the number of supervision terms ending in release per 
+                 month and dividing it by the total number of 
+                 supervision sessions terminating in a given month. For 
+                 parole periods, this means when the parole period 
+                 terminates in release to liberty or ultimate revocation, 
+                 not when it terminates with a parole board hold. 
+                 Individuals on dual supervision are counted under parole.`,
+    });
+  }
+
+  get supervisionToLibertyOverTime(): SupervisionCountOverTimeMetric {
+    return new SupervisionCountOverTimeMetric({
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_liberty_releases_over_time",
+      rootStore: this.rootStore,
+      dataTransformer: (data) =>
+        createSupervisionTransitionTimeSeries(data, "releases"),
+      enabledFilters: [
+        FILTER_TYPES.TIME_PERIOD,
+        FILTER_TYPES.GENDER,
+        FILTER_TYPES.SUPERVISION_TYPE,
+      ],
+      chartTitle: "Releases to from supervision to liberty",
+      noteCopy: `The revocation rate is calculated by counting 
+                 the number of revocations per month and dividing it by 
+                 the total supervision population in the given month or year. 
+                 In this chart, the total supervision population includes only 
+                 those on in-state probation, parole, or dual supervision.`,
     });
   }
 }

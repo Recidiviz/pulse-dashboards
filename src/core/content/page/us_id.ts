@@ -21,6 +21,10 @@
 import { StateSpecificPageCopy } from "../types";
 
 const content: StateSpecificPageCopy = {
+  prison: {
+    summary:
+      "This chart includes individuals who are admitted to IDOC facilities and CAPP, including termers, riders, parole violators, and people held in county jails under IDOC jurisdiction.",
+  },
   supervision: {
     summary:
       "This charts includes all individuals that are currently on probation and/or parole, including those in the Limited Supervision Unit.",
@@ -28,6 +32,10 @@ const content: StateSpecificPageCopy = {
   supervisionToPrison: {
     summary:
       "This chart includes people who have been incarcerated in an IDOC facility because their parole or probation was revoked. Revocations are counted when the person was admitted to a facility, not when the violation occurred.",
+  },
+  supervisionToLiberty: {
+    summary:
+      "These charts show people who were discharged from supervision positively or if their supervision period expired. Individuals are counted in their original month of projected completion, even if terminated earlier.",
   },
 };
 

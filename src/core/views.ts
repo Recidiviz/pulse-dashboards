@@ -95,3 +95,17 @@ export function getCompartmentFromView(view: CoreView): SimulationCompartment {
 export function getViewFromPathname(pathname: string): string {
   return pathnameToView[pathname];
 }
+
+const pageIdToHeading: Record<string, string> = {
+  [CORE_PAGES.explore]: "Explore",
+  [CORE_PAGES.projections]: "Projections",
+  [CORE_PAGES.practices]: "Practices",
+  [PATHWAYS_PAGES.prison]: "Prison",
+  [PATHWAYS_PAGES.supervision]: "Supervision",
+  [PATHWAYS_PAGES.supervisionToPrison]: "Supervision to Prison",
+  [PATHWAYS_PAGES.supervisionToLiberty]: "Supervision to Liberty",
+};
+
+export function getPageHeadingFromId(pageId: string): string {
+  return pageIdToHeading[pageId];
+}

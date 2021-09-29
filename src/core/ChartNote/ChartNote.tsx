@@ -24,7 +24,7 @@ type Props = {
 };
 
 const ChartNote: React.FC<Props> = ({ note, isLoading = false }) => {
-  if (isLoading) {
+  if (isLoading || !note) {
     return (
       <div className="ChartNote">
         <br />

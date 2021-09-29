@@ -59,10 +59,12 @@ const TENANTS: Tenants = {
         PATHWAYS_PAGES.prison,
         PATHWAYS_PAGES.supervision,
         PATHWAYS_PAGES.supervisionToPrison,
+        PATHWAYS_PAGES.supervisionToLiberty,
       ],
       prison: [PATHWAYS_SECTIONS.populationOverTime],
       supervision: [PATHWAYS_SECTIONS.populationOverTime],
       supervisionToPrison: [PATHWAYS_SECTIONS.transitionsOverTime],
+      supervisionToLiberty: [PATHWAYS_SECTIONS.transitionsOverTime],
     },
     pagesWithRestrictions: [
       "projections",

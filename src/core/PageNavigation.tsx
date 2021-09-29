@@ -18,7 +18,6 @@
 import "./PageNavigation.scss";
 
 import cx from "classnames";
-import { startCase } from "lodash";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -27,6 +26,7 @@ import { useRootStore } from "../components/StoreProvider";
 import withRouteSync from "../withRouteSync";
 import { useCoreStore } from "./CoreStoreProvider";
 import { NavigationSection } from "./types/navigation";
+import { getPageHeadingFromId } from "./views";
 
 const PageNavigation: React.FC = () => {
   const { pathname } = useLocation();
@@ -35,8 +35,6 @@ const PageNavigation: React.FC = () => {
   const currentView = pathname.split("/")[1];
   const navigationLayout = userStore.userAllowedNavigation;
   const pageOptions = navigationLayout[currentView] ?? [];
-  const formatHeading = (str: string) =>
-    startCase(str.charAt(0).toUpperCase() + str.slice(1));
 
   return (
     <ul
@@ -56,7 +54,7 @@ const PageNavigation: React.FC = () => {
                 page?.toLowerCase() === pageOption.toLowerCase(),
             })}
           >
-            {formatHeading(pageOption)}
+            {getPageHeadingFromId(pageOption)}
           </Link>
         </li>
       ))}

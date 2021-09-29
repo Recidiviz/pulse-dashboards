@@ -42,7 +42,10 @@ const content: PageCopy = {
   supervisionToLiberty: {
     title: "Supervision to Liberty",
     summary:
-      "This chart shows people who were discharged from supervision positively or if their supervision period expired.",
+      "These charts show people who were discharged from supervision positively or if their supervision period expired. Individuals are counted in their original month of projected completion, even if terminated earlier.",
+    sections: {
+      transitionsOverTime: "Releases from supervision to liberty",
+    },
   },
   supervisionToPrison: {
     title: "Supervision to Prison",
