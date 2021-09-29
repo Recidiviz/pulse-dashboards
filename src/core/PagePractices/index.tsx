@@ -48,11 +48,11 @@ const PagePractices: React.FC = () => {
   } = pagePracticesStore;
 
   // TODO: add in Error state
-  if (isError || currentEntitySummary === undefined) {
+  if (isError) {
     return null;
   }
 
-  if (isLoading) {
+  if (isLoading || currentEntitySummary === undefined) {
     return (
       <PageTemplate>
         <Loading />

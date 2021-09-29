@@ -59,6 +59,7 @@ describe("getAllowedNavigation", () => {
       community: ["explore", "practices", "projections"],
       methodology: ["practices", "projections"],
       facilities: ["explore"],
+      practices: [],
     };
     pagesWithRestrictions = ["practices"];
   });
@@ -83,6 +84,28 @@ describe("getAllowedNavigation", () => {
     routes = [
       ["community_practices", true],
       ["community_bogus", false],
+      ["practices", true],
+    ];
+    const expected = {
+      goals: [],
+      community: ["explore", "practices", "projections"],
+      facilities: ["explore"],
+      methodology: ["practices", "projections"],
+      practices: [],
+    };
+    const allowedNavigation = getAllowedNavigation(
+      tenantAllowedNavigation,
+      pagesWithRestrictions,
+      routes
+    );
+    expect(allowedNavigation).toEqual(expected);
+  });
+
+  it("returns the navigation object without the restricted view when the view permission is false", () => {
+    routes = [
+      ["community_practices", true],
+      ["community_bogus", false],
+      ["practices", false],
     ];
     const expected = {
       goals: [],
@@ -102,6 +125,7 @@ describe("getAllowedNavigation", () => {
     routes = [
       ["community_practices", true],
       ["community_projections", false],
+      ["practices", true],
     ];
     const allowedPaths = getAllowedNavigation(
       tenantAllowedNavigation,
@@ -121,6 +145,16 @@ describe("getPathWithoutParams", () => {
   it("returns the path without params when given a path with params", () => {
     const basePath = "/community/practices";
     expect(getPathWithoutParams(`${basePath}/office-a`)).toEqual(basePath);
+  });
+
+  it("returns the path without params when given a path with params", () => {
+    const basePath = "/practices";
+    expect(getPathWithoutParams(`${basePath}/office-a`)).toEqual(basePath);
+  });
+
+  it("returns the path without params when given a path with params", () => {
+    const basePath = "/pathways/prison";
+    expect(getPathWithoutParams(`${basePath}/anythingElse`)).toEqual(basePath);
   });
 });
 

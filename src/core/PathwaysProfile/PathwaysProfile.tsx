@@ -14,22 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, Col, Container, Row } from "reactstrap";
 
-import StateSelector from "./StateSelector";
-import { useRootStore } from "./StoreProvider";
+import StateSelector from "../../components/StateSelector";
+import { useRootStore } from "../../components/StoreProvider";
 
-const Profile = () => {
+type StateSelectOption = {
+  label: string;
+  value: any;
+};
+
+const PathwaysProfile = () => {
   const { push } = useHistory();
-
   const { tenantStore, userStore } = useRootStore();
   const { user } = userStore;
   const [selectedState, setSelectedState] = useState();
 
-  const handleOnChange = (option) => setSelectedState(option.value);
+  const handleOnChange = (option: StateSelectOption) => {
+    setSelectedState(option.value);
+  };
   const handleOnClick = () => {
     if (selectedState) {
       tenantStore.setCurrentTenantId(selectedState);
@@ -44,7 +51,7 @@ const Profile = () => {
             <Col md={2}>
               <img
                 src={user.picture}
-                alt="Profile"
+                alt="PathwaysProfile"
                 className="rounded-circle img-fluid profile-picture mb-3 mb-md-0"
               />
             </Col>
@@ -54,12 +61,12 @@ const Profile = () => {
               <p className="lead text-muted">{userStore.stateName}</p>
               {userStore.availableStateCodes.length > 1 && (
                 <div style={{ maxWidth: "33%" }}>
-                  <p className="Profile__prompt lead text-muted">
+                  <p className="PathwaysProfile__prompt lead text-muted">
                     Current view state:
                   </p>
                   <StateSelector onChange={handleOnChange} />
                   <Button
-                    className="Profile__submit mt-3"
+                    className="PathwaysProfile__submit mt-3"
                     variant="dark"
                     onClick={handleOnClick}
                   >
@@ -75,4 +82,4 @@ const Profile = () => {
   );
 };
 
-export default observer(Profile);
+export default observer(PathwaysProfile);

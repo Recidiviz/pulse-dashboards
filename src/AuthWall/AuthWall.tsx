@@ -67,6 +67,7 @@ const AuthWall: React.FC = ({ children }) => {
 
       userStore.setAuthError(ERROR_MESSAGES.unauthorized);
     }
+
     const authorizedChildren = React.Children.map(children, (child: any) => {
       const { tenantIds, views } = child.props;
 

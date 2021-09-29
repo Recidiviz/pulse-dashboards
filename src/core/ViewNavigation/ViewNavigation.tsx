@@ -18,7 +18,6 @@
 import "./ViewNavigation.scss";
 
 import { Icon, IconSVG } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink } from "react-router-dom";
 
@@ -49,7 +48,7 @@ const ViewNavigation = (): React.ReactElement => {
         <NavLink
           activeClassName="ViewNavigation__navlink--active"
           className="ViewNavigation__navlink"
-          to="/community/practices"
+          to="/practices"
         >
           <PracticesLogo className="ViewNavigation__icon" />
         </NavLink>
@@ -80,7 +79,7 @@ const ViewNavigation = (): React.ReactElement => {
         </div>
         <div className="ViewNavigation__tooltip-box">
           <div className="ViewNavigation__navlink">
-            <UserAvatar />
+            <UserAvatar pathways />
           </div>
           <div className="ViewNavigation__tooltip">
             <div className="ViewNavigation__tooltip-header">Profile</div>
@@ -91,4 +90,4 @@ const ViewNavigation = (): React.ReactElement => {
   );
 };
 
-export default observer(ViewNavigation);
+export default ViewNavigation;

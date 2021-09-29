@@ -54,6 +54,7 @@ const TENANTS: Tenants = {
       community: ["practices", "projections"],
       facilities: ["projections"],
       methodology: ["projections", "practices"],
+      practices: [],
       pathways: [
         PATHWAYS_PAGES.prison,
         PATHWAYS_PAGES.supervision,

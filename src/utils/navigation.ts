@@ -14,8 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Navigation, RoutePermission } from "../core/types/navigation";
-import { CORE_VIEWS } from "../core/views";
+import {
+  Navigation,
+  NavigationSection,
+  RoutePermission,
+} from "../core/types/navigation";
+import {
+  CORE_PAGES,
+  CORE_VIEWS,
+  PATHWAYS_PAGES,
+  PATHWAYS_VIEWS,
+} from "../core/views";
 import { TenantId } from "../RootStore/types";
 import TENANTS from "../tenants";
 
@@ -49,6 +58,9 @@ export function getAllowedNavigation(
           // eslint-disable-next-line no-unused-expressions
           acc.methodology?.push(page);
         }
+        if (view === PATHWAYS_VIEWS.practices) {
+          acc[PATHWAYS_VIEWS.practices as NavigationSection] = [];
+        }
       }
       return acc;
     },
@@ -61,16 +73,22 @@ export function getAllowedNavigation(
       supervision: [],
     } as Navigation
   );
+
   const allowedNavigation = Object.fromEntries(
     Object.entries(tenantAllowedNavigation).map(([view, pages]) => {
-      return [
-        view,
-        pages?.filter(
-          (p) =>
-            (pagesWithRestrictions && !pagesWithRestrictions.includes(p)) ||
-            userAllowedNavigation[view as keyof Navigation]?.includes(p)
-        ),
-      ];
+      // eslint-disable-next-line no-nested-ternary
+      return !pagesWithRestrictions?.includes(view)
+        ? [
+            view,
+            pages?.filter(
+              (p) =>
+                (pagesWithRestrictions && !pagesWithRestrictions.includes(p)) ||
+                userAllowedNavigation[view as keyof Navigation]?.includes(p)
+            ),
+          ]
+        : Object.keys(userAllowedNavigation).includes(view)
+        ? [view, []]
+        : [];
     })
   );
 
@@ -82,11 +100,15 @@ export function getAllowedNavigation(
 }
 
 export function getPathWithoutParams(pathname: string): string {
-  const navItems = pathname.split("/");
-  // navItems[0] is "" because of the leading /
-  const view: string = navItems[1];
-  const page: string = navItems[2];
-  return page ? `/${view}/${page}` : `/${view}`;
+  const viewsAndPages = Object.values(CORE_VIEWS)
+    .concat(Object.values(CORE_PAGES))
+    .concat(Object.values(PATHWAYS_VIEWS))
+    .concat(Object.values(PATHWAYS_PAGES));
+  const basePath = pathname
+    .split("/")
+    .filter((p) => viewsAndPages.includes(p))
+    .join("/");
+  return `/${basePath}`;
 }
 
 export function convertToSlug(text: string): string {

@@ -27,6 +27,7 @@ export const CORE_VIEWS: Record<string, string> = {
 export type PathwaysView = keyof typeof PATHWAYS_VIEWS;
 export const PATHWAYS_VIEWS: Record<string, string> = {
   pathways: "pathways",
+  practices: "practices",
 } as const;
 
 export const CORE_PATHS: Record<string, string> = {
@@ -43,6 +44,7 @@ export const CORE_PATHS: Record<string, string> = {
 
 export const PATHWAYS_PATHS: Record<string, string> = {
   pathways: "/pathways/:pageId/:sectionId?",
+  practices: "/practices/:entityId?",
 };
 
 export type CorePage = keyof typeof CORE_PAGES;

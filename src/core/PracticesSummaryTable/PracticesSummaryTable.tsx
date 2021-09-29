@@ -19,10 +19,11 @@ import "./PracticesSummaryTable.scss";
 import cx from "classnames";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSortBy, useTable } from "react-table";
 
 import { encrypt } from "../../utils/formatStrings";
+import { getPathWithoutParams } from "../../utils/navigation";
 import { useCoreStore } from "../CoreStoreProvider";
 import { ENTITY_TYPES, EntityType, MetricValueAccessor } from "../models/types";
 import {
@@ -46,6 +47,9 @@ function getEntityTypeName(entityType: EntityType): string {
 }
 
 const PracticesSummaryTable: React.FC = () => {
+  const { pathname } = useLocation();
+  const basePath = getPathWithoutParams(pathname);
+
   const { pagePracticesStore } = useCoreStore();
   const {
     selectedMetricId: selectedSortBy,
@@ -134,7 +138,7 @@ const PracticesSummaryTable: React.FC = () => {
             }) => (
               <Link
                 className="PracticesSummaryTable__link"
-                to={`/community/practices/${encrypt(value.entityId)}`}
+                to={`${basePath}/${encrypt(value.entityId)}`}
               >
                 {value.entityName}
               </Link>
@@ -151,7 +155,7 @@ const PracticesSummaryTable: React.FC = () => {
         columns: metricColumns,
       },
     ],
-    [entityType, overallColumns, metricColumns]
+    [entityType, overallColumns, metricColumns, basePath]
   );
 
   const sortBy = useMemo(() => ({ id: selectedSortBy, desc: false }), [

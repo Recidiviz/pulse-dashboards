@@ -23,11 +23,14 @@ import { Link } from "react-router-dom";
 
 import { useUserStore } from "../StoreProvider";
 
-const UserAvatar = (): React.ReactElement => {
-  const { user } = useUserStore();
+interface Props {
+  pathways?: boolean;
+}
 
+const UserAvatar: React.FC<Props> = ({ pathways = false }) => {
+  const { user } = useUserStore();
   return (
-    <Link to="/profile">
+    <Link to={pathways ? "/pathways-profile" : "/profile"}>
       <span className="UserAvatar">{user.name && user.name[0]}</span>
     </Link>
   );

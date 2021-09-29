@@ -19,9 +19,10 @@ import "./PracticesSummaryBreadcrumbs.scss";
 
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { encrypt, toTitleCase } from "../../utils/formatStrings";
+import { getPathWithoutParams } from "../../utils/navigation";
 import { useCoreStore } from "../CoreStoreProvider";
 import { ENTITY_TYPES } from "../models/types";
 import {
@@ -48,6 +49,9 @@ function formatOfficerName(name: string): string {
 }
 
 const PracticesSummaryBreadcrumbs: React.FC = () => {
+  const { pathname } = useLocation();
+  const basePath = getPathWithoutParams(pathname);
+
   const { tenantStore, pagePracticesStore } = useCoreStore();
   const { currentEntitySummary, parentEntityName } = pagePracticesStore;
   const { stateName } = tenantStore;
@@ -79,10 +83,7 @@ const PracticesSummaryBreadcrumbs: React.FC = () => {
   return (
     <div className="PracticesSummaryBreadcrumbs">
       {state ? (
-        <Link
-          className="PracticesSummaryBreadcrumbs--state"
-          to="/community/practices"
-        >
+        <Link className="PracticesSummaryBreadcrumbs--state" to={pathname}>
           {state}
         </Link>
       ) : (
@@ -96,7 +97,7 @@ const PracticesSummaryBreadcrumbs: React.FC = () => {
           {parentEntityId && (
             <Link
               className="PracticesSummaryBreadcrumbs--parent"
-              to={`/community/practices/${encrypt(parentEntityId)}`}
+              to={`${basePath}/${encrypt(parentEntityId)}`}
             >
               {parent}
             </Link>

@@ -26,6 +26,7 @@ export type Navigation = {
   community?: string[];
   facilities?: string[];
   methodology?: string[];
+  practices?: string[];
   pathways?: string[];
   prison?: PathwaysSection[];
   supervision?: PathwaysSection[];

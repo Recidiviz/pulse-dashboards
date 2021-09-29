@@ -42,6 +42,7 @@ import PagePathways from "./core/PagePathways";
 import PagePractices from "./core/PagePractices";
 import PageProjections from "./core/PageProjections";
 import PathwaysLayout from "./core/PathwaysLayout";
+import PathwaysProfile from "./core/PathwaysProfile";
 import {
   CORE_PATHS,
   CORE_VIEWS,
@@ -68,7 +69,7 @@ Sentry.init({
   dsn: process.env.REACT_APP_SENTRY_DSN,
 });
 
-const SHARED_VIEWS = ["profile", ""];
+const SHARED_VIEWS = ["", "profile"];
 
 // prettier-ignore
 const App = () => (
@@ -89,10 +90,11 @@ const App = () => (
               </Switch>
             </LanternLayout>
 
-            <PathwaysLayout tenantIds={CORE_TENANTS} views={Object.values(PATHWAYS_VIEWS)}>
+            <PathwaysLayout tenantIds={CORE_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat("pathways-profile")}>
               <Switch>
                 <ProtectedRoute path={PATHWAYS_PATHS.pathways} component={PagePathways} />
-                <Route path="/profile" component={Profile} />
+                <ProtectedRoute path={PATHWAYS_PATHS.practices} component={PagePractices} />
+                <Route path="/pathways-profile" component={PathwaysProfile} />
                 <Redirect from="/pathways" to="/pathways/prison" />
                 <NotFound />
               </Switch>
