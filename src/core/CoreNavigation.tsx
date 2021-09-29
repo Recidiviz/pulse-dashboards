@@ -22,8 +22,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import recidivizLogo from "../assets/static/images/Logo.svg";
+import ProfileLink from "../components/ProfileLink";
 import { useRootStore } from "../components/StoreProvider";
-import UserAvatar from "../components/UserAvatar";
 import { useCoreStore } from "./CoreStoreProvider";
 import CoreViewNavigation from "./CoreViewNavigation";
 import PageNavigation from "./PageNavigation";
@@ -69,7 +69,7 @@ const CoreNavigation: React.FC = () => {
       </div>
       <div className="CoreNavigation__right">
         <PageNavigation />
-        <UserAvatar />
+        <ProfileLink />
       </div>
     </nav>
   );

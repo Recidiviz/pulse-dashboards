@@ -16,16 +16,16 @@
 // =============================================================================
 import React from "react";
 
+import ProfileLink from "../components/ProfileLink";
 import TopBar from "../components/TopBar/TopBar";
 import TopBarLogo from "../components/TopBar/TopBarLogo";
-import UserAvatar from "../components/UserAvatar";
 
 const LanternTopBar: React.FC = () => {
   return (
     <TopBar isHidable isWide>
       <TopBarLogo />
       <ul className="nav-right">
-        <UserAvatar />
+        <ProfileLink />
       </ul>
     </TopBar>
   );

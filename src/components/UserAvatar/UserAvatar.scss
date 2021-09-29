@@ -18,24 +18,21 @@
 @import "../../core/CoreConstants.scss";
 
 .UserAvatar {
-  background: $signal-notifications;
   border-radius: 50%;
-  color: white;
   display: inline-block;
-  line-height: 32px;
   height: 32px;
-  text-align: center;
-  text-transform: uppercase;
-  width: 32px;
-  cursor: pointer;
+  line-height: 32px;
   margin: 0 1rem;
+  width: 32px;
+
+  &--default {
+    background: $signal-notifications;
+    color: white;
+    text-transform: uppercase;
+    text-align: center;
+  }
 }
 
-.CoreLayout .UserAvatar {
-  margin-left: 2rem;
-  margin-right: 2.375rem;
-}
-
-.PathwaysLayout .UserAvatar {
+.PathwaysLayout .UserAvatar--default {
   background: $signal-highlight;
 }

@@ -24,7 +24,7 @@ import { NavLink } from "react-router-dom";
 import { ReactComponent as MethodologyLogo } from "../../assets/static/images/methodology.svg";
 import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathways.svg";
 import { ReactComponent as PracticesLogo } from "../../assets/static/images/practices.svg";
-import UserAvatar from "../../components/UserAvatar";
+import ProfileLink from "../../components/ProfileLink";
 
 const ViewNavigation = (): React.ReactElement => {
   return (
@@ -79,7 +79,7 @@ const ViewNavigation = (): React.ReactElement => {
         </div>
         <div className="ViewNavigation__tooltip-box">
           <div className="ViewNavigation__navlink">
-            <UserAvatar pathways />
+            <ProfileLink pathways />
           </div>
           <div className="ViewNavigation__tooltip">
             <div className="ViewNavigation__tooltip-header">Profile</div>
