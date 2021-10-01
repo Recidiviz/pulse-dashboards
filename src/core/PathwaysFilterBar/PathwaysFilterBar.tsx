@@ -14,28 +14,49 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { isEqual } from "lodash";
 import { get } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
+import { useQueryParams } from "use-query-params";
 
-import { CoreSelect } from "./controls/CoreSelect";
-import Filter from "./controls/Filter";
-import FilterBar from "./controls/FilterBar";
-import { useCoreStore } from "./CoreStoreProvider";
-import DetailsGroup from "./DetailsGroup";
-import DownloadDataButton from "./DownloadDataButton";
-import MethodologyLink from "./MethodologyLink";
-import { EnabledFilters, PopulationFilters } from "./types/filters";
-import { getFilterOption } from "./utils/filterOptions";
-import { CORE_PATHS } from "./views";
+import {
+  filterQueryParams,
+  removeUndefinedValuesFromObject,
+} from "../../utils/navigation";
+import { CoreSelect } from "../controls/CoreSelect";
+import Filter from "../controls/Filter";
+import FilterBar from "../controls/FilterBar";
+import { useCoreStore } from "../CoreStoreProvider";
+import DetailsGroup from "../DetailsGroup";
+import DownloadDataButton from "../DownloadDataButton";
+import MethodologyLink from "../MethodologyLink";
+import {
+  EnabledFilters,
+  FilterOption,
+  PopulationFilters,
+} from "../types/filters";
+import { getFilterOption } from "../utils/filterOptions";
+import { CORE_PATHS } from "../views";
 
-const PopulationFilterBar: React.FC<{
+const PathwaysFilterBar: React.FC<{
   filterOptions: PopulationFilters;
   handleDownload: () => Promise<void>;
   enabledFilters?: EnabledFilters;
 }> = ({ filterOptions, handleDownload, enabledFilters = [] }) => {
   const { filtersStore } = useCoreStore();
   const { filters } = filtersStore;
+
+  // if current query params do not match enabled filters, update query
+  const [query, setQuery] = useQueryParams(filterQueryParams);
+  const cleanQuery = removeUndefinedValuesFromObject(query);
+  const enabled = enabledFilters.reduce(
+    (acc, filter) => ({ ...acc, [filter]: filtersStore.filters[filter] }),
+    {}
+  );
+  if (!isEqual(Object.keys(enabled).sort(), Object.keys(cleanQuery).sort())) {
+    setQuery({ ...enabled }, "replace");
+  }
 
   return (
     <FilterBar
@@ -57,7 +78,9 @@ const PopulationFilterBar: React.FC<{
             <CoreSelect
               value={getFilterOption(get(filters, filter.type), filter.options)}
               options={filter.options}
-              onChange={filter.setFilters(filtersStore)}
+              onChange={(option: FilterOption) =>
+                setQuery({ [filter.type]: option.value })
+              }
               defaultValue={filter.defaultValue}
             />
           </Filter>
@@ -67,4 +90,4 @@ const PopulationFilterBar: React.FC<{
   );
 };
 
-export default observer(PopulationFilterBar);
+export default observer(PathwaysFilterBar);

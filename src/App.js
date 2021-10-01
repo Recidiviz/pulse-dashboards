@@ -26,6 +26,7 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
+import { QueryParamProvider } from "use-query-params";
 
 import AuthWall from "./AuthWall";
 import NotFound from "./components/NotFound";
@@ -76,51 +77,53 @@ const App = () => (
   <StoreProvider>
     <SentryErrorBoundary>
       <Router>
-        <Switch>
-          <Route path="/verify" component={VerificationNeeded} />
-          <AuthWall>
+        <QueryParamProvider ReactRouterRoute={Route}>
+          <Switch>
+            <Route path="/verify" component={VerificationNeeded} />
+            <AuthWall>
 
-            <LanternLayout tenantIds={LANTERN_TENANTS} views={Object.values(LANTERN_VIEWS).concat(SHARED_VIEWS)}>
-              <Switch>
-                <Route path="/community/revocations" component={Revocations} />
-                <Route path="/profile" component={Profile} />
-                <Redirect exact from="/" to="/community/revocations" />
-                <Redirect from="/revocations" to="/community/revocations" />
-                <NotFound />
-              </Switch>
-            </LanternLayout>
+              <LanternLayout tenantIds={LANTERN_TENANTS} views={Object.values(LANTERN_VIEWS).concat(SHARED_VIEWS)}>
+                <Switch>
+                  <Route path="/community/revocations" component={Revocations} />
+                  <Route path="/profile" component={Profile} />
+                  <Redirect exact from="/" to="/community/revocations" />
+                  <Redirect from="/revocations" to="/community/revocations" />
+                  <NotFound />
+                </Switch>
+              </LanternLayout>
 
-            <PathwaysLayout tenantIds={CORE_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat("pathways-profile")}>
-              <Switch>
-                <ProtectedRoute path={PATHWAYS_PATHS.pathways} component={PagePathways} />
-                <ProtectedRoute path={PATHWAYS_PATHS.practices} component={PagePractices} />
-                <Route path="/pathways-profile" component={PathwaysProfile} />
-                <Redirect from="/pathways" to="/pathways/prison" />
-                <NotFound />
-              </Switch>
-            </PathwaysLayout>
+              <PathwaysLayout tenantIds={CORE_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat("pathways-profile")}>
+                <Switch>
+                  <ProtectedRoute path={PATHWAYS_PATHS.pathways} component={PagePathways} />
+                  <ProtectedRoute path={PATHWAYS_PATHS.practices} component={PagePractices} />
+                  <Route path="/pathways-profile" component={PathwaysProfile} />
+                  <Redirect from="/pathways" to="/pathways/prison" />
+                  <NotFound />
+                </Switch>
+              </PathwaysLayout>
 
-            <CoreLayout tenantIds={CORE_TENANTS}  views={Object.values(CORE_VIEWS).concat(SHARED_VIEWS)}>
-              <Switch>
-                <ProtectedRoute path={CORE_PATHS.goals} component={CoreGoalsView} />
-                <ProtectedRoute path={CORE_PATHS.communityExplore} component={UsNdCommunityExplore} />
-                <ProtectedRoute path={CORE_PATHS.communityProjections} component={PageProjections} />
-                <ProtectedRoute path={CORE_PATHS.facilitiesExplore} component={UsNdFacilitiesExplore} />
-                <ProtectedRoute path={CORE_PATHS.facilitiesProjections} component={PageProjections} />
-                <ProtectedRoute path={CORE_PATHS.communityPractices} component={PagePractices}/>
-                <ProtectedRoute path={CORE_PATHS.methodology} component={PageMethodology} />
-                <Route path="/profile" component={Profile} />
-                <RedirectHome />
-                <Redirect from="/snapshots" to="/goals" />
-                <Redirect from="/revocations" to="/goals" />
-                <Redirect from="/reincarcerations" to="/goals" />
-                <Redirect from="/community/goals" to="/goals" />
-                <Redirect from="/facilities/goals" to="/goals" />
-                <NotFound />
-              </Switch>
-            </CoreLayout>
-          </AuthWall>
-        </Switch>
+              <CoreLayout tenantIds={CORE_TENANTS}  views={Object.values(CORE_VIEWS).concat(SHARED_VIEWS)}>
+                <Switch>
+                  <ProtectedRoute path={CORE_PATHS.goals} component={CoreGoalsView} />
+                  <ProtectedRoute path={CORE_PATHS.communityExplore} component={UsNdCommunityExplore} />
+                  <ProtectedRoute path={CORE_PATHS.communityProjections} component={PageProjections} />
+                  <ProtectedRoute path={CORE_PATHS.facilitiesExplore} component={UsNdFacilitiesExplore} />
+                  <ProtectedRoute path={CORE_PATHS.facilitiesProjections} component={PageProjections} />
+                  <ProtectedRoute path={CORE_PATHS.communityPractices} component={PagePractices}/>
+                  <ProtectedRoute path={CORE_PATHS.methodology} component={PageMethodology} />
+                  <Route path="/profile" component={Profile} />
+                  <RedirectHome />
+                  <Redirect from="/snapshots" to="/goals" />
+                  <Redirect from="/revocations" to="/goals" />
+                  <Redirect from="/reincarcerations" to="/goals" />
+                  <Redirect from="/community/goals" to="/goals" />
+                  <Redirect from="/facilities/goals" to="/goals" />
+                  <NotFound />
+                </Switch>
+              </CoreLayout>
+            </AuthWall>
+          </Switch>
+        </QueryParamProvider>
       </Router>
     </SentryErrorBoundary>
   </StoreProvider>

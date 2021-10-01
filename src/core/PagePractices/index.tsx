@@ -22,7 +22,6 @@ import { Loading } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import withRouteSync from "../../withRouteSync";
 import { useCoreStore } from "../CoreStoreProvider";
 import DetailsGroup from "../DetailsGroup";
 import DownloadDataButton from "../DownloadDataButton";
@@ -37,6 +36,7 @@ import PracticesSummaryChart from "../PracticesSummaryChart";
 import PracticesSummaryDetail from "../PracticesSummaryDetail";
 import PracticesSummaryTable from "../PracticesSummaryTable/PracticesSummaryTable";
 import { CORE_PATHS } from "../views";
+import withRouteSync from "../withRouteSync";
 
 const PagePractices: React.FC = () => {
   const { metricsStore, pagePracticesStore } = useCoreStore();

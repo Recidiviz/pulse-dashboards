@@ -23,10 +23,10 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../components/StoreProvider";
-import withRouteSync from "../withRouteSync";
 import { useCoreStore } from "./CoreStoreProvider";
 import { NavigationSection } from "./types/navigation";
 import { getPageHeadingFromId } from "./views";
+import withRouteSync from "./withRouteSync";
 
 const PageNavigation: React.FC = () => {
   const { pathname } = useLocation();

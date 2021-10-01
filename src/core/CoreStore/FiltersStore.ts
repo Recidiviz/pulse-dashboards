@@ -53,6 +53,10 @@ export default class FiltersStore {
     });
   }
 
+  resetFilters(): void {
+    this.setFilters(defaultPopulationFilterValues);
+  }
+
   get timePeriodLabel(): string {
     return formatTimePeriodLabel(get(this.filters, "timePeriod"));
   }

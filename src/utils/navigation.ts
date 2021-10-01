@@ -14,11 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { QueryParamConfigMap, StringParam } from "use-query-params";
+
 import {
   Navigation,
   NavigationSection,
   RoutePermission,
 } from "../core/types/navigation";
+import { FILTER_TYPES } from "../core/utils/constants";
 import {
   CORE_PAGES,
   CORE_VIEWS,
@@ -125,3 +128,22 @@ export function getStateNameForStateCode(stateCode: string): string {
   }
   return TENANTS[stateCode as TenantId].name;
 }
+
+export const filterQueryParams = Object.values(FILTER_TYPES).reduce(
+  (acc, filter) => ({ ...acc, [filter]: StringParam }),
+  {}
+) as QueryParamConfigMap;
+
+export const metricQueryParams = {
+  selectedMetricId: StringParam,
+} as QueryParamConfigMap;
+
+export const removeUndefinedValuesFromObject = (
+  obj: Record<string, string>
+): Record<string, string> => {
+  const cleanObj = { ...obj };
+  Object.keys(cleanObj).forEach(
+    (key) => cleanObj[key] === undefined && delete cleanObj[key]
+  );
+  return cleanObj;
+};

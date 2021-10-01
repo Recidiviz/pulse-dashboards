@@ -81,6 +81,7 @@ describe("PopulationOverTimeMetric", () => {
     metric = new PopulationOverTimeMetric({
       id: "prisonPopulationOverTime",
       tenantId: mockTenantId,
+      compartment: "INCARCERATION",
       sourceFilename: "prison_population_projection_time_series",
       dataTransformer: createProjectionTimeSeries,
       enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
@@ -129,6 +130,7 @@ describe("PopulationOverTimeMetric", () => {
     metric = new PopulationOverTimeMetric({
       id: "prisonPopulationOverTime",
       tenantId: mockTenantId,
+      compartment: "INCARCERATION",
       sourceFilename: "prison_population_projection_time_series",
       dataTransformer: createProjectionTimeSeries,
       enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
@@ -146,6 +148,7 @@ describe("PopulationOverTimeMetric", () => {
       metric = new PopulationOverTimeMetric({
         id: "prisonPopulationOverTime",
         tenantId: mockTenantId,
+        compartment: "INCARCERATION",
         sourceFilename: "prison_population_projection_time_series",
         dataTransformer: createProjectionTimeSeries,
         enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],

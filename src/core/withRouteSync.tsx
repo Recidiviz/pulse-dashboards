@@ -19,15 +19,23 @@ import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { ComponentType, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
+import { useQueryParams } from "use-query-params";
 
-import { useCoreStore } from "./core/CoreStoreProvider";
-import { DEFAULT_ENTITY_ID } from "./core/PagePractices/types";
+import { decrypt } from "../utils";
 import {
+  filterQueryParams,
+  metricQueryParams,
+  removeUndefinedValuesFromObject,
+} from "../utils/navigation";
+import { useCoreStore } from "./CoreStoreProvider";
+import { DEFAULT_ENTITY_ID } from "./PagePractices/types";
+import {
+  CORE_PAGES,
   DEFAULT_PATHWAYS_SECTION_BY_PAGE,
+  PATHWAYS_VIEWS,
   PathwaysPage,
   PathwaysSection,
-} from "./core/views";
-import { decrypt } from "./utils";
+} from "./views";
 
 type RouteParams = {
   sectionId?: string;
@@ -69,16 +77,35 @@ const withRouteSync = <Props extends RouteParams>(
 ): ComponentType<Props> => {
   const WrappedRouteComponent: React.FC<Props> = (props) => {
     const { pathname } = useLocation();
-    const pageId = pathname.split("/")[2] as PathwaysPage;
+    const {
+      pagePracticesStore,
+      setPage,
+      setSection,
+      filtersStore,
+    } = useCoreStore();
+
+    // prepare URI params to sync with store
+    const [viewId, pageId] = pathname.split("/").slice(1, 3);
     const { entityId, sectionId } = normalizeRouteParams(useParams());
-    const { pagePracticesStore, setPage, setSection } = useCoreStore();
+
+    // prepare query params to sync with store
+    const queryParams =
+      viewId === "practices" || pageId === "practices"
+        ? metricQueryParams
+        : filterQueryParams;
+    const [query] = useQueryParams(queryParams);
+    const cleanQuery = removeUndefinedValuesFromObject(query);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(
       action("sync route params", () => {
         pagePracticesStore.setCurrentEntityId(entityId);
         setSection(sectionId);
-        setPage(pageId);
+        setPage(pageId as PathwaysPage);
+        // eslint-disable-next-line no-unused-expressions
+        viewId === PATHWAYS_VIEWS.practices || pageId === CORE_PAGES.practices
+          ? pagePracticesStore.setSelectedMetricId(query.selectedMetricId)
+          : filtersStore.setFilters(cleanQuery);
       })
     );
 

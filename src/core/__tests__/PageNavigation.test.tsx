@@ -22,6 +22,7 @@ import { Link, StaticRouter } from "react-router-dom";
 import { useRootStore } from "../../components/StoreProvider";
 import RootStore from "../../RootStore";
 import CoreStore from "../CoreStore";
+import FiltersStore from "../CoreStore/FiltersStore";
 import PagePracticesStore from "../CoreStore/PagePracticesStore";
 import { useCoreStore } from "../CoreStoreProvider";
 import PageNavigation from "../PageNavigation";
@@ -35,9 +36,13 @@ jest.mock("react-router-dom", () => ({
     pathname: "/community/revocations",
   }),
 }));
+jest.mock("use-query-params", () => ({
+  useQueryParams: jest.fn().mockReturnValue(["query", jest.fn()]),
+}));
 
 let coreStore: CoreStore;
 let pagePracticesStore: PagePracticesStore;
+let filtersStore: FiltersStore;
 
 describe("CoreLayout tests", () => {
   let page;
@@ -53,6 +58,7 @@ describe("CoreLayout tests", () => {
   beforeEach(() => {
     coreStore = new CoreStore(RootStore);
     pagePracticesStore = coreStore.pagePracticesStore;
+    filtersStore = coreStore.filtersStore;
     (useRootStore as jest.Mock).mockReturnValue({
       userStore: {
         userAllowedNavigation: {
@@ -74,6 +80,7 @@ describe("CoreLayout tests", () => {
       pagePracticesStore,
       setSection: jest.fn(),
       setPage: jest.fn(),
+      filtersStore,
     });
 
     const selector = renderPageNavigation();
@@ -87,6 +94,7 @@ describe("CoreLayout tests", () => {
       pagePracticesStore,
       setSection: jest.fn(),
       setPage: jest.fn(),
+      filtersStore,
     });
 
     const selector = renderPageNavigation();
@@ -102,6 +110,7 @@ describe("CoreLayout tests", () => {
       pagePracticesStore,
       setSection: jest.fn(),
       setPage: jest.fn(),
+      filtersStore,
     });
 
     const selector = renderPageNavigation();

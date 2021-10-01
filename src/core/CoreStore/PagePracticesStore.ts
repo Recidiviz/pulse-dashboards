@@ -70,6 +70,10 @@ export default class PagePracticesStore {
     this.currentEntityId = entityId;
   }
 
+  resetCurrentEntityId(): void {
+    this.setCurrentEntityId(METRIC_TYPES.OVERALL);
+  }
+
   get summaries(): PracticesSummaryRecord[] {
     return this.rootStore.metricsStore.practices.summaries;
   }
@@ -79,7 +83,7 @@ export default class PagePracticesStore {
   }
 
   setSelectedMetricId(metricId: MetricType): void {
-    this.selectedMetricId = metricId;
+    this.selectedMetricId = metricId || METRIC_TYPES.OVERALL;
   }
 
   get metrics(): PracticesMetric[] {

@@ -78,13 +78,14 @@ export default class MetricsStore {
     return new PopulationOverTimeMetric({
       id: "prisonPopulationOverTime",
       tenantId: this.rootStore.currentTenantId,
+      compartment: "INCARCERATION",
       sourceFilename: "prison_population_projection_time_series",
       rootStore: this.rootStore,
       dataTransformer: createProjectionTimeSeries,
       enabledFilters: [
         FILTER_TYPES.TIME_PERIOD,
-        FILTER_TYPES.LEGAL_STATUS,
         FILTER_TYPES.GENDER,
+        FILTER_TYPES.LEGAL_STATUS,
       ],
     });
   }
@@ -93,6 +94,7 @@ export default class MetricsStore {
     return new PopulationOverTimeMetric({
       id: "supervisionPopulationOverTime",
       tenantId: this.rootStore.currentTenantId,
+      compartment: "SUPERVISION",
       sourceFilename: "supervision_population_projection_time_series",
       rootStore: this.rootStore,
       dataTransformer: createProjectionTimeSeries,

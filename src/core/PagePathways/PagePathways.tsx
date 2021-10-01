@@ -20,16 +20,16 @@ import "./PagePathways.scss";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import withRouteSync from "../../withRouteSync";
 import ChartNote from "../ChartNote";
 import { useCoreStore } from "../CoreStoreProvider";
 import usePageContent from "../hooks/usePageContent";
 import MetricVizMapper from "../MetricVizMapper";
 import PageTemplate from "../PageTemplate";
-import PathwaysFilterBar from "../PathwaysFilterBar";
+import PathwaysFilterBar from "../PathwaysFilterBar/PathwaysFilterBar";
 import PathwaysLeftPanel from "../PathwaysLeftPanel";
 import filterOptions from "../utils/filterOptions";
 import { PathwaysPage } from "../views";
+import withRouteSync from "../withRouteSync";
 
 const PagePathways: React.FC = () => {
   const { currentTenantId, metricsStore, page } = useCoreStore();

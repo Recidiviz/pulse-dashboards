@@ -15,17 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
+import { BrowserRouter as Router } from "react-router-dom";
+import { useQueryParams } from "use-query-params";
 
 import RootStore from "../../../RootStore";
 import TENANTS from "../../../tenants";
 import CoreStore from "../../CoreStore";
+import FiltersStore from "../../CoreStore/FiltersStore";
 import PagePracticesStore from "../../CoreStore/PagePracticesStore";
 import { useCoreStore } from "../../CoreStoreProvider";
 import { PracticesMetric } from "../../PagePractices/types";
 import PracticesSummaryCards from "..";
 
+const mockSetQuery = jest.fn();
+
+jest.mock("use-query-params");
 jest.mock("../../CoreStoreProvider");
 jest.mock("../../models/ProjectionsMetrics");
 jest.mock("../../models/VitalsMetrics", () => {
@@ -69,12 +75,20 @@ jest.mock("../../../RootStore/TenantStore", () => {
 
 let coreStore: CoreStore;
 let pagePracticesStore: PagePracticesStore;
+let filtersStore: FiltersStore;
 
 describe("PracticesSummaryCards", () => {
   beforeEach(() => {
     coreStore = new CoreStore(RootStore);
+    filtersStore = new FiltersStore({ rootStore: coreStore });
     pagePracticesStore = coreStore.pagePracticesStore;
-    (useCoreStore as jest.Mock).mockReturnValue({ pagePracticesStore });
+    (useCoreStore as jest.Mock).mockReturnValue({
+      pagePracticesStore,
+      setSection: jest.fn(),
+      setPage: jest.fn(),
+      filtersStore,
+    });
+    (useQueryParams as jest.Mock).mockReturnValue(["query", mockSetQuery]);
   });
 
   describe("metrics by tenant", () => {
@@ -84,10 +98,33 @@ describe("PracticesSummaryCards", () => {
         [];
       metrics.forEach((metric: string) => {
         it(`renders the metric card ${metric}`, () => {
-          const { getByText } = render(<PracticesSummaryCards />);
+          const { getByText } = render(
+            <Router>
+              <PracticesSummaryCards />
+            </Router>
+          );
           expect(getByText(metric));
         });
       });
     });
+  });
+
+  test("selecting from menu sets the query params", async () => {
+    render(
+      <Router>
+        <PracticesSummaryCards />
+      </Router>
+    );
+
+    fireEvent.click(screen.getByText("Timely risk assessments"));
+    fireEvent.click(screen.getByText("Timely contacts"));
+
+    expect(mockSetQuery).toHaveBeenCalledTimes(2);
+    expect(mockSetQuery.mock.calls[0]).toEqual([
+      { selectedMetricId: "RISK_ASSESSMENT" },
+    ]);
+    expect(mockSetQuery.mock.calls[1]).toEqual([
+      { selectedMetricId: "CONTACT" },
+    ]);
   });
 });

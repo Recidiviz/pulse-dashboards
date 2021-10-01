@@ -23,14 +23,22 @@ import {
   MonthOptions,
 } from "../PopulationTimeSeriesChart/helpers";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import { PopulationProjectionTimeSeriesRecord } from "./types";
+import {
+  PopulationProjectionTimeSeriesRecord,
+  SimulationCompartment,
+} from "./types";
 import { getRecordDate } from "./utils";
 
 export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationProjectionTimeSeriesRecord> {
+  compartment: SimulationCompartment;
+
   constructor(
-    props: BaseMetricConstructorOptions<PopulationProjectionTimeSeriesRecord>
+    props: BaseMetricConstructorOptions<PopulationProjectionTimeSeriesRecord> & {
+      compartment: SimulationCompartment;
+    }
   ) {
     super(props);
+    this.compartment = props.compartment;
     this.download = this.download.bind(this);
   }
 
@@ -40,11 +48,13 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationP
       gender,
       legalStatus,
       timePeriod,
+      supervisionType,
     } = this.rootStore.filtersStore.filters;
     const monthRange: MonthOptions = parseInt(timePeriod) as MonthOptions;
     const range = monthRange === 1 ? 6 : monthRange;
-    const status = legalStatus;
     const stepSize = range / 6;
+    const status =
+      this.compartment === "SUPERVISION" ? supervisionType : legalStatus;
 
     const { simulationDate } = this;
     return this.allRecords.filter(

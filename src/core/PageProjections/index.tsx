@@ -21,7 +21,7 @@ import { useLocation } from "react-router-dom";
 import { useCoreStore } from "../CoreStoreProvider";
 import { SimulationCompartment } from "../models/types";
 import PageTemplate from "../PageTemplate";
-import PathwaysFilterBar from "../PathwaysFilterBar";
+import PathwaysFilterBar from "../PathwaysFilterBar/PathwaysFilterBar";
 import PopulationSummaryMetrics from "../PopulationSummaryMetrics";
 import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
 import filterOptions from "../utils/filterOptions";

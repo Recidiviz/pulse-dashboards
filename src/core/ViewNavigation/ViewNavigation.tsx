@@ -25,8 +25,10 @@ import { ReactComponent as MethodologyLogo } from "../../assets/static/images/me
 import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathways.svg";
 import { ReactComponent as PracticesLogo } from "../../assets/static/images/practices.svg";
 import ProfileLink from "../../components/ProfileLink";
+import { useCoreStore } from "../CoreStoreProvider";
 
 const ViewNavigation = (): React.ReactElement => {
+  const { filtersStore, pagePracticesStore } = useCoreStore();
   return (
     <aside className="ViewNavigation">
       <div className="ViewNavigation__tooltip-box">
@@ -34,6 +36,7 @@ const ViewNavigation = (): React.ReactElement => {
           activeClassName="ViewNavigation__navlink--active"
           className="ViewNavigation__navlink"
           to="/pathways"
+          onClick={() => filtersStore.resetFilters()}
         >
           <PathwaysLogo className="ViewNavigation__icon" />
         </NavLink>
@@ -49,6 +52,7 @@ const ViewNavigation = (): React.ReactElement => {
           activeClassName="ViewNavigation__navlink--active"
           className="ViewNavigation__navlink"
           to="/practices"
+          onClick={() => pagePracticesStore.resetCurrentEntityId()}
         >
           <PracticesLogo className="ViewNavigation__icon" />
         </NavLink>

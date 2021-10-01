@@ -14,20 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
 import { observer } from "mobx-react-lite";
 import React from "react";
+import { useQueryParams } from "use-query-params";
 
+import { metricQueryParams } from "../../utils/navigation";
 import { useCoreStore } from "../CoreStoreProvider";
-import { MetricType } from "../PagePractices/types";
+import withRouteSync from "../withRouteSync";
 import PracticesSummaryCard from "./PracticesSummaryCard";
 
 const PracticesSummaryCards: React.FC = () => {
   const { pagePracticesStore } = useCoreStore();
   const { summaryCards, selectedMetricId } = pagePracticesStore;
-  const handleSelectCard: (id: MetricType) => () => void = (id) => () => {
-    pagePracticesStore.setSelectedMetricId(id);
-  };
+  const [, setQuery] = useQueryParams(metricQueryParams);
 
   return (
     <>
@@ -39,11 +38,11 @@ const PracticesSummaryCards: React.FC = () => {
           percentage={value}
           status={status}
           selected={selectedMetricId === id}
-          onClick={handleSelectCard(id)}
+          onClick={() => setQuery({ selectedMetricId: id })}
         />
       ))}
     </>
   );
 };
 
-export default observer(PracticesSummaryCards);
+export default withRouteSync(observer(PracticesSummaryCards));

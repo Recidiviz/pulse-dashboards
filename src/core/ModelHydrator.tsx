@@ -30,7 +30,6 @@ import { Hydratable } from "./models/types";
 const Wrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 100%;
   min-height: 558px;
   background-color: white;
   border-radius: 0.5rem;
