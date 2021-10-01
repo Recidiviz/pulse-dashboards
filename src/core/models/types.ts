@@ -125,3 +125,9 @@ export interface Hydratable {
     | SupervisionCountTimeSeriesRecord[];
   hydrate: () => void;
 }
+
+export type MetricId =
+  | "prisonPopulationOverTime"
+  | "supervisionPopulationOverTime"
+  | "supervisionToPrisonOverTime"
+  | "supervisionToLibertyOverTime";

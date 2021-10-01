@@ -63,7 +63,10 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationP
   }
 
   get note(): string {
-    return `${this.noteCopy} ${formatDate(this.simulationDate, "MMMM yyyy")}.`;
+    return `${this.content.note} ${formatDate(
+      this.simulationDate,
+      "MMMM yyyy"
+    )}.`;
   }
 
   get simulationDate(): Date {

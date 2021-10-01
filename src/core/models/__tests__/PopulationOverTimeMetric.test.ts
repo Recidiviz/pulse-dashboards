@@ -79,12 +79,12 @@ describe("PopulationOverTimeMetric", () => {
   beforeEach(() => {
     mockCoreStore.filtersStore = filtersStore;
     metric = new PopulationOverTimeMetric({
+      id: "prisonPopulationOverTime",
       tenantId: mockTenantId,
       sourceFilename: "prison_population_projection_time_series",
       dataTransformer: createProjectionTimeSeries,
       enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
       rootStore: mockCoreStore,
-      chartTitle: "title",
     });
     metric.hydrate();
   });
@@ -127,12 +127,12 @@ describe("PopulationOverTimeMetric", () => {
     });
 
     metric = new PopulationOverTimeMetric({
+      id: "prisonPopulationOverTime",
       tenantId: mockTenantId,
       sourceFilename: "prison_population_projection_time_series",
       dataTransformer: createProjectionTimeSeries,
       enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
       rootStore: mockCoreStore,
-      chartTitle: "title",
     });
     metric.hydrate();
 
@@ -144,12 +144,12 @@ describe("PopulationOverTimeMetric", () => {
       mockCoreStore.filtersStore = filtersStore;
 
       metric = new PopulationOverTimeMetric({
+        id: "prisonPopulationOverTime",
         tenantId: mockTenantId,
         sourceFilename: "prison_population_projection_time_series",
         dataTransformer: createProjectionTimeSeries,
         enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
         rootStore: mockCoreStore,
-        chartTitle: "title",
       });
       metric.hydrate();
     });

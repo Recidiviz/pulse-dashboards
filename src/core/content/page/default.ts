@@ -20,21 +20,20 @@
 
 import { PageCopy } from "../types";
 
-// TODO(#1340): [Pathways] Get sections definition into spreadsheet or remove from content system
 const content: PageCopy = {
   prison: {
     title: "Prison",
-    summary: `This chart includes individuals who are admitted to state facilities,
-      including termers, riders, parole violators, and people held in county jails
-      under state jurisdiction.`,
+    summary:
+      "This chart includes individuals who are admitted to state facilities, including termers, riders, parole violators, and people held in county jails under state jurisdiction.",
     sections: {
       populationOverTime: "Prison population",
     },
+    methodology: "This is the prison specific page methodology",
   },
   supervision: {
     title: "Supervision",
     summary:
-      "This chart includes all individuals that are currently on probation and/or parole.",
+      "This chart includes all individuals who are currently on probation and/or parole.",
     sections: {
       populationOverTime: "Supervised population",
     },
@@ -42,7 +41,7 @@ const content: PageCopy = {
   supervisionToLiberty: {
     title: "Supervision to Liberty",
     summary:
-      "These charts show people who were discharged from supervision positively or if their supervision period expired. Individuals are counted in their original month of projected completion, even if terminated earlier.",
+      "These charts show people who were discharged from supervision positively or if their supervision period expired.",
     sections: {
       transitionsOverTime: "Releases from supervision to liberty",
     },

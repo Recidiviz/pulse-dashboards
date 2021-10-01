@@ -21,18 +21,30 @@ import { parseResponseByFileFormat } from "../../api/metrics";
 import { callMetricsApi } from "../../api/metrics/metricsClient";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import RootStore from "../../RootStore";
+import defaultContent from "../content/metric/default";
+import IdContent from "../content/metric/us_id";
+import { MetricContent, StateSpecificMetricCopy } from "../content/types";
 import CoreStore from "../CoreStore";
 import { EnabledFilters } from "../types/filters";
-import { Hydratable, MetricRecord, RawMetricData, TenantId } from "./types";
+import {
+  Hydratable,
+  MetricId,
+  MetricRecord,
+  RawMetricData,
+  TenantId,
+} from "./types";
+
+const contentOverrides: { [category: string]: StateSpecificMetricCopy } = {
+  US_ID: IdContent,
+};
 
 export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
+  id: MetricId;
   sourceFilename: string;
   dataTransformer: (d: RawMetricData) => RecordFormat[];
   enabledFilters: EnabledFilters;
-  chartTitle: string;
   tenantId?: TenantId;
   rootStore?: CoreStore;
-  noteCopy?: string;
 };
 
 /**
@@ -47,11 +59,9 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
   implements Hydratable {
   rootStore?: CoreStore;
 
+  id: MetricId;
+
   readonly tenantId?: TenantId;
-
-  chartTitle: string;
-
-  noteCopy?: string;
 
   // data properties
   protected readonly sourceFilename: string;
@@ -71,12 +81,11 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   constructor({
     rootStore,
+    id,
     tenantId,
     sourceFilename,
     dataTransformer,
     enabledFilters,
-    chartTitle,
-    noteCopy,
   }: BaseMetricConstructorOptions<RecordFormat>) {
     makeObservable<PathwaysMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
@@ -86,8 +95,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     });
 
     this.rootStore = rootStore;
-    this.chartTitle = chartTitle;
-    this.noteCopy = noteCopy;
+    this.id = id;
     this.tenantId = tenantId;
     this.sourceFilename = sourceFilename;
     this.dataTransformer = dataTransformer;
@@ -96,12 +104,31 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.enabledFilters = enabledFilters;
   }
 
+  get content(): MetricContent {
+    if (
+      this.rootStore &&
+      this.rootStore.currentTenantId &&
+      this.rootStore.currentTenantId in contentOverrides &&
+      this.id in contentOverrides[this.rootStore.currentTenantId]
+    ) {
+      return {
+        ...defaultContent[this.id],
+        ...contentOverrides[this.rootStore.currentTenantId][this.id],
+      };
+    }
+    return defaultContent[this.id];
+  }
+
+  get chartTitle(): string {
+    return this.content.title;
+  }
+
   /**
    * Returns the note copy, unformatted. Child metric classes can override this
    * function and format the note if necessary.
    */
   get note(): string | undefined {
-    return this.noteCopy;
+    return this.content.note;
   }
 
   /**

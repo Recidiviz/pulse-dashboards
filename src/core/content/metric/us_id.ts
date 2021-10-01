@@ -18,38 +18,13 @@
  *
  */
 
-import { MetricId } from "../models/types";
-import { PathwaysPage, PathwaysSection } from "../views";
+import { StateSpecificMetricCopy } from "../types";
 
-export type PageContent = {
-  title: string;
-  summary: string;
-  sections?: Sections;
-  methodology?: string;
+const content: StateSpecificMetricCopy = {
+  prisonPopulationOverTime: {},
+  supervisionPopulationOverTime: {},
+  supervisionToPrisonOverTime: {},
+  supervisionToLibertyOverTime: {},
 };
 
-export type Sections = {
-  [key in PathwaysSection]: string;
-};
-
-export type PageCopy = {
-  [key in PathwaysPage]: PageContent;
-};
-
-export type StateSpecificPageCopy = {
-  [key in PathwaysPage]?: Partial<PageContent>;
-};
-
-export type MetricContent = {
-  title: string;
-  note: string;
-  methodology?: string;
-};
-
-export type MetricCopy = {
-  [key in MetricId]: MetricContent;
-};
-
-export type StateSpecificMetricCopy = {
-  [key in MetricId]?: Partial<MetricContent>;
-};
+export default content;
