@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { SimulationCompartment } from "./models/types";
+import { MetricId, SimulationCompartment } from "./models/types";
 
 export type CoreView = keyof typeof CORE_VIEWS;
 export const CORE_VIEWS: Record<string, string> = {
@@ -28,6 +28,7 @@ export type PathwaysView = keyof typeof PATHWAYS_VIEWS;
 export const PATHWAYS_VIEWS: Record<string, string> = {
   pathways: "pathways",
   practices: "practices",
+  pathwaysMethodology: "pathways-methodology",
 } as const;
 
 export const CORE_PATHS: Record<string, string> = {
@@ -45,6 +46,8 @@ export const CORE_PATHS: Record<string, string> = {
 export const PATHWAYS_PATHS: Record<string, string> = {
   pathways: "/pathways/:pageId/:sectionId?",
   practices: "/practices/:entityId?",
+  methodology: "/pathways-methodology/:dashboard",
+  methodologyPathways: "/pathways-methodology/pathways",
 };
 
 export type CorePage = keyof typeof CORE_PAGES;
@@ -65,17 +68,42 @@ export const PathwaysPageIdList = Object.keys(PATHWAYS_PAGES);
 
 export type PathwaysSection = keyof typeof PATHWAYS_SECTIONS;
 export const PATHWAYS_SECTIONS: Record<string, string> = {
-  populationOverTime: "populationOverTime",
-  transitionsOverTime: "transitionsOverTime",
+  countOverTime: "countOverTime",
 };
 
 export const DEFAULT_PATHWAYS_PAGE = PATHWAYS_PAGES.prison;
 export const DEFAULT_PATHWAYS_SECTION_BY_PAGE: Record<string, string> = {
-  [PATHWAYS_PAGES.prison]: PATHWAYS_SECTIONS.populationOverTime,
-  [PATHWAYS_PAGES.supervision]: PATHWAYS_SECTIONS.populationOverTime,
-  [PATHWAYS_PAGES.supervisionToPrison]: PATHWAYS_SECTIONS.transitionsOverTime,
-  [PATHWAYS_PAGES.supervisionToLiberty]: PATHWAYS_SECTIONS.transitionsOverTime,
+  [PATHWAYS_PAGES.prison]: PATHWAYS_SECTIONS.countOverTime,
+  [PATHWAYS_PAGES.supervision]: PATHWAYS_SECTIONS.countOverTime,
+  [PATHWAYS_PAGES.supervisionToPrison]: PATHWAYS_SECTIONS.countOverTime,
+  [PATHWAYS_PAGES.supervisionToLiberty]: PATHWAYS_SECTIONS.countOverTime,
 };
+
+const PATHWAYS_MERIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
+  [PATHWAYS_PAGES.prison]: ["prisonPopulationOverTime"],
+  [PATHWAYS_PAGES.supervision]: ["supervisionPopulationOverTime"],
+  [PATHWAYS_PAGES.supervisionToPrison]: ["supervisionToPrisonOverTime"],
+  [PATHWAYS_PAGES.supervisionToLiberty]: ["supervisionToLibertyOverTime"],
+};
+
+export function getMetricIdsForPage(page: PathwaysPage): MetricId[] {
+  return PATHWAYS_MERIC_IDS_BY_PAGE[page];
+}
+
+export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
+  MetricId,
+  PathwaysSection
+> = {
+  // @ts-ignore
+  prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
+  supervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
+  supervisionToPrisonOverTime: PATHWAYS_SECTIONS.countOverTime,
+  supervisionToLibertyOverTime: PATHWAYS_SECTIONS.countOverTime,
+};
+
+export function getSectionIdForMetric(metric: MetricId): PathwaysSection {
+  return PATHWAYS_SECTION_BY_METRIC_ID[metric];
+}
 
 const pathnameToView: Record<string, string> = {
   [CORE_PATHS.goals]: CORE_VIEWS.goals,
@@ -104,6 +132,7 @@ const pageIdToHeading: Record<string, string> = {
   [PATHWAYS_PAGES.supervision]: "Supervision",
   [PATHWAYS_PAGES.supervisionToPrison]: "Supervision to Prison",
   [PATHWAYS_PAGES.supervisionToLiberty]: "Supervision to Liberty",
+  [PATHWAYS_VIEWS.pathways]: "Pathways",
 };
 
 export function getPageHeadingFromId(pageId: string): string {

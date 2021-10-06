@@ -96,6 +96,7 @@ const App = () => (
                 <Switch>
                   <ProtectedRoute path={PATHWAYS_PATHS.pathways} component={PagePathways} />
                   <ProtectedRoute path={PATHWAYS_PATHS.practices} component={PagePractices} />
+                  <ProtectedRoute path={PATHWAYS_PATHS.methodology} component={PageMethodology} />
                   <Route path="/pathways-profile" component={PathwaysProfile} />
                   <Redirect from="/pathways" to="/pathways/prison" />
                   <NotFound />

@@ -25,7 +25,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useRootStore } from "../components/StoreProvider";
 import { useCoreStore } from "./CoreStoreProvider";
 import { NavigationSection } from "./types/navigation";
-import { getPageHeadingFromId } from "./views";
+import { getPageHeadingFromId, PATHWAYS_VIEWS } from "./views";
 import withRouteSync from "./withRouteSync";
 
 const PageNavigation: React.FC = () => {
@@ -40,9 +40,11 @@ const PageNavigation: React.FC = () => {
     <ul
       className={cx("PageNavigation", {
         "PageNavigation--Pathways":
-          currentView && currentView.toLowerCase() === "pathways",
+          currentView &&
+          Object.values(PATHWAYS_VIEWS).includes(currentView.toLowerCase()),
         "PageNavigation--Core":
-          currentView && currentView.toLowerCase() !== "pathways",
+          currentView &&
+          !Object.values(PATHWAYS_VIEWS).includes(currentView.toLowerCase()),
       })}
     >
       {pageOptions.map((pageOption: NavigationSection) => (

@@ -26,11 +26,11 @@ import StoreProvider, { useRootStore } from "../components/StoreProvider";
 import VerificationNeeded from "../components/VerificationNeeded";
 import UsNDCommunityExplore from "../core/community/Explore";
 import CoreLayout from "../core/CoreLayout";
+import MethodologyPathways from "../core/MethodologyPathways";
+import MethodologyProjections from "../core/MethodologyProjections/Methodology";
 import PagePathways from "../core/PagePathways";
 import PagePractices from "../core/PagePractices";
 import PathwaysLayout from "../core/PathwaysLayout";
-import PracticesMethodology from "../core/PracticesMethodology";
-import ProjectionsMethodology from "../core/ProjectionsMethodology/Methodology";
 import LanternLayout from "../lantern/LanternLayout";
 import Revocations from "../lantern/Revocations";
 import { US_ID, US_ND } from "../RootStore/TenantStore/coreTenants";
@@ -51,8 +51,8 @@ jest.mock("@recidiviz/design-system");
 jest.mock("../components/StoreProvider");
 jest.mock("../components/ErrorMessage");
 jest.mock("../components/VerificationNeeded");
-jest.mock("../core/ProjectionsMethodology/Methodology");
-jest.mock("../core/PracticesMethodology");
+jest.mock("../core/MethodologyProjections/Methodology");
+jest.mock("../core/MethodologyPathways");
 jest.mock("../core/PagePractices");
 jest.mock("../core/PagePathways");
 
@@ -65,8 +65,8 @@ describe("App tests", () => {
   const mockLoadingTestId = "loading-test-id";
   const mockErrorId = "error-test-id";
   const mockVerificationNeededId = "verification-needed-test-id";
-  const mockProjectionsMethodologyId = "projections-methodology-id";
-  const mockPracticesMethodologyId = "practices-methodology-id";
+  const mockMethodologyProjectionsId = "projections-methodology-id";
+  const mockMethodologyPathwaysId = "pathways-methodology-id";
   const mockPathwaysPrisonId = "pathways-prison-id";
   const mockCommunityPracticesId = "community-practices-id";
 
@@ -74,7 +74,7 @@ describe("App tests", () => {
   const LanternLayoutMock = LanternLayout.type;
   const CoreLayoutMock = CoreLayout.type;
   const PathwaysLayoutMock = PathwaysLayout.type;
-  const PracticesMethodologyMock = PracticesMethodology.type;
+  const MethodologyPathwaysMock = MethodologyPathways.type;
   const PagePathwaysMock = PagePathways.type;
   const PagePracticesMock = PagePractices.type;
   let userStore = {};
@@ -93,11 +93,11 @@ describe("App tests", () => {
   Loading.mockReturnValue(mockWithTestId(mockLoadingTestId));
   ErrorMessage.mockReturnValue(mockWithTestId(mockErrorId));
   VerificationNeeded.mockReturnValue(mockWithTestId(mockVerificationNeededId));
-  ProjectionsMethodology.mockReturnValue(
-    mockWithTestId(mockProjectionsMethodologyId)
+  MethodologyProjections.mockReturnValue(
+    mockWithTestId(mockMethodologyProjectionsId)
   );
-  PracticesMethodologyMock.mockReturnValue(
-    mockWithTestId(mockPracticesMethodologyId)
+  MethodologyPathwaysMock.mockReturnValue(
+    mockWithTestId(mockMethodologyPathwaysId)
   );
 
   beforeEach(() => {
@@ -264,7 +264,7 @@ describe("App tests", () => {
       expect(CoreLayoutMock).toHaveBeenCalledTimes(1);
       expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
       expect(container.children.length).toBe(1);
-      expect(getByTestId(mockProjectionsMethodologyId)).toBeInTheDocument();
+      expect(getByTestId(mockMethodologyProjectionsId)).toBeInTheDocument();
     });
 
     it("should render the Practices Methodology page", () => {
@@ -280,7 +280,7 @@ describe("App tests", () => {
 
       expect(CoreLayoutMock).toHaveBeenCalledTimes(1);
       expect(container.children.length).toBe(1);
-      expect(getByTestId(mockPracticesMethodologyId)).toBeInTheDocument();
+      expect(getByTestId(mockMethodologyPathwaysId)).toBeInTheDocument();
     });
   });
 

@@ -18,20 +18,28 @@
  *
  */
 
-import { StateSpecificPageCopy } from "../../types";
+import { MetricCopy } from "../../types";
 
-const content: StateSpecificPageCopy = {
-  prison: {
-    summary: "ID-specific prison summary",
-    methodology: "ID-specific prison methodology",
+const content: MetricCopy = {
+  prisonPopulationOverTime: {
+    title: "Incarcerated Population",
+    note: "Incarcerated population note",
+    methodology: "Incarcerated population methodology",
   },
-  supervision: {
-    summary: "ID-specific supervision summary",
-    methodology: "ID-specific supervision methodology",
+  supervisionPopulationOverTime: {
+    title: "Supervised Population",
+    note: "Supervised population note",
+    methodology: "Supervised population methodology",
   },
-  supervisionToPrison: {
-    summary: "ID-specific supervision to prison summary",
-    methodology: "ID-specific supervision to prison methodology",
+  supervisionToPrisonOverTime: {
+    title: "Admissions to prison from supervision",
+    note: "Admissions to prison from supervision note",
+    methodology: "Admissions to prison from supervision methodology",
+  },
+  supervisionToLibertyOverTime: {
+    title: "Releases to from supervision to liberty",
+    note: "Releases to from supervision to liberty note",
+    methodology: "Releases to from supervision to liberty methodology",
   },
 };
 

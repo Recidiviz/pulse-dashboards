@@ -21,16 +21,21 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { useRootStore } from "../components/StoreProvider";
+import { convertToSlug } from "../utils/navigation";
 import * as styles from "./CoreConstants.scss";
+import { useCoreStore } from "./CoreStoreProvider";
 
-const MethodologyLink: React.FC<{ path: string }> = ({ path }) => {
-  const { currentTenantId } = useRootStore();
+const MethodologyLink: React.FC<{ path: string; chartTitle?: string }> = ({
+  path,
+  chartTitle,
+}) => {
+  const { currentTenantId } = useCoreStore();
   return (
     <Link
       className="MethodologyLink DetailsGroup__button"
       to={{
         pathname: path,
+        hash: convertToSlug(chartTitle || ""),
         search: `?stateCode=${currentTenantId}`,
       }}
       target="_blank"

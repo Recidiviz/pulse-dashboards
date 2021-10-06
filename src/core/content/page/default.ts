@@ -26,24 +26,15 @@ const content: PageCopy = {
     summary:
       "This chart includes individuals who are admitted to state facilities, including termers, riders, parole violators, and people held in county jails under state jurisdiction.",
     sections: {
-      populationOverTime: "Prison population",
+      countOverTime: "Prison population",
     },
-    methodology: "This is the prison specific page methodology",
   },
   supervision: {
     title: "Supervision",
     summary:
       "This chart includes all individuals who are currently on probation and/or parole.",
     sections: {
-      populationOverTime: "Supervised population",
-    },
-  },
-  supervisionToLiberty: {
-    title: "Supervision to Liberty",
-    summary:
-      "These charts show people who were discharged from supervision positively or if their supervision period expired.",
-    sections: {
-      transitionsOverTime: "Releases from supervision to liberty",
+      countOverTime: "Supervised population",
     },
   },
   supervisionToPrison: {
@@ -51,7 +42,15 @@ const content: PageCopy = {
     summary:
       "This chart includes people who have been incarcerated in a state facility because their parole or probation was revoked. Revocations are counted when the person was admitted to a facility, not when the violation occurred.",
     sections: {
-      transitionsOverTime: "Admissions to prison from supervision",
+      countOverTime: "Admissions to prison from supervision",
+    },
+  },
+  supervisionToLiberty: {
+    title: "Supervision to Liberty",
+    summary:
+      "These charts show people who were discharged from supervision positively or if their supervision period expired.",
+    sections: {
+      countOverTime: "Releases from supervision to liberty",
     },
   },
 };

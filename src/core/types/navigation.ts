@@ -32,4 +32,5 @@ export type Navigation = {
   supervision?: PathwaysSection[];
   supervisionToPrison?: PathwaysSection[];
   supervisionToLiberty?: PathwaysSection[];
+  "pathways-methodology"?: string[];
 };

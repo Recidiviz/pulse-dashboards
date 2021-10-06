@@ -19,27 +19,12 @@
  */
 
 import { useRootStore } from "../../components/StoreProvider";
-import defaultContent from "../content/page/default";
-import IdContent from "../content/page/us_id";
-import { PageContent, StateSpecificPageCopy } from "../content/types";
+import { getPageCopy } from "../content";
+import { PageContent } from "../content/types";
 import { PathwaysPage } from "../views";
-
-const contentOverrides: { [category: string]: StateSpecificPageCopy } = {
-  US_ID: IdContent,
-};
 
 export default function usePageContent(pageId: PathwaysPage): PageContent {
   const { currentTenantId } = useRootStore();
 
-  if (
-    currentTenantId in contentOverrides &&
-    pageId in contentOverrides[currentTenantId]
-  ) {
-    return {
-      ...defaultContent[pageId],
-      ...contentOverrides[currentTenantId][pageId],
-    };
-  }
-
-  return defaultContent[pageId];
+  return getPageCopy(currentTenantId)[pageId];
 }

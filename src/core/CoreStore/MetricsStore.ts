@@ -55,19 +55,16 @@ export default class MetricsStore {
     const { page, section } = this.rootStore;
     const map = {
       [PATHWAYS_PAGES.prison]: {
-        [PATHWAYS_SECTIONS.populationOverTime]: this.prisonPopulationOverTime,
+        [PATHWAYS_SECTIONS.countOverTime]: this.prisonPopulationOverTime,
       },
       [PATHWAYS_PAGES.supervision]: {
-        [PATHWAYS_SECTIONS.populationOverTime]: this
-          .supervisionPopulationOverTime,
+        [PATHWAYS_SECTIONS.countOverTime]: this.supervisionPopulationOverTime,
       },
       [PATHWAYS_PAGES.supervisionToPrison]: {
-        [PATHWAYS_SECTIONS.transitionsOverTime]: this
-          .supervisionToPrisonOverTime,
+        [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToPrisonOverTime,
       },
       [PATHWAYS_PAGES.supervisionToLiberty]: {
-        [PATHWAYS_SECTIONS.transitionsOverTime]: this
-          .supervisionToLibertyOverTime,
+        [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToLibertyOverTime,
       },
     };
     // @ts-ignore

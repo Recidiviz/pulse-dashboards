@@ -17,9 +17,8 @@
 
 import "./ViewNavigation.scss";
 
-import { Icon, IconSVG } from "@recidiviz/design-system";
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 import { ReactComponent as MethodologyLogo } from "../../assets/static/images/methodology.svg";
 import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathways.svg";
@@ -28,7 +27,10 @@ import ProfileLink from "../../components/ProfileLink";
 import { useCoreStore } from "../CoreStoreProvider";
 
 const ViewNavigation = (): React.ReactElement => {
-  const { filtersStore, pagePracticesStore } = useCoreStore();
+  const { pathname } = useLocation();
+  const view = pathname.split("/")[1];
+  const { filtersStore, pagePracticesStore, currentTenantId } = useCoreStore();
+
   return (
     <aside className="ViewNavigation">
       <div className="ViewNavigation__tooltip-box">
@@ -66,19 +68,17 @@ const ViewNavigation = (): React.ReactElement => {
       </div>
       <div className="ViewNavigation__bottom">
         <div className="ViewNavigation__tooltip-box">
-          <a
+          <NavLink
             className="ViewNavigation__navlink"
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
+            to={{
+              pathname: `/pathways-methodology/${view}`,
+              search: `?stateCode=${currentTenantId}`,
+            }}
           >
             <MethodologyLogo className="ViewNavigation__icon" />
-          </a>
+          </NavLink>
           <div className="ViewNavigation__tooltip">
-            <div className="ViewNavigation__tooltip-header">
-              Methodology
-              <Icon kind={IconSVG.Open} width={16} height={16} />
-            </div>
+            <div className="ViewNavigation__tooltip-header">Methodology</div>
           </div>
         </div>
         <div className="ViewNavigation__tooltip-box">

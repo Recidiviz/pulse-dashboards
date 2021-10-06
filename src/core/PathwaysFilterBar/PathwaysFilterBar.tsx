@@ -37,13 +37,14 @@ import {
   PopulationFilters,
 } from "../types/filters";
 import { getFilterOption } from "../utils/filterOptions";
-import { CORE_PATHS } from "../views";
+import { PATHWAYS_PATHS } from "../views";
 
 const PathwaysFilterBar: React.FC<{
   filterOptions: PopulationFilters;
   handleDownload: () => Promise<void>;
+  chartTitle?: string;
   enabledFilters?: EnabledFilters;
-}> = ({ filterOptions, handleDownload, enabledFilters = [] }) => {
+}> = ({ filterOptions, handleDownload, chartTitle, enabledFilters = [] }) => {
   const { filtersStore } = useCoreStore();
   const { filters } = filtersStore;
 
@@ -63,7 +64,10 @@ const PathwaysFilterBar: React.FC<{
       details={
         <DetailsGroup>
           <DownloadDataButton handleOnClick={handleDownload} />
-          <MethodologyLink path={CORE_PATHS.methodologyProjections} />
+          <MethodologyLink
+            path={PATHWAYS_PATHS.methodologyPathways}
+            chartTitle={chartTitle}
+          />
         </DetailsGroup>
       }
     >

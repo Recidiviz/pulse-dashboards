@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { US_ID, US_ND } from "../../RootStore/TenantStore/coreTenants";
+import { MetricCopy, PageCopy } from "../content/types";
 /**
  * All data comes back from the server as string values;
  * it will be up to us to cast those strings to other types as needed
@@ -99,16 +100,23 @@ export const ENTITY_TYPES = {
   PO: "PO",
 } as const;
 
-export type MethodologyContent = {
-  header: string;
-  body: string;
-};
+export interface MethodologyContent {
+  title: string;
+  methodology: string;
+}
 
 export type ViewMethodology = {
   practices: {
     title: string;
     description: string;
-    content: MethodologyContent[];
+    pageCopy: Record<string, MethodologyContent>;
+    metricCopy: Record<string, MethodologyContent>;
+  };
+  pathways?: {
+    title: string;
+    description: string;
+    pageCopy: PageCopy;
+    metricCopy: MetricCopy;
   };
 };
 

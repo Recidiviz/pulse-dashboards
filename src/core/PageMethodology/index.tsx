@@ -20,8 +20,8 @@ import React from "react";
 import { useHistory, useParams } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
-import PracticesMethodology from "../PracticesMethodology";
-import ProjectionsMethodology from "../ProjectionsMethodology/Methodology";
+import MethodologyPathways from "../MethodologyPathways";
+import MethodologyProjections from "../MethodologyProjections";
 
 const PageMethodology: React.FC = () => {
   const { userStore, tenantStore } = useRootStore();
@@ -35,8 +35,9 @@ const PageMethodology: React.FC = () => {
   }
 
   const methodologies: { [k: string]: React.FC } = {
-    practices: PracticesMethodology,
-    projections: ProjectionsMethodology,
+    practices: MethodologyPathways,
+    projections: MethodologyProjections,
+    pathways: MethodologyPathways,
   };
 
   const Methodology = methodologies[dashboard];

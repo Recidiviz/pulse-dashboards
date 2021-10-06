@@ -19,7 +19,7 @@ import { makeAutoObservable, reaction } from "mobx";
 import TENANTS from "../../tenants";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { formatISODateString, formatPercent } from "../../utils/formatStrings";
-import content from "../content";
+import { getMethodologyCopy } from "../content";
 import {
   ENTITY_TYPES,
   PracticesSummaryRecord,
@@ -302,9 +302,8 @@ export default class PagePracticesStore {
   async downloadData(): Promise<void> {
     if (!this.rootStore.currentTenantId) return;
 
-    const { practices: practicesMethodology } = content[
-      this.rootStore.currentTenantId
-    ];
+    const methodology = getMethodologyCopy(this.rootStore.currentTenantId)
+      .practices;
     return downloadChartAsData({
       fileContents: [
         this.timeSeriesDownloadableData,
@@ -312,7 +311,7 @@ export default class PagePracticesStore {
       ],
       chartTitle: `${this.rootStore.tenantStore.stateName} Practices`,
       shouldZipDownload: true,
-      methodologyContent: practicesMethodology.content,
+      methodologyContent: methodology.pageCopy,
       getTokenSilently: this.rootStore.userStore.getTokenSilently,
       filters: this.filtersText,
       lastUpdatedOn: this.lastUpdatedOn,

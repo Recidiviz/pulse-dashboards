@@ -21,10 +21,20 @@
 import { StateSpecificMetricCopy } from "../types";
 
 const content: StateSpecificMetricCopy = {
-  prisonPopulationOverTime: {},
-  supervisionPopulationOverTime: {},
-  supervisionToPrisonOverTime: {},
-  supervisionToLibertyOverTime: {},
+  prisonPopulationOverTime: {
+    methodology:
+      "- The monthly figures shown in the chart represent the total population for the selected group on the first day of that month. For example, if you hover over the “November 2020” data point on the chart, you’ll see the total number of people in prison on November 1, 2020.\n- Something about prediction intervals being 95%.\n- To see detailed methodology on how projections are calculated, download this PDF.",
+  },
+  supervisionPopulationOverTime: {
+    methodology:
+      "- The monthly figures shown in the chart represent the total population for the selected group on the first day of that month. For example, if you hover over the “November 2020” data point on the chart, you’ll see the total number of people in prison on November 1, 2020.\n- Something about prediction intervals being 95%.\n- To see detailed methodology on how projections work, download this PDF.",
+  },
+  supervisionToPrisonOverTime: {
+    methodology: "- supervision to prison over time methodology",
+  },
+  supervisionToLibertyOverTime: {
+    methodology: "- supervision to liberty over time methodology",
+  },
 };
 
 export default content;

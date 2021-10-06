@@ -21,9 +21,9 @@ import { parseResponseByFileFormat } from "../../api/metrics";
 import { callMetricsApi } from "../../api/metrics/metricsClient";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import RootStore from "../../RootStore";
+import { getMetricCopy, metricContentOverrides } from "../content";
 import defaultContent from "../content/metric/default";
-import IdContent from "../content/metric/us_id";
-import { MetricContent, StateSpecificMetricCopy } from "../content/types";
+import { MetricContent } from "../content/types";
 import CoreStore from "../CoreStore";
 import { EnabledFilters } from "../types/filters";
 import {
@@ -33,10 +33,6 @@ import {
   RawMetricData,
   TenantId,
 } from "./types";
-
-const contentOverrides: { [category: string]: StateSpecificMetricCopy } = {
-  US_ID: IdContent,
-};
 
 export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   id: MetricId;
@@ -105,18 +101,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
   }
 
   get content(): MetricContent {
-    if (
-      this.rootStore &&
-      this.rootStore.currentTenantId &&
-      this.rootStore.currentTenantId in contentOverrides &&
-      this.id in contentOverrides[this.rootStore.currentTenantId]
-    ) {
-      return {
-        ...defaultContent[this.id],
-        ...contentOverrides[this.rootStore.currentTenantId][this.id],
-      };
-    }
-    return defaultContent[this.id];
+    return getMetricCopy(this.rootStore?.currentTenantId)[this.id];
   }
 
   get chartTitle(): string {

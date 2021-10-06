@@ -54,6 +54,7 @@ const TENANTS: Tenants = {
       community: ["practices", "projections"],
       facilities: ["projections"],
       methodology: ["projections", "practices"],
+      "pathways-methodology": ["pathways", "practices"],
       practices: [],
       pathways: [
         PATHWAYS_PAGES.prison,
@@ -61,10 +62,10 @@ const TENANTS: Tenants = {
         PATHWAYS_PAGES.supervisionToPrison,
         PATHWAYS_PAGES.supervisionToLiberty,
       ],
-      prison: [PATHWAYS_SECTIONS.populationOverTime],
-      supervision: [PATHWAYS_SECTIONS.populationOverTime],
-      supervisionToPrison: [PATHWAYS_SECTIONS.transitionsOverTime],
-      supervisionToLiberty: [PATHWAYS_SECTIONS.transitionsOverTime],
+      prison: [PATHWAYS_SECTIONS.countOverTime],
+      supervision: [PATHWAYS_SECTIONS.countOverTime],
+      supervisionToPrison: [PATHWAYS_SECTIONS.countOverTime],
+      supervisionToLiberty: [PATHWAYS_SECTIONS.countOverTime],
     },
     pagesWithRestrictions: [
       "projections",

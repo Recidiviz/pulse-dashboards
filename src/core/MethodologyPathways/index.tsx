@@ -15,33 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./PathwaysNavigation.scss";
-
-import { observer } from "mobx-react-lite";
-import React from "react";
-import { useLocation } from "react-router-dom";
-
-import { useRootStore } from "../../components/StoreProvider";
-import PageNavigation from "../PageNavigation";
-import { PATHWAYS_VIEWS } from "../views";
-
-const PathwaysNavigation: React.FC = () => {
-  const { currentTenantId } = useRootStore();
-  const { pathname } = useLocation();
-  const view = pathname.split("/")[1];
-  if (
-    !currentTenantId ||
-    ![PATHWAYS_VIEWS.pathways, PATHWAYS_VIEWS.pathwaysMethodology].includes(
-      view
-    )
-  )
-    return null;
-
-  return (
-    <nav className="PathwaysNavigation">
-      <PageNavigation />
-    </nav>
-  );
-};
-
-export default observer(PathwaysNavigation);
+export { default } from "./MethodologyPathways";

@@ -50,12 +50,17 @@ const PagePathways: React.FC = () => {
           filterOptions={filterOptions[currentTenantId]}
           enabledFilters={enabledFilters}
           handleDownload={download}
+          chartTitle={metric.chartTitle}
         />
       }
     >
       <div className="PagePathways">
         <MetricVizMapper metric={metric} />
-        <ChartNote note={note} isLoading={isLoading} />
+        <ChartNote
+          note={note}
+          isLoading={isLoading}
+          chartTitle={metric.chartTitle}
+        />
       </div>
     </PageTemplate>
   );

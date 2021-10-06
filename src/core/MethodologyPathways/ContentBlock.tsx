@@ -14,52 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import "./ChartNote.scss";
 
+import Markdown from "markdown-to-jsx";
 import React from "react";
-import { Link } from "react-router-dom";
+import ScrollableAnchor from "react-scrollable-anchor";
 
 import { convertToSlug } from "../../utils/navigation";
-import { useCoreStore } from "../CoreStoreProvider";
+import { MethodologyContent } from "../models/types";
 
 type Props = {
-  note: string;
-  chartTitle: string;
-  isLoading?: boolean;
+  content: MethodologyContent;
 };
 
-const ChartNote: React.FC<Props> = ({
-  note,
-  chartTitle,
-  isLoading = false,
-}) => {
-  const { currentTenantId } = useCoreStore();
-
-  if (isLoading || !note) {
-    return (
-      <div className="ChartNote">
-        <br />
-      </div>
-    );
-  }
+const ContentBlock: React.FC<Props> = ({ content }) => {
   return (
-    <div className="ChartNote">
-      <strong>Note: </strong>
-      {/* TODO add link when methodology is ready */}
-      {note}
-      <Link
-        className="ChartNote__link"
-        to={{
-          pathname: "/pathways-methodology/pathways",
-          hash: convertToSlug(chartTitle || ""),
-          search: `?stateCode=${currentTenantId}`,
-        }}
-        target="_blank"
-      >
-        See full methodology. →
-      </Link>
-    </div>
+    <ScrollableAnchor id={convertToSlug(content.title)}>
+      <div className="Methodology__block">
+        <h4 className="Methodology__sub-block--title ">{content.title}</h4>
+        <Markdown>{content.methodology || ""}</Markdown>
+      </div>
+    </ScrollableAnchor>
   );
 };
 
-export default ChartNote;
+export default ContentBlock;

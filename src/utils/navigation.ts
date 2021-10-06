@@ -54,12 +54,17 @@ export function getAllowedNavigation(
     (acc, route) => {
       const [fullRoute, permission] = route;
       const [view, page] = fullRoute.split("_");
+
       if (permission) {
         // eslint-disable-next-line no-unused-expressions
         acc[view as keyof Navigation]?.push(page);
         if (Object.keys(CORE_VIEWS).includes(view)) {
           // eslint-disable-next-line no-unused-expressions
           acc.methodology?.push(page);
+        }
+        if (Object.keys(PATHWAYS_VIEWS).includes(view)) {
+          // eslint-disable-next-line no-unused-expressions
+          acc["pathways-methodology"]?.push(view);
         }
         if (view === PATHWAYS_VIEWS.practices) {
           acc[PATHWAYS_VIEWS.practices as NavigationSection] = [];
@@ -74,6 +79,7 @@ export function getAllowedNavigation(
       pathways: [],
       prison: [],
       supervision: [],
+      pathwaysMethodology: [],
     } as Navigation
   );
 
