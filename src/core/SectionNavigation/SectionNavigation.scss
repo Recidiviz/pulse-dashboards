@@ -40,4 +40,18 @@
       color: $signal-links;
     }
   }
+
+  @media screen and (max-width: $core-breakpoint-sm) {
+    &__title {
+      display: none;
+    }
+    &__navlink {
+      margin-bottom: 0;
+      color: $slate-80;
+      text-align: right;
+    }
+    &__icon {
+      display: none;
+    }
+  }
 }

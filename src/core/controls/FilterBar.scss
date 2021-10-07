@@ -14,12 +14,20 @@
     max-width: $core-max-view-width;
     width: 100%;
 
+    @media screen and (max-width: $core-breakpoint-sm) {
+      flex-wrap: nowrap;
+    }
+
     .Filter {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding-bottom: 0.5rem;
       padding-right: 1.5rem;
+
+      @media screen and (max-width: $core-breakpoint-sm) {
+        padding-right: 1rem;
+      }
 
       &__title {
         color: $slate-80;

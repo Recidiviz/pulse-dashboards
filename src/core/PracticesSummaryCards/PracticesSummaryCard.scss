@@ -17,10 +17,9 @@
 @import "../CoreConstants.scss";
 
 .PracticesSummaryCard {
-  max-width: 22.375rem;
   max-height: 6rem;
-  width: 22rem;
   height: 6rem;
+  flex: 40%;
   border-radius: 0.5rem;
   box-shadow: $inset-shadow-30;
   display: flex;
@@ -28,14 +27,29 @@
   background-color: #ffffff;
   user-select: none;
 
-  @media screen and (max-width: $core-breakpoint-sm) {
-    max-width: 100%;
-    width: 28rem;
-    margin: 0.5rem 0;
+  @media screen and (-ms-high-contrast: active),
+    screen and (-ms-high-contrast: none) {
+    &:not(:last-child) {
+      margin-right: 1.5rem;
+    }
+
+    @media screen and (max-width: $core-breakpoint-sm) {
+      margin-top: 1rem;
+      margin-right: 1rem;
+
+      &:nth-child(even) {
+        margin-right: 0;
+      }
+    }
+
+    @media screen and (max-width: $core-breakpoint-xs) {
+      margin-right: 0 !important;
+    }
   }
 
-  @media screen and (max-width: $core-breakpoint-xs) {
-    width: 20rem;
+  @media screen and (max-width: $core-breakpoint-sm) {
+    max-width: 100%;
+    min-width: 20rem;
   }
 
   &:hover {

@@ -21,11 +21,14 @@ import "./PagePractices.scss";
 import { Loading } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
+import { useLocation } from "react-router-dom";
 
+import useIsMobile from "../../hooks/useIsMobile";
 import { useCoreStore } from "../CoreStoreProvider";
 import DetailsGroup from "../DetailsGroup";
 import DownloadDataButton from "../DownloadDataButton";
 import MethodologyLink from "../MethodologyLink";
+import MobileNavigation from "../MobileNavigation";
 import { ENTITY_TYPES } from "../models/types";
 import PageTemplate from "../PageTemplate";
 import PracticesCaseloadButton from "../PracticesCaseloadButton";
@@ -39,6 +42,12 @@ import { CORE_PATHS } from "../views";
 import withRouteSync from "../withRouteSync";
 
 const PagePractices: React.FC = () => {
+  const isMobile = useIsMobile();
+  const { pathname } = useLocation();
+  const currentView = pathname.split("/")[1].toLowerCase();
+  const isCoreView = currentView === "community";
+  const displayHeader = isCoreView || (!isCoreView && !isMobile);
+
   const { metricsStore, pagePracticesStore } = useCoreStore();
   const { isLoading, isError } = metricsStore.practices;
   const {
@@ -61,17 +70,26 @@ const PagePractices: React.FC = () => {
   }
 
   return (
-    <PageTemplate>
-      <div className="PagePractices__header">
-        <PracticesSummaryBreadcrumbs />
+    <PageTemplate mobileNavigation={<MobileNavigation />}>
+      {displayHeader && (
+        <div className="PagePractices__header">
+          <PracticesSummaryBreadcrumbs />
+          <DetailsGroup>
+            <DownloadDataButton handleOnClick={downloadData} />
+            <MethodologyLink path={CORE_PATHS.methodologyPractices} />
+          </DetailsGroup>
+        </div>
+      )}
+
+      <div className="PagePractices__SummaryCards">
+        <PracticesSummaryCards />
+      </div>
+      {isMobile && !isCoreView && (
         <DetailsGroup>
           <DownloadDataButton handleOnClick={downloadData} />
           <MethodologyLink path={CORE_PATHS.methodologyPractices} />
         </DetailsGroup>
-      </div>
-      <div className="PagePractices__SummaryCards">
-        <PracticesSummaryCards />
-      </div>
+      )}
       <div className="PagePractices__SummarySection">
         <div className="PagePractices__SummaryDetail">
           <PracticesSummaryDetail />

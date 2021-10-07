@@ -33,8 +33,52 @@
   display: flex;
   flex-direction: column;
 
+  &__mobile {
+    width: 100%;
+    position: initial;
+    padding: 2rem 0;
+
+    .ViewNavigation__navlink {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-bottom: 0;
+
+      &:not(:first-child) {
+        margin-top: 3.5rem;
+      }
+      img {
+        margin: 0;
+      }
+      &-heading {
+        display: block;
+        font: $font-ui-sans-24;
+        color: $white;
+        opacity: 0.6;
+        margin-left: 1.5rem;
+      }
+      &--active {
+        .ViewNavigation__navlink-heading {
+          opacity: 1;
+        }
+      }
+      &:hover {
+        & svg path {
+          opacity: 1;
+        }
+        .ViewNavigation__navlink-heading {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
   &__navlink {
     margin-bottom: 3rem;
+    cursor: pointer;
+    &-heading {
+      display: none;
+    }
     &--active {
       & svg path {
         opacity: 1;
@@ -76,11 +120,11 @@
     padding: 1.5rem;
     width: auto;
     display: inline-block;
-    right:inherit;
+    right: inherit;
     width: max-content;
     @include ie11 {
       min-width: 13rem;
-    };
+    }
     max-width: 15.5rem;
     background-color: $pine-1;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);

@@ -22,14 +22,14 @@ import * as fontStyles from "../CoreConstants.scss";
 
 const MetricsCardComponent = styled(Card)`
   width: 100%;
-  :first-child {
-    margin-right: 1rem;
-  }
   display: flex;
   flex-flow: row nowrap;
   min-height: 120px;
-  padding: 20px 40px;
+  padding: 20px 30px;
   justify-content: space-between;
+  @media screen and (max-width: ${fontStyles.breakpointSm}) {
+    padding: 20px;
+  }
 `;
 
 const MetricHeading = styled.div`

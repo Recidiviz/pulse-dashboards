@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // ===================== ========================================================
 
-import "./PagePathways.scss";
-
 import { observer } from "mobx-react-lite";
 import React from "react";
 
@@ -24,6 +22,7 @@ import ChartNote from "../ChartNote";
 import { useCoreStore } from "../CoreStoreProvider";
 import usePageContent from "../hooks/usePageContent";
 import MetricVizMapper from "../MetricVizMapper";
+import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 import PathwaysFilterBar from "../PathwaysFilterBar/PathwaysFilterBar";
 import PathwaysLeftPanel from "../PathwaysLeftPanel";
@@ -34,6 +33,7 @@ import withRouteSync from "../withRouteSync";
 const PagePathways: React.FC = () => {
   const { currentTenantId, metricsStore, page } = useCoreStore();
   const pageContent = usePageContent(page as PathwaysPage);
+
   if (!pageContent) return <div />;
 
   const { title, summary } = pageContent;
@@ -43,6 +43,7 @@ const PagePathways: React.FC = () => {
 
   return (
     <PageTemplate
+      mobileNavigation={<MobileNavigation title={title} />}
       leftPanel={<PathwaysLeftPanel title={title} description={summary} />}
       filters={
         <PathwaysFilterBar
@@ -54,14 +55,12 @@ const PagePathways: React.FC = () => {
         />
       }
     >
-      <div className="PagePathways">
-        <MetricVizMapper metric={metric} />
-        <ChartNote
-          note={note}
-          isLoading={isLoading}
-          chartTitle={metric.chartTitle}
-        />
-      </div>
+      <MetricVizMapper metric={metric} />
+      <ChartNote
+        note={note}
+        isLoading={isLoading}
+        chartTitle={metric.chartTitle}
+      />
     </PageTemplate>
   );
 };

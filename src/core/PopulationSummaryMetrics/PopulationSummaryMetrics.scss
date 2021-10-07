@@ -25,10 +25,11 @@
 .PopulationSummaryMetrics {
   display: flex;
   flex-flow: row nowrap;
+  gap: 1rem;
   width: 100%;
   justify-content: space-evenly;
 
-  @media screen and (max-width: $core-breakpoint-sm) {
+  @media screen and (max-width: $core-breakpoint-xs) {
     flex-flow: row wrap;
   }
 
@@ -36,6 +37,7 @@
     display: flex;
     flex-flow: column;
     margin-right: 1rem;
+    text-align: end;
   }
 
   &__value {

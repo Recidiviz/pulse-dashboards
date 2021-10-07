@@ -82,28 +82,30 @@ const PracticesSummaryBreadcrumbs: React.FC = () => {
 
   return (
     <div className="PracticesSummaryBreadcrumbs">
-      {state ? (
-        <Link className="PracticesSummaryBreadcrumbs--state" to={pathname}>
-          {state}
-        </Link>
-      ) : (
-        // Render a placeholder so the header spacing remains
-        // constant with or without a state link
-        <div>&nbsp;</div>
-      )}
-      {parent && (
-        <div className="PracticesSummaryBreadcrumbs__parent-container">
-          <span>/</span>
-          {parentEntityId && (
-            <Link
-              className="PracticesSummaryBreadcrumbs--parent"
-              to={`${basePath}/${encrypt(parentEntityId)}`}
-            >
-              {parent}
-            </Link>
-          )}
-        </div>
-      )}
+      <div className="PracticesSummaryBreadcrumbs__container">
+        {state ? (
+          <Link className="PracticesSummaryBreadcrumbs--state" to={basePath}>
+            {state}
+          </Link>
+        ) : (
+          // Render a placeholder so the header spacing remains
+          // constant with or without a state link
+          <div>&nbsp;</div>
+        )}
+        {parent && (
+          <div className="PracticesSummaryBreadcrumbs__parent-container">
+            <span>/</span>
+            {parentEntityId && (
+              <Link
+                className="PracticesSummaryBreadcrumbs--parent"
+                to={`${basePath}/${encrypt(parentEntityId)}`}
+              >
+                {parent}
+              </Link>
+            )}
+          </div>
+        )}
+      </div>
       <div className="PracticesSummaryBreadcrumbs--current">{current}</div>
     </div>
   );

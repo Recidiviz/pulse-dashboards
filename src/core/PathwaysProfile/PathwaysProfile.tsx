@@ -22,6 +22,8 @@ import { Button, Col, Container, Row } from "reactstrap";
 
 import StateSelector from "../../components/StateSelector";
 import { useRootStore } from "../../components/StoreProvider";
+import MobileNavigation from "../MobileNavigation";
+import PageTemplate from "../PageTemplate";
 
 type StateSelectOption = {
   label: string;
@@ -44,41 +46,39 @@ const PathwaysProfile = () => {
     push({ pathname: "/" });
   };
   return (
-    <div className="main-content bgc-grey-100">
-      <div id="mainContent">
-        <Container className="mb-5">
-          <Row className="align-items-center profile-header mb-5 text-center text-md-left">
-            <Col md={2}>
-              <img
-                src={user.picture}
-                alt="PathwaysProfile"
-                className="rounded-circle img-fluid profile-picture mb-3 mb-md-0"
-              />
-            </Col>
-            <Col md>
-              <h2>{user.name}</h2>
-              <p className="lead text-muted">{user.email}</p>
-              <p className="lead text-muted">{userStore.stateName}</p>
-              {userStore.availableStateCodes.length > 1 && (
-                <div style={{ maxWidth: "33%" }}>
-                  <p className="PathwaysProfile__prompt lead text-muted">
-                    Current view state:
-                  </p>
-                  <StateSelector onChange={handleOnChange} />
-                  <Button
-                    className="PathwaysProfile__submit mt-3"
-                    variant="dark"
-                    onClick={handleOnClick}
-                  >
-                    View dashboard
-                  </Button>
-                </div>
-              )}
-            </Col>
-          </Row>
-        </Container>
-      </div>
-    </div>
+    <PageTemplate mobileNavigation={<MobileNavigation title="Profile" />}>
+      <Container className="mb-5">
+        <Row className="align-items-center profile-header mb-5 text-center text-md-left">
+          <Col md={2}>
+            <img
+              src={user.picture}
+              alt="PathwaysProfile"
+              className="rounded-circle img-fluid profile-picture mb-3 mb-md-0"
+            />
+          </Col>
+          <Col md>
+            <h2>{user.name}</h2>
+            <p className="lead text-muted">{user.email}</p>
+            <p className="lead text-muted">{userStore.stateName}</p>
+            {userStore.availableStateCodes.length > 1 && (
+              <div style={{ maxWidth: "33%" }}>
+                <p className="PathwaysProfile__prompt lead text-muted">
+                  Current view state:
+                </p>
+                <StateSelector onChange={handleOnChange} />
+                <Button
+                  className="PathwaysProfile__submit mt-3"
+                  variant="dark"
+                  onClick={handleOnClick}
+                >
+                  View dashboard
+                </Button>
+              </div>
+            )}
+          </Col>
+        </Row>
+      </Container>
+    </PageTemplate>
   );
 };
 

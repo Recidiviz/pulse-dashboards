@@ -46,6 +46,9 @@
 
     .axis.bottom {
       transform: translateY(18px);
+      text {
+        transform: rotate(-45deg) translate(-0.4rem, -0.4rem);
+      }
     }
 
     .axis.left {

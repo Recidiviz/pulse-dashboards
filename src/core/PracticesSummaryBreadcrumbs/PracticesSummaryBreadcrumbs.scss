@@ -33,7 +33,7 @@
 
   &--state,
   &--parent {
-    font: $font-ui-sans-14;
+    font: $font-ui-sans-16;
     color: $slate-80;
     &:hover {
       text-decoration-line: underline;
@@ -52,5 +52,21 @@
   &--current {
     font: $font-ui-serif-34;
     color: $pine-3;
+  }
+}
+
+.PathwaysLayout {
+  .PracticesSummaryBreadcrumbs {
+    @media screen and (max-width: $core-breakpoint-sm) {
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0;
+
+      &--current {
+        font: $font-ui-serif-24 !important;
+      }
+    }
   }
 }

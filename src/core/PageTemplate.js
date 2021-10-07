@@ -28,8 +28,10 @@ const PageTemplate = ({
   importantNotes,
   filters = null,
   leftPanel = null,
+  mobileNavigation = null,
 }) => (
-  <div className="main-content PageTemplate">
+  <div className="PageTemplate">
+    {mobileNavigation}
     {leftPanel}
     <div className="PageTemplate__body">
       {filters}
@@ -49,6 +51,7 @@ PageTemplate.defaultProps = {
   importantNotes: [],
   filters: null,
   leftPanel: null,
+  mobileNavigation: null,
 };
 
 PageTemplate.propTypes = {
@@ -61,6 +64,7 @@ PageTemplate.propTypes = {
   ),
   filters: PropTypes.node,
   leftPanel: PropTypes.node,
+  mobileNavigation: PropTypes.node,
 };
 
 export default PageTemplate;

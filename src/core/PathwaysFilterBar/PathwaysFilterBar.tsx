@@ -62,7 +62,7 @@ const PathwaysFilterBar: React.FC<{
   return (
     <FilterBar
       details={
-        <DetailsGroup>
+        <DetailsGroup hideOnMobile>
           <DownloadDataButton handleOnClick={handleDownload} />
           <MethodologyLink
             path={PATHWAYS_PATHS.methodologyPathways}

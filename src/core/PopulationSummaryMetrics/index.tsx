@@ -58,7 +58,8 @@ const PopulationSummaryMetrics: React.FC<PropTypes> = ({
           <PercentDelta
             className={cn("PopulationSummaryMetrics__delta", {
               "PopulationSummaryMetrics__delta--loading": isLoading,
-              "PopulationSummaryMetrics__delta--error": isError || noData,
+              "PopulationSummaryMetrics__delta--error":
+                isError || (noData && !isLoading),
             })}
             improvesOnIncrease={false}
           />
@@ -79,7 +80,8 @@ const PopulationSummaryMetrics: React.FC<PropTypes> = ({
           <PercentDelta
             className={cn("PopulationSummaryMetrics__delta", {
               "PopulationSummaryMetrics__delta--loading": isLoading,
-              "PopulationSummaryMetrics__delta--error": isError || noData,
+              "PopulationSummaryMetrics__delta--error":
+                isError || (noData && !isLoading),
             })}
             improvesOnIncrease={false}
           />

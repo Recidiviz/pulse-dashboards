@@ -14,18 +14,5 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-@import "../../assets/styles/spec/settings/index";
-@import "../CoreConstants.scss";
 
-.PathwaysNavigation {
-  background: $marble-3;
-  height: 4rem;
-  width: calc(100% - 4rem);
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: $core-border-color 1px solid;
-
-  @media screen and (max-width: $core-breakpoint-sm) {
-    display: none;
-  }
-}
+export { default } from "./Drawer";

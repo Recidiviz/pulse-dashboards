@@ -26,6 +26,10 @@
     flex-direction: column;
     width: 100%;
     margin-left: 4rem;
+
+    @media screen and (max-width: $core-breakpoint-sm) {
+      margin-left: 0;
+    }
   }
 
   &__header {

@@ -20,9 +20,9 @@ import "./PathwaysLayout.scss";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import Footer from "../components/Footer";
 import IE11Banner from "../components/IE11Banner";
 import useIntercom from "../hooks/useIntercom";
+import useIsMobile from "../hooks/useIsMobile";
 import CoreStoreProvider from "./CoreStoreProvider";
 import ErrorBoundary from "./ErrorBoundary";
 import PathwaysNavigation from "./PathwaysNavigation";
@@ -34,18 +34,19 @@ interface Props {
 
 const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
   useIntercom();
+  const isMobile = useIsMobile();
+
   return (
     <CoreStoreProvider>
       <ErrorBoundary>
         <div id="app" className="PathwaysLayout">
-          <ViewNavigation />
+          {!isMobile && <ViewNavigation />}
           <div className="PathwaysLayout__main">
             <div className="PathwaysLayout__header">
               <PathwaysNavigation />
             </div>
             <IE11Banner />
             {children}
-            <Footer />
           </div>
         </div>
       </ErrorBoundary>

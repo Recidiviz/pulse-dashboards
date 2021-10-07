@@ -23,12 +23,14 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../components/StoreProvider";
+import useIsMobile from "../hooks/useIsMobile";
 import { useCoreStore } from "./CoreStoreProvider";
 import { NavigationSection } from "./types/navigation";
 import { getPageHeadingFromId, PATHWAYS_VIEWS } from "./views";
 import withRouteSync from "./withRouteSync";
 
 const PageNavigation: React.FC = () => {
+  const isMobile = useIsMobile();
   const { pathname } = useLocation();
   const { page } = useCoreStore();
   const { userStore } = useRootStore();
@@ -36,15 +38,19 @@ const PageNavigation: React.FC = () => {
   const navigationLayout = userStore.userAllowedNavigation;
   const pageOptions = navigationLayout[currentView] ?? [];
 
+  const isCoreView =
+    currentView &&
+    !Object.values(PATHWAYS_VIEWS).includes(currentView.toLowerCase());
+  const isPathwaysView =
+    currentView &&
+    Object.values(PATHWAYS_VIEWS).includes(currentView.toLowerCase());
+
   return (
     <ul
       className={cx("PageNavigation", {
-        "PageNavigation--Pathways":
-          currentView &&
-          Object.values(PATHWAYS_VIEWS).includes(currentView.toLowerCase()),
-        "PageNavigation--Core":
-          currentView &&
-          !Object.values(PATHWAYS_VIEWS).includes(currentView.toLowerCase()),
+        "PageNavigation--pathways": isPathwaysView && !isMobile,
+        "PageNavigation--core": isCoreView,
+        "PageNavigation--mobile": isMobile && isPathwaysView,
       })}
     >
       {pageOptions.map((pageOption: NavigationSection) => (

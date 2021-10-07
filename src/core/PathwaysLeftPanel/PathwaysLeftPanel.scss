@@ -18,9 +18,9 @@
 @import "../CoreConstants";
 
 .PathwaysLeftPanel {
-  min-width: 23rem;
   max-width: 22rem;
-  margin-right: 8.5rem;
+  min-width: 17rem;
+  margin: 0 4.5rem;
   padding-top: 3rem;
 
   &__title {
@@ -34,5 +34,27 @@
     color: $slate-80;
     letter-spacing: -0.01em;
     padding-bottom: 0.5rem;
+  }
+
+  @media screen and (max-width: $core-breakpoint-md) {
+    margin: 0 3rem;
+  }
+
+  @media screen and (max-width: $core-breakpoint-sm) {
+    max-width: 100%;
+    margin-right: 0;
+    padding: 1rem 2.5rem;
+    margin: 0;
+    background: $marble-4;
+
+    &__title {
+      display: none;
+    }
+    &__description {
+      padding-bottom: 0;
+    }
+    & :last-child {
+      display: none;
+    }
   }
 }

@@ -14,18 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-@import "../../assets/styles/spec/settings/index";
-@import "../CoreConstants.scss";
+import { useEffect, useState } from "react";
 
-.PathwaysNavigation {
-  background: $marble-3;
-  height: 4rem;
-  width: calc(100% - 4rem);
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: $core-border-color 1px solid;
+const useIsMobile = (): boolean => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
 
-  @media screen and (max-width: $core-breakpoint-sm) {
-    display: none;
-  }
-}
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 1024);
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return isMobile;
+};
+
+export default useIsMobile;

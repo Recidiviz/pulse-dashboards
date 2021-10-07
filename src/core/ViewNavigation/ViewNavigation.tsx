@@ -24,24 +24,78 @@ import { ReactComponent as MethodologyLogo } from "../../assets/static/images/me
 import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathways.svg";
 import { ReactComponent as PracticesLogo } from "../../assets/static/images/practices.svg";
 import ProfileLink from "../../components/ProfileLink";
+import useIsMobile from "../../hooks/useIsMobile";
 import { useCoreStore } from "../CoreStoreProvider";
 
-const ViewNavigation = (): React.ReactElement => {
+const ViewNavigation: React.FC = ({ children }) => {
+  const isMobile = useIsMobile();
   const { pathname } = useLocation();
   const view = pathname.split("/")[1];
   const { filtersStore, pagePracticesStore, currentTenantId } = useCoreStore();
 
+  const PathwaysLink = () => (
+    <NavLink
+      activeClassName="ViewNavigation__navlink--active"
+      className="ViewNavigation__navlink"
+      to="/pathways"
+      onClick={() => filtersStore.resetFilters()}
+    >
+      <PathwaysLogo className="ViewNavigation__icon" />
+      <div className="ViewNavigation__navlink-heading">Pathways</div>
+    </NavLink>
+  );
+
+  const PracticesLink = () => (
+    <NavLink
+      activeClassName="ViewNavigation__navlink--active"
+      className="ViewNavigation__navlink"
+      to="/practices"
+      onClick={() => pagePracticesStore.resetCurrentEntityId()}
+    >
+      <PracticesLogo className="ViewNavigation__icon" />
+      <div className="ViewNavigation__navlink-heading">Practices</div>
+    </NavLink>
+  );
+
+  const MethodologyLink = () => (
+    <NavLink
+      className="ViewNavigation__navlink"
+      to={{
+        pathname: `/pathways-methodology/${view}`,
+        search: `?stateCode=${currentTenantId}`,
+      }}
+    >
+      <MethodologyLogo className="ViewNavigation__icon" />
+    </NavLink>
+  );
+
+  const ProfileNavLink = () => (
+    <NavLink
+      activeClassName="ViewNavigation__navlink--active"
+      className="ViewNavigation__navlink"
+      to="/pathways-profile"
+    >
+      <ProfileLink pathways />
+      <div className="ViewNavigation__navlink-heading">Profile</div>
+    </NavLink>
+  );
+
+  if (isMobile) {
+    return (
+      <div className="ViewNavigation__mobile">
+        <PathwaysLink />
+        {children}
+        <PracticesLink />
+        <MethodologyLink />
+        <ProfileNavLink />
+      </div>
+    );
+  }
+
   return (
     <aside className="ViewNavigation">
       <div className="ViewNavigation__tooltip-box">
-        <NavLink
-          activeClassName="ViewNavigation__navlink--active"
-          className="ViewNavigation__navlink"
-          to="/pathways"
-          onClick={() => filtersStore.resetFilters()}
-        >
-          <PathwaysLogo className="ViewNavigation__icon" />
-        </NavLink>
+        <PathwaysLink />
         <div className="ViewNavigation__tooltip">
           <h5 className="ViewNavigation__tooltip-header">Pathways</h5>
           <div className="ViewNavigation__tooltip-body">
@@ -50,14 +104,7 @@ const ViewNavigation = (): React.ReactElement => {
         </div>
       </div>
       <div className="ViewNavigation__tooltip-box">
-        <NavLink
-          activeClassName="ViewNavigation__navlink--active"
-          className="ViewNavigation__navlink"
-          to="/practices"
-          onClick={() => pagePracticesStore.resetCurrentEntityId()}
-        >
-          <PracticesLogo className="ViewNavigation__icon" />
-        </NavLink>
+        <PracticesLink />
         <div className="ViewNavigation__tooltip">
           <h5 className="ViewNavigation__tooltip-header">Practices</h5>
           <div className="ViewNavigation__tooltip-body">
@@ -68,23 +115,13 @@ const ViewNavigation = (): React.ReactElement => {
       </div>
       <div className="ViewNavigation__bottom">
         <div className="ViewNavigation__tooltip-box">
-          <NavLink
-            className="ViewNavigation__navlink"
-            to={{
-              pathname: `/pathways-methodology/${view}`,
-              search: `?stateCode=${currentTenantId}`,
-            }}
-          >
-            <MethodologyLogo className="ViewNavigation__icon" />
-          </NavLink>
+          <MethodologyLink />
           <div className="ViewNavigation__tooltip">
             <div className="ViewNavigation__tooltip-header">Methodology</div>
           </div>
         </div>
         <div className="ViewNavigation__tooltip-box">
-          <div className="ViewNavigation__navlink">
-            <ProfileLink pathways />
-          </div>
+          <ProfileNavLink />
           <div className="ViewNavigation__tooltip">
             <div className="ViewNavigation__tooltip-header">Profile</div>
           </div>

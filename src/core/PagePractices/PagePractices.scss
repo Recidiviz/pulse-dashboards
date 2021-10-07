@@ -30,20 +30,13 @@
     flex-flow: row nowrap;
     justify-content: space-between;
     width: 100%;
-
-    > :not(:last-child) {
-      margin-right: 1.5rem;
-    }
+    gap: 1.5rem;
 
     @media screen and (max-width: $core-breakpoint-sm) {
       align-items: flex-end;
-      display: flex;
       flex-flow: row wrap;
-      justify-content: space-between;
-
-      > :not(:last-child) {
-        margin-right: 0;
-      }
+      gap: 1rem;
+      margin-top: 2.5rem;
     }
   }
 
@@ -76,7 +69,6 @@
       border-radius: 0.5rem;
       border-right: none;
       margin-bottom: 1rem;
-      height: 374px;
       width: 100%;
     }
   }
