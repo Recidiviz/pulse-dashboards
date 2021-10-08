@@ -21,8 +21,10 @@ import {
   makeAutoObservable,
   observable,
   set,
+  toJS,
 } from "mobx";
 
+import getFilters from "../../utils/getFilterDescription";
 import { PopulationFilters, PopulationFilterValues } from "../types/filters";
 import { defaultPopulationFilterValues } from "../utils/filterOptions";
 import { formatTimePeriodLabel } from "../utils/timePeriod";
@@ -59,5 +61,19 @@ export default class FiltersStore {
 
   get timePeriodLabel(): string {
     return formatTimePeriodLabel(get(this.filters, "timePeriod"));
+  }
+
+  get filtersDescription(): string {
+    const metric = this.rootStore.metricsStore.current;
+    const filters = toJS(this.filters);
+    const enabledFilters = Object.entries(filters).reduce(
+      (acc, [key, value]) => {
+        // @ts-ignore
+        if (metric.enabledFilters.includes(key)) acc[key] = value;
+        return acc;
+      },
+      {}
+    );
+    return getFilters(enabledFilters);
   }
 }

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import RootStore from "../../RootStore";
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
@@ -113,21 +114,41 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationP
     return {
       chartDatasets: datasets,
       chartLabels: labels,
-      chartId: "Population Projection",
+      chartId: this.chartTitle,
       dataExportLabel: "Month",
     };
   }
 
-  // TODO #1292 PopulationOverTimeMetric download
+  async fetchMethodologyPDF(): Promise<Record<string, any>> {
+    const token = await RootStore.getTokenSilently();
+    const endpoint = `${
+      process.env.REACT_APP_API_URL
+    }/api/${this.rootStore?.currentTenantId?.toLowerCase()}/projections/methodology.pdf`;
+    const pdf = await fetch(endpoint, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return {
+      data: await pdf.blob(),
+      type: "binary",
+      name: "population_projections_methodology.pdf",
+    };
+  }
+
   async download(): Promise<void> {
     return downloadChartAsData({
       fileContents: [this.downloadableData],
-      chartTitle: `Population Projections: filters text`,
+      chartTitle: this.chartTitle,
       shouldZipDownload: true,
       getTokenSilently: this.rootStore?.userStore.getTokenSilently,
       includeFiltersDescriptionInCSV: true,
-      filters: { filtersDescription: "filters text" },
+      filters: {
+        filtersDescription: this.rootStore?.filtersStore.filtersDescription,
+      },
       lastUpdatedOn: formatDate(this.simulationDate),
+      methodologyContent: this.methodology,
+      methodologyPDF: await this.fetchMethodologyPDF(),
     });
   }
 }

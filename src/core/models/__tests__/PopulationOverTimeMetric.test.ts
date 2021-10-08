@@ -24,12 +24,17 @@ import { FILTER_TYPES } from "../../utils/constants";
 import PopulationOverTimeMetric from "../PopulationOverTimeMetric";
 import { createProjectionTimeSeries } from "../utils";
 
+const OLD_ENV = process.env;
+
 const mockTenantId = "US_ID";
-const mockCoreStore = {} as CoreStore;
+const mockCoreStore = { currentTenantId: mockTenantId } as CoreStore;
 const filtersStore = new FiltersStore({ rootStore: mockCoreStore });
 jest.mock("../../../RootStore", () => ({
-  getTokenSilently: jest.fn(),
+  getTokenSilently: jest.fn().mockReturnValue("auth token"),
 }));
+global.fetch = jest.fn().mockResolvedValue({
+  blob: () => "blob",
+});
 
 jest.mock("../../../api/metrics/metricsClient", () => {
   return {
@@ -77,6 +82,9 @@ describe("PopulationOverTimeMetric", () => {
   let metric: PopulationOverTimeMetric;
 
   beforeEach(() => {
+    process.env = Object.assign(process.env, {
+      REACT_APP_API_URL: "test-url",
+    });
     mockCoreStore.filtersStore = filtersStore;
     metric = new PopulationOverTimeMetric({
       id: "prisonPopulationOverTime",
@@ -88,6 +96,13 @@ describe("PopulationOverTimeMetric", () => {
       rootStore: mockCoreStore,
     });
     metric.hydrate();
+  });
+
+  afterAll(() => {
+    jest.resetModules();
+    jest.restoreAllMocks();
+    jest.resetAllMocks();
+    process.env = OLD_ENV;
   });
 
   it("fetches metrics when initialized", () => {
@@ -203,6 +218,31 @@ describe("PopulationOverTimeMetric", () => {
             year: 2016,
           },
         ]);
+      });
+    });
+  });
+
+  describe("fetchMethodologyPdf", () => {
+    let pdf: Record<string, string>;
+
+    beforeEach(async () => {
+      pdf = await metric.fetchMethodologyPDF();
+    });
+
+    it("successfully fetches the methodology PDF", () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `test-url/api/${mockTenantId.toLowerCase()}/projections/methodology.pdf`,
+        {
+          headers: {
+            Authorization: `Bearer auth token`,
+          },
+        }
+      );
+
+      expect(pdf).toEqual({
+        data: "blob",
+        name: "population_projections_methodology.pdf",
+        type: "binary",
       });
     });
   });

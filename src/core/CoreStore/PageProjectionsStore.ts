@@ -16,6 +16,7 @@
 // =============================================================================
 import { makeAutoObservable } from "mobx";
 
+import RootStore from "../../RootStore";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import {
   formatDate,
@@ -125,8 +126,14 @@ export default class PageProjectionsStore {
   }
 
   async fetchMethodologyPDF(): Promise<Record<string, any>> {
+    const token = await RootStore.getTokenSilently();
     const endpoint = `${process.env.REACT_APP_API_URL}/api/${this.rootStore.currentTenantId}/projections/methodology.pdf`;
-    const pdf = await fetch(endpoint);
+    const pdf = await fetch(endpoint, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     return {
       data: await pdf.blob(),
       type: "binary",

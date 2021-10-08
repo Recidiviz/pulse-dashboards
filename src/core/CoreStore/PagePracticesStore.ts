@@ -301,7 +301,6 @@ export default class PagePracticesStore {
 
   async downloadData(): Promise<void> {
     if (!this.rootStore.currentTenantId) return;
-
     const methodology = getMethodologyCopy(this.rootStore.currentTenantId)
       .practices;
     return downloadChartAsData({
@@ -311,7 +310,7 @@ export default class PagePracticesStore {
       ],
       chartTitle: `${this.rootStore.tenantStore.stateName} Practices`,
       shouldZipDownload: true,
-      methodologyContent: methodology.pageCopy,
+      methodologyContent: Object.values(methodology.pageCopy),
       getTokenSilently: this.rootStore.userStore.getTokenSilently,
       filters: this.filtersText,
       lastUpdatedOn: this.lastUpdatedOn,

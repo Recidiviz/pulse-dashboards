@@ -32,6 +32,14 @@ jest.mock("../../../RootStore/TenantStore", () => {
   }));
 });
 
+jest.mock("../../../core/CoreStore/MetricsStore", () => {
+  return jest.fn().mockImplementation(() => ({
+    current: {
+      enabledFilters: [],
+    },
+  }));
+});
+
 describe("FiltersStore", () => {
   beforeEach(() => {
     coreStore = new CoreStore(RootStore);
@@ -60,6 +68,38 @@ describe("FiltersStore", () => {
     it("returns the time period label", () => {
       coreStore.filtersStore.setFilters({ timePeriod: "3" });
       expect(coreStore.filtersStore.timePeriodLabel).toEqual("3 months");
+    });
+  });
+
+  describe("filtersDescription", () => {
+    it("returns the correct description when legalStatus is enabled", () => {
+      coreStore.metricsStore.current.enabledFilters = [
+        "timePeriod",
+        "gender",
+        "legalStatus",
+      ];
+      coreStore.filtersStore.setFilters({
+        timePeriod: "3",
+        legalStatus: "TREATMENT_IN_PRISON",
+      });
+      expect(coreStore.filtersStore.filtersDescription).toEqual(
+        "Time period: 3 months, All genders, Legal status: Rider"
+      );
+    });
+
+    it("returns the correct description when supervisionType is enabled", () => {
+      coreStore.metricsStore.current.enabledFilters = [
+        "timePeriod",
+        "gender",
+        "supervisionType",
+      ];
+      coreStore.filtersStore.setFilters({
+        timePeriod: "12",
+        supervisionType: "PAROLE",
+      });
+      expect(coreStore.filtersStore.filtersDescription).toEqual(
+        "Supervision type: Parole/Dual, Time period: 1 year, All genders"
+      );
     });
   });
 });

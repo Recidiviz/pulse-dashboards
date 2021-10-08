@@ -21,10 +21,11 @@ import { parseResponseByFileFormat } from "../../api/metrics";
 import { callMetricsApi } from "../../api/metrics/metricsClient";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import RootStore from "../../RootStore";
-import { getMetricCopy } from "../content";
-import { MetricContent } from "../content/types";
+import { getMethodologyCopy, getMetricCopy } from "../content";
+import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
 import { EnabledFilters } from "../types/filters";
+import { PathwaysPage } from "../views";
 import {
   Hydratable,
   MetricId,
@@ -71,7 +72,6 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   error?: Error;
 
-  // filter properties
   enabledFilters: EnabledFilters;
 
   constructor({
@@ -95,7 +95,6 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.sourceFilename = sourceFilename;
     this.dataTransformer = dataTransformer;
     this.eagerExpand = true;
-
     this.enabledFilters = enabledFilters;
   }
 
@@ -113,6 +112,22 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
    */
   get note(): string | undefined {
     return this.content.note;
+  }
+
+  /**
+   * Returns the methodology copy specific to this metric.
+   * Page methodology + metric methodology.
+   */
+  get methodology(): (PageContent | MetricContent)[] {
+    if (!this.rootStore?.currentTenantId) return [];
+    const methodology = getMethodologyCopy(this.rootStore.currentTenantId)
+      .pathways;
+    if (!methodology?.metricCopy || !methodology?.pageCopy) return [];
+
+    return [
+      methodology.pageCopy[this.rootStore.page as PathwaysPage],
+      methodology.metricCopy[this.id],
+    ];
   }
 
   /**

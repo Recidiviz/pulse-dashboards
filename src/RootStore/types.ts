@@ -49,7 +49,7 @@ export type LanternMethodologyByTenant = {
 export type LanternMethodology = {
   [k: string]: {
     id: number;
-    header?: string;
-    body: string;
+    title?: string;
+    methodology: string;
   }[];
 };

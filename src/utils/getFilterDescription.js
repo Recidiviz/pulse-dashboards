@@ -18,6 +18,7 @@ import find from "lodash/fp/find";
 import get from "lodash/fp/get";
 import pipe from "lodash/fp/pipe";
 
+import { PopulationFilterOptions } from "../core/utils/filterOptions";
 import {
   ADMISSION_TYPES,
   SUPERVISION_LEVELS,
@@ -60,7 +61,10 @@ const formatChargeCategory = (chargeCategory) =>
 const formatSupervisionType = (supervisionType) =>
   supervisionType === "All"
     ? "All supervision types"
-    : `Supervision type: ${humanReadableTitleCase(supervisionType)}`;
+    : `Supervision type: ${pipe(
+        find({ value: supervisionType }),
+        get("label")
+      )(PopulationFilterOptions.supervisionType.options)}`;
 
 const formatSupervisionLevel = (supervisionLevel) =>
   supervisionLevel === "All"
@@ -77,6 +81,21 @@ const formatAdmissionType = (admissionTypes) => {
         admissionTypes,
         ADMISSION_TYPES.flattenedOptions
       )}`;
+};
+
+const formatGender = (gender) => {
+  return gender === "ALL"
+    ? `All genders`
+    : `Gender: ${humanReadableTitleCase(gender)}`;
+};
+
+const formatLegalStatus = (legalStatus) => {
+  return legalStatus === "ALL"
+    ? `All legal status`
+    : `Legal status: ${pipe(
+        find({ value: legalStatus }),
+        get("label")
+      )(PopulationFilterOptions.legalStatus.options)}`;
 };
 
 function getFilters(toggleStates) {
@@ -106,6 +125,20 @@ function getFilters(toggleStates) {
 
   if (toggleStates.admissionType) {
     filters.push(formatAdmissionType(toggleStates.admissionType));
+  }
+
+  if (toggleStates.timePeriod) {
+    filters.push(
+      `Time period: ${formatMetricPeriodMonthsFilter(toggleStates.timePeriod)}`
+    );
+  }
+
+  if (toggleStates.gender) {
+    filters.push(formatGender(toggleStates.gender));
+  }
+
+  if (toggleStates.legalStatus) {
+    filters.push(formatLegalStatus(toggleStates.legalStatus));
   }
 
   return filters.join(", ");

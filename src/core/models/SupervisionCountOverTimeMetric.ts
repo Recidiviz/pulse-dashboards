@@ -96,21 +96,23 @@ export default class SupervisionCountOverTimeMetric extends PathwaysMetric<Super
     return {
       chartDatasets: datasets,
       chartLabels: labels,
-      chartId: "Supervision Transition",
+      chartId: this.chartTitle,
       dataExportLabel: "Month",
     };
   }
 
-  // TODO #1292 PopulationOverTimeMetric download
   async download(): Promise<void> {
     return downloadChartAsData({
       fileContents: [this.downloadableData],
-      chartTitle: `Supervision Transition: filters text`,
+      chartTitle: this.chartTitle,
       shouldZipDownload: true,
       getTokenSilently: this.rootStore?.userStore.getTokenSilently,
       includeFiltersDescriptionInCSV: true,
-      filters: { filtersDescription: "filters text" },
+      filters: {
+        filtersDescription: this.rootStore?.filtersStore.filtersDescription,
+      },
       lastUpdatedOn: formatDate(this.dataDate),
+      methodologyContent: this.methodology,
     });
   }
 }

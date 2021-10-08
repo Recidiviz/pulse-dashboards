@@ -22,13 +22,13 @@ describe("createMethodologyFile functions", () => {
   const mockChartId = "revocations_count";
   const mockChartTitle = "Revocations Count";
   const mockTimeWindowDescription = "20 November 2019 - 20 November 2020";
-  const mockMethodologyHeader = "methodology header";
-  const mockMethodologyBody = "methodology body";
+  const mockMethodologyTitle = "methodology header";
+  const mockMethodology = "methodology body";
   const methodology = {
     [mockChartId]: [
       {
-        header: mockMethodologyHeader,
-        body: mockMethodologyBody,
+        title: mockMethodologyTitle,
+        methodology: mockMethodology,
       },
     ],
   };
@@ -57,15 +57,15 @@ describe("createMethodologyFile functions", () => {
         "Data last updated on: 4/6/2021\n\n" +
         "Export Date: 11/20/2020\n\n" +
         "methodology header\n" +
-        "methodology body\n\n"
+        "  methodology body\n\n"
     );
   });
 
-  it("should remove html markup in the methodology body", () => {
+  it("should remove markdown in the methodology body", () => {
     const methodologyWithMarkup = [
       {
-        header: mockMethodologyHeader,
-        body: `<div>${mockMethodologyBody}</div>`,
+        title: mockMethodologyTitle,
+        methodology: `**${mockMethodology}**`,
       },
     ];
     const actual = createMethodologyFile({
@@ -77,7 +77,7 @@ describe("createMethodologyFile functions", () => {
       "Chart: Revocations Count\n\n" +
         "Export Date: 11/20/2020\n\n" +
         "methodology header\n" +
-        "methodology body\n\n"
+        "  methodology body\n\n"
     );
   });
 
@@ -86,7 +86,7 @@ describe("createMethodologyFile functions", () => {
       const methodologyWithoutHeader = {
         [mockChartId]: [
           {
-            body: mockMethodologyBody,
+            methodology: mockMethodology,
           },
         ],
       };
@@ -104,7 +104,7 @@ describe("createMethodologyFile functions", () => {
           "- some filters text\n" +
           "- some violation text\n\n" +
           "Export Date: 11/20/2020\n\n" +
-          "methodology body\n\n"
+          "  methodology body\n\n"
       );
     });
   });

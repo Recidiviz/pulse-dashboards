@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { htmlToText } from "html-to-text";
 import moment from "moment";
+import wrap from "word-wrap";
 
 function createMethodologyFile({
   chartTitle,
@@ -46,8 +46,9 @@ function createMethodologyFile({
   text += `Export Date: ${exportDate}\n\n`;
 
   infoChart.forEach((chart) => {
-    if (chart.header) text += `${chart.header}\n`;
-    text += `${htmlToText(chart.body)}\n`;
+    if (chart.title) text += `${chart.title}\n`;
+    const methodology = chart.methodology.replace(/\*\*/g, ``);
+    text += `${wrap(methodology, { width: 80 })}\n`;
     text += "\n";
   });
 
