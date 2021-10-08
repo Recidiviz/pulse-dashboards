@@ -66,6 +66,7 @@ const ViewNavigation: React.FC = ({ children }) => {
       }}
     >
       <MethodologyLogo className="ViewNavigation__icon" />
+      <div className="ViewNavigation__navlink-heading">Methodology</div>
     </NavLink>
   );
 

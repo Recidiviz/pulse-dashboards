@@ -15,17 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import Markdown from "markdown-to-jsx";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { useLocation } from "react-router-dom";
-import ScrollableAnchor, { configureAnchors } from "react-scrollable-anchor";
+import { configureAnchors } from "react-scrollable-anchor";
 import { Container } from "reactstrap";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { convertToSlug } from "../../utils/navigation";
 import { getMethodologyCopy } from "../content";
-import { MethodologyContent } from "../models/types";
+import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 import {
   getMetricIdsForPage,
@@ -57,7 +56,7 @@ const MethodologyPathways: React.FC = () => {
   configureAnchors({ offset: -75 });
 
   return (
-    <PageTemplate>
+    <PageTemplate mobileNavigation={<MobileNavigation />}>
       <div className="Methodology">
         <Container className="col-md-9 col-12">
           <h1 className="Methodology__main-title">{Methodology.title}</h1>

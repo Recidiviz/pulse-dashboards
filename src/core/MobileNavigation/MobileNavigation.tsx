@@ -17,7 +17,6 @@
 
 import "./MobileNavigation.scss";
 
-import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -28,6 +27,7 @@ import PageNavigation from "../PageNavigation";
 import PracticesSummaryBreadcrumbs from "../PracticesSummaryBreadcrumbs";
 import SectionNavigation from "../SectionNavigation";
 import ViewNavigation from "../ViewNavigation";
+import { PATHWAYS_VIEWS } from "../views";
 
 interface Props {
   title?: string;
@@ -47,7 +47,7 @@ const MobileNavigation: React.FC<Props> = ({ title }) => {
     <>
       <Drawer isShowing={open} hide={() => setOpen(false)}>
         <ViewNavigation>
-          {currentView === "pathways" && <PageNavigation />}
+          {currentView !== PATHWAYS_VIEWS.practices && <PageNavigation />}
         </ViewNavigation>
       </Drawer>
       <div className="MobileNavigation">
@@ -71,4 +71,4 @@ const MobileNavigation: React.FC<Props> = ({ title }) => {
   ) : null;
 };
 
-export default observer(MobileNavigation);
+export default MobileNavigation;
