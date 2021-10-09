@@ -1,0 +1,69 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2021 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+@import "../CoreConstants.scss";
+
+.PathwaysProfile {
+  max-width: 41rem;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  
+  @media screen and (max-width: $core-breakpoint-md) {
+    padding-top: 2rem;
+    max-width: 100%;
+  }
+  &__title {
+    font: $font-ui-serif-34;
+    color: $pine-3;
+    letter-spacing: -0.04em;
+    margin-bottom: 1rem;
+
+    @media screen and (max-width: $core-breakpoint-md) {
+      font: $font-ui-serif-24;
+    }
+  }
+  &__subtitle {
+    font: $font-ui-sans-16;
+    color: $slate-80;
+    letter-spacing: -0.01em;
+    margin-top: 0 !important;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid $slate-20;
+    margin-bottom: 2rem;
+  }
+  &__log-out-button {
+    width: 10rem;
+    font: $font-ui-sans-16;
+    color: $white;
+    background: $signal-links;
+    padding: 1rem 0;
+    margin-bottom: 3rem;
+    border-radius: 999px;
+    border: 0;
+    outline: 0;
+  }
+  &__footer {
+    margin-top: auto;
+    font: $font-ui-sans-14;
+    letter-spacing: -0.01em;
+    color: $slate-80;
+    a {
+      margin: 0 0.5rem;
+      color: $signal-links;
+    }
+  }
+}

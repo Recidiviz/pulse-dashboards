@@ -9,6 +9,7 @@ $core-max-view-width: 93rem;
 
 $box-shadow-color-30: rgba(19, 44, 82, 0.3);
 $box-shadow-color-20: rgba(19, 44, 82, 0.2);
+$inset-shadow-20: inset 0px -1px 1px $box-shadow-color-20;
 $inset-shadow-30: inset 0px -1px 1px $box-shadow-color-30;
 
 /* System Design Colors */
@@ -29,6 +30,7 @@ $signal-links: #006c67;
 $signal-links-lite: #4d9895;
 $signal-highlight: #25b894;
 $signal-notifications: #237caf;
+$signal-outline: #3797cd;
 $signal-tooltip: #082249;
 $signal-error: #a43939;
 $signal-error-lite: #bf7474;

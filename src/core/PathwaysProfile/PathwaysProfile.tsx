@@ -15,69 +15,70 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { Button, Col, Container, Row } from "reactstrap";
+import "./PathwaysProfile.scss";
 
-import StateSelector from "../../components/StateSelector";
+import { observer } from "mobx-react-lite";
+import React, { useCallback } from "react";
+
+import StateSelection from "../../components/StateSelection";
 import { useRootStore } from "../../components/StoreProvider";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 
-type StateSelectOption = {
-  label: string;
-  value: any;
-};
-
 const PathwaysProfile = () => {
-  const { push } = useHistory();
-  const { tenantStore, userStore } = useRootStore();
-  const { user } = userStore;
-  const [selectedState, setSelectedState] = useState();
+  const { userStore } = useRootStore();
+  const { user, logout } = userStore;
 
-  const handleOnChange = (option: StateSelectOption) => {
-    setSelectedState(option.value);
-  };
-  const handleOnClick = () => {
-    if (selectedState) {
-      tenantStore.setCurrentTenantId(selectedState);
-    }
-    push({ pathname: "/" });
-  };
+  const onLogout = useCallback(
+    (e) => {
+      e.preventDefault();
+      logout({ returnTo: window.location.origin });
+    },
+    [logout]
+  );
+
   return (
     <PageTemplate mobileNavigation={<MobileNavigation title="Profile" />}>
-      <Container className="mb-5">
-        <Row className="align-items-center profile-header mb-5 text-center text-md-left">
-          <Col md={2}>
-            <img
-              src={user.picture}
-              alt="PathwaysProfile"
-              className="rounded-circle img-fluid profile-picture mb-3 mb-md-0"
-            />
-          </Col>
-          <Col md>
-            <h2>{user.name}</h2>
-            <p className="lead text-muted">{user.email}</p>
-            <p className="lead text-muted">{userStore.stateName}</p>
-            {userStore.availableStateCodes.length > 1 && (
-              <div style={{ maxWidth: "33%" }}>
-                <p className="PathwaysProfile__prompt lead text-muted">
-                  Current view state:
-                </p>
-                <StateSelector onChange={handleOnChange} />
-                <Button
-                  className="PathwaysProfile__submit mt-3"
-                  variant="dark"
-                  onClick={handleOnClick}
-                >
-                  View dashboard
-                </Button>
-              </div>
-            )}
-          </Col>
-        </Row>
-      </Container>
+      <div className="PathwaysProfile">
+        <>
+          <div className="PathwaysProfile__title">{user.email}</div>
+          <div className="PathwaysProfile__subtitle">{userStore.stateName}</div>
+          <StateSelection />
+          <button
+            type="button"
+            className="PathwaysProfile__log-out-button"
+            onClick={onLogout}
+          >
+            Log out
+          </button>
+        </>
+        <div className="PathwaysProfile__footer">
+          © {new Date().getFullYear()}
+          <a
+            href="https://www.recidiviz.org"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Recidiviz
+          </a>
+          ·
+          <a
+            href="https://www.recidiviz.org/legal/privacy-policy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Privacy Policy
+          </a>
+          ·
+          <a
+            href="https://www.recidiviz.org/legal/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Terms of Service
+          </a>
+        </div>
+      </div>
     </PageTemplate>
   );
 };

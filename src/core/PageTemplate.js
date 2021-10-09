@@ -35,13 +35,11 @@ const PageTemplate = ({
     {leftPanel}
     <div className="PageTemplate__body">
       {filters}
-      <div id="mainContent">
-        <div className="row gap-20 pos-r">
-          {importantNotes.length !== 0 && (
-            <ImportantNotesBar importantNotes={importantNotes} />
-          )}
-          <div className="PageTemplate__content">{children}</div>
-        </div>
+      <div className="row gap-20 pos-r">
+        {importantNotes.length !== 0 && (
+          <ImportantNotesBar importantNotes={importantNotes} />
+        )}
+        <div className="PageTemplate__content">{children}</div>
       </div>
     </div>
   </div>

@@ -15,37 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-@import "./CoreConstants.scss";
-
-.PathwaysLayout {
-  display: flex;
-  min-height: 100vh;
-  background: $marble-3;
-
-  &__main {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-left: 4rem;
-
-    @media screen and (max-width: $core-breakpoint-sm) {
-      margin-left: 0;
-    }
-  }
-
-  &__header {
-    width: 100%;
-    position: fixed;
-    z-index: 2;
-  }
-
-  .IE11Banner {
-    padding-top: 4rem;
-    padding-bottom: 0;
-    background-color: $marble-3;
-  }
-
-  .Footer {
-    background-color: $marble-3;
-  }
-}
+export { default } from "./StateSelection";

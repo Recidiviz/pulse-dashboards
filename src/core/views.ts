@@ -29,6 +29,7 @@ export const PATHWAYS_VIEWS: Record<string, string> = {
   pathways: "pathways",
   practices: "practices",
   pathwaysMethodology: "pathways-methodology",
+  pathwaysProfile: "pathways-profile",
 } as const;
 
 export const CORE_PATHS: Record<string, string> = {
