@@ -292,7 +292,7 @@ describe("App tests", () => {
     const { container } = render(<App />);
 
     expect(container.children.length).toBe(1);
-    expect(container.firstChild.dataset.testid).toBe(mockLoadingTestId);
+    expect(container.firstChild.className).toBe("Loading__container");
   });
 
   it("should render the Error component if there is an error", () => {

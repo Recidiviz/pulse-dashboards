@@ -64,7 +64,9 @@ const PagePractices: React.FC = () => {
   if (isLoading || currentEntitySummary === undefined) {
     return (
       <PageTemplate>
-        <Loading />
+        <div className="Loading__container">
+          <Loading />
+        </div>
       </PageTemplate>
     );
   }

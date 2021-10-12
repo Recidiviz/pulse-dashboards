@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import "./AuthWall.scss";
+
 import { Loading } from "@recidiviz/design-system";
 import { when } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -49,7 +51,11 @@ const AuthWall: React.FC = ({ children }) => {
   }
 
   if (userStore.userIsLoading) {
-    return <Loading />;
+    return (
+      <div className="Loading__container">
+        <Loading />
+      </div>
+    );
   }
   if (userStore.isAuthorized) {
     if (
@@ -62,7 +68,11 @@ const AuthWall: React.FC = ({ children }) => {
       ) {
         window.location.href =
           process.env.REACT_APP_CASE_TRIAGE_URL || "about:blank";
-        return <Loading />;
+        return (
+          <div className="Loading__container">
+            <Loading />
+          </div>
+        );
       }
 
       userStore.setAuthError(ERROR_MESSAGES.unauthorized);
