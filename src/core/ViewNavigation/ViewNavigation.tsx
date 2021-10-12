@@ -31,31 +31,48 @@ const ViewNavigation: React.FC = ({ children }) => {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   const view = pathname.split("/")[1];
-  const { filtersStore, pagePracticesStore, currentTenantId } = useCoreStore();
+  const {
+    filtersStore,
+    pagePracticesStore,
+    currentTenantId,
+    userStore,
+  } = useCoreStore();
 
-  const PathwaysLink = () => (
-    <NavLink
-      activeClassName="ViewNavigation__navlink--active"
-      className="ViewNavigation__navlink"
-      to="/pathways"
-      onClick={() => filtersStore.resetFilters()}
-    >
-      <PathwaysLogo className="ViewNavigation__icon" />
-      <div className="ViewNavigation__navlink-heading">Pathways</div>
-    </NavLink>
-  );
+  const navigationLayout = userStore.userAllowedNavigation;
+  if (!navigationLayout) return <div />;
 
-  const PracticesLink = () => (
-    <NavLink
-      activeClassName="ViewNavigation__navlink--active"
-      className="ViewNavigation__navlink"
-      to="/practices"
-      onClick={() => pagePracticesStore.resetCurrentEntityId()}
-    >
-      <PracticesLogo className="ViewNavigation__icon" />
-      <div className="ViewNavigation__navlink-heading">Practices</div>
-    </NavLink>
-  );
+  // Pathways is enabled if enabledPathwaysPages.length > 0
+  const enabledPathwaysPages = navigationLayout.pathways || [];
+  // Practices is enabled if enabledPractices !== undefined
+  const enablePractices = navigationLayout.practices;
+
+  const PathwaysLink = () => {
+    return enabledPathwaysPages.length > 0 ? (
+      <NavLink
+        activeClassName="ViewNavigation__navlink--active"
+        className="ViewNavigation__navlink"
+        to="/pathways"
+        onClick={() => filtersStore.resetFilters()}
+      >
+        <PathwaysLogo className="ViewNavigation__icon" />
+        <div className="ViewNavigation__navlink-heading">Pathways</div>
+      </NavLink>
+    ) : null;
+  };
+
+  const PracticesLink = () => {
+    return enablePractices ? (
+      <NavLink
+        activeClassName="ViewNavigation__navlink--active"
+        className="ViewNavigation__navlink"
+        to="/practices"
+        onClick={() => pagePracticesStore.resetCurrentEntityId()}
+      >
+        <PracticesLogo className="ViewNavigation__icon" />
+        <div className="ViewNavigation__navlink-heading">Practices</div>
+      </NavLink>
+    ) : null;
+  };
 
   const MethodologyLink = () => (
     <NavLink

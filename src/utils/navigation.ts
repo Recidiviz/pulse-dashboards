@@ -77,12 +77,9 @@ export function getAllowedNavigation(
       facilities: [],
       methodology: [],
       pathways: [],
-      prison: [],
-      supervision: [],
-      pathwaysMethodology: [],
+      "pathways-methodology": [],
     } as Navigation
   );
-
   const allowedNavigation = Object.fromEntries(
     Object.entries(tenantAllowedNavigation).map(([view, pages]) => {
       // eslint-disable-next-line no-nested-ternary
@@ -96,7 +93,7 @@ export function getAllowedNavigation(
             ),
           ]
         : Object.keys(userAllowedNavigation).includes(view)
-        ? [view, []]
+        ? [view, tenantAllowedNavigation[view as keyof Navigation]]
         : [];
     })
   );

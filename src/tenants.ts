@@ -23,6 +23,7 @@ import { Navigation } from "./core/types/navigation";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "./core/views";
 import * as core from "./RootStore/TenantStore/coreTenants";
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
+import * as pathways from "./RootStore/TenantStore/pathwaysTenants";
 import { TenantId } from "./RootStore/types";
 
 export const RECIDIVIZ_TENANT = "RECIDIVIZ";
@@ -43,35 +44,33 @@ type Tenants = {
 };
 
 const TENANTS: Tenants = {
-  [core.US_ID]: {
+  [pathways.US_ID]: {
     name: "Idaho",
     stateCode: "ID",
     domain: "idoc.idaho.gov",
-    availableStateCodes: [core.US_ID],
+    availableStateCodes: [pathways.US_ID],
     enableUserRestrictions: false,
     enablePracticesCaseloadButton: true,
     navigation: {
-      community: ["practices", "projections"],
-      facilities: ["projections"],
-      methodology: ["projections", "practices"],
-      "pathways-methodology": ["pathways", "practices"],
-      practices: [],
       pathways: [
         PATHWAYS_PAGES.prison,
         PATHWAYS_PAGES.supervision,
         PATHWAYS_PAGES.supervisionToPrison,
         PATHWAYS_PAGES.supervisionToLiberty,
       ],
+      practices: [],
       prison: [PATHWAYS_SECTIONS.countOverTime],
       supervision: [PATHWAYS_SECTIONS.countOverTime],
       supervisionToPrison: [PATHWAYS_SECTIONS.countOverTime],
       supervisionToLiberty: [PATHWAYS_SECTIONS.countOverTime],
+      "pathways-methodology": ["pathways", "practices"],
     },
     pagesWithRestrictions: [
-      "projections",
       "practices",
       "prison",
       "supervision",
+      "supervisionToPrison",
+      "supervisionToLiberty",
     ],
     practicesMetrics: [
       {
@@ -120,7 +119,7 @@ const TENANTS: Tenants = {
       methodology: ["practices"],
       facilities: ["explore"],
     },
-    pagesWithRestrictions: ["practices", "prison", "supervision"],
+    pagesWithRestrictions: ["practices"],
     practicesMetrics: [
       {
         name: METRIC_TYPE_LABELS.OVERALL,
@@ -163,7 +162,9 @@ const TENANTS: Tenants = {
   RECIDIVIZ: {
     name: "Recidiviz",
     stateCode: "Recidiviz",
-    availableStateCodes: core.CORE_TENANTS.concat(lantern.LANTERN_TENANTS),
+    availableStateCodes: core.CORE_TENANTS.concat(
+      lantern.LANTERN_TENANTS
+    ).concat(pathways.PATHWAYS_TENANTS),
     enableUserRestrictions: true,
     enablePracticesCaseloadButton: true,
   },

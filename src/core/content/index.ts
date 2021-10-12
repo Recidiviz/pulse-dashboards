@@ -17,6 +17,7 @@
 import { merge } from "lodash";
 
 import * as coreTenants from "../../RootStore/TenantStore/coreTenants";
+import * as pathwaysTenants from "../../RootStore/TenantStore/pathwaysTenants";
 import { TenantId } from "../../RootStore/types";
 import { ViewMethodology } from "../models/types";
 import { usIdMethodology } from "./methodology/usIdMethodology";
@@ -62,7 +63,7 @@ export const getMethodologyCopy = (
   currentTenantId: TenantId
 ): ViewMethodology => {
   switch (currentTenantId) {
-    case coreTenants.US_ID:
+    case pathwaysTenants.US_ID:
       return usIdMethodology;
     case coreTenants.US_ND:
       return usNdMethodology;

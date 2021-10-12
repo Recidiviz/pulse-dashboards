@@ -28,7 +28,7 @@ export type PathwaysView = keyof typeof PATHWAYS_VIEWS;
 export const PATHWAYS_VIEWS: Record<string, string> = {
   pathways: "pathways",
   practices: "practices",
-  pathwaysMethodology: "pathways-methodology",
+  methodology: "pathways-methodology",
   pathwaysProfile: "pathways-profile",
 } as const;
 

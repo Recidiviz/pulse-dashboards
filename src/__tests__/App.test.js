@@ -33,8 +33,9 @@ import PagePractices from "../core/PagePractices";
 import PathwaysLayout from "../core/PathwaysLayout";
 import LanternLayout from "../lantern/LanternLayout";
 import Revocations from "../lantern/Revocations";
-import { US_ID, US_ND } from "../RootStore/TenantStore/coreTenants";
+import { US_ND } from "../RootStore/TenantStore/coreTenants";
 import { US_MO, US_PA } from "../RootStore/TenantStore/lanternTenants";
+import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
 
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 
@@ -109,6 +110,7 @@ describe("App tests", () => {
         community: ["explore", "practices", "projections"],
         methodology: ["practices", "projections"],
         pathways: ["prison"],
+        "pathways-methodology": ["practices", "pathways"],
       },
     };
   });
@@ -169,7 +171,7 @@ describe("App tests", () => {
       expect(getByTestId(mockNDCommunityExploreId)).toBeInTheDocument();
     });
 
-    it("should render Core Layout for a ID user with community practices page", () => {
+    it("should not render Core Layout for a ID user", () => {
       window.history.pushState({}, "", "/community/practices");
       const user = { [metadataField]: { state_code: US_ID } };
 
@@ -178,11 +180,10 @@ describe("App tests", () => {
         currentTenantId: US_ID,
       });
 
-      const { getByTestId } = render(<App />);
-      expect(CoreLayoutMock).toHaveBeenCalledTimes(1);
-      expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
+      render(<App />);
+      expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
       expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
-      expect(getByTestId(mockCommunityPracticesId)).toBeInTheDocument();
+      expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -252,11 +253,11 @@ describe("App tests", () => {
   describe("Methodology page", () => {
     it("should render the Projections Methodology page", () => {
       window.history.pushState({}, "", "/methodology/projections");
-      const user = { [metadataField]: { state_code: US_ID } };
+      const user = { [metadataField]: { state_code: US_ND } };
 
       useRootStore.mockReturnValue({
         userStore: { ...userStore, ...user },
-        currentTenantId: US_ID,
+        currentTenantId: US_ND,
       });
 
       const { container, getByTestId } = render(<App />);
@@ -279,6 +280,42 @@ describe("App tests", () => {
       const { container, getByTestId } = render(<App />);
 
       expect(CoreLayoutMock).toHaveBeenCalledTimes(1);
+      expect(container.children.length).toBe(1);
+      expect(getByTestId(mockMethodologyPathwaysId)).toBeInTheDocument();
+    });
+  });
+
+  describe("practices-methodology page", () => {
+    it("should render the methology-pathways page for Pathways", () => {
+      window.history.pushState({}, "", "/pathways-methodology/pathways");
+      const user = { [metadataField]: { state_code: US_ID } };
+
+      useRootStore.mockReturnValue({
+        userStore: { ...userStore, ...user },
+        currentTenantId: US_ID,
+      });
+
+      const { container, getByTestId } = render(<App />);
+
+      expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
+      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(1);
+      expect(container.children.length).toBe(1);
+      expect(getByTestId(mockMethodologyPathwaysId)).toBeInTheDocument();
+    });
+
+    it("should render the methology-pathways page for Practices", () => {
+      window.history.pushState({}, "", "/pathways-methodology/practices");
+      const user = { [metadataField]: { state_code: US_ID } };
+
+      useRootStore.mockReturnValue({
+        userStore: { ...userStore, ...user },
+        currentTenantId: US_ID,
+      });
+
+      const { container, getByTestId } = render(<App />);
+
+      expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
+      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(1);
       expect(container.children.length).toBe(1);
       expect(getByTestId(mockMethodologyPathwaysId)).toBeInTheDocument();
     });

@@ -57,6 +57,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import RedirectHome from "./RedirectHome";
 import { CORE_TENANTS } from "./RootStore/TenantStore/coreTenants";
 import { LANTERN_TENANTS } from "./RootStore/TenantStore/lanternTenants";
+import { PATHWAYS_TENANTS } from "./RootStore/TenantStore/pathwaysTenants";
 import { initI18n } from "./utils/i18nSettings";
 import initFontAwesome from "./utils/initFontAwesome";
 import initIntercomSettings from "./utils/initIntercomSettings";
@@ -92,13 +93,14 @@ const App = () => (
                 </Switch>
               </LanternLayout>
 
-              <PathwaysLayout tenantIds={CORE_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat("pathways-profile")}>
+              <PathwaysLayout tenantIds={PATHWAYS_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat("", "pathways-profile")}>
                 <Switch>
                   <ProtectedRoute path={PATHWAYS_PATHS.pathways} component={PagePathways} />
                   <ProtectedRoute path={PATHWAYS_PATHS.practices} component={PagePractices} />
                   <ProtectedRoute path={PATHWAYS_PATHS.methodology} component={PageMethodology} />
                   <Route path="/pathways-profile" component={PathwaysProfile} />
                   <Redirect from="/pathways" to="/pathways/prison" />
+                  <RedirectHome />
                   <NotFound />
                 </Switch>
               </PathwaysLayout>

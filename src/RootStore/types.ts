@@ -18,13 +18,14 @@
 import { LANTERN, RECIDIVIZ_TENANT } from "../tenants";
 import * as core from "./TenantStore/coreTenants";
 import * as lantern from "./TenantStore/lanternTenants";
+import * as pathways from "./TenantStore/pathwaysTenants";
 
 export type LanternTenants = typeof lantern.LANTERN_TENANTS[number];
 
 const TenantIds = [
   lantern.US_MO,
   lantern.US_PA,
-  core.US_ID,
+  pathways.US_ID,
   core.US_ND,
   RECIDIVIZ_TENANT,
   LANTERN,

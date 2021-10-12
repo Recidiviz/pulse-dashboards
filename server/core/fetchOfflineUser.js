@@ -36,7 +36,15 @@ function fetchOfflineUser({
       allowed_supervision_location_ids: allowedSupervisionLocationIds,
       allowed_supervision_location_level: allowedSupervisionLocationLevel,
       can_access_leadership_dashboard: true,
-      can_acceess_case_triage: true,
+      can_access_case_triage: true,
+      routes: {
+        pathways_prison: true,
+        pathways_supervision: true,
+        practices: true,
+        pathways_supervisionToLiberty: true,
+        pathways_supervisionToPrison: true,
+        community_practices: true,
+      },
     },
   };
 }

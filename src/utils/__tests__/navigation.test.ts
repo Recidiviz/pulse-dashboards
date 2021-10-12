@@ -60,8 +60,11 @@ describe("getAllowedNavigation", () => {
       methodology: ["practices", "projections"],
       facilities: ["explore"],
       practices: [],
+      pathways: ["prison", "supervision"],
+      prison: ["countOverTime"],
+      "pathways-methodology": ["pathways", "practices"],
     };
-    pagesWithRestrictions = ["practices"];
+    pagesWithRestrictions = ["practices", "prison"];
   });
 
   it("returns the navigation object minus pagesWithRestrictions when user routes array is empty", () => {
@@ -71,6 +74,8 @@ describe("getAllowedNavigation", () => {
       community: ["explore", "projections"],
       facilities: ["explore"],
       methodology: ["projections"],
+      pathways: ["supervision"],
+      "pathways-methodology": ["pathways"],
     };
     const allowedNavigation = getAllowedNavigation(
       tenantAllowedNavigation,
@@ -85,6 +90,7 @@ describe("getAllowedNavigation", () => {
       ["community_practices", true],
       ["community_bogus", false],
       ["practices", true],
+      ["pathways_prison", true],
     ];
     const expected = {
       goals: [],
@@ -92,6 +98,8 @@ describe("getAllowedNavigation", () => {
       facilities: ["explore"],
       methodology: ["practices", "projections"],
       practices: [],
+      pathways: ["prison", "supervision"],
+      "pathways-methodology": ["pathways", "practices"],
     };
     const allowedNavigation = getAllowedNavigation(
       tenantAllowedNavigation,
@@ -112,6 +120,8 @@ describe("getAllowedNavigation", () => {
       community: ["explore", "practices", "projections"],
       facilities: ["explore"],
       methodology: ["practices", "projections"],
+      pathways: ["supervision"],
+      "pathways-methodology": ["pathways"],
     };
     const allowedNavigation = getAllowedNavigation(
       tenantAllowedNavigation,
@@ -121,7 +131,7 @@ describe("getAllowedNavigation", () => {
     expect(allowedNavigation).toEqual(expected);
   });
 
-  it("returns the original navigation object when page not in pagesWithRestrictions is disabled", () => {
+  it("returns the original navigation object when page not in pagesWithRestrictions is empty", () => {
     routes = [
       ["community_practices", true],
       ["community_projections", false],
@@ -129,7 +139,7 @@ describe("getAllowedNavigation", () => {
     ];
     const allowedPaths = getAllowedNavigation(
       tenantAllowedNavigation,
-      pagesWithRestrictions,
+      [],
       routes
     );
     expect(allowedPaths).toEqual(tenantAllowedNavigation);

@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { US_ID, US_ND } from "../../RootStore/TenantStore/coreTenants";
+import { US_ND } from "../../RootStore/TenantStore/coreTenants";
+import { US_ID } from "../../RootStore/TenantStore/pathwaysTenants";
 import { Gender } from "../models/types";
 import {
   FilterOption,
