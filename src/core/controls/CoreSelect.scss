@@ -15,10 +15,6 @@
     transition: border-radius 0s !important;
     cursor: pointer !important;
 
-    &:hover {
-      border-color: $core-border-color !important;
-    }
-
     &--menu-is-open {
       border-bottom-right-radius: 0 !important;
       border-bottom-left-radius: 0 !important;
@@ -34,6 +30,8 @@
   }
 
   &__menu {
+    @include font-ui-sans-14;
+    color: $pine-3;
     background-color: $marble-3 !important;
     border: 1px solid $core-border-color;
     border-radius: 0rem 0rem 1.25rem 1.25rem !important;
@@ -78,8 +76,7 @@
 
   &__value-container {
     color: $pine-3;
-    font: $font-ui-sans-14;
-    letter-spacing: -0.01em;
+    @include font-ui-sans-14;
     padding-left: 1rem !important;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -98,6 +95,9 @@
     height: 0;
     border-style: solid;
     border-width: 4px 4px 0 4px;
-    border-color: #014c48 transparent transparent transparent;
+    border-color: $pine-3 transparent transparent transparent;
+    &--changed {
+      border-color: $signal-links transparent transparent transparent;
+    }
   }
 }

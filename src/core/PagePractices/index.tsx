@@ -56,6 +56,10 @@ const PagePractices: React.FC = () => {
     childEntitySummaryRows,
   } = pagePracticesStore;
 
+  window.scrollTo({
+    top: 0,
+  });
+
   // TODO: add in Error state
   if (isError) {
     return null;

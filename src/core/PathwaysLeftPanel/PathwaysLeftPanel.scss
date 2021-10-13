@@ -18,21 +18,21 @@
 @import "../CoreConstants";
 
 .PathwaysLeftPanel {
-  max-width: 22rem;
   min-width: 17rem;
+  width: auto;
   margin: 0 4.5rem;
   padding-top: 3rem;
+  position: sticky;
+  top: 64px;
 
   &__title {
-    font: $font-ui-serif-34;
+    @include font-ui-serif-34;
     color: $pine-3;
-    letter-spacing: -0.04em;
     padding-bottom: 1rem;
   }
   &__description {
-    font: $font-ui-sans-16;
+    @include font-ui-sans-16;
     color: $slate-80;
-    letter-spacing: -0.01em;
     padding-bottom: 0.5rem;
   }
 
@@ -41,7 +41,7 @@
   }
 
   @media screen and (max-width: $core-breakpoint-sm) {
-    max-width: 100%;
+    width: 100%;
     margin-right: 0;
     padding: 1rem 2.5rem;
     margin: 0;

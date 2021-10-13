@@ -31,8 +31,7 @@
 
       &__title {
         color: $slate-80;
-        font: $font-ui-sans-14;
-        letter-spacing: -0.01em;
+        @include font-ui-sans-14;
         padding-right: 0.5rem;
         white-space: nowrap;
       }

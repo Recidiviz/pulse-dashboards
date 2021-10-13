@@ -27,9 +27,8 @@
     max-width: 100%;
   }
   &__title {
-    font: $font-ui-serif-34;
+    @include font-ui-serif-34;
     color: $pine-3;
-    letter-spacing: -0.04em;
     margin-bottom: 1rem;
 
     @media screen and (max-width: $core-breakpoint-md) {
@@ -37,9 +36,8 @@
     }
   }
   &__subtitle {
-    font: $font-ui-sans-16;
+    @include font-ui-sans-16;
     color: $slate-80;
-    letter-spacing: -0.01em;
     margin-top: 0 !important;
     padding-bottom: 2rem;
     border-bottom: 1px solid $slate-20;
@@ -58,8 +56,7 @@
   }
   &__footer {
     margin-top: auto;
-    font: $font-ui-sans-14;
-    letter-spacing: -0.01em;
+    @include font-ui-sans-14;
     color: $slate-80;
     a {
       margin: 0 0.5rem;

@@ -16,10 +16,11 @@
 // =============================================================================
 import "./CoreSelect.scss";
 
+import cn from "classnames";
 import React, { forwardRef } from "react";
 import ReactSelect from "react-select";
 
-import { pine3 } from "../CoreConstants.scss";
+import { pine3, signalLinks } from "../CoreConstants.scss";
 
 type FilterOption = {
   label: string;
@@ -27,6 +28,7 @@ type FilterOption = {
 };
 
 type CoreSelectProps = {
+  isChanged: boolean;
   value: FilterOption | FilterOption[];
   defaultValue: FilterOption | FilterOption[];
   options: FilterOption[];
@@ -34,11 +36,17 @@ type CoreSelectProps = {
   [key: string]: any;
 };
 
-const coreSelectCustomStyles = {
-  singleValue: (provided: any) => ({
-    ...provided,
-    color: pine3,
-  }),
+const coreSelectCustomStyles = (props: CoreSelectProps) => {
+  return {
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: props.isChanged ? signalLinks : pine3,
+    }),
+    control: (provided: any) => ({
+      ...provided,
+      border: props.isChanged && `1px solid ${signalLinks} !important`,
+    }),
+  };
 };
 
 export const CoreSelect = forwardRef<HTMLInputElement, CoreSelectProps>(
@@ -46,17 +54,21 @@ export const CoreSelect = forwardRef<HTMLInputElement, CoreSelectProps>(
     <ReactSelect
       // @ts-ignore
       ref={ref}
-      className="CoreSeleсt"
+      className="CoreSelect"
       classNamePrefix="CoreSelect"
       components={{
         IndicatorSeparator: () => null,
         DropdownIndicator: () => (
           <div className="CoreSelect__custom-indicator">
-            <span className="CoreSelect__custom-arrow" />
+            <span
+              className={cn("CoreSelect__custom-arrow", {
+                "CoreSelect__custom-arrow--changed": props.isChanged,
+              })}
+            />
           </div>
         ),
       }}
-      styles={coreSelectCustomStyles}
+      styles={coreSelectCustomStyles(props)}
       {...props}
     />
   )

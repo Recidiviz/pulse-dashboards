@@ -41,8 +41,7 @@
   }
 
   &__value {
-    font: $font-ui-serif-34;
-    letter-spacing: -0.04em;
+    @include font-ui-serif-34;
     color: $pine-3;
     padding: 0 0 0;
 
@@ -67,8 +66,7 @@
   }
 
   &__delta {
-    font: $font-ui-sans-14;
-    letter-spacing: -0.01em;
+    @include font-ui-sans-14;
     line-height: 1.5rem;
 
     &--loading {

@@ -19,22 +19,20 @@
 
 .SectionNavigation {
   &__title {
-    font: $font-ui-sans-24;
+    @include font-ui-sans-24;
     color: $slate-85;
-    letter-spacing: -0.02em;
     border-bottom: 1px solid $slate-20;
     padding-bottom: 1rem;
     margin-bottom: 2rem;
     margin-top: 3rem;
   }
   &__navlink {
-    font: $font-ui-sans-16;
+    @include font-ui-sans-16;
     color: $signal-links;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
-    letter-spacing: -0.01em;
 
     &:hover {
       color: $signal-links;

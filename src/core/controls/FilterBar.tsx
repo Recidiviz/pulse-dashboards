@@ -28,7 +28,7 @@ const FilterBar: React.FC<{
   children: React.ReactNode;
 }> = ({ details = null, children }) => {
   return (
-    <Sticky style={FILTER_BAR_STYLE}>
+    <Sticky style={FILTER_BAR_STYLE} className="Sticky">
       <div className="FilterBar">
         <div className="FilterBar__container">
           <div className="FilterBar__filters">{children}</div>

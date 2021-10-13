@@ -86,6 +86,10 @@ const PathwaysFilterBar: React.FC<{
                 setQuery({ [filter.type]: option.value })
               }
               defaultValue={filter.defaultValue}
+              isChanged={
+                filter.defaultValue !==
+                getFilterOption(get(filters, filter.type), filter.options).value
+              }
             />
           </Filter>
         );

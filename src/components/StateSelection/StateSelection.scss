@@ -19,11 +19,10 @@
 
 .StateSelection {
   margin-bottom: 2rem;
-  
+
   &__heading {
-    font: $font-ui-sans-16;
+    @include font-ui-sans-16;
     color: $slate-85;
-    letter-spacing: -0.01em;
     margin-bottom: 1rem;
   }
   &__select-item {

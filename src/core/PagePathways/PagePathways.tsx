@@ -34,6 +34,10 @@ const PagePathways: React.FC = () => {
   const { currentTenantId, metricsStore, page } = useCoreStore();
   const pageContent = usePageContent(page as PathwaysPage);
 
+  window.scrollTo({
+    top: 0,
+  });
+
   if (!pageContent) return <div />;
 
   const { title, summary } = pageContent;

@@ -23,10 +23,9 @@
 
 .VizCountOverTimeWithAvg {
   background: $white;
-  font: $font-ui-sans-14;
+  @include font-ui-sans-14;
   border-radius: 0.5rem;
   box-shadow: $inset-shadow-30;
-  letter-spacing: -0.01em;
   line-height: 1.5rem;
   width: 100%;
 
@@ -82,8 +81,7 @@
   }
 
   &__goal-label {
-    font: $font-ui-sans-14;
+    @include font-ui-sans-14;
     fill: $signal-links;
-    letter-spacing: -0.01em;
   }
 }

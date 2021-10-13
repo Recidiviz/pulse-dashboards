@@ -47,9 +47,8 @@
   }
 
   &__goal-label {
-    font: $font-ui-sans-14;
+    @include font-ui-sans-14;
     fill: $signal-links;
-    letter-spacing: -0.01em;
   }
 }
 
@@ -59,8 +58,7 @@
   &__Date,
   &__Average {
     opacity: 0.8;
-    letter-spacing: -0.01em;
-    font: $font-ui-sans-14;
+    @include font-ui-sans-14;
   }
 
   &__Value {

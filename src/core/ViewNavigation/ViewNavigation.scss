@@ -144,7 +144,7 @@
       position: relative;
     }
     &-header {
-      font: $font-ui-sans-16;
+      @include font-ui-sans-16;
       color: $white;
       & svg {
         margin-left: 0.5rem;

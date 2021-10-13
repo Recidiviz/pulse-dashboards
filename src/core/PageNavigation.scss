@@ -12,10 +12,9 @@
     align-items: center;
     cursor: pointer;
     display: flex;
-    font: $font-ui-sans-16;
+    @include font-ui-sans-16;
     height: 100%;
     justify-content: center;
-    letter-spacing: -0.01em;
     margin: 0;
   }
 

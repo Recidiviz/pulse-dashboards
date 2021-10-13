@@ -36,9 +36,8 @@
     cursor: pointer;
   }
   &__title {
-    font: $font-ui-serif-24;
+    @include font-ui-serif-24;
     color: $pine-3;
-    letter-spacing: -0.03em;
     white-space: nowrap;
   }
   &__pathways {
