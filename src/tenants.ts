@@ -52,13 +52,13 @@ const TENANTS: Tenants = {
     enableUserRestrictions: false,
     enablePracticesCaseloadButton: true,
     navigation: {
+      practices: [],
       pathways: [
         PATHWAYS_PAGES.prison,
         PATHWAYS_PAGES.supervision,
         PATHWAYS_PAGES.supervisionToPrison,
         PATHWAYS_PAGES.supervisionToLiberty,
       ],
-      practices: [],
       prison: [PATHWAYS_SECTIONS.countOverTime],
       supervision: [PATHWAYS_SECTIONS.countOverTime],
       supervisionToPrison: [PATHWAYS_SECTIONS.countOverTime],

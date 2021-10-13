@@ -75,6 +75,7 @@ describe("getAllowedNavigation", () => {
       facilities: ["explore"],
       methodology: ["projections"],
       pathways: ["supervision"],
+      prison: ["countOverTime"],
       "pathways-methodology": ["pathways"],
     };
     const allowedNavigation = getAllowedNavigation(
@@ -99,6 +100,7 @@ describe("getAllowedNavigation", () => {
       methodology: ["practices", "projections"],
       practices: [],
       pathways: ["prison", "supervision"],
+      prison: ["countOverTime"],
       "pathways-methodology": ["pathways", "practices"],
     };
     const allowedNavigation = getAllowedNavigation(
@@ -121,6 +123,7 @@ describe("getAllowedNavigation", () => {
       facilities: ["explore"],
       methodology: ["practices", "projections"],
       pathways: ["supervision"],
+      prison: ["countOverTime"],
       "pathways-methodology": ["pathways"],
     };
     const allowedNavigation = getAllowedNavigation(

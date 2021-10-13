@@ -77,6 +77,10 @@ export function getAllowedNavigation(
       facilities: [],
       methodology: [],
       pathways: [],
+      prison: [],
+      supervision: [],
+      supervisionToLiberty: [],
+      supervisionToPrison: [],
       "pathways-methodology": [],
     } as Navigation
   );
