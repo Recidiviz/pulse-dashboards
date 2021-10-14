@@ -22,18 +22,24 @@ import { StateSpecificMetricCopy } from "../types";
 
 const content: StateSpecificMetricCopy = {
   prisonPopulationOverTime: {
+    title: "Prison Population",
     methodology:
-      "- The monthly figures shown in the chart represent the total population for the selected group on the first day of that month. For example, if you hover over the “November 2020” data point on the chart, you’ll see the total number of people in prison on November 1, 2020.\n- Something about prediction intervals being 95%.\n- To see detailed methodology on how projections are calculated, download this PDF.",
+      "- **Historical population:** The left side of the chart describes the historical prison population over the selected “Time Period”. Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the “November 2020” data point on the chart will show the total number of people described in the “Who is included?” section above on November 1, 2020. \n- **Projected population:** The right side of the chart describes the projected prison population over the selected “Time Period.” The shaded area represents the confidence intervals of the projection. On hover, the 5% and 95% confidence range can be seen in parentheses. Click here for more on the projection methodology.",
   },
   supervisionPopulationOverTime: {
+    title: "Supervision Population",
     methodology:
-      "- The monthly figures shown in the chart represent the total population for the selected group on the first day of that month. For example, if you hover over the “November 2020” data point on the chart, you’ll see the total number of people in prison on November 1, 2020.\n- Something about prediction intervals being 95%.\n- To see detailed methodology on how projections work, download this PDF.",
+      "- **Historical population:** The left side of the chart describes the historical supervision population over the selected “Time Period”. Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the “November 2020” data point on the chart will show the total number of people described in the “Who is included?” section above on November 1, 2020. \n- **Projected population:** The right side of the chart describes the projected supervision population over the selected “Time Period.” The shaded area represents the confidence intervals of the projection. On hover, the 5% and 95% confidence range can be seen in parentheses. Click here for more on the projection methodology.",
   },
   supervisionToPrisonOverTime: {
-    methodology: "- supervision to prison over time methodology",
+    title: "Admissions from Supervision to Prison",
+    methodology:
+      "- **Number of admissions:** Each data point represents the total number of admissions from supervision to prison over the course of the month. For example, hovering over the “November 2020” bar in the chart will show the total number of admissions between November 1 and November 30, 2020. \n- **90-day rolling average:** Each data point on the solid line represents the average number of admissions for each of the past 90 days.",
   },
   supervisionToLibertyOverTime: {
-    methodology: "- supervision to liberty over time methodology",
+    title: "Releases from Supervision to Liberty",
+    methodology:
+      "- **Number of releases:** Each data point represents the total number of releases from supervision to liberty over the course of the month. For example, hovering over the “November 2020” bar in the chart will show the total number of releases between November 1 and November 30, 2020. \n- **90-day rolling average:** Each data point on the solid line represents the average number of releases for each of the past 90 days.",
   },
 };
 

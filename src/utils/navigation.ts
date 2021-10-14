@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { uniq } from "lodash";
 import { QueryParamConfigMap, StringParam } from "use-query-params";
 
 import {
@@ -105,6 +106,9 @@ export function getAllowedNavigation(
   if (allowedNavigation.methodology?.length === 0) {
     delete allowedNavigation.methodology;
   }
+  allowedNavigation["pathways-methodology"] = uniq(
+    userAllowedNavigation["pathways-methodology"]
+  );
 
   return allowedNavigation;
 }

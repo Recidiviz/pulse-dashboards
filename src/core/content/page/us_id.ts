@@ -23,25 +23,27 @@ import { StateSpecificPageCopy } from "../types";
 const content: StateSpecificPageCopy = {
   prison: {
     summary:
-      "This chart includes individuals who are admitted to IDOC facilities and CAPP, including termers, riders, parole violators, and people held in county jails under IDOC jurisdiction.",
+      "This chart include individuals who are admitted to state facilities, including termers, riders, parole violators, people in CAPP, and people held in county jails under state jurisdiction.",
     methodology:
-      "These charts include individuals who are admitted to state facilities, including termers, riders, parole violators, and people held in county jails under state jurisdiction.\n\n- **“Termers”**: Blah blah\n- **“Riders”**: \n- **“Parole Violators”**: \n- **People in CAPP**: Blah blah\n- **People in paid county jail beds**: For the historical total incarcerated population we use the movements file to exclude people who have entered County Jails in unpaid beds. Currently, any movement period listed with the fac_cd + lu_cd code in the list ‘RTSX’, ‘RTUT’, ‘CJVS’, ‘CJCT’ is not counted until a subsequent movement is recorded without any of those codes. The county jails population puts the ingested actuals within 1% of IDOC’s historical monthly average total population validated for 2019-2020. More work can be done to incorporate additional logic using the ofndr_loc_hst table in the future, but that table covers a much smaller subset of the unpaid",
+      "These charts include individuals who are admitted to state facilities, including termers, riders, parole violators, people in CAPP, and people held in county jails under state jurisdiction.\n\nFor people held in paid county jail beds, the historical total incarcerated population uses the movements file to exclude people who have entered County Jails in unpaid beds. Currently, any movement period listed with the fac_cd + lu_cd code in the list ‘RTSX’, ‘RTUT’, ‘CJVS’, ‘CJCT’ is not counted until a subsequent movement is recorded without any of those codes. ",
   },
   supervision: {
     summary:
-      "This charts includes all individuals that are currently on probation and/or parole, including those in the Limited Supervision Unit.",
+      "These charts include all people on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant.",
     methodology:
-      "This charts includes all individuals that are currently on probation and/or parole, including those in the Limited Supervision Unit.\n\n- **People on parole:**\n- **People on probation:**\n- **People in the Limited Supervision Unit?**\n- **People in Connection and Intervention Stations?:**",
+      "These charts include all people on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant.",
   },
   supervisionToPrison: {
     summary:
-      "This chart includes people who have been incarcerated in an IDOC facility because their parole or probation was revoked. Revocations are counted when the person was admitted to a facility, not when the violation occurred.",
-    methodology: "Supervision to prison page methodology copy",
+      "These charts include a count of all admissions supervision to prison. People on supervision include those on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant. An admission is counted on the day the person is admitted to a facility, not the day the violation occurred.\n",
+    methodology:
+      "These charts include a count of all admissions supervision to prison. People on supervision include those on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant. An admission is counted on the day the person is admitted to a facility, not the day the violation occurred.\n",
   },
   supervisionToLiberty: {
     summary:
-      "These charts show people who were discharged from supervision positively or if their supervision period expired. Individuals are counted in their original month of projected completion, even if terminated earlier.",
-    methodology: "Supervision to liberty page methodology copy",
+      "These charts include a count of all releases from supervision to liberty. A release is defined as a discharge, expiration, commutation, or pardon.",
+    methodology:
+      "These charts include a count of all releases from supervision to liberty. A release is defined as a discharge, expiration, commutation, or pardon.",
   },
 };
 

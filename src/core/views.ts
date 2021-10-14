@@ -49,6 +49,7 @@ export const PATHWAYS_PATHS: Record<string, string> = {
   practices: "/practices/:entityId?",
   methodology: "/pathways-methodology/:dashboard",
   methodologyPathways: "/pathways-methodology/pathways",
+  methodologyPractices: "/pathways-methodology/practices",
 };
 
 export type CorePage = keyof typeof CORE_PAGES;

@@ -63,7 +63,7 @@ const MethodologyPathways: React.FC = () => {
           <h2 className="Methodology__main-description">
             {Methodology.description}
           </h2>
-          <div className=" Methodology__toc col-md-5 col-12">
+          <div className=" Methodology__toc">
             <h5 className="Methodology__toc--title">CONTENTS</h5>
             <div className="d-flex flex-column">
               {Object.keys(pageCopy).map((pageId) => {
@@ -101,7 +101,7 @@ const MethodologyPathways: React.FC = () => {
                   !enabledSections.includes(getSectionIdForMetric(metricId))
                 )
                   return <div />;
-                return <ContentBlock content={metric} />;
+                return <ContentBlock content={metric} subBlock />;
               });
 
               return (

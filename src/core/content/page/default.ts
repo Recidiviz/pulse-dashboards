@@ -23,18 +23,16 @@ import { PageCopy } from "../types";
 const content: PageCopy = {
   prison: {
     title: "Prison",
-    summary:
-      "This chart includes individuals who are admitted to state facilities, including termers, riders, parole violators, and people held in county jails under state jurisdiction.",
+    summary: "This page shows all people in state prison facilities.",
     sections: {
-      countOverTime: "Prison population",
+      countOverTime: "Prison Population",
     },
   },
   supervision: {
     title: "Supervision",
-    summary:
-      "This chart includes all individuals who are currently on probation and/or parole.",
+    summary: "This page shows all people supervised by the state.",
     sections: {
-      countOverTime: "Supervised population",
+      countOverTime: "Supervision Population",
     },
   },
   supervisionToPrison: {
@@ -42,7 +40,7 @@ const content: PageCopy = {
     summary:
       "This chart includes people who have been incarcerated in a state facility because their parole or probation was revoked. Revocations are counted when the person was admitted to a facility, not when the violation occurred.",
     sections: {
-      countOverTime: "Admissions to prison from supervision",
+      countOverTime: "Admissions from Supervision to Prison",
     },
   },
   supervisionToLiberty: {
@@ -50,7 +48,7 @@ const content: PageCopy = {
     summary:
       "These charts show people who were discharged from supervision positively or if their supervision period expired.",
     sections: {
-      countOverTime: "Releases from supervision to liberty",
+      countOverTime: "Releases from Supervision to Liberty",
     },
   },
 };

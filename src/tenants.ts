@@ -162,9 +162,9 @@ const TENANTS: Tenants = {
   RECIDIVIZ: {
     name: "Recidiviz",
     stateCode: "Recidiviz",
-    availableStateCodes: core.CORE_TENANTS.concat(
+    availableStateCodes: pathways.PATHWAYS_TENANTS.concat(
       lantern.LANTERN_TENANTS
-    ).concat(pathways.PATHWAYS_TENANTS),
+    ).concat(core.CORE_TENANTS),
     enableUserRestrictions: true,
     enablePracticesCaseloadButton: true,
   },

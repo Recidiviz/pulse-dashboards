@@ -24,13 +24,21 @@ import { MethodologyContent } from "../models/types";
 
 type Props = {
   content: MethodologyContent;
+  subBlock?: boolean;
 };
 
-const ContentBlock: React.FC<Props> = ({ content }) => {
+const ContentBlock: React.FC<Props> = ({ content, subBlock = false }) => {
   return (
     <ScrollableAnchor id={convertToSlug(content.title)}>
       <div className="Methodology__block">
-        <h4 className="Methodology__sub-block--title ">{content.title}</h4>
+        {subBlock ? (
+          <h4 className="Methodology__sub-block--title ">{content.title}</h4>
+        ) : (
+          <>
+            <h3 className="Methodology__block--title ">{content.title}</h3>
+            <hr />
+          </>
+        )}
         <Markdown>{content.methodology || ""}</Markdown>
       </div>
     </ScrollableAnchor>

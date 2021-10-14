@@ -38,7 +38,7 @@ import PracticesSummaryCards from "../PracticesSummaryCards";
 import PracticesSummaryChart from "../PracticesSummaryChart";
 import PracticesSummaryDetail from "../PracticesSummaryDetail";
 import PracticesSummaryTable from "../PracticesSummaryTable/PracticesSummaryTable";
-import { CORE_PATHS } from "../views";
+import { CORE_PATHS, PATHWAYS_PATHS } from "../views";
 import withRouteSync from "../withRouteSync";
 
 const PagePractices: React.FC = () => {
@@ -82,7 +82,13 @@ const PagePractices: React.FC = () => {
           <PracticesSummaryBreadcrumbs />
           <DetailsGroup>
             <DownloadDataButton handleOnClick={downloadData} />
-            <MethodologyLink path={CORE_PATHS.methodologyPractices} />
+            <MethodologyLink
+              path={
+                isCoreView
+                  ? CORE_PATHS.methodologyPractices
+                  : PATHWAYS_PATHS.methodologyPractices
+              }
+            />
           </DetailsGroup>
         </div>
       )}
@@ -93,7 +99,13 @@ const PagePractices: React.FC = () => {
       {isMobile && !isCoreView && (
         <DetailsGroup>
           <DownloadDataButton handleOnClick={downloadData} />
-          <MethodologyLink path={CORE_PATHS.methodologyPractices} />
+          <MethodologyLink
+            path={
+              isCoreView
+                ? CORE_PATHS.methodologyPractices
+                : PATHWAYS_PATHS.methodologyPractices
+            }
+          />
         </DetailsGroup>
       )}
       <div className="PagePractices__SummarySection">

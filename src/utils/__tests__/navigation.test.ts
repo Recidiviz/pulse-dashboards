@@ -76,7 +76,7 @@ describe("getAllowedNavigation", () => {
       methodology: ["projections"],
       pathways: ["supervision"],
       prison: ["countOverTime"],
-      "pathways-methodology": ["pathways"],
+      "pathways-methodology": [],
     };
     const allowedNavigation = getAllowedNavigation(
       tenantAllowedNavigation,
@@ -90,8 +90,8 @@ describe("getAllowedNavigation", () => {
     routes = [
       ["community_practices", true],
       ["community_bogus", false],
-      ["practices", true],
       ["pathways_prison", true],
+      ["practices", true],
     ];
     const expected = {
       goals: [],
@@ -116,13 +116,14 @@ describe("getAllowedNavigation", () => {
       ["community_practices", true],
       ["community_bogus", false],
       ["practices", false],
+      ["pathways_prison", true],
     ];
     const expected = {
       goals: [],
       community: ["explore", "practices", "projections"],
       facilities: ["explore"],
       methodology: ["practices", "projections"],
-      pathways: ["supervision"],
+      pathways: ["prison", "supervision"],
       prison: ["countOverTime"],
       "pathways-methodology": ["pathways"],
     };
@@ -138,6 +139,7 @@ describe("getAllowedNavigation", () => {
     routes = [
       ["community_practices", true],
       ["community_projections", false],
+      ["pathways_prison", true],
       ["practices", true],
     ];
     const allowedPaths = getAllowedNavigation(
@@ -146,6 +148,26 @@ describe("getAllowedNavigation", () => {
       routes
     );
     expect(allowedPaths).toEqual(tenantAllowedNavigation);
+  });
+
+  it("returns the correct pathways-methodology object for practices only", () => {
+    routes = [["practices", true]];
+    const expected = {
+      goals: [],
+      community: ["explore", "projections"],
+      facilities: ["explore"],
+      methodology: ["projections"],
+      pathways: ["supervision"],
+      practices: [],
+      prison: ["countOverTime"],
+      "pathways-methodology": ["practices"],
+    };
+    const allowedPaths = getAllowedNavigation(
+      tenantAllowedNavigation,
+      pagesWithRestrictions,
+      routes
+    );
+    expect(allowedPaths).toEqual(expected);
   });
 });
 

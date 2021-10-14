@@ -26,6 +26,7 @@ import { ReactComponent as PracticesLogo } from "../../assets/static/images/prac
 import ProfileLink from "../../components/ProfileLink";
 import useIsMobile from "../../hooks/useIsMobile";
 import { useCoreStore } from "../CoreStoreProvider";
+import { PATHWAYS_VIEWS } from "../views";
 
 const ViewNavigation: React.FC = ({ children }) => {
   const isMobile = useIsMobile();
@@ -74,18 +75,25 @@ const ViewNavigation: React.FC = ({ children }) => {
     ) : null;
   };
 
-  const MethodologyLink = () => (
-    <NavLink
-      className="ViewNavigation__navlink"
-      to={{
-        pathname: `/pathways-methodology/${view}`,
-        search: `?stateCode=${currentTenantId}`,
-      }}
-    >
-      <MethodologyLogo className="ViewNavigation__icon" />
-      <div className="ViewNavigation__navlink-heading">Methodology</div>
-    </NavLink>
-  );
+  const MethodologyLink = () => {
+    const methodologyView =
+      view === PATHWAYS_VIEWS.pathwaysProfile ||
+      view === PATHWAYS_VIEWS.methodology
+        ? PATHWAYS_VIEWS.practices
+        : view;
+    return (
+      <NavLink
+        className="ViewNavigation__navlink"
+        to={{
+          pathname: `/pathways-methodology/${methodologyView}`,
+          search: `?stateCode=${currentTenantId}`,
+        }}
+      >
+        <MethodologyLogo className="ViewNavigation__icon" />
+        <div className="ViewNavigation__navlink-heading">Methodology</div>
+      </NavLink>
+    );
+  };
 
   const ProfileNavLink = () => (
     <NavLink

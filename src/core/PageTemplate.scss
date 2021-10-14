@@ -32,6 +32,9 @@
     flex-flow: column;
     width: 100%;
     padding-bottom: 1rem;
+    padding-left: 4.5rem;
+    padding-right: 5rem;
+
     & > .Sticky {
       position: unset !important;
     }
@@ -45,20 +48,6 @@
 
     > :not(:first-child) {
       margin-top: 16px;
-    }
-  }
-
-  @media screen and (max-width: $core-breakpoint-lg) {
-    &__body {
-      padding-left: 4.5rem;
-      padding-right: 5rem;
-    }
-  }
-
-  @media screen and (max-width: $core-breakpoint-md) {
-    &__body {
-      padding-left: 3rem;
-      padding-right: 3rem;
     }
   }
 

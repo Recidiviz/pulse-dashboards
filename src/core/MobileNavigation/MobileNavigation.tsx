@@ -47,7 +47,7 @@ const MobileNavigation: React.FC<Props> = ({ title }) => {
     <>
       <Drawer isShowing={open} hide={() => setOpen(false)}>
         <ViewNavigation>
-          {currentView !== PATHWAYS_VIEWS.practices && <PageNavigation />}
+          {currentView === PATHWAYS_VIEWS.pathways && <PageNavigation />}
         </ViewNavigation>
       </Drawer>
       <div className="MobileNavigation">
