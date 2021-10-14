@@ -290,6 +290,7 @@ function getCollections(stateCode = null) {
     case stateCodes.US_PA:
       return newRevocations(dimensionsByStateCode[stateCode]);
     case stateCodes.US_ID:
+    case stateCodes.US_TN:
       return {
         [COLLECTIONS.POPULATION_PROJECTIONS]: {
           population_projection_timeseries: {

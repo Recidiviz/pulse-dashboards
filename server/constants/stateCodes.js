@@ -3,6 +3,7 @@ const stateCodes = {
   US_PA: "US_PA",
   US_ND: "US_ND",
   US_ID: "US_ID",
+  US_TN: "US_TN",
 };
 
 const lanternStateCodes = [stateCodes.US_MO, stateCodes.US_PA];

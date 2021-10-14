@@ -26,6 +26,7 @@ const TenantIds = [
   lantern.US_MO,
   lantern.US_PA,
   pathways.US_ID,
+  pathways.US_TN,
   core.US_ND,
   RECIDIVIZ_TENANT,
   LANTERN,

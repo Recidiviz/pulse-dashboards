@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { US_ND } from "../../RootStore/TenantStore/coreTenants";
-import { US_ID } from "../../RootStore/TenantStore/pathwaysTenants";
+import { US_ID, US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
 import { Gender } from "../models/types";
 import {
   FilterOption,
@@ -157,5 +157,6 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
 
 export default {
   [US_ID]: PopulationFilterOptions,
+  [US_TN]: PopulationFilterOptions,
   [US_ND]: undefined,
 } as const;

@@ -99,6 +99,19 @@ const TENANTS: Tenants = {
       },
     ],
   },
+  [pathways.US_TN]: {
+    name: "Tennessee",
+    stateCode: "TN",
+    availableStateCodes: [pathways.US_TN],
+    enableUserRestrictions: false,
+    enablePracticesCaseloadButton: false,
+    navigation: {
+      pathways: [PATHWAYS_PAGES.prison],
+      prison: [PATHWAYS_SECTIONS.countOverTime],
+      "pathways-methodology": ["pathways"],
+    },
+    pagesWithRestrictions: ["prison"],
+  },
   [lantern.US_MO]: {
     name: "Missouri",
     stateCode: "MO",
