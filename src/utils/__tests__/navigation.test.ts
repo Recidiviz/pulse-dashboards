@@ -56,27 +56,26 @@ describe("getAllowedNavigation", () => {
   beforeEach(() => {
     tenantAllowedNavigation = {
       goals: [],
-      community: ["explore", "practices", "projections"],
-      methodology: ["practices", "projections"],
+      community: ["explore", "practices"],
+      methodology: ["practices"],
+      "id-methodology": ["system", "operations"],
       facilities: ["explore"],
-      practices: [],
-      pathways: ["prison", "supervision"],
+      operations: [],
+      system: ["prison", "supervision"],
       prison: ["countOverTime"],
-      "pathways-methodology": ["pathways", "practices"],
     };
-    pagesWithRestrictions = ["practices", "prison"];
+    pagesWithRestrictions = ["practices", "prison", "operations"];
   });
 
   it("returns the navigation object minus pagesWithRestrictions when user routes array is empty", () => {
     routes = [];
     const expected = {
       goals: [],
-      community: ["explore", "projections"],
+      community: ["explore"],
       facilities: ["explore"],
-      methodology: ["projections"],
-      pathways: ["supervision"],
+      system: ["supervision"],
       prison: ["countOverTime"],
-      "pathways-methodology": [],
+      "id-methodology": [],
     };
     const allowedNavigation = getAllowedNavigation(
       tenantAllowedNavigation,
@@ -90,18 +89,18 @@ describe("getAllowedNavigation", () => {
     routes = [
       ["community_practices", true],
       ["community_bogus", false],
-      ["pathways_prison", true],
-      ["practices", true],
+      ["system_prison", true],
+      ["operations", true],
     ];
     const expected = {
       goals: [],
-      community: ["explore", "practices", "projections"],
+      community: ["explore", "practices"],
       facilities: ["explore"],
-      methodology: ["practices", "projections"],
-      practices: [],
-      pathways: ["prison", "supervision"],
+      methodology: ["practices"],
+      operations: [],
+      system: ["prison", "supervision"],
       prison: ["countOverTime"],
-      "pathways-methodology": ["pathways", "practices"],
+      "id-methodology": ["system", "operations"],
     };
     const allowedNavigation = getAllowedNavigation(
       tenantAllowedNavigation,
@@ -115,17 +114,17 @@ describe("getAllowedNavigation", () => {
     routes = [
       ["community_practices", true],
       ["community_bogus", false],
-      ["practices", false],
-      ["pathways_prison", true],
+      ["operations", false],
+      ["system_prison", true],
     ];
     const expected = {
       goals: [],
-      community: ["explore", "practices", "projections"],
+      community: ["explore", "practices"],
       facilities: ["explore"],
-      methodology: ["practices", "projections"],
-      pathways: ["prison", "supervision"],
+      methodology: ["practices"],
+      system: ["prison", "supervision"],
       prison: ["countOverTime"],
-      "pathways-methodology": ["pathways"],
+      "id-methodology": ["system"],
     };
     const allowedNavigation = getAllowedNavigation(
       tenantAllowedNavigation,
@@ -138,9 +137,8 @@ describe("getAllowedNavigation", () => {
   it("returns the original navigation object when page not in pagesWithRestrictions is empty", () => {
     routes = [
       ["community_practices", true],
-      ["community_projections", false],
-      ["pathways_prison", true],
-      ["practices", true],
+      ["system_prison", true],
+      ["operations", true],
     ];
     const allowedPaths = getAllowedNavigation(
       tenantAllowedNavigation,
@@ -150,17 +148,16 @@ describe("getAllowedNavigation", () => {
     expect(allowedPaths).toEqual(tenantAllowedNavigation);
   });
 
-  it("returns the correct pathways-methodology object for practices only", () => {
-    routes = [["practices", true]];
+  it("returns the correct methodology object for practices only", () => {
+    routes = [["operations", true]];
     const expected = {
       goals: [],
-      community: ["explore", "projections"],
+      community: ["explore"],
       facilities: ["explore"],
-      methodology: ["projections"],
-      pathways: ["supervision"],
-      practices: [],
+      "id-methodology": ["operations"],
+      system: ["supervision"],
+      operations: [],
       prison: ["countOverTime"],
-      "pathways-methodology": ["practices"],
     };
     const allowedPaths = getAllowedNavigation(
       tenantAllowedNavigation,
@@ -183,12 +180,12 @@ describe("getPathWithoutParams", () => {
   });
 
   it("returns the path without params when given a path with params", () => {
-    const basePath = "/practices";
+    const basePath = "/operations";
     expect(getPathWithoutParams(`${basePath}/office-a`)).toEqual(basePath);
   });
 
   it("returns the path without params when given a path with params", () => {
-    const basePath = "/pathways/prison";
+    const basePath = "/system/prison";
     expect(getPathWithoutParams(`${basePath}/anythingElse`)).toEqual(basePath);
   });
 });

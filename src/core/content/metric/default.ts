@@ -32,13 +32,9 @@ const content: MetricCopy = {
   },
   supervisionToPrisonOverTime: {
     title: "Admissions to prison from supervision",
-    note:
-      "The revocation rate is calculated by counting the number of revocations per month and dividing it by the total supervision population in the given month or year. In this chart, the total supervision population includes only those on in-state probation, parole, or dual supervision. ",
   },
   supervisionToLibertyOverTime: {
     title: "Releases from supervision to liberty",
-    note:
-      "The supervision success rate is calculated by counting the number of supervision terms ending in release per month and dividing it by the total number of supervision sessions terminating in a given month. For parole periods, this means when the parole period terminates in release to liberty or ultimate revocation, not when it terminates with a parole board hold. Individuals on dual supervision are counted under parole.",
   },
 };
 

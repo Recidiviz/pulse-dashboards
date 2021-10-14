@@ -31,10 +31,7 @@ const ProfileLink: FC<ProfileLinkProps> = ({
   pathways = false,
 }): React.ReactElement => {
   return (
-    <Link
-      to={pathways ? "/pathways-profile" : "/profile"}
-      className="ProfileLink"
-    >
+    <Link to="/profile" className="ProfileLink">
       <UserAvatar />
     </Link>
   );

@@ -86,7 +86,7 @@ const PagePractices: React.FC = () => {
               path={
                 isCoreView
                   ? CORE_PATHS.methodologyPractices
-                  : PATHWAYS_PATHS.methodologyPractices
+                  : PATHWAYS_PATHS.methodologyOperations
               }
             />
           </DetailsGroup>
@@ -103,7 +103,7 @@ const PagePractices: React.FC = () => {
             path={
               isCoreView
                 ? CORE_PATHS.methodologyPractices
-                : PATHWAYS_PATHS.methodologyPractices
+                : PATHWAYS_PATHS.methodologyOperations
             }
           />
         </DetailsGroup>

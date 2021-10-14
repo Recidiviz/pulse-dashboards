@@ -103,7 +103,7 @@ const withRouteSync = <Props extends RouteParams>(
         setSection(sectionId);
         setPage(pageId as PathwaysPage);
         // eslint-disable-next-line no-unused-expressions
-        viewId === PATHWAYS_VIEWS.practices || pageId === CORE_PAGES.practices
+        viewId === PATHWAYS_VIEWS.operations || pageId === CORE_PAGES.practices
           ? pagePracticesStore.setSelectedMetricId(query.selectedMetricId)
           : filtersStore.setFilters(cleanQuery);
       })

@@ -42,12 +42,11 @@ const MobileNavigation: React.FC<Props> = ({ title }) => {
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
-
   return isMobile ? (
     <>
       <Drawer isShowing={open} hide={() => setOpen(false)}>
         <ViewNavigation>
-          {currentView === PATHWAYS_VIEWS.pathways && <PageNavigation />}
+          {currentView === PATHWAYS_VIEWS.system && <PageNavigation />}
         </ViewNavigation>
       </Drawer>
       <div className="MobileNavigation">
@@ -56,13 +55,13 @@ const MobileNavigation: React.FC<Props> = ({ title }) => {
           onClick={() => setOpen(!open)}
         />
         <div className="MobileNavigation__title">{title}</div>
-        {currentView === "pathways" && (
-          <div className="MobileNavigation__pathways">
+        {currentView === PATHWAYS_VIEWS.system && (
+          <div className="MobileNavigation__system">
             <SectionNavigation />
           </div>
         )}
-        {currentView === "practices" && (
-          <div className="MobileNavigation__practices">
+        {currentView === PATHWAYS_VIEWS.operations && (
+          <div className="MobileNavigation__operations">
             <PracticesSummaryBreadcrumbs />
           </div>
         )}

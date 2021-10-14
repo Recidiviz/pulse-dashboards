@@ -30,7 +30,7 @@ import filterOptions from "../utils/filterOptions";
 import { PathwaysPage } from "../views";
 import withRouteSync from "../withRouteSync";
 
-const PagePathways: React.FC = () => {
+const PageSystem: React.FC = () => {
   const { currentTenantId, metricsStore, page } = useCoreStore();
   const pageContent = usePageContent(page as PathwaysPage);
 
@@ -69,4 +69,4 @@ const PagePathways: React.FC = () => {
   );
 };
 
-export default withRouteSync(observer(PagePathways));
+export default withRouteSync(observer(PageSystem));

@@ -43,20 +43,22 @@ const ViewNavigation: React.FC = ({ children }) => {
   if (!navigationLayout) return <div />;
 
   // Pathways is enabled if enabledPathwaysPages.length > 0
-  const enabledPathwaysPages = navigationLayout.pathways || [];
+  const enabledPathwaysPages = navigationLayout.system || [];
   // Practices is enabled if enabledPractices !== undefined
-  const enablePractices = navigationLayout.practices;
+  const enablePractices = navigationLayout.operations;
 
   const PathwaysLink = () => {
     return enabledPathwaysPages.length > 0 ? (
       <NavLink
         activeClassName="ViewNavigation__navlink--active"
         className="ViewNavigation__navlink"
-        to="/pathways"
+        to={`/${PATHWAYS_VIEWS.system}`}
         onClick={() => filtersStore.resetFilters()}
       >
         <PathwaysLogo className="ViewNavigation__icon" />
-        <div className="ViewNavigation__navlink-heading">Pathways</div>
+        <div className="ViewNavigation__navlink-heading">
+          System-Level Trends
+        </div>
       </NavLink>
     ) : null;
   };
@@ -66,26 +68,27 @@ const ViewNavigation: React.FC = ({ children }) => {
       <NavLink
         activeClassName="ViewNavigation__navlink--active"
         className="ViewNavigation__navlink"
-        to="/practices"
+        to={`/${PATHWAYS_VIEWS.operations}`}
         onClick={() => pagePracticesStore.resetCurrentEntityId()}
       >
         <PracticesLogo className="ViewNavigation__icon" />
-        <div className="ViewNavigation__navlink-heading">Practices</div>
+        <div className="ViewNavigation__navlink-heading">
+          Operational Metrics
+        </div>
       </NavLink>
     ) : null;
   };
 
   const MethodologyLink = () => {
     const methodologyView =
-      view === PATHWAYS_VIEWS.pathwaysProfile ||
-      view === PATHWAYS_VIEWS.methodology
-        ? PATHWAYS_VIEWS.practices
+      view === PATHWAYS_VIEWS.profile || view === PATHWAYS_VIEWS.methodology
+        ? PATHWAYS_VIEWS.operations
         : view;
     return (
       <NavLink
         className="ViewNavigation__navlink"
         to={{
-          pathname: `/pathways-methodology/${methodologyView}`,
+          pathname: `/${PATHWAYS_VIEWS.methodology}/${methodologyView}`,
           search: `?stateCode=${currentTenantId}`,
         }}
       >
@@ -99,7 +102,7 @@ const ViewNavigation: React.FC = ({ children }) => {
     <NavLink
       activeClassName="ViewNavigation__navlink--active"
       className="ViewNavigation__navlink"
-      to="/pathways-profile"
+      to={`${PATHWAYS_VIEWS.profile}`}
     >
       <ProfileLink pathways />
       <div className="ViewNavigation__navlink-heading">Profile</div>
@@ -123,19 +126,23 @@ const ViewNavigation: React.FC = ({ children }) => {
       <div className="ViewNavigation__tooltip-box">
         <PathwaysLink />
         <div className="ViewNavigation__tooltip">
-          <h5 className="ViewNavigation__tooltip-header">Pathways</h5>
+          <h5 className="ViewNavigation__tooltip-header">
+            System-Level Trends
+          </h5>
+          {/* prettier-ignore */}
           <div className="ViewNavigation__tooltip-body">
-            A real-time map of your system and how people are moving through it
+            A real-time map of the corrections system and how people are moving through it
           </div>
         </div>
       </div>
       <div className="ViewNavigation__tooltip-box">
         <PracticesLink />
         <div className="ViewNavigation__tooltip">
-          <h5 className="ViewNavigation__tooltip-header">Practices</h5>
+          <h5 className="ViewNavigation__tooltip-header">
+            Operational Metrics
+          </h5>
           <div className="ViewNavigation__tooltip-body">
-            A birds-eye view of staff- and region-level resources and
-            operational trends
+            A birds-eye view of staff- and region-level trends
           </div>
         </div>
       </div>

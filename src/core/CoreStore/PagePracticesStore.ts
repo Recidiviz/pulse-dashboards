@@ -310,7 +310,8 @@ export default class PagePracticesStore {
       ],
       chartTitle: `${this.rootStore.tenantStore.stateName} Practices`,
       shouldZipDownload: true,
-      methodologyContent: Object.values(methodology.pageCopy),
+      methodologyContent:
+        methodology?.pageCopy && Object.values(methodology.pageCopy),
       getTokenSilently: this.rootStore.userStore.getTokenSilently,
       filters: this.filtersText,
       lastUpdatedOn: this.lastUpdatedOn,

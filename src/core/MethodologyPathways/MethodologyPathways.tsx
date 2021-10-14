@@ -49,9 +49,9 @@ const MethodologyPathways: React.FC = () => {
   // manually override enabled Pages for Practices since it is a
   // static/custom methodology layout
   const enabledPages =
-    view === PATHWAYS_VIEWS.practices
-      ? ["practicesPercentMethodology", "practicesOverTimeMethodology"]
-      : navigationLayout.pathways;
+    view === PATHWAYS_VIEWS.system
+      ? navigationLayout.system
+      : ["practicesPercentMethodology", "practicesOverTimeMethodology"];
 
   configureAnchors({ offset: -75 });
 

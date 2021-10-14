@@ -26,10 +26,10 @@ export const CORE_VIEWS: Record<string, string> = {
 
 export type PathwaysView = keyof typeof PATHWAYS_VIEWS;
 export const PATHWAYS_VIEWS: Record<string, string> = {
-  pathways: "pathways",
-  practices: "practices",
-  methodology: "pathways-methodology",
-  pathwaysProfile: "pathways-profile",
+  system: "system",
+  operations: "operations",
+  methodology: "id-methodology",
+  profile: "profile",
 } as const;
 
 export const CORE_PATHS: Record<string, string> = {
@@ -45,11 +45,11 @@ export const CORE_PATHS: Record<string, string> = {
 };
 
 export const PATHWAYS_PATHS: Record<string, string> = {
-  pathways: "/pathways/:pageId/:sectionId?",
-  practices: "/practices/:entityId?",
-  methodology: "/pathways-methodology/:dashboard",
-  methodologyPathways: "/pathways-methodology/pathways",
-  methodologyPractices: "/pathways-methodology/practices",
+  system: "/system/:pageId/:sectionId?",
+  operations: "/operations/:entityId?",
+  methodology: "/id-methodology/:dashboard",
+  methodologySystem: "/id-methodology/system",
+  methodologyOperations: "/id-methodology/operations",
 };
 
 export type CorePage = keyof typeof CORE_PAGES;
@@ -134,7 +134,8 @@ const pageIdToHeading: Record<string, string> = {
   [PATHWAYS_PAGES.supervision]: "Supervision",
   [PATHWAYS_PAGES.supervisionToPrison]: "Supervision to Prison",
   [PATHWAYS_PAGES.supervisionToLiberty]: "Supervision to Liberty",
-  [PATHWAYS_VIEWS.pathways]: "Pathways",
+  [PATHWAYS_VIEWS.system]: "System-Level Trends",
+  [PATHWAYS_VIEWS.operations]: "Operational Metrics",
 };
 
 export function getPageHeadingFromId(pageId: string): string {

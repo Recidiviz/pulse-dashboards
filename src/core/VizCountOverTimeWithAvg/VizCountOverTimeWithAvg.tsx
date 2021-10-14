@@ -93,7 +93,7 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
       <div className="PopulationTimeSeriesChart__Header">
         <div className="PopulationTimeSeriesChart__Title">{chartTitle}</div>
         <PopulationTimeSeriesLegend
-          items={["Monthly count", "90-day average"]}
+          items={["Monthly count", "3-month rolling average"]}
         />
       </div>
       <ResponsiveOrdinalFrame

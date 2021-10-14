@@ -24,26 +24,24 @@ import { Link, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../components/StoreProvider";
 import useIsMobile from "../hooks/useIsMobile";
+import { CORE_TENANTS } from "../RootStore/TenantStore/coreTenants";
+import { PATHWAYS_TENANTS } from "../RootStore/TenantStore/pathwaysTenants";
 import { useCoreStore } from "./CoreStoreProvider";
 import { NavigationSection } from "./types/navigation";
-import { getPageHeadingFromId, PATHWAYS_VIEWS } from "./views";
+import { getPageHeadingFromId } from "./views";
 import withRouteSync from "./withRouteSync";
 
 const PageNavigation: React.FC = () => {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   const { page } = useCoreStore();
-  const { userStore } = useRootStore();
+  const { userStore, currentTenantId } = useRootStore();
   const currentView = pathname.split("/")[1];
   const navigationLayout = userStore.userAllowedNavigation;
   const pageOptions = navigationLayout[currentView] ?? [];
 
-  const isCoreView =
-    currentView &&
-    !Object.values(PATHWAYS_VIEWS).includes(currentView.toLowerCase());
-  const isPathwaysView =
-    currentView &&
-    Object.values(PATHWAYS_VIEWS).includes(currentView.toLowerCase());
+  const isCoreView = CORE_TENANTS.includes(currentTenantId);
+  const isPathwaysView = PATHWAYS_TENANTS.includes(currentTenantId);
 
   return (
     <ul

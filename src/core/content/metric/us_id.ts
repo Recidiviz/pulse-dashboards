@@ -34,12 +34,12 @@ const content: StateSpecificMetricCopy = {
   supervisionToPrisonOverTime: {
     title: "Admissions from Supervision to Prison",
     methodology:
-      "- **Number of admissions:** Each data point represents the total number of admissions from supervision to prison over the course of the month. For example, hovering over the “November 2020” bar in the chart will show the total number of admissions between November 1 and November 30, 2020. \n- **90-day rolling average:** Each data point on the solid line represents the average number of admissions for each of the past 90 days.",
+      "- **Number of admissions:** Each data point represents the total number of admissions from supervision to prison over the course of the month. For example, hovering over the “November 2020” bar in the chart will show the total number of admissions between November 1 and November 30, 2020. \n- **3-month rolling average:** Each data point on the solid line represents the average number of monthly admissions from supervision to prison over the past three months. For example, if January, February, and March had 50, 150, and 325 admissions, respectively, the March rolling average would be 175 (the average of the current month and the preceding 2 months).",
   },
   supervisionToLibertyOverTime: {
     title: "Releases from Supervision to Liberty",
     methodology:
-      "- **Number of releases:** Each data point represents the total number of releases from supervision to liberty over the course of the month. For example, hovering over the “November 2020” bar in the chart will show the total number of releases between November 1 and November 30, 2020. \n- **90-day rolling average:** Each data point on the solid line represents the average number of releases for each of the past 90 days.",
+      "- **Number of releases:** Each data point represents the total number of releases from supervision to liberty over the course of the month. For example, hovering over the “November 2020” bar in the chart will show the total number of releases between November 1 and November 30, 2020. \n- **3-month rolling average:** Each data point on the solid line represents the average number of monthly admissions from supervision to prison over the past three months. For example, if January, February, and March had 50, 150, and 325 admissions, respectively, the March rolling average would be 175 (the average of the current month and the preceding 2 months).",
   },
 };
 

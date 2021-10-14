@@ -24,9 +24,9 @@ const CASE_TRIAGE_METHODOLOGY_URL =
  * All methodology attribute blocks are in Markdown
  */
 export const usIdMethodology: ViewMethodology = {
-  practices: {
-    title: "Idaho Practices",
-    description: `The “Practices” page provides a snapshot of key operational metrics to proactively identify potential resource constraints and focus attention on successes and areas for improvement. `,
+  operations: {
+    title: "Operational Metrics",
+    description: `The Operational Metrics page provides a bird's eye view of staff- and region-level trends to help practively identify resource constraints as well as focus attention on successes and areas for improvement.`,
     pageCopy: {
       practicesPercentMethodology: {
         title: "Percentage Calculations",
@@ -56,10 +56,10 @@ export const usIdMethodology: ViewMethodology = {
     },
     metricCopy: {},
   },
-  pathways: {
-    title: "Pathways",
+  system: {
+    title: "System-Level Trends",
     // TODO figure out a way to get this into the sync content
-    description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
+    description: `The System-Level Trends page provides a real-time map of the corrections system and helps identify patterns of success and failure among specific cohorts of people.`,
     get pageCopy() {
       return getPageCopy("US_ID");
     },

@@ -35,9 +35,10 @@ const PageMethodology: React.FC = () => {
   }
 
   const methodologies: { [k: string]: React.FC } = {
-    practices: MethodologyPathways,
+    operations: MethodologyPathways,
     projections: MethodologyProjections,
-    pathways: MethodologyPathways,
+    system: MethodologyPathways,
+    practices: MethodologyPathways,
   };
 
   const Methodology = methodologies[dashboard];

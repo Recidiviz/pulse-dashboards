@@ -121,7 +121,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
   get methodology(): (PageContent | MetricContent)[] {
     if (!this.rootStore?.currentTenantId) return [];
     const methodology = getMethodologyCopy(this.rootStore.currentTenantId)
-      .pathways;
+      .system;
     if (!methodology?.metricCopy || !methodology?.pageCopy) return [];
 
     return [

@@ -30,7 +30,6 @@ import { QueryParamProvider } from "use-query-params";
 
 import AuthWall from "./AuthWall";
 import NotFound from "./components/NotFound";
-import Profile from "./components/Profile";
 import SentryErrorBoundary from "./components/SentryErrorBoundary";
 import StoreProvider from "./components/StoreProvider";
 import VerificationNeeded from "./components/VerificationNeeded";
@@ -39,9 +38,9 @@ import CoreLayout from "./core/CoreLayout";
 import UsNdFacilitiesExplore from "./core/facilities/Explore";
 import CoreGoalsView from "./core/goals/CoreGoalsView";
 import PageMethodology from "./core/PageMethodology";
-import PagePathways from "./core/PagePathways";
 import PagePractices from "./core/PagePractices";
 import PageProjections from "./core/PageProjections";
+import PageSystem from "./core/PageSystem";
 import PathwaysLayout from "./core/PathwaysLayout";
 import PathwaysProfile from "./core/PathwaysProfile";
 import {
@@ -86,20 +85,20 @@ const App = () => (
               <LanternLayout tenantIds={LANTERN_TENANTS} views={Object.values(LANTERN_VIEWS).concat(SHARED_VIEWS)}>
                 <Switch>
                   <Route path="/community/revocations" component={Revocations} />
-                  <Route path="/profile" component={Profile} />
+                  <Route path="/profile" component={PathwaysProfile} />
                   <Redirect exact from="/" to="/community/revocations" />
                   <Redirect from="/revocations" to="/community/revocations" />
                   <NotFound />
                 </Switch>
               </LanternLayout>
 
-              <PathwaysLayout tenantIds={PATHWAYS_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat("", "pathways-profile")}>
+              <PathwaysLayout tenantIds={PATHWAYS_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat("", "profile")}>
                 <Switch>
-                  <ProtectedRoute path={PATHWAYS_PATHS.pathways} component={PagePathways} />
-                  <ProtectedRoute path={PATHWAYS_PATHS.practices} component={PagePractices} />
+                  <ProtectedRoute path={PATHWAYS_PATHS.system} component={PageSystem} />
+                  <ProtectedRoute path={PATHWAYS_PATHS.operations} component={PagePractices} />
                   <ProtectedRoute path={PATHWAYS_PATHS.methodology} component={PageMethodology} />
-                  <Route path="/pathways-profile" component={PathwaysProfile} />
-                  <Redirect from="/pathways" to="/pathways/prison" />
+                  <Route path="/profile" component={PathwaysProfile} />
+                  <Redirect from="/system" to="/system/prison" />
                   <RedirectHome />
                   <NotFound />
                 </Switch>
@@ -114,7 +113,7 @@ const App = () => (
                   <ProtectedRoute path={CORE_PATHS.facilitiesProjections} component={PageProjections} />
                   <ProtectedRoute path={CORE_PATHS.communityPractices} component={PagePractices}/>
                   <ProtectedRoute path={CORE_PATHS.methodology} component={PageMethodology} />
-                  <Route path="/profile" component={Profile} />
+                  <Route path="/profile" component={PathwaysProfile} />
                   <RedirectHome />
                   <Redirect from="/snapshots" to="/goals" />
                   <Redirect from="/revocations" to="/goals" />

@@ -26,11 +26,11 @@ export type Navigation = {
   community?: string[];
   facilities?: string[];
   methodology?: string[];
-  practices?: string[];
-  pathways?: string[];
+  operations?: string[];
+  system?: string[];
   prison?: PathwaysSection[];
   supervision?: PathwaysSection[];
   supervisionToPrison?: PathwaysSection[];
   supervisionToLiberty?: PathwaysSection[];
-  "pathways-methodology"?: string[];
+  "id-methodology"?: string[];
 };

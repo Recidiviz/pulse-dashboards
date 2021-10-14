@@ -30,9 +30,9 @@ export const usNdMethodology: ViewMethodology = {
                       \n- **Overall:** The sum of all the counts below.
                       \n- **Timely discharge:** Number of people on supervision who are not past their projected supervision completion date.
                       \n- **Timely contacts:** Sum of the following:
-                          - Number of people on Minimum Supervision who have had a face-to-face contact within the last 3 calendar months and a home visit within 90 days of their supervision start.</li>
-                          - Number of people on Medium Supervision who have had a face-to-face contact within the last 2 calendar months and a home visit within 90 days of their supervision start, and a home visit within the last calendar year.</li>
-                          - Number of people on Maximum Supervision who have had a face-to-face contact within the last calendar month, a home visit within 90 days of their supervision start, and a home visit within the last calendar year.</li>
+                          - Number of people on Minimum Supervision who have had a face-to-face contact within the last 3 calendar months and a home visit within 90 days of their supervision start.
+                          - Number of people on Medium Supervision who have had a face-to-face contact within the last 2 calendar months and a home visit within 90 days of their supervision start, and a home visit within the last calendar year.
+                          - Number of people on Maximum Supervision who have had a face-to-face contact within the last calendar month, a home visit within 90 days of their supervision start, and a home visit within the last calendar year.
                       \n- **Timely risk assessments:** Number of people on supervision who have had a risk assessment completed within the last 212 days, or had an assessment within the first 30 days of supervision, if they have been on supervision for fewer than 212 days. This excludes all people on supervision for NC, IC-OUT, and diversion.
                       \n\nThe denominator of each rate calculation is all people on supervision in a given day for a given region. For example, the denominators of the percentages for Oakes Office represent the total number of people on supervision in Oakes.`,
       },

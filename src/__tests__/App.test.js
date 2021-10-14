@@ -28,8 +28,8 @@ import UsNDCommunityExplore from "../core/community/Explore";
 import CoreLayout from "../core/CoreLayout";
 import MethodologyPathways from "../core/MethodologyPathways";
 import MethodologyProjections from "../core/MethodologyProjections/Methodology";
-import PagePathways from "../core/PagePathways";
 import PagePractices from "../core/PagePractices";
+import PageSystem from "../core/PageSystem";
 import PathwaysLayout from "../core/PathwaysLayout";
 import LanternLayout from "../lantern/LanternLayout";
 import Revocations from "../lantern/Revocations";
@@ -55,7 +55,7 @@ jest.mock("../components/VerificationNeeded");
 jest.mock("../core/MethodologyProjections/Methodology");
 jest.mock("../core/MethodologyPathways");
 jest.mock("../core/PagePractices");
-jest.mock("../core/PagePathways");
+jest.mock("../core/PageSystem");
 
 describe("App tests", () => {
   const metadataField = `${METADATA_NAMESPACE}app_metadata`;
@@ -76,7 +76,7 @@ describe("App tests", () => {
   const CoreLayoutMock = CoreLayout.type;
   const PathwaysLayoutMock = PathwaysLayout.type;
   const MethodologyPathwaysMock = MethodologyPathways.type;
-  const PagePathwaysMock = PagePathways.type;
+  const PageSystemMock = PageSystem.type;
   const PagePracticesMock = PagePractices.type;
   let userStore = {};
 
@@ -88,7 +88,7 @@ describe("App tests", () => {
   UsNDCommunityExplore.mockReturnValue(
     mockWithTestId(mockNDCommunityExploreId)
   );
-  PagePathwaysMock.mockReturnValue(mockWithTestId(mockPathwaysPrisonId));
+  PageSystemMock.mockReturnValue(mockWithTestId(mockPathwaysPrisonId));
   PagePracticesMock.mockReturnValue(mockWithTestId(mockCommunityPracticesId));
   NotFound.mockReturnValue(mockWithTestId(mockNotFoundId));
   Loading.mockReturnValue(mockWithTestId(mockLoadingTestId));
@@ -109,8 +109,8 @@ describe("App tests", () => {
       userAllowedNavigation: {
         community: ["explore", "practices", "projections"],
         methodology: ["practices", "projections"],
-        pathways: ["prison"],
-        "pathways-methodology": ["practices", "pathways"],
+        system: ["prison"],
+        "id-methodology": ["operations", "system"],
       },
     };
   });
@@ -188,8 +188,8 @@ describe("App tests", () => {
   });
 
   describe("Pathways layout", () => {
-    it("should render Pathways Layout for a ID user with pathways prison page", () => {
-      window.history.pushState({}, "", "/pathways/prison");
+    it("should render Pathways Layout for a ID user with system prison page", () => {
+      window.history.pushState({}, "", "/system/prison");
       const user = { [metadataField]: { state_code: US_ID } };
 
       useRootStore.mockReturnValue({
@@ -285,9 +285,9 @@ describe("App tests", () => {
     });
   });
 
-  describe("practices-methodology page", () => {
-    it("should render the methology-pathways page for Pathways", () => {
-      window.history.pushState({}, "", "/pathways-methodology/pathways");
+  describe("id-methodology page", () => {
+    it("should render the system methodology page for System", () => {
+      window.history.pushState({}, "", "/id-methodology/system");
       const user = { [metadataField]: { state_code: US_ID } };
 
       useRootStore.mockReturnValue({
@@ -303,8 +303,8 @@ describe("App tests", () => {
       expect(getByTestId(mockMethodologyPathwaysId)).toBeInTheDocument();
     });
 
-    it("should render the methology-pathways page for Practices", () => {
-      window.history.pushState({}, "", "/pathways-methodology/practices");
+    it("should render the system methodology page for Operations", () => {
+      window.history.pushState({}, "", "/id-methodology/operations");
       const user = { [metadataField]: { state_code: US_ID } };
 
       useRootStore.mockReturnValue({

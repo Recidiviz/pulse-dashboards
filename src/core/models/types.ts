@@ -107,13 +107,19 @@ export interface MethodologyContent {
 }
 
 export type ViewMethodology = {
-  practices: {
+  practices?: {
     title: string;
     description: string;
     pageCopy: Record<string, MethodologyContent>;
     metricCopy: Record<string, MethodologyContent>;
   };
-  pathways?: {
+  operations?: {
+    title: string;
+    description: string;
+    pageCopy: Record<string, MethodologyContent>;
+    metricCopy: Record<string, MethodologyContent>;
+  };
+  system?: {
     title: string;
     description: string;
     pageCopy: PageCopy;

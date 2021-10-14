@@ -32,7 +32,7 @@ jest.mock("react-router-dom", () => ({
   // @ts-ignore
   ...jest.requireActual("react-router-dom"),
   useLocation: jest.fn().mockReturnValue({
-    pathname: "/pathways-methodology/pathways",
+    pathname: "/id-methodology/system",
   }),
 }));
 jest.mock("../../../components/StoreProvider");
@@ -47,7 +47,7 @@ jest.mock("../../MobileNavigation", () => {
 describe("MethodologyPathways", () => {
   describe("when the tenant is US_ID", () => {
     const allowedNavigation = {
-      pathways: ["prison", "supervision"],
+      system: ["prison", "supervision"],
       prison: ["countOverTime"],
       supervision: [],
       supervisionToPrison: ["countOverTime"],
@@ -65,8 +65,8 @@ describe("MethodologyPathways", () => {
 
     describe("TOC links", () => {
       // @ts-ignore
-      const { pageCopy } = getMethodologyCopy("US_ID").pathways;
-      allowedNavigation.pathways.forEach((pageId: string) => {
+      const { pageCopy } = getMethodologyCopy("US_ID").system;
+      allowedNavigation.system.forEach((pageId: string) => {
         it(`renders the TOC link for ${pageId}`, () => {
           const { getByRole } = render(<MethodologyPathways />);
           expect(getByRole("link", { name: pageCopy[pageId].title }));
@@ -74,7 +74,7 @@ describe("MethodologyPathways", () => {
       });
 
       const notAllowedNavigation = Object.keys(pageCopy).filter(
-        (page) => !allowedNavigation.pathways.includes(page)
+        (page) => !allowedNavigation.system.includes(page)
       );
       notAllowedNavigation.forEach((pageId: string) => {
         it(`does not render the TOC link for ${pageId}`, () => {
@@ -88,8 +88,8 @@ describe("MethodologyPathways", () => {
 
     describe("Methodology blocks", () => {
       // @ts-ignore
-      const { metricCopy, pageCopy } = getMethodologyCopy("US_ID").pathways;
-      allowedNavigation.pathways.forEach((pageId: string) => {
+      const { metricCopy, pageCopy } = getMethodologyCopy("US_ID").system;
+      allowedNavigation.system.forEach((pageId: string) => {
         it(`renders the methodology block for page ${pageId}`, () => {
           const { getByRole } = render(<MethodologyPathways />);
           expect(getByRole("heading", { name: pageCopy[pageId].title }));
@@ -134,7 +134,7 @@ describe("MethodologyPathways", () => {
       });
 
       const notAllowedPages = Object.keys(pageCopy).filter(
-        (page) => !allowedNavigation.pathways.includes(page)
+        (page) => !allowedNavigation.system.includes(page)
       );
       notAllowedPages.forEach((pageId: string) => {
         it(`does not render the methodology block for page ${pageId}`, () => {

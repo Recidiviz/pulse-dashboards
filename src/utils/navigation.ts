@@ -65,10 +65,10 @@ export function getAllowedNavigation(
         }
         if (Object.keys(PATHWAYS_VIEWS).includes(view)) {
           // eslint-disable-next-line no-unused-expressions
-          acc["pathways-methodology"]?.push(view);
+          acc["id-methodology"]?.push(view);
         }
-        if (view === PATHWAYS_VIEWS.practices) {
-          acc[PATHWAYS_VIEWS.practices as NavigationSection] = [];
+        if (view === PATHWAYS_VIEWS.operations) {
+          acc[PATHWAYS_VIEWS.operations as NavigationSection] = [];
         }
       }
       return acc;
@@ -77,12 +77,12 @@ export function getAllowedNavigation(
       community: [],
       facilities: [],
       methodology: [],
-      pathways: [],
+      system: [],
       prison: [],
       supervision: [],
       supervisionToLiberty: [],
       supervisionToPrison: [],
-      "pathways-methodology": [],
+      "id-methodology": [],
     } as Navigation
   );
   const allowedNavigation = Object.fromEntries(
@@ -106,10 +106,10 @@ export function getAllowedNavigation(
   if (allowedNavigation.methodology?.length === 0) {
     delete allowedNavigation.methodology;
   }
-  allowedNavigation["pathways-methodology"] = uniq(
-    userAllowedNavigation["pathways-methodology"]
-  );
 
+  allowedNavigation["id-methodology"] = uniq(
+    userAllowedNavigation["id-methodology"]
+  );
   return allowedNavigation;
 }
 

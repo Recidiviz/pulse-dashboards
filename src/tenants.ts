@@ -52,8 +52,8 @@ const TENANTS: Tenants = {
     enableUserRestrictions: false,
     enablePracticesCaseloadButton: true,
     navigation: {
-      practices: [],
-      pathways: [
+      operations: [],
+      system: [
         PATHWAYS_PAGES.prison,
         PATHWAYS_PAGES.supervision,
         PATHWAYS_PAGES.supervisionToPrison,
@@ -63,10 +63,10 @@ const TENANTS: Tenants = {
       supervision: [PATHWAYS_SECTIONS.countOverTime],
       supervisionToPrison: [PATHWAYS_SECTIONS.countOverTime],
       supervisionToLiberty: [PATHWAYS_SECTIONS.countOverTime],
-      "pathways-methodology": ["pathways", "practices"],
+      "id-methodology": ["system", "operations"],
     },
     pagesWithRestrictions: [
-      "practices",
+      "operations",
       "prison",
       "supervision",
       "supervisionToPrison",
@@ -106,9 +106,9 @@ const TENANTS: Tenants = {
     enableUserRestrictions: false,
     enablePracticesCaseloadButton: false,
     navigation: {
-      pathways: [PATHWAYS_PAGES.prison],
+      system: [PATHWAYS_PAGES.prison],
       prison: [PATHWAYS_SECTIONS.countOverTime],
-      "pathways-methodology": ["pathways"],
+      "id-methodology": ["pathways"],
     },
     pagesWithRestrictions: ["prison"],
   },
