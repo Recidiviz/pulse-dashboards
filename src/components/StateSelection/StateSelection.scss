@@ -19,14 +19,23 @@
 
 .StateSelection {
   margin-bottom: 2rem;
+  width: 100%;
 
   &__heading {
     @include font-ui-sans-16;
     color: $slate-85;
     margin-bottom: 1rem;
   }
+
+  &__select-item-container {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 0 30px;
+  }
+
   &__select-item {
-    width: 100%;
+    width: 32%;
+    min-width: 450px;
     display: flex;
     align-items: center;
     font: $font-ui-sans-24;

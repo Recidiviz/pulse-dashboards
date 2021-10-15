@@ -47,7 +47,7 @@ const PageNavigation: React.FC = () => {
     <ul
       className={cx("PageNavigation", {
         "PageNavigation--pathways": isPathwaysView && !isMobile,
-        "PageNavigation--core": isCoreView,
+        "PageNavigation--core": isCoreView && !isMobile,
         "PageNavigation--mobile": isMobile && isPathwaysView,
       })}
     >

@@ -67,4 +67,8 @@
     max-width: $core-max-view-width;
     width: 100%;
   }
+
+  & ~ .Footer {
+    display: none;
+  }
 }

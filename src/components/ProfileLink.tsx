@@ -18,18 +18,12 @@
  *
  */
 
-import React, { FC } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 import UserAvatar from "./UserAvatar";
 
-type ProfileLinkProps = {
-  pathways?: boolean;
-};
-
-const ProfileLink: FC<ProfileLinkProps> = ({
-  pathways = false,
-}): React.ReactElement => {
+const ProfileLink: React.FC = () => {
   return (
     <Link to="/profile" className="ProfileLink">
       <UserAvatar />

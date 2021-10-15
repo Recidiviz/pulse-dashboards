@@ -17,9 +17,10 @@
 @import "../core/CoreConstants";
 @import "../assets/styles/spec/settings/baseColors.scss";
 
-.Lantern {
+.LanternLayout {
   .IE11Banner {
     padding-top: $header-height;
+    padding-bottom: 0;
 
     &__container {
       padding-left: 2rem;

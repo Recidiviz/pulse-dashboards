@@ -104,7 +104,7 @@ const ViewNavigation: React.FC = ({ children }) => {
       className="ViewNavigation__navlink"
       to={`${PATHWAYS_VIEWS.profile}`}
     >
-      <ProfileLink pathways />
+      <ProfileLink />
       <div className="ViewNavigation__navlink-heading">Profile</div>
     </NavLink>
   );

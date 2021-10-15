@@ -16,12 +16,11 @@
 // =============================================================================
 @import "../CoreConstants.scss";
 
-.PathwaysProfile {
-  max-width: 41rem;
+.Profile {
   min-height: 90vh;
   display: flex;
   flex-direction: column;
-  
+
   @media screen and (max-width: $core-breakpoint-md) {
     padding-top: 2rem;
     max-width: 100%;
@@ -42,14 +41,18 @@
     padding-bottom: 2rem;
     border-bottom: 1px solid $slate-20;
     margin-bottom: 2rem;
+    width: 100%
   }
-  &__log-out-button {
-    width: 10rem;
-    font: $font-ui-sans-16;
-    color: $white;
+  &__button {
+    min-width: 10rem !important;
+    display: initial !important;
+    font: $font-ui-sans-16 !important;
+    @include font-ui-sans-16;
+    color: $white !important;
     background: $signal-links;
-    padding: 1rem 0;
+    padding: 1rem 2rem !important;
     margin-bottom: 3rem;
+    margin-right: 1rem;
     border-radius: 999px;
     border: 0;
     outline: 0;
@@ -61,6 +64,34 @@
     a {
       margin: 0 0.5rem;
       color: $signal-links;
+    }
+  }
+}
+
+.LanternLayout {
+  .Profile {
+    &__title {
+      padding-top: 4.5rem;
+      color: #002c42;
+    }
+    &__button {
+      background: #265880;
+      &:hover {
+        background: #002c42;
+      }
+    }
+    &__footer {
+      a {
+        color: #265880;
+      }
+    }
+  }
+}
+
+.CoreLayout {
+  .Profile {
+    &__title {
+      padding-top: 4.5rem;
     }
   }
 }

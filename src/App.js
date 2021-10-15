@@ -42,7 +42,7 @@ import PagePractices from "./core/PagePractices";
 import PageProjections from "./core/PageProjections";
 import PageSystem from "./core/PageSystem";
 import PathwaysLayout from "./core/PathwaysLayout";
-import PathwaysProfile from "./core/PathwaysProfile";
+import Profile from "./core/Profile";
 import {
   CORE_PATHS,
   CORE_VIEWS,
@@ -85,19 +85,19 @@ const App = () => (
               <LanternLayout tenantIds={LANTERN_TENANTS} views={Object.values(LANTERN_VIEWS).concat(SHARED_VIEWS)}>
                 <Switch>
                   <Route path="/community/revocations" component={Revocations} />
-                  <Route path="/profile" component={PathwaysProfile} />
+                  <Route path="/profile" component={Profile} />
                   <Redirect exact from="/" to="/community/revocations" />
                   <Redirect from="/revocations" to="/community/revocations" />
                   <NotFound />
                 </Switch>
               </LanternLayout>
 
-              <PathwaysLayout tenantIds={PATHWAYS_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat("", "profile")}>
+              <PathwaysLayout tenantIds={PATHWAYS_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat(SHARED_VIEWS)}>
                 <Switch>
                   <ProtectedRoute path={PATHWAYS_PATHS.system} component={PageSystem} />
                   <ProtectedRoute path={PATHWAYS_PATHS.operations} component={PagePractices} />
                   <ProtectedRoute path={PATHWAYS_PATHS.methodology} component={PageMethodology} />
-                  <Route path="/profile" component={PathwaysProfile} />
+                  <Route path="/profile" component={Profile} />
                   <Redirect from="/system" to="/system/prison" />
                   <RedirectHome />
                   <NotFound />
@@ -113,7 +113,7 @@ const App = () => (
                   <ProtectedRoute path={CORE_PATHS.facilitiesProjections} component={PageProjections} />
                   <ProtectedRoute path={CORE_PATHS.communityPractices} component={PagePractices}/>
                   <ProtectedRoute path={CORE_PATHS.methodology} component={PageMethodology} />
-                  <Route path="/profile" component={PathwaysProfile} />
+                  <Route path="/profile" component={Profile} />
                   <RedirectHome />
                   <Redirect from="/snapshots" to="/goals" />
                   <Redirect from="/revocations" to="/goals" />
