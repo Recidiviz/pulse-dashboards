@@ -92,6 +92,18 @@ $font-article-serif-56: 400 3.5rem/4.5rem $serif;
   font: $font-ui-serif-34;
   letter-spacing: -0.04em;
 }
+@mixin font-article-serif-24 {
+  font: $font-article-serif-24;
+  letter-spacing: -0.04em;
+}
+@mixin font-article-serif-34 {
+  font: $font-article-serif-34;
+  letter-spacing: -0.04em;
+}
+@mixin font-article-serif-56 {
+  font: $font-article-serif-56;
+  letter-spacing: -0.04em;
+}
 
 :export {
   crimson: $crimson;

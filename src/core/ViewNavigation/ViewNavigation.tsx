@@ -102,7 +102,7 @@ const ViewNavigation: React.FC = ({ children }) => {
     <NavLink
       activeClassName="ViewNavigation__navlink--active"
       className="ViewNavigation__navlink"
-      to={`${PATHWAYS_VIEWS.profile}`}
+      to={`/${PATHWAYS_VIEWS.profile}`}
     >
       <ProfileLink />
       <div className="ViewNavigation__navlink-heading">Profile</div>

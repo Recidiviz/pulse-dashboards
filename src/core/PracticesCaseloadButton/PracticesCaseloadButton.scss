@@ -21,7 +21,7 @@
   
   &__button { 
     color: $signal-links;
-    font: $font-ui-sans-16;
+    @include font-ui-sans-16;
     padding-top: 38px;
 
     &:hover {

@@ -53,7 +53,7 @@
   }
 
   &__min-max {
-    font: $font-ui-sans-14;
+    @include font-ui-sans-14;
     color: $slate-80;
     white-space: nowrap;
 

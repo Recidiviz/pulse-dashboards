@@ -62,6 +62,6 @@
   }
 
   &__Value {
-    font: $font-ui-sans-16;
+    @include font-ui-sans-16;
   }
 }

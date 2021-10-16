@@ -172,7 +172,7 @@
       }
       .dropdown-item {
         color: $slate-80;
-        font: $font-ui-sans-14;
+        @include font-ui-sans-14;
       }
     }
   }

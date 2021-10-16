@@ -71,7 +71,7 @@ $border-styles: 1px solid $slate-20;
     /* Top header row */
     & > :first-child {
       color: $slate-80;
-      font: $font-ui-sans-16;
+      @include font-ui-sans-16;
 
       & > th {
         padding-top: 2rem;
@@ -91,7 +91,7 @@ $border-styles: 1px solid $slate-20;
     /* Sortable header row */
     & > :last-child {
       color: $pine-3;
-      font: $font-ui-sans-14;
+      @include font-ui-sans-14;
 
       /* All headers except Entity */
       & > th:not(:first-child) {
@@ -141,7 +141,7 @@ $border-styles: 1px solid $slate-20;
   &__row--value {
     border-top: $border-styles;
     color: $pine-3;
-    font: $font-ui-sans-14;
+    @include font-ui-sans-14;
 
     /* All cells except entity */
     td:not(:first-child) {
@@ -168,7 +168,7 @@ $border-styles: 1px solid $slate-20;
   /* Entity links */
   &__link {
     color: $pine-3;
-    font: $font-ui-sans-14;
+    @include font-ui-sans-14;
     border: 0;
     background-color: transparent;
     text-align: left;
@@ -220,7 +220,7 @@ $border-styles: 1px solid $slate-20;
     display: flex;
     align-items: center;
     justify-content: center;
-    font: $font-ui-sans-16;
+    @include font-ui-sans-16;
   }
 
   &__sort {

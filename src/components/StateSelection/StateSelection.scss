@@ -38,7 +38,7 @@
     min-width: 450px;
     display: flex;
     align-items: center;
-    font: $font-ui-sans-24;
+    @include font-ui-sans-24;
     color: $pine-1;
     background: $white;
     box-shadow: $inset-shadow-20;
@@ -63,7 +63,7 @@
 
       &::after {
         content: "Currently viewing";
-        font: $font-ui-sans-14;
+        @include font-ui-sans-14;
         color: $slate-80;
         margin-left: auto;
       }

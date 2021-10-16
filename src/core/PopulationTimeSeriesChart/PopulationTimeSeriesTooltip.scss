@@ -4,7 +4,7 @@
 .PopulationTimeseriesTooltip {
   @include chart-tooltip;
   &__value {
-    font: $font-ui-sans-16;
+    @include font-ui-sans-16;
   }
   &__date,
   &__bottom {

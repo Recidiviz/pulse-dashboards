@@ -21,7 +21,7 @@ import { Link } from "react-router-dom";
 
 import { convertToSlug } from "../../utils/navigation";
 import { useCoreStore } from "../CoreStoreProvider";
-import { PATHWAYS_VIEWS } from "../views";
+import { PATHWAYS_PATHS } from "../views";
 
 type Props = {
   note: string;
@@ -51,7 +51,7 @@ const ChartNote: React.FC<Props> = ({
       <Link
         className="ChartNote__link"
         to={{
-          pathname: `/${PATHWAYS_VIEWS.methodology}/pathways`,
+          pathname: `${PATHWAYS_PATHS.methodologySystem}`,
           hash: convertToSlug(chartTitle || ""),
           search: `?stateCode=${currentTenantId}`,
         }}

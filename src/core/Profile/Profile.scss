@@ -31,7 +31,7 @@
     margin-bottom: 1rem;
 
     @media screen and (max-width: $core-breakpoint-md) {
-      font: $font-ui-serif-24;
+      @include font-ui-serif-24;
     }
   }
   &__subtitle {
@@ -47,7 +47,6 @@
     min-width: 10rem !important;
     display: initial !important;
     font: $font-ui-sans-16 !important;
-    @include font-ui-sans-16;
     color: $white !important;
     background: $signal-links;
     padding: 1rem 2rem !important;

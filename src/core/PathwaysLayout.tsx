@@ -17,8 +17,10 @@
 
 import "./PathwaysLayout.scss";
 
+import cn from "classnames";
 import { observer } from "mobx-react-lite";
 import React from "react";
+import { useLocation } from "react-router-dom";
 
 import IE11Banner from "../components/IE11Banner";
 import useIntercom from "../hooks/useIntercom";
@@ -27,6 +29,7 @@ import CoreStoreProvider from "./CoreStoreProvider";
 import ErrorBoundary from "./ErrorBoundary";
 import PathwaysNavigation from "./PathwaysNavigation";
 import ViewNavigation from "./ViewNavigation";
+import { PATHWAYS_VIEWS } from "./views";
 
 interface Props {
   children: React.ReactElement;
@@ -35,11 +38,18 @@ interface Props {
 const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
   useIntercom();
   const isMobile = useIsMobile();
+  const { pathname } = useLocation();
+  const currentView = pathname.split("/")[1];
 
   return (
     <CoreStoreProvider>
       <ErrorBoundary>
-        <div id="app" className="PathwaysLayout">
+        <div
+          id="app"
+          className={cn("PathwaysLayout", {
+            Operations: currentView === PATHWAYS_VIEWS.operations && !isMobile,
+          })}
+        >
           {!isMobile && <ViewNavigation />}
           <div className="PathwaysLayout__main">
             <div className="PathwaysLayout__header">

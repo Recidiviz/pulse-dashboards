@@ -52,7 +52,7 @@
       }
       &-heading {
         display: block;
-        font: $font-ui-sans-24;
+        @include font-ui-sans-24;
         color: $white;
         opacity: 0.6;
         margin-left: 1.5rem;

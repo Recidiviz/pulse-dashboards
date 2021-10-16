@@ -17,7 +17,7 @@
 
   &__Title {
     color: $pine-1;
-    font: $font-ui-sans-16;
+    @include font-ui-sans-16;
   }
 
   &__Point {

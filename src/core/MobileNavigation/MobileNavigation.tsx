@@ -38,7 +38,6 @@ const MobileNavigation: React.FC<Props> = ({ title }) => {
   const { pathname } = useLocation();
   const currentView = pathname.split("/")[1].toLowerCase();
   const [open, setOpen] = useState(false);
-
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
@@ -46,8 +45,7 @@ const MobileNavigation: React.FC<Props> = ({ title }) => {
     <>
       <Drawer isShowing={open} hide={() => setOpen(false)}>
         <ViewNavigation>
-          {currentView !== PATHWAYS_VIEWS.system &&
-            currentView !== PATHWAYS_VIEWS.profile && <PageNavigation />}
+          {currentView === PATHWAYS_VIEWS.system && <PageNavigation />}
         </ViewNavigation>
       </Drawer>
       <div className="MobileNavigation">

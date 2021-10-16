@@ -39,7 +39,6 @@ const PageNavigation: React.FC = () => {
   const currentView = pathname.split("/")[1];
   const navigationLayout = userStore.userAllowedNavigation;
   const pageOptions = navigationLayout[currentView] ?? [];
-
   const isCoreView = CORE_TENANTS.includes(currentTenantId);
   const isPathwaysView = PATHWAYS_TENANTS.includes(currentTenantId);
 
@@ -47,7 +46,7 @@ const PageNavigation: React.FC = () => {
     <ul
       className={cx("PageNavigation", {
         "PageNavigation--pathways": isPathwaysView && !isMobile,
-        "PageNavigation--core": isCoreView && !isMobile,
+        "PageNavigation--core": isCoreView,
         "PageNavigation--mobile": isMobile && isPathwaysView,
       })}
     >

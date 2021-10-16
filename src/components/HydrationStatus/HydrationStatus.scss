@@ -59,7 +59,7 @@
     background: $marble-4;
     border-radius: 999px;
     color: $pine-3;
-    font: $font-ui-sans-14;
+    @include font-ui-sans-14;
     outline: 0;
     border: 0;
     height: 40px;

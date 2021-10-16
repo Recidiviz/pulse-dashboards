@@ -8,7 +8,7 @@
 
   &__main-title {
     color: $pine-3;
-    font: $font-article-serif-56;
+    @include font-article-serif-56;
     letter-spacing: -0.04em;
     padding-bottom: 1rem;
     padding-top: 6rem;
@@ -50,7 +50,7 @@
 
     &--title {
       padding: 4.5rem 0px 0px 0px !important;
-      font: $font-article-serif-34;
+      @include font-article-serif-34;
       color: $pine-3;
       letter-spacing: -0.04em;
     }
@@ -62,7 +62,7 @@
   &__sub-block--title {
     padding: 2rem 0px 1rem 0px !important;
     color: $pine-3;
-    font: $font-article-serif-24;
+    @include font-article-serif-24;
     letter-spacing: -0.04em;
   }
   &__table {

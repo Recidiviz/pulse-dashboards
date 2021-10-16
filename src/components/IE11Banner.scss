@@ -61,7 +61,7 @@
 
     &--text {
       color: $white;
-      font: $font-ui-sans-16;
+      @include font-ui-sans-16;
       line-height: 24px;
       padding-right: 10px;
     }
