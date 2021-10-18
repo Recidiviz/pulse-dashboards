@@ -52,10 +52,9 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationP
       supervisionType,
     } = this.rootStore.filtersStore.filters;
     const monthRange: MonthOptions = parseInt(timePeriod) as MonthOptions;
-    const range = monthRange === 1 ? 6 : monthRange;
-    const stepSize = range / 6;
     const status =
       this.compartment === "SUPERVISION" ? supervisionType : legalStatus;
+    const stepSize = monthRange === 60 ? 2 : 1;
 
     const { simulationDate } = this;
     return this.allRecords.filter(
@@ -66,7 +65,7 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationP
         return (
           record.gender === gender &&
           record.legalStatus === status &&
-          Math.abs(monthsOut) <= range &&
+          Math.abs(monthsOut) <= monthRange &&
           monthsOut % stepSize === 0
         );
       }

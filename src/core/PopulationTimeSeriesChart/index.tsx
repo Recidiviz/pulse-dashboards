@@ -33,6 +33,7 @@ import {
   formatMonthAndYear,
   getChartTop,
   getDateRange,
+  getDateSpacing,
   MonthOptions,
   prepareData,
 } from "./helpers";
@@ -105,6 +106,8 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({ title, data }) => {
     class: "PopulationTimeSeriesChart__ProjectedLine",
     data: projectedPopulation,
   };
+
+  const dateSpacing = getDateSpacing(timePeriod);
 
   return (
     <div className="PopulationTimeSeriesChart">
@@ -211,6 +214,7 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({ title, data }) => {
             // @ts-ignore
             tickValues: historicalPopulation
               .concat(projectedPopulation.slice(1)) // don't double-draw center date
+              .filter((_, index) => index % dateSpacing === 0)
               .map((r) => r.date),
             tickFormat: (d: Date) => formatMonthAndYear(d),
           },

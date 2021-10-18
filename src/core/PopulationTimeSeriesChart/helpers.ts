@@ -19,7 +19,7 @@ import { formatDate } from "../../utils/formatStrings";
 import { PopulationProjectionTimeSeriesRecord } from "../models/types";
 import { getRecordDate } from "../models/utils";
 
-export type MonthOptions = 1 | 6 | 12 | 24 | 60;
+export type MonthOptions = 6 | 12 | 24 | 60;
 
 export type ChartPoint = {
   date: Date;
@@ -81,7 +81,6 @@ export const getDateRange = (
 
   let offset;
   switch (monthRange) {
-    case 1:
     case 6:
       offset = 1;
       break;
@@ -130,4 +129,12 @@ export const getChartTop = (plotLine: ChartPoint[]): number => {
   }
 
   return (Math.ceil(maxValue / spacing) + 1) * spacing;
+};
+
+export const getDateSpacing = (timeRange: MonthOptions): number => {
+  if (timeRange <= 12) return 1;
+
+  if (timeRange <= 24) return 2;
+
+  return 4;
 };

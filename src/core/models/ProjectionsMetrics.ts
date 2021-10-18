@@ -44,10 +44,9 @@ export default class ProjectionsMetrics extends Metric<PopulationProjectionTimeS
       timePeriod,
     } = this.rootStore.filtersStore.filters;
     const monthRange: MonthOptions = parseInt(timePeriod) as MonthOptions;
-    const range = monthRange === 1 ? 6 : monthRange;
     const status =
       compartment === "SUPERVISION" ? supervisionType : legalStatus;
-    const stepSize = range / 6;
+    const stepSize = monthRange / 6;
 
     const { simulationDate } = this;
     return records.filter((record: PopulationProjectionTimeSeriesRecord) => {
@@ -58,7 +57,7 @@ export default class ProjectionsMetrics extends Metric<PopulationProjectionTimeS
         record.gender === gender &&
         record.compartment === compartment &&
         record.legalStatus === status &&
-        Math.abs(monthsOut) <= range &&
+        Math.abs(monthsOut) <= monthRange &&
         monthsOut % stepSize === 0
       );
     });
