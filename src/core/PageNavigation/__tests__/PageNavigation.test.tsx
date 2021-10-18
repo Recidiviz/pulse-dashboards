@@ -19,16 +19,16 @@ import { mount } from "enzyme";
 import React from "react";
 import { Link, StaticRouter } from "react-router-dom";
 
-import { useRootStore } from "../../components/StoreProvider";
-import RootStore from "../../RootStore";
-import CoreStore from "../CoreStore";
-import FiltersStore from "../CoreStore/FiltersStore";
-import PagePracticesStore from "../CoreStore/PagePracticesStore";
-import { useCoreStore } from "../CoreStoreProvider";
-import PageNavigation from "../PageNavigation";
+import { useRootStore } from "../../../components/StoreProvider";
+import RootStore from "../../../RootStore";
+import CoreStore from "../../CoreStore";
+import FiltersStore from "../../CoreStore/FiltersStore";
+import PagePracticesStore from "../../CoreStore/PagePracticesStore";
+import { useCoreStore } from "../../CoreStoreProvider";
+import PageNavigation from "..";
 
-jest.mock("../CoreStoreProvider");
-jest.mock("../../components/StoreProvider");
+jest.mock("../../CoreStoreProvider");
+jest.mock("../../../components/StoreProvider");
 jest.mock("react-router-dom", () => ({
   // @ts-ignore
   ...jest.requireActual("react-router-dom"),

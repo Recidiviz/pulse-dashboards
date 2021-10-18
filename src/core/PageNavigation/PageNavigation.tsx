@@ -22,14 +22,14 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
-import { useRootStore } from "../components/StoreProvider";
-import useIsMobile from "../hooks/useIsMobile";
-import { CORE_TENANTS } from "../RootStore/TenantStore/coreTenants";
-import { PATHWAYS_TENANTS } from "../RootStore/TenantStore/pathwaysTenants";
-import { useCoreStore } from "./CoreStoreProvider";
-import { NavigationSection } from "./types/navigation";
-import { getPageHeadingFromId } from "./views";
-import withRouteSync from "./withRouteSync";
+import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
+import { CORE_TENANTS } from "../../RootStore/TenantStore/coreTenants";
+import { PATHWAYS_TENANTS } from "../../RootStore/TenantStore/pathwaysTenants";
+import { useCoreStore } from "../CoreStoreProvider";
+import { NavigationSection } from "../types/navigation";
+import { getPageHeadingFromId } from "../views";
+import withRouteSync from "../withRouteSync";
 
 const PageNavigation: React.FC = () => {
   const isMobile = useIsMobile();

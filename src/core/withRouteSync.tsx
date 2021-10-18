@@ -90,7 +90,7 @@ const withRouteSync = <Props extends RouteParams>(
 
     // prepare query params to sync with store
     const queryParams =
-      viewId === "practices" || pageId === "practices"
+      viewId === PATHWAYS_VIEWS.operations || pageId === CORE_PAGES.practices
         ? metricQueryParams
         : filterQueryParams;
     const [query] = useQueryParams(queryParams);
