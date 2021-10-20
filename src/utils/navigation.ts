@@ -146,7 +146,7 @@ export const filterQueryParams = Object.values(FILTER_TYPES).reduce(
 ) as QueryParamConfigMap;
 
 export const metricQueryParams = {
-  selectedMetricId: StringParam,
+  selectedMetric: StringParam,
 } as QueryParamConfigMap;
 
 export const removeUndefinedValuesFromObject = (

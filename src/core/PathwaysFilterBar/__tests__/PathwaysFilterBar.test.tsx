@@ -65,11 +65,11 @@ test("selecting from menu sets the query params", async () => {
   expect(mockSetQuery).toHaveBeenCalledTimes(3);
   // the first call is on initial load, setting the query param to default value
   expect(mockSetQuery.mock.calls[0]).toEqual([
-    { gender: "ALL", timePeriod: "6" },
+    { gender: "All", timePeriod: "6 months" },
     "replace",
   ]);
   // second call is the time period select event
-  expect(mockSetQuery.mock.calls[1]).toEqual([{ timePeriod: "12" }]);
+  expect(mockSetQuery.mock.calls[1]).toEqual([{ timePeriod: "1 year" }]);
   // third call is the gender select event
-  expect(mockSetQuery.mock.calls[2]).toEqual([{ gender: "FEMALE" }]);
+  expect(mockSetQuery.mock.calls[2]).toEqual([{ gender: "Female" }]);
 });

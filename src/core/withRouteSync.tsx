@@ -28,7 +28,9 @@ import {
   removeUndefinedValuesFromObject,
 } from "../utils/navigation";
 import { useCoreStore } from "./CoreStoreProvider";
-import { DEFAULT_ENTITY_ID } from "./PagePractices/types";
+import { DEFAULT_ENTITY_ID, METRIC_TYPES } from "./PagePractices/types";
+import { PopulationFilterLabels } from "./types/filters";
+import { convertLabelsToValues } from "./utils/filterOptions";
 import {
   CORE_PAGES,
   DEFAULT_PATHWAYS_SECTION_BY_PAGE,
@@ -104,8 +106,14 @@ const withRouteSync = <Props extends RouteParams>(
         setPage(pageId as PathwaysPage);
         // eslint-disable-next-line no-unused-expressions
         viewId === PATHWAYS_VIEWS.operations || pageId === CORE_PAGES.practices
-          ? pagePracticesStore.setSelectedMetricId(query.selectedMetricId)
-          : filtersStore.setFilters(cleanQuery);
+          ? pagePracticesStore.setSelectedMetricId(
+              pagePracticesStore.metrics.find((metric) => {
+                return metric.name === query.selectedMetric;
+              })?.id || METRIC_TYPES.OVERALL
+            )
+          : filtersStore.setFilters(
+              convertLabelsToValues(cleanQuery as PopulationFilterLabels)
+            );
       })
     );
 

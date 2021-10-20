@@ -38,7 +38,7 @@ const PracticesSummaryCards: React.FC = () => {
           percentage={value}
           status={status}
           selected={selectedMetricId === id}
-          onClick={() => setQuery({ selectedMetricId: id })}
+          onClick={() => setQuery({ selectedMetric: title })}
         />
       ))}
     </>

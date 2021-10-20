@@ -33,7 +33,7 @@ jest.mock("react-router-dom", () => ({
   // @ts-ignore
   ...jest.requireActual("react-router-dom"),
   useLocation: jest.fn().mockReturnValue({
-    pathname: "/community/revocations",
+    pathname: "/community/practices",
   }),
 }));
 jest.mock("use-query-params", () => ({

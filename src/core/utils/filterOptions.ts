@@ -19,6 +19,7 @@ import { US_ID, US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
 import { Gender } from "../models/types";
 import {
   FilterOption,
+  PopulationFilterLabels,
   PopulationFilters,
   PopulationFilterValues,
   SetPopulationFilters,
@@ -53,6 +54,21 @@ export const defaultSupervisionType = defaultSupervisionTypeOption.value;
 
 export const defaultDistrictOption = { label: "All", value: "all" };
 export const defaultDistrict = [defaultDistrictOption.value];
+
+export const convertLabelsToValues = (
+  filtersLabels: PopulationFilterLabels
+): Record<string, string> => {
+  return Object.keys(filtersLabels).reduce((acc, filterType) => {
+    const option = PopulationFilterOptions[
+      filterType as keyof PopulationFilterLabels
+    ].options.find(
+      (o) =>
+        o.label === filtersLabels[filterType as keyof PopulationFilterLabels]
+    );
+    if (option) acc[filterType] = option.value;
+    return acc;
+  }, {} as Record<string, string>);
+};
 
 export const getFilterOption = (
   value: string,

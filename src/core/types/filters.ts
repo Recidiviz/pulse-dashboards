@@ -28,6 +28,13 @@ export type PopulationFilterValues = {
   legalStatus: string;
 };
 
+export type PopulationFilterLabels = {
+  timePeriod: string;
+  gender: string;
+  supervisionType: string;
+  legalStatus: string;
+};
+
 export type SetPopulationFilters = (
   filtersStore: FiltersStore
 ) => (option: FilterOption) => void;

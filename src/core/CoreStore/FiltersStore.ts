@@ -18,6 +18,7 @@ import {
   action,
   computed,
   get,
+  keys,
   makeAutoObservable,
   observable,
   set,
@@ -25,8 +26,16 @@ import {
 } from "mobx";
 
 import getFilters from "../../utils/getFilterDescription";
-import { PopulationFilters, PopulationFilterValues } from "../types/filters";
-import { defaultPopulationFilterValues } from "../utils/filterOptions";
+import {
+  PopulationFilterLabels,
+  PopulationFilters,
+  PopulationFilterValues,
+} from "../types/filters";
+import {
+  defaultPopulationFilterValues,
+  getFilterOption,
+  PopulationFilterOptions,
+} from "../utils/filterOptions";
 import { formatTimePeriodLabel } from "../utils/timePeriod";
 import type CoreStore from ".";
 
@@ -75,5 +84,17 @@ export default class FiltersStore {
       {}
     );
     return getFilters(enabledFilters);
+  }
+
+  get filtersLabels(): PopulationFilterLabels {
+    return keys(this.filters).reduce((acc, filterType) => {
+      const filter =
+        PopulationFilterOptions[filterType as keyof PopulationFilterLabels];
+      acc[filterType as keyof PopulationFilterLabels] = getFilterOption(
+        this.filters[filter.type],
+        filter.options
+      ).label;
+      return acc;
+    }, {} as PopulationFilterLabels);
   }
 }

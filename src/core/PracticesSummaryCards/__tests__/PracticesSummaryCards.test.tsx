@@ -34,6 +34,13 @@ const mockSetQuery = jest.fn();
 jest.mock("use-query-params");
 jest.mock("../../CoreStoreProvider");
 jest.mock("../../models/ProjectionsMetrics");
+jest.mock("react-router-dom", () => ({
+  // @ts-ignore
+  ...jest.requireActual("react-router-dom"),
+  useLocation: jest.fn().mockReturnValue({
+    pathname: "/operations",
+  }),
+}));
 jest.mock("../../models/VitalsMetrics", () => {
   return jest.fn().mockImplementation(() => ({
     timeSeries: [],
@@ -121,10 +128,10 @@ describe("PracticesSummaryCards", () => {
 
     expect(mockSetQuery).toHaveBeenCalledTimes(2);
     expect(mockSetQuery.mock.calls[0]).toEqual([
-      { selectedMetricId: "RISK_ASSESSMENT" },
+      { selectedMetric: "Timely risk assessments" },
     ]);
     expect(mockSetQuery.mock.calls[1]).toEqual([
-      { selectedMetricId: "CONTACT" },
+      { selectedMetric: "Timely contacts" },
     ]);
   });
 });

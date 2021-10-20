@@ -52,7 +52,7 @@ const PathwaysFilterBar: React.FC<{
   const [query, setQuery] = useQueryParams(filterQueryParams);
   const cleanQuery = removeUndefinedValuesFromObject(query);
   const enabled = enabledFilters.reduce(
-    (acc, filter) => ({ ...acc, [filter]: filtersStore.filters[filter] }),
+    (acc, filter) => ({ ...acc, [filter]: filtersStore.filtersLabels[filter] }),
     {}
   );
   if (!isEqual(Object.keys(enabled).sort(), Object.keys(cleanQuery).sort())) {
@@ -83,7 +83,7 @@ const PathwaysFilterBar: React.FC<{
               value={getFilterOption(get(filters, filter.type), filter.options)}
               options={filter.options}
               onChange={(option: FilterOption) =>
-                setQuery({ [filter.type]: option.value })
+                setQuery({ [filter.type]: option.label })
               }
               defaultValue={filter.defaultValue}
               isChanged={

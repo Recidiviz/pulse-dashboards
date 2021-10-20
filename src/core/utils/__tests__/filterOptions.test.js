@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { METRIC_TYPES } from "../constants";
+import { FILTER_TYPES, METRIC_TYPES } from "../constants";
 import {
+  convertLabelsToValues,
   defaultDistrict,
   defaultMetricPeriod,
   defaultMetricType,
@@ -29,5 +30,19 @@ describe("Filter default values", () => {
     expect(defaultMetricPeriod).toBe("12");
     expect(defaultMetricType).toBe(METRIC_TYPES.COUNTS);
     expect(defaultSupervisionType).toBe("all");
+  });
+});
+
+describe("convertLabelsToValues", () => {
+  it("should return the filters object with values", () => {
+    const filtersLabels = {
+      [FILTER_TYPES.TIME_PERIOD]: "6 months",
+      [FILTER_TYPES.LEGAL_STATUS]: "Parole Violator",
+    };
+    const expected = {
+      legalStatus: "PAROLE_BOARD_HOLD",
+      timePeriod: "6",
+    };
+    expect(convertLabelsToValues(filtersLabels)).toEqual(expected);
   });
 });
