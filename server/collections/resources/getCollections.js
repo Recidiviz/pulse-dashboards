@@ -156,11 +156,11 @@ const PATHWAYS_COLLECTIONS = {
     supervision_population_projection_time_series: {
       filename: "supervision_population_projection_time_series.txt",
     },
-    supervision_to_prison_admissions_over_time: {
-      filename: "supervision_to_prison_admissions_over_time.json",
+    supervision_to_prison_count_by_month: {
+      filename: "supervision_to_prison_count_by_month.txt",
     },
-    supervision_to_liberty_releases_over_time: {
-      filename: "supervision_to_liberty_releases_over_time.json",
+    supervision_to_liberty_count_by_month: {
+      filename: "supervision_to_liberty_count_by_month.txt",
     },
   },
 };

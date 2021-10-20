@@ -107,7 +107,7 @@ export default class MetricsStore {
     return new SupervisionCountOverTimeMetric({
       id: "supervisionToPrisonOverTime",
       tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_prison_admissions_over_time",
+      sourceFilename: "supervision_to_prison_count_by_month",
       rootStore: this.rootStore,
       dataTransformer: (data) =>
         createSupervisionTransitionTimeSeries(data, "admissions"),
@@ -123,7 +123,7 @@ export default class MetricsStore {
     return new SupervisionCountOverTimeMetric({
       id: "supervisionToLibertyOverTime",
       tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_liberty_releases_over_time",
+      sourceFilename: "supervision_to_liberty_count_by_month",
       rootStore: this.rootStore,
       dataTransformer: (data) =>
         createSupervisionTransitionTimeSeries(data, "releases"),
