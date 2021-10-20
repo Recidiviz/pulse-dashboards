@@ -23,7 +23,7 @@ import { StateSpecificPageCopy } from "../types";
 const content: StateSpecificPageCopy = {
   prison: {
     summary:
-      "This chart include individuals who are admitted to state facilities, including termers, riders, parole violators, people in CAPP, and people held in county jails under state jurisdiction.",
+      "These charts include individuals who are admitted to state facilities, including termers, riders, parole violators, people in CAPP, and people held in county jails under state jurisdiction.",
     methodology:
       "These charts include individuals who are admitted to state facilities, including termers, riders, parole violators, people in CAPP, and people held in county jails under state jurisdiction.\n\nFor people held in paid county jail beds, the historical total incarcerated population uses the movements file to exclude people who have entered County Jails in unpaid beds. Currently, any movement period listed with the fac_cd + lu_cd code in the list ‘RTSX’, ‘RTUT’, ‘CJVS’, ‘CJCT’ is not counted until a subsequent movement is recorded without any of those codes. ",
   },
@@ -35,7 +35,7 @@ const content: StateSpecificPageCopy = {
   },
   supervisionToPrison: {
     summary:
-      "These charts include a count of all admissions supervision to prison. People on supervision include those on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant. An admission is counted on the day the person is admitted to a facility, not the day the violation occurred.\n",
+      "These charts include a count of all admissions from supervision to prison. People on supervision include those on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant. An admission is counted on the day the person is admitted to a facility, not the day the violation occurred.\n",
     methodology:
       "These charts include a count of all admissions supervision to prison. People on supervision include those on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant. An admission is counted on the day the person is admitted to a facility, not the day the violation occurred.\n",
   },
