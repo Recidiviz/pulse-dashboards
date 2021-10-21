@@ -29,7 +29,12 @@ type Props = {
 
 const ContentBlock: React.FC<Props> = ({ content, subBlock = false }) => {
   return (
-    <ScrollableAnchor id={convertToSlug(content.title)}>
+    <ScrollableAnchor
+      id={convertToSlug(content.title)}
+      // The key is necessary here to force the ScrollableAnchor to remount
+      // when there is new content to ensure the correct #id for TOC navigation
+      key={convertToSlug(content.title)}
+    >
       <div className="Methodology__block">
         {subBlock ? (
           <h4 className="Methodology__sub-block--title ">{content.title}</h4>

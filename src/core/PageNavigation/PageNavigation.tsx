@@ -53,7 +53,7 @@ const PageNavigation: React.FC = () => {
       {pageOptions.map((pageOption: NavigationSection) => (
         <li key={pageOption}>
           <Link
-            to={`/${currentView}/${pageOption}`}
+            to={{ pathname: `/${currentView}/${pageOption}`, hash: "" }}
             className={cx("PageNavigation__option", {
               "PageNavigation__option--selected":
                 page?.toLowerCase() === pageOption.toLowerCase(),

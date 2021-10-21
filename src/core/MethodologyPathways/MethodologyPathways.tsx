@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { configureAnchors } from "react-scrollable-anchor";
 import { Container } from "reactstrap";
@@ -35,10 +35,24 @@ import {
 } from "../views";
 import ContentBlock from "./ContentBlock";
 
+// Opens all external links in a new window
+const updateExternalLinks = (): void => {
+  const { links } = document;
+  for (let i = 0; i < links.length; i += 1) {
+    if (links[i].hostname !== window.location.hostname) {
+      links[i].target = "_blank";
+    }
+  }
+};
+
 const MethodologyPathways: React.FC = () => {
   const { pathname } = useLocation();
   const view = pathname.split("/")[2];
   const { currentTenantId, userStore } = useRootStore();
+
+  useEffect(() => {
+    updateExternalLinks();
+  });
 
   // @ts-ignore
   const Methodology = getMethodologyCopy(currentTenantId)[view];
