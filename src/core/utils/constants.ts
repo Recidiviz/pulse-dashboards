@@ -8,4 +8,6 @@ export const FILTER_TYPES = {
   GENDER: "gender",
   LEGAL_STATUS: "legalStatus",
   SUPERVISION_TYPE: "supervisionType",
+  AGE: "age",
+  FACILITY: "facility",
 } as const;

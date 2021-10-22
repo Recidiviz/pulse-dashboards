@@ -21,12 +21,12 @@ import RootStore from "../../../RootStore";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
 import { FILTER_TYPES } from "../../utils/constants";
-import PopulationOverTimeMetric from "../PopulationOverTimeMetric";
-import { createPopulationTimeSeries } from "../utils";
+import PopulationProjectionOverTimeMetric from "../PopulationProjectionOverTimeMetric";
+import { createProjectionTimeSeries } from "../utils";
 
 const OLD_ENV = process.env;
 
-const mockTenantId = "US_TN";
+const mockTenantId = "US_ID";
 const mockCoreStore = { currentTenantId: mockTenantId } as CoreStore;
 const filtersStore = new FiltersStore({ rootStore: mockCoreStore });
 jest.mock("../../../RootStore", () => ({
@@ -39,35 +39,38 @@ global.fetch = jest.fn().mockResolvedValue({
 jest.mock("../../../api/metrics/metricsClient", () => {
   return {
     callMetricsApi: jest.fn().mockResolvedValue({
-      prison_population_time_series: [
+      prison_population_projection_time_series: [
         {
           gender: "MALE",
           legal_status: "ALL",
           month: "5",
-          facility: "MCCX",
-          age: "ALL",
-          state_code: "US_TN",
+          simulation_tag: "HISTORICAL",
+          state_code: "US_ID",
           total_population: 7641,
+          total_population_max: 7641,
+          total_population_min: 7641,
           year: "2016",
         },
         {
           gender: "ALL",
           legal_status: "ALL",
           month: "1",
-          facility: "ALL",
-          age: "ALL",
-          state_code: "US_TN",
+          simulation_tag: "HISTORICAL",
+          state_code: "US_ID",
           total_population: 7641,
+          total_population_max: 7641,
+          total_population_min: 7641,
           year: "2016",
         },
         {
           gender: "ALL",
           legal_status: "ALL",
           month: "12",
-          facility: "ALL",
-          age: "ALL",
-          state_code: "US_TN",
+          simulation_tag: "HISTORICAL",
+          state_code: "US_ID",
           total_population: 7641,
+          total_population_max: 7641,
+          total_population_min: 7641,
           year: "2015",
         },
       ],
@@ -75,29 +78,23 @@ jest.mock("../../../api/metrics/metricsClient", () => {
   };
 });
 
-describe("PopulationOverTimeMetric", () => {
-  let metric: PopulationOverTimeMetric;
+describe("PopulationProjectionOverTimeMetric", () => {
+  let metric: PopulationProjectionOverTimeMetric;
 
   beforeEach(() => {
     process.env = Object.assign(process.env, {
       REACT_APP_API_URL: "test-url",
     });
     mockCoreStore.filtersStore = filtersStore;
-    metric = new PopulationOverTimeMetric({
-      id: "prisonPopulationOverTime",
+    metric = new PopulationProjectionOverTimeMetric({
+      id: "projectedPrisonPopulationOverTime",
       tenantId: mockTenantId,
       compartment: "INCARCERATION",
-      sourceFilename: "prison_population_time_series",
+      sourceFilename: "prison_population_projection_time_series",
+      dataTransformer: createProjectionTimeSeries,
+      enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
       rootStore: mockCoreStore,
-      dataTransformer: createPopulationTimeSeries,
-      enabledFilters: [
-        FILTER_TYPES.GENDER,
-        FILTER_TYPES.LEGAL_STATUS,
-        FILTER_TYPES.AGE,
-        FILTER_TYPES.FACILITY,
-      ],
     });
-
     metric.hydrate();
   });
 
@@ -110,7 +107,7 @@ describe("PopulationOverTimeMetric", () => {
 
   it("fetches metrics when initialized", () => {
     expect(callMetricsApi).toHaveBeenCalledWith(
-      `${mockTenantId.toLowerCase()}/pathways/prison_population_time_series`,
+      `${mockTenantId.toLowerCase()}/pathways/prison_population_projection_time_series`,
       RootStore.getTokenSilently
     );
   });
@@ -124,62 +121,53 @@ describe("PopulationOverTimeMetric", () => {
       gender: "ALL",
       legalStatus: "ALL",
       month: 1,
-      facility: "ALL",
-      age: "ALL",
+      simulationTag: "HISTORICAL",
       totalPopulation: 7641,
+      totalPopulationMax: 7641,
+      totalPopulationMin: 7641,
       year: 2016,
     });
   });
 
-  it("finds most recent month", () => {
-    expect(metric.mostRecentDate).toEqual(new Date(2016, 4));
+  it("finds the simulation month", () => {
+    expect(metric.simulationDate).toEqual(new Date(2015, 11));
   });
 
-  it("does not throw when accessing the most recent date without loaded data", () => {
+  it("does not throw when accessing the simluation date without loaded data", () => {
     jest.mock("../../../api/metrics/metricsClient", () => {
       return {
         callMetricsApi: jest.fn().mockResolvedValue({
-          prison_population_time_series: [],
+          prison_population_projection_time_series: [],
         }),
       };
     });
 
-    metric = new PopulationOverTimeMetric({
-      id: "prisonPopulationOverTime",
+    metric = new PopulationProjectionOverTimeMetric({
+      id: "projectedPrisonPopulationOverTime",
       tenantId: mockTenantId,
       compartment: "INCARCERATION",
-      sourceFilename: "prison_population_time_series",
+      sourceFilename: "prison_population_projection_time_series",
+      dataTransformer: createProjectionTimeSeries,
+      enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
       rootStore: mockCoreStore,
-      dataTransformer: createPopulationTimeSeries,
-      enabledFilters: [
-        FILTER_TYPES.GENDER,
-        FILTER_TYPES.LEGAL_STATUS,
-        FILTER_TYPES.AGE,
-        FILTER_TYPES.FACILITY,
-      ],
     });
     metric.hydrate();
 
-    expect(metric.mostRecentDate).toEqual(new Date(9999, 11, 31));
+    expect(metric.simulationDate).toEqual(new Date(9999, 11, 31));
   });
 
   describe("dataSeries", () => {
     beforeEach(() => {
       mockCoreStore.filtersStore = filtersStore;
 
-      metric = new PopulationOverTimeMetric({
-        id: "prisonPopulationOverTime",
+      metric = new PopulationProjectionOverTimeMetric({
+        id: "projectedPrisonPopulationOverTime",
         tenantId: mockTenantId,
         compartment: "INCARCERATION",
-        sourceFilename: "prison_population_time_series",
+        sourceFilename: "prison_population_projection_time_series",
+        dataTransformer: createProjectionTimeSeries,
+        enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
         rootStore: mockCoreStore,
-        dataTransformer: createPopulationTimeSeries,
-        enabledFilters: [
-          FILTER_TYPES.GENDER,
-          FILTER_TYPES.LEGAL_STATUS,
-          FILTER_TYPES.AGE,
-          FILTER_TYPES.FACILITY,
-        ],
       });
       metric.hydrate();
     });
@@ -187,24 +175,26 @@ describe("PopulationOverTimeMetric", () => {
     it("filters by default values", () => {
       expect(metric.dataSeries).toEqual([
         {
-          year: 2015,
-          month: 12,
-          compartment: undefined,
-          legalStatus: "ALL",
-          gender: "ALL",
-          facility: "ALL",
-          age: "ALL",
-          totalPopulation: 7641,
-        },
-        {
           year: 2016,
           month: 1,
           compartment: undefined,
           legalStatus: "ALL",
           gender: "ALL",
-          facility: "ALL",
-          age: "ALL",
+          simulationTag: "HISTORICAL",
           totalPopulation: 7641,
+          totalPopulationMax: 7641,
+          totalPopulationMin: 7641,
+        },
+        {
+          year: 2015,
+          month: 12,
+          compartment: undefined,
+          legalStatus: "ALL",
+          gender: "ALL",
+          simulationTag: "HISTORICAL",
+          totalPopulation: 7641,
+          totalPopulationMax: 7641,
+          totalPopulationMin: 7641,
         },
       ]);
     });
@@ -212,10 +202,7 @@ describe("PopulationOverTimeMetric", () => {
     it("updates when the filters change", () => {
       runInAction(() => {
         if (metric.rootStore) {
-          metric.rootStore.filtersStore.setFilters({
-            gender: "MALE",
-            facility: "MCCX",
-          });
+          metric.rootStore.filtersStore.setFilters({ gender: "MALE" });
         }
 
         expect(metric.dataSeries).toEqual([
@@ -223,10 +210,11 @@ describe("PopulationOverTimeMetric", () => {
             compartment: undefined,
             gender: "MALE",
             legalStatus: "ALL",
-            facility: "MCCX",
-            age: "ALL",
             month: 5,
+            simulationTag: "HISTORICAL",
             totalPopulation: 7641,
+            totalPopulationMax: 7641,
+            totalPopulationMin: 7641,
             year: 2016,
           },
         ]);

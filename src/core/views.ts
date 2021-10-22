@@ -98,6 +98,7 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
 > = {
   // @ts-ignore
   prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
+  projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   supervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   supervisionToPrisonOverTime: PATHWAYS_SECTIONS.countOverTime,
   supervisionToLibertyOverTime: PATHWAYS_SECTIONS.countOverTime,

@@ -13,30 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// ===================== ========================================================
+// =============================================================================
 
-import { observer } from "mobx-react-lite";
-import React from "react";
-
-import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
-import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
-
-type VizPopulationOverTimeProps = {
-  metric: PopulationOverTimeMetric;
-};
-
-const VizPopulationOverTime: React.FC<VizPopulationOverTimeProps> = ({
-  metric,
-}) => {
-  const { dataSeries, chartTitle } = metric;
-
-  return (
-    <PopulationTimeSeriesChart
-      metric={metric}
-      data={dataSeries}
-      title={chartTitle}
-    />
-  );
-};
-
-export default observer(VizPopulationOverTime);
+export { default } from "./VizPopulationProjectionOverTime";

@@ -18,25 +18,34 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
+import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
+import PopulationSummaryMetrics from "../PopulationSummaryMetrics";
 import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
 
-type VizPopulationOverTimeProps = {
-  metric: PopulationOverTimeMetric;
+type VizPopulationProjectionOverTimeProps = {
+  metric: PopulationProjectionOverTimeMetric;
 };
 
-const VizPopulationOverTime: React.FC<VizPopulationOverTimeProps> = ({
+const VizPopulationProjectionOverTime: React.FC<VizPopulationProjectionOverTimeProps> = ({
   metric,
 }) => {
-  const { dataSeries, chartTitle } = metric;
+  const { dataSeries, chartTitle, error, simulationDate, isLoading } = metric;
 
   return (
-    <PopulationTimeSeriesChart
-      metric={metric}
-      data={dataSeries}
-      title={chartTitle}
-    />
+    <>
+      <PopulationSummaryMetrics
+        data={dataSeries}
+        simulationDate={simulationDate}
+        isLoading={isLoading}
+        isError={error}
+      />
+      <PopulationTimeSeriesChart
+        metric={metric}
+        data={dataSeries}
+        title={chartTitle}
+      />
+    </>
   );
 };
 
-export default observer(VizPopulationOverTime);
+export default observer(VizPopulationProjectionOverTime);

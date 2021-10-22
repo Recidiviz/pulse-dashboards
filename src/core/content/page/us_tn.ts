@@ -18,27 +18,16 @@
  *
  */
 
-import { MetricCopy } from "../types";
+import { StateSpecificPageCopy } from "../types";
 
-const content: MetricCopy = {
-  projectedPrisonPopulationOverTime: {
-    title: "Incarcerated Population",
-    note: "Historical and projected population data were generated",
-    methodology: "This is the prison population over time methodology",
-  },
-  supervisionPopulationOverTime: {
-    title: "Supervised Population",
-    note: "Historical and projected population data were generated",
-  },
-  supervisionToPrisonOverTime: {
-    title: "Admissions to prison from supervision",
-  },
-  supervisionToLibertyOverTime: {
-    title: "Releases from supervision to liberty",
-  },
-  prisonPopulationOverTime: {
-    title: "Incarcerated Population",
-    note: "Placeholder note",
+const content: StateSpecificPageCopy = {
+  prison: {
+    summary:
+      "These charts show people who are currentlly incarcerated in a TDOC facility or sentenced to serve their time in a county jail due to either a felony or misdemeanor conviction.",
+    sections: {
+      countOverTime: "Prison population over time",
+    },
+    methodology: "Prison page methodology",
   },
 };
 

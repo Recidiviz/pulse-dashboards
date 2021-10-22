@@ -24,8 +24,10 @@ import { usIdMethodology } from "./methodology/usIdMethodology";
 import { usNdMethodology } from "./methodology/usNdMethodology";
 import defaultMetricContent from "./metric/default";
 import IdMetricContent from "./metric/us_id";
+import TnMetricContent from "./metric/us_tn";
 import defaultPageContent from "./page/default";
 import IdPageContent from "./page/us_id";
+import TnPageContent from "./page/us_tn";
 import {
   MetricCopy,
   PageCopy,
@@ -37,12 +39,14 @@ export const pageContentOverrides: {
   [category: string]: StateSpecificPageCopy;
 } = {
   US_ID: IdPageContent,
+  US_TN: TnPageContent,
 };
 
 export const metricContentOverrides: {
   [category: string]: StateSpecificMetricCopy;
 } = {
   US_ID: IdMetricContent,
+  US_TN: TnMetricContent,
 };
 
 export const getPageCopy = (currentTenantId: TenantId): PageCopy => {

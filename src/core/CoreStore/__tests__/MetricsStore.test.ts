@@ -17,7 +17,7 @@
 import { runInAction } from "mobx";
 
 import RootStore from "../../../RootStore";
-import PopulationOverTimeMetric from "../../models/PopulationOverTimeMetric";
+import PopulationProjectionOverTimeMetric from "../../models/PopulationProjectionOverTimeMetric";
 import ProjectionsMetrics from "../../models/ProjectionsMetrics";
 import VitalsMetrics from "../../models/VitalsMetrics";
 import CoreStore from "..";
@@ -54,10 +54,10 @@ describe("MetricsStore", () => {
       );
     });
 
-    it("has a reference to the prisonPopulationOverTime metric", () => {
-      expect(coreStore.metricsStore.prisonPopulationOverTime).toBeInstanceOf(
-        PopulationOverTimeMetric
-      );
+    it("has a reference to the projectedPrisonPopulationOverTime metric", () => {
+      expect(
+        coreStore.metricsStore.projectedPrisonPopulationOverTime
+      ).toBeInstanceOf(PopulationProjectionOverTimeMetric);
     });
   });
 

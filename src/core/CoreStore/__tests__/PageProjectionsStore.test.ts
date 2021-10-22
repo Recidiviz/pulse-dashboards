@@ -116,7 +116,7 @@ describe("PageProjectionsStore", () => {
     it("formats the filters text according to the view", () => {
       coreStore.setView(getViewFromPathname("/facilities/projections"));
       expect(pageProjectionsStore.filtersText).toEqual(
-        "Incarceration - 6 months; Gender: All; Legal Status: All"
+        "Incarceration - 6 months; Gender: All; Legal Status: All; Age: All; Facility: All"
       );
     });
   });

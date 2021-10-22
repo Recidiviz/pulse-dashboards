@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { US_ND } from "../../RootStore/TenantStore/coreTenants";
-import { US_ID } from "../../RootStore/TenantStore/pathwaysTenants";
+import { US_ID, US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
 import { MetricCopy, PageCopy } from "../content/types";
 /**
  * All data comes back from the server as string values;
@@ -29,10 +29,20 @@ export type ApiData = {
 export type RawApiData = Record<string, ApiData>;
 export type RawMetricData = Record<string, string>[];
 
-export const TenantIdList = [US_ND, US_ID] as const;
+export const TenantIdList = [US_ND, US_ID, US_TN] as const;
 
 export type TenantId = typeof TenantIdList[number];
 export type Gender = "ALL" | "FEMALE" | "MALE";
+export type Age =
+  | "ALL"
+  | "LESS_THAN_24"
+  | "25_29"
+  | "30_34"
+  | "35_39"
+  | "40_44"
+  | "45_49"
+  | "50_54"
+  | "GREATER_THAN_55";
 export type SimulationCompartment = "SUPERVISION" | "INCARCERATION";
 export type SupervisionType = "PAROLE" | "PROBATION" | "ALL";
 
@@ -40,7 +50,8 @@ export type MetricRecord =
   | PopulationProjectionTimeSeriesRecord
   | PracticesSummaryRecord
   | PracticesTimeSeriesRecord
-  | SupervisionCountTimeSeriesRecord;
+  | SupervisionCountTimeSeriesRecord
+  | PopulationTimeSeriesRecord;
 
 export type PopulationProjectionTimeSeriesRecord = {
   year: number;
@@ -52,6 +63,17 @@ export type PopulationProjectionTimeSeriesRecord = {
   totalPopulation: number;
   totalPopulationMax: number;
   totalPopulationMin: number;
+};
+
+export type PopulationTimeSeriesRecord = {
+  year: number;
+  month: number;
+  compartment: SimulationCompartment;
+  legalStatus: string;
+  gender: Gender;
+  facility: string;
+  age: Age;
+  totalPopulation: number;
 };
 
 export type SupervisionCountTimeSeriesRecord = {
@@ -137,12 +159,14 @@ export interface Hydratable {
   error?: Error;
   dataSeries?:
     | PopulationProjectionTimeSeriesRecord[]
+    | PopulationTimeSeriesRecord[]
     | SupervisionCountTimeSeriesRecord[];
   hydrate: () => void;
 }
 
 export type MetricId =
   | "prisonPopulationOverTime"
+  | "projectedPrisonPopulationOverTime"
   | "supervisionPopulationOverTime"
   | "supervisionToPrisonOverTime"
   | "supervisionToLibertyOverTime";

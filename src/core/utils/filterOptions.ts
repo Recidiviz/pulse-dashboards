@@ -16,7 +16,7 @@
 // =============================================================================
 import { US_ND } from "../../RootStore/TenantStore/coreTenants";
 import { US_ID, US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
-import { Gender } from "../models/types";
+import { Age, Gender } from "../models/types";
 import {
   FilterOption,
   PopulationFilterLabels,
@@ -158,6 +158,49 @@ export const PopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.community],
   },
+  [FILTER_TYPES.AGE]: {
+    type: FILTER_TYPES.AGE,
+    title: "Age",
+    width: "10rem",
+    setFilters: setFilters(FILTER_TYPES.AGE),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "<24 years old", value: "LESS_THAN_24" },
+      { label: "25-29 years old", value: "25_29" },
+      { label: "30-34 years old", value: "30_34" },
+      { label: "35-39 years old", value: "35_39" },
+      { label: "40-44 years old", value: "40_44" },
+      { label: "45-49 years old", value: "45_49" },
+      { label: "50-54 years old", value: "50_54" },
+      { label: "55+ years old", value: "GREATER_THAN_55" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.FACILITY]: {
+    type: FILTER_TYPES.FACILITY,
+    title: "Facility",
+    width: "7rem",
+    setFilters: setFilters(FILTER_TYPES.FACILITY),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "MCCX", value: "MCCX" },
+      { label: "BCCX", value: "BCCX" },
+      { label: "TTCC", value: "TTCC" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
 };
 
 export const defaultPopulationFilterValues: PopulationFilterValues = {
@@ -169,6 +212,10 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
     PopulationFilterOptions[FILTER_TYPES.LEGAL_STATUS].defaultValue,
   [FILTER_TYPES.SUPERVISION_TYPE]:
     PopulationFilterOptions[FILTER_TYPES.SUPERVISION_TYPE].defaultValue,
+  [FILTER_TYPES.AGE]: PopulationFilterOptions[FILTER_TYPES.AGE]
+    .defaultValue as Age,
+  [FILTER_TYPES.FACILITY]:
+    PopulationFilterOptions[FILTER_TYPES.FACILITY].defaultValue,
 };
 
 export default {

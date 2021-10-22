@@ -24,14 +24,17 @@ import {
   MonthOptions,
 } from "../PopulationTimeSeriesChart/helpers";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import { PopulationTimeSeriesRecord, SimulationCompartment } from "./types";
+import {
+  PopulationProjectionTimeSeriesRecord,
+  SimulationCompartment,
+} from "./types";
 import { getRecordDate } from "./utils";
 
-export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationTimeSeriesRecord> {
+export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<PopulationProjectionTimeSeriesRecord> {
   compartment: SimulationCompartment;
 
   constructor(
-    props: BaseMetricConstructorOptions<PopulationTimeSeriesRecord> & {
+    props: BaseMetricConstructorOptions<PopulationProjectionTimeSeriesRecord> & {
       compartment: SimulationCompartment;
     }
   ) {
@@ -40,45 +43,52 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
     this.download = this.download.bind(this);
   }
 
-  get dataSeries(): PopulationTimeSeriesRecord[] {
+  get dataSeries(): PopulationProjectionTimeSeriesRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
     const {
       gender,
-      supervisionType,
       legalStatus,
       timePeriod,
-      facility,
-      age,
+      supervisionType,
     } = this.rootStore.filtersStore.filters;
     const monthRange: MonthOptions = parseInt(timePeriod) as MonthOptions;
     const status =
       this.compartment === "SUPERVISION" ? supervisionType : legalStatus;
     const stepSize = monthRange === 60 ? 2 : 1;
 
-    const { mostRecentDate } = this;
-    return this.allRecords.filter((record: PopulationTimeSeriesRecord) => {
-      const monthsOut =
-        (record.year - mostRecentDate.getFullYear()) * 12 +
-        (record.month - (mostRecentDate.getMonth() + 1));
-      return (
-        record.gender === gender &&
-        record.legalStatus === status &&
-        record.age === age &&
-        record.facility === facility &&
-        Math.abs(monthsOut) <= monthRange &&
-        monthsOut % stepSize === 0
-      );
-    });
+    const { simulationDate } = this;
+    return this.allRecords.filter(
+      (record: PopulationProjectionTimeSeriesRecord) => {
+        const monthsOut =
+          (record.year - simulationDate.getFullYear()) * 12 +
+          (record.month - (simulationDate.getMonth() + 1));
+        return (
+          record.gender === gender &&
+          record.legalStatus === status &&
+          Math.abs(monthsOut) <= monthRange &&
+          monthsOut % stepSize === 0
+        );
+      }
+    );
   }
 
-  get mostRecentDate(): Date {
+  get note(): string {
+    return `${this.content.note} ${formatDate(
+      this.simulationDate,
+      "MMMM yyyy"
+    )}.`;
+  }
+
+  get simulationDate(): Date {
     const { allRecords } = this;
 
     if (!allRecords || allRecords.length === 0) {
       return new Date(9999, 11, 31);
     }
 
-    return getRecordDate(allRecords.slice(-1)[0]);
+    return getRecordDate(
+      allRecords.filter((d) => d.simulationTag === "HISTORICAL").slice(-1)[0]
+    );
   }
 
   get downloadableData(): DownloadableData | undefined {
@@ -88,9 +98,11 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
     const data: Record<string, number>[] = [];
     const labels: string[] = [];
 
-    this.dataSeries.forEach((d: PopulationTimeSeriesRecord) => {
+    this.dataSeries.forEach((d: PopulationProjectionTimeSeriesRecord) => {
       data.push({
         Population: Math.round(d.totalPopulation),
+        "CI Lower": Math.round(d.totalPopulationMin),
+        "CI Upper": Math.round(d.totalPopulationMax),
       });
 
       labels.push(formatMonthAndYear(getRecordDate(d)));
@@ -133,7 +145,7 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
       filters: {
         filtersDescription: this.rootStore?.filtersStore.filtersDescription,
       },
-      lastUpdatedOn: formatDate(this.mostRecentDate),
+      lastUpdatedOn: formatDate(this.simulationDate),
       methodologyContent: this.methodology,
       methodologyPDF: await this.fetchMethodologyPDF(),
     });

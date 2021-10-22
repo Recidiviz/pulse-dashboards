@@ -19,16 +19,22 @@ import React from "react";
 
 import PathwaysMetric from "../models/PathwaysMetric";
 import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
+import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import SupervisionCountOverTimeMetric from "../models/SupervisionCountOverTimeMetric";
 import { MetricRecord } from "../models/types";
 import VizCountOverTimeWithAvg from "../VizCountOverTimeWithAvg";
 import VizPopulationOverTime from "../VizPopulationOverTime";
+import VizPopulationProjectionOverTime from "../VizPopulationProjectionOverTime";
 
 type MetricVizMapperProps = {
   metric: PathwaysMetric<MetricRecord>;
 };
 
 const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
+  if (metric instanceof PopulationProjectionOverTimeMetric) {
+    return <VizPopulationProjectionOverTime metric={metric} />;
+  }
+
   if (metric instanceof PopulationOverTimeMetric) {
     return <VizPopulationOverTime metric={metric} />;
   }

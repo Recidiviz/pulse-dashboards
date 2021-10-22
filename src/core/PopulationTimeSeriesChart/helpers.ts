@@ -16,7 +16,13 @@
 // =============================================================================
 
 import { formatDate } from "../../utils/formatStrings";
-import { PopulationProjectionTimeSeriesRecord } from "../models/types";
+import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
+import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
+import ProjectionsMetrics from "../models/ProjectionsMetrics";
+import {
+  PopulationProjectionTimeSeriesRecord,
+  PopulationTimeSeriesRecord,
+} from "../models/types";
 import { getRecordDate } from "../models/utils";
 
 export type MonthOptions = 6 | 12 | 24 | 60;
@@ -35,37 +41,60 @@ export type PreparedData = {
 };
 
 export const prepareData = (
-  data: PopulationProjectionTimeSeriesRecord[]
+  metric:
+    | PopulationProjectionOverTimeMetric
+    | PopulationOverTimeMetric
+    | ProjectionsMetrics,
+  rawData: PopulationTimeSeriesRecord[] | PopulationProjectionTimeSeriesRecord[]
 ): PreparedData => {
-  const historicalPopulation = data
-    .filter((d) => d.simulationTag === "HISTORICAL")
-    .map((d) => ({
-      date: getRecordDate(d),
-      value: d.totalPopulation,
-    }));
+  let historicalPopulation: ChartPoint[] = [];
+  let projectedPopulation: ChartPoint[] = [];
+  let uncertainty: ChartPoint[] = [];
+  let data;
 
-  const projectedPopulation = historicalPopulation.slice(-1).concat(
-    data
-      .filter((d) => d.simulationTag === "BASELINE")
+  if (
+    metric instanceof PopulationProjectionOverTimeMetric ||
+    metric instanceof ProjectionsMetrics
+  ) {
+    data = rawData as PopulationProjectionTimeSeriesRecord[];
+
+    historicalPopulation = data
+      .filter((d) => d.simulationTag === "HISTORICAL")
       .map((d) => ({
         date: getRecordDate(d),
         value: d.totalPopulation,
-        lowerBound: d.totalPopulationMin,
-        upperBound: d.totalPopulationMax,
-      }))
-  );
+      }));
 
-  const uncertainty = [
-    historicalPopulation[historicalPopulation.length - 1],
-    ...data
-      .filter((d) => d.simulationTag !== "HISTORICAL")
-      .map((d) => ({ date: getRecordDate(d), value: d.totalPopulationMax })),
-    ...data
-      .filter((d) => d.simulationTag !== "HISTORICAL")
-      .map((d) => ({ date: getRecordDate(d), value: d.totalPopulationMin }))
-      .reverse(),
-    historicalPopulation[historicalPopulation.length - 1],
-  ];
+    projectedPopulation = historicalPopulation.slice(-1).concat(
+      data
+        .filter((d) => d.simulationTag === "BASELINE")
+        .map((d) => ({
+          date: getRecordDate(d),
+          value: d.totalPopulation,
+          lowerBound: d.totalPopulationMin,
+          upperBound: d.totalPopulationMax,
+        }))
+    );
+
+    uncertainty = [
+      historicalPopulation[historicalPopulation.length - 1],
+      ...data
+        .filter((d) => d.simulationTag !== "HISTORICAL")
+        .map((d) => ({ date: getRecordDate(d), value: d.totalPopulationMax })),
+      ...data
+        .filter((d) => d.simulationTag !== "HISTORICAL")
+        .map((d) => ({ date: getRecordDate(d), value: d.totalPopulationMin }))
+        .reverse(),
+      historicalPopulation[historicalPopulation.length - 1],
+    ];
+  } else if (metric instanceof PopulationOverTimeMetric) {
+    data = rawData as PopulationTimeSeriesRecord[];
+
+    historicalPopulation = data.map((d) => ({
+      date: getRecordDate(d),
+      value: d.totalPopulation,
+    }));
+  }
 
   return { historicalPopulation, projectedPopulation, uncertainty };
 };

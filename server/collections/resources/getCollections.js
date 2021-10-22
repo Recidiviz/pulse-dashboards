@@ -162,6 +162,9 @@ const PATHWAYS_COLLECTIONS = {
     supervision_to_liberty_count_by_month: {
       filename: "supervision_to_liberty_count_by_month.txt",
     },
+    prison_population_time_series: {
+      filename: "prison_population_time_series.json",
+    },
   },
 };
 

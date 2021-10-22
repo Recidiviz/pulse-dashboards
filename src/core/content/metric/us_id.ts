@@ -21,7 +21,7 @@
 import { StateSpecificMetricCopy } from "../types";
 
 const content: StateSpecificMetricCopy = {
-  prisonPopulationOverTime: {
+  projectedPrisonPopulationOverTime: {
     title: "Prison Population",
     methodology:
       "- **Historical population:** The left side of the chart describes the historical prison population over the selected “Time Period”. Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the “November 2020” data point on the chart will show the total number of people described in the “Who is included?” section above on November 1, 2020. \n- **Projected population:** The right side of the chart describes the projected prison population over the selected “Time Period.” The shaded area represents the confidence intervals of the projection. On hover, the 5% and 95% confidence range can be seen in parentheses. [Click here](https://drive.google.com/file/d/1xDpv_nRp171Ixhcq_WzfmeRNObnP8ZbB/view) for more on the projection methodology.",

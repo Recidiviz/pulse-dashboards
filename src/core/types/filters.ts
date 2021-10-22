@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import type FiltersStore from "../CoreStore/FiltersStore";
-import { Gender } from "../models/types";
+import { Age, Gender } from "../models/types";
 import { FILTER_TYPES } from "../utils/constants";
 
 type ValueOf<T> = T[keyof T];
@@ -26,6 +26,8 @@ export type PopulationFilterValues = {
   gender: Gender;
   supervisionType: string;
   legalStatus: string;
+  facility: string;
+  age: Age;
 };
 
 export type PopulationFilterLabels = {
@@ -33,6 +35,8 @@ export type PopulationFilterLabels = {
   gender: string;
   supervisionType: string;
   legalStatus: string;
+  facility: string;
+  age: string;
 };
 
 export type SetPopulationFilters = (
@@ -49,6 +53,8 @@ export interface PopulationFilters {
   [FILTER_TYPES.GENDER]: PopulationFilter;
   [FILTER_TYPES.LEGAL_STATUS]: PopulationFilter;
   [FILTER_TYPES.SUPERVISION_TYPE]: PopulationFilter;
+  [FILTER_TYPES.AGE]: PopulationFilter;
+  [FILTER_TYPES.FACILITY]: PopulationFilter;
 }
 
 type PopulationFilter = {

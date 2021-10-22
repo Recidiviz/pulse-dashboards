@@ -16,10 +16,13 @@
 // =============================================================================
 import { makeAutoObservable } from "mobx";
 
+import { US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
 import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
+import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import ProjectionsMetrics from "../models/ProjectionsMetrics";
 import SupervisionCountOverTimeMetric from "../models/SupervisionCountOverTimeMetric";
 import {
+  createPopulationTimeSeries,
   createProjectionTimeSeries,
   createSupervisionTransitionTimeSeries,
 } from "../models/utils";
@@ -55,7 +58,10 @@ export default class MetricsStore {
     const { page, section } = this.rootStore;
     const map = {
       [PATHWAYS_PAGES.prison]: {
-        [PATHWAYS_SECTIONS.countOverTime]: this.prisonPopulationOverTime,
+        [PATHWAYS_SECTIONS.countOverTime]:
+          this.rootStore.currentTenantId === US_TN
+            ? this.prisonPopulationOverTime
+            : this.projectedPrisonPopulationOverTime,
       },
       [PATHWAYS_PAGES.supervision]: {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionPopulationOverTime,
@@ -76,6 +82,24 @@ export default class MetricsStore {
       id: "prisonPopulationOverTime",
       tenantId: this.rootStore.currentTenantId,
       compartment: "INCARCERATION",
+      sourceFilename: "prison_population_time_series",
+      rootStore: this.rootStore,
+      dataTransformer: createPopulationTimeSeries,
+      enabledFilters: [
+        FILTER_TYPES.TIME_PERIOD,
+        FILTER_TYPES.GENDER,
+        FILTER_TYPES.LEGAL_STATUS,
+        FILTER_TYPES.AGE,
+        FILTER_TYPES.FACILITY,
+      ],
+    });
+  }
+
+  get projectedPrisonPopulationOverTime(): PopulationProjectionOverTimeMetric {
+    return new PopulationProjectionOverTimeMetric({
+      id: "projectedPrisonPopulationOverTime",
+      tenantId: this.rootStore.currentTenantId,
+      compartment: "INCARCERATION",
       sourceFilename: "prison_population_projection_time_series",
       rootStore: this.rootStore,
       dataTransformer: createProjectionTimeSeries,
@@ -87,8 +111,8 @@ export default class MetricsStore {
     });
   }
 
-  get supervisionPopulationOverTime(): PopulationOverTimeMetric {
-    return new PopulationOverTimeMetric({
+  get supervisionPopulationOverTime(): PopulationProjectionOverTimeMetric {
+    return new PopulationProjectionOverTimeMetric({
       id: "supervisionPopulationOverTime",
       tenantId: this.rootStore.currentTenantId,
       compartment: "SUPERVISION",

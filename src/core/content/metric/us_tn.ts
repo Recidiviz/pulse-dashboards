@@ -18,27 +18,12 @@
  *
  */
 
-import { MetricCopy } from "../types";
+import { StateSpecificMetricCopy } from "../types";
 
-const content: MetricCopy = {
-  projectedPrisonPopulationOverTime: {
-    title: "Incarcerated Population",
-    note: "Historical and projected population data were generated",
-    methodology: "This is the prison population over time methodology",
-  },
-  supervisionPopulationOverTime: {
-    title: "Supervised Population",
-    note: "Historical and projected population data were generated",
-  },
-  supervisionToPrisonOverTime: {
-    title: "Admissions to prison from supervision",
-  },
-  supervisionToLibertyOverTime: {
-    title: "Releases from supervision to liberty",
-  },
+const content: StateSpecificMetricCopy = {
   prisonPopulationOverTime: {
-    title: "Incarcerated Population",
-    note: "Placeholder note",
+    title: "Prison Population",
+    methodology: "Prison population over time methodology",
   },
 };
 
