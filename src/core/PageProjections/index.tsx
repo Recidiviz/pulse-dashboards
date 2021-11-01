@@ -23,7 +23,7 @@ import { SimulationCompartment } from "../models/types";
 import PageTemplate from "../PageTemplate";
 import PathwaysFilterBar from "../PathwaysFilterBar/PathwaysFilterBar";
 import PopulationSummaryMetrics from "../PopulationSummaryMetrics";
-import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
+import { PopulationProjectionTimeSeriesChart } from "../PopulationTimeSeriesChart";
 import filterOptions from "../utils/filterOptions";
 import { getCompartmentFromView, getViewFromPathname } from "../views";
 import PopulationProjectionLastUpdated from "./PopulationProjectionLastUpdated";
@@ -62,7 +62,7 @@ const PageProjections: React.FC = () => {
         simulationDate={simulationDate}
         isLoading={isLoading}
       />
-      <PopulationTimeSeriesChart
+      <PopulationProjectionTimeSeriesChart
         metric={model}
         title={`Total ${populationType} Population`}
         data={filteredData}

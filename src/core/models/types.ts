@@ -68,7 +68,6 @@ export type PopulationProjectionTimeSeriesRecord = {
 export type PopulationTimeSeriesRecord = {
   year: number;
   month: number;
-  compartment: SimulationCompartment;
   legalStatus: string;
   gender: Gender;
   facility: string;

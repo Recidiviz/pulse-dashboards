@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatDate } from "../../utils/formatStrings";
+import { formatDate } from "../../utils";
 import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import ProjectionsMetrics from "../models/ProjectionsMetrics";
@@ -87,9 +87,8 @@ export const prepareData = (
         .reverse(),
       historicalPopulation[historicalPopulation.length - 1],
     ];
-  } else if (metric instanceof PopulationOverTimeMetric) {
+  } else {
     data = rawData as PopulationTimeSeriesRecord[];
-
     historicalPopulation = data.map((d) => ({
       date: getRecordDate(d),
       value: d.totalPopulation,
@@ -166,4 +165,13 @@ export const getDateSpacing = (timeRange: MonthOptions): number => {
   if (timeRange <= 24) return 2;
 
   return 4;
+};
+
+export const getTickValues = (
+  population: ChartPoint[],
+  dateSpacing: number
+): Date[] => {
+  return population
+    .filter((_, index) => index % dateSpacing === 0)
+    .map((r) => r.date);
 };

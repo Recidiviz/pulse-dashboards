@@ -20,7 +20,7 @@ import React from "react";
 
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import PopulationSummaryMetrics from "../PopulationSummaryMetrics";
-import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
+import { PopulationProjectionTimeSeriesChart } from "../PopulationTimeSeriesChart";
 
 type VizPopulationProjectionOverTimeProps = {
   metric: PopulationProjectionOverTimeMetric;
@@ -39,7 +39,7 @@ const VizPopulationProjectionOverTime: React.FC<VizPopulationProjectionOverTimeP
         isLoading={isLoading}
         isError={error}
       />
-      <PopulationTimeSeriesChart
+      <PopulationProjectionTimeSeriesChart
         metric={metric}
         data={dataSeries}
         title={chartTitle}

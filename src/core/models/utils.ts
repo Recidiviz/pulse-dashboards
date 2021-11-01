@@ -52,12 +52,11 @@ export function createPopulationTimeSeries(
       return {
         year: Number(record.year),
         month: Number(record.month),
-        compartment: record.compartment as SimulationCompartment,
         legalStatus: record.legal_status,
         gender: record.gender as Gender,
-        age: record.age as Age,
+        age: record.age_group as Age,
         facility: record.facility,
-        totalPopulation: parseInt(record.total_population),
+        totalPopulation: parseInt(record.count),
       };
     })
     .sort((a, b) => (a.year - b.year) * 12 + a.month - b.month);
