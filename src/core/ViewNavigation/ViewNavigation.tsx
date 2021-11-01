@@ -23,7 +23,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { ReactComponent as MethodologyLogo } from "../../assets/static/images/methodology.svg";
 import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathways.svg";
 import { ReactComponent as PracticesLogo } from "../../assets/static/images/practices.svg";
-import ProfileLink from "../../components/ProfileLink";
+import UserAvatar from "../../components/UserAvatar/UserAvatar";
 import useIsMobile from "../../hooks/useIsMobile";
 import { useCoreStore } from "../CoreStoreProvider";
 import { PATHWAYS_VIEWS } from "../views";
@@ -104,7 +104,7 @@ const ViewNavigation: React.FC = ({ children }) => {
       className="ViewNavigation__navlink"
       to={`/${PATHWAYS_VIEWS.profile}`}
     >
-      <ProfileLink />
+      <UserAvatar />
       <div className="ViewNavigation__navlink-heading">Profile</div>
     </NavLink>
   );
