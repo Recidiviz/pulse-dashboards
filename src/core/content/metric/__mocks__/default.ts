@@ -21,6 +21,11 @@
 import { MetricCopy } from "../../types";
 
 const content: MetricCopy = {
+  prisonFacilityPopulation: {
+    title: "Incarcerated Population by Prison",
+    note: "Incarcerated population by prison note",
+    methodology: "Incarcerated population by prison methodology",
+  },
   prisonPopulationOverTime: {
     title: "Incarcerated Population",
     note: "Incarcerated population note",

@@ -40,6 +40,10 @@ const content: MetricCopy = {
     title: "Incarcerated Population",
     note: "Placeholder note",
   },
+  prisonFacilityPopulation: {
+    title: "Incarcerated Population by Facility",
+    note: "Placeholder note",
+  },
 };
 
 export default content;

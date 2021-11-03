@@ -19,6 +19,7 @@ import {
   Age,
   Gender,
   PopulationProjectionTimeSeriesRecord,
+  PopulationSnapshotRecord,
   PopulationTimeSeriesRecord,
   RawMetricData,
   SimulationCompartment,
@@ -40,6 +41,22 @@ export function createProjectionTimeSeries(
       totalPopulation: Number(record.total_population),
       totalPopulationMax: Number(record.total_population_max),
       totalPopulationMin: Number(record.total_population_min),
+    };
+  });
+}
+
+export function createFacilityPopulationSnapshot(
+  rawRecords: RawMetricData
+): PopulationSnapshotRecord[] {
+  return rawRecords.map((record) => {
+    return {
+      year: Number(record.year),
+      month: Number(record.month),
+      legalStatus: record.legal_status,
+      gender: record.gender as Gender,
+      age: record.age_group as Age,
+      facility: record.facility,
+      totalPopulation: parseInt(record.count),
     };
   });
 }

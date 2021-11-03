@@ -19,9 +19,11 @@ import { makeAutoObservable } from "mobx";
 import { US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
 import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
+import PopulationSnapshotMetric from "../models/PopulationSnapshotMetric";
 import ProjectionsMetrics from "../models/ProjectionsMetrics";
 import SupervisionCountOverTimeMetric from "../models/SupervisionCountOverTimeMetric";
 import {
+  createFacilityPopulationSnapshot,
   createPopulationTimeSeries,
   createProjectionTimeSeries,
   createSupervisionTransitionTimeSeries,
@@ -62,6 +64,7 @@ export default class MetricsStore {
           this.rootStore.currentTenantId === US_TN
             ? this.prisonPopulationOverTime
             : this.projectedPrisonPopulationOverTime,
+        [PATHWAYS_SECTIONS.countByLocation]: this.prisonFacilityPopulation,
       },
       [PATHWAYS_PAGES.supervision]: {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionPopulationOverTime,
@@ -87,6 +90,23 @@ export default class MetricsStore {
       dataTransformer: createPopulationTimeSeries,
       enabledFilters: [
         FILTER_TYPES.TIME_PERIOD,
+        FILTER_TYPES.GENDER,
+        FILTER_TYPES.LEGAL_STATUS,
+        FILTER_TYPES.AGE,
+        FILTER_TYPES.FACILITY,
+      ],
+    });
+  }
+
+  get prisonFacilityPopulation(): PopulationSnapshotMetric {
+    return new PopulationSnapshotMetric({
+      id: "prisonFacilityPopulation",
+      tenantId: this.rootStore.currentTenantId,
+      compartment: "INCARCERATION",
+      sourceFilename: "prison_population_time_series",
+      rootStore: this.rootStore,
+      dataTransformer: createFacilityPopulationSnapshot,
+      enabledFilters: [
         FILTER_TYPES.GENDER,
         FILTER_TYPES.LEGAL_STATUS,
         FILTER_TYPES.AGE,

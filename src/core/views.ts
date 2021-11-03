@@ -71,6 +71,7 @@ export const PathwaysPageIdList = Object.keys(PATHWAYS_PAGES);
 export type PathwaysSection = keyof typeof PATHWAYS_SECTIONS;
 export const PATHWAYS_SECTIONS: Record<string, string> = {
   countOverTime: "countOverTime",
+  countByLocation: "countByLocation",
 };
 
 export const DEFAULT_PATHWAYS_PAGE = PATHWAYS_PAGES.prison;
@@ -81,7 +82,7 @@ export const DEFAULT_PATHWAYS_SECTION_BY_PAGE: Record<string, string> = {
   [PATHWAYS_PAGES.supervisionToLiberty]: PATHWAYS_SECTIONS.countOverTime,
 };
 
-const PATHWAYS_MERIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
+const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
   [PATHWAYS_PAGES.prison]: ["prisonPopulationOverTime"],
   [PATHWAYS_PAGES.supervision]: ["supervisionPopulationOverTime"],
   [PATHWAYS_PAGES.supervisionToPrison]: ["supervisionToPrisonOverTime"],
@@ -89,14 +90,14 @@ const PATHWAYS_MERIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
 };
 
 export function getMetricIdsForPage(page: PathwaysPage): MetricId[] {
-  return PATHWAYS_MERIC_IDS_BY_PAGE[page];
+  return PATHWAYS_METRIC_IDS_BY_PAGE[page];
 }
 
 export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
   MetricId,
   PathwaysSection
 > = {
-  // @ts-ignore
+  prisonFacilityPopulation: PATHWAYS_SECTIONS.countByLocation,
   prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   supervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,

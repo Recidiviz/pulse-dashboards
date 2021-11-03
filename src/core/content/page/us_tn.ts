@@ -23,9 +23,10 @@ import { StateSpecificPageCopy } from "../types";
 const content: StateSpecificPageCopy = {
   prison: {
     summary:
-      "These charts show people who are currentlly incarcerated in a TDOC facility or sentenced to serve their time in a county jail due to either a felony or misdemeanor conviction.",
+      "These charts show people who are currently incarcerated in a TDOC facility or sentenced to serve their time in a county jail due to either a felony or misdemeanor conviction.",
     sections: {
       countOverTime: "Prison population over time",
+      countByLocation: "Prison population by facility",
     },
     methodology: "Prison page methodology",
   },
