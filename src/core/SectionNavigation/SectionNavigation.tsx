@@ -18,6 +18,7 @@
 import "./SectionNavigation.scss";
 
 import { Icon, IconSVG } from "@recidiviz/design-system";
+import cn from "classnames";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -32,27 +33,33 @@ const SectionNavigation: React.FC = () => {
   const { userStore } = useRootStore();
   const { setSection } = useCoreStore();
   const navigationLayout = userStore.userAllowedNavigation;
-  const [currentView, currentPage] = pathname.split("/").slice(1, 3);
+  const [currentView, currentPage] = pathname.split("/").slice(1, 4);
   const enabledSections = navigationLayout[currentPage] ?? [];
+  const [currentSection = enabledSections[0]] = pathname.split("/").slice(3, 4);
   const { sections } = usePageContent(currentPage as PathwaysPage);
 
   return (
     <nav className="SectionNavigation">
-      <div className="SectionNavigation__title">Over-Time Trends</div>
+      <div className="SectionNavigation__title" />
       {enabledSections.map((sectionId: string) => (
         <div key={sectionId}>
           <Link
-            className="SectionNavigation__navlink"
+            className={cn("SectionNavigation__navlink", {
+              "SectionNavigation__navlink--active":
+                currentSection === sectionId,
+            })}
             to={`/${currentView}/${currentPage}/${sectionId}`}
             onClick={() => setSection(sectionId)}
           >
             {sections && sections[sectionId]}
-            <Icon
-              className="SectionNavigation__icon"
-              kind={IconSVG.Arrow}
-              width={16}
-              height={16}
-            />
+            {currentSection === sectionId && (
+              <Icon
+                className="SectionNavigation__icon"
+                kind={IconSVG.Arrow}
+                width={16}
+                height={16}
+              />
+            )}
           </Link>
         </div>
       ))}

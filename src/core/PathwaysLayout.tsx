@@ -52,9 +52,7 @@ const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
         >
           {!isMobile && <ViewNavigation />}
           <div className="PathwaysLayout__main">
-            <div className="PathwaysLayout__header">
-              <PathwaysNavigation />
-            </div>
+            <PathwaysNavigation />
             <IE11Banner />
             {children}
           </div>

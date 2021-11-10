@@ -19,6 +19,8 @@ $crimson-dark: #a43939;
 $crimson-dark-50: rgba(164, 57, 57, 0.5);
 $data-forest: #25636f;
 $data-forest-07: rgba(37, 99, 111, 0.07);
+$data-forest-dark: #004b5b;
+$data-teal: #90aeb5;
 $indigo: rgba(76, 98, 144, 1);
 $indigo-10: rgba(76, 98, 144, 0.1);
 $marble-3: #f4f5f5;
@@ -119,6 +121,9 @@ $font-article-serif-56: 400 3.5rem/4.5rem $serif;
   slate80: $slate-80;
   slate60: $slate-60;
   white: $white;
+  dataForest: $data-forest;
+  dataForestDark: $data-forest-dark;
+  dataTeal: $data-teal;
 
   fontUiSans16: $font-ui-sans-16;
   fontUiSans14: $font-ui-sans-14;

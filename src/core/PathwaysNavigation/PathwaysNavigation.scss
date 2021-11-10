@@ -24,6 +24,8 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: $core-border-color 1px solid;
+  position: fixed;
+  z-index: 2;
 
   @media screen and (max-width: $core-breakpoint-sm) {
     display: none;

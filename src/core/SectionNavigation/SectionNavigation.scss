@@ -22,19 +22,22 @@
     @include font-ui-sans-24;
     color: $slate-85;
     border-bottom: 1px solid $slate-20;
-    padding-bottom: 1rem;
-    margin-bottom: 2rem;
-    margin-top: 3rem;
+    margin-bottom: 2.5rem;
+    margin-top: 2.5rem;
   }
   &__navlink {
     @include font-ui-sans-16;
-    color: $signal-links;
+    color: $pine-1;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 
     &:hover {
+      color: $signal-links;
+    }
+
+    &--active {
       color: $signal-links;
     }
   }

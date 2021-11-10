@@ -25,7 +25,7 @@ import React from "react";
 type PropTypes = {
   date: string;
   value: string;
-  average: string;
+  average?: string;
 };
 
 const PathwaysTooltip: React.FC<PropTypes> = ({ date, value, average }) => {

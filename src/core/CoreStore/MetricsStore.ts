@@ -105,12 +105,8 @@ export default class MetricsStore {
       sourceFilename: "prison_population_time_series",
       rootStore: this.rootStore,
       dataTransformer: createFacilityPopulationSnapshot,
-      enabledFilters: [
-        FILTER_TYPES.GENDER,
-        FILTER_TYPES.LEGAL_STATUS,
-        FILTER_TYPES.AGE,
-        FILTER_TYPES.FACILITY,
-      ],
+      enabledFilters: [FILTER_TYPES.GENDER, FILTER_TYPES.FACILITY],
+      enabledMoreFilters: [FILTER_TYPES.AGE, FILTER_TYPES.LEGAL_STATUS],
     });
   }
 

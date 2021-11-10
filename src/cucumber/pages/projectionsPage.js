@@ -23,7 +23,7 @@ class ProjectionsPage extends Page {
   }
 
   get projectionsChartHeader() {
-    return $(".PopulationTimeSeriesChart__Header");
+    return $(".PopulationTimeSeriesChart__header");
   }
 }
 

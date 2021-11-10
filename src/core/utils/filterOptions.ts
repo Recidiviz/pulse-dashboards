@@ -103,13 +103,13 @@ export const PopulationFilterOptions: PopulationFilters = {
     width: "8rem",
     setFilters: setFilters(FILTER_TYPES.TIME_PERIOD),
     options: [
-      { label: "5 years", value: "60" },
-      { label: "2 years", value: "24" },
-      { label: "1 year", value: "12" },
       { label: "6 months", value: "6" },
+      { label: "1 year", value: "12" },
+      { label: "2 years", value: "24" },
+      { label: "5 years", value: "60" },
     ],
     get defaultOption(): FilterOption {
-      return this.options[3];
+      return this.options[0];
     },
     get defaultValue(): string {
       return this.defaultOption.value;

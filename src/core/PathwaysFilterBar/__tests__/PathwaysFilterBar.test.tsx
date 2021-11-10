@@ -40,7 +40,9 @@ beforeEach(() => {
   (useCoreStore as jest.Mock).mockReturnValue({
     filtersStore,
   });
-  (useRootStore as jest.Mock).mockReturnValue({});
+  (useRootStore as jest.Mock).mockReturnValue({
+    userStore: { userAllowedNavigation: {} },
+  });
   (useQueryParams as jest.Mock).mockReturnValue(["query", mockSetQuery]);
 });
 

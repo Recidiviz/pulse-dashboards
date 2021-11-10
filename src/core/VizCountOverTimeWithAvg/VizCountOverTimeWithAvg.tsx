@@ -43,8 +43,6 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
 
   const { dataSeries, chartTitle } = metric;
 
-  if (!dataSeries) return <div className="ChartCountOverTimeWithAvg" />;
-
   const data = dataSeries.map((d, index) => ({
     index,
     date: new Date(d.year, d.month - 1),
@@ -90,8 +88,8 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
 
   return (
     <div className="VizCountOverTimeWithAvg">
-      <div className="PopulationTimeSeriesChart__Header">
-        <div className="PopulationTimeSeriesChart__Title">{chartTitle}</div>
+      <div className="PopulationTimeSeriesChart__header">
+        <div className="PopulationTimeSeriesChart__title">{chartTitle}</div>
         <PopulationTimeSeriesLegend
           items={["Monthly count", "3-month rolling average"]}
         />

@@ -54,12 +54,12 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   ...chartProps
 }) => {
   const historicalLine = {
-    class: "PopulationTimeSeriesChart__HistoricalLine",
+    class: "PopulationTimeSeriesChart__historicalLine",
     data: historicalPopulation,
   };
 
   const projectedLine = {
-    class: "PopulationTimeSeriesChart__ProjectedLine",
+    class: "PopulationTimeSeriesChart__projectedLine",
     data: projectedPopulation,
   };
 
@@ -72,8 +72,8 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
 
   return (
     <div className="PopulationTimeSeriesChart">
-      <div className="PopulationTimeSeriesChart__Header">
-        <div className="PopulationTimeSeriesChart__Title">{title}</div>
+      <div className="PopulationTimeSeriesChart__header">
+        <div className="PopulationTimeSeriesChart__title">{title}</div>
       </div>
       <ResponsiveXYFrame
         responsiveWidth
@@ -100,7 +100,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
         xExtent={[beginDate, endDate]}
         yExtent={[0, chartTop]}
         showLinePoints
-        pointClass="PopulationTimeSeriesChart__Point"
+        pointClass="PopulationTimeSeriesChart__point"
         axes={[
           { orient: "left", tickFormat: (n: number) => n.toLocaleString() },
           {

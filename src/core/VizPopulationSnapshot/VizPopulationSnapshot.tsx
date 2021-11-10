@@ -16,9 +16,13 @@
 // ===================== ========================================================
 
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { ResponsiveOrdinalFrame } from "semiotic";
 
+import * as styles from "../CoreConstants.scss";
+import { useCoreStore } from "../CoreStoreProvider";
 import PopulationSnapshotMetric from "../models/PopulationSnapshotMetric";
+import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizPopulationOverTimeProps = {
@@ -28,11 +32,94 @@ type VizPopulationOverTimeProps = {
 const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
   metric,
 }) => {
-  const { dataSeries } = metric;
+  const { filtersStore } = useCoreStore();
+  const { filters } = filtersStore;
+  const { dataSeries, chartTitle } = metric;
+
+  const [hoveredId, setHoveredId] = useState(null);
+  const [pickedId, setPickedId] = useState([] as string[]);
+
+  useEffect(() => {
+    setPickedId(filters.facility);
+  }, [filters.facility]);
+
+  const data = dataSeries.map((d, index) => ({
+    index,
+    facility: d.facility,
+    value: d.totalPopulation,
+  }));
+
+  const yRange = [0, Math.max(...data.map((d) => d.value))];
+
+  const hoverAnnotation = (annotation: any) => {
+    const { d } = annotation;
+    const { data: pieceData } = d.pieces[0];
+    setHoveredId(pieceData.index);
+  };
+
   return (
     <div>
-      {dataSeries[0].age}, {dataSeries[0].gender}, {dataSeries[0].legalStatus}.
-      total data points: {dataSeries.length}
+      <div className="VizCountOverTimeWithAvg">
+        <div className="PopulationTimeSeriesChart__header">
+          <div className="PopulationTimeSeriesChart__title">{chartTitle}</div>
+        </div>
+        <ResponsiveOrdinalFrame
+          responsiveWidth
+          hoverAnnotation
+          customHoverBehavior={(piece: any) => {
+            if (piece) {
+              setHoveredId(piece.index);
+            } else {
+              setHoveredId(null);
+            }
+          }}
+          svgAnnotationRules={(annotation: any) => {
+            if (annotation.d.type === "column-hover") {
+              return hoverAnnotation(annotation);
+            }
+            setHoveredId(null);
+            return null;
+          }}
+          baseMarkProps={{ transitionDuration: { default: 500 } }}
+          tooltipContent={(d: any) => {
+            const pieceData = d.pieces[0];
+            return (
+              <PathwaysTooltip
+                date={pieceData.facility}
+                value={pieceData.value}
+              />
+            );
+          }}
+          type="bar"
+          data={data}
+          size={[558, 558]}
+          margin={{ left: 79, bottom: 96, right: 50, top: 56 }}
+          oAccessor="facility"
+          oPadding={data.length > 25 ? 2 : 15}
+          style={(d: any) => {
+            if (d.index === hoveredId) {
+              return { fill: styles.dataForestDark };
+            }
+            if (pickedId.includes(d.facility)) {
+              return { fill: styles.dataTeal };
+            }
+            return { fill: styles.dataForest };
+          }}
+          rAccessor="value"
+          rExtent={yRange}
+          // @ts-ignore
+          oLabel={(facility: string, _: any) => {
+            return <text textAnchor="middle">{facility}</text>;
+          }}
+          axes={[
+            {
+              orient: "left",
+              ticks: 3,
+              tickFormat: (n: number) => n.toLocaleString(),
+            },
+          ]}
+        />
+      </div>
     </div>
   );
 };

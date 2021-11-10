@@ -41,7 +41,7 @@ const content: MetricCopy = {
     note: "Placeholder note",
   },
   prisonFacilityPopulation: {
-    title: "Incarcerated Population by Facility",
+    title: "Prison population by facility",
     note: "Placeholder note",
   },
 };

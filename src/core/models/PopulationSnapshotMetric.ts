@@ -18,6 +18,12 @@
  *
  */
 // TODO #1428 Add tests
+import { pipe } from "lodash/fp";
+import groupBy from "lodash/fp/groupBy";
+import map from "lodash/fp/map";
+import sumBy from "lodash/fp/sumBy";
+import values from "lodash/fp/values";
+
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PopulationSnapshotRecord, SimulationCompartment } from "./types";
 
@@ -53,17 +59,33 @@ export default class PopulationSnapshotMetric extends PathwaysMetric<PopulationS
       )
     );
 
-    return this.allRecords.filter((record: PopulationSnapshotRecord) => {
-      return (
-        record.year === latestDate.getFullYear() &&
-        record.month - 1 === latestDate.getMonth() &&
-        record.gender === gender &&
-        status.includes(record.legalStatus) &&
-        age.includes(record.age) &&
-        (this.id === "prisonFacilityPopulation"
-          ? !["ALL"].includes(record.facility)
-          : facility.includes(record.facility))
-      );
-    });
+    const filteredRecords = this.allRecords.filter(
+      (record: PopulationSnapshotRecord) => {
+        return (
+          record.year === latestDate.getFullYear() &&
+          record.month - 1 === latestDate.getMonth() &&
+          record.gender === gender &&
+          status.includes(record.legalStatus) &&
+          age.includes(record.age) &&
+          (this.id === "prisonFacilityPopulation"
+            ? !["ALL"].includes(record.facility)
+            : facility.includes(record.facility))
+        );
+      }
+    );
+
+    const result = pipe(
+      groupBy((d: PopulationSnapshotRecord) => [d.facility]),
+      values,
+      map((dataset) => ({
+        year: dataset[0].year,
+        month: dataset[0].month,
+        gender: dataset[0].gender,
+        legalStatus: dataset[0].legalStatus,
+        facility: dataset[0].facility,
+        totalPopulation: sumBy("totalPopulation", dataset),
+      }))
+    )(filteredRecords);
+    return result as PopulationSnapshotRecord[];
   }
 }

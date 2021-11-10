@@ -22,7 +22,7 @@ import { StateSpecificMetricCopy } from "../types";
 
 const content: StateSpecificMetricCopy = {
   prisonPopulationOverTime: {
-    title: "Prison Population",
+    title: "Prison population over time",
     methodology: "Prison population over time methodology",
   },
 };

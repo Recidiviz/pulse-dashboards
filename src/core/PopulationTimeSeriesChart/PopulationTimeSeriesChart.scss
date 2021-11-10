@@ -7,7 +7,7 @@
     height: 639px;
   }
 
-  &__Header {
+  &__header {
     display: flex;
     justify-content: space-between;
     padding-top: 2.5rem;
@@ -15,23 +15,23 @@
     padding-right: 3rem;
   }
 
-  &__Title {
+  &__title {
     color: $pine-1;
     @include font-ui-sans-16;
   }
 
-  &__Point {
+  &__point {
     fill: $indigo;
     r: 0.3rem;
   }
 
-  &__HistoricalLine,
-  &__ProjectedLine {
+  &__historicalLine,
+  &__projectedLine {
     stroke: $indigo;
     stroke-width: 2;
   }
 
-  &__ProjectedLine {
+  &__projectedLine {
     stroke-dasharray: 7 9;
   }
 

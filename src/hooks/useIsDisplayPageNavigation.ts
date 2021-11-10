@@ -14,35 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-import "./PathwaysNavigation.scss";
-
-import { observer } from "mobx-react-lite";
-import React from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-import { useRootStore } from "../../components/StoreProvider";
-import useIsDisplayPageNavigation from "../../hooks/useIsDisplayPageNavigation";
-import PageNavigation from "../PageNavigation";
-import { PATHWAYS_VIEWS } from "../views";
+import { useRootStore } from "../components/StoreProvider";
 
-const PathwaysNavigation: React.FC = () => {
-  const { currentTenantId } = useRootStore();
+const useIsDisplayPageNavigation = (): boolean => {
+  const { userStore } = useRootStore();
   const { pathname } = useLocation();
-  const isDisplayNav = useIsDisplayPageNavigation();
   const view = pathname.split("/")[1];
-  if (
-    !currentTenantId ||
-    ![PATHWAYS_VIEWS.system, PATHWAYS_VIEWS.methodology].includes(view) ||
-    !isDisplayNav
-  )
-    return null;
+  const navigationLayout = userStore.userAllowedNavigation;
+  const pageOptions = useMemo(() => navigationLayout[view] ?? [], [
+    navigationLayout,
+    view,
+  ]);
 
-  return (
-    <nav className="PathwaysNavigation">
-      <PageNavigation />
-    </nav>
+  const [isDisplayPageNavigation, setIsDisplayPageNavigation] = useState(
+    pageOptions.length > 1
   );
+
+  useEffect(() => {
+    setIsDisplayPageNavigation(pageOptions.length > 1);
+  }, [pageOptions]);
+
+  return isDisplayPageNavigation;
 };
 
-export default observer(PathwaysNavigation);
+export default useIsDisplayPageNavigation;

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import cn from "classnames";
 import { isEqual } from "lodash";
 import { pick } from "lodash/fp";
 import { get } from "mobx";
@@ -21,6 +22,8 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { useQueryParams } from "use-query-params";
 
+import useIsDisplayPageNavigation from "../../hooks/useIsDisplayPageNavigation";
+import useIsMobile from "../../hooks/useIsMobile";
 import { sortByLabel } from "../../utils/datasets";
 import {
   filterQueryParams,
@@ -39,6 +42,7 @@ import {
   FilterOption,
   PopulationFilters,
 } from "../types/filters";
+import { FILTER_TYPES } from "../utils/constants";
 import { getFilterOption } from "../utils/filterOptions";
 import { PATHWAYS_PATHS } from "../views";
 
@@ -58,6 +62,9 @@ const PathwaysFilterBar: React.FC<{
   const { filtersStore } = useCoreStore();
   const { filters } = filtersStore;
 
+  const isDisplayNav = useIsDisplayPageNavigation();
+  const isMobile = useIsMobile();
+
   // if current query params do not match enabled filters, update query
   const [query, setQuery] = useQueryParams(filterQueryParams);
   const cleanQuery = removeUndefinedValuesFromObject(query);
@@ -70,48 +77,62 @@ const PathwaysFilterBar: React.FC<{
   }
 
   return (
-    <FilterBar
-      details={
-        <DetailsGroup hideOnMobile>
-          <MoreFilters
-            enabledFilters={enabledMoreFilters}
-            filterOptions={pick(enabledMoreFilters, filterOptions)}
-            setQuery={(updatedFilters: Partial<PopulationFilters>) =>
-              setQuery(updatedFilters)
-            }
-          />
-          <DownloadDataButton handleOnClick={handleDownload} />
-          <MethodologyLink
-            path={PATHWAYS_PATHS.methodologySystem}
-            chartTitle={chartTitle}
-          />
-        </DetailsGroup>
-      }
+    <div
+      className={cn({
+        "pt-5": isDisplayNav && !isMobile,
+      })}
     >
-      {enabledFilters.map((filterType) => {
-        const filter = filterOptions[filterType];
-        return (
-          <Filter
-            key={`${filterType}`}
-            title={filter.title}
-            width={filter.width}
-          >
-            <CoreSelect
-              value={getFilterOption(get(filters, filter.type), filter.options)}
-              options={sortByLabel(filter.options, "label")}
-              onChange={(option: FilterOption) =>
-                setQuery({ [filter.type]: option.label })
-              }
-              defaultValue={filter.defaultValue}
-              isChanged={
-                filter.defaultValue !==
-                getFilterOption(get(filters, filter.type), filter.options).value
+      <FilterBar
+        details={
+          <DetailsGroup hideOnMobile>
+            <MoreFilters
+              enabledFilters={enabledMoreFilters}
+              filterOptions={pick(enabledMoreFilters, filterOptions)}
+              setQuery={(updatedFilters: Partial<PopulationFilters>) =>
+                setQuery(updatedFilters)
               }
             />
-          </Filter>
-        );
-      })}
-    </FilterBar>
+            <DownloadDataButton handleOnClick={handleDownload} />
+            <MethodologyLink
+              path={PATHWAYS_PATHS.methodologySystem}
+              chartTitle={chartTitle}
+            />
+          </DetailsGroup>
+        }
+      >
+        {enabledFilters.map((filterType) => {
+          const filter = filterOptions[filterType];
+          return (
+            <Filter
+              key={`${filterType}`}
+              title={filter.title}
+              width={filter.width}
+            >
+              <CoreSelect
+                value={getFilterOption(
+                  get(filters, filter.type),
+                  filter.options
+                )}
+                options={
+                  filter.type === FILTER_TYPES.TIME_PERIOD
+                    ? filter.options
+                    : sortByLabel(filter.options, "label")
+                }
+                onChange={(option: FilterOption) =>
+                  setQuery({ [filter.type]: option.label })
+                }
+                defaultValue={filter.defaultValue}
+                isChanged={
+                  filter.defaultValue !==
+                  getFilterOption(get(filters, filter.type), filter.options)
+                    .value
+                }
+              />
+            </Filter>
+          );
+        })}
+      </FilterBar>
+    </div>
   );
 };
 
