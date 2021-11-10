@@ -45,13 +45,11 @@ exports.onExecutePreUserRegistration = async (event, api) => {
 
   /** 1. Domain allow list for registration */
   const authorizedDomains = ["recidiviz.org", "csg.org"]; // add authorized domains here
-  const testerEmails = []; // Add tester emails here
   const emailSplit = event.user.email && event.user.email.split("@");
   const userDomain = emailSplit[emailSplit.length - 1].toLowerCase();
-  const e2eTestEmails = []; // Add e2e tester emails here
 
   // Add any additional email authorization overrides
-  const authorizedEmails = [].concat(testerEmails).concat(e2eTestEmails);
+  const authorizedEmails = [];
 
   const userHasAccess =
     authorizedDomains.some(function (authorizedDomain) {
@@ -74,8 +72,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     // Set state_code for Recidiviz users
     if (
       userDomain === "recidiviz.org" &&
-      event.user.app_metadata &&
-      !event.user.app_metadata.recidiviz_tester
+      !event.user?.app_metadata.recidiviz_tester
     ) {
       api.user.setAppMetadata("state_code", "recidiviz");
       return;

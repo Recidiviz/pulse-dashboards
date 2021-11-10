@@ -23,14 +23,15 @@
 exports.onExecutePostLogin = async (event, api) => {
   const { app_metadata, email } = event.user;
   const stateCode = app_metadata.state_code?.toLowerCase();
-  
-  const testerEmails = [];
-  const e2eTestEmails = [];
 
-  if (app_metadata.skip_sync_permissions ||
-    (email && (testerEmails.includes(email) ||
-      e2eTestEmails.includes(email)))
-  ) {
+  // This is the only action available to SSO users
+  // If a recidiviz user doesn't have a state_code set (i.e. it's their first login),
+  // set it to be recidiviz so they don't get a 404 wall
+  if (userDomain === "recidiviz.org" && !app_metadata.state_code) {
+    api.user.setAppMetadata("state_code", "recidiviz");
+  }
+  
+  if (app_metadata.skip_sync_permissions) {
     return;
   }
 
