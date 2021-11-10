@@ -72,6 +72,7 @@ export type PathwaysSection = keyof typeof PATHWAYS_SECTIONS;
 export const PATHWAYS_SECTIONS: Record<string, string> = {
   countOverTime: "countOverTime",
   countByLocation: "countByLocation",
+  personLevelDetail: "personLevelDetail",
 };
 
 export const DEFAULT_PATHWAYS_PAGE = PATHWAYS_PAGES.prison;
@@ -97,6 +98,7 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
   MetricId,
   PathwaysSection
 > = {
+  incarcerationPopulationPersonLevel: PATHWAYS_SECTIONS.personLevelDetail,
   prisonFacilityPopulation: PATHWAYS_SECTIONS.countByLocation,
   prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,

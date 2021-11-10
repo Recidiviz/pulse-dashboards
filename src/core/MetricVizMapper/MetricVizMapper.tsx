@@ -17,6 +17,7 @@
 
 import React from "react";
 
+import IncarcerationPopulationPersonLevelMetric from "../models/IncarcerationPopulationPersonLevelMetric";
 import PathwaysMetric from "../models/PathwaysMetric";
 import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
@@ -24,6 +25,7 @@ import PopulationSnapshotMetric from "../models/PopulationSnapshotMetric";
 import SupervisionCountOverTimeMetric from "../models/SupervisionCountOverTimeMetric";
 import { MetricRecord } from "../models/types";
 import VizCountOverTimeWithAvg from "../VizCountOverTimeWithAvg";
+import VizIncarcerationPopulationPersonLevel from "../VizIncarcerationPopulationPersonLevel";
 import VizPopulationOverTime from "../VizPopulationOverTime";
 import VizPopulationProjectionOverTime from "../VizPopulationProjectionOverTime";
 import VizPopulationSnapshot from "../VizPopulationSnapshot";
@@ -39,6 +41,10 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
 
   if (metric instanceof PopulationSnapshotMetric) {
     return <VizPopulationSnapshot metric={metric} />;
+  }
+
+  if (metric instanceof IncarcerationPopulationPersonLevelMetric) {
+    return <VizIncarcerationPopulationPersonLevel metric={metric} />;
   }
 
   if (metric instanceof PopulationOverTimeMetric) {

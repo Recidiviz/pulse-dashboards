@@ -17,6 +17,7 @@
 import { makeAutoObservable } from "mobx";
 
 import { US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
+import IncarcerationPopulationPersonLevelMetric from "../models/IncarcerationPopulationPersonLevelMetric";
 import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import PopulationSnapshotMetric from "../models/PopulationSnapshotMetric";
@@ -24,6 +25,7 @@ import ProjectionsMetrics from "../models/ProjectionsMetrics";
 import SupervisionCountOverTimeMetric from "../models/SupervisionCountOverTimeMetric";
 import {
   createFacilityPopulationSnapshot,
+  createIncarcerationPopulationPersonLevelList,
   createPopulationTimeSeries,
   createProjectionTimeSeries,
   createSupervisionTransitionTimeSeries,
@@ -65,6 +67,8 @@ export default class MetricsStore {
             ? this.prisonPopulationOverTime
             : this.projectedPrisonPopulationOverTime,
         [PATHWAYS_SECTIONS.countByLocation]: this.prisonFacilityPopulation,
+        [PATHWAYS_SECTIONS.personLevelDetail]: this
+          .incarcerationPopulationPersonLevel,
       },
       [PATHWAYS_PAGES.supervision]: {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionPopulationOverTime,
@@ -78,6 +82,18 @@ export default class MetricsStore {
     };
     // @ts-ignore
     return map[page][section];
+  }
+
+  get incarcerationPopulationPersonLevel(): IncarcerationPopulationPersonLevelMetric {
+    return new IncarcerationPopulationPersonLevelMetric({
+      id: "incarcerationPopulationPersonLevel",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "incarceration_population_person_level",
+      rootStore: this.rootStore,
+      dataTransformer: createIncarcerationPopulationPersonLevelList,
+      enabledFilters: [FILTER_TYPES.GENDER, FILTER_TYPES.FACILITY],
+      enabledMoreFilters: [FILTER_TYPES.AGE, FILTER_TYPES.LEGAL_STATUS],
+    });
   }
 
   get prisonPopulationOverTime(): PopulationOverTimeMetric {

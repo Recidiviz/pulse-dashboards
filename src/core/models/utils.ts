@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { toTitleCase } from "../../utils";
 import {
   Age,
   Gender,
+  IncarcerationPopulationPersonLevelRecord,
   PopulationProjectionTimeSeriesRecord,
   PopulationSnapshotRecord,
   PopulationTimeSeriesRecord,
@@ -57,6 +59,23 @@ export function createFacilityPopulationSnapshot(
       age: record.age_group as Age,
       facility: record.facility,
       totalPopulation: parseInt(record.count),
+    };
+  });
+}
+
+export function createIncarcerationPopulationPersonLevelList(
+  rawRecords: RawMetricData
+): IncarcerationPopulationPersonLevelRecord[] {
+  return rawRecords.map((record) => {
+    return {
+      stateId: record.state_id,
+      fullName: record.full_name,
+      lastUpdated: formatDateString(record.last_updated),
+      legalStatus: toTitleCase(record.legal_status),
+      gender: toTitleCase(record.gender) as Gender,
+      ageGroup: record.age_group as Age,
+      age: record.age,
+      facility: record.facility,
     };
   });
 }
@@ -105,3 +124,8 @@ export interface TimeSeriesRecord {
 export function getRecordDate(d: TimeSeriesRecord): Date {
   return new Date(d.year, d.month - 1);
 }
+
+const formatDateString = (dateString: string) => {
+  const [year, month, day] = dateString.split("-");
+  return new Date(Number(year), Number(month) - 1, Number(day));
+};

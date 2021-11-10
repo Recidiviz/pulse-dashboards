@@ -27,6 +27,7 @@ const content: StateSpecificPageCopy = {
     sections: {
       countOverTime: "Prison population over time",
       countByLocation: "Prison population by facility",
+      personLevelDetail: "List of people in prison",
     },
     methodology: "Prison page methodology",
   },

@@ -110,6 +110,7 @@ const TENANTS: Tenants = {
       prison: [
         PATHWAYS_SECTIONS.countOverTime,
         PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.personLevelDetail,
       ],
       "id-methodology": ["system"],
     },

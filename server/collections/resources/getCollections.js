@@ -165,6 +165,9 @@ const PATHWAYS_COLLECTIONS = {
     prison_population_time_series: {
       filename: "prison_population_time_series.json",
     },
+    incarceration_population_person_level: {
+      filename: "incarceration_population_person_level.json",
+    },
   },
 };
 

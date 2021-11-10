@@ -21,6 +21,9 @@
 import { MetricCopy } from "../types";
 
 const content: MetricCopy = {
+  incarcerationPopulationPersonLevel: {
+    title: "List of people in prison",
+  },
   projectedPrisonPopulationOverTime: {
     title: "Incarcerated Population",
     note: "Historical and projected population data were generated",

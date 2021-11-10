@@ -52,7 +52,8 @@ export type MetricRecord =
   | PracticesTimeSeriesRecord
   | SupervisionCountTimeSeriesRecord
   | PopulationTimeSeriesRecord
-  | PopulationSnapshotRecord;
+  | PopulationSnapshotRecord
+  | IncarcerationPopulationPersonLevelRecord;
 
 export type PopulationProjectionTimeSeriesRecord = {
   year: number;
@@ -74,6 +75,17 @@ export type PopulationSnapshotRecord = {
   facility: string;
   age: Age;
   totalPopulation: number;
+};
+
+export type IncarcerationPopulationPersonLevelRecord = {
+  stateId: string;
+  fullName: string;
+  lastUpdated: Date;
+  legalStatus: string;
+  gender: Gender;
+  facility: string;
+  ageGroup: Age;
+  age: string;
 };
 
 export type PopulationTimeSeriesRecord = PopulationSnapshotRecord & {
@@ -166,7 +178,8 @@ export interface Hydratable {
     | PopulationProjectionTimeSeriesRecord[]
     | PopulationSnapshotRecord[]
     | PopulationTimeSeriesRecord[]
-    | SupervisionCountTimeSeriesRecord[];
+    | SupervisionCountTimeSeriesRecord[]
+    | IncarcerationPopulationPersonLevelRecord[];
   hydrate: () => void;
 }
 
@@ -176,4 +189,5 @@ export type MetricId =
   | "projectedPrisonPopulationOverTime"
   | "supervisionPopulationOverTime"
   | "supervisionToPrisonOverTime"
-  | "supervisionToLibertyOverTime";
+  | "supervisionToLibertyOverTime"
+  | "incarcerationPopulationPersonLevel";
