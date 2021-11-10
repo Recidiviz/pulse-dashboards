@@ -1,6 +1,6 @@
 # Shared Filters Package
 
-Shared filtering functionality for filtering the optimized data formats on the [frontend](https://github.com/Recidiviz/pulse-dashboards/tree/main/src) and the [backend-server](https://github.com/Recidiviz/pulse-dashboards/tree/main/server).
+Shared filtering functionality for filtering the optimized data formats on the [frontend](https://github.com/Recidiviz/pulse-dashboard/tree/main/src) and the [backend-server](https://github.com/Recidiviz/pulse-dashboard/tree/main/server).
 
 Here's a short description for the some of the main exports:
 
@@ -26,8 +26,8 @@ You must first run `yarn link` within the `shared-filters` directory, and then r
 [shared-filters]:> yarn link
 
 # From the dependent frontend directory
-[pulse-dashboards/src]:> yarn link shared-filters
+[pulse-dashboard/src]:> yarn link shared-filters
 
 # From the dependent backend directory
-[pulse-dashboards/server]:> yarn link shared-filters
+[pulse-dashboard/server]:> yarn link shared-filters
 ```

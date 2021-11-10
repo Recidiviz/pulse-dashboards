@@ -1,12 +1,12 @@
 {
-  "name": "pulse-dashboards",
+  "name": "pulse-dashboard",
   "version": "0.3.0",
   "engines": {
     "node": "12.x.x"
   },
   "description": "Bringing criminal justice analysis to decision makers to help reduce incarceration",
   "private": true,
-  "repository": "git@github.com:Recidiviz/pulse-dashboards.git",
+  "repository": "git@github.com:Recidiviz/pulse-dashboard.git",
   "author": "Recidiviz <team@recidiviz.org>",
   "license": "GNU General Public License v3",
   "scripts": {
