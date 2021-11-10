@@ -56,18 +56,22 @@ export const defaultDistrictOption = { label: "All", value: "all" };
 export const defaultDistrict = [defaultDistrictOption.value];
 
 export const convertLabelsToValues = (
-  filtersLabels: PopulationFilterLabels
-): Record<string, string> => {
+  filtersLabels: PopulationFilterLabels,
+  filterOptions: PopulationFilters
+): Record<string, string | string[]> => {
+  if (!filterOptions) return {};
   return Object.keys(filtersLabels).reduce((acc, filterType) => {
-    const option = PopulationFilterOptions[
+    const options = filterOptions[
       filterType as keyof PopulationFilterLabels
-    ].options.find(
-      (o) =>
-        o.label === filtersLabels[filterType as keyof PopulationFilterLabels]
+    ].options.filter((o) =>
+      filtersLabels[filterType as keyof PopulationFilterLabels]
+        .split(",")
+        .includes(o.label)
     );
-    if (option) acc[filterType] = option.value;
+    const values = options.map((o) => o.value);
+    if (options) acc[filterType] = values.length > 1 ? values : values[0];
     return acc;
-  }, {} as Record<string, string>);
+  }, {} as Record<string, string | string[]>);
 };
 
 export const getFilterOption = (
@@ -75,6 +79,15 @@ export const getFilterOption = (
   options: FilterOption[]
 ): FilterOption =>
   options.find((option) => option.value === value) ?? options[0];
+
+export const getFilterOptions = (
+  value: string[],
+  options: FilterOption[]
+): FilterOption[] => {
+  return (
+    options.filter((option) => value.includes(option.value)) ?? [options[0]]
+  );
+};
 
 const setFilters = (
   filterKey: keyof PopulationFilters
@@ -224,18 +237,66 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
     PopulationFilterOptions[FILTER_TYPES.TIME_PERIOD].defaultValue,
   [FILTER_TYPES.GENDER]: PopulationFilterOptions[FILTER_TYPES.GENDER]
     .defaultValue as Gender,
-  [FILTER_TYPES.LEGAL_STATUS]:
+  [FILTER_TYPES.LEGAL_STATUS]: [
     PopulationFilterOptions[FILTER_TYPES.LEGAL_STATUS].defaultValue,
+  ],
   [FILTER_TYPES.SUPERVISION_TYPE]:
     PopulationFilterOptions[FILTER_TYPES.SUPERVISION_TYPE].defaultValue,
-  [FILTER_TYPES.AGE]: PopulationFilterOptions[FILTER_TYPES.AGE]
-    .defaultValue as Age,
-  [FILTER_TYPES.FACILITY]:
+  [FILTER_TYPES.AGE]: [
+    PopulationFilterOptions[FILTER_TYPES.AGE].defaultValue,
+  ] as Age[],
+  [FILTER_TYPES.FACILITY]: [
     PopulationFilterOptions[FILTER_TYPES.FACILITY].defaultValue,
+  ],
+};
+
+export const IdPopulationFilterOptions: PopulationFilters = {
+  ...PopulationFilterOptions,
+  [FILTER_TYPES.LEGAL_STATUS]: {
+    type: FILTER_TYPES.LEGAL_STATUS,
+    title: "Legal Status",
+    width: "9.5rem",
+    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Rider", value: "TREATMENT_IN_PRISON" },
+      { label: "Termer", value: "GENERAL" },
+      { label: "Parole Violator", value: "PAROLE_BOARD_HOLD" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+};
+
+export const TnPopulationFilterOptions: PopulationFilters = {
+  ...PopulationFilterOptions,
+  [FILTER_TYPES.LEGAL_STATUS]: {
+    type: FILTER_TYPES.LEGAL_STATUS,
+    title: "Legal Status",
+    width: "9.5rem",
+    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "General", value: "GENERAL" },
+      { label: "Legal", value: "LEGAL" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
 };
 
 export default {
-  [US_ID]: PopulationFilterOptions,
-  [US_TN]: PopulationFilterOptions,
+  [US_ID]: IdPopulationFilterOptions,
+  [US_TN]: TnPopulationFilterOptions,
   [US_ND]: undefined,
 } as const;

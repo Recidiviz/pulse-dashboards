@@ -14,35 +14,4 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import "./PopulationProjectionLastUpdated.scss";
-
-import React from "react";
-
-import { formatDate } from "../../utils/formatStrings";
-
-type Props = {
-  simulationDate?: Date;
-  isLoading?: boolean;
-};
-
-const PopulationProjectionLastUpdated: React.FC<Props> = ({
-  simulationDate = new Date(9999, 11, 30),
-  isLoading = false,
-}) => {
-  if (isLoading) {
-    return (
-      <div className="PopulationProjectionLastUpdated">
-        <br />
-      </div>
-    );
-  }
-
-  return (
-    <div className="PopulationProjectionLastUpdated">
-      Historical and projected population data were generated{" "}
-      {formatDate(simulationDate, "MMMM yyyy")}.
-    </div>
-  );
-};
-
-export default PopulationProjectionLastUpdated;
+export { default } from "./Modal";

@@ -251,23 +251,6 @@ describe("App tests", () => {
   });
 
   describe("Methodology page", () => {
-    it("should render the Projections Methodology page", () => {
-      window.history.pushState({}, "", "/methodology/projections");
-      const user = { [metadataField]: { state_code: US_ND } };
-
-      useRootStore.mockReturnValue({
-        userStore: { ...userStore, ...user },
-        currentTenantId: US_ND,
-      });
-
-      const { container, getByTestId } = render(<App />);
-
-      expect(CoreLayoutMock).toHaveBeenCalledTimes(1);
-      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
-      expect(container.children.length).toBe(1);
-      expect(getByTestId(mockMethodologyProjectionsId)).toBeInTheDocument();
-    });
-
     it("should render the Practices Methodology page", () => {
       window.history.pushState({}, "", "/methodology/practices");
       const user = { [metadataField]: { state_code: US_ND } };

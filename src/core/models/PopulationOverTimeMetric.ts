@@ -15,6 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { pipe } from "lodash/fp";
+import groupBy from "lodash/fp/groupBy";
+import map from "lodash/fp/map";
+import sumBy from "lodash/fp/sumBy";
+import values from "lodash/fp/values";
+
 import RootStore from "../../RootStore";
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
@@ -56,19 +62,34 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
     const stepSize = monthRange === 60 ? 2 : 1;
 
     const { mostRecentDate } = this;
-    return this.allRecords.filter((record: PopulationTimeSeriesRecord) => {
-      const monthsOut =
-        (record.year - mostRecentDate.getFullYear()) * 12 +
-        (record.month - (mostRecentDate.getMonth() + 1));
-      return (
-        record.gender === gender &&
-        record.legalStatus === status &&
-        record.age === age &&
-        record.facility === facility &&
-        Math.abs(monthsOut) <= monthRange &&
-        monthsOut % stepSize === 0
-      );
-    });
+    const filteredRecords = this.allRecords.filter(
+      (record: PopulationTimeSeriesRecord) => {
+        const monthsOut =
+          (record.year - mostRecentDate.getFullYear()) * 12 +
+          (record.month - (mostRecentDate.getMonth() + 1));
+        return (
+          record.gender === gender &&
+          status.includes(record.legalStatus) &&
+          age.includes(record.age) &&
+          facility.includes(record.facility) &&
+          Math.abs(monthsOut) <= monthRange &&
+          monthsOut % stepSize === 0
+        );
+      }
+    );
+
+    const result = pipe(
+      groupBy((d: PopulationTimeSeriesRecord) => [d.year, d.month]),
+      values,
+      map((dataset) => ({
+        year: dataset[0].year,
+        month: dataset[0].month,
+        gender: dataset[0].gender,
+        legalStatus: dataset[0].legalStatus,
+        totalPopulation: sumBy("totalPopulation", dataset),
+      }))
+    )(filteredRecords);
+    return result as PopulationTimeSeriesRecord[];
   }
 
   get mostRecentDate(): Date {

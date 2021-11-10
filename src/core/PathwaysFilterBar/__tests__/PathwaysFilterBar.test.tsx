@@ -33,7 +33,7 @@ const mockSetQuery = jest.fn();
 jest.mock("../../CoreStoreProvider");
 jest.mock("../../../components/StoreProvider");
 jest.mock("use-query-params");
-const mockCoreStore = {} as CoreStore;
+const mockCoreStore = { currentTenantId: "US_ID" } as CoreStore;
 const filtersStore = new FiltersStore({ rootStore: mockCoreStore });
 
 beforeEach(() => {

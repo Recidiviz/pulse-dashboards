@@ -31,10 +31,10 @@ import {
   PopulationFilters,
   PopulationFilterValues,
 } from "../types/filters";
-import {
+import filterOptions, {
   defaultPopulationFilterValues,
   getFilterOption,
-  PopulationFilterOptions,
+  getFilterOptions,
 } from "../utils/filterOptions";
 import { formatTimePeriodLabel } from "../utils/timePeriod";
 import type CoreStore from ".";
@@ -83,18 +83,33 @@ export default class FiltersStore {
       },
       {}
     );
-    return getFilters(enabledFilters);
+    return getFilters(enabledFilters, this.filterOptions);
   }
 
   get filtersLabels(): PopulationFilterLabels {
     return keys(this.filters).reduce((acc, filterType) => {
-      const filter =
-        PopulationFilterOptions[filterType as keyof PopulationFilterLabels];
-      acc[filterType as keyof PopulationFilterLabels] = getFilterOption(
-        this.filters[filter.type],
-        filter.options
-      ).label;
+      const filter = this.filterOptions[
+        filterType as keyof PopulationFilterLabels
+      ];
+      const labels =
+        typeof this.filters[filter.type] === "string"
+          ? getFilterOption(this.filters[filter.type] as string, filter.options)
+              .label
+          : getFilterOptions(
+              this.filters[filter.type] as string[],
+              filter.options
+            )
+              .map((o) => o.label)
+              .join(",");
+      acc[filterType as keyof PopulationFilterLabels] = labels;
       return acc;
     }, {} as PopulationFilterLabels);
+  }
+
+  get filterOptions(): PopulationFilters {
+    // @ts-ignore
+    return this.rootStore.currentTenantId
+      ? filterOptions[this.rootStore.currentTenantId]
+      : filterOptions.US_ID;
   }
 }

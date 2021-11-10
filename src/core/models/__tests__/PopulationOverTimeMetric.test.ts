@@ -189,21 +189,15 @@ describe("PopulationOverTimeMetric", () => {
         {
           year: 2015,
           month: 12,
-          compartment: undefined,
           legalStatus: "ALL",
           gender: "ALL",
-          facility: "ALL",
-          age: "ALL",
           totalPopulation: 7641,
         },
         {
           year: 2016,
           month: 1,
-          compartment: undefined,
           legalStatus: "ALL",
           gender: "ALL",
-          facility: "ALL",
-          age: "ALL",
           totalPopulation: 7641,
         },
       ]);
@@ -214,7 +208,7 @@ describe("PopulationOverTimeMetric", () => {
         if (metric.rootStore) {
           metric.rootStore.filtersStore.setFilters({
             gender: "MALE",
-            facility: "MCCX",
+            facility: ["MCCX"],
           });
         }
 
@@ -223,8 +217,6 @@ describe("PopulationOverTimeMetric", () => {
             compartment: undefined,
             gender: "MALE",
             legalStatus: "ALL",
-            facility: "MCCX",
-            age: "ALL",
             month: 5,
             totalPopulation: 7641,
             year: 2016,

@@ -39,7 +39,6 @@ import UsNdFacilitiesExplore from "./core/facilities/Explore";
 import CoreGoalsView from "./core/goals/CoreGoalsView";
 import PageMethodology from "./core/PageMethodology";
 import PagePractices from "./core/PagePractices";
-import PageProjections from "./core/PageProjections";
 import PageSystem from "./core/PageSystem";
 import PathwaysLayout from "./core/PathwaysLayout";
 import Profile from "./core/Profile";
@@ -108,9 +107,7 @@ const App = () => (
                 <Switch>
                   <ProtectedRoute path={CORE_PATHS.goals} component={CoreGoalsView} />
                   <ProtectedRoute path={CORE_PATHS.communityExplore} component={UsNdCommunityExplore} />
-                  <ProtectedRoute path={CORE_PATHS.communityProjections} component={PageProjections} />
                   <ProtectedRoute path={CORE_PATHS.facilitiesExplore} component={UsNdFacilitiesExplore} />
-                  <ProtectedRoute path={CORE_PATHS.facilitiesProjections} component={PageProjections} />
                   <ProtectedRoute path={CORE_PATHS.communityPractices} component={PagePractices}/>
                   <ProtectedRoute path={CORE_PATHS.methodology} component={PageMethodology} />
                   <Route path="/profile" component={Profile} />

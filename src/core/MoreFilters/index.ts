@@ -14,27 +14,4 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-import { mount } from "enzyme";
-import React from "react";
-
-import PopulationProjectionLastUpdated from "../PopulationProjectionLastUpdated";
-
-describe("Tests PopulationProjectionLastUpdated component", () => {
-  const render = (date) =>
-    mount(<PopulationProjectionLastUpdated simulationDate={date} />);
-
-  it("displays shot months correctly", () => {
-    const lastUpdated = render(new Date(2020, 4));
-    expect(
-      lastUpdated.find(".PopulationProjectionLastUpdated").text()
-    ).toContain("May 2020");
-  });
-
-  it("displays long months correctly", () => {
-    const lastUpdated = render(new Date(2022, 11));
-    expect(
-      lastUpdated.find(".PopulationProjectionLastUpdated").text()
-    ).toContain("December 2022");
-  });
-});
+export { default } from "./MoreFilters";

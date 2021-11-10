@@ -39,6 +39,7 @@ export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   sourceFilename: string;
   dataTransformer: (d: RawMetricData) => RecordFormat[];
   enabledFilters: EnabledFilters;
+  enabledMoreFilters?: EnabledFilters;
   tenantId?: TenantId;
   rootStore?: CoreStore;
 };
@@ -74,6 +75,8 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   enabledFilters: EnabledFilters;
 
+  enabledMoreFilters?: EnabledFilters;
+
   constructor({
     rootStore,
     id,
@@ -81,6 +84,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     sourceFilename,
     dataTransformer,
     enabledFilters,
+    enabledMoreFilters,
   }: BaseMetricConstructorOptions<RecordFormat>) {
     makeObservable<PathwaysMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
@@ -96,6 +100,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.dataTransformer = dataTransformer;
     this.eagerExpand = true;
     this.enabledFilters = enabledFilters;
+    this.enabledMoreFilters = enabledMoreFilters;
   }
 
   get content(): MetricContent {

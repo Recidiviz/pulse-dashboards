@@ -25,9 +25,9 @@ export type PopulationFilterValues = {
   timePeriod: string;
   gender: Gender;
   supervisionType: string;
-  legalStatus: string;
-  facility: string;
-  age: Age;
+  legalStatus: string[];
+  facility: string[];
+  age: Age[];
 };
 
 export type PopulationFilterLabels = {
@@ -57,7 +57,7 @@ export interface PopulationFilters {
   [FILTER_TYPES.FACILITY]: PopulationFilter;
 }
 
-type PopulationFilter = {
+export type PopulationFilter = {
   type: keyof PopulationFilters;
   title: string;
   width: string;

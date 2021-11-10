@@ -34,7 +34,6 @@ import {
 import FiltersStore from "./FiltersStore";
 import MetricsStore from "./MetricsStore";
 import PagePracticesStore from "./PagePracticesStore";
-import PageProjectionsStore from "./PageProjectionsStore";
 
 interface CoreStoreProps {
   userStore: UserStore;
@@ -51,8 +50,6 @@ export default class CoreStore {
   metricsStore: MetricsStore;
 
   pagePracticesStore: PagePracticesStore;
-
-  pageProjectionsStore: PageProjectionsStore;
 
   view: CoreView = CORE_VIEWS.community;
 
@@ -73,10 +70,6 @@ export default class CoreStore {
     this.metricsStore = new MetricsStore({ rootStore: this });
 
     this.pagePracticesStore = new PagePracticesStore({
-      rootStore: this,
-    });
-
-    this.pageProjectionsStore = new PageProjectionsStore({
       rootStore: this,
     });
 

@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { isEqual } from "lodash";
+import { pick } from "lodash/fp";
 import { get } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { useQueryParams } from "use-query-params";
 
+import { sortByLabel } from "../../utils/datasets";
 import {
   filterQueryParams,
   removeUndefinedValuesFromObject,
@@ -31,6 +33,7 @@ import { useCoreStore } from "../CoreStoreProvider";
 import DetailsGroup from "../DetailsGroup";
 import DownloadDataButton from "../DownloadDataButton";
 import MethodologyLink from "../MethodologyLink";
+import MoreFilters from "../MoreFilters";
 import {
   EnabledFilters,
   FilterOption,
@@ -44,14 +47,21 @@ const PathwaysFilterBar: React.FC<{
   handleDownload: () => Promise<void>;
   chartTitle?: string;
   enabledFilters?: EnabledFilters;
-}> = ({ filterOptions, handleDownload, chartTitle, enabledFilters = [] }) => {
+  enabledMoreFilters?: EnabledFilters;
+}> = ({
+  filterOptions,
+  handleDownload,
+  chartTitle,
+  enabledFilters = [],
+  enabledMoreFilters = [],
+}) => {
   const { filtersStore } = useCoreStore();
   const { filters } = filtersStore;
 
   // if current query params do not match enabled filters, update query
   const [query, setQuery] = useQueryParams(filterQueryParams);
   const cleanQuery = removeUndefinedValuesFromObject(query);
-  const enabled = enabledFilters.reduce(
+  const enabled = [...enabledFilters, ...enabledMoreFilters].reduce(
     (acc, filter) => ({ ...acc, [filter]: filtersStore.filtersLabels[filter] }),
     {}
   );
@@ -63,6 +73,13 @@ const PathwaysFilterBar: React.FC<{
     <FilterBar
       details={
         <DetailsGroup hideOnMobile>
+          <MoreFilters
+            enabledFilters={enabledMoreFilters}
+            filterOptions={pick(enabledMoreFilters, filterOptions)}
+            setQuery={(updatedFilters: Partial<PopulationFilters>) =>
+              setQuery(updatedFilters)
+            }
+          />
           <DownloadDataButton handleOnClick={handleDownload} />
           <MethodologyLink
             path={PATHWAYS_PATHS.methodologySystem}
@@ -81,7 +98,7 @@ const PathwaysFilterBar: React.FC<{
           >
             <CoreSelect
               value={getFilterOption(get(filters, filter.type), filter.options)}
-              options={filter.options}
+              options={sortByLabel(filter.options, "label")}
               onChange={(option: FilterOption) =>
                 setQuery({ [filter.type]: option.label })
               }

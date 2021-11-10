@@ -89,16 +89,19 @@ const formatGender = (gender) => {
     : `Gender: ${humanReadableTitleCase(gender)}`;
 };
 
-const formatLegalStatus = (legalStatus) => {
+const formatLegalStatus = (legalStatus, filterOptions) => {
+  const statusLabels = legalStatus.map((status) => {
+    return pipe(
+      find({ value: status }),
+      get("label")
+    )(filterOptions.legalStatus.options);
+  });
   return legalStatus === "ALL"
     ? `All legal status`
-    : `Legal status: ${pipe(
-        find({ value: legalStatus }),
-        get("label")
-      )(PopulationFilterOptions.legalStatus.options)}`;
+    : `Legal status: ${statusLabels.join(", ")}`;
 };
 
-function getFilters(toggleStates) {
+function getFilters(toggleStates, filterOptions) {
   const filters = [];
 
   if (toggleStates.metricPeriodMonths) {
@@ -116,7 +119,9 @@ function getFilters(toggleStates) {
   }
 
   if (toggleStates.supervisionType) {
-    filters.push(formatSupervisionType(toggleStates.supervisionType));
+    filters.push(
+      formatSupervisionType(toggleStates.supervisionType, filterOptions)
+    );
   }
 
   if (toggleStates.supervisionLevel) {
@@ -138,7 +143,7 @@ function getFilters(toggleStates) {
   }
 
   if (toggleStates.legalStatus) {
-    filters.push(formatLegalStatus(toggleStates.legalStatus));
+    filters.push(formatLegalStatus(toggleStates.legalStatus, filterOptions));
   }
 
   return filters.join(", ");

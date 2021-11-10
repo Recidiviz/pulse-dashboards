@@ -91,10 +91,9 @@ export default class MetricsStore {
       enabledFilters: [
         FILTER_TYPES.TIME_PERIOD,
         FILTER_TYPES.GENDER,
-        FILTER_TYPES.LEGAL_STATUS,
-        FILTER_TYPES.AGE,
         FILTER_TYPES.FACILITY,
       ],
+      enabledMoreFilters: [FILTER_TYPES.AGE, FILTER_TYPES.LEGAL_STATUS],
     });
   }
 

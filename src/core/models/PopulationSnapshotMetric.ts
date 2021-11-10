@@ -58,11 +58,11 @@ export default class PopulationSnapshotMetric extends PathwaysMetric<PopulationS
         record.year === latestDate.getFullYear() &&
         record.month - 1 === latestDate.getMonth() &&
         record.gender === gender &&
-        record.legalStatus === status &&
-        record.age === age &&
+        status.includes(record.legalStatus) &&
+        age.includes(record.age) &&
         (this.id === "prisonFacilityPopulation"
-          ? record.facility !== "ALL"
-          : record.facility === facility)
+          ? !["ALL"].includes(record.facility)
+          : facility.includes(record.facility))
       );
     });
   }

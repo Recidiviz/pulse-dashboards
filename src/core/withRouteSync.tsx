@@ -112,7 +112,10 @@ const withRouteSync = <Props extends RouteParams>(
               })?.id || METRIC_TYPES.OVERALL
             )
           : filtersStore.setFilters(
-              convertLabelsToValues(cleanQuery as PopulationFilterLabels)
+              convertLabelsToValues(
+                cleanQuery as PopulationFilterLabels,
+                filtersStore.filterOptions
+              )
             );
       })
     );

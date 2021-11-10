@@ -14,35 +14,32 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import "./DetailsGroup.scss";
+@import "../CoreConstants.scss";
 
-import { Icon, IconSVG } from "@recidiviz/design-system";
-import React from "react";
-
-import * as styles from "./CoreConstants.scss";
-
-interface PropTypes {
-  handleOnClick: () => Promise<void>;
+.MoreFilters {
+  @include font-ui-sans-16;
+  box-shadow: inset 0px -0.749129px 0.749129px rgba(19, 44, 82, 0.2);
+  border-radius: 8px;
+  background: $white;
+  margin-bottom: 1rem;
+  &__header {
+    color: $slate-80;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid $slate-20;
+  }
+  &__content {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 1.75rem 2rem;
+    & * {
+      flex: 0 50%;
+      &:nth-last-child(-n + 2) {
+        margin-bottom: 0;
+      }
+    }
+  }
+  &__icon {
+    transform: rotate(45deg);
+    width: 0.5rem;
+  }
 }
-
-const DownloadDataButton: React.FC<PropTypes> = ({ handleOnClick }) => {
-  return (
-    <button
-      className="DetailsGroup__button"
-      id="downloadChartData"
-      type="button"
-      aria-expanded="true"
-      aria-controls="importantNotes"
-      onClick={handleOnClick}
-    >
-      <Icon
-        className="DetailsGroup__icon"
-        kind={IconSVG.Download}
-        fill={styles.signalLinks}
-      />
-      Download Data
-    </button>
-  );
-};
-
-export default DownloadDataButton;

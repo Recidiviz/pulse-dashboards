@@ -115,7 +115,7 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
       type: "y",
       value:
         gender === "ALL" &&
-        legalStatus === "ALL" &&
+        legalStatus === ["ALL"] &&
         compartment === "INCARCERATION"
           ? TOTAL_INCARCERATED_LIMIT
           : 1e6,

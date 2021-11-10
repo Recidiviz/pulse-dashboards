@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { FILTER_TYPES, METRIC_TYPES } from "../constants";
-import {
+import filterOptions, {
   convertLabelsToValues,
   defaultDistrict,
   defaultMetricPeriod,
@@ -43,6 +43,8 @@ describe("convertLabelsToValues", () => {
       legalStatus: "PAROLE_BOARD_HOLD",
       timePeriod: "6",
     };
-    expect(convertLabelsToValues(filtersLabels)).toEqual(expected);
+    expect(convertLabelsToValues(filtersLabels, filterOptions.US_ID)).toEqual(
+      expected
+    );
   });
 });

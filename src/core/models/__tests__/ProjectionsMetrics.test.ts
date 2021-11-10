@@ -23,7 +23,7 @@ import FiltersStore from "../../CoreStore/FiltersStore";
 import { CORE_VIEWS } from "../../views";
 import ProjectionsMetrics from "../ProjectionsMetrics";
 
-const mockTenantId = "US_ND";
+const mockTenantId = "US_ID";
 const mockCoreStore = {} as CoreStore;
 const filtersStore = new FiltersStore({ rootStore: mockCoreStore });
 jest.mock("../../../RootStore", () => ({

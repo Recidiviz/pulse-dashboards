@@ -43,7 +43,13 @@ const PageSystem: React.FC = () => {
   const { title, summary } = pageContent;
 
   const metric = metricsStore.current;
-  const { enabledFilters, download, isLoading, note } = metric;
+  const {
+    enabledFilters,
+    enabledMoreFilters,
+    download,
+    isLoading,
+    note,
+  } = metric;
 
   return (
     <PageTemplate
@@ -54,6 +60,7 @@ const PageSystem: React.FC = () => {
           // @ts-ignore
           filterOptions={filterOptions[currentTenantId]}
           enabledFilters={enabledFilters}
+          enabledMoreFilters={enabledMoreFilters}
           handleDownload={download}
           chartTitle={metric.chartTitle}
         />

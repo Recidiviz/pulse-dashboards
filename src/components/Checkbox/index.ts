@@ -14,35 +14,4 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import "./DetailsGroup.scss";
-
-import { Icon, IconSVG } from "@recidiviz/design-system";
-import React from "react";
-
-import * as styles from "./CoreConstants.scss";
-
-interface PropTypes {
-  handleOnClick: () => Promise<void>;
-}
-
-const DownloadDataButton: React.FC<PropTypes> = ({ handleOnClick }) => {
-  return (
-    <button
-      className="DetailsGroup__button"
-      id="downloadChartData"
-      type="button"
-      aria-expanded="true"
-      aria-controls="importantNotes"
-      onClick={handleOnClick}
-    >
-      <Icon
-        className="DetailsGroup__icon"
-        kind={IconSVG.Download}
-        fill={styles.signalLinks}
-      />
-      Download Data
-    </button>
-  );
-};
-
-export default DownloadDataButton;
+export { default } from "./Checkbox";

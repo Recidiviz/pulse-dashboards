@@ -14,35 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import "./DetailsGroup.scss";
-
-import { Icon, IconSVG } from "@recidiviz/design-system";
+import { render, screen } from "@testing-library/react";
 import React from "react";
 
-import * as styles from "./CoreConstants.scss";
+import Modal from "../Modal";
 
-interface PropTypes {
-  handleOnClick: () => Promise<void>;
-}
+describe("Modal.js", () => {
+  const mockHide = jest.fn();
 
-const DownloadDataButton: React.FC<PropTypes> = ({ handleOnClick }) => {
-  return (
-    <button
-      className="DetailsGroup__button"
-      id="downloadChartData"
-      type="button"
-      aria-expanded="true"
-      aria-controls="importantNotes"
-      onClick={handleOnClick}
-    >
-      <Icon
-        className="DetailsGroup__icon"
-        kind={IconSVG.Download}
-        fill={styles.signalLinks}
-      />
-      Download Data
-    </button>
-  );
-};
+  it("should render standard modal", () => {
+    render(
+      <>
+        <Modal isShowing>Some content</Modal>
+      </>
+    );
 
-export default DownloadDataButton;
+    expect(screen.queryByText("Some content")).toBeInTheDocument();
+  });
+
+  it("should not be rendered if isShowing is false", () => {
+    render(
+      <Modal isShowing={false} hide={mockHide}>
+        Some content
+      </Modal>
+    );
+
+    expect(screen.queryByText("Some content")).not.toBeInTheDocument();
+  });
+});

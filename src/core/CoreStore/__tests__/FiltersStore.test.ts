@@ -28,7 +28,7 @@ jest.mock("../../../RootStore/UserStore", () => {
 
 jest.mock("../../../RootStore/TenantStore", () => {
   return jest.fn().mockImplementation(() => ({
-    currentTenantId: "US_ND",
+    currentTenantId: "US_ID",
   }));
 });
 
@@ -80,7 +80,7 @@ describe("FiltersStore", () => {
       ];
       coreStore.filtersStore.setFilters({
         timePeriod: "3",
-        legalStatus: "TREATMENT_IN_PRISON",
+        legalStatus: ["TREATMENT_IN_PRISON"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
         "Time period: 3 months, All genders, Legal status: Rider"

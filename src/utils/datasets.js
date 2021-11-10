@@ -110,3 +110,12 @@ export function centerSingleMonthDatasetIfNecessary(dataValues, labels) {
     labels.push("");
   }
 }
+
+/**
+ * Sorts the data points by labels, ascending alphabetic order.
+ *  -`labelIndex`: The index in the dataPoint array that contains the label
+ *    to sort on
+ */
+export function sortByLabel(dataPoints, labelKey) {
+  return dataPoints.sort((a, b) => a[labelKey].localeCompare(b[labelKey]));
+}

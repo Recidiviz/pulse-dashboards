@@ -56,7 +56,7 @@ export default class ProjectionsMetrics extends Metric<PopulationProjectionTimeS
       return (
         record.gender === gender &&
         record.compartment === compartment &&
-        record.legalStatus === status &&
+        status.includes(record.legalStatus) &&
         Math.abs(monthsOut) <= monthRange &&
         monthsOut % stepSize === 0
       );

@@ -33,10 +33,16 @@
   }
 
   &__button {
+    display: flex;
+    align-items: baseline;
+    outline: 0;
+    border: 0;
+    background: transparent;
     color: $signal-links;
     @include font-ui-sans-16;
-    > :not(:last-child) {
-      margin-right: 1.5rem;
+    padding: 0;
+    &:not(:last-child) {
+      padding-right: 1.5rem;
     }
 
     &:hover {
@@ -63,6 +69,7 @@
   }
 
   &__content {
+    display: flex;
     @media screen and (max-width: $core-breakpoint-sm) {
       display: none;
     }
@@ -81,6 +88,8 @@
       z-index: 3;
 
       .DetailsGroup__button {
+        display: flex;
+        align-items: center;
         border-radius: 0;
         padding: 0.75rem 1.5rem;
         width: 100%;
