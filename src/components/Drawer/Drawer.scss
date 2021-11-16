@@ -64,7 +64,7 @@
     transform: translateX(-105%);
     transition: transform 0.3s ease;
     &--open {
-      transform: translateX(0);
+      transform: translateX(0) !important;
     }
   }
 
@@ -72,5 +72,25 @@
     color: $white;
     cursor: pointer;
     transform: rotate(0.5turn);
+  }
+
+  &--rtl {
+    .Drawer {
+      &__wrapper {
+        left: inherit;
+        right: 0;
+      }
+
+      &__body {
+        padding: 1.75rem;
+        padding-left: 2.5rem;
+        transform: translateX(105%);
+      }
+
+      &__close-icon {
+        display: flex;
+        margin-left: auto;
+      }
+    }
   }
 }

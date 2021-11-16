@@ -20,15 +20,20 @@ import "./SectionNavigation.scss";
 import { Icon, IconSVG } from "@recidiviz/design-system";
 import cn from "classnames";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
+import Drawer from "../../components/Drawer";
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { useCoreStore } from "../CoreStoreProvider";
 import usePageContent from "../hooks/usePageContent";
 import { PathwaysPage } from "../views";
 
 const SectionNavigation: React.FC = () => {
+  const [open, setOpen] = useState(false);
+
+  const isMobile = useIsMobile();
   const { pathname } = useLocation();
   const { userStore } = useRootStore();
   const { setSection } = useCoreStore();
@@ -38,7 +43,13 @@ const SectionNavigation: React.FC = () => {
   const [currentSection = enabledSections[0]] = pathname.split("/").slice(3, 4);
   const { sections } = usePageContent(currentPage as PathwaysPage);
 
-  return (
+  const isMultipleSections = enabledSections.length > 1;
+
+  useEffect(() => {
+    setOpen(false);
+  }, [currentSection]);
+
+  const sectionLinks = (
     <nav className="SectionNavigation">
       <div className="SectionNavigation__title" />
       {enabledSections.map((sectionId: string) => (
@@ -47,6 +58,7 @@ const SectionNavigation: React.FC = () => {
             className={cn("SectionNavigation__navlink", {
               "SectionNavigation__navlink--active":
                 currentSection === sectionId,
+              "SectionNavigation__navlink--multiple": isMultipleSections,
             })}
             to={`/${currentView}/${currentPage}/${sectionId}`}
             onClick={() => setSection(sectionId)}
@@ -54,7 +66,7 @@ const SectionNavigation: React.FC = () => {
             {sections && sections[sectionId]}
             {currentSection === sectionId && (
               <Icon
-                className="SectionNavigation__icon"
+                className="SectionNavigation__arrow"
                 kind={IconSVG.Arrow}
                 width={16}
                 height={16}
@@ -65,6 +77,25 @@ const SectionNavigation: React.FC = () => {
       ))}
     </nav>
   );
+
+  if (isMobile && isMultipleSections)
+    return (
+      <>
+        <Drawer rtl isShowing={open} hide={() => setOpen(false)}>
+          {sectionLinks}
+        </Drawer>
+        <button
+          type="button"
+          className="SectionNavigation__drawer-button"
+          onClick={() => setOpen(!open)}
+        >
+          <span>{sections && sections[currentSection]}</span>
+          <Icon kind={IconSVG.DownChevron} width={10} height={6} />
+        </button>
+      </>
+    );
+
+  return sectionLinks;
 };
 
 export default observer(SectionNavigation);

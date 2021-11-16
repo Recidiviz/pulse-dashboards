@@ -35,7 +35,8 @@
 
   &__table {
     max-height: calc(100vh - 22rem);
-    overflow: overlay;
+    overflow: overlay !important;
+    overflow: auto;
     margin-top: 1.938rem;
 
     @media screen and (max-width: $core-breakpoint-sm) {

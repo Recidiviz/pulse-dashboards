@@ -25,10 +25,11 @@ import useOnClickOutside from "use-onclickoutside";
 
 type Props = {
   isShowing: boolean;
+  rtl?: boolean;
   hide: () => void;
 };
 
-const Drawer: React.FC<Props> = ({ isShowing, hide, children }) => {
+const Drawer: React.FC<Props> = ({ isShowing, hide, rtl, children }) => {
   const ref: any = useRef();
   useOnClickOutside(ref, hide);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -52,7 +53,11 @@ const Drawer: React.FC<Props> = ({ isShowing, hide, children }) => {
   }
 
   return createPortal(
-    <div className="Drawer">
+    <div
+      className={cn("Drawer", {
+        "Drawer--rtl": rtl,
+      })}
+    >
       <div
         className={cn("Drawer__overlay", {
           "Drawer__overlay--open": isTransitioning && isShowing,
@@ -73,9 +78,9 @@ const Drawer: React.FC<Props> = ({ isShowing, hide, children }) => {
         >
           <Icon
             className="Drawer__close-icon"
-            kind={IconSVG.Arrow}
-            width={24}
-            height={24}
+            kind={rtl ? IconSVG.Close : IconSVG.Arrow}
+            width={rtl ? 17 : 24}
+            height={rtl ? 17 : 24}
             onClick={hide}
           />
           {children}

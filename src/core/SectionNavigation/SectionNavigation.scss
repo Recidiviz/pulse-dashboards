@@ -32,26 +32,50 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
-
     &:hover {
       color: $signal-links;
     }
-
     &--active {
       color: $signal-links;
     }
   }
 
   @media screen and (max-width: $core-breakpoint-sm) {
+    padding: 2rem 0;
+
     &__title {
       display: none;
     }
     &__navlink {
       margin-bottom: 0;
       color: $slate-80;
-      text-align: right;
+      &--multiple {
+        margin-bottom: 2.5rem;
+        color: $white !important;
+        opacity: 0.6;
+      }
+      &:hover {
+        opacity: 1;
+      }
+      &--active {
+        opacity: 1;
+      }
     }
-    &__icon {
+    &__drawer-button {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      @include font-ui-sans-16;
+      color: $slate-80;
+      transition: all 0.3s ease-in-out;
+      &:hover {
+        color: $signal-links;
+      }
+      & :first-child {
+        padding-right: 0.625rem;
+      }
+    }
+    &__arrow {
       display: none;
     }
   }
