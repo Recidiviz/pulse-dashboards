@@ -22,8 +22,19 @@ import { StateSpecificMetricCopy } from "../types";
 
 const content: StateSpecificMetricCopy = {
   prisonPopulationOverTime: {
-    title: "Prison population over time",
-    methodology: "Prison population over time methodology",
+    title: "Prison Population",
+    methodology:
+      "- The chart describes the historical prison population over the selected “Time Period”. Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the “November 2020” data point on the chart will show the total number of people described in the section above on November 1, 2020. ",
+  },
+  prisonFacilityPopulation: {
+    title: "Prison Population by Facility",
+    methodology:
+      "- The chart describes the number of people in each facility as of the date specified in the chart title. ",
+  },
+  prisonPopulationPersonLevel: {
+    title: "List of People in Prison",
+    methodology:
+      "- The table includes a row for each person in prison as of the date specified in the chart title. ",
   },
 };
 

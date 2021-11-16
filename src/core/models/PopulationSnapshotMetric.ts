@@ -45,28 +45,18 @@ export default class PopulationSnapshotMetric extends PathwaysMetric<PopulationS
       gender,
       legalStatus,
       supervisionType,
-      age,
+      ageGroup,
       facility,
     } = this.rootStore.filtersStore.filters;
     const status =
       this.compartment === "SUPERVISION" ? supervisionType : legalStatus;
-    const latestDate = new Date(
-      Math.max(
-        // @ts-ignore
-        ...this.allRecords.map(
-          (r) => new Date(Number(r.year), Number(r.month) - 1)
-        )
-      )
-    );
 
     const filteredRecords = this.allRecords.filter(
       (record: PopulationSnapshotRecord) => {
         return (
-          record.year === latestDate.getFullYear() &&
-          record.month - 1 === latestDate.getMonth() &&
           record.gender === gender &&
           status.includes(record.legalStatus) &&
-          age.includes(record.age) &&
+          ageGroup.includes(record.ageGroup) &&
           (this.id === "prisonFacilityPopulation"
             ? !["ALL"].includes(record.facility)
             : facility.includes(record.facility))
@@ -78,8 +68,6 @@ export default class PopulationSnapshotMetric extends PathwaysMetric<PopulationS
       groupBy((d: PopulationSnapshotRecord) => [d.facility]),
       values,
       map((dataset) => ({
-        year: dataset[0].year,
-        month: dataset[0].month,
         gender: dataset[0].gender,
         legalStatus: dataset[0].legalStatus,
         facility: dataset[0].facility,

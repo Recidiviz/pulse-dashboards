@@ -54,7 +54,7 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
       legalStatus,
       timePeriod,
       facility,
-      age,
+      ageGroup,
     } = this.rootStore.filtersStore.filters;
     const monthRange: MonthOptions = parseInt(timePeriod) as MonthOptions;
     const status =
@@ -70,7 +70,7 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
         return (
           record.gender === gender &&
           status.includes(record.legalStatus) &&
-          age.includes(record.age) &&
+          ageGroup.includes(record.ageGroup) &&
           facility.includes(record.facility) &&
           Math.abs(monthsOut) <= monthRange &&
           monthsOut % stepSize === 0

@@ -16,7 +16,7 @@
 // =============================================================================
 import { US_ND } from "../../RootStore/TenantStore/coreTenants";
 import { US_ID, US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
-import { Age, Gender } from "../models/types";
+import { AgeGroup, Gender } from "../models/types";
 import {
   FilterOption,
   PopulationFilterLabels,
@@ -171,11 +171,11 @@ export const PopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.community],
   },
-  [FILTER_TYPES.AGE]: {
-    type: FILTER_TYPES.AGE,
+  [FILTER_TYPES.AGE_GROUP]: {
+    type: FILTER_TYPES.AGE_GROUP,
     title: "Age",
     width: "10rem",
-    setFilters: setFilters(FILTER_TYPES.AGE),
+    setFilters: setFilters(FILTER_TYPES.AGE_GROUP),
     options: [
       { label: "All", value: "ALL" },
       { label: "<25 years old", value: "<25" },
@@ -185,7 +185,8 @@ export const PopulationFilterOptions: PopulationFilters = {
       { label: "40-44 years old", value: "40-44" },
       { label: "45-49 years old", value: "45-49" },
       { label: "50-54 years old", value: "50-54" },
-      { label: "55+ years old", value: "55+" },
+      { label: "55-59 years old", value: "55-59" },
+      { label: "60+ years old", value: "60+" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -205,22 +206,17 @@ export const PopulationFilterOptions: PopulationFilters = {
       { label: "MCCX", value: "MCCX" },
       { label: "BCCX", value: "BCCX" },
       { label: "TTCC", value: "TTCC" },
-      { label: "NWXS", value: "NWXS" },
-      { label: "TCIX2", value: "TCIX2" },
-      { label: "TCA", value: "TCA" },
-      { label: "TCIX1", value: "TCIX1" },
       { label: "SCCF", value: "SCCF" },
-      { label: "TPFW", value: "TPFW" },
-      { label: "CRC", value: "CRC" },
-      { label: "MLTC", value: "MLTC" },
-      { label: "WTRC", value: "WTRC" },
-      { label: "DSNF", value: "DSNF" },
       { label: "WCFA", value: "WCFA" },
-      { label: "RMSI", value: "RMSI" },
-      { label: "NECX2", value: "NECX2" },
-      { label: "NCCF", value: "NCCF" },
+      { label: "NECX", value: "NECX" },
       { label: "WTSP", value: "WTSP" },
-      { label: "NECX1", value: "NECX1" },
+      { label: "NWCX", value: "NWCX" },
+      { label: "HCCF", value: "HCCF" },
+      { label: "RMSI", value: "RMSI" },
+      { label: "SPND", value: "SPND" },
+      { label: "MLRC", value: "MLRC" },
+      { label: "TCIX", value: "TCIX" },
+      { label: "DJRC", value: "DJRC" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -242,9 +238,9 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
   [FILTER_TYPES.SUPERVISION_TYPE]:
     PopulationFilterOptions[FILTER_TYPES.SUPERVISION_TYPE].defaultValue,
-  [FILTER_TYPES.AGE]: [
-    PopulationFilterOptions[FILTER_TYPES.AGE].defaultValue,
-  ] as Age[],
+  [FILTER_TYPES.AGE_GROUP]: [
+    PopulationFilterOptions[FILTER_TYPES.AGE_GROUP].defaultValue,
+  ] as AgeGroup[],
   [FILTER_TYPES.FACILITY]: [
     PopulationFilterOptions[FILTER_TYPES.FACILITY].defaultValue,
   ],
@@ -277,13 +273,26 @@ export const TnPopulationFilterOptions: PopulationFilters = {
   ...PopulationFilterOptions,
   [FILTER_TYPES.LEGAL_STATUS]: {
     type: FILTER_TYPES.LEGAL_STATUS,
-    title: "Legal Status",
+    title: "Admission Reason",
     width: "9.5rem",
     setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
     options: [
       { label: "All", value: "ALL" },
-      { label: "General", value: "GENERAL" },
-      { label: "Legal", value: "LEGAL" },
+      { label: "Temporary custody", value: "TEMPORARY_CUSTODY" },
+      { label: "New admission", value: "NEW_ADMISSION" },
+      {
+        label: "Transfer from other jurisdiction",
+        value: "TRANSFER_FROM_OTHER_JURISDICTION",
+      },
+      { label: "Probation revocation", value: "PROBATION_REVOCATION" },
+      { label: "Transfer", value: "TRANSFER" },
+      { label: "Parole revocation", value: "PAROLE_REVOCATION" },
+      {
+        label: "Return from temporary release",
+        value: "RETURN_FROM_TEMPORARY_RELEASE",
+      },
+      { label: "Sanction", value: "SANCTION_ADMISSION" },
+      { label: "Return from escape", value: "RETURN_FROM_ESCAPE" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];

@@ -23,13 +23,14 @@ import { StateSpecificPageCopy } from "../types";
 const content: StateSpecificPageCopy = {
   prison: {
     summary:
-      "These charts show people who are currently incarcerated in a TDOC facility or sentenced to serve their time in a county jail due to either a felony or misdemeanor conviction.",
+      "These charts show people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails are not included. ",
     sections: {
       countOverTime: "Prison population over time",
       countByLocation: "Prison population by facility",
       personLevelDetail: "List of people in prison",
     },
-    methodology: "Prison page methodology",
+    methodology:
+      "These charts show people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails are not included.",
   },
 };
 

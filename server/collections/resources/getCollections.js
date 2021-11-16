@@ -165,8 +165,11 @@ const PATHWAYS_COLLECTIONS = {
     prison_population_time_series: {
       filename: "prison_population_time_series.json",
     },
-    incarceration_population_person_level: {
-      filename: "incarceration_population_person_level.json",
+    prison_population_snapshot_person_level: {
+      filename: "prison_population_snapshot_person_level.json",
+    },
+    prison_population_snapshot_by_dimension: {
+      filename: "prison_population_snapshot_by_dimension.json",
     },
   },
 };
@@ -296,7 +299,6 @@ function getCollections(stateCode = null) {
     case stateCodes.US_PA:
       return newRevocations(dimensionsByStateCode[stateCode]);
     case stateCodes.US_ID:
-    case stateCodes.US_TN:
       return {
         [COLLECTIONS.POPULATION_PROJECTIONS]: {
           population_projection_timeseries: {
@@ -306,6 +308,8 @@ function getCollections(stateCode = null) {
         ...VITALS_COLLECTION,
         ...PATHWAYS_COLLECTIONS,
       };
+    case stateCodes.US_TN:
+      return PATHWAYS_COLLECTIONS;
     case stateCodes.US_ND:
       return { ...CORE_COLLECTIONS, ...VITALS_COLLECTION };
     default:

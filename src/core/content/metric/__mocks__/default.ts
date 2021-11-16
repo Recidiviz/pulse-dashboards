@@ -21,7 +21,7 @@
 import { MetricCopy } from "../../types";
 
 const content: MetricCopy = {
-  incarcerationPopulationPersonLevel: {
+  prisonPopulationPersonLevel: {
     title: "List of people in prison",
   },
   prisonFacilityPopulation: {

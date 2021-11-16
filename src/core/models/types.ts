@@ -33,16 +33,16 @@ export const TenantIdList = [US_ND, US_ID, US_TN] as const;
 
 export type TenantId = typeof TenantIdList[number];
 export type Gender = "ALL" | "FEMALE" | "MALE";
-export type Age =
+export type AgeGroup =
   | "ALL"
-  | "LESS_THAN_24"
-  | "25_29"
-  | "30_34"
-  | "35_39"
-  | "40_44"
-  | "45_49"
-  | "50_54"
-  | "GREATER_THAN_55";
+  | "<24"
+  | "25-29"
+  | "30-34"
+  | "35-39"
+  | "40-44"
+  | "45-49"
+  | "50-54"
+  | "55+";
 export type SimulationCompartment = "SUPERVISION" | "INCARCERATION";
 export type SupervisionType = "PAROLE" | "PROBATION" | "ALL";
 
@@ -53,7 +53,7 @@ export type MetricRecord =
   | SupervisionCountTimeSeriesRecord
   | PopulationTimeSeriesRecord
   | PopulationSnapshotRecord
-  | IncarcerationPopulationPersonLevelRecord;
+  | PrisonPopulationPersonLevelRecord;
 
 export type PopulationProjectionTimeSeriesRecord = {
   year: number;
@@ -68,23 +68,21 @@ export type PopulationProjectionTimeSeriesRecord = {
 };
 
 export type PopulationSnapshotRecord = {
-  year: number;
-  month: number;
   legalStatus: string;
   gender: Gender;
   facility: string;
-  age: Age;
+  ageGroup: AgeGroup;
   totalPopulation: number;
 };
 
-export type IncarcerationPopulationPersonLevelRecord = {
+export type PrisonPopulationPersonLevelRecord = {
   stateId: string;
   fullName: string;
   lastUpdated: Date;
   legalStatus: string;
   gender: Gender;
   facility: string;
-  ageGroup: Age;
+  ageGroup: AgeGroup;
   age: string;
 };
 
@@ -179,7 +177,7 @@ export interface Hydratable {
     | PopulationSnapshotRecord[]
     | PopulationTimeSeriesRecord[]
     | SupervisionCountTimeSeriesRecord[]
-    | IncarcerationPopulationPersonLevelRecord[];
+    | PrisonPopulationPersonLevelRecord[];
   hydrate: () => void;
 }
 
@@ -190,4 +188,4 @@ export type MetricId =
   | "supervisionPopulationOverTime"
   | "supervisionToPrisonOverTime"
   | "supervisionToLibertyOverTime"
-  | "incarcerationPopulationPersonLevel";
+  | "prisonPopulationPersonLevel";

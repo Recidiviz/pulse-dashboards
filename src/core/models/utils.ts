@@ -15,14 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { toTitleCase } from "../../utils";
 import {
-  Age,
+  AgeGroup,
   Gender,
-  IncarcerationPopulationPersonLevelRecord,
   PopulationProjectionTimeSeriesRecord,
   PopulationSnapshotRecord,
   PopulationTimeSeriesRecord,
+  PrisonPopulationPersonLevelRecord,
   RawMetricData,
   SimulationCompartment,
   SupervisionCountTimeSeriesRecord,
@@ -52,28 +51,26 @@ export function createFacilityPopulationSnapshot(
 ): PopulationSnapshotRecord[] {
   return rawRecords.map((record) => {
     return {
-      year: Number(record.year),
-      month: Number(record.month),
       legalStatus: record.legal_status,
       gender: record.gender as Gender,
-      age: record.age_group as Age,
+      ageGroup: record.age_group as AgeGroup,
       facility: record.facility,
       totalPopulation: parseInt(record.count),
     };
   });
 }
 
-export function createIncarcerationPopulationPersonLevelList(
+export function createPrisonPopulationPersonLevelList(
   rawRecords: RawMetricData
-): IncarcerationPopulationPersonLevelRecord[] {
+): PrisonPopulationPersonLevelRecord[] {
   return rawRecords.map((record) => {
     return {
       stateId: record.state_id,
       fullName: record.full_name,
       lastUpdated: formatDateString(record.last_updated),
-      legalStatus: toTitleCase(record.legal_status),
-      gender: toTitleCase(record.gender) as Gender,
-      ageGroup: record.age_group as Age,
+      legalStatus: record.legal_status,
+      gender: record.gender as Gender,
+      ageGroup: record.age_group as AgeGroup,
       age: record.age,
       facility: record.facility,
     };
@@ -83,19 +80,17 @@ export function createIncarcerationPopulationPersonLevelList(
 export function createPopulationTimeSeries(
   rawRecords: RawMetricData
 ): PopulationTimeSeriesRecord[] {
-  return rawRecords
-    .map((record) => {
-      return {
-        year: Number(record.year),
-        month: Number(record.month),
-        legalStatus: record.legal_status,
-        gender: record.gender as Gender,
-        age: record.age_group as Age,
-        facility: record.facility,
-        totalPopulation: parseInt(record.count),
-      };
-    })
-    .sort((a, b) => (a.year - b.year) * 12 + a.month - b.month);
+  return rawRecords.map((record) => {
+    return {
+      year: Number(record.year),
+      month: Number(record.month),
+      legalStatus: record.legal_status,
+      gender: record.gender as Gender,
+      ageGroup: record.age_group as AgeGroup,
+      facility: record.facility,
+      totalPopulation: parseInt(record.count),
+    };
+  });
 }
 
 export function createSupervisionTransitionTimeSeries(

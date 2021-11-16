@@ -21,13 +21,9 @@
 import { MetricCopy } from "../types";
 
 const content: MetricCopy = {
-  incarcerationPopulationPersonLevel: {
-    title: "List of people in prison",
-  },
   projectedPrisonPopulationOverTime: {
     title: "Incarcerated Population",
     note: "Historical and projected population data were generated",
-    methodology: "This is the prison population over time methodology",
   },
   supervisionPopulationOverTime: {
     title: "Supervised Population",
@@ -40,12 +36,13 @@ const content: MetricCopy = {
     title: "Releases from supervision to liberty",
   },
   prisonPopulationOverTime: {
-    title: "Incarcerated Population",
-    note: "Placeholder note",
+    title: "Prison Population Over Time",
+  },
+  prisonPopulationPersonLevel: {
+    title: "List of people in prison",
   },
   prisonFacilityPopulation: {
     title: "Prison population by facility",
-    note: "Placeholder note",
   },
 };
 

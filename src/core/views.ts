@@ -98,7 +98,7 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
   MetricId,
   PathwaysSection
 > = {
-  incarcerationPopulationPersonLevel: PATHWAYS_SECTIONS.personLevelDetail,
+  prisonPopulationPersonLevel: PATHWAYS_SECTIONS.personLevelDetail,
   prisonFacilityPopulation: PATHWAYS_SECTIONS.countByLocation,
   prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,

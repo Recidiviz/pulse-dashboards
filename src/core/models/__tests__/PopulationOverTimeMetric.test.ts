@@ -39,16 +39,17 @@ global.fetch = jest.fn().mockResolvedValue({
 jest.mock("../../../api/metrics/metricsClient", () => {
   return {
     callMetricsApi: jest.fn().mockResolvedValue({
+      // time series data is sorted by date ascending in the data platform
       prison_population_time_series: [
         {
-          gender: "MALE",
+          gender: "ALL",
           legal_status: "ALL",
-          month: "5",
-          facility: "MCCX",
+          month: "12",
+          facility: "ALL",
           age_group: "ALL",
           state_code: "US_TN",
           count: 7641,
-          year: "2016",
+          year: "2015",
         },
         {
           gender: "ALL",
@@ -61,14 +62,14 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           year: "2016",
         },
         {
-          gender: "ALL",
+          gender: "MALE",
           legal_status: "ALL",
-          month: "12",
-          facility: "ALL",
+          month: "5",
+          facility: "MCCX",
           age_group: "ALL",
           state_code: "US_TN",
           count: 7641,
-          year: "2015",
+          year: "2016",
         },
       ],
     }),
@@ -93,7 +94,7 @@ describe("PopulationOverTimeMetric", () => {
       enabledFilters: [
         FILTER_TYPES.GENDER,
         FILTER_TYPES.LEGAL_STATUS,
-        FILTER_TYPES.AGE,
+        FILTER_TYPES.AGE_GROUP,
         FILTER_TYPES.FACILITY,
       ],
     });
@@ -120,15 +121,35 @@ describe("PopulationOverTimeMetric", () => {
   });
 
   it("has a transformed records property", () => {
-    expect(metric.records).toContainEqual({
-      gender: "ALL",
-      legalStatus: "ALL",
-      month: 1,
-      facility: "ALL",
-      age: "ALL",
-      totalPopulation: 7641,
-      year: 2016,
-    });
+    expect(metric.records).toEqual([
+      {
+        gender: "ALL",
+        legalStatus: "ALL",
+        month: 12,
+        facility: "ALL",
+        ageGroup: "ALL",
+        totalPopulation: 7641,
+        year: 2015,
+      },
+      {
+        gender: "ALL",
+        legalStatus: "ALL",
+        month: 1,
+        facility: "ALL",
+        ageGroup: "ALL",
+        totalPopulation: 7641,
+        year: 2016,
+      },
+      {
+        gender: "MALE",
+        legalStatus: "ALL",
+        month: 5,
+        facility: "MCCX",
+        ageGroup: "ALL",
+        totalPopulation: 7641,
+        year: 2016,
+      },
+    ]);
   });
 
   it("finds most recent month", () => {
@@ -154,7 +175,7 @@ describe("PopulationOverTimeMetric", () => {
       enabledFilters: [
         FILTER_TYPES.GENDER,
         FILTER_TYPES.LEGAL_STATUS,
-        FILTER_TYPES.AGE,
+        FILTER_TYPES.AGE_GROUP,
         FILTER_TYPES.FACILITY,
       ],
     });
@@ -177,7 +198,7 @@ describe("PopulationOverTimeMetric", () => {
         enabledFilters: [
           FILTER_TYPES.GENDER,
           FILTER_TYPES.LEGAL_STATUS,
-          FILTER_TYPES.AGE,
+          FILTER_TYPES.AGE_GROUP,
           FILTER_TYPES.FACILITY,
         ],
       });

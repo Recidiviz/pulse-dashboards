@@ -14,22 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // ===================== ========================================================
-import "./VizIncarcerationPopulationPersonLevel.scss";
+import "./VizPopulationPersonLevel.scss";
 
 import { max } from "lodash/fp";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
 import PathwaysTable from "../../components/PathwaysTable";
-import { formatDate } from "../../utils";
-import IncarcerationPopulationPersonLevelMetric from "../models/IncarcerationPopulationPersonLevelMetric";
+import { formatDate, toHumanReadable, toTitleCase } from "../../utils";
+import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
 import withMetricHydrator from "../withMetricHydrator";
 
-type VizIncarcerationPopulationPersonLevelProps = {
-  metric: IncarcerationPopulationPersonLevelMetric;
+type VizPopulationPersonLevelProps = {
+  metric: PrisonPopulationPersonLevelMetric;
 };
 
-const VizIncarcerationPopulationPersonLevel: React.FC<VizIncarcerationPopulationPersonLevelProps> = ({
+const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
   metric,
 }) => {
   const { dataSeries, chartTitle } = metric;
@@ -40,6 +40,7 @@ const VizIncarcerationPopulationPersonLevel: React.FC<VizIncarcerationPopulation
       {
         Header: "Name",
         accessor: "fullName",
+        Cell: ({ value }: { value: string }) => <div>{toTitleCase(value)}</div>,
       },
       {
         Header: "DOC ID",
@@ -48,6 +49,7 @@ const VizIncarcerationPopulationPersonLevel: React.FC<VizIncarcerationPopulation
       {
         Header: "Gender",
         accessor: "gender",
+        Cell: ({ value }: { value: string }) => <div>{toTitleCase(value)}</div>,
       },
       {
         Header: "Age",
@@ -60,29 +62,30 @@ const VizIncarcerationPopulationPersonLevel: React.FC<VizIncarcerationPopulation
       {
         Header: "Admission Reason",
         accessor: "legalStatus",
+        Cell: ({ value }: { value: string }) => (
+          <div>{toTitleCase(toHumanReadable(value))}</div>
+        ),
       },
     ],
     []
   );
 
   return (
-    <div className="VizIncarcerationPopulationPersonLevel">
-      <div className="VizIncarcerationPopulationPersonLevel__header">
-        <div className="VizIncarcerationPopulationPersonLevel__title">
+    <div className="VizPopulationPersonLevel">
+      <div className="VizPopulationPersonLevel__header">
+        <div className="VizPopulationPersonLevel__title">
           {chartTitle}{" "}
           <span>as of {formatDate(latestUpdate, "MMMM dd, yyyy")}</span>
         </div>
-        <div className="VizIncarcerationPopulationPersonLevel__title">
-          Total: {dataSeries.length} people
+        <div className="VizPopulationPersonLevel__title">
+          Total: {dataSeries.length.toLocaleString()} people
         </div>
       </div>
-      <div className="VizIncarcerationPopulationPersonLevel__table">
+      <div className="VizPopulationPersonLevel__table">
         <PathwaysTable columns={columns} data={dataSeries} />
       </div>
     </div>
   );
 };
 
-export default withMetricHydrator(
-  observer(VizIncarcerationPopulationPersonLevel)
-);
+export default withMetricHydrator(observer(VizPopulationPersonLevel));

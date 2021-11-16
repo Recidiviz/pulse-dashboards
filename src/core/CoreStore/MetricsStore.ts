@@ -17,16 +17,16 @@
 import { makeAutoObservable } from "mobx";
 
 import { US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
-import IncarcerationPopulationPersonLevelMetric from "../models/IncarcerationPopulationPersonLevelMetric";
 import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import PopulationSnapshotMetric from "../models/PopulationSnapshotMetric";
+import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
 import ProjectionsMetrics from "../models/ProjectionsMetrics";
 import SupervisionCountOverTimeMetric from "../models/SupervisionCountOverTimeMetric";
 import {
   createFacilityPopulationSnapshot,
-  createIncarcerationPopulationPersonLevelList,
   createPopulationTimeSeries,
+  createPrisonPopulationPersonLevelList,
   createProjectionTimeSeries,
   createSupervisionTransitionTimeSeries,
 } from "../models/utils";
@@ -67,8 +67,7 @@ export default class MetricsStore {
             ? this.prisonPopulationOverTime
             : this.projectedPrisonPopulationOverTime,
         [PATHWAYS_SECTIONS.countByLocation]: this.prisonFacilityPopulation,
-        [PATHWAYS_SECTIONS.personLevelDetail]: this
-          .incarcerationPopulationPersonLevel,
+        [PATHWAYS_SECTIONS.personLevelDetail]: this.prisonPopulationPersonLevel,
       },
       [PATHWAYS_PAGES.supervision]: {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionPopulationOverTime,
@@ -84,15 +83,15 @@ export default class MetricsStore {
     return map[page][section];
   }
 
-  get incarcerationPopulationPersonLevel(): IncarcerationPopulationPersonLevelMetric {
-    return new IncarcerationPopulationPersonLevelMetric({
-      id: "incarcerationPopulationPersonLevel",
+  get prisonPopulationPersonLevel(): PrisonPopulationPersonLevelMetric {
+    return new PrisonPopulationPersonLevelMetric({
+      id: "prisonPopulationPersonLevel",
       tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "incarceration_population_person_level",
+      sourceFilename: "prison_population_snapshot_person_level",
       rootStore: this.rootStore,
-      dataTransformer: createIncarcerationPopulationPersonLevelList,
+      dataTransformer: createPrisonPopulationPersonLevelList,
       enabledFilters: [FILTER_TYPES.GENDER, FILTER_TYPES.FACILITY],
-      enabledMoreFilters: [FILTER_TYPES.AGE, FILTER_TYPES.LEGAL_STATUS],
+      enabledMoreFilters: [FILTER_TYPES.AGE_GROUP, FILTER_TYPES.LEGAL_STATUS],
     });
   }
 
@@ -109,7 +108,7 @@ export default class MetricsStore {
         FILTER_TYPES.GENDER,
         FILTER_TYPES.FACILITY,
       ],
-      enabledMoreFilters: [FILTER_TYPES.AGE, FILTER_TYPES.LEGAL_STATUS],
+      enabledMoreFilters: [FILTER_TYPES.AGE_GROUP, FILTER_TYPES.LEGAL_STATUS],
     });
   }
 
@@ -118,11 +117,11 @@ export default class MetricsStore {
       id: "prisonFacilityPopulation",
       tenantId: this.rootStore.currentTenantId,
       compartment: "INCARCERATION",
-      sourceFilename: "prison_population_time_series",
+      sourceFilename: "prison_population_snapshot_by_dimension",
       rootStore: this.rootStore,
       dataTransformer: createFacilityPopulationSnapshot,
       enabledFilters: [FILTER_TYPES.GENDER, FILTER_TYPES.FACILITY],
-      enabledMoreFilters: [FILTER_TYPES.AGE, FILTER_TYPES.LEGAL_STATUS],
+      enabledMoreFilters: [FILTER_TYPES.AGE_GROUP, FILTER_TYPES.LEGAL_STATUS],
     });
   }
 

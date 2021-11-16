@@ -8,6 +8,6 @@ export const FILTER_TYPES = {
   GENDER: "gender",
   LEGAL_STATUS: "legalStatus",
   SUPERVISION_TYPE: "supervisionType",
-  AGE: "age",
+  AGE_GROUP: "ageGroup",
   FACILITY: "facility",
 } as const;

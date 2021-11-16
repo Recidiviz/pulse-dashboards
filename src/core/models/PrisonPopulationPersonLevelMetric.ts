@@ -19,16 +19,16 @@
  */
 // TODO #1428 Add tests
 import PathwaysMetric from "./PathwaysMetric";
-import { IncarcerationPopulationPersonLevelRecord } from "./types";
+import { PrisonPopulationPersonLevelRecord } from "./types";
 
-export default class IncarcerationPopulationPersonLevelMetric extends PathwaysMetric<IncarcerationPopulationPersonLevelRecord> {
-  get dataSeries(): IncarcerationPopulationPersonLevelRecord[] {
+export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<PrisonPopulationPersonLevelRecord> {
+  get dataSeries(): PrisonPopulationPersonLevelRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
     const {
       gender,
-      legalStatus,
-      age,
+      ageGroup,
       facility,
+      legalStatus,
     } = this.rootStore.filtersStore.filters;
 
     const handleFilters = (filter: string[] | string, recordFilter: string) => {
@@ -39,14 +39,13 @@ export default class IncarcerationPopulationPersonLevelMetric extends PathwaysMe
         ? filter.includes(recordFilter)
         : recordFilter === filter;
     };
-
     return this.allRecords.filter(
-      (record: IncarcerationPopulationPersonLevelRecord) => {
+      (record: PrisonPopulationPersonLevelRecord) => {
         return (
           handleFilters(facility, record.facility) &&
-          handleFilters(gender, record.gender.toUpperCase()) &&
-          handleFilters(age, record.ageGroup) &&
-          handleFilters(legalStatus, record.legalStatus.toUpperCase())
+          handleFilters(gender, record.gender) &&
+          handleFilters(ageGroup, record.ageGroup) &&
+          handleFilters(legalStatus, record.legalStatus)
         );
       }
     );
