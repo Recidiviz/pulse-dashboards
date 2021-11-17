@@ -34,6 +34,7 @@ export const METRIC_TYPE_LABELS = {
   OVERALL: "Overall across all practices",
   DISCHARGE: "Timely discharge",
   CONTACT: "Timely contacts",
+  F2F_CONTACT: "Timely F2F contacts",
   RISK_ASSESSMENT: "Timely risk assessments",
   DOWNGRADE: "Supervision & risk level match",
 } as const;

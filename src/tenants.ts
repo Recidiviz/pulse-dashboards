@@ -86,9 +86,9 @@ const TENANTS: Tenants = {
         accessor: "timelyRiskAssessment",
       },
       {
-        name: METRIC_TYPE_LABELS.CONTACT,
+        name: METRIC_TYPE_LABELS.F2F_CONTACT,
         id: METRIC_TYPES.CONTACT,
-        description: `of clients have an up-to-date contact, according to IDOC policy`,
+        description: `of clients have an up-to-date face-to-face contact, according to IDOC policy`,
         accessor: "timelyContact",
       },
       {

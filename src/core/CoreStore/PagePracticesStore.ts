@@ -197,10 +197,9 @@ export default class PagePracticesStore {
     let labels = [] as string[];
     let ids = [] as string[];
     const datasets = [] as DownloadableDataset[];
-    const metrics = this.metrics.map((m) => m.id);
-    metrics.forEach((metricType: MetricType) => {
+    this.metrics.forEach((metric) => {
       const metricData = this.currentEntityTimeSeries.filter(
-        (d: PracticesTimeSeriesRecord) => d.metric === metricType
+        (d: PracticesTimeSeriesRecord) => d.metric === metric.id
       );
       labels = metricData.map((d) => d.date);
       ids = metricData.map((d) => d.entityId);
@@ -214,7 +213,7 @@ export default class PagePracticesStore {
       );
       datasets.push({
         data: downloadableData,
-        label: METRIC_TYPE_LABELS[metricType],
+        label: metric.name,
       });
     });
 
@@ -245,10 +244,7 @@ export default class PagePracticesStore {
       (d: PracticesSummaryTableRow) => {
         const metrics = this.metrics.reduce((acc: any, metric) => {
           if (metric.id !== METRIC_TYPES.OVERALL) {
-            acc[METRIC_TYPE_LABELS[metric.id]] = formatPercent(
-              d[metric.accessor],
-              true
-            );
+            acc[metric.name] = formatPercent(d[metric.accessor], true);
           }
           return acc;
         }, {});

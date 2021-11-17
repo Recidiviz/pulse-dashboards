@@ -368,7 +368,7 @@ describe("PagePracticesStore", () => {
                   "30D average": "46%",
                 },
               ],
-              label: "Timely contacts",
+              label: "Timely F2F contacts",
             },
             {
               data: [
@@ -403,7 +403,7 @@ describe("PagePracticesStore", () => {
                   "90D change": "-2%",
                   "30D change": "0%",
                   "Overall across all practices": "85%",
-                  "Timely contacts": "60%",
+                  "Timely F2F contacts": "60%",
                   "Supervision & risk level match": "67%",
                   "Timely risk assessments": "69%",
                 },
@@ -411,7 +411,7 @@ describe("PagePracticesStore", () => {
                   "90D change": "-2%",
                   "30D change": "0%",
                   "Overall across all practices": "95%",
-                  "Timely contacts": "90%",
+                  "Timely F2F contacts": "90%",
                   "Supervision & risk level match": "67%",
                   "Timely risk assessments": "99%",
                 },
@@ -445,9 +445,9 @@ describe("PagePracticesStore", () => {
           },
           {
             accessor: "timelyContact",
-            description: `of clients have an up-to-date contact, according to IDOC policy`,
+            description: `of clients have an up-to-date face-to-face contact, according to IDOC policy`,
             id: "CONTACT",
-            name: "Timely contacts",
+            name: "Timely F2F contacts",
           },
           {
             accessor: "timelyDowngrade",
