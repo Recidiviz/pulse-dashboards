@@ -66,11 +66,7 @@ const MoreFilters: React.FC<Props> = ({
   };
 
   const onResetFilters = () => {
-    enabledFilters.forEach((filterType) => {
-      setQuery({
-        [filterType]: filterOptions[filterType].defaultOption.label,
-      });
-    });
+    setQuery(filtersStore.enabledFiltersDefaultQueryString);
     setOpen(false);
   };
 

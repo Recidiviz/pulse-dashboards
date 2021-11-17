@@ -24,9 +24,11 @@ import {
   set,
   toJS,
 } from "mobx";
+import { QueryParamConfigMap, UrlUpdateType } from "use-query-params";
 
 import getFilters from "../../utils/getFilterDescription";
 import {
+  EnabledFilters,
   PopulationFilterLabels,
   PopulationFilters,
   PopulationFilterValues,
@@ -66,6 +68,19 @@ export default class FiltersStore {
 
   resetFilters(): void {
     this.setFilters(defaultPopulationFilterValues);
+  }
+
+  get enabledFiltersDefaultQueryString(): QueryParamConfigMap {
+    const { current: metric } = this.rootStore.metricsStore;
+    const query = {} as QueryParamConfigMap;
+    [...metric.enabledFilters, ...metric.enabledMoreFilters].forEach(
+      (filterType) => {
+        query[filterType] = this.filterOptions[
+          filterType as keyof PopulationFilters
+        ].defaultOption.label as any;
+      }
+    );
+    return query;
   }
 
   get timePeriodLabel(): string {

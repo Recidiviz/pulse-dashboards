@@ -16,18 +16,17 @@
 // =============================================================================
 
 import React from "react";
+import { useQueryParams } from "use-query-params";
 
 import { ReactComponent as NoDataLogo } from "../../assets/static/images/no_data_logo.svg";
 import { useCoreStore } from "../../core/CoreStoreProvider";
-import { defaultPopulationFilterValues } from "../../core/utils/filterOptions";
+import withRouteSync from "../../core/withRouteSync";
+import { filterQueryParams } from "../../utils/navigation";
 import HydrationStatus from "./HydrationStatus";
 
 const Error: React.FC = () => {
   const { filtersStore } = useCoreStore();
-
-  const onResetFilters = () => {
-    filtersStore.setFilters(defaultPopulationFilterValues);
-  };
+  const [, setQuery] = useQueryParams(filterQueryParams);
 
   return (
     <HydrationStatus
@@ -41,11 +40,16 @@ const Error: React.FC = () => {
         </>
       }
     >
-      <button type="button" onClick={onResetFilters}>
+      <button
+        type="button"
+        onClick={() =>
+          setQuery(filtersStore.enabledFiltersDefaultQueryString, "replace")
+        }
+      >
         Reset filters
       </button>
     </HydrationStatus>
   );
 };
 
-export default Error;
+export default withRouteSync(Error);
