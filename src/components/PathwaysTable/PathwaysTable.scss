@@ -24,20 +24,22 @@
   color: $pine-1;
   @include font-ui-sans-14;
 
+  @media screen and (max-width: 1550px) {
+    width: 970px;
+  }
+
   &__head {
     color: $slate-80;
-    position: sticky;
-    top: 0;
 
-    & tr {
+    & .tr {
       border: 0 !important;
     }
 
-    &--sortable{
+    &--sortable {
       display: flex;
     }
 
-    & th {
+    & .th {
       background: $white;
       padding: 0.875rem 0;
       padding-left: 2.5rem;
@@ -45,12 +47,32 @@
     }
   }
 
-  & tr {
+  &__body {
+    height: calc(100vh - 22rem);
+
+    @media screen and (max-width: $core-breakpoint-sm) {
+      @media (orientation: landscape) {
+        max-height: 464px;
+      }
+      @media (orientation: portrait) {
+        max-height: calc(100vh - 28rem);
+      }
+    }
+  }
+
+  & .tr {
+    display: flex;
     border-top: 1px solid $slate-20;
   }
 
-  & td {
+  & .td {
     padding: 1rem 0;
     padding-left: 2.5rem;
+    display: flex;
+    align-items: center;
+
+    & > :last-child {
+      padding-right: 2.5rem;
+    }
   }
 }

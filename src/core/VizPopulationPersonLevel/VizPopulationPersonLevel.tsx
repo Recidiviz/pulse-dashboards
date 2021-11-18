@@ -40,23 +40,28 @@ const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
         Header: "Name",
         accessor: "fullName",
         Cell: ({ value }: { value: string }) => <div>{toTitleCase(value)}</div>,
+        width: 150,
       },
       {
         Header: "DOC ID",
         accessor: "stateId",
+        width: 100,
       },
       {
         Header: "Gender",
         accessor: "gender",
         Cell: ({ value }: { value: string }) => <div>{toTitleCase(value)}</div>,
+        width: 80,
       },
       {
         Header: "Age",
         accessor: "age",
+        width: 80,
       },
       {
         Header: "Facility",
         accessor: "facility",
+        width: 80,
       },
       {
         Header: "Admission Reason",

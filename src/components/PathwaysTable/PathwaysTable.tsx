@@ -18,8 +18,12 @@
 import "./PathwaysTable.scss";
 
 import cx from "classnames";
-import React from "react";
-import { useSortBy, useTable } from "react-table";
+import React, { useCallback, useMemo } from "react";
+import { useFlexLayout, useSortBy, useTable } from "react-table";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { FixedSizeList as List } from "react-window";
+
+import getScrollBarWidth from "../../utils/getScrollBarWidth";
 
 type Props = {
   columns: any;
@@ -38,16 +42,41 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
       columns,
       data,
     },
-    useSortBy
+    useSortBy,
+    useFlexLayout
+  );
+
+  const scrollBarSize = useMemo(() => getScrollBarWidth(), []);
+
+  const RenderRow = useCallback(
+    ({ index, style }) => {
+      const row = rows[index];
+      prepareRow(row);
+      return (
+        <div className="tr" {...row.getRowProps({ style })}>
+          {row.cells.map((cell) => {
+            return (
+              <div className="td" {...cell.getCellProps()}>
+                {cell.render("Cell")}
+              </div>
+            );
+          })}
+        </div>
+      );
+    },
+    [prepareRow, rows]
   );
 
   return (
-    <table className="PathwaysTable" {...getTableProps()}>
-      <thead className="PathwaysTable__head">
+    <div className="PathwaysTable" {...getTableProps()}>
+      <div className="PathwaysTable__head">
         {headerGroups.map((headerGroup) => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
+          <div className="tr" {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
-              <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+              <div
+                className="th"
+                {...column.getHeaderProps(column.getSortByToggleProps())}
+              >
                 {column.canSort ? (
                   <div className="PathwaysTable__head--sortable">
                     {column.render("Header")}
@@ -75,24 +104,26 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
                 ) : (
                   column.render("Header")
                 )}
-              </th>
+              </div>
             ))}
-          </tr>
+          </div>
         ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map((row, i) => {
-          prepareRow(row);
-          return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map((cell) => {
-                return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
-              })}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+      </div>
+      <div className="PathwaysTable__body" {...getTableBodyProps()}>
+        <AutoSizer>
+          {({ height, width }) => (
+            <List
+              height={height}
+              itemCount={rows.length}
+              itemSize={70}
+              width={width + scrollBarSize}
+            >
+              {RenderRow}
+            </List>
+          )}
+        </AutoSizer>
+      </div>
+    </div>
   );
 };
 

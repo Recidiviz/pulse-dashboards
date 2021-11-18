@@ -13,29 +13,18 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// ===================== ========================================================
-@import "../CoreConstants";
+// =============================================================================
 
-.VizPopulationPersonLevel {
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 2.5rem;
-    padding-left: 2.5rem;
-    padding-right: 3rem;
-  }
+const getScrollBarWidth = () => {
+  const scrollDiv = document.createElement("div");
+  scrollDiv.setAttribute(
+    "style",
+    "width: 100px; height: 100px; overflow: scroll; position:absolute; top:-9999px;"
+  );
+  document.body.appendChild(scrollDiv);
+  const scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+  document.body.removeChild(scrollDiv);
+  return scrollbarWidth;
+};
 
-  &__title {
-    color: $pine-1;
-    @include font-ui-sans-16;
-    & span {
-      color: $slate-80;
-    }
-  }
-
-  &__table {
-    overflow: overlay !important;
-    overflow: auto;
-    margin-top: 1.938rem;
-  }
-}
+export default getScrollBarWidth;
