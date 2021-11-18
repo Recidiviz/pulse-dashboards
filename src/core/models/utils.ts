@@ -56,6 +56,7 @@ export function createFacilityPopulationSnapshot(
       ageGroup: record.age_group as AgeGroup,
       facility: record.facility,
       totalPopulation: parseInt(record.count),
+      lastUpdated: formatDateString(record.last_updated),
     };
   });
 }

@@ -56,8 +56,8 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
   }));
 
   const { beginDate, endDate } = getDateRange(
-    historicalPopulation[0].date,
-    historicalPopulation.slice(-1)[0].date,
+    historicalPopulation[0]?.date,
+    historicalPopulation.slice(-1)[0]?.date,
     timePeriod
   );
 

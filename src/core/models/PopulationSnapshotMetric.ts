@@ -71,6 +71,7 @@ export default class PopulationSnapshotMetric extends PathwaysMetric<PopulationS
         gender: dataset[0].gender,
         legalStatus: dataset[0].legalStatus,
         facility: dataset[0].facility,
+        lastUpdated: dataset[0].lastUpdated,
         totalPopulation: sumBy("totalPopulation", dataset),
       }))
     )(filteredRecords);

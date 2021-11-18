@@ -128,6 +128,12 @@ export const getDateRange = (
   beginDate.setDate(beginDate.getDate() - offset);
   endDate.setDate(endDate.getDate() + offset);
 
+  if (!firstDate && !lastDate)
+    return {
+      beginDate: new Date(9999, 11, 31),
+      endDate: new Date(9999, 11, 31),
+    };
+
   return { beginDate, endDate };
 };
 

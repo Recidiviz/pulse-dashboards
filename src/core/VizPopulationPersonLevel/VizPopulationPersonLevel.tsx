@@ -16,7 +16,6 @@
 // ===================== ========================================================
 import "./VizPopulationPersonLevel.scss";
 
-import { max } from "lodash/fp";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
@@ -34,7 +33,7 @@ const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
 }) => {
   const { dataSeries, chartTitle } = metric;
 
-  const latestUpdate = max(dataSeries.map((d) => d.lastUpdated)) || new Date();
+  const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
   const columns = React.useMemo(
     () => [
       {
@@ -74,8 +73,7 @@ const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
     <div className="VizPopulationPersonLevel">
       <div className="VizPopulationPersonLevel__header">
         <div className="VizPopulationPersonLevel__title">
-          {chartTitle}{" "}
-          <span>as of {formatDate(latestUpdate, "MMMM dd, yyyy")}</span>
+          {chartTitle} <span>as of {latestUpdate}</span>
         </div>
         <div className="VizPopulationPersonLevel__title">
           Total: {dataSeries.length.toLocaleString()} people

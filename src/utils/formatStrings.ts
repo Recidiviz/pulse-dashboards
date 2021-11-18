@@ -192,6 +192,8 @@ function formatISODateString(date: string): string {
 }
 
 function formatDate(date: Date, pattern = "M/d/yy"): string {
+  if (!date) return "Unknown";
+
   return format(date, pattern);
 }
 

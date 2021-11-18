@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 
+import { formatDate } from "../../utils";
 import * as styles from "../CoreConstants.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import PopulationSnapshotMetric from "../models/PopulationSnapshotMetric";
@@ -49,6 +50,8 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     value: d.totalPopulation,
   }));
 
+  const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
+
   const yRange = [0, Math.max(...data.map((d) => d.value))];
 
   const hoverAnnotation = (annotation: any) => {
@@ -61,7 +64,9 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     <div>
       <div className="VizCountOverTimeWithAvg">
         <div className="PopulationTimeSeriesChart__header">
-          <div className="PopulationTimeSeriesChart__title">{chartTitle}</div>
+          <div className="PopulationTimeSeriesChart__title">
+            {chartTitle} <span>as of {latestUpdate}</span>
+          </div>
         </div>
         <ResponsiveOrdinalFrame
           responsiveWidth

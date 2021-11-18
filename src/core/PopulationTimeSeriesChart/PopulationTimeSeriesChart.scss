@@ -18,6 +18,9 @@
   &__title {
     color: $pine-1;
     @include font-ui-sans-16;
+    & span {
+      color: $slate-80;
+    }
   }
 
   &__point {

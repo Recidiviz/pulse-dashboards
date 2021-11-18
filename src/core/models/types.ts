@@ -73,6 +73,7 @@ export type PopulationSnapshotRecord = {
   facility: string;
   ageGroup: AgeGroup;
   totalPopulation: number;
+  lastUpdated: Date;
 };
 
 export type PrisonPopulationPersonLevelRecord = {
@@ -86,9 +87,14 @@ export type PrisonPopulationPersonLevelRecord = {
   age: string;
 };
 
-export type PopulationTimeSeriesRecord = PopulationSnapshotRecord & {
+export type PopulationTimeSeriesRecord = {
   year: number;
   month: number;
+  legalStatus: string;
+  gender: Gender;
+  facility: string;
+  ageGroup: AgeGroup;
+  totalPopulation: number;
 };
 
 export type SupervisionCountTimeSeriesRecord = {
