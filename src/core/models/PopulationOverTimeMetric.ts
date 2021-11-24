@@ -21,7 +21,6 @@ import map from "lodash/fp/map";
 import sumBy from "lodash/fp/sumBy";
 import values from "lodash/fp/values";
 
-import RootStore from "../../RootStore";
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
@@ -68,7 +67,7 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
           (record.year - mostRecentDate.getFullYear()) * 12 +
           (record.month - (mostRecentDate.getMonth() + 1));
         return (
-          record.gender === gender &&
+          gender.includes(record.gender) &&
           status.includes(record.legalStatus) &&
           ageGroup.includes(record.ageGroup) &&
           facility.includes(record.facility) &&
@@ -127,23 +126,6 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
     };
   }
 
-  async fetchMethodologyPDF(): Promise<Record<string, any>> {
-    const token = await RootStore.getTokenSilently();
-    const endpoint = `${
-      process.env.REACT_APP_API_URL
-    }/api/${this.rootStore?.currentTenantId?.toLowerCase()}/projections/methodology.pdf`;
-    const pdf = await fetch(endpoint, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return {
-      data: await pdf.blob(),
-      type: "binary",
-      name: "population_projections_methodology.pdf",
-    };
-  }
-
   async download(): Promise<void> {
     return downloadChartAsData({
       fileContents: [this.downloadableData],
@@ -156,7 +138,6 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
       },
       lastUpdatedOn: formatDate(this.mostRecentDate),
       methodologyContent: this.methodology,
-      methodologyPDF: await this.fetchMethodologyPDF(),
     });
   }
 }

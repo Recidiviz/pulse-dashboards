@@ -18,4 +18,4 @@
 export const US_ID = "US_ID";
 export const US_TN = "US_TN";
 
-export const PATHWAYS_TENANTS = [US_ID, US_TN];
+export const PATHWAYS_TENANTS = [US_TN, US_ID];

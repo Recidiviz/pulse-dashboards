@@ -84,7 +84,11 @@ export const DEFAULT_PATHWAYS_SECTION_BY_PAGE: Record<string, string> = {
 };
 
 const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
-  [PATHWAYS_PAGES.prison]: ["prisonPopulationOverTime"],
+  [PATHWAYS_PAGES.prison]: [
+    "prisonPopulationOverTime",
+    "prisonFacilityPopulation",
+    "prisonPopulationPersonLevel",
+  ],
   [PATHWAYS_PAGES.supervision]: ["supervisionPopulationOverTime"],
   [PATHWAYS_PAGES.supervisionToPrison]: ["supervisionToPrisonOverTime"],
   [PATHWAYS_PAGES.supervisionToLiberty]: ["supervisionToLibertyOverTime"],

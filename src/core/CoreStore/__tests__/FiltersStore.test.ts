@@ -79,11 +79,11 @@ describe("FiltersStore", () => {
         "legalStatus",
       ];
       coreStore.filtersStore.setFilters({
-        timePeriod: "3",
+        timePeriod: "6",
         legalStatus: ["TREATMENT_IN_PRISON"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
-        "Time period: 3 months, All genders, Legal status: Rider"
+        "Time Period:, 6 months\nGender:, All\nLegal Status:, Rider\n"
       );
     });
 
@@ -98,7 +98,22 @@ describe("FiltersStore", () => {
         supervisionType: "PAROLE",
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
-        "Supervision type: Parole/Dual, Time period: 1 year, All genders"
+        "Time Period:, 1 year\nGender:, All\nSupervision Type:, Parole/Dual\n"
+      );
+    });
+
+    it("returns the correct description when more multiple options of one filter are selected", () => {
+      coreStore.metricsStore.current.enabledFilters = [
+        "timePeriod",
+        "gender",
+        "facility",
+      ];
+      coreStore.filtersStore.setFilters({
+        timePeriod: "12",
+        facility: ["MCCX", "SPND"],
+      });
+      expect(coreStore.filtersStore.filtersDescription).toEqual(
+        "Time Period:, 1 year\nGender:, All\nFacility:, MCCX,SPND\n"
       );
     });
   });

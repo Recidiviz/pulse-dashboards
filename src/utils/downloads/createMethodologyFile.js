@@ -34,7 +34,7 @@ function createMethodologyFile({
   }
   if (filters) {
     text += `Applied filters:\n`;
-    text += `- ${filters}\n`;
+    text += `- ${filters.replace(/:,/g, ":")}\n`;
   }
   if (violation) {
     text += `- ${violation}\n`;

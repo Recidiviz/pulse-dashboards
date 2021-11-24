@@ -43,7 +43,7 @@ import {
   PopulationFilters,
 } from "../types/filters";
 import { FILTER_TYPES } from "../utils/constants";
-import { getFilterOption } from "../utils/filterOptions";
+import { getFilterOptions } from "../utils/filterOptions";
 import { PATHWAYS_PATHS } from "../views";
 
 const PathwaysFilterBar: React.FC<{
@@ -109,10 +109,9 @@ const PathwaysFilterBar: React.FC<{
               width={filter.width}
             >
               <CoreSelect
-                value={getFilterOption(
-                  get(filters, filter.type),
-                  filter.options
-                )}
+                value={
+                  getFilterOptions(get(filters, filter.type), filter.options)[0]
+                }
                 options={
                   filter.type === FILTER_TYPES.TIME_PERIOD
                     ? filter.options
@@ -124,7 +123,7 @@ const PathwaysFilterBar: React.FC<{
                 defaultValue={filter.defaultValue}
                 isChanged={
                   filter.defaultValue !==
-                  getFilterOption(get(filters, filter.type), filter.options)
+                  getFilterOptions(get(filters, filter.type), filter.options)[0]
                     .value
                 }
               />

@@ -53,8 +53,8 @@ export default class SupervisionCountOverTimeMetric extends PathwaysMetric<Super
           (record.year - dataDate.getFullYear()) * 12 +
           (record.month - (dataDate.getMonth() + 1));
         return (
-          record.gender === gender &&
-          record.supervisionType === supervisionType &&
+          gender.includes(record.gender) &&
+          supervisionType.includes(record.supervisionType) &&
           Math.abs(monthsOut) <= monthRange
         );
       }

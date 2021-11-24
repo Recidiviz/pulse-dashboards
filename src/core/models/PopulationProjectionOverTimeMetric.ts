@@ -63,7 +63,7 @@ export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<P
           (record.year - simulationDate.getFullYear()) * 12 +
           (record.month - (simulationDate.getMonth() + 1));
         return (
-          record.gender === gender &&
+          gender.includes(record.gender) &&
           status.includes(record.legalStatus) &&
           Math.abs(monthsOut) <= monthRange &&
           monthsOut % stepSize === 0

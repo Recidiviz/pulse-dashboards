@@ -28,51 +28,21 @@ type VizPopulationPersonLevelProps = {
   metric: PrisonPopulationPersonLevelMetric;
 };
 
+export const createTitleCasedCell = ({
+  value,
+}: {
+  value: string;
+}): JSX.Element => {
+  return <div>{toTitleCase(toHumanReadable(value))}</div>;
+};
+
 const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
   metric,
 }) => {
-  const { dataSeries, chartTitle } = metric;
+  const { dataSeries, chartTitle, columns } = metric;
+  if (!columns) return null;
 
   const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "Name",
-        accessor: "fullName",
-        Cell: ({ value }: { value: string }) => <div>{toTitleCase(value)}</div>,
-        width: 150,
-      },
-      {
-        Header: "DOC ID",
-        accessor: "stateId",
-        width: 100,
-      },
-      {
-        Header: "Gender",
-        accessor: "gender",
-        Cell: ({ value }: { value: string }) => <div>{toTitleCase(value)}</div>,
-        width: 80,
-      },
-      {
-        Header: "Age",
-        accessor: "age",
-        width: 80,
-      },
-      {
-        Header: "Facility",
-        accessor: "facility",
-        width: 80,
-      },
-      {
-        Header: "Admission Reason",
-        accessor: "legalStatus",
-        Cell: ({ value }: { value: string }) => (
-          <div>{toTitleCase(toHumanReadable(value))}</div>
-        ),
-      },
-    ],
-    []
-  );
 
   return (
     <div className="VizPopulationPersonLevel">
@@ -85,7 +55,12 @@ const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
         </div>
       </div>
       <div className="VizPopulationPersonLevel__table">
-        <PathwaysTable columns={columns} data={dataSeries} />
+        <PathwaysTable
+          columns={columns.map((c) =>
+            c.titleCase ? { ...c, Cell: createTitleCasedCell } : c
+          )}
+          data={dataSeries}
+        />
       </div>
     </div>
   );

@@ -24,11 +24,9 @@ import {
   set,
   toJS,
 } from "mobx";
-import { QueryParamConfigMap, UrlUpdateType } from "use-query-params";
+import { QueryParamConfigMap } from "use-query-params";
 
-import getFilters from "../../utils/getFilterDescription";
 import {
-  EnabledFilters,
   PopulationFilterLabels,
   PopulationFilters,
   PopulationFilterValues,
@@ -90,15 +88,25 @@ export default class FiltersStore {
   get filtersDescription(): string {
     const metric = this.rootStore.metricsStore.current;
     const filters = toJS(this.filters);
-    const enabledFilters = Object.entries(filters).reduce(
+    const filtersStrings = Object.entries(filters).reduce(
       (acc, [key, value]) => {
-        // @ts-ignore
-        if (metric.enabledFilters.includes(key)) acc[key] = value;
+        if (
+          metric.enabledFilters.includes(key) ||
+          metric.enabledMoreFilters?.includes(key)
+        ) {
+          const { title } = this.filterOptions[key as keyof PopulationFilters];
+          acc.push(
+            `${title}:, ${
+              this.filtersLabels[key as keyof PopulationFilterLabels]
+            }`
+          );
+        }
+
         return acc;
       },
-      {}
+      [] as string[]
     );
-    return getFilters(enabledFilters, this.filterOptions);
+    return filtersStrings.join("\n").concat("\n");
   }
 
   get filtersLabels(): PopulationFilterLabels {

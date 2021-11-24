@@ -40,7 +40,7 @@ describe("convertLabelsToValues", () => {
       [FILTER_TYPES.LEGAL_STATUS]: "Parole Violator",
     };
     const expected = {
-      legalStatus: "PAROLE_BOARD_HOLD",
+      legalStatus: ["PAROLE_BOARD_HOLD"],
       timePeriod: "6",
     };
     expect(convertLabelsToValues(filtersLabels, filterOptions.US_ID)).toEqual(

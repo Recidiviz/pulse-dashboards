@@ -24,7 +24,7 @@ import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonL
 import ProjectionsMetrics from "../models/ProjectionsMetrics";
 import SupervisionCountOverTimeMetric from "../models/SupervisionCountOverTimeMetric";
 import {
-  createFacilityPopulationSnapshot,
+  createPopulationSnapshot,
   createPopulationTimeSeries,
   createPrisonPopulationPersonLevelList,
   createProjectionTimeSeries,
@@ -119,7 +119,7 @@ export default class MetricsStore {
       compartment: "INCARCERATION",
       sourceFilename: "prison_population_snapshot_by_dimension",
       rootStore: this.rootStore,
-      dataTransformer: createFacilityPopulationSnapshot,
+      dataTransformer: createPopulationSnapshot,
       enabledFilters: [FILTER_TYPES.GENDER, FILTER_TYPES.FACILITY],
       enabledMoreFilters: [FILTER_TYPES.AGE_GROUP, FILTER_TYPES.LEGAL_STATUS],
     });

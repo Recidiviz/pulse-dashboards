@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2020 Recidiviz, Inc.
+// Copyright (C) 2021 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,17 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { RawApiData } from "../models/types";
+import { ViewMethodology } from "../../models/types";
+import { getMetricCopy, getPageCopy } from "..";
 
-export type ChartDataType = {
-  isLoading: boolean;
-  isError: boolean;
-  apiData: RawApiData;
-};
-
-export type TableColumn = {
-  Header: string;
-  accessor: string;
-  titleCase: boolean;
-  width?: number;
+/**
+ * All methodology attribute blocks are in Markdown
+ */
+export const usTnMethodology: ViewMethodology = {
+  system: {
+    title: "System-Level Trends",
+    // TODO figure out a way to get this into the sync content
+    description: `The System-Level Trends page provides a real-time map of the corrections system and helps identify patterns of success and failure among specific cohorts of people.`,
+    get pageCopy() {
+      return getPageCopy("US_TN");
+    },
+    get metricCopy() {
+      return getMetricCopy("US_TN");
+    },
+  },
 };

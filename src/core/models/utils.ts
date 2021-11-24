@@ -46,7 +46,7 @@ export function createProjectionTimeSeries(
   });
 }
 
-export function createFacilityPopulationSnapshot(
+export function createPopulationSnapshot(
   rawRecords: RawMetricData
 ): PopulationSnapshotRecord[] {
   return rawRecords.map((record) => {
@@ -121,7 +121,7 @@ export function getRecordDate(d: TimeSeriesRecord): Date {
   return new Date(d.year, d.month - 1);
 }
 
-const formatDateString = (dateString: string) => {
+export const formatDateString = (dateString: string): Date => {
   const [year, month, day] = dateString.split("-");
   return new Date(Number(year), Number(month) - 1, Number(day));
 };

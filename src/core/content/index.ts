@@ -22,6 +22,7 @@ import { TenantId } from "../../RootStore/types";
 import { ViewMethodology } from "../models/types";
 import { usIdMethodology } from "./methodology/usIdMethodology";
 import { usNdMethodology } from "./methodology/usNdMethodology";
+import { usTnMethodology } from "./methodology/usTnMethodology";
 import defaultMetricContent from "./metric/default";
 import IdMetricContent from "./metric/us_id";
 import TnMetricContent from "./metric/us_tn";
@@ -71,6 +72,8 @@ export const getMethodologyCopy = (
       return usIdMethodology;
     case coreTenants.US_ND:
       return usNdMethodology;
+    case pathwaysTenants.US_TN:
+      return usTnMethodology;
     default:
       throw new Error(
         `methodology does not exist for state code ${currentTenantId}`

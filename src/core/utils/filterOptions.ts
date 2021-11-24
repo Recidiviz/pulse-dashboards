@@ -69,7 +69,9 @@ export const convertLabelsToValues = (
         .includes(o.label)
     );
     const values = options.map((o) => o.value);
-    if (options) acc[filterType] = values.length > 1 ? values : values[0];
+    if (options)
+      acc[filterType] =
+        filterType === FILTER_TYPES.TIME_PERIOD ? values[0] : values;
     return acc;
   }, {} as Record<string, string | string[]>);
 };

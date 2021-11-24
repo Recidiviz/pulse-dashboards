@@ -82,7 +82,7 @@ const ViewNavigation: React.FC = ({ children }) => {
   const MethodologyLink = () => {
     const methodologyView =
       view === PATHWAYS_VIEWS.profile || view === PATHWAYS_VIEWS.methodology
-        ? PATHWAYS_VIEWS.operations
+        ? PATHWAYS_VIEWS.system
         : view;
     return (
       <NavLink

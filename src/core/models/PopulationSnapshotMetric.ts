@@ -17,13 +17,14 @@
  * =============================================================================
  *
  */
-// TODO #1428 Add tests
 import { pipe } from "lodash/fp";
 import groupBy from "lodash/fp/groupBy";
 import map from "lodash/fp/map";
 import sumBy from "lodash/fp/sumBy";
 import values from "lodash/fp/values";
 
+import { downloadChartAsData } from "../../utils/downloads/downloadData";
+import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PopulationSnapshotRecord, SimulationCompartment } from "./types";
 
@@ -37,6 +38,7 @@ export default class PopulationSnapshotMetric extends PathwaysMetric<PopulationS
   ) {
     super(props);
     this.compartment = props.compartment;
+    this.download = this.download.bind(this);
   }
 
   get dataSeries(): PopulationSnapshotRecord[] {
@@ -54,7 +56,7 @@ export default class PopulationSnapshotMetric extends PathwaysMetric<PopulationS
     const filteredRecords = this.allRecords.filter(
       (record: PopulationSnapshotRecord) => {
         return (
-          record.gender === gender &&
+          gender.includes(record.gender) &&
           status.includes(record.legalStatus) &&
           ageGroup.includes(record.ageGroup) &&
           (this.id === "prisonFacilityPopulation"
@@ -72,9 +74,48 @@ export default class PopulationSnapshotMetric extends PathwaysMetric<PopulationS
         legalStatus: dataset[0].legalStatus,
         facility: dataset[0].facility,
         lastUpdated: dataset[0].lastUpdated,
+        ageGroup: dataset[0].ageGroup,
         totalPopulation: sumBy("totalPopulation", dataset),
       }))
     )(filteredRecords);
     return result as PopulationSnapshotRecord[];
+  }
+
+  get downloadableData(): DownloadableData | undefined {
+    if (!this.dataSeries) return undefined;
+
+    const datasets = [] as DownloadableDataset[];
+    const data: Record<string, number>[] = [];
+    const labels: string[] = [];
+
+    this.dataSeries.forEach((d: PopulationSnapshotRecord) => {
+      data.push({
+        Count: Math.round(d.totalPopulation),
+      });
+
+      labels.push(d.facility);
+    });
+
+    datasets.push({ data, label: "" });
+    return {
+      chartDatasets: datasets,
+      chartLabels: labels,
+      chartId: this.chartTitle,
+      dataExportLabel: "Facility",
+    };
+  }
+
+  async download(): Promise<void> {
+    return downloadChartAsData({
+      fileContents: [this.downloadableData],
+      chartTitle: this.chartTitle,
+      shouldZipDownload: true,
+      getTokenSilently: this.rootStore?.userStore.getTokenSilently,
+      includeFiltersDescriptionInCSV: true,
+      filters: {
+        filtersDescription: this.rootStore?.filtersStore.filtersDescription,
+      },
+      methodologyContent: this.methodology,
+    });
   }
 }

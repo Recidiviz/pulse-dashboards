@@ -19,6 +19,7 @@ import {
   METRIC_TYPES,
   PracticesMetric,
 } from "./core/PagePractices/types";
+import { TableColumn } from "./core/types/charts";
 import { Navigation } from "./core/types/navigation";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "./core/views";
 import * as core from "./RootStore/TenantStore/coreTenants";
@@ -40,6 +41,7 @@ type Tenants = {
     navigation?: Navigation;
     practicesMetrics?: PracticesMetric[];
     pagesWithRestrictions?: string[];
+    tableColumns?: TableColumn[];
   };
 };
 
@@ -115,6 +117,43 @@ const TENANTS: Tenants = {
       "id-methodology": ["system"],
     },
     pagesWithRestrictions: ["prison"],
+    tableColumns: [
+      {
+        Header: "Name",
+        accessor: "fullName",
+        titleCase: true,
+        width: 150,
+      },
+      {
+        Header: "DOC ID",
+        accessor: "stateId",
+        titleCase: false,
+        width: 100,
+      },
+      {
+        Header: "Gender",
+        accessor: "gender",
+        titleCase: true,
+        width: 80,
+      },
+      {
+        Header: "Age",
+        accessor: "age",
+        titleCase: false,
+        width: 80,
+      },
+      {
+        Header: "Facility",
+        accessor: "facility",
+        titleCase: false,
+        width: 80,
+      },
+      {
+        Header: "Admission Reason",
+        accessor: "legalStatus",
+        titleCase: true,
+      },
+    ],
   },
   [lantern.US_MO]: {
     name: "Missouri",

@@ -30,7 +30,6 @@ import {
   DEFAULT_ENTITY_ID,
   DownloadableData,
   DownloadableDataset,
-  METRIC_TYPE_LABELS,
   METRIC_TYPES,
   MetricType,
   PracticesMetric,

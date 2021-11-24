@@ -17,11 +17,22 @@
  * =============================================================================
  *
  */
-// TODO #1428 Add tests
-import PathwaysMetric from "./PathwaysMetric";
+import tenants from "../../tenants";
+import { toHumanReadable, toTitleCase } from "../../utils";
+import { downloadChartAsData } from "../../utils/downloads/downloadData";
+import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
+import { TableColumn } from "../types/charts";
+import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PrisonPopulationPersonLevelRecord } from "./types";
 
 export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<PrisonPopulationPersonLevelRecord> {
+  constructor(
+    props: BaseMetricConstructorOptions<PrisonPopulationPersonLevelRecord>
+  ) {
+    super(props);
+    this.download = this.download.bind(this);
+  }
+
   get dataSeries(): PrisonPopulationPersonLevelRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
     const {
@@ -32,7 +43,7 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
     } = this.rootStore.filtersStore.filters;
 
     const handleFilters = (filter: string[] | string, recordFilter: string) => {
-      if (filter === "ALL") {
+      if (filter.includes("ALL")) {
         return recordFilter !== "ALL";
       }
       return Array.isArray(filter)
@@ -49,5 +60,59 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
         );
       }
     );
+  }
+
+  get columns(): TableColumn[] | undefined {
+    if (!this.rootStore?.currentTenantId) return undefined;
+    return tenants[this.rootStore.currentTenantId].tableColumns;
+  }
+
+  get downloadableData(): DownloadableData | undefined {
+    if (!this.dataSeries || !this.columns) return undefined;
+    const { columns } = this;
+
+    const datasets = [] as DownloadableDataset[];
+    const data: Record<string, string>[] = [];
+    const labels: string[] = [];
+
+    this.dataSeries.forEach((d: PrisonPopulationPersonLevelRecord) => {
+      const row: Record<string, any> = {};
+      columns.forEach((c) => {
+        if (c.Header === "Name") return;
+        row[c.Header] = c.titleCase
+          ? toTitleCase(
+              toHumanReadable(
+                d[
+                  c.accessor as keyof PrisonPopulationPersonLevelRecord
+                ].toString()
+              )
+            )
+          : d[c.accessor as keyof PrisonPopulationPersonLevelRecord];
+      });
+      data.push(row);
+      labels.push(d.fullName);
+    });
+
+    datasets.push({ data, label: "" });
+    return {
+      chartDatasets: datasets,
+      chartLabels: labels,
+      chartId: this.chartTitle,
+      dataExportLabel: "Name",
+    };
+  }
+
+  async download(): Promise<void> {
+    return downloadChartAsData({
+      fileContents: [this.downloadableData],
+      chartTitle: this.chartTitle,
+      shouldZipDownload: true,
+      getTokenSilently: this.rootStore?.userStore.getTokenSilently,
+      includeFiltersDescriptionInCSV: true,
+      filters: {
+        filtersDescription: this.rootStore?.filtersStore.filtersDescription,
+      },
+      methodologyContent: this.methodology,
+    });
   }
 }

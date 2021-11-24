@@ -21,8 +21,9 @@ import RootStore from "../../../RootStore";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
 import { FILTER_TYPES } from "../../utils/constants";
-import PopulationOverTimeMetric from "../PopulationOverTimeMetric";
-import { createPopulationTimeSeries } from "../utils";
+import { defaultPopulationFilterValues } from "../../utils/filterOptions";
+import PopulationSnapshotMetric from "../PopulationSnapshotMetric";
+import { createPopulationSnapshot, formatDateString } from "../utils";
 
 const OLD_ENV = process.env;
 
@@ -39,58 +40,51 @@ global.fetch = jest.fn().mockResolvedValue({
 jest.mock("../../../api/metrics/metricsClient", () => {
   return {
     callMetricsApi: jest.fn().mockResolvedValue({
-      // time series data is sorted by date ascending in the data platform
-      prison_population_time_series: [
+      prison_population_snapshot_by_dimension: [
         {
-          gender: "ALL",
           legal_status: "ALL",
-          month: "12",
-          facility: "ALL",
+          gender: "ALL",
           age_group: "ALL",
-          state_code: "US_TN",
-          count: 7641,
-          year: "2015",
+          facility: "Bedrock",
+          count: "15",
+          last_updated: "2021-10-27",
         },
         {
-          gender: "ALL",
           legal_status: "ALL",
-          month: "1",
-          facility: "ALL",
+          gender: "ALL",
           age_group: "ALL",
-          state_code: "US_TN",
-          count: 7641,
-          year: "2016",
+          facility: "School of Rock",
+          count: "10",
+          last_updated: "2021-10-27",
         },
         {
-          gender: "MALE",
           legal_status: "ALL",
-          month: "5",
-          facility: "MCCX",
+          gender: "FEMALE",
           age_group: "ALL",
-          state_code: "US_TN",
-          count: 7641,
-          year: "2016",
+          facility: "Bedrock",
+          count: "5",
+          last_updated: "2021-10-27",
         },
       ],
     }),
   };
 });
 
-describe("PopulationOverTimeMetric", () => {
-  let metric: PopulationOverTimeMetric;
+describe("PopulationSnapshotMetric", () => {
+  let metric: PopulationSnapshotMetric;
 
   beforeEach(() => {
     process.env = Object.assign(process.env, {
       REACT_APP_API_URL: "test-url",
     });
     mockCoreStore.filtersStore = filtersStore;
-    metric = new PopulationOverTimeMetric({
-      id: "prisonPopulationOverTime",
+    metric = new PopulationSnapshotMetric({
+      id: "prisonFacilityPopulation",
       tenantId: mockTenantId,
       compartment: "INCARCERATION",
-      sourceFilename: "prison_population_time_series",
+      sourceFilename: "prison_population_snapshot_by_dimension",
       rootStore: mockCoreStore,
-      dataTransformer: createPopulationTimeSeries,
+      dataTransformer: createPopulationSnapshot,
       enabledFilters: [
         FILTER_TYPES.GENDER,
         FILTER_TYPES.LEGAL_STATUS,
@@ -111,7 +105,7 @@ describe("PopulationOverTimeMetric", () => {
 
   it("fetches metrics when initialized", () => {
     expect(callMetricsApi).toHaveBeenCalledWith(
-      `${mockTenantId.toLowerCase()}/pathways/prison_population_time_series`,
+      `${mockTenantId.toLowerCase()}/pathways/prison_population_snapshot_by_dimension`,
       RootStore.getTokenSilently
     );
   });
@@ -123,78 +117,43 @@ describe("PopulationOverTimeMetric", () => {
   it("has a transformed records property", () => {
     expect(metric.records).toEqual([
       {
-        gender: "ALL",
         legalStatus: "ALL",
-        month: 12,
-        facility: "ALL",
+        gender: "ALL",
         ageGroup: "ALL",
-        totalPopulation: 7641,
-        year: 2015,
+        facility: "Bedrock",
+        totalPopulation: 15,
+        lastUpdated: formatDateString("2021-10-27"),
       },
       {
-        gender: "ALL",
         legalStatus: "ALL",
-        month: 1,
-        facility: "ALL",
+        gender: "ALL",
         ageGroup: "ALL",
-        totalPopulation: 7641,
-        year: 2016,
+        facility: "School of Rock",
+        totalPopulation: 10,
+        lastUpdated: formatDateString("2021-10-27"),
       },
       {
-        gender: "MALE",
         legalStatus: "ALL",
-        month: 5,
-        facility: "MCCX",
+        gender: "FEMALE",
         ageGroup: "ALL",
-        totalPopulation: 7641,
-        year: 2016,
+        facility: "Bedrock",
+        totalPopulation: 5,
+        lastUpdated: formatDateString("2021-10-27"),
       },
     ]);
-  });
-
-  it("finds most recent month", () => {
-    expect(metric.mostRecentDate).toEqual(new Date(2016, 4));
-  });
-
-  it("does not throw when accessing the most recent date without loaded data", () => {
-    jest.mock("../../../api/metrics/metricsClient", () => {
-      return {
-        callMetricsApi: jest.fn().mockResolvedValue({
-          prison_population_time_series: [],
-        }),
-      };
-    });
-
-    metric = new PopulationOverTimeMetric({
-      id: "prisonPopulationOverTime",
-      tenantId: mockTenantId,
-      compartment: "INCARCERATION",
-      sourceFilename: "prison_population_time_series",
-      rootStore: mockCoreStore,
-      dataTransformer: createPopulationTimeSeries,
-      enabledFilters: [
-        FILTER_TYPES.GENDER,
-        FILTER_TYPES.LEGAL_STATUS,
-        FILTER_TYPES.AGE_GROUP,
-        FILTER_TYPES.FACILITY,
-      ],
-    });
-    metric.hydrate();
-
-    expect(metric.mostRecentDate).toEqual(new Date(9999, 11, 31));
   });
 
   describe("dataSeries", () => {
     beforeEach(() => {
       mockCoreStore.filtersStore = filtersStore;
 
-      metric = new PopulationOverTimeMetric({
-        id: "prisonPopulationOverTime",
+      metric = new PopulationSnapshotMetric({
+        id: "prisonFacilityPopulation",
         tenantId: mockTenantId,
         compartment: "INCARCERATION",
-        sourceFilename: "prison_population_time_series",
+        sourceFilename: "prison_population_snapshot_by_dimension",
         rootStore: mockCoreStore,
-        dataTransformer: createPopulationTimeSeries,
+        dataTransformer: createPopulationSnapshot,
         enabledFilters: [
           FILTER_TYPES.GENDER,
           FILTER_TYPES.LEGAL_STATUS,
@@ -208,18 +167,20 @@ describe("PopulationOverTimeMetric", () => {
     it("filters by default values", () => {
       expect(metric.dataSeries).toEqual([
         {
-          year: 2015,
-          month: 12,
           legalStatus: "ALL",
           gender: "ALL",
-          totalPopulation: 7641,
+          ageGroup: "ALL",
+          facility: "Bedrock",
+          totalPopulation: 15,
+          lastUpdated: formatDateString("2021-10-27"),
         },
         {
-          year: 2016,
-          month: 1,
           legalStatus: "ALL",
           gender: "ALL",
-          totalPopulation: 7641,
+          ageGroup: "ALL",
+          facility: "School of Rock",
+          totalPopulation: 10,
+          lastUpdated: formatDateString("2021-10-27"),
         },
       ]);
     });
@@ -228,22 +189,70 @@ describe("PopulationOverTimeMetric", () => {
       runInAction(() => {
         if (metric.rootStore) {
           metric.rootStore.filtersStore.setFilters({
-            gender: "MALE",
-            facility: ["MCCX"],
+            gender: "FEMALE",
+            facility: ["Bedrock"],
           });
         }
 
         expect(metric.dataSeries).toEqual([
           {
-            compartment: undefined,
-            gender: "MALE",
             legalStatus: "ALL",
-            month: 5,
-            totalPopulation: 7641,
-            year: 2016,
+            ageGroup: "ALL",
+            gender: "FEMALE",
+            facility: "Bedrock",
+            totalPopulation: 5,
+            lastUpdated: formatDateString("2021-10-27"),
           },
         ]);
       });
+    });
+  });
+
+  describe("when the currentTenantId is US_TN", () => {
+    beforeEach(() => {
+      mockCoreStore.filtersStore = filtersStore;
+
+      if (metric.rootStore) {
+        metric.rootStore.filtersStore.setFilters(defaultPopulationFilterValues);
+      }
+
+      metric = new PopulationSnapshotMetric({
+        id: "prisonFacilityPopulation",
+        tenantId: mockTenantId,
+        compartment: "INCARCERATION",
+        sourceFilename: "prison_population_snapshot_by_dimension",
+        rootStore: mockCoreStore,
+        dataTransformer: createPopulationSnapshot,
+        enabledFilters: [
+          FILTER_TYPES.GENDER,
+          FILTER_TYPES.LEGAL_STATUS,
+          FILTER_TYPES.AGE_GROUP,
+          FILTER_TYPES.FACILITY,
+        ],
+      });
+      metric.hydrate();
+    });
+
+    it("has the correct downloadableData", () => {
+      const expected = {
+        chartDatasets: [
+          {
+            data: [
+              {
+                Count: 15,
+              },
+              {
+                Count: 10,
+              },
+            ],
+            label: "",
+          },
+        ],
+        chartId: "Prison Population by Facility",
+        chartLabels: ["Bedrock", "School of Rock"],
+        dataExportLabel: "Facility",
+      };
+      expect(metric.downloadableData).toEqual(expected);
     });
   });
 });
