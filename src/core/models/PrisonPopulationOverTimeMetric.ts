@@ -29,14 +29,17 @@ import {
   MonthOptions,
 } from "../PopulationTimeSeriesChart/helpers";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import { PopulationTimeSeriesRecord, SimulationCompartment } from "./types";
+import {
+  PrisonPopulationTimeSeriesRecord,
+  SimulationCompartment,
+} from "./types";
 import { getRecordDate } from "./utils";
 
-export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationTimeSeriesRecord> {
+export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<PrisonPopulationTimeSeriesRecord> {
   compartment: SimulationCompartment;
 
   constructor(
-    props: BaseMetricConstructorOptions<PopulationTimeSeriesRecord> & {
+    props: BaseMetricConstructorOptions<PrisonPopulationTimeSeriesRecord> & {
       compartment: SimulationCompartment;
     }
   ) {
@@ -45,7 +48,7 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
     this.download = this.download.bind(this);
   }
 
-  get dataSeries(): PopulationTimeSeriesRecord[] {
+  get dataSeries(): PrisonPopulationTimeSeriesRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
     const {
       gender,
@@ -62,7 +65,7 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
 
     const { mostRecentDate } = this;
     const filteredRecords = this.allRecords.filter(
-      (record: PopulationTimeSeriesRecord) => {
+      (record: PrisonPopulationTimeSeriesRecord) => {
         const monthsOut =
           (record.year - mostRecentDate.getFullYear()) * 12 +
           (record.month - (mostRecentDate.getMonth() + 1));
@@ -78,7 +81,7 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
     );
 
     const result = pipe(
-      groupBy((d: PopulationTimeSeriesRecord) => [d.year, d.month]),
+      groupBy((d: PrisonPopulationTimeSeriesRecord) => [d.year, d.month]),
       values,
       map((dataset) => ({
         year: dataset[0].year,
@@ -88,7 +91,7 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
         totalPopulation: sumBy("totalPopulation", dataset),
       }))
     )(filteredRecords);
-    return result as PopulationTimeSeriesRecord[];
+    return result as PrisonPopulationTimeSeriesRecord[];
   }
 
   get mostRecentDate(): Date {
@@ -108,7 +111,7 @@ export default class PopulationOverTimeMetric extends PathwaysMetric<PopulationT
     const data: Record<string, number>[] = [];
     const labels: string[] = [];
 
-    this.dataSeries.forEach((d: PopulationTimeSeriesRecord) => {
+    this.dataSeries.forEach((d: PrisonPopulationTimeSeriesRecord) => {
       data.push({
         Population: Math.round(d.totalPopulation),
       });

@@ -27,10 +27,12 @@ import {
 import { QueryParamConfigMap } from "use-query-params";
 
 import {
+  EnabledFiltersByMetric,
   PopulationFilterLabels,
   PopulationFilters,
   PopulationFilterValues,
 } from "../types/filters";
+import enabledFilters from "../utils/enabledFilters";
 import filterOptions, {
   defaultPopulationFilterValues,
   getFilterOption,
@@ -71,13 +73,14 @@ export default class FiltersStore {
   get enabledFiltersDefaultQueryString(): QueryParamConfigMap {
     const { current: metric } = this.rootStore.metricsStore;
     const query = {} as QueryParamConfigMap;
-    [...metric.enabledFilters, ...metric.enabledMoreFilters].forEach(
-      (filterType) => {
-        query[filterType] = this.filterOptions[
-          filterType as keyof PopulationFilters
-        ].defaultOption.label as any;
-      }
-    );
+    [
+      ...metric.filters.enabledFilters,
+      ...metric.filters.enabledMoreFilters,
+    ].forEach((filterType) => {
+      query[filterType] = this.filterOptions[
+        filterType as keyof PopulationFilters
+      ].defaultOption.label as any;
+    });
     return query;
   }
 
@@ -91,8 +94,8 @@ export default class FiltersStore {
     const filtersStrings = Object.entries(filters).reduce(
       (acc, [key, value]) => {
         if (
-          metric.enabledFilters.includes(key) ||
-          metric.enabledMoreFilters?.includes(key)
+          metric.filters.enabledFilters.includes(key) ||
+          metric.filters.enabledMoreFilters?.includes(key)
         ) {
           const { title } = this.filterOptions[key as keyof PopulationFilters];
           acc.push(
@@ -127,6 +130,13 @@ export default class FiltersStore {
       acc[filterType as keyof PopulationFilterLabels] = labels;
       return acc;
     }, {} as PopulationFilterLabels);
+  }
+
+  get enabledFilters(): EnabledFiltersByMetric {
+    // @ts-ignore
+    return this.rootStore.currentTenantId
+      ? enabledFilters[this.rootStore.currentTenantId]
+      : undefined;
   }
 
   get filterOptions(): PopulationFilters {

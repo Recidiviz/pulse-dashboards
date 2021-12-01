@@ -17,21 +17,22 @@
 import { makeAutoObservable } from "mobx";
 
 import { US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
-import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
-import PopulationSnapshotMetric from "../models/PopulationSnapshotMetric";
+import PopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
+import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
 import ProjectionsMetrics from "../models/ProjectionsMetrics";
-import SupervisionCountOverTimeMetric from "../models/SupervisionCountOverTimeMetric";
+import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
+import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import {
-  createPopulationSnapshot,
-  createPopulationTimeSeries,
   createPrisonPopulationPersonLevelList,
+  createPrisonPopulationSnapshot,
+  createPrisonPopulationTimeSeries,
   createProjectionTimeSeries,
-  createSupervisionTransitionTimeSeries,
+  createSupervisionPopulationSnapshot,
+  createSupervisionPopulationTimeSeries,
 } from "../models/utils";
 import VitalsMetrics from "../models/VitalsMetrics";
-import { FILTER_TYPES } from "../utils/constants";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../views";
 import type CoreStore from ".";
 
@@ -74,6 +75,8 @@ export default class MetricsStore {
       },
       [PATHWAYS_PAGES.supervisionToPrison]: {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToPrisonOverTime,
+        [PATHWAYS_SECTIONS.countByLocation]: this
+          .supervisionToPrisonPopulationByDistrict,
       },
       [PATHWAYS_PAGES.supervisionToLiberty]: {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToLibertyOverTime,
@@ -90,8 +93,8 @@ export default class MetricsStore {
       sourceFilename: "prison_population_snapshot_person_level",
       rootStore: this.rootStore,
       dataTransformer: createPrisonPopulationPersonLevelList,
-      enabledFilters: [FILTER_TYPES.GENDER, FILTER_TYPES.FACILITY],
-      enabledMoreFilters: [FILTER_TYPES.AGE_GROUP, FILTER_TYPES.LEGAL_STATUS],
+      filters: this.rootStore.filtersStore.enabledFilters
+        .prisonPopulationPersonLevel,
     });
   }
 
@@ -102,26 +105,35 @@ export default class MetricsStore {
       compartment: "INCARCERATION",
       sourceFilename: "prison_population_time_series",
       rootStore: this.rootStore,
-      dataTransformer: createPopulationTimeSeries,
-      enabledFilters: [
-        FILTER_TYPES.TIME_PERIOD,
-        FILTER_TYPES.GENDER,
-        FILTER_TYPES.FACILITY,
-      ],
-      enabledMoreFilters: [FILTER_TYPES.AGE_GROUP, FILTER_TYPES.LEGAL_STATUS],
+      dataTransformer: createPrisonPopulationTimeSeries,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .prisonPopulationOverTime,
     });
   }
 
-  get prisonFacilityPopulation(): PopulationSnapshotMetric {
-    return new PopulationSnapshotMetric({
+  get prisonFacilityPopulation(): PrisonPopulationSnapshotMetric {
+    return new PrisonPopulationSnapshotMetric({
       id: "prisonFacilityPopulation",
       tenantId: this.rootStore.currentTenantId,
-      compartment: "INCARCERATION",
+      accessor: "facility",
       sourceFilename: "prison_population_snapshot_by_dimension",
       rootStore: this.rootStore,
-      dataTransformer: createPopulationSnapshot,
-      enabledFilters: [FILTER_TYPES.GENDER, FILTER_TYPES.FACILITY],
-      enabledMoreFilters: [FILTER_TYPES.AGE_GROUP, FILTER_TYPES.LEGAL_STATUS],
+      dataTransformer: createPrisonPopulationSnapshot,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .prisonFacilityPopulation,
+    });
+  }
+
+  get supervisionToPrisonPopulationByDistrict(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionToPrisonPopulationByDistrict",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      accessor: "district",
+      dataTransformer: createSupervisionPopulationSnapshot,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToPrisonPopulationByDistrict,
     });
   }
 
@@ -133,11 +145,8 @@ export default class MetricsStore {
       sourceFilename: "prison_population_projection_time_series",
       rootStore: this.rootStore,
       dataTransformer: createProjectionTimeSeries,
-      enabledFilters: [
-        FILTER_TYPES.TIME_PERIOD,
-        FILTER_TYPES.GENDER,
-        FILTER_TYPES.LEGAL_STATUS,
-      ],
+      filters: this.rootStore.filtersStore.enabledFilters
+        .projectedPrisonPopulationOverTime,
     });
   }
 
@@ -149,43 +158,34 @@ export default class MetricsStore {
       sourceFilename: "supervision_population_projection_time_series",
       rootStore: this.rootStore,
       dataTransformer: createProjectionTimeSeries,
-      enabledFilters: [
-        FILTER_TYPES.TIME_PERIOD,
-        FILTER_TYPES.GENDER,
-        FILTER_TYPES.SUPERVISION_TYPE,
-      ],
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionPopulationOverTime,
     });
   }
 
-  get supervisionToPrisonOverTime(): SupervisionCountOverTimeMetric {
-    return new SupervisionCountOverTimeMetric({
+  get supervisionToPrisonOverTime(): SupervisionPopulationOverTimeMetric {
+    return new SupervisionPopulationOverTimeMetric({
       id: "supervisionToPrisonOverTime",
       tenantId: this.rootStore.currentTenantId,
       sourceFilename: "supervision_to_prison_count_by_month",
       rootStore: this.rootStore,
       dataTransformer: (data) =>
-        createSupervisionTransitionTimeSeries(data, "admissions"),
-      enabledFilters: [
-        FILTER_TYPES.TIME_PERIOD,
-        FILTER_TYPES.GENDER,
-        FILTER_TYPES.SUPERVISION_TYPE,
-      ],
+        createSupervisionPopulationTimeSeries(data, "admissions"),
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToPrisonOverTime,
     });
   }
 
-  get supervisionToLibertyOverTime(): SupervisionCountOverTimeMetric {
-    return new SupervisionCountOverTimeMetric({
+  get supervisionToLibertyOverTime(): SupervisionPopulationOverTimeMetric {
+    return new SupervisionPopulationOverTimeMetric({
       id: "supervisionToLibertyOverTime",
       tenantId: this.rootStore.currentTenantId,
       sourceFilename: "supervision_to_liberty_count_by_month",
       rootStore: this.rootStore,
       dataTransformer: (data) =>
-        createSupervisionTransitionTimeSeries(data, "releases"),
-      enabledFilters: [
-        FILTER_TYPES.TIME_PERIOD,
-        FILTER_TYPES.GENDER,
-        FILTER_TYPES.SUPERVISION_TYPE,
-      ],
+        createSupervisionPopulationTimeSeries(data, "releases"),
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToLibertyOverTime,
     });
   }
 }

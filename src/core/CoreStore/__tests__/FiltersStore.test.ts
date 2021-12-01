@@ -35,7 +35,9 @@ jest.mock("../../../RootStore/TenantStore", () => {
 jest.mock("../../../core/CoreStore/MetricsStore", () => {
   return jest.fn().mockImplementation(() => ({
     current: {
-      enabledFilters: [],
+      filters: {
+        enabledFilters: [],
+      },
     },
   }));
 });
@@ -73,7 +75,7 @@ describe("FiltersStore", () => {
 
   describe("filtersDescription", () => {
     it("returns the correct description when legalStatus is enabled", () => {
-      coreStore.metricsStore.current.enabledFilters = [
+      coreStore.metricsStore.current.filters.enabledFilters = [
         "timePeriod",
         "gender",
         "legalStatus",
@@ -88,7 +90,7 @@ describe("FiltersStore", () => {
     });
 
     it("returns the correct description when supervisionType is enabled", () => {
-      coreStore.metricsStore.current.enabledFilters = [
+      coreStore.metricsStore.current.filters.enabledFilters = [
         "timePeriod",
         "gender",
         "supervisionType",
@@ -103,7 +105,7 @@ describe("FiltersStore", () => {
     });
 
     it("returns the correct description when more multiple options of one filter are selected", () => {
-      coreStore.metricsStore.current.enabledFilters = [
+      coreStore.metricsStore.current.filters.enabledFilters = [
         "timePeriod",
         "gender",
         "facility",

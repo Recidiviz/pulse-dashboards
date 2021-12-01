@@ -32,6 +32,12 @@ const content: StateSpecificPageCopy = {
     methodology:
       "These charts show people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails are not included.",
   },
+  supervisionToPrison: {
+    sections: {
+      countOverTime: "Admissions from supervision over time",
+      countByLocation: "Admissions from supervision by district",
+    },
+  },
 };
 
 export default content;

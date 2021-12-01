@@ -10,4 +10,7 @@ export const FILTER_TYPES = {
   SUPERVISION_TYPE: "supervisionType",
   AGE_GROUP: "ageGroup",
   FACILITY: "facility",
+  DISTRICT: "district",
+  MOST_SEVERE_VIOLATION: "mostSevereViolation",
+  NUMBER_OF_VIOLATIONS: "numberOfViolations",
 } as const;

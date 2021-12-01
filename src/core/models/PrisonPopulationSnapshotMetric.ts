@@ -26,38 +26,35 @@ import values from "lodash/fp/values";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import { PopulationSnapshotRecord, SimulationCompartment } from "./types";
+import { PrisonPopulationSnapshotRecord } from "./types";
 
-export default class PopulationSnapshotMetric extends PathwaysMetric<PopulationSnapshotRecord> {
-  compartment: SimulationCompartment;
+export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<PrisonPopulationSnapshotRecord> {
+  accessor: keyof PrisonPopulationSnapshotRecord;
 
   constructor(
-    props: BaseMetricConstructorOptions<PopulationSnapshotRecord> & {
-      compartment: SimulationCompartment;
+    props: BaseMetricConstructorOptions<PrisonPopulationSnapshotRecord> & {
+      accessor: keyof PrisonPopulationSnapshotRecord;
     }
   ) {
     super(props);
-    this.compartment = props.compartment;
+    this.accessor = props.accessor;
     this.download = this.download.bind(this);
   }
 
-  get dataSeries(): PopulationSnapshotRecord[] {
+  get dataSeries(): PrisonPopulationSnapshotRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
     const {
       gender,
       legalStatus,
-      supervisionType,
       ageGroup,
       facility,
     } = this.rootStore.filtersStore.filters;
-    const status =
-      this.compartment === "SUPERVISION" ? supervisionType : legalStatus;
 
     const filteredRecords = this.allRecords.filter(
-      (record: PopulationSnapshotRecord) => {
+      (record: PrisonPopulationSnapshotRecord) => {
         return (
           gender.includes(record.gender) &&
-          status.includes(record.legalStatus) &&
+          legalStatus.includes(record.legalStatus) &&
           ageGroup.includes(record.ageGroup) &&
           (this.id === "prisonFacilityPopulation"
             ? !["ALL"].includes(record.facility)
@@ -67,7 +64,7 @@ export default class PopulationSnapshotMetric extends PathwaysMetric<PopulationS
     );
 
     const result = pipe(
-      groupBy((d: PopulationSnapshotRecord) => [d.facility]),
+      groupBy((d: PrisonPopulationSnapshotRecord) => [d[this.accessor]]),
       values,
       map((dataset) => ({
         gender: dataset[0].gender,
@@ -75,10 +72,10 @@ export default class PopulationSnapshotMetric extends PathwaysMetric<PopulationS
         facility: dataset[0].facility,
         lastUpdated: dataset[0].lastUpdated,
         ageGroup: dataset[0].ageGroup,
-        totalPopulation: sumBy("totalPopulation", dataset),
+        count: sumBy("count", dataset),
       }))
     )(filteredRecords);
-    return result as PopulationSnapshotRecord[];
+    return result as PrisonPopulationSnapshotRecord[];
   }
 
   get downloadableData(): DownloadableData | undefined {
@@ -88,12 +85,12 @@ export default class PopulationSnapshotMetric extends PathwaysMetric<PopulationS
     const data: Record<string, number>[] = [];
     const labels: string[] = [];
 
-    this.dataSeries.forEach((d: PopulationSnapshotRecord) => {
+    this.dataSeries.forEach((d: PrisonPopulationSnapshotRecord) => {
       data.push({
-        Count: Math.round(d.totalPopulation),
+        Count: Math.round(d.count),
       });
 
-      labels.push(d.facility);
+      labels.push(d[this.accessor].toString());
     });
 
     datasets.push({ data, label: "" });

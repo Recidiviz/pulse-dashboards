@@ -34,7 +34,7 @@ jest.mock("../../models/VitalsMetrics");
 jest.mock("../../models/ProjectionsMetrics");
 jest.mock("../../../RootStore/TenantStore", () => {
   return jest.fn().mockImplementation(() => ({
-    currentTenantId: "US_ND",
+    currentTenantId: "US_TN",
   }));
 });
 

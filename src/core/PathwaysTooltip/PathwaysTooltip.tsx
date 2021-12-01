@@ -32,7 +32,7 @@ const PathwaysTooltip: React.FC<PropTypes> = ({ date, value, average }) => {
   return (
     <div className="PathwaysTooltip">
       <div className="PathwaysTooltip__date">{date}</div>
-      <div className="PathwaysTooltip__value">{value}</div>
+      <div className="PathwaysTooltip__value">{value.toLocaleString()}</div>
       <div className="PathwaysTooltip__average">{average}</div>
     </div>
   );

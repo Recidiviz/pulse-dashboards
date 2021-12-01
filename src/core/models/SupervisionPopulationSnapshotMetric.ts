@@ -17,62 +17,72 @@
  * =============================================================================
  *
  */
+import { pipe } from "lodash/fp";
+import groupBy from "lodash/fp/groupBy";
+import map from "lodash/fp/map";
+import sumBy from "lodash/fp/sumBy";
+import values from "lodash/fp/values";
 
-import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
-import {
-  formatMonthAndYear,
-  MonthOptions,
-} from "../PopulationTimeSeriesChart/helpers";
+import { getFilterLabel } from "../utils/filterOptions";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import { SupervisionCountTimeSeriesRecord } from "./types";
-import { getRecordDate } from "./utils";
+import { SupervisionPopulationSnapshotRecord } from "./types";
 
-export default class SupervisionCountOverTimeMetric extends PathwaysMetric<SupervisionCountTimeSeriesRecord> {
+export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<SupervisionPopulationSnapshotRecord> {
+  accessor: keyof SupervisionPopulationSnapshotRecord;
+
   constructor(
-    props: BaseMetricConstructorOptions<SupervisionCountTimeSeriesRecord>
+    props: BaseMetricConstructorOptions<SupervisionPopulationSnapshotRecord> & {
+      accessor: keyof SupervisionPopulationSnapshotRecord;
+    }
   ) {
     super(props);
+    this.accessor = props.accessor;
     this.download = this.download.bind(this);
   }
 
-  get dataSeries(): SupervisionCountTimeSeriesRecord[] {
+  get dataSeries(): SupervisionPopulationSnapshotRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
     const {
       gender,
       supervisionType,
-      timePeriod,
+      ageGroup,
+      district,
+      numberOfViolations,
+      mostSevereViolation,
     } = this.rootStore.filtersStore.filters;
-    const monthRange: MonthOptions = parseInt(timePeriod) as MonthOptions;
 
-    const { dataDate } = this;
-    return this.allRecords.filter(
-      (record: SupervisionCountTimeSeriesRecord) => {
-        const monthsOut =
-          (record.year - dataDate.getFullYear()) * 12 +
-          (record.month - (dataDate.getMonth() + 1));
+    const filteredRecords = this.allRecords.filter(
+      (record: SupervisionPopulationSnapshotRecord) => {
         return (
           gender.includes(record.gender) &&
+          ageGroup.includes(record.ageGroup) &&
           supervisionType.includes(record.supervisionType) &&
-          Math.abs(monthsOut) <= monthRange
+          numberOfViolations.includes(record.numberOfViolations) &&
+          mostSevereViolation.includes(record.mostSevereViolation) &&
+          (this.id === "supervisionToPrisonPopulationByDistrict"
+            ? !["ALL"].includes(record.district)
+            : district.includes(record.district))
         );
       }
     );
-  }
 
-  get dataDate(): Date {
-    const { allRecords } = this;
-
-    if (!allRecords || allRecords.length === 0) {
-      return new Date(9999, 11, 31);
-    }
-
-    return getRecordDate(
-      allRecords
-        .filter((d) => d.gender === "ALL" && d.supervisionType === "ALL")
-        .slice(-1)[0]
-    );
+    const result = pipe(
+      groupBy((d: SupervisionPopulationSnapshotRecord) => [d[this.accessor]]),
+      values,
+      map((dataset) => ({
+        gender: dataset[0].gender,
+        district: dataset[0].district,
+        supervisionType: dataset[0].supervisionType,
+        lastUpdated: dataset[0].lastUpdated,
+        ageGroup: dataset[0].ageGroup,
+        mostSevereViolation: dataset[0].mostSevereViolation,
+        numberOfViolations: dataset[0].numberOfViolations,
+        count: sumBy("count", dataset),
+      }))
+    )(filteredRecords);
+    return result as SupervisionPopulationSnapshotRecord[];
   }
 
   get downloadableData(): DownloadableData | undefined {
@@ -82,22 +92,20 @@ export default class SupervisionCountOverTimeMetric extends PathwaysMetric<Super
     const data: Record<string, number>[] = [];
     const labels: string[] = [];
 
-    this.dataSeries.forEach((d: SupervisionCountTimeSeriesRecord) => {
+    this.dataSeries.forEach((d: SupervisionPopulationSnapshotRecord) => {
       data.push({
-        value: Math.round(d.count),
-        "3-month rolling average": Math.round(d.avg90day),
+        Count: Math.round(d.count),
       });
 
-      labels.push(formatMonthAndYear(getRecordDate(d)));
+      labels.push(getFilterLabel(this.accessor, d[this.accessor].toString()));
     });
 
     datasets.push({ data, label: "" });
-
     return {
       chartDatasets: datasets,
       chartLabels: labels,
       chartId: this.chartTitle,
-      dataExportLabel: "Month",
+      dataExportLabel: `District`,
     };
   }
 
@@ -111,7 +119,6 @@ export default class SupervisionCountOverTimeMetric extends PathwaysMetric<Super
       filters: {
         filtersDescription: this.rootStore?.filtersStore.filtersDescription,
       },
-      lastUpdatedOn: formatDate(this.dataDate),
       methodologyContent: this.methodology,
     });
   }

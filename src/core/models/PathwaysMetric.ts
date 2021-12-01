@@ -24,7 +24,7 @@ import RootStore from "../../RootStore";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
-import { EnabledFilters } from "../types/filters";
+import { Filters } from "../types/filters";
 import { PathwaysPage } from "../views";
 import {
   Hydratable,
@@ -38,8 +38,7 @@ export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   id: MetricId;
   sourceFilename: string;
   dataTransformer: (d: RawMetricData) => RecordFormat[];
-  enabledFilters: EnabledFilters;
-  enabledMoreFilters?: EnabledFilters;
+  filters: Filters;
   tenantId?: TenantId;
   rootStore?: CoreStore;
 };
@@ -73,9 +72,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   error?: Error;
 
-  enabledFilters: EnabledFilters;
-
-  enabledMoreFilters?: EnabledFilters;
+  filters: Filters;
 
   constructor({
     rootStore,
@@ -83,8 +80,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     tenantId,
     sourceFilename,
     dataTransformer,
-    enabledFilters,
-    enabledMoreFilters,
+    filters,
   }: BaseMetricConstructorOptions<RecordFormat>) {
     makeObservable<PathwaysMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
@@ -99,8 +95,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.sourceFilename = sourceFilename;
     this.dataTransformer = dataTransformer;
     this.eagerExpand = true;
-    this.enabledFilters = enabledFilters;
-    this.enabledMoreFilters = enabledMoreFilters;
+    this.filters = filters;
   }
 
   get content(): MetricContent {

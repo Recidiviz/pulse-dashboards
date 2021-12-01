@@ -93,12 +93,14 @@ describe("PrisonPopulationPersonLevelMetric", () => {
       sourceFilename: "prison_population_snapshot_person_level",
       rootStore: mockCoreStore,
       dataTransformer: createPrisonPopulationPersonLevelList,
-      enabledFilters: [
-        FILTER_TYPES.GENDER,
-        FILTER_TYPES.LEGAL_STATUS,
-        FILTER_TYPES.AGE_GROUP,
-        FILTER_TYPES.FACILITY,
-      ],
+      filters: {
+        enabledFilters: [
+          FILTER_TYPES.GENDER,
+          FILTER_TYPES.LEGAL_STATUS,
+          FILTER_TYPES.AGE_GROUP,
+          FILTER_TYPES.FACILITY,
+        ],
+      },
     });
 
     metric.hydrate();
@@ -167,12 +169,14 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         sourceFilename: "prison_population_snapshot_person_level",
         rootStore: mockCoreStore,
         dataTransformer: createPrisonPopulationPersonLevelList,
-        enabledFilters: [
-          FILTER_TYPES.GENDER,
-          FILTER_TYPES.LEGAL_STATUS,
-          FILTER_TYPES.AGE_GROUP,
-          FILTER_TYPES.FACILITY,
-        ],
+        filters: {
+          enabledFilters: [
+            FILTER_TYPES.GENDER,
+            FILTER_TYPES.LEGAL_STATUS,
+            FILTER_TYPES.AGE_GROUP,
+            FILTER_TYPES.FACILITY,
+          ],
+        },
       });
       metric.hydrate();
     });
@@ -251,12 +255,14 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         sourceFilename: "prison_population_snapshot_person_level",
         rootStore: mockCoreStore,
         dataTransformer: createPrisonPopulationPersonLevelList,
-        enabledFilters: [
-          FILTER_TYPES.GENDER,
-          FILTER_TYPES.LEGAL_STATUS,
-          FILTER_TYPES.AGE_GROUP,
-          FILTER_TYPES.FACILITY,
-        ],
+        filters: {
+          enabledFilters: [
+            FILTER_TYPES.GENDER,
+            FILTER_TYPES.LEGAL_STATUS,
+            FILTER_TYPES.AGE_GROUP,
+            FILTER_TYPES.FACILITY,
+          ],
+        },
       });
       metric.hydrate();
     });
@@ -332,7 +338,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
             label: "",
           },
         ],
-        chartId: "List of People in Prison",
+        chartId: "List of people in prison",
         chartLabels: ["Barney Rubble", "Fred Flinstone", "Wilma Flinstone"],
         dataExportLabel: "Name",
       };

@@ -39,6 +39,9 @@
       color: $signal-links;
     }
   }
+  &__arrow {
+    margin-left: 2.5rem;
+  }
 
   @media screen and (max-width: $core-breakpoint-sm) {
     padding: 2rem 0;

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import type FiltersStore from "../CoreStore/FiltersStore";
-import { AgeGroup, Gender } from "../models/types";
+import { AgeGroup, Gender, MetricId } from "../models/types";
 import { FILTER_TYPES } from "../utils/constants";
 
 type ValueOf<T> = T[keyof T];
@@ -28,6 +28,9 @@ export type PopulationFilterValues = {
   legalStatus: string[];
   facility: string[];
   ageGroup: AgeGroup[];
+  district: string[];
+  mostSevereViolation: string[];
+  numberOfViolations: string[];
 };
 
 export type PopulationFilterLabels = {
@@ -37,6 +40,9 @@ export type PopulationFilterLabels = {
   legalStatus: string;
   facility: string;
   ageGroup: string;
+  district: string;
+  mostSevereViolation: string;
+  numberOfViolations: string;
 };
 
 export type SetPopulationFilters = (
@@ -55,6 +61,9 @@ export interface PopulationFilters {
   [FILTER_TYPES.SUPERVISION_TYPE]: PopulationFilter;
   [FILTER_TYPES.AGE_GROUP]: PopulationFilter;
   [FILTER_TYPES.FACILITY]: PopulationFilter;
+  [FILTER_TYPES.DISTRICT]: PopulationFilter;
+  [FILTER_TYPES.MOST_SEVERE_VIOLATION]: PopulationFilter;
+  [FILTER_TYPES.NUMBER_OF_VIOLATIONS]: PopulationFilter;
 }
 
 export type PopulationFilter = {
@@ -66,4 +75,13 @@ export type PopulationFilter = {
   defaultOption: FilterOption;
   defaultValue: string;
   enabledViews: string[];
+};
+
+export type Filters = {
+  enabledFilters: EnabledFilters;
+  enabledMoreFilters?: EnabledFilters;
+};
+
+export type EnabledFiltersByMetric = {
+  [key in MetricId]: Filters;
 };

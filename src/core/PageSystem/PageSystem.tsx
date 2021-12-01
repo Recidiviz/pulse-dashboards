@@ -31,25 +31,19 @@ import { PathwaysPage } from "../views";
 import withRouteSync from "../withRouteSync";
 
 const PageSystem: React.FC = () => {
-  const { currentTenantId, metricsStore, page } = useCoreStore();
-  const pageContent = usePageContent(page as PathwaysPage);
-
   window.scrollTo({
     top: 0,
   });
-
+  const { currentTenantId, metricsStore, page } = useCoreStore();
+  const pageContent = usePageContent(page as PathwaysPage);
   if (!pageContent) return <div />;
 
-  const { title, summary } = pageContent;
-
   const metric = metricsStore.current;
-  const {
-    enabledFilters,
-    enabledMoreFilters,
-    download,
-    isLoading,
-    note,
-  } = metric;
+  if (!metric) return <div />;
+
+  const { title, summary } = pageContent;
+  const { filters, download, isLoading, note } = metric;
+  const { enabledFilters, enabledMoreFilters } = filters;
 
   return (
     <PageTemplate

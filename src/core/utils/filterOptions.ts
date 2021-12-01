@@ -91,6 +91,18 @@ export const getFilterOptions = (
   );
 };
 
+export const getFilterLabel = (
+  filterType: string,
+  filterValue: string
+): string => {
+  return (
+    PopulationFilterOptions[
+      filterType as keyof PopulationFilterLabels
+    ].options.find((option: FilterOption) => option.value === filterValue)
+      ?.label || ""
+  );
+};
+
 const setFilters = (
   filterKey: keyof PopulationFilters
 ): SetPopulationFilters => (filtersStore) => (option) => {
@@ -228,6 +240,70 @@ export const PopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.facilities],
   },
+  [FILTER_TYPES.DISTRICT]: {
+    type: FILTER_TYPES.DISTRICT,
+    title: "District",
+    width: "7.5rem",
+    setFilters: setFilters(FILTER_TYPES.DISTRICT),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "District 1", value: "DISTRICT_1" },
+      { label: "District 2", value: "DISTRICT_2" },
+      { label: "District 3", value: "DISTRICT_3" },
+      { label: "District 4", value: "DISTRICT_4" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.MOST_SEVERE_VIOLATION]: {
+    type: FILTER_TYPES.MOST_SEVERE_VIOLATION,
+    title: "Most Severe Violation",
+    width: "7rem",
+    setFilters: setFilters(FILTER_TYPES.MOST_SEVERE_VIOLATION),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Felony", value: "FELONY" },
+      { label: "Misdemeanor", value: "MISDEMEANOR" },
+      { label: "Technical", value: "TECHNICAL" },
+      { label: "Subs. Use", value: "SUBSTANCE_ABUSE" },
+      { label: "Absconsion", value: "ABSCONDED" },
+      { label: "Municipal", value: "MUNICIPAL" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.NUMBER_OF_VIOLATIONS]: {
+    type: FILTER_TYPES.NUMBER_OF_VIOLATIONS,
+    title: "Number Of Violations",
+    width: "7rem",
+    setFilters: setFilters(FILTER_TYPES.NUMBER_OF_VIOLATIONS),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "1", value: "1" },
+      { label: "2", value: "2" },
+      { label: "3", value: "3" },
+      { label: "4", value: "4" },
+      { label: "5", value: "5" },
+      { label: "6+", value: "6+" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
 };
 
 export const defaultPopulationFilterValues: PopulationFilterValues = {
@@ -245,6 +321,15 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ] as AgeGroup[],
   [FILTER_TYPES.FACILITY]: [
     PopulationFilterOptions[FILTER_TYPES.FACILITY].defaultValue,
+  ],
+  [FILTER_TYPES.DISTRICT]: [
+    PopulationFilterOptions[FILTER_TYPES.DISTRICT].defaultValue,
+  ],
+  [FILTER_TYPES.MOST_SEVERE_VIOLATION]: [
+    PopulationFilterOptions[FILTER_TYPES.MOST_SEVERE_VIOLATION].defaultValue,
+  ],
+  [FILTER_TYPES.NUMBER_OF_VIOLATIONS]: [
+    PopulationFilterOptions[FILTER_TYPES.NUMBER_OF_VIOLATIONS].defaultValue,
   ],
 };
 

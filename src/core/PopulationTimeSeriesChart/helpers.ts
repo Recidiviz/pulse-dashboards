@@ -16,12 +16,12 @@
 // =============================================================================
 
 import { formatDate } from "../../utils";
-import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
+import PopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import ProjectionsMetrics from "../models/ProjectionsMetrics";
 import {
   PopulationProjectionTimeSeriesRecord,
-  PopulationTimeSeriesRecord,
+  PrisonPopulationTimeSeriesRecord,
 } from "../models/types";
 import { getRecordDate } from "../models/utils";
 
@@ -45,7 +45,9 @@ export const prepareData = (
     | PopulationProjectionOverTimeMetric
     | PopulationOverTimeMetric
     | ProjectionsMetrics,
-  rawData: PopulationTimeSeriesRecord[] | PopulationProjectionTimeSeriesRecord[]
+  rawData:
+    | PrisonPopulationTimeSeriesRecord[]
+    | PopulationProjectionTimeSeriesRecord[]
 ): PreparedData => {
   let historicalPopulation: ChartPoint[] = [];
   let projectedPopulation: ChartPoint[] = [];
@@ -88,7 +90,7 @@ export const prepareData = (
       historicalPopulation[historicalPopulation.length - 1],
     ];
   } else {
-    data = rawData as PopulationTimeSeriesRecord[];
+    data = rawData as PrisonPopulationTimeSeriesRecord[];
     historicalPopulation = data.map((d) => ({
       date: getRecordDate(d),
       value: d.totalPopulation,

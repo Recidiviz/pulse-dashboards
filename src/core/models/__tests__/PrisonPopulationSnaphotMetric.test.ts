@@ -22,8 +22,8 @@ import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
 import { FILTER_TYPES } from "../../utils/constants";
 import { defaultPopulationFilterValues } from "../../utils/filterOptions";
-import PopulationSnapshotMetric from "../PopulationSnapshotMetric";
-import { createPopulationSnapshot, formatDateString } from "../utils";
+import PrisonPopulationSnapshotMetric from "../PrisonPopulationSnapshotMetric";
+import { createPrisonPopulationSnapshot, formatDateString } from "../utils";
 
 const OLD_ENV = process.env;
 
@@ -44,7 +44,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         {
           legal_status: "ALL",
           gender: "ALL",
-          age_group: "ALL",
+          age_group: undefined,
           facility: "Bedrock",
           count: "15",
           last_updated: "2021-10-27",
@@ -52,7 +52,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         {
           legal_status: "ALL",
           gender: "ALL",
-          age_group: "ALL",
+          age_group: undefined,
           facility: "School of Rock",
           count: "10",
           last_updated: "2021-10-27",
@@ -60,7 +60,6 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         {
           legal_status: "ALL",
           gender: "FEMALE",
-          age_group: "ALL",
           facility: "Bedrock",
           count: "5",
           last_updated: "2021-10-27",
@@ -70,27 +69,29 @@ jest.mock("../../../api/metrics/metricsClient", () => {
   };
 });
 
-describe("PopulationSnapshotMetric", () => {
-  let metric: PopulationSnapshotMetric;
+describe("PrisonPopulationSnapshotMetric", () => {
+  let metric: PrisonPopulationSnapshotMetric;
 
   beforeEach(() => {
     process.env = Object.assign(process.env, {
       REACT_APP_API_URL: "test-url",
     });
     mockCoreStore.filtersStore = filtersStore;
-    metric = new PopulationSnapshotMetric({
+    metric = new PrisonPopulationSnapshotMetric({
       id: "prisonFacilityPopulation",
       tenantId: mockTenantId,
-      compartment: "INCARCERATION",
       sourceFilename: "prison_population_snapshot_by_dimension",
       rootStore: mockCoreStore,
-      dataTransformer: createPopulationSnapshot,
-      enabledFilters: [
-        FILTER_TYPES.GENDER,
-        FILTER_TYPES.LEGAL_STATUS,
-        FILTER_TYPES.AGE_GROUP,
-        FILTER_TYPES.FACILITY,
-      ],
+      accessor: "facility",
+      dataTransformer: createPrisonPopulationSnapshot,
+      filters: {
+        enabledFilters: [
+          FILTER_TYPES.GENDER,
+          FILTER_TYPES.LEGAL_STATUS,
+          FILTER_TYPES.AGE_GROUP,
+          FILTER_TYPES.FACILITY,
+        ],
+      },
     });
 
     metric.hydrate();
@@ -121,7 +122,7 @@ describe("PopulationSnapshotMetric", () => {
         gender: "ALL",
         ageGroup: "ALL",
         facility: "Bedrock",
-        totalPopulation: 15,
+        count: 15,
         lastUpdated: formatDateString("2021-10-27"),
       },
       {
@@ -129,7 +130,7 @@ describe("PopulationSnapshotMetric", () => {
         gender: "ALL",
         ageGroup: "ALL",
         facility: "School of Rock",
-        totalPopulation: 10,
+        count: 10,
         lastUpdated: formatDateString("2021-10-27"),
       },
       {
@@ -137,7 +138,7 @@ describe("PopulationSnapshotMetric", () => {
         gender: "FEMALE",
         ageGroup: "ALL",
         facility: "Bedrock",
-        totalPopulation: 5,
+        count: 5,
         lastUpdated: formatDateString("2021-10-27"),
       },
     ]);
@@ -147,19 +148,21 @@ describe("PopulationSnapshotMetric", () => {
     beforeEach(() => {
       mockCoreStore.filtersStore = filtersStore;
 
-      metric = new PopulationSnapshotMetric({
+      metric = new PrisonPopulationSnapshotMetric({
         id: "prisonFacilityPopulation",
         tenantId: mockTenantId,
-        compartment: "INCARCERATION",
         sourceFilename: "prison_population_snapshot_by_dimension",
         rootStore: mockCoreStore,
-        dataTransformer: createPopulationSnapshot,
-        enabledFilters: [
-          FILTER_TYPES.GENDER,
-          FILTER_TYPES.LEGAL_STATUS,
-          FILTER_TYPES.AGE_GROUP,
-          FILTER_TYPES.FACILITY,
-        ],
+        accessor: "facility",
+        dataTransformer: createPrisonPopulationSnapshot,
+        filters: {
+          enabledFilters: [
+            FILTER_TYPES.GENDER,
+            FILTER_TYPES.LEGAL_STATUS,
+            FILTER_TYPES.AGE_GROUP,
+            FILTER_TYPES.FACILITY,
+          ],
+        },
       });
       metric.hydrate();
     });
@@ -171,7 +174,7 @@ describe("PopulationSnapshotMetric", () => {
           gender: "ALL",
           ageGroup: "ALL",
           facility: "Bedrock",
-          totalPopulation: 15,
+          count: 15,
           lastUpdated: formatDateString("2021-10-27"),
         },
         {
@@ -179,7 +182,7 @@ describe("PopulationSnapshotMetric", () => {
           gender: "ALL",
           ageGroup: "ALL",
           facility: "School of Rock",
-          totalPopulation: 10,
+          count: 10,
           lastUpdated: formatDateString("2021-10-27"),
         },
       ]);
@@ -200,7 +203,7 @@ describe("PopulationSnapshotMetric", () => {
             ageGroup: "ALL",
             gender: "FEMALE",
             facility: "Bedrock",
-            totalPopulation: 5,
+            count: 5,
             lastUpdated: formatDateString("2021-10-27"),
           },
         ]);
@@ -216,19 +219,21 @@ describe("PopulationSnapshotMetric", () => {
         metric.rootStore.filtersStore.setFilters(defaultPopulationFilterValues);
       }
 
-      metric = new PopulationSnapshotMetric({
+      metric = new PrisonPopulationSnapshotMetric({
         id: "prisonFacilityPopulation",
         tenantId: mockTenantId,
-        compartment: "INCARCERATION",
         sourceFilename: "prison_population_snapshot_by_dimension",
         rootStore: mockCoreStore,
-        dataTransformer: createPopulationSnapshot,
-        enabledFilters: [
-          FILTER_TYPES.GENDER,
-          FILTER_TYPES.LEGAL_STATUS,
-          FILTER_TYPES.AGE_GROUP,
-          FILTER_TYPES.FACILITY,
-        ],
+        accessor: "facility",
+        dataTransformer: createPrisonPopulationSnapshot,
+        filters: {
+          enabledFilters: [
+            FILTER_TYPES.GENDER,
+            FILTER_TYPES.LEGAL_STATUS,
+            FILTER_TYPES.AGE_GROUP,
+            FILTER_TYPES.FACILITY,
+          ],
+        },
       });
       metric.hydrate();
     });
@@ -248,7 +253,7 @@ describe("PopulationSnapshotMetric", () => {
             label: "",
           },
         ],
-        chartId: "Prison Population by Facility",
+        chartId: "Prison population by facility",
         chartLabels: ["Bedrock", "School of Rock"],
         dataExportLabel: "Facility",
       };

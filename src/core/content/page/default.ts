@@ -25,14 +25,14 @@ const content: PageCopy = {
     title: "Prison",
     summary: "This page shows all people in state prison facilities.",
     sections: {
-      countOverTime: "Prison Population",
+      countOverTime: "Prison population over time",
     },
   },
   supervision: {
     title: "Supervision",
     summary: "This page shows all people supervised by the state.",
     sections: {
-      countOverTime: "Supervision Population",
+      countOverTime: "Supervision population over time",
     },
   },
   supervisionToPrison: {
@@ -40,15 +40,17 @@ const content: PageCopy = {
     summary:
       "This chart includes people who have been incarcerated in a state facility because their parole or probation was revoked. Revocations are counted when the person was admitted to a facility, not when the violation occurred.",
     sections: {
-      countOverTime: "Admissions from Supervision to Prison",
+      countOverTime: "Admissions from supervision over time",
     },
+    methodology:
+      "These charts include details of all admissions from supervision to prison.",
   },
   supervisionToLiberty: {
     title: "Supervision to Liberty",
     summary:
       "These charts show people who were discharged from supervision positively or if their supervision period expired.",
     sections: {
-      countOverTime: "Releases from Supervision to Liberty",
+      countOverTime: "Releases from supervision over time",
     },
   },
 };

@@ -92,7 +92,9 @@ describe("PopulationProjectionOverTimeMetric", () => {
       compartment: "INCARCERATION",
       sourceFilename: "prison_population_projection_time_series",
       dataTransformer: createProjectionTimeSeries,
-      enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
+      filters: {
+        enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
+      },
       rootStore: mockCoreStore,
     });
     metric.hydrate();
@@ -148,7 +150,9 @@ describe("PopulationProjectionOverTimeMetric", () => {
       compartment: "INCARCERATION",
       sourceFilename: "prison_population_projection_time_series",
       dataTransformer: createProjectionTimeSeries,
-      enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
+      filters: {
+        enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
+      },
       rootStore: mockCoreStore,
     });
     metric.hydrate();
@@ -166,7 +170,9 @@ describe("PopulationProjectionOverTimeMetric", () => {
         compartment: "INCARCERATION",
         sourceFilename: "prison_population_projection_time_series",
         dataTransformer: createProjectionTimeSeries,
-        enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
+        filters: {
+          enabledFilters: [FILTER_TYPES.LEGAL_STATUS, FILTER_TYPES.GENDER],
+        },
         rootStore: mockCoreStore,
       });
       metric.hydrate();

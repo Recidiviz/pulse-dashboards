@@ -26,14 +26,14 @@ import React, { useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 
 import * as styles from "../CoreConstants.scss";
-import SupervisionCountOverTimeMetric from "../models/SupervisionCountOverTimeMetric";
+import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import PopulationTimeSeriesLegend from "../PopulationTimeSeriesChart/PopulationTimeSeriesLegend";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizCountOverTimeWithAvgProps = {
-  metric: SupervisionCountOverTimeMetric;
+  metric: SupervisionPopulationOverTimeMetric;
 };
 
 const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
@@ -84,7 +84,10 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
     },
   ];
 
-  const yRange = [0, Math.max(...data.map((d) => d.value))];
+  const yRange = [
+    0,
+    Math.max(...data.map((d) => d.value), ...data.map((d) => d.average)),
+  ];
 
   return (
     <div className="VizCountOverTimeWithAvg">

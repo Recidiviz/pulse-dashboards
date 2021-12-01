@@ -22,12 +22,14 @@ import { ResponsiveOrdinalFrame } from "semiotic";
 import { formatDate } from "../../utils";
 import * as styles from "../CoreConstants.scss";
 import { useCoreStore } from "../CoreStoreProvider";
-import PopulationSnapshotMetric from "../models/PopulationSnapshotMetric";
+import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
+import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
+import { getFilterLabel } from "../utils/filterOptions";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizPopulationOverTimeProps = {
-  metric: PopulationSnapshotMetric;
+  metric: PrisonPopulationSnapshotMetric | SupervisionPopulationSnapshotMetric;
 };
 
 const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
@@ -35,24 +37,28 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
 }) => {
   const { filtersStore } = useCoreStore();
   const { filters } = filtersStore;
-  const { dataSeries, chartTitle } = metric;
+  const { dataSeries, chartTitle, accessor } = metric;
+
+  // @ts-ignore
+  const accessorFilter = filters[accessor];
 
   const [hoveredId, setHoveredId] = useState(null);
   const [pickedId, setPickedId] = useState([] as string[]);
 
   useEffect(() => {
-    setPickedId(filters.facility);
-  }, [filters.facility]);
+    setPickedId(accessorFilter);
+  }, [accessorFilter]);
 
-  const data = dataSeries.map((d, index) => ({
+  const data = dataSeries.map((d: any, index: number) => ({
     index,
-    facility: d.facility,
-    value: d.totalPopulation,
+    accessorValue: d[accessor],
+    accessorLabel: getFilterLabel(accessor, d[accessor]),
+    count: d.count,
   }));
 
   const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
 
-  const yRange = [0, Math.max(...data.map((d) => d.value))];
+  const yRange = [0, Math.max(...data.map((d) => d.count))];
 
   const hoverAnnotation = (annotation: any) => {
     const { d } = annotation;
@@ -90,8 +96,8 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
             const pieceData = d.pieces[0];
             return (
               <PathwaysTooltip
-                date={pieceData.facility}
-                value={pieceData.value}
+                date={pieceData.accessorLabel}
+                value={pieceData.count}
               />
             );
           }}
@@ -99,22 +105,22 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           data={data}
           size={[558, 558]}
           margin={{ left: 79, bottom: 96, right: 50, top: 56 }}
-          oAccessor="facility"
+          oAccessor="accessorLabel"
           oPadding={data.length > 25 ? 2 : 15}
           style={(d: any) => {
             if (d.index === hoveredId) {
               return { fill: styles.dataForestDark };
             }
-            if (pickedId.includes(d.facility)) {
+            if (pickedId.includes(d.accessorValue)) {
               return { fill: styles.dataTeal };
             }
             return { fill: styles.dataForest };
           }}
-          rAccessor="value"
+          rAccessor="count"
           rExtent={yRange}
           // @ts-ignore
-          oLabel={(facility: string, _: any) => {
-            return <text textAnchor="middle">{facility}</text>;
+          oLabel={(accessorLabel: string, _: any) => {
+            return <text textAnchor="middle">{accessorLabel}</text>;
           }}
           axes={[
             {

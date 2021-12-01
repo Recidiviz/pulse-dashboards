@@ -50,9 +50,10 @@ export type MetricRecord =
   | PopulationProjectionTimeSeriesRecord
   | PracticesSummaryRecord
   | PracticesTimeSeriesRecord
-  | SupervisionCountTimeSeriesRecord
-  | PopulationTimeSeriesRecord
-  | PopulationSnapshotRecord
+  | SupervisionPopulationTimeSeriesRecord
+  | PrisonPopulationTimeSeriesRecord
+  | PrisonPopulationSnapshotRecord
+  | SupervisionPopulationSnapshotRecord
   | PrisonPopulationPersonLevelRecord;
 
 export type PopulationProjectionTimeSeriesRecord = {
@@ -67,13 +68,24 @@ export type PopulationProjectionTimeSeriesRecord = {
   totalPopulationMin: number;
 };
 
-export type PopulationSnapshotRecord = {
+export type PrisonPopulationSnapshotRecord = {
   legalStatus: string;
   gender: Gender;
   facility: string;
   ageGroup: AgeGroup;
-  totalPopulation: number;
+  count: number;
   lastUpdated: Date;
+};
+
+export type SupervisionPopulationSnapshotRecord = {
+  lastUpdated: Date;
+  gender: Gender;
+  ageGroup: AgeGroup;
+  supervisionType: SupervisionType;
+  district: string;
+  mostSevereViolation: string;
+  numberOfViolations: string;
+  count: number;
 };
 
 export type PrisonPopulationPersonLevelRecord = {
@@ -87,7 +99,7 @@ export type PrisonPopulationPersonLevelRecord = {
   age: string;
 };
 
-export type PopulationTimeSeriesRecord = {
+export type PrisonPopulationTimeSeriesRecord = {
   year: number;
   month: number;
   legalStatus: string;
@@ -97,11 +109,14 @@ export type PopulationTimeSeriesRecord = {
   totalPopulation: number;
 };
 
-export type SupervisionCountTimeSeriesRecord = {
+export type SupervisionPopulationTimeSeriesRecord = {
   year: number;
   month: number;
   gender: Gender;
   supervisionType: SupervisionType;
+  district: string;
+  mostSevereViolation: string;
+  numberOfViolations: string;
   count: number;
   avg90day: number;
 };
@@ -180,9 +195,10 @@ export interface Hydratable {
   error?: Error;
   dataSeries?:
     | PopulationProjectionTimeSeriesRecord[]
-    | PopulationSnapshotRecord[]
-    | PopulationTimeSeriesRecord[]
-    | SupervisionCountTimeSeriesRecord[]
+    | PrisonPopulationSnapshotRecord[]
+    | SupervisionPopulationSnapshotRecord[]
+    | PrisonPopulationTimeSeriesRecord[]
+    | SupervisionPopulationTimeSeriesRecord[]
     | PrisonPopulationPersonLevelRecord[];
   hydrate: () => void;
 }
@@ -194,4 +210,5 @@ export type MetricId =
   | "supervisionPopulationOverTime"
   | "supervisionToPrisonOverTime"
   | "supervisionToLibertyOverTime"
-  | "prisonPopulationPersonLevel";
+  | "prisonPopulationPersonLevel"
+  | "supervisionToPrisonPopulationByDistrict";

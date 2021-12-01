@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import PopulationOverTimeMetric from "../models/PopulationOverTimeMetric";
+import PopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
 
 type VizPopulationOverTimeProps = {
