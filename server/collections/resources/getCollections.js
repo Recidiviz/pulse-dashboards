@@ -303,11 +303,6 @@ function getCollections(stateCode = null) {
       return newRevocations(dimensionsByStateCode[stateCode]);
     case stateCodes.US_ID:
       return {
-        [COLLECTIONS.POPULATION_PROJECTIONS]: {
-          population_projection_timeseries: {
-            filename: "population_projection_timeseries.json",
-          },
-        },
         ...VITALS_COLLECTION,
         ...PATHWAYS_COLLECTIONS,
       };

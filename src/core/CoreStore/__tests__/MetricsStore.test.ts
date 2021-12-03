@@ -18,7 +18,6 @@ import { runInAction } from "mobx";
 
 import RootStore from "../../../RootStore";
 import PopulationProjectionOverTimeMetric from "../../models/PopulationProjectionOverTimeMetric";
-import ProjectionsMetrics from "../../models/ProjectionsMetrics";
 import VitalsMetrics from "../../models/VitalsMetrics";
 import CoreStore from "..";
 
@@ -31,7 +30,6 @@ jest.mock("../../../RootStore/UserStore", () => {
 });
 
 jest.mock("../../models/VitalsMetrics");
-jest.mock("../../models/ProjectionsMetrics");
 jest.mock("../../../RootStore/TenantStore", () => {
   return jest.fn().mockImplementation(() => ({
     currentTenantId: "US_TN",
@@ -46,12 +44,6 @@ describe("MetricsStore", () => {
   describe("metrics", () => {
     it("has a reference to the practices metrics", () => {
       expect(coreStore.metricsStore.practices).toBeInstanceOf(VitalsMetrics);
-    });
-
-    it("has a reference to the projections metrics", () => {
-      expect(coreStore.metricsStore.projections).toBeInstanceOf(
-        ProjectionsMetrics
-      );
     });
 
     it("has a reference to the projectedPrisonPopulationOverTime metric", () => {
@@ -69,20 +61,6 @@ describe("MetricsStore", () => {
         expect(VitalsMetrics).toHaveBeenCalledWith({
           tenantId: "US_ID",
           sourceEndpoint: "vitals",
-        });
-      });
-    });
-
-    it("fetches new projections metrics for the new tenantId", () => {
-      runInAction(() => {
-        coreStore.tenantStore.currentTenantId = "US_ID";
-        expect(coreStore.metricsStore.projections).toBeInstanceOf(
-          ProjectionsMetrics
-        );
-        expect(ProjectionsMetrics).toHaveBeenCalledWith({
-          tenantId: "US_ID",
-          sourceEndpoint: "projections",
-          rootStore: coreStore,
         });
       });
     });

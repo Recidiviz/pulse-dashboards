@@ -21,7 +21,6 @@ import React from "react";
 import * as styles from "../CoreConstants.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
-import ProjectionsMetrics from "../models/ProjectionsMetrics";
 import { PopulationProjectionTimeSeriesRecord } from "../models/types";
 import withMetricHydrator from "../withMetricHydrator";
 import {
@@ -37,7 +36,7 @@ import PopulationTimeSeriesErrorBar from "./PopulationTimeSeriesErrorBar";
 const TOTAL_INCARCERATED_LIMIT = 8008;
 
 type Props = {
-  metric: PopulationProjectionOverTimeMetric | ProjectionsMetrics;
+  metric: PopulationProjectionOverTimeMetric;
   title: string;
   data: PopulationProjectionTimeSeriesRecord[];
 };

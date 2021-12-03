@@ -28,7 +28,6 @@ import { PracticesMetric } from "../../PagePractices/types";
 import PracticesSummaryTable from "../PracticesSummaryTable";
 
 jest.mock("../../CoreStoreProvider");
-jest.mock("../../models/ProjectionsMetrics");
 jest.mock("../../models/VitalsMetrics", () => {
   return jest.fn().mockImplementation(() => ({
     timeSeries: [],

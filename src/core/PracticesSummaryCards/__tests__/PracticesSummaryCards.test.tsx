@@ -33,7 +33,6 @@ const mockSetQuery = jest.fn();
 
 jest.mock("use-query-params");
 jest.mock("../../CoreStoreProvider");
-jest.mock("../../models/ProjectionsMetrics");
 jest.mock("react-router-dom", () => ({
   // @ts-ignore
   ...jest.requireActual("react-router-dom"),

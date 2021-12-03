@@ -18,7 +18,6 @@
 import { formatDate } from "../../utils";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import PopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
-import ProjectionsMetrics from "../models/ProjectionsMetrics";
 import {
   PopulationProjectionTimeSeriesRecord,
   PrisonPopulationTimeSeriesRecord,
@@ -41,10 +40,7 @@ export type PreparedData = {
 };
 
 export const prepareData = (
-  metric:
-    | PopulationProjectionOverTimeMetric
-    | PopulationOverTimeMetric
-    | ProjectionsMetrics,
+  metric: PopulationProjectionOverTimeMetric | PopulationOverTimeMetric,
   rawData:
     | PrisonPopulationTimeSeriesRecord[]
     | PopulationProjectionTimeSeriesRecord[]
@@ -54,10 +50,7 @@ export const prepareData = (
   let uncertainty: ChartPoint[] = [];
   let data;
 
-  if (
-    metric instanceof PopulationProjectionOverTimeMetric ||
-    metric instanceof ProjectionsMetrics
-  ) {
+  if (metric instanceof PopulationProjectionOverTimeMetric) {
     data = rawData as PopulationProjectionTimeSeriesRecord[];
 
     historicalPopulation = data

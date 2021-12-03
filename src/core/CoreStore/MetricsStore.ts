@@ -21,7 +21,6 @@ import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOv
 import PopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
-import ProjectionsMetrics from "../models/ProjectionsMetrics";
 import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import {
@@ -48,14 +47,6 @@ export default class MetricsStore {
     return new VitalsMetrics({
       tenantId: this.rootStore.currentTenantId,
       sourceEndpoint: "vitals",
-    });
-  }
-
-  get projections(): ProjectionsMetrics {
-    return new ProjectionsMetrics({
-      tenantId: this.rootStore.currentTenantId,
-      sourceEndpoint: "projections",
-      rootStore: this.rootStore,
     });
   }
 

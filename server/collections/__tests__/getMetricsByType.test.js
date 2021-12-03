@@ -24,7 +24,6 @@ describe("getMetricsByType", () => {
   test.each([
     ["US_MO", COLLECTIONS.NEW_REVOCATION, NewRevocationsMetrics],
     ["US_PA", COLLECTIONS.NEW_REVOCATION, NewRevocationsMetrics],
-    ["US_ID", COLLECTIONS.POPULATION_PROJECTIONS, BaseMetrics],
     ["US_ND", COLLECTIONS.GOALS, BaseMetrics],
     ["US_ND", COLLECTIONS.COMMUNITY_EXPLORE, BaseMetrics],
     ["US_ND", COLLECTIONS.FACILITIES_EXPLORE, BaseMetrics],
