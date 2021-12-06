@@ -31,10 +31,11 @@ import { ERROR_MESSAGES } from "../constants";
  * Verifies authorization before rendering its children.
  */
 const AuthWall: React.FC = ({ children }) => {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const currentView = pathname.split("/")[1];
-  const { userStore, currentTenantId } = useRootStore();
+  const { userStore, currentTenantId, tenantStore } = useRootStore();
   const { userAppMetadata } = userStore;
+  const stateCodeParam = new URLSearchParams(search).get("stateCode");
 
   useEffect(
     () =>
@@ -77,6 +78,9 @@ const AuthWall: React.FC = ({ children }) => {
 
       userStore.setAuthError(ERROR_MESSAGES.unauthorized);
     }
+
+    if (userStore.stateCode?.toLowerCase() === "recidiviz" && stateCodeParam)
+      tenantStore.setCurrentTenantId(stateCodeParam);
 
     const authorizedChildren = React.Children.map(children, (child: any) => {
       const { tenantIds, views } = child.props;

@@ -14,40 +14,5 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import "./Methodology.scss";
 
-import React from "react";
-import { useHistory, useParams } from "react-router-dom";
-
-import { useRootStore } from "../../components/StoreProvider";
-import MethodologyPathways from "../MethodologyPathways";
-import MethodologyProjections from "../MethodologyProjections";
-
-const PageMethodology: React.FC = () => {
-  const { userStore, tenantStore } = useRootStore();
-  const { userHasAccess } = userStore;
-  const { dashboard }: { dashboard: string } = useParams();
-  const { push, location } = useHistory();
-
-  const stateCode = new URLSearchParams(location.search).get("stateCode");
-  if (stateCode && userHasAccess(stateCode)) {
-    tenantStore.setCurrentTenantId(stateCode);
-  }
-
-  const methodologies: { [k: string]: React.FC } = {
-    operations: MethodologyPathways,
-    projections: MethodologyProjections,
-    system: MethodologyPathways,
-    practices: MethodologyPathways,
-  };
-
-  const Methodology = methodologies[dashboard];
-
-  if (!Methodology || (stateCode && !userHasAccess(stateCode))) {
-    push({ pathname: "/" });
-  }
-
-  return <Methodology />;
-};
-
-export default PageMethodology;
+export { default } from "./PageMethodology";

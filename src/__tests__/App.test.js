@@ -125,7 +125,7 @@ describe("App tests", () => {
       const user = { [metadataField]: { state_code: US_MO } };
 
       useRootStore.mockReturnValue({
-        userStore: { ...userStore, ...user },
+        userStore: { ...userStore, ...user, stateCode: US_MO },
         currentTenantId: US_MO,
       });
 
@@ -160,7 +160,7 @@ describe("App tests", () => {
       const user = { [metadataField]: { state_code: US_ND } };
 
       useRootStore.mockReturnValue({
-        userStore: { ...userStore, ...user },
+        userStore: { ...userStore, ...user, stateCode: US_ND },
         currentTenantId: US_ND,
       });
 
@@ -176,7 +176,7 @@ describe("App tests", () => {
       const user = { [metadataField]: { state_code: US_ID } };
 
       useRootStore.mockReturnValue({
-        userStore: { ...userStore, ...user },
+        userStore: { ...userStore, ...user, stateCode: US_ID },
         currentTenantId: US_ID,
       });
 
@@ -193,7 +193,7 @@ describe("App tests", () => {
       const user = { [metadataField]: { state_code: US_ID } };
 
       useRootStore.mockReturnValue({
-        userStore: { ...userStore, ...user },
+        userStore: { ...userStore, ...user, stateCode: US_ID },
         currentTenantId: US_ID,
       });
 
@@ -256,7 +256,7 @@ describe("App tests", () => {
       const user = { [metadataField]: { state_code: US_ND } };
 
       useRootStore.mockReturnValue({
-        userStore: { ...userStore, ...user },
+        userStore: { ...userStore, ...user, stateCode: US_ND },
         currentTenantId: US_ND,
       });
 
@@ -274,7 +274,7 @@ describe("App tests", () => {
       const user = { [metadataField]: { state_code: US_ID } };
 
       useRootStore.mockReturnValue({
-        userStore: { ...userStore, ...user },
+        userStore: { ...userStore, ...user, stateCode: US_ID },
         currentTenantId: US_ID,
       });
 
@@ -291,7 +291,7 @@ describe("App tests", () => {
       const user = { [metadataField]: { state_code: US_ID } };
 
       useRootStore.mockReturnValue({
-        userStore: { ...userStore, ...user },
+        userStore: { ...userStore, ...user, stateCode: US_ID },
         currentTenantId: US_ID,
       });
 
