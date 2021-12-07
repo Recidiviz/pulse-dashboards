@@ -49,6 +49,14 @@ const content: MetricCopy = {
   supervisionToPrisonPopulationByDistrict: {
     title: "Admissions from supervision by district",
   },
+  supervisionToPrisonPopulationByMostSevereViolation: {
+    title: "Admissions from supervision by most severe violation",
+    chartXAxisTitle: "Most severe violation prior to admission to prison",
+  },
+  supervisionToPrisonPopulationByNumberOfViolations: {
+    title: "Admissions from supervision by number of violations",
+    chartXAxisTitle: "Number of violations prior to admission to prison",
+  },
 };
 
 export default content;

@@ -63,14 +63,13 @@ const SectionNavigation: React.FC = () => {
             to={`/${currentView}/${currentPage}/${sectionId}`}
             onClick={() => setSection(sectionId)}
           >
-            {sections && sections[sectionId]}
+            <div className="SectionNavigation__section-name">
+              {sections && sections[sectionId]}
+            </div>
             {currentSection === sectionId && (
-              <Icon
-                className="SectionNavigation__arrow"
-                kind={IconSVG.Arrow}
-                width={16}
-                height={16}
-              />
+              <div className="SectionNavigation__arrow">
+                <Icon kind={IconSVG.Arrow} width={16} height={16} />
+              </div>
             )}
           </Link>
         </div>

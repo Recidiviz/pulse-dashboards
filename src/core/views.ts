@@ -73,6 +73,8 @@ export const PATHWAYS_SECTIONS: Record<string, string> = {
   countOverTime: "countOverTime",
   countByLocation: "countByLocation",
   personLevelDetail: "personLevelDetail",
+  countByMostSevereViolation: "countByMostSevereViolation",
+  countByNumberOfViolations: "countByNumberOfViolations",
 };
 
 export const DEFAULT_PATHWAYS_PAGE = PATHWAYS_PAGES.prison;
@@ -93,6 +95,8 @@ const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
   [PATHWAYS_PAGES.supervisionToPrison]: [
     "supervisionToPrisonOverTime",
     "supervisionToPrisonPopulationByDistrict",
+    "supervisionToPrisonPopulationByMostSevereViolation",
+    "supervisionToPrisonPopulationByNumberOfViolations",
   ],
   [PATHWAYS_PAGES.supervisionToLiberty]: ["supervisionToLibertyOverTime"],
 };
@@ -107,11 +111,15 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
 > = {
   prisonPopulationPersonLevel: PATHWAYS_SECTIONS.personLevelDetail,
   prisonFacilityPopulation: PATHWAYS_SECTIONS.countByLocation,
-  supervisionToPrisonPopulationByDistrict: PATHWAYS_SECTIONS.countByLocation,
   prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   projectedSupervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   supervisionToPrisonOverTime: PATHWAYS_SECTIONS.countOverTime,
+  supervisionToPrisonPopulationByDistrict: PATHWAYS_SECTIONS.countByLocation,
+  supervisionToPrisonPopulationByMostSevereViolation:
+    PATHWAYS_SECTIONS.countByMostSevereViolation,
+  supervisionToPrisonPopulationByNumberOfViolations:
+    PATHWAYS_SECTIONS.countByNumberOfViolations,
   supervisionToLibertyOverTime: PATHWAYS_SECTIONS.countOverTime,
 };
 

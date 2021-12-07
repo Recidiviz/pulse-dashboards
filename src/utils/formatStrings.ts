@@ -18,6 +18,7 @@ import CryptoJS from "crypto-js";
 import Base64 from "crypto-js/enc-base64";
 import SHA256 from "crypto-js/sha256";
 import { format, parseISO } from "date-fns";
+import ceil from "lodash/ceil";
 import lowerCase from "lodash/fp/lowerCase";
 import pipe from "lodash/fp/pipe";
 import startCase from "lodash/fp/startCase";
@@ -228,6 +229,23 @@ function decrypt(hexString: string): string {
   return plainText;
 }
 
+const getTicks = (
+  value: number
+): { maxTickValue: number; tickValues: number[] } => {
+  const precision = Math.floor(Math.log10(value));
+  const max = ceil(value, precision > 2 ? -precision + 1 : -precision);
+  const ticksCount = max % 4 === 0 ? 4 : 5;
+  const ticks = Array.from(
+    { length: ticksCount + 1 },
+    (_, i) => (max / ticksCount) * i
+  );
+
+  return {
+    maxTickValue: max,
+    tickValues: value === -Infinity ? [] : ticks,
+  };
+};
+
 export {
   decrypt,
   encrypt,
@@ -244,6 +262,7 @@ export {
   getPeriodLabelFromMetricPeriodMonthsFilter,
   getStatePopulations,
   getStatePopulationsLabels,
+  getTicks,
   getTrailingLabelFromMetricPeriodMonthsFilter,
   hashEmailAddress,
   humanReadableTitleCase,

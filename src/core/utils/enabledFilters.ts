@@ -105,6 +105,30 @@ export const TnEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.NUMBER_OF_VIOLATIONS,
     ],
   },
+  supervisionToPrisonPopulationByMostSevereViolation: {
+    enabledFilters: [
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.MOST_SEVERE_VIOLATION,
+    ],
+    enabledMoreFilters: [
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.SUPERVISION_TYPE,
+      FILTER_TYPES.NUMBER_OF_VIOLATIONS,
+    ],
+  },
+  supervisionToPrisonPopulationByNumberOfViolations: {
+    enabledFilters: [
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.MOST_SEVERE_VIOLATION,
+    ],
+    enabledMoreFilters: [
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.SUPERVISION_TYPE,
+      FILTER_TYPES.NUMBER_OF_VIOLATIONS,
+    ],
+  },
 };
 
 export default {

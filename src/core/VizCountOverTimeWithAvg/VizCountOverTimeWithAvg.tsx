@@ -25,6 +25,7 @@ import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 
+import { getTicks } from "../../utils";
 import * as styles from "../CoreConstants.scss";
 import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
@@ -84,10 +85,11 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
     },
   ];
 
-  const yRange = [
-    0,
-    Math.max(...data.map((d) => d.value), ...data.map((d) => d.average)),
-  ];
+  const { maxTickValue, tickValues } = getTicks(
+    Math.max(...data.map((d) => d.value), ...data.map((d) => d.average))
+  );
+
+  const yRange = [0, maxTickValue];
 
   return (
     <div className="VizCountOverTimeWithAvg">
@@ -148,8 +150,9 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
         axes={[
           {
             orient: "left",
-            ticks: 3,
+            ticks: 5,
             tickFormat: (n: number) => n.toLocaleString(),
+            tickValues,
           },
         ]}
       />

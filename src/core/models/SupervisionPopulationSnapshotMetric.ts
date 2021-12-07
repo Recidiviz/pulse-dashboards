@@ -59,11 +59,15 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
           gender.includes(record.gender) &&
           ageGroup.includes(record.ageGroup) &&
           supervisionType.includes(record.supervisionType) &&
-          numberOfViolations.includes(record.numberOfViolations) &&
-          mostSevereViolation.includes(record.mostSevereViolation) &&
           (this.id === "supervisionToPrisonPopulationByDistrict"
             ? !["ALL"].includes(record.district)
-            : district.includes(record.district))
+            : district.includes(record.district)) &&
+          (this.id === "supervisionToPrisonPopulationByMostSevereViolation"
+            ? !["ALL"].includes(record.mostSevereViolation)
+            : mostSevereViolation.includes(record.mostSevereViolation)) &&
+          (this.id === "supervisionToPrisonPopulationByNumberOfViolations"
+            ? !["ALL"].includes(record.numberOfViolations)
+            : numberOfViolations.includes(record.numberOfViolations))
         );
       }
     );

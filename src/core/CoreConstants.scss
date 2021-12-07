@@ -21,6 +21,8 @@ $data-forest: #25636f;
 $data-forest-07: rgba(37, 99, 111, 0.07);
 $data-forest-dark: #004b5b;
 $data-teal: #90aeb5;
+$data-gold: #d9a95f;
+$data-gold-dark: #B7873D;
 $indigo: rgba(76, 98, 144, 1);
 $indigo-10: rgba(76, 98, 144, 0.1);
 $marble-3: #f4f5f5;
@@ -124,6 +126,8 @@ $font-article-serif-56: 400 3.5rem/4.5rem $serif;
   dataForest: $data-forest;
   dataForestDark: $data-forest-dark;
   dataTeal: $data-teal;
+  dataGold: $data-gold;
+  dataGoldDark: $data-gold-dark;
 
   fontUiSans16: $font-ui-sans-16;
   fontUiSans14: $font-ui-sans-14;

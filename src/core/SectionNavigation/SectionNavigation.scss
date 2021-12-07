@@ -39,8 +39,9 @@
       color: $signal-links;
     }
   }
-  &__arrow {
-    margin-left: 2.5rem;
+
+  &__section-name {
+    margin-right: 2.5rem;
   }
 
   @media screen and (max-width: $core-breakpoint-sm) {
@@ -80,6 +81,9 @@
     }
     &__arrow {
       display: none;
+    }
+    &__section-name {
+      margin-right: 0;
     }
   }
 }

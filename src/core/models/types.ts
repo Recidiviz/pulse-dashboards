@@ -211,4 +211,6 @@ export type MetricId =
   | "supervisionToPrisonOverTime"
   | "supervisionToLibertyOverTime"
   | "prisonPopulationPersonLevel"
-  | "supervisionToPrisonPopulationByDistrict";
+  | "supervisionToPrisonPopulationByDistrict"
+  | "supervisionToPrisonPopulationByMostSevereViolation"
+  | "supervisionToPrisonPopulationByNumberOfViolations";

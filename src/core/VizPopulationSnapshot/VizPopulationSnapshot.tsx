@@ -14,12 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // ===================== ========================================================
+import "./VizPopulationSnapshot.scss";
 
+import cn from "classnames";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 
-import { formatDate } from "../../utils";
+import { formatDate, getTicks } from "../../utils";
 import * as styles from "../CoreConstants.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
@@ -37,7 +39,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
 }) => {
   const { filtersStore } = useCoreStore();
   const { filters } = filtersStore;
-  const { dataSeries, chartTitle, accessor } = metric;
+  const { dataSeries, chartTitle, accessor, chartXAxisTitle } = metric;
 
   // @ts-ignore
   const accessorFilter = filters[accessor];
@@ -58,7 +60,11 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
 
   const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
 
-  const yRange = [0, Math.max(...data.map((d) => d.count))];
+  const { maxTickValue, tickValues } = getTicks(
+    Math.max(...data.map((d) => d.count))
+  );
+
+  const yRange = [0, maxTickValue];
 
   const hoverAnnotation = (annotation: any) => {
     const { d } = annotation;
@@ -66,15 +72,24 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     setHoveredId(pieceData.index);
   };
 
+  const isGeographic = ["district", "facility", "officer"].includes(accessor);
+
   return (
     <div>
-      <div className="VizCountOverTimeWithAvg">
+      <div
+        className={cn("VizPopulationSnapshot", {
+          "VizPopulationSnapshot__labels--not-rotated": data.length < 10,
+        })}
+      >
         <div className="PopulationTimeSeriesChart__header">
           <div className="PopulationTimeSeriesChart__title">
             {chartTitle} <span>as of {latestUpdate}</span>
           </div>
         </div>
         <ResponsiveOrdinalFrame
+          // The key is necessary here to force the viz to remount
+          // when there is a new metric to ensure there is not a awkward transition
+          key={metric.id}
           responsiveWidth
           hoverAnnotation
           customHoverBehavior={(piece: any) => {
@@ -104,10 +119,19 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           type="bar"
           data={data}
           size={[558, 558]}
-          margin={{ left: 79, bottom: 96, right: 50, top: 56 }}
+          margin={{ left: 79, bottom: 75, right: 50, top: 56 }}
           oAccessor="accessorLabel"
           oPadding={data.length > 25 ? 2 : 15}
           style={(d: any) => {
+            if (!isGeographic) {
+              if (d.index === hoveredId) {
+                return { fill: styles.dataGoldDark };
+              }
+              if (pickedId.includes(d.accessorValue)) {
+                return { fill: styles.dataGoldDark };
+              }
+              return { fill: styles.dataGold };
+            }
             if (d.index === hoveredId) {
               return { fill: styles.dataForestDark };
             }
@@ -125,11 +149,16 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           axes={[
             {
               orient: "left",
-              ticks: 3,
               tickFormat: (n: number) => n.toLocaleString(),
+              tickValues,
             },
           ]}
         />
+        {chartXAxisTitle && (
+          <div className="VizPopulationSnapshot__chartXAxisTitle">
+            {chartXAxisTitle}
+          </div>
+        )}
       </div>
     </div>
   );

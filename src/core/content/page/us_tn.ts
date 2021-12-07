@@ -36,6 +36,10 @@ const content: StateSpecificPageCopy = {
     sections: {
       countOverTime: "Admissions from supervision over time",
       countByLocation: "Admissions from supervision by district",
+      countByMostSevereViolation:
+        "Admissions from supervision by most severe violation",
+      countByNumberOfViolations:
+        "Admissions from supervision by number of violations",
     },
   },
 };

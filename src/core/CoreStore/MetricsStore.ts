@@ -72,6 +72,10 @@ export default class MetricsStore {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToPrisonOverTime,
         [PATHWAYS_SECTIONS.countByLocation]: this
           .supervisionToPrisonPopulationByDistrict,
+        [PATHWAYS_SECTIONS.countByMostSevereViolation]: this
+          .supervisionToPrisonPopulationByMostSevereViolation,
+        [PATHWAYS_SECTIONS.countByNumberOfViolations]: this
+          .supervisionToPrisonPopulationByNumberOfViolations,
       },
       [PATHWAYS_PAGES.supervisionToLiberty]: {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToLibertyOverTime,
@@ -128,6 +132,32 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByDistrict,
+    });
+  }
+
+  get supervisionToPrisonPopulationByMostSevereViolation(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionToPrisonPopulationByMostSevereViolation",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "mostSevereViolation",
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToPrisonPopulationByMostSevereViolation,
+    });
+  }
+
+  get supervisionToPrisonPopulationByNumberOfViolations(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionToPrisonPopulationByNumberOfViolations",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "numberOfViolations",
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToPrisonPopulationByNumberOfViolations,
     });
   }
 

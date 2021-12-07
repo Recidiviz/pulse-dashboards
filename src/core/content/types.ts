@@ -43,6 +43,7 @@ export type StateSpecificPageCopy = {
 export type MetricContent = {
   title: string;
   note?: string;
+  chartXAxisTitle?: string;
   methodology?: string;
 };
 
