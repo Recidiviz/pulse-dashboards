@@ -24,7 +24,7 @@ const content: StateSpecificMetricCopy = {
   projectedPrisonPopulationOverTime: {
     methodology: "- ID Specific prison population methodology",
   },
-  supervisionPopulationOverTime: {
+  projectedSupervisionPopulationOverTime: {
     methodology: "- ID Specific supervision population methodology",
   },
   supervisionToPrisonOverTime: {

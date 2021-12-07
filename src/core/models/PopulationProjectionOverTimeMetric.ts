@@ -19,10 +19,7 @@ import RootStore from "../../RootStore";
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
-import {
-  formatMonthAndYear,
-  MonthOptions,
-} from "../PopulationTimeSeriesChart/helpers";
+import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import {
   PopulationProjectionTimeSeriesRecord,
@@ -48,10 +45,9 @@ export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<P
     const {
       gender,
       legalStatus,
-      timePeriod,
       supervisionType,
     } = this.rootStore.filtersStore.filters;
-    const monthRange: MonthOptions = parseInt(timePeriod) as MonthOptions;
+    const { monthRange } = this.rootStore.filtersStore;
     const status =
       this.compartment === "SUPERVISION" ? supervisionType : legalStatus;
     const stepSize = monthRange === 60 ? 2 : 1;

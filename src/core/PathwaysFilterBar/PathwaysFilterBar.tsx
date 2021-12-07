@@ -14,36 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import "./PathwaysFilterBar.scss";
+
 import cn from "classnames";
-import { isEqual } from "lodash";
 import { pick } from "lodash/fp";
 import { get } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { useQueryParams } from "use-query-params";
 
-import useIsDisplayPageNavigation from "../../hooks/useIsDisplayPageNavigation";
+import useDisplayPageNavigation from "../../hooks/useDisplayPageNavigation";
 import useIsMobile from "../../hooks/useIsMobile";
 import { sortByLabel } from "../../utils/datasets";
-import {
-  filterQueryParams,
-  removeUndefinedValuesFromObject,
-} from "../../utils/navigation";
 import { CoreSelect } from "../controls/CoreSelect";
 import Filter from "../controls/Filter";
 import FilterBar from "../controls/FilterBar";
+import CoreMultiSelect from "../controls/MultiSelect/CoreMultiSelect";
 import { useCoreStore } from "../CoreStoreProvider";
 import DetailsGroup from "../DetailsGroup";
 import DownloadDataButton from "../DownloadDataButton";
 import MethodologyLink from "../MethodologyLink";
 import MoreFilters from "../MoreFilters";
-import {
-  EnabledFilters,
-  FilterOption,
-  PopulationFilters,
-} from "../types/filters";
+import { EnabledFilters, PopulationFilters } from "../types/filters";
 import { FILTER_TYPES } from "../utils/constants";
-import { getFilterOption, getFilterOptions } from "../utils/filterOptions";
+import { getFilterOptions } from "../utils/filterOptions";
 import { PATHWAYS_PATHS } from "../views";
 
 const PathwaysFilterBar: React.FC<{
@@ -62,82 +55,96 @@ const PathwaysFilterBar: React.FC<{
   const { filtersStore } = useCoreStore();
   const { filters } = filtersStore;
 
-  const isDisplayNav = useIsDisplayPageNavigation();
+  const isDisplayNav = useDisplayPageNavigation();
   const isMobile = useIsMobile();
-
-  // if current query params do not match enabled filters, update query
-  const [query, setQuery] = useQueryParams(filterQueryParams);
-  const cleanQuery = removeUndefinedValuesFromObject(query);
-  const enabled = [...enabledFilters, ...enabledMoreFilters].reduce(
-    (acc, filter) => ({ ...acc, [filter]: filtersStore.filtersLabels[filter] }),
-    {}
-  );
-  if (!isEqual(Object.keys(enabled).sort(), Object.keys(cleanQuery).sort())) {
-    setQuery({ ...enabled }, "replace");
-  }
 
   return (
     <div
-      className={cn({
+      className={cn("PathwaysFilterBar", {
         "pt-5": isDisplayNav && !isMobile,
       })}
     >
       <FilterBar
         details={
-          <DetailsGroup hideOnMobile>
-            <MoreFilters
-              enabledFilters={enabledMoreFilters}
-              filterOptions={pick(enabledMoreFilters, filterOptions)}
-              setQuery={(updatedFilters: Partial<PopulationFilters>) =>
-                setQuery(updatedFilters)
-              }
-            />
-            <DownloadDataButton handleOnClick={handleDownload} />
-            <MethodologyLink
-              path={PATHWAYS_PATHS.methodologySystem}
-              chartTitle={chartTitle}
-            />
-          </DetailsGroup>
+          isMobile ? (
+            <DetailsGroup>
+              <MoreFilters
+                enabledFilters={enabledMoreFilters}
+                filterOptions={pick(enabledMoreFilters, filterOptions)}
+              />
+              <DownloadDataButton handleOnClick={handleDownload} />
+              <MethodologyLink
+                path={PATHWAYS_PATHS.methodologySystem}
+                chartTitle={chartTitle}
+              />
+            </DetailsGroup>
+          ) : (
+            <div className="FilterBar__details">
+              <MoreFilters
+                enabledFilters={enabledMoreFilters}
+                filterOptions={pick(enabledMoreFilters, filterOptions)}
+              />
+              <DetailsGroup>
+                <DownloadDataButton handleOnClick={handleDownload} />
+                <MethodologyLink
+                  path={PATHWAYS_PATHS.methodologySystem}
+                  chartTitle={chartTitle}
+                />
+              </DetailsGroup>
+            </div>
+          )
         }
       >
         {enabledFilters.map((filterType) => {
           const filter = filterOptions[filterType];
           return (
-            <Filter
-              key={`${filterType}`}
-              title={filter.title}
-              width={filter.width}
-            >
-              <CoreSelect
-                value={
-                  filter.type === FILTER_TYPES.TIME_PERIOD
-                    ? getFilterOption(get(filters, filter.type), filter.options)
-                    : getFilterOptions(
-                        get(filters, filter.type),
-                        filter.options
-                      )[0]
-                }
-                options={
-                  filter.type === FILTER_TYPES.TIME_PERIOD
-                    ? filter.options
-                    : sortByLabel(filter.options, "label")
-                }
-                onChange={(option: FilterOption) =>
-                  setQuery({ [filter.type]: option.label })
-                }
-                defaultValue={filter.defaultValue}
-                isChanged={
-                  filter.type === FILTER_TYPES.TIME_PERIOD
-                    ? filter.defaultValue !==
-                      getFilterOption(get(filters, filter.type), filter.options)
-                        .value
-                    : filter.defaultValue !==
-                      getFilterOptions(
-                        get(filters, filter.type),
-                        filter.options
-                      )[0].value
-                }
-              />
+            <Filter key={`${filterType}`} title={filter.title}>
+              {filter.isSingleSelect ? (
+                <CoreSelect
+                  id={filter.type}
+                  value={getFilterOptions(
+                    get(filters, filter.type),
+                    filter.options
+                  )}
+                  options={
+                    filter.type === FILTER_TYPES.TIME_PERIOD
+                      ? filter.options
+                      : sortByLabel(filter.options, "label")
+                  }
+                  onChange={filter.setFilters(filtersStore)}
+                  defaultValue={filter.defaultValue}
+                  isChanged={
+                    filter.defaultValue !==
+                    getFilterOptions(
+                      get(filters, filter.type),
+                      filter.options
+                    )[0].value
+                  }
+                />
+              ) : (
+                <CoreMultiSelect
+                  id={filter.type}
+                  summingOption={{ value: "ALL", label: "All" }}
+                  value={getFilterOptions(
+                    get(filters, filter.type),
+                    filter.options
+                  )}
+                  options={
+                    filter.type === FILTER_TYPES.TIME_PERIOD
+                      ? filter.options
+                      : sortByLabel(filter.options, "label")
+                  }
+                  onChange={filter.setFilters(filtersStore)}
+                  defaultValue={filter.defaultValue}
+                  isChanged={
+                    filter.defaultValue !==
+                    getFilterOptions(
+                      get(filters, filter.type),
+                      filter.options
+                    )[0].value
+                  }
+                />
+              )}
             </Filter>
           );
         })}

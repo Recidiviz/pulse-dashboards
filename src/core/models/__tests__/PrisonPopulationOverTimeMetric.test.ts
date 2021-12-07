@@ -87,7 +87,6 @@ describe("PrisonPopulationOverTimeMetric", () => {
     metric = new PrisonPopulationOverTimeMetric({
       id: "prisonPopulationOverTime",
       tenantId: mockTenantId,
-      compartment: "INCARCERATION",
       sourceFilename: "prison_population_time_series",
       rootStore: mockCoreStore,
       dataTransformer: createPrisonPopulationTimeSeries,
@@ -170,7 +169,6 @@ describe("PrisonPopulationOverTimeMetric", () => {
     metric = new PrisonPopulationOverTimeMetric({
       id: "prisonPopulationOverTime",
       tenantId: mockTenantId,
-      compartment: "INCARCERATION",
       sourceFilename: "prison_population_time_series",
       rootStore: mockCoreStore,
       dataTransformer: createPrisonPopulationTimeSeries,
@@ -195,7 +193,6 @@ describe("PrisonPopulationOverTimeMetric", () => {
       metric = new PrisonPopulationOverTimeMetric({
         id: "prisonPopulationOverTime",
         tenantId: mockTenantId,
-        compartment: "INCARCERATION",
         sourceFilename: "prison_population_time_series",
         rootStore: mockCoreStore,
         dataTransformer: createPrisonPopulationTimeSeries,
@@ -234,7 +231,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
       runInAction(() => {
         if (metric.rootStore) {
           metric.rootStore.filtersStore.setFilters({
-            gender: "MALE",
+            gender: ["MALE"],
             facility: ["MCCX"],
           });
         }

@@ -69,9 +69,7 @@ export const convertLabelsToValues = (
         .includes(o.label)
     );
     const values = options.map((o) => o.value);
-    if (options)
-      acc[filterType] =
-        filterType === FILTER_TYPES.TIME_PERIOD ? values[0] : values;
+    if (options) acc[filterType] = values;
     return acc;
   }, {} as Record<string, string | string[]>);
 };
@@ -105,16 +103,21 @@ export const getFilterLabel = (
 
 const setFilters = (
   filterKey: keyof PopulationFilters
-): SetPopulationFilters => (filtersStore) => (option) => {
-  filtersStore.setFilters({ [filterKey]: option.value });
+): SetPopulationFilters => (filtersStore) => (options) => {
+  // Filters are set by both multi-select and single-select components
+  // so the options can be either an array or a string,
+  // but we always want to the filter values to be arrays in the filtersStore
+  const values = Array.isArray(options)
+    ? options.map((o) => o.value)
+    : [options.value];
+  filtersStore.setFilters({ [filterKey]: values });
 };
 
-// TODO(#940): Move width styling for filter to CSS
 export const PopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.TIME_PERIOD]: {
     type: FILTER_TYPES.TIME_PERIOD,
     title: "Time Period",
-    width: "8rem",
+    isSingleSelect: true,
     setFilters: setFilters(FILTER_TYPES.TIME_PERIOD),
     options: [
       { label: "6 months", value: "6" },
@@ -133,7 +136,7 @@ export const PopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.GENDER]: {
     type: FILTER_TYPES.GENDER,
     title: "Gender",
-    width: "7rem",
+    isSingleSelect: true,
     setFilters: setFilters(FILTER_TYPES.GENDER),
     options: [
       { label: "All", value: "ALL" },
@@ -151,7 +154,6 @@ export const PopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.LEGAL_STATUS]: {
     type: FILTER_TYPES.LEGAL_STATUS,
     title: "Legal Status",
-    width: "9.5rem",
     setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
     options: [
       { label: "All", value: "ALL" },
@@ -170,7 +172,7 @@ export const PopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.SUPERVISION_TYPE]: {
     type: FILTER_TYPES.SUPERVISION_TYPE,
     title: "Supervision Type",
-    width: "8.5rem",
+    isSingleSelect: true,
     setFilters: setFilters(FILTER_TYPES.SUPERVISION_TYPE),
     options: [
       { label: "All", value: "ALL" },
@@ -188,7 +190,6 @@ export const PopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.AGE_GROUP]: {
     type: FILTER_TYPES.AGE_GROUP,
     title: "Age",
-    width: "10rem",
     setFilters: setFilters(FILTER_TYPES.AGE_GROUP),
     options: [
       { label: "All", value: "ALL" },
@@ -213,7 +214,6 @@ export const PopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.FACILITY]: {
     type: FILTER_TYPES.FACILITY,
     title: "Facility",
-    width: "7rem",
     setFilters: setFilters(FILTER_TYPES.FACILITY),
     options: [
       { label: "All", value: "ALL" },
@@ -243,7 +243,6 @@ export const PopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.DISTRICT]: {
     type: FILTER_TYPES.DISTRICT,
     title: "District",
-    width: "7.5rem",
     setFilters: setFilters(FILTER_TYPES.DISTRICT),
     options: [
       { label: "All", value: "ALL" },
@@ -263,7 +262,6 @@ export const PopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.MOST_SEVERE_VIOLATION]: {
     type: FILTER_TYPES.MOST_SEVERE_VIOLATION,
     title: "Most Severe Violation",
-    width: "7rem",
     setFilters: setFilters(FILTER_TYPES.MOST_SEVERE_VIOLATION),
     options: [
       { label: "All", value: "ALL" },
@@ -285,7 +283,6 @@ export const PopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.NUMBER_OF_VIOLATIONS]: {
     type: FILTER_TYPES.NUMBER_OF_VIOLATIONS,
     title: "Number Of Violations",
-    width: "7rem",
     setFilters: setFilters(FILTER_TYPES.NUMBER_OF_VIOLATIONS),
     options: [
       { label: "All", value: "ALL" },
@@ -307,15 +304,18 @@ export const PopulationFilterOptions: PopulationFilters = {
 };
 
 export const defaultPopulationFilterValues: PopulationFilterValues = {
-  [FILTER_TYPES.TIME_PERIOD]:
+  [FILTER_TYPES.TIME_PERIOD]: [
     PopulationFilterOptions[FILTER_TYPES.TIME_PERIOD].defaultValue,
-  [FILTER_TYPES.GENDER]: PopulationFilterOptions[FILTER_TYPES.GENDER]
-    .defaultValue as Gender,
+  ],
+  [FILTER_TYPES.GENDER]: [
+    PopulationFilterOptions[FILTER_TYPES.GENDER].defaultValue,
+  ] as Gender[],
   [FILTER_TYPES.LEGAL_STATUS]: [
     PopulationFilterOptions[FILTER_TYPES.LEGAL_STATUS].defaultValue,
   ],
-  [FILTER_TYPES.SUPERVISION_TYPE]:
+  [FILTER_TYPES.SUPERVISION_TYPE]: [
     PopulationFilterOptions[FILTER_TYPES.SUPERVISION_TYPE].defaultValue,
+  ],
   [FILTER_TYPES.AGE_GROUP]: [
     PopulationFilterOptions[FILTER_TYPES.AGE_GROUP].defaultValue,
   ] as AgeGroup[],
@@ -338,7 +338,7 @@ export const IdPopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.LEGAL_STATUS]: {
     type: FILTER_TYPES.LEGAL_STATUS,
     title: "Legal Status",
-    width: "9.5rem",
+    isSingleSelect: true,
     setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
     options: [
       { label: "All", value: "ALL" },
@@ -361,7 +361,6 @@ export const TnPopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.LEGAL_STATUS]: {
     type: FILTER_TYPES.LEGAL_STATUS,
     title: "Admission Reason",
-    width: "9.5rem",
     setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
     options: [
       { label: "All", value: "ALL" },
@@ -394,5 +393,5 @@ export const TnPopulationFilterOptions: PopulationFilters = {
 export default {
   [US_ID]: IdPopulationFilterOptions,
   [US_TN]: TnPopulationFilterOptions,
-  [US_ND]: undefined,
+  [US_ND]: PopulationFilterOptions,
 } as const;

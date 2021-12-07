@@ -18,7 +18,7 @@ import { makeAutoObservable } from "mobx";
 
 import { US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
-import PopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
+import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
 import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
@@ -52,6 +52,9 @@ export default class MetricsStore {
 
   get current(): any {
     const { page, section } = this.rootStore;
+
+    if (!Object.keys(PATHWAYS_PAGES).includes(page)) return undefined;
+
     const map = {
       [PATHWAYS_PAGES.prison]: {
         [PATHWAYS_SECTIONS.countOverTime]:
@@ -62,7 +65,8 @@ export default class MetricsStore {
         [PATHWAYS_SECTIONS.personLevelDetail]: this.prisonPopulationPersonLevel,
       },
       [PATHWAYS_PAGES.supervision]: {
-        [PATHWAYS_SECTIONS.countOverTime]: this.supervisionPopulationOverTime,
+        [PATHWAYS_SECTIONS.countOverTime]: this
+          .projectedSupervisionPopulationOverTime,
       },
       [PATHWAYS_PAGES.supervisionToPrison]: {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToPrisonOverTime,
@@ -89,11 +93,10 @@ export default class MetricsStore {
     });
   }
 
-  get prisonPopulationOverTime(): PopulationOverTimeMetric {
-    return new PopulationOverTimeMetric({
+  get prisonPopulationOverTime(): PrisonPopulationOverTimeMetric {
+    return new PrisonPopulationOverTimeMetric({
       id: "prisonPopulationOverTime",
       tenantId: this.rootStore.currentTenantId,
-      compartment: "INCARCERATION",
       sourceFilename: "prison_population_time_series",
       rootStore: this.rootStore,
       dataTransformer: createPrisonPopulationTimeSeries,
@@ -141,16 +144,16 @@ export default class MetricsStore {
     });
   }
 
-  get supervisionPopulationOverTime(): PopulationProjectionOverTimeMetric {
+  get projectedSupervisionPopulationOverTime(): PopulationProjectionOverTimeMetric {
     return new PopulationProjectionOverTimeMetric({
-      id: "supervisionPopulationOverTime",
+      id: "projectedSupervisionPopulationOverTime",
       tenantId: this.rootStore.currentTenantId,
       compartment: "SUPERVISION",
       sourceFilename: "supervision_population_projection_time_series",
       rootStore: this.rootStore,
       dataTransformer: createProjectionTimeSeries,
       filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionPopulationOverTime,
+        .projectedSupervisionPopulationOverTime,
     });
   }
 

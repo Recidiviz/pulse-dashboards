@@ -208,7 +208,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
     it("updates when the filters change", () => {
       runInAction(() => {
         if (metric.rootStore) {
-          metric.rootStore.filtersStore.setFilters({ gender: "MALE" });
+          metric.rootStore.filtersStore.setFilters({ gender: ["MALE"] });
         }
 
         expect(metric.dataSeries).toEqual([

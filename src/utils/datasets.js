@@ -117,5 +117,8 @@ export function centerSingleMonthDatasetIfNecessary(dataValues, labels) {
  *    to sort on
  */
 export function sortByLabel(dataPoints, labelKey) {
-  return dataPoints.sort((a, b) => a[labelKey].localeCompare(b[labelKey]));
+  return dataPoints.sort((a, b) => {
+    if (a[labelKey] === "All") return -1;
+    return a[labelKey].localeCompare(b[labelKey]);
+  });
 }

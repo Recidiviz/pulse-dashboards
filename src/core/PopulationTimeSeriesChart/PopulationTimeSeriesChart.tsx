@@ -45,7 +45,8 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
   const { filtersStore } = useCoreStore();
 
   const timePeriod: MonthOptions = parseInt(
-    filtersStore.filters.timePeriod
+    // the timePeriod filter will only ever be single-select so always use the 0 index
+    filtersStore.filters.timePeriod[0]
   ) as MonthOptions;
 
   const dateSpacing = Math.ceil(getDateSpacing(timePeriod) / 2);

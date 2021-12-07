@@ -26,10 +26,10 @@ import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
 import PagePracticesStore from "../../CoreStore/PagePracticesStore";
 import { useCoreStore } from "../../CoreStoreProvider";
-import { PracticesMetric } from "../../PagePractices/types";
+import { METRIC_TYPES, PracticesMetric } from "../../PagePractices/types";
 import PracticesSummaryCards from "..";
 
-const mockSetQuery = jest.fn();
+const mockSetSelectedMetricId = jest.fn();
 
 jest.mock("use-query-params");
 jest.mock("../../CoreStoreProvider");
@@ -94,7 +94,9 @@ describe("PracticesSummaryCards", () => {
       setPage: jest.fn(),
       filtersStore,
     });
-    (useQueryParams as jest.Mock).mockReturnValue(["query", mockSetQuery]);
+    (useQueryParams as jest.Mock).mockReturnValue(["query", jest.fn()]);
+
+    pagePracticesStore.setSelectedMetricId = mockSetSelectedMetricId;
   });
 
   describe("metrics by tenant", () => {
@@ -115,22 +117,24 @@ describe("PracticesSummaryCards", () => {
     });
   });
 
-  test("selecting from menu sets the query params", async () => {
+  test("selecting from menu sets the selectedMetricId", async () => {
     render(
       <Router>
         <PracticesSummaryCards />
       </Router>
     );
 
+    mockSetSelectedMetricId.mockReset();
+
     fireEvent.click(screen.getByText("Timely risk assessments"));
     fireEvent.click(screen.getByText("Timely contacts"));
 
-    expect(mockSetQuery).toHaveBeenCalledTimes(2);
-    expect(mockSetQuery.mock.calls[0]).toEqual([
-      { selectedMetric: "Timely risk assessments" },
+    expect(mockSetSelectedMetricId).toHaveBeenCalledTimes(2);
+    expect(mockSetSelectedMetricId.mock.calls[0]).toEqual([
+      METRIC_TYPES.RISK_ASSESSMENT,
     ]);
-    expect(mockSetQuery.mock.calls[1]).toEqual([
-      { selectedMetric: "Timely contacts" },
+    expect(mockSetSelectedMetricId.mock.calls[1]).toEqual([
+      METRIC_TYPES.CONTACT,
     ]);
   });
 });

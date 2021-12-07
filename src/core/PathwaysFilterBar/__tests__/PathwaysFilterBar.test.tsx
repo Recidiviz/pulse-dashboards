@@ -19,7 +19,6 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import selectEvent from "react-select-event";
-import { useQueryParams } from "use-query-params";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import CoreStore from "../../CoreStore";
@@ -28,11 +27,10 @@ import { useCoreStore } from "../../CoreStoreProvider";
 import filterOptions from "../../utils/filterOptions";
 import PathwaysFilterBar from "..";
 
-const mockSetQuery = jest.fn();
+const mockSetFilters = jest.fn();
 
 jest.mock("../../CoreStoreProvider");
 jest.mock("../../../components/StoreProvider");
-jest.mock("use-query-params");
 const mockCoreStore = { currentTenantId: "US_ID" } as CoreStore;
 const filtersStore = new FiltersStore({ rootStore: mockCoreStore });
 
@@ -43,14 +41,14 @@ beforeEach(() => {
   (useRootStore as jest.Mock).mockReturnValue({
     userStore: { userAllowedNavigation: {} },
   });
-  (useQueryParams as jest.Mock).mockReturnValue(["query", mockSetQuery]);
+  filtersStore.setFilters = mockSetFilters;
 });
 
 afterEach(() => {
   jest.resetAllMocks();
 });
 
-test("selecting from menu sets the query params", async () => {
+test("selecting from menu sets the filters", async () => {
   render(
     <Router>
       <PathwaysFilterBar
@@ -64,14 +62,9 @@ test("selecting from menu sets the query params", async () => {
   await selectEvent.select(screen.getByText("6 months"), ["1 year"]);
   await selectEvent.select(screen.getByText("All"), ["Female"]);
 
-  expect(mockSetQuery).toHaveBeenCalledTimes(3);
-  // the first call is on initial load, setting the query param to default value
-  expect(mockSetQuery.mock.calls[0]).toEqual([
-    { gender: "All", timePeriod: "6 months" },
-    "replace",
-  ]);
-  // second call is the time period select event
-  expect(mockSetQuery.mock.calls[1]).toEqual([{ timePeriod: "1 year" }]);
-  // third call is the gender select event
-  expect(mockSetQuery.mock.calls[2]).toEqual([{ gender: "Female" }]);
+  expect(mockSetFilters).toHaveBeenCalledTimes(2);
+  // first call is the time period select event
+  expect(mockSetFilters.mock.calls[0]).toEqual([{ timePeriod: ["12"] }]);
+  // second call is the gender select event
+  expect(mockSetFilters.mock.calls[1]).toEqual([{ gender: ["FEMALE"] }]);
 });

@@ -24,27 +24,16 @@ import values from "lodash/fp/values";
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
-import {
-  formatMonthAndYear,
-  MonthOptions,
-} from "../PopulationTimeSeriesChart/helpers";
+import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import {
-  PrisonPopulationTimeSeriesRecord,
-  SimulationCompartment,
-} from "./types";
+import { PrisonPopulationTimeSeriesRecord } from "./types";
 import { getRecordDate } from "./utils";
 
 export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<PrisonPopulationTimeSeriesRecord> {
-  compartment: SimulationCompartment;
-
   constructor(
-    props: BaseMetricConstructorOptions<PrisonPopulationTimeSeriesRecord> & {
-      compartment: SimulationCompartment;
-    }
+    props: BaseMetricConstructorOptions<PrisonPopulationTimeSeriesRecord>
   ) {
     super(props);
-    this.compartment = props.compartment;
     this.download = this.download.bind(this);
   }
 
@@ -52,15 +41,11 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
     if (!this.rootStore || !this.allRecords?.length) return [];
     const {
       gender,
-      supervisionType,
       legalStatus,
-      timePeriod,
       facility,
       ageGroup,
     } = this.rootStore.filtersStore.filters;
-    const monthRange: MonthOptions = parseInt(timePeriod) as MonthOptions;
-    const status =
-      this.compartment === "SUPERVISION" ? supervisionType : legalStatus;
+    const { monthRange } = this.rootStore.filtersStore;
     const stepSize = monthRange === 60 ? 2 : 1;
 
     const { mostRecentDate } = this;
@@ -71,7 +56,7 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
           (record.month - (mostRecentDate.getMonth() + 1));
         return (
           gender.includes(record.gender) &&
-          status.includes(record.legalStatus) &&
+          legalStatus.includes(record.legalStatus) &&
           ageGroup.includes(record.ageGroup) &&
           facility.includes(record.facility) &&
           Math.abs(monthsOut) <= monthRange &&

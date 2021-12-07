@@ -20,7 +20,7 @@ import cn from "classnames";
 import React, { forwardRef } from "react";
 import ReactSelect from "react-select";
 
-import { pine3, signalLinks } from "../CoreConstants.scss";
+import { coreSelectCustomStyles } from "./utils";
 
 type FilterOption = {
   label: string;
@@ -34,19 +34,6 @@ type CoreSelectProps = {
   options: FilterOption[];
   onChange: (option: FilterOption) => void;
   [key: string]: any;
-};
-
-const coreSelectCustomStyles = (props: CoreSelectProps) => {
-  return {
-    singleValue: (provided: any) => ({
-      ...provided,
-      color: props.isChanged ? signalLinks : pine3,
-    }),
-    control: (provided: any) => ({
-      ...provided,
-      border: props.isChanged && `1px solid ${signalLinks} !important`,
-    }),
-  };
 };
 
 export const CoreSelect = forwardRef<HTMLInputElement, CoreSelectProps>(
@@ -68,7 +55,7 @@ export const CoreSelect = forwardRef<HTMLInputElement, CoreSelectProps>(
           </div>
         ),
       }}
-      styles={coreSelectCustomStyles(props)}
+      styles={coreSelectCustomStyles(props.isChanged)}
       {...props}
     />
   )

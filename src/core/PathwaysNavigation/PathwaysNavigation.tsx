@@ -22,14 +22,14 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
-import useIsDisplayPageNavigation from "../../hooks/useIsDisplayPageNavigation";
+import useDisplayPageNavigation from "../../hooks/useDisplayPageNavigation";
 import PageNavigation from "../PageNavigation";
 import { PATHWAYS_VIEWS } from "../views";
 
 const PathwaysNavigation: React.FC = () => {
   const { currentTenantId } = useRootStore();
   const { pathname } = useLocation();
-  const isDisplayNav = useIsDisplayPageNavigation();
+  const isDisplayNav = useDisplayPageNavigation();
   const view = pathname.split("/")[1];
   if (
     !currentTenantId ||

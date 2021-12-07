@@ -89,7 +89,7 @@ const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
     "prisonFacilityPopulation",
     "prisonPopulationPersonLevel",
   ],
-  [PATHWAYS_PAGES.supervision]: ["supervisionPopulationOverTime"],
+  [PATHWAYS_PAGES.supervision]: ["projectedSupervisionPopulationOverTime"],
   [PATHWAYS_PAGES.supervisionToPrison]: [
     "supervisionToPrisonOverTime",
     "supervisionToPrisonPopulationByDistrict",
@@ -110,7 +110,7 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
   supervisionToPrisonPopulationByDistrict: PATHWAYS_SECTIONS.countByLocation,
   prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
-  supervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
+  projectedSupervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   supervisionToPrisonOverTime: PATHWAYS_SECTIONS.countOverTime,
   supervisionToLibertyOverTime: PATHWAYS_SECTIONS.countOverTime,
 };

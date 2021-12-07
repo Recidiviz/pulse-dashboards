@@ -26,10 +26,7 @@ import values from "lodash/fp/values";
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
-import {
-  formatMonthAndYear,
-  MonthOptions,
-} from "../PopulationTimeSeriesChart/helpers";
+import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { SupervisionPopulationTimeSeriesRecord } from "./types";
 import { getRecordDate } from "./utils";
@@ -47,12 +44,11 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
     const {
       gender,
       supervisionType,
-      timePeriod,
       district,
       mostSevereViolation,
       numberOfViolations,
     } = this.rootStore.filtersStore.filters;
-    const monthRange: MonthOptions = parseInt(timePeriod) as MonthOptions;
+    const { monthRange } = this.rootStore.filtersStore;
 
     const { mostRecentDate } = this;
     const filteredRecords = this.allRecords.filter(

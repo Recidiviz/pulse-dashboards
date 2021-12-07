@@ -11,6 +11,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: baseline;
     max-width: $core-max-view-width;
     width: 100%;
 
@@ -42,5 +43,11 @@
   &__filters {
     display: flex;
     flex-flow: row wrap;
+  }
+
+  &__details {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
   }
 }

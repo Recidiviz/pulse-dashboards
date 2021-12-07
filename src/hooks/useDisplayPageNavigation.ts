@@ -14,34 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 
-import React from "react";
+import { useRootStore } from "../components/StoreProvider";
 
-import { ReactComponent as NoDataLogo } from "../../assets/static/images/no_data_logo.svg";
-import { useCoreStore } from "../../core/CoreStoreProvider";
-import withRouteSync from "../../core/withRouteSync";
-import HydrationStatus from "./HydrationStatus";
+const useDisplayPageNavigation = (): boolean => {
+  const { userStore } = useRootStore();
+  const { pathname } = useLocation();
+  const view = pathname.split("/")[1];
+  const navigationLayout = userStore.userAllowedNavigation;
+  const pageOptions = useMemo(() => navigationLayout[view] ?? [], [
+    navigationLayout,
+    view,
+  ]);
 
-const Error: React.FC = () => {
-  const { filtersStore } = useCoreStore();
-
-  return (
-    <HydrationStatus
-      icon={<NoDataLogo />}
-      title="No data available"
-      subtitle={
-        <>
-          The critera you selected may be too narrow.
-          <br />
-          Try choosing a different set of filters.
-        </>
-      }
-    >
-      <button type="button" onClick={filtersStore.resetFilters}>
-        Reset filters
-      </button>
-    </HydrationStatus>
+  const [isDisplayPageNavigation, setIsDisplayPageNavigation] = useState(
+    pageOptions.length > 1
   );
+
+  useEffect(() => {
+    setIsDisplayPageNavigation(pageOptions.length > 1);
+  }, [pageOptions]);
+
+  return isDisplayPageNavigation;
 };
 
-export default withRouteSync(Error);
+export default useDisplayPageNavigation;

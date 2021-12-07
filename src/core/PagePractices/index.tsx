@@ -80,7 +80,7 @@ const PagePractices: React.FC = () => {
       {displayHeader && (
         <div className="PagePractices__header">
           <PracticesSummaryBreadcrumbs />
-          <DetailsGroup>
+          <DetailsGroup expand>
             <DownloadDataButton handleOnClick={downloadData} />
             <MethodologyLink
               path={
@@ -97,7 +97,7 @@ const PagePractices: React.FC = () => {
         <PracticesSummaryCards />
       </div>
       {isMobile && !isCoreView && (
-        <DetailsGroup>
+        <DetailsGroup expand>
           <DownloadDataButton handleOnClick={downloadData} />
           <MethodologyLink
             path={

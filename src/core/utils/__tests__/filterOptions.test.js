@@ -41,7 +41,7 @@ describe("convertLabelsToValues", () => {
     };
     const expected = {
       legalStatus: ["PAROLE_BOARD_HOLD"],
-      timePeriod: "6",
+      timePeriod: ["6"],
     };
     expect(convertLabelsToValues(filtersLabels, filterOptions.US_ID)).toEqual(
       expected

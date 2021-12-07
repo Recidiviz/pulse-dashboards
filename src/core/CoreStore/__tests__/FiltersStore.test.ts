@@ -59,17 +59,24 @@ describe("FiltersStore", () => {
     it("updates the filter values", () => {
       const expected = {
         ...defaultPopulationFilterValues,
-        gender: "FEMALE",
+        gender: ["FEMALE"],
       };
-      coreStore.filtersStore.setFilters({ gender: "FEMALE" });
+      coreStore.filtersStore.setFilters({ gender: ["FEMALE"] });
       expect(coreStore.filtersStore.filters).toEqual(expected);
     });
   });
 
   describe("timePeriodLabel", () => {
     it("returns the time period label", () => {
-      coreStore.filtersStore.setFilters({ timePeriod: "3" });
+      coreStore.filtersStore.setFilters({ timePeriod: ["3"] });
       expect(coreStore.filtersStore.timePeriodLabel).toEqual("3 months");
+    });
+  });
+
+  describe("monthRange", () => {
+    it("returns the month range", () => {
+      coreStore.filtersStore.setFilters({ timePeriod: ["60"] });
+      expect(coreStore.filtersStore.monthRange).toEqual(60);
     });
   });
 
@@ -81,7 +88,7 @@ describe("FiltersStore", () => {
         "legalStatus",
       ];
       coreStore.filtersStore.setFilters({
-        timePeriod: "6",
+        timePeriod: ["6"],
         legalStatus: ["TREATMENT_IN_PRISON"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
@@ -96,8 +103,8 @@ describe("FiltersStore", () => {
         "supervisionType",
       ];
       coreStore.filtersStore.setFilters({
-        timePeriod: "12",
-        supervisionType: "PAROLE",
+        timePeriod: ["12"],
+        supervisionType: ["PAROLE"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
         "Time Period:, 1 year\nGender:, All\nSupervision Type:, Parole/Dual\n"
@@ -111,7 +118,7 @@ describe("FiltersStore", () => {
         "facility",
       ];
       coreStore.filtersStore.setFilters({
-        timePeriod: "12",
+        timePeriod: ["12"],
         facility: ["MCCX", "SPND"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(

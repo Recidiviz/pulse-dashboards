@@ -18,6 +18,7 @@
 import { mount } from "enzyme";
 import React from "react";
 import { Link, StaticRouter } from "react-router-dom";
+import { useQueryParams } from "use-query-params";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import RootStore from "../../../RootStore";
@@ -27,6 +28,7 @@ import PagePracticesStore from "../../CoreStore/PagePracticesStore";
 import { useCoreStore } from "../../CoreStoreProvider";
 import PageNavigation from "..";
 
+jest.mock("use-query-params");
 jest.mock("../../CoreStoreProvider");
 jest.mock("../../../components/StoreProvider");
 jest.mock("react-router-dom", () => ({
@@ -35,9 +37,6 @@ jest.mock("react-router-dom", () => ({
   useLocation: jest.fn().mockReturnValue({
     pathname: "/community/practices",
   }),
-}));
-jest.mock("use-query-params", () => ({
-  useQueryParams: jest.fn().mockReturnValue(["query", jest.fn()]),
 }));
 
 let coreStore: CoreStore;
@@ -66,6 +65,7 @@ describe("CoreLayout tests", () => {
         },
       },
     });
+    (useQueryParams as jest.Mock).mockReturnValue(["query", jest.fn()]);
   });
 
   afterAll(() => {

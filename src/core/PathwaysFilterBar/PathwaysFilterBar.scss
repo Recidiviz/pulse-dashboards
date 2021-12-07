@@ -14,34 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-import React from "react";
-
-import { ReactComponent as NoDataLogo } from "../../assets/static/images/no_data_logo.svg";
-import { useCoreStore } from "../../core/CoreStoreProvider";
-import withRouteSync from "../../core/withRouteSync";
-import HydrationStatus from "./HydrationStatus";
-
-const Error: React.FC = () => {
-  const { filtersStore } = useCoreStore();
-
-  return (
-    <HydrationStatus
-      icon={<NoDataLogo />}
-      title="No data available"
-      subtitle={
-        <>
-          The critera you selected may be too narrow.
-          <br />
-          Try choosing a different set of filters.
-        </>
-      }
-    >
-      <button type="button" onClick={filtersStore.resetFilters}>
-        Reset filters
-      </button>
-    </HydrationStatus>
-  );
-};
-
-export default withRouteSync(Error);
+.PathwaysFilterBar {
+  #timePeriod {
+    width: 8rem;
+  }
+  #gender {
+    width: 7.5rem;
+  }
+  #legalStatus {
+    width: 11rem;
+  }
+  #supervisionType {
+    width: 11rem;
+  }
+  #ageGroup {
+    width: 16rem;
+  }
+  #facility {
+    width: 11rem;
+  }
+  #district {
+    width: 11rem;
+  }
+}

@@ -16,9 +16,7 @@
 // =============================================================================
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { useQueryParams } from "use-query-params";
 
-import { metricQueryParams } from "../../utils/navigation";
 import { useCoreStore } from "../CoreStoreProvider";
 import withRouteSync from "../withRouteSync";
 import PracticesSummaryCard from "./PracticesSummaryCard";
@@ -26,7 +24,6 @@ import PracticesSummaryCard from "./PracticesSummaryCard";
 const PracticesSummaryCards: React.FC = () => {
   const { pagePracticesStore } = useCoreStore();
   const { summaryCards, selectedMetricId } = pagePracticesStore;
-  const [, setQuery] = useQueryParams(metricQueryParams);
 
   return (
     <>
@@ -38,7 +35,7 @@ const PracticesSummaryCards: React.FC = () => {
           percentage={value}
           status={status}
           selected={selectedMetricId === id}
-          onClick={() => setQuery({ selectedMetric: title })}
+          onClick={() => pagePracticesStore.setSelectedMetricId(id)}
         />
       ))}
     </>

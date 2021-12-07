@@ -14,30 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { StylesConfig } from "react-select";
 
-import { useRootStore } from "../components/StoreProvider";
+import { pine3, signalLinks } from "../CoreConstants.scss";
+import { FilterOption } from "../types/filters";
 
-const useIsDisplayPageNavigation = (): boolean => {
-  const { userStore } = useRootStore();
-  const { pathname } = useLocation();
-  const view = pathname.split("/")[1];
-  const navigationLayout = userStore.userAllowedNavigation;
-  const pageOptions = useMemo(() => navigationLayout[view] ?? [], [
-    navigationLayout,
-    view,
-  ]);
-
-  const [isDisplayPageNavigation, setIsDisplayPageNavigation] = useState(
-    pageOptions.length > 1
-  );
-
-  useEffect(() => {
-    setIsDisplayPageNavigation(pageOptions.length > 1);
-  }, [pageOptions]);
-
-  return isDisplayPageNavigation;
+export const coreSelectCustomStyles = (
+  isChanged: boolean
+): Partial<StylesConfig<FilterOption, false>> => {
+  return {
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: isChanged ? signalLinks : pine3,
+    }),
+    control: (provided: any) => ({
+      ...provided,
+      color: isChanged ? signalLinks : pine3,
+      border: isChanged && `1px solid ${signalLinks} !important`,
+    }),
+  };
 };
-
-export default useIsDisplayPageNavigation;

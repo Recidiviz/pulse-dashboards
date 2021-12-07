@@ -21,7 +21,6 @@ import RootStore from "../../../RootStore";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
 import { FILTER_TYPES } from "../../utils/constants";
-import { defaultPopulationFilterValues } from "../../utils/filterOptions";
 import PrisonPopulationPersonLevelMetric from "../PrisonPopulationPersonLevelMetric";
 import {
   createPrisonPopulationPersonLevelList,
@@ -220,7 +219,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
       runInAction(() => {
         if (metric.rootStore) {
           metric.rootStore.filtersStore.setFilters({
-            gender: "MALE",
+            gender: ["MALE"],
             facility: ["Bedrock"],
           });
         }
@@ -246,7 +245,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
       mockCoreStore.filtersStore = filtersStore;
 
       if (metric.rootStore) {
-        metric.rootStore.filtersStore.setFilters(defaultPopulationFilterValues);
+        metric.rootStore.filtersStore.resetFilters();
       }
 
       metric = new PrisonPopulationPersonLevelMetric({

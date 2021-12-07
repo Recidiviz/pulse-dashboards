@@ -25,7 +25,7 @@ const content: MetricCopy = {
     title: "Prison population over time",
     note: "Historical and projected population data were generated",
   },
-  supervisionPopulationOverTime: {
+  projectedSupervisionPopulationOverTime: {
     title: "Supervision population over time",
     note: "Historical and projected population data were generated",
   },

@@ -22,9 +22,9 @@ type ValueOf<T> = T[keyof T];
 export type EnabledFilters = ValueOf<typeof FILTER_TYPES>[];
 
 export type PopulationFilterValues = {
-  timePeriod: string;
-  gender: Gender;
-  supervisionType: string;
+  timePeriod: string[];
+  gender: Gender[];
+  supervisionType: string[];
   legalStatus: string[];
   facility: string[];
   ageGroup: AgeGroup[];
@@ -47,7 +47,7 @@ export type PopulationFilterLabels = {
 
 export type SetPopulationFilters = (
   filtersStore: FiltersStore
-) => (option: FilterOption) => void;
+) => (option: FilterOption[] | FilterOption) => void;
 
 export type FilterOption = {
   label: string;
@@ -69,7 +69,7 @@ export interface PopulationFilters {
 export type PopulationFilter = {
   type: keyof PopulationFilters;
   title: string;
-  width: string;
+  isSingleSelect?: boolean;
   setFilters: SetPopulationFilters;
   options: FilterOption[];
   defaultOption: FilterOption;

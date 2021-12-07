@@ -18,46 +18,40 @@ import "./DetailsGroup.scss";
 
 import { Icon, IconSVG } from "@recidiviz/design-system";
 import cn from "classnames";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import useOnClickOutside from "use-onclickoutside";
 
-import useIsMobile from "../hooks/useIsMobile";
-
 type Props = {
-  hideOnMobile?: boolean;
+  expand?: boolean;
 };
 
-const DetailsGroup: React.FC<Props> = ({ hideOnMobile, children }) => {
-  const isMobile = useIsMobile();
+const DetailsGroup: React.FC<Props> = ({ expand, children }) => {
   const [open, setOpen] = useState(false);
   const ref: any = useRef();
   useOnClickOutside(ref, () => setOpen(false));
 
-  useEffect(() => {
-    setOpen(false);
-  }, [isMobile]);
+  if (expand) {
+    return <div className="DetailsGroup">{children}</div>;
+  }
 
-  if (hideOnMobile)
-    return (
-      <div className="DetailsGroup" ref={ref}>
-        <Icon
-          kind={IconSVG.TripleDot}
-          width={16}
-          height={16}
-          className="DetailsGroup__menu"
-          onClick={() => setOpen(!open)}
-        />
-        <div
-          className={cn("DetailsGroup__content", {
-            "DetailsGroup__content--visible": open,
-          })}
-        >
-          {children}
-        </div>
+  return (
+    <div className="DetailsGroup" ref={ref}>
+      <Icon
+        kind={IconSVG.TripleDot}
+        width={16}
+        height={16}
+        className="DetailsGroup__menu"
+        onClick={() => setOpen(!open)}
+      />
+      <div
+        className={cn("DetailsGroup__content", {
+          "DetailsGroup__content--visible": open,
+        })}
+      >
+        {children}
       </div>
-    );
-
-  return <div className="DetailsGroup">{children}</div>;
+    </div>
+  );
 };
 
 export default DetailsGroup;

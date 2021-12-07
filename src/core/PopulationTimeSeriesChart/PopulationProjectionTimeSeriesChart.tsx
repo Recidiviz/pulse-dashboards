@@ -53,7 +53,8 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
   }
 
   const timePeriod: MonthOptions = parseInt(
-    filtersStore.filters.timePeriod
+    // the timePeriod filter will only ever be single-select so always use the 0 index
+    filtersStore.filters.timePeriod[0]
   ) as MonthOptions;
 
   const dateSpacing = getDateSpacing(timePeriod);
@@ -113,7 +114,7 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
     {
       type: "y",
       value:
-        gender === "ALL" &&
+        gender === ["ALL"] &&
         legalStatus === ["ALL"] &&
         compartment === "INCARCERATION"
           ? TOTAL_INCARCERATED_LIMIT

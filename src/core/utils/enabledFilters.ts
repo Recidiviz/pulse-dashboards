@@ -28,7 +28,7 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.LEGAL_STATUS,
     ],
   },
-  supervisionPopulationOverTime: {
+  projectedSupervisionPopulationOverTime: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.GENDER,
@@ -60,27 +60,35 @@ export const TnEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   prisonPopulationOverTime: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.GENDER,
       FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
     ],
     enabledMoreFilters: [FILTER_TYPES.AGE_GROUP, FILTER_TYPES.LEGAL_STATUS],
   },
   prisonPopulationPersonLevel: {
-    enabledFilters: [FILTER_TYPES.GENDER, FILTER_TYPES.FACILITY],
-    enabledMoreFilters: [FILTER_TYPES.AGE_GROUP, FILTER_TYPES.LEGAL_STATUS],
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+    enabledMoreFilters: [FILTER_TYPES.LEGAL_STATUS],
   },
   prisonFacilityPopulation: {
-    enabledFilters: [FILTER_TYPES.GENDER, FILTER_TYPES.FACILITY],
-    enabledMoreFilters: [FILTER_TYPES.AGE_GROUP, FILTER_TYPES.LEGAL_STATUS],
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+    enabledMoreFilters: [FILTER_TYPES.LEGAL_STATUS],
   },
   supervisionToPrisonOverTime: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.GENDER,
-      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.SUPERVISION_TYPE,
     ],
     enabledMoreFilters: [
-      FILTER_TYPES.SUPERVISION_TYPE,
+      FILTER_TYPES.DISTRICT,
       FILTER_TYPES.MOST_SEVERE_VIOLATION,
       FILTER_TYPES.NUMBER_OF_VIOLATIONS,
     ],

@@ -59,7 +59,6 @@
 div.CoreMultiSelect {
   max-height: 2.5rem;
   flex-grow: 1;
-  width: 15.65rem;
   font-size: $font-size-base;
   color: $pine-3;
 
@@ -69,6 +68,7 @@ div.CoreMultiSelect {
     overflow-x: hidden;
     justify-content: left;
     padding-left: 1rem;
+    font-weight: 500;
   }
 
   &__clear-indicator {

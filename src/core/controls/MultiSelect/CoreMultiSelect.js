@@ -27,6 +27,7 @@ import Option from "../../../controls/MultiSelect/Option";
 import ValueContainer from "../../../controls/MultiSelect/ValueContainer";
 import { optionPropType } from "../../../controls/propTypes";
 import { getNewOptions } from "../../../controls/utils";
+import { coreSelectCustomStyles } from "../utils";
 
 const CustomScrollBarWrapper = ({ children }) => {
   return (
@@ -111,6 +112,7 @@ const CoreMultiSelect = ({
       value={value}
       isSearchable
       isMulti
+      styles={coreSelectCustomStyles(props.isChanged)}
       {...props}
     />
   );
@@ -118,6 +120,7 @@ const CoreMultiSelect = ({
 
 CoreMultiSelect.defaultProps = {
   className: "",
+  isChanged: false,
 };
 CoreMultiSelect.propTypes = {
   defaultValue: PropTypes.arrayOf(optionPropType).isRequired,
@@ -126,6 +129,7 @@ CoreMultiSelect.propTypes = {
   options: PropTypes.arrayOf(optionPropType).isRequired,
   className: PropTypes.string,
   summingOption: optionPropType.isRequired,
+  isChanged: PropTypes.bool,
 };
 CustomScrollBarWrapper.propTypes = {
   children: PropTypes.arrayOf(optionPropType).isRequired,

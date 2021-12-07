@@ -26,6 +26,7 @@ import {
 } from "mobx";
 import { QueryParamConfigMap } from "use-query-params";
 
+import { MonthOptions } from "../PopulationTimeSeriesChart/helpers";
 import {
   EnabledFiltersByMetric,
   PopulationFilterLabels,
@@ -35,7 +36,6 @@ import {
 import enabledFilters from "../utils/enabledFilters";
 import filterOptions, {
   defaultPopulationFilterValues,
-  getFilterOption,
   getFilterOptions,
 } from "../utils/filterOptions";
 import { formatTimePeriodLabel } from "../utils/timePeriod";
@@ -54,6 +54,7 @@ export default class FiltersStore {
     });
 
     this.rootStore = rootStore;
+    this.resetFilters = this.resetFilters.bind(this);
   }
 
   setFilters(updatedFilters: Partial<PopulationFilterValues>): void {
@@ -88,6 +89,11 @@ export default class FiltersStore {
     return formatTimePeriodLabel(get(this.filters, "timePeriod"));
   }
 
+  get monthRange(): MonthOptions {
+    // the timePeriod filter will only ever be single-select so always use the 0 index
+    return parseInt(this.filters.timePeriod[0]) as MonthOptions;
+  }
+
   get filtersDescription(): string {
     const metric = this.rootStore.metricsStore.current;
     const filters = toJS(this.filters);
@@ -117,16 +123,12 @@ export default class FiltersStore {
       const filter = this.filterOptions[
         filterType as keyof PopulationFilterLabels
       ];
-      const labels =
-        typeof this.filters[filter.type] === "string"
-          ? getFilterOption(this.filters[filter.type] as string, filter.options)
-              .label
-          : getFilterOptions(
-              this.filters[filter.type] as string[],
-              filter.options
-            )
-              .map((o) => o.label)
-              .join(",");
+      const labels = getFilterOptions(
+        this.filters[filter.type] as string[],
+        filter.options
+      )
+        .map((o) => o.label)
+        .join(",");
       acc[filterType as keyof PopulationFilterLabels] = labels;
       return acc;
     }, {} as PopulationFilterLabels);

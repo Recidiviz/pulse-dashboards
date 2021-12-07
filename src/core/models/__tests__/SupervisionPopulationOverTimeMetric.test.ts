@@ -257,7 +257,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
       runInAction(() => {
         if (metric.rootStore) {
           metric.rootStore.filtersStore.setFilters({
-            gender: "MALE",
+            gender: ["MALE"],
             district: ["DISTRICT_1"],
           });
         }

@@ -34,12 +34,10 @@ import { getFilterOptions } from "../utils/filterOptions";
 type Props = {
   filterOptions: PopulationFilters;
   enabledFilters?: EnabledFilters;
-  setQuery: (updatedFilters: Partial<PopulationFilters>) => void;
 };
 
 const MoreFilters: React.FC<Props> = ({
   filterOptions,
-  setQuery,
   enabledFilters = [],
 }) => {
   const [open, setOpen] = useState(false);
@@ -61,19 +59,19 @@ const MoreFilters: React.FC<Props> = ({
   const onUpdateFilters = (newOptions: FilterOption[], filterType: string) => {
     updateFilters({
       ...updatedFilters,
-      [filterType]: newOptions.map((o) => o.label),
+      [filterType]: newOptions.map((o) => o.value),
     });
   };
 
   const onResetFilters = () => {
-    setQuery(filtersStore.enabledFiltersDefaultQueryString);
+    filtersStore.resetFilters();
     setOpen(false);
   };
 
   if (enabledFilters.length < 1) return null;
 
   const onClickApply = () => {
-    setQuery(updatedFilters);
+    filtersStore.setFilters(updatedFilters);
     setOpen(false);
   };
 

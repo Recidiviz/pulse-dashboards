@@ -84,6 +84,7 @@ const withRouteSync = <Props extends RouteParams>(
       setPage,
       setSection,
       filtersStore,
+      metricsStore,
     } = useCoreStore();
 
     // prepare URI params to sync with store
@@ -95,29 +96,76 @@ const withRouteSync = <Props extends RouteParams>(
       viewId === PATHWAYS_VIEWS.operations || pageId === CORE_PAGES.practices
         ? metricQueryParams
         : filterQueryParams;
-    const [query] = useQueryParams(queryParams);
+    const [query, setQuery] = useQueryParams(queryParams);
     const cleanQuery = removeUndefinedValuesFromObject(query);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(
-      action("sync route params", () => {
+      action("sync route params to store on initial load", () => {
         pagePracticesStore.setCurrentEntityId(entityId);
         setSection(sectionId);
         setPage(pageId as PathwaysPage);
-        // eslint-disable-next-line no-unused-expressions
-        viewId === PATHWAYS_VIEWS.operations || pageId === CORE_PAGES.practices
-          ? pagePracticesStore.setSelectedMetricId(
-              pagePracticesStore.metrics.find((metric) => {
-                return metric.name === query.selectedMetric;
-              })?.id || METRIC_TYPES.OVERALL
+
+        if (
+          viewId === PATHWAYS_VIEWS.operations ||
+          pageId === CORE_PAGES.practices
+        ) {
+          const metricId =
+            pagePracticesStore.metrics.find((m) => {
+              return m.name === cleanQuery.selectedMetric;
+            })?.id || METRIC_TYPES.OVERALL;
+          pagePracticesStore.setSelectedMetricId(metricId);
+        } else {
+          filtersStore.setFilters(
+            convertLabelsToValues(
+              cleanQuery as PopulationFilterLabels,
+              filtersStore.filterOptions
             )
-          : filtersStore.setFilters(
-              convertLabelsToValues(
-                cleanQuery as PopulationFilterLabels,
-                filtersStore.filterOptions
-              )
+          );
+        }
+      }),
+      []
+    );
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(
+      action("sync params from store to query params", () => {
+        setSection(sectionId);
+        setPage(pageId as PathwaysPage);
+
+        if (
+          viewId === PATHWAYS_VIEWS.operations ||
+          pageId === CORE_PAGES.practices
+        ) {
+          const metricName =
+            pagePracticesStore.metrics.find((m) => {
+              return m.id === pagePracticesStore.selectedMetricId;
+            })?.name || "Overall";
+          setQuery({ selectedMetric: metricName });
+        } else {
+          const { current: metric } = metricsStore;
+          if (metric) {
+            const updatedQuery = [
+              ...metric.filters.enabledFilters,
+              ...(metric.filters.enabledMoreFilters || []),
+            ].reduce(
+              (acc, filter) => ({
+                ...acc,
+                // @ts-ignore
+                [filter]: filtersStore.filtersLabels[filter],
+              }),
+              {}
             );
-      })
+            setQuery(updatedQuery);
+          }
+        }
+      }),
+      [
+        filtersStore.filtersLabels,
+        pageId,
+        sectionId,
+        pagePracticesStore.selectedMetricId,
+      ]
     );
 
     return <RouteComponent {...props} />;

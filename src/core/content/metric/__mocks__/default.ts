@@ -39,7 +39,7 @@ const content: MetricCopy = {
     note: "Incarcerated population note",
     methodology: "Incarcerated population methodology",
   },
-  supervisionPopulationOverTime: {
+  projectedSupervisionPopulationOverTime: {
     title: "Supervised Population",
     note: "Supervised population note",
     methodology: "Supervised population methodology",
