@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 
-import { METRIC_TYPES } from "./constants";
+import { METRIC_MODES } from "./constants";
 
-export const metricTypePropType = PropTypes.oneOf([
-  METRIC_TYPES.RATES,
-  METRIC_TYPES.COUNTS,
+export const metricModePropType = PropTypes.oneOf([
+  METRIC_MODES.RATES,
+  METRIC_MODES.COUNTS,
 ]);
 
 export const officeDataPropTypes = PropTypes.shape({

@@ -37,9 +37,12 @@
     width: 11rem;
   }
   #mostSevereViolation {
-    width: 15rem
+    width: 15rem;
   }
   #numberOfViolations {
-    width: 10rem
+    width: 10rem;
+  }
+  &__toggle-pill {
+    margin-right: 1.5rem;
   }
 }

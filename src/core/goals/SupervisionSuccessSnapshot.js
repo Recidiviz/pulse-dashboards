@@ -34,7 +34,7 @@ import {
 } from "../../utils/datasets";
 import { generateTrendlineDataset } from "../../utils/trendline";
 import { configureDownloadButtons } from "../utils/configureDownloadButtons";
-import { METRIC_TYPES } from "../utils/constants";
+import { METRIC_MODES } from "../utils/constants";
 import {
   filterDatasetByDistrict,
   filterDatasetBySupervisionType,
@@ -46,7 +46,7 @@ import {
   getMinForGoalAndData,
   trendlineGoalText,
 } from "../utils/metricGoal";
-import { metricTypePropType } from "../utils/propTypes";
+import { metricModePropType } from "../utils/propTypes";
 import { monthNamesWithYearsFromNumbers } from "../utils/timePeriod";
 import {
   canDisplayGoal,
@@ -130,7 +130,7 @@ const SupervisionSuccessSnapshot = ({
     // Don't add completion rates for months in the future
     filter(isValidData),
     groupByMonthAndMap,
-    map(metricType === METRIC_TYPES.RATES ? dataRatesMapper : dataCountsMapper),
+    map(metricType === METRIC_MODES.RATES ? dataRatesMapper : dataCountsMapper),
     (dataset) =>
       sortFilterAndSupplementMostRecentMonths(
         dataset,
@@ -242,7 +242,7 @@ const SupervisionSuccessSnapshot = ({
           yAxes: [
             {
               ticks: toggleYAxisTicksAdditionalOptions(
-                METRIC_TYPES.RATES,
+                METRIC_MODES.RATES,
                 metricType,
                 chartMinValue,
                 chartMaxValue,
@@ -325,7 +325,7 @@ SupervisionSuccessSnapshot.propTypes = {
       supervision_type: PropTypes.string,
     })
   ).isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
   supervisionType: PropTypes.string.isRequired,

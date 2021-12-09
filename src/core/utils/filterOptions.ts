@@ -25,13 +25,13 @@ import {
   SetPopulationFilters,
 } from "../types/filters";
 import { CORE_VIEWS } from "../views";
-import { FILTER_TYPES, METRIC_TYPES } from "./constants";
+import { FILTER_TYPES, METRIC_MODES } from "./constants";
 
-export const metricTypeOptions = [
-  { label: "Counts", value: METRIC_TYPES.COUNTS },
-  { label: "Rates", value: METRIC_TYPES.RATES },
+export const metricModeOptions = [
+  { label: "Counts", value: METRIC_MODES.COUNTS },
+  { label: "Rates", value: METRIC_MODES.RATES },
 ];
-export const defaultMetricType = metricTypeOptions[0].value;
+export const defaultMetricMode = metricModeOptions[0].value;
 
 export const metricPeriodOptions = [
   { label: "3 years", value: "36" },

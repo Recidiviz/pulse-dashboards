@@ -35,12 +35,12 @@ import { Bar } from "react-chartjs-2";
 
 import { COLORS } from "../../assets/scripts/constants/colors";
 import { numberFromOfficerId } from "../../utils/formatStrings";
-import { METRIC_TYPES } from "../utils/constants";
+import { METRIC_MODES } from "../utils/constants";
 import {
   filterDatasetByMetricPeriodMonths,
   filterDatasetBySupervisionType,
 } from "../utils/dataFilters";
-import { metricTypePropType } from "../utils/propTypes";
+import { metricModePropType } from "../utils/propTypes";
 import {
   toggleLabel,
   toggleYAxisTicksStackedRateBasicCount,
@@ -75,13 +75,13 @@ const prepareDataGroupedByOffice = (bars, metricType) => (data) => {
     bars
   );
 
-  if (metricType === METRIC_TYPES.COUNTS) {
+  if (metricType === METRIC_MODES.COUNTS) {
     return {
       officerId,
       values: countsByType,
     };
   }
-  if (metricType === METRIC_TYPES.RATES) {
+  if (metricType === METRIC_MODES.RATES) {
     const totalCount = pipe(values, reduce(sum, 0))(countsByType);
     const ratesByType = mapValues(
       (count) => (100 * (count / totalCount)).toFixed(2),
@@ -245,7 +245,7 @@ PerOfficerBarChart.propTypes = {
   chartId: PropTypes.string.isRequired,
   exportLabel: PropTypes.string.isRequired,
   countsPerPeriodPerOfficer: PropTypes.arrayOf(PropTypes.shape({})),
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
   supervisionType: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,

@@ -27,9 +27,9 @@ import { Bar } from "react-chartjs-2";
 
 import { COLOR_ROTATION, COLORS } from "../../assets/scripts/constants/colors";
 import { configureDownloadButtons } from "../utils/configureDownloadButtons";
-import { METRIC_TYPES } from "../utils/constants";
+import { METRIC_MODES } from "../utils/constants";
 import { filterDatasetByDistrict } from "../utils/dataFilters";
-import { metricTypePropType } from "../utils/propTypes";
+import { metricModePropType } from "../utils/propTypes";
 
 const chartId = "reincarcerationRateByStayLength";
 const chartLabels = [
@@ -75,7 +75,7 @@ const ReincarcerationRateByStayLength = ({
   getTokenSilently,
 }) => {
   const label =
-    metricType === METRIC_TYPES.COUNTS
+    metricType === METRIC_MODES.COUNTS
       ? "Number reincarcerated"
       : "Reincarceration rate";
 
@@ -96,7 +96,7 @@ const ReincarcerationRateByStayLength = ({
       return 0;
     }
 
-    return metricType === METRIC_TYPES.COUNTS
+    return metricType === METRIC_MODES.COUNTS
       ? dataPointsForLabel.count
       : dataPointsForLabel.rate;
   })(chartLabels);
@@ -131,7 +131,7 @@ const ReincarcerationRateByStayLength = ({
           mode: "index",
           callbacks: {
             label:
-              metricType === METRIC_TYPES.COUNTS
+              metricType === METRIC_MODES.COUNTS
                 ? countsTooltipLabel
                 : ratesTooltipLabel,
           },
@@ -202,7 +202,7 @@ ReincarcerationRateByStayLength.propTypes = {
     })
   ).isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
 };
 
 export default ReincarcerationRateByStayLength;

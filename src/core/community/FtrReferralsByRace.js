@@ -31,14 +31,14 @@ import {
 } from "../../assets/scripts/constants/colors";
 import { raceValueToLabel } from "../../utils/formatStrings";
 import { configureDownloadButtons } from "../utils/configureDownloadButtons";
-import { METRIC_TYPES } from "../utils/constants";
+import { METRIC_MODES } from "../utils/constants";
 import {
   filterDatasetByDistrict,
   filterDatasetByLabels,
   filterDatasetByMetricPeriodMonths,
   filterDatasetBySupervisionType,
 } from "../utils/dataFilters";
-import { metricTypePropType } from "../utils/propTypes";
+import { metricModePropType } from "../utils/propTypes";
 import {
   addMissedRaceCounts,
   countMapper,
@@ -284,7 +284,7 @@ const FtrReferralsByRace = ({
   );
 
   let activeChart = countsChart;
-  if (metricType === METRIC_TYPES.RATES) {
+  if (metricType === METRIC_MODES.RATES) {
     activeChart = ratesChart;
   }
 
@@ -333,7 +333,7 @@ FtrReferralsByRace.propTypes = {
   ).isRequired,
   supervisionType: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
 };
 

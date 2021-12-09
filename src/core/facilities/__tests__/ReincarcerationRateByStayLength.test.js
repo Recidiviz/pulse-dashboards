@@ -18,7 +18,7 @@
 import React from "react";
 import ShallowRenderer from "react-test-renderer/shallow";
 
-import { METRIC_TYPES } from "../../utils/constants";
+import { METRIC_MODES } from "../../utils/constants";
 import ReincarcerationRateByStayLength from "../ReincarcerationRateByStayLength";
 
 const ratesByStayLength = [
@@ -128,7 +128,7 @@ describe("test for component ReincarcerationRateByStayLength", () => {
     const renderer = new ShallowRenderer();
     renderer.render(
       <ReincarcerationRateByStayLength
-        metricType={METRIC_TYPES.RATES}
+        metricType={METRIC_MODES.RATES}
         district={["all"]}
         ratesByStayLength={ratesByStayLength}
       />
@@ -169,7 +169,7 @@ describe("test for component ReincarcerationRateByStayLength", () => {
     const renderer = new ShallowRenderer();
     renderer.render(
       <ReincarcerationRateByStayLength
-        metricType={METRIC_TYPES.COUNTS}
+        metricType={METRIC_MODES.COUNTS}
         district={["all"]}
         ratesByStayLength={ratesByStayLength}
       />

@@ -29,6 +29,7 @@ import { CoreSelect } from "../controls/CoreSelect";
 import Filter from "../controls/Filter";
 import FilterBar from "../controls/FilterBar";
 import CoreMultiSelect from "../controls/MultiSelect/CoreMultiSelect";
+import TogglePill from "../controls/TogglePill";
 import { useCoreStore } from "../CoreStoreProvider";
 import DetailsGroup from "../DetailsGroup";
 import DownloadDataButton from "../DownloadDataButton";
@@ -36,7 +37,7 @@ import MethodologyLink from "../MethodologyLink";
 import MoreFilters from "../MoreFilters";
 import { EnabledFilters, PopulationFilters } from "../types/filters";
 import { FILTER_TYPES } from "../utils/constants";
-import { getFilterOptions } from "../utils/filterOptions";
+import { getFilterOptions, metricModeOptions } from "../utils/filterOptions";
 import { PATHWAYS_PATHS } from "../views";
 
 const PathwaysFilterBar: React.FC<{
@@ -45,12 +46,14 @@ const PathwaysFilterBar: React.FC<{
   chartTitle?: string;
   enabledFilters?: EnabledFilters;
   enabledMoreFilters?: EnabledFilters;
+  enableMetricModeToggle?: boolean;
 }> = ({
   filterOptions,
   handleDownload,
   chartTitle,
   enabledFilters = [],
   enabledMoreFilters = [],
+  enableMetricModeToggle,
 }) => {
   const { filtersStore } = useCoreStore();
   const { filters } = filtersStore;
@@ -95,6 +98,16 @@ const PathwaysFilterBar: React.FC<{
           )
         }
       >
+        {enableMetricModeToggle && (
+          <TogglePill
+            leftPill={metricModeOptions[0]}
+            rightPill={metricModeOptions[1]}
+            onChange={(metricMode: string) =>
+              filtersStore.setMetricMode(metricMode)
+            }
+            currentValue={filtersStore.currentMetricMode}
+          />
+        )}
         {enabledFilters.map((filterType) => {
           const filter = filterOptions[filterType];
           return (

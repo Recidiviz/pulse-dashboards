@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FILTER_TYPES, METRIC_TYPES } from "../constants";
+import { FILTER_TYPES, METRIC_MODES } from "../constants";
 import filterOptions, {
   convertLabelsToValues,
   defaultDistrict,
+  defaultMetricMode,
   defaultMetricPeriod,
-  defaultMetricType,
   defaultSupervisionType,
 } from "../filterOptions";
 
@@ -28,7 +28,7 @@ describe("Filter default values", () => {
   it("should be right", () => {
     expect(defaultDistrict).toEqual(["all"]);
     expect(defaultMetricPeriod).toBe("12");
-    expect(defaultMetricType).toBe(METRIC_TYPES.COUNTS);
+    expect(defaultMetricMode).toBe(METRIC_MODES.COUNTS);
     expect(defaultSupervisionType).toBe("all");
   });
 });

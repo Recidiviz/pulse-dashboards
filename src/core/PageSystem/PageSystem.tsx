@@ -57,6 +57,7 @@ const PageSystem: React.FC = () => {
           enabledMoreFilters={enabledMoreFilters}
           handleDownload={download}
           chartTitle={metric.chartTitle}
+          enableMetricModeToggle={metric.enableMetricModeToggle}
         />
       }
     >

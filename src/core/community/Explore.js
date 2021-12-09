@@ -32,11 +32,11 @@ import useChartData from "../hooks/useChartData";
 import Methodology from "../Methodology";
 import PageTemplate from "../PageTemplate";
 import PeriodLabel from "../PeriodLabel";
-import { METRIC_TYPES } from "../utils/constants";
+import { METRIC_MODES } from "../utils/constants";
 import {
   defaultDistrict,
+  defaultMetricMode,
   defaultMetricPeriod,
-  defaultMetricType,
   defaultSupervisionType,
 } from "../utils/filterOptions";
 import CaseTerminationsByOfficer from "./CaseTerminationsByOfficer";
@@ -58,7 +58,7 @@ const CommunityExplore = () => {
     "us_nd/community/explore"
   );
 
-  const [metricType, setMetricType] = useState(defaultMetricType);
+  const [metricType, setMetricType] = useState(defaultMetricMode);
   const [metricPeriodMonths, setMetricPeriodMonths] = useState(
     defaultMetricPeriod
   );
@@ -215,7 +215,7 @@ const CommunityExplore = () => {
             <>
               ADMISSIONS BY TYPE
               {(supervisionType !== "all" || district[0] !== "all") &&
-                metricType === METRIC_TYPES.RATES && (
+                metricType === METRIC_MODES.RATES && (
                   <WarningIcon
                     tooltipText="This graph is showing both non-revocation and revocation admissions to prison. We cannot show percentages of admissions from a specific supervision type or office because those filters can’t be applied to non-revocation admissions to prison."
                     className="pL-10 toggle-alert"

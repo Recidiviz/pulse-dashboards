@@ -35,7 +35,7 @@ import {
 } from "../../utils/datasets";
 import { generateTrendlineDataset } from "../../utils/trendline";
 import { configureDownloadButtons } from "../utils/configureDownloadButtons";
-import { METRIC_TYPES } from "../utils/constants";
+import { METRIC_MODES } from "../utils/constants";
 import {
   filterDatasetByDistrict,
   filterDatasetBySupervisionType,
@@ -47,7 +47,7 @@ import {
   getMinForGoalAndData,
   trendlineGoalText,
 } from "../utils/metricGoal";
-import { metricTypePropType } from "../utils/propTypes";
+import { metricModePropType } from "../utils/propTypes";
 import { monthNamesWithYearsFromNumbers } from "../utils/timePeriod";
 import {
   canDisplayGoal,
@@ -145,7 +145,7 @@ const RevocationAdmissionsSnapshot = ({
     (dataset) => filterDatasetByDistrict(dataset, district),
     groupByMonth(calculateTotalRevocations),
     toRevocationCountsList,
-    metricType === METRIC_TYPES.COUNTS
+    metricType === METRIC_MODES.COUNTS
       ? identity
       : map((data) => ({
           ...data,
@@ -351,7 +351,7 @@ RevocationAdmissionsSnapshot.propTypes = {
   ).isRequired,
   supervisionType: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
 };
 

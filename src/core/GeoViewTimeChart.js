@@ -38,8 +38,8 @@ import {
   toHumanReadable,
   toTitleCase,
 } from "../utils/formatStrings";
-import { metricTypePropType } from "./utils/propTypes";
-import { METRIC_TYPES } from "./utils/constants";
+import { metricModePropType } from "./utils/propTypes";
+import { METRIC_MODES } from "./utils/constants";
 
 const minMarkerRadius = 10;
 const maxMarkerRadius = 35;
@@ -108,7 +108,7 @@ function getOfficeDataValue(
     return 0;
   }
 
-  if (metricType === METRIC_TYPES.COUNTS) {
+  if (metricType === METRIC_MODES.COUNTS) {
     return office.dataValues[metricPeriodMonths][supervisionTypeKey].numerator;
   }
 
@@ -121,7 +121,7 @@ function relatedMaxValue(
   metricPeriodMonths,
   supervisionTypeKey
 ) {
-  const valueKey = metricType === METRIC_TYPES.COUNTS ? "numerator" : "rate";
+  const valueKey = metricType === METRIC_MODES.COUNTS ? "numerator" : "rate";
   return maxValues[metricPeriodMonths][supervisionTypeKey][valueKey];
 }
 
@@ -179,7 +179,7 @@ function toggleTooltip(
     );
   }
 
-  if (metricType === METRIC_TYPES.COUNTS) {
+  if (metricType === METRIC_MODES.COUNTS) {
     return `${office.officeName}: ${value}`;
   }
 
@@ -207,7 +207,7 @@ function toggleTooltipForCounty(
     );
   }
 
-  if (metricType === METRIC_TYPES.COUNTS) {
+  if (metricType === METRIC_MODES.COUNTS) {
     return `${geographyNameForCounty}: ${value}`;
   }
   return `${geographyNameForCounty}: ${value}%`;
@@ -773,7 +773,7 @@ GeoViewTimeChart.propTypes = {
   centerLong: PropTypes.number.isRequired,
   centerLat: PropTypes.number.isRequired,
   chartTitle: PropTypes.string.isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
   dataPointsByOffice: PropTypes.arrayOf(
     PropTypes.shape({

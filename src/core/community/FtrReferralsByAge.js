@@ -27,13 +27,13 @@ import {
 } from "../../assets/scripts/constants/colors";
 import { toInt } from "../../utils/formatStrings";
 import { configureDownloadButtons } from "../utils/configureDownloadButtons";
-import { METRIC_TYPES } from "../utils/constants";
+import { METRIC_MODES } from "../utils/constants";
 import {
   filterDatasetByDistrict,
   filterDatasetByMetricPeriodMonths,
   filterDatasetBySupervisionType,
 } from "../utils/dataFilters";
-import { metricTypePropType } from "../utils/propTypes";
+import { metricModePropType } from "../utils/propTypes";
 import { tooltipForCountChart, tooltipForRateChart } from "../utils/tooltips";
 
 const chartId = "ftrReferralsByAge";
@@ -300,7 +300,7 @@ const FtrReferralsByAge = ({
   );
 
   let activeChart = countsChart;
-  if (metricType === METRIC_TYPES.RATES) {
+  if (metricType === METRIC_MODES.RATES) {
     activeChart = ratesChart;
   }
 
@@ -343,7 +343,7 @@ FtrReferralsByAge.propTypes = {
   supervisionType: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
 };
 
 export default FtrReferralsByAge;

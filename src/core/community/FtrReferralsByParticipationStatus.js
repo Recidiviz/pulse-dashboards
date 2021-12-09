@@ -20,8 +20,8 @@ import React from "react";
 
 import { COLORS_FIVE_VALUES } from "../../assets/scripts/constants/colors";
 import PerMonthBarChart from "../bars/PerMonthBarChart";
-import { METRIC_TYPES } from "../utils/constants";
-import { metricTypePropType } from "../utils/propTypes";
+import { METRIC_MODES } from "../utils/constants";
+import { metricModePropType } from "../utils/propTypes";
 
 const chartId = "ftrReferralsByParticipationStatus";
 
@@ -56,7 +56,7 @@ const FtrReferralsByParticipationStatus = ({
       { key: "denied", label: "Denied" },
       { key: "discharged", label: "Discharged" },
     ]}
-    yAxisLabel={metricType === METRIC_TYPES.COUNTS ? "Count" : "Percentage"}
+    yAxisLabel={metricType === METRIC_MODES.COUNTS ? "Count" : "Percentage"}
     barColorPalette={chartColors}
     dataExportLabel="Month\Status"
     getTokenSilently={getTokenSilently}
@@ -65,7 +65,7 @@ const FtrReferralsByParticipationStatus = ({
 
 FtrReferralsByParticipationStatus.propTypes = {
   getTokenSilently: PropTypes.func.isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
   supervisionType: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,

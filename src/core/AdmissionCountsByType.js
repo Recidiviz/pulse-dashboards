@@ -31,13 +31,13 @@ import { Bar, Pie } from "react-chartjs-2";
 import { COLOR_ROTATION, COLORS } from "../assets/scripts/constants/colors";
 import { sortByLabel } from "../utils/datasets";
 import { configureDownloadButtons } from "./utils/configureDownloadButtons";
-import { METRIC_TYPES } from "./utils/constants";
+import { METRIC_MODES } from "./utils/constants";
 import {
   filterDatasetByDistrict,
   filterDatasetByMetricPeriodMonths,
   filterDatasetBySupervisionType,
 } from "./utils/dataFilters";
-import { metricTypePropType } from "./utils/propTypes";
+import { metricModePropType } from "./utils/propTypes";
 
 const chartId = "admissionCountsByType";
 
@@ -56,9 +56,9 @@ const AdmissionCountsByType = ({
 }) => {
   // This chart does not support district or supervision type breakdowns for rates, only counts
   const filterDistrict =
-    metricType === METRIC_TYPES.COUNTS ? district : ["all"];
+    metricType === METRIC_MODES.COUNTS ? district : ["all"];
   const filterSupervisionType =
-    metricType === METRIC_TYPES.COUNTS ? supervisionType : "all";
+    metricType === METRIC_MODES.COUNTS ? supervisionType : "all";
 
   const filteredAdmissionCounts = pipe(
     (dataset) => filterDatasetByDistrict(dataset, filterDistrict),
@@ -232,7 +232,7 @@ const AdmissionCountsByType = ({
   );
 
   const activeChart =
-    metricType === METRIC_TYPES.RATES ? ratesChart : countsChart;
+    metricType === METRIC_MODES.RATES ? ratesChart : countsChart;
 
   useEffect(() => {
     configureDownloadButtons({
@@ -262,7 +262,7 @@ AdmissionCountsByType.propTypes = {
   admissionCountsByType: PropTypes.arrayOf(PropTypes.shape({})),
   supervisionType: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
 };
 

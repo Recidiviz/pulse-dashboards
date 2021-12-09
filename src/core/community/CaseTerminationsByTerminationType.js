@@ -20,8 +20,8 @@ import React from "react";
 
 import { COLORS_SEVEN_VALUES } from "../../assets/scripts/constants/colors";
 import PerMonthBarChart from "../bars/PerMonthBarChart";
-import { METRIC_TYPES } from "../utils/constants";
-import { metricTypePropType } from "../utils/propTypes";
+import { METRIC_MODES } from "../utils/constants";
+import { metricModePropType } from "../utils/propTypes";
 
 const chartId = "caseTerminationsByTerminationType";
 
@@ -53,7 +53,7 @@ const CaseTerminationsByTerminationType = ({
       { key: "other", label: "Other" },
     ]}
     yAxisLabel={
-      metricType === METRIC_TYPES.COUNTS ? "Case terminations" : "Percentage"
+      metricType === METRIC_MODES.COUNTS ? "Case terminations" : "Percentage"
     }
     barColorPalette={COLORS_SEVEN_VALUES}
     dataExportLabel="Month"
@@ -63,7 +63,7 @@ const CaseTerminationsByTerminationType = ({
 
 CaseTerminationsByTerminationType.propTypes = {
   getTokenSilently: PropTypes.func.isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
   caseTerminationCountsByMonthByTerminationType: PropTypes.arrayOf(

@@ -29,13 +29,13 @@ import {
   COLORS_SEVEN_VALUES,
 } from "../../assets/scripts/constants/colors";
 import { configureDownloadButtons } from "../utils/configureDownloadButtons";
-import { METRIC_TYPES } from "../utils/constants";
+import { METRIC_MODES } from "../utils/constants";
 import {
   filterDatasetByDistrict,
   filterDatasetByMetricPeriodMonths,
   filterDatasetBySupervisionType,
 } from "../utils/dataFilters";
-import { metricTypePropType } from "../utils/propTypes";
+import { metricModePropType } from "../utils/propTypes";
 import {
   addMissedRaceCounts,
   countMapper,
@@ -246,7 +246,7 @@ const RevocationProportionByRace = ({
   );
 
   let activeChart = countsChart;
-  if (metricType === METRIC_TYPES.RATES) {
+  if (metricType === METRIC_MODES.RATES) {
     activeChart = ratesChart;
   }
 
@@ -275,7 +275,7 @@ const RevocationProportionByRace = ({
 };
 
 RevocationProportionByRace.propTypes = {
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
   supervisionType: PropTypes.string.isRequired,

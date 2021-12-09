@@ -29,7 +29,7 @@ import {
 } from "../../utils/datasets";
 import { groupByMonth } from "../bars/utils";
 import { configureDownloadButtons } from "../utils/configureDownloadButtons";
-import { METRIC_TYPES } from "../utils/constants";
+import { METRIC_MODES } from "../utils/constants";
 import {
   filterDatasetByDistrict,
   filterDatasetBySupervisionType,
@@ -39,7 +39,7 @@ import {
   getGoalForChart,
   getMaxForGoalAndDataIfGoalDisplayable,
 } from "../utils/metricGoal";
-import { metricTypePropType, officeDataPropTypes } from "../utils/propTypes";
+import { metricModePropType, officeDataPropTypes } from "../utils/propTypes";
 import { monthNamesWithYearsFromNumbers } from "../utils/timePeriod";
 import {
   canDisplayGoal,
@@ -85,7 +85,7 @@ const RevocationCountOverTime = ({
     (dataset) => filterDatasetBySupervisionType(dataset, supervisionType),
     (dataset) => filterDatasetByDistrict(dataset, district),
     groupByMonth(["revocation_count", "total_supervision_count"]),
-    map(metricType === METRIC_TYPES.RATES ? dataRatesMapper : dataCountsMapper),
+    map(metricType === METRIC_MODES.RATES ? dataRatesMapper : dataCountsMapper),
     (dataset) =>
       sortFilterAndSupplementMostRecentMonths(
         dataset,
@@ -169,7 +169,7 @@ const RevocationCountOverTime = ({
           yAxes: [
             {
               ticks: toggleYAxisTicksFor(
-                METRIC_TYPES.COUNTS,
+                METRIC_MODES.COUNTS,
                 metricType,
                 chartMinValue,
                 chartMaxValue,
@@ -251,7 +251,7 @@ RevocationCountOverTime.defaultProps = {
 RevocationCountOverTime.propTypes = {
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   stateCode: PropTypes.string.isRequired,
   supervisionType: PropTypes.string.isRequired,
   officeData: PropTypes.arrayOf(officeDataPropTypes).isRequired,

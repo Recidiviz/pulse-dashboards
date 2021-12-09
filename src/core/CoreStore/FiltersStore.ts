@@ -35,6 +35,7 @@ import {
 } from "../types/filters";
 import enabledFilters from "../utils/enabledFilters";
 import filterOptions, {
+  defaultMetricMode,
   defaultPopulationFilterValues,
   getFilterOptions,
 } from "../utils/filterOptions";
@@ -45,6 +46,8 @@ export default class FiltersStore {
   rootStore;
 
   filters: PopulationFilterValues = defaultPopulationFilterValues;
+
+  metricMode: string = defaultMetricMode;
 
   constructor({ rootStore }: { rootStore: CoreStore }) {
     makeAutoObservable(this, {
@@ -65,6 +68,10 @@ export default class FiltersStore {
         updatedFilters[filterKey as keyof PopulationFilters]
       );
     });
+  }
+
+  setMetricMode(metricMode: string): void {
+    this.metricMode = metricMode;
   }
 
   resetFilters(): void {
@@ -116,6 +123,10 @@ export default class FiltersStore {
       [] as string[]
     );
     return filtersStrings.join("\n").concat("\n");
+  }
+
+  get currentMetricMode(): string {
+    return this.metricMode;
   }
 
   get filtersLabels(): PopulationFilterLabels {

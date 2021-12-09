@@ -28,8 +28,8 @@ import {
   defaultMetricPeriodOption,
   defaultSupervisionTypeOption,
   getFilterOption,
+  metricModeOptions,
   metricPeriodOptions,
-  metricTypeOptions,
   supervisionTypeOptions,
 } from "./utils/filterOptions";
 
@@ -90,8 +90,8 @@ const CoreFilterBar: React.FC<CoreFilterBarProps> = ({
       {setChartMetricType && metricType && (
         <Filter>
           <TogglePill
-            leftPill={metricTypeOptions[0]}
-            rightPill={metricTypeOptions[1]}
+            leftPill={metricModeOptions[0]}
+            rightPill={metricModeOptions[1]}
             onChange={setChartMetricType}
             currentValue={metricType}
           />

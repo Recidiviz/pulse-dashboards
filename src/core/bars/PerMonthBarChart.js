@@ -27,12 +27,12 @@ import { Bar } from "react-chartjs-2";
 import { COLORS } from "../../assets/scripts/constants/colors";
 import { toNumber } from "../../utils";
 import { sortFilterAndSupplementMostRecentMonths } from "../../utils/datasets";
-import { METRIC_TYPES } from "../utils/constants";
+import { METRIC_MODES } from "../utils/constants";
 import {
   filterDatasetByDistrict,
   filterDatasetBySupervisionType,
 } from "../utils/dataFilters";
-import { metricTypePropType } from "../utils/propTypes";
+import { metricModePropType } from "../utils/propTypes";
 import { monthNamesWithYearsFromNumbers } from "../utils/timePeriod";
 import {
   toggleLabel,
@@ -58,14 +58,14 @@ export const prepareDataGroupedByMonth = (metricType, bars) => (data) => {
 
   const totalCount = pipe(values, reduce(sum, 0))(monthCounts);
 
-  if (metricType === METRIC_TYPES.COUNTS) {
+  if (metricType === METRIC_MODES.COUNTS) {
     return {
       year,
       month,
       monthDict: monthCounts,
     };
   }
-  if (metricType === METRIC_TYPES.RATES) {
+  if (metricType === METRIC_MODES.RATES) {
     const monthRates = {};
 
     Object.keys(monthCounts).forEach((key) => {
@@ -223,7 +223,7 @@ PerMonthBarChart.propTypes = {
   chartId: PropTypes.string.isRequired,
   exportLabel: PropTypes.string.isRequired,
   countsByMonth: PropTypes.arrayOf(PropTypes.shape({})),
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   numMonths: PropTypes.string.isRequired,
   filters: PropTypes.shape({
     district: PropTypes.arrayOf(PropTypes.string),

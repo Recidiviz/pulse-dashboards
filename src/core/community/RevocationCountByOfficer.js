@@ -20,8 +20,8 @@ import React from "react";
 
 import { COLORS_FIVE_VALUES } from "../../assets/scripts/constants/colors";
 import PerOfficerBarChart from "../bars/PerOfficerBarChart";
-import { METRIC_TYPES } from "../utils/constants";
-import { metricTypePropType, officeDataPropTypes } from "../utils/propTypes";
+import { METRIC_MODES } from "../utils/constants";
+import { metricModePropType, officeDataPropTypes } from "../utils/propTypes";
 
 const chartId = "revocationsByOfficer";
 
@@ -50,7 +50,7 @@ const RevocationCountByOfficer = ({
       { key: "unknown_count", label: "Unknown Type" },
     ]}
     yAxisLabel={
-      metricType === METRIC_TYPES.COUNTS ? "Revocation count" : "Percentage"
+      metricType === METRIC_MODES.COUNTS ? "Revocation count" : "Percentage"
     }
     barColorPalette={COLORS_FIVE_VALUES}
     getTokenSilently={getTokenSilently}
@@ -76,7 +76,7 @@ RevocationCountByOfficer.propTypes = {
       unknown_count: PropTypes.string,
     })
   ),
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
   supervisionType: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,

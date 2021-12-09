@@ -131,6 +131,7 @@ export default class MetricsStore {
       sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
       rootStore: this.rootStore,
       accessor: "district",
+      enableMetricModeToggle: true,
       dataTransformer: createSupervisionPopulationSnapshot,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByDistrict,

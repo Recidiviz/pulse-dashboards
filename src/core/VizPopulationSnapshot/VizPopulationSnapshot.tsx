@@ -27,6 +27,7 @@ import { useCoreStore } from "../CoreStoreProvider";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
+import { METRIC_MODES } from "../utils/constants";
 import { getFilterLabel } from "../utils/filterOptions";
 import withMetricHydrator from "../withMetricHydrator";
 
@@ -38,11 +39,20 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
   metric,
 }) => {
   const { filtersStore } = useCoreStore();
-  const { filters } = filtersStore;
-  const { dataSeries, chartTitle, accessor, chartXAxisTitle } = metric;
+  const { filters, currentMetricMode } = filtersStore;
+  const {
+    dataSeries,
+    chartTitle,
+    accessor,
+    chartXAxisTitle,
+    enableMetricModeToggle,
+  } = metric;
 
   // @ts-ignore
   const accessorFilter = filters[accessor];
+  const isGeographic = ["district", "facility", "officer"].includes(accessor);
+  const isRate =
+    currentMetricMode === METRIC_MODES.RATES && enableMetricModeToggle;
 
   const [hoveredId, setHoveredId] = useState(null);
   const [pickedId, setPickedId] = useState([] as string[]);
@@ -55,13 +65,13 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     index,
     accessorValue: d[accessor],
     accessorLabel: getFilterLabel(accessor, d[accessor]),
-    count: d.count,
+    value: isRate ? ((d.count * 100) / d.totalPopulation).toFixed() : d.count,
   }));
 
   const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
 
   const { maxTickValue, tickValues } = getTicks(
-    Math.max(...data.map((d) => d.count))
+    Math.max(...data.map((d) => d.value))
   );
 
   const yRange = [0, maxTickValue];
@@ -71,8 +81,6 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     const { data: pieceData } = d.pieces[0];
     setHoveredId(pieceData.index);
   };
-
-  const isGeographic = ["district", "facility", "officer"].includes(accessor);
 
   return (
     <div>
@@ -112,7 +120,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
             return (
               <PathwaysTooltip
                 date={pieceData.accessorLabel}
-                value={pieceData.count}
+                value={isRate ? `${pieceData.value}%` : pieceData.value}
               />
             );
           }}
@@ -140,7 +148,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
             }
             return { fill: styles.dataForest };
           }}
-          rAccessor="count"
+          rAccessor="value"
           rExtent={yRange}
           // @ts-ignore
           oLabel={(accessorLabel: string, _: any) => {
@@ -149,7 +157,8 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           axes={[
             {
               orient: "left",
-              tickFormat: (n: number) => n.toLocaleString(),
+              tickFormat: (n: number) =>
+                isRate ? `${n}%` : n.toLocaleString(),
               tickValues,
             },
           ]}

@@ -32,8 +32,8 @@ import PageTemplate from "../PageTemplate";
 import PeriodLabel from "../PeriodLabel";
 import {
   defaultDistrict,
+  defaultMetricMode,
   defaultMetricPeriod,
-  defaultMetricType,
 } from "../utils/filterOptions";
 import { getYearFromNow } from "../utils/timePeriod";
 import AdmissionsVsReleases from "./AdmissionsVsReleases";
@@ -44,7 +44,7 @@ const FacilitiesExplore = () => {
   const { apiData, isLoading, getTokenSilently } = useChartData(
     "us_nd/facilities/explore"
   );
-  const [metricType, setMetricType] = useState(defaultMetricType);
+  const [metricType, setMetricType] = useState(defaultMetricMode);
   const [metricPeriodMonths, setMetricPeriodMonths] = useState(
     defaultMetricPeriod
   );

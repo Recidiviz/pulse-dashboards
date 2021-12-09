@@ -20,8 +20,8 @@ import React from "react";
 
 import { COLORS_STACKED_TWO_VALUES } from "../../assets/scripts/constants/colors";
 import PerMonthBarChart from "../bars/PerMonthBarChart";
-import { METRIC_TYPES } from "../utils/constants";
-import { metricTypePropType } from "../utils/propTypes";
+import { METRIC_MODES } from "../utils/constants";
+import { metricModePropType } from "../utils/propTypes";
 
 const chartId = "revocationsBySupervisionType";
 
@@ -44,7 +44,7 @@ const RevocationCountBySupervisionType = ({
       { key: "parole_count", label: "Parole" },
     ]}
     yAxisLabel={
-      metricType === METRIC_TYPES.COUNTS ? "Revocation count" : "Percentage"
+      metricType === METRIC_MODES.COUNTS ? "Revocation count" : "Percentage"
     }
     barColorPalette={COLORS_STACKED_TWO_VALUES}
     dataExportLabel="Month"
@@ -54,7 +54,7 @@ const RevocationCountBySupervisionType = ({
 
 RevocationCountBySupervisionType.propTypes = {
   getTokenSilently: PropTypes.func.isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
   revocationCountsByMonthBySupervisionType: PropTypes.arrayOf(

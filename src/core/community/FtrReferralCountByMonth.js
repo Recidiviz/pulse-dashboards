@@ -30,12 +30,12 @@ import {
 } from "../../utils/datasets";
 import { groupByMonth } from "../bars/utils";
 import { configureDownloadButtons } from "../utils/configureDownloadButtons";
-import { METRIC_TYPES } from "../utils/constants";
+import { METRIC_MODES } from "../utils/constants";
 import {
   filterDatasetByDistrict,
   filterDatasetBySupervisionType,
 } from "../utils/dataFilters";
-import { metricTypePropType } from "../utils/propTypes";
+import { metricModePropType } from "../utils/propTypes";
 import { monthNamesWithYearsFromNumbers } from "../utils/timePeriod";
 import { toggleLabel, updateTooltipForMetricType } from "../utils/tooltips";
 
@@ -83,7 +83,7 @@ const FtrReferralCountByMonth = ({
     (dataset) => filterDatasetBySupervisionType(dataset, supervisionType),
     (dataset) => filterDatasetByDistrict(dataset, district),
     groupByMonth(["count", "total_supervision_count"]),
-    map(metricType === METRIC_TYPES.RATES ? dataRatesMapper : dataCountsMapper),
+    map(metricType === METRIC_MODES.RATES ? dataRatesMapper : dataCountsMapper),
     sortAndSupplementMostRecentMonths(metricPeriodMonths)
   )(countsByMonth);
 
@@ -200,7 +200,7 @@ const FtrReferralCountByMonth = ({
     if (
       headerElement &&
       mostRecentValue !== null &&
-      metricType === METRIC_TYPES.COUNTS
+      metricType === METRIC_MODES.COUNTS
     ) {
       const title = `There have been <span class='fs-block header-highlight'>${mostRecentValue} referrals</span> to Free Through Recovery this month so far.`;
       headerElement.innerHTML = title;
@@ -230,7 +230,7 @@ FtrReferralCountByMonth.propTypes = {
   ).isRequired,
   supervisionType: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
   header: PropTypes.string,
 };

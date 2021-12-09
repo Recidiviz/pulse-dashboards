@@ -29,9 +29,9 @@ import { COLORS, COLORS_GOOD_BAD } from "../../assets/scripts/constants/colors";
 import { toNumber } from "../../utils";
 import { sortFilterAndSupplementMostRecentMonths } from "../../utils/datasets";
 import { configureDownloadButtons } from "../utils/configureDownloadButtons";
-import { METRIC_TYPES } from "../utils/constants";
+import { METRIC_MODES } from "../utils/constants";
 import { filterDatasetByDistrict } from "../utils/dataFilters";
-import { metricTypePropType } from "../utils/propTypes";
+import { metricModePropType } from "../utils/propTypes";
 import { monthNamesWithYearsFromNumbers } from "../utils/timePeriod";
 import { toggleLabel, updateTooltipForMetricType } from "../utils/tooltips";
 
@@ -83,7 +83,7 @@ const AdmissionsVsReleases = ({
     groupBy(({ year, month }) => `${year}-${month}`),
     values,
     map(
-      metricType === METRIC_TYPES.COUNTS ? dataCountsMapper : dataRatesMapper
+      metricType === METRIC_MODES.COUNTS ? dataCountsMapper : dataRatesMapper
     ),
     (dataset) =>
       sortFilterAndSupplementMostRecentMonths(
@@ -196,7 +196,7 @@ const AdmissionsVsReleases = ({
   if (
     headerElement &&
     mostRecentValue !== null &&
-    metricType === METRIC_TYPES.COUNTS &&
+    metricType === METRIC_MODES.COUNTS &&
     district[0].toUpperCase() === "ALL"
   ) {
     let title = "";
@@ -232,7 +232,7 @@ AdmissionsVsReleases.propTypes = {
       year: PropTypes.string,
     })
   ).isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
   header: PropTypes.string,

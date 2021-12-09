@@ -20,8 +20,8 @@ import React from "react";
 
 import { COLORS_FIVE_VALUES } from "../../assets/scripts/constants/colors";
 import PerMonthBarChart from "../bars/PerMonthBarChart";
-import { METRIC_TYPES } from "../utils/constants";
-import { metricTypePropType } from "../utils/propTypes";
+import { METRIC_MODES } from "../utils/constants";
+import { metricModePropType } from "../utils/propTypes";
 
 const chartId = "revocationsByViolationType";
 
@@ -50,7 +50,7 @@ const RevocationCountByViolationType = ({
       { key: "unknown_count", label: "Unknown Type" },
     ]}
     yAxisLabel={
-      metricType === METRIC_TYPES.COUNTS ? "Revocation count" : "Percentage"
+      metricType === METRIC_MODES.COUNTS ? "Revocation count" : "Percentage"
     }
     barColorPalette={COLORS_FIVE_VALUES}
     dataExportLabel="Month"
@@ -59,7 +59,7 @@ const RevocationCountByViolationType = ({
 );
 
 RevocationCountByViolationType.propTypes = {
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
   supervisionType: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,

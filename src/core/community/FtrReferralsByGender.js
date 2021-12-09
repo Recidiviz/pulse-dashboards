@@ -36,14 +36,14 @@ import {
   genderValueToLabel,
 } from "../../utils/formatStrings";
 import { configureDownloadButtons } from "../utils/configureDownloadButtons";
-import { METRIC_TYPES } from "../utils/constants";
+import { METRIC_MODES } from "../utils/constants";
 import {
   filterDatasetByDistrict,
   filterDatasetByLabels,
   filterDatasetByMetricPeriodMonths,
   filterDatasetBySupervisionType,
 } from "../utils/dataFilters";
-import { metricTypePropType } from "../utils/propTypes";
+import { metricModePropType } from "../utils/propTypes";
 import { tooltipForCountChart, tooltipForRateChart } from "../utils/tooltips";
 
 const chartId = "ftrReferralsByGender";
@@ -228,7 +228,7 @@ const FtrReferralsByGender = ({
   );
 
   let activeChart = countsChart;
-  if (metricType === METRIC_TYPES.RATES) {
+  if (metricType === METRIC_MODES.RATES) {
     activeChart = ratesChart;
   }
 
@@ -271,7 +271,7 @@ FtrReferralsByGender.propTypes = {
   supervisionType: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
-  metricType: metricTypePropType.isRequired,
+  metricType: metricModePropType.isRequired,
 };
 
 export default FtrReferralsByGender;
