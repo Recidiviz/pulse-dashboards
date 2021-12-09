@@ -67,7 +67,10 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
             : mostSevereViolation.includes(record.mostSevereViolation)) &&
           (this.id === "supervisionToPrisonPopulationByNumberOfViolations"
             ? !["ALL"].includes(record.numberOfViolations)
-            : numberOfViolations.includes(record.numberOfViolations))
+            : numberOfViolations.includes(record.numberOfViolations)) &&
+          (this.id === "supervisionToPrisonPopulationByLengthOfStay"
+            ? !["ALL"].includes(record.lengthOfStay)
+            : ["ALL"].includes(record.lengthOfStay))
         );
       }
     );
@@ -83,7 +86,13 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
         ageGroup: dataset[0].ageGroup,
         mostSevereViolation: dataset[0].mostSevereViolation,
         numberOfViolations: dataset[0].numberOfViolations,
+        lengthOfStay: dataset[0].lengthOfStay,
+        totalPopulation: sumBy("totalPopulation", dataset),
         count: sumBy("count", dataset),
+        populationProportion: (
+          (sumBy("count", dataset) * 100) /
+          sumBy("totalPopulation", dataset)
+        ).toFixed(),
       }))
     )(filteredRecords);
     return result as SupervisionPopulationSnapshotRecord[];

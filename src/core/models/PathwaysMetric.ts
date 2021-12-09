@@ -118,6 +118,10 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     return this.content.chartXAxisTitle;
   }
 
+  get chartYAxisTitle(): string | undefined {
+    return this.content.chartYAxisTitle;
+  }
+
   /**
    * Returns the methodology copy specific to this metric.
    * Page methodology + metric methodology.

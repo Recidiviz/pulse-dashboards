@@ -81,8 +81,8 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           "VizPopulationSnapshot__labels--not-rotated": data.length < 10,
         })}
       >
-        <div className="PopulationTimeSeriesChart__header">
-          <div className="PopulationTimeSeriesChart__title">
+        <div className="VizPathways__header">
+          <div className="VizPathways__title">
             {chartTitle} <span>as of {latestUpdate}</span>
           </div>
         </div>

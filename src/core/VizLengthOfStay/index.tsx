@@ -14,32 +14,5 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-.PathwaysFilterBar {
-  #timePeriod {
-    width: 8rem;
-  }
-  #gender {
-    width: 7.5rem;
-  }
-  #legalStatus {
-    width: 11rem;
-  }
-  #supervisionType {
-    width: 11rem;
-  }
-  #ageGroup {
-    width: 16rem;
-  }
-  #facility {
-    width: 11rem;
-  }
-  #district {
-    width: 11rem;
-  }
-  #mostSevereViolation {
-    width: 15rem
-  }
-  #numberOfViolations {
-    width: 10rem
-  }
-}
+
+export { default } from "./VizLengthOfStay";

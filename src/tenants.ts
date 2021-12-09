@@ -116,6 +116,7 @@ const TENANTS: Tenants = {
       ],
       supervisionToPrison: [
         PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLengthOfStay,
         PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.countByMostSevereViolation,
         PATHWAYS_SECTIONS.countByNumberOfViolations,

@@ -104,6 +104,8 @@ export function createSupervisionPopulationSnapshot(
         district: record.district,
         mostSevereViolation: record.most_severe_violation,
         numberOfViolations: record.number_of_violations,
+        lengthOfStay: record.length_of_stay,
+        totalPopulation: parseInt(record.total_population),
       },
       supervisionDimensionDefaults
     );

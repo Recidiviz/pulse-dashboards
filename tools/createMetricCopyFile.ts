@@ -42,6 +42,12 @@ const createMetricCopyFile = async (
         ...(row.Title ? { title: row.Title } : {}),
         ...(row.Note ? { note: row.Note } : {}),
         ...(row.Methodology ? { methodology: row.Methodology } : {}),
+        ...(row["X-Axis title"]
+          ? { chartXAxisTitle: row["X-Axis title"] }
+          : {}),
+        ...(row["Y-Axis title"]
+          ? { chartYAxisTitle: row["Y-Axis title"] }
+          : {}),
       },
     ])
   ) as MetricContent;

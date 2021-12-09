@@ -49,13 +49,18 @@ const content: MetricCopy = {
   supervisionToPrisonPopulationByDistrict: {
     title: "Admissions from supervision by district",
   },
-  supervisionToPrisonPopulationByMostSevereViolation: {
-    title: "Admissions from supervision by most severe violation",
-    chartXAxisTitle: "Most severe violation prior to admission to prison",
+  supervisionToPrisonPopulationByLengthOfStay: {
+    title: "Time to admission from supervision",
+    chartXAxisTitle: "Time to admission from supervision to prison, in months",
+    chartYAxisTitle: "Proportion of supervision population",
   },
   supervisionToPrisonPopulationByNumberOfViolations: {
     title: "Admissions from supervision by number of violations",
-    chartXAxisTitle: "Number of violations prior to admission to prison",
+    chartYAxisTitle: "Number of violations prior to admission to prison",
+  },
+  supervisionToPrisonPopulationByMostSevereViolation: {
+    title: "Admissions from supervision by most severe violation",
+    chartYAxisTitle: "Most severe violation prior to admission to prison",
   },
 };
 

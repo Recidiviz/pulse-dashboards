@@ -66,6 +66,11 @@ const content: MetricCopy = {
     methodology:
       "Admissions from supervision by number of violations methodology",
   },
+  supervisionToPrisonPopulationByLengthOfStay: {
+    title: "Time to admission from supervision",
+    note: "Time to admission from supervision note",
+    methodology: "Time to admission from supervisionmethodology",
+  },
   supervisionToLibertyOverTime: {
     title: "Releases to from supervision to liberty",
     note: "Releases to from supervision to liberty note",

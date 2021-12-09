@@ -43,6 +43,9 @@
   &__section-name {
     margin-right: 2.5rem;
   }
+  &__arrow {
+    min-width: 16px;
+  }
 
   @media screen and (max-width: $core-breakpoint-sm) {
     padding: 2rem 0;

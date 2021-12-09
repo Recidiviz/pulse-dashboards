@@ -1,4 +1,4 @@
-/*
+/*!
  * Recidiviz - a data platform for criminal justice reform
  * Copyright (C) 2021 Recidiviz, Inc.
  *
@@ -18,40 +18,26 @@
  *
  */
 
-import { MetricId } from "../models/types";
-import { PathwaysPage, PathwaysSection } from "../views";
+@import "../CoreConstants";
+@import "../controls/mixins";
 
-export type PageContent = {
-  title: string;
-  summary: string;
-  sections?: Sections;
-  methodology?: string;
-};
-
-export type Sections = {
-  [key in PathwaysSection]: string;
-};
-
-export type PageCopy = {
-  [key in PathwaysPage]: PageContent;
-};
-
-export type StateSpecificPageCopy = {
-  [key in PathwaysPage]?: Partial<PageContent>;
-};
-
-export type MetricContent = {
-  title: string;
-  note?: string;
-  chartXAxisTitle?: string;
-  chartYAxisTitle?: string;
-  methodology?: string;
-};
-
-export type MetricCopy = {
-  [key in MetricId]: MetricContent;
-};
-
-export type StateSpecificMetricCopy = {
-  [key in MetricId]?: Partial<MetricContent>;
-};
+.VizLengthOfStay {
+  &__chart-container {
+    display: flex;
+  }
+  &__chartXAxisTitle {
+    text-align: center;
+    padding-bottom: 2rem;
+    color: $slate-85;
+  }
+  &__chartYAxisTitle {
+    text-align: center;
+    color: $slate-85;
+    writing-mode: vertical-rl;
+    transform: scale(-1, -1);
+    padding-right: 2rem;
+  }
+  .data-visualization .axis.bottom text {
+    transform: initial !important;
+  }
+}

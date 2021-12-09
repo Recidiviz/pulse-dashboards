@@ -26,6 +26,7 @@ import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulation
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import { MetricRecord } from "../models/types";
 import VizCountOverTimeWithAvg from "../VizCountOverTimeWithAvg";
+import VizLengthOfStay from "../VizLengthOfStay";
 import VizPopulationOverTime from "../VizPopulationOverTime";
 import VizPopulationPersonLevel from "../VizPopulationPersonLevel";
 import VizPopulationProjectionOverTime from "../VizPopulationProjectionOverTime";
@@ -45,7 +46,11 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
   }
 
   if (metric instanceof SupervisionPopulationSnapshotMetric) {
-    return <VizPopulationSnapshot metric={metric} />;
+    return metric.id === "supervisionToPrisonPopulationByLengthOfStay" ? (
+      <VizLengthOfStay metric={metric} />
+    ) : (
+      <VizPopulationSnapshot metric={metric} />
+    );
   }
 
   if (metric instanceof PrisonPopulationPersonLevelMetric) {

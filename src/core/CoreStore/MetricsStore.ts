@@ -76,6 +76,8 @@ export default class MetricsStore {
           .supervisionToPrisonPopulationByMostSevereViolation,
         [PATHWAYS_SECTIONS.countByNumberOfViolations]: this
           .supervisionToPrisonPopulationByNumberOfViolations,
+        [PATHWAYS_SECTIONS.countByLengthOfStay]: this
+          .supervisionToPrisonPopulationByLengthOfStay,
       },
       [PATHWAYS_PAGES.supervisionToLiberty]: {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToLibertyOverTime,
@@ -158,6 +160,19 @@ export default class MetricsStore {
       accessor: "numberOfViolations",
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByNumberOfViolations,
+    });
+  }
+
+  get supervisionToPrisonPopulationByLengthOfStay(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionToPrisonPopulationByLengthOfStay",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "lengthOfStay",
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToPrisonPopulationByLengthOfStay,
     });
   }
 

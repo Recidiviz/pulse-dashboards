@@ -52,6 +52,8 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           most_severe_violation: "ALL",
           number_of_violations: "ALL",
           supervision_type: "ALL",
+          length_of_stay: "ALL",
+          total_population: 45,
         },
         {
           gender: "ALL",
@@ -62,6 +64,8 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           most_severe_violation: undefined,
           number_of_violations: undefined,
           supervision_type: undefined,
+          length_of_stay: "ALL",
+          total_population: 30,
         },
         {
           gender: "FEMALE",
@@ -69,6 +73,8 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           district: "DISTRICT_1",
           count: "5",
           last_updated: "2021-10-27",
+          length_of_stay: "ALL",
+          total_population: 30,
         },
       ],
     }),
@@ -132,6 +138,8 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         mostSevereViolation: "ALL",
         numberOfViolations: "ALL",
         supervisionType: "ALL",
+        lengthOfStay: "ALL",
+        totalPopulation: 45,
       },
       {
         gender: "ALL",
@@ -142,6 +150,8 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         mostSevereViolation: "ALL",
         numberOfViolations: "ALL",
         supervisionType: "ALL",
+        lengthOfStay: "ALL",
+        totalPopulation: 30,
       },
       {
         gender: "FEMALE",
@@ -152,6 +162,8 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         mostSevereViolation: "ALL",
         numberOfViolations: "ALL",
         supervisionType: "ALL",
+        lengthOfStay: "ALL",
+        totalPopulation: 30,
       },
     ]);
   });
@@ -191,6 +203,9 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           mostSevereViolation: "ALL",
           numberOfViolations: "ALL",
           supervisionType: "ALL",
+          lengthOfStay: "ALL",
+          totalPopulation: 45,
+          populationProportion: "33",
         },
         {
           gender: "ALL",
@@ -201,6 +216,9 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           mostSevereViolation: "ALL",
           numberOfViolations: "ALL",
           supervisionType: "ALL",
+          lengthOfStay: "ALL",
+          totalPopulation: 30,
+          populationProportion: "33",
         },
       ]);
     });
@@ -224,6 +242,9 @@ describe("SupervisionPopulationSnapshotMetric", () => {
             mostSevereViolation: "ALL",
             numberOfViolations: "ALL",
             supervisionType: "ALL",
+            lengthOfStay: "ALL",
+            totalPopulation: 30,
+            populationProportion: "17",
           },
         ]);
       });

@@ -85,6 +85,7 @@ export type SupervisionPopulationSnapshotRecord = {
   district: string;
   mostSevereViolation: string;
   numberOfViolations: string;
+  lengthOfStay: string;
   count: number;
 };
 
@@ -213,4 +214,5 @@ export type MetricId =
   | "prisonPopulationPersonLevel"
   | "supervisionToPrisonPopulationByDistrict"
   | "supervisionToPrisonPopulationByMostSevereViolation"
-  | "supervisionToPrisonPopulationByNumberOfViolations";
+  | "supervisionToPrisonPopulationByNumberOfViolations"
+  | "supervisionToPrisonPopulationByLengthOfStay";

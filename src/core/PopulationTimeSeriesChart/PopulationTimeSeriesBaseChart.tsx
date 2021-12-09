@@ -18,6 +18,7 @@
  *
  */
 
+import "../VizPathways.scss";
 import "./PopulationTimeSeriesChart.scss";
 
 import { scaleTime } from "d3-scale";
@@ -54,7 +55,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   ...chartProps
 }) => {
   const historicalLine = {
-    class: "PopulationTimeSeriesChart__historicalLine",
+    class: "VizPathways__historicalLine",
     data: historicalPopulation,
   };
 
@@ -71,9 +72,9 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
     : getTickValues(historicalPopulation, dateSpacing);
 
   return (
-    <div className="PopulationTimeSeriesChart">
-      <div className="PopulationTimeSeriesChart__header">
-        <div className="PopulationTimeSeriesChart__title">{title}</div>
+    <div className="VizPathways PopulationTimeSeriesChart">
+      <div className="VizPathways__header">
+        <div className="VizPathways__title">{title}</div>
       </div>
       <ResponsiveXYFrame
         responsiveWidth
@@ -100,7 +101,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
         xExtent={[beginDate, endDate]}
         yExtent={[0, chartTop]}
         showLinePoints
-        pointClass="PopulationTimeSeriesChart__point"
+        pointClass="VizPathways__point"
         axes={[
           { orient: "left", tickFormat: (n: number) => n.toLocaleString() },
           {

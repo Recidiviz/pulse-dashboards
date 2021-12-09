@@ -66,11 +66,11 @@ const SectionNavigation: React.FC = () => {
             <div className="SectionNavigation__section-name">
               {sections && sections[sectionId]}
             </div>
-            {currentSection === sectionId && (
-              <div className="SectionNavigation__arrow">
+            <div className="SectionNavigation__arrow">
+              {currentSection === sectionId && (
                 <Icon kind={IconSVG.Arrow} width={16} height={16} />
-              </div>
-            )}
+              )}
+            </div>
           </Link>
         </div>
       ))}

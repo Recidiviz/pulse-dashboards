@@ -40,6 +40,7 @@ const content: StateSpecificPageCopy = {
         "Admissions from supervision by most severe violation",
       countByNumberOfViolations:
         "Admissions from supervision by number of violations",
+      countByLengthOfStay: "Time to admission from supervision",
     },
   },
 };

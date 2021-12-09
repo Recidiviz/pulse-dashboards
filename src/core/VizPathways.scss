@@ -1,0 +1,72 @@
+@import "./CoreConstants";
+
+.VizPathways {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 2.5rem;
+    padding-left: 2.5rem;
+    padding-right: 3rem;
+  }
+
+  &__title {
+    color: $pine-1;
+    @include font-ui-sans-16;
+    & span {
+      color: $slate-80;
+    }
+  }
+
+  &__point {
+    fill: $indigo;
+    r: 0.3rem;
+  }
+
+  &__historicalLine {
+    stroke: $indigo;
+    stroke-width: 2;
+  }
+
+  .data-visualization {
+    .axis-baseline {
+      stroke: none;
+    }
+
+    .axis-label {
+      fill: $slate-80;
+    }
+
+    .axis.bottom {
+      transform: translateY(18px);
+      text {
+        transform: rotate(-45deg) translate(-0.4rem, -0.4rem);
+      }
+    }
+
+    .axis.left {
+      transform: translateX(-4px);
+    }
+  }
+
+  .background-graphics {
+    .x.tick-line {
+      stroke: none;
+    }
+
+    .y.tick-line {
+      stroke: $slate-20;
+    }
+  }
+
+  .annotation-layer {
+    .uncertainty {
+      fill: $indigo-10;
+    }
+
+    .frame-hover {
+      fill: $signal-tooltip;
+      stroke: $signal-tooltip;
+      r: 0.25rem;
+    }
+  }
+}
