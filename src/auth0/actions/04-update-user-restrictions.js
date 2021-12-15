@@ -23,15 +23,18 @@
 exports.onExecutePostLogin = async (event, api) => {
   const { app_metadata, email } = event.user;
   const stateCode = app_metadata.state_code?.toLowerCase();
+  const authorizedDomains = ["recidiviz.org", "csg.org", "recidiviz-test.org"]; // add authorized domains here
+  const emailSplit = email?.split("@") || "";
+  const userDomain = emailSplit[emailSplit.length - 1].toLowerCase();
 
-  // This is the only action available to SSO users
-  // If a recidiviz user doesn't have a state_code set (i.e. it's their first login),
-  // set it to be recidiviz so they don't get a 404 wall
-  if (userDomain === "recidiviz.org" && !app_metadata.state_code) {
-    api.user.setAppMetadata("state_code", "recidiviz");
-  }
-  
-  if (app_metadata.skip_sync_permissions) {
+  const DENY_MESSAGE = 'There was a problem authorizing your account. Please contact your organization administrator. ' +
+    'If you don’t know your administrator, contact feedback@recidiviz.org.';
+
+  if (app_metadata.skip_sync_permissions ||
+    authorizedDomains.some(function (authorizedDomain) {
+      return userDomain === authorizedDomain;
+    })
+  ) {
     return;
   }
 
@@ -57,12 +60,15 @@ exports.onExecutePostLogin = async (event, api) => {
       const client = await auth.getIdTokenClient(
         event.secrets.TARGET_AUDIENCE
       );
+
+      // some ID accounts come up with an onmicrosoft domain. This patches the email for the request
+      const request_email = event.user.email?.replace("idoc.onmicrosoft.com", "idoc.idaho.gov");
+
       const url = `${event.secrets
-        .RECIDIVIZ_APP_URL}/auth/dashboard_user_restrictions_by_email?email_address=${event.user.email}&region_code=${stateCode}`;
+        .RECIDIVIZ_APP_URL}/auth/dashboard_user_restrictions_by_email?email_address=${request_email}&region_code=${stateCode}`;
 
       const apiResponse = await client.request({ url, retry: true });
       const restrictions = apiResponse.data;
-      if (event.user.email === 'elchao96@gmail.com') { return }
       api.user.setAppMetadata("allowed_supervision_location_ids", restrictions.allowed_supervision_location_ids || []);
       api.user.setAppMetadata("allowed_supervision_location_level", restrictions.allowed_supervision_location_level);
       api.user.setAppMetadata("can_access_case_triage", restrictions.can_access_case_triage || false);
@@ -78,7 +84,7 @@ exports.onExecutePostLogin = async (event, api) => {
           clientId: event.client.client_id,
         },
       });
-      api.access.deny('There was a problem authorizing your account. Please contact your organization administrator, if you don’t know your administrator, contact feedback@recidiviz.org.');
+      api.access.deny(DENY_MESSAGE);
     }
   }
 };
