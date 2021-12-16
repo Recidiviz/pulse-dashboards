@@ -62,7 +62,7 @@ exports.onExecutePostLogin = async (event, api) => {
       );
 
       // some ID accounts come up with an onmicrosoft domain. This patches the email for the request
-      const request_email = event.user.email?.replace("idoc.onmicrosoft.com", "idoc.idaho.gov");
+      const request_email = event.user.email?.replace("iddoc.onmicrosoft.com", "idoc.idaho.gov");
 
       const url = `${event.secrets
         .RECIDIVIZ_APP_URL}/auth/dashboard_user_restrictions_by_email?email_address=${request_email}&region_code=${stateCode}`;
