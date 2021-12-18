@@ -130,9 +130,9 @@ const withRouteSync = <Props extends RouteParams>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(
       action("sync params from store to query params", () => {
+        pagePracticesStore.setCurrentEntityId(entityId);
         setSection(sectionId);
         setPage(pageId as PathwaysPage);
-
         if (
           viewId === PATHWAYS_VIEWS.operations ||
           pageId === CORE_PAGES.practices
@@ -161,6 +161,7 @@ const withRouteSync = <Props extends RouteParams>(
         }
       }),
       [
+        entityId,
         filtersStore.filtersLabels,
         pageId,
         sectionId,
