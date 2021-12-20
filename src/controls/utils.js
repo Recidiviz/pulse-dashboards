@@ -88,7 +88,7 @@ export const formatSelectOptionValue = ({
 
   // labels for core filters
   if (isCore) {
-    return `${selectedOptions[0].label} and ${selectedOptions.length - 1} more`;
+    return `${selectedOptions.length} selected`;
   }
 
   if (isShortFormat) {
