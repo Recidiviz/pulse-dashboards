@@ -1,11 +1,12 @@
 @import "./CoreConstants";
 
 .VizPathways {
+  padding-left: 2.5rem;
+  
   &__header {
     display: flex;
     justify-content: space-between;
     padding-top: 2.5rem;
-    padding-left: 2.5rem;
     padding-right: 3rem;
   }
 

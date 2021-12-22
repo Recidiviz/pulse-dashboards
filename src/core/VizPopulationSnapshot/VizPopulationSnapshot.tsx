@@ -90,7 +90,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
   return (
     <div>
       <div
-        className={cn("VizPopulationSnapshot", {
+        className={cn("VizPopulationSnapshot VizPathways", {
           "VizPopulationSnapshot__labels--not-rotated": data.length < 10,
         })}
       >
@@ -132,7 +132,12 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           type="bar"
           data={data}
           size={[558, 558]}
-          margin={{ left: 79, bottom: 75, right: 50, top: 56 }}
+          margin={{
+            left: (maxTickValue.toString().length + 1) * 10,
+            bottom: 75,
+            right: 50,
+            top: 56,
+          }}
           oAccessor="accessorLabel"
           oPadding={data.length > 25 ? 2 : 15}
           style={(d: any) => {

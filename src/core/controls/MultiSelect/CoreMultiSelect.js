@@ -19,7 +19,6 @@ import "./CoreMultiSelect.scss";
 import cn from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { Scrollbars } from "react-custom-scrollbars";
 import ReactSelect from "react-select";
 
 import GroupHeading from "../../../controls/MultiSelect/GroupHeading";
@@ -30,14 +29,7 @@ import { getNewOptions } from "../../../controls/utils";
 import { coreSelectCustomStyles } from "../utils";
 
 const CustomScrollBarWrapper = ({ children }) => {
-  return (
-    <Scrollbars
-      thumbSize={31}
-      style={{ height: 250, marginBottom: -15, width: 249 }}
-    >
-      {children}
-    </Scrollbars>
-  );
+  return <div style={{ overflowY: "auto", maxHeight: 250 }}>{children}</div>;
 };
 
 const CoreMultiSelect = ({

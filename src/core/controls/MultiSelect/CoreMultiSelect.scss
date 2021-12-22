@@ -69,6 +69,7 @@ div.CoreMultiSelect {
     justify-content: left;
     padding-left: 1rem;
     font-weight: 500;
+    @include font-ui-sans-14;
   }
 
   &__clear-indicator {
@@ -132,6 +133,7 @@ div.CoreMultiSelect {
     overflow: hidden;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
+    @include font-ui-sans-14;
 
     &-list div:first-child {
       padding-top: none;
@@ -156,10 +158,6 @@ div.CoreMultiSelect {
         & .MultiSelect__checkbox {
           background: rgba(0, 108, 103, 0.2);
         }
-      }
-
-      &:last-child {
-        margin-bottom: 0.9rem;
       }
     }
   }

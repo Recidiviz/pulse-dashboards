@@ -96,7 +96,12 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
         xAccessor="date"
         yAccessor="value"
         size={[558, 558]}
-        margin={{ left: 104, bottom: 96, right: 50, top: 56 }}
+        margin={{
+          left: (chartTop.toString().length + 1.5) * 10,
+          bottom: 96,
+          right: 50,
+          top: 56,
+        }}
         // @ts-ignore
         xExtent={[beginDate, endDate]}
         yExtent={[0, chartTop]}

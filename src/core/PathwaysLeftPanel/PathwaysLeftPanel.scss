@@ -33,6 +33,7 @@
     @include font-ui-sans-16;
     color: $slate-80;
     padding-bottom: 0.5rem;
+    width: 18.75rem;
   }
 
   @media screen and (max-width: $core-breakpoint-md) {
@@ -51,6 +52,7 @@
     }
     &__description {
       padding-bottom: 0;
+      width: auto;
     }
     & :last-child {
       display: none;

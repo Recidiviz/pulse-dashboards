@@ -96,7 +96,7 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
   const yRange = [0, maxTickValue];
 
   return (
-    <div className="VizCountOverTimeWithAvg">
+    <div className="VizPathways VizCountOverTimeWithAvg">
       <div className="VizPathways__header">
         <div className="VizPathways__title">{chartTitle}</div>
         <PopulationTimeSeriesLegend
@@ -129,7 +129,12 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
         type="bar"
         data={data}
         size={[558, 558]}
-        margin={{ left: 79, bottom: 96, right: 50, top: 56 }}
+        margin={{
+          left: (maxTickValue.toString().length + 1) * 10,
+          bottom: 96,
+          right: 50,
+          top: 56,
+        }}
         oAccessor="date"
         oPadding={data.length > 25 ? 2 : 15}
         style={(d: any) => {

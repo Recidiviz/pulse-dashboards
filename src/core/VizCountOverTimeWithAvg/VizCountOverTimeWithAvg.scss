@@ -29,19 +29,6 @@
   line-height: 1.5rem;
   width: 100%;
 
-  &__Header {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 2.5rem;
-    padding-left: 2.5rem;
-    padding-right: 3rem;
-  }
-
-  &__Title {
-    color: $pine-1;
-    @include font-ui-sans-16;
-  }
-
   .background-graphics {
     .axis.axis-tick-lines {
       stroke: none;
