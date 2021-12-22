@@ -28,6 +28,13 @@ const content: PageCopy = {
       countOverTime: "Prison population over time",
     },
   },
+  prisonToSupervision: {
+    title: "Prison to Supervision",
+    summary: "lorem ipsum",
+    sections: {
+      countOverTime: "Releases from prison to supervision over time",
+    },
+  },
   supervision: {
     title: "Supervision",
     summary: "This page shows all people supervised by the state.",

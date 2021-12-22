@@ -56,10 +56,12 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
         return (
           gender.includes(record.gender) &&
           legalStatus.includes(record.legalStatus) &&
-          ageGroup.includes(record.ageGroup) &&
-          (this.id === "prisonFacilityPopulation"
+          (this.accessor === "facility"
             ? !["ALL"].includes(record.facility)
-            : facility.includes(record.facility))
+            : facility.includes(record.facility)) &&
+          (this.accessor === "ageGroup"
+            ? !["ALL"].includes(record.ageGroup)
+            : ageGroup.includes(record.ageGroup))
         );
       }
     );
@@ -68,12 +70,17 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
       groupBy((d: PrisonPopulationSnapshotRecord) => [d[this.accessor]]),
       values,
       map((dataset) => ({
+        count: sumBy("count", dataset),
+        totalPopulation: sumBy("totalPopulation", dataset),
+        populationProportion: (
+          (sumBy("count", dataset) * 100) /
+          sumBy("totalPopulation", dataset)
+        ).toFixed(),
+        lastUpdated: dataset[0].lastUpdated,
         gender: dataset[0].gender,
         legalStatus: dataset[0].legalStatus,
         facility: dataset[0].facility,
-        lastUpdated: dataset[0].lastUpdated,
         ageGroup: dataset[0].ageGroup,
-        count: sumBy("count", dataset),
       }))
     )(filteredRecords);
     return result as PrisonPopulationSnapshotRecord[];

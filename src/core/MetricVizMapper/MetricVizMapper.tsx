@@ -46,11 +46,12 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
   }
 
   if (metric instanceof SupervisionPopulationSnapshotMetric) {
-    return metric.id === "supervisionToPrisonPopulationByLengthOfStay" ? (
-      <VizLengthOfStay metric={metric} />
-    ) : (
-      <VizPopulationSnapshot metric={metric} />
-    );
+    switch (metric.id) {
+      case "supervisionToPrisonPopulationByLengthOfStay":
+        return <VizLengthOfStay metric={metric} />;
+      default:
+        return <VizPopulationSnapshot metric={metric} />;
+    }
   }
 
   if (metric instanceof PrisonPopulationPersonLevelMetric) {
@@ -58,7 +59,12 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
   }
 
   if (metric instanceof PopulationOverTimeMetric) {
-    return <VizPopulationOverTime metric={metric} />;
+    switch (metric.id) {
+      case "prisonToSupervisionPopulationOverTime":
+        return <VizCountOverTimeWithAvg metric={metric} />;
+      default:
+        return <VizPopulationOverTime metric={metric} />;
+    }
   }
 
   if (metric instanceof SupervisionPopulationOverTimeMetric) {

@@ -61,21 +61,21 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
           gender.includes(record.gender) &&
           ageGroup.includes(record.ageGroup) &&
           supervisionType.includes(record.supervisionType) &&
-          (this.id === "supervisionToPrisonPopulationByDistrict"
+          (this.accessor === "district"
             ? !["ALL"].includes(record.district)
             : district.includes(record.district)) &&
-          (this.id === "supervisionToPrisonPopulationByMostSevereViolation"
+          (this.accessor === "mostSevereViolation"
             ? !["ALL"].includes(record.mostSevereViolation)
             : mostSevereViolation.includes(record.mostSevereViolation)) &&
-          (this.id === "supervisionToPrisonPopulationByNumberOfViolations"
+          (this.accessor === "numberOfViolations"
             ? !["ALL"].includes(record.numberOfViolations)
             : numberOfViolations.includes(record.numberOfViolations)) &&
-          (this.id === "supervisionToPrisonPopulationBySupervisionLevel"
-            ? !["ALL"].includes(record.supervisionLevel)
-            : supervisionLevel.includes(record.supervisionLevel)) &&
-          (this.id === "supervisionToPrisonPopulationByLengthOfStay"
+          (this.accessor === "lengthOfStay"
             ? !["ALL"].includes(record.lengthOfStay)
             : ["ALL"].includes(record.lengthOfStay)) &&
+          (this.accessor === "supervisionLevel"
+            ? !["ALL"].includes(record.supervisionLevel)
+            : supervisionLevel.includes(record.supervisionLevel)) &&
           ["ALL"].includes(record.race)
         );
       }
@@ -85,22 +85,22 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
       groupBy((d: SupervisionPopulationSnapshotRecord) => [d[this.accessor]]),
       values,
       map((dataset) => ({
+        count: sumBy("count", dataset),
+        totalPopulation: sumBy("totalPopulation", dataset),
+        populationProportion: (
+          (sumBy("count", dataset) * 100) /
+          sumBy("totalPopulation", dataset)
+        ).toFixed(),
+        lastUpdated: dataset[0].lastUpdated,
         gender: dataset[0].gender,
         district: dataset[0].district,
         supervisionType: dataset[0].supervisionType,
-        lastUpdated: dataset[0].lastUpdated,
         ageGroup: dataset[0].ageGroup,
         mostSevereViolation: dataset[0].mostSevereViolation,
         numberOfViolations: dataset[0].numberOfViolations,
         lengthOfStay: dataset[0].lengthOfStay,
         supervisionLevel: dataset[0].supervisionLevel,
         race: dataset[0].race,
-        totalPopulation: sumBy("totalPopulation", dataset),
-        count: sumBy("count", dataset),
-        populationProportion: (
-          (sumBy("count", dataset) * 100) /
-          sumBy("totalPopulation", dataset)
-        ).toFixed(),
       }))
     )(filteredRecords);
     return result as SupervisionPopulationSnapshotRecord[];

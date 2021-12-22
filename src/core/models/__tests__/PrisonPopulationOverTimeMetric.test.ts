@@ -47,6 +47,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           month: "12",
           facility: "ALL",
           age_group: undefined,
+          avg_90day: "100",
           state_code: "US_TN",
           person_count: 7641,
           year: "2015",
@@ -57,6 +58,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           month: "1",
           facility: "ALL",
           age_group: undefined,
+          avg_90day: "100",
           state_code: "US_TN",
           person_count: 7641,
           year: "2016",
@@ -67,6 +69,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           month: "5",
           facility: "MCCX",
           age_group: undefined,
+          avg_90day: "100",
           state_code: "US_TN",
           person_count: 7641,
           year: "2016",
@@ -130,6 +133,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
         facility: "ALL",
         ageGroup: "ALL",
         totalPopulation: 7641,
+        avg90day: 100,
         year: 2015,
       },
       {
@@ -139,6 +143,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
         facility: "ALL",
         ageGroup: "ALL",
         totalPopulation: 7641,
+        avg90day: 100,
         year: 2016,
       },
       {
@@ -148,6 +153,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
         facility: "MCCX",
         ageGroup: "ALL",
         totalPopulation: 7641,
+        avg90day: 100,
         year: 2016,
       },
     ]);
@@ -216,6 +222,9 @@ describe("PrisonPopulationOverTimeMetric", () => {
           legalStatus: "ALL",
           gender: "ALL",
           totalPopulation: 7641,
+          ageGroup: "ALL",
+          avg90day: 100,
+          facility: "ALL",
         },
         {
           year: 2016,
@@ -223,6 +232,9 @@ describe("PrisonPopulationOverTimeMetric", () => {
           legalStatus: "ALL",
           gender: "ALL",
           totalPopulation: 7641,
+          ageGroup: "ALL",
+          avg90day: 100,
+          facility: "ALL",
         },
       ]);
     });
@@ -241,6 +253,9 @@ describe("PrisonPopulationOverTimeMetric", () => {
             compartment: undefined,
             gender: "MALE",
             legalStatus: "ALL",
+            ageGroup: "ALL",
+            avg90day: 100,
+            facility: "MCCX",
             month: 5,
             totalPopulation: 7641,
             year: 2016,

@@ -14,24 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { ViewMethodology } from "../../models/types";
+import { getMetricCopy, getPageCopy } from "..";
 
-import { PathwaysSection } from "../views";
-
-export type RoutePermission = (string | any)[];
-
-export type NavigationSection = keyof Navigation;
-
-export type Navigation = {
-  goals?: string[];
-  community?: string[];
-  facilities?: string[];
-  methodology?: string[];
-  operations?: string[];
-  system?: string[];
-  prison?: PathwaysSection[];
-  prisonToSupervision?: PathwaysSection[];
-  supervision?: PathwaysSection[];
-  supervisionToPrison?: PathwaysSection[];
-  supervisionToLiberty?: PathwaysSection[];
-  "id-methodology"?: string[];
+/**
+ * All methodology attribute blocks are in Markdown
+ */
+export const usMeMethodology: ViewMethodology = {
+  system: {
+    title: "System-Level Trends",
+    // TODO figure out a way to get this into the sync content
+    description: `The System-Level Trends page provides a real-time map of the corrections system and helps identify patterns of success and failure among specific cohorts of people.`,
+    get pageCopy() {
+      return getPageCopy("US_ME");
+    },
+    get metricCopy() {
+      return getMetricCopy("US_ME");
+    },
+  },
 };

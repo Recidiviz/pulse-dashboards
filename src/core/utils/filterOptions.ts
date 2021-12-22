@@ -18,6 +18,7 @@ import { US_ND } from "../../RootStore/TenantStore/coreTenants";
 import {
   US_DEMO,
   US_ID,
+  US_ME,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { AgeGroup, Gender } from "../models/types";
@@ -390,6 +391,10 @@ export const TnPopulationFilterOptions: PopulationFilters = {
   },
 };
 
+export const MePopulationFilterOptions: PopulationFilters = {
+  ...DefaultPopulationFilterOptions,
+};
+
 export const DemoPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
   [FILTER_TYPES.AGE_GROUP]: {
@@ -545,6 +550,7 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
 export default {
   [US_ID]: IdPopulationFilterOptions,
   [US_TN]: TnPopulationFilterOptions,
+  [US_ME]: MePopulationFilterOptions,
   [US_ND]: DefaultPopulationFilterOptions,
   [US_DEMO]: DemoPopulationFilterOptions,
 } as const;

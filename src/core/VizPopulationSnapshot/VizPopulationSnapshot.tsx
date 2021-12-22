@@ -22,6 +22,7 @@ import React, { useEffect, useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 
 import { formatDate, getTicks } from "../../utils";
+import { sortByLabel } from "../../utils/datasets";
 import * as styles from "../CoreConstants.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
@@ -70,6 +71,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     ),
     value: isRate ? ((d.count * 100) / d.totalPopulation).toFixed() : d.count,
   }));
+  sortByLabel(data, "accessorLabel");
 
   const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
 

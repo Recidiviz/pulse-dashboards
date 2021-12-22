@@ -44,6 +44,26 @@ const content: MetricCopy = {
     note: "Supervised population note",
     methodology: "Supervised population methodology",
   },
+  prisonToSupervisionPopulationOverTime: {
+    title: "Releases from prison to supervision over time",
+    note: "Releases from prison to supervision over time note",
+    methodology: "Releases from prison to supervision over time methodology",
+  },
+  prisonToSupervisionPopulationByAge: {
+    title: "Releases from prison to supervision by age",
+    note: "Releases from prison to supervision by age note",
+    methodology: "Releases from prison to supervision by age methodology",
+  },
+  prisonToSupervisionPopulationByFacility: {
+    title: "Releases from prison to supervision by facility",
+    note: "Releases from prison to supervision by facility note",
+    methodology: "Releases from prison to supervision by facility methodology",
+  },
+  prisonToSupervisionPopulationPersonLevel: {
+    title: "List of releases from prison to supervision",
+    note: "List of releases from prison to supervision note",
+    methodology: "List of releases from prison to supervision methodology",
+  },
   supervisionToPrisonOverTime: {
     title: "Admissions to prison from supervision",
     note: "Admissions to prison from supervision note",

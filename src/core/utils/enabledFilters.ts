@@ -16,7 +16,11 @@
 // =============================================================================
 
 import { US_ND } from "../../RootStore/TenantStore/coreTenants";
-import { US_ID, US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
+import {
+  US_ID,
+  US_ME,
+  US_TN,
+} from "../../RootStore/TenantStore/pathwaysTenants";
 import { EnabledFiltersByMetric } from "../types/filters";
 import { FILTER_TYPES } from "./constants";
 
@@ -45,6 +49,36 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.AGE_GROUP,
     ],
     enabledMoreFilters: [FILTER_TYPES.LEGAL_STATUS],
+  },
+  // PRISON TO SUPERVISION
+  prisonToSupervisionPopulationOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+    ],
+    enabledMoreFilters: [FILTER_TYPES.AGE_GROUP],
+  },
+  prisonToSupervisionPopulationByAge: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  prisonToSupervisionPopulationByFacility: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  prisonToSupervisionPopulationPersonLevel: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+    ],
   },
   // SUPERVISION TO PRISON
   supervisionToPrisonOverTime: {
@@ -167,8 +201,13 @@ export const TnEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
 };
 
+export const MeEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
+  ...EnabledFilterOptions,
+};
+
 export default {
   [US_ID]: IdEnabledFilterOptions,
   [US_TN]: TnEnabledFilterOptions,
+  [US_ME]: MeEnabledFilterOptions,
   [US_ND]: undefined,
 } as const;

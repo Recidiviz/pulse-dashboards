@@ -108,11 +108,20 @@ const TENANTS: Tenants = {
     enableUserRestrictions: false,
     enablePracticesCaseloadButton: false,
     navigation: {
-      system: [PATHWAYS_PAGES.prison, PATHWAYS_PAGES.supervisionToPrison],
+      system: [
+        PATHWAYS_PAGES.prison,
+        PATHWAYS_PAGES.prisonToSupervision,
+        PATHWAYS_PAGES.supervisionToPrison,
+      ],
       prison: [
         PATHWAYS_SECTIONS.countOverTime,
         PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.personLevelDetail,
+      ],
+      prisonToSupervision: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByAgeGroup,
+        PATHWAYS_SECTIONS.countByLocation,
       ],
       supervisionToPrison: [
         PATHWAYS_SECTIONS.countOverTime,
@@ -155,6 +164,77 @@ const TENANTS: Tenants = {
         accessor: "facility",
         titleCase: false,
         width: 80,
+      },
+      {
+        Header: "Admission Reason",
+        accessor: "legalStatus",
+        titleCase: true,
+      },
+    ],
+  },
+  [pathways.US_ME]: {
+    name: "Maine",
+    stateCode: "ME",
+    availableStateCodes: [pathways.US_ME],
+    enableUserRestrictions: false,
+    enablePracticesCaseloadButton: false,
+    navigation: {
+      system: [
+        PATHWAYS_PAGES.prison,
+        PATHWAYS_PAGES.prisonToSupervision,
+        PATHWAYS_PAGES.supervisionToPrison,
+      ],
+      prison: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.personLevelDetail,
+      ],
+      prisonToSupervision: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByAgeGroup,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.personLevelDetail,
+      ],
+      supervisionToPrison: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLengthOfStay,
+        PATHWAYS_SECTIONS.countByMostSevereViolation,
+        PATHWAYS_SECTIONS.countByNumberOfViolations,
+        PATHWAYS_SECTIONS.countByLocation,
+      ],
+      "id-methodology": ["system"],
+    },
+    pagesWithRestrictions: ["prison"],
+    tableColumns: [
+      {
+        Header: "Name",
+        accessor: "fullName",
+        titleCase: true,
+        width: 150,
+      },
+      {
+        Header: "DOC ID",
+        accessor: "stateId",
+        titleCase: false,
+        width: 100,
+      },
+      {
+        Header: "Gender",
+        accessor: "gender",
+        titleCase: true,
+        width: 80,
+      },
+      {
+        Header: "Age",
+        accessor: "age",
+        titleCase: false,
+        width: 80,
+      },
+      {
+        Header: "Facility",
+        accessor: "facility",
+        titleCase: true,
+        width: 100,
       },
       {
         Header: "Admission Reason",

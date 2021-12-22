@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { US_ND } from "../../RootStore/TenantStore/coreTenants";
-import { US_ID, US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
+import {
+  US_ID,
+  US_ME,
+  US_TN,
+} from "../../RootStore/TenantStore/pathwaysTenants";
 import { MetricCopy, PageCopy } from "../content/types";
 /**
  * All data comes back from the server as string values;
@@ -29,7 +33,7 @@ export type ApiData = {
 export type RawApiData = Record<string, ApiData>;
 export type RawMetricData = Record<string, string>[];
 
-export const TenantIdList = [US_ND, US_ID, US_TN] as const;
+export const TenantIdList = [US_ND, US_ID, US_TN, US_ME] as const;
 
 export type TenantId = typeof TenantIdList[number];
 export type Gender = "ALL" | "FEMALE" | "MALE";
@@ -90,6 +94,7 @@ export type PrisonPopulationPersonLevelRecord = {
 
 export type PrisonPopulationTimeSeriesRecord = {
   totalPopulation: number;
+  avg90day: number;
   year: number;
   month: number;
   gender: Gender;
@@ -221,4 +226,8 @@ export type MetricId =
   | "supervisionToPrisonPopulationByMostSevereViolation"
   | "supervisionToPrisonPopulationByNumberOfViolations"
   | "supervisionToPrisonPopulationByLengthOfStay"
+  | "prisonToSupervisionPopulationOverTime"
+  | "prisonToSupervisionPopulationByAge"
+  | "prisonToSupervisionPopulationByFacility"
+  | "prisonToSupervisionPopulationPersonLevel"
   | "supervisionToPrisonPopulationBySupervisionLevel";

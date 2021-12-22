@@ -27,6 +27,7 @@ import { ResponsiveOrdinalFrame } from "semiotic";
 
 import { getTicks } from "../../utils";
 import * as styles from "../CoreConstants.scss";
+import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
@@ -34,7 +35,7 @@ import PopulationTimeSeriesLegend from "../PopulationTimeSeriesChart/PopulationT
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizCountOverTimeWithAvgProps = {
-  metric: SupervisionPopulationOverTimeMetric;
+  metric: SupervisionPopulationOverTimeMetric | PrisonPopulationOverTimeMetric;
 };
 
 const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
@@ -44,14 +45,17 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
 
   const { dataSeries, chartTitle } = metric;
 
-  const data = dataSeries.map((d, index) => ({
+  const data = dataSeries.map((d: any, index: number) => ({
     index,
     date: new Date(d.year, d.month - 1),
-    value: d.count,
+    value:
+      metric instanceof PrisonPopulationOverTimeMetric
+        ? d.totalPopulation
+        : d.count,
     average: d.avg90day,
   }));
 
-  const averageData = dataSeries.map((d, index) => ({
+  const averageData = dataSeries.map((d: any, index: number) => ({
     index,
     date: new Date(d.year, d.month - 1),
     value: d.avg90day,

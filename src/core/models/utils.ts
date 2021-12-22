@@ -82,6 +82,7 @@ export function createPrisonPopulationSnapshot(
     return mergeDefaults(
       {
         count: parseInt(record.person_count),
+        totalPopulation: parseInt(record.total_population),
         lastUpdated: formatDateString(record.last_updated),
         legalStatus: record.legal_status,
         gender: record.gender as Gender,
@@ -146,6 +147,7 @@ export function createPrisonPopulationTimeSeries(
         year: Number(record.year),
         month: Number(record.month),
         totalPopulation: parseInt(record.person_count),
+        avg90day: parseInt(record.avg_90day),
         legalStatus: record.legal_status,
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,

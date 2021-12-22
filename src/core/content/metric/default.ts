@@ -46,6 +46,18 @@ const content: MetricCopy = {
   prisonFacilityPopulation: {
     title: "Prison population by facility",
   },
+  prisonToSupervisionPopulationOverTime: {
+    title: "Releases from prison to supervision over time",
+  },
+  prisonToSupervisionPopulationByAge: {
+    title: "Releases from prison to supervision by age",
+  },
+  prisonToSupervisionPopulationByFacility: {
+    title: "Releases from prison to supervision by facility",
+  },
+  prisonToSupervisionPopulationPersonLevel: {
+    title: "List of releases from prison to supervision",
+  },
   supervisionToPrisonPopulationByDistrict: {
     title: "Admissions from supervision by district",
   },

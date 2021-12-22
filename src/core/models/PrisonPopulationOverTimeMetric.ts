@@ -55,12 +55,12 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
           (record.year - mostRecentDate.getFullYear()) * 12 +
           (record.month - (mostRecentDate.getMonth() + 1));
         return (
+          Math.abs(monthsOut) <= monthRange &&
+          monthsOut % stepSize === 0 &&
           gender.includes(record.gender) &&
           legalStatus.includes(record.legalStatus) &&
           ageGroup.includes(record.ageGroup) &&
-          facility.includes(record.facility) &&
-          Math.abs(monthsOut) <= monthRange &&
-          monthsOut % stepSize === 0
+          facility.includes(record.facility)
         );
       }
     );
@@ -73,6 +73,9 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
         month: dataset[0].month,
         gender: dataset[0].gender,
         legalStatus: dataset[0].legalStatus,
+        facility: dataset[0].facility,
+        ageGroup: dataset[0].ageGroup,
+        avg90day: sumBy("avg90day", dataset),
         totalPopulation: sumBy("totalPopulation", dataset),
       }))
     )(filteredRecords);

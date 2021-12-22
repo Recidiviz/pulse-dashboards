@@ -38,20 +38,19 @@ const content: StateSpecificPageCopy = {
       countOverTime: "Releases from prison to supervision over time",
       countByAgeGroup: "Releases from prison to supervision by age",
       countByLocation: "Releases from prison to supervision by facility",
+      personLevelDetail: "List of releases from prison to supervision",
     },
     methodology: "Lorem ipsum",
   },
   supervisionToPrison: {
     sections: {
       countOverTime: "Admissions from supervision over time",
-      countByLocation: "Admissions from supervision by district",
+      countByLocation: "Admissions from supervision by region",
       countByMostSevereViolation:
         "Admissions from supervision by most severe violation",
       countByNumberOfViolations:
         "Admissions from supervision by number of violations",
       countByLengthOfStay: "Time to admission from supervision",
-      countBySupervisionLevel:
-        "Admissions from supervision to prison by supervision level",
     },
   },
 };

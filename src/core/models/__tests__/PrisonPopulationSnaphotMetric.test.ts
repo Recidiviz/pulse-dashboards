@@ -47,6 +47,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           facility: "Bedrock",
           person_count: "15",
           last_updated: "2021-10-27",
+          total_population: "35",
         },
         {
           legal_status: "ALL",
@@ -55,6 +56,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           facility: "School of Rock",
           person_count: "10",
           last_updated: "2021-10-27",
+          total_population: "35",
         },
         {
           legal_status: "ALL",
@@ -62,6 +64,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           facility: "Bedrock",
           person_count: "5",
           last_updated: "2021-10-27",
+          total_population: "35",
         },
       ],
     }),
@@ -123,6 +126,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         facility: "Bedrock",
         count: 15,
         lastUpdated: formatDateString("2021-10-27"),
+        totalPopulation: 35,
       },
       {
         legalStatus: "ALL",
@@ -131,6 +135,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         facility: "School of Rock",
         count: 10,
         lastUpdated: formatDateString("2021-10-27"),
+        totalPopulation: 35,
       },
       {
         legalStatus: "ALL",
@@ -139,6 +144,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         facility: "Bedrock",
         count: 5,
         lastUpdated: formatDateString("2021-10-27"),
+        totalPopulation: 35,
       },
     ]);
   });
@@ -175,6 +181,8 @@ describe("PrisonPopulationSnapshotMetric", () => {
           facility: "Bedrock",
           count: 15,
           lastUpdated: formatDateString("2021-10-27"),
+          populationProportion: "43",
+          totalPopulation: 35,
         },
         {
           legalStatus: "ALL",
@@ -183,6 +191,8 @@ describe("PrisonPopulationSnapshotMetric", () => {
           facility: "School of Rock",
           count: 10,
           lastUpdated: formatDateString("2021-10-27"),
+          populationProportion: "29",
+          totalPopulation: 35,
         },
       ]);
     });
@@ -204,6 +214,8 @@ describe("PrisonPopulationSnapshotMetric", () => {
             facility: "Bedrock",
             count: 5,
             lastUpdated: formatDateString("2021-10-27"),
+            populationProportion: "14",
+            totalPopulation: 35,
           },
         ]);
       });

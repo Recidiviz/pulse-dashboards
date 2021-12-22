@@ -174,6 +174,12 @@ const PATHWAYS_COLLECTIONS = {
     supervision_to_prison_population_snapshot_by_dimension: {
       filename: "supervision_to_prison_population_snapshot_by_dimension.txt",
     },
+    prison_to_supervision_count_by_month: {
+      filename: "prison_to_supervision_count_by_month.json",
+    },
+    prison_to_supervision_population_snapshot_by_dimension: {
+      filename: "prison_to_supervision_population_snapshot_by_dimension.json",
+    },
   },
 };
 
@@ -307,6 +313,8 @@ function getCollections(stateCode = null) {
         ...PATHWAYS_COLLECTIONS,
       };
     case stateCodes.US_TN:
+      return PATHWAYS_COLLECTIONS;
+    case stateCodes.US_ME:
       return PATHWAYS_COLLECTIONS;
     case stateCodes.US_ND:
       return { ...CORE_COLLECTIONS, ...VITALS_COLLECTION };
