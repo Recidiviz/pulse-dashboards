@@ -220,4 +220,5 @@ export type MetricId =
   | "supervisionToPrisonPopulationByDistrict"
   | "supervisionToPrisonPopulationByMostSevereViolation"
   | "supervisionToPrisonPopulationByNumberOfViolations"
-  | "supervisionToPrisonPopulationByLengthOfStay";
+  | "supervisionToPrisonPopulationByLengthOfStay"
+  | "supervisionToPrisonPopulationBySupervisionLevel";

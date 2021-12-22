@@ -29,4 +29,5 @@ export const FILTER_TYPES = {
   DISTRICT: "district",
   MOST_SEVERE_VIOLATION: "mostSevereViolation",
   NUMBER_OF_VIOLATIONS: "numberOfViolations",
+  SUPERVISION_LEVEL: "supervisionLevel",
 } as const;

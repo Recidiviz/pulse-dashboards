@@ -58,6 +58,7 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.SUPERVISION_TYPE,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.SUPERVISION_LEVEL,
     ],
   },
   supervisionToPrisonPopulationByLengthOfStay: {
@@ -70,6 +71,7 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.SUPERVISION_TYPE,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.SUPERVISION_LEVEL,
     ],
   },
   supervisionToPrisonPopulationByNumberOfViolations: {
@@ -82,6 +84,7 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.SUPERVISION_TYPE,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.SUPERVISION_LEVEL,
     ],
   },
   supervisionToPrisonPopulationByMostSevereViolation: {
@@ -94,6 +97,7 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.SUPERVISION_TYPE,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.SUPERVISION_LEVEL,
     ],
   },
   supervisionToPrisonPopulationByDistrict: {
@@ -106,6 +110,20 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.SUPERVISION_TYPE,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.SUPERVISION_LEVEL,
+    ],
+  },
+  supervisionToPrisonPopulationBySupervisionLevel: {
+    enabledFilters: [
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.MOST_SEVERE_VIOLATION,
+      FILTER_TYPES.NUMBER_OF_VIOLATIONS,
+    ],
+    enabledMoreFilters: [
+      FILTER_TYPES.SUPERVISION_TYPE,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.SUPERVISION_LEVEL,
     ],
   },
   // SUPERVISION TO LIBERTY

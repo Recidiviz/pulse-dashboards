@@ -285,6 +285,24 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.facilities],
   },
+  [FILTER_TYPES.SUPERVISION_LEVEL]: {
+    type: FILTER_TYPES.SUPERVISION_LEVEL,
+    title: "Supervision Level",
+    setFilters: setFilters(FILTER_TYPES.SUPERVISION_LEVEL),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Minimum", value: "MINIMUM" },
+      { label: "Medium", value: "MEDIUM" },
+      { label: "Maximum", value: "MAXIMUM" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
 };
 
 export const IdPopulationFilterOptions: PopulationFilters = {
@@ -518,6 +536,9 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   [FILTER_TYPES.NUMBER_OF_VIOLATIONS]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.NUMBER_OF_VIOLATIONS]
       .defaultValue,
+  ],
+  [FILTER_TYPES.SUPERVISION_LEVEL]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.SUPERVISION_LEVEL].defaultValue,
   ],
 };
 

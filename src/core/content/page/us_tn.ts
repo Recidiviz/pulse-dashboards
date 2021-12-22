@@ -41,6 +41,8 @@ const content: StateSpecificPageCopy = {
       countByNumberOfViolations:
         "Admissions from supervision by number of violations",
       countByLengthOfStay: "Time to admission from supervision",
+      countBySupervisionLevel:
+        "Admissions from supervision to prison by supervision level",
     },
   },
 };

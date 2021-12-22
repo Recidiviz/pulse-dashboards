@@ -120,6 +120,7 @@ const TENANTS: Tenants = {
         PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.countByMostSevereViolation,
         PATHWAYS_SECTIONS.countByNumberOfViolations,
+        PATHWAYS_SECTIONS.countBySupervisionLevel,
       ],
       "id-methodology": ["system"],
     },

@@ -31,6 +31,7 @@ export type PopulationFilterValues = {
   district: string[];
   mostSevereViolation: string[];
   numberOfViolations: string[];
+  supervisionLevel: string[];
 };
 
 export type PopulationFilterLabels = {
@@ -43,6 +44,7 @@ export type PopulationFilterLabels = {
   district: string;
   mostSevereViolation: string;
   numberOfViolations: string;
+  supervisionLevel: string;
 };
 
 export type SetPopulationFilters = (
@@ -64,6 +66,7 @@ export interface PopulationFilters {
   [FILTER_TYPES.DISTRICT]: PopulationFilter;
   [FILTER_TYPES.MOST_SEVERE_VIOLATION]: PopulationFilter;
   [FILTER_TYPES.NUMBER_OF_VIOLATIONS]: PopulationFilter;
+  [FILTER_TYPES.SUPERVISION_LEVEL]: PopulationFilter;
 }
 
 export type PopulationFilter = {

@@ -23,6 +23,7 @@ import map from "lodash/fp/map";
 import sumBy from "lodash/fp/sumBy";
 import values from "lodash/fp/values";
 
+import { toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
@@ -98,7 +99,7 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
       chartDatasets: datasets,
       chartLabels: labels,
       chartId: this.chartTitle,
-      dataExportLabel: "Facility",
+      dataExportLabel: toTitleCase(this.accessor),
     };
   }
 

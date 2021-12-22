@@ -62,6 +62,9 @@ const content: MetricCopy = {
     title: "Admissions from supervision by most severe violation",
     chartYAxisTitle: "Most severe violation prior to admission to prison",
   },
+  supervisionToPrisonPopulationBySupervisionLevel: {
+    title: "Admissions from supervision to prison by supervision level",
+  },
 };
 
 export default content;

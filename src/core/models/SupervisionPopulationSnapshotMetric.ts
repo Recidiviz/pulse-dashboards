@@ -23,6 +23,7 @@ import map from "lodash/fp/map";
 import sumBy from "lodash/fp/sumBy";
 import values from "lodash/fp/values";
 
+import { toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import { PopulationFilterLabels } from "../types/filters";
@@ -51,6 +52,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
       district,
       numberOfViolations,
       mostSevereViolation,
+      supervisionLevel,
     } = this.rootStore.filtersStore.filters;
 
     const filteredRecords = this.allRecords.filter(
@@ -68,10 +70,12 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
           (this.id === "supervisionToPrisonPopulationByNumberOfViolations"
             ? !["ALL"].includes(record.numberOfViolations)
             : numberOfViolations.includes(record.numberOfViolations)) &&
+          (this.id === "supervisionToPrisonPopulationBySupervisionLevel"
+            ? !["ALL"].includes(record.supervisionLevel)
+            : supervisionLevel.includes(record.supervisionLevel)) &&
           (this.id === "supervisionToPrisonPopulationByLengthOfStay"
             ? !["ALL"].includes(record.lengthOfStay)
             : ["ALL"].includes(record.lengthOfStay)) &&
-          ["ALL"].includes(record.supervisionLevel) &&
           ["ALL"].includes(record.race)
         );
       }
@@ -129,7 +133,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
       chartDatasets: datasets,
       chartLabels: labels,
       chartId: this.chartTitle,
-      dataExportLabel: `District`,
+      dataExportLabel: toTitleCase(this.accessor),
     };
   }
 
