@@ -57,12 +57,14 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
           (record.year - mostRecentDate.getFullYear()) * 12 +
           (record.month - (mostRecentDate.getMonth() + 1));
         return (
+          Math.abs(monthsOut) <= monthRange &&
           gender.includes(record.gender) &&
           supervisionType.includes(record.supervisionType) &&
           district.includes(record.district) &&
           mostSevereViolation.includes(record.mostSevereViolation) &&
           numberOfViolations.includes(record.numberOfViolations) &&
-          Math.abs(monthsOut) <= monthRange
+          ["ALL"].includes(record.supervisionLevel) &&
+          ["ALL"].includes(record.race)
         );
       }
     );
@@ -80,6 +82,8 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
         district: dataset[0].district,
         mostSevereViolation: dataset[0].mostSevereViolation,
         numberOfViolations: dataset[0].numberOfViolations,
+        supervisionLevel: dataset[0].supervisionLevel,
+        race: dataset[0].race,
       }))
     )(filteredRecords);
     return result as SupervisionPopulationTimeSeriesRecord[];

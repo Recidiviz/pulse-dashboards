@@ -47,7 +47,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           gender: "ALL",
           age_group: undefined,
           district: "DISTRICT_1",
-          count: "15",
+          person_count: "15",
           last_updated: "2021-10-27",
           most_severe_violation: "ALL",
           number_of_violations: "ALL",
@@ -59,7 +59,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           gender: "ALL",
           age_group: undefined,
           district: "DISTRICT_2",
-          count: "10",
+          person_count: "10",
           last_updated: "2021-10-27",
           most_severe_violation: undefined,
           number_of_violations: undefined,
@@ -71,7 +71,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           gender: "FEMALE",
           age_group: undefined,
           district: "DISTRICT_1",
-          count: "5",
+          person_count: "5",
           last_updated: "2021-10-27",
           length_of_stay: "ALL",
           total_population: 30,
@@ -140,6 +140,8 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         supervisionType: "ALL",
         lengthOfStay: "ALL",
         totalPopulation: 45,
+        race: "ALL",
+        supervisionLevel: "ALL",
       },
       {
         gender: "ALL",
@@ -152,6 +154,8 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         supervisionType: "ALL",
         lengthOfStay: "ALL",
         totalPopulation: 30,
+        race: "ALL",
+        supervisionLevel: "ALL",
       },
       {
         gender: "FEMALE",
@@ -164,6 +168,8 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         supervisionType: "ALL",
         lengthOfStay: "ALL",
         totalPopulation: 30,
+        race: "ALL",
+        supervisionLevel: "ALL",
       },
     ]);
   });
@@ -206,6 +212,8 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           lengthOfStay: "ALL",
           totalPopulation: 45,
           populationProportion: "33",
+          race: "ALL",
+          supervisionLevel: "ALL",
         },
         {
           gender: "ALL",
@@ -219,6 +227,8 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           lengthOfStay: "ALL",
           totalPopulation: 30,
           populationProportion: "33",
+          race: "ALL",
+          supervisionLevel: "ALL",
         },
       ]);
     });
@@ -245,6 +255,8 @@ describe("SupervisionPopulationSnapshotMetric", () => {
             lengthOfStay: "ALL",
             totalPopulation: 30,
             populationProportion: "17",
+            race: "ALL",
+            supervisionLevel: "ALL",
           },
         ]);
       });

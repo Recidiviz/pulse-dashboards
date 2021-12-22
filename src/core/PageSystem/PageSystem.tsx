@@ -26,7 +26,6 @@ import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 import PathwaysFilterBar from "../PathwaysFilterBar/PathwaysFilterBar";
 import PathwaysLeftPanel from "../PathwaysLeftPanel";
-import filterOptions from "../utils/filterOptions";
 import { PathwaysPage } from "../views";
 import withRouteSync from "../withRouteSync";
 
@@ -34,7 +33,7 @@ const PageSystem: React.FC = () => {
   window.scrollTo({
     top: 0,
   });
-  const { currentTenantId, metricsStore, page } = useCoreStore();
+  const { metricsStore, page, filtersStore } = useCoreStore();
   const pageContent = usePageContent(page as PathwaysPage);
   if (!pageContent) return <div />;
 
@@ -44,6 +43,7 @@ const PageSystem: React.FC = () => {
   const { title, summary } = pageContent;
   const { filters, download, isLoading, note } = metric;
   const { enabledFilters, enabledMoreFilters } = filters;
+  const { filterOptions } = filtersStore;
 
   return (
     <PageTemplate
@@ -52,7 +52,7 @@ const PageSystem: React.FC = () => {
       filters={
         <PathwaysFilterBar
           // @ts-ignore
-          filterOptions={filterOptions[currentTenantId]}
+          filterOptions={filterOptions}
           enabledFilters={enabledFilters}
           enabledMoreFilters={enabledMoreFilters}
           handleDownload={download}

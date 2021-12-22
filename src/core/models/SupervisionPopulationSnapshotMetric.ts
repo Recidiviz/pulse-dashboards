@@ -25,7 +25,7 @@ import values from "lodash/fp/values";
 
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
-import { getFilterLabel } from "../utils/filterOptions";
+import { PopulationFilterLabels } from "../types/filters";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { SupervisionPopulationSnapshotRecord } from "./types";
 
@@ -70,7 +70,9 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
             : numberOfViolations.includes(record.numberOfViolations)) &&
           (this.id === "supervisionToPrisonPopulationByLengthOfStay"
             ? !["ALL"].includes(record.lengthOfStay)
-            : ["ALL"].includes(record.lengthOfStay))
+            : ["ALL"].includes(record.lengthOfStay)) &&
+          ["ALL"].includes(record.supervisionLevel) &&
+          ["ALL"].includes(record.race)
         );
       }
     );
@@ -87,6 +89,8 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
         mostSevereViolation: dataset[0].mostSevereViolation,
         numberOfViolations: dataset[0].numberOfViolations,
         lengthOfStay: dataset[0].lengthOfStay,
+        supervisionLevel: dataset[0].supervisionLevel,
+        race: dataset[0].race,
         totalPopulation: sumBy("totalPopulation", dataset),
         count: sumBy("count", dataset),
         populationProportion: (
@@ -110,7 +114,14 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
         Count: Math.round(d.count),
       });
 
-      labels.push(getFilterLabel(this.accessor, d[this.accessor].toString()));
+      if (this.rootStore?.filtersStore) {
+        labels.push(
+          this.rootStore?.filtersStore.getFilterLabel(
+            this.accessor as keyof PopulationFilterLabels,
+            d[this.accessor].toString()
+          )
+        );
+      }
     });
 
     datasets.push({ data, label: "" });

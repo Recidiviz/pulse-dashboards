@@ -18,7 +18,7 @@ import find from "lodash/fp/find";
 import get from "lodash/fp/get";
 import pipe from "lodash/fp/pipe";
 
-import { PopulationFilterOptions } from "../core/utils/filterOptions";
+import { DefaultPopulationFilterOptions } from "../core/utils/filterOptions";
 import {
   ADMISSION_TYPES,
   SUPERVISION_LEVELS,
@@ -64,7 +64,7 @@ const formatSupervisionType = (supervisionType) =>
     : `Supervision type: ${pipe(
         find({ value: supervisionType }),
         get("label")
-      )(PopulationFilterOptions.supervisionType.options)}`;
+      )(DefaultPopulationFilterOptions.supervisionType.options)}`;
 
 const formatSupervisionLevel = (supervisionLevel) =>
   supervisionLevel === "All"

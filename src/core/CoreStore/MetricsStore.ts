@@ -209,8 +209,7 @@ export default class MetricsStore {
       tenantId: this.rootStore.currentTenantId,
       sourceFilename: "supervision_to_prison_count_by_month",
       rootStore: this.rootStore,
-      dataTransformer: (data) =>
-        createSupervisionPopulationTimeSeries(data, "admissions"),
+      dataTransformer: (data) => createSupervisionPopulationTimeSeries(data),
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonOverTime,
     });
@@ -222,8 +221,7 @@ export default class MetricsStore {
       tenantId: this.rootStore.currentTenantId,
       sourceFilename: "supervision_to_liberty_count_by_month",
       rootStore: this.rootStore,
-      dataTransformer: (data) =>
-        createSupervisionPopulationTimeSeries(data, "releases"),
+      dataTransformer: (data) => createSupervisionPopulationTimeSeries(data),
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToLibertyOverTime,
     });

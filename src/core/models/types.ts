@@ -50,34 +50,57 @@ export type MetricRecord =
   | PopulationProjectionTimeSeriesRecord
   | PracticesSummaryRecord
   | PracticesTimeSeriesRecord
-  | SupervisionPopulationTimeSeriesRecord
   | PrisonPopulationTimeSeriesRecord
   | PrisonPopulationSnapshotRecord
+  | SupervisionPopulationTimeSeriesRecord
   | SupervisionPopulationSnapshotRecord
   | PrisonPopulationPersonLevelRecord;
 
 export type PopulationProjectionTimeSeriesRecord = {
+  totalPopulation: number;
+  totalPopulationMax: number;
+  totalPopulationMin: number;
   year: number;
   month: number;
   compartment: SimulationCompartment;
   legalStatus: string;
   gender: Gender;
   simulationTag: string;
-  totalPopulation: number;
-  totalPopulationMax: number;
-  totalPopulationMin: number;
 };
 
 export type PrisonPopulationSnapshotRecord = {
-  legalStatus: string;
-  gender: Gender;
-  facility: string;
-  ageGroup: AgeGroup;
   count: number;
   lastUpdated: Date;
+  gender: Gender;
+  ageGroup: AgeGroup;
+  legalStatus: string;
+  facility: string;
+};
+
+export type PrisonPopulationPersonLevelRecord = {
+  lastUpdated: Date;
+  stateId: string;
+  fullName: string;
+  gender: Gender;
+  ageGroup: AgeGroup;
+  age: string;
+  legalStatus: string;
+  facility: string;
+};
+
+export type PrisonPopulationTimeSeriesRecord = {
+  totalPopulation: number;
+  year: number;
+  month: number;
+  gender: Gender;
+  ageGroup: AgeGroup;
+  legalStatus: string;
+  facility: string;
 };
 
 export type SupervisionPopulationSnapshotRecord = {
+  count: number;
+  totalPopulation: number;
   lastUpdated: Date;
   gender: Gender;
   ageGroup: AgeGroup;
@@ -86,31 +109,13 @@ export type SupervisionPopulationSnapshotRecord = {
   mostSevereViolation: string;
   numberOfViolations: string;
   lengthOfStay: string;
-  count: number;
-};
-
-export type PrisonPopulationPersonLevelRecord = {
-  stateId: string;
-  fullName: string;
-  lastUpdated: Date;
-  legalStatus: string;
-  gender: Gender;
-  facility: string;
-  ageGroup: AgeGroup;
-  age: string;
-};
-
-export type PrisonPopulationTimeSeriesRecord = {
-  year: number;
-  month: number;
-  legalStatus: string;
-  gender: Gender;
-  facility: string;
-  ageGroup: AgeGroup;
-  totalPopulation: number;
+  supervisionLevel: string;
+  race: string;
 };
 
 export type SupervisionPopulationTimeSeriesRecord = {
+  count: number;
+  avg90day: number;
   year: number;
   month: number;
   gender: Gender;
@@ -118,8 +123,8 @@ export type SupervisionPopulationTimeSeriesRecord = {
   district: string;
   mostSevereViolation: string;
   numberOfViolations: string;
-  count: number;
-  avg90day: number;
+  supervisionLevel: string;
+  race: string;
 };
 
 export type PracticesTimeSeriesRecord = {

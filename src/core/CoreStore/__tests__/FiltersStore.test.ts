@@ -119,10 +119,10 @@ describe("FiltersStore", () => {
       ];
       coreStore.filtersStore.setFilters({
         timePeriod: ["12"],
-        facility: ["MCCX", "SPND"],
+        facility: ["FACILITY_2", "FACILITY_3"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
-        "Time Period:, 1 year\nGender:, All\nFacility:, MCCX,SPND\n"
+        "Time Period:, 1 year\nGender:, All\nFacility:, Facility 2,Facility 3\n"
       );
     });
   });

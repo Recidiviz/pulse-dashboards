@@ -1,0 +1,1 @@
+{"value_keys": [ "age_group", "avg_90day", "district", "person_count", "race" ], "dimension_manifest": [ [ "gender", [ "all", "female", "male" ] ], [ "month", [ "1", "10", "11", "12", "2", "3", "4", "5", "6", "7", "8", "9" ] ], [ "supervision_type", [ "all", "parole", "probation" ] ], [ "year", [ "2017", "2018", "2019", "2020", "2021" ] ] ], "total_data_points": 51840}

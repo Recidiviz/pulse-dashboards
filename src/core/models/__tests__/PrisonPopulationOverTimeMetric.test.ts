@@ -48,7 +48,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           facility: "ALL",
           age_group: undefined,
           state_code: "US_TN",
-          count: 7641,
+          person_count: 7641,
           year: "2015",
         },
         {
@@ -58,7 +58,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           facility: "ALL",
           age_group: undefined,
           state_code: "US_TN",
-          count: 7641,
+          person_count: 7641,
           year: "2016",
         },
         {
@@ -68,7 +68,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           facility: "MCCX",
           age_group: undefined,
           state_code: "US_TN",
-          count: 7641,
+          person_count: 7641,
           year: "2016",
         },
       ],

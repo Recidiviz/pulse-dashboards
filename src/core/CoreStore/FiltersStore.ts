@@ -26,9 +26,13 @@ import {
 } from "mobx";
 import { QueryParamConfigMap } from "use-query-params";
 
+import { US_DEMO } from "../../RootStore/TenantStore/pathwaysTenants";
+import { isDemoMode } from "../../utils/isDemoMode";
+import { isOfflineMode } from "../../utils/isOfflineMode";
 import { MonthOptions } from "../PopulationTimeSeriesChart/helpers";
 import {
   EnabledFiltersByMetric,
+  FilterOption,
   PopulationFilterLabels,
   PopulationFilters,
   PopulationFilterValues,
@@ -36,6 +40,7 @@ import {
 import enabledFilters from "../utils/enabledFilters";
 import filterOptions, {
   defaultMetricMode,
+  DefaultPopulationFilterOptions,
   defaultPopulationFilterValues,
   getFilterOptions,
 } from "../utils/filterOptions";
@@ -58,6 +63,7 @@ export default class FiltersStore {
 
     this.rootStore = rootStore;
     this.resetFilters = this.resetFilters.bind(this);
+    this.getFilterLabel = this.getFilterLabel.bind(this);
   }
 
   setFilters(updatedFilters: Partial<PopulationFilterValues>): void {
@@ -153,9 +159,23 @@ export default class FiltersStore {
   }
 
   get filterOptions(): PopulationFilters {
-    // @ts-ignore
     return this.rootStore.currentTenantId
-      ? filterOptions[this.rootStore.currentTenantId]
-      : filterOptions.US_ID;
+      ? filterOptions[
+          isDemoMode() || isOfflineMode()
+            ? US_DEMO
+            : this.rootStore.currentTenantId
+        ]
+      : DefaultPopulationFilterOptions;
+  }
+
+  getFilterLabel(
+    filterType: keyof PopulationFilters,
+    filterValue: string
+  ): string {
+    return (
+      this.filterOptions[filterType].options.find(
+        (option: FilterOption) => option.value === filterValue
+      )?.label || ""
+    );
   }
 }

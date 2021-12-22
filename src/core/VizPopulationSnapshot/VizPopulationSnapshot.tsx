@@ -27,8 +27,8 @@ import { useCoreStore } from "../CoreStoreProvider";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
+import { PopulationFilterLabels } from "../types/filters";
 import { METRIC_MODES } from "../utils/constants";
-import { getFilterLabel } from "../utils/filterOptions";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizPopulationOverTimeProps = {
@@ -39,7 +39,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
   metric,
 }) => {
   const { filtersStore } = useCoreStore();
-  const { filters, currentMetricMode } = filtersStore;
+  const { filters, getFilterLabel, currentMetricMode } = filtersStore;
   const {
     dataSeries,
     chartTitle,
@@ -64,7 +64,10 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
   const data = dataSeries.map((d: any, index: number) => ({
     index,
     accessorValue: d[accessor],
-    accessorLabel: getFilterLabel(accessor, d[accessor]),
+    accessorLabel: getFilterLabel(
+      accessor as keyof PopulationFilterLabels,
+      d[accessor].toString()
+    ),
     value: isRate ? ((d.count * 100) / d.totalPopulation).toFixed() : d.count,
   }));
 

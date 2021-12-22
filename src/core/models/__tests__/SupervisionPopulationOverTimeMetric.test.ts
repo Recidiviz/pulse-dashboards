@@ -47,7 +47,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           district: "ALL",
           age_group: undefined,
           state_code: "US_TN",
-          releases: 7641,
+          person_count: 7641,
           avg_90day: 7000,
           year: "2015",
           most_severe_violation: "ALL",
@@ -60,7 +60,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           district: "ALL",
           age_group: undefined,
           state_code: "US_TN",
-          releases: 7641,
+          person_count: 7641,
           avg_90day: 7000,
           year: "2016",
           most_severe_violation: undefined,
@@ -73,7 +73,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           district: "DISTRICT_1",
           age_group: undefined,
           state_code: "US_TN",
-          releases: 7641,
+          person_count: 7641,
           avg_90day: 7000,
           year: "2016",
         },
@@ -95,8 +95,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
       tenantId: mockTenantId,
       sourceFilename: "supervision_to_liberty_count_by_month",
       rootStore: mockCoreStore,
-      dataTransformer: (data) =>
-        createSupervisionPopulationTimeSeries(data, "releases"),
+      dataTransformer: (data) => createSupervisionPopulationTimeSeries(data),
       filters: {
         enabledFilters: [
           FILTER_TYPES.GENDER,
@@ -141,6 +140,9 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         mostSevereViolation: "ALL",
         numberOfViolations: "ALL",
         supervisionType: "ALL",
+        lengthOfStay: "ALL",
+        race: "ALL",
+        supervisionLevel: "ALL",
       },
       {
         gender: "ALL",
@@ -153,6 +155,9 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         mostSevereViolation: "ALL",
         numberOfViolations: "ALL",
         supervisionType: "ALL",
+        lengthOfStay: "ALL",
+        race: "ALL",
+        supervisionLevel: "ALL",
       },
       {
         gender: "MALE",
@@ -165,6 +170,9 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         mostSevereViolation: "ALL",
         numberOfViolations: "ALL",
         supervisionType: "ALL",
+        lengthOfStay: "ALL",
+        race: "ALL",
+        supervisionLevel: "ALL",
       },
     ]);
   });
@@ -187,8 +195,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
       tenantId: mockTenantId,
       sourceFilename: "supervision_to_liberty_count_by_month",
       rootStore: mockCoreStore,
-      dataTransformer: (data) =>
-        createSupervisionPopulationTimeSeries(data, "releases"),
+      dataTransformer: (data) => createSupervisionPopulationTimeSeries(data),
       filters: {
         enabledFilters: [
           FILTER_TYPES.GENDER,
@@ -212,8 +219,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         tenantId: mockTenantId,
         sourceFilename: "supervision_to_liberty_count_by_month",
         rootStore: mockCoreStore,
-        dataTransformer: (data) =>
-          createSupervisionPopulationTimeSeries(data, "releases"),
+        dataTransformer: (data) => createSupervisionPopulationTimeSeries(data),
         filters: {
           enabledFilters: [
             FILTER_TYPES.GENDER,
@@ -238,6 +244,8 @@ describe("SupervisionPopulationOverTimeMetric", () => {
           mostSevereViolation: "ALL",
           numberOfViolations: "ALL",
           supervisionType: "ALL",
+          race: "ALL",
+          supervisionLevel: "ALL",
         },
         {
           year: 2016,
@@ -249,6 +257,8 @@ describe("SupervisionPopulationOverTimeMetric", () => {
           mostSevereViolation: "ALL",
           numberOfViolations: "ALL",
           supervisionType: "ALL",
+          race: "ALL",
+          supervisionLevel: "ALL",
         },
       ]);
     });
@@ -273,6 +283,8 @@ describe("SupervisionPopulationOverTimeMetric", () => {
             mostSevereViolation: "ALL",
             numberOfViolations: "ALL",
             supervisionType: "ALL",
+            race: "ALL",
+            supervisionLevel: "ALL",
           },
         ]);
       });

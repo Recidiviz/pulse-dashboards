@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { US_ND } from "../../RootStore/TenantStore/coreTenants";
-import { US_ID, US_TN } from "../../RootStore/TenantStore/pathwaysTenants";
+import {
+  US_DEMO,
+  US_ID,
+  US_TN,
+} from "../../RootStore/TenantStore/pathwaysTenants";
 import { AgeGroup, Gender } from "../models/types";
 import {
   FilterOption,
@@ -89,18 +93,6 @@ export const getFilterOptions = (
   );
 };
 
-export const getFilterLabel = (
-  filterType: string,
-  filterValue: string
-): string => {
-  return (
-    PopulationFilterOptions[
-      filterType as keyof PopulationFilterLabels
-    ].options.find((option: FilterOption) => option.value === filterValue)
-      ?.label || ""
-  );
-};
-
 const setFilters = (
   filterKey: keyof PopulationFilters
 ): SetPopulationFilters => (filtersStore) => (options) => {
@@ -113,7 +105,7 @@ const setFilters = (
   filtersStore.setFilters({ [filterKey]: values });
 };
 
-export const PopulationFilterOptions: PopulationFilters = {
+export const DefaultPopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.TIME_PERIOD]: {
     type: FILTER_TYPES.TIME_PERIOD,
     title: "Time Period",
@@ -151,24 +143,6 @@ export const PopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.community, CORE_VIEWS.facilities],
   },
-  [FILTER_TYPES.LEGAL_STATUS]: {
-    type: FILTER_TYPES.LEGAL_STATUS,
-    title: "Legal Status",
-    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
-    options: [
-      { label: "All", value: "ALL" },
-      { label: "Rider", value: "TREATMENT_IN_PRISON" },
-      { label: "Termer", value: "GENERAL" },
-      { label: "Parole Violator", value: "PAROLE_BOARD_HOLD" },
-    ],
-    get defaultOption(): FilterOption {
-      return this.options[0];
-    },
-    get defaultValue(): string {
-      return this.defaultOption.value;
-    },
-    enabledViews: [CORE_VIEWS.facilities],
-  },
   [FILTER_TYPES.SUPERVISION_TYPE]: {
     type: FILTER_TYPES.SUPERVISION_TYPE,
     title: "Supervision Type",
@@ -202,6 +176,143 @@ export const PopulationFilterOptions: PopulationFilters = {
       { label: "50-54 years old", value: "50-54" },
       { label: "55-59 years old", value: "55-59" },
       { label: "60+ years old", value: "60+" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.LEGAL_STATUS]: {
+    type: FILTER_TYPES.LEGAL_STATUS,
+    title: "Legal Status",
+    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Rider", value: "TREATMENT_IN_PRISON" },
+      { label: "Termer", value: "GENERAL" },
+      { label: "Parole Violator", value: "PAROLE_BOARD_HOLD" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.FACILITY]: {
+    type: FILTER_TYPES.FACILITY,
+    title: "Facility",
+    setFilters: setFilters(FILTER_TYPES.FACILITY),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Facility 1", value: "FACILITY_1" },
+      { label: "Facility 2", value: "FACILITY_2" },
+      { label: "Facility 3", value: "FACILITY_3" },
+      { label: "Facility 4", value: "FACILITY_4" },
+      { label: "Facility 5", value: "FACILITY_5" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.DISTRICT]: {
+    type: FILTER_TYPES.DISTRICT,
+    title: "District",
+    setFilters: setFilters(FILTER_TYPES.DISTRICT),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "District 1", value: "DISTRICT_1" },
+      { label: "District 2", value: "DISTRICT_2" },
+      { label: "District 3", value: "DISTRICT_3" },
+      { label: "District 4", value: "DISTRICT_4" },
+      { label: "District 5", value: "DISTRICT_5" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.MOST_SEVERE_VIOLATION]: {
+    type: FILTER_TYPES.MOST_SEVERE_VIOLATION,
+    title: "Most Severe Violation",
+    setFilters: setFilters(FILTER_TYPES.MOST_SEVERE_VIOLATION),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Felony", value: "FELONY" },
+      { label: "Misdemeanor", value: "MISDEMEANOR" },
+      { label: "Technical", value: "TECHNICAL" },
+      { label: "Subs. Use", value: "SUBSTANCE_ABUSE" },
+      { label: "Absconsion", value: "ABSCONDED" },
+      { label: "Municipal", value: "MUNICIPAL" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.NUMBER_OF_VIOLATIONS]: {
+    type: FILTER_TYPES.NUMBER_OF_VIOLATIONS,
+    title: "Number Of Violations",
+    setFilters: setFilters(FILTER_TYPES.NUMBER_OF_VIOLATIONS),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "1", value: "1" },
+      { label: "2", value: "2" },
+      { label: "3", value: "3" },
+      { label: "4", value: "4" },
+      { label: "5", value: "5" },
+      { label: "6+", value: "6+" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+};
+
+export const IdPopulationFilterOptions: PopulationFilters = {
+  ...DefaultPopulationFilterOptions,
+};
+
+export const TnPopulationFilterOptions: PopulationFilters = {
+  ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.LEGAL_STATUS]: {
+    type: FILTER_TYPES.LEGAL_STATUS,
+    title: "Admission Reason",
+    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Temporary custody", value: "TEMPORARY_CUSTODY" },
+      { label: "New admission", value: "NEW_ADMISSION" },
+      {
+        label: "Transfer from other jurisdiction",
+        value: "TRANSFER_FROM_OTHER_JURISDICTION",
+      },
+      { label: "Transfer", value: "TRANSFER" },
+      { label: "Revocation", value: "REVOCATION" },
+      {
+        label: "Return from temporary release",
+        value: "RETURN_FROM_TEMPORARY_RELEASE",
+      },
+      { label: "Sanction", value: "SANCTION_ADMISSION" },
+      { label: "Return from escape", value: "RETURN_FROM_ESCAPE" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -259,6 +370,87 @@ export const PopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.facilities],
   },
+};
+
+export const DemoPopulationFilterOptions: PopulationFilters = {
+  ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.AGE_GROUP]: {
+    type: FILTER_TYPES.AGE_GROUP,
+    title: "Age",
+    setFilters: setFilters(FILTER_TYPES.AGE_GROUP),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "<25 years old", value: "<25" },
+      { label: "25-29 years old", value: "25-29" },
+      { label: "30-34 years old", value: "30-34" },
+      { label: "60+ years old", value: "60+" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.LEGAL_STATUS]: {
+    type: FILTER_TYPES.LEGAL_STATUS,
+    title: "Admission Reason",
+    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "New admission", value: "NEW_ADMISSION" },
+      { label: "Revocation", value: "REVOCATION" },
+      { label: "Transfer", value: "TRANSFER" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.FACILITY]: {
+    type: FILTER_TYPES.FACILITY,
+    title: "Facility",
+    setFilters: setFilters(FILTER_TYPES.FACILITY),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Facility 1", value: "FACILITY_1" },
+      { label: "Facility 2", value: "FACILITY_2" },
+      { label: "Facility 3", value: "FACILITY_3" },
+      { label: "Facility 4", value: "FACILITY_4" },
+      { label: "Facility 5", value: "FACILITY_5" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.DISTRICT]: {
+    type: FILTER_TYPES.DISTRICT,
+    title: "District",
+    setFilters: setFilters(FILTER_TYPES.DISTRICT),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "District 1", value: "DISTRICT_1" },
+      { label: "District 2", value: "DISTRICT_2" },
+      { label: "District 3", value: "DISTRICT_3" },
+      { label: "District 4", value: "DISTRICT_4" },
+      { label: "District 5", value: "DISTRICT_5" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
   [FILTER_TYPES.MOST_SEVERE_VIOLATION]: {
     type: FILTER_TYPES.MOST_SEVERE_VIOLATION,
     title: "Most Severe Violation",
@@ -266,11 +458,8 @@ export const PopulationFilterOptions: PopulationFilters = {
     options: [
       { label: "All", value: "ALL" },
       { label: "Felony", value: "FELONY" },
-      { label: "Misdemeanor", value: "MISDEMEANOR" },
       { label: "Technical", value: "TECHNICAL" },
-      { label: "Subs. Use", value: "SUBSTANCE_ABUSE" },
       { label: "Absconsion", value: "ABSCONDED" },
-      { label: "Municipal", value: "MUNICIPAL" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -288,9 +477,6 @@ export const PopulationFilterOptions: PopulationFilters = {
       { label: "All", value: "ALL" },
       { label: "1", value: "1" },
       { label: "2", value: "2" },
-      { label: "3", value: "3" },
-      { label: "4", value: "4" },
-      { label: "5", value: "5" },
       { label: "6+", value: "6+" },
     ],
     get defaultOption(): FilterOption {
@@ -305,93 +491,39 @@ export const PopulationFilterOptions: PopulationFilters = {
 
 export const defaultPopulationFilterValues: PopulationFilterValues = {
   [FILTER_TYPES.TIME_PERIOD]: [
-    PopulationFilterOptions[FILTER_TYPES.TIME_PERIOD].defaultValue,
+    DefaultPopulationFilterOptions[FILTER_TYPES.TIME_PERIOD].defaultValue,
   ],
   [FILTER_TYPES.GENDER]: [
-    PopulationFilterOptions[FILTER_TYPES.GENDER].defaultValue,
+    DefaultPopulationFilterOptions[FILTER_TYPES.GENDER].defaultValue,
   ] as Gender[],
   [FILTER_TYPES.LEGAL_STATUS]: [
-    PopulationFilterOptions[FILTER_TYPES.LEGAL_STATUS].defaultValue,
+    DefaultPopulationFilterOptions[FILTER_TYPES.LEGAL_STATUS].defaultValue,
   ],
   [FILTER_TYPES.SUPERVISION_TYPE]: [
-    PopulationFilterOptions[FILTER_TYPES.SUPERVISION_TYPE].defaultValue,
+    DefaultPopulationFilterOptions[FILTER_TYPES.SUPERVISION_TYPE].defaultValue,
   ],
   [FILTER_TYPES.AGE_GROUP]: [
-    PopulationFilterOptions[FILTER_TYPES.AGE_GROUP].defaultValue,
+    DefaultPopulationFilterOptions[FILTER_TYPES.AGE_GROUP].defaultValue,
   ] as AgeGroup[],
   [FILTER_TYPES.FACILITY]: [
-    PopulationFilterOptions[FILTER_TYPES.FACILITY].defaultValue,
+    DefaultPopulationFilterOptions[FILTER_TYPES.FACILITY].defaultValue,
   ],
   [FILTER_TYPES.DISTRICT]: [
-    PopulationFilterOptions[FILTER_TYPES.DISTRICT].defaultValue,
+    DefaultPopulationFilterOptions[FILTER_TYPES.DISTRICT].defaultValue,
   ],
   [FILTER_TYPES.MOST_SEVERE_VIOLATION]: [
-    PopulationFilterOptions[FILTER_TYPES.MOST_SEVERE_VIOLATION].defaultValue,
+    DefaultPopulationFilterOptions[FILTER_TYPES.MOST_SEVERE_VIOLATION]
+      .defaultValue,
   ],
   [FILTER_TYPES.NUMBER_OF_VIOLATIONS]: [
-    PopulationFilterOptions[FILTER_TYPES.NUMBER_OF_VIOLATIONS].defaultValue,
+    DefaultPopulationFilterOptions[FILTER_TYPES.NUMBER_OF_VIOLATIONS]
+      .defaultValue,
   ],
-};
-
-export const IdPopulationFilterOptions: PopulationFilters = {
-  ...PopulationFilterOptions,
-  [FILTER_TYPES.LEGAL_STATUS]: {
-    type: FILTER_TYPES.LEGAL_STATUS,
-    title: "Legal Status",
-    isSingleSelect: true,
-    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
-    options: [
-      { label: "All", value: "ALL" },
-      { label: "Rider", value: "TREATMENT_IN_PRISON" },
-      { label: "Termer", value: "GENERAL" },
-      { label: "Parole Violator", value: "PAROLE_BOARD_HOLD" },
-    ],
-    get defaultOption(): FilterOption {
-      return this.options[0];
-    },
-    get defaultValue(): string {
-      return this.defaultOption.value;
-    },
-    enabledViews: [CORE_VIEWS.facilities],
-  },
-};
-
-export const TnPopulationFilterOptions: PopulationFilters = {
-  ...PopulationFilterOptions,
-  [FILTER_TYPES.LEGAL_STATUS]: {
-    type: FILTER_TYPES.LEGAL_STATUS,
-    title: "Admission Reason",
-    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
-    options: [
-      { label: "All", value: "ALL" },
-      { label: "Temporary custody", value: "TEMPORARY_CUSTODY" },
-      { label: "New admission", value: "NEW_ADMISSION" },
-      {
-        label: "Transfer from other jurisdiction",
-        value: "TRANSFER_FROM_OTHER_JURISDICTION",
-      },
-      { label: "Probation revocation", value: "PROBATION_REVOCATION" },
-      { label: "Transfer", value: "TRANSFER" },
-      { label: "Parole revocation", value: "PAROLE_REVOCATION" },
-      {
-        label: "Return from temporary release",
-        value: "RETURN_FROM_TEMPORARY_RELEASE",
-      },
-      { label: "Sanction", value: "SANCTION_ADMISSION" },
-      { label: "Return from escape", value: "RETURN_FROM_ESCAPE" },
-    ],
-    get defaultOption(): FilterOption {
-      return this.options[0];
-    },
-    get defaultValue(): string {
-      return this.defaultOption.value;
-    },
-    enabledViews: [CORE_VIEWS.facilities],
-  },
 };
 
 export default {
   [US_ID]: IdPopulationFilterOptions,
   [US_TN]: TnPopulationFilterOptions,
-  [US_ND]: PopulationFilterOptions,
+  [US_ND]: DefaultPopulationFilterOptions,
+  [US_DEMO]: DemoPopulationFilterOptions,
 } as const;
