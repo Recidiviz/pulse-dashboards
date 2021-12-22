@@ -67,7 +67,7 @@ function cacheFiles({ files, metricType, cacheKeyPrefix }) {
   const cachePromises = [];
   const subsetCombinations = getSubsetCombinations(getSubsetManifest());
 
-  if (metricType === "newRevocation") {
+  if (metricType === "newRevocation" || metricType === "pathways") {
     Object.keys(files).forEach((fileKey) => {
       const cacheKey = `${cacheKeyPrefix}-${fileKey}`;
       const metricFile = { [fileKey]: files[fileKey] };

@@ -217,7 +217,52 @@ describe("refreshRedisCache", () => {
     });
   });
 
-  describe("when metricType is not newRevocation", () => {
+  describe("when metricType is pathways", () => {
+    describe("refreshing the cache for files without subsets", () => {
+      beforeEach(() => {
+        metricType = "pathways";
+        fileName = "random_file_name";
+        metricFile = { [fileName]: fileContents };
+      });
+
+      it("calls the cache with the correct key and value", (done) => {
+        const cacheKey = `${stateCode}-${metricType}-${fileName}`;
+        refreshRedisCache(
+          mockFetchValue,
+          stateCode,
+          metricType,
+          (err, result) => {
+            expect(err).toBeNull();
+            expect(result).toEqual("OK");
+
+            expect(mockFetchValue).toHaveBeenCalledTimes(1);
+            expect(mockCache.set).toHaveBeenCalledTimes(1);
+            expect(mockCache.set).toHaveBeenCalledWith(cacheKey, metricFile);
+            done();
+          }
+        );
+      });
+
+      it("returns an error response when caching fails", (done) => {
+        const error = new Error("Error setting cache value");
+        mockCache.set.mockImplementationOnce(() => {
+          throw error;
+        });
+
+        refreshRedisCache(mockFetchValue, stateCode, metricType, (err) => {
+          expect(mockCache.set).toHaveBeenCalledTimes(1);
+          expect(err).toEqual(error);
+          expect(Sentry.captureException).toHaveBeenCalledWith(
+            "Error occurred while caching files for metricType: pathways",
+            error
+          );
+          done();
+        });
+      });
+    });
+  });
+
+  describe("when metricType is not newRevocation or pathways", () => {
     beforeEach(() => {
       metricType = "vitals";
       metricFile = {

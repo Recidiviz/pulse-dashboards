@@ -45,16 +45,16 @@ function fetchMetrics(stateCode, metricType, metricName, isOffline) {
     metricType,
     metricName
   );
-
-  return Promise.all(metricPromises).then((allFileContents) => {
+  return Promise.allSettled(metricPromises).then((allFileContents) => {
     const results = {};
     allFileContents.forEach((contents) => {
-      console.log(`Fetched contents for metricName ${contents.fileKey}`);
-      results[contents.fileKey] = processMetricFile(
-        contents.contents,
-        contents.metadata,
-        contents.extension
-      );
+      if (contents.status === "fulfilled") {
+        results[contents.value.fileKey] = processMetricFile(
+          contents.value.contents,
+          contents.value.metadata,
+          contents.value.extension
+        );
+      }
     });
     console.log(`Fetched all ${metricType} metrics from ${source}`);
     return results;

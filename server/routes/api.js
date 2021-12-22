@@ -171,17 +171,6 @@ function facilitiesExplore(req, res) {
   );
 }
 
-function populationProjections(req, res) {
-  const { stateCode } = req.params;
-  const metricType = "populationProjections";
-  const cacheKey = getCacheKey({ stateCode, metricType });
-  cacheResponse(
-    cacheKey,
-    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
-    responder(res)
-  );
-}
-
 function populationProjectionsMethodology(req, res) {
   const { stateCode } = req.params;
   const file = `${path.resolve(
@@ -271,7 +260,6 @@ module.exports = {
   goals,
   communityExplore,
   facilitiesExplore,
-  populationProjections,
   populationProjectionsMethodology,
   vitals,
   pathways,

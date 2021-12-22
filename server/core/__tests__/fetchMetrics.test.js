@@ -98,4 +98,31 @@ describe("fetchMetrics tests", () => {
       expect(results).toStrictEqual({ [fileKey]: deserializedFile });
     });
   });
+
+  it("should process any metric files with a fulfilled promise, even if it followed a rejected promise", () => {
+    const metricType = "metric_type_2";
+    const isDemo = false;
+    fetchMetricsFromGCS.mockReturnValue([
+      Promise.reject(new Error("Error")),
+      Promise.resolve(promiseData),
+    ]);
+    processMetricFile.mockReturnValue(deserializedFile);
+
+    return fetchMetrics(stateCode, metricType, file, isDemo).then((results) => {
+      expect(fetchMetricsFromGCS).toHaveBeenCalledTimes(1);
+      expect(fetchMetricsFromGCS).toHaveBeenCalledWith(
+        upperCasedStateCode,
+        metricType,
+        file
+      );
+
+      expect(processMetricFile).toHaveBeenCalledTimes(1);
+      expect(processMetricFile).toHaveBeenCalledWith(
+        contents,
+        metadata,
+        extension
+      );
+      expect(results).toStrictEqual({ [fileKey]: deserializedFile });
+    });
+  });
 });
