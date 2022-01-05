@@ -318,7 +318,6 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
     options: [
       { label: "All", value: "ALL" },
-      { label: "Temporary custody", value: "TEMPORARY_CUSTODY" },
       { label: "New admission", value: "NEW_ADMISSION" },
       {
         label: "Transfer from other jurisdiction",

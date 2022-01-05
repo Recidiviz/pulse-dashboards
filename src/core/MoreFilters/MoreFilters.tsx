@@ -22,6 +22,7 @@ import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
 import Modal from "../../components/Modal";
+import RadioGroup from "../../controls/RadioGroup";
 import CheckboxGroup from "../controls/CheckboxGroup";
 import { useCoreStore } from "../CoreStoreProvider";
 import {
@@ -29,7 +30,7 @@ import {
   FilterOption,
   PopulationFilters,
 } from "../types/filters";
-import { getFilterOptions } from "../utils/filterOptions";
+import { getFilterOption, getFilterOptions } from "../utils/filterOptions";
 
 type Props = {
   filterOptions: PopulationFilters;
@@ -76,7 +77,6 @@ const MoreFilters: React.FC<Props> = ({
   };
 
   if (enabledFilters.length < 1) return null;
-
   return (
     <>
       <Modal
@@ -103,11 +103,24 @@ const MoreFilters: React.FC<Props> = ({
             <div className="MoreFilters" key={`${filterType}`}>
               <div className="MoreFilters__header">{filter.title}</div>
               <div className="MoreFilters__content">
-                <CheckboxGroup
-                  filter={filter}
-                  summingOption={filter.defaultOption}
-                  onChange={onUpdateFilters}
-                />
+                {filter.isSingleSelect ? (
+                  <RadioGroup
+                    filter={filter}
+                    defaultValue={
+                      getFilterOption(
+                        get(filters, filter.type)[0],
+                        filter.options
+                      ).value
+                    }
+                    onChange={onUpdateFilters}
+                  />
+                ) : (
+                  <CheckboxGroup
+                    filter={filter}
+                    summingOption={filter.defaultOption}
+                    onChange={onUpdateFilters}
+                  />
+                )}
               </div>
             </div>
           );

@@ -17,38 +17,44 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import "./RadioGroup.scss";
 
-import PropTypes from "prop-types";
 import React, { useState } from "react";
 
-const RadioGroup = ({ defaultValue, onChange, options }) => {
-  const [state, setState] = useState(defaultValue);
+import { FilterOption, PopulationFilter } from "../core/types/filters";
 
+type RadioGroupProps = {
+  filter: PopulationFilter;
+  defaultValue: string;
+  onChange: (newOptions: FilterOption[], filterType: string) => void;
+};
+
+const RadioGroup: React.FC<RadioGroupProps> = ({
+  filter,
+  defaultValue,
+  onChange,
+}) => {
+  const [state, setState] = useState(defaultValue);
+  const { type, options } = filter;
   return (
-    <div className="RadioGroup">
+    <>
       {options.map(({ value, label }) => (
-        <label className="RadioGroup__label" key={value}>
+        <label className="RadioGroup__container">
+          <span className="RadioGroup__label" key={value}>
+            {label}
+          </span>
           <input
             className="RadioGroup__input"
             type="radio"
             checked={state === value}
             onChange={() => {
               setState(value);
-              onChange(value);
+              onChange([{ value, label }], type);
             }}
           />
-          {label}
+          <span className="RadioGroup__box" />
         </label>
       ))}
-    </div>
+    </>
   );
-};
-
-RadioGroup.propTypes = {
-  defaultValue: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  options: PropTypes.arrayOf(
-    PropTypes.shape({ label: PropTypes.string, value: PropTypes.string })
-  ).isRequired,
 };
 
 export default RadioGroup;
