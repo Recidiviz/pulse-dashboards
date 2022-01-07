@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import crypto from "crypto";
 import { useEffect } from "react";
 
 import { useRootStore } from "../components/StoreProvider";
@@ -22,6 +23,11 @@ import { useRootStore } from "../components/StoreProvider";
 const useIntercom = () => {
   const { userStore, tenantStore } = useRootStore();
   const { user } = userStore;
+  const hash = crypto
+    .createHmac("sha256", process.env.REACT_APP_INTERCOM_APP_KEY)
+    .update(user.sub)
+    .digest("hex");
+
   useEffect(() => {
     window.Intercom("update", {
       state_code: tenantStore.currentTenantId,
@@ -30,6 +36,7 @@ const useIntercom = () => {
       email: user.email,
       user_id: user.sub,
       hide_default_launcher: false,
+      user_hash: hash,
     });
   }, [
     tenantStore.currentTenantId,
@@ -37,6 +44,7 @@ const useIntercom = () => {
     user.nickname,
     user.email,
     user.sub,
+    hash,
   ]);
 
   useEffect(() => {

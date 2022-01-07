@@ -22,6 +22,8 @@ import useIntercom from "../useIntercom";
 
 jest.mock("../../components/StoreProvider");
 
+const OLD_ENV = process.env;
+
 describe("useIntercom hook tests", () => {
   const mockName = "some user name";
   const mockNickname = "some user nickname";
@@ -43,7 +45,18 @@ describe("useIntercom hook tests", () => {
   const intercom = jest.fn();
   window.Intercom = intercom;
 
-  const { rerender, unmount } = renderHook(() => useIntercom());
+  let rendered;
+
+  beforeAll(() => {
+    process.env = Object.assign(process.env, {
+      REACT_APP_INTERCOM_APP_KEY: "abcd",
+    });
+    rendered = renderHook(() => useIntercom());
+  });
+
+  afterAll(() => {
+    process.env = OLD_ENV;
+  });
 
   it("should update intercom with user data", () => {
     expect(intercom).toHaveBeenCalledTimes(1);
@@ -55,6 +68,8 @@ describe("useIntercom hook tests", () => {
         nickname: mockNickname,
         email: mockEmail,
         user_id: mockUserId,
+        user_hash:
+          "1bf02f3b6639dd2a6bfdfbdda269db483eceab0184c634affe26d82a62706161",
         hide_default_launcher: false,
       },
     ]);
@@ -69,7 +84,7 @@ describe("useIntercom hook tests", () => {
       tenantStore: { currentTenantId: mockStateCode },
     });
 
-    rerender();
+    rendered.rerender();
 
     expect(intercom).toHaveBeenCalledTimes(2);
     expect(intercom.mock.calls[1]).toEqual([
@@ -80,13 +95,15 @@ describe("useIntercom hook tests", () => {
         nickname: mockNickname,
         email: mockEmail,
         user_id: mockUserId,
+        user_hash:
+          "1bf02f3b6639dd2a6bfdfbdda269db483eceab0184c634affe26d82a62706161",
         hide_default_launcher: false,
       },
     ]);
   });
 
   it("should hide intercom on unmount", () => {
-    unmount();
+    rendered.unmount();
 
     expect(intercom).toHaveBeenCalledTimes(3);
     expect(intercom.mock.calls[2]).toEqual([
