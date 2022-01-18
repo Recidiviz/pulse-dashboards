@@ -54,6 +54,7 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
         const monthsOut =
           (record.year - mostRecentDate.getFullYear()) * 12 +
           (record.month - (mostRecentDate.getMonth() + 1));
+
         return (
           Math.abs(monthsOut) <= monthRange &&
           monthsOut % stepSize === 0 &&
@@ -76,7 +77,7 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
         facility: dataset[0].facility,
         ageGroup: dataset[0].ageGroup,
         avg90day: sumBy("avg90day", dataset),
-        totalPopulation: sumBy("totalPopulation", dataset),
+        count: sumBy("count", dataset),
       }))
     )(filteredRecords);
     return result as PrisonPopulationTimeSeriesRecord[];
@@ -101,7 +102,7 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
 
     this.dataSeries.forEach((d: PrisonPopulationTimeSeriesRecord) => {
       data.push({
-        Population: Math.round(d.totalPopulation),
+        Population: Math.round(d.count),
       });
 
       labels.push(formatMonthAndYear(getRecordDate(d)));

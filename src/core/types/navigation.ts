@@ -28,6 +28,7 @@ export type Navigation = {
   methodology?: string[];
   operations?: string[];
   system?: string[];
+  libertyToPrison?: PathwaysSection[];
   prison?: PathwaysSection[];
   prisonToSupervision?: PathwaysSection[];
   supervision?: PathwaysSection[];

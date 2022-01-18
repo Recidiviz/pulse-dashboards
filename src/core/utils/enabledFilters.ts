@@ -25,6 +25,13 @@ import { EnabledFiltersByMetric } from "../types/filters";
 import { FILTER_TYPES } from "./constants";
 
 export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
+  // LIBERTY TO PRISON
+  libertyToPrisonPopulationOverTime: {
+    enabledFilters: [FILTER_TYPES.TIME_PERIOD, FILTER_TYPES.DISTRICT],
+  },
+  libertyToPrisonPopulationByDistrict: {
+    enabledFilters: [FILTER_TYPES.DISTRICT],
+  },
   // PRISON
   prisonPopulationOverTime: {
     enabledFilters: [
@@ -78,6 +85,29 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  // SUPERVISION
+  supervisionPopulationOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.SUPERVISION_LEVEL,
+    ],
+    enabledMoreFilters: [FILTER_TYPES.GENDER],
+  },
+  supervisionPopulationByDistrict: {
+    enabledFilters: [
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.SUPERVISION_LEVEL,
+      FILTER_TYPES.GENDER,
+    ],
+  },
+  supervisionPopulationBySupervisionLevel: {
+    enabledFilters: [
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.SUPERVISION_LEVEL,
+      FILTER_TYPES.GENDER,
     ],
   },
   // SUPERVISION TO PRISON

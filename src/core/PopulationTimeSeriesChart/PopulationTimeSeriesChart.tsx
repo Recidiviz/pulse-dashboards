@@ -54,7 +54,7 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
   const historicalPopulation = data.map(
     (d: PrisonPopulationTimeSeriesRecord) => ({
       date: getRecordDate(d),
-      value: d.totalPopulation,
+      value: d.count,
     })
   );
 

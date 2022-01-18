@@ -379,6 +379,7 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       { label: "District 2", value: "DISTRICT_2" },
       { label: "District 3", value: "DISTRICT_3" },
       { label: "District 4", value: "DISTRICT_4" },
+      { label: "District 5", value: "DISTRICT_5" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];

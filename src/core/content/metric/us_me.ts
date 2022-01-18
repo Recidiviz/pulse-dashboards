@@ -32,6 +32,9 @@ const content: StateSpecificMetricCopy = {
     methodology:
       "The table includes a row for each person in prison as of the date specified in the chart title. ",
   },
+  supervisionPopulationByDistrict: {
+    title: "Supervision population by region",
+  },
   supervisionToPrisonPopulationByDistrict: {
     title: "Admissions from supervision by region",
     methodology:

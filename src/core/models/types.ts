@@ -93,7 +93,7 @@ export type PrisonPopulationPersonLevelRecord = {
 };
 
 export type PrisonPopulationTimeSeriesRecord = {
-  totalPopulation: number;
+  count: number;
   avg90day: number;
   year: number;
   month: number;
@@ -215,19 +215,24 @@ export interface Hydratable {
 }
 
 export type MetricId =
+  | "libertyToPrisonPopulationOverTime"
+  | "libertyToPrisonPopulationByDistrict"
   | "prisonFacilityPopulation"
   | "prisonPopulationOverTime"
   | "projectedPrisonPopulationOverTime"
-  | "projectedSupervisionPopulationOverTime"
-  | "supervisionToPrisonOverTime"
-  | "supervisionToLibertyOverTime"
   | "prisonPopulationPersonLevel"
-  | "supervisionToPrisonPopulationByDistrict"
-  | "supervisionToPrisonPopulationByMostSevereViolation"
-  | "supervisionToPrisonPopulationByNumberOfViolations"
-  | "supervisionToPrisonPopulationByLengthOfStay"
   | "prisonToSupervisionPopulationOverTime"
   | "prisonToSupervisionPopulationByAge"
   | "prisonToSupervisionPopulationByFacility"
   | "prisonToSupervisionPopulationPersonLevel"
-  | "supervisionToPrisonPopulationBySupervisionLevel";
+  | "supervisionPopulationOverTime"
+  | "projectedSupervisionPopulationOverTime"
+  | "supervisionPopulationByDistrict"
+  | "supervisionPopulationBySupervisionLevel"
+  | "supervisionToPrisonOverTime"
+  | "supervisionToPrisonPopulationByDistrict"
+  | "supervisionToPrisonPopulationByMostSevereViolation"
+  | "supervisionToPrisonPopulationByNumberOfViolations"
+  | "supervisionToPrisonPopulationByLengthOfStay"
+  | "supervisionToPrisonPopulationBySupervisionLevel"
+  | "supervisionToLibertyOverTime";

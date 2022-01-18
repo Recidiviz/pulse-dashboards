@@ -21,6 +21,15 @@
 import { PageCopy } from "../types";
 
 const content: PageCopy = {
+  libertyToPrison: {
+    title: "Liberty to Prison",
+    summary:
+      "These charts show individuals who are admitted to DOC facilities resulting from a reason other than revocation. They do not include transfers, periods of temporary custody, or returns from escape.",
+    sections: {
+      countOverTime: "Admissions from liberty to prison over time",
+      countByLocation: "Admissions from liberty to prison by district",
+    },
+  },
   prison: {
     title: "Prison",
     summary: "This page shows all people in state prison facilities.",

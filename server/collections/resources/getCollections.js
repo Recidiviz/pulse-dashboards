@@ -150,6 +150,12 @@ const VITALS_COLLECTION = {
 
 const PATHWAYS_COLLECTIONS = {
   [COLLECTIONS.PATHWAYS]: {
+    liberty_to_prison_count_by_month: {
+      filename: "liberty_to_prison_count_by_month.json",
+    },
+    liberty_to_prison_population_snapshot_by_dimension: {
+      filename: "liberty_to_prison_population_snapshot_by_dimension.json",
+    },
     prison_population_projection_time_series: {
       filename: "prison_population_projection_time_series.txt",
     },
@@ -179,6 +185,12 @@ const PATHWAYS_COLLECTIONS = {
     },
     prison_to_supervision_population_snapshot_by_dimension: {
       filename: "prison_to_supervision_population_snapshot_by_dimension.json",
+    },
+    supervision_population_time_series: {
+      filename: "supervision_population_time_series.json",
+    },
+    supervision_population_snapshot_by_dimension: {
+      filename: "supervision_population_snapshot_by_dimension.json",
     },
   },
 };

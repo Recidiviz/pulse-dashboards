@@ -29,22 +29,29 @@ import {
   SupervisionType,
 } from "./types";
 
-const supervisionDimensionDefaults = {
-  supervisionType: "ALL" as SupervisionType,
-  gender: "ALL" as Gender,
-  ageGroup: "ALL" as AgeGroup,
+const superDimensionDefaults = {
   district: "ALL",
-  mostSevereViolation: "ALL",
-  numberOfViolations: "ALL",
-  lengthOfStay: "ALL",
   supervisionLevel: "ALL",
+  supervisionType: "ALL" as SupervisionType,
   race: "ALL",
 };
 
-const prisonDimensionDefaults = {
-  legalStatus: "ALL",
+const sharedDimensionDefaults = {
   gender: "ALL" as Gender,
   ageGroup: "ALL" as AgeGroup,
+};
+
+const supervisionDimensionDefaults = {
+  ...sharedDimensionDefaults,
+  ...superDimensionDefaults,
+  mostSevereViolation: "ALL",
+  numberOfViolations: "ALL",
+  lengthOfStay: "ALL",
+};
+
+const prisonDimensionDefaults = {
+  ...sharedDimensionDefaults,
+  legalStatus: "ALL",
   facility: "ALL",
 };
 
@@ -146,7 +153,7 @@ export function createPrisonPopulationTimeSeries(
       {
         year: Number(record.year),
         month: Number(record.month),
-        totalPopulation: parseInt(record.person_count),
+        count: parseInt(record.person_count),
         avg90day: parseInt(record.avg_90day),
         legalStatus: record.legal_status,
         gender: record.gender as Gender,

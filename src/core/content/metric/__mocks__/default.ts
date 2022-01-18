@@ -21,6 +21,16 @@
 import { MetricCopy } from "../../types";
 
 const content: MetricCopy = {
+  libertyToPrisonPopulationOverTime: {
+    title: "Admissions from liberty to prison over time",
+    note: "Admissions from liberty to prison over time note",
+    methodology: "Admissions from liberty to prison over time methodology",
+  },
+  libertyToPrisonPopulationByDistrict: {
+    title: "Admissions from liberty to prison by district",
+    note: "Admissions from liberty to prison by district note",
+    methodology: "Admissions from liberty to prison by district methodology",
+  },
   prisonPopulationPersonLevel: {
     title: "List of people in prison",
   },
@@ -63,6 +73,21 @@ const content: MetricCopy = {
     title: "List of releases from prison to supervision",
     note: "List of releases from prison to supervision note",
     methodology: "List of releases from prison to supervision methodology",
+  },
+  supervisionPopulationOverTime: {
+    title: "Supervision population over time",
+    note: "Supervision population over time note",
+    methodology: "Supervision population over time methodology",
+  },
+  supervisionPopulationByDistrict: {
+    title: "Supervision population by district",
+    note: "Supervision population by district",
+    methodology: "Supervision population by district methodology",
+  },
+  supervisionPopulationBySupervisionLevel: {
+    title: "Supervision population by supervision level",
+    note: "Supervision population by supervision level note",
+    methodology: "Supervision population by supervision level methodology",
   },
   supervisionToPrisonOverTime: {
     title: "Admissions to prison from supervision",

@@ -109,14 +109,25 @@ const TENANTS: Tenants = {
     enablePracticesCaseloadButton: false,
     navigation: {
       system: [
+        PATHWAYS_PAGES.libertyToPrison,
         PATHWAYS_PAGES.prison,
         PATHWAYS_PAGES.prisonToSupervision,
+        PATHWAYS_PAGES.supervision,
         PATHWAYS_PAGES.supervisionToPrison,
+      ],
+      libertyToPrison: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
       ],
       prison: [
         PATHWAYS_SECTIONS.countOverTime,
         PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.personLevelDetail,
+      ],
+      supervision: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countBySupervisionLevel,
       ],
       prisonToSupervision: [
         PATHWAYS_SECTIONS.countOverTime,
@@ -180,9 +191,15 @@ const TENANTS: Tenants = {
     enablePracticesCaseloadButton: false,
     navigation: {
       system: [
+        PATHWAYS_PAGES.libertyToPrison,
         PATHWAYS_PAGES.prison,
         PATHWAYS_PAGES.prisonToSupervision,
+        PATHWAYS_PAGES.supervision,
         PATHWAYS_PAGES.supervisionToPrison,
+      ],
+      libertyToPrison: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
       ],
       prison: [
         PATHWAYS_SECTIONS.countOverTime,
@@ -194,6 +211,11 @@ const TENANTS: Tenants = {
         PATHWAYS_SECTIONS.countByAgeGroup,
         PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.personLevelDetail,
+      ],
+      supervision: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countBySupervisionLevel,
       ],
       supervisionToPrison: [
         PATHWAYS_SECTIONS.countOverTime,

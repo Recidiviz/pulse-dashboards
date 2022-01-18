@@ -48,10 +48,7 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
   const data = dataSeries.map((d: any, index: number) => ({
     index,
     date: new Date(d.year, d.month - 1),
-    value:
-      metric instanceof PrisonPopulationOverTimeMetric
-        ? d.totalPopulation
-        : d.count,
+    value: d.count,
     average: d.avg90day,
   }));
 

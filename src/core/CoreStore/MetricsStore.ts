@@ -56,6 +56,12 @@ export default class MetricsStore {
     if (!Object.keys(PATHWAYS_PAGES).includes(page)) return undefined;
 
     const map = {
+      [PATHWAYS_PAGES.libertyToPrison]: {
+        [PATHWAYS_SECTIONS.countOverTime]: this
+          .libertyToPrisonPopulationOverTime,
+        [PATHWAYS_SECTIONS.countByLocation]: this
+          .libertyToPrisonPopulationByDistrict,
+      },
       [PATHWAYS_PAGES.prison]: {
         [PATHWAYS_SECTIONS.countOverTime]:
           this.rootStore.currentTenantId === US_ID
@@ -75,8 +81,14 @@ export default class MetricsStore {
           .prisonToSupervisionPopulationPersonLevel,
       },
       [PATHWAYS_PAGES.supervision]: {
-        [PATHWAYS_SECTIONS.countOverTime]: this
-          .projectedSupervisionPopulationOverTime,
+        [PATHWAYS_SECTIONS.countOverTime]:
+          this.rootStore.currentTenantId === US_ID
+            ? this.projectedSupervisionPopulationOverTime
+            : this.supervisionPopulationOverTime,
+        [PATHWAYS_SECTIONS.countByLocation]: this
+          .supervisionPopulationByDistrict,
+        [PATHWAYS_SECTIONS.countBySupervisionLevel]: this
+          .supervisionPopulationBySupervisionLevel,
       },
       [PATHWAYS_PAGES.supervisionToPrison]: {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToPrisonOverTime,
@@ -97,6 +109,35 @@ export default class MetricsStore {
     };
     // @ts-ignore
     return map[page][section];
+  }
+
+  // Admissions from liberty to prison are counted by district and not by facility,
+  // so this will be a SupervisionPopulationOverTimeMetric
+  get libertyToPrisonPopulationOverTime(): SupervisionPopulationOverTimeMetric {
+    return new SupervisionPopulationOverTimeMetric({
+      id: "libertyToPrisonPopulationOverTime",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "liberty_to_prison_count_by_month",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationTimeSeries,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .libertyToPrisonPopulationOverTime,
+    });
+  }
+
+  // Admissions from liberty to prison are counted by district and not by facility,
+  // so this will be a SupervisionPopulationSnapshotMetric
+  get libertyToPrisonPopulationByDistrict(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "libertyToPrisonPopulationByDistrict",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "district",
+      filters: this.rootStore.filtersStore.enabledFilters
+        .libertyToPrisonPopulationByDistrict,
+    });
   }
 
   get prisonPopulationPersonLevel(): PrisonPopulationPersonLevelMetric {
@@ -120,6 +161,45 @@ export default class MetricsStore {
       dataTransformer: createPrisonPopulationTimeSeries,
       filters: this.rootStore.filtersStore.enabledFilters
         .prisonPopulationOverTime,
+    });
+  }
+
+  get supervisionPopulationOverTime(): SupervisionPopulationOverTimeMetric {
+    return new SupervisionPopulationOverTimeMetric({
+      id: "supervisionPopulationOverTime",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_population_time_series",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationTimeSeries,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionPopulationOverTime,
+    });
+  }
+
+  get supervisionPopulationByDistrict(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionPopulationByDistrict",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      enableMetricModeToggle: true,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "district",
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionPopulationByDistrict,
+    });
+  }
+
+  get supervisionPopulationBySupervisionLevel(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionPopulationBySupervisionLevel",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "supervisionLevel",
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionPopulationBySupervisionLevel,
     });
   }
 

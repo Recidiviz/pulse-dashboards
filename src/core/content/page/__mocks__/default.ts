@@ -21,6 +21,13 @@
 import { PageCopy } from "../../types";
 
 const content: PageCopy = {
+  libertyToPrison: {
+    title: "Liberty to Prison",
+    summary: "Default liberty to prison summary",
+    sections: {
+      sectionId: "Default liberty to prison section title",
+    },
+  },
   prison: {
     title: "Prison",
     summary: "Default prison summary",

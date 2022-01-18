@@ -62,13 +62,20 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
     switch (metric.id) {
       case "prisonToSupervisionPopulationOverTime":
         return <VizCountOverTimeWithAvg metric={metric} />;
+      case "libertyToPrisonPopulationOverTime":
+        return <VizCountOverTimeWithAvg metric={metric} />;
       default:
         return <VizPopulationOverTime metric={metric} />;
     }
   }
 
   if (metric instanceof SupervisionPopulationOverTimeMetric) {
-    return <VizCountOverTimeWithAvg metric={metric} />;
+    switch (metric.id) {
+      case "supervisionPopulationOverTime":
+        return <VizPopulationOverTime metric={metric as any} />;
+      default:
+        return <VizCountOverTimeWithAvg metric={metric} />;
+    }
   }
 
   // there are no other metric types, so this should only be reached when developing new ones

@@ -86,7 +86,7 @@ export const prepareData = (
     data = rawData as PrisonPopulationTimeSeriesRecord[];
     historicalPopulation = data.map((d) => ({
       date: getRecordDate(d),
-      value: d.totalPopulation,
+      value: d.count,
     }));
   }
 
