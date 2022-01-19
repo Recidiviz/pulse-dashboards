@@ -19,14 +19,17 @@ import crypto from "crypto";
 import { useEffect } from "react";
 
 import { useRootStore } from "../components/StoreProvider";
+import { isDemoMode } from "../utils/isDemoMode";
 
 const useIntercom = () => {
   const { userStore, tenantStore } = useRootStore();
   const { user } = userStore;
-  const hash = crypto
-    .createHmac("sha256", process.env.REACT_APP_INTERCOM_APP_KEY)
-    .update(user.sub)
-    .digest("hex");
+  const hash = isDemoMode
+    ? crypto
+        .createHmac("sha256", process.env.REACT_APP_INTERCOM_APP_KEY)
+        .update(user.sub || "")
+        .digest("hex")
+    : undefined;
 
   useEffect(() => {
     window.Intercom("update", {

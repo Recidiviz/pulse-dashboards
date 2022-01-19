@@ -28,7 +28,11 @@ import { CORE_TENANTS } from "../../RootStore/TenantStore/coreTenants";
 import { PATHWAYS_TENANTS } from "../../RootStore/TenantStore/pathwaysTenants";
 import { useCoreStore } from "../CoreStoreProvider";
 import { NavigationSection } from "../types/navigation";
-import { getPageHeadingFromId } from "../views";
+import {
+  CoreViewIdList,
+  getPageHeadingFromId,
+  PathwaysViewIdList,
+} from "../views";
 import withRouteSync from "../withRouteSync";
 
 const PageNavigation: React.FC = () => {
@@ -41,12 +45,15 @@ const PageNavigation: React.FC = () => {
   const pageOptions = navigationLayout[currentView] ?? [];
   const isCoreView = CORE_TENANTS.includes(currentTenantId);
   const isPathwaysView = PATHWAYS_TENANTS.includes(currentTenantId);
-
   return (
     <ul
       className={cx("PageNavigation", {
-        "PageNavigation--pathways": isPathwaysView && !isMobile,
-        "PageNavigation--core": isCoreView,
+        "PageNavigation--pathways":
+          isPathwaysView &&
+          !isMobile &&
+          PathwaysViewIdList.includes(currentView),
+        "PageNavigation--core":
+          isCoreView && CoreViewIdList.includes(currentView),
         "PageNavigation--mobile": isMobile && isPathwaysView,
       })}
     >

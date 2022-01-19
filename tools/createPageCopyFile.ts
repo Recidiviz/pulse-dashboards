@@ -32,49 +32,51 @@ const createPageCopyFile = async (
 ): Promise<void> => {
   const pageCopySheet =
     doc.sheetsByTitle[stateCode ? `Pages - ${stateCode}` : "Pages"];
-  await pageCopySheet.loadCells();
-  const rows = await pageCopySheet.getRows();
+  if (pageCopySheet) {
+    await pageCopySheet.loadCells();
+    const rows = await pageCopySheet.getRows();
 
-  const enabledRows = rows.filter((row) =>
-    PathwaysPageIdList.includes(row["Page ID"])
-  );
-
-  const content = Object.fromEntries(
-    enabledRows.map((row) => [
-      row["Page ID"],
-      {
-        ...(row.Title ? { title: row.Title } : {}),
-        ...(row.Summary ? { summary: row.Summary } : {}),
-        ...(row.Sections ? { sections: JSON.parse(row.Sections) } : {}),
-        ...(row.Methodology ? { methodology: row.Methodology } : {}),
-      },
-    ])
-  );
-
-  const fileTemplate = await readFile(
-    "tools/templates/pageCopy.template",
-    "utf-8"
-  );
-
-  let copyFileContents = fileTemplate.replace(
-    /COPY_CONTENT/,
-    JSON.stringify(content, null, 2)
-  );
-
-  if (stateCode) {
-    copyFileContents = copyFileContents.replace(
-      /PageCopy/g,
-      "StateSpecificPageCopy"
+    const enabledRows = rows.filter((row) =>
+      PathwaysPageIdList.includes(row["Page ID"])
     );
+
+    const content = Object.fromEntries(
+      enabledRows.map((row) => [
+        row["Page ID"],
+        {
+          ...(row.Title ? { title: row.Title } : {}),
+          ...(row.Summary ? { summary: row.Summary } : {}),
+          ...(row.Sections ? { sections: JSON.parse(row.Sections) } : {}),
+          ...(row.Methodology ? { methodology: row.Methodology } : {}),
+        },
+      ])
+    );
+
+    const fileTemplate = await readFile(
+      "tools/templates/pageCopy.template",
+      "utf-8"
+    );
+
+    let copyFileContents = fileTemplate.replace(
+      /COPY_CONTENT/,
+      JSON.stringify(content, null, 2)
+    );
+
+    if (stateCode) {
+      copyFileContents = copyFileContents.replace(
+        /PageCopy/g,
+        "StateSpecificPageCopy"
+      );
+    }
+
+    const outPath = `src/core/content/page/${
+      stateCode ? stateCode.toLowerCase() : "default"
+    }.ts`;
+
+    await writeFile(outPath, copyFileContents);
+    // eslint-disable-next-line no-console
+    console.log(`${outPath} successfully generated.`);
   }
-
-  const outPath = `src/core/content/page/${
-    stateCode ? stateCode.toLowerCase() : "default"
-  }.ts`;
-
-  await writeFile(outPath, copyFileContents);
-  // eslint-disable-next-line no-console
-  console.log(`${outPath} successfully generated.`);
 };
 
 export default createPageCopyFile;

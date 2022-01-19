@@ -32,50 +32,52 @@ const createMetricCopyFile = async (
 ): Promise<void> => {
   const metricCopySheet =
     doc.sheetsByTitle[stateCode ? `Metrics - ${stateCode}` : "Metrics"];
-  await metricCopySheet.loadCells();
-  const rows = await metricCopySheet.getRows();
+  if (metricCopySheet) {
+    await metricCopySheet.loadCells();
+    const rows = await metricCopySheet.getRows();
 
-  const content = Object.fromEntries(
-    rows.map((row) => [
-      row["Metric ID"],
-      {
-        ...(row.Title ? { title: row.Title } : {}),
-        ...(row.Note ? { note: row.Note } : {}),
-        ...(row.Methodology ? { methodology: row.Methodology } : {}),
-        ...(row["X-Axis title"]
-          ? { chartXAxisTitle: row["X-Axis title"] }
-          : {}),
-        ...(row["Y-Axis title"]
-          ? { chartYAxisTitle: row["Y-Axis title"] }
-          : {}),
-      },
-    ])
-  ) as MetricContent;
+    const content = Object.fromEntries(
+      rows.map((row) => [
+        row["Metric ID"],
+        {
+          ...(row.Title ? { title: row.Title } : {}),
+          ...(row.Note ? { note: row.Note } : {}),
+          ...(row.Methodology ? { methodology: row.Methodology } : {}),
+          ...(row["X-Axis title"]
+            ? { chartXAxisTitle: row["X-Axis title"] }
+            : {}),
+          ...(row["Y-Axis title"]
+            ? { chartYAxisTitle: row["Y-Axis title"] }
+            : {}),
+        },
+      ])
+    ) as MetricContent;
 
-  const fileTemplate = await readFile(
-    "tools/templates/metricCopy.template",
-    "utf-8"
-  );
-
-  let copyFileContents = fileTemplate.replace(
-    /COPY_CONTENT/,
-    JSON.stringify(content, null, 2)
-  );
-
-  if (stateCode) {
-    copyFileContents = copyFileContents.replace(
-      /MetricCopy/g,
-      "StateSpecificMetricCopy"
+    const fileTemplate = await readFile(
+      "tools/templates/metricCopy.template",
+      "utf-8"
     );
+
+    let copyFileContents = fileTemplate.replace(
+      /COPY_CONTENT/,
+      JSON.stringify(content, null, 2)
+    );
+
+    if (stateCode) {
+      copyFileContents = copyFileContents.replace(
+        /MetricCopy/g,
+        "StateSpecificMetricCopy"
+      );
+    }
+
+    const outPath = `src/core/content/metric/${
+      stateCode ? stateCode.toLowerCase() : "default"
+    }.ts`;
+
+    await writeFile(outPath, copyFileContents);
+    // eslint-disable-next-line no-console
+    console.log(`${outPath} successfully generated.`);
   }
-
-  const outPath = `src/core/content/metric/${
-    stateCode ? stateCode.toLowerCase() : "default"
-  }.ts`;
-
-  await writeFile(outPath, copyFileContents);
-  // eslint-disable-next-line no-console
-  console.log(`${outPath} successfully generated.`);
 };
 
 export default createMetricCopyFile;

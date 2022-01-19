@@ -61,6 +61,13 @@ export default class MetricsStore {
           .libertyToPrisonPopulationOverTime,
         [PATHWAYS_SECTIONS.countByLocation]: this
           .libertyToPrisonPopulationByDistrict,
+        [PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration]: this
+          .libertyToPrisonPopulationByPriorLengthOfIncarceration,
+        [PATHWAYS_SECTIONS.countByGender]: this
+          .libertyToPrisonPopulationByGender,
+        [PATHWAYS_SECTIONS.countByAgeGroup]: this
+          .libertyToPrisonPopulationByAgeGroup,
+        [PATHWAYS_SECTIONS.countByRace]: this.libertyToPrisonPopulationByRace,
       },
       [PATHWAYS_PAGES.prison]: {
         [PATHWAYS_SECTIONS.countOverTime]:
@@ -102,9 +109,23 @@ export default class MetricsStore {
           .supervisionToPrisonPopulationByLengthOfStay,
         [PATHWAYS_SECTIONS.countBySupervisionLevel]: this
           .supervisionToPrisonPopulationBySupervisionLevel,
+        [PATHWAYS_SECTIONS.countByRace]: this
+          .supervisionToPrisonPopulationByRace,
+        [PATHWAYS_SECTIONS.countByGender]: this
+          .supervisionToPrisonPopulationByGender,
       },
       [PATHWAYS_PAGES.supervisionToLiberty]: {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToLibertyOverTime,
+        [PATHWAYS_SECTIONS.countByLengthOfStay]: this
+          .supervisionToLibertyPopulationByLengthOfStay,
+        [PATHWAYS_SECTIONS.countByLocation]: this
+          .supervisionToLibertyPopulationByLocation,
+        [PATHWAYS_SECTIONS.countByGender]: this
+          .supervisionToLibertyPopulationByGender,
+        [PATHWAYS_SECTIONS.countByAgeGroup]: this
+          .supervisionToLibertyPopulationByAgeGroup,
+        [PATHWAYS_SECTIONS.countByRace]: this
+          .supervisionToLibertyPopulationByRace,
       },
     };
     // @ts-ignore
@@ -135,8 +156,64 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "district",
+      enableMetricModeToggle: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .libertyToPrisonPopulationByDistrict,
+    });
+  }
+
+  get libertyToPrisonPopulationByRace(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "libertyToPrisonPopulationByRace",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "race",
+      enableMetricModeToggle: true,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .libertyToPrisonPopulationByRace,
+    });
+  }
+
+  get libertyToPrisonPopulationByAgeGroup(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "libertyToPrisonPopulationByAgeGroup",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "ageGroup",
+      enableMetricModeToggle: true,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .libertyToPrisonPopulationByAgeGroup,
+    });
+  }
+
+  get libertyToPrisonPopulationByGender(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "libertyToPrisonPopulationByGender",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "gender",
+      enableMetricModeToggle: true,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .libertyToPrisonPopulationByGender,
+    });
+  }
+
+  get libertyToPrisonPopulationByPriorLengthOfIncarceration(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "libertyToPrisonPopulationByPriorLengthOfIncarceration",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "priorLengthOfIncarceration",
+      filters: this.rootStore.filtersStore.enabledFilters
+        .libertyToPrisonPopulationByPriorLengthOfIncarceration,
     });
   }
 
@@ -283,6 +360,34 @@ export default class MetricsStore {
     });
   }
 
+  get supervisionToPrisonPopulationByGender(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionToPrisonPopulationByGender",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "gender",
+      enableMetricModeToggle: true,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToPrisonPopulationByGender,
+    });
+  }
+
+  get supervisionToPrisonPopulationByRace(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionToPrisonPopulationByRace",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "race",
+      enableMetricModeToggle: true,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToPrisonPopulationByRace,
+    });
+  }
+
   get projectedPrisonPopulationOverTime(): PopulationProjectionOverTimeMetric {
     return new PopulationProjectionOverTimeMetric({
       id: "projectedPrisonPopulationOverTime",
@@ -382,6 +487,75 @@ export default class MetricsStore {
       dataTransformer: (data) => createSupervisionPopulationTimeSeries(data),
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToLibertyOverTime,
+    });
+  }
+
+  get supervisionToLibertyPopulationByLengthOfStay(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionToLibertyPopulationByLengthOfStay",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_liberty_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "lengthOfStay",
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToLibertyPopulationByLengthOfStay,
+    });
+  }
+
+  get supervisionToLibertyPopulationByRace(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionToLibertyPopulationByRace",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_liberty_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "race",
+      enableMetricModeToggle: true,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToLibertyPopulationByRace,
+    });
+  }
+
+  get supervisionToLibertyPopulationByLocation(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionToLibertyPopulationByLocation",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_liberty_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "district",
+      enableMetricModeToggle: true,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToLibertyPopulationByLocation,
+    });
+  }
+
+  get supervisionToLibertyPopulationByGender(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionToLibertyPopulationByGender",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_liberty_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "gender",
+      enableMetricModeToggle: true,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToLibertyPopulationByGender,
+    });
+  }
+
+  get supervisionToLibertyPopulationByAgeGroup(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionToLibertyPopulationByAgeGroup",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_liberty_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "ageGroup",
+      enableMetricModeToggle: true,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToLibertyPopulationByAgeGroup,
     });
   }
 }

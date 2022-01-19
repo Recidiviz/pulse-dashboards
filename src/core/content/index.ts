@@ -16,7 +16,6 @@
 // =============================================================================
 import { merge } from "lodash";
 
-import * as coreTenants from "../../RootStore/TenantStore/coreTenants";
 import * as pathwaysTenants from "../../RootStore/TenantStore/pathwaysTenants";
 import { TenantId } from "../../RootStore/types";
 import { ViewMethodology } from "../models/types";
@@ -27,10 +26,12 @@ import { usTnMethodology } from "./methodology/usTnMethodology";
 import defaultMetricContent from "./metric/default";
 import IdMetricContent from "./metric/us_id";
 import MeMetricContent from "./metric/us_me";
+import NdMetricContent from "./metric/us_nd";
 import TnMetricContent from "./metric/us_tn";
 import defaultPageContent from "./page/default";
 import IdPageContent from "./page/us_id";
 import MePageContent from "./page/us_me";
+import NdPageContent from "./page/us_nd";
 import TnPageContent from "./page/us_tn";
 import {
   MetricCopy,
@@ -45,6 +46,7 @@ export const pageContentOverrides: {
   US_ID: IdPageContent,
   US_TN: TnPageContent,
   US_ME: MePageContent,
+  US_ND: NdPageContent,
 };
 
 export const metricContentOverrides: {
@@ -53,6 +55,7 @@ export const metricContentOverrides: {
   US_ID: IdMetricContent,
   US_TN: TnMetricContent,
   US_ME: MeMetricContent,
+  US_ND: NdMetricContent,
 };
 
 export const getPageCopy = (currentTenantId: TenantId): PageCopy => {
@@ -75,7 +78,7 @@ export const getMethodologyCopy = (
   switch (currentTenantId) {
     case pathwaysTenants.US_ID:
       return usIdMethodology;
-    case coreTenants.US_ND:
+    case pathwaysTenants.US_ND:
       return usNdMethodology;
     case pathwaysTenants.US_ME:
       return usMeMethodology;

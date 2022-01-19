@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { US_ND } from "../../RootStore/TenantStore/coreTenants";
 import {
   US_DEMO,
   US_ID,
   US_ME,
+  US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { AgeGroup, Gender } from "../models/types";
@@ -304,6 +304,44 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.facilities],
   },
+  [FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION]: {
+    type: FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION,
+    title: "Prior Length Of Incarceration",
+    setFilters: setFilters(FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "0", value: "0" },
+      { label: "6", value: "6" },
+      { label: "12", value: "12" },
+      { label: "18", value: "18" },
+      { label: "24", value: "24" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.RACE]: {
+    type: FILTER_TYPES.RACE,
+    title: "Race",
+    setFilters: setFilters(FILTER_TYPES.RACE),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Black", value: "BLACK" },
+      { label: "White", value: "WHITE" },
+      { label: "Hispanic", value: "HISPANIC" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
 };
 
 export const IdPopulationFilterOptions: PopulationFilters = {
@@ -510,6 +548,44 @@ export const DemoPopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.facilities],
   },
+  [FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION]: {
+    type: FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION,
+    title: "Prior Length Of Incarceration",
+    setFilters: setFilters(FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "0", value: "0" },
+      { label: "6", value: "6" },
+      { label: "12", value: "12" },
+      { label: "18", value: "18" },
+      { label: "24", value: "24" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.RACE]: {
+    type: FILTER_TYPES.RACE,
+    title: "Race",
+    setFilters: setFilters(FILTER_TYPES.RACE),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Black", value: "BLACK" },
+      { label: "White", value: "WHITE" },
+      { label: "Hispanic", value: "HISPANIC" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
 };
 
 export const defaultPopulationFilterValues: PopulationFilterValues = {
@@ -544,6 +620,13 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
   [FILTER_TYPES.SUPERVISION_LEVEL]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.SUPERVISION_LEVEL].defaultValue,
+  ],
+  [FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION]
+      .defaultValue,
+  ],
+  [FILTER_TYPES.RACE]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.RACE].defaultValue,
   ],
 };
 

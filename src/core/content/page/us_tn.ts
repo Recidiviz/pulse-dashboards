@@ -24,40 +24,8 @@ const content: StateSpecificPageCopy = {
   prison: {
     summary:
       "These charts show people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails are not included. ",
-    sections: {
-      countOverTime: "Prison population over time",
-      countByLocation: "Prison population by facility",
-      personLevelDetail: "List of people in prison",
-    },
     methodology:
       "These charts show people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails are not included.",
-  },
-  prisonToSupervision: {
-    sections: {
-      countOverTime: "Releases from prison to supervision over time",
-      countByAgeGroup: "Releases from prison to supervision by age",
-      countByLocation: "Releases from prison to supervision by facility",
-    },
-  },
-  supervision: {
-    sections: {
-      countOverTime: "Supervision population over time",
-      countByLocation: "Supervision population by district",
-      countBySupervisionLevel: "Supervision population by supervision level",
-    },
-  },
-  supervisionToPrison: {
-    sections: {
-      countOverTime: "Admissions from supervision over time",
-      countByLocation: "Admissions from supervision by district",
-      countByMostSevereViolation:
-        "Admissions from supervision by most severe violation",
-      countByNumberOfViolations:
-        "Admissions from supervision by number of violations",
-      countByLengthOfStay: "Time to admission from supervision",
-      countBySupervisionLevel:
-        "Admissions from supervision to prison by supervision level",
-    },
   },
 };
 

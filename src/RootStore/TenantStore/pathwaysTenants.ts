@@ -18,6 +18,7 @@
 export const US_ID = "US_ID";
 export const US_TN = "US_TN";
 export const US_ME = "US_ME";
+export const US_ND = "US_ND";
 export const US_DEMO = "US_DEMO";
 
-export const PATHWAYS_TENANTS = [US_TN, US_ID, US_ME];
+export const PATHWAYS_TENANTS = [US_TN, US_ID, US_ME, US_ND];

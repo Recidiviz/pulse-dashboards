@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { US_ND } from "../../RootStore/TenantStore/coreTenants";
+
 import {
   US_ID,
   US_ME,
+  US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { MetricCopy, PageCopy } from "../content/types";
@@ -101,6 +102,10 @@ export type PrisonPopulationTimeSeriesRecord = {
   ageGroup: AgeGroup;
   legalStatus: string;
   facility: string;
+  supervisionType: SupervisionType;
+  district: string;
+  supervisionLevel: string;
+  race: string;
 };
 
 export type SupervisionPopulationSnapshotRecord = {
@@ -116,6 +121,7 @@ export type SupervisionPopulationSnapshotRecord = {
   lengthOfStay: string;
   supervisionLevel: string;
   race: string;
+  priorLengthOfIncarceration: string;
 };
 
 export type SupervisionPopulationTimeSeriesRecord = {
@@ -217,6 +223,10 @@ export interface Hydratable {
 export type MetricId =
   | "libertyToPrisonPopulationOverTime"
   | "libertyToPrisonPopulationByDistrict"
+  | "libertyToPrisonPopulationByGender"
+  | "libertyToPrisonPopulationByRace"
+  | "libertyToPrisonPopulationByAgeGroup"
+  | "libertyToPrisonPopulationByPriorLengthOfIncarceration"
   | "prisonFacilityPopulation"
   | "prisonPopulationOverTime"
   | "projectedPrisonPopulationOverTime"
@@ -235,4 +245,11 @@ export type MetricId =
   | "supervisionToPrisonPopulationByNumberOfViolations"
   | "supervisionToPrisonPopulationByLengthOfStay"
   | "supervisionToPrisonPopulationBySupervisionLevel"
-  | "supervisionToLibertyOverTime";
+  | "supervisionToPrisonPopulationByGender"
+  | "supervisionToPrisonPopulationByRace"
+  | "supervisionToLibertyOverTime"
+  | "supervisionToLibertyPopulationByLengthOfStay"
+  | "supervisionToLibertyPopulationByLocation"
+  | "supervisionToLibertyPopulationByGender"
+  | "supervisionToLibertyPopulationByAgeGroup"
+  | "supervisionToLibertyPopulationByRace";

@@ -26,7 +26,6 @@ import {
   PATHWAYS_SECTIONS,
   PATHWAYS_VIEWS,
 } from "./core/views";
-import * as core from "./RootStore/TenantStore/coreTenants";
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
 import * as pathways from "./RootStore/TenantStore/pathwaysTenants";
 import { TenantId } from "./RootStore/types";
@@ -276,20 +275,113 @@ const TENANTS: Tenants = {
     enableUserRestrictions: true,
     enablePracticesCaseloadButton: false,
   },
-  [core.US_ND]: {
+  [pathways.US_ND]: {
     name: "North Dakota",
     stateCode: "ND",
     domain: "nd.gov",
-    availableStateCodes: [core.US_ND],
+    availableStateCodes: [pathways.US_ND],
     enableUserRestrictions: false,
-    enablePracticesCaseloadButton: false,
+    enablePracticesCaseloadButton: true,
     navigation: {
+      operations: [],
+      system: [
+        PATHWAYS_PAGES.libertyToPrison,
+        PATHWAYS_PAGES.prison,
+        PATHWAYS_PAGES.prisonToSupervision,
+        PATHWAYS_PAGES.supervision,
+        PATHWAYS_PAGES.supervisionToPrison,
+        PATHWAYS_PAGES.supervisionToLiberty,
+      ],
+      libertyToPrison: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration,
+        PATHWAYS_SECTIONS.countByGender,
+        PATHWAYS_SECTIONS.countByAgeGroup,
+        PATHWAYS_SECTIONS.countByRace,
+      ],
+      prison: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.personLevelDetail,
+      ],
+      prisonToSupervision: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countByAgeGroup,
+      ],
+      supervisionToPrison: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLengthOfStay,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countBySupervisionLevel,
+        PATHWAYS_SECTIONS.countByGender,
+        PATHWAYS_SECTIONS.countByRace,
+      ],
+      supervision: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countBySupervisionLevel,
+      ],
+      supervisionToLiberty: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLengthOfStay,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countByRace,
+        PATHWAYS_SECTIONS.countByGender,
+        PATHWAYS_SECTIONS.countByAgeGroup,
+      ],
+
       goals: [],
       community: ["explore", "practices"],
       methodology: ["practices"],
       facilities: ["explore"],
+      "id-methodology": ["system", "operations"],
     },
-    pagesWithRestrictions: ["practices"],
+    pagesWithRestrictions: [
+      "operations",
+      "libertyToPrison",
+      "prison",
+      "supervisionToPrison",
+      "supervision",
+      "practices",
+    ],
+    tableColumns: [
+      {
+        Header: "Name",
+        accessor: "fullName",
+        titleCase: true,
+        width: 150,
+      },
+      {
+        Header: "DOC ID",
+        accessor: "stateId",
+        titleCase: false,
+        width: 100,
+      },
+      {
+        Header: "Gender",
+        accessor: "gender",
+        titleCase: true,
+        width: 80,
+      },
+      {
+        Header: "Age",
+        accessor: "age",
+        titleCase: false,
+        width: 80,
+      },
+      {
+        Header: "Facility",
+        accessor: "facility",
+        titleCase: true,
+        width: 100,
+      },
+      {
+        Header: "Admission Reason",
+        accessor: "legalStatus",
+        titleCase: true,
+      },
+    ],
     practicesMetrics: [
       {
         name: METRIC_TYPE_LABELS.OVERALL,
@@ -334,7 +426,7 @@ const TENANTS: Tenants = {
     stateCode: "Recidiviz",
     availableStateCodes: pathways.PATHWAYS_TENANTS.concat(
       lantern.LANTERN_TENANTS
-    ).concat(core.CORE_TENANTS),
+    ),
     enableUserRestrictions: true,
     enablePracticesCaseloadButton: true,
   },

@@ -29,6 +29,13 @@ cron:
     schedule: every day 07:00
     target: default
 
+
+  - description: "Refresh US_ND pathways external cache"
+    url: /api/US_ND/pathways/refreshCache
+    # Every day at 07:00 UTC / 03:00 EST / 00:00 PST
+    schedule: every day 07:00
+    target: default
+
   - description: "Refresh US_ND vitals external cache"
     url: /api/US_ND/vitals/refreshCache
     # Every day at 07:00 UTC / 03:00 EST / 00:00 PST
@@ -79,6 +86,12 @@ cron:
 
   - description: "DEMO - Refresh US_TN pathways external cache"
     url: /api/US_TN/pathways/refreshCache
+    # Every day at 07:00 UTC / 03:00 EST / 00:00 PST
+    schedule: every day 07:00
+    target: demo
+
+  - description: "DEMO - Refresh US_ND pathways external cache"
+    url: /api/US_ND/pathways/refreshCache
     # Every day at 07:00 UTC / 03:00 EST / 00:00 PST
     schedule: every day 07:00
     target: demo

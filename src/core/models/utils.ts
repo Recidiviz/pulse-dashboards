@@ -47,6 +47,7 @@ const supervisionDimensionDefaults = {
   mostSevereViolation: "ALL",
   numberOfViolations: "ALL",
   lengthOfStay: "ALL",
+  priorLengthOfIncarceration: "ALL",
 };
 
 const prisonDimensionDefaults = {
@@ -119,6 +120,7 @@ export function createSupervisionPopulationSnapshot(
         lengthOfStay: record.length_of_stay,
         supervisionLevel: record.supervision_level,
         race: record.race,
+        priorLengthOfIncarceration: record.prior_length_of_incarceration,
       },
       supervisionDimensionDefaults
     );
@@ -159,8 +161,12 @@ export function createPrisonPopulationTimeSeries(
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
         facility: record.facility,
+        district: record.district,
+        supervisionLevel: record.supervision_level,
+        supervisionType: record.supervision_type as SupervisionType,
+        race: record.race,
       },
-      prisonDimensionDefaults
+      { ...prisonDimensionDefaults, ...superDimensionDefaults }
     );
   });
 }

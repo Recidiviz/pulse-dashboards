@@ -192,6 +192,9 @@ const PATHWAYS_COLLECTIONS = {
     supervision_population_snapshot_by_dimension: {
       filename: "supervision_population_snapshot_by_dimension.json",
     },
+    supervision_to_liberty_population_snapshot_by_dimension: {
+      filename: "supervision_to_liberty_population_snapshot_by_dimension.json",
+    },
   },
 };
 
@@ -233,6 +236,7 @@ const CORE_COLLECTIONS = {
     },
   },
   [COLLECTIONS.COMMUNITY_EXPLORE]: {
+    site_offices: { filename: "site_offices.json" },
     admissions_by_type_by_month: {
       filename: "admissions_by_type_by_month.txt",
     },
@@ -289,7 +293,6 @@ const CORE_COLLECTIONS = {
     supervision_termination_by_type_by_period: {
       filename: "supervision_termination_by_type_by_period.txt",
     },
-    site_offices: { filename: "site_offices.json" },
   },
   [COLLECTIONS.FACILITIES_EXPLORE]: {
     admissions_by_type_by_period: {
@@ -329,7 +332,11 @@ function getCollections(stateCode = null) {
     case stateCodes.US_ME:
       return PATHWAYS_COLLECTIONS;
     case stateCodes.US_ND:
-      return { ...CORE_COLLECTIONS, ...VITALS_COLLECTION };
+      return {
+        ...VITALS_COLLECTION,
+        ...CORE_COLLECTIONS,
+        ...PATHWAYS_COLLECTIONS,
+      };
     default:
       throw new Error(
         `getCollections received an unexpected state code: ${stateCode}`

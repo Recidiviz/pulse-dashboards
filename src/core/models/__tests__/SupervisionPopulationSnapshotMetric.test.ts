@@ -141,6 +141,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         lengthOfStay: "ALL",
         totalPopulation: 45,
         race: "ALL",
+        priorLengthOfIncarceration: "ALL",
         supervisionLevel: "ALL",
       },
       {
@@ -155,6 +156,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         lengthOfStay: "ALL",
         totalPopulation: 30,
         race: "ALL",
+        priorLengthOfIncarceration: "ALL",
         supervisionLevel: "ALL",
       },
       {
@@ -169,6 +171,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         lengthOfStay: "ALL",
         totalPopulation: 30,
         race: "ALL",
+        priorLengthOfIncarceration: "ALL",
         supervisionLevel: "ALL",
       },
     ]);
@@ -213,6 +216,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           totalPopulation: 45,
           populationProportion: "33",
           race: "ALL",
+          priorLengthOfIncarceration: "ALL",
           supervisionLevel: "ALL",
         },
         {
@@ -228,6 +232,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           totalPopulation: 30,
           populationProportion: "33",
           race: "ALL",
+          priorLengthOfIncarceration: "ALL",
           supervisionLevel: "ALL",
         },
       ]);
@@ -256,6 +261,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
             totalPopulation: 30,
             populationProportion: "17",
             race: "ALL",
+            priorLengthOfIncarceration: "ALL",
             supervisionLevel: "ALL",
           },
         ]);

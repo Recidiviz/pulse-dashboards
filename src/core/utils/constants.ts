@@ -28,6 +28,8 @@ export const FILTER_TYPES = {
   FACILITY: "facility",
   DISTRICT: "district",
   MOST_SEVERE_VIOLATION: "mostSevereViolation",
+  PRIOR_LENGTH_OF_INCARCERATION: "priorLengthOfIncarceration",
+  RACE: "race",
   NUMBER_OF_VIOLATIONS: "numberOfViolations",
   SUPERVISION_LEVEL: "supervisionLevel",
 } as const;

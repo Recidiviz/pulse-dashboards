@@ -16,7 +16,6 @@
 // =============================================================================
 /* eslint camelcase: 0 */
 import { LANTERN, RECIDIVIZ_TENANT } from "../tenants";
-import * as core from "./TenantStore/coreTenants";
 import * as lantern from "./TenantStore/lanternTenants";
 import * as pathways from "./TenantStore/pathwaysTenants";
 
@@ -28,7 +27,7 @@ const TenantIds = [
   pathways.US_ID,
   pathways.US_TN,
   pathways.US_ME,
-  core.US_ND,
+  pathways.US_ND,
   RECIDIVIZ_TENANT,
   LANTERN,
 ] as const;

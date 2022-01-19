@@ -141,6 +141,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         numberOfViolations: "ALL",
         supervisionType: "ALL",
         lengthOfStay: "ALL",
+        priorLengthOfIncarceration: "ALL",
         race: "ALL",
         supervisionLevel: "ALL",
       },
@@ -157,6 +158,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         supervisionType: "ALL",
         lengthOfStay: "ALL",
         race: "ALL",
+        priorLengthOfIncarceration: "ALL",
         supervisionLevel: "ALL",
       },
       {
@@ -172,6 +174,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         supervisionType: "ALL",
         lengthOfStay: "ALL",
         race: "ALL",
+        priorLengthOfIncarceration: "ALL",
         supervisionLevel: "ALL",
       },
     ]);

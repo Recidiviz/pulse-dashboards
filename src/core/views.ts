@@ -23,6 +23,7 @@ export const CORE_VIEWS: Record<string, string> = {
   goals: "goals",
   methodology: "methodology",
 } as const;
+export const CoreViewIdList = Object.keys(CORE_VIEWS);
 
 export type PathwaysView = keyof typeof PATHWAYS_VIEWS;
 export const PATHWAYS_VIEWS: Record<string, string> = {
@@ -82,6 +83,9 @@ export const PATHWAYS_SECTIONS: Record<string, string> = {
   countByLengthOfStay: "countByLengthOfStay",
   countByAgeGroup: "countByAgeGroup",
   countBySupervisionLevel: "countBySupervisionLevel",
+  countByPriorLengthOfIncarceration: "countByPriorLengthOfIncarceration",
+  countByGender: "countByGender",
+  countByRace: "countByRace",
 };
 
 export const DEFAULT_PATHWAYS_PAGE = PATHWAYS_PAGES.prison;
@@ -98,6 +102,10 @@ const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
   [PATHWAYS_PAGES.libertyToPrison]: [
     "libertyToPrisonPopulationOverTime",
     "libertyToPrisonPopulationByDistrict",
+    "libertyToPrisonPopulationByGender",
+    "libertyToPrisonPopulationByAgeGroup",
+    "libertyToPrisonPopulationByRace",
+    "libertyToPrisonPopulationByPriorLengthOfIncarceration",
   ],
   [PATHWAYS_PAGES.prison]: [
     "prisonPopulationOverTime",
@@ -123,8 +131,17 @@ const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
     "supervisionToPrisonPopulationByNumberOfViolations",
     "supervisionToPrisonPopulationByLengthOfStay",
     "supervisionToPrisonPopulationBySupervisionLevel",
+    "supervisionToPrisonPopulationByGender",
+    "supervisionToPrisonPopulationByRace",
   ],
-  [PATHWAYS_PAGES.supervisionToLiberty]: ["supervisionToLibertyOverTime"],
+  [PATHWAYS_PAGES.supervisionToLiberty]: [
+    "supervisionToLibertyOverTime",
+    "supervisionToLibertyPopulationByLengthOfStay",
+    "supervisionToLibertyPopulationByLocation",
+    "supervisionToLibertyPopulationByGender",
+    "supervisionToLibertyPopulationByAgeGroup",
+    "supervisionToLibertyPopulationByRace",
+  ],
 };
 
 export function getMetricIdsForPage(page: PathwaysPage): MetricId[] {
@@ -137,6 +154,11 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
 > = {
   libertyToPrisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   libertyToPrisonPopulationByDistrict: PATHWAYS_SECTIONS.countByLocation,
+  libertyToPrisonPopulationByGender: PATHWAYS_SECTIONS.countByGender,
+  libertyToPrisonPopulationByAgeGroup: PATHWAYS_SECTIONS.countByAgeGroup,
+  libertyToPrisonPopulationByRace: PATHWAYS_SECTIONS.countByRace,
+  libertyToPrisonPopulationByPriorLengthOfIncarceration:
+    PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration,
   prisonPopulationPersonLevel: PATHWAYS_SECTIONS.personLevelDetail,
   prisonFacilityPopulation: PATHWAYS_SECTIONS.countByLocation,
   prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
@@ -160,7 +182,15 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
     PATHWAYS_SECTIONS.countByNumberOfViolations,
   supervisionToPrisonPopulationBySupervisionLevel:
     PATHWAYS_SECTIONS.countBySupervisionLevel,
+  supervisionToPrisonPopulationByGender: PATHWAYS_SECTIONS.countByGender,
+  supervisionToPrisonPopulationByRace: PATHWAYS_SECTIONS.countByRace,
   supervisionToLibertyOverTime: PATHWAYS_SECTIONS.countOverTime,
+  supervisionToLibertyPopulationByLengthOfStay:
+    PATHWAYS_SECTIONS.countByLengthOfStay,
+  supervisionToLibertyPopulationByLocation: PATHWAYS_SECTIONS.countByLocation,
+  supervisionToLibertyPopulationByGender: PATHWAYS_SECTIONS.countByGender,
+  supervisionToLibertyPopulationByAgeGroup: PATHWAYS_SECTIONS.countByAgeGroup,
+  supervisionToLibertyPopulationByRace: PATHWAYS_SECTIONS.countByRace,
 };
 
 export function getSectionIdForMetric(metric: MetricId): PathwaysSection {

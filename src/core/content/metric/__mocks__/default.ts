@@ -31,6 +31,27 @@ const content: MetricCopy = {
     note: "Admissions from liberty to prison by district note",
     methodology: "Admissions from liberty to prison by district methodology",
   },
+  libertyToPrisonPopulationByPriorLengthOfIncarceration: {
+    title: "Admissions from liberty by prior length of incarceration",
+    note: "Admissions from liberty by prior length of incarceration note",
+    methodology:
+      "Admissions from liberty by prior length of incarceration methodology",
+  },
+  libertyToPrisonPopulationByGender: {
+    title: "Admissions from liberty by gender",
+    note: "Admissions from liberty by gender note",
+    methodology: "Admissions from liberty by gender methodology",
+  },
+  libertyToPrisonPopulationByAgeGroup: {
+    title: "Admissions from liberty by age",
+    note: "Admissions from liberty by age note",
+    methodology: "Admissions from liberty by age methodology",
+  },
+  libertyToPrisonPopulationByRace: {
+    title: "Admissions from liberty by race",
+    note: "Admissions from liberty by race note",
+    methodology: "Admissions from liberty by race methodology",
+  },
   prisonPopulationPersonLevel: {
     title: "List of people in prison",
   },
@@ -122,10 +143,45 @@ const content: MetricCopy = {
     methodology:
       "Admissions from supervision to prison by supervision level methodology",
   },
+  supervisionToPrisonPopulationByGender: {
+    title: "Admissions from supervision by gender",
+    note: "Admissions from supervision by gender note",
+    methodology: "Admissions from supervision by gender methodology",
+  },
+  supervisionToPrisonPopulationByRace: {
+    title: "Admissions from supervision by race",
+    note: "Admissions from supervision by race note",
+    methodology: "Admissions from supervision by race methodology",
+  },
   supervisionToLibertyOverTime: {
     title: "Releases to from supervision to liberty",
     note: "Releases to from supervision to liberty note",
     methodology: "Releases to from supervision to liberty methodology",
+  },
+  supervisionToLibertyPopulationByLengthOfStay: {
+    title: "Time to release from supervision to liberty",
+    note: "Time to release from supervision to liberty",
+    methodology: "Time to release from supervision to liberty methodology",
+  },
+  supervisionToLibertyPopulationByLocation: {
+    title: "Releases to from supervision by district",
+    note: "Releases to from supervision by district note",
+    methodology: "Releases to from supervision by district methodology",
+  },
+  supervisionToLibertyPopulationByGender: {
+    title: "Releases to from supervision by gender",
+    note: "Releases to from supervision by gender",
+    methodology: "Releases to from supervision by gender methodology",
+  },
+  supervisionToLibertyPopulationByAgeGroup: {
+    title: "Releases to from supervision by age",
+    note: "Releases to from supervision by age note",
+    methodology: "Releases to from supervision by age methodology",
+  },
+  supervisionToLibertyPopulationByRace: {
+    title: "Releases to from supervision by race",
+    note: "Releases to from supervision by race note",
+    methodology: "Releases to from supervision by race methodology",
   },
 };
 

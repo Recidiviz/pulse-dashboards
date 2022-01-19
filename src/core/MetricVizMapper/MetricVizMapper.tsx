@@ -48,6 +48,7 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
   if (metric instanceof SupervisionPopulationSnapshotMetric) {
     switch (metric.id) {
       case "supervisionToPrisonPopulationByLengthOfStay":
+      case "supervisionToLibertyPopulationByLengthOfStay":
         return <VizLengthOfStay metric={metric} />;
       default:
         return <VizPopulationSnapshot metric={metric} />;

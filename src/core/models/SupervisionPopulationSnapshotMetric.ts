@@ -53,14 +53,19 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
       numberOfViolations,
       mostSevereViolation,
       supervisionLevel,
+      race,
     } = this.rootStore.filtersStore.filters;
 
     const filteredRecords = this.allRecords.filter(
       (record: SupervisionPopulationSnapshotRecord) => {
         return (
-          gender.includes(record.gender) &&
-          ageGroup.includes(record.ageGroup) &&
           supervisionType.includes(record.supervisionType) &&
+          (this.accessor === "ageGroup"
+            ? !["ALL"].includes(record.ageGroup)
+            : ageGroup.includes(record.ageGroup)) &&
+          (this.accessor === "gender"
+            ? !["ALL"].includes(record.gender)
+            : gender.includes(record.gender)) &&
           (this.accessor === "district"
             ? !["ALL"].includes(record.district)
             : district.includes(record.district)) &&
@@ -76,7 +81,12 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
           (this.accessor === "supervisionLevel"
             ? !["ALL"].includes(record.supervisionLevel)
             : supervisionLevel.includes(record.supervisionLevel)) &&
-          ["ALL"].includes(record.race)
+          (this.accessor === "priorLengthOfIncarceration"
+            ? !["ALL"].includes(record.priorLengthOfIncarceration)
+            : ["ALL"].includes(record.priorLengthOfIncarceration)) &&
+          (this.accessor === "race"
+            ? !["ALL"].includes(record.race)
+            : race.includes(record.race))
         );
       }
     );
@@ -100,6 +110,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
         numberOfViolations: dataset[0].numberOfViolations,
         lengthOfStay: dataset[0].lengthOfStay,
         supervisionLevel: dataset[0].supervisionLevel,
+        priorLengthOfIncarceration: dataset[0].priorLengthOfIncarceration,
         race: dataset[0].race,
       }))
     )(filteredRecords);
