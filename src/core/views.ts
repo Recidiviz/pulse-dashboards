@@ -31,6 +31,7 @@ export const PATHWAYS_VIEWS: Record<string, string> = {
   methodology: "id-methodology",
   profile: "profile",
 } as const;
+export const PathwaysViewIdList = Object.keys(PATHWAYS_VIEWS);
 
 export const CORE_PATHS: Record<string, string> = {
   goals: "/goals",
@@ -58,6 +59,7 @@ export const CORE_PAGES = {
   projections: "projections",
   practices: "practices",
 } as const;
+export const CorePageIdList = Object.keys(CORE_PAGES);
 
 export type PathwaysPage = keyof typeof PATHWAYS_PAGES;
 export const PATHWAYS_PAGES = {

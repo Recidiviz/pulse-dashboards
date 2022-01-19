@@ -25,10 +25,15 @@ import qs from "qs";
 
 import { fetchOfflineUser } from "../api/fetchOfflineUser";
 import { ERROR_MESSAGES } from "../constants/errorMessages";
-import { Navigation, RoutePermission } from "../core/types/navigation";
+import {
+  Navigation,
+  NavigationSection,
+  RoutePermission,
+} from "../core/types/navigation";
+import { CorePageIdList, PathwaysPageIdList } from "../core/views";
 import tenants from "../tenants";
 import { isOfflineMode } from "../utils/isOfflineMode";
-import { getAllowedNavigation } from "../utils/navigation";
+import { getAllowedMethodology } from "../utils/navigation";
 import type RootStore from ".";
 import { TenantId, UserAppMetadata } from "./types";
 
@@ -190,8 +195,14 @@ export default class UserStore {
   get routes(): RoutePermission[] {
     if (!this.userAppMetadata?.routes) return [];
     const routePermissions = entries(this.userAppMetadata?.routes);
-    // @ts-ignore
-    return routePermissions as RoutePermission[];
+    const routes: RoutePermission[] = routePermissions.map(
+      ([fullRoute, permission]: RoutePermission) => {
+        const [view, page] = fullRoute.split("_");
+        const route = view === "operations" ? view : page;
+        return [route, permission];
+      }
+    );
+    return routes;
   }
 
   /**
@@ -240,20 +251,52 @@ export default class UserStore {
    * Returns the navigation object based on the routes the user is authorized for
    */
   get userAllowedNavigation(): Navigation | undefined {
-    if (
-      !this.rootStore?.currentTenantId ||
-      !tenants[this.rootStore.currentTenantId].navigation
-    )
-      return {};
+    if (!this.rootStore?.currentTenantId) return {};
+    const { navigation: allowed, pagesWithRestrictions } = tenants[
+      this.rootStore.currentTenantId
+    ];
+    if (!allowed) return {};
 
-    if (this.stateCode === "RECIDIVIZ")
-      return tenants[this.rootStore.currentTenantId].navigation;
+    if (this.stateCode === "RECIDIVIZ") return allowed;
 
-    return getAllowedNavigation(
-      tenants[this.rootStore.currentTenantId].navigation,
-      tenants[this.rootStore.currentTenantId]?.pagesWithRestrictions,
-      this.routes
-    );
+    if (pagesWithRestrictions) {
+      pagesWithRestrictions.forEach((page) => {
+        if (!this.canAccessRestrictedPage(page)) {
+          // TODO #1561 Remove this block once CORE dashboard is removed
+          if (CorePageIdList.includes(page)) {
+            if (!allowed.community || allowed.community.indexOf(page) < 0)
+              return;
+            allowed.community.splice(allowed.community.indexOf(page), 1);
+          }
+          // System page permissions are on the page level,
+          // so remove them as necessary from the system key array
+          if (PathwaysPageIdList.includes(page)) {
+            if (!allowed.system || allowed.system.indexOf(page) < 0) return;
+            allowed.system.splice(allowed.system.indexOf(page), 1);
+          }
+          delete allowed[page as NavigationSection];
+        }
+      });
+    }
+    // If there are not any allowed system pages, delete the system key
+    if (allowed.system?.length === 0) {
+      delete allowed.system;
+    }
+    return { ...allowed, ...getAllowedMethodology(allowed) };
+  }
+
+  canAccessRestrictedPage(pageName: string): boolean {
+    if (!this.rootStore?.currentTenantId) return false;
+    const { pagesWithRestrictions } = tenants[this.rootStore.currentTenantId];
+    const permission = this.getRoutePermission(pageName);
+    return permission || !pagesWithRestrictions?.includes(pageName);
+  }
+
+  getRoutePermission(route: string): boolean {
+    const routePermission = this.routes.find((r) => r[0] === route);
+    // If the route does not exist in the RoutePermissions object, default to false;
+    if (!routePermission) return false;
+    return routePermission[1];
   }
 
   setAuthError(error: Error): void {

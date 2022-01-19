@@ -17,7 +17,13 @@
 import createAuth0Client from "@auth0/auth0-spa-js";
 
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
-import TENANTS from "../../tenants";
+import {
+  PATHWAYS_PAGES,
+  PATHWAYS_SECTIONS,
+  PATHWAYS_VIEWS,
+} from "../../core/views";
+import tenants from "../../tenants";
+import RootStore from "..";
 import { TenantId } from "../types";
 import UserStore from "../UserStore";
 
@@ -184,7 +190,7 @@ test("redirect to targetUrl after callback", async () => {
   expect(window.location.href).toBe(targetUrl);
 });
 
-test.each(Object.keys(TENANTS))(
+test.each(Object.keys(tenants))(
   "gets metadata for the user %s",
   async (currentTenantId) => {
     const tenantMetadata = { [metadataField]: { state_code: currentTenantId } };
@@ -199,9 +205,9 @@ test.each(Object.keys(TENANTS))(
     });
     await store.authorize();
     expect(store.availableStateCodes).toBe(
-      TENANTS[currentTenantId as TenantId].availableStateCodes
+      tenants[currentTenantId as TenantId].availableStateCodes
     );
-    expect(store.stateName).toBe(TENANTS[currentTenantId as TenantId].name);
+    expect(store.stateName).toBe(tenants[currentTenantId as TenantId].name);
   }
 );
 
@@ -218,4 +224,250 @@ test("Error from getTokenSilently redirects to login", async () => {
     appState: { targetUrl: window.location.href },
   });
   expect(store.authError).toBe(undefined);
+});
+
+describe("getRoutePermission", () => {
+  test("when permission is found and is false returns false", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    const tenantMetadata = {
+      [metadataField]: {
+        state_code: "US_MO",
+        routes: {
+          operations: false,
+        },
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+    });
+    await store.authorize();
+    expect(store.getRoutePermission("operations")).toBe(false);
+  });
+
+  test("when permission is found and is true returns true", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    const tenantMetadata = {
+      [metadataField]: {
+        state_code: "US_MO",
+        routes: {
+          community_practices: true,
+        },
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+    });
+    await store.authorize();
+    expect(store.getRoutePermission("practices")).toBe(true);
+  });
+
+  test("when permission is not found returns false", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    const tenantMetadata = {
+      [metadataField]: {
+        state_code: "US_MO",
+        routes: {},
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+    });
+    await store.authorize();
+    expect(store.getRoutePermission("operations")).toBe(false);
+  });
+});
+
+describe("canAccessRestrictedPage", () => {
+  test("when page is not in pagesWithRestrictions", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    const tenantMetadata = {
+      [metadataField]: {
+        state_code: tenantId,
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: {
+        currentTenantId: tenantId,
+      } as typeof RootStore,
+    });
+    await store.authorize();
+    expect(store.canAccessRestrictedPage("anyBogusPage")).toBe(true);
+  });
+
+  test("when page is restricted and permission is false", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    const tenantMetadata = {
+      [metadataField]: {
+        state_code: tenantId,
+        routes: {
+          operations: false,
+        },
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: {
+        currentTenantId: tenantId,
+      } as typeof RootStore,
+    });
+    await store.authorize();
+
+    tenants[tenantId].pagesWithRestrictions = ["operations"];
+    expect(store.canAccessRestrictedPage("operations")).toBe(false);
+  });
+
+  test("when page is restricted and permission is true", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    const tenantMetadata = {
+      [metadataField]: {
+        state_code: tenantId,
+        routes: {
+          operations: true,
+        },
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: {
+        currentTenantId: tenantId,
+      } as typeof RootStore,
+    });
+    await store.authorize();
+
+    tenants[tenantId].pagesWithRestrictions = ["operations"];
+    expect(store.canAccessRestrictedPage("operations")).toBe(true);
+  });
+});
+
+describe("userAllowedNavigation", () => {
+  const stateCode = "US_TN";
+
+  beforeEach(() => {
+    tenants[stateCode].pagesWithRestrictions = [
+      PATHWAYS_PAGES.prison,
+      PATHWAYS_PAGES.supervision,
+    ];
+    tenants[stateCode].navigation = {
+      system: [
+        PATHWAYS_PAGES.libertyToPrison,
+        PATHWAYS_PAGES.prison,
+        PATHWAYS_PAGES.supervision,
+      ],
+      libertyToPrison: [PATHWAYS_SECTIONS.countOverTime],
+      prison: [PATHWAYS_SECTIONS.countOverTime],
+      supervision: [PATHWAYS_SECTIONS.countOverTime],
+      "id-methodology": [PATHWAYS_VIEWS.system],
+      methodology: [],
+    };
+  });
+
+  test("returns the navigation object minus pagesWithRestrictions when user routes is empty", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    const tenantMetadata = {
+      [metadataField]: {
+        state_code: stateCode,
+        routes: {},
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: {
+        currentTenantId: stateCode,
+      } as typeof RootStore,
+    });
+    await store.authorize();
+    const expected = {
+      "id-methodology": ["system"],
+      libertyToPrison: ["countOverTime"],
+      methodology: [],
+      system: ["libertyToPrison"],
+    };
+    expect(store.userAllowedNavigation).toEqual(expected);
+  });
+
+  test("returns the navigation object minus pagesWithRestrictions plus pages where route permission is true", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    const tenantMetadata = {
+      [metadataField]: {
+        state_code: stateCode,
+        routes: {
+          system_prison: true,
+        },
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: {
+        currentTenantId: stateCode,
+      } as typeof RootStore,
+    });
+    await store.authorize();
+    const expected = {
+      "id-methodology": ["system"],
+      libertyToPrison: ["countOverTime"],
+      prison: ["countOverTime"],
+      methodology: [],
+      system: ["libertyToPrison", "prison"],
+    };
+    expect(store.userAllowedNavigation).toEqual(expected);
+  });
+
+  test("returns the navigation object minus restricted page when page permission is false", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    const tenantMetadata = {
+      [metadataField]: {
+        state_code: stateCode,
+        routes: {
+          system_prison: false,
+        },
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: {
+        currentTenantId: stateCode,
+      } as typeof RootStore,
+    });
+    await store.authorize();
+    const expected = {
+      "id-methodology": ["system"],
+      libertyToPrison: ["countOverTime"],
+      methodology: [],
+      system: ["libertyToPrison"],
+    };
+    expect(store.userAllowedNavigation).toEqual(expected);
+  });
+
+  test("returns the navigation object when pagesWithRestrictions is empty", async () => {
+    tenants[stateCode].pagesWithRestrictions = [];
+
+    mockIsAuthenticated.mockResolvedValue(true);
+    const tenantMetadata = {
+      [metadataField]: {
+        state_code: stateCode,
+        routes: {
+          system_prison: false,
+        },
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: {
+        currentTenantId: stateCode,
+      } as typeof RootStore,
+    });
+    await store.authorize();
+    expect(store.userAllowedNavigation).toEqual(tenants[stateCode].navigation);
+  });
 });

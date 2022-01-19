@@ -14,11 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Navigation, RoutePermission } from "../../core/types/navigation";
 import {
   convertSlugToId,
   convertToSlug,
-  getAllowedNavigation,
   getPathsFromNavigation,
   getPathWithoutParams,
 } from "../navigation";
@@ -44,126 +42,6 @@ describe("getPathsFromNavigation", () => {
       "/methodology/practices",
       "/facilities/explore",
     ];
-    expect(allowedPaths).toEqual(expected);
-  });
-});
-
-describe("getAllowedNavigation", () => {
-  let tenantAllowedNavigation: Navigation | undefined;
-  let pagesWithRestrictions: string[] | undefined;
-  let routes: RoutePermission[];
-
-  beforeEach(() => {
-    tenantAllowedNavigation = {
-      goals: [],
-      community: ["explore", "practices"],
-      methodology: ["practices"],
-      "id-methodology": ["system", "operations"],
-      facilities: ["explore"],
-      operations: [],
-      system: ["prison", "supervision"],
-      prison: ["countOverTime"],
-    };
-    pagesWithRestrictions = ["practices", "prison", "operations"];
-  });
-
-  it("returns the navigation object minus pagesWithRestrictions when user routes array is empty", () => {
-    routes = [];
-    const expected = {
-      goals: [],
-      community: ["explore"],
-      facilities: ["explore"],
-      system: ["supervision"],
-      prison: ["countOverTime"],
-      "id-methodology": [],
-    };
-    const allowedNavigation = getAllowedNavigation(
-      tenantAllowedNavigation,
-      pagesWithRestrictions,
-      routes
-    );
-    expect(allowedNavigation).toEqual(expected);
-  });
-
-  it("returns the navigation object with restricted page when user routes array includes a restricted page", () => {
-    routes = [
-      ["community_practices", true],
-      ["community_bogus", false],
-      ["system_prison", true],
-      ["operations", true],
-    ];
-    const expected = {
-      goals: [],
-      community: ["explore", "practices"],
-      facilities: ["explore"],
-      methodology: ["practices"],
-      operations: [],
-      system: ["prison", "supervision"],
-      prison: ["countOverTime"],
-      "id-methodology": ["system", "operations"],
-    };
-    const allowedNavigation = getAllowedNavigation(
-      tenantAllowedNavigation,
-      pagesWithRestrictions,
-      routes
-    );
-    expect(allowedNavigation).toEqual(expected);
-  });
-
-  it("returns the navigation object without the restricted view when the view permission is false", () => {
-    routes = [
-      ["community_practices", true],
-      ["community_bogus", false],
-      ["operations", false],
-      ["system_prison", true],
-    ];
-    const expected = {
-      goals: [],
-      community: ["explore", "practices"],
-      facilities: ["explore"],
-      methodology: ["practices"],
-      system: ["prison", "supervision"],
-      prison: ["countOverTime"],
-      "id-methodology": ["system"],
-    };
-    const allowedNavigation = getAllowedNavigation(
-      tenantAllowedNavigation,
-      pagesWithRestrictions,
-      routes
-    );
-    expect(allowedNavigation).toEqual(expected);
-  });
-
-  it("returns the original navigation object when page not in pagesWithRestrictions is empty", () => {
-    routes = [
-      ["community_practices", true],
-      ["system_prison", true],
-      ["operations", true],
-    ];
-    const allowedPaths = getAllowedNavigation(
-      tenantAllowedNavigation,
-      [],
-      routes
-    );
-    expect(allowedPaths).toEqual(tenantAllowedNavigation);
-  });
-
-  it("returns the correct methodology object for practices only", () => {
-    routes = [["operations", true]];
-    const expected = {
-      goals: [],
-      community: ["explore"],
-      facilities: ["explore"],
-      "id-methodology": ["operations"],
-      system: ["supervision"],
-      operations: [],
-      prison: ["countOverTime"],
-    };
-    const allowedPaths = getAllowedNavigation(
-      tenantAllowedNavigation,
-      pagesWithRestrictions,
-      routes
-    );
     expect(allowedPaths).toEqual(expected);
   });
 });

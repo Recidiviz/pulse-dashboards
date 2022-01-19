@@ -21,7 +21,11 @@ import {
 } from "./core/PagePractices/types";
 import { TableColumn } from "./core/types/charts";
 import { Navigation } from "./core/types/navigation";
-import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "./core/views";
+import {
+  PATHWAYS_PAGES,
+  PATHWAYS_SECTIONS,
+  PATHWAYS_VIEWS,
+} from "./core/views";
 import * as core from "./RootStore/TenantStore/coreTenants";
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
 import * as pathways from "./RootStore/TenantStore/pathwaysTenants";
@@ -142,7 +146,7 @@ const TENANTS: Tenants = {
         PATHWAYS_SECTIONS.countByNumberOfViolations,
         PATHWAYS_SECTIONS.countBySupervisionLevel,
       ],
-      "id-methodology": ["system"],
+      "id-methodology": [PATHWAYS_VIEWS.system],
     },
     pagesWithRestrictions: ["prison"],
     tableColumns: [

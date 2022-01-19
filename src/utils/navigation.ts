@@ -14,14 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { uniq } from "lodash";
 import { QueryParamConfigMap, StringParam } from "use-query-params";
 
-import {
-  Navigation,
-  NavigationSection,
-  RoutePermission,
-} from "../core/types/navigation";
+import { Navigation } from "../core/types/navigation";
 import { FILTER_TYPES } from "../core/utils/constants";
 import {
   CORE_PAGES,
@@ -45,72 +40,20 @@ export function getPathsFromNavigation(
   });
 }
 
-export function getAllowedNavigation(
-  tenantAllowedNavigation: Navigation | undefined,
-  pagesWithRestrictions: string[] | undefined,
-  routes: RoutePermission[]
-): Navigation {
-  if (!tenantAllowedNavigation) return {};
-  const userAllowedNavigation = routes.reduce(
-    (acc, route) => {
-      const [fullRoute, permission] = route;
-      const [view, page] = fullRoute.split("_");
-
-      if (permission) {
-        // eslint-disable-next-line no-unused-expressions
-        acc[view as keyof Navigation]?.push(page);
-        if (Object.keys(CORE_VIEWS).includes(view)) {
-          // eslint-disable-next-line no-unused-expressions
-          acc.methodology?.push(page);
-        }
-        if (Object.keys(PATHWAYS_VIEWS).includes(view)) {
-          // eslint-disable-next-line no-unused-expressions
-          acc["id-methodology"]?.push(view);
-        }
-        if (view === PATHWAYS_VIEWS.operations) {
-          acc[PATHWAYS_VIEWS.operations as NavigationSection] = [];
-        }
-      }
-      return acc;
-    },
-    {
-      community: [],
-      facilities: [],
-      methodology: [],
-      system: [],
-      prison: [],
-      supervision: [],
-      supervisionToLiberty: [],
-      supervisionToPrison: [],
-      "id-methodology": [],
-    } as Navigation
-  );
-  const allowedNavigation = Object.fromEntries(
-    Object.entries(tenantAllowedNavigation).map(([view, pages]) => {
-      // eslint-disable-next-line no-nested-ternary
-      return !pagesWithRestrictions?.includes(view)
-        ? [
-            view,
-            pages?.filter(
-              (p) =>
-                (pagesWithRestrictions && !pagesWithRestrictions.includes(p)) ||
-                userAllowedNavigation[view as keyof Navigation]?.includes(p)
-            ),
-          ]
-        : Object.keys(userAllowedNavigation).includes(view)
-        ? [view, tenantAllowedNavigation[view as keyof Navigation]]
-        : [];
-    })
-  );
-
-  if (allowedNavigation.methodology?.length === 0) {
-    delete allowedNavigation.methodology;
-  }
-
-  allowedNavigation["id-methodology"] = uniq(
-    userAllowedNavigation["id-methodology"]
-  );
-  return allowedNavigation;
+export function getAllowedMethodology(
+  allowed: Partial<Navigation>
+): Partial<Navigation> {
+  const methodologyPages = ["system", "operations"];
+  const allowedMethodology = [] as string[];
+  methodologyPages.forEach((page) => {
+    if (Object.prototype.hasOwnProperty.call(allowed, page))
+      allowedMethodology.push(page);
+  });
+  return {
+    // TODO #1561 Remove methodlogy key once CORE dashboard is removed
+    methodology: allowed.community?.includes("practices") ? ["practices"] : [],
+    "id-methodology": allowedMethodology,
+  };
 }
 
 export function getPathWithoutParams(pathname: string): string {
