@@ -75,7 +75,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
 
   const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
 
-  const { maxTickValue, tickValues } = getTicks(
+  const { maxTickValue, tickValues, marginFactor } = getTicks(
     Math.max(...data.map((d) => d.value))
   );
 
@@ -133,7 +133,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           data={data}
           size={[558, 558]}
           margin={{
-            left: (maxTickValue.toString().length + 1) * 10,
+            left: marginFactor,
             bottom: 75,
             right: 50,
             top: 56,

@@ -86,7 +86,7 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
     },
   ];
 
-  const { maxTickValue, tickValues } = getTicks(
+  const { maxTickValue, tickValues, marginFactor } = getTicks(
     Math.max(...data.map((d) => d.value), ...data.map((d) => d.average))
   );
 
@@ -127,7 +127,7 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
         data={data}
         size={[558, 558]}
         margin={{
-          left: (maxTickValue.toString().length + 1) * 10,
+          left: marginFactor,
           bottom: 96,
           right: 50,
           top: 56,

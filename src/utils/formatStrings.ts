@@ -231,7 +231,7 @@ function decrypt(hexString: string): string {
 
 const getTicks = (
   value: number
-): { maxTickValue: number; tickValues: number[] } => {
+): { maxTickValue: number; tickValues: number[]; marginFactor: number } => {
   const precision = Math.floor(Math.log10(value));
   const max = ceil(value, precision > 2 ? -precision + 1 : -precision);
   const ticksCount = max % 4 === 0 ? 4 : 5;
@@ -240,9 +240,14 @@ const getTicks = (
     (_, i) => (max / ticksCount) * i
   );
 
+  // This value used to determine chart left margin based on tick value
+  const marginFactor =
+    (max.toString().length + (max.toString().length > 2 ? 1 : 2)) * 10;
+
   return {
     maxTickValue: max,
     tickValues: value === -Infinity ? [] : ticks,
+    marginFactor,
   };
 };
 
