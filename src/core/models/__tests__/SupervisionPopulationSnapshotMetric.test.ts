@@ -47,7 +47,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           gender: "ALL",
           age_group: undefined,
           district: "DISTRICT_1",
-          person_count: "15",
+          event_count: "15",
           last_updated: "2021-10-27",
           most_severe_violation: "ALL",
           number_of_violations: "ALL",

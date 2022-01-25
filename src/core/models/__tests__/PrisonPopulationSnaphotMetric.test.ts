@@ -45,7 +45,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           gender: "ALL",
           age_group: undefined,
           facility: "Bedrock",
-          person_count: "15",
+          event_count: "15",
           last_updated: "2021-10-27",
           total_population: "35",
         },

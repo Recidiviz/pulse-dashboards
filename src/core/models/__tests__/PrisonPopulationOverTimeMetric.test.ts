@@ -49,7 +49,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           age_group: undefined,
           avg_90day: "100",
           state_code: "US_TN",
-          person_count: 7641,
+          event_count: 7641,
           year: "2015",
         },
         {

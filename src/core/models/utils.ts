@@ -89,9 +89,10 @@ export function createPrisonPopulationSnapshot(
   return rawRecords.map((record) => {
     return mergeDefaults(
       {
-        count: parseInt(record.person_count),
+        count: parseInt(record.event_count) || parseInt(record.person_count),
         totalPopulation: parseInt(record.total_population),
-        lastUpdated: formatDateString(record.last_updated),
+        lastUpdated:
+          record.last_updated && formatDateString(record.last_updated),
         legalStatus: record.legal_status,
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
@@ -108,9 +109,10 @@ export function createSupervisionPopulationSnapshot(
   return rawRecords.map((record) => {
     return mergeDefaults(
       {
-        count: parseInt(record.person_count),
+        count: parseInt(record.event_count) || parseInt(record.person_count),
         totalPopulation: parseInt(record.total_population),
-        lastUpdated: formatDateString(record.last_updated),
+        lastUpdated:
+          record.last_updated && formatDateString(record.last_updated),
         supervisionType: record.supervision_type as SupervisionType,
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
@@ -135,7 +137,8 @@ export function createPrisonPopulationPersonLevelList(
       {
         stateId: record.state_id,
         fullName: record.full_name,
-        lastUpdated: formatDateString(record.last_updated),
+        lastUpdated:
+          record.last_updated && formatDateString(record.last_updated),
         age: record.age,
         legalStatus: record.legal_status,
         gender: record.gender as Gender,
@@ -155,7 +158,7 @@ export function createPrisonPopulationTimeSeries(
       {
         year: Number(record.year),
         month: Number(record.month),
-        count: parseInt(record.person_count),
+        count: parseInt(record.event_count) || parseInt(record.person_count),
         avg90day: parseInt(record.avg_90day),
         legalStatus: record.legal_status,
         gender: record.gender as Gender,
@@ -179,7 +182,7 @@ export function createSupervisionPopulationTimeSeries(
       {
         year: Number(record.year),
         month: Number(record.month),
-        count: parseInt(record.person_count),
+        count: parseInt(record.event_count) || parseInt(record.person_count),
         avg90day: parseInt(record.avg_90day),
         supervisionType: record.supervision_type as SupervisionType,
         gender: record?.gender as Gender,
