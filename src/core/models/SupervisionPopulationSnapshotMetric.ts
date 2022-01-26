@@ -28,7 +28,8 @@ import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import { PopulationFilterLabels } from "../types/filters";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import { SupervisionPopulationSnapshotRecord } from "./types";
+import { SupervisionPopulationSnapshotRecord, TimePeriod } from "./types";
+import { filterTimePeriod } from "./utils";
 
 export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<SupervisionPopulationSnapshotRecord> {
   accessor: keyof SupervisionPopulationSnapshotRecord;
@@ -54,8 +55,8 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
       mostSevereViolation,
       supervisionLevel,
       race,
+      timePeriod,
     } = this.rootStore.filtersStore.filters;
-
     const filteredRecords = this.allRecords.filter(
       (record: SupervisionPopulationSnapshotRecord) => {
         return (
@@ -86,11 +87,15 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
             : ["ALL"].includes(record.priorLengthOfIncarceration)) &&
           (this.accessor === "race"
             ? !["ALL"].includes(record.race)
-            : race.includes(record.race))
+            : race.includes(record.race)) &&
+          filterTimePeriod(
+            this.hasTimePeriodDimension,
+            record.timePeriod,
+            timePeriod[0] as TimePeriod
+          )
         );
       }
     );
-
     const result = pipe(
       groupBy((d: SupervisionPopulationSnapshotRecord) => [d[this.accessor]]),
       values,
@@ -112,6 +117,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
         supervisionLevel: dataset[0].supervisionLevel,
         priorLengthOfIncarceration: dataset[0].priorLengthOfIncarceration,
         race: dataset[0].race,
+        timePeriod: dataset[0].timePeriod,
       }))
     )(filteredRecords);
     return result as SupervisionPopulationSnapshotRecord[];

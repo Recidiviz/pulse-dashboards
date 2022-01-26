@@ -52,6 +52,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           age_group: "<25",
           age: "18",
           facility: "Bedrock",
+          time_period: "months_0_6",
         },
         {
           state_id: "1",
@@ -62,6 +63,18 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           age_group: "<25",
           age: "18",
           facility: "School of Rock",
+          time_period: "months_7_12",
+        },
+        {
+          state_id: "1",
+          full_name: "Betty",
+          last_updated: "2021-11-1",
+          legal_status: "SANCTION",
+          gender: "MALE",
+          age_group: "<25",
+          age: "18",
+          facility: "School of Rock",
+          time_period: "months_0_6",
         },
         {
           state_id: "1",
@@ -72,6 +85,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           age_group: "<25",
           age: "18",
           facility: "Bedrock",
+          time_period: "months_7_12",
         },
       ],
     }),
@@ -91,9 +105,11 @@ describe("PrisonPopulationPersonLevelMetric", () => {
       tenantId: mockTenantId,
       sourceFilename: "prison_population_snapshot_person_level",
       rootStore: mockCoreStore,
+      hasTimePeriodDimension: true,
       dataTransformer: createPrisonPopulationPersonLevelList,
       filters: {
         enabledFilters: [
+          FILTER_TYPES.TIME_PERIOD,
           FILTER_TYPES.GENDER,
           FILTER_TYPES.LEGAL_STATUS,
           FILTER_TYPES.AGE_GROUP,
@@ -134,6 +150,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         ageGroup: "<25",
         age: "18",
         facility: "Bedrock",
+        timePeriod: "6",
       },
       {
         stateId: "1",
@@ -144,6 +161,18 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         ageGroup: "<25",
         age: "18",
         facility: "School of Rock",
+        timePeriod: "12",
+      },
+      {
+        stateId: "1",
+        fullName: "Betty",
+        lastUpdated: formatDateString("2021-11-1"),
+        legalStatus: "SANCTION",
+        gender: "MALE",
+        ageGroup: "<25",
+        age: "18",
+        facility: "School of Rock",
+        timePeriod: "6",
       },
       {
         stateId: "1",
@@ -154,6 +183,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         ageGroup: "<25",
         age: "18",
         facility: "Bedrock",
+        timePeriod: "12",
       },
     ]);
   });
@@ -167,9 +197,11 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         tenantId: mockTenantId,
         sourceFilename: "prison_population_snapshot_person_level",
         rootStore: mockCoreStore,
+        hasTimePeriodDimension: true,
         dataTransformer: createPrisonPopulationPersonLevelList,
         filters: {
           enabledFilters: [
+            FILTER_TYPES.TIME_PERIOD,
             FILTER_TYPES.GENDER,
             FILTER_TYPES.LEGAL_STATUS,
             FILTER_TYPES.AGE_GROUP,
@@ -191,6 +223,35 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           ageGroup: "<25",
           age: "18",
           facility: "Bedrock",
+          timePeriod: "6",
+        },
+        {
+          stateId: "1",
+          fullName: "Betty",
+          lastUpdated: formatDateString("2021-11-1"),
+          legalStatus: "SANCTION",
+          gender: "MALE",
+          ageGroup: "<25",
+          age: "18",
+          facility: "School of Rock",
+          timePeriod: "6",
+        },
+      ]);
+    });
+
+    it("does not filter by timePeriod if hasTimePeriodDimension is false", () => {
+      metric.hasTimePeriodDimension = false;
+      expect(metric.dataSeries).toEqual([
+        {
+          stateId: "1",
+          fullName: "Barney Rubble",
+          lastUpdated: formatDateString("2021-11-1"),
+          legalStatus: "NEW_ADMISSION",
+          gender: "MALE",
+          ageGroup: "<25",
+          age: "18",
+          facility: "Bedrock",
+          timePeriod: "6",
         },
         {
           stateId: "1",
@@ -201,6 +262,18 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           ageGroup: "<25",
           age: "18",
           facility: "School of Rock",
+          timePeriod: "12",
+        },
+        {
+          stateId: "1",
+          fullName: "Betty",
+          lastUpdated: formatDateString("2021-11-1"),
+          legalStatus: "SANCTION",
+          gender: "MALE",
+          ageGroup: "<25",
+          age: "18",
+          facility: "School of Rock",
+          timePeriod: "6",
         },
         {
           stateId: "1",
@@ -211,6 +284,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           ageGroup: "<25",
           age: "18",
           facility: "Bedrock",
+          timePeriod: "12",
         },
       ]);
     });
@@ -234,6 +308,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
             ageGroup: "<25",
             age: "18",
             facility: "Bedrock",
+            timePeriod: "6",
           },
         ]);
       });
@@ -327,6 +402,13 @@ describe("PrisonPopulationPersonLevelMetric", () => {
                 Gender: "Male",
               },
               {
+                "Admission Reason": "Sanction",
+                Age: "18",
+                "DOC ID": "1",
+                Facility: "School of Rock",
+                Gender: "Male",
+              },
+              {
                 "Admission Reason": "New Admission",
                 Age: "18",
                 "DOC ID": "1",
@@ -338,7 +420,12 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           },
         ],
         chartId: "List of people in prison",
-        chartLabels: ["Barney Rubble", "Fred Flinstone", "Wilma Flinstone"],
+        chartLabels: [
+          "Barney Rubble",
+          "Fred Flinstone",
+          "Betty",
+          "Wilma Flinstone",
+        ],
         dataExportLabel: "Name",
       };
       expect(metric.downloadableData).toEqual(expected);

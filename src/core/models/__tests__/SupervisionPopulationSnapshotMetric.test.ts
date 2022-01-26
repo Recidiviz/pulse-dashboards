@@ -54,6 +54,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           supervision_type: "ALL",
           length_of_stay: "ALL",
           total_population: 45,
+          time_period: "months_0_6",
         },
         {
           gender: "ALL",
@@ -66,6 +67,20 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           supervision_type: undefined,
           length_of_stay: "ALL",
           total_population: 30,
+          time_period: "months_0_6",
+        },
+        {
+          gender: "ALL",
+          age_group: undefined,
+          district: "DISTRICT_2",
+          person_count: "10",
+          last_updated: "2021-10-27",
+          most_severe_violation: undefined,
+          number_of_violations: undefined,
+          supervision_type: undefined,
+          length_of_stay: "ALL",
+          total_population: 30,
+          time_period: "months_7_12",
         },
         {
           gender: "FEMALE",
@@ -75,6 +90,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           last_updated: "2021-10-27",
           length_of_stay: "ALL",
           total_population: 30,
+          time_period: "months_7_12",
         },
       ],
     }),
@@ -98,12 +114,14 @@ describe("SupervisionPopulationSnapshotMetric", () => {
       dataTransformer: createSupervisionPopulationSnapshot,
       filters: {
         enabledFilters: [
+          FILTER_TYPES.TIME_PERIOD,
           FILTER_TYPES.GENDER,
           FILTER_TYPES.LEGAL_STATUS,
           FILTER_TYPES.AGE_GROUP,
           FILTER_TYPES.DISTRICT,
         ],
       },
+      hasTimePeriodDimension: true,
     });
 
     metric.hydrate();
@@ -143,6 +161,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         race: "ALL",
         priorLengthOfIncarceration: "ALL",
         supervisionLevel: "ALL",
+        timePeriod: "6",
       },
       {
         gender: "ALL",
@@ -158,6 +177,23 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         race: "ALL",
         priorLengthOfIncarceration: "ALL",
         supervisionLevel: "ALL",
+        timePeriod: "6",
+      },
+      {
+        gender: "ALL",
+        ageGroup: "ALL",
+        district: "DISTRICT_2",
+        count: 10,
+        lastUpdated: formatDateString("2021-10-27"),
+        mostSevereViolation: "ALL",
+        numberOfViolations: "ALL",
+        supervisionType: "ALL",
+        lengthOfStay: "ALL",
+        totalPopulation: 30,
+        race: "ALL",
+        priorLengthOfIncarceration: "ALL",
+        supervisionLevel: "ALL",
+        timePeriod: "12",
       },
       {
         gender: "FEMALE",
@@ -173,6 +209,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         race: "ALL",
         priorLengthOfIncarceration: "ALL",
         supervisionLevel: "ALL",
+        timePeriod: "12",
       },
     ]);
   });
@@ -191,12 +228,14 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         dataTransformer: createSupervisionPopulationSnapshot,
         filters: {
           enabledFilters: [
+            FILTER_TYPES.TIME_PERIOD,
             FILTER_TYPES.GENDER,
             FILTER_TYPES.LEGAL_STATUS,
             FILTER_TYPES.AGE_GROUP,
             FILTER_TYPES.DISTRICT,
           ],
         },
+        hasTimePeriodDimension: true,
       });
       metric.hydrate();
     });
@@ -218,6 +257,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           race: "ALL",
           priorLengthOfIncarceration: "ALL",
           supervisionLevel: "ALL",
+          timePeriod: "6",
         },
         {
           gender: "ALL",
@@ -234,6 +274,48 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           race: "ALL",
           priorLengthOfIncarceration: "ALL",
           supervisionLevel: "ALL",
+          timePeriod: "6",
+        },
+      ]);
+    });
+
+    it("does not filter by timePeriod if hasTimePeriodDimension is false", () => {
+      metric.hasTimePeriodDimension = false;
+
+      expect(metric.dataSeries).toEqual([
+        {
+          gender: "ALL",
+          ageGroup: "ALL",
+          district: "DISTRICT_1",
+          count: 15,
+          lastUpdated: formatDateString("2021-10-27"),
+          mostSevereViolation: "ALL",
+          numberOfViolations: "ALL",
+          supervisionType: "ALL",
+          lengthOfStay: "ALL",
+          totalPopulation: 45,
+          populationProportion: "33",
+          race: "ALL",
+          priorLengthOfIncarceration: "ALL",
+          supervisionLevel: "ALL",
+          timePeriod: "6",
+        },
+        {
+          gender: "ALL",
+          ageGroup: "ALL",
+          district: "DISTRICT_2",
+          count: 20,
+          lastUpdated: formatDateString("2021-10-27"),
+          mostSevereViolation: "ALL",
+          numberOfViolations: "ALL",
+          supervisionType: "ALL",
+          lengthOfStay: "ALL",
+          totalPopulation: 60,
+          populationProportion: "33",
+          race: "ALL",
+          priorLengthOfIncarceration: "ALL",
+          supervisionLevel: "ALL",
+          timePeriod: "6",
         },
       ]);
     });
@@ -244,6 +326,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           metric.rootStore.filtersStore.setFilters({
             gender: ["FEMALE"],
             district: ["DISTRICT_1"],
+            timePeriod: ["12"],
           });
         }
 
@@ -263,6 +346,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
             race: "ALL",
             priorLengthOfIncarceration: "ALL",
             supervisionLevel: "ALL",
+            timePeriod: "12",
           },
         ]);
       });
@@ -306,7 +390,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
                 Count: 15,
               },
               {
-                Count: 10,
+                Count: 20,
               },
             ],
             label: "",

@@ -157,6 +157,7 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "district",
       enableMetricModeToggle: true,
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .libertyToPrisonPopulationByDistrict,
     });
@@ -171,6 +172,7 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "race",
       enableMetricModeToggle: true,
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .libertyToPrisonPopulationByRace,
     });
@@ -185,6 +187,7 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "ageGroup",
       enableMetricModeToggle: true,
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .libertyToPrisonPopulationByAgeGroup,
     });
@@ -199,6 +202,7 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "gender",
       enableMetricModeToggle: true,
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .libertyToPrisonPopulationByGender,
     });
@@ -212,6 +216,7 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "priorLengthOfIncarceration",
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .libertyToPrisonPopulationByPriorLengthOfIncarceration,
     });
@@ -302,6 +307,7 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       accessor: "district",
       enableMetricModeToggle: true,
+      hasTimePeriodDimension: true,
       dataTransformer: createSupervisionPopulationSnapshot,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByDistrict,
@@ -316,6 +322,7 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "mostSevereViolation",
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByMostSevereViolation,
     });
@@ -329,6 +336,7 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "numberOfViolations",
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByNumberOfViolations,
     });
@@ -342,6 +350,7 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "lengthOfStay",
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByLengthOfStay,
     });
@@ -355,6 +364,7 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "supervisionLevel",
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationBySupervisionLevel,
     });
@@ -369,6 +379,7 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "gender",
       enableMetricModeToggle: true,
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByGender,
     });
@@ -383,6 +394,7 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "race",
       enableMetricModeToggle: true,
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByRace,
     });
@@ -435,6 +447,7 @@ export default class MetricsStore {
       enableMetricModeToggle: true,
       dataTransformer: createPrisonPopulationSnapshot,
       accessor: "ageGroup",
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .prisonToSupervisionPopulationByAge,
     });
@@ -449,6 +462,7 @@ export default class MetricsStore {
       enableMetricModeToggle: true,
       dataTransformer: createPrisonPopulationSnapshot,
       accessor: "facility",
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .prisonToSupervisionPopulationByFacility,
     });
@@ -458,8 +472,9 @@ export default class MetricsStore {
     return new PrisonPopulationPersonLevelMetric({
       id: "prisonToSupervisionPopulationPersonLevel",
       tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "prison_population_snapshot_person_level",
+      sourceFilename: "prison_to_supervision_population_snapshot_person_level",
       rootStore: this.rootStore,
+      hasTimePeriodDimension: true,
       dataTransformer: createPrisonPopulationPersonLevelList,
       filters: this.rootStore.filtersStore.enabledFilters
         .prisonToSupervisionPopulationPersonLevel,
@@ -498,6 +513,7 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "lengthOfStay",
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToLibertyPopulationByLengthOfStay,
     });
@@ -511,6 +527,7 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "race",
+      hasTimePeriodDimension: true,
       enableMetricModeToggle: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToLibertyPopulationByRace,
@@ -526,6 +543,7 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "district",
       enableMetricModeToggle: true,
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToLibertyPopulationByLocation,
     });
@@ -540,6 +558,7 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "gender",
       enableMetricModeToggle: true,
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToLibertyPopulationByGender,
     });
@@ -554,6 +573,7 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "ageGroup",
       enableMetricModeToggle: true,
+      hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToLibertyPopulationByAgeGroup,
     });

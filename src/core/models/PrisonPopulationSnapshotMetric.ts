@@ -27,7 +27,8 @@ import { toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import { PrisonPopulationSnapshotRecord } from "./types";
+import { PrisonPopulationSnapshotRecord, TimePeriod } from "./types";
+import { filterTimePeriod } from "./utils";
 
 export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<PrisonPopulationSnapshotRecord> {
   accessor: keyof PrisonPopulationSnapshotRecord;
@@ -49,6 +50,7 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
       legalStatus,
       ageGroup,
       facility,
+      timePeriod,
     } = this.rootStore.filtersStore.filters;
 
     const filteredRecords = this.allRecords.filter(
@@ -61,7 +63,12 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
             : facility.includes(record.facility)) &&
           (this.accessor === "ageGroup"
             ? !["ALL"].includes(record.ageGroup)
-            : ageGroup.includes(record.ageGroup))
+            : ageGroup.includes(record.ageGroup)) &&
+          filterTimePeriod(
+            this.hasTimePeriodDimension,
+            record.timePeriod,
+            timePeriod[0] as TimePeriod
+          )
         );
       }
     );
@@ -81,6 +88,7 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
         legalStatus: dataset[0].legalStatus,
         facility: dataset[0].facility,
         ageGroup: dataset[0].ageGroup,
+        timePeriod: dataset[0].timePeriod,
       }))
     )(filteredRecords);
     return result as PrisonPopulationSnapshotRecord[];

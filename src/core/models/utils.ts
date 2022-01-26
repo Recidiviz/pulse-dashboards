@@ -27,6 +27,8 @@ import {
   SupervisionPopulationSnapshotRecord,
   SupervisionPopulationTimeSeriesRecord,
   SupervisionType,
+  TimePeriod,
+  TimePeriodRawValue,
 } from "./types";
 
 const superDimensionDefaults = {
@@ -55,6 +57,13 @@ const prisonDimensionDefaults = {
   legalStatus: "ALL",
   facility: "ALL",
 };
+
+const timePeriodMap = {
+  months_0_6: "6",
+  months_7_12: "12",
+  months_13_24: "24",
+  months_25_60: "60",
+} as Record<TimePeriodRawValue, TimePeriod>;
 
 const mergeDefaults = (record: any, defaults: any) =>
   Object.assign(
@@ -97,6 +106,9 @@ export function createPrisonPopulationSnapshot(
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
         facility: record.facility,
+        timePeriod:
+          record.time_period &&
+          timePeriodMap[record.time_period as TimePeriodRawValue],
       },
       prisonDimensionDefaults
     );
@@ -123,6 +135,9 @@ export function createSupervisionPopulationSnapshot(
         supervisionLevel: record.supervision_level,
         race: record.race,
         priorLengthOfIncarceration: record.prior_length_of_incarceration,
+        timePeriod:
+          record.time_period &&
+          timePeriodMap[record.time_period as TimePeriodRawValue],
       },
       supervisionDimensionDefaults
     );
@@ -144,6 +159,9 @@ export function createPrisonPopulationPersonLevelList(
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
         facility: record.facility,
+        timePeriod:
+          record.time_period &&
+          timePeriodMap[record.time_period as TimePeriodRawValue],
       },
       prisonDimensionDefaults
     );
@@ -209,4 +227,14 @@ export function getRecordDate(d: TimeSeriesRecord): Date {
 export const formatDateString = (dateString: string): Date => {
   const [year, month, day] = dateString.split("-");
   return new Date(Number(year), Number(month) - 1, Number(day));
+};
+
+export const filterTimePeriod = (
+  shouldFilter = false,
+  recordTimePeriodValue: TimePeriod,
+  filterTimePeriodValue: TimePeriod
+): boolean => {
+  return shouldFilter
+    ? Number(recordTimePeriodValue) <= Number(filterTimePeriodValue)
+    : true;
 };

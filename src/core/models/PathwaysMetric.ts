@@ -42,6 +42,7 @@ export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   tenantId?: TenantId;
   rootStore?: CoreStore;
   enableMetricModeToggle?: boolean;
+  hasTimePeriodDimension?: boolean;
 };
 
 /**
@@ -77,6 +78,8 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   enableMetricModeToggle?: boolean = false;
 
+  hasTimePeriodDimension?: boolean = false;
+
   constructor({
     rootStore,
     id,
@@ -85,6 +88,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     dataTransformer,
     filters,
     enableMetricModeToggle,
+    hasTimePeriodDimension,
   }: BaseMetricConstructorOptions<RecordFormat>) {
     makeObservable<PathwaysMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
@@ -101,6 +105,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.eagerExpand = true;
     this.filters = filters;
     this.enableMetricModeToggle = enableMetricModeToggle;
+    this.hasTimePeriodDimension = hasTimePeriodDimension;
   }
 
   get content(): MetricContent {

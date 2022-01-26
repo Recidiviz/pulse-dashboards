@@ -186,6 +186,9 @@ const PATHWAYS_COLLECTIONS = {
     prison_to_supervision_population_snapshot_by_dimension: {
       filename: "prison_to_supervision_population_snapshot_by_dimension.json",
     },
+    prison_to_supervision_population_snapshot_person_level: {
+      filename: "prison_to_supervision_population_snapshot_person_level.json",
+    },
     supervision_population_time_series: {
       filename: "supervision_population_time_series.json",
     },

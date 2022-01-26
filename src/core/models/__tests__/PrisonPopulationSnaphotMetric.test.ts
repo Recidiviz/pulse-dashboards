@@ -48,6 +48,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           event_count: "15",
           last_updated: "2021-10-27",
           total_population: "35",
+          time_period: "months_0_6",
         },
         {
           legal_status: "ALL",
@@ -57,6 +58,17 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           person_count: "10",
           last_updated: "2021-10-27",
           total_population: "35",
+          time_period: "months_7_12",
+        },
+        {
+          legal_status: "ALL",
+          gender: "ALL",
+          age_group: undefined,
+          facility: "School of Rock",
+          person_count: "10",
+          last_updated: "2021-10-27",
+          total_population: "35",
+          time_period: "months_0_6",
         },
         {
           legal_status: "ALL",
@@ -65,6 +77,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           person_count: "5",
           last_updated: "2021-10-27",
           total_population: "35",
+          time_period: "months_7_12",
         },
       ],
     }),
@@ -85,9 +98,11 @@ describe("PrisonPopulationSnapshotMetric", () => {
       sourceFilename: "prison_population_snapshot_by_dimension",
       rootStore: mockCoreStore,
       accessor: "facility",
+      hasTimePeriodDimension: true,
       dataTransformer: createPrisonPopulationSnapshot,
       filters: {
         enabledFilters: [
+          FILTER_TYPES.TIME_PERIOD,
           FILTER_TYPES.GENDER,
           FILTER_TYPES.LEGAL_STATUS,
           FILTER_TYPES.AGE_GROUP,
@@ -127,6 +142,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         count: 15,
         lastUpdated: formatDateString("2021-10-27"),
         totalPopulation: 35,
+        timePeriod: "6",
       },
       {
         legalStatus: "ALL",
@@ -136,6 +152,17 @@ describe("PrisonPopulationSnapshotMetric", () => {
         count: 10,
         lastUpdated: formatDateString("2021-10-27"),
         totalPopulation: 35,
+        timePeriod: "12",
+      },
+      {
+        legalStatus: "ALL",
+        gender: "ALL",
+        ageGroup: "ALL",
+        facility: "School of Rock",
+        count: 10,
+        lastUpdated: formatDateString("2021-10-27"),
+        totalPopulation: 35,
+        timePeriod: "6",
       },
       {
         legalStatus: "ALL",
@@ -145,6 +172,36 @@ describe("PrisonPopulationSnapshotMetric", () => {
         count: 5,
         lastUpdated: formatDateString("2021-10-27"),
         totalPopulation: 35,
+        timePeriod: "12",
+      },
+    ]);
+  });
+
+  it("does not filter by timePeriod if hasTimePeriodDimension is false", () => {
+    metric.hasTimePeriodDimension = false;
+
+    expect(metric.dataSeries).toEqual([
+      {
+        legalStatus: "ALL",
+        gender: "ALL",
+        ageGroup: "ALL",
+        facility: "Bedrock",
+        count: 15,
+        lastUpdated: formatDateString("2021-10-27"),
+        totalPopulation: 35,
+        timePeriod: "6",
+        populationProportion: "43",
+      },
+      {
+        legalStatus: "ALL",
+        gender: "ALL",
+        ageGroup: "ALL",
+        facility: "School of Rock",
+        count: 20,
+        lastUpdated: formatDateString("2021-10-27"),
+        totalPopulation: 70,
+        timePeriod: "12",
+        populationProportion: "29",
       },
     ]);
   });
@@ -159,9 +216,11 @@ describe("PrisonPopulationSnapshotMetric", () => {
         sourceFilename: "prison_population_snapshot_by_dimension",
         rootStore: mockCoreStore,
         accessor: "facility",
+        hasTimePeriodDimension: true,
         dataTransformer: createPrisonPopulationSnapshot,
         filters: {
           enabledFilters: [
+            FILTER_TYPES.TIME_PERIOD,
             FILTER_TYPES.GENDER,
             FILTER_TYPES.LEGAL_STATUS,
             FILTER_TYPES.AGE_GROUP,
@@ -183,6 +242,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
           lastUpdated: formatDateString("2021-10-27"),
           populationProportion: "43",
           totalPopulation: 35,
+          timePeriod: "6",
         },
         {
           legalStatus: "ALL",
@@ -193,6 +253,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
           lastUpdated: formatDateString("2021-10-27"),
           populationProportion: "29",
           totalPopulation: 35,
+          timePeriod: "6",
         },
       ]);
     });
@@ -203,6 +264,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
           metric.rootStore.filtersStore.setFilters({
             gender: ["FEMALE"],
             facility: ["Bedrock"],
+            timePeriod: ["12"],
           });
         }
 
@@ -216,6 +278,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
             lastUpdated: formatDateString("2021-10-27"),
             populationProportion: "14",
             totalPopulation: 35,
+            timePeriod: "12",
           },
         ]);
       });
@@ -258,7 +321,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
                 Count: 15,
               },
               {
-                Count: 10,
+                Count: 20,
               },
             ],
             label: "",

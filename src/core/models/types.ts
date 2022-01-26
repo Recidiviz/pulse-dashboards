@@ -50,6 +50,12 @@ export type AgeGroup =
   | "55+";
 export type SimulationCompartment = "SUPERVISION" | "INCARCERATION";
 export type SupervisionType = "PAROLE" | "PROBATION" | "ALL";
+export type TimePeriod = "6" | "12" | "24" | "60";
+export type TimePeriodRawValue =
+  | "months_0_6"
+  | "months_7_12"
+  | "months_13_24"
+  | "months_25_60";
 
 export type MetricRecord =
   | PopulationProjectionTimeSeriesRecord
@@ -80,6 +86,7 @@ export type PrisonPopulationSnapshotRecord = {
   ageGroup: AgeGroup;
   legalStatus: string;
   facility: string;
+  timePeriod: TimePeriod;
 };
 
 export type PrisonPopulationPersonLevelRecord = {
@@ -91,6 +98,7 @@ export type PrisonPopulationPersonLevelRecord = {
   age: string;
   legalStatus: string;
   facility: string;
+  timePeriod: TimePeriod;
 };
 
 export type PrisonPopulationTimeSeriesRecord = {
@@ -122,6 +130,7 @@ export type SupervisionPopulationSnapshotRecord = {
   supervisionLevel: string;
   race: string;
   priorLengthOfIncarceration: string;
+  timePeriod: TimePeriod;
 };
 
 export type SupervisionPopulationTimeSeriesRecord = {

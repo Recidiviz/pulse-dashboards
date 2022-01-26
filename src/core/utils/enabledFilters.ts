@@ -27,259 +27,6 @@ import { FILTER_TYPES } from "./constants";
 export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   // LIBERTY TO PRISON
   libertyToPrisonPopulationOverTime: {
-    enabledFilters: [FILTER_TYPES.TIME_PERIOD, FILTER_TYPES.DISTRICT],
-  },
-  libertyToPrisonPopulationByDistrict: {
-    enabledFilters: [FILTER_TYPES.DISTRICT],
-  },
-  // PRISON
-  prisonPopulationOverTime: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.FACILITY,
-      FILTER_TYPES.GENDER,
-    ],
-    enabledMoreFilters: [FILTER_TYPES.AGE_GROUP, FILTER_TYPES.LEGAL_STATUS],
-  },
-  prisonFacilityPopulation: {
-    enabledFilters: [
-      FILTER_TYPES.FACILITY,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.AGE_GROUP,
-    ],
-    enabledMoreFilters: [FILTER_TYPES.LEGAL_STATUS],
-  },
-  prisonPopulationPersonLevel: {
-    enabledFilters: [
-      FILTER_TYPES.FACILITY,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.AGE_GROUP,
-    ],
-    enabledMoreFilters: [FILTER_TYPES.LEGAL_STATUS],
-  },
-  // PRISON TO SUPERVISION
-  prisonToSupervisionPopulationOverTime: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.FACILITY,
-      FILTER_TYPES.GENDER,
-    ],
-    enabledMoreFilters: [FILTER_TYPES.AGE_GROUP],
-  },
-  prisonToSupervisionPopulationByAge: {
-    enabledFilters: [
-      FILTER_TYPES.FACILITY,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.AGE_GROUP,
-    ],
-  },
-  prisonToSupervisionPopulationByFacility: {
-    enabledFilters: [
-      FILTER_TYPES.FACILITY,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.AGE_GROUP,
-    ],
-  },
-  prisonToSupervisionPopulationPersonLevel: {
-    enabledFilters: [
-      FILTER_TYPES.FACILITY,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.AGE_GROUP,
-    ],
-  },
-  // SUPERVISION
-  supervisionPopulationOverTime: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.DISTRICT,
-      FILTER_TYPES.SUPERVISION_LEVEL,
-    ],
-    enabledMoreFilters: [FILTER_TYPES.GENDER],
-  },
-  supervisionPopulationByDistrict: {
-    enabledFilters: [
-      FILTER_TYPES.DISTRICT,
-      FILTER_TYPES.SUPERVISION_LEVEL,
-      FILTER_TYPES.GENDER,
-    ],
-  },
-  supervisionPopulationBySupervisionLevel: {
-    enabledFilters: [
-      FILTER_TYPES.DISTRICT,
-      FILTER_TYPES.SUPERVISION_LEVEL,
-      FILTER_TYPES.GENDER,
-    ],
-  },
-  // SUPERVISION TO PRISON
-  supervisionToPrisonOverTime: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.DISTRICT,
-      FILTER_TYPES.MOST_SEVERE_VIOLATION,
-    ],
-    enabledMoreFilters: [
-      FILTER_TYPES.NUMBER_OF_VIOLATIONS,
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.AGE_GROUP,
-      FILTER_TYPES.SUPERVISION_LEVEL,
-    ],
-  },
-  supervisionToPrisonPopulationByLengthOfStay: {
-    enabledFilters: [
-      FILTER_TYPES.DISTRICT,
-      FILTER_TYPES.MOST_SEVERE_VIOLATION,
-      FILTER_TYPES.NUMBER_OF_VIOLATIONS,
-    ],
-    enabledMoreFilters: [
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.AGE_GROUP,
-      FILTER_TYPES.SUPERVISION_LEVEL,
-    ],
-  },
-  supervisionToPrisonPopulationByNumberOfViolations: {
-    enabledFilters: [
-      FILTER_TYPES.DISTRICT,
-      FILTER_TYPES.MOST_SEVERE_VIOLATION,
-      FILTER_TYPES.NUMBER_OF_VIOLATIONS,
-    ],
-    enabledMoreFilters: [
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.AGE_GROUP,
-      FILTER_TYPES.SUPERVISION_LEVEL,
-    ],
-  },
-  supervisionToPrisonPopulationByMostSevereViolation: {
-    enabledFilters: [
-      FILTER_TYPES.DISTRICT,
-      FILTER_TYPES.MOST_SEVERE_VIOLATION,
-      FILTER_TYPES.NUMBER_OF_VIOLATIONS,
-    ],
-    enabledMoreFilters: [
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.AGE_GROUP,
-      FILTER_TYPES.SUPERVISION_LEVEL,
-    ],
-  },
-  supervisionToPrisonPopulationByDistrict: {
-    enabledFilters: [
-      FILTER_TYPES.DISTRICT,
-      FILTER_TYPES.MOST_SEVERE_VIOLATION,
-      FILTER_TYPES.NUMBER_OF_VIOLATIONS,
-    ],
-    enabledMoreFilters: [
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.AGE_GROUP,
-      FILTER_TYPES.SUPERVISION_LEVEL,
-    ],
-  },
-  supervisionToPrisonPopulationBySupervisionLevel: {
-    enabledFilters: [
-      FILTER_TYPES.DISTRICT,
-      FILTER_TYPES.MOST_SEVERE_VIOLATION,
-      FILTER_TYPES.NUMBER_OF_VIOLATIONS,
-    ],
-    enabledMoreFilters: [
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.AGE_GROUP,
-      FILTER_TYPES.SUPERVISION_LEVEL,
-    ],
-  },
-  // SUPERVISION TO LIBERTY
-  supervisionToLibertyOverTime: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
-    ],
-  },
-  supervisionToLibertyPopulationByLengthOfStay: {
-    enabledFilters: [
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.DISTRICT,
-    ],
-    enabledMoreFilters: [FILTER_TYPES.AGE_GROUP, FILTER_TYPES.RACE],
-  },
-  supervisionToLibertyPopulationByLocation: {
-    enabledFilters: [
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.AGE_GROUP,
-    ],
-    enabledMoreFilters: [FILTER_TYPES.RACE],
-  },
-  supervisionToLibertyPopulationByGender: {
-    enabledFilters: [
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.DISTRICT,
-      FILTER_TYPES.AGE_GROUP,
-    ],
-    enabledMoreFilters: [FILTER_TYPES.RACE],
-  },
-  supervisionToLibertyPopulationByAgeGroup: {
-    enabledFilters: [
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.DISTRICT,
-    ],
-    enabledMoreFilters: [FILTER_TYPES.RACE],
-  },
-  supervisionToLibertyPopulationByRace: {
-    enabledFilters: [
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.DISTRICT,
-    ],
-    enabledMoreFilters: [FILTER_TYPES.AGE_GROUP],
-  },
-};
-
-export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
-  ...EnabledFilterOptions,
-  // PRISON
-  projectedPrisonPopulationOverTime: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.LEGAL_STATUS,
-    ],
-  },
-  // SUPERVISION
-  projectedSupervisionPopulationOverTime: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
-    ],
-  },
-  // SUPERVISION TO PRISON
-  supervisionToPrisonOverTime: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
-    ],
-  },
-};
-
-export const TnEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
-  ...EnabledFilterOptions,
-};
-
-export const MeEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
-  ...EnabledFilterOptions,
-};
-
-export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
-  ...EnabledFilterOptions,
-  // LIBERTY TO PRISON
-  libertyToPrisonPopulationOverTime: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
@@ -345,6 +92,62 @@ export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
     enabledFilters: [FILTER_TYPES.FACILITY, FILTER_TYPES.AGE_GROUP],
     enabledMoreFilters: [FILTER_TYPES.LEGAL_STATUS],
   },
+  // PRISON TO SUPERVISION
+  prisonToSupervisionPopulationOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+    ],
+    enabledMoreFilters: [FILTER_TYPES.AGE_GROUP],
+  },
+  prisonToSupervisionPopulationByAge: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  prisonToSupervisionPopulationByFacility: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  prisonToSupervisionPopulationPersonLevel: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  // SUPERVISION
+  supervisionPopulationOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.SUPERVISION_LEVEL,
+    ],
+    enabledMoreFilters: [FILTER_TYPES.GENDER],
+  },
+  supervisionPopulationByDistrict: {
+    enabledFilters: [
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.SUPERVISION_LEVEL,
+      FILTER_TYPES.GENDER,
+    ],
+  },
+  supervisionPopulationBySupervisionLevel: {
+    enabledFilters: [
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.SUPERVISION_LEVEL,
+      FILTER_TYPES.GENDER,
+    ],
+  },
   // SUPERVISION TO PRISON
   supervisionToPrisonOverTime: {
     enabledFilters: [
@@ -360,6 +163,7 @@ export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToPrisonPopulationByLengthOfStay: {
     enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
@@ -371,6 +175,7 @@ export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToPrisonPopulationByDistrict: {
     enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
@@ -382,6 +187,7 @@ export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToPrisonPopulationBySupervisionLevel: {
     enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
@@ -393,6 +199,7 @@ export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToPrisonPopulationByGender: {
     enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
@@ -404,6 +211,7 @@ export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   supervisionToPrisonPopulationByRace: {
     enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
@@ -413,6 +221,107 @@ export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.SUPERVISION_TYPE,
     ],
   },
+  // SUPERVISION TO LIBERTY
+  supervisionToLibertyOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.SUPERVISION_TYPE,
+      FILTER_TYPES.GENDER,
+    ],
+  },
+  supervisionToLibertyPopulationByLengthOfStay: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.SUPERVISION_TYPE,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.DISTRICT,
+    ],
+    enabledMoreFilters: [FILTER_TYPES.AGE_GROUP, FILTER_TYPES.RACE],
+  },
+  supervisionToLibertyPopulationByLocation: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.SUPERVISION_TYPE,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+    enabledMoreFilters: [FILTER_TYPES.RACE],
+  },
+  supervisionToLibertyPopulationByGender: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.SUPERVISION_TYPE,
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+    enabledMoreFilters: [FILTER_TYPES.RACE],
+  },
+  supervisionToLibertyPopulationByAgeGroup: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.SUPERVISION_TYPE,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.DISTRICT,
+    ],
+    enabledMoreFilters: [FILTER_TYPES.RACE],
+  },
+  supervisionToLibertyPopulationByRace: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.SUPERVISION_TYPE,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.DISTRICT,
+    ],
+    enabledMoreFilters: [FILTER_TYPES.AGE_GROUP],
+  },
+};
+
+export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
+  ...EnabledFilterOptions,
+  // PRISON
+  projectedPrisonPopulationOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.LEGAL_STATUS,
+    ],
+  },
+  // SUPERVISION
+  projectedSupervisionPopulationOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.SUPERVISION_TYPE,
+      FILTER_TYPES.GENDER,
+    ],
+  },
+  // SUPERVISION TO PRISON
+  supervisionToPrisonOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.SUPERVISION_TYPE,
+      FILTER_TYPES.GENDER,
+    ],
+  },
+  // SUPERVISION TO LIBERTY
+  supervisionToLibertyOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.SUPERVISION_TYPE,
+      FILTER_TYPES.GENDER,
+    ],
+  },
+};
+
+export const TnEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
+  ...EnabledFilterOptions,
+};
+
+export const MeEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
+  ...EnabledFilterOptions,
+};
+
+export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
+  ...EnabledFilterOptions,
 };
 
 export default {
