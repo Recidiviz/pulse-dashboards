@@ -44,9 +44,6 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
       legalStatus,
       facility,
       ageGroup,
-      district,
-      supervisionType,
-      supervisionLevel,
     } = this.rootStore.filtersStore.filters;
     const { monthRange } = this.rootStore.filtersStore;
     const stepSize = monthRange === 60 ? 2 : 1;
@@ -64,11 +61,7 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
           gender.includes(record.gender) &&
           legalStatus.includes(record.legalStatus) &&
           ageGroup.includes(record.ageGroup) &&
-          facility.includes(record.facility) &&
-          district.includes(record.district) &&
-          supervisionType.includes(record.supervisionType) &&
-          supervisionLevel.includes(record.supervisionLevel) &&
-          ["ALL"].includes(record.race)
+          facility.includes(record.facility)
         );
       }
     );
@@ -83,10 +76,6 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
         legalStatus: dataset[0].legalStatus,
         facility: dataset[0].facility,
         ageGroup: dataset[0].ageGroup,
-        district: dataset[0].district,
-        supervisionType: dataset[0].supervisionType,
-        supervisionLevel: dataset[0].supervisionLevel,
-        race: dataset[0].race,
         avg90day: sumBy("avg90day", dataset),
         count: sumBy("count", dataset),
       }))

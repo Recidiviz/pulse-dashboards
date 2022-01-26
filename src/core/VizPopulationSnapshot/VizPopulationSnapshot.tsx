@@ -40,7 +40,12 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
   metric,
 }) => {
   const { filtersStore } = useCoreStore();
-  const { filters, getFilterLabel, currentMetricMode } = filtersStore;
+  const {
+    filters,
+    getFilterLabel,
+    getLocationName,
+    currentMetricMode,
+  } = filtersStore;
   const {
     dataSeries,
     chartTitle,
@@ -62,15 +67,25 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     setPickedId(accessorFilter);
   }, [accessorFilter]);
 
-  const data = dataSeries.map((d: any, index: number) => ({
-    index,
-    accessorValue: d[accessor],
-    accessorLabel: getFilterLabel(
+  const data = dataSeries.map((d: any, index: number) => {
+    const filterLabel = getFilterLabel(
       accessor as keyof PopulationFilterLabels,
       d[accessor].toString()
-    ),
-    value: isRate ? ((d.count * 100) / d.totalPopulation).toFixed() : d.count,
-  }));
+    );
+    return {
+      index,
+      accessorValue: d[accessor],
+      accessorLabel: filterLabel,
+      value: isRate ? ((d.count * 100) / d.totalPopulation).toFixed() : d.count,
+      customTooltipLabel:
+        accessor === "facility" || accessor === "district"
+          ? getLocationName(
+              accessor as keyof PopulationFilterLabels,
+              d[accessor].toString()
+            )
+          : filterLabel,
+    };
+  });
   sortByLabel(data, "accessorLabel");
 
   const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
@@ -124,7 +139,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
             const pieceData = d.pieces[0];
             return (
               <PathwaysTooltip
-                date={pieceData.accessorLabel}
+                label={pieceData.customTooltipLabel || pieceData.accessorLabel}
                 value={isRate ? `${pieceData.value}%` : pieceData.value}
               />
             );

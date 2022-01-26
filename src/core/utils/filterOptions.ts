@@ -210,12 +210,20 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.FACILITY),
     options: [
       { label: "All", value: "ALL" },
-      { label: "Facility 1", value: "FACILITY_1" },
-      { label: "Facility 2", value: "FACILITY_2" },
-      { label: "Facility 3", value: "FACILITY_3" },
-      { label: "Facility 4", value: "FACILITY_4" },
-      { label: "Facility 5", value: "FACILITY_5" },
+      { label: "FACILITY_1", value: "FACILITY_1" },
+      { label: "FACILITY_2", value: "FACILITY_2" },
+      { label: "FACILITY_3", value: "FACILITY_3" },
+      { label: "FACILITY_4", value: "FACILITY_4" },
+      { label: "FACILITY_5", value: "FACILITY_5" },
     ],
+    locationNameMap: {
+      ALL: "All",
+      FACILITY_1: "Facility 1",
+      FACILITY_2: "Facility 2",
+      FACILITY_3: "Facility 3",
+      FACILITY_4: "Facility 4",
+      FACILITY_5: "Facility 5",
+    },
     get defaultOption(): FilterOption {
       return this.options[0];
     },
@@ -230,12 +238,20 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.DISTRICT),
     options: [
       { label: "All", value: "ALL" },
-      { label: "District 1", value: "DISTRICT_1" },
-      { label: "District 2", value: "DISTRICT_2" },
-      { label: "District 3", value: "DISTRICT_3" },
-      { label: "District 4", value: "DISTRICT_4" },
-      { label: "District 5", value: "DISTRICT_5" },
+      { label: "DISTRICT_1", value: "DISTRICT_1" },
+      { label: "DISTRICT_2", value: "DISTRICT_2" },
+      { label: "DISTRICT_3", value: "DISTRICT_3" },
+      { label: "DISTRICT_4", value: "DISTRICT_4" },
+      { label: "DISTRICT_5", value: "DISTRICT_5" },
     ],
+    locationNameMap: {
+      ALL: "All",
+      DISTRICT_1: "District 1",
+      DISTRICT_2: "District 2",
+      DISTRICT_3: "District 3",
+      DISTRICT_4: "District 4",
+      DISTRICT_5: "District 5",
+    },
     get defaultOption(): FilterOption {
       return this.options[0];
     },
@@ -413,12 +429,20 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.DISTRICT),
     options: [
       { label: "All", value: "ALL" },
-      { label: "District 1", value: "DISTRICT_1" },
-      { label: "District 2", value: "DISTRICT_2" },
-      { label: "District 3", value: "DISTRICT_3" },
-      { label: "District 4", value: "DISTRICT_4" },
-      { label: "District 5", value: "DISTRICT_5" },
+      { label: "DISTRICT_1", value: "DISTRICT_1" },
+      { label: "DISTRICT_2", value: "DISTRICT_2" },
+      { label: "DISTRICT_3", value: "DISTRICT_3" },
+      { label: "DISTRICT_4", value: "DISTRICT_4" },
+      { label: "DISTRICT_5", value: "DISTRICT_5" },
     ],
+    locationNameMap: {
+      ALL: "All",
+      DISTRICT_1: "District 1",
+      DISTRICT_2: "District 2",
+      DISTRICT_3: "District 3",
+      DISTRICT_4: "District 4",
+      DISTRICT_5: "District 5",
+    },
     get defaultOption(): FilterOption {
       return this.options[0];
     },
@@ -431,6 +455,147 @@ export const TnPopulationFilterOptions: PopulationFilters = {
 
 export const MePopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
+};
+
+export const NdPopulationFilterOptions: PopulationFilters = {
+  ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.FACILITY]: {
+    type: FILTER_TYPES.FACILITY,
+    title: "Facility",
+    setFilters: setFilters(FILTER_TYPES.FACILITY),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "NDSP", value: "NDSP" },
+      { label: "JRCC", value: "JRCC" },
+      { label: "MRCC", value: "MRCC" },
+      { label: "HRCC", value: "HRCC" },
+      {
+        label: "DWCRC",
+        value: "DWCRC",
+      },
+      { label: "BTC", value: "BTC" },
+      { label: "CPP", value: "CPP" },
+      { label: "GFC", value: "GFC" },
+      { label: "OOS", value: "OOS" },
+      {
+        label: "TRC",
+        value: "TRC",
+      },
+      { label: "FTPFAR", value: "FTPFAR" },
+      { label: "FTPMND", value: "FTPMND" },
+      { label: "MTPFAR", value: "MTPFAR" },
+      { label: "MTPMND", value: "MTPMND" },
+      { label: "LRRP", value: "LRRP" },
+    ],
+    locationNameMap: {
+      NDSP: "North Dakota State Penitentiary",
+      JRCC: "James River Correctional Center",
+      MRCC: "Missouri River Correctional Center",
+      HRCC: "Heart River Correctional Center",
+      DWCRC: "Dakota Women's Correctional and Rehabilitation Center",
+      BTC: "Bismarck Transition Center",
+      CPP: "Community Placement Program",
+      GFC: "Grand Forks County Correctional",
+      OOS: "Out of state",
+      TRC: "Tompkins Rehabilitation and Correctional Center",
+      FTPFAR: "Fargo - Female Transfer Program",
+      FTPMND: "Mandan - Female Transfer Program",
+      MTPFAR: "Fargo - Male Transfer Program",
+      MTPMND: "Mandan - Male Transfer Program",
+      LRRP: "Lake Region Residential Reentry Center",
+    },
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.LEGAL_STATUS]: {
+    type: FILTER_TYPES.LEGAL_STATUS,
+    title: "Admission Reason",
+    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "New admission", value: "NEW_ADMISSION" },
+      {
+        label: "Transfer from other jurisdiction",
+        value: "TRANSFER_FROM_OTHER_JURISDICTION",
+      },
+      { label: "Transfer", value: "TRANSFER" },
+      { label: "Revocation", value: "REVOCATION" },
+      {
+        label: "Return from temporary release",
+        value: "RETURN_FROM_TEMPORARY_RELEASE",
+      },
+      { label: "Sanction", value: "SANCTION_ADMISSION" },
+      { label: "Return from escape", value: "RETURN_FROM_ESCAPE" },
+      { label: "Admitted in error", value: "ADMITTED_IN_ERROR" },
+      { label: "Status change", value: "STATUS_CHANGE" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.DISTRICT]: {
+    type: FILTER_TYPES.DISTRICT,
+    title: "District",
+    setFilters: setFilters(FILTER_TYPES.DISTRICT),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Beulah Office", value: "Beulah Office" },
+      { label: "Minot Office", value: "Minot Office" },
+      { label: "Washburn Office", value: "Washburn Office" },
+      { label: "Watford City Office", value: "Watford City Office" },
+      { label: "Mandan Office", value: "Mandan Office" },
+      { label: "Oakes Office", value: "Oakes Office" },
+      { label: "Grafton Office", value: "Grafton Office" },
+      { label: "Grand Forks Office", value: "Grand Forks Office" },
+      { label: "Wahpeton Office", value: "Wahpeton Office" },
+      { label: "Williston Office", value: "Williston Office" },
+      { label: "Rolla Office", value: "Rolla Office" },
+      { label: "Jamestown Office", value: "Jamestown Office" },
+      { label: "Bismarck Office", value: "Bismarck Office" },
+      { label: "Fargo Office", value: "Fargo Office" },
+      { label: "Jamestown Office", value: "Jamestown Office" },
+      { label: "Central Office", value: "Central Office" },
+      { label: "Dickinson Office", value: "Dickinson Office" },
+      { label: "Bottineau Office", value: "Bottineau Office" },
+      { label: "Devils Lake Office", value: "Devils Lake Office" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.SUPERVISION_LEVEL]: {
+    type: FILTER_TYPES.SUPERVISION_LEVEL,
+    title: "Supervision Level",
+    setFilters: setFilters(FILTER_TYPES.SUPERVISION_LEVEL),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Minimum", value: "MINIMUM" },
+      { label: "Medium", value: "MEDIUM" },
+      { label: "Maximum", value: "MAXIMUM" },
+      { label: "Diversion", value: "DIVERSION" },
+      { label: "Interstate compact", value: "INTERSTATE_COMPACT" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
 };
 
 export const DemoPopulationFilterOptions: PopulationFilters = {
@@ -478,12 +643,20 @@ export const DemoPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.FACILITY),
     options: [
       { label: "All", value: "ALL" },
-      { label: "Facility 1", value: "FACILITY_1" },
-      { label: "Facility 2", value: "FACILITY_2" },
-      { label: "Facility 3", value: "FACILITY_3" },
-      { label: "Facility 4", value: "FACILITY_4" },
-      { label: "Facility 5", value: "FACILITY_5" },
+      { label: "FACILITY_1", value: "FACILITY_1" },
+      { label: "FACILITY_2", value: "FACILITY_2" },
+      { label: "FACILITY_3", value: "FACILITY_3" },
+      { label: "FACILITY_4", value: "FACILITY_4" },
+      { label: "FACILITY_5", value: "FACILITY_5" },
     ],
+    locationNameMap: {
+      ALL: "All",
+      FACILITY_1: "Facility 1",
+      FACILITY_2: "Facility 2",
+      FACILITY_3: "Facility 3",
+      FACILITY_4: "Facility 4",
+      FACILITY_5: "Facility 5",
+    },
     get defaultOption(): FilterOption {
       return this.options[0];
     },
@@ -498,12 +671,20 @@ export const DemoPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.DISTRICT),
     options: [
       { label: "All", value: "ALL" },
-      { label: "District 1", value: "DISTRICT_1" },
-      { label: "District 2", value: "DISTRICT_2" },
-      { label: "District 3", value: "DISTRICT_3" },
-      { label: "District 4", value: "DISTRICT_4" },
-      { label: "District 5", value: "DISTRICT_5" },
+      { label: "DISTRICT_1", value: "DISTRICT_1" },
+      { label: "DISTRICT_2", value: "DISTRICT_2" },
+      { label: "DISTRICT_3", value: "DISTRICT_3" },
+      { label: "DISTRICT_4", value: "DISTRICT_4" },
+      { label: "DISTRICT_5", value: "DISTRICT_5" },
     ],
+    locationNameMap: {
+      ALL: "All",
+      DISTRICT_1: "District 1",
+      DISTRICT_2: "District 2",
+      DISTRICT_3: "District 3",
+      DISTRICT_4: "District 4",
+      DISTRICT_5: "District 5",
+    },
     get defaultOption(): FilterOption {
       return this.options[0];
     },
@@ -634,6 +815,6 @@ export default {
   [US_ID]: IdPopulationFilterOptions,
   [US_TN]: TnPopulationFilterOptions,
   [US_ME]: MePopulationFilterOptions,
-  [US_ND]: DefaultPopulationFilterOptions,
+  [US_ND]: NdPopulationFilterOptions,
   [US_DEMO]: DemoPopulationFilterOptions,
 } as const;

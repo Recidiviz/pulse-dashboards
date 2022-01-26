@@ -142,6 +142,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         count: 15,
         lastUpdated: formatDateString("2021-10-27"),
         totalPopulation: 35,
+        lengthOfStay: "ALL",
         timePeriod: "6",
       },
       {
@@ -152,6 +153,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         count: 10,
         lastUpdated: formatDateString("2021-10-27"),
         totalPopulation: 35,
+        lengthOfStay: "ALL",
         timePeriod: "12",
       },
       {
@@ -162,6 +164,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         count: 10,
         lastUpdated: formatDateString("2021-10-27"),
         totalPopulation: 35,
+        lengthOfStay: "ALL",
         timePeriod: "6",
       },
       {
@@ -172,6 +175,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         count: 5,
         lastUpdated: formatDateString("2021-10-27"),
         totalPopulation: 35,
+        lengthOfStay: "ALL",
         timePeriod: "12",
       },
     ]);
@@ -191,6 +195,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         totalPopulation: 35,
         timePeriod: "6",
         populationProportion: "43",
+        lengthOfStay: "ALL",
       },
       {
         legalStatus: "ALL",
@@ -202,6 +207,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         totalPopulation: 70,
         timePeriod: "12",
         populationProportion: "29",
+        lengthOfStay: "ALL",
       },
     ]);
   });
@@ -242,6 +248,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
           lastUpdated: formatDateString("2021-10-27"),
           populationProportion: "43",
           totalPopulation: 35,
+          lengthOfStay: "ALL",
           timePeriod: "6",
         },
         {
@@ -253,6 +260,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
           lastUpdated: formatDateString("2021-10-27"),
           populationProportion: "29",
           totalPopulation: 35,
+          lengthOfStay: "ALL",
           timePeriod: "6",
         },
       ]);
@@ -278,6 +286,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
             lastUpdated: formatDateString("2021-10-27"),
             populationProportion: "14",
             totalPopulation: 35,
+            lengthOfStay: "ALL",
             timePeriod: "12",
           },
         ]);

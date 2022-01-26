@@ -64,6 +64,7 @@ export default class FiltersStore {
     this.rootStore = rootStore;
     this.resetFilters = this.resetFilters.bind(this);
     this.getFilterLabel = this.getFilterLabel.bind(this);
+    this.getLocationName = this.getLocationName.bind(this);
   }
 
   setFilters(updatedFilters: Partial<PopulationFilterValues>): void {
@@ -177,5 +178,13 @@ export default class FiltersStore {
         (option: FilterOption) => option.value === filterValue
       )?.label || ""
     );
+  }
+
+  getLocationName(
+    filterType: keyof PopulationFilters,
+    locationValue: string
+  ): string | undefined {
+    const { locationNameMap } = this.filterOptions[filterType];
+    return locationNameMap ? locationNameMap[locationValue] : undefined;
   }
 }

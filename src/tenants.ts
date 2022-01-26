@@ -373,7 +373,7 @@ const TENANTS: Tenants = {
       {
         Header: "Facility",
         accessor: "facility",
-        titleCase: true,
+        titleCase: false,
         width: 100,
       },
       {

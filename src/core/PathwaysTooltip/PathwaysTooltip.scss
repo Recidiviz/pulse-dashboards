@@ -23,10 +23,11 @@
 .PathwaysTooltip {
   @include chart-tooltip;
 
-  &__date,
+  &__label,
   &__average {
     opacity: 0.8;
     @include font-ui-sans-14;
+    text-align: center;
   }
 
   &__value {

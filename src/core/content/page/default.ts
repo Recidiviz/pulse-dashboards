@@ -74,24 +74,26 @@ const content: PageCopy = {
   },
   libertyToPrison: {
     title: "Liberty to Prison",
-    summary: "Lorem ipsum",
+    summary:
+      "These charts show people who were sentenced to prison from a new court commitment.",
     sections: {
       countOverTime: "Admissions from liberty to prison over time",
       countByLocation: "Admissions from liberty to prison by district",
-      countByGender: "Admissions from liberty by gender",
-      countByAgeGroup: "Admissions from liberty by age",
-      countByRace: "Admissions from liberty by race",
+      countByGender: "Admissions from liberty to prison by gender",
+      countByAgeGroup: "Admissions from liberty to prison by age",
+      countByRace: "Admissions from liberty to prison by race",
       countByPriorLengthOfIncarceration:
-        "Admissions from liberty by prior length of incarceration",
+        "Admissions from liberty to prison by prior length of incarceration",
     },
   },
   prisonToSupervision: {
     title: "Prison to Supervision",
-    summary: "Lorem ipsum",
+    summary:
+      "These charts show people who were released from state prison facilities to supervision",
     sections: {
       countOverTime: "Releases from prison to supervision over time",
-      countByLocation: "Admissions from prison to supervision by facility",
-      countByAgeGroup: "Admissions from prison to supervision by age",
+      countByLocation: "Releases from prison to supervision by facility",
+      countByAgeGroup: "Releases from prison to supervision by age",
       personLevelDetail: "List of releases from prison to supervision",
     },
   },

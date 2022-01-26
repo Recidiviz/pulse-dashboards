@@ -122,7 +122,7 @@ describe("FiltersStore", () => {
         facility: ["FACILITY_2", "FACILITY_3"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
-        "Time Period:, 1 year\nGender:, All\nFacility:, Facility 2,Facility 3\n"
+        "Time Period:, 1 year\nGender:, All\nFacility:, FACILITY_2,FACILITY_3\n"
       );
     });
   });

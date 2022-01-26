@@ -58,16 +58,16 @@ const content: MetricCopy = {
       "The chart describes the number of people admitted to prison from each district as of the date specified in the chart title. ",
   },
   supervisionToPrisonPopulationByLengthOfStay: {
-    title: "Time to admission from supervision",
+    title: "Time to admission from supervision to prison",
     chartXAxisTitle: "Time to admission from supervision to prison, in months",
     chartYAxisTitle: "Proportion of supervision population",
   },
   supervisionToPrisonPopulationByNumberOfViolations: {
-    title: "Admissions from supervision by number of violations",
+    title: "Admissions from supervision to prison by number of violations",
     chartYAxisTitle: "Number of violations prior to admission to prison",
   },
   supervisionToPrisonPopulationByMostSevereViolation: {
-    title: "Admissions from supervision by most severe violation",
+    title: "Admissions from supervision to prison by most severe violation",
     chartYAxisTitle: "Most severe violation prior to admission to prison",
   },
   libertyToPrisonPopulationOverTime: {
@@ -83,18 +83,23 @@ const content: MetricCopy = {
   },
   libertyToPrisonPopulationByGender: {
     title: "Admissions from liberty to prison by gender",
+    chartXAxisTitle: "Proportion of genders admitted to prison from liberty",
   },
   libertyToPrisonPopulationByAgeGroup: {
     title: "Admissions from liberty to prison by age",
+    chartXAxisTitle: "Proportion of ages admitted to prison from liberty",
   },
   libertyToPrisonPopulationByRace: {
     title: "Admissions from liberty to prison by race",
+    chartXAxisTitle: "Proportion of races admitted to prison from liberty",
   },
   prisonToSupervisionPopulationOverTime: {
     title: "Releases from prison to supervision over time",
   },
   prisonToSupervisionPopulationByAge: {
     title: "Releases from prison to supervision by age",
+    chartXAxisTitle:
+      "Proportion of ages of people released from prison to supervision",
   },
   prisonToSupervisionPopulationByFacility: {
     title: "Releases from prison to supervision by facility",
@@ -116,12 +121,16 @@ const content: MetricCopy = {
   },
   supervisionToPrisonPopulationByGender: {
     title: "Admissions from supervision to prison by gender",
+    chartXAxisTitle:
+      "Proportion of genders of people admitted from supervision to prison",
   },
   supervisionToPrisonPopulationByRace: {
     title: "Admissions from supervision to prison by race",
+    chartXAxisTitle:
+      "Proportion of races of people admitted from supervision to prison",
   },
   supervisionToLibertyPopulationByLengthOfStay: {
-    title: "Time served at release",
+    title: "Time served at release from supervision",
     chartXAxisTitle: "Time since starting supervision, in months",
     chartYAxisTitle: "Proportion of cohort",
   },
@@ -130,12 +139,16 @@ const content: MetricCopy = {
   },
   supervisionToLibertyPopulationByGender: {
     title: "Releases from supervision by gender",
+    chartXAxisTitle:
+      "Proportion of genders of people released from supervision",
   },
   supervisionToLibertyPopulationByAgeGroup: {
     title: "Releases from supervision by age",
+    chartXAxisTitle: "Proportion of ages of people released from supervision",
   },
   supervisionToLibertyPopulationByRace: {
     title: "Releases from supervision by race",
+    chartXAxisTitle: "Proportion of races of people released from supervision",
   },
 };
 

@@ -31,25 +31,20 @@ import {
   TimePeriodRawValue,
 } from "./types";
 
-const superDimensionDefaults = {
-  district: "ALL",
-  supervisionLevel: "ALL",
-  supervisionType: "ALL" as SupervisionType,
-  race: "ALL",
-};
-
 const sharedDimensionDefaults = {
   gender: "ALL" as Gender,
   ageGroup: "ALL" as AgeGroup,
+  lengthOfStay: "ALL",
 };
 
 const supervisionDimensionDefaults = {
   ...sharedDimensionDefaults,
-  ...superDimensionDefaults,
   mostSevereViolation: "ALL",
   numberOfViolations: "ALL",
-  lengthOfStay: "ALL",
   priorLengthOfIncarceration: "ALL",
+  supervisionLevel: "ALL",
+  supervisionType: "ALL",
+  race: "ALL",
 };
 
 const prisonDimensionDefaults = {
@@ -106,6 +101,7 @@ export function createPrisonPopulationSnapshot(
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
         facility: record.facility,
+        lengthOfStay: record.length_of_stay,
         timePeriod:
           record.time_period &&
           timePeriodMap[record.time_period as TimePeriodRawValue],
@@ -171,48 +167,56 @@ export function createPrisonPopulationPersonLevelList(
 export function createPrisonPopulationTimeSeries(
   rawRecords: RawMetricData
 ): PrisonPopulationTimeSeriesRecord[] {
-  return rawRecords.map((record) => {
-    return mergeDefaults(
-      {
-        year: Number(record.year),
-        month: Number(record.month),
-        count: parseInt(record.event_count) || parseInt(record.person_count),
-        avg90day: parseInt(record.avg_90day),
-        legalStatus: record.legal_status,
-        gender: record.gender as Gender,
-        ageGroup: record.age_group as AgeGroup,
-        facility: record.facility,
-        district: record.district,
-        supervisionLevel: record.supervision_level,
-        supervisionType: record.supervision_type as SupervisionType,
-        race: record.race,
-      },
-      { ...prisonDimensionDefaults, ...superDimensionDefaults }
-    );
-  });
+  return rawRecords
+    .map((record) => {
+      return mergeDefaults(
+        {
+          year: Number(record.year),
+          month: Number(record.month),
+          count: parseInt(record.event_count) || parseInt(record.person_count),
+          avg90day: parseInt(record.avg_90day),
+          legalStatus: record.legal_status,
+          gender: record.gender as Gender,
+          ageGroup: record.age_group as AgeGroup,
+          facility: record.facility,
+          district: record.district,
+          supervisionLevel: record.supervision_level,
+          supervisionType: record.supervision_type as SupervisionType,
+          race: record.race,
+        },
+        { ...prisonDimensionDefaults }
+      );
+    })
+    .sort((a, b) => {
+      return (a.year - b.year) * 12 + a.month - b.month;
+    });
 }
 
 export function createSupervisionPopulationTimeSeries(
   rawRecords: RawMetricData
 ): SupervisionPopulationTimeSeriesRecord[] {
-  return rawRecords.map((record) => {
-    return mergeDefaults(
-      {
-        year: Number(record.year),
-        month: Number(record.month),
-        count: parseInt(record.event_count) || parseInt(record.person_count),
-        avg90day: parseInt(record.avg_90day),
-        supervisionType: record.supervision_type as SupervisionType,
-        gender: record?.gender as Gender,
-        district: record?.district,
-        mostSevereViolation: record.most_severe_violation,
-        numberOfViolations: record.number_of_violations,
-        supervisionLevel: record.supervision_level,
-        race: record.race,
-      },
-      supervisionDimensionDefaults
-    );
-  });
+  return rawRecords
+    .map((record) => {
+      return mergeDefaults(
+        {
+          year: Number(record.year),
+          month: Number(record.month),
+          count: parseInt(record.event_count) || parseInt(record.person_count),
+          avg90day: parseInt(record.avg_90day),
+          supervisionType: record.supervision_type as SupervisionType,
+          gender: record?.gender as Gender,
+          district: record?.district,
+          mostSevereViolation: record.most_severe_violation,
+          numberOfViolations: record.number_of_violations,
+          supervisionLevel: record.supervision_level,
+          race: record.race,
+        },
+        supervisionDimensionDefaults
+      );
+    })
+    .sort((a, b) => {
+      return (a.year - b.year) * 12 + a.month - b.month;
+    });
 }
 
 export interface TimeSeriesRecord {

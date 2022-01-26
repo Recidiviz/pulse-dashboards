@@ -23,15 +23,15 @@ import "./PathwaysTooltip.scss";
 import React from "react";
 
 type PropTypes = {
-  date: string;
+  label: string;
   value: string;
   average?: string;
 };
 
-const PathwaysTooltip: React.FC<PropTypes> = ({ date, value, average }) => {
+const PathwaysTooltip: React.FC<PropTypes> = ({ label, value, average }) => {
   return (
     <div className="PathwaysTooltip">
-      <div className="PathwaysTooltip__date">{date}</div>
+      <div className="PathwaysTooltip__label">{label}</div>
       <div className="PathwaysTooltip__value">{value.toLocaleString()}</div>
       <div className="PathwaysTooltip__average">{average}</div>
     </div>

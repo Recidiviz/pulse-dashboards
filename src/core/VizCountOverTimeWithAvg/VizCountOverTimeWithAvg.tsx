@@ -180,7 +180,7 @@ const ChartCountOverTimeWithAvgTooltip: React.FC<ChartCountOverTimeWithAvgToolti
   const { date, value, average } = data;
   return (
     <PathwaysTooltip
-      date={date.toLocaleString("en-US", { month: "long", year: "numeric" })}
+      label={date.toLocaleString("en-US", { month: "long", year: "numeric" })}
       value={value.toString()}
       average={`90-day avg: ${average}`}
     />

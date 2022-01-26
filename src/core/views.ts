@@ -32,7 +32,7 @@ export const PATHWAYS_VIEWS: Record<string, string> = {
   methodology: "id-methodology",
   profile: "profile",
 } as const;
-export const PathwaysViewIdList = Object.keys(PATHWAYS_VIEWS);
+export const PathwaysViewList = Object.values(PATHWAYS_VIEWS);
 
 export const CORE_PATHS: Record<string, string> = {
   goals: "/goals",

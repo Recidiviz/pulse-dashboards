@@ -65,7 +65,7 @@ const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
             hoverAnnotation
             tooltipContent={(d: any) => (
               <PathwaysTooltip
-                date={`${d.lengthOfStay} months`}
+                label={`${d.lengthOfStay} months`}
                 value={`${d.populationProportion}%`}
               />
             )}

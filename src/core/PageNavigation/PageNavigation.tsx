@@ -31,7 +31,7 @@ import { NavigationSection } from "../types/navigation";
 import {
   CoreViewIdList,
   getPageHeadingFromId,
-  PathwaysViewIdList,
+  PathwaysViewList,
 } from "../views";
 import withRouteSync from "../withRouteSync";
 
@@ -49,9 +49,7 @@ const PageNavigation: React.FC = () => {
     <ul
       className={cx("PageNavigation", {
         "PageNavigation--pathways":
-          isPathwaysView &&
-          !isMobile &&
-          PathwaysViewIdList.includes(currentView),
+          isPathwaysView && !isMobile && PathwaysViewList.includes(currentView),
         "PageNavigation--core":
           isCoreView && CoreViewIdList.includes(currentView),
         "PageNavigation--mobile": isMobile && isPathwaysView,

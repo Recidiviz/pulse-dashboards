@@ -18,7 +18,7 @@
 @import "../CoreConstants";
 
 .PathwaysLeftPanel {
-  min-width: 21rem;
+  min-width: 28rem;
   width: auto;
   margin: 0 4.5rem;
   position: sticky;
@@ -37,6 +37,7 @@
   }
 
   @media screen and (max-width: $core-breakpoint-md) {
+    min-width: 21rem;
     margin: 0 3rem;
   }
 

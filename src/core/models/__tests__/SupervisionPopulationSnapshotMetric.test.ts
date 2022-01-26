@@ -397,7 +397,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           },
         ],
         chartId: "Admissions from supervision by district",
-        chartLabels: ["District 1", "District 2"],
+        chartLabels: ["DISTRICT_1", "DISTRICT_2"],
         dataExportLabel: "District",
       };
       expect(metric.downloadableData).toEqual(expected);

@@ -150,6 +150,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         ageGroup: "<25",
         age: "18",
         facility: "Bedrock",
+        lengthOfStay: "ALL",
         timePeriod: "6",
       },
       {
@@ -161,6 +162,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         ageGroup: "<25",
         age: "18",
         facility: "School of Rock",
+        lengthOfStay: "ALL",
         timePeriod: "12",
       },
       {
@@ -172,6 +174,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         ageGroup: "<25",
         age: "18",
         facility: "School of Rock",
+        lengthOfStay: "ALL",
         timePeriod: "6",
       },
       {
@@ -183,6 +186,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         ageGroup: "<25",
         age: "18",
         facility: "Bedrock",
+        lengthOfStay: "ALL",
         timePeriod: "12",
       },
     ]);
@@ -223,6 +227,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           ageGroup: "<25",
           age: "18",
           facility: "Bedrock",
+          lengthOfStay: "ALL",
           timePeriod: "6",
         },
         {
@@ -234,6 +239,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           ageGroup: "<25",
           age: "18",
           facility: "School of Rock",
+          lengthOfStay: "ALL",
           timePeriod: "6",
         },
       ]);
@@ -251,6 +257,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           ageGroup: "<25",
           age: "18",
           facility: "Bedrock",
+          lengthOfStay: "ALL",
           timePeriod: "6",
         },
         {
@@ -262,6 +269,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           ageGroup: "<25",
           age: "18",
           facility: "School of Rock",
+          lengthOfStay: "ALL",
           timePeriod: "12",
         },
         {
@@ -273,6 +281,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           ageGroup: "<25",
           age: "18",
           facility: "School of Rock",
+          lengthOfStay: "ALL",
           timePeriod: "6",
         },
         {
@@ -284,6 +293,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           ageGroup: "<25",
           age: "18",
           facility: "Bedrock",
+          lengthOfStay: "ALL",
           timePeriod: "12",
         },
       ]);
@@ -308,6 +318,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
             ageGroup: "<25",
             age: "18",
             facility: "Bedrock",
+            lengthOfStay: "ALL",
             timePeriod: "6",
           },
         ]);

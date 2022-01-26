@@ -48,6 +48,20 @@ export type AgeGroup =
   | "45-49"
   | "50-54"
   | "55+";
+export type LengthOfStay =
+  | "ALL"
+  | "months_0_3"
+  | "months_3_6"
+  | "months_6_9"
+  | "months_9_12"
+  | "months_12_15"
+  | "months_15_18"
+  | "months_18_21"
+  | "months_21_24"
+  | "months_24_36"
+  | "months_36_48"
+  | "months_48_60";
+
 export type SimulationCompartment = "SUPERVISION" | "INCARCERATION";
 export type SupervisionType = "PAROLE" | "PROBATION" | "ALL";
 export type TimePeriod = "6" | "12" | "24" | "60";
@@ -86,6 +100,7 @@ export type PrisonPopulationSnapshotRecord = {
   ageGroup: AgeGroup;
   legalStatus: string;
   facility: string;
+  lengthOfStay: LengthOfStay;
   timePeriod: TimePeriod;
 };
 
@@ -110,9 +125,6 @@ export type PrisonPopulationTimeSeriesRecord = {
   ageGroup: AgeGroup;
   legalStatus: string;
   facility: string;
-  supervisionType: SupervisionType;
-  district: string;
-  supervisionLevel: string;
   race: string;
 };
 

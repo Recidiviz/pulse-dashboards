@@ -52,7 +52,6 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
       facility,
       timePeriod,
     } = this.rootStore.filtersStore.filters;
-
     const filteredRecords = this.allRecords.filter(
       (record: PrisonPopulationSnapshotRecord) => {
         return (
@@ -64,6 +63,7 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
           (this.accessor === "ageGroup"
             ? !["ALL"].includes(record.ageGroup)
             : ageGroup.includes(record.ageGroup)) &&
+          ["ALL"].includes(record.lengthOfStay) &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,
@@ -88,6 +88,7 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
         legalStatus: dataset[0].legalStatus,
         facility: dataset[0].facility,
         ageGroup: dataset[0].ageGroup,
+        lengthOfStay: dataset[0].lengthOfStay,
         timePeriod: dataset[0].timePeriod,
       }))
     )(filteredRecords);
