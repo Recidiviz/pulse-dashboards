@@ -48,14 +48,14 @@
   }
 
   &__body {
-    height: calc(100vh - 22rem);
+    height: calc(100vh - 26rem);
 
     @media screen and (max-width: $core-breakpoint-sm) {
       @media (orientation: landscape) {
         max-height: 464px;
       }
       @media (orientation: portrait) {
-        max-height: calc(100vh - 28rem);
+        max-height: calc(100vh - 31rem);
       }
     }
   }

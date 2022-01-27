@@ -20,7 +20,6 @@
   min-height: 2.375rem;
   display: flex;
   align-items: center;
-  align-self: flex-end;
 
   &__item {
     color: $slate-80;
@@ -33,7 +32,7 @@
 
   &__button {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     outline: 0;
     border: 0;
     background: transparent;

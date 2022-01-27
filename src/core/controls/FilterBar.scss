@@ -4,14 +4,13 @@
   background: $marble-3;
   display: flex;
   justify-content: center;
-  padding-bottom: 0.5rem;
+  padding-bottom: 1rem;
   margin-bottom: 1rem;
 
   &__container {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    align-items: baseline;
     max-width: $core-max-view-width;
     width: 100%;
 
@@ -24,7 +23,6 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-bottom: 0.5rem;
       padding-right: 1.5rem;
 
       @media screen and (max-width: $core-breakpoint-sm) {
@@ -48,6 +46,5 @@
   &__details {
     display: flex;
     flex-flow: row;
-    align-items: center;
   }
 }
