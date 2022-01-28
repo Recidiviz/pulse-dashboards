@@ -17,6 +17,8 @@
  * =============================================================================
  *
  */
+import { computed, makeObservable } from "mobx";
+
 import tenants from "../../tenants";
 import { toHumanReadable, toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
@@ -31,6 +33,12 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
     props: BaseMetricConstructorOptions<PrisonPopulationPersonLevelRecord>
   ) {
     super(props);
+
+    makeObservable<PrisonPopulationPersonLevelMetric>(this, {
+      dataSeries: computed,
+      downloadableData: computed,
+    });
+
     this.download = this.download.bind(this);
   }
 
@@ -54,6 +62,7 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
     return this.allRecords.filter(
       (record: PrisonPopulationPersonLevelRecord) => {
         return (
+          // #TODO #1597 create tooling to reduce listing every dimension in filters
           handleFilters(facility, record.facility) &&
           handleFilters(gender, record.gender) &&
           handleFilters(ageGroup, record.ageGroup) &&

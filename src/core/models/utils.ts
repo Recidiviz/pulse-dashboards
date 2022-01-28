@@ -94,7 +94,6 @@ export function createPrisonPopulationSnapshot(
     return mergeDefaults(
       {
         count: parseInt(record.event_count) || parseInt(record.person_count),
-        totalPopulation: parseInt(record.total_population),
         lastUpdated:
           record.last_updated && formatDateString(record.last_updated),
         legalStatus: record.legal_status,
@@ -118,7 +117,6 @@ export function createSupervisionPopulationSnapshot(
     return mergeDefaults(
       {
         count: parseInt(record.event_count) || parseInt(record.person_count),
-        totalPopulation: parseInt(record.total_population),
         lastUpdated:
           record.last_updated && formatDateString(record.last_updated),
         supervisionType: record.supervision_type as SupervisionType,

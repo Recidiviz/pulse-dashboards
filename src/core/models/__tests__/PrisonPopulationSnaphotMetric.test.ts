@@ -40,6 +40,26 @@ jest.mock("../../../api/metrics/metricsClient", () => {
   return {
     callMetricsApi: jest.fn().mockResolvedValue({
       prison_population_snapshot_by_dimension: [
+        // ALL row
+        {
+          legal_status: "ALL",
+          gender: "ALL",
+          age_group: "ALL",
+          facility: "ALL",
+          event_count: "30",
+          last_updated: "2021-10-27",
+          time_period: "months_0_6",
+        },
+        // Row with missing dimension value which will default to ALL
+        {
+          legal_status: "ALL",
+          gender: undefined,
+          age_group: "ALL",
+          facility: "ALL",
+          event_count: "1",
+          last_updated: "2021-10-27",
+          time_period: "months_0_6",
+        },
         {
           legal_status: "ALL",
           gender: "ALL",
@@ -47,7 +67,6 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           facility: "Bedrock",
           event_count: "15",
           last_updated: "2021-10-27",
-          total_population: "35",
           time_period: "months_0_6",
         },
         {
@@ -57,7 +76,6 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           facility: "School of Rock",
           person_count: "10",
           last_updated: "2021-10-27",
-          total_population: "35",
           time_period: "months_7_12",
         },
         {
@@ -76,7 +94,6 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           facility: "Bedrock",
           person_count: "5",
           last_updated: "2021-10-27",
-          total_population: "35",
           time_period: "months_7_12",
         },
       ],
@@ -138,12 +155,31 @@ describe("PrisonPopulationSnapshotMetric", () => {
         legalStatus: "ALL",
         gender: "ALL",
         ageGroup: "ALL",
+        facility: "ALL",
+        count: 30,
+        lastUpdated: formatDateString("2021-10-27"),
+        timePeriod: "6",
+        lengthOfStay: "ALL",
+      },
+      {
+        legalStatus: "ALL",
+        gender: "ALL",
+        ageGroup: "ALL",
+        facility: "ALL",
+        count: 1,
+        lastUpdated: formatDateString("2021-10-27"),
+        timePeriod: "6",
+        lengthOfStay: "ALL",
+      },
+      {
+        legalStatus: "ALL",
+        gender: "ALL",
+        ageGroup: "ALL",
         facility: "Bedrock",
         count: 15,
         lastUpdated: formatDateString("2021-10-27"),
-        totalPopulation: 35,
-        lengthOfStay: "ALL",
         timePeriod: "6",
+        lengthOfStay: "ALL",
       },
       {
         legalStatus: "ALL",
@@ -152,9 +188,8 @@ describe("PrisonPopulationSnapshotMetric", () => {
         facility: "School of Rock",
         count: 10,
         lastUpdated: formatDateString("2021-10-27"),
-        totalPopulation: 35,
-        lengthOfStay: "ALL",
         timePeriod: "12",
+        lengthOfStay: "ALL",
       },
       {
         legalStatus: "ALL",
@@ -163,9 +198,8 @@ describe("PrisonPopulationSnapshotMetric", () => {
         facility: "School of Rock",
         count: 10,
         lastUpdated: formatDateString("2021-10-27"),
-        totalPopulation: 35,
-        lengthOfStay: "ALL",
         timePeriod: "6",
+        lengthOfStay: "ALL",
       },
       {
         legalStatus: "ALL",
@@ -174,9 +208,8 @@ describe("PrisonPopulationSnapshotMetric", () => {
         facility: "Bedrock",
         count: 5,
         lastUpdated: formatDateString("2021-10-27"),
-        totalPopulation: 35,
-        lengthOfStay: "ALL",
         timePeriod: "12",
+        lengthOfStay: "ALL",
       },
     ]);
   });
@@ -192,9 +225,8 @@ describe("PrisonPopulationSnapshotMetric", () => {
         facility: "Bedrock",
         count: 15,
         lastUpdated: formatDateString("2021-10-27"),
-        totalPopulation: 35,
         timePeriod: "6",
-        populationProportion: "43",
+        populationProportion: "50",
         lengthOfStay: "ALL",
       },
       {
@@ -204,12 +236,39 @@ describe("PrisonPopulationSnapshotMetric", () => {
         facility: "School of Rock",
         count: 20,
         lastUpdated: formatDateString("2021-10-27"),
-        totalPopulation: 70,
         timePeriod: "12",
-        populationProportion: "29",
+        populationProportion: "67",
         lengthOfStay: "ALL",
       },
     ]);
+  });
+
+  describe("totalCount", () => {
+    beforeEach(() => {
+      mockCoreStore.filtersStore = filtersStore;
+
+      metric = new PrisonPopulationSnapshotMetric({
+        id: "prisonFacilityPopulation",
+        tenantId: mockTenantId,
+        sourceFilename: "prison_population_snapshot_by_dimension",
+        rootStore: mockCoreStore,
+        accessor: "facility",
+        dataTransformer: createPrisonPopulationSnapshot,
+        filters: {
+          enabledFilters: [
+            FILTER_TYPES.GENDER,
+            FILTER_TYPES.LEGAL_STATUS,
+            FILTER_TYPES.AGE_GROUP,
+            FILTER_TYPES.FACILITY,
+          ],
+        },
+      });
+      metric.hydrate();
+    });
+
+    it("returns the count from the ALL row", () => {
+      expect(metric.totalCount).toBe(30);
+    });
   });
 
   describe("dataSeries", () => {
@@ -246,10 +305,9 @@ describe("PrisonPopulationSnapshotMetric", () => {
           facility: "Bedrock",
           count: 15,
           lastUpdated: formatDateString("2021-10-27"),
-          populationProportion: "43",
-          totalPopulation: 35,
-          lengthOfStay: "ALL",
+          populationProportion: "50",
           timePeriod: "6",
+          lengthOfStay: "ALL",
         },
         {
           legalStatus: "ALL",
@@ -258,10 +316,9 @@ describe("PrisonPopulationSnapshotMetric", () => {
           facility: "School of Rock",
           count: 10,
           lastUpdated: formatDateString("2021-10-27"),
-          populationProportion: "29",
-          totalPopulation: 35,
-          lengthOfStay: "ALL",
           timePeriod: "6",
+          populationProportion: "33",
+          lengthOfStay: "ALL",
         },
       ]);
     });
@@ -284,10 +341,9 @@ describe("PrisonPopulationSnapshotMetric", () => {
             facility: "Bedrock",
             count: 5,
             lastUpdated: formatDateString("2021-10-27"),
-            populationProportion: "14",
-            totalPopulation: 35,
-            lengthOfStay: "ALL",
             timePeriod: "12",
+            populationProportion: "17",
+            lengthOfStay: "ALL",
           },
         ]);
       });

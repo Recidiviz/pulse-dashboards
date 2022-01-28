@@ -22,6 +22,7 @@ import groupBy from "lodash/fp/groupBy";
 import map from "lodash/fp/map";
 import sumBy from "lodash/fp/sumBy";
 import values from "lodash/fp/values";
+import { computed, makeObservable } from "mobx";
 
 import { toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
@@ -39,8 +40,49 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
     }
   ) {
     super(props);
+
+    makeObservable<PrisonPopulationSnapshotMetric>(this, {
+      totalCount: computed,
+      dataSeries: computed,
+      downloadableData: computed,
+    });
+
     this.accessor = props.accessor;
     this.download = this.download.bind(this);
+  }
+
+  get totalCount(): number {
+    if (!this.rootStore || !this.allRecords) return -1;
+    const { timePeriod } = this.rootStore.filtersStore.filters;
+
+    const allRows = this.allRecords.filter(
+      (record: PrisonPopulationSnapshotRecord) => {
+        return (
+          // #TODO #1597 create tooling to reduce listing every dimension in filters
+          record.gender === "ALL" &&
+          record.legalStatus === "ALL" &&
+          record.facility === "ALL" &&
+          record.ageGroup === "ALL" &&
+          record.lengthOfStay === "ALL" &&
+          filterTimePeriod(
+            this.hasTimePeriodDimension,
+            record.timePeriod,
+            timePeriod[0] as TimePeriod
+          )
+        );
+      }
+    );
+
+    if (allRows.length === 0) {
+      throw new Error(`Metric ${this.id} is missing the "ALL" row`);
+    }
+
+    /* Since we are defaulting NULL dimension values to "ALL" when the
+     * record is created, we may end up with multiple rows where every
+     * dimension is "ALL". Since we rely on the "ALL" row for the total count,
+     * we will sort them based by count and take the largest.
+     */
+    return Math.max(...allRows.map((r) => r.count));
   }
 
   get dataSeries(): PrisonPopulationSnapshotRecord[] {
@@ -55,6 +97,7 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
     const filteredRecords = this.allRecords.filter(
       (record: PrisonPopulationSnapshotRecord) => {
         return (
+          // #TODO #1597 create tooling to reduce listing every dimension in filters
           gender.includes(record.gender) &&
           legalStatus.includes(record.legalStatus) &&
           (this.accessor === "facility"
@@ -63,7 +106,9 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
           (this.accessor === "ageGroup"
             ? !["ALL"].includes(record.ageGroup)
             : ageGroup.includes(record.ageGroup)) &&
-          ["ALL"].includes(record.lengthOfStay) &&
+          (this.accessor === "lengthOfStay"
+            ? !["ALL"].includes(record.lengthOfStay)
+            : ["ALL"].includes(record.lengthOfStay)) &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,
@@ -77,11 +122,11 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
       groupBy((d: PrisonPopulationSnapshotRecord) => [d[this.accessor]]),
       values,
       map((dataset) => ({
+        // #TODO #1597 create tooling to reduce listing every dimension in filters
         count: sumBy("count", dataset),
-        totalPopulation: sumBy("totalPopulation", dataset),
         populationProportion: (
           (sumBy("count", dataset) * 100) /
-          sumBy("totalPopulation", dataset)
+          this.totalCount
         ).toFixed(),
         lastUpdated: dataset[0].lastUpdated,
         gender: dataset[0].gender,

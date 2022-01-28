@@ -22,6 +22,7 @@ import groupBy from "lodash/fp/groupBy";
 import map from "lodash/fp/map";
 import sumBy from "lodash/fp/sumBy";
 import values from "lodash/fp/values";
+import { computed, makeObservable } from "mobx";
 
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
@@ -36,6 +37,13 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
     props: BaseMetricConstructorOptions<SupervisionPopulationTimeSeriesRecord>
   ) {
     super(props);
+
+    makeObservable<SupervisionPopulationOverTimeMetric>(this, {
+      mostRecentDate: computed,
+      dataSeries: computed,
+      downloadableData: computed,
+    });
+
     this.download = this.download.bind(this);
   }
 
@@ -58,6 +66,7 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
           (record.year - mostRecentDate.getFullYear()) * 12 +
           (record.month - (mostRecentDate.getMonth() + 1));
         return (
+          // #TODO #1597 create tooling to reduce listing every dimension in filters
           Math.abs(monthsOut) <= monthRange &&
           gender.includes(record.gender) &&
           supervisionType.includes(record.supervisionType) &&
@@ -74,6 +83,7 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
       groupBy((d: SupervisionPopulationTimeSeriesRecord) => [d.year, d.month]),
       values,
       map((dataset) => ({
+        // #TODO #1597 create tooling to reduce listing every dimension in filters
         year: dataset[0].year,
         month: dataset[0].month,
         count: sumBy("count", dataset),

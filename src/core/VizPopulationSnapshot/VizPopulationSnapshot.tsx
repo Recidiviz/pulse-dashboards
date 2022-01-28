@@ -76,7 +76,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
       index,
       accessorValue: d[accessor],
       accessorLabel: filterLabel,
-      value: isRate ? ((d.count * 100) / d.totalPopulation).toFixed() : d.count,
+      value: isRate ? d.populationProportion : d.count,
       customTooltipLabel:
         accessor === "facility" || accessor === "district"
           ? getLocationName(
@@ -86,6 +86,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           : filterLabel,
     };
   });
+
   sortByLabel(data, "accessorLabel");
 
   const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");

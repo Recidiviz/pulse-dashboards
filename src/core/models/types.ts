@@ -130,7 +130,6 @@ export type PrisonPopulationTimeSeriesRecord = {
 
 export type SupervisionPopulationSnapshotRecord = {
   count: number;
-  totalPopulation: number;
   lastUpdated: Date;
   gender: Gender;
   ageGroup: AgeGroup;
