@@ -20,6 +20,13 @@
 
 import { StateSpecificPageCopy } from "../types";
 
-const content: StateSpecificPageCopy = {};
+const content: StateSpecificPageCopy = {
+  prison: {
+    summary:
+      "These charts show people incarcerated in a ND DOCR facility or serving their prison sentence in the community through the Community Placement Program. It does not include individuals incarcerated in county jails.",
+    methodology:
+      "These charts show people incarcerated in a ND DOCR facility or serving their prison sentence in the community through the Community Placement Program. It does not include individuals incarcerated in county jails.",
+  },
+};
 
 export default content;
