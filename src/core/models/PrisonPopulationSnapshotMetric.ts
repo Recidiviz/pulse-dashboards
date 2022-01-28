@@ -117,7 +117,6 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
         );
       }
     );
-
     const result = pipe(
       groupBy((d: PrisonPopulationSnapshotRecord) => [d[this.accessor]]),
       values,

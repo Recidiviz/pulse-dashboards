@@ -86,6 +86,7 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
         legalStatus: dataset[0].legalStatus,
         facility: dataset[0].facility,
         ageGroup: dataset[0].ageGroup,
+        // TODO I don't think this is right
         avg90day: sumBy("avg90day", dataset),
         count: sumBy("count", dataset),
       }))

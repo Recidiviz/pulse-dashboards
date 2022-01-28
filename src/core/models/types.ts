@@ -48,7 +48,7 @@ export type AgeGroup =
   | "45-49"
   | "50-54"
   | "55+";
-export type LengthOfStay =
+export type LengthOfStayRawValue =
   | "ALL"
   | "months_0_3"
   | "months_3_6"
@@ -61,6 +61,21 @@ export type LengthOfStay =
   | "months_24_36"
   | "months_36_48"
   | "months_48_60";
+
+export type LengthOfStay =
+  | "ALL"
+  | "0"
+  | "3"
+  | "6"
+  | "9"
+  | "12"
+  | "15"
+  | "18"
+  | "21"
+  | "24"
+  | "36"
+  | "48"
+  | "60";
 
 export type SimulationCompartment = "SUPERVISION" | "INCARCERATION";
 export type SupervisionType = "PAROLE" | "PROBATION" | "ALL";

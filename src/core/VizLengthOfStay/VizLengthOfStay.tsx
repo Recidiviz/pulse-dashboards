@@ -77,7 +77,7 @@ const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
             yAccessor="populationProportion"
             size={[558, 558]}
             margin={{ left: 75, bottom: 75, right: 50, top: 56 }}
-            xExtent={[0, 24]}
+            xExtent={[0, 60]}
             yExtent={yRange}
             pointClass="VizPathways__point"
             lineType={{ type: "line", interpolator: curveCatmullRom }}

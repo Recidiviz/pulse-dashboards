@@ -104,6 +104,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
       race,
       timePeriod,
     } = this.rootStore.filtersStore.filters;
+
     const filteredRecords = this.allRecords.filter(
       (record: SupervisionPopulationSnapshotRecord) => {
         return (

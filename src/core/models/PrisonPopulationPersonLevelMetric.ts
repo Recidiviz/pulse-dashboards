@@ -79,7 +79,7 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
 
   get columns(): TableColumn[] | undefined {
     if (!this.rootStore?.currentTenantId) return undefined;
-    return tenants[this.rootStore.currentTenantId].tableColumns;
+    return tenants[this.rootStore.currentTenantId].tableColumns?.[this.id];
   }
 
   get downloadableData(): DownloadableData | undefined {
