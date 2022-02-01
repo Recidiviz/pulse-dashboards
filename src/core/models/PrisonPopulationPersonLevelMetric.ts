@@ -51,14 +51,16 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
       legalStatus,
       timePeriod,
     } = this.rootStore.filtersStore.filters;
-    const handleFilters = (filter: string[] | string, recordFilter: string) => {
-      if (filter.includes("ALL")) {
-        return recordFilter !== "ALL";
+    const handleFilters = (filter: string[] | string, recordValue: string) => {
+      const filters = Array.isArray(filter) ? filter : [filter];
+
+      if (filters.includes("ALL")) {
+        return recordValue !== "ALL";
       }
-      return Array.isArray(filter)
-        ? filter.includes(recordFilter)
-        : recordFilter === filter;
+
+      return filters.includes(recordValue);
     };
+
     return this.allRecords.filter(
       (record: PrisonPopulationPersonLevelRecord) => {
         return (
