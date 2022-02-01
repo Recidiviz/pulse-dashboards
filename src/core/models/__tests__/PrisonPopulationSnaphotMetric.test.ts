@@ -40,7 +40,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
   return {
     callMetricsApi: jest.fn().mockResolvedValue({
       prison_population_snapshot_by_dimension: [
-        // ALL row
+        // ALL row 6 months
         {
           legal_status: "ALL",
           gender: "ALL",
@@ -50,11 +50,20 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           last_updated: "2021-10-27",
           time_period: "months_0_6",
         },
-        // Row with missing dimension value which will default to ALL
+        // ALL row 12 months
+        {
+          legal_status: "ALL",
+          gender: "ALL",
+          age_group: "ALL",
+          facility: "ALL",
+          event_count: "15",
+          last_updated: "2021-10-27",
+          time_period: "months_7_12",
+        },
+        // Row with missing dimension value which will default to Unknown
         {
           legal_status: "ALL",
           gender: undefined,
-          age_group: "ALL",
           facility: "ALL",
           event_count: "1",
           last_updated: "2021-10-27",
@@ -63,7 +72,6 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         {
           legal_status: "ALL",
           gender: "ALL",
-          age_group: undefined,
           facility: "Bedrock",
           event_count: "15",
           last_updated: "2021-10-27",
@@ -71,30 +79,11 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         },
         {
           legal_status: "ALL",
-          gender: "ALL",
-          age_group: undefined,
-          facility: "School of Rock",
-          person_count: "10",
-          last_updated: "2021-10-27",
-          time_period: "months_7_12",
-        },
-        {
-          legal_status: "ALL",
-          gender: "ALL",
-          age_group: undefined,
-          facility: "School of Rock",
-          person_count: "10",
-          last_updated: "2021-10-27",
-          total_population: "35",
-          time_period: "months_0_6",
-        },
-        {
-          legal_status: "ALL",
           gender: "FEMALE",
-          facility: "Bedrock",
+          facility: "School of Rock",
           person_count: "5",
           last_updated: "2021-10-27",
-          time_period: "months_7_12",
+          time_period: "months_0_6",
         },
       ],
     }),
@@ -121,8 +110,6 @@ describe("PrisonPopulationSnapshotMetric", () => {
         enabledFilters: [
           FILTER_TYPES.TIME_PERIOD,
           FILTER_TYPES.GENDER,
-          FILTER_TYPES.LEGAL_STATUS,
-          FILTER_TYPES.AGE_GROUP,
           FILTER_TYPES.FACILITY,
         ],
       },
@@ -166,6 +153,16 @@ describe("PrisonPopulationSnapshotMetric", () => {
         gender: "ALL",
         ageGroup: "ALL",
         facility: "ALL",
+        count: 15,
+        lastUpdated: formatDateString("2021-10-27"),
+        timePeriod: "12",
+        lengthOfStay: "ALL",
+      },
+      {
+        legalStatus: "ALL",
+        gender: "Unknown",
+        ageGroup: "ALL",
+        facility: "ALL",
         count: 1,
         lastUpdated: formatDateString("2021-10-27"),
         timePeriod: "6",
@@ -183,61 +180,12 @@ describe("PrisonPopulationSnapshotMetric", () => {
       },
       {
         legalStatus: "ALL",
-        gender: "ALL",
-        ageGroup: "ALL",
-        facility: "School of Rock",
-        count: 10,
-        lastUpdated: formatDateString("2021-10-27"),
-        timePeriod: "12",
-        lengthOfStay: "ALL",
-      },
-      {
-        legalStatus: "ALL",
-        gender: "ALL",
-        ageGroup: "ALL",
-        facility: "School of Rock",
-        count: 10,
-        lastUpdated: formatDateString("2021-10-27"),
-        timePeriod: "6",
-        lengthOfStay: "ALL",
-      },
-      {
-        legalStatus: "ALL",
         gender: "FEMALE",
         ageGroup: "ALL",
-        facility: "Bedrock",
+        facility: "School of Rock",
         count: 5,
         lastUpdated: formatDateString("2021-10-27"),
-        timePeriod: "12",
-        lengthOfStay: "ALL",
-      },
-    ]);
-  });
-
-  it("does not filter by timePeriod if hasTimePeriodDimension is false", () => {
-    metric.hasTimePeriodDimension = false;
-
-    expect(metric.dataSeries).toEqual([
-      {
-        legalStatus: "ALL",
-        gender: "ALL",
-        ageGroup: "ALL",
-        facility: "Bedrock",
-        count: 15,
-        lastUpdated: formatDateString("2021-10-27"),
         timePeriod: "6",
-        populationProportion: "50",
-        lengthOfStay: "ALL",
-      },
-      {
-        legalStatus: "ALL",
-        gender: "ALL",
-        ageGroup: "ALL",
-        facility: "School of Rock",
-        count: 20,
-        lastUpdated: formatDateString("2021-10-27"),
-        timePeriod: "12",
-        populationProportion: "67",
         lengthOfStay: "ALL",
       },
     ]);
@@ -256,12 +204,12 @@ describe("PrisonPopulationSnapshotMetric", () => {
         dataTransformer: createPrisonPopulationSnapshot,
         filters: {
           enabledFilters: [
+            FILTER_TYPES.TIME_PERIOD,
             FILTER_TYPES.GENDER,
-            FILTER_TYPES.LEGAL_STATUS,
-            FILTER_TYPES.AGE_GROUP,
             FILTER_TYPES.FACILITY,
           ],
         },
+        hasTimePeriodDimension: true,
       });
       metric.hydrate();
     });
@@ -269,10 +217,25 @@ describe("PrisonPopulationSnapshotMetric", () => {
     it("returns the count from the ALL row", () => {
       expect(metric.totalCount).toBe(30);
     });
+
+    it("returns the sum from both ALL rows when time period is 12", () => {
+      runInAction(() => {
+        if (metric.rootStore) {
+          metric.rootStore.filtersStore.setFilters({
+            timePeriod: ["12"],
+          });
+        }
+      });
+
+      expect(metric.totalCount).toBe(45);
+    });
   });
 
   describe("dataSeries", () => {
     beforeEach(() => {
+      filtersStore.setFilters({
+        timePeriod: ["6"],
+      });
       mockCoreStore.filtersStore = filtersStore;
 
       metric = new PrisonPopulationSnapshotMetric({
@@ -287,8 +250,6 @@ describe("PrisonPopulationSnapshotMetric", () => {
           enabledFilters: [
             FILTER_TYPES.TIME_PERIOD,
             FILTER_TYPES.GENDER,
-            FILTER_TYPES.LEGAL_STATUS,
-            FILTER_TYPES.AGE_GROUP,
             FILTER_TYPES.FACILITY,
           ],
         },
@@ -297,6 +258,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
     });
 
     it("filters by default values", () => {
+      // totalCount in this dataSeries is 30
       expect(metric.dataSeries).toEqual([
         {
           legalStatus: "ALL",
@@ -307,17 +269,6 @@ describe("PrisonPopulationSnapshotMetric", () => {
           lastUpdated: formatDateString("2021-10-27"),
           populationProportion: "50",
           timePeriod: "6",
-          lengthOfStay: "ALL",
-        },
-        {
-          legalStatus: "ALL",
-          gender: "ALL",
-          ageGroup: "ALL",
-          facility: "School of Rock",
-          count: 10,
-          lastUpdated: formatDateString("2021-10-27"),
-          timePeriod: "6",
-          populationProportion: "33",
           lengthOfStay: "ALL",
         },
       ]);
@@ -332,26 +283,55 @@ describe("PrisonPopulationSnapshotMetric", () => {
             timePeriod: ["12"],
           });
         }
-
+        // totalCount in this dataSeries is 45
         expect(metric.dataSeries).toEqual([
           {
             legalStatus: "ALL",
             ageGroup: "ALL",
             gender: "FEMALE",
-            facility: "Bedrock",
+            facility: "School of Rock",
             count: 5,
             lastUpdated: formatDateString("2021-10-27"),
-            timePeriod: "12",
-            populationProportion: "17",
+            timePeriod: "6",
+            populationProportion: "11",
             lengthOfStay: "ALL",
           },
         ]);
       });
     });
+
+    it("does not filter by timePeriod if hasTimePeriodDimension is false", () => {
+      metric.hasTimePeriodDimension = false;
+      runInAction(() => {
+        if (metric.rootStore) {
+          metric.rootStore.filtersStore.setFilters({
+            gender: ["ALL"],
+            timePeriod: ["6"],
+          });
+        }
+      });
+      // totalCount in this dataSeries is 45
+      expect(metric.dataSeries).toEqual([
+        {
+          legalStatus: "ALL",
+          gender: "ALL",
+          ageGroup: "ALL",
+          facility: "Bedrock",
+          count: 15,
+          lastUpdated: formatDateString("2021-10-27"),
+          timePeriod: "6",
+          populationProportion: "33",
+          lengthOfStay: "ALL",
+        },
+      ]);
+    });
   });
 
   describe("when the currentTenantId is US_TN", () => {
     beforeEach(() => {
+      filtersStore.setFilters({
+        timePeriod: ["6"],
+      });
       mockCoreStore.filtersStore = filtersStore;
 
       if (metric.rootStore) {
@@ -367,9 +347,8 @@ describe("PrisonPopulationSnapshotMetric", () => {
         dataTransformer: createPrisonPopulationSnapshot,
         filters: {
           enabledFilters: [
+            FILTER_TYPES.TIME_PERIOD,
             FILTER_TYPES.GENDER,
-            FILTER_TYPES.LEGAL_STATUS,
-            FILTER_TYPES.AGE_GROUP,
             FILTER_TYPES.FACILITY,
           ],
         },
@@ -385,15 +364,12 @@ describe("PrisonPopulationSnapshotMetric", () => {
               {
                 Count: 15,
               },
-              {
-                Count: 20,
-              },
             ],
             label: "",
           },
         ],
         chartId: "Prison population by facility",
-        chartLabels: ["Bedrock", "School of Rock"],
+        chartLabels: ["Bedrock"],
         dataExportLabel: "Facility",
       };
       expect(metric.downloadableData).toEqual(expected);

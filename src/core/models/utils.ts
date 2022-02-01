@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { EnabledFilter, EnabledFilters } from "../types/filters";
 import {
   AgeGroup,
   Gender,
@@ -77,13 +78,22 @@ const lengthOfStayMap = {
   months_48_60: "60",
 } as Record<LengthOfStayRawValue, LengthOfStay>;
 
-const mergeDefaults = (record: any, defaults: any) =>
+const mergeDefaults = (
+  record: any,
+  defaults: any,
+  enabledFilters: EnabledFilters
+) =>
   Object.assign(
     {},
     defaults,
-    ...Object.entries(record).map(([k, v]) =>
-      v === undefined ? {} : { [k]: v }
-    )
+    ...Object.entries(record).map(([k, v]) => {
+      if (v === undefined) {
+        return enabledFilters.includes(k as EnabledFilter)
+          ? { [k]: "Unknown" }
+          : {};
+      }
+      return { [k]: v };
+    })
   );
 
 export function createProjectionTimeSeries(
@@ -105,7 +115,8 @@ export function createProjectionTimeSeries(
 }
 
 export function createPrisonPopulationSnapshot(
-  rawRecords: RawMetricData
+  rawRecords: RawMetricData,
+  enabledFilters: EnabledFilters
 ): PrisonPopulationSnapshotRecord[] {
   return rawRecords.map((record) => {
     return mergeDefaults(
@@ -126,13 +137,15 @@ export function createPrisonPopulationSnapshot(
           record.time_period &&
           timePeriodMap[record.time_period.toLowerCase() as TimePeriodRawValue],
       },
-      prisonDimensionDefaults
+      prisonDimensionDefaults,
+      enabledFilters
     );
   });
 }
 
 export function createSupervisionPopulationSnapshot(
-  rawRecords: RawMetricData
+  rawRecords: RawMetricData,
+  enabledFilters: EnabledFilters
 ): SupervisionPopulationSnapshotRecord[] {
   return rawRecords.map((record) => {
     return mergeDefaults(
@@ -143,7 +156,7 @@ export function createSupervisionPopulationSnapshot(
         supervisionType: record.supervision_type as SupervisionType,
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
-        district: record.district?.toUpperCase(),
+        district: record.district ? record.district.toUpperCase() : "Unknown",
         mostSevereViolation: record.most_severe_violation,
         numberOfViolations: record.number_of_violations,
         lengthOfStay:
@@ -158,13 +171,15 @@ export function createSupervisionPopulationSnapshot(
           record.time_period &&
           timePeriodMap[record.time_period.toLowerCase() as TimePeriodRawValue],
       },
-      supervisionDimensionDefaults
+      supervisionDimensionDefaults,
+      enabledFilters
     );
   });
 }
 
 export function createPrisonPopulationPersonLevelList(
-  rawRecords: RawMetricData
+  rawRecords: RawMetricData,
+  enabledFilters: EnabledFilters
 ): PrisonPopulationPersonLevelRecord[] {
   return rawRecords.map((record) => {
     return mergeDefaults(
@@ -183,13 +198,15 @@ export function createPrisonPopulationPersonLevelList(
             record.time_period?.toLowerCase() as TimePeriodRawValue
           ],
       },
-      {}
+      {},
+      enabledFilters
     );
   });
 }
 
 export function createPrisonPopulationTimeSeries(
-  rawRecords: RawMetricData
+  rawRecords: RawMetricData,
+  enabledFilters: EnabledFilters
 ): PrisonPopulationTimeSeriesRecord[] {
   return rawRecords
     .map((record) => {
@@ -210,7 +227,8 @@ export function createPrisonPopulationTimeSeries(
           supervisionType: record.supervision_type as SupervisionType,
           race: record.race,
         },
-        { ...prisonDimensionDefaults }
+        prisonDimensionDefaults,
+        enabledFilters
       );
     })
     .sort((a, b) => {
@@ -219,7 +237,8 @@ export function createPrisonPopulationTimeSeries(
 }
 
 export function createSupervisionPopulationTimeSeries(
-  rawRecords: RawMetricData
+  rawRecords: RawMetricData,
+  enabledFilters: EnabledFilters
 ): SupervisionPopulationTimeSeriesRecord[] {
   return rawRecords
     .map((record) => {
@@ -238,8 +257,10 @@ export function createSupervisionPopulationTimeSeries(
           numberOfViolations: record.number_of_violations,
           supervisionLevel: record.supervision_level,
           race: record.race,
+          ageGroup: record.age_group as AgeGroup,
         },
-        supervisionDimensionDefaults
+        supervisionDimensionDefaults,
+        enabledFilters
       );
     })
     .sort((a, b) => {

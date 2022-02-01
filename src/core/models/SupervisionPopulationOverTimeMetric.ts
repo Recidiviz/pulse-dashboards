@@ -57,6 +57,7 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
       numberOfViolations,
       supervisionLevel,
       race,
+      ageGroup,
     } = this.rootStore.filtersStore.filters;
     const { monthRange } = this.rootStore.filtersStore;
 
@@ -75,7 +76,8 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
           mostSevereViolation.includes(record.mostSevereViolation) &&
           numberOfViolations.includes(record.numberOfViolations) &&
           supervisionLevel.includes(record.supervisionLevel) &&
-          race.includes(record.race)
+          race.includes(record.race) &&
+          ageGroup.includes(record.ageGroup)
         );
       }
     );
@@ -96,6 +98,7 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
         numberOfViolations: dataset[0].numberOfViolations,
         supervisionLevel: dataset[0].supervisionLevel,
         race: dataset[0].race,
+        ageGroup: dataset[0].ageGroup,
       }))
     )(filteredRecords);
     return result as SupervisionPopulationTimeSeriesRecord[];

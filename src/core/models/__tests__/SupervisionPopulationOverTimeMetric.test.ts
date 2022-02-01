@@ -45,33 +45,27 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           gender: "ALL",
           month: "12",
           district: "ALL",
-          age_group: undefined,
+          supervision_type: "ALL",
           state_code: "US_TN",
           event_count: 7641,
           avg_90day: 7000,
           year: "2015",
-          most_severe_violation: "ALL",
-          number_of_violations: "ALL",
-          supervision_type: "ALL",
         },
         {
           gender: "ALL",
           month: "1",
           district: "ALL",
-          age_group: undefined,
+          supervision_type: undefined,
           state_code: "US_TN",
           event_count: 7641,
           avg_90day: 7000,
           year: "2016",
-          most_severe_violation: undefined,
-          number_of_violations: undefined,
-          supervision_type: undefined,
         },
         {
           gender: "MALE",
           month: "5",
           district: "DISTRICT_1",
-          age_group: undefined,
+          supervision_type: "ALL",
           state_code: "US_TN",
           person_count: 7641,
           avg_90day: 7000,
@@ -95,12 +89,11 @@ describe("SupervisionPopulationOverTimeMetric", () => {
       tenantId: mockTenantId,
       sourceFilename: "supervision_to_liberty_count_by_month",
       rootStore: mockCoreStore,
-      dataTransformer: (data) => createSupervisionPopulationTimeSeries(data),
+      dataTransformer: createSupervisionPopulationTimeSeries,
       filters: {
         enabledFilters: [
           FILTER_TYPES.GENDER,
-          FILTER_TYPES.LEGAL_STATUS,
-          FILTER_TYPES.AGE_GROUP,
+          FILTER_TYPES.SUPERVISION_TYPE,
           FILTER_TYPES.DISTRICT,
         ],
       },
@@ -128,6 +121,8 @@ describe("SupervisionPopulationOverTimeMetric", () => {
   });
 
   it("has a transformed records property", () => {
+    // supervisionType values default to "Unknown" since that filter is enabled
+    // legalStatus values default to "ALL" since that filter is not enabled
     expect(metric.records).toEqual([
       {
         gender: "ALL",
@@ -155,7 +150,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         year: 2016,
         mostSevereViolation: "ALL",
         numberOfViolations: "ALL",
-        supervisionType: "ALL",
+        supervisionType: "Unknown",
         lengthOfStay: "ALL",
         race: "ALL",
         priorLengthOfIncarceration: "ALL",
@@ -198,12 +193,11 @@ describe("SupervisionPopulationOverTimeMetric", () => {
       tenantId: mockTenantId,
       sourceFilename: "supervision_to_liberty_count_by_month",
       rootStore: mockCoreStore,
-      dataTransformer: (data) => createSupervisionPopulationTimeSeries(data),
+      dataTransformer: createSupervisionPopulationTimeSeries,
       filters: {
         enabledFilters: [
           FILTER_TYPES.GENDER,
-          FILTER_TYPES.LEGAL_STATUS,
-          FILTER_TYPES.AGE_GROUP,
+          FILTER_TYPES.SUPERVISION_TYPE,
           FILTER_TYPES.DISTRICT,
         ],
       },
@@ -222,12 +216,11 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         tenantId: mockTenantId,
         sourceFilename: "supervision_to_liberty_count_by_month",
         rootStore: mockCoreStore,
-        dataTransformer: (data) => createSupervisionPopulationTimeSeries(data),
+        dataTransformer: createSupervisionPopulationTimeSeries,
         filters: {
           enabledFilters: [
             FILTER_TYPES.GENDER,
-            FILTER_TYPES.LEGAL_STATUS,
-            FILTER_TYPES.AGE_GROUP,
+            FILTER_TYPES.SUPERVISION_TYPE,
             FILTER_TYPES.DISTRICT,
           ],
         },
@@ -249,19 +242,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
           supervisionType: "ALL",
           race: "ALL",
           supervisionLevel: "ALL",
-        },
-        {
-          year: 2016,
-          month: 1,
-          district: "ALL",
-          gender: "ALL",
-          count: 7641,
-          avg90day: 7000,
-          mostSevereViolation: "ALL",
-          numberOfViolations: "ALL",
-          supervisionType: "ALL",
-          race: "ALL",
-          supervisionLevel: "ALL",
+          ageGroup: "ALL",
         },
       ]);
     });
@@ -288,6 +269,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
             supervisionType: "ALL",
             race: "ALL",
             supervisionLevel: "ALL",
+            ageGroup: "ALL",
           },
         ]);
       });

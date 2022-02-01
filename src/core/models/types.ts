@@ -171,6 +171,7 @@ export type SupervisionPopulationTimeSeriesRecord = {
   numberOfViolations: string;
   supervisionLevel: string;
   race: string;
+  ageGroup: AgeGroup;
 };
 
 export type PracticesTimeSeriesRecord = {

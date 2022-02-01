@@ -43,10 +43,9 @@ jest.mock("../../../api/metrics/metricsClient", () => {
       prison_population_time_series: [
         {
           gender: "ALL",
-          legal_status: "ALL",
           month: "12",
           facility: "ALL",
-          age_group: undefined,
+          age_group: "ALL",
           avg_90day: "100",
           state_code: "US_TN",
           event_count: 7641,
@@ -54,7 +53,6 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         },
         {
           gender: "ALL",
-          legal_status: "ALL",
           month: "1",
           facility: "ALL",
           age_group: undefined,
@@ -65,10 +63,9 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         },
         {
           gender: "MALE",
-          legal_status: "ALL",
           month: "5",
           facility: "MCCX",
-          age_group: undefined,
+          age_group: "ALL",
           avg_90day: "100",
           state_code: "US_TN",
           person_count: 7641,
@@ -96,7 +93,6 @@ describe("PrisonPopulationOverTimeMetric", () => {
       filters: {
         enabledFilters: [
           FILTER_TYPES.GENDER,
-          FILTER_TYPES.LEGAL_STATUS,
           FILTER_TYPES.AGE_GROUP,
           FILTER_TYPES.FACILITY,
         ],
@@ -125,6 +121,8 @@ describe("PrisonPopulationOverTimeMetric", () => {
   });
 
   it("has a transformed records property", () => {
+    // ageGroup values default to "Unknown" since that filter is enabled
+    // legalStatus values default to "ALL" since that filter is not enabled
     expect(metric.records).toEqual([
       {
         gender: "ALL",
@@ -142,7 +140,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
         legalStatus: "ALL",
         month: 1,
         facility: "ALL",
-        ageGroup: "ALL",
+        ageGroup: "Unknown",
         count: 7641,
         avg90day: 100,
         year: 2016,
@@ -184,7 +182,6 @@ describe("PrisonPopulationOverTimeMetric", () => {
       filters: {
         enabledFilters: [
           FILTER_TYPES.GENDER,
-          FILTER_TYPES.LEGAL_STATUS,
           FILTER_TYPES.AGE_GROUP,
           FILTER_TYPES.FACILITY,
         ],
@@ -208,7 +205,6 @@ describe("PrisonPopulationOverTimeMetric", () => {
         filters: {
           enabledFilters: [
             FILTER_TYPES.GENDER,
-            FILTER_TYPES.LEGAL_STATUS,
             FILTER_TYPES.AGE_GROUP,
             FILTER_TYPES.FACILITY,
           ],
@@ -222,16 +218,6 @@ describe("PrisonPopulationOverTimeMetric", () => {
         {
           year: 2015,
           month: 12,
-          legalStatus: "ALL",
-          gender: "ALL",
-          count: 7641,
-          ageGroup: "ALL",
-          avg90day: 100,
-          facility: "ALL",
-        },
-        {
-          year: 2016,
-          month: 1,
           legalStatus: "ALL",
           gender: "ALL",
           count: 7641,

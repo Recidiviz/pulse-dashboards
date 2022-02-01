@@ -24,7 +24,7 @@ import RootStore from "../../RootStore";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
-import { Filters } from "../types/filters";
+import { EnabledFilters, Filters } from "../types/filters";
 import { PathwaysPage } from "../views";
 import {
   Hydratable,
@@ -37,7 +37,7 @@ import {
 export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   id: MetricId;
   sourceFilename: string;
-  dataTransformer: (d: RawMetricData) => RecordFormat[];
+  dataTransformer: (d: RawMetricData, f: EnabledFilters) => RecordFormat[];
   filters: Filters;
   tenantId?: TenantId;
   rootStore?: CoreStore;
@@ -64,7 +64,10 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
   // data properties
   protected readonly sourceFilename: string;
 
-  protected dataTransformer: (d: RawMetricData) => RecordFormat[];
+  protected dataTransformer: (
+    d: RawMetricData,
+    f: EnabledFilters
+  ) => RecordFormat[];
 
   eagerExpand: boolean;
 
@@ -180,7 +183,13 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
         this.sourceFilename,
         this.eagerExpand
       );
-      return this.dataTransformer(parsedData.data);
+      return this.dataTransformer(
+        parsedData.data,
+        // TODO #1511 remove this concat once all filters are under single key
+        this.filters.enabledFilters.concat(
+          this.filters.enabledMoreFilters || []
+        )
+      );
     }
     throw new Error(ERROR_MESSAGES.noMetricData);
   }

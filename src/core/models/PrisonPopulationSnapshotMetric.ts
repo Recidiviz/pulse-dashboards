@@ -77,12 +77,10 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
       throw new Error(`Metric ${this.id} is missing the "ALL" row`);
     }
 
-    /* Since we are defaulting NULL dimension values to "ALL" when the
-     * record is created, we may end up with multiple rows where every
-     * dimension is "ALL". Since we rely on the "ALL" row for the total count,
-     * we will sort them based by count and take the largest.
+    /* Since the counts are not accumulated per time period in the data platform,
+     * we must sum the rows to find the total across currently active time periods
      */
-    return Math.max(...allRows.map((r) => r.count));
+    return allRows.map((r) => r.count).reduce((a, b) => a + b, 0);
   }
 
   get dataSeries(): PrisonPopulationSnapshotRecord[] {
