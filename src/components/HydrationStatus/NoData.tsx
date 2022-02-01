@@ -19,10 +19,9 @@ import React from "react";
 
 import { ReactComponent as NoDataLogo } from "../../assets/static/images/no_data_logo.svg";
 import { useCoreStore } from "../../core/CoreStoreProvider";
-import withRouteSync from "../../core/withRouteSync";
 import HydrationStatus from "./HydrationStatus";
 
-const Error: React.FC = () => {
+const NoData: React.FC = () => {
   const { filtersStore } = useCoreStore();
 
   return (
@@ -44,4 +43,4 @@ const Error: React.FC = () => {
   );
 };
 
-export default withRouteSync(Error);
+export default NoData;
