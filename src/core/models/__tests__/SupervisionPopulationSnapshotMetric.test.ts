@@ -61,7 +61,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           gender: "ALL",
           age_group: "ALL",
           district: "ALL",
-          event_count: "45",
+          event_count: "20",
           last_updated: "2021-10-27",
           most_severe_violation: "ALL",
           number_of_violations: "ALL",
@@ -170,7 +170,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         gender: "ALL",
         ageGroup: "ALL",
         district: "ALL",
-        count: 45,
+        count: 20,
         lastUpdated: formatDateString("2021-10-27"),
         mostSevereViolation: "ALL",
         numberOfViolations: "ALL",
@@ -281,7 +281,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         }
       });
 
-      expect(metric.totalCount).toBe(90);
+      expect(metric.totalCount).toBe(65);
     });
   });
 
@@ -365,7 +365,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           numberOfViolations: "ALL",
           supervisionType: "ALL",
           lengthOfStay: "ALL",
-          populationProportion: "17",
+          populationProportion: "23",
           race: "ALL",
           priorLengthOfIncarceration: "ALL",
           supervisionLevel: "ALL",
@@ -381,7 +381,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           numberOfViolations: "ALL",
           supervisionType: "ALL",
           lengthOfStay: "ALL",
-          populationProportion: "11",
+          populationProportion: "15",
           race: "ALL",
           priorLengthOfIncarceration: "ALL",
           supervisionLevel: "ALL",
@@ -400,7 +400,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           });
         }
 
-        // totalCount (denominator of populationProportion) is 90
+        // totalCount (denominator of populationProportion) is 65
         expect(metric.dataSeries).toEqual([
           {
             ageGroup: "ALL",
@@ -412,7 +412,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
             numberOfViolations: "ALL",
             supervisionType: "ALL",
             lengthOfStay: "ALL",
-            populationProportion: "6",
+            populationProportion: "8",
             race: "ALL",
             priorLengthOfIncarceration: "ALL",
             supervisionLevel: "ALL",

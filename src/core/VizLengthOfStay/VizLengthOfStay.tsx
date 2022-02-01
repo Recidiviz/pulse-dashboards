@@ -21,7 +21,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { ResponsiveXYFrame } from "semiotic";
 
-import { formatDate, getTicks } from "../../utils";
+import { formatDate, formatPercent, getTicks } from "../../utils";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import withMetricHydrator from "../withMetricHydrator";
@@ -31,17 +31,28 @@ type VizLengthOfStayProps = {
 };
 
 const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
-  const { dataSeries, chartTitle, chartXAxisTitle, chartYAxisTitle } = metric;
+  const {
+    dataSeries,
+    chartTitle,
+    chartXAxisTitle,
+    chartYAxisTitle,
+    totalCount,
+  } = metric;
 
   const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
 
-  const data = dataSeries.map((d: any) => ({
-    lengthOfStay: d.lengthOfStay,
-    populationProportion: d.populationProportion,
-  }));
+  let accumulatedCount = 0;
+  const data = dataSeries.map((d: any) => {
+    accumulatedCount += d.count;
+    return {
+      lengthOfStay: d.lengthOfStay,
+      count: accumulatedCount,
+      cohortProportion: (accumulatedCount * 100) / totalCount,
+    };
+  });
 
   const { maxTickValue } = getTicks(
-    Math.max(...data.map((d) => d.populationProportion))
+    Math.max(...data.map((d) => d.cohortProportion))
   );
 
   const yRange = [0, maxTickValue];
@@ -66,7 +77,7 @@ const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
             tooltipContent={(d: any) => (
               <PathwaysTooltip
                 label={`${d.lengthOfStay} months`}
-                value={`${d.populationProportion}%`}
+                value={`${formatPercent(d.cohortProportion)}`}
               />
             )}
             // @ts-ignore
@@ -74,7 +85,7 @@ const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
             lineDataAccessor="data"
             lineClass="VizPathways__historicalLine"
             xAccessor="lengthOfStay"
-            yAccessor="populationProportion"
+            yAccessor="cohortProportion"
             size={[558, 558]}
             margin={{ left: 75, bottom: 75, right: 50, top: 56 }}
             xExtent={[0, 60]}
