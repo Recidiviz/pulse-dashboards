@@ -107,7 +107,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     <div>
       <div
         className={cn("VizPopulationSnapshot VizPathways", {
-          "VizPopulationSnapshot__labels--not-rotated": data.length < 10,
+          "VizPopulationSnapshot__labels--not-rotated": true,
         })}
       >
         <div className="VizPathways__header">
@@ -154,7 +154,11 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
             right: 50,
             top: 56,
           }}
-          oAccessor="accessorLabel"
+          oAccessor={
+            ["ageGroup", "facility"].includes(accessor)
+              ? "accessorValue"
+              : "accessorLabel"
+          }
           oPadding={data.length > 25 ? 2 : 15}
           style={(d: any) => {
             if (!isGeographic) {

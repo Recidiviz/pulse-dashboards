@@ -17,7 +17,7 @@
 
 @import "../CoreConstants";
 
-$pathways-left-panel-width: 15rem;
+$pathways-left-panel-width: 22rem;
 
 .PathwaysLeftPanel {
   min-width: $pathways-left-panel-width;
@@ -38,9 +38,16 @@ $pathways-left-panel-width: 15rem;
     max-width: $pathways-left-panel-width;
   }
 
+  @media screen and (max-width: $core-breakpoint-lg) {
+    margin: 0 0 0 3rem;
+  }
+
+  @media screen and (max-width: $core-breakpoint-ml) {
+    min-width: $pathways-left-panel-width - 2rem;
+  }
+
   @media screen and (max-width: $core-breakpoint-md) {
-    min-width: $pathways-left-panel-width - 3rem;
-    margin: 0 3rem;
+    min-width: $pathways-left-panel-width - 5rem;
   }
 
   @media screen and (max-width: $core-breakpoint-sm) {

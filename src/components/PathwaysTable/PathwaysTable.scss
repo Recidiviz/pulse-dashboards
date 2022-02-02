@@ -24,10 +24,6 @@
   color: $pine-1;
   @include font-ui-sans-14;
 
-  @media screen and (max-width: 1550px) {
-    width: 970px;
-  }
-
   &__head {
     color: $slate-80;
 
@@ -48,15 +44,10 @@
   }
 
   &__body {
-    height: calc(100vh - 26rem);
+    height: 520px;
 
     @media screen and (max-width: $core-breakpoint-sm) {
-      @media (orientation: landscape) {
-        max-height: 464px;
-      }
-      @media (orientation: portrait) {
-        max-height: calc(100vh - 31rem);
-      }
+      height: 420px;
     }
   }
 

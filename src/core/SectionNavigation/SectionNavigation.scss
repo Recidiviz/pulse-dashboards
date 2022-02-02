@@ -18,6 +18,8 @@
 @import "../CoreConstants";
 
 .SectionNavigation {
+  padding-bottom: 2rem;
+
   &__title {
     @include font-ui-sans-24;
     color: $slate-85;
