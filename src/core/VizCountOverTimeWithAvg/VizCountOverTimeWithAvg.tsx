@@ -86,7 +86,7 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
     },
   ];
 
-  const { maxTickValue, tickValues, marginFactor } = getTicks(
+  const { maxTickValue, tickValues, ticksMargin } = getTicks(
     Math.max(...data.map((d) => d.value), ...data.map((d) => d.average))
   );
 
@@ -127,7 +127,7 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
         data={data}
         size={[558, 558]}
         margin={{
-          left: marginFactor,
+          left: ticksMargin,
           bottom: 96,
           right: 50,
           top: 56,
@@ -182,7 +182,7 @@ const ChartCountOverTimeWithAvgTooltip: React.FC<ChartCountOverTimeWithAvgToolti
     <PathwaysTooltip
       label={date.toLocaleString("en-US", { month: "long", year: "numeric" })}
       value={value.toString()}
-      average={`90-day avg: ${average}`}
+      average={`3-month rolling average: ${average}`}
     />
   );
 };

@@ -21,6 +21,7 @@ import {
   keys,
   makeAutoObservable,
   observable,
+  reaction,
   set,
   toJS,
 } from "mobx";
@@ -33,10 +34,12 @@ import { MonthOptions } from "../PopulationTimeSeriesChart/helpers";
 import {
   EnabledFiltersByMetric,
   FilterOption,
+  Filters,
   PopulationFilterLabels,
   PopulationFilters,
   PopulationFilterValues,
 } from "../types/filters";
+import { FILTER_TYPES } from "../utils/constants";
 import enabledFilters from "../utils/enabledFilters";
 import filterOptions, {
   defaultMetricMode,
@@ -65,6 +68,13 @@ export default class FiltersStore {
     this.resetFilters = this.resetFilters.bind(this);
     this.getFilterLabel = this.getFilterLabel.bind(this);
     this.getLocationName = this.getLocationName.bind(this);
+
+    reaction(
+      () => this.rootStore.metricsStore.current.filters,
+      (filters: Filters) => {
+        this.clearDisabledFilters(filters);
+      }
+    );
   }
 
   setFilters(updatedFilters: Partial<PopulationFilterValues>): void {
@@ -74,6 +84,21 @@ export default class FiltersStore {
         filterKey,
         updatedFilters[filterKey as keyof PopulationFilters]
       );
+    });
+  }
+
+  clearDisabledFilters(filters: Filters): void {
+    const currentlyEnabledFilters = [
+      ...filters.enabledFilters,
+      ...(filters.enabledMoreFilters || []),
+    ];
+    keys(this.filters).forEach((filterType) => {
+      if (
+        filterType !== FILTER_TYPES.TIME_PERIOD &&
+        // @ts-ignore
+        !currentlyEnabledFilters.includes(filterType)
+      )
+        this.setFilters({ [filterType]: ["ALL"] });
     });
   }
 

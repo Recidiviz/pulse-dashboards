@@ -231,23 +231,30 @@ function decrypt(hexString: string): string {
 
 const getTicks = (
   value: number
-): { maxTickValue: number; tickValues: number[]; marginFactor: number } => {
+): { maxTickValue: number; tickValues: number[]; ticksMargin: number } => {
   const precision = Math.floor(Math.log10(value));
   const max = ceil(value, precision > 2 ? -precision + 1 : -precision);
   const ticksCount = max % 4 === 0 ? 4 : 5;
-  const ticks = Array.from(
-    { length: ticksCount + 1 },
-    (_, i) => (max / ticksCount) * i
+  const ticks = Array.from({ length: ticksCount + 1 }, (_, i) =>
+    Number(((max / ticksCount) * i).toFixed(1))
   );
 
-  // This value used to determine chart left margin based on tick value
-  const marginFactor =
-    (max.toString().length + (max.toString().length > 2 ? 1 : 2)) * 10;
+  const getMarginFactor = (n: number, isFloat: boolean) => {
+    if (n <= 2) {
+      return isFloat ? 4 : 2.2;
+    }
+    return 1;
+  };
 
   return {
     maxTickValue: max,
     tickValues: value === -Infinity ? [] : ticks,
-    marginFactor,
+
+    // This value used to determine chart left margin based on tick value length
+    ticksMargin:
+      (max.toString().length +
+        getMarginFactor(max.toString().length, ticks[1] % 1 !== 0)) *
+      10,
   };
 };
 

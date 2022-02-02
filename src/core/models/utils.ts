@@ -184,15 +184,15 @@ export function createPrisonPopulationPersonLevelList(
   return rawRecords.map((record) => {
     return mergeDefaults(
       {
-        stateId: record.state_id,
-        fullName: record.full_name,
+        stateId: record.state_id || "Unknown",
+        fullName: record.full_name || "Unknown",
         lastUpdated:
           record.last_updated && formatDateString(record.last_updated),
-        age: record.age,
-        legalStatus: record.legal_status || "N/A",
-        gender: record.gender as Gender,
-        ageGroup: record.age_group as AgeGroup,
-        facility: record.facility,
+        age: record.age || "Unknown",
+        legalStatus: record.legal_status || "Unknown",
+        gender: (record.gender as Gender) || "Unknown",
+        ageGroup: (record.age_group as AgeGroup) || "Unknown",
+        facility: record.facility || "Unknown",
         timePeriod:
           timePeriodMap[
             record.time_period?.toLowerCase() as TimePeriodRawValue

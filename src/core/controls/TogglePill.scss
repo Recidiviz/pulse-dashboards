@@ -23,7 +23,6 @@ $ALL_PILL_WIDTH: 160px;
   align-items: center;
   justify-content: center;
   text-align: center;
-  @include font-ui-sans-14;
 
   &__button {
     display: flex;
@@ -34,6 +33,7 @@ $ALL_PILL_WIDTH: 160px;
     height: 2.33rem;
     border: 1px solid #d2d8d8;
     background: transparent;
+    @include font-ui-sans-14;
 
     &:focus {
       outline: none;

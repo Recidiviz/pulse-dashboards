@@ -19,7 +19,7 @@ import "./MoreFilters.scss";
 import { Button, Icon, IconSVG } from "@recidiviz/design-system";
 import { get } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Modal from "../../components/Modal";
 import RadioGroup from "../../controls/RadioGroup";
@@ -46,6 +46,10 @@ const MoreFilters: React.FC<Props> = ({
 
   const { filtersStore } = useCoreStore();
   const { filters } = filtersStore;
+
+  useEffect(() => {
+    updateFilters({});
+  }, [enabledFilters]);
 
   let activeFiltersCount = 0;
 
