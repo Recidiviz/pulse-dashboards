@@ -58,6 +58,7 @@ export type SetPopulationFilters = (
 export type FilterOption = {
   label: string;
   value: string;
+  longLabel?: string;
 };
 
 export interface PopulationFilters {

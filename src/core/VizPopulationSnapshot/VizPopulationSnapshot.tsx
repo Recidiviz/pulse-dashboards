@@ -43,7 +43,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
   const {
     filters,
     getFilterLabel,
-    getLocationName,
+    getFilterLongLabel,
     currentMetricMode,
   } = filtersStore;
   const {
@@ -72,18 +72,16 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
       accessor as keyof PopulationFilterLabels,
       d[accessor].toString()
     );
+    const filterLongLabel = getFilterLongLabel(
+      accessor as keyof PopulationFilterLabels,
+      d[accessor].toString()
+    );
     return {
       index,
       accessorValue: d[accessor],
       accessorLabel: filterLabel,
+      tooltipLabel: filterLongLabel ?? filterLabel,
       value: isRate ? d.populationProportion : d.count,
-      customTooltipLabel:
-        accessor === "facility" || accessor === "district"
-          ? getLocationName(
-              accessor as keyof PopulationFilterLabels,
-              d[accessor].toString()
-            )
-          : filterLabel,
     };
   });
 
@@ -117,7 +115,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
         </div>
         <ResponsiveOrdinalFrame
           // The key is necessary here to force the viz to remount
-          // when there is a new metric to ensure there is not a awkward transition
+          // when there is a new metric to ensure there is not an awkward transition
           key={metric.id}
           responsiveWidth
           hoverAnnotation
@@ -140,7 +138,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
             const pieceData = d.pieces[0];
             return (
               <PathwaysTooltip
-                label={pieceData.customTooltipLabel || pieceData.accessorLabel}
+                label={pieceData.tooltipLabel}
                 value={isRate ? `${pieceData.value}%` : pieceData.value}
               />
             );
@@ -154,11 +152,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
             right: 50,
             top: 56,
           }}
-          oAccessor={
-            ["ageGroup", "facility"].includes(accessor)
-              ? "accessorValue"
-              : "accessorLabel"
-          }
+          oAccessor="accessorLabel"
           oPadding={data.length > 25 ? 2 : 15}
           style={(d: any) => {
             if (!isGeographic) {

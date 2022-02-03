@@ -67,7 +67,7 @@ export default class FiltersStore {
     this.rootStore = rootStore;
     this.resetFilters = this.resetFilters.bind(this);
     this.getFilterLabel = this.getFilterLabel.bind(this);
-    this.getLocationName = this.getLocationName.bind(this);
+    this.getFilterLongLabel = this.getFilterLongLabel.bind(this);
 
     reaction(
       () => this.rootStore.metricsStore.current.filters,
@@ -205,11 +205,14 @@ export default class FiltersStore {
     );
   }
 
-  getLocationName(
+  getFilterLongLabel(
     filterType: keyof PopulationFilters,
-    locationValue: string
+    filterValue: string
   ): string | undefined {
-    const { locationNameMap } = this.filterOptions[filterType];
-    return locationNameMap ? locationNameMap[locationValue] : undefined;
+    return (
+      this.filterOptions[filterType].options.find(
+        (option: FilterOption) => option.value === filterValue
+      )?.longLabel || undefined
+    );
   }
 }
