@@ -39,7 +39,7 @@ export const createTitleCasedCell = ({
 const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
   metric,
 }) => {
-  const { dataSeries, chartTitle, columns } = metric;
+  const { dataSeries, chartTitle, columns, id } = metric;
   if (!columns) return null;
 
   const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
@@ -51,7 +51,8 @@ const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
           {chartTitle} <span>as of {latestUpdate}</span>
         </div>
         <div className="VizPopulationPersonLevel__title">
-          Total: {dataSeries.length.toLocaleString()} people
+          Total: {dataSeries.length.toLocaleString()}{" "}
+          {id.includes("prisonToSupervision") ? "releases" : "people"}
         </div>
       </div>
       <div className="VizPopulationPersonLevel__table">

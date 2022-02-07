@@ -18,10 +18,10 @@
 import "./PathwaysTable.scss";
 
 import cx from "classnames";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useFlexLayout, useSortBy, useTable } from "react-table";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { FixedSizeList as List } from "react-window";
+import { VariableSizeList as List } from "react-window";
 
 import getScrollBarWidth from "../../utils/getScrollBarWidth";
 
@@ -56,7 +56,14 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
         <div className="tr" {...row.getRowProps({ style })}>
           {row.cells.map((cell) => {
             return (
-              <div className="td" {...cell.getCellProps()}>
+              <div
+                className="td"
+                {...cell.getCellProps(
+                  ["Age", "Facility"].includes(String(cell.column.Header))
+                    ? { style: { wordSpacing: "100vw" } }
+                    : {}
+                )}
+              >
                 {cell.render("Cell")}
               </div>
             );
@@ -66,6 +73,22 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
     },
     [prepareRow, rows]
   );
+
+  const getItemSize = (index: number) => {
+    const row = rows[index];
+    const rowFactor = row.values.age.match(/,/g)?.length;
+    const rowHeights = new Array(rows.length)
+      .fill(true)
+      .map(() => (rowFactor !== 1 && rowFactor * 40) || 70);
+    return rowHeights[index];
+  };
+
+  const listRef: React.LegacyRef<List> = React.createRef();
+
+  useEffect(() => {
+    // eslint-disable-next-line
+    listRef.current?.resetAfterIndex(0);
+  }, [listRef]);
 
   return (
     <div className="PathwaysTable" {...getTableProps()}>
@@ -113,9 +136,10 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
         <AutoSizer>
           {({ height, width }) => (
             <List
+              ref={listRef}
               height={height}
               itemCount={rows.length}
-              itemSize={70}
+              itemSize={getItemSize}
               width={width + scrollBarSize}
             >
               {RenderRow}

@@ -68,7 +68,7 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
           (record.year - mostRecentDate.getFullYear()) * 12 +
           (record.month - (mostRecentDate.getMonth() + 1));
         return (
-          // #TODO #1597 create tooling to reduce listing every dimension in filters
+          // #TODO #1596 create tooling to reduce listing every dimension in filters
           Math.abs(monthsOut) <= monthRange &&
           gender.includes(record.gender) &&
           supervisionType.includes(record.supervisionType) &&
@@ -86,7 +86,7 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
       groupBy((d: SupervisionPopulationTimeSeriesRecord) => [d.year, d.month]),
       values,
       map((dataset) => ({
-        // #TODO #1597 create tooling to reduce listing every dimension in filters
+        // #TODO #1596 create tooling to reduce listing every dimension in filters
         year: dataset[0].year,
         month: dataset[0].month,
         count: sumBy("count", dataset),

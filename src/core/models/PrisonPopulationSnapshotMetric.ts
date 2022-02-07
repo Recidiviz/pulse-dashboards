@@ -58,7 +58,7 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
     const allRows = this.allRecords.filter(
       (record: PrisonPopulationSnapshotRecord) => {
         return (
-          // #TODO #1597 create tooling to reduce listing every dimension in filters
+          // #TODO #1596 create tooling to reduce listing every dimension in filters
           record.gender === "ALL" &&
           record.legalStatus === "ALL" &&
           record.facility === "ALL" &&
@@ -95,7 +95,7 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
     const filteredRecords = this.allRecords.filter(
       (record: PrisonPopulationSnapshotRecord) => {
         return (
-          // #TODO #1597 create tooling to reduce listing every dimension in filters
+          // #TODO #1596 create tooling to reduce listing every dimension in filters
           gender.includes(record.gender) &&
           legalStatus.includes(record.legalStatus) &&
           (this.accessor === "facility"
@@ -119,7 +119,7 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
       groupBy((d: PrisonPopulationSnapshotRecord) => [d[this.accessor]]),
       values,
       map((dataset) => ({
-        // #TODO #1597 create tooling to reduce listing every dimension in filters
+        // #TODO #1596 create tooling to reduce listing every dimension in filters
         count: sumBy("count", dataset),
         populationProportion: (
           (sumBy("count", dataset) * 100) /

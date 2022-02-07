@@ -59,7 +59,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
     const allRows = this.allRecords.filter(
       (record: SupervisionPopulationSnapshotRecord) => {
         return (
-          // #TODO #1597 create tooling to reduce listing every dimension in filters
+          // #TODO #1596 create tooling to reduce listing every dimension in filters
           record.supervisionType === "ALL" &&
           record.ageGroup === "ALL" &&
           record.gender === "ALL" &&
@@ -106,7 +106,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
     const filteredRecords = this.allRecords.filter(
       (record: SupervisionPopulationSnapshotRecord) => {
         return (
-          // #TODO #1597 create tooling to reduce listing every dimension in filters
+          // #TODO #1596 create tooling to reduce listing every dimension in filters
           supervisionType.includes(record.supervisionType) &&
           (this.accessor === "ageGroup"
             ? !["ALL"].includes(record.ageGroup)
@@ -148,7 +148,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
       groupBy((d: SupervisionPopulationSnapshotRecord) => [d[this.accessor]]),
       values,
       map((dataset) => ({
-        // #TODO #1597 create tooling to reduce listing every dimension in filters
+        // #TODO #1596 create tooling to reduce listing every dimension in filters
         count: sumBy("count", dataset),
         populationProportion: (
           (sumBy("count", dataset) * 100) /
