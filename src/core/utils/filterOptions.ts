@@ -628,11 +628,11 @@ export const NdPopulationFilterOptions: PopulationFilters = {
       { label: "Hispanic", value: "HISPANIC" },
       { label: "Asian", value: "ASIAN" },
       {
-        label: "American Indian/Alaskan Native",
+        label: "American Indian/ Alaskan Native",
         value: "AMERICAN_INDIAN_ALASKAN_NATIVE",
       },
       {
-        label: "Native Hawaiian/Pacific Islander",
+        label: "Native Hawaiian/ Pacific Islander",
         value: "NATIVE_HAWAIIAN_PACIFIC_ISLANDER",
       },
       { label: "Other", value: "OTHER" },

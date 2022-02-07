@@ -234,9 +234,20 @@ const getTicks = (
 ): { maxTickValue: number; tickValues: number[]; ticksMargin: number } => {
   const precision = Math.floor(Math.log10(value));
   const max = ceil(value, precision > 2 ? -precision + 1 : -precision);
-  const ticksCount = max % 4 === 0 ? 4 : 5;
+
+  let ticksCount = 0;
+  if (max % 5 === 0) {
+    ticksCount = 5;
+  } else if (max % 4 === 0) {
+    ticksCount = 4;
+  } else if (max % 3 === 0) {
+    ticksCount = 3;
+  } else {
+    ticksCount = 2;
+  }
+
   const ticks = Array.from({ length: ticksCount + 1 }, (_, i) =>
-    Number(((max / ticksCount) * i).toFixed(1))
+    Math.round((max / ticksCount) * i)
   );
 
   const getMarginFactor = (n: number, isFloat: boolean) => {

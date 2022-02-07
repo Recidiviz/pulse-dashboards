@@ -36,8 +36,12 @@
   }
 
   &__labels--not-rotated {
-    .foreground-graphics .ordinal-labels text {
-      transform: initial !important;
+    .foreground-graphics {
+      transform: translate(0, 1.5rem) !important;
+
+      .ordinal-labels text {
+        transform: initial !important;
+      }
     }
   }
 
@@ -62,11 +66,11 @@
   }
 
   .foreground-graphics {
-    transform: translate(0, 1.5rem);
+    transform: translate(0, 2rem);
 
     .ordinal-labels text {
       fill: $slate-80;
-      transform: rotate(-45deg) translate(-0.4rem, -0.4rem);
+      transform: rotate(-45deg) translate(-1.0rem, -2.0rem);
     }
   }
 

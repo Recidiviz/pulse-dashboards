@@ -56,6 +56,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
 
   // @ts-ignore
   const accessorFilter = filters[accessor];
+  const isRotateLabels = ["district", "race", "facility"].includes(accessor);
   const isGeographic = ["district", "facility", "officer"].includes(accessor);
   const isRate =
     currentMetricMode === METRIC_MODES.RATES && enableMetricModeToggle;
@@ -105,7 +106,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     <div>
       <div
         className={cn("VizPopulationSnapshot VizPathways", {
-          "VizPopulationSnapshot__labels--not-rotated": true,
+          "VizPopulationSnapshot__labels--not-rotated": !isRotateLabels,
         })}
       >
         <div className="VizPathways__header">
@@ -148,7 +149,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           size={[558, 558]}
           margin={{
             left: ticksMargin,
-            bottom: 75,
+            bottom: isRotateLabels ? 116 : 75,
             right: 50,
             top: 56,
           }}
@@ -176,7 +177,17 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           rExtent={yRange}
           // @ts-ignore
           oLabel={(accessorLabel: string, _: any) => {
-            return <text textAnchor="middle">{accessorLabel}</text>;
+            return (
+              <text textAnchor="middle">
+                {isRotateLabels
+                  ? accessorLabel.split(/(.*?\/)/g).map((wrapPart) => (
+                      <tspan dy="1.5em" x="0">
+                        {wrapPart}
+                      </tspan>
+                    ))
+                  : accessorLabel}
+              </text>
+            );
           }}
           axes={[
             {
