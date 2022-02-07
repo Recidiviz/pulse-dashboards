@@ -221,6 +221,30 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.SUPERVISION_TYPE,
     ],
   },
+  supervisionToPrisonPopulationByMostSevereViolation: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+    ],
+    enabledMoreFilters: [
+      FILTER_TYPES.SUPERVISION_LEVEL,
+      FILTER_TYPES.SUPERVISION_TYPE,
+    ],
+  },
+  supervisionToPrisonPopulationByNumberOfViolations: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+    ],
+    enabledMoreFilters: [
+      FILTER_TYPES.SUPERVISION_LEVEL,
+      FILTER_TYPES.SUPERVISION_TYPE,
+    ],
+  },
   // SUPERVISION TO LIBERTY
   supervisionToLibertyOverTime: {
     enabledFilters: [
