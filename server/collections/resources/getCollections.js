@@ -151,10 +151,10 @@ const VITALS_COLLECTION = {
 const PATHWAYS_COLLECTIONS = {
   [COLLECTIONS.PATHWAYS]: {
     liberty_to_prison_count_by_month: {
-      filename: "liberty_to_prison_count_by_month.json",
+      filename: "liberty_to_prison_count_by_month.txt",
     },
     liberty_to_prison_population_snapshot_by_dimension: {
-      filename: "liberty_to_prison_population_snapshot_by_dimension.json",
+      filename: "liberty_to_prison_population_snapshot_by_dimension.txt",
     },
     prison_population_projection_time_series: {
       filename: "prison_population_projection_time_series.txt",
@@ -169,34 +169,34 @@ const PATHWAYS_COLLECTIONS = {
       filename: "supervision_to_liberty_count_by_month.txt",
     },
     prison_population_time_series: {
-      filename: "prison_population_time_series.json",
+      filename: "prison_population_time_series.txt",
     },
     prison_population_snapshot_person_level: {
       filename: "prison_population_snapshot_person_level.json",
     },
     prison_population_snapshot_by_dimension: {
-      filename: "prison_population_snapshot_by_dimension.json",
+      filename: "prison_population_snapshot_by_dimension.txt",
     },
     supervision_to_prison_population_snapshot_by_dimension: {
       filename: "supervision_to_prison_population_snapshot_by_dimension.txt",
     },
     prison_to_supervision_count_by_month: {
-      filename: "prison_to_supervision_count_by_month.json",
+      filename: "prison_to_supervision_count_by_month.txt",
     },
     prison_to_supervision_population_snapshot_by_dimension: {
-      filename: "prison_to_supervision_population_snapshot_by_dimension.json",
+      filename: "prison_to_supervision_population_snapshot_by_dimension.txt",
     },
     prison_to_supervision_population_snapshot_person_level: {
       filename: "prison_to_supervision_population_snapshot_person_level.json",
     },
     supervision_population_time_series: {
-      filename: "supervision_population_time_series.json",
+      filename: "supervision_population_time_series.txt",
     },
     supervision_population_snapshot_by_dimension: {
-      filename: "supervision_population_snapshot_by_dimension.json",
+      filename: "supervision_population_snapshot_by_dimension.txt",
     },
     supervision_to_liberty_population_snapshot_by_dimension: {
-      filename: "supervision_to_liberty_population_snapshot_by_dimension.json",
+      filename: "supervision_to_liberty_population_snapshot_by_dimension.txt",
     },
   },
 };
