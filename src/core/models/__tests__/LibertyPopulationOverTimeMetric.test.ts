@@ -21,8 +21,8 @@ import RootStore from "../../../RootStore";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
 import { FILTER_TYPES } from "../../utils/constants";
-import SupervisionPopulationOverTimeMetric from "../SupervisionPopulationOverTimeMetric";
-import { createSupervisionPopulationTimeSeries } from "../utils";
+import LibertyPopulationOverTimeMetric from "../LibertyPopulationOverTimeMetric";
+import { createLibertyPopulationTimeSeries } from "../utils";
 
 const OLD_ENV = process.env;
 
@@ -40,12 +40,11 @@ jest.mock("../../../api/metrics/metricsClient", () => {
   return {
     callMetricsApi: jest.fn().mockResolvedValue({
       // time series data is sorted by date ascending in the data platform
-      supervision_to_liberty_count_by_month: [
+      liberty_to_prison_count_by_month: [
         {
           gender: "ALL",
           month: "12",
-          district: "ALL",
-          supervision_type: "ALL",
+          judicial_district: "ALL",
           state_code: "US_TN",
           event_count: 7641,
           avg_90day: 7000,
@@ -54,8 +53,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         {
           gender: "ALL",
           month: "1",
-          district: "ALL",
-          supervision_type: undefined,
+          judicial_district: "ALL",
           state_code: "US_TN",
           event_count: 7641,
           avg_90day: 7000,
@@ -64,10 +62,9 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         {
           gender: "MALE",
           month: "5",
-          district: "DISTRICT_1",
-          supervision_type: "ALL",
+          judicial_district: "JUDICIAL_DISTRICT_1",
           state_code: "US_TN",
-          person_count: 7641,
+          event_count: 7641,
           avg_90day: 7000,
           year: "2016",
         },
@@ -76,26 +73,22 @@ jest.mock("../../../api/metrics/metricsClient", () => {
   };
 });
 
-describe("SupervisionPopulationOverTimeMetric", () => {
-  let metric: SupervisionPopulationOverTimeMetric;
+describe("LibertyPopulationOverTimeMetric", () => {
+  let metric: LibertyPopulationOverTimeMetric;
 
   beforeEach(() => {
     process.env = Object.assign(process.env, {
       REACT_APP_API_URL: "test-url",
     });
     mockCoreStore.filtersStore = filtersStore;
-    metric = new SupervisionPopulationOverTimeMetric({
-      id: "prisonPopulationOverTime",
+    metric = new LibertyPopulationOverTimeMetric({
+      id: "libertyToPrisonPopulationOverTime",
       tenantId: mockTenantId,
-      sourceFilename: "supervision_to_liberty_count_by_month",
+      sourceFilename: "liberty_to_prison_count_by_month",
       rootStore: mockCoreStore,
-      dataTransformer: createSupervisionPopulationTimeSeries,
+      dataTransformer: createLibertyPopulationTimeSeries,
       filters: {
-        enabledFilters: [
-          FILTER_TYPES.GENDER,
-          FILTER_TYPES.SUPERVISION_TYPE,
-          FILTER_TYPES.DISTRICT,
-        ],
+        enabledFilters: [FILTER_TYPES.GENDER, FILTER_TYPES.JUDICIAL_DISTRICT],
       },
     });
 
@@ -111,7 +104,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
 
   it("fetches metrics when initialized", () => {
     expect(callMetricsApi).toHaveBeenCalledWith(
-      `${mockTenantId.toLowerCase()}/pathways/supervision_to_liberty_count_by_month`,
+      `${mockTenantId.toLowerCase()}/pathways/liberty_to_prison_count_by_month`,
       RootStore.getTokenSilently
     );
   });
@@ -127,47 +120,35 @@ describe("SupervisionPopulationOverTimeMetric", () => {
       {
         gender: "ALL",
         month: 12,
-        district: "ALL",
+        judicialDistrict: "ALL",
         ageGroup: "ALL",
         count: 7641,
         avg90day: 7000,
         year: 2015,
-        mostSevereViolation: "ALL",
-        numberOfViolations: "ALL",
-        supervisionType: "ALL",
-        lengthOfStay: "ALL",
         race: "ALL",
-        supervisionLevel: "ALL",
+        priorLengthOfIncarceration: "ALL",
       },
       {
         gender: "ALL",
         month: 1,
-        district: "ALL",
+        judicialDistrict: "ALL",
         ageGroup: "ALL",
         count: 7641,
         avg90day: 7000,
         year: 2016,
-        mostSevereViolation: "ALL",
-        numberOfViolations: "ALL",
-        supervisionType: "Unknown",
-        lengthOfStay: "ALL",
         race: "ALL",
-        supervisionLevel: "ALL",
+        priorLengthOfIncarceration: "ALL",
       },
       {
         gender: "MALE",
         month: 5,
-        district: "DISTRICT_1",
+        judicialDistrict: "JUDICIAL_DISTRICT_1",
         ageGroup: "ALL",
         count: 7641,
         avg90day: 7000,
         year: 2016,
-        mostSevereViolation: "ALL",
-        numberOfViolations: "ALL",
-        supervisionType: "ALL",
-        lengthOfStay: "ALL",
         race: "ALL",
-        supervisionLevel: "ALL",
+        priorLengthOfIncarceration: "ALL",
       },
     ]);
   });
@@ -180,23 +161,19 @@ describe("SupervisionPopulationOverTimeMetric", () => {
     jest.mock("../../../api/metrics/metricsClient", () => {
       return {
         callMetricsApi: jest.fn().mockResolvedValue({
-          supervision_to_liberty_count_by_month: [],
+          liberty_to_prison_count_by_month: [],
         }),
       };
     });
 
-    metric = new SupervisionPopulationOverTimeMetric({
+    metric = new LibertyPopulationOverTimeMetric({
       id: "prisonPopulationOverTime",
       tenantId: mockTenantId,
-      sourceFilename: "supervision_to_liberty_count_by_month",
+      sourceFilename: "liberty_to_prison_count_by_month",
       rootStore: mockCoreStore,
-      dataTransformer: createSupervisionPopulationTimeSeries,
+      dataTransformer: createLibertyPopulationTimeSeries,
       filters: {
-        enabledFilters: [
-          FILTER_TYPES.GENDER,
-          FILTER_TYPES.SUPERVISION_TYPE,
-          FILTER_TYPES.DISTRICT,
-        ],
+        enabledFilters: [FILTER_TYPES.GENDER, FILTER_TYPES.JUDICIAL_DISTRICT],
       },
     });
     metric.hydrate();
@@ -208,18 +185,14 @@ describe("SupervisionPopulationOverTimeMetric", () => {
     beforeEach(() => {
       mockCoreStore.filtersStore = filtersStore;
 
-      metric = new SupervisionPopulationOverTimeMetric({
+      metric = new LibertyPopulationOverTimeMetric({
         id: "prisonPopulationOverTime",
         tenantId: mockTenantId,
-        sourceFilename: "supervision_to_liberty_count_by_month",
+        sourceFilename: "liberty_to_prison_count_by_month",
         rootStore: mockCoreStore,
-        dataTransformer: createSupervisionPopulationTimeSeries,
+        dataTransformer: createLibertyPopulationTimeSeries,
         filters: {
-          enabledFilters: [
-            FILTER_TYPES.GENDER,
-            FILTER_TYPES.SUPERVISION_TYPE,
-            FILTER_TYPES.DISTRICT,
-          ],
+          enabledFilters: [FILTER_TYPES.GENDER, FILTER_TYPES.JUDICIAL_DISTRICT],
         },
       });
       metric.hydrate();
@@ -230,16 +203,24 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         {
           year: 2015,
           month: 12,
-          district: "ALL",
+          judicialDistrict: "ALL",
           gender: "ALL",
           count: 7641,
           avg90day: 7000,
-          mostSevereViolation: "ALL",
-          numberOfViolations: "ALL",
-          supervisionType: "ALL",
           race: "ALL",
-          supervisionLevel: "ALL",
           ageGroup: "ALL",
+          priorLengthOfIncarceration: "ALL",
+        },
+        {
+          gender: "ALL",
+          month: 1,
+          judicialDistrict: "ALL",
+          ageGroup: "ALL",
+          count: 7641,
+          avg90day: 7000,
+          year: 2016,
+          race: "ALL",
+          priorLengthOfIncarceration: "ALL",
         },
       ]);
     });
@@ -249,7 +230,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         if (metric.rootStore) {
           metric.rootStore.filtersStore.setFilters({
             gender: ["MALE"],
-            district: ["DISTRICT_1"],
+            judicialDistrict: ["JUDICIAL_DISTRICT_1"],
           });
         }
 
@@ -258,15 +239,12 @@ describe("SupervisionPopulationOverTimeMetric", () => {
             gender: "MALE",
             month: 5,
             count: 7641,
-            district: "DISTRICT_1",
+            judicialDistrict: "JUDICIAL_DISTRICT_1",
             avg90day: 7000,
             year: 2016,
-            mostSevereViolation: "ALL",
-            numberOfViolations: "ALL",
-            supervisionType: "ALL",
             race: "ALL",
-            supervisionLevel: "ALL",
             ageGroup: "ALL",
+            priorLengthOfIncarceration: "ALL",
           },
         ]);
       });

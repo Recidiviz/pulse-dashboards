@@ -17,6 +17,8 @@
 import { makeAutoObservable } from "mobx";
 
 import { US_ID } from "../../RootStore/TenantStore/pathwaysTenants";
+import LibertyPopulationOverTimeMetric from "../models/LibertyPopulationOverTimeMetric";
+import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshotMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
@@ -24,6 +26,8 @@ import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMe
 import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import {
+  createLibertyPopulationSnapshot,
+  createLibertyPopulationTimeSeries,
   createPrisonPopulationPersonLevelList,
   createPrisonPopulationSnapshot,
   createPrisonPopulationTimeSeries,
@@ -132,30 +136,26 @@ export default class MetricsStore {
     return map[page][section];
   }
 
-  // Admissions from liberty to prison are counted by district and not by facility,
-  // so this will be a SupervisionPopulationOverTimeMetric
-  get libertyToPrisonPopulationOverTime(): SupervisionPopulationOverTimeMetric {
-    return new SupervisionPopulationOverTimeMetric({
+  get libertyToPrisonPopulationOverTime(): LibertyPopulationOverTimeMetric {
+    return new LibertyPopulationOverTimeMetric({
       id: "libertyToPrisonPopulationOverTime",
       tenantId: this.rootStore.currentTenantId,
       sourceFilename: "liberty_to_prison_count_by_month",
       rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationTimeSeries,
+      dataTransformer: createLibertyPopulationTimeSeries,
       filters: this.rootStore.filtersStore.enabledFilters
         .libertyToPrisonPopulationOverTime,
     });
   }
 
-  // Admissions from liberty to prison are counted by district and not by facility,
-  // so this will be a SupervisionPopulationSnapshotMetric
-  get libertyToPrisonPopulationByDistrict(): SupervisionPopulationSnapshotMetric {
-    return new SupervisionPopulationSnapshotMetric({
+  get libertyToPrisonPopulationByDistrict(): LibertyPopulationSnapshotMetric {
+    return new LibertyPopulationSnapshotMetric({
       id: "libertyToPrisonPopulationByDistrict",
       tenantId: this.rootStore.currentTenantId,
       sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
       rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "district",
+      dataTransformer: createLibertyPopulationSnapshot,
+      accessor: "judicialDistrict",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
@@ -163,13 +163,13 @@ export default class MetricsStore {
     });
   }
 
-  get libertyToPrisonPopulationByRace(): SupervisionPopulationSnapshotMetric {
-    return new SupervisionPopulationSnapshotMetric({
+  get libertyToPrisonPopulationByRace(): LibertyPopulationSnapshotMetric {
+    return new LibertyPopulationSnapshotMetric({
       id: "libertyToPrisonPopulationByRace",
       tenantId: this.rootStore.currentTenantId,
       sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
       rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
+      dataTransformer: createLibertyPopulationSnapshot,
       accessor: "race",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
@@ -178,13 +178,13 @@ export default class MetricsStore {
     });
   }
 
-  get libertyToPrisonPopulationByAgeGroup(): SupervisionPopulationSnapshotMetric {
-    return new SupervisionPopulationSnapshotMetric({
+  get libertyToPrisonPopulationByAgeGroup(): LibertyPopulationSnapshotMetric {
+    return new LibertyPopulationSnapshotMetric({
       id: "libertyToPrisonPopulationByAgeGroup",
       tenantId: this.rootStore.currentTenantId,
       sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
       rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
+      dataTransformer: createLibertyPopulationSnapshot,
       accessor: "ageGroup",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
@@ -193,13 +193,13 @@ export default class MetricsStore {
     });
   }
 
-  get libertyToPrisonPopulationByGender(): SupervisionPopulationSnapshotMetric {
-    return new SupervisionPopulationSnapshotMetric({
+  get libertyToPrisonPopulationByGender(): LibertyPopulationSnapshotMetric {
+    return new LibertyPopulationSnapshotMetric({
       id: "libertyToPrisonPopulationByGender",
       tenantId: this.rootStore.currentTenantId,
       sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
       rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
+      dataTransformer: createLibertyPopulationSnapshot,
       accessor: "gender",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
@@ -208,13 +208,13 @@ export default class MetricsStore {
     });
   }
 
-  get libertyToPrisonPopulationByPriorLengthOfIncarceration(): SupervisionPopulationSnapshotMetric {
-    return new SupervisionPopulationSnapshotMetric({
+  get libertyToPrisonPopulationByPriorLengthOfIncarceration(): LibertyPopulationSnapshotMetric {
+    return new LibertyPopulationSnapshotMetric({
       id: "libertyToPrisonPopulationByPriorLengthOfIncarceration",
       tenantId: this.rootStore.currentTenantId,
       sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
       rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
+      dataTransformer: createLibertyPopulationSnapshot,
       accessor: "priorLengthOfIncarceration",
       hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters

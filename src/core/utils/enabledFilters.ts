@@ -29,7 +29,7 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   libertyToPrisonPopulationOverTime: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
     ],
@@ -37,7 +37,8 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   libertyToPrisonPopulationByDistrict: {
     enabledFilters: [
-      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
     ],
@@ -45,7 +46,8 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   libertyToPrisonPopulationByPriorLengthOfIncarceration: {
     enabledFilters: [
-      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
     ],
@@ -53,7 +55,8 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   libertyToPrisonPopulationByGender: {
     enabledFilters: [
-      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
     ],
@@ -61,7 +64,8 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   libertyToPrisonPopulationByAgeGroup: {
     enabledFilters: [
-      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
     ],
@@ -69,7 +73,8 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
   libertyToPrisonPopulationByRace: {
     enabledFilters: [
-      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
     ],

@@ -20,6 +20,8 @@ import {
   Gender,
   LengthOfStay,
   LengthOfStayRawValue,
+  LibertyPopulationSnapshotRecord,
+  LibertyPopulationTimeSeriesRecord,
   PopulationProjectionTimeSeriesRecord,
   PrisonPopulationPersonLevelRecord,
   PrisonPopulationSnapshotRecord,
@@ -36,24 +38,31 @@ import {
 const sharedDimensionDefaults = {
   gender: "ALL" as Gender,
   ageGroup: "ALL" as AgeGroup,
-  lengthOfStay: "ALL",
 };
 
 const supervisionDimensionDefaults = {
   ...sharedDimensionDefaults,
   mostSevereViolation: "ALL",
   numberOfViolations: "ALL",
-  priorLengthOfIncarceration: "ALL",
   supervisionLevel: "ALL",
   supervisionType: "ALL",
   race: "ALL",
   district: "ALL",
+  lengthOfStay: "ALL",
+};
+
+const libertyDimensionDefaults = {
+  ...sharedDimensionDefaults,
+  priorLengthOfIncarceration: "ALL",
+  race: "ALL",
+  judicialDistrict: "ALL",
 };
 
 const prisonDimensionDefaults = {
   ...sharedDimensionDefaults,
   legalStatus: "ALL",
   facility: "ALL",
+  lengthOfStay: "ALL",
 };
 
 const timePeriodMap = {
@@ -75,6 +84,7 @@ const lengthOfStayMap = {
   months_24_36: "36",
   months_36_48: "48",
   months_48_60: "60",
+  all: "ALL",
 } as Record<LengthOfStayRawValue, LengthOfStay>;
 
 const mergeDefaults = (
@@ -254,6 +264,58 @@ export function createSupervisionPopulationTimeSeries(
         ageGroup: record.age_group as AgeGroup,
       },
       supervisionDimensionDefaults,
+      enabledFilters
+    );
+  });
+}
+
+export function createLibertyPopulationTimeSeries(
+  rawRecords: RawMetricData,
+  enabledFilters: EnabledFilters
+): LibertyPopulationTimeSeriesRecord[] {
+  return rawRecords.map((record) => {
+    return mergeDefaults(
+      {
+        year: Number(record.year),
+        month: Number(record.month),
+        count: parseInt(record.event_count),
+        avg90day: parseInt(record.avg_90day),
+        gender: record.gender as Gender,
+        ageGroup: record.age_group as AgeGroup,
+        judicialDistrict: record.judicial_district
+          ? record.judicial_district.toUpperCase()
+          : "Unknown",
+        race: record.race,
+        priorLengthOfIncarceration: record.prior_length_of_incarceration,
+      },
+      libertyDimensionDefaults,
+      enabledFilters
+    );
+  });
+}
+
+export function createLibertyPopulationSnapshot(
+  rawRecords: RawMetricData,
+  enabledFilters: EnabledFilters
+): LibertyPopulationSnapshotRecord[] {
+  return rawRecords.map((record) => {
+    return mergeDefaults(
+      {
+        count: parseInt(record.event_count),
+        lastUpdated:
+          record.last_updated && formatDateString(record.last_updated),
+        gender: record.gender as Gender,
+        ageGroup: record.age_group as AgeGroup,
+        judicialDistrict: record.judicial_district
+          ? record.judicial_district.toUpperCase()
+          : "Unknown",
+        race: record.race,
+        priorLengthOfIncarceration: record.prior_length_of_incarceration,
+        timePeriod:
+          record.time_period &&
+          timePeriodMap[record.time_period.toLowerCase() as TimePeriodRawValue],
+      },
+      libertyDimensionDefaults,
       enabledFilters
     );
   });

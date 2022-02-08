@@ -49,7 +49,7 @@ export type AgeGroup =
   | "50-54"
   | "55+";
 export type LengthOfStayRawValue =
-  | "ALL"
+  | "all"
   | "months_0_3"
   | "months_3_6"
   | "months_6_9"
@@ -94,7 +94,9 @@ export type MetricRecord =
   | PrisonPopulationSnapshotRecord
   | SupervisionPopulationTimeSeriesRecord
   | SupervisionPopulationSnapshotRecord
-  | PrisonPopulationPersonLevelRecord;
+  | PrisonPopulationPersonLevelRecord
+  | LibertyPopulationTimeSeriesRecord
+  | LibertyPopulationSnapshotRecord;
 
 export type PopulationProjectionTimeSeriesRecord = {
   totalPopulation: number;
@@ -155,7 +157,6 @@ export type SupervisionPopulationSnapshotRecord = {
   lengthOfStay: string;
   supervisionLevel: string;
   race: string;
-  priorLengthOfIncarceration: string;
   timePeriod: TimePeriod;
 };
 
@@ -172,6 +173,29 @@ export type SupervisionPopulationTimeSeriesRecord = {
   supervisionLevel: string;
   race: string;
   ageGroup: AgeGroup;
+};
+
+export type LibertyPopulationSnapshotRecord = {
+  count: number;
+  lastUpdated: Date;
+  gender: Gender;
+  ageGroup: AgeGroup;
+  judicialDistrict: string;
+  race: string;
+  priorLengthOfIncarceration: string;
+  timePeriod: TimePeriod;
+};
+
+export type LibertyPopulationTimeSeriesRecord = {
+  count: number;
+  avg90day: number;
+  year: number;
+  month: number;
+  gender: Gender;
+  judicialDistrict: string;
+  race: string;
+  ageGroup: AgeGroup;
+  priorLengthOfIncarceration: string;
 };
 
 export type PracticesTimeSeriesRecord = {
@@ -252,6 +276,8 @@ export interface Hydratable {
     | SupervisionPopulationSnapshotRecord[]
     | PrisonPopulationTimeSeriesRecord[]
     | SupervisionPopulationTimeSeriesRecord[]
+    | LibertyPopulationTimeSeriesRecord[]
+    | LibertyPopulationSnapshotRecord[]
     | PrisonPopulationPersonLevelRecord[];
   hydrate: () => void;
 }

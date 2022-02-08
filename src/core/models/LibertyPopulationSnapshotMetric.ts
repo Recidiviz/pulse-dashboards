@@ -24,25 +24,24 @@ import sumBy from "lodash/fp/sumBy";
 import values from "lodash/fp/values";
 import { computed, makeObservable } from "mobx";
 
-import { toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import { PopulationFilterLabels } from "../types/filters";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import { SupervisionPopulationSnapshotRecord, TimePeriod } from "./types";
+import { LibertyPopulationSnapshotRecord, TimePeriod } from "./types";
 import { filterTimePeriod } from "./utils";
 
-export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<SupervisionPopulationSnapshotRecord> {
-  accessor: keyof SupervisionPopulationSnapshotRecord;
+export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<LibertyPopulationSnapshotRecord> {
+  accessor: keyof LibertyPopulationSnapshotRecord;
 
   constructor(
-    props: BaseMetricConstructorOptions<SupervisionPopulationSnapshotRecord> & {
-      accessor: keyof SupervisionPopulationSnapshotRecord;
+    props: BaseMetricConstructorOptions<LibertyPopulationSnapshotRecord> & {
+      accessor: keyof LibertyPopulationSnapshotRecord;
     }
   ) {
     super(props);
 
-    makeObservable<SupervisionPopulationSnapshotMetric>(this, {
+    makeObservable<LibertyPopulationSnapshotMetric>(this, {
       totalCount: computed,
       dataSeries: computed,
       downloadableData: computed,
@@ -57,18 +56,14 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
     const { timePeriod } = this.rootStore.filtersStore.filters;
 
     const allRows = this.allRecords.filter(
-      (record: SupervisionPopulationSnapshotRecord) => {
+      (record: LibertyPopulationSnapshotRecord) => {
         return (
-          // #TODO #1596 create tooling to reduce listing every dimension in filters
-          record.supervisionType === "ALL" &&
+          // #TODO #1597 create tooling to reduce listing every dimension in filters
           record.ageGroup === "ALL" &&
           record.gender === "ALL" &&
-          record.mostSevereViolation === "ALL" &&
-          record.numberOfViolations === "ALL" &&
-          record.lengthOfStay === "ALL" &&
-          record.supervisionLevel === "ALL" &&
           record.race === "ALL" &&
-          record.district === "ALL" &&
+          record.judicialDistrict === "ALL" &&
+          record.priorLengthOfIncarceration === "ALL" &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,
@@ -88,49 +83,34 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
     return allRows.map((r) => r.count).reduce((a, b) => a + b, 0);
   }
 
-  get dataSeries(): SupervisionPopulationSnapshotRecord[] {
+  get dataSeries(): LibertyPopulationSnapshotRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
     const {
       gender,
-      supervisionType,
       ageGroup,
-      district,
-      numberOfViolations,
-      mostSevereViolation,
-      supervisionLevel,
       race,
       timePeriod,
+      judicialDistrict,
     } = this.rootStore.filtersStore.filters;
-
     const filteredRecords = this.allRecords.filter(
-      (record: SupervisionPopulationSnapshotRecord) => {
+      (record: LibertyPopulationSnapshotRecord) => {
         return (
-          // #TODO #1596 create tooling to reduce listing every dimension in filters
-          supervisionType.includes(record.supervisionType) &&
+          // #TODO #1597 create tooling to reduce listing every dimension in filters
           (this.accessor === "ageGroup"
             ? !["ALL"].includes(record.ageGroup)
             : ageGroup.includes(record.ageGroup)) &&
           (this.accessor === "gender"
             ? !["ALL"].includes(record.gender)
             : gender.includes(record.gender)) &&
-          (this.accessor === "district"
-            ? !["ALL"].includes(record.district)
-            : district.includes(record.district)) &&
-          (this.accessor === "mostSevereViolation"
-            ? !["ALL"].includes(record.mostSevereViolation)
-            : mostSevereViolation.includes(record.mostSevereViolation)) &&
-          (this.accessor === "numberOfViolations"
-            ? !["ALL"].includes(record.numberOfViolations)
-            : numberOfViolations.includes(record.numberOfViolations)) &&
-          (this.accessor === "lengthOfStay"
-            ? !["ALL"].includes(record.lengthOfStay)
-            : ["ALL"].includes(record.lengthOfStay)) &&
-          (this.accessor === "supervisionLevel"
-            ? !["ALL"].includes(record.supervisionLevel)
-            : supervisionLevel.includes(record.supervisionLevel)) &&
+          (this.accessor === "judicialDistrict"
+            ? !["ALL"].includes(record.judicialDistrict)
+            : judicialDistrict.includes(record.judicialDistrict)) &&
           (this.accessor === "race"
             ? !["ALL"].includes(record.race)
             : race.includes(record.race)) &&
+          (this.accessor === "priorLengthOfIncarceration"
+            ? !["ALL"].includes(record.priorLengthOfIncarceration)
+            : ["ALL"].includes(record.priorLengthOfIncarceration)) &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,
@@ -139,12 +119,11 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
         );
       }
     );
-
     const result = pipe(
-      groupBy((d: SupervisionPopulationSnapshotRecord) => [d[this.accessor]]),
+      groupBy((d: LibertyPopulationSnapshotRecord) => [d[this.accessor]]),
       values,
       map((dataset) => ({
-        // #TODO #1596 create tooling to reduce listing every dimension in filters
+        // #TODO #1597 create tooling to reduce listing every dimension in filters
         count: sumBy("count", dataset),
         populationProportion: (
           (sumBy("count", dataset) * 100) /
@@ -152,18 +131,14 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
         ).toFixed(),
         lastUpdated: dataset[0].lastUpdated,
         gender: dataset[0].gender,
-        district: dataset[0].district,
-        supervisionType: dataset[0].supervisionType,
+        judicialDistrict: dataset[0].judicialDistrict,
         ageGroup: dataset[0].ageGroup,
-        mostSevereViolation: dataset[0].mostSevereViolation,
-        numberOfViolations: dataset[0].numberOfViolations,
-        lengthOfStay: dataset[0].lengthOfStay,
-        supervisionLevel: dataset[0].supervisionLevel,
+        priorLengthOfIncarceration: dataset[0].priorLengthOfIncarceration,
         race: dataset[0].race,
         timePeriod: dataset[0].timePeriod,
       }))
     )(filteredRecords);
-    return result as SupervisionPopulationSnapshotRecord[];
+    return result as LibertyPopulationSnapshotRecord[];
   }
 
   get downloadableData(): DownloadableData | undefined {
@@ -173,7 +148,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
     const data: Record<string, number>[] = [];
     const labels: string[] = [];
 
-    this.dataSeries.forEach((d: SupervisionPopulationSnapshotRecord) => {
+    this.dataSeries.forEach((d: LibertyPopulationSnapshotRecord) => {
       data.push({
         Count: Math.round(d.count),
       });
@@ -193,7 +168,10 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
       chartDatasets: datasets,
       chartLabels: labels,
       chartId: this.chartTitle,
-      dataExportLabel: toTitleCase(this.accessor),
+      dataExportLabel:
+        this.rootStore?.filtersStore.filterOptions?.[
+          this.accessor as keyof PopulationFilterLabels
+        ].title || "",
     };
   }
 

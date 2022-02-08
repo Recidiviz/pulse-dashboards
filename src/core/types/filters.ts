@@ -29,6 +29,7 @@ export type PopulationFilterValues = {
   facility: string[];
   ageGroup: AgeGroup[];
   district: string[];
+  judicialDistrict: string[];
   mostSevereViolation: string[];
   numberOfViolations: string[];
   supervisionLevel: string[];
@@ -44,6 +45,7 @@ export type PopulationFilterLabels = {
   facility: string;
   ageGroup: string;
   district: string;
+  judicialDistrict: string;
   mostSevereViolation: string;
   numberOfViolations: string;
   supervisionLevel: string;
@@ -69,6 +71,7 @@ export interface PopulationFilters {
   [FILTER_TYPES.AGE_GROUP]: PopulationFilter;
   [FILTER_TYPES.FACILITY]: PopulationFilter;
   [FILTER_TYPES.DISTRICT]: PopulationFilter;
+  [FILTER_TYPES.JUDICIAL_DISTRICT]: PopulationFilter;
   [FILTER_TYPES.MOST_SEVERE_VIOLATION]: PopulationFilter;
   [FILTER_TYPES.NUMBER_OF_VIOLATIONS]: PopulationFilter;
   [FILTER_TYPES.SUPERVISION_LEVEL]: PopulationFilter;

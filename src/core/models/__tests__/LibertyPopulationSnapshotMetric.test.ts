@@ -21,11 +21,8 @@ import RootStore from "../../../RootStore";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
 import { FILTER_TYPES } from "../../utils/constants";
-import SupervisionPopulationSnapshotMetric from "../SupervisionPopulationSnapshotMetric";
-import {
-  createSupervisionPopulationSnapshot,
-  formatDateString,
-} from "../utils";
+import LibertyPopulationSnapshotMetric from "../LibertyPopulationSnapshotMetric";
+import { createLibertyPopulationSnapshot, formatDateString } from "../utils";
 
 const OLD_ENV = process.env;
 
@@ -42,59 +39,51 @@ global.fetch = jest.fn().mockResolvedValue({
 jest.mock("../../../api/metrics/metricsClient", () => {
   return {
     callMetricsApi: jest.fn().mockResolvedValue({
-      supervision_to_prison_population_snapshot_by_dimension: [
+      liberty_to_prison_population_snapshot_by_dimension: [
         // ALL row 6 months
         {
           gender: "ALL",
           age_group: "ALL",
-          district: "ALL",
+          judicial_district: "ALL",
           event_count: "45",
           last_updated: "2021-10-27",
-          most_severe_violation: "ALL",
-          number_of_violations: "ALL",
-          supervision_type: "ALL",
-          length_of_stay: "ALL",
           time_period: "months_0_6",
         },
         // ALL row 12 months
         {
           gender: "ALL",
           age_group: "ALL",
-          district: "ALL",
+          judicial_district: "ALL",
           event_count: "20",
           last_updated: "2021-10-27",
-          most_severe_violation: "ALL",
-          number_of_violations: "ALL",
-          supervision_type: "ALL",
-          length_of_stay: "ALL",
           time_period: "months_7_12",
         },
         // Row with missing dimension value which will default to Unknown
         {
           gender: undefined,
-          district: "ALL",
+          judicial_district: "ALL",
           event_count: "1",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
         },
         {
           gender: "ALL",
-          district: "DISTRICT_1",
+          judicial_district: "JUDICIAL_DISTRICT_1",
           event_count: "15",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
         },
         {
           gender: "ALL",
-          district: "DISTRICT_2",
-          person_count: "10",
+          judicial_district: "JUDICIAL_DISTRICT_2",
+          event_count: "10",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
         },
         {
           gender: "FEMALE",
-          district: "DISTRICT_1",
-          person_count: "5",
+          judicial_district: "JUDICIAL_DISTRICT_1",
+          event_count: "5",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
         },
@@ -103,26 +92,26 @@ jest.mock("../../../api/metrics/metricsClient", () => {
   };
 });
 
-describe("SupervisionPopulationSnapshotMetric", () => {
-  let metric: SupervisionPopulationSnapshotMetric;
+describe("LibertyPopulationSnapshotMetric", () => {
+  let metric: LibertyPopulationSnapshotMetric;
 
   beforeEach(() => {
     process.env = Object.assign(process.env, {
       REACT_APP_API_URL: "test-url",
     });
     mockCoreStore.filtersStore = filtersStore;
-    metric = new SupervisionPopulationSnapshotMetric({
-      id: "supervisionToPrisonPopulationByDistrict",
+    metric = new LibertyPopulationSnapshotMetric({
+      id: "libertyToPrisonPopulationByDistrict",
       tenantId: mockTenantId,
-      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
+      sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
       rootStore: mockCoreStore,
-      accessor: "district",
-      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "judicialDistrict",
+      dataTransformer: createLibertyPopulationSnapshot,
       filters: {
         enabledFilters: [
           FILTER_TYPES.TIME_PERIOD,
           FILTER_TYPES.GENDER,
-          FILTER_TYPES.DISTRICT,
+          FILTER_TYPES.JUDICIAL_DISTRICT,
         ],
       },
       hasTimePeriodDimension: true,
@@ -140,7 +129,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
 
   it("fetches metrics when initialized", () => {
     expect(callMetricsApi).toHaveBeenCalledWith(
-      `${mockTenantId.toLowerCase()}/pathways/supervision_to_prison_population_snapshot_by_dimension`,
+      `${mockTenantId.toLowerCase()}/pathways/liberty_to_prison_population_snapshot_by_dimension`,
       RootStore.getTokenSilently
     );
   });
@@ -154,86 +143,62 @@ describe("SupervisionPopulationSnapshotMetric", () => {
       {
         gender: "ALL",
         ageGroup: "ALL",
-        district: "ALL",
+        judicialDistrict: "ALL",
         count: 45,
         lastUpdated: formatDateString("2021-10-27"),
-        mostSevereViolation: "ALL",
-        numberOfViolations: "ALL",
-        supervisionType: "ALL",
-        lengthOfStay: "ALL",
         race: "ALL",
-        supervisionLevel: "ALL",
         timePeriod: "6",
+        priorLengthOfIncarceration: "ALL",
       },
       {
         gender: "ALL",
         ageGroup: "ALL",
-        district: "ALL",
+        judicialDistrict: "ALL",
         count: 20,
         lastUpdated: formatDateString("2021-10-27"),
-        mostSevereViolation: "ALL",
-        numberOfViolations: "ALL",
-        supervisionType: "ALL",
-        lengthOfStay: "ALL",
         race: "ALL",
-        supervisionLevel: "ALL",
         timePeriod: "12",
+        priorLengthOfIncarceration: "ALL",
       },
       {
         gender: "Unknown",
         ageGroup: "ALL",
-        district: "ALL",
+        judicialDistrict: "ALL",
         count: 1,
         lastUpdated: formatDateString("2021-10-27"),
-        mostSevereViolation: "ALL",
-        numberOfViolations: "ALL",
-        supervisionType: "ALL",
-        lengthOfStay: "ALL",
         race: "ALL",
-        supervisionLevel: "ALL",
         timePeriod: "6",
+        priorLengthOfIncarceration: "ALL",
       },
       {
         gender: "ALL",
         ageGroup: "ALL",
-        district: "DISTRICT_1",
+        judicialDistrict: "JUDICIAL_DISTRICT_1",
         count: 15,
         lastUpdated: formatDateString("2021-10-27"),
-        mostSevereViolation: "ALL",
-        numberOfViolations: "ALL",
-        supervisionType: "ALL",
-        lengthOfStay: "ALL",
         race: "ALL",
-        supervisionLevel: "ALL",
         timePeriod: "6",
+        priorLengthOfIncarceration: "ALL",
       },
       {
         gender: "ALL",
         ageGroup: "ALL",
-        district: "DISTRICT_2",
+        judicialDistrict: "JUDICIAL_DISTRICT_2",
         count: 10,
         lastUpdated: formatDateString("2021-10-27"),
-        mostSevereViolation: "ALL",
-        numberOfViolations: "ALL",
-        supervisionType: "ALL",
-        lengthOfStay: "ALL",
         race: "ALL",
-        supervisionLevel: "ALL",
         timePeriod: "6",
+        priorLengthOfIncarceration: "ALL",
       },
       {
         gender: "FEMALE",
         ageGroup: "ALL",
-        district: "DISTRICT_1",
+        judicialDistrict: "JUDICIAL_DISTRICT_1",
         count: 5,
         lastUpdated: formatDateString("2021-10-27"),
-        mostSevereViolation: "ALL",
-        numberOfViolations: "ALL",
-        supervisionType: "ALL",
-        lengthOfStay: "ALL",
         race: "ALL",
-        supervisionLevel: "ALL",
         timePeriod: "6",
+        priorLengthOfIncarceration: "ALL",
       },
     ]);
   });
@@ -242,19 +207,18 @@ describe("SupervisionPopulationSnapshotMetric", () => {
     beforeEach(() => {
       mockCoreStore.filtersStore = filtersStore;
 
-      metric = new SupervisionPopulationSnapshotMetric({
-        id: "supervisionToPrisonPopulationByDistrict",
+      metric = new LibertyPopulationSnapshotMetric({
+        id: "libertyToPrisonPopulationByDistrict",
         tenantId: mockTenantId,
-        sourceFilename:
-          "supervision_to_prison_population_snapshot_by_dimension",
+        sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
         rootStore: mockCoreStore,
-        accessor: "district",
-        dataTransformer: createSupervisionPopulationSnapshot,
+        accessor: "judicialDistrict",
+        dataTransformer: createLibertyPopulationSnapshot,
         filters: {
           enabledFilters: [
             FILTER_TYPES.TIME_PERIOD,
             FILTER_TYPES.GENDER,
-            FILTER_TYPES.DISTRICT,
+            FILTER_TYPES.JUDICIAL_DISTRICT,
           ],
         },
         hasTimePeriodDimension: true,
@@ -286,20 +250,15 @@ describe("SupervisionPopulationSnapshotMetric", () => {
       });
       mockCoreStore.filtersStore = filtersStore;
 
-      metric = new SupervisionPopulationSnapshotMetric({
-        id: "supervisionToPrisonPopulationByDistrict",
+      metric = new LibertyPopulationSnapshotMetric({
+        id: "libertyToPrisonPopulationByDistrict",
         tenantId: mockTenantId,
-        sourceFilename:
-          "supervision_to_prison_population_snapshot_by_dimension",
+        sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
         rootStore: mockCoreStore,
-        accessor: "district",
-        dataTransformer: createSupervisionPopulationSnapshot,
+        accessor: "judicialDistrict",
+        dataTransformer: createLibertyPopulationSnapshot,
         filters: {
-          enabledFilters: [
-            FILTER_TYPES.TIME_PERIOD,
-            FILTER_TYPES.GENDER,
-            FILTER_TYPES.DISTRICT,
-          ],
+          enabledFilters: [FILTER_TYPES.TIME_PERIOD, FILTER_TYPES.GENDER],
         },
         hasTimePeriodDimension: true,
       });
@@ -312,32 +271,24 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         {
           gender: "ALL",
           ageGroup: "ALL",
-          district: "DISTRICT_1",
+          judicialDistrict: "JUDICIAL_DISTRICT_1",
           count: 15,
           lastUpdated: formatDateString("2021-10-27"),
-          mostSevereViolation: "ALL",
-          numberOfViolations: "ALL",
-          supervisionType: "ALL",
-          lengthOfStay: "ALL",
           populationProportion: "33",
           race: "ALL",
-          supervisionLevel: "ALL",
           timePeriod: "6",
+          priorLengthOfIncarceration: "ALL",
         },
         {
           gender: "ALL",
           ageGroup: "ALL",
-          district: "DISTRICT_2",
+          judicialDistrict: "JUDICIAL_DISTRICT_2",
           count: 10,
           lastUpdated: formatDateString("2021-10-27"),
-          mostSevereViolation: "ALL",
-          numberOfViolations: "ALL",
-          supervisionType: "ALL",
-          lengthOfStay: "ALL",
           populationProportion: "22",
           race: "ALL",
-          supervisionLevel: "ALL",
           timePeriod: "6",
+          priorLengthOfIncarceration: "ALL",
         },
       ]);
     });
@@ -350,32 +301,24 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         {
           gender: "ALL",
           ageGroup: "ALL",
-          district: "DISTRICT_1",
+          judicialDistrict: "JUDICIAL_DISTRICT_1",
           count: 15,
           lastUpdated: formatDateString("2021-10-27"),
-          mostSevereViolation: "ALL",
-          numberOfViolations: "ALL",
-          supervisionType: "ALL",
-          lengthOfStay: "ALL",
           populationProportion: "23",
           race: "ALL",
-          supervisionLevel: "ALL",
           timePeriod: "6",
+          priorLengthOfIncarceration: "ALL",
         },
         {
           gender: "ALL",
           ageGroup: "ALL",
-          district: "DISTRICT_2",
+          judicialDistrict: "JUDICIAL_DISTRICT_2",
           count: 10,
           lastUpdated: formatDateString("2021-10-27"),
-          mostSevereViolation: "ALL",
-          numberOfViolations: "ALL",
-          supervisionType: "ALL",
-          lengthOfStay: "ALL",
           populationProportion: "15",
           race: "ALL",
-          supervisionLevel: "ALL",
           timePeriod: "6",
+          priorLengthOfIncarceration: "ALL",
         },
       ]);
     });
@@ -385,7 +328,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         if (metric.rootStore) {
           metric.rootStore.filtersStore.setFilters({
             gender: ["FEMALE"],
-            district: ["DISTRICT_1"],
+            judicialDistrict: ["JUDICIAL_DISTRICT_1"],
             timePeriod: ["12"],
           });
         }
@@ -395,17 +338,13 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           {
             ageGroup: "ALL",
             gender: "FEMALE",
-            district: "DISTRICT_1",
+            judicialDistrict: "JUDICIAL_DISTRICT_1",
             count: 5,
             lastUpdated: formatDateString("2021-10-27"),
-            mostSevereViolation: "ALL",
-            numberOfViolations: "ALL",
-            supervisionType: "ALL",
-            lengthOfStay: "ALL",
             populationProportion: "8",
             race: "ALL",
-            supervisionLevel: "ALL",
             timePeriod: "6",
+            priorLengthOfIncarceration: "ALL",
           },
         ]);
       });
@@ -423,19 +362,18 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         metric.rootStore.filtersStore.resetFilters();
       }
 
-      metric = new SupervisionPopulationSnapshotMetric({
-        id: "supervisionToPrisonPopulationByDistrict",
+      metric = new LibertyPopulationSnapshotMetric({
+        id: "libertyToPrisonPopulationByDistrict",
         tenantId: mockTenantId,
-        sourceFilename:
-          "supervision_to_prison_population_snapshot_by_dimension",
+        sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
         rootStore: mockCoreStore,
-        accessor: "district",
-        dataTransformer: createSupervisionPopulationSnapshot,
+        accessor: "judicialDistrict",
+        dataTransformer: createLibertyPopulationSnapshot,
         filters: {
           enabledFilters: [
             FILTER_TYPES.TIME_PERIOD,
             FILTER_TYPES.GENDER,
-            FILTER_TYPES.DISTRICT,
+            FILTER_TYPES.JUDICIAL_DISTRICT,
           ],
         },
       });
@@ -457,9 +395,9 @@ describe("SupervisionPopulationSnapshotMetric", () => {
             label: "",
           },
         ],
-        chartId: "Admissions from supervision by district",
-        chartLabels: ["DISTRICT_1", "DISTRICT_2"],
-        dataExportLabel: "District",
+        chartId: "Admissions from liberty to prison by district",
+        chartLabels: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
+        dataExportLabel: "Judicial District",
       };
       expect(metric.downloadableData).toEqual(expected);
     });

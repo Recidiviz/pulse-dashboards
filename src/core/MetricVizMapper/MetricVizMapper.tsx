@@ -17,9 +17,11 @@
 
 import React from "react";
 
+import LibertyPopulationOverTimeMetric from "../models/LibertyPopulationOverTimeMetric";
+import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshotMetric";
 import PathwaysMetric from "../models/PathwaysMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
-import PopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
+import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
 import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
@@ -41,7 +43,10 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
     return <VizPopulationProjectionOverTime metric={metric} />;
   }
 
-  if (metric instanceof PrisonPopulationSnapshotMetric) {
+  if (
+    metric instanceof PrisonPopulationSnapshotMetric ||
+    metric instanceof LibertyPopulationSnapshotMetric
+  ) {
     return <VizPopulationSnapshot metric={metric} />;
   }
 
@@ -59,21 +64,23 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
     return <VizPopulationPersonLevel metric={metric} />;
   }
 
-  if (metric instanceof PopulationOverTimeMetric) {
+  if (metric instanceof PrisonPopulationOverTimeMetric) {
     switch (metric.id) {
       case "prisonToSupervisionPopulationOverTime":
-        return <VizCountOverTimeWithAvg metric={metric} />;
-      case "libertyToPrisonPopulationOverTime":
         return <VizCountOverTimeWithAvg metric={metric} />;
       default:
         return <VizPopulationOverTime metric={metric} />;
     }
   }
 
+  if (metric instanceof LibertyPopulationOverTimeMetric) {
+    return <VizCountOverTimeWithAvg metric={metric} />;
+  }
+
   if (metric instanceof SupervisionPopulationOverTimeMetric) {
     switch (metric.id) {
       case "supervisionPopulationOverTime":
-        return <VizPopulationOverTime metric={metric as any} />;
+        return <VizPopulationOverTime metric={metric} />;
       default:
         return <VizCountOverTimeWithAvg metric={metric} />;
     }

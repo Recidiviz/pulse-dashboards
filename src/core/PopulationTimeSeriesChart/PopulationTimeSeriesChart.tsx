@@ -19,8 +19,12 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useCoreStore } from "../CoreStoreProvider";
-import PopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
-import { PrisonPopulationTimeSeriesRecord } from "../models/types";
+import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
+import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
+import {
+  PrisonPopulationTimeSeriesRecord,
+  SupervisionPopulationTimeSeriesRecord,
+} from "../models/types";
 import { getRecordDate } from "../models/utils";
 import withMetricHydrator from "../withMetricHydrator";
 import {
@@ -32,9 +36,11 @@ import {
 import PopulationTimeSeriesBaseChart from "./PopulationTimeSeriesBaseChart";
 
 type Props = {
-  metric: PopulationOverTimeMetric;
+  metric: PrisonPopulationOverTimeMetric | SupervisionPopulationOverTimeMetric;
   title: string;
-  data: PrisonPopulationTimeSeriesRecord[];
+  data:
+    | PrisonPopulationTimeSeriesRecord[]
+    | SupervisionPopulationTimeSeriesRecord[];
 };
 
 const PopulationTimeSeriesChart: React.FC<Props> = ({
@@ -52,7 +58,11 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
   const dateSpacing = Math.ceil(getDateSpacing(timePeriod) / 2);
 
   const historicalPopulation = data.map(
-    (d: PrisonPopulationTimeSeriesRecord) => ({
+    (
+      d:
+        | PrisonPopulationTimeSeriesRecord
+        | SupervisionPopulationTimeSeriesRecord
+    ) => ({
       date: getRecordDate(d),
       value: d.count,
     })

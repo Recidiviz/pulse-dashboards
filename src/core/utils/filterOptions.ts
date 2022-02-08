@@ -244,6 +244,34 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.facilities],
   },
+  [FILTER_TYPES.JUDICIAL_DISTRICT]: {
+    type: FILTER_TYPES.JUDICIAL_DISTRICT,
+    title: "Judicial District",
+    setFilters: setFilters(FILTER_TYPES.JUDICIAL_DISTRICT),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "JUDICIAL_DISTRICT_1", value: "JUDICIAL_DISTRICT_1" },
+      { label: "JUDICIAL_DISTRICT_2", value: "JUDICIAL_DISTRICT_2" },
+      { label: "JUDICIAL_DISTRICT_3", value: "JUDICIAL_DISTRICT_3" },
+      { label: "JUDICIAL_DISTRICT_4", value: "JUDICIAL_DISTRICT_4" },
+      { label: "JUDICIAL_DISTRICT_5", value: "JUDICIAL_DISTRICT_5" },
+    ],
+    locationNameMap: {
+      ALL: "All",
+      JUDICIAL_DISTRICT_1: "District 1",
+      JUDICIAL_DISTRICT_2: "District 2",
+      JUDICIAL_DISTRICT_3: "District 3",
+      JUDICIAL_DISTRICT_4: "District 4",
+      JUDICIAL_DISTRICT_5: "District 5",
+    },
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
   [FILTER_TYPES.MOST_SEVERE_VIOLATION]: {
     type: FILTER_TYPES.MOST_SEVERE_VIOLATION,
     title: "Most Severe Violation",
@@ -311,10 +339,17 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     options: [
       { label: "All", value: "ALL" },
       { label: "0", value: "0" },
+      { label: "1", value: "1" },
+      { label: "2", value: "2" },
+      { label: "3", value: "3" },
+      { label: "4", value: "4" },
+      { label: "5", value: "5" },
       { label: "6", value: "6" },
-      { label: "12", value: "12" },
-      { label: "18", value: "18" },
-      { label: "24", value: "24" },
+      { label: "7", value: "7" },
+      { label: "8", value: "8" },
+      { label: "9", value: "9" },
+      { label: "10", value: "10" },
+      { label: "11+", value: "11+" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -324,6 +359,7 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.facilities],
   },
+
   [FILTER_TYPES.RACE]: {
     type: FILTER_TYPES.RACE,
     title: "Race",
@@ -597,6 +633,29 @@ export const NdPopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.facilities],
   },
+  [FILTER_TYPES.JUDICIAL_DISTRICT]: {
+    type: FILTER_TYPES.JUDICIAL_DISTRICT,
+    title: "Judicial District",
+    setFilters: setFilters(FILTER_TYPES.JUDICIAL_DISTRICT),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "South Central", value: "SOUTH_CENTRAL" },
+      { label: "Northwest", value: "NORTHWEST" },
+      { label: "Northeast", value: "NORTHEAST" },
+      { label: "Southwest", value: "SOUTHWEST" },
+      { label: "Northeast Central", value: "NORTHEAST_CENTRAL" },
+      { label: "East Central", value: "EAST_CENTRAL" },
+      { label: "Southeast", value: "SOUTHEAST" },
+      { label: "North Central", value: "NORTH_CENTRAL" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
   [FILTER_TYPES.SUPERVISION_LEVEL]: {
     type: FILTER_TYPES.SUPERVISION_LEVEL,
     title: "Supervision Level",
@@ -823,6 +882,9 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
   [FILTER_TYPES.DISTRICT]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.DISTRICT].defaultValue,
+  ],
+  [FILTER_TYPES.JUDICIAL_DISTRICT]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.JUDICIAL_DISTRICT].defaultValue,
   ],
   [FILTER_TYPES.MOST_SEVERE_VIOLATION]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.MOST_SEVERE_VIOLATION]

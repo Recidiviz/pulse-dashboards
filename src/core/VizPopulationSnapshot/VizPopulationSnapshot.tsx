@@ -25,6 +25,7 @@ import { formatDate, getTicks } from "../../utils";
 import { sortByLabel } from "../../utils/datasets";
 import * as styles from "../CoreConstants.scss";
 import { useCoreStore } from "../CoreStoreProvider";
+import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshotMetric";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
@@ -33,7 +34,10 @@ import { METRIC_MODES } from "../utils/constants";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizPopulationOverTimeProps = {
-  metric: PrisonPopulationSnapshotMetric | SupervisionPopulationSnapshotMetric;
+  metric:
+    | PrisonPopulationSnapshotMetric
+    | SupervisionPopulationSnapshotMetric
+    | LibertyPopulationSnapshotMetric;
 };
 
 const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
@@ -56,8 +60,18 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
 
   // @ts-ignore
   const accessorFilter = filters[accessor];
-  const isRotateLabels = ["district", "race", "facility"].includes(accessor);
-  const isGeographic = ["district", "facility", "officer"].includes(accessor);
+  const isRotateLabels = [
+    "district",
+    "race",
+    "facility",
+    "judicialDistrict",
+  ].includes(accessor);
+  const isGeographic = [
+    "district",
+    "facility",
+    "officer",
+    "judicialDistrict",
+  ].includes(accessor);
   const isRate =
     currentMetricMode === METRIC_MODES.RATES && enableMetricModeToggle;
 

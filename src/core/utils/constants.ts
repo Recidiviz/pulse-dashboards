@@ -27,6 +27,7 @@ export const FILTER_TYPES = {
   AGE_GROUP: "ageGroup",
   FACILITY: "facility",
   DISTRICT: "district",
+  JUDICIAL_DISTRICT: "judicialDistrict",
   MOST_SEVERE_VIOLATION: "mostSevereViolation",
   PRIOR_LENGTH_OF_INCARCERATION: "priorLengthOfIncarceration",
   RACE: "race",
