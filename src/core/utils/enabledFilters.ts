@@ -353,6 +353,15 @@ export const MeEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
 
 export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
+  supervisionToPrisonOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+    ],
+    enabledMoreFilters: [FILTER_TYPES.SUPERVISION_TYPE],
+  },
 };
 
 export default {
