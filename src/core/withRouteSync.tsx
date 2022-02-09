@@ -28,12 +28,13 @@ import {
   removeUndefinedValuesFromObject,
 } from "../utils/navigation";
 import { useCoreStore } from "./CoreStoreProvider";
+import { TenantId } from "./models/types";
 import { DEFAULT_ENTITY_ID, METRIC_TYPES } from "./PagePractices/types";
 import { PopulationFilterLabels } from "./types/filters";
 import { convertLabelsToValues } from "./utils/filterOptions";
 import {
   CORE_PAGES,
-  DEFAULT_PATHWAYS_SECTION_BY_PAGE,
+  getDefaultPathwaysSectionByPage,
   PATHWAYS_VIEWS,
   PathwaysPage,
   PathwaysSection,
@@ -50,7 +51,10 @@ type NormalizedParams = {
   entityId: string;
 };
 
-const normalizeRouteParams = (rawParams: RouteParams): NormalizedParams => {
+const normalizeRouteParams = (
+  rawParams: RouteParams,
+  currentTenantId?: TenantId
+): NormalizedParams => {
   const {
     entityId: rawEntityId,
     sectionId: rawSectionId,
@@ -65,7 +69,8 @@ const normalizeRouteParams = (rawParams: RouteParams): NormalizedParams => {
   return {
     entityId: entityId || DEFAULT_ENTITY_ID,
     sectionId:
-      sectionId || (pageId && DEFAULT_PATHWAYS_SECTION_BY_PAGE[pageId]),
+      sectionId ||
+      (pageId && getDefaultPathwaysSectionByPage(pageId, currentTenantId)),
   };
 };
 
@@ -85,11 +90,15 @@ const withRouteSync = <Props extends RouteParams>(
       setSection,
       filtersStore,
       metricsStore,
+      currentTenantId,
     } = useCoreStore();
 
     // prepare URI params to sync with store
     const [viewId, pageId] = pathname.split("/").slice(1, 3);
-    const { entityId, sectionId } = normalizeRouteParams(useParams());
+    const { entityId, sectionId } = normalizeRouteParams(
+      useParams(),
+      currentTenantId
+    );
 
     // prepare query params to sync with store
     const queryParams =

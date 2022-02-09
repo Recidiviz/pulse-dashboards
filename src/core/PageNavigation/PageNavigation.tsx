@@ -64,7 +64,7 @@ const PageNavigation: React.FC = () => {
                 page?.toLowerCase() === pageOption.toLowerCase(),
             })}
           >
-            {getPageHeadingFromId(pageOption)}
+            {getPageHeadingFromId(pageOption, currentTenantId)}
           </Link>
         </li>
       ))}

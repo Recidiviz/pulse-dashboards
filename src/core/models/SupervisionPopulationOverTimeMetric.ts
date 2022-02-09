@@ -124,7 +124,9 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
     this.dataSeries.forEach((d: SupervisionPopulationTimeSeriesRecord) => {
       data.push({
         value: Math.round(d.count),
-        "3-month rolling average": Math.round(d.avg90day),
+        ...(d.avg90day && {
+          "3-month rolling average": Math.round(d.avg90day),
+        }),
       });
 
       labels.push(formatMonthAndYear(getRecordDate(d)));

@@ -48,7 +48,7 @@ describe("MethodologyPathways", () => {
   describe("when the tenant is US_ID", () => {
     const allowedNavigation = {
       system: ["prison", "supervision"],
-      prison: ["countOverTime"],
+      prison: ["projectedCountOverTime"],
       supervision: [],
       supervisionToPrison: ["countOverTime"],
       supervisionToLiberty: [],

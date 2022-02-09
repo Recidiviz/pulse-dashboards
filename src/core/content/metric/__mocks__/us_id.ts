@@ -22,6 +22,7 @@ import { StateSpecificMetricCopy } from "../../types";
 
 const content: StateSpecificMetricCopy = {
   projectedPrisonPopulationOverTime: {
+    title: "Projected prison populatio over time",
     methodology: "- ID Specific prison population methodology",
   },
   projectedSupervisionPopulationOverTime: {

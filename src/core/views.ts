@@ -14,7 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { MetricId, SimulationCompartment } from "./models/types";
+
+import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
+import { MetricId, SimulationCompartment, TenantId } from "./models/types";
 
 export type CoreView = keyof typeof CORE_VIEWS;
 export const CORE_VIEWS: Record<string, string> = {
@@ -76,6 +78,7 @@ export const PathwaysPageIdList = Object.keys(PATHWAYS_PAGES);
 export type PathwaysSection = keyof typeof PATHWAYS_SECTIONS;
 export const PATHWAYS_SECTIONS: Record<string, string> = {
   countOverTime: "countOverTime",
+  projectedCountOverTime: "projectedCountOverTime",
   countByLocation: "countByLocation",
   personLevelDetail: "personLevelDetail",
   countByMostSevereViolation: "countByMostSevereViolation",
@@ -98,6 +101,24 @@ export const DEFAULT_PATHWAYS_SECTION_BY_PAGE: Record<string, string> = {
   [PATHWAYS_PAGES.supervisionToLiberty]: PATHWAYS_SECTIONS.countOverTime,
 };
 
+const defaltPathwaysWithProjectionsSectionByPage: Record<string, string> = {
+  ...DEFAULT_PATHWAYS_SECTION_BY_PAGE,
+  [PATHWAYS_PAGES.prison]: PATHWAYS_SECTIONS.projectedCountOverTime,
+  [PATHWAYS_PAGES.supervision]: PATHWAYS_SECTIONS.projectedCountOverTime,
+};
+
+export function getDefaultPathwaysSectionByPage(
+  pageId: string,
+  currentTenantId?: TenantId
+): string {
+  switch (currentTenantId) {
+    case US_ID:
+      return defaltPathwaysWithProjectionsSectionByPage[pageId];
+    default:
+      return DEFAULT_PATHWAYS_SECTION_BY_PAGE[pageId];
+  }
+}
+
 const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
   [PATHWAYS_PAGES.libertyToPrison]: [
     "libertyToPrisonPopulationOverTime",
@@ -108,6 +129,7 @@ const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
     "libertyToPrisonPopulationByPriorLengthOfIncarceration",
   ],
   [PATHWAYS_PAGES.prison]: [
+    "projectedPrisonPopulationOverTime",
     "prisonPopulationOverTime",
     "prisonFacilityPopulation",
     "prisonPopulationPersonLevel",
@@ -162,8 +184,9 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
   prisonPopulationPersonLevel: PATHWAYS_SECTIONS.personLevelDetail,
   prisonFacilityPopulation: PATHWAYS_SECTIONS.countByLocation,
   prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
-  projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
-  projectedSupervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
+  projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS.projectedCountOverTime,
+  projectedSupervisionPopulationOverTime:
+    PATHWAYS_SECTIONS.projectedCountOverTime,
   prisonToSupervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   prisonToSupervisionPopulationByAge: PATHWAYS_SECTIONS.countByAgeGroup,
   prisonToSupervisionPopulationByFacility: PATHWAYS_SECTIONS.countByLocation,
@@ -216,7 +239,7 @@ export function getViewFromPathname(pathname: string): string {
   return pathnameToView[pathname];
 }
 
-const pageIdToHeading: Record<string, string> = {
+const defaultPageIdToHeading: Record<string, string> = {
   [CORE_PAGES.explore]: "Explore",
   [CORE_PAGES.projections]: "Projections",
   [CORE_PAGES.practices]: "Practices",
@@ -230,6 +253,25 @@ const pageIdToHeading: Record<string, string> = {
   [PATHWAYS_VIEWS.operations]: "Operational Metrics",
 };
 
-export function getPageHeadingFromId(pageId: string): string {
-  return pageIdToHeading[pageId];
+const ndPageToIdHeading: Record<string, string> = {
+  ...defaultPageIdToHeading,
+  [PATHWAYS_PAGES.libertyToPrison]: "Liberty to Incarceration",
+  [PATHWAYS_PAGES.prison]: "Incarceration",
+  [PATHWAYS_PAGES.prisonToSupervision]: "Incarceration to Supervision",
+  [PATHWAYS_PAGES.supervisionToPrison]: "Supervision to Incarceration",
+};
+
+// TODO #1639 Move to content system
+const pageIdToHeading: Record<TenantId, Record<string, string>> = {
+  US_ID: defaultPageIdToHeading,
+  US_ME: defaultPageIdToHeading,
+  US_TN: defaultPageIdToHeading,
+  US_ND: ndPageToIdHeading,
+};
+
+export function getPageHeadingFromId(
+  pageId: string,
+  currentTenantId: TenantId
+): string {
+  return pageIdToHeading[currentTenantId][pageId];
 }

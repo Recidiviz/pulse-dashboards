@@ -57,7 +57,7 @@ const ChartNote: React.FC<Props> = ({
         }}
         target="_blank"
       >
-        See full methodology. →
+        See full methodology →
       </Link>
     </div>
   );

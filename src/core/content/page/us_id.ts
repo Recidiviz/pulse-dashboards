@@ -24,12 +24,22 @@ const content: StateSpecificPageCopy = {
   prison: {
     summary:
       "These charts include individuals who are admitted to state facilities, including termers, riders, parole violators, people in CAPP, and people held in county jails under state jurisdiction.",
+    sections: {
+      projectedCountOverTime: "Prison population over time",
+      countByLocation: "Prison population by facility",
+      personLevelDetail: "List of people in prison",
+    },
     methodology:
       "These charts include individuals who are admitted to state facilities, including termers, riders, parole violators, people in CAPP, and people held in county jails under state jurisdiction.\n\nFor people held in paid county jail beds, the historical total incarcerated population uses the movements file to exclude people who have entered County Jails in unpaid beds. Currently, any movement period listed with the fac_cd + lu_cd code in the list ‘RTSX’, ‘RTUT’, ‘CJVS’, ‘CJCT’ is not counted until a subsequent movement is recorded without any of those codes. ",
   },
   supervision: {
     summary:
       "These charts include all people on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant.",
+    sections: {
+      projectedCountOverTime: "Supervision population over time",
+      countByLocation: "Supervision population by district",
+      countBySupervisionLevel: "Supervision population by supervision level",
+    },
     methodology:
       "These charts include all people on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant.",
   },

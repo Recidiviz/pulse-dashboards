@@ -441,7 +441,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
             label: "",
           },
         ],
-        chartId: "List of people in prison",
+        chartId: "List of people in incarceration",
         chartLabels: [
           "Barney Rubble",
           "Fred Flinstone",

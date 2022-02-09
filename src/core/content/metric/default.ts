@@ -29,23 +29,20 @@ const content: MetricCopy = {
     title: "Supervision population over time",
     note: "Historical and projected population data were generated",
   },
-  supervisionToPrisonOverTime: {
-    title: "Admissions from supervision over time",
-    methodology:
-      "The chart describes the number of people admitted from supervision to prison.",
-  },
   supervisionToLibertyOverTime: {
     title: "Releases from supervision over time",
+    methodology:
+      'The chart describes the historical supervision population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. ',
   },
   prisonPopulationOverTime: {
-    title: "Prison population over time",
+    title: "Incarceration population over time",
     methodology:
-      "The chart describes the historical prison population over the selected “Time Period”. Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the “November 2020” data point on the chart will show the total number of people described in the section above on November 1, 2020. ",
+      'The chart describes the historical incarceration population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. ',
   },
   prisonPopulationPersonLevel: {
-    title: "List of people in prison",
+    title: "List of people in incarceration",
     methodology:
-      "The table includes a row for each person in prison as of the date specified in the chart title. ",
+      "The table includes a row for each person in incarceration as of the date specified in the chart title. ",
   },
   prisonFacilityPopulation: {
     title: "Prison population by facility",
@@ -55,20 +52,24 @@ const content: MetricCopy = {
   supervisionToPrisonPopulationByDistrict: {
     title: "Admissions from supervision by district",
     methodology:
-      "The chart describes the number of people admitted to prison from each district as of the date specified in the chart title. ",
+      'The chart describes the number of people admitted to prison from each district as of the date specified in the chart title. When "Counts" is selected, the number of people in each district is shown. When "Rates" is selected, the percentage shows the number of people in each district divided by the total number of people admitted to incarceration.',
+  },
+  supervisionToPrisonOverTime: {
+    title: "Admissions from supervision over time",
+    methodology:
+      "These charts include events where people are admitted from supervision to incarceration. This includes revocations, sanction admissions, and new court commits that occur while an individual is on supervision. Revocations are counted when the person was admitted to incarceration status, not when the violation occurred. All charts on this page are event-based, so if a single person has 2 revocations during the selected time period, 2 events are counted on this page.",
   },
   supervisionToPrisonPopulationByLengthOfStay: {
     title: "Time to admission from supervision to prison",
     chartXAxisTitle: "Time to admission from supervision to prison, in months",
-    chartYAxisTitle: "Proportion of supervision population",
   },
   supervisionToPrisonPopulationByNumberOfViolations: {
     title: "Admissions from supervision to prison by number of violations",
-    chartYAxisTitle: "Number of violations prior to admission to prison",
+    chartXAxisTitle: "Number of violations prior to admission to prison",
   },
   supervisionToPrisonPopulationByMostSevereViolation: {
     title: "Admissions from supervision to prison by most severe violation",
-    chartYAxisTitle: "Most severe violation prior to admission to prison",
+    chartXAxisTitle: "Most severe violation prior to admission to prison",
   },
   libertyToPrisonPopulationOverTime: {
     title: "Admissions from liberty to prison over time",
@@ -79,27 +80,21 @@ const content: MetricCopy = {
   libertyToPrisonPopulationByPriorLengthOfIncarceration: {
     title: "Admissions from liberty to prison by prior length of incarceration",
     chartXAxisTitle: "Prior length of incarceration, in years",
-    chartYAxisTitle: "Proportion of people who were previously incarcerated",
   },
   libertyToPrisonPopulationByGender: {
     title: "Admissions from liberty to prison by gender",
-    chartXAxisTitle: "Proportion of genders admitted to prison from liberty",
   },
   libertyToPrisonPopulationByAgeGroup: {
     title: "Admissions from liberty to prison by age",
-    chartXAxisTitle: "Proportion of ages admitted to prison from liberty",
   },
   libertyToPrisonPopulationByRace: {
     title: "Admissions from liberty to prison by race",
-    chartXAxisTitle: "Proportion of races admitted to prison from liberty",
   },
   prisonToSupervisionPopulationOverTime: {
     title: "Releases from prison to supervision over time",
   },
   prisonToSupervisionPopulationByAge: {
     title: "Releases from prison to supervision by age",
-    chartXAxisTitle:
-      "Proportion of ages of people released from prison to supervision",
   },
   prisonToSupervisionPopulationByFacility: {
     title: "Releases from prison to supervision by facility",
@@ -121,34 +116,33 @@ const content: MetricCopy = {
   },
   supervisionToPrisonPopulationByGender: {
     title: "Admissions from supervision to prison by gender",
-    chartXAxisTitle:
-      "Proportion of genders of people admitted from supervision to prison",
   },
   supervisionToPrisonPopulationByRace: {
     title: "Admissions from supervision to prison by race",
-    chartXAxisTitle:
-      "Proportion of races of people admitted from supervision to prison",
   },
   supervisionToLibertyPopulationByLengthOfStay: {
     title: "Time served at release from supervision",
     chartXAxisTitle: "Time since starting supervision, in months",
-    chartYAxisTitle: "Proportion of cohort",
   },
   supervisionToLibertyPopulationByLocation: {
     title: "Releases from supervision by district",
+    methodology:
+      'The chart describes the number of people released from supervision to liberty from each district as of the date specified in the chart title. When "Counts" is selected, the number of people in each district is shown. When "Rates" is selected, the percentage shows the number of people in each district divided by the total number of people released to liberty.',
   },
   supervisionToLibertyPopulationByGender: {
     title: "Releases from supervision by gender",
-    chartXAxisTitle:
-      "Proportion of genders of people released from supervision",
+    methodology:
+      'The chart describes the number of people released from supervision to liberty from each gender as of the date specified in the chart title. When "Counts" is selected, the number of people in each gender is shown. When "Rates" is selected, the percentage shows the number of people in each gender divided by the total number of people released to liberty.',
   },
   supervisionToLibertyPopulationByAgeGroup: {
     title: "Releases from supervision by age",
-    chartXAxisTitle: "Proportion of ages of people released from supervision",
+    methodology:
+      'The chart describes the number of people released from supervision to liberty from each age group as of the date specified in the chart title. When "Counts" is selected, the number of people in each age group is shown. When "Rates" is selected, the percentage shows the number of people in each age group divided by the total number of people released to liberty.',
   },
   supervisionToLibertyPopulationByRace: {
     title: "Releases from supervision by race",
-    chartXAxisTitle: "Proportion of races of people released from supervision",
+    methodology:
+      'The chart describes the number of people released from supervision to liberty from each race as of the date specified in the chart title. When "Counts" is selected, the number of people in each race is shown. When "Rates" is selected, the percentage shows the number of people in each race divided by the total number of people released to liberty.',
   },
 };
 

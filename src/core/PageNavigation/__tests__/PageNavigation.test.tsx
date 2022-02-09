@@ -64,6 +64,7 @@ describe("CoreLayout tests", () => {
           community: ["page1", "page2", "page3"],
         },
       },
+      currentTenantId: "US_ID",
     });
     (useQueryParams as jest.Mock).mockReturnValue(["query", jest.fn()]);
   });

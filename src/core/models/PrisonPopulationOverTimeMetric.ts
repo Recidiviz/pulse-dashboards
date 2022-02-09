@@ -114,6 +114,9 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
     this.dataSeries.forEach((d: PrisonPopulationTimeSeriesRecord) => {
       data.push({
         Population: Math.round(d.count),
+        ...(d.avg90day && {
+          "3-month rolling average": Math.round(d.avg90day),
+        }),
       });
 
       labels.push(formatMonthAndYear(getRecordDate(d)));

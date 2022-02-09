@@ -16,7 +16,6 @@
 // =============================================================================
 import { makeAutoObservable } from "mobx";
 
-import { US_ID } from "../../RootStore/TenantStore/pathwaysTenants";
 import LibertyPopulationOverTimeMetric from "../models/LibertyPopulationOverTimeMetric";
 import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshotMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
@@ -74,10 +73,9 @@ export default class MetricsStore {
         [PATHWAYS_SECTIONS.countByRace]: this.libertyToPrisonPopulationByRace,
       },
       [PATHWAYS_PAGES.prison]: {
-        [PATHWAYS_SECTIONS.countOverTime]:
-          this.rootStore.currentTenantId === US_ID
-            ? this.projectedPrisonPopulationOverTime
-            : this.prisonPopulationOverTime,
+        [PATHWAYS_SECTIONS.projectedCountOverTime]: this
+          .projectedPrisonPopulationOverTime,
+        [PATHWAYS_SECTIONS.countOverTime]: this.prisonPopulationOverTime,
         [PATHWAYS_SECTIONS.countByLocation]: this.prisonFacilityPopulation,
         [PATHWAYS_SECTIONS.personLevelDetail]: this.prisonPopulationPersonLevel,
       },
@@ -92,10 +90,9 @@ export default class MetricsStore {
           .prisonToSupervisionPopulationPersonLevel,
       },
       [PATHWAYS_PAGES.supervision]: {
-        [PATHWAYS_SECTIONS.countOverTime]:
-          this.rootStore.currentTenantId === US_ID
-            ? this.projectedSupervisionPopulationOverTime
-            : this.supervisionPopulationOverTime,
+        [PATHWAYS_SECTIONS.projectedCountOverTime]: this
+          .projectedSupervisionPopulationOverTime,
+        [PATHWAYS_SECTIONS.countOverTime]: this.supervisionPopulationOverTime,
         [PATHWAYS_SECTIONS.countByLocation]: this
           .supervisionPopulationByDistrict,
         [PATHWAYS_SECTIONS.countBySupervisionLevel]: this

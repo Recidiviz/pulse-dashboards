@@ -545,6 +545,18 @@ export const NdPopulationFilterOptions: PopulationFilters = {
         longLabel: "County Jail",
         value: "CJ",
       },
+      {
+        label: "TRCC",
+        value: "TRCC",
+      },
+      {
+        label: "NTAD",
+        value: "NTAD",
+      },
+      {
+        label: "TABLET",
+        value: "TABLET",
+      },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
