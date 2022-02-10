@@ -30,8 +30,8 @@
     height: $header-height;
 
     .lantern-logo {
-      height: $header-height/2;
-      margin: $header-height/4;
+      height: calc($header-height/2);
+      margin: calc($header-height/4);
     }
 
     .nav-right {

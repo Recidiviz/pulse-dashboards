@@ -29,60 +29,60 @@ $responsive: true;
 
 @for $i from 0 through 4 {
   .gapX-#{$i} {
-    margin-left: #{($i / -2)}px !important;
-    margin-right: #{($i / -2)}px !important;
+    margin-left: #{(calc($i / -2))}px !important;
+    margin-right: #{(calc($i / -2))}px !important;
 
     & > * {
-      padding-left: #{($i / 2)}px !important;
-      padding-right: #{($i / 2)}px !important;
+      padding-left: #{(calc($i / 2))}px !important;
+      padding-right: #{(calc($i / 2))}px !important;
     }
   }
 
   .gapY-#{$i} {
-    margin-top: #{($i / -2)}px !important;
-    margin-bottom: #{($i / -2)}px !important;
+    margin-top: #{(calc($i / -2))}px !important;
+    margin-bottom: #{(calc($i / -2))}px !important;
 
     & > * {
-      padding-top: #{($i / 2)}px !important;
-      padding-bottom: #{($i / 2)}px !important;
+      padding-top: #{(calc($i / 2))}px !important;
+      padding-bottom: #{(calc($i / 2))}px !important;
     }
   }
 
   .gap-#{$i} {
-    margin: #{($i / -2)}px !important;
+    margin: #{(calc($i / -2))}px !important;
 
     & > * {
-      padding: #{($i / 2)}px !important;
+      padding: #{(calc($i / 2))}px !important;
     }
   }
 
   @if ($responsive == true) {
     @include generateResponsive() {
       .gapX-#{$i}\@#{$breakpointAlias} {
-        margin-left: #{($i / -2)}px !important;
-        margin-right: #{($i / -2)}px !important;
+        margin-left: #{(calc($i / -2))}px !important;
+        margin-right: #{(calc($i / -2))}px !important;
 
         & > * {
-          padding-left: #{($i / 2)}px !important;
-          padding-right: #{($i / 2)}px !important;
+          padding-left: #{(calc($i / 2))}px !important;
+          padding-right: #{(calc($i / 2))}px !important;
         }
       }
 
       .gapY-#{$i}\@#{$breakpointAlias} {
-        margin-top: #{($i / -2)}px !important;
-        margin-bottom: #{($i / -2)}px !important;
+        margin-top: #{(calc($i / -2))}px !important;
+        margin-bottom: #{(calc($i / -2))}px !important;
 
         & > * {
-          padding-top: #{($i / 2)}px !important;
-          padding-bottom: #{($i / 2)}px !important;
+          padding-top: #{(calc($i / 2))}px !important;
+          padding-bottom: #{(calc($i / 2))}px !important;
         }
       }
 
       .gap-#{$i}\@#{$breakpointAlias} {
-        margin: #{($i / -2)}px !important;
+        margin: #{(calc($i / -2))}px !important;
 
         & > * {
-          padding: #{($i / 2)}px !important;
+          padding: #{(calc($i / 2))}px !important;
         }
       }
     }
@@ -96,60 +96,60 @@ $responsive: true;
 @for $i from 5 through 35 {
   @if $i % 5 == 0 {
     .gapX-#{$i} {
-      margin-left: #{($i / -2)}px !important;
-      margin-right: #{($i / -2)}px !important;
+      margin-left: #{(calc($i / -2))}px !important;
+      margin-right: #{(calc($i / -2))}px !important;
 
       & > * {
-        padding-left: #{($i / 2)}px !important;
-        padding-right: #{($i / 2)}px !important;
+        padding-left: #{(calc($i / 2))}px !important;
+        padding-right: #{(calc($i / 2))}px !important;
       }
     }
 
     .gapY-#{$i} {
-      margin-top: #{($i / -2)}px !important;
-      margin-bottom: #{($i / -2)}px !important;
+      margin-top: #{(calc($i / -2))}px !important;
+      margin-bottom: #{(calc($i / -2))}px !important;
 
       & > * {
-        padding-top: #{($i / 2)}px !important;
-        padding-bottom: #{($i / 2)}px !important;
+        padding-top: #{(calc($i / 2))}px !important;
+        padding-bottom: #{(calc($i / 2))}px !important;
       }
     }
 
     .gap-#{$i} {
-      margin: #{($i / -2)}px !important;
+      margin: #{(calc($i / -2))}px !important;
 
       & > * {
-        padding: #{($i / 2)}px !important;
+        padding: #{(calc($i / 2))}px !important;
       }
     }
 
     @if ($responsive == true) {
       @include generateResponsive() {
         .gapX-#{$i}\@#{$breakpointAlias} {
-          margin-left: #{($i / -2)}px !important;
-          margin-right: #{($i / -2)}px !important;
+          margin-left: #{(calc($i / -2))}px !important;
+          margin-right: #{(calc($i / -2))}px !important;
 
           & > * {
-            padding-left: #{($i / 2)}px !important;
-            padding-right: #{($i / 2)}px !important;
+            padding-left: #{(calc($i / 2))}px !important;
+            padding-right: #{(calc($i / 2))}px !important;
           }
         }
 
         .gapY-#{$i}\@#{$breakpointAlias} {
-          margin-top: #{($i / -2)}px !important;
-          margin-bottom: #{($i / -2)}px !important;
+          margin-top: #{(calc($i / -2))}px !important;
+          margin-bottom: #{(calc($i / -2))}px !important;
 
           & > * {
-            padding-top: #{($i / 2)}px !important;
-            padding-bottom: #{($i / 2)}px !important;
+            padding-top: #{(calc($i / 2))}px !important;
+            padding-bottom: #{(calc($i / 2))}px !important;
           }
         }
 
         .gap-#{$i}\@#{$breakpointAlias} {
-          margin: #{($i / -2)}px !important;
+          margin: #{(calc($i / -2))}px !important;
 
           & > * {
-            padding: #{($i / 2)}px !important;
+            padding: #{(calc($i / 2))}px !important;
           }
         }
       }
@@ -164,60 +164,60 @@ $responsive: true;
 @for $i from 40 through 160 {
   @if $i % 10 == 0 {
     .gapX-#{$i} {
-      margin-left: #{($i / -2)}px !important;
-      margin-right: #{($i / -2)}px !important;
+      margin-left: #{(calc($i / -2))}px !important;
+      margin-right: #{(calc($i / -2))}px !important;
 
       & > * {
-        padding-left: #{($i / 2)}px !important;
-        padding-right: #{($i / 2)}px !important;
+        padding-left: #{(calc($i / 2))}px !important;
+        padding-right: #{(calc($i / 2))}px !important;
       }
     }
 
     .gapY-#{$i} {
-      margin-top: #{($i / -2)}px !important;
-      margin-bottom: #{($i / -2)}px !important;
+      margin-top: #{(calc($i / -2))}px !important;
+      margin-bottom: #{(calc($i / -2))}px !important;
 
       & > * {
-        padding-top: #{($i / 2)}px !important;
-        padding-bottom: #{($i / 2)}px !important;
+        padding-top: #{(calc($i / 2))}px !important;
+        padding-bottom: #{(calc($i / 2))}px !important;
       }
     }
 
     .gap-#{$i} {
-      margin: #{($i / -2)}px !important;
+      margin: #{(calc($i / -2))}px !important;
 
       & > * {
-        padding: #{($i / 2)}px !important;
+        padding: #{(calc($i / 2))}px !important;
       }
     }
 
     @if ($responsive == true) {
       @include generateResponsive() {
         .gapX-#{$i}\@#{$breakpointAlias} {
-          margin-left: #{($i / -2)}px !important;
-          margin-right: #{($i / -2)}px !important;
+          margin-left: #{(calc($i / -2))}px !important;
+          margin-right: #{(calc($i / -2))}px !important;
 
           & > * {
-            padding-left: #{($i / 2)}px !important;
-            padding-right: #{($i / 2)}px !important;
+            padding-left: #{(calc($i / 2))}px !important;
+            padding-right: #{(calc($i / 2))}px !important;
           }
         }
 
         .gapY-#{$i}\@#{$breakpointAlias} {
-          margin-top: #{($i / -2)}px !important;
-          margin-bottom: #{($i / -2)}px !important;
+          margin-top: #{(calc($i / -2))}px !important;
+          margin-bottom: #{(calc($i / -2))}px !important;
 
           & > * {
-            padding-top: #{($i / 2)}px !important;
-            padding-bottom: #{($i / 2)}px !important;
+            padding-top: #{(calc($i / 2))}px !important;
+            padding-bottom: #{(calc($i / 2))}px !important;
           }
         }
 
         .gap-#{$i}\@#{$breakpointAlias} {
-          margin: #{($i / -2)}px !important;
+          margin: #{(calc($i / -2))}px !important;
 
           & > * {
-            padding: #{($i / 2)}px !important;
+            padding: #{(calc($i / 2))}px !important;
           }
         }
       }
