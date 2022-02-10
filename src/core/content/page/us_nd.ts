@@ -28,7 +28,7 @@ const content: StateSpecificPageCopy = {
     sections: {
       countOverTime: "Incarceration population over time",
       countByLocation: "Incarceration population by facility",
-      personLevelDetail: "List of people in incarceration",
+      personLevelDetail: "List of people incarcerated",
     },
     methodology:
       "These charts show people incarcerated in a ND DOCR facility or serving their prison sentence in the community through the Community Placement Program. It does not include individuals incarcerated in county jails unless the individual is temporarily transferred to a county jail while already incarcerated.",
@@ -36,14 +36,14 @@ const content: StateSpecificPageCopy = {
   supervisionToPrison: {
     title: "Supervision to Incarceration",
     summary:
-      "These charts include events where people are admitted from supervision to incarceration. This includes revocations, sanction admissions, and new court commits that occur while an individual is on supervision. Admissions are counted when the person was admitted to incarceration status. All charts on this page are event-based, so if a single person has 2 revocations during the selected time period, 2 events are counted on this page.",
+      "These charts include events where people are admitted from supervision to incarceration. This includes revocations, sanction admissions, and new court commits that occur while an individual is on supervision. Admissions are counted when the person was admitted to incarceration status. All charts on this page are event-based, so if a single person has two admissions during the selected time period, two events are counted on this page.",
     methodology:
-      "These charts include events where people are admitted from supervision to incarceration. This includes revocations, sanction admissions, and new court commits that occur while an individual is on supervision. Admissions are counted when the person was admitted to incarceration status, not when the violation occurred. All charts on this page are event-based, so if a single person has 2 revocations during the selected time period, 2 events are counted on this page.",
+      "These charts include events where people are admitted from supervision to incarceration. This includes revocations, sanction admissions, and new court commits that occur while an individual is on supervision. Admissions are counted when the person was admitted to incarceration status. All charts on this page are event-based, so if a single person has two admissions during the selected time period, two events are counted on this page.",
   },
   libertyToPrison: {
     title: "Liberty to Incarceration",
     summary:
-      "These charts include events where people are admitted to incarceration status from a new court commitment. Admissions are counted when the person was admitted to incarceration. All charts on this page are event-based, so if a single person has 2 admissions during the selected time period, 2 events are counted on this page.",
+      "These charts include events where people are admitted to incarceration status from a new court commitment. Admissions are counted when the person was admitted to incarceration. All charts on this page are event-based, so if a single person has two admissions during the selected time period, two events are counted on this page.",
     sections: {
       countOverTime: "Admissions from liberty to incarceration over time",
       countByLocation: "Admissions from liberty to incarceration by district",
@@ -54,12 +54,12 @@ const content: StateSpecificPageCopy = {
         "Admissions from liberty to incarceration by prior length of incarceration",
     },
     methodology:
-      "These charts include events where people are admitted to incarceration status from a new court commitment. Admissions are counted when the person was admitted to incarceration. All charts on this page are event-based, so if a single person has 2 admissions during the selected time period, 2 events are counted on this page.",
+      "These charts include events where people are admitted to incarceration status from a new court commitment. Admissions are counted when the person was admitted to incarceration. All charts on this page are event-based, so if a single person has two admissions during the selected time period, two events are counted on this page.",
   },
   prisonToSupervision: {
     title: "Incarceration to Supervision",
     summary:
-      "These charts include events where people are released from incarceration to supervision. Releases are counted on the day a person leaves incarceration. All charts on this page are event-based, so if a single person has 2 releases during the selected time period, 2 events are counted on this page.",
+      "These charts include events where people are released from incarceration to supervision. Releases are counted on the day a person leaves incarceration. All charts on this page are event-based, so if a single person has two releases during the selected time period, two events are counted on this page.",
     sections: {
       countOverTime: "Releases from incarceration to supervision over time",
       countByLocation: "Releases from incarceration to supervision by facility",
@@ -67,7 +67,7 @@ const content: StateSpecificPageCopy = {
       personLevelDetail: "List of releases from incarceration to supervision",
     },
     methodology:
-      "These charts include events where people are released from incarceration to supervision. Releases are counted on the day a person leaves incarceration. All charts on this page are event-based, so if a single person has 2 releases during the selected time period, 2 events are counted on this page.",
+      "These charts include events where people are released from incarceration to supervision. Releases are counted on the day a person leaves incarceration. All charts on this page are event-based, so if a single person has two releases during the selected time period, two events are counted on this page.",
   },
   supervision: {
     title: "Supervision",
@@ -79,9 +79,9 @@ const content: StateSpecificPageCopy = {
   supervisionToLiberty: {
     title: "Supervision to Liberty",
     summary:
-      "These charts include events where people are released from supervision to liberty. Releases are counted on the day a person terminates supervision. All charts on this page are event-based, so if a single person has 2 releases during the selected time period, 2 events are counted on this page.",
+      "These charts include events where people are released from supervision to liberty. Releases are counted on the day a person terminates supervision. All charts on this page are event-based, so if a single person has two releases during the selected time period, two events are counted on this page.",
     methodology:
-      "These charts include events where people are released from supervision to liberty. Releases are counted on the day a person terminates supervision. All charts on this page are event-based, so if a single person has 2 releases during the selected time period, 2 events are counted on this page.",
+      "These charts include events where people are released from supervision to liberty. Releases are counted on the day a person terminates supervision. All charts on this page are event-based, so if a single person has two releases during the selected time period, two events are counted on this page.",
   },
 };
 
