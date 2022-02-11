@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import moment from "moment";
+
 import { EnabledFilter, EnabledFilters } from "../types/filters";
 import {
   AgeGroup,
@@ -131,8 +133,7 @@ export function createPrisonPopulationSnapshot(
     return mergeDefaults(
       {
         count: parseInt(record.event_count) || parseInt(record.person_count),
-        lastUpdated:
-          record.last_updated && formatDateString(record.last_updated),
+        lastUpdated: formatDateString(record.last_updated),
         legalStatus: record.legal_status,
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
@@ -160,8 +161,7 @@ export function createSupervisionPopulationSnapshot(
     return mergeDefaults(
       {
         count: parseInt(record.event_count) || parseInt(record.person_count),
-        lastUpdated:
-          record.last_updated && formatDateString(record.last_updated),
+        lastUpdated: formatDateString(record.last_updated),
         supervisionType: record.supervision_type as SupervisionType,
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
@@ -195,8 +195,7 @@ export function createPrisonPopulationPersonLevelList(
       {
         stateId: record.state_id || "Unknown",
         fullName: record.full_name || "Unknown",
-        lastUpdated:
-          record.last_updated && formatDateString(record.last_updated),
+        lastUpdated: formatDateString(record.last_updated),
         age: record.age || "Unknown",
         legalStatus: record.legal_status || "Unknown",
         gender: (record.gender as Gender) || "Unknown",
@@ -302,8 +301,7 @@ export function createLibertyPopulationSnapshot(
     return mergeDefaults(
       {
         count: parseInt(record.event_count),
-        lastUpdated:
-          record.last_updated && formatDateString(record.last_updated),
+        lastUpdated: formatDateString(record.last_updated),
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
         judicialDistrict: record.judicial_district
@@ -330,7 +328,8 @@ export function getRecordDate(d: TimeSeriesRecord): Date {
   return new Date(d.year, d.month - 1);
 }
 
-export const formatDateString = (dateString: string): Date => {
+export const formatDateString = (dateString: string): Date | undefined => {
+  if (!moment(dateString, "YYYY-MM-DD", true).isValid()) return undefined;
   const [year, month, day] = dateString.split("-");
   return new Date(Number(year), Number(month) - 1, Number(day));
 };

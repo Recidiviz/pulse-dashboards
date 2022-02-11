@@ -196,13 +196,7 @@ const TENANTS: Tenants = {
     enableUserRestrictions: false,
     enablePracticesCaseloadButton: false,
     navigation: {
-      system: [
-        PATHWAYS_PAGES.libertyToPrison,
-        PATHWAYS_PAGES.prison,
-        PATHWAYS_PAGES.prisonToSupervision,
-        PATHWAYS_PAGES.supervision,
-        PATHWAYS_PAGES.supervisionToPrison,
-      ],
+      system: [PATHWAYS_PAGES.prison],
       libertyToPrison: [
         PATHWAYS_SECTIONS.countOverTime,
         PATHWAYS_SECTIONS.countByLocation,

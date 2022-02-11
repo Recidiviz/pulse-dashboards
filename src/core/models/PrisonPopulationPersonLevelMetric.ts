@@ -80,7 +80,10 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
     );
 
     const result = pipe(
-      groupBy((d: PrisonPopulationPersonLevelRecord) => [d.stateId]),
+      groupBy((d: PrisonPopulationPersonLevelRecord) => [
+        d.stateId,
+        d.fullName,
+      ]),
       values,
       map((dataset) => ({
         fullName: dataset[0].fullName,

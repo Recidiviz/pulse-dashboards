@@ -188,13 +188,25 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
   },
   [FILTER_TYPES.LEGAL_STATUS]: {
     type: FILTER_TYPES.LEGAL_STATUS,
-    title: "Legal Status",
+    title: "Admission Reason",
     setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
     options: [
       { label: "All", value: "ALL" },
-      { label: "Rider", value: "TREATMENT_IN_PRISON" },
-      { label: "Termer", value: "GENERAL" },
-      { label: "Parole Violator", value: "PAROLE_BOARD_HOLD" },
+      { label: "New admission", value: "NEW_ADMISSION" },
+      {
+        label: "Transfer from other jurisdiction",
+        value: "TRANSFER_FROM_OTHER_JURISDICTION",
+      },
+      { label: "Transfer", value: "TRANSFER" },
+      { label: "Revocation", value: "REVOCATION" },
+      {
+        label: "Return from temporary release",
+        value: "RETURN_FROM_TEMPORARY_RELEASE",
+      },
+      { label: "Sanction", value: "SANCTION_ADMISSION" },
+      { label: "Return from escape", value: "RETURN_FROM_ESCAPE" },
+      { label: "Admitted in error", value: "ADMITTED_IN_ERROR" },
+      { label: "Status change", value: "STATUS_CHANGE" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -382,6 +394,24 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
 
 export const IdPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.LEGAL_STATUS]: {
+    type: FILTER_TYPES.LEGAL_STATUS,
+    title: "Legal Status",
+    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Rider", value: "TREATMENT_IN_PRISON" },
+      { label: "Termer", value: "GENERAL" },
+      { label: "Parole Violator", value: "PAROLE_BOARD_HOLD" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
 };
 
 export const TnPopulationFilterOptions: PopulationFilters = {
@@ -467,6 +497,104 @@ export const TnPopulationFilterOptions: PopulationFilters = {
 
 export const MePopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.LEGAL_STATUS]: {
+    type: FILTER_TYPES.LEGAL_STATUS,
+    title: "Admission Reason",
+    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "New admission", value: "NEW_ADMISSION" },
+      {
+        label: "Transfer from other jurisdiction",
+        value: "TRANSFER_FROM_OTHER_JURISDICTION",
+      },
+      { label: "Transfer", value: "TRANSFER" },
+      { label: "Revocation", value: "REVOCATION" },
+      {
+        label: "Return from temporary release",
+        value: "RETURN_FROM_TEMPORARY_RELEASE",
+      },
+      { label: "Return from escape", value: "RETURN_FROM_ESCAPE" },
+      { label: "Temporary custody", value: "TEMPORARY_CUSTODY" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.FACILITY]: {
+    type: FILTER_TYPES.FACILITY,
+    title: "Facility",
+    setFilters: setFilters(FILTER_TYPES.FACILITY),
+    options: [
+      { label: "All", value: "ALL" },
+      {
+        label: "MCC",
+        longLabel: "Maine Correctional Center",
+        value: "MAINE CORRECTIONAL CENTER",
+      },
+      {
+        label: "MVCF",
+        longLabel: "Mountain View Correctional Facility",
+        value: "MOUNTAIN VIEW CORRECTIONAL FACILITY",
+      },
+      {
+        label: "SMWRC",
+        longLabel: "Southern Maine Women's ReEntry Center",
+        value: "SOUTHERN MAINE WOMEN'S REENTRY CENTER",
+      },
+      {
+        label: "BCF",
+        longLabel: "Bolduc Correctional Facility",
+        value: "BOLDUC CORRECTIONAL FACILITY",
+      },
+      {
+        label: "MSP",
+        longLabel: "Maine State Prison",
+        value: "MAINE STATE PRISON",
+      },
+      {
+        label: "DCF",
+        longLabel: "Downeast Correctional Facility",
+        value: "DOWNEAST CORRECTIONAL FACILITY",
+      },
+      {
+        label: "CMPRC",
+        longLabel: "Central Maine Pre-Release Center",
+        value: "CENTRAL MAINE PRE-RELEASE CENTER",
+      },
+      {
+        label: "BPRC",
+        longLabel: "Bangor Pre-Release Center",
+        value: "BANGOR PRE-RELEASE CENTER",
+      },
+      {
+        label: "BWC",
+        longLabel: "Bangor Womens Center",
+        value: "BANGOR WOMENS CENTER",
+      },
+      {
+        label: "CO",
+        longLabel: "Central Office, IT",
+        value: "CENTRAL OFFICE, IT",
+      },
+      {
+        label: "YCJ",
+        longLabel: "York County Jail",
+        value: "YORK COUNTY JAIL",
+      },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
 };
 
 export const NdPopulationFilterOptions: PopulationFilters = {
