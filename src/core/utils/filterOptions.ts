@@ -534,57 +534,32 @@ export const MePopulationFilterOptions: PopulationFilters = {
       {
         label: "MCC",
         longLabel: "Maine Correctional Center",
-        value: "MAINE CORRECTIONAL CENTER",
+        value: "MCC",
       },
       {
         label: "MVCF",
         longLabel: "Mountain View Correctional Facility",
-        value: "MOUNTAIN VIEW CORRECTIONAL FACILITY",
+        value: "MVCF",
       },
       {
         label: "SMWRC",
         longLabel: "Southern Maine Women's ReEntry Center",
-        value: "SOUTHERN MAINE WOMEN'S REENTRY CENTER",
+        value: "SMWRC",
       },
       {
         label: "BCF",
         longLabel: "Bolduc Correctional Facility",
-        value: "BOLDUC CORRECTIONAL FACILITY",
+        value: "BCF",
       },
       {
         label: "MSP",
         longLabel: "Maine State Prison",
-        value: "MAINE STATE PRISON",
+        value: "MSP",
       },
       {
         label: "DCF",
         longLabel: "Downeast Correctional Facility",
-        value: "DOWNEAST CORRECTIONAL FACILITY",
-      },
-      {
-        label: "CMPRC",
-        longLabel: "Central Maine Pre-Release Center",
-        value: "CENTRAL MAINE PRE-RELEASE CENTER",
-      },
-      {
-        label: "BPRC",
-        longLabel: "Bangor Pre-Release Center",
-        value: "BANGOR PRE-RELEASE CENTER",
-      },
-      {
-        label: "BWC",
-        longLabel: "Bangor Womens Center",
-        value: "BANGOR WOMENS CENTER",
-      },
-      {
-        label: "CO",
-        longLabel: "Central Office, IT",
-        value: "CENTRAL OFFICE, IT",
-      },
-      {
-        label: "YCJ",
-        longLabel: "York County Jail",
-        value: "YORK COUNTY JAIL",
+        value: "DCF",
       },
     ],
     get defaultOption(): FilterOption {

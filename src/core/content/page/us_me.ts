@@ -20,6 +20,11 @@
 
 import { StateSpecificPageCopy } from "../types";
 
-const content: StateSpecificPageCopy = {};
+const content: StateSpecificPageCopy = {
+  prison: {
+    methodology:
+      "These charts include individuals who are admitted to Maine state prison facilities. People on SCCP and in County Jails are not included.",
+  },
+};
 
 export default content;

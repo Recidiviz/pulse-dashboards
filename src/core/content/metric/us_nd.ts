@@ -22,15 +22,16 @@ import { StateSpecificMetricCopy } from "../types";
 
 const content: StateSpecificMetricCopy = {
   prisonPopulationOverTime: {
-    note: "CPPs are included in the incarceration population",
+    note:
+      "CPPs are included in the incarceration population. In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
   },
   prisonPopulationPersonLevel: {
     title: "List of people incarcerated",
-    note: "CPPs are included in the incarceration population",
+    note: "CPPs are included in the incarceration population.",
   },
   prisonFacilityPopulation: {
     title: "Incarceration population by facility",
-    note: "CPPs are included in the incarceration population",
+    note: "CPPs are included in the incarceration population.",
     methodology:
       'This chart describes the total number of people incarcerated in each ND DOCR facility or serving their prison sentence in the community through the Community Placement Program as specified by the date in the title. It does not include individuals incarcerated in county jails  unless the individual is temporarily transferred to a county jail while already incarcerated. When "Counts" is selected, the number of people in each facility is shown. When "Rates" is selected, the percentage shows the number of people in each facility divided by the total number of people incarcerated.',
   },
@@ -53,6 +54,8 @@ const content: StateSpecificMetricCopy = {
   },
   libertyToPrisonPopulationOverTime: {
     title: "Admissions from liberty to incarceration over time",
+    note:
+      "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
     methodology:
       "This chart describes the total number of events where individuals were admitted to incarceration from a new court commitment each month. Admissions are counted on the day when the person was admitted to incarceration status, not when the arrest or charge occurred. This chart is event-based, so if a single person has 2 new court commitments during the selected time period, 2 events are counted in this chart.",
   },
@@ -84,6 +87,8 @@ const content: StateSpecificMetricCopy = {
   },
   prisonToSupervisionPopulationOverTime: {
     title: "Releases from incarceration to supervision over time",
+    note:
+      "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
     methodology:
       "This chart describes the total number of events where individuals were released from incarceration to supervision each month. Releases are counted on the day when the person was released to supervision. This chart is event-based, so if a single person is released twice during the selected time period, 2 events are counted in this chart.",
   },
@@ -103,18 +108,18 @@ const content: StateSpecificMetricCopy = {
       "The table includes a row for each event where a person was released from incarceration to supervision as of the date specified in the chart title. ",
   },
   supervisionPopulationOverTime: {
-    note: "Interstate compact cases are included in the parole population",
+    note:
+      "Interstate compact cases are included in the parole population. In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
     methodology:
       'The chart describes the historical supervision population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. People under interstate compact are included in the supervision population. Note: Supervision level data is not available prior to August 2019, so filtering by supervision level on the 5-year time period may make the counts on this chart appear lower than they actually are prior to Aug 2019.',
   },
   supervisionPopulationByDistrict: {
-    note: "Interstate compact cases are included in the parole population",
+    note: "Interstate compact cases are included in the parole population.",
     methodology:
       "The chart describes the number of people on supervision in each district as of the date specified in the chart title. People under interstate compact are included in the supervision population.",
   },
   supervisionPopulationBySupervisionLevel: {
-    note:
-      "Supervision level data is not available prior to August 2019, so filtering by the 5-year time period may make the counts on this chart appear lower than they actually are. Interstate compact cases are included in the parole population.",
+    note: "Interstate compact cases are included in the parole population.",
     methodology:
       "The chart describes the number of people on supervision in each district as of the date specified in the chart title. Interstate compact cases are included in the parole population.",
   },

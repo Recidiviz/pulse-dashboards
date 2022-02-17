@@ -31,13 +31,10 @@ const content: MetricCopy = {
   },
   supervisionToLibertyOverTime: {
     title: "Releases from supervision over time",
+    note:
+      "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
     methodology:
       'The chart describes the historical supervision population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. ',
-  },
-  prisonPopulationOverTime: {
-    title: "Incarceration population over time",
-    methodology:
-      'The chart describes the historical incarceration population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. ',
   },
   prisonPopulationPersonLevel: {
     title: "List of people incarcerated",
@@ -56,8 +53,17 @@ const content: MetricCopy = {
   },
   supervisionToPrisonOverTime: {
     title: "Admissions from supervision over time",
+    note:
+      "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
     methodology:
       "These charts include events where people are admitted from supervision to incarceration. This includes revocations, sanction admissions, and new court commits that occur while an individual is on supervision. Revocations are counted when the person was admitted to incarceration status, not when the violation occurred. All charts on this page are event-based, so if a single person has two revocations during the selected time period, two events are counted on this page.",
+  },
+  prisonPopulationOverTime: {
+    title: "Incarceration population over time",
+    note:
+      "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
+    methodology:
+      'The chart describes the historical incarceration population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. ',
   },
   supervisionToPrisonPopulationByLengthOfStay: {
     title: "Time to admission from supervision to prison",
@@ -73,6 +79,8 @@ const content: MetricCopy = {
   },
   libertyToPrisonPopulationOverTime: {
     title: "Admissions from liberty to prison over time",
+    note:
+      "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
   },
   libertyToPrisonPopulationByDistrict: {
     title: "Admissions from liberty to prison by district",
@@ -92,6 +100,8 @@ const content: MetricCopy = {
   },
   prisonToSupervisionPopulationOverTime: {
     title: "Releases from prison to supervision over time",
+    note:
+      "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
   },
   prisonToSupervisionPopulationByAge: {
     title: "Releases from prison to supervision by age",
@@ -104,6 +114,8 @@ const content: MetricCopy = {
   },
   supervisionPopulationOverTime: {
     title: "Supervision population over time",
+    note:
+      "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
   },
   supervisionPopulationByDistrict: {
     title: "Supervision population by district",
