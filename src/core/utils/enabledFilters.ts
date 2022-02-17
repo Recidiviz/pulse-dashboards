@@ -362,6 +362,9 @@ export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
     ],
     enabledMoreFilters: [FILTER_TYPES.SUPERVISION_TYPE],
   },
+  supervisionPopulationOverTime: {
+    enabledFilters: [FILTER_TYPES.TIME_PERIOD, FILTER_TYPES.DISTRICT],
+  },
 };
 
 export default {

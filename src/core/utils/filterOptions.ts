@@ -816,6 +816,25 @@ export const NdPopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.facilities],
   },
+  [FILTER_TYPES.SUPERVISION_TYPE]: {
+    type: FILTER_TYPES.SUPERVISION_TYPE,
+    title: "Supervision Type",
+    isSingleSelect: true,
+    setFilters: setFilters(FILTER_TYPES.SUPERVISION_TYPE),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Probation", value: "PROBATION" },
+      { label: "Parole/Dual", value: "PAROLE" },
+      { label: "Absconsion", value: "ABSCONSION" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.community],
+  },
   [FILTER_TYPES.RACE]: {
     type: FILTER_TYPES.RACE,
     title: "Race",
