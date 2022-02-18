@@ -95,6 +95,7 @@ export default class DistrictsStore {
 
   get districtKeys() {
     const { tenantMappings } = this.rootStore.tenantStore;
+    if (!tenantMappings) return {};
     return {
       valueKey: tenantMappings.districtFilterValueKey,
       filterKey: tenantMappings.districtFilterKey,

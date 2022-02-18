@@ -23,6 +23,7 @@ import selectEvent from "react-select-event";
 import { useRootStore } from "../../../components/StoreProvider";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
+import MetricsStore from "../../CoreStore/MetricsStore";
 import { useCoreStore } from "../../CoreStoreProvider";
 import filterOptions from "../../utils/filterOptions";
 import PathwaysFilterBar from "..";
@@ -37,6 +38,15 @@ const filtersStore = new FiltersStore({ rootStore: mockCoreStore });
 beforeEach(() => {
   (useCoreStore as jest.Mock).mockReturnValue({
     filtersStore,
+    metricsStore: {
+      current: {
+        download: jest.fn(),
+        filters: {
+          enabledFilters: ["timePeriod", "gender"],
+          enabledMoreFilters: [],
+        },
+      },
+    },
   });
   (useRootStore as jest.Mock).mockReturnValue({
     userStore: { userAllowedNavigation: {} },
@@ -51,11 +61,7 @@ afterEach(() => {
 test("selecting from menu sets the filters", async () => {
   render(
     <Router>
-      <PathwaysFilterBar
-        filterOptions={filterOptions.US_ID}
-        handleDownload={jest.fn()}
-        enabledFilters={["timePeriod", "gender"]}
-      />
+      <PathwaysFilterBar />
     </Router>
   );
 

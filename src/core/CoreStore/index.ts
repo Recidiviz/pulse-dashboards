@@ -45,9 +45,9 @@ export default class CoreStore {
 
   tenantStore: TenantStore;
 
-  filtersStore: FiltersStore;
+  filtersStore: FiltersStore = new FiltersStore({ rootStore: this });
 
-  metricsStore: MetricsStore;
+  metricsStore: MetricsStore = new MetricsStore({ rootStore: this });
 
   pagePracticesStore: PagePracticesStore;
 
@@ -64,10 +64,6 @@ export default class CoreStore {
     this.userStore = userStore;
 
     this.tenantStore = tenantStore;
-
-    this.filtersStore = new FiltersStore({ rootStore: this });
-
-    this.metricsStore = new MetricsStore({ rootStore: this });
 
     this.pagePracticesStore = new PagePracticesStore({
       rootStore: this,

@@ -15,18 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { useCoreStore } from "../CoreStoreProvider";
 import LibertyPopulationOverTimeMetric from "../models/LibertyPopulationOverTimeMetric";
 import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshotMetric";
-import PathwaysMetric from "../models/PathwaysMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
 import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
-import { MetricRecord } from "../models/types";
 import VizCountOverTimeWithAvg from "../VizCountOverTimeWithAvg";
 import VizLengthOfStay from "../VizLengthOfStay";
 import VizPopulationOverTime from "../VizPopulationOverTime";
@@ -34,11 +34,10 @@ import VizPopulationPersonLevel from "../VizPopulationPersonLevel";
 import VizPopulationProjectionOverTime from "../VizPopulationProjectionOverTime";
 import VizPopulationSnapshot from "../VizPopulationSnapshot";
 
-type MetricVizMapperProps = {
-  metric: PathwaysMetric<MetricRecord>;
-};
+const MetricVizMapper: React.FC = () => {
+  const { metricsStore } = useCoreStore();
+  const metric = metricsStore.current;
 
-const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
   if (metric instanceof PopulationProjectionOverTimeMetric) {
     return <VizPopulationProjectionOverTime metric={metric} />;
   }
@@ -90,4 +89,4 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
   throw new Error("unknown metric type");
 };
 
-export default MetricVizMapper;
+export default observer(MetricVizMapper);
