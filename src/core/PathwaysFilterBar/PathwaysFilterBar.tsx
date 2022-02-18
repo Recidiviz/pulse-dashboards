@@ -35,35 +35,31 @@ import DetailsGroup from "../DetailsGroup";
 import DownloadDataButton from "../DownloadDataButton";
 import MethodologyLink from "../MethodologyLink";
 import MoreFilters from "../MoreFilters";
-import { EnabledFilters } from "../types/filters";
+import { EnabledFilters, PopulationFilters } from "../types/filters";
 import { FILTER_TYPES } from "../utils/constants";
 import { getFilterOptions, metricModeOptions } from "../utils/filterOptions";
 import { PATHWAYS_PATHS } from "../views";
 
-const PathwaysFilterBar: React.FC = () => {
+const PathwaysFilterBar: React.FC<{
+  filterOptions: PopulationFilters;
+  handleDownload: () => Promise<void>;
+  chartTitle?: string;
+  enabledFilters?: EnabledFilters;
+  enabledMoreFilters?: EnabledFilters;
+  enableMetricModeToggle?: boolean;
+}> = ({
+  filterOptions,
+  handleDownload,
+  chartTitle,
+  enabledFilters = [],
+  enabledMoreFilters = [],
+  enableMetricModeToggle,
+}) => {
+  const { filtersStore } = useCoreStore();
+  const { filters } = filtersStore;
+
   const isDisplayNav = useDisplayPageNavigation();
   const isMobile = useIsMobile();
-
-  const { filtersStore, metricsStore } = useCoreStore();
-  const { current: metric } = metricsStore;
-  if (!metric) return <div />;
-
-  const { filters, filterOptions } = filtersStore;
-
-  const {
-    filters: enabledMetricFilters,
-    download: handleDownload,
-    chartTitle,
-    enableMetricModeToggle,
-  } = metric;
-
-  const {
-    enabledFilters,
-    enabledMoreFilters,
-  }: {
-    enabledFilters: EnabledFilters;
-    enabledMoreFilters: EnabledFilters;
-  } = enabledMetricFilters;
 
   return (
     <div
@@ -152,7 +148,7 @@ const PathwaysFilterBar: React.FC = () => {
                       : sortByLabel(filter.options, "label")
                   }
                   onChange={filter.setFilters(filtersStore)}
-                  defaultValue={[filter.defaultOption]}
+                  defaultValue={filter.defaultValue}
                   isChanged={
                     filter.defaultValue !==
                     getFilterOptions(

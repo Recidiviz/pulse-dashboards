@@ -33,7 +33,7 @@ const PageSystem: React.FC = () => {
   window.scrollTo({
     top: 0,
   });
-  const { metricsStore, page } = useCoreStore();
+  const { metricsStore, page, filtersStore } = useCoreStore();
   const pageContent = usePageContent(page as PathwaysPage);
   if (!pageContent) return <div />;
 
@@ -41,15 +41,32 @@ const PageSystem: React.FC = () => {
   if (!metric) return <div />;
 
   const { title, summary } = pageContent;
+  const { filters, download, isLoading, note } = metric;
+  const { enabledFilters, enabledMoreFilters } = filters;
+  const { filterOptions } = filtersStore;
 
   return (
     <PageTemplate
       mobileNavigation={<MobileNavigation title={title} />}
       leftPanel={<PathwaysLeftPanel title={title} description={summary} />}
-      filters={<PathwaysFilterBar />}
+      filters={
+        <PathwaysFilterBar
+          // @ts-ignore
+          filterOptions={filterOptions}
+          enabledFilters={enabledFilters}
+          enabledMoreFilters={enabledMoreFilters}
+          handleDownload={download}
+          chartTitle={metric.chartTitle}
+          enableMetricModeToggle={metric.enableMetricModeToggle}
+        />
+      }
     >
-      <MetricVizMapper />
-      <ChartNote />
+      <MetricVizMapper metric={metric} />
+      <ChartNote
+        note={note}
+        isLoading={isLoading}
+        chartTitle={metric.chartTitle}
+      />
     </PageTemplate>
   );
 };

@@ -102,15 +102,11 @@ export default class UserStore {
    * to the Auth0 login domain for fresh authentication.
    * Returns an Error if Auth0 configuration is not present.
    */
-
   async authorize(): Promise<void> {
     if (isOfflineMode()) {
       this.isAuthorized = true;
-      const offlineUser = await fetchOfflineUser({});
-      runInAction(() => {
-        this.user = offlineUser;
-        this.userIsLoading = false;
-      });
+      this.user = await fetchOfflineUser({});
+      this.userIsLoading = false;
       this.getToken = () => "";
       return;
     }

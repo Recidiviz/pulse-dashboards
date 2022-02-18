@@ -59,12 +59,9 @@ import { PATHWAYS_TENANTS } from "./RootStore/TenantStore/pathwaysTenants";
 import { initI18n } from "./utils/i18nSettings";
 import initFontAwesome from "./utils/initFontAwesome";
 import initIntercomSettings from "./utils/initIntercomSettings";
-import { isDemoMode } from "./utils/isDemoMode";
 
 initFontAwesome();
-if (!isDemoMode) {
-  initIntercomSettings();
-}
+initIntercomSettings();
 initI18n();
 
 Sentry.init({

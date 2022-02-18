@@ -70,11 +70,10 @@ export default class FiltersStore {
     this.getFilterLongLabel = this.getFilterLongLabel.bind(this);
 
     reaction(
-      () => this.rootStore.metricsStore?.current?.filters,
+      () => this.rootStore.metricsStore.current.filters,
       (filters: Filters) => {
         this.clearDisabledFilters(filters);
-      },
-      { delay: 300 }
+      }
     );
   }
 
@@ -88,7 +87,7 @@ export default class FiltersStore {
     });
   }
 
-  clearDisabledFilters(filters: Filters = { enabledFilters: [] }): void {
+  clearDisabledFilters(filters: Filters): void {
     const currentlyEnabledFilters = [
       ...filters.enabledFilters,
       ...(filters.enabledMoreFilters || []),

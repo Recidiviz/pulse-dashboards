@@ -17,6 +17,7 @@
 
 import { Loading } from "@recidiviz/design-system";
 import { autorun } from "mobx";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { useEffect } from "react";
 import { animated, useTransition } from "react-spring/web.cjs";
@@ -139,4 +140,4 @@ const ModelHydrator = ({
   );
 };
 
-export default ModelHydrator;
+export default observer(ModelHydrator);

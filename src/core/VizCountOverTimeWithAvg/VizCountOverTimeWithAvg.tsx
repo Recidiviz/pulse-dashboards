@@ -71,15 +71,7 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
     const cx = column.middle;
     const cy = adjustedSize[1] - rScale(pieceData.average);
     setHoveredId(pieceData.index);
-    return (
-      <circle
-        key={pieceData.index}
-        cx={cx}
-        cy={cy}
-        r={4}
-        fill={styles.indigo}
-      />
-    );
+    return <circle cx={cx} cy={cy} r={4} fill={styles.indigo} />;
   };
 
   const averageAnnotations = [

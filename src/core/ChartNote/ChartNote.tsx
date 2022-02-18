@@ -16,7 +16,6 @@
 // =============================================================================
 import "./ChartNote.scss";
 
-import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -24,10 +23,18 @@ import { convertToSlug } from "../../utils/navigation";
 import { useCoreStore } from "../CoreStoreProvider";
 import { PATHWAYS_PATHS } from "../views";
 
-const ChartNote: React.FC = () => {
-  const { currentTenantId, metricsStore } = useCoreStore();
-  const metric = metricsStore.current;
-  const { isLoading, note, chartTitle } = metric;
+type Props = {
+  note: string;
+  chartTitle: string;
+  isLoading?: boolean;
+};
+
+const ChartNote: React.FC<Props> = ({
+  note,
+  chartTitle,
+  isLoading = false,
+}) => {
+  const { currentTenantId } = useCoreStore();
 
   if (isLoading || !note) {
     return (
@@ -56,4 +63,4 @@ const ChartNote: React.FC = () => {
   );
 };
 
-export default observer(ChartNote);
+export default ChartNote;
