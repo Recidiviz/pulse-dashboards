@@ -79,21 +79,21 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         },
         {
           gender: "ALL",
-          district: "DISTRICT_1",
+          district: "DISTRICT 10",
           event_count: "15",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
         },
         {
           gender: "ALL",
-          district: "DISTRICT_2",
+          district: "DISTRICT 81",
           person_count: "10",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
         },
         {
           gender: "FEMALE",
-          district: "DISTRICT_1",
+          district: "DISTRICT 10",
           person_count: "5",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
@@ -196,7 +196,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
       {
         gender: "ALL",
         ageGroup: "ALL",
-        district: "DISTRICT_1",
+        district: "DISTRICT 10",
         count: 15,
         lastUpdated: formatDateString("2021-10-27"),
         mostSevereViolation: "ALL",
@@ -210,7 +210,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
       {
         gender: "ALL",
         ageGroup: "ALL",
-        district: "DISTRICT_2",
+        district: "DISTRICT 81",
         count: 10,
         lastUpdated: formatDateString("2021-10-27"),
         mostSevereViolation: "ALL",
@@ -224,7 +224,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
       {
         gender: "FEMALE",
         ageGroup: "ALL",
-        district: "DISTRICT_1",
+        district: "DISTRICT 10",
         count: 5,
         lastUpdated: formatDateString("2021-10-27"),
         mostSevereViolation: "ALL",
@@ -312,7 +312,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         {
           gender: "ALL",
           ageGroup: "ALL",
-          district: "DISTRICT_1",
+          district: "DISTRICT 10",
           count: 15,
           lastUpdated: formatDateString("2021-10-27"),
           mostSevereViolation: "ALL",
@@ -327,7 +327,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         {
           gender: "ALL",
           ageGroup: "ALL",
-          district: "DISTRICT_2",
+          district: "DISTRICT 81",
           count: 10,
           lastUpdated: formatDateString("2021-10-27"),
           mostSevereViolation: "ALL",
@@ -350,7 +350,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         {
           gender: "ALL",
           ageGroup: "ALL",
-          district: "DISTRICT_1",
+          district: "DISTRICT 10",
           count: 15,
           lastUpdated: formatDateString("2021-10-27"),
           mostSevereViolation: "ALL",
@@ -365,7 +365,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         {
           gender: "ALL",
           ageGroup: "ALL",
-          district: "DISTRICT_2",
+          district: "DISTRICT 81",
           count: 10,
           lastUpdated: formatDateString("2021-10-27"),
           mostSevereViolation: "ALL",
@@ -378,68 +378,6 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           timePeriod: "6",
         },
       ]);
-    });
-
-    it("updates when the filters change", () => {
-      runInAction(() => {
-        if (metric.rootStore) {
-          metric.rootStore.filtersStore.setFilters({
-            gender: ["FEMALE"],
-            district: ["DISTRICT_1"],
-            timePeriod: ["12"],
-          });
-        }
-
-        // totalCount (denominator of populationProportion) is 65
-        expect(metric.dataSeries).toEqual([
-          {
-            ageGroup: "ALL",
-            gender: "FEMALE",
-            district: "DISTRICT_1",
-            count: 5,
-            lastUpdated: formatDateString("2021-10-27"),
-            mostSevereViolation: "ALL",
-            numberOfViolations: "ALL",
-            supervisionType: "ALL",
-            lengthOfStay: "ALL",
-            populationProportion: "8",
-            race: "ALL",
-            supervisionLevel: "ALL",
-            timePeriod: "6",
-          },
-        ]);
-      });
-    });
-  });
-
-  describe("when the currentTenantId is US_TN", () => {
-    beforeEach(() => {
-      filtersStore.setFilters({
-        timePeriod: ["6"],
-      });
-      mockCoreStore.filtersStore = filtersStore;
-
-      if (metric.rootStore) {
-        metric.rootStore.filtersStore.resetFilters();
-      }
-
-      metric = new SupervisionPopulationSnapshotMetric({
-        id: "supervisionToPrisonPopulationByDistrict",
-        tenantId: mockTenantId,
-        sourceFilename:
-          "supervision_to_prison_population_snapshot_by_dimension",
-        rootStore: mockCoreStore,
-        accessor: "district",
-        dataTransformer: createSupervisionPopulationSnapshot,
-        filters: {
-          enabledFilters: [
-            FILTER_TYPES.TIME_PERIOD,
-            FILTER_TYPES.GENDER,
-            FILTER_TYPES.DISTRICT,
-          ],
-        },
-      });
-      metric.hydrate();
     });
 
     it("has the correct downloadableData", () => {
@@ -458,10 +396,41 @@ describe("SupervisionPopulationSnapshotMetric", () => {
           },
         ],
         chartId: "Admissions from supervision by district",
-        chartLabels: ["DISTRICT_1", "DISTRICT_2"],
+        chartLabels: ["District 10", "District 81"],
         dataExportLabel: "District",
       };
       expect(metric.downloadableData).toEqual(expected);
+    });
+
+    it("updates when the filters change", () => {
+      runInAction(() => {
+        if (metric.rootStore) {
+          metric.rootStore.filtersStore.setFilters({
+            gender: ["FEMALE"],
+            district: ["DISTRICT 10"],
+            timePeriod: ["12"],
+          });
+        }
+
+        // totalCount (denominator of populationProportion) is 65
+        expect(metric.dataSeries).toEqual([
+          {
+            ageGroup: "ALL",
+            gender: "FEMALE",
+            district: "DISTRICT 10",
+            count: 5,
+            lastUpdated: formatDateString("2021-10-27"),
+            mostSevereViolation: "ALL",
+            numberOfViolations: "ALL",
+            supervisionType: "ALL",
+            lengthOfStay: "ALL",
+            populationProportion: "8",
+            race: "ALL",
+            supervisionLevel: "ALL",
+            timePeriod: "6",
+          },
+        ]);
+      });
     });
   });
 });

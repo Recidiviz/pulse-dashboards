@@ -480,11 +480,25 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.DISTRICT),
     options: [
       { label: "All", value: "ALL" },
-      { label: "DISTRICT_1", longLabel: "District 1", value: "DISTRICT_1" },
-      { label: "DISTRICT_2", longLabel: "District 2", value: "DISTRICT_2" },
-      { label: "DISTRICT_3", longLabel: "District 3", value: "DISTRICT_3" },
-      { label: "DISTRICT_4", longLabel: "District 4", value: "DISTRICT_4" },
-      { label: "DISTRICT_5", longLabel: "District 5", value: "DISTRICT_5" },
+      { label: "District 10", value: "DISTRICT 10" },
+      { label: "District 20", value: "DISTRICT 20" },
+      { label: "District 21", value: "DISTRICT 21" },
+      { label: "District 30", value: "DISTRICT 30" },
+      { label: "District 31", value: "DISTRICT 31" },
+      {
+        label: "Districts 40 And 41",
+        value: "DISTRICTS 40 And 41",
+      },
+      { label: "District 50", value: "DISTRICT 50" },
+      { label: "District 51", value: "DISTRICT 51" },
+      { label: "District 60", value: "DISTRICT 60" },
+      { label: "District 61", value: "DISTRICT 61" },
+      {
+        label: "Districts 70 And 71",
+        value: "DISTRICTS 70 And 71",
+      },
+      { label: "District 80", value: "DISTRICT 80" },
+      { label: "District 81", value: "DISTRICT 81" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -493,6 +507,95 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       return this.defaultOption.value;
     },
     enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.JUDICIAL_DISTRICT]: {
+    type: FILTER_TYPES.JUDICIAL_DISTRICT,
+    title: "Judicial District",
+    setFilters: setFilters(FILTER_TYPES.JUDICIAL_DISTRICT),
+    options: [
+      { label: "ALL", longLabel: "All", value: "ALL" },
+      { label: "1", longLabel: "District 1", value: "1" },
+      { label: "2", longLabel: "District 2", value: "2" },
+      { label: "3", longLabel: "District 3", value: "3" },
+      { label: "4", longLabel: "District 4", value: "4" },
+      { label: "5", longLabel: "District 5", value: "5" },
+      { label: "6", longLabel: "District 6", value: "6" },
+      { label: "7", longLabel: "District 7", value: "7" },
+      { label: "8", longLabel: "District 8", value: "8" },
+      { label: "9", longLabel: "District 9", value: "9" },
+      { label: "10", longLabel: "District 10", value: "10" },
+      { label: "11", longLabel: "District 11", value: "11" },
+      { label: "12", longLabel: "District 12", value: "12" },
+      { label: "13", longLabel: "District 13", value: "13" },
+      { label: "14", longLabel: "District 14", value: "14" },
+      { label: "15", longLabel: "District 15", value: "15" },
+      { label: "16", longLabel: "District 16", value: "16" },
+      { label: "17", longLabel: "District 17", value: "17" },
+      { label: "18", longLabel: "District 18", value: "18" },
+      { label: "19", longLabel: "District 19", value: "19" },
+      { label: "20", longLabel: "District 20", value: "20" },
+      { label: "21", longLabel: "District 21", value: "21" },
+      { label: "22", longLabel: "District 22", value: "22" },
+      { label: "23", longLabel: "District 23", value: "23" },
+      { label: "24", longLabel: "District 24", value: "24" },
+      { label: "25", longLabel: "District 25", value: "25" },
+      { label: "26", longLabel: "District 26", value: "26" },
+      { label: "27", longLabel: "District 27", value: "27" },
+      { label: "28", longLabel: "District 28", value: "28" },
+      { label: "29", longLabel: "District 29", value: "29" },
+      { label: "30", longLabel: "District 30", value: "30" },
+      { label: "31", longLabel: "District 31", value: "31" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.RACE]: {
+    type: FILTER_TYPES.RACE,
+    title: "Race",
+    setFilters: setFilters(FILTER_TYPES.RACE),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Black", value: "BLACK" },
+      { label: "White", value: "WHITE" },
+      { label: "Hispanic", value: "HISPANIC" },
+      { label: "Asian", value: "ASIAN" },
+      {
+        label: "American Indian/ Alaskan Native",
+        value: "AMERICAN_INDIAN_ALASKAN_NATIVE",
+      },
+      { label: "Other", value: "OTHER" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.SUPERVISION_TYPE]: {
+    type: FILTER_TYPES.SUPERVISION_TYPE,
+    title: "Supervision Type",
+    isSingleSelect: true,
+    setFilters: setFilters(FILTER_TYPES.SUPERVISION_TYPE),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Probation", value: "PROBATION" },
+      { label: "Parole", value: "PAROLE" },
+      { label: "Absconsion", value: "ABSCONSION" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.community],
   },
 };
 

@@ -68,21 +68,21 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         },
         {
           gender: "ALL",
-          judicial_district: "JUDICIAL_DISTRICT_1",
+          judicial_district: "1",
           event_count: "15",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
         },
         {
           gender: "ALL",
-          judicial_district: "JUDICIAL_DISTRICT_2",
+          judicial_district: "2",
           event_count: "10",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
         },
         {
           gender: "FEMALE",
-          judicial_district: "JUDICIAL_DISTRICT_1",
+          judicial_district: "1",
           event_count: "5",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
@@ -173,7 +173,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
       {
         gender: "ALL",
         ageGroup: "ALL",
-        judicialDistrict: "JUDICIAL_DISTRICT_1",
+        judicialDistrict: "1",
         count: 15,
         lastUpdated: formatDateString("2021-10-27"),
         race: "ALL",
@@ -183,7 +183,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
       {
         gender: "ALL",
         ageGroup: "ALL",
-        judicialDistrict: "JUDICIAL_DISTRICT_2",
+        judicialDistrict: "2",
         count: 10,
         lastUpdated: formatDateString("2021-10-27"),
         race: "ALL",
@@ -193,7 +193,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
       {
         gender: "FEMALE",
         ageGroup: "ALL",
-        judicialDistrict: "JUDICIAL_DISTRICT_1",
+        judicialDistrict: "1",
         count: 5,
         lastUpdated: formatDateString("2021-10-27"),
         race: "ALL",
@@ -271,7 +271,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
         {
           gender: "ALL",
           ageGroup: "ALL",
-          judicialDistrict: "JUDICIAL_DISTRICT_1",
+          judicialDistrict: "1",
           count: 15,
           lastUpdated: formatDateString("2021-10-27"),
           populationProportion: "33",
@@ -282,7 +282,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
         {
           gender: "ALL",
           ageGroup: "ALL",
-          judicialDistrict: "JUDICIAL_DISTRICT_2",
+          judicialDistrict: "2",
           count: 10,
           lastUpdated: formatDateString("2021-10-27"),
           populationProportion: "22",
@@ -301,7 +301,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
         {
           gender: "ALL",
           ageGroup: "ALL",
-          judicialDistrict: "JUDICIAL_DISTRICT_1",
+          judicialDistrict: "1",
           count: 15,
           lastUpdated: formatDateString("2021-10-27"),
           populationProportion: "23",
@@ -312,7 +312,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
         {
           gender: "ALL",
           ageGroup: "ALL",
-          judicialDistrict: "JUDICIAL_DISTRICT_2",
+          judicialDistrict: "2",
           count: 10,
           lastUpdated: formatDateString("2021-10-27"),
           populationProportion: "15",
@@ -321,63 +321,6 @@ describe("LibertyPopulationSnapshotMetric", () => {
           priorLengthOfIncarceration: "ALL",
         },
       ]);
-    });
-
-    it("updates when the filters change", () => {
-      runInAction(() => {
-        if (metric.rootStore) {
-          metric.rootStore.filtersStore.setFilters({
-            gender: ["FEMALE"],
-            judicialDistrict: ["JUDICIAL_DISTRICT_1"],
-            timePeriod: ["12"],
-          });
-        }
-
-        // totalCount (denominator of populationProportion) is 65
-        expect(metric.dataSeries).toEqual([
-          {
-            ageGroup: "ALL",
-            gender: "FEMALE",
-            judicialDistrict: "JUDICIAL_DISTRICT_1",
-            count: 5,
-            lastUpdated: formatDateString("2021-10-27"),
-            populationProportion: "8",
-            race: "ALL",
-            timePeriod: "6",
-            priorLengthOfIncarceration: "ALL",
-          },
-        ]);
-      });
-    });
-  });
-
-  describe("when the currentTenantId is US_TN", () => {
-    beforeEach(() => {
-      filtersStore.setFilters({
-        timePeriod: ["6"],
-      });
-      mockCoreStore.filtersStore = filtersStore;
-
-      if (metric.rootStore) {
-        metric.rootStore.filtersStore.resetFilters();
-      }
-
-      metric = new LibertyPopulationSnapshotMetric({
-        id: "libertyToPrisonPopulationByDistrict",
-        tenantId: mockTenantId,
-        sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
-        rootStore: mockCoreStore,
-        accessor: "judicialDistrict",
-        dataTransformer: createLibertyPopulationSnapshot,
-        filters: {
-          enabledFilters: [
-            FILTER_TYPES.TIME_PERIOD,
-            FILTER_TYPES.GENDER,
-            FILTER_TYPES.JUDICIAL_DISTRICT,
-          ],
-        },
-      });
-      metric.hydrate();
     });
 
     it("has the correct downloadableData", () => {
@@ -396,10 +339,37 @@ describe("LibertyPopulationSnapshotMetric", () => {
           },
         ],
         chartId: "Admissions from liberty to prison by district",
-        chartLabels: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
+        chartLabels: ["1", "2"],
         dataExportLabel: "Judicial District",
       };
       expect(metric.downloadableData).toEqual(expected);
+    });
+
+    it("updates when the filters change", () => {
+      runInAction(() => {
+        if (metric.rootStore) {
+          metric.rootStore.filtersStore.setFilters({
+            gender: ["FEMALE"],
+            judicialDistrict: ["1"],
+            timePeriod: ["12"],
+          });
+        }
+
+        // totalCount (denominator of populationProportion) is 65
+        expect(metric.dataSeries).toEqual([
+          {
+            ageGroup: "ALL",
+            gender: "FEMALE",
+            judicialDistrict: "1",
+            count: 5,
+            lastUpdated: formatDateString("2021-10-27"),
+            populationProportion: "8",
+            race: "ALL",
+            timePeriod: "6",
+            priorLengthOfIncarceration: "ALL",
+          },
+        ]);
+      });
     });
   });
 });
