@@ -17,6 +17,7 @@
 
 import "./ViewNavigation.scss";
 
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -164,4 +165,4 @@ const ViewNavigation: React.FC = ({ children }) => {
   );
 };
 
-export default ViewNavigation;
+export default observer(ViewNavigation);

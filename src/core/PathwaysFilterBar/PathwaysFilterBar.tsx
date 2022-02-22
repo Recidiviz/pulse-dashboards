@@ -148,7 +148,7 @@ const PathwaysFilterBar: React.FC<{
                       : sortByLabel(filter.options, "label")
                   }
                   onChange={filter.setFilters(filtersStore)}
-                  defaultValue={filter.defaultValue}
+                  defaultValue={[filter.defaultOption]}
                   isChanged={
                     filter.defaultValue !==
                     getFilterOptions(

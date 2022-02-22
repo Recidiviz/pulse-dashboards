@@ -105,8 +105,11 @@ export default class UserStore {
   async authorize(): Promise<void> {
     if (isOfflineMode()) {
       this.isAuthorized = true;
-      this.user = await fetchOfflineUser({});
-      this.userIsLoading = false;
+      const offlineUser = await fetchOfflineUser({});
+      runInAction(() => {
+        this.user = offlineUser;
+        this.userIsLoading = false;
+      });
       this.getToken = () => "";
       return;
     }
