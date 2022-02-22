@@ -397,6 +397,7 @@ export const IdPopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.LEGAL_STATUS]: {
     type: FILTER_TYPES.LEGAL_STATUS,
     title: "Legal Status",
+    isSingleSelect: true,
     setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
     options: [
       { label: "All", value: "ALL" },
