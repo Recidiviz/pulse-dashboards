@@ -16,7 +16,12 @@
 // =============================================================================
 import moment from "moment";
 
-import { EnabledFilter, EnabledFilters } from "../types/filters";
+import { Dimension } from "../types/dimensions";
+import {
+  EnabledFilter,
+  EnabledFilters,
+  PopulationFilterValues,
+} from "../types/filters";
 import {
   AgeGroup,
   Gender,
@@ -24,6 +29,7 @@ import {
   LengthOfStayRawValue,
   LibertyPopulationSnapshotRecord,
   LibertyPopulationTimeSeriesRecord,
+  MetricRecord,
   PopulationProjectionTimeSeriesRecord,
   PrisonPopulationPersonLevelRecord,
   PrisonPopulationSnapshotRecord,
@@ -342,4 +348,49 @@ export const filterTimePeriod = (
   return shouldFilter
     ? Number(recordTimePeriodValue) <= Number(filterTimePeriodValue)
     : true;
+};
+
+export const filterRecords = (
+  record: MetricRecord,
+  dimensions: Dimension[],
+  filters: PopulationFilterValues,
+  accessor?: string
+): boolean => {
+  return dimensions.every((dimensionId) => {
+    // @ts-ignore
+    const dimensionRecord = record[dimensionId];
+    const filterDimension = dimensionId as keyof PopulationFilterValues;
+
+    if (accessor === dimensionId) {
+      return !["ALL"].includes(dimensionRecord);
+    }
+    if (!filters[filterDimension]) {
+      return ["ALL"].includes(dimensionRecord);
+    }
+    return filters[filterDimension].includes(dimensionRecord);
+  });
+};
+
+export const filterPersonLevelRecords = (
+  record: MetricRecord,
+  dimensions: Dimension[],
+  filters: PopulationFilterValues
+): boolean => {
+  const handleFilters = (filter: string[] | string, recordValue: string) => {
+    const allFilters = Array.isArray(filter) ? filter : [filter];
+
+    if (allFilters.includes("ALL")) {
+      return recordValue !== "ALL";
+    }
+
+    return allFilters.includes(recordValue);
+  };
+
+  return dimensions.every((dimensionId) => {
+    // @ts-ignore
+    const dimensionRecord = record[dimensionId];
+    const filterDimension = dimensionId as keyof PopulationFilterValues;
+
+    return handleFilters(filters[filterDimension], dimensionRecord);
+  });
 };

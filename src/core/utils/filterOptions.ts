@@ -262,20 +262,32 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.JUDICIAL_DISTRICT),
     options: [
       { label: "All", value: "ALL" },
-      { label: "JUDICIAL_DISTRICT_1", value: "JUDICIAL_DISTRICT_1" },
-      { label: "JUDICIAL_DISTRICT_2", value: "JUDICIAL_DISTRICT_2" },
-      { label: "JUDICIAL_DISTRICT_3", value: "JUDICIAL_DISTRICT_3" },
-      { label: "JUDICIAL_DISTRICT_4", value: "JUDICIAL_DISTRICT_4" },
-      { label: "JUDICIAL_DISTRICT_5", value: "JUDICIAL_DISTRICT_5" },
+      {
+        label: "District 1",
+        longLabel: "District 1",
+        value: "JUDICIAL_DISTRICT_1",
+      },
+      {
+        label: "District 2",
+        longLabel: "District 2",
+        value: "JUDICIAL_DISTRICT_2",
+      },
+      {
+        label: "District 3",
+        longLabel: "District 3",
+        value: "JUDICIAL_DISTRICT_3",
+      },
+      {
+        label: "District 4",
+        longLabel: "District 4",
+        value: "JUDICIAL_DISTRICT_4",
+      },
+      {
+        label: "District 5",
+        longLabel: "District 5",
+        value: "JUDICIAL_DISTRICT_5",
+      },
     ],
-    locationNameMap: {
-      ALL: "All",
-      JUDICIAL_DISTRICT_1: "District 1",
-      JUDICIAL_DISTRICT_2: "District 2",
-      JUDICIAL_DISTRICT_3: "District 3",
-      JUDICIAL_DISTRICT_4: "District 4",
-      JUDICIAL_DISTRICT_5: "District 5",
-    },
     get defaultOption(): FilterOption {
       return this.options[0];
     },
@@ -344,34 +356,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.facilities],
   },
-  [FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION]: {
-    type: FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION,
-    title: "Prior Length Of Incarceration",
-    setFilters: setFilters(FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION),
-    options: [
-      { label: "All", value: "ALL" },
-      { label: "0", value: "0" },
-      { label: "1", value: "1" },
-      { label: "2", value: "2" },
-      { label: "3", value: "3" },
-      { label: "4", value: "4" },
-      { label: "5", value: "5" },
-      { label: "6", value: "6" },
-      { label: "7", value: "7" },
-      { label: "8", value: "8" },
-      { label: "9", value: "9" },
-      { label: "10", value: "10" },
-      { label: "11+", value: "11+" },
-    ],
-    get defaultOption(): FilterOption {
-      return this.options[0];
-    },
-    get defaultValue(): string {
-      return this.defaultOption.value;
-    },
-    enabledViews: [CORE_VIEWS.facilities],
-  },
-
   [FILTER_TYPES.RACE]: {
     type: FILTER_TYPES.RACE,
     title: "Race",
@@ -1059,26 +1043,6 @@ export const DemoPopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.facilities],
   },
-  [FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION]: {
-    type: FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION,
-    title: "Prior Length Of Incarceration",
-    setFilters: setFilters(FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION),
-    options: [
-      { label: "All", value: "ALL" },
-      { label: "0", value: "0" },
-      { label: "6", value: "6" },
-      { label: "12", value: "12" },
-      { label: "18", value: "18" },
-      { label: "24", value: "24" },
-    ],
-    get defaultOption(): FilterOption {
-      return this.options[0];
-    },
-    get defaultValue(): string {
-      return this.defaultOption.value;
-    },
-    enabledViews: [CORE_VIEWS.facilities],
-  },
   [FILTER_TYPES.RACE]: {
     type: FILTER_TYPES.RACE,
     title: "Race",
@@ -1134,10 +1098,6 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
   [FILTER_TYPES.SUPERVISION_LEVEL]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.SUPERVISION_LEVEL].defaultValue,
-  ],
-  [FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION]: [
-    DefaultPopulationFilterOptions[FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION]
-      .defaultValue,
   ],
   [FILTER_TYPES.RACE]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.RACE].defaultValue,

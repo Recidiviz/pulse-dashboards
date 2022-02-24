@@ -58,8 +58,9 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     enableMetricModeToggle,
   } = metric;
 
-  // @ts-ignore
-  const accessorFilter = filters[accessor];
+  const isNotFilters = ["priorLengthOfIncarceration", "lengthOfStay"].includes(
+    accessor
+  );
   const isRotateLabels = [
     "district",
     "race",
@@ -75,27 +76,37 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
   const isRate =
     currentMetricMode === METRIC_MODES.RATES && enableMetricModeToggle;
 
+  const accessorFilter = filters[accessor as keyof PopulationFilterLabels];
+
   const [hoveredId, setHoveredId] = useState(null);
-  const [pickedId, setPickedId] = useState([] as string[]);
+  const [pickedId, setPickedId] = useState<string[]>([]);
 
   useEffect(() => {
-    setPickedId(accessorFilter);
-  }, [accessorFilter]);
+    if (!isNotFilters) {
+      setPickedId(accessorFilter);
+    } else {
+      setPickedId([]);
+    }
+  }, [accessorFilter, isNotFilters]);
 
   const data = dataSeries.map((d: any, index: number) => {
-    const filterLabel = getFilterLabel(
-      accessor as keyof PopulationFilterLabels,
-      d[accessor].toString()
-    );
-    const filterLongLabel = getFilterLongLabel(
-      accessor as keyof PopulationFilterLabels,
-      d[accessor].toString()
-    );
+    const filterLabel = isNotFilters
+      ? d[accessor]
+      : getFilterLabel(
+          accessor as keyof PopulationFilterLabels,
+          d[accessor].toString()
+        );
+    const filterLongLabel =
+      !isNotFilters &&
+      getFilterLongLabel(
+        accessor as keyof PopulationFilterLabels,
+        d[accessor].toString()
+      );
     return {
       index,
       accessorValue: d[accessor],
       accessorLabel: filterLabel,
-      tooltipLabel: filterLongLabel ?? filterLabel,
+      tooltipLabel: filterLongLabel || filterLabel,
       value: isRate ? d.populationProportion : d.count,
     };
   });
@@ -174,7 +185,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
               if (d.index === hoveredId) {
                 return { fill: styles.dataGoldDark };
               }
-              if (pickedId.includes(d.accessorValue)) {
+              if (pickedId && pickedId.includes(d.accessorValue)) {
                 return { fill: styles.dataGoldDark };
               }
               return { fill: styles.dataGold };
@@ -182,7 +193,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
             if (d.index === hoveredId) {
               return { fill: styles.dataForestDark };
             }
-            if (pickedId.includes(d.accessorValue)) {
+            if (pickedId && pickedId.includes(d.accessorValue)) {
               return { fill: styles.dataTeal };
             }
             return { fill: styles.dataForest };

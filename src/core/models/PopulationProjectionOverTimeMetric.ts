@@ -25,7 +25,7 @@ import {
   PopulationProjectionTimeSeriesRecord,
   SimulationCompartment,
 } from "./types";
-import { getRecordDate } from "./utils";
+import { filterRecords, getRecordDate } from "./utils";
 
 export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<PopulationProjectionTimeSeriesRecord> {
   compartment: SimulationCompartment;
@@ -42,27 +42,24 @@ export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<P
 
   get dataSeries(): PopulationProjectionTimeSeriesRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
-    const {
-      gender,
-      legalStatus,
-      supervisionType,
-    } = this.rootStore.filtersStore.filters;
+    const { filters } = this.rootStore.filtersStore;
+    const { supervisionType, legalStatus } = filters;
     const { monthRange } = this.rootStore.filtersStore;
+    const stepSize = monthRange === 60 ? 2 : 1;
     const status =
       this.compartment === "SUPERVISION" ? supervisionType : legalStatus;
-    const stepSize = monthRange === 60 ? 2 : 1;
-
     const { simulationDate } = this;
+
     return this.allRecords.filter(
       (record: PopulationProjectionTimeSeriesRecord) => {
         const monthsOut =
           (record.year - simulationDate.getFullYear()) * 12 +
           (record.month - (simulationDate.getMonth() + 1));
         return (
-          gender.includes(record.gender) &&
-          status.includes(record.legalStatus) &&
           Math.abs(monthsOut) <= monthRange &&
-          monthsOut % stepSize === 0
+          monthsOut % stepSize === 0 &&
+          status.includes(record.legalStatus) &&
+          filterRecords(record, this.dimensions, filters)
         );
       }
     );

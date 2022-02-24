@@ -29,7 +29,7 @@ import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PrisonPopulationSnapshotRecord, TimePeriod } from "./types";
-import { filterTimePeriod } from "./utils";
+import { filterRecords, filterTimePeriod } from "./utils";
 
 export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<PrisonPopulationSnapshotRecord> {
   accessor: keyof PrisonPopulationSnapshotRecord;
@@ -58,12 +58,10 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
     const allRows = this.allRecords.filter(
       (record: PrisonPopulationSnapshotRecord) => {
         return (
-          // #TODO #1596 create tooling to reduce listing every dimension in filters
-          record.gender === "ALL" &&
-          record.legalStatus === "ALL" &&
-          record.facility === "ALL" &&
-          record.ageGroup === "ALL" &&
-          record.lengthOfStay === "ALL" &&
+          this.dimensions.every(
+            // @ts-ignore
+            (dimensionId) => record[dimensionId] === "ALL"
+          ) &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,
@@ -85,28 +83,13 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
 
   get dataSeries(): PrisonPopulationSnapshotRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
-    const {
-      gender,
-      legalStatus,
-      ageGroup,
-      facility,
-      timePeriod,
-    } = this.rootStore.filtersStore.filters;
+    const { filters } = this.rootStore.filtersStore;
+    const { timePeriod } = filters;
+
     const filteredRecords = this.allRecords.filter(
       (record: PrisonPopulationSnapshotRecord) => {
         return (
-          // #TODO #1596 create tooling to reduce listing every dimension in filters
-          gender.includes(record.gender) &&
-          legalStatus.includes(record.legalStatus) &&
-          (this.accessor === "facility"
-            ? !["ALL"].includes(record.facility)
-            : facility.includes(record.facility)) &&
-          (this.accessor === "ageGroup"
-            ? !["ALL"].includes(record.ageGroup)
-            : ageGroup.includes(record.ageGroup)) &&
-          (this.accessor === "lengthOfStay"
-            ? !["ALL"].includes(record.lengthOfStay)
-            : ["ALL"].includes(record.lengthOfStay)) &&
+          filterRecords(record, this.dimensions, filters, this.accessor) &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,
@@ -115,25 +98,28 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
         );
       }
     );
+
     const result = pipe(
       groupBy((d: PrisonPopulationSnapshotRecord) => [d[this.accessor]]),
       values,
-      map((dataset) => ({
-        // #TODO #1596 create tooling to reduce listing every dimension in filters
-        count: sumBy("count", dataset),
-        populationProportion: (
-          (sumBy("count", dataset) * 100) /
-          this.totalCount
-        ).toFixed(),
-        lastUpdated: dataset[0].lastUpdated,
-        gender: dataset[0].gender,
-        legalStatus: dataset[0].legalStatus,
-        facility: dataset[0].facility,
-        ageGroup: dataset[0].ageGroup,
-        lengthOfStay: dataset[0].lengthOfStay,
-        timePeriod: dataset[0].timePeriod,
-      }))
+      map((dataset) => {
+        const datasetWithoutCount = dataset.map(
+          (group: PrisonPopulationSnapshotRecord) => {
+            const { count, ...rest } = group;
+            return rest;
+          }
+        );
+        return {
+          count: sumBy("count", dataset),
+          populationProportion: (
+            (sumBy("count", dataset) * 100) /
+            this.totalCount
+          ).toFixed(),
+          ...datasetWithoutCount[0],
+        };
+      })
     )(filteredRecords);
+
     return result as PrisonPopulationSnapshotRecord[];
   }
 

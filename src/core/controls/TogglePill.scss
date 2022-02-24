@@ -33,6 +33,7 @@ $ALL_PILL_WIDTH: 160px;
     height: 2.33rem;
     border: 1px solid #d2d8d8;
     background: transparent;
+    padding: 0 1rem;
     @include font-ui-sans-14;
 
     &:focus {

@@ -121,6 +121,6 @@ export function sortByLabel(dataPoints, labelKey) {
     if (a[labelKey] === "All") return -1;
     if (b[labelKey] === "All") return 1;
 
-    return a[labelKey].localeCompare(b[labelKey]);
+    return a[labelKey].localeCompare(b[labelKey], "en", { numeric: true });
   });
 }

@@ -240,6 +240,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
           race: "ALL",
           supervisionLevel: "ALL",
           ageGroup: "ALL",
+          lengthOfStay: "ALL",
         },
       ]);
     });
@@ -267,6 +268,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
             race: "ALL",
             supervisionLevel: "ALL",
             ageGroup: "ALL",
+            lengthOfStay: "ALL",
           },
         ]);
       });

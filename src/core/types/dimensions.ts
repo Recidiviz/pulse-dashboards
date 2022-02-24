@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2020 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,28 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-export const METRIC_MODES = {
-  COUNTS: "counts",
-  RATES: "rates",
+
+import { DIMENSION_TYPES } from "../utils/constants";
+
+type Dimensions = {
+  [DIMENSION_TYPES.TIME_PERIOD]: string;
+  [DIMENSION_TYPES.GENDER]: string;
+  [DIMENSION_TYPES.LEGAL_STATUS]: string;
+  [DIMENSION_TYPES.SUPERVISION_TYPE]: string;
+  [DIMENSION_TYPES.AGE_GROUP]: string;
+  [DIMENSION_TYPES.FACILITY]: string;
+  [DIMENSION_TYPES.DISTRICT]: string;
+  [DIMENSION_TYPES.JUDICIAL_DISTRICT]: string;
+  [DIMENSION_TYPES.MOST_SEVERE_VIOLATION]: string;
+  [DIMENSION_TYPES.NUMBER_OF_VIOLATIONS]: string;
+  [DIMENSION_TYPES.SUPERVISION_LEVEL]: string;
+  [DIMENSION_TYPES.RACE]: string;
+  [DIMENSION_TYPES.PRIOR_LENGTH_OF_INCARCERATION]: string;
+  [DIMENSION_TYPES.LENGTH_OF_STAY]: string;
 };
 
-export const FILTER_TYPES = {
-  TIME_PERIOD: "timePeriod",
-  GENDER: "gender",
-  LEGAL_STATUS: "legalStatus",
-  SUPERVISION_TYPE: "supervisionType",
-  AGE_GROUP: "ageGroup",
-  FACILITY: "facility",
-  DISTRICT: "district",
-  JUDICIAL_DISTRICT: "judicialDistrict",
-  MOST_SEVERE_VIOLATION: "mostSevereViolation",
-  RACE: "race",
-  NUMBER_OF_VIOLATIONS: "numberOfViolations",
-  SUPERVISION_LEVEL: "supervisionLevel",
-} as const;
-
-export const DIMENSION_TYPES = {
-  ...FILTER_TYPES,
-  PRIOR_LENGTH_OF_INCARCERATION: "priorLengthOfIncarceration",
-  LENGTH_OF_STAY: "lengthOfStay",
-} as const;
+export type Dimension = keyof Dimensions;

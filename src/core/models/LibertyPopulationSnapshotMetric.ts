@@ -29,7 +29,7 @@ import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import { PopulationFilterLabels } from "../types/filters";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { LibertyPopulationSnapshotRecord, TimePeriod } from "./types";
-import { filterTimePeriod } from "./utils";
+import { filterRecords, filterTimePeriod } from "./utils";
 
 export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<LibertyPopulationSnapshotRecord> {
   accessor: keyof LibertyPopulationSnapshotRecord;
@@ -58,12 +58,10 @@ export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<Libe
     const allRows = this.allRecords.filter(
       (record: LibertyPopulationSnapshotRecord) => {
         return (
-          // #TODO #1597 create tooling to reduce listing every dimension in filters
-          record.ageGroup === "ALL" &&
-          record.gender === "ALL" &&
-          record.race === "ALL" &&
-          record.judicialDistrict === "ALL" &&
-          record.priorLengthOfIncarceration === "ALL" &&
+          this.dimensions.every(
+            // @ts-ignore
+            (dimensionId) => record[dimensionId] === "ALL"
+          ) &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,
@@ -85,32 +83,13 @@ export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<Libe
 
   get dataSeries(): LibertyPopulationSnapshotRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
-    const {
-      gender,
-      ageGroup,
-      race,
-      timePeriod,
-      judicialDistrict,
-    } = this.rootStore.filtersStore.filters;
+    const { filters } = this.rootStore.filtersStore;
+    const { timePeriod } = filters;
+
     const filteredRecords = this.allRecords.filter(
       (record: LibertyPopulationSnapshotRecord) => {
         return (
-          // #TODO #1597 create tooling to reduce listing every dimension in filters
-          (this.accessor === "ageGroup"
-            ? !["ALL"].includes(record.ageGroup)
-            : ageGroup.includes(record.ageGroup)) &&
-          (this.accessor === "gender"
-            ? !["ALL"].includes(record.gender)
-            : gender.includes(record.gender)) &&
-          (this.accessor === "judicialDistrict"
-            ? !["ALL"].includes(record.judicialDistrict)
-            : judicialDistrict.includes(record.judicialDistrict)) &&
-          (this.accessor === "race"
-            ? !["ALL"].includes(record.race)
-            : race.includes(record.race)) &&
-          (this.accessor === "priorLengthOfIncarceration"
-            ? !["ALL"].includes(record.priorLengthOfIncarceration)
-            : ["ALL"].includes(record.priorLengthOfIncarceration)) &&
+          filterRecords(record, this.dimensions, filters, this.accessor) &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,
@@ -119,25 +98,28 @@ export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<Libe
         );
       }
     );
+
     const result = pipe(
       groupBy((d: LibertyPopulationSnapshotRecord) => [d[this.accessor]]),
       values,
-      map((dataset) => ({
-        // #TODO #1597 create tooling to reduce listing every dimension in filters
-        count: sumBy("count", dataset),
-        populationProportion: (
-          (sumBy("count", dataset) * 100) /
-          this.totalCount
-        ).toFixed(),
-        lastUpdated: dataset[0].lastUpdated,
-        gender: dataset[0].gender,
-        judicialDistrict: dataset[0].judicialDistrict,
-        ageGroup: dataset[0].ageGroup,
-        priorLengthOfIncarceration: dataset[0].priorLengthOfIncarceration,
-        race: dataset[0].race,
-        timePeriod: dataset[0].timePeriod,
-      }))
+      map((dataset) => {
+        const datasetWithoutCount = dataset.map(
+          (group: LibertyPopulationSnapshotRecord) => {
+            const { count, ...rest } = group;
+            return rest;
+          }
+        );
+        return {
+          count: sumBy("count", dataset),
+          populationProportion: (
+            (sumBy("count", dataset) * 100) /
+            this.totalCount
+          ).toFixed(),
+          ...datasetWithoutCount[0],
+        };
+      })
     )(filteredRecords);
+
     return result as LibertyPopulationSnapshotRecord[];
   }
 

@@ -30,7 +30,7 @@ import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { SupervisionPopulationTimeSeriesRecord } from "./types";
-import { getRecordDate } from "./utils";
+import { filterRecords, getRecordDate } from "./utils";
 
 export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<SupervisionPopulationTimeSeriesRecord> {
   constructor(
@@ -49,35 +49,18 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
 
   get dataSeries(): SupervisionPopulationTimeSeriesRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
-    const {
-      gender,
-      supervisionType,
-      district,
-      mostSevereViolation,
-      numberOfViolations,
-      supervisionLevel,
-      race,
-      ageGroup,
-    } = this.rootStore.filtersStore.filters;
+    const { filters } = this.rootStore.filtersStore;
     const { monthRange } = this.rootStore.filtersStore;
-
     const { mostRecentDate } = this;
+
     const filteredRecords = this.allRecords.filter(
       (record: SupervisionPopulationTimeSeriesRecord) => {
         const monthsOut =
           (record.year - mostRecentDate.getFullYear()) * 12 +
           (record.month - (mostRecentDate.getMonth() + 1));
         return (
-          // #TODO #1596 create tooling to reduce listing every dimension in filters
           Math.abs(monthsOut) <= monthRange &&
-          gender.includes(record.gender) &&
-          supervisionType.includes(record.supervisionType) &&
-          district.includes(record.district) &&
-          mostSevereViolation.includes(record.mostSevereViolation) &&
-          numberOfViolations.includes(record.numberOfViolations) &&
-          supervisionLevel.includes(record.supervisionLevel) &&
-          race.includes(record.race) &&
-          ageGroup.includes(record.ageGroup)
+          filterRecords(record, this.dimensions, filters)
         );
       }
     );
@@ -85,22 +68,21 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
     const result = pipe(
       groupBy((d: SupervisionPopulationTimeSeriesRecord) => [d.year, d.month]),
       values,
-      map((dataset) => ({
-        // #TODO #1596 create tooling to reduce listing every dimension in filters
-        year: dataset[0].year,
-        month: dataset[0].month,
-        count: sumBy("count", dataset),
-        avg90day: sumBy("avg90day", dataset),
-        gender: dataset[0].gender,
-        supervisionType: dataset[0].supervisionType,
-        district: dataset[0].district,
-        mostSevereViolation: dataset[0].mostSevereViolation,
-        numberOfViolations: dataset[0].numberOfViolations,
-        supervisionLevel: dataset[0].supervisionLevel,
-        race: dataset[0].race,
-        ageGroup: dataset[0].ageGroup,
-      }))
+      map((dataset) => {
+        const datasetWithoutCount = dataset.map(
+          (group: SupervisionPopulationTimeSeriesRecord) => {
+            const { count, avg90day, ...rest } = group;
+            return rest;
+          }
+        );
+        return {
+          count: sumBy("count", dataset),
+          avg90day: sumBy("avg90day", dataset),
+          ...datasetWithoutCount[0],
+        };
+      })
     )(filteredRecords);
+
     return result as SupervisionPopulationTimeSeriesRecord[];
   }
 

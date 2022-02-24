@@ -24,8 +24,10 @@ import RootStore from "../../RootStore";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
+import { Dimension } from "../types/dimensions";
 import { EnabledFilters, Filters } from "../types/filters";
 import { PathwaysPage } from "../views";
+import { dimensionsByMetricType } from "./dimensions";
 import {
   Hydratable,
   MetricId,
@@ -79,6 +81,8 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   filters: Filters;
 
+  dimensions: Dimension[];
+
   enableMetricModeToggle?: boolean = false;
 
   hasTimePeriodDimension?: boolean = false;
@@ -107,6 +111,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.dataTransformer = dataTransformer;
     this.eagerExpand = true;
     this.filters = filters;
+    this.dimensions = dimensionsByMetricType[this.sourceFilename];
     this.enableMetricModeToggle = enableMetricModeToggle;
     this.hasTimePeriodDimension = hasTimePeriodDimension;
   }

@@ -224,6 +224,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
           ageGroup: "ALL",
           avg90day: 100,
           facility: "ALL",
+          lengthOfStay: "ALL",
         },
       ]);
     });
@@ -248,6 +249,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
             month: 5,
             count: 7641,
             year: 2016,
+            lengthOfStay: "ALL",
           },
         ]);
       });

@@ -33,7 +33,6 @@ export type PopulationFilterValues = {
   mostSevereViolation: string[];
   numberOfViolations: string[];
   supervisionLevel: string[];
-  priorLengthOfIncarceration: string[];
   race: string[];
 };
 
@@ -49,7 +48,6 @@ export type PopulationFilterLabels = {
   mostSevereViolation: string;
   numberOfViolations: string;
   supervisionLevel: string;
-  priorLengthOfIncarceration: string;
   race: string;
 };
 
@@ -75,7 +73,6 @@ export interface PopulationFilters {
   [FILTER_TYPES.MOST_SEVERE_VIOLATION]: PopulationFilter;
   [FILTER_TYPES.NUMBER_OF_VIOLATIONS]: PopulationFilter;
   [FILTER_TYPES.SUPERVISION_LEVEL]: PopulationFilter;
-  [FILTER_TYPES.PRIOR_LENGTH_OF_INCARCERATION]: PopulationFilter;
   [FILTER_TYPES.RACE]: PopulationFilter;
 }
 

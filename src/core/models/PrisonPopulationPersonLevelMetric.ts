@@ -17,7 +17,10 @@
  * =============================================================================
  *
  */
-import { groupBy, map, pipe, values } from "lodash/fp";
+import { pipe } from "lodash/fp";
+import groupBy from "lodash/fp/groupBy";
+import map from "lodash/fp/map";
+import values from "lodash/fp/values";
 import { computed, makeObservable } from "mobx";
 
 import tenants from "../../tenants";
@@ -27,7 +30,7 @@ import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import { TableColumn } from "../types/charts";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PrisonPopulationPersonLevelRecord, TimePeriod } from "./types";
-import { filterTimePeriod } from "./utils";
+import { filterPersonLevelRecords, filterTimePeriod } from "./utils";
 
 export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<PrisonPopulationPersonLevelRecord> {
   constructor(
@@ -45,31 +48,14 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
 
   get dataSeries(): PrisonPopulationPersonLevelRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
-    const {
-      gender,
-      ageGroup,
-      facility,
-      legalStatus,
-      timePeriod,
-    } = this.rootStore.filtersStore.filters;
-    const handleFilters = (filter: string[] | string, recordValue: string) => {
-      const filters = Array.isArray(filter) ? filter : [filter];
 
-      if (filters.includes("ALL")) {
-        return recordValue !== "ALL";
-      }
-
-      return filters.includes(recordValue);
-    };
+    const { filters } = this.rootStore.filtersStore;
+    const { timePeriod } = filters;
 
     const filteredRecords = this.allRecords.filter(
       (record: PrisonPopulationPersonLevelRecord) => {
         return (
-          // #TODO #1596 create tooling to reduce listing every dimension in filters
-          handleFilters(facility, record.facility) &&
-          handleFilters(gender, record.gender) &&
-          handleFilters(ageGroup, record.ageGroup) &&
-          handleFilters(legalStatus, record.legalStatus) &&
+          filterPersonLevelRecords(record, this.dimensions, filters) &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,
@@ -85,21 +71,17 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
         d.fullName,
       ]),
       values,
-      map((dataset) => ({
-        fullName: dataset[0].fullName,
-        stateId: dataset[0].stateId,
-        gender: dataset[0].gender,
-        age: dataset
-          .map((d: PrisonPopulationPersonLevelRecord) => d.age)
-          .join(", "),
-        facility: dataset
-          .map((d: PrisonPopulationPersonLevelRecord) => d.facility)
-          .join(", "),
-        legalStatus: dataset[0].legalStatus,
-        lastUpdated: dataset[0].lastUpdated,
-        timePeriod: dataset[0].timePeriod,
-        ageGroup: dataset[0].ageGroup,
-      }))
+      map((dataset) => {
+        return {
+          ...dataset[0],
+          age: dataset
+            .map((d: PrisonPopulationPersonLevelRecord) => d.age)
+            .join(", "),
+          facility: dataset
+            .map((d: PrisonPopulationPersonLevelRecord) => d.facility)
+            .join(", "),
+        };
+      })
     )(filteredRecords);
 
     return result as PrisonPopulationPersonLevelRecord[];

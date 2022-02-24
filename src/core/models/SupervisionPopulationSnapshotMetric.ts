@@ -30,7 +30,7 @@ import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import { PopulationFilterLabels } from "../types/filters";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { SupervisionPopulationSnapshotRecord, TimePeriod } from "./types";
-import { filterTimePeriod } from "./utils";
+import { filterRecords, filterTimePeriod } from "./utils";
 
 export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<SupervisionPopulationSnapshotRecord> {
   accessor: keyof SupervisionPopulationSnapshotRecord;
@@ -59,16 +59,10 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
     const allRows = this.allRecords.filter(
       (record: SupervisionPopulationSnapshotRecord) => {
         return (
-          // #TODO #1596 create tooling to reduce listing every dimension in filters
-          record.supervisionType === "ALL" &&
-          record.ageGroup === "ALL" &&
-          record.gender === "ALL" &&
-          record.mostSevereViolation === "ALL" &&
-          record.numberOfViolations === "ALL" &&
-          record.lengthOfStay === "ALL" &&
-          record.supervisionLevel === "ALL" &&
-          record.race === "ALL" &&
-          record.district === "ALL" &&
+          this.dimensions.every(
+            // @ts-ignore
+            (dimensionId) => record[dimensionId] === "ALL"
+          ) &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,
@@ -90,47 +84,13 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
 
   get dataSeries(): SupervisionPopulationSnapshotRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
-    const {
-      gender,
-      supervisionType,
-      ageGroup,
-      district,
-      numberOfViolations,
-      mostSevereViolation,
-      supervisionLevel,
-      race,
-      timePeriod,
-    } = this.rootStore.filtersStore.filters;
+    const { filters } = this.rootStore.filtersStore;
+    const { timePeriod } = filters;
 
     const filteredRecords = this.allRecords.filter(
       (record: SupervisionPopulationSnapshotRecord) => {
         return (
-          // #TODO #1596 create tooling to reduce listing every dimension in filters
-          supervisionType.includes(record.supervisionType) &&
-          (this.accessor === "ageGroup"
-            ? !["ALL"].includes(record.ageGroup)
-            : ageGroup.includes(record.ageGroup)) &&
-          (this.accessor === "gender"
-            ? !["ALL"].includes(record.gender)
-            : gender.includes(record.gender)) &&
-          (this.accessor === "district"
-            ? !["ALL"].includes(record.district)
-            : district.includes(record.district)) &&
-          (this.accessor === "mostSevereViolation"
-            ? !["ALL"].includes(record.mostSevereViolation)
-            : mostSevereViolation.includes(record.mostSevereViolation)) &&
-          (this.accessor === "numberOfViolations"
-            ? !["ALL"].includes(record.numberOfViolations)
-            : numberOfViolations.includes(record.numberOfViolations)) &&
-          (this.accessor === "lengthOfStay"
-            ? !["ALL"].includes(record.lengthOfStay)
-            : ["ALL"].includes(record.lengthOfStay)) &&
-          (this.accessor === "supervisionLevel"
-            ? !["ALL"].includes(record.supervisionLevel)
-            : supervisionLevel.includes(record.supervisionLevel)) &&
-          (this.accessor === "race"
-            ? !["ALL"].includes(record.race)
-            : race.includes(record.race)) &&
+          filterRecords(record, this.dimensions, filters, this.accessor) &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,
@@ -143,26 +103,24 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
     const result = pipe(
       groupBy((d: SupervisionPopulationSnapshotRecord) => [d[this.accessor]]),
       values,
-      map((dataset) => ({
-        // #TODO #1596 create tooling to reduce listing every dimension in filters
-        count: sumBy("count", dataset),
-        populationProportion: (
-          (sumBy("count", dataset) * 100) /
-          this.totalCount
-        ).toFixed(),
-        lastUpdated: dataset[0].lastUpdated,
-        gender: dataset[0].gender,
-        district: dataset[0].district,
-        supervisionType: dataset[0].supervisionType,
-        ageGroup: dataset[0].ageGroup,
-        mostSevereViolation: dataset[0].mostSevereViolation,
-        numberOfViolations: dataset[0].numberOfViolations,
-        lengthOfStay: dataset[0].lengthOfStay,
-        supervisionLevel: dataset[0].supervisionLevel,
-        race: dataset[0].race,
-        timePeriod: dataset[0].timePeriod,
-      }))
+      map((dataset) => {
+        const datasetWithoutCount = dataset.map(
+          (group: SupervisionPopulationSnapshotRecord) => {
+            const { count, ...rest } = group;
+            return rest;
+          }
+        );
+        return {
+          count: sumBy("count", dataset),
+          populationProportion: (
+            (sumBy("count", dataset) * 100) /
+            this.totalCount
+          ).toFixed(),
+          ...datasetWithoutCount[0],
+        };
+      })
     )(filteredRecords);
+
     return result as SupervisionPopulationSnapshotRecord[];
   }
 

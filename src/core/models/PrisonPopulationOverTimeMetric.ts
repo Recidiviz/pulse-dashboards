@@ -28,7 +28,7 @@ import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PrisonPopulationTimeSeriesRecord } from "./types";
-import { getRecordDate } from "./utils";
+import { filterRecords, getRecordDate } from "./utils";
 
 export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<PrisonPopulationTimeSeriesRecord> {
   constructor(
@@ -47,30 +47,20 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
 
   get dataSeries(): PrisonPopulationTimeSeriesRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
-    const {
-      gender,
-      legalStatus,
-      facility,
-      ageGroup,
-    } = this.rootStore.filtersStore.filters;
+    const { filters } = this.rootStore.filtersStore;
     const { monthRange } = this.rootStore.filtersStore;
+    const { mostRecentDate } = this;
     const stepSize = monthRange === 60 ? 2 : 1;
 
-    const { mostRecentDate } = this;
     const filteredRecords = this.allRecords.filter(
       (record: PrisonPopulationTimeSeriesRecord) => {
         const monthsOut =
           (record.year - mostRecentDate.getFullYear()) * 12 +
           (record.month - (mostRecentDate.getMonth() + 1));
-
         return (
-          // #TODO #1596 create tooling to reduce listing every dimension in filters
           Math.abs(monthsOut) <= monthRange &&
           monthsOut % stepSize === 0 &&
-          gender.includes(record.gender) &&
-          legalStatus.includes(record.legalStatus) &&
-          ageGroup.includes(record.ageGroup) &&
-          facility.includes(record.facility)
+          filterRecords(record, this.dimensions, filters)
         );
       }
     );
@@ -78,19 +68,21 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
     const result = pipe(
       groupBy((d: PrisonPopulationTimeSeriesRecord) => [d.year, d.month]),
       values,
-      map((dataset) => ({
-        // #TODO #1596 create tooling to reduce listing every dimension in filters
-        year: dataset[0].year,
-        month: dataset[0].month,
-        gender: dataset[0].gender,
-        legalStatus: dataset[0].legalStatus,
-        facility: dataset[0].facility,
-        ageGroup: dataset[0].ageGroup,
-        // TODO I don't think this is right
-        avg90day: sumBy("avg90day", dataset),
-        count: sumBy("count", dataset),
-      }))
+      map((dataset) => {
+        const datasetWithoutCount = dataset.map(
+          (group: PrisonPopulationTimeSeriesRecord) => {
+            const { count, avg90day, ...rest } = group;
+            return rest;
+          }
+        );
+        return {
+          count: sumBy("count", dataset),
+          avg90day: sumBy("avg90day", dataset),
+          ...datasetWithoutCount[0],
+        };
+      })
     )(filteredRecords);
+
     return result as PrisonPopulationTimeSeriesRecord[];
   }
 
