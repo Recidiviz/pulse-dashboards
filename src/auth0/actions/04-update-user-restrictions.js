@@ -43,7 +43,7 @@ exports.onExecutePostLogin = async (event, api) => {
     api.user.setAppMetadata("blocked_state_codes", ["us_pa"]);
   }
 
-  if (["us_mo", "us_id", "us_nd"].includes(stateCode)) {
+  if (["us_mo", "us_id", "us_nd", "us_me"].includes(stateCode)) {
     const Sentry = require("@sentry/node");
     const { GoogleAuth } = require('google-auth-library');
     Sentry.init({
