@@ -737,16 +737,8 @@ export const NdPopulationFilterOptions: PopulationFilters = {
         value: "CJ",
       },
       {
-        label: "TRCC",
-        value: "TRCC",
-      },
-      {
         label: "NTAD",
         value: "NTAD",
-      },
-      {
-        label: "TABLET",
-        value: "TABLET",
       },
     ],
     get defaultOption(): FilterOption {
