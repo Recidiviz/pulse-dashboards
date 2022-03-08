@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { MetricId } from "./core/models/types";
 import {
   METRIC_TYPE_LABELS,
   METRIC_TYPES,
   PracticesMetric,
 } from "./core/PagePractices/types";
-import { TableColumn } from "./core/types/charts";
+import { TableColumns } from "./core/types/charts";
 import { Navigation } from "./core/types/navigation";
+import enabledTableColumns from "./core/utils/enabledTableColumns";
 import {
   PATHWAYS_PAGES,
   PATHWAYS_SECTIONS,
@@ -43,9 +43,10 @@ type Tenants = {
     enableUserRestrictions: boolean;
     enablePracticesCaseloadButton: boolean;
     navigation?: Navigation;
+    betaNavigation?: Navigation;
     practicesMetrics?: PracticesMetric[];
     pagesWithRestrictions?: string[];
-    tableColumns?: Partial<Record<MetricId, TableColumn[]>>;
+    tableColumns?: TableColumns;
   };
 };
 
@@ -71,13 +72,65 @@ const TENANTS: Tenants = {
       supervisionToLiberty: [PATHWAYS_SECTIONS.countOverTime],
       "id-methodology": ["system", "operations"],
     },
+    betaNavigation: {
+      operations: [],
+      system: [
+        PATHWAYS_PAGES.libertyToPrison,
+        PATHWAYS_PAGES.prison,
+        PATHWAYS_PAGES.prisonToSupervision,
+        PATHWAYS_PAGES.supervision,
+        PATHWAYS_PAGES.supervisionToPrison,
+        PATHWAYS_PAGES.supervisionToLiberty,
+      ],
+      libertyToPrison: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration,
+        PATHWAYS_SECTIONS.countByGender,
+        PATHWAYS_SECTIONS.countByAgeGroup,
+        PATHWAYS_SECTIONS.countByRace,
+      ],
+      prison: [
+        PATHWAYS_SECTIONS.projectedCountOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.personLevelDetail,
+      ],
+      prisonToSupervision: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countByAgeGroup,
+        PATHWAYS_SECTIONS.personLevelDetail,
+      ],
+      supervision: [
+        PATHWAYS_SECTIONS.projectedCountOverTime,
+        PATHWAYS_SECTIONS.countBySupervisionLevel,
+      ],
+      supervisionToPrison: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLengthOfStay,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countByGender,
+        PATHWAYS_SECTIONS.countByAgeGroup,
+      ],
+      supervisionToLiberty: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countByRace,
+        PATHWAYS_SECTIONS.countByGender,
+        PATHWAYS_SECTIONS.countByAgeGroup,
+      ],
+      "id-methodology": ["system", "operations"],
+    },
     pagesWithRestrictions: [
       "operations",
+      "libertyToPrison",
       "prison",
+      "prisonToSupervision",
       "supervision",
       "supervisionToPrison",
       "supervisionToLiberty",
     ],
+    tableColumns: enabledTableColumns[pathways.US_ID],
     practicesMetrics: [
       {
         name: METRIC_TYPE_LABELS.OVERALL,
@@ -163,77 +216,7 @@ const TENANTS: Tenants = {
       "id-methodology": [PATHWAYS_VIEWS.system],
     },
     pagesWithRestrictions: ["prison"],
-    tableColumns: {
-      prisonPopulationPersonLevel: [
-        {
-          Header: "Name",
-          accessor: "fullName",
-          titleCase: true,
-          width: 150,
-        },
-        {
-          Header: "DOC ID",
-          accessor: "stateId",
-          titleCase: false,
-          width: 100,
-        },
-        {
-          Header: "Gender",
-          accessor: "gender",
-          titleCase: true,
-          width: 80,
-        },
-        {
-          Header: "Age",
-          accessor: "age",
-          titleCase: false,
-          width: 80,
-        },
-        {
-          Header: "Facility",
-          accessor: "facility",
-          titleCase: false,
-          width: 80,
-        },
-        {
-          Header: "Admission Reason",
-          accessor: "legalStatus",
-          titleCase: true,
-        },
-      ],
-      prisonToSupervisionPopulationPersonLevel: [
-        {
-          Header: "Name",
-          accessor: "fullName",
-          titleCase: true,
-          width: 150,
-        },
-        {
-          Header: "DOC ID",
-          accessor: "stateId",
-          titleCase: false,
-          width: 100,
-        },
-        {
-          Header: "Gender",
-          accessor: "gender",
-          titleCase: true,
-          width: 80,
-        },
-        {
-          Header: "Age",
-          accessor: "age",
-          titleCase: false,
-          width: 80,
-        },
-        {
-          Header: "Facility",
-          accessor: "facility",
-          titleCase: false,
-          width: 100,
-        },
-      ],
-    },
+    tableColumns: enabledTableColumns[pathways.US_TN],
   },
   [pathways.US_ME]: {
     name: "Maine",
@@ -273,45 +256,7 @@ const TENANTS: Tenants = {
       "id-methodology": ["system"],
     },
     pagesWithRestrictions: ["prison"],
-    tableColumns: {
-      prisonPopulationPersonLevel: [
-        {
-          Header: "Name",
-          accessor: "fullName",
-          titleCase: true,
-          width: 150,
-        },
-        {
-          Header: "DOC ID",
-          accessor: "stateId",
-          titleCase: false,
-          width: 100,
-        },
-        {
-          Header: "Gender",
-          accessor: "gender",
-          titleCase: true,
-          width: 80,
-        },
-        {
-          Header: "Age",
-          accessor: "age",
-          titleCase: false,
-          width: 80,
-        },
-        {
-          Header: "Facility",
-          accessor: "facility",
-          titleCase: false,
-          width: 100,
-        },
-        {
-          Header: "Admission Reason",
-          accessor: "legalStatus",
-          titleCase: true,
-        },
-      ],
-    },
+    tableColumns: enabledTableColumns[pathways.US_ME],
   },
   [lantern.US_MO]: {
     name: "Missouri",
@@ -393,77 +338,7 @@ const TENANTS: Tenants = {
       "supervision",
       "practices",
     ],
-    tableColumns: {
-      prisonPopulationPersonLevel: [
-        {
-          Header: "Name",
-          accessor: "fullName",
-          titleCase: true,
-          width: 150,
-        },
-        {
-          Header: "DOC ID",
-          accessor: "stateId",
-          titleCase: false,
-          width: 100,
-        },
-        {
-          Header: "Gender",
-          accessor: "gender",
-          titleCase: true,
-          width: 80,
-        },
-        {
-          Header: "Age",
-          accessor: "age",
-          titleCase: false,
-          width: 80,
-        },
-        {
-          Header: "Facility",
-          accessor: "facility",
-          titleCase: false,
-          width: 100,
-        },
-        {
-          Header: "Admission Reason",
-          accessor: "legalStatus",
-          titleCase: true,
-        },
-      ],
-      prisonToSupervisionPopulationPersonLevel: [
-        {
-          Header: "Name",
-          accessor: "fullName",
-          titleCase: true,
-          width: 150,
-        },
-        {
-          Header: "DOC ID",
-          accessor: "stateId",
-          titleCase: false,
-          width: 100,
-        },
-        {
-          Header: "Gender",
-          accessor: "gender",
-          titleCase: true,
-          width: 80,
-        },
-        {
-          Header: "Age",
-          accessor: "age",
-          titleCase: false,
-          width: 80,
-        },
-        {
-          Header: "Facility",
-          accessor: "facility",
-          titleCase: false,
-          width: 100,
-        },
-      ],
-    },
+    tableColumns: enabledTableColumns[pathways.US_ND],
     practicesMetrics: [
       {
         name: METRIC_TYPE_LABELS.OVERALL,

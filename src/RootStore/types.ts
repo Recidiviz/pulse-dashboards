@@ -41,6 +41,7 @@ export type UserAppMetadata = {
   allowed_supervision_location_level?: string;
   can_access_leadership_dashboard: boolean;
   can_access_case_triage: boolean;
+  should_see_beta_charts: boolean;
   routes?: Record<string, boolean>;
 };
 

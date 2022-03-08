@@ -317,6 +317,9 @@ export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.LEGAL_STATUS,
     ],
   },
+  prisonFacilityPopulation: {
+    enabledFilters: [FILTER_TYPES.FACILITY, FILTER_TYPES.AGE_GROUP],
+  },
   // SUPERVISION
   projectedSupervisionPopulationOverTime: {
     enabledFilters: [
@@ -329,8 +332,36 @@ export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   supervisionToPrisonOverTime: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.MOST_SEVERE_VIOLATION,
+      FILTER_TYPES.NUMBER_OF_VIOLATIONS,
+    ],
+    enabledMoreFilters: [
       FILTER_TYPES.SUPERVISION_TYPE,
       FILTER_TYPES.GENDER,
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.SUPERVISION_LEVEL,
+    ],
+  },
+  supervisionToPrisonPopulationByLengthOfStay: {
+    enabledFilters: [
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+    ],
+  },
+  supervisionToPrisonPopulationByDistrict: {
+    enabledFilters: [
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+    ],
+  },
+  supervisionToPrisonPopulationByGender: {
+    enabledFilters: [
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
     ],
   },
   // SUPERVISION TO LIBERTY
@@ -339,6 +370,34 @@ export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.SUPERVISION_TYPE,
       FILTER_TYPES.GENDER,
+    ],
+  },
+  supervisionToLibertyPopulationByLocation: {
+    enabledFilters: [
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.DISTRICT,
+    ],
+  },
+  supervisionToLibertyPopulationByGender: {
+    enabledFilters: [
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.DISTRICT,
+    ],
+  },
+  supervisionToLibertyPopulationByAgeGroup: {
+    enabledFilters: [
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.DISTRICT,
+    ],
+  },
+  supervisionToLibertyPopulationByRace: {
+    enabledFilters: [
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.DISTRICT,
     ],
   },
 };

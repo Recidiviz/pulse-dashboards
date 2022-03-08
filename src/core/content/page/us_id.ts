@@ -43,9 +43,26 @@ const content: StateSpecificPageCopy = {
     methodology:
       "These charts include all people on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant.",
   },
+  prisonToSupervision: {
+    sections: {
+      countOverTime: "Releases from prison to supervision over time",
+      countByAgeGroup: "Releases to supervision by age",
+      countByLocation: "Releases to supervision by facility",
+    },
+  },
   supervisionToPrison: {
     summary:
       "These charts include a count of all admissions from supervision to prison. People on supervision include those on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant. An admission is counted on the day the person is admitted to a facility, not the day the violation occurred.\n",
+    sections: {
+      countByLocation: "Admissions from supervision by district",
+      countByMostSevereViolation:
+        "Admissions from supervision by most severe violation",
+      countByNumberOfViolations:
+        "Admissions from supervision by number of violations",
+      countByLengthOfStay: "Time to admission from supervision",
+      countBySupervisionLevel:
+        "Admissions from supervision to prison by supervision level",
+    },
     methodology:
       "These charts include a count of all admissions supervision to prison. People on supervision include those on probation, parole/dual supervision, informal probation, those who have absconded, and those who have an active bench warrant. An admission is counted on the day the person is admitted to a facility, not the day the violation occurred.\n",
   },

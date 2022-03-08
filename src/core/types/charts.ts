@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { RawApiData } from "../models/types";
+import { MetricId, RawApiData } from "../models/types";
 
 export type ChartDataType = {
   isLoading: boolean;
@@ -28,3 +28,5 @@ export type TableColumn = {
   titleCase: boolean;
   width?: number;
 };
+
+export type TableColumns = Partial<Record<MetricId, TableColumn[]>>;

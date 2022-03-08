@@ -34,7 +34,7 @@ const PathwaysLeftPanel: React.FC<{
   return (
     <div
       className={cn("PathwaysLeftPanel", {
-        "pt-5": isDisplayNav && !isMobile,
+        "pt-5 pb-5": isDisplayNav && !isMobile,
       })}
     >
       <div className="PathwaysLeftPanel__title">{title}</div>

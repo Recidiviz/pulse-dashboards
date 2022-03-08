@@ -195,6 +195,20 @@ export default class UserStore {
     return stateCode.toUpperCase() as TenantId;
   }
 
+  /**
+   * Returns a boolean describing whether this user should see the beta charts.
+   */
+  get shouldSeeBetaCharts(): boolean {
+    return (
+      this.stateCode === "RECIDIVIZ" ||
+      this.userAppMetadata?.should_see_beta_charts ||
+      false
+    );
+  }
+
+  /**
+   * Returns the route permissions for the given user.
+   */
   get routes(): RoutePermission[] {
     if (!this.userAppMetadata?.routes) return [];
     const routePermissions = entries(this.userAppMetadata?.routes);
@@ -255,9 +269,11 @@ export default class UserStore {
    */
   get userAllowedNavigation(): Navigation | undefined {
     if (!this.rootStore?.currentTenantId) return {};
-    const { navigation: allowed, pagesWithRestrictions } = tenants[
+    const { navigation, betaNavigation, pagesWithRestrictions } = tenants[
       this.rootStore.currentTenantId
     ];
+    const allowed =
+      this.shouldSeeBetaCharts && betaNavigation ? betaNavigation : navigation;
     if (!allowed) return {};
 
     if (this.stateCode === "RECIDIVIZ") return allowed;
