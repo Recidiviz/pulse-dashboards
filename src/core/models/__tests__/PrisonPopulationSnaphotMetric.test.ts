@@ -139,7 +139,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
   it("has a transformed records property", () => {
     expect(metric.records).toEqual([
       {
-        legalStatus: "ALL",
+        admissionReason: "ALL",
         gender: "ALL",
         ageGroup: "ALL",
         facility: "ALL",
@@ -149,7 +149,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         lengthOfStay: "ALL",
       },
       {
-        legalStatus: "ALL",
+        admissionReason: "ALL",
         gender: "ALL",
         ageGroup: "ALL",
         facility: "ALL",
@@ -159,7 +159,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         lengthOfStay: "ALL",
       },
       {
-        legalStatus: "ALL",
+        admissionReason: "ALL",
         gender: "Unknown",
         ageGroup: "ALL",
         facility: "ALL",
@@ -169,7 +169,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         lengthOfStay: "ALL",
       },
       {
-        legalStatus: "ALL",
+        admissionReason: "ALL",
         gender: "ALL",
         ageGroup: "ALL",
         facility: "Bedrock",
@@ -179,7 +179,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         lengthOfStay: "ALL",
       },
       {
-        legalStatus: "ALL",
+        admissionReason: "ALL",
         gender: "FEMALE",
         ageGroup: "ALL",
         facility: "School of Rock",
@@ -261,7 +261,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
       // totalCount in this dataSeries is 30
       expect(metric.dataSeries).toEqual([
         {
-          legalStatus: "ALL",
+          admissionReason: "ALL",
           gender: "ALL",
           ageGroup: "ALL",
           facility: "Bedrock",
@@ -286,7 +286,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         // totalCount in this dataSeries is 45
         expect(metric.dataSeries).toEqual([
           {
-            legalStatus: "ALL",
+            admissionReason: "ALL",
             ageGroup: "ALL",
             gender: "FEMALE",
             facility: "School of Rock",
@@ -313,7 +313,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
       // totalCount in this dataSeries is 45
       expect(metric.dataSeries).toEqual([
         {
-          legalStatus: "ALL",
+          admissionReason: "ALL",
           gender: "ALL",
           ageGroup: "ALL",
           facility: "Bedrock",

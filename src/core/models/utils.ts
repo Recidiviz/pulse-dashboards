@@ -68,7 +68,7 @@ const libertyDimensionDefaults = {
 
 const prisonDimensionDefaults = {
   ...sharedDimensionDefaults,
-  legalStatus: "ALL",
+  admissionReason: "ALL",
   facility: "ALL",
   lengthOfStay: "ALL",
 };
@@ -140,7 +140,7 @@ export function createPrisonPopulationSnapshot(
       {
         count: parseInt(record.event_count) || parseInt(record.person_count),
         lastUpdated: formatDateString(record.last_updated),
-        legalStatus: record.legal_status,
+        admissionReason: record.legal_status,
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
         facility: record.facility,
@@ -203,7 +203,7 @@ export function createPrisonPopulationPersonLevelList(
         fullName: record.full_name || "Unknown",
         lastUpdated: formatDateString(record.last_updated),
         age: record.age || "Unknown",
-        legalStatus: record.legal_status || "Unknown",
+        admissionReason: record.legal_status || "Unknown",
         gender: (record.gender as Gender) || "Unknown",
         ageGroup: (record.age_group as AgeGroup) || "Unknown",
         facility: record.facility || "Unknown",
@@ -231,7 +231,7 @@ export function createPrisonPopulationTimeSeries(
           ? parseInt(record.event_count)
           : parseInt(record.person_count),
         avg90day: parseInt(record.avg_90day),
-        legalStatus: record.legal_status,
+        admissionReason: record.legal_status,
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
         facility: record.facility,

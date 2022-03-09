@@ -188,8 +188,27 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
   },
   [FILTER_TYPES.LEGAL_STATUS]: {
     type: FILTER_TYPES.LEGAL_STATUS,
-    title: "Admission Reason",
+    title: "Legal Status",
+    isSingleSelect: true,
     setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Rider", value: "TREATMENT_IN_PRISON" },
+      { label: "Termer", value: "GENERAL" },
+      { label: "Parole Violator", value: "PAROLE_BOARD_HOLD" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.ADMISSION_REASON]: {
+    type: FILTER_TYPES.ADMISSION_REASON,
+    title: "Admission Reason",
+    setFilters: setFilters(FILTER_TYPES.ADMISSION_REASON),
     options: [
       { label: "All", value: "ALL" },
       { label: "New admission", value: "NEW_ADMISSION" },
@@ -378,16 +397,175 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
 
 export const IdPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
-  [FILTER_TYPES.LEGAL_STATUS]: {
-    type: FILTER_TYPES.LEGAL_STATUS,
-    title: "Legal Status",
-    isSingleSelect: true,
-    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
+  [FILTER_TYPES.FACILITY]: {
+    type: FILTER_TYPES.FACILITY,
+    title: "Facility",
+    setFilters: setFilters(FILTER_TYPES.FACILITY),
     options: [
       { label: "All", value: "ALL" },
-      { label: "Rider", value: "TREATMENT_IN_PRISON" },
-      { label: "Termer", value: "GENERAL" },
-      { label: "Parole Violator", value: "PAROLE_BOARD_HOLD" },
+      {
+        label: "CAPP",
+        longLabel: "Correctional Alternative Placement Program",
+        value: "CAPP",
+      },
+      {
+        label: "IMSI",
+        longLabel: "Idaho Maximum Security Institution",
+        value: "IMSI",
+      },
+      {
+        label: "ISCC",
+        longLabel: "Idaho State Correctional Center",
+        value: "ISCC",
+      },
+      {
+        label: "ISCI",
+        longLabel: "Idaho State Correctional Institution",
+        value: "ISCI",
+      },
+      {
+        label: "SBWCC",
+        longLabel: "South Boise Women's Correctional Center",
+        value: "SBWCC",
+      },
+      {
+        label: "SICI",
+        longLabel: "South Idaho Correctional Institution",
+        value: "SICI",
+      },
+      {
+        label: "NICI",
+        longLabel: "North Idaho Correctional Institution",
+        value: "NICI",
+      },
+      {
+        label: "ICIO",
+        longLabel: "Idaho Correctional Institution-Orofino",
+        value: "ICIO",
+      },
+      {
+        label: "PWCC",
+        longLabel: "Pocatello Women's Correctional Center",
+        value: "PWCC",
+      },
+      { label: "CJ", longLabel: "County Jail", value: "CJ" },
+      { label: "OOS", longLabel: "Out of state", value: "OOS" },
+      { label: "WC", longLabel: "Work camps", value: "WC" },
+      { label: "OTHER", longLabel: "Other", value: "OTHER" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.DISTRICT]: {
+    type: FILTER_TYPES.DISTRICT,
+    title: "District",
+    setFilters: setFilters(FILTER_TYPES.DISTRICT),
+    options: [
+      { label: "All", longLabel: "All", value: "ALL" },
+      {
+        label: "District 0",
+        longLabel: "District Office 0",
+        value: "DISTRICT 0",
+      },
+      {
+        label: "District 1",
+        longLabel: "District Office 1, Coeur d'Alene",
+        value: "DISTRICT 1",
+      },
+      {
+        label: "District 2",
+        longLabel: "District Office 2, Lewiston",
+        value: "DISTRICT 2",
+      },
+      {
+        label: "District 3",
+        longLabel: "District Office 3, Caldwell",
+        value: "DISTRICT 3",
+      },
+      {
+        label: "District 4",
+        longLabel: "District Office 4, Boise",
+        value: "DISTRICT 4",
+      },
+      {
+        label: "District 5",
+        longLabel: "District Office 5, Twin Falls",
+        value: "DISTRICT 5",
+      },
+      {
+        label: "District 6",
+        longLabel: "District Office 6, Pocatello",
+        value: "DISTRICT 6",
+      },
+      {
+        label: "District 7",
+        longLabel: "District Office 7, Idaho Falls",
+        value: "DISTRICT 7",
+      },
+      { label: "Federal", longLabel: "Federal", value: "FEDERAL" },
+      {
+        label: "PCO",
+        longLabel: "Parole Commission Office",
+        value: "PAROLE COMMISSION OFFICE",
+      },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.RACE]: {
+    type: FILTER_TYPES.RACE,
+    title: "Race",
+    setFilters: setFilters(FILTER_TYPES.RACE),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Black", value: "BLACK" },
+      { label: "White", value: "WHITE" },
+      { label: "Hispanic", value: "HISPANIC" },
+      { label: "Asian", value: "ASIAN" },
+      {
+        label: "American Indian/ Alaskan Native",
+        value: "AMERICAN_INDIAN_ALASKAN_NATIVE",
+      },
+      {
+        label: "Native Hawaiian/ Pacific Islander",
+        value: "NATIVE_HAWAIIAN_PACIFIC_ISLANDER",
+      },
+      { label: "Other", value: "OTHER" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.SUPERVISION_LEVEL]: {
+    type: FILTER_TYPES.SUPERVISION_LEVEL,
+    title: "Supervision Level",
+    setFilters: setFilters(FILTER_TYPES.SUPERVISION_LEVEL),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Minimum", value: "MINIMUM" },
+      { label: "Medium", value: "MEDIUM" },
+      { label: "Maximum", value: "MAXIMUM" },
+      { label: "High", value: "HIGH" },
+      { label: "Diversion", value: "DIVERSION" },
+      { label: "Interstate compact", value: "INTERSTATE_COMPACT" },
+      { label: "In custody", value: "IN_CUSTODY" },
+      { label: "Unassigned", value: "UNASSIGNED" },
+      { label: "Unsupervised", value: "UNSUPERVISED" },
+      { label: "Limited", value: "LIMITED" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -1064,6 +1242,9 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ] as Gender[],
   [FILTER_TYPES.LEGAL_STATUS]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.LEGAL_STATUS].defaultValue,
+  ],
+  [FILTER_TYPES.ADMISSION_REASON]: [
+    DefaultPopulationFilterOptions[FILTER_TYPES.ADMISSION_REASON].defaultValue,
   ],
   [FILTER_TYPES.SUPERVISION_TYPE]: [
     DefaultPopulationFilterOptions[FILTER_TYPES.SUPERVISION_TYPE].defaultValue,

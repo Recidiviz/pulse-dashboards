@@ -122,11 +122,11 @@ describe("PrisonPopulationOverTimeMetric", () => {
 
   it("has a transformed records property", () => {
     // ageGroup values default to "Unknown" since that filter is enabled
-    // legalStatus values default to "ALL" since that filter is not enabled
+    // admissionReason values default to "ALL" since that filter is not enabled
     expect(metric.records).toEqual([
       {
         gender: "ALL",
-        legalStatus: "ALL",
+        admissionReason: "ALL",
         month: 12,
         facility: "ALL",
         ageGroup: "ALL",
@@ -137,7 +137,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
       },
       {
         gender: "ALL",
-        legalStatus: "ALL",
+        admissionReason: "ALL",
         month: 1,
         facility: "ALL",
         ageGroup: "Unknown",
@@ -148,7 +148,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
       },
       {
         gender: "MALE",
-        legalStatus: "ALL",
+        admissionReason: "ALL",
         month: 5,
         facility: "MCCX",
         ageGroup: "ALL",
@@ -218,7 +218,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
         {
           year: 2015,
           month: 12,
-          legalStatus: "ALL",
+          admissionReason: "ALL",
           gender: "ALL",
           count: 7641,
           ageGroup: "ALL",
@@ -242,7 +242,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
           {
             compartment: undefined,
             gender: "MALE",
-            legalStatus: "ALL",
+            admissionReason: "ALL",
             ageGroup: "ALL",
             avg90day: 100,
             facility: "MCCX",

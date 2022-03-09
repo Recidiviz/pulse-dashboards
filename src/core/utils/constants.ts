@@ -23,6 +23,7 @@ export const FILTER_TYPES = {
   TIME_PERIOD: "timePeriod",
   GENDER: "gender",
   LEGAL_STATUS: "legalStatus",
+  ADMISSION_REASON: "admissionReason",
   SUPERVISION_TYPE: "supervisionType",
   AGE_GROUP: "ageGroup",
   FACILITY: "facility",

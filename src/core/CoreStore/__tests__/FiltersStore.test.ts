@@ -81,18 +81,18 @@ describe("FiltersStore", () => {
   });
 
   describe("filtersDescription", () => {
-    it("returns the correct description when legalStatus is enabled", () => {
+    it("returns the correct description when admissionReason is enabled", () => {
       coreStore.metricsStore.current.filters.enabledFilters = [
         "timePeriod",
         "gender",
-        "legalStatus",
+        "admissionReason",
       ];
       coreStore.filtersStore.setFilters({
         timePeriod: ["6"],
-        legalStatus: ["TREATMENT_IN_PRISON"],
+        admissionReason: ["NEW_ADMISSION"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
-        "Time Period:, 6 months\nGender:, All\nLegal Status:, Rider\n"
+        "Time Period:, 6 months\nGender:, All\nAdmission Reason:, New admission\n"
       );
     });
 
@@ -119,10 +119,10 @@ describe("FiltersStore", () => {
       ];
       coreStore.filtersStore.setFilters({
         timePeriod: ["12"],
-        facility: ["FACILITY_2", "FACILITY_3"],
+        facility: ["CAPP", "ISCC"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
-        "Time Period:, 1 year\nGender:, All\nFacility:, FACILITY_2,FACILITY_3\n"
+        "Time Period:, 1 year\nGender:, All\nFacility:, CAPP,ISCC\n"
       );
     });
   });

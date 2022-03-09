@@ -66,6 +66,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     "race",
     "facility",
     "judicialDistrict",
+    "supervisionLevel",
   ].includes(accessor);
   const isGeographic = [
     "district",

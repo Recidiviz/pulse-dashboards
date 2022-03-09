@@ -26,6 +26,7 @@ export type PopulationFilterValues = {
   gender: Gender[];
   supervisionType: string[];
   legalStatus: string[];
+  admissionReason: string[];
   facility: string[];
   ageGroup: AgeGroup[];
   district: string[];
@@ -41,6 +42,7 @@ export type PopulationFilterLabels = {
   gender: string;
   supervisionType: string;
   legalStatus: string;
+  admissionReason: string;
   facility: string;
   ageGroup: string;
   district: string;
@@ -65,6 +67,7 @@ export interface PopulationFilters {
   [FILTER_TYPES.TIME_PERIOD]: PopulationFilter;
   [FILTER_TYPES.GENDER]: PopulationFilter;
   [FILTER_TYPES.LEGAL_STATUS]: PopulationFilter;
+  [FILTER_TYPES.ADMISSION_REASON]: PopulationFilter;
   [FILTER_TYPES.SUPERVISION_TYPE]: PopulationFilter;
   [FILTER_TYPES.AGE_GROUP]: PopulationFilter;
   [FILTER_TYPES.FACILITY]: PopulationFilter;

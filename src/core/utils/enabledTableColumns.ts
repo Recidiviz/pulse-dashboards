@@ -57,7 +57,7 @@ export const DefaultTableColumns: TableColumns = {
     },
     {
       Header: "Admission Reason",
-      accessor: "legalStatus",
+      accessor: "admissionReason",
       titleCase: true,
     },
   ],

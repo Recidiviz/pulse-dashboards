@@ -36,21 +36,24 @@ export const dimensionsByMetricType = {
   // PRISON
   prison_population_time_series: [
     DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.LEGAL_STATUS,
+    DIMENSION_TYPES.ADMISSION_REASON,
     DIMENSION_TYPES.FACILITY,
     DIMENSION_TYPES.AGE_GROUP,
   ],
-  prison_population_projection_time_series: [DIMENSION_TYPES.GENDER],
-  prison_population_snapshot_by_dimension: [
+  prison_population_projection_time_series: [
     DIMENSION_TYPES.GENDER,
     DIMENSION_TYPES.LEGAL_STATUS,
+  ],
+  prison_population_snapshot_by_dimension: [
+    DIMENSION_TYPES.GENDER,
+    DIMENSION_TYPES.ADMISSION_REASON,
     DIMENSION_TYPES.FACILITY,
     DIMENSION_TYPES.AGE_GROUP,
     DIMENSION_TYPES.LENGTH_OF_STAY,
   ],
   prison_population_snapshot_person_level: [
     DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.LEGAL_STATUS,
+    DIMENSION_TYPES.ADMISSION_REASON,
     DIMENSION_TYPES.FACILITY,
     DIMENSION_TYPES.AGE_GROUP,
   ],

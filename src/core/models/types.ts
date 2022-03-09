@@ -115,7 +115,7 @@ export type PrisonPopulationSnapshotRecord = {
   lastUpdated: Date;
   gender: Gender;
   ageGroup: AgeGroup;
-  legalStatus: string;
+  admissionReason: string;
   facility: string;
   lengthOfStay: LengthOfStay;
   timePeriod: TimePeriod;
@@ -128,7 +128,7 @@ export type PrisonPopulationPersonLevelRecord = {
   gender: Gender;
   ageGroup: AgeGroup;
   age: string;
-  legalStatus: string;
+  admissionReason: string;
   facility: string;
   timePeriod: TimePeriod;
 };
@@ -140,7 +140,7 @@ export type PrisonPopulationTimeSeriesRecord = {
   month: number;
   gender: Gender;
   ageGroup: AgeGroup;
-  legalStatus: string;
+  admissionReason: string;
   facility: string;
   race: string;
 };
