@@ -39,6 +39,7 @@ import UsNdFacilitiesExplore from "./core/facilities/Explore";
 import CoreGoalsView from "./core/goals/CoreGoalsView";
 import PageMethodology from "./core/PageMethodology";
 import PagePractices from "./core/PagePractices";
+import PagePracticesV2 from "./core/PagePracticesV2";
 import PageSystem from "./core/PageSystem";
 import PathwaysLayout from "./core/PathwaysLayout";
 import Profile from "./core/Profile";
@@ -99,6 +100,7 @@ const App = () => (
                   <ProtectedRoute path={PATHWAYS_PATHS.system} component={PageSystem} />
                   <ProtectedRoute path={PATHWAYS_PATHS.operations} component={PagePractices} />
                   <ProtectedRoute path={PATHWAYS_PATHS.methodology} component={PageMethodology} />
+                  <ProtectedRoute path={PATHWAYS_PATHS.practices} component={PagePracticesV2} />
                   <Route path="/profile" component={Profile} />
                   <Redirect from="/system" to="/system/prison" />
                   <RedirectHome />

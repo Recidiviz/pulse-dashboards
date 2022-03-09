@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2022 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,25 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PathwaysSection } from "../views";
+import { Assets, palette, spacing } from "@recidiviz/design-system";
+import React from "react";
+import styled from "styled-components/macro";
 
-export type RoutePermission = (string | any)[];
+import { headerHeight } from "../../assets/styles/spec/settings/baseColors.scss";
 
-export type NavigationSection = keyof Navigation;
+const Wrapper = styled.div`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: ${palette.marble3};
+  height: ${headerHeight};
+  padding: ${spacing.md}px;
+`;
 
-export type Navigation = {
-  goals?: string[];
-  community?: string[];
-  facilities?: string[];
-  methodology?: string[];
-  operations?: string[];
-  system?: string[];
-  libertyToPrison?: PathwaysSection[];
-  prison?: PathwaysSection[];
-  prisonToSupervision?: PathwaysSection[];
-  supervision?: PathwaysSection[];
-  supervisionToPrison?: PathwaysSection[];
-  supervisionToLiberty?: PathwaysSection[];
-  "id-methodology"?: string[];
-  practices?: string[];
+const LogoImg = styled.img`
+  width: auto;
+  height: 22px;
+`;
+
+const PracticesTopBar: React.FC = () => {
+  return (
+    <Wrapper>
+      <LogoImg src={Assets.LOGO} alt="Recidiviz" />
+    </Wrapper>
+  );
 };
+
+export default PracticesTopBar;

@@ -165,6 +165,7 @@ const TENANTS: Tenants = {
     enableUserRestrictions: false,
     enablePracticesCaseloadButton: false,
     navigation: {
+      practices: [],
       system: [
         PATHWAYS_PAGES.libertyToPrison,
         PATHWAYS_PAGES.prison,
@@ -215,7 +216,7 @@ const TENANTS: Tenants = {
       ],
       "id-methodology": [PATHWAYS_VIEWS.system],
     },
-    pagesWithRestrictions: ["prison"],
+    pagesWithRestrictions: ["practices", "prison"],
     tableColumns: enabledTableColumns[pathways.US_TN],
   },
   [pathways.US_ME]: {

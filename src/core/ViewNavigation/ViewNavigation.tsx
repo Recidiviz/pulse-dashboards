@@ -47,6 +47,7 @@ const ViewNavigation: React.FC = ({ children }) => {
   const enabledPathwaysPages = navigationLayout.system || [];
   // Practices is enabled if enabledPractices !== undefined
   const enablePractices = navigationLayout.operations;
+  const enablePracticesV2 = Boolean(navigationLayout.practices);
 
   const PathwaysLink = () => {
     return enabledPathwaysPages.length > 0 ? (
@@ -76,6 +77,19 @@ const ViewNavigation: React.FC = ({ children }) => {
         <div className="ViewNavigation__navlink-heading">
           Operational Metrics
         </div>
+      </NavLink>
+    ) : null;
+  };
+
+  const PracticesV2Link = () => {
+    return enablePracticesV2 ? (
+      <NavLink
+        activeClassName="ViewNavigation__navlink--active"
+        className="ViewNavigation__navlink"
+        to={`/${PATHWAYS_VIEWS.practices}`}
+      >
+        <PracticesLogo className="ViewNavigation__icon" />
+        <div className="ViewNavigation__navlink-heading">Practices</div>
       </NavLink>
     ) : null;
   };
@@ -147,6 +161,7 @@ const ViewNavigation: React.FC = ({ children }) => {
           </div>
         </div>
       </div>
+      <PracticesV2Link />
       <div className="ViewNavigation__bottom">
         <div className="ViewNavigation__tooltip-box">
           <MethodologyLink />
