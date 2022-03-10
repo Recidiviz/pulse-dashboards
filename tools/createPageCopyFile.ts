@@ -18,6 +18,7 @@ import { promises } from "fs";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 
 import { PathwaysPageIdList } from "../src/core/views";
+import { convertCurlyQuotesToStraight } from "../src/utils/formatStrings";
 
 const { readFile, writeFile } = promises;
 
@@ -45,9 +46,13 @@ const createPageCopyFile = async (
         row["Page ID"],
         {
           ...(row.Title ? { title: row.Title } : {}),
-          ...(row.Summary ? { summary: row.Summary } : {}),
+          ...(row.Summary
+            ? { summary: convertCurlyQuotesToStraight(row.Summary) }
+            : {}),
           ...(row.Sections ? { sections: JSON.parse(row.Sections) } : {}),
-          ...(row.Methodology ? { methodology: row.Methodology } : {}),
+          ...(row.Methodology
+            ? { methodology: convertCurlyQuotesToStraight(row.Methodology) }
+            : {}),
         },
       ])
     );

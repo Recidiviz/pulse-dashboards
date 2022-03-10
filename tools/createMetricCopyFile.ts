@@ -18,6 +18,7 @@ import { promises } from "fs";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 
 import { MetricContent } from "../src/core/content/types";
+import { convertCurlyQuotesToStraight } from "../src/utils/formatStrings";
 
 const { readFile, writeFile } = promises;
 
@@ -41,8 +42,10 @@ const createMetricCopyFile = async (
         row["Metric ID"],
         {
           ...(row.Title ? { title: row.Title } : {}),
-          ...(row.Note ? { note: row.Note } : {}),
-          ...(row.Methodology ? { methodology: row.Methodology } : {}),
+          ...(row.Note ? { note: convertCurlyQuotesToStraight(row.Note) } : {}),
+          ...(row.Methodology
+            ? { methodology: convertCurlyQuotesToStraight(row.Methodology) }
+            : {}),
           ...(row["X-Axis title"]
             ? { chartXAxisTitle: row["X-Axis title"] }
             : {}),

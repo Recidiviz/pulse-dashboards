@@ -291,4 +291,10 @@ describe("formatStrings", () => {
       expect(utils.decrypt(encrypted)).toBe(plainText);
     });
   });
+
+  it("convert curly quotes to straight", () => {
+    const withCurlyQuotes = "“ ” ‘ ’";
+    const result = utils.convertCurlyQuotesToStraight(withCurlyQuotes);
+    expect(result).toEqual("\" \" ' '");
+  });
 });
