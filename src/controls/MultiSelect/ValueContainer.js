@@ -19,7 +19,7 @@ import React from "react";
 import { components } from "react-select";
 
 import { optionPropType } from "../propTypes";
-import { formatSelectOptionValue } from "../utils";
+import { formatSelectOptionValue, VALUE_CHARACTER_LIMIT } from "../utils";
 
 const ValueContainer = ({
   allOptions,
@@ -51,7 +51,9 @@ const ValueContainer = ({
 
   return (
     <components.ValueContainer {...props}>
-      {text}
+      {text.length > VALUE_CHARACTER_LIMIT
+        ? `${text.slice(0, VALUE_CHARACTER_LIMIT)}...`
+        : text}
       {selectInput}
     </components.ValueContainer>
   );

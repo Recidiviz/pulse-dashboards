@@ -18,6 +18,8 @@
 import filter from "lodash/fp/filter";
 import map from "lodash/fp/map";
 
+export const VALUE_CHARACTER_LIMIT = 15;
+
 export const excludeOption = (options, optionToExclude) => {
   if (!optionToExclude) return options;
   return options.filter((option) => optionToExclude.value !== option.value);
