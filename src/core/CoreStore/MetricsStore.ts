@@ -459,6 +459,7 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "supervisionLevel",
+      enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationBySupervisionLevel,

@@ -32,7 +32,7 @@ const content: PageCopy = {
   },
   supervision: {
     title: "Supervision",
-    summary: "This page shows all people supervised by the state.",
+    summary: "Includes all people supervised by the state.",
     sections: {
       countOverTime: "Supervision population over time",
       countByLocation: "Supervision population by district",
@@ -42,7 +42,7 @@ const content: PageCopy = {
   supervisionToPrison: {
     title: "Supervision to Prison",
     summary:
-      "This chart includes people who have been incarcerated in a state facility because their parole or probation was revoked. Revocations are counted when the person was admitted to a facility, not when the violation occurred.",
+      "Includes people who have been incarcerated in a state facility because their parole or probation was revoked. Revocations are counted when the person was admitted to a facility, not when the violation occurred.",
     sections: {
       countOverTime: "Admissions from supervision over time",
       countByLocation: "Admissions from supervision by district",
@@ -55,6 +55,7 @@ const content: PageCopy = {
         "Admissions from supervision by most severe violation",
       countByNumberOfViolations:
         "Admissions from supervision by number of violations",
+      countByOfficer: "Admissions from supervision by officer",
     },
     methodology:
       "These charts include details of all admissions from supervision to prison.",
@@ -62,7 +63,7 @@ const content: PageCopy = {
   supervisionToLiberty: {
     title: "Supervision to Liberty",
     summary:
-      "These charts show people who were discharged from supervision positively or if their supervision period expired.",
+      "Includes people who were discharged from supervision positively or if their supervision period expired.",
     sections: {
       countOverTime: "Releases from supervision over time",
       countByLengthOfStay: "Time served at release",
@@ -75,7 +76,7 @@ const content: PageCopy = {
   libertyToPrison: {
     title: "Liberty to Prison",
     summary:
-      "These charts show people who were sentenced to prison from a new court commitment.",
+      "Includes people who were sentenced to prison from a new court commitment.",
     sections: {
       countOverTime: "Admissions from liberty to prison over time",
       countByLocation: "Admissions from liberty to prison by district",
@@ -89,7 +90,7 @@ const content: PageCopy = {
   prisonToSupervision: {
     title: "Prison to Supervision",
     summary:
-      "These charts show people who were released from state prison facilities to supervision",
+      "Includes people who were released from state prison facilities to supervision",
     sections: {
       countOverTime: "Releases from prison to supervision over time",
       countByLocation: "Releases from prison to supervision by facility",

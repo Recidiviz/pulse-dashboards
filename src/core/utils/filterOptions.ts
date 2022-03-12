@@ -153,6 +153,9 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
       { label: "All", value: "ALL" },
       { label: "Probation", value: "PROBATION" },
       { label: "Parole/Dual", value: "PAROLE" },
+      { label: "Bench Warrant", value: "BENCH_WARRANT" },
+      { label: "Informal Probation", value: "INFORMAL_PROBATION" },
+      { label: "Absconsion", value: "ABSCONSION" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -450,8 +453,10 @@ export const IdPopulationFilterOptions: PopulationFilters = {
       },
       { label: "CJ", longLabel: "County Jail", value: "CJ" },
       { label: "OOS", longLabel: "Out of state", value: "OOS" },
-      { label: "WC", longLabel: "Work camps", value: "WC" },
+      { label: "WC", longLabel: "Work centers", value: "WC" },
       { label: "OTHER", longLabel: "Other", value: "OTHER" },
+      { label: "CRC", longLabel: "Community Reentry Center", value: "CRC" },
+      { label: "SCC", longLabel: "Saguaro Correctional Center", value: "SCC" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -561,11 +566,12 @@ export const IdPopulationFilterOptions: PopulationFilters = {
       { label: "Maximum", value: "MAXIMUM" },
       { label: "High", value: "HIGH" },
       { label: "Diversion", value: "DIVERSION" },
-      { label: "Interstate compact", value: "INTERSTATE_COMPACT" },
+      { label: "Interstate", value: "INTERSTATE_COMPACT" },
       { label: "In custody", value: "IN_CUSTODY" },
       { label: "Unassigned", value: "UNASSIGNED" },
       { label: "Unsupervised", value: "UNSUPERVISED" },
-      { label: "Limited", value: "LIMITED" },
+      { label: "Limited supervision", value: "LIMITED" },
+      { label: "Other", value: "OTHER" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];

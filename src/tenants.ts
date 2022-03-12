@@ -114,7 +114,6 @@ const TENANTS: Tenants = {
       ],
       supervisionToLiberty: [
         PATHWAYS_SECTIONS.countOverTime,
-        PATHWAYS_SECTIONS.countByLengthOfStay,
         PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.countByRace,
         PATHWAYS_SECTIONS.countByGender,

@@ -40,7 +40,6 @@ const content: StateSpecificMetricCopy = {
     methodology:
       "This chart shows the proportion of people admitted from supervision to incarceration a certain time period after starting supervision, out of all the people who were admitted during the selected time period.",
     chartXAxisTitle: "Time since supervision start",
-    chartYAxisTitle: "Proportion of admissions that have occurred",
   },
   supervisionToPrisonPopulationByNumberOfViolations: {
     title:

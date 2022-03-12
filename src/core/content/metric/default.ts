@@ -46,11 +46,6 @@ const content: MetricCopy = {
     methodology:
       "The chart describes the number of people in each facility as of the date specified in the chart title. ",
   },
-  supervisionToPrisonPopulationByDistrict: {
-    title: "Admissions from supervision by district",
-    methodology:
-      'The chart describes the number of people admitted to prison from each district as of the date specified in the chart title. When "Counts" is selected, the number of people in each district is shown. When "Rates" is selected, the percentage shows the number of people in each district divided by the total number of people admitted to incarceration.',
-  },
   supervisionToPrisonOverTime: {
     title: "Admissions from supervision over time",
     note:
@@ -67,6 +62,8 @@ const content: MetricCopy = {
   },
   supervisionToPrisonPopulationByLengthOfStay: {
     title: "Time to admission from supervision to prison",
+    methodology:
+      "This chart shows the proportion of people admitted from supervision to prison a certain time period after starting supervision, out of all the people who were admitted during the selected time period.",
     chartXAxisTitle: "Time to admission from supervision to prison, in months",
   },
   supervisionToPrisonPopulationByNumberOfViolations: {
@@ -81,36 +78,56 @@ const content: MetricCopy = {
     title: "Admissions from liberty to prison over time",
     note:
       "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
+    methodology:
+      "This chart describes the total number of events where individuals were admitted to prison from a new court commitment each month. Admissions are counted on the day when the person was admitted to prison, not when the arrest or charge occurred. This chart is event-based, so if a single person has 2 new court commitments during the selected time period, 2 events are counted in this chart.",
   },
   libertyToPrisonPopulationByDistrict: {
     title: "Admissions from liberty to prison by district",
+    methodology:
+      'The chart describes the number of people admitted to prison from a new court commitment from each judicial district as of the date specified in the chart title. When "Counts" is selected, the number of people admitted in each judicial district is shown. When "Rates" is selected, the percentage shows the number of people admitted in each judicial district divided by the total number of people admitted to prison.',
   },
   libertyToPrisonPopulationByPriorLengthOfIncarceration: {
     title: "Admissions from liberty to prison by prior length of incarceration",
+    methodology:
+      'The chart describes the number of people admitted to prison from a new court commitment during the selected time period, broken down the by the length of their most recent incarceration in years. For example, people who have never been incarcerated will fall in the "0" bucket, people who were recently incarcerated for up to 1 year will fall in the 1 bucket.',
     chartXAxisTitle: "Prior length of incarceration, in years",
   },
   libertyToPrisonPopulationByGender: {
     title: "Admissions from liberty to prison by gender",
+    methodology:
+      'The chart describes the number of people admitted to prison from a new court commitment from each gender as of the date specified in the chart title. When "Counts" is selected, the number of people in each gender is shown. When "Rates" is selected, the percentage shows the number of people in each gender divided by the total number of people admitted to prison.',
   },
   libertyToPrisonPopulationByAgeGroup: {
     title: "Admissions from liberty to prison by age",
+    methodology:
+      'The chart describes the number of people admitted to prison from a new court commitment from each age group as of the date specified in the chart title. When "Counts" is selected, the number of people in each age group is shown. When "Rates" is selected, the percentage shows the number of people in each age group divided by the total number of people admitted to prison.',
   },
   libertyToPrisonPopulationByRace: {
     title: "Admissions from liberty to prison by race",
+    methodology:
+      'The chart describes the number of people admitted to prison from a new court commitment from each race as of the date specified in the chart title. When "Counts" is selected, the number of people in each race is shown. When "Rates" is selected, the percentage shows the number of people in each race divided by the total number of people admitted to prison.',
   },
   prisonToSupervisionPopulationOverTime: {
     title: "Releases from prison to supervision over time",
     note:
       "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
+    methodology:
+      "This chart describes the total number of events where individuals were released from prison to supervision each month. Releases are counted on the day when the person was released to supervision. This chart is event-based, so if a single person is released twice during the selected time period, 2 events are counted in this chart.",
   },
   prisonToSupervisionPopulationByAge: {
     title: "Releases from prison to supervision by age",
+    methodology:
+      'The chart describes the number of people released from prison to supervision from each age group as of the date specified in the chart title. When "Counts" is selected, the number of people in each age group is shown. When "Rates" is selected, the percentage shows the number of people in each age group divided by the total number of people released to supervision.',
   },
   prisonToSupervisionPopulationByFacility: {
     title: "Releases from prison to supervision by facility",
+    methodology:
+      'The chart describes the number of people released from prison to supervision from each facility as of the date specified in the chart title. When "Counts" is selected, the number of people released from each facility is shown. When "Rates" is selected, the percentage shows the number of people released from each facility divided by the total number of people released to supervision.',
   },
   prisonToSupervisionPopulationPersonLevel: {
     title: "List of releases from prison to supervision",
+    methodology:
+      "The table includes a row for each event where a person was released from prison to supervision as of the date specified in the chart title. ",
   },
   supervisionPopulationOverTime: {
     title: "Supervision population over time",
@@ -122,18 +139,33 @@ const content: MetricCopy = {
   },
   supervisionPopulationBySupervisionLevel: {
     title: "Supervision population by supervision level",
+    methodology:
+      "The chart describes the number of people on supervision at each supervision level as of the date specified in the chart title. ",
+  },
+  supervisionToPrisonPopulationByDistrict: {
+    title: "Admissions from supervision by district",
+    methodology:
+      'The chart describes the number of people admitted to prison from each district as of the date specified in the chart title. When "Counts" is selected, the number of people in each district is shown. When "Rates" is selected, the percentage shows the number of people in each district divided by the total number of people admitted to prison.',
   },
   supervisionToPrisonPopulationBySupervisionLevel: {
     title: "Admissions from supervision to prison by supervision level",
+    methodology:
+      'The chart describes the number of people admitted to prison from each supervision level as of the date specified in the chart title. When "Counts" is selected, the number of people in each supervision level is shown. When "Rates" is selected, the percentage shows the number of people in each supervision level divided by the total number of people admitted to prison.',
   },
   supervisionToPrisonPopulationByGender: {
     title: "Admissions from supervision to prison by gender",
+    methodology:
+      'The chart describes the number of people admitted to prison from each gender as of the date specified in the chart title. When "Counts" is selected, the number of people in each gender is shown. When "Rates" is selected, the percentage shows the number of people in each gender divided by the total number of people admitted to prison.',
   },
   supervisionToPrisonPopulationByRace: {
     title: "Admissions from supervision to prison by race",
+    methodology:
+      'The chart describes the number of people admitted to prison from each race as of the date specified in the chart title. When "Counts" is selected, the number of people in each race is shown. When "Rates" is selected, the percentage shows the number of people in each race divided by the total number of people admitted to prison.',
   },
   supervisionToLibertyPopulationByLengthOfStay: {
     title: "Time served at release from supervision",
+    methodology:
+      "This chart shows the proportion of people released from supervision to liberty a certain time period after starting supervision, out of all the people who were released during the selected time period.",
     chartXAxisTitle: "Time since starting supervision, in months",
   },
   supervisionToLibertyPopulationByLocation: {
