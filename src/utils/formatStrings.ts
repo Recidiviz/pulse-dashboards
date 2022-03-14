@@ -233,8 +233,7 @@ const getTicks = (
   value: number
 ): { maxTickValue: number; tickValues: number[]; ticksMargin: number } => {
   const precision = Math.floor(Math.log10(value));
-  const max = ceil(value, precision > 2 ? -precision + 1 : -precision);
-
+  const max = ceil(value, precision >= 2 ? -precision + 1 : -precision);
   let ticksCount = 0;
   if (max % 5 === 0) {
     ticksCount = 5;

@@ -39,4 +39,5 @@ export const DIMENSION_TYPES = {
   ...FILTER_TYPES,
   PRIOR_LENGTH_OF_INCARCERATION: "priorLengthOfIncarceration",
   LENGTH_OF_STAY: "lengthOfStay",
+  OFFICER_NAME: "officerName",
 } as const;

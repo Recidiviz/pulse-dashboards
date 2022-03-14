@@ -112,6 +112,11 @@ const content: StateSpecificMetricCopy = {
     methodology:
       'The chart describes the historical supervision population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. People under interstate compact are included in the supervision population. Note: Supervision level data is not available prior to August 2019, so filtering by supervision level on the 5-year time period may make the counts on this chart appear lower than they actually are prior to Aug 2019.',
   },
+  supervisionToPrisonPopulationByOfficer: {
+    title: "Admissions from supervision by officer",
+    methodology:
+      'The chart describes the number of people admitted to incarceration from each officer\'s caseload as of the date specified in the chart title. The admission is attributed to the officer who was assigned to that person on the day of their admission to incarceration. When "Counts" is selected, the number of people in each district is shown. When "Rates" is selected, the percentage shows the number of people in each district divided by the total number of people admitted to incarceration.',
+  },
   supervisionPopulationByDistrict: {
     note: "Interstate compact cases are included in the parole population.",
     methodology:

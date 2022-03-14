@@ -141,7 +141,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
           this.rootStore?.filtersStore.getFilterLabel(
             this.accessor as keyof PopulationFilterLabels,
             d[this.accessor].toString()
-          )
+          ) || d[this.accessor].toString()
         );
       }
     });

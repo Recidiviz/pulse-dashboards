@@ -136,6 +136,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         numberOfViolations: "ALL",
         supervisionType: "ALL",
         lengthOfStay: "ALL",
+        officerName: "ALL",
         race: "ALL",
         supervisionLevel: "ALL",
       },
@@ -151,6 +152,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         numberOfViolations: "ALL",
         supervisionType: "Unknown",
         lengthOfStay: "ALL",
+        officerName: "ALL",
         race: "ALL",
         supervisionLevel: "ALL",
       },
@@ -166,6 +168,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         numberOfViolations: "ALL",
         supervisionType: "ALL",
         lengthOfStay: "ALL",
+        officerName: "ALL",
         race: "ALL",
         supervisionLevel: "ALL",
       },
@@ -241,6 +244,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
           supervisionLevel: "ALL",
           ageGroup: "ALL",
           lengthOfStay: "ALL",
+          officerName: "ALL",
         },
       ]);
     });
@@ -269,6 +273,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
             supervisionLevel: "ALL",
             ageGroup: "ALL",
             lengthOfStay: "ALL",
+            officerName: "ALL",
           },
         ]);
       });

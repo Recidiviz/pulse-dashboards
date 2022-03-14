@@ -16,6 +16,7 @@
 // =============================================================================
 import moment from "moment";
 
+import { toTitleCase } from "../../utils";
 import { Dimension } from "../types/dimensions";
 import {
   EnabledFilter,
@@ -57,6 +58,7 @@ const supervisionDimensionDefaults = {
   race: "ALL",
   district: "ALL",
   lengthOfStay: "ALL",
+  officerName: "ALL",
 };
 
 const libertyDimensionDefaults = {
@@ -181,6 +183,10 @@ export function createSupervisionPopulationSnapshot(
           ],
         supervisionLevel: record.supervision_level,
         race: record.race,
+        officerName:
+          record.officer_name && record.officer_name.toLowerCase() === "all"
+            ? record.officer_name
+            : toTitleCase(record.officer_name),
         priorLengthOfIncarceration: record.prior_length_of_incarceration,
         timePeriod:
           record.time_period &&

@@ -158,6 +158,7 @@ export type SupervisionPopulationSnapshotRecord = {
   supervisionLevel: string;
   race: string;
   timePeriod: TimePeriod;
+  officerName: string;
 };
 
 export type SupervisionPopulationTimeSeriesRecord = {
@@ -309,6 +310,7 @@ export type MetricId =
   | "supervisionToPrisonPopulationBySupervisionLevel"
   | "supervisionToPrisonPopulationByGender"
   | "supervisionToPrisonPopulationByRace"
+  | "supervisionToPrisonPopulationByOfficer"
   | "supervisionToLibertyOverTime"
   | "supervisionToLibertyPopulationByLengthOfStay"
   | "supervisionToLibertyPopulationByLocation"

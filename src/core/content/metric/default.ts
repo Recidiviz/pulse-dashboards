@@ -63,7 +63,7 @@ const content: MetricCopy = {
   supervisionToPrisonPopulationByLengthOfStay: {
     title: "Time to admission from supervision to prison",
     methodology:
-      "This chart shows the proportion of people admitted from supervision to prison a certain time period after starting supervision, out of all the people who were admitted during the selected time period.",
+      'This chart shows the proportion of people admitted from supervision to prison a certain time period after starting supervision, out of all the people who were admitted during the selected time period. For example, if the selected time period is "6 months" and hovering over 24 months in the chart shows "70%", that means 70% of people who were admitted from supervision to prison during the past six months were admitted in the first 24 months of supervision.',
     chartXAxisTitle: "Time to admission from supervision to prison, in months",
   },
   supervisionToPrisonPopulationByNumberOfViolations: {
@@ -141,6 +141,11 @@ const content: MetricCopy = {
     title: "Supervision population by supervision level",
     methodology:
       "The chart describes the number of people on supervision at each supervision level as of the date specified in the chart title. ",
+  },
+  supervisionToPrisonPopulationByOfficer: {
+    title: "Admissions from supervision by officer",
+    methodology:
+      'The chart describes the number of people admitted to prison from each officer\'s caseload as of the date specified in the chart title. The admission is attributed to the officer who was assigned to that person on the day of their admission to a prison. When "Counts" is selected, the number of people in each district is shown. When "Rates" is selected, the percentage shows the number of people in each district divided by the total number of people admitted to prison.',
   },
   supervisionToPrisonPopulationByDistrict: {
     title: "Admissions from supervision by district",

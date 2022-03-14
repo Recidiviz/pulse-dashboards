@@ -105,6 +105,15 @@ export const dimensionsByMetricType = {
     DIMENSION_TYPES.SUPERVISION_LEVEL,
     DIMENSION_TYPES.RACE,
   ],
+  supervision_to_prison_population_snapshot_by_officer: [
+    DIMENSION_TYPES.GENDER,
+    DIMENSION_TYPES.SUPERVISION_TYPE,
+    DIMENSION_TYPES.DISTRICT,
+    DIMENSION_TYPES.AGE_GROUP,
+    DIMENSION_TYPES.SUPERVISION_LEVEL,
+    DIMENSION_TYPES.RACE,
+    DIMENSION_TYPES.OFFICER_NAME,
+  ],
   // SUPERVISION TO LIBERTY
   supervision_to_liberty_count_by_month: [
     DIMENSION_TYPES.GENDER,

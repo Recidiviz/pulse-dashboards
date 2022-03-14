@@ -114,6 +114,8 @@ export default class MetricsStore {
           .supervisionToPrisonPopulationByRace,
         [PATHWAYS_SECTIONS.countByGender]: this
           .supervisionToPrisonPopulationByGender,
+        [PATHWAYS_SECTIONS.countByOfficer]: this
+          .supervisionToPrisonPopulationByOfficer,
       },
       [PATHWAYS_PAGES.supervisionToLiberty]: {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToLibertyOverTime,
@@ -493,6 +495,21 @@ export default class MetricsStore {
       hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByRace,
+    });
+  }
+
+  get supervisionToPrisonPopulationByOfficer(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionToPrisonPopulationByOfficer",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_to_prison_population_snapshot_by_officer",
+      rootStore: this.rootStore,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "officerName",
+      enableMetricModeToggle: true,
+      hasTimePeriodDimension: true,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionToPrisonPopulationByOfficer,
     });
   }
 

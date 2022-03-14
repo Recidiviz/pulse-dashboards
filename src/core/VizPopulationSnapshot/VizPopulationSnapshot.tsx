@@ -58,9 +58,12 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     enableMetricModeToggle,
   } = metric;
 
-  const isNotFilters = ["priorLengthOfIncarceration", "lengthOfStay"].includes(
-    accessor
-  );
+  const isOfficer = ["officerName"].includes(accessor);
+  const isNotFilters = [
+    "priorLengthOfIncarceration",
+    "lengthOfStay",
+    "officerName",
+  ].includes(accessor);
   const isRotateLabels = [
     "district",
     "race",
@@ -103,17 +106,17 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
         accessor as keyof PopulationFilterLabels,
         d[accessor].toString()
       );
+    const currentValue = isRate ? d.populationProportion : d.count;
     return {
       index,
       accessorValue: d[accessor],
       accessorLabel: filterLabel,
       tooltipLabel: filterLongLabel || filterLabel,
-      value: isRate ? d.populationProportion : d.count,
+      value: currentValue.toString(),
     };
   });
 
-  sortByLabel(data, "accessorLabel");
-
+  sortByLabel(data, isOfficer ? "value" : "accessorLabel", isOfficer);
   const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
 
   const { maxTickValue, tickValues, ticksMargin } = getTicks(
@@ -205,13 +208,14 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           oLabel={(accessorLabel: string, _: any) => {
             return (
               <text textAnchor="middle">
-                {isRotateLabels
-                  ? accessorLabel.split(/(.*?\/)/g).map((wrapPart) => (
-                      <tspan dy="1.5em" x="0">
-                        {wrapPart}
-                      </tspan>
-                    ))
-                  : accessorLabel}
+                {!isOfficer &&
+                  (isRotateLabels
+                    ? accessorLabel.split(/(.*?\/)/g).map((wrapPart) => (
+                        <tspan dy="1.5em" x="0">
+                          {wrapPart}
+                        </tspan>
+                      ))
+                    : accessorLabel)}
               </text>
             );
           }}

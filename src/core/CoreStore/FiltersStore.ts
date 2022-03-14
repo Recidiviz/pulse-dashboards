@@ -200,7 +200,7 @@ export default class FiltersStore {
     filterValue: string
   ): string {
     return (
-      this.filterOptions[filterType].options.find(
+      this.filterOptions[filterType]?.options.find(
         (option: FilterOption) => option.value === filterValue
       )?.label || ""
     );

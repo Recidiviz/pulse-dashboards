@@ -198,6 +198,9 @@ const PATHWAYS_COLLECTIONS = {
     supervision_to_liberty_population_snapshot_by_dimension: {
       filename: "supervision_to_liberty_population_snapshot_by_dimension.txt",
     },
+    supervision_to_prison_population_snapshot_by_officer: {
+      filename: "supervision_to_prison_population_snapshot_by_officer.txt",
+    },
   },
 };
 

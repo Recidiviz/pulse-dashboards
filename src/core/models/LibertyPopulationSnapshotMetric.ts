@@ -24,6 +24,7 @@ import sumBy from "lodash/fp/sumBy";
 import values from "lodash/fp/values";
 import { computed, makeObservable } from "mobx";
 
+import { toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import { PopulationFilterLabels } from "../types/filters";
@@ -140,7 +141,7 @@ export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<Libe
           this.rootStore?.filtersStore.getFilterLabel(
             this.accessor as keyof PopulationFilterLabels,
             d[this.accessor].toString()
-          )
+          ) || d[this.accessor].toString()
         );
       }
     });
@@ -153,7 +154,7 @@ export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<Libe
       dataExportLabel:
         this.rootStore?.filtersStore.filterOptions?.[
           this.accessor as keyof PopulationFilterLabels
-        ].title || "",
+        ]?.title || toTitleCase(this.accessor),
     };
   }
 
