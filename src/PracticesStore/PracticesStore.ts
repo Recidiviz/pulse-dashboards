@@ -180,7 +180,7 @@ export class PracticesStore implements Hydratable {
       return this.officers
         ?.current()
         ?.filter(
-          (o) =>
+          (o: UserRecord) =>
             o.name.toLowerCase().includes(searchFilterNormalized) ||
             o.id.toLowerCase().includes(searchFilterNormalized)
         );

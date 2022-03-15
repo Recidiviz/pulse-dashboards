@@ -455,7 +455,7 @@ export const IdPopulationFilterOptions: PopulationFilters = {
       { label: "OOS", longLabel: "Out of state", value: "OOS" },
       { label: "WC", longLabel: "Work centers", value: "WC" },
       { label: "OTHER", longLabel: "Other", value: "OTHER" },
-      { label: "CRC", longLabel: "Community Reentry Center", value: "CRC" },
+      { label: "CRC", longLabel: "Community Reentry Centers", value: "CRC" },
       { label: "SCC", longLabel: "Saguaro Correctional Center", value: "SCC" },
     ],
     get defaultOption(): FilterOption {
@@ -516,7 +516,7 @@ export const IdPopulationFilterOptions: PopulationFilters = {
       {
         label: "PCO",
         longLabel: "Parole Commission Office",
-        value: "PAROLE COMMISSION OFFICE",
+        value: "PCO",
       },
     ],
     get defaultOption(): FilterOption {

@@ -61,20 +61,6 @@ const TENANTS: Tenants = {
     navigation: {
       operations: [],
       system: [
-        PATHWAYS_PAGES.prison,
-        PATHWAYS_PAGES.supervision,
-        PATHWAYS_PAGES.supervisionToPrison,
-        PATHWAYS_PAGES.supervisionToLiberty,
-      ],
-      prison: [PATHWAYS_SECTIONS.projectedCountOverTime],
-      supervision: [PATHWAYS_SECTIONS.projectedCountOverTime],
-      supervisionToPrison: [PATHWAYS_SECTIONS.countOverTime],
-      supervisionToLiberty: [PATHWAYS_SECTIONS.countOverTime],
-      "id-methodology": ["system", "operations"],
-    },
-    betaNavigation: {
-      operations: [],
-      system: [
         PATHWAYS_PAGES.libertyToPrison,
         PATHWAYS_PAGES.prison,
         PATHWAYS_PAGES.prisonToSupervision,

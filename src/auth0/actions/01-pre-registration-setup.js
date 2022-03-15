@@ -140,6 +140,10 @@ exports.onExecutePreUserRegistration = async (event, api) => {
           "can_access_leadership_dashboard",
           restrictions.can_access_leadership_dashboard || false
         );
+        api.user.setAppMetadata(
+          "should_see_beta_charts",
+          restrictions.should_see_beta_charts || false
+        );
         api.user.setAppMetadata("routes", restrictions.routes || null);
         return;
       } catch (apiError) {
