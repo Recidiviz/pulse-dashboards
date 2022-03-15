@@ -20,6 +20,7 @@ import { computed, configure, makeObservable } from "mobx";
 import demoAuthConfig from "../auth_config_demo.json";
 import devAuthConfig from "../auth_config_dev.json";
 import productionAuthConfig from "../auth_config_production.json";
+import { PracticesStore } from "../PracticesStore";
 import PageStore from "./PageStore";
 import TenantStore from "./TenantStore";
 import { TenantId } from "./types";
@@ -61,12 +62,14 @@ if (process.env.NODE_ENV !== "test") {
   });
 }
 
-class RootStore {
+export class RootStore {
   tenantStore: TenantStore;
 
   userStore: UserStore;
 
   pageStore: PageStore;
+
+  practicesStore: PracticesStore;
 
   constructor() {
     makeObservable(this, {
@@ -82,6 +85,8 @@ class RootStore {
     this.tenantStore = new TenantStore({ rootStore: this });
 
     this.pageStore = new PageStore({ rootStore: this });
+
+    this.practicesStore = new PracticesStore({ rootStore: this });
   }
 
   get currentTenantId(): TenantId | undefined {
@@ -96,7 +101,7 @@ class RootStore {
     return this.userStore.availableStateCodes;
   }
 
-  get getTokenSilently() {
+  get getTokenSilently(): UserStore["getTokenSilently"] {
     return this.userStore.getTokenSilently;
   }
 }
