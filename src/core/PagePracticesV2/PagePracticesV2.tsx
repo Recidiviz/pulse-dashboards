@@ -15,30 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { Assets, palette, spacing } from "@recidiviz/design-system";
+import cn from "classnames";
+import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import React from "react";
+import ReactSelect from "react-select";
 import styled from "styled-components/macro";
 
 import cssVars from "../CoreConstants.scss";
 import PracticesSearch from "../PracticesSearch";
-import PracticesTopBar from "../PracticesTopBar";
 
 const Wrapper = styled.div`
-  display: flex;
+  display: grid;
   font: ${cssVars.fontUiSans16};
-  justify-content: center;
-  padding: 0 ${spacing.md}px;
+  grid-template-columns: 350px 1fr;
   position: relative;
   width: 100%;
 
   @media screen and (min-width: ${cssVars.breakpointSm}) {
-    padding-left: 4rem;
     padding-right: 0;
   }
 `;
 
+const Sidebar = styled.div`
+  padding: 0 ${spacing.md}px;
+`;
+
 const Contents = styled.div`
-  padding-top: ${spacing.xxl}px;
+  padding: ${spacing.xxl}px;
   flex: 0 1 872px;
 `;
 
@@ -48,10 +53,36 @@ const Divider = styled.hr`
   width: 100%;
 `;
 
+const LogoImg = styled.img`
+  width: auto;
+  height: 22px;
+`;
+
+const Label = styled.div`
+  font-style: normal;
+  font-size: ${rem(13)};
+
+  letter-spacing: -0.01em;
+
+  color: ${palette.slate60};
+`;
+
 const PagePracticesV2: React.FC = () => {
   return (
     <Wrapper>
-      <PracticesTopBar />
+      <Sidebar>
+        <LogoImg src={Assets.LOGO} alt="Recidiviz" />
+        <Divider />
+
+        <Label>Officer</Label>
+        <ReactSelect
+          className={cn("Select")}
+          classNamePrefix="Select"
+          options={[]}
+          placeholder="Select an officer..."
+        />
+        <Divider />
+      </Sidebar>
       <Contents>
         <PracticesSearch />
         <Divider />
@@ -60,4 +91,4 @@ const PagePracticesV2: React.FC = () => {
   );
 };
 
-export default PagePracticesV2;
+export default observer(PagePracticesV2);
