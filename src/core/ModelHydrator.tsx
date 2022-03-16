@@ -24,19 +24,10 @@ import { animated, useTransition } from "react-spring/web.cjs";
 import styled from "styled-components/macro";
 
 import { Error, NoData } from "../components/HydrationStatus";
-import * as styles from "./CoreConstants.scss";
 import { Hydratable } from "./models/types";
 
 const Wrapper = styled.div`
   position: relative;
-  width: 100%;
-  min-height: 558px;
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: ${styles.insetShadow30};
-  font-family: Libre Franklin, sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.01em;
 `;
 
 const StatusWrapper = styled(animated.div)`
@@ -81,6 +72,7 @@ const crossFade = {
 type ModelHydratorProps = {
   children: React.ReactElement;
   model: Hydratable;
+  className?: string;
 };
 
 /**
@@ -91,6 +83,7 @@ type ModelHydratorProps = {
 const ModelHydrator = ({
   children,
   model,
+  className,
 }: ModelHydratorProps): React.ReactElement => {
   // this is fine, mobx autoruns don't need dependencies
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -105,7 +98,7 @@ const ModelHydrator = ({
   const transitions = useTransition(getHydrationStatus(model), null, crossFade);
 
   return (
-    <Wrapper>
+    <Wrapper className={className}>
       {transitions.map(({ item, key, props }) => {
         switch (item) {
           case "pending":

@@ -32,6 +32,7 @@ const demoAuthConfig = require("../src/auth_config_demo.json");
 const api = require("./routes/api");
 const { newRevocationsParamValidations } = require("./routes/paramsValidation");
 const { validateStateCode } = require("./utils/validateStateCode");
+const { getFirebaseToken } = require("./practices/firebaseToken");
 
 const app = express();
 
@@ -176,6 +177,9 @@ app.get("/_ah/warmup", () => {
   // eslint-disable-next-line no-console
   console.log("Responding to warmup request...");
 });
+
+// authenticates the user to Firestore with Auth0 credential
+app.get("/token", getFirebaseToken);
 
 // The Sentry error handler must be before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());

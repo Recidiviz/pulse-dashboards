@@ -15,15 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord, subscribeToClientUpdates } from "../firestore";
+import { ClientRecord, FullName, subscribeToClientUpdates } from "../firestore";
 import { ClientUpdate } from "./ClientUpdate";
 import { observableSubscription, SubscriptionValue } from "./utils";
-
-type FullName = {
-  givenNames?: string;
-  middleName?: string;
-  surname?: string;
-};
 
 export class Client {
   id: string;
@@ -52,7 +46,7 @@ export class Client {
   constructor(record: ClientRecord) {
     this.id = record.personExternalId;
     this.stateCode = record.stateCode;
-    this.fullName = JSON.parse(record.personName);
+    this.fullName = record.personName;
     this.officerId = record.officerId;
     this.supervisionType = record.supervisionType;
     this.supervisionLevel = record.supervisionLevel;

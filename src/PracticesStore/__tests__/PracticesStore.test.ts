@@ -23,6 +23,7 @@ import {
   searchClients,
   subscribeToEligibleCount,
   subscribeToOfficers,
+  UserUpdateRecord,
 } from "../../firestore";
 import { RootStore } from "../../RootStore";
 import type { PracticesStore } from "..";
@@ -58,7 +59,14 @@ function doBackendMock() {
 
 beforeEach(() => {
   practicesStore = new RootStore().practicesStore;
-  practicesStore.rootStore.userStore.user = { email: "foo@example.com" };
+  runInAction(() => {
+    practicesStore.rootStore.userStore.user = {
+      email: "foo@example.com",
+      [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+        state_code: mockUser.info.stateCode,
+      },
+    };
+  });
   doBackendMock();
 });
 
@@ -73,7 +81,7 @@ afterEach(() => {
 
 test("hydration progress", async () => {
   expect(practicesStore.error).toBeUndefined();
-  expect(practicesStore.isLoading).toBeTrue();
+  expect(practicesStore.isLoading).toBeUndefined();
 
   practicesStore.hydrate();
 
@@ -97,6 +105,7 @@ test("caseload defaults to all saved officers when present", async () => {
   mockGetUser.mockResolvedValue({
     ...mockUser,
     updates: {
+      ...(mockUser.updates as UserUpdateRecord),
       savedOfficers: mockSavedOfficers,
       savedDistricts: mockSavedDistricts,
     },

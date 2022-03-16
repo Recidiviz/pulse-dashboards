@@ -16,7 +16,9 @@
 // =============================================================================
 
 import React from "react";
+import styled from "styled-components/macro";
 
+import * as styles from "./CoreConstants.scss";
 import ModelHydrator from "./ModelHydrator";
 import { Hydratable } from "./models/types";
 
@@ -24,15 +26,26 @@ type withMetricHydratorProps = {
   metric: Hydratable;
 };
 
+const MetricVizHydrator = styled(ModelHydrator)`
+  width: 100%;
+  min-height: 558px;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: ${styles.insetShadow30};
+  font-family: Libre Franklin, sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+`;
+
 const withMetricHydrator = <Props extends withMetricHydratorProps>(
   OriginalComponent: React.ComponentType<Props>
 ): React.ComponentType<Props> => {
   const ComponentWithHydrator: React.ComponentType<Props> = (props) => {
     const { metric } = props;
     return (
-      <ModelHydrator model={metric}>
+      <MetricVizHydrator model={metric}>
         <OriginalComponent {...props} />
-      </ModelHydrator>
+      </MetricVizHydrator>
     );
   };
 

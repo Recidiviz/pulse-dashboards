@@ -14,20 +14,115 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Unsubscribe } from "firebase/firestore";
+import { initializeApp } from "firebase/app";
+import {
+  connectAuthEmulator,
+  getAuth,
+  signInWithCustomToken,
+} from "firebase/auth";
+import {
+  collection,
+  CollectionReference,
+  connectFirestoreEmulator,
+  getDocs,
+  getFirestore,
+  limit,
+  onSnapshot,
+  query,
+  Unsubscribe,
+  where,
+} from "firebase/firestore";
 
+import { TenantId } from "../RootStore/types";
 import {
   ClientRecord,
   ClientUpdateRecord,
   CombinedUserRecord,
   OpportunityType,
-  UserRecord,
+  StaffRecord,
+  UserUpdateRecord,
 } from "./types";
 
+const app = initializeApp({
+  projectId: process.env.REACT_APP_FIRESTORE_PROJECT,
+  apiKey: "fakevaluefornow",
+});
+
+export const authenticate = async (
+  auth0Token: string
+): Promise<ReturnType<typeof signInWithCustomToken>> => {
+  const tokenExchangeResponse = await fetch(
+    `${process.env.REACT_APP_API_URL}/token`,
+    {
+      headers: {
+        Authorization: `Bearer ${auth0Token}`,
+      },
+    }
+  );
+
+  const { firebaseToken } = await tokenExchangeResponse.json();
+  const auth = getAuth(app);
+  if (process.env.REACT_APP_FIRESTORE_PROJECT?.startsWith("demo-")) {
+    connectAuthEmulator(auth, "http://localhost:9099");
+  }
+  return signInWithCustomToken(auth, firebaseToken);
+};
+
+const db = getFirestore(app);
+if (process.env.REACT_APP_FIRESTORE_PROJECT?.startsWith("demo-")) {
+  connectFirestoreEmulator(db, "localhost", 8080);
+}
+const collections = {
+  staff: collection(db, "staff") as CollectionReference<StaffRecord>,
+  userUpdates: collection(
+    db,
+    "userUpdates"
+  ) as CollectionReference<UserUpdateRecord>,
+  clients: collection(db, "clients") as CollectionReference<ClientRecord>,
+  clientUpdates: collection(
+    db,
+    "clientUpdates"
+  ) as CollectionReference<ClientUpdateRecord>,
+};
+
 export async function getUser(
-  email: string
+  email: string,
+  stateCode: TenantId
 ): Promise<CombinedUserRecord | undefined> {
-  throw new Error("Not implemented");
+  // recidiviz users "impersonate" the test user for now;
+  // this only works against fixture data
+  const queryEmail = email.endsWith("@recidiviz.org")
+    ? "test-officer@example.com"
+    : email;
+  const queryStateCode = stateCode === "RECIDIVIZ" ? "US_XX" : stateCode;
+
+  const [infoSnapshot, updateSnapshot] = await Promise.all([
+    getDocs(
+      query(
+        collections.staff,
+        where("stateCode", "==", queryStateCode),
+        where("email", "==", queryEmail),
+        limit(1)
+      )
+    ),
+    getDocs(
+      query(
+        collections.userUpdates,
+        where("stateCode", "==", queryStateCode),
+        where("email", "==", queryEmail),
+        limit(1)
+      )
+    ),
+  ]);
+  const info = infoSnapshot.docs[0]?.data();
+  if (!info) return undefined;
+
+  const updates = updateSnapshot.docs[0]?.data();
+
+  return {
+    info,
+    updates,
+  };
 }
 
 export function searchClients(
@@ -38,19 +133,51 @@ export function searchClients(
   throw new Error("Not implemented");
 }
 
+/**
+ * @param handleResults will be called whenever data changes
+ * @returns a callable unsubscribe handle
+ */
 export function subscribeToClientUpdates(
   stateCode: string,
   clientId: string,
   handleResults: (results: ClientUpdateRecord[]) => void
 ): Unsubscribe {
-  throw new Error("Not implemented");
+  return onSnapshot(
+    query(
+      collections.clientUpdates,
+      where("stateCode", "==", stateCode),
+      where("clientId", "==", clientId)
+    ),
+    (results) => {
+      const docs: ClientUpdateRecord[] = [];
+      results.forEach((result) => docs.push(result.data()));
+      handleResults(docs);
+    }
+  );
 }
 
+/**
+ * @param handleResults will be called whenever data changes
+ * @returns a callable unsubscribe handle
+ */
 export function subscribeToOfficers(
   stateCode: string,
-  handleResults: (results: UserRecord[]) => void
+  handleResults: (results: StaffRecord[]) => void
 ): Unsubscribe {
-  throw new Error("Not implemented");
+  return onSnapshot(
+    query(
+      collections.staff,
+      where("stateCode", "==", stateCode),
+      where("hasCaseload", "==", true)
+    ),
+    (results) => {
+      const docs: StaffRecord[] = [];
+      results.forEach((result) => {
+        docs.push(result.data());
+      });
+      handleResults(docs);
+    }
+  );
 }
 
 /**
@@ -63,5 +190,15 @@ export function subscribeToEligibleCount(
   officerIds: string[],
   handleResults: (results: number) => void
 ): Unsubscribe {
-  throw new Error("not implemented");
+  return onSnapshot(
+    query(
+      collections.clients,
+      where("stateCode", "==", stateCode),
+      where(`${opportunityType}Eligible`, "!=", null),
+      where("officerId", "in", officerIds)
+    ),
+    (results) => {
+      handleResults(results.size);
+    }
+  );
 }

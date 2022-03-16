@@ -31,6 +31,7 @@ import {
   RoutePermission,
 } from "../core/types/navigation";
 import { CorePageIdList, PathwaysPageIdList } from "../core/views";
+import { authenticate } from "../firestore";
 import tenants from "../tenants";
 import { isOfflineMode } from "../utils/isOfflineMode";
 import { getAllowedMethodology } from "../utils/navigation";
@@ -120,7 +121,8 @@ export default class UserStore {
     }
 
     try {
-      this.auth0 = await createAuth0Client(this.authSettings);
+      const auth0 = await createAuth0Client(this.authSettings);
+      this.auth0 = auth0;
       const urlQuery = qs.parse(window.location.search, {
         ignoreQueryPrefix: true,
       });
@@ -130,7 +132,7 @@ export default class UserStore {
       }
 
       if (urlQuery.code && urlQuery.state) {
-        const { appState } = await this.auth0.handleRedirectCallback();
+        const { appState } = await auth0.handleRedirectCallback();
         // auth0 params are single-use, must be removed from history or they can cause errors
         let replacementUrl;
         if (appState && appState.targetUrl) {
@@ -141,8 +143,8 @@ export default class UserStore {
         }
         window.history.replaceState({}, document.title, replacementUrl);
       }
-      if (await this.auth0.isAuthenticated()) {
-        const user = await this.auth0.getUser();
+      if (await auth0.isAuthenticated()) {
+        const user = await auth0.getUser();
         runInAction(() => {
           this.userIsLoading = false;
           if (user && user.email_verified) {
@@ -155,6 +157,9 @@ export default class UserStore {
             this.isAuthorized = false;
           }
         });
+        if (this.isAuthorized) {
+          await authenticate(await auth0.getTokenSilently());
+        }
       } else {
         this.auth0.loginWithRedirect({
           appState: { targetUrl: window.location.href },

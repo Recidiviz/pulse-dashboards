@@ -19,7 +19,7 @@ import {
   ClientRecord,
   ClientUpdateRecord,
   CombinedUserRecord,
-  UserRecord,
+  StaffRecord,
 } from "../../firestore";
 import { dateToTimestamp } from "../utils";
 
@@ -29,50 +29,67 @@ export const mockUser: CombinedUserRecord = {
     district: "DISTRICT 1",
     name: "{}",
     stateCode: "US_XX",
+    email: "test-officer@example.com",
+    hasCaseload: true,
   },
-  updates: {},
+  updates: {
+    stateCode: "US_XX",
+    email: "test-officer@example.com",
+  },
 };
 
 export const mockClients: ClientRecord[] = [
   {
-    personName:
-      '{"given_names": "TONYE", "surname": "THOMPSON", "middle_names": "BARBY"}',
+    personName: {
+      givenNames: "TONYE",
+      middleName: "BARBY",
+      surname: "THOMPSON",
+    },
     personExternalId: "100",
     stateCode: "US_XX",
     officerId: "OFFICER1",
     supervisionType: "TN PAROLEE",
     supervisionLevel: "STANDARD: MEDIUM",
     supervisionLevelStart: dateToTimestamp("2019-10-26"),
+    compliantReportingEligible: null,
   },
   {
-    personName: '{"given_names": "LINET", "surname": "HANSEN"}',
+    personName: { givenNames: "LINET", surname: "HANSEN" },
     personExternalId: "101",
     stateCode: "US_XX",
     officerId: "OFFICER1",
     supervisionType: "TN PROBATIONER",
     supervisionLevel: "STANDARD: MEDIUM",
     supervisionLevelStart: dateToTimestamp("2019-12-20"),
+    compliantReportingEligible: null,
   },
 ];
 
-export const mockOfficers: UserRecord[] = [
+export const mockOfficers: StaffRecord[] = [
   {
     name: "Foo Fakename",
     id: "OFFICER2",
     stateCode: mockUser.info.stateCode,
     district: "1",
+    hasCaseload: true,
+    email: null,
   },
   {
     name: "Bar Realname",
     id: "OFFICER3",
     stateCode: mockUser.info.stateCode,
     district: "1",
+    hasCaseload: true,
+    email: null,
   },
 ];
 
 export const mockClientUpdate: ClientUpdateRecord = {
   personExternalId: "100",
-  personName:
-    '{"given_names": "TONYE", "surname": "THOMPSON", "middle_names": "BARBY"}',
+  personName: {
+    givenNames: "TONYE",
+    surname: "THOMPSON",
+    middleName: "BARBY",
+  },
   stateCode: mockUser.info.stateCode,
 };

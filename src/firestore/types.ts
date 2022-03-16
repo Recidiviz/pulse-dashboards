@@ -17,19 +17,31 @@
 import type { Timestamp } from "firebase/firestore";
 
 /**
- * User-level data exported from the Recidiviz data platform
+ * Staff-level data exported from the Recidiviz data platform.
+ * Staff may be identified independently as users and as officers with active caseloads
+ * based on the properties of this object.
  */
-export type UserRecord = {
+export type StaffRecord = {
   name: string;
   district: string;
   id: string;
   stateCode: string;
+  /**
+   * If they have an email address they are a known user
+   */
+  email: string | null;
+  /**
+   * Only staff with caseloads need to be included in filters
+   */
+  hasCaseload: boolean;
 };
 
 /**
  * User-level data generated within this application
  */
 export type UserUpdateRecord = {
+  email: string;
+  stateCode: string;
   savedOfficers?: string[];
   savedDistricts?: string[];
 };
@@ -38,8 +50,8 @@ export type UserUpdateRecord = {
  * Combines user data from this application and the Recidiviz platform into a single object
  */
 export type CombinedUserRecord = {
-  info: UserRecord;
-  updates: UserUpdateRecord;
+  info: StaffRecord;
+  updates?: UserUpdateRecord;
 };
 
 /**
@@ -47,18 +59,24 @@ export type CombinedUserRecord = {
  */
 export type OpportunityType = "compliantReporting";
 
+export type FullName = {
+  givenNames?: string;
+  middleName?: string;
+  surname?: string;
+};
+
 /**
  * A nested object of all client-level data from the Recidiviz data platform
  */
 export type ClientRecord = {
   personExternalId: string;
   stateCode: string;
-  personName: string;
+  personName: FullName;
   officerId: string;
   supervisionType: string;
   supervisionLevel: string;
   supervisionLevelStart: Timestamp;
-  compliantReportingEligible?: CompliantReportingEligibleRecord;
+  compliantReportingEligible: CompliantReportingEligibleRecord | null;
 };
 
 export type CompliantReportingEligibleRecord = {
@@ -73,8 +91,11 @@ export type CompliantReportingEligibleRecord = {
  */
 export type ClientUpdateRecord = {
   personExternalId: string;
-  personName: string;
   stateCode: string;
+  /**
+   * Duplicated from ETL to enable direct full-text search
+   */
+  personName: FullName;
   compliantReportingStatus?: CompliantReportingStatusRecord;
 };
 

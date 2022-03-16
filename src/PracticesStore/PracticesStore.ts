@@ -23,9 +23,9 @@ import {
   getUser,
   OpportunityType,
   searchClients,
+  StaffRecord,
   subscribeToEligibleCount,
   subscribeToOfficers,
-  UserRecord,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
 import { Client } from "./Client";
@@ -36,7 +36,7 @@ type ConstructorOpts = { rootStore: RootStore };
 export class PracticesStore implements Hydratable {
   rootStore: RootStore;
 
-  isLoading = true;
+  isLoading?: boolean;
 
   error?: Error;
 
@@ -52,7 +52,7 @@ export class PracticesStore implements Hydratable {
 
   private clients?: Client[];
 
-  private officers?: SubscriptionValue<UserRecord[]>;
+  private officers?: SubscriptionValue<StaffRecord[]>;
 
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
@@ -78,17 +78,21 @@ export class PracticesStore implements Hydratable {
    * Expects user authentication to already be complete.
    */
   async hydrate(): Promise<void> {
-    this.isLoading = true;
-    this.error = undefined;
+    runInAction(() => {
+      this.isLoading = true;
+      this.error = undefined;
+    });
     try {
-      const { user: authenticatedUser } = this.rootStore;
+      const { userStore } = this.rootStore;
+      const { user, stateCode } = userStore;
+      const email = user?.email;
 
-      if (!authenticatedUser?.email) {
+      if (!email) {
         // We expect the user to already be authenticated
         throw new Error("Missing email for current user.");
       }
 
-      const userRecord = await getUser(authenticatedUser.email);
+      const userRecord = await getUser(email, stateCode);
       if (userRecord) {
         runInAction(() => {
           this.user = userRecord;
@@ -96,9 +100,7 @@ export class PracticesStore implements Hydratable {
           this.updateStateData(userRecord.info.stateCode);
         });
       } else {
-        throw new Error(
-          `Unable to retrieve user record for ${authenticatedUser.email}`
-        );
+        throw new Error(`Unable to retrieve user record for ${email}`);
       }
     } catch (e) {
       runInAction(() => {
@@ -120,7 +122,7 @@ export class PracticesStore implements Hydratable {
   }
 
   private setDefaultCaseload(userData: CombinedUserRecord) {
-    if (userData.updates.savedDistricts || userData.updates.savedOfficers) {
+    if (userData.updates?.savedDistricts || userData.updates?.savedOfficers) {
       this.districtFilter = userData.updates.savedDistricts ?? [];
       this.officerFilter = userData.updates.savedOfficers ?? [];
     } else {
@@ -173,14 +175,14 @@ export class PracticesStore implements Hydratable {
     }
   }
 
-  get filteredOfficers(): UserRecord[] | undefined {
+  get filteredOfficers(): StaffRecord[] | undefined {
     const { searchFilter } = this;
     if (searchFilter) {
       const searchFilterNormalized = searchFilter.toLowerCase();
       return this.officers
         ?.current()
         ?.filter(
-          (o: UserRecord) =>
+          (o: StaffRecord) =>
             o.name.toLowerCase().includes(searchFilterNormalized) ||
             o.id.toLowerCase().includes(searchFilterNormalized)
         );
@@ -190,7 +192,7 @@ export class PracticesStore implements Hydratable {
 
   get searchResults(): {
     clients?: Client[];
-    officers?: UserRecord[];
+    officers?: StaffRecord[];
   } {
     return {
       clients: this.clients,

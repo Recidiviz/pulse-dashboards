@@ -1,0 +1,111 @@
+[
+  {
+    "personName": {
+      "givenNames": "TONYE",
+      "surname": "THOMPSON",
+      "middleNames": "BARBY"
+    },
+    "personExternalId": "100",
+    "stateCode": "US_XX",
+    "officerId": "OFFICER1",
+    "district": "DISTRICT 50",
+    "supervisionType": "TN PAROLEE",
+    "supervisionLevel": "STANDARD: MEDIUM",
+    "supervisionLevelStart": "2019-10-26",
+    "compliantReportingEligible": {
+      "judicialDistrict": "17",
+      "offenseType": [
+        "SALVIA DIVINORUM A PROD/MFG/DIST/POSS",
+        "ARSON",
+        "ATT FRAUD INSURANCE CLAIM - $60,000 OR MORE"
+      ],
+      "lastDrugNegative": ["2022-01-26"],
+      "lastSanction": null
+    }
+  },
+  {
+    "personName": { "givenNames": "LINET", "surname": "HANSEN" },
+    "personExternalId": "101",
+    "stateCode": "US_XX",
+    "officerId": "OFFICER1",
+    "district": "DISTRICT 50",
+    "supervisionType": "TN PROBATIONER",
+    "supervisionLevel": "STANDARD: MEDIUM",
+    "supervisionLevelStart": "2019-12-20",
+    "compliantReportingEligible": {
+      "judicialDistrict": "14",
+      "offenseType": [
+        "DUI, 4TH OFFENSE & SUBSEQUENT",
+        "POSS FIREARM W/PRIOR VIOL/DEAD WPN CONV"
+      ],
+      "lastDrugNegative": ["2021-09-17", "2022-02-02"],
+      "lastSanction": "IPDS"
+    }
+  },
+  {
+    "personName": {
+      "givenNames": "REBEKAH",
+      "surname": "CORTES",
+      "middleNames": "HATTI"
+    },
+    "personExternalId": "102",
+    "stateCode": "US_XX",
+    "officerId": "OFFICER1",
+    "district": "DISTRICT 50",
+    "supervisionType": "MISDEMEANOR PROBATIONER",
+    "supervisionLevel": "STANDARD: MINIMUM",
+    "supervisionLevelStart": "2021-07-05",
+    "compliantReportingEligible": null
+  },
+  {
+    "personName": { "givenNames": "RAMONDA", "surname": "UNDERWOOD" },
+    "personExternalId": "104",
+    "stateCode": "US_XX",
+    "officerId": "OFFICER2",
+    "district": "DISTRICT 50",
+    "supervisionType": "DIVERSION",
+    "supervisionLevel": "STANDARD: MEDIUM",
+    "supervisionLevelStart": "2020-04-07",
+    "compliantReportingEligible": {
+      "judicialDistrict": null,
+      "offenseType": [],
+      "lastDrugNegative": ["2021-11-26"],
+      "lastSanction": "OPRD"
+    }
+  },
+  {
+    "personName": {
+      "givenNames": "CLARIBEL",
+      "surname": "VELAZQUEZ",
+      "middleNames": "M"
+    },
+    "personExternalId": "107",
+    "stateCode": "US_XX",
+    "officerId": "OFFICER2",
+    "district": "DISTRICT 50",
+    "supervisionType": "DETERMINATE RLSE PROBATIONER",
+    "supervisionLevel": "STANDARD: MEDIUM",
+    "supervisionLevelStart": "2020-05-19",
+    "compliantReportingEligible": null
+  },
+  {
+    "personName": {
+      "givenNames": "SHERRI",
+      "surname": "WRIGHT",
+      "middleNames": "RENELLE"
+    },
+    "personExternalId": "109",
+    "stateCode": "US_XX",
+    "officerId": "OFFICER2",
+    "district": "DISTRICT 50",
+    "supervisionType": "TN PAROLEE",
+    "supervisionLevel": "STANDARD: MINIMUM",
+    "supervisionLevelStart": "2021-02-11",
+    "compliantReportingEligible": {
+      "judicialDistrict": "14",
+      "offenseType": ["FRAUD", "BURGLARY-OTHER THAN HABITATION"],
+      "lastDrugNegative": ["2022-01-26"],
+      "lastSanction": null
+    }
+  }
+]

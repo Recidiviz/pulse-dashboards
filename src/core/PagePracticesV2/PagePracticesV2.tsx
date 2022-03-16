@@ -23,7 +23,9 @@ import React from "react";
 import ReactSelect from "react-select";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import cssVars from "../CoreConstants.scss";
+import ModelHydrator from "../ModelHydrator";
 import PracticesSearch from "../PracticesSearch";
 
 const Wrapper = styled.div`
@@ -68,26 +70,29 @@ const Label = styled.div`
 `;
 
 const PagePracticesV2: React.FC = () => {
+  const { practicesStore } = useRootStore();
   return (
-    <Wrapper>
-      <Sidebar>
-        <LogoImg src={Assets.LOGO} alt="Recidiviz" />
-        <Divider />
+    <ModelHydrator model={practicesStore}>
+      <Wrapper>
+        <Sidebar>
+          <LogoImg src={Assets.LOGO} alt="Recidiviz" />
+          <Divider />
 
-        <Label>Officer</Label>
-        <ReactSelect
-          className={cn("Select")}
-          classNamePrefix="Select"
-          options={[]}
-          placeholder="Select an officer..."
-        />
-        <Divider />
-      </Sidebar>
-      <Contents>
-        <PracticesSearch />
-        <Divider />
-      </Contents>
-    </Wrapper>
+          <Label>Officer</Label>
+          <ReactSelect
+            className={cn("Select")}
+            classNamePrefix="Select"
+            options={[]}
+            placeholder="Select an officer..."
+          />
+          <Divider />
+        </Sidebar>
+        <Contents>
+          <PracticesSearch />
+          <Divider />
+        </Contents>
+      </Wrapper>
+    </ModelHydrator>
   );
 };
 

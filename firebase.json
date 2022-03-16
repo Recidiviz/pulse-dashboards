@@ -1,4 +1,7 @@
 {
+  "firestore": {
+    "rules": "firestore-config/firestore.rules"
+  },
   "hosting": {
     "public": "build",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
@@ -14,5 +17,13 @@
         "headers": [{ "key": "X-Frame-Options", "value": "DENY" }]
       }
     ]
+  },
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "firestore": {
+      "port": 8080
+    }
   }
 }

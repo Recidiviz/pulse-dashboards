@@ -52,6 +52,19 @@ Bringing criminal justice analysis to decision makers to help reduce incarcerati
 
    [Instructions for installing Redis 4.0.14 on Windows](https://github.com/tporadowski/redis#redis-4014-for-windows)
 
+1. Install Firebase Tools (version >=10 required) and ensure you are logged in:
+
+   ```
+   yarn global add firebase-tools
+   # OR npm install -g firebase-tools
+   ```
+
+   Then:
+
+   ```
+   firebase login
+   ```
+
 1. Install dependencies:
 
    `yarn install`
@@ -90,14 +103,12 @@ Expected frontend environment variables include:
 - `REACT_APP_DEPLOY_ENV` - The current deploy environment: `production`, `staging`, or `dev`
 - `REACT_APP_CASE_TRIAGE_URL` - URL to the Case Triage app for the caseload redirection
 
-
 Expected backend environment variables include:
 
 - `AUTH_ENV` - a string indicating the "auth environment" used to point to the correct Auth0 tenant. Either "development" or "production". Must match the frontend `REACT_APP_AUTH_ENV` variable.
 - `GOOGLE_APPLICATION_CREDENTIALS` - a relative path pointing to the JSON file containing the credentials of the service account used to communicate with Google Cloud Storage, for metric retrieval.
 - `METRIC_BUCKET` - the name of the Google Cloud Storage bucket where the metrics reside.
 - `IS_OFFLINE` (OPTIONAL) - whether or not to run the backend in offline mode, which will retrieve static fixture data from the `server/core/demo_data` directory instead of pulling data from dynamic, live sources. This should only be set when running locally and should be provided through the command line, along with the frontend sibling above. To run the app in offline mode, use the following command: `yarn offline`
-
 
 The build process, as described below, ensures that the proper values are compiled and included in the static bundle at build time, for the right environment.
 
@@ -142,14 +153,14 @@ To run eslint manually:
 `eslint .`
 
 > **Note**: we are gradually adding linting enforcement to our existing code, so not everything may be subject to linting yet. Refer to the [ignore file](https://github.com/Recidiviz/pulse-dashboard/.eslintignore) for details. While this transition is underway, if you are adding new files or substantially rewriting existing ones, you are encouraged to whitelist them for linting by updating the configuration file.
- 
+
 ### Syncing content
 
 Content found in the folder `src/core/content` can be synced with an external google sheet by running `yarn sync-content`. The ID of the sheet as well as the credentials of a service account with access to it should be stored in the `.env-cmdrc` file.
 
 ### Running the application locally
 
-A yarn script is available for starting the development servers. The React frontend is served out of port `3000` and the Node/Express backend is served out of port `3001`. A Redis server will be started on the default port `6379`. 
+A yarn script is available for starting the development servers. The React frontend is served out of port `3000` and the Node/Express backend is served out of port `3001`. A Redis server will be started on the default port `6379`.
 
 `yarn dev`
 
@@ -159,13 +170,11 @@ The development servers will remain active until you either close your terminal 
 
 **Note:** The development servers do not need to be restarted when source code is modified. The assets will automatically be recompiled and the browser will be refreshed (when there's a frontend change). Thanks, Webpack!
 
-
 ### Running the application locally and fetching from the Demo GCS bucket
 
 Similarlly to running the application locally, the application can be run but the Backend will fetch from a Demo GCS bucket, where all of the data is anonymized and randomized. Non-recidiviz employees should use this option.
 
 `yarn demo`
-
 
 ### Running the Frontend and Backend together in Offline mode
 
@@ -266,7 +275,6 @@ To run E2E tests that involve logging in:
 
 1. Start your dev server: `yarn dev`
 2. Run the test suites: `yarn test-e2e-lantern` or `yarn test-e2e-core` or `yarn test-e2e-users`
-
 
 ## Tooling
 
