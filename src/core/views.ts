@@ -271,6 +271,7 @@ const pageIdToHeading: Record<TenantId, Record<string, string>> = {
   US_ID: defaultPageIdToHeading,
   US_ME: defaultPageIdToHeading,
   US_TN: defaultPageIdToHeading,
+  US_MI: defaultPageIdToHeading,
   US_ND: ndPageToIdHeading,
 };
 

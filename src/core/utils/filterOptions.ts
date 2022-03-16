@@ -18,6 +18,7 @@ import {
   US_DEMO,
   US_ID,
   US_ME,
+  US_MI,
   US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
@@ -844,6 +845,10 @@ export const MePopulationFilterOptions: PopulationFilters = {
   },
 };
 
+export const MiPopulationFilterOptions: PopulationFilters = {
+  ...DefaultPopulationFilterOptions,
+};
+
 export const NdPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
   [FILTER_TYPES.FACILITY]: {
@@ -1287,6 +1292,7 @@ export default {
   [US_ID]: IdPopulationFilterOptions,
   [US_TN]: TnPopulationFilterOptions,
   [US_ME]: MePopulationFilterOptions,
+  [US_MI]: MiPopulationFilterOptions,
   [US_ND]: NdPopulationFilterOptions,
   [US_DEMO]: DemoPopulationFilterOptions,
 } as const;

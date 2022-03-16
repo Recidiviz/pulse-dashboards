@@ -18,6 +18,7 @@
 import {
   US_ID,
   US_ME,
+  US_MI,
   US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
@@ -107,6 +108,10 @@ export const MeEnabledTableColumns: TableColumns = {
   prisonPopulationPersonLevel: DefaultTableColumns.prisonPopulationPersonLevel,
 };
 
+export const MiEnabledTableColumns: TableColumns = {
+  ...DefaultTableColumns,
+};
+
 export const NdEnabledTableColumns: TableColumns = {
   ...DefaultTableColumns,
 };
@@ -115,5 +120,6 @@ export default {
   [US_ID]: IdEnabledTableColumns,
   [US_TN]: TnEnabledTableColumns,
   [US_ME]: MeEnabledTableColumns,
+  [US_MI]: MiEnabledTableColumns,
   [US_ND]: NdEnabledTableColumns,
 } as const;

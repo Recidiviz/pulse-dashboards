@@ -19,6 +19,7 @@ import { US_ND } from "../../RootStore/TenantStore/coreTenants";
 import {
   US_ID,
   US_ME,
+  US_MI,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { EnabledFiltersByMetric } from "../types/filters";
@@ -406,6 +407,10 @@ export const MeEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
 };
 
+export const MiEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
+  ...EnabledFilterOptions,
+};
+
 export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
   supervisionToPrisonOverTime: {
@@ -426,5 +431,6 @@ export default {
   [US_ID]: IdEnabledFilterOptions,
   [US_TN]: TnEnabledFilterOptions,
   [US_ME]: MeEnabledFilterOptions,
+  [US_MI]: MiEnabledFilterOptions,
   [US_ND]: NdEnabledFilterOptions,
 } as const;

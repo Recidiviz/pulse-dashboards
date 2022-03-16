@@ -5,6 +5,7 @@ const stateCodes = {
   US_ID: "US_ID",
   US_TN: "US_TN",
   US_ME: "US_ME",
+  US_MI: "US_MI",
 };
 
 const lanternStateCodes = [stateCodes.US_MO, stateCodes.US_PA];

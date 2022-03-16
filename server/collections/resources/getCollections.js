@@ -337,6 +337,8 @@ function getCollections(stateCode = null) {
       return PATHWAYS_COLLECTIONS;
     case stateCodes.US_ME:
       return PATHWAYS_COLLECTIONS;
+    case stateCodes.US_MI:
+      return PATHWAYS_COLLECTIONS;
     case stateCodes.US_ND:
       return {
         ...VITALS_COLLECTION,
