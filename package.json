@@ -26,16 +26,19 @@
     "redis-server": "redis-server",
     "server": "nodemon server.js",
     "spa": "BROWSER=none env-cmd -e development react-scripts start",
-    "server:dev": "env-cmd -e server npm-run-all --parallel server redis-server firebase-emulator",
+    "spa:offline": "env-cmd -e development,offline react-scripts start",
+    "server:dev": "env-cmd -e server npm-run-all --parallel server redis-server",
     "dev": "env-cmd -e development npm-run-all --parallel spa server:dev",
     "server:demo": "env-cmd -e server-demo npm-run-all --parallel server redis-server",
     "spa:demo": "BROWSER=none env-cmd -e development-demo react-scripts start",
     "demo": "npm-run-all --parallel spa:demo server:demo",
     "server:offline": "env-cmd -e server,offline npm-run-all --parallel server:dev",
-    "offline": "env-cmd -e offline,server npm-run-all --parallel spa server redis-server",
+    "offline": "env-cmd -e offline,server npm-run-all --parallel spa:offline server redis-server firebase-emulator",
     "sync-content": "env-cmd -e sync-content ts-node tools/syncContentFromSheets.ts && prettier --write src/core/content/*",
-    "firebase-emulator": "firebase --project=demo-dev emulators:start",
-    "practices-fixture": "ts-node tools/practicesFixtures.ts"
+    "firebase-emulator": "firebase --project=demo-dev emulators:start --import firestore-config/emulator-fixtures",
+    "update-practices-fixture": "firebase emulators:exec --project=demo-dev --only firestore --export-on-exit firestore-config/emulator-fixtures 'ts-node tools/practicesFixtures.ts'",
+    "update-rules-staging": "firebase --project=staging-backend deploy --only firestore:rules",
+    "update-rules-production": "firebase --project=production-backend deploy --only firestore:rules"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.12.1",

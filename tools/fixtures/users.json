@@ -2,25 +2,25 @@
   {
     "name": "Test Officer1",
     "email": "test-officer@example.com",
-    "district": "DISTRICT 4",
+    "district": "DISTRICT 50",
     "id": "OFFICER1",
-    "stateCode": "US_XX",
+    "stateCode": "US_TN",
     "hasCaseload": true
   },
   {
     "name": "Test Officer2",
     "email": null,
-    "district": "DISTRICT 4",
+    "district": "DISTRICT 50",
     "id": "OFFICER2",
-    "stateCode": "US_XX",
+    "stateCode": "US_TN",
     "hasCaseload": true
   },
   {
     "name": "Test Supervisor",
     "email": "test-supervisor@example.com",
-    "district": "DISTRICT 4",
+    "district": "DISTRICT 50",
     "id": "SUPERVISOR1",
-    "stateCode": "US_XX",
+    "stateCode": "US_TN",
     "hasCaseload": false
   }
 ]

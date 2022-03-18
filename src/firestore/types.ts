@@ -23,7 +23,7 @@ import type { Timestamp } from "firebase/firestore";
  */
 export type StaffRecord = {
   name: string;
-  district: string;
+  district?: string;
   id: string;
   stateCode: string;
   /**

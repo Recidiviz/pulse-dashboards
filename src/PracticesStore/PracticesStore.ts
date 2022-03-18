@@ -83,7 +83,7 @@ export class PracticesStore implements Hydratable {
       this.error = undefined;
     });
     try {
-      const { userStore } = this.rootStore;
+      const { userStore, currentTenantId } = this.rootStore;
       const { user, stateCode } = userStore;
       const email = user?.email;
 
@@ -92,12 +92,32 @@ export class PracticesStore implements Hydratable {
         throw new Error("Missing email for current user.");
       }
 
-      const userRecord = await getUser(email, stateCode);
+      let userRecord: CombinedUserRecord | undefined;
+      if (stateCode === "RECIDIVIZ" && currentTenantId) {
+        userRecord = {
+          info: {
+            id: "RECIDIVIZ",
+            name: email,
+            email,
+            stateCode: currentTenantId,
+            hasCaseload: false,
+          },
+        };
+      } else {
+        userRecord = await getUser(email, stateCode);
+      }
+      // recidiviz users "impersonate" the test user for now;
+      // this only works against fixture data
+      // const queryEmail = isDemoProject ? "test-officer@example.com" : email;
+      // const queryStateCode = stateCode === "RECIDIVIZ" ? "US_XX" : stateCode;
+
       if (userRecord) {
         runInAction(() => {
           this.user = userRecord;
-          this.setDefaultCaseload(userRecord);
-          this.updateStateData(userRecord.info.stateCode);
+          this.setDefaultCaseload(userRecord as CombinedUserRecord);
+          this.updateStateData(
+            (userRecord as CombinedUserRecord).info.stateCode
+          );
         });
       } else {
         throw new Error(`Unable to retrieve user record for ${email}`);
@@ -126,7 +146,9 @@ export class PracticesStore implements Hydratable {
       this.districtFilter = userData.updates.savedDistricts ?? [];
       this.officerFilter = userData.updates.savedOfficers ?? [];
     } else {
-      this.districtFilter = [userData.info.district];
+      this.districtFilter = userData.info.district
+        ? [userData.info.district]
+        : [];
       this.officerFilter = [userData.info.id];
     }
   }
@@ -175,19 +197,18 @@ export class PracticesStore implements Hydratable {
     }
   }
 
-  get filteredOfficers(): StaffRecord[] | undefined {
-    const { searchFilter } = this;
-    if (searchFilter) {
-      const searchFilterNormalized = searchFilter.toLowerCase();
-      return this.officers
+  get filteredOfficers(): StaffRecord[] {
+    const searchFilter = this.searchFilter || "";
+    const searchFilterNormalized = searchFilter.toLowerCase();
+    return (
+      this.officers
         ?.current()
         ?.filter(
           (o: StaffRecord) =>
             o.name.toLowerCase().includes(searchFilterNormalized) ||
             o.id.toLowerCase().includes(searchFilterNormalized)
-        );
-    }
-    return undefined;
+        ) || []
+    );
   }
 
   get searchResults(): {

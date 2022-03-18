@@ -24,6 +24,7 @@ import ReactSelect from "react-select";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { StaffRecord } from "../../firestore";
 import cssVars from "../CoreConstants.scss";
 import ModelHydrator from "../ModelHydrator";
 import PracticesSearch from "../PracticesSearch";
@@ -82,7 +83,12 @@ const PagePracticesV2: React.FC = () => {
           <ReactSelect
             className={cn("Select")}
             classNamePrefix="Select"
-            options={[]}
+            options={practicesStore.filteredOfficers.map(
+              (officer: StaffRecord) => ({
+                label: officer.name,
+                value: officer.id,
+              })
+            )}
             placeholder="Select an officer..."
           />
           <Divider />

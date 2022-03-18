@@ -43,9 +43,13 @@ import {
   UserUpdateRecord,
 } from "./types";
 
+const projectId = process.env.REACT_APP_FIREBASE_BACKEND_PROJECT || "demo-dev";
+const isDemoProject = projectId.startsWith("demo-");
+const apiKey = process.env.REACT_APP_FIREBASE_API_KEY;
+
 const app = initializeApp({
-  projectId: process.env.REACT_APP_FIRESTORE_PROJECT,
-  apiKey: "fakevaluefornow",
+  projectId,
+  apiKey,
 });
 
 export const authenticate = async (
@@ -62,16 +66,17 @@ export const authenticate = async (
 
   const { firebaseToken } = await tokenExchangeResponse.json();
   const auth = getAuth(app);
-  if (process.env.REACT_APP_FIRESTORE_PROJECT?.startsWith("demo-")) {
+  if (isDemoProject) {
     connectAuthEmulator(auth, "http://localhost:9099");
   }
   return signInWithCustomToken(auth, firebaseToken);
 };
 
 const db = getFirestore(app);
-if (process.env.REACT_APP_FIRESTORE_PROJECT?.startsWith("demo-")) {
+if (isDemoProject) {
   connectFirestoreEmulator(db, "localhost", 8080);
 }
+
 const collections = {
   staff: collection(db, "staff") as CollectionReference<StaffRecord>,
   userUpdates: collection(
@@ -89,27 +94,20 @@ export async function getUser(
   email: string,
   stateCode: TenantId
 ): Promise<CombinedUserRecord | undefined> {
-  // recidiviz users "impersonate" the test user for now;
-  // this only works against fixture data
-  const queryEmail = email.endsWith("@recidiviz.org")
-    ? "test-officer@example.com"
-    : email;
-  const queryStateCode = stateCode === "RECIDIVIZ" ? "US_XX" : stateCode;
-
   const [infoSnapshot, updateSnapshot] = await Promise.all([
     getDocs(
       query(
         collections.staff,
-        where("stateCode", "==", queryStateCode),
-        where("email", "==", queryEmail),
+        where("stateCode", "==", stateCode),
+        where("email", "==", email),
         limit(1)
       )
     ),
     getDocs(
       query(
         collections.userUpdates,
-        where("stateCode", "==", queryStateCode),
-        where("email", "==", queryEmail),
+        where("stateCode", "==", stateCode),
+        where("email", "==", email),
         limit(1)
       )
     ),

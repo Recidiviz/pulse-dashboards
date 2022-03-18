@@ -202,6 +202,7 @@ If you are running in offline mode, you may need to run through the following st
    ```
    :> redis-cli shutdown
    ```
+1. Make sure you can run the Firebase emulator; this requires Firebase Tools as described above as well as a recent version of Java.
 
 To download data/fixture files to be used offline, run the `download_fixture_with_metadata.sh` script. The only argument to the script is the path to the file in GCS. You must have credentials to access GCS, and `gsutil` installed.
 
@@ -211,6 +212,8 @@ You may also need to install `jq`, a bash command line json processor. It can be
 
 Example usage:
 `server/core/demo_data/download_fixture_with_metadata.sh gs://some-data-bucket/US_ID/vitals_summaries.txt`
+
+The Firebase emulator has its own set of fixtures that it automatically imports when starting up; to change those fixtures, edit the fixture files in `tools/fixtures` and then run `yarn update-practices-fixture`.
 
 ## Deploys
 
@@ -248,6 +251,10 @@ Deploy the backend to staging Google App Engine with `gcloud app deploy gae-stag
 
 Similarly, deploy the backend to the demo service on staging Google App Engine with `gcloud app deploy gae-staging-demo.yaml --project [project_id]`
 
+#### Firestore rules
+
+Firestore security rules and their tests are found in `./firestore-config`. Changes can be deployed with `yarn update-rules-staging`.
+
 ### Deploying to production
 
 Follow the instructions described above, but with different commands for both frontend and backend deploys.
@@ -255,6 +262,8 @@ Follow the instructions described above, but with different commands for both fr
 Generate a production build of the frontend with `yarn build`. Test locally with `firebase serve`. Deploy the frontend with `firebase deploy -P production`.
 
 Deploy the backend to production GAE with `gcloud app deploy gae-production.yaml --project [project_id]`.
+
+Deploy Firestore rules to production with `yarn update-rules-production`.
 
 Test vigorously! Don't be afraid to rollback the deploy of frontend or backend through the Firebase and GAE consoles.
 

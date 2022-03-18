@@ -107,6 +107,7 @@ export default class UserStore {
     if (isOfflineMode()) {
       this.isAuthorized = true;
       const offlineUser = await fetchOfflineUser({});
+      await authenticate("fakeAuth0Token");
       runInAction(() => {
         this.user = offlineUser;
         this.userIsLoading = false;

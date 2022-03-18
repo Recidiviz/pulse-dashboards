@@ -16,19 +16,40 @@
 // =============================================================================
 
 const firebaseAdmin = require("firebase-admin");
+const fs = require("fs");
+const { fetchOfflineUser } = require("../core");
+const { getAppMetadata } = require("../utils/getAppMetadata");
+const { isOfflineMode } = require("../utils/isOfflineMode");
 
-if (process.env.AUTH_ENV !== "production") {
-  firebaseAdmin.initializeApp({ projectId: "demo-dev" });
+const projectId = process.env.FIREBASE_PROJECT || "demo-dev";
+const credentialFile = process.env.FIREBASE_CREDENTIAL;
+
+const appOptions = { projectId };
+if (!isOfflineMode && credentialFile) {
+  appOptions.credential = firebaseAdmin.credential.cert(
+    JSON.parse(fs.readFileSync(credentialFile).toString())
+  );
 }
 
+firebaseAdmin.initializeApp(appOptions);
+
 async function getFirebaseToken(req, res) {
-  const stateCode =
-    req.user[`${process.env.METADATA_NAMESPACE}app_metadata`].state_code;
+  let uid;
+  let stateCode;
+
+  if (isOfflineMode) {
+    const user = fetchOfflineUser({});
+    stateCode = getAppMetadata({ user }).state_code;
+    uid = user.email;
+  } else {
+    uid = req.user.sub;
+    stateCode = getAppMetadata(req).state_code;
+  }
 
   if (stateCode) {
     const firebaseToken = await firebaseAdmin
       .auth()
-      .createCustomToken(req.user.sub, { stateCode });
+      .createCustomToken(uid, { stateCode });
 
     res.json({ firebaseToken });
   } else {

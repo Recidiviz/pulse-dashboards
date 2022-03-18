@@ -6,7 +6,7 @@
       "middleNames": "BARBY"
     },
     "personExternalId": "100",
-    "stateCode": "US_XX",
+    "stateCode": "US_TN",
     "officerId": "OFFICER1",
     "district": "DISTRICT 50",
     "supervisionType": "TN PAROLEE",
@@ -26,7 +26,7 @@
   {
     "personName": { "givenNames": "LINET", "surname": "HANSEN" },
     "personExternalId": "101",
-    "stateCode": "US_XX",
+    "stateCode": "US_TN",
     "officerId": "OFFICER1",
     "district": "DISTRICT 50",
     "supervisionType": "TN PROBATIONER",
@@ -49,7 +49,7 @@
       "middleNames": "HATTI"
     },
     "personExternalId": "102",
-    "stateCode": "US_XX",
+    "stateCode": "US_TN",
     "officerId": "OFFICER1",
     "district": "DISTRICT 50",
     "supervisionType": "MISDEMEANOR PROBATIONER",
@@ -60,7 +60,7 @@
   {
     "personName": { "givenNames": "RAMONDA", "surname": "UNDERWOOD" },
     "personExternalId": "104",
-    "stateCode": "US_XX",
+    "stateCode": "US_TN",
     "officerId": "OFFICER2",
     "district": "DISTRICT 50",
     "supervisionType": "DIVERSION",
@@ -80,7 +80,7 @@
       "middleNames": "M"
     },
     "personExternalId": "107",
-    "stateCode": "US_XX",
+    "stateCode": "US_TN",
     "officerId": "OFFICER2",
     "district": "DISTRICT 50",
     "supervisionType": "DETERMINATE RLSE PROBATIONER",
@@ -95,7 +95,7 @@
       "middleNames": "RENELLE"
     },
     "personExternalId": "109",
-    "stateCode": "US_XX",
+    "stateCode": "US_TN",
     "officerId": "OFFICER2",
     "district": "DISTRICT 50",
     "supervisionType": "TN PAROLEE",
