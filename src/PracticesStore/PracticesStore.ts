@@ -22,8 +22,8 @@ import {
   CombinedUserRecord,
   getUser,
   OpportunityType,
-  searchClients,
   StaffRecord,
+  subscribeToCaseloads,
   subscribeToEligibleCount,
   subscribeToOfficers,
 } from "../firestore";
@@ -42,15 +42,11 @@ export class PracticesStore implements Hydratable {
 
   user?: CombinedUserRecord;
 
-  districtFilter: string[] = [];
-
-  officerFilter: string[] = [];
-
-  searchFilter?: string;
+  selectedOfficers: string[] = [];
 
   private compliantReportingEligibleCount?: SubscriptionValue<number>;
 
-  private clients?: Client[];
+  private clients?: SubscriptionValue<Client[]>;
 
   private officers?: SubscriptionValue<StaffRecord[]>;
 
@@ -60,15 +56,9 @@ export class PracticesStore implements Hydratable {
 
     // trigger some updates when filters change
     reaction(
-      () => [this.officerFilter],
+      () => [this.selectedOfficers],
       () => {
         this.updateCaseloadSources();
-      }
-    );
-    reaction(
-      () => [this.searchFilter, this.officerFilter],
-      () => {
-        this.updateSearchSources();
       }
     );
   }
@@ -115,9 +105,6 @@ export class PracticesStore implements Hydratable {
         runInAction(() => {
           this.user = userRecord;
           this.setDefaultCaseload(userRecord as CombinedUserRecord);
-          this.updateStateData(
-            (userRecord as CombinedUserRecord).info.stateCode
-          );
         });
       } else {
         throw new Error(`Unable to retrieve user record for ${email}`);
@@ -132,24 +119,13 @@ export class PracticesStore implements Hydratable {
     });
   }
 
-  /**
-   * Updates data sources queried based on current state code
-   */
-  private updateStateData(stateCode: string) {
-    this.officers = observableSubscription((handler) =>
-      subscribeToOfficers(stateCode, handler)
-    );
-  }
-
   private setDefaultCaseload(userData: CombinedUserRecord) {
-    if (userData.updates?.savedDistricts || userData.updates?.savedOfficers) {
-      this.districtFilter = userData.updates.savedDistricts ?? [];
-      this.officerFilter = userData.updates.savedOfficers ?? [];
+    if (userData.updates?.savedOfficers) {
+      this.selectedOfficers = userData.updates.savedOfficers ?? [];
     } else {
-      this.districtFilter = userData.info.district
-        ? [userData.info.district]
+      this.selectedOfficers = userData.info.hasCaseload
+        ? [userData.info.id]
         : [];
-      this.officerFilter = [userData.info.id];
     }
   }
 
@@ -158,18 +134,44 @@ export class PracticesStore implements Hydratable {
    */
   private updateCaseloadSources() {
     const { user: userInfo } = this;
+
     if (userInfo) {
       this.compliantReportingEligibleCount = observableSubscription(
         (handler) => {
           return subscribeToEligibleCount(
             "compliantReporting",
             userInfo.info.stateCode,
-            this.officerFilter,
+            this.selectedOfficers,
             handler
           );
         }
       );
+      this.officers = observableSubscription((handler) =>
+        subscribeToOfficers(
+          userInfo.info.stateCode,
+          userInfo.info.district,
+          handler
+        )
+      );
+
+      if (this.selectedOfficers.length) {
+        this.clients = observableSubscription((handler) =>
+          subscribeToCaseloads(
+            userInfo.info.stateCode,
+            this.selectedOfficers,
+            (results) => handler(results.map((r) => new Client(r)))
+          )
+        );
+      } else {
+        this.clients = undefined;
+      }
     }
+  }
+
+  get compliantReportingEligibleClients(): Client[] {
+    return (
+      this.clients?.current()?.filter((c) => c.compliantReportingEligible) || []
+    );
   }
 
   get opportunityCounts(): Record<OpportunityType, number | undefined> {
@@ -178,46 +180,7 @@ export class PracticesStore implements Hydratable {
     };
   }
 
-  /**
-   * Updates data sources queried based on current search string
-   */
-  private updateSearchSources() {
-    if (this.searchFilter && this.user) {
-      searchClients(
-        this.user.info.stateCode,
-        this.officerFilter,
-        this.searchFilter
-      ).then((records) => {
-        runInAction(() => {
-          this.clients = records.map((r) => new Client(r));
-        });
-      });
-    } else {
-      this.clients = undefined;
-    }
-  }
-
-  get filteredOfficers(): StaffRecord[] {
-    const searchFilter = this.searchFilter || "";
-    const searchFilterNormalized = searchFilter.toLowerCase();
-    return (
-      this.officers
-        ?.current()
-        ?.filter(
-          (o: StaffRecord) =>
-            o.name.toLowerCase().includes(searchFilterNormalized) ||
-            o.id.toLowerCase().includes(searchFilterNormalized)
-        ) || []
-    );
-  }
-
-  get searchResults(): {
-    clients?: Client[];
-    officers?: StaffRecord[];
-  } {
-    return {
-      clients: this.clients,
-      officers: this.filteredOfficers,
-    };
+  get availableOfficers(): StaffRecord[] {
+    return this.officers?.current() ?? [];
   }
 }

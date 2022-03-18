@@ -43,7 +43,6 @@ export type UserUpdateRecord = {
   email: string;
   stateCode: string;
   savedOfficers?: string[];
-  savedDistricts?: string[];
 };
 
 /**

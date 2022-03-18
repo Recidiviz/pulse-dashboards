@@ -23,11 +23,11 @@ import {
 } from "../../firestore";
 import { dateToTimestamp } from "../utils";
 
-export const mockUser: CombinedUserRecord = {
+export const mockOfficer: CombinedUserRecord = {
   info: {
     id: "OFFICER1",
     district: "DISTRICT 1",
-    name: "{}",
+    name: "Test Officer",
     stateCode: "US_XX",
     email: "test-officer@example.com",
     hasCaseload: true,
@@ -35,6 +35,35 @@ export const mockUser: CombinedUserRecord = {
   updates: {
     stateCode: "US_XX",
     email: "test-officer@example.com",
+  },
+};
+
+export const mockSupervisor: CombinedUserRecord = {
+  info: {
+    id: "SUPERVISOR1",
+    district: "DISTRICT 1",
+    name: "Test Supervisor",
+    stateCode: "US_XX",
+    email: "test-supervisor@example.com",
+    hasCaseload: false,
+  },
+  updates: {
+    stateCode: "US_XX",
+    email: "test-supervisor@example.com",
+  },
+};
+
+export const mockDirector: CombinedUserRecord = {
+  info: {
+    id: "DIRECTOR1",
+    name: "Test Director",
+    stateCode: "US_XX",
+    email: "test-director@example.com",
+    hasCaseload: false,
+  },
+  updates: {
+    stateCode: "US_XX",
+    email: "test-director@example.com",
   },
 };
 
@@ -69,7 +98,7 @@ export const mockOfficers: StaffRecord[] = [
   {
     name: "Foo Fakename",
     id: "OFFICER2",
-    stateCode: mockUser.info.stateCode,
+    stateCode: mockOfficer.info.stateCode,
     district: "1",
     hasCaseload: true,
     email: null,
@@ -77,7 +106,7 @@ export const mockOfficers: StaffRecord[] = [
   {
     name: "Bar Realname",
     id: "OFFICER3",
-    stateCode: mockUser.info.stateCode,
+    stateCode: mockOfficer.info.stateCode,
     district: "1",
     hasCaseload: true,
     email: null,
@@ -91,5 +120,5 @@ export const mockClientUpdate: ClientUpdateRecord = {
     surname: "THOMPSON",
     middleName: "BARBY",
   },
-  stateCode: mockUser.info.stateCode,
+  stateCode: mockOfficer.info.stateCode,
 };

@@ -123,14 +123,6 @@ export async function getUser(
   };
 }
 
-export function searchClients(
-  stateCode: string,
-  officerIds: string[],
-  search: string
-): Promise<ClientRecord[]> {
-  throw new Error("Not implemented");
-}
-
 /**
  * @param handleResults will be called whenever data changes
  * @returns a callable unsubscribe handle
@@ -160,16 +152,42 @@ export function subscribeToClientUpdates(
  */
 export function subscribeToOfficers(
   stateCode: string,
+  district: string | undefined,
   handleResults: (results: StaffRecord[]) => void
+): Unsubscribe {
+  const constraints = [
+    where("stateCode", "==", stateCode),
+    where("hasCaseload", "==", true),
+  ];
+  if (district) {
+    constraints.push(where("district", "==", district));
+  }
+  return onSnapshot(query(collections.staff, ...constraints), (results) => {
+    const docs: StaffRecord[] = [];
+    results.forEach((result) => {
+      docs.push(result.data());
+    });
+    handleResults(docs);
+  });
+}
+
+/**
+ * @param handleResults will be called whenever data changes
+ * @returns a callable unsubscribe handle
+ */
+export function subscribeToCaseloads(
+  stateCode: string,
+  officerIds: string[],
+  handleResults: (results: ClientRecord[]) => void
 ): Unsubscribe {
   return onSnapshot(
     query(
-      collections.staff,
+      collections.clients,
       where("stateCode", "==", stateCode),
-      where("hasCaseload", "==", true)
+      where("officerId", "in", officerIds)
     ),
     (results) => {
-      const docs: StaffRecord[] = [];
+      const docs: ClientRecord[] = [];
       results.forEach((result) => {
         docs.push(result.data());
       });

@@ -83,7 +83,7 @@ const PagePracticesV2: React.FC = () => {
           <ReactSelect
             className={cn("Select")}
             classNamePrefix="Select"
-            options={practicesStore.filteredOfficers.map(
+            options={practicesStore.availableOfficers.map(
               (officer: StaffRecord) => ({
                 label: officer.name,
                 value: officer.id,

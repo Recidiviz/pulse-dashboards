@@ -20,14 +20,20 @@ import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
   getUser,
-  searchClients,
+  subscribeToCaseloads,
   subscribeToEligibleCount,
   subscribeToOfficers,
   UserUpdateRecord,
 } from "../../firestore";
 import { RootStore } from "../../RootStore";
 import type { PracticesStore } from "..";
-import { mockClients, mockOfficers, mockUser } from "../__fixtures__";
+import {
+  mockClients,
+  mockDirector,
+  mockOfficer,
+  mockOfficers,
+  mockSupervisor,
+} from "../__fixtures__";
 
 jest.mock("../../firestore");
 
@@ -38,8 +44,8 @@ const mockSubscribeToEligibleCount = subscribeToEligibleCount as jest.MockedFunc
 const mockSubscribeToOfficers = subscribeToOfficers as jest.MockedFunction<
   typeof subscribeToOfficers
 >;
-const mockSearchClients = searchClients as jest.MockedFunction<
-  typeof searchClients
+const mockSubscribeToCaseloads = subscribeToCaseloads as jest.MockedFunction<
+  typeof subscribeToCaseloads
 >;
 
 let practicesStore: PracticesStore;
@@ -48,7 +54,7 @@ let testObserver: IDisposer;
 const mockUnsub = jest.fn();
 
 function doBackendMock() {
-  mockGetUser.mockResolvedValue(mockUser);
+  mockGetUser.mockResolvedValue(mockOfficer);
   mockSubscribeToEligibleCount.mockImplementation(
     (opportunityType, stateCode, ids, handler) => {
       handler(1);
@@ -57,13 +63,19 @@ function doBackendMock() {
   );
 }
 
+async function waitForHydration(): Promise<void> {
+  practicesStore.hydrate();
+
+  await when(() => !practicesStore.isLoading);
+}
+
 beforeEach(() => {
   practicesStore = new RootStore().practicesStore;
   runInAction(() => {
     practicesStore.rootStore.userStore.user = {
       email: "foo@example.com",
       [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-        state_code: mockUser.info.stateCode,
+        state_code: mockOfficer.info.stateCode,
       },
     };
   });
@@ -83,47 +95,154 @@ test("hydration progress", async () => {
   expect(practicesStore.error).toBeUndefined();
   expect(practicesStore.isLoading).toBeUndefined();
 
-  practicesStore.hydrate();
+  await waitForHydration();
 
-  await when(() => !practicesStore.isLoading);
-
-  expect(practicesStore.user).toEqual(mockUser);
+  expect(practicesStore.user).toEqual(mockOfficer);
 });
 
 test("caseload defaults to self", async () => {
-  practicesStore.hydrate();
+  await waitForHydration();
 
-  await when(() => !practicesStore.isLoading);
-
-  expect(practicesStore.districtFilter).toEqual([mockUser.info.district]);
-  expect(practicesStore.officerFilter).toEqual([mockUser.info.id]);
+  expect(practicesStore.selectedOfficers).toEqual([mockOfficer.info.id]);
 });
 
 test("caseload defaults to all saved officers when present", async () => {
   const mockSavedOfficers = ["OFFICER1", "OFFICER2", "OFFICER3"];
-  const mockSavedDistricts = ["DISTRICT1", "DISTRICT2"];
   mockGetUser.mockResolvedValue({
-    ...mockUser,
+    ...mockOfficer,
     updates: {
-      ...(mockUser.updates as UserUpdateRecord),
+      ...(mockOfficer.updates as UserUpdateRecord),
       savedOfficers: mockSavedOfficers,
-      savedDistricts: mockSavedDistricts,
     },
   });
 
-  practicesStore.hydrate();
+  await waitForHydration();
 
-  await when(() => practicesStore.isLoading === false);
+  expect(practicesStore.selectedOfficers).toEqual(mockSavedOfficers);
+});
 
-  expect(practicesStore.districtFilter).toEqual(mockSavedDistricts);
-  expect(practicesStore.officerFilter).toEqual(mockSavedOfficers);
+test("caseload defaults to no officers if user has no caseload and no saved officers", async () => {
+  mockGetUser.mockResolvedValue(mockSupervisor);
+
+  await waitForHydration();
+
+  expect(practicesStore.selectedOfficers).toEqual([]);
+});
+
+test("subscribe to officers in user's district", async () => {
+  mockSubscribeToOfficers.mockImplementation(
+    (stateCode, district, handleResults) => {
+      expect(stateCode).toBe(mockOfficer.info.stateCode);
+      expect(district).toBe(mockOfficer.info.district);
+      handleResults(mockOfficers);
+      return mockUnsub;
+    }
+  );
+
+  await waitForHydration();
+
+  // simulate a UI displaying officer list
+  testObserver = keepAlive(computed(() => practicesStore.availableOfficers));
+
+  await when(() => practicesStore.availableOfficers.length > 0);
+
+  expect(mockSubscribeToOfficers).toHaveBeenCalled();
+
+  expect(practicesStore.availableOfficers).toEqual(mockOfficers);
+});
+
+test("subscribe to all officers if user has no district", async () => {
+  mockGetUser.mockResolvedValue(mockDirector);
+  mockSubscribeToOfficers.mockImplementation(
+    (stateCode, district, handleResults) => {
+      expect(stateCode).toBe(mockDirector.info.stateCode);
+      expect(district).toBeUndefined();
+      handleResults(mockOfficers);
+      return mockUnsub;
+    }
+  );
+
+  await waitForHydration();
+
+  // simulate a UI displaying officer list
+  testObserver = keepAlive(computed(() => practicesStore.availableOfficers));
+
+  await when(() => practicesStore.availableOfficers.length > 0);
+
+  expect(mockSubscribeToOfficers).toHaveBeenCalled();
+
+  expect(practicesStore.availableOfficers).toEqual(mockOfficers);
+});
+
+test("subscribe to all clients in default caseload", async () => {
+  mockSubscribeToCaseloads.mockImplementation(
+    (stateCode, officerIds, handler) => {
+      expect(stateCode).toBe(mockOfficer.info.stateCode);
+      expect(officerIds).toEqual([mockOfficer.info.id]);
+      handler(mockClients);
+      return mockUnsub;
+    }
+  );
+
+  await waitForHydration();
+
+  // simulate a UI displaying client list
+  testObserver = keepAlive(
+    computed(() => practicesStore.compliantReportingEligibleClients)
+  );
+
+  expect(mockSubscribeToCaseloads).toHaveBeenCalled();
+
+  expect(practicesStore.compliantReportingEligibleClients).toEqual([]);
+});
+
+test("subscribe to all clients in saved caseload", async () => {
+  const mockSavedOfficers = ["OFFICER1", "OFFICER2", "OFFICER3"];
+  mockGetUser.mockResolvedValue({
+    ...mockSupervisor,
+    updates: {
+      ...(mockSupervisor.updates as UserUpdateRecord),
+      savedOfficers: mockSavedOfficers,
+    },
+  });
+
+  mockSubscribeToCaseloads.mockImplementation(
+    (stateCode, officerIds, handler) => {
+      expect(stateCode).toBe(mockOfficer.info.stateCode);
+      expect(officerIds).toEqual(mockSavedOfficers);
+      handler([]);
+      return mockUnsub;
+    }
+  );
+
+  await waitForHydration();
+
+  // simulate a UI displaying client list
+  testObserver = keepAlive(
+    computed(() => practicesStore.compliantReportingEligibleClients)
+  );
+
+  expect(mockSubscribeToCaseloads).toHaveBeenCalled();
+});
+
+test("don't subscribe to clients if no officers are selected", async () => {
+  mockGetUser.mockResolvedValue(mockSupervisor);
+
+  await waitForHydration();
+
+  // simulate a UI displaying client list
+  testObserver = keepAlive(
+    computed(() => practicesStore.compliantReportingEligibleClients)
+  );
+
+  expect(mockSubscribeToCaseloads).not.toHaveBeenCalled();
 });
 
 test("count compliant reporting opportunities based on current filter", async () => {
   const mockCount = 10;
   mockSubscribeToEligibleCount.mockImplementation(
     (opportunityType, stateCode, ids, handler) => {
-      expect(ids).toEqual([mockUser.info.id]);
+      expect(ids).toEqual([mockOfficer.info.id]);
       handler(mockCount);
       return mockUnsub;
     }
@@ -155,7 +274,7 @@ test("clean up caseload subscriptions on change", async () => {
   expect(mockUnsub).not.toHaveBeenCalled();
 
   runInAction(() => {
-    practicesStore.officerFilter = ["OFFICER2"];
+    practicesStore.selectedOfficers = ["OFFICER2"];
   });
 
   await when(
@@ -163,42 +282,4 @@ test("clean up caseload subscriptions on change", async () => {
   );
 
   expect(mockUnsub).toHaveBeenCalled();
-});
-
-test("search for clients", async () => {
-  mockSearchClients.mockResolvedValue(mockClients);
-
-  mockSubscribeToOfficers.mockImplementation((stateCode, handler) => {
-    expect(stateCode).toBe(mockUser.info.stateCode);
-    handler(mockOfficers);
-    return mockUnsub;
-  });
-
-  practicesStore.hydrate();
-
-  await when(() => !practicesStore.isLoading);
-
-  runInAction(() => {
-    practicesStore.searchFilter = "foo";
-  });
-
-  // simulate a search results page in the UI that is observing results
-  keepAlive(computed(() => practicesStore.searchResults));
-
-  expect(mockSearchClients).toHaveBeenCalledWith(
-    mockUser.info.stateCode,
-    [mockUser.info.id],
-    "foo"
-  );
-  expect(mockSubscribeToOfficers).toHaveBeenCalled();
-
-  await when(() => practicesStore.searchResults.clients !== undefined);
-
-  expect(practicesStore.searchResults.clients?.length).toBe(mockClients.length);
-
-  await when(() => practicesStore.searchResults.officers !== undefined);
-
-  expect(practicesStore.searchResults.officers).toEqual(
-    mockOfficers.slice(0, 1)
-  );
 });
