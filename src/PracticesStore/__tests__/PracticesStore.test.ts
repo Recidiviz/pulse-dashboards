@@ -61,6 +61,14 @@ function doBackendMock() {
       return mockUnsub;
     }
   );
+  mockSubscribeToCaseloads.mockImplementation(
+    (stateCode, officerIds, handler) => {
+      expect(stateCode).toBe(mockOfficer.info.stateCode);
+      expect(officerIds).toEqual([mockOfficer.info.id]);
+      handler(mockClients);
+      return mockUnsub;
+    }
+  );
 }
 
 async function waitForHydration(): Promise<void> {
@@ -175,15 +183,6 @@ test("subscribe to all officers if user has no district", async () => {
 });
 
 test("subscribe to all clients in default caseload", async () => {
-  mockSubscribeToCaseloads.mockImplementation(
-    (stateCode, officerIds, handler) => {
-      expect(stateCode).toBe(mockOfficer.info.stateCode);
-      expect(officerIds).toEqual([mockOfficer.info.id]);
-      handler(mockClients);
-      return mockUnsub;
-    }
-  );
-
   await waitForHydration();
 
   // simulate a UI displaying client list
@@ -193,7 +192,7 @@ test("subscribe to all clients in default caseload", async () => {
 
   expect(mockSubscribeToCaseloads).toHaveBeenCalled();
 
-  expect(practicesStore.compliantReportingEligibleClients).toEqual([]);
+  expect(practicesStore.compliantReportingEligibleClients.length).toBe(1);
 });
 
 test("subscribe to all clients in saved caseload", async () => {
@@ -282,4 +281,36 @@ test("clean up caseload subscriptions on change", async () => {
   );
 
   expect(mockUnsub).toHaveBeenCalled();
+});
+
+test("no client selected", async () => {
+  await waitForHydration();
+
+  runInAction(() => {
+    practicesStore.selectedOfficers = ["OFFICER1"];
+  });
+
+  // simulate a UI displaying CR data
+  testObserver = keepAlive(
+    computed(() => practicesStore.compliantReportingEligibleClients)
+  );
+
+  expect(practicesStore.selectedClient).toBeUndefined();
+});
+
+test("client selected", async () => {
+  const idToSelect = mockClients[1].personExternalId;
+  await waitForHydration();
+
+  runInAction(() => {
+    practicesStore.selectedOfficers = ["OFFICER1"];
+    practicesStore.selectedClientId = idToSelect;
+  });
+
+  // simulate a UI displaying client data
+  testObserver = keepAlive(computed(() => practicesStore.selectedClient));
+
+  await when(() => practicesStore.selectedClient !== undefined);
+
+  expect(practicesStore.selectedClient?.id).toBe(idToSelect);
 });

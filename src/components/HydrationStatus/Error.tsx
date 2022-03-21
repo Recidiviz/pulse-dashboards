@@ -31,7 +31,7 @@ const Error: React.FC = () => {
   const onLogout = useCallback(
     (e) => {
       e.preventDefault();
-      logout({ returnTo: window.location.origin });
+      if (logout) logout({ returnTo: window.location.origin });
     },
     [logout]
   );

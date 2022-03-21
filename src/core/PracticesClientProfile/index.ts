@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2022 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,20 +14,5 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { observer } from "mobx-react-lite";
-import React from "react";
-import { Redirect } from "react-router-dom";
 
-import { useUserStore } from "./components/StoreProvider";
-import { getPathsFromNavigation } from "./utils/navigation";
-
-export const RedirectHome: React.FC = ({ ...rest }) => {
-  const userStore = useUserStore();
-
-  const allowedPaths = getPathsFromNavigation(
-    userStore.userAllowedNavigation ?? {}
-  );
-  return <Redirect {...rest} exact from="/" to={allowedPaths[0]} />;
-};
-
-export default observer(RedirectHome);
+export { default } from "./PracticesClientProfile";

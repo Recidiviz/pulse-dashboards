@@ -20,14 +20,17 @@ import cn from "classnames";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
+import { Switch, useRouteMatch } from "react-router-dom";
 import ReactSelect from "react-select";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { StaffRecord } from "../../firestore";
 import cssVars from "../CoreConstants.scss";
 import ModelHydrator from "../ModelHydrator";
+import PracticesClientProfile from "../PracticesClientProfile";
+import PracticesRoute from "../PracticesRoute";
 import PracticesSearch from "../PracticesSearch";
+import { PRACTICES_PAGES } from "../views";
 
 const Wrapper = styled.div`
   display: grid;
@@ -72,6 +75,8 @@ const Label = styled.div`
 
 const PagePracticesV2: React.FC = () => {
   const { practicesStore } = useRootStore();
+  const { path } = useRouteMatch();
+
   return (
     <ModelHydrator model={practicesStore}>
       <Wrapper>
@@ -79,19 +84,26 @@ const PagePracticesV2: React.FC = () => {
           <LogoImg src={Assets.LOGO} alt="Recidiviz" />
           <Divider />
 
-          <Label>Officer</Label>
-          <ReactSelect
-            className={cn("Select")}
-            classNamePrefix="Select"
-            options={practicesStore.availableOfficers.map(
-              (officer: StaffRecord) => ({
-                label: officer.name,
-                value: officer.id,
-              })
-            )}
-            placeholder="Select an officer..."
-          />
-          <Divider />
+          <Switch>
+            <PracticesRoute exact path={path}>
+              <Label>Officer</Label>
+              <ReactSelect
+                className={cn("Select")}
+                classNamePrefix="Select"
+                options={practicesStore.availableOfficers.map((officer) => ({
+                  label: officer.name,
+                  value: officer.id,
+                }))}
+                placeholder="Select an officer..."
+              />
+              <Divider />
+            </PracticesRoute>
+            <PracticesRoute
+              path={`${path}/${PRACTICES_PAGES.compliantReporting}/:clientId`}
+            >
+              <PracticesClientProfile />
+            </PracticesRoute>
+          </Switch>
         </Sidebar>
         <Contents>
           <PracticesSearch />

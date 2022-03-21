@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { ClientRecord, FullName, subscribeToClientUpdates } from "../firestore";
+import { toTitleCase } from "../utils";
 import { ClientUpdate } from "./ClientUpdate";
 import { observableSubscription, SubscriptionValue } from "./utils";
 
@@ -48,8 +49,8 @@ export class Client {
     this.stateCode = record.stateCode;
     this.fullName = record.personName;
     this.officerId = record.officerId;
-    this.supervisionType = record.supervisionType;
-    this.supervisionLevel = record.supervisionLevel;
+    this.supervisionType = toTitleCase(record.supervisionType);
+    this.supervisionLevel = toTitleCase(record.supervisionLevel);
     this.supervisionLevelStart = record.supervisionLevelStart.toDate();
 
     const { compliantReportingEligible } = record;
@@ -78,9 +79,11 @@ export class Client {
   }
 
   get displayName(): string {
-    return [this.fullName.givenNames, this.fullName.surname]
-      .filter((n) => Boolean(n))
-      .join(" ");
+    return toTitleCase(
+      [this.fullName.givenNames, this.fullName.surname]
+        .filter((n) => Boolean(n))
+        .join(" ")
+    );
   }
 
   get updates(): ClientUpdate | undefined {

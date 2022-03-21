@@ -44,6 +44,8 @@ export class PracticesStore implements Hydratable {
 
   selectedOfficers: string[] = [];
 
+  selectedClientId?: string;
+
   private compliantReportingEligibleCount?: SubscriptionValue<number>;
 
   private clients?: SubscriptionValue<Client[]>;
@@ -182,5 +184,9 @@ export class PracticesStore implements Hydratable {
 
   get availableOfficers(): StaffRecord[] {
     return this.officers?.current() ?? [];
+  }
+
+  get selectedClient(): Client | undefined {
+    return this.clients?.current()?.find((c) => c.id === this.selectedClientId);
   }
 }

@@ -18,6 +18,7 @@ import createAuth0Client, {
   Auth0Client,
   Auth0ClientOptions,
   GetTokenSilentlyOptions,
+  LogoutOptions,
   User,
 } from "@auth0/auth0-spa-js";
 import { action, entries, makeAutoObservable, runInAction } from "mobx";
@@ -76,7 +77,7 @@ export default class UserStore {
 
   getToken?: (options?: GetTokenSilentlyOptions) => void;
 
-  logout?: () => void;
+  logout?: (options?: LogoutOptions) => void;
 
   readonly rootStore?: typeof RootStore;
 

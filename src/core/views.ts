@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityType } from "../firestore";
 import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
 import { MetricId, SimulationCompartment, TenantId } from "./models/types";
 
@@ -224,6 +225,12 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
 export function getSectionIdForMetric(metric: MetricId): PathwaysSection {
   return PATHWAYS_SECTION_BY_METRIC_ID[metric];
 }
+
+export type PracticesPage = OpportunityType;
+export const PRACTICES_PAGES: Record<OpportunityType, string> = {
+  compliantReporting: "compliantReporting",
+};
+export const PracticesPageIdList = Object.keys(PATHWAYS_PAGES);
 
 const pathnameToView: Record<string, string> = {
   [CORE_PATHS.goals]: CORE_VIEWS.goals,

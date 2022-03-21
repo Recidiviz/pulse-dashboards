@@ -90,7 +90,12 @@ export const mockClients: ClientRecord[] = [
     supervisionType: "TN PROBATIONER",
     supervisionLevel: "STANDARD: MEDIUM",
     supervisionLevelStart: dateToTimestamp("2019-12-20"),
-    compliantReportingEligible: null,
+    compliantReportingEligible: {
+      judicialDistrict: "A",
+      lastDrugNegative: [],
+      lastSanction: null,
+      offenseType: ["EXAMPLE"],
+    },
   },
 ];
 
