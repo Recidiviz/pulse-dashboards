@@ -194,9 +194,8 @@ If you are running in offline mode, you may need to run through the following st
 
 1. Check that you have all of the required environment variables and files set up:
 
-   - [ ] `.env` should exist and have the correct values for the backend. These variables can be found in the Recidiviz 1Password Vault.
-   - [ ] `.env-cmdrc` should exist and should have the correct values for the "development" frontend environment. These variables can be found in the Recidiviz 1Password Vault.
-   - [ ] You should have both `auth_config_dev.json` and `auth_config_production.json` files defined in the `pulse-dashboard/src` directory. The values for these files are found in the Recidiviz 1Password Vault.
+   - [ ] copy `.env-cmdrc.example` into another file called `.env-cmdrc`. (It will be ignored by git)
+   - [ ] copy `src/auth_config.json.example` into three new files called `src/auth_config_demo.json`, `src/auth_config_dev.json`, and `src/auth_config_production.json`
 
 1. Make sure your `redis-server` is not still running from a previous session. To avoid this situation, always shutdown the demo server by using `CTRL + c`. If you need to shutdown the redis-server from an earlier run, you can use the command:
    ```
