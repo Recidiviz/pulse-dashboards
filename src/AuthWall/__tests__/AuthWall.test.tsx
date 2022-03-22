@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { Loading } from "@recidiviz/design-system";
-import { render } from "@testing-library/react";
 import React from "react";
 
 import mockWithTestId from "../../../__helpers__/mockWithTestId";
 import { useRootStore } from "../../components/StoreProvider";
 import { ERROR_MESSAGES } from "../../constants";
+import { render } from "../../testUtils";
 import AuthWall from "../AuthWall";
 
 jest.mock("../../components/StoreProvider");

@@ -122,7 +122,7 @@ test("hydration progress", async () => {
 test("caseload defaults to self", async () => {
   await waitForHydration();
 
-  expect(practicesStore.selectedOfficers).toEqual([mockOfficer.info.id]);
+  expect(practicesStore.selectedOfficerIds).toEqual([mockOfficer.info.id]);
 });
 
 test("caseload defaults to all saved officers when present", async () => {
@@ -137,7 +137,7 @@ test("caseload defaults to all saved officers when present", async () => {
 
   await waitForHydration();
 
-  expect(practicesStore.selectedOfficers).toEqual(mockSavedOfficers);
+  expect(practicesStore.selectedOfficerIds).toEqual(mockSavedOfficers);
 });
 
 test("caseload defaults to no officers if user has no caseload and no saved officers", async () => {
@@ -145,7 +145,7 @@ test("caseload defaults to no officers if user has no caseload and no saved offi
 
   await waitForHydration();
 
-  expect(practicesStore.selectedOfficers).toEqual([]);
+  expect(practicesStore.selectedOfficerIds).toEqual([]);
 });
 
 test("subscribe to officers in user's district", async () => {
@@ -284,7 +284,7 @@ test("clean up caseload subscriptions on change", async () => {
   expect(mockUnsub).not.toHaveBeenCalled();
 
   runInAction(() => {
-    practicesStore.selectedOfficers = ["OFFICER2"];
+    practicesStore.selectedOfficerIds = ["OFFICER2"];
   });
 
   await when(
@@ -294,8 +294,12 @@ test("clean up caseload subscriptions on change", async () => {
   expect(mockUnsub).toHaveBeenCalled();
 });
 
-test("no client selected", () => {
-  populateClients();
+test("no client selected", async () => {
+  await waitForHydration();
+
+  runInAction(() => {
+    practicesStore.selectedOfficerIds = ["OFFICER1"];
+  });
 
   // simulate a UI displaying CR data
   testObserver = keepAlive(
@@ -311,6 +315,7 @@ test("select existing client", () => {
   const idToSelect = mockClients[0].personExternalId;
 
   runInAction(() => {
+    practicesStore.selectedOfficerIds = ["OFFICER1"];
     practicesStore.selectedClientId = idToSelect;
   });
 

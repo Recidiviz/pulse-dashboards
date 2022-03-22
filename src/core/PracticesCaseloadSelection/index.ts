@@ -14,32 +14,4 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-import React, { useEffect } from "react";
-import { Route, RouteProps, useParams } from "react-router-dom";
-
-import { useRootStore } from "../../components/StoreProvider";
-
-const RouteSync: React.FC = ({ children }) => {
-  const { practicesStore } = useRootStore();
-  const { clientId } = useParams<{ clientId?: string }>();
-  useEffect(() => practicesStore.updateSelectedClient(clientId), [
-    practicesStore,
-    clientId,
-  ]);
-
-  return <>{children}</>;
-};
-
-/**
- * Wraps a react-router Route to sync route data to the Practices datastore.
- */
-const PracticesRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
-  return (
-    <Route {...rest}>
-      <RouteSync>{children}</RouteSync>
-    </Route>
-  );
-};
-
-export default PracticesRoute;
+export * from "./PracticesCaseloadSelection";

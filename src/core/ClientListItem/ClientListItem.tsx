@@ -17,10 +17,12 @@
 import { palette, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
+import { Link, useRouteMatch } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { Client } from "../../PracticesStore/Client";
 import { ClientAvatar } from "../ClientAvatar";
+import { PRACTICES_PAGES } from "../views";
 
 interface ClientListItemProps {
   client: Client;
@@ -28,21 +30,25 @@ interface ClientListItemProps {
 
 const CLIENT_LIST_ITEM_AVATAR_SIZE = 40;
 
-const ClientListItemElement = styled.div`
+const ClientName = styled.div`
+  color: ${palette.pine2};
+  font-size: ${rem(14)};
+`;
+
+const ClientListItemElement = styled(Link)`
   align-items: center;
   display: grid;
   grid-template-columns: ${rem(CLIENT_LIST_ITEM_AVATAR_SIZE)} 1fr;
   margin-bottom: ${rem(spacing.sm)};
+
+  &:hover ${ClientName} {
+    color: ${palette.signal.links};
+  }
 `;
 
 const ClientInfo = styled.div`
   line-height: 1.1;
   margin-left: ${rem(spacing.sm)};
-`;
-
-const ClientName = styled.div`
-  color: ${palette.pine2};
-  font-size: ${rem(14)};
 `;
 
 const ClientID = styled.span`
@@ -51,8 +57,12 @@ const ClientID = styled.span`
 `;
 
 const ClientListItem: React.FC<ClientListItemProps> = ({ client }) => {
+  const { path } = useRouteMatch();
+
   return (
-    <ClientListItemElement>
+    <ClientListItemElement
+      to={`${path}/${PRACTICES_PAGES.compliantReporting}/${client.id}`}
+    >
       <ClientAvatar
         name={client.displayName}
         size={CLIENT_LIST_ITEM_AVATAR_SIZE}

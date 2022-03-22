@@ -15,26 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Assets, palette, spacing } from "@recidiviz/design-system";
-import cn from "classnames";
+import {
+  Assets,
+  AVAILABLE_FONTS,
+  palette,
+  spacing,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import React from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
-import ReactSelect from "react-select";
-import styled from "styled-components/macro";
+import styled, { ThemeProvider } from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import cssVars from "../CoreConstants.scss";
 import ModelHydrator from "../ModelHydrator";
+import { PracticesCaseloadSelection } from "../PracticesCaseloadSelection";
 import PracticesClientProfile from "../PracticesClientProfile";
 import PracticesRoute from "../PracticesRoute";
-import PracticesSearch from "../PracticesSearch";
 import { PRACTICES_PAGES } from "../views";
 
 const Wrapper = styled.div`
   display: grid;
-  font: ${cssVars.fontUiSans16};
   grid-template-columns: 350px 1fr;
   position: relative;
   width: 100%;
@@ -48,11 +49,6 @@ const Sidebar = styled.div`
   padding: 0 ${spacing.md}px;
 `;
 
-const Contents = styled.div`
-  padding: ${spacing.xxl}px;
-  flex: 0 1 872px;
-`;
-
 const Divider = styled.hr`
   border-top: 1px solid ${palette.slate20};
   margin: ${spacing.lg}px 0;
@@ -64,53 +60,40 @@ const LogoImg = styled.img`
   height: 22px;
 `;
 
-const Label = styled.div`
-  font-style: normal;
-  font-size: ${rem(13)};
-
-  letter-spacing: -0.01em;
-
-  color: ${palette.slate60};
-`;
-
 const PagePracticesV2: React.FC = () => {
   const { practicesStore } = useRootStore();
   const { path } = useRouteMatch();
 
   return (
-    <ModelHydrator model={practicesStore}>
-      <Wrapper>
-        <Sidebar>
-          <LogoImg src={Assets.LOGO} alt="Recidiviz" />
-          <Divider />
-
-          <Switch>
-            <PracticesRoute exact path={path}>
-              <Label>Officer</Label>
-              <ReactSelect
-                className={cn("Select")}
-                classNamePrefix="Select"
-                options={practicesStore.availableOfficers.map((officer) => ({
-                  label: officer.name,
-                  value: officer.id,
-                }))}
-                placeholder="Select an officer..."
-              />
-              <Divider />
-            </PracticesRoute>
-            <PracticesRoute
-              path={`${path}/${PRACTICES_PAGES.compliantReporting}/:clientId`}
-            >
-              <PracticesClientProfile />
-            </PracticesRoute>
-          </Switch>
-        </Sidebar>
-        <Contents>
-          <PracticesSearch />
-          <Divider />
-        </Contents>
-      </Wrapper>
-    </ModelHydrator>
+    <ThemeProvider
+      theme={{
+        fonts: {
+          heading: AVAILABLE_FONTS.LIBRE_BASKERVILLE,
+          body: AVAILABLE_FONTS.PUBLIC_SANS,
+          serif: AVAILABLE_FONTS.LIBRE_BASKERVILLE,
+          sans: AVAILABLE_FONTS.PUBLIC_SANS,
+        },
+      }}
+    >
+      <ModelHydrator model={practicesStore}>
+        <Wrapper>
+          <Sidebar>
+            <LogoImg src={Assets.LOGO} alt="Recidiviz" />
+            <Divider />
+            <Switch>
+              <PracticesRoute exact path={path}>
+                <PracticesCaseloadSelection />
+              </PracticesRoute>
+              <PracticesRoute
+                path={`${path}/${PRACTICES_PAGES.compliantReporting}/:clientId`}
+              >
+                <PracticesClientProfile />
+              </PracticesRoute>
+            </Switch>
+          </Sidebar>
+        </Wrapper>
+      </ModelHydrator>
+    </ThemeProvider>
   );
 };
 

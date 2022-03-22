@@ -83,17 +83,15 @@ const MethodologyPathways: React.FC = () => {
               {Object.keys(pageCopy).map((pageId) => {
                 const page = pageCopy[pageId];
                 if (!page?.title || !enabledPages.includes(pageId))
-                  return <div />;
+                  return <div key={`link${page.title}`} />;
                 return (
-                  <>
-                    <a
-                      className="Methodology__toc--link"
-                      key={`link${page.title}`}
-                      href={`#${convertToSlug(page.title)}`}
-                    >
-                      {page.title}
-                    </a>
-                  </>
+                  <a
+                    className="Methodology__toc--link"
+                    key={`link${page.title}`}
+                    href={`#${convertToSlug(page.title)}`}
+                  >
+                    {page.title}
+                  </a>
                 );
               })}
             </div>
@@ -102,7 +100,7 @@ const MethodologyPathways: React.FC = () => {
             {Object.keys(pageCopy).map((pageId) => {
               const page = pageCopy[pageId as PathwaysPage];
               if (!page?.title || !enabledPages.includes(pageId))
-                return <div />;
+                return <div key={`content${page.title}`} />;
               // Practices methodology does not have the concept of sections
               const metrics = PathwaysPageIdList.includes(pageId)
                 ? getMetricIdsForPage(pageId as PathwaysPage)
@@ -114,15 +112,21 @@ const MethodologyPathways: React.FC = () => {
                   !metric?.title ||
                   !enabledSections.includes(getSectionIdForMetric(metricId))
                 )
-                  return <div />;
-                return <ContentBlock content={metric} subBlock />;
+                  return <div key={`metric${metricId}`} />;
+                return (
+                  <ContentBlock
+                    content={metric}
+                    subBlock
+                    key={`metric${metricId}`}
+                  />
+                );
               });
 
               return (
-                <>
+                <React.Fragment key={`block${page.title}`}>
                   <ContentBlock content={page} />
                   {metricMethodologies}
-                </>
+                </React.Fragment>
               );
             })}
           </div>

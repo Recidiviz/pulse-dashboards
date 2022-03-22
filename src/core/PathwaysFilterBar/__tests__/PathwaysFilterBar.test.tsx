@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render, screen } from "@testing-library/react";
 import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import selectEvent from "react-select-event";
 
 import { useRootStore } from "../../../components/StoreProvider";
+import { render, screen } from "../../../testUtils";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
 import { useCoreStore } from "../../CoreStoreProvider";

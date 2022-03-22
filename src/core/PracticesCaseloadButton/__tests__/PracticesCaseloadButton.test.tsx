@@ -15,15 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import React from "react";
+
+import RootStore from "../../../RootStore";
 import {
   fireEvent,
   render,
   screen,
   waitForElementToBeRemoved,
-} from "@testing-library/react";
-import React from "react";
-
-import RootStore from "../../../RootStore";
+} from "../../../testUtils";
 import CoreStore from "../../CoreStore";
 import PagePracticesStore from "../../CoreStore/PagePracticesStore";
 import { useCoreStore } from "../../CoreStoreProvider";

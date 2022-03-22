@@ -52,7 +52,7 @@ export class PracticesStore implements Hydratable {
 
   user?: CombinedUserRecord;
 
-  selectedOfficers: string[] = [];
+  selectedOfficerIds: string[] = [];
 
   selectedClientId?: string;
 
@@ -70,7 +70,7 @@ export class PracticesStore implements Hydratable {
 
     // trigger some updates when filters change
     reaction(
-      () => [this.selectedOfficers],
+      () => [this.selectedOfficerIds],
       () => {
         this.updateCaseloadSources();
       }
@@ -165,11 +165,25 @@ export class PracticesStore implements Hydratable {
     });
   }
 
+  updateSelectedOfficers(officerIds: string[]): void {
+    this.selectedOfficerIds = officerIds;
+  }
+
+  updateSelectedClient(clientId?: string): void {
+    this.selectedClientId = clientId;
+  }
+
+  get selectedOfficers(): StaffRecord[] {
+    return this.availableOfficers.filter(
+      (officer) => this.selectedOfficerIds.indexOf(officer.id) !== -1
+    );
+  }
+
   private setDefaultCaseload(userData: CombinedUserRecord) {
     if (userData.updates?.savedOfficers) {
-      this.selectedOfficers = userData.updates.savedOfficers ?? [];
+      this.selectedOfficerIds = userData.updates.savedOfficers ?? [];
     } else {
-      this.selectedOfficers = userData.info.hasCaseload
+      this.selectedOfficerIds = userData.info.hasCaseload
         ? [userData.info.id]
         : [];
     }
@@ -187,7 +201,7 @@ export class PracticesStore implements Hydratable {
           return subscribeToEligibleCount(
             "compliantReporting",
             userInfo.info.stateCode,
-            this.selectedOfficers,
+            this.selectedOfficerIds,
             handler
           );
         }
@@ -200,11 +214,11 @@ export class PracticesStore implements Hydratable {
         )
       );
 
-      if (this.selectedOfficers.length) {
+      if (this.selectedOfficerIds.length) {
         this.clientsSubscription = observableSubscription((syncToStore) =>
           subscribeToCaseloads(
             userInfo.info.stateCode,
-            this.selectedOfficers,
+            this.selectedOfficerIds,
             (results) => syncToStore(results)
           )
         );
@@ -217,7 +231,7 @@ export class PracticesStore implements Hydratable {
   get compliantReportingEligibleClients(): Client[] {
     return values(this.clients).filter(
       (c) =>
-        this.selectedOfficers.includes(c.officerId) &&
+        this.selectedOfficerIds.includes(c.officerId) &&
         c.compliantReportingEligible
     );
   }
