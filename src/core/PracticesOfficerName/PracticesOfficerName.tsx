@@ -19,29 +19,22 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Details } from "./Details";
-import { Heading } from "./Heading";
-import { ClientProfileProps } from "./types";
 
-const PracticesClientProfile: React.FC = () => {
-  const { practicesStore } = useRootStore();
-
-  const client = practicesStore.selectedClient;
-
-  if (!client) {
-    return null;
-  }
-
-  return <ClientProfile client={client} />;
+type PracticesOfficerNameProps = {
+  officerId: string;
 };
 
-export default observer(PracticesClientProfile);
+const PracticesOfficerName: React.FC<PracticesOfficerNameProps> = ({
+  officerId,
+}) => {
+  const { practicesStore } = useRootStore();
 
-const ClientProfile = observer(({ client }: ClientProfileProps) => {
   return (
-    <article>
-      <Heading client={client} />
-      <Details client={client} />
-    </article>
+    <span>
+      {practicesStore.availableOfficers.find((o) => o.id === officerId)?.name ??
+        officerId}
+    </span>
   );
-});
+};
+
+export default observer(PracticesOfficerName);

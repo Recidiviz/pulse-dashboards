@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette } from "@recidiviz/design-system";
+import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -26,6 +26,7 @@ import { ClientProfileProps } from "./types";
 const HeadingWrapper = styled.div`
   display: grid;
   grid-template-columns: ${rem(56)} 1fr;
+  margin-bottom: ${rem(spacing.md)};
 `;
 
 const ClientName = styled.h1`

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { format as formatPhone } from "phone-fns";
+
 import { ClientRecord, FullName, subscribeToClientUpdates } from "../firestore";
 import { toTitleCase } from "../utils";
 import { ClientUpdate } from "./ClientUpdate";
@@ -35,6 +37,20 @@ export class Client {
 
   supervisionLevelStart: Date;
 
+  address: string;
+
+  private rawPhoneNumber: string;
+
+  expirationDate: Date;
+
+  currentBalance: number;
+
+  lastPaymentAmount?: number;
+
+  lastPaymentDate?: Date;
+
+  specialConditions: string;
+
   compliantReportingEligible?: {
     offenseType: string[];
     judicialDistrict: string;
@@ -52,6 +68,13 @@ export class Client {
     this.supervisionType = toTitleCase(record.supervisionType);
     this.supervisionLevel = toTitleCase(record.supervisionLevel);
     this.supervisionLevelStart = record.supervisionLevelStart.toDate();
+    this.address = record.address;
+    this.rawPhoneNumber = record.phoneNumber;
+    this.expirationDate = record.expirationDate.toDate();
+    this.currentBalance = record.currentBalance;
+    this.lastPaymentDate = record.lastPaymentDate?.toDate();
+    this.lastPaymentAmount = record.lastPaymentAmount;
+    this.specialConditions = record.specialConditions;
 
     const { compliantReportingEligible } = record;
     if (compliantReportingEligible) {
@@ -84,6 +107,10 @@ export class Client {
         .filter((n) => Boolean(n))
         .join(" ")
     );
+  }
+
+  get phoneNumber(): string {
+    return formatPhone("(NNN) NNN-NNNN", this.rawPhoneNumber);
   }
 
   get updates(): ClientUpdate | undefined {

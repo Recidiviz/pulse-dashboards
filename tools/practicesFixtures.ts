@@ -53,6 +53,9 @@ async function loadClientsFixture() {
     bulkWriter.create(db.collection(COLLECTIONS.clients).doc(), {
       ...record,
       supervisionLevelStart: parseISO(record.supervisionLevelStart),
+      expirationDate: parseISO(record.expirationDate),
+      lastPaymentDate:
+        record.lastPaymentDate && parseISO(record.lastPaymentDate),
       compliantReportingEligible,
     });
   });

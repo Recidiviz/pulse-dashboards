@@ -12258,6 +12258,11 @@ knuth-shuffle-seeded@^1.0.6:
   dependencies:
     seed-random "~2.2.0"
 
+kyanite@1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/kyanite/-/kyanite-1.4.2.tgz#35c99f3615d1e7f3fd0767d408ca2da4f66a2989"
+  integrity sha512-KgbQVuEReZm9/UJo8XOmOM6XxEsh9YxELVZhhUa6OclnBfe5Yd+qtAryhY13Oup5xjEVEGRWg2S1WHiOYS5eAQ==
+
 labella@1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/labella/-/labella-1.1.4.tgz#c6cc5a340e8df340eb335633683ea59b828c322d"
@@ -14305,6 +14310,13 @@ performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
+
+phone-fns@^3.2.3:
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/phone-fns/-/phone-fns-3.2.3.tgz#1f5a2e83a8f8bc270a888d7cf63a88f3a9ebe742"
+  integrity sha512-G17QdE8Er2Xek6vt0XknZf1cGRRQeMp6HxlGA5rvPyykEQv0Hq1yj7ur1osWoA6opNBEUTFPfXM0TezFR+eGsA==
+  dependencies:
+    kyanite "1.4.2"
 
 picomatch@^2.0.4, picomatch@^2.0.5, picomatch@^2.2.1:
   version "2.2.2"

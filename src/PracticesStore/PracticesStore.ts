@@ -15,11 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable, reaction, runInAction } from "mobx";
+import {
+  autorun,
+  has,
+  makeAutoObservable,
+  reaction,
+  runInAction,
+  set,
+  values,
+} from "mobx";
 
 import { Hydratable } from "../core/models/types";
 import {
+  ClientRecord,
   CombinedUserRecord,
+  getClient,
   getUser,
   OpportunityType,
   StaffRecord,
@@ -48,7 +58,9 @@ export class PracticesStore implements Hydratable {
 
   private compliantReportingEligibleCount?: SubscriptionValue<number>;
 
-  private clients?: SubscriptionValue<Client[]>;
+  private clientsSubscription?: SubscriptionValue<ClientRecord[]>;
+
+  clients: Record<string, Client> = {};
 
   private officers?: SubscriptionValue<StaffRecord[]>;
 
@@ -63,6 +75,25 @@ export class PracticesStore implements Hydratable {
         this.updateCaseloadSources();
       }
     );
+
+    // persistent storage for subscription results
+    reaction(
+      () => [this.clientsSubscription?.current()],
+      ([newClients]) => {
+        this.updateClients(newClients);
+      }
+    );
+
+    // try to fetch clients that aren't already in our subscription
+    autorun(async () => {
+      if (
+        this.user &&
+        this.selectedClientId &&
+        !has(this.clients, this.selectedClientId)
+      ) {
+        this.fetchClient(this.user.info.stateCode, this.selectedClientId);
+      }
+    });
   }
 
   /**
@@ -121,6 +152,19 @@ export class PracticesStore implements Hydratable {
     });
   }
 
+  async fetchClient(stateCode: string, clientId: string): Promise<void> {
+    const clientRecord = await getClient(stateCode, clientId);
+    if (clientRecord) {
+      this.updateClients([clientRecord]);
+    }
+  }
+
+  updateClients(newClients: ClientRecord[] = []): void {
+    newClients.forEach((record) => {
+      set(this.clients, record.personExternalId, new Client(record));
+    });
+  }
+
   private setDefaultCaseload(userData: CombinedUserRecord) {
     if (userData.updates?.savedOfficers) {
       this.selectedOfficers = userData.updates.savedOfficers ?? [];
@@ -157,22 +201,24 @@ export class PracticesStore implements Hydratable {
       );
 
       if (this.selectedOfficers.length) {
-        this.clients = observableSubscription((handler) =>
+        this.clientsSubscription = observableSubscription((syncToStore) =>
           subscribeToCaseloads(
             userInfo.info.stateCode,
             this.selectedOfficers,
-            (results) => handler(results.map((r) => new Client(r)))
+            (results) => syncToStore(results)
           )
         );
       } else {
-        this.clients = undefined;
+        this.clientsSubscription = undefined;
       }
     }
   }
 
   get compliantReportingEligibleClients(): Client[] {
-    return (
-      this.clients?.current()?.filter((c) => c.compliantReportingEligible) || []
+    return values(this.clients).filter(
+      (c) =>
+        this.selectedOfficers.includes(c.officerId) &&
+        c.compliantReportingEligible
     );
   }
 
@@ -187,6 +233,8 @@ export class PracticesStore implements Hydratable {
   }
 
   get selectedClient(): Client | undefined {
-    return this.clients?.current()?.find((c) => c.id === this.selectedClientId);
+    return this.selectedClientId
+      ? this.clients[this.selectedClientId]
+      : undefined;
   }
 }

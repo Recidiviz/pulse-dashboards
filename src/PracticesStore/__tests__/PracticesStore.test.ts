@@ -19,6 +19,7 @@ import { computed, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
+  getClient,
   getUser,
   subscribeToCaseloads,
   subscribeToEligibleCount,
@@ -34,9 +35,11 @@ import {
   mockOfficers,
   mockSupervisor,
 } from "../__fixtures__";
+import { Client } from "../Client";
 
 jest.mock("../../firestore");
 
+const mockGetClient = getClient as jest.MockedFunction<typeof getClient>;
 const mockGetUser = getUser as jest.MockedFunction<typeof getUser>;
 const mockSubscribeToEligibleCount = subscribeToEligibleCount as jest.MockedFunction<
   typeof subscribeToEligibleCount
@@ -75,6 +78,14 @@ async function waitForHydration(): Promise<void> {
   practicesStore.hydrate();
 
   await when(() => !practicesStore.isLoading);
+}
+
+function populateClients(): void {
+  runInAction(() => {
+    practicesStore.clients = {
+      [mockClients[0].personExternalId]: new Client(mockClients[0]),
+    };
+  });
 }
 
 beforeEach(() => {
@@ -283,12 +294,8 @@ test("clean up caseload subscriptions on change", async () => {
   expect(mockUnsub).toHaveBeenCalled();
 });
 
-test("no client selected", async () => {
-  await waitForHydration();
-
-  runInAction(() => {
-    practicesStore.selectedOfficers = ["OFFICER1"];
-  });
+test("no client selected", () => {
+  populateClients();
 
   // simulate a UI displaying CR data
   testObserver = keepAlive(
@@ -298,19 +305,41 @@ test("no client selected", async () => {
   expect(practicesStore.selectedClient).toBeUndefined();
 });
 
-test("client selected", async () => {
-  const idToSelect = mockClients[1].personExternalId;
-  await waitForHydration();
+test("select existing client", () => {
+  populateClients();
+
+  const idToSelect = mockClients[0].personExternalId;
 
   runInAction(() => {
-    practicesStore.selectedOfficers = ["OFFICER1"];
     practicesStore.selectedClientId = idToSelect;
   });
 
   // simulate a UI displaying client data
   testObserver = keepAlive(computed(() => practicesStore.selectedClient));
 
+  expect(practicesStore.selectedClient?.id).toBe(idToSelect);
+});
+
+test("select unfetched client", async () => {
+  practicesStore.hydrate();
+
+  const idToSelect = "unknownId";
+  mockGetClient.mockResolvedValue({
+    ...mockClients[0],
+    personExternalId: idToSelect,
+  });
+
+  runInAction(() => {
+    practicesStore.selectedClientId = idToSelect;
+  });
+
+  expect(practicesStore.selectedClient).toBeUndefined();
+
   await when(() => practicesStore.selectedClient !== undefined);
 
+  expect(mockGetClient).toHaveBeenCalledWith(
+    mockOfficer.info.stateCode,
+    idToSelect
+  );
   expect(practicesStore.selectedClient?.id).toBe(idToSelect);
 });

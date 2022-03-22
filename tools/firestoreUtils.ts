@@ -24,6 +24,7 @@ export function getDb(): Firestore {
     credentials: {},
     ssl: false,
     keyFilename: "",
+    ignoreUndefinedProperties: true,
   });
 }
 

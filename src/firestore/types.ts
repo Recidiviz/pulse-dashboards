@@ -75,6 +75,13 @@ export type ClientRecord = {
   supervisionType: string;
   supervisionLevel: string;
   supervisionLevelStart: Timestamp;
+  address: string;
+  phoneNumber: string;
+  expirationDate: Timestamp;
+  currentBalance: number;
+  lastPaymentAmount?: number;
+  lastPaymentDate?: Timestamp;
+  specialConditions: string;
   compliantReportingEligible: CompliantReportingEligibleRecord | null;
 };
 

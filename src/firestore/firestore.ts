@@ -123,6 +123,21 @@ export async function getUser(
   };
 }
 
+export async function getClient(
+  stateCode: string,
+  clientId: string
+): Promise<ClientRecord | undefined> {
+  const result = await getDocs(
+    query(
+      collections.clients,
+      where("stateCode", "==", stateCode),
+      where("personExternalId", "==", clientId),
+      limit(1)
+    )
+  );
+  return result.docs[0]?.data();
+}
+
 /**
  * @param handleResults will be called whenever data changes
  * @returns a callable unsubscribe handle

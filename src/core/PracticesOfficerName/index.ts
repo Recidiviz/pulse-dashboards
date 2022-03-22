@@ -15,33 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import React from "react";
-
-import { useRootStore } from "../../components/StoreProvider";
-import { Details } from "./Details";
-import { Heading } from "./Heading";
-import { ClientProfileProps } from "./types";
-
-const PracticesClientProfile: React.FC = () => {
-  const { practicesStore } = useRootStore();
-
-  const client = practicesStore.selectedClient;
-
-  if (!client) {
-    return null;
-  }
-
-  return <ClientProfile client={client} />;
-};
-
-export default observer(PracticesClientProfile);
-
-const ClientProfile = observer(({ client }: ClientProfileProps) => {
-  return (
-    <article>
-      <Heading client={client} />
-      <Details client={client} />
-    </article>
-  );
-});
+export { default } from "./PracticesOfficerName";

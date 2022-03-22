@@ -12,6 +12,13 @@
     "supervisionType": "TN PAROLEE",
     "supervisionLevel": "STANDARD: MEDIUM",
     "supervisionLevelStart": "2019-10-26",
+    "address": "123 Main St, Nashville, TN 12345",
+    "phoneNumber": "5555555678",
+    "expirationDate": "2025-12-31",
+    "currentBalance": 0,
+    "lastPaymentAmount": 50,
+    "lastPaymentDate": "2021-11-15",
+    "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
     "compliantReportingEligible": {
       "judicialDistrict": "17",
       "offenseType": [
@@ -32,6 +39,11 @@
     "supervisionType": "TN PROBATIONER",
     "supervisionLevel": "STANDARD: MEDIUM",
     "supervisionLevelStart": "2019-12-20",
+    "address": "456 Broadway, Nashville, TN 12345",
+    "phoneNumber": "5555555678",
+    "expirationDate": "2024-12-31",
+    "currentBalance": 221.88,
+    "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
     "compliantReportingEligible": {
       "judicialDistrict": "14",
       "offenseType": [
@@ -55,6 +67,13 @@
     "supervisionType": "MISDEMEANOR PROBATIONER",
     "supervisionLevel": "STANDARD: MINIMUM",
     "supervisionLevelStart": "2021-07-05",
+    "address": "999 Main St, Nashville, TN 12345",
+    "phoneNumber": "5555555678",
+    "expirationDate": "2025-12-31",
+    "currentBalance": 0,
+    "lastPaymentAmount": 125.75,
+    "lastPaymentDate": "2022-01-03",
+    "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
     "compliantReportingEligible": null
   },
   {
@@ -66,6 +85,13 @@
     "supervisionType": "DIVERSION",
     "supervisionLevel": "STANDARD: MEDIUM",
     "supervisionLevelStart": "2020-04-07",
+    "address": "999 Main St, Nashville, TN 12345",
+    "phoneNumber": "5555555678",
+    "expirationDate": "2025-12-31",
+    "currentBalance": 0,
+    "lastPaymentAmount": 125.75,
+    "lastPaymentDate": "2022-01-03",
+    "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
     "compliantReportingEligible": {
       "judicialDistrict": null,
       "offenseType": [],
@@ -83,9 +109,17 @@
     "stateCode": "US_TN",
     "officerId": "OFFICER2",
     "district": "DISTRICT 50",
+
     "supervisionType": "DETERMINATE RLSE PROBATIONER",
     "supervisionLevel": "STANDARD: MEDIUM",
     "supervisionLevelStart": "2020-05-19",
+    "address": "999 Main St, Nashville, TN 12345",
+    "phoneNumber": "5555555678",
+    "expirationDate": "2025-12-31",
+    "currentBalance": 0,
+    "lastPaymentAmount": 125.75,
+    "lastPaymentDate": "2022-01-03",
+    "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
     "compliantReportingEligible": null
   },
   {
@@ -101,6 +135,13 @@
     "supervisionType": "TN PAROLEE",
     "supervisionLevel": "STANDARD: MINIMUM",
     "supervisionLevelStart": "2021-02-11",
+    "address": "999 Main St, Nashville, TN 12345",
+    "phoneNumber": "5555555678",
+    "expirationDate": "2025-12-31",
+    "currentBalance": 0,
+    "lastPaymentAmount": 125.75,
+    "lastPaymentDate": "2022-01-03",
+    "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
     "compliantReportingEligible": {
       "judicialDistrict": "14",
       "offenseType": ["FRAUD", "BURGLARY-OTHER THAN HABITATION"],
