@@ -65,7 +65,7 @@ import initIntercomSettings from "./utils/initIntercomSettings";
 import { isDemoMode } from "./utils/isDemoMode";
 
 initFontAwesome();
-if (!isDemoMode) {
+if (!isDemoMode()) {
   initIntercomSettings();
 }
 initI18n();
