@@ -41,9 +41,8 @@ const PageSystem: React.FC = () => {
   if (!metric) return <div />;
 
   const { title, summary } = pageContent;
-  const { filters, download, isLoading, note } = metric;
-  const { enabledFilters, enabledMoreFilters } = filters;
-  const { filterOptions } = filtersStore;
+  const { download, isLoading, note } = metric;
+  const { filterOptions, sortedFilters } = filtersStore;
 
   return (
     <PageTemplate
@@ -51,10 +50,9 @@ const PageSystem: React.FC = () => {
       leftPanel={<PathwaysLeftPanel title={title} description={summary} />}
       filters={
         <PathwaysFilterBar
-          // @ts-ignore
+          key={metric.id}
           filterOptions={filterOptions}
-          enabledFilters={enabledFilters}
-          enabledMoreFilters={enabledMoreFilters}
+          enabledFilters={sortedFilters}
           handleDownload={download}
           chartTitle={metric.chartTitle}
           enableMetricModeToggle={metric.enableMetricModeToggle}

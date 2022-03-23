@@ -32,6 +32,8 @@ import { isDemoMode } from "../../utils/isDemoMode";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import { MonthOptions } from "../PopulationTimeSeriesChart/helpers";
 import {
+  EnabledFilter,
+  EnabledFilters,
   EnabledFiltersByMetric,
   FilterOption,
   Filters,
@@ -39,7 +41,12 @@ import {
   PopulationFilters,
   PopulationFilterValues,
 } from "../types/filters";
-import { FILTER_TYPES } from "../utils/constants";
+import {
+  FILTER_TYPES,
+  prisonFiltersOrder,
+  SIMULATION_COMPARTMENTS,
+  supervisionFiltersOrder,
+} from "../utils/constants";
 import enabledFilters from "../utils/enabledFilters";
 import filterOptions, {
   defaultMetricMode,
@@ -183,6 +190,19 @@ export default class FiltersStore {
     return this.rootStore.currentTenantId
       ? enabledFilters[this.rootStore.currentTenantId]
       : undefined;
+  }
+
+  get sortedFilters(): EnabledFilters {
+    const { current: metric } = this.rootStore.metricsStore;
+
+    const order: EnabledFilters =
+      metric.compartment === SIMULATION_COMPARTMENTS.SUPERVISION
+        ? supervisionFiltersOrder
+        : prisonFiltersOrder;
+
+    return order.filter((item: EnabledFilter) =>
+      metric.filters.enabledFilters.includes(item)
+    );
   }
 
   get filterOptions(): PopulationFilters {

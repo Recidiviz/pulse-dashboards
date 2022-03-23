@@ -33,6 +33,7 @@ import {
   MetricId,
   MetricRecord,
   RawMetricData,
+  SimulationCompartment,
   TenantId,
 } from "./types";
 
@@ -44,6 +45,7 @@ export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   tenantId?: TenantId;
   rootStore?: CoreStore;
   enableMetricModeToggle?: boolean;
+  compartment?: SimulationCompartment;
   hasTimePeriodDimension?: boolean;
 };
 
@@ -85,6 +87,8 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   enableMetricModeToggle?: boolean = false;
 
+  compartment?: SimulationCompartment;
+
   hasTimePeriodDimension?: boolean = false;
 
   constructor({
@@ -95,6 +99,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     dataTransformer,
     filters,
     enableMetricModeToggle,
+    compartment,
     hasTimePeriodDimension,
   }: BaseMetricConstructorOptions<RecordFormat>) {
     makeObservable<PathwaysMetric<RecordFormat>, "allRecords">(this, {
@@ -113,6 +118,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.filters = filters;
     this.dimensions = dimensionsByMetricType[this.sourceFilename];
     this.enableMetricModeToggle = enableMetricModeToggle;
+    this.compartment = compartment;
     this.hasTimePeriodDimension = hasTimePeriodDimension;
   }
 

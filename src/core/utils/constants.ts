@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+export const SIMULATION_COMPARTMENTS = {
+  SUPERVISION: "SUPERVISION",
+  INCARCERATION: "INCARCERATION",
+};
+
 export const METRIC_MODES = {
   COUNTS: "counts",
   RATES: "rates",
@@ -41,3 +46,25 @@ export const DIMENSION_TYPES = {
   LENGTH_OF_STAY: "lengthOfStay",
   OFFICER_NAME: "officerName",
 } as const;
+
+export const prisonFiltersOrder = [
+  FILTER_TYPES.TIME_PERIOD,
+  FILTER_TYPES.FACILITY,
+  FILTER_TYPES.DISTRICT,
+  FILTER_TYPES.GENDER,
+  FILTER_TYPES.LEGAL_STATUS,
+  FILTER_TYPES.AGE_GROUP,
+  FILTER_TYPES.RACE,
+];
+
+export const supervisionFiltersOrder = [
+  FILTER_TYPES.TIME_PERIOD,
+  FILTER_TYPES.DISTRICT,
+  FILTER_TYPES.GENDER,
+  FILTER_TYPES.SUPERVISION_TYPE,
+  FILTER_TYPES.SUPERVISION_LEVEL,
+  FILTER_TYPES.MOST_SEVERE_VIOLATION,
+  FILTER_TYPES.NUMBER_OF_VIOLATIONS,
+  FILTER_TYPES.AGE_GROUP,
+  FILTER_TYPES.RACE,
+];

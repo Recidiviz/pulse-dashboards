@@ -24,6 +24,7 @@ import React from "react";
 
 import useDisplayPageNavigation from "../../hooks/useDisplayPageNavigation";
 import useIsMobile from "../../hooks/useIsMobile";
+import useResizeFilterBar from "../../hooks/useResizeFilterBar";
 import { sortByLabel } from "../../utils/datasets";
 import { CoreSelect } from "../controls/CoreSelect";
 import Filter from "../controls/Filter";
@@ -45,14 +46,12 @@ const PathwaysFilterBar: React.FC<{
   handleDownload: () => Promise<void>;
   chartTitle?: string;
   enabledFilters?: EnabledFilters;
-  enabledMoreFilters?: EnabledFilters;
   enableMetricModeToggle?: boolean;
 }> = ({
   filterOptions,
   handleDownload,
   chartTitle,
   enabledFilters = [],
-  enabledMoreFilters = [],
   enableMetricModeToggle,
 }) => {
   const { filtersStore } = useCoreStore();
@@ -61,6 +60,16 @@ const PathwaysFilterBar: React.FC<{
   const isDisplayNav = useDisplayPageNavigation();
   const isMobile = useIsMobile();
 
+  const filtersRef = React.useRef() as React.MutableRefObject<HTMLElement>;
+  const containerRef = React.useRef() as React.MutableRefObject<HTMLElement>;
+
+  const enabledFiltersDisplayCount = useResizeFilterBar(
+    filtersRef,
+    containerRef,
+    enabledFilters,
+    enableMetricModeToggle
+  );
+
   return (
     <div
       className={cn("PathwaysFilterBar", {
@@ -68,12 +77,19 @@ const PathwaysFilterBar: React.FC<{
       })}
     >
       <FilterBar
+        filtersRef={filtersRef}
+        containerRef={containerRef}
         details={
           isMobile ? (
             <DetailsGroup>
               <MoreFilters
-                enabledFilters={enabledMoreFilters}
-                filterOptions={pick(enabledMoreFilters, filterOptions)}
+                enabledFilters={enabledFilters.slice(
+                  enabledFiltersDisplayCount
+                )}
+                filterOptions={pick(
+                  enabledFilters.slice(enabledFiltersDisplayCount),
+                  filterOptions
+                )}
               />
               <DownloadDataButton handleOnClick={handleDownload} />
               <MethodologyLink
@@ -84,8 +100,13 @@ const PathwaysFilterBar: React.FC<{
           ) : (
             <div className="FilterBar__details">
               <MoreFilters
-                enabledFilters={enabledMoreFilters}
-                filterOptions={pick(enabledMoreFilters, filterOptions)}
+                enabledFilters={enabledFilters.slice(
+                  enabledFiltersDisplayCount
+                )}
+                filterOptions={pick(
+                  enabledFilters.slice(enabledFiltersDisplayCount),
+                  filterOptions
+                )}
               />
               <DetailsGroup>
                 <DownloadDataButton handleOnClick={handleDownload} />
@@ -108,59 +129,61 @@ const PathwaysFilterBar: React.FC<{
             currentValue={filtersStore.currentMetricMode}
           />
         )}
-        {enabledFilters.map((filterType) => {
-          const filter = filterOptions[filterType];
-          return (
-            <Filter key={`${filterType}`} title={filter.title}>
-              {filter.isSingleSelect ? (
-                <CoreSelect
-                  id={filter.type}
-                  value={getFilterOptions(
-                    get(filters, filter.type),
-                    filter.options
-                  )}
-                  options={
-                    filter.type === FILTER_TYPES.TIME_PERIOD
-                      ? filter.options
-                      : sortByLabel(filter.options, "label")
-                  }
-                  onChange={filter.setFilters(filtersStore)}
-                  defaultValue={filter.defaultValue}
-                  isChanged={
-                    filter.defaultValue !==
-                    getFilterOptions(
+        {enabledFilters
+          .slice(0, enabledFiltersDisplayCount)
+          .map((filterType) => {
+            const filter = filterOptions[filterType];
+            return (
+              <Filter key={`${filterType}`} title={filter.title}>
+                {filter.isSingleSelect ? (
+                  <CoreSelect
+                    id={filter.type}
+                    value={getFilterOptions(
                       get(filters, filter.type),
                       filter.options
-                    )[0].value
-                  }
-                />
-              ) : (
-                <CoreMultiSelect
-                  id={filter.type}
-                  summingOption={{ value: "ALL", label: "All" }}
-                  value={getFilterOptions(
-                    get(filters, filter.type),
-                    filter.options
-                  )}
-                  options={
-                    filter.type === FILTER_TYPES.TIME_PERIOD
-                      ? filter.options
-                      : sortByLabel(filter.options, "label")
-                  }
-                  onChange={filter.setFilters(filtersStore)}
-                  defaultValue={[filter.defaultOption]}
-                  isChanged={
-                    filter.defaultValue !==
-                    getFilterOptions(
+                    )}
+                    options={
+                      filter.type === FILTER_TYPES.TIME_PERIOD
+                        ? filter.options
+                        : sortByLabel(filter.options, "label")
+                    }
+                    onChange={filter.setFilters(filtersStore)}
+                    defaultValue={filter.defaultValue}
+                    isChanged={
+                      filter.defaultValue !==
+                      getFilterOptions(
+                        get(filters, filter.type),
+                        filter.options
+                      )[0].value
+                    }
+                  />
+                ) : (
+                  <CoreMultiSelect
+                    id={filter.type}
+                    summingOption={{ value: "ALL", label: "All" }}
+                    value={getFilterOptions(
                       get(filters, filter.type),
                       filter.options
-                    )[0].value
-                  }
-                />
-              )}
-            </Filter>
-          );
-        })}
+                    )}
+                    options={
+                      filter.type === FILTER_TYPES.TIME_PERIOD
+                        ? filter.options
+                        : sortByLabel(filter.options, "label")
+                    }
+                    onChange={filter.setFilters(filtersStore)}
+                    defaultValue={[filter.defaultOption]}
+                    isChanged={
+                      filter.defaultValue !==
+                      getFilterOptions(
+                        get(filters, filter.type),
+                        filter.options
+                      )[0].value
+                    }
+                  />
+                )}
+              </Filter>
+            );
+          })}
       </FilterBar>
     </div>
   );
