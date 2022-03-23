@@ -18,7 +18,7 @@
 import { format as formatPhone } from "phone-fns";
 
 import { ClientRecord, FullName, subscribeToClientUpdates } from "../firestore";
-import { toTitleCase } from "../utils";
+import { formatAsCurrency, formatDate, toTitleCase } from "../utils";
 import { ClientUpdate } from "./ClientUpdate";
 import { observableSubscription, SubscriptionValue } from "./utils";
 
@@ -49,7 +49,11 @@ export class Client {
 
   lastPaymentDate?: Date;
 
+  feeExemptions?: string;
+
   specialConditions: string;
+
+  nextSpecialConditionsCheck?: Date;
 
   compliantReportingEligible?: {
     offenseType: string[];
@@ -74,7 +78,9 @@ export class Client {
     this.currentBalance = record.currentBalance;
     this.lastPaymentDate = record.lastPaymentDate?.toDate();
     this.lastPaymentAmount = record.lastPaymentAmount;
+    this.feeExemptions = record.feeExemptions;
     this.specialConditions = record.specialConditions;
+    this.nextSpecialConditionsCheck = record.nextSpecialConditionsCheck?.toDate();
 
     const { compliantReportingEligible } = record;
     if (compliantReportingEligible) {
@@ -115,5 +121,21 @@ export class Client {
 
   get updates(): ClientUpdate | undefined {
     return this.fetchedUpdates.current();
+  }
+
+  /**
+   * Coalesces multiple fee-related fields into a single controlling status
+   */
+  get finesAndFeesStatus(): string {
+    if (this.feeExemptions) return this.feeExemptions;
+
+    if (!this.currentBalance) return "Fees paid in full";
+
+    if (this.lastPaymentAmount && this.lastPaymentDate)
+      return `Last payment: ${formatAsCurrency(
+        this.lastPaymentAmount as number
+      )} on ${formatDate(this.lastPaymentDate as Date)}`;
+
+    return `Current balance: ${formatAsCurrency(this.currentBalance)}`;
   }
 }

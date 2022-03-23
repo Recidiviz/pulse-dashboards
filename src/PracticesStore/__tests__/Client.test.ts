@@ -58,3 +58,25 @@ test("fetch client updates on demand", async () => {
 
   await when(() => client.updates !== undefined);
 });
+
+test("fines and fees status", () => {
+  const mockClient = mockClients[0];
+  const client = new Client(mockClient);
+
+  client.feeExemptions = "exemption test";
+
+  expect(client.finesAndFeesStatus).toBe("exemption test");
+
+  client.feeExemptions = undefined;
+
+  expect(client.finesAndFeesStatus).toBe("Fees paid in full");
+
+  client.currentBalance = 250.12;
+
+  expect(client.finesAndFeesStatus).toBe("Last payment: $50.00 on 11/15/21");
+
+  client.lastPaymentAmount = undefined;
+  client.lastPaymentDate = undefined;
+
+  expect(client.finesAndFeesStatus).toBe("Current balance: $250.12");
+});

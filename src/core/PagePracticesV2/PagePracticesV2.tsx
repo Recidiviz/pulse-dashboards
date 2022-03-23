@@ -36,7 +36,10 @@ import { PRACTICES_PAGES } from "../views";
 
 const Wrapper = styled.div`
   display: grid;
+  font-family: ${(props) => props.theme.fonts.body};
+  font-weight: 500;
   grid-template-columns: 350px 1fr;
+  letter-spacing: -0.01em;
   position: relative;
   width: 100%;
 

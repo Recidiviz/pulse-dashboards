@@ -43,7 +43,10 @@
     "phoneNumber": "5555555678",
     "expirationDate": "2024-12-31",
     "currentBalance": 221.88,
+    "lastPaymentAmount": 125.75,
+    "lastPaymentDate": "2022-01-03",
     "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
+    "nextSpecialConditionsCheck": "2022-12-31",
     "compliantReportingEligible": {
       "judicialDistrict": "14",
       "offenseType": [
@@ -88,10 +91,10 @@
     "address": "999 Main St, Nashville, TN 12345",
     "phoneNumber": "5555555678",
     "expirationDate": "2025-12-31",
-    "currentBalance": 0,
-    "lastPaymentAmount": 125.75,
-    "lastPaymentDate": "2022-01-03",
+    "currentBalance": 125.75,
+    "feeExemptions": "Recent FEEP contact",
     "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
+    "nextSpecialConditionsCheck": "2022-12-31",
     "compliantReportingEligible": {
       "judicialDistrict": null,
       "offenseType": [],
@@ -120,6 +123,7 @@
     "lastPaymentAmount": 125.75,
     "lastPaymentDate": "2022-01-03",
     "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
+    "nextSpecialConditionsCheck": "2022-12-31",
     "compliantReportingEligible": null
   },
   {
@@ -142,6 +146,7 @@
     "lastPaymentAmount": 125.75,
     "lastPaymentDate": "2022-01-03",
     "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
+    "nextSpecialConditionsCheck": "2022-12-31",
     "compliantReportingEligible": {
       "judicialDistrict": "14",
       "offenseType": ["FRAUD", "BURGLARY-OTHER THAN HABITATION"],

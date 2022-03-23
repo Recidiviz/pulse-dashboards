@@ -18,6 +18,7 @@
 import tk from "timekeeper";
 
 import {
+  formatRelativeToNow,
   formatTimePeriodLabel,
   getYearFromNow,
   monthNamesWithYearsFromNumbers,
@@ -177,6 +178,28 @@ describe("timePeriod", () => {
       expect(monthNamesWithYearsDifferentOrderArray).toEqual(
         dataExpectedDifferentOrderArray
       );
+    });
+  });
+
+  describe("formatRelativeToNow", () => {
+    let now;
+
+    beforeEach(() => {
+      now = new Date(2022, 1);
+      tk.freeze(now);
+    });
+
+    afterEach(() => {
+      tk.reset();
+    });
+
+    test("formats as months", () => {
+      expect(formatRelativeToNow(new Date(2021, 1, 1))).toBe("12 months");
+      expect(formatRelativeToNow(new Date(2020, 1, 2))).toBe("23 months");
+    });
+    test("formats as years", () => {
+      expect(formatRelativeToNow(new Date(2020, 1, 1))).toBe("2 years");
+      expect(formatRelativeToNow(new Date(2016, 6, 1))).toBe("5 years");
     });
   });
 });

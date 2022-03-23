@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { CompliantReportingModule } from "./CompliantReportingModule";
 import { Details } from "./Details";
 import { Heading } from "./Heading";
 import { ClientProfileProps } from "./types";
@@ -41,6 +42,7 @@ const ClientProfile = observer(({ client }: ClientProfileProps) => {
   return (
     <article>
       <Heading client={client} />
+      <CompliantReportingModule client={client} />
       <Details client={client} />
     </article>
   );

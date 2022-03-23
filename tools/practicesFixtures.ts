@@ -56,6 +56,9 @@ async function loadClientsFixture() {
       expirationDate: parseISO(record.expirationDate),
       lastPaymentDate:
         record.lastPaymentDate && parseISO(record.lastPaymentDate),
+      nextSpecialConditionsCheck:
+        record.nextSpecialConditionsCheck &&
+        parseISO(record.nextSpecialConditionsCheck),
       compliantReportingEligible,
     });
   });

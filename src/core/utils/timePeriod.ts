@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { differenceInMonths } from "date-fns";
 import moment from "moment";
 
 import { monthNamesWithYears } from "../../utils/months";
@@ -36,6 +37,16 @@ export function formatTimePeriodLabel(months: string): string {
   if (numMonths < 12) return `${months} months`;
   if (numMonths === 12) return "1 year";
   return `${numMonths / 12} years`;
+}
+
+/**
+ * Represents difference from current date as text. Durations under two years
+ * represented as months, otherwise truncated to full years.
+ */
+export function formatRelativeToNow(start: Date): string {
+  const months = differenceInMonths(new Date(), start);
+  if (months < 24) return `${months} months`;
+  return `${Math.floor(months / 12)} years`;
 }
 
 export default {

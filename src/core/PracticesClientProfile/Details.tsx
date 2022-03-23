@@ -22,6 +22,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { formatAsCurrency, formatDate } from "../../utils";
 import PracticesOfficerName from "../PracticesOfficerName";
 import { ClientProfileProps } from "./types";
 
@@ -55,11 +56,6 @@ const DetailsContent = styled.dd`
   letter-spacing: -0.01em;
   line-height: 1.14;
 `;
-
-const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
 
 export const Details = observer(({ client }: ClientProfileProps) => {
   return (
@@ -98,15 +94,15 @@ export const Details = observer(({ client }: ClientProfileProps) => {
         <DetailsList>
           <DetailsSubheading>Remaining</DetailsSubheading>
           <DetailsContent>
-            {currencyFormatter.format(client.currentBalance)}
+            {formatAsCurrency(client.currentBalance)}
           </DetailsContent>
 
           {client.lastPaymentAmount && client.lastPaymentDate && (
             <>
               <DetailsSubheading>Last Payment</DetailsSubheading>
               <DetailsContent>
-                {currencyFormatter.format(client.lastPaymentAmount)},{" "}
-                {format(client.lastPaymentDate, "M/d/yy")}
+                {formatAsCurrency(client.lastPaymentAmount)},{" "}
+                {formatDate(client.lastPaymentDate)}
               </DetailsContent>
             </>
           )}

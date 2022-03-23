@@ -307,3 +307,8 @@ export {
   toTitleCase,
   violationCountLabel,
 };
+
+export const formatAsCurrency = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+}).format;
