@@ -31,6 +31,7 @@ import cssVars from "../CoreConstants.scss";
 import ModelHydrator from "../ModelHydrator";
 import { PracticesCaseloadSelection } from "../PracticesCaseloadSelection";
 import PracticesClientProfile from "../PracticesClientProfile";
+import PracticesCompliantReportingForm from "../PracticesCompliantReportingForm/PracticesCompliantReportingForm";
 import PracticesRoute from "../PracticesRoute";
 import { PRACTICES_PAGES } from "../views";
 
@@ -63,6 +64,16 @@ const LogoImg = styled.img`
   height: 22px;
 `;
 
+const PracticesSidebar: React.FC = ({ children }) => {
+  return (
+    <Sidebar>
+      <LogoImg src={Assets.LOGO} alt="Recidiviz" />
+      <Divider />
+      {children}
+    </Sidebar>
+  );
+};
+
 const PagePracticesV2: React.FC = () => {
   const { practicesStore } = useRootStore();
   const { path } = useRouteMatch();
@@ -80,20 +91,21 @@ const PagePracticesV2: React.FC = () => {
     >
       <ModelHydrator model={practicesStore}>
         <Wrapper>
-          <Sidebar>
-            <LogoImg src={Assets.LOGO} alt="Recidiviz" />
-            <Divider />
-            <Switch>
-              <PracticesRoute exact path={path}>
+          <Switch>
+            <PracticesRoute exact path={path}>
+              <PracticesSidebar>
                 <PracticesCaseloadSelection />
-              </PracticesRoute>
-              <PracticesRoute
-                path={`${path}/${PRACTICES_PAGES.compliantReporting}/:clientId`}
-              >
+              </PracticesSidebar>
+            </PracticesRoute>
+            <PracticesRoute
+              path={`${path}/${PRACTICES_PAGES.compliantReporting}/:clientId`}
+            >
+              <PracticesSidebar>
                 <PracticesClientProfile />
-              </PracticesRoute>
-            </Switch>
-          </Sidebar>
+              </PracticesSidebar>
+              <PracticesCompliantReportingForm />
+            </PracticesRoute>
+          </Switch>
         </Wrapper>
       </ModelHydrator>
     </ThemeProvider>
