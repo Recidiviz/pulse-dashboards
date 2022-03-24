@@ -1,0 +1,73 @@
+export type CompliantReportingReferralRecord = {
+  poFirstName: string;
+  poLastName: string;
+  clientFirstName: string;
+  clientLastName: string;
+  dateToday: string;
+  tdocId: string;
+  physicalAddress: string;
+  currentEmployer: string;
+  driversLicense: string;
+  driversLicenseSuspended: string;
+  driversLicenseRevoked: string;
+  convictionCounty: string;
+  courtName: string;
+  allDockets: string;
+  offenseType: string;
+  supervisionType: string;
+  sentenceStartDate: string;
+  sentenceLengthDays: string;
+  expirationDate: string;
+  supervisionFeeAssessed: string;
+  supervisionFeeArrearaged: "1" | "0";
+  supervisionFeeExemption: string;
+  supervisionFeeExemptionType: string;
+  supervisionFeeExemptionExpirDate: string;
+  supervisionFeeWaived: string;
+  courtCostsPaid: "1" | "0";
+  courtCostsBalance: string;
+  courtCostsMonthlyAmt1: string;
+  courtCostsMonthlyAmt2: string;
+  restitutionAmt: string;
+  restitutionMonthlyPayment: string;
+  restitutionMonthlyPaymentTo: string;
+  specialConditionsAlcDrugScreen: "1" | "0";
+  specialConditionsAlcDrugScreenDate: string;
+  specialConditionsAlcDrugAssessment: string;
+  specialConditionsAlcDrugAssessmentComplete: "1" | "0";
+  specialConditionsAlcDrugAssessmentCompleteDate: string;
+  specialConditionsAlcDrugTreatment: "1" | "0";
+  specialConditionsAlcDrugTreatmentInOut: "INPATIENT" | "OUTPATIENT";
+  specialConditionsAlcDrugTreatmentCurrent: "1" | "0";
+  specialConditionsAlcDrugTreatmentCompleteDate: string;
+  specialConditionsCounseling: "1" | "0";
+  specialConditionsCounselingType: ("ANGER_MANAGEMENT" | "MENTAL_HEALTH")[];
+  specialConditionsCounselingCurrent: "1" | "0";
+  specialConditionsCounselingCompleteDate: string;
+  specialConditionsCommunityService: "1" | "0";
+  specialConditionsCommunityServiceHours: string;
+  specialConditionsCommunityServiceCurrent: "1" | "0";
+  specialConditionsCommunityServiceCompletionDate: string;
+  specialConditionsProgramming: "1" | "0";
+  specialConditionsProgrammingCognitiveBehavior: "1" | "0";
+  specialConditionsProgrammingCognitiveBehaviorCurrent: "1" | "0";
+  specialConditionsProgrammingCognitiveBehaviorCompletionDate: string;
+  specialConditionsProgrammingSafe: "1" | "0";
+  specialConditionsProgrammingSafeCurrent: "1" | "0";
+  specialConditionsProgrammingSafeCompletionDate: string;
+  specialConditionsProgrammingVictimImpact: "1" | "0";
+  specialConditionsProgrammingVictimImpactCurrent: "1" | "0";
+  specialConditionsProgrammingVictimImpactCompletionDate: string;
+  specialConditionsProgrammingFsw: "1" | "0";
+  specialConditionsProgrammingFswCurrent: "1" | "0";
+  specialConditionsProgrammingFswCompletionDate: string;
+};
+
+export interface CompliantReportingReferralTransformation {
+  clientFullName: string;
+  poFullName: string;
+  offenseType: string[];
+}
+
+export type TransformedCompliantReportingReferral = CompliantReportingReferralRecord &
+  CompliantReportingReferralTransformation;

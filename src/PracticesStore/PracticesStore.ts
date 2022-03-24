@@ -34,11 +34,13 @@ import {
   OpportunityType,
   StaffRecord,
   subscribeToCaseloads,
+  subscribeToCompliantReportingReferral,
   subscribeToEligibleCount,
   subscribeToOfficers,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
 import { Client } from "./Client";
+import { CompliantReportingReferralRecord } from "./CompliantReportingReferralRecord";
 import { observableSubscription, SubscriptionValue } from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
@@ -59,6 +61,8 @@ export class PracticesStore implements Hydratable {
   private compliantReportingEligibleCount?: SubscriptionValue<number>;
 
   private clientsSubscription?: SubscriptionValue<ClientRecord[]>;
+
+  private compliantReportingReferralSubscription?: SubscriptionValue<CompliantReportingReferralRecord>;
 
   clients: Record<string, Client> = {};
 
@@ -92,6 +96,12 @@ export class PracticesStore implements Hydratable {
         !has(this.clients, this.selectedClientId)
       ) {
         this.fetchClient(this.user.info.stateCode, this.selectedClientId);
+      }
+    });
+
+    autorun(async () => {
+      if (this.selectedClientId) {
+        this.subscribeToCompliantReportingReferral(this.selectedClientId);
       }
     });
   }
@@ -179,6 +189,16 @@ export class PracticesStore implements Hydratable {
     );
   }
 
+  get selectedCompliantReportingReferral():
+    | CompliantReportingReferralRecord
+    | undefined {
+    const record = this.compliantReportingReferralSubscription?.current();
+
+    if (record && record.tdocId === this.selectedClientId) {
+      return record;
+    }
+  }
+
   private setDefaultCaseload(userData: CombinedUserRecord) {
     if (userData.updates?.savedOfficers) {
       this.selectedOfficerIds = userData.updates.savedOfficers ?? [];
@@ -225,6 +245,21 @@ export class PracticesStore implements Hydratable {
       } else {
         this.clientsSubscription = undefined;
       }
+    }
+  }
+
+  subscribeToCompliantReportingReferral(clientId: string) {
+    const { user: userInfo } = this;
+
+    if (userInfo) {
+      this.compliantReportingReferralSubscription = observableSubscription(
+        (syncToStore) =>
+          subscribeToCompliantReportingReferral(
+            userInfo.info.stateCode,
+            clientId,
+            (results) => syncToStore(results)
+          )
+      );
     }
   }
 

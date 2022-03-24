@@ -25,6 +25,7 @@ import { deleteCollection, getDb } from "./firestoreUtils";
 const COLLECTIONS = {
   clients: "clients",
   staff: "staff",
+  compliantReportingReferrals: "compliantReportingReferrals",
 };
 
 const db = getDb();
@@ -89,5 +90,32 @@ async function loadUserFixture() {
   console.log("new staff data loaded successfully");
 }
 
+async function loadReferralsFixture() {
+  console.log("wiping existing referral data ...");
+  await deleteCollection(db, COLLECTIONS.compliantReportingReferrals);
+
+  console.log("loading new referral data...");
+  const bulkWriter = db.bulkWriter();
+
+  const rawUsers = JSON.parse(
+    fs
+      .readFileSync("tools/fixtures/compliantReportingReferrals.json")
+      .toString()
+  );
+
+  rawUsers.forEach((rawReferral: any) => {
+    bulkWriter.create(
+      db.collection(COLLECTIONS.compliantReportingReferrals).doc(),
+      rawReferral
+    );
+  });
+
+  await bulkWriter.flush();
+  await bulkWriter.close();
+
+  console.log("new referral data loaded successfully");
+}
+
 loadUserFixture();
 loadClientsFixture();
+loadReferralsFixture();

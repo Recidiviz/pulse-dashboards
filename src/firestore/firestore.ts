@@ -33,6 +33,7 @@ import {
   where,
 } from "firebase/firestore";
 
+import { CompliantReportingReferralRecord } from "../PracticesStore/CompliantReportingReferralRecord";
 import { TenantId } from "../RootStore/types";
 import {
   ClientRecord,
@@ -88,6 +89,10 @@ const collections = {
     db,
     "clientUpdates"
   ) as CollectionReference<ClientUpdateRecord>,
+  compliantReportingReferrals: collection(
+    db,
+    "compliantReportingReferrals"
+  ) as CollectionReference<CompliantReportingReferralRecord>,
 };
 
 export async function getUser(
@@ -230,6 +235,23 @@ export function subscribeToEligibleCount(
     ),
     (results) => {
       handleResults(results.size);
+    }
+  );
+}
+
+export function subscribeToCompliantReportingReferral(
+  stateCode: string,
+  clientId: string,
+  handleResults: (results: CompliantReportingReferralRecord) => void
+): Unsubscribe {
+  return onSnapshot(
+    query(
+      collections.compliantReportingReferrals,
+      where("stateCode", "==", stateCode),
+      where("tdocId", "==", clientId)
+    ),
+    (result) => {
+      handleResults(result.docs[0]?.data());
     }
   );
 }
