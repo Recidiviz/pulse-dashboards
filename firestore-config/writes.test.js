@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { assertFails, assertSucceeds } from "@firebase/rules-unit-testing";
-import { getDocs } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 
 import {
   ETL_COLLECTION_NAMES,
@@ -31,6 +31,14 @@ import {
 
 let testEnv;
 
+function testWriteToCollections(collectionNames, db, assertFn) {
+  return Promise.all(
+    collectionNames.map((collectionName) =>
+      assertFn(setDoc(doc(db, collectionName, "foo"), {}))
+    )
+  );
+}
+
 beforeAll(async () => {
   testEnv = await startTestEnv();
 });
@@ -44,28 +52,39 @@ afterEach(async () => {
   await testEnv.clearFirestore();
 });
 
-async function testAllReads(db, assertFn) {
-  return Promise.all([
-    ...ETL_COLLECTION_NAMES.map(async (collectionName) => {
-      await assertFn(getDocs(db.collection(collectionName)));
-    }),
-    ...UPDATE_COLLECTION_NAMES.map(async (collectionName) => {
-      await assertFn(getDocs(db.collection(collectionName)));
-    }),
-  ]);
-}
+test.each([
+  ["anon", getAnonUser],
+  ["stateless user", getStatelessUser],
+  ["state user", getTNUser],
+  ["out of state user", getOutOfStateUser],
+  ["Recidiviz user", getRecidivizUser],
+])("ETL data is read-only for %s", async (userType, getUserContext) => {
+  await testWriteToCollections(
+    ETL_COLLECTION_NAMES,
+    getUserContext(testEnv).firestore(),
+    assertFails
+  );
+});
 
 test.each([
   ["anon", getAnonUser],
   ["stateless", getStatelessUser],
   ["other state", getOutOfStateUser],
-])("%s user cannot read", async (userType, getUserContext) => {
-  await testAllReads(getUserContext(testEnv).firestore(), assertFails);
+])("%s user cannot write", async (userType, getUserContext) => {
+  await testWriteToCollections(
+    UPDATE_COLLECTION_NAMES,
+    getUserContext(testEnv).firestore(),
+    assertFails
+  );
 });
 
 test.each([
   ["TN", getTNUser],
   ["Recidiviz", getRecidivizUser],
-])("%s user can read", async (userType, getUserContext) => {
-  await testAllReads(getUserContext(testEnv).firestore(), assertSucceeds);
+])("%s user can write", async (userType, getUserContext) => {
+  await testWriteToCollections(
+    UPDATE_COLLECTION_NAMES,
+    getUserContext(testEnv).firestore(),
+    assertSucceeds
+  );
 });

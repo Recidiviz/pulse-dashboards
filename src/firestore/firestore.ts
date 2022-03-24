@@ -24,6 +24,8 @@ import {
   collection,
   CollectionReference,
   connectFirestoreEmulator,
+  doc,
+  getDoc,
   getDocs,
   getFirestore,
   limit,
@@ -34,7 +36,6 @@ import {
 } from "firebase/firestore";
 
 import { CompliantReportingReferralRecord } from "../PracticesStore/CompliantReportingReferralRecord";
-import { TenantId } from "../RootStore/types";
 import {
   ClientRecord,
   ClientUpdateRecord,
@@ -96,25 +97,12 @@ const collections = {
 };
 
 export async function getUser(
-  email: string,
-  stateCode: TenantId
+  email: string
 ): Promise<CombinedUserRecord | undefined> {
   const [infoSnapshot, updateSnapshot] = await Promise.all([
+    getDocs(query(collections.staff, where("email", "==", email), limit(1))),
     getDocs(
-      query(
-        collections.staff,
-        where("stateCode", "==", stateCode),
-        where("email", "==", email),
-        limit(1)
-      )
-    ),
-    getDocs(
-      query(
-        collections.userUpdates,
-        where("stateCode", "==", stateCode),
-        where("email", "==", email),
-        limit(1)
-      )
+      query(collections.userUpdates, where("email", "==", email), limit(1))
     ),
   ]);
   const info = infoSnapshot.docs[0]?.data();
@@ -129,18 +117,10 @@ export async function getUser(
 }
 
 export async function getClient(
-  stateCode: string,
   clientId: string
 ): Promise<ClientRecord | undefined> {
-  const result = await getDocs(
-    query(
-      collections.clients,
-      where("stateCode", "==", stateCode),
-      where("personExternalId", "==", clientId),
-      limit(1)
-    )
-  );
-  return result.docs[0]?.data();
+  const result = await getDoc(doc(collections.clients, clientId));
+  return result.data();
 }
 
 /**
@@ -240,18 +220,13 @@ export function subscribeToEligibleCount(
 }
 
 export function subscribeToCompliantReportingReferral(
-  stateCode: string,
   clientId: string,
-  handleResults: (results: CompliantReportingReferralRecord) => void
+  handleResults: (results: CompliantReportingReferralRecord | undefined) => void
 ): Unsubscribe {
   return onSnapshot(
-    query(
-      collections.compliantReportingReferrals,
-      where("stateCode", "==", stateCode),
-      where("tdocId", "==", clientId)
-    ),
+    doc(collections.compliantReportingReferrals, clientId),
     (result) => {
-      handleResults(result.docs[0]?.data());
+      handleResults(result.data());
     }
   );
 }

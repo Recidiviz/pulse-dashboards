@@ -342,9 +342,6 @@ test("select unfetched client", async () => {
 
   await when(() => practicesStore.selectedClient !== undefined);
 
-  expect(mockGetClient).toHaveBeenCalledWith(
-    mockOfficer.info.stateCode,
-    idToSelect
-  );
+  expect(mockGetClient).toHaveBeenCalledWith(idToSelect);
   expect(practicesStore.selectedClient?.id).toBe(idToSelect);
 });

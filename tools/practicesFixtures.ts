@@ -51,17 +51,20 @@ async function loadClientsFixture() {
       );
     }
 
-    bulkWriter.create(db.collection(COLLECTIONS.clients).doc(), {
-      ...record,
-      supervisionLevelStart: parseISO(record.supervisionLevelStart),
-      expirationDate: parseISO(record.expirationDate),
-      lastPaymentDate:
-        record.lastPaymentDate && parseISO(record.lastPaymentDate),
-      nextSpecialConditionsCheck:
-        record.nextSpecialConditionsCheck &&
-        parseISO(record.nextSpecialConditionsCheck),
-      compliantReportingEligible,
-    });
+    bulkWriter.create(
+      db.doc(`${COLLECTIONS.clients}/${record.personExternalId}`),
+      {
+        ...record,
+        supervisionLevelStart: parseISO(record.supervisionLevelStart),
+        expirationDate: parseISO(record.expirationDate),
+        lastPaymentDate:
+          record.lastPaymentDate && parseISO(record.lastPaymentDate),
+        nextSpecialConditionsCheck:
+          record.nextSpecialConditionsCheck &&
+          parseISO(record.nextSpecialConditionsCheck),
+        compliantReportingEligible,
+      }
+    );
   });
 
   bulkWriter
@@ -105,7 +108,9 @@ async function loadReferralsFixture() {
 
   rawUsers.forEach((rawReferral: any) => {
     bulkWriter.create(
-      db.collection(COLLECTIONS.compliantReportingReferrals).doc(),
+      db.doc(
+        `${COLLECTIONS.compliantReportingReferrals}/${rawReferral.tdocId}`
+      ),
       rawReferral
     );
   });

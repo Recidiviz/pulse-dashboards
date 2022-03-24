@@ -1,9 +1,22 @@
 rules_version = '2';
 service cloud.firestore {
+  function allowedStateCode() {
+    return request.auth.token.stateCode in ["US_TN", "recidiviz"]
+  }
+
   match /databases/{database}/documents {
+    
+
     match /{document=**} {
-      allow read: if request.auth.token.stateCode == "recidiviz"
-      allow read: if request.auth.token.stateCode == resource.data.stateCode
+      allow read: if allowedStateCode()
+    }
+
+    match /userUpdates/{document=**} {
+      allow write: if allowedStateCode()
+    }
+    
+    match /clientUpdates/{document=**} {
+      allow write: if allowedStateCode()
     }
   }
 }

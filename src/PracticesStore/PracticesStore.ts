@@ -90,12 +90,8 @@ export class PracticesStore implements Hydratable {
 
     // try to fetch clients that aren't already in our subscription
     autorun(async () => {
-      if (
-        this.user &&
-        this.selectedClientId &&
-        !has(this.clients, this.selectedClientId)
-      ) {
-        this.fetchClient(this.user.info.stateCode, this.selectedClientId);
+      if (this.selectedClientId && !has(this.clients, this.selectedClientId)) {
+        this.fetchClient(this.selectedClientId);
       }
     });
 
@@ -137,7 +133,7 @@ export class PracticesStore implements Hydratable {
           },
         };
       } else {
-        userRecord = await getUser(email, stateCode);
+        userRecord = await getUser(email);
       }
       // recidiviz users "impersonate" the test user for now;
       // this only works against fixture data
@@ -162,8 +158,8 @@ export class PracticesStore implements Hydratable {
     });
   }
 
-  async fetchClient(stateCode: string, clientId: string): Promise<void> {
-    const clientRecord = await getClient(stateCode, clientId);
+  async fetchClient(clientId: string): Promise<void> {
+    const clientRecord = await getClient(clientId);
     if (clientRecord) {
       this.updateClients([clientRecord]);
     }
@@ -197,6 +193,7 @@ export class PracticesStore implements Hydratable {
     if (record && record.tdocId === this.selectedClientId) {
       return record;
     }
+    return undefined;
   }
 
   private setDefaultCaseload(userData: CombinedUserRecord) {
@@ -248,19 +245,13 @@ export class PracticesStore implements Hydratable {
     }
   }
 
-  subscribeToCompliantReportingReferral(clientId: string) {
-    const { user: userInfo } = this;
-
-    if (userInfo) {
-      this.compliantReportingReferralSubscription = observableSubscription(
-        (syncToStore) =>
-          subscribeToCompliantReportingReferral(
-            userInfo.info.stateCode,
-            clientId,
-            (results) => syncToStore(results)
-          )
-      );
-    }
+  subscribeToCompliantReportingReferral(clientId: string): void {
+    this.compliantReportingReferralSubscription = observableSubscription(
+      (syncToStore) =>
+        subscribeToCompliantReportingReferral(clientId, (results) => {
+          if (results) syncToStore(results);
+        })
+    );
   }
 
   get compliantReportingEligibleClients(): Client[] {
