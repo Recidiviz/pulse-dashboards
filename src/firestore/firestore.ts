@@ -259,3 +259,26 @@ export function updateCompliantReportingDenial(
     merge: true,
   });
 }
+
+export function updateCompliantReportingCompleted(
+  userEmail: string,
+  clientId: string,
+  clearCompletion = false
+): Promise<void> {
+  return setDoc(
+    doc(collections.clientUpdates, clientId),
+    {
+      compliantReporting: {
+        completed: clearCompletion
+          ? deleteField()
+          : {
+              update: {
+                by: userEmail,
+                date: serverTimestamp(),
+              },
+            },
+      },
+    },
+    { merge: true }
+  );
+}

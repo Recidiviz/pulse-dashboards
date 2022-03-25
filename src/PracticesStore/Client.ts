@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { makeObservable } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
 import {
@@ -23,6 +24,7 @@ import {
   FullName,
   OpportunityType,
   subscribeToClientUpdates,
+  updateCompliantReportingCompleted,
   updateCompliantReportingDenial,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
@@ -74,7 +76,16 @@ export class Client {
 
   private fetchedUpdates: SubscriptionValue<ClientUpdateRecord>;
 
+  formIsPrinting = false;
+
   constructor(record: ClientRecord, rootStore: RootStore) {
+    makeObservable(this, {
+      formIsPrinting: true,
+      setFormIsPrinting: true,
+      printCurrentForm: true,
+      currentUserEmail: true,
+    });
+
     this.rootStore = rootStore;
 
     this.id = record.personExternalId;
@@ -159,28 +170,50 @@ export class Client {
     };
   }
 
+  get currentUserEmail(): string | null | undefined {
+    return this.rootStore.practicesStore.user?.info.email;
+  }
+
   async setCompliantReportingDenialReasons(reasons: string[]): Promise<void> {
-    const email = this.rootStore.practicesStore.user?.info.email;
-    if (email) {
+    if (this.currentUserEmail) {
       // clear irrelevant "other" text if necessary
       const deletions = reasons.includes(OTHER_KEY)
         ? undefined
         : { otherReason: true };
-      await updateCompliantReportingDenial(
-        email,
-        this.id,
-        { reasons },
-        deletions
-      );
+
+      await Promise.all([
+        updateCompliantReportingDenial(
+          this.currentUserEmail,
+          this.id,
+          { reasons },
+          deletions
+        ),
+        updateCompliantReportingCompleted(this.currentUserEmail, this.id, true),
+      ]);
     }
   }
 
   async setCompliantReportingDenialOtherReason(
     otherReason?: string
   ): Promise<void> {
-    const email = this.rootStore.practicesStore.user?.info.email;
-    if (email) {
-      await updateCompliantReportingDenial(email, this.id, { otherReason });
+    if (this.currentUserEmail) {
+      await updateCompliantReportingDenial(this.currentUserEmail, this.id, {
+        otherReason,
+      });
+    }
+  }
+
+  setFormIsPrinting(value: boolean): void {
+    this.formIsPrinting = value;
+  }
+
+  printCurrentForm(): void {
+    if (this.currentUserEmail) {
+      if (this.eligibilityStatus.compliantReporting) {
+        updateCompliantReportingCompleted(this.currentUserEmail, this.id);
+      }
+
+      this.setFormIsPrinting(true);
     }
   }
 }

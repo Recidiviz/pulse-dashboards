@@ -117,5 +117,7 @@ type CompliantReportingUpdateRecord = {
   referralForm?: {
     updated: UpdateLog;
   };
-  completed?: UpdateLog;
+  completed?: {
+    update: UpdateLog;
+  };
 };

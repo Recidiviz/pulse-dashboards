@@ -26,12 +26,14 @@ export const STATUS_COLORS = {
     background: rgba(palette.signal.highlight, 0.1),
     border: rgba(palette.signal.highlight, 0.3),
     text: palette.pine4,
+    buttonFill: palette.signal.links,
   },
   ineligible: {
     icon: palette.data.gold1,
     background: rgba(palette.data.gold1, 0.1),
     border: rgba(palette.data.gold1, 0.5),
     text: palette.slate85,
+    buttonFill: palette.data.gold1,
   },
 } as const;
 

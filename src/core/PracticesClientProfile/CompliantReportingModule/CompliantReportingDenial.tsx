@@ -27,7 +27,7 @@ import {
 } from "@recidiviz/design-system";
 import { debounce, xor } from "lodash";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
+import { darken, rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
@@ -47,7 +47,9 @@ const REASONS_MAP = {
   [OTHER_KEY]: "Please specify a reason",
 };
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  flex: 1 1 auto;
+`;
 
 const OtherLabel = styled.label`
   color: ${STATUS_COLORS.ineligible.text};
@@ -92,6 +94,12 @@ const StatusAwareButton = styled(DropdownToggle).attrs({
   &:hover,
   &:focus {
     background-color: ${(props) => props.background};
+  }
+
+  &:active,
+  &[aria-expanded="true"] {
+    ${(props) =>
+      props.border ? `border-color: ${darken(0.2, props.border)};` : ""}
   }
 `;
 

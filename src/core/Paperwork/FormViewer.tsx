@@ -15,9 +15,10 @@
 // =============================================================================
 
 import { Button, palette, Pill, spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem, transparentize } from "polished";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   ReactZoomPanPinchRef,
   TransformComponent,
@@ -25,6 +26,8 @@ import {
 } from "react-zoom-pan-pinch";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
+import type { Client } from "../../PracticesStore/Client";
 import { generate } from "./FormGenerator";
 import { PrintablePage } from "./US_TN/styles";
 
@@ -93,28 +96,21 @@ const FormViewer: React.FC<FormViewerProps> = ({ fileName, children }) => {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
   const transformWrapperRef = React.useRef() as React.MutableRefObject<ReactZoomPanPinchRef>;
 
-  const [isPrinting, setIsPrinting] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const download = () => {
-    if (!transformWrapperRef.current) {
-      return;
-    }
-
-    transformWrapperRef.current.resetTransform(0);
-
-    // Apply print styles
-    setIsPrinting(true);
-  };
+  const client = useRootStore().practicesStore.selectedClient;
+  const isPrinting = client?.formIsPrinting ?? false;
 
   // Generate the form and save it once the print styles have been rendered
   useEffect(() => {
-    if (isPrinting && formRef.current) {
+    if (isPrinting && formRef.current && transformWrapperRef.current) {
+      transformWrapperRef.current.resetTransform(0);
+
       generate(formRef.current, `${PrintablePage}`).then((pdf) => {
         pdf.save(fileName);
-        setIsPrinting(false);
+        // if isPrinting is defined then client is too
+        (client as Client).setFormIsPrinting(false);
       });
     }
-  }, [formRef, isPrinting, fileName]);
+  }, [formRef, transformWrapperRef, isPrinting, fileName, client]);
 
   return (
     <TransformWrapper
@@ -141,4 +137,4 @@ const FormViewer: React.FC<FormViewerProps> = ({ fileName, children }) => {
   );
 };
 
-export default FormViewer;
+export default observer(FormViewer);

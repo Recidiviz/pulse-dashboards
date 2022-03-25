@@ -21,12 +21,14 @@ import { IDisposer, keepAlive } from "mobx-utils";
 import {
   ClientRecord,
   subscribeToClientUpdates,
+  updateCompliantReportingCompleted,
   updateCompliantReportingDenial,
 } from "../../firestore";
 import { RootStore } from "../../RootStore";
 import { mockClients, mockClientUpdate, mockOfficer } from "../__fixtures__";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../PracticesStore";
+import { dateToTimestamp } from "../utils";
 
 let testObserver: IDisposer;
 
@@ -37,6 +39,9 @@ const mockSubscribeToClientUpdates = subscribeToClientUpdates as jest.MockedFunc
 >;
 const mockUpdateCompliantReportingDenial = updateCompliantReportingDenial as jest.MockedFunction<
   typeof updateCompliantReportingDenial
+>;
+const mockUpdateCompliantReportingCompleted = updateCompliantReportingCompleted as jest.MockedFunction<
+  typeof updateCompliantReportingCompleted
 >;
 
 let clientRecord: ClientRecord;
@@ -104,6 +109,12 @@ test("set compliant reporting ineligible", () => {
     { reasons },
     { otherReason: true }
   );
+
+  expect(mockUpdateCompliantReportingCompleted).toHaveBeenCalledWith(
+    mockOfficer.info.email,
+    client.id,
+    true
+  );
 });
 
 test("ineligible for other reason", () => {
@@ -143,4 +154,48 @@ test("set compliant reporting other reason", () => {
     client.id,
     { otherReason }
   );
+});
+
+test("print client reporting form", () => {
+  rootStore.practicesStore.user = mockOfficer;
+
+  expect(client.formIsPrinting).toBe(false);
+
+  client.printCurrentForm();
+
+  expect(client.formIsPrinting).toBe(true);
+});
+
+test("mark client as completed when printing form", () => {
+  rootStore.practicesStore.user = mockOfficer;
+
+  client.printCurrentForm();
+
+  expect(mockUpdateCompliantReportingCompleted).toHaveBeenCalledWith(
+    mockOfficer.info.email,
+    client.id
+  );
+});
+
+test("don't record a completion if user is ineligible", async () => {
+  rootStore.practicesStore.user = mockOfficer;
+
+  mockSubscribeToClientUpdates.mockImplementation((clientId, handleResults) => {
+    handleResults({
+      compliantReporting: {
+        denial: {
+          reasons: ["test"],
+          updated: { by: "test", date: dateToTimestamp("2022-02-01") },
+        },
+      },
+    });
+    return jest.fn();
+  });
+
+  // ensure the update data has been hydrated
+  await when(() => client.updates !== undefined);
+
+  client.printCurrentForm();
+
+  expect(mockUpdateCompliantReportingCompleted).not.toHaveBeenCalled();
 });

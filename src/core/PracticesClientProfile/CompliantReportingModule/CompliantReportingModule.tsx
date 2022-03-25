@@ -16,6 +16,7 @@
 // =============================================================================
 
 import {
+  Button,
   Icon,
   IconSVG,
   palette,
@@ -23,7 +24,7 @@ import {
   TooltipTrigger,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
+import { darken, rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
@@ -65,6 +66,20 @@ const Criterion = styled.li`
   grid-template-columns: ${rem(spacing.lg)} 1fr;
   margin: 0 0 8px;
   line-height: 1.3;
+`;
+
+const ActionButtons = styled.div`
+  display: flex;
+`;
+
+const PrintButton = styled(Button)<{ buttonFill: string }>`
+  background: ${(props) => props.buttonFill};
+  margin-right: ${rem(spacing.sm)};
+
+  &:hover,
+  &:focus {
+    background: ${(props) => darken(0.1, props.buttonFill)};
+  }
 `;
 
 export const CompliantReportingModule = observer(
@@ -153,7 +168,20 @@ export const CompliantReportingModule = observer(
             </TooltipTrigger>
           ))}
         </CriteriaList>
-        <CompliantReportingDenial client={client} />
+        <ActionButtons>
+          <div>
+            <PrintButton
+              kind="primary"
+              shape="block"
+              buttonFill={colors.buttonFill}
+              onClick={() => client.printCurrentForm()}
+            >
+              {client.updates?.compliantReporting?.completed ? "Rep" : "P"}rint
+              PDF
+            </PrintButton>
+          </div>
+          <CompliantReportingDenial client={client} />
+        </ActionButtons>
       </Wrapper>
     );
   }
