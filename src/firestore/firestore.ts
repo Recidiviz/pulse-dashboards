@@ -24,16 +24,21 @@ import {
   collection,
   CollectionReference,
   connectFirestoreEmulator,
+  deleteField,
   doc,
   getDoc,
   getDocs,
   getFirestore,
   limit,
   onSnapshot,
+  PartialWithFieldValue,
   query,
+  serverTimestamp,
+  setDoc,
   Unsubscribe,
   where,
 } from "firebase/firestore";
+import { mapValues, pickBy } from "lodash";
 
 import { CompliantReportingReferralRecord } from "../PracticesStore/CompliantReportingReferralRecord";
 import {
@@ -128,22 +133,12 @@ export async function getClient(
  * @returns a callable unsubscribe handle
  */
 export function subscribeToClientUpdates(
-  stateCode: string,
   clientId: string,
-  handleResults: (results: ClientUpdateRecord[]) => void
+  handleResults: (results?: ClientUpdateRecord) => void
 ): Unsubscribe {
-  return onSnapshot(
-    query(
-      collections.clientUpdates,
-      where("stateCode", "==", stateCode),
-      where("clientId", "==", clientId)
-    ),
-    (results) => {
-      const docs: ClientUpdateRecord[] = [];
-      results.forEach((result) => docs.push(result.data()));
-      handleResults(docs);
-    }
-  );
+  return onSnapshot(doc(collections.clientUpdates, clientId), (result) => {
+    handleResults(result.data({ serverTimestamps: "estimate" }));
+  });
 }
 
 /**
@@ -229,4 +224,38 @@ export function subscribeToCompliantReportingReferral(
       handleResults(result.data());
     }
   );
+}
+
+export function updateCompliantReportingDenial(
+  userEmail: string,
+  clientId: string,
+  fieldUpdates: {
+    reasons?: string[];
+    otherReason?: string;
+  },
+  deleteFields?: {
+    otherReason: boolean;
+  }
+): Promise<void> {
+  // Firestore will reject any undefined values so filter them out
+  const filteredUpdates = pickBy(fieldUpdates);
+
+  const fieldsToDelete = mapValues(pickBy(deleteFields), () => deleteField());
+
+  const changes: PartialWithFieldValue<ClientUpdateRecord> = {
+    compliantReporting: {
+      denial: {
+        ...filteredUpdates,
+        ...fieldsToDelete,
+        updated: {
+          by: userEmail,
+          date: serverTimestamp(),
+        },
+      },
+    },
+  };
+
+  return setDoc(doc(collections.clientUpdates, clientId), changes, {
+    merge: true,
+  });
 }

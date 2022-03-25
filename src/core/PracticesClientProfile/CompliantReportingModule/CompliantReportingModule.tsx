@@ -15,20 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import {
+  Icon,
+  IconSVG,
+  palette,
+  spacing,
+  TooltipTrigger,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { formatDate } from "../../utils";
-import { formatRelativeToNow } from "../utils/timePeriod";
-import { CriteriaList, EligibilityCriterion } from "./CriteriaList";
-import { ClientProfileProps } from "./types";
+import { formatDate } from "../../../utils";
+import { formatRelativeToNow } from "../../utils/timePeriod";
+import { ClientProfileProps } from "../types";
+import { CompliantReportingDenial } from "./CompliantReportingDenial";
+import { useStatusColors } from "./utils";
 
-const Wrapper = styled.div`
-  background-color: rgba(37, 184, 148, 0.1);
-  border-color: rgba(37, 184, 148, 0.3);
+const Wrapper = styled.div<{ background: string; border: string }>`
+  background-color: ${({ background: backgroundColor }) => backgroundColor};
+  border-color: ${({ border: borderColor }) => borderColor};
   border-style: solid;
   border-width: 1px 0;
   color: ${palette.pine1};
@@ -36,11 +43,35 @@ const Wrapper = styled.div`
   padding: ${rem(spacing.md)};
 `;
 
+const CriterionIcon = styled(Icon)`
+  grid-column: 1;
+  /* slight vertical offset to approximate baseline alignment */
+  margin-top: ${rem(1)};
+`;
+
+const CriterionContent = styled.div`
+  grid-column: 2;
+`;
+
+const CriteriaList = styled.ul`
+  list-style: none;
+  font-size: ${rem(14)};
+  margin: ${rem(spacing.md)} 0;
+  padding: 0;
+`;
+
+const Criterion = styled.li`
+  display: grid;
+  grid-template-columns: ${rem(spacing.lg)} 1fr;
+  margin: 0 0 8px;
+  line-height: 1.3;
+`;
+
 export const CompliantReportingModule = observer(
   ({ client }: ClientProfileProps) => {
     if (!client.compliantReportingEligible) return null;
 
-    const criteria: EligibilityCriterion[] = [
+    const criteria = [
       {
         text: `Current supervision level: ${client.supervisionLevel}`,
         tooltip:
@@ -103,10 +134,26 @@ export const CompliantReportingModule = observer(
       },
     ];
 
+    const colors = useStatusColors(client);
+
     return (
-      <Wrapper>
+      <Wrapper {...colors}>
         <div>Compliant Reporting</div>
-        <CriteriaList criteria={criteria} />
+        <CriteriaList style={{ color: colors.text }}>
+          {criteria.map(({ text, tooltip }) => (
+            <TooltipTrigger contents={tooltip} key={text}>
+              <Criterion>
+                <CriterionIcon
+                  kind={IconSVG.Success}
+                  color={colors.icon}
+                  size={16}
+                />
+                <CriterionContent>{text}</CriterionContent>
+              </Criterion>
+            </TooltipTrigger>
+          ))}
+        </CriteriaList>
+        <CompliantReportingDenial client={client} />
       </Wrapper>
     );
   }

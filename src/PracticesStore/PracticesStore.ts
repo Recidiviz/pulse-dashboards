@@ -45,6 +45,8 @@ import { observableSubscription, SubscriptionValue } from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
 
+export const OTHER_KEY = "Other";
+
 export class PracticesStore implements Hydratable {
   rootStore: RootStore;
 
@@ -167,7 +169,11 @@ export class PracticesStore implements Hydratable {
 
   updateClients(newClients: ClientRecord[] = []): void {
     newClients.forEach((record) => {
-      set(this.clients, record.personExternalId, new Client(record));
+      set(
+        this.clients,
+        record.personExternalId,
+        new Client(record, this.rootStore)
+      );
     });
   }
 

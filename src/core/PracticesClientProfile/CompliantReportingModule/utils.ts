@@ -15,20 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientUpdateRecord } from "../firestore";
+import { palette } from "@recidiviz/design-system";
+import { rgba } from "polished";
 
-/**
- * Represents client-level data generated within this application.
- */
-export class ClientUpdate {
-  clientId: string;
+import type { Client } from "../../../PracticesStore/Client";
 
-  readonly compliantReportingStatus?: Readonly<
-    ClientUpdateRecord["compliantReportingStatus"]
-  >;
+export const STATUS_COLORS = {
+  eligible: {
+    icon: palette.signal.highlight,
+    background: rgba(palette.signal.highlight, 0.1),
+    border: rgba(palette.signal.highlight, 0.3),
+    text: palette.pine4,
+  },
+  ineligible: {
+    icon: palette.data.gold1,
+    background: rgba(palette.data.gold1, 0.1),
+    border: rgba(palette.data.gold1, 0.5),
+    text: palette.slate85,
+  },
+} as const;
 
-  constructor(record: ClientUpdateRecord) {
-    this.clientId = record.personExternalId;
-    this.compliantReportingStatus = record.compliantReportingStatus;
-  }
+export function useStatusColors(
+  client: Client
+): typeof STATUS_COLORS[keyof typeof STATUS_COLORS] {
+  return client.eligibilityStatus.compliantReporting
+    ? STATUS_COLORS.eligible
+    : STATUS_COLORS.ineligible;
 }

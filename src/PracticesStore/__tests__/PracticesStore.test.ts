@@ -51,6 +51,7 @@ const mockSubscribeToCaseloads = subscribeToCaseloads as jest.MockedFunction<
   typeof subscribeToCaseloads
 >;
 
+let rootStore: RootStore;
 let practicesStore: PracticesStore;
 let testObserver: IDisposer;
 
@@ -83,15 +84,16 @@ async function waitForHydration(): Promise<void> {
 function populateClients(): void {
   runInAction(() => {
     practicesStore.clients = {
-      [mockClients[0].personExternalId]: new Client(mockClients[0]),
+      [mockClients[0].personExternalId]: new Client(mockClients[0], rootStore),
     };
   });
 }
 
 beforeEach(() => {
-  practicesStore = new RootStore().practicesStore;
+  rootStore = new RootStore();
+  practicesStore = rootStore.practicesStore;
   runInAction(() => {
-    practicesStore.rootStore.userStore.user = {
+    rootStore.userStore.user = {
       email: "foo@example.com",
       [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
         state_code: mockOfficer.info.stateCode,

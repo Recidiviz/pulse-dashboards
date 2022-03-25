@@ -18,9 +18,15 @@
 import { computed, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
-import { subscribeToClientUpdates } from "../../firestore";
-import { mockClients, mockClientUpdate } from "../__fixtures__";
+import {
+  ClientRecord,
+  subscribeToClientUpdates,
+  updateCompliantReportingDenial,
+} from "../../firestore";
+import { RootStore } from "../../RootStore";
+import { mockClients, mockClientUpdate, mockOfficer } from "../__fixtures__";
 import { Client } from "../Client";
+import { OTHER_KEY } from "../PracticesStore";
 
 let testObserver: IDisposer;
 
@@ -29,6 +35,19 @@ jest.mock("../../firestore");
 const mockSubscribeToClientUpdates = subscribeToClientUpdates as jest.MockedFunction<
   typeof subscribeToClientUpdates
 >;
+const mockUpdateCompliantReportingDenial = updateCompliantReportingDenial as jest.MockedFunction<
+  typeof updateCompliantReportingDenial
+>;
+
+let clientRecord: ClientRecord;
+let client: Client;
+let rootStore: RootStore;
+
+beforeEach(() => {
+  [clientRecord] = mockClients;
+  rootStore = new RootStore();
+  client = new Client(clientRecord, rootStore);
+});
 
 afterEach(() => {
   jest.resetAllMocks();
@@ -40,16 +59,11 @@ afterEach(() => {
 });
 
 test("fetch client updates on demand", async () => {
-  mockSubscribeToClientUpdates.mockImplementation(
-    (stateCode, clientId, handler) => {
-      expect(stateCode).toBe(client.stateCode);
-      expect(clientId).toBe(client.id);
-      handler([mockClientUpdate]);
-      return jest.fn();
-    }
-  );
-
-  const client = new Client(mockClients[0]);
+  mockSubscribeToClientUpdates.mockImplementation((clientId, handler) => {
+    expect(clientId).toBe(client.id);
+    handler(mockClientUpdate);
+    return jest.fn();
+  });
 
   // simulate a client profile page observing updates
   testObserver = keepAlive(computed(() => [client.updates]));
@@ -60,9 +74,6 @@ test("fetch client updates on demand", async () => {
 });
 
 test("fines and fees status", () => {
-  const mockClient = mockClients[0];
-  const client = new Client(mockClient);
-
   client.feeExemptions = "exemption test";
 
   expect(client.finesAndFeesStatus).toBe("exemption test");
@@ -79,4 +90,57 @@ test("fines and fees status", () => {
   client.lastPaymentDate = undefined;
 
   expect(client.finesAndFeesStatus).toBe("Current balance: $250.12");
+});
+
+test("set compliant reporting ineligible", () => {
+  rootStore.practicesStore.user = mockOfficer;
+
+  const reasons = ["test1", "test2"];
+  client.setCompliantReportingDenialReasons(reasons);
+
+  expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
+    mockOfficer.info.email,
+    client.id,
+    { reasons },
+    { otherReason: true }
+  );
+});
+
+test("ineligible for other reason", () => {
+  rootStore.practicesStore.user = mockOfficer;
+
+  const reasons = ["test1", OTHER_KEY];
+  client.setCompliantReportingDenialReasons(reasons);
+
+  expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
+    mockOfficer.info.email,
+    client.id,
+    { reasons },
+    undefined
+  );
+
+  const newReasons = reasons.slice(0, 1);
+
+  client.setCompliantReportingDenialReasons(newReasons);
+
+  expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
+    mockOfficer.info.email,
+    client.id,
+    { reasons: newReasons },
+    // this will delete the related field if reasons do not include "other"
+    { otherReason: true }
+  );
+});
+
+test("set compliant reporting other reason", () => {
+  rootStore.practicesStore.user = mockOfficer;
+
+  const otherReason = "some other reason";
+  client.setCompliantReportingDenialOtherReason(otherReason);
+
+  expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
+    mockOfficer.info.email,
+    client.id,
+    { otherReason }
+  );
 });

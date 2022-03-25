@@ -130,12 +130,4 @@ export const mockOfficers: StaffRecord[] = [
   },
 ];
 
-export const mockClientUpdate: ClientUpdateRecord = {
-  personExternalId: "100",
-  personName: {
-    givenNames: "TONYE",
-    surname: "THOMPSON",
-    middleName: "BARBY",
-  },
-  stateCode: mockOfficer.info.stateCode,
-};
+export const mockClientUpdate: ClientUpdateRecord = {};

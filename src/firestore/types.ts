@@ -98,23 +98,24 @@ export type CompliantReportingEligibleRecord = {
  * A nested object of all client-level data generated within this application
  */
 export type ClientUpdateRecord = {
-  personExternalId: string;
-  stateCode: string;
-  /**
-   * Duplicated from ETL to enable direct full-text search
-   */
-  personName: FullName;
-  compliantReportingStatus?: CompliantReportingStatusRecord;
+  compliantReporting?: CompliantReportingUpdateRecord;
 };
 
-type CompliantReportingStatusCode = "ELIGIBLE" | "DENIED";
+type UpdateLog = {
+  date: Timestamp;
+  by: string;
+};
 
-export type CompliantReportingStatusRecord = {
-  personExternalId: string;
-  status: CompliantReportingStatusCode;
-  deniedReasons: string[];
-  statusUpdated: {
-    date: Timestamp;
-    by: string;
+export type CompliantReportingDenial = {
+  reasons: string[];
+  otherReason?: string;
+  updated: UpdateLog;
+};
+
+type CompliantReportingUpdateRecord = {
+  denial?: CompliantReportingDenial;
+  referralForm?: {
+    updated: UpdateLog;
   };
+  completed?: UpdateLog;
 };

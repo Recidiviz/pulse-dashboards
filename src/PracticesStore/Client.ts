@@ -17,12 +17,22 @@
 
 import { format as formatPhone } from "phone-fns";
 
-import { ClientRecord, FullName, subscribeToClientUpdates } from "../firestore";
+import {
+  ClientRecord,
+  ClientUpdateRecord,
+  FullName,
+  OpportunityType,
+  subscribeToClientUpdates,
+  updateCompliantReportingDenial,
+} from "../firestore";
+import type { RootStore } from "../RootStore";
 import { formatAsCurrency, formatDate, toTitleCase } from "../utils";
-import { ClientUpdate } from "./ClientUpdate";
+import { OTHER_KEY } from "./PracticesStore";
 import { observableSubscription, SubscriptionValue } from "./utils";
 
 export class Client {
+  rootStore: RootStore;
+
   id: string;
 
   stateCode: string;
@@ -62,9 +72,11 @@ export class Client {
     sanctionsPastYear: { type: string }[];
   };
 
-  private fetchedUpdates: SubscriptionValue<ClientUpdate>;
+  private fetchedUpdates: SubscriptionValue<ClientUpdateRecord>;
 
-  constructor(record: ClientRecord) {
+  constructor(record: ClientRecord, rootStore: RootStore) {
+    this.rootStore = rootStore;
+
     this.id = record.personExternalId;
     this.stateCode = record.stateCode;
     this.fullName = record.personName;
@@ -98,10 +110,9 @@ export class Client {
 
     // connect to additional data sources for this client
     this.fetchedUpdates = observableSubscription((handler) =>
-      subscribeToClientUpdates(this.stateCode, this.id, (r) => {
-        const [updateRecord] = r;
-        if (updateRecord) {
-          handler(new ClientUpdate(updateRecord));
+      subscribeToClientUpdates(this.id, (r) => {
+        if (r) {
+          handler(r);
         }
       })
     );
@@ -119,7 +130,7 @@ export class Client {
     return formatPhone("(NNN) NNN-NNNN", this.rawPhoneNumber);
   }
 
-  get updates(): ClientUpdate | undefined {
+  get updates(): ClientUpdateRecord | undefined {
     return this.fetchedUpdates.current();
   }
 
@@ -137,5 +148,39 @@ export class Client {
       )} on ${formatDate(this.lastPaymentDate as Date)}`;
 
     return `Current balance: ${formatAsCurrency(this.currentBalance)}`;
+  }
+
+  get eligibilityStatus(): Record<OpportunityType, boolean> {
+    const compliantReporting =
+      (this.updates?.compliantReporting?.denial?.reasons?.length || 0) === 0;
+
+    return {
+      compliantReporting,
+    };
+  }
+
+  async setCompliantReportingDenialReasons(reasons: string[]): Promise<void> {
+    const email = this.rootStore.practicesStore.user?.info.email;
+    if (email) {
+      // clear irrelevant "other" text if necessary
+      const deletions = reasons.includes(OTHER_KEY)
+        ? undefined
+        : { otherReason: true };
+      await updateCompliantReportingDenial(
+        email,
+        this.id,
+        { reasons },
+        deletions
+      );
+    }
+  }
+
+  async setCompliantReportingDenialOtherReason(
+    otherReason?: string
+  ): Promise<void> {
+    const email = this.rootStore.practicesStore.user?.info.email;
+    if (email) {
+      await updateCompliantReportingDenial(email, this.id, { otherReason });
+    }
   }
 }
