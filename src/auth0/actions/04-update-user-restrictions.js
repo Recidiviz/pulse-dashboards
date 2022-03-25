@@ -27,10 +27,12 @@ exports.onExecutePostLogin = async (event, api) => {
   const emailSplit = email?.split("@") || "";
   const userDomain = emailSplit[emailSplit.length - 1].toLowerCase();
 
-  const DENY_MESSAGE = 'There was a problem authorizing your account. Please contact your organization administrator. ' +
-    'If you don’t know your administrator, contact feedback@recidiviz.org.';
+  const DENY_MESSAGE =
+    "There was a problem authorizing your account. Please contact your organization administrator. " +
+    "If you don’t know your administrator, contact feedback@recidiviz.org.";
 
-  if (app_metadata.skip_sync_permissions ||
+  if (
+    app_metadata.skip_sync_permissions ||
     authorizedDomains.some(function (authorizedDomain) {
       return userDomain === authorizedDomain;
     })
@@ -43,9 +45,9 @@ exports.onExecutePostLogin = async (event, api) => {
     api.user.setAppMetadata("blocked_state_codes", ["us_pa"]);
   }
 
-  if (["us_mo", "us_id", "us_nd", "us_me"].includes(stateCode)) {
+  if (["us_mo", "us_id", "us_nd", "us_me", "us_tn"].includes(stateCode)) {
     const Sentry = require("@sentry/node");
-    const { GoogleAuth } = require('google-auth-library');
+    const { GoogleAuth } = require("google-auth-library");
     Sentry.init({
       dsn: event.secrets.SENTRY_DSN,
       environment: event.secrets.SENTRY_ENV,
@@ -54,28 +56,43 @@ exports.onExecutePostLogin = async (event, api) => {
       let credentials = JSON.parse(
         event.secrets.GOOGLE_APPLICATION_CREDENTIALS
       );
-      const privateKey = event.secrets.PRIVATE_KEY.replace(/\\n/gm, '\n')
-      credentials = { ...credentials, "private_key": privateKey }
+      const privateKey = event.secrets.PRIVATE_KEY.replace(/\\n/gm, "\n");
+      credentials = { ...credentials, private_key: privateKey };
       const auth = new GoogleAuth({ credentials });
-      const client = await auth.getIdTokenClient(
-        event.secrets.TARGET_AUDIENCE
-      );
+      const client = await auth.getIdTokenClient(event.secrets.TARGET_AUDIENCE);
 
       // some ID accounts come up with an onmicrosoft domain. This patches the email for the request
-      const request_email = event.user.email?.replace("iddoc.onmicrosoft.com", "idoc.idaho.gov");
+      const request_email = event.user.email?.replace(
+        "iddoc.onmicrosoft.com",
+        "idoc.idaho.gov"
+      );
 
-      const url = `${event.secrets
-        .RECIDIVIZ_APP_URL}/auth/dashboard_user_restrictions_by_email?email_address=${request_email}&region_code=${stateCode}`;
+      const url = `${event.secrets.RECIDIVIZ_APP_URL}/auth/dashboard_user_restrictions_by_email?email_address=${request_email}&region_code=${stateCode}`;
 
       const apiResponse = await client.request({ url, retry: true });
       const restrictions = apiResponse.data;
-      api.user.setAppMetadata("allowed_supervision_location_ids", restrictions.allowed_supervision_location_ids || []);
-      api.user.setAppMetadata("allowed_supervision_location_level", restrictions.allowed_supervision_location_level);
-      api.user.setAppMetadata("can_access_case_triage", restrictions.can_access_case_triage || false);
-      api.user.setAppMetadata("can_access_leadership_dashboard", restrictions.can_access_leadership_dashboard || false);
-      api.user.setAppMetadata("should_see_beta_charts", restrictions.should_see_beta_charts || false);
+      api.user.setAppMetadata(
+        "allowed_supervision_location_ids",
+        restrictions.allowed_supervision_location_ids || []
+      );
+      api.user.setAppMetadata(
+        "allowed_supervision_location_level",
+        restrictions.allowed_supervision_location_level
+      );
+      api.user.setAppMetadata(
+        "can_access_case_triage",
+        restrictions.can_access_case_triage || false
+      );
+      api.user.setAppMetadata(
+        "can_access_leadership_dashboard",
+        restrictions.can_access_leadership_dashboard || false
+      );
+      api.user.setAppMetadata(
+        "should_see_beta_charts",
+        restrictions.should_see_beta_charts || false
+      );
       api.user.setAppMetadata("routes", restrictions.routes || null);
-    } catch(apiError) {
+    } catch (apiError) {
       Sentry.captureMessage(
         `Error while updating user permissions on login for user: ${event.user.email}`
       );

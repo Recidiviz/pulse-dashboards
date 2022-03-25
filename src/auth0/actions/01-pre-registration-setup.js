@@ -79,7 +79,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     }
 
     /** 2. Add user's state_code to the app_metadata */
-    const acceptedStateCodes = ["id", "mo", "nd", "pa", "me"];
+    const acceptedStateCodes = ["id", "mo", "nd", "pa", "me", "tn"];
     const domainSplit = userDomain.split(".");
 
     // assumes the state is always the second to last component of the domain
@@ -88,15 +88,15 @@ exports.onExecutePreUserRegistration = async (event, api) => {
 
     // Idaho and Maine do not use the abbreviation in their email addresses
     const stateCodeMapping = {
-      "maine": "me",
-      "idaho": "id",
-    }
-      
+      maine: "me",
+      idaho: "id",
+    };
+
     if (
       Object.keys(stateCodeMapping).includes(state) ||
       (event.user.email && authorizedEmails.includes(event.user.email))
     ) {
-      state = stateCodeMapping[state]
+      state = stateCodeMapping[state];
     }
 
     const stateCode = `us_${state}`;
@@ -107,7 +107,13 @@ exports.onExecutePreUserRegistration = async (event, api) => {
 
     /** 3. Add the user's restrictions to the app_metadata */
     // Other states do not currently have any sign up or user restrictions
-    const stateCodesWithRestrictions = ["us_mo", "us_id", "us_nd", "us_me"];
+    const stateCodesWithRestrictions = [
+      "us_mo",
+      "us_id",
+      "us_nd",
+      "us_me",
+      "us_tn",
+    ];
 
     if (stateCodesWithRestrictions.includes(stateCode.toLowerCase())) {
       try {
