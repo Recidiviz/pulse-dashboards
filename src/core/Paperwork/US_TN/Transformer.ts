@@ -11,7 +11,9 @@ export const transform = (
     specialConditionsCounselingAngerManagementComplete: !!data.specialConditionsCounselingAngerManagementCompleteDate,
     specialConditionsCounselingMentalHealthComplete: !!data.specialConditionsCounselingMentalHealthCompleteDate,
 
-    restitutionMonthlyPaymentTo: data.restitutionMonthlyPaymentTo.join("; "),
+    currentOffenses: data.currentOffenses || [],
+    restitutionMonthlyPaymentTo:
+      data.restitutionMonthlyPaymentTo?.join("; ") ?? "",
 
     clientFullName: `${data.clientFirstName} ${data.clientLastName}`,
     poFullName: `${data.poFirstName} ${data.poLastName}`,
