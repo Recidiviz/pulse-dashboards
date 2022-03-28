@@ -15,20 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeObservable } from "mobx";
+import { has } from "lodash";
+import { action, computed, keys, makeObservable, observable, set } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
+import { transform } from "../core/Paperwork/US_TN/Transformer";
 import {
   ClientRecord,
   ClientUpdateRecord,
+  CompliantReportingReferralForm,
   FullName,
   OpportunityType,
   subscribeToClientUpdates,
+  subscribeToCompliantReportingReferral,
   updateCompliantReportingCompleted,
   updateCompliantReportingDenial,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
 import { toTitleCase } from "../utils";
+import {
+  CompliantReportingReferralRecord,
+  TransformedCompliantReportingReferral,
+} from "./CompliantReportingReferralRecord";
 import { OTHER_KEY } from "./PracticesStore";
 import { observableSubscription, SubscriptionValue } from "./utils";
 
@@ -89,6 +97,10 @@ export class Client {
 
   formIsPrinting = false;
 
+  compliantReportingReferralDraftData: Partial<TransformedCompliantReportingReferral>;
+
+  private fetchedCompliantReportingReferral: SubscriptionValue<CompliantReportingReferralRecord>;
+
   constructor(record: ClientRecord, rootStore: RootStore) {
     makeObservable(this, {
       formIsPrinting: true,
@@ -97,6 +109,9 @@ export class Client {
       currentUserEmail: true,
       eligibilityStatus: true,
       reviewStatus: true,
+      compliantReportingReferralDraftData: true,
+      setCompliantReportingReferralDataField: action,
+      compliantReportingReferralFormData: computed.struct,
     });
 
     this.rootStore = rootStore;
@@ -117,6 +132,9 @@ export class Client {
     this.feeExemptions = record.feeExemptions;
     this.specialConditions = record.specialConditions;
     this.nextSpecialConditionsCheck = record.nextSpecialConditionsCheck?.toDate();
+    this.compliantReportingReferralDraftData = observable<
+      Partial<TransformedCompliantReportingReferral>
+    >({});
 
     const { compliantReportingEligible } = record;
     if (compliantReportingEligible) {
@@ -142,7 +160,16 @@ export class Client {
       subscribeToClientUpdates(this.id, (r) => {
         if (r) {
           handler(r);
+          const data = r.compliantReporting?.referralForm?.data ?? {};
+
+          set(this.compliantReportingReferralDraftData, data);
         }
+      })
+    );
+
+    this.fetchedCompliantReportingReferral = observableSubscription((handler) =>
+      subscribeToCompliantReportingReferral(this.id, (result) => {
+        if (result) handler(result);
       })
     );
   }
@@ -196,6 +223,10 @@ export class Client {
     return this.rootStore.practicesStore.user?.info.email;
   }
 
+  get currentUserName(): string | null | undefined {
+    return this.rootStore.practicesStore.user?.info.email;
+  }
+
   async setCompliantReportingDenialReasons(reasons: string[]): Promise<void> {
     if (this.currentUserEmail) {
       // clear irrelevant "other" text if necessary
@@ -237,5 +268,59 @@ export class Client {
 
       this.setFormIsPrinting(true);
     }
+  }
+
+  get compliantReportingReferralFormData(): Partial<TransformedCompliantReportingReferral> {
+    // Use keys() to avoid mobx es5 error regarding detecting added/removed properties
+    const draft: Partial<TransformedCompliantReportingReferral> = keys(
+      this.compliantReportingReferralDraftData
+    ).reduce((memo, key) => {
+      return {
+        ...memo,
+        [key]: this.compliantReportingReferralDraftData[
+          key as keyof TransformedCompliantReportingReferral
+        ],
+      };
+    }, {});
+
+    return {
+      ...this.prefilledCompliantReferralForm,
+      ...draft,
+    };
+  }
+
+  getCompliantReportingReferralDataField(
+    key: keyof TransformedCompliantReportingReferral
+  ):
+    | TransformedCompliantReportingReferral[keyof TransformedCompliantReportingReferral]
+    | undefined {
+    const draftData = this.compliantReportingReferralFormData[key];
+    const prefillData = this.prefilledCompliantReferralForm[key];
+    return has(this.compliantReportingReferralDraftData, key)
+      ? draftData
+      : prefillData;
+  }
+
+  setCompliantReportingReferralDataField(
+    key: keyof TransformedCompliantReportingReferral,
+    value: boolean | string | string[]
+  ): void {
+    set(this.compliantReportingReferralDraftData, key, value);
+  }
+
+  get prefilledCompliantReferralForm(): Partial<TransformedCompliantReportingReferral> {
+    const prefillSourceInformation = this.fetchedCompliantReportingReferral?.current();
+
+    if (prefillSourceInformation) {
+      return transform(prefillSourceInformation);
+    }
+
+    return {};
+  }
+
+  get compliantReportingReferralDraft():
+    | CompliantReportingReferralForm
+    | undefined {
+    return this.updates?.compliantReporting?.referralForm;
   }
 }

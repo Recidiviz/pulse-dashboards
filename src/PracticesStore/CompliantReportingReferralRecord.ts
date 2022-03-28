@@ -41,9 +41,12 @@ export type CompliantReportingReferralRecord = {
   specialConditionsAlcDrugTreatmentCurrent: "1" | "0";
   specialConditionsAlcDrugTreatmentCompleteDate: string;
   specialConditionsCounseling: "1" | "0";
-  specialConditionsCounselingType: ("ANGER_MANAGEMENT" | "MENTAL_HEALTH")[];
-  specialConditionsCounselingCurrent: "1" | "0";
-  specialConditionsCounselingCompleteDate: string;
+  specialConditionsCounselingAngerManagement: "1" | "0";
+  specialConditionsCounselingAngerManagementCurrent: "1" | "0";
+  specialConditionsCounselingAngerManagementCompleteDate: string;
+  specialConditionsCounselingMentalHealth: "1" | "0";
+  specialConditionsCounselingMentalHealthCurrent: "1" | "0";
+  specialConditionsCounselingMentalHealthCompleteDate: string;
   specialConditionsCommunityService: "1" | "0";
   specialConditionsCommunityServiceHours: string;
   specialConditionsCommunityServiceCurrent: "1" | "0";
@@ -64,9 +67,41 @@ export type CompliantReportingReferralRecord = {
 };
 
 export interface CompliantReportingReferralTransformation {
+  /* Computed fields */
   clientFullName: string;
   poFullName: string;
   offenseType: string[];
+  sentenceLengthDaysText: string;
+  specialConditionsCounselingAngerManagementComplete: "1" | "0";
+  specialConditionsCounselingMentalHealthComplete: "1" | "0";
+
+  /* Fields in the UI that are not included in the ETL */
+  licenseYears: string;
+  telephoneNumber: string;
+  supervisorFullName: string;
+  supervisionFeeArrearagedAmount: string;
+  iotSanctioning: "1" | "0";
+  atrSupervisionTransfer: "1" | "0";
+  seeAdditionalOffenses: "1" | "0";
+  isProbation: "1" | "0";
+  isIsc: "1" | "0";
+  isParole: "1" | "0";
+  is4035313: "1" | "0";
+  specialConditionsAlcDrugTreatmentIsInpatient: "1" | "0";
+  specialConditionsAlcDrugTreatmentIsOutpatient: "1" | "0";
+  specialConditionsCounseling: "1" | "0";
+  specialConditionsNoContact: "1" | "0";
+  specialConditionsNoContactName: string;
+  specialConditionsProgramming: "1" | "0";
+  specialConditionsSocialWorker: "1" | "0";
+  specialConditionsAlcDrugAssessmentPending: "1" | "0";
+  specialConditionsAlcDrugTreatmentComplete: "1" | "0";
+  specialConditionsCounselingComplete: "1" | "0";
+  specialConditionsCommunityServiceComplete: "1" | "0";
+  specialConditionsProgrammingCognitiveBehaviorComplete: "1" | "0";
+  specialConditionsProgrammingSafeComplete: "1" | "0";
+  specialConditionsProgrammingVictimImpactComplete: "1" | "0";
+  specialConditionsProgrammingFswComplete: "1" | "0";
 }
 
 export type TransformedCompliantReportingReferral = CompliantReportingReferralRecord &

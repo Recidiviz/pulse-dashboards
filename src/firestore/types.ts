@@ -16,6 +16,8 @@
 // =============================================================================
 import type { Timestamp } from "firebase/firestore";
 
+import { TransformedCompliantReportingReferral } from "../PracticesStore/CompliantReportingReferralRecord";
+
 /**
  * Staff-level data exported from the Recidiviz data platform.
  * Staff may be identified independently as users and as officers with active caseloads
@@ -115,11 +117,14 @@ export type CompliantReportingDenial = {
   updated: UpdateLog;
 };
 
+export type CompliantReportingReferralForm = {
+  updated: UpdateLog;
+  data?: Partial<TransformedCompliantReportingReferral>;
+};
+
 type CompliantReportingUpdateRecord = {
   denial?: CompliantReportingDenial;
-  referralForm?: {
-    updated: UpdateLog;
-  };
+  referralForm?: CompliantReportingReferralForm;
   completed?: {
     update: UpdateLog;
   };

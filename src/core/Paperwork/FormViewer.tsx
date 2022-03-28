@@ -16,6 +16,7 @@
 
 import { Button, palette, Pill, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import { rem, transparentize } from "polished";
 import * as React from "react";
 import { useEffect } from "react";
@@ -112,6 +113,22 @@ const FormViewer: React.FC<FormViewerProps> = ({ fileName, children }) => {
     }
   }, [formRef, transformWrapperRef, isPrinting, fileName, client]);
 
+  // TODO(#1729) Remove compliant-reporting specific content
+  const { practicesStore } = useRootStore();
+  const draft = practicesStore.selectedClient?.compliantReportingReferralDraft;
+  let lastEdited;
+  if (draft) {
+    lastEdited = `Last edited by ${draft.updated.by} ${moment(
+      draft.updated.date.seconds * 1000
+    ).fromNow()}`;
+  } else {
+    lastEdited = `Prefilled with TOMIS data on ${
+      practicesStore.selectedClient?.getCompliantReportingReferralDataField(
+        "dateToday"
+      ) ?? moment().format("MM-DD-YYYY")
+    }`;
+  }
+
   return (
     <TransformWrapper
       ref={transformWrapperRef}
@@ -124,7 +141,7 @@ const FormViewer: React.FC<FormViewerProps> = ({ fileName, children }) => {
       <FormViewerGrid>
         <FormViewerControls>
           <Controls transformWrapperRef={transformWrapperRef} />
-          <Status color={palette.slate85}>Last edited placeholder</Status>
+          <Status color={palette.slate85}>{lastEdited}</Status>
         </FormViewerControls>
 
         <TransformComponent wrapperStyle={{ cursor: "grab", width: "100%" }}>

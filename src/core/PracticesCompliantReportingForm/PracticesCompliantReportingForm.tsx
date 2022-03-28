@@ -31,18 +31,12 @@ const CompliantReportingFormContainer = styled.div`
 const PracticesCompliantReportingForm: React.FC = () => {
   const { practicesStore } = useRootStore();
 
-  if (!practicesStore.selectedCompliantReportingReferral) {
-    return <CompliantReportingFormContainer />;
-  }
-
   return (
     <CompliantReportingFormContainer>
       <FormViewer
         fileName={`${practicesStore.selectedClient?.displayName} - Form CR3947 Rev05-18.pdf`}
       >
-        <FormCR3947Rev0518
-          data={practicesStore.selectedCompliantReportingReferral}
-        />
+        <FormCR3947Rev0518 />
       </FormViewer>
     </CompliantReportingFormContainer>
   );

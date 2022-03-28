@@ -18,8 +18,10 @@ import styled, { css } from "styled-components/macro";
 
 import { FORMAT_HEIGHT, FORMAT_WIDTH, MARGIN } from "../FormGenerator";
 import { FormViewerContextData } from "../FormViewer";
+import FormCheckbox from "./FormCheckbox";
+import FormInput from "./FormInput";
 
-const Input = styled.input.attrs({ type: "text" })`
+const Input = styled.input`
   border-width: 0;
   font-size: 9px;
   font-weight: normal;
@@ -86,7 +88,7 @@ const PrintablePage = styled.div.attrs({ className: "form-page" })`
   line-height: 1.3;
 `;
 
-const FormContainer = styled.div<FormViewerContextData>`
+const FormContainer = styled.form<FormViewerContextData>`
   // Hide placeholders and blue background while printing
   ${({ isPrinting }) =>
     isPrinting
@@ -161,8 +163,21 @@ const Checkbox = styled.input.attrs({
   margin: 0 0.25em 0 0;
 `;
 
-const SpecialConditionsCheckbox = styled(Checkbox)`
+const SpecialConditionsCheckbox = styled(FormCheckbox)`
   margin-right: 0;
+`;
+
+const FormSignatureGrid = styled(Grid).attrs({
+  columns: "2fr 1fr 2fr 1fr",
+  rows: "18px 18px",
+})`
+  background-color: white;
+  grid-gap: 5px;
+  margin-top: 5px;
+`;
+
+const FormSignatureInput = styled(FormInput)`
+  border-bottom: 1px solid black;
 `;
 
 export {
@@ -170,6 +185,8 @@ export {
   Emphasize,
   FormBox,
   FormContainer,
+  FormSignatureGrid,
+  FormSignatureInput,
   Grid,
   HeaderRow,
   Input,

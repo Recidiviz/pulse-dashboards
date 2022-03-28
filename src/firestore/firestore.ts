@@ -226,6 +226,25 @@ export function subscribeToCompliantReportingReferral(
   );
 }
 
+export const updateCompliantReportingDraft = function (
+  updatedBy: string,
+  clientId: string,
+  data: Record<string, boolean | string | string[]>
+): Promise<void> {
+  return setDoc(
+    doc(collections.clientUpdates, clientId),
+    {
+      compliantReporting: {
+        referralForm: {
+          updated: { by: updatedBy, date: serverTimestamp() },
+          data,
+        },
+      },
+    },
+    { merge: true }
+  );
+};
+
 export function updateCompliantReportingDenial(
   userEmail: string,
   clientId: string,
