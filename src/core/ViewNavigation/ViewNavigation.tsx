@@ -47,7 +47,7 @@ const ViewNavigation: React.FC = ({ children }) => {
   const enabledPathwaysPages = navigationLayout.system || [];
   // Practices is enabled if enabledPractices !== undefined
   const enablePractices = navigationLayout.operations;
-  const enablePracticesV2 = Boolean(navigationLayout.practices);
+  const enablePracticesV2 = Boolean(navigationLayout.workflows);
 
   const PathwaysLink = () => {
     return enabledPathwaysPages.length > 0 ? (

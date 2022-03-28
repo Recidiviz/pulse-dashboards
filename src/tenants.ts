@@ -151,7 +151,7 @@ const TENANTS: Tenants = {
     enableUserRestrictions: false,
     enablePracticesCaseloadButton: false,
     navigation: {
-      practices: [],
+      workflows: [],
       system: [
         PATHWAYS_PAGES.libertyToPrison,
         PATHWAYS_PAGES.prison,

@@ -20,43 +20,60 @@ import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
 import { MetricId, SimulationCompartment, TenantId } from "./models/types";
 
 export type CoreView = keyof typeof CORE_VIEWS;
-export const CORE_VIEWS: Record<string, string> = {
+/**
+ * Maps from view names to root paths
+ */
+export const CORE_VIEWS = {
   community: "community",
   facilities: "facilities",
   goals: "goals",
   methodology: "methodology",
 } as const;
 export const CoreViewIdList = Object.keys(CORE_VIEWS);
+export type CoreViewRootPath = typeof CORE_VIEWS[CoreView];
+
+export const isValidCoreRootPath = (str: string): boolean => {
+  return Object.values(CORE_VIEWS).includes(str as CoreViewRootPath);
+};
 
 export type PathwaysView = keyof typeof PATHWAYS_VIEWS;
-export const PATHWAYS_VIEWS: Record<string, string> = {
+/**
+ * Maps from view names to root paths
+ */
+export const PATHWAYS_VIEWS = {
   system: "system",
   operations: "operations",
   methodology: "id-methodology",
   profile: "profile",
-  practices: "practices",
+  practices: "workflows",
 } as const;
-export const PathwaysViewList = Object.values(PATHWAYS_VIEWS);
+type PathwaysViewRootPath = typeof PATHWAYS_VIEWS[PathwaysView];
+
+export const isValidPathwaysRootPath = (str: string): boolean => {
+  return Object.values(PATHWAYS_VIEWS).includes(str as PathwaysViewRootPath);
+};
+
+export type ViewRootPath = CoreViewRootPath | PathwaysViewRootPath;
 
 export const CORE_PATHS: Record<string, string> = {
-  goals: "/goals",
-  communityExplore: "/community/explore",
-  communityProjections: "/community/projections",
-  communityPractices: "/community/practices/:entityId?",
-  facilitiesExplore: "/facilities/explore",
-  facilitiesProjections: "/facilities/projections",
-  methodology: "/methodology/:dashboard",
-  methodologyPractices: "/methodology/practices",
-  methodologyProjections: "/methodology/projections",
+  goals: `/${CORE_VIEWS.goals}`,
+  communityExplore: `/${CORE_VIEWS.community}/explore`,
+  communityProjections: `/${CORE_VIEWS.community}/projections`,
+  communityPractices: `/${CORE_VIEWS.community}/practices/:entityId?`,
+  facilitiesExplore: `/${CORE_VIEWS.facilities}/explore`,
+  facilitiesProjections: `/${CORE_VIEWS.facilities}/projections`,
+  methodology: `/${CORE_VIEWS.methodology}/:dashboard`,
+  methodologyPractices: `/${CORE_VIEWS.methodology}/practices`,
+  methodologyProjections: `/${CORE_VIEWS.methodology}/projections`,
 };
 
 export const PATHWAYS_PATHS: Record<string, string> = {
-  system: "/system/:pageId/:sectionId?",
-  operations: "/operations/:entityId?",
-  methodology: "/id-methodology/:dashboard",
-  methodologySystem: "/id-methodology/system",
-  methodologyOperations: "/id-methodology/operations",
-  practices: "/practices",
+  system: `/${PATHWAYS_VIEWS.system}/:pageId/:sectionId?`,
+  operations: `/${PATHWAYS_VIEWS.operations}/:entityId?`,
+  methodology: `/${PATHWAYS_VIEWS.methodology}/:dashboard`,
+  methodologySystem: `/${PATHWAYS_VIEWS.methodology}/system`,
+  methodologyOperations: `/${PATHWAYS_VIEWS.methodology}/operations`,
+  practices: `/${PATHWAYS_VIEWS.practices}`,
 };
 
 export type CorePage = keyof typeof CORE_PAGES;
@@ -77,6 +94,7 @@ export const PATHWAYS_PAGES = {
   supervisionToPrison: "supervisionToPrison",
 } as const;
 export const PathwaysPageIdList = Object.keys(PATHWAYS_PAGES);
+export type PathwaysPageRootPath = typeof PATHWAYS_PAGES[PathwaysPage];
 
 export type PathwaysSection = keyof typeof PATHWAYS_SECTIONS;
 export const PATHWAYS_SECTIONS: Record<string, string> = {
@@ -232,22 +250,22 @@ export const PRACTICES_PAGES: Record<OpportunityType, string> = {
 };
 export const PracticesPageIdList = Object.keys(PATHWAYS_PAGES);
 
-const pathnameToView: Record<string, string> = {
-  [CORE_PATHS.goals]: CORE_VIEWS.goals,
-  [CORE_PATHS.communityExplore]: CORE_VIEWS.community,
-  [CORE_PATHS.communityProjections]: CORE_VIEWS.community,
-  [CORE_PATHS.communityPractices]: CORE_VIEWS.community,
-  [CORE_PATHS.facilitiesExplore]: CORE_VIEWS.facilities,
-  [CORE_PATHS.facilitiesProjections]: CORE_VIEWS.facilities,
-  [CORE_PATHS.methodologyPractices]: CORE_VIEWS.methodology,
-  [CORE_PATHS.methodologyProjections]: CORE_VIEWS.methodology,
+const pathnameToView: Record<string, CoreView> = {
+  [CORE_PATHS.goals]: "goals",
+  [CORE_PATHS.communityExplore]: "community",
+  [CORE_PATHS.communityProjections]: "community",
+  [CORE_PATHS.communityPractices]: "community",
+  [CORE_PATHS.facilitiesExplore]: "facilities",
+  [CORE_PATHS.facilitiesProjections]: "facilities",
+  [CORE_PATHS.methodologyPractices]: "methodology",
+  [CORE_PATHS.methodologyProjections]: "methodology",
 };
 
 export function getCompartmentFromView(view: CoreView): SimulationCompartment {
   return view === CORE_VIEWS.community ? "SUPERVISION" : "INCARCERATION";
 }
 
-export function getViewFromPathname(pathname: string): string {
+export function getViewFromPathname(pathname: string): CoreView {
   return pathnameToView[pathname];
 }
 

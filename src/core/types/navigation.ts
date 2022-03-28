@@ -15,25 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PathwaysSection } from "../views";
+import { PathwaysPageRootPath, PathwaysSection, ViewRootPath } from "../views";
 
 export type RoutePermission = (string | any)[];
 
 export type NavigationSection = keyof Navigation;
 
-export type Navigation = {
-  goals?: string[];
-  community?: string[];
-  facilities?: string[];
-  methodology?: string[];
-  operations?: string[];
-  system?: string[];
-  libertyToPrison?: PathwaysSection[];
-  prison?: PathwaysSection[];
-  prisonToSupervision?: PathwaysSection[];
-  supervision?: PathwaysSection[];
-  supervisionToPrison?: PathwaysSection[];
-  supervisionToLiberty?: PathwaysSection[];
-  "id-methodology"?: string[];
-  practices?: string[];
-};
+export type Navigation = Partial<
+  Record<ViewRootPath, string[]> &
+    Record<PathwaysPageRootPath, PathwaysSection[]>
+>;

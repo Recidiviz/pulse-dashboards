@@ -22,7 +22,6 @@ import { TenantId } from "../models/types";
 import { PopulationFilterValues } from "../types/filters";
 import {
   CORE_PAGES,
-  CORE_VIEWS,
   CorePage,
   CoreView,
   DEFAULT_PATHWAYS_PAGE,
@@ -51,7 +50,7 @@ export default class CoreStore {
 
   pagePracticesStore: PagePracticesStore;
 
-  view: CoreView = CORE_VIEWS.community;
+  view: PathwaysView | CoreView = "community";
 
   page: PathwaysPage | CorePage = CORE_PAGES.practices;
 

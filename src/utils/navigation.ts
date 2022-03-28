@@ -57,10 +57,12 @@ export function getAllowedMethodology(
 }
 
 export function getPathWithoutParams(pathname: string): string {
-  const viewsAndPages = Object.values(CORE_VIEWS)
-    .concat(Object.values(CORE_PAGES))
-    .concat(Object.values(PATHWAYS_VIEWS))
-    .concat(Object.values(PATHWAYS_PAGES));
+  const viewsAndPages: string[] = [
+    ...Object.values(CORE_VIEWS),
+    ...Object.values(CORE_PAGES),
+    ...Object.values(PATHWAYS_VIEWS),
+    ...Object.values(PATHWAYS_PAGES),
+  ];
   const basePath = pathname
     .split("/")
     .filter((p) => viewsAndPages.includes(p))

@@ -27,7 +27,7 @@ import { useRootStore } from "../components/StoreProvider";
 import { useCoreStore } from "./CoreStoreProvider";
 import CoreViewNavigation from "./CoreViewNavigation";
 import PageNavigation from "./PageNavigation";
-import { CORE_VIEWS, getViewFromPathname } from "./views";
+import { getViewFromPathname, isValidCoreRootPath } from "./views";
 
 const CoreNavigation: React.FC = () => {
   const { currentTenantId, userStore } = useRootStore();
@@ -42,7 +42,7 @@ const CoreNavigation: React.FC = () => {
   Object.entries(navigationLayout).forEach((entry) => {
     const page = entry[0];
     const options = entry[1];
-    if (!Object.values(CORE_VIEWS).includes(page)) return;
+    if (!isValidCoreRootPath(page)) return;
     menu.push({
       label: page[0].toUpperCase() + page.slice(1),
       // @ts-ignore
