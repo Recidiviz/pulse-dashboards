@@ -67,49 +67,52 @@ export const mockDirector: CombinedUserRecord = {
   },
 };
 
-export const mockClients: ClientRecord[] = [
-  {
-    personName: {
-      givenNames: "TONYE",
-      middleName: "BARBY",
-      surname: "THOMPSON",
-    },
-    personExternalId: "100",
-    stateCode: "US_XX",
-    officerId: "OFFICER1",
-    supervisionType: "TN PAROLEE",
-    supervisionLevel: "STANDARD: MEDIUM",
-    supervisionLevelStart: dateToTimestamp("2019-10-26"),
-    address: "123 Main St, Nashville, TN 12345",
-    phoneNumber: "5555555678",
-    expirationDate: dateToTimestamp("2025-12-31"),
-    currentBalance: 0,
-    lastPaymentAmount: 50,
-    lastPaymentDate: dateToTimestamp("2021-11-15"),
-    specialConditions: "SPECIAL CONDITIONS TEST TEST",
-    compliantReportingEligible: null,
+export const ineligibleClient: ClientRecord = {
+  personName: {
+    givenNames: "TONYE",
+    middleName: "BARBY",
+    surname: "THOMPSON",
   },
-  {
-    personName: { givenNames: "LINET", surname: "HANSEN" },
-    personExternalId: "101",
-    stateCode: "US_XX",
-    officerId: "OFFICER1",
-    supervisionType: "TN PROBATIONER",
-    supervisionLevel: "STANDARD: MEDIUM",
-    supervisionLevelStart: dateToTimestamp("2019-12-20"),
-    address: "123 Main St, Nashville, TN 12345",
-    phoneNumber: "5555555678",
-    expirationDate: dateToTimestamp("2024-12-31"),
-    currentBalance: 221.88,
-    specialConditions: "EXAMPLE OF SPECIAL CONDITIONS HERE",
-    compliantReportingEligible: {
-      judicialDistrict: "A",
-      lastDrugNegative: [],
-      lastSanction: null,
-      offenseType: ["EXAMPLE"],
-    },
+  personExternalId: "100",
+  stateCode: "US_XX",
+  officerId: "OFFICER1",
+  supervisionType: "TN PAROLEE",
+  supervisionLevel: "STANDARD: MEDIUM",
+  supervisionLevelStart: dateToTimestamp("2020-12-20"),
+  address: "123 Main St, Nashville, TN 12345",
+  phoneNumber: "5555555678",
+  expirationDate: dateToTimestamp("2025-12-31"),
+  currentBalance: 0,
+  lastPaymentAmount: 50,
+  lastPaymentDate: dateToTimestamp("2021-11-15"),
+  specialConditions: "SPECIAL CONDITIONS TEST TEST",
+  compliantReportingEligible: null,
+};
+
+export const eligibleClient: ClientRecord = {
+  personName: { givenNames: "LINET", surname: "HANSEN" },
+  personExternalId: "101",
+  stateCode: "US_XX",
+  officerId: "OFFICER1",
+  supervisionType: "TN PROBATIONER",
+  supervisionLevel: "STANDARD: MEDIUM",
+  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  address: "123 Main St, Nashville, TN 12345",
+  phoneNumber: "5555555678",
+  expirationDate: dateToTimestamp("2024-12-31"),
+  currentBalance: 221.88,
+  specialConditions: "EXAMPLE OF SPECIAL CONDITIONS HERE",
+  compliantReportingEligible: {
+    eligibleLevelStart: dateToTimestamp("2019-12-20"),
+    judicialDistrict: "A",
+    drugScreensPastYear: [],
+    sanctionsPastYear: [],
+    currentOffenses: ["EXAMPLE"],
+    lifetimeOffensesExpired: ["EXAMPLE"],
   },
-];
+};
+
+export const mockClients = [ineligibleClient, eligibleClient];
 
 export const mockOfficers: StaffRecord[] = [
   {

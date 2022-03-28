@@ -29,6 +29,7 @@ import {
 import { RootStore } from "../../RootStore";
 import type { PracticesStore } from "..";
 import {
+  ineligibleClient,
   mockClients,
   mockDirector,
   mockOfficer,
@@ -84,7 +85,10 @@ async function waitForHydration(): Promise<void> {
 function populateClients(): void {
   runInAction(() => {
     practicesStore.clients = {
-      [mockClients[0].personExternalId]: new Client(mockClients[0], rootStore),
+      [ineligibleClient.personExternalId]: new Client(
+        ineligibleClient,
+        rootStore
+      ),
     };
   });
 }
@@ -314,7 +318,7 @@ test("no client selected", async () => {
 test("select existing client", () => {
   populateClients();
 
-  const idToSelect = mockClients[0].personExternalId;
+  const idToSelect = ineligibleClient.personExternalId;
 
   runInAction(() => {
     practicesStore.selectedOfficerIds = ["OFFICER1"];
@@ -332,7 +336,7 @@ test("select unfetched client", async () => {
 
   const idToSelect = "unknownId";
   mockGetClient.mockResolvedValue({
-    ...mockClients[0],
+    ...ineligibleClient,
     personExternalId: idToSelect,
   });
 

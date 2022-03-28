@@ -19,13 +19,12 @@ import { computed, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
-  ClientRecord,
   subscribeToClientUpdates,
   updateCompliantReportingCompleted,
   updateCompliantReportingDenial,
 } from "../../firestore";
 import { RootStore } from "../../RootStore";
-import { mockClients, mockClientUpdate, mockOfficer } from "../__fixtures__";
+import { eligibleClient, mockClientUpdate, mockOfficer } from "../__fixtures__";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../PracticesStore";
 import { dateToTimestamp } from "../utils";
@@ -44,14 +43,12 @@ const mockUpdateCompliantReportingCompleted = updateCompliantReportingCompleted 
   typeof updateCompliantReportingCompleted
 >;
 
-let clientRecord: ClientRecord;
 let client: Client;
 let rootStore: RootStore;
 
 beforeEach(() => {
-  [clientRecord] = mockClients;
   rootStore = new RootStore();
-  client = new Client(clientRecord, rootStore);
+  client = new Client(eligibleClient, rootStore);
 });
 
 afterEach(() => {
@@ -76,25 +73,6 @@ test("fetch client updates on demand", async () => {
   expect(mockSubscribeToClientUpdates).toHaveBeenCalled();
 
   await when(() => client.updates !== undefined);
-});
-
-test("fines and fees status", () => {
-  client.feeExemptions = "exemption test";
-
-  expect(client.finesAndFeesStatus).toBe("exemption test");
-
-  client.feeExemptions = undefined;
-
-  expect(client.finesAndFeesStatus).toBe("Fees paid in full");
-
-  client.currentBalance = 250.12;
-
-  expect(client.finesAndFeesStatus).toBe("Last payment: $50.00 on 11/15/21");
-
-  client.lastPaymentAmount = undefined;
-  client.lastPaymentDate = undefined;
-
-  expect(client.finesAndFeesStatus).toBe("Current balance: $250.12");
 });
 
 test("set compliant reporting ineligible", () => {
@@ -198,4 +176,50 @@ test("don't record a completion if user is ineligible", async () => {
   client.printCurrentForm();
 
   expect(mockUpdateCompliantReportingCompleted).not.toHaveBeenCalled();
+});
+
+test("compliant reporting review status", async () => {
+  let sendUpdate: any;
+
+  mockSubscribeToClientUpdates.mockImplementation((clientId, handleResults) => {
+    // get a reference to the sync function so we can call it repeatedly
+    sendUpdate = handleResults;
+    return jest.fn();
+  });
+
+  keepAlive(computed(() => [client.reviewStatus]));
+
+  sendUpdate(undefined);
+  expect(client.reviewStatus.compliantReporting).toBe("Needs referral");
+
+  sendUpdate({
+    someOtherKey: {},
+  });
+  expect(client.reviewStatus.compliantReporting).toBe("Needs referral");
+
+  sendUpdate({
+    compliantReporting: {
+      denial: {
+        reasons: ["test"],
+        updated: { by: "test", date: dateToTimestamp("2022-02-01") },
+      },
+    },
+  });
+  expect(client.reviewStatus.compliantReporting).toBe("Currently ineligible");
+
+  sendUpdate({
+    // for this case the contents don't matter as long as it exists
+    compliantReporting: {},
+  });
+  expect(client.reviewStatus.compliantReporting).toBe("Referral in progress");
+
+  sendUpdate({
+    compliantReporting: {
+      completed: {
+        by: "test",
+        date: {},
+      },
+    },
+  });
+  expect(client.reviewStatus.compliantReporting).toBe("Referral form complete");
 });

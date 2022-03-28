@@ -117,7 +117,7 @@ export const CompliantReportingDenial = observer(
       textColor: reasons?.length ? colors.text : undefined,
     };
 
-    let buttonText = "Not eligible?";
+    let buttonText = "Not currently eligible?";
     if (reasons?.length) {
       buttonText = `${reasons[0]}${
         reasons.length > 1 ? ` + ${reasons.length - 1} more` : ""

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { palette, spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import { Link, useRouteMatch } from "react-router-dom";
@@ -51,7 +52,7 @@ const ClientInfo = styled.div`
   margin-left: ${rem(spacing.sm)};
 `;
 
-const ClientID = styled.span`
+const ClientStatus = styled.span`
   color: ${palette.slate60};
   font-size: ${rem(12)};
 `;
@@ -68,11 +69,13 @@ const ClientListItem: React.FC<ClientListItemProps> = ({ client }) => {
         size={CLIENT_LIST_ITEM_AVATAR_SIZE}
       />
       <ClientInfo>
-        <ClientName>{client.displayName}</ClientName>
-        <ClientID>{client.id}</ClientID>
+        <ClientName>
+          {client.displayName} ({client.id})
+        </ClientName>
+        <ClientStatus>{client.reviewStatus.compliantReporting}</ClientStatus>
       </ClientInfo>
     </ClientListItemElement>
   );
 };
 
-export default ClientListItem;
+export default observer(ClientListItem);

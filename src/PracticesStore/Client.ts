@@ -28,9 +28,17 @@ import {
   updateCompliantReportingDenial,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
-import { formatAsCurrency, formatDate, toTitleCase } from "../utils";
+import { toTitleCase } from "../utils";
 import { OTHER_KEY } from "./PracticesStore";
 import { observableSubscription, SubscriptionValue } from "./utils";
+
+// these are the only values supported for now, limited to the Compliant Reporting flow
+type SupervisionLevel = "Medium" | "Minimum";
+
+const SUPERVISION_LEVEL_MAP: Record<string, SupervisionLevel> = {
+  "STANDARD: MEDIUM": "Medium",
+  "STANDARD: MINIMUM": "Minimum",
+};
 
 export class Client {
   rootStore: RootStore;
@@ -45,7 +53,7 @@ export class Client {
 
   supervisionType: string;
 
-  supervisionLevel: string;
+  supervisionLevel: SupervisionLevel;
 
   supervisionLevelStart: Date;
 
@@ -68,10 +76,13 @@ export class Client {
   nextSpecialConditionsCheck?: Date;
 
   compliantReportingEligible?: {
-    offenseType: string[];
+    eligibleLevelStart: Date;
+    currentOffenses: string[];
+    lifetimeOffensesExpired: string[];
     judicialDistrict: string;
-    drugNegativePastYear: Date[];
+    drugScreensPastYear: { result: string; date: Date }[];
     sanctionsPastYear: { type: string }[];
+    mostRecentArrestCheck?: Date;
   };
 
   private fetchedUpdates: SubscriptionValue<ClientUpdateRecord>;
@@ -84,6 +95,8 @@ export class Client {
       setFormIsPrinting: true,
       printCurrentForm: true,
       currentUserEmail: true,
+      eligibilityStatus: true,
+      reviewStatus: true,
     });
 
     this.rootStore = rootStore;
@@ -93,7 +106,7 @@ export class Client {
     this.fullName = record.personName;
     this.officerId = record.officerId;
     this.supervisionType = toTitleCase(record.supervisionType);
-    this.supervisionLevel = toTitleCase(record.supervisionLevel);
+    this.supervisionLevel = SUPERVISION_LEVEL_MAP[record.supervisionLevel];
     this.supervisionLevelStart = record.supervisionLevelStart.toDate();
     this.address = record.address;
     this.rawPhoneNumber = record.phoneNumber;
@@ -108,14 +121,19 @@ export class Client {
     const { compliantReportingEligible } = record;
     if (compliantReportingEligible) {
       this.compliantReportingEligible = {
-        offenseType: compliantReportingEligible.offenseType,
+        eligibleLevelStart: compliantReportingEligible.eligibleLevelStart.toDate(),
+        currentOffenses: compliantReportingEligible.currentOffenses,
+        lifetimeOffensesExpired:
+          compliantReportingEligible.lifetimeOffensesExpired,
         judicialDistrict: compliantReportingEligible.judicialDistrict,
-        drugNegativePastYear: compliantReportingEligible.lastDrugNegative.map(
-          (t) => t.toDate()
+        drugScreensPastYear: compliantReportingEligible.drugScreensPastYear.map(
+          ({ result, date }) => ({ result, date: date.toDate() })
         ),
-        sanctionsPastYear: compliantReportingEligible.lastSanction
-          ? [{ type: compliantReportingEligible.lastSanction }]
-          : [],
+        sanctionsPastYear:
+          compliantReportingEligible.sanctionsPastYear.map((type) => ({
+            type,
+          })) || [],
+        mostRecentArrestCheck: compliantReportingEligible.mostRecentArrestCheck?.toDate(),
       };
     }
 
@@ -145,22 +163,6 @@ export class Client {
     return this.fetchedUpdates.current();
   }
 
-  /**
-   * Coalesces multiple fee-related fields into a single controlling status
-   */
-  get finesAndFeesStatus(): string {
-    if (this.feeExemptions) return this.feeExemptions;
-
-    if (!this.currentBalance) return "Fees paid in full";
-
-    if (this.lastPaymentAmount && this.lastPaymentDate)
-      return `Last payment: ${formatAsCurrency(
-        this.lastPaymentAmount as number
-      )} on ${formatDate(this.lastPaymentDate as Date)}`;
-
-    return `Current balance: ${formatAsCurrency(this.currentBalance)}`;
-  }
-
   get eligibilityStatus(): Record<OpportunityType, boolean> {
     const compliantReporting =
       (this.updates?.compliantReporting?.denial?.reasons?.length || 0) === 0;
@@ -168,6 +170,26 @@ export class Client {
     return {
       compliantReporting,
     };
+  }
+
+  get reviewStatus(): Record<OpportunityType, string> {
+    let compliantReporting = "Needs referral";
+
+    if (!this.eligibilityStatus.compliantReporting) {
+      compliantReporting = "Currently ineligible";
+    } else {
+      const updates = this.updates?.compliantReporting;
+
+      if (updates) {
+        if (updates.completed) {
+          compliantReporting = "Referral form complete";
+        } else {
+          compliantReporting = "Referral in progress";
+        }
+      }
+    }
+
+    return { compliantReporting };
   }
 
   get currentUserEmail(): string | null | undefined {

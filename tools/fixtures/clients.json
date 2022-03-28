@@ -11,7 +11,7 @@
     "district": "DISTRICT 50",
     "supervisionType": "TN PAROLEE",
     "supervisionLevel": "STANDARD: MEDIUM",
-    "supervisionLevelStart": "2019-10-26",
+    "supervisionLevelStart": "2021-10-26",
     "address": "123 Main St, Nashville, TN 12345",
     "phoneNumber": "5555555678",
     "expirationDate": "2025-12-31",
@@ -20,14 +20,17 @@
     "lastPaymentDate": "2021-11-15",
     "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
     "compliantReportingEligible": {
+      "eligibleLevelStart": "2019-10-26",
       "judicialDistrict": "17",
-      "offenseType": [
+      "lifetimeOffensesExpired": ["HABITUAL TRAFFIC OFFENDER"],
+      "currentOffenses": [
         "SALVIA DIVINORUM A PROD/MFG/DIST/POSS",
         "ARSON",
         "ATT FRAUD INSURANCE CLAIM - $60,000 OR MORE"
       ],
-      "lastDrugNegative": ["2022-01-26"],
-      "lastSanction": null
+      "drugScreensPastYear": [{ "result": "DRUN", "date": "2022-01-26" }],
+      "sanctionsPastYear": [],
+      "mostRecentArrestCheck": "2022-01-03"
     }
   },
   {
@@ -48,13 +51,20 @@
     "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
     "nextSpecialConditionsCheck": "2022-12-31",
     "compliantReportingEligible": {
+      "eligibleLevelStart": "2019-12-20",
       "judicialDistrict": "14",
-      "offenseType": [
+      "lifetimeOffensesExpired": [],
+      "currentOffenses": [
         "DUI, 4TH OFFENSE & SUBSEQUENT",
-        "POSS FIREARM W/PRIOR VIOL/DEAD WPN CONV"
+        "POSS FIREARM W/PRIOR VIOL/DEAD WPN CONV",
+        "AGGRAV ASLT WEAPON (BEER BOTTLE), FLIGHT-ESCA"
       ],
-      "lastDrugNegative": ["2021-09-17", "2022-02-02"],
-      "lastSanction": "IPDS"
+      "drugScreensPastYear": [
+        { "result": "DRUN", "date": "2021-09-17" },
+        { "result": "DRUM", "date": "2022-02-02" }
+      ],
+      "sanctionsPastYear": ["IPDS"],
+      "mostRecentArrestCheck": "2022-01-03"
     }
   },
   {
@@ -86,8 +96,8 @@
     "officerId": "OFFICER2",
     "district": "DISTRICT 50",
     "supervisionType": "DIVERSION",
-    "supervisionLevel": "STANDARD: MEDIUM",
-    "supervisionLevelStart": "2020-04-07",
+    "supervisionLevel": "STANDARD: MINIMUM",
+    "supervisionLevelStart": "2022-01-07",
     "address": "999 Main St, Nashville, TN 12345",
     "phoneNumber": "5555555678",
     "expirationDate": "2025-12-31",
@@ -96,10 +106,16 @@
     "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
     "nextSpecialConditionsCheck": "2022-12-31",
     "compliantReportingEligible": {
+      "eligibleLevelStart": "2020-04-07",
       "judicialDistrict": null,
-      "offenseType": [],
-      "lastDrugNegative": ["2021-11-26"],
-      "lastSanction": "OPRD"
+      "lifetimeOffensesExpired": ["TNCARE FRAUD"],
+      "currentOffenses": [
+        "FORGERY - COUNTERFEITING",
+        " BRIBERY OF A PUBLIC SERVANT"
+      ],
+      "drugScreensPastYear": [{ "result": "DRUX", "date": "2021-11-26" }],
+      "sanctionsPastYear": ["OPRD"],
+      "mostRecentArrestCheck": "2022-01-03"
     }
   },
   {
@@ -112,7 +128,6 @@
     "stateCode": "US_TN",
     "officerId": "OFFICER2",
     "district": "DISTRICT 50",
-
     "supervisionType": "DETERMINATE RLSE PROBATIONER",
     "supervisionLevel": "STANDARD: MEDIUM",
     "supervisionLevelStart": "2020-05-19",
@@ -148,10 +163,12 @@
     "specialConditions": "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
     "nextSpecialConditionsCheck": "2022-12-31",
     "compliantReportingEligible": {
+      "eligibleLevelStart": "2021-02-11",
       "judicialDistrict": "14",
-      "offenseType": ["FRAUD", "BURGLARY-OTHER THAN HABITATION"],
-      "lastDrugNegative": ["2022-01-26"],
-      "lastSanction": null
+      "lifetimeOffensesExpired": [],
+      "currentOffenses": ["FRAUD", "BURGLARY-OTHER THAN HABITATION"],
+      "drugScreensPastYear": [{ "result": "DRUN", "date": "2022-01-26" }],
+      "sanctionsPastYear": []
     }
   }
 ]

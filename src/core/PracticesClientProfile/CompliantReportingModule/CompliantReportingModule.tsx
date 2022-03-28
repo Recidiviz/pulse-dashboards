@@ -28,10 +28,9 @@ import { darken, rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { formatDate } from "../../../utils";
-import { formatRelativeToNow } from "../../utils/timePeriod";
 import { ClientProfileProps } from "../types";
 import { CompliantReportingDenial } from "./CompliantReportingDenial";
+import { getEligibilityCriteria } from "./eligibilityCriteria";
 import { useStatusColors } from "./utils";
 
 const Wrapper = styled.div<{ background: string; border: string }>`
@@ -82,80 +81,23 @@ const PrintButton = styled(Button)<{ buttonFill: string }>`
   }
 `;
 
+const Title = observer(({ client }: ClientProfileProps) => {
+  return (
+    <div>Compliant Reporting: {client.reviewStatus.compliantReporting}</div>
+  );
+});
+
 export const CompliantReportingModule = observer(
   ({ client }: ClientProfileProps) => {
     if (!client.compliantReportingEligible) return null;
-
-    const criteria = [
-      {
-        text: `Current supervision level: ${client.supervisionLevel}`,
-        tooltip:
-          "Policy requirement: Currently on medium or minimum supervision.",
-      },
-      {
-        text: `Time on ${client.supervisionLevel}: ${formatRelativeToNow(
-          client.supervisionLevelStart
-        )}`,
-        tooltip: `Policy requirement: On minimum supervision level for 1 year or medium level 
-          for 18 months. Includes people who moved from minimum to medium in the last 18 months
-          but have been on medium or less for at least 18 months`,
-      },
-      {
-        text: `Arrests or sanctions in the past year: ${
-          client.compliantReportingEligible.sanctionsPastYear
-            .map((s) => s.type)
-            .join(", ") || "None"
-        }`,
-        tooltip:
-          "Policy requirement: No arrest or sanctions higher than Level 1 in the last 1 year.",
-      },
-      {
-        text: `Fee payments occurring: ${client.finesAndFeesStatus}`,
-        tooltip: `Policy requirement: Fees paid in full or partial payments are occurring in accordance 
-          with payment plan. An offender with fee arrearages of $2,000 or less must make 3 payments
-          on consecutive months.`,
-      },
-      {
-        text: `Negative drug screens in last 12 months: ${
-          client.compliantReportingEligible.drugNegativePastYear
-            .map((d) => formatDate(d))
-            .join(", ") || "None"
-        }`,
-        tooltip: `Policy requirement: Passed drug screen in the last 12 months for non drug offenders. 
-          Passed 2 drug screens in last 12 months for drug offenders, most recent is negative.`,
-      },
-      {
-        text: `Special conditions: ${
-          client.nextSpecialConditionsCheck ? "" : "No"
-        } SPE note due ${
-          client.nextSpecialConditionsCheck
-            ? formatDate(client.nextSpecialConditionsCheck)
-            : ""
-        }`,
-        tooltip: "Policy requirement: Special conditions are current.",
-      },
-      {
-        text: "Reporting: No standards overdue",
-        tooltip:
-          "Policy requirement: Has reported as instructed without incident unless excused and documented by the officer.",
-      },
-      {
-        text: `Offense type: ${
-          client.compliantReportingEligible.offenseType.join("; ") || "None"
-        }`,
-        tooltip: `Policy requirement: Offense type not domestic abuse or sexual assault, 
-          DUI in past 5 years, not crime against person that resulted in physical bodily harm, 
-          not crime where victim was under 18.`,
-      },
-    ];
 
     const colors = useStatusColors(client);
 
     return (
       <Wrapper {...colors}>
-        <div>Compliant Reporting</div>
+        <Title client={client} />
         <CriteriaList style={{ color: colors.text }}>
-          {criteria.map(({ text, tooltip }) => (
+          {getEligibilityCriteria(client).map(({ text, tooltip }) => (
             <TooltipTrigger contents={tooltip} key={text}>
               <Criterion>
                 <CriterionIcon

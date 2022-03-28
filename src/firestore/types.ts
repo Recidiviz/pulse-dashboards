@@ -88,10 +88,13 @@ export type ClientRecord = {
 };
 
 export type CompliantReportingEligibleRecord = {
-  offenseType: string[];
+  eligibleLevelStart: Timestamp;
+  currentOffenses: string[];
+  lifetimeOffensesExpired: string[];
   judicialDistrict: string;
-  lastDrugNegative: Timestamp[];
-  lastSanction: string | null;
+  drugScreensPastYear: { result: string; date: Timestamp }[];
+  sanctionsPastYear: string[];
+  mostRecentArrestCheck?: Timestamp;
 };
 
 /**

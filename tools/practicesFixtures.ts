@@ -46,9 +46,20 @@ async function loadClientsFixture() {
     const { compliantReportingEligible } = record;
 
     if (compliantReportingEligible) {
-      compliantReportingEligible.lastDrugNegative = compliantReportingEligible.lastDrugNegative.map(
-        parseISO
+      compliantReportingEligible.drugScreensPastYear = compliantReportingEligible.drugScreensPastYear.map(
+        ({ result, date }: Record<string, string>) => ({
+          result,
+          date: parseISO(date),
+        })
       );
+      compliantReportingEligible.eligibleLevelStart = parseISO(
+        compliantReportingEligible.eligibleLevelStart
+      );
+      if (compliantReportingEligible.mostRecentArrestCheck) {
+        compliantReportingEligible.mostRecentArrestCheck = parseISO(
+          compliantReportingEligible.mostRecentArrestCheck
+        );
+      }
     }
 
     bulkWriter.create(
