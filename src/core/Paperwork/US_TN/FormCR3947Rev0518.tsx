@@ -38,28 +38,31 @@ import {
 } from "./styles";
 import { FormDataType } from "./types";
 
-interface OffenseTypeInputProps {
+interface CurrentOffenseInputProps {
   data?: FormDataType;
   index: number;
 }
 
-const OffenseTypeInput: React.FC<OffenseTypeInputProps> = ({ data, index }) => {
+const CurrentOffenseInput: React.FC<CurrentOffenseInputProps> = ({
+  data,
+  index,
+}) => {
   return (
     <FormInput
       placeholder="Offenses."
-      name="offenseType"
-      getValue={(offenseType) => {
-        return offenseType?.[index];
+      name="currentOffenses"
+      getValue={(currentOffenses) => {
+        return currentOffenses?.[index];
       }}
-      buildValue={(offenseType, value) => {
-        const newOffenseType = [...offenseType];
+      buildValue={(currentOffenses, value) => {
+        const newCurrentOffense = [...currentOffenses];
         for (let i = 0; i < 5; i += 1) {
-          if (typeof newOffenseType[i] === "undefined") {
-            newOffenseType[i] = "";
+          if (typeof newCurrentOffense[i] === "undefined") {
+            newCurrentOffense[i] = "";
           }
         }
-        newOffenseType[index] = value;
-        return newOffenseType;
+        newCurrentOffense[index] = value;
+        return newCurrentOffense;
       }}
     />
   );
@@ -192,11 +195,11 @@ const FormCR3947Rev0518: React.FC = () => {
                 </Item>
               </Item>
               <Grid rows="repeat(5, 1fr)">
-                <OffenseTypeInput index={0} />
-                <OffenseTypeInput index={1} />
-                <OffenseTypeInput index={2} />
-                <OffenseTypeInput index={3} />
-                <OffenseTypeInput index={4} />
+                <CurrentOffenseInput index={0} />
+                <CurrentOffenseInput index={1} />
+                <CurrentOffenseInput index={2} />
+                <CurrentOffenseInput index={3} />
+                <CurrentOffenseInput index={4} />
               </Grid>
             </Grid>
             <Grid columns="75px 1fr 1fr 1fr 1fr">

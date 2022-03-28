@@ -8,22 +8,17 @@ export const transform = (
 ): Partial<TransformedCompliantReportingReferral> => {
   return {
     ...data,
-    specialConditionsCounselingAngerManagementComplete: data.specialConditionsCounselingAngerManagementCompleteDate
-      ? "1"
-      : "0",
-    specialConditionsCounselingMentalHealthComplete: data.specialConditionsCounselingMentalHealthCompleteDate
-      ? "1"
-      : "0",
-    restitutionMonthlyPaymentTo: JSON.parse(
-      data.restitutionMonthlyPaymentTo || "[]"
-    ).join(" "),
+    specialConditionsCounselingAngerManagementComplete: !!data.specialConditionsCounselingAngerManagementCompleteDate,
+    specialConditionsCounselingMentalHealthComplete: !!data.specialConditionsCounselingMentalHealthCompleteDate,
+
+    restitutionMonthlyPaymentTo: data.restitutionMonthlyPaymentTo.join("; "),
+
     clientFullName: `${data.clientFirstName} ${data.clientLastName}`,
     poFullName: `${data.poFirstName} ${data.poLastName}`,
-    offenseType: JSON.parse(data.offenseType),
     sentenceLengthDaysText: `${data.sentenceLengthDays} days`,
     specialConditionsAlcDrugTreatmentIsInpatient:
-      data.specialConditionsAlcDrugTreatmentInOut === "INPATIENT" ? "1" : "0",
+      data.specialConditionsAlcDrugTreatmentInOut === "INPATIENT",
     specialConditionsAlcDrugTreatmentIsOutpatient:
-      data.specialConditionsAlcDrugTreatmentInOut === "OUTPATIENT" ? "1" : "0",
+      data.specialConditionsAlcDrugTreatmentInOut === "OUTPATIENT",
   };
 };

@@ -18,6 +18,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../../components/StoreProvider";
+import { updateCompliantReportingDraft } from "../../../firestore";
 import { Checkbox } from "./styles";
 import { FormDataType } from "./types";
 
@@ -34,24 +35,26 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
   }
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!practicesStore.selectedClient || !practicesStore.user) {
+    const client = practicesStore.selectedClient;
+    if (!client || !practicesStore.user) {
       event.preventDefault();
       return;
     }
 
-    practicesStore.selectedClient.setCompliantReportingReferralDataField(
-      name,
-      event.target.checked ? "1" : "0"
-    );
+    client.setCompliantReportingReferralDataField(name, event.target.checked);
+
+    updateCompliantReportingDraft(client.currentUserName || "user", client.id, {
+      [name]: event.target.checked,
+    });
   };
 
   return (
     <Checkbox
       {...props}
       checked={
-        practicesStore.selectedClient.getCompliantReportingReferralDataField(
+        !!practicesStore.selectedClient.getCompliantReportingReferralDataField(
           name
-        ) === "1"
+        )
       }
       id={name}
       name={name}
