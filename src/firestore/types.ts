@@ -75,25 +75,25 @@ export type ClientRecord = {
   personName: FullName;
   officerId: string;
   supervisionType: string;
-  supervisionLevel: string;
-  supervisionLevelStart: Timestamp;
-  address: string;
-  phoneNumber: string;
-  expirationDate: Timestamp;
+  supervisionLevel?: string;
+  supervisionLevelStart?: Timestamp;
+  address?: string;
+  phoneNumber?: string;
+  expirationDate?: Timestamp;
   currentBalance: number;
   lastPaymentAmount?: number;
   lastPaymentDate?: Timestamp;
   feeExemptions?: string;
   specialConditions: string;
   nextSpecialConditionsCheck?: Timestamp;
-  compliantReportingEligible: CompliantReportingEligibleRecord | null;
+  compliantReportingEligible?: CompliantReportingEligibleRecord;
 };
 
 export type CompliantReportingEligibleRecord = {
   eligibleLevelStart: Timestamp;
   currentOffenses: string[];
   lifetimeOffensesExpired: string[];
-  judicialDistrict: string;
+  judicialDistrict: string | null;
   drugScreensPastYear: { result: string; date: Timestamp }[];
   sanctionsPastYear: string[];
   mostRecentArrestCheck?: Timestamp;

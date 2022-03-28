@@ -86,7 +86,6 @@ export const ineligibleClient: ClientRecord = {
   lastPaymentAmount: 50,
   lastPaymentDate: dateToTimestamp("2021-11-15"),
   specialConditions: "SPECIAL CONDITIONS TEST TEST",
-  compliantReportingEligible: null,
 };
 
 export const eligibleClient: ClientRecord = {

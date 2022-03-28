@@ -40,8 +40,10 @@ import {
 import { OTHER_KEY } from "./PracticesStore";
 import { observableSubscription, SubscriptionValue } from "./utils";
 
+export const UNKNOWN = "Unknown" as const;
+
 // these are the only values supported for now, limited to the Compliant Reporting flow
-type SupervisionLevel = "Medium" | "Minimum";
+type SupervisionLevel = "Medium" | "Minimum" | typeof UNKNOWN;
 
 const SUPERVISION_LEVEL_MAP: Record<string, SupervisionLevel> = {
   "STANDARD: MEDIUM": "Medium",
@@ -63,13 +65,13 @@ export class Client {
 
   supervisionLevel: SupervisionLevel;
 
-  supervisionLevelStart: Date;
+  supervisionLevelStart?: Date;
 
   address: string;
 
-  private rawPhoneNumber: string;
+  private rawPhoneNumber?: string;
 
-  expirationDate: Date;
+  expirationDate?: Date;
 
   currentBalance: number;
 
@@ -121,11 +123,13 @@ export class Client {
     this.fullName = record.personName;
     this.officerId = record.officerId;
     this.supervisionType = toTitleCase(record.supervisionType);
-    this.supervisionLevel = SUPERVISION_LEVEL_MAP[record.supervisionLevel];
-    this.supervisionLevelStart = record.supervisionLevelStart.toDate();
-    this.address = record.address;
+    this.supervisionLevel = record.supervisionLevel
+      ? SUPERVISION_LEVEL_MAP[record.supervisionLevel]
+      : UNKNOWN;
+    this.supervisionLevelStart = record.supervisionLevelStart?.toDate();
+    this.address = record.address || UNKNOWN;
     this.rawPhoneNumber = record.phoneNumber;
-    this.expirationDate = record.expirationDate.toDate();
+    this.expirationDate = record.expirationDate?.toDate();
     this.currentBalance = record.currentBalance;
     this.lastPaymentDate = record.lastPaymentDate?.toDate();
     this.lastPaymentAmount = record.lastPaymentAmount;
@@ -143,7 +147,8 @@ export class Client {
         currentOffenses: compliantReportingEligible.currentOffenses,
         lifetimeOffensesExpired:
           compliantReportingEligible.lifetimeOffensesExpired,
-        judicialDistrict: compliantReportingEligible.judicialDistrict,
+        judicialDistrict:
+          compliantReportingEligible.judicialDistrict ?? UNKNOWN,
         drugScreensPastYear: compliantReportingEligible.drugScreensPastYear.map(
           ({ result, date }) => ({ result, date: date.toDate() })
         ),
@@ -183,7 +188,9 @@ export class Client {
   }
 
   get phoneNumber(): string {
-    return formatPhone("(NNN) NNN-NNNN", this.rawPhoneNumber);
+    return this.rawPhoneNumber
+      ? formatPhone("(NNN) NNN-NNNN", this.rawPhoneNumber)
+      : UNKNOWN;
   }
 
   get updates(): ClientUpdateRecord | undefined {

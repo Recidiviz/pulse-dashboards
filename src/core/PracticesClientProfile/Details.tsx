@@ -22,6 +22,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { UNKNOWN } from "../../PracticesStore/Client";
 import { formatAsCurrency, formatDate } from "../../utils";
 import PracticesOfficerName from "../PracticesOfficerName";
 import { ClientProfileProps } from "./types";
@@ -68,7 +69,9 @@ export const Details = observer(({ client }: ClientProfileProps) => {
         <DetailsList>
           <DetailsSubheading>Expiration</DetailsSubheading>
           <DetailsContent>
-            {format(client.expirationDate, "MMM d, yyyy")}
+            {client.expirationDate
+              ? format(client.expirationDate, "MMM d, yyyy")
+              : UNKNOWN}
           </DetailsContent>
 
           <DetailsSubheading>Assigned to</DetailsSubheading>

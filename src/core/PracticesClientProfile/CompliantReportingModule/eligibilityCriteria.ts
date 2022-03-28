@@ -44,7 +44,10 @@ export function getEligibilityCriteria(
   let requiredSupervisionLevel = `${supervisionLevel.toLowerCase()} supervision`;
   // if eligible start is not the same as current level start,
   // this indicates they moved up or down a level but qualify under medium
-  if (!isEqual(supervisionLevelStart, eligibleLevelStart)) {
+  if (
+    supervisionLevelStart &&
+    !isEqual(supervisionLevelStart, eligibleLevelStart)
+  ) {
     requiredSupervisionLevel = "medium supervision or less";
   }
 
