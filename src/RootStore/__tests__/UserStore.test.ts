@@ -22,12 +22,14 @@ import {
   PATHWAYS_SECTIONS,
   PATHWAYS_VIEWS,
 } from "../../core/views";
+import { authenticate } from "../../firestore";
 import tenants from "../../tenants";
 import RootStore from "..";
 import { TenantId } from "../types";
 import UserStore from "../UserStore";
 
 jest.mock("@auth0/auth0-spa-js");
+jest.mock("../../firestore");
 
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 
@@ -37,6 +39,7 @@ const mockHandleRedirectCallback = jest.fn();
 const mockIsAuthenticated = jest.fn();
 const mockLoginWithRedirect = jest.fn();
 const mockGetTokenSilently = jest.fn();
+const mockFirestoreAuthenticate = authenticate as jest.Mock;
 
 const tenantId = "US_MO";
 const metadataField = `${METADATA_NAMESPACE}app_metadata`;
@@ -104,6 +107,7 @@ test("Invalid state thrown in authorize redirects to login", async () => {
 test("authorized when authenticated", async () => {
   mockIsAuthenticated.mockResolvedValue(true);
   mockGetUser.mockResolvedValue({ email_verified: true, ...metadata });
+  mockFirestoreAuthenticate.mockResolvedValue({});
 
   const store = new UserStore({
     authSettings: testAuthSettings,
