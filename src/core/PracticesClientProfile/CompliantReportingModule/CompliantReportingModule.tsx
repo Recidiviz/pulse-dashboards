@@ -28,6 +28,7 @@ import { darken, rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import type { Client } from "../../../PracticesStore/Client";
 import { ClientProfileProps } from "../types";
 import { CompliantReportingDenial } from "./CompliantReportingDenial";
 import { getEligibilityCriteria } from "./eligibilityCriteria";
@@ -87,6 +88,18 @@ const Title = observer(({ client }: ClientProfileProps) => {
   );
 });
 
+const getPrintText = (client: Client) => {
+  if (client.formIsPrinting) {
+    return "Printing PDF...";
+  }
+
+  if (client.updates?.compliantReporting?.completed) {
+    return "Reprint PDF";
+  }
+
+  return "Print PDF";
+};
+
 export const CompliantReportingModule = observer(
   ({ client }: ClientProfileProps) => {
     if (!client.compliantReportingEligible) return null;
@@ -118,8 +131,7 @@ export const CompliantReportingModule = observer(
               buttonFill={colors.buttonFill}
               onClick={() => client.printCurrentForm()}
             >
-              {client.updates?.compliantReporting?.completed ? "Rep" : "P"}rint
-              PDF
+              {getPrintText(client)}
             </PrintButton>
           </div>
           <CompliantReportingDenial client={client} />
