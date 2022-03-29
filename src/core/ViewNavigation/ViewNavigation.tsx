@@ -27,7 +27,24 @@ import { ReactComponent as PracticesLogo } from "../../assets/static/images/prac
 import UserAvatar from "../../components/UserAvatar/UserAvatar";
 import useIsMobile from "../../hooks/useIsMobile";
 import { useCoreStore } from "../CoreStoreProvider";
+import { PRACTICES_METHODOLOGY_URL } from "../utils/constants";
 import { PATHWAYS_VIEWS } from "../views";
+
+const ViewTooltip: React.FC<{ title: string; body?: string }> = ({
+  children,
+  title,
+  body,
+}) => {
+  return (
+    <div className="ViewNavigation__tooltip-box">
+      {children}
+      <div className="ViewNavigation__tooltip">
+        <div className="ViewNavigation__tooltip-header">{title}</div>
+        {body && <div className="ViewNavigation__tooltip-body">{body}</div>}
+      </div>
+    </div>
+  );
+};
 
 const ViewNavigation: React.FC = ({ children }) => {
   const isMobile = useIsMobile();
@@ -95,6 +112,21 @@ const ViewNavigation: React.FC = ({ children }) => {
   };
 
   const MethodologyLink = () => {
+    const linkContents = (
+      <>
+        <MethodologyLogo className="ViewNavigation__icon" />
+        <div className="ViewNavigation__navlink-heading">Methodology</div>
+      </>
+    );
+
+    if (view === PATHWAYS_VIEWS.practices) {
+      return (
+        <a className="ViewNavigation__navlink" href={PRACTICES_METHODOLOGY_URL}>
+          {linkContents}
+        </a>
+      );
+    }
+
     const methodologyView =
       view === PATHWAYS_VIEWS.profile || view === PATHWAYS_VIEWS.methodology
         ? PATHWAYS_VIEWS.system
@@ -107,8 +139,7 @@ const ViewNavigation: React.FC = ({ children }) => {
           search: `?stateCode=${currentTenantId}`,
         }}
       >
-        <MethodologyLogo className="ViewNavigation__icon" />
-        <div className="ViewNavigation__navlink-heading">Methodology</div>
+        {linkContents}
       </NavLink>
     );
   };
@@ -138,43 +169,35 @@ const ViewNavigation: React.FC = ({ children }) => {
 
   return (
     <aside className="ViewNavigation">
-      <div className="ViewNavigation__tooltip-box">
+      <ViewTooltip
+        title={currentTenantId === "US_TN" ? "Pathways" : "System-Level Trends"}
+        body="A real-time map of the corrections system and how people are moving through it"
+      >
         <PathwaysLink />
-        <div className="ViewNavigation__tooltip">
-          <h5 className="ViewNavigation__tooltip-header">
-            System-Level Trends
-          </h5>
-          {/* prettier-ignore */}
-          <div className="ViewNavigation__tooltip-body">
-            A real-time map of the corrections system and how people are moving through it
-          </div>
-        </div>
-      </div>
-      <div className="ViewNavigation__tooltip-box">
+      </ViewTooltip>
+
+      <ViewTooltip
+        title="Operational Metrics"
+        body="A birds-eye view of staff- and region-level trends"
+      >
         <PracticesLink />
-        <div className="ViewNavigation__tooltip">
-          <h5 className="ViewNavigation__tooltip-header">
-            Operational Metrics
-          </h5>
-          <div className="ViewNavigation__tooltip-body">
-            A birds-eye view of staff- and region-level trends
-          </div>
-        </div>
-      </div>
-      <PracticesV2Link />
+      </ViewTooltip>
+
+      <ViewTooltip
+        title="Workflows"
+        body="A tool to identify and take action on opportunities to improve outcomes"
+      >
+        <PracticesV2Link />
+      </ViewTooltip>
+
       <div className="ViewNavigation__bottom">
-        <div className="ViewNavigation__tooltip-box">
+        <ViewTooltip title="Methodology">
           <MethodologyLink />
-          <div className="ViewNavigation__tooltip">
-            <div className="ViewNavigation__tooltip-header">Methodology</div>
-          </div>
-        </div>
-        <div className="ViewNavigation__tooltip-box">
+        </ViewTooltip>
+
+        <ViewTooltip title="Profile">
           <ProfileNavLink />
-          <div className="ViewNavigation__tooltip">
-            <div className="ViewNavigation__tooltip-header">Profile</div>
-          </div>
-        </div>
+        </ViewTooltip>
       </div>
     </aside>
   );
