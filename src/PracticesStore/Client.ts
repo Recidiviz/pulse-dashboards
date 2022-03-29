@@ -316,7 +316,7 @@ export class Client {
     const prefillSourceInformation = this.fetchedCompliantReportingReferral?.current();
 
     if (prefillSourceInformation) {
-      return transform(prefillSourceInformation);
+      return transform(this, prefillSourceInformation);
     }
 
     return {};
