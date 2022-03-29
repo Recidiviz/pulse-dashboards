@@ -586,10 +586,10 @@ export const IdPopulationFilterOptions: PopulationFilters = {
 
 export const TnPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
-  [FILTER_TYPES.LEGAL_STATUS]: {
-    type: FILTER_TYPES.LEGAL_STATUS,
+  [FILTER_TYPES.ADMISSION_REASON]: {
+    type: FILTER_TYPES.ADMISSION_REASON,
     title: "Admission Reason",
-    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
+    setFilters: setFilters(FILTER_TYPES.ADMISSION_REASON),
     options: [
       { label: "All", value: "ALL" },
       { label: "New admission", value: "NEW_ADMISSION" },
@@ -599,12 +599,9 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       },
       { label: "Transfer", value: "TRANSFER" },
       { label: "Revocation", value: "REVOCATION" },
-      {
-        label: "Return from temporary release",
-        value: "RETURN_FROM_TEMPORARY_RELEASE",
-      },
-      { label: "Sanction", value: "SANCTION_ADMISSION" },
       { label: "Return from escape", value: "RETURN_FROM_ESCAPE" },
+      { label: "Admitted in error", value: "ADMITTED_IN_ERROR" },
+      { label: "Status change", value: "STATUS_CHANGE" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -750,13 +747,12 @@ export const TnPopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.SUPERVISION_TYPE]: {
     type: FILTER_TYPES.SUPERVISION_TYPE,
     title: "Supervision Type",
-    isSingleSelect: true,
     setFilters: setFilters(FILTER_TYPES.SUPERVISION_TYPE),
     options: [
       { label: "All", value: "ALL" },
       { label: "Probation", value: "PROBATION" },
       { label: "Parole", value: "PAROLE" },
-      { label: "Absconsion", value: "ABSCONSION" },
+      { label: "Community confinement", value: "COMMUNITY_CONFINEMENT" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];

@@ -201,7 +201,7 @@ export default class FiltersStore {
         : prisonFiltersOrder;
 
     return order.filter((item: EnabledFilter) =>
-      metric.filters.enabledFilters.includes(item)
+      metric.filters?.enabledFilters.includes(item)
     );
   }
 
