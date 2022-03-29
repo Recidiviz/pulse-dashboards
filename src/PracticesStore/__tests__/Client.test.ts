@@ -139,7 +139,7 @@ test("print client reporting form", () => {
 
   expect(client.formIsPrinting).toBe(false);
 
-  client.printCurrentForm();
+  client.printCompliantReportingReferralForm();
 
   expect(client.formIsPrinting).toBe(true);
 });
@@ -147,7 +147,7 @@ test("print client reporting form", () => {
 test("mark client as completed when printing form", () => {
   rootStore.practicesStore.user = mockOfficer;
 
-  client.printCurrentForm();
+  client.printCompliantReportingReferralForm();
 
   expect(mockUpdateCompliantReportingCompleted).toHaveBeenCalledWith(
     mockOfficer.info.email,
@@ -173,7 +173,7 @@ test("don't record a completion if user is ineligible", async () => {
   // ensure the update data has been hydrated
   await when(() => client.updates !== undefined);
 
-  client.printCurrentForm();
+  client.printCompliantReportingReferralForm();
 
   expect(mockUpdateCompliantReportingCompleted).not.toHaveBeenCalled();
 });

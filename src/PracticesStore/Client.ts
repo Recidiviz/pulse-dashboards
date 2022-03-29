@@ -19,6 +19,7 @@ import { has } from "lodash";
 import { action, computed, keys, makeObservable, observable, set } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
+import { trackReferralFormPrinted } from "../analytics";
 import { transform } from "../core/Paperwork/US_TN/Transformer";
 import {
   ClientRecord,
@@ -106,7 +107,7 @@ export class Client {
     makeObservable(this, {
       formIsPrinting: true,
       setFormIsPrinting: true,
-      printCurrentForm: true,
+      printCompliantReportingReferralForm: true,
       currentUserEmail: true,
       eligibilityStatus: true,
       reviewStatus: true,
@@ -190,6 +191,13 @@ export class Client {
       : UNKNOWN;
   }
 
+  get officerDistrict(): string | undefined {
+    const officer = this.rootStore.practicesStore?.availableOfficers.find(
+      (o) => o.id === this.officerId
+    );
+    return officer?.district;
+  }
+
   get updates(): ClientUpdateRecord | undefined {
     return this.fetchedUpdates.current();
   }
@@ -264,13 +272,20 @@ export class Client {
     this.formIsPrinting = value;
   }
 
-  printCurrentForm(): void {
+  printCompliantReportingReferralForm(): void {
     if (this.currentUserEmail) {
       if (this.eligibilityStatus.compliantReporting) {
         updateCompliantReportingCompleted(this.currentUserEmail, this.id);
       }
 
       this.setFormIsPrinting(true);
+      trackReferralFormPrinted({
+        formType: "compliantReportingReferral",
+        district: this.officerDistrict,
+        eligibilityStatus: this.eligibilityStatus,
+        denialReasons: this.updates?.compliantReporting?.denial?.reasons,
+        otherReason: this.updates?.compliantReporting?.denial?.otherReason,
+      });
     }
   }
 

@@ -129,7 +129,7 @@ export const CompliantReportingModule = observer(
               kind="primary"
               shape="block"
               buttonFill={colors.buttonFill}
-              onClick={() => client.printCurrentForm()}
+              onClick={() => client.printCompliantReportingReferralForm()}
             >
               {getPrintText(client)}
             </PrintButton>

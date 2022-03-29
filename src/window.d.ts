@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2022 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,27 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import "jest-extended";
-import "@testing-library/jest-dom/extend-expect";
-import "@testing-library/react-hooks/dont-cleanup-after-each";
-import "jest-canvas-mock";
 
-import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
-import { configure } from "enzyme";
+// According to https://github.com/microsoft/TypeScript/issues/33128#issuecomment-748937504,
+// this line is needed in order to turn this from a script into a module in order
+// to allow the interface definition to be extended.
+export {};
 
-import { initI18n } from "./utils/i18nSettings";
-
-initI18n();
-
-configure({ adapter: new Adapter() });
-
-process.env = {
-  ...process.env,
-  REACT_APP_METADATA_NAMESPACE: "test-metadata-namespace/",
-  REACT_APP_CASE_TRIAGE_URL: "test-case-triage-url",
-};
-
-// mock analytics configuration
-window.analytics = {
-  track: () => {},
-};
+declare global {
+  interface Window {
+    // Segment's analytics.js
+    analytics: SegmentAnalytics.AnalyticsJS;
+  }
+}
