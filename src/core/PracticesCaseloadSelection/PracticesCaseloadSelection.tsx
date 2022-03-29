@@ -25,9 +25,21 @@ import { useRootStore } from "../../components/StoreProvider";
 import { StaffRecord } from "../../firestore";
 import { Client } from "../../PracticesStore/Client";
 import { ClientListItem } from "../ClientListItem";
+import { PRACTICES_METHODOLOGY_URL } from "../utils/constants";
 
 // This is a query limitation imposed by Firestore
 const SELECTED_OFFICER_LIMIT = 10;
+
+const Heading = styled.div`
+  color: ${palette.slate85};
+  line-height: 1.3;
+  margin-bottom: ${rem(spacing.lg)};
+
+  a {
+    color: ${palette.text.links};
+    text-decoration: underline;
+  }
+`;
 
 const Label = styled.div`
   font-style: normal;
@@ -39,7 +51,11 @@ const Label = styled.div`
 `;
 
 const ClientListEmptyState: React.FC = () => {
-  return <div>No clients found. Try selecting more officers.</div>;
+  return (
+    <div>
+      No clients eligible for Compliant Reporting. Search for another officer.
+    </div>
+  );
 };
 
 const ClientListElement = styled.div`
@@ -92,6 +108,11 @@ export const PracticesCaseloadSelection: React.FC = observer(() => {
 
   return (
     <>
+      <Heading>
+        Search for officer(s) below to review and refer eligible clients for
+        Compliant Reporting. <a href={PRACTICES_METHODOLOGY_URL}>Learn more</a>
+      </Heading>
+
       <Label>Officer</Label>
       <ReactSelect
         isMulti

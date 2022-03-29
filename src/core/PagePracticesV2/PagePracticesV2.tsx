@@ -22,6 +22,7 @@ import {
   spacing,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import React from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components/macro";
@@ -74,6 +75,15 @@ const PracticesSidebar: React.FC = ({ children }) => {
   );
 };
 
+const SidebarHeading = styled.h1`
+  color: ${palette.pine2};
+  font-family: ${(props) => props.theme.fonts.sans};
+  font-size: ${rem(18)};
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+`;
+
 const PagePracticesV2: React.FC = () => {
   const { practicesStore } = useRootStore();
   const { path } = useRouteMatch();
@@ -94,6 +104,7 @@ const PagePracticesV2: React.FC = () => {
           <Switch>
             <PracticesRoute exact path={path}>
               <PracticesSidebar>
+                <SidebarHeading>Compliant Reporting</SidebarHeading>
                 <PracticesCaseloadSelection />
               </PracticesSidebar>
             </PracticesRoute>
