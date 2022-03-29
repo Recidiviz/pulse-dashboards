@@ -40,6 +40,13 @@ export const generate = (
 
   const [page] = pages;
 
+  // Some Chrome extensions will inject a background image, which breaks html2canvas
+  // Remove the background image when printing
+  Array.from(page.querySelectorAll("input")).forEach((input) => {
+    // eslint-disable-next-line no-param-reassign
+    input.style.backgroundImage = "";
+  });
+
   return pdf
     .html(page, {
       margin: MARGIN / 2,
