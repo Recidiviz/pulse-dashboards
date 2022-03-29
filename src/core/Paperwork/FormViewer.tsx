@@ -41,6 +41,7 @@ const FormViewerControls = styled.div`
 const FormViewerGrid = styled.div`
   display: grid;
   grid-template-rows: min-content 1fr;
+  height: 100%;
 `;
 
 interface FormViewerProps {
@@ -144,7 +145,9 @@ const FormViewer: React.FC<FormViewerProps> = ({ fileName, children }) => {
           <Status color={palette.slate85}>{lastEdited}</Status>
         </FormViewerControls>
 
-        <TransformComponent wrapperStyle={{ cursor: "grab", width: "100%" }}>
+        <TransformComponent
+          wrapperStyle={{ cursor: "grab", height: "auto", width: "100%" }}
+        >
           <FormViewerContext.Provider value={{ isPrinting }}>
             <div ref={formRef}>{children}</div>
           </FormViewerContext.Provider>
