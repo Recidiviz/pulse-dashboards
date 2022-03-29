@@ -121,7 +121,12 @@ const ViewNavigation: React.FC = ({ children }) => {
 
     if (view === PATHWAYS_VIEWS.practices) {
       return (
-        <a className="ViewNavigation__navlink" href={PRACTICES_METHODOLOGY_URL}>
+        <a
+          className="ViewNavigation__navlink"
+          href={PRACTICES_METHODOLOGY_URL}
+          target="_blank"
+          rel="noreferrer"
+        >
           {linkContents}
         </a>
       );

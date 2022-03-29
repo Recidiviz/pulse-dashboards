@@ -110,7 +110,10 @@ export const PracticesCaseloadSelection: React.FC = observer(() => {
     <>
       <Heading>
         Search for officer(s) below to review and refer eligible clients for
-        Compliant Reporting. <a href={PRACTICES_METHODOLOGY_URL}>Learn more</a>
+        Compliant Reporting.{" "}
+        <a href={PRACTICES_METHODOLOGY_URL} target="_blank" rel="noreferrer">
+          Learn more
+        </a>
       </Heading>
 
       <Label>Officer</Label>
