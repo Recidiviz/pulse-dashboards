@@ -18,13 +18,16 @@ import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
-import ReactSelect from "react-select";
+import ReactSelect, { components, MenuListComponentProps } from "react-select";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { StaffRecord } from "../../firestore";
 import { Client } from "../../PracticesStore/Client";
 import { ClientListItem } from "../ClientListItem";
+
+// This is a query limitation imposed by Firestore
+const SELECTED_OFFICER_LIMIT = 10;
 
 const Label = styled.div`
   font-style: normal;
@@ -59,12 +62,33 @@ const ClientList: React.FC = observer(() => {
   );
 });
 
+const DisabledMessage = styled.div`
+  color: ${palette.signal.notification};
+  /* non-standard padding value to match library styles */
+  padding: 12px;
+`;
+
+const DisabledMenuList = ({
+  children,
+  ...props
+}: MenuListComponentProps<{ label: string; value: string }, true>) => (
+  <components.MenuList {...props}>
+    <DisabledMessage>
+      Cannot select more than {SELECTED_OFFICER_LIMIT} officers.
+    </DisabledMessage>
+    {children}
+  </components.MenuList>
+);
+
 const buildSelectOption = (officer: StaffRecord) => {
   return { label: officer.name, value: officer.id };
 };
 
 export const PracticesCaseloadSelection: React.FC = observer(() => {
   const { practicesStore } = useRootStore();
+
+  const disableAdditionalSelections =
+    practicesStore.selectedOfficers.length >= SELECTED_OFFICER_LIMIT;
 
   return (
     <>
@@ -79,6 +103,12 @@ export const PracticesCaseloadSelection: React.FC = observer(() => {
           )
         }
         placeholder="Select an officer..."
+        isOptionDisabled={() => disableAdditionalSelections}
+        components={
+          disableAdditionalSelections
+            ? { MenuList: DisabledMenuList }
+            : undefined
+        }
       />
 
       <ClientList />
