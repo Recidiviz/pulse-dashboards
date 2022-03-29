@@ -26,7 +26,9 @@ export const transform = (
 
     clientFullName: `${data.clientFirstName} ${data.clientLastName}`,
     poFullName: `${data.poFirstName} ${data.poLastName}`,
-    sentenceLengthDaysText: `${data.sentenceLengthDays} days`,
+    sentenceLengthDaysText: data.sentenceLengthDays
+      ? `${data.sentenceLengthDays} days`
+      : "",
     specialConditionsAlcDrugTreatmentIsInpatient:
       data.specialConditionsAlcDrugTreatmentInOut === "INPATIENT",
     specialConditionsAlcDrugTreatmentIsOutpatient:
