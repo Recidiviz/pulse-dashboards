@@ -32,7 +32,6 @@ import {
   updateCompliantReportingDenial,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
-import { toTitleCase } from "../utils";
 import {
   CompliantReportingReferralRecord,
   TransformedCompliantReportingReferral,
@@ -122,7 +121,7 @@ export class Client {
     this.stateCode = record.stateCode;
     this.fullName = record.personName;
     this.officerId = record.officerId;
-    this.supervisionType = toTitleCase(record.supervisionType);
+    this.supervisionType = record.supervisionType;
     this.supervisionLevel = record.supervisionLevel
       ? SUPERVISION_LEVEL_MAP[record.supervisionLevel]
       : UNKNOWN;
@@ -180,11 +179,9 @@ export class Client {
   }
 
   get displayName(): string {
-    return toTitleCase(
-      [this.fullName.givenNames, this.fullName.surname]
-        .filter((n) => Boolean(n))
-        .join(" ")
-    );
+    return [this.fullName.givenNames, this.fullName.surname]
+      .filter((n) => Boolean(n))
+      .join(" ");
   }
 
   get phoneNumber(): string {
