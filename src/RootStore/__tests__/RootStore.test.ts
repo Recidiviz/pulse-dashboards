@@ -22,6 +22,11 @@ import RootStore from "..";
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 
 jest.mock("@auth0/auth0-spa-js");
+jest.mock("../../firestore", () => {
+  return {
+    authenticate: jest.fn(() => Promise.resolve()),
+  };
+});
 jest.mock("../../api/metrics");
 jest.mock("../TenantStore", () => {
   return jest.fn().mockImplementation(() => ({
@@ -55,6 +60,7 @@ describe("RootStore", () => {
     (createAuth0Client as jest.Mock).mockResolvedValue({
       getUser: () => user,
       isAuthenticated: () => true,
+      getTokenSilently: () => "token",
     });
 
     await RootStore.userStore.authorize();

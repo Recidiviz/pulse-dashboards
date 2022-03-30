@@ -140,6 +140,7 @@ test("requires email verification", async () => {
   });
   await store.authorize();
   expect(store.isAuthorized).toBe(false);
+  expect(store.userIsLoading).toBe(true);
 });
 
 test("handles Auth0 token params", async () => {
@@ -228,6 +229,7 @@ test("Error from getTokenSilently redirects to login", async () => {
     appState: { targetUrl: window.location.href },
   });
   expect(store.authError).toBe(undefined);
+  expect(store.userIsLoading).toBe(true);
 });
 
 describe("getRoutePermission", () => {

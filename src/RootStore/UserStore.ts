@@ -147,19 +147,21 @@ export default class UserStore {
       }
       if (await auth0.isAuthenticated()) {
         const user = await auth0.getUser();
-        await runInAction(async () => {
-          this.userIsLoading = false;
-          if (user && user.email_verified) {
+        if (user && user.email_verified) {
+          await authenticate(await auth0.getTokenSilently());
+          runInAction(() => {
             this.user = user;
-            await authenticate(await auth0.getTokenSilently());
             this.getToken = (options?: GetTokenSilentlyOptions) =>
               this.auth0?.getTokenSilently(options);
             this.logout = (...p: any) => this.auth0?.logout(...p);
             this.isAuthorized = true;
-          } else {
+            this.userIsLoading = false;
+          });
+        } else {
+          runInAction(() => {
             this.isAuthorized = false;
-          }
-        });
+          });
+        }
       } else {
         this.auth0.loginWithRedirect({
           appState: { targetUrl: window.location.href },
