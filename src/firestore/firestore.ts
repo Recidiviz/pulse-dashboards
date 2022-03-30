@@ -104,10 +104,13 @@ const collections = {
 export async function getUser(
   email: string
 ): Promise<CombinedUserRecord | undefined> {
+  const queryEmail = email.toLowerCase();
   const [infoSnapshot, updateSnapshot] = await Promise.all([
-    getDocs(query(collections.staff, where("email", "==", email), limit(1))),
     getDocs(
-      query(collections.userUpdates, where("email", "==", email), limit(1))
+      query(collections.staff, where("email", "==", queryEmail), limit(1))
+    ),
+    getDocs(
+      query(collections.userUpdates, where("email", "==", queryEmail), limit(1))
     ),
   ]);
   const info = infoSnapshot.docs[0]?.data();
