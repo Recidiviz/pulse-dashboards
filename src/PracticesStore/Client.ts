@@ -81,7 +81,7 @@ export class Client {
 
   feeExemptions?: string;
 
-  specialConditions: string;
+  specialConditions: string[];
 
   nextSpecialConditionsCheck?: Date;
 

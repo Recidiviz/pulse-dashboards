@@ -85,7 +85,7 @@ export const ineligibleClient: ClientRecord = {
   currentBalance: 0,
   lastPaymentAmount: 50,
   lastPaymentDate: dateToTimestamp("2021-11-15"),
-  specialConditions: "SPECIAL CONDITIONS TEST TEST",
+  specialConditions: ["SPECIAL CONDITIONS TEST TEST"],
 };
 
 export const eligibleClient: ClientRecord = {
@@ -100,7 +100,7 @@ export const eligibleClient: ClientRecord = {
   phoneNumber: "5555555678",
   expirationDate: dateToTimestamp("2024-12-31"),
   currentBalance: 221.88,
-  specialConditions: "EXAMPLE OF SPECIAL CONDITIONS HERE",
+  specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
   compliantReportingEligible: {
     eligibleLevelStart: dateToTimestamp("2019-12-20"),
     judicialDistrict: "A",

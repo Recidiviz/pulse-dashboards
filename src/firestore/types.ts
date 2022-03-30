@@ -84,7 +84,7 @@ export type ClientRecord = {
   lastPaymentAmount?: number;
   lastPaymentDate?: Timestamp;
   feeExemptions?: string;
-  specialConditions: string;
+  specialConditions: string[];
   nextSpecialConditionsCheck?: Timestamp;
   compliantReportingEligible?: CompliantReportingEligibleRecord;
 };

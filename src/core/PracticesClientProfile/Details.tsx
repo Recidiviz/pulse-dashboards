@@ -16,13 +16,14 @@
 // =============================================================================
 
 import { palette, spacing } from "@recidiviz/design-system";
-import { format } from "date-fns";
+import { format, parseJSON } from "date-fns";
+import { mapValues, toUpper } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { UNKNOWN } from "../../PracticesStore/Client";
+import { Client, UNKNOWN } from "../../PracticesStore/Client";
 import { formatAsCurrency, formatDate } from "../../utils";
 import PracticesOfficerName from "../PracticesOfficerName";
 import { ClientProfileProps } from "./types";
@@ -58,11 +59,90 @@ const DetailsContent = styled.dd`
   line-height: 1.14;
 `;
 
+// TODO(#1735): the real type should be cleaner than this
+type ParsedSpecialCondition = {
+  // eslint-disable-next-line camelcase
+  note_update_date: string;
+  // eslint-disable-next-line camelcase
+  conditions_on_date: string | null;
+};
+
+// TODO(#1735): after data/ETL change we should expect structured data
+// rather than a JSON-ish string
+function getSpecialConditionsMarkup(client: Client): JSX.Element {
+  // we will flatten the nested lists of conditions into this
+  const conditionsToDisplay: (
+    | NonNullable<ParsedSpecialCondition>
+    | string
+  )[] = [];
+
+  client.specialConditions.forEach((conditionsJson) => {
+    try {
+      const conditionsForSentence: {
+        // eslint-disable-next-line camelcase
+        note_update_date: string;
+        // eslint-disable-next-line camelcase
+        conditions_on_date: string | null;
+      }[] = JSON.parse(
+        // the specialConditions strings are almost valid JSON,
+        // except they may include NULL instead of null as a value;
+        // work around this by converting to lowercase
+        conditionsJson.toLowerCase()
+      );
+
+      conditionsForSentence.forEach(
+        // eslint-disable-next-line camelcase
+        ({ note_update_date, conditions_on_date }) => {
+          // don't display nulls
+          // eslint-disable-next-line camelcase
+          if (!conditions_on_date) return;
+
+          // note that we have to convert the actual values back to uppercase
+          // to display them properly
+          conditionsToDisplay.push(
+            mapValues({ note_update_date, conditions_on_date }, toUpper)
+          );
+        }
+      );
+    } catch (e) {
+      // if we couldn't hack our way to valid JSON,
+      // display the whole ugly string so there's no data loss
+      conditionsToDisplay.push(conditionsJson);
+    }
+  });
+
+  return (
+    <>
+      {!conditionsToDisplay.length && "None"}
+      <DetailsList>
+        {conditionsToDisplay.map((condition, i) => {
+          // can't guarantee uniqueness of anything in the condition,
+          // there are lots of duplicates in fact
+          const key = i;
+
+          if (typeof condition === "string") {
+            return <DetailsContent key={key}>{condition}</DetailsContent>;
+          }
+
+          return (
+            <React.Fragment key={key}>
+              <DetailsSubheading>
+                {formatDate(parseJSON(condition.note_update_date))}
+              </DetailsSubheading>
+              <DetailsContent>{condition.conditions_on_date}</DetailsContent>
+            </React.Fragment>
+          );
+        })}
+      </DetailsList>
+    </>
+  );
+}
+
 export const Details = observer(({ client }: ClientProfileProps) => {
   return (
     <DetailsSection>
       <DetailsHeading>Special Conditions</DetailsHeading>
-      <DetailsContent>{client.specialConditions}</DetailsContent>
+      <DetailsContent>{getSpecialConditionsMarkup(client)}</DetailsContent>
 
       <DetailsHeading>Supervision</DetailsHeading>
       <DetailsContent>
@@ -100,7 +180,7 @@ export const Details = observer(({ client }: ClientProfileProps) => {
             {formatAsCurrency(client.currentBalance)}
           </DetailsContent>
 
-          {client.lastPaymentAmount && client.lastPaymentDate && (
+          {client.lastPaymentAmount && client.lastPaymentDate ? (
             <>
               <DetailsSubheading>Last Payment</DetailsSubheading>
               <DetailsContent>
@@ -108,7 +188,7 @@ export const Details = observer(({ client }: ClientProfileProps) => {
                 {formatDate(client.lastPaymentDate)}
               </DetailsContent>
             </>
-          )}
+          ) : null}
         </DetailsList>
       </DetailsContent>
     </DetailsSection>
