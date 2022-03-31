@@ -34,6 +34,7 @@ exports.onExecutePostLogin = async (event, api) => {
       [event.secrets.RECIDIVIZ_CONNECTION_ID]: "recidiviz",
       // NOTE: delete the following lines for staging
       [event.secrets.US_ID_CONNECTION_ID]: "us_id",
+      [event.secrets.US_TN_CONNECTION_ID]: "us_tn",
     };
 
     const connection = event.connection.id;
