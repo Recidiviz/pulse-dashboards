@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { parseISO } from "date-fns";
+import { Timestamp } from "firebase/firestore";
 import { has } from "lodash";
 import { action, computed, keys, makeObservable, observable, set } from "mobx";
 import { format as formatPhone } from "phone-fns";
@@ -49,6 +51,17 @@ const SUPERVISION_LEVEL_MAP: Record<string, SupervisionLevel> = {
   "STANDARD: MEDIUM": "Medium",
   "STANDARD: MINIMUM": "Minimum",
 };
+
+function fieldToDate(field: Timestamp | string): Date {
+  if (typeof field === "string") {
+    return parseISO(field);
+  }
+  return field.toDate();
+}
+
+function optionalFieldToDate(field?: Timestamp | string): Date | undefined {
+  if (field) return fieldToDate(field);
+}
 
 export class Client {
   rootStore: RootStore;
@@ -126,16 +139,20 @@ export class Client {
     this.supervisionLevel = record.supervisionLevel
       ? SUPERVISION_LEVEL_MAP[record.supervisionLevel]
       : UNKNOWN;
-    this.supervisionLevelStart = record.supervisionLevelStart?.toDate();
+    this.supervisionLevelStart = optionalFieldToDate(
+      record.supervisionLevelStart
+    );
     this.address = record.address || UNKNOWN;
     this.rawPhoneNumber = record.phoneNumber;
-    this.expirationDate = record.expirationDate?.toDate();
+    this.expirationDate = optionalFieldToDate(record.expirationDate);
     this.currentBalance = record.currentBalance;
-    this.lastPaymentDate = record.lastPaymentDate?.toDate();
+    this.lastPaymentDate = optionalFieldToDate(record.lastPaymentDate);
     this.lastPaymentAmount = record.lastPaymentAmount;
     this.feeExemptions = record.feeExemptions;
     this.specialConditions = record.specialConditions;
-    this.nextSpecialConditionsCheck = record.nextSpecialConditionsCheck?.toDate();
+    this.nextSpecialConditionsCheck = optionalFieldToDate(
+      record.nextSpecialConditionsCheck
+    );
     this.compliantReportingReferralDraftData = observable<
       Partial<TransformedCompliantReportingReferral>
     >({});
@@ -143,20 +160,24 @@ export class Client {
     const { compliantReportingEligible } = record;
     if (compliantReportingEligible) {
       this.compliantReportingEligible = {
-        eligibleLevelStart: compliantReportingEligible.eligibleLevelStart.toDate(),
+        eligibleLevelStart: fieldToDate(
+          compliantReportingEligible.eligibleLevelStart
+        ),
         currentOffenses: compliantReportingEligible.currentOffenses,
         lifetimeOffensesExpired:
           compliantReportingEligible.lifetimeOffensesExpired,
         judicialDistrict:
           compliantReportingEligible.judicialDistrict ?? UNKNOWN,
         drugScreensPastYear: compliantReportingEligible.drugScreensPastYear.map(
-          ({ result, date }) => ({ result, date: date.toDate() })
+          ({ result, date }) => ({ result, date: fieldToDate(date) })
         ),
         sanctionsPastYear:
           compliantReportingEligible.sanctionsPastYear.map((type) => ({
             type,
           })) || [],
-        mostRecentArrestCheck: compliantReportingEligible.mostRecentArrestCheck?.toDate(),
+        mostRecentArrestCheck: optionalFieldToDate(
+          compliantReportingEligible.mostRecentArrestCheck
+        ),
       };
     }
 

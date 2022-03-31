@@ -76,27 +76,27 @@ export type ClientRecord = {
   officerId: string;
   supervisionType: string;
   supervisionLevel?: string;
-  supervisionLevelStart?: Timestamp;
+  supervisionLevelStart?: Timestamp | string;
   address?: string;
   phoneNumber?: string;
-  expirationDate?: Timestamp;
+  expirationDate?: Timestamp | string;
   currentBalance: number;
   lastPaymentAmount?: number;
-  lastPaymentDate?: Timestamp;
+  lastPaymentDate?: Timestamp | string;
   feeExemptions?: string;
   specialConditions: string[];
-  nextSpecialConditionsCheck?: Timestamp;
+  nextSpecialConditionsCheck?: Timestamp | string;
   compliantReportingEligible?: CompliantReportingEligibleRecord;
 };
 
 export type CompliantReportingEligibleRecord = {
-  eligibleLevelStart: Timestamp;
+  eligibleLevelStart: Timestamp | string;
   currentOffenses: string[];
   lifetimeOffensesExpired: string[];
   judicialDistrict: string | null;
-  drugScreensPastYear: { result: string; date: Timestamp }[];
+  drugScreensPastYear: { result: string; date: Timestamp | string }[];
   sanctionsPastYear: string[];
-  mostRecentArrestCheck?: Timestamp;
+  mostRecentArrestCheck?: Timestamp | string;
 };
 
 /**

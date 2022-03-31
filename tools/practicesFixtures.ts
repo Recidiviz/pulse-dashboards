@@ -17,7 +17,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
 import fs from "fs";
 
 import { deleteCollection, getDb } from "./firestoreUtils";
@@ -43,38 +42,9 @@ async function loadClientsFixture() {
 
   // Iterate through each record
   rawCases.forEach((record: Record<string, any>) => {
-    const { compliantReportingEligible } = record;
-
-    if (compliantReportingEligible) {
-      compliantReportingEligible.drugScreensPastYear = compliantReportingEligible.drugScreensPastYear.map(
-        ({ result, date }: Record<string, string>) => ({
-          result,
-          date: parseISO(date),
-        })
-      );
-      compliantReportingEligible.eligibleLevelStart = parseISO(
-        compliantReportingEligible.eligibleLevelStart
-      );
-      if (compliantReportingEligible.mostRecentArrestCheck) {
-        compliantReportingEligible.mostRecentArrestCheck = parseISO(
-          compliantReportingEligible.mostRecentArrestCheck
-        );
-      }
-    }
-
     bulkWriter.create(
       db.doc(`${COLLECTIONS.clients}/${record.personExternalId}`),
-      {
-        ...record,
-        supervisionLevelStart: parseISO(record.supervisionLevelStart),
-        expirationDate: parseISO(record.expirationDate),
-        lastPaymentDate:
-          record.lastPaymentDate && parseISO(record.lastPaymentDate),
-        nextSpecialConditionsCheck:
-          record.nextSpecialConditionsCheck &&
-          parseISO(record.nextSpecialConditionsCheck),
-        compliantReportingEligible,
-      }
+      record
     );
   });
 
