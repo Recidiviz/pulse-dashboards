@@ -50,13 +50,15 @@ const Label = styled.div`
   color: ${palette.slate60};
 `;
 
-const ClientListEmptyState: React.FC = () => {
-  return (
-    <div>
-      No clients eligible for Compliant Reporting. Search for another officer.
-    </div>
-  );
-};
+const ClientListEmptyState: React.FC = observer(() => {
+  const { practicesStore } = useRootStore();
+
+  const text = practicesStore.selectedOfficers.length
+    ? "No clients eligible for Compliant Reporting. Search for another officer."
+    : "";
+
+  return <div>{text}</div>;
+});
 
 const ClientListElement = styled.div`
   margin-top: ${rem(spacing.md)};
@@ -111,7 +113,11 @@ export const PracticesCaseloadSelection: React.FC = observer(() => {
       <Heading>
         Search for officer(s) below to review and refer eligible clients for
         Compliant Reporting.{" "}
-        <a href={PRACTICES_METHODOLOGY_URL} target="_blank" rel="noreferrer">
+        <a
+          href={PRACTICES_METHODOLOGY_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Learn more
         </a>
       </Heading>

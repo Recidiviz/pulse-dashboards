@@ -51,7 +51,7 @@ const Wrapper = styled.div`
 `;
 
 const Sidebar = styled.div`
-  padding: 0 ${spacing.md}px;
+  padding: ${rem(spacing.md)};
 `;
 
 const Divider = styled.hr`

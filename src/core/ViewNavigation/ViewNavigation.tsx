@@ -125,7 +125,7 @@ const ViewNavigation: React.FC = ({ children }) => {
           className="ViewNavigation__navlink"
           href={PRACTICES_METHODOLOGY_URL}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
         >
           {linkContents}
         </a>

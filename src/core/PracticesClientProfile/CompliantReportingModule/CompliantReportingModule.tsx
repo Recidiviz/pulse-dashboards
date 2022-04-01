@@ -82,6 +82,15 @@ const PrintButton = styled(Button)<{ buttonFill: string }>`
   }
 `;
 
+const KeepTogether = styled.span`
+  white-space: nowrap;
+`;
+
+// TODO(https://github.com/Recidiviz/web-libraries/issues/87): style TooltipTrigger directly
+const InfoTooltipWrapper = styled.span`
+  vertical-align: text-bottom;
+`;
+
 const Title = observer(({ client }: ClientProfileProps) => {
   return (
     <div>Compliant Reporting: {client.reviewStatus.compliantReporting}</div>
@@ -110,18 +119,32 @@ export const CompliantReportingModule = observer(
       <Wrapper {...colors}>
         <Title client={client} />
         <CriteriaList style={{ color: colors.text }}>
-          {getEligibilityCriteria(client).map(({ text, tooltip }) => (
-            <TooltipTrigger contents={tooltip} key={text}>
+          {getEligibilityCriteria(client).map(({ text, tooltip }) => {
+            // split text so we can prevent orphaned tooltips
+            const textTokens = text.split(" ");
+            return (
               <Criterion>
                 <CriterionIcon
                   kind={IconSVG.Success}
                   color={colors.icon}
                   size={16}
                 />
-                <CriterionContent>{text}</CriterionContent>
+                <CriterionContent>
+                  {textTokens.slice(0, -1).join(" ")}{" "}
+                  <KeepTogether>
+                    {textTokens.slice(-1)}{" "}
+                    {tooltip && (
+                      <InfoTooltipWrapper>
+                        <TooltipTrigger contents={tooltip}>
+                          <Icon kind="Info" size={12} color={palette.slate30} />
+                        </TooltipTrigger>
+                      </InfoTooltipWrapper>
+                    )}
+                  </KeepTogether>
+                </CriterionContent>
               </Criterion>
-            </TooltipTrigger>
-          ))}
+            );
+          })}
         </CriteriaList>
         <ActionButtons>
           <div>

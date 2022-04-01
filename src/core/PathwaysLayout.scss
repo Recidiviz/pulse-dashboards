@@ -44,8 +44,11 @@
   }
 }
 
-.PathwaysLayout.Operations {
-  .IE11Banner {
-    padding-top: 0;
+.PathwaysLayout {
+  &.Operations,
+  &.Practices {
+    .IE11Banner {
+      padding-top: 0;
+    }
   }
 }

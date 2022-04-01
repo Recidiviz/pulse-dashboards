@@ -48,6 +48,7 @@ const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
           id="app"
           className={cn("PathwaysLayout", {
             Operations: currentView === PATHWAYS_VIEWS.operations && !isMobile,
+            Practices: currentView === PATHWAYS_VIEWS.practices,
           })}
         >
           {!isMobile && <ViewNavigation />}

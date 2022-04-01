@@ -70,7 +70,7 @@ export function getEligibilityCriteria(
           ? ` Last ARRN on ${formatDate(mostRecentArrestCheck)}`
           : "N/A"
       }`,
-      tooltip: "Policy requirement: No arrest in the last 1 year",
+      tooltip: "Policy requirement: No arrests in the last 1 year.",
     },
     {
       text: `Sanctions in the past year: ${
@@ -83,7 +83,7 @@ export function getEligibilityCriteria(
       text: `Fees payments: Balance less than $500 or “permanent” exception`,
     },
     {
-      text: `Negative drug screens in last 12 months: ${
+      text: `Passed drug screens in last 12 months: ${
         drugScreensPastYear
           .map(({ result, date }) => `${result} – ${formatDate(date)}`)
           .join(", ") || "None"

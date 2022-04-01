@@ -42,7 +42,6 @@ const REASONS_MAP = {
   DEDF: "No effort to pay fees",
   DEDU: "Serious compliance problems ",
   DEIJ: "Not allowed per court",
-  DEIO: "IOT",
   DEIR: "Failure to report as instructed",
   [OTHER_KEY]: "Please specify a reason",
 };
