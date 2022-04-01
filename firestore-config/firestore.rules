@@ -1,7 +1,7 @@
 rules_version = '2';
 service cloud.firestore {
   function allowedStateCode() {
-    return request.auth.token.stateCode in ["US_TN", "recidiviz"]
+    return request.auth.token.stateCode in ["US_TN", "RECIDIVIZ"]
   }
 
   match /databases/{database}/documents {

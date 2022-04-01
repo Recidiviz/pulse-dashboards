@@ -47,6 +47,7 @@ async function getFirebaseToken(req, res) {
   }
 
   if (stateCode) {
+    stateCode = stateCode.toUpperCase();
     const firebaseToken = await firebaseAdmin
       .auth()
       .createCustomToken(uid, { stateCode });

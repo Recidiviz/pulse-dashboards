@@ -127,10 +127,6 @@ export class PracticesStore implements Hydratable {
       } else {
         userRecord = await getUser(email);
       }
-      // recidiviz users "impersonate" the test user for now;
-      // this only works against fixture data
-      // const queryEmail = isDemoProject ? "test-officer@example.com" : email;
-      // const queryStateCode = stateCode === "RECIDIVIZ" ? "US_XX" : stateCode;
 
       if (userRecord) {
         runInAction(() => {

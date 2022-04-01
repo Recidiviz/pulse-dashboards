@@ -65,6 +65,6 @@ export function getOutOfStateUser(testEnv) {
 
 export function getRecidivizUser(testEnv) {
   return testEnv.authenticatedContext("admin", {
-    stateCode: "recidiviz",
+    stateCode: "RECIDIVIZ",
   });
 }
