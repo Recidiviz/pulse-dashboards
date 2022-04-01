@@ -27,9 +27,12 @@ exports.onExecutePostLogin = async (event, api) => {
   const emailSplit = email?.split("@") || "";
   const userDomain = emailSplit[emailSplit.length - 1].toLowerCase();
 
-  const DENY_MESSAGE =
-    "There was a problem authorizing your account. Please contact your organization administrator. " +
-    "If you don’t know your administrator, contact feedback@recidiviz.org.";
+  const DENY_MESSAGE = stateCode === "us_tn" ?
+    ("There was a problem authorizing your account. If you are a Community Supervision staff member, " +
+      "you may not have access yet and you should receive access by April 15, 2022. " +
+      "If you have any further questions, contact feedback@recidiviz.org") :
+    ("There was a problem authorizing your account. Please contact your organization administrator. " +
+      "If you don’t know your administrator, contact feedback@recidiviz.org.");
 
   if (
     app_metadata.skip_sync_permissions ||
