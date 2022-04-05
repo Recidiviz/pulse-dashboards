@@ -86,9 +86,16 @@ const KeepTogether = styled.span`
   white-space: nowrap;
 `;
 
-// TODO(https://github.com/Recidiviz/web-libraries/issues/87): style TooltipTrigger directly
-const InfoTooltipWrapper = styled.span`
+const InfoTooltipWrapper = styled(TooltipTrigger)`
   vertical-align: text-bottom;
+`;
+
+const InfoButton = styled(Button).attrs({
+  kind: "link",
+  icon: "Info",
+  iconSize: 12,
+})`
+  color: ${palette.slate30};
 `;
 
 const Title = observer(({ client }: ClientProfileProps) => {
@@ -134,10 +141,8 @@ export const CompliantReportingModule = observer(
                   <KeepTogether>
                     {textTokens.slice(-1)}{" "}
                     {tooltip && (
-                      <InfoTooltipWrapper>
-                        <TooltipTrigger contents={tooltip}>
-                          <Icon kind="Info" size={12} color={palette.slate30} />
-                        </TooltipTrigger>
+                      <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
+                        <InfoButton />
                       </InfoTooltipWrapper>
                     )}
                   </KeepTogether>

@@ -1188,7 +1188,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.12.5", "@babel/runtime@^7.16.7", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.7":
+"@babel/runtime@^7.12.5", "@babel/runtime@^7.17.8", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.7":
   version "7.17.8"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.8.tgz#3e56e4aff81befa55ac3ac6a0967349fd1c5bca2"
   integrity sha512-dQpEpK0O9o6lj6oPu0gRDbbnk+4LeHlNcBpspf6Olzt3GIX4P1lWF1gS+pHLDFlaJvbR6q7jCfQ08zA4QJBnmA==
@@ -1951,19 +1951,19 @@
   integrity sha512-9FqhNjKQWpQ3fGnSOCovHOm+yhhiorKEqYLAfd525jWavunDJcx8rOW6i6ozAh+FbwcYMkL7b+3j4UR/30MpoQ==
 
 "@fontsource/libre-baskerville@^4.1.0":
-  version "4.5.3"
-  resolved "https://registry.yarnpkg.com/@fontsource/libre-baskerville/-/libre-baskerville-4.5.3.tgz#2be61ed7c349ad18dbcc947291bef9aa94ce26e1"
-  integrity sha512-c65YbQy65HyL2+KCZ0Xws54wzVlErVU2Ia1ewgkpEqwgtU/wb93pyCP2YOVI4K6jbIEXa6D1V0WsRM3XP9lmSQ==
+  version "4.5.5"
+  resolved "https://registry.yarnpkg.com/@fontsource/libre-baskerville/-/libre-baskerville-4.5.5.tgz#bfb6784f47a0f2c0adea960ab9f4879a4cf9b3e4"
+  integrity sha512-u9BSGffqZWJg4AAgndypPoHkuYvKhcap4l2Krj8AvRW8rUPdz8fKWWosyaHtdJZhKTDzmEpkbFJBtlYtZwSRtw==
 
 "@fontsource/libre-franklin@^4.1.0":
-  version "4.5.3"
-  resolved "https://registry.yarnpkg.com/@fontsource/libre-franklin/-/libre-franklin-4.5.3.tgz#89c519e60433cc63a473b31d5985ecba3ed89dac"
-  integrity sha512-dH3xW1RA1G8KPKAMv4FIQIzo04rT9uc+K3HzSNfxhrE0DpqIaABf7geUSV2GWtf5gjqdrjzrjLXjs0ehgkPrtQ==
+  version "4.5.5"
+  resolved "https://registry.yarnpkg.com/@fontsource/libre-franklin/-/libre-franklin-4.5.5.tgz#a65535ec0c29243b4373d41d62161a623299a526"
+  integrity sha512-tb9Bl8mWWEIUDZ3y5HEyxxgSaJH2lv1UUf05uc4r4e4Vbt3NKRPrNQoJ9UGhzp1XIVo297wSWEtnqJeFHZJgYQ==
 
 "@fontsource/public-sans@^4.5.3":
-  version "4.5.3"
-  resolved "https://registry.yarnpkg.com/@fontsource/public-sans/-/public-sans-4.5.3.tgz#2627e0eec0b3b1eeeb906f5ac0a9f0b84235a22b"
-  integrity sha512-/3PC3AhNyHNfGt0iFVZ7NrwFOlbKLgD/ZH4k/ERkNCymxbJX5zF9OzYwsrfjbTmvh9Mkhlq2ZGU9XwBY7GsSDg==
+  version "4.5.5"
+  resolved "https://registry.yarnpkg.com/@fontsource/public-sans/-/public-sans-4.5.5.tgz#ce8e5d214f336e96daf8dcb7af40d1f293e7d3fd"
+  integrity sha512-g0Rbn8OLkimMtSiTI5bW2iVe8Is+Vul466YNw0HLA+hvQ16oS8JEgt+ZEiIOUwk53hPXs7+sb7P/mhLLKqlTFQ==
 
 "@fortawesome/fontawesome-common-types@^0.2.34":
   version "0.2.34"
@@ -2722,9 +2722,9 @@
     "@react-spring/types" "~9.4.4"
 
 "@recidiviz/design-system@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@recidiviz/design-system/-/design-system-3.0.0.tgz#f04ac294de677ce6463cd29ac77599268de4803e"
-  integrity sha512-gj3HKFpOiAb7T34v1eHlrsnoK00pt/FB/HGAfzgNumTbMWskm+9zPutOClDGuhOThhtDPak59N4/jDxdZt0ZSw==
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@recidiviz/design-system/-/design-system-3.1.0.tgz#9a40b0b6b3e30ff4c62b07161746405e839878d9"
+  integrity sha512-lR+LlWfwuTUwKdlq++QZqamcZqpUFkGJm1mBva2G8UohQ/A5ET9knKY53i+uQfrubhnj/5lSis6E03f3XqNfpQ==
   dependencies:
     "@fontsource/libre-baskerville" "^4.1.0"
     "@fontsource/libre-franklin" "^4.1.0"
@@ -3607,9 +3607,9 @@
     "@types/react" "*"
 
 "@types/react@*":
-  version "17.0.41"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.41.tgz#6e179590d276394de1e357b3f89d05d7d3da8b85"
-  integrity sha512-chYZ9ogWUodyC7VUTRBfblysKLjnohhFY9bGLwvnUFFy48+vB9DikmB3lW0qTFmBcKSzmdglcvkHK71IioOlDA==
+  version "17.0.43"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.43.tgz#4adc142887dd4a2601ce730bc56c3436fdb07a55"
+  integrity sha512-8Q+LNpdxf057brvPu1lMtC5Vn7J119xrP1aq4qiaefNioQUYANF/CYeK4NsKorSZyUGJ66g0IM+4bbjwx45o2A==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -14669,11 +14669,11 @@ pnp-webpack-plugin@1.6.4:
     ts-pnp "^1.1.6"
 
 polished@^4.1.0:
-  version "4.1.4"
-  resolved "https://registry.yarnpkg.com/polished/-/polished-4.1.4.tgz#640293ba834109614961a700fdacbb6599fb12d0"
-  integrity sha512-Nq5Mbza+Auo7N3sQb1QMFaQiDO+4UexWuSGR7Cjb4Sw11SZIJcrrFtiZ+L0jT9MBsUsxDboHVASbCLbE1rnECg==
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/polished/-/polished-4.2.1.tgz#e38cdf4244b3bea63f77b0f8ab2335e22a66bd08"
+  integrity sha512-vRkUnHBwVX7kIeCzCghcLCWoDenV+sV7lkItnmTc7bb6Uzbe8ogU1FxqEW8+dXCxUX8YW8vusQ0HTk2yES7bfQ==
   dependencies:
-    "@babel/runtime" "^7.16.7"
+    "@babel/runtime" "^7.17.8"
 
 polished@^4.1.3:
   version "4.1.3"
