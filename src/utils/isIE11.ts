@@ -14,37 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { makeAutoObservable } from "mobx";
-
-import isIE11 from "../utils/isIE11";
-import type RootStore from ".";
-
-const IE_11_BANNER_VISIBLE = "ie11BannerIsVisibleInSession";
-
-export default class PageStore {
-  isIE11: boolean;
-
-  ie11BannerIsVisible: boolean;
-
-  hideTopBar: boolean;
-
-  constructor({ rootStore }: { rootStore: typeof RootStore }) {
-    makeAutoObservable(this);
-
-    this.isIE11 = isIE11();
-    const storageIsVisible =
-      sessionStorage.getItem(IE_11_BANNER_VISIBLE) || "true";
-    this.ie11BannerIsVisible = storageIsVisible === "true" && this.isIE11;
-
-    this.hideTopBar = false;
-  }
-
-  hideIE11Banner = (): void => {
-    this.ie11BannerIsVisible = false;
-    sessionStorage.setItem(IE_11_BANNER_VISIBLE, "false");
-  };
-
-  setHideTopBar = (value: boolean): void => {
-    this.hideTopBar = value;
-  };
+export default function isIE11(): boolean {
+  return window.navigator.userAgent.indexOf("Trident/") > 0;
 }

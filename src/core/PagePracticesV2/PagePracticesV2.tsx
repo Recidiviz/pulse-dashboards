@@ -28,6 +28,7 @@ import { Switch, useRouteMatch } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import isIE11 from "../../utils/isIE11";
 import cssVars from "../CoreConstants.scss";
 import ModelHydrator from "../ModelHydrator";
 import { PracticesCaseloadSelection } from "../PracticesCaseloadSelection";
@@ -84,9 +85,32 @@ const SidebarHeading = styled.h1`
   line-height: 1.3;
 `;
 
+const IE11Warning = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-content: center;
+  text-align: center;
+  height: auto;
+  width: 100%;
+  margin: auto;
+`;
+
 const PagePracticesV2: React.FC = () => {
   const { practicesStore } = useRootStore();
   const { path } = useRouteMatch();
+
+  if (isIE11()) {
+    return (
+      <IE11Warning>
+        <h1>This page is not supported in Internet Explorer 11.</h1>
+        <h3>
+          Please switch to Chrome, Firefox, Edge, or another modern browser and
+          try again.
+        </h3>
+      </IE11Warning>
+    );
+  }
 
   return (
     <ThemeProvider
