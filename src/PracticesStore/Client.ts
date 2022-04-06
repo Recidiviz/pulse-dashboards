@@ -206,10 +206,14 @@ export class Client {
       .join(" ");
   }
 
-  get phoneNumber(): string {
+  get formattedPhoneNumber(): string | undefined {
     return this.rawPhoneNumber
       ? formatPhone("(NNN) NNN-NNNN", this.rawPhoneNumber)
-      : UNKNOWN;
+      : undefined;
+  }
+
+  get phoneNumber(): string {
+    return this.formattedPhoneNumber || UNKNOWN;
   }
 
   get officerDistrict(): string | undefined {

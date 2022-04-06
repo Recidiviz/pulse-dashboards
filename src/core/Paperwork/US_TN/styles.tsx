@@ -13,7 +13,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import {
+  Icon,
+  IconSVG,
+  iconToDataURI,
+  palette,
+} from "@recidiviz/design-system";
 import { rem } from "polished";
+import * as React from "react";
 import styled, { css } from "styled-components/macro";
 
 import { FORMAT_HEIGHT, FORMAT_WIDTH, MARGIN } from "../FormGenerator";
@@ -21,12 +28,22 @@ import { FormViewerContextData } from "../FormViewer";
 import FormCheckbox from "./FormCheckbox";
 import FormInput from "./FormInput";
 
+const EDIT_BACKGROUND = iconToDataURI(
+  <Icon kind={IconSVG.Edit} color={palette.slate60} />
+);
+
 const Input = styled.input`
   border-width: 0;
   font-size: 9px;
   font-weight: normal;
   padding: 1px 3px;
   margin-bottom: 0;
+
+  background-image: ${EDIT_BACKGROUND};
+  background-repeat: no-repeat;
+  background-position: left 3px center;
+  background-size: 0.75em;
+  padding-left: 1.5em;
 `;
 
 interface ItemProps {
@@ -66,6 +83,10 @@ const Grid = styled.div<GridProps>(
     & ${Input} {
       background-color: var(--grid-foreground-color);
     }
+
+    label& {
+      margin-bottom: 0;
+    }
   `
 );
 
@@ -102,11 +123,13 @@ const FormContainer = styled.form<FormViewerContextData>`
           ${Input} {
             border-width: 0;
             border-color: transparent;
+            padding-left: 1px;
+            background-image: none;
           }
         `
       : css`
           ${Input} {
-            background: aliceblue;
+            background-color: aliceblue;
           }
         `}
 `;
@@ -114,6 +137,13 @@ const FormContainer = styled.form<FormViewerContextData>`
 const PrintablePageMargin = styled.div`
   background-color: white;
   padding: ${rem(18)};
+  box-sizing: content-box;
+  transform-origin: 0 0;
+
+  height: ${rem(FORMAT_HEIGHT - MARGIN)};
+  max-height: ${rem(FORMAT_HEIGHT - MARGIN)};
+  width: ${rem(FORMAT_WIDTH - MARGIN)};
+  max-width: ${rem(FORMAT_WIDTH - MARGIN)};
 `;
 
 const Row = styled.div`

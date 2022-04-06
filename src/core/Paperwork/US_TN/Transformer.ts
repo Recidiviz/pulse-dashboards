@@ -3,13 +3,24 @@ import {
   CompliantReportingReferralRecord,
   TransformedCompliantReportingReferral,
 } from "../../../PracticesStore/CompliantReportingReferralRecord";
+import { formatAsCurrency } from "../../../utils";
 
 export const transform = (
   client: Client,
   data: CompliantReportingReferralRecord
 ): Partial<TransformedCompliantReportingReferral> => {
+  let allDockets;
+  try {
+    allDockets = (JSON.parse(data.allDockets) as string[]).join(", ");
+  } catch {
+    allDockets = data.allDockets;
+  }
+
   return {
     ...data,
+    allDockets,
+    clientFullName: client.displayName,
+    telephoneNumber: client.formattedPhoneNumber,
     specialConditionsCounselingAngerManagementComplete: !!data.specialConditionsCounselingAngerManagementCompleteDate,
     specialConditionsCounselingMentalHealthComplete: !!data.specialConditionsCounselingMentalHealthCompleteDate,
 
@@ -24,7 +35,6 @@ export const transform = (
     isIsc: client.supervisionType === "ISC",
     is4035313: client.supervisionType === "Diversion",
 
-    clientFullName: `${data.clientFirstName} ${data.clientLastName}`,
     poFullName: `${data.poFirstName} ${data.poLastName}`,
     sentenceLengthDaysText: data.sentenceLengthDays
       ? `${data.sentenceLengthDays} days`
@@ -33,5 +43,10 @@ export const transform = (
       data.specialConditionsAlcDrugTreatmentInOut === "INPATIENT",
     specialConditionsAlcDrugTreatmentIsOutpatient:
       data.specialConditionsAlcDrugTreatmentInOut === "OUTPATIENT",
+
+    supervisionFeeArrearagedAmount: formatAsCurrency(
+      data.supervisionFeeArrearagedAmount
+    ),
+    supervisionFeeAssessed: formatAsCurrency(data.supervisionFeeAssessed),
   };
 };

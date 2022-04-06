@@ -18,8 +18,9 @@ export type CompliantReportingReferralRecord = {
   sentenceStartDate: string;
   sentenceLengthDays: string;
   expirationDate: string;
-  supervisionFeeAssessed: string;
+  supervisionFeeAssessed: number;
   supervisionFeeArrearaged: boolean;
+  supervisionFeeArrearagedAmount: number;
   supervisionFeeExemption: string;
   supervisionFeeExemptionType: string;
   supervisionFeeExemptionExpirDate: string;
@@ -75,6 +76,10 @@ export interface TransformedCompliantReportingReferral {
   specialConditionsCounselingAngerManagementComplete: boolean;
   specialConditionsCounselingMentalHealthComplete: boolean;
 
+  /* Converted fields */
+  supervisionFeeAssessed: string;
+  supervisionFeeArrearagedAmount: string;
+
   /* Fields directly passed from ETL */
   poFirstName: string;
   poLastName: string;
@@ -95,7 +100,6 @@ export interface TransformedCompliantReportingReferral {
   sentenceStartDate: string;
   sentenceLengthDays: string;
   expirationDate: string;
-  supervisionFeeAssessed: string;
   supervisionFeeArrearaged: boolean;
   supervisionFeeExemption: string;
   supervisionFeeExemptionType: string;
@@ -145,7 +149,6 @@ export interface TransformedCompliantReportingReferral {
   licenseYears: string;
   telephoneNumber: string;
   supervisorFullName: string;
-  supervisionFeeArrearagedAmount: string;
   iotSanctioning: boolean;
   atrSupervisionTransfer: boolean;
   seeAdditionalOffenses: boolean;

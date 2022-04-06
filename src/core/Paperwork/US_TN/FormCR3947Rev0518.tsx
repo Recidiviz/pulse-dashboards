@@ -49,7 +49,7 @@ const CurrentOffenseInput: React.FC<CurrentOffenseInputProps> = ({
 }) => {
   return (
     <FormInput
-      placeholder="Offenses."
+      placeholder="Offenses"
       name="currentOffenses"
       getValue={(currentOffenses) => {
         return currentOffenses?.[index];
@@ -118,14 +118,14 @@ const FormCR3947Rev0518: React.FC = () => {
                 name="physicalAddress"
               />
               <Item as="label">Phone #:</Item>
-              <FormInput placeholder="(###) ###-####." name="telephoneNumber" />
+              <FormInput placeholder="(###) ###-####" name="telephoneNumber" />
             </Grid>
             <Grid columns="90px 1fr">
               <Item as="label" htmlFor="employer">
                 Current Employer
               </Item>
               <FormInput
-                placeholder="Company Name., Company Address."
+                placeholder="Company Name, Company Address"
                 id="employer"
                 name="currentEmployer"
               />
@@ -145,7 +145,7 @@ const FormCR3947Rev0518: React.FC = () => {
               </Grid>
               <Item center>
                 <Item as="label">
-                  for <FormInput placeholder="Number." name="licenseYears" />{" "}
+                  for <FormInput placeholder="Number" name="licenseYears" />{" "}
                   years.
                 </Item>
               </Item>
@@ -155,7 +155,7 @@ const FormCR3947Rev0518: React.FC = () => {
                 County of Conviction
               </Item>
               <FormInput
-                placeholder="County."
+                placeholder="County"
                 name="convictionCounty"
                 id="county"
               />
@@ -163,7 +163,7 @@ const FormCR3947Rev0518: React.FC = () => {
                 Court
               </Item>
               <FormInput
-                placeholder="Court Name."
+                placeholder="Court Name"
                 name="courtName"
                 id="court_name"
               />
@@ -177,7 +177,7 @@ const FormCR3947Rev0518: React.FC = () => {
                   </Emphasize>
                 </span>
               </Item>
-              <FormInput placeholder="Docket(s)." name="allDockets" />
+              <FormInput placeholder="Docket(s)" name="allDockets" />
             </Grid>
             <Grid columns="100px 1fr">
               <Item>
@@ -221,11 +221,11 @@ const FormCR3947Rev0518: React.FC = () => {
             </Grid>
             <Grid columns="75px 75px 80px 1fr 75px 1fr">
               <Item as="label"> Sentence Date</Item>
-              <FormInput placeholder="Date." name="sentenceStartDate" />
+              <FormInput placeholder="Date" name="sentenceStartDate" />
               <Item as="label">Sentence Length</Item>
-              <FormInput placeholder="Length." name="sentenceLengthDaysText" />
+              <FormInput placeholder="Length" name="sentenceLengthDaysText" />
               <Item as="label">Expiration Date</Item>
-              <FormInput placeholder="Date." name="expirationDate" />
+              <FormInput placeholder="Date" name="expirationDate" />
             </Grid>
             <Grid columns="100px 141px repeat(2, 1fr)" rows="60px">
               <Item style={{ textAlign: "center" }}>
@@ -239,13 +239,12 @@ const FormCR3947Rev0518: React.FC = () => {
                 </Emphasize>
               </Item>
               <Grid columns="141px" rows="19px 1fr">
-                <Item as="label">
-                  $
+                <Grid as="label">
                   <FormInput
-                    placeholder="Assessed Amount."
+                    placeholder="Assessed Amount"
                     name="supervisionFeeAssessed"
                   />
-                </Item>
+                </Grid>
                 <Grid columns="70px 71px">
                   <Item center>
                     <Item as="label">
@@ -254,12 +253,11 @@ const FormCR3947Rev0518: React.FC = () => {
                   </Item>
                   <Grid
                     as="label"
-                    columns="min-content 61px"
+                    columns="70px"
                     style={{ gridGap: 0, marginBottom: 0 }}
                   >
-                    <Item center>$</Item>
                     <FormInput
-                      placeholder="Amount."
+                      placeholder="Amount"
                       name="supervisionFeeArrearagedAmount"
                     />
                   </Grid>
@@ -270,7 +268,7 @@ const FormCR3947Rev0518: React.FC = () => {
                   Exemption type:
                 </Item>
                 <FormInput
-                  placeholder="Type."
+                  placeholder="Type"
                   name="supervisionFeeExemptionType"
                 />
                 <Item center>
@@ -279,7 +277,7 @@ const FormCR3947Rev0518: React.FC = () => {
                   Expiration Date:
                 </Item>
                 <FormInput
-                  placeholder="Date."
+                  placeholder="Date"
                   name="supervisionFeeExemptionExpirDate"
                 />
               </Grid>
@@ -302,33 +300,33 @@ const FormCR3947Rev0518: React.FC = () => {
                 Balance
               </Item>
               <FormInput
-                placeholder="Court Cost Balance."
+                placeholder="Court Cost Balance"
                 name="courtCostsBalance"
               />
               <Item center as="label">
                 Monthly Payment
               </Item>
-              <FormInput placeholder="Amount." name="courtCostsMonthlyAmt1" />
+              <FormInput placeholder="Amount" name="courtCostsMonthlyAmt1" />
             </Grid>
             <Grid columns="100px 50px 90px 2fr">
               <Item center>Restitution:</Item>
               <Item center as="label">
                 Amount:
               </Item>
-              <FormInput placeholder="Total Amount." name="restitutionAmt" />
+              <FormInput placeholder="Total Amount" name="restitutionAmt" />
               <Grid rows="1fr 1fr" columns="90px 1fr">
                 <Item as="label" center>
                   Monthly Payment
                 </Item>
                 <FormInput
-                  placeholder="Amount."
+                  placeholder="Amount"
                   name="restitutionMonthlyPayment"
                 />
                 <Item as="label" center>
                   Payment made to:
                 </Item>
                 <FormInput
-                  placeholder="Recipient."
+                  placeholder="Recipient"
                   name="restitutionMonthlyPaymentTo"
                 />
               </Grid>
@@ -347,7 +345,7 @@ const FormCR3947Rev0518: React.FC = () => {
               <Item>Alcohol and Drug Screen</Item>
               <Item as="label">Date of last drug screen</Item>
               <FormInput
-                placeholder="Date."
+                placeholder="Date"
                 name="specialConditionsAlcDrugScreenDate"
               />
             </Grid>
@@ -367,7 +365,7 @@ const FormCR3947Rev0518: React.FC = () => {
                 </Item>
               </Item>
               <FormInput
-                placeholder="Completion Date."
+                placeholder="Completion Date"
                 name="specialConditionsAlcDrugAssessmentCompleteDate"
               />
             </Grid>
@@ -401,7 +399,7 @@ const FormCR3947Rev0518: React.FC = () => {
                 </Item>
               </Item>
               <FormInput
-                placeholder="Completion Date."
+                placeholder="Completion Date"
                 name="specialConditionsAlcDrugTreatmentCompleteDate"
               />
             </Grid>
@@ -444,11 +442,11 @@ const FormCR3947Rev0518: React.FC = () => {
               </Grid>
               <Grid rows="1fr 1fr">
                 <FormInput
-                  placeholder="Completion Date."
+                  placeholder="Completion Date"
                   name="specialConditionsCounselingAngerManagementCompleteDate"
                 />
                 <FormInput
-                  placeholder="Completion Date."
+                  placeholder="Completion Date"
                   name="specialConditionsCounselingMentalHealthCompleteDate"
                 />
               </Grid>
@@ -461,7 +459,7 @@ const FormCR3947Rev0518: React.FC = () => {
                 Community Service Work
                 <br /># of hours:{" "}
                 <FormInput
-                  placeholder="hours."
+                  placeholder="hours"
                   name="specialConditionsCommunityServiceHours"
                 />
               </Item>
@@ -481,7 +479,7 @@ const FormCR3947Rev0518: React.FC = () => {
                 </Item>
               </Item>
               <FormInput
-                placeholder="Completion Date."
+                placeholder="Completion Date"
                 name="specialConditionsCommunityServiceCompletionDate"
               />
             </Grid>
@@ -492,7 +490,7 @@ const FormCR3947Rev0518: React.FC = () => {
               <Item as="label">
                 No Contact with{" "}
                 <FormInput
-                  placeholder="Name."
+                  placeholder="Name"
                   name="specialConditionsNoContactName"
                   style={{ width: 300 }}
                 />
@@ -551,15 +549,15 @@ const FormCR3947Rev0518: React.FC = () => {
               </Grid>
               <Grid rows="1fr 1fr 1fr">
                 <FormInput
-                  placeholder="Completion Date."
+                  placeholder="Completion Date"
                   name="specialConditionsProgrammingCognitiveBehaviorCompletionDate"
                 />
                 <FormInput
-                  placeholder="Completion Date."
+                  placeholder="Completion Date"
                   name="specialConditionsProgrammingSafeCompletionDate"
                 />
                 <FormInput
-                  placeholder="Completion Date."
+                  placeholder="Completion Date"
                   name="specialConditionsProgrammingVictimImpactCompletionDate"
                 />
               </Grid>
@@ -580,7 +578,7 @@ const FormCR3947Rev0518: React.FC = () => {
                 </Item>
               </Item>
               <FormInput
-                placeholder="Completion Date."
+                placeholder="Completion Date"
                 name="specialConditionsProgrammingFswCompletionDate"
               />
             </Grid>

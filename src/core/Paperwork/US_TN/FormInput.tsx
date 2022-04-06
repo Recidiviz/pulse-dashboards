@@ -17,7 +17,7 @@
 import { debounce } from "lodash";
 import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useRef, useState } from "react";
+import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import {
@@ -25,6 +25,7 @@ import {
   updateCompliantReportingDraft,
 } from "../../../firestore";
 import type { Client } from "../../../PracticesStore/Client";
+import { useAnimatedValue } from "../utils";
 import { Input } from "./styles";
 import { FormDataType } from "./types";
 
@@ -63,6 +64,11 @@ const FormInput: React.FC<FormInputProps> = ({
   ...props
 }) => {
   const [value, setValue] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement>(
+    null
+  ) as MutableRefObject<HTMLInputElement>;
+
+  useAnimatedValue(inputRef, value);
 
   useEffect(() => {
     return autorun(() => {
@@ -103,6 +109,7 @@ const FormInput: React.FC<FormInputProps> = ({
     <Input
       {...props}
       value={value}
+      ref={inputRef}
       id={name}
       name={name}
       type="text"

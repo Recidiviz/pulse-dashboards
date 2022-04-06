@@ -2721,10 +2721,10 @@
     "@react-spring/shared" "~9.4.4"
     "@react-spring/types" "~9.4.4"
 
-"@recidiviz/design-system@^3.0.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@recidiviz/design-system/-/design-system-3.1.0.tgz#9a40b0b6b3e30ff4c62b07161746405e839878d9"
-  integrity sha512-lR+LlWfwuTUwKdlq++QZqamcZqpUFkGJm1mBva2G8UohQ/A5ET9knKY53i+uQfrubhnj/5lSis6E03f3XqNfpQ==
+"@recidiviz/design-system@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@recidiviz/design-system/-/design-system-3.2.0.tgz#93833ba3ada3306f75ff2008485f9b72f8ba01aa"
+  integrity sha512-bLMtyLlQe5+bJT9FPQF9E5pw1i5MXS5X0NaY/MNxiuGFZOsGXUJAgdun7MaSAVIco35nfhACPm8EH50EaGiuhQ==
   dependencies:
     "@fontsource/libre-baskerville" "^4.1.0"
     "@fontsource/libre-franklin" "^4.1.0"
@@ -16383,11 +16383,6 @@ react-window@^1.8.6:
   dependencies:
     "@babel/runtime" "^7.0.0"
     memoize-one ">=3.1.1 <6"
-
-react-zoom-pan-pinch@^2.1.3:
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/react-zoom-pan-pinch/-/react-zoom-pan-pinch-2.1.3.tgz#3b84594200343136c0d4397c33fec38dc0ee06ad"
-  integrity sha512-a5AChOWhjo0RmxsNZXGQIlNh3e3nLU6m4V6M+6dlbPNk5d+MtMxgKWyA5zpR06Lp3OZkZVF9nR8JeWSvKwck9g==
 
 react@^16.0.0:
   version "16.14.0"
