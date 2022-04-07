@@ -338,7 +338,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
             label: "",
           },
         ],
-        chartId: "Admissions from liberty to prison by district",
+        chartId: "Admissions from liberty to prison by judicial district",
         chartLabels: ["1", "2"],
         dataExportLabel: "Judicial District",
       };

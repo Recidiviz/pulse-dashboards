@@ -22,9 +22,12 @@ import { getMetricCopy, getPageCopy } from "..";
  */
 export const usTnMethodology: ViewMethodology = {
   system: {
-    title: "System-Level Trends",
+    title: "Pathways",
     // TODO figure out a way to get this into the sync content
-    description: `The System-Level Trends page provides a real-time map of the corrections system and helps identify patterns of success and failure among specific cohorts of people.`,
+    description:
+      "Pathways provides a real-time map of the corrections system and helps identify patterns of success and failure among specific cohorts of people.",
+    descriptionSecondary:
+      "In each of the charts and tables, when a filter is set to 'All', the counts may not add up to the sum of each individual filtered value. This is because there are some unknown values (for example, some people with an unknown age). These people are counted when the age filter is set to 'All' but are not shown in any of the other breakdowns.",
     get pageCopy() {
       return getPageCopy("US_TN");
     },

@@ -23,7 +23,7 @@ import { StateSpecificPageCopy } from "../types";
 const content: StateSpecificPageCopy = {
   prison: {
     summary:
-      "These charts show people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails are not included. ",
+      "These charts show people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails and workhouses are not included. ",
     methodology:
       "These charts show people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails are not included.",
   },

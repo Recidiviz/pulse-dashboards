@@ -259,6 +259,7 @@ export type ViewMethodology = {
   system?: {
     title: string;
     description: string;
+    descriptionSecondary?: string;
     pageCopy: PageCopy;
     metricCopy: MetricCopy;
   };

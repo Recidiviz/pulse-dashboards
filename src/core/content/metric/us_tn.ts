@@ -21,20 +21,25 @@
 import { StateSpecificMetricCopy } from "../types";
 
 const content: StateSpecificMetricCopy = {
-  prisonPopulationOverTime: {
-    methodology: `The chart describes the historical prison population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. `,
-  },
   prisonFacilityPopulation: {
     methodology:
-      "The chart describes the number of people in each facility as of the date specified in the chart title. ",
+      'The chart describes the number of people in each facility as of the date specified in the chart title. "General" includes facilities 019, 033, 047, 057, 075, 079, 082, 19C, and 47C.',
   },
-  prisonPopulationPersonLevel: {
+  prisonToSupervisionPopulationByFacility: {
     methodology:
-      "The table includes a row for each person in prison as of the date specified in the chart title. ",
+      'The chart describes the number of people released from prison to supervision from each facility as of the date specified in the chart title. When "Counts" is selected, the number of people released from each facility is shown. When "Rates" is selected, the percentage shows the number of people released from each facility divided by the total number of people released to supervision. "General" includes facilities 019, 033, 047, 057, 075, 079, 082, 19C, and 47C.',
+  },
+  supervisionPopulationByDistrict: {
+    methodology:
+      'The chart describes the number of people on supervision in each district as of the date specified in the chart title. "Other" includes sites KCCA, MCHR, ETHR, CACC, MCCC, CMCS, WXCN, DCCCP, SECC, SCHR, MRCP, SEHR, DECC, DCDC4, HCCC, FTHR, and UCHR.',
   },
   supervisionToPrisonPopulationByDistrict: {
     methodology:
-      "The chart describes the number of people admitted to prison from each district as of the date specified in the chart title. ",
+      'The chart describes the number of people admitted to prison from each district as of the date specified in the chart title. When "Counts" is selected, the number of people in each district is shown. When "Rates" is selected, the percentage shows the number of people in each district divided by the total number of people admitted to prison. "Other" includes sites KCCA, MCHR, ETHR, CACC, MCCC, CMCS, WXCN, DCCCP, SECC, SCHR, MRCP, SEHR, DECC, DCDC4, HCCC, FTHR, and UCHR.',
+  },
+  supervisionToLibertyPopulationByLocation: {
+    methodology:
+      'The chart describes the number of people released from supervision to liberty from each district as of the date specified in the chart title. When "Counts" is selected, the number of people in each district is shown. When "Rates" is selected, the percentage shows the number of people in each district divided by the total number of people released to liberty. "Other" includes sites KCCA, MCHR, ETHR, CACC, MCCC, CMCS, WXCN, DCCCP, SECC, SCHR, MRCP, SEHR, DECC, DCDC4, HCCC, FTHR, and UCHR.',
   },
 };
 

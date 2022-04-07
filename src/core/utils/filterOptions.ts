@@ -586,6 +586,29 @@ export const IdPopulationFilterOptions: PopulationFilters = {
 
 export const TnPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.SUPERVISION_LEVEL]: {
+    type: FILTER_TYPES.SUPERVISION_LEVEL,
+    title: "Supervision Level",
+    setFilters: setFilters(FILTER_TYPES.SUPERVISION_LEVEL),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Minimum", value: "MINIMUM" },
+      { label: "Medium", value: "MEDIUM" },
+      { label: "Maximum", value: "HIGH" },
+      { label: "Enhanced", value: "MAXIMUM" },
+      { label: "In Custody", value: "IN_CUSTODY" },
+      { label: "Compliant Reporting", value: "LIMITED" },
+      { label: "Inactive", value: "UNSUPERVISED" },
+      { label: "Intake", value: "UNASSIGNED" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
   [FILTER_TYPES.ADMISSION_REASON]: {
     type: FILTER_TYPES.ADMISSION_REASON,
     title: "Admission Reason",
@@ -628,9 +651,11 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       { label: "HCCF", value: "HCCF" },
       { label: "RMSI", value: "RMSI" },
       { label: "SPND", value: "SPND" },
-      { label: "MLRC", value: "MLRC" },
+      { label: "MLTC", value: "MLTC" },
       { label: "TCIX", value: "TCIX" },
       { label: "DJRC", value: "DJRC" },
+      { label: "General", value: "GENERAL" },
+      { label: "Inactive", value: "INACTIVE" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -646,25 +671,23 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.DISTRICT),
     options: [
       { label: "All", value: "ALL" },
+      { label: "Absconded", value: "DISTRICT 0" },
       { label: "District 10", value: "DISTRICT 10" },
       { label: "District 20", value: "DISTRICT 20" },
       { label: "District 21", value: "DISTRICT 21" },
       { label: "District 30", value: "DISTRICT 30" },
       { label: "District 31", value: "DISTRICT 31" },
-      {
-        label: "Districts 40 And 41",
-        value: "DISTRICTS 40 And 41",
-      },
+      { label: "District 40", value: "DISTRICT 40" },
+      { label: "District 41", value: "DISTRICT 41" },
       { label: "District 50", value: "DISTRICT 50" },
       { label: "District 51", value: "DISTRICT 51" },
       { label: "District 60", value: "DISTRICT 60" },
       { label: "District 61", value: "DISTRICT 61" },
-      {
-        label: "Districts 70 And 71",
-        value: "DISTRICTS 70 And 71",
-      },
+      { label: "District 70", value: "DISTRICT 70" },
+      { label: "District 71", value: "DISTRICT 71" },
       { label: "District 80", value: "DISTRICT 80" },
       { label: "District 81", value: "DISTRICT 81" },
+      { label: "Other", value: "OTHER" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -752,7 +775,7 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       { label: "All", value: "ALL" },
       { label: "Probation", value: "PROBATION" },
       { label: "Parole", value: "PAROLE" },
-      { label: "Community confinement", value: "COMMUNITY_CONFINEMENT" },
+      { label: "Community corrections", value: "COMMUNITY_CONFINEMENT" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];

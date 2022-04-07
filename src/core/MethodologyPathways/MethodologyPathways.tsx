@@ -77,6 +77,12 @@ const MethodologyPathways: React.FC = () => {
           <h2 className="Methodology__main-description">
             {Methodology.description}
           </h2>
+          <br />
+          {Methodology.descriptionSecondary && (
+            <h2 className="Methodology__main-description">
+              {Methodology.descriptionSecondary}
+            </h2>
+          )}
           <div className=" Methodology__toc">
             <h5 className="Methodology__toc--title">CONTENTS</h5>
             <div className="d-flex flex-column">

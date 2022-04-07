@@ -21,6 +21,20 @@
 import { PageCopy } from "../types";
 
 const content: PageCopy = {
+  libertyToPrison: {
+    title: "Liberty to Prison",
+    summary:
+      "Includes people who were sentenced to prison from a new court commitment.",
+    sections: {
+      countOverTime: "Admissions from liberty to prison over time",
+      countByLocation: "Admissions from liberty to prison by judicial district",
+      countByGender: "Admissions from liberty to prison by gender",
+      countByAgeGroup: "Admissions from liberty to prison by age",
+      countByRace: "Admissions from liberty to prison by race",
+      countByPriorLengthOfIncarceration:
+        "Admissions from liberty to prison by prior length of incarceration",
+    },
+  },
   prison: {
     title: "Prison",
     summary: "This page shows all people in state prison facilities.",
@@ -28,6 +42,17 @@ const content: PageCopy = {
       countOverTime: "Prison population over time",
       countByLocation: "Prison population by facility",
       personLevelDetail: "List of people in prison",
+    },
+  },
+  prisonToSupervision: {
+    title: "Prison to Supervision",
+    summary:
+      "Includes people who were released from state prison facilities to supervision",
+    sections: {
+      countOverTime: "Releases from prison to supervision over time",
+      countByLocation: "Releases from prison to supervision by facility",
+      countByAgeGroup: "Releases from prison to supervision by age",
+      personLevelDetail: "List of releases from prison to supervision",
     },
   },
   supervision: {
@@ -71,31 +96,6 @@ const content: PageCopy = {
       countByRace: "Releases from supervision by race",
       countByGender: "Releases from supervision by gender ",
       countByAgeGroup: "Releases from supervision by age",
-    },
-  },
-  libertyToPrison: {
-    title: "Liberty to Prison",
-    summary:
-      "Includes people who were sentenced to prison from a new court commitment.",
-    sections: {
-      countOverTime: "Admissions from liberty to prison over time",
-      countByLocation: "Admissions from liberty to prison by district",
-      countByGender: "Admissions from liberty to prison by gender",
-      countByAgeGroup: "Admissions from liberty to prison by age",
-      countByRace: "Admissions from liberty to prison by race",
-      countByPriorLengthOfIncarceration:
-        "Admissions from liberty to prison by prior length of incarceration",
-    },
-  },
-  prisonToSupervision: {
-    title: "Prison to Supervision",
-    summary:
-      "Includes people who were released from state prison facilities to supervision",
-    sections: {
-      countOverTime: "Releases from prison to supervision over time",
-      countByLocation: "Releases from prison to supervision by facility",
-      countByAgeGroup: "Releases from prison to supervision by age",
-      personLevelDetail: "List of releases from prison to supervision",
     },
   },
 };

@@ -388,6 +388,15 @@ export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
 
 export const TnEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
+  supervisionToPrisonOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.SUPERVISION_TYPE,
+    ],
+  },
 };
 
 export const MeEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
