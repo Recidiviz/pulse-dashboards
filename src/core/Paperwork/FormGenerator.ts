@@ -17,21 +17,23 @@
 import { jsPDF } from "jspdf";
 
 export const PDF_DPI = 72;
-export const FORMAT_WIDTH = 8.5 * PDF_DPI;
-export const FORMAT_HEIGHT = 11 * PDF_DPI;
-export const FORMAT = [FORMAT_WIDTH, FORMAT_HEIGHT];
-export const MARGIN = 0.75 * PDF_DPI;
+
+export const DIMENSIONS_IN = {
+  HEIGHT: 11,
+  WIDTH: 8.5,
+  MARGIN: 0.75,
+};
+
+export const DIMENSIONS_PX = {
+  HEIGHT: DIMENSIONS_IN.HEIGHT * PDF_DPI,
+  WIDTH: DIMENSIONS_IN.WIDTH * PDF_DPI,
+  MARGIN: DIMENSIONS_IN.MARGIN * PDF_DPI,
+};
 
 export const generate = (
   element: HTMLElement,
   selector: string
 ): Promise<jsPDF> => {
-  // eslint-disable-next-line new-cap
-  const pdf = new jsPDF({
-    unit: "px",
-    format: FORMAT,
-  });
-
   const pages = Array.from(element.querySelectorAll(selector)) as HTMLElement[];
 
   if (pages.length > 1) {
@@ -40,6 +42,12 @@ export const generate = (
 
   const [page] = pages;
 
+  // eslint-disable-next-line new-cap
+  const pdf = new jsPDF({
+    unit: "in",
+    format: [DIMENSIONS_IN.WIDTH, DIMENSIONS_IN.HEIGHT],
+  });
+
   // Some Chrome extensions will inject a background image, which breaks html2canvas
   // Remove the background image when printing
   Array.from(page.querySelectorAll("input")).forEach((input) => {
@@ -47,10 +55,20 @@ export const generate = (
     input.style.backgroundImage = "";
   });
 
+  const pdfContentAreaWidth = DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN;
+  const currentPageWidth = page.offsetWidth;
+
+  // The `page` element is assumed to be rendered at 8.5in x 11in. Pinch to zoom alters these inherent dimensions.
+  // This causes the PDF contents to overflow the page boundaries, as a result, we scale the canvas proportionally
+  const currentViewportScale = pdfContentAreaWidth / currentPageWidth;
+
   return pdf
     .html(page, {
-      margin: MARGIN / 2,
+      margin: DIMENSIONS_IN.MARGIN / 2,
       autoPaging: "text",
+      html2canvas: {
+        scale: currentViewportScale / PDF_DPI,
+      },
     })
     .then(() => {
       const pagesInPdf = pdf.getNumberOfPages();

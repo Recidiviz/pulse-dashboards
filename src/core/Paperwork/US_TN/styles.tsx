@@ -23,8 +23,8 @@ import { rem } from "polished";
 import * as React from "react";
 import styled, { css } from "styled-components/macro";
 
-import { FORMAT_HEIGHT, FORMAT_WIDTH, MARGIN } from "../FormGenerator";
-import { FormViewerContextData } from "../FormViewer";
+import { DIMENSIONS_PX } from "../FormGenerator";
+import type { FormViewerContextData } from "../FormViewer";
 import FormCheckbox from "./FormCheckbox";
 import FormInput from "./FormInput";
 
@@ -96,10 +96,10 @@ const Emphasize = styled.span`
 
 const PrintablePage = styled.div.attrs({ className: "form-page" })`
   background-color: white;
-  height: ${rem(FORMAT_HEIGHT - MARGIN)};
-  max-height: ${rem(FORMAT_HEIGHT - MARGIN)};
-  width: ${rem(FORMAT_WIDTH - MARGIN)};
-  max-width: ${rem(FORMAT_WIDTH - MARGIN)};
+  height: ${rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
+  max-height: ${rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
+  width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
+  max-width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
   overflow: hidden;
   color: black;
   font-family: Arial, serif;
@@ -140,10 +140,10 @@ const PrintablePageMargin = styled.div`
   box-sizing: content-box;
   transform-origin: 0 0;
 
-  height: ${rem(FORMAT_HEIGHT - MARGIN)};
-  max-height: ${rem(FORMAT_HEIGHT - MARGIN)};
-  width: ${rem(FORMAT_WIDTH - MARGIN)};
-  max-width: ${rem(FORMAT_WIDTH - MARGIN)};
+  height: ${rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
+  max-height: ${rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
+  width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
+  max-width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
 `;
 
 const Row = styled.div`
