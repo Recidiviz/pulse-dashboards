@@ -43,11 +43,12 @@ const content: PageCopy = {
       countByLocation: "Prison population by facility",
       personLevelDetail: "List of people in prison",
     },
+    methodology: "Includes individuals who are admitted to state facilities.",
   },
   prisonToSupervision: {
     title: "Prison to Supervision",
     summary:
-      "Includes people who were released from state prison facilities to supervision",
+      "Includes people who were released from state prison facilities to supervision.",
     sections: {
       countOverTime: "Releases from prison to supervision over time",
       countByLocation: "Releases from prison to supervision by facility",
@@ -97,6 +98,8 @@ const content: PageCopy = {
       countByGender: "Releases from supervision by gender ",
       countByAgeGroup: "Releases from supervision by age",
     },
+    methodology:
+      "These charts include events where people are released from supervision to liberty. Releases are counted on the day a person terminates supervision. All charts on this page are event-based, so if a single person has two releases during the selected time period, two events are counted on this page.",
   },
 };
 

@@ -256,9 +256,21 @@ const getTicks = (
     return 1;
   };
 
+  let tickValues: number[];
+  switch (true) {
+    case value === -Infinity:
+      tickValues = [];
+      break;
+    case value < 1:
+      tickValues = [0.2, 0.4, 0.6, 0.8];
+      break;
+    default:
+      tickValues = ticks;
+  }
+
   return {
     maxTickValue: max,
-    tickValues: value === -Infinity ? [] : ticks,
+    tickValues,
 
     // This value used to determine chart left margin based on tick value length
     ticksMargin:

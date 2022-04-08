@@ -23,9 +23,34 @@ import { StateSpecificPageCopy } from "../types";
 const content: StateSpecificPageCopy = {
   prison: {
     summary:
-      "These charts show people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails and workhouses are not included. ",
+      "Includes people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails and workhouses are not included. ",
     methodology:
       "These charts show people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails are not included.",
+  },
+  prisonToSupervision: {
+    summary:
+      "Includes people who were released from state prison facilities to supervision. People in county jails and workhouses are not included. ",
+    methodology:
+      "These charts show people who were released from state prison facilities to supervision. People released from county jails and workhouses are not included. ",
+  },
+  libertyToPrison: {
+    summary:
+      "Includes people who were sentenced to prison from a new court commitment. People placed in county jails and workhouses are not included.",
+    methodology:
+      "These charts show people who were sentenced to prison from a new court commitment. People placed in county jails and workhouses are not included.",
+  },
+  supervisionToPrison: {
+    summary:
+      "Includes people who have been incarcerated in a state prison facility because their parole or probation was revoked. People placed in county jails and workhouses are not included. Revocations are counted when the person was admitted to a facility, not when the violation occurred.",
+    methodology:
+      "These charts show people who have been incarcerated in a state prison facility because their parole or probation was revoked. People placed in county jails and workhouses are not included. Revocations are counted when the person was admitted to a facility, not when the violation occurred.",
+  },
+  supervisionToLiberty: {
+    methodology:
+      "These charts include events where people are released from supervision to liberty. Releases are counted on the day a person terminates supervision. All charts on this page are event-based, so if a single person has two releases during the selected time period, two events are counted on this page.",
+  },
+  supervision: {
+    methodology: "These charts show people supervised by TDOC.",
   },
 };
 

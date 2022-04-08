@@ -110,12 +110,13 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
             return rest;
           }
         );
+        const populationProportion =
+          (sumBy("count", dataset) * 100) / this.totalCount;
         return {
           count: sumBy("count", dataset),
-          populationProportion: (
-            (sumBy("count", dataset) * 100) /
-            this.totalCount
-          ).toFixed(),
+          populationProportion: populationProportion.toFixed(
+            populationProportion < 1 ? 2 : 0
+          ),
           ...datasetWithoutCount[0],
         };
       })

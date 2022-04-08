@@ -41,6 +41,10 @@ const content: StateSpecificMetricCopy = {
     methodology:
       'The chart describes the number of people released from supervision to liberty from each district as of the date specified in the chart title. When "Counts" is selected, the number of people in each district is shown. When "Rates" is selected, the percentage shows the number of people in each district divided by the total number of people released to liberty. "Other" includes sites KCCA, MCHR, ETHR, CACC, MCCC, CMCS, WXCN, DCCCP, SECC, SCHR, MRCP, SEHR, DECC, DCDC4, HCCC, FTHR, and UCHR.',
   },
+  prisonPopulationPersonLevel: {
+    note:
+      "The people who are in the INACTIVE facility are due to a known bug which will be fixed soon.",
+  },
 };
 
 export default content;
