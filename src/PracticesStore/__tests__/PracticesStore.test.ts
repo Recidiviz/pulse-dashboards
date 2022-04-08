@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { keyBy } from "lodash";
 import { computed, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
+  ClientRecord,
   getClient,
   getUser,
   subscribeToCaseloads,
@@ -29,6 +31,7 @@ import {
 import { RootStore } from "../../RootStore";
 import type { PracticesStore } from "..";
 import {
+  eligibleClient,
   ineligibleClient,
   mockClients,
   mockDirector,
@@ -82,14 +85,12 @@ async function waitForHydration(): Promise<void> {
   await when(() => !practicesStore.isLoading);
 }
 
-function populateClients(): void {
+function populateClients(clients: ClientRecord[]): void {
   runInAction(() => {
-    practicesStore.clients = {
-      [ineligibleClient.personExternalId]: new Client(
-        ineligibleClient,
-        rootStore
-      ),
-    };
+    practicesStore.clients = keyBy(
+      clients.map((r) => new Client(r, rootStore)),
+      "pseudonymizedId"
+    );
   });
 }
 
@@ -316,19 +317,19 @@ test("no client selected", async () => {
 });
 
 test("select existing client", () => {
-  populateClients();
+  populateClients(mockClients);
 
-  const idToSelect = ineligibleClient.personExternalId;
+  const idToSelect = ineligibleClient.pseudonymizedId;
 
   runInAction(() => {
     practicesStore.selectedOfficerIds = ["OFFICER1"];
-    practicesStore.selectedClientId = idToSelect;
+    practicesStore.updateSelectedClient(idToSelect);
   });
 
   // simulate a UI displaying client data
   testObserver = keepAlive(computed(() => practicesStore.selectedClient));
 
-  expect(practicesStore.selectedClient?.id).toBe(idToSelect);
+  expect(practicesStore.selectedClient?.pseudonymizedId).toBe(idToSelect);
 });
 
 test("select unfetched client", async () => {
@@ -337,17 +338,47 @@ test("select unfetched client", async () => {
   const idToSelect = "unknownId";
   mockGetClient.mockResolvedValue({
     ...ineligibleClient,
-    personExternalId: idToSelect,
+    pseudonymizedId: idToSelect,
   });
 
-  runInAction(() => {
-    practicesStore.selectedClientId = idToSelect;
-  });
+  practicesStore.updateSelectedClient(idToSelect);
 
   expect(practicesStore.selectedClient).toBeUndefined();
 
   await when(() => practicesStore.selectedClient !== undefined);
 
   expect(mockGetClient).toHaveBeenCalledWith(idToSelect);
-  expect(practicesStore.selectedClient?.id).toBe(idToSelect);
+  expect(practicesStore.selectedClient?.pseudonymizedId).toBe(idToSelect);
+});
+
+test("track call on client", async () => {
+  populateClients(mockClients);
+
+  const trackingSpy = jest.spyOn(Client.prototype, "trackFormViewed");
+
+  await practicesStore.trackClientFormViewed(
+    eligibleClient.pseudonymizedId,
+    "compliantReporting"
+  );
+
+  expect(trackingSpy).toHaveBeenCalledWith("compliantReporting");
+});
+
+test("tracking call waits for client to be instantiated", async () => {
+  populateClients([]);
+  mockGetClient.mockResolvedValue(eligibleClient);
+
+  const trackingSpy = jest.spyOn(Client.prototype, "trackFormViewed");
+
+  const trackingPromise = practicesStore.trackClientFormViewed(
+    eligibleClient.pseudonymizedId,
+    "compliantReporting"
+  );
+
+  // triggers an additional fetch to populate the expected client
+  practicesStore.updateSelectedClient(eligibleClient.pseudonymizedId);
+
+  await trackingPromise;
+
+  expect(trackingSpy).toHaveBeenCalledWith("compliantReporting");
 });

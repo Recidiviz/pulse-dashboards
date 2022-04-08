@@ -20,14 +20,12 @@ import { observer } from "mobx-react-lite";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import { useRootStore } from "../../../components/StoreProvider";
-import {
-  CombinedUserRecord,
-  updateCompliantReportingDraft,
-} from "../../../firestore";
+import { CombinedUserRecord } from "../../../firestore";
 import type { Client } from "../../../PracticesStore/Client";
 import { useAnimatedValue } from "../utils";
 import { Input } from "./styles";
 import { FormDataType } from "./types";
+import { updateFieldData } from "./utils";
 
 export type FormInputValueGetter = (value: any) => any;
 
@@ -80,13 +78,9 @@ const FormInput: React.FC<FormInputProps> = ({
 
   const updateFirestoreRef = useRef(
     debounce((key, builtValue) => {
-      updateCompliantReportingDraft(
-        client.currentUserName || "user",
-        client.id,
-        {
-          [key]: builtValue,
-        }
-      );
+      updateFieldData(client.currentUserName || "user", client, {
+        [key]: builtValue,
+      });
     }, 2000)
   );
 

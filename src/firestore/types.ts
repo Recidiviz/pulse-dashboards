@@ -55,10 +55,14 @@ export type CombinedUserRecord = {
   updates?: UserUpdateRecord;
 };
 
+const OPPORTUNITY_TYPES = ["compliantReporting"] as const;
 /**
  * Values of this union map to key prefixes in client records
  */
-export type OpportunityType = "compliantReporting";
+export type OpportunityType = typeof OPPORTUNITY_TYPES[number];
+export function isOpportunityType(s: string): s is OpportunityType {
+  return OPPORTUNITY_TYPES.includes(s as OpportunityType);
+}
 
 export type FullName = {
   givenNames?: string;
@@ -71,6 +75,7 @@ export type FullName = {
  */
 export type ClientRecord = {
   personExternalId: string;
+  pseudonymizedId: string;
   stateCode: string;
   personName: FullName;
   officerId: string;
@@ -129,3 +134,5 @@ type CompliantReportingUpdateRecord = {
     update: UpdateLog;
   };
 };
+
+export type FormFieldData = Record<string, boolean | string | string[]>;

@@ -26,7 +26,6 @@ import {
   connectFirestoreEmulator,
   deleteField,
   doc,
-  getDoc,
   getDocs,
   getFirestore,
   limit,
@@ -45,6 +44,7 @@ import {
   ClientRecord,
   ClientUpdateRecord,
   CombinedUserRecord,
+  FormFieldData,
   OpportunityType,
   StaffRecord,
   UserUpdateRecord,
@@ -127,8 +127,16 @@ export async function getUser(
 export async function getClient(
   clientId: string
 ): Promise<ClientRecord | undefined> {
-  const result = await getDoc(doc(collections.clients, clientId));
-  return result.data();
+  // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
+  const result = await getDocs(
+    query(
+      collections.clients,
+      where("pseudonymizedId", "==", clientId),
+      limit(1)
+    )
+  );
+
+  return result.docs[0]?.data();
 }
 
 /**
@@ -232,7 +240,7 @@ export function subscribeToCompliantReportingReferral(
 export const updateCompliantReportingDraft = function (
   updatedBy: string,
   clientId: string,
-  data: Record<string, boolean | string | string[]>
+  data: FormFieldData
 ): Promise<void> {
   return setDoc(
     doc(collections.clientUpdates, clientId),

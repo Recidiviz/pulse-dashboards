@@ -95,6 +95,7 @@ exports.onExecutePostLogin = async (event, api) => {
         restrictions.should_see_beta_charts || false
       );
       api.user.setAppMetadata("routes", restrictions.routes || null);
+      api.user.setAppMetadata("user_hash", restrictions.user_hash)
     } catch (apiError) {
       Sentry.captureMessage(
         `Error while updating user permissions on login for user: ${event.user.email}`

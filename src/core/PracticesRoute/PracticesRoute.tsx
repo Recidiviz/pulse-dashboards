@@ -15,20 +15,52 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useEffect } from "react";
-import { Route, RouteProps, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Redirect, Route, RouteProps, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { isOpportunityType } from "../../firestore";
+import { PATHWAYS_PATHS } from "../views";
+
+// react-router does not seem to export this type directly
+type RouterLocation = ReturnType<typeof useLocation>;
+
+function parseLocation(loc: RouterLocation) {
+  // slicing off empty string at 0 caused by leading slash,
+  // and 1 which should always be "workflows"
+  const [page, clientId]: Array<string | undefined> = loc.pathname
+    .split("/")
+    .slice(2);
+
+  return { page, clientId };
+}
 
 const RouteSync: React.FC = ({ children }) => {
   const { practicesStore } = useRootStore();
-  const { clientId } = useParams<{ clientId?: string }>();
-  useEffect(() => practicesStore.updateSelectedClient(clientId), [
-    practicesStore,
-    clientId,
-  ]);
+  const loc = useLocation();
 
-  return <>{children}</>;
+  const [notFound, setNotFound] = useState(false);
+
+  //
+  useEffect(() => {
+    const { page, clientId } = parseLocation(loc);
+
+    // sync location data into the store
+    practicesStore.updateSelectedClient(clientId).catch(() => {
+      setNotFound(true);
+    });
+
+    // issue tracking calls as needed
+    if (clientId && isOpportunityType(page)) {
+      practicesStore.trackClientFormViewed(clientId, page);
+    }
+  }, [loc, practicesStore]);
+
+  return notFound ? (
+    <Redirect to={PATHWAYS_PATHS.practices404} />
+  ) : (
+    <>{children}</>
+  );
 };
 
 /**

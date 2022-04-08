@@ -27,6 +27,7 @@ import React from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components/macro";
 
+import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import isIE11 from "../../utils/isIE11";
 import cssVars from "../CoreConstants.scss";
@@ -140,6 +141,7 @@ const PagePracticesV2: React.FC = () => {
               </PracticesSidebar>
               <PracticesCompliantReportingForm />
             </PracticesRoute>
+            <NotFound />
           </Switch>
         </Wrapper>
       </ModelHydrator>

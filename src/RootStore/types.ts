@@ -44,6 +44,7 @@ export type UserAppMetadata = {
   can_access_case_triage: boolean;
   should_see_beta_charts: boolean;
   routes?: Record<string, boolean>;
+  user_hash?: string;
 };
 
 export type LanternMethodologyByTenant = {

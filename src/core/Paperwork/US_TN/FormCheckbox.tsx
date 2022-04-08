@@ -18,9 +18,9 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../../components/StoreProvider";
-import { updateCompliantReportingDraft } from "../../../firestore";
 import { Checkbox } from "./styles";
 import { FormDataType } from "./types";
+import { updateFieldData } from "./utils";
 
 export interface FormCheckboxProps
   extends React.InputHTMLAttributes<HTMLElement> {
@@ -43,7 +43,7 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
 
     client.setCompliantReportingReferralDataField(name, event.target.checked);
 
-    updateCompliantReportingDraft(client.currentUserName || "user", client.id, {
+    updateFieldData(client.currentUserName || "user", client, {
       [name]: event.target.checked,
     });
   };

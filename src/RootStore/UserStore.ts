@@ -21,9 +21,10 @@ import createAuth0Client, {
   LogoutOptions,
   User,
 } from "@auth0/auth0-spa-js";
-import { action, entries, makeAutoObservable, runInAction } from "mobx";
+import { action, entries, makeAutoObservable, runInAction, when } from "mobx";
 import qs from "qs";
 
+import { identify } from "../analytics";
 import { fetchOfflineUser } from "../api/fetchOfflineUser";
 import { ERROR_MESSAGES } from "../constants/errorMessages";
 import {
@@ -157,6 +158,7 @@ export default class UserStore {
             this.isAuthorized = true;
             this.userIsLoading = false;
           });
+          this.trackIdentity();
         } else {
           runInAction(() => {
             this.isAuthorized = false;
@@ -174,6 +176,14 @@ export default class UserStore {
       } else {
         this.authError = error;
       }
+    }
+  }
+
+  async trackIdentity(): Promise<void> {
+    await when(() => this.userAppMetadata !== undefined);
+    const userId = this.userAppMetadata?.user_hash;
+    if (userId) {
+      identify(userId);
     }
   }
 

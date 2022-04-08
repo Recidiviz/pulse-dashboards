@@ -17,14 +17,32 @@
 import { v4 as uuidv4 } from "uuid";
 
 import { OpportunityType } from "./firestore";
+import { OpportunityStatus } from "./PracticesStore/Client";
 
 const sessionId = uuidv4();
+
+const isAnalyticsEnabled = process.env.NODE_ENV !== "development";
+
+export function identify(userId: string): void {
+  const traits = { sessionId };
+
+  if (isAnalyticsEnabled) {
+    window.analytics.identify(userId, traits);
+  } else {
+    // eslint-disable-next-line no-console
+    console.log(
+      `[Analytics] Identifying user: ${userId}, with traits: ${JSON.stringify(
+        traits
+      )}`
+    );
+  }
+}
 
 const track = (eventName: string, metadata?: Record<string, unknown>): void => {
   const fullMetadata = metadata || {};
   fullMetadata.sessionId = sessionId;
 
-  if (process.env.NODE_ENV !== "development") {
+  if (isAnalyticsEnabled) {
     window.analytics.track(eventName, fullMetadata);
   } else {
     // eslint-disable-next-line
@@ -36,24 +54,31 @@ const track = (eventName: string, metadata?: Record<string, unknown>): void => {
   }
 };
 
-export const trackReferralFormPrinted = ({
-  formType,
-  district,
-  eligibilityStatus,
-  denialReasons,
-  otherReason,
-}: {
-  formType: string;
-  district?: string;
-  eligibilityStatus: Record<OpportunityType, boolean>;
-  denialReasons?: string[];
-  otherReason?: string;
-}): void => {
-  track("frontend.referral_form_printed", {
-    formType,
-    district,
-    eligibilityStatus,
-    denialReasons,
-    otherReason,
-  });
+type ClientFormTrackingMetadata = {
+  clientId: string;
+  opportunityType: OpportunityType;
 };
+
+export function trackReferralFormViewed(
+  metadata: ClientFormTrackingMetadata
+): void {
+  track("frontend.referral_form_viewed", metadata);
+}
+
+export const trackReferralFormPrinted = (
+  metadata: ClientFormTrackingMetadata
+): void => {
+  track("frontend.referral_form_printed", metadata);
+};
+
+export function trackSurfacedInList(
+  metadata: ClientFormTrackingMetadata
+): void {
+  track("frontend.surfaced_in_list", metadata);
+}
+
+export function trackSetOpportunityStatus<
+  Metadata extends { clientId: string; status: OpportunityStatus }
+>(metadata: Metadata): void {
+  track("frontend.opportunity_status_updated", metadata);
+}

@@ -16,13 +16,13 @@
 // =============================================================================
 
 import {
-  autorun,
   has,
   makeAutoObservable,
   reaction,
   runInAction,
   set,
   values,
+  when,
 } from "mobx";
 
 import { Hydratable } from "../core/models/types";
@@ -56,7 +56,7 @@ export class PracticesStore implements Hydratable {
 
   selectedOfficerIds: string[] = [];
 
-  selectedClientId?: string;
+  private selectedClientPseudoId?: string;
 
   private compliantReportingEligibleCount?: SubscriptionValue<number>;
 
@@ -85,13 +85,6 @@ export class PracticesStore implements Hydratable {
         this.updateClients(newClients);
       }
     );
-
-    // try to fetch clients that aren't already in our subscription
-    autorun(async () => {
-      if (this.selectedClientId && !has(this.clients, this.selectedClientId)) {
-        this.fetchClient(this.selectedClientId);
-      }
-    });
   }
 
   /**
@@ -150,6 +143,8 @@ export class PracticesStore implements Hydratable {
     const clientRecord = await getClient(clientId);
     if (clientRecord) {
       this.updateClients([clientRecord]);
+    } else {
+      throw new Error(`client ${clientId} not found`);
     }
   }
 
@@ -157,7 +152,7 @@ export class PracticesStore implements Hydratable {
     newClients.forEach((record) => {
       set(
         this.clients,
-        record.personExternalId,
+        record.pseudonymizedId,
         new Client(record, this.rootStore)
       );
     });
@@ -167,8 +162,11 @@ export class PracticesStore implements Hydratable {
     this.selectedOfficerIds = officerIds;
   }
 
-  updateSelectedClient(clientId?: string): void {
-    this.selectedClientId = clientId;
+  async updateSelectedClient(clientId?: string): Promise<void> {
+    this.selectedClientPseudoId = clientId;
+    if (clientId && !has(this.clients, clientId)) {
+      await this.fetchClient(clientId);
+    }
   }
 
   get selectedOfficers(): StaffRecord[] {
@@ -245,8 +243,17 @@ export class PracticesStore implements Hydratable {
   }
 
   get selectedClient(): Client | undefined {
-    return this.selectedClientId
-      ? this.clients[this.selectedClientId]
+    return this.selectedClientPseudoId
+      ? this.clients[this.selectedClientPseudoId]
       : undefined;
+  }
+
+  async trackClientFormViewed(
+    clientId: string,
+    formType: OpportunityType
+  ): Promise<void> {
+    await when(() => this.clients[clientId] !== undefined);
+
+    this.clients[clientId].trackFormViewed(formType);
   }
 }

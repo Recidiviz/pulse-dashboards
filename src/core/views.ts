@@ -74,6 +74,7 @@ export const PATHWAYS_PATHS: Record<string, string> = {
   methodologySystem: `/${PATHWAYS_VIEWS.methodology}/system`,
   methodologyOperations: `/${PATHWAYS_VIEWS.methodology}/operations`,
   practices: `/${PATHWAYS_VIEWS.practices}`,
+  practices404: `/${PATHWAYS_VIEWS.practices}/not-found`,
 };
 
 export type CorePage = keyof typeof CORE_PAGES;

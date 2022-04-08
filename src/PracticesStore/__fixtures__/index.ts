@@ -15,12 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  ClientRecord,
-  ClientUpdateRecord,
-  CombinedUserRecord,
-  StaffRecord,
-} from "../../firestore";
+import { ClientRecord, CombinedUserRecord, StaffRecord } from "../../firestore";
 import { dateToTimestamp } from "../utils";
 
 export const mockOfficer: CombinedUserRecord = {
@@ -74,6 +69,7 @@ export const ineligibleClient: ClientRecord = {
     surname: "THOMPSON",
   },
   personExternalId: "100",
+  pseudonymizedId: "p100",
   stateCode: "US_XX",
   officerId: "OFFICER1",
   supervisionType: "TN PAROLEE",
@@ -91,6 +87,7 @@ export const ineligibleClient: ClientRecord = {
 export const eligibleClient: ClientRecord = {
   personName: { givenNames: "LINET", surname: "HANSEN" },
   personExternalId: "101",
+  pseudonymizedId: "p101",
   stateCode: "US_XX",
   officerId: "OFFICER1",
   supervisionType: "TN PROBATIONER",
@@ -131,5 +128,3 @@ export const mockOfficers: StaffRecord[] = [
     email: null,
   },
 ];
-
-export const mockClientUpdate: ClientUpdateRecord = {};

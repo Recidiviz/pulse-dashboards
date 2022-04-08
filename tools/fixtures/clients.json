@@ -6,6 +6,7 @@
       "middleNames": "BARBY"
     },
     "personExternalId": "100",
+    "pseudonymizedId": "p100",
     "stateCode": "US_TN",
     "officerId": "OFFICER1",
     "district": "DISTRICT 50",
@@ -38,6 +39,7 @@
   {
     "personName": { "givenNames": "LINET", "surname": "HANSEN" },
     "personExternalId": "101",
+    "pseudonymizedId": "p101",
     "stateCode": "US_TN",
     "officerId": "OFFICER1",
     "district": "DISTRICT 50",
@@ -78,6 +80,7 @@
       "middleNames": "HATTI"
     },
     "personExternalId": "102",
+    "pseudonymizedId": "p102",
     "stateCode": "US_TN",
     "officerId": "OFFICER1",
     "district": "DISTRICT 50",
@@ -98,6 +101,7 @@
   {
     "personName": { "givenNames": "RAMONDA", "surname": "UNDERWOOD" },
     "personExternalId": "104",
+    "pseudonymizedId": "p104",
     "stateCode": "US_TN",
     "officerId": "OFFICER2",
     "district": "DISTRICT 50",
@@ -133,6 +137,7 @@
       "middleNames": "M"
     },
     "personExternalId": "107",
+    "pseudonymizedId": "p107",
     "stateCode": "US_TN",
     "officerId": "OFFICER2",
     "district": "DISTRICT 50",
@@ -158,6 +163,7 @@
       "middleNames": "RENELLE"
     },
     "personExternalId": "109",
+    "pseudonymizedId": "p109",
     "stateCode": "US_TN",
     "officerId": "OFFICER2",
     "district": "DISTRICT 50",

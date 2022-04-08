@@ -16,6 +16,7 @@
 // =============================================================================
 import createAuth0Client from "@auth0/auth0-spa-js";
 
+import { identify } from "../../analytics";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import {
   PATHWAYS_PAGES,
@@ -30,6 +31,7 @@ import UserStore from "../UserStore";
 
 jest.mock("@auth0/auth0-spa-js");
 jest.mock("../../firestore");
+jest.mock("../../analytics");
 
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 
@@ -40,6 +42,8 @@ const mockIsAuthenticated = jest.fn();
 const mockLoginWithRedirect = jest.fn();
 const mockGetTokenSilently = jest.fn();
 const mockFirestoreAuthenticate = authenticate as jest.Mock;
+
+const mockIdentify = identify as jest.Mock<typeof identify>;
 
 const tenantId = "US_MO";
 const metadataField = `${METADATA_NAMESPACE}app_metadata`;
@@ -476,4 +480,30 @@ describe("userAllowedNavigation", () => {
     await store.authorize();
     expect(store.userAllowedNavigation).toEqual(tenants[stateCode].navigation);
   });
+});
+
+test("does not identify authorized users without ID hash", async () => {
+  mockIsAuthenticated.mockResolvedValue(true);
+  mockGetUser.mockResolvedValue({
+    email_verified: true,
+    ...metadata,
+  });
+  const store = new UserStore({ authSettings: testAuthSettings });
+  await store.authorize();
+
+  expect(mockIdentify).not.toHaveBeenCalled();
+});
+
+test("identifies authorized user if an ID hash is present", async () => {
+  mockIsAuthenticated.mockResolvedValue(true);
+  const userHash = "hash123abc";
+  mockGetUser.mockResolvedValue({
+    email_verified: true,
+    [metadataField]: { state_code: tenantId, user_hash: userHash },
+  });
+
+  const store = new UserStore({ authSettings: testAuthSettings });
+  await store.authorize();
+
+  expect(mockIdentify).toHaveBeenCalledWith(userHash);
 });

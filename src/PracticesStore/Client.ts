@@ -18,10 +18,23 @@
 import { parseISO } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import { has } from "lodash";
-import { action, computed, keys, makeObservable, observable, set } from "mobx";
+import {
+  action,
+  computed,
+  keys,
+  makeObservable,
+  observable,
+  set,
+  when,
+} from "mobx";
 import { format as formatPhone } from "phone-fns";
 
-import { trackReferralFormPrinted } from "../analytics";
+import {
+  trackReferralFormPrinted,
+  trackReferralFormViewed,
+  trackSetOpportunityStatus,
+  trackSurfacedInList,
+} from "../analytics";
 import { transform } from "../core/Paperwork/US_TN/Transformer";
 import {
   ClientRecord,
@@ -63,10 +76,32 @@ function optionalFieldToDate(field?: Timestamp | string): Date | undefined {
   if (field) return fieldToDate(field);
 }
 
+export type OpportunityStatus =
+  | "PENDING"
+  | "IN_PROGRESS"
+  | "DENIED"
+  | "COMPLETED";
+
+const defaultOpportunityStatuses: Record<OpportunityStatus, string> = {
+  PENDING: "Needs referral",
+  DENIED: "Currently ineligible",
+  COMPLETED: "Referral form complete",
+  IN_PROGRESS: "Referral in progress",
+};
+
+const opportunityStatusMessages: Record<
+  OpportunityType,
+  Record<OpportunityStatus, string>
+> = {
+  compliantReporting: defaultOpportunityStatuses,
+};
+
 export class Client {
   rootStore: RootStore;
 
   id: string;
+
+  pseudonymizedId: string;
 
   stateCode: string;
 
@@ -132,6 +167,7 @@ export class Client {
     this.rootStore = rootStore;
 
     this.id = record.personExternalId;
+    this.pseudonymizedId = record.pseudonymizedId;
     this.stateCode = record.stateCode;
     this.fullName = record.personName;
     this.officerId = record.officerId;
@@ -189,6 +225,9 @@ export class Client {
           const data = r.compliantReporting?.referralForm?.data ?? {};
 
           set(this.compliantReportingReferralDraftData, data);
+        } else {
+          // empty object will replace undefined, signifying completed fetch
+          handler({});
         }
       })
     );
@@ -236,24 +275,35 @@ export class Client {
     };
   }
 
-  get reviewStatus(): Record<OpportunityType, string> {
-    let compliantReporting = "Needs referral";
+  get reviewStatus(): Record<OpportunityType, OpportunityStatus> {
+    let compliantReporting: OpportunityStatus = "PENDING";
 
     if (!this.eligibilityStatus.compliantReporting) {
-      compliantReporting = "Currently ineligible";
+      compliantReporting = "DENIED";
     } else {
       const updates = this.updates?.compliantReporting;
 
       if (updates) {
         if (updates.completed) {
-          compliantReporting = "Referral form complete";
+          compliantReporting = "COMPLETED";
         } else {
-          compliantReporting = "Referral in progress";
+          compliantReporting = "IN_PROGRESS";
         }
       }
     }
 
-    return { compliantReporting };
+    return {
+      compliantReporting,
+    };
+  }
+
+  get reviewStatusMessages(): Record<OpportunityType, string> {
+    return {
+      compliantReporting:
+        opportunityStatusMessages.compliantReporting[
+          this.reviewStatus.compliantReporting
+        ],
+    };
   }
 
   get currentUserEmail(): string | null | undefined {
@@ -280,6 +330,19 @@ export class Client {
         ),
         updateCompliantReportingCompleted(this.currentUserEmail, this.id, true),
       ]);
+
+      if (reasons.length) {
+        trackSetOpportunityStatus({
+          clientId: this.pseudonymizedId,
+          status: "DENIED",
+          deniedReasons: reasons,
+        });
+      } else {
+        trackSetOpportunityStatus({
+          clientId: this.pseudonymizedId,
+          status: "IN_PROGRESS",
+        });
+      }
     }
   }
 
@@ -301,15 +364,18 @@ export class Client {
     if (this.currentUserEmail) {
       if (this.eligibilityStatus.compliantReporting) {
         updateCompliantReportingCompleted(this.currentUserEmail, this.id);
+        if (this.reviewStatus.compliantReporting !== "COMPLETED") {
+          trackSetOpportunityStatus({
+            clientId: this.pseudonymizedId,
+            status: "COMPLETED",
+          });
+        }
       }
 
       this.setFormIsPrinting(true);
       trackReferralFormPrinted({
-        formType: "compliantReportingReferral",
-        district: this.officerDistrict,
-        eligibilityStatus: this.eligibilityStatus,
-        denialReasons: this.updates?.compliantReporting?.denial?.reasons,
-        otherReason: this.updates?.compliantReporting?.denial?.otherReason,
+        clientId: this.pseudonymizedId,
+        opportunityType: "compliantReporting",
       });
     }
   }
@@ -345,10 +411,10 @@ export class Client {
       : prefillData;
   }
 
-  setCompliantReportingReferralDataField(
+  async setCompliantReportingReferralDataField(
     key: keyof TransformedCompliantReportingReferral,
     value: boolean | string | string[]
-  ): void {
+  ): Promise<void> {
     set(this.compliantReportingReferralDraftData, key, value);
   }
 
@@ -366,5 +432,23 @@ export class Client {
     | CompliantReportingReferralForm
     | undefined {
     return this.updates?.compliantReporting?.referralForm;
+  }
+
+  async trackFormViewed(formType: OpportunityType): Promise<void> {
+    await when(() => this.updates !== undefined);
+
+    trackReferralFormViewed({
+      clientId: this.pseudonymizedId,
+      opportunityType: formType,
+    });
+  }
+
+  async trackListViewed(listType: OpportunityType): Promise<void> {
+    await when(() => this.updates !== undefined);
+
+    trackSurfacedInList({
+      clientId: this.pseudonymizedId,
+      opportunityType: listType,
+    });
   }
 }

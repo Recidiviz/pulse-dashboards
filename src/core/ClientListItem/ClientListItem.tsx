@@ -17,7 +17,7 @@
 import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -60,9 +60,21 @@ const ClientStatus = styled.span`
 const ClientListItem: React.FC<ClientListItemProps> = ({ client }) => {
   const { path } = useRouteMatch();
 
+  // track when clients are displayed in the list
+  useEffect(
+    () => {
+      client.trackListViewed("compliantReporting");
+    },
+    // Client instance references are not stable across subscription updates,
+    // but the underlying data will be. This prevents logging clients twice when, e.g.,
+    // the entire list is refreshed due to more clients being added to it
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [client.pseudonymizedId]
+  );
+
   return (
     <ClientListItemElement
-      to={`${path}/${PRACTICES_PAGES.compliantReporting}/${client.id}`}
+      to={`${path}/${PRACTICES_PAGES.compliantReporting}/${client.pseudonymizedId}`}
     >
       <ClientAvatar
         name={client.displayName}
@@ -72,7 +84,9 @@ const ClientListItem: React.FC<ClientListItemProps> = ({ client }) => {
         <ClientName>
           {client.displayName} ({client.id})
         </ClientName>
-        <ClientStatus>{client.reviewStatus.compliantReporting}</ClientStatus>
+        <ClientStatus>
+          {client.reviewStatusMessages.compliantReporting}
+        </ClientStatus>
       </ClientInfo>
     </ClientListItemElement>
   );

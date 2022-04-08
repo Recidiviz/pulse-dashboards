@@ -100,7 +100,9 @@ const InfoButton = styled(Button).attrs({
 
 const Title = observer(({ client }: ClientProfileProps) => {
   return (
-    <div>Compliant Reporting: {client.reviewStatus.compliantReporting}</div>
+    <div>
+      Compliant Reporting: {client.reviewStatusMessages.compliantReporting}
+    </div>
   );
 });
 
