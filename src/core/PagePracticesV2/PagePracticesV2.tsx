@@ -45,6 +45,7 @@ const Wrapper = styled.div`
   grid-template-columns: 350px 1fr;
   letter-spacing: -0.01em;
   position: relative;
+  min-height: 100vh;
   width: 100%;
 
   @media screen and (min-width: ${cssVars.breakpointSm}) {
@@ -53,13 +54,7 @@ const Wrapper = styled.div`
 `;
 
 const Sidebar = styled.div`
-  padding: ${rem(spacing.md)};
-`;
-
-const Divider = styled.hr`
-  border-top: 1px solid ${palette.slate20};
-  margin: ${spacing.lg}px 0;
-  width: 100%;
+  background: ${palette.marble1};
 `;
 
 const LogoImg = styled.img`
@@ -70,12 +65,21 @@ const LogoImg = styled.img`
 const PracticesSidebar: React.FC = ({ children }) => {
   return (
     <Sidebar>
-      <LogoImg src={Assets.LOGO} alt="Recidiviz" />
-      <Divider />
-      {children}
+      <SidebarSection>
+        <LogoImg src={Assets.LOGO} alt="Recidiviz" />
+      </SidebarSection>
+      <SidebarSection>{children}</SidebarSection>
     </Sidebar>
   );
 };
+
+const SidebarSection = styled.section`
+  padding: ${rem(spacing.md)};
+
+  &:first-child {
+    border-bottom: 1px solid ${palette.slate20};
+  }
+`;
 
 const SidebarHeading = styled.h1`
   color: ${palette.pine2};

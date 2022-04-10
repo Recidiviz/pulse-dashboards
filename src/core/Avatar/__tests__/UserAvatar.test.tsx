@@ -22,10 +22,10 @@ import { mount } from "enzyme";
 import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 
-import { useUserStore } from "../../StoreProvider";
-import UserAvatar from "../UserAvatar";
+import { useUserStore } from "../../../components/StoreProvider";
+import { AvatarImage, AvatarInitials, UserAvatar } from "../UserAvatar";
 
-jest.mock("../../StoreProvider");
+jest.mock("../../../components/StoreProvider");
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -54,8 +54,7 @@ describe("UserAvatar tests", () => {
 
   it("renders a span with the first letter of the user's name when the profile image is from Gravatar", () => {
     const avatar = renderAvatar("Essun", "https://s.gravatar.com/avatar/foo");
-    expect(avatar.find(".UserAvatar").type()).toEqual("span");
-    expect(avatar.find(".UserAvatar").text()).toEqual("E");
+    expect(avatar.find(`${AvatarInitials}`).text()).toEqual("E");
   });
 
   it("renders an image when the profile icon is not from Gravatar.", () => {
@@ -63,7 +62,8 @@ describe("UserAvatar tests", () => {
       "Essun",
       "https://the-fulcrum.com/avatar/indite"
     );
-    expect(avatar.find(".UserAvatar--default")).toEqual({});
-    expect(avatar.find(".UserAvatar").type()).toEqual("img");
+    expect(
+      avatar.find(`${AvatarImage}`)?.prop("style")?.backgroundImage
+    ).toEqual(`url("https://the-fulcrum.com/avatar/indite")`);
   });
 });

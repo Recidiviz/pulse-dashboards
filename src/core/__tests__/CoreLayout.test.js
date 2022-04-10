@@ -21,8 +21,8 @@ import { useLocation } from "react-router-dom";
 
 import mockWithTestId from "../../../__helpers__/mockWithTestId";
 import StoreProvider from "../../components/StoreProvider";
-import UserAvatar from "../../components/UserAvatar";
 import useIntercom from "../../hooks/useIntercom";
+import { UserAvatar } from "../Avatar";
 import CoreLayout from "../CoreLayout";
 
 jest.mock("mobx-react-lite", () => {
@@ -36,7 +36,7 @@ jest.mock("react-router-dom", () => ({
   Link: jest.fn().mockReturnValue(null),
   NavLink: jest.fn().mockReturnValue(null),
 }));
-jest.mock("../../components/UserAvatar");
+jest.mock("../Avatar");
 jest.mock("../../hooks/useIntercom");
 
 describe("CoreLayout tests", () => {

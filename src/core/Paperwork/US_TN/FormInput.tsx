@@ -112,7 +112,7 @@ const FormInput: React.FC<FormInputProps> = ({
 const FormInputWrapper: React.FC<FormInputWrapperProps> = (props) => {
   const { practicesStore } = useRootStore();
   if (!practicesStore.selectedClient || !practicesStore.user) {
-    return null;
+    return <Input {...props} disabled />;
   }
 
   return (

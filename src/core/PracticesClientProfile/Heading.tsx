@@ -20,7 +20,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { ClientAvatar } from "../ClientAvatar";
+import { ClientAvatar } from "../Avatar";
 import { ClientProfileProps } from "./types";
 
 const HeadingWrapper = styled.div`

@@ -22,7 +22,7 @@ import { Link, useRouteMatch } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { Client } from "../../PracticesStore/Client";
-import { ClientAvatar } from "../ClientAvatar";
+import { ClientAvatar } from "../Avatar";
 import { PRACTICES_PAGES } from "../views";
 
 interface ClientListItemProps {

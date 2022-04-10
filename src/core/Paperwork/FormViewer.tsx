@@ -14,7 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Pill } from "@recidiviz/design-system";
+import { palette, Pill, spacing } from "@recidiviz/design-system";
 import { throttle } from "lodash";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
@@ -29,9 +29,11 @@ import { generate } from "./FormGenerator";
 import { PrintablePage, PrintablePageMargin } from "./US_TN/styles";
 
 const FormViewerControls = styled.div`
-  padding: ${rem(32)};
+  padding: ${rem(spacing.xl)} ${rem(spacing.lg)};
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: -${rem(spacing.sm)};
 `;
 
 const FormViewerGrid = styled.div`
@@ -48,9 +50,10 @@ const Status = styled(Pill)`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 8px 16px;
+  padding: ${rem(spacing.md)} ${rem(spacing.lg)};
+  margin-top: ${rem(spacing.sm)};
 
-  background-color: ${transparentize(0.9, palette.signal.highlight)};
+  background-color: ${transparentize(0.85, palette.signal.highlight)};
   color: white;
 `;
 
@@ -79,7 +82,7 @@ const useResizeForm = (formRef: React.MutableRefObject<HTMLDivElement>) => {
 
       page.style.transform = `scale(${scale})
          translateX(${rem(scaledMargin)})
-         translateY(${rem(scaledMargin / 2)})`;
+         translateY(${rem(10 / scale)})`;
 
       container.style.minHeight = rem(scaledHeight + scaledMargin * 2);
     }, 1000 / 60);
@@ -131,6 +134,9 @@ const FormViewer: React.FC<FormViewerProps> = ({ fileName, children }) => {
   return (
     <FormViewerGrid>
       <FormViewerControls>
+        <Status color={palette.slate85}>
+          Edit and collaborate on the document below
+        </Status>
         <Status color={palette.slate85}>{lastEdited}</Status>
       </FormViewerControls>
 

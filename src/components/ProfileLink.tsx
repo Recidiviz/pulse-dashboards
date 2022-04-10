@@ -21,8 +21,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+import { UserAvatar } from "../core/Avatar";
 import { PATHWAYS_VIEWS } from "../core/views";
-import UserAvatar from "./UserAvatar";
 
 const ProfileLink: React.FC = () => {
   return (

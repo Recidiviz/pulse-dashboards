@@ -35,7 +35,13 @@ const AvatarElement = styled.div(
   height: ${rem(size)};
   width: ${rem(size)};
   border-radius: ${rem(size / 2)};
+  overflow: hidden;
   position: relative;
+  
+  & svg {
+    position: absolute;
+    top: 0;
+  }
 `
 );
 
@@ -60,6 +66,7 @@ const ClientAvatar: React.FC<AvatarProps> = ({ name, size = 40 }) => {
         size={size}
         name={name}
         colors={palette.data.defaultOrder}
+        square={false}
       />
       <AvatarInitials>
         {initials[0]}

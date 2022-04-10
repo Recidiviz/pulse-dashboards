@@ -19,7 +19,7 @@ import React from "react";
 
 import mockWithTestId from "../../../__helpers__/mockWithTestId";
 import StoreProvider from "../../components/StoreProvider";
-import UserAvatar from "../../components/UserAvatar";
+import { UserAvatar } from "../../core/Avatar";
 import useIntercom from "../../hooks/useIntercom";
 import usePageLayout from "../hooks/usePageLayout";
 import LanternLayout from "../LanternLayout";
@@ -35,7 +35,7 @@ jest.mock("react-router-dom", () => {
   };
 });
 jest.mock("../hooks/usePageLayout");
-jest.mock("../../components/UserAvatar");
+jest.mock("../../core/Avatar");
 jest.mock("../../hooks/useIntercom");
 jest.mock("../../utils/i18nSettings");
 
