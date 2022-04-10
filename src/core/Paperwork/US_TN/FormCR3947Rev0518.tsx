@@ -36,37 +36,6 @@ import {
   Row,
   SpecialConditionsCheckbox,
 } from "./styles";
-import { FormDataType } from "./types";
-
-interface CurrentOffenseInputProps {
-  data?: FormDataType;
-  index: number;
-}
-
-const CurrentOffenseInput: React.FC<CurrentOffenseInputProps> = ({
-  data,
-  index,
-}) => {
-  return (
-    <FormInput
-      placeholder="Offenses"
-      name="currentOffenses"
-      getValue={(currentOffenses) => {
-        return currentOffenses?.[index];
-      }}
-      buildValue={(currentOffenses, value) => {
-        const newCurrentOffense = [...currentOffenses];
-        for (let i = 0; i < 5; i += 1) {
-          if (typeof newCurrentOffense[i] === "undefined") {
-            newCurrentOffense[i] = "";
-          }
-        }
-        newCurrentOffense[index] = value;
-        return newCurrentOffense;
-      }}
-    />
-  );
-};
 
 const FormCR3947Rev0518: React.FC = () => {
   const formViewerContext = useContext(FormViewerContext);
@@ -195,11 +164,11 @@ const FormCR3947Rev0518: React.FC = () => {
                 </Item>
               </Item>
               <Grid rows="repeat(5, 1fr)">
-                <CurrentOffenseInput index={0} />
-                <CurrentOffenseInput index={1} />
-                <CurrentOffenseInput index={2} />
-                <CurrentOffenseInput index={3} />
-                <CurrentOffenseInput index={4} />
+                <FormInput name="currentOffenses0" placeholder="Offenses" />
+                <FormInput name="currentOffenses1" placeholder="Offenses" />
+                <FormInput name="currentOffenses2" placeholder="Offenses" />
+                <FormInput name="currentOffenses3" placeholder="Offenses" />
+                <FormInput name="currentOffenses4" placeholder="Offenses" />
               </Grid>
             </Grid>
             <Grid columns="75px 1fr 1fr 1fr 1fr">

@@ -48,5 +48,11 @@ export const transform = (
       data.supervisionFeeArrearagedAmount
     ),
     supervisionFeeAssessed: formatAsCurrency(data.supervisionFeeAssessed),
+
+    currentOffenses0: data.currentOffenses[0] || "",
+    currentOffenses1: data.currentOffenses[1] || "",
+    currentOffenses2: data.currentOffenses[2] || "",
+    currentOffenses3: data.currentOffenses[3] || "",
+    currentOffenses4: data.currentOffenses[4] || "",
   };
 };

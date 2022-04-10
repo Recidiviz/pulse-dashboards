@@ -146,6 +146,11 @@ export interface TransformedCompliantReportingReferral {
   specialConditionsProgrammingFswCompletionDate: string;
 
   /* Fields in the UI that are not included in the ETL */
+  currentOffenses0: string;
+  currentOffenses1: string;
+  currentOffenses2: string;
+  currentOffenses3: string;
+  currentOffenses4: string;
   licenseYears: string;
   telephoneNumber: string;
   supervisorFullName: string;

@@ -20,10 +20,9 @@ import { Timestamp } from "firebase/firestore";
 import { has } from "lodash";
 import {
   action,
-  computed,
-  keys,
   makeObservable,
   observable,
+  runInAction,
   set,
   when,
 } from "mobx";
@@ -161,7 +160,6 @@ export class Client {
       reviewStatus: true,
       compliantReportingReferralDraftData: true,
       setCompliantReportingReferralDataField: action,
-      compliantReportingReferralFormData: computed.struct,
     });
 
     this.rootStore = rootStore;
@@ -224,6 +222,9 @@ export class Client {
           handler(r);
           const data = r.compliantReporting?.referralForm?.data ?? {};
 
+          runInAction(() => {
+            set(this.compliantReportingReferralDraftData, data);
+          });
           set(this.compliantReportingReferralDraftData, data);
         } else {
           // empty object will replace undefined, signifying completed fetch
@@ -380,32 +381,15 @@ export class Client {
     }
   }
 
-  get compliantReportingReferralFormData(): Partial<TransformedCompliantReportingReferral> {
-    // Use keys() to avoid mobx es5 error regarding detecting added/removed properties
-    const draft: Partial<TransformedCompliantReportingReferral> = keys(
-      this.compliantReportingReferralDraftData
-    ).reduce((memo, key) => {
-      return {
-        ...memo,
-        [key]: this.compliantReportingReferralDraftData[
-          key as keyof TransformedCompliantReportingReferral
-        ],
-      };
-    }, {});
-
-    return {
-      ...this.prefilledCompliantReferralForm,
-      ...draft,
-    };
-  }
-
   getCompliantReportingReferralDataField(
     key: keyof TransformedCompliantReportingReferral
   ):
     | TransformedCompliantReportingReferral[keyof TransformedCompliantReportingReferral]
     | undefined {
-    const draftData = this.compliantReportingReferralFormData[key];
+    // Destructure prior to assignment to register dependencies on both fields
+    const draftData = this.compliantReportingReferralDraftData[key];
     const prefillData = this.prefilledCompliantReferralForm[key];
+
     return has(this.compliantReportingReferralDraftData, key)
       ? draftData
       : prefillData;

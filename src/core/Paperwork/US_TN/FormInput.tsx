@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { debounce } from "lodash";
-import { autorun } from "mobx";
+import { reaction } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 
@@ -29,10 +29,7 @@ import { updateFieldData } from "./utils";
 
 export type FormInputValueGetter = (value: any) => any;
 
-export type FormInputValueBuilder = (
-  data: any,
-  value: string
-) => string | string[];
+export type FormInputValueBuilder = (data: any, value: string) => string;
 
 interface FormInputWrapperProps extends React.InputHTMLAttributes<HTMLElement> {
   name: keyof FormDataType;
@@ -66,18 +63,20 @@ const FormInput: React.FC<FormInputProps> = ({
     null
   ) as MutableRefObject<HTMLInputElement>;
 
-  useAnimatedValue(inputRef, value);
+  const hasAnimated = useAnimatedValue(inputRef, value);
 
   useEffect(() => {
-    return autorun(() => {
-      setValue(
-        getValue(client.getCompliantReportingReferralDataField(name)) || ""
-      );
-    });
+    return reaction(
+      () => getValue(client.getCompliantReportingReferralDataField(name)),
+      (newValue) => setValue(newValue),
+      { name }
+    );
   });
 
   const updateFirestoreRef = useRef(
     debounce((key, builtValue) => {
+      client.setCompliantReportingReferralDataField(name, builtValue);
+
       updateFieldData(client.currentUserName || "user", client, {
         [key]: builtValue,
       });
@@ -92,8 +91,6 @@ const FormInput: React.FC<FormInputProps> = ({
       event.target.value
     );
 
-    client.setCompliantReportingReferralDataField(name, builtValue);
-
     if (updateFirestoreRef.current) {
       updateFirestoreRef.current(name, builtValue);
     }
@@ -102,7 +99,7 @@ const FormInput: React.FC<FormInputProps> = ({
   return (
     <Input
       {...props}
-      value={value}
+      value={hasAnimated ? value : ""}
       ref={inputRef}
       id={name}
       name={name}
