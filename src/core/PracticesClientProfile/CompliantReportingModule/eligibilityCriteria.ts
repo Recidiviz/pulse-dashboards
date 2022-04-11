@@ -30,6 +30,7 @@ export function getEligibilityCriteria(
     supervisionLevel,
     supervisionLevelStart,
     compliantReportingEligible: {
+      eligibilityCategory,
       eligibleLevelStart,
       sanctionsPastYear,
       drugScreensPastYear,
@@ -37,6 +38,8 @@ export function getEligibilityCriteria(
       lifetimeOffensesExpired,
       mostRecentArrestCheck,
       finesFeesEligible,
+      pastOffenses,
+      zeroToleranceCodes,
     },
     specialConditionsFlag,
     lastSpecialConditionsNote,
@@ -56,7 +59,7 @@ export function getEligibilityCriteria(
   }
 
   let feeText =
-    "Fee balance less than $2,000 and has made payments on three consecutive months";
+    "Fee balance for current sentence less than $2,000 and has made payments on three consecutive months";
   if (finesFeesEligible === "exempt") {
     feeText = `Exemption: ${feeExemptions}`;
   } else if (finesFeesEligible === "low_balance") {
@@ -87,7 +90,7 @@ export function getEligibilityCriteria(
       break;
   }
 
-  return [
+  const criteria = [
     {
       text: `Current supervision level: ${supervisionLevel}`,
       tooltip:
@@ -97,7 +100,7 @@ export function getEligibilityCriteria(
       text: `Time on ${requiredSupervisionLevel}: ${formatRelativeToNow(
         eligibleLevelStart
       )}`,
-      tooltip: `Policy requirement: On minimum supervision level for 1 year 
+      tooltip: `Policy requirement: On minimum supervision level for 1 year
         or medium level for 18 months.`,
     },
     {
@@ -121,10 +124,10 @@ export function getEligibilityCriteria(
     {
       text: `Passed drug screens in last 12 months: ${
         drugScreensPastYear
-          .map(({ result, date }) => `${result} – ${formatPracticesDate(date)}`)
+          .map(({ result, date }) => `${result} — ${formatPracticesDate(date)}`)
           .join(", ") || "None"
       }`,
-      tooltip: `Policy requirement: Passed drug screen in the last 12 months for non drug offenders. 
+      tooltip: `Policy requirement: Passed drug screen in the last 12 months for non drug offenders.
         Passed 2 drug screens in last 12 months for drug offenders, most recent is negative.`,
     },
     {
@@ -141,8 +144,8 @@ export function getEligibilityCriteria(
       text: `Current offense${currentOffenses.length !== 1 ? "s" : ""}: ${
         currentOffenses.join("; ") || "None"
       }`,
-      tooltip: `Policy requirement: Offense type not domestic abuse or sexual assault, 
-        DUI in past 5 years, not crime against person that resulted in physical bodily harm, 
+      tooltip: `Policy requirement: Offense type not domestic abuse or sexual assault,
+        DUI in past 5 years, not crime against person that resulted in physical bodily harm,
         not crime where victim was under 18.`,
     },
     {
@@ -156,4 +159,43 @@ export function getEligibilityCriteria(
         is more than ten years old.`,
     },
   ];
+
+  if (eligibilityCategory === "c2" && pastOffenses.length) {
+    criteria.push({
+      text: `Eligible with discretion: Prior offenses and lifetime offenses
+        expired less than 10 years ago: ${pastOffenses.join("; ")}`,
+      tooltip: `If the offender has a previous conviction for one of the crimes listed in
+        Section VI.(A)(3) but is not currently on supervision for one of those crimes,
+        then the  DD shall make a case by case determination as to whether an offender
+        is suitable for CR. The DD review process is waived if the expiration date is
+        more than ten years old.`,
+    });
+  }
+
+  if (eligibilityCategory === "c3" && zeroToleranceCodes.length) {
+    criteria.push({
+      text: `Eligible with discretion: Previous zero-tolerance codes ${zeroToleranceCodes
+        .map(
+          ({ contactNoteDate, contactNoteType }) =>
+            `${contactNoteType} — ${formatPracticesDate(contactNoteDate)}`
+        )
+        .join(", ")}`,
+      tooltip: `If the person has received a zero tolerance code since starting their
+          latest supervision, they may still be eligible for compliant reporting.`,
+    });
+  }
+
+  if (
+    eligibilityCategory === "c3" &&
+    currentOffenses.length === 0 &&
+    pastOffenses.length === 0
+  ) {
+    criteria.push({
+      text: "Eligible with discretion: Missing sentence information",
+      tooltip: `If the person is missing sentencing information, they may still be
+            eligible for compliant reporting.`,
+    });
+  }
+
+  return criteria;
 }

@@ -132,7 +132,7 @@ export const CompliantReportingModule = observer(
             // split text so we can prevent orphaned tooltips
             const textTokens = text.split(" ");
             return (
-              <Criterion>
+              <Criterion key={text}>
                 <CriterionIcon
                   kind={IconSVG.Success}
                   color={colors.icon}

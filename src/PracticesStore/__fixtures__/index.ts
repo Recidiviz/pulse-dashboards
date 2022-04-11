@@ -108,6 +108,8 @@ export const eligibleClient: ClientRecord = {
     drugScreensPastYear: [],
     sanctionsPastYear: [],
     currentOffenses: ["EXAMPLE"],
+    pastOffenses: [],
+    zeroToleranceCodes: [],
     lifetimeOffensesExpired: ["EXAMPLE"],
   },
 };

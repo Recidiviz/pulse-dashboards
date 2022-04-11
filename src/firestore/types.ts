@@ -114,6 +114,8 @@ export type CompliantReportingEligibleRecord = {
   drugScreensPastYear: { result: string; date: Timestamp | string }[];
   sanctionsPastYear: string[];
   mostRecentArrestCheck?: Timestamp | string;
+  pastOffenses: string[];
+  zeroToleranceCodes?: { contactNoteType: string; contactNoteDate: string }[];
 };
 
 /**

@@ -150,6 +150,8 @@ export class Client {
     sanctionsPastYear: { type: string }[];
     mostRecentArrestCheck?: Date;
     finesFeesEligible: CompliantReportingFinesFeesEligible;
+    pastOffenses: string[];
+    zeroToleranceCodes: { contactNoteType: string; contactNoteDate: Date }[];
   };
 
   private fetchedUpdates: SubscriptionValue<ClientUpdateRecord>;
@@ -231,6 +233,14 @@ export class Client {
           compliantReportingEligible.mostRecentArrestCheck
         ),
         finesFeesEligible: compliantReportingEligible.finesFeesEligible,
+        pastOffenses: compliantReportingEligible.pastOffenses,
+        zeroToleranceCodes:
+          compliantReportingEligible.zeroToleranceCodes?.map(
+            ({ contactNoteDate, contactNoteType }) => ({
+              contactNoteType,
+              contactNoteDate: new Date(contactNoteDate),
+            })
+          ) ?? [],
       };
     }
 
