@@ -38,9 +38,11 @@ import { transform } from "../core/Paperwork/US_TN/Transformer";
 import {
   ClientRecord,
   ClientUpdateRecord,
+  CompliantReportingFinesFeesEligible,
   CompliantReportingReferralForm,
   FullName,
   OpportunityType,
+  SpecialConditionsStatus,
   subscribeToClientUpdates,
   subscribeToCompliantReportingReferral,
   updateCompliantReportingCompleted,
@@ -128,11 +130,18 @@ export class Client {
 
   feeExemptions?: string;
 
+  specialConditionsFlag: SpecialConditionsStatus;
+
   specialConditions: string[];
 
   nextSpecialConditionsCheck?: Date;
 
+  lastSpecialConditionsNote?: Date;
+
+  specialConditionsTerminatedDate?: Date;
+
   compliantReportingEligible?: {
+    eligibilityCategory: string;
     eligibleLevelStart: Date;
     currentOffenses: string[];
     lifetimeOffensesExpired: string[];
@@ -140,6 +149,7 @@ export class Client {
     drugScreensPastYear: { result: string; date: Date }[];
     sanctionsPastYear: { type: string }[];
     mostRecentArrestCheck?: Date;
+    finesFeesEligible: CompliantReportingFinesFeesEligible;
   };
 
   private fetchedUpdates: SubscriptionValue<ClientUpdateRecord>;
@@ -183,9 +193,16 @@ export class Client {
     this.lastPaymentDate = optionalFieldToDate(record.lastPaymentDate);
     this.lastPaymentAmount = record.lastPaymentAmount;
     this.feeExemptions = record.feeExemptions;
+    this.specialConditionsFlag = record.specialConditionsFlag;
     this.specialConditions = record.specialConditions;
     this.nextSpecialConditionsCheck = optionalFieldToDate(
       record.nextSpecialConditionsCheck
+    );
+    this.lastSpecialConditionsNote = optionalFieldToDate(
+      record.lastSpecialConditionsNote
+    );
+    this.specialConditionsTerminatedDate = optionalFieldToDate(
+      record.specialConditionsTerminatedDate
     );
     this.compliantReportingReferralDraftData = observable<
       Partial<TransformedCompliantReportingReferral>
@@ -194,6 +211,7 @@ export class Client {
     const { compliantReportingEligible } = record;
     if (compliantReportingEligible) {
       this.compliantReportingEligible = {
+        eligibilityCategory: compliantReportingEligible.eligibilityCategory,
         eligibleLevelStart: fieldToDate(
           compliantReportingEligible.eligibleLevelStart
         ),
@@ -212,6 +230,7 @@ export class Client {
         mostRecentArrestCheck: optionalFieldToDate(
           compliantReportingEligible.mostRecentArrestCheck
         ),
+        finesFeesEligible: compliantReportingEligible.finesFeesEligible,
       };
     }
 

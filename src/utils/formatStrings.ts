@@ -192,13 +192,13 @@ function formatISODateString(date: string): string {
   return format(parseISO(date), "M/d/yy");
 }
 
-function formatDate(date: Date, pattern = "M/d/yy"): string {
+function formatDate(date?: Date, pattern = "M/d/yy"): string {
   if (!date) return "Unknown";
 
   return format(date, pattern);
 }
 
-function formatPracticesDate(date: Date): string {
+function formatPracticesDate(date?: Date): string {
   return formatDate(date, "MMM d, yyyy");
 }
 

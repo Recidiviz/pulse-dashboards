@@ -81,6 +81,7 @@ export const ineligibleClient: ClientRecord = {
   currentBalance: 0,
   lastPaymentAmount: 50,
   lastPaymentDate: dateToTimestamp("2021-11-15"),
+  specialConditionsFlag: "current",
   specialConditions: ["SPECIAL CONDITIONS TEST TEST"],
 };
 
@@ -97,10 +98,13 @@ export const eligibleClient: ClientRecord = {
   phoneNumber: "5555555678",
   expirationDate: dateToTimestamp("2024-12-31"),
   currentBalance: 221.88,
+  specialConditionsFlag: "current",
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
   compliantReportingEligible: {
+    eligibilityCategory: "c1",
     eligibleLevelStart: dateToTimestamp("2019-12-20"),
     judicialDistrict: "A",
+    finesFeesEligible: "regular_payments",
     drugScreensPastYear: [],
     sanctionsPastYear: [],
     currentOffenses: ["EXAMPLE"],

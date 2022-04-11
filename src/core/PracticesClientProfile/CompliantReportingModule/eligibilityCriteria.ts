@@ -36,8 +36,12 @@ export function getEligibilityCriteria(
       currentOffenses,
       lifetimeOffensesExpired,
       mostRecentArrestCheck,
+      finesFeesEligible,
     },
-    nextSpecialConditionsCheck,
+    specialConditionsFlag,
+    lastSpecialConditionsNote,
+    specialConditionsTerminatedDate,
+    feeExemptions,
   } = client;
 
   // current level by default
@@ -49,6 +53,38 @@ export function getEligibilityCriteria(
     !isEqual(supervisionLevelStart, eligibleLevelStart)
   ) {
     requiredSupervisionLevel = "medium supervision or less";
+  }
+
+  let feeText =
+    "Fee balance less than $2,000 and has made payments on three consecutive months";
+  if (finesFeesEligible === "exempt") {
+    feeText = `Exemption: ${feeExemptions}`;
+  } else if (finesFeesEligible === "low_balance") {
+    feeText = "Fee balance less than $500";
+  }
+
+  // legacy version
+  let specialConditionsText: string;
+
+  switch (specialConditionsFlag) {
+    case "current":
+      specialConditionsText = `Special conditions up to date, last SPEC on ${formatPracticesDate(
+        lastSpecialConditionsNote
+      )}`;
+      break;
+    case "none":
+      specialConditionsText = "No special conditions";
+      break;
+    case "terminated":
+      specialConditionsText = `SPET on ${formatPracticesDate(
+        specialConditionsTerminatedDate
+      )}`;
+      break;
+    default:
+      // this can happen while schema is in transition, or if we get an unexpected value;
+      // provides a generic fallback
+      specialConditionsText = "Special conditions up to date";
+      break;
   }
 
   return [
@@ -80,7 +116,7 @@ export function getEligibilityCriteria(
         "Policy requirement: No sanctions higher than Level 1 in the last 1 year.",
     },
     {
-      text: `Fees payments: Balance less than $500 or “permanent” exception`,
+      text: feeText,
     },
     {
       text: `Passed drug screens in last 12 months: ${
@@ -92,13 +128,7 @@ export function getEligibilityCriteria(
         Passed 2 drug screens in last 12 months for drug offenders, most recent is negative.`,
     },
     {
-      text: `Special conditions: SPE not overdue (${
-        nextSpecialConditionsCheck ? "" : "No "
-      }SPE note due${
-        nextSpecialConditionsCheck
-          ? ` ${formatPracticesDate(nextSpecialConditionsCheck)}`
-          : ""
-      })`,
+      text: specialConditionsText,
       tooltip: "Policy requirement: Special conditions are current.",
     },
     {

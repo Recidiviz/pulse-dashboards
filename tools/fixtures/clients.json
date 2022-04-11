@@ -22,7 +22,10 @@
     "specialConditions": [
       "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS"
     ],
+    "specialConditionsTerminatedDate": "2021-12-31",
+    "specialConditionsFlag": "terminated",
     "compliantReportingEligible": {
+      "eligibilityCategory": "c1",
       "eligibleLevelStart": "2019-10-26",
       "judicialDistrict": "17",
       "lifetimeOffensesExpired": ["HABITUAL TRAFFIC OFFENDER"],
@@ -33,7 +36,8 @@
       ],
       "drugScreensPastYear": [{ "result": "DRUN", "date": "2022-01-26" }],
       "sanctionsPastYear": [],
-      "mostRecentArrestCheck": "2022-01-03"
+      "mostRecentArrestCheck": "2022-01-03",
+      "finesFeesEligible": "low_balance"
     }
   },
   {
@@ -49,14 +53,17 @@
     "address": "456 Broadway, Nashville, TN 12345",
     "phoneNumber": "5555555678",
     "expirationDate": "2024-12-31",
-    "currentBalance": 221.88,
+    "currentBalance": 1221.88,
     "lastPaymentAmount": 125.75,
     "lastPaymentDate": "2022-01-03",
     "specialConditions": [
       "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS"
     ],
     "nextSpecialConditionsCheck": "2022-12-31",
+    "lastSpecialConditionsNote": "2021-12-31",
+    "specialConditionsFlag": "current",
     "compliantReportingEligible": {
+      "eligibilityCategory": "c1",
       "eligibleLevelStart": "2019-12-20",
       "judicialDistrict": "14",
       "lifetimeOffensesExpired": [],
@@ -70,7 +77,8 @@
         { "result": "DRUM", "date": "2022-02-02" }
       ],
       "sanctionsPastYear": ["IPDS"],
-      "mostRecentArrestCheck": "2022-01-03"
+      "mostRecentArrestCheck": "2022-01-03",
+      "finesFeesEligible": "regular_payments"
     }
   },
   {
@@ -117,7 +125,10 @@
       "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS"
     ],
     "nextSpecialConditionsCheck": "2022-12-31",
+    "lastSpecialConditionsNote": "2021-12-31",
+    "specialConditionsFlag": "current",
     "compliantReportingEligible": {
+      "eligibilityCategory": "c1",
       "eligibleLevelStart": "2020-04-07",
       "judicialDistrict": null,
       "lifetimeOffensesExpired": ["TNCARE FRAUD"],
@@ -127,7 +138,8 @@
       ],
       "drugScreensPastYear": [{ "result": "DRUX", "date": "2021-11-26" }],
       "sanctionsPastYear": ["OPRD"],
-      "mostRecentArrestCheck": "2022-01-03"
+      "mostRecentArrestCheck": "2022-01-03",
+      "finesFeesEligible": "exempt"
     }
   },
   {
@@ -154,7 +166,16 @@
       "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS"
     ],
     "nextSpecialConditionsCheck": "2022-12-31",
-    "compliantReportingEligible": null
+    "compliantReportingEligible": {
+      "eligibilityCategory": "c4",
+      "eligibleLevelStart": "2020-05-19",
+      "judicialDistrict": "14",
+      "lifetimeOffensesExpired": [],
+      "currentOffenses": ["FRAUD", "BURGLARY-OTHER THAN HABITATION"],
+      "drugScreensPastYear": [{ "result": "DRUN", "date": "2022-01-26" }],
+      "sanctionsPastYear": [],
+      "finesFeesEligible": "low_balance"
+    }
   },
   {
     "personName": {
@@ -176,17 +197,17 @@
     "currentBalance": 0,
     "lastPaymentAmount": 125.75,
     "lastPaymentDate": "2022-01-03",
-    "specialConditions": [
-      "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS"
-    ],
-    "nextSpecialConditionsCheck": "2022-12-31",
+    "specialConditions": [],
+    "specialConditionsFlag": "none",
     "compliantReportingEligible": {
+      "eligibilityCategory": "c1",
       "eligibleLevelStart": "2021-02-11",
       "judicialDistrict": "14",
       "lifetimeOffensesExpired": [],
       "currentOffenses": ["FRAUD", "BURGLARY-OTHER THAN HABITATION"],
       "drugScreensPastYear": [{ "result": "DRUN", "date": "2022-01-26" }],
-      "sanctionsPastYear": []
+      "sanctionsPastYear": [],
+      "finesFeesEligible": "low_balance"
     }
   }
 ]

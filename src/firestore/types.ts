@@ -70,6 +70,8 @@ export type FullName = {
   surname?: string;
 };
 
+export type SpecialConditionsStatus = "none" | "terminated" | "current";
+
 /**
  * A nested object of all client-level data from the Recidiviz data platform
  */
@@ -89,16 +91,26 @@ export type ClientRecord = {
   lastPaymentAmount?: number;
   lastPaymentDate?: Timestamp | string;
   feeExemptions?: string;
+  specialConditionsFlag: SpecialConditionsStatus;
   specialConditions: string[];
   nextSpecialConditionsCheck?: Timestamp | string;
+  lastSpecialConditionsNote?: string;
+  specialConditionsTerminatedDate?: string;
   compliantReportingEligible?: CompliantReportingEligibleRecord;
 };
 
+export type CompliantReportingFinesFeesEligible =
+  | "low_balance"
+  | "exempt"
+  | "regular_payments";
+
 export type CompliantReportingEligibleRecord = {
+  eligibilityCategory: string;
   eligibleLevelStart: Timestamp | string;
   currentOffenses: string[];
   lifetimeOffensesExpired: string[];
   judicialDistrict: string | null;
+  finesFeesEligible: CompliantReportingFinesFeesEligible;
   drugScreensPastYear: { result: string; date: Timestamp | string }[];
   sanctionsPastYear: string[];
   mostRecentArrestCheck?: Timestamp | string;
