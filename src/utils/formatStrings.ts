@@ -198,6 +198,10 @@ function formatDate(date: Date, pattern = "M/d/yy"): string {
   return format(date, pattern);
 }
 
+function formatPracticesDate(date: Date): string {
+  return formatDate(date, "MMM d, yyyy");
+}
+
 function getFirstName(fullName: string): string {
   return fullName.split(" ")[0];
 }
@@ -294,6 +298,7 @@ export {
   formatLargeNumber,
   formatOfficerLabel,
   formatPercent,
+  formatPracticesDate,
   genderValueToHumanReadable,
   genderValueToLabel,
   generateEmailAddress,

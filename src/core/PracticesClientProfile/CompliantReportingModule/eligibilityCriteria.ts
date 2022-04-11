@@ -18,7 +18,7 @@
 import { isEqual } from "date-fns";
 
 import { Client } from "../../../PracticesStore/Client";
-import { formatDate } from "../../../utils";
+import { formatPracticesDate } from "../../../utils";
 import { formatRelativeToNow } from "../../utils/timePeriod";
 
 export function getEligibilityCriteria(
@@ -67,7 +67,7 @@ export function getEligibilityCriteria(
     {
       text: `Arrests: ${
         mostRecentArrestCheck
-          ? ` Last ARRN on ${formatDate(mostRecentArrestCheck)}`
+          ? ` Last ARRN on ${formatPracticesDate(mostRecentArrestCheck)}`
           : "N/A"
       }`,
       tooltip: "Policy requirement: No arrests in the last 1 year.",
@@ -85,7 +85,7 @@ export function getEligibilityCriteria(
     {
       text: `Passed drug screens in last 12 months: ${
         drugScreensPastYear
-          .map(({ result, date }) => `${result} – ${formatDate(date)}`)
+          .map(({ result, date }) => `${result} – ${formatPracticesDate(date)}`)
           .join(", ") || "None"
       }`,
       tooltip: `Policy requirement: Passed drug screen in the last 12 months for non drug offenders. 
@@ -96,7 +96,7 @@ export function getEligibilityCriteria(
         nextSpecialConditionsCheck ? "" : "No "
       }SPE note due${
         nextSpecialConditionsCheck
-          ? ` ${formatDate(nextSpecialConditionsCheck)}`
+          ? ` ${formatPracticesDate(nextSpecialConditionsCheck)}`
           : ""
       })`,
       tooltip: "Policy requirement: Special conditions are current.",

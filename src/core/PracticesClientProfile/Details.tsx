@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { palette, spacing } from "@recidiviz/design-system";
-import { format, parseJSON } from "date-fns";
+import { parseJSON } from "date-fns";
 import { mapValues, toUpper } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -24,7 +24,7 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { Client, UNKNOWN } from "../../PracticesStore/Client";
-import { formatAsCurrency, formatDate } from "../../utils";
+import { formatAsCurrency, formatPracticesDate } from "../../utils";
 import PracticesOfficerName from "../PracticesOfficerName";
 import { ClientProfileProps } from "./types";
 
@@ -127,7 +127,7 @@ function getSpecialConditionsMarkup(client: Client): JSX.Element {
           return (
             <React.Fragment key={key}>
               <DetailsSubheading>
-                {formatDate(parseJSON(condition.note_update_date))}
+                {formatPracticesDate(parseJSON(condition.note_update_date))}
               </DetailsSubheading>
               <DetailsContent>{condition.conditions_on_date}</DetailsContent>
             </React.Fragment>
@@ -150,7 +150,7 @@ export const Details = observer(({ client }: ClientProfileProps) => {
           <DetailsSubheading>Expiration</DetailsSubheading>
           <DetailsContent>
             {client.expirationDate
-              ? format(client.expirationDate, "MMM d, yyyy")
+              ? formatPracticesDate(client.expirationDate)
               : UNKNOWN}
           </DetailsContent>
 
@@ -185,7 +185,7 @@ export const Details = observer(({ client }: ClientProfileProps) => {
               <DetailsSubheading>Last Payment</DetailsSubheading>
               <DetailsContent>
                 {formatAsCurrency(client.lastPaymentAmount)},{" "}
-                {formatDate(client.lastPaymentDate)}
+                {formatPracticesDate(client.lastPaymentDate)}
               </DetailsContent>
             </>
           ) : null}
