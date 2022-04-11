@@ -42,6 +42,7 @@ import {
   CompliantReportingReferralForm,
   FullName,
   OpportunityType,
+  SpecialConditionCode,
   SpecialConditionsStatus,
   subscribeToClientUpdates,
   subscribeToCompliantReportingReferral,
@@ -134,7 +135,9 @@ export class Client {
 
   specialConditionsFlag: SpecialConditionsStatus;
 
-  specialConditions: string[];
+  probationSpecialConditions: string[];
+
+  paroleSpecialConditions: SpecialConditionCode[];
 
   nextSpecialConditionsCheck?: Date;
 
@@ -198,7 +201,8 @@ export class Client {
     this.lastPaymentAmount = record.lastPaymentAmount;
     this.feeExemptions = record.feeExemptions;
     this.specialConditionsFlag = record.specialConditionsFlag;
-    this.specialConditions = record.specialConditions;
+    this.probationSpecialConditions = record.specialConditions;
+    this.paroleSpecialConditions = record.boardConditions ?? [];
     this.nextSpecialConditionsCheck = optionalFieldToDate(
       record.nextSpecialConditionsCheck
     );

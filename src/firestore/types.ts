@@ -72,6 +72,11 @@ export type FullName = {
 
 export type SpecialConditionsStatus = "none" | "terminated" | "current";
 
+export type SpecialConditionCode = {
+  condition: string;
+  conditionDescription: string;
+};
+
 /**
  * A nested object of all client-level data from the Recidiviz data platform
  */
@@ -94,6 +99,7 @@ export type ClientRecord = {
   feeExemptions?: string;
   specialConditionsFlag: SpecialConditionsStatus;
   specialConditions: string[];
+  boardConditions?: SpecialConditionCode[];
   nextSpecialConditionsCheck?: Timestamp | string;
   lastSpecialConditionsNote?: string;
   specialConditionsTerminatedDate?: string;

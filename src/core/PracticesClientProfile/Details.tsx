@@ -76,7 +76,7 @@ function getSpecialConditionsMarkup(client: Client): JSX.Element {
     | string
   )[] = [];
 
-  client.specialConditions.forEach((conditionsJson) => {
+  client.probationSpecialConditions.forEach((conditionsJson) => {
     try {
       const conditionsForSentence: {
         // eslint-disable-next-line camelcase
@@ -141,8 +141,29 @@ function getSpecialConditionsMarkup(client: Client): JSX.Element {
 export const Details = observer(({ client }: ClientProfileProps) => {
   return (
     <DetailsSection>
-      <DetailsHeading>Special Conditions</DetailsHeading>
+      <DetailsHeading>Probation Special Conditions</DetailsHeading>
       <DetailsContent>{getSpecialConditionsMarkup(client)}</DetailsContent>
+
+      <DetailsHeading>Parole Special Conditions</DetailsHeading>
+      <DetailsContent>
+        <>
+          {!client.paroleSpecialConditions.length && "None"}
+          <DetailsList>
+            {client.paroleSpecialConditions.map(
+              ({ condition, conditionDescription }, i) => {
+                return (
+                  // can't guarantee uniqueness of anything in the condition,
+                  // there are lots of duplicates in fact
+                  // eslint-disable-next-line react/no-array-index-key
+                  <DetailsContent key={i}>
+                    {condition} ({conditionDescription})
+                  </DetailsContent>
+                );
+              }
+            )}
+          </DetailsList>
+        </>
+      </DetailsContent>
 
       <DetailsHeading>Supervision</DetailsHeading>
       <DetailsContent>
