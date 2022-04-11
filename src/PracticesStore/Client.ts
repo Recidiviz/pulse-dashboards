@@ -122,6 +122,8 @@ export class Client {
 
   expirationDate?: Date;
 
+  supervisionStartDate?: Date;
+
   currentBalance: number;
 
   lastPaymentAmount?: number;
@@ -205,6 +207,9 @@ export class Client {
     );
     this.specialConditionsTerminatedDate = optionalFieldToDate(
       record.specialConditionsTerminatedDate
+    );
+    this.supervisionStartDate = optionalFieldToDate(
+      record.earliestSupervisionStartDateInLatestSystem
     );
     this.compliantReportingReferralDraftData = observable<
       Partial<TransformedCompliantReportingReferral>

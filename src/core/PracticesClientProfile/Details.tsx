@@ -23,7 +23,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { Client, UNKNOWN } from "../../PracticesStore/Client";
+import { Client } from "../../PracticesStore/Client";
 import { formatAsCurrency, formatPracticesDate } from "../../utils";
 import PracticesOfficerName from "../PracticesOfficerName";
 import { ClientProfileProps } from "./types";
@@ -147,11 +147,14 @@ export const Details = observer(({ client }: ClientProfileProps) => {
       <DetailsHeading>Supervision</DetailsHeading>
       <DetailsContent>
         <DetailsList>
+          <DetailsSubheading>Start</DetailsSubheading>
+          <DetailsContent>
+            {formatPracticesDate(client.supervisionStartDate)}
+          </DetailsContent>
+
           <DetailsSubheading>Expiration</DetailsSubheading>
           <DetailsContent>
-            {client.expirationDate
-              ? formatPracticesDate(client.expirationDate)
-              : UNKNOWN}
+            {formatPracticesDate(client.expirationDate)}
           </DetailsContent>
 
           <DetailsSubheading>Assigned to</DetailsSubheading>

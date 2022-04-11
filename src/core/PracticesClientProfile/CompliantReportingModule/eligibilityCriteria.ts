@@ -90,31 +90,43 @@ export function getEligibilityCriteria(
       break;
   }
 
+  let sanctionsText: string;
+  if (sanctionsPastYear.length) {
+    sanctionsText = `Sanctions in the past year: ${sanctionsPastYear
+      .map((s) => s.type)
+      .join(", ")}`;
+  } else {
+    sanctionsText = "No sanctions in the past year";
+  }
+
+  let lifetimeOffensesText = "No lifetime offenses";
+  if (lifetimeOffensesExpired.length) {
+    lifetimeOffensesText = `Lifetime offense${
+      lifetimeOffensesExpired.length !== 1 ? "s" : ""
+    } expired 10+ years ago: ${lifetimeOffensesExpired.join("; ")}`;
+  }
+
   const criteria = [
     {
-      text: `Current supervision level: ${supervisionLevel}`,
+      text: `Currently on ${supervisionLevel.toLowerCase()} supervision level`,
       tooltip:
         "Policy requirement: Currently on medium or minimum supervision.",
     },
     {
-      text: `Time on ${requiredSupervisionLevel}: ${formatRelativeToNow(
+      text: `On ${requiredSupervisionLevel} for ${formatRelativeToNow(
         eligibleLevelStart
       )}`,
       tooltip: `Policy requirement: On minimum supervision level for 1 year
         or medium level for 18 months.`,
     },
     {
-      text: `Arrests: ${
+      text: `Negative arrest check on ${formatPracticesDate(
         mostRecentArrestCheck
-          ? ` Last ARRN on ${formatPracticesDate(mostRecentArrestCheck)}`
-          : "N/A"
-      }`,
+      )}`,
       tooltip: "Policy requirement: No arrests in the last 1 year.",
     },
     {
-      text: `Sanctions in the past year: ${
-        sanctionsPastYear.map((s) => s.type).join(", ") || "None"
-      }`,
+      text: sanctionsText,
       tooltip:
         "Policy requirement: No sanctions higher than Level 1 in the last 1 year.",
     },
@@ -124,10 +136,12 @@ export function getEligibilityCriteria(
     {
       text: `Passed drug screens in last 12 months: ${
         drugScreensPastYear
-          .map(({ result, date }) => `${result} — ${formatPracticesDate(date)}`)
-          .join(", ") || "None"
+          .map(
+            ({ result, date }) => `${result} on ${formatPracticesDate(date)}`
+          )
+          .join("; ") || "None"
       }`,
-      tooltip: `Policy requirement: Passed drug screen in the last 12 months for non drug offenders.
+      tooltip: `Policy requirement: Passed drug screen in the last 12 months for non-drug offenders.
         Passed 2 drug screens in last 12 months for drug offenders, most recent is negative.`,
     },
     {
@@ -135,13 +149,12 @@ export function getEligibilityCriteria(
       tooltip: "Policy requirement: Special conditions are current.",
     },
     {
-      text:
-        "Reporting requirements: No DECF, DEDF, DEDU, DEIO, DEIR codes in the last 3 months",
+      text: "No DECF, DEDF, DEDU, DEIO, DEIR codes in the last 3 months",
       tooltip: `Policy requirement: Has reported as instructed without incident unless excused
         and documented by the officer.`,
     },
     {
-      text: `Current offense${currentOffenses.length !== 1 ? "s" : ""}: ${
+      text: `Valid current offense${currentOffenses.length !== 1 ? "s" : ""}: ${
         currentOffenses.join("; ") || "None"
       }`,
       tooltip: `Policy requirement: Offense type not domestic abuse or sexual assault,
@@ -149,9 +162,7 @@ export function getEligibilityCriteria(
         not crime where victim was under 18.`,
     },
     {
-      text: `Lifetime offense${
-        lifetimeOffensesExpired.length !== 1 ? "s" : ""
-      } expired 10+ years ago: ${lifetimeOffensesExpired.join("; ") || "None"}`,
+      text: lifetimeOffensesText,
       tooltip: `Policy requirement: If the offender has a previous conviction for one of
         the crimes listed in Section VI.(A)(3) but is not currently on supervision for one
         of those crimes, then the  DD shall make a case by case determination as to whether
@@ -177,9 +188,9 @@ export function getEligibilityCriteria(
       text: `Eligible with discretion: Previous zero-tolerance codes ${zeroToleranceCodes
         .map(
           ({ contactNoteDate, contactNoteType }) =>
-            `${contactNoteType} — ${formatPracticesDate(contactNoteDate)}`
+            `${contactNoteType} on ${formatPracticesDate(contactNoteDate)}`
         )
-        .join(", ")}`,
+        .join("; ")}`,
       tooltip: `If the person has received a zero tolerance code since starting their
           latest supervision, they may still be eligible for compliant reporting.`,
     });

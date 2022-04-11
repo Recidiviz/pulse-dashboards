@@ -86,6 +86,7 @@ export type ClientRecord = {
   supervisionLevelStart?: Timestamp | string;
   address?: string;
   phoneNumber?: string;
+  earliestSupervisionStartDateInLatestSystem?: string;
   expirationDate?: Timestamp | string;
   currentBalance: number;
   lastPaymentAmount?: number;
