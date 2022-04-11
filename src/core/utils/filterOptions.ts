@@ -215,7 +215,7 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.ADMISSION_REASON),
     options: [
       { label: "All", value: "ALL" },
-      { label: "New admission", value: "NEW_ADMISSION" },
+      { label: "New court commitment", value: "NEW_ADMISSION" },
       {
         label: "Transfer from other jurisdiction",
         value: "TRANSFER_FROM_OTHER_JURISDICTION",
@@ -600,6 +600,11 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       { label: "Compliant Reporting", value: "LIMITED" },
       { label: "Inactive", value: "UNSUPERVISED" },
       { label: "Intake", value: "UNASSIGNED" },
+      { label: "Absconded", value: "ABSCONDED" },
+      { label: "Detainer", value: "DETAINER" },
+      { label: "Warrant", value: "WARRANT" },
+      { label: "ICOTS", value: "ICOTS_OUT" },
+      { label: "Other", value: "OTHER" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -615,15 +620,13 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.ADMISSION_REASON),
     options: [
       { label: "All", value: "ALL" },
-      { label: "New admission", value: "NEW_ADMISSION" },
+      { label: "New court commitment", value: "NEW_ADMISSION" },
       {
         label: "Transfer from other jurisdiction",
         value: "TRANSFER_FROM_OTHER_JURISDICTION",
       },
       { label: "Transfer", value: "TRANSFER" },
       { label: "Revocation", value: "REVOCATION" },
-      { label: "Return from escape", value: "RETURN_FROM_ESCAPE" },
-      { label: "Admitted in error", value: "ADMITTED_IN_ERROR" },
       { label: "Status change", value: "STATUS_CHANGE" },
     ],
     get defaultOption(): FilterOption {
@@ -789,13 +792,13 @@ export const TnPopulationFilterOptions: PopulationFilters = {
 
 export const MePopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
-  [FILTER_TYPES.LEGAL_STATUS]: {
-    type: FILTER_TYPES.LEGAL_STATUS,
+  [FILTER_TYPES.ADMISSION_REASON]: {
+    type: FILTER_TYPES.ADMISSION_REASON,
     title: "Admission Reason",
-    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
+    setFilters: setFilters(FILTER_TYPES.ADMISSION_REASON),
     options: [
       { label: "All", value: "ALL" },
-      { label: "New admission", value: "NEW_ADMISSION" },
+      { label: "New court commitment", value: "NEW_ADMISSION" },
       {
         label: "Transfer from other jurisdiction",
         value: "TRANSFER_FROM_OTHER_JURISDICTION",
@@ -806,7 +809,6 @@ export const MePopulationFilterOptions: PopulationFilters = {
         label: "Return from temporary release",
         value: "RETURN_FROM_TEMPORARY_RELEASE",
       },
-      { label: "Return from escape", value: "RETURN_FROM_ESCAPE" },
       { label: "Temporary custody", value: "TEMPORARY_CUSTODY" },
     ],
     get defaultOption(): FilterOption {
@@ -963,7 +965,7 @@ export const NdPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
     options: [
       { label: "All", value: "ALL" },
-      { label: "New admission", value: "NEW_ADMISSION" },
+      { label: "New court commitment", value: "NEW_ADMISSION" },
       {
         label: "Transfer from other jurisdiction",
         value: "TRANSFER_FROM_OTHER_JURISDICTION",
@@ -1155,7 +1157,7 @@ export const DemoPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
     options: [
       { label: "All", value: "ALL" },
-      { label: "New admission", value: "NEW_ADMISSION" },
+      { label: "New court commitment", value: "NEW_ADMISSION" },
       { label: "Revocation", value: "REVOCATION" },
       { label: "Transfer", value: "TRANSFER" },
     ],

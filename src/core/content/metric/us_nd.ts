@@ -22,6 +22,7 @@ import { StateSpecificMetricCopy } from "../types";
 
 const content: StateSpecificMetricCopy = {
   prisonPopulationOverTime: {
+    title: "Incarceration population over time",
     note:
       "CPPs are included in the incarceration population. In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
   },

@@ -23,11 +23,11 @@ import { StateSpecificMetricCopy } from "../types";
 const content: StateSpecificMetricCopy = {
   prisonFacilityPopulation: {
     methodology:
-      'The chart describes the number of people in each facility as of the date specified in the chart title. "General" includes facilities 019, 033, 047, 057, 075, 079, 082, 19C, and 47C.',
+      "The chart describes the number of people in each facility as of the date specified in the chart title.",
   },
   prisonToSupervisionPopulationByFacility: {
     methodology:
-      'The chart describes the number of people released from prison to supervision from each facility as of the date specified in the chart title. When "Counts" is selected, the number of people released from each facility is shown. When "Rates" is selected, the percentage shows the number of people released from each facility divided by the total number of people released to supervision. "General" includes facilities 019, 033, 047, 057, 075, 079, 082, 19C, and 47C.',
+      'The chart describes the number of people released from prison to supervision from each facility as of the date specified in the chart title. When "Counts" is selected, the number of people released from each facility is shown. When "Rates" is selected, the percentage shows the number of people released from each facility divided by the total number of people released to supervision.',
   },
   supervisionPopulationByDistrict: {
     methodology:
@@ -43,7 +43,23 @@ const content: StateSpecificMetricCopy = {
   },
   prisonPopulationPersonLevel: {
     note:
-      "The people who are in the INACTIVE facility are due to a known bug which will be fixed soon.",
+      "Some people are appearing in an INACTIVE facility due to a known issue that will be resolved by 5/31/22.",
+  },
+  supervisionPopulationBySupervisionLevel: {
+    methodology:
+      'The chart describes the number of people on supervision at each supervision level as of the date specified in the chart title. "Other" includes supervision level codes ZS3, ZS1, 6P1, 6P2, ZS2, 6P4, 9RT, ZWS, 9DP, ZS4, ZRE, and ZTV',
+  },
+  prisonToSupervisionPopulationByAge: {
+    note:
+      "Approximately 8% of the total release events are not counted in this chart due to an unknown age issue that will be resolved by 5/31/22.",
+  },
+  libertyToPrisonPopulationByAgeGroup: {
+    note:
+      "Approximately 6% of the total admission events are not counted in this chart due to an unknown age issue that will be resolved by 5/31/22.",
+  },
+  supervisionToLibertyPopulationByAgeGroup: {
+    note:
+      "Approximately 9% of the total release events are not counted in this chart due to an unknown age issue that will be resolved by 5/31/22.",
   },
 };
 

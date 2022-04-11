@@ -37,7 +37,7 @@ const content: MetricCopy = {
       'The chart describes the historical supervision population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. ',
   },
   prisonPopulationPersonLevel: {
-    title: "List of people incarcerated",
+    title: "List of people in prison",
     methodology:
       "The table includes a row for each person incarcerated as of the date specified in the chart title. ",
   },
@@ -51,10 +51,10 @@ const content: MetricCopy = {
     note:
       "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
     methodology:
-      "These charts include events where people are admitted from supervision to incarceration. This includes revocations, sanction admissions, and new court commits that occur while an individual is on supervision. Revocations are counted when the person was admitted to incarceration status, not when the violation occurred. All charts on this page are event-based, so if a single person has two revocations during the selected time period, two events are counted on this page.",
+      "These charts include events where people are admitted from supervision to prison. This includes revocations, sanction admissions, and new court commits that occur while an individual is on supervision. Revocations are counted when the person was admitted to incarceration status, not when the violation occurred. All charts on this page are event-based, so if a single person has two revocations during the selected time period, two events are counted on this page.",
   },
   prisonPopulationOverTime: {
-    title: "Incarceration population over time",
+    title: "Prison population over time",
     note:
       "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
     methodology:

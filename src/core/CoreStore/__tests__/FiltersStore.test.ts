@@ -92,7 +92,7 @@ describe("FiltersStore", () => {
         admissionReason: ["NEW_ADMISSION"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
-        "Time Period:, 6 months\nGender:, All\nAdmission Reason:, New admission\n"
+        "Time Period:, 6 months\nGender:, All\nAdmission Reason:, New court commitment\n"
       );
     });
 

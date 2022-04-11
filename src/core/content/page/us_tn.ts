@@ -25,7 +25,7 @@ const content: StateSpecificPageCopy = {
     summary:
       "Includes people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails and workhouses are not included. ",
     methodology:
-      "These charts show people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails are not included.",
+      'These charts show people incarcerated in a TDOC prison for a felony or misdemeanor conviction. People in county jails are not included. The "admission reason" is determined by the original admission reason for the current sentence. As a result, movements that happened after the most recent sentence started may not be captured. For example, if someone was admitted from liberty to prison on a new court commitment for the most recent sentence, then escaped then returned during the same sentence, they will show up under the admission reason of "New court commitment."',
   },
   prisonToSupervision: {
     summary:
