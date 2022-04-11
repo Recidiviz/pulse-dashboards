@@ -77,7 +77,7 @@ const FormCR3947Rev0518: React.FC = () => {
             }}
           />
           <FormBox>
-            <Grid columns="90px 1fr 50px 1fr">
+            <Grid columns="90px 1fr 50px 100px">
               <Item as="label" htmlFor="address">
                 Physical Address
               </Item>

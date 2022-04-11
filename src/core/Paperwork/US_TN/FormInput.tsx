@@ -69,7 +69,7 @@ const FormInput: React.FC<FormInputProps> = ({
     return reaction(
       () => getValue(client.getCompliantReportingReferralDataField(name)),
       (newValue) => setValue(newValue),
-      { name }
+      { name, fireImmediately: true }
     );
   });
 
@@ -111,7 +111,7 @@ const FormInput: React.FC<FormInputProps> = ({
 
 const FormInputWrapper: React.FC<FormInputWrapperProps> = (props) => {
   const { practicesStore } = useRootStore();
-  if (!practicesStore.selectedClient || !practicesStore.user) {
+  if (!practicesStore?.selectedClient?.updates || !practicesStore.user) {
     return <Input {...props} disabled />;
   }
 
