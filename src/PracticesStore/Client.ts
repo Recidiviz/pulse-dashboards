@@ -257,13 +257,11 @@ export class Client {
     this.fetchedUpdates = observableSubscription((handler) =>
       subscribeToClientUpdates(this.id, (r) => {
         if (r) {
-          handler(r);
-          const data = r.compliantReporting?.referralForm?.data ?? {};
-
           runInAction(() => {
+            handler(r);
+            const data = r.compliantReporting?.referralForm?.data ?? {};
             set(this.compliantReportingReferralDraftData, data);
           });
-          set(this.compliantReportingReferralDraftData, data);
         } else {
           // empty object will replace undefined, signifying completed fetch
           handler({});
