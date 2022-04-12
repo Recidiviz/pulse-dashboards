@@ -64,8 +64,9 @@ export const metricContentOverrides: {
 };
 
 export const getPageCopy = (currentTenantId: TenantId): PageCopy => {
+  const copyOfContent = JSON.parse(JSON.stringify(defaultPageContent));
   return currentTenantId in pageContentOverrides
-    ? merge(defaultPageContent, pageContentOverrides[currentTenantId])
+    ? merge(copyOfContent, pageContentOverrides[currentTenantId])
     : defaultPageContent;
 };
 

@@ -83,6 +83,12 @@ const content: StateSpecificPageCopy = {
     methodology:
       "These charts include events where people are released from supervision to liberty. Releases are counted on the day a person terminates supervision. All charts on this page are event-based, so if a single person has two releases during the selected time period, two events are counted on this page.",
   },
+  explore: {
+    title: "Explore",
+  },
+  practices: {
+    title: "Practices",
+  },
 };
 
 export default content;

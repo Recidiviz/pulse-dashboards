@@ -97,6 +97,8 @@ export const PATHWAYS_PAGES = {
 export const PathwaysPageIdList = Object.keys(PATHWAYS_PAGES);
 export type PathwaysPageRootPath = typeof PATHWAYS_PAGES[PathwaysPage];
 
+export type CoreOrPathwaysPage = CorePage | PathwaysPage;
+
 export type PathwaysSection = keyof typeof PATHWAYS_SECTIONS;
 export const PATHWAYS_SECTIONS: Record<string, string> = {
   countOverTime: "countOverTime",
@@ -268,42 +270,4 @@ export function getCompartmentFromView(view: CoreView): SimulationCompartment {
 
 export function getViewFromPathname(pathname: string): CoreView {
   return pathnameToView[pathname];
-}
-
-const defaultPageIdToHeading: Record<string, string> = {
-  [CORE_PAGES.explore]: "Explore",
-  [CORE_PAGES.projections]: "Projections",
-  [CORE_PAGES.practices]: "Practices",
-  [PATHWAYS_PAGES.libertyToPrison]: "Liberty to Prison",
-  [PATHWAYS_PAGES.prison]: "Prison",
-  [PATHWAYS_PAGES.prisonToSupervision]: "Prison to Supervision",
-  [PATHWAYS_PAGES.supervision]: "Supervision",
-  [PATHWAYS_PAGES.supervisionToPrison]: "Supervision to Prison",
-  [PATHWAYS_PAGES.supervisionToLiberty]: "Supervision to Liberty",
-  [PATHWAYS_VIEWS.system]: "System-Level Trends",
-  [PATHWAYS_VIEWS.operations]: "Operational Metrics",
-};
-
-const ndPageToIdHeading: Record<string, string> = {
-  ...defaultPageIdToHeading,
-  [PATHWAYS_PAGES.libertyToPrison]: "Liberty to Incarceration",
-  [PATHWAYS_PAGES.prison]: "Incarceration",
-  [PATHWAYS_PAGES.prisonToSupervision]: "Incarceration to Supervision",
-  [PATHWAYS_PAGES.supervisionToPrison]: "Supervision to Incarceration",
-};
-
-// TODO #1639 Move to content system
-const pageIdToHeading: Record<TenantId, Record<string, string>> = {
-  US_ID: defaultPageIdToHeading,
-  US_ME: defaultPageIdToHeading,
-  US_TN: defaultPageIdToHeading,
-  US_MI: defaultPageIdToHeading,
-  US_ND: ndPageToIdHeading,
-};
-
-export function getPageHeadingFromId(
-  pageId: string,
-  currentTenantId: TenantId
-): string {
-  return pageIdToHeading[currentTenantId][pageId];
 }

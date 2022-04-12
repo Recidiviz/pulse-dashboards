@@ -26,13 +26,10 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { CORE_TENANTS } from "../../RootStore/TenantStore/coreTenants";
 import { PATHWAYS_TENANTS } from "../../RootStore/TenantStore/pathwaysTenants";
+import { getPageCopy } from "../content";
 import { useCoreStore } from "../CoreStoreProvider";
 import { NavigationSection } from "../types/navigation";
-import {
-  CoreViewIdList,
-  getPageHeadingFromId,
-  isValidPathwaysRootPath,
-} from "../views";
+import { CoreViewIdList, isValidPathwaysRootPath } from "../views";
 import withRouteSync from "../withRouteSync";
 
 const PageNavigation: React.FC = () => {
@@ -64,7 +61,8 @@ const PageNavigation: React.FC = () => {
                 page?.toLowerCase() === pageOption.toLowerCase(),
             })}
           >
-            {getPageHeadingFromId(pageOption, currentTenantId)}
+            {/* @ts-ignore */}
+            {getPageCopy(currentTenantId)?.[pageOption]?.title}
           </Link>
         </li>
       ))}
