@@ -657,7 +657,6 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       { label: "MLTC", value: "MLTC" },
       { label: "TCIX", value: "TCIX" },
       { label: "DJRC", value: "DJRC" },
-      { label: "General", value: "GENERAL" },
       { label: "Inactive", value: "INACTIVE" },
     ],
     get defaultOption(): FilterOption {
