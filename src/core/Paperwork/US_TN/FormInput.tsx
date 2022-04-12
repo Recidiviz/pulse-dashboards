@@ -58,7 +58,9 @@ const FormInput: React.FC<FormInputProps> = ({
   buildValue = createDefaultValueBuilder(name),
   ...props
 }) => {
-  const [value, setValue] = useState<string>("");
+  const [value, setValue] = useState<string>(
+    getValue(client.getCompliantReportingReferralDataField(name))
+  );
   const inputRef = useRef<HTMLInputElement>(
     null
   ) as MutableRefObject<HTMLInputElement>;
@@ -69,7 +71,7 @@ const FormInput: React.FC<FormInputProps> = ({
     return reaction(
       () => getValue(client.getCompliantReportingReferralDataField(name)),
       (newValue) => setValue(newValue),
-      { name, fireImmediately: true }
+      { name }
     );
   });
 
