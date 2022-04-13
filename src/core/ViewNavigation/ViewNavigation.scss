@@ -74,7 +74,7 @@
   }
 
   &__navlink {
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
     cursor: pointer;
     &-heading {
       display: none;
@@ -104,11 +104,6 @@
 
   &__bottom {
     margin-top: auto;
-    .ViewNavigation {
-      &__navlink {
-        margin-bottom: 2rem;
-      }
-    }
   }
 
   &__tooltip {

@@ -21,6 +21,8 @@
   &__point {
     fill: $indigo;
     r: 0.3rem;
+    stroke: $white;
+    stroke-width: 2;
   }
 
   &__historicalLine {

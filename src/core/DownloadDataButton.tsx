@@ -36,7 +36,7 @@ const DownloadDataButton: React.FC<PropTypes> = ({ handleOnClick }) => {
       onClick={handleOnClick}
     >
       <Icon
-        className="DetailsGroup__icon"
+        className="DetailsGroup__icon DetailsGroup__icon--download"
         kind={IconSVG.Download}
         fill={styles.signalLinks}
       />

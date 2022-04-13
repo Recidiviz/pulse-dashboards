@@ -21,7 +21,7 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 
-import { formatDate, getTicks } from "../../utils";
+import { formatDate, getDimensionLabel, getTicks } from "../../utils";
 import { sortByLabel } from "../../utils/datasets";
 import * as styles from "../CoreConstants.scss";
 import { useCoreStore } from "../CoreStoreProvider";
@@ -29,6 +29,7 @@ import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshot
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
+import { Dimension } from "../types/dimensions";
 import { PopulationFilterLabels } from "../types/filters";
 import { METRIC_MODES } from "../utils/constants";
 import withMetricHydrator from "../withMetricHydrator";
@@ -100,12 +101,12 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           accessor as keyof PopulationFilterLabels,
           d[accessor].toString()
         );
-    const filterLongLabel =
-      !isNotFilters &&
-      getFilterLongLabel(
-        accessor as keyof PopulationFilterLabels,
-        d[accessor].toString()
-      );
+    const filterLongLabel = isNotFilters
+      ? getDimensionLabel(accessor as Dimension, d[accessor].toString())
+      : getFilterLongLabel(
+          accessor as keyof PopulationFilterLabels,
+          d[accessor].toString()
+        );
     const currentValue = isRate ? d.populationProportion : d.count;
     return {
       index,
@@ -185,22 +186,19 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           oAccessor="accessorLabel"
           oPadding={data.length > 25 ? 2 : 15}
           style={(d: any) => {
-            if (!isGeographic) {
-              if (d.index === hoveredId) {
-                return { fill: styles.dataGoldDark };
-              }
-              if (pickedId && pickedId.includes(d.accessorValue)) {
-                return { fill: styles.dataGoldDark };
-              }
-              return { fill: styles.dataGold };
-            }
-            if (d.index === hoveredId) {
-              return { fill: styles.dataForestDark };
-            }
-            if (pickedId && pickedId.includes(d.accessorValue)) {
-              return { fill: styles.dataTeal };
-            }
-            return { fill: styles.dataForest };
+            const isPicked = pickedId.includes(d.accessorValue);
+            const isHovered = d.index === hoveredId;
+            const color = isGeographic
+              ? styles.dataGoldDark
+              : styles.dataForestDark;
+            const opacity =
+              (hoveredId === null && pickedId[0] === "ALL") ||
+              (hoveredId === null && pickedId.length === 0) ||
+              isHovered ||
+              isPicked
+                ? 1
+                : 0.75;
+            return { fill: color, fillOpacity: opacity };
           }}
           rAccessor="value"
           rExtent={yRange}

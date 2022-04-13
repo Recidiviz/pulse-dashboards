@@ -25,6 +25,7 @@ import startCase from "lodash/fp/startCase";
 import moment from "moment";
 import numeral from "numeral";
 
+import { Dimension } from "../core/types/dimensions";
 import { translate } from "./i18nSettings";
 
 const CRYPTO_PASSPHRASE = process.env.REACT_APP_CRYPTO_PASSPHRASE || "";
@@ -288,6 +289,20 @@ function convertCurlyQuotesToStraight(text: string): string {
   return text.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
 }
 
+const getDimensionLabel = (
+  dimensionType: Dimension,
+  dimensionValue: string
+): string => {
+  if (
+    dimensionType === "priorLengthOfIncarceration" &&
+    dimensionValue === "0"
+  ) {
+    return "  Not previously incarcerated";
+  }
+
+  return dimensionValue;
+};
+
 export {
   convertCurlyQuotesToStraight,
   decrypt,
@@ -302,6 +317,7 @@ export {
   genderValueToHumanReadable,
   genderValueToLabel,
   generateEmailAddress,
+  getDimensionLabel,
   getFirstName,
   getPeriodLabelFromMetricPeriodMonthsFilter,
   getStatePopulations,
