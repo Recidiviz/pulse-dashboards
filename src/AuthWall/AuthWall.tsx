@@ -21,7 +21,7 @@ import { Loading } from "@recidiviz/design-system";
 import { when } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 import NotFound from "../components/NotFound";
 import { useRootStore } from "../components/StoreProvider";
@@ -36,15 +36,20 @@ const AuthWall: React.FC = ({ children }) => {
   const { userStore, currentTenantId, tenantStore } = useRootStore();
   const { userAppMetadata } = userStore;
   const stateCodeParam = new URLSearchParams(search).get("stateCode");
+  const history = useHistory();
 
-  useEffect(
-    () =>
-      // return when's disposer so it is cleaned up if it never runs
-      when(
-        () => !userStore.isAuthorized,
-        () => userStore.authorize()
-      ),
-    [userStore]
+  useEffect(() =>
+    // return when's disposer so it is cleaned up if it never runs
+    when(
+      () => !userStore.isAuthorized,
+      // handler keeps React Router in sync with URL changes
+      // that may happen in `authorize` after redirect
+      () =>
+        userStore.authorize((targetUrl: string) => {
+          const url = new URL(targetUrl);
+          history.replace(url.pathname);
+        })
+    )
   );
 
   if (userStore.authError) {

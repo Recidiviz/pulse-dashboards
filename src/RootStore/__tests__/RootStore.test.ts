@@ -63,7 +63,7 @@ describe("RootStore", () => {
       getTokenSilently: () => "token",
     });
 
-    await RootStore.userStore.authorize();
+    await RootStore.userStore.authorize(jest.fn());
 
     expect(RootStore.user).toBeDefined();
   });

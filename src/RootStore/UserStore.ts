@@ -105,7 +105,7 @@ export default class UserStore {
    * to the Auth0 login domain for fresh authentication.
    * Returns an Error if Auth0 configuration is not present.
    */
-  async authorize(): Promise<void> {
+  async authorize(handleTargetUrl: (targetUrl: string) => void): Promise<void> {
     if (isOfflineMode()) {
       this.isAuthorized = true;
       const offlineUser = await fetchOfflineUser({});
@@ -145,6 +145,7 @@ export default class UserStore {
           replacementUrl = `${window.location.origin}${window.location.pathname}`;
         }
         window.history.replaceState({}, document.title, replacementUrl);
+        handleTargetUrl(replacementUrl);
       }
       if (await auth0.isAuthenticated()) {
         const user = await auth0.getUser();

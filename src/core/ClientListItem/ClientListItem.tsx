@@ -86,6 +86,9 @@ const ClientListItem: React.FC<ClientListItemProps> = ({ client }) => {
         </ClientName>
         <ClientStatus>
           {client.reviewStatusMessages.compliantReporting}
+          {!client.eligibilityStatus.compliantReporting &&
+            client.updates?.compliantReporting?.denial &&
+            ` (${client.updates.compliantReporting.denial.reasons.join(", ")})`}
         </ClientStatus>
       </ClientInfo>
     </ClientListItemElement>

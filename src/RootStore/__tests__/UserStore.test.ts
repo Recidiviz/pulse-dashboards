@@ -45,6 +45,8 @@ const mockFirestoreAuthenticate = authenticate as jest.Mock;
 
 const mockIdentify = identify as jest.Mock<typeof identify>;
 
+const mockHandleUrl = jest.fn();
+
 const tenantId = "US_MO";
 const metadataField = `${METADATA_NAMESPACE}app_metadata`;
 const metadata = { [metadataField]: { state_code: tenantId } };
@@ -77,7 +79,7 @@ test("authorization immediately pending", () => {
 
 test("authorize requires Auth0 client settings", async () => {
   const store = new UserStore({});
-  await store.authorize();
+  await store.authorize(mockHandleUrl);
   const error = store.authError;
   expect(error?.message).toMatch(ERROR_MESSAGES.auth0Configuration);
 });
@@ -87,7 +89,7 @@ test("error thrown in authorize sets authError", async () => {
   const store = new UserStore({
     authSettings: testAuthSettings,
   });
-  await store.authorize();
+  await store.authorize(mockHandleUrl);
   const error = store.authError;
   expect(error?.message).toBeDefined();
 });
@@ -99,7 +101,7 @@ test("Invalid state thrown in authorize redirects to login", async () => {
   const store = new UserStore({
     authSettings: testAuthSettings,
   });
-  await store.authorize();
+  await store.authorize(mockHandleUrl);
 
   expect(mockLoginWithRedirect.mock.calls.length).toBe(1);
   expect(mockLoginWithRedirect.mock.calls[0][0]).toEqual({
@@ -116,7 +118,7 @@ test("authorized when authenticated", async () => {
   const store = new UserStore({
     authSettings: testAuthSettings,
   });
-  await store.authorize();
+  await store.authorize(mockHandleUrl);
   expect(store.isAuthorized).toBe(true);
   expect(store.userIsLoading).toBe(false);
 });
@@ -128,7 +130,7 @@ test("redirect to Auth0 when unauthenticated", async () => {
   const store = new UserStore({
     authSettings: testAuthSettings,
   });
-  await store.authorize();
+  await store.authorize(mockHandleUrl);
   expect(mockLoginWithRedirect.mock.calls.length).toBe(1);
   expect(mockLoginWithRedirect.mock.calls[0][0]).toEqual({
     appState: { targetUrl: window.location.href },
@@ -142,7 +144,7 @@ test("requires email verification", async () => {
   const store = new UserStore({
     authSettings: testAuthSettings,
   });
-  await store.authorize();
+  await store.authorize(mockHandleUrl);
   expect(store.isAuthorized).toBe(false);
   expect(store.userIsLoading).toBe(true);
 });
@@ -160,10 +162,30 @@ test("handles Auth0 token params", async () => {
   const store = new UserStore({
     authSettings: testAuthSettings,
   });
-  await store.authorize();
+  await store.authorize(mockHandleUrl);
 
   expect(mockHandleRedirectCallback.mock.calls.length).toBe(1);
   expect(window.location.href).not.toMatch(auth0LoginParams);
+});
+
+test("calls target URL handler after redirect", async () => {
+  // this needs to be a localhost URL or JSDOM will have problems
+  const mockUrl = "http://localhost/some/url";
+  mockHandleRedirectCallback.mockResolvedValue({
+    appState: { targetUrl: mockUrl },
+  });
+  const auth0LoginParams = "code=123456&state=abcdef";
+  const urlWithToken = new URL(window.location.href);
+  urlWithToken.search = `?${auth0LoginParams}`;
+  window.history.pushState({}, "Test", urlWithToken.href);
+
+  const store = new UserStore({
+    authSettings: testAuthSettings,
+  });
+
+  await store.authorize(mockHandleUrl);
+
+  expect(mockHandleUrl).toHaveBeenCalledWith(mockUrl);
 });
 
 test("urlQuery error", async () => {
@@ -179,7 +201,7 @@ test("urlQuery error", async () => {
   const store = new UserStore({
     authSettings: testAuthSettings,
   });
-  await store.authorize();
+  await store.authorize(mockHandleUrl);
   expect(store.authError).toEqual(new Error("no access"));
 });
 
@@ -195,7 +217,7 @@ test("redirect to targetUrl after callback", async () => {
   const store = new UserStore({
     authSettings: testAuthSettings,
   });
-  await store.authorize();
+  await store.authorize(mockHandleUrl);
   expect(window.location.href).toBe(targetUrl);
 });
 
@@ -212,7 +234,7 @@ test.each(Object.keys(tenants))(
     const store = new UserStore({
       authSettings: testAuthSettings,
     });
-    await store.authorize();
+    await store.authorize(mockHandleUrl);
     expect(store.availableStateCodes).toBe(
       tenants[currentTenantId as TenantId].availableStateCodes
     );
@@ -225,7 +247,7 @@ test("Error from getTokenSilently redirects to login", async () => {
   const store = new UserStore({
     authSettings: testAuthSettings,
   });
-  await store.authorize();
+  await store.authorize(mockHandleUrl);
   mockGetTokenSilently.mockResolvedValue(new Error("Login required"));
   await store.getTokenSilently();
   expect(mockLoginWithRedirect.mock.calls.length).toBe(1);
@@ -251,7 +273,7 @@ describe("getRoutePermission", () => {
     const store = new UserStore({
       authSettings: testAuthSettings,
     });
-    await store.authorize();
+    await store.authorize(mockHandleUrl);
     expect(store.getRoutePermission("operations")).toBe(false);
   });
 
@@ -269,7 +291,7 @@ describe("getRoutePermission", () => {
     const store = new UserStore({
       authSettings: testAuthSettings,
     });
-    await store.authorize();
+    await store.authorize(mockHandleUrl);
     expect(store.getRoutePermission("practices")).toBe(true);
   });
 
@@ -285,7 +307,7 @@ describe("getRoutePermission", () => {
     const store = new UserStore({
       authSettings: testAuthSettings,
     });
-    await store.authorize();
+    await store.authorize(mockHandleUrl);
     expect(store.getRoutePermission("operations")).toBe(false);
   });
 });
@@ -305,7 +327,7 @@ describe("canAccessRestrictedPage", () => {
         currentTenantId: tenantId,
       } as typeof RootStore,
     });
-    await store.authorize();
+    await store.authorize(mockHandleUrl);
     expect(store.canAccessRestrictedPage("anyBogusPage")).toBe(true);
   });
 
@@ -326,7 +348,7 @@ describe("canAccessRestrictedPage", () => {
         currentTenantId: tenantId,
       } as typeof RootStore,
     });
-    await store.authorize();
+    await store.authorize(mockHandleUrl);
 
     tenants[tenantId].pagesWithRestrictions = ["operations"];
     expect(store.canAccessRestrictedPage("operations")).toBe(false);
@@ -349,7 +371,7 @@ describe("canAccessRestrictedPage", () => {
         currentTenantId: tenantId,
       } as typeof RootStore,
     });
-    await store.authorize();
+    await store.authorize(mockHandleUrl);
 
     tenants[tenantId].pagesWithRestrictions = ["operations"];
     expect(store.canAccessRestrictedPage("operations")).toBe(true);
@@ -393,7 +415,7 @@ describe("userAllowedNavigation", () => {
         currentTenantId: stateCode,
       } as typeof RootStore,
     });
-    await store.authorize();
+    await store.authorize(mockHandleUrl);
     const expected = {
       "id-methodology": ["system"],
       libertyToPrison: ["countOverTime"],
@@ -420,7 +442,7 @@ describe("userAllowedNavigation", () => {
         currentTenantId: stateCode,
       } as typeof RootStore,
     });
-    await store.authorize();
+    await store.authorize(mockHandleUrl);
     const expected = {
       "id-methodology": ["system"],
       libertyToPrison: ["countOverTime"],
@@ -448,7 +470,7 @@ describe("userAllowedNavigation", () => {
         currentTenantId: stateCode,
       } as typeof RootStore,
     });
-    await store.authorize();
+    await store.authorize(mockHandleUrl);
     const expected = {
       "id-methodology": ["system"],
       libertyToPrison: ["countOverTime"],
@@ -477,7 +499,7 @@ describe("userAllowedNavigation", () => {
         currentTenantId: stateCode,
       } as typeof RootStore,
     });
-    await store.authorize();
+    await store.authorize(mockHandleUrl);
     expect(store.userAllowedNavigation).toEqual(tenants[stateCode].navigation);
   });
 });
@@ -489,7 +511,7 @@ test("does not identify authorized users without ID hash", async () => {
     ...metadata,
   });
   const store = new UserStore({ authSettings: testAuthSettings });
-  await store.authorize();
+  await store.authorize(mockHandleUrl);
 
   expect(mockIdentify).not.toHaveBeenCalled();
 });
@@ -503,7 +525,7 @@ test("identifies authorized user if an ID hash is present", async () => {
   });
 
   const store = new UserStore({ authSettings: testAuthSettings });
-  await store.authorize();
+  await store.authorize(mockHandleUrl);
 
   expect(mockIdentify).toHaveBeenCalledWith(userHash);
 });

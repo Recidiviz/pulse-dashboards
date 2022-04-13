@@ -30,6 +30,9 @@ jest.mock("react-router-dom", () => ({
   useLocation: jest.fn().mockReturnValue({
     pathname: "/community/revocations",
   }),
+  useHistory: jest.fn().mockReturnValue({
+    replace: jest.fn(),
+  }),
 }));
 
 const mockLoadingTestId = "loading-test-id";
