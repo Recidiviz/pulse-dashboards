@@ -78,7 +78,7 @@ export function trackSurfacedInList(
 }
 
 export function trackSetOpportunityStatus<
-  Metadata extends { clientId: string; status: OpportunityStatus }
+  Metadata extends ClientFormTrackingMetadata & { status: OpportunityStatus }
 >(metadata: Metadata): void {
   track("frontend.opportunity_status_updated", metadata);
 }

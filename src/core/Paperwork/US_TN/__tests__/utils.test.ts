@@ -79,6 +79,7 @@ test("track start of progress on pending review", async () => {
   expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
     clientId: client.pseudonymizedId,
     status: "IN_PROGRESS",
+    opportunityType: "compliantReporting",
   });
 });
 

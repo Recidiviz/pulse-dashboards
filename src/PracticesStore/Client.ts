@@ -372,12 +372,14 @@ export class Client {
         trackSetOpportunityStatus({
           clientId: this.pseudonymizedId,
           status: "DENIED",
+          opportunityType: "compliantReporting",
           deniedReasons: reasons,
         });
       } else {
         trackSetOpportunityStatus({
           clientId: this.pseudonymizedId,
           status: "IN_PROGRESS",
+          opportunityType: "compliantReporting",
         });
       }
     }
@@ -405,6 +407,7 @@ export class Client {
           trackSetOpportunityStatus({
             clientId: this.pseudonymizedId,
             status: "COMPLETED",
+            opportunityType: "compliantReporting",
           });
         }
       }

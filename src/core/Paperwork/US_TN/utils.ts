@@ -37,6 +37,7 @@ export async function updateFieldData(
     trackSetOpportunityStatus({
       clientId: client.pseudonymizedId,
       status: "IN_PROGRESS",
+      opportunityType: "compliantReporting",
     });
   }
 }

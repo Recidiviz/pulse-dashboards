@@ -102,6 +102,7 @@ test("set compliant reporting ineligible", async () => {
   expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
     clientId: client.pseudonymizedId,
     status: "DENIED",
+    opportunityType: "compliantReporting",
     deniedReasons: reasons,
   });
 });
@@ -157,6 +158,7 @@ test("clear denial reasons", async () => {
   expect(trackSetOpportunityStatus).toHaveBeenLastCalledWith({
     clientId: client.pseudonymizedId,
     status: "IN_PROGRESS",
+    opportunityType: "compliantReporting",
   });
 });
 
@@ -182,6 +184,7 @@ test("mark client as completed when printing form", () => {
   expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
     clientId: client.pseudonymizedId,
     status: "COMPLETED",
+    opportunityType: "compliantReporting",
   });
 });
 
