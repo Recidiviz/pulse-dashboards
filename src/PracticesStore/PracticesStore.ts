@@ -229,7 +229,9 @@ export class PracticesStore implements Hydratable {
       (c) =>
         this.selectedOfficerIds.includes(c.officerId) &&
         c.compliantReportingEligible &&
-        c.compliantReportingEligible.eligibilityCategory !== "c4"
+        ["c1", "c2", "c3"].includes(
+          c.compliantReportingEligible.eligibilityCategory
+        )
     );
   }
 

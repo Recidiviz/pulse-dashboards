@@ -21,6 +21,7 @@ import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
   ClientRecord,
+  CompliantReportingEligibleRecord,
   getClient,
   getUser,
   subscribeToCaseloads,
@@ -381,4 +382,101 @@ test("tracking call waits for client to be instantiated", async () => {
   await trackingPromise;
 
   expect(trackingSpy).toHaveBeenCalledWith("compliantReporting");
+});
+
+test("only approved eligibility categories are surfaced", async () => {
+  const eligibilityFields = {
+    ...eligibleClient.compliantReportingEligible,
+  } as CompliantReportingEligibleRecord;
+  const mockEligibleClients: ClientRecord[] = [
+    {
+      ...eligibleClient,
+      personExternalId: "c1",
+      pseudonymizedId: "c1p",
+      compliantReportingEligible: {
+        ...eligibilityFields,
+        eligibilityCategory: "c1",
+      },
+    },
+    {
+      ...eligibleClient,
+      personExternalId: "c2",
+      pseudonymizedId: "c2p",
+      compliantReportingEligible: {
+        ...eligibilityFields,
+        eligibilityCategory: "c2",
+      },
+    },
+    {
+      ...eligibleClient,
+      personExternalId: "c3",
+      pseudonymizedId: "c3p",
+      compliantReportingEligible: {
+        ...eligibilityFields,
+        eligibilityCategory: "c3",
+      },
+    },
+  ];
+  const mockIneligibleCategoryClients: ClientRecord[] = [
+    {
+      ...eligibleClient,
+      personExternalId: "c4",
+      pseudonymizedId: "c4p",
+      compliantReportingEligible: {
+        ...eligibilityFields,
+        eligibilityCategory: "c4",
+      },
+    },
+    {
+      ...eligibleClient,
+      personExternalId: "c4_review",
+      pseudonymizedId: "c4_review_p",
+      compliantReportingEligible: {
+        ...eligibilityFields,
+        eligibilityCategory: "c4_review",
+      },
+    },
+    {
+      ...eligibleClient,
+      personExternalId: "unexpected_value",
+      pseudonymizedId: "unexpected_value_p",
+      compliantReportingEligible: {
+        ...eligibilityFields,
+        eligibilityCategory: "unexpected_value",
+      },
+    },
+  ];
+
+  mockSubscribeToCaseloads.mockImplementation(
+    (stateCode, officerIds, handler) => {
+      handler([...mockEligibleClients, ...mockIneligibleCategoryClients]);
+      return mockUnsub;
+    }
+  );
+
+  await waitForHydration();
+
+  // simulate a UI displaying client list
+  testObserver = keepAlive(
+    computed(() => practicesStore.compliantReportingEligibleClients)
+  );
+
+  expect(practicesStore.compliantReportingEligibleClients.length).toBe(
+    mockEligibleClients.length
+  );
+  mockEligibleClients.forEach((expectedClient) =>
+    expect(
+      practicesStore.compliantReportingEligibleClients.find(
+        (c) => c.id === expectedClient.personExternalId
+      )
+    ).toBeDefined()
+  );
+
+  mockIneligibleCategoryClients.forEach((unexpectedClient) =>
+    expect(
+      practicesStore.compliantReportingEligibleClients.find(
+        (c) => c.id === unexpectedClient.personExternalId
+      )
+    ).toBeUndefined()
+  );
 });
