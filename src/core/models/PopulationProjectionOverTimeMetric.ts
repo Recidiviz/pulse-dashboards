@@ -25,7 +25,7 @@ import {
   PopulationProjectionTimeSeriesRecord,
   SimulationCompartment,
 } from "./types";
-import { filterRecords, getRecordDate } from "./utils";
+import { filterRecordByDimensions, getRecordDate } from "./utils";
 
 export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<PopulationProjectionTimeSeriesRecord> {
   compartment: SimulationCompartment;
@@ -59,7 +59,7 @@ export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<P
           Math.abs(monthsOut) <= monthRange &&
           monthsOut % stepSize === 0 &&
           status.includes(record.legalStatus) &&
-          filterRecords(record, this.dimensions, filters)
+          filterRecordByDimensions(record, this.dimensions, filters)
         );
       }
     );

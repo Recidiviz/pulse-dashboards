@@ -29,7 +29,7 @@ import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PrisonPopulationSnapshotRecord, TimePeriod } from "./types";
-import { filterRecords, filterTimePeriod } from "./utils";
+import { filterRecordByDimensions, filterTimePeriod } from "./utils";
 
 export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<PrisonPopulationSnapshotRecord> {
   accessor: keyof PrisonPopulationSnapshotRecord;
@@ -89,7 +89,12 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
     const filteredRecords = this.allRecords.filter(
       (record: PrisonPopulationSnapshotRecord) => {
         return (
-          filterRecords(record, this.dimensions, filters, this.accessor) &&
+          filterRecordByDimensions(
+            record,
+            this.dimensions,
+            filters,
+            this.accessor
+          ) &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,

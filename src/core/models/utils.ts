@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { every } from "lodash";
+import { property } from "lodash/fp";
 import moment from "moment";
 
 import { toTitleCase } from "../../utils";
@@ -236,7 +238,6 @@ export function createPrisonPopulationTimeSeries(
         count: record.event_count
           ? parseInt(record.event_count)
           : parseInt(record.person_count),
-        avg90day: parseInt(record.avg_90day),
         admissionReason: record.legal_status,
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
@@ -264,7 +265,6 @@ export function createSupervisionPopulationTimeSeries(
         count: record.event_count
           ? parseInt(record.event_count)
           : parseInt(record.person_count),
-        avg90day: parseInt(record.avg_90day),
         supervisionType: record.supervision_type as SupervisionType,
         gender: record.gender as Gender,
         district: record.district?.toUpperCase(),
@@ -290,7 +290,6 @@ export function createLibertyPopulationTimeSeries(
         year: Number(record.year),
         month: Number(record.month),
         count: parseInt(record.event_count),
-        avg90day: parseInt(record.avg_90day),
         gender: record.gender as Gender,
         ageGroup: record.age_group as AgeGroup,
         judicialDistrict: record.judicial_district
@@ -356,7 +355,7 @@ export const filterTimePeriod = (
     : true;
 };
 
-export const filterRecords = (
+export const filterRecordByDimensions = (
   record: MetricRecord,
   dimensions: Dimension[],
   filters: PopulationFilterValues,
@@ -377,7 +376,34 @@ export const filterRecords = (
   });
 };
 
-export const filterPersonLevelRecords = (
+export const properties = (...keys: string[]): CallableFunction => (
+  obj: Record<string, any>
+) => keys.map((key) => property(key, obj));
+
+type AndPredicate = (item: any) => boolean;
+
+export const and = (...predicates: AndPredicate[]): AndPredicate => (item) =>
+  every(predicates, (predicate) => predicate(item));
+
+interface DateFilters {
+  monthRange: number;
+  since: Date;
+  stepSize?: number;
+}
+
+export const filterRecordByDate = (
+  record: TimeSeriesRecord,
+  { monthRange, since, stepSize = 1 }: DateFilters
+): boolean => {
+  const date = getRecordDate(record);
+  const monthsOut = Math.abs(
+    (date.getFullYear() - since.getFullYear()) * 12 +
+      (date.getMonth() - since.getMonth())
+  );
+
+  return monthsOut <= monthRange && monthsOut % stepSize === 0;
+};
+export const filterPersonLevelRecordByDimensions = (
   record: MetricRecord,
   dimensions: Dimension[],
   filters: PopulationFilterValues

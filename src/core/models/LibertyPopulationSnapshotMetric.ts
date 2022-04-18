@@ -30,7 +30,7 @@ import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import { PopulationFilterLabels } from "../types/filters";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { LibertyPopulationSnapshotRecord, TimePeriod } from "./types";
-import { filterRecords, filterTimePeriod } from "./utils";
+import { filterRecordByDimensions, filterTimePeriod } from "./utils";
 
 export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<LibertyPopulationSnapshotRecord> {
   accessor: keyof LibertyPopulationSnapshotRecord;
@@ -90,7 +90,12 @@ export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<Libe
     const filteredRecords = this.allRecords.filter(
       (record: LibertyPopulationSnapshotRecord) => {
         return (
-          filterRecords(record, this.dimensions, filters, this.accessor) &&
+          filterRecordByDimensions(
+            record,
+            this.dimensions,
+            filters,
+            this.accessor
+          ) &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,

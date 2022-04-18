@@ -17,20 +17,16 @@
  * =============================================================================
  *
  */
-import { pipe } from "lodash/fp";
-import groupBy from "lodash/fp/groupBy";
-import map from "lodash/fp/map";
-import sumBy from "lodash/fp/sumBy";
-import values from "lodash/fp/values";
 import { computed, makeObservable } from "mobx";
 
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
+import { recordsWithAggregateMetrics } from "./calculateAggregateMetrics";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { SupervisionPopulationTimeSeriesRecord } from "./types";
-import { filterRecords, getRecordDate } from "./utils";
+import { getRecordDate } from "./utils";
 
 export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<SupervisionPopulationTimeSeriesRecord> {
   constructor(
@@ -49,41 +45,12 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
 
   get dataSeries(): SupervisionPopulationTimeSeriesRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
-    const { filters } = this.rootStore.filtersStore;
-    const { monthRange } = this.rootStore.filtersStore;
-    const { mostRecentDate } = this;
-
-    const filteredRecords = this.allRecords.filter(
-      (record: SupervisionPopulationTimeSeriesRecord) => {
-        const monthsOut =
-          (record.year - mostRecentDate.getFullYear()) * 12 +
-          (record.month - (mostRecentDate.getMonth() + 1));
-        return (
-          Math.abs(monthsOut) <= monthRange &&
-          filterRecords(record, this.dimensions, filters)
-        );
-      }
+    const { filters, monthRange } = this.rootStore.filtersStore;
+    return recordsWithAggregateMetrics<SupervisionPopulationTimeSeriesRecord>(
+      this,
+      filters,
+      monthRange
     );
-
-    const result = pipe(
-      groupBy((d: SupervisionPopulationTimeSeriesRecord) => [d.year, d.month]),
-      values,
-      map((dataset) => {
-        const datasetWithoutCount = dataset.map(
-          (group: SupervisionPopulationTimeSeriesRecord) => {
-            const { count, avg90day, ...rest } = group;
-            return rest;
-          }
-        );
-        return {
-          count: sumBy("count", dataset),
-          avg90day: sumBy("avg90day", dataset),
-          ...datasetWithoutCount[0],
-        };
-      })
-    )(filteredRecords);
-
-    return result as SupervisionPopulationTimeSeriesRecord[];
   }
 
   get mostRecentDate(): Date {

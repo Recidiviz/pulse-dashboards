@@ -30,7 +30,7 @@ import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import { TableColumn } from "../types/charts";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PrisonPopulationPersonLevelRecord, TimePeriod } from "./types";
-import { filterPersonLevelRecords, filterTimePeriod } from "./utils";
+import { filterPersonLevelRecordByDimensions, filterTimePeriod } from "./utils";
 
 export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<PrisonPopulationPersonLevelRecord> {
   constructor(
@@ -55,7 +55,11 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
     const filteredRecords = this.allRecords.filter(
       (record: PrisonPopulationPersonLevelRecord) => {
         return (
-          filterPersonLevelRecords(record, this.dimensions, filters) &&
+          filterPersonLevelRecordByDimensions(
+            record,
+            this.dimensions,
+            filters
+          ) &&
           filterTimePeriod(
             this.hasTimePeriodDimension,
             record.timePeriod,
