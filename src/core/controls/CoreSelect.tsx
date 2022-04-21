@@ -37,28 +37,31 @@ type CoreSelectProps = {
 };
 
 export const CoreSelect = forwardRef<HTMLInputElement, CoreSelectProps>(
-  (props, ref) => (
-    <ReactSelect
-      // @ts-ignore
-      ref={ref}
-      className="CoreSelect"
-      classNamePrefix="CoreSelect"
-      components={{
-        IndicatorSeparator: () => null,
-        DropdownIndicator: () => (
-          <div className="CoreSelect__custom-indicator">
-            <span
-              className={cn("CoreSelect__custom-arrow", {
-                "CoreSelect__custom-arrow--changed": props.isChanged,
-              })}
-            />
-          </div>
-        ),
-      }}
-      styles={coreSelectCustomStyles(props.isChanged)}
-      {...props}
-    />
-  )
+  (props, ref) => {
+    return (
+      <ReactSelect
+        // @ts-ignore
+        ref={ref}
+        aria-label={props.id}
+        className="CoreSelect"
+        classNamePrefix="CoreSelect"
+        components={{
+          IndicatorSeparator: () => null,
+          DropdownIndicator: () => (
+            <div className="CoreSelect__custom-indicator">
+              <span
+                className={cn("CoreSelect__custom-arrow", {
+                  "CoreSelect__custom-arrow--changed": props.isChanged,
+                })}
+              />
+            </div>
+          ),
+        }}
+        styles={coreSelectCustomStyles(props.isChanged)}
+        {...props}
+      />
+    );
+  }
 );
 
 CoreSelect.displayName = "Select";

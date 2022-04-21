@@ -52,6 +52,7 @@ const CoreMultiSelect = ({
     const input = document.querySelector(".CoreMultiSelect__input > input");
     if (input) {
       input.setAttribute("readonly", "");
+      input.setAttribute("aria-labelledby", `${input.id}`);
     }
   });
 
