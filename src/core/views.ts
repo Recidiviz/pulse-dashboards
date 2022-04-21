@@ -228,7 +228,7 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
   supervisionToPrisonPopulationByNumberOfViolations:
     PATHWAYS_SECTIONS.countByNumberOfViolations,
   supervisionToPrisonPopulationByLengthOfStay:
-    PATHWAYS_SECTIONS.countByNumberOfViolations,
+    PATHWAYS_SECTIONS.countByLengthOfStay,
   supervisionToPrisonPopulationBySupervisionLevel:
     PATHWAYS_SECTIONS.countBySupervisionLevel,
   supervisionToPrisonPopulationByGender: PATHWAYS_SECTIONS.countByGender,

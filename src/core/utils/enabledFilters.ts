@@ -401,6 +401,23 @@ export const TnEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
 
 export const MeEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
+  libertyToPrisonPopulationOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  supervisionToPrisonOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.SUPERVISION_TYPE,
+    ],
+  },
 };
 
 export const MiEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {

@@ -704,7 +704,7 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     title: "Judicial District",
     setFilters: setFilters(FILTER_TYPES.JUDICIAL_DISTRICT),
     options: [
-      { label: "ALL", longLabel: "All", value: "ALL" },
+      { label: "All", longLabel: "All", value: "ALL" },
       { label: "1", longLabel: "District 1", value: "1" },
       { label: "2", longLabel: "District 2", value: "2" },
       { label: "3", longLabel: "District 3", value: "3" },
@@ -804,10 +804,6 @@ export const MePopulationFilterOptions: PopulationFilters = {
       },
       { label: "Transfer", value: "TRANSFER" },
       { label: "Revocation", value: "REVOCATION" },
-      {
-        label: "Return from temporary release",
-        value: "RETURN_FROM_TEMPORARY_RELEASE",
-      },
       { label: "Temporary custody", value: "TEMPORARY_CUSTODY" },
     ],
     get defaultOption(): FilterOption {
@@ -854,6 +850,147 @@ export const MePopulationFilterOptions: PopulationFilters = {
         longLabel: "Downeast Correctional Facility",
         value: "DCF",
       },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.SUPERVISION_LEVEL]: {
+    type: FILTER_TYPES.SUPERVISION_LEVEL,
+    title: "Risk Level",
+    setFilters: setFilters(FILTER_TYPES.SUPERVISION_LEVEL),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Administrative", value: "LIMITED" },
+      { label: "Low", value: "MINIMUM" },
+      { label: "Moderate", value: "MEDIUM" },
+      { label: "High", value: "HIGH" },
+      { label: "Maximum", value: "MAXIMUM" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.DISTRICT]: {
+    type: FILTER_TYPES.DISTRICT,
+    title: "Sub-office",
+    setFilters: setFilters(FILTER_TYPES.DISTRICT),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Skowhegan", value: "SKOWHEGAN" },
+      { label: "Wiscasset", value: "WISCASSET" },
+      { label: "Portland", value: "PORTLAND" },
+      { label: "Lewiston", value: "LEWISTON" },
+      { label: "Bangor", value: "BANGOR" },
+      { label: "Calais", value: "CALAIS" },
+      { label: "Biddeford", value: "BIDDEFORD" },
+      { label: "Machias", value: "MACHIAS" },
+      { label: "Belfast", value: "BELFAST" },
+      { label: "Augusta", value: "AUGUSTA" },
+      { label: "Houlton", value: "HOULTON" },
+      { label: "Ellsworth", value: "ELLSWORTH" },
+      { label: "Rockland (R3)", value: "ROCKLAND (R3)" },
+      { label: "Rockland (R2)", value: "ROCKLAND (R2)" },
+      { label: "Farmington", value: "FARMINGTON" },
+      { label: "Waterville", value: "WATERVILLE" },
+      { label: "South Paris", value: "SOUTH PARIS" },
+      { label: "Springvale", value: "SPRINGVALE" },
+      { label: "Caribou", value: "CARIBOU" },
+      { label: "Mexico", value: "MEXICO" },
+      { label: "Lincoln", value: "LINCOLN" },
+      { label: "Naples", value: "NAPLES" },
+      { label: "Presque Isle", value: "PRESQUE ISLE" },
+      { label: "West Bath", value: "WEST BATH" },
+      { label: "Dover-Foxcroft", value: "DOVER-FOXCROFT" },
+      { label: "Rumford", value: "RUMFORD" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.JUDICIAL_DISTRICT]: {
+    type: FILTER_TYPES.JUDICIAL_DISTRICT,
+    title: "Judicial District",
+    setFilters: setFilters(FILTER_TYPES.JUDICIAL_DISTRICT),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Androscoggin", value: "1" },
+      { label: "Aroostook", value: "3" },
+      { label: "Cumberland", value: "5" },
+      { label: "Franklin", value: "7" },
+      { label: "Hancock", value: "9" },
+      { label: "Kennebec", value: "11" },
+      { label: "Knox", value: "13" },
+      { label: "Lincoln", value: "15" },
+      { label: "Oxford", value: "17" },
+      { label: "Penobscot", value: "19" },
+      { label: "Piscataquis", value: "21" },
+      { label: "Sagadahoc", value: "23" },
+      { label: "Somerset", value: "25" },
+      { label: "Waldo", value: "27" },
+      { label: "Washington", value: "29" },
+      { label: "York", value: "31" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.SUPERVISION_TYPE]: {
+    type: FILTER_TYPES.SUPERVISION_TYPE,
+    title: "Supervision Type",
+    setFilters: setFilters(FILTER_TYPES.SUPERVISION_TYPE),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Probation", value: "PROBATION" },
+      { label: "Parole", value: "PAROLE" },
+      { label: "SCCP", value: "COMMUNITY_CONFINEMENT" },
+      { label: "Warrant absconded", value: "BENCH_WARRANT" },
+      { label: "Escape", value: "ABSCONSION" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.community],
+  },
+  [FILTER_TYPES.RACE]: {
+    type: FILTER_TYPES.RACE,
+    title: "Race",
+    setFilters: setFilters(FILTER_TYPES.RACE),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Black", value: "BLACK" },
+      { label: "White", value: "WHITE" },
+      { label: "Hispanic", value: "HISPANIC" },
+      { label: "Asian", value: "ASIAN" },
+      {
+        label: "American Indian/ Alaskan Native",
+        value: "AMERICAN_INDIAN_ALASKAN_NATIVE",
+      },
+      {
+        label: "Native Hawaiian/ Pacific Islander",
+        value: "NATIVE_HAWAIIAN_PACIFIC_ISLANDER",
+      },
+      { label: "Other", value: "OTHER" },
+      { label: "Not hispanic", value: "NOT_HISPANIC" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];

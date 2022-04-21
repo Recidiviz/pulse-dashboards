@@ -105,7 +105,7 @@ export const TnEnabledTableColumns: TableColumns = {
 };
 
 export const MeEnabledTableColumns: TableColumns = {
-  prisonPopulationPersonLevel: DefaultTableColumns.prisonPopulationPersonLevel,
+  ...DefaultTableColumns,
 };
 
 export const MiEnabledTableColumns: TableColumns = {

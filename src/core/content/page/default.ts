@@ -72,7 +72,7 @@ const content: PageCopy = {
     sections: {
       countOverTime: "Admissions from supervision over time",
       countByLocation: "Admissions from supervision by district",
-      countByLengthOfStay: "Time to admission from supervision",
+      countByLengthOfStay: "Length of stay on supervision before admission",
       countByGender: "Admissions from supervision by gender ",
       countByRace: "Admissions from supervision by race",
       countBySupervisionLevel:
@@ -92,7 +92,7 @@ const content: PageCopy = {
       "Includes people who were discharged from supervision positively or if their supervision period expired.",
     sections: {
       countOverTime: "Releases from supervision over time",
-      countByLengthOfStay: "Time served at release",
+      countByLengthOfStay: "Length of stay on supervision before release",
       countByLocation: "Releases from supervision by district",
       countByRace: "Releases from supervision by race",
       countByGender: "Releases from supervision by gender ",

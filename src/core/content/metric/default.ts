@@ -61,10 +61,11 @@ const content: MetricCopy = {
       'The chart describes the historical incarceration population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. ',
   },
   supervisionToPrisonPopulationByLengthOfStay: {
-    title: "Time to admission from supervision to prison",
+    title: "Length of stay on supervision before admission",
     methodology:
       'This chart shows the proportion of people admitted from supervision to prison a certain time period after starting supervision, out of all the people who were admitted during the selected time period. For example, if the selected time period is "6 months" and hovering over 24 months in the chart shows "70%", that means 70% of people who were admitted from supervision to prison during the past six months were admitted in the first 24 months of supervision.',
-    chartXAxisTitle: "Time to admission from supervision to prison, in months",
+    chartXAxisTitle: "Time on supervision, in months",
+    chartYAxisTitle: "Percent of admissions that have occurred by that time",
   },
   supervisionToPrisonPopulationByNumberOfViolations: {
     title: "Admissions from supervision to prison by number of violations",
@@ -148,8 +149,10 @@ const content: MetricCopy = {
   },
   supervisionToPrisonPopulationByOfficer: {
     title: "Admissions from supervision by officer",
+    note:
+      "This chart reflects the number of admissions from an officer's caseload during the selected time period, where officers with the most admissions appear at the top. If an officer had no admissions from their caseload during the time period, they do not appear in this chart.",
     methodology:
-      'The chart describes the number of people admitted to prison from each officer\'s caseload as of the date specified in the chart title. The admission is attributed to the officer who was assigned to that person on the day of their admission to a prison. When "Counts" is selected, the number of people in each district is shown. When "Rates" is selected, the percentage shows the number of people in each district divided by the total number of people admitted to prison.',
+      'The chart describes the number of people admitted to prison from each officer\'s caseload as of the date specified in the chart title. The admission is attributed to the officer who was assigned to that person on the day of their admission to a prison. When "Counts" is selected, the number of people on each officer\'s caseload is shown. When "Rates" is selected, the percentage shows the number of people on each officer\'s caseload divided by the total number of people admitted to prison.',
   },
   supervisionToPrisonPopulationByDistrict: {
     title: "Admissions from supervision by district",
@@ -172,10 +175,11 @@ const content: MetricCopy = {
       'The chart describes the number of people admitted to prison from each race as of the date specified in the chart title. When "Counts" is selected, the number of people in each race is shown. When "Rates" is selected, the percentage shows the number of people in each race divided by the total number of people admitted to prison.',
   },
   supervisionToLibertyPopulationByLengthOfStay: {
-    title: "Time served at release from supervision",
+    title: "Length of stay on supervision before release",
     methodology:
       "This chart shows the proportion of people released from supervision to liberty a certain time period after starting supervision, out of all the people who were released during the selected time period.",
     chartXAxisTitle: "Time since starting supervision, in months",
+    chartYAxisTitle: "Percent of releases that have occurred by that time",
   },
   supervisionToLibertyPopulationByLocation: {
     title: "Releases from supervision by district",

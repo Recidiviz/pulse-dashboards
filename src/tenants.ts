@@ -88,6 +88,7 @@ const TENANTS: Tenants = {
       ],
       supervision: [
         PATHWAYS_SECTIONS.projectedCountOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.countBySupervisionLevel,
       ],
       supervisionToPrison: [
@@ -226,7 +227,6 @@ const TENANTS: Tenants = {
       ],
       libertyToPrison: [
         PATHWAYS_SECTIONS.countOverTime,
-        PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration,
         PATHWAYS_SECTIONS.countByGender,
         PATHWAYS_SECTIONS.countByAgeGroup,
@@ -254,6 +254,7 @@ const TENANTS: Tenants = {
       ],
       supervision: [
         PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.countBySupervisionLevel,
       ],
       supervisionToLiberty: [
@@ -320,6 +321,7 @@ const TENANTS: Tenants = {
       ],
       supervision: [
         PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.countBySupervisionLevel,
       ],
       supervisionToLiberty: [
@@ -389,6 +391,7 @@ const TENANTS: Tenants = {
       ],
       supervision: [
         PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.countBySupervisionLevel,
       ],
       supervisionToLiberty: [

@@ -175,7 +175,11 @@ const ViewNavigation: React.FC = ({ children }) => {
   return (
     <aside className="ViewNavigation">
       <ViewTooltip
-        title={currentTenantId === "US_TN" ? "Pathways" : "System-Level Trends"}
+        title={
+          currentTenantId && ["US_TN", "US_ME"].includes(currentTenantId)
+            ? "Pathways"
+            : "System-Level Trends"
+        }
         body="A real-time map of the corrections system and how people are moving through it"
       >
         <PathwaysLink />
