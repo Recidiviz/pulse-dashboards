@@ -28,7 +28,7 @@ function fetchOfflineUser({
 }) {
   return {
     picture:
-      "https://ui-avatars.com/api/?name=Demo+Jones&background=0D8ABC&color=fff&rounded=true",
+      "https://ui-avatars.com/api/?name=Demo+Jones&background=0D8ABC&color=fff&rounded=false",
     name,
     email,
     [`${process.env.METADATA_NAMESPACE}app_metadata`]: {

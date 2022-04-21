@@ -13,12 +13,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import moment from "moment";
+
 import type { Client } from "../../../PracticesStore/Client";
 import {
   CompliantReportingReferralRecord,
   TransformedCompliantReportingReferral,
 } from "../../../PracticesStore/CompliantReportingReferralRecord";
 import { formatAsCurrency, formatPracticesDate } from "../../../utils";
+
+function formatSentenceLength(
+  startDate: string,
+  sentenceLengthDays: string
+): string {
+  if (!sentenceLengthDays) return "";
+
+  const start = moment.utc(startDate);
+  const end = start.clone().add(sentenceLengthDays, "days");
+  const diff = moment.duration(start.diff(end)).abs();
+
+  return diff.humanize();
+}
 
 export const transform = (
   client: Client,
@@ -52,9 +67,10 @@ export const transform = (
     is4035313: client.supervisionType === "Diversion",
 
     poFullName: `${data.poFirstName} ${data.poLastName}`,
-    sentenceLengthDaysText: data.sentenceLengthDays
-      ? `${data.sentenceLengthDays} days`
-      : "",
+    sentenceLengthDaysText: formatSentenceLength(
+      data.sentenceStartDate,
+      data.sentenceLengthDays
+    ),
     specialConditionsAlcDrugTreatmentIsInpatient:
       data.specialConditionsAlcDrugTreatmentInOut === "INPATIENT",
     specialConditionsAlcDrugTreatmentIsOutpatient:

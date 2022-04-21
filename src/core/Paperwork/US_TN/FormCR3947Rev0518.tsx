@@ -178,7 +178,6 @@ const FormCR3947Rev0518: React.FC = () => {
                 <strong>Regular Probation</strong>
               </Item>
               <Item as="label">
-                {/* TODO(#11270) What does this field mean? */}
                 <FormCheckbox name="is4035313" /> <strong>40-35-313</strong>
               </Item>
               <Item as="label">
@@ -188,7 +187,7 @@ const FormCR3947Rev0518: React.FC = () => {
                 <FormCheckbox name="isParole" /> <strong>Parole</strong>
               </Item>
             </Grid>
-            <Grid columns="75px 75px 80px 1fr 75px 1fr">
+            <Grid columns="75px 75px 80px 1fr 70px 65px">
               <Item as="label"> Sentence Date</Item>
               <FormInput placeholder="Date" name="sentenceStartDate" />
               <Item as="label">Sentence Length</Item>
@@ -196,7 +195,7 @@ const FormCR3947Rev0518: React.FC = () => {
               <Item as="label">Expiration Date</Item>
               <FormInput placeholder="Date" name="expirationDate" />
             </Grid>
-            <Grid columns="100px 141px repeat(2, 1fr)" rows="60px">
+            <Grid columns="100px 121px 196px 1fr" rows="60px">
               <Item style={{ textAlign: "center" }}>
                 Supervision Fees Status <br />
                 <Emphasize as="small">
@@ -207,24 +206,20 @@ const FormCR3947Rev0518: React.FC = () => {
                   </strong>
                 </Emphasize>
               </Item>
-              <Grid columns="141px" rows="19px 1fr">
+              <Grid columns="121px" rows="19px 1fr">
                 <Grid as="label">
                   <FormInput
                     placeholder="Assessed Amount"
                     name="supervisionFeeAssessed"
                   />
                 </Grid>
-                <Grid columns="70px 71px">
+                <Grid columns="60px 60px">
                   <Item center>
                     <Item as="label">
                       <FormCheckbox name="supervisionFeeArrearaged" /> Arrearage
                     </Item>
                   </Item>
-                  <Grid
-                    as="label"
-                    columns="70px"
-                    style={{ gridGap: 0, marginBottom: 0 }}
-                  >
+                  <Grid as="label" columns="60px">
                     <FormInput
                       placeholder="Amount"
                       name="supervisionFeeArrearagedAmount"
@@ -232,7 +227,7 @@ const FormCR3947Rev0518: React.FC = () => {
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid columns="75px 1fr" rows="19px 1fr">
+              <Grid columns="75px 120px" rows="19px 1fr">
                 <Item as="label" center>
                   Exemption type:
                 </Item>

@@ -24,7 +24,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import { ReactComponent as MethodologyLogo } from "../../assets/static/images/methodology.svg";
 import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathways.svg";
 import { ReactComponent as PracticesLogo } from "../../assets/static/images/practices.svg";
-import useIsMobile from "../../hooks/useIsMobile";
 import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
 import { PRACTICES_METHODOLOGY_URL } from "../utils/constants";
@@ -46,8 +45,14 @@ const ViewTooltip: React.FC<{ title: string; body?: string }> = ({
   );
 };
 
-const ViewNavigation: React.FC = ({ children }) => {
-  const isMobile = useIsMobile();
+interface ViewNavigationProps {
+  drawer?: boolean;
+}
+
+const ViewNavigation: React.FC<ViewNavigationProps> = ({
+  children,
+  drawer = false,
+}) => {
   const { pathname } = useLocation();
   const view = pathname.split("/")[1];
   const {
@@ -106,7 +111,7 @@ const ViewNavigation: React.FC = ({ children }) => {
         to={`/${PATHWAYS_VIEWS.practices}`}
       >
         <PracticesLogo className="ViewNavigation__icon" />
-        <div className="ViewNavigation__navlink-heading">Practices</div>
+        <div className="ViewNavigation__navlink-heading">Workflows</div>
       </NavLink>
     ) : null;
   };
@@ -160,12 +165,13 @@ const ViewNavigation: React.FC = ({ children }) => {
     </NavLink>
   );
 
-  if (isMobile) {
+  if (drawer) {
     return (
       <div className="ViewNavigation__mobile">
         <PathwaysLink />
         {children}
         <PracticesLink />
+        <PracticesV2Link />
         <MethodologyLink />
         <ProfileNavLink />
       </div>

@@ -47,6 +47,11 @@
     width: 100%;
   }
 
+  &__practices {
+    @include font-ui-serif-24;
+    color: $pine-3;
+  }
+
   @media screen and (max-width: $core-breakpoint-sm) {
     display: flex;
   }

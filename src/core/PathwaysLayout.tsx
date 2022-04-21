@@ -51,7 +51,9 @@ const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
             Practices: currentView === PATHWAYS_VIEWS.practices,
           })}
         >
-          {!isMobile && <ViewNavigation />}
+          {currentView === PATHWAYS_VIEWS.practices || !isMobile ? (
+            <ViewNavigation />
+          ) : null}
           <div className="PathwaysLayout__main">
             <PathwaysNavigation />
             <IE11Banner />

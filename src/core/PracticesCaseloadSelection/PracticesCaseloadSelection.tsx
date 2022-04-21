@@ -41,7 +41,8 @@ const Heading = styled.div`
   }
 `;
 
-const Label = styled.div`
+const Label = styled.label`
+  display: block;
   font-style: normal;
   font-size: ${rem(13)};
 
@@ -122,25 +123,26 @@ export const PracticesCaseloadSelection: React.FC = observer(() => {
         </a>
       </Heading>
 
-      <Label>Officer</Label>
-      <ReactSelect
-        isMulti
-        value={practicesStore.selectedOfficers.map(buildSelectOption)}
-        options={practicesStore.availableOfficers.map(buildSelectOption)}
-        onChange={(newValue) =>
-          practicesStore.updateSelectedOfficers(
-            newValue.map((item) => item.value)
-          )
-        }
-        placeholder="Select an officer..."
-        isOptionDisabled={() => disableAdditionalSelections}
-        components={
-          disableAdditionalSelections
-            ? { MenuList: DisabledMenuList }
-            : undefined
-        }
-      />
-
+      <Label>
+        Officer
+        <ReactSelect
+          isMulti
+          value={practicesStore.selectedOfficers.map(buildSelectOption)}
+          options={practicesStore.availableOfficers.map(buildSelectOption)}
+          onChange={(newValue) =>
+            practicesStore.updateSelectedOfficers(
+              newValue.map((item) => item.value)
+            )
+          }
+          placeholder="Select an officer..."
+          isOptionDisabled={() => disableAdditionalSelections}
+          components={
+            disableAdditionalSelections
+              ? { MenuList: DisabledMenuList }
+              : undefined
+          }
+        />
+      </Label>
       <ClientList />
     </>
   );

@@ -14,12 +14,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import {
+  animation,
   Icon,
   IconSVG,
   iconToDataURI,
   palette,
 } from "@recidiviz/design-system";
-import { rem } from "polished";
+import { darken, rem } from "polished";
 import * as React from "react";
 import styled, { css } from "styled-components/macro";
 
@@ -130,7 +131,11 @@ const FormContainer = styled.form<FormViewerContextData>`
       : css`
           ${Input} {
             background-color: aliceblue;
-          }
+            transition-duration: ${animation.defaultDurationMs}ms;
+            transition-property: background-color;
+            &:hover {
+              background-color: ${darken(0.1, "aliceblue")};
+            }
         `}
 `;
 
