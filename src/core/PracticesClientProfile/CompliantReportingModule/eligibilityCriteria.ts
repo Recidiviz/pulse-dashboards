@@ -58,6 +58,21 @@ export function getEligibilityCriteria(
     requiredSupervisionLevel = "medium supervision or less";
   }
 
+  let supervisionDurationText: string;
+  let supervisionDurationTooltip: string;
+  if (eligibilityCategory === "c4") {
+    supervisionDurationText = "ICOTS";
+    supervisionDurationTooltip = `All misdemeanor cases and ICOTS minimum cases shall automatically 
+      transfer to Compliant Reporting after intake and after the completion of the risk needs 
+      assessment pursuant to Policy #704.01.1.`;
+  } else {
+    supervisionDurationText = `On ${requiredSupervisionLevel} for ${formatRelativeToNow(
+      eligibleLevelStart
+    )}`;
+    supervisionDurationTooltip = `Policy requirement: On minimum supervision level for 1 year
+      or medium level for 18 months.`;
+  }
+
   let feeText =
     "Fee balance for current sentence less than $2,000 and has made payments on three consecutive months";
   if (finesFeesEligible === "exempt") {
@@ -113,11 +128,8 @@ export function getEligibilityCriteria(
         "Policy requirement: Currently on medium or minimum supervision.",
     },
     {
-      text: `On ${requiredSupervisionLevel} for ${formatRelativeToNow(
-        eligibleLevelStart
-      )}`,
-      tooltip: `Policy requirement: On minimum supervision level for 1 year
-        or medium level for 18 months.`,
+      text: supervisionDurationText,
+      tooltip: supervisionDurationTooltip,
     },
     {
       text: `Negative arrest check on ${formatPracticesDate(

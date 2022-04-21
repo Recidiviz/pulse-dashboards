@@ -416,8 +416,6 @@ test("only approved eligibility categories are surfaced", async () => {
         eligibilityCategory: "c3",
       },
     },
-  ];
-  const mockIneligibleCategoryClients: ClientRecord[] = [
     {
       ...eligibleClient,
       personExternalId: "c4",
@@ -427,6 +425,8 @@ test("only approved eligibility categories are surfaced", async () => {
         eligibilityCategory: "c4",
       },
     },
+  ];
+  const mockIneligibleCategoryClients: ClientRecord[] = [
     {
       ...eligibleClient,
       personExternalId: "c4_review",
