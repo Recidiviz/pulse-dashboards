@@ -31,16 +31,13 @@ type VizLengthOfStayProps = {
 };
 
 const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
-  const {
-    dataSeries,
-    chartTitle,
-    chartXAxisTitle,
-    chartYAxisTitle,
-    totalCount,
-  } = metric;
+  const { dataSeries, chartTitle, chartXAxisTitle, chartYAxisTitle } = metric;
 
   const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
 
+  const totalCount = dataSeries.reduce((accumulator, d) => {
+    return accumulator + d.count;
+  }, 0);
   let accumulatedCount = 0;
   const data = dataSeries.map((d: any) => {
     accumulatedCount += d.count;
@@ -50,6 +47,7 @@ const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
       cohortProportion: (accumulatedCount * 100) / totalCount,
     };
   });
+  data.unshift({ lengthOfStay: 0, count: 0, cohortProportion: 0 });
 
   const { maxTickValue } = getTicks(
     Math.max(...data.map((d) => d.cohortProportion))

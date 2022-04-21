@@ -101,6 +101,7 @@ const TENANTS: Tenants = {
       ],
       supervisionToLiberty: [
         PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLengthOfStay,
         PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.countByRace,
         PATHWAYS_SECTIONS.countByGender,
@@ -187,12 +188,14 @@ const TENANTS: Tenants = {
       ],
       supervisionToPrison: [
         PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLengthOfStay,
         PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.countByGender,
         PATHWAYS_SECTIONS.countByRace,
       ],
       supervisionToLiberty: [
         PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLengthOfStay,
         PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.countByRace,
         PATHWAYS_SECTIONS.countByGender,
@@ -396,7 +399,7 @@ const TENANTS: Tenants = {
       ],
       supervisionToLiberty: [
         PATHWAYS_SECTIONS.countOverTime,
-        // PATHWAYS_SECTIONS.countByLengthOfStay,
+        PATHWAYS_SECTIONS.countByLengthOfStay,
         PATHWAYS_SECTIONS.countByLocation,
         PATHWAYS_SECTIONS.countByRace,
         PATHWAYS_SECTIONS.countByGender,
