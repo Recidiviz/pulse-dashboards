@@ -19,6 +19,7 @@ import {
   US_ID,
   US_ME,
   US_MI,
+  US_MO,
   US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
@@ -112,6 +113,10 @@ export const MiEnabledTableColumns: TableColumns = {
   ...DefaultTableColumns,
 };
 
+export const MoEnabledTableColumns: TableColumns = {
+  ...DefaultTableColumns,
+};
+
 export const NdEnabledTableColumns: TableColumns = {
   ...DefaultTableColumns,
 };
@@ -121,5 +126,6 @@ export default {
   [US_TN]: TnEnabledTableColumns,
   [US_ME]: MeEnabledTableColumns,
   [US_MI]: MiEnabledTableColumns,
+  [US_MO]: MoEnabledTableColumns,
   [US_ND]: NdEnabledTableColumns,
 } as const;

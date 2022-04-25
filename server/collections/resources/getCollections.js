@@ -326,6 +326,10 @@ const CORE_COLLECTIONS = {
 function getCollections(stateCode = null) {
   switch (stateCode) {
     case stateCodes.US_MO:
+      return {
+        ...newRevocations(dimensionsByStateCode[stateCode]),
+        ...PATHWAYS_COLLECTIONS,
+      };
     case stateCodes.US_PA:
       return newRevocations(dimensionsByStateCode[stateCode]);
     case stateCodes.US_ID:
@@ -334,9 +338,7 @@ function getCollections(stateCode = null) {
         ...PATHWAYS_COLLECTIONS,
       };
     case stateCodes.US_TN:
-      return PATHWAYS_COLLECTIONS;
     case stateCodes.US_ME:
-      return PATHWAYS_COLLECTIONS;
     case stateCodes.US_MI:
       return PATHWAYS_COLLECTIONS;
     case stateCodes.US_ND:

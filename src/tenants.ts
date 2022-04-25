@@ -275,9 +275,73 @@ const TENANTS: Tenants = {
   [lantern.US_MO]: {
     name: "Missouri",
     stateCode: "MO",
-    availableStateCodes: [lantern.US_MO],
+    availableStateCodes: [pathways.US_MO],
     enableUserRestrictions: true,
     enablePracticesCaseloadButton: false,
+    navigation: {
+      system: [
+        PATHWAYS_PAGES.libertyToPrison,
+        PATHWAYS_PAGES.prison,
+        PATHWAYS_PAGES.prisonToSupervision,
+        PATHWAYS_PAGES.supervision,
+        PATHWAYS_PAGES.supervisionToPrison,
+        PATHWAYS_PAGES.supervisionToLiberty,
+      ],
+      libertyToPrison: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration,
+        PATHWAYS_SECTIONS.countByGender,
+        PATHWAYS_SECTIONS.countByAgeGroup,
+        PATHWAYS_SECTIONS.countByRace,
+      ],
+      prison: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.personLevelDetail,
+      ],
+      prisonToSupervision: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countByAgeGroup,
+        PATHWAYS_SECTIONS.personLevelDetail,
+      ],
+      supervisionToPrison: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLengthOfStay,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countBySupervisionLevel,
+        PATHWAYS_SECTIONS.countByOfficer,
+        PATHWAYS_SECTIONS.countByGender,
+        PATHWAYS_SECTIONS.countByRace,
+      ],
+      supervision: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countBySupervisionLevel,
+      ],
+      supervisionToLiberty: [
+        PATHWAYS_SECTIONS.countOverTime,
+        PATHWAYS_SECTIONS.countByLengthOfStay,
+        PATHWAYS_SECTIONS.countByLocation,
+        PATHWAYS_SECTIONS.countByRace,
+        PATHWAYS_SECTIONS.countByGender,
+        PATHWAYS_SECTIONS.countByAgeGroup,
+      ],
+      // TODO remove once LANTERN is deprecated
+      // @ts-ignore
+      revocations: [],
+      "id-methodology": ["system"],
+    },
+    pagesWithRestrictions: [
+      "libertyToPrison",
+      "prison",
+      "prisonToSupervision",
+      "supervisionToPrison",
+      "supervisionToLiberty",
+      "supervision",
+    ],
+    tableColumns: enabledTableColumns[pathways.US_MO],
   },
   [pathways.US_MI]: {
     name: "Michigan",
@@ -464,9 +528,8 @@ const TENANTS: Tenants = {
   RECIDIVIZ: {
     name: "Recidiviz",
     stateCode: "Recidiviz",
-    availableStateCodes: pathways.PATHWAYS_TENANTS.concat(
-      lantern.LANTERN_TENANTS
-    ),
+    // US_PA is the last non-Pathways tenant
+    availableStateCodes: pathways.PATHWAYS_TENANTS.concat([lantern.US_PA]),
     enableUserRestrictions: true,
     enablePracticesCaseloadButton: true,
   },

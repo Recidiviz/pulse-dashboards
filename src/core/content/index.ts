@@ -22,18 +22,21 @@ import { ViewMethodology } from "../models/types";
 import { usIdMethodology } from "./methodology/usIdMethodology";
 import { usMeMethodology } from "./methodology/usMeMethodology";
 import { usMiMethodology } from "./methodology/usMiMethodology";
+import { usMoMethodology } from "./methodology/usMoMethodology";
 import { usNdMethodology } from "./methodology/usNdMethodology";
 import { usTnMethodology } from "./methodology/usTnMethodology";
 import defaultMetricContent from "./metric/default";
 import IdMetricContent from "./metric/us_id";
 import MeMetricContent from "./metric/us_me";
 import MiMetricContent from "./metric/us_mi";
+import MoMetricContent from "./metric/us_mo";
 import NdMetricContent from "./metric/us_nd";
 import TnMetricContent from "./metric/us_tn";
 import defaultPageContent from "./page/default";
 import IdPageContent from "./page/us_id";
 import MePageContent from "./page/us_me";
 import MiPageContent from "./page/us_mi";
+import MoPageContent from "./page/us_mo";
 import NdPageContent from "./page/us_nd";
 import TnPageContent from "./page/us_tn";
 import {
@@ -51,6 +54,7 @@ export const pageContentOverrides: {
   US_ME: MePageContent,
   US_ND: NdPageContent,
   US_MI: MiPageContent,
+  US_MO: MoPageContent,
 };
 
 export const metricContentOverrides: {
@@ -61,6 +65,7 @@ export const metricContentOverrides: {
   US_ME: MeMetricContent,
   US_ND: NdMetricContent,
   US_MI: MiMetricContent,
+  US_MO: MoMetricContent,
 };
 
 export const getPageCopy = (currentTenantId: TenantId): PageCopy => {
@@ -90,6 +95,8 @@ export const getMethodologyCopy = (
       return usMeMethodology;
     case pathwaysTenants.US_MI:
       return usMiMethodology;
+    case pathwaysTenants.US_MO:
+      return usMoMethodology;
     case pathwaysTenants.US_TN:
       return usTnMethodology;
     default:
