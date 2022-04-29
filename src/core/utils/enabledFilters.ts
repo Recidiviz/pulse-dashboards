@@ -410,6 +410,46 @@ export const MeEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.AGE_GROUP,
     ],
   },
+  libertyToPrisonPopulationByDistrict: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  libertyToPrisonPopulationByPriorLengthOfIncarceration: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  libertyToPrisonPopulationByGender: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  libertyToPrisonPopulationByAgeGroup: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  libertyToPrisonPopulationByRace: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
   supervisionToPrisonOverTime: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,

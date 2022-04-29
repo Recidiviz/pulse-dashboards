@@ -51,7 +51,7 @@ const RouteSync: React.FC = ({ children }) => {
     });
 
     // issue tracking calls as needed
-    if (clientId && isOpportunityType(page)) {
+    if (clientId && page && isOpportunityType(page)) {
       practicesStore.trackClientFormViewed(clientId, page);
     }
   }, [loc, practicesStore]);

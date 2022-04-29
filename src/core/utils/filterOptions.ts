@@ -991,7 +991,7 @@ export const MePopulationFilterOptions: PopulationFilters = {
         value: "NATIVE_HAWAIIAN_PACIFIC_ISLANDER",
       },
       { label: "Other", value: "OTHER" },
-      { label: "Not hispanic", value: "NOT_HISPANIC" },
+      { label: "Other", value: "NOT_HISPANIC" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
