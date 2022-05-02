@@ -147,7 +147,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.SUPERVISION_LEVEL,
-      FILTER_TYPES.GENDER,
     ],
   },
   supervisionPopulationByDistrict: {
