@@ -562,9 +562,9 @@ export const IdPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.SUPERVISION_LEVEL),
     options: [
       { label: "All", value: "ALL" },
-      { label: "Minimum", value: "MINIMUM" },
-      { label: "Medium", value: "MEDIUM" },
-      { label: "Maximum", value: "MAXIMUM" },
+      { label: "Low", value: "MINIMUM" },
+      { label: "Moderate", value: "MEDIUM" },
+      { label: "High", value: "MAXIMUM" },
       { label: "High", value: "HIGH" },
       { label: "Diversion", value: "DIVERSION" },
       { label: "Interstate", value: "INTERSTATE_COMPACT" },
