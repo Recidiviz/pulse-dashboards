@@ -19,7 +19,6 @@ import {
   US_ID,
   US_ME,
   US_MI,
-  US_MO,
   US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
@@ -1007,79 +1006,6 @@ export const MiPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
 };
 
-export const MoPopulationFilterOptions: PopulationFilters = {
-  ...DefaultPopulationFilterOptions,
-  [FILTER_TYPES.SUPERVISION_LEVEL]: {
-    type: FILTER_TYPES.SUPERVISION_LEVEL,
-    title: "Supervision Level",
-    setFilters: setFilters(FILTER_TYPES.SUPERVISION_LEVEL),
-    options: [
-      { label: "All", value: "ALL" },
-      { label: "Incarcerated", value: "INCARCERATED" },
-      { label: "Low", value: "MINIMUM" },
-      { label: "Moderate", value: "MEDIUM" },
-      { label: "High", value: "HIGH" },
-      { label: "Maximum", value: "MAXIMUM" },
-    ],
-    get defaultOption(): FilterOption {
-      return this.options[0];
-    },
-    get defaultValue(): string {
-      return this.defaultOption.value;
-    },
-    enabledViews: [CORE_VIEWS.facilities],
-  },
-  [FILTER_TYPES.RACE]: {
-    type: FILTER_TYPES.RACE,
-    title: "Race",
-    setFilters: setFilters(FILTER_TYPES.RACE),
-    options: [
-      { label: "All", value: "ALL" },
-      { label: "Black", value: "BLACK" },
-      { label: "White", value: "WHITE" },
-      { label: "Hispanic", value: "HISPANIC" },
-      { label: "Asian", value: "ASIAN" },
-      {
-        label: "American Indian/ Alaskan Native",
-        value: "AMERICAN_INDIAN_ALASKAN_NATIVE",
-      },
-      { label: "Other", value: "OTHER" },
-      { label: "Not hispanic", value: "NOT_HISPANIC" },
-    ],
-    get defaultOption(): FilterOption {
-      return this.options[0];
-    },
-    get defaultValue(): string {
-      return this.defaultOption.value;
-    },
-    enabledViews: [CORE_VIEWS.facilities],
-  },
-  [FILTER_TYPES.DISTRICT]: {
-    type: FILTER_TYPES.DISTRICT,
-    title: "Sub-office",
-    setFilters: setFilters(FILTER_TYPES.DISTRICT),
-    options: [
-      { label: "All", value: "ALL" },
-      { label: "Northeast", value: "NORTHEAST" },
-      { label: "TCSTL", value: "TCSTL" },
-      { label: "Southwest", value: "SOUTHWEST" },
-      { label: "Central Office", value: "CENTRAL OFFICE" },
-      { label: "Eastern", value: "EASTERN" },
-      { label: "Southeast", value: "SOUTHEAST" },
-      { label: "Unclassified", value: "UNCLASSIFIED_REGION" },
-      { label: "Western", value: "WESTERN" },
-      { label: "North Central", value: "NORTH CENTRAL" },
-    ],
-    get defaultOption(): FilterOption {
-      return this.options[0];
-    },
-    get defaultValue(): string {
-      return this.defaultOption.value;
-    },
-    enabledViews: [CORE_VIEWS.facilities],
-  },
-};
-
 export const NdPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
   [FILTER_TYPES.FACILITY]: {
@@ -1338,37 +1264,6 @@ export const NdPopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.facilities],
   },
-  [FILTER_TYPES.ADMISSION_REASON]: {
-    type: FILTER_TYPES.ADMISSION_REASON,
-    title: "Admission Reason",
-    setFilters: setFilters(FILTER_TYPES.ADMISSION_REASON),
-    options: [
-      { label: "All", value: "ALL" },
-      { label: "New court commitment", value: "NEW_ADMISSION" },
-      {
-        label: "Transfer from other jurisdiction",
-        value: "TRANSFER_FROM_OTHER_JURISDICTION",
-      },
-      { label: "Transfer", value: "TRANSFER" },
-      { label: "Revocation", value: "REVOCATION" },
-      {
-        label: "Return from temporary release",
-        value: "RETURN_FROM_TEMPORARY_RELEASE",
-      },
-      { label: "Sanction", value: "SANCTION_ADMISSION" },
-      { label: "Return from escape", value: "RETURN_FROM_ESCAPE" },
-      { label: "Admitted in error", value: "ADMITTED_IN_ERROR" },
-      { label: "Status change", value: "STATUS_CHANGE" },
-      { label: "Temporary Custody", value: "TEMPORARY_CUSTODY" },
-    ],
-    get defaultOption(): FilterOption {
-      return this.options[0];
-    },
-    get defaultValue(): string {
-      return this.defaultOption.value;
-    },
-    enabledViews: [CORE_VIEWS.facilities],
-  },
 };
 
 export const DemoPopulationFilterOptions: PopulationFilters = {
@@ -1555,7 +1450,6 @@ export default {
   [US_TN]: TnPopulationFilterOptions,
   [US_ME]: MePopulationFilterOptions,
   [US_MI]: MiPopulationFilterOptions,
-  [US_MO]: MoPopulationFilterOptions,
   [US_ND]: NdPopulationFilterOptions,
   [US_DEMO]: DemoPopulationFilterOptions,
 } as const;

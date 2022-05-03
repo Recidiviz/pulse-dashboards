@@ -95,6 +95,16 @@ const App = () => (
               <Route path="/verify" component={VerificationNeeded} />
               <AuthWall>
 
+                <LanternLayout tenantIds={LANTERN_TENANTS} views={Object.values(LANTERN_VIEWS).concat(SHARED_VIEWS)}>
+                  <Switch>
+                    <Route path="/community/revocations" component={Revocations} />
+                    <Route path="/profile" component={Profile} />
+                    <Redirect exact from="/" to="/community/revocations" />
+                    <Redirect from="/revocations" to="/community/revocations" />
+                    <NotFound />
+                  </Switch>
+                </LanternLayout>
+
                 <PathwaysLayout tenantIds={PATHWAYS_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat(SHARED_VIEWS)}>
                   <Switch>
                     <ProtectedRoute path={PATHWAYS_PATHS.system} component={PageSystem} />
@@ -107,15 +117,6 @@ const App = () => (
                     <NotFound />
                   </Switch>
                 </PathwaysLayout>
-
-                <LanternLayout tenantIds={LANTERN_TENANTS} views={Object.values(LANTERN_VIEWS).concat(SHARED_VIEWS)}>
-                  <Switch>
-                    <Route path="/community/revocations" component={Revocations} />
-                    <Route path="/profile" component={Profile} />
-                    <Redirect from="/revocations" to="/community/revocations" />
-                    <NotFound />
-                  </Switch>
-                </LanternLayout>
 
                 <CoreLayout tenantIds={CORE_TENANTS}  views={Object.values(CORE_VIEWS).concat(SHARED_VIEWS)}>
                   <Switch>
