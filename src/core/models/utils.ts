@@ -96,6 +96,7 @@ const lengthOfStayMap = {
   months_24_36: "36",
   months_36_48: "48",
   months_48_60: "60",
+  unknown: "UNKNOWN",
   all: "ALL",
 } as Record<LengthOfStayRawValue, LengthOfStay>;
 
@@ -353,6 +354,12 @@ export const filterTimePeriod = (
   return shouldFilter
     ? Number(recordTimePeriodValue) <= Number(filterTimePeriodValue)
     : true;
+};
+
+export const filterUnknownLengthOfStay = (
+  recordLengthOfStayValue: LengthOfStay
+): boolean => {
+  return recordLengthOfStayValue !== "UNKNOWN";
 };
 
 export const filterRecordByDimensions = (

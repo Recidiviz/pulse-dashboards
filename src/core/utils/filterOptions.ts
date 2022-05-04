@@ -401,6 +401,50 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
 
 export const IdPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.AGE_GROUP]: {
+    type: FILTER_TYPES.AGE_GROUP,
+    title: "Age",
+    setFilters: setFilters(FILTER_TYPES.AGE_GROUP),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "<25", longLabel: "<25 years old", value: "<25" },
+      { label: "25-29", longLabel: "25-29 years old", value: "25-29" },
+      { label: "30-34", longLabel: "30-34 years old", value: "30-34" },
+      { label: "35-39", longLabel: "35-39 years old", value: "35-39" },
+      { label: "40-44", longLabel: "40-44 years old", value: "40-44" },
+      { label: "45-49", longLabel: "45-49 years old", value: "45-49" },
+      { label: "50-54", longLabel: "50-54 years old", value: "50-54" },
+      { label: "55-59", longLabel: "55-59 years old", value: "55-59" },
+      { label: "60+", longLabel: "60+ years old", value: "60+" },
+      { label: "Unknown", value: "UNKNOWN" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.GENDER]: {
+    type: FILTER_TYPES.GENDER,
+    title: "Gender",
+    isSingleSelect: true,
+    setFilters: setFilters(FILTER_TYPES.GENDER),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Female", value: "FEMALE" },
+      { label: "Male", value: "MALE" },
+      { label: "Unknown", value: "UNKNOWN" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.community, CORE_VIEWS.facilities],
+  },
   [FILTER_TYPES.FACILITY]: {
     type: FILTER_TYPES.FACILITY,
     title: "Facility",
@@ -519,6 +563,7 @@ export const IdPopulationFilterOptions: PopulationFilters = {
         longLabel: "Parole Commission Office",
         value: "PCO",
       },
+      { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -547,6 +592,7 @@ export const IdPopulationFilterOptions: PopulationFilters = {
         value: "NATIVE_HAWAIIAN_PACIFIC_ISLANDER",
       },
       { label: "Other", value: "OTHER" },
+      { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -586,6 +632,31 @@ export const IdPopulationFilterOptions: PopulationFilters = {
 
 export const TnPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.AGE_GROUP]: {
+    type: FILTER_TYPES.AGE_GROUP,
+    title: "Age",
+    setFilters: setFilters(FILTER_TYPES.AGE_GROUP),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "<25", longLabel: "<25 years old", value: "<25" },
+      { label: "25-29", longLabel: "25-29 years old", value: "25-29" },
+      { label: "30-34", longLabel: "30-34 years old", value: "30-34" },
+      { label: "35-39", longLabel: "35-39 years old", value: "35-39" },
+      { label: "40-44", longLabel: "40-44 years old", value: "40-44" },
+      { label: "45-49", longLabel: "45-49 years old", value: "45-49" },
+      { label: "50-54", longLabel: "50-54 years old", value: "50-54" },
+      { label: "55-59", longLabel: "55-59 years old", value: "55-59" },
+      { label: "60+", longLabel: "60+ years old", value: "60+" },
+      { label: "Unknown", value: "UNKNOWN" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
   [FILTER_TYPES.SUPERVISION_LEVEL]: {
     type: FILTER_TYPES.SUPERVISION_LEVEL,
     title: "Supervision Level",
@@ -690,6 +761,7 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       { label: "District 80", value: "DISTRICT 80" },
       { label: "District 81", value: "DISTRICT 81" },
       { label: "Other", value: "OTHER" },
+      { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -705,6 +777,7 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.JUDICIAL_DISTRICT),
     options: [
       { label: "All", longLabel: "All", value: "ALL" },
+      { label: "Unknown", longLabel: "Unknown", value: "UNKNOWN" },
       { label: "1", longLabel: "District 1", value: "1" },
       { label: "2", longLabel: "District 2", value: "2" },
       { label: "3", longLabel: "District 3", value: "3" },
@@ -1165,6 +1238,7 @@ export const NdPopulationFilterOptions: PopulationFilters = {
         longLabel: "Devils Lake Office",
         value: "DEVILS LAKE",
       },
+      { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -1188,6 +1262,7 @@ export const NdPopulationFilterOptions: PopulationFilters = {
       { label: "East Central", value: "EAST_CENTRAL" },
       { label: "Southeast", value: "SOUTHEAST" },
       { label: "North Central", value: "NORTH_CENTRAL" },
+      { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];

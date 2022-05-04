@@ -23,6 +23,8 @@ import { ResponsiveXYFrame } from "semiotic";
 
 import { formatDate, formatPercent, getTicks } from "../../utils";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
+import { SupervisionPopulationSnapshotRecord } from "../models/types";
+import { filterUnknownLengthOfStay } from "../models/utils";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import withMetricHydrator from "../withMetricHydrator";
 
@@ -33,13 +35,25 @@ type VizLengthOfStayProps = {
 const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
   const { dataSeries, chartTitle, chartXAxisTitle, chartYAxisTitle } = metric;
 
-  const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
+  // TODO #1838
+  // Remove this filter once consolidated backend is in place
+  // and we no longer receive unknown LOS values
+  const filteredRecords = dataSeries.filter(
+    (record: SupervisionPopulationSnapshotRecord) => {
+      return filterUnknownLengthOfStay(record.lengthOfStay);
+    }
+  );
 
-  const totalCount = dataSeries.reduce((accumulator, d) => {
+  const latestUpdate = formatDate(
+    filteredRecords[0]?.lastUpdated,
+    "MMMM dd, yyyy"
+  );
+
+  const totalCount = filteredRecords.reduce((accumulator, d) => {
     return accumulator + d.count;
   }, 0);
   let accumulatedCount = 0;
-  const data = dataSeries.map((d: any) => {
+  const data = filteredRecords.map((d: any) => {
     accumulatedCount += d.count;
     return {
       lengthOfStay: d.lengthOfStay,

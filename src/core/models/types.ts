@@ -51,6 +51,7 @@ export type AgeGroup =
   | "55+";
 export type LengthOfStayRawValue =
   | "all"
+  | "unknown"
   | "months_0_3"
   | "months_3_6"
   | "months_6_9"
@@ -65,6 +66,7 @@ export type LengthOfStayRawValue =
 
 export type LengthOfStay =
   | "ALL"
+  | "UNKNOWN"
   | "0"
   | "3"
   | "6"
@@ -155,7 +157,7 @@ export type SupervisionPopulationSnapshotRecord = {
   district: string;
   mostSevereViolation: string;
   numberOfViolations: string;
-  lengthOfStay: string;
+  lengthOfStay: LengthOfStay;
   supervisionLevel: string;
   race: string;
   timePeriod: TimePeriod;
