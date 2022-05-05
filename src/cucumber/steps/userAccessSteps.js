@@ -43,6 +43,10 @@ Given(
   }
 );
 
+Given("I wait for {int} seconds", function (s) {
+  return setTimeout(() => {}, s * 1000);
+});
+
 When(
   "I select district {string} from the District Filter",
   function (districtId) {

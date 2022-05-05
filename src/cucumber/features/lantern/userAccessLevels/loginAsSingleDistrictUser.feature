@@ -7,6 +7,7 @@ Feature: Login as a single district user
     Background:
         Given I am on the login page
         And I login as an "restrictedAccessUser1" user
+        And I wait for 2 seconds
 
     Scenario: The page should reflect my restrictions
         Then I should see "TCSTL" selected in the district filter

@@ -25,7 +25,7 @@ When("I click on the profile link", () => {
 
 Then("I should see the Profile page", () => {
   const prompt = profilePage.promptText;
-  expect(prompt.getText()).toEqual("Current view state:");
+  expect(prompt.getText()).toEqual("Select a state");
 });
 
 When("I select the state {string}", (stateName) => {

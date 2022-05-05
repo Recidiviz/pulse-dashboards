@@ -7,8 +7,6 @@ Feature: Login as a user with access to all districts
     Background:
         Given I am on the login page
         And I login as an "admin" user
-        And I click on the profile link
-        And I select the state "Missouri"
 
     Scenario: Viewing the District Filter
         Then I should see "ALL" selected in the district filter

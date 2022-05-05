@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2020 Recidiviz, Inc.
+// Copyright (C) 2022 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,25 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { ViewMethodology } from "../../models/types";
+import { getMetricCopy, getPageCopy } from "..";
 
-export const US_ID = "US_ID";
-export const US_TN = "US_TN";
-export const US_ME = "US_ME";
-export const US_MI = "US_MI";
-export const US_MO = "US_MO";
-export const US_ND = "US_ND";
-// Hack alert - US_PA is not yet a Pathways tenant - but adding it here to enable US_MO (the other LANTERN tenant) access to Pathways.
-// The navigation set up in tenants.ts only allows US_PA access to /revocations,
-// but adding it as a Pathways tenant allows LANTERN tenants to use the Pathways allowed navigation logic, thus enabling Pathways for US_MO.
-export const US_PA = "US_PA";
-export const US_DEMO = "US_DEMO";
-
-export const PATHWAYS_TENANTS = [
-  US_TN,
-  US_ND,
-  US_ID,
-  US_ME,
-  US_MI,
-  US_MO,
-  US_PA,
-];
+/**
+ * All methodology attribute blocks are in Markdown
+ */
+export const usMoMethodology: ViewMethodology = {
+  system: {
+    title: "Pathways",
+    description: `Pathways provides a real-time map of the corrections system and helps identify patterns of success and failure among specific cohorts of people.`,
+    get pageCopy() {
+      return getPageCopy("US_MO");
+    },
+    get metricCopy() {
+      return getMetricCopy("US_MO");
+    },
+  },
+};

@@ -7,7 +7,7 @@ class ProfilePage extends Page {
   }
 
   get promptText() {
-    return $(".Profile__prompt");
+    return $(".StateSelection__heading");
   }
 
   get stateSelector() {
@@ -19,10 +19,8 @@ class ProfilePage extends Page {
   }
 
   selectStateOption(stateName) {
-    this.stateSelector.click();
-    const option = $(`div=${stateName}`);
+    const option = $(`button=${stateName}`);
     option.click();
-    this.viewDashboardBtn.click();
   }
 }
 

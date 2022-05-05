@@ -274,15 +274,19 @@ E2E feature specs are found in the `src/cucumber` directory. The tests are run u
 
 Configure HEADLESS mode by setting this variable in your `.env.development.local`: `RUN_TESTS_HEADLESS=true`.
 
-The E2E tests are split between tests that can run on the demo server, and tests that can run on staging. The tests that are run on staging can be used to test the auth0 login flow and require additional environment variables set:
+The E2E tests run on the dev server, with the "e2e" environment set, and can be used to test the auth0 login flow and require additional environment variables set:
 
 TEST_AUTH_USER=<a real auth0 email to test with>
 TEST_AUTH_PASSWORD=
+TEST_AUTH_RESTRICTED_ACCESS_USER_1=<a real auth0 email with restricted access>
+TEST_AUTH_RESTRICTED_ACCESS_USER_1_PASSWORD=
+TEST_AUTH_RESTRICTED_ACCESS_USER_2=<a real auth0 email with restricted access>
+TEST_AUTH_RESTRICTED_ACCESS_USER_2_PASSWORD=
 
 To run E2E tests that involve logging in:
 
 1. Start your dev server: `yarn dev`
-2. Run the test suites: `yarn test-e2e-lantern` or `yarn test-e2e-core` or `yarn test-e2e-users`
+2. Run the test suites: `yarn test-e2e-lantern` or `yarn test-e2e-login` or `yarn test-e2e-users`
 
 ## Tooling
 

@@ -41,7 +41,6 @@ exports.config = {
     login: ["./src/cucumber/features/login.feature"],
     lantern: ["./src/cucumber/features/lantern/*.feature"],
     userAccess: ["./src/cucumber/features/lantern/userAccessLevels/*.feature"],
-    core: ["./src/cucumber/features/core/*.feature"],
   },
   // Patterns to exclude.
   exclude: [

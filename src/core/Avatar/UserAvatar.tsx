@@ -86,7 +86,7 @@ const UserAvatar: React.FC<AvatarProps> = ({ size = 32 }) => {
 
   if (useBoringAvatars) {
     return (
-      <AvatarElement size={size}>
+      <AvatarElement size={size} className="UserAvatar">
         <Avatar
           variant="marble"
           size={size}
