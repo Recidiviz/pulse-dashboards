@@ -90,13 +90,24 @@ const InfoTooltipWrapper = styled(TooltipTrigger)`
   vertical-align: text-bottom;
 `;
 
-const InfoButton = styled(Button).attrs({
-  kind: "link",
-  icon: "Info",
-  iconSize: 12,
-})`
+const InfoLink = styled.a`
   color: ${palette.slate30};
+
+  &:hover,
+  &:focus {
+    color: ${palette.slate60};
+  }
 `;
+
+const InfoButton = () => (
+  <InfoLink
+    href="https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view?usp=sharing"
+    target="_blank"
+    rel="noreferrer"
+  >
+    <Icon kind="Info" size={12} />
+  </InfoLink>
+);
 
 const Title = observer(({ client }: ClientProfileProps) => {
   return (
