@@ -19,7 +19,6 @@ import "./assets/scripts/index";
 import "./assets/styles/index.scss";
 
 import { AVAILABLE_FONTS } from "@recidiviz/design-system";
-import * as Sentry from "@sentry/react";
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -70,11 +69,6 @@ if (!isDemoMode()) {
 }
 initI18n();
 
-Sentry.init({
-  environment: process.env.REACT_APP_SENTRY_ENV,
-  dsn: process.env.REACT_APP_SENTRY_DSN,
-});
-
 const SHARED_VIEWS = ["", "profile"];
 
 // prettier-ignore
@@ -88,8 +82,8 @@ const App = () => (
     }}
   }>
     <StoreProvider>
-      <SentryErrorBoundary>
-        <Router>
+      <Router>
+        <SentryErrorBoundary>
           <QueryParamProvider ReactRouterRoute={Route}>
             <Switch>
               <Route path="/verify" component={VerificationNeeded} />
@@ -137,8 +131,8 @@ const App = () => (
               </AuthWall>
             </Switch>
           </QueryParamProvider>
-        </Router>
-      </SentryErrorBoundary>
+        </SentryErrorBoundary>
+      </Router>
     </StoreProvider>
   </ThemeProvider>
 );

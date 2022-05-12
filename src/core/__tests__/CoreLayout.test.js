@@ -32,6 +32,7 @@ jest.mock("mobx-react-lite", () => {
 });
 jest.mock("react-router-dom", () => ({
   useLocation: jest.fn(),
+  useHistory: jest.fn(),
   matchPath: jest.fn().mockReturnValue(false),
   Link: jest.fn().mockReturnValue(null),
   NavLink: jest.fn().mockReturnValue(null),

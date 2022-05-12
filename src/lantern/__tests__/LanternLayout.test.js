@@ -32,6 +32,7 @@ jest.mock("mobx-react-lite", () => {
 jest.mock("react-router-dom", () => {
   return {
     Link: ({ children }) => children,
+    useHistory: jest.fn(),
   };
 });
 jest.mock("../hooks/usePageLayout");
