@@ -160,11 +160,11 @@ Content found in the folder `src/core/content` can be synced with an external go
 
 ### Running the application locally
 
-A yarn script is available for starting the development servers. The React frontend is served out of port `3000` and the Node/Express backend is served out of port `3001`. A Redis server will be started on the default port `6379`.
+A yarn script is available for starting the development servers. The React frontend is served out of port `3000` and the Node/Express backend is served out of port `3001`. A Redis server will be started on port `6380` (this is one higher than the default, and was chosen to make it possible to run Pathways and Case Triage at the same time).
 
 `yarn dev`
 
-This will start both the API Express server on port `3001` and the Redis server on port `6379`. You could start the frontend server separately using `yarn spa`.
+This will start both the API Express server on port `3001` and the Redis server on port `6380`. You could start the frontend server separately using `yarn spa`.
 
 The development servers will remain active until you either close your terminal or shut down the entire setup at once using `control+c`.
 
@@ -198,9 +198,11 @@ If you are running in offline mode, you may need to run through the following st
    - [ ] copy `src/auth_config.json.example` into three new files called `src/auth_config_demo.json`, `src/auth_config_dev.json`, and `src/auth_config_production.json`
 
 1. Make sure your `redis-server` is not still running from a previous session. To avoid this situation, always shutdown the demo server by using `CTRL + c`. If you need to shutdown the redis-server from an earlier run, you can use the command:
+
    ```
-   :> redis-cli shutdown
+   :> redis-cli -p 6380 shutdown
    ```
+
 1. Make sure you can run the Firebase emulator; this requires Firebase Tools as described above as well as a recent version of Java.
 
 To download data/fixture files to be used offline, run the `download_fixture_with_metadata.sh` script. The only argument to the script is the path to the file in GCS. You must have credentials to access GCS, and `gsutil` installed.
@@ -222,11 +224,11 @@ As noted above, the Dashboard is two components: a React frontend and a Node/Exp
 
 Follow these steps to deploy a Firebase Preview App for QA:
 
-1.  Build the staging app with `yarn build-staging`.
-2.  Run `firebase hosting:channel:deploy PREVIEW_APP_NAME` (replace NAME with a string with no spaces like feature-pop, this name will be used to construct the URL)
-3.  Access your Preview app at the provided URL, which will have the following pattern: `https://recidiviz-dashboard-stag-e1108--[PREVIEW_APP_NAME]-[random-hash].web.app`
-4.  To update your preview URL with changes, run the same command again. Make sure to specify the same PREVIEW_APP_NAME in the command.
-5.  When you're done with the preview app, delete it: `firebase hosting:channel:delete PREVIEW_APP_NAME`
+1. Build the staging app with `yarn build-staging`.
+2. Run `firebase hosting:channel:deploy PREVIEW_APP_NAME` (replace NAME with a string with no spaces like feature-pop, this name will be used to construct the URL)
+3. Access your Preview app at the provided URL, which will have the following pattern: `https://recidiviz-dashboard-stag-e1108--[PREVIEW_APP_NAME]-[random-hash].web.app`
+4. To update your preview URL with changes, run the same command again. Make sure to specify the same PREVIEW_APP_NAME in the command.
+5. When you're done with the preview app, delete it: `firebase hosting:channel:delete PREVIEW_APP_NAME`
 
 [How to manage preview apps on Firebase](https://firebase.google.com/docs/hosting/manage-hosting-resources?authuser=0)
 
@@ -310,17 +312,17 @@ Here are a few helpful commands for inspecting the local redis cache:
 
 ```bash
 # Follow along with commands sent to the redis-server
-:> redis-cli MONITOR
+:> redis-cli -p 6380 MONITOR
 
 # Clear your local redis cache
-:> redis-cli FLUSHALL
+:> redis-cli -p 6380 FLUSHALL
 
-:> redis-cli
+:> redis-cli -p 6380
 # List all the available keys in the cache
-[localhost:6379]> KEYS *
+[localhost:6380]> KEYS *
 
 # Get the value of the key
-[localhost:6379]> GET key_name
+[localhost:6380]> GET key_name
 ```
 
 ### Webpack

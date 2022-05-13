@@ -23,7 +23,7 @@
     "test-firestore": "TZ=UTC firebase emulators:exec --only firestore 'yarn jest ./firestore-config'",
     "test": "yarn test-server && yarn test-filters && yarn test-react",
     "lint": "tsc && eslint '**/*.{js,ts,tsx}'",
-    "redis-server": "redis-server",
+    "redis-server": "redis-server --port 6380",
     "server": "nodemon server.js",
     "spa": "BROWSER=none env-cmd -e development react-scripts start",
     "spa:offline": "env-cmd -e offline react-scripts start",

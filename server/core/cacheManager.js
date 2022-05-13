@@ -32,7 +32,7 @@ const Redis = require("ioredis");
 const { isOfflineMode } = require("../utils/isOfflineMode");
 
 const REDISHOST = process.env.REDISHOST || "localhost";
-const REDISPORT = process.env.REDISPORT || 6379;
+const REDISPORT = process.env.REDISPORT || 6380;
 const REDISAUTH = process.env.REDISAUTH || "";
 
 // Expire items in the redis cache after 2 days
