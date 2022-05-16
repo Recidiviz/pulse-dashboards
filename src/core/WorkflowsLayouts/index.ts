@@ -15,5 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./CompliantReportingClientProfile";
-export * from "./FullProfile";
+export * from "./WorkflowsFormLayout";
+export * from "./WorkflowsNavLayout";

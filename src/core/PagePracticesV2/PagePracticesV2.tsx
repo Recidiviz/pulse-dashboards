@@ -15,13 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Assets,
-  AVAILABLE_FONTS,
-  palette,
-  spacing,
-} from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
+import { AVAILABLE_FONTS, palette } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
@@ -30,56 +24,16 @@ import styled, { ThemeProvider } from "styled-components/macro";
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import isIE11 from "../../utils/isIE11";
-import cssVars from "../CoreConstants.scss";
 import ModelHydrator from "../ModelHydrator";
 import { PracticesCaseloadSelection } from "../PracticesCaseloadSelection";
-import PracticesClientProfile from "../PracticesClientProfile";
+import {
+  CompliantReportingClientProfile,
+  FullProfile,
+} from "../PracticesClientProfile";
 import PracticesCompliantReportingForm from "../PracticesCompliantReportingForm/PracticesCompliantReportingForm";
 import PracticesRoute from "../PracticesRoute";
 import { PRACTICES_PAGES } from "../views";
-
-const Wrapper = styled.div`
-  display: grid;
-  font-family: ${(props) => props.theme.fonts.body};
-  font-weight: 500;
-  grid-template-columns: 350px 1fr;
-  letter-spacing: -0.01em;
-  position: relative;
-  min-height: 100vh;
-  width: 100%;
-
-  @media screen and (min-width: ${cssVars.breakpointSm}) {
-    padding-right: 0;
-  }
-`;
-
-const Sidebar = styled.div`
-  background: ${palette.marble1};
-`;
-
-const LogoImg = styled.img`
-  width: auto;
-  height: 22px;
-`;
-
-const PracticesSidebar: React.FC = ({ children }) => {
-  return (
-    <Sidebar>
-      <SidebarSection>
-        <LogoImg src={Assets.LOGO} alt="Recidiviz" />
-      </SidebarSection>
-      <SidebarSection>{children}</SidebarSection>
-    </Sidebar>
-  );
-};
-
-const SidebarSection = styled.section`
-  padding: ${rem(spacing.md)};
-
-  &:first-child {
-    border-bottom: 1px solid ${palette.slate20};
-  }
-`;
+import { WorkflowsFormLayout } from "../WorkflowsLayouts";
 
 const SidebarHeading = styled.h1`
   color: ${palette.pine2};
@@ -129,28 +83,34 @@ const PagePracticesV2: React.FC = () => {
       }}
     >
       <ModelHydrator model={practicesStore}>
-        <Wrapper>
-          <Switch>
-            <PracticesRoute exact path={path}>
-              <PracticesSidebar>
-                <SidebarHeading>Compliant Reporting</SidebarHeading>
-                <PracticesCaseloadSelection />
-              </PracticesSidebar>
-            </PracticesRoute>
-            <PracticesRoute
-              path={`${path}/${PRACTICES_PAGES.compliantReporting}/:clientId`}
-            >
-              <PracticesSidebar>
-                <PracticesClientProfile />
-              </PracticesSidebar>
-              <PracticesCompliantReportingForm />
-            </PracticesRoute>
-            <NotFound />
-          </Switch>
-        </Wrapper>
+        <Switch>
+          <PracticesRoute exact path={path}>
+            <WorkflowsFormLayout
+              sidebarContents={
+                <>
+                  <SidebarHeading>Compliant Reporting</SidebarHeading>
+                  <PracticesCaseloadSelection />
+                </>
+              }
+              formContents={null}
+            />
+          </PracticesRoute>
+          <PracticesRoute
+            path={`${path}/${PRACTICES_PAGES.compliantReporting}/:clientId`}
+          >
+            <WorkflowsFormLayout
+              sidebarContents={<CompliantReportingClientProfile />}
+              formContents={<PracticesCompliantReportingForm />}
+            />
+          </PracticesRoute>
+          <PracticesRoute path={`${path}/${PRACTICES_PAGES.client}/:clientId`}>
+            <FullProfile />
+          </PracticesRoute>
+          <NotFound />
+        </Switch>
       </ModelHydrator>
     </ThemeProvider>
   );
 };
 
-export default observer(PagePracticesV2);
+export default PagePracticesV2;

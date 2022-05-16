@@ -247,9 +247,10 @@ export function getSectionIdForMetric(metric: MetricId): PathwaysSection {
   return PATHWAYS_SECTION_BY_METRIC_ID[metric];
 }
 
-export type PracticesPage = OpportunityType;
-export const PRACTICES_PAGES: Record<OpportunityType, string> = {
+export type PracticesPage = OpportunityType | "client";
+export const PRACTICES_PAGES: Record<PracticesPage, string> = {
   compliantReporting: "compliantReporting",
+  client: "client",
 };
 export const PracticesPageIdList = Object.keys(PATHWAYS_PAGES);
 

@@ -14,33 +14,39 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
-import React from "react";
+
+import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
-import FormViewer from "../Paperwork/FormViewer";
-import FormCR3947Rev0518 from "../Paperwork/US_TN";
-
-const CompliantReportingFormContainer = styled.div`
-  background-color: ${palette.pine2};
-  border-left: 1px solid ${palette.slate20};
-  height: 100%;
+// TODO: move to design system
+export const UiSans14 = styled.div`
+  font-family: ${(props) => props.theme.fonts.body};
+  font-size: ${rem(14)};
+  font-weight: 500;
+  line-height: ${rem(24)};
+  letter-spacing: -0.01em;
 `;
 
-const PracticesCompliantReportingForm: React.FC = () => {
-  const { practicesStore } = useRootStore();
+export const UiSans16 = styled.div`
+  font-family: ${(props) => props.theme.fonts.body};
+  font-size: ${rem(16)};
+  font-weight: 500;
+  line-height: ${rem(24)};
+  letter-spacing: -0.01em;
+`;
 
-  return (
-    <CompliantReportingFormContainer>
-      <FormViewer
-        fileName={`${practicesStore.selectedClient?.displayName} - Form CR3947 Rev05-18.pdf`}
-      >
-        <FormCR3947Rev0518 />
-      </FormViewer>
-    </CompliantReportingFormContainer>
-  );
-};
+export const UiSans18 = styled.div`
+  font-family: ${(props) => props.theme.fonts.body};
+  font-size: ${rem(18)};
+  font-weight: 500;
+  line-height: ${rem(24)};
+  letter-spacing: -0.02em;
+`;
 
-export default observer(PracticesCompliantReportingForm);
+export const UiSans24 = styled.div`
+  font-family: ${(props) => props.theme.fonts.body};
+  font-size: ${rem(24)};
+  font-weight: 400;
+  line-height: ${rem(40)};
+  letter-spacing: -0.02em;
+`;

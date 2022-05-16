@@ -45,8 +45,9 @@ const AvatarElement = styled.div(
 `
 );
 
-const AvatarInitials = styled.div`
-  font-size: ${rem(10)};
+const AvatarInitials = styled.div<{ size: number }>`
+  font-size: ${(props) => rem(props.size / 4)};
+  font-weight: 700;
   letter-spacing: 0.02em;
   color: white;
   text-align: center;
@@ -68,7 +69,7 @@ const ClientAvatar: React.FC<AvatarProps> = ({ name, size = 40 }) => {
         colors={palette.data.defaultOrder}
         square={false}
       />
-      <AvatarInitials>
+      <AvatarInitials size={size}>
         {initials[0]}
         {initials.length > 1 ? initials[initials.length - 1] : ""}
       </AvatarInitials>

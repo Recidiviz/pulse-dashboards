@@ -18,7 +18,6 @@
 import { palette, spacing } from "@recidiviz/design-system";
 import { parseJSON } from "date-fns";
 import { mapValues, toUpper } from "lodash";
-import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
@@ -26,15 +25,13 @@ import styled from "styled-components/macro";
 import { Client } from "../../PracticesStore/Client";
 import { formatAsCurrency, formatPracticesDate } from "../../utils";
 import PracticesOfficerName from "../PracticesOfficerName";
+import { UiSans14 } from "./styles";
 import { ClientProfileProps } from "./types";
 
 const DetailsSection = styled.dl``;
 
-const DetailsHeading = styled.dt`
+const DetailsHeading = styled(UiSans14).attrs({ as: "dt" })`
   color: ${palette.pine1};
-  font-size: ${rem(14)};
-  font-weight: 500;
-  letter-spacing: -0.01em;
   line-height: 1.14;
   margin-bottom: ${rem(spacing.sm)};
   margin-top: ${rem(spacing.lg)};
@@ -51,11 +48,8 @@ const DetailsSubheading = styled.dt`
   margin-bottom: ${rem(spacing.xs)};
 `;
 
-const DetailsContent = styled.dd`
+const DetailsContent = styled(UiSans14).attrs({ as: "dd" })`
   color: rgba(53, 83, 98, 0.9);
-  font-size: ${rem(14)};
-  font-weight: 500;
-  letter-spacing: -0.01em;
   line-height: 1.14;
 `;
 
@@ -138,7 +132,9 @@ function getSpecialConditionsMarkup(client: Client): JSX.Element {
   );
 }
 
-export const Details = observer(({ client }: ClientProfileProps) => {
+export const SpecialConditions = ({
+  client,
+}: ClientProfileProps): React.ReactElement => {
   return (
     <DetailsSection>
       <DetailsHeading>Probation Special Conditions</DetailsHeading>
@@ -164,7 +160,15 @@ export const Details = observer(({ client }: ClientProfileProps) => {
           </DetailsList>
         </>
       </DetailsContent>
+    </DetailsSection>
+  );
+};
 
+export const Supervision = ({
+  client,
+}: ClientProfileProps): React.ReactElement => {
+  return (
+    <DetailsSection>
       <DetailsHeading>Supervision</DetailsHeading>
       <DetailsContent>
         <DetailsList>
@@ -184,18 +188,42 @@ export const Details = observer(({ client }: ClientProfileProps) => {
           </DetailsContent>
         </DetailsList>
       </DetailsContent>
+    </DetailsSection>
+  );
+};
 
+export const Contact = ({ client }: ClientProfileProps): React.ReactElement => {
+  return (
+    <DetailsSection>
       <DetailsHeading>Contact</DetailsHeading>
       <DetailsContent>
         <DetailsList>
           <DetailsSubheading>Telephone</DetailsSubheading>
           <DetailsContent>{client.phoneNumber}</DetailsContent>
-
+        </DetailsList>
+      </DetailsContent>
+    </DetailsSection>
+  );
+};
+export const Housing = ({ client }: ClientProfileProps): React.ReactElement => {
+  return (
+    <DetailsSection>
+      <DetailsHeading>Housing</DetailsHeading>
+      <DetailsContent>
+        <DetailsList>
           <DetailsSubheading>Address</DetailsSubheading>
           <DetailsContent>{client.address}</DetailsContent>
         </DetailsList>
       </DetailsContent>
+    </DetailsSection>
+  );
+};
 
+export const FinesAndFees = ({
+  client,
+}: ClientProfileProps): React.ReactElement => {
+  return (
+    <DetailsSection>
       <DetailsHeading>Fines and Fees</DetailsHeading>
       <DetailsContent>
         <DetailsList>
@@ -217,4 +245,4 @@ export const Details = observer(({ client }: ClientProfileProps) => {
       </DetailsContent>
     </DetailsSection>
   );
-});
+};

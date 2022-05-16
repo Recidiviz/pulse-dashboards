@@ -20,11 +20,16 @@ import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { CompliantReportingModule } from "./CompliantReportingModule";
-import { Details } from "./Details";
+import {
+  Contact,
+  FinesAndFees,
+  Housing,
+  SpecialConditions,
+  Supervision,
+} from "./Details";
 import { Heading } from "./Heading";
-import { ClientProfileProps } from "./types";
 
-const PracticesClientProfile: React.FC = () => {
+export const CompliantReportingClientProfile = observer(() => {
   const { practicesStore } = useRootStore();
 
   const client = practicesStore.selectedClient;
@@ -33,17 +38,15 @@ const PracticesClientProfile: React.FC = () => {
     return null;
   }
 
-  return <ClientProfile client={client} />;
-};
-
-export default observer(PracticesClientProfile);
-
-const ClientProfile = observer(({ client }: ClientProfileProps) => {
   return (
     <article>
       <Heading client={client} />
       <CompliantReportingModule client={client} />
-      <Details client={client} />
+      <SpecialConditions client={client} />
+      <Supervision client={client} />
+      <Contact client={client} />
+      <Housing client={client} />
+      <FinesAndFees client={client} />
     </article>
   );
 });

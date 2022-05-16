@@ -14,33 +14,40 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
+
+import { palette, spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
-import FormViewer from "../Paperwork/FormViewer";
-import FormCR3947Rev0518 from "../Paperwork/US_TN";
+import RecidivizLogo from "../RecidivizLogo";
 
-const CompliantReportingFormContainer = styled.div`
-  background-color: ${palette.pine2};
-  border-left: 1px solid ${palette.slate20};
-  height: 100%;
+const Wrapper = styled.div`
+  background-color: ${palette.marble1};
+  display: grid;
+  grid-template-columns: ${rem(230)} minmax(0, ${rem(1268 + spacing.md)});
+  min-height: 100vh;
+  width: 100%;
 `;
 
-const PracticesCompliantReportingForm: React.FC = () => {
-  const { practicesStore } = useRootStore();
+const Sidebar = styled.nav`
+  grid-column: 1;
+  padding: ${rem(spacing.md)};
+`;
 
+const Main = styled.main`
+  grid-column: 2;
+  padding-right: ${rem(spacing.md)};
+  padding-top: ${rem(spacing.sm)};
+`;
+
+export const WorkflowsNavLayout: React.FC = ({ children }) => {
   return (
-    <CompliantReportingFormContainer>
-      <FormViewer
-        fileName={`${practicesStore.selectedClient?.displayName} - Form CR3947 Rev05-18.pdf`}
-      >
-        <FormCR3947Rev0518 />
-      </FormViewer>
-    </CompliantReportingFormContainer>
+    <Wrapper>
+      <Sidebar>
+        <RecidivizLogo />
+      </Sidebar>
+      <Main>{children}</Main>
+    </Wrapper>
   );
 };
-
-export default observer(PracticesCompliantReportingForm);

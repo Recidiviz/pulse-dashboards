@@ -14,33 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
+
+import { Assets } from "@recidiviz/design-system";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
-import FormViewer from "../Paperwork/FormViewer";
-import FormCR3947Rev0518 from "../Paperwork/US_TN";
-
-const CompliantReportingFormContainer = styled.div`
-  background-color: ${palette.pine2};
-  border-left: 1px solid ${palette.slate20};
-  height: 100%;
+const LogoImg = styled.img`
+  width: auto;
+  height: 22px;
 `;
 
-const PracticesCompliantReportingForm: React.FC = () => {
-  const { practicesStore } = useRootStore();
-
-  return (
-    <CompliantReportingFormContainer>
-      <FormViewer
-        fileName={`${practicesStore.selectedClient?.displayName} - Form CR3947 Rev05-18.pdf`}
-      >
-        <FormCR3947Rev0518 />
-      </FormViewer>
-    </CompliantReportingFormContainer>
-  );
+const RecidivizLogo: React.FC = () => {
+  return <LogoImg src={Assets.LOGO} alt="Recidiviz" />;
 };
 
-export default observer(PracticesCompliantReportingForm);
+export default RecidivizLogo;
