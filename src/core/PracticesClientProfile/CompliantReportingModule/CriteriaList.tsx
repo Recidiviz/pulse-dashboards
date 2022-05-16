@@ -15,13 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import {
+  Icon,
+  IconSVG,
+  palette,
+  spacing,
+  TooltipTrigger,
+} from "@recidiviz/design-system";
 import { isEqual } from "date-fns";
+import { rem } from "polished";
+import React from "react";
+import styled from "styled-components/macro";
 
-import { Client } from "../../../PracticesStore/Client";
+import type { Client } from "../../../PracticesStore/Client";
 import { formatPracticesDate } from "../../../utils";
 import { formatRelativeToNow } from "../../utils/timePeriod";
+import { ClientProfileProps } from "../types";
+import { StatusPalette } from "./common";
 
-export function getEligibilityCriteria(
+function getEligibilityCriteria(
   client: Client
 ): { text: string; tooltip?: string }[] {
   if (!client.compliantReportingEligible) return [];
@@ -222,3 +234,88 @@ export function getEligibilityCriteria(
 
   return criteria;
 }
+
+const CriterionIcon = styled(Icon)`
+  grid-column: 1;
+  /* slight vertical offset to approximate baseline alignment */
+  margin-top: ${rem(1)};
+`;
+
+const CriterionContent = styled.div`
+  grid-column: 2;
+`;
+
+const Wrapper = styled.ul`
+  list-style: none;
+  font-size: ${rem(14)};
+  margin: ${rem(spacing.md)} 0;
+  padding: 0;
+`;
+
+const Criterion = styled.li`
+  display: grid;
+  grid-template-columns: ${rem(spacing.lg)} 1fr;
+  margin: 0 0 8px;
+  line-height: 1.3;
+`;
+
+const KeepTogether = styled.span`
+  white-space: nowrap;
+`;
+
+const InfoTooltipWrapper = styled(TooltipTrigger)`
+  vertical-align: text-bottom;
+`;
+
+const InfoLink = styled.a`
+  color: ${palette.slate30};
+
+  &:hover,
+  &:focus {
+    color: ${palette.slate60};
+  }
+`;
+
+const InfoButton = () => (
+  <InfoLink
+    href="https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view?usp=sharing"
+    target="_blank"
+    rel="noreferrer"
+  >
+    <Icon kind="Info" size={12} />
+  </InfoLink>
+);
+
+export const CriteriaList = ({
+  client,
+  colors,
+}: ClientProfileProps & { colors: StatusPalette }): React.ReactElement => {
+  return (
+    <Wrapper style={{ color: colors.text }}>
+      {getEligibilityCriteria(client).map(({ text, tooltip }) => {
+        // split text so we can prevent orphaned tooltips
+        const textTokens = text.split(" ");
+        return (
+          <Criterion key={text}>
+            <CriterionIcon
+              kind={IconSVG.Success}
+              color={colors.icon}
+              size={16}
+            />
+            <CriterionContent>
+              {textTokens.slice(0, -1).join(" ")}{" "}
+              <KeepTogether>
+                {textTokens.slice(-1)}{" "}
+                {tooltip && (
+                  <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
+                    <InfoButton />
+                  </InfoTooltipWrapper>
+                )}
+              </KeepTogether>
+            </CriterionContent>
+          </Criterion>
+        );
+      })}
+    </Wrapper>
+  );
+};

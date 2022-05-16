@@ -22,10 +22,10 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { UiSans14 } from "../../components/typography";
 import { Client } from "../../PracticesStore/Client";
 import { formatAsCurrency, formatPracticesDate } from "../../utils";
 import PracticesOfficerName from "../PracticesOfficerName";
-import { UiSans14 } from "./styles";
 import { ClientProfileProps } from "./types";
 
 const DetailsSection = styled.dl``;

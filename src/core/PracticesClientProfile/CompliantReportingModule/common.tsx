@@ -15,10 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
-import { rgba } from "polished";
+import { palette, spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
+import { rem, rgba } from "polished";
+import React from "react";
+import styled from "styled-components/macro";
 
 import type { Client } from "../../../PracticesStore/Client";
+import { ClientProfileProps } from "../types";
 
 export const STATUS_COLORS = {
   eligible: {
@@ -27,6 +31,7 @@ export const STATUS_COLORS = {
     border: rgba(palette.signal.highlight, 0.3),
     text: palette.pine4,
     buttonFill: palette.signal.links,
+    link: palette.signal.links,
   },
   ineligible: {
     icon: palette.data.gold1,
@@ -34,13 +39,32 @@ export const STATUS_COLORS = {
     border: rgba(palette.data.gold1, 0.5),
     text: palette.slate85,
     buttonFill: palette.data.gold1,
+    link: palette.data.gold1,
   },
 } as const;
 
-export function useStatusColors(
-  client: Client
-): typeof STATUS_COLORS[keyof typeof STATUS_COLORS] {
+export type StatusPalette = typeof STATUS_COLORS[keyof typeof STATUS_COLORS];
+
+export function useStatusColors(client: Client): StatusPalette {
   return client.eligibilityStatus.compliantReporting
     ? STATUS_COLORS.eligible
     : STATUS_COLORS.ineligible;
 }
+
+export const Wrapper = styled.div<{ background: string; border: string }>`
+  background-color: ${({ background: backgroundColor }) => backgroundColor};
+  border-color: ${({ border: borderColor }) => borderColor};
+  border-style: solid;
+  border-width: 1px 0;
+  color: ${palette.pine1};
+  margin: 0 -${rem(spacing.md)};
+  padding: ${rem(spacing.md)};
+`;
+
+export const Title = observer(({ client }: ClientProfileProps) => {
+  return (
+    <div>
+      Compliant Reporting: {client.reviewStatusMessages.compliantReporting}
+    </div>
+  );
+});

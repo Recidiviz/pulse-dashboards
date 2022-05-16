@@ -22,10 +22,16 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import {
+  UiSans14,
+  UiSans16,
+  UiSans18,
+  UiSans24,
+} from "../../components/typography";
 import { ClientAvatar } from "../Avatar";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
+import { CompliantReportingPreview } from "./CompliantReportingModule";
 import { FinesAndFees, Housing, SpecialConditions } from "./Details";
-import { UiSans14, UiSans16, UiSans18, UiSans24 } from "./styles";
 import { SupervisionProgress } from "./SupervisionProgress";
 
 const COLUMNS = "1fr 1.2fr";
@@ -80,12 +86,29 @@ const ContactValue = styled(UiSans16).attrs({ as: "dd" })`
 
 const SectionHeading = styled(UiSans18)`
   color: ${palette.pine2};
-  margin-bottom: ${rem(spacing.sm)};
+  margin-bottom: ${rem(spacing.md)};
 `;
 
 const Divider = styled.hr`
   border-top: 1px solid ${palette.slate20};
   margin: ${rem(spacing.md)} 0;
+`;
+
+const NoOpportunities = styled.div`
+  align-items: center;
+  background: ${rgba(palette.slate, 0.05)};
+  border: 1px solid ${palette.slate20};
+  border-radius: ${rem(4)};
+  color: ${palette.slate70};
+  display: flex;
+  flex-direction: column;
+  height: ${rem(250)};
+  justify-content: center;
+  padding: ${rem(spacing.md)};
+
+  ${UiSans16} {
+    color: ${palette.pine2};
+  }
 `;
 
 export const FullProfile = observer((): React.ReactElement | null => {
@@ -125,6 +148,17 @@ export const FullProfile = observer((): React.ReactElement | null => {
           <FinesAndFees client={client} />
           <Divider />
           <SpecialConditions client={client} />
+        </div>
+        <div>
+          <SectionHeading>Opportunities</SectionHeading>
+          {client.compliantReportingEligible ? (
+            <CompliantReportingPreview client={client} />
+          ) : (
+            <NoOpportunities>
+              <UiSans16>None for now</UiSans16>
+              <UiSans14>New opportunities will appear here.</UiSans14>
+            </NoOpportunities>
+          )}
         </div>
       </Wrapper>
     </WorkflowsNavLayout>

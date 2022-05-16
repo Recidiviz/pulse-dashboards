@@ -33,7 +33,7 @@ import styled from "styled-components/macro";
 
 import { OTHER_KEY } from "../../../PracticesStore";
 import { ClientProfileProps } from "../types";
-import { STATUS_COLORS, useStatusColors } from "./utils";
+import { STATUS_COLORS, useStatusColors } from "./common";
 
 const REASONS_MAP = {
   DECF: "No effort to pay fine and costs",

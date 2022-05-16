@@ -27,10 +27,10 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { UiSans14 } from "../../components/typography";
 import { formatPracticesDate } from "../../utils";
 import PracticesOfficerName from "../PracticesOfficerName";
 import { Supervision } from "./Details";
-import { UiSans14 } from "./styles";
 import { ClientProfileProps } from "./types";
 
 const Wrapper = styled.div``;
