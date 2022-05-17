@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2022 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,17 +20,32 @@
  * @param {Event} event - Details about the user and the context in which they are logging in.
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
+const crypto = require("crypto");
+
+function generateSegmentId(event) {
+  const email = Buffer.from(event.user.email, "utf8");
+  return crypto.createHash("sha256").update(email).digest("base64");
+}
+
+function generateIntercomId(event) {
+  const data = Buffer.from(generateSegmentId(event), "utf8");
+  return crypto
+    .createHmac("sha256", event.secrets.INTERCOM_APP_KEY)
+    .update(data)
+    .digest("hex");
+}
+
 exports.onExecutePostLogin = async (event, api) => {
   const namespace = "https://dashboard.recidiviz.org";
-  // https://auth0.com/docs/actions/triggers/post-login
   api.idToken.setCustomClaim(
     `${namespace}/user_metadata`,
     event.user.user_metadata
   );
-  api.idToken.setCustomClaim(
-    `${namespace}/app_metadata`,
-    event.user.app_metadata
-  );
+  api.idToken.setCustomClaim(`${namespace}/app_metadata`, {
+    ...event.user.app_metadata,
+    segment_id: generateSegmentId(event),
+    intercom_id: generateIntercomId(event),
+  });
   api.accessToken.setCustomClaim(
     `${namespace}/app_metadata`,
     event.user.app_metadata

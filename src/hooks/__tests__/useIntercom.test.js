@@ -22,8 +22,6 @@ import useIntercom from "../useIntercom";
 
 jest.mock("../../components/StoreProvider");
 
-const OLD_ENV = process.env;
-
 describe("useIntercom hook tests", () => {
   const mockName = "some user name";
   const mockNickname = "some user nickname";
@@ -34,11 +32,20 @@ describe("useIntercom hook tests", () => {
     name: mockName,
     nickname: mockNickname,
     email: mockEmail,
-    sub: mockUserId,
+  };
+
+  const mockIntercomId =
+    "1bf02f3b6639dd2a6bfdfbdda269db483eceab0184c634affe26d82a62706161";
+  const mockUserAppMetadata = {
+    segment_id: mockUserId,
+    intercom_id: mockIntercomId,
   };
 
   useRootStore.mockReturnValue({
-    userStore: { user: mockUser },
+    userStore: {
+      user: mockUser,
+      userAppMetadata: mockUserAppMetadata,
+    },
     tenantStore: { currentTenantId: mockStateCode },
   });
 
@@ -48,14 +55,7 @@ describe("useIntercom hook tests", () => {
   let rendered;
 
   beforeAll(() => {
-    process.env = Object.assign(process.env, {
-      REACT_APP_INTERCOM_APP_KEY: "abcd",
-    });
     rendered = renderHook(() => useIntercom());
-  });
-
-  afterAll(() => {
-    process.env = OLD_ENV;
   });
 
   it("should update intercom with user data", () => {
@@ -68,8 +68,7 @@ describe("useIntercom hook tests", () => {
         nickname: mockNickname,
         email: mockEmail,
         user_id: mockUserId,
-        user_hash:
-          "1bf02f3b6639dd2a6bfdfbdda269db483eceab0184c634affe26d82a62706161",
+        user_hash: mockIntercomId,
         hide_default_launcher: false,
       },
     ]);
@@ -80,7 +79,7 @@ describe("useIntercom hook tests", () => {
     mockUser.name = mockNewName;
 
     useRootStore.mockReturnValue({
-      userStore: { user: mockUser },
+      userStore: { user: mockUser, userAppMetadata: mockUserAppMetadata },
       tenantStore: { currentTenantId: mockStateCode },
     });
 
@@ -95,8 +94,7 @@ describe("useIntercom hook tests", () => {
         nickname: mockNickname,
         email: mockEmail,
         user_id: mockUserId,
-        user_hash:
-          "1bf02f3b6639dd2a6bfdfbdda269db483eceab0184c634affe26d82a62706161",
+        user_hash: mockIntercomId,
         hide_default_launcher: false,
       },
     ]);
