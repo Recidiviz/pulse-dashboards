@@ -65,6 +65,7 @@ function getEligibilityCriteria(
   // this indicates they moved up or down a level but qualify under medium
   if (
     supervisionLevelStart &&
+    eligibleLevelStart &&
     !isEqual(supervisionLevelStart, eligibleLevelStart)
   ) {
     requiredSupervisionLevel = "medium supervision or less";
@@ -79,7 +80,9 @@ function getEligibilityCriteria(
       assessment pursuant to Policy #704.01.1.`;
   } else {
     supervisionDurationText = `On ${requiredSupervisionLevel} for ${formatRelativeToNow(
-      eligibleLevelStart
+      // this date should only ever be missing for ICOTS cases,
+      // since it's not actually part of their eligibility criteria
+      eligibleLevelStart as Date
     )}`;
     supervisionDurationTooltip = `Policy requirement: On minimum supervision level for 1 year
       or medium level for 18 months.`;

@@ -147,7 +147,7 @@ export class Client {
 
   compliantReportingEligible?: {
     eligibilityCategory: string;
-    eligibleLevelStart: Date;
+    eligibleLevelStart?: Date;
     currentOffenses: string[];
     lifetimeOffensesExpired: string[];
     judicialDistrict: string;
@@ -223,7 +223,7 @@ export class Client {
     if (compliantReportingEligible) {
       this.compliantReportingEligible = {
         eligibilityCategory: compliantReportingEligible.eligibilityCategory,
-        eligibleLevelStart: fieldToDate(
+        eligibleLevelStart: optionalFieldToDate(
           compliantReportingEligible.eligibleLevelStart
         ),
         currentOffenses: compliantReportingEligible.currentOffenses,
