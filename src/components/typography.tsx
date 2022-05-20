@@ -19,6 +19,14 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 // TODO: move to design system
+export const UiSans12 = styled.div`
+  font-family: ${(props) => props.theme.fonts.body};
+  font-size: ${rem(12)};
+  font-weight: 500;
+  line-height: ${rem(24)};
+  letter-spacing: -0.01em;
+`;
+
 export const UiSans14 = styled.div`
   font-family: ${(props) => props.theme.fonts.body};
   font-size: ${rem(14)};

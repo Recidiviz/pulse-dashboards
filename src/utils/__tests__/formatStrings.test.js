@@ -108,8 +108,9 @@ describe("formatStrings", () => {
   });
 
   it("pluralize when it should pluralize", () => {
-    const result = utils.pluralize(2, "violation");
-    expect(result).toEqual("2 violations");
+    expect(utils.pluralize(2, "violation")).toEqual("2 violations");
+
+    expect(utils.pluralize(0, "violation")).toEqual("0 violations");
   });
 
   it("getFirstName when there are more than one names in fullName", () => {

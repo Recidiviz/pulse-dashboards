@@ -78,11 +78,13 @@ function optionalFieldToDate(field?: Timestamp | string): Date | undefined {
   if (field) return fieldToDate(field);
 }
 
-export type OpportunityStatus =
-  | "PENDING"
-  | "IN_PROGRESS"
-  | "DENIED"
-  | "COMPLETED";
+export const OPPORTUNITY_STATUS_RANKED = [
+  "PENDING",
+  "IN_PROGRESS",
+  "DENIED",
+  "COMPLETED",
+] as const;
+export type OpportunityStatus = typeof OPPORTUNITY_STATUS_RANKED[number];
 
 const defaultOpportunityStatuses: Record<OpportunityStatus, string> = {
   PENDING: "Needs referral",

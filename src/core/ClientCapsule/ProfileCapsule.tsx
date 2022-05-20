@@ -14,6 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import ClientListItem from "./ClientListItem";
 
-export { ClientListItem };
+import { identity } from "lodash";
+import React from "react";
+
+import ClientCapsule, { ClientCapsuleProps } from "./ClientCapsule";
+
+type Props = Omit<ClientCapsuleProps, "status">;
+
+export const ProfileCapsule = ({
+  client,
+  ...otherProps
+}: Props): JSX.Element => {
+  return (
+    <ClientCapsule
+      client={client}
+      {...otherProps}
+      status={
+        <>
+          {[client.supervisionType, client.supervisionLevel]
+            .filter(identity)
+            .join(", ")}
+        </>
+      }
+    />
+  );
+};

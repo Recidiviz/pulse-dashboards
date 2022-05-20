@@ -14,23 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { spacing } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
+
+import { palette, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
-import React from "react";
 import styled from "styled-components/macro";
 
-import { ProfileCapsule } from "../ClientCapsule";
-import { ClientProfileProps } from "./types";
+import { UiSans18 } from "../../components/typography";
 
-const HeadingWrapper = styled.div`
-  margin-bottom: ${rem(spacing.md)};
+export const Heading = styled(UiSans18)`
+  border-bottom: 1px solid ${palette.slate20};
+  color: ${palette.slate85};
+  flex: 0 0 auto;
+  margin-top: ${rem(spacing.xl)};
+  padding-bottom: ${rem(spacing.sm)};
 `;
-
-export const Heading = observer(({ client }: ClientProfileProps) => {
-  return (
-    <HeadingWrapper>
-      <ProfileCapsule avatarSize="sm" client={client} textSize="sm" />
-    </HeadingWrapper>
-  );
-});

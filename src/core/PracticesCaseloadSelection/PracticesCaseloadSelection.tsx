@@ -18,17 +18,17 @@ import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
-import ReactSelect, { components, MenuListComponentProps } from "react-select";
+import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { StaffRecord } from "../../firestore";
 import { Client } from "../../PracticesStore/Client";
-import { ClientListItem } from "../ClientListItem";
+import { CaseloadSelect } from "../CaseloadSelect";
+import { OpportunityCapsule } from "../ClientCapsule";
 import { PRACTICES_METHODOLOGY_URL } from "../utils/constants";
+import { workflowsUrl } from "../views";
 
 // This is a query limitation imposed by Firestore
-const SELECTED_OFFICER_LIMIT = 10;
 
 const Heading = styled.div`
   color: ${palette.slate85};
@@ -61,8 +61,14 @@ const ClientListEmptyState: React.FC = observer(() => {
   return <div>{text}</div>;
 });
 
-const ClientListElement = styled.div`
+const ClientListElement = styled.ul`
+  list-style: none;
   margin-top: ${rem(spacing.md)};
+  padding: 0;
+`;
+
+const ClientListItem = styled.li`
+  margin-bottom: ${rem(spacing.md)};
 `;
 
 const ClientList: React.FC = observer(() => {
@@ -71,7 +77,20 @@ const ClientList: React.FC = observer(() => {
   } = useRootStore();
 
   const items = compliantReportingEligibleClients.map((client: Client) => (
-    <ClientListItem client={client} key={client.id} />
+    <ClientListItem key={client.id}>
+      <Link
+        to={workflowsUrl("compliantReporting", {
+          clientId: client.pseudonymizedId,
+        })}
+      >
+        <OpportunityCapsule
+          avatarSize="lg"
+          client={client}
+          opportunity="compliantReporting"
+          textSize="sm"
+        />
+      </Link>
+    </ClientListItem>
   ));
 
   return (
@@ -81,34 +100,7 @@ const ClientList: React.FC = observer(() => {
   );
 });
 
-const DisabledMessage = styled.div`
-  color: ${palette.signal.notification};
-  /* non-standard padding value to match library styles */
-  padding: 12px;
-`;
-
-const DisabledMenuList = ({
-  children,
-  ...props
-}: MenuListComponentProps<{ label: string; value: string }, true>) => (
-  <components.MenuList {...props}>
-    <DisabledMessage>
-      Cannot select more than {SELECTED_OFFICER_LIMIT} officers.
-    </DisabledMessage>
-    {children}
-  </components.MenuList>
-);
-
-const buildSelectOption = (officer: StaffRecord) => {
-  return { label: officer.name, value: officer.id };
-};
-
-export const PracticesCaseloadSelection: React.FC = observer(() => {
-  const { practicesStore } = useRootStore();
-
-  const disableAdditionalSelections =
-    practicesStore.selectedOfficers.length >= SELECTED_OFFICER_LIMIT;
-
+export const PracticesCaseloadSelection = (): JSX.Element => {
   return (
     <>
       <Heading>
@@ -125,25 +117,10 @@ export const PracticesCaseloadSelection: React.FC = observer(() => {
 
       <Label>
         Officer
-        <ReactSelect
-          isMulti
-          value={practicesStore.selectedOfficers.map(buildSelectOption)}
-          options={practicesStore.availableOfficers.map(buildSelectOption)}
-          onChange={(newValue) =>
-            practicesStore.updateSelectedOfficers(
-              newValue.map((item) => item.value)
-            )
-          }
-          placeholder="Select an officer..."
-          isOptionDisabled={() => disableAdditionalSelections}
-          components={
-            disableAdditionalSelections
-              ? { MenuList: DisabledMenuList }
-              : undefined
-          }
-        />
+        <CaseloadSelect hideIndicators />
       </Label>
+
       <ClientList />
     </>
   );
-});
+};

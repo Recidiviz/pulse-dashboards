@@ -108,7 +108,7 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
       <NavLink
         activeClassName="ViewNavigation__navlink--active"
         className="ViewNavigation__navlink"
-        to={`/${PATHWAYS_VIEWS.practices}`}
+        to={`/${PATHWAYS_VIEWS.workflows}`}
       >
         <PracticesLogo className="ViewNavigation__icon" />
         <div className="ViewNavigation__navlink-heading">Workflows</div>
@@ -124,7 +124,7 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
       </>
     );
 
-    if (view === PATHWAYS_VIEWS.practices) {
+    if (view === PATHWAYS_VIEWS.workflows) {
       return (
         <a
           className="ViewNavigation__navlink"

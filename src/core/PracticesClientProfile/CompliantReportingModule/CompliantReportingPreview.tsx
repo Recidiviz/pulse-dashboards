@@ -25,7 +25,7 @@ import styled from "styled-components/macro";
 import formPreviewSrc from "../../../assets/static/images/compliantReportingFormPreview.png";
 import { IconGoSvg } from "../../../components/Icons";
 import { UiSans16 } from "../../../components/typography";
-import { PRACTICES_PAGES } from "../../views";
+import { workflowsUrl } from "../../views";
 import { ClientProfileProps } from "../types";
 import { StatusPalette, Title, useStatusColors, Wrapper } from "./common";
 import { CompliantReportingDenial } from "./CompliantReportingDenial";
@@ -88,7 +88,9 @@ export const CompliantReportingPreview = observer(
         </div>
         <div>
           <FormLink
-            to={`../${PRACTICES_PAGES.compliantReporting}/${client.pseudonymizedId}`}
+            to={workflowsUrl("compliantReporting", {
+              clientId: client.pseudonymizedId,
+            })}
             {...colors}
           >
             <UiSans16>

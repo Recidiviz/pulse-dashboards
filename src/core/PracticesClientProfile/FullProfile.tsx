@@ -22,13 +22,8 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import {
-  UiSans14,
-  UiSans16,
-  UiSans18,
-  UiSans24,
-} from "../../components/typography";
-import { ClientAvatar } from "../Avatar";
+import { UiSans14, UiSans16, UiSans18 } from "../../components/typography";
+import { ProfileCapsule } from "../ClientCapsule";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { CompliantReportingPreview } from "./CompliantReportingModule";
 import { FinesAndFees, Housing, SpecialConditions } from "./Details";
@@ -56,18 +51,6 @@ const Header = styled.div`
   grid-area: header;
   grid-template-columns: ${COLUMNS};
   padding: ${rem(spacing.lg)} 0 ${rem(spacing.md)};
-`;
-
-const IdentityCell = styled(UiSans14)`
-  color: ${palette.slate70};
-  column-gap: ${rem(spacing.md)};
-  display: grid;
-  grid-template-columns: min-content 1fr;
-`;
-
-const Name = styled(UiSans24)`
-  color: ${palette.pine2};
-  line-height: ${rem(32)};
 `;
 
 const ContactCell = styled(UiSans14).attrs({ as: "dl" })`
@@ -122,15 +105,7 @@ export const FullProfile = observer((): React.ReactElement | null => {
     <WorkflowsNavLayout>
       <Wrapper>
         <Header>
-          <IdentityCell>
-            <ClientAvatar name={client.displayName} size={56} />
-            <div>
-              <Name>{client.displayName}</Name>
-              <div>
-                {client.supervisionType}, {client.supervisionLevel}, {client.id}
-              </div>
-            </div>
-          </IdentityCell>
+          <ProfileCapsule avatarSize="lg" client={client} textSize="lg" />
           <ContactCell>
             <div>
               <ContactLabel>Telephone</ContactLabel>

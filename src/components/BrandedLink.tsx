@@ -14,23 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { spacing } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import React from "react";
+
+import { palette } from "@recidiviz/design-system";
+import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { ProfileCapsule } from "../ClientCapsule";
-import { ClientProfileProps } from "./types";
+/**
+ * A React Router link styled with Recidiviz brand colors
+ */
+export const BrandedLink = styled(Link)`
+  color: ${palette.signal.links};
 
-const HeadingWrapper = styled.div`
-  margin-bottom: ${rem(spacing.md)};
+  &:hover,
+  &:focus {
+    color: ${palette.signal.highlight};
+  }
 `;
-
-export const Heading = observer(({ client }: ClientProfileProps) => {
-  return (
-    <HeadingWrapper>
-      <ProfileCapsule avatarSize="sm" client={client} textSize="sm" />
-    </HeadingWrapper>
-  );
-});

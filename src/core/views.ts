@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityType } from "../firestore";
+import { OPPORTUNITY_TYPES, OpportunityType } from "../firestore";
 import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
 import { MetricId, SimulationCompartment, TenantId } from "./models/types";
 
@@ -45,7 +45,7 @@ export const PATHWAYS_VIEWS = {
   operations: "operations",
   methodology: "id-methodology",
   profile: "profile",
-  practices: "workflows",
+  workflows: "workflows",
 } as const;
 type PathwaysViewRootPath = typeof PATHWAYS_VIEWS[PathwaysView];
 
@@ -73,8 +73,8 @@ export const PATHWAYS_PATHS: Record<string, string> = {
   methodology: `/${PATHWAYS_VIEWS.methodology}/:dashboard`,
   methodologySystem: `/${PATHWAYS_VIEWS.methodology}/system`,
   methodologyOperations: `/${PATHWAYS_VIEWS.methodology}/operations`,
-  practices: `/${PATHWAYS_VIEWS.practices}`,
-  practices404: `/${PATHWAYS_VIEWS.practices}/not-found`,
+  practices: `/${PATHWAYS_VIEWS.workflows}`,
+  practices404: `/${PATHWAYS_VIEWS.workflows}/not-found`,
 };
 
 export type CorePage = keyof typeof CORE_PAGES;
@@ -247,12 +247,60 @@ export function getSectionIdForMetric(metric: MetricId): PathwaysSection {
   return PATHWAYS_SECTION_BY_METRIC_ID[metric];
 }
 
-export type PracticesPage = OpportunityType | "client";
-export const PRACTICES_PAGES: Record<PracticesPage, string> = {
+export type WorkflowsPage = OpportunityType | "profile";
+// this slightly strange construction was needed because
+// `[...OPPORTUNITY_TYPES, "profile"]` caused a TypeError in Jest,
+// something about how TypeScript creates readonly arrays?
+export const WorkflowsPageIdList = (["profile"] as WorkflowsPage[]).concat(
+  OPPORTUNITY_TYPES
+);
+export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   compliantReporting: "compliantReporting",
-  client: "client",
+  profile: "client",
 };
-export const PracticesPageIdList = Object.keys(PATHWAYS_PAGES);
+
+const WORKFLOWS_SEARCH_ROUTES: Record<WorkflowsPage, string> = {
+  profile: `/${PATHWAYS_VIEWS.workflows}/clients`,
+  compliantReporting: `/${PATHWAYS_VIEWS.workflows}`,
+};
+
+const WORKFLOWS_CLIENT_PATH_ROUTES: Record<WorkflowsPage, string> = {
+  profile: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.profile}/:clientId`,
+  compliantReporting: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.compliantReporting}/:clientId`,
+};
+
+/**
+ * @returns the route template string for a Workflows page
+ */
+export function workflowsRoute({
+  name,
+  client,
+}: {
+  name: WorkflowsPage;
+  client: boolean;
+}): string {
+  if (client) {
+    return WORKFLOWS_CLIENT_PATH_ROUTES[name];
+  }
+  return WORKFLOWS_SEARCH_ROUTES[name];
+}
+
+type WorkflowsRouteParams = { clientId: string };
+
+/**
+ * @returns an absolute path for the specified route + params (where applicable)
+ */
+export function workflowsUrl(
+  routeName: WorkflowsPage,
+  params?: WorkflowsRouteParams
+): string {
+  if (params) {
+    return Object.keys(params).reduce((route, param) => {
+      return route.replace(`:${param}`, params[param as keyof typeof params]);
+    }, WORKFLOWS_CLIENT_PATH_ROUTES[routeName]);
+  }
+  return WORKFLOWS_SEARCH_ROUTES[routeName];
+}
 
 const pathnameToView: Record<string, CoreView> = {
   [CORE_PATHS.goals]: "goals",

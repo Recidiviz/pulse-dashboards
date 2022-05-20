@@ -18,12 +18,13 @@
 import { AVAILABLE_FONTS, palette } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
-import { Switch, useRouteMatch } from "react-router-dom";
+import { Switch } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import isIE11 from "../../utils/isIE11";
+import { CaseloadView } from "../CaseloadView";
 import ModelHydrator from "../ModelHydrator";
 import { PracticesCaseloadSelection } from "../PracticesCaseloadSelection";
 import {
@@ -32,7 +33,7 @@ import {
 } from "../PracticesClientProfile";
 import PracticesCompliantReportingForm from "../PracticesCompliantReportingForm/PracticesCompliantReportingForm";
 import PracticesRoute from "../PracticesRoute";
-import { PRACTICES_PAGES } from "../views";
+import { workflowsRoute } from "../views";
 import { WorkflowsFormLayout } from "../WorkflowsLayouts";
 
 const SidebarHeading = styled.h1`
@@ -57,7 +58,6 @@ const IE11Warning = styled.div`
 
 const PagePracticesV2: React.FC = () => {
   const { practicesStore } = useRootStore();
-  const { path } = useRouteMatch();
 
   if (isIE11()) {
     return (
@@ -84,7 +84,10 @@ const PagePracticesV2: React.FC = () => {
     >
       <ModelHydrator model={practicesStore}>
         <Switch>
-          <PracticesRoute exact path={path}>
+          <PracticesRoute
+            exact
+            path={workflowsRoute({ name: "compliantReporting", client: false })}
+          >
             <WorkflowsFormLayout
               sidebarContents={
                 <>
@@ -96,15 +99,25 @@ const PagePracticesV2: React.FC = () => {
             />
           </PracticesRoute>
           <PracticesRoute
-            path={`${path}/${PRACTICES_PAGES.compliantReporting}/:clientId`}
+            exact
+            path={workflowsRoute({ name: "compliantReporting", client: true })}
           >
             <WorkflowsFormLayout
               sidebarContents={<CompliantReportingClientProfile />}
               formContents={<PracticesCompliantReportingForm />}
             />
           </PracticesRoute>
-          <PracticesRoute path={`${path}/${PRACTICES_PAGES.client}/:clientId`}>
+          <PracticesRoute
+            exact
+            path={workflowsRoute({ name: "profile", client: true })}
+          >
             <FullProfile />
+          </PracticesRoute>
+          <PracticesRoute
+            exact
+            path={workflowsRoute({ name: "profile", client: false })}
+          >
+            <CaseloadView />
           </PracticesRoute>
           <NotFound />
         </Switch>

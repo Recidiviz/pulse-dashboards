@@ -14,23 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { spacing } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import React from "react";
-import styled from "styled-components/macro";
 
-import { ProfileCapsule } from "../ClientCapsule";
-import { ClientProfileProps } from "./types";
+import { OPPORTUNITY_TYPES } from "../../firestore";
+import { CaseloadSelect } from "../CaseloadSelect";
+import { WorkflowsNavLayout } from "../WorkflowsLayouts";
+import { AllClients } from "./AllClients";
+import { OpportunityList } from "./OpportunityList";
 
-const HeadingWrapper = styled.div`
-  margin-bottom: ${rem(spacing.md)};
-`;
-
-export const Heading = observer(({ client }: ClientProfileProps) => {
+export const CaseloadView: React.FC = () => {
   return (
-    <HeadingWrapper>
-      <ProfileCapsule avatarSize="sm" client={client} textSize="sm" />
-    </HeadingWrapper>
+    <WorkflowsNavLayout>
+      <CaseloadSelect />
+      {OPPORTUNITY_TYPES.map((opportunity) => (
+        <OpportunityList key={opportunity} opportunity={opportunity} />
+      ))}
+      <AllClients />
+    </WorkflowsNavLayout>
   );
-});
+};

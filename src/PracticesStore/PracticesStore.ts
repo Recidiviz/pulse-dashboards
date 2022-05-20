@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ascending } from "d3-array";
 import {
   has,
   makeAutoObservable,
@@ -38,7 +39,7 @@ import {
   subscribeToOfficers,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
-import { Client } from "./Client";
+import { Client, OPPORTUNITY_STATUS_RANKED } from "./Client";
 import { observableSubscription, SubscriptionValue } from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
@@ -225,14 +226,28 @@ export class PracticesStore implements Hydratable {
   }
 
   get compliantReportingEligibleClients(): Client[] {
-    return values(this.clients).filter(
-      (c) =>
-        this.selectedOfficerIds.includes(c.officerId) &&
-        c.compliantReportingEligible &&
-        ["c1", "c2", "c3", "c4"].includes(
-          c.compliantReportingEligible.eligibilityCategory
-        )
-    );
+    return values(this.clients)
+      .filter(
+        (c) =>
+          this.selectedOfficerIds.includes(c.officerId) &&
+          c.compliantReportingEligible &&
+          ["c1", "c2", "c3", "c4"].includes(
+            c.compliantReportingEligible.eligibilityCategory
+          )
+      )
+      .sort((a, b) => {
+        // hierarchical sort: review status > last name > first name
+        return (
+          ascending(
+            OPPORTUNITY_STATUS_RANKED.indexOf(
+              a.reviewStatus.compliantReporting
+            ),
+            OPPORTUNITY_STATUS_RANKED.indexOf(b.reviewStatus.compliantReporting)
+          ) ||
+          ascending(a.fullName.surname, b.fullName.surname) ||
+          ascending(a.fullName.givenNames, b.fullName.givenNames)
+        );
+      });
   }
 
   get opportunityCounts(): Record<OpportunityType, number | undefined> {

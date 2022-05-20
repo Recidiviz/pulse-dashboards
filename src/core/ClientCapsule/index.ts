@@ -14,23 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { spacing } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import React from "react";
-import styled from "styled-components/macro";
 
-import { ProfileCapsule } from "../ClientCapsule";
-import { ClientProfileProps } from "./types";
-
-const HeadingWrapper = styled.div`
-  margin-bottom: ${rem(spacing.md)};
-`;
-
-export const Heading = observer(({ client }: ClientProfileProps) => {
-  return (
-    <HeadingWrapper>
-      <ProfileCapsule avatarSize="sm" client={client} textSize="sm" />
-    </HeadingWrapper>
-  );
-});
+export { default as ClientCapsule } from "./ClientCapsule";
+export * from "./OpportunityCapsule";
+export * from "./ProfileCapsule";

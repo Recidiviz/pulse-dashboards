@@ -48,10 +48,10 @@ const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
           id="app"
           className={cn("PathwaysLayout", {
             Operations: currentView === PATHWAYS_VIEWS.operations && !isMobile,
-            Practices: currentView === PATHWAYS_VIEWS.practices,
+            Practices: currentView === PATHWAYS_VIEWS.workflows,
           })}
         >
-          {currentView === PATHWAYS_VIEWS.practices || !isMobile ? (
+          {currentView === PATHWAYS_VIEWS.workflows || !isMobile ? (
             <ViewNavigation />
           ) : null}
           <div className="PathwaysLayout__main">

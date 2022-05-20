@@ -128,7 +128,7 @@ const violationCountLabel = (count: string): string =>
 
 const pluralize = (count: number, term: string): string => {
   const base = `${count} ${term}`;
-  return count > 1 ? `${base}s` : base;
+  return count !== 1 ? `${base}s` : base;
 };
 
 function getPeriodLabelFromMetricPeriodMonthsFilter(

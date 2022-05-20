@@ -14,23 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { spacing } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import React from "react";
-import styled from "styled-components/macro";
 
-import { ProfileCapsule } from "../ClientCapsule";
-import { ClientProfileProps } from "./types";
+import {
+  WORKFLOWS_PAGES,
+  WorkflowsPageIdList,
+  workflowsRoute,
+  workflowsUrl,
+} from "../views";
 
-const HeadingWrapper = styled.div`
-  margin-bottom: ${rem(spacing.md)};
-`;
+test("URL with no params", () => {
+  WorkflowsPageIdList.forEach((pageId) => {
+    expect(workflowsUrl(pageId)).toBe(
+      workflowsRoute({ name: pageId, client: false })
+    );
+  });
+});
 
-export const Heading = observer(({ client }: ClientProfileProps) => {
-  return (
-    <HeadingWrapper>
-      <ProfileCapsule avatarSize="sm" client={client} textSize="sm" />
-    </HeadingWrapper>
-  );
+test("path to client", () => {
+  WorkflowsPageIdList.forEach((pageId) => {
+    expect(workflowsUrl(pageId, { clientId: "test123" })).toBe(
+      `/workflows/${WORKFLOWS_PAGES[pageId]}/test123`
+    );
+  });
 });
