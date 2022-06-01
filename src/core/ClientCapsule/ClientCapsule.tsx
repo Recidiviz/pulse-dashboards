@@ -29,7 +29,7 @@ import { Client } from "../../PracticesStore/Client";
 import { ClientAvatar } from "../Avatar";
 
 export type ClientCapsuleProps = {
-  avatarSize: "sm" | "lg";
+  avatarSize: "md" | "lg";
   client: Client;
   status: React.ReactNode;
   textSize: "sm" | "lg";
@@ -69,14 +69,19 @@ const ClientStatusLg = styled(UiSans14)`
   ${clientStatusStyles}
 `;
 
+const IdentityLg = styled(UiSans24)`
+  line-height: ${rem(30)};
+  margin-bottom: ${rem(spacing.xs)};
+`;
+
 const SIZES = {
   avatar: {
-    sm: 40,
+    md: 40,
     lg: 56,
   },
-  name: {
+  identity: {
     sm: UiSans18,
-    lg: UiSans24,
+    lg: IdentityLg,
   },
   status: {
     sm: ClientStatusSm,
@@ -90,18 +95,18 @@ const ClientCapsule: React.FC<ClientCapsuleProps> = ({
   status,
   textSize,
 }) => {
-  const NameEl = SIZES.name[textSize];
+  const IdentityEl = SIZES.identity[textSize];
   const StatusEl = SIZES.status[textSize];
 
   return (
     <Wrapper>
       <ClientAvatar name={client.displayName} size={SIZES.avatar[avatarSize]} />
       <ClientInfo>
-        <NameEl>
+        <IdentityEl>
           <ClientName>{client.displayName}</ClientName>
           <Separator> • </Separator>
           <ClientId>{client.id}</ClientId>
-        </NameEl>
+        </IdentityEl>
         <StatusEl>{status}</StatusEl>
       </ClientInfo>
     </Wrapper>

@@ -39,7 +39,7 @@ const PreviewWrapper = styled(Wrapper)`
   margin: ${rem(spacing.md)} 0;
 `;
 
-const FormLink = styled(Link)<StatusPalette>`
+const FormLink = styled(Link)<Pick<StatusPalette, "link">>`
   display: block;
   color: ${(props) => props.link};
   text-align: right;
@@ -60,7 +60,7 @@ const FormLink = styled(Link)<StatusPalette>`
   }
 `;
 
-const FormPreview = styled.img<StatusPalette>`
+const FormPreview = styled.img<Pick<StatusPalette, "border">>`
   border: 1px solid ${(props) => rgba(props.border, 0.2)};
   border-radius: ${rem(2)};
   display: block;
@@ -91,13 +91,16 @@ export const CompliantReportingPreview = observer(
             to={workflowsUrl("compliantReporting", {
               clientId: client.pseudonymizedId,
             })}
-            {...colors}
+            link={colors.link}
+            onClick={() =>
+              client.trackProfileOpportunityClicked("compliantReporting")
+            }
           >
             <UiSans16>
               Auto-fill form
               <Icon kind={IconGoSvg} size={rem(14)} />
             </UiSans16>
-            <FormPreview src={formPreviewSrc} {...colors} />
+            <FormPreview src={formPreviewSrc} border={colors.border} />
           </FormLink>
         </div>
       </PreviewWrapper>

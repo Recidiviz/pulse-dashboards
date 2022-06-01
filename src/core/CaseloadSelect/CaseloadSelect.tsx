@@ -28,6 +28,7 @@ import { IndicatorProps } from "react-select/src/components/indicators";
 import { MultiValueRemoveProps } from "react-select/src/components/MultiValue";
 import styled from "styled-components/macro";
 
+import { trackCaseloadSearch } from "../../analytics";
 import { useRootStore } from "../../components/StoreProvider";
 import { UiSans14 } from "../../components/typography";
 import { StaffRecord } from "../../firestore";
@@ -143,11 +144,15 @@ export const CaseloadSelect = observer(
           components={customComponents}
           isMulti
           isOptionDisabled={() => disableAdditionalSelections}
-          onChange={(newValue) =>
+          onChange={(newValue) => {
             practicesStore.updateSelectedOfficers(
               newValue.map((item) => item.value)
-            )
-          }
+            );
+            trackCaseloadSearch({
+              officerCount: newValue.length,
+              isDefault: false,
+            });
+          }}
           options={practicesStore.availableOfficers.map(buildSelectOption)}
           placeholder="Search for one or more officers …"
           styles={{

@@ -15,10 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
-import styled from "styled-components/macro";
+// TODO(https://github.com/Recidiviz/web-libraries/issues/98): add this style to the design system
+import "@fontsource/public-sans/600.css";
 
-// TODO: move to design system
+import { rem } from "polished";
+import styled, { css } from "styled-components/macro";
+
+// TODO(#1917): move these components/styles to design system
+export const typeStyles = {
+  uiSans14: css`
+    font-family: ${(props) => props.theme.fonts.body};
+    font-size: ${rem(14)};
+    font-weight: 500;
+    line-height: ${rem(24)};
+    letter-spacing: -0.01em;
+  `,
+};
+
 export const UiSans12 = styled.div`
   font-family: ${(props) => props.theme.fonts.body};
   font-size: ${rem(12)};
@@ -28,11 +41,7 @@ export const UiSans12 = styled.div`
 `;
 
 export const UiSans14 = styled.div`
-  font-family: ${(props) => props.theme.fonts.body};
-  font-size: ${rem(14)};
-  font-weight: 500;
-  line-height: ${rem(24)};
-  letter-spacing: -0.01em;
+  ${typeStyles.uiSans14}
 `;
 
 export const UiSans16 = styled.div`

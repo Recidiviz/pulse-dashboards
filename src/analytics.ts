@@ -54,31 +54,50 @@ const track = (eventName: string, metadata?: Record<string, unknown>): void => {
   }
 };
 
-type ClientFormTrackingMetadata = {
+type ClientOpportunityTrackingMetadata = {
   clientId: string;
   opportunityType: OpportunityType;
 };
 
 export function trackReferralFormViewed(
-  metadata: ClientFormTrackingMetadata
+  metadata: ClientOpportunityTrackingMetadata
 ): void {
   track("frontend.referral_form_viewed", metadata);
 }
 
 export const trackReferralFormPrinted = (
-  metadata: ClientFormTrackingMetadata
+  metadata: ClientOpportunityTrackingMetadata
 ): void => {
   track("frontend.referral_form_printed", metadata);
 };
 
 export function trackSurfacedInList(
-  metadata: ClientFormTrackingMetadata
+  metadata: ClientOpportunityTrackingMetadata
 ): void {
   track("frontend.surfaced_in_list", metadata);
 }
 
 export function trackSetOpportunityStatus<
-  Metadata extends ClientFormTrackingMetadata & { status: OpportunityStatus }
+  Metadata extends ClientOpportunityTrackingMetadata & {
+    status: OpportunityStatus;
+  }
 >(metadata: Metadata): void {
   track("frontend.opportunity_status_updated", metadata);
+}
+
+export function trackClientProfileViewed(metadata: { clientId: string }): void {
+  track("frontend.profile_viewed", metadata);
+}
+
+export function trackProfileOpportunityClicked(
+  metadata: ClientOpportunityTrackingMetadata
+): void {
+  track("frontend.profile_opportunity_link_clicked", metadata);
+}
+
+export function trackCaseloadSearch(metadata: {
+  officerCount: number;
+  isDefault: boolean;
+}): void {
+  track("frontend.caseload_search", metadata);
 }

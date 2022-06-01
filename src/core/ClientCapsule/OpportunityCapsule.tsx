@@ -17,10 +17,11 @@
 
 import { assertNever } from "assert-never";
 import { observer } from "mobx-react-lite";
-import React, { useEffect } from "react";
+import React from "react";
 
 import { OpportunityType } from "../../firestore";
 import type { Client } from "../../PracticesStore/Client";
+import { useClientTracking } from "../hooks/useClientTracking";
 import ClientCapsule, { ClientCapsuleProps } from "./ClientCapsule";
 
 type Props = Omit<ClientCapsuleProps, "status"> & {
@@ -45,17 +46,9 @@ function getStatusMessage(client: Client, opportunity: OpportunityType) {
 
 export const OpportunityCapsule = observer(
   ({ client, opportunity, ...otherProps }: Props) => {
-    // track when clients are displayed in the list
-    useEffect(
-      () => {
-        client.trackListViewed(opportunity);
-      },
-      // Client instance references are not stable across subscription updates,
-      // but the underlying data will be. This prevents logging clients twice when, e.g.,
-      // the entire list is refreshed due to more clients being added to it
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [client.pseudonymizedId]
-    );
+    useClientTracking(client, () => {
+      client.trackListViewed(opportunity);
+    });
 
     return (
       <ClientCapsule

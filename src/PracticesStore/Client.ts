@@ -29,6 +29,8 @@ import {
 import { format as formatPhone } from "phone-fns";
 
 import {
+  trackClientProfileViewed,
+  trackProfileOpportunityClicked,
   trackReferralFormPrinted,
   trackReferralFormViewed,
   trackSetOpportunityStatus,
@@ -474,6 +476,17 @@ export class Client {
     trackSurfacedInList({
       clientId: this.pseudonymizedId,
       opportunityType: listType,
+    });
+  }
+
+  trackProfileViewed(): void {
+    trackClientProfileViewed({ clientId: this.pseudonymizedId });
+  }
+
+  trackProfileOpportunityClicked(opportunityType: OpportunityType): void {
+    trackProfileOpportunityClicked({
+      clientId: this.pseudonymizedId,
+      opportunityType,
     });
   }
 }

@@ -16,11 +16,14 @@
 // =============================================================================
 
 import { palette, spacing } from "@recidiviz/design-system";
-import { rem } from "polished";
+import { rem, rgba } from "polished";
 import React from "react";
+import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { typeStyles, UiSans12 } from "../../components/typography";
 import RecidivizLogo from "../RecidivizLogo";
+import { PATHWAYS_VIEWS, workflowsUrl } from "../views";
 
 const Wrapper = styled.div`
   background-color: ${palette.marble1};
@@ -41,11 +44,74 @@ const Main = styled.main`
   padding-top: ${rem(spacing.sm)};
 `;
 
+const NavLinks = styled.ul`
+  list-style: none;
+  margin: 0;
+  margin-top: ${rem(72)};
+  padding: 0;
+
+  li {
+    margin-bottom: ${rem(spacing.xs)};
+  }
+`;
+
+const NavSection = styled.ul`
+  list-style: none;
+  margin: 0;
+  margin-top: ${rem(spacing.lg)};
+  padding: 0;
+`;
+
+const NavSectionLabel = styled(UiSans12)`
+  color: ${rgba(palette.slate, 0.5)};
+  font-size: ${rem(13)};
+  line-height: ${rem(16)};
+`;
+
+const BrandedNavLink = styled(NavLink).attrs({ exact: true })`
+  ${typeStyles.uiSans14}
+
+  color: ${palette.slate80};
+
+  &:hover,
+  &:focus {
+    color: ${palette.pine4};
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  &.active {
+    color: ${palette.pine4};
+    font-weight: 600;
+  }
+`;
+
 export const WorkflowsNavLayout: React.FC = ({ children }) => {
   return (
     <Wrapper>
       <Sidebar>
-        <RecidivizLogo />
+        <Link to={`/${PATHWAYS_VIEWS.workflows}`}>
+          <RecidivizLogo />
+        </Link>
+        <NavLinks>
+          <li>
+            <BrandedNavLink to={workflowsUrl("profile")}>
+              Clients
+            </BrandedNavLink>
+          </li>
+          <li>
+            <NavSection>
+              <li>
+                <NavSectionLabel>Forms</NavSectionLabel>
+              </li>
+              <li>
+                <BrandedNavLink to={workflowsUrl("compliantReporting")}>
+                  Compliant Reporting
+                </BrandedNavLink>
+              </li>
+            </NavSection>
+          </li>
+        </NavLinks>
       </Sidebar>
       <Main>{children}</Main>
     </Wrapper>

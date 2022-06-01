@@ -2101,6 +2101,11 @@
   resolved "https://registry.yarnpkg.com/@fontsource/public-sans/-/public-sans-4.5.5.tgz#ce8e5d214f336e96daf8dcb7af40d1f293e7d3fd"
   integrity sha512-g0Rbn8OLkimMtSiTI5bW2iVe8Is+Vul466YNw0HLA+hvQ16oS8JEgt+ZEiIOUwk53hPXs7+sb7P/mhLLKqlTFQ==
 
+"@fontsource/public-sans@^4.5.8":
+  version "4.5.8"
+  resolved "https://registry.yarnpkg.com/@fontsource/public-sans/-/public-sans-4.5.8.tgz#bd6492e9339f3320ef5f356d365061039833c3af"
+  integrity sha512-63O4JX7E8yZFrP8/UdiJvUlCWc0tVYu7rt18Htd8jgAqmUriv/ZmVjdsYOf+k5zZ1VEHg/P7DYeSXXGbMJsTOw==
+
 "@fortawesome/fontawesome-common-types@^0.2.34":
   version "0.2.34"
   resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.2.34.tgz#0a8c348bb23b7b760030f5b1d912e582be4ec915"

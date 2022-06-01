@@ -14,7 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
 import React from "react";
+import styled from "styled-components/macro";
 
 import { OPPORTUNITY_TYPES } from "../../firestore";
 import { CaseloadSelect } from "../CaseloadSelect";
@@ -22,14 +25,21 @@ import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { AllClients } from "./AllClients";
 import { OpportunityList } from "./OpportunityList";
 
+const Wrapper = styled.div`
+  /* leaving extra space for the Intercom button */
+  padding-bottom: ${rem(spacing.md * 4)};
+`;
+
 export const CaseloadView: React.FC = () => {
   return (
     <WorkflowsNavLayout>
-      <CaseloadSelect />
-      {OPPORTUNITY_TYPES.map((opportunity) => (
-        <OpportunityList key={opportunity} opportunity={opportunity} />
-      ))}
-      <AllClients />
+      <Wrapper>
+        <CaseloadSelect />
+        {OPPORTUNITY_TYPES.map((opportunity) => (
+          <OpportunityList key={opportunity} opportunity={opportunity} />
+        ))}
+        <AllClients />
+      </Wrapper>
     </WorkflowsNavLayout>
   );
 };

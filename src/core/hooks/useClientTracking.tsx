@@ -14,23 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { spacing } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import React from "react";
-import styled from "styled-components/macro";
 
-import { ProfileCapsule } from "../ClientCapsule";
-import { ClientProfileProps } from "./types";
+import { useEffect } from "react";
 
-const HeadingWrapper = styled.div`
-  margin-bottom: ${rem(spacing.md)};
-`;
+import type { Client } from "../../PracticesStore/Client";
 
-export const Heading = observer(({ client }: ClientProfileProps) => {
-  return (
-    <HeadingWrapper>
-      <ProfileCapsule avatarSize="md" client={client} textSize="sm" />
-    </HeadingWrapper>
+/**
+ * Ensures the given tracking function is called only once per client,
+ * de-duplicating across possible re-renders of the same client.
+ * @param trackingFn will be called even if `client` is undefined! Be sure it handles this case.
+ */
+export function useClientTracking(
+  client: Client | undefined,
+  trackingFn: () => void
+): void {
+  // track when clients are displayed in the list
+  useEffect(
+    () => {
+      trackingFn();
+    },
+    // Client instance references are not stable across subscription updates,
+    // but the underlying data will be. This prevents logging clients twice when
+    // subscription data is refreshed.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [client?.pseudonymizedId]
   );
-});
+}

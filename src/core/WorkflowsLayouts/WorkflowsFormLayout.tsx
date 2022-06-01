@@ -18,10 +18,12 @@
 import { palette, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import cssVars from "../CoreConstants.scss";
 import RecidivizLogo from "../RecidivizLogo";
+import { PATHWAYS_VIEWS } from "../views";
 
 const Wrapper = styled.div`
   align-items: stretch;
@@ -55,7 +57,9 @@ const SidebarWrapper: React.FC = ({ children }) => {
   return (
     <Sidebar>
       <SidebarSection>
-        <RecidivizLogo />
+        <Link to={`/${PATHWAYS_VIEWS.workflows}`}>
+          <RecidivizLogo />
+        </Link>
       </SidebarSection>
       <SidebarSection>{children}</SidebarSection>
     </Sidebar>

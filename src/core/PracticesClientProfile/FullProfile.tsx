@@ -24,6 +24,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { UiSans14, UiSans16, UiSans18 } from "../../components/typography";
 import { ProfileCapsule } from "../ClientCapsule";
+import { useClientTracking } from "../hooks/useClientTracking";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { CompliantReportingPreview } from "./CompliantReportingModule";
 import { FinesAndFees, Housing, SpecialConditions } from "./Details";
@@ -40,7 +41,8 @@ const Wrapper = styled.div`
     "header header"
     ". .";
   grid-template-columns: ${COLUMNS};
-  grid-template-rows: ${rem(96)} auto;
+  grid-template-rows: minmax(${rem(96)}, auto) auto;
+  padding-bottom: ${rem(spacing.lg)};
   row-gap: ${rem(spacing.lg)};
 `;
 
@@ -98,6 +100,8 @@ export const FullProfile = observer((): React.ReactElement | null => {
   const {
     practicesStore: { selectedClient: client },
   } = useRootStore();
+
+  useClientTracking(client, () => client?.trackProfileViewed());
 
   if (!client) return null;
 

@@ -119,7 +119,7 @@ export const OpportunityList = observer(
           })}
         >
           <OpportunityCapsule
-            avatarSize="sm"
+            avatarSize="md"
             client={client}
             opportunity={opportunity}
             textSize="sm"

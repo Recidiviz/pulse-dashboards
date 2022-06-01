@@ -26,6 +26,7 @@ import {
   when,
 } from "mobx";
 
+import { trackCaseloadSearch } from "../analytics";
 import { Hydratable } from "../core/models/types";
 import {
   ClientRecord,
@@ -184,6 +185,10 @@ export class PracticesStore implements Hydratable {
         ? [userData.info.id]
         : [];
     }
+    trackCaseloadSearch({
+      officerCount: this.selectedOfficerIds.length,
+      isDefault: true,
+    });
   }
 
   /**
