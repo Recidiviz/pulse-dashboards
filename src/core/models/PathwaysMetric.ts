@@ -18,7 +18,10 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 
 import { parseResponseByFileFormat } from "../../api/metrics";
-import { callMetricsApi } from "../../api/metrics/metricsClient";
+import {
+  callMetricsApi,
+  callNewMetricsApi,
+} from "../../api/metrics/metricsClient";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import RootStore from "../../RootStore";
 import { getMethodologyCopy, getMetricCopy } from "../content";
@@ -47,6 +50,7 @@ export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   enableMetricModeToggle?: boolean;
   compartment?: SimulationCompartment;
   hasTimePeriodDimension?: boolean;
+  endpoint?: string;
 };
 
 /**
@@ -91,6 +95,8 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   hasTimePeriodDimension?: boolean = false;
 
+  endpoint?: string;
+
   constructor({
     rootStore,
     id,
@@ -101,6 +107,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     enableMetricModeToggle,
     compartment,
     hasTimePeriodDimension,
+    endpoint,
   }: BaseMetricConstructorOptions<RecordFormat>) {
     makeObservable<PathwaysMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
@@ -120,6 +127,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.enableMetricModeToggle = enableMetricModeToggle;
     this.compartment = compartment;
     this.hasTimePeriodDimension = hasTimePeriodDimension;
+    this.endpoint = endpoint;
   }
 
   get content(): MetricContent {
@@ -211,6 +219,19 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
   protected async fetchMetrics(): Promise<Record<string, RawMetricData>> {
     const endpoint = `${this.tenantId}/pathways/${this.sourceFilename}`.toLowerCase();
     return callMetricsApi(endpoint, RootStore.getTokenSilently);
+  }
+
+  protected async fetchNewMetrics(
+    params: URLSearchParams
+  ): Promise<RecordFormat[]> {
+    return this.endpoint &&
+      process.env.REACT_APP_DEPLOY_ENV !== "production" &&
+      process.env.REACT_APP_NEW_BACKEND_API_URL
+      ? callNewMetricsApi(
+          `${this.tenantId}/${this.endpoint}?${params.toString()}`,
+          RootStore.getTokenSilently
+        )
+      : Promise.resolve();
   }
 
   get records(): RecordFormat[] | undefined {

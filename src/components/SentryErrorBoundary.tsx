@@ -42,6 +42,7 @@ function SentryErrorBoundary({
         }),
       ],
       tracesSampleRate: 1,
+      maxValueLength: 1000, // default is 250, this lets us see longer error messages
     });
   }, [history]);
   return (

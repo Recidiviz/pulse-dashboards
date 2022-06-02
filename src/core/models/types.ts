@@ -202,6 +202,12 @@ export type LibertyPopulationTimeSeriesRecord = {
   priorLengthOfIncarceration: string;
 };
 
+export interface TimeSeriesDataRecord {
+  count: number;
+  year: number;
+  month: number;
+}
+
 export type PracticesTimeSeriesRecord = {
   date: string;
   entityId: string;

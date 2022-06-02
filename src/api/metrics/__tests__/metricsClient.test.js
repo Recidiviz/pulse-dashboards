@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { callMetricsApi } from "../metricsClient";
+import { callMetricsApi, callNewMetricsApi } from "../metricsClient";
 
 const OLD_ENV = process.env;
 
@@ -30,6 +30,7 @@ describe("metricsClient", () => {
     "newRevocations/revocations_matrix_events_by_month?violationType=All";
   const getTokenSilently = jest.fn().mockResolvedValue(mockToken);
   const expectedUrl = `test-url/api/${endpoint}`;
+  const expectedNewBEUrl = `test-be-url/pathways/${endpoint}`;
 
   beforeAll(() => {
     // do not log the expected error - keep tests less verbose
@@ -40,6 +41,9 @@ describe("metricsClient", () => {
     jest.resetModules();
     jest.restoreAllMocks();
     jest.resetAllMocks();
+  });
+
+  afterEach(() => {
     process.env = OLD_ENV;
   });
 
@@ -53,6 +57,27 @@ describe("metricsClient", () => {
 
     it("calls fetch with the correct url and headers", () => {
       expect(fetch).toHaveBeenCalledWith(expectedUrl, {
+        headers: {
+          Authorization: `Bearer ${mockToken}`,
+        },
+      });
+    });
+
+    it("returns the resolved data response", () => {
+      expect(output).toEqual({ data: [] });
+    });
+  });
+
+  describe("when callNewMetricsApi succeeds", () => {
+    beforeEach(async () => {
+      process.env = Object.assign(process.env, {
+        REACT_APP_NEW_BACKEND_API_URL: "test-be-url",
+      });
+      output = await callNewMetricsApi(endpoint, getTokenSilently);
+    });
+
+    it("calls fetch with the correct url and headers", () => {
+      expect(fetch).toHaveBeenCalledWith(expectedNewBEUrl, {
         headers: {
           Authorization: `Bearer ${mockToken}`,
         },

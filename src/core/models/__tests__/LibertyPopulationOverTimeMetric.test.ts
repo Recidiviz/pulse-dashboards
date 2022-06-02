@@ -14,9 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import * as Sentry from "@sentry/react";
 import { runInAction } from "mobx";
+import tk from "timekeeper";
 
-import { callMetricsApi } from "../../../api/metrics/metricsClient";
+import {
+  callMetricsApi,
+  callNewMetricsApi,
+} from "../../../api/metrics/metricsClient";
 import RootStore from "../../../RootStore";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
@@ -67,8 +72,17 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         },
       ],
     }),
+    callNewMetricsApi: jest.fn().mockResolvedValue([
+      {
+        year: 2015,
+        month: 12,
+        count: 7641,
+      },
+    ]),
   };
 });
+
+jest.mock("@sentry/react");
 
 describe("LibertyPopulationOverTimeMetric", () => {
   let metric: LibertyPopulationOverTimeMetric;
@@ -76,12 +90,16 @@ describe("LibertyPopulationOverTimeMetric", () => {
   beforeEach(() => {
     process.env = Object.assign(process.env, {
       REACT_APP_API_URL: "test-url",
+      REACT_APP_DEPLOY_ENV: "dev",
+      REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
     });
     mockCoreStore.filtersStore = filtersStore;
+    filtersStore.resetFilters();
     metric = new LibertyPopulationOverTimeMetric({
       id: "libertyToPrisonPopulationOverTime",
       tenantId: mockTenantId,
       sourceFilename: "liberty_to_prison_count_by_month",
+      endpoint: "LibertyToPrisonTransitions",
       rootStore: mockCoreStore,
       dataTransformer: createLibertyPopulationTimeSeries,
       filters: {
@@ -177,12 +195,14 @@ describe("LibertyPopulationOverTimeMetric", () => {
 
   describe("dataSeries", () => {
     beforeEach(() => {
+      tk.freeze(new Date("2022-01-15"));
       mockCoreStore.filtersStore = filtersStore;
 
       metric = new LibertyPopulationOverTimeMetric({
         id: "prisonPopulationOverTime",
         tenantId: mockTenantId,
         sourceFilename: "liberty_to_prison_count_by_month",
+        endpoint: "LibertyToPrisonTransitions",
         rootStore: mockCoreStore,
         dataTransformer: createLibertyPopulationTimeSeries,
         filters: {
@@ -190,6 +210,71 @@ describe("LibertyPopulationOverTimeMetric", () => {
         },
       });
       metric.hydrate();
+    });
+    afterEach(() => {
+      tk.reset();
+    });
+
+    it("calls the new API and logs diffs", () => {
+      expect(callNewMetricsApi).toHaveBeenCalledWith(
+        `${mockTenantId}/LibertyToPrisonTransitions?group=year_month&since=2021-07-01`,
+        RootStore.getTokenSilently
+      );
+      expect(Sentry.captureException).toHaveBeenCalled();
+    });
+
+    it("calls the new API and does not log diffs if there are none", () => {
+      jest.mock("../../../api/metrics/metricsClient", () => {
+        return {
+          callNewMetricsApi: jest.fn().mockResolvedValue([
+            {
+              year: 2015,
+              month: 12,
+              count: 7641,
+            },
+            {
+              year: 2016,
+              month: 1,
+              count: 7641,
+            },
+            {
+              year: 2016,
+              month: 5,
+              count: 7641,
+            },
+          ]),
+        };
+      });
+
+      expect(callNewMetricsApi).toHaveBeenCalledWith(
+        `${mockTenantId}/LibertyToPrisonTransitions?group=year_month&since=2021-07-01`,
+        RootStore.getTokenSilently
+      );
+      // Sentry will probably get called after metric.dataSeries has returned, so
+      // give it a bit of time before we check on it
+      setTimeout(
+        () => expect(Sentry.captureException).not.toHaveBeenCalled(),
+        300
+      );
+    });
+
+    it("calls the new API with filters", () => {
+      runInAction(() => {
+        if (metric.rootStore) {
+          metric.rootStore.filtersStore.setFilters({
+            gender: ["MALE"],
+            judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
+          });
+        }
+      });
+
+      expect(callNewMetricsApi).toHaveBeenCalledWith(
+        encodeURI(
+          `${mockTenantId}/LibertyToPrisonTransitions?group=year_month&since=2021-07-01` +
+            `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
+        ),
+        RootStore.getTokenSilently
+      );
     });
 
     it("filters by default values", () => {

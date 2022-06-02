@@ -44,17 +44,12 @@ async function fetchWithRetry(endpoint, options, retryTimes) {
   }
 }
 
-/**
- * An asynchronous function that returns a promise which will eventually return the results from
- * invoking the given API endpoint. Takes in the |endpoint| as a string and the |getTokenSilently|
- * function, which will be used to authenticate the client against the API.
- */
-async function callMetricsApi(endpoint, getTokenSilently) {
+async function callApi(url, getTokenSilently) {
   const token = await getTokenSilently();
 
   const retryTimes = 3;
   const responseJson = await fetchWithRetry(
-    `${process.env.REACT_APP_API_URL}/api/${endpoint}`,
+    url,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -67,6 +62,26 @@ async function callMetricsApi(endpoint, getTokenSilently) {
 }
 
 /**
+ * An asynchronous function that returns a promise which will eventually return the results from
+ * invoking the given API endpoint. Takes in the |endpoint| as a string and the |getTokenSilently|
+ * function, which will be used to authenticate the client against the API.
+ */
+async function callMetricsApi(endpoint, getTokenSilently) {
+  const url = `${process.env.REACT_APP_API_URL}/api/${endpoint}`;
+  return callApi(url, getTokenSilently);
+}
+
+/**
+ * An asynchronous function that returns a promise which will eventually return the results from
+ * invoking the given API endpoint. Takes in the |endpoint| as a string and the |getTokenSilently|
+ * function, which will be used to authenticate the client against the API.
+ */
+async function callNewMetricsApi(endpoint, getTokenSilently) {
+  const url = `${process.env.REACT_APP_NEW_BACKEND_API_URL}/pathways/${endpoint}`;
+  return callApi(url, getTokenSilently);
+}
+
+/**
  * A convenience function returning whether or not the client is still awaiting what it needs to
  * display results to the user. We are ready if we are no longer loading the view, if we are no
  * longer awaiting the API, and if we have an authenticated user.
@@ -75,4 +90,4 @@ function awaitingResults(loading, user, awaitingApi) {
   return loading || !user || awaitingApi;
 }
 
-export { awaitingResults, callMetricsApi };
+export { awaitingResults, callMetricsApi, callNewMetricsApi };
