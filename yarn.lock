@@ -2873,10 +2873,10 @@
     "@react-spring/shared" "~9.4.4"
     "@react-spring/types" "~9.4.4"
 
-"@recidiviz/design-system@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@recidiviz/design-system/-/design-system-3.2.0.tgz#93833ba3ada3306f75ff2008485f9b72f8ba01aa"
-  integrity sha512-bLMtyLlQe5+bJT9FPQF9E5pw1i5MXS5X0NaY/MNxiuGFZOsGXUJAgdun7MaSAVIco35nfhACPm8EH50EaGiuhQ==
+"@recidiviz/design-system@^3.2.2":
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/@recidiviz/design-system/-/design-system-3.3.2.tgz#ebb38075490b99d61fe66e18adceb4bc9764c329"
+  integrity sha512-5ijy8m8Bws7NlyX3bZCbyX8uZeEAVhgp67Mak/lJxEYV4a60Fk+nehwRL6Y9YtJxs8Rw73qm/lRfMFqreqpZ0w==
   dependencies:
     "@fontsource/libre-baskerville" "^4.1.0"
     "@fontsource/libre-franklin" "^4.1.0"

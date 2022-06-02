@@ -27,6 +27,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { UiSans14 } from "../../../components/typography";
 import type { Client } from "../../../PracticesStore/Client";
 import { formatPracticesDate } from "../../../utils";
 import { formatRelativeToNow } from "../../utils/timePeriod";
@@ -248,9 +249,8 @@ const CriterionContent = styled.div`
   grid-column: 2;
 `;
 
-const Wrapper = styled.ul`
+const Wrapper = styled(UiSans14).attrs({ as: "ul" })`
   list-style: none;
-  font-size: ${rem(14)};
   margin: ${rem(spacing.md)} 0;
   padding: 0;
 `;
