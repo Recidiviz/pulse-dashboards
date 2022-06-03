@@ -38,20 +38,28 @@ export type StaffRecord = {
   hasCaseload: boolean;
 };
 
+export type UserRecord = StaffRecord & { email: string };
+export function isUserRecord(
+  staffRecord: StaffRecord
+): staffRecord is UserRecord {
+  return staffRecord.email !== null;
+}
+
 /**
  * User-level data generated within this application
  */
 export type UserUpdateRecord = {
-  email: string;
-  stateCode: string;
+  // this is for supervisors or others without caseloads to configure their default view
   savedOfficers?: string[];
+  // this persists their most recent caseload selection
+  selectedOfficerIds?: string[];
 };
 
 /**
  * Combines user data from this application and the Recidiviz platform into a single object
  */
 export type CombinedUserRecord = {
-  info: StaffRecord;
+  info: UserRecord;
   updates?: UserUpdateRecord;
 };
 

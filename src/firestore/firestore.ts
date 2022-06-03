@@ -45,6 +45,7 @@ import {
   ClientUpdateRecord,
   CombinedUserRecord,
   FormFieldData,
+  isUserRecord,
   OpportunityType,
   StaffRecord,
   UserUpdateRecord,
@@ -114,7 +115,7 @@ export async function getUser(
     ),
   ]);
   const info = infoSnapshot.docs[0]?.data();
-  if (!info) return undefined;
+  if (!info || !isUserRecord(info)) return undefined;
 
   const updates = updateSnapshot.docs[0]?.data();
 
@@ -122,6 +123,15 @@ export async function getUser(
     info,
     updates,
   };
+}
+
+export function subscribeToUserUpdates(
+  email: string,
+  handleResults: (results?: UserUpdateRecord) => void
+): Unsubscribe {
+  return onSnapshot(doc(collections.userUpdates, email), (result) => {
+    handleResults(result.data());
+  });
 }
 
 export async function getClient(
@@ -308,6 +318,19 @@ export function updateCompliantReportingCompleted(
               },
             },
       },
+    },
+    { merge: true }
+  );
+}
+
+export function updateSelectedOfficerIds(
+  userEmail: string,
+  selectedOfficerIds: string[]
+): Promise<void> {
+  return setDoc(
+    doc(collections.userUpdates, userEmail),
+    {
+      selectedOfficerIds,
     },
     { merge: true }
   );

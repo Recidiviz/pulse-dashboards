@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { keyBy } from "lodash";
-import { computed, runInAction, when } from "mobx";
+import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
@@ -27,6 +27,7 @@ import {
   subscribeToCaseloads,
   subscribeToEligibleCount,
   subscribeToOfficers,
+  subscribeToUserUpdates,
   UserUpdateRecord,
 } from "../../firestore";
 import { RootStore } from "../../RootStore";
@@ -54,6 +55,9 @@ const mockSubscribeToOfficers = subscribeToOfficers as jest.MockedFunction<
 >;
 const mockSubscribeToCaseloads = subscribeToCaseloads as jest.MockedFunction<
   typeof subscribeToCaseloads
+>;
+const mockSubscribeToUserUpdates = subscribeToUserUpdates as jest.MockedFunction<
+  typeof subscribeToUserUpdates
 >;
 
 let rootStore: RootStore;
@@ -96,6 +100,8 @@ function populateClients(clients: ClientRecord[]): void {
 }
 
 beforeEach(() => {
+  // this lets us spy on observables, e.g. the tenant ID getter
+  configure({ safeDescriptors: false });
   rootStore = new RootStore();
   practicesStore = rootStore.practicesStore;
   runInAction(() => {
@@ -110,7 +116,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  configure({ safeDescriptors: true });
   jest.resetAllMocks();
+  window.localStorage.clear();
 
   // clean up any Mobx observers to avoid leaks
   if (testObserver) {
@@ -124,7 +132,7 @@ test("hydration progress", async () => {
 
   await waitForHydration();
 
-  expect(practicesStore.user).toEqual(mockOfficer);
+  expect(practicesStore.user).toBeDefined();
 });
 
 test("caseload defaults to self", async () => {
@@ -139,6 +147,7 @@ test("caseload defaults to all saved officers when present", async () => {
     ...mockOfficer,
     updates: {
       ...(mockOfficer.updates as UserUpdateRecord),
+      selectedOfficerIds: undefined,
       savedOfficers: mockSavedOfficers,
     },
   });
@@ -154,6 +163,48 @@ test("caseload defaults to no officers if user has no caseload and no saved offi
   await waitForHydration();
 
   expect(practicesStore.selectedOfficerIds).toEqual([]);
+});
+
+test("caseload defaults to stored value", async () => {
+  const mockStoredOfficers = ["OFFICER1", "OFFICER3"];
+  mockGetUser.mockResolvedValue({
+    ...mockOfficer,
+    updates: {
+      ...(mockOfficer.updates as UserUpdateRecord),
+      selectedOfficerIds: mockStoredOfficers,
+    },
+  });
+
+  await waitForHydration();
+
+  expect(practicesStore.selectedOfficerIds).toEqual(mockStoredOfficers);
+});
+
+test("default caseload skips empty stored value", async () => {
+  mockGetUser.mockResolvedValue({
+    ...mockOfficer,
+    updates: {
+      ...(mockOfficer.updates as UserUpdateRecord),
+      selectedOfficerIds: [],
+    },
+  });
+
+  await waitForHydration();
+  expect(practicesStore.selectedOfficerIds).toEqual([mockOfficer.info.id]);
+});
+
+test("caseload syncs with stored value changes", async () => {
+  // simulate a database write; this will be read immediately after the default,
+  // which is not 100% realistic but good enough for now
+  const mockStoredOfficers = ["OFFICER1", "OFFICER3"];
+  mockSubscribeToUserUpdates.mockImplementation((email, handler) => {
+    handler({ selectedOfficerIds: mockStoredOfficers });
+    return mockUnsub;
+  });
+
+  await waitForHydration();
+
+  expect(practicesStore.selectedOfficerIds).toEqual(mockStoredOfficers);
 });
 
 test("subscribe to officers in user's district", async () => {
@@ -292,7 +343,7 @@ test("clean up caseload subscriptions on change", async () => {
   expect(mockUnsub).not.toHaveBeenCalled();
 
   runInAction(() => {
-    practicesStore.selectedOfficerIds = ["OFFICER2"];
+    (practicesStore.user as any).updates = { selectedOfficerIds: ["OFFICER2"] };
   });
 
   await when(
@@ -306,7 +357,7 @@ test("no client selected", async () => {
   await waitForHydration();
 
   runInAction(() => {
-    practicesStore.selectedOfficerIds = ["OFFICER1"];
+    (practicesStore.user as any).updates = { selectedOfficerIds: ["OFFICER1"] };
   });
 
   // simulate a UI displaying CR data
@@ -323,7 +374,6 @@ test("select existing client", () => {
   const idToSelect = ineligibleClient.pseudonymizedId;
 
   runInAction(() => {
-    practicesStore.selectedOfficerIds = ["OFFICER1"];
     practicesStore.updateSelectedClient(idToSelect);
   });
 

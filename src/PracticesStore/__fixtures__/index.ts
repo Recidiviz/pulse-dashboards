@@ -27,10 +27,6 @@ export const mockOfficer: CombinedUserRecord = {
     email: "test-officer@example.com",
     hasCaseload: true,
   },
-  updates: {
-    stateCode: "US_XX",
-    email: "test-officer@example.com",
-  },
 };
 
 export const mockSupervisor: CombinedUserRecord = {
@@ -42,10 +38,6 @@ export const mockSupervisor: CombinedUserRecord = {
     email: "test-supervisor@example.com",
     hasCaseload: false,
   },
-  updates: {
-    stateCode: "US_XX",
-    email: "test-supervisor@example.com",
-  },
 };
 
 export const mockDirector: CombinedUserRecord = {
@@ -55,10 +47,6 @@ export const mockDirector: CombinedUserRecord = {
     stateCode: "US_XX",
     email: "test-director@example.com",
     hasCaseload: false,
-  },
-  updates: {
-    stateCode: "US_XX",
-    email: "test-director@example.com",
   },
 };
 

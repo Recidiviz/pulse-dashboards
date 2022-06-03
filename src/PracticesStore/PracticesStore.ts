@@ -38,6 +38,9 @@ import {
   subscribeToCaseloads,
   subscribeToEligibleCount,
   subscribeToOfficers,
+  subscribeToUserUpdates,
+  updateSelectedOfficerIds,
+  UserUpdateRecord,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
 import { Client, OPPORTUNITY_STATUS_RANKED } from "./Client";
@@ -56,7 +59,7 @@ export class PracticesStore implements Hydratable {
 
   user?: CombinedUserRecord;
 
-  selectedOfficerIds: string[] = [];
+  private userUpdatesSubscription?: SubscriptionValue<UserUpdateRecord>;
 
   private selectedClientPseudoId?: string;
 
@@ -85,6 +88,16 @@ export class PracticesStore implements Hydratable {
       () => [this.clientsSubscription?.current()],
       ([newClients]) => {
         this.updateClients(newClients);
+      }
+    );
+    reaction(
+      () => [this.userUpdatesSubscription?.current()],
+      ([userUpdates]) => {
+        runInAction(() => {
+          if (this.user && userUpdates) {
+            this.user.updates = userUpdates;
+          }
+        });
       }
     );
   }
@@ -124,10 +137,13 @@ export class PracticesStore implements Hydratable {
       }
 
       if (userRecord) {
-        runInAction(() => {
-          this.user = userRecord;
-          this.setDefaultCaseload(userRecord as CombinedUserRecord);
-        });
+        this.setUserWithDefaults(userRecord as CombinedUserRecord);
+        // subscribe to updates after the initial fetch
+        this.userUpdatesSubscription = observableSubscription((syncToStore) =>
+          subscribeToUserUpdates(email, (userUpdates) => {
+            if (userUpdates) syncToStore(userUpdates);
+          })
+        );
       } else {
         throw new Error(`Unable to retrieve user record for ${email}`);
       }
@@ -139,6 +155,10 @@ export class PracticesStore implements Hydratable {
     runInAction(() => {
       this.isLoading = false;
     });
+  }
+
+  get selectedOfficerIds(): string[] {
+    return this.user?.updates?.selectedOfficerIds ?? [];
   }
 
   async fetchClient(clientId: string): Promise<void> {
@@ -161,7 +181,8 @@ export class PracticesStore implements Hydratable {
   }
 
   updateSelectedOfficers(officerIds: string[]): void {
-    this.selectedOfficerIds = officerIds;
+    if (!this.user) return;
+    updateSelectedOfficerIds(this.user.info.email, officerIds);
   }
 
   async updateSelectedClient(clientId?: string): Promise<void> {
@@ -177,16 +198,25 @@ export class PracticesStore implements Hydratable {
     );
   }
 
-  private setDefaultCaseload(userData: CombinedUserRecord) {
-    if (userData.updates?.savedOfficers) {
-      this.selectedOfficerIds = userData.updates.savedOfficers ?? [];
-    } else {
-      this.selectedOfficerIds = userData.info.hasCaseload
-        ? [userData.info.id]
-        : [];
+  private setUserWithDefaults(userData: CombinedUserRecord) {
+    const updates: UserUpdateRecord = userData.updates ?? {};
+
+    let selectedOfficerIds = updates.selectedOfficerIds ?? [];
+
+    if (!selectedOfficerIds.length) {
+      if (updates.savedOfficers?.length) {
+        selectedOfficerIds = updates.savedOfficers;
+      } else if (userData.info.hasCaseload) {
+        selectedOfficerIds = [userData.info.id];
+      }
     }
+
+    updates.selectedOfficerIds = selectedOfficerIds;
+
+    this.user = { ...userData, updates };
+
     trackCaseloadSearch({
-      officerCount: this.selectedOfficerIds.length,
+      officerCount: selectedOfficerIds.length,
       isDefault: true,
     });
   }
