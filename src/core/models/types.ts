@@ -23,6 +23,9 @@ import {
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { MetricCopy, PageCopy } from "../content/types";
+import { PracticesMetric } from "../PagePractices/types";
+import { TableColumns } from "../types/charts";
+import { Navigation } from "../types/navigation";
 /**
  * All data comes back from the server as string values;
  * it will be up to us to cast those strings to other types as needed
@@ -38,6 +41,20 @@ export type RawMetricData = Record<string, string>[];
 export const TenantIdList = [US_ND, US_ID, US_TN, US_ME, US_MI] as const;
 
 export type TenantId = typeof TenantIdList[number];
+export type TenantConfig = {
+  name: string;
+  stateCode: string;
+  domain?: string;
+  availableStateCodes: string[];
+  enableUserRestrictions: boolean;
+  enablePracticesCaseloadButton: boolean;
+  navigation?: Navigation;
+  betaNavigation?: Navigation;
+  practicesMetrics?: PracticesMetric[];
+  pagesWithRestrictions?: string[];
+  tableColumns?: TableColumns;
+};
+
 export type Gender = "ALL" | "FEMALE" | "MALE";
 export type AgeGroup =
   | "ALL"
