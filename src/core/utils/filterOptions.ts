@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import {
+  US_CO,
   US_DEMO,
   US_ID,
   US_ME,
@@ -398,6 +399,10 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     },
     enabledViews: [CORE_VIEWS.facilities],
   },
+};
+
+export const CoPopulationFilterOptions: PopulationFilters = {
+  ...DefaultPopulationFilterOptions,
 };
 
 export const IdPopulationFilterOptions: PopulationFilters = {
@@ -1626,6 +1631,7 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
 };
 
 export default {
+  [US_CO]: CoPopulationFilterOptions,
   [US_ID]: IdPopulationFilterOptions,
   [US_TN]: TnPopulationFilterOptions,
   [US_ME]: MePopulationFilterOptions,

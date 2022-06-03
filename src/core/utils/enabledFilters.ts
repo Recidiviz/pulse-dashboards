@@ -17,6 +17,7 @@
 
 import { US_ND } from "../../RootStore/TenantStore/coreTenants";
 import {
+  US_CO,
   US_ID,
   US_ME,
   US_MI,
@@ -307,6 +308,10 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
 };
 
+export const CoEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
+  ...EnabledFilterOptions,
+};
+
 export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
   // LIBERTY TO PRISON
@@ -485,6 +490,7 @@ export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
 };
 
 export default {
+  [US_CO]: CoEnabledFilterOptions,
   [US_ID]: IdEnabledFilterOptions,
   [US_TN]: TnEnabledFilterOptions,
   [US_ME]: MeEnabledFilterOptions,

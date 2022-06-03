@@ -16,6 +16,7 @@
 // =============================================================================
 
 import {
+  US_CO,
   US_ID,
   US_ME,
   US_MI,
@@ -97,11 +98,11 @@ export const DefaultTableColumns: TableColumns = {
   ],
 };
 
-export const IdEnabledTableColumns: TableColumns = {
+export const CoEnabledTableColumns: TableColumns = {
   ...DefaultTableColumns,
 };
 
-export const TnEnabledTableColumns: TableColumns = {
+export const IdEnabledTableColumns: TableColumns = {
   ...DefaultTableColumns,
 };
 
@@ -121,11 +122,16 @@ export const NdEnabledTableColumns: TableColumns = {
   ...DefaultTableColumns,
 };
 
+export const TnEnabledTableColumns: TableColumns = {
+  ...DefaultTableColumns,
+};
+
 export default {
+  [US_CO]: CoEnabledTableColumns,
   [US_ID]: IdEnabledTableColumns,
-  [US_TN]: TnEnabledTableColumns,
   [US_ME]: MeEnabledTableColumns,
   [US_MI]: MiEnabledTableColumns,
   [US_MO]: MoEnabledTableColumns,
   [US_ND]: NdEnabledTableColumns,
+  [US_TN]: TnEnabledTableColumns,
 } as const;

@@ -24,6 +24,7 @@ export type LanternTenants = typeof lantern.LANTERN_TENANTS[number];
 const TenantIds = [
   lantern.US_MO,
   lantern.US_PA,
+  pathways.US_CO,
   pathways.US_ID,
   pathways.US_TN,
   pathways.US_ME,

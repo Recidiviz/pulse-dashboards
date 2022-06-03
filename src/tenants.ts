@@ -18,6 +18,7 @@ import { TenantConfig } from "./core/models/types";
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
 import * as pathways from "./RootStore/TenantStore/pathwaysTenants";
 import { TenantId } from "./RootStore/types";
+import US_CO_CONFIG from "./tenants/US_CO";
 import US_ID_CONFIG from "./tenants/US_ID";
 import US_ME_CONFIG from "./tenants/US_ME";
 import US_MI_CONFIG from "./tenants/US_MI";
@@ -35,6 +36,7 @@ type Tenants = {
 
 const TENANTS: Tenants = {
   [pathways.US_ID]: US_ID_CONFIG,
+  [pathways.US_CO]: US_CO_CONFIG,
   [pathways.US_ME]: US_ME_CONFIG,
   [pathways.US_MI]: US_MI_CONFIG,
   [lantern.US_MO]: US_MO_CONFIG,

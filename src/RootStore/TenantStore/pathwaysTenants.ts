@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export const US_CO = "US_CO";
 export const US_ID = "US_ID";
-export const US_TN = "US_TN";
 export const US_ME = "US_ME";
 export const US_MI = "US_MI";
 export const US_MO = "US_MO";
 export const US_ND = "US_ND";
+export const US_TN = "US_TN";
 // Hack alert - US_PA is not yet a Pathways tenant - but adding it here to enable US_MO (the other LANTERN tenant) access to Pathways.
 // The navigation set up in tenants.ts only allows US_PA access to /revocations,
 // but adding it as a Pathways tenant allows LANTERN tenants to use the Pathways allowed navigation logic, thus enabling Pathways for US_MO.
@@ -28,11 +29,13 @@ export const US_PA = "US_PA";
 export const US_DEMO = "US_DEMO";
 
 export const PATHWAYS_TENANTS = [
+  // NOTE: the first state in this list is where Recidiviz users will default to
   US_TN,
-  US_ND,
+  US_CO,
   US_ID,
   US_ME,
   US_MI,
   US_MO,
+  US_ND,
   US_PA,
 ];
