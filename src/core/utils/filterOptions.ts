@@ -652,7 +652,6 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       { label: "50-54", longLabel: "50-54 years old", value: "50-54" },
       { label: "55-59", longLabel: "55-59 years old", value: "55-59" },
       { label: "60+", longLabel: "60+ years old", value: "60+" },
-      { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];

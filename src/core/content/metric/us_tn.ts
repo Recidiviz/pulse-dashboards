@@ -41,25 +41,9 @@ const content: StateSpecificMetricCopy = {
     methodology:
       'The chart describes the number of people released from supervision to liberty from each district as of the date specified in the chart title. When "Counts" is selected, the number of people in each district is shown. When "Rates" is selected, the percentage shows the number of people in each district divided by the total number of people released to liberty. "Other" includes sites KCCA, MCHR, ETHR, CACC, MCCC, CMCS, WXCN, DCCCP, SECC, SCHR, MRCP, SEHR, DECC, DCDC4, HCCC, FTHR, and UCHR.',
   },
-  prisonPopulationPersonLevel: {
-    note:
-      "Some people are appearing in an INACTIVE facility due to a known issue that will be resolved by 5/31/22.",
-  },
   supervisionPopulationBySupervisionLevel: {
     methodology:
       'The chart describes the number of people on supervision at each supervision level as of the date specified in the chart title. "Other" includes supervision level codes ZS3, ZS1, 6P1, 6P2, ZS2, 6P4, 9RT, ZWS, 9DP, ZS4, ZRE, and ZTV',
-  },
-  prisonToSupervisionPopulationByAge: {
-    note:
-      "Approximately 8% of the total release events are not counted in this chart due to an unknown age issue that will be resolved by 5/31/22.",
-  },
-  libertyToPrisonPopulationByAgeGroup: {
-    note:
-      "Approximately 6% of the total admission events are not counted in this chart due to an unknown age issue that will be resolved by 5/31/22.",
-  },
-  supervisionToLibertyPopulationByAgeGroup: {
-    note:
-      "Approximately 9% of the total release events are not counted in this chart due to an unknown age issue that will be resolved by 5/31/22.",
   },
 };
 
