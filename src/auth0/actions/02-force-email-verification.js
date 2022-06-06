@@ -21,8 +21,8 @@
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
-  // Skip email verification on OpenID connections
-  if (event.connection.name.includes("OpenID")) {
+  // Skip email verification on OpenID and SAML connections
+  if (event.connection.name.includes("OpenID") || event.connection.name.includes("SAML")) {
     return;
   }
 
