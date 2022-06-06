@@ -616,7 +616,6 @@ export const IdPopulationFilterOptions: PopulationFilters = {
       { label: "All", value: "ALL" },
       { label: "Low", value: "MINIMUM" },
       { label: "Moderate", value: "MEDIUM" },
-      { label: "High", value: "MAXIMUM" },
       { label: "High", value: "HIGH" },
       { label: "Diversion", value: "DIVERSION" },
       { label: "Interstate", value: "INTERSTATE_COMPACT" },
