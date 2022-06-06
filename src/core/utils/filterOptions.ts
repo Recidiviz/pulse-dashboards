@@ -677,9 +677,8 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       { label: "Inactive", value: "UNSUPERVISED" },
       { label: "Intake", value: "UNASSIGNED" },
       { label: "Absconded", value: "ABSCONDED" },
-      { label: "Detainer", value: "DETAINER" },
       { label: "Warrant", value: "WARRANT" },
-      { label: "ICOTS", value: "ICOTS_OUT" },
+      { label: "ICOTS", value: "INTERSTATE_COMPACT" },
       { label: "Other", value: "OTHER" },
     ],
     get defaultOption(): FilterOption {
