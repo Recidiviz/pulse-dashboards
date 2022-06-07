@@ -26,6 +26,7 @@ import {
   connectFirestoreEmulator,
   deleteField,
   doc,
+  getDoc,
   getDocs,
   getFirestore,
   limit,
@@ -110,14 +111,12 @@ export async function getUser(
     getDocs(
       query(collections.staff, where("email", "==", queryEmail), limit(1))
     ),
-    getDocs(
-      query(collections.userUpdates, where("email", "==", queryEmail), limit(1))
-    ),
+    getDoc(doc(collections.userUpdates, queryEmail)),
   ]);
   const info = infoSnapshot.docs[0]?.data();
   if (!info || !isUserRecord(info)) return undefined;
 
-  const updates = updateSnapshot.docs[0]?.data();
+  const updates = updateSnapshot.data();
 
   return {
     info,
@@ -129,9 +128,12 @@ export function subscribeToUserUpdates(
   email: string,
   handleResults: (results?: UserUpdateRecord) => void
 ): Unsubscribe {
-  return onSnapshot(doc(collections.userUpdates, email), (result) => {
-    handleResults(result.data());
-  });
+  return onSnapshot(
+    doc(collections.userUpdates, email.toLowerCase()),
+    (result) => {
+      handleResults(result.data());
+    }
+  );
 }
 
 export async function getClient(
