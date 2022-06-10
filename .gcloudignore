@@ -38,10 +38,8 @@ __mocks__/
 archive/
 /build/report.html
 coverage/
-/yarn.lock
 /*.md
 
 # Offline fixture files
 server/core/demo_data/*.json
 server/core/demo_data/*.txt
-

@@ -18,7 +18,7 @@
 import { mount } from "enzyme";
 import React from "react";
 
-import * as styles from "../../CoreConstants.scss";
+import styles from "../../CoreConstants.module.scss";
 import PercentDelta, { ROTATE_DOWN, ROTATE_UP } from "../PercentDelta";
 
 describe("PercentDelta", () => {

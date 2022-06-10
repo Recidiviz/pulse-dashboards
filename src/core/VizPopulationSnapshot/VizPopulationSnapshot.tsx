@@ -23,7 +23,7 @@ import { ResponsiveOrdinalFrame } from "semiotic";
 
 import { formatDate, getDimensionLabel, getTicks } from "../../utils";
 import { sortByLabel } from "../../utils/datasets";
-import * as styles from "../CoreConstants.scss";
+import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshotMetric";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";

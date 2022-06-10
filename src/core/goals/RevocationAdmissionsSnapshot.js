@@ -329,6 +329,7 @@ const RevocationAdmissionsSnapshot = ({
 
 RevocationAdmissionsSnapshot.defaultProps = {
   disableGoal: false,
+  header: null,
 };
 
 RevocationAdmissionsSnapshot.propTypes = {

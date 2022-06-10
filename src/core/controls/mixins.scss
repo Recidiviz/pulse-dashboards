@@ -1,4 +1,4 @@
-@import "../CoreConstants.scss";
+@import "../CoreConstants.module.scss";
 
 @mixin chart-tooltip {
   background: $signal-tooltip;

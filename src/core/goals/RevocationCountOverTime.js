@@ -39,7 +39,7 @@ import {
   getGoalForChart,
   getMaxForGoalAndDataIfGoalDisplayable,
 } from "../utils/metricGoal";
-import { metricModePropType, officeDataPropTypes } from "../utils/propTypes";
+import { metricModePropType } from "../utils/propTypes";
 import { monthNamesWithYearsFromNumbers } from "../utils/timePeriod";
 import {
   canDisplayGoal,
@@ -246,6 +246,7 @@ const RevocationCountOverTime = ({
 
 RevocationCountOverTime.defaultProps = {
   disableGoal: false,
+  header: null,
 };
 
 RevocationCountOverTime.propTypes = {
@@ -254,7 +255,6 @@ RevocationCountOverTime.propTypes = {
   metricType: metricModePropType.isRequired,
   stateCode: PropTypes.string.isRequired,
   supervisionType: PropTypes.string.isRequired,
-  officeData: PropTypes.arrayOf(officeDataPropTypes).isRequired,
   revocationCountsByMonth: PropTypes.arrayOf(
     PropTypes.shape({
       district: PropTypes.string.isRequired,
@@ -267,6 +267,8 @@ RevocationCountOverTime.propTypes = {
     })
   ).isRequired,
   disableGoal: PropTypes.bool,
+  header: PropTypes.string,
+  getTokenSilently: PropTypes.func.isRequired,
 };
 
 export default RevocationCountOverTime;

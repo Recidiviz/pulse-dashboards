@@ -70,7 +70,10 @@ const prepareDataGroupedByOffice = (bars, metricType) => (data) => {
   const officerId = numberFromOfficerId(data.officer_external_id);
 
   const countsByType = reduce(
-    (counts, { key }) => ({ ...counts, [key]: toInteger(data[key]) }),
+    (counts, { key }) => {
+      const { [key]: d } = data;
+      return { ...counts, [key]: toInteger(d) };
+    },
     {},
     bars
   );

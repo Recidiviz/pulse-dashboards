@@ -285,6 +285,7 @@ ReincarcerationCountOverTime.propTypes = {
   disableGoal: PropTypes.bool,
   header: PropTypes.string,
   stateCode: PropTypes.string.isRequired,
+  getTokenSilently: PropTypes.func.isRequired,
 };
 
 export default ReincarcerationCountOverTime;

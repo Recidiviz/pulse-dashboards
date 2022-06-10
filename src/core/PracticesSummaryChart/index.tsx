@@ -23,10 +23,11 @@ import React, { useState } from "react";
 
 import flags from "../../flags";
 import { formatISODateString, formatPercent } from "../../utils/formatStrings";
-import * as styles from "../CoreConstants.scss";
+import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import { METRIC_TYPES } from "../PagePractices/types";
 import PracticesSummaryTooltip from "./PracticesSummaryTooltip";
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
 const ResponsiveOrdinalFrame = require("semiotic/lib/ResponsiveOrdinalFrame") as any;
 

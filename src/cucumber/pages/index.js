@@ -5,12 +5,12 @@ export default class Page {
     this.redirectPause = redirectPause;
   }
 
-  open(path) {
-    browser.url(path);
-    browser.pause(this.redirectPause);
+  async open(path) {
+    await browser.url(path);
+    await browser.pause(this.redirectPause);
   }
 
-  get userMenu() {
-    return $(".UserAvatar");
+  async userMenu() {
+    return $(".ProfileLink");
   }
 }

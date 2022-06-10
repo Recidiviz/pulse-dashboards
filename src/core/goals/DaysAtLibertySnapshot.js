@@ -240,6 +240,7 @@ DaysAtLibertySnapshot.propTypes = {
   stateCode: PropTypes.string.isRequired,
   disableGoal: PropTypes.bool,
   header: PropTypes.string,
+  getTokenSilently: PropTypes.func.isRequired,
 };
 
 export default DaysAtLibertySnapshot;

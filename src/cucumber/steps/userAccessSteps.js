@@ -43,63 +43,62 @@ Given(
   }
 );
 
-Given("I wait for {int} seconds", function (s) {
-  return setTimeout(() => {}, s * 1000);
+Given("I wait for {int} seconds", async (s) => {
+  await new Promise((resolve) => setTimeout(resolve, s * 1000));
 });
 
 When(
   "I select district {string} from the District Filter",
-  function (districtId) {
-    const { districtFilter, districtFilterMenu } = lanternPage;
-    districtFilter.click();
-    $(`.MultiSelect__checkbox-container=${districtId}`).click();
-    districtFilter.parentElement().parentElement().click();
-    districtFilterMenu.waitUntil(function () {
-      return !this.isExisting();
-    });
+  async (districtId) => {
+    const districtFilter = await lanternPage.districtFilter();
+    const districtFilterMenu = await lanternPage.districtFilterMenu();
+    await districtFilter.click();
+    const el = await $(`.MultiSelect__checkbox-container=${districtId}`);
+    await el.click();
+    await (await districtFilter.parentElement()).click();
+    await !districtFilterMenu.isExisting();
   }
 );
 
-When("I am viewing the Case Table", () => {
-  const { caseTable } = lanternPage;
-  caseTable.scrollIntoView();
+When("I am viewing the Case Table", async () => {
+  const caseTable = await lanternPage.caseTable();
+  await caseTable.scrollIntoView();
   caseTable.waitUntil(function () {
     return this.isDisplayedInViewport();
   });
 });
 
-Then("I should only see cases from district {string}", (districtIds) => {
-  const { caseTableDistrictColumns } = lanternPage;
-  const columnValues = caseTableDistrictColumns.map(function (el) {
-    return el.getText();
-  });
+Then("I should only see cases from district {string}", async (districtIds) => {
+  const caseTableDistrictColumns = await lanternPage.caseTableDistrictColumns();
+  const columnValues = await Promise.all(
+    caseTableDistrictColumns.map(async function (el) {
+      return el.getText();
+    })
+  );
   const expectedValues = districtIds.split(",").sort();
   expect(expectedValues).toEqual(expect.arrayContaining(uniq(columnValues)));
 });
 
 Then(
   "I should see {string} selected in the district filter",
-  function (districtId) {
-    const { districtFilter } = lanternPage;
-    districtFilter.waitForExist();
-    expect(districtFilter.getText()).toMatch(districtId);
+  async (districtId) => {
+    const districtFilter = await lanternPage.districtFilter();
+    expect(await districtFilter.getText()).toMatch(districtId);
   }
 );
 
-Then("I should not be able to change the selected district", function () {
-  const { disabledDistrictFilter } = lanternPage;
-  disabledDistrictFilter.waitForExist();
-
-  expect(disabledDistrictFilter.isExisting()).toEqual(true);
+Then("I should not be able to change the selected district", async () => {
+  const disabledDistrictFilter = await lanternPage.disabledDistrictFilter();
+  expect(await disabledDistrictFilter.isExisting()).toEqual(true);
 });
 
 Then(
   "I should see district {string} highlighted on the chart",
-  function (districtIds) {
-    setTimeout(() => {}, 10000);
-    const chartWrapper = lanternPage.getDistrictChartWrapperByDistrictIds(
+  async (districtIds) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const chartWrapper = await lanternPage.getDistrictChartWrapperByDistrictIds(
       districtIds.split(",")
     );
-    expect(chartWrapper.isExisting()).toEqual(true);
+    expect(await chartWrapper.isExisting()).toEqual(true);
   }
 );

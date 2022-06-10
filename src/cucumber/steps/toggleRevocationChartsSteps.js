@@ -18,25 +18,24 @@ import { Given, Then, When } from "@cucumber/cucumber";
 
 import lanternPage from "../pages/lanternPage";
 
-Given("I am viewing the District chart", () => {
-  const chart = lanternPage.districtChartCanvas;
-  chart.waitForExist();
-  expect(chart.isExisting()).toEqual(true);
+Given("I am viewing the District chart", async () => {
+  const chart = await lanternPage.districtChartCanvas();
+  expect(await chart.isExisting()).toEqual(true);
 });
 
-When("I click on the {string} revocations link", (linkText) => {
-  const link = lanternPage.getRevocationsLink(linkText);
-  link.click();
+When("I click on the {string} revocations link", async (linkText) => {
+  const link = await lanternPage.getRevocationsLink(linkText);
+  await link.click();
 });
 
-Then("I should see the Officer chart", () => {
-  const chart = lanternPage.officerChartCanvas;
-  chart.waitForExist();
-  expect(chart.isExisting()).toEqual(true);
+Then("I should see the Officer chart", async () => {
+  const chart = await lanternPage.officerChartCanvas();
+  await chart.waitForExist();
+  expect(await chart.isExisting()).toEqual(true);
 });
 
-Then("I should see the Risk level chart", () => {
-  const chart = lanternPage.riskLevelChartCanvas;
-  chart.waitForExist();
-  expect(chart.isExisting()).toEqual(true);
+Then("I should see the Risk level chart", async () => {
+  const chart = await lanternPage.riskLevelChartCanvas();
+  await chart.waitForExist();
+  expect(await chart.isExisting()).toEqual(true);
 });

@@ -1,5 +1,5 @@
 @import "../controls/mixins.scss";
-@import "../CoreConstants";
+@import "../CoreConstants.module.scss";
 
 .PopulationTimeseriesTooltip {
   @include chart-tooltip;

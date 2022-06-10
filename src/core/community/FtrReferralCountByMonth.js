@@ -232,6 +232,7 @@ FtrReferralCountByMonth.propTypes = {
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
   metricType: metricModePropType.isRequired,
   metricPeriodMonths: PropTypes.string.isRequired,
+  getTokenSilently: PropTypes.func.isRequired,
   header: PropTypes.string,
 };
 

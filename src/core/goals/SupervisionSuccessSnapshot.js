@@ -332,6 +332,7 @@ SupervisionSuccessSnapshot.propTypes = {
   stateCode: PropTypes.string.isRequired,
   header: PropTypes.string,
   disableGoal: PropTypes.bool,
+  getTokenSilently: PropTypes.func.isRequired,
 };
 
 export default SupervisionSuccessSnapshot;

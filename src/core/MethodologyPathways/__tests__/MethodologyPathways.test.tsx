@@ -40,9 +40,6 @@ jest.mock("../../content/page/default.ts");
 jest.mock("../../content/page/us_id.ts");
 jest.mock("../../content/metric/default.ts");
 jest.mock("../../content/metric/us_id.ts");
-jest.mock("../../MobileNavigation", () => {
-  return jest.fn().mockReturnValue(<div />);
-});
 
 describe("MethodologyPathways", () => {
   describe("when the tenant is US_ID", () => {

@@ -16,7 +16,7 @@
 // =============================================================================
 import { StylesConfig } from "react-select";
 
-import { pine3, signalLinks } from "../CoreConstants.scss";
+import styles from "../CoreConstants.module.scss";
 import { FilterOption } from "../types/filters";
 
 export const coreSelectCustomStyles = (
@@ -25,12 +25,12 @@ export const coreSelectCustomStyles = (
   return {
     singleValue: (provided: any) => ({
       ...provided,
-      color: isChanged ? signalLinks : pine3,
+      color: isChanged ? styles.signalLinks : styles.pine3,
     }),
     control: (provided: any) => ({
       ...provided,
-      color: isChanged ? signalLinks : pine3,
-      border: isChanged && `1px solid ${signalLinks} !important`,
+      color: isChanged ? styles.signalLinks : styles.pine3,
+      border: isChanged && `1px solid ${styles.signalLinks} !important`,
     }),
   };
 };

@@ -21,7 +21,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import cssVars from "../CoreConstants.scss";
+import cssVars from "../CoreConstants.module.scss";
 import RecidivizLogo from "../RecidivizLogo";
 import { PATHWAYS_VIEWS } from "../views";
 

@@ -18,7 +18,7 @@ import { Card } from "@recidiviz/design-system";
 import React from "react";
 import styled from "styled-components/macro";
 
-import * as fontStyles from "../CoreConstants.scss";
+import fontStyles from "../CoreConstants.module.scss";
 
 const MetricsCardComponent = styled(Card)`
   width: 100%;

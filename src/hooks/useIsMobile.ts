@@ -16,14 +16,18 @@
 // =============================================================================
 import { useEffect, useState } from "react";
 
-import { breakpointSm } from "../core/CoreConstants.scss";
+import styles from "../core/CoreConstants.module.scss";
 
 const useIsMobile = (): boolean => {
-  const breakpoint = breakpointSm && breakpointSm.replace(/\D/g, "");
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= breakpoint);
+  const breakpoint =
+    styles.breakpointSm && styles.breakpointSm.replace(/\D/g, "");
+  const [isMobile, setIsMobile] = useState(
+    window.innerWidth <= Number(breakpoint)
+  );
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= breakpoint);
+    const handleResize = () =>
+      setIsMobile(window.innerWidth <= Number(breakpoint));
 
     window.addEventListener("resize", handleResize);
     handleResize();

@@ -21,7 +21,7 @@ import cn from "classnames";
 import React from "react";
 
 import { formatPercent } from "../../utils/formatStrings";
-import * as styles from "../CoreConstants.scss";
+import styles from "../CoreConstants.module.scss";
 
 const deltaDirections = {
   improved: "improved",

@@ -46,8 +46,8 @@ interface PropTypes {
   title: string;
   percentage: number;
   status: SummaryStatus;
-  selected: boolean;
   onClick: () => void;
+  selected?: boolean;
 }
 
 const PracticesSummaryCard: React.FC<PropTypes> = ({
@@ -87,6 +87,7 @@ const PracticesSummaryCard: React.FC<PropTypes> = ({
     </div>
   </div>
 );
+
 PracticesSummaryCard.defaultProps = {
   selected: false,
 };

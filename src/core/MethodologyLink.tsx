@@ -22,7 +22,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { convertToSlug } from "../utils/navigation";
-import * as styles from "./CoreConstants.scss";
+import styles from "./CoreConstants.module.scss";
 import { useCoreStore } from "./CoreStoreProvider";
 
 const MethodologyLink: React.FC<{ path: string; chartTitle?: string }> = ({

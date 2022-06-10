@@ -28,7 +28,7 @@ import {
   hashEmailAddress,
   toPossessive,
 } from "../../utils/formatStrings";
-import * as styles from "../CoreConstants.scss";
+import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import { ENTITY_TYPES } from "../models/types";
 

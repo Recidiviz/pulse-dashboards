@@ -6,60 +6,60 @@ class LanternPage extends Page {
     super.open(`${browser.config.baseUrl}/community/revocations`);
   }
 
-  get lanternLayout() {
+  async lanternLayout() {
     return $(".LanternLayout");
   }
 
-  get revocationsOverTimeTitle() {
+  async revocationsOverTimeTitle() {
     return $(".RevocationsOverTime h4.RevocationsByDimension__title");
   }
 
-  get districtChartCanvas() {
+  async districtChartCanvas() {
     return $("canvas#admissionsByDistrict");
   }
 
-  get officerChartCanvas() {
+  async officerChartCanvas() {
     return $("canvas#admissionsByOfficer");
   }
 
-  get riskLevelChartCanvas() {
+  async riskLevelChartCanvas() {
     return $("canvas#admissionsByRiskLevel");
   }
 
-  get districtFilter() {
+  async districtFilter() {
     return $(".FilterField.DistrictFilter .DistrictFilterDropdown");
   }
 
-  get disabledDistrictFilter() {
+  async disabledDistrictFilter() {
     return $(".DistrictFilter .Select--is-disabled");
   }
 
-  get districtFilterMenu() {
+  async districtFilterMenu() {
     return $(".MultiSelect__menu-list");
   }
 
-  get caseTable() {
+  async caseTable() {
     return $(".CaseTable");
   }
 
-  get caseTableDistrictColumns() {
+  async caseTableDistrictColumns() {
     return $$("td.CaseTable--district");
   }
 
-  getDistrictChartWrapperByDistrictIds(districtIds) {
+  async getDistrictChartWrapperByDistrictIds(districtIds) {
     return $(
       `.RevocationsByDimension--admissionsByDistrict--${districtIds.join("-")}`
     );
   }
 
-  getRevocationsLink(linkText) {
+  async getRevocationsLink(linkText) {
     return $(`button*=${linkText}`);
   }
 
-  navigateToProfile() {
-    this.userMenu.click();
-    browser.pause(this.redirectPause);
+  async navigateToProfile() {
+    (await this.userMenu()).click();
+    await browser.pause(this.redirectPause);
   }
 }
 
-export default new LanternPage({ redirectPause: 1000 });
+export default new LanternPage({ redirectPause: 2000 });

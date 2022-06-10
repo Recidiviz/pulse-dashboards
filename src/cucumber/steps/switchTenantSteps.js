@@ -19,21 +19,20 @@ import { Then, When } from "@cucumber/cucumber";
 import lanternPage from "../pages/lanternPage";
 import profilePage from "../pages/profilePage";
 
-When("I click on the profile link", () => {
-  lanternPage.navigateToProfile();
+When("I click on the profile link", async () => {
+  await lanternPage.navigateToProfile();
 });
 
-Then("I should see the Profile page", () => {
-  const prompt = profilePage.promptText;
-  expect(prompt.getText()).toEqual("Select a state");
+Then("I should see the Profile page", async () => {
+  const prompt = await profilePage.promptText();
+  expect(await prompt.getText()).toEqual("Select a state");
 });
 
-When("I select the state {string}", (stateName) => {
-  profilePage.selectStateOption(stateName);
+When("I select the state {string}", async (stateName) => {
+  await profilePage.selectStateOption(stateName);
 });
 
-Then("I should see the Pennsylvania dashboard", () => {
-  const title = lanternPage.revocationsOverTimeTitle;
-  title.waitForExist();
-  expect(title.getText()).toMatch("Number of recommitments from parole");
+Then("I should see the Pennsylvania dashboard", async () => {
+  const title = await lanternPage.revocationsOverTimeTitle();
+  expect(await title.getText()).toMatch("Number of recommitments from parole");
 });

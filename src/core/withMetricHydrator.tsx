@@ -18,7 +18,7 @@
 import React from "react";
 import styled from "styled-components/macro";
 
-import * as styles from "./CoreConstants.scss";
+import styles from "./CoreConstants.module.scss";
 import ModelHydrator from "./ModelHydrator";
 import { Hydratable } from "./models/types";
 

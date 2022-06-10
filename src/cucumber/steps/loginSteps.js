@@ -19,23 +19,22 @@ import { Given, Then, When } from "@cucumber/cucumber";
 import lanternPage from "../pages/lanternPage";
 import loginPage from "../pages/loginPage";
 
-Given("I am on the login page", function () {
-  loginPage.open();
+Given("I am on the login page", async function () {
+  await loginPage.open();
 });
 
-Given("I am logged in as a {string} user", function (userLevel) {
+Given("I am logged in as a {string} user", async (userLevel) => {
   const { username, password } = browser.config.credentials[userLevel];
-  loginPage.open();
-  loginPage.login(username, password);
+  await loginPage.open();
+  await loginPage.login(username, password);
 });
 
-When("I login as an {string} user", function (userLevel) {
+When("I login as an {string} user", async (userLevel) => {
   const { username, password } = browser.config.credentials[userLevel];
-  loginPage.login(username, password);
+  await loginPage.login(username, password);
 });
 
-Then("I should see the Lantern landing page", function () {
-  const layout = lanternPage.lanternLayout;
-  layout.waitForExist();
-  expect(layout.isExisting()).toEqual(true);
+Then("I should see the Lantern landing page", async () => {
+  const layout = await lanternPage.lanternLayout();
+  expect(await layout.isExisting()).toEqual(true);
 });

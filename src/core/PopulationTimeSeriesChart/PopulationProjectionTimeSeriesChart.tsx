@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import * as styles from "../CoreConstants.scss";
+import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import { PopulationProjectionTimeSeriesRecord } from "../models/types";

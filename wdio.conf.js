@@ -262,13 +262,13 @@ exports.config = {
    * Runs after a Cucumber scenario
    */
   // eslint-disable-next-line
-  afterScenario: function (world) {
+  afterScenario: async function (world) {
     // For tests run on demo mode, we want to skip full page reloads because we
     // are not going to go through the log in flow.
     const { tags } = world.pickle;
     const tagNames = tags.map((t) => t.name);
     if (tagNames.includes("@skip-session-reload")) return;
-    browser.reloadSession();
+    await browser.reloadSession();
   },
   /**
    * Runs after a Cucumber feature

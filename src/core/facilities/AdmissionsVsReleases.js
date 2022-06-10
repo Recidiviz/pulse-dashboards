@@ -236,6 +236,7 @@ AdmissionsVsReleases.propTypes = {
   metricPeriodMonths: PropTypes.string.isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
   header: PropTypes.string,
+  getTokenSilently: PropTypes.func.isRequired,
 };
 
 export default AdmissionsVsReleases;

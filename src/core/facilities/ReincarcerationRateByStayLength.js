@@ -203,6 +203,7 @@ ReincarcerationRateByStayLength.propTypes = {
   ).isRequired,
   district: PropTypes.arrayOf(PropTypes.string).isRequired,
   metricType: metricModePropType.isRequired,
+  getTokenSilently: PropTypes.func.isRequired,
 };
 
 export default ReincarcerationRateByStayLength;

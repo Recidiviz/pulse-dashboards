@@ -51,7 +51,10 @@ export const prepareDataGroupedByMonth = (metricType, bars) => (data) => {
   const { year, month } = data;
 
   const monthCounts = reduce(
-    (acc, { key }) => ({ ...acc, [key]: Number(data[key]) }),
+    (acc, { key }) => {
+      const { [key]: d } = data;
+      return { ...acc, [key]: Number(d) };
+    },
     {},
     bars
   );

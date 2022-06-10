@@ -6,21 +6,21 @@ class ProfilePage extends Page {
     super.open(`${browser.config.baseUrl}/profile`);
   }
 
-  get promptText() {
+  async promptText() {
     return $(".StateSelection__heading");
   }
 
-  get stateSelector() {
+  async stateSelector() {
     return $(".StateSelector");
   }
 
-  get viewDashboardBtn() {
+  async viewDashboardBtn() {
     return $(".Profile__submit");
   }
 
-  selectStateOption(stateName) {
-    const option = $(`button=${stateName}`);
-    option.click();
+  async selectStateOption(stateName) {
+    const option = await $(`button=${stateName}`);
+    await option.click();
   }
 }
 

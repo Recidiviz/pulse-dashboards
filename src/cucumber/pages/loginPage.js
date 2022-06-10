@@ -2,27 +2,27 @@
 import Page from ".";
 
 class LoginPage extends Page {
-  open() {
-    super.open(browser.config.baseUrl);
+  async open() {
+    await super.open(browser.config.baseUrl);
   }
 
-  get usernameInput() {
+  async usernameInput() {
     return $('input[type="email"]');
   }
 
-  get passwordInput() {
+  async passwordInput() {
     return $('input[type="password"]');
   }
 
-  get submitBtn() {
+  async submitBtn() {
     return $('form button[type="submit"]');
   }
 
-  login(username, password) {
-    this.usernameInput.addValue(username);
-    this.passwordInput.addValue(password);
-    this.submitBtn.click();
-    browser.pause(this.redirectPause);
+  async login(username, password) {
+    await (await this.usernameInput()).addValue(username);
+    await (await this.passwordInput()).addValue(password);
+    await (await this.submitBtn()).click();
+    await browser.pause(this.redirectPause);
   }
 }
 

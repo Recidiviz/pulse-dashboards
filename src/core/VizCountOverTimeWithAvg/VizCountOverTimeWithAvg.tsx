@@ -26,7 +26,7 @@ import React, { useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
 
 import { getTicks } from "../../utils";
-import * as styles from "../CoreConstants.scss";
+import styles from "../CoreConstants.module.scss";
 import LibertyPopulationOverTimeMetric from "../models/LibertyPopulationOverTimeMetric";
 import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
