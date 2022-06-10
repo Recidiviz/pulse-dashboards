@@ -154,7 +154,7 @@ const PathwaysFilterBar: React.FC<{
                       getFilterOptions(
                         get(filters, filter.type),
                         filter.options
-                      )[0].value
+                      )[0]?.value
                     }
                   />
                 ) : (
@@ -177,7 +177,7 @@ const PathwaysFilterBar: React.FC<{
                       getFilterOptions(
                         get(filters, filter.type),
                         filter.options
-                      )[0].value
+                      )[0]?.value
                     }
                   />
                 )}
