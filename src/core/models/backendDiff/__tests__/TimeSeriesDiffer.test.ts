@@ -15,8 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { diffTimeSeriesData, timeSeriesDiffValue } from "../backendDiff";
-import { TimeSeriesDataRecord } from "../types";
+import { TimeSeriesDataRecord } from "../../types";
+import { DiffValue } from "../Differ";
+import { TimeSeriesDiffer } from "../TimeSeriesDiffer";
+
+const differ: TimeSeriesDiffer = new TimeSeriesDiffer();
 
 it("diffs equal data out of order", () => {
   const oldData: TimeSeriesDataRecord[] = [
@@ -44,7 +47,7 @@ it("diffs equal data out of order", () => {
     },
   ];
 
-  expect(diffTimeSeriesData(oldData, newData).entries).toHaveLength(0);
+  expect(differ.diff(oldData, newData).entries).toHaveLength(0);
 });
 
 it("diffs unequal data", () => {
@@ -95,9 +98,9 @@ it("diffs unequal data", () => {
     },
   ];
 
-  const expectedDiffs: Map<string, timeSeriesDiffValue> = new Map<
+  const expectedDiffs: Map<string, DiffValue<number>> = new Map<
     string,
-    timeSeriesDiffValue
+    DiffValue<number>
   >();
 
   expectedDiffs.set("2020-1", {
@@ -113,5 +116,5 @@ it("diffs unequal data", () => {
     newValue: 1,
   });
 
-  expect(diffTimeSeriesData(oldData, newData)).toEqual(expectedDiffs);
+  expect(differ.diff(oldData, newData)).toEqual(expectedDiffs);
 });

@@ -17,17 +17,13 @@
  * =============================================================================
  *
  */
-import * as Sentry from "@sentry/react";
-import { startOfMonth, subMonths } from "date-fns";
-import { snakeCase } from "lodash";
-import { autorun, computed, get, keys, makeObservable, toJS } from "mobx";
+import { computed, makeObservable } from "mobx";
 
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
-import { PopulationFilterValues } from "../types/filters";
-import { DiffError, diffTimeSeriesData } from "./backendDiff";
+import { TimeSeriesDiffer } from "./backendDiff/TimeSeriesDiffer";
 import { recordsWithAggregateMetrics } from "./calculateAggregateMetrics";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { LibertyPopulationTimeSeriesRecord } from "./types";
@@ -45,43 +41,10 @@ export default class LibertyPopulationOverTimeMetric extends PathwaysMetric<Libe
       downloadableData: computed,
     });
 
-    autorun(() => {
-      if (!this.rootStore || !this.allRecords?.length) return;
-      const { filters, monthRange } = this.rootStore.filtersStore;
-      const queryParams = new URLSearchParams({ group: "year_month" });
-      const since = startOfMonth(subMonths(new Date(), monthRange));
-      queryParams.append("since", formatDate(since, "yyyy-MM-dd"));
-
-      keys(filters).forEach((k) => {
-        const key = k as keyof PopulationFilterValues;
-        const values = toJS(get(filters, key));
-
-        const queryKey = snakeCase(key);
-        if (key !== "timePeriod") {
-          values.forEach((val: any) => {
-            if (val !== "ALL") {
-              queryParams.append(`filters[${queryKey}]`, val);
-            }
-          });
-        }
-      });
-
-      this.fetchNewMetrics(queryParams).then((results) => {
-        if (
-          this.endpoint &&
-          process.env.REACT_APP_DEPLOY_ENV !== "production"
-        ) {
-          const diffs = diffTimeSeriesData(this.dataSeries, results);
-          if (diffs.size > 0) {
-            Sentry.captureException(
-              new DiffError(JSON.stringify(Object.fromEntries(diffs)))
-            );
-          }
-        }
-      });
-    });
-
     this.download = this.download.bind(this);
+    this.endpoint = "LibertyToPrisonTransitionsCount";
+    this.groupBy = "year_month";
+    this.differ = new TimeSeriesDiffer();
   }
 
   get dataSeries(): LibertyPopulationTimeSeriesRecord[] {

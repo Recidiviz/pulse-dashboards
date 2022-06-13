@@ -145,7 +145,6 @@ export default class MetricsStore {
       dataTransformer: createLibertyPopulationTimeSeries,
       filters: this.rootStore.filtersStore.enabledFilters
         .libertyToPrisonPopulationOverTime,
-      endpoint: "LibertyToPrisonTransitionsCount",
     });
   }
 

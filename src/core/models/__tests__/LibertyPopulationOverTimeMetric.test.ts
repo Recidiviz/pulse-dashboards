@@ -99,7 +99,6 @@ describe("LibertyPopulationOverTimeMetric", () => {
       id: "libertyToPrisonPopulationOverTime",
       tenantId: mockTenantId,
       sourceFilename: "liberty_to_prison_count_by_month",
-      endpoint: "LibertyToPrisonTransitions",
       rootStore: mockCoreStore,
       dataTransformer: createLibertyPopulationTimeSeries,
       filters: {
@@ -110,11 +109,14 @@ describe("LibertyPopulationOverTimeMetric", () => {
     metric.hydrate();
   });
 
+  afterEach(() => {
+    process.env = OLD_ENV;
+  });
+
   afterAll(() => {
     jest.resetModules();
     jest.restoreAllMocks();
     jest.resetAllMocks();
-    process.env = OLD_ENV;
   });
 
   it("fetches metrics when initialized", () => {
@@ -202,7 +204,6 @@ describe("LibertyPopulationOverTimeMetric", () => {
         id: "prisonPopulationOverTime",
         tenantId: mockTenantId,
         sourceFilename: "liberty_to_prison_count_by_month",
-        endpoint: "LibertyToPrisonTransitions",
         rootStore: mockCoreStore,
         dataTransformer: createLibertyPopulationTimeSeries,
         filters: {
@@ -217,7 +218,7 @@ describe("LibertyPopulationOverTimeMetric", () => {
 
     it("calls the new API and logs diffs", () => {
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/LibertyToPrisonTransitions?group=year_month&since=2021-07-01`,
+        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&since=2021-07-01`,
         RootStore.getTokenSilently
       );
       expect(Sentry.captureException).toHaveBeenCalled();
@@ -247,7 +248,7 @@ describe("LibertyPopulationOverTimeMetric", () => {
       });
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/LibertyToPrisonTransitions?group=year_month&since=2021-07-01`,
+        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&since=2021-07-01`,
         RootStore.getTokenSilently
       );
       // Sentry will probably get called after metric.dataSeries has returned, so
@@ -270,7 +271,7 @@ describe("LibertyPopulationOverTimeMetric", () => {
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
         encodeURI(
-          `${mockTenantId}/LibertyToPrisonTransitions?group=year_month&since=2021-07-01` +
+          `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&since=2021-07-01` +
             `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
         ),
         RootStore.getTokenSilently

@@ -15,7 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { action, makeObservable, observable, runInAction } from "mobx";
+import * as Sentry from "@sentry/react";
+import { startOfMonth, subMonths } from "date-fns";
+import { snakeCase } from "lodash";
+import {
+  action,
+  autorun,
+  get,
+  makeObservable,
+  observable,
+  runInAction,
+  toJS,
+} from "mobx";
 
 import { parseResponseByFileFormat } from "../../api/metrics";
 import {
@@ -24,17 +35,25 @@ import {
 } from "../../api/metrics/metricsClient";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import RootStore from "../../RootStore";
+import { formatDate } from "../../utils";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
 import { Dimension } from "../types/dimensions";
-import { EnabledFilters, Filters } from "../types/filters";
+import {
+  EnabledFilters,
+  Filters,
+  PopulationFilterValues,
+} from "../types/filters";
 import { PathwaysPage } from "../views";
+import { Differ } from "./backendDiff/Differ";
+import { DiffError } from "./backendDiff/DiffError";
 import { dimensionsByMetricType } from "./dimensions";
 import {
   Hydratable,
   MetricId,
   MetricRecord,
+  PathwaysMetricRecords,
   RawMetricData,
   SimulationCompartment,
   TenantId,
@@ -50,7 +69,6 @@ export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   enableMetricModeToggle?: boolean;
   compartment?: SimulationCompartment;
   hasTimePeriodDimension?: boolean;
-  endpoint?: string;
 };
 
 /**
@@ -97,6 +115,10 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   endpoint?: string;
 
+  groupBy?: string;
+
+  differ?: Differ<any, any>; // not super great but the differs are temporary anyway
+
   constructor({
     rootStore,
     id,
@@ -107,7 +129,6 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     enableMetricModeToggle,
     compartment,
     hasTimePeriodDimension,
-    endpoint,
   }: BaseMetricConstructorOptions<RecordFormat>) {
     makeObservable<PathwaysMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
@@ -127,8 +148,52 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.enableMetricModeToggle = enableMetricModeToggle;
     this.compartment = compartment;
     this.hasTimePeriodDimension = hasTimePeriodDimension;
-    this.endpoint = endpoint;
+
+    autorun(() => {
+      if (
+        !this.rootStore ||
+        !this.allRecords?.length ||
+        !this.groupBy ||
+        !this.endpoint ||
+        process.env.REACT_APP_DEPLOY_ENV === "production"
+      )
+        return;
+      const groupBy = snakeCase(this.groupBy);
+      const filterValues = this.rootStore.filtersStore.filters;
+      const { monthRange } = this.rootStore.filtersStore;
+      const queryParams = new URLSearchParams({ group: groupBy });
+      if (monthRange) {
+        const since = startOfMonth(subMonths(new Date(), monthRange));
+        queryParams.append("since", formatDate(since, "yyyy-MM-dd"));
+      }
+
+      this.dimensions.forEach((dimension) => {
+        const key = dimension as keyof PopulationFilterValues;
+        const values = toJS(get(filterValues, key));
+        const queryKey = snakeCase(key);
+        if (values) {
+          values.forEach((val: any) => {
+            if (val !== "ALL") {
+              queryParams.append(`filters[${queryKey}]`, val);
+            }
+          });
+        }
+      });
+
+      this.fetchNewMetrics(queryParams).then((results) => {
+        if (this.differ) {
+          const diffs = this.differ.diff(this.dataSeries, results);
+          if (diffs.size > 0) {
+            Sentry.captureException(
+              new DiffError(JSON.stringify(Object.fromEntries(diffs)))
+            );
+          }
+        }
+      });
+    });
   }
+
+  abstract get dataSeries(): PathwaysMetricRecords;
 
   get content(): MetricContent {
     return getMetricCopy(this.rootStore?.currentTenantId)[this.id];

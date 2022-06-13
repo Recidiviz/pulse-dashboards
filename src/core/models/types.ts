@@ -220,11 +220,18 @@ export type LibertyPopulationTimeSeriesRecord = {
   priorLengthOfIncarceration: string;
 };
 
-export interface TimeSeriesDataRecord {
+export type TimeSeriesDataRecord = {
   count: number;
   year: number;
   month: number;
-}
+};
+
+/* Superset of all the SnapshotRecords, but with all fields except "count" optional */
+export type SnapshotDataRecord = Partial<
+  PrisonPopulationSnapshotRecord &
+    SupervisionPopulationSnapshotRecord &
+    LibertyPopulationSnapshotRecord
+> & { count: number };
 
 export type PracticesTimeSeriesRecord = {
   date: string;
@@ -299,17 +306,19 @@ export type ViewMethodology = {
 export interface Hydratable {
   isLoading?: boolean;
   error?: Error;
-  dataSeries?:
-    | PopulationProjectionTimeSeriesRecord[]
-    | PrisonPopulationSnapshotRecord[]
-    | SupervisionPopulationSnapshotRecord[]
-    | PrisonPopulationTimeSeriesRecord[]
-    | SupervisionPopulationTimeSeriesRecord[]
-    | LibertyPopulationTimeSeriesRecord[]
-    | LibertyPopulationSnapshotRecord[]
-    | PrisonPopulationPersonLevelRecord[];
+  dataSeries?: PathwaysMetricRecords;
   hydrate: () => void;
 }
+
+export type PathwaysMetricRecords =
+  | PopulationProjectionTimeSeriesRecord[]
+  | PrisonPopulationSnapshotRecord[]
+  | SupervisionPopulationSnapshotRecord[]
+  | PrisonPopulationTimeSeriesRecord[]
+  | SupervisionPopulationTimeSeriesRecord[]
+  | LibertyPopulationTimeSeriesRecord[]
+  | LibertyPopulationSnapshotRecord[]
+  | PrisonPopulationPersonLevelRecord[];
 
 export type MetricId =
   | "libertyToPrisonPopulationOverTime"

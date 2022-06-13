@@ -14,9 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import * as Sentry from "@sentry/react";
 import { runInAction } from "mobx";
+import tk from "timekeeper";
 
-import { callMetricsApi } from "../../../api/metrics/metricsClient";
+import {
+  callMetricsApi,
+  callNewMetricsApi,
+} from "../../../api/metrics/metricsClient";
 import RootStore from "../../../RootStore";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
@@ -89,8 +94,20 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         },
       ],
     }),
+    callNewMetricsApi: jest.fn().mockResolvedValue([
+      {
+        judicialDistrict: "1",
+        count: 150,
+      },
+      {
+        judicialDistrict: "2",
+        count: 100,
+      },
+    ]),
   };
 });
+
+jest.mock("@sentry/react");
 
 describe("LibertyPopulationSnapshotMetric", () => {
   let metric: LibertyPopulationSnapshotMetric;
@@ -98,6 +115,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
   beforeEach(() => {
     process.env = Object.assign(process.env, {
       REACT_APP_API_URL: "test-url",
+      REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
     });
     mockCoreStore.filtersStore = filtersStore;
     metric = new LibertyPopulationSnapshotMetric({
@@ -118,6 +136,10 @@ describe("LibertyPopulationSnapshotMetric", () => {
     });
 
     metric.hydrate();
+  });
+
+  afterEach(() => {
+    process.env = OLD_ENV;
   });
 
   afterAll(() => {
@@ -245,6 +267,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
 
   describe("dataSeries", () => {
     beforeEach(() => {
+      tk.freeze(new Date("2022-01-15"));
       filtersStore.setFilters({
         timePeriod: ["6"],
       });
@@ -263,6 +286,18 @@ describe("LibertyPopulationSnapshotMetric", () => {
         hasTimePeriodDimension: true,
       });
       metric.hydrate();
+    });
+
+    afterEach(() => {
+      tk.reset();
+    });
+
+    it("calls the new API and logs diffs", () => {
+      expect(callNewMetricsApi).toHaveBeenCalledWith(
+        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=judicial_district&since=2021-07-01`,
+        RootStore.getTokenSilently
+      );
+      expect(Sentry.captureException).toHaveBeenCalled();
     });
 
     it("filters by default values", () => {
