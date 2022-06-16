@@ -296,7 +296,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
           `${this.tenantId}/${this.endpoint}?${params.toString()}`,
           RootStore.getTokenSilently
         )
-      : Promise.resolve();
+      : Promise.resolve([]);
   }
 
   get records(): RecordFormat[] | undefined {
