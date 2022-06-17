@@ -63,7 +63,7 @@ type ParsedSpecialCondition = {
 
 // TODO(#1735): after data/ETL change we should expect structured data
 // rather than a JSON-ish string
-function getSpecialConditionsMarkup(client: Client): JSX.Element {
+function getProbationSpecialConditionsMarkup(client: Client): JSX.Element {
   // we will flatten the nested lists of conditions into this
   const conditionsToDisplay: (
     | NonNullable<ParsedSpecialCondition>
@@ -107,7 +107,8 @@ function getSpecialConditionsMarkup(client: Client): JSX.Element {
 
   return (
     <>
-      {!conditionsToDisplay.length && "None"}
+      {!conditionsToDisplay.length &&
+        "None according to judgment orders in TOMIS"}
       <DetailsList>
         {conditionsToDisplay.map((condition, i) => {
           // can't guarantee uniqueness of anything in the condition,
@@ -138,12 +139,15 @@ export const SpecialConditions = ({
   return (
     <DetailsSection>
       <DetailsHeading>Probation Special Conditions</DetailsHeading>
-      <DetailsContent>{getSpecialConditionsMarkup(client)}</DetailsContent>
+      <DetailsContent>
+        {getProbationSpecialConditionsMarkup(client)}
+      </DetailsContent>
 
       <DetailsHeading>Parole Special Conditions</DetailsHeading>
       <DetailsContent>
         <>
-          {!client.paroleSpecialConditions.length && "None"}
+          {!client.paroleSpecialConditions.length &&
+            "None according to Board Actions in TOMIS"}
           <DetailsList>
             {client.paroleSpecialConditions.map(
               ({ condition, conditionDescription }, i) => {
@@ -227,7 +231,7 @@ export const FinesAndFees = ({
       <DetailsHeading>Fines and Fees</DetailsHeading>
       <DetailsContent>
         <DetailsList>
-          <DetailsSubheading>Remaining</DetailsSubheading>
+          <DetailsSubheading>Remaining for current sentence</DetailsSubheading>
           <DetailsContent>
             {formatAsCurrency(client.currentBalance)}
           </DetailsContent>

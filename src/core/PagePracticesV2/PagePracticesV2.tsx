@@ -17,7 +17,7 @@
 
 import { AVAILABLE_FONTS, palette } from "@recidiviz/design-system";
 import { rem } from "polished";
-import React from "react";
+import React, { useEffect } from "react";
 import { Switch } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components/macro";
 
@@ -57,6 +57,11 @@ const IE11Warning = styled.div`
 `;
 
 const PagePracticesV2: React.FC = () => {
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+    });
+  }, []);
   const { practicesStore } = useRootStore();
 
   if (isIE11()) {
@@ -109,13 +114,13 @@ const PagePracticesV2: React.FC = () => {
           </PracticesRoute>
           <PracticesRoute
             exact
-            path={workflowsRoute({ name: "profile", client: true })}
+            path={workflowsRoute({ name: "general", client: true })}
           >
             <FullProfile />
           </PracticesRoute>
           <PracticesRoute
             exact
-            path={workflowsRoute({ name: "profile", client: false })}
+            path={workflowsRoute({ name: "general", client: false })}
           >
             <CaseloadView />
           </PracticesRoute>

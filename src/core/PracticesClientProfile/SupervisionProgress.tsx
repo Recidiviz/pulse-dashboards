@@ -48,6 +48,10 @@ const Title = styled(UiSans14)`
   color: ${palette.pine2};
 `;
 
+const OfficerAssignment = styled(UiSans14)`
+  flex: 0 0 auto;
+`;
+
 const TimelineDates = styled(UiSans14)`
   display: flex;
   flex-wrap: wrap;
@@ -85,17 +89,27 @@ const TimelineToday = styled.circle`
   fill: ${palette.data.gold1};
 `;
 
+function formatDateRange(start: Date, end: Date): string {
+  const monthDiff = Math.abs(differenceInMonths(end, start));
+
+  const durationFromExp = intervalToDuration({ start, end });
+  return `${formatDuration(durationFromExp, {
+    format: monthDiff < 6 ? ["months", "days"] : ["years", "months"],
+    delimiter: " and ",
+  })}`;
+}
+
+function formatSentenceLength(startDate: Date, expirationDate: Date): string {
+  return formatDateRange(startDate, expirationDate);
+}
+
 function formatTimeToGo(expirationDate: Date): string {
   const today = startOfDay(new Date());
   const lastDay = startOfDay(expirationDate);
 
-  const monthDiff = Math.abs(differenceInMonths(lastDay, today));
-
-  const durationFromExp = intervalToDuration({ start: today, end: lastDay });
-  return `${formatDuration(durationFromExp, {
-    format: monthDiff < 6 ? ["months", "days"] : ["years", "months"],
-    delimiter: ", ",
-  })} ${today > lastDay ? "past EXP" : "to go"}`;
+  return `${formatDateRange(today, lastDay)} ${
+    today > lastDay ? "past EXP" : "to go"
+  }`;
 }
 
 export const SupervisionProgress = ({
@@ -125,11 +139,14 @@ export const SupervisionProgress = ({
       <VizHeader>
         <div>
           <Title>Supervision</Title>
-          <UiSans14>{formatTimeToGo(expirationDate)}</UiSans14>
+          <UiSans14>
+            {formatSentenceLength(supervisionStartDate, expirationDate)} (
+            {formatTimeToGo(expirationDate)})
+          </UiSans14>
         </div>
-        <UiSans14>
+        <OfficerAssignment>
           Assigned to <PracticesOfficerName officerId={officerId} />
-        </UiSans14>
+        </OfficerAssignment>
       </VizHeader>
 
       <TimelineChart>

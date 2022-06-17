@@ -247,25 +247,25 @@ export function getSectionIdForMetric(metric: MetricId): PathwaysSection {
   return PATHWAYS_SECTION_BY_METRIC_ID[metric];
 }
 
-export type WorkflowsPage = OpportunityType | "profile";
+export type WorkflowsPage = OpportunityType | "general";
 // this slightly strange construction was needed because
-// `[...OPPORTUNITY_TYPES, "profile"]` caused a TypeError in Jest,
+// `[...OPPORTUNITY_TYPES, "general"]` caused a TypeError in Jest,
 // something about how TypeScript creates readonly arrays?
-export const WorkflowsPageIdList = (["profile"] as WorkflowsPage[]).concat(
+export const WorkflowsPageIdList = (["general"] as WorkflowsPage[]).concat(
   OPPORTUNITY_TYPES
 );
 export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   compliantReporting: "compliantReporting",
-  profile: "client",
+  general: "client",
 };
 
 const WORKFLOWS_SEARCH_ROUTES: Record<WorkflowsPage, string> = {
-  profile: `/${PATHWAYS_VIEWS.workflows}/clients`,
+  general: `/${PATHWAYS_VIEWS.workflows}/clients`,
   compliantReporting: `/${PATHWAYS_VIEWS.workflows}`,
 };
 
 const WORKFLOWS_CLIENT_PATH_ROUTES: Record<WorkflowsPage, string> = {
-  profile: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.profile}/:clientId`,
+  general: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.general}/:clientId`,
   compliantReporting: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.compliantReporting}/:clientId`,
 };
 

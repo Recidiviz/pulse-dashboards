@@ -95,14 +95,14 @@ export const WorkflowsNavLayout: React.FC = ({ children }) => {
         </Link>
         <NavLinks>
           <li>
-            <BrandedNavLink to={workflowsUrl("profile")}>
+            <BrandedNavLink to={workflowsUrl("general")}>
               Clients
             </BrandedNavLink>
           </li>
           <li>
             <NavSection>
               <li>
-                <NavSectionLabel>Forms</NavSectionLabel>
+                <NavSectionLabel>Shortcuts</NavSectionLabel>
               </li>
               <li>
                 <BrandedNavLink to={workflowsUrl("compliantReporting")}>
