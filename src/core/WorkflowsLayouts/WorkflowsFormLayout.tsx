@@ -25,12 +25,14 @@ import cssVars from "../CoreConstants.module.scss";
 import RecidivizLogo from "../RecidivizLogo";
 import { PATHWAYS_VIEWS } from "../views";
 
+export const FORM_SIDEBAR_WIDTH = 350;
+
 const Wrapper = styled.div`
   align-items: stretch;
   display: grid;
   font-family: ${(props) => props.theme.fonts.body};
   font-weight: 500;
-  grid-template-columns: 350px 1fr;
+  grid-template-columns: ${rem(FORM_SIDEBAR_WIDTH)} 1fr;
   letter-spacing: -0.01em;
   position: relative;
   min-height: 100vh;

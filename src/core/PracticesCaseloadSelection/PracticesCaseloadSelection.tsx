@@ -14,21 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette, spacing } from "@recidiviz/design-system";
+import { Icon, palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
+import { rem, rgba } from "polished";
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { IconPeopleSvg } from "../../components/Icons";
 import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../PracticesStore/Client";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { OpportunityCapsule } from "../ClientCapsule";
 import { PRACTICES_METHODOLOGY_URL } from "../utils/constants";
 import { workflowsUrl } from "../views";
+import { FORM_SIDEBAR_WIDTH } from "../WorkflowsLayouts";
 
-// This is a query limitation imposed by Firestore
+const FOOTER_HEIGHT = 64;
 
 const Heading = styled.div`
   color: ${palette.slate85};
@@ -65,6 +67,7 @@ const ClientListElement = styled.ul`
   list-style: none;
   margin-top: ${rem(spacing.md)};
   padding: 0;
+  padding-bottom: ${rem(FOOTER_HEIGHT)};
 `;
 
 const ClientListItem = styled.li`
@@ -100,6 +103,26 @@ const ClientList: React.FC = observer(() => {
   );
 });
 
+const AllClientsLink = styled(Link)`
+  align-items: center;
+  background: ${palette.marble1};
+  border-top: 1px solid ${rgba(palette.slate, 0.15)};
+  bottom: 0;
+  color: ${palette.slate85};
+  display: flex;
+  gap: ${rem(spacing.md)};
+  height: ${rem(FOOTER_HEIGHT)};
+  margin-left: -${rem(spacing.md)};
+  padding: 0 ${rem(spacing.lg)};
+  position: fixed;
+  width: ${rem(FORM_SIDEBAR_WIDTH)};
+
+  &:hover,
+  &:focus {
+    color: ${palette.slate};
+  }
+`;
+
 export const PracticesCaseloadSelection = (): JSX.Element => {
   return (
     <>
@@ -121,6 +144,9 @@ export const PracticesCaseloadSelection = (): JSX.Element => {
       </Label>
 
       <ClientList />
+      <AllClientsLink to={workflowsUrl("general")}>
+        <Icon kind={IconPeopleSvg} size={16} /> View all clients
+      </AllClientsLink>
     </>
   );
 };
