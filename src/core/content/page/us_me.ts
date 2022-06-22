@@ -28,8 +28,9 @@ const content: StateSpecificPageCopy = {
   supervision: {
     sections: {
       countOverTime: "Supervision population over time",
-      countByLocation: "Supervision population by sub-office",
+      countByLocation: "Supervision population by region",
       countBySupervisionLevel: "Supervision population by risk level",
+      countByRace: "Supervision population by race",
     },
     methodology:
       'Note: Risk level charts and filters on this page combine "High" and "Very High" risk levels into "High."',
@@ -38,7 +39,7 @@ const content: StateSpecificPageCopy = {
     sections: {
       countOverTime: "Admissions from supervision over time",
       countByLengthOfStay: "Length of stay on supervision before admission",
-      countByLocation: "Admissions from supervision by sub-office",
+      countByLocation: "Admissions from supervision by region",
       countByGender: "Admissions from supervision by gender ",
       countByRace: "Admissions from supervision by race",
       countBySupervisionLevel: "Admissions from supervision by risk level",
@@ -55,7 +56,7 @@ const content: StateSpecificPageCopy = {
     sections: {
       countOverTime: "Releases from supervision over time",
       countByLengthOfStay: "Length of stay on supervision before release",
-      countByLocation: "Releases from supervision by sub-office",
+      countByLocation: "Releases from supervision by region",
       countByRace: "Releases from supervision by race",
       countByGender: "Releases from supervision by gender ",
       countByAgeGroup: "Releases from supervision by age",
