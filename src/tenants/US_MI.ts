@@ -30,14 +30,7 @@ const US_MI_CONFIG: TenantConfig = {
   enableUserRestrictions: false,
   enablePracticesCaseloadButton: false,
   navigation: {
-    system: [
-      PATHWAYS_PAGES.libertyToPrison,
-      PATHWAYS_PAGES.prison,
-      PATHWAYS_PAGES.prisonToSupervision,
-      PATHWAYS_PAGES.supervision,
-      PATHWAYS_PAGES.supervisionToPrison,
-      PATHWAYS_PAGES.supervisionToLiberty,
-    ],
+    system: [PATHWAYS_PAGES.prison],
     libertyToPrison: [
       PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLocation,
@@ -83,14 +76,7 @@ const US_MI_CONFIG: TenantConfig = {
     ],
     "id-methodology": ["system"],
   },
-  pagesWithRestrictions: [
-    "libertyToPrison",
-    "prison",
-    "prisonToSupervision",
-    "supervisionToPrison",
-    "supervisionToLiberty",
-    "supervision",
-  ],
+  pagesWithRestrictions: ["prison"],
   tableColumns: enabledTableColumns[pathways.US_MI],
 };
 

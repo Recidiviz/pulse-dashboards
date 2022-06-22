@@ -78,6 +78,12 @@ cron:
     schedule: every day 07:00
     target: default
 
+  - description: "Refresh US_MI pathways external cache"
+    url: /api/US_MI/pathways/refreshCache
+    # Every day at 07:00 UTC / 03:00 EST / 00:00 PST
+    schedule: every day 07:00
+    target: default
+
   - description: "DEMO - Refresh US_PA newRevocation external cache"
     url: /api/US_PA/newRevocation/refreshCache
     # Every day at 06:00 UTC / 02:00 EST / 23:00 PST
@@ -152,6 +158,12 @@ cron:
 
   - description: "DEMO - Refresh US_CO pathways external cache"
     url: /api/US_CO/pathways/refreshCache
+    # Every day at 07:00 UTC / 03:00 EST / 00:00 PST
+    schedule: every day 07:00
+    target: demo
+
+  - description: "DEMO - Refresh US_MI pathways external cache"
+    url: /api/US_MI/pathways/refreshCache
     # Every day at 07:00 UTC / 03:00 EST / 00:00 PST
     schedule: every day 07:00
     target: demo

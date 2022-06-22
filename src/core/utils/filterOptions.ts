@@ -1058,6 +1058,270 @@ export const MePopulationFilterOptions: PopulationFilters = {
 
 export const MiPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.FACILITY]: {
+    type: FILTER_TYPES.FACILITY,
+    title: "Facility",
+    setFilters: setFilters(FILTER_TYPES.FACILITY),
+    options: [
+      { label: "All", value: "ALL" },
+      {
+        label: "AMF",
+        longLabel: "Baraga Maximum Facility",
+        value: "AMF",
+      },
+      {
+        label: "ARF",
+        longLabel: "Gus Harrison Correctional Facility",
+        value: "ARF",
+      },
+      {
+        label: "DRF",
+        longLabel: "Carson City Correctional Facility",
+        value: "DRF",
+      },
+      {
+        label: "ECF",
+        longLabel: "Oaks Correctional Facility",
+        value: "ECF",
+      },
+      {
+        label: "ICF",
+        longLabel: "Ionia Correctional Facility",
+        value: "ICF",
+      },
+      {
+        label: "JCF",
+        longLabel: "G. Robert Cotton Correctional Facility",
+        value: "JCF",
+      },
+      {
+        label: "JCS",
+        longLabel: "Cooper Street Facility",
+        value: "JCS",
+      },
+      {
+        label: "KCF",
+        longLabel: "Kinross Correctional Facility",
+        value: "KCF",
+      },
+      {
+        label: "LCF",
+        longLabel: "Lakeland Correctional Facility",
+        value: "LCF",
+      },
+      {
+        label: "LMF",
+        longLabel: "Alger Correctional Facility",
+        value: "LMF",
+      },
+      {
+        label: "LRF",
+        longLabel: "Earnest C. Brooks Correctional Facility",
+        value: "LRF",
+      },
+      {
+        label: "MBP",
+        longLabel: "Marquette Branch Prison",
+        value: "MBP",
+      },
+      {
+        label: "MCF",
+        longLabel: "Muskegon Correctional Facility",
+        value: "MCF",
+      },
+      {
+        label: "MRF",
+        longLabel: "Macomb Correctional Facility",
+        value: "MRF",
+      },
+      {
+        label: "MTF",
+        longLabel: "West Shoreline Correctional Facility",
+        value: "MTF",
+      },
+      {
+        label: "MTU",
+        longLabel: "Richard A Handlon Correctional Facility",
+        value: "MTU",
+      },
+      {
+        label: "NCF",
+        longLabel: "Newberry Correctional Facility",
+        value: "NCF",
+      },
+      {
+        label: "OCF",
+        longLabel: "Ojibway Correctional Facility",
+        value: "OCF",
+      },
+      {
+        label: "RGC",
+        longLabel: "Charles Egeler Reception and Guidance Center",
+        value: "RGC",
+      },
+      {
+        label: "RMI",
+        longLabel: "Michigan Reformatory",
+        value: "RMI",
+      },
+      {
+        label: "RRF",
+        longLabel: "Ryan Correctional Facility",
+        value: "RRF",
+      },
+      {
+        label: "SLF",
+        longLabel: "St. Louis Correctional Facility",
+        value: "SLF",
+      },
+      {
+        label: "SMT",
+        longLabel: "Parnall Correctional Facility",
+        value: "SMT",
+      },
+      {
+        label: "SRF",
+        longLabel: "Sagniaw Correctional Facility",
+        value: "SRF",
+      },
+      {
+        label: "STF",
+        longLabel: "Central Michigan Correctional Facility",
+        value: "STF",
+      },
+      {
+        label: "TCF",
+        longLabel: "Thumb Correctional Facility",
+        value: "TCF",
+      },
+      {
+        label: "URF",
+        longLabel: "Chippewa Correctional Facility",
+        value: "URF",
+      },
+      {
+        label: "WCC",
+        longLabel: "Woodland Correctional Facility",
+        value: "WCC",
+      },
+      {
+        label: "WHV",
+        longLabel: "Women's Huron Valley",
+        value: "WHV",
+      },
+      {
+        label: "CLE",
+        value: "CLE",
+      },
+      {
+        label: "HVM",
+        value: "HVM",
+      },
+      {
+        label: "OCF",
+        value: "OCF",
+      },
+      {
+        label: "PRF",
+        value: "PRF",
+      },
+      {
+        label: "RRF",
+        value: "RRF",
+      },
+      {
+        label: "ZLI",
+        value: "ZLI",
+      },
+      {
+        label: "ZLW",
+        value: "ZLW",
+      },
+      {
+        label: "JMF",
+        value: "JMF",
+      },
+      {
+        label: "SFM",
+        value: "SFM",
+      },
+      {
+        label: "IBC",
+        longLabel: "Bellamy Creek Correctional Facility",
+        value: "IBC",
+      },
+      {
+        label: "SMF",
+        value: "SMF",
+      },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.RACE]: {
+    type: FILTER_TYPES.RACE,
+    title: "Race",
+    setFilters: setFilters(FILTER_TYPES.RACE),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Unknown", value: "UNKNOWN" },
+      { label: "Black", value: "BLACK" },
+      { label: "White", value: "WHITE" },
+      { label: "Hispanic", value: "HISPANIC" },
+      { label: "Asian", value: "ASIAN" },
+      {
+        label: "American Indian/ Alaskan Native",
+        value: "AMERICAN_INDIAN_ALASKAN_NATIVE",
+      },
+      {
+        label: "Native Hawaiian/ Pacific Islander",
+        value: "NATIVE_HAWAIIAN_PACIFIC_ISLANDER",
+      },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.LEGAL_STATUS]: {
+    type: FILTER_TYPES.LEGAL_STATUS,
+    title: "Admission Reason",
+    setFilters: setFilters(FILTER_TYPES.LEGAL_STATUS),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "New court commitment", value: "NEW_ADMISSION" },
+      {
+        label: "Transfer from other jurisdiction",
+        value: "TRANSFER_FROM_OTHER_JURISDICTION",
+      },
+      { label: "Transfer", value: "TRANSFER" },
+      { label: "Revocation", value: "REVOCATION" },
+      {
+        label: "Return from temporary release",
+        value: "RETURN_FROM_TEMPORARY_RELEASE",
+      },
+      { label: "Sanction", value: "SANCTION_ADMISSION" },
+      { label: "Return from escape", value: "RETURN_FROM_ESCAPE" },
+      { label: "Status change", value: "STATUS_CHANGE" },
+      { label: "Other", value: "OTHER" },
+      { label: "Unknown", value: "UNKNOWN" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
 };
 
 export const MoPopulationFilterOptions: PopulationFilters = {
