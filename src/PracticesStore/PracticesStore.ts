@@ -268,7 +268,9 @@ export class PracticesStore implements Hydratable {
           c.compliantReportingEligible &&
           ["c1", "c2", "c3", "c4"].includes(
             c.compliantReportingEligible.eligibilityCategory
-          )
+          ) &&
+          // exclude anyone almost eligible
+          c.compliantReportingEligible.remainingCriteriaNeeded === 0
       )
       .sort((a, b) => {
         // hierarchical sort: review status > last name > first name

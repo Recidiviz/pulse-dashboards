@@ -124,6 +124,11 @@ export type CompliantReportingFinesFeesEligible =
 
 export type CompliantReportingEligibleRecord = {
   eligibilityCategory: string;
+  /** Any number greater than zero indicates the client is _almost_ eligible.
+   * In practice this field should not be optional once it is supported by ETL,
+   * but for backwards compatibility it is for now
+   */
+  remainingCriteriaNeeded?: number;
   eligibleLevelStart: Timestamp | string;
   currentOffenses: string[];
   lifetimeOffensesExpired: string[];

@@ -151,6 +151,8 @@ export class Client {
 
   compliantReportingEligible?: {
     eligibilityCategory: string;
+    /** Any number greater than zero indicates the client is _almost_ eligible. */
+    remainingCriteriaNeeded: number;
     eligibleLevelStart?: Date;
     currentOffenses: string[];
     lifetimeOffensesExpired: string[];
@@ -227,6 +229,8 @@ export class Client {
     if (compliantReportingEligible) {
       this.compliantReportingEligible = {
         eligibilityCategory: compliantReportingEligible.eligibilityCategory,
+        remainingCriteriaNeeded:
+          compliantReportingEligible.remainingCriteriaNeeded ?? 0,
         eligibleLevelStart: optionalFieldToDate(
           compliantReportingEligible.eligibleLevelStart
         ),
