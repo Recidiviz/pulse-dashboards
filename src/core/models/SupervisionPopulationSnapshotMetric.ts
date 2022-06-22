@@ -115,8 +115,12 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
             return rest;
           }
         );
+        const denominator =
+          this.id === "supervisionToPrisonPopulationByOfficer"
+            ? Math.max(sumBy("caseload", dataset), 1)
+            : this.totalCount;
         const populationProportion =
-          (sumBy("count", dataset) * 100) / this.totalCount;
+          (sumBy("count", dataset) * 100) / denominator;
         return {
           count: sumBy("count", dataset),
           populationProportion: populationProportion.toFixed(

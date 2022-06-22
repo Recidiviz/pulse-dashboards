@@ -30,7 +30,7 @@ const NoData: React.FC = () => {
       title="No data available"
       subtitle={
         <>
-          The critera you selected may be too narrow.
+          The criteria you selected may be too narrow.
           <br />
           Try choosing a different set of filters.
         </>

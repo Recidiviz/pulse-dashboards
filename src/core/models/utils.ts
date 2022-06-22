@@ -191,6 +191,7 @@ export function createSupervisionPopulationSnapshot(
           record.officer_name && record.officer_name.toLowerCase() === "all"
             ? record.officer_name
             : toTitleCase(record.officer_name),
+        caseload: record.caseload && parseInt(record.caseload),
         priorLengthOfIncarceration: record.prior_length_of_incarceration,
         timePeriod:
           record.time_period &&

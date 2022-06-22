@@ -107,7 +107,7 @@ function toTitleCase(str: string): string {
   return (
     str &&
     str.replace(
-      /\w\S*/g,
+      /\w[^\s-]*/g,
       (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
     )
   );
@@ -289,6 +289,19 @@ function convertCurlyQuotesToStraight(text: string): string {
   return text.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"');
 }
 
+function formatName(fullName: string): string {
+  const LAST_NAME_CHARACTER_LIMIT = 10;
+  const names = fullName.split(" ");
+  const firstInitial = names[0][0];
+  const lastName = names[names.length - 1];
+
+  return `${firstInitial}. ${
+    lastName.length > LAST_NAME_CHARACTER_LIMIT
+      ? `${lastName.slice(0, LAST_NAME_CHARACTER_LIMIT)}...`
+      : lastName
+  }`;
+}
+
 const getDimensionLabel = (
   dimensionType: Dimension,
   dimensionValue: string
@@ -311,6 +324,7 @@ export {
   formatDistrictLabel,
   formatISODateString,
   formatLargeNumber,
+  formatName,
   formatOfficerLabel,
   formatPercent,
   formatPracticesDate,

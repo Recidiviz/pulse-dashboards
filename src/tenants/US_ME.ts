@@ -62,6 +62,7 @@ const US_ME_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLengthOfStay,
       PATHWAYS_SECTIONS.countByLocation,
+      PATHWAYS_SECTIONS.countByOfficer,
       PATHWAYS_SECTIONS.countBySupervisionLevel,
       PATHWAYS_SECTIONS.countByGender,
       PATHWAYS_SECTIONS.countByRace,

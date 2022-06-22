@@ -20,8 +20,14 @@ import cn from "classnames";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { ResponsiveOrdinalFrame } from "semiotic";
+import { ResponsiveFrameProps } from "semiotic/lib/ResponsiveFrame";
 
-import { formatDate, getDimensionLabel, getTicks } from "../../utils";
+import {
+  formatDate,
+  formatName,
+  getDimensionLabel,
+  getTicks,
+} from "../../utils";
 import { sortByLabel } from "../../utils/datasets";
 import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
@@ -59,25 +65,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     enableMetricModeToggle,
   } = metric;
 
-  const isOfficer = ["officerName"].includes(accessor);
-  const isNotFilters = [
-    "priorLengthOfIncarceration",
-    "lengthOfStay",
-    "officerName",
-  ].includes(accessor);
-  const isRotateLabels = [
-    "district",
-    "race",
-    "facility",
-    "judicialDistrict",
-    "supervisionLevel",
-  ].includes(accessor);
-  const isGeographic = [
-    "district",
-    "facility",
-    "officer",
-    "judicialDistrict",
-  ].includes(accessor);
+  const { accessorIsNotFilterType: isNotFilter } = metric;
   const isRate =
     currentMetricMode === METRIC_MODES.RATES && enableMetricModeToggle;
 
@@ -87,21 +75,21 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
   const [pickedId, setPickedId] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!isNotFilters) {
+    if (!isNotFilter) {
       setPickedId(accessorFilter);
     } else {
       setPickedId([]);
     }
-  }, [accessorFilter, isNotFilters]);
+  }, [accessorFilter, isNotFilter]);
 
   const data = dataSeries.map((d: any, index: number) => {
-    const filterLabel = isNotFilters
+    const filterLabel = isNotFilter
       ? d[accessor]
       : getFilterLabel(
           accessor as keyof PopulationFilterLabels,
           d[accessor].toString()
         );
-    const filterLongLabel = isNotFilters
+    const filterLongLabel = isNotFilter
       ? getDimensionLabel(accessor as Dimension, d[accessor].toString())
       : getFilterLongLabel(
           accessor as keyof PopulationFilterLabels,
@@ -117,7 +105,11 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     };
   });
 
-  sortByLabel(data, isOfficer ? "value" : "accessorLabel", isOfficer);
+  sortByLabel(
+    data,
+    metric.isHorizontal ? "value" : "accessorLabel",
+    metric.isHorizontal
+  );
   const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
 
   const { maxTickValue, tickValues, ticksMargin } = getTicks(
@@ -132,11 +124,144 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     setHoveredId(pieceData.index);
   };
 
+  const chartProps = {
+    // The key is necessary here to force the viz to remount
+    // when there is a new metric to ensure there is not an awkward transition
+    key: metric.id,
+    responsiveWidth: true,
+    hoverAnnotation: true,
+    type: "bar",
+    data,
+    oAccessor: "accessorLabel",
+    projection: "vertical",
+    customHoverBehavior: (piece: any) => {
+      if (piece) {
+        setHoveredId(piece.index);
+      } else {
+        setHoveredId(null);
+      }
+    },
+    baseMarkProps: { transitionDuration: { default: 500 } },
+    size: [558, 558],
+    margin: {
+      left: ticksMargin,
+      bottom: 75,
+      right: 50,
+      top: 56,
+    },
+    oPadding: data.length > 25 ? 2 : 15,
+    style: (d: any) => {
+      const isPicked = pickedId.includes(d.accessorValue);
+      const isHovered = d.index === hoveredId;
+      const color = metric.isGeographic
+        ? styles.dataGoldDark
+        : styles.dataForestDark;
+      const opacity =
+        (hoveredId === null && pickedId[0] === "ALL") ||
+        (hoveredId === null && pickedId.length === 0) ||
+        isHovered ||
+        isPicked
+          ? 1
+          : 0.75;
+
+      const style = { fill: color, fillOpacity: opacity };
+      return style;
+    },
+    rAccessor: "value",
+    rExtent: yRange,
+    axes: [
+      {
+        orient: "left",
+        tickFormat: (n: number) => (isRate ? `${n}%` : n.toLocaleString()),
+        tickValues,
+      },
+    ],
+    oLabel: (accessorLabel: string, _: any) => {
+      return <text textAnchor="middle">{accessorLabel}</text>;
+    },
+    svgAnnotationRules: (annotation: any) => {
+      const {
+        d: { type },
+      } = annotation;
+      if (type === "column-hover") {
+        return hoverAnnotation(annotation);
+      }
+      setHoveredId(null);
+      return null;
+    },
+    tooltipContent: (d: any) => {
+      const { pieces } = d;
+      const pieceData = pieces[0];
+      return (
+        <PathwaysTooltip
+          label={pieceData.tooltipLabel}
+          value={isRate ? `${pieceData.value}%` : pieceData.value}
+        />
+      );
+    },
+    ...(metric.isHorizontal && {
+      projection: "horizontal",
+      size: [558, data.length * 25 + 150],
+      margin: {
+        left: 120,
+        bottom: 75,
+        right: 50,
+        top: 56,
+      },
+      axes: [
+        {
+          orient: "top",
+          tickFormat: (n: number) => (isRate ? `${n}%` : n.toLocaleString()),
+          tickValues,
+        },
+      ],
+      oLabel: (accessorLabel: string, _: any) => {
+        return (
+          <text textAnchor="end">
+            <tspan key={accessorLabel} dy="1.5em" x="0">
+              {formatName(accessorLabel)}
+            </tspan>
+          </text>
+        );
+      },
+    }),
+    ...(metric.rotateLabels && {
+      margin: {
+        left: ticksMargin,
+        bottom: 116,
+        right: 50,
+        top: 56,
+      },
+      axes: [
+        {
+          orient: "left",
+          tickFormat: (n: number) => (isRate ? `${n}%` : n.toLocaleString()),
+          tickValues,
+        },
+      ],
+      oLabel: (accessorLabel: string, _: any) => {
+        return (
+          <text textAnchor="middle">
+            {
+              // eslint-disable-next-line react/destructuring-assignment
+              accessorLabel.split(/(.*?\/)/g).map((wrapPart) => (
+                <tspan key={accessorLabel} dy="1.5em" x="0">
+                  {wrapPart}
+                </tspan>
+              ))
+            }
+          </text>
+        );
+      },
+    }),
+  } as ResponsiveFrameProps;
+
   return (
     <div>
       <div
         className={cn("VizPopulationSnapshot VizPathways", {
-          "VizPopulationSnapshot__labels--not-rotated": !isRotateLabels,
+          "VizPopulationSnapshot__labels--not-rotated": !metric.rotateLabels,
+          "VizPopulationSnapshot__horizontal-bar": metric.isHorizontal,
         })}
       >
         <div className="VizPathways__header">
@@ -144,88 +269,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
             {chartTitle} <span>as of {latestUpdate}</span>
           </div>
         </div>
-        <ResponsiveOrdinalFrame
-          // The key is necessary here to force the viz to remount
-          // when there is a new metric to ensure there is not an awkward transition
-          key={metric.id}
-          responsiveWidth
-          hoverAnnotation
-          customHoverBehavior={(piece: any) => {
-            if (piece) {
-              setHoveredId(piece.index);
-            } else {
-              setHoveredId(null);
-            }
-          }}
-          svgAnnotationRules={(annotation: any) => {
-            if (annotation.d.type === "column-hover") {
-              return hoverAnnotation(annotation);
-            }
-            setHoveredId(null);
-            return null;
-          }}
-          baseMarkProps={{ transitionDuration: { default: 500 } }}
-          tooltipContent={(d: any) => {
-            const pieceData = d.pieces[0];
-            return (
-              <PathwaysTooltip
-                label={pieceData.tooltipLabel}
-                value={isRate ? `${pieceData.value}%` : pieceData.value}
-              />
-            );
-          }}
-          type="bar"
-          data={data}
-          size={[558, 558]}
-          margin={{
-            left: ticksMargin,
-            bottom: isRotateLabels ? 116 : 75,
-            right: 50,
-            top: 56,
-          }}
-          oAccessor="accessorLabel"
-          oPadding={data.length > 25 ? 2 : 15}
-          style={(d: any) => {
-            const isPicked = pickedId.includes(d.accessorValue);
-            const isHovered = d.index === hoveredId;
-            const color = isGeographic
-              ? styles.dataGoldDark
-              : styles.dataForestDark;
-            const opacity =
-              (hoveredId === null && pickedId[0] === "ALL") ||
-              (hoveredId === null && pickedId.length === 0) ||
-              isHovered ||
-              isPicked
-                ? 1
-                : 0.75;
-            return { fill: color, fillOpacity: opacity };
-          }}
-          rAccessor="value"
-          rExtent={yRange}
-          // @ts-ignore
-          oLabel={(accessorLabel: string, _: any) => {
-            return (
-              <text textAnchor="middle">
-                {!isOfficer &&
-                  (isRotateLabels
-                    ? accessorLabel.split(/(.*?\/)/g).map((wrapPart) => (
-                        <tspan dy="1.5em" x="0">
-                          {wrapPart}
-                        </tspan>
-                      ))
-                    : accessorLabel)}
-              </text>
-            );
-          }}
-          axes={[
-            {
-              orient: "left",
-              tickFormat: (n: number) =>
-                isRate ? `${n}%` : n.toLocaleString(),
-              tickValues,
-            },
-          ]}
-        />
+        <ResponsiveOrdinalFrame {...chartProps} />
         {chartXAxisTitle && (
           <div className="VizPopulationSnapshot__chartXAxisTitle">
             {chartXAxisTitle}

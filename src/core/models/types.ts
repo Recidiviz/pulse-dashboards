@@ -182,6 +182,7 @@ export type SupervisionPopulationSnapshotRecord = {
   race: string;
   timePeriod: TimePeriod;
   officerName: string;
+  caseload: number;
 };
 
 export type SupervisionPopulationTimeSeriesRecord = {

@@ -32,9 +32,14 @@ import {
   NavigationSection,
   RoutePermission,
 } from "../core/types/navigation";
-import { CorePageIdList, PathwaysPageIdList } from "../core/views";
+import {
+  CorePageIdList,
+  PATHWAYS_SECTIONS,
+  PathwaysPageIdList,
+} from "../core/views";
 import { authenticate } from "../firestore";
 import tenants from "../tenants";
+import isIE11 from "../utils/isIE11";
 import { isOfflineMode } from "../utils/isOfflineMode";
 import { getAllowedMethodology } from "../utils/navigation";
 import type RootStore from ".";
@@ -290,6 +295,7 @@ export default class UserStore {
     const { navigation, betaNavigation, pagesWithRestrictions } = tenants[
       this.rootStore.currentTenantId
     ];
+
     const allowed =
       this.shouldSeeBetaCharts && betaNavigation ? betaNavigation : navigation;
     if (!allowed) return {};
@@ -319,6 +325,14 @@ export default class UserStore {
     if (allowed.system?.length === 0) {
       delete allowed.system;
     }
+
+    if (isIE11() && allowed?.supervisionToPrison) {
+      const indexOfOfficerChart = allowed.supervisionToPrison?.findIndex(
+        (r) => r === PATHWAYS_SECTIONS.countByOfficer
+      );
+      allowed.supervisionToPrison.splice(indexOfOfficerChart, 1);
+    }
+
     return { ...allowed, ...getAllowedMethodology(allowed) };
   }
 

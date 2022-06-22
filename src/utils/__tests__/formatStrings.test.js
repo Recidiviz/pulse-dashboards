@@ -78,6 +78,10 @@ describe("formatStrings", () => {
     expect(dataErrorAfterTest).toEqual("");
   });
 
+  it("to title case with hyphen", () => {
+    expect(utils.toTitleCase("barney rub-ble")).toEqual("Barney Rub-Ble");
+  });
+
   it("human readable title case with underscores", () => {
     const dataForTesting = "SAN_FRANCISCO_CALIFORNIA";
     const dataAfterTest = utils.humanReadableTitleCase(dataForTesting);
@@ -297,5 +301,19 @@ describe("formatStrings", () => {
     const withCurlyQuotes = "“ ” ‘ ’";
     const result = utils.convertCurlyQuotesToStraight(withCurlyQuotes);
     expect(result).toEqual("\" \" ' '");
+  });
+
+  describe("formatName", () => {
+    it("formats a 'firstName lastName' correctly", () => {
+      expect(utils.formatName("Barney Rubble")).toBe("B. Rubble");
+    });
+
+    it("formats a 'firstName middleInitial lastName' correctly", () => {
+      expect(utils.formatName("Barney J. Rubble")).toBe("B. Rubble");
+    });
+
+    it("formats a name with more than 10 character last Name correctly", () => {
+      expect(utils.formatName("Barney Rubbbbbbble")).toBe("B. Rubbbbbbbl...");
+    });
   });
 });

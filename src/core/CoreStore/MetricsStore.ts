@@ -164,6 +164,8 @@ export default class MetricsStore {
       hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .libertyToPrisonPopulationByDistrict,
+      rotateLabels: true,
+      isGeographic: true,
     });
   }
 
@@ -179,6 +181,7 @@ export default class MetricsStore {
       hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .libertyToPrisonPopulationByRace,
+      rotateLabels: true,
     });
   }
 
@@ -223,6 +226,7 @@ export default class MetricsStore {
       hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .libertyToPrisonPopulationByPriorLengthOfIncarceration,
+      accessorIsNotFilterType: true,
     });
   }
 
@@ -263,6 +267,8 @@ export default class MetricsStore {
       dataTransformer: createPrisonPopulationSnapshot,
       filters: this.rootStore.filtersStore.enabledFilters
         .prisonFacilityPopulation,
+      rotateLabels: true,
+      isGeographic: true,
     });
   }
 
@@ -277,6 +283,7 @@ export default class MetricsStore {
       dataTransformer: createPrisonPopulationSnapshot,
       filters: this.rootStore.filtersStore.enabledFilters
         .prisonPopulationByRace,
+      rotateLabels: true,
     });
   }
 
@@ -332,6 +339,8 @@ export default class MetricsStore {
       hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .prisonToSupervisionPopulationByFacility,
+      rotateLabels: true,
+      isGeographic: true,
     });
   }
 
@@ -347,6 +356,7 @@ export default class MetricsStore {
       hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .prisonToSupervisionPopulationByRace,
+      rotateLabels: true,
     });
   }
 
@@ -402,6 +412,8 @@ export default class MetricsStore {
       accessor: "district",
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionPopulationByDistrict,
+      rotateLabels: true,
+      isGeographic: true,
     });
   }
 
@@ -417,6 +429,7 @@ export default class MetricsStore {
       accessor: "race",
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionPopulationByRace,
+      rotateLabels: true,
     });
   }
 
@@ -431,6 +444,7 @@ export default class MetricsStore {
       accessor: "supervisionLevel",
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionPopulationBySupervisionLevel,
+      rotateLabels: true,
     });
   }
 
@@ -461,6 +475,8 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByDistrict,
+      rotateLabels: true,
+      isGeographic: true,
     });
   }
 
@@ -506,6 +522,7 @@ export default class MetricsStore {
       hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByLengthOfStay,
+      accessorIsNotFilterType: true,
     });
   }
 
@@ -522,6 +539,7 @@ export default class MetricsStore {
       hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationBySupervisionLevel,
+      rotateLabels: true,
     });
   }
 
@@ -554,6 +572,7 @@ export default class MetricsStore {
       hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByRace,
+      rotateLabels: true,
     });
   }
 
@@ -567,8 +586,10 @@ export default class MetricsStore {
       accessor: "officerName",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
+      isHorizontal: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToPrisonPopulationByOfficer,
+      accessorIsNotFilterType: true,
     });
   }
 
@@ -614,6 +635,7 @@ export default class MetricsStore {
       enableMetricModeToggle: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToLibertyPopulationByRace,
+      rotateLabels: true,
     });
   }
 
@@ -630,6 +652,8 @@ export default class MetricsStore {
       hasTimePeriodDimension: true,
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionToLibertyPopulationByLocation,
+      rotateLabels: true,
+      isGeographic: true,
     });
   }
 

@@ -25,6 +25,7 @@ import {
 } from "../../core/views";
 import { authenticate } from "../../firestore";
 import tenants from "../../tenants";
+import isIE11 from "../../utils/isIE11";
 import RootStore from "..";
 import { TenantId } from "../types";
 import UserStore from "../UserStore";
@@ -32,6 +33,7 @@ import UserStore from "../UserStore";
 jest.mock("@auth0/auth0-spa-js");
 jest.mock("../../firestore");
 jest.mock("../../analytics");
+jest.mock("../../utils/isIE11");
 
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 
@@ -46,6 +48,7 @@ const mockFirestoreAuthenticate = authenticate as jest.Mock;
 const mockIdentify = identify as jest.Mock<typeof identify>;
 
 const mockHandleUrl = jest.fn();
+const mockIsIE11 = isIE11 as jest.Mock<boolean>;
 
 const tenantId = "US_MO";
 const metadataField = `${METADATA_NAMESPACE}app_metadata`;
@@ -65,6 +68,7 @@ beforeEach(() => {
     loginWithRedirect: mockLoginWithRedirect,
     getTokenSilently: mockGetTokenSilently,
   });
+  mockIsIE11.mockReturnValue(false);
 });
 
 afterEach(() => {
@@ -501,6 +505,87 @@ describe("userAllowedNavigation", () => {
     });
     await store.authorize(mockHandleUrl);
     expect(store.userAllowedNavigation).toEqual(tenants[stateCode].navigation);
+  });
+
+  describe("when the browser isIE11", () => {
+    let tenantMetadata;
+    let store: UserStore;
+    beforeEach(() => {
+      mockIsIE11.mockReturnValue(true);
+      mockIsAuthenticated.mockResolvedValue(true);
+      tenantMetadata = {
+        [metadataField]: {
+          state_code: stateCode,
+          routes: {
+            system_prison: false,
+          },
+        },
+      };
+      mockGetUser.mockResolvedValue({
+        email_verified: true,
+        ...tenantMetadata,
+      });
+      mockGetUser.mockResolvedValue({
+        email_verified: true,
+        ...tenantMetadata,
+      });
+      store = new UserStore({
+        authSettings: testAuthSettings,
+        rootStore: {
+          currentTenantId: stateCode,
+        } as typeof RootStore,
+      });
+    });
+
+    test("returns the navigation object minus the officer chart", async () => {
+      tenants[stateCode].navigation = {
+        system: [
+          PATHWAYS_PAGES.libertyToPrison,
+          PATHWAYS_PAGES.prison,
+          PATHWAYS_PAGES.supervision,
+        ],
+        libertyToPrison: [PATHWAYS_SECTIONS.countOverTime],
+        prison: [PATHWAYS_SECTIONS.countOverTime],
+        supervision: [PATHWAYS_SECTIONS.countOverTime],
+        supervisionToPrison: [PATHWAYS_SECTIONS.countByOfficer],
+        "id-methodology": [PATHWAYS_VIEWS.system],
+        methodology: [],
+      };
+
+      await store.authorize(mockHandleUrl);
+      const expected = {
+        "id-methodology": ["system"],
+        libertyToPrison: ["countOverTime"],
+        methodology: [],
+        system: ["libertyToPrison"],
+        supervisionToPrison: [],
+      };
+      expect(store.userAllowedNavigation).toEqual(expected);
+    });
+
+    test("it does not error if allowed.supervisionToPrison is undefined", async () => {
+      tenants[stateCode].navigation = {
+        system: [
+          PATHWAYS_PAGES.libertyToPrison,
+          PATHWAYS_PAGES.prison,
+          PATHWAYS_PAGES.supervision,
+        ],
+        libertyToPrison: [PATHWAYS_SECTIONS.countOverTime],
+        prison: [PATHWAYS_SECTIONS.countOverTime],
+        supervision: [PATHWAYS_SECTIONS.countOverTime],
+        "id-methodology": [PATHWAYS_VIEWS.system],
+        methodology: [],
+      };
+
+      await store.authorize(mockHandleUrl);
+      const expected = {
+        "id-methodology": ["system"],
+        libertyToPrison: ["countOverTime"],
+        methodology: [],
+        system: ["libertyToPrison"],
+      };
+      expect(store.userAllowedNavigation).toEqual(expected);
+    });
   });
 });
 

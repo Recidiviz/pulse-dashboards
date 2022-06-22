@@ -69,6 +69,10 @@ export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   enableMetricModeToggle?: boolean;
   compartment?: SimulationCompartment;
   hasTimePeriodDimension?: boolean;
+  isHorizontal?: boolean;
+  isGeographic?: boolean;
+  rotateLabels?: boolean;
+  accessorIsNotFilterType?: boolean;
 };
 
 /**
@@ -113,6 +117,14 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   hasTimePeriodDimension?: boolean = false;
 
+  isHorizontal?: boolean = false;
+
+  isGeographic?: boolean = false;
+
+  rotateLabels?: boolean = false;
+
+  accessorIsNotFilterType?: boolean = false;
+
   endpoint?: string;
 
   groupBy?: string;
@@ -129,6 +141,10 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     enableMetricModeToggle,
     compartment,
     hasTimePeriodDimension,
+    isHorizontal,
+    isGeographic,
+    rotateLabels,
+    accessorIsNotFilterType,
   }: BaseMetricConstructorOptions<RecordFormat>) {
     makeObservable<PathwaysMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
@@ -148,6 +164,10 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.enableMetricModeToggle = enableMetricModeToggle;
     this.compartment = compartment;
     this.hasTimePeriodDimension = hasTimePeriodDimension;
+    this.isHorizontal = isHorizontal;
+    this.isGeographic = isGeographic;
+    this.rotateLabels = rotateLabels;
+    this.accessorIsNotFilterType = accessorIsNotFilterType;
 
     autorun(() => {
       if (
