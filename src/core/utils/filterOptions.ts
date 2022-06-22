@@ -946,6 +946,8 @@ export const MePopulationFilterOptions: PopulationFilters = {
       { label: "Moderate", value: "MEDIUM" },
       { label: "High", value: "HIGH" },
       { label: "Maximum", value: "MAXIMUM" },
+      { label: "Other", value: "OTHER" },
+      { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
