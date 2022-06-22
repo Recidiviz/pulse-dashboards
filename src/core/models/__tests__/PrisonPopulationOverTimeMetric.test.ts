@@ -49,6 +49,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           state_code: "US_TN",
           event_count: 7641,
           year: "2015",
+          race: "ALL",
         },
         {
           gender: "ALL",
@@ -58,6 +59,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           state_code: "US_TN",
           person_count: 7641,
           year: "2016",
+          race: "ALL",
         },
         {
           gender: "MALE",
@@ -67,6 +69,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           state_code: "US_TN",
           person_count: 7641,
           year: "2016",
+          race: "ALL",
         },
       ],
     }),
@@ -130,6 +133,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
         count: 7641,
         year: 2015,
         lengthOfStay: "ALL",
+        race: "ALL",
       },
       {
         gender: "ALL",
@@ -140,6 +144,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
         count: 7641,
         year: 2016,
         lengthOfStay: "ALL",
+        race: "ALL",
       },
       {
         gender: "MALE",
@@ -150,6 +155,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
         count: 7641,
         year: 2016,
         lengthOfStay: "ALL",
+        race: "ALL",
       },
     ]);
   });
@@ -219,6 +225,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
           avg90day: 7641,
           facility: "ALL",
           lengthOfStay: "ALL",
+          race: "ALL",
         },
       ]);
     });
@@ -243,6 +250,7 @@ describe("PrisonPopulationOverTimeMetric", () => {
             count: 7641,
             year: 2016,
             lengthOfStay: "ALL",
+            race: "ALL",
           },
         ]);
       });

@@ -51,18 +51,21 @@ const US_ID_CONFIG: TenantConfig = {
     prison: [
       PATHWAYS_SECTIONS.projectedCountOverTime,
       PATHWAYS_SECTIONS.countByLocation,
+      PATHWAYS_SECTIONS.countByRace,
       PATHWAYS_SECTIONS.personLevelDetail,
     ],
     prisonToSupervision: [
       PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLocation,
       PATHWAYS_SECTIONS.countByAgeGroup,
+      PATHWAYS_SECTIONS.countByRace,
       PATHWAYS_SECTIONS.personLevelDetail,
     ],
     supervision: [
       PATHWAYS_SECTIONS.projectedCountOverTime,
       PATHWAYS_SECTIONS.countByLocation,
       PATHWAYS_SECTIONS.countBySupervisionLevel,
+      PATHWAYS_SECTIONS.countByRace,
     ],
     supervisionToPrison: [
       PATHWAYS_SECTIONS.countOverTime,
@@ -76,9 +79,9 @@ const US_ID_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLengthOfStay,
       PATHWAYS_SECTIONS.countByLocation,
-      PATHWAYS_SECTIONS.countByRace,
       PATHWAYS_SECTIONS.countByGender,
       PATHWAYS_SECTIONS.countByAgeGroup,
+      PATHWAYS_SECTIONS.countByRace,
     ],
     "id-methodology": ["system", "operations"],
   },

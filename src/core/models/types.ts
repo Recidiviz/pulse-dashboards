@@ -140,6 +140,7 @@ export type PrisonPopulationSnapshotRecord = {
   facility: string;
   lengthOfStay: LengthOfStay;
   timePeriod: TimePeriod;
+  race: string;
 };
 
 export type PrisonPopulationPersonLevelRecord = {
@@ -152,6 +153,7 @@ export type PrisonPopulationPersonLevelRecord = {
   admissionReason: string;
   facility: string;
   timePeriod: TimePeriod;
+  race: string;
 };
 
 export type PrisonPopulationTimeSeriesRecord = {
@@ -327,17 +329,20 @@ export type MetricId =
   | "libertyToPrisonPopulationByRace"
   | "libertyToPrisonPopulationByAgeGroup"
   | "libertyToPrisonPopulationByPriorLengthOfIncarceration"
-  | "prisonFacilityPopulation"
   | "prisonPopulationOverTime"
+  | "prisonFacilityPopulation"
+  | "prisonPopulationByRace"
   | "projectedPrisonPopulationOverTime"
   | "prisonPopulationPersonLevel"
   | "prisonToSupervisionPopulationOverTime"
   | "prisonToSupervisionPopulationByAge"
   | "prisonToSupervisionPopulationByFacility"
+  | "prisonToSupervisionPopulationByRace"
   | "prisonToSupervisionPopulationPersonLevel"
   | "supervisionPopulationOverTime"
   | "projectedSupervisionPopulationOverTime"
   | "supervisionPopulationByDistrict"
+  | "supervisionPopulationByRace"
   | "supervisionPopulationBySupervisionLevel"
   | "supervisionToPrisonOverTime"
   | "supervisionToPrisonPopulationByDistrict"

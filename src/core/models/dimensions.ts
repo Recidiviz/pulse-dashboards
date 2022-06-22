@@ -39,6 +39,7 @@ export const dimensionsByMetricType = {
     DIMENSION_TYPES.ADMISSION_REASON,
     DIMENSION_TYPES.FACILITY,
     DIMENSION_TYPES.AGE_GROUP,
+    DIMENSION_TYPES.RACE,
   ],
   prison_population_projection_time_series: [
     DIMENSION_TYPES.GENDER,
@@ -50,38 +51,45 @@ export const dimensionsByMetricType = {
     DIMENSION_TYPES.FACILITY,
     DIMENSION_TYPES.AGE_GROUP,
     DIMENSION_TYPES.LENGTH_OF_STAY,
+    DIMENSION_TYPES.RACE,
   ],
   prison_population_snapshot_person_level: [
     DIMENSION_TYPES.GENDER,
     DIMENSION_TYPES.ADMISSION_REASON,
     DIMENSION_TYPES.FACILITY,
     DIMENSION_TYPES.AGE_GROUP,
+    DIMENSION_TYPES.RACE,
   ],
   // PRISON TO SUPERVISION
   prison_to_supervision_count_by_month: [
     DIMENSION_TYPES.GENDER,
     DIMENSION_TYPES.FACILITY,
     DIMENSION_TYPES.AGE_GROUP,
+    DIMENSION_TYPES.RACE,
   ],
   prison_to_supervision_population_snapshot_by_dimension: [
     DIMENSION_TYPES.GENDER,
     DIMENSION_TYPES.FACILITY,
     DIMENSION_TYPES.AGE_GROUP,
+    DIMENSION_TYPES.RACE,
   ],
   prison_to_supervision_population_snapshot_person_level: [
     DIMENSION_TYPES.GENDER,
     DIMENSION_TYPES.FACILITY,
     DIMENSION_TYPES.AGE_GROUP,
+    DIMENSION_TYPES.RACE,
   ],
   // SUPERVISION
   supervision_population_time_series: [
     DIMENSION_TYPES.DISTRICT,
     DIMENSION_TYPES.SUPERVISION_LEVEL,
+    DIMENSION_TYPES.RACE,
   ],
   supervision_population_projection_time_series: [DIMENSION_TYPES.GENDER],
   supervision_population_snapshot_by_dimension: [
     DIMENSION_TYPES.DISTRICT,
     DIMENSION_TYPES.SUPERVISION_LEVEL,
+    DIMENSION_TYPES.RACE,
   ],
   // SUPERVISION TO PRISON
   supervision_to_prison_count_by_month: [

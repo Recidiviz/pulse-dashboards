@@ -29,29 +29,15 @@ const content: MetricCopy = {
     title: "Supervision population over time",
     note: "Historical and projected population data were generated",
   },
-  supervisionToLibertyOverTime: {
-    title: "Releases from supervision over time",
-    note:
-      "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
-    methodology:
-      'The chart describes the historical supervision population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. ',
-  },
-  prisonPopulationPersonLevel: {
-    title: "List of people in prison",
-    methodology:
-      "The table includes a row for each person incarcerated as of the date specified in the chart title. ",
-  },
   prisonFacilityPopulation: {
     title: "Prison population by facility",
     methodology:
       "The chart describes the number of people in each facility as of the date specified in the chart title. ",
   },
-  supervisionToPrisonOverTime: {
-    title: "Admissions from supervision over time",
-    note:
-      "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
+  prisonPopulationByRace: {
+    title: "Prison population by race",
     methodology:
-      "These charts include events where people are admitted from supervision to prison. This includes revocations, sanction admissions, and new court commits that occur while an individual is on supervision. Revocations are counted when the person was admitted to incarceration status, not when the violation occurred. All charts on this page are event-based, so if a single person has two revocations during the selected time period, two events are counted on this page.",
+      "The chart describes the number of people from each race as of the date specified in the chart title. ",
   },
   prisonPopulationOverTime: {
     title: "Prison population over time",
@@ -59,6 +45,18 @@ const content: MetricCopy = {
       "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
     methodology:
       'The chart describes the historical incarceration population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. ',
+  },
+  prisonPopulationPersonLevel: {
+    title: "List of people in prison",
+    methodology:
+      "The table includes a row for each person incarcerated as of the date specified in the chart title. ",
+  },
+  supervisionToPrisonOverTime: {
+    title: "Admissions from supervision over time",
+    note:
+      "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
+    methodology:
+      "These charts include events where people are admitted from supervision to prison. This includes revocations, sanction admissions, and new court commits that occur while an individual is on supervision. Revocations are counted when the person was admitted to incarceration status, not when the violation occurred. All charts on this page are event-based, so if a single person has two revocations during the selected time period, two events are counted on this page.",
   },
   supervisionToPrisonPopulationByLengthOfStay: {
     title: "Length of stay on supervision before admission",
@@ -120,6 +118,11 @@ const content: MetricCopy = {
     methodology:
       'The chart describes the number of people released from prison to supervision from each age group as of the date specified in the chart title. When "Counts" is selected, the number of people in each age group is shown. When "Rates" is selected, the percentage shows the number of people in each age group divided by the total number of people released to supervision.',
   },
+  prisonToSupervisionPopulationByRace: {
+    title: "Releases from prison to supervision by race",
+    methodology:
+      'The chart describes the number of people released from prison to supervision from each race as of the date specified in the chart title. When "Counts" is selected, the number of people in each race is shown. When "Rates" is selected, the percentage shows the number of people in each age group divided by the total number of people released to supervision.',
+  },
   prisonToSupervisionPopulationByFacility: {
     title: "Releases from prison to supervision by facility",
     methodology:
@@ -142,6 +145,11 @@ const content: MetricCopy = {
     methodology:
       "The chart describes the number of people on supervision in each district as of the date specified in the chart title.",
   },
+  supervisionPopulationByRace: {
+    title: "Supervision population by race",
+    methodology:
+      "The chart describes the number of people on supervision from each race as of the date specified in the chart title.",
+  },
   supervisionPopulationBySupervisionLevel: {
     title: "Supervision population by supervision level",
     methodology:
@@ -150,9 +158,9 @@ const content: MetricCopy = {
   supervisionToPrisonPopulationByOfficer: {
     title: "Admissions from supervision by officer",
     note:
-      "This chart reflects the number of admissions from an officer's caseload during the selected time period, where officers with the most admissions appear at the top. If an officer had no admissions from their caseload during the time period, they do not appear in this chart.",
+      'If an officer had no admissions from their caseload during the time period, they do not appear in this chart. Officer caseloads vary widely, so admission rates by officer may be based on a relatively small number of cases and therefore less generalizable. When "Counts" is selected, the number of people on each officer\'s caseload is shown. When "Rates" is selected, the percentage shows the number of admissions per officer divided by the total number of unique people that the officer supervised over the selected time period. Performance improvements are coming soon that will make this chart load faster.',
     methodology:
-      'The chart describes the number of people admitted to prison from each officer\'s caseload as of the date specified in the chart title. The admission is attributed to the officer who was assigned to that person on the day of their admission to a prison. When "Counts" is selected, the number of people on each officer\'s caseload is shown. When "Rates" is selected, the percentage shows the number of people on each officer\'s caseload divided by the total number of people admitted to prison.',
+      'The chart describes the number of people admitted to prison from each officer\'s caseload as of the date specified in the chart title. The admission is attributed to the officer who was assigned to that person on the day of their admission to a prison. If an officer had no admissions from their caseload during the time period, they do not appear in this chart. When "Counts" is selected, the number of people on each officer\'s caseload is shown. When "Rates" is selected, the percentage shows the number of admissions per officer divided by the total number of unique people that the officer supervised over the selected time period. Officer caseloads vary widely, so admission rates by officer may be based on a relatively small number of cases and therefore less generalizable.',
   },
   supervisionToPrisonPopulationByDistrict: {
     title: "Admissions from supervision by district",
@@ -173,6 +181,13 @@ const content: MetricCopy = {
     title: "Admissions from supervision to prison by race",
     methodology:
       'The chart describes the number of people admitted to prison from each race as of the date specified in the chart title. When "Counts" is selected, the number of people in each race is shown. When "Rates" is selected, the percentage shows the number of people in each race divided by the total number of people admitted to prison.',
+  },
+  supervisionToLibertyOverTime: {
+    title: "Releases from supervision over time",
+    note:
+      "In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
+    methodology:
+      'The chart describes the historical supervision population over the selected "Time Period". Each data point represents the total population for the selected group on the first day of that month. For example, hovering over the "November 2020" data point on the chart will show the total number of people described in the section above on November 1, 2020. ',
   },
   supervisionToLibertyPopulationByLengthOfStay: {
     title: "Length of stay on supervision before release",

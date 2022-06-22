@@ -89,6 +89,7 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
       FILTER_TYPES.AGE_GROUP,
       FILTER_TYPES.ADMISSION_REASON,
     ],
@@ -97,6 +98,16 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
     enabledFilters: [
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+      FILTER_TYPES.ADMISSION_REASON,
+    ],
+  },
+  prisonPopulationByRace: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
       FILTER_TYPES.AGE_GROUP,
       FILTER_TYPES.ADMISSION_REASON,
     ],
@@ -105,6 +116,7 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
     enabledFilters: [
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
       FILTER_TYPES.AGE_GROUP,
       FILTER_TYPES.ADMISSION_REASON,
     ],
@@ -115,6 +127,7 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
       FILTER_TYPES.AGE_GROUP,
     ],
   },
@@ -123,6 +136,7 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
       FILTER_TYPES.AGE_GROUP,
     ],
   },
@@ -131,6 +145,16 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  prisonToSupervisionPopulationByRace: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
       FILTER_TYPES.AGE_GROUP,
     ],
   },
@@ -139,6 +163,7 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.FACILITY,
       FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
       FILTER_TYPES.AGE_GROUP,
     ],
   },
@@ -147,14 +172,30 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.RACE,
       FILTER_TYPES.SUPERVISION_LEVEL,
     ],
   },
   supervisionPopulationByDistrict: {
-    enabledFilters: [FILTER_TYPES.DISTRICT, FILTER_TYPES.SUPERVISION_LEVEL],
+    enabledFilters: [
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.SUPERVISION_LEVEL,
+    ],
   },
   supervisionPopulationBySupervisionLevel: {
-    enabledFilters: [FILTER_TYPES.DISTRICT, FILTER_TYPES.SUPERVISION_LEVEL],
+    enabledFilters: [
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.SUPERVISION_LEVEL,
+    ],
+  },
+  supervisionPopulationByRace: {
+    enabledFilters: [
+      FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.SUPERVISION_LEVEL,
+    ],
   },
   // SUPERVISION TO PRISON
   supervisionToPrisonOverTime: {
@@ -254,9 +295,9 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
       FILTER_TYPES.SUPERVISION_TYPE,
       FILTER_TYPES.AGE_GROUP,
-      FILTER_TYPES.RACE,
     ],
   },
   supervisionToLibertyPopulationByLengthOfStay: {
@@ -264,6 +305,7 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
       FILTER_TYPES.SUPERVISION_TYPE,
     ],
   },
@@ -272,9 +314,9 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
       FILTER_TYPES.SUPERVISION_TYPE,
       FILTER_TYPES.AGE_GROUP,
-      FILTER_TYPES.RACE,
     ],
   },
   supervisionToLibertyPopulationByGender: {
@@ -282,27 +324,28 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
       FILTER_TYPES.TIME_PERIOD,
       FILTER_TYPES.DISTRICT,
       FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
       FILTER_TYPES.SUPERVISION_TYPE,
       FILTER_TYPES.AGE_GROUP,
-      FILTER_TYPES.RACE,
     ],
   },
   supervisionToLibertyPopulationByAgeGroup: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
       FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
+      FILTER_TYPES.SUPERVISION_TYPE,
       FILTER_TYPES.AGE_GROUP,
     ],
   },
   supervisionToLibertyPopulationByRace: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.SUPERVISION_TYPE,
-      FILTER_TYPES.GENDER,
       FILTER_TYPES.DISTRICT,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.SUPERVISION_TYPE,
       FILTER_TYPES.AGE_GROUP,
     ],
   },
@@ -485,7 +528,11 @@ export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
     ],
   },
   supervisionPopulationOverTime: {
-    enabledFilters: [FILTER_TYPES.TIME_PERIOD, FILTER_TYPES.DISTRICT],
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.DISTRICT,
+    ],
   },
 };
 

@@ -1044,7 +1044,7 @@ export const MePopulationFilterOptions: PopulationFilters = {
         value: "NATIVE_HAWAIIAN_PACIFIC_ISLANDER",
       },
       { label: "Other", value: "OTHER" },
-      { label: "Other", value: "NOT_HISPANIC" },
+      { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -1384,6 +1384,7 @@ export const NdPopulationFilterOptions: PopulationFilters = {
         value: "NATIVE_HAWAIIAN_PACIFIC_ISLANDER",
       },
       { label: "Other", value: "OTHER" },
+      { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];

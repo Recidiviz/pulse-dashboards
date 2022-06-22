@@ -53,6 +53,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           age: "18",
           facility: "Bedrock",
           time_period: "months_0_6",
+          race: "EARTHLING",
         },
         {
           state_id: "1",
@@ -64,6 +65,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           age: "20",
           facility: "School of Rock",
           time_period: "months_0_6",
+          race: "EARTHLING",
         },
         {
           state_id: "2",
@@ -75,6 +77,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           age: "18",
           facility: "School of Rock",
           time_period: "months_7_12",
+          race: "EARTHLING",
         },
         {
           state_id: "3",
@@ -86,6 +89,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           age: "18",
           facility: "School of Rock",
           time_period: "months_0_6",
+          race: "EARTHLING",
         },
         {
           state_id: "4",
@@ -97,6 +101,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           age: "18",
           facility: "Bedrock",
           time_period: "months_7_12",
+          race: "EARTHLING",
         },
       ],
     }),
@@ -162,6 +167,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         age: "18",
         facility: "Bedrock",
         timePeriod: "6",
+        race: "EARTHLING",
       },
       {
         stateId: "1",
@@ -173,6 +179,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         age: "20",
         facility: "School of Rock",
         timePeriod: "6",
+        race: "EARTHLING",
       },
       {
         stateId: "2",
@@ -184,6 +191,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         age: "18",
         facility: "School of Rock",
         timePeriod: "12",
+        race: "EARTHLING",
       },
       {
         stateId: "3",
@@ -195,6 +203,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         age: "18",
         facility: "School of Rock",
         timePeriod: "6",
+        race: "EARTHLING",
       },
       {
         stateId: "4",
@@ -206,6 +215,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         age: "18",
         facility: "Bedrock",
         timePeriod: "12",
+        race: "EARTHLING",
       },
     ]);
   });
@@ -246,6 +256,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           age: "18, 20",
           facility: "Bedrock, School of Rock",
           timePeriod: "6",
+          race: "EARTHLING",
         },
         {
           stateId: "3",
@@ -257,6 +268,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           age: "18",
           facility: "School of Rock",
           timePeriod: "6",
+          race: "EARTHLING",
         },
       ]);
     });
@@ -274,6 +286,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           age: "18, 20",
           facility: "Bedrock, School of Rock",
           timePeriod: "6",
+          race: "EARTHLING",
         },
         {
           stateId: "2",
@@ -285,6 +298,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           age: "18",
           facility: "School of Rock",
           timePeriod: "12",
+          race: "EARTHLING",
         },
         {
           stateId: "3",
@@ -296,6 +310,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           age: "18",
           facility: "School of Rock",
           timePeriod: "6",
+          race: "EARTHLING",
         },
         {
           stateId: "4",
@@ -307,6 +322,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           age: "18",
           facility: "Bedrock",
           timePeriod: "12",
+          race: "EARTHLING",
         },
       ]);
     });
@@ -331,6 +347,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
             age: "18",
             facility: "Bedrock",
             timePeriod: "6",
+            race: "EARTHLING",
           },
         ]);
       });
@@ -357,6 +374,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
             FILTER_TYPES.LEGAL_STATUS,
             FILTER_TYPES.AGE_GROUP,
             FILTER_TYPES.FACILITY,
+            FILTER_TYPES.RACE,
           ],
         },
       });
@@ -400,6 +418,11 @@ describe("PrisonPopulationPersonLevelMetric", () => {
           accessor: "admissionReason",
           titleCase: true,
         },
+        {
+          Header: "Race",
+          accessor: "race",
+          titleCase: true,
+        },
       ];
       expect(metric.columns).toEqual(expected);
     });
@@ -415,6 +438,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
                 "DOC ID": "1",
                 Facility: "Bedrock, School of Rock",
                 Gender: "Male",
+                Race: "Earthling",
               },
               {
                 "Admission Reason": "Sanction",
@@ -422,6 +446,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
                 "DOC ID": "2",
                 Facility: "School of Rock",
                 Gender: "Male",
+                Race: "Earthling",
               },
               {
                 "Admission Reason": "Sanction",
@@ -429,6 +454,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
                 "DOC ID": "3",
                 Facility: "School of Rock",
                 Gender: "Male",
+                Race: "Earthling",
               },
               {
                 "Admission Reason": "New Admission",
@@ -436,6 +462,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
                 "DOC ID": "4",
                 Facility: "Bedrock",
                 Gender: "Female",
+                Race: "Earthling",
               },
             ],
             label: "",

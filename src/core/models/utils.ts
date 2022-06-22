@@ -157,6 +157,7 @@ export function createPrisonPopulationSnapshot(
         timePeriod:
           record.time_period &&
           timePeriodMap[record.time_period.toLowerCase() as TimePeriodRawValue],
+        race: record.race,
       },
       prisonDimensionDefaults,
       enabledFilters
@@ -220,6 +221,7 @@ export function createPrisonPopulationPersonLevelList(
           timePeriodMap[
             record.time_period?.toLowerCase() as TimePeriodRawValue
           ],
+        race: record.race || "Unknown",
       },
       {},
       enabledFilters

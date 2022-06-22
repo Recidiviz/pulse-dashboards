@@ -49,12 +49,14 @@ const US_MI_CONFIG: TenantConfig = {
     prison: [
       PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLocation,
+      PATHWAYS_SECTIONS.countByRace,
       PATHWAYS_SECTIONS.personLevelDetail,
     ],
     prisonToSupervision: [
       PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLocation,
       PATHWAYS_SECTIONS.countByAgeGroup,
+      PATHWAYS_SECTIONS.countByRace,
       PATHWAYS_SECTIONS.personLevelDetail,
     ],
     supervisionToPrison: [
@@ -69,14 +71,15 @@ const US_MI_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLocation,
       PATHWAYS_SECTIONS.countBySupervisionLevel,
+      PATHWAYS_SECTIONS.countByRace,
     ],
     supervisionToLiberty: [
       PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLengthOfStay,
       PATHWAYS_SECTIONS.countByLocation,
-      PATHWAYS_SECTIONS.countByRace,
       PATHWAYS_SECTIONS.countByGender,
       PATHWAYS_SECTIONS.countByAgeGroup,
+      PATHWAYS_SECTIONS.countByRace,
     ],
     "id-methodology": ["system"],
   },

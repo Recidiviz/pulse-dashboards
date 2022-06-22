@@ -209,6 +209,7 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
     PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration,
   prisonPopulationPersonLevel: PATHWAYS_SECTIONS.personLevelDetail,
   prisonFacilityPopulation: PATHWAYS_SECTIONS.countByLocation,
+  prisonPopulationByRace: PATHWAYS_SECTIONS.countByRace,
   prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS.projectedCountOverTime,
   projectedSupervisionPopulationOverTime:
@@ -216,9 +217,11 @@ export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
   prisonToSupervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   prisonToSupervisionPopulationByAge: PATHWAYS_SECTIONS.countByAgeGroup,
   prisonToSupervisionPopulationByFacility: PATHWAYS_SECTIONS.countByLocation,
+  prisonToSupervisionPopulationByRace: PATHWAYS_SECTIONS.countByRace,
   prisonToSupervisionPopulationPersonLevel: PATHWAYS_SECTIONS.personLevelDetail,
   supervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
   supervisionPopulationByDistrict: PATHWAYS_SECTIONS.countByLocation,
+  supervisionPopulationByRace: PATHWAYS_SECTIONS.countByRace,
   supervisionPopulationBySupervisionLevel:
     PATHWAYS_SECTIONS.countBySupervisionLevel,
   supervisionToPrisonOverTime: PATHWAYS_SECTIONS.countOverTime,

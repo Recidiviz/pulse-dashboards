@@ -41,6 +41,7 @@ const content: PageCopy = {
     sections: {
       countOverTime: "Prison population over time",
       countByLocation: "Prison population by facility",
+      countByRace: "Prison population by race",
       personLevelDetail: "List of people in prison",
     },
     methodology: "Includes individuals who are admitted to state facilities.",
@@ -53,6 +54,7 @@ const content: PageCopy = {
       countOverTime: "Releases from prison to supervision over time",
       countByLocation: "Releases from prison to supervision by facility",
       countByAgeGroup: "Releases from prison to supervision by age",
+      countByRace: "Releases from prison to supervision by race",
       personLevelDetail: "List of releases from prison to supervision",
     },
   },
@@ -63,6 +65,7 @@ const content: PageCopy = {
       countOverTime: "Supervision population over time",
       countByLocation: "Supervision population by district",
       countBySupervisionLevel: "Supervision population by supervision level",
+      countByRace: "Supervision population by race",
     },
   },
   supervisionToPrison: {

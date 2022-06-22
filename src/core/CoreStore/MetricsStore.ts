@@ -77,6 +77,7 @@ export default class MetricsStore {
           .projectedPrisonPopulationOverTime,
         [PATHWAYS_SECTIONS.countOverTime]: this.prisonPopulationOverTime,
         [PATHWAYS_SECTIONS.countByLocation]: this.prisonFacilityPopulation,
+        [PATHWAYS_SECTIONS.countByRace]: this.prisonPopulationByRace,
         [PATHWAYS_SECTIONS.personLevelDetail]: this.prisonPopulationPersonLevel,
       },
       [PATHWAYS_PAGES.prisonToSupervision]: {
@@ -86,6 +87,8 @@ export default class MetricsStore {
           .prisonToSupervisionPopulationByAge,
         [PATHWAYS_SECTIONS.countByLocation]: this
           .prisonToSupervisionPopulationByFacility,
+        [PATHWAYS_SECTIONS.countByRace]: this
+          .prisonToSupervisionPopulationByRace,
         [PATHWAYS_SECTIONS.personLevelDetail]: this
           .prisonToSupervisionPopulationPersonLevel,
       },
@@ -95,6 +98,7 @@ export default class MetricsStore {
         [PATHWAYS_SECTIONS.countOverTime]: this.supervisionPopulationOverTime,
         [PATHWAYS_SECTIONS.countByLocation]: this
           .supervisionPopulationByDistrict,
+        [PATHWAYS_SECTIONS.countByRace]: this.supervisionPopulationByRace,
         [PATHWAYS_SECTIONS.countBySupervisionLevel]: this
           .supervisionPopulationBySupervisionLevel,
       },
@@ -262,6 +266,20 @@ export default class MetricsStore {
     });
   }
 
+  get prisonPopulationByRace(): PrisonPopulationSnapshotMetric {
+    return new PrisonPopulationSnapshotMetric({
+      id: "prisonPopulationByRace",
+      tenantId: this.rootStore.currentTenantId,
+      accessor: "race",
+      sourceFilename: "prison_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      enableMetricModeToggle: true,
+      dataTransformer: createPrisonPopulationSnapshot,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .prisonPopulationByRace,
+    });
+  }
+
   get prisonPopulationPersonLevel(): PrisonPopulationPersonLevelMetric {
     return new PrisonPopulationPersonLevelMetric({
       id: "prisonPopulationPersonLevel",
@@ -317,6 +335,21 @@ export default class MetricsStore {
     });
   }
 
+  get prisonToSupervisionPopulationByRace(): PrisonPopulationSnapshotMetric {
+    return new PrisonPopulationSnapshotMetric({
+      id: "prisonToSupervisionPopulationByRace",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "prison_to_supervision_population_snapshot_by_dimension",
+      rootStore: this.rootStore,
+      enableMetricModeToggle: true,
+      dataTransformer: createPrisonPopulationSnapshot,
+      accessor: "race",
+      hasTimePeriodDimension: true,
+      filters: this.rootStore.filtersStore.enabledFilters
+        .prisonToSupervisionPopulationByRace,
+    });
+  }
+
   get prisonToSupervisionPopulationPersonLevel(): PrisonPopulationPersonLevelMetric {
     return new PrisonPopulationPersonLevelMetric({
       id: "prisonToSupervisionPopulationPersonLevel",
@@ -369,6 +402,21 @@ export default class MetricsStore {
       accessor: "district",
       filters: this.rootStore.filtersStore.enabledFilters
         .supervisionPopulationByDistrict,
+    });
+  }
+
+  get supervisionPopulationByRace(): SupervisionPopulationSnapshotMetric {
+    return new SupervisionPopulationSnapshotMetric({
+      id: "supervisionPopulationByRace",
+      tenantId: this.rootStore.currentTenantId,
+      sourceFilename: "supervision_population_snapshot_by_dimension",
+      compartment: "SUPERVISION",
+      rootStore: this.rootStore,
+      enableMetricModeToggle: true,
+      dataTransformer: createSupervisionPopulationSnapshot,
+      accessor: "race",
+      filters: this.rootStore.filtersStore.enabledFilters
+        .supervisionPopulationByRace,
     });
   }
 

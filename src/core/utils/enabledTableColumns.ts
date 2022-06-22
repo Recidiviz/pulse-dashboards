@@ -63,6 +63,11 @@ export const DefaultTableColumns: TableColumns = {
       accessor: "admissionReason",
       titleCase: true,
     },
+    {
+      Header: "Race",
+      accessor: "race",
+      titleCase: true,
+    },
   ],
   prisonToSupervisionPopulationPersonLevel: [
     {
@@ -94,6 +99,11 @@ export const DefaultTableColumns: TableColumns = {
       accessor: "facility",
       titleCase: false,
       width: 100,
+    },
+    {
+      Header: "Race",
+      accessor: "race",
+      titleCase: true,
     },
   ],
 };

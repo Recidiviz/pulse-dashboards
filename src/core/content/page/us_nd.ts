@@ -28,6 +28,7 @@ const content: StateSpecificPageCopy = {
     sections: {
       countOverTime: "Incarceration population over time",
       countByLocation: "Incarceration population by facility",
+      countByRace: "Incarceration population by race",
       personLevelDetail: "List of people incarcerated",
     },
     methodology:
@@ -64,6 +65,7 @@ const content: StateSpecificPageCopy = {
       countOverTime: "Releases from incarceration to supervision over time",
       countByLocation: "Releases from incarceration to supervision by facility",
       countByAgeGroup: "Releases from incarceration to supervision by age",
+      countByRace: "List of releases from incarceration to supervision by race",
       personLevelDetail: "List of releases from incarceration to supervision",
     },
     methodology:

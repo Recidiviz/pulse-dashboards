@@ -49,6 +49,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           event_count: "30",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
+          race: "ALL",
         },
         // ALL row 12 months
         {
@@ -59,6 +60,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           event_count: "15",
           last_updated: "2021-10-27",
           time_period: "months_7_12",
+          race: "ALL",
         },
         // Row with missing dimension value which will default to Unknown
         {
@@ -68,6 +70,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           event_count: "1",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
+          race: "ALL",
         },
         {
           legal_status: "ALL",
@@ -76,6 +79,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           event_count: "15",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
+          race: "ALL",
         },
         {
           legal_status: "ALL",
@@ -84,6 +88,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           person_count: "5",
           last_updated: "2021-10-27",
           time_period: "months_0_6",
+          race: "ALL",
         },
       ],
     }),
@@ -147,6 +152,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         lastUpdated: formatDateString("2021-10-27"),
         timePeriod: "6",
         lengthOfStay: "ALL",
+        race: "ALL",
       },
       {
         admissionReason: "ALL",
@@ -157,6 +163,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         lastUpdated: formatDateString("2021-10-27"),
         timePeriod: "12",
         lengthOfStay: "ALL",
+        race: "ALL",
       },
       {
         admissionReason: "ALL",
@@ -167,6 +174,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         lastUpdated: formatDateString("2021-10-27"),
         timePeriod: "6",
         lengthOfStay: "ALL",
+        race: "ALL",
       },
       {
         admissionReason: "ALL",
@@ -177,6 +185,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         lastUpdated: formatDateString("2021-10-27"),
         timePeriod: "6",
         lengthOfStay: "ALL",
+        race: "ALL",
       },
       {
         admissionReason: "ALL",
@@ -187,6 +196,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
         lastUpdated: formatDateString("2021-10-27"),
         timePeriod: "6",
         lengthOfStay: "ALL",
+        race: "ALL",
       },
     ]);
   });
@@ -270,6 +280,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
           populationProportion: "50",
           timePeriod: "6",
           lengthOfStay: "ALL",
+          race: "ALL",
         },
       ]);
     });
@@ -295,6 +306,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
             timePeriod: "6",
             populationProportion: "11",
             lengthOfStay: "ALL",
+            race: "ALL",
           },
         ]);
       });
@@ -322,6 +334,7 @@ describe("PrisonPopulationSnapshotMetric", () => {
           timePeriod: "6",
           populationProportion: "33",
           lengthOfStay: "ALL",
+          race: "ALL",
         },
       ]);
     });

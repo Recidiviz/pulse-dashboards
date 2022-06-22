@@ -60,6 +60,11 @@ const content: MetricCopy = {
     note: "Incarcerated population by prison note",
     methodology: "Incarcerated population by prison methodology",
   },
+  prisonPopulationByRace: {
+    title: "Incarcerated Population by Race",
+    note: "Incarcerated population by race note",
+    methodology: "Incarcerated population by race methodology",
+  },
   prisonPopulationOverTime: {
     title: "Incarcerated Population",
     note: "Incarcerated population note",
@@ -90,6 +95,11 @@ const content: MetricCopy = {
     note: "Releases from prison to supervision by facility note",
     methodology: "Releases from prison to supervision by facility methodology",
   },
+  prisonToSupervisionPopulationByRace: {
+    title: "Releases from prison to supervision by race",
+    note: "Releases from prison to supervision by race note",
+    methodology: "Releases from prison to supervision by race methodology",
+  },
   prisonToSupervisionPopulationPersonLevel: {
     title: "List of releases from prison to supervision",
     note: "List of releases from prison to supervision note",
@@ -104,6 +114,11 @@ const content: MetricCopy = {
     title: "Supervision population by district",
     note: "Supervision population by district",
     methodology: "Supervision population by district methodology",
+  },
+  supervisionPopulationByRace: {
+    title: "Supervision population by race",
+    note: "Supervision population by race",
+    methodology: "Supervision population by race methodology",
   },
   supervisionPopulationBySupervisionLevel: {
     title: "Supervision population by supervision level",

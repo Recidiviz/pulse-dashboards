@@ -26,6 +26,10 @@ const content: StateSpecificMetricCopy = {
     note:
       "CPPs are included in the incarceration population. In this over-time chart, counts represent events from the first day of each month. This is different from the other charts on the page, which reflect counts as of the date specified in the chart title.",
   },
+  prisonPopulationByRace: {
+    title: "Incarceration population by race",
+    note: "CPPs are included in the incarceration population.",
+  },
   prisonPopulationPersonLevel: {
     title: "List of people incarcerated",
     note: "CPPs are included in the incarceration population.",
@@ -100,6 +104,11 @@ const content: StateSpecificMetricCopy = {
     title: "Releases from incarceration to supervision by facility",
     methodology:
       'The chart describes the number of people released from incarceration to supervision from each facility as of the date specified in the chart title. When "Counts" is selected, the number of people released from each facility is shown. When "Rates" is selected, the percentage shows the number of people released from each facility divided by the total number of people released to supervision.',
+  },
+  prisonToSupervisionPopulationByRace: {
+    title: "Releases from incarceration to supervision by race",
+    methodology:
+      'The chart describes the number of people released from incarceration to supervision from each race as of the date specified in the chart title. When "Counts" is selected, the number of people released from each race is shown. When "Rates" is selected, the percentage shows the number of people released from each race divided by the total number of people released to supervision.',
   },
   prisonToSupervisionPopulationPersonLevel: {
     title: "List of releases from incarceration to supervision",
