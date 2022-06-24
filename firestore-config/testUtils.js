@@ -27,6 +27,10 @@ export const ETL_COLLECTION_NAMES = [
   "compliantReportingReferrals",
 ];
 /**
+ * Admin collections are read-only (administered by Recidiviz via console)
+ */
+export const ADMIN_COLLECTION_NAMES = ["featureVariants"];
+/**
  * Update collections are writeable
  */
 export const UPDATE_COLLECTION_NAMES = ["userUpdates", "clientUpdates"];

@@ -45,6 +45,7 @@ import {
   ClientRecord,
   ClientUpdateRecord,
   CombinedUserRecord,
+  FeatureVariantRecord,
   FormFieldData,
   isUserRecord,
   OpportunityType,
@@ -101,26 +102,37 @@ const collections = {
     db,
     "compliantReportingReferrals"
   ) as CollectionReference<CompliantReportingReferralRecord>,
+  featureVariants: collection(
+    db,
+    "featureVariants"
+  ) as CollectionReference<FeatureVariantRecord>,
 };
 
 export async function getUser(
   email: string
 ): Promise<CombinedUserRecord | undefined> {
   const queryEmail = email.toLowerCase();
-  const [infoSnapshot, updateSnapshot] = await Promise.all([
+  const [
+    infoSnapshot,
+    updateSnapshot,
+    featureVariantSnapshot,
+  ] = await Promise.all([
     getDocs(
       query(collections.staff, where("email", "==", queryEmail), limit(1))
     ),
     getDoc(doc(collections.userUpdates, queryEmail)),
+    getDoc(doc(collections.featureVariants, queryEmail)),
   ]);
   const info = infoSnapshot.docs[0]?.data();
   if (!info || !isUserRecord(info)) return undefined;
 
   const updates = updateSnapshot.data();
+  const featureVariants = featureVariantSnapshot.data();
 
   return {
     info,
     updates,
+    featureVariants,
   };
 }
 
@@ -130,6 +142,18 @@ export function subscribeToUserUpdates(
 ): Unsubscribe {
   return onSnapshot(
     doc(collections.userUpdates, email.toLowerCase()),
+    (result) => {
+      handleResults(result.data());
+    }
+  );
+}
+
+export function subscribeToFeatureVariants(
+  email: string,
+  handleResults: (results?: FeatureVariantRecord) => void
+): Unsubscribe {
+  return onSnapshot(
+    doc(collections.featureVariants, email.toLowerCase()),
     (result) => {
       handleResults(result.data());
     }

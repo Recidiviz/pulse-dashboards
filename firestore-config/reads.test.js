@@ -19,6 +19,7 @@ import { assertFails, assertSucceeds } from "@firebase/rules-unit-testing";
 import { getDocs } from "firebase/firestore";
 
 import {
+  ADMIN_COLLECTION_NAMES,
   ETL_COLLECTION_NAMES,
   getAnonUser,
   getOutOfStateUser,
@@ -47,6 +48,9 @@ afterEach(async () => {
 async function testAllReads(db, assertFn) {
   return Promise.all([
     ...ETL_COLLECTION_NAMES.map(async (collectionName) => {
+      await assertFn(getDocs(db.collection(collectionName)));
+    }),
+    ...ADMIN_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(getDocs(db.collection(collectionName)));
     }),
     ...UPDATE_COLLECTION_NAMES.map(async (collectionName) => {

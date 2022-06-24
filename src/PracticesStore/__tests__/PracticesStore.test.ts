@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { add } from "date-fns";
 import { keyBy } from "lodash";
 import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
@@ -26,6 +27,7 @@ import {
   getUser,
   subscribeToCaseloads,
   subscribeToEligibleCount,
+  subscribeToFeatureVariants,
   subscribeToOfficers,
   subscribeToUserUpdates,
   UserUpdateRecord,
@@ -42,6 +44,7 @@ import {
   mockSupervisor,
 } from "../__fixtures__";
 import { Client } from "../Client";
+import { dateToTimestamp } from "../utils";
 
 jest.mock("../../firestore");
 
@@ -58,6 +61,9 @@ const mockSubscribeToCaseloads = subscribeToCaseloads as jest.MockedFunction<
 >;
 const mockSubscribeToUserUpdates = subscribeToUserUpdates as jest.MockedFunction<
   typeof subscribeToUserUpdates
+>;
+const mockSubscribeToFeatureVariants = subscribeToFeatureVariants as jest.MockedFunction<
+  typeof subscribeToFeatureVariants
 >;
 
 let rootStore: RootStore;
@@ -205,6 +211,32 @@ test("caseload syncs with stored value changes", async () => {
   await waitForHydration();
 
   expect(practicesStore.selectedOfficerIds).toEqual(mockStoredOfficers);
+});
+
+test("receive feature variants at startup", async () => {
+  mockGetUser.mockResolvedValue({
+    ...mockOfficer,
+    featureVariants: { TEST: {} },
+  });
+
+  await waitForHydration();
+
+  expect(practicesStore.featureVariants).toEqual({
+    TEST: {},
+  });
+});
+
+test("receive feature variants from subscription", async () => {
+  mockSubscribeToFeatureVariants.mockImplementation((email, handler) => {
+    handler({ TEST: {} });
+    return mockUnsub;
+  });
+
+  await waitForHydration();
+
+  expect(practicesStore.featureVariants).toEqual({
+    TEST: {},
+  });
 });
 
 test("subscribe to officers in user's district", async () => {
@@ -613,4 +645,53 @@ test("filter out clients who are almost eligible", async () => {
       )
     ).toBeUndefined()
   );
+});
+
+test("variant with no active date", async () => {
+  mockGetUser.mockResolvedValue({
+    ...mockOfficer,
+    featureVariants: { TEST: { variant: "a" } },
+  });
+
+  await waitForHydration();
+
+  expect(practicesStore.featureVariants).toEqual({
+    TEST: { variant: "a" },
+  });
+});
+
+test("variant with past active date", async () => {
+  mockGetUser.mockResolvedValue({
+    ...mockOfficer,
+    featureVariants: {
+      TEST: {
+        activeDate: dateToTimestamp(
+          add(new Date(), { seconds: -1 }).toISOString()
+        ),
+      },
+    },
+  });
+
+  await waitForHydration();
+
+  expect(practicesStore.featureVariants).toEqual({
+    TEST: {},
+  });
+});
+
+test("variant with future active date", async () => {
+  mockGetUser.mockResolvedValue({
+    ...mockOfficer,
+    featureVariants: {
+      TEST: {
+        activeDate: dateToTimestamp(
+          add(new Date(), { seconds: 1 }).toISOString()
+        ),
+      },
+    },
+  });
+
+  await waitForHydration();
+
+  expect(practicesStore.featureVariants).toEqual({});
 });

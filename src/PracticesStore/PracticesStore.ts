@@ -17,6 +17,7 @@
 
 import { ascending } from "d3-array";
 import {
+  entries,
   has,
   makeAutoObservable,
   reaction,
@@ -25,18 +26,22 @@ import {
   values,
   when,
 } from "mobx";
+import { now } from "mobx-utils";
 
 import { trackCaseloadSearch } from "../analytics";
 import { Hydratable } from "../core/models/types";
 import {
   ClientRecord,
   CombinedUserRecord,
+  FeatureVariant,
+  FeatureVariantRecord,
   getClient,
   getUser,
   OpportunityType,
   StaffRecord,
   subscribeToCaseloads,
   subscribeToEligibleCount,
+  subscribeToFeatureVariants,
   subscribeToOfficers,
   subscribeToUserUpdates,
   updateSelectedOfficerIds,
@@ -60,6 +65,10 @@ export class PracticesStore implements Hydratable {
   user?: CombinedUserRecord;
 
   private userUpdatesSubscription?: SubscriptionValue<UserUpdateRecord>;
+
+  private featureVariantRecord?: FeatureVariantRecord;
+
+  private featureVariantsSubscription?: SubscriptionValue<FeatureVariantRecord>;
 
   private selectedClientPseudoId?: string;
 
@@ -96,6 +105,17 @@ export class PracticesStore implements Hydratable {
         runInAction(() => {
           if (this.user && userUpdates) {
             this.user.updates = userUpdates;
+          }
+        });
+      }
+    );
+    reaction(
+      () => [this.featureVariantsSubscription?.current()],
+      ([featureVariants]) => {
+        runInAction(() => {
+          // featureVariants should only be undefined while the initial fetch is pending
+          if (featureVariants) {
+            this.featureVariantRecord = featureVariants;
           }
         });
       }
@@ -137,12 +157,23 @@ export class PracticesStore implements Hydratable {
       }
 
       if (userRecord) {
-        this.setUserWithDefaults(userRecord as CombinedUserRecord);
+        const { info, updates, featureVariants } = userRecord;
+        // don't include featureVariants in user object so we can keep it private
+        this.setUserWithDefaults({ info, updates });
+        this.featureVariantRecord = featureVariants;
         // subscribe to updates after the initial fetch
         this.userUpdatesSubscription = observableSubscription((syncToStore) =>
           subscribeToUserUpdates(email, (userUpdates) => {
             if (userUpdates) syncToStore(userUpdates);
           })
+        );
+        this.featureVariantsSubscription = observableSubscription(
+          (syncToStore) =>
+            subscribeToFeatureVariants(email, (featureVariantUpdate) => {
+              // returning an empty objects helps us distinguish finding no result from awaiting
+              // the initial result (which will be exposed on the subscription as undefined)
+              syncToStore(featureVariantUpdate ?? {});
+            })
         );
       } else {
         throw new Error(`Unable to retrieve user record for ${email}`);
@@ -310,5 +341,28 @@ export class PracticesStore implements Hydratable {
     await when(() => this.clients[clientId] !== undefined);
 
     this.clients[clientId].trackFormViewed(formType);
+  }
+
+  /**
+   * All feature variants currently active for this user, taking into account
+   * the activeDate for each feature and observing the current Date for reactivity
+   */
+  get featureVariants(): Partial<Record<FeatureVariant, { variant?: string }>> {
+    if (this.featureVariantRecord) {
+      return entries(this.featureVariantRecord).reduce(
+        (activeVariants, [variantName, variantInfo]) => {
+          if (!variantInfo) return activeVariants;
+
+          const { variant, activeDate } = variantInfo;
+          // check date once a minute so there isn't too much lag when we cross the threshold
+          if (activeDate && activeDate.toMillis() > now(1000 * 60))
+            return activeVariants;
+          return { ...activeVariants, [variantName]: { variant } };
+        },
+        {}
+      );
+    }
+
+    return {};
   }
 }

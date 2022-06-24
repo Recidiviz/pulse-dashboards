@@ -19,6 +19,7 @@ import { assertFails, assertSucceeds } from "@firebase/rules-unit-testing";
 import { doc, setDoc } from "firebase/firestore";
 
 import {
+  ADMIN_COLLECTION_NAMES,
   ETL_COLLECTION_NAMES,
   getAnonUser,
   getOutOfStateUser,
@@ -58,13 +59,16 @@ test.each([
   ["state user", getTNUser],
   ["out of state user", getOutOfStateUser],
   ["Recidiviz user", getRecidivizUser],
-])("ETL data is read-only for %s", async (userType, getUserContext) => {
-  await testWriteToCollections(
-    ETL_COLLECTION_NAMES,
-    getUserContext(testEnv).firestore(),
-    assertFails
-  );
-});
+])(
+  "ETL and admin data is read-only for %s",
+  async (userType, getUserContext) => {
+    await testWriteToCollections(
+      [...ETL_COLLECTION_NAMES, ...ADMIN_COLLECTION_NAMES],
+      getUserContext(testEnv).firestore(),
+      assertFails
+    );
+  }
+);
 
 test.each([
   ["anon", getAnonUser],

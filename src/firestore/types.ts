@@ -55,12 +55,26 @@ export type UserUpdateRecord = {
   selectedOfficerIds?: string[];
 };
 
+// TEST is useful for testing, as the name suggests,
+// but also so that we don't have an empty union when there are no feature variants in use
+export type FeatureVariant = "TEST" | "CompliantReportingAlmostEligible";
+/**
+ * For each feature, an optional activeDate can control when the user gets access.
+ * If this is missing, access will be granted immediately.
+ * The `variant` property can be used to segment users to different variants of the feature,
+ * e.g. for A/B testing.
+ */
+export type FeatureVariantRecord = Partial<
+  Record<FeatureVariant, { activeDate?: Timestamp; variant?: string }>
+>;
+
 /**
  * Combines user data from this application and the Recidiviz platform into a single object
  */
 export type CombinedUserRecord = {
   info: UserRecord;
   updates?: UserUpdateRecord;
+  featureVariants?: FeatureVariantRecord;
 };
 
 export const OPPORTUNITY_TYPES = ["compliantReporting"] as const;
