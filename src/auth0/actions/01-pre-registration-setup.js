@@ -72,7 +72,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     // Set state_code for Recidiviz users
     if (
       userDomain === "recidiviz.org" &&
-      !event.user?.app_metadata.recidiviz_tester
+      !event.user?.app_metadata?.recidiviz_tester
     ) {
       api.user.setAppMetadata("state_code", "recidiviz");
       return;
@@ -94,7 +94,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     };
 
     if (
-      Object.keys(stateCodeMapping).includes(state) ||
+      state in stateCodeMapping ||
       (event.user.email && authorizedEmails.includes(event.user.email))
     ) {
       state = stateCodeMapping[state];

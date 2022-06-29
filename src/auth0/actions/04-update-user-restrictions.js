@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2022 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ exports.onExecutePostLogin = async (event, api) => {
   const { app_metadata, email } = event.user;
   const stateCode = app_metadata.state_code?.toLowerCase();
   const authorizedDomains = ["recidiviz.org", "csg.org", "recidiviz-test.org"]; // add authorized domains here
+  const statesWithRestrictions = ["us_co", "us_id", "us_me", "us_mi", "us_mo", "us_nd", "us_tn"];
   const emailSplit = email?.split("@") || "";
   const userDomain = emailSplit[emailSplit.length - 1].toLowerCase();
 
@@ -48,7 +49,7 @@ exports.onExecutePostLogin = async (event, api) => {
     api.user.setAppMetadata("blocked_state_codes", ["us_pa"]);
   }
 
-  if (["us_mo", "us_id", "us_nd", "us_me", "us_tn"].includes(stateCode)) {
+  if (statesWithRestrictions.includes(stateCode)) {
     const Sentry = require("@sentry/node");
     const { GoogleAuth } = require("google-auth-library");
     Sentry.init({
