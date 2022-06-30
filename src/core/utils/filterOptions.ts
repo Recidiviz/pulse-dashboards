@@ -1363,7 +1363,6 @@ export const MoPopulationFilterOptions: PopulationFilters = {
         value: "AMERICAN_INDIAN_ALASKAN_NATIVE",
       },
       { label: "Other", value: "OTHER" },
-      { label: "Not hispanic", value: "NOT_HISPANIC" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
