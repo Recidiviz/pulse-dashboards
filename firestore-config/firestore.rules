@@ -18,5 +18,13 @@ service cloud.firestore {
     match /clientUpdates/{document=**} {
       allow write: if allowedStateCode()
     }
+
+    match /DEMO_userUpdates/{document=**} {
+      allow write: if allowedStateCode()
+    }
+    
+    match /DEMO_clientUpdates/{document=**} {
+      allow write: if allowedStateCode()
+    }
   }
 }

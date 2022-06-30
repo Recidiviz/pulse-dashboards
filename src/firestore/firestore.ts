@@ -41,6 +41,8 @@ import {
 import { mapValues, pickBy } from "lodash";
 
 import { CompliantReportingReferralRecord } from "../PracticesStore/CompliantReportingReferralRecord";
+import { isDemoMode } from "../utils/isDemoMode";
+import { isOfflineMode } from "../utils/isOfflineMode";
 import {
   ClientRecord,
   ClientUpdateRecord,
@@ -53,14 +55,27 @@ import {
   UserUpdateRecord,
 } from "./types";
 
-const projectId = process.env.REACT_APP_FIREBASE_BACKEND_PROJECT || "demo-dev";
-const isDemoProject = projectId.startsWith("demo-");
-const apiKey = process.env.REACT_APP_FIREBASE_API_KEY;
+function getFirestoreProjectId() {
+  const projectId = process.env.REACT_APP_FIREBASE_BACKEND_PROJECT;
 
+  // default to offline mode when missing configuration (e.g. in unit tests)
+  if (isOfflineMode() || !projectId) {
+    // demo-* is the Firebase magic word for a dummy project
+    return "demo-dev";
+  }
+
+  return projectId;
+}
+
+const projectId = getFirestoreProjectId();
+const apiKey = process.env.REACT_APP_FIREBASE_API_KEY;
 const app = initializeApp({
   projectId,
   apiKey,
 });
+
+// demo- is a Firebase-reserved prefix that will only work with local emulators
+const useOfflineFirestore = projectId.startsWith("demo-");
 
 export const authenticate = async (
   auth0Token: string
@@ -76,35 +91,56 @@ export const authenticate = async (
 
   const { firebaseToken } = await tokenExchangeResponse.json();
   const auth = getAuth(app);
-  if (isDemoProject) {
+  if (useOfflineFirestore) {
     connectAuthEmulator(auth, "http://localhost:9099");
   }
   return signInWithCustomToken(auth, firebaseToken);
 };
 
 const db = getFirestore(app);
-if (isDemoProject) {
+if (useOfflineFirestore) {
   connectFirestoreEmulator(db, "localhost", 8080);
 }
 
+const collectionNames = {
+  staff: "staff",
+  userUpdates: "userUpdates",
+  clients: "clients",
+  clientUpdates: "clientUpdates",
+  compliantReportingReferrals: "compliantReportingReferrals",
+  featureVariants: "featureVariants",
+};
+
+if (isDemoMode()) {
+  Object.entries(collectionNames).forEach(([key, value]) => {
+    collectionNames[key as keyof typeof collectionNames] = `DEMO_${value}`;
+  });
+}
+
 const collections = {
-  staff: collection(db, "staff") as CollectionReference<StaffRecord>,
+  staff: collection(
+    db,
+    collectionNames.staff
+  ) as CollectionReference<StaffRecord>,
   userUpdates: collection(
     db,
-    "userUpdates"
+    collectionNames.userUpdates
   ) as CollectionReference<UserUpdateRecord>,
-  clients: collection(db, "clients") as CollectionReference<ClientRecord>,
+  clients: collection(
+    db,
+    collectionNames.clients
+  ) as CollectionReference<ClientRecord>,
   clientUpdates: collection(
     db,
-    "clientUpdates"
+    collectionNames.clientUpdates
   ) as CollectionReference<ClientUpdateRecord>,
   compliantReportingReferrals: collection(
     db,
-    "compliantReportingReferrals"
+    collectionNames.compliantReportingReferrals
   ) as CollectionReference<CompliantReportingReferralRecord>,
   featureVariants: collection(
     db,
-    "featureVariants"
+    collectionNames.featureVariants
   ) as CollectionReference<FeatureVariantRecord>,
 };
 
