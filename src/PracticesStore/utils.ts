@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { addDays, differenceInDays, parseISO } from "date-fns";
 import { Timestamp, Unsubscribe } from "firebase/firestore";
 import { fromResource, IResource } from "mobx-utils";
 
@@ -41,4 +42,17 @@ export function observableSubscription<ObservableType>(
 
 export function dateToTimestamp(isodate: string): Timestamp {
   return new Timestamp(new Date(isodate).getTime() / 1000, 0);
+}
+
+// dates in demo fixtures will be shifted relative to this date
+const DEMO_TIMESTAMP = parseISO("2021-12-16");
+
+/**
+ * Shifts a given date forward by the difference between the current date
+ * and the static "demo date" used for fixture data, bringing the dates
+ * in demo fixtures up to date relative to today.
+ */
+export function shiftDemoDate(storedDate: Date): Date {
+  const offsetDays = differenceInDays(new Date(), DEMO_TIMESTAMP);
+  return addDays(storedDate, offsetDays);
 }

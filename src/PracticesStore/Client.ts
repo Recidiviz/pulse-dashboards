@@ -52,12 +52,17 @@ import {
   updateCompliantReportingDenial,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
+import { isDemoMode } from "../utils/isDemoMode";
 import {
   CompliantReportingReferralRecord,
   TransformedCompliantReportingReferral,
 } from "./CompliantReportingReferralRecord";
 import { OTHER_KEY } from "./PracticesStore";
-import { observableSubscription, SubscriptionValue } from "./utils";
+import {
+  observableSubscription,
+  shiftDemoDate,
+  SubscriptionValue,
+} from "./utils";
 
 export const UNKNOWN = "Unknown" as const;
 
@@ -69,11 +74,23 @@ const SUPERVISION_LEVEL_MAP: Record<string, SupervisionLevel> = {
   "STANDARD: MINIMUM": "Minimum",
 };
 
+/**
+ * Given a raw field from Firestore, converts it to a Date.
+ * When Demo Mode is active, it also applies a time shift so that
+ * the date from demo fixture data is relevant to the current date.
+ */
 function fieldToDate(field: Timestamp | string): Date {
+  let result: Date;
   if (typeof field === "string") {
-    return parseISO(field);
+    result = parseISO(field);
+  } else {
+    result = field.toDate();
   }
-  return field.toDate();
+  if (isDemoMode()) {
+    result = shiftDemoDate(result);
+  }
+
+  return result;
 }
 
 function optionalFieldToDate(field?: Timestamp | string): Date | undefined {
