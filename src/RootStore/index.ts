@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { Auth0ClientOptions, User } from "@auth0/auth0-spa-js";
-import { computed, configure, makeObservable } from "mobx";
+import * as Sentry from "@sentry/react";
+import { computed, configure, makeObservable, onReactionError } from "mobx";
 
 import demoAuthConfig from "../auth_config_demo.json";
 import devAuthConfig from "../auth_config_dev.json";
@@ -59,6 +60,14 @@ if (process.env.NODE_ENV !== "test") {
     // This linter gives too many false positives when propTypes is defined
     // https://mobx.js.org/configuration.html#observablerequiresreaction-boolean
     observableRequiresReaction: false,
+  });
+
+  // log errors in Mobx reactions (e.g. autoruns) which are otherwise swallowed
+  onReactionError((error) => {
+    Sentry.captureException(error, (scope) => {
+      scope.setTag("currentTenantId", globalStore.currentTenantId);
+      return scope;
+    });
   });
 }
 
@@ -106,4 +115,5 @@ export class RootStore {
   }
 }
 
-export default new RootStore();
+const globalStore = new RootStore();
+export default globalStore;
