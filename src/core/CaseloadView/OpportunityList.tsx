@@ -14,7 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Icon, palette, spacing } from "@recidiviz/design-system";
+import {
+  Icon,
+  palette,
+  Sans16,
+  spacing,
+  typography,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
@@ -23,7 +29,6 @@ import styled from "styled-components/macro";
 
 import { BrandedLink } from "../../components/BrandedLink";
 import { useRootStore } from "../../components/StoreProvider";
-import { UiSans18 } from "../../components/typography";
 import { OPPORTUNITY_LABELS, OpportunityType } from "../../firestore";
 import { Client } from "../../PracticesStore/Client";
 import { pluralize } from "../../utils";
@@ -61,7 +66,7 @@ const ScrollShadow = styled.div<{ show: boolean; side: "right" | "left" }>`
 const ScrollContainer = styled.div`
   display: flex;
   overflow-x: auto;
-  padding-bottom: ${rem(spacing.sm)};
+  padding-bottom: ${rem(spacing.md)};
 `;
 
 const ScrollSentinel = styled.div`
@@ -92,6 +97,7 @@ const ClientLink = styled(BrandedLink)`
 `;
 
 const OpportunityLink = styled(BrandedLink)`
+  ${typography.Sans16}
   align-items: center;
   display: flex;
   gap: 0.3em;
@@ -124,9 +130,9 @@ export const OpportunityList = observer(
             opportunity={opportunity}
             textSize="sm"
           />
-          <UiSans18>
-            <Icon kind="Arrow" size={16} />
-          </UiSans18>
+          <Sans16>
+            <Icon kind="Arrow" size={14} />
+          </Sans16>
         </ClientLink>
       </ClientListItem>
     ));
@@ -134,13 +140,13 @@ export const OpportunityList = observer(
     return (
       <>
         <ListHeader>
-          <Icon kind="StarCircled" color={palette.signal.highlight} size={16} />
+          <Icon kind="StarCircled" color={palette.signal.highlight} size={14} />
           <span>
             {pluralize(items.length, "client")} eligible for{" "}
             {OPPORTUNITY_LABELS[opportunity]}
           </span>
           <OpportunityLink to={workflowsUrl(opportunity)}>
-            View all <Icon kind="Arrow" size={16} />
+            View all <Icon kind="Arrow" size={14} />
           </OpportunityLink>
         </ListHeader>
         <ScrollShadowContainer>

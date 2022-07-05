@@ -14,17 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette, spacing } from "@recidiviz/design-system";
+import {
+  palette,
+  Sans14,
+  Sans16,
+  Sans18,
+  Sans24,
+  spacing,
+} from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
-import styled from "styled-components/macro";
+import styled, { css } from "styled-components/macro";
 
-import {
-  UiSans12,
-  UiSans14,
-  UiSans18,
-  UiSans24,
-} from "../../components/typography";
 import { Client } from "../../PracticesStore/Client";
 import { ClientAvatar } from "../Avatar";
 
@@ -52,26 +53,20 @@ const Wrapper = styled.div`
   column-gap: ${rem(spacing.sm)};
   display: grid;
   grid-template-columns: auto 1fr;
-  margin-bottom: ${rem(spacing.sm)};
 `;
 
 const ClientInfo = styled.div``;
 
-const clientStatusStyles = `
+const clientStatusStyles = css`
   color: ${palette.slate60};
-  line-height: 1.1;`;
+`;
 
-const ClientStatusSm = styled(UiSans12)`
+const ClientStatusSm = styled(Sans14)`
   ${clientStatusStyles}
 `;
 
-const ClientStatusLg = styled(UiSans14)`
+const ClientStatusLg = styled(Sans16)`
   ${clientStatusStyles}
-`;
-
-const IdentityLg = styled(UiSans24)`
-  line-height: ${rem(30)};
-  margin-bottom: ${rem(spacing.xs)};
 `;
 
 const SIZES = {
@@ -80,8 +75,8 @@ const SIZES = {
     lg: 56,
   },
   identity: {
-    sm: UiSans18,
-    lg: IdentityLg,
+    sm: Sans18,
+    lg: Sans24,
   },
   status: {
     sm: ClientStatusSm,

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../CoreConstants.module.scss";
 
 .MobileNavigation {
@@ -36,7 +37,7 @@
     cursor: pointer;
   }
   &__title {
-    @include font-ui-serif-24;
+    @include serif-24;
     color: $pine-3;
     white-space: nowrap;
   }
@@ -48,7 +49,7 @@
   }
 
   &__vitals {
-    @include font-ui-serif-24;
+    @include serif-24;
     color: $pine-3;
   }
 

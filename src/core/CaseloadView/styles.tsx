@@ -15,15 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { palette, Sans18, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { UiSans18 } from "../../components/typography";
-
-export const Heading = styled(UiSans18)`
+export const Heading = styled(Sans18)`
   border-bottom: 1px solid ${palette.slate20};
-  color: ${palette.slate85};
+  color: ${palette.pine3};
   flex: 0 0 auto;
   margin-top: ${rem(spacing.xl)};
   padding-bottom: ${rem(spacing.sm)};

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../assets/styles/spec/settings/index";
 @import "./CoreConstants.module.scss";
 
@@ -42,12 +43,14 @@
     padding-left: 4rem;
 
     .CoreViewNavigation {
+      @include sans-24;
       background: transparent;
       border: none;
       color: $pine-3;
       cursor: pointer;
       display: flex;
-      @include font-ui-sans-20;
+      font-size: 1.25rem;
+      line-height: 1.5rem;
       margin-left: 1.5rem;
       user-select: none;
 
@@ -104,9 +107,11 @@
       }
 
       &__item {
+        @include sans-24;
         color: $pine-3;
         cursor: pointer;
-        @include font-ui-sans-20;
+        font-size: 1.25rem;
+        line-height: 1.5rem;
         padding: 0.5rem 1.5rem;
       }
 
@@ -172,7 +177,7 @@
       }
       .dropdown-item {
         color: $slate-80;
-        @include font-ui-sans-14;
+        @include sans-14;
       }
     }
   }

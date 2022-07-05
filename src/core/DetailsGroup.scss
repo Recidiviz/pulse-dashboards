@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
 @import "./CoreConstants.module.scss";
 
 .DetailsGroup {
@@ -23,7 +24,7 @@
 
   &__item {
     color: $slate-80;
-    @include font-ui-sans-14;
+    @include sans-14;
 
     > :not(:last-child) {
       margin-right: 1.5rem;
@@ -37,7 +38,7 @@
     border: 0;
     background: transparent;
     color: $signal-links;
-    @include font-ui-sans-16;
+    @include sans-16;
     padding: 0;
     &:not(:last-child) {
       padding-right: 1.5rem;

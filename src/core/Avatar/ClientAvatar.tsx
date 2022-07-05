@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette } from "@recidiviz/design-system";
+import { palette, Sans14 } from "@recidiviz/design-system";
 import Avatar from "boring-avatars";
 import { rem } from "polished";
 import React from "react";
-import styled from "styled-components/macro";
+import styled, { css } from "styled-components/macro";
 
 interface AvatarProps {
   name: string;
@@ -30,31 +30,33 @@ interface AvatarElementProps {
 }
 
 const AvatarElement = styled.div(
-  ({ size }: AvatarElementProps) => `
-  line-height: ${rem(size)};
-  height: ${rem(size)};
-  width: ${rem(size)};
-  border-radius: ${rem(size / 2)};
-  overflow: hidden;
-  position: relative;
-  
-  & svg {
-    position: absolute;
-    top: 0;
-  }
-`
+  ({ size }: AvatarElementProps) => css`
+    align-items: center;
+    border-radius: ${rem(size / 2)};
+    display: flex;
+    height: ${rem(size)};
+    line-height: ${rem(size)};
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    width: ${rem(size)};
+
+    & svg {
+      left: 0;
+      position: absolute;
+      top: 0;
+    }
+  `
 );
 
-const AvatarInitials = styled.div<{ size: number }>`
+const AvatarInitials = styled(Sans14)<{ size: number }>`
+  color: white;
+  flex: 0 0 auto;
   font-size: ${(props) => rem(props.size / 4)};
   font-weight: 700;
-  letter-spacing: 0.02em;
-  color: white;
+  line-height: 1;
+  position: relative;
   text-align: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
 `;
 
 const ClientAvatar: React.FC<AvatarProps> = ({ name, size = 40 }) => {

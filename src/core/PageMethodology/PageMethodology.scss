@@ -1,3 +1,20 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2022 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../CoreConstants.module.scss";
 
 .main-content {
@@ -8,7 +25,7 @@
 
   &__main-title {
     color: $pine-3;
-    @include font-article-serif-56;
+    @include header-56;
     letter-spacing: -0.04em;
     padding-bottom: 1rem;
     padding-top: 6rem;
@@ -30,39 +47,39 @@
     }
   }
   &__main-description {
+    @include body-24;
     color: $pine-3;
-    font: $font-article-sans-24;
   }
   &__toc {
     padding: 2.93rem 0px 0px 0px !important;
     &--header {
+      @include sans-14;
       color: $slate-85;
-      font: $font-article-sans-14;
     }
     &--link {
-      font: $font-article-sans-24;
+      @include sans-24;
     }
   }
   &__block {
     margin-bottom: 1rem;
-    font: $font-article-sans-16;
     color: $pine-2;
 
     &--title {
       padding: 4.5rem 0px 0px 0px !important;
-      @include font-article-serif-34;
+      @include header-34;
       color: $pine-3;
       letter-spacing: -0.04em;
     }
-    &--content, p {
-      font: $font-article-sans-16;
+    &--content,
+    p {
+      @include body-16;
       color: $pine-2;
     }
   }
   &__sub-block--title {
     padding: 2rem 0px 1rem 0px !important;
     color: $pine-3;
-    @include font-article-serif-24;
+    @include header-24;
     letter-spacing: -0.04em;
   }
   &__table {

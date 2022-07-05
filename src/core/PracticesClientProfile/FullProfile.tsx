@@ -15,14 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import {
+  palette,
+  Sans14,
+  Sans16,
+  spacing,
+  typography,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { UiSans14, UiSans16, UiSans18 } from "../../components/typography";
 import { ProfileCapsule } from "../ClientCapsule";
 import { useClientTracking } from "../hooks/useClientTracking";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
@@ -55,7 +60,8 @@ const Header = styled.div`
   padding: ${rem(spacing.lg)} 0 ${rem(spacing.md)};
 `;
 
-const ContactCell = styled(UiSans14).attrs({ as: "dl" })`
+const ContactCell = styled.dl`
+  ${typography.Sans14}
   color: ${palette.slate70};
   margin: 0;
 `;
@@ -64,12 +70,13 @@ const ContactLabel = styled.dt`
   font-weight: inherit;
 `;
 
-const ContactValue = styled(UiSans16).attrs({ as: "dd" })`
+const ContactValue = styled.dd`
+  ${typography.Sans16}
   color: ${palette.signal.links};
   margin: 0;
 `;
 
-const SectionHeading = styled(UiSans18)`
+const SectionHeading = styled(Sans16)`
   color: ${palette.pine2};
   margin-bottom: ${rem(spacing.md)};
 `;
@@ -91,7 +98,7 @@ const NoOpportunities = styled.div`
   justify-content: center;
   padding: ${rem(spacing.md)};
 
-  ${UiSans16} {
+  ${Sans16} {
     color: ${palette.pine2};
   }
 `;
@@ -134,8 +141,8 @@ export const FullProfile = observer((): React.ReactElement | null => {
             <CompliantReportingPreview client={client} />
           ) : (
             <NoOpportunities>
-              <UiSans16>None for now</UiSans16>
-              <UiSans14>New opportunities will appear here.</UiSans14>
+              <Sans16>None for now</Sans16>
+              <Sans14>New opportunities will appear here.</Sans14>
             </NoOpportunities>
           )}
         </div>

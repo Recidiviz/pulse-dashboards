@@ -18,12 +18,13 @@
  *
  */
 
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../CoreConstants.module.scss";
 @import "../controls/mixins";
 
 .VizCountOverTimeWithAvg {
   background: $white;
-  @include font-ui-sans-14;
+  @include sans-14;
   border-radius: 0.5rem;
   box-shadow: $inset-shadow-30;
   line-height: 1.5rem;
@@ -68,7 +69,7 @@
   }
 
   &__goal-label {
-    @include font-ui-sans-14;
+    @include sans-14;
     fill: $signal-links;
   }
 }

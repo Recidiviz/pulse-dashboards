@@ -1,3 +1,20 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2022 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../../../assets/styles/spec/settings/index";
 @import "../../CoreConstants.module.scss";
 
@@ -69,7 +86,7 @@ div.CoreMultiSelect {
     justify-content: left;
     padding-left: 1rem;
     font-weight: 500;
-    @include font-ui-sans-14;
+    @include sans-14;
   }
 
   &__clear-indicator {
@@ -133,7 +150,7 @@ div.CoreMultiSelect {
     overflow: hidden;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
-    @include font-ui-sans-14;
+    @include sans-14;
 
     &-list div:first-child {
       padding-top: none;

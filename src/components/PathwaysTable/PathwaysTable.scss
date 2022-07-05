@@ -15,13 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../../core/CoreConstants.module.scss";
 
 .PathwaysTable {
   width: 100%;
   text-align: left;
   color: $pine-1;
-  @include font-ui-sans-14;
+  @include sans-14;
 
   @media screen and (max-width: $core-breakpoint-sm) {
     min-width: 800px !important;
@@ -42,7 +43,7 @@
       background: $white;
       padding: 0.875rem 0;
       padding-left: 2.5rem;
-      @include font-ui-sans-14;
+      @include sans-14;
     }
   }
 

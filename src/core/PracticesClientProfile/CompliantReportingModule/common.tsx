@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { palette, Sans14, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
@@ -63,8 +63,8 @@ export const Wrapper = styled.div<{ background: string; border: string }>`
 
 export const Title = observer(({ client }: ClientProfileProps) => {
   return (
-    <div>
+    <Sans14>
       Compliant Reporting: {client.reviewStatusMessages.compliantReporting}
-    </div>
+    </Sans14>
   );
 });

@@ -16,16 +16,21 @@
 // =============================================================================
 import { observer } from "mobx-react-lite";
 import React from "react";
+import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { Checkbox } from "./styles";
 import { FormDataType } from "./types";
 import { updateFieldData } from "./utils";
 
-export interface FormCheckboxProps
-  extends React.InputHTMLAttributes<HTMLElement> {
+export type FormCheckboxProps = StyledComponentProps<
+  "input",
+  DefaultTheme,
+  { type: "checkbox" },
+  "type"
+> & {
   name: keyof FormDataType;
-}
+};
 
 const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
   const { practicesStore } = useRootStore();

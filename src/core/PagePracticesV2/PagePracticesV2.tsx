@@ -15,11 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AVAILABLE_FONTS, palette } from "@recidiviz/design-system";
-import { rem } from "polished";
+import { palette, typography } from "@recidiviz/design-system";
 import React, { useEffect } from "react";
 import { Switch } from "react-router-dom";
-import styled, { ThemeProvider } from "styled-components/macro";
+import styled from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
@@ -37,12 +36,8 @@ import { VitalsCaseloadSelection } from "../VitalsCaseloadSelection";
 import { WorkflowsFormLayout } from "../WorkflowsLayouts";
 
 const SidebarHeading = styled.h1`
+  ${typography.Sans18}
   color: ${palette.pine2};
-  font-family: ${(props) => props.theme.fonts.sans};
-  font-size: ${rem(18)};
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.3;
 `;
 
 const IE11Warning = styled.div`
@@ -77,57 +72,46 @@ const PagePracticesV2: React.FC = () => {
   }
 
   return (
-    <ThemeProvider
-      theme={{
-        fonts: {
-          heading: AVAILABLE_FONTS.LIBRE_BASKERVILLE,
-          body: AVAILABLE_FONTS.PUBLIC_SANS,
-          serif: AVAILABLE_FONTS.LIBRE_BASKERVILLE,
-          sans: AVAILABLE_FONTS.PUBLIC_SANS,
-        },
-      }}
-    >
-      <ModelHydrator model={practicesStore}>
-        <Switch>
-          <PracticesRoute
-            exact
-            path={workflowsRoute({ name: "compliantReporting", client: false })}
-          >
-            <WorkflowsFormLayout
-              sidebarContents={
-                <>
-                  <SidebarHeading>Compliant Reporting</SidebarHeading>
-                  <VitalsCaseloadSelection />
-                </>
-              }
-              formContents={null}
-            />
-          </PracticesRoute>
-          <PracticesRoute
-            exact
-            path={workflowsRoute({ name: "compliantReporting", client: true })}
-          >
-            <WorkflowsFormLayout
-              sidebarContents={<CompliantReportingClientProfile />}
-              formContents={<PracticesCompliantReportingForm />}
-            />
-          </PracticesRoute>
-          <PracticesRoute
-            exact
-            path={workflowsRoute({ name: "general", client: true })}
-          >
-            <FullProfile />
-          </PracticesRoute>
-          <PracticesRoute
-            exact
-            path={workflowsRoute({ name: "general", client: false })}
-          >
-            <CaseloadView />
-          </PracticesRoute>
-          <NotFound />
-        </Switch>
-      </ModelHydrator>
-    </ThemeProvider>
+    <ModelHydrator model={practicesStore}>
+      <Switch>
+        <PracticesRoute
+          exact
+          path={workflowsRoute({ name: "compliantReporting", client: false })}
+        >
+          <WorkflowsFormLayout
+            sidebarContents={
+              <>
+                <SidebarHeading>Compliant Reporting</SidebarHeading>
+                <VitalsCaseloadSelection />
+              </>
+            }
+            formContents={null}
+          />
+        </PracticesRoute>
+        <PracticesRoute
+          exact
+          path={workflowsRoute({ name: "compliantReporting", client: true })}
+        >
+          <WorkflowsFormLayout
+            sidebarContents={<CompliantReportingClientProfile />}
+            formContents={<PracticesCompliantReportingForm />}
+          />
+        </PracticesRoute>
+        <PracticesRoute
+          exact
+          path={workflowsRoute({ name: "general", client: true })}
+        >
+          <FullProfile />
+        </PracticesRoute>
+        <PracticesRoute
+          exact
+          path={workflowsRoute({ name: "general", client: false })}
+        >
+          <CaseloadView />
+        </PracticesRoute>
+        <NotFound />
+      </Switch>
+    </ModelHydrator>
   );
 };
 

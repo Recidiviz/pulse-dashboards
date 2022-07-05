@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../CoreConstants.module.scss";
 @import "../../assets/styles/spec/tools/mixins/mediaQueriesRanges.scss";
 
@@ -41,7 +42,7 @@
   }
 
   &__value {
-    @include font-ui-serif-34;
+    @include serif-34;
     color: $pine-3;
     padding: 0 0 0;
 
@@ -53,7 +54,7 @@
   }
 
   &__min-max {
-    @include font-ui-sans-14;
+    @include sans-14;
     color: $slate-80;
     white-space: nowrap;
 
@@ -66,7 +67,7 @@
   }
 
   &__delta {
-    @include font-ui-sans-14;
+    @include sans-14;
     line-height: 1.5rem;
 
     &--loading {

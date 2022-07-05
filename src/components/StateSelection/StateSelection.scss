@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../../core/CoreConstants.module.scss";
 
 .StateSelection {
@@ -22,7 +23,7 @@
   width: 100%;
 
   &__heading {
-    @include font-ui-sans-16;
+    @include sans-16;
     color: $slate-85;
     margin-bottom: 1rem;
   }
@@ -38,7 +39,7 @@
     min-width: 450px;
     display: flex;
     align-items: center;
-    @include font-ui-sans-24;
+    @include sans-24;
     color: $pine-1;
     background: $white;
     box-shadow: $inset-shadow-20;
@@ -63,7 +64,7 @@
 
       &::after {
         content: "Currently viewing";
-        @include font-ui-sans-14;
+        @include sans-14;
         color: $slate-80;
         margin-left: auto;
       }

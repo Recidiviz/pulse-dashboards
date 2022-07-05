@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../CoreConstants.module.scss";
 
 .VitalsSummaryBreadcrumbs {
@@ -33,7 +34,7 @@
 
   &--state,
   &--parent {
-    @include font-ui-sans-16;
+    @include sans-16;
     color: $slate-80;
     &:hover {
       text-decoration-line: underline;
@@ -50,7 +51,7 @@
   }
 
   &--current {
-    @include font-ui-serif-34;
+    @include serif-34;
     color: $pine-3;
   }
 }
@@ -65,8 +66,7 @@
       margin: 0;
 
       &--current {
-        font: $font-ui-serif-24 !important;
-        letter-spacing: -0.02em;
+        @include serif-24;
       }
     }
   }

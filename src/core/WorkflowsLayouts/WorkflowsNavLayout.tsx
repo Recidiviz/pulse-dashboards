@@ -15,13 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { palette, Sans12, spacing, typography } from "@recidiviz/design-system";
 import { rem, rgba } from "polished";
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { typeStyles, UiSans12 } from "../../components/typography";
 import RecidivizLogo from "../RecidivizLogo";
 import { PATHWAYS_VIEWS, workflowsUrl } from "../views";
 
@@ -62,14 +61,14 @@ const NavSection = styled.ul`
   padding: 0;
 `;
 
-const NavSectionLabel = styled(UiSans12)`
+const NavSectionLabel = styled(Sans12)`
   color: ${rgba(palette.slate, 0.5)};
   font-size: ${rem(13)};
   line-height: ${rem(16)};
 `;
 
 const BrandedNavLink = styled(NavLink).attrs({ exact: true })`
-  ${typeStyles.uiSans14}
+  ${typography.Sans14}
 
   color: ${palette.slate80};
 

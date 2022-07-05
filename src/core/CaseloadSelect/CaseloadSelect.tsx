@@ -14,7 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Icon, palette, Pill, spacing, zindex } from "@recidiviz/design-system";
+import {
+  Icon,
+  palette,
+  Pill,
+  Sans14,
+  spacing,
+  zindex,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
@@ -30,16 +37,10 @@ import styled from "styled-components/macro";
 
 import { trackCaseloadSearch } from "../../analytics";
 import { useRootStore } from "../../components/StoreProvider";
-import { UiSans14 } from "../../components/typography";
 import { StaffRecord } from "../../firestore";
 
 // This is a query limitation imposed by Firestore
 const SELECTED_OFFICER_LIMIT = 10;
-
-const BaseTypeface = styled(UiSans14)`
-  font-size: ${rem(13)};
-  line-height: 1;
-`;
 
 const ValuePill = styled(Pill).attrs({ color: palette.slate20, filled: false })`
   align-self: flex-start;
@@ -83,7 +84,7 @@ const DistrictIndicator = observer(() => {
   return (
     <ValuePill>
       D{district}&nbsp;
-      <Icon kind="Place" size={13} color={palette.slate60} />
+      <Icon kind="Place" size={12} color={palette.slate60} />
     </ValuePill>
   );
 });
@@ -103,7 +104,7 @@ const IndicatorsContainer = ({
 const ValueRemover = (props: MultiValueRemoveProps<SelectOption>) => {
   return (
     <components.MultiValueRemove {...props}>
-      <Icon kind="CloseOutlined" size={13} />
+      <Icon kind="CloseOutlined" size={14} />
     </components.MultiValueRemove>
   );
 };
@@ -139,7 +140,7 @@ export const CaseloadSelect = observer(
     }
 
     return (
-      <BaseTypeface>
+      <Sans14>
         <ReactSelect
           components={customComponents}
           isMulti
@@ -160,7 +161,7 @@ export const CaseloadSelect = observer(
               ...base,
               color: palette.slate85,
               cursor: "pointer",
-              fontSize: rem(13),
+              fontSize: rem(14),
               margin: `0 ${rem(spacing.md)}`,
               padding: 0,
               "&:hover": {
@@ -171,14 +172,14 @@ export const CaseloadSelect = observer(
               ...base,
               borderColor: palette.slate20,
               borderRadius: rem(8),
-              minHeight: rem(50),
+              minHeight: rem(48),
               padding: rem(spacing.sm),
             }),
             indicatorsContainer: (base) => ({
               ...base,
               alignSelf: "flex-start",
               display: hideIndicators ? "none" : "inherit",
-              height: rem(32),
+              height: rem(30),
             }),
             menu: (base) => ({ ...base, zIndex: zindex.tooltip - 1 }),
             multiValue: (base) => ({
@@ -187,15 +188,15 @@ export const CaseloadSelect = observer(
               background: "transparent",
               border: `1px solid ${palette.slate20}`,
               borderRadius: rem(8),
-              height: rem(32),
+              height: rem(30),
               margin: 0,
               padding: rem(spacing.sm),
             }),
             multiValueLabel: (base) => ({
               ...base,
               color: palette.slate85,
-              fontSize: rem(13),
-              lineHeight: 1,
+              fontSize: rem(14),
+              lineHeight: rem(16),
               padding: 0,
             }),
             multiValueRemove: (base, state) => ({
@@ -215,7 +216,7 @@ export const CaseloadSelect = observer(
           }}
           value={practicesStore.selectedOfficers.map(buildSelectOption)}
         />
-      </BaseTypeface>
+      </Sans14>
     );
   }
 );

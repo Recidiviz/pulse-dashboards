@@ -21,13 +21,13 @@ import {
   palette,
   spacing,
   TooltipTrigger,
+  typography,
 } from "@recidiviz/design-system";
 import { isEqual } from "date-fns";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { UiSans14 } from "../../../components/typography";
 import type { Client } from "../../../PracticesStore/Client";
 import { formatPracticesDate } from "../../../utils";
 import { formatRelativeToNow } from "../../utils/timePeriod";
@@ -249,7 +249,8 @@ const CriterionContent = styled.div`
   grid-column: 2;
 `;
 
-const Wrapper = styled(UiSans14).attrs({ as: "ul" })`
+const Wrapper = styled.ul`
+  ${typography.Sans14}
   list-style: none;
   margin: ${rem(spacing.md)} 0;
   padding: 0;

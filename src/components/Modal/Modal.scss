@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../../core/CoreConstants.module.scss";
 
 .Modal {
@@ -69,7 +70,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    @include font-ui-serif-24;
+    @include serif-24;
     color: $pine-2;
     margin-left: 0.5rem;
     padding: 3rem 2.5rem 0;
@@ -101,7 +102,7 @@
     border-top: 1px solid $slate-20;
     padding: 1.5rem 2.5rem;
     & button {
-      @include font-ui-sans-16;
+      @include sans-16;
       display: block;
     }
     @media screen and (max-width: $core-breakpoint-xs) {

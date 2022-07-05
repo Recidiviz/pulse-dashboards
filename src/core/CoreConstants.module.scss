@@ -1,5 +1,20 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2022 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
 // TODO(#900): Move Core SCSS constants into this file
-
 $core-breakpoint-lg: 1920px;
 $core-breakpoint-ml: 1760px;
 $core-breakpoint-md: 1366px;
@@ -54,63 +69,6 @@ $core-element-hover-color: #d2d8d8;
 $core-border-color: #d2d8d8;
 $core-focused-color: #e3e6e6;
 
-/* Font families */
-$sans-serif: Libre Franklin, sans serif;
-$serif: Libre Baskerville, serif;
-
-/* font: font-style font-variant font-weight font-size/line-height font-family */
-$font-ui-sans-14: 500 0.875rem/1.5rem $sans-serif;
-$font-ui-sans-16: 500 1rem/1.5rem $sans-serif;
-$font-ui-sans-20: 500 1.25rem/1.5rem $sans-serif;
-$font-ui-sans-24: 1.5rem/2.5rem $sans-serif;
-$font-ui-serif-24: 400 1.5rem/3rem $serif;
-$font-ui-serif-34: 400 2.125rem/3rem $serif;
-$font-article-sans-14: 400 0.88rem/1.5rem $sans-serif;
-$font-article-sans-16: 400 1rem/1.7rem $sans-serif;
-$font-article-sans-24: 400 1.5rem/2.5rem $sans-serif;
-$font-article-sans-32: 400 2rem/3rem $sans-serif;
-$font-article-serif-24: 400 1.5rem/2rem $serif;
-$font-article-serif-34: 400 2.1rem/3rem $serif;
-$font-article-serif-56: 400 3.5rem/4.5rem $serif;
-
-/* Font mixins */
-@mixin font-ui-sans-14 {
-  font: $font-ui-sans-14;
-  letter-spacing: -0.01em;
-}
-@mixin font-ui-sans-16 {
-  font: $font-ui-sans-16;
-  letter-spacing: -0.01em;
-}
-@mixin font-ui-sans-20 {
-  font: $font-ui-sans-20;
-  letter-spacing: -0.01em;
-}
-@mixin font-ui-sans-24 {
-  font: $font-ui-sans-24;
-  letter-spacing: -0.02em;
-}
-@mixin font-ui-serif-24 {
-  font: $font-ui-serif-24;
-  letter-spacing: -0.03em;
-}
-@mixin font-ui-serif-34 {
-  font: $font-ui-serif-34;
-  letter-spacing: -0.04em;
-}
-@mixin font-article-serif-24 {
-  font: $font-article-serif-24;
-  letter-spacing: -0.04em;
-}
-@mixin font-article-serif-34 {
-  font: $font-article-serif-34;
-  letter-spacing: -0.04em;
-}
-@mixin font-article-serif-56 {
-  font: $font-article-serif-56;
-  letter-spacing: -0.04em;
-}
-
 :export {
   crimson: $crimson;
   crimsonDark: $crimson-dark;
@@ -130,9 +88,6 @@ $font-article-serif-56: 400 3.5rem/4.5rem $serif;
   dataTeal: $data-teal;
   dataGold: $data-gold;
   dataGoldDark: $data-gold-dark;
-
-  fontUiSans16: $font-ui-sans-16;
-  fontUiSans14: $font-ui-sans-14;
 
   insetShadow30: $inset-shadow-30;
 

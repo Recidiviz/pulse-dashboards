@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, spacing } from "@recidiviz/design-system";
+import { Icon, Sans16, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
@@ -24,7 +24,6 @@ import styled from "styled-components/macro";
 
 import formPreviewSrc from "../../../assets/static/images/compliantReportingFormPreview.png";
 import { IconGoSvg } from "../../../components/Icons";
-import { UiSans16 } from "../../../components/typography";
 import { workflowsUrl } from "../../views";
 import { ClientProfileProps } from "../types";
 import { StatusPalette, Title, useStatusColors, Wrapper } from "./common";
@@ -39,6 +38,8 @@ const PreviewWrapper = styled(Wrapper)`
   margin: ${rem(spacing.md)} 0;
 `;
 
+const LinkText = styled(Sans16)``;
+
 const FormLink = styled(Link)<Pick<StatusPalette, "link">>`
   display: block;
   color: ${(props) => props.link};
@@ -50,7 +51,7 @@ const FormLink = styled(Link)<Pick<StatusPalette, "link">>`
     text-decoration: underline;
   }
 
-  ${UiSans16} {
+  ${LinkText} {
     margin-bottom: ${rem(spacing.md)};
   }
 
@@ -80,9 +81,9 @@ export const CompliantReportingPreview = observer(
     return (
       <PreviewWrapper {...colors}>
         <div>
-          <UiSans16>
+          <Sans16>
             <Title client={client} />
-          </UiSans16>
+          </Sans16>
           <CriteriaList client={client} colors={colors} />
           <CompliantReportingDenial client={client} />
         </div>
@@ -96,10 +97,10 @@ export const CompliantReportingPreview = observer(
               client.trackProfileOpportunityClicked("compliantReporting")
             }
           >
-            <UiSans16>
+            <LinkText>
               Auto-fill form
               <Icon kind={IconGoSvg} size={rem(14)} />
-            </UiSans16>
+            </LinkText>
             <FormPreview src={formPreviewSrc} border={colors.border} />
           </FormLink>
         </div>

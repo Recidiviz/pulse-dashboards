@@ -14,7 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Icon, palette, spacing } from "@recidiviz/design-system";
+import {
+  Body14,
+  Icon,
+  palette,
+  spacing,
+  typography,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
@@ -32,25 +38,19 @@ import { FORM_SIDEBAR_WIDTH } from "../WorkflowsLayouts";
 
 const FOOTER_HEIGHT = 64;
 
-const Heading = styled.div`
+const Heading = styled(Body14)`
   color: ${palette.slate85};
-  line-height: 1.3;
   margin-bottom: ${rem(spacing.lg)};
+`;
 
-  a {
-    color: ${palette.text.links};
-    text-decoration: underline;
-  }
+const LabelText = styled.div`
+  ${typography.Sans14}
+  color: ${palette.slate60};
+  margin-bottom: ${rem(spacing.sm)};
 `;
 
 const Label = styled.label`
   display: block;
-  font-style: normal;
-  font-size: ${rem(13)};
-
-  letter-spacing: -0.01em;
-
-  color: ${palette.slate60};
 `;
 
 const ClientListEmptyState: React.FC = observer(() => {
@@ -139,7 +139,7 @@ export const VitalsCaseloadSelection = (): JSX.Element => {
       </Heading>
 
       <Label>
-        Officer
+        <LabelText>Officer</LabelText>
         <CaseloadSelect hideIndicators />
       </Label>
 

@@ -18,7 +18,6 @@
 import "./assets/scripts/index";
 import "./assets/styles/index.scss";
 
-import { AVAILABLE_FONTS } from "@recidiviz/design-system";
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -26,7 +25,6 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
-import { ThemeProvider } from "styled-components/macro";
 import { QueryParamProvider } from "use-query-params";
 
 import AuthWall from "./AuthWall";
@@ -73,14 +71,6 @@ const SHARED_VIEWS = ["", "profile"];
 
 // prettier-ignore
 const App = () => (
-  <ThemeProvider theme={{
-    fonts: {
-      heading: AVAILABLE_FONTS.LIBRE_BASKERVILLE,
-      body: AVAILABLE_FONTS.LIBRE_FRANKLIN,
-      serif: AVAILABLE_FONTS.LIBRE_BASKERVILLE,
-      sans: AVAILABLE_FONTS.LIBRE_FRANKLIN,
-    }}
-  }>
     <StoreProvider>
       <Router>
         <SentryErrorBoundary>
@@ -134,7 +124,6 @@ const App = () => (
         </SentryErrorBoundary>
       </Router>
     </StoreProvider>
-  </ThemeProvider>
 );
 
 export default App;

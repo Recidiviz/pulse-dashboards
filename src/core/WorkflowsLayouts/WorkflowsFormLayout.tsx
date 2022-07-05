@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -28,12 +28,10 @@ import { PATHWAYS_VIEWS } from "../views";
 export const FORM_SIDEBAR_WIDTH = 350;
 
 const Wrapper = styled.div`
+  ${typography.Sans16}
   align-items: stretch;
   display: grid;
-  font-family: ${(props) => props.theme.fonts.body};
-  font-weight: 500;
   grid-template-columns: ${rem(FORM_SIDEBAR_WIDTH)} 1fr;
-  letter-spacing: -0.01em;
   position: relative;
   min-height: 100vh;
   width: 100%;

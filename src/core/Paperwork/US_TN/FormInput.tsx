@@ -18,6 +18,7 @@ import { debounce } from "lodash";
 import { reaction } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
+import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { CombinedUserRecord } from "../../../firestore";
@@ -31,11 +32,17 @@ export type FormInputValueGetter = (value: any) => any;
 
 export type FormInputValueBuilder = (data: any, value: string) => string;
 
-interface FormInputWrapperProps extends React.InputHTMLAttributes<HTMLElement> {
+type FormInputWrapperProps = StyledComponentProps<
+  "input",
+  DefaultTheme,
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  {},
+  never
+> & {
   name: keyof FormDataType;
   getValue?: FormInputValueGetter;
   buildValue?: FormInputValueBuilder;
-}
+};
 
 interface FormInputProps extends FormInputWrapperProps {
   client: Client;

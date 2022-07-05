@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette, spacing } from "@recidiviz/design-system";
+import { palette, Sans14, spacing } from "@recidiviz/design-system";
 import { ascending } from "d3-array";
 import { groupBy } from "lodash";
 import { values } from "mobx";
@@ -25,7 +25,6 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { UiSans14 } from "../../components/typography";
 import { Client } from "../../PracticesStore/Client";
 import { ProfileCapsule } from "../ClientCapsule";
 import PracticesOfficerName from "../PracticesOfficerName";
@@ -38,13 +37,13 @@ const CaseloadWrapper = styled.ul`
   grid-template-columns: repeat(auto-fill, minmax(${rem(320)}, 1fr));
   list-style-type: none;
   margin: 0;
-  margin-top: ${rem(spacing.lg)};
+  margin-top: ${rem(spacing.md)};
   padding: 0;
   row-gap: ${rem(spacing.sm)};
 `;
 
-const OfficerName = styled(UiSans14)`
-  color: ${palette.slate80};
+const OfficerName = styled(Sans14)`
+  color: ${palette.pine2};
   margin-top: ${rem(spacing.lg)};
 `;
 

@@ -44,7 +44,9 @@ const ContentBlock: React.FC<Props> = ({ content, subBlock = false }) => {
             <hr />
           </>
         )}
-        <Markdown>{content.methodology || ""}</Markdown>
+        <div className="Methodology__block--content">
+          <Markdown>{content.methodology || ""}</Markdown>
+        </div>
       </div>
     </ScrollableAnchor>
   );

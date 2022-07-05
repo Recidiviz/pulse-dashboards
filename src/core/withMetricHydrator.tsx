@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { typography } from "@recidiviz/design-system";
 import React from "react";
 import styled from "styled-components/macro";
 
@@ -27,14 +28,12 @@ type withMetricHydratorProps = {
 };
 
 const MetricVizHydrator = styled(ModelHydrator)`
+  ${typography.Sans14}
   width: 100%;
   min-height: 558px;
   background-color: white;
   border-radius: 0.5rem;
   box-shadow: ${styles.insetShadow30};
-  font-family: Libre Franklin, sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.01em;
 `;
 
 const withMetricHydrator = <Props extends withMetricHydratorProps>(

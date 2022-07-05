@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../CoreConstants.module.scss";
 
 .VitalsSummaryCard {
@@ -69,7 +70,7 @@
   }
   &__title {
     color: $slate-80;
-    @include font-ui-sans-16;
+    @include sans-16;
     line-height: 1.25rem;
     padding: 0 0.12rem 0 1.56rem;
     min-width: 115px;
@@ -82,7 +83,7 @@
     background-position-y: bottom;
     color: $pine-3;
     display: flex;
-    @include font-ui-serif-34;
+    @include serif-34;
     height: 100%;
     justify-content: center;
     width: 50%;

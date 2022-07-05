@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { palette, Sans14, spacing, typography } from "@recidiviz/design-system";
 import { scaleTime } from "d3-scale";
 import {
   differenceInMonths,
@@ -27,7 +27,6 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { UiSans14 } from "../../components/typography";
 import { formatPracticesDate } from "../../utils";
 import PracticesOfficerName from "../PracticesOfficerName";
 import { Supervision } from "./Details";
@@ -36,6 +35,7 @@ import { ClientProfileProps } from "./types";
 const Wrapper = styled.div``;
 
 const VizHeader = styled.div`
+  ${typography.Sans14}
   display: flex;
   justify-content: space-between;
 
@@ -44,15 +44,16 @@ const VizHeader = styled.div`
   }
 `;
 
-const Title = styled(UiSans14)`
+const Title = styled.div`
   color: ${palette.pine2};
+  margin-bottom: ${rem(spacing.xs)};
 `;
 
-const OfficerAssignment = styled(UiSans14)`
+const OfficerAssignment = styled(Sans14)`
   flex: 0 0 auto;
 `;
 
-const TimelineDates = styled(UiSans14)`
+const TimelineDates = styled(Sans14)`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -139,10 +140,10 @@ export const SupervisionProgress = ({
       <VizHeader>
         <div>
           <Title>Supervision</Title>
-          <UiSans14>
+          <Sans14>
             {formatSentenceLength(supervisionStartDate, expirationDate)} (
             {formatTimeToGo(expirationDate)})
-          </UiSans14>
+          </Sans14>
         </div>
         <OfficerAssignment>
           Assigned to <PracticesOfficerName officerId={officerId} />

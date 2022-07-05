@@ -1,11 +1,9 @@
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../CoreConstants.module.scss";
 @import "../controls/mixins.scss";
 
 .VitalsSummaryChart {
-  font-family: $sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  line-height: 1.5rem;
+  @include sans-14;
   padding: 0 0 40px;
   width: 100%;
 
@@ -47,7 +45,7 @@
   }
 
   &__goal-label {
-    @include font-ui-sans-14;
+    @include sans-14;
     fill: $signal-links;
   }
 }
@@ -58,10 +56,10 @@
   &__Date,
   &__Average {
     opacity: 0.8;
-    @include font-ui-sans-14;
+    @include sans-14;
   }
 
   &__Value {
-    @include font-ui-sans-16;
+    @include sans-16;
   }
 }

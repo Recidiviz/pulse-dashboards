@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Card } from "@recidiviz/design-system";
+import { Card, typography } from "@recidiviz/design-system";
 import React from "react";
 import styled from "styled-components/macro";
 
-import fontStyles from "../CoreConstants.module.scss";
+import coreStyles from "../CoreConstants.module.scss";
 
 const MetricsCardComponent = styled(Card)`
   width: 100%;
@@ -27,21 +27,19 @@ const MetricsCardComponent = styled(Card)`
   min-height: 120px;
   padding: 20px 30px;
   justify-content: space-between;
-  @media screen and (max-width: ${fontStyles.breakpointSm}) {
+  @media screen and (max-width: ${coreStyles.breakpointSm}) {
     padding: 20px;
   }
 `;
 
 const MetricHeading = styled.div`
-  color: ${fontStyles.pine1};
-  font: ${fontStyles.fontUiSans16};
-  letter-spacing: -0.01em;
+  ${typography.Sans16}
+  color: ${coreStyles.pine1};
 `;
 
 const MetricSubHeading = styled.div`
-  color: ${fontStyles.slate80};
-  font: ${fontStyles.fontUiSans14};
-  letter-spacing: -0.01em;
+  ${typography.Sans14}
+  color: ${coreStyles.slate80};
 `;
 
 const HeadingContainer = styled.div`

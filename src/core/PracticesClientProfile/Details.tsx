@@ -15,14 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { palette, spacing, typography } from "@recidiviz/design-system";
 import { parseJSON } from "date-fns";
 import { mapValues, toUpper } from "lodash";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { UiSans14 } from "../../components/typography";
 import { Client } from "../../PracticesStore/Client";
 import { formatAsCurrency, formatPracticesDate } from "../../utils";
 import PracticesOfficerName from "../PracticesOfficerName";
@@ -30,27 +29,28 @@ import { ClientProfileProps } from "./types";
 
 const DetailsSection = styled.dl``;
 
-const DetailsHeading = styled(UiSans14).attrs({ as: "dt" })`
+const DetailsHeading = styled.dt`
+  ${typography.Sans14}
   color: ${palette.pine1};
-  line-height: 1.14;
   margin-bottom: ${rem(spacing.sm)};
-  margin-top: ${rem(spacing.lg)};
+  margin-top: ${rem(spacing.md)};
 `;
 
 const DetailsList = styled.dl``;
 
 const DetailsSubheading = styled.dt`
+  ${typography.Sans14}
   color: rgba(53, 83, 98, 0.5);
-  font-size: ${rem(13)};
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  line-height: 1.14;
   margin-bottom: ${rem(spacing.xs)};
 `;
 
-const DetailsContent = styled(UiSans14).attrs({ as: "dd" })`
+const DetailsContent = styled.dd`
+  ${typography.Sans14}
   color: rgba(53, 83, 98, 0.9);
-  line-height: 1.14;
+`;
+
+const SpecialConditionsCopy = styled.div`
+  ${typography.Body12}
 `;
 
 // TODO(#1735): the real type should be cleaner than this
@@ -124,7 +124,11 @@ function getProbationSpecialConditionsMarkup(client: Client): JSX.Element {
               <DetailsSubheading>
                 {formatPracticesDate(parseJSON(condition.note_update_date))}
               </DetailsSubheading>
-              <DetailsContent>{condition.conditions_on_date}</DetailsContent>
+              <DetailsContent>
+                <SpecialConditionsCopy>
+                  {condition.conditions_on_date}
+                </SpecialConditionsCopy>
+              </DetailsContent>
             </React.Fragment>
           );
         })}
@@ -156,7 +160,9 @@ export const SpecialConditions = ({
                   // there are lots of duplicates in fact
                   // eslint-disable-next-line react/no-array-index-key
                   <DetailsContent key={i}>
-                    {condition} ({conditionDescription})
+                    <SpecialConditionsCopy>
+                      {condition} ({conditionDescription})
+                    </SpecialConditionsCopy>
                   </DetailsContent>
                 );
               }
