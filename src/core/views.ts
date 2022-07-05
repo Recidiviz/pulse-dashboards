@@ -157,11 +157,13 @@ const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
     "projectedPrisonPopulationOverTime",
     "prisonPopulationOverTime",
     "prisonFacilityPopulation",
+    "prisonPopulationByRace",
     "prisonPopulationPersonLevel",
   ],
   [PATHWAYS_PAGES.prisonToSupervision]: [
     "prisonToSupervisionPopulationOverTime",
     "prisonToSupervisionPopulationByAge",
+    "prisonToSupervisionPopulationByRace",
     "prisonToSupervisionPopulationByFacility",
     "prisonToSupervisionPopulationPersonLevel",
   ],
@@ -169,6 +171,7 @@ const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {
     "projectedSupervisionPopulationOverTime",
     "supervisionPopulationOverTime",
     "supervisionPopulationByDistrict",
+    "supervisionPopulationByRace",
     "supervisionPopulationBySupervisionLevel",
   ],
   [PATHWAYS_PAGES.supervisionToPrison]: [

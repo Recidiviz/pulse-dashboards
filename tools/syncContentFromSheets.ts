@@ -22,7 +22,13 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 import createMetricCopyFile from "./createMetricCopyFile";
 import createPageCopyFile from "./createPageCopyFile";
 
-const STATES_WITH_COPY_OVERRIDES = ["US_ID", "US_TN", "US_ND", "US_ME"];
+const STATES_WITH_COPY_OVERRIDES = [
+  "US_ID",
+  "US_TN",
+  "US_ND",
+  "US_ME",
+  "US_MI",
+];
 
 const syncContentWithSheet = async () => {
   const doc = new GoogleSpreadsheet(process.env.CONTENT_SHEET_ID);

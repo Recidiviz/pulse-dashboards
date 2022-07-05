@@ -1,6 +1,6 @@
 /*
  * Recidiviz - a data platform for criminal justice reform
- * Copyright (C) 2021 Recidiviz, Inc.
+ * Copyright (C) 2022 Recidiviz, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,10 @@ import { StateSpecificPageCopy } from "../types";
 
 const content: StateSpecificPageCopy = {
   prison: {
+    summary:
+      "These charts show people incarcerated in an MDOC facility. Individuals incarcerated in county jails and individuals serving special alternative incarceration are not included.",
     methodology:
-      "These charts include individuals who are admitted to Maine state prison facilities. People on SCCP and in County Jails are not included.",
+      "These charts show people incarcerated in an MDOC facility. Individuals incarcerated in county jails and individuals serving special alternative incarceration are not included. Individuals in housing unit #6 of Macomb Correctional Facility are also not included, as those individuals are alleged parole violators.",
   },
 };
 
