@@ -39,9 +39,9 @@ import CoreLayout from "./core/CoreLayout";
 import UsNdFacilitiesExplore from "./core/facilities/Explore";
 import CoreGoalsView from "./core/goals/CoreGoalsView";
 import PageMethodology from "./core/PageMethodology";
-import PagePractices from "./core/PagePractices";
 import PagePracticesV2 from "./core/PagePracticesV2";
 import PageSystem from "./core/PageSystem";
+import PageVitals from "./core/PageVitals";
 import PathwaysLayout from "./core/PathwaysLayout";
 import Profile from "./core/Profile";
 import {
@@ -92,7 +92,7 @@ const App = () => (
                 <PathwaysLayout tenantIds={PATHWAYS_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat(SHARED_VIEWS)}>
                   <Switch>
                     <ProtectedRoute path={PATHWAYS_PATHS.system} component={PageSystem} />
-                    <ProtectedRoute path={PATHWAYS_PATHS.operations} component={PagePractices} />
+                    <ProtectedRoute path={PATHWAYS_PATHS.operations} component={PageVitals} />
                     <ProtectedRoute path={PATHWAYS_PATHS.methodology} component={PageMethodology} />
                     <ProtectedRoute path={PATHWAYS_PATHS.practices} component={PagePracticesV2} />
                     <Route path="/profile" component={Profile} />
@@ -116,7 +116,7 @@ const App = () => (
                     <ProtectedRoute path={CORE_PATHS.goals} component={CoreGoalsView} />
                     <ProtectedRoute path={CORE_PATHS.communityExplore} component={UsNdCommunityExplore} />
                     <ProtectedRoute path={CORE_PATHS.facilitiesExplore} component={UsNdFacilitiesExplore} />
-                    <ProtectedRoute path={CORE_PATHS.communityPractices} component={PagePractices}/>
+                    <ProtectedRoute path={CORE_PATHS.communityPractices} component={PageVitals}/>
                     <ProtectedRoute path={CORE_PATHS.methodology} component={PageMethodology} />
                     <Route path="/profile" component={Profile} />
                     <RedirectHome />

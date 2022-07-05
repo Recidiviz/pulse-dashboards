@@ -24,7 +24,7 @@ import {
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { MetricCopy, PageCopy } from "../content/types";
-import { PracticesMetric } from "../PagePractices/types";
+import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
 import { Navigation } from "../types/navigation";
 /**
@@ -48,10 +48,10 @@ export type TenantConfig = {
   domain?: string;
   availableStateCodes: string[];
   enableUserRestrictions: boolean;
-  enablePracticesCaseloadButton: boolean;
+  enableVitalsCaseloadButton: boolean;
   navigation?: Navigation;
   betaNavigation?: Navigation;
-  practicesMetrics?: PracticesMetric[];
+  vitalsMetrics?: VitalsMetric[];
   pagesWithRestrictions?: string[];
   tableColumns?: TableColumns;
 };
@@ -109,8 +109,8 @@ export type TimePeriodRawValue =
 
 export type MetricRecord =
   | PopulationProjectionTimeSeriesRecord
-  | PracticesSummaryRecord
-  | PracticesTimeSeriesRecord
+  | VitalsSummaryRecord
+  | VitalsTimeSeriesRecord
   | PrisonPopulationTimeSeriesRecord
   | PrisonPopulationSnapshotRecord
   | SupervisionPopulationTimeSeriesRecord
@@ -236,7 +236,7 @@ export type SnapshotDataRecord = Partial<
     LibertyPopulationSnapshotRecord
 > & { count: number };
 
-export type PracticesTimeSeriesRecord = {
+export type VitalsTimeSeriesRecord = {
   date: string;
   entityId: string;
   metric: string;
@@ -252,7 +252,7 @@ export type MetricValueAccessor =
   | "timelyRiskAssessment"
   | "timelyDowngrade";
 
-export type PracticesSummaryRecord = {
+export type VitalsSummaryRecord = {
   entityId: string;
   entityName: string; // i.e. "North Dakota" or "Oakes"
   entityType: EntityType;

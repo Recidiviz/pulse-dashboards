@@ -32,7 +32,7 @@ import {
 } from "../views";
 import FiltersStore from "./FiltersStore";
 import MetricsStore from "./MetricsStore";
-import PagePracticesStore from "./PagePracticesStore";
+import VitalsStore from "./VitalsStore";
 
 interface CoreStoreProps {
   userStore: UserStore;
@@ -48,7 +48,7 @@ export default class CoreStore {
 
   metricsStore: MetricsStore = new MetricsStore({ rootStore: this });
 
-  pagePracticesStore: PagePracticesStore;
+  vitalsStore: VitalsStore;
 
   view: PathwaysView | CoreView = "community";
 
@@ -64,7 +64,7 @@ export default class CoreStore {
 
     this.tenantStore = tenantStore;
 
-    this.pagePracticesStore = new PagePracticesStore({
+    this.vitalsStore = new VitalsStore({
       rootStore: this,
     });
 

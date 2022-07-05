@@ -19,7 +19,7 @@
  */
 
 import { TenantConfig } from "../core/models/types";
-import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PagePractices/types";
+import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
@@ -30,7 +30,7 @@ const US_ND_CONFIG: TenantConfig = {
   domain: "nd.gov",
   availableStateCodes: [pathways.US_ND],
   enableUserRestrictions: false,
-  enablePracticesCaseloadButton: true,
+  enableVitalsCaseloadButton: true,
   navigation: {
     operations: [],
     system: [
@@ -103,7 +103,7 @@ const US_ND_CONFIG: TenantConfig = {
     "practices",
   ],
   tableColumns: enabledTableColumns[pathways.US_ND],
-  practicesMetrics: [
+  vitalsMetrics: [
     {
       name: METRIC_TYPE_LABELS.OVERALL,
       id: METRIC_TYPES.OVERALL,

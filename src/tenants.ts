@@ -49,14 +49,14 @@ const TENANTS: Tenants = {
     // US_PA is the last non-Pathways tenant
     availableStateCodes: pathways.PATHWAYS_TENANTS,
     enableUserRestrictions: true,
-    enablePracticesCaseloadButton: true,
+    enableVitalsCaseloadButton: true,
   },
   LANTERN: {
     name: "Lantern",
     stateCode: "Lantern",
     availableStateCodes: lantern.LANTERN_TENANTS,
     enableUserRestrictions: false,
-    enablePracticesCaseloadButton: false,
+    enableVitalsCaseloadButton: false,
   },
 };
 

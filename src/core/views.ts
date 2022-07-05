@@ -63,7 +63,7 @@ export const CORE_PATHS: Record<string, string> = {
   facilitiesExplore: `/${CORE_VIEWS.facilities}/explore`,
   facilitiesProjections: `/${CORE_VIEWS.facilities}/projections`,
   methodology: `/${CORE_VIEWS.methodology}/:dashboard`,
-  methodologyPractices: `/${CORE_VIEWS.methodology}/practices`,
+  methodologyVitals: `/${CORE_VIEWS.methodology}/practices`,
   methodologyProjections: `/${CORE_VIEWS.methodology}/projections`,
 };
 
@@ -312,7 +312,7 @@ const pathnameToView: Record<string, CoreView> = {
   [CORE_PATHS.communityPractices]: "community",
   [CORE_PATHS.facilitiesExplore]: "facilities",
   [CORE_PATHS.facilitiesProjections]: "facilities",
-  [CORE_PATHS.methodologyPractices]: "methodology",
+  [CORE_PATHS.methodologyVitals]: "methodology",
   [CORE_PATHS.methodologyProjections]: "methodology",
 };
 

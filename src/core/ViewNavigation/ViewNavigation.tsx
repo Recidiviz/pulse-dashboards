@@ -57,7 +57,7 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
   const view = pathname.split("/")[1];
   const {
     filtersStore,
-    pagePracticesStore,
+    vitalsStore,
     currentTenantId,
     userStore,
   } = useCoreStore();
@@ -93,7 +93,7 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
         activeClassName="ViewNavigation__navlink--active"
         className="ViewNavigation__navlink"
         to={`/${PATHWAYS_VIEWS.operations}`}
-        onClick={() => pagePracticesStore.resetCurrentEntityId()}
+        onClick={() => vitalsStore.resetCurrentEntityId()}
       >
         <PracticesLogo className="ViewNavigation__icon" />
         <div className="ViewNavigation__navlink-heading">

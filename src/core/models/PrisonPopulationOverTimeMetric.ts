@@ -19,7 +19,7 @@ import { computed, makeObservable } from "mobx";
 
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
-import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
+import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import { recordsWithAggregateMetrics } from "./calculateAggregateMetrics";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";

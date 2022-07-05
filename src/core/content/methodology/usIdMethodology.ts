@@ -28,7 +28,7 @@ export const usIdMethodology: ViewMethodology = {
     title: "Operational Metrics",
     description: `The Operational Metrics page provides a bird's eye view of staff- and region-level trends to help practively identify resource constraints as well as focus attention on successes and areas for improvement.`,
     pageCopy: {
-      practicesPercentMethodology: {
+      vitalsPercentMethodology: {
         title: "Percentage Calculations",
         methodology: `The numerator for each percentage calculation is the number of people who meet the following criteria on a given day:
                       \n- **Overall:** The sum of all the counts below.
@@ -45,7 +45,7 @@ export const usIdMethodology: ViewMethodology = {
                       \n- **Supervision & risk level match:** The number of people on supervision who have a supervision level that is the same or below the risk level designated by their latest risk assessment score.
                       \n\nThe denominator of each rate calculation is all people on supervision in a given day for a given region. For example, the denominators of the percentages for District 3 represent the total number of people on supervision in District 3.`,
       },
-      practicesOverTimeMethodology: {
+      vitalsOverTimeMethodology: {
         title: "Over-time Calculations",
         methodology: `- **"Current Performance"** takes the numerator and denominator for the "Data last updated" date.
                       \n- **Rolling 30-day average:** On a given day, the rolling 30-day represents the average of the Current Performance percentage for the 30 days prior.

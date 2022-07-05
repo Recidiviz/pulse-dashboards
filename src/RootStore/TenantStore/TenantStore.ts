@@ -100,10 +100,10 @@ export default class TenantStore {
     return tenants[this.currentTenantId].domain;
   }
 
-  get enablePracticesCaseloadButton(): boolean {
+  get enableVitalsCaseloadButton(): boolean {
     if (!this.currentTenantId) return false;
     return (
-      tenants[this.currentTenantId].enablePracticesCaseloadButton &&
+      tenants[this.currentTenantId].enableVitalsCaseloadButton &&
       process.env.AUTH_ENV !== "demo"
     );
   }

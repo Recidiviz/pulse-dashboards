@@ -21,14 +21,14 @@ import { toTitleCase } from "../../utils/formatStrings";
 import Metric, { BaseMetricProps } from "./Metric";
 import {
   EntityType,
-  PracticesSummaryRecord,
-  PracticesTimeSeriesRecord,
   RawMetricData,
+  VitalsSummaryRecord,
+  VitalsTimeSeriesRecord,
 } from "./types";
 
 export function createPracticesSummaryMetric(
   rawRecords: RawMetricData
-): PracticesSummaryRecord[] {
+): VitalsSummaryRecord[] {
   return rawRecords.map((record) => {
     return {
       entityId: record.entity_id,
@@ -48,7 +48,7 @@ export function createPracticesSummaryMetric(
 
 export function createPracticesTimeSeriesMetric(
   rawRecords: RawMetricData
-): PracticesTimeSeriesRecord[] {
+): VitalsTimeSeriesRecord[] {
   return rawRecords.map((record) => {
     return {
       date: record.date,
@@ -60,7 +60,7 @@ export function createPracticesTimeSeriesMetric(
   });
 }
 
-type MetricRecords = PracticesSummaryRecord | PracticesTimeSeriesRecord;
+type MetricRecords = VitalsSummaryRecord | VitalsTimeSeriesRecord;
 
 export default class VitalsMetrics extends Metric<MetricRecords> {
   constructor(props: BaseMetricProps) {
@@ -71,7 +71,7 @@ export default class VitalsMetrics extends Metric<MetricRecords> {
     });
   }
 
-  get summaries(): PracticesSummaryRecord[] {
+  get summaries(): VitalsSummaryRecord[] {
     if (!this.apiData) return [];
     const summaries = parseResponseByFileFormat(
       this.apiData,
@@ -81,7 +81,7 @@ export default class VitalsMetrics extends Metric<MetricRecords> {
     return createPracticesSummaryMetric(summaries.data);
   }
 
-  get timeSeries(): PracticesTimeSeriesRecord[] {
+  get timeSeries(): VitalsTimeSeriesRecord[] {
     if (!this.apiData) return [];
     const timeSeries = parseResponseByFileFormat(
       this.apiData,

@@ -103,21 +103,21 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
                 {column.canSort ? (
                   <div className="PathwaysTable__head--sortable">
                     {column.render("Header")}
-                    <div className="PracticesSummaryTable__sort">
+                    <div className="VitalsSummaryTable__sort">
                       <div
                         className={cx(
-                          "PracticesSummaryTable__sort__button PracticesSummaryTable__sort__button--up",
+                          "VitalsSummaryTable__sort__button VitalsSummaryTable__sort__button--up",
                           {
-                            "PracticesSummaryTable__sort__button--active":
+                            "VitalsSummaryTable__sort__button--active":
                               column.isSorted && column.isSortedDesc,
                           }
                         )}
                       />
                       <div
                         className={cx(
-                          "PracticesSummaryTable__sort__button PracticesSummaryTable__sort__button--down",
+                          "VitalsSummaryTable__sort__button VitalsSummaryTable__sort__button--down",
                           {
-                            "PracticesSummaryTable__sort__button--active":
+                            "VitalsSummaryTable__sort__button--active":
                               column.isSorted && !column.isSortedDesc,
                           }
                         )}

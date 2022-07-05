@@ -26,7 +26,7 @@ import { computed, makeObservable } from "mobx";
 import tenants from "../../tenants";
 import { toHumanReadable, toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
-import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
+import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { TableColumn } from "../types/charts";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PrisonPopulationPersonLevelRecord, TimePeriod } from "./types";

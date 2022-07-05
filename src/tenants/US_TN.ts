@@ -32,7 +32,7 @@ const US_TN_CONFIG: TenantConfig = {
   stateCode: "TN",
   availableStateCodes: [pathways.US_TN],
   enableUserRestrictions: false,
-  enablePracticesCaseloadButton: false,
+  enableVitalsCaseloadButton: false,
   navigation: {
     workflows: [],
     system: [

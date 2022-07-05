@@ -28,7 +28,7 @@ const US_MO_CONFIG: TenantConfig = {
   stateCode: "MO",
   availableStateCodes: [pathways.US_MO],
   enableUserRestrictions: true,
-  enablePracticesCaseloadButton: false,
+  enableVitalsCaseloadButton: false,
   navigation: {
     system: [
       PATHWAYS_PAGES.libertyToPrison,

@@ -46,7 +46,7 @@ export default class MetricsStore {
     this.rootStore = rootStore;
   }
 
-  get practices(): VitalsMetrics {
+  get vitals(): VitalsMetrics {
     return new VitalsMetrics({
       tenantId: this.rootStore.currentTenantId,
       sourceEndpoint: "vitals",

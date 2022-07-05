@@ -21,12 +21,12 @@ import { getMetricCopy, getPageCopy } from "..";
  * All methodology attribute blocks are in Markdown
  */
 export const usNdMethodology: ViewMethodology = {
-  // TODO #1561 Remove practices methodology once CORE dashboard is removed
+  // TODO #1561 Remove vitals methodology once CORE dashboard is removed
   practices: {
     title: "Practices",
     description: `The "Practices" page provides a snapshot of agency performance on a set of key metrics to proactively identify potential resource constraints and focus attention on operational successes and areas for improvement.`,
     pageCopy: {
-      practicesPercentMethodology: {
+      vitalsPercentMethodology: {
         title: "Percentage Calculations",
         methodology: `The numerator for each percentage calculation is the number of people who meet the following criteria on a given day:
                       \n- **Overall:** The sum of all the counts below.
@@ -38,7 +38,7 @@ export const usNdMethodology: ViewMethodology = {
                       \n- **Timely risk assessments:** Number of people on supervision who have had a risk assessment completed within the last 212 days, or had an assessment within the first 30 days of supervision, if they have been on supervision for fewer than 212 days. This excludes all people on supervision for NC, IC-OUT, and diversion.
                       \n\nThe denominator of each rate calculation is all people on supervision in a given day for a given region. For example, the denominators of the percentages for Oakes Office represent the total number of people on supervision in Oakes.`,
       },
-      practicesOverTimeMethodology: {
+      vitalsOverTimeMethodology: {
         title: "Over-time Calculations",
         methodology: `The numerator for each percentage calculation is the number of people who meet the following criteria on a given day:
                       \n\n- **"Current Performance"** takes the numerator and denominator for the "Data last updated" date. For example, if the data was last updated on 3/31/21, the timely discharge performance would be represented by the total number of people with a projected supervision completion date before 3/31/21 divided by the total number of people on supervision on 3/31/21.
@@ -54,7 +54,7 @@ export const usNdMethodology: ViewMethodology = {
     title: "Operational Metrics",
     description: `The "Operations" page provides a snapshot of agency performance on a set of key metrics to proactively identify potential resource constraints and focus attention on operational successes and areas for improvement.`,
     pageCopy: {
-      practicesPercentMethodology: {
+      vitalsPercentMethodology: {
         title: "Percentage Calculations",
         methodology: `The numerator for each percentage calculation is the number of people who meet the following criteria on a given day:
                       \n- **Overall:** The sum of all the counts below.
@@ -66,7 +66,7 @@ export const usNdMethodology: ViewMethodology = {
                       \n- **Timely risk assessments:** Number of people on supervision who have had a risk assessment completed within the last 212 days, or had an assessment within the first 30 days of supervision, if they have been on supervision for fewer than 212 days. This excludes all people on supervision for NC, IC-OUT, and diversion.
                       \n\nThe denominator of each rate calculation is all people on supervision in a given day for a given region. For example, the denominators of the percentages for Oakes Office represent the total number of people on supervision in Oakes.`,
       },
-      practicesOverTimeMethodology: {
+      vitalsOverTimeMethodology: {
         title: "Over-time Calculations",
         methodology: `The numerator for each percentage calculation is the number of people who meet the following criteria on a given day:
                       \n\n- **"Current Performance"** takes the numerator and denominator for the "Data last updated" date. For example, if the data was last updated on 3/31/21, the timely discharge performance would be represented by the total number of people with a projected supervision completion date before 3/31/21 divided by the total number of people on supervision on 3/31/21.

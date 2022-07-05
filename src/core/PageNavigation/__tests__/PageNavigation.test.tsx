@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { mount } from "enzyme";
-import React from "react";
 import { Link, StaticRouter } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 
@@ -24,7 +23,7 @@ import { useRootStore } from "../../../components/StoreProvider";
 import RootStore from "../../../RootStore";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
-import PagePracticesStore from "../../CoreStore/PagePracticesStore";
+import VitalsStore from "../../CoreStore/VitalsStore";
 import { useCoreStore } from "../../CoreStoreProvider";
 import PageNavigation from "..";
 
@@ -40,7 +39,7 @@ jest.mock("react-router-dom", () => ({
 }));
 
 let coreStore: CoreStore;
-let pagePracticesStore: PagePracticesStore;
+let vitalsStore: VitalsStore;
 let filtersStore: FiltersStore;
 
 describe("CoreLayout tests", () => {
@@ -56,7 +55,7 @@ describe("CoreLayout tests", () => {
 
   beforeEach(() => {
     coreStore = new CoreStore(RootStore);
-    pagePracticesStore = coreStore.pagePracticesStore;
+    vitalsStore = coreStore.vitalsStore;
     filtersStore = coreStore.filtersStore;
     (useRootStore as jest.Mock).mockReturnValue({
       userStore: {
@@ -78,7 +77,7 @@ describe("CoreLayout tests", () => {
     page = "page1";
     (useCoreStore as jest.Mock).mockReturnValue({
       page,
-      pagePracticesStore,
+      vitalsStore,
       setSection: jest.fn(),
       setPage: jest.fn(),
       filtersStore,
@@ -92,7 +91,7 @@ describe("CoreLayout tests", () => {
     page = "page1";
     (useCoreStore as jest.Mock).mockReturnValue({
       page,
-      pagePracticesStore,
+      vitalsStore,
       setSection: jest.fn(),
       setPage: jest.fn(),
       filtersStore,
@@ -108,7 +107,7 @@ describe("CoreLayout tests", () => {
     page = "disabledPage";
     (useCoreStore as jest.Mock).mockReturnValue({
       page,
-      pagePracticesStore,
+      vitalsStore,
       setSection: jest.fn(),
       setPage: jest.fn(),
       filtersStore,

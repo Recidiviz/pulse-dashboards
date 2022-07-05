@@ -29,7 +29,7 @@ import {
 } from "../utils/navigation";
 import { useCoreStore } from "./CoreStoreProvider";
 import { TenantId } from "./models/types";
-import { DEFAULT_ENTITY_ID, METRIC_TYPES } from "./PagePractices/types";
+import { DEFAULT_ENTITY_ID, METRIC_TYPES } from "./PageVitals/types";
 import { PopulationFilterLabels } from "./types/filters";
 import { convertLabelsToValues } from "./utils/filterOptions";
 import {
@@ -85,7 +85,7 @@ const withRouteSync = <Props extends RouteParams>(
   const WrappedRouteComponent: React.FC<Props> = (props) => {
     const { pathname } = useLocation();
     const {
-      pagePracticesStore,
+      vitalsStore,
       setPage,
       setSection,
       filtersStore,
@@ -111,7 +111,7 @@ const withRouteSync = <Props extends RouteParams>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(
       action("sync route params to store on initial load", () => {
-        pagePracticesStore.setCurrentEntityId(entityId);
+        vitalsStore.setCurrentEntityId(entityId);
         setSection(sectionId);
         setPage(pageId as PathwaysPage);
 
@@ -120,10 +120,10 @@ const withRouteSync = <Props extends RouteParams>(
           pageId === CORE_PAGES.practices
         ) {
           const metricId =
-            pagePracticesStore.metrics.find((m) => {
+            vitalsStore.metrics.find((m) => {
               return m.name === cleanQuery.selectedMetric;
             })?.id || METRIC_TYPES.OVERALL;
-          pagePracticesStore.setSelectedMetricId(metricId);
+          vitalsStore.setSelectedMetricId(metricId);
         } else {
           filtersStore.setFilters(
             convertLabelsToValues(
@@ -139,7 +139,7 @@ const withRouteSync = <Props extends RouteParams>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(
       action("sync params from store to query params", () => {
-        pagePracticesStore.setCurrentEntityId(entityId);
+        vitalsStore.setCurrentEntityId(entityId);
         setSection(sectionId);
         setPage(pageId as PathwaysPage);
         if (
@@ -147,8 +147,8 @@ const withRouteSync = <Props extends RouteParams>(
           pageId === CORE_PAGES.practices
         ) {
           const metricName =
-            pagePracticesStore.metrics.find((m) => {
-              return m.id === pagePracticesStore.selectedMetricId;
+            vitalsStore.metrics.find((m) => {
+              return m.id === vitalsStore.selectedMetricId;
             })?.name || "Overall";
           setQuery({ selectedMetric: metricName });
         } else {
@@ -174,7 +174,7 @@ const withRouteSync = <Props extends RouteParams>(
         filtersStore.filtersLabels,
         pageId,
         sectionId,
-        pagePracticesStore.selectedMetricId,
+        vitalsStore.selectedMetricId,
       ]
     );
 

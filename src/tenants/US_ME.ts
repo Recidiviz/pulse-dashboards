@@ -28,7 +28,7 @@ const US_ME_CONFIG: TenantConfig = {
   stateCode: "ME",
   availableStateCodes: [pathways.US_ME],
   enableUserRestrictions: false,
-  enablePracticesCaseloadButton: false,
+  enableVitalsCaseloadButton: false,
   navigation: {
     system: [
       PATHWAYS_PAGES.libertyToPrison,

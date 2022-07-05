@@ -18,7 +18,7 @@
 import RootStore from "../../RootStore";
 import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
-import { DownloadableData, DownloadableDataset } from "../PagePractices/types";
+import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import {

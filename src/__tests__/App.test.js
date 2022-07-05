@@ -28,8 +28,8 @@ import UsNDCommunityExplore from "../core/community/Explore";
 import CoreLayout from "../core/CoreLayout";
 import MethodologyPathways from "../core/MethodologyPathways";
 import MethodologyProjections from "../core/MethodologyProjections/Methodology";
-import PagePractices from "../core/PagePractices";
 import PageSystem from "../core/PageSystem";
+import PageVitals from "../core/PageVitals";
 import PathwaysLayout from "../core/PathwaysLayout";
 import LanternLayout from "../lantern/LanternLayout";
 import Revocations from "../lantern/Revocations";
@@ -54,7 +54,7 @@ jest.mock("../components/ErrorMessage");
 jest.mock("../components/VerificationNeeded");
 jest.mock("../core/MethodologyProjections/Methodology");
 jest.mock("../core/MethodologyPathways");
-jest.mock("../core/PagePractices");
+jest.mock("../core/PageVitals");
 jest.mock("../core/PageSystem");
 
 describe("App tests", () => {
@@ -77,7 +77,7 @@ describe("App tests", () => {
   const PathwaysLayoutMock = PathwaysLayout.type;
   const MethodologyPathwaysMock = MethodologyPathways.type;
   const PageSystemMock = PageSystem.type;
-  const PagePracticesMock = PagePractices.type;
+  const PageVitalsMock = PageVitals.type;
   let userStore = {};
 
   LanternLayoutMock.mockImplementation(({ children }) => children);
@@ -89,7 +89,7 @@ describe("App tests", () => {
     mockWithTestId(mockNDCommunityExploreId)
   );
   PageSystemMock.mockReturnValue(mockWithTestId(mockPathwaysPrisonId));
-  PagePracticesMock.mockReturnValue(mockWithTestId(mockCommunityPracticesId));
+  PageVitalsMock.mockReturnValue(mockWithTestId(mockCommunityPracticesId));
   NotFound.mockReturnValue(mockWithTestId(mockNotFoundId));
   Loading.mockReturnValue(mockWithTestId(mockLoadingTestId));
   ErrorMessage.mockReturnValue(mockWithTestId(mockErrorId));

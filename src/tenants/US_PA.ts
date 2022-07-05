@@ -26,7 +26,7 @@ const US_PA_CONFIG: TenantConfig = {
   stateCode: "PA",
   availableStateCodes: [lantern.US_PA],
   enableUserRestrictions: false,
-  enablePracticesCaseloadButton: false,
+  enableVitalsCaseloadButton: false,
   navigation: {
     // TODO remove once LANTERN is deprecated
     // @ts-ignore

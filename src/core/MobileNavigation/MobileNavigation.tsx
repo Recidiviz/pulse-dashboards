@@ -24,10 +24,10 @@ import { ReactComponent as MenuIcon } from "../../assets/static/images/menu.svg"
 import Drawer from "../../components/Drawer";
 import useIsMobile from "../../hooks/useIsMobile";
 import PageNavigation from "../PageNavigation";
-import PracticesSummaryBreadcrumbs from "../PracticesSummaryBreadcrumbs";
 import SectionNavigation from "../SectionNavigation";
 import ViewNavigation from "../ViewNavigation";
 import { PATHWAYS_VIEWS } from "../views";
+import VitalsSummaryBreadcrumbs from "../VitalsSummaryBreadcrumbs";
 
 interface Props {
   title?: string;
@@ -61,7 +61,7 @@ const MobileNavigation: React.FC<Props> = ({ title }) => {
         )}
         {currentView === PATHWAYS_VIEWS.operations && (
           <div className="MobileNavigation__operations">
-            <PracticesSummaryBreadcrumbs />
+            <VitalsSummaryBreadcrumbs />
           </div>
         )}
       </div>

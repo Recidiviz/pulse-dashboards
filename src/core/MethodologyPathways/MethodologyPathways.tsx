@@ -65,7 +65,7 @@ const MethodologyPathways: React.FC = () => {
   const enabledPages =
     view === PATHWAYS_VIEWS.system
       ? navigationLayout.system
-      : ["practicesPercentMethodology", "practicesOverTimeMethodology"];
+      : ["vitalsPercentMethodology", "vitalsOverTimeMethodology"];
 
   configureAnchors({ offset: -75 });
 

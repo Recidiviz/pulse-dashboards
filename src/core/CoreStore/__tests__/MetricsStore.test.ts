@@ -42,8 +42,8 @@ describe("MetricsStore", () => {
   });
 
   describe("metrics", () => {
-    it("has a reference to the practices metrics", () => {
-      expect(coreStore.metricsStore.practices).toBeInstanceOf(VitalsMetrics);
+    it("has a reference to the vitals metrics", () => {
+      expect(coreStore.metricsStore.vitals).toBeInstanceOf(VitalsMetrics);
     });
 
     it("has a reference to the projectedPrisonPopulationOverTime metric", () => {
@@ -54,10 +54,10 @@ describe("MetricsStore", () => {
   });
 
   describe("when the tenantId changes", () => {
-    it("fetches new practices metrics for the new tenantId", () => {
+    it("fetches new vitals metrics for the new tenantId", () => {
       runInAction(() => {
         coreStore.tenantStore.currentTenantId = "US_ID";
-        expect(coreStore.metricsStore.practices).toBeInstanceOf(VitalsMetrics);
+        expect(coreStore.metricsStore.vitals).toBeInstanceOf(VitalsMetrics);
         expect(VitalsMetrics).toHaveBeenCalledWith({
           tenantId: "US_ID",
           sourceEndpoint: "vitals",

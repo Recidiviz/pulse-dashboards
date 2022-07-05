@@ -28,7 +28,7 @@ const US_CO_CONFIG: TenantConfig = {
   stateCode: "CO",
   availableStateCodes: [pathways.US_CO],
   enableUserRestrictions: false,
-  enablePracticesCaseloadButton: false,
+  enableVitalsCaseloadButton: false,
   navigation: {
     system: [
       PATHWAYS_PAGES.libertyToPrison,
