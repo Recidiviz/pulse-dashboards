@@ -294,7 +294,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
 
     it("calls the new API and logs diffs", () => {
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=judicial_district&since=2021-07-01`,
+        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=judicial_district&since=2021-07-15`,
         RootStore.getTokenSilently
       );
       expect(Sentry.captureException).toHaveBeenCalled();

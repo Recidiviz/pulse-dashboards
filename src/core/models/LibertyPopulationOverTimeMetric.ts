@@ -44,6 +44,7 @@ export default class LibertyPopulationOverTimeMetric extends PathwaysMetric<Libe
     this.download = this.download.bind(this);
     this.endpoint = "LibertyToPrisonTransitionsCount";
     this.groupBy = "year_month";
+    this.backtrackSinceToFirstOfMonth = true;
     this.differ = new TimeSeriesDiffer();
   }
 

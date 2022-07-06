@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { SnapshotDataRecord } from "../../types";
-import { DiffValue } from "../Differ";
+import { Diff, DiffValue } from "../Differ";
 import { SnapshotDiffer } from "../SnapshotDiffer";
 
 const differ: SnapshotDiffer = new SnapshotDiffer("ageGroup");
@@ -43,7 +43,8 @@ it("diffs equal data out of order", () => {
     },
   ];
 
-  expect(differ.diff(oldData, newData).entries).toHaveLength(0);
+  expect(differ.diff(oldData, newData).totalDiffs).toEqual(0);
+  expect(differ.diff(oldData, newData).samples.entries).toHaveLength(0);
 });
 
 it("diffs unequal data", () => {
@@ -104,8 +105,12 @@ it("diffs unequal data", () => {
     oldValue: 0,
     newValue: 1,
   });
+  const expectedDiffOutput: Diff<number> = {
+    totalDiffs: 3,
+    samples: expectedDiffs,
+  };
 
-  expect(differ.diff(oldData, newData)).toEqual(expectedDiffs);
+  expect(differ.diff(oldData, newData)).toEqual(expectedDiffOutput);
 });
 
 it("diffs data with extra fields", () => {
@@ -135,5 +140,6 @@ it("diffs data with extra fields", () => {
     },
   ];
 
-  expect(differ.diff(oldData, newData).entries).toHaveLength(0);
+  expect(differ.diff(oldData, newData).totalDiffs).toEqual(0);
+  expect(differ.diff(oldData, newData).samples.entries).toHaveLength(0);
 });

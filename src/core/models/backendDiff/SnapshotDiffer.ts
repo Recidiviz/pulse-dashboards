@@ -42,4 +42,8 @@ export class SnapshotDiffer extends Differ<SnapshotDataRecord, number> {
   getValue(result: SnapshotDataRecord): number {
     return result.count;
   }
+
+  compare(value: number, other: number): boolean {
+    return value === other;
+  }
 }

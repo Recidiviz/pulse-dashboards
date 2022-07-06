@@ -129,7 +129,9 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   groupBy?: string;
 
-  differ?: Differ<any, any>; // not super great but the differs are temporary anyway
+  differ?: Differ<any, any>; // <any, any> isn't super great but the differs are temporary anyway
+
+  backtrackSinceToFirstOfMonth?: boolean = false;
 
   constructor({
     rootStore,
@@ -173,7 +175,6 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
       if (
         !this.rootStore ||
         !this.allRecords?.length ||
-        !this.groupBy ||
         !this.endpoint ||
         process.env.REACT_APP_DEPLOY_ENV === "production"
       )
@@ -181,9 +182,14 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
       const groupBy = snakeCase(this.groupBy);
       const filterValues = this.rootStore.filtersStore.filters;
       const { monthRange } = this.rootStore.filtersStore;
-      const queryParams = new URLSearchParams({ group: groupBy });
+      const queryParams = new URLSearchParams();
+      if (groupBy) {
+        queryParams.append("group", groupBy);
+      }
       if (monthRange) {
-        const since = startOfMonth(subMonths(new Date(), monthRange));
+        const since = this.backtrackSinceToFirstOfMonth
+          ? startOfMonth(subMonths(new Date(), monthRange))
+          : subMonths(new Date(), monthRange);
         queryParams.append("since", formatDate(since, "yyyy-MM-dd"));
       }
 
@@ -203,9 +209,13 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
       this.fetchNewMetrics(queryParams).then((results) => {
         if (this.differ) {
           const diffs = this.differ.diff(this.dataSeries, results);
-          if (diffs.size > 0) {
+          if (diffs.totalDiffs > 0) {
             Sentry.captureException(
-              new DiffError(JSON.stringify(Object.fromEntries(diffs)))
+              new DiffError(
+                `${diffs.totalDiffs} diffs: ${JSON.stringify(
+                  Object.fromEntries(diffs.samples)
+                )}`
+              )
             );
           }
         }

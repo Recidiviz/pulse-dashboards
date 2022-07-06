@@ -18,22 +18,29 @@
  *
  */
 
+import { isEqualWith } from "lodash";
+
 export type DiffValue<T> = {
   oldValue: T | undefined;
   newValue: T | undefined;
+};
+
+export type Diff<T> = {
+  totalDiffs: number;
+  samples: Map<string, DiffValue<T>>;
 };
 
 /**
  * Base class for diffing results from old and new backends.
  */
 export abstract class Differ<DataRecord, DiffValueType> {
-  abstract emptyValue: DiffValueType;
+  abstract emptyValue: DiffValueType | undefined;
 
-  diff(
-    oldData: DataRecord[],
-    newData: DataRecord[]
-  ): Map<string, DiffValue<DiffValueType>> {
+  maxDiffs = 10;
+
+  diff(oldData: DataRecord[], newData: DataRecord[]): Diff<DiffValueType> {
     const diffs = new Map<string, DiffValue<DiffValueType>>();
+    let totalDiffs = 0;
 
     const oldResults = new Map<string, DiffValueType>();
     oldData.forEach((value) => {
@@ -48,31 +55,40 @@ export abstract class Differ<DataRecord, DiffValueType> {
 
       const oldValue = oldResults.get(key) || this.emptyValue;
       const newValue = value || this.emptyValue;
-      if (oldValue !== newValue) {
-        diffs.set(key, {
-          oldValue,
-          newValue,
-        });
+      if (!isEqualWith(oldValue, newValue, this.compare.bind(this))) {
+        totalDiffs += 1;
+        if (totalDiffs < this.maxDiffs) {
+          diffs.set(key, {
+            oldValue,
+            newValue,
+          });
+        }
       }
     });
 
     oldResults.forEach((value, key) => {
       const oldValue = value || this.emptyValue;
       const newValue = newResults.get(key) || this.emptyValue;
-      if (oldValue !== newValue) {
-        // Since we're using maps with string keys, we don't need to check if a diff is already
-        // accounted for- we can just re-add it and it will dedupe itself.
-        diffs.set(key, {
-          oldValue,
-          newValue,
-        });
+      if (
+        !isEqualWith(oldValue, newValue, this.compare.bind(this)) &&
+        !diffs.has(key)
+      ) {
+        totalDiffs += 1;
+        if (totalDiffs < this.maxDiffs) {
+          diffs.set(key, {
+            oldValue,
+            newValue,
+          });
+        }
       }
     });
 
-    return diffs;
+    return { totalDiffs, samples: diffs };
   }
 
   abstract getKey(result: DataRecord): string;
 
   abstract getValue(result: DataRecord): DiffValueType;
+
+  abstract compare(value: DiffValueType, other: DiffValueType): boolean;
 }

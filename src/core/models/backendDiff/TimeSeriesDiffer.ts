@@ -32,4 +32,8 @@ export class TimeSeriesDiffer extends Differ<TimeSeriesDataRecord, number> {
   getValue(result: TimeSeriesDataRecord): number {
     return result.count;
   }
+
+  compare(value: number, other: number): boolean {
+    return value === other;
+  }
 }
