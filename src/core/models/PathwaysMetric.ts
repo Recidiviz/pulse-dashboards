@@ -73,6 +73,7 @@ export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   isGeographic?: boolean;
   rotateLabels?: boolean;
   accessorIsNotFilterType?: boolean;
+  endpoint?: string;
 };
 
 /**
@@ -147,6 +148,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     isGeographic,
     rotateLabels,
     accessorIsNotFilterType,
+    endpoint,
   }: BaseMetricConstructorOptions<RecordFormat>) {
     makeObservable<PathwaysMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
@@ -170,6 +172,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.isGeographic = isGeographic;
     this.rotateLabels = rotateLabels;
     this.accessorIsNotFilterType = accessorIsNotFilterType;
+    this.endpoint = endpoint;
 
     autorun(() => {
       if (

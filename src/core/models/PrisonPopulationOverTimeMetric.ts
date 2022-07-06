@@ -21,6 +21,7 @@ import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
+import { TimeSeriesDiffer } from "./backendDiff/TimeSeriesDiffer";
 import { recordsWithAggregateMetrics } from "./calculateAggregateMetrics";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PrisonPopulationTimeSeriesRecord } from "./types";
@@ -39,6 +40,9 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
     });
 
     this.download = this.download.bind(this);
+    this.groupBy = "year_month";
+    this.backtrackSinceToFirstOfMonth = true;
+    this.differ = new TimeSeriesDiffer();
   }
 
   get dataSeries(): PrisonPopulationTimeSeriesRecord[] {

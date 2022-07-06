@@ -27,6 +27,7 @@ import { computed, makeObservable } from "mobx";
 import { toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
+import { SnapshotDiffer } from "./backendDiff/SnapshotDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PrisonPopulationSnapshotRecord, TimePeriod } from "./types";
 import { filterRecordByDimensions, filterTimePeriod } from "./utils";
@@ -49,6 +50,8 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
 
     this.accessor = props.accessor;
     this.download = this.download.bind(this);
+    this.groupBy = this.accessor;
+    this.differ = new SnapshotDiffer(this.accessor);
   }
 
   get totalCount(): number {

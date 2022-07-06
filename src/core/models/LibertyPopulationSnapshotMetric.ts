@@ -51,7 +51,6 @@ export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<Libe
 
     this.accessor = props.accessor;
     this.download = this.download.bind(this);
-    this.endpoint = "LibertyToPrisonTransitionsCount";
     this.groupBy = this.accessor;
     this.differ = new SnapshotDiffer(this.accessor);
   }

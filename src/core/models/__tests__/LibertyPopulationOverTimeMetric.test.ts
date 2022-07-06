@@ -204,6 +204,7 @@ describe("LibertyPopulationOverTimeMetric", () => {
         id: "prisonPopulationOverTime",
         tenantId: mockTenantId,
         sourceFilename: "liberty_to_prison_count_by_month",
+        endpoint: "LibertyToPrisonTransitionsCount",
         rootStore: mockCoreStore,
         dataTransformer: createLibertyPopulationTimeSeries,
         filters: {

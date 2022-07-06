@@ -277,6 +277,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
         id: "libertyToPrisonPopulationByDistrict",
         tenantId: mockTenantId,
         sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
+        endpoint: "LibertyToPrisonTransitionsCount",
         rootStore: mockCoreStore,
         accessor: "judicialDistrict",
         dataTransformer: createLibertyPopulationSnapshot,
