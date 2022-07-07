@@ -26,7 +26,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { CORE_TENANTS } from "../../RootStore/TenantStore/coreTenants";
 import { PATHWAYS_TENANTS } from "../../RootStore/TenantStore/pathwaysTenants";
-import { getPageCopy } from "../content";
+import { getMethodologyCopy, getPageCopy } from "../content";
 import { useCoreStore } from "../CoreStoreProvider";
 import { NavigationSection } from "../types/navigation";
 import { CoreViewIdList, isValidPathwaysRootPath } from "../views";
@@ -42,6 +42,17 @@ const PageNavigation: React.FC = () => {
   const pageOptions = navigationLayout[currentView] ?? [];
   const isCoreView = CORE_TENANTS.includes(currentTenantId);
   const isPathwaysView = PATHWAYS_TENANTS.includes(currentTenantId);
+  // TODO(#2016): Remove try-catch once getMethodologyCopy() always returns copy
+  let mergePageAndMethodologyCopy = getPageCopy(currentTenantId);
+  try {
+    mergePageAndMethodologyCopy = {
+      ...mergePageAndMethodologyCopy,
+      ...getMethodologyCopy(currentTenantId),
+    };
+  } catch {
+    // no methodology exists for state
+  }
+
   return (
     <ul
       className={cx("PageNavigation", {
@@ -62,11 +73,12 @@ const PageNavigation: React.FC = () => {
             })}
           >
             {/* @ts-ignore */}
-            {getPageCopy(currentTenantId)?.[pageOption]?.title}
+            {mergePageAndMethodologyCopy?.[pageOption]?.title}
           </Link>
         </li>
       ))}
     </ul>
   );
 };
+
 export default withRouteSync(observer(PageNavigation));
