@@ -1212,49 +1212,29 @@ export const MiPopulationFilterOptions: PopulationFilters = {
         value: "WHV",
       },
       {
-        label: "CLE",
-        value: "CLE",
-      },
-      {
-        label: "HVM",
-        value: "HVM",
-      },
-      {
-        label: "OCF",
-        value: "OCF",
-      },
-      {
         label: "PRF",
+        longLabel: "Macomb Parole Violation Unit",
         value: "PRF",
       },
       {
-        label: "RRF",
-        value: "RRF",
-      },
-      {
         label: "ZLI",
+        longLabel: "Special Alternative Incarceration/Men's",
         value: "ZLI",
       },
       {
         label: "ZLW",
+        longLabel: "Special Alternative Incarceration/Women's",
         value: "ZLW",
       },
       {
-        label: "JMF",
-        value: "JMF",
-      },
-      {
-        label: "SFM",
-        value: "SFM",
+        label: "SMF",
+        longLabel: "Standish Maximum Correctional Facility",
+        value: "SMF",
       },
       {
         label: "IBC",
         longLabel: "Bellamy Creek Correctional Facility",
         value: "IBC",
-      },
-      {
-        label: "SMF",
-        value: "SMF",
       },
     ],
     get defaultOption(): FilterOption {
