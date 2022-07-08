@@ -679,6 +679,7 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       { label: "Warrant", value: "WARRANT" },
       { label: "ICOTS", value: "INTERSTATE_COMPACT" },
       { label: "Other", value: "OTHER" },
+      { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -1319,6 +1320,10 @@ export const MoPopulationFilterOptions: PopulationFilters = {
       { label: "Moderate", value: "MEDIUM" },
       { label: "High", value: "HIGH" },
       { label: "Maximum", value: "MAXIMUM" },
+      { label: "Electronic Monitoring", value: "ELECTRONIC_MONITORING_ONLY" },
+      { label: "Unknown", value: "UNKNOWN" },
+      { label: "Unassigned", value: "UNASSIGNED" },
+      { label: "Other", value: "OTHER" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
@@ -1582,6 +1587,7 @@ export const NdPopulationFilterOptions: PopulationFilters = {
       { label: "Maximum", value: "MAXIMUM" },
       { label: "Diversion", value: "DIVERSION" },
       { label: "Interstate compact", value: "INTERSTATE_COMPACT" },
+      { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
