@@ -84,11 +84,23 @@ export class PracticesStore implements Hydratable {
     this.rootStore = rootStore;
     makeAutoObservable(this, { rootStore: false });
 
-    // trigger some updates when filters change
+    // update caseload subscriptions when selection changes
     reaction(
       () => [this.selectedOfficerIds],
       () => {
         this.updateCaseloadSources();
+      }
+    );
+
+    // force new caseload data subscriptions when feature flags change,
+    // because data sources may be affected by flags
+    reaction(
+      () => [this.featureVariantRecord],
+      () => {
+        this.updateCaseloadSources();
+        if (this.selectedClientPseudoId) {
+          this.fetchClient(this.selectedClientPseudoId);
+        }
       }
     );
 

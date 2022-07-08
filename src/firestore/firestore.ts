@@ -144,6 +144,20 @@ const collections = {
   ) as CollectionReference<FeatureVariantRecord>,
 };
 
+/**
+ * Replaces the clients collection reference in place with a reference
+ * to the clients sandbox collection (or vice versa, based on feature variant)
+ */
+function patchClientDataSandbox(featureVariants?: FeatureVariantRecord) {
+  const useSandbox =
+    featureVariants?.CompliantReportingAlmostEligible !== undefined;
+
+  collections.clients = collection(
+    db,
+    `${useSandbox ? "SANDBOX_" : ""}${collectionNames.clients}`
+  ) as CollectionReference<ClientRecord>;
+}
+
 export async function getUser(
   email: string
 ): Promise<CombinedUserRecord | undefined> {
@@ -164,6 +178,8 @@ export async function getUser(
 
   const updates = updateSnapshot.data();
   const featureVariants = featureVariantSnapshot.data();
+
+  patchClientDataSandbox(featureVariants);
 
   return {
     info,
@@ -191,7 +207,9 @@ export function subscribeToFeatureVariants(
   return onSnapshot(
     doc(collections.featureVariants, email.toLowerCase()),
     (result) => {
-      handleResults(result.data());
+      const featureVariants = result.data();
+      patchClientDataSandbox(featureVariants);
+      handleResults(featureVariants);
     }
   );
 }
@@ -258,20 +276,25 @@ export function subscribeToCaseloads(
   officerIds: string[],
   handleResults: (results: ClientRecord[]) => void
 ): Unsubscribe {
-  return onSnapshot(
-    query(
+  // constructing the query in a new closure ensures that
+  // we dereference the collection when the function is CALLED,
+  // rather than when the function is DEFINED. This is important
+  // because the collections object may have been patched during that interval.
+  function getCaseloadQuery() {
+    return query(
       collections.clients,
       where("stateCode", "==", stateCode),
       where("officerId", "in", officerIds)
-    ),
-    (results) => {
-      const docs: ClientRecord[] = [];
-      results.forEach((result) => {
-        docs.push(result.data());
-      });
-      handleResults(docs);
-    }
-  );
+    );
+  }
+
+  return onSnapshot(getCaseloadQuery(), (results) => {
+    const docs: ClientRecord[] = [];
+    results.forEach((result) => {
+      docs.push(result.data());
+    });
+    handleResults(docs);
+  });
 }
 
 /**
