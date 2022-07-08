@@ -403,6 +403,298 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
 
 export const CoPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.FACILITY]: {
+    type: FILTER_TYPES.FACILITY,
+    title: "Facility",
+    setFilters: setFilters(FILTER_TYPES.FACILITY),
+    options: [
+      { label: "All", value: "ALL" },
+      {
+        value: "FT LYON",
+        label: "FT LYON",
+        longLabel: "Fort Lyon Correctional Facility",
+      },
+      {
+        value: "SCCF",
+        label: "SCCF",
+        longLabel: "San Carlos Correctional Facility",
+      },
+      {
+        value: "PAROLE FAC",
+        label: "PAROLE FAC",
+        longLabel: "Parole Facility",
+      },
+      {
+        value: "KCCC",
+        label: "KCCC",
+        longLabel: "Kit Carson Correctional Facility",
+      },
+      {
+        value: "DRCD",
+        label: "DRCD",
+        longLabel: "Denver Reception And Diagnostic Center",
+      },
+      {
+        value: "CMRC",
+        label: "CMRC",
+        longLabel: "Cheyenne Mountain Re-Entry Center",
+      },
+      {
+        value: "DCC",
+        label: "DCC",
+        longLabel: "Delta Correctional Center",
+      },
+      {
+        value: "PUEBLO MIN",
+        label: "PUEBLO MIN",
+        longLabel: "Pueblo Minimum Center",
+      },
+      {
+        value: "CC ALT PGM",
+        label: "CC ALT PGM",
+        longLabel: "Colo Corrections Alternative Prog (BVCF Boot Camp)",
+      },
+      {
+        value: "LVCF",
+        label: "LVCF",
+        longLabel: "La Vista Correctional Facility",
+      },
+      {
+        value: "LVCF MALE",
+        label: "LVCF MALE",
+        longLabel: "La Vista Correctional Facility For Males",
+      },
+      {
+        value: "CTCF",
+        label: "CTCF",
+        longLabel: "Colorado Territorial Correctional Facility",
+      },
+      {
+        value: "FEDERAL",
+        label: "FEDERAL",
+        longLabel: "Federal",
+      },
+      {
+        value: "CSP",
+        label: "CSP",
+        longLabel: "Colorado State Penitentiary",
+      },
+      {
+        value: "ACC",
+        label: "ACC",
+        longLabel: "Arrowhead Correctional Center",
+      },
+      {
+        value: "FMCC",
+        label: "FMCC",
+        longLabel: "Four Mile Correctional Center",
+      },
+      {
+        value: "AVCF",
+        label: "AVCF",
+        longLabel: "Arkansas Valley Correctional Facility",
+      },
+      {
+        value: "BCCF",
+        label: "BCCF",
+        longLabel: "Bent County Correctional Facility",
+      },
+      {
+        value: "OOS",
+        label: "OOS",
+        longLabel: "Out of state",
+      },
+      {
+        value: "TCF",
+        label: "TCF",
+        longLabel: "Trinidad Correctional Facility",
+      },
+      {
+        value: "CCC",
+        label: "CCC",
+        longLabel: "Colorado Correctional Center (Camp George West)",
+      },
+      {
+        value: "ISP-1",
+        label: "ISP-1",
+        longLabel: "Intensive Supervision - Inmate",
+      },
+      {
+        value: "YOS",
+        label: "YOS",
+        longLabel: "YOS Facility",
+      },
+      {
+        value: "COLUMBINE",
+        label: "COLUMBINE",
+        longLabel: "Columbine",
+      },
+      {
+        value: "BVMC",
+        label: "BVMC",
+        longLabel: "Buena Vista Minimum Center",
+      },
+      {
+        value: "SHDW MNTN",
+        label: "SHDW MNTN",
+        longLabel: "SHDW MNTN",
+      },
+      {
+        value: "CJ",
+        label: "CJ",
+        longLabel: "County Jail",
+      },
+      {
+        value: "DWCF",
+        label: "DWCF",
+        longLabel: "Denver Womens Correctional Facility",
+      },
+      {
+        value: "CCCF",
+        label: "CCCF",
+        longLabel: "Crowley County Correctional Facility",
+      },
+      {
+        value: "FCC",
+        label: "FCC",
+        longLabel: "FCC",
+      },
+      {
+        value: "FCF",
+        label: "FCF",
+        longLabel: "Fremont Correctional Facility",
+      },
+      {
+        value: "PRERELEASE",
+        label: "PRERELEASE",
+        longLabel: "Pre-Release Center",
+      },
+      {
+        value: "SCF",
+        label: "SCF",
+        longLabel: "Sterling Correctional Facility",
+      },
+      {
+        value: "LCF",
+        label: "LCF",
+        longLabel: "Limon Correctional Facility",
+      },
+      {
+        value: "SCC",
+        label: "SCC",
+        longLabel: "Skyline Correctional Center",
+      },
+      {
+        value: "FUG-INMATE",
+        label: "FUG-INMATE",
+        longLabel: "Fugitive Inmate",
+      },
+      {
+        value: "CC",
+        label: "CC",
+        longLabel: "Community Corrections",
+      },
+      {
+        value: "CCF",
+        label: "CCF",
+        longLabel: "CCCentennial Correctional FacilityF",
+      },
+      {
+        value: "BVCF",
+        label: "BVCF",
+        longLabel: "Buena Vista Correctional Complex",
+      },
+      {
+        value: "HUERFANO",
+        label: "HUERFANO",
+        longLabel: "Huerfano Correctional Center",
+      },
+      {
+        value: "HPCF",
+        label: "HPCF",
+        longLabel: "High Plains Correctional Facility",
+      },
+      {
+        value: "BRUSH",
+        label: "BRUSH",
+        longLabel: "Brush Correctional Facility",
+      },
+      {
+        value: "CWCF",
+        label: "CWCF",
+        longLabel: "Colorado Womens Correctional Facility",
+      },
+      {
+        value: "UNKNOWN",
+        label: "UNKNOWN",
+        longLabel: "Unknown",
+      },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.ADMISSION_REASON]: {
+    type: FILTER_TYPES.ADMISSION_REASON,
+    title: "Admission Reason",
+    setFilters: setFilters(FILTER_TYPES.ADMISSION_REASON),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "New court commitment", value: "NEW_ADMISSION" },
+      {
+        label: "Transfer from other jurisdiction",
+        value: "TRANSFER_FROM_OTHER_JURISDICTION",
+      },
+      { label: "Transfer", value: "TRANSFER" },
+      { label: "Revocation", value: "REVOCATION" },
+      {
+        label: "Return from temporary release",
+        value: "RETURN_FROM_TEMPORARY_RELEASE",
+      },
+      { label: "Status change", value: "STATUS_CHANGE" },
+      { label: "Other", value: "OTHER" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
+  [FILTER_TYPES.RACE]: {
+    type: FILTER_TYPES.RACE,
+    title: "Race",
+    setFilters: setFilters(FILTER_TYPES.RACE),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Black", value: "BLACK" },
+      { label: "White", value: "WHITE" },
+      { label: "Hispanic", value: "HISPANIC" },
+      { label: "Asian", value: "ASIAN" },
+      {
+        label: "American Indian/ Alaskan Native",
+        value: "AMERICAN_INDIAN_ALASKAN_NATIVE",
+      },
+      {
+        label: "Native Hawaiian/ Pacific Islander",
+        value: "NATIVE_HAWAIIAN_PACIFIC_ISLANDER",
+      },
+      { label: "Other", value: "OTHER" },
+      { label: "Unknown", value: "UNKNOWN" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+    enabledViews: [CORE_VIEWS.facilities],
+  },
 };
 
 export const IdPopulationFilterOptions: PopulationFilters = {

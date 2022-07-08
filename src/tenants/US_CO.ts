@@ -30,14 +30,7 @@ const US_CO_CONFIG: TenantConfig = {
   enableUserRestrictions: false,
   enableVitalsCaseloadButton: false,
   navigation: {
-    system: [
-      PATHWAYS_PAGES.libertyToPrison,
-      PATHWAYS_PAGES.prison,
-      PATHWAYS_PAGES.prisonToSupervision,
-      PATHWAYS_PAGES.supervision,
-      PATHWAYS_PAGES.supervisionToPrison,
-      PATHWAYS_PAGES.supervisionToLiberty,
-    ],
+    system: [PATHWAYS_PAGES.prison],
     libertyToPrison: [
       PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLocation,
