@@ -16,7 +16,6 @@
 // =============================================================================
 import * as Sentry from "@sentry/react";
 import { runInAction } from "mobx";
-import tk from "timekeeper";
 
 import {
   callMetricsApi,
@@ -267,7 +266,6 @@ describe("LibertyPopulationSnapshotMetric", () => {
 
   describe("dataSeries", () => {
     beforeEach(() => {
-      tk.freeze(new Date("2022-01-15"));
       filtersStore.setFilters({
         timePeriod: ["6"],
       });
@@ -289,13 +287,9 @@ describe("LibertyPopulationSnapshotMetric", () => {
       metric.hydrate();
     });
 
-    afterEach(() => {
-      tk.reset();
-    });
-
     it("calls the new API and logs diffs", () => {
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=judicial_district&since=2021-07-15`,
+        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=judicial_district&time_period=months_0_6`,
         RootStore.getTokenSilently
       );
       expect(Sentry.captureException).toHaveBeenCalled();

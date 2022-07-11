@@ -16,7 +16,6 @@
 // =============================================================================
 import * as Sentry from "@sentry/react";
 import { runInAction } from "mobx";
-import tk from "timekeeper";
 
 import {
   callMetricsApi,
@@ -197,7 +196,6 @@ describe("LibertyPopulationOverTimeMetric", () => {
 
   describe("dataSeries", () => {
     beforeEach(() => {
-      tk.freeze(new Date("2022-01-15"));
       mockCoreStore.filtersStore = filtersStore;
 
       metric = new LibertyPopulationOverTimeMetric({
@@ -213,13 +211,10 @@ describe("LibertyPopulationOverTimeMetric", () => {
       });
       metric.hydrate();
     });
-    afterEach(() => {
-      tk.reset();
-    });
 
     it("calls the new API and logs diffs", () => {
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&since=2021-07-01`,
+        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&time_period=months_0_6`,
         RootStore.getTokenSilently
       );
       expect(Sentry.captureException).toHaveBeenCalled();
@@ -249,7 +244,7 @@ describe("LibertyPopulationOverTimeMetric", () => {
       });
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&since=2021-07-01`,
+        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&time_period=months_0_6`,
         RootStore.getTokenSilently
       );
       // Sentry will probably get called after metric.dataSeries has returned, so
@@ -272,7 +267,7 @@ describe("LibertyPopulationOverTimeMetric", () => {
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
         encodeURI(
-          `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&since=2021-07-01` +
+          `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&time_period=months_0_6` +
             `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
         ),
         RootStore.getTokenSilently

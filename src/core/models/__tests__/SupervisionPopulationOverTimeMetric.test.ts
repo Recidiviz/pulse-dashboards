@@ -16,7 +16,6 @@
 // =============================================================================
 import * as Sentry from "@sentry/react";
 import { runInAction } from "mobx";
-import tk from "timekeeper";
 
 import {
   callMetricsApi,
@@ -223,7 +222,6 @@ describe("SupervisionPopulationOverTimeMetric", () => {
 
   describe("dataSeries", () => {
     beforeEach(() => {
-      tk.freeze(new Date("2022-01-15"));
       mockCoreStore.filtersStore = filtersStore;
 
       metric = new SupervisionPopulationOverTimeMetric({
@@ -243,13 +241,10 @@ describe("SupervisionPopulationOverTimeMetric", () => {
       });
       metric.hydrate();
     });
-    afterEach(() => {
-      tk.reset();
-    });
 
     it("calls the new API and logs diffs", () => {
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&since=2021-07-01`,
+        `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&time_period=months_0_6`,
         RootStore.getTokenSilently
       );
       expect(Sentry.captureException).toHaveBeenCalled();
@@ -279,7 +274,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
       });
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&since=2021-07-01`,
+        `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&time_period=months_0_6`,
         RootStore.getTokenSilently
       );
       // Sentry will probably get called after metric.dataSeries has returned, so
@@ -302,7 +297,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
         encodeURI(
-          `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&since=2021-07-01` +
+          `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&time_period=months_0_6` +
             `&filters[gender]=MALE&filters[district]=DISTRICT_1&filters[district]=DISTRICT_2`
         ),
         RootStore.getTokenSilently

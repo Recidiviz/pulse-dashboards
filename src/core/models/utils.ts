@@ -436,3 +436,12 @@ export const filterPersonLevelRecordByDimensions = (
     return handleFilters(filters[filterDimension], dimensionRecord);
   });
 };
+
+export const getTimePeriodRawValue = (
+  months: string | number
+): string | undefined => {
+  return Object.keys(timePeriodMap).find(
+    (timePeriodRawValue) =>
+      timePeriodMap[timePeriodRawValue as TimePeriodRawValue] === String(months)
+  );
+};

@@ -16,7 +16,6 @@
 // =============================================================================
 import * as Sentry from "@sentry/react";
 import { runInAction } from "mobx";
-import tk from "timekeeper";
 
 import {
   callMetricsApi,
@@ -254,7 +253,6 @@ describe("PrisonPopulationPersonLevelMetric", () => {
 
   describe("dataSeries", () => {
     beforeEach(() => {
-      tk.freeze(new Date("2022-01-15"));
       mockCoreStore.filtersStore = filtersStore;
 
       metric = new PrisonPopulationPersonLevelMetric({
@@ -277,13 +275,9 @@ describe("PrisonPopulationPersonLevelMetric", () => {
       metric.hydrate();
     });
 
-    afterEach(() => {
-      tk.reset();
-    });
-
     it("calls the new API and logs diffs", () => {
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/PrisonToSupervisionTransitionsPersonLevel?since=2021-07-15`,
+        `${mockTenantId}/PrisonToSupervisionTransitionsPersonLevel?time_period=months_0_6`,
         RootStore.getTokenSilently
       );
       expect(Sentry.captureException).toHaveBeenCalled();

@@ -16,7 +16,6 @@
 // =============================================================================
 
 import * as Sentry from "@sentry/react";
-import { startOfMonth, subMonths } from "date-fns";
 import { snakeCase } from "lodash";
 import {
   action,
@@ -35,7 +34,6 @@ import {
 } from "../../api/metrics/metricsClient";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import RootStore from "../../RootStore";
-import { formatDate } from "../../utils";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
@@ -58,6 +56,7 @@ import {
   SimulationCompartment,
   TenantId,
 } from "./types";
+import { getTimePeriodRawValue } from "./utils";
 
 export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   id: MetricId;
@@ -132,8 +131,6 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   differ?: Differ<any, any>; // <any, any> isn't super great but the differs are temporary anyway
 
-  backtrackSinceToFirstOfMonth?: boolean = false;
-
   constructor({
     rootStore,
     id,
@@ -190,10 +187,10 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
         queryParams.append("group", groupBy);
       }
       if (monthRange) {
-        const since = this.backtrackSinceToFirstOfMonth
-          ? startOfMonth(subMonths(new Date(), monthRange))
-          : subMonths(new Date(), monthRange);
-        queryParams.append("since", formatDate(since, "yyyy-MM-dd"));
+        const timePeriod = getTimePeriodRawValue(monthRange);
+        if (timePeriod) {
+          queryParams.append("time_period", timePeriod);
+        }
       }
 
       this.dimensions.forEach((dimension) => {

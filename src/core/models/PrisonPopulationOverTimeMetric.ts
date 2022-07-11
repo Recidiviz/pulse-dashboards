@@ -41,7 +41,6 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
 
     this.download = this.download.bind(this);
     this.groupBy = "year_month";
-    this.backtrackSinceToFirstOfMonth = true;
     this.differ = new TimeSeriesDiffer();
   }
 
