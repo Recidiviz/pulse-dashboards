@@ -154,7 +154,7 @@ export default class UserStore {
       }
       if (await auth0.isAuthenticated()) {
         const user = await auth0.getUser();
-        if (user && user.email_verified) {
+        if (user) {
           await authenticate(await auth0.getTokenSilently());
           runInAction(() => {
             this.user = user;

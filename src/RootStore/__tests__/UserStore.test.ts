@@ -141,7 +141,7 @@ test("redirect to Auth0 when unauthenticated", async () => {
   });
 });
 
-test("requires email verification", async () => {
+test("does not require email verification", async () => {
   mockGetUser.mockResolvedValue({ email_verified: false, ...metadata });
   mockIsAuthenticated.mockResolvedValue(true);
 
@@ -149,8 +149,8 @@ test("requires email verification", async () => {
     authSettings: testAuthSettings,
   });
   await store.authorize(mockHandleUrl);
-  expect(store.isAuthorized).toBe(false);
-  expect(store.userIsLoading).toBe(true);
+  expect(store.isAuthorized).toBe(true);
+  expect(store.userIsLoading).toBe(false);
 });
 
 test("handles Auth0 token params", async () => {
