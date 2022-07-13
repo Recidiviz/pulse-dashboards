@@ -23,6 +23,7 @@ const helmet = require("helmet");
 const multer = require("multer");
 const jwt = require("express-jwt");
 const jwksRsa = require("jwks-rsa");
+const rateLimit = require("express-rate-limit");
 const Sentry = require("@sentry/node");
 
 const { pathToRegexp } = require("path-to-regexp");
@@ -37,6 +38,13 @@ const { getFirebaseToken } = require("./practices/firebaseToken");
 const app = express();
 
 const upload = multer();
+
+const limiter = rateLimit({
+  windowMs: 1000, // 1 second = 1000ms
+  max: 15, // each IP address gets 15 requests per 1 second
+  standardHeaders: true, // return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // disabling the `X-RateLimit-*` headers
+});
 
 Sentry.init({
   environment: process.env.SENTRY_ENV,
@@ -180,6 +188,8 @@ app.get("/_ah/warmup", () => {
 
 // authenticates the user to Firestore with Auth0 credential
 app.get("/token", getFirebaseToken);
+
+app.use(limiter);
 
 // The Sentry error handler must be before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());

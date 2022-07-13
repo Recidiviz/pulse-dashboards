@@ -94,6 +94,7 @@
     "env-cmd": "^9.0.3",
     "express": "^4.16.4",
     "express-jwt": "^6.1.2",
+    "express-rate-limit": "^6.4.0",
     "express-unless": "^1.0.0",
     "express-validator": "^6.8.1",
     "firebase": "^9.6.8",
