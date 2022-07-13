@@ -23,6 +23,9 @@ const { validationResult } = require("express-validator");
 const uuid = require("uuid");
 const fs = require("fs");
 const path = require("path");
+const escape = require("escape-html");
+const sanitizeFilename = require("sanitize-filename");
+
 const {
   refreshRedisCache,
   fetchMetrics,
@@ -203,8 +206,10 @@ function pathways(req, res) {
 
 function generateFileLink(req, res) {
   const { file } = req;
-  const fileName = `${uuid.v4()}-${file.originalname}`;
+  const fileName = `${uuid.v4()}-${sanitizeFilename(file.originalname)}`;
   const protocol = process.env.AUTH_ENV === "development" ? `http` : `https`;
+
+  const reqHeadersHost = escape(req.headers.host);
 
   fs.writeFile(`/tmp/${fileName}`, file.buffer, function (err) {
     if (err) {
@@ -213,7 +218,7 @@ function generateFileLink(req, res) {
       );
     }
   });
-  res.send(`${protocol}://${req.headers.host}/file/${fileName}`);
+  res.send(`${protocol}://${reqHeadersHost}/file/${fileName}`);
 }
 
 function upload(req, res) {
@@ -225,7 +230,7 @@ function upload(req, res) {
     },
   };
 
-  const fileName = req.params.name;
+  const fileName = sanitizeFilename(req.params.name);
 
   res.sendFile(fileName, options, (sendErr) => {
     if (sendErr) {
