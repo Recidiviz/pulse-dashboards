@@ -25,6 +25,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import isIE11 from "../../utils/isIE11";
 import { CaseloadView } from "../CaseloadView";
 import ModelHydrator from "../ModelHydrator";
+import { OpportunityCaseloadSelection } from "../OpportunityCaseloadSelection";
 import {
   CompliantReportingClientProfile,
   FullProfile,
@@ -32,7 +33,6 @@ import {
 import PracticesCompliantReportingForm from "../PracticesCompliantReportingForm/PracticesCompliantReportingForm";
 import PracticesRoute from "../PracticesRoute";
 import { workflowsRoute } from "../views";
-import { VitalsCaseloadSelection } from "../VitalsCaseloadSelection";
 import { WorkflowsFormLayout } from "../WorkflowsLayouts";
 
 const SidebarHeading = styled.h1`
@@ -82,7 +82,7 @@ const PagePracticesV2: React.FC = () => {
             sidebarContents={
               <>
                 <SidebarHeading>Compliant Reporting</SidebarHeading>
-                <VitalsCaseloadSelection />
+                <OpportunityCaseloadSelection opportunity="compliantReporting" />
               </>
             }
             formContents={null}

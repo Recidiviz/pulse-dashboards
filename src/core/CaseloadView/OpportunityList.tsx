@@ -109,8 +109,10 @@ type OpportunityListProps = { opportunity: OpportunityType };
 export const OpportunityList = observer(
   ({ opportunity }: OpportunityListProps) => {
     const {
-      practicesStore: { compliantReportingEligibleClients: eligibleClients },
+      practicesStore: { opportunityEligibleClients },
     } = useRootStore();
+
+    const eligibleClients = opportunityEligibleClients[opportunity];
 
     const leftShadow = useInView({ initialInView: true });
     const rightShadow = useInView({ initialInView: true });

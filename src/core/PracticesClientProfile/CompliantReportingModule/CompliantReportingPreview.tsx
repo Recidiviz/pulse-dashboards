@@ -74,7 +74,7 @@ const FormPreview = styled.img<Pick<StatusPalette, "border">>`
 
 export const CompliantReportingPreview = observer(
   ({ client }: ClientProfileProps) => {
-    if (!client.compliantReportingEligible) return null;
+    if (!client.opportunitiesEligible.compliantReporting) return null;
 
     const colors = useStatusColors(client);
 

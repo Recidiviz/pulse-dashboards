@@ -69,6 +69,22 @@ export const UNKNOWN = "Unknown" as const;
 // these are the only values supported for now, limited to the Compliant Reporting flow
 type SupervisionLevel = "Medium" | "Minimum" | typeof UNKNOWN;
 
+type CompliantReportingCriteria = {
+  eligibilityCategory: string;
+  /** Any number greater than zero indicates the client is _almost_ eligible. */
+  remainingCriteriaNeeded: number;
+  eligibleLevelStart?: Date;
+  currentOffenses: string[];
+  lifetimeOffensesExpired: string[];
+  judicialDistrict: string;
+  drugScreensPastYear: { result: string; date: Date }[];
+  sanctionsPastYear: { type: string }[];
+  mostRecentArrestCheck?: Date;
+  finesFeesEligible: CompliantReportingFinesFeesEligible;
+  pastOffenses: string[];
+  zeroToleranceCodes: { contactNoteType: string; contactNoteDate: Date }[];
+};
+
 const SUPERVISION_LEVEL_MAP: Record<string, SupervisionLevel> = {
   "STANDARD: MEDIUM": "Medium",
   "STANDARD: MINIMUM": "Minimum",
@@ -166,21 +182,7 @@ export class Client {
 
   specialConditionsTerminatedDate?: Date;
 
-  compliantReportingEligible?: {
-    eligibilityCategory: string;
-    /** Any number greater than zero indicates the client is _almost_ eligible. */
-    remainingCriteriaNeeded: number;
-    eligibleLevelStart?: Date;
-    currentOffenses: string[];
-    lifetimeOffensesExpired: string[];
-    judicialDistrict: string;
-    drugScreensPastYear: { result: string; date: Date }[];
-    sanctionsPastYear: { type: string }[];
-    mostRecentArrestCheck?: Date;
-    finesFeesEligible: CompliantReportingFinesFeesEligible;
-    pastOffenses: string[];
-    zeroToleranceCodes: { contactNoteType: string; contactNoteDate: Date }[];
-  };
+  private compliantReportingCriteria?: CompliantReportingCriteria;
 
   private fetchedUpdates: SubscriptionValue<ClientUpdateRecord>;
 
@@ -191,15 +193,16 @@ export class Client {
   private fetchedCompliantReportingReferral: SubscriptionValue<CompliantReportingReferralRecord>;
 
   constructor(record: ClientRecord, rootStore: RootStore) {
-    makeObservable(this, {
-      formIsPrinting: true,
-      setFormIsPrinting: true,
-      printCompliantReportingReferralForm: true,
-      currentUserEmail: true,
-      eligibilityStatus: true,
-      reviewStatus: true,
+    makeObservable<Client, "compliantReportingCriteria">(this, {
+      compliantReportingCriteria: true,
       compliantReportingReferralDraftData: true,
+      currentUserEmail: true,
+      formIsPrinting: true,
+      opportunitiesEligible: true,
+      printCompliantReportingReferralForm: true,
+      reviewStatus: true,
       setCompliantReportingReferralDataField: action,
+      setFormIsPrinting: true,
     });
 
     this.rootStore = rootStore;
@@ -244,7 +247,7 @@ export class Client {
 
     const { compliantReportingEligible } = record;
     if (compliantReportingEligible) {
-      this.compliantReportingEligible = {
+      this.compliantReportingCriteria = {
         eligibilityCategory: compliantReportingEligible.eligibilityCategory,
         remainingCriteriaNeeded:
           compliantReportingEligible.remainingCriteriaNeeded ?? 0,
@@ -328,19 +331,31 @@ export class Client {
     return this.fetchedUpdates.current();
   }
 
-  get eligibilityStatus(): Record<OpportunityType, boolean> {
-    const compliantReporting =
-      (this.updates?.compliantReporting?.denial?.reasons?.length || 0) === 0;
+  get opportunitiesEligible(): {
+    compliantReporting?: CompliantReportingCriteria;
+  } {
+    let compliantReporting;
 
-    return {
-      compliantReporting,
-    };
+    if (
+      this.compliantReportingCriteria &&
+      ["c1", "c2", "c3", "c4"].includes(
+        this.compliantReportingCriteria.eligibilityCategory
+      ) &&
+      // exclude anyone almost eligible
+      this.compliantReportingCriteria.remainingCriteriaNeeded === 0
+    ) {
+      compliantReporting = this.compliantReportingCriteria;
+    }
+
+    return { compliantReporting };
   }
 
   get reviewStatus(): Record<OpportunityType, OpportunityStatus> {
     let compliantReporting: OpportunityStatus = "PENDING";
 
-    if (!this.eligibilityStatus.compliantReporting) {
+    if (
+      (this.updates?.compliantReporting?.denial?.reasons?.length || 0) !== 0
+    ) {
       compliantReporting = "DENIED";
     } else {
       const updates = this.updates?.compliantReporting;
@@ -426,7 +441,7 @@ export class Client {
 
   printCompliantReportingReferralForm(): void {
     if (this.currentUserEmail) {
-      if (this.eligibilityStatus.compliantReporting) {
+      if (this.reviewStatus.compliantReporting !== "DENIED") {
         updateCompliantReportingCompleted(this.currentUserEmail, this.id);
         if (this.reviewStatus.compliantReporting !== "COMPLETED") {
           trackSetOpportunityStatus({

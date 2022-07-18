@@ -289,12 +289,14 @@ test("subscribe to all clients in default caseload", async () => {
 
   // simulate a UI displaying client list
   testObserver = keepAlive(
-    computed(() => practicesStore.compliantReportingEligibleClients)
+    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
   );
 
   expect(mockSubscribeToCaseloads).toHaveBeenCalled();
 
-  expect(practicesStore.compliantReportingEligibleClients.length).toBe(1);
+  expect(
+    practicesStore.opportunityEligibleClients.compliantReporting.length
+  ).toBe(1);
 });
 
 test("subscribe to all clients in saved caseload", async () => {
@@ -320,7 +322,7 @@ test("subscribe to all clients in saved caseload", async () => {
 
   // simulate a UI displaying client list
   testObserver = keepAlive(
-    computed(() => practicesStore.compliantReportingEligibleClients)
+    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
   );
 
   expect(mockSubscribeToCaseloads).toHaveBeenCalled();
@@ -333,7 +335,7 @@ test("don't subscribe to clients if no officers are selected", async () => {
 
   // simulate a UI displaying client list
   testObserver = keepAlive(
-    computed(() => practicesStore.compliantReportingEligibleClients)
+    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
   );
 
   expect(mockSubscribeToCaseloads).not.toHaveBeenCalled();
@@ -394,7 +396,7 @@ test("no client selected", async () => {
 
   // simulate a UI displaying CR data
   testObserver = keepAlive(
-    computed(() => practicesStore.compliantReportingEligibleClients)
+    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
   );
 
   expect(practicesStore.selectedClient).toBeUndefined();
@@ -540,15 +542,15 @@ test("only approved eligibility categories are surfaced", async () => {
 
   // simulate a UI displaying client list
   testObserver = keepAlive(
-    computed(() => practicesStore.compliantReportingEligibleClients)
+    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
   );
 
-  expect(practicesStore.compliantReportingEligibleClients.length).toBe(
-    mockEligibleClients.length
-  );
+  expect(
+    practicesStore.opportunityEligibleClients.compliantReporting.length
+  ).toBe(mockEligibleClients.length);
   mockEligibleClients.forEach((expectedClient) =>
     expect(
-      practicesStore.compliantReportingEligibleClients.find(
+      practicesStore.opportunityEligibleClients.compliantReporting.find(
         (c) => c.id === expectedClient.personExternalId
       )
     ).toBeDefined()
@@ -556,7 +558,7 @@ test("only approved eligibility categories are surfaced", async () => {
 
   mockIneligibleCategoryClients.forEach((unexpectedClient) =>
     expect(
-      practicesStore.compliantReportingEligibleClients.find(
+      practicesStore.opportunityEligibleClients.compliantReporting.find(
         (c) => c.id === unexpectedClient.personExternalId
       )
     ).toBeUndefined()
@@ -624,15 +626,15 @@ test("filter out clients who are almost eligible", async () => {
 
   // simulate a UI displaying client list
   testObserver = keepAlive(
-    computed(() => practicesStore.compliantReportingEligibleClients)
+    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
   );
 
-  expect(practicesStore.compliantReportingEligibleClients.length).toBe(
-    mockEligibleClients.length
-  );
+  expect(
+    practicesStore.opportunityEligibleClients.compliantReporting.length
+  ).toBe(mockEligibleClients.length);
   mockEligibleClients.forEach((expectedClient) =>
     expect(
-      practicesStore.compliantReportingEligibleClients.find(
+      practicesStore.opportunityEligibleClients.compliantReporting.find(
         (c) => c.id === expectedClient.personExternalId
       )
     ).toBeDefined()
@@ -640,7 +642,7 @@ test("filter out clients who are almost eligible", async () => {
 
   mockAlmostEligibleClients.forEach((unexpectedClient) =>
     expect(
-      practicesStore.compliantReportingEligibleClients.find(
+      practicesStore.opportunityEligibleClients.compliantReporting.find(
         (c) => c.id === unexpectedClient.personExternalId
       )
     ).toBeUndefined()

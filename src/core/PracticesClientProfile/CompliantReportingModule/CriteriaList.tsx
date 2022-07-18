@@ -37,22 +37,24 @@ import { StatusPalette } from "./common";
 function getEligibilityCriteria(
   client: Client
 ): { text: string; tooltip?: string }[] {
-  if (!client.compliantReportingEligible) return [];
+  if (!client.opportunitiesEligible.compliantReporting) return [];
 
   const {
     supervisionLevel,
     supervisionLevelStart,
-    compliantReportingEligible: {
-      eligibilityCategory,
-      eligibleLevelStart,
-      sanctionsPastYear,
-      drugScreensPastYear,
-      currentOffenses,
-      lifetimeOffensesExpired,
-      mostRecentArrestCheck,
-      finesFeesEligible,
-      pastOffenses,
-      zeroToleranceCodes,
+    opportunitiesEligible: {
+      compliantReporting: {
+        eligibilityCategory,
+        eligibleLevelStart,
+        sanctionsPastYear,
+        drugScreensPastYear,
+        currentOffenses,
+        lifetimeOffensesExpired,
+        mostRecentArrestCheck,
+        finesFeesEligible,
+        pastOffenses,
+        zeroToleranceCodes,
+      },
     },
     specialConditionsFlag,
     lastSpecialConditionsNote,

@@ -303,17 +303,12 @@ export class PracticesStore implements Hydratable {
     }
   }
 
-  get compliantReportingEligibleClients(): Client[] {
+  private get compliantReportingEligibleClients(): Client[] {
     return values(this.clients)
       .filter(
         (c) =>
           this.selectedOfficerIds.includes(c.officerId) &&
-          c.compliantReportingEligible &&
-          ["c1", "c2", "c3", "c4"].includes(
-            c.compliantReportingEligible.eligibilityCategory
-          ) &&
-          // exclude anyone almost eligible
-          c.compliantReportingEligible.remainingCriteriaNeeded === 0
+          c.opportunitiesEligible.compliantReporting !== undefined
       )
       .sort((a, b) => {
         // hierarchical sort: review status > last name > first name
@@ -328,6 +323,12 @@ export class PracticesStore implements Hydratable {
           ascending(a.fullName.givenNames, b.fullName.givenNames)
         );
       });
+  }
+
+  get opportunityEligibleClients(): Record<OpportunityType, Client[]> {
+    return {
+      compliantReporting: this.compliantReportingEligibleClients,
+    };
   }
 
   get opportunityCounts(): Record<OpportunityType, number | undefined> {

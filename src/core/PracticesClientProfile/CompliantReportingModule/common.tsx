@@ -46,9 +46,9 @@ export const STATUS_COLORS = {
 export type StatusPalette = typeof STATUS_COLORS[keyof typeof STATUS_COLORS];
 
 export function useStatusColors(client: Client): StatusPalette {
-  return client.eligibilityStatus.compliantReporting
-    ? STATUS_COLORS.eligible
-    : STATUS_COLORS.ineligible;
+  return client.reviewStatus.compliantReporting === "DENIED"
+    ? STATUS_COLORS.ineligible
+    : STATUS_COLORS.eligible;
 }
 
 export const Wrapper = styled.div<{ background: string; border: string }>`

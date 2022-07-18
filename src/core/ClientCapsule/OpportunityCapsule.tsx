@@ -34,7 +34,7 @@ function getStatusMessage(client: Client, opportunity: OpportunityType) {
       return (
         <>
           {client.reviewStatusMessages.compliantReporting}
-          {!client.eligibilityStatus.compliantReporting &&
+          {client.reviewStatus.compliantReporting === "DENIED" &&
             client.updates?.compliantReporting?.denial &&
             ` (${client.updates.compliantReporting.denial.reasons.join(", ")})`}
         </>

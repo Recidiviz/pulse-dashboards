@@ -137,7 +137,7 @@ export const FullProfile = observer((): React.ReactElement | null => {
         </div>
         <div>
           <SectionHeading>Opportunities</SectionHeading>
-          {client.compliantReportingEligible ? (
+          {client.opportunitiesEligible.compliantReporting ? (
             <CompliantReportingPreview client={client} />
           ) : (
             <NoOpportunities>
