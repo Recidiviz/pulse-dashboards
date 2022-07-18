@@ -153,6 +153,13 @@ export type CompliantReportingEligibleRecord = {
   mostRecentArrestCheck?: Timestamp | string;
   pastOffenses: string[];
   zeroToleranceCodes?: { contactNoteType: string; contactNoteDate: string }[];
+  almostEligibleCriteria?: {
+    currentLevelEligibilityDate?: string;
+    passedDrugScreenNeeded?: boolean;
+    paymentNeeded?: boolean;
+    recentRejectionCodes?: string[];
+    seriousSanctionsEligibilityDate?: string;
+  };
 };
 
 /**

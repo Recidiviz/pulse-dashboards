@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, when } from "mobx";
+import { computed, configure, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
@@ -24,6 +24,7 @@ import {
   trackSurfacedInList,
 } from "../../analytics";
 import {
+  CompliantReportingEligibleRecord,
   subscribeToClientUpdates,
   updateCompliantReportingCompleted,
   updateCompliantReportingDenial,
@@ -31,7 +32,7 @@ import {
 import { RootStore } from "../../RootStore";
 import { eligibleClient, mockOfficer } from "../__fixtures__";
 import { Client } from "../Client";
-import { OTHER_KEY } from "../PracticesStore";
+import { OTHER_KEY, PracticesStore } from "../PracticesStore";
 import { dateToTimestamp } from "../utils";
 
 let testObserver: IDisposer;
@@ -53,11 +54,14 @@ let client: Client;
 let rootStore: RootStore;
 
 beforeEach(() => {
+  // this lets us spy on mobx computed getters
+  configure({ safeDescriptors: false });
   rootStore = new RootStore();
   client = new Client(eligibleClient, rootStore);
 });
 
 afterEach(() => {
+  configure({ safeDescriptors: true });
   jest.resetAllMocks();
 
   // clean up any Mobx observers to avoid leaks
@@ -342,4 +346,38 @@ test("list view tracking waits for updates", async () => {
     clientId: client.pseudonymizedId,
     opportunityType: "compliantReporting",
   });
+});
+
+test("almost eligible criteria are filtered to remove negatives", async () => {
+  const spy = jest.spyOn(PracticesStore.prototype, "featureVariants", "get");
+  spy.mockReturnValue({ CompliantReportingAlmostEligible: {} });
+  rootStore = new RootStore();
+
+  client = new Client(
+    {
+      ...eligibleClient,
+      compliantReportingEligible: {
+        ...(eligibleClient.compliantReportingEligible as CompliantReportingEligibleRecord),
+        remainingCriteriaNeeded: 1,
+        almostEligibleCriteria: {
+          passedDrugScreenNeeded: true,
+          paymentNeeded: false,
+          currentLevelEligibilityDate: undefined,
+          recentRejectionCodes: [],
+        },
+      },
+    },
+    rootStore
+  );
+
+  expect(
+    client.opportunitiesAlmostEligible.compliantReporting
+      ?.almostEligibleCriteria
+  ).toEqual({ passedDrugScreenNeeded: true });
+  expect(
+    Object.keys(
+      client.opportunitiesAlmostEligible.compliantReporting
+        ?.almostEligibleCriteria ?? {}
+    ).length
+  ).toBe(1);
 });

@@ -34,6 +34,7 @@ import { OpportunityType } from "../../firestore";
 import { Client } from "../../PracticesStore/Client";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { OpportunityCapsule } from "../ClientCapsule";
+import { OpportunityAlmostCapsule } from "../ClientCapsule/OpportunityAlmostCapsule";
 import { PRACTICES_METHODOLOGY_URL } from "../utils/constants";
 import { workflowsUrl } from "../views";
 import { FORM_SIDEBAR_WIDTH } from "../WorkflowsLayouts";
@@ -49,6 +50,7 @@ const LabelText = styled.div`
   ${typography.Sans14}
   color: ${palette.slate60};
   margin-bottom: ${rem(spacing.sm)};
+  margin-top: ${rem(spacing.lg)};
 `;
 
 const Label = styled.label`
@@ -65,49 +67,35 @@ const ClientListEmptyState: React.FC = observer(() => {
   return <div>{text}</div>;
 });
 
+const OpportunityListWrapper = styled.div`
+  padding-bottom: ${rem(FOOTER_HEIGHT)};
+`;
+
 const ClientListElement = styled.ul`
   list-style: none;
   margin-top: ${rem(spacing.md)};
   padding: 0;
-  padding-bottom: ${rem(FOOTER_HEIGHT)};
 `;
 
 const ClientListItem = styled.li`
   margin-bottom: ${rem(spacing.md)};
 `;
 
-const ClientList: React.FC<OpportunityCaseloadProps> = observer(
-  ({ opportunity }) => {
-    const {
-      practicesStore: { opportunityEligibleClients },
-    } = useRootStore();
-
-    const items = opportunityEligibleClients[opportunity].map(
-      (client: Client) => (
-        <ClientListItem key={client.id}>
-          <Link
-            to={workflowsUrl(opportunity, {
-              clientId: client.pseudonymizedId,
-            })}
-          >
-            <OpportunityCapsule
-              avatarSize="lg"
-              client={client}
-              opportunity={opportunity}
-              textSize="sm"
-            />
-          </Link>
-        </ClientListItem>
-      )
-    );
-
-    return (
-      <ClientListElement>
-        {items.length === 0 ? <ClientListEmptyState /> : items}
-      </ClientListElement>
-    );
-  }
-);
+const OpportunityListLink: React.FC<
+  OpportunityCaseloadProps & { client: Client }
+> = ({ children, client, opportunity }) => {
+  return (
+    <ClientListItem key={client.id}>
+      <Link
+        to={workflowsUrl(opportunity, {
+          clientId: client.pseudonymizedId,
+        })}
+      >
+        {children}
+      </Link>
+    </ClientListItem>
+  );
+};
 
 const AllClientsLink = styled(Link)`
   align-items: center;
@@ -133,43 +121,96 @@ type OpportunityCaseloadProps = {
   opportunity: OpportunityType;
 };
 
-export const OpportunityCaseloadSelection = ({
-  opportunity,
-}: OpportunityCaseloadProps): JSX.Element => {
-  let introText: React.ReactNode;
-  switch (opportunity) {
-    case "compliantReporting":
-      introText = (
-        <>
-          Search for officer(s) below to review and refer eligible clients for
-          Compliant Reporting.{" "}
-          <a
-            href={PRACTICES_METHODOLOGY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn more
-          </a>
-        </>
-      );
-      break;
-    default:
-      assertNever(opportunity);
+export const OpportunityCaseloadSelection = observer(
+  ({ opportunity }: OpportunityCaseloadProps) => {
+    const {
+      practicesStore: {
+        opportunityEligibleClients,
+        opportunityAlmostEligibleClients,
+      },
+    } = useRootStore();
+
+    const eligibleNow = opportunityEligibleClients[opportunity];
+    const almostEligible = opportunityAlmostEligibleClients[opportunity];
+
+    let introText: React.ReactNode;
+    switch (opportunity) {
+      case "compliantReporting":
+        introText = (
+          <>
+            Search for officer(s) below to review and refer eligible clients for
+            Compliant Reporting.{" "}
+            <a
+              href={PRACTICES_METHODOLOGY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Learn more
+            </a>
+          </>
+        );
+        break;
+      default:
+        assertNever(opportunity);
+    }
+
+    return (
+      <>
+        <OpportunityListWrapper>
+          <Heading>{introText}</Heading>
+          <Label>
+            <LabelText>Caseloads</LabelText>
+            <CaseloadSelect hideIndicators />
+          </Label>
+          {!eligibleNow.length && !almostEligible.length && (
+            <ClientListEmptyState />
+          )}
+          {eligibleNow.length ? (
+            <>
+              <LabelText>Eligible now</LabelText>
+              <ClientListElement>
+                {eligibleNow.map((client) => (
+                  <OpportunityListLink
+                    key={client.pseudonymizedId}
+                    {...{ client, opportunity }}
+                  >
+                    <OpportunityCapsule
+                      avatarSize="lg"
+                      client={client}
+                      opportunity={opportunity}
+                      textSize="sm"
+                    />
+                  </OpportunityListLink>
+                ))}
+              </ClientListElement>
+            </>
+          ) : null}
+          {almostEligible.length ? (
+            <>
+              <LabelText>Almost eligible</LabelText>
+              <ClientListElement>
+                {almostEligible.map((client) => (
+                  <OpportunityListLink
+                    key={client.pseudonymizedId}
+                    {...{ client, opportunity }}
+                  >
+                    <OpportunityAlmostCapsule
+                      avatarSize="lg"
+                      client={client}
+                      opportunity={opportunity}
+                      textSize="sm"
+                    />
+                  </OpportunityListLink>
+                ))}
+              </ClientListElement>
+            </>
+          ) : null}
+        </OpportunityListWrapper>
+
+        <AllClientsLink to={workflowsUrl("general")}>
+          <Icon kind={IconPeopleSvg} size={16} /> View all clients
+        </AllClientsLink>
+      </>
+    );
   }
-
-  return (
-    <>
-      <Heading>{introText}</Heading>
-
-      <Label>
-        <LabelText>Officer</LabelText>
-        <CaseloadSelect hideIndicators />
-      </Label>
-
-      <ClientList opportunity={opportunity} />
-      <AllClientsLink to={workflowsUrl("general")}>
-        <Icon kind={IconPeopleSvg} size={16} /> View all clients
-      </AllClientsLink>
-    </>
-  );
-};
+);

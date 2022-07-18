@@ -48,7 +48,7 @@ import {
   UserUpdateRecord,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
-import { Client, OPPORTUNITY_STATUS_RANKED } from "./Client";
+import { Client } from "./Client";
 import { observableSubscription, SubscriptionValue } from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
@@ -303,21 +303,36 @@ export class PracticesStore implements Hydratable {
     }
   }
 
+  get caseloadClients(): Client[] {
+    return values(this.clients).filter((c) =>
+      this.selectedOfficerIds.includes(c.officerId)
+    );
+  }
+
   private get compliantReportingEligibleClients(): Client[] {
-    return values(this.clients)
-      .filter(
-        (c) =>
-          this.selectedOfficerIds.includes(c.officerId) &&
-          c.opportunitiesEligible.compliantReporting !== undefined
-      )
+    return this.caseloadClients
+      .filter((c) => c.opportunitiesEligible.compliantReporting)
       .sort((a, b) => {
         // hierarchical sort: review status > last name > first name
         return (
           ascending(
-            OPPORTUNITY_STATUS_RANKED.indexOf(
-              a.reviewStatus.compliantReporting
-            ),
-            OPPORTUNITY_STATUS_RANKED.indexOf(b.reviewStatus.compliantReporting)
+            a.opportunitiesEligibleRank.compliantReporting,
+            b.opportunitiesEligibleRank.compliantReporting
+          ) ||
+          ascending(a.fullName.surname, b.fullName.surname) ||
+          ascending(a.fullName.givenNames, b.fullName.givenNames)
+        );
+      });
+  }
+
+  private get compliantReportingAlmostEligibleClients(): Client[] {
+    return this.caseloadClients
+      .filter((c) => c.opportunitiesAlmostEligible.compliantReporting)
+      .sort((a, b) => {
+        return (
+          ascending(
+            a.opportunitiesAlmostEligibleRank.compliantReporting,
+            b.opportunitiesAlmostEligibleRank.compliantReporting
           ) ||
           ascending(a.fullName.surname, b.fullName.surname) ||
           ascending(a.fullName.givenNames, b.fullName.givenNames)
@@ -329,6 +344,10 @@ export class PracticesStore implements Hydratable {
     return {
       compliantReporting: this.compliantReportingEligibleClients,
     };
+  }
+
+  get opportunityAlmostEligibleClients(): Record<OpportunityType, Client[]> {
+    return { compliantReporting: this.compliantReportingAlmostEligibleClients };
   }
 
   get opportunityCounts(): Record<OpportunityType, number | undefined> {

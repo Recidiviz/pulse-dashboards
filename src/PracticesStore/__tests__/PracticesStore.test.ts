@@ -649,6 +649,79 @@ test("filter out clients who are almost eligible", async () => {
   );
 });
 
+test("list clients who are almost eligible", async () => {
+  // requires active feature flag
+  mockGetUser.mockResolvedValue({
+    ...mockOfficer,
+    featureVariants: { CompliantReportingAlmostEligible: {} },
+  });
+
+  const eligibilityFields = {
+    ...eligibleClient.compliantReportingEligible,
+  } as CompliantReportingEligibleRecord;
+  const mockAlmostEligibleClients: ClientRecord[] = [
+    {
+      ...eligibleClient,
+      personExternalId: "almost1",
+      pseudonymizedId: "almost1p",
+      compliantReportingEligible: {
+        ...eligibilityFields,
+        eligibilityCategory: "c1",
+        remainingCriteriaNeeded: 1,
+      },
+    },
+    // clients below will still be excluded, needing >1 criteria
+    {
+      ...eligibleClient,
+      personExternalId: "almost2",
+      pseudonymizedId: "almost2p",
+      compliantReportingEligible: {
+        ...eligibilityFields,
+        eligibilityCategory: "c2",
+        remainingCriteriaNeeded: 3,
+      },
+    },
+    {
+      ...eligibleClient,
+      personExternalId: "almost3",
+      pseudonymizedId: "almost3p",
+      compliantReportingEligible: {
+        ...eligibilityFields,
+        eligibilityCategory: "c3",
+        remainingCriteriaNeeded: 2,
+      },
+    },
+  ];
+
+  mockSubscribeToCaseloads.mockImplementation(
+    (stateCode, officerIds, handler) => {
+      handler([...mockAlmostEligibleClients]);
+      return mockUnsub;
+    }
+  );
+
+  await waitForHydration();
+
+  // simulate a UI displaying client list
+  testObserver = keepAlive(
+    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
+  );
+
+  expect(
+    practicesStore.opportunityEligibleClients.compliantReporting.length
+  ).toBe(0);
+
+  expect(
+    practicesStore.opportunityAlmostEligibleClients.compliantReporting.length
+  ).toBe(1);
+
+  expect(
+    practicesStore.opportunityAlmostEligibleClients.compliantReporting.find(
+      (c) => c.id === mockAlmostEligibleClients[0].personExternalId
+    )
+  ).toBeDefined();
+});
+
 test("variant with no active date", async () => {
   mockGetUser.mockResolvedValue({
     ...mockOfficer,
