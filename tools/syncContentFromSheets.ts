@@ -23,11 +23,12 @@ import createMetricCopyFile from "./createMetricCopyFile";
 import createPageCopyFile from "./createPageCopyFile";
 
 const STATES_WITH_COPY_OVERRIDES = [
+  "US_CO",
   "US_ID",
-  "US_TN",
-  "US_ND",
   "US_ME",
   "US_MI",
+  "US_ND",
+  "US_TN",
 ];
 
 const syncContentWithSheet = async () => {

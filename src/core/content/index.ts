@@ -26,6 +26,7 @@ import { usMoMethodology } from "./methodology/usMoMethodology";
 import { usNdMethodology } from "./methodology/usNdMethodology";
 import { usTnMethodology } from "./methodology/usTnMethodology";
 import defaultMetricContent from "./metric/default";
+import CoMetricContent from "./metric/us_co";
 import IdMetricContent from "./metric/us_id";
 import MeMetricContent from "./metric/us_me";
 import MiMetricContent from "./metric/us_mi";
@@ -33,6 +34,7 @@ import MoMetricContent from "./metric/us_mo";
 import NdMetricContent from "./metric/us_nd";
 import TnMetricContent from "./metric/us_tn";
 import defaultPageContent from "./page/default";
+import CoPageContent from "./page/us_co";
 import IdPageContent from "./page/us_id";
 import MePageContent from "./page/us_me";
 import MiPageContent from "./page/us_mi";
@@ -49,6 +51,7 @@ import {
 export const pageContentOverrides: {
   [category: string]: StateSpecificPageCopy;
 } = {
+  US_CO: CoPageContent,
   US_ID: IdPageContent,
   US_TN: TnPageContent,
   US_ME: MePageContent,
@@ -60,6 +63,7 @@ export const pageContentOverrides: {
 export const metricContentOverrides: {
   [category: string]: StateSpecificMetricCopy;
 } = {
+  US_CO: CoMetricContent,
   US_ID: IdMetricContent,
   US_TN: TnMetricContent,
   US_ME: MeMetricContent,
