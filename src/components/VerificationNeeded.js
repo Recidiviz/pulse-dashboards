@@ -41,7 +41,7 @@ const VerificationNeeded = () => (
           {/* eslint-disable-next-line react/jsx-one-expression-per-line */}
           If you are still having trouble, please reach out to{" "}
           <a
-            href="mailto:web-support@recidiviz.org?Subject=Trouble%20logging%20in"
+            href="mailto:feedback@recidiviz.org?Subject=Trouble%20logging%20in"
             target="_top"
           >
             Recidiviz Support
