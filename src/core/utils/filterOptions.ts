@@ -430,8 +430,8 @@ export const CoPopulationFilterOptions: PopulationFilters = {
         longLabel: "Kit Carson Correctional Facility",
       },
       {
-        value: "DRCD",
-        label: "DRCD",
+        value: "DRDC",
+        label: "DRDC",
         longLabel: "Denver Reception And Diagnostic Center",
       },
       {
@@ -515,8 +515,8 @@ export const CoPopulationFilterOptions: PopulationFilters = {
         longLabel: "Colorado Correctional Center (Camp George West)",
       },
       {
-        value: "ISP-1",
-        label: "ISP-1",
+        value: "ISP-I",
+        label: "ISP-I",
         longLabel: "Intensive Supervision - Inmate",
       },
       {
@@ -555,9 +555,9 @@ export const CoPopulationFilterOptions: PopulationFilters = {
         longLabel: "Crowley County Correctional Facility",
       },
       {
-        value: "FCC",
-        label: "FCC",
-        longLabel: "FCC",
+        value: "RCC",
+        label: "RCC",
+        longLabel: "RCC",
       },
       {
         value: "FCF",
@@ -597,7 +597,7 @@ export const CoPopulationFilterOptions: PopulationFilters = {
       {
         value: "CCF",
         label: "CCF",
-        longLabel: "CCCentennial Correctional FacilityF",
+        longLabel: "Centennial Correctional Facility",
       },
       {
         value: "BVCF",
