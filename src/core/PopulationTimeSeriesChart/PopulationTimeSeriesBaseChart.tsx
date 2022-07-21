@@ -49,6 +49,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   historicalPopulation,
   projectedPopulation,
   chartTop,
+  chartBottom,
   dateSpacing,
   beginDate,
   endDate,
@@ -104,7 +105,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
         }}
         // @ts-ignore
         xExtent={[beginDate, endDate]}
-        yExtent={[0, chartTop]}
+        yExtent={[chartBottom, chartTop]}
         showLinePoints
         pointClass="VizPathways__point"
         axes={[

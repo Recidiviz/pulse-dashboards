@@ -28,6 +28,7 @@ import {
 import { getRecordDate } from "../models/utils";
 import withMetricHydrator from "../withMetricHydrator";
 import {
+  getChartBottom,
   getChartTop,
   getDateRange,
   getDateSpacing,
@@ -76,12 +77,14 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
 
   // set top of chart to the nearest thousand above the highest historical point
   const chartTop = getChartTop(historicalPopulation);
+  const chartBottom = getChartBottom(historicalPopulation);
 
   return (
     <PopulationTimeSeriesBaseChart
       title={title}
       historicalPopulation={historicalPopulation}
       chartTop={chartTop}
+      chartBottom={chartBottom}
       dateSpacing={dateSpacing}
       beginDate={beginDate}
       endDate={endDate}

@@ -24,6 +24,7 @@ import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOv
 import { PopulationProjectionTimeSeriesRecord } from "../models/types";
 import withMetricHydrator from "../withMetricHydrator";
 import {
+  getChartBottom,
   getChartTop,
   getDateRange,
   getDateSpacing,
@@ -79,6 +80,7 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
 
   // set top of chart to the nearest thousand above the highest uncertainty value
   const chartTop = getChartTop(projectedPopulation);
+  const chartBottom = getChartBottom(projectedPopulation);
 
   const projectionArea = [
     {
@@ -144,6 +146,7 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
       historicalPopulation={historicalPopulation}
       projectedPopulation={projectedPopulation}
       chartTop={chartTop}
+      chartBottom={chartBottom}
       dateSpacing={dateSpacing}
       beginDate={beginDate}
       endDate={endDate}

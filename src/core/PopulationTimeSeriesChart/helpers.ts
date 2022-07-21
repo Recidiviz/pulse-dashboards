@@ -137,27 +137,39 @@ export const formatMonthAndYear = (date: Date): string => {
 };
 
 export const getChartTop = (plotLine: ChartPoint[]): number => {
-  // Dynamically chose the top of the chart such that there should be a horizonal rule
+  // Dynamically choose the top of the chart such that there should be a horizonal rule
   // at the very top for visual separation
   const maxValue = Math.max(...plotLine.map((d) => d.upperBound ?? d.value));
+  const spacing = getAxisSpacing(maxValue);
 
+  return (Math.ceil(maxValue / spacing) + 1) * spacing;
+};
+
+export const getChartBottom = (plotLine: ChartPoint[]): number => {
+  // Dynamically choose the bottom of the Y axis based on the min value
+  const minValue = Math.min(...plotLine.map((d) => d.lowerBound ?? d.value));
+  const spacing = getAxisSpacing(minValue);
+
+  return (Math.floor(minValue / spacing) - 1) * spacing;
+};
+
+const getAxisSpacing = (value: number): number => {
   let spacing;
 
-  if (maxValue < 200) {
+  if (value < 200) {
     spacing = 20;
-  } else if (maxValue < 1000) {
+  } else if (value < 1000) {
     spacing = 100;
-  } else if (maxValue < 2000) {
+  } else if (value < 2000) {
     spacing = 200;
-  } else if (maxValue < 5000) {
+  } else if (value < 5000) {
     spacing = 500;
-  } else if (maxValue < 10000) {
+  } else if (value < 10000) {
     spacing = 1000;
   } else {
     spacing = 2000;
   }
-
-  return (Math.ceil(maxValue / spacing) + 1) * spacing;
+  return spacing;
 };
 
 export const getDateSpacing = (timeRange: MonthOptions): number => {
