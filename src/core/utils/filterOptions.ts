@@ -555,16 +555,6 @@ export const CoPopulationFilterOptions: PopulationFilters = {
         longLabel: "Buena Vista Correctional Complex",
       },
       {
-        value: "HUERFANO",
-        label: "HUERFANO",
-        longLabel: "Huerfano Correctional Center",
-      },
-      {
-        value: "BRUSH",
-        label: "BRUSH",
-        longLabel: "Brush Correctional Facility",
-      },
-      {
         value: "UNKNOWN",
         label: "UNKNOWN",
         longLabel: "Unknown",
