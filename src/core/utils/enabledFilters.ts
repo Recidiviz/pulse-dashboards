@@ -353,6 +353,15 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
 
 export const CoEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
+  prisonPopulationOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.ADMISSION_REASON,
+    ],
+  },
 };
 
 export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
