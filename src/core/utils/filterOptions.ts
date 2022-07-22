@@ -410,11 +410,6 @@ export const CoPopulationFilterOptions: PopulationFilters = {
     options: [
       { label: "All", value: "ALL" },
       {
-        value: "FT LYON",
-        label: "FT LYON",
-        longLabel: "Fort Lyon Correctional Facility",
-      },
-      {
         value: "SCCF",
         label: "SCCF",
         longLabel: "San Carlos Correctional Facility",
@@ -423,11 +418,6 @@ export const CoPopulationFilterOptions: PopulationFilters = {
         value: "PAROLE FAC",
         label: "PAROLE FAC",
         longLabel: "Parole Facility",
-      },
-      {
-        value: "KCCC",
-        label: "KCCC",
-        longLabel: "Kit Carson Correctional Facility",
       },
       {
         value: "DRDC",
@@ -445,34 +435,14 @@ export const CoPopulationFilterOptions: PopulationFilters = {
         longLabel: "Delta Correctional Center",
       },
       {
-        value: "PUEBLO MIN",
-        label: "PUEBLO MIN",
-        longLabel: "Pueblo Minimum Center",
-      },
-      {
-        value: "CC ALT PGM",
-        label: "CC ALT PGM",
-        longLabel: "Colo Corrections Alternative Prog (BVCF Boot Camp)",
-      },
-      {
         value: "LVCF",
         label: "LVCF",
         longLabel: "La Vista Correctional Facility",
       },
       {
-        value: "LVCF MALE",
-        label: "LVCF MALE",
-        longLabel: "La Vista Correctional Facility For Males",
-      },
-      {
         value: "CTCF",
         label: "CTCF",
         longLabel: "Colorado Territorial Correctional Facility",
-      },
-      {
-        value: "FEDERAL",
-        label: "FEDERAL",
-        longLabel: "Federal",
       },
       {
         value: "CSP",
@@ -525,21 +495,6 @@ export const CoPopulationFilterOptions: PopulationFilters = {
         longLabel: "YOS Facility",
       },
       {
-        value: "COLUMBINE",
-        label: "COLUMBINE",
-        longLabel: "Columbine",
-      },
-      {
-        value: "BVMC",
-        label: "BVMC",
-        longLabel: "Buena Vista Minimum Center",
-      },
-      {
-        value: "SHDW MNTN",
-        label: "SHDW MNTN",
-        longLabel: "SHDW MNTN",
-      },
-      {
         value: "CJ",
         label: "CJ",
         longLabel: "County Jail",
@@ -563,11 +518,6 @@ export const CoPopulationFilterOptions: PopulationFilters = {
         value: "FCF",
         label: "FCF",
         longLabel: "Fremont Correctional Facility",
-      },
-      {
-        value: "PRERELEASE",
-        label: "PRERELEASE",
-        longLabel: "Pre-Release Center",
       },
       {
         value: "SCF",
@@ -610,19 +560,9 @@ export const CoPopulationFilterOptions: PopulationFilters = {
         longLabel: "Huerfano Correctional Center",
       },
       {
-        value: "HPCF",
-        label: "HPCF",
-        longLabel: "High Plains Correctional Facility",
-      },
-      {
         value: "BRUSH",
         label: "BRUSH",
         longLabel: "Brush Correctional Facility",
-      },
-      {
-        value: "CWCF",
-        label: "CWCF",
-        longLabel: "Colorado Womens Correctional Facility",
       },
       {
         value: "UNKNOWN",
