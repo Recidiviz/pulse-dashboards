@@ -150,7 +150,7 @@ export const getChartBottom = (plotLine: ChartPoint[]): number => {
   const minValue = Math.min(...plotLine.map((d) => d.lowerBound ?? d.value));
   const spacing = getAxisSpacing(minValue);
 
-  return (Math.floor(minValue / spacing) - 1) * spacing;
+  return Math.max((Math.floor(minValue / spacing) - 1) * spacing, 0);
 };
 
 const getAxisSpacing = (value: number): number => {

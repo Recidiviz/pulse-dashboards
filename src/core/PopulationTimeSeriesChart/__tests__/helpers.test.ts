@@ -103,6 +103,9 @@ describe("Tests for helpers", () => {
     it("returns a reasonable lower bound for large values", () => {
       checkExpectedBound(getChartBottom, [21000, 18000, 12490], 10000);
     });
+    it("returns a non-negaitive lower bound for small values", () => {
+      checkExpectedBound(getChartBottom, [4, 4, 4], 0);
+    });
     it("takes into account the lower bound if it is set", () => {
       const data = generateDataWithUncertainty([
         [1000, 5000, 900],
