@@ -39,7 +39,7 @@ const Error: React.FC = () => {
   return (
     <HydrationStatus
       icon={<ErrorLogo />}
-      title="Sorry, we’re having trouble loading this chart"
+      title="Sorry, we’re having trouble loading this page"
       subtitle={
         <>
           Try reloading the page. If that doesn’t work, log out and log back in.
