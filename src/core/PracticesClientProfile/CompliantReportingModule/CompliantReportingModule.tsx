@@ -21,7 +21,7 @@ import { darken, rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import type { Client } from "../../../PracticesStore/Client";
+import type { Client } from "../../../PracticesStore";
 import { ClientProfileProps } from "../types";
 import { Title, useStatusColors, Wrapper } from "./common";
 import { CompliantReportingDenial } from "./CompliantReportingDenial";
@@ -62,7 +62,10 @@ export const CompliantReportingModule = observer(
     return (
       <Wrapper {...colors}>
         <Title client={client} />
-        <CriteriaList client={client} colors={colors} />
+        <CriteriaList
+          opportunity={client.opportunitiesEligible.compliantReporting}
+          colors={colors}
+        />
         <ActionButtons>
           <div>
             <PrintButton

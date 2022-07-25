@@ -82,7 +82,7 @@ const PagePracticesV2: React.FC = () => {
             sidebarContents={
               <>
                 <SidebarHeading>Compliant Reporting</SidebarHeading>
-                <OpportunityCaseloadSelection opportunity="compliantReporting" />
+                <OpportunityCaseloadSelection opportunityType="compliantReporting" />
               </>
             }
             formContents={null}

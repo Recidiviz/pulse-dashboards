@@ -19,6 +19,8 @@ import { addDays, differenceInDays, parseISO } from "date-fns";
 import { Timestamp, Unsubscribe } from "firebase/firestore";
 import { fromResource, IResource } from "mobx-utils";
 
+import { isDemoMode } from "../utils/isDemoMode";
+
 type Subscriber<Result> = (
   handleRecords: (results: Result) => void
 ) => Unsubscribe | undefined;
@@ -55,4 +57,31 @@ const DEMO_TIMESTAMP = parseISO("2021-12-16");
 export function shiftDemoDate(storedDate: Date): Date {
   const offsetDays = differenceInDays(new Date(), DEMO_TIMESTAMP);
   return addDays(storedDate, offsetDays);
+}
+
+export class OpportunityValidationError extends Error {}
+
+/**
+ * Given a raw field from Firestore, converts it to a Date.
+ * When Demo Mode is active, it also applies a time shift so that
+ * the date from demo fixture data is relevant to the current date.
+ */
+export function fieldToDate(field: Timestamp | string): Date {
+  let result: Date;
+  if (typeof field === "string") {
+    result = parseISO(field);
+  } else {
+    result = field.toDate();
+  }
+  if (isDemoMode()) {
+    result = shiftDemoDate(result);
+  }
+
+  return result;
+}
+
+export function optionalFieldToDate(
+  field?: Timestamp | string
+): Date | undefined {
+  if (field) return fieldToDate(field);
 }

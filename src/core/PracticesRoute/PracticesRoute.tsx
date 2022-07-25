@@ -19,7 +19,7 @@ import React, { useEffect, useState } from "react";
 import { Redirect, Route, RouteProps, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { isOpportunityType } from "../../firestore";
+import { isOpportunityType } from "../../PracticesStore";
 import { PATHWAYS_PATHS } from "../views";
 
 // react-router does not seem to export this type directly

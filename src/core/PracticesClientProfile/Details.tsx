@@ -22,7 +22,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { Client } from "../../PracticesStore/Client";
+import { Client } from "../../PracticesStore";
 import { formatAsCurrency, formatPracticesDate } from "../../utils";
 import PracticesOfficerName from "../PracticesOfficerName";
 import { ClientProfileProps } from "./types";

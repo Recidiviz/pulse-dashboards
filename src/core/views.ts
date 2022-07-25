@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OPPORTUNITY_TYPES, OpportunityType } from "../firestore";
+import { OPPORTUNITY_TYPES, OpportunityType } from "../PracticesStore";
 import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
 import { MetricId, SimulationCompartment, TenantId } from "./models/types";
 

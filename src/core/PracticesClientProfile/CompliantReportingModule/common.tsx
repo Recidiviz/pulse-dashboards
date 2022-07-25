@@ -21,7 +21,7 @@ import { rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import type { Client } from "../../../PracticesStore/Client";
+import type { Client } from "../../../PracticesStore";
 import { ClientProfileProps } from "../types";
 
 export const STATUS_COLORS = {
@@ -46,7 +46,7 @@ export const STATUS_COLORS = {
 export type StatusPalette = typeof STATUS_COLORS[keyof typeof STATUS_COLORS];
 
 export function useStatusColors(client: Client): StatusPalette {
-  return client.reviewStatus.compliantReporting === "DENIED"
+  return client.opportunities.compliantReporting?.reviewStatus === "DENIED"
     ? STATUS_COLORS.ineligible
     : STATUS_COLORS.eligible;
 }
@@ -64,7 +64,8 @@ export const Wrapper = styled.div<{ background: string; border: string }>`
 export const Title = observer(({ client }: ClientProfileProps) => {
   return (
     <Sans14>
-      Compliant Reporting: {client.reviewStatusMessages.compliantReporting}
+      Compliant Reporting:{" "}
+      {client.opportunities.compliantReporting?.statusMessageShort}
     </Sans14>
   );
 });

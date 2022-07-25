@@ -15,12 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
-import { Timestamp } from "firebase/firestore";
-import { has, pickBy } from "lodash";
+import { has } from "lodash";
 import {
   action,
-  keys,
+  entries,
   makeObservable,
   observable,
   runInAction,
@@ -41,10 +39,8 @@ import { transform } from "../core/Paperwork/US_TN/Transformer";
 import {
   ClientRecord,
   ClientUpdateRecord,
-  CompliantReportingFinesFeesEligible,
   CompliantReportingReferralForm,
   FullName,
-  OpportunityType,
   SpecialConditionCode,
   SpecialConditionsStatus,
   subscribeToClientUpdates,
@@ -53,15 +49,19 @@ import {
   updateCompliantReportingDenial,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
-import { isDemoMode } from "../utils/isDemoMode";
 import {
   CompliantReportingReferralRecord,
   TransformedCompliantReportingReferral,
 } from "./CompliantReportingReferralRecord";
+import {
+  createCompliantReportingOpportunity,
+  Opportunity,
+  OpportunityType,
+} from "./Opportunity";
 import { OTHER_KEY } from "./PracticesStore";
 import {
   observableSubscription,
-  shiftDemoDate,
+  optionalFieldToDate,
   SubscriptionValue,
 } from "./utils";
 
@@ -70,95 +70,12 @@ export const UNKNOWN = "Unknown" as const;
 // these are the only values supported for now, limited to the Compliant Reporting flow
 type SupervisionLevel = "Medium" | "Minimum" | typeof UNKNOWN;
 
-type CompliantReportingCriteria = {
-  eligibilityCategory: string;
-  /** Any number greater than zero indicates the client is _almost_ eligible. */
-  remainingCriteriaNeeded: number;
-  eligibleLevelStart?: Date;
-  currentOffenses: string[];
-  lifetimeOffensesExpired: string[];
-  judicialDistrict: string;
-  drugScreensPastYear: { result: string; date: Date }[];
-  sanctionsPastYear: { type: string }[];
-  mostRecentArrestCheck?: Date;
-  finesFeesEligible: CompliantReportingFinesFeesEligible;
-  pastOffenses: string[];
-  zeroToleranceCodes: { contactNoteType: string; contactNoteDate: Date }[];
-  // values in this object are either affirmative or missing; e.g. only true never false
-  almostEligibleCriteria?: {
-    currentLevelEligibilityDate?: Date;
-    passedDrugScreenNeeded?: true;
-    paymentNeeded?: true;
-    recentRejectionCodes?: string[];
-    seriousSanctionsEligibilityDate?: Date;
-  };
-};
-
 const SUPERVISION_LEVEL_MAP: Record<string, SupervisionLevel> = {
   "STANDARD: MEDIUM": "Medium",
   "STANDARD: MINIMUM": "Minimum",
 };
 
-/**
- * Applied as a filter to the `eligibilityCategory` field; users with values other than these
- * should not appear as eligible in the UI.
- */
-const COMPLIANT_REPORTING_ACTIVE_CATEGORIES = ["c1", "c2", "c3", "c4"];
-
-/**
- * Given a raw field from Firestore, converts it to a Date.
- * When Demo Mode is active, it also applies a time shift so that
- * the date from demo fixture data is relevant to the current date.
- */
-function fieldToDate(field: Timestamp | string): Date {
-  let result: Date;
-  if (typeof field === "string") {
-    result = parseISO(field);
-  } else {
-    result = field.toDate();
-  }
-  if (isDemoMode()) {
-    result = shiftDemoDate(result);
-  }
-
-  return result;
-}
-
-function optionalFieldToDate(field?: Timestamp | string): Date | undefined {
-  if (field) return fieldToDate(field);
-}
-
-// ranked roughly by actionability
-const OPPORTUNITY_STATUS_RANKED = [
-  "PENDING",
-  "IN_PROGRESS",
-  "DENIED",
-  "COMPLETED",
-] as const;
-export type OpportunityStatus = typeof OPPORTUNITY_STATUS_RANKED[number];
-
-const defaultOpportunityStatuses: Record<OpportunityStatus, string> = {
-  PENDING: "Needs referral",
-  DENIED: "Currently ineligible",
-  COMPLETED: "Referral form complete",
-  IN_PROGRESS: "Referral in progress",
-};
-
-const opportunityStatusMessages: Record<
-  OpportunityType,
-  Record<OpportunityStatus, string>
-> = {
-  compliantReporting: defaultOpportunityStatuses,
-};
-
-// ranked roughly by actionability
-const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED = [
-  "paymentNeeded",
-  "passedDrugScreenNeeded",
-  "recentRejectionCodes",
-  "seriousSanctionsEligibilityDate",
-  "currentLevelEligibilityDate",
-];
+type OpportunityMapping = Partial<Record<OpportunityType, Opportunity>>;
 
 export class Client {
   rootStore: RootStore;
@@ -207,7 +124,7 @@ export class Client {
 
   specialConditionsTerminatedDate?: Date;
 
-  private compliantReportingCriteria?: CompliantReportingCriteria;
+  opportunities: OpportunityMapping;
 
   private fetchedUpdates: SubscriptionValue<ClientUpdateRecord>;
 
@@ -218,17 +135,14 @@ export class Client {
   private fetchedCompliantReportingReferral: SubscriptionValue<CompliantReportingReferralRecord>;
 
   constructor(record: ClientRecord, rootStore: RootStore) {
-    makeObservable<Client, "compliantReportingCriteria">(this, {
-      compliantReportingCriteria: true,
+    makeObservable(this, {
+      opportunities: true,
       compliantReportingReferralDraftData: true,
       currentUserEmail: true,
       formIsPrinting: true,
       opportunitiesAlmostEligible: true,
-      opportunitiesAlmostEligibleRank: true,
       opportunitiesEligible: true,
-      opportunitiesEligibleRank: true,
       printCompliantReportingReferralForm: true,
-      reviewStatus: true,
       setCompliantReportingReferralDataField: action,
       setFormIsPrinting: true,
     });
@@ -273,80 +187,12 @@ export class Client {
       Partial<TransformedCompliantReportingReferral>
     >({});
 
-    const { compliantReportingEligible } = record;
-    if (compliantReportingEligible) {
-      const {
-        almostEligibleCriteria,
-        currentOffenses,
-        drugScreensPastYear,
-        eligibilityCategory,
-        eligibleLevelStart,
-        finesFeesEligible,
-        judicialDistrict,
-        lifetimeOffensesExpired,
-        mostRecentArrestCheck,
-        pastOffenses,
-        remainingCriteriaNeeded,
-        sanctionsPastYear,
-        zeroToleranceCodes,
-      } = compliantReportingEligible;
-
-      this.compliantReportingCriteria = {
-        eligibilityCategory,
-        remainingCriteriaNeeded: remainingCriteriaNeeded ?? 0,
-        eligibleLevelStart: optionalFieldToDate(eligibleLevelStart),
-        currentOffenses,
-        lifetimeOffensesExpired,
-        judicialDistrict: judicialDistrict ?? UNKNOWN,
-        drugScreensPastYear: drugScreensPastYear.map(({ result, date }) => ({
-          result,
-          date: fieldToDate(date),
-        })),
-        sanctionsPastYear:
-          sanctionsPastYear.map((type) => ({
-            type,
-          })) || [],
-        mostRecentArrestCheck: optionalFieldToDate(mostRecentArrestCheck),
-        finesFeesEligible,
-        pastOffenses,
-        zeroToleranceCodes:
-          zeroToleranceCodes?.map(({ contactNoteDate, contactNoteType }) => ({
-            contactNoteType,
-            contactNoteDate: new Date(contactNoteDate),
-          })) ?? [],
-      };
-
-      if (almostEligibleCriteria) {
-        const {
-          currentLevelEligibilityDate,
-          passedDrugScreenNeeded,
-          paymentNeeded,
-          recentRejectionCodes,
-          seriousSanctionsEligibilityDate,
-        } = almostEligibleCriteria;
-
-        set(this.compliantReportingCriteria, {
-          // drop falsy values for easier counting
-          almostEligibleCriteria: pickBy(
-            {
-              currentLevelEligibilityDate: optionalFieldToDate(
-                currentLevelEligibilityDate
-              ),
-              passedDrugScreenNeeded,
-              paymentNeeded,
-              recentRejectionCodes,
-              seriousSanctionsEligibilityDate: optionalFieldToDate(
-                seriousSanctionsEligibilityDate
-              ),
-            },
-            (val) => {
-              if (val instanceof Array) return val.length > 0;
-              return Boolean(val);
-            }
-          ),
-        });
-      }
-    }
+    this.opportunities = {
+      compliantReporting: createCompliantReportingOpportunity(
+        record.compliantReportingEligible,
+        this
+      ),
+    };
 
     // connect to additional data sources for this client
     this.fetchedUpdates = observableSubscription((handler) =>
@@ -398,107 +244,22 @@ export class Client {
     return this.fetchedUpdates.current();
   }
 
-  get opportunitiesEligible(): {
-    compliantReporting?: CompliantReportingCriteria;
-  } {
-    let compliantReporting;
-
-    if (
-      this.compliantReportingCriteria &&
-      COMPLIANT_REPORTING_ACTIVE_CATEGORIES.includes(
-        this.compliantReportingCriteria.eligibilityCategory
-      ) &&
-      // exclude anyone almost eligible
-      this.compliantReportingCriteria.remainingCriteriaNeeded === 0
-    ) {
-      compliantReporting = this.compliantReportingCriteria;
-    }
-
-    return { compliantReporting };
-  }
-
-  /**
-   * To aid list sorting and other comparisons, assigns a rank to each opportunity
-   * based on its properties or status
-   */
-  get opportunitiesEligibleRank(): { compliantReporting?: number } {
-    const compliantReporting = OPPORTUNITY_STATUS_RANKED.indexOf(
-      this.reviewStatus.compliantReporting
-    );
-
-    return { compliantReporting };
-  }
-
-  get opportunitiesAlmostEligible(): {
-    compliantReporting?: CompliantReportingCriteria;
-  } {
-    let compliantReporting;
-
-    if (
-      this.rootStore.practicesStore.featureVariants
-        .CompliantReportingAlmostEligible &&
-      this.compliantReportingCriteria &&
-      COMPLIANT_REPORTING_ACTIVE_CATEGORIES.includes(
-        this.compliantReportingCriteria.eligibilityCategory
-      ) &&
-      // "Almost" defined as missing exactly one criterion
-      this.compliantReportingCriteria.remainingCriteriaNeeded === 1
-    ) {
-      compliantReporting = this.compliantReportingCriteria;
-    }
-
-    return { compliantReporting };
-  }
-
-  /**
-   * To aid list sorting and other comparisons, assigns a rank to each opportunity
-   * based on its properties or status
-   */
-  get opportunitiesAlmostEligibleRank(): { compliantReporting?: number } {
-    let compliantReporting;
-    const criteria = this.opportunitiesAlmostEligible.compliantReporting
-      ?.almostEligibleCriteria;
-    if (criteria) {
-      compliantReporting = Math.min(
-        ...keys(criteria).map((key) =>
-          COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED.indexOf(key as string)
-        )
-      );
-    }
-    return { compliantReporting };
-  }
-
-  get reviewStatus(): Record<OpportunityType, OpportunityStatus> {
-    let compliantReporting: OpportunityStatus = "PENDING";
-
-    if (
-      (this.updates?.compliantReporting?.denial?.reasons?.length || 0) !== 0
-    ) {
-      compliantReporting = "DENIED";
-    } else {
-      const updates = this.updates?.compliantReporting;
-
-      if (updates) {
-        if (updates.completed) {
-          compliantReporting = "COMPLETED";
-        } else {
-          compliantReporting = "IN_PROGRESS";
-        }
+  get opportunitiesEligible(): OpportunityMapping {
+    return entries(this.opportunities).reduce((opportunities, [key, opp]) => {
+      if (opp !== undefined && !opp.almostEligible) {
+        return { ...opportunities, [key as OpportunityType]: opp };
       }
-    }
-
-    return {
-      compliantReporting,
-    };
+      return opportunities;
+    }, {} as OpportunityMapping);
   }
 
-  get reviewStatusMessages(): Record<OpportunityType, string> {
-    return {
-      compliantReporting:
-        opportunityStatusMessages.compliantReporting[
-          this.reviewStatus.compliantReporting
-        ],
-    };
+  get opportunitiesAlmostEligible(): OpportunityMapping {
+    return entries(this.opportunities).reduce((opportunities, [key, opp]) => {
+      if (opp !== undefined && opp.almostEligible) {
+        return { ...opportunities, [key as OpportunityType]: opp };
+      }
+      return opportunities;
+    }, {} as OpportunityMapping);
   }
 
   get currentUserEmail(): string | null | undefined {
@@ -559,9 +320,11 @@ export class Client {
 
   printCompliantReportingReferralForm(): void {
     if (this.currentUserEmail) {
-      if (this.reviewStatus.compliantReporting !== "DENIED") {
+      if (this.opportunities.compliantReporting?.reviewStatus !== "DENIED") {
         updateCompliantReportingCompleted(this.currentUserEmail, this.id);
-        if (this.reviewStatus.compliantReporting !== "COMPLETED") {
+        if (
+          this.opportunities.compliantReporting?.reviewStatus !== "COMPLETED"
+        ) {
           trackSetOpportunityStatus({
             clientId: this.pseudonymizedId,
             status: "COMPLETED",

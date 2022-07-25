@@ -30,11 +30,9 @@ import styled from "styled-components/macro";
 
 import { IconPeopleSvg } from "../../components/Icons";
 import { useRootStore } from "../../components/StoreProvider";
-import { OpportunityType } from "../../firestore";
-import { Client } from "../../PracticesStore/Client";
+import { Client, OpportunityType } from "../../PracticesStore";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { OpportunityCapsule } from "../ClientCapsule";
-import { OpportunityAlmostCapsule } from "../ClientCapsule/OpportunityAlmostCapsule";
 import { PRACTICES_METHODOLOGY_URL } from "../utils/constants";
 import { workflowsUrl } from "../views";
 import { FORM_SIDEBAR_WIDTH } from "../WorkflowsLayouts";
@@ -83,7 +81,7 @@ const ClientListItem = styled.li`
 
 const OpportunityListLink: React.FC<
   OpportunityCaseloadProps & { client: Client }
-> = ({ children, client, opportunity }) => {
+> = ({ children, client, opportunityType: opportunity }) => {
   return (
     <ClientListItem key={client.id}>
       <Link
@@ -118,23 +116,20 @@ const AllClientsLink = styled(Link)`
 `;
 
 type OpportunityCaseloadProps = {
-  opportunity: OpportunityType;
+  opportunityType: OpportunityType;
 };
 
 export const OpportunityCaseloadSelection = observer(
-  ({ opportunity }: OpportunityCaseloadProps) => {
+  ({ opportunityType }: OpportunityCaseloadProps) => {
     const {
-      practicesStore: {
-        opportunityEligibleClients,
-        opportunityAlmostEligibleClients,
-      },
+      practicesStore: { eligibleOpportunities, almostEligibleOpportunities },
     } = useRootStore();
 
-    const eligibleNow = opportunityEligibleClients[opportunity];
-    const almostEligible = opportunityAlmostEligibleClients[opportunity];
+    const eligibleNow = eligibleOpportunities[opportunityType];
+    const almostEligible = almostEligibleOpportunities[opportunityType];
 
     let introText: React.ReactNode;
-    switch (opportunity) {
+    switch (opportunityType) {
       case "compliantReporting":
         introText = (
           <>
@@ -151,7 +146,7 @@ export const OpportunityCaseloadSelection = observer(
         );
         break;
       default:
-        assertNever(opportunity);
+        assertNever(opportunityType);
     }
 
     return (
@@ -169,19 +164,22 @@ export const OpportunityCaseloadSelection = observer(
             <>
               <LabelText>Eligible now</LabelText>
               <ClientListElement>
-                {eligibleNow.map((client) => (
-                  <OpportunityListLink
-                    key={client.pseudonymizedId}
-                    {...{ client, opportunity }}
-                  >
-                    <OpportunityCapsule
-                      avatarSize="lg"
-                      client={client}
-                      opportunity={opportunity}
-                      textSize="sm"
-                    />
-                  </OpportunityListLink>
-                ))}
+                {eligibleNow.map((opportunity) => {
+                  const { client } = opportunity;
+                  return (
+                    <OpportunityListLink
+                      key={client.pseudonymizedId}
+                      {...{ client, opportunityType }}
+                    >
+                      <OpportunityCapsule
+                        avatarSize="lg"
+                        client={client}
+                        opportunity={opportunity}
+                        textSize="sm"
+                      />
+                    </OpportunityListLink>
+                  );
+                })}
               </ClientListElement>
             </>
           ) : null}
@@ -189,19 +187,22 @@ export const OpportunityCaseloadSelection = observer(
             <>
               <LabelText>Almost eligible</LabelText>
               <ClientListElement>
-                {almostEligible.map((client) => (
-                  <OpportunityListLink
-                    key={client.pseudonymizedId}
-                    {...{ client, opportunity }}
-                  >
-                    <OpportunityAlmostCapsule
-                      avatarSize="lg"
-                      client={client}
-                      opportunity={opportunity}
-                      textSize="sm"
-                    />
-                  </OpportunityListLink>
-                ))}
+                {almostEligible.map((opportunity) => {
+                  const { client } = opportunity;
+                  return (
+                    <OpportunityListLink
+                      key={client.pseudonymizedId}
+                      {...{ client, opportunityType }}
+                    >
+                      <OpportunityCapsule
+                        avatarSize="lg"
+                        client={client}
+                        opportunity={opportunity}
+                        textSize="sm"
+                      />
+                    </OpportunityListLink>
+                  );
+                })}
               </ClientListElement>
             </>
           ) : null}

@@ -16,7 +16,7 @@
 // =============================================================================
 import type { Timestamp } from "firebase/firestore";
 
-import { TransformedCompliantReportingReferral } from "../PracticesStore/CompliantReportingReferralRecord";
+import { TransformedCompliantReportingReferral } from "../PracticesStore";
 
 /**
  * Staff-level data exported from the Recidiviz data platform.
@@ -75,18 +75,6 @@ export type CombinedUserRecord = {
   info: UserRecord;
   updates?: UserUpdateRecord;
   featureVariants?: FeatureVariantRecord;
-};
-
-export const OPPORTUNITY_TYPES = ["compliantReporting"] as const;
-/**
- * Values of this union map to key prefixes in client records
- */
-export type OpportunityType = typeof OPPORTUNITY_TYPES[number];
-export function isOpportunityType(s: string): s is OpportunityType {
-  return OPPORTUNITY_TYPES.includes(s as OpportunityType);
-}
-export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
-  compliantReporting: "Compliant Reporting",
 };
 
 export type FullName = {
@@ -185,7 +173,7 @@ export type CompliantReportingReferralForm = {
   data?: Partial<TransformedCompliantReportingReferral>;
 };
 
-type CompliantReportingUpdateRecord = {
+export type CompliantReportingUpdateRecord = {
   denial?: CompliantReportingDenial;
   referralForm?: CompliantReportingReferralForm;
   completed?: {

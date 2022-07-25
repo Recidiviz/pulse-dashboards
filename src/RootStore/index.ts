@@ -62,6 +62,12 @@ if (process.env.NODE_ENV !== "test") {
     observableRequiresReaction: false,
   });
 
+  if (process.env.NODE_ENV !== "production") {
+    configure({
+      disableErrorBoundaries: true,
+    });
+  }
+
   // log errors in Mobx reactions (e.g. autoruns) which are otherwise swallowed
   onReactionError((error) => {
     Sentry.captureException(error, (scope) => {

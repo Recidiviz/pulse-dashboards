@@ -15,11 +15,11 @@
 // =============================================================================
 import moment from "moment";
 
-import type { Client } from "../../../PracticesStore/Client";
+import type { Client } from "../../../PracticesStore";
 import {
   CompliantReportingReferralRecord,
   TransformedCompliantReportingReferral,
-} from "../../../PracticesStore/CompliantReportingReferralRecord";
+} from "../../../PracticesStore";
 import { formatAsCurrency, formatPracticesDate } from "../../../utils";
 
 function formatSentenceLength(

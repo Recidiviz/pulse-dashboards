@@ -84,7 +84,10 @@ export const CompliantReportingPreview = observer(
           <Sans16>
             <Title client={client} />
           </Sans16>
-          <CriteriaList client={client} colors={colors} />
+          <CriteriaList
+            opportunity={client.opportunitiesEligible.compliantReporting}
+            colors={colors}
+          />
           <CompliantReportingDenial client={client} />
         </div>
         <div>

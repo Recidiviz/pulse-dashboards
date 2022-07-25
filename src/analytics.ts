@@ -16,8 +16,7 @@
 // =============================================================================
 import { v4 as uuidv4 } from "uuid";
 
-import { OpportunityType } from "./firestore";
-import { OpportunityStatus } from "./PracticesStore/Client";
+import { OpportunityStatus, OpportunityType } from "./PracticesStore";
 
 const sessionId = uuidv4();
 

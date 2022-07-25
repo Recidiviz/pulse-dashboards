@@ -24,7 +24,6 @@ import {
   trackSurfacedInList,
 } from "../../analytics";
 import {
-  CompliantReportingEligibleRecord,
   subscribeToClientUpdates,
   updateCompliantReportingCompleted,
   updateCompliantReportingDenial,
@@ -32,7 +31,7 @@ import {
 import { RootStore } from "../../RootStore";
 import { eligibleClient, mockOfficer } from "../__fixtures__";
 import { Client } from "../Client";
-import { OTHER_KEY, PracticesStore } from "../PracticesStore";
+import { OTHER_KEY } from "../PracticesStore";
 import { dateToTimestamp } from "../utils";
 
 let testObserver: IDisposer;
@@ -225,15 +224,22 @@ test("compliant reporting review status", async () => {
     return jest.fn();
   });
 
-  keepAlive(computed(() => [client.reviewStatusMessages]));
+  // simulate a UI that is actually displaying client data, to trigger subscriptions
+  testObserver = keepAlive(
+    computed(() => [client.opportunities.compliantReporting?.reviewStatus])
+  );
 
   sendUpdate(undefined);
-  expect(client.reviewStatusMessages.compliantReporting).toBe("Needs referral");
+  expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
+    "Needs referral"
+  );
 
   sendUpdate({
     someOtherKey: {},
   });
-  expect(client.reviewStatusMessages.compliantReporting).toBe("Needs referral");
+  expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
+    "Needs referral"
+  );
 
   sendUpdate({
     compliantReporting: {
@@ -243,7 +249,7 @@ test("compliant reporting review status", async () => {
       },
     },
   });
-  expect(client.reviewStatusMessages.compliantReporting).toBe(
+  expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
     "Currently ineligible"
   );
 
@@ -251,7 +257,7 @@ test("compliant reporting review status", async () => {
     // for this case the contents don't matter as long as it exists
     compliantReporting: {},
   });
-  expect(client.reviewStatusMessages.compliantReporting).toBe(
+  expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
     "Referral in progress"
   );
 
@@ -263,7 +269,7 @@ test("compliant reporting review status", async () => {
       },
     },
   });
-  expect(client.reviewStatusMessages.compliantReporting).toBe(
+  expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
     "Referral form complete"
   );
 });
@@ -346,38 +352,4 @@ test("list view tracking waits for updates", async () => {
     clientId: client.pseudonymizedId,
     opportunityType: "compliantReporting",
   });
-});
-
-test("almost eligible criteria are filtered to remove negatives", async () => {
-  const spy = jest.spyOn(PracticesStore.prototype, "featureVariants", "get");
-  spy.mockReturnValue({ CompliantReportingAlmostEligible: {} });
-  rootStore = new RootStore();
-
-  client = new Client(
-    {
-      ...eligibleClient,
-      compliantReportingEligible: {
-        ...(eligibleClient.compliantReportingEligible as CompliantReportingEligibleRecord),
-        remainingCriteriaNeeded: 1,
-        almostEligibleCriteria: {
-          passedDrugScreenNeeded: true,
-          paymentNeeded: false,
-          currentLevelEligibilityDate: undefined,
-          recentRejectionCodes: [],
-        },
-      },
-    },
-    rootStore
-  );
-
-  expect(
-    client.opportunitiesAlmostEligible.compliantReporting
-      ?.almostEligibleCriteria
-  ).toEqual({ passedDrugScreenNeeded: true });
-  expect(
-    Object.keys(
-      client.opportunitiesAlmostEligible.compliantReporting
-        ?.almostEligibleCriteria ?? {}
-    ).length
-  ).toBe(1);
 });

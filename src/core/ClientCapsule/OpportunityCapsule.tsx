@@ -15,45 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { assertNever } from "assert-never";
 import { observer } from "mobx-react-lite";
-import React from "react";
 
-import { OpportunityType } from "../../firestore";
-import type { Client } from "../../PracticesStore/Client";
+import { Opportunity } from "../../PracticesStore";
 import { useClientTracking } from "../hooks/useClientTracking";
 import ClientCapsule, { ClientCapsuleProps } from "./ClientCapsule";
 
 type Props = Omit<ClientCapsuleProps, "status"> & {
-  opportunity: OpportunityType;
+  opportunity: Opportunity;
 };
-
-function getStatusMessage(client: Client, opportunity: OpportunityType) {
-  switch (opportunity) {
-    case "compliantReporting":
-      return (
-        <>
-          {client.reviewStatusMessages.compliantReporting}
-          {client.reviewStatus.compliantReporting === "DENIED" &&
-            client.updates?.compliantReporting?.denial &&
-            ` (${client.updates.compliantReporting.denial.reasons.join(", ")})`}
-        </>
-      );
-    default:
-      return assertNever(opportunity);
-  }
-}
 
 export const OpportunityCapsule = observer(
   ({ client, opportunity, ...otherProps }: Props) => {
     useClientTracking(client, () => {
-      client.trackListViewed(opportunity);
+      client.trackListViewed(opportunity.type);
     });
 
     return (
       <ClientCapsule
         client={client}
-        status={getStatusMessage(client, opportunity)}
+        status={opportunity.statusMessageShort}
         {...otherProps}
       />
     );

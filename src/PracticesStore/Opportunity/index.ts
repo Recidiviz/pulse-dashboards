@@ -15,29 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { when } from "mobx";
-
-import { trackSetOpportunityStatus } from "../../../analytics";
-import {
-  FormFieldData,
-  updateCompliantReportingDraft,
-} from "../../../firestore";
-import { Client } from "../../../PracticesStore";
-
-export async function updateFieldData(
-  updatedBy: string,
-  client: Client,
-  fieldData: FormFieldData
-): Promise<void> {
-  updateCompliantReportingDraft(updatedBy, client.id, fieldData);
-
-  await when(() => client.updates !== undefined);
-
-  if (client.opportunities.compliantReporting?.reviewStatus === "PENDING") {
-    trackSetOpportunityStatus({
-      clientId: client.pseudonymizedId,
-      status: "IN_PROGRESS",
-      opportunityType: "compliantReporting",
-    });
-  }
-}
+export * from "./CompliantReportingOpportunity";
+export * from "./types";

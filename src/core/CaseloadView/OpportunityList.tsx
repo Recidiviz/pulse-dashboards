@@ -29,8 +29,7 @@ import styled from "styled-components/macro";
 
 import { BrandedLink } from "../../components/BrandedLink";
 import { useRootStore } from "../../components/StoreProvider";
-import { OPPORTUNITY_LABELS, OpportunityType } from "../../firestore";
-import { Client } from "../../PracticesStore/Client";
+import { OPPORTUNITY_LABELS, OpportunityType } from "../../PracticesStore";
 import { pluralize } from "../../utils";
 import { OpportunityCapsule } from "../ClientCapsule";
 import { workflowsUrl } from "../views";
@@ -104,40 +103,43 @@ const OpportunityLink = styled(BrandedLink)`
   margin-left: auto;
 `;
 
-type OpportunityListProps = { opportunity: OpportunityType };
+type OpportunityListProps = { opportunityType: OpportunityType };
 
 export const OpportunityList = observer(
-  ({ opportunity }: OpportunityListProps) => {
+  ({ opportunityType }: OpportunityListProps) => {
     const {
-      practicesStore: { opportunityEligibleClients },
+      practicesStore: { eligibleOpportunities },
     } = useRootStore();
-
-    const eligibleClients = opportunityEligibleClients[opportunity];
 
     const leftShadow = useInView({ initialInView: true });
     const rightShadow = useInView({ initialInView: true });
 
-    if (!eligibleClients.length) return null;
+    const opportunities = eligibleOpportunities[opportunityType];
 
-    const items = eligibleClients.map((client: Client) => (
-      <ClientListItem key={client.id}>
-        <ClientLink
-          to={workflowsUrl(opportunity, {
-            clientId: client.pseudonymizedId,
-          })}
-        >
-          <OpportunityCapsule
-            avatarSize="md"
-            client={client}
-            opportunity={opportunity}
-            textSize="sm"
-          />
-          <Sans16>
-            <Icon kind="Arrow" size={14} />
-          </Sans16>
-        </ClientLink>
-      </ClientListItem>
-    ));
+    if (!opportunities.length) return null;
+
+    const items = opportunities.map((opportunity) => {
+      const { client } = opportunity;
+      return (
+        <ClientListItem key={client.id}>
+          <ClientLink
+            to={workflowsUrl(opportunity.type, {
+              clientId: client.pseudonymizedId,
+            })}
+          >
+            <OpportunityCapsule
+              avatarSize="md"
+              client={client}
+              opportunity={opportunity}
+              textSize="sm"
+            />
+            <Sans16>
+              <Icon kind="Arrow" size={14} />
+            </Sans16>
+          </ClientLink>
+        </ClientListItem>
+      );
+    });
 
     return (
       <>
@@ -145,9 +147,9 @@ export const OpportunityList = observer(
           <Icon kind="StarCircled" color={palette.signal.highlight} size={14} />
           <span>
             {pluralize(items.length, "client")} eligible for{" "}
-            {OPPORTUNITY_LABELS[opportunity]}
+            {OPPORTUNITY_LABELS[opportunityType]}
           </span>
-          <OpportunityLink to={workflowsUrl(opportunity)}>
+          <OpportunityLink to={workflowsUrl(opportunityType)}>
             View all <Icon kind="Arrow" size={14} />
           </OpportunityLink>
         </ListHeader>

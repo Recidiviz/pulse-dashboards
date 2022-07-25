@@ -1,3 +1,3 @@
-import { TransformedCompliantReportingReferral } from "../../../PracticesStore/CompliantReportingReferralRecord";
+import { TransformedCompliantReportingReferral } from "../../../PracticesStore";
 
 export type FormDataType = Partial<TransformedCompliantReportingReferral>;

@@ -24,7 +24,7 @@ import { useEffect } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import type { Client } from "../../PracticesStore/Client";
+import type { Client } from "../../PracticesStore";
 import { generate } from "./FormGenerator";
 import { PrintablePage, PrintablePageMargin } from "./US_TN/styles";
 

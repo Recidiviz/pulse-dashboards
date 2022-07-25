@@ -90,6 +90,7 @@ export const eligibleClient: ClientRecord = {
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
   compliantReportingEligible: {
     eligibilityCategory: "c1",
+    remainingCriteriaNeeded: 0,
     eligibleLevelStart: dateToTimestamp("2019-12-20"),
     judicialDistrict: "A",
     finesFeesEligible: "regular_payments",

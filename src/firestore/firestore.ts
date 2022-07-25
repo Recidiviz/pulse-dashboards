@@ -40,7 +40,10 @@ import {
 } from "firebase/firestore";
 import { mapValues, pickBy } from "lodash";
 
-import { CompliantReportingReferralRecord } from "../PracticesStore/CompliantReportingReferralRecord";
+import {
+  CompliantReportingReferralRecord,
+  OpportunityType,
+} from "../PracticesStore";
 import { isDemoMode } from "../utils/isDemoMode";
 import { isOfflineMode } from "../utils/isOfflineMode";
 import {
@@ -50,7 +53,6 @@ import {
   FeatureVariantRecord,
   FormFieldData,
   isUserRecord,
-  OpportunityType,
   StaffRecord,
   UserUpdateRecord,
 } from "./types";

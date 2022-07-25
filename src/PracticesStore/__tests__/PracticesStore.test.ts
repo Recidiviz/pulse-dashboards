@@ -288,15 +288,9 @@ test("subscribe to all clients in default caseload", async () => {
   await waitForHydration();
 
   // simulate a UI displaying client list
-  testObserver = keepAlive(
-    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
-  );
+  testObserver = keepAlive(computed(() => practicesStore.caseloadClients));
 
   expect(mockSubscribeToCaseloads).toHaveBeenCalled();
-
-  expect(
-    practicesStore.opportunityEligibleClients.compliantReporting.length
-  ).toBe(1);
 });
 
 test("subscribe to all clients in saved caseload", async () => {
@@ -322,7 +316,7 @@ test("subscribe to all clients in saved caseload", async () => {
 
   // simulate a UI displaying client list
   testObserver = keepAlive(
-    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
+    computed(() => practicesStore.eligibleOpportunities.compliantReporting)
   );
 
   expect(mockSubscribeToCaseloads).toHaveBeenCalled();
@@ -335,7 +329,7 @@ test("don't subscribe to clients if no officers are selected", async () => {
 
   // simulate a UI displaying client list
   testObserver = keepAlive(
-    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
+    computed(() => practicesStore.eligibleOpportunities.compliantReporting)
   );
 
   expect(mockSubscribeToCaseloads).not.toHaveBeenCalled();
@@ -396,7 +390,7 @@ test("no client selected", async () => {
 
   // simulate a UI displaying CR data
   testObserver = keepAlive(
-    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
+    computed(() => practicesStore.eligibleOpportunities.compliantReporting)
   );
 
   expect(practicesStore.selectedClient).toBeUndefined();
@@ -542,34 +536,34 @@ test("only approved eligibility categories are surfaced", async () => {
 
   // simulate a UI displaying client list
   testObserver = keepAlive(
-    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
+    computed(() => practicesStore.eligibleOpportunities)
   );
 
-  expect(
-    practicesStore.opportunityEligibleClients.compliantReporting.length
-  ).toBe(mockEligibleClients.length);
+  expect(practicesStore.eligibleOpportunities.compliantReporting.length).toBe(
+    mockEligibleClients.length
+  );
   mockEligibleClients.forEach((expectedClient) =>
     expect(
-      practicesStore.opportunityEligibleClients.compliantReporting.find(
-        (c) => c.id === expectedClient.personExternalId
+      practicesStore.eligibleOpportunities.compliantReporting.find(
+        (opp) => opp.client.id === expectedClient.personExternalId
       )
     ).toBeDefined()
   );
 
   mockIneligibleCategoryClients.forEach((unexpectedClient) =>
     expect(
-      practicesStore.opportunityEligibleClients.compliantReporting.find(
-        (c) => c.id === unexpectedClient.personExternalId
+      practicesStore.eligibleOpportunities.compliantReporting.find(
+        (opp) => opp.client.id === unexpectedClient.personExternalId
       )
     ).toBeUndefined()
   );
 });
 
-test("filter out clients who are almost eligible", async () => {
+function getMockAlmostEligibleClients(): ClientRecord[] {
   const eligibilityFields = {
     ...eligibleClient.compliantReportingEligible,
   } as CompliantReportingEligibleRecord;
-  const mockAlmostEligibleClients: ClientRecord[] = [
+  return [
     {
       ...eligibleClient,
       personExternalId: "almost1",
@@ -578,8 +572,12 @@ test("filter out clients who are almost eligible", async () => {
         ...eligibilityFields,
         eligibilityCategory: "c1",
         remainingCriteriaNeeded: 1,
+        almostEligibleCriteria: {
+          passedDrugScreenNeeded: true,
+        },
       },
     },
+    // clients below will still be excluded, needing >1 criteria
     {
       ...eligibleClient,
       personExternalId: "almost2",
@@ -588,6 +586,11 @@ test("filter out clients who are almost eligible", async () => {
         ...eligibilityFields,
         eligibilityCategory: "c2",
         remainingCriteriaNeeded: 3,
+        almostEligibleCriteria: {
+          passedDrugScreenNeeded: true,
+          paymentNeeded: true,
+          recentRejectionCodes: ["ABCD"],
+        },
       },
     },
     {
@@ -598,10 +601,21 @@ test("filter out clients who are almost eligible", async () => {
         ...eligibilityFields,
         eligibilityCategory: "c3",
         remainingCriteriaNeeded: 2,
+        almostEligibleCriteria: {
+          passedDrugScreenNeeded: true,
+          paymentNeeded: true,
+        },
       },
     },
   ];
+}
 
+test("filter out clients who are almost eligible", async () => {
+  const mockAlmostEligibleClients = getMockAlmostEligibleClients();
+
+  const eligibilityFields = {
+    ...eligibleClient.compliantReportingEligible,
+  } as CompliantReportingEligibleRecord;
   const mockEligibleClients = [
     {
       ...eligibleClient,
@@ -626,24 +640,24 @@ test("filter out clients who are almost eligible", async () => {
 
   // simulate a UI displaying client list
   testObserver = keepAlive(
-    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
+    computed(() => practicesStore.eligibleOpportunities)
   );
 
-  expect(
-    practicesStore.opportunityEligibleClients.compliantReporting.length
-  ).toBe(mockEligibleClients.length);
+  expect(practicesStore.eligibleOpportunities.compliantReporting.length).toBe(
+    mockEligibleClients.length
+  );
   mockEligibleClients.forEach((expectedClient) =>
     expect(
-      practicesStore.opportunityEligibleClients.compliantReporting.find(
-        (c) => c.id === expectedClient.personExternalId
+      practicesStore.eligibleOpportunities.compliantReporting.find(
+        (opp) => opp.client.id === expectedClient.personExternalId
       )
     ).toBeDefined()
   );
 
   mockAlmostEligibleClients.forEach((unexpectedClient) =>
     expect(
-      practicesStore.opportunityEligibleClients.compliantReporting.find(
-        (c) => c.id === unexpectedClient.personExternalId
+      practicesStore.eligibleOpportunities.compliantReporting.find(
+        (opp) => opp.client.id === unexpectedClient.personExternalId
       )
     ).toBeUndefined()
   );
@@ -656,42 +670,7 @@ test("list clients who are almost eligible", async () => {
     featureVariants: { CompliantReportingAlmostEligible: {} },
   });
 
-  const eligibilityFields = {
-    ...eligibleClient.compliantReportingEligible,
-  } as CompliantReportingEligibleRecord;
-  const mockAlmostEligibleClients: ClientRecord[] = [
-    {
-      ...eligibleClient,
-      personExternalId: "almost1",
-      pseudonymizedId: "almost1p",
-      compliantReportingEligible: {
-        ...eligibilityFields,
-        eligibilityCategory: "c1",
-        remainingCriteriaNeeded: 1,
-      },
-    },
-    // clients below will still be excluded, needing >1 criteria
-    {
-      ...eligibleClient,
-      personExternalId: "almost2",
-      pseudonymizedId: "almost2p",
-      compliantReportingEligible: {
-        ...eligibilityFields,
-        eligibilityCategory: "c2",
-        remainingCriteriaNeeded: 3,
-      },
-    },
-    {
-      ...eligibleClient,
-      personExternalId: "almost3",
-      pseudonymizedId: "almost3p",
-      compliantReportingEligible: {
-        ...eligibilityFields,
-        eligibilityCategory: "c3",
-        remainingCriteriaNeeded: 2,
-      },
-    },
-  ];
+  const mockAlmostEligibleClients = getMockAlmostEligibleClients();
 
   mockSubscribeToCaseloads.mockImplementation(
     (stateCode, officerIds, handler) => {
@@ -704,20 +683,20 @@ test("list clients who are almost eligible", async () => {
 
   // simulate a UI displaying client list
   testObserver = keepAlive(
-    computed(() => practicesStore.opportunityEligibleClients.compliantReporting)
+    computed(() => practicesStore.eligibleOpportunities.compliantReporting)
+  );
+
+  expect(practicesStore.eligibleOpportunities.compliantReporting.length).toBe(
+    0
   );
 
   expect(
-    practicesStore.opportunityEligibleClients.compliantReporting.length
-  ).toBe(0);
-
-  expect(
-    practicesStore.opportunityAlmostEligibleClients.compliantReporting.length
+    practicesStore.almostEligibleOpportunities.compliantReporting.length
   ).toBe(1);
 
   expect(
-    practicesStore.opportunityAlmostEligibleClients.compliantReporting.find(
-      (c) => c.id === mockAlmostEligibleClients[0].personExternalId
+    practicesStore.almostEligibleOpportunities.compliantReporting.find(
+      (opp) => opp.client.id === mockAlmostEligibleClients[0].personExternalId
     )
   ).toBeDefined();
 });

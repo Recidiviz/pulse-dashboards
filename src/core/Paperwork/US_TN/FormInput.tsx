@@ -22,7 +22,7 @@ import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { CombinedUserRecord } from "../../../firestore";
-import type { Client } from "../../../PracticesStore/Client";
+import type { Client } from "../../../PracticesStore";
 import { useAnimatedValue } from "../utils";
 import { Input } from "./styles";
 import { FormDataType } from "./types";

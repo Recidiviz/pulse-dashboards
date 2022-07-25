@@ -19,7 +19,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { OPPORTUNITY_TYPES } from "../../firestore";
+import { OPPORTUNITY_TYPES } from "../../PracticesStore";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { AllClients } from "./AllClients";
@@ -36,7 +36,7 @@ export const CaseloadView: React.FC = () => {
       <Wrapper>
         <CaseloadSelect />
         {OPPORTUNITY_TYPES.map((opportunity) => (
-          <OpportunityList key={opportunity} opportunity={opportunity} />
+          <OpportunityList key={opportunity} opportunityType={opportunity} />
         ))}
         <AllClients />
       </Wrapper>

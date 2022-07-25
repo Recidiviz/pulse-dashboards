@@ -15,9 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { palette, Sans14, spacing } from "@recidiviz/design-system";
-import { ascending } from "d3-array";
 import { groupBy } from "lodash";
-import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -25,7 +23,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Client } from "../../PracticesStore/Client";
+import { Client } from "../../PracticesStore";
 import { ProfileCapsule } from "../ClientCapsule";
 import PracticesOfficerName from "../PracticesOfficerName";
 import { workflowsUrl } from "../views";
@@ -61,19 +59,12 @@ const Caseload = ({ clients }: { clients: Client[] }) => {
 
 export const AllClients = observer(() => {
   const {
-    practicesStore: { clients, selectedOfficerIds },
+    practicesStore: { caseloadClients, selectedOfficerIds },
   } = useRootStore();
 
   if (!selectedOfficerIds.length) return null;
 
-  const caseloads = groupBy(
-    [...values(clients)].sort(
-      (a, b) =>
-        ascending(a.fullName.surname, b.fullName.surname) ||
-        ascending(a.fullName.givenNames, b.fullName.givenNames)
-    ),
-    "officerId"
-  );
+  const caseloads = groupBy(caseloadClients, "officerId");
 
   return (
     <>

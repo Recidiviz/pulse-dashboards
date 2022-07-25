@@ -36,8 +36,8 @@ import { IDisposer } from "mobx-utils";
 
 import { trackSetOpportunityStatus } from "../../../../analytics";
 import { subscribeToClientUpdates } from "../../../../firestore";
+import { Client } from "../../../../PracticesStore";
 import { eligibleClient } from "../../../../PracticesStore/__fixtures__";
-import { Client } from "../../../../PracticesStore/Client";
 import { RootStore } from "../../../../RootStore";
 import { updateFieldData } from "../utils";
 

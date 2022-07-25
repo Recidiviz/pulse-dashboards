@@ -17,7 +17,7 @@
 
 import { useEffect } from "react";
 
-import type { Client } from "../../PracticesStore/Client";
+import type { Client } from "../../PracticesStore";
 
 /**
  * Ensures the given tracking function is called only once per client,

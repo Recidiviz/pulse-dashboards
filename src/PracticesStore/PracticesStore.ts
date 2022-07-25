@@ -37,7 +37,6 @@ import {
   FeatureVariantRecord,
   getClient,
   getUser,
-  OpportunityType,
   StaffRecord,
   subscribeToCaseloads,
   subscribeToEligibleCount,
@@ -49,6 +48,11 @@ import {
 } from "../firestore";
 import type { RootStore } from "../RootStore";
 import { Client } from "./Client";
+import {
+  Opportunity,
+  OPPORTUNITY_TYPES,
+  OpportunityType,
+} from "./Opportunity/types";
 import { observableSubscription, SubscriptionValue } from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
@@ -304,50 +308,40 @@ export class PracticesStore implements Hydratable {
   }
 
   get caseloadClients(): Client[] {
-    return values(this.clients).filter((c) =>
-      this.selectedOfficerIds.includes(c.officerId)
-    );
-  }
-
-  private get compliantReportingEligibleClients(): Client[] {
-    return this.caseloadClients
-      .filter((c) => c.opportunitiesEligible.compliantReporting)
+    return values(this.clients)
+      .filter((c) => this.selectedOfficerIds.includes(c.officerId))
       .sort((a, b) => {
-        // hierarchical sort: review status > last name > first name
         return (
-          ascending(
-            a.opportunitiesEligibleRank.compliantReporting,
-            b.opportunitiesEligibleRank.compliantReporting
-          ) ||
           ascending(a.fullName.surname, b.fullName.surname) ||
           ascending(a.fullName.givenNames, b.fullName.givenNames)
         );
       });
   }
 
-  private get compliantReportingAlmostEligibleClients(): Client[] {
-    return this.caseloadClients
-      .filter((c) => c.opportunitiesAlmostEligible.compliantReporting)
-      .sort((a, b) => {
-        return (
-          ascending(
-            a.opportunitiesAlmostEligibleRank.compliantReporting,
-            b.opportunitiesAlmostEligibleRank.compliantReporting
-          ) ||
-          ascending(a.fullName.surname, b.fullName.surname) ||
-          ascending(a.fullName.givenNames, b.fullName.givenNames)
-        );
-      });
+  get eligibleOpportunities(): Record<OpportunityType, Opportunity[]> {
+    const mapping = {} as Record<OpportunityType, Opportunity[]>;
+    OPPORTUNITY_TYPES.forEach((opportunityType) => {
+      const opportunities = this.caseloadClients
+        .map((c) => c.opportunitiesEligible[opportunityType])
+        .filter((opp): opp is Opportunity => opp !== undefined)
+        .sort((a, b) => ascending(a?.rank, b?.rank));
+
+      mapping[opportunityType] = opportunities;
+    });
+    return mapping;
   }
 
-  get opportunityEligibleClients(): Record<OpportunityType, Client[]> {
-    return {
-      compliantReporting: this.compliantReportingEligibleClients,
-    };
-  }
+  get almostEligibleOpportunities(): Record<OpportunityType, Opportunity[]> {
+    const mapping = {} as Record<OpportunityType, Opportunity[]>;
+    OPPORTUNITY_TYPES.forEach((opportunityType) => {
+      const opportunities = this.caseloadClients
+        .map((c) => c.opportunitiesAlmostEligible[opportunityType])
+        .filter((opp): opp is Opportunity => opp !== undefined)
+        .sort((a, b) => ascending(a?.rank, b?.rank));
 
-  get opportunityAlmostEligibleClients(): Record<OpportunityType, Client[]> {
-    return { compliantReporting: this.compliantReportingAlmostEligibleClients };
+      mapping[opportunityType] = opportunities;
+    });
+    return mapping;
   }
 
   get opportunityCounts(): Record<OpportunityType, number | undefined> {
