@@ -34,7 +34,7 @@ export const OpportunityCapsule = observer(
     return (
       <ClientCapsule
         client={client}
-        status={opportunity.statusMessageShort}
+        status={opportunity.statusMessageLong}
         {...otherProps}
       />
     );
