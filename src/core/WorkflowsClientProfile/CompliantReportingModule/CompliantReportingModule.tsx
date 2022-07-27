@@ -55,7 +55,7 @@ const getPrintText = (client: Client) => {
 
 export const CompliantReportingModule = observer(
   ({ client }: ClientProfileProps) => {
-    if (!client.opportunitiesEligible.compliantReporting) return null;
+    if (!client.opportunities.compliantReporting) return null;
 
     const colors = useStatusColors(client);
 
@@ -63,7 +63,7 @@ export const CompliantReportingModule = observer(
       <Wrapper {...colors}>
         <Title client={client} />
         <CriteriaList
-          opportunity={client.opportunitiesEligible.compliantReporting}
+          opportunity={client.opportunities.compliantReporting}
           colors={colors}
         />
         <ActionButtons>

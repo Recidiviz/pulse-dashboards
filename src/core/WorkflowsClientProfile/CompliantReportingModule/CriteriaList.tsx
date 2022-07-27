@@ -19,11 +19,13 @@ import {
   Icon,
   IconSVG,
   palette,
+  Sans14,
   spacing,
   TooltipTrigger,
   typography,
 } from "@recidiviz/design-system";
-import { rem } from "polished";
+import { observer } from "mobx-react-lite";
+import { rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
@@ -36,7 +38,7 @@ const CriterionIcon = styled(Icon)`
   margin-top: ${rem(1)};
 `;
 
-const CriterionContent = styled.div`
+const CriterionContentWrapper = styled.div`
   grid-column: 2;
 `;
 
@@ -47,7 +49,7 @@ const Wrapper = styled.ul`
   padding: 0;
 `;
 
-const Criterion = styled.li`
+const CriterionWrapper = styled.li`
   display: grid;
   grid-template-columns: ${rem(spacing.lg)} 1fr;
   margin: 0 0 8px;
@@ -81,39 +83,81 @@ const InfoButton = () => (
   </InfoLink>
 );
 
-export const CriteriaList = ({
-  opportunity,
-  colors,
-}: {
-  opportunity: Opportunity;
-  colors: StatusPalette;
-}): React.ReactElement => {
-  return (
-    <Wrapper style={{ color: colors.text }}>
-      {opportunity.requirementsMet.map(({ text, tooltip }) => {
-        // split text so we can prevent orphaned tooltips
-        const textTokens = text.split(" ");
-        return (
-          <Criterion key={text}>
-            <CriterionIcon
-              kind={IconSVG.Success}
-              color={colors.icon}
-              size={16}
-            />
-            <CriterionContent>
-              {textTokens.slice(0, -1).join(" ")}{" "}
-              <KeepTogether>
-                {textTokens.slice(-1)}{" "}
+const ListDivider = styled(Sans14)`
+  align-items: center;
+  color: ${palette.slate70};
+  display: flex;
+  gap: ${rem(spacing.sm)};
+  margin: ${rem(spacing.md)} 0;
+`;
+
+const DividerRule = styled.hr`
+  border-top: 1px solid ${rgba(palette.slate, 0.15)};
+  flex: 1 1 auto;
+  margin: 0;
+`;
+
+export const CriteriaList = observer(
+  ({
+    opportunity,
+    colors,
+  }: {
+    opportunity: Opportunity;
+    colors: StatusPalette;
+  }): React.ReactElement => {
+    return (
+      <Wrapper style={{ color: colors.text }}>
+        {opportunity.requirementsAlmostMet.map(({ text, tooltip }) => {
+          return (
+            <CriterionWrapper key={text}>
+              <CriterionIcon
+                kind={IconSVG.Error}
+                color={colors.iconAlmost}
+                size={16}
+              />
+              <CriterionContentWrapper>
+                {text}
                 {tooltip && (
-                  <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                    <InfoButton />
-                  </InfoTooltipWrapper>
+                  <>
+                    {" "}
+                    <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
+                      <InfoButton />
+                    </InfoTooltipWrapper>
+                  </>
                 )}
-              </KeepTogether>
-            </CriterionContent>
-          </Criterion>
-        );
-      })}
-    </Wrapper>
-  );
-};
+              </CriterionContentWrapper>
+            </CriterionWrapper>
+          );
+        })}
+        <ListDivider>
+          <div>Completed</div>
+          <DividerRule />
+        </ListDivider>
+        {opportunity.requirementsMet.map(({ text, tooltip }) => {
+          // split text so we can prevent orphaned tooltips
+          const textTokens = text.split(" ");
+          return (
+            <CriterionWrapper key={text}>
+              <CriterionIcon
+                kind={IconSVG.Success}
+                color={colors.icon}
+                size={16}
+              />
+              <CriterionContentWrapper>
+                {textTokens.slice(0, -1).join(" ")}{" "}
+                <KeepTogether>
+                  {textTokens.slice(-1)}{" "}
+                  {tooltip && (
+                    <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
+                      <InfoButton />
+                    </InfoTooltipWrapper>
+                  )}
+                </KeepTogether>
+              </CriterionContentWrapper>
+            </CriterionWrapper>
+          );
+        })}
+      </Wrapper>
+    );
+  }
+);

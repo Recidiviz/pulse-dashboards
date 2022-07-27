@@ -27,14 +27,25 @@ import { ClientProfileProps } from "../types";
 export const STATUS_COLORS = {
   eligible: {
     icon: palette.signal.highlight,
+    iconAlmost: palette.data.gold1,
     background: rgba(palette.signal.highlight, 0.1),
     border: rgba(palette.signal.highlight, 0.3),
     text: palette.pine4,
     buttonFill: palette.signal.links,
     link: palette.signal.links,
   },
+  almostEligible: {
+    icon: palette.signal.highlight,
+    iconAlmost: palette.data.gold1,
+    background: "transparent",
+    border: rgba(palette.slate, 0.15),
+    text: palette.pine4,
+    buttonFill: palette.signal.links,
+    link: palette.signal.links,
+  },
   ineligible: {
     icon: palette.data.gold1,
+    iconAlmost: palette.data.gold1,
     background: rgba(palette.data.gold1, 0.1),
     border: rgba(palette.data.gold1, 0.5),
     text: palette.slate85,
@@ -46,9 +57,13 @@ export const STATUS_COLORS = {
 export type StatusPalette = typeof STATUS_COLORS[keyof typeof STATUS_COLORS];
 
 export function useStatusColors(client: Client): StatusPalette {
-  return client.opportunities.compliantReporting?.reviewStatus === "DENIED"
-    ? STATUS_COLORS.ineligible
-    : STATUS_COLORS.eligible;
+  if (client.opportunities.compliantReporting?.reviewStatus === "DENIED") {
+    return STATUS_COLORS.ineligible;
+  }
+  if (client.opportunities.compliantReporting?.almostEligible) {
+    return STATUS_COLORS.almostEligible;
+  }
+  return STATUS_COLORS.eligible;
 }
 
 export const Wrapper = styled.div<{ background: string; border: string }>`
@@ -61,11 +76,15 @@ export const Wrapper = styled.div<{ background: string; border: string }>`
   padding: ${rem(spacing.md)};
 `;
 
+const TitleText = styled(Sans14)`
+  color: ${palette.pine1};
+`;
+
 export const Title = observer(({ client }: ClientProfileProps) => {
   return (
-    <Sans14>
+    <TitleText>
       Compliant Reporting:{" "}
       {client.opportunities.compliantReporting?.statusMessageShort}
-    </Sans14>
+    </TitleText>
   );
 });

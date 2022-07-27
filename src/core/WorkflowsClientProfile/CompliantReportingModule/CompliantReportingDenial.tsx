@@ -106,7 +106,7 @@ export const CompliantReportingDenial = observer(
   ({ client }: ClientProfileProps) => {
     const colors = useStatusColors(client);
 
-    if (!client.opportunitiesEligible.compliantReporting) return null;
+    if (!client.opportunities.compliantReporting) return null;
 
     const reasons = client.updates?.compliantReporting?.denial?.reasons;
 

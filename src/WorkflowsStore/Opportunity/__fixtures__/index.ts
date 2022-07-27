@@ -14,12 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Required } from "utility-types";
+import { Required as RequireKeys } from "utility-types";
 
-import { ClientRecord } from "../../../firestore";
+import {
+  ClientRecord,
+  CompliantReportingEligibleRecord,
+} from "../../../firestore";
 import { dateToTimestamp } from "../../utils";
 
-export const compliantReportingEligibleClientRecord: Required<
+export const compliantReportingEligibleClientRecord: RequireKeys<
   ClientRecord,
   "compliantReportingEligible"
 > = {
@@ -52,7 +55,7 @@ export const compliantReportingEligibleClientRecord: Required<
   },
 };
 
-export const compliantReportingAlmostEligibleClientRecord: Required<
+export const compliantReportingAlmostEligibleClientRecord: RequireKeys<
   ClientRecord,
   "compliantReportingEligible"
 > = {
@@ -71,9 +74,6 @@ export const compliantReportingAlmostEligibleClientRecord: Required<
   compliantReportingEligible: {
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 1,
-    almostEligibleCriteria: {
-      passedDrugScreenNeeded: true,
-    },
     mostRecentArrestCheck: dateToTimestamp("2022-05-28"),
     eligibleLevelStart: dateToTimestamp("2019-12-20"),
     judicialDistrict: "A",
@@ -84,4 +84,14 @@ export const compliantReportingAlmostEligibleClientRecord: Required<
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
   },
+};
+
+export const CompliantReportingAlmostEligibleCriteria: Required<
+  NonNullable<CompliantReportingEligibleRecord["almostEligibleCriteria"]>
+> = {
+  passedDrugScreenNeeded: true,
+  paymentNeeded: true,
+  currentLevelEligibilityDate: "2022-08-15",
+  seriousSanctionsEligibilityDate: "2022-08-15",
+  recentRejectionCodes: ["TEST1"],
 };

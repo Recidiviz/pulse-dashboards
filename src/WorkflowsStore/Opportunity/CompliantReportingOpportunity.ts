@@ -80,6 +80,66 @@ const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (keyof AlmostEligibleCriteria)
  */
 const COMPLIANT_REPORTING_ACTIVE_CATEGORIES = ["c1", "c2", "c3", "c4"];
 
+type OpportunityCriterion = {
+  // TODO: text as templates?
+  tooltip?: string;
+};
+
+// This could be configured externally once it's fleshed out
+// to include all copy and other static data
+const CRITERIA: Record<string, OpportunityCriterion> = {
+  drug: {
+    tooltip:
+      "Policy requirement: Passed drug screen in the last 12 months for non-drug offenders. Passed 2 drug screens in last 12 months for drug offenders, most recent is negative.",
+  },
+  timeOnSupervision: {
+    tooltip:
+      "Policy requirement: On minimum supervision level for 1 year or medium level for 18 months.",
+  },
+  payments: {},
+  compliance: {
+    tooltip:
+      "Policy requirement: Has reported as instructed without incident unless excused and documented by the officer.",
+  },
+  sanctions: {
+    tooltip:
+      "Policy requirement: No sanctions higher than Level 1 in the last 1 year.",
+  },
+  supervisionLevel: {
+    tooltip: "Policy requirement: Currently on medium or minimum supervision.",
+  },
+  icots: {
+    tooltip:
+      "All misdemeanor cases and ICOTS minimum cases shall automatically transfer to Compliant Reporting after intake and after the completion of the risk needs assessment pursuant to Policy #704.01.1.",
+  },
+  arrests: {
+    tooltip: "Policy requirement: No arrests in the last 1 year.",
+  },
+  specialConditions: {
+    tooltip: "Policy requirement: Special conditions are current.",
+  },
+  currentOffenses: {
+    tooltip:
+      "Policy requirement: Offense type not domestic abuse or sexual assault, DUI in past 5 years, not crime against person that resulted in physical bodily harm, not crime where victim was under 18.",
+  },
+  lifetimeOffenses: {
+    tooltip:
+      "Policy requirement: If the offender has a previous conviction for one of the crimes listed in Section VI.(A)(3) but is not currently on supervision for one of those crimes, then the  DD shall make a case by case determination as to whether an offender is suitable for CR. The DD review process is waived if the expiration date is more than ten years old.",
+  },
+  pastOffenses: {
+    tooltip:
+      "If the offender has a previous conviction for one of the crimes listed in Section VI.(A)(3) but is not currently on supervision for one of those crimes, then the  DD shall make a case by case determination as to whether an offender is suitable for CR. The DD review process is waived if the expiration date is more than ten years old.",
+  },
+  zeroToleranceCodes: {
+    tooltip:
+      "If the person has received a zero tolerance code since starting their latest supervision, they may still be eligible for compliant reporting.",
+  },
+  missingSentences: {
+    tooltip:
+      "If the person is missing sentencing information, they may still be eligible for compliant reporting.",
+  },
+};
+
 export class CompliantReportingOpportunity implements Opportunity {
   client: Client;
 
@@ -329,45 +389,97 @@ export class CompliantReportingOpportunity implements Opportunity {
       pastOffenses,
       zeroToleranceCodes,
     } = this.transformedRecord;
+    const { requirementAlmostMetMap } = this;
 
-    // current level by default
-    let requiredSupervisionLevel = `${supervisionLevel.toLowerCase()} supervision`;
-    // if eligible start is not the same as current level start,
-    // this indicates they moved up or down a level but qualify under medium
-    if (
-      supervisionLevelStart &&
-      eligibleLevelStart &&
-      !isEqual(supervisionLevelStart, eligibleLevelStart)
-    ) {
-      requiredSupervisionLevel = "medium supervision or less";
-    }
+    const requirements: OpportunityRequirement[] = [];
 
-    let supervisionDurationText: string;
-    let supervisionDurationTooltip: string;
+    // Required supervision level
+    requirements.push({
+      text: `Currently on ${supervisionLevel.toLowerCase()} supervision level`,
+      tooltip: CRITERIA.supervisionLevel.tooltip,
+    });
+
+    // required time on required supervision level
+
     if (eligibilityCategory === "c4") {
-      supervisionDurationText = "ICOTS";
-      supervisionDurationTooltip = `All misdemeanor cases and ICOTS minimum cases shall automatically 
-      transfer to Compliant Reporting after intake and after the completion of the risk needs 
-      assessment pursuant to Policy #704.01.1.`;
-    } else {
-      supervisionDurationText = `On ${requiredSupervisionLevel} for ${formatRelativeToNow(
-        // this date should only ever be missing for ICOTS cases,
-        // since it's not actually part of their eligibility criteria
-        eligibleLevelStart as Date
-      )}`;
-      supervisionDurationTooltip = `Policy requirement: On minimum supervision level for 1 year
-      or medium level for 18 months.`;
+      requirements.push({
+        text: "ICOTS",
+        tooltip: CRITERIA.icots.tooltip,
+      });
+    } else if (!requirementAlmostMetMap.currentLevelEligibilityDate) {
+      // current level by default
+      let requiredSupervisionLevel = `${supervisionLevel.toLowerCase()} supervision`;
+      // if eligible start is not the same as current level start,
+      // this indicates they moved up or down a level but qualify under medium
+      if (
+        supervisionLevelStart &&
+        eligibleLevelStart &&
+        !isEqual(supervisionLevelStart, eligibleLevelStart)
+      ) {
+        requiredSupervisionLevel = "medium supervision or less";
+      }
+      requirements.push({
+        text: `On ${requiredSupervisionLevel} for ${formatRelativeToNow(
+          // this date should only ever be missing for ICOTS cases,
+          // since it's not actually part of their eligibility criteria
+          eligibleLevelStart as Date
+        )}`,
+        tooltip: CRITERIA.timeOnSupervision.tooltip,
+      });
     }
 
-    let feeText =
-      "Fee balance for current sentence less than $2,000 and has made payments on three consecutive months";
-    if (finesFeesEligible === "exempt") {
-      feeText = `Exemption: ${feeExemptions}`;
-    } else if (finesFeesEligible === "low_balance") {
-      feeText = "Fee balance less than $500";
+    // required arrest history
+    requirements.push({
+      text: `Negative arrest check on ${formatWorkflowsDate(
+        mostRecentArrestCheck
+      )}`,
+      tooltip: CRITERIA.arrests.tooltip,
+    });
+
+    // required sanction history
+    if (!requirementAlmostMetMap.seriousSanctionsEligibilityDate) {
+      let sanctionsText: string;
+      if (sanctionsPastYear.length) {
+        sanctionsText = `Sanctions in the past year: ${sanctionsPastYear
+          .map((s) => s.type)
+          .join(", ")}`;
+      } else {
+        sanctionsText = "No sanctions in the past year";
+      }
+      requirements.push({
+        text: sanctionsText,
+        tooltip: CRITERIA.sanctions.tooltip,
+      });
     }
 
-    // legacy version
+    // required fee payment status
+    if (!requirementAlmostMetMap.paymentNeeded) {
+      let feeText =
+        "Fee balance for current sentence less than $2,000 and has made payments on three consecutive months";
+      if (finesFeesEligible === "exempt") {
+        feeText = `Exemption: ${feeExemptions}`;
+      } else if (finesFeesEligible === "low_balance") {
+        feeText = "Fee balance less than $500";
+      }
+      requirements.push({ text: feeText, tooltip: CRITERIA.payments.tooltip });
+    }
+
+    // Required drug screen history
+    if (!requirementAlmostMetMap.passedDrugScreenNeeded) {
+      requirements.push({
+        text: `Passed drug screens in last 12 months: ${
+          drugScreensPastYear
+            .map(
+              ({ result, date }) => `${result} on ${formatWorkflowsDate(date)}`
+            )
+            .join("; ") || "None"
+        }`,
+        tooltip: CRITERIA.drug.tooltip,
+      });
+    }
+
+    // required special conditions status
+
     let specialConditionsText: string;
 
     switch (specialConditionsFlag) {
@@ -385,99 +497,49 @@ export class CompliantReportingOpportunity implements Opportunity {
         )}`;
         break;
       default:
-        // this can happen while schema is in transition, or if we get an unexpected value;
+        // this can happen if we get an unexpected value;
         // provides a generic fallback
         specialConditionsText = "Special conditions up to date";
         break;
     }
+    requirements.push({
+      text: specialConditionsText,
+      tooltip: CRITERIA.specialConditions.tooltip,
+    });
 
-    let sanctionsText: string;
-    if (sanctionsPastYear.length) {
-      sanctionsText = `Sanctions in the past year: ${sanctionsPastYear
-        .map((s) => s.type)
-        .join(", ")}`;
-    } else {
-      sanctionsText = "No sanctions in the past year";
+    // required compliance history
+    if (!requirementAlmostMetMap.recentRejectionCodes) {
+      requirements.push({
+        text: "No DECF, DEDF, DEDU, DEIO, DEIR codes in the last 3 months",
+        tooltip: CRITERIA.compliance.tooltip,
+      });
     }
 
+    // required offense types
+    requirements.push({
+      text: `Valid current offense${currentOffenses.length !== 1 ? "s" : ""}: ${
+        currentOffenses.join("; ") || "None"
+      }`,
+      tooltip: CRITERIA.currentOffenses.tooltip,
+    });
+
+    // required prior offense types
     let lifetimeOffensesText = "No lifetime offenses";
     if (lifetimeOffensesExpired.length) {
       lifetimeOffensesText = `Lifetime offense${
         lifetimeOffensesExpired.length !== 1 ? "s" : ""
       } expired 10+ years ago: ${lifetimeOffensesExpired.join("; ")}`;
     }
-
-    const requirements = [
-      {
-        text: `Currently on ${supervisionLevel.toLowerCase()} supervision level`,
-        tooltip:
-          "Policy requirement: Currently on medium or minimum supervision.",
-      },
-      {
-        text: supervisionDurationText,
-        tooltip: supervisionDurationTooltip,
-      },
-      {
-        text: `Negative arrest check on ${formatWorkflowsDate(
-          mostRecentArrestCheck
-        )}`,
-        tooltip: "Policy requirement: No arrests in the last 1 year.",
-      },
-      {
-        text: sanctionsText,
-        tooltip:
-          "Policy requirement: No sanctions higher than Level 1 in the last 1 year.",
-      },
-      {
-        text: feeText,
-      },
-      {
-        text: `Passed drug screens in last 12 months: ${
-          drugScreensPastYear
-            .map(
-              ({ result, date }) => `${result} on ${formatWorkflowsDate(date)}`
-            )
-            .join("; ") || "None"
-        }`,
-        tooltip: `Policy requirement: Passed drug screen in the last 12 months for non-drug offenders.
-        Passed 2 drug screens in last 12 months for drug offenders, most recent is negative.`,
-      },
-      {
-        text: specialConditionsText,
-        tooltip: "Policy requirement: Special conditions are current.",
-      },
-      {
-        text: "No DECF, DEDF, DEDU, DEIO, DEIR codes in the last 3 months",
-        tooltip: `Policy requirement: Has reported as instructed without incident unless excused
-        and documented by the officer.`,
-      },
-      {
-        text: `Valid current offense${
-          currentOffenses.length !== 1 ? "s" : ""
-        }: ${currentOffenses.join("; ") || "None"}`,
-        tooltip: `Policy requirement: Offense type not domestic abuse or sexual assault,
-        DUI in past 5 years, not crime against person that resulted in physical bodily harm,
-        not crime where victim was under 18.`,
-      },
-      {
-        text: lifetimeOffensesText,
-        tooltip: `Policy requirement: If the offender has a previous conviction for one of
-        the crimes listed in Section VI.(A)(3) but is not currently on supervision for one
-        of those crimes, then the  DD shall make a case by case determination as to whether
-        an offender is suitable for CR. The DD review process is waived if the expiration date
-        is more than ten years old.`,
-      },
-    ];
+    requirements.push({
+      text: lifetimeOffensesText,
+      tooltip: CRITERIA.lifetimeOffenses.tooltip,
+    });
 
     if (eligibilityCategory === "c2" && pastOffenses.length) {
       requirements.push({
         text: `Eligible with discretion: Prior offenses and lifetime offenses
         expired less than 10 years ago: ${pastOffenses.join("; ")}`,
-        tooltip: `If the offender has a previous conviction for one of the crimes listed in
-        Section VI.(A)(3) but is not currently on supervision for one of those crimes,
-        then the  DD shall make a case by case determination as to whether an offender
-        is suitable for CR. The DD review process is waived if the expiration date is
-        more than ten years old.`,
+        tooltip: CRITERIA.pastOffenses.tooltip,
       });
     }
 
@@ -489,8 +551,7 @@ export class CompliantReportingOpportunity implements Opportunity {
               `${contactNoteType} on ${formatWorkflowsDate(contactNoteDate)}`
           )
           .join("; ")}`,
-        tooltip: `If the person has received a zero tolerance code since starting their
-          latest supervision, they may still be eligible for compliant reporting.`,
+        tooltip: CRITERIA.zeroToleranceCodes.tooltip,
       });
     }
 
@@ -501,8 +562,7 @@ export class CompliantReportingOpportunity implements Opportunity {
     ) {
       requirements.push({
         text: "Eligible with discretion: Missing sentence information",
-        tooltip: `If the person is missing sentencing information, they may still be
-            eligible for compliant reporting.`,
+        tooltip: CRITERIA.missingSentences.tooltip,
       });
     }
 
@@ -512,8 +572,28 @@ export class CompliantReportingOpportunity implements Opportunity {
   get requirementsAlmostMet(): OpportunityRequirement[] {
     const { validAlmostEligibleKeys } = this;
     if (!validAlmostEligibleKeys.length) return [];
-    // TODO(#13264): implement this!
-    return [];
+
+    const configMap: Record<
+      keyof AlmostEligibleCriteria,
+      OpportunityCriterion
+    > = {
+      passedDrugScreenNeeded: CRITERIA.drug,
+      currentLevelEligibilityDate: CRITERIA.timeOnSupervision,
+      paymentNeeded: CRITERIA.payments,
+      recentRejectionCodes: CRITERIA.compliance,
+      seriousSanctionsEligibilityDate: CRITERIA.sanctions,
+    };
+
+    const requirements: OpportunityRequirement[] = [];
+    validAlmostEligibleKeys.forEach((criterionKey) => {
+      const text = this.requirementAlmostMetMap[criterionKey];
+      // in practice this should always be true so this is mostly type safety
+      if (text) {
+        requirements.push({ text, tooltip: configMap[criterionKey].tooltip });
+      }
+    });
+
+    return requirements;
   }
 
   /**
@@ -531,20 +611,26 @@ export class CompliantReportingOpportunity implements Opportunity {
             return value ? "Needs one more passed drug screen" : undefined;
           case "paymentNeeded":
             return value ? "Needs one more payment" : undefined;
-          case "currentLevelEligibilityDate":
-            return value instanceof Date
+          case "currentLevelEligibilityDate": {
+            const eligibilityDate =
+              typeof value === "string" && optionalFieldToDate(value);
+            return eligibilityDate instanceof Date
               ? `Needs ${differenceInCalendarDays(
-                  value,
+                  eligibilityDate,
                   new Date()
                 )} more days on ${this.client.supervisionLevel}`
               : undefined;
-          case "seriousSanctionsEligibilityDate":
-            return value instanceof Date
+          }
+          case "seriousSanctionsEligibilityDate": {
+            const eligibilityDate =
+              typeof value === "string" && optionalFieldToDate(value);
+            return eligibilityDate instanceof Date
               ? `Needs ${differenceInCalendarDays(
-                  value,
+                  eligibilityDate,
                   new Date()
                 )} more days without sanction higher than level 1`
               : undefined;
+          }
           case "recentRejectionCodes":
             return Array.isArray(value) && value.length
               ? `Double check ${value.join("/")} contact note`

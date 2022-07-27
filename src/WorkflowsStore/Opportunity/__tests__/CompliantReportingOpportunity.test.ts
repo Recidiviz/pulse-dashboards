@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { cloneDeep } from "lodash";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
@@ -25,6 +26,7 @@ import { dateToTimestamp } from "../../utils";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import {
   compliantReportingAlmostEligibleClientRecord,
+  CompliantReportingAlmostEligibleCriteria,
   compliantReportingEligibleClientRecord,
 } from "../__fixtures__";
 import { Opportunity } from "../types";
@@ -143,64 +145,124 @@ describe("fully eligible", () => {
   });
 });
 
-describe("almost eligible", () => {
-  beforeEach(() => {
-    jest
-      .spyOn(WorkflowsStore.prototype, "featureVariants", "get")
-      .mockReturnValue({ CompliantReportingAlmostEligible: {} });
+describe.each([
+  ["paymentNeeded", 0, "Needs one more payment", undefined, /Fee balance/],
+  [
+    "passedDrugScreenNeeded",
+    1,
+    "Needs one more passed drug screen",
+    /drug screen/,
+    /drug screens/,
+  ],
+  [
+    "recentRejectionCodes",
+    2,
+    "Double check TEST1 contact note",
+    /Has reported as instructed/,
+    /DECF, DEDF, DEDU,/,
+  ],
+  [
+    "seriousSanctionsEligibilityDate",
+    3,
+    "Needs 14 more days without sanction higher than level 1",
+    /sanctions/,
+    /Sanctions/,
+  ],
+  [
+    "currentLevelEligibilityDate",
+    4,
+    "Needs 14 more days on Medium",
+    /minimum supervision level for 1 year /,
+    /on medium supervision for /,
+  ],
+] as [criterionKey: keyof typeof CompliantReportingAlmostEligibleCriteria, expectedRank: number, expectedListText: string, expectedToolip: RegExp | undefined, expectedMissingText: RegExp][])(
+  "almost eligible but for %s",
+  (
+    criterionKey,
+    expectedRank,
+    expectedListText,
+    expectedTooltip,
+    expectedMissingText
+  ) => {
+    beforeEach(() => {
+      jest
+        .spyOn(WorkflowsStore.prototype, "featureVariants", "get")
+        .mockReturnValue({ CompliantReportingAlmostEligible: {} });
 
-    createTestUnit(compliantReportingAlmostEligibleClientRecord);
-  });
+      const almostEligibleCriteria = {
+        [criterionKey]: CompliantReportingAlmostEligibleCriteria[criterionKey],
+      };
+      const testRecord = cloneDeep(
+        compliantReportingAlmostEligibleClientRecord
+      );
+      testRecord.compliantReportingEligible.almostEligibleCriteria = almostEligibleCriteria;
+      createTestUnit(testRecord);
+    });
 
-  test("review status", () => {
-    expect(cr.reviewStatus).toBe("ALMOST");
+    test("review status", () => {
+      expect(cr.reviewStatus).toBe("ALMOST");
 
-    mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
-    expect(cr.reviewStatus).toBe("ALMOST");
+      mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
+      expect(cr.reviewStatus).toBe("ALMOST");
 
-    mockUpdates.mockReturnValue(DENIED_UPDATE);
-    expect(cr.reviewStatus).toBe("DENIED");
+      mockUpdates.mockReturnValue(DENIED_UPDATE);
+      expect(cr.reviewStatus).toBe("DENIED");
 
-    mockUpdates.mockReturnValue(COMPLETED_UPDATE);
-    expect(cr.reviewStatus).toBe("ALMOST");
-  });
+      mockUpdates.mockReturnValue(COMPLETED_UPDATE);
+      expect(cr.reviewStatus).toBe("ALMOST");
+    });
 
-  test("short status message", () => {
-    expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.ALMOST);
+    test("short status message", () => {
+      expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.ALMOST);
 
-    mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
-    expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.ALMOST);
+      mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
+      expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.ALMOST);
 
-    mockUpdates.mockReturnValue(COMPLETED_UPDATE);
-    expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.ALMOST);
+      mockUpdates.mockReturnValue(COMPLETED_UPDATE);
+      expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.ALMOST);
 
-    mockUpdates.mockReturnValue(DENIED_UPDATE);
-    expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.DENIED);
-  });
-  test("extended status message", () => {
-    const drugMessage = "Needs one more passed drug screen";
-    expect(cr.statusMessageLong).toBe(drugMessage);
+      mockUpdates.mockReturnValue(DENIED_UPDATE);
+      expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.DENIED);
+    });
+    test("extended status message", () => {
+      expect(cr.statusMessageLong).toBe(expectedListText);
 
-    mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
-    expect(cr.statusMessageLong).toBe(drugMessage);
+      mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
+      expect(cr.statusMessageLong).toBe(expectedListText);
 
-    mockUpdates.mockReturnValue(COMPLETED_UPDATE);
-    expect(cr.statusMessageLong).toBe(drugMessage);
+      mockUpdates.mockReturnValue(COMPLETED_UPDATE);
+      expect(cr.statusMessageLong).toBe(expectedListText);
 
-    mockUpdates.mockReturnValue(DENIED_UPDATE);
-    expect(cr.statusMessageLong).toBe(
-      `${defaultOpportunityStatuses.DENIED} (ABC)`
-    );
-  });
+      mockUpdates.mockReturnValue(DENIED_UPDATE);
+      expect(cr.statusMessageLong).toBe(
+        `${defaultOpportunityStatuses.DENIED} (ABC)`
+      );
+    });
 
-  test("rank by status", () => {
-    expect(cr.rank).toBe(1);
+    test("rank by status", () => {
+      expect(cr.rank).toBe(expectedRank);
 
-    mockUpdates.mockReturnValue(DENIED_UPDATE);
-    expect(cr.rank).toBe(5);
-  });
+      mockUpdates.mockReturnValue(DENIED_UPDATE);
+      expect(cr.rank).toBe(5);
+    });
 
-  test.todo("requirements almost met");
+    test("requirements almost met", () => {
+      expect(cr.requirementsAlmostMet).toEqual([
+        {
+          text: expectedListText,
+          tooltip: expectedTooltip
+            ? expect.stringMatching(expectedTooltip)
+            : undefined,
+        },
+      ]);
+    });
 
-  test.todo("requirements met");
-});
+    test("requirements met", () => {
+      expect(
+        cr.requirementsMet.find((req) => {
+          return req.text.match(expectedMissingText);
+        })
+      ).toBeUndefined();
+    });
+  }
+);
