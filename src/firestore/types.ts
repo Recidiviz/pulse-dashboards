@@ -16,7 +16,7 @@
 // =============================================================================
 import type { Timestamp } from "firebase/firestore";
 
-import { TransformedCompliantReportingReferral } from "../PracticesStore";
+import { TransformedCompliantReportingReferral } from "../WorkflowsStore";
 
 /**
  * Staff-level data exported from the Recidiviz data platform.

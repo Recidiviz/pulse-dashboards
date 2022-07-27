@@ -17,7 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 
-import { Opportunity } from "../../PracticesStore";
+import { Opportunity } from "../../WorkflowsStore";
 import { useClientTracking } from "../hooks/useClientTracking";
 import ClientCapsule, { ClientCapsuleProps } from "./ClientCapsule";
 

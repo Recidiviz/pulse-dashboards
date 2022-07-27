@@ -15,12 +15,12 @@
 // =============================================================================
 import moment from "moment";
 
-import type { Client } from "../../../PracticesStore";
+import { formatAsCurrency, formatWorkflowsDate } from "../../../utils";
+import type { Client } from "../../../WorkflowsStore";
 import {
   CompliantReportingReferralRecord,
   TransformedCompliantReportingReferral,
-} from "../../../PracticesStore";
-import { formatAsCurrency, formatPracticesDate } from "../../../utils";
+} from "../../../WorkflowsStore";
 
 function formatSentenceLength(
   startDate: string,
@@ -49,7 +49,7 @@ export const transform = (
   return {
     ...data,
     allDockets,
-    dateToday: formatPracticesDate(new Date()),
+    dateToday: formatWorkflowsDate(new Date()),
     clientFullName: client.displayName,
     telephoneNumber: client.formattedPhoneNumber,
     specialConditionsCounselingAngerManagementComplete: !!data.specialConditionsCounselingAngerManagementCompleteDate,

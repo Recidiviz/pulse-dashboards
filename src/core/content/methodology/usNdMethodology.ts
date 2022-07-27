@@ -22,6 +22,7 @@ import { getMetricCopy, getPageCopy } from "..";
  */
 export const usNdMethodology: ViewMethodology = {
   // TODO #1561 Remove vitals methodology once CORE dashboard is removed
+  explore: { title: "Explore" },
   practices: {
     title: "Practices",
     description: `The "Practices" page provides a snapshot of agency performance on a set of key metrics to proactively identify potential resource constraints and focus attention on operational successes and areas for improvement.`,

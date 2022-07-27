@@ -21,7 +21,7 @@ import { computed, configure, makeObservable, onReactionError } from "mobx";
 import demoAuthConfig from "../auth_config_demo.json";
 import devAuthConfig from "../auth_config_dev.json";
 import productionAuthConfig from "../auth_config_production.json";
-import { PracticesStore } from "../PracticesStore";
+import { WorkflowsStore } from "../WorkflowsStore";
 import PageStore from "./PageStore";
 import TenantStore from "./TenantStore";
 import { TenantId } from "./types";
@@ -84,7 +84,7 @@ export class RootStore {
 
   pageStore: PageStore;
 
-  practicesStore: PracticesStore;
+  workflowsStore: WorkflowsStore;
 
   constructor() {
     makeObservable(this, {
@@ -101,7 +101,7 @@ export class RootStore {
 
     this.pageStore = new PageStore({ rootStore: this });
 
-    this.practicesStore = new PracticesStore({ rootStore: this });
+    this.workflowsStore = new WorkflowsStore({ rootStore: this });
   }
 
   get currentTenantId(): TenantId | undefined {

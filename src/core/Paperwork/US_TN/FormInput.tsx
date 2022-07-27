@@ -22,7 +22,7 @@ import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { CombinedUserRecord } from "../../../firestore";
-import type { Client } from "../../../PracticesStore";
+import type { Client } from "../../../WorkflowsStore";
 import { useAnimatedValue } from "../utils";
 import { Input } from "./styles";
 import { FormDataType } from "./types";
@@ -119,15 +119,15 @@ const FormInput: React.FC<FormInputProps> = ({
 };
 
 const FormInputWrapper: React.FC<FormInputWrapperProps> = (props) => {
-  const { practicesStore } = useRootStore();
-  if (!practicesStore?.selectedClient?.updates || !practicesStore.user) {
+  const { workflowsStore } = useRootStore();
+  if (!workflowsStore?.selectedClient?.updates || !workflowsStore.user) {
     return <Input {...props} disabled />;
   }
 
   return (
     <FormInput
-      client={practicesStore.selectedClient}
-      user={practicesStore.user}
+      client={workflowsStore.selectedClient}
+      user={workflowsStore.user}
       {...props}
     />
   );

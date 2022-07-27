@@ -75,7 +75,7 @@ const buildSelectOption = (officer: StaffRecord): SelectOption => {
 
 const DistrictIndicator = observer(() => {
   const {
-    practicesStore: { user },
+    workflowsStore: { user },
   } = useRootStore();
   const district = user?.info.district;
 
@@ -123,7 +123,7 @@ type CaseloadSelectProps = {
 
 export const CaseloadSelect = observer(
   ({ hideIndicators = false }: CaseloadSelectProps) => {
-    const { practicesStore } = useRootStore();
+    const { workflowsStore } = useRootStore();
 
     const customComponents: SelectComponentsConfig<SelectOption, true> = {
       ClearIndicator: ClearAll,
@@ -133,7 +133,7 @@ export const CaseloadSelect = observer(
     };
 
     const disableAdditionalSelections =
-      practicesStore.selectedOfficers.length >= SELECTED_OFFICER_LIMIT;
+      workflowsStore.selectedOfficers.length >= SELECTED_OFFICER_LIMIT;
 
     if (disableAdditionalSelections) {
       customComponents.MenuList = DisabledMenuList;
@@ -146,7 +146,7 @@ export const CaseloadSelect = observer(
           isMulti
           isOptionDisabled={() => disableAdditionalSelections}
           onChange={(newValue) => {
-            practicesStore.updateSelectedOfficers(
+            workflowsStore.updateSelectedOfficers(
               newValue.map((item) => item.value)
             );
             trackCaseloadSearch({
@@ -154,7 +154,7 @@ export const CaseloadSelect = observer(
               isDefault: false,
             });
           }}
-          options={practicesStore.availableOfficers.map(buildSelectOption)}
+          options={workflowsStore.availableOfficers.map(buildSelectOption)}
           placeholder="Search for one or more officers …"
           styles={{
             clearIndicator: (base) => ({
@@ -214,7 +214,7 @@ export const CaseloadSelect = observer(
               gap: rem(spacing.sm),
             }),
           }}
-          value={practicesStore.selectedOfficers.map(buildSelectOption)}
+          value={workflowsStore.selectedOfficers.map(buildSelectOption)}
         />
       </Sans14>
     );

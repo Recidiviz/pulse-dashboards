@@ -22,7 +22,7 @@ import {
   FormFieldData,
   updateCompliantReportingDraft,
 } from "../../../firestore";
-import { Client } from "../../../PracticesStore";
+import { Client } from "../../../WorkflowsStore";
 
 export async function updateFieldData(
   updatedBy: string,

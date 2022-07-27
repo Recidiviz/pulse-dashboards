@@ -19,7 +19,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { OPPORTUNITY_TYPES } from "../../PracticesStore";
+import { OPPORTUNITY_TYPES } from "../../WorkflowsStore";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { AllClients } from "./AllClients";

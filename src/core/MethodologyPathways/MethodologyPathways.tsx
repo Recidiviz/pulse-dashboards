@@ -60,7 +60,7 @@ const MethodologyPathways: React.FC = () => {
   if (!pageCopy || !metricCopy) return <div />;
 
   const navigationLayout = userStore.userAllowedNavigation;
-  // manually override enabled Pages for Practices since it is a
+  // manually override enabled Pages for Vitals Practices since it is a
   // static/custom methodology layout
   const enabledPages =
     view === PATHWAYS_VIEWS.system
@@ -107,7 +107,7 @@ const MethodologyPathways: React.FC = () => {
               const page = pageCopy[pageId as PathwaysPage];
               if (!page?.title || !enabledPages.includes(pageId))
                 return <div key={`content${page.title}`} />;
-              // Practices methodology does not have the concept of sections
+              // Vitals Practices methodology does not have the concept of sections
               const metrics = PathwaysPageIdList.includes(pageId)
                 ? getMetricIdsForPage(pageId as PathwaysPage)
                 : [];

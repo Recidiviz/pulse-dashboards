@@ -24,7 +24,7 @@ import { useEffect } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import type { Client } from "../../PracticesStore";
+import type { Client } from "../../WorkflowsStore";
 import { generate } from "./FormGenerator";
 import { PrintablePage, PrintablePageMargin } from "./US_TN/styles";
 
@@ -101,7 +101,7 @@ const FormViewer: React.FC<FormViewerProps> = ({ fileName, children }) => {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
   useResizeForm(formRef);
 
-  const client = useRootStore().practicesStore.selectedClient;
+  const client = useRootStore().workflowsStore.selectedClient;
   const isPrinting = client?.formIsPrinting ?? false;
 
   // Generate the form and save it once the print styles have been rendered
@@ -116,8 +116,8 @@ const FormViewer: React.FC<FormViewerProps> = ({ fileName, children }) => {
   }, [formRef, isPrinting, fileName, client]);
 
   // TODO(#1729) Remove compliant-reporting specific content
-  const { practicesStore } = useRootStore();
-  const draft = practicesStore.selectedClient?.compliantReportingReferralDraft;
+  const { workflowsStore } = useRootStore();
+  const draft = workflowsStore.selectedClient?.compliantReportingReferralDraft;
   let lastEdited;
   if (draft) {
     lastEdited = `Last edited by ${draft.updated.by} ${moment(
@@ -125,7 +125,7 @@ const FormViewer: React.FC<FormViewerProps> = ({ fileName, children }) => {
     ).fromNow()}`;
   } else {
     lastEdited = `Prefilled with data from TDOC on ${
-      practicesStore.selectedClient?.getCompliantReportingReferralDataField(
+      workflowsStore.selectedClient?.getCompliantReportingReferralDataField(
         "dateToday"
       ) ?? moment().format("MM-DD-YYYY")
     }`;

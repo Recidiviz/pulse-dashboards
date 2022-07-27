@@ -23,10 +23,10 @@ import { NavLink, useLocation } from "react-router-dom";
 
 import { ReactComponent as MethodologyLogo } from "../../assets/static/images/methodology.svg";
 import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathways.svg";
-import { ReactComponent as PracticesLogo } from "../../assets/static/images/practices.svg";
+import { ReactComponent as WorkflowsLogo } from "../../assets/static/images/practices.svg";
 import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
-import { PRACTICES_METHODOLOGY_URL } from "../utils/constants";
+import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { PATHWAYS_VIEWS } from "../views";
 
 const ViewTooltip: React.FC<{ title: string; body?: string }> = ({
@@ -67,9 +67,9 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
 
   // Pathways is enabled if enabledPathwaysPages.length > 0
   const enabledPathwaysPages = navigationLayout.system || [];
-  // Practices is enabled if enabledPractices !== undefined
-  const enablePractices = navigationLayout.operations;
-  const enablePracticesV2 = Boolean(navigationLayout.workflows);
+  // Operations is enabled if enableOperations !== undefined
+  const enableOperations = navigationLayout.operations;
+  const enableWorkflows = Boolean(navigationLayout.workflows);
 
   const PathwaysLink = () => {
     return enabledPathwaysPages.length > 0 ? (
@@ -87,15 +87,15 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
     ) : null;
   };
 
-  const PracticesLink = () => {
-    return enablePractices ? (
+  const OperationsLink = () => {
+    return enableOperations ? (
       <NavLink
         activeClassName="ViewNavigation__navlink--active"
         className="ViewNavigation__navlink"
         to={`/${PATHWAYS_VIEWS.operations}`}
         onClick={() => vitalsStore.resetCurrentEntityId()}
       >
-        <PracticesLogo className="ViewNavigation__icon" />
+        <WorkflowsLogo className="ViewNavigation__icon" />
         <div className="ViewNavigation__navlink-heading">
           Operational Metrics
         </div>
@@ -103,14 +103,14 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
     ) : null;
   };
 
-  const PracticesV2Link = () => {
-    return enablePracticesV2 ? (
+  const WorkflowsLink = () => {
+    return enableWorkflows ? (
       <NavLink
         activeClassName="ViewNavigation__navlink--active"
         className="ViewNavigation__navlink"
         to={`/${PATHWAYS_VIEWS.workflows}`}
       >
-        <PracticesLogo className="ViewNavigation__icon" />
+        <WorkflowsLogo className="ViewNavigation__icon" />
         <div className="ViewNavigation__navlink-heading">Workflows</div>
       </NavLink>
     ) : null;
@@ -128,7 +128,7 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
       return (
         <a
           className="ViewNavigation__navlink"
-          href={PRACTICES_METHODOLOGY_URL}
+          href={WORKFLOWS_METHODOLOGY_URL}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -170,8 +170,8 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
       <div className="ViewNavigation__mobile">
         <PathwaysLink />
         {children}
-        <PracticesLink />
-        <PracticesV2Link />
+        <OperationsLink />
+        <WorkflowsLink />
         <MethodologyLink />
         <ProfileNavLink />
       </div>
@@ -195,14 +195,14 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
         title="Operational Metrics"
         body="A birds-eye view of staff- and region-level trends"
       >
-        <PracticesLink />
+        <OperationsLink />
       </ViewTooltip>
 
       <ViewTooltip
         title="Workflows"
         body="A tool to identify and take action on opportunities to improve outcomes"
       >
-        <PracticesV2Link />
+        <WorkflowsLink />
       </ViewTooltip>
 
       <div className="ViewNavigation__bottom">

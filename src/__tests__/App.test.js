@@ -251,7 +251,7 @@ describe("App tests", () => {
   });
 
   describe("Methodology page", () => {
-    it("should render the Practices Methodology page", () => {
+    it("should render the Vitals Practices Methodology page", () => {
       window.history.pushState({}, "", "/methodology/practices");
       const user = { [metadataField]: { state_code: US_ND } };
 

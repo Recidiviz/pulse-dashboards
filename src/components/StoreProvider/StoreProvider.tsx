@@ -18,9 +18,9 @@
 import PropTypes from "prop-types";
 import React, { useContext } from "react";
 
-import { PracticesStore } from "../../PracticesStore";
 import store, { RootStore } from "../../RootStore";
 import type UserStore from "../../RootStore/UserStore";
+import { WorkflowsStore } from "../../WorkflowsStore";
 
 const StoreContext = React.createContext<undefined | RootStore>(undefined);
 
@@ -40,7 +40,7 @@ export default StoreProvider;
  * incrementally starts to enforce typing in RootStore consumers
  */
 interface PartiallyTypedRootStore {
-  practicesStore: PracticesStore;
+  workflowsStore: WorkflowsStore;
   [key: string]: any;
 }
 

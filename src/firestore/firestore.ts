@@ -40,12 +40,12 @@ import {
 } from "firebase/firestore";
 import { mapValues, pickBy } from "lodash";
 
+import { isDemoMode } from "../utils/isDemoMode";
+import { isOfflineMode } from "../utils/isOfflineMode";
 import {
   CompliantReportingReferralRecord,
   OpportunityType,
-} from "../PracticesStore";
-import { isDemoMode } from "../utils/isDemoMode";
-import { isOfflineMode } from "../utils/isOfflineMode";
+} from "../WorkflowsStore";
 import {
   ClientRecord,
   ClientUpdateRecord,

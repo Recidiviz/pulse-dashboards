@@ -26,7 +26,7 @@ import { rem } from "polished";
 import React from "react";
 import styled, { css } from "styled-components/macro";
 
-import { Client } from "../../PracticesStore";
+import { Client } from "../../WorkflowsStore";
 import { ClientAvatar } from "../Avatar";
 
 export type ClientCapsuleProps = {

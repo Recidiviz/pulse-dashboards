@@ -30,10 +30,10 @@ import styled from "styled-components/macro";
 
 import { IconPeopleSvg } from "../../components/Icons";
 import { useRootStore } from "../../components/StoreProvider";
-import { Client, OpportunityType } from "../../PracticesStore";
+import { Client, OpportunityType } from "../../WorkflowsStore";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { OpportunityCapsule } from "../ClientCapsule";
-import { PRACTICES_METHODOLOGY_URL } from "../utils/constants";
+import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { workflowsUrl } from "../views";
 import { FORM_SIDEBAR_WIDTH } from "../WorkflowsLayouts";
 
@@ -56,9 +56,9 @@ const Label = styled.label`
 `;
 
 const ClientListEmptyState: React.FC = observer(() => {
-  const { practicesStore } = useRootStore();
+  const { workflowsStore } = useRootStore();
 
-  const text = practicesStore.selectedOfficers.length
+  const text = workflowsStore.selectedOfficers.length
     ? "No clients eligible. Search for another officer."
     : "";
 
@@ -122,7 +122,7 @@ type OpportunityCaseloadProps = {
 export const OpportunityCaseloadSelection = observer(
   ({ opportunityType }: OpportunityCaseloadProps) => {
     const {
-      practicesStore: { eligibleOpportunities, almostEligibleOpportunities },
+      workflowsStore: { eligibleOpportunities, almostEligibleOpportunities },
     } = useRootStore();
 
     const eligibleNow = eligibleOpportunities[opportunityType];
@@ -136,7 +136,7 @@ export const OpportunityCaseloadSelection = observer(
             Search for officer(s) below to review and refer eligible clients for
             Compliant Reporting.{" "}
             <a
-              href={PRACTICES_METHODOLOGY_URL}
+              href={WORKFLOWS_METHODOLOGY_URL}
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -21,11 +21,6 @@ import {
   getPathWithoutParams,
 } from "../navigation";
 
-jest.mock("../../flags", () => ({
-  enablePracticesDashboard: true,
-  enableProjectionsDashboard: true,
-}));
-
 describe("getPathsFromNavigation", () => {
   it("returns the correct allowed paths paths", () => {
     const navigation = {

@@ -23,10 +23,10 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Client } from "../../PracticesStore";
+import { Client } from "../../WorkflowsStore";
 import { ProfileCapsule } from "../ClientCapsule";
-import PracticesOfficerName from "../PracticesOfficerName";
 import { workflowsUrl } from "../views";
+import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { Heading } from "./styles";
 
 const CaseloadWrapper = styled.ul`
@@ -59,7 +59,7 @@ const Caseload = ({ clients }: { clients: Client[] }) => {
 
 export const AllClients = observer(() => {
   const {
-    practicesStore: { caseloadClients, selectedOfficerIds },
+    workflowsStore: { caseloadClients, selectedOfficerIds },
   } = useRootStore();
 
   if (!selectedOfficerIds.length) return null;
@@ -76,7 +76,7 @@ export const AllClients = observer(() => {
         <React.Fragment key={officerId}>
           {selectedOfficerIds.length > 1 && (
             <OfficerName>
-              <PracticesOfficerName officerId={officerId} />
+              <WorkflowsOfficerName officerId={officerId} />
             </OfficerName>
           )}
           {/* in practice there should never be a missing caseload,

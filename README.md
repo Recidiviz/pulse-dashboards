@@ -214,7 +214,7 @@ You may also need to install `jq`, a bash command line json processor. It can be
 Example usage:
 `server/core/demo_data/download_fixture_with_metadata.sh gs://some-data-bucket/US_ID/vitals_summaries.txt`
 
-The Firebase emulator has its own set of fixtures that it automatically imports when starting up; to change those fixtures, edit the fixture files in `tools/fixtures` and then run `yarn update-practices-fixture`.
+The Firebase emulator has its own set of fixtures that it automatically imports when starting up; to change those fixtures, edit the fixture files in `tools/fixtures` and then run `yarn update-workflows-fixture`.
 
 ## Deploys
 

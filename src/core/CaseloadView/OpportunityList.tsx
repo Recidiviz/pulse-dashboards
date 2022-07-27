@@ -29,8 +29,8 @@ import styled from "styled-components/macro";
 
 import { BrandedLink } from "../../components/BrandedLink";
 import { useRootStore } from "../../components/StoreProvider";
-import { OPPORTUNITY_LABELS, OpportunityType } from "../../PracticesStore";
 import { pluralize } from "../../utils";
+import { OPPORTUNITY_LABELS, OpportunityType } from "../../WorkflowsStore";
 import { OpportunityCapsule } from "../ClientCapsule";
 import { workflowsUrl } from "../views";
 import { Heading } from "./styles";
@@ -108,7 +108,7 @@ type OpportunityListProps = { opportunityType: OpportunityType };
 export const OpportunityList = observer(
   ({ opportunityType }: OpportunityListProps) => {
     const {
-      practicesStore: { eligibleOpportunities },
+      workflowsStore: { eligibleOpportunities },
     } = useRootStore();
 
     const leftShadow = useInView({ initialInView: true });

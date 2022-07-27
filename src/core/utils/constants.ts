@@ -71,5 +71,5 @@ export const supervisionFiltersOrder = [
   FILTER_TYPES.RACE,
 ];
 
-export const PRACTICES_METHODOLOGY_URL =
+export const WORKFLOWS_METHODOLOGY_URL =
   "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view?usp=sharing";

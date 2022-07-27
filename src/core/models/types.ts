@@ -280,6 +280,7 @@ export interface MethodologyContent {
 }
 
 export type ViewMethodology = {
+  explore?: { title: string };
   practices?: {
     title: string;
     description: string;

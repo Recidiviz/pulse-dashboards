@@ -199,7 +199,7 @@ function formatDate(date?: Date, pattern = "M/d/yy"): string {
   return format(date, pattern);
 }
 
-function formatPracticesDate(date?: Date): string {
+function formatWorkflowsDate(date?: Date): string {
   return formatDate(date, "MMM d, yyyy");
 }
 
@@ -327,7 +327,7 @@ export {
   formatName,
   formatOfficerLabel,
   formatPercent,
-  formatPracticesDate,
+  formatWorkflowsDate,
   genderValueToHumanReadable,
   genderValueToLabel,
   generateEmailAddress,

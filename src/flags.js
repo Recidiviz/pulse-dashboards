@@ -3,15 +3,15 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
   ? {
       // TODO(395): Set to true when we have debugged the issues with the exit rate calculations
       enableRevocationRateByExit: false,
-      enablePracticesGoalLine: false,
+      enableVitalsGoalLine: false,
     }
   : process.env.REACT_APP_DEPLOY_ENV === "staging"
   ? {
       enableRevocationRateByExit: false,
-      enablePracticesGoalLine: false,
+      enableVitalsGoalLine: false,
     }
   : {
       // Development
       enableRevocationRateByExit: false,
-      enablePracticesGoalLine: false,
+      enableVitalsGoalLine: false,
     };

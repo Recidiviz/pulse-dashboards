@@ -16,7 +16,7 @@
 // =============================================================================
 import { v4 as uuidv4 } from "uuid";
 
-import { OpportunityStatus, OpportunityType } from "./PracticesStore";
+import { OpportunityStatus, OpportunityType } from "./WorkflowsStore";
 
 const sessionId = uuidv4();
 

@@ -33,15 +33,15 @@ export type FormCheckboxProps = StyledComponentProps<
 };
 
 const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
-  const { practicesStore } = useRootStore();
+  const { workflowsStore } = useRootStore();
 
-  if (!practicesStore.selectedClient) {
+  if (!workflowsStore.selectedClient) {
     return null;
   }
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const client = practicesStore.selectedClient;
-    if (!client || !practicesStore.user) {
+    const client = workflowsStore.selectedClient;
+    if (!client || !workflowsStore.user) {
       event.preventDefault();
       return;
     }
@@ -57,7 +57,7 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
     <Checkbox
       {...props}
       checked={
-        !!practicesStore.selectedClient.getCompliantReportingReferralDataField(
+        !!workflowsStore.selectedClient.getCompliantReportingReferralDataField(
           name
         )
       }

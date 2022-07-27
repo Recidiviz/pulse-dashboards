@@ -26,7 +26,7 @@ import {
   VitalsTimeSeriesRecord,
 } from "./types";
 
-export function createPracticesSummaryMetric(
+export function createVitalsSummaryMetric(
   rawRecords: RawMetricData
 ): VitalsSummaryRecord[] {
   return rawRecords.map((record) => {
@@ -46,7 +46,7 @@ export function createPracticesSummaryMetric(
   });
 }
 
-export function createPracticesTimeSeriesMetric(
+export function createVitalsTimeSeriesMetric(
   rawRecords: RawMetricData
 ): VitalsTimeSeriesRecord[] {
   return rawRecords.map((record) => {
@@ -78,7 +78,7 @@ export default class VitalsMetrics extends Metric<MetricRecords> {
       "vitals_summaries",
       this.eagerExpand
     );
-    return createPracticesSummaryMetric(summaries.data);
+    return createVitalsSummaryMetric(summaries.data);
   }
 
   get timeSeries(): VitalsTimeSeriesRecord[] {
@@ -88,6 +88,6 @@ export default class VitalsMetrics extends Metric<MetricRecords> {
       "vitals_time_series",
       this.eagerExpand
     );
-    return createPracticesTimeSeriesMetric(timeSeries.data);
+    return createVitalsTimeSeriesMetric(timeSeries.data);
   }
 }

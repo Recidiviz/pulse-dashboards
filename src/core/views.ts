@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OPPORTUNITY_TYPES, OpportunityType } from "../PracticesStore";
 import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
+import { OPPORTUNITY_TYPES, OpportunityType } from "../WorkflowsStore";
 import { MetricId, SimulationCompartment, TenantId } from "./models/types";
 
 export type CoreView = keyof typeof CORE_VIEWS;
@@ -73,8 +73,8 @@ export const PATHWAYS_PATHS: Record<string, string> = {
   methodology: `/${PATHWAYS_VIEWS.methodology}/:dashboard`,
   methodologySystem: `/${PATHWAYS_VIEWS.methodology}/system`,
   methodologyOperations: `/${PATHWAYS_VIEWS.methodology}/operations`,
-  practices: `/${PATHWAYS_VIEWS.workflows}`,
-  practices404: `/${PATHWAYS_VIEWS.workflows}/not-found`,
+  workflows: `/${PATHWAYS_VIEWS.workflows}`,
+  workflows404: `/${PATHWAYS_VIEWS.workflows}/not-found`,
 };
 
 export type CorePage = keyof typeof CORE_PAGES;

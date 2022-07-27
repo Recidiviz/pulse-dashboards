@@ -127,7 +127,7 @@ const VitalsSummaryChart: React.FC = () => {
       ...latestDataPoint,
     },
   ];
-  const goalLineAnnotations = flags.enablePracticesGoalLine
+  const goalLineAnnotations = flags.enableVitalsGoalLine
     ? [
         {
           type: "react-annotation",

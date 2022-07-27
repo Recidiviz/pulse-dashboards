@@ -33,7 +33,7 @@ const demoAuthConfig = require("../src/auth_config_demo.json");
 const api = require("./routes/api");
 const { newRevocationsParamValidations } = require("./routes/paramsValidation");
 const { validateStateCode } = require("./utils/validateStateCode");
-const { getFirebaseToken } = require("./practices/firebaseToken");
+const { getFirebaseToken } = require("./workflows/firebaseToken");
 
 const app = express();
 
