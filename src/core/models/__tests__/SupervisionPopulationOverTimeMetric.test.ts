@@ -233,6 +233,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
         dataTransformer: createSupervisionPopulationTimeSeries,
         filters: {
           enabledFilters: [
+            FILTER_TYPES.TIME_PERIOD,
             FILTER_TYPES.GENDER,
             FILTER_TYPES.SUPERVISION_TYPE,
             FILTER_TYPES.DISTRICT,
@@ -244,7 +245,9 @@ describe("SupervisionPopulationOverTimeMetric", () => {
 
     it("calls the new API and logs diffs", () => {
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&time_period=months_0_6`,
+        encodeURI(
+          `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&filters[time_period]=months_0_6`
+        ),
         RootStore.getTokenSilently
       );
       expect(Sentry.captureException).toHaveBeenCalled();
@@ -274,7 +277,9 @@ describe("SupervisionPopulationOverTimeMetric", () => {
       });
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&time_period=months_0_6`,
+        encodeURI(
+          `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&filters[time_period]=months_0_6`
+        ),
         RootStore.getTokenSilently
       );
       // Sentry will probably get called after metric.dataSeries has returned, so
@@ -297,7 +302,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
         encodeURI(
-          `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&time_period=months_0_6` +
+          `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&filters[time_period]=months_0_6` +
             `&filters[gender]=MALE&filters[district]=DISTRICT_1&filters[district]=DISTRICT_2`
         ),
         RootStore.getTokenSilently

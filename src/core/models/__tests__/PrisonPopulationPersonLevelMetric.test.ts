@@ -259,6 +259,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         id: "prisonPopulationPersonLevel",
         tenantId: mockTenantId,
         sourceFilename: "prison_population_snapshot_person_level",
+        endpoint: "PrisonPopulationPersonLevel",
         rootStore: mockCoreStore,
         hasTimePeriodDimension: true,
         dataTransformer: createPrisonPopulationPersonLevelList,
@@ -277,7 +278,9 @@ describe("PrisonPopulationPersonLevelMetric", () => {
 
     it("calls the new API and logs diffs", () => {
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/PrisonToSupervisionTransitionsPersonLevel?time_period=months_0_6`,
+        encodeURI(
+          `${mockTenantId}/PrisonPopulationPersonLevel?filters[time_period]=months_0_6`
+        ),
         RootStore.getTokenSilently
       );
       expect(Sentry.captureException).toHaveBeenCalled();

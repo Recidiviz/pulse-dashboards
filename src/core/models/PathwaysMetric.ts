@@ -181,25 +181,24 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
         return;
       const groupBy = snakeCase(this.groupBy);
       const filterValues = this.rootStore.filtersStore.filters;
-      const { monthRange } = this.rootStore.filtersStore;
+
       const queryParams = new URLSearchParams();
       if (groupBy) {
         queryParams.append("group", groupBy);
       }
-      if (monthRange) {
-        const timePeriod = getTimePeriodRawValue(monthRange);
-        if (timePeriod) {
-          queryParams.append("time_period", timePeriod);
-        }
-      }
 
-      this.dimensions.forEach((dimension) => {
-        const key = dimension as keyof PopulationFilterValues;
+      this.filters.enabledFilters.forEach((filter) => {
+        const key = filter as keyof PopulationFilterValues;
         const values = toJS(get(filterValues, key));
         const queryKey = snakeCase(key);
         if (values) {
           values.forEach((val: any) => {
-            if (val !== "ALL") {
+            if (queryKey === "time_period") {
+              const timePeriod = getTimePeriodRawValue(val);
+              if (timePeriod) {
+                queryParams.append(`filters[${queryKey}]`, timePeriod);
+              }
+            } else if (val !== "ALL") {
               queryParams.append(`filters[${queryKey}]`, val);
             }
           });

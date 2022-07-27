@@ -206,7 +206,11 @@ describe("LibertyPopulationOverTimeMetric", () => {
         rootStore: mockCoreStore,
         dataTransformer: createLibertyPopulationTimeSeries,
         filters: {
-          enabledFilters: [FILTER_TYPES.GENDER, FILTER_TYPES.JUDICIAL_DISTRICT],
+          enabledFilters: [
+            FILTER_TYPES.TIME_PERIOD,
+            FILTER_TYPES.GENDER,
+            FILTER_TYPES.JUDICIAL_DISTRICT,
+          ],
         },
       });
       metric.hydrate();
@@ -214,7 +218,9 @@ describe("LibertyPopulationOverTimeMetric", () => {
 
     it("calls the new API and logs diffs", () => {
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&time_period=months_0_6`,
+        encodeURI(
+          `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&filters[time_period]=months_0_6`
+        ),
         RootStore.getTokenSilently
       );
       expect(Sentry.captureException).toHaveBeenCalled();
@@ -244,7 +250,9 @@ describe("LibertyPopulationOverTimeMetric", () => {
       });
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&time_period=months_0_6`,
+        encodeURI(
+          `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&filters[time_period]=months_0_6`
+        ),
         RootStore.getTokenSilently
       );
       // Sentry will probably get called after metric.dataSeries has returned, so
@@ -267,7 +275,7 @@ describe("LibertyPopulationOverTimeMetric", () => {
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
         encodeURI(
-          `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&time_period=months_0_6` +
+          `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&filters[time_period]=months_0_6` +
             `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
         ),
         RootStore.getTokenSilently

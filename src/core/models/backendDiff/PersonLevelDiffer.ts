@@ -40,9 +40,9 @@ export class PersonLevelDiffer extends Differ<
 
   getKey(result: PrisonPopulationPersonLevelRecord): string {
     // Concatenate ID, time period, and age group to get something that's probably unique.
-    return `${result.stateId}|${this.convertTimePeriod(result.timePeriod)}|${
-      result.ageGroup
-    }`;
+    return `${result.stateId}${
+      result.timePeriod ? `|${this.convertTimePeriod(result.timePeriod)}` : ""
+    }|${result.ageGroup}`;
   }
 
   getValue(
@@ -68,15 +68,19 @@ export class PersonLevelDiffer extends Differ<
   transformForComparison(
     record: PrisonPopulationPersonLevelRecord
   ): PrisonPopulationPersonLevelRecord {
-    return {
+    const transformed = {
       ...record,
       // new backend doesn't return admissionReason for PrisonToSupervision
       admissionReason: record.admissionReason || "Unknown",
       // new backend doesn't return lastUpdated
       lastUpdated: new Date(9999, 12, 31),
-      // new backend returns timePeriod as a "months_" string instead of a TimePeriod
-      timePeriod: this.convertTimePeriod(record.timePeriod),
     };
+    if (record.timePeriod) {
+      // new backend returns timePeriod as a "months_" string instead of a TimePeriod
+      transformed.timePeriod = this.convertTimePeriod(record.timePeriod);
+    }
+
+    return transformed;
   }
 
   convertTimePeriod(timePeriod: TimePeriod): TimePeriod {

@@ -45,7 +45,6 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
     });
 
     this.download = this.download.bind(this);
-    this.endpoint = "PrisonToSupervisionTransitionsPersonLevel";
     this.differ = new PersonLevelDiffer(0); // only send counts to Sentry because diff values contain PII
   }
 

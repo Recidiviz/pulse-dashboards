@@ -20,6 +20,7 @@ import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
+import { TimeSeriesDiffer } from "./backendDiff/TimeSeriesDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import {
   PopulationProjectionTimeSeriesRecord,
@@ -38,6 +39,7 @@ export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<P
     super(props);
     this.compartment = props.compartment;
     this.download = this.download.bind(this);
+    this.differ = new TimeSeriesDiffer();
   }
 
   get dataSeries(): PopulationProjectionTimeSeriesRecord[] {
