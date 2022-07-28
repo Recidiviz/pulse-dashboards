@@ -26,7 +26,7 @@ import {
   CompliantReportingEligibleRecord,
   CompliantReportingFinesFeesEligible,
 } from "../../firestore";
-import { formatWorkflowsDate } from "../../utils";
+import { formatWorkflowsDate, pluralizeWord } from "../../utils";
 import { Client, UNKNOWN } from "../Client";
 import {
   fieldToDate,
@@ -596,6 +596,38 @@ export class CompliantReportingOpportunity implements Opportunity {
     return requirements;
   }
 
+  private get almostEligibleCriteriaTransformed() {
+    const {
+      recentRejectionCodes,
+      currentLevelEligibilityDate: currentLevelEligibilityDateString,
+      passedDrugScreenNeeded,
+      paymentNeeded,
+      seriousSanctionsEligibilityDate: seriousSanctionsEligibilityDateString,
+    } = this.record.almostEligibleCriteria ?? {};
+
+    const currentLevelEligibilityDate = optionalFieldToDate(
+      currentLevelEligibilityDateString
+    );
+    const currentLevelEligibilityDaysRemaining =
+      currentLevelEligibilityDate &&
+      differenceInCalendarDays(currentLevelEligibilityDate, new Date());
+
+    const seriousSanctionsEligibilityDate = optionalFieldToDate(
+      seriousSanctionsEligibilityDateString
+    );
+    const seriousSanctionsEligibilityDaysRemaining =
+      seriousSanctionsEligibilityDate &&
+      differenceInCalendarDays(seriousSanctionsEligibilityDate, new Date());
+
+    return {
+      passedDrugScreenNeeded,
+      paymentNeeded,
+      currentLevelEligibilityDaysRemaining,
+      seriousSanctionsEligibilityDaysRemaining,
+      recentRejectionCodes,
+    };
+  }
+
   /**
    * Maps each possible almost-eligible criterion to a display value,
    * where valid data exists for this client.
@@ -603,43 +635,111 @@ export class CompliantReportingOpportunity implements Opportunity {
   private get requirementAlmostMetMap(): Partial<
     Record<keyof AlmostEligibleCriteria, string | undefined>
   > {
+    const {
+      almostEligibleCriteriaTransformed: {
+        recentRejectionCodes,
+        currentLevelEligibilityDaysRemaining,
+        passedDrugScreenNeeded,
+        paymentNeeded,
+        seriousSanctionsEligibilityDaysRemaining,
+      },
+    } = this;
+
     return mapValues(
       toJS(this.record.almostEligibleCriteria),
       (value, key: keyof AlmostEligibleCriteria) => {
         switch (key) {
           case "passedDrugScreenNeeded":
-            return value ? "Needs one more passed drug screen" : undefined;
+            return passedDrugScreenNeeded
+              ? "Needs one more passed drug screen"
+              : undefined;
           case "paymentNeeded":
-            return value ? "Needs one more payment" : undefined;
+            return paymentNeeded ? "Needs one more payment" : undefined;
           case "currentLevelEligibilityDate": {
-            const eligibilityDate =
-              typeof value === "string" && optionalFieldToDate(value);
-            return eligibilityDate instanceof Date
-              ? `Needs ${differenceInCalendarDays(
-                  eligibilityDate,
-                  new Date()
-                )} more days on ${this.client.supervisionLevel}`
+            return currentLevelEligibilityDaysRemaining !== undefined
+              ? `Needs ${currentLevelEligibilityDaysRemaining} more ${pluralizeWord(
+                  currentLevelEligibilityDaysRemaining,
+                  "day"
+                )} on ${this.client.supervisionLevel}`
               : undefined;
           }
           case "seriousSanctionsEligibilityDate": {
-            const eligibilityDate =
-              typeof value === "string" && optionalFieldToDate(value);
-            return eligibilityDate instanceof Date
-              ? `Needs ${differenceInCalendarDays(
-                  eligibilityDate,
-                  new Date()
-                )} more days without sanction higher than level 1`
+            return seriousSanctionsEligibilityDaysRemaining !== undefined
+              ? `Needs ${seriousSanctionsEligibilityDaysRemaining} more ${pluralizeWord(
+                  seriousSanctionsEligibilityDaysRemaining,
+                  "day"
+                )} without sanction higher than level 1`
               : undefined;
           }
           case "recentRejectionCodes":
-            return Array.isArray(value) && value.length
-              ? `Double check ${value.join("/")} contact note`
+            return recentRejectionCodes?.length
+              ? `Double check ${recentRejectionCodes.join("/")} contact note`
               : undefined;
           default:
             return assertNever(key);
         }
       }
     );
+  }
+
+  get almostEligibleRecommendedNote():
+    | { title: string; text: string }
+    | undefined {
+    // note functionality only supports a single missing criterion
+    if (this.validAlmostEligibleKeys.length !== 1) return undefined;
+
+    const missingCriterionKey = this.validAlmostEligibleKeys[0];
+
+    const title = this.requirementAlmostMetMap[missingCriterionKey];
+    // not expected to happen in practice but Typescript doesn't know that
+    if (!title) return undefined;
+
+    const {
+      almostEligibleCriteriaTransformed: {
+        currentLevelEligibilityDaysRemaining,
+        seriousSanctionsEligibilityDaysRemaining,
+      },
+    } = this;
+
+    let criterionSpecificCopy: string | undefined;
+    switch (missingCriterionKey) {
+      case "currentLevelEligibilityDate":
+        criterionSpecificCopy = `stay on your current supervision level for ${currentLevelEligibilityDaysRemaining} more ${pluralizeWord(
+          currentLevelEligibilityDaysRemaining ?? 0,
+          "day"
+        )}`;
+        break;
+      case "passedDrugScreenNeeded":
+        criterionSpecificCopy = "pass one drug screen";
+        break;
+      case "paymentNeeded":
+        criterionSpecificCopy =
+          "make one payment towards your fines and fees balance";
+        break;
+      case "recentRejectionCodes":
+        // intentionally left blank; no note required in this case
+        break;
+      case "seriousSanctionsEligibilityDate":
+        criterionSpecificCopy = `don’t get any sanctions higher than level 1 for ${seriousSanctionsEligibilityDaysRemaining} more ${pluralizeWord(
+          seriousSanctionsEligibilityDaysRemaining ?? 0,
+          "day"
+        )}`;
+        break;
+      default:
+        break;
+    }
+
+    if (!criterionSpecificCopy) return undefined;
+
+    const text = `Hey ${this.client.fullName.givenNames}, you’ve been doing well and are 
+    almost eligible for Compliant Reporting, which would let you switch to telephone
+    check-ins, rather than needing to report to the office. If you ${criterionSpecificCopy}, 
+    you will meet all of the requirements and I can refer you.`.replace(
+      /\s+/gm,
+      " "
+    );
+
+    return { title, text };
   }
 
   private get validAlmostEligibleKeys() {

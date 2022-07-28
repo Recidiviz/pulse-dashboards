@@ -143,16 +143,29 @@ describe("fully eligible", () => {
   test("requirements met", () => {
     expect(cr.requirementsMet).toMatchSnapshot();
   });
+
+  test("recommended note", () => {
+    // this is for almost eligible only
+    expect(cr.almostEligibleRecommendedNote).toBeUndefined();
+  });
 });
 
 describe.each([
-  ["paymentNeeded", 0, "Needs one more payment", undefined, /Fee balance/],
+  [
+    "paymentNeeded",
+    0,
+    "Needs one more payment",
+    undefined,
+    /Fee balance/,
+    /make one payment/,
+  ],
   [
     "passedDrugScreenNeeded",
     1,
     "Needs one more passed drug screen",
     /drug screen/,
     /drug screens/,
+    /pass one drug screen/,
   ],
   [
     "recentRejectionCodes",
@@ -167,6 +180,7 @@ describe.each([
     "Needs 14 more days without sanction higher than level 1",
     /sanctions/,
     /Sanctions/,
+    /get any sanctions/,
   ],
   [
     "currentLevelEligibilityDate",
@@ -174,15 +188,17 @@ describe.each([
     "Needs 14 more days on Medium",
     /minimum supervision level for 1 year /,
     /on medium supervision for /,
+    /stay on your current supervision level/,
   ],
-] as [criterionKey: keyof typeof CompliantReportingAlmostEligibleCriteria, expectedRank: number, expectedListText: string, expectedToolip: RegExp | undefined, expectedMissingText: RegExp][])(
+] as [criterionKey: keyof typeof CompliantReportingAlmostEligibleCriteria, expectedRank: number, expectedListText: string, expectedToolip: RegExp | undefined, expectedMissingText: RegExp, expectedNote?: RegExp][])(
   "almost eligible but for %s",
   (
     criterionKey,
     expectedRank,
     expectedListText,
     expectedTooltip,
-    expectedMissingText
+    expectedMissingText,
+    expectedNote
   ) => {
     beforeEach(() => {
       jest
@@ -263,6 +279,14 @@ describe.each([
           return req.text.match(expectedMissingText);
         })
       ).toBeUndefined();
+    });
+
+    test("recommended note", () => {
+      if (expectedNote) {
+        expect(cr.almostEligibleRecommendedNote?.text).toMatch(expectedNote);
+      } else {
+        expect(cr.almostEligibleRecommendedNote).toBeUndefined();
+      }
     });
   }
 );

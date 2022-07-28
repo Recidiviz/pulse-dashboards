@@ -126,9 +126,18 @@ function numberFromOfficerId(officerId: string): number {
 const violationCountLabel = (count: string): string =>
   count === "8" ? "8+" : count;
 
+/**
+ * @returns appropriately singular or plural (+s) form of `term`
+ */
+const pluralizeWord = (count: number, term: string): string => {
+  return count !== 1 ? `${term}s` : term;
+};
+
+/**
+ * @returns `count` with appropriately singular or plural (+s) form of `term
+ */
 const pluralize = (count: number, term: string): string => {
-  const base = `${count} ${term}`;
-  return count !== 1 ? `${base}s` : base;
+  return `${count} ${pluralizeWord(count, term)}`;
 };
 
 function getPeriodLabelFromMetricPeriodMonthsFilter(
@@ -343,6 +352,7 @@ export {
   matrixViolationTypeToLabel,
   numberFromOfficerId,
   pluralize,
+  pluralizeWord,
   raceValueToHumanReadable,
   raceValueToLabel,
   safeToInt,

@@ -31,6 +31,7 @@ import styled from "styled-components/macro";
 
 import { Opportunity } from "../../../WorkflowsStore";
 import { StatusPalette } from "./common";
+import { OpportunityRecommendedLanguageModal } from "./OpportunityRecommendedLanguageModal";
 
 const CriterionIcon = styled(Icon)`
   grid-column: 1;
@@ -116,7 +117,9 @@ export const CriteriaList = observer(
                 size={16}
               />
               <CriterionContentWrapper>
-                {text}
+                <OpportunityRecommendedLanguageModal opportunity={opportunity}>
+                  {text}
+                </OpportunityRecommendedLanguageModal>
                 {tooltip && (
                   <>
                     {" "}

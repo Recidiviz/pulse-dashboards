@@ -49,6 +49,7 @@ export type OpportunityStatus = typeof OPPORTUNITY_STATUS_RANKED[number];
  */
 export interface Opportunity {
   almostEligible: boolean;
+  almostEligibleRecommendedNote?: { title: string; text: string };
   client: Client;
   rank: number;
   requirementsAlmostMet: OpportunityRequirement[];
