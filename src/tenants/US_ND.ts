@@ -102,6 +102,7 @@ const US_ND_CONFIG: TenantConfig = {
     "supervisionToLiberty",
     "supervision",
     "practices",
+    "workflows",
   ],
   tableColumns: enabledTableColumns[pathways.US_ND],
   vitalsMetrics: [
