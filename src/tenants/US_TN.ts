@@ -34,7 +34,7 @@ const US_TN_CONFIG: TenantConfig = {
   enableUserRestrictions: false,
   enableVitalsCaseloadButton: false,
   navigation: {
-    workflows: [],
+    workflows: ["compliantReporting"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,

@@ -34,8 +34,11 @@ describe("getPathsFromNavigation", () => {
       "/goals",
       "/community/explore",
       "/community/practices",
+      "/community",
       "/methodology/practices",
+      "/methodology",
       "/facilities/explore",
+      "/facilities",
     ];
     expect(allowedPaths).toEqual(expected);
   });

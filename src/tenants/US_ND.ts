@@ -33,6 +33,7 @@ const US_ND_CONFIG: TenantConfig = {
   enableVitalsCaseloadButton: true,
   navigation: {
     operations: [],
+    workflows: ["earlyTermination"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,
