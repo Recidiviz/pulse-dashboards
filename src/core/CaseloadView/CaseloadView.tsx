@@ -36,7 +36,14 @@ export const CaseloadView: React.FC = () => {
       <Wrapper>
         <CaseloadSelect />
         {OPPORTUNITY_TYPES.map((opportunity) => (
-          <OpportunityList key={opportunity} opportunityType={opportunity} />
+          <>
+            <OpportunityList key={opportunity} opportunityType={opportunity} />
+            <OpportunityList
+              key={opportunity}
+              opportunityType={opportunity}
+              almost
+            />
+          </>
         ))}
         <AllClients />
       </Wrapper>

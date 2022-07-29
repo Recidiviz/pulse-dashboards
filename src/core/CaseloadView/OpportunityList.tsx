@@ -103,18 +103,23 @@ const OpportunityLink = styled(BrandedLink)`
   margin-left: auto;
 `;
 
-type OpportunityListProps = { opportunityType: OpportunityType };
+type OpportunityListProps = {
+  almost?: boolean;
+  opportunityType: OpportunityType;
+};
 
 export const OpportunityList = observer(
-  ({ opportunityType }: OpportunityListProps) => {
+  ({ almost, opportunityType }: OpportunityListProps) => {
     const {
-      workflowsStore: { eligibleOpportunities },
+      workflowsStore: { almostEligibleOpportunities, eligibleOpportunities },
     } = useRootStore();
 
     const leftShadow = useInView({ initialInView: true });
     const rightShadow = useInView({ initialInView: true });
 
-    const opportunities = eligibleOpportunities[opportunityType];
+    const opportunities = almost
+      ? almostEligibleOpportunities[opportunityType]
+      : eligibleOpportunities[opportunityType];
 
     if (!opportunities.length) return null;
 
@@ -146,8 +151,8 @@ export const OpportunityList = observer(
         <ListHeader>
           <Icon kind="StarCircled" color={palette.signal.highlight} size={14} />
           <span>
-            {pluralize(items.length, "client")} eligible for{" "}
-            {OPPORTUNITY_LABELS[opportunityType]}
+            {pluralize(items.length, "client")} {almost && "almost"} eligible
+            for {OPPORTUNITY_LABELS[opportunityType]}
           </span>
           <OpportunityLink to={workflowsUrl(opportunityType)}>
             View all <Icon kind="Arrow" size={14} />
