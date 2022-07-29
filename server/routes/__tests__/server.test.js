@@ -39,7 +39,16 @@ jest.mock("@sentry/node", () => ({
 jest.mock("../../utils/getAppMetadata", () => {
   return {
     getAppMetadata: jest.fn().mockImplementation(() => {
-      return { state_code: "US_MO" };
+      return {
+        state_code: "US_MO",
+        can_access_leadership_dashboard: true,
+        routes: {
+          system_prison: true,
+          system_prisonToSupervision: false,
+          system_supervision: false,
+          system_supervisionToLiberty: true,
+        },
+      };
     }),
   };
 });
@@ -223,6 +232,48 @@ describe("Server tests", () => {
         .then((response) => {
           expect(response.statusCode).toEqual(200);
         });
+    });
+  });
+
+  describe("GET api/:stateCode/pathways/:file", () => {
+    beforeEach(() => {
+      process.env = Object.assign(process.env, {
+        IS_OFFLINE: "true",
+        AUTH_ENV: "test",
+      });
+      jest.resetModules();
+      app = require("../../app").app;
+      jest.mock("../../core/fetchMetrics", () => {
+        return {
+          default: jest.fn(() =>
+            Promise.resolve({ file_1: "content_1", file_2: "content_2" })
+          ),
+        };
+      });
+    });
+
+    it("succeeds when the user has permissions", async () => {
+      const prisonResponse = await request(app).get(
+        "/api/US_MO/pathways/prison_population_time_series"
+      );
+      expect(prisonResponse.statusCode).toEqual(200);
+
+      const supervisionToLibertyResponse = await request(app).get(
+        "/api/US_MO/pathways/supervision_to_liberty_count_by_month"
+      );
+      expect(supervisionToLibertyResponse.statusCode).toEqual(200);
+    });
+
+    it("fails when the user does not have permissions", async () => {
+      const prisonToSupervisionResponse = await request(app).get(
+        "/api/US_MO/pathways/prison_to_supervision_count_by_month"
+      );
+      expect(prisonToSupervisionResponse.statusCode).toEqual(403);
+
+      const supervisionResponse = await request(app).get(
+        "/api/US_MO/pathways/supervision_population_time_series"
+      );
+      expect(supervisionResponse.statusCode).toEqual(403);
     });
   });
 

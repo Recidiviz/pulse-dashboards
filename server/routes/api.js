@@ -25,6 +25,7 @@ const fs = require("fs");
 const path = require("path");
 const escape = require("escape-html");
 const sanitizeFilename = require("sanitize-filename");
+const { snakeCase } = require("lodash");
 
 const {
   refreshRedisCache,
@@ -44,6 +45,7 @@ const {
 const { formatKeysToSnakeCase } = require("../utils");
 
 const BAD_REQUEST = 400;
+const FORBIDDEN = 403;
 const SERVER_ERROR = 500;
 /**
  * A callback which returns either an error payload or a data payload.
@@ -81,6 +83,16 @@ function refreshCache(req, res) {
     stateCode,
     metricType,
     responder(res)
+  );
+}
+
+function respondWithForbidden(res) {
+  responder(res)(
+    {
+      status: FORBIDDEN,
+      errors: ["User does not have permission to access this resource"],
+    },
+    null
   );
 }
 
@@ -183,6 +195,16 @@ function populationProjectionsMethodology(req, res) {
 }
 
 function vitals(req, res) {
+  const appMetadata = getAppMetadata(req);
+  const allowed =
+    appMetadata.state_code === "recidiviz" ||
+    appMetadata.routes?.operations ||
+    appMetadata.routes?.community_practices;
+  if (!allowed) {
+    respondWithForbidden(res);
+    return;
+  }
+
   const { stateCode } = req.params;
   const metricType = "vitals";
   const cacheKey = getCacheKey({ stateCode, metricType });
@@ -196,6 +218,34 @@ function vitals(req, res) {
 function pathways(req, res) {
   const { stateCode, file: metricName } = req.params;
   const metricType = "pathways";
+  const appMetadata = getAppMetadata(req);
+
+  const allowed =
+    appMetadata.state_code === "recidiviz" ||
+    (appMetadata.can_access_leadership_dashboard &&
+      Object.entries(appMetadata.routes).some(([route, status]) => {
+        // routes have the format `system_prisonToSupervision: true`
+        // metric names have the format `prison_to_supervision_count_by_month`
+        if (!status) {
+          return false;
+        }
+        const routeParts = route.split("_");
+        if (routeParts.length !== 2 || routeParts[0] !== "system") {
+          return false;
+        }
+
+        return (
+          metricName.startsWith(snakeCase(routeParts[1])) &&
+          // Make sure we don't consider system_prison as eligible for prison_to_supervision_count_by_month
+          !metricName.startsWith(`${snakeCase(routeParts[1])}_to_`)
+        );
+      }));
+
+  if (!allowed) {
+    respondWithForbidden(res);
+    return;
+  }
+
   const cacheKey = getCacheKey({ stateCode, metricType, metricName });
   cacheResponse(
     cacheKey,
