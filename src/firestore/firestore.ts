@@ -146,20 +146,6 @@ const collections = {
   ) as CollectionReference<FeatureVariantRecord>,
 };
 
-/**
- * Replaces the clients collection reference in place with a reference
- * to the clients sandbox collection (or vice versa, based on feature variant)
- */
-function patchClientDataSandbox(featureVariants?: FeatureVariantRecord) {
-  const useSandbox =
-    featureVariants?.CompliantReportingAlmostEligible !== undefined;
-
-  collections.clients = collection(
-    db,
-    `${useSandbox ? "SANDBOX_" : ""}${collectionNames.clients}`
-  ) as CollectionReference<ClientRecord>;
-}
-
 export async function getUser(
   email: string
 ): Promise<CombinedUserRecord | undefined> {
@@ -180,8 +166,6 @@ export async function getUser(
 
   const updates = updateSnapshot.data();
   const featureVariants = featureVariantSnapshot.data();
-
-  patchClientDataSandbox(featureVariants);
 
   return {
     info,
@@ -210,7 +194,6 @@ export function subscribeToFeatureVariants(
     doc(collections.featureVariants, email.toLowerCase()),
     (result) => {
       const featureVariants = result.data();
-      patchClientDataSandbox(featureVariants);
       handleResults(featureVariants);
     }
   );
