@@ -26,7 +26,7 @@ import isIE11 from "../../utils/isIE11";
 import { CaseloadView } from "../CaseloadView";
 import ModelHydrator from "../ModelHydrator";
 import { OpportunityCaseloadSelection } from "../OpportunityCaseloadSelection";
-import { WORKFLOWS_PATHS, workflowsRoute } from "../views";
+import { workflowsRoute } from "../views";
 import {
   CompliantReportingClientProfile,
   FullProfile,
@@ -99,19 +99,6 @@ const PageWorkflows: React.FC = () => {
         </WorkflowsRoute>
         <WorkflowsRoute
           exact
-          path={workflowsRoute({ name: "earlyTermination", client: false })}
-        >
-          <WorkflowsFormLayout
-            sidebarContents={
-              <>
-                <SidebarHeading>Early Termination</SidebarHeading>
-              </>
-            }
-            formContents={null}
-          />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
           path={workflowsRoute({ name: "general", client: true })}
         >
           <FullProfile />
@@ -122,7 +109,6 @@ const PageWorkflows: React.FC = () => {
         >
           <CaseloadView />
         </WorkflowsRoute>
-        <WorkflowsRoute exact path={WORKFLOWS_PATHS.workflows} />
         <NotFound />
       </Switch>
     </ModelHydrator>

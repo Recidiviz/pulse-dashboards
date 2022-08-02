@@ -238,7 +238,7 @@ export default class UserStore {
     const routes: RoutePermission[] = routePermissions.map(
       ([fullRoute, permission]: RoutePermission) => {
         const [view, page] = fullRoute.split("_");
-        const route = page ?? view;
+        const route = view === "operations" ? view : page;
         return [route, permission];
       }
     );

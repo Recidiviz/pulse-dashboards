@@ -33,7 +33,6 @@ const US_ND_CONFIG: TenantConfig = {
   enableVitalsCaseloadButton: true,
   navigation: {
     operations: [],
-    workflows: ["earlyTermination"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,
@@ -102,7 +101,6 @@ const US_ND_CONFIG: TenantConfig = {
     "supervisionToLiberty",
     "supervision",
     "practices",
-    "workflows",
   ],
   tableColumns: enabledTableColumns[pathways.US_ND],
   vitalsMetrics: [

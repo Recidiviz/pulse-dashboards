@@ -47,7 +47,6 @@ import {
   CORE_VIEWS,
   PATHWAYS_PATHS,
   PATHWAYS_VIEWS,
-  WORKFLOWS_PATHS,
 } from "./core/views";
 import LanternLayout from "./lantern/LanternLayout";
 import Revocations from "./lantern/Revocations";
@@ -85,7 +84,7 @@ const App = () => (
                     <ProtectedRoute path={PATHWAYS_PATHS.system} component={PageSystem} />
                     <ProtectedRoute path={PATHWAYS_PATHS.operations} component={PageVitals} />
                     <ProtectedRoute path={PATHWAYS_PATHS.methodology} component={PageMethodology} />
-                    <ProtectedRoute path={WORKFLOWS_PATHS.workflows} component={PageWorkflows} />
+                    <ProtectedRoute path={PATHWAYS_PATHS.workflows} component={PageWorkflows} />
                     <Route path="/profile" component={Profile} />
                     <Redirect from="/system" to="/system/prison" />
                     <RedirectHome />

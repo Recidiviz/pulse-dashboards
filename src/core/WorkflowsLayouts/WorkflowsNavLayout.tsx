@@ -21,8 +21,6 @@ import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { OPPORTUNITY_LABELS } from "../../WorkflowsStore/Opportunity/types";
 import RecidivizLogo from "../RecidivizLogo";
 import { PATHWAYS_VIEWS, workflowsUrl } from "../views";
 
@@ -88,10 +86,6 @@ const BrandedNavLink = styled(NavLink).attrs({ exact: true })`
 `;
 
 export const WorkflowsNavLayout: React.FC = ({ children }) => {
-  const {
-    workflowsStore: { opportunityTypes },
-  } = useRootStore();
-
   return (
     <Wrapper>
       <Sidebar>
@@ -109,15 +103,11 @@ export const WorkflowsNavLayout: React.FC = ({ children }) => {
               <li>
                 <NavSectionLabel>Shortcuts</NavSectionLabel>
               </li>
-              {opportunityTypes.map((opportunityType) => {
-                return (
-                  <li>
-                    <BrandedNavLink to={workflowsUrl(opportunityType)}>
-                      {OPPORTUNITY_LABELS[opportunityType]}
-                    </BrandedNavLink>
-                  </li>
-                );
-              })}
+              <li>
+                <BrandedNavLink to={workflowsUrl("compliantReporting")}>
+                  Compliant Reporting
+                </BrandedNavLink>
+              </li>
             </NavSection>
           </li>
         </NavLinks>

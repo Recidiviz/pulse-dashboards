@@ -17,10 +17,7 @@
 
 import { Client } from "../Client";
 
-export const OPPORTUNITY_TYPES = [
-  "compliantReporting",
-  "earlyTermination",
-] as const;
+export const OPPORTUNITY_TYPES = ["compliantReporting"] as const;
 /**
  * Values of this union map to key prefixes in client records
  */
@@ -30,7 +27,6 @@ export function isOpportunityType(s: string): s is OpportunityType {
 }
 export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   compliantReporting: "Compliant Reporting",
-  earlyTermination: "Early Termination",
 };
 
 export type OpportunityRequirement = { text: string; tooltip?: string };

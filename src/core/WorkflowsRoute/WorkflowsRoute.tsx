@@ -19,8 +19,8 @@ import React, { useEffect, useState } from "react";
 import { Redirect, Route, RouteProps, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { isOpportunityType } from "../../WorkflowsStore/Opportunity/types";
-import { WORKFLOWS_PATHS, workflowsRoute } from "../views";
+import { isOpportunityType } from "../../WorkflowsStore";
+import { PATHWAYS_PATHS } from "../views";
 
 // react-router does not seem to export this type directly
 type RouterLocation = ReturnType<typeof useLocation>;
@@ -36,16 +36,14 @@ function parseLocation(loc: RouterLocation) {
 }
 
 const RouteSync: React.FC = ({ children }) => {
-  const { workflowsStore, currentTenantId } = useRootStore();
+  const { workflowsStore } = useRootStore();
   const loc = useLocation();
 
   const [notFound, setNotFound] = useState(false);
-  const [redirectPath, setRedirectPath] = useState<string | undefined>();
 
   //
   useEffect(() => {
     const { page, clientId } = parseLocation(loc);
-    setRedirectPath(undefined);
 
     // sync location data into the store
     workflowsStore.updateSelectedClient(clientId).catch(() => {
@@ -56,30 +54,13 @@ const RouteSync: React.FC = ({ children }) => {
     if (clientId && page && isOpportunityType(page)) {
       workflowsStore.trackClientFormViewed(clientId, page);
     }
+  }, [loc, workflowsStore]);
 
-    if (!page) {
-      switch (currentTenantId) {
-        case "US_TN":
-          setRedirectPath(
-            workflowsRoute({ name: "compliantReporting", client: false })
-          );
-          break;
-        default:
-          setRedirectPath(workflowsRoute({ name: "general", client: false }));
-          break;
-      }
-    }
-  }, [loc, workflowsStore, currentTenantId]);
-
-  if (notFound) {
-    return <Redirect to={WORKFLOWS_PATHS.workflows404} />;
-  }
-
-  if (redirectPath) {
-    return <Redirect to={redirectPath} />;
-  }
-
-  return <>{children}</>;
+  return notFound ? (
+    <Redirect to={PATHWAYS_PATHS.workflows404} />
+  ) : (
+    <>{children}</>
+  );
 };
 
 /**
