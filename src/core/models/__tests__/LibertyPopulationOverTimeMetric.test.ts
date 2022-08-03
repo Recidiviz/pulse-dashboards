@@ -219,7 +219,7 @@ describe("LibertyPopulationOverTimeMetric", () => {
     it("calls the new API and logs diffs", () => {
       expect(callNewMetricsApi).toHaveBeenCalledWith(
         encodeURI(
-          `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&filters[time_period]=months_0_6`
+          `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`
         ),
         RootStore.getTokenSilently
       );
@@ -251,7 +251,7 @@ describe("LibertyPopulationOverTimeMetric", () => {
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
         encodeURI(
-          `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&filters[time_period]=months_0_6`
+          `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`
         ),
         RootStore.getTokenSilently
       );
@@ -275,7 +275,7 @@ describe("LibertyPopulationOverTimeMetric", () => {
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
         encodeURI(
-          `${mockTenantId}/LibertyToPrisonTransitionsCount?group=year_month&filters[time_period]=months_0_6` +
+          `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
             `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
         ),
         RootStore.getTokenSilently

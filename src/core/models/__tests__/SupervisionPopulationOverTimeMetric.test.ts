@@ -246,7 +246,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
     it("calls the new API and logs diffs", () => {
       expect(callNewMetricsApi).toHaveBeenCalledWith(
         encodeURI(
-          `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&filters[time_period]=months_0_6`
+          `${mockTenantId}/SupervisionToLibertyTransitionsCount?filters[time_period]=months_0_6`
         ),
         RootStore.getTokenSilently
       );
@@ -278,7 +278,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
         encodeURI(
-          `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&filters[time_period]=months_0_6`
+          `${mockTenantId}/SupervisionToLibertyTransitionsCount?filters[time_period]=months_0_6`
         ),
         RootStore.getTokenSilently
       );
@@ -302,7 +302,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(
         encodeURI(
-          `${mockTenantId}/SupervisionToLibertyTransitionsCount?group=year_month&filters[time_period]=months_0_6` +
+          `${mockTenantId}/SupervisionToLibertyTransitionsCount?filters[time_period]=months_0_6` +
             `&filters[gender]=MALE&filters[district]=DISTRICT_1&filters[district]=DISTRICT_2`
         ),
         RootStore.getTokenSilently

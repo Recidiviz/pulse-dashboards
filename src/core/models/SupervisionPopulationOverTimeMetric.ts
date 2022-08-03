@@ -42,7 +42,6 @@ export default class SupervisionPopulationOverTimeMetric extends PathwaysMetric<
     });
 
     this.download = this.download.bind(this);
-    this.groupBy = "year_month";
     this.differ = new TimeSeriesDiffer();
   }
 
