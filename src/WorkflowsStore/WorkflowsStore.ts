@@ -47,6 +47,7 @@ import {
   UserUpdateRecord,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
+import tenants from "../tenants";
 import { Client } from "./Client";
 import {
   Opportunity,
@@ -344,12 +345,6 @@ export class WorkflowsStore implements Hydratable {
     return mapping;
   }
 
-  get opportunityCounts(): Record<OpportunityType, number | undefined> {
-    return {
-      compliantReporting: this.compliantReportingEligibleCount?.current(),
-    };
-  }
-
   get availableOfficers(): StaffRecord[] {
     return this.officers?.current() ?? [];
   }
@@ -390,5 +385,13 @@ export class WorkflowsStore implements Hydratable {
     }
 
     return {};
+  }
+
+  get opportunityTypes(): OpportunityType[] {
+    return (
+      (this.rootStore.currentTenantId &&
+        tenants[this.rootStore.currentTenantId].opportunityTypes) ??
+      []
+    );
   }
 }

@@ -23,6 +23,7 @@ import {
   CORE_VIEWS,
   PATHWAYS_PAGES,
   PATHWAYS_VIEWS,
+  WORKFLOWS_PAGES,
 } from "../core/views";
 import { TenantId } from "../RootStore/types";
 import TENANTS from "../tenants";
@@ -35,7 +36,7 @@ export function getPathsFromNavigation(
     const view: string = navItem[0];
     const pages: string[] = navItem[1] || [];
     return pages.length
-      ? pages.map((page) => `/${view}/${page}`)
+      ? pages.map((page) => `/${view}/${page}`).concat([`/${view}`])
       : [`/${view}`];
   });
 }
@@ -62,6 +63,7 @@ export function getPathWithoutParams(pathname: string): string {
     ...Object.values(CORE_PAGES),
     ...Object.values(PATHWAYS_VIEWS),
     ...Object.values(PATHWAYS_PAGES),
+    ...Object.values(WORKFLOWS_PAGES),
   ];
   const basePath = pathname
     .split("/")

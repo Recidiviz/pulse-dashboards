@@ -23,6 +23,9 @@ import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
+import { OpportunityType } from "../WorkflowsStore";
+
+const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = ["earlyTermination"];
 
 const US_ND_CONFIG: TenantConfig = {
   name: "North Dakota",
@@ -31,8 +34,10 @@ const US_ND_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_ND],
   enableUserRestrictions: false,
   enableVitalsCaseloadButton: true,
+  opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   navigation: {
     operations: [],
+    workflows: [...WORKFLOWS_OPPORTUNITY_TYPES, "client"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,
@@ -101,6 +106,7 @@ const US_ND_CONFIG: TenantConfig = {
     "supervisionToLiberty",
     "supervision",
     "practices",
+    "workflows",
   ],
   tableColumns: enabledTableColumns[pathways.US_ND],
   vitalsMetrics: [

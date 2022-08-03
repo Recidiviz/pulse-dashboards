@@ -335,48 +335,25 @@ test("don't subscribe to clients if no officers are selected", async () => {
   expect(mockSubscribeToCaseloads).not.toHaveBeenCalled();
 });
 
-test("count compliant reporting opportunities based on current filter", async () => {
-  const mockCount = 10;
-  mockSubscribeToEligibleCount.mockImplementation(
-    (opportunityType, stateCode, ids, handler) => {
-      expect(ids).toEqual([mockOfficer.info.id]);
-      handler(mockCount);
-      return mockUnsub;
-    }
-  );
-
-  workflowsStore.hydrate();
-
-  await when(
-    () => workflowsStore.opportunityCounts.compliantReporting !== undefined
-  );
-
-  expect(workflowsStore.opportunityCounts.compliantReporting).toBe(mockCount);
-});
-
 test("clean up caseload subscriptions on change", async () => {
-  workflowsStore.hydrate();
+  await waitForHydration();
 
   // simulate a component consuming this value, because it will automatically unsubscribe
   // when no longer observed; we are testing the use case of the underlying filter changing
   // while the computed value is continuously observed
-  testObserver = keepAlive(
-    computed(() => workflowsStore.opportunityCounts.compliantReporting)
-  );
+  testObserver = keepAlive(computed(() => workflowsStore.caseloadClients));
 
-  await when(
-    () => workflowsStore.opportunityCounts.compliantReporting !== undefined
-  );
+  await when(() => workflowsStore.caseloadClients !== undefined);
 
   expect(mockUnsub).not.toHaveBeenCalled();
 
   runInAction(() => {
-    (workflowsStore.user as any).updates = { selectedOfficerIds: ["OFFICER2"] };
+    (workflowsStore.user as any).updates = {
+      selectedOfficerIds: ["OFFICER2"],
+    };
   });
 
-  await when(
-    () => workflowsStore.opportunityCounts.compliantReporting !== undefined
-  );
+  await when(() => workflowsStore.caseloadClients !== undefined);
 
   expect(mockUnsub).toHaveBeenCalled();
 });

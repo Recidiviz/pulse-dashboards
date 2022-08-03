@@ -26,6 +26,9 @@ import {
   PATHWAYS_VIEWS,
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
+import { OpportunityType } from "../WorkflowsStore";
+
+const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = ["compliantReporting"];
 
 const US_TN_CONFIG: TenantConfig = {
   name: "Tennessee",
@@ -33,8 +36,9 @@ const US_TN_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_TN],
   enableUserRestrictions: false,
   enableVitalsCaseloadButton: false,
+  opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   navigation: {
-    workflows: [],
+    workflows: [...WORKFLOWS_OPPORTUNITY_TYPES, "client"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,

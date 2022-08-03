@@ -145,6 +145,8 @@ export const OpportunityCaseloadSelection = observer(
           </>
         );
         break;
+      case "earlyTermination":
+        break;
       default:
         assertNever(opportunityType);
     }

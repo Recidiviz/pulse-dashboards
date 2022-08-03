@@ -16,7 +16,10 @@
 // =============================================================================
 
 import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
-import { OPPORTUNITY_TYPES, OpportunityType } from "../WorkflowsStore";
+import {
+  OPPORTUNITY_TYPES,
+  OpportunityType,
+} from "../WorkflowsStore/Opportunity/types";
 import { MetricId, SimulationCompartment, TenantId } from "./models/types";
 
 export type CoreView = keyof typeof CORE_VIEWS;
@@ -73,8 +76,6 @@ export const PATHWAYS_PATHS: Record<string, string> = {
   methodology: `/${PATHWAYS_VIEWS.methodology}/:dashboard`,
   methodologySystem: `/${PATHWAYS_VIEWS.methodology}/system`,
   methodologyOperations: `/${PATHWAYS_VIEWS.methodology}/operations`,
-  workflows: `/${PATHWAYS_VIEWS.workflows}`,
-  workflows404: `/${PATHWAYS_VIEWS.workflows}/not-found`,
 };
 
 export type CorePage = keyof typeof CORE_PAGES;
@@ -253,6 +254,12 @@ export function getSectionIdForMetric(metric: MetricId): PathwaysSection {
   return PATHWAYS_SECTION_BY_METRIC_ID[metric];
 }
 
+export const WORKFLOWS_PATHS = {
+  opportunityType: `/${PATHWAYS_VIEWS.workflows}/:opportunityType`,
+  workflows: `/${PATHWAYS_VIEWS.workflows}`,
+  workflows404: `/${PATHWAYS_VIEWS.workflows}/not-found`,
+};
+
 export type WorkflowsPage = OpportunityType | "general";
 // this slightly strange construction was needed because
 // `[...OPPORTUNITY_TYPES, "general"]` caused a TypeError in Jest,
@@ -263,16 +270,19 @@ export const WorkflowsPageIdList = (["general"] as WorkflowsPage[]).concat(
 export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   compliantReporting: "compliantReporting",
   general: "client",
+  earlyTermination: "earlyTermination",
 };
 
 const WORKFLOWS_SEARCH_ROUTES: Record<WorkflowsPage, string> = {
   general: `/${PATHWAYS_VIEWS.workflows}/clients`,
-  compliantReporting: `/${PATHWAYS_VIEWS.workflows}`,
+  compliantReporting: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.compliantReporting}`,
+  earlyTermination: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earlyTermination}`,
 };
 
 const WORKFLOWS_CLIENT_PATH_ROUTES: Record<WorkflowsPage, string> = {
   general: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.general}/:clientId`,
   compliantReporting: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.compliantReporting}/:clientId`,
+  earlyTermination: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earlyTermination}/:clientId`,
 };
 
 /**

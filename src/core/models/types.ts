@@ -23,6 +23,7 @@ import {
   US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
+import { OpportunityType } from "../../WorkflowsStore";
 import { MetricCopy, PageCopy } from "../content/types";
 import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
@@ -54,6 +55,7 @@ export type TenantConfig = {
   vitalsMetrics?: VitalsMetric[];
   pagesWithRestrictions?: string[];
   tableColumns?: TableColumns;
+  opportunityTypes?: OpportunityType[];
 };
 
 export type Gender = "ALL" | "FEMALE" | "MALE";
