@@ -32,3 +32,14 @@ export const defaultOpportunityStatuses: Record<OpportunityStatus, string> = {
   IN_PROGRESS: "Referral in progress",
   ALMOST: "Almost eligible",
 };
+
+export const earlyTerminationOpportunityStatuses: Record<
+  OpportunityStatus,
+  string
+> = {
+  PENDING: "Overdue for early termination",
+  IN_PROGRESS: "Early termination status in review",
+  COMPLETED: "Paperwork completed and filed with Court",
+  DENIED: "Currently ineligible",
+  ALMOST: "Almost eligible",
+};

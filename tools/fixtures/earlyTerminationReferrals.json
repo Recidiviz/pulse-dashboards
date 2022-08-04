@@ -1,0 +1,19 @@
+[
+  {
+    "stateCode": "US_ND",
+    "externalId": "110",
+    "formInformation": {
+      "plaintiffName": "JAMIE JONES",
+      "judgeName": "Judge 1",
+      "sentencingDate": "2020-01-03",
+      "sentenceLengthYears": 3,
+      "chargeName": "CHARGE 1",
+      "remainingFees": 120
+    },
+    "reasons": {
+      "pastEarlyDischarge": { 
+        "eligibleDate": "2022-01-03"
+      }
+    }
+  }
+]

@@ -21,6 +21,7 @@ import {
   CompliantReportingEligibleRecord,
 } from "../../../firestore";
 import { dateToTimestamp } from "../../utils";
+import { EarlyTerminationReferralRecord } from "../EarlyTerminationReferralRecord";
 
 export const compliantReportingEligibleClientRecord: RequireKeys<
   ClientRecord,
@@ -94,4 +95,53 @@ export const CompliantReportingAlmostEligibleCriteria: Required<
   currentLevelEligibilityDate: "2022-08-15",
   seriousSanctionsEligibilityDate: "2022-08-15",
   recentRejectionCodes: ["TEST1"],
+};
+
+export const earlyTerminationEligibleClientRecord: RequireKeys<
+  ClientRecord,
+  "earlyTerminationEligible"
+> = {
+  personName: {
+    givenNames: "JAMIE",
+    surname: "JONES",
+  },
+  personExternalId: "110",
+  pseudonymizedId: "p110",
+  stateCode: "US_ND",
+  officerId: "OFFICER3",
+  supervisionType: "PROBATION",
+  supervisionLevel: "STANDARD: MEDIUM",
+  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  address: "123 Bedrock Lane",
+  phoneNumber: "5555555678",
+  expirationDate: dateToTimestamp("2024-12-31"),
+  currentBalance: 1221.88,
+  lastPaymentAmount: 125.75,
+  lastPaymentDate: dateToTimestamp("2022-01-03"),
+  specialConditions: [
+    "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
+  ],
+  specialConditionsFlag: "current",
+  earlyTerminationEligible: true,
+};
+
+export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {
+  stateCode: "US_ND",
+  externalId: "110",
+  formInformation: {
+    plaintiffName: "JAMIE JONES",
+    judgeName: "Judge 1",
+    sentencingDate: "2020-01-03",
+    sentenceLengthYears: 3,
+    chargeName: "CHARGE 1",
+    remainingFees: 120,
+  },
+  reasons: {
+    pastEarlyDischarge: {
+      eligibleDate: "2022-01-03",
+    },
+    eligibleSupervisionLevel: { supervisionLevel: "MEDIUM" },
+    eligibleSupervisionType: { supervisionType: "PROBATION" },
+    notActiveRevocationStatus: {},
+  },
 };

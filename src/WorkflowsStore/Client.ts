@@ -21,6 +21,7 @@ import {
   entries,
   makeObservable,
   observable,
+  reaction,
   runInAction,
   set,
   when,
@@ -45,6 +46,7 @@ import {
   SpecialConditionsStatus,
   subscribeToClientUpdates,
   subscribeToCompliantReportingReferral,
+  subscribeToEarlyTerminationReferral,
   updateCompliantReportingCompleted,
   updateCompliantReportingDenial,
 } from "../firestore";
@@ -55,9 +57,11 @@ import {
 } from "./CompliantReportingReferralRecord";
 import {
   createCompliantReportingOpportunity,
+  createEarlyTerminationOpportunity,
   Opportunity,
   OpportunityType,
 } from "./Opportunity";
+import { EarlyTerminationReferralRecord } from "./Opportunity/EarlyTerminationReferralRecord";
 import {
   observableSubscription,
   optionalFieldToDate,
@@ -134,6 +138,8 @@ export class Client {
 
   private fetchedCompliantReportingReferral: SubscriptionValue<CompliantReportingReferralRecord>;
 
+  private fetchedEarlyTerminationReferral: SubscriptionValue<EarlyTerminationReferralRecord>;
+
   constructor(record: ClientRecord, rootStore: RootStore) {
     makeObservable(this, {
       opportunities: true,
@@ -187,12 +193,19 @@ export class Client {
       Partial<TransformedCompliantReportingReferral>
     >({});
 
-    this.opportunities = {
-      compliantReporting: createCompliantReportingOpportunity(
-        record.compliantReportingEligible,
-        this
-      ),
-    };
+    reaction(
+      () => [this.fetchedEarlyTerminationReferral?.current()],
+      ([earlyTerminationReferralRecord]) => {
+        runInAction(() => {
+          if (earlyTerminationReferralRecord)
+            this.opportunities.earlyTermination = createEarlyTerminationOpportunity(
+              record.earlyTerminationEligible,
+              earlyTerminationReferralRecord,
+              this
+            );
+        });
+      }
+    );
 
     // connect to additional data sources for this client
     this.fetchedUpdates = observableSubscription((handler) =>
@@ -215,6 +228,24 @@ export class Client {
         if (result) handler(result);
       })
     );
+
+    this.fetchedEarlyTerminationReferral = observableSubscription((handler) => {
+      return subscribeToEarlyTerminationReferral(this.id, (result) => {
+        if (result) handler(result);
+      });
+    });
+
+    this.opportunities = {
+      compliantReporting: createCompliantReportingOpportunity(
+        record.compliantReportingEligible,
+        this
+      ),
+      earlyTermination: createEarlyTerminationOpportunity(
+        record.earlyTerminationEligible,
+        this.fetchedEarlyTerminationReferral.current(),
+        this
+      ),
+    };
   }
 
   get displayName(): string {

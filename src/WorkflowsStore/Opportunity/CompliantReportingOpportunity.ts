@@ -140,7 +140,7 @@ const CRITERIA: Record<string, OpportunityCriterion> = {
   },
 };
 
-export class CompliantReportingOpportunity implements Opportunity {
+class CompliantReportingOpportunity implements Opportunity {
   client: Client;
 
   readonly type: OpportunityType = "compliantReporting";

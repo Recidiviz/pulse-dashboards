@@ -63,7 +63,7 @@ export function getTNUser(testEnv) {
 
 export function getOutOfStateUser(testEnv) {
   return testEnv.authenticatedContext("foo", {
-    stateCode: "US_ND",
+    stateCode: "US_ID",
   });
 }
 

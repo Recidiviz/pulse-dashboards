@@ -46,6 +46,7 @@ import {
   CompliantReportingReferralRecord,
   OpportunityType,
 } from "../WorkflowsStore";
+import { EarlyTerminationReferralRecord } from "../WorkflowsStore/Opportunity/EarlyTerminationReferralRecord";
 import {
   ClientRecord,
   ClientUpdateRecord,
@@ -110,6 +111,7 @@ const collectionNames = {
   clients: "clients",
   clientUpdates: "clientUpdates",
   compliantReportingReferrals: "compliantReportingReferrals",
+  earlyTerminationReferrals: "earlyTerminationReferrals",
   featureVariants: "featureVariants",
 };
 
@@ -140,6 +142,10 @@ const collections = {
     db,
     collectionNames.compliantReportingReferrals
   ) as CollectionReference<CompliantReportingReferralRecord>,
+  earlyTerminationReferrals: collection(
+    db,
+    collectionNames.earlyTerminationReferrals
+  ) as CollectionReference<EarlyTerminationReferralRecord>,
   featureVariants: collection(
     db,
     collectionNames.featureVariants
@@ -311,6 +317,18 @@ export function subscribeToCompliantReportingReferral(
 ): Unsubscribe {
   return onSnapshot(
     doc(collections.compliantReportingReferrals, clientId),
+    (result) => {
+      handleResults(result.data());
+    }
+  );
+}
+
+export function subscribeToEarlyTerminationReferral(
+  clientId: string,
+  handleResults: (results: EarlyTerminationReferralRecord | undefined) => void
+): Unsubscribe {
+  return onSnapshot(
+    doc(collections.earlyTerminationReferrals, clientId),
     (result) => {
       handleResults(result.data());
     }

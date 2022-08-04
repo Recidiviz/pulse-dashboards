@@ -19,7 +19,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { OPPORTUNITY_TYPES } from "../../WorkflowsStore";
+import { useRootStore } from "../../components/StoreProvider";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { AllClients } from "./AllClients";
@@ -31,11 +31,14 @@ const Wrapper = styled.div`
 `;
 
 export const CaseloadView: React.FC = () => {
+  const {
+    workflowsStore: { opportunityTypes },
+  } = useRootStore();
   return (
     <WorkflowsNavLayout>
       <Wrapper>
         <CaseloadSelect />
-        {OPPORTUNITY_TYPES.map((opportunity) => (
+        {opportunityTypes.map((opportunity) => (
           <>
             <OpportunityList key={opportunity} opportunityType={opportunity} />
             <OpportunityList

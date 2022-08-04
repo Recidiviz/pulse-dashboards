@@ -117,6 +117,7 @@ export type ClientRecord = {
   lastSpecialConditionsNote?: string;
   specialConditionsTerminatedDate?: string;
   compliantReportingEligible?: CompliantReportingEligibleRecord;
+  earlyTerminationEligible?: boolean;
 };
 
 export type CompliantReportingFinesFeesEligible =

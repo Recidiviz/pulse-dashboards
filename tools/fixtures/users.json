@@ -22,5 +22,13 @@
     "id": "SUPERVISOR1",
     "stateCode": "US_TN",
     "hasCaseload": false
+  },
+  {
+    "name": "Test Officer3",
+    "email": "test-officer-3@example.com",
+    "district": "DISTRICT 1",
+    "id": "OFFICER3",
+    "stateCode": "US_ND",
+    "hasCaseload": true
   }
 ]

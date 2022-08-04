@@ -105,6 +105,7 @@ const PageWorkflows: React.FC = () => {
             sidebarContents={
               <>
                 <SidebarHeading>Early Termination</SidebarHeading>
+                <OpportunityCaseloadSelection opportunityType="earlyTermination" />
               </>
             }
             formContents={null}

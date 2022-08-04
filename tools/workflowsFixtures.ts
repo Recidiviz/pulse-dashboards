@@ -25,6 +25,7 @@ const COLLECTIONS = {
   clients: "clients",
   staff: "staff",
   compliantReportingReferrals: "compliantReportingReferrals",
+  earlyTerminationReferrals: "earlyTerminationReferrals",
 };
 
 const db = getDb();
@@ -74,7 +75,7 @@ async function loadUserFixture() {
   console.log("new staff data loaded successfully");
 }
 
-async function loadReferralsFixture() {
+async function loadCompliantReportingReferralsFixture() {
   console.log("wiping existing referral data ...");
   await deleteCollection(db, COLLECTIONS.compliantReportingReferrals);
 
@@ -99,9 +100,36 @@ async function loadReferralsFixture() {
   await bulkWriter.flush();
   await bulkWriter.close();
 
-  console.log("new referral data loaded successfully");
+  console.log("new compliant reporting referral data loaded successfully");
+}
+
+async function loadEarlyTerminationReferralsFixture() {
+  console.log("wiping existing referral data ...");
+  await deleteCollection(db, COLLECTIONS.earlyTerminationReferrals);
+
+  console.log("loading new referral data...");
+  const bulkWriter = db.bulkWriter();
+
+  const rawUsers = JSON.parse(
+    fs.readFileSync("tools/fixtures/earlyTerminationReferrals.json").toString()
+  );
+
+  rawUsers.forEach((rawReferral: any) => {
+    bulkWriter.create(
+      db.doc(
+        `${COLLECTIONS.earlyTerminationReferrals}/${rawReferral.externalId}`
+      ),
+      rawReferral
+    );
+  });
+
+  await bulkWriter.flush();
+  await bulkWriter.close();
+
+  console.log("new early termination referral data loaded successfully");
 }
 
 loadUserFixture();
 loadClientsFixture();
-loadReferralsFixture();
+loadCompliantReportingReferralsFixture();
+loadEarlyTerminationReferralsFixture();
