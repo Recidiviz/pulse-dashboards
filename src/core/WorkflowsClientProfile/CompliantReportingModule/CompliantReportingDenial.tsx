@@ -18,10 +18,7 @@
 import {
   Dropdown,
   DropdownMenu,
-  DropdownMenuItem,
   DropdownToggle,
-  Icon,
-  IconSVG,
   palette,
   spacing,
 } from "@recidiviz/design-system";
@@ -31,6 +28,7 @@ import { darken, rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import Checkbox from "../../../components/Checkbox";
 import { OTHER_KEY } from "../../../WorkflowsStore";
 import { ClientProfileProps } from "../types";
 import { STATUS_COLORS, useStatusColors } from "./common";
@@ -50,19 +48,19 @@ const Wrapper = styled.div`
   flex: 1 1 auto;
 `;
 
-const OtherLabel = styled.label`
-  color: ${STATUS_COLORS.ineligible.text};
+const OtherInputWrapper = styled.div`
   display: block;
-  margin-top: ${rem(spacing.sm)};
+  margin: ${rem(spacing.sm)} 2.5rem 2rem;
 `;
 
-const OtherInput = styled.input.attrs({ type: "text" })`
-  background: transparent;
-  border: 1px solid ${palette.slate30};
+const OtherInput = styled.textarea.attrs({ type: "text" })`
+  background: ${palette.marble3};
   border-radius: ${rem(4)};
+  border: 2px solid transparent;
   display: block;
   margin-top: ${rem(spacing.xs)};
   width: 100%;
+  min-height: 2rem;
 
   &:focus {
     border-color: ${STATUS_COLORS.ineligible.border};
@@ -74,13 +72,47 @@ export const IconPad = styled.span`
   margin-right: 8px;
 `;
 
-const Checkmark: React.FC = () => {
-  return (
-    <IconPad>
-      <Icon kind={IconSVG.Check} size={12} />
-    </IconPad>
-  );
-};
+const DropdownContainer = styled.div`
+  min-width: 21rem;
+  min-height: 21rem;
+`;
+
+const SelectReasonText = styled.div`
+  color: ${palette.slate70};
+  padding: 0.5rem 1rem;
+`;
+
+const DropdownItem = styled.div<{ first?: boolean }>`
+  color: ${(props) => (props.first ? palette.pine3 : palette.pine4)};
+  border-bottom: ${(props) =>
+    props.first ? `1px solid ${palette.slate20}` : 0};
+  padding: ${(props) => (props.first ? "1rem" : "0.25rem 1rem 0.25rem")};
+
+  &:hover {
+    background-color: ${palette.slate10};
+  }
+
+  > .Checkbox__container {
+    height: 100%;
+    width: 100%;
+    margin-bottom: 0;
+
+    > .Checkbox__label {
+      top: 0;
+    }
+
+    > .Checkbox__input:checked ~ .Checkbox__box {
+      background-color: ${palette.signal.highlight};
+      border-color: transparent;
+    }
+
+    > .Checkbox__input:checked ~ .Checkbox__box {
+      &:hover {
+        background-color: ${palette.signal.links};
+      }
+    }
+  }
+`;
 
 const StatusAwareButton = styled(DropdownToggle).attrs({
   kind: "secondary",
@@ -105,7 +137,6 @@ const StatusAwareButton = styled(DropdownToggle).attrs({
 export const CompliantReportingDenial = observer(
   ({ client }: ClientProfileProps) => {
     const colors = useStatusColors(client);
-
     if (!client.opportunities.compliantReporting) return null;
 
     const reasons = client.updates?.compliantReporting?.denial?.reasons;
@@ -116,7 +147,7 @@ export const CompliantReportingDenial = observer(
       textColor: reasons?.length ? colors.text : undefined,
     };
 
-    let buttonText = "Not currently eligible?";
+    let buttonText = "Update eligibility";
     if (reasons?.length) {
       buttonText = `${reasons[0]}${
         reasons.length > 1 ? ` + ${reasons.length - 1} more` : ""
@@ -128,39 +159,61 @@ export const CompliantReportingDenial = observer(
         <Dropdown>
           <StatusAwareButton {...buttonProps}>{buttonText}</StatusAwareButton>
           <DropdownMenu>
-            {Object.entries(REASONS_MAP).map(([code, desc]) => (
-              <DropdownMenuItem
-                key={code}
-                onClick={() => {
-                  client.setCompliantReportingDenialReasons(
-                    xor(reasons, [code]).sort()
-                  );
-                }}
-              >
-                {reasons?.includes(code) ? <Checkmark /> : null}
-                {code}: {desc}
-              </DropdownMenuItem>
-            ))}
+            <DropdownContainer>
+              <DropdownItem first>
+                <Checkbox
+                  value="eligible"
+                  checked={!reasons?.length}
+                  name="eligible"
+                  onChange={() => {
+                    if (reasons?.length) {
+                      client.setCompliantReportingDenialReasons([]);
+                    }
+                  }}
+                >
+                  Eligible
+                </Checkbox>
+              </DropdownItem>
+              <SelectReasonText>
+                Not eligible? Select reason(s):
+              </SelectReasonText>
+              {Object.entries(REASONS_MAP).map(([code, desc]) => (
+                <DropdownItem>
+                  <Checkbox
+                    value={code}
+                    checked={reasons?.includes(code) || false}
+                    name="denial reason"
+                    onChange={() => {
+                      client.setCompliantReportingDenialReasons(
+                        xor(reasons, [code]).sort()
+                      );
+                    }}
+                  >
+                    {code}: {desc}
+                  </Checkbox>
+                </DropdownItem>
+              ))}
+
+              {reasons?.includes(OTHER_KEY) && (
+                <OtherInputWrapper>
+                  <OtherInput
+                    defaultValue={
+                      client.updates?.compliantReporting?.denial?.otherReason
+                    }
+                    placeholder="Please specify a reason…"
+                    onChange={debounce(
+                      (event) =>
+                        client.setCompliantReportingDenialOtherReason(
+                          event.target.value
+                        ),
+                      500
+                    )}
+                  />
+                </OtherInputWrapper>
+              )}
+            </DropdownContainer>
           </DropdownMenu>
         </Dropdown>
-        {reasons?.includes(OTHER_KEY) && (
-          <OtherLabel>
-            Other ineligibility reason:
-            <OtherInput
-              defaultValue={
-                client.updates?.compliantReporting?.denial?.otherReason
-              }
-              placeholder="Please specify …"
-              onChange={debounce(
-                (event) =>
-                  client.setCompliantReportingDenialOtherReason(
-                    event.target.value
-                  ),
-                500
-              )}
-            />
-          </OtherLabel>
-        )}
       </Wrapper>
     );
   }
