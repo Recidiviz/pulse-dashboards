@@ -84,6 +84,8 @@ type OpportunityMapping = Partial<Record<OpportunityType, Opportunity>>;
 export class Client {
   rootStore: RootStore;
 
+  recordId: string;
+
   id: string;
 
   pseudonymizedId: string;
@@ -155,6 +157,7 @@ export class Client {
 
     this.rootStore = rootStore;
 
+    this.recordId = record.recordId;
     this.id = record.personExternalId;
     this.pseudonymizedId = record.pseudonymizedId;
     this.stateCode = record.stateCode;
@@ -224,7 +227,7 @@ export class Client {
     );
 
     this.fetchedCompliantReportingReferral = observableSubscription((handler) =>
-      subscribeToCompliantReportingReferral(this.id, (result) => {
+      subscribeToCompliantReportingReferral(this.recordId, (result) => {
         if (result) handler(result);
       })
     );

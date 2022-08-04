@@ -51,6 +51,7 @@ export const mockDirector: CombinedUserRecord = {
 };
 
 export const ineligibleClient: ClientRecord = {
+  recordId: "us_xx_100",
   personName: {
     givenNames: "TONYE",
     middleName: "BARBY",
@@ -74,6 +75,7 @@ export const ineligibleClient: ClientRecord = {
 };
 
 export const eligibleClient: ClientRecord = {
+  recordId: "us_xx_101",
   personName: { givenNames: "LINET", surname: "HANSEN" },
   personExternalId: "101",
   pseudonymizedId: "p101",
@@ -89,6 +91,7 @@ export const eligibleClient: ClientRecord = {
   specialConditionsFlag: "current",
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
   compliantReportingEligible: {
+    stateCode: "US_XX",
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 0,
     eligibleLevelStart: dateToTimestamp("2019-12-20"),

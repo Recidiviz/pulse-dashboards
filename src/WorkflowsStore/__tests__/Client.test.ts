@@ -23,14 +23,20 @@ import {
   trackSetOpportunityStatus,
   trackSurfacedInList,
 } from "../../analytics";
+import { transform } from "../../core/Paperwork/US_TN/Transformer";
 import {
   subscribeToClientUpdates,
+  subscribeToCompliantReportingReferral,
   updateCompliantReportingCompleted,
   updateCompliantReportingDenial,
 } from "../../firestore";
 import { RootStore } from "../../RootStore";
 import { eligibleClient, mockOfficer } from "../__fixtures__";
 import { Client } from "../Client";
+import {
+  CompliantReportingReferralRecord,
+  TransformedCompliantReportingReferral,
+} from "../CompliantReportingReferralRecord";
 import { dateToTimestamp } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 
@@ -38,7 +44,12 @@ let testObserver: IDisposer;
 
 jest.mock("../../analytics");
 jest.mock("../../firestore");
+jest.mock("../../core/Paperwork/US_TN/Transformer");
 
+const mockTransform = transform as jest.MockedFunction<typeof transform>;
+const mockSubscribeToCompliantReportingReferral = subscribeToCompliantReportingReferral as jest.MockedFunction<
+  typeof subscribeToCompliantReportingReferral
+>;
 const mockSubscribeToClientUpdates = subscribeToClientUpdates as jest.MockedFunction<
   typeof subscribeToClientUpdates
 >;
@@ -67,6 +78,33 @@ afterEach(() => {
   if (testObserver) {
     testObserver();
   }
+});
+
+test("fetch CompliantReportingReferral uses recordId", async () => {
+  const record = { poFirstName: "Bob" } as CompliantReportingReferralRecord;
+  mockTransform.mockImplementation(
+    (_: Client, data: CompliantReportingReferralRecord) => {
+      return (data as unknown) as Partial<TransformedCompliantReportingReferral>;
+    }
+  );
+
+  mockSubscribeToCompliantReportingReferral.mockImplementation(
+    (recordId, handler) => {
+      expect(recordId).toBe(client.recordId);
+      handler(record);
+      return jest.fn();
+    }
+  );
+
+  testObserver = keepAlive(
+    computed(() => [client.prefilledCompliantReferralForm])
+  );
+
+  await when(
+    () => client.prefilledCompliantReferralForm.poFirstName !== undefined
+  );
+
+  expect(mockSubscribeToCompliantReportingReferral).toHaveBeenCalled();
 });
 
 test("fetch client updates on demand", async () => {

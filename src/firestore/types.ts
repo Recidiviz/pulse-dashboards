@@ -94,6 +94,7 @@ export type SpecialConditionCode = {
  * A nested object of all client-level data from the Recidiviz data platform
  */
 export type ClientRecord = {
+  recordId: string;
   personExternalId: string;
   pseudonymizedId: string;
   stateCode: string;
@@ -131,6 +132,7 @@ export type CompliantReportingEligibleRecord = {
    * In practice this field should not be optional once it is supported by ETL,
    * but for backwards compatibility it is for now
    */
+  stateCode: string;
   remainingCriteriaNeeded?: number;
   eligibleLevelStart: Timestamp | string;
   currentOffenses: string[];

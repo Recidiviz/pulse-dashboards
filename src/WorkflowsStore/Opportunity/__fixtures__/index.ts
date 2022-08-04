@@ -27,6 +27,7 @@ export const compliantReportingEligibleClientRecord: RequireKeys<
   ClientRecord,
   "compliantReportingEligible"
 > = {
+  recordId: "us_xx_cr-eligible-1",
   personName: { givenNames: "Test", surname: "Name" },
   personExternalId: "cr-eligible-1",
   pseudonymizedId: "pseudo-cr-eligible-1",
@@ -40,6 +41,7 @@ export const compliantReportingEligibleClientRecord: RequireKeys<
   lastSpecialConditionsNote: "2022-03-15",
   specialConditions: [],
   compliantReportingEligible: {
+    stateCode: "US_XX",
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 0,
     mostRecentArrestCheck: dateToTimestamp("2022-05-28"),
@@ -60,6 +62,7 @@ export const compliantReportingAlmostEligibleClientRecord: RequireKeys<
   ClientRecord,
   "compliantReportingEligible"
 > = {
+  recordId: "us_xx_cr-almost-eligible-1",
   personName: { givenNames: "Test", surname: "Name" },
   personExternalId: "cr-almost-eligible-1",
   pseudonymizedId: "pseudo-cr-almost-eligible-1",
@@ -73,6 +76,7 @@ export const compliantReportingAlmostEligibleClientRecord: RequireKeys<
   lastSpecialConditionsNote: "2022-03-15",
   specialConditions: [],
   compliantReportingEligible: {
+    stateCode: "US_XX",
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 1,
     mostRecentArrestCheck: dateToTimestamp("2022-05-28"),
@@ -101,6 +105,7 @@ export const earlyTerminationEligibleClientRecord: RequireKeys<
   ClientRecord,
   "earlyTerminationEligible"
 > = {
+  recordId: "us_nd_110",
   personName: {
     givenNames: "JAMIE",
     surname: "JONES",

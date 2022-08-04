@@ -209,7 +209,7 @@ export async function getClient(
   clientId: string
 ): Promise<ClientRecord | undefined> {
   // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
-  const result = await getDocs(
+  const results = await getDocs(
     query(
       collections.clients,
       where("pseudonymizedId", "==", clientId),
@@ -217,7 +217,8 @@ export async function getClient(
     )
   );
 
-  return result.docs[0]?.data();
+  const result = results.docs[0];
+  if (result.exists()) return { ...result.data(), recordId: result.id };
 }
 
 /**
@@ -282,7 +283,7 @@ export function subscribeToCaseloads(
   return onSnapshot(getCaseloadQuery(), (results) => {
     const docs: ClientRecord[] = [];
     results.forEach((result) => {
-      docs.push(result.data());
+      docs.push({ ...result.data(), recordId: result.id });
     });
     handleResults(docs);
   });
@@ -312,11 +313,11 @@ export function subscribeToEligibleCount(
 }
 
 export function subscribeToCompliantReportingReferral(
-  clientId: string,
+  recordId: string,
   handleResults: (results: CompliantReportingReferralRecord | undefined) => void
 ): Unsubscribe {
   return onSnapshot(
-    doc(collections.compliantReportingReferrals, clientId),
+    doc(collections.compliantReportingReferrals, recordId),
     (result) => {
       handleResults(result.data());
     }
