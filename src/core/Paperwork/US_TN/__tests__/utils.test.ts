@@ -35,7 +35,10 @@
 import { IDisposer } from "mobx-utils";
 
 import { trackSetOpportunityStatus } from "../../../../analytics";
-import { subscribeToClientUpdates } from "../../../../firestore";
+import {
+  subscribeToClientUpdates,
+  subscribeToClientUpdatesV2,
+} from "../../../../firestore";
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../../WorkflowsStore";
 import { eligibleClient } from "../../../../WorkflowsStore/__fixtures__";
@@ -49,6 +52,9 @@ jest.mock("../../../../firestore");
 const mockSubscribeToClientUpdates = subscribeToClientUpdates as jest.MockedFunction<
   typeof subscribeToClientUpdates
 >;
+const mockSubscribeToClientUpdatesV2 = subscribeToClientUpdatesV2 as jest.MockedFunction<
+  typeof subscribeToClientUpdatesV2
+>;
 
 let client: Client;
 let rootStore: RootStore;
@@ -56,6 +62,11 @@ let rootStore: RootStore;
 beforeEach(() => {
   rootStore = new RootStore();
   client = new Client(eligibleClient, rootStore);
+  mockSubscribeToClientUpdates.mockImplementation((clientId, handler) => {
+    expect(clientId).toBe(client.id);
+    handler({});
+    return jest.fn();
+  });
 });
 
 afterEach(() => {
@@ -68,8 +79,8 @@ afterEach(() => {
 });
 
 test("track start of progress on pending review", async () => {
-  mockSubscribeToClientUpdates.mockImplementation((clientId, handler) => {
-    expect(clientId).toBe(client.id);
+  mockSubscribeToClientUpdatesV2.mockImplementation((clientId, handler) => {
+    expect(clientId).toBe(client.recordId);
     handler({});
     return jest.fn();
   });
@@ -84,8 +95,8 @@ test("track start of progress on pending review", async () => {
 });
 
 test("form updates should not track status change if it's already set", async () => {
-  mockSubscribeToClientUpdates.mockImplementation((clientId, handler) => {
-    expect(clientId).toBe(client.id);
+  mockSubscribeToClientUpdatesV2.mockImplementation((clientId, handler) => {
+    expect(clientId).toBe(client.recordId);
     handler({ compliantReporting: {} });
     return jest.fn();
   });

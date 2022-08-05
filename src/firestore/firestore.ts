@@ -26,6 +26,8 @@ import {
   connectFirestoreEmulator,
   deleteField,
   doc,
+  DocumentReference,
+  DocumentSnapshot,
   getDoc,
   getDocs,
   getFirestore,
@@ -110,6 +112,7 @@ const collectionNames = {
   userUpdates: "userUpdates",
   clients: "clients",
   clientUpdates: "clientUpdates",
+  clientUpdatesV2: "clientUpdatesV2",
   compliantReportingReferrals: "compliantReportingReferrals",
   earlyTerminationReferrals: "earlyTerminationReferrals",
   featureVariants: "featureVariants",
@@ -137,6 +140,10 @@ const collections = {
   clientUpdates: collection(
     db,
     collectionNames.clientUpdates
+  ) as CollectionReference<ClientUpdateRecord>,
+  clientUpdatesV2: collection(
+    db,
+    collectionNames.clientUpdatesV2
   ) as CollectionReference<ClientUpdateRecord>,
   compliantReportingReferrals: collection(
     db,
@@ -229,9 +236,26 @@ export function subscribeToClientUpdates(
   clientId: string,
   handleResults: (results?: ClientUpdateRecord) => void
 ): Unsubscribe {
-  return onSnapshot(doc(collections.clientUpdates, clientId), (result) => {
-    handleResults(result.data({ serverTimestamps: "estimate" }));
-  });
+  return onSnapshot(
+    doc(collections.clientUpdates, clientId),
+    (result: DocumentSnapshot) =>
+      handleResults(result.data({ serverTimestamps: "estimate" }))
+  );
+}
+
+/**
+ * @param handleResults will be called whenever data changes
+ * @returns a callable unsubscribe handle
+ */
+export function subscribeToClientUpdatesV2(
+  recordId: string,
+  handleResults: (results?: ClientUpdateRecord) => void
+): Unsubscribe {
+  return onSnapshot(
+    doc(collections.clientUpdatesV2, recordId),
+    (result: DocumentSnapshot) =>
+      handleResults(result.data({ serverTimestamps: "estimate" }))
+  );
 }
 
 /**
@@ -336,15 +360,44 @@ export function subscribeToEarlyTerminationReferral(
   );
 }
 
-export const updateCompliantReportingDraft = function (
+// TODO(#2108): Clean up requests to `clientUpdates` after fully migrating to `clientUpdatesV2`
+const getClientUpdatesV2DocRef = async function (
+  clientId: string,
+  recordId: string
+): Promise<{
+  docRef: DocumentReference;
+  oldDocument: ClientUpdateRecord | undefined;
+}> {
+  let oldDocument;
+  const docRef = doc(collections.clientUpdatesV2, recordId);
+  const newDocument = await getDoc(docRef);
+
+  if (!newDocument.exists()) {
+    // Get old document to merge with new updates
+    oldDocument = (
+      await getDoc(doc(collections.clientUpdates, clientId))
+    ).data();
+  }
+
+  return { docRef, oldDocument };
+};
+
+export const updateCompliantReportingDraft = async function (
   updatedBy: string,
   clientId: string,
+  recordId: string,
   data: FormFieldData
 ): Promise<void> {
+  const { docRef, oldDocument } = await getClientUpdatesV2DocRef(
+    clientId,
+    recordId
+  );
+
   return setDoc(
-    doc(collections.clientUpdates, clientId),
+    docRef,
     {
       compliantReporting: {
+        ...(oldDocument?.compliantReporting ?? {}),
         referralForm: {
           updated: { by: updatedBy, date: serverTimestamp() },
           data,
@@ -355,9 +408,10 @@ export const updateCompliantReportingDraft = function (
   );
 };
 
-export function updateCompliantReportingDenial(
+export async function updateCompliantReportingDenial(
   userEmail: string,
   clientId: string,
+  recordId: string,
   fieldUpdates: {
     reasons?: string[];
     otherReason?: string;
@@ -371,8 +425,14 @@ export function updateCompliantReportingDenial(
 
   const fieldsToDelete = mapValues(pickBy(deleteFields), () => deleteField());
 
+  const { docRef, oldDocument } = await getClientUpdatesV2DocRef(
+    clientId,
+    recordId
+  );
+
   const changes: PartialWithFieldValue<ClientUpdateRecord> = {
     compliantReporting: {
+      ...(oldDocument?.compliantReporting ?? {}),
       denial: {
         ...filteredUpdates,
         ...fieldsToDelete,
@@ -384,20 +444,26 @@ export function updateCompliantReportingDenial(
     },
   };
 
-  return setDoc(doc(collections.clientUpdates, clientId), changes, {
+  return setDoc(docRef, changes, {
     merge: true,
   });
 }
 
-export function updateCompliantReportingCompleted(
+export async function updateCompliantReportingCompleted(
   userEmail: string,
   clientId: string,
+  recordId: string,
   clearCompletion = false
 ): Promise<void> {
+  const { docRef, oldDocument } = await getClientUpdatesV2DocRef(
+    clientId,
+    recordId
+  );
   return setDoc(
-    doc(collections.clientUpdates, clientId),
+    docRef,
     {
       compliantReporting: {
+        ...(oldDocument?.compliantReporting ?? {}),
         completed: clearCompletion
           ? deleteField()
           : {

@@ -26,6 +26,7 @@ import {
 import { transform } from "../../core/Paperwork/US_TN/Transformer";
 import {
   subscribeToClientUpdates,
+  subscribeToClientUpdatesV2,
   subscribeToCompliantReportingReferral,
   updateCompliantReportingCompleted,
   updateCompliantReportingDenial,
@@ -53,6 +54,9 @@ const mockSubscribeToCompliantReportingReferral = subscribeToCompliantReportingR
 const mockSubscribeToClientUpdates = subscribeToClientUpdates as jest.MockedFunction<
   typeof subscribeToClientUpdates
 >;
+const mockSubscribeToClientUpdatesV2 = subscribeToClientUpdatesV2 as jest.MockedFunction<
+  typeof subscribeToClientUpdates
+>;
 const mockUpdateCompliantReportingDenial = updateCompliantReportingDenial as jest.MockedFunction<
   typeof updateCompliantReportingDenial
 >;
@@ -68,6 +72,11 @@ beforeEach(() => {
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
   client = new Client(eligibleClient, rootStore);
+  mockSubscribeToClientUpdatesV2.mockImplementation((recordId, handler) => {
+    expect(recordId).toBe(client.recordId);
+    handler({});
+    return jest.fn();
+  });
 });
 
 afterEach(() => {
@@ -107,7 +116,42 @@ test("fetch CompliantReportingReferral uses recordId", async () => {
   expect(mockSubscribeToCompliantReportingReferral).toHaveBeenCalled();
 });
 
+test("subscribe to clientUpdatesV2 if it is not empty", async () => {
+  mockSubscribeToClientUpdatesV2.mockImplementation((recordId, handler) => {
+    expect(recordId).toBe(client.recordId);
+    handler({ compliantReporting: {} });
+    return jest.fn();
+  });
+  // simulate a client profile page observing updates
+  testObserver = keepAlive(computed(() => [client.updates]));
+
+  expect(mockSubscribeToClientUpdates).not.toHaveBeenCalled();
+  expect(mockSubscribeToClientUpdatesV2).toHaveBeenCalled();
+
+  await when(() => client.updates !== undefined);
+});
+
+test("subscribe to clientUpdates if clientUpdatesV2 is empty", async () => {
+  mockSubscribeToClientUpdates.mockImplementation((clientId, handler) => {
+    expect(clientId).toBe(client.id);
+    handler({ compliantReporting: {} });
+    return jest.fn();
+  });
+  // simulate a client profile page observing updates
+  testObserver = keepAlive(computed(() => [client.updates]));
+
+  expect(mockSubscribeToClientUpdates).toHaveBeenCalled();
+  expect(mockSubscribeToClientUpdatesV2).toHaveBeenCalled();
+
+  await when(() => client.updates !== undefined);
+});
+
 test("fetch client updates on demand", async () => {
+  mockSubscribeToClientUpdatesV2.mockImplementation((recordId, handler) => {
+    expect(recordId).toBe(client.recordId);
+    handler({});
+    return jest.fn();
+  });
   mockSubscribeToClientUpdates.mockImplementation((clientId, handler) => {
     expect(clientId).toBe(client.id);
     handler({});
@@ -131,6 +175,7 @@ test("set compliant reporting ineligible", async () => {
   expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
     mockOfficer.info.email,
     client.id,
+    client.recordId,
     { reasons },
     { otherReason: true }
   );
@@ -138,6 +183,7 @@ test("set compliant reporting ineligible", async () => {
   expect(mockUpdateCompliantReportingCompleted).toHaveBeenCalledWith(
     mockOfficer.info.email,
     client.id,
+    client.recordId,
     true
   );
   expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
@@ -157,6 +203,7 @@ test("ineligible for other reason", () => {
   expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
     mockOfficer.info.email,
     client.id,
+    client.recordId,
     { reasons },
     undefined
   );
@@ -168,6 +215,7 @@ test("ineligible for other reason", () => {
   expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
     mockOfficer.info.email,
     client.id,
+    client.recordId,
     { reasons: newReasons },
     // this will delete the related field if reasons do not include "other"
     { otherReason: true }
@@ -183,6 +231,7 @@ test("set compliant reporting other reason", () => {
   expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
     mockOfficer.info.email,
     client.id,
+    client.recordId,
     { otherReason }
   );
 });
@@ -220,7 +269,8 @@ test("mark client as completed when printing form", () => {
 
   expect(mockUpdateCompliantReportingCompleted).toHaveBeenCalledWith(
     mockOfficer.info.email,
-    client.id
+    client.id,
+    client.recordId
   );
   expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
     clientId: client.pseudonymizedId,
@@ -232,17 +282,19 @@ test("mark client as completed when printing form", () => {
 test("don't record a completion if user is ineligible", async () => {
   rootStore.workflowsStore.user = mockOfficer;
 
-  mockSubscribeToClientUpdates.mockImplementation((clientId, handleResults) => {
-    handleResults({
-      compliantReporting: {
-        denial: {
-          reasons: ["test"],
-          updated: { by: "test", date: dateToTimestamp("2022-02-01") },
+  mockSubscribeToClientUpdates.mockImplementation(
+    (_clientId, handleResults) => {
+      handleResults({
+        compliantReporting: {
+          denial: {
+            reasons: ["test"],
+            updated: { by: "test", date: dateToTimestamp("2022-02-01") },
+          },
         },
-      },
-    });
-    return jest.fn();
-  });
+      });
+      return jest.fn();
+    }
+  );
 
   // ensure the update data has been hydrated
   await when(() => client.updates !== undefined);
@@ -256,11 +308,13 @@ test("don't record a completion if user is ineligible", async () => {
 test("compliant reporting review status", async () => {
   let sendUpdate: any;
 
-  mockSubscribeToClientUpdates.mockImplementation((clientId, handleResults) => {
-    // get a reference to the sync function so we can call it repeatedly
-    sendUpdate = handleResults;
-    return jest.fn();
-  });
+  mockSubscribeToClientUpdates.mockImplementation(
+    (_clientId, handleResults) => {
+      // get a reference to the sync function so we can call it repeatedly
+      sendUpdate = handleResults;
+      return jest.fn();
+    }
+  );
 
   // simulate a UI that is actually displaying client data, to trigger subscriptions
   testObserver = keepAlive(

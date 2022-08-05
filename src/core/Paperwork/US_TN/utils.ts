@@ -29,7 +29,12 @@ export async function updateFieldData(
   client: Client,
   fieldData: FormFieldData
 ): Promise<void> {
-  updateCompliantReportingDraft(updatedBy, client.id, fieldData);
+  updateCompliantReportingDraft(
+    updatedBy,
+    client.id,
+    client.recordId,
+    fieldData
+  );
 
   await when(() => client.updates !== undefined);
 

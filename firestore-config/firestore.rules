@@ -19,6 +19,10 @@ service cloud.firestore {
       allow write: if allowedStateCode()
     }
 
+    match /clientUpdatesV2/{document=**} {
+      allow write: if allowedStateCode()
+    }
+
     match /DEMO_userUpdates/{document=**} {
       allow write: if allowedStateCode()
     }

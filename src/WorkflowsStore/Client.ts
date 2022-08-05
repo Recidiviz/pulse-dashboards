@@ -45,6 +45,7 @@ import {
   SpecialConditionCode,
   SpecialConditionsStatus,
   subscribeToClientUpdates,
+  subscribeToClientUpdatesV2,
   subscribeToCompliantReportingReferral,
   subscribeToEarlyTerminationReferral,
   updateCompliantReportingCompleted,
@@ -134,6 +135,8 @@ export class Client {
 
   private fetchedUpdates: SubscriptionValue<ClientUpdateRecord>;
 
+  private fetchedUpdatesV2: SubscriptionValue<ClientUpdateRecord>;
+
   formIsPrinting = false;
 
   compliantReportingReferralDraftData: Partial<TransformedCompliantReportingReferral>;
@@ -211,8 +214,8 @@ export class Client {
     );
 
     // connect to additional data sources for this client
-    this.fetchedUpdates = observableSubscription((handler) =>
-      subscribeToClientUpdates(this.id, (r) => {
+    this.fetchedUpdatesV2 = observableSubscription((handler) => {
+      return subscribeToClientUpdatesV2(this.recordId, (r) => {
         if (r) {
           runInAction(() => {
             handler(r);
@@ -223,8 +226,23 @@ export class Client {
           // empty object will replace undefined, signifying completed fetch
           handler({});
         }
-      })
-    );
+      });
+    });
+
+    this.fetchedUpdates = observableSubscription((handler) => {
+      return subscribeToClientUpdates(this.id, (r) => {
+        if (r) {
+          runInAction(() => {
+            handler(r);
+            const data = r.compliantReporting?.referralForm?.data ?? {};
+            set(this.compliantReportingReferralDraftData, data);
+          });
+        } else {
+          // empty object will replace undefined, signifying completed fetch
+          handler({});
+        }
+      });
+    });
 
     this.fetchedCompliantReportingReferral = observableSubscription((handler) =>
       subscribeToCompliantReportingReferral(this.recordId, (result) => {
@@ -275,6 +293,14 @@ export class Client {
   }
 
   get updates(): ClientUpdateRecord | undefined {
+    // TODO(#2108): Clean up requests to `clientUpdates` after fully migrating to `clientUpdatesV2`
+    if (
+      this.fetchedUpdatesV2.current() &&
+      Object.keys(this.fetchedUpdatesV2.current() as Record<string, any>)
+        .length > 0
+    ) {
+      return this.fetchedUpdatesV2.current();
+    }
     return this.fetchedUpdates.current();
   }
 
@@ -311,15 +337,20 @@ export class Client {
         ? undefined
         : { otherReason: true };
 
-      await Promise.all([
-        updateCompliantReportingDenial(
-          this.currentUserEmail,
-          this.id,
-          { reasons },
-          deletions
-        ),
-        updateCompliantReportingCompleted(this.currentUserEmail, this.id, true),
-      ]);
+      await updateCompliantReportingDenial(
+        this.currentUserEmail,
+        this.id,
+        this.recordId,
+        { reasons },
+        deletions
+      );
+
+      await updateCompliantReportingCompleted(
+        this.currentUserEmail,
+        this.id,
+        this.recordId,
+        true
+      );
 
       if (reasons.length) {
         trackSetOpportunityStatus({
@@ -342,9 +373,14 @@ export class Client {
     otherReason?: string
   ): Promise<void> {
     if (this.currentUserEmail) {
-      await updateCompliantReportingDenial(this.currentUserEmail, this.id, {
-        otherReason,
-      });
+      await updateCompliantReportingDenial(
+        this.currentUserEmail,
+        this.id,
+        this.recordId,
+        {
+          otherReason,
+        }
+      );
     }
   }
 
@@ -355,7 +391,11 @@ export class Client {
   printCompliantReportingReferralForm(): void {
     if (this.currentUserEmail) {
       if (this.opportunities.compliantReporting?.reviewStatus !== "DENIED") {
-        updateCompliantReportingCompleted(this.currentUserEmail, this.id);
+        updateCompliantReportingCompleted(
+          this.currentUserEmail,
+          this.id,
+          this.recordId
+        );
         if (
           this.opportunities.compliantReporting?.reviewStatus !== "COMPLETED"
         ) {
