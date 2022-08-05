@@ -42,13 +42,6 @@ const mockSubscribeToEarlyTerminationReferral = subscribeToEarlyTerminationRefer
 function createTestUnit(
   clientRecord: typeof earlyTerminationEligibleClientRecord
 ) {
-  mockSubscribeToEarlyTerminationReferral.mockImplementation(
-    (clientId, handler) => {
-      handler(earlyTerminationReferralRecord);
-      return jest.fn();
-    }
-  );
-
   root = new RootStore();
   client = new Client(clientRecord, root);
   const maybeOpportunity = createEarlyTerminationOpportunity(
@@ -79,6 +72,12 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
+    mockSubscribeToEarlyTerminationReferral.mockImplementation(
+      (clientId, handler) => {
+        handler(earlyTerminationReferralRecord);
+        return jest.fn();
+      }
+    );
     createTestUnit(earlyTerminationEligibleClientRecord);
   });
 
@@ -108,5 +107,39 @@ describe("fully eligible", () => {
 
   test("requirements met", () => {
     expect(et.requirementsMet).toEqual([]);
+  });
+});
+
+describe("invalid opportunity record", () => {
+  test("invalid record due to missing supervision level returns undefined opportunity", () => {
+    const invalidRecord = JSON.parse(
+      JSON.stringify(earlyTerminationReferralRecord)
+    );
+    // @ts-ignore
+    invalidRecord.reasons.eligibleSupervisionLevel = {};
+    expect(
+      createEarlyTerminationOpportunity(true, invalidRecord, client)
+    ).toBeUndefined();
+  });
+
+  test("invalid record due to missing notActiveRevocationStatus returns undefined opportunity", () => {
+    const invalidRecord = JSON.parse(
+      JSON.stringify(earlyTerminationReferralRecord)
+    );
+    delete invalidRecord.reasons.notActiveRevocationStatus;
+    expect(
+      createEarlyTerminationOpportunity(true, invalidRecord, client)
+    ).toBeUndefined();
+  });
+
+  test("invalid record due to revocation_date returns undefined opportunity", () => {
+    const invalidRecord = JSON.parse(
+      JSON.stringify(earlyTerminationReferralRecord)
+    );
+    invalidRecord.reasons.notActiveRevocationStatus.revocation_date =
+      "12/25/2021";
+    expect(
+      createEarlyTerminationOpportunity(true, invalidRecord, client)
+    ).toBeUndefined();
   });
 });

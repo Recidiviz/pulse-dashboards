@@ -70,6 +70,7 @@ class EarlyTerminationOpportunity implements Opportunity {
         pastEarlyDischarge,
         eligibleSupervisionLevel,
         eligibleSupervisionType,
+        notActiveRevocationStatus,
       },
     } = this.record;
 
@@ -96,7 +97,7 @@ class EarlyTerminationOpportunity implements Opportunity {
         eligibleSupervisionType: {
           supervisionType: eligibleSupervisionType?.supervisionType,
         },
-        notActiveRevocationStatus: {},
+        notActiveRevocationStatus,
       },
     };
 
@@ -109,8 +110,44 @@ class EarlyTerminationOpportunity implements Opportunity {
    * This may be due to feature gating rather than any actual problem with the input data.
    * Don't call this in the constructor because it causes MobX to explode!
    */
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-empty-function
-  validate(): void {}
+  validate(): void {
+    const {
+      reasons: {
+        pastEarlyDischarge,
+        eligibleSupervisionLevel,
+        eligibleSupervisionType,
+        notActiveRevocationStatus,
+      },
+    } = this.transformedRecord;
+
+    if (!pastEarlyDischarge?.eligibleDate) {
+      throw new OpportunityValidationError(
+        "Missing early termination opportunity eligible date"
+      );
+    }
+
+    if (!eligibleSupervisionLevel?.supervisionLevel) {
+      throw new OpportunityValidationError(
+        "Missing early termination opportunity supervision level"
+      );
+    }
+
+    if (!eligibleSupervisionType?.supervisionType) {
+      throw new OpportunityValidationError(
+        "Missing early termination opportunity supervision type"
+      );
+    }
+
+    if (
+      !notActiveRevocationStatus ||
+      (notActiveRevocationStatus &&
+        Object.keys(notActiveRevocationStatus).length > 0)
+    ) {
+      throw new OpportunityValidationError(
+        "Early termination opportunity has revocation date"
+      );
+    }
+  }
 
   // eslint-disable-next-line class-methods-use-this
   get almostEligible(): boolean {
