@@ -19,16 +19,19 @@ import { cloneDeep } from "lodash";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
-import { ClientUpdateRecord } from "../../../firestore";
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
-import { dateToTimestamp } from "../../utils";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import {
   compliantReportingAlmostEligibleClientRecord,
   CompliantReportingAlmostEligibleCriteria,
   compliantReportingEligibleClientRecord,
 } from "../__fixtures__";
+import {
+  COMPLETED_UPDATE,
+  DENIED_UPDATE,
+  INCOMPLETE_UPDATE,
+} from "../testUtils";
 import { Opportunity } from "../types";
 import { defaultOpportunityStatuses } from "../utils";
 
@@ -36,20 +39,6 @@ let cr: Opportunity;
 let client: Client;
 let root: RootStore;
 let mockUpdates: jest.SpyInstance;
-
-const UPDATE_RECORD = {
-  by: "foo",
-  date: dateToTimestamp("2022-07-15"),
-};
-const INCOMPLETE_UPDATE: ClientUpdateRecord = { compliantReporting: {} };
-
-const DENIED_UPDATE: ClientUpdateRecord = {
-  compliantReporting: { denial: { reasons: ["ABC"], updated: UPDATE_RECORD } },
-};
-
-const COMPLETED_UPDATE: ClientUpdateRecord = {
-  compliantReporting: { completed: { update: UPDATE_RECORD } },
-};
 
 function createTestUnit(
   clientRecord: typeof compliantReportingEligibleClientRecord

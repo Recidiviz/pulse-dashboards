@@ -28,8 +28,8 @@ import {
   subscribeToClientUpdates,
   subscribeToClientUpdatesV2,
   subscribeToCompliantReportingReferral,
-  updateCompliantReportingCompleted,
   updateCompliantReportingDenial,
+  updateOpportunityCompleted,
 } from "../../firestore";
 import { RootStore } from "../../RootStore";
 import { eligibleClient, mockOfficer } from "../__fixtures__";
@@ -60,8 +60,8 @@ const mockSubscribeToClientUpdatesV2 = subscribeToClientUpdatesV2 as jest.Mocked
 const mockUpdateCompliantReportingDenial = updateCompliantReportingDenial as jest.MockedFunction<
   typeof updateCompliantReportingDenial
 >;
-const mockUpdateCompliantReportingCompleted = updateCompliantReportingCompleted as jest.MockedFunction<
-  typeof updateCompliantReportingCompleted
+const mockUpdateOpportunityCompleted = updateOpportunityCompleted as jest.MockedFunction<
+  typeof updateOpportunityCompleted
 >;
 
 let client: Client;
@@ -180,10 +180,11 @@ test("set compliant reporting ineligible", async () => {
     { otherReason: true }
   );
 
-  expect(mockUpdateCompliantReportingCompleted).toHaveBeenCalledWith(
+  expect(mockUpdateOpportunityCompleted).toHaveBeenCalledWith(
     mockOfficer.info.email,
     client.id,
     client.recordId,
+    "compliantReporting",
     true
   );
   expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
@@ -257,7 +258,7 @@ test("print client reporting form", () => {
 
   expect(client.formIsPrinting).toBe(false);
 
-  client.printCompliantReportingReferralForm();
+  client.printReferralForm("compliantReporting");
 
   expect(client.formIsPrinting).toBe(true);
 });
@@ -265,12 +266,13 @@ test("print client reporting form", () => {
 test("mark client as completed when printing form", () => {
   rootStore.workflowsStore.user = mockOfficer;
 
-  client.printCompliantReportingReferralForm();
+  client.printReferralForm("compliantReporting");
 
-  expect(mockUpdateCompliantReportingCompleted).toHaveBeenCalledWith(
+  expect(mockUpdateOpportunityCompleted).toHaveBeenCalledWith(
     mockOfficer.info.email,
     client.id,
-    client.recordId
+    client.recordId,
+    "compliantReporting"
   );
   expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
     clientId: client.pseudonymizedId,
@@ -299,9 +301,9 @@ test("don't record a completion if user is ineligible", async () => {
   // ensure the update data has been hydrated
   await when(() => client.updates !== undefined);
 
-  client.printCompliantReportingReferralForm();
+  client.printReferralForm("compliantReporting");
 
-  expect(mockUpdateCompliantReportingCompleted).not.toHaveBeenCalled();
+  expect(mockUpdateOpportunityCompleted).not.toHaveBeenCalled();
   expect(trackSetOpportunityStatus).not.toHaveBeenCalled();
 });
 

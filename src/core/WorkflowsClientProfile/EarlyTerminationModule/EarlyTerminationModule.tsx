@@ -28,36 +28,35 @@ import {
 } from "../common";
 import { CriteriaList } from "../CriteriaList";
 import { ClientProfileProps } from "../types";
-import { CompliantReportingDenial } from "./CompliantReportingDenial";
 
 const getPrintText = (client: Client) => {
   if (client.formIsPrinting) {
     return "Printing PDF...";
   }
 
-  if (client.updates?.compliantReporting?.completed) {
+  if (client.updates?.earlyTermination?.completed) {
     return "Reprint PDF";
   }
 
   return "Print PDF";
 };
 
-export const CompliantReportingModule = observer(
+export const EarlyTerminationModule = observer(
   ({ client }: ClientProfileProps) => {
-    if (!client.opportunities.compliantReporting) return null;
+    if (!client.opportunities.earlyTermination) return null;
 
     const colors = useStatusColors(client);
 
     return (
       <Wrapper {...colors}>
         <Title
-          titleText="Compliant Reporting"
+          titleText="Early Termination"
           statusMessage={
-            client.opportunities.compliantReporting?.statusMessageShort
+            client.opportunities.earlyTermination?.statusMessageShort
           }
         />
         <CriteriaList
-          opportunity={client.opportunities.compliantReporting}
+          opportunity={client.opportunities.earlyTermination}
           colors={colors}
         />
         <ActionButtons>
@@ -66,12 +65,11 @@ export const CompliantReportingModule = observer(
               kind="primary"
               shape="block"
               buttonFill={colors.buttonFill}
-              onClick={() => client.printReferralForm("compliantReporting")}
+              onClick={() => client.printReferralForm("earlyTermination")}
             >
               {getPrintText(client)}
             </PrintButton>
           </div>
-          <CompliantReportingDenial client={client} />
         </ActionButtons>
       </Wrapper>
     );

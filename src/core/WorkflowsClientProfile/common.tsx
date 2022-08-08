@@ -15,14 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans14, spacing } from "@recidiviz/design-system";
+import { Button, palette, Sans14, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem, rgba } from "polished";
+import { darken, rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import type { Client } from "../../../WorkflowsStore";
-import { ClientProfileProps } from "../types";
+import type { Client } from "../../WorkflowsStore";
 
 export const STATUS_COLORS = {
   eligible: {
@@ -76,15 +75,34 @@ export const Wrapper = styled.div<{ background: string; border: string }>`
   padding: ${rem(spacing.md)};
 `;
 
+export const ActionButtons = styled.div`
+  display: flex;
+`;
+
+export const PrintButton = styled(Button)<{ buttonFill: string }>`
+  background: ${(props) => props.buttonFill};
+  margin-right: ${rem(spacing.sm)};
+
+  &:hover,
+  &:focus {
+    background: ${(props) => darken(0.1, props.buttonFill)};
+  }
+`;
+
 const TitleText = styled(Sans14)`
   color: ${palette.pine1};
 `;
 
-export const Title = observer(({ client }: ClientProfileProps) => {
+type TitleProps = {
+  titleText: string;
+  statusMessage: string;
+};
+
+export const Title = observer(({ titleText, statusMessage }: TitleProps) => {
   return (
     <TitleText>
-      Compliant Reporting:{" "}
-      {client.opportunities.compliantReporting?.statusMessageShort}
+      {`${titleText}: `}
+      {statusMessage}
     </TitleText>
   );
 });

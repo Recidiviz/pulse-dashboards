@@ -26,6 +26,11 @@ import {
   earlyTerminationReferralRecord,
 } from "../__fixtures__";
 import { createEarlyTerminationOpportunity } from "../EarlyTerminationOpportunity";
+import {
+  COMPLETED_UPDATE,
+  DENIED_UPDATE,
+  INCOMPLETE_UPDATE,
+} from "../testUtils";
 import { Opportunity } from "../types";
 import { earlyTerminationOpportunityStatuses } from "../utils";
 
@@ -34,6 +39,7 @@ let client: Client;
 let root: RootStore;
 
 jest.mock("../../../firestore");
+let mockUpdates: jest.SpyInstance;
 
 const mockSubscribeToEarlyTerminationReferral = subscribeToEarlyTerminationReferral as jest.MockedFunction<
   typeof subscribeToEarlyTerminationReferral
@@ -62,6 +68,7 @@ beforeEach(() => {
   // this lets us spy on observables, e.g. computed getters
   configure({ safeDescriptors: false });
   tk.freeze(new Date(2022, 7, 1));
+  mockUpdates = jest.spyOn(Client.prototype, "updates", "get");
 });
 
 afterEach(() => {
@@ -83,11 +90,35 @@ describe("fully eligible", () => {
 
   test("review status", () => {
     expect(et.reviewStatus).toBe("PENDING");
+
+    mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
+    expect(et.reviewStatus).toBe("IN_PROGRESS");
+
+    mockUpdates.mockReturnValue(DENIED_UPDATE);
+    expect(et.reviewStatus).toBe("DENIED");
+
+    mockUpdates.mockReturnValue(COMPLETED_UPDATE);
+    expect(et.reviewStatus).toBe("COMPLETED");
   });
 
   test("short status message", () => {
     expect(et.statusMessageShort).toBe(
       earlyTerminationOpportunityStatuses.PENDING
+    );
+
+    mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
+    expect(et.statusMessageShort).toBe(
+      earlyTerminationOpportunityStatuses.IN_PROGRESS
+    );
+
+    mockUpdates.mockReturnValue(DENIED_UPDATE);
+    expect(et.statusMessageShort).toBe(
+      earlyTerminationOpportunityStatuses.DENIED
+    );
+
+    mockUpdates.mockReturnValue(COMPLETED_UPDATE);
+    expect(et.statusMessageShort).toBe(
+      earlyTerminationOpportunityStatuses.COMPLETED
     );
   });
 

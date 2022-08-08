@@ -154,17 +154,23 @@ class EarlyTerminationOpportunity implements Opportunity {
     return false;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get rank(): number {
     return rankByReviewStatus(this);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get reviewStatus(): OpportunityStatus {
-    // TODO #2139 Update status logic once early termination is added to the client update record
-    const status: OpportunityStatus = "PENDING";
+    const updates = this.client.updates?.earlyTermination;
+    if ((updates?.denial?.reasons?.length || 0) !== 0) {
+      return "DENIED";
+    }
 
-    return status;
+    if (updates) {
+      if (updates.completed) {
+        return "COMPLETED";
+      }
+      return "IN_PROGRESS";
+    }
+    return "PENDING";
   }
 
   get statusMessageShort(): string {

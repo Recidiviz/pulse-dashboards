@@ -30,8 +30,8 @@ import styled from "styled-components/macro";
 
 import Checkbox from "../../../components/Checkbox";
 import { OTHER_KEY } from "../../../WorkflowsStore";
+import { STATUS_COLORS, useStatusColors } from "../common";
 import { ClientProfileProps } from "../types";
-import { STATUS_COLORS, useStatusColors } from "./common";
 
 const REASONS_MAP = {
   DECF: "No effort to pay fine and costs",

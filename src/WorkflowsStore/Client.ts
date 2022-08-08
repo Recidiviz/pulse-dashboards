@@ -48,8 +48,8 @@ import {
   subscribeToClientUpdatesV2,
   subscribeToCompliantReportingReferral,
   subscribeToEarlyTerminationReferral,
-  updateCompliantReportingCompleted,
   updateCompliantReportingDenial,
+  updateOpportunityCompleted,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
 import {
@@ -153,7 +153,7 @@ export class Client {
       formIsPrinting: true,
       opportunitiesAlmostEligible: true,
       opportunitiesEligible: true,
-      printCompliantReportingReferralForm: true,
+      printReferralForm: true,
       setCompliantReportingReferralDataField: action,
       setFormIsPrinting: true,
     });
@@ -345,10 +345,11 @@ export class Client {
         deletions
       );
 
-      await updateCompliantReportingCompleted(
+      await updateOpportunityCompleted(
         this.currentUserEmail,
         this.id,
         this.recordId,
+        "compliantReporting",
         true
       );
 
@@ -388,21 +389,20 @@ export class Client {
     this.formIsPrinting = value;
   }
 
-  printCompliantReportingReferralForm(): void {
+  printReferralForm(opportunityType: OpportunityType): void {
     if (this.currentUserEmail) {
-      if (this.opportunities.compliantReporting?.reviewStatus !== "DENIED") {
-        updateCompliantReportingCompleted(
+      if (this.opportunities[opportunityType]?.reviewStatus !== "DENIED") {
+        updateOpportunityCompleted(
           this.currentUserEmail,
           this.id,
-          this.recordId
+          this.recordId,
+          opportunityType
         );
-        if (
-          this.opportunities.compliantReporting?.reviewStatus !== "COMPLETED"
-        ) {
+        if (this.opportunities[opportunityType]?.reviewStatus !== "COMPLETED") {
           trackSetOpportunityStatus({
             clientId: this.pseudonymizedId,
             status: "COMPLETED",
-            opportunityType: "compliantReporting",
+            opportunityType,
           });
         }
       }
@@ -410,7 +410,7 @@ export class Client {
       this.setFormIsPrinting(true);
       trackReferralFormPrinted({
         clientId: this.pseudonymizedId,
-        opportunityType: "compliantReporting",
+        opportunityType,
       });
     }
   }

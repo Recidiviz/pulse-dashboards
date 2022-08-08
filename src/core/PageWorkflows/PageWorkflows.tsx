@@ -31,6 +31,7 @@ import {
   CompliantReportingClientProfile,
   FullProfile,
 } from "../WorkflowsClientProfile";
+import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTerminationClientProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import { WorkflowsFormLayout } from "../WorkflowsLayouts";
 import WorkflowsRoute from "../WorkflowsRoute";
@@ -109,6 +110,15 @@ const PageWorkflows: React.FC = () => {
               </>
             }
             formContents={null}
+          />
+        </WorkflowsRoute>
+        <WorkflowsRoute
+          exact
+          path={workflowsRoute({ name: "earlyTermination", client: true })}
+        >
+          <WorkflowsFormLayout
+            sidebarContents={<EarlyTerminationClientProfile />}
+            formContents={<div />}
           />
         </WorkflowsRoute>
         <WorkflowsRoute

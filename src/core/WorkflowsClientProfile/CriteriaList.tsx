@@ -29,7 +29,7 @@ import { rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { Opportunity } from "../../../WorkflowsStore";
+import { Opportunity } from "../../WorkflowsStore";
 import { StatusPalette } from "./common";
 import { OpportunityRecommendedLanguageModal } from "./OpportunityRecommendedLanguageModal";
 

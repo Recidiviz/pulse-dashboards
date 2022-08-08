@@ -25,10 +25,10 @@ import styled from "styled-components/macro";
 import formPreviewSrc from "../../../assets/static/images/compliantReportingFormPreview.png";
 import { IconGoSvg } from "../../../components/Icons";
 import { workflowsUrl } from "../../views";
+import { StatusPalette, Title, useStatusColors, Wrapper } from "../common";
+import { CriteriaList } from "../CriteriaList";
 import { ClientProfileProps } from "../types";
-import { StatusPalette, Title, useStatusColors, Wrapper } from "./common";
 import { CompliantReportingDenial } from "./CompliantReportingDenial";
-import { CriteriaList } from "./CriteriaList";
 
 const PreviewWrapper = styled(Wrapper)`
   border-width: 1px;
@@ -82,7 +82,12 @@ export const CompliantReportingPreview = observer(
       <PreviewWrapper {...colors}>
         <div>
           <Sans16>
-            <Title client={client} />
+            <Title
+              titleText="Compliant Reporting"
+              statusMessage={
+                client.opportunities.compliantReporting?.statusMessageShort
+              }
+            />
           </Sans16>
           <CriteriaList
             opportunity={client.opportunities.compliantReporting}

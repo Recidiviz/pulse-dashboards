@@ -449,10 +449,11 @@ export async function updateCompliantReportingDenial(
   });
 }
 
-export async function updateCompliantReportingCompleted(
+export async function updateOpportunityCompleted(
   userEmail: string,
   clientId: string,
   recordId: string,
+  opportunityType: OpportunityType,
   clearCompletion = false
 ): Promise<void> {
   const { docRef, oldDocument } = await getClientUpdatesV2DocRef(
@@ -462,8 +463,8 @@ export async function updateCompliantReportingCompleted(
   return setDoc(
     docRef,
     {
-      compliantReporting: {
-        ...(oldDocument?.compliantReporting ?? {}),
+      [opportunityType]: {
+        ...(oldDocument?.[opportunityType] ?? {}),
         completed: clearCompletion
           ? deleteField()
           : {

@@ -17,6 +17,7 @@
 import type { Timestamp } from "firebase/firestore";
 
 import { TransformedCompliantReportingReferral } from "../WorkflowsStore";
+import { TransformedEarlyTerminationReferral } from "../WorkflowsStore/Opportunity/EarlyTerminationReferralRecord";
 
 /**
  * Staff-level data exported from the Recidiviz data platform.
@@ -158,6 +159,7 @@ export type CompliantReportingEligibleRecord = {
  */
 export type ClientUpdateRecord = {
   compliantReporting?: CompliantReportingUpdateRecord;
+  earlyTermination?: EarlyTerminationUpdateRecord;
 };
 
 type UpdateLog = {
@@ -165,7 +167,7 @@ type UpdateLog = {
   by: string;
 };
 
-export type CompliantReportingDenial = {
+export type Denial = {
   reasons: string[];
   otherReason?: string;
   updated: UpdateLog;
@@ -176,12 +178,19 @@ export type CompliantReportingReferralForm = {
   data?: Partial<TransformedCompliantReportingReferral>;
 };
 
-export type CompliantReportingUpdateRecord = {
-  denial?: CompliantReportingDenial;
-  referralForm?: CompliantReportingReferralForm;
+export type EarlyTerminationReferralForm = {
+  updated: UpdateLog;
+  data?: Partial<TransformedEarlyTerminationReferral>;
+};
+
+type OpportunityUpdateRecord<ReferralForm> = {
+  denial?: Denial;
+  referralForm?: ReferralForm;
   completed?: {
     update: UpdateLog;
   };
 };
+export type EarlyTerminationUpdateRecord = OpportunityUpdateRecord<EarlyTerminationReferralForm>;
+export type CompliantReportingUpdateRecord = OpportunityUpdateRecord<CompliantReportingReferralForm>;
 
 export type FormFieldData = Record<string, boolean | string | string[]>;

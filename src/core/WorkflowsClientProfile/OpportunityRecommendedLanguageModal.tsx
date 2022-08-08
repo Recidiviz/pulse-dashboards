@@ -32,7 +32,7 @@ import React, { useState } from "react";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
 
-import { Opportunity } from "../../../WorkflowsStore";
+import { Opportunity } from "../../WorkflowsStore";
 
 const StyledModal = styled(Modal)`
   .ReactModal__Content {
