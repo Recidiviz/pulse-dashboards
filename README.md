@@ -102,6 +102,7 @@ Expected frontend environment variables include:
 - `REACT_APP_SENTRY_DSN` - The public DSN URL to use for sending Sentry errors, can be found on the Sentry project page.
 - `REACT_APP_DEPLOY_ENV` - The current deploy environment: `production`, `staging`, or `dev`
 - `REACT_APP_CASE_TRIAGE_URL` - URL to the Case Triage app for the caseload redirection
+- `REACT_APP_NEW_BACKEND_API_URL` - URL of the new Pathways backend
 
 Expected backend environment variables include:
 
@@ -166,9 +167,33 @@ A yarn script is available for starting the development servers. The React front
 
 This will start both the API Express server on port `3001` and the Redis server on port `6380`. You could start the frontend server separately using `yarn spa`.
 
+API calls to the new Pathways backend are made to the staging version of the app.
+
 The development servers will remain active until you either close your terminal or shut down the entire setup at once using `control+c`.
 
 **Note:** The development servers do not need to be restarted when source code is modified. The assets will automatically be recompiled and the browser will be refreshed (when there's a frontend change). Thanks, Webpack!
+
+### Running the application locally with a local Pathways new backend
+
+If you have not run the Case Triage server locally before, run:
+
+`./recidiviz/tools/case_triage/initialize_development_environment.sh`
+
+This script also may need to be rerun periodically when new secrets are added to it.
+
+Then, to run the new backend locally, run (from your `recidiviz-data` repository):
+
+`docker-compose -f docker-compose.yaml -f docker-compose.case-triage.yaml up --remove-orphans`
+
+If you use a Mac, you may need to turn off AirPlay Receiver in System Preferences --> Sharing in order to make port 5000 available.
+
+To create the required databases and add data to them, use the [load_fixtures](https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/tools/pathways/load_fixtures.py) script (see instructions and sample usage in the file). Data is persisted even when the container is stopped, so the script does not need to be run every time you start the container.
+
+**Tip:** To inspect and/or edit the database contents locally, you can use a GUI like [Postico](https://eggerapps.at/postico/), and connect to the `postgres` database using the host/user/password defined in [docker-compose.yaml](https://github.com/Recidiviz/recidiviz-data/blob/62210d3ebab17c4424abcb17395989f1209e8f0e/docker-compose.yaml#L87-L91). If you edit the contents manually, run the [reset_cache](https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/tools/pathways/reset_cache.py) script to update the cache with the new contents.
+
+To run the frontend against a local new backend, run (now from `pulse-dashboard`):
+
+`yarn dev:be`
 
 ### Running the application locally and fetching from the Demo GCS bucket
 
@@ -251,6 +276,8 @@ We deploy the backend to Google App Engine with configured yaml files. Copy the 
 Deploy the backend to staging Google App Engine with `gcloud app deploy gae-staging.yaml --project [project_id]`. This will upload any updated backend code/configuration to GAE and start the server (GAE runs `npm start` only once the deploy succeeds and is stable). Test vigorously on staging before continuing to production.
 
 Similarly, deploy the backend to the demo service on staging Google App Engine with `gcloud app deploy gae-staging-demo.yaml --project [project_id]`
+
+The new Pathways backend is deployed to the Case Triage Cloud Run service during the `recidiviz-data` deploy. New versions can be deployed manually in the Cloud Console, but this should only be done sparingly.
 
 #### Firestore rules
 
