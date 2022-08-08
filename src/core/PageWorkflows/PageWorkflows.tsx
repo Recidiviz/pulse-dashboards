@@ -56,7 +56,7 @@ const PageWorkflows: React.FC = () => {
     window.scrollTo({
       top: 0,
     });
-  }, []);
+  });
   const { workflowsStore } = useRootStore();
 
   if (isIE11()) {

@@ -140,7 +140,7 @@ export type CompliantReportingEligibleRecord = {
   judicialDistrict: string | null;
   finesFeesEligible: CompliantReportingFinesFeesEligible;
   drugScreensPastYear: { result: string; date: Timestamp | string }[];
-  sanctionsPastYear: string[];
+  sanctionsPastYear: { ProposedSanction: string }[];
   mostRecentArrestCheck?: Timestamp | string;
   pastOffenses: string[];
   zeroToleranceCodes?: { contactNoteType: string; contactNoteDate: string }[];

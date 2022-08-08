@@ -185,7 +185,7 @@ describe.each([
   [
     "currentLevelEligibilityDate",
     4,
-    "Needs 14 more days on Medium",
+    "Needs 14 more days on medium",
     /minimum supervision level for 1 year /,
     /on medium supervision for /,
     /stay on your current supervision level/,

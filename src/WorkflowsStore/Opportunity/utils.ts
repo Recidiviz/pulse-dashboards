@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { format } from "date-fns";
+
 import {
   Opportunity,
   OPPORTUNITY_STATUS_RANKED,
@@ -43,3 +45,7 @@ export const earlyTerminationOpportunityStatuses: Record<
   DENIED: "Currently ineligible",
   ALMOST: "Almost eligible",
 };
+
+export function formatNoteDate(date: Date): string {
+  return format(date, "MMMM do");
+}

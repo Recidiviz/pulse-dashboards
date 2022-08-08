@@ -149,7 +149,11 @@ export const OpportunityList = observer(
     return (
       <>
         <ListHeader>
-          <Icon kind="StarCircled" color={palette.signal.highlight} size={14} />
+          <Icon
+            kind={almost ? "Error" : "StarCircled"}
+            color={almost ? palette.data.gold1 : palette.signal.highlight}
+            size={14}
+          />
           <span>
             {pluralize(items.length, "client")} {almost && "almost"} eligible
             for {OPPORTUNITY_LABELS[opportunityType]}

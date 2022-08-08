@@ -39,7 +39,11 @@ import {
   OpportunityStatus,
   OpportunityType,
 } from "./types";
-import { defaultOpportunityStatuses, rankByReviewStatus } from "./utils";
+import {
+  defaultOpportunityStatuses,
+  formatNoteDate,
+  rankByReviewStatus,
+} from "./utils";
 
 type AlmostEligibleCriteria = {
   currentLevelEligibilityDate?: Date;
@@ -189,8 +193,8 @@ class CompliantReportingOpportunity implements Opportunity {
         date: fieldToDate(date),
       })),
       sanctionsPastYear:
-        sanctionsPastYear.map((type) => ({
-          type,
+        sanctionsPastYear.map(({ ProposedSanction }) => ({
+          type: ProposedSanction,
         })) || [],
       mostRecentArrestCheck: optionalFieldToDate(mostRecentArrestCheck),
       finesFeesEligible,
@@ -622,7 +626,9 @@ class CompliantReportingOpportunity implements Opportunity {
     return {
       passedDrugScreenNeeded,
       paymentNeeded,
+      currentLevelEligibilityDate,
       currentLevelEligibilityDaysRemaining,
+      seriousSanctionsEligibilityDate,
       seriousSanctionsEligibilityDaysRemaining,
       recentRejectionCodes,
     };
@@ -660,7 +666,7 @@ class CompliantReportingOpportunity implements Opportunity {
               ? `Needs ${currentLevelEligibilityDaysRemaining} more ${pluralizeWord(
                   currentLevelEligibilityDaysRemaining,
                   "day"
-                )} on ${this.client.supervisionLevel}`
+                )} on ${this.client.supervisionLevel.toLowerCase()}`
               : undefined;
           }
           case "seriousSanctionsEligibilityDate": {
@@ -696,18 +702,19 @@ class CompliantReportingOpportunity implements Opportunity {
 
     const {
       almostEligibleCriteriaTransformed: {
-        currentLevelEligibilityDaysRemaining,
-        seriousSanctionsEligibilityDaysRemaining,
+        currentLevelEligibilityDate,
+        seriousSanctionsEligibilityDate,
       },
     } = this;
 
     let criterionSpecificCopy: string | undefined;
     switch (missingCriterionKey) {
       case "currentLevelEligibilityDate":
-        criterionSpecificCopy = `stay on your current supervision level for ${currentLevelEligibilityDaysRemaining} more ${pluralizeWord(
-          currentLevelEligibilityDaysRemaining ?? 0,
-          "day"
-        )}`;
+        criterionSpecificCopy =
+          currentLevelEligibilityDate &&
+          `stay on your current supervision level until ${formatNoteDate(
+            currentLevelEligibilityDate
+          )}`;
         break;
       case "passedDrugScreenNeeded":
         criterionSpecificCopy = "pass one drug screen";
@@ -720,10 +727,11 @@ class CompliantReportingOpportunity implements Opportunity {
         // intentionally left blank; no note required in this case
         break;
       case "seriousSanctionsEligibilityDate":
-        criterionSpecificCopy = `don’t get any sanctions higher than level 1 for ${seriousSanctionsEligibilityDaysRemaining} more ${pluralizeWord(
-          seriousSanctionsEligibilityDaysRemaining ?? 0,
-          "day"
-        )}`;
+        criterionSpecificCopy =
+          seriousSanctionsEligibilityDate &&
+          `don’t get any sanctions higher than level 1 until ${formatNoteDate(
+            seriousSanctionsEligibilityDate
+          )}`;
         break;
       default:
         break;
