@@ -17,6 +17,7 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { fieldToDate, OpportunityValidationError } from "../utils";
 import {
@@ -25,6 +26,7 @@ import {
 } from "./EarlyTerminationReferralRecord";
 import {
   Opportunity,
+  OpportunityCriterion,
   OpportunityRequirement,
   OpportunityStatus,
   OpportunityType,
@@ -33,6 +35,24 @@ import {
   earlyTerminationOpportunityStatuses,
   rankByReviewStatus,
 } from "./utils";
+
+// This could be configured externally once it's fleshed out
+// to include all copy and other static data
+const CRITERIA: Record<string, OpportunityCriterion> = {
+  eligibleDate: {
+    tooltip:
+      "Early termination date (as calculated by DOCSTARS) is in the past.",
+  },
+  supervisionLevel: {
+    tooltip: `Currently on diversion, minimum, medium, maximum, or IC-out supervision level.`,
+  },
+  supervisionType: {
+    tooltip: `Serving a suspended, deferred, IC-probation, or IC-parole sentence.`,
+  },
+  revocationStatus: {
+    tooltip: `Not on active revocation status.`,
+  },
+};
 
 class EarlyTerminationOpportunity implements Opportunity {
   client: Client;
@@ -182,9 +202,43 @@ class EarlyTerminationOpportunity implements Opportunity {
     return earlyTerminationOpportunityStatuses[this.reviewStatus];
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get requirementsMet(): OpportunityRequirement[] {
-    return [];
+    const requirements: OpportunityRequirement[] = [];
+    const {
+      reasons: {
+        pastEarlyDischarge,
+        eligibleSupervisionLevel,
+        eligibleSupervisionType,
+      },
+    } = this.transformedRecord;
+
+    if (pastEarlyDischarge?.eligibleDate) {
+      requirements.push({
+        text: `Early termination date is ${formatWorkflowsDate(
+          pastEarlyDischarge?.eligibleDate
+        )}`,
+        tooltip: CRITERIA.eligibleDate.tooltip,
+      });
+    }
+
+    if (eligibleSupervisionLevel?.supervisionLevel) {
+      requirements.push({
+        text: `Currently on ${eligibleSupervisionLevel?.supervisionLevel.toLowerCase()} supervision`,
+        tooltip: CRITERIA.supervisionLevel.tooltip,
+      });
+    }
+    if (eligibleSupervisionType?.supervisionType) {
+      requirements.push({
+        text: `Serving ${eligibleSupervisionType?.supervisionType?.toLowerCase()} sentence`,
+        tooltip: CRITERIA.supervisionType.tooltip,
+      });
+    }
+    requirements.push({
+      text: `Not on active revocation status`,
+      tooltip: CRITERIA.revocationStatus.tooltip,
+    });
+
+    return requirements;
   }
 
   // eslint-disable-next-line class-methods-use-this

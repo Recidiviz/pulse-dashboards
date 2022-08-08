@@ -35,6 +35,7 @@ import {
 } from "../utils";
 import {
   Opportunity,
+  OpportunityCriterion,
   OpportunityRequirement,
   OpportunityStatus,
   OpportunityType,
@@ -83,11 +84,6 @@ const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (keyof AlmostEligibleCriteria)
  * Clients with values other than these should not appear as eligible in the UI.
  */
 const COMPLIANT_REPORTING_ACTIVE_CATEGORIES = ["c1", "c2", "c3", "c4"];
-
-type OpportunityCriterion = {
-  // TODO: text as templates?
-  tooltip?: string;
-};
 
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data

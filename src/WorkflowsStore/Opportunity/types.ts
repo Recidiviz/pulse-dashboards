@@ -17,6 +17,11 @@
 
 import { Client } from "../Client";
 
+export type OpportunityCriterion = {
+  // TODO: text as templates?
+  tooltip?: string;
+};
+
 export const OPPORTUNITY_TYPES = [
   "compliantReporting",
   "earlyTermination",
@@ -33,7 +38,10 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   earlyTermination: "Early Termination",
 };
 
-export type OpportunityRequirement = { text: string; tooltip?: string };
+export type OpportunityRequirement = {
+  text: string;
+  tooltip?: string;
+};
 
 // ranked roughly by actionability
 export const OPPORTUNITY_STATUS_RANKED = [

@@ -137,7 +137,7 @@ describe("fully eligible", () => {
   });
 
   test("requirements met", () => {
-    expect(et.requirementsMet).toEqual([]);
+    expect(et.requirementsMet).toMatchSnapshot();
   });
 });
 
