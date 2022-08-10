@@ -305,25 +305,25 @@ class CompliantReportingOpportunity implements Opportunity {
   }
 
   get reviewStatus(): OpportunityStatus {
-    let status: OpportunityStatus;
-
-    const updates = this.client.updates?.compliantReporting;
+    const updates = this.client.opportunityUpdates.compliantReporting;
 
     if ((updates?.denial?.reasons?.length || 0) !== 0) {
-      status = "DENIED";
-    } else if (this.validAlmostEligibleKeys.length) {
-      status = "ALMOST";
-    } else if (updates) {
-      if (updates.completed) {
-        status = "COMPLETED";
-      } else {
-        status = "IN_PROGRESS";
-      }
-    } else {
-      status = "PENDING";
+      return "DENIED";
     }
 
-    return status;
+    if (this.validAlmostEligibleKeys.length) {
+      return "ALMOST";
+    }
+
+    if (updates?.completed) {
+      return "COMPLETED";
+    }
+
+    if (updates?.referralForm) {
+      return "IN_PROGRESS";
+    }
+
+    return "PENDING";
   }
 
   get statusMessageShort(): string {
@@ -341,8 +341,8 @@ class CompliantReportingOpportunity implements Opportunity {
     if (reviewStatus === "DENIED") {
       const baseMessage = defaultOpportunityStatuses[reviewStatus];
       let additionalText = "";
-      if (this.client.updates?.compliantReporting?.denial) {
-        additionalText = ` (${this.client.updates.compliantReporting.denial.reasons.join(
+      if (this.client.opportunityUpdates.compliantReporting?.denial) {
+        additionalText = ` (${this.client.opportunityUpdates.compliantReporting.denial.reasons.join(
           ", "
         )})`;
       }

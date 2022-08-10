@@ -139,7 +139,8 @@ export const CompliantReportingDenial = observer(
     const colors = useStatusColors(client);
     if (!client.opportunities.compliantReporting) return null;
 
-    const reasons = client.updates?.compliantReporting?.denial?.reasons;
+    const reasons =
+      client.opportunityUpdates.compliantReporting?.denial?.reasons;
 
     const buttonProps = {
       background: colors.background,
@@ -198,7 +199,8 @@ export const CompliantReportingDenial = observer(
                 <OtherInputWrapper>
                   <OtherInput
                     defaultValue={
-                      client.updates?.compliantReporting?.denial?.otherReason
+                      client.opportunityUpdates.compliantReporting?.denial
+                        ?.otherReason
                     }
                     placeholder="Please specify a reason…"
                     onChange={debounce(

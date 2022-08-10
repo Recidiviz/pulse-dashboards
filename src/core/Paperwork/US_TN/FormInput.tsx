@@ -120,7 +120,10 @@ const FormInput: React.FC<FormInputProps> = ({
 
 const FormInputWrapper: React.FC<FormInputWrapperProps> = (props) => {
   const { workflowsStore } = useRootStore();
-  if (!workflowsStore?.selectedClient?.updates || !workflowsStore.user) {
+  if (
+    !workflowsStore?.selectedClient?.opportunityUpdates.compliantReporting ||
+    !workflowsStore.user
+  ) {
     return <Input {...props} disabled />;
   }
 

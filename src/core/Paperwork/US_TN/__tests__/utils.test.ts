@@ -32,13 +32,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { computed, configure, observable, set } from "mobx";
 import { IDisposer } from "mobx-utils";
 
 import { trackSetOpportunityStatus } from "../../../../analytics";
-import {
-  subscribeToClientUpdates,
-  subscribeToClientUpdatesV2,
-} from "../../../../firestore";
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../../WorkflowsStore";
 import { eligibleClient } from "../../../../WorkflowsStore/__fixtures__";
@@ -49,27 +46,25 @@ let testObserver: IDisposer;
 jest.mock("../../../../analytics");
 jest.mock("../../../../firestore");
 
-const mockSubscribeToClientUpdates = subscribeToClientUpdates as jest.MockedFunction<
-  typeof subscribeToClientUpdates
->;
-const mockSubscribeToClientUpdatesV2 = subscribeToClientUpdatesV2 as jest.MockedFunction<
-  typeof subscribeToClientUpdatesV2
->;
-
 let client: Client;
 let rootStore: RootStore;
+let mockUpdate: typeof Client.prototype["opportunityUpdates"];
 
 beforeEach(() => {
+  // this lets us spy on mobx computed getters
+  configure({ safeDescriptors: false });
   rootStore = new RootStore();
   client = new Client(eligibleClient, rootStore);
-  mockSubscribeToClientUpdates.mockImplementation((clientId, handler) => {
-    expect(clientId).toBe(client.id);
-    handler({});
-    return jest.fn();
-  });
+
+  // update this to simulate fetched data and pipe it through MobX
+  mockUpdate = observable({});
+  jest
+    .spyOn(Client.prototype, "opportunityUpdates", "get")
+    .mockReturnValue(computed(() => mockUpdate).get());
 });
 
 afterEach(() => {
+  configure({ safeDescriptors: true });
   jest.resetAllMocks();
 
   // clean up any Mobx observers to avoid leaks
@@ -79,10 +74,9 @@ afterEach(() => {
 });
 
 test("track start of progress on pending review", async () => {
-  mockSubscribeToClientUpdatesV2.mockImplementation((clientId, handler) => {
-    expect(clientId).toBe(client.recordId);
-    handler({});
-    return jest.fn();
+  // simulating a fetch that has found no updates yet
+  set(mockUpdate, {
+    compliantReporting: {},
   });
 
   await updateFieldData("testUser", client, { clientFirstName: "Testabc" });
@@ -95,10 +89,9 @@ test("track start of progress on pending review", async () => {
 });
 
 test("form updates should not track status change if it's already set", async () => {
-  mockSubscribeToClientUpdatesV2.mockImplementation((clientId, handler) => {
-    expect(clientId).toBe(client.recordId);
-    handler({ compliantReporting: {} });
-    return jest.fn();
+  // simulate fetching existing edits to the form
+  set(mockUpdate, {
+    compliantReporting: { referralForm: { data: { foo: "bar" } } },
   });
 
   await updateFieldData("testUser", client, { clientFirstName: "Testabc" });

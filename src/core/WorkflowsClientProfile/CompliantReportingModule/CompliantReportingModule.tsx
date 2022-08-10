@@ -35,7 +35,7 @@ const getPrintText = (client: Client) => {
     return "Printing PDF...";
   }
 
-  if (client.updates?.compliantReporting?.completed) {
+  if (client.opportunityUpdates.compliantReporting?.completed) {
     return "Reprint PDF";
   }
 

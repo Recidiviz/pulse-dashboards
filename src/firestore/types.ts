@@ -16,7 +16,10 @@
 // =============================================================================
 import type { Timestamp } from "firebase/firestore";
 
-import { TransformedCompliantReportingReferral } from "../WorkflowsStore";
+import {
+  OpportunityType,
+  TransformedCompliantReportingReferral,
+} from "../WorkflowsStore";
 import { TransformedEarlyTerminationReferral } from "../WorkflowsStore/Opportunity/EarlyTerminationReferralRecord";
 
 /**
@@ -173,24 +176,43 @@ export type Denial = {
   updated: UpdateLog;
 };
 
-export type CompliantReportingReferralForm = {
+type ReferralFormEdits<
+  FormData extends Record<string, any> = Record<string, any>
+> = {
   updated: UpdateLog;
-  data?: Partial<TransformedCompliantReportingReferral>;
+  data?: Partial<FormData>;
 };
 
-export type EarlyTerminationReferralForm = {
-  updated: UpdateLog;
-  data?: Partial<TransformedEarlyTerminationReferral>;
-};
+export type CompliantReportingReferralForm = ReferralFormEdits<TransformedCompliantReportingReferral>;
 
-type OpportunityUpdateRecord<ReferralForm> = {
+export type EarlyTerminationReferralForm = ReferralFormEdits<TransformedEarlyTerminationReferral>;
+
+export type OpportunityEdits<FormEdits = ReferralFormEdits> = {
   denial?: Denial;
-  referralForm?: ReferralForm;
+  referralForm?: FormEdits;
   completed?: {
     update: UpdateLog;
   };
 };
-export type EarlyTerminationUpdateRecord = OpportunityUpdateRecord<EarlyTerminationReferralForm>;
-export type CompliantReportingUpdateRecord = OpportunityUpdateRecord<CompliantReportingReferralForm>;
+
+type OpportunityUpdateRecordBase<
+  OppType extends OpportunityType,
+  ReferralForm extends ReferralFormEdits
+> = {
+  type: OppType;
+} & OpportunityEdits<ReferralForm>;
+
+export type EarlyTerminationUpdateRecord = OpportunityUpdateRecordBase<
+  "earlyTermination",
+  EarlyTerminationReferralForm
+>;
+export type CompliantReportingUpdateRecord = OpportunityUpdateRecordBase<
+  "compliantReporting",
+  CompliantReportingReferralForm
+>;
+
+export type OpportunityUpdateRecord =
+  | EarlyTerminationUpdateRecord
+  | CompliantReportingUpdateRecord;
 
 export type FormFieldData = Record<string, boolean | string | string[]>;

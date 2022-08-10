@@ -179,7 +179,7 @@ class EarlyTerminationOpportunity implements Opportunity {
   }
 
   get reviewStatus(): OpportunityStatus {
-    const updates = this.client.updates?.earlyTermination;
+    const updates = this.client.opportunityUpdates.earlyTermination;
     if ((updates?.denial?.reasons?.length || 0) !== 0) {
       return "DENIED";
     }

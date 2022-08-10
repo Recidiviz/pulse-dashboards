@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, configure, when } from "mobx";
+import { computed, configure, observable, set, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
@@ -25,8 +25,6 @@ import {
 } from "../../analytics";
 import { transform } from "../../core/Paperwork/US_TN/Transformer";
 import {
-  subscribeToClientUpdates,
-  subscribeToClientUpdatesV2,
   subscribeToCompliantReportingReferral,
   updateCompliantReportingDenial,
   updateOpportunityCompleted,
@@ -51,12 +49,6 @@ const mockTransform = transform as jest.MockedFunction<typeof transform>;
 const mockSubscribeToCompliantReportingReferral = subscribeToCompliantReportingReferral as jest.MockedFunction<
   typeof subscribeToCompliantReportingReferral
 >;
-const mockSubscribeToClientUpdates = subscribeToClientUpdates as jest.MockedFunction<
-  typeof subscribeToClientUpdates
->;
-const mockSubscribeToClientUpdatesV2 = subscribeToClientUpdatesV2 as jest.MockedFunction<
-  typeof subscribeToClientUpdates
->;
 const mockUpdateCompliantReportingDenial = updateCompliantReportingDenial as jest.MockedFunction<
   typeof updateCompliantReportingDenial
 >;
@@ -66,17 +58,19 @@ const mockUpdateOpportunityCompleted = updateOpportunityCompleted as jest.Mocked
 
 let client: Client;
 let rootStore: RootStore;
+let mockUpdate: typeof Client.prototype["opportunityUpdates"];
 
 beforeEach(() => {
   // this lets us spy on mobx computed getters
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
   client = new Client(eligibleClient, rootStore);
-  mockSubscribeToClientUpdatesV2.mockImplementation((recordId, handler) => {
-    expect(recordId).toBe(client.recordId);
-    handler({});
-    return jest.fn();
-  });
+
+  // update this to simulate fetched data and pipe it through MobX
+  mockUpdate = observable({});
+  jest
+    .spyOn(Client.prototype, "opportunityUpdates", "get")
+    .mockReturnValue(computed(() => mockUpdate).get());
 });
 
 afterEach(() => {
@@ -116,56 +110,6 @@ test("fetch CompliantReportingReferral uses recordId", async () => {
   expect(mockSubscribeToCompliantReportingReferral).toHaveBeenCalled();
 });
 
-test("subscribe to clientUpdatesV2 if it is not empty", async () => {
-  mockSubscribeToClientUpdatesV2.mockImplementation((recordId, handler) => {
-    expect(recordId).toBe(client.recordId);
-    handler({ compliantReporting: {} });
-    return jest.fn();
-  });
-  // simulate a client profile page observing updates
-  testObserver = keepAlive(computed(() => [client.updates]));
-
-  expect(mockSubscribeToClientUpdates).not.toHaveBeenCalled();
-  expect(mockSubscribeToClientUpdatesV2).toHaveBeenCalled();
-
-  await when(() => client.updates !== undefined);
-});
-
-test("subscribe to clientUpdates if clientUpdatesV2 is empty", async () => {
-  mockSubscribeToClientUpdates.mockImplementation((clientId, handler) => {
-    expect(clientId).toBe(client.id);
-    handler({ compliantReporting: {} });
-    return jest.fn();
-  });
-  // simulate a client profile page observing updates
-  testObserver = keepAlive(computed(() => [client.updates]));
-
-  expect(mockSubscribeToClientUpdates).toHaveBeenCalled();
-  expect(mockSubscribeToClientUpdatesV2).toHaveBeenCalled();
-
-  await when(() => client.updates !== undefined);
-});
-
-test("fetch client updates on demand", async () => {
-  mockSubscribeToClientUpdatesV2.mockImplementation((recordId, handler) => {
-    expect(recordId).toBe(client.recordId);
-    handler({});
-    return jest.fn();
-  });
-  mockSubscribeToClientUpdates.mockImplementation((clientId, handler) => {
-    expect(clientId).toBe(client.id);
-    handler({});
-    return jest.fn();
-  });
-
-  // simulate a client profile page observing updates
-  testObserver = keepAlive(computed(() => [client.updates]));
-
-  expect(mockSubscribeToClientUpdates).toHaveBeenCalled();
-
-  await when(() => client.updates !== undefined);
-});
-
 test("set compliant reporting ineligible", async () => {
   rootStore.workflowsStore.user = mockOfficer;
 
@@ -174,7 +118,6 @@ test("set compliant reporting ineligible", async () => {
 
   expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
     mockOfficer.info.email,
-    client.id,
     client.recordId,
     { reasons },
     { otherReason: true }
@@ -182,7 +125,6 @@ test("set compliant reporting ineligible", async () => {
 
   expect(mockUpdateOpportunityCompleted).toHaveBeenCalledWith(
     mockOfficer.info.email,
-    client.id,
     client.recordId,
     "compliantReporting",
     true
@@ -203,7 +145,6 @@ test("ineligible for other reason", () => {
 
   expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
     mockOfficer.info.email,
-    client.id,
     client.recordId,
     { reasons },
     undefined
@@ -215,7 +156,6 @@ test("ineligible for other reason", () => {
 
   expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
     mockOfficer.info.email,
-    client.id,
     client.recordId,
     { reasons: newReasons },
     // this will delete the related field if reasons do not include "other"
@@ -231,7 +171,6 @@ test("set compliant reporting other reason", () => {
 
   expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
     mockOfficer.info.email,
-    client.id,
     client.recordId,
     { otherReason }
   );
@@ -270,7 +209,6 @@ test("mark client as completed when printing form", () => {
 
   expect(mockUpdateOpportunityCompleted).toHaveBeenCalledWith(
     mockOfficer.info.email,
-    client.id,
     client.recordId,
     "compliantReporting"
   );
@@ -281,61 +219,10 @@ test("mark client as completed when printing form", () => {
   });
 });
 
-test("don't record a completion if user is ineligible", async () => {
+test("don't record a completion if user is ineligible", () => {
   rootStore.workflowsStore.user = mockOfficer;
 
-  mockSubscribeToClientUpdates.mockImplementation(
-    (_clientId, handleResults) => {
-      handleResults({
-        compliantReporting: {
-          denial: {
-            reasons: ["test"],
-            updated: { by: "test", date: dateToTimestamp("2022-02-01") },
-          },
-        },
-      });
-      return jest.fn();
-    }
-  );
-
-  // ensure the update data has been hydrated
-  await when(() => client.updates !== undefined);
-
-  client.printReferralForm("compliantReporting");
-
-  expect(mockUpdateOpportunityCompleted).not.toHaveBeenCalled();
-  expect(trackSetOpportunityStatus).not.toHaveBeenCalled();
-});
-
-test("compliant reporting review status", async () => {
-  let sendUpdate: any;
-
-  mockSubscribeToClientUpdates.mockImplementation(
-    (_clientId, handleResults) => {
-      // get a reference to the sync function so we can call it repeatedly
-      sendUpdate = handleResults;
-      return jest.fn();
-    }
-  );
-
-  // simulate a UI that is actually displaying client data, to trigger subscriptions
-  testObserver = keepAlive(
-    computed(() => [client.opportunities.compliantReporting?.reviewStatus])
-  );
-
-  sendUpdate(undefined);
-  expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
-    "Needs referral"
-  );
-
-  sendUpdate({
-    someOtherKey: {},
-  });
-  expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
-    "Needs referral"
-  );
-
-  sendUpdate({
+  set(mockUpdate, {
     compliantReporting: {
       denial: {
         reasons: ["test"],
@@ -343,19 +230,41 @@ test("compliant reporting review status", async () => {
       },
     },
   });
+
+  client.printReferralForm("compliantReporting");
+
+  expect(mockUpdateOpportunityCompleted).not.toHaveBeenCalled();
+  expect(trackSetOpportunityStatus).not.toHaveBeenCalled();
+});
+
+test("compliant reporting review status", () => {
+  expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
+    "Needs referral"
+  );
+
+  set(mockUpdate, {
+    compliantReporting: {
+      denial: {
+        reasons: ["test"],
+        updated: { by: "test", date: dateToTimestamp("2022-02-01") },
+      },
+    },
+  });
+
   expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
     "Currently ineligible"
   );
 
-  sendUpdate({
-    // for this case the contents don't matter as long as it exists
-    compliantReporting: {},
+  set(mockUpdate, {
+    compliantReporting: {
+      referralForm: {},
+    },
   });
   expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
     "Referral in progress"
   );
 
-  sendUpdate({
+  set(mockUpdate, {
     compliantReporting: {
       completed: {
         by: "test",
@@ -369,11 +278,8 @@ test("compliant reporting review status", async () => {
 });
 
 test("form view tracking", async () => {
-  mockSubscribeToClientUpdates.mockImplementation((clientId, handler) => {
-    expect(clientId).toBe(client.id);
-    handler({});
-    return jest.fn();
-  });
+  // tracking call waits for the initial update fetch so we have to mock it
+  set(mockUpdate, { compliantReporting: {} });
 
   await client.trackFormViewed("compliantReporting");
 
@@ -384,22 +290,20 @@ test("form view tracking", async () => {
 });
 
 test("form view tracking waits for updates", async () => {
-  mockSubscribeToClientUpdates.mockImplementation((clientId, handler) => {
-    expect(clientId).toBe(client.id);
-    // simulate fetch latency
-    setTimeout(() => {
-      handler({
-        compliantReporting: {
-          completed: {
-            update: { by: "abc", date: dateToTimestamp("2022-01-01") },
-          },
-        },
-      });
-    }, 10);
-    return jest.fn();
-  });
+  const trackingCall = client.trackFormViewed("compliantReporting");
 
-  await client.trackFormViewed("compliantReporting");
+  // simulate fetch latency
+  setTimeout(() => {
+    set(mockUpdate, {
+      compliantReporting: {
+        completed: {
+          update: { by: "abc", date: dateToTimestamp("2022-01-01") },
+        },
+      },
+    });
+  }, 10);
+
+  await trackingCall;
 
   expect(trackReferralFormViewed).toHaveBeenCalledTimes(1);
   expect(trackReferralFormViewed).toHaveBeenCalledWith({
@@ -409,11 +313,8 @@ test("form view tracking waits for updates", async () => {
 });
 
 test("list view tracking", async () => {
-  mockSubscribeToClientUpdates.mockImplementation((clientId, handler) => {
-    expect(clientId).toBe(client.id);
-    handler({});
-    return jest.fn();
-  });
+  // tracking call waits for the initial update fetch so we have to mock it
+  set(mockUpdate, { compliantReporting: {} });
 
   await client.trackListViewed("compliantReporting");
 
@@ -424,22 +325,20 @@ test("list view tracking", async () => {
 });
 
 test("list view tracking waits for updates", async () => {
-  mockSubscribeToClientUpdates.mockImplementation((clientId, handler) => {
-    expect(clientId).toBe(client.id);
-    // simulate fetch latency
-    setTimeout(() => {
-      handler({
-        compliantReporting: {
-          completed: {
-            update: { by: "abc", date: dateToTimestamp("2022-01-01") },
-          },
-        },
-      });
-    }, 10);
-    return jest.fn();
-  });
+  const trackingCall = client.trackListViewed("compliantReporting");
 
-  await client.trackListViewed("compliantReporting");
+  // simulate fetch latency
+  setTimeout(() => {
+    set(mockUpdate, {
+      compliantReporting: {
+        completed: {
+          update: { by: "abc", date: dateToTimestamp("2022-01-01") },
+        },
+      },
+    });
+  }, 10);
+
+  await trackingCall;
 
   expect(trackSurfacedInList).toHaveBeenCalledTimes(1);
   expect(trackSurfacedInList).toHaveBeenCalledWith({

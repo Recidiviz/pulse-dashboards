@@ -24,16 +24,34 @@ const UPDATE_RECORD = {
 };
 
 export const INCOMPLETE_UPDATE: ClientUpdateRecord = {
-  compliantReporting: {},
-  earlyTermination: {},
+  compliantReporting: {
+    type: "compliantReporting",
+    referralForm: { updated: UPDATE_RECORD },
+  },
+  earlyTermination: {
+    type: "earlyTermination",
+    referralForm: { updated: UPDATE_RECORD },
+  },
 };
 
 export const DENIED_UPDATE: ClientUpdateRecord = {
-  compliantReporting: { denial: { reasons: ["ABC"], updated: UPDATE_RECORD } },
-  earlyTermination: { denial: { reasons: ["ABC"], updated: UPDATE_RECORD } },
+  compliantReporting: {
+    type: "compliantReporting",
+    denial: { reasons: ["ABC"], updated: UPDATE_RECORD },
+  },
+  earlyTermination: {
+    type: "earlyTermination",
+    denial: { reasons: ["ABC"], updated: UPDATE_RECORD },
+  },
 };
 
 export const COMPLETED_UPDATE: ClientUpdateRecord = {
-  compliantReporting: { completed: { update: UPDATE_RECORD } },
-  earlyTermination: { completed: { update: UPDATE_RECORD } },
+  compliantReporting: {
+    type: "compliantReporting",
+    completed: { update: UPDATE_RECORD },
+  },
+  earlyTermination: {
+    type: "earlyTermination",
+    completed: { update: UPDATE_RECORD },
+  },
 };

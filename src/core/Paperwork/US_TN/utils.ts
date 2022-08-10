@@ -29,14 +29,9 @@ export async function updateFieldData(
   client: Client,
   fieldData: FormFieldData
 ): Promise<void> {
-  updateCompliantReportingDraft(
-    updatedBy,
-    client.id,
-    client.recordId,
-    fieldData
-  );
+  updateCompliantReportingDraft(updatedBy, client.recordId, fieldData);
 
-  await when(() => client.updates !== undefined);
+  await when(() => client.opportunityUpdates.compliantReporting !== undefined);
 
   if (client.opportunities.compliantReporting?.reviewStatus === "PENDING") {
     trackSetOpportunityStatus({

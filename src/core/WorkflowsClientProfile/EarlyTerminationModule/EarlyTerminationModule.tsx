@@ -34,7 +34,7 @@ const getPrintText = (client: Client) => {
     return "Printing PDF...";
   }
 
-  if (client.updates?.earlyTermination?.completed) {
+  if (client.opportunityUpdates.earlyTermination?.completed) {
     return "Reprint PDF";
   }
 

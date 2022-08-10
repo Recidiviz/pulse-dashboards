@@ -56,6 +56,8 @@ import {
   FeatureVariantRecord,
   FormFieldData,
   isUserRecord,
+  OpportunityEdits,
+  OpportunityUpdateRecord,
   StaffRecord,
   UserUpdateRecord,
 } from "./types";
@@ -113,6 +115,7 @@ const collectionNames = {
   clients: "clients",
   clientUpdates: "clientUpdates",
   clientUpdatesV2: "clientUpdatesV2",
+  clientOpportunityUpdates: "clientOpportunityUpdates",
   compliantReportingReferrals: "compliantReportingReferrals",
   earlyTerminationReferrals: "earlyTerminationReferrals",
   featureVariants: "featureVariants",
@@ -141,10 +144,7 @@ const collections = {
     db,
     collectionNames.clientUpdates
   ) as CollectionReference<ClientUpdateRecord>,
-  clientUpdatesV2: collection(
-    db,
-    collectionNames.clientUpdatesV2
-  ) as CollectionReference<ClientUpdateRecord>,
+  clientUpdatesV2: collection(db, collectionNames.clientUpdatesV2),
   compliantReportingReferrals: collection(
     db,
     collectionNames.compliantReportingReferrals
@@ -256,6 +256,75 @@ export function subscribeToClientUpdatesV2(
     (result: DocumentSnapshot) =>
       handleResults(result.data({ serverTimestamps: "estimate" }))
   );
+}
+
+/**
+ * This will migrate legacy data to the new subcollection, if there is no document in the
+ * new subcollection but legacy data exists. It will not change any data in legacy collections,
+ * but the expectation is that they will be ignored once the new collection is populated.
+ * TODO(#2108): Remove this function after migration is complete
+ */
+async function migrateOpportunityUpdate(
+  updateDocRef: DocumentReference,
+  clientId: string,
+  clientRecordId: string,
+  opportunityType: OpportunityType
+) {
+  // if destination document does not already exist, we will look for a legacy document to migrate
+  let dataToMigrate: OpportunityEdits | undefined;
+  if (!(await getDoc(updateDocRef)).exists()) {
+    const {
+      docRef: v2UpdatesDocRef,
+      oldDocument: v1UpdatesDoc,
+    } = await getClientUpdatesV2DocRef(clientId, clientRecordId);
+
+    // legacy format(s): object nested directly in the update doc
+    let legacyRecord = v1UpdatesDoc;
+    // this doc will only be returned if the v2 doc does not exist
+    if (!v1UpdatesDoc) {
+      legacyRecord = (await getDoc(v2UpdatesDocRef)).data();
+    }
+
+    dataToMigrate = legacyRecord?.[opportunityType];
+  }
+
+  if (dataToMigrate) {
+    // write old + new data to new destination
+    setDoc(updateDocRef, dataToMigrate);
+  }
+}
+
+/**
+ * @param opportunityType needs to match `UpdateType`! This function does not verify that it does
+ * @param handleResults will be called whenever data changes
+ * @returns a callable unsubscribe handle
+ */
+export function subscribeToOpportunityUpdate<
+  UpdateType extends OpportunityUpdateRecord
+>(
+  clientId: string,
+  clientRecordId: string,
+  opportunityType: OpportunityType,
+  handleResults: (results?: UpdateType) => void
+): Unsubscribe {
+  const updateDocRef = doc(
+    collections.clientUpdatesV2,
+    clientRecordId,
+    collectionNames.clientOpportunityUpdates,
+    opportunityType
+  );
+
+  migrateOpportunityUpdate(
+    updateDocRef,
+    clientId,
+    clientRecordId,
+    opportunityType
+  );
+
+  return onSnapshot(updateDocRef, (result) => {
+    const data = result.data({ serverTimestamps: "estimate" });
+    handleResults(data && ({ ...data, type: opportunityType } as UpdateType));
+  });
 }
 
 /**
@@ -382,35 +451,34 @@ const getClientUpdatesV2DocRef = async function (
   return { docRef, oldDocument };
 };
 
+async function updateOpportunity(
+  opportunityType: OpportunityType,
+  recordId: string,
+  update: PartialWithFieldValue<OpportunityEdits>
+) {
+  const opportunityDocRef = doc(
+    collections.clientUpdatesV2,
+    `${recordId}/${collectionNames.clientOpportunityUpdates}/${opportunityType}`
+  );
+
+  return setDoc(opportunityDocRef, { ...update }, { merge: true });
+}
+
 export const updateCompliantReportingDraft = async function (
   updatedBy: string,
-  clientId: string,
   recordId: string,
   data: FormFieldData
 ): Promise<void> {
-  const { docRef, oldDocument } = await getClientUpdatesV2DocRef(
-    clientId,
-    recordId
-  );
-
-  return setDoc(
-    docRef,
-    {
-      compliantReporting: {
-        ...(oldDocument?.compliantReporting ?? {}),
-        referralForm: {
-          updated: { by: updatedBy, date: serverTimestamp() },
-          data,
-        },
-      },
+  return updateOpportunity("compliantReporting", recordId, {
+    referralForm: {
+      updated: { by: updatedBy, date: serverTimestamp() },
+      data,
     },
-    { merge: true }
-  );
+  });
 };
 
 export async function updateCompliantReportingDenial(
   userEmail: string,
-  clientId: string,
   recordId: string,
   fieldUpdates: {
     reasons?: string[];
@@ -425,58 +493,36 @@ export async function updateCompliantReportingDenial(
 
   const fieldsToDelete = mapValues(pickBy(deleteFields), () => deleteField());
 
-  const { docRef, oldDocument } = await getClientUpdatesV2DocRef(
-    clientId,
-    recordId
-  );
-
-  const changes: PartialWithFieldValue<ClientUpdateRecord> = {
-    compliantReporting: {
-      ...(oldDocument?.compliantReporting ?? {}),
-      denial: {
-        ...filteredUpdates,
-        ...fieldsToDelete,
-        updated: {
-          by: userEmail,
-          date: serverTimestamp(),
-        },
+  const changes = {
+    denial: {
+      ...filteredUpdates,
+      ...fieldsToDelete,
+      updated: {
+        by: userEmail,
+        date: serverTimestamp(),
       },
     },
   };
 
-  return setDoc(docRef, changes, {
-    merge: true,
-  });
+  return updateOpportunity("compliantReporting", recordId, changes);
 }
 
 export async function updateOpportunityCompleted(
   userEmail: string,
-  clientId: string,
   recordId: string,
   opportunityType: OpportunityType,
   clearCompletion = false
 ): Promise<void> {
-  const { docRef, oldDocument } = await getClientUpdatesV2DocRef(
-    clientId,
-    recordId
-  );
-  return setDoc(
-    docRef,
-    {
-      [opportunityType]: {
-        ...(oldDocument?.[opportunityType] ?? {}),
-        completed: clearCompletion
-          ? deleteField()
-          : {
-              update: {
-                by: userEmail,
-                date: serverTimestamp(),
-              },
-            },
-      },
-    },
-    { merge: true }
-  );
+  return updateOpportunity(opportunityType, recordId, {
+    completed: clearCompletion
+      ? deleteField()
+      : {
+          update: {
+            by: userEmail,
+            date: serverTimestamp(),
+          },
+        },
+  });
 }
 
 export function updateSelectedOfficerIds(

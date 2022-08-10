@@ -39,15 +39,15 @@ import {
 import { transform } from "../core/Paperwork/US_TN/Transformer";
 import {
   ClientRecord,
-  ClientUpdateRecord,
   CompliantReportingReferralForm,
+  CompliantReportingUpdateRecord,
+  EarlyTerminationUpdateRecord,
   FullName,
   SpecialConditionCode,
   SpecialConditionsStatus,
-  subscribeToClientUpdates,
-  subscribeToClientUpdatesV2,
   subscribeToCompliantReportingReferral,
   subscribeToEarlyTerminationReferral,
+  subscribeToOpportunityUpdate,
   updateCompliantReportingDenial,
   updateOpportunityCompleted,
 } from "../firestore";
@@ -133,9 +133,10 @@ export class Client {
 
   opportunities: OpportunityMapping;
 
-  private fetchedUpdates: SubscriptionValue<ClientUpdateRecord>;
-
-  private fetchedUpdatesV2: SubscriptionValue<ClientUpdateRecord>;
+  private opportunityUpdateSubscriptions: {
+    compliantReporting?: SubscriptionValue<CompliantReportingUpdateRecord>;
+    earlyTermination?: SubscriptionValue<EarlyTerminationUpdateRecord>;
+  } = {};
 
   formIsPrinting = false;
 
@@ -146,13 +147,14 @@ export class Client {
   private fetchedEarlyTerminationReferral: SubscriptionValue<EarlyTerminationReferralRecord>;
 
   constructor(record: ClientRecord, rootStore: RootStore) {
-    makeObservable(this, {
+    makeObservable<Client, "opportunityUpdateSubscriptions">(this, {
       opportunities: true,
       compliantReportingReferralDraftData: true,
       currentUserEmail: true,
       formIsPrinting: true,
       opportunitiesAlmostEligible: true,
       opportunitiesEligible: true,
+      opportunityUpdateSubscriptions: true,
       printReferralForm: true,
       setCompliantReportingReferralDataField: action,
       setFormIsPrinting: true,
@@ -213,35 +215,45 @@ export class Client {
       }
     );
 
-    // connect to additional data sources for this client
-    this.fetchedUpdatesV2 = observableSubscription((handler) => {
-      return subscribeToClientUpdatesV2(this.recordId, (r) => {
-        if (r) {
-          runInAction(() => {
-            handler(r);
-            const data = r.compliantReporting?.referralForm?.data ?? {};
-            set(this.compliantReportingReferralDraftData, data);
-          });
-        } else {
-          // empty object will replace undefined, signifying completed fetch
-          handler({});
+    set(this.opportunityUpdateSubscriptions, {
+      compliantReporting: observableSubscription<CompliantReportingUpdateRecord>(
+        (handler) => {
+          return subscribeToOpportunityUpdate<CompliantReportingUpdateRecord>(
+            this.id,
+            this.recordId,
+            "compliantReporting",
+            (result) => {
+              if (result) {
+                runInAction(() => {
+                  handler(result);
+                  const data = result.referralForm?.data ?? {};
+                  set(this.compliantReportingReferralDraftData, data);
+                });
+              } else {
+                // empty object will replace undefined, signifying completed fetch
+                handler({ type: "compliantReporting" });
+              }
+            }
+          );
         }
-      });
-    });
-
-    this.fetchedUpdates = observableSubscription((handler) => {
-      return subscribeToClientUpdates(this.id, (r) => {
-        if (r) {
-          runInAction(() => {
-            handler(r);
-            const data = r.compliantReporting?.referralForm?.data ?? {};
-            set(this.compliantReportingReferralDraftData, data);
-          });
-        } else {
-          // empty object will replace undefined, signifying completed fetch
-          handler({});
+      ),
+      earlyTermination: observableSubscription<EarlyTerminationUpdateRecord>(
+        (handler) => {
+          return subscribeToOpportunityUpdate<EarlyTerminationUpdateRecord>(
+            this.id,
+            this.recordId,
+            "earlyTermination",
+            (result) => {
+              if (result) {
+                handler(result);
+              } else {
+                // empty object will replace undefined, signifying completed fetch
+                handler({ type: "earlyTermination" });
+              }
+            }
+          );
         }
-      });
+      ),
     });
 
     this.fetchedCompliantReportingReferral = observableSubscription((handler) =>
@@ -292,16 +304,14 @@ export class Client {
     return officer?.district;
   }
 
-  get updates(): ClientUpdateRecord | undefined {
-    // TODO(#2108): Clean up requests to `clientUpdates` after fully migrating to `clientUpdatesV2`
-    if (
-      this.fetchedUpdatesV2.current() &&
-      Object.keys(this.fetchedUpdatesV2.current() as Record<string, any>)
-        .length > 0
-    ) {
-      return this.fetchedUpdatesV2.current();
-    }
-    return this.fetchedUpdates.current();
+  get opportunityUpdates(): {
+    compliantReporting?: CompliantReportingUpdateRecord;
+    earlyTermination?: EarlyTerminationUpdateRecord;
+  } {
+    return {
+      compliantReporting: this.opportunityUpdateSubscriptions.compliantReporting?.current(),
+      earlyTermination: this.opportunityUpdateSubscriptions.earlyTermination?.current(),
+    };
   }
 
   get opportunitiesEligible(): OpportunityMapping {
@@ -339,7 +349,6 @@ export class Client {
 
       await updateCompliantReportingDenial(
         this.currentUserEmail,
-        this.id,
         this.recordId,
         { reasons },
         deletions
@@ -347,7 +356,6 @@ export class Client {
 
       await updateOpportunityCompleted(
         this.currentUserEmail,
-        this.id,
         this.recordId,
         "compliantReporting",
         true
@@ -376,7 +384,6 @@ export class Client {
     if (this.currentUserEmail) {
       await updateCompliantReportingDenial(
         this.currentUserEmail,
-        this.id,
         this.recordId,
         {
           otherReason,
@@ -394,7 +401,6 @@ export class Client {
       if (this.opportunities[opportunityType]?.reviewStatus !== "DENIED") {
         updateOpportunityCompleted(
           this.currentUserEmail,
-          this.id,
           this.recordId,
           opportunityType
         );
@@ -449,11 +455,11 @@ export class Client {
   get compliantReportingReferralDraft():
     | CompliantReportingReferralForm
     | undefined {
-    return this.updates?.compliantReporting?.referralForm;
+    return this.opportunityUpdates.compliantReporting?.referralForm;
   }
 
   async trackFormViewed(formType: OpportunityType): Promise<void> {
-    await when(() => this.updates !== undefined);
+    await when(() => this.opportunityUpdates[formType] !== undefined);
 
     trackReferralFormViewed({
       clientId: this.pseudonymizedId,
@@ -462,7 +468,7 @@ export class Client {
   }
 
   async trackListViewed(listType: OpportunityType): Promise<void> {
-    await when(() => this.updates !== undefined);
+    await when(() => this.opportunityUpdates[listType] !== undefined);
 
     trackSurfacedInList({
       clientId: this.pseudonymizedId,
