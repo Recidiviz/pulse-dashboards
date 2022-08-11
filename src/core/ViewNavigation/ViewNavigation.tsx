@@ -22,8 +22,9 @@ import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import { ReactComponent as MethodologyLogo } from "../../assets/static/images/methodology.svg";
+import { ReactComponent as OperationsLogo } from "../../assets/static/images/operations.svg";
 import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathways.svg";
-import { ReactComponent as WorkflowsLogo } from "../../assets/static/images/practices.svg";
+import { ReactComponent as WorkflowsLogo } from "../../assets/static/images/workflows.svg";
 import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
@@ -95,7 +96,7 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
         to={`/${PATHWAYS_VIEWS.operations}`}
         onClick={() => vitalsStore.resetCurrentEntityId()}
       >
-        <WorkflowsLogo className="ViewNavigation__icon" />
+        <OperationsLogo className="ViewNavigation__icon" />
         <div className="ViewNavigation__navlink-heading">
           Operational Metrics
         </div>

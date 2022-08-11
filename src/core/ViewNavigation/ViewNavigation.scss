@@ -63,7 +63,7 @@
         }
       }
       &:hover {
-        & svg path {
+        & svg g {
           opacity: 1;
         }
         .ViewNavigation__navlink-heading {
@@ -80,7 +80,7 @@
       display: none;
     }
     &--active {
-      & svg path {
+      & svg g {
         opacity: 1;
       }
     }
@@ -94,10 +94,10 @@
   &__icon {
     width: 1.5rem;
     height: 1.5rem;
-    & path {
+    & g {
       opacity: 0.5;
     }
-    &:hover path {
+    &:hover g {
       opacity: 1;
     }
   }
