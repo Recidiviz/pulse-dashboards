@@ -109,26 +109,31 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         },
       ],
     }),
-    callNewMetricsApi: jest.fn().mockResolvedValue([
-      {
-        stateId: "1",
-        fullName: "Barney Rubble",
-        gender: "MALE",
-        ageGroup: "<25",
-        age: "18, 20",
-        facility: "Bedrock, School of Rock",
-        timePeriod: "months_0_6",
+    callNewMetricsApi: jest.fn().mockResolvedValue({
+      data: [
+        {
+          stateId: "1",
+          fullName: "Barney Rubble",
+          gender: "MALE",
+          ageGroup: "<25",
+          age: "18, 20",
+          facility: "Bedrock, School of Rock",
+          timePeriod: "months_0_6",
+        },
+        {
+          stateId: "3",
+          fullName: "Betty",
+          gender: "MALE",
+          ageGroup: "<25",
+          age: "18",
+          facility: "School of Rock",
+          timePeriod: "months_0_6",
+        },
+      ],
+      metadata: {
+        lastUpdated: "2022-01-01",
       },
-      {
-        stateId: "3",
-        fullName: "Betty",
-        gender: "MALE",
-        ageGroup: "<25",
-        age: "18",
-        facility: "School of Rock",
-        timePeriod: "months_0_6",
-      },
-    ]),
+    }),
   };
 });
 

@@ -93,16 +93,21 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         },
       ],
     }),
-    callNewMetricsApi: jest.fn().mockResolvedValue([
-      {
-        judicialDistrict: "1",
-        count: 150,
+    callNewMetricsApi: jest.fn().mockResolvedValue({
+      data: [
+        {
+          judicialDistrict: "1",
+          count: 150,
+        },
+        {
+          judicialDistrict: "2",
+          count: 100,
+        },
+      ],
+      metadata: {
+        lastUpdated: "2022-01-01",
       },
-      {
-        judicialDistrict: "2",
-        count: 100,
-      },
-    ]),
+    }),
   };
 });
 

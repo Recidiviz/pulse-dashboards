@@ -17,7 +17,7 @@
 
 import { SnapshotDataRecord } from "../../types";
 import { Diff, DiffValue } from "../Differ";
-import { SnapshotDiffer } from "../SnapshotDiffer";
+import { SnapshotDiffer, SnapshotDiffType } from "../SnapshotDiffer";
 
 const differ: SnapshotDiffer = new SnapshotDiffer("ageGroup");
 
@@ -26,20 +26,24 @@ it("diffs equal data out of order", () => {
     {
       ageGroup: "25-29",
       count: 10,
+      lastUpdated: new Date(2022, 5, 1),
     },
     {
       ageGroup: "30-34",
       count: 20,
+      lastUpdated: new Date(2022, 5, 1),
     },
   ];
   const newData: SnapshotDataRecord[] = [
     {
       ageGroup: "30-34",
       count: 20,
+      lastUpdated: new Date(2022, 5, 1),
     },
     {
       ageGroup: "25-29",
       count: 10,
+      lastUpdated: new Date(2022, 5, 1),
     },
   ];
 
@@ -53,20 +57,24 @@ it("diffs unequal data", () => {
     {
       ageGroup: "25-29",
       count: 10,
+      lastUpdated: new Date(2022, 5, 1),
     },
     // Exists in old only
     {
       ageGroup: "30-34",
       count: 20,
+      lastUpdated: new Date(2022, 5, 1),
     },
     {
       ageGroup: "35-39",
       count: 0,
+      lastUpdated: new Date(2022, 5, 1),
     },
     // Exists in both
     {
       ageGroup: "40-44",
       count: 30,
+      lastUpdated: new Date(2022, 5, 1),
     },
   ];
 
@@ -75,37 +83,40 @@ it("diffs unequal data", () => {
     {
       ageGroup: "50-54",
       count: 1,
+      lastUpdated: new Date(2022, 5, 1),
     },
     // Exists in both
     {
       ageGroup: "40-44",
       count: 30,
+      lastUpdated: new Date(2022, 5, 1),
     },
     // Exists in old but with different count
     {
       ageGroup: "25-29",
       count: 100,
+      lastUpdated: new Date(2022, 5, 1),
     },
   ];
 
-  const expectedDiffs: Map<string, DiffValue<number>> = new Map<
+  const expectedDiffs: Map<string, DiffValue<SnapshotDiffType>> = new Map<
     string,
-    DiffValue<number>
+    DiffValue<SnapshotDiffType>
   >();
 
   expectedDiffs.set("25-29", {
-    oldValue: 10,
-    newValue: 100,
+    oldValue: { count: 10, lastUpdated: new Date(2022, 5, 1) },
+    newValue: { count: 100, lastUpdated: new Date(2022, 5, 1) },
   });
   expectedDiffs.set("30-34", {
-    oldValue: 20,
-    newValue: 0,
+    oldValue: { count: 20, lastUpdated: new Date(2022, 5, 1) },
+    newValue: { count: 0, lastUpdated: undefined },
   });
   expectedDiffs.set("50-54", {
-    oldValue: 0,
-    newValue: 1,
+    oldValue: { count: 0, lastUpdated: undefined },
+    newValue: { count: 1, lastUpdated: new Date(2022, 5, 1) },
   });
-  const expectedDiffOutput: Diff<number> = {
+  const expectedDiffOutput: Diff<SnapshotDiffType> = {
     totalDiffs: 3,
     samples: expectedDiffs,
   };
@@ -122,21 +133,25 @@ it("diffs data with extra fields", () => {
       ageGroup: "25-29",
       gender: "ALL",
       count: 10,
+      lastUpdated: new Date(2022, 5, 1),
     },
     {
       ageGroup: "30-34",
       gender: "FEMALE",
       count: 20,
+      lastUpdated: new Date(2022, 5, 1),
     },
   ];
   const newData: SnapshotDataRecord[] = [
     {
       ageGroup: "30-34",
       count: 20,
+      lastUpdated: new Date(2022, 5, 1),
     },
     {
       ageGroup: "25-29",
       count: 10,
+      lastUpdated: new Date(2022, 5, 1),
     },
   ];
 

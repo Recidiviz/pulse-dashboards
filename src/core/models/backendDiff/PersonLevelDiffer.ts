@@ -72,8 +72,6 @@ export class PersonLevelDiffer extends Differ<
       ...record,
       // new backend doesn't return admissionReason for PrisonToSupervision
       admissionReason: record.admissionReason || "Unknown",
-      // new backend doesn't return lastUpdated
-      lastUpdated: new Date(9999, 12, 31),
     };
     if (record.timePeriod) {
       // new backend returns timePeriod as a "months_" string instead of a TimePeriod

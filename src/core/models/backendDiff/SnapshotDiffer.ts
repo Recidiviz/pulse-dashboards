@@ -21,14 +21,25 @@
 import { SnapshotDataRecord } from "../types";
 import { Differ } from "./Differ";
 
+export type SnapshotDiffType = {
+  count: number;
+  lastUpdated?: Date;
+};
+
 /**
  * Differ that compares counts between records with records with keys of a specific type.
  */
 /* eslint-disable class-methods-use-this */
-export class SnapshotDiffer extends Differ<SnapshotDataRecord, number> {
+export class SnapshotDiffer extends Differ<
+  SnapshotDataRecord,
+  SnapshotDiffType
+> {
   diffKey: keyof SnapshotDataRecord;
 
-  emptyValue = 0;
+  emptyValue = {
+    count: 0,
+    lastUpdated: undefined,
+  };
 
   constructor(diffKey: keyof SnapshotDataRecord) {
     super();
@@ -39,11 +50,20 @@ export class SnapshotDiffer extends Differ<SnapshotDataRecord, number> {
     return result[this.diffKey]?.toString() || "";
   }
 
-  getValue(result: SnapshotDataRecord): number {
-    return result.count;
+  getValue(result: SnapshotDataRecord): SnapshotDiffType {
+    return {
+      count: result.count,
+      lastUpdated: result.lastUpdated,
+    };
   }
 
-  compare(value: number, other: number): boolean {
-    return value === other;
+  compare(value: SnapshotDiffType, other: SnapshotDiffType): boolean {
+    if (value.count === 0 && other.count === 0) {
+      return true;
+    }
+    return (
+      value.count === other.count &&
+      value.lastUpdated?.getTime() === other.lastUpdated?.getTime()
+    );
   }
 }

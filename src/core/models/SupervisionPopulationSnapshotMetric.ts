@@ -31,7 +31,11 @@ import { PopulationFilterLabels } from "../types/filters";
 import { SnapshotDiffer } from "./backendDiff/SnapshotDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { SupervisionPopulationSnapshotRecord, TimePeriod } from "./types";
-import { filterRecordByDimensions, filterTimePeriod } from "./utils";
+import {
+  addLastUpdatedToRecords,
+  filterRecordByDimensions,
+  filterTimePeriod,
+} from "./utils";
 
 export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<SupervisionPopulationSnapshotRecord> {
   accessor: keyof SupervisionPopulationSnapshotRecord;
@@ -53,6 +57,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
     this.download = this.download.bind(this);
     this.groupBy = this.accessor;
     this.differ = new SnapshotDiffer(this.accessor);
+    this.newBackendDataTransformer = addLastUpdatedToRecords;
   }
 
   get totalCount(): number {

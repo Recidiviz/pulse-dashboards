@@ -121,6 +121,13 @@ export type MetricRecord =
   | LibertyPopulationTimeSeriesRecord
   | LibertyPopulationSnapshotRecord;
 
+export type NewBackendRecord<RecordType extends MetricRecord> = {
+  data: RecordType[];
+  metadata: {
+    lastUpdated: string;
+  };
+};
+
 export type PopulationProjectionTimeSeriesRecord = {
   totalPopulation: number;
   totalPopulationMax: number;

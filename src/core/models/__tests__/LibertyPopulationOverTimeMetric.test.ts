@@ -71,13 +71,18 @@ jest.mock("../../../api/metrics/metricsClient", () => {
         },
       ],
     }),
-    callNewMetricsApi: jest.fn().mockResolvedValue([
-      {
-        year: 2015,
-        month: 12,
-        count: 7641,
+    callNewMetricsApi: jest.fn().mockResolvedValue({
+      data: [
+        {
+          year: 2015,
+          month: 12,
+          count: 7641,
+        },
+      ],
+      metadata: {
+        lastUpdated: "2022-01-01",
       },
-    ]),
+    }),
   };
 });
 
@@ -229,23 +234,28 @@ describe("LibertyPopulationOverTimeMetric", () => {
     it("calls the new API and does not log diffs if there are none", () => {
       jest.mock("../../../api/metrics/metricsClient", () => {
         return {
-          callNewMetricsApi: jest.fn().mockResolvedValue([
-            {
-              year: 2015,
-              month: 12,
-              count: 7641,
+          callNewMetricsApi: jest.fn().mockResolvedValue({
+            data: [
+              {
+                year: 2015,
+                month: 12,
+                count: 7641,
+              },
+              {
+                year: 2016,
+                month: 1,
+                count: 7641,
+              },
+              {
+                year: 2016,
+                month: 5,
+                count: 7641,
+              },
+            ],
+            metadata: {
+              lastUpdated: "2022-01-01",
             },
-            {
-              year: 2016,
-              month: 1,
-              count: 7641,
-            },
-            {
-              year: 2016,
-              month: 5,
-              count: 7641,
-            },
-          ]),
+          }),
         };
       });
 

@@ -51,6 +51,7 @@ import {
   Hydratable,
   MetricId,
   MetricRecord,
+  NewBackendRecord,
   PathwaysMetricRecords,
   RawMetricData,
   SimulationCompartment,
@@ -97,6 +98,10 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
   protected dataTransformer: (
     d: RawMetricData,
     f: EnabledFilters
+  ) => RecordFormat[];
+
+  protected newBackendDataTransformer?: (
+    d: NewBackendRecord<RecordFormat>
   ) => RecordFormat[];
 
   eagerExpand: boolean;
@@ -205,7 +210,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
         }
       });
 
-      this.fetchNewMetrics(queryParams).then((results) => {
+      this.fetchAndTransformNewMetrics(queryParams).then((results) => {
         if (this.differ) {
           const diffs = this.differ.diff(this.dataSeries, results);
           if (diffs.totalDiffs > 0) {
@@ -315,9 +320,19 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     return callMetricsApi(endpoint, RootStore.getTokenSilently);
   }
 
-  protected async fetchNewMetrics(
+  protected async fetchAndTransformNewMetrics(
     params: URLSearchParams
   ): Promise<RecordFormat[]> {
+    const apiResponse = await this.fetchNewMetrics(params);
+    if (apiResponse && this.newBackendDataTransformer) {
+      return this.newBackendDataTransformer(apiResponse);
+    }
+    return apiResponse?.data;
+  }
+
+  protected async fetchNewMetrics(
+    params: URLSearchParams
+  ): Promise<NewBackendRecord<RecordFormat>> {
     return this.endpoint &&
       process.env.REACT_APP_DEPLOY_ENV !== "production" &&
       process.env.REACT_APP_NEW_BACKEND_API_URL
@@ -325,7 +340,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
           `${this.tenantId}/${this.endpoint}?${params.toString()}`,
           RootStore.getTokenSilently
         )
-      : Promise.resolve([]);
+      : Promise.resolve({});
   }
 
   get records(): RecordFormat[] | undefined {

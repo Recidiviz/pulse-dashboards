@@ -33,6 +33,7 @@ import {
   LibertyPopulationSnapshotRecord,
   LibertyPopulationTimeSeriesRecord,
   MetricRecord,
+  NewBackendRecord,
   PopulationProjectionTimeSeriesRecord,
   PrisonPopulationPersonLevelRecord,
   PrisonPopulationSnapshotRecord,
@@ -332,6 +333,22 @@ export function createLibertyPopulationSnapshot(
       enabledFilters
     );
   });
+}
+
+export function addLastUpdatedToRecords<T extends MetricRecord>(
+  response: NewBackendRecord<T>
+): T[] {
+  if (response.metadata?.lastUpdated) {
+    return response.data.map((record) => {
+      return {
+        ...record,
+        lastUpdated:
+          formatDateString(response.metadata.lastUpdated) ||
+          new Date(9999, 11, 31),
+      };
+    });
+  }
+  return response.data;
 }
 
 export interface TimeSeriesRecord {
