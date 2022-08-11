@@ -36,11 +36,13 @@ import {
   trackSetOpportunityStatus,
   trackSurfacedInList,
 } from "../analytics";
+import { transform as transformEarlyTermination } from "../core/Paperwork/US_ND/Transformer";
 import { transform } from "../core/Paperwork/US_TN/Transformer";
 import {
   ClientRecord,
   CompliantReportingReferralForm,
   CompliantReportingUpdateRecord,
+  EarlyTerminationReferralForm,
   EarlyTerminationUpdateRecord,
   FullName,
   SpecialConditionCode,
@@ -62,7 +64,10 @@ import {
   Opportunity,
   OpportunityType,
 } from "./Opportunity";
-import { EarlyTerminationReferralRecord } from "./Opportunity/EarlyTerminationReferralRecord";
+import {
+  EarlyTerminationDraftData,
+  EarlyTerminationReferralRecord,
+} from "./Opportunity/EarlyTerminationReferralRecord";
 import {
   observableSubscription,
   optionalFieldToDate,
@@ -111,7 +116,7 @@ export class Client {
 
   supervisionStartDate?: Date;
 
-  currentBalance: number;
+  currentBalance?: number;
 
   lastPaymentAmount?: number;
 
@@ -119,11 +124,11 @@ export class Client {
 
   feeExemptions?: string;
 
-  specialConditionsFlag: SpecialConditionsStatus;
+  specialConditionsFlag?: SpecialConditionsStatus;
 
-  probationSpecialConditions: string[];
+  probationSpecialConditions?: string[];
 
-  paroleSpecialConditions: SpecialConditionCode[];
+  paroleSpecialConditions?: SpecialConditionCode[];
 
   nextSpecialConditionsCheck?: Date;
 
@@ -142,6 +147,8 @@ export class Client {
 
   compliantReportingReferralDraftData: Partial<TransformedCompliantReportingReferral>;
 
+  earlyTerminationReferralDraftData: Partial<EarlyTerminationDraftData>;
+
   private fetchedCompliantReportingReferral: SubscriptionValue<CompliantReportingReferralRecord>;
 
   private fetchedEarlyTerminationReferral: SubscriptionValue<EarlyTerminationReferralRecord>;
@@ -150,6 +157,7 @@ export class Client {
     makeObservable<Client, "opportunityUpdateSubscriptions">(this, {
       opportunities: true,
       compliantReportingReferralDraftData: true,
+      earlyTerminationReferralDraftData: true,
       currentUserEmail: true,
       formIsPrinting: true,
       opportunitiesAlmostEligible: true,
@@ -157,6 +165,7 @@ export class Client {
       opportunityUpdateSubscriptions: true,
       printReferralForm: true,
       setCompliantReportingReferralDataField: action,
+      setEarlyTerminationReferralDataField: action,
       setFormIsPrinting: true,
     });
 
@@ -199,6 +208,9 @@ export class Client {
     );
     this.compliantReportingReferralDraftData = observable<
       Partial<TransformedCompliantReportingReferral>
+    >({});
+    this.earlyTerminationReferralDraftData = observable<
+      Partial<EarlyTerminationDraftData>
     >({});
 
     reaction(
@@ -340,6 +352,7 @@ export class Client {
     return this.rootStore.workflowsStore.user?.info.email;
   }
 
+  /* Compliant Reporting */
   async setCompliantReportingDenialReasons(reasons: string[]): Promise<void> {
     if (this.currentUserEmail) {
       // clear irrelevant "other" text if necessary
@@ -456,6 +469,42 @@ export class Client {
     | CompliantReportingReferralForm
     | undefined {
     return this.opportunityUpdates.compliantReporting?.referralForm;
+  }
+
+  /* Early Termination */
+  get prefilledEarlyTerminationForm(): Partial<EarlyTerminationDraftData> {
+    const prefillSourceInformation = this.fetchedEarlyTerminationReferral?.current();
+
+    if (prefillSourceInformation) {
+      return transformEarlyTermination(this, prefillSourceInformation);
+    }
+
+    return {};
+  }
+
+  getEarlyTerminatonDataField(
+    key: keyof EarlyTerminationDraftData
+  ): EarlyTerminationDraftData[keyof EarlyTerminationDraftData] | undefined {
+    // Destructure prior to assignment to register dependencies on both fields
+    const draftData = this.earlyTerminationReferralDraftData[key];
+    const prefillData = this.prefilledEarlyTerminationForm[key];
+
+    return has(this.earlyTerminationReferralDraftData, key)
+      ? draftData
+      : prefillData;
+  }
+
+  async setEarlyTerminationReferralDataField(
+    key: keyof EarlyTerminationDraftData,
+    value: boolean | string | string[]
+  ): Promise<void> {
+    set(this.earlyTerminationReferralDraftData, key, value);
+  }
+
+  get earlyTerminationReferralDraft():
+    | EarlyTerminationReferralForm
+    | undefined {
+    return this.opportunityUpdates.earlyTermination?.referralForm;
   }
 
   async trackFormViewed(formType: OpportunityType): Promise<void> {

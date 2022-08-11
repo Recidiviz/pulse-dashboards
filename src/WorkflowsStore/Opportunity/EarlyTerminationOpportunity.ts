@@ -79,46 +79,66 @@ class EarlyTerminationOpportunity implements Opportunity {
       stateCode,
       externalId,
       formInformation: {
-        plaintiffName,
+        clientName,
+        convictionCounty,
+        judicialDistrictCode,
+        criminalNumber,
         judgeName,
-        sentencingDate,
+        priorCourtDate,
         sentenceLengthYears,
-        chargeName,
-        remainingFees,
+        crimeNames,
+        probationExpirationDate,
+        probationOfficerFullName,
       },
-      reasons: {
-        pastEarlyDischarge,
-        eligibleSupervisionLevel,
-        eligibleSupervisionType,
-        notActiveRevocationStatus,
-      },
+      reasons,
+      metadata,
     } = this.record;
+
+    const transformedReasons: TransformedEarlyTerminationReferral["reasons"] = {};
+
+    reasons.forEach(({ criteriaName, reason }) => {
+      switch (criteriaName) {
+        case "SUPERVISION_EARLY_DISCHARGE_DATE_WITHIN_30_DAYS":
+          transformedReasons.pastEarlyDischarge = {
+            eligibleDate: reason.eligibleDate
+              ? fieldToDate(reason.eligibleDate)
+              : undefined,
+          };
+          break;
+        case "US_ND_NOT_IN_ACTIVE_REVOCATION_STATUS":
+          transformedReasons.notActiveRevocationStatus = {
+            revocationDate: reason.revocationDate
+              ? fieldToDate(reason.revocationDate)
+              : undefined,
+          };
+          break;
+        case "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SUPERVISION_LEVEL":
+          transformedReasons.eligibleSupervisionLevel = reason;
+          break;
+        case "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SENTENCE_TYPE":
+          transformedReasons.eligibleSupervisionType = reason;
+          break;
+        default:
+      }
+    });
 
     const transformedRecord: TransformedEarlyTerminationReferral = {
       stateCode,
       externalId,
       formInformation: {
-        plaintiffName,
+        clientName,
+        convictionCounty,
+        judicialDistrictCode,
+        criminalNumber,
         judgeName,
-        sentencingDate: fieldToDate(sentencingDate),
+        priorCourtDate: fieldToDate(priorCourtDate),
+        probationExpirationDate: fieldToDate(probationExpirationDate),
+        probationOfficerFullName,
         sentenceLengthYears,
-        chargeName,
-        remainingFees,
+        crimeNames,
       },
-      reasons: {
-        pastEarlyDischarge: {
-          eligibleDate: pastEarlyDischarge
-            ? fieldToDate(pastEarlyDischarge.eligibleDate)
-            : undefined,
-        },
-        eligibleSupervisionLevel: {
-          supervisionLevel: eligibleSupervisionLevel?.supervisionLevel,
-        },
-        eligibleSupervisionType: {
-          supervisionType: eligibleSupervisionType?.supervisionType,
-        },
-        notActiveRevocationStatus,
-      },
+      reasons: transformedReasons,
+      metadata,
     };
 
     return transformedRecord;
@@ -160,8 +180,7 @@ class EarlyTerminationOpportunity implements Opportunity {
 
     if (
       !notActiveRevocationStatus ||
-      (notActiveRevocationStatus &&
-        Object.keys(notActiveRevocationStatus).length > 0)
+      (notActiveRevocationStatus && notActiveRevocationStatus.revocationDate)
     ) {
       throw new OpportunityValidationError(
         "Early termination opportunity has revocation date"

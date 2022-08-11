@@ -18,4 +18,5 @@
 export * from "./Client";
 export * from "./CompliantReportingReferralRecord";
 export * from "./Opportunity";
+export * from "./Opportunity/EarlyTerminationReferralRecord";
 export * from "./WorkflowsStore";

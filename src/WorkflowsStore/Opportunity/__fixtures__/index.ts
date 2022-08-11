@@ -120,13 +120,6 @@ export const earlyTerminationEligibleClientRecord: RequireKeys<
   address: "123 Bedrock Lane",
   phoneNumber: "5555555678",
   expirationDate: dateToTimestamp("2024-12-31"),
-  currentBalance: 1221.88,
-  lastPaymentAmount: 125.75,
-  lastPaymentDate: dateToTimestamp("2022-01-03"),
-  specialConditions: [
-    "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
-  ],
-  specialConditionsFlag: "current",
   earlyTerminationEligible: true,
 };
 
@@ -134,19 +127,45 @@ export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {
   stateCode: "US_ND",
   externalId: "110",
   formInformation: {
-    plaintiffName: "JAMIE JONES",
-    judgeName: "Judge 1",
-    sentencingDate: "2020-01-03",
+    clientName: "Jamie Jones",
+    convictionCounty: "NORTH_CENTRAL",
+    judgeName: "JUDGE 1",
+    priorCourtDate: "2020-01-03",
     sentenceLengthYears: 3,
-    chargeName: "CHARGE 1",
-    remainingFees: 120,
+    crimeNames: ["CHARGE 1", "CHARGE 2"],
+    probationExpirationDate: "2022-12-02",
+    probationOfficerFullName: "Karl Fog",
+    criminalNumber: "12345",
+    judicialDistrictCode: "BISMARCK",
   },
-  reasons: {
-    pastEarlyDischarge: {
-      eligibleDate: "2022-01-03",
+  reasons: [
+    {
+      criteriaName: "SUPERVISION_EARLY_DISCHARGE_DATE_WITHIN_30_DAYS",
+      reason: {
+        eligibleDate: "2022-01-03",
+      },
     },
-    eligibleSupervisionLevel: { supervisionLevel: "MEDIUM" },
-    eligibleSupervisionType: { supervisionType: "PROBATION" },
-    notActiveRevocationStatus: {},
+    {
+      criteriaName: "US_ND_NOT_IN_ACTIVE_REVOCATION_STATUS",
+      reason: {
+        revocationDate: undefined,
+      },
+    },
+    {
+      criteriaName: "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SUPERVISION_LEVEL",
+      reason: {
+        supervisionLevel: "MEDIUM",
+      },
+    },
+    {
+      criteriaName: "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SENTENCE_TYPE",
+      reason: {
+        supervisionType: "PROBATION",
+      },
+    },
+  ],
+  metadata: {
+    multipleSentences: true,
+    outOfState: false,
   },
 };

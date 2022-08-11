@@ -70,7 +70,7 @@ function getProbationSpecialConditionsMarkup(client: Client): JSX.Element {
     | string
   )[] = [];
 
-  client.probationSpecialConditions.forEach((conditionsJson) => {
+  client.probationSpecialConditions?.forEach((conditionsJson) => {
     try {
       const conditionsForSentence: {
         // eslint-disable-next-line camelcase
@@ -150,10 +150,10 @@ export const SpecialConditions = ({
       <DetailsHeading>Parole Special Conditions</DetailsHeading>
       <DetailsContent>
         <>
-          {!client.paroleSpecialConditions.length &&
+          {!client.paroleSpecialConditions?.length &&
             "None according to Board Actions in TOMIS"}
           <DetailsList>
-            {client.paroleSpecialConditions.map(
+            {client.paroleSpecialConditions?.map(
               ({ condition, conditionDescription }, i) => {
                 return (
                   // can't guarantee uniqueness of anything in the condition,
@@ -239,7 +239,7 @@ export const FinesAndFees = ({
         <DetailsList>
           <DetailsSubheading>Remaining for current sentence</DetailsSubheading>
           <DetailsContent>
-            {formatAsCurrency(client.currentBalance)}
+            {client.currentBalance && formatAsCurrency(client.currentBalance)}
           </DetailsContent>
 
           {client.lastPaymentAmount && client.lastPaymentDate ? (

@@ -111,12 +111,12 @@ export type ClientRecord = {
   phoneNumber?: string;
   earliestSupervisionStartDateInLatestSystem?: string;
   expirationDate?: Timestamp | string;
-  currentBalance: number;
+  currentBalance?: number;
   lastPaymentAmount?: number;
   lastPaymentDate?: Timestamp | string;
   feeExemptions?: string;
-  specialConditionsFlag: SpecialConditionsStatus;
-  specialConditions: string[];
+  specialConditionsFlag?: SpecialConditionsStatus;
+  specialConditions?: string[];
   boardConditions?: SpecialConditionCode[];
   nextSpecialConditionsCheck?: Timestamp | string;
   lastSpecialConditionsNote?: string;

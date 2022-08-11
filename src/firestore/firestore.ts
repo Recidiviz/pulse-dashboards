@@ -537,3 +537,19 @@ export function updateSelectedOfficerIds(
     { merge: true }
   );
 }
+
+/* Early Termination */
+// TODO: Combine updateCompliantReportingDraft and this once no longer querying clientUpdates?
+export const updateEarlyTerminationDraft = async function (
+  updatedBy: string,
+  recordId: string,
+  data: FormFieldData
+): Promise<void> {
+  const update = {
+    referralForm: {
+      updated: { by: updatedBy, date: serverTimestamp() },
+      data,
+    },
+  };
+  return updateOpportunity("earlyTermination", recordId, update);
+};

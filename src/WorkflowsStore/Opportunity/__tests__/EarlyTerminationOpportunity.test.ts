@@ -26,6 +26,7 @@ import {
   earlyTerminationReferralRecord,
 } from "../__fixtures__";
 import { createEarlyTerminationOpportunity } from "../EarlyTerminationOpportunity";
+import { EarlyTerminationCriteria } from "../EarlyTerminationReferralRecord";
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,
@@ -50,6 +51,7 @@ function createTestUnit(
 ) {
   root = new RootStore();
   client = new Client(clientRecord, root);
+
   const maybeOpportunity = createEarlyTerminationOpportunity(
     clientRecord.earlyTerminationEligible,
     earlyTerminationReferralRecord,
@@ -148,8 +150,13 @@ describe("invalid opportunity record", () => {
     const invalidRecord = JSON.parse(
       JSON.stringify(earlyTerminationReferralRecord)
     );
-    // @ts-ignore
-    invalidRecord.reasons.eligibleSupervisionLevel = {};
+
+    invalidRecord.reasons = invalidRecord.reasons.filter(
+      (criteria: EarlyTerminationCriteria) =>
+        criteria.criteriaName ===
+        "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SUPERVISION_LEVEL"
+    );
+
     expect(
       createEarlyTerminationOpportunity(true, invalidRecord, client)
     ).toBeUndefined();
@@ -159,18 +166,32 @@ describe("invalid opportunity record", () => {
     const invalidRecord = JSON.parse(
       JSON.stringify(earlyTerminationReferralRecord)
     );
-    delete invalidRecord.reasons.notActiveRevocationStatus;
+
+    invalidRecord.reasons = invalidRecord.reasons.filter(
+      (criteria: EarlyTerminationCriteria) =>
+        criteria.criteriaName === "US_ND_NOT_IN_ACTIVE_REVOCATION_STATUS"
+    );
+
     expect(
       createEarlyTerminationOpportunity(true, invalidRecord, client)
     ).toBeUndefined();
   });
 
-  test("invalid record due to revocation_date returns undefined opportunity", () => {
+  test("invalid record due to revocationDate returns undefined opportunity", () => {
     const invalidRecord = JSON.parse(
       JSON.stringify(earlyTerminationReferralRecord)
     );
-    invalidRecord.reasons.notActiveRevocationStatus.revocation_date =
-      "12/25/2021";
+
+    invalidRecord.reasons = invalidRecord.reasons.filter(
+      (criteria: EarlyTerminationCriteria) =>
+        criteria.criteriaName === "US_ND_NOT_IN_ACTIVE_REVOCATION_STATUS"
+    );
+
+    invalidRecord.reasons.push({
+      criteria_name: "US_ND_NOT_IN_ACTIVE_REVOCATION_STATUS",
+      reason: { revocationDate: "12/25/2021" },
+    });
+
     expect(
       createEarlyTerminationOpportunity(true, invalidRecord, client)
     ).toBeUndefined();

@@ -15,22 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+type EarlyTerminationReason = {
+  eligibleDate?: string;
+  supervisionType?: string;
+  revocationDate?: string;
+  supervisionLevel?: string;
+};
+
+export type EarlyTerminationCriteria = {
+  criteriaName: string;
+  reason: EarlyTerminationReason;
+};
+
 export type EarlyTerminationReferralRecord = {
   stateCode: string;
   externalId: string;
   formInformation: {
-    plaintiffName: string;
+    clientName: string;
+    convictionCounty: string;
+    judicialDistrictCode: string;
+    criminalNumber: string;
     judgeName: string;
-    sentencingDate: string;
+    priorCourtDate: string;
     sentenceLengthYears: number;
-    chargeName: string;
-    remainingFees: number;
+    crimeNames: string[];
+    probationExpirationDate: string;
+    probationOfficerFullName: string;
   };
-  reasons: {
-    pastEarlyDischarge: { eligibleDate: string };
-    eligibleSupervisionLevel: { supervisionLevel: string };
-    eligibleSupervisionType: { supervisionType: string };
-    notActiveRevocationStatus: Record<string, never>;
+  reasons: EarlyTerminationCriteria[];
+  metadata: {
+    multipleSentences: boolean;
+    outOfState: boolean;
   };
 };
 
@@ -38,17 +53,38 @@ export interface TransformedEarlyTerminationReferral {
   stateCode: string;
   externalId: string;
   formInformation: {
-    plaintiffName: string;
+    clientName: string;
+    convictionCounty: string;
+    judicialDistrictCode: string;
+    criminalNumber: string;
     judgeName: string;
-    sentencingDate: Date;
+    priorCourtDate: Date;
     sentenceLengthYears: number;
-    chargeName: string;
-    remainingFees: number;
+    crimeNames: string[];
+    probationExpirationDate: Date;
+    probationOfficerFullName: string;
   };
   reasons: {
     pastEarlyDischarge?: { eligibleDate?: Date };
     eligibleSupervisionLevel?: { supervisionLevel?: string };
     eligibleSupervisionType?: { supervisionType?: string };
-    notActiveRevocationStatus?: Record<string, never>;
+    notActiveRevocationStatus?: { revocationDate?: Date };
   };
+  metadata: {
+    multipleSentences: boolean;
+    outOfState: boolean;
+  };
+}
+
+export interface EarlyTerminationDraftData {
+  clientName: string;
+  convictionCounty: string;
+  judicialDistrictCode: string;
+  criminalNumber: string;
+  judgeName: string;
+  priorCourtDate: Date | string;
+  sentenceLengthYears: number;
+  crimeNames: string[];
+  probationExpirationDate: Date | string;
+  probationOfficerFullName: string;
 }
