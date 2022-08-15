@@ -20,11 +20,13 @@ import { makeAutoObservable } from "mobx";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { fieldToDate, OpportunityValidationError } from "../utils";
+import { OTHER_KEY } from "../WorkflowsStore";
 import {
   EarlyTerminationReferralRecord,
   TransformedEarlyTerminationReferral,
 } from "./EarlyTerminationReferralRecord";
 import {
+  DenialReasonsMap,
   Opportunity,
   OpportunityCriterion,
   OpportunityRequirement,
@@ -35,6 +37,18 @@ import {
   earlyTerminationOpportunityStatuses,
   rankByReviewStatus,
 } from "./utils";
+
+const DENIAL_REASONS_MAP = {
+  "INT MEASURE":
+    "Under active intermediate measure as a result of 1+ violations",
+  "CASE PLAN NC": "Has not completed case plan goals",
+  "AR STATUS": "Under active revocation status",
+  SO: "Being supervised for sex offense",
+  "FINES/FEES": "Willfull nonpayment of fines/fees despite ability to pay",
+  INC: "Incarcerated on another offense",
+  "SA DECLINE": "State's Attorney permanently declined consideration",
+  [OTHER_KEY]: "Please specify a reason",
+};
 
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
@@ -61,6 +75,8 @@ class EarlyTerminationOpportunity implements Opportunity {
 
   private record: EarlyTerminationReferralRecord;
 
+  readonly denialReasonsMap: DenialReasonsMap;
+
   constructor(record: EarlyTerminationReferralRecord, client: Client) {
     makeAutoObservable<
       EarlyTerminationOpportunity,
@@ -72,6 +88,7 @@ class EarlyTerminationOpportunity implements Opportunity {
 
     this.client = client;
     this.record = record;
+    this.denialReasonsMap = DENIAL_REASONS_MAP;
   }
 
   private get transformedRecord() {

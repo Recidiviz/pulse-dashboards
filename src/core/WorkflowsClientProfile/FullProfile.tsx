@@ -22,6 +22,7 @@ import {
   spacing,
   typography,
 } from "@recidiviz/design-system";
+import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
@@ -31,7 +32,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import { ProfileCapsule } from "../ClientCapsule";
 import { useClientTracking } from "../hooks/useClientTracking";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import { CompliantReportingPreview } from "./CompliantReportingModule";
+import { OpportunityPreview } from "./CompliantReportingModule";
 import { FinesAndFees, Housing, SpecialConditions } from "./Details";
 import { SupervisionProgress } from "./SupervisionProgress";
 
@@ -112,6 +113,10 @@ export const FullProfile = observer((): React.ReactElement | null => {
 
   if (!client) return null;
 
+  const opportunity = values(client.opportunities).find(
+    (opp) => opp !== undefined
+  );
+
   return (
     <WorkflowsNavLayout>
       <Wrapper>
@@ -137,8 +142,8 @@ export const FullProfile = observer((): React.ReactElement | null => {
         </div>
         <div>
           <SectionHeading>Opportunities</SectionHeading>
-          {client.opportunities.compliantReporting ? (
-            <CompliantReportingPreview client={client} />
+          {opportunity ? (
+            <OpportunityPreview client={client} opportunity={opportunity} />
           ) : (
             <NoOpportunities>
               <Sans16>None for now</Sans16>

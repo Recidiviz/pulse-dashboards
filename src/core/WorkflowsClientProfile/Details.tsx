@@ -22,6 +22,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import * as pathwaysTenants from "../../RootStore/TenantStore/pathwaysTenants";
 import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
 import { Client } from "../../WorkflowsStore";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
@@ -52,6 +53,25 @@ const DetailsContent = styled.dd`
 const SpecialConditionsCopy = styled.div`
   ${typography.Body12}
 `;
+
+type EmptySpecialConditionCopy = {
+  parole: string;
+  probation: string;
+};
+
+const STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_COPY: Record<
+  string,
+  EmptySpecialConditionCopy
+> = {
+  [pathwaysTenants.US_TN]: {
+    parole: "None according to Board Actions in TOMIS",
+    probation: "None according to judgment orders in TOMIS",
+  },
+  [pathwaysTenants.US_ND]: {
+    parole: "None according to DOCSTARS",
+    probation: "None according to DOCSTARS",
+  },
+};
 
 // TODO(#1735): the real type should be cleaner than this
 type ParsedSpecialCondition = {
@@ -108,7 +128,7 @@ function getProbationSpecialConditionsMarkup(client: Client): JSX.Element {
   return (
     <>
       {!conditionsToDisplay.length &&
-        "None according to judgment orders in TOMIS"}
+        STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_COPY[client.stateCode].probation}
       <DetailsList>
         {conditionsToDisplay.map((condition, i) => {
           // can't guarantee uniqueness of anything in the condition,
@@ -151,7 +171,8 @@ export const SpecialConditions = ({
       <DetailsContent>
         <>
           {!client.paroleSpecialConditions?.length &&
-            "None according to Board Actions in TOMIS"}
+            STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_COPY[client.stateCode]
+              .parole}
           <DetailsList>
             {client.paroleSpecialConditions?.map(
               ({ condition, conditionDescription }, i) => {

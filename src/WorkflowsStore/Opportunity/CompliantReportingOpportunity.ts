@@ -33,7 +33,9 @@ import {
   OpportunityValidationError,
   optionalFieldToDate,
 } from "../utils";
+import { OTHER_KEY } from "../WorkflowsStore";
 import {
+  DenialReasonsMap,
   Opportunity,
   OpportunityCriterion,
   OpportunityRequirement,
@@ -140,12 +142,25 @@ const CRITERIA: Record<string, OpportunityCriterion> = {
   },
 };
 
+const DENIAL_REASONS_MAP = {
+  DECF: "DECF: No effort to pay fine and costs",
+  DECR: "DECR: Criminal record",
+  DECT: "DECT: Insufficient time in supervision level",
+  DEDF: "DEDF: No effort to pay fees",
+  DEDU: "DEDU: Serious compliance problems ",
+  DEIJ: "DEIJ: Not allowed per court",
+  DEIR: "DEIR: Failure to report as instructed",
+  [OTHER_KEY]: "Please specify a reason",
+};
+
 class CompliantReportingOpportunity implements Opportunity {
   client: Client;
 
   readonly type: OpportunityType = "compliantReporting";
 
   private record: CompliantReportingEligibleRecord;
+
+  readonly denialReasonsMap: DenialReasonsMap;
 
   constructor(record: CompliantReportingEligibleRecord, client: Client) {
     makeAutoObservable<
@@ -158,6 +173,7 @@ class CompliantReportingOpportunity implements Opportunity {
 
     this.client = client;
     this.record = record;
+    this.denialReasonsMap = DENIAL_REASONS_MAP;
   }
 
   private get transformedRecord() {

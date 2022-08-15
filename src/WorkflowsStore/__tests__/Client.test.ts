@@ -26,8 +26,8 @@ import {
 import { transform } from "../../core/Paperwork/US_TN/Transformer";
 import {
   subscribeToCompliantReportingReferral,
-  updateCompliantReportingDenial,
   updateOpportunityCompleted,
+  updateOpportunityDenial,
 } from "../../firestore";
 import { RootStore } from "../../RootStore";
 import { eligibleClient, mockOfficer } from "../__fixtures__";
@@ -36,6 +36,7 @@ import {
   CompliantReportingReferralRecord,
   TransformedCompliantReportingReferral,
 } from "../CompliantReportingReferralRecord";
+import { OPPORTUNITY_TYPES } from "../Opportunity";
 import { dateToTimestamp } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 
@@ -49,8 +50,8 @@ const mockTransform = transform as jest.MockedFunction<typeof transform>;
 const mockSubscribeToCompliantReportingReferral = subscribeToCompliantReportingReferral as jest.MockedFunction<
   typeof subscribeToCompliantReportingReferral
 >;
-const mockUpdateCompliantReportingDenial = updateCompliantReportingDenial as jest.MockedFunction<
-  typeof updateCompliantReportingDenial
+const mockupdateOpportunityDenial = updateOpportunityDenial as jest.MockedFunction<
+  typeof updateOpportunityDenial
 >;
 const mockUpdateOpportunityCompleted = updateOpportunityCompleted as jest.MockedFunction<
   typeof updateOpportunityCompleted
@@ -110,124 +111,140 @@ test("fetch CompliantReportingReferral uses recordId", async () => {
   expect(mockSubscribeToCompliantReportingReferral).toHaveBeenCalled();
 });
 
-test("set compliant reporting ineligible", async () => {
-  runInAction(() => {
+test.each(OPPORTUNITY_TYPES)(
+  "set %s opportunity ineligible",
+  async (opportunityType) => {
     rootStore.workflowsStore.user = mockOfficer;
-  });
 
-  const reasons = ["test1", "test2"];
-  await client.setCompliantReportingDenialReasons(reasons);
+    const reasons = ["test1", "test2"];
 
-  expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
-    mockOfficer.info.email,
-    client.recordId,
-    { reasons },
-    { otherReason: true }
-  );
+    await client.setOpportunityDenialReasons(reasons, opportunityType);
 
-  expect(mockUpdateOpportunityCompleted).toHaveBeenCalledWith(
-    mockOfficer.info.email,
-    client.recordId,
-    "compliantReporting",
-    true
-  );
-  expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
-    clientId: client.pseudonymizedId,
-    status: "DENIED",
-    opportunityType: "compliantReporting",
-    deniedReasons: reasons,
-  });
-});
+    expect(mockupdateOpportunityDenial).toHaveBeenCalledWith(
+      mockOfficer.info.email,
+      client.recordId,
+      { reasons },
+      opportunityType,
+      { otherReason: true }
+    );
 
-test("ineligible for other reason", () => {
-  runInAction(() => {
+    expect(mockUpdateOpportunityCompleted).toHaveBeenCalledWith(
+      mockOfficer.info.email,
+      client.recordId,
+      opportunityType,
+      true
+    );
+    expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
+      clientId: client.pseudonymizedId,
+      status: "DENIED",
+      opportunityType,
+      deniedReasons: reasons,
+    });
+  }
+);
+
+test.each(OPPORTUNITY_TYPES)(
+  "set %s opportunity ineligible for other reason",
+  (opportunityType) => {
     rootStore.workflowsStore.user = mockOfficer;
-  });
 
-  const reasons = ["test1", OTHER_KEY];
-  client.setCompliantReportingDenialReasons(reasons);
+    const reasons = ["test1", OTHER_KEY];
 
-  expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
-    mockOfficer.info.email,
-    client.recordId,
-    { reasons },
-    undefined
-  );
+    client.setOpportunityDenialReasons(reasons, opportunityType);
 
-  const newReasons = reasons.slice(0, 1);
+    expect(mockupdateOpportunityDenial).toHaveBeenCalledWith(
+      mockOfficer.info.email,
+      client.recordId,
+      { reasons },
+      opportunityType,
+      undefined
+    );
 
-  client.setCompliantReportingDenialReasons(newReasons);
+    const newReasons = reasons.slice(0, 1);
 
-  expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
-    mockOfficer.info.email,
-    client.recordId,
-    { reasons: newReasons },
-    // this will delete the related field if reasons do not include "other"
-    { otherReason: true }
-  );
-});
+    client.setOpportunityDenialReasons(newReasons, opportunityType);
 
-test("set compliant reporting other reason", () => {
-  runInAction(() => {
+    expect(mockupdateOpportunityDenial).toHaveBeenCalledWith(
+      mockOfficer.info.email,
+      client.recordId,
+      { reasons: newReasons },
+      opportunityType,
+      // this will delete the related field if reasons do not include "other"
+      { otherReason: true }
+    );
+  }
+);
+
+test.each(OPPORTUNITY_TYPES)(
+  "set %s opportunity other reason",
+  (opportunityType) => {
     rootStore.workflowsStore.user = mockOfficer;
-  });
-  const otherReason = "some other reason";
-  client.setCompliantReportingDenialOtherReason(otherReason);
 
-  expect(mockUpdateCompliantReportingDenial).toHaveBeenCalledWith(
-    mockOfficer.info.email,
-    client.recordId,
-    { otherReason }
-  );
-});
+    const otherReason = "some other reason";
+    client.setOpportunityOtherReason(opportunityType, otherReason);
 
-test("clear denial reasons", async () => {
-  runInAction(() => {
+    expect(mockupdateOpportunityDenial).toHaveBeenCalledWith(
+      mockOfficer.info.email,
+      client.recordId,
+      { otherReason },
+      opportunityType
+    );
+  }
+);
+
+test.each(OPPORTUNITY_TYPES)(
+  "clear denial reasons for opportunity %s",
+  async (opportunityType) => {
     rootStore.workflowsStore.user = mockOfficer;
-  });
-  const reasons = ["test1", OTHER_KEY];
-  await client.setCompliantReportingDenialReasons(reasons);
 
-  await client.setCompliantReportingDenialReasons([]);
+    const reasons = ["test1", OTHER_KEY];
+    await client.setOpportunityDenialReasons(reasons, opportunityType);
 
-  expect(trackSetOpportunityStatus).toHaveBeenCalledTimes(2);
-  expect(trackSetOpportunityStatus).toHaveBeenLastCalledWith({
-    clientId: client.pseudonymizedId,
-    status: "IN_PROGRESS",
-    opportunityType: "compliantReporting",
-  });
-});
+    await client.setOpportunityDenialReasons([], opportunityType);
 
-test("print client reporting form", () => {
-  runInAction(() => {
+    expect(trackSetOpportunityStatus).toHaveBeenCalledTimes(2);
+    expect(trackSetOpportunityStatus).toHaveBeenLastCalledWith({
+      clientId: client.pseudonymizedId,
+      status: "IN_PROGRESS",
+      opportunityType,
+    });
+  }
+);
+
+test.each(OPPORTUNITY_TYPES)(
+  "print client reporting form for %s opportunity",
+  (opportunityType) => {
     rootStore.workflowsStore.user = mockOfficer;
-  });
 
-  expect(client.formIsPrinting).toBe(false);
+    expect(client.formIsPrinting).toBe(false);
 
-  client.printReferralForm("compliantReporting");
+    client.printReferralForm(opportunityType);
 
-  expect(client.formIsPrinting).toBe(true);
-});
+    expect(client.formIsPrinting).toBe(true);
 
-test("mark client as completed when printing form", () => {
-  runInAction(() => {
+    client.setFormIsPrinting(false);
+  }
+);
+
+test.each(OPPORTUNITY_TYPES)(
+  "mark client as completed when printing form for %s opportunity",
+  (opportunityType) => {
     rootStore.workflowsStore.user = mockOfficer;
-  });
 
-  client.printReferralForm("compliantReporting");
+    client.printReferralForm(opportunityType);
 
-  expect(mockUpdateOpportunityCompleted).toHaveBeenCalledWith(
-    mockOfficer.info.email,
-    client.recordId,
-    "compliantReporting"
-  );
-  expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
-    clientId: client.pseudonymizedId,
-    status: "COMPLETED",
-    opportunityType: "compliantReporting",
-  });
-});
+    expect(mockUpdateOpportunityCompleted).toHaveBeenCalledWith(
+      mockOfficer.info.email,
+      client.recordId,
+      opportunityType
+    );
+    expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
+      clientId: client.pseudonymizedId,
+      status: "COMPLETED",
+      opportunityType,
+    });
+  }
+);
 
 test("don't record a completion if user is ineligible", () => {
   runInAction(() => {

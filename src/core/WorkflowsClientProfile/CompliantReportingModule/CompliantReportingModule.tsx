@@ -18,29 +18,19 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import type { Client } from "../../../WorkflowsStore";
 import {
   ActionButtons,
+  getPrintText,
   PrintButton,
   Title,
   useStatusColors,
   Wrapper,
 } from "../common";
 import { CriteriaList } from "../CriteriaList";
+import { OpportunityDenial } from "../OpportunityDenial";
 import { ClientProfileProps } from "../types";
-import { CompliantReportingDenial } from "./CompliantReportingDenial";
 
-const getPrintText = (client: Client) => {
-  if (client.formIsPrinting) {
-    return "Printing PDF...";
-  }
-
-  if (client.opportunityUpdates.compliantReporting?.completed) {
-    return "Reprint PDF";
-  }
-
-  return "Print PDF";
-};
+const OPPORTUNITY_TYPE = "compliantReporting";
 
 export const CompliantReportingModule = observer(
   ({ client }: ClientProfileProps) => {
@@ -66,12 +56,15 @@ export const CompliantReportingModule = observer(
               kind="primary"
               shape="block"
               buttonFill={colors.buttonFill}
-              onClick={() => client.printReferralForm("compliantReporting")}
+              onClick={() => client.printReferralForm(OPPORTUNITY_TYPE)}
             >
-              {getPrintText(client)}
+              {getPrintText(client, OPPORTUNITY_TYPE)}
             </PrintButton>
           </div>
-          <CompliantReportingDenial client={client} />
+          <OpportunityDenial
+            client={client}
+            opportunity={client.opportunities.compliantReporting}
+          />
         </ActionButtons>
       </Wrapper>
     );

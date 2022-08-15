@@ -18,28 +18,19 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import type { Client } from "../../../WorkflowsStore";
 import {
   ActionButtons,
+  getPrintText,
   PrintButton,
   Title,
   useStatusColors,
   Wrapper,
 } from "../common";
 import { CriteriaList } from "../CriteriaList";
+import { OpportunityDenial } from "../OpportunityDenial";
 import { ClientProfileProps } from "../types";
 
-const getPrintText = (client: Client) => {
-  if (client.formIsPrinting) {
-    return "Printing PDF...";
-  }
-
-  if (client.opportunityUpdates.earlyTermination?.completed) {
-    return "Reprint PDF";
-  }
-
-  return "Print PDF";
-};
+const OPPORTUNITY_TYPE = "earlyTermination";
 
 export const EarlyTerminationModule = observer(
   ({ client }: ClientProfileProps) => {
@@ -65,11 +56,15 @@ export const EarlyTerminationModule = observer(
               kind="primary"
               shape="block"
               buttonFill={colors.buttonFill}
-              onClick={() => client.printReferralForm("earlyTermination")}
+              onClick={() => client.printReferralForm(OPPORTUNITY_TYPE)}
             >
-              {getPrintText(client)}
+              {getPrintText(client, OPPORTUNITY_TYPE)}
             </PrintButton>
           </div>
+          <OpportunityDenial
+            client={client}
+            opportunity={client.opportunities.earlyTermination}
+          />
         </ActionButtons>
       </Wrapper>
     );

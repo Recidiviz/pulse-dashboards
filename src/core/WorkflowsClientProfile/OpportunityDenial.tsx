@@ -23,26 +23,16 @@ import {
   spacing,
 } from "@recidiviz/design-system";
 import { debounce, xor } from "lodash";
+import { entries } from "mobx";
 import { observer } from "mobx-react-lite";
 import { darken, rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import Checkbox from "../../../components/Checkbox";
-import { OTHER_KEY } from "../../../WorkflowsStore";
-import { STATUS_COLORS, useStatusColors } from "../common";
-import { ClientProfileProps } from "../types";
-
-const REASONS_MAP = {
-  DECF: "No effort to pay fine and costs",
-  DECR: "Criminal record",
-  DECT: "Insufficient time in supervision level",
-  DEDF: "No effort to pay fees",
-  DEDU: "Serious compliance problems ",
-  DEIJ: "Not allowed per court",
-  DEIR: "Failure to report as instructed",
-  [OTHER_KEY]: "Please specify a reason",
-};
+import Checkbox from "../../components/Checkbox";
+import { OTHER_KEY } from "../../WorkflowsStore";
+import { STATUS_COLORS, useStatusColors } from "./common";
+import { ClientWithOpportunityProps } from "./types";
 
 const Wrapper = styled.div`
   flex: 1 1 auto;
@@ -134,13 +124,13 @@ const StatusAwareButton = styled(DropdownToggle).attrs({
   }
 `;
 
-export const CompliantReportingDenial = observer(
-  ({ client }: ClientProfileProps) => {
+export const OpportunityDenial = observer(
+  ({ client, opportunity }: ClientWithOpportunityProps) => {
     const colors = useStatusColors(client);
-    if (!client.opportunities.compliantReporting) return null;
+    if (!opportunity) return null;
 
     const reasons =
-      client.opportunityUpdates.compliantReporting?.denial?.reasons;
+      client.opportunityUpdates?.[opportunity.type]?.denial?.reasons;
 
     const buttonProps = {
       background: colors.background,
@@ -168,7 +158,7 @@ export const CompliantReportingDenial = observer(
                   name="eligible"
                   onChange={() => {
                     if (reasons?.length) {
-                      client.setCompliantReportingDenialReasons([]);
+                      client.setOpportunityDenialReasons([], opportunity.type);
                     }
                   }}
                 >
@@ -178,19 +168,20 @@ export const CompliantReportingDenial = observer(
               <SelectReasonText>
                 Not eligible? Select reason(s):
               </SelectReasonText>
-              {Object.entries(REASONS_MAP).map(([code, desc]) => (
+              {entries(opportunity?.denialReasonsMap).map(([code, desc]) => (
                 <DropdownItem>
                   <Checkbox
                     value={code}
                     checked={reasons?.includes(code) || false}
                     name="denial reason"
                     onChange={() => {
-                      client.setCompliantReportingDenialReasons(
-                        xor(reasons, [code]).sort()
+                      client.setOpportunityDenialReasons(
+                        xor(reasons, [code]).sort(),
+                        opportunity.type
                       );
                     }}
                   >
-                    {code}: {desc}
+                    {desc}
                   </Checkbox>
                 </DropdownItem>
               ))}
@@ -199,13 +190,14 @@ export const CompliantReportingDenial = observer(
                 <OtherInputWrapper>
                   <OtherInput
                     defaultValue={
-                      client.opportunityUpdates.compliantReporting?.denial
+                      client.opportunityUpdates?.[opportunity.type]?.denial
                         ?.otherReason
                     }
                     placeholder="Please specify a reason…"
                     onChange={debounce(
                       (event) =>
-                        client.setCompliantReportingDenialOtherReason(
+                        client.setOpportunityOtherReason(
+                          opportunity.type,
                           event.target.value
                         ),
                       500

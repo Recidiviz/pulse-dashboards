@@ -15,8 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Client } from "../../WorkflowsStore";
+import type { Client, Opportunity } from "../../WorkflowsStore";
 
 export type ClientProfileProps = {
   client: Client;
+};
+
+export type ClientWithOpportunityProps = ClientProfileProps & {
+  opportunity: Opportunity;
 };

@@ -51,8 +51,8 @@ import {
   subscribeToCompliantReportingReferral,
   subscribeToEarlyTerminationReferral,
   subscribeToOpportunityUpdate,
-  updateCompliantReportingDenial,
   updateOpportunityCompleted,
+  updateOpportunityDenial,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
 import {
@@ -175,7 +175,7 @@ export class Client {
     this.recordId = record.recordId;
     this.id = record.personExternalId;
     this.pseudonymizedId = record.pseudonymizedId;
-    this.stateCode = record.stateCode;
+    this.stateCode = record.stateCode.toUpperCase();
     this.fullName = record.personName;
     this.officerId = record.officerId;
     this.supervisionType = record.supervisionType;
@@ -355,25 +355,28 @@ export class Client {
     return this.rootStore.workflowsStore.user?.info.email;
   }
 
-  /* Compliant Reporting */
-  async setCompliantReportingDenialReasons(reasons: string[]): Promise<void> {
+  async setOpportunityDenialReasons(
+    reasons: string[],
+    opportunityType: OpportunityType
+  ): Promise<void> {
     if (this.currentUserEmail) {
       // clear irrelevant "other" text if necessary
       const deletions = reasons.includes(OTHER_KEY)
         ? undefined
         : { otherReason: true };
 
-      await updateCompliantReportingDenial(
+      await updateOpportunityDenial(
         this.currentUserEmail,
         this.recordId,
         { reasons },
+        opportunityType,
         deletions
       );
 
       await updateOpportunityCompleted(
         this.currentUserEmail,
         this.recordId,
-        "compliantReporting",
+        opportunityType,
         true
       );
 
@@ -381,29 +384,31 @@ export class Client {
         trackSetOpportunityStatus({
           clientId: this.pseudonymizedId,
           status: "DENIED",
-          opportunityType: "compliantReporting",
+          opportunityType,
           deniedReasons: reasons,
         });
       } else {
         trackSetOpportunityStatus({
           clientId: this.pseudonymizedId,
           status: "IN_PROGRESS",
-          opportunityType: "compliantReporting",
+          opportunityType,
         });
       }
     }
   }
 
-  async setCompliantReportingDenialOtherReason(
+  async setOpportunityOtherReason(
+    opportunityType: OpportunityType,
     otherReason?: string
   ): Promise<void> {
     if (this.currentUserEmail) {
-      await updateCompliantReportingDenial(
+      await updateOpportunityDenial(
         this.currentUserEmail,
         this.recordId,
         {
           otherReason,
-        }
+        },
+        opportunityType
       );
     }
   }
@@ -437,6 +442,7 @@ export class Client {
     }
   }
 
+  /* Compliant Reporting */
   getCompliantReportingReferralDataField(
     key: keyof TransformedCompliantReportingReferral
   ):

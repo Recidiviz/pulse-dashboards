@@ -22,13 +22,19 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import formPreviewSrc from "../../../assets/static/images/compliantReportingFormPreview.png";
-import { IconGoSvg } from "../../../components/Icons";
-import { workflowsUrl } from "../../views";
-import { StatusPalette, Title, useStatusColors, Wrapper } from "../common";
-import { CriteriaList } from "../CriteriaList";
-import { ClientProfileProps } from "../types";
-import { CompliantReportingDenial } from "./CompliantReportingDenial";
+import compliantReportingFormPreviewSrc from "../../assets/static/images/compliantReportingFormPreview.png";
+import { IconGoSvg } from "../../components/Icons";
+import { OPPORTUNITY_LABELS, OpportunityType } from "../../WorkflowsStore";
+import { workflowsUrl } from "../views";
+import { StatusPalette, Title, useStatusColors, Wrapper } from "./common";
+import { CriteriaList } from "./CriteriaList";
+import { OpportunityDenial } from "./OpportunityDenial";
+import { ClientWithOpportunityProps } from "./types";
+
+// TODO Remove the Partial here when we have an earlyTermination preview image
+const FORM_PREVIEW: Partial<Record<OpportunityType, string>> = {
+  compliantReporting: compliantReportingFormPreviewSrc,
+};
 
 const PreviewWrapper = styled(Wrapper)`
   border-width: 1px;
@@ -72,10 +78,8 @@ const FormPreview = styled.img<Pick<StatusPalette, "border">>`
   width: ${rem(205)};
 `;
 
-export const CompliantReportingPreview = observer(
-  ({ client }: ClientProfileProps) => {
-    if (!client.opportunities.compliantReporting) return null;
-
+export const OpportunityPreview = observer(
+  ({ client, opportunity }: ClientWithOpportunityProps) => {
     const colors = useStatusColors(client);
 
     return (
@@ -83,33 +87,31 @@ export const CompliantReportingPreview = observer(
         <div>
           <Sans16>
             <Title
-              titleText="Compliant Reporting"
-              statusMessage={
-                client.opportunities.compliantReporting?.statusMessageShort
-              }
+              titleText={OPPORTUNITY_LABELS[opportunity.type]}
+              statusMessage={opportunity?.statusMessageShort}
             />
           </Sans16>
-          <CriteriaList
-            opportunity={client.opportunities.compliantReporting}
-            colors={colors}
-          />
-          <CompliantReportingDenial client={client} />
+          <CriteriaList opportunity={opportunity} colors={colors} />
+          <OpportunityDenial client={client} opportunity={opportunity} />
         </div>
         <div>
           <FormLink
-            to={workflowsUrl("compliantReporting", {
+            to={workflowsUrl(opportunity.type, {
               clientId: client.pseudonymizedId,
             })}
             link={colors.link}
             onClick={() =>
-              client.trackProfileOpportunityClicked("compliantReporting")
+              client.trackProfileOpportunityClicked(opportunity.type)
             }
           >
             <LinkText>
               Auto-fill form
               <Icon kind={IconGoSvg} size={rem(14)} />
             </LinkText>
-            <FormPreview src={formPreviewSrc} border={colors.border} />
+            <FormPreview
+              src={FORM_PREVIEW[opportunity.type]}
+              border={colors.border}
+            />
           </FormLink>
         </div>
       </PreviewWrapper>

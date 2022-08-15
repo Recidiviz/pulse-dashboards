@@ -53,6 +53,8 @@ export const OPPORTUNITY_STATUS_RANKED = [
 ] as const;
 export type OpportunityStatus = typeof OPPORTUNITY_STATUS_RANKED[number];
 
+export type DenialReasonsMap = Record<string, string>;
+
 /**
  * An Opportunity is associated with a single client.
  * The client is assumed to be eligible for the Opportunity unless the
@@ -71,4 +73,5 @@ export interface Opportunity {
   statusMessageLong: string;
   readonly type: OpportunityType;
   validate: () => void;
+  denialReasonsMap: DenialReasonsMap;
 }

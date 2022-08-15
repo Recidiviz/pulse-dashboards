@@ -477,13 +477,14 @@ export const updateCompliantReportingDraft = async function (
   });
 };
 
-export async function updateCompliantReportingDenial(
+export async function updateOpportunityDenial(
   userEmail: string,
   recordId: string,
   fieldUpdates: {
     reasons?: string[];
     otherReason?: string;
   },
+  opportunityType: OpportunityType,
   deleteFields?: {
     otherReason: boolean;
   }
@@ -504,7 +505,7 @@ export async function updateCompliantReportingDenial(
     },
   };
 
-  return updateOpportunity("compliantReporting", recordId, changes);
+  return updateOpportunity(opportunityType, recordId, changes);
 }
 
 export async function updateOpportunityCompleted(
