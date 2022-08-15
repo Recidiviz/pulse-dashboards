@@ -34,6 +34,20 @@ import styled from "styled-components/macro";
 
 import { Opportunity } from "../../WorkflowsStore";
 
+// we want this to display inline, which a <button> cannot do
+const TriggerButton = styled.a.attrs({
+  role: "button",
+  tabIndex: 0,
+})`
+  color: ${palette.signal.links};
+
+  &:hover,
+  &:focus {
+    color: ${palette.pine4};
+    text-decoration: underline;
+  }
+`;
+
 const StyledModal = styled(Modal)`
   .ReactModal__Content {
     padding: 0;
@@ -88,9 +102,17 @@ export const OpportunityRecommendedLanguageModal = observer(
 
     return (
       <>
-        <Button kind="link" onClick={() => setShowModal(!showModal)}>
+        <TriggerButton
+          onClick={() => setShowModal(!showModal)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              setShowModal(!showModal);
+              event.preventDefault();
+            }
+          }}
+        >
           {children}
-        </Button>
+        </TriggerButton>
         <StyledModal
           isOpen={showModal}
           onRequestClose={() => setShowModal(false)}
