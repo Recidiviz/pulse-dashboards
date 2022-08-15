@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, configure, observable, set, when } from "mobx";
+import { computed, configure, observable, runInAction, set, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
@@ -111,7 +111,9 @@ test("fetch CompliantReportingReferral uses recordId", async () => {
 });
 
 test("set compliant reporting ineligible", async () => {
-  rootStore.workflowsStore.user = mockOfficer;
+  runInAction(() => {
+    rootStore.workflowsStore.user = mockOfficer;
+  });
 
   const reasons = ["test1", "test2"];
   await client.setCompliantReportingDenialReasons(reasons);
@@ -138,7 +140,9 @@ test("set compliant reporting ineligible", async () => {
 });
 
 test("ineligible for other reason", () => {
-  rootStore.workflowsStore.user = mockOfficer;
+  runInAction(() => {
+    rootStore.workflowsStore.user = mockOfficer;
+  });
 
   const reasons = ["test1", OTHER_KEY];
   client.setCompliantReportingDenialReasons(reasons);
@@ -164,8 +168,9 @@ test("ineligible for other reason", () => {
 });
 
 test("set compliant reporting other reason", () => {
-  rootStore.workflowsStore.user = mockOfficer;
-
+  runInAction(() => {
+    rootStore.workflowsStore.user = mockOfficer;
+  });
   const otherReason = "some other reason";
   client.setCompliantReportingDenialOtherReason(otherReason);
 
@@ -177,8 +182,9 @@ test("set compliant reporting other reason", () => {
 });
 
 test("clear denial reasons", async () => {
-  rootStore.workflowsStore.user = mockOfficer;
-
+  runInAction(() => {
+    rootStore.workflowsStore.user = mockOfficer;
+  });
   const reasons = ["test1", OTHER_KEY];
   await client.setCompliantReportingDenialReasons(reasons);
 
@@ -193,7 +199,9 @@ test("clear denial reasons", async () => {
 });
 
 test("print client reporting form", () => {
-  rootStore.workflowsStore.user = mockOfficer;
+  runInAction(() => {
+    rootStore.workflowsStore.user = mockOfficer;
+  });
 
   expect(client.formIsPrinting).toBe(false);
 
@@ -203,7 +211,9 @@ test("print client reporting form", () => {
 });
 
 test("mark client as completed when printing form", () => {
-  rootStore.workflowsStore.user = mockOfficer;
+  runInAction(() => {
+    rootStore.workflowsStore.user = mockOfficer;
+  });
 
   client.printReferralForm("compliantReporting");
 
@@ -220,7 +230,9 @@ test("mark client as completed when printing form", () => {
 });
 
 test("don't record a completion if user is ineligible", () => {
-  rootStore.workflowsStore.user = mockOfficer;
+  runInAction(() => {
+    rootStore.workflowsStore.user = mockOfficer;
+  });
 
   set(mockUpdate, {
     compliantReporting: {
@@ -294,12 +306,14 @@ test("form view tracking waits for updates", async () => {
 
   // simulate fetch latency
   setTimeout(() => {
-    set(mockUpdate, {
-      compliantReporting: {
-        completed: {
-          update: { by: "abc", date: dateToTimestamp("2022-01-01") },
+    runInAction(() => {
+      set(mockUpdate, {
+        compliantReporting: {
+          completed: {
+            update: { by: "abc", date: dateToTimestamp("2022-01-01") },
+          },
         },
-      },
+      });
     });
   }, 10);
 
@@ -329,12 +343,14 @@ test("list view tracking waits for updates", async () => {
 
   // simulate fetch latency
   setTimeout(() => {
-    set(mockUpdate, {
-      compliantReporting: {
-        completed: {
-          update: { by: "abc", date: dateToTimestamp("2022-01-01") },
+    runInAction(() => {
+      set(mockUpdate, {
+        compliantReporting: {
+          completed: {
+            update: { by: "abc", date: dateToTimestamp("2022-01-01") },
+          },
         },
-      },
+      });
     });
   }, 10);
 

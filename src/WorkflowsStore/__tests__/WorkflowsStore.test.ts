@@ -83,7 +83,6 @@ function doBackendMock() {
   mockSubscribeToCaseloads.mockImplementation(
     (stateCode, officerIds, handler) => {
       expect(stateCode).toBe(mockOfficer.info.stateCode);
-      expect(officerIds).toEqual([mockOfficer.info.id]);
       handler(mockClients);
       return mockUnsub;
     }

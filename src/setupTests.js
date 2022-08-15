@@ -21,8 +21,13 @@ import "jest-canvas-mock";
 
 import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
 import { configure } from "enzyme";
+import { configure as configureMobx } from "mobx";
 
 import { initI18n } from "./utils/i18nSettings";
+
+configureMobx({
+  enforceActions: "never",
+});
 
 initI18n();
 
@@ -38,3 +43,5 @@ process.env = {
 window.analytics = {
   track: () => {},
 };
+
+window.scrollTo = () => {};

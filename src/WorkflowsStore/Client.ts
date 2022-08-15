@@ -18,6 +18,7 @@
 import { has } from "lodash";
 import {
   action,
+  autorun,
   entries,
   makeObservable,
   observable,
@@ -136,7 +137,7 @@ export class Client {
 
   specialConditionsTerminatedDate?: Date;
 
-  opportunities: OpportunityMapping;
+  opportunities: OpportunityMapping = {};
 
   private opportunityUpdateSubscriptions: {
     compliantReporting?: SubscriptionValue<CompliantReportingUpdateRecord>;
@@ -280,17 +281,19 @@ export class Client {
       });
     });
 
-    this.opportunities = {
-      compliantReporting: createCompliantReportingOpportunity(
-        record.compliantReportingEligible,
-        this
-      ),
-      earlyTermination: createEarlyTerminationOpportunity(
-        record.earlyTerminationEligible,
-        this.fetchedEarlyTerminationReferral.current(),
-        this
-      ),
-    };
+    autorun(() => {
+      this.opportunities = {
+        compliantReporting: createCompliantReportingOpportunity(
+          record.compliantReportingEligible,
+          this
+        ),
+        earlyTermination: createEarlyTerminationOpportunity(
+          record.earlyTerminationEligible,
+          this.fetchedEarlyTerminationReferral.current(),
+          this
+        ),
+      };
+    });
   }
 
   get displayName(): string {

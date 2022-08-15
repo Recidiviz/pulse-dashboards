@@ -275,7 +275,6 @@ export function createEarlyTerminationOpportunity(
   client: Client
 ): EarlyTerminationOpportunity | undefined {
   if (!record || !eligible) return undefined;
-
   try {
     const opp = new EarlyTerminationOpportunity(record, client);
     opp.validate();

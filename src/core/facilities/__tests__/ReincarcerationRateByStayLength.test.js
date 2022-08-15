@@ -131,6 +131,7 @@ describe("test for component ReincarcerationRateByStayLength", () => {
         metricType={METRIC_MODES.RATES}
         district={["all"]}
         ratesByStayLength={ratesByStayLength}
+        getTokenSilently={() => {}}
       />
     );
     const result = renderer.getRenderOutput();
@@ -172,6 +173,7 @@ describe("test for component ReincarcerationRateByStayLength", () => {
         metricType={METRIC_MODES.COUNTS}
         district={["all"]}
         ratesByStayLength={ratesByStayLength}
+        getTokenSilently={() => {}}
       />
     );
     const result = renderer.getRenderOutput();
