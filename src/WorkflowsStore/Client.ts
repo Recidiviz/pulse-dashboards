@@ -276,7 +276,7 @@ export class Client {
     );
 
     this.fetchedEarlyTerminationReferral = observableSubscription((handler) => {
-      return subscribeToEarlyTerminationReferral(this.id, (result) => {
+      return subscribeToEarlyTerminationReferral(this.recordId, (result) => {
         if (result) handler(result);
       });
     });
