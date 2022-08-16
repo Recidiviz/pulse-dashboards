@@ -59,17 +59,15 @@ type EmptySpecialConditionCopy = {
   probation: string;
 };
 
-const STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_COPY: Record<
+// Special condition strings to display when a client does not have a special condition set
+// If the state opportunity does not support special conditions, it should not have an entry here
+const STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_STRINGS: Record<
   string,
   EmptySpecialConditionCopy
 > = {
   [pathwaysTenants.US_TN]: {
     parole: "None according to Board Actions in TOMIS",
     probation: "None according to judgment orders in TOMIS",
-  },
-  [pathwaysTenants.US_ND]: {
-    parole: "None according to DOCSTARS",
-    probation: "None according to DOCSTARS",
   },
 };
 
@@ -83,7 +81,10 @@ type ParsedSpecialCondition = {
 
 // TODO(#1735): after data/ETL change we should expect structured data
 // rather than a JSON-ish string
-function getProbationSpecialConditionsMarkup(client: Client): JSX.Element {
+function getProbationSpecialConditionsMarkup(
+  client: Client,
+  emptySpecialConditionString: string
+): JSX.Element {
   // we will flatten the nested lists of conditions into this
   const conditionsToDisplay: (
     | NonNullable<ParsedSpecialCondition>
@@ -127,8 +128,7 @@ function getProbationSpecialConditionsMarkup(client: Client): JSX.Element {
 
   return (
     <>
-      {!conditionsToDisplay.length &&
-        STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_COPY[client.stateCode].probation}
+      {!conditionsToDisplay.length && emptySpecialConditionString}
       <DetailsList>
         {conditionsToDisplay.map((condition, i) => {
           // can't guarantee uniqueness of anything in the condition,
@@ -159,20 +159,26 @@ function getProbationSpecialConditionsMarkup(client: Client): JSX.Element {
 
 export const SpecialConditions = ({
   client,
-}: ClientProfileProps): React.ReactElement => {
+}: ClientProfileProps): React.ReactElement | null => {
+  const emptySpecialConditionStrings =
+    STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_STRINGS[client.stateCode];
+  if (!emptySpecialConditionStrings) return null;
+
   return (
     <DetailsSection>
       <DetailsHeading>Probation Special Conditions</DetailsHeading>
       <DetailsContent>
-        {getProbationSpecialConditionsMarkup(client)}
+        {getProbationSpecialConditionsMarkup(
+          client,
+          emptySpecialConditionStrings.probation
+        )}
       </DetailsContent>
 
       <DetailsHeading>Parole Special Conditions</DetailsHeading>
       <DetailsContent>
         <>
           {!client.paroleSpecialConditions?.length &&
-            STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_COPY[client.stateCode]
-              .parole}
+            emptySpecialConditionStrings.parole}
           <DetailsList>
             {client.paroleSpecialConditions?.map(
               ({ condition, conditionDescription }, i) => {
