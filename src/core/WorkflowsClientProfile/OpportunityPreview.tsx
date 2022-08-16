@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import compliantReportingFormPreviewSrc from "../../assets/static/images/compliantReportingFormPreview.png";
+import earlyTerminationFormPreviewSrc from "../../assets/static/images/earlyTerminationFormPreview.png";
 import { IconGoSvg } from "../../components/Icons";
 import { OPPORTUNITY_LABELS, OpportunityType } from "../../WorkflowsStore";
 import { workflowsUrl } from "../views";
@@ -31,9 +32,9 @@ import { CriteriaList } from "./CriteriaList";
 import { OpportunityDenial } from "./OpportunityDenial";
 import { ClientWithOpportunityProps } from "./types";
 
-// TODO Remove the Partial here when we have an earlyTermination preview image
-const FORM_PREVIEW: Partial<Record<OpportunityType, string>> = {
+const FORM_PREVIEW: Record<OpportunityType, string> = {
   compliantReporting: compliantReportingFormPreviewSrc,
+  earlyTermination: earlyTerminationFormPreviewSrc,
 };
 
 const PreviewWrapper = styled(Wrapper)`
