@@ -26,7 +26,7 @@ const FormFooterElement = styled.div`
 
 const FormFooter: React.FC = () => (
   <FormFooterElement>
-    <span>CR-3946 (Rev. 05-18)</span>
+    <span>CR-3947 (Rev. 05-18)</span>
     <span>Duplicate as Needed</span>
     <span>RDA 1286</span>
   </FormFooterElement>
