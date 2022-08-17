@@ -144,7 +144,10 @@ const collections = {
     db,
     collectionNames.clientUpdates
   ) as CollectionReference<ClientUpdateRecord>,
-  clientUpdatesV2: collection(db, collectionNames.clientUpdatesV2),
+  clientUpdatesV2: collection(
+    db,
+    collectionNames.clientUpdatesV2
+  ) as CollectionReference,
   compliantReportingReferrals: collection(
     db,
     collectionNames.compliantReportingReferrals
@@ -160,7 +163,8 @@ const collections = {
 };
 
 export async function getUser(
-  email: string
+  email: string,
+  stateCode: string
 ): Promise<CombinedUserRecord | undefined> {
   const queryEmail = email.toLowerCase();
   const [
@@ -169,7 +173,12 @@ export async function getUser(
     featureVariantSnapshot,
   ] = await Promise.all([
     getDocs(
-      query(collections.staff, where("email", "==", queryEmail), limit(1))
+      query(
+        collections.staff,
+        where("email", "==", queryEmail),
+        where("stateCode", "==", stateCode),
+        limit(1)
+      )
     ),
     getDoc(doc(collections.userUpdates, queryEmail)),
     getDoc(doc(collections.featureVariants, queryEmail)),
@@ -213,13 +222,15 @@ export function subscribeToFeatureVariants(
 }
 
 export async function getClient(
-  clientId: string
+  clientId: string,
+  stateCode: string
 ): Promise<ClientRecord | undefined> {
   // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
   const results = await getDocs(
     query(
       collections.clients,
       where("pseudonymizedId", "==", clientId),
+      where("stateCode", "==", stateCode),
       limit(1)
     )
   );
@@ -238,7 +249,7 @@ export function subscribeToClientUpdates(
 ): Unsubscribe {
   return onSnapshot(
     doc(collections.clientUpdates, clientId),
-    (result: DocumentSnapshot) =>
+    (result: DocumentSnapshot<ClientUpdateRecord>) =>
       handleResults(result.data({ serverTimestamps: "estimate" }))
   );
 }
@@ -253,7 +264,7 @@ export function subscribeToClientUpdatesV2(
 ): Unsubscribe {
   return onSnapshot(
     doc(collections.clientUpdatesV2, recordId),
-    (result: DocumentSnapshot) =>
+    (result: DocumentSnapshot<ClientUpdateRecord>) =>
       handleResults(result.data({ serverTimestamps: "estimate" }))
   );
 }
@@ -434,7 +445,7 @@ const getClientUpdatesV2DocRef = async function (
   clientId: string,
   recordId: string
 ): Promise<{
-  docRef: DocumentReference;
+  docRef: DocumentReference<ClientUpdateRecord>;
   oldDocument: ClientUpdateRecord | undefined;
 }> {
   let oldDocument;
@@ -466,6 +477,7 @@ async function updateOpportunity(
 
 export const updateCompliantReportingDraft = async function (
   updatedBy: string,
+  stateCode: string,
   recordId: string,
   data: FormFieldData
 ): Promise<void> {
@@ -528,11 +540,13 @@ export async function updateOpportunityCompleted(
 
 export function updateSelectedOfficerIds(
   userEmail: string,
+  stateCode: string,
   selectedOfficerIds: string[]
 ): Promise<void> {
   return setDoc(
     doc(collections.userUpdates, userEmail),
     {
+      stateCode,
       selectedOfficerIds,
     },
     { merge: true }

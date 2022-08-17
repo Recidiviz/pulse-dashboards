@@ -22,20 +22,39 @@ import {
   ADMIN_COLLECTION_NAMES,
   ETL_COLLECTION_NAMES,
   getAnonUser,
-  getOutOfStateUser,
+  getNDUser,
   getRecidivizUser,
   getStatelessUser,
   getTNUser,
+  PERSONAL_UPDATE_COLLECTION_NAME,
+  SHARED_UPDATE_COLLECTION_NAMES,
   startTestEnv,
-  UPDATE_COLLECTION_NAMES,
+  US_TN_ONLY_UPDATE_COLLECTION_NAME,
 } from "./testUtils";
 
 let testEnv;
 
-function testWriteToCollections(collectionNames, db, assertFn) {
+function testWriteToCollectionsWithoutStateCodePrefix(
+  collectionNames,
+  db,
+  assertFn
+) {
   return Promise.all(
     collectionNames.map((collectionName) =>
       assertFn(setDoc(doc(db, collectionName, "foo"), {}))
+    )
+  );
+}
+
+function testWriteToCollectionsForStateWithStateCodePrefix(
+  collectionNames,
+  db,
+  assertFn,
+  stateCode
+) {
+  return Promise.all(
+    collectionNames.map((collectionName) =>
+      assertFn(setDoc(doc(db, collectionName, `${stateCode}_someID`), {}))
     )
   );
 }
@@ -57,12 +76,13 @@ test.each([
   ["anon", getAnonUser],
   ["stateless user", getStatelessUser],
   ["state user", getTNUser],
-  ["out of state user", getOutOfStateUser],
+  ["ND user", getNDUser],
+  ["TN user", getTNUser],
   ["Recidiviz user", getRecidivizUser],
 ])(
   "ETL and admin data is read-only for %s",
   async (userType, getUserContext) => {
-    await testWriteToCollections(
+    await testWriteToCollectionsWithoutStateCodePrefix(
       [...ETL_COLLECTION_NAMES, ...ADMIN_COLLECTION_NAMES],
       getUserContext(testEnv).firestore(),
       assertFails
@@ -73,22 +93,166 @@ test.each([
 test.each([
   ["anon", getAnonUser],
   ["stateless", getStatelessUser],
-  ["other state", getOutOfStateUser],
 ])("%s user cannot write", async (userType, getUserContext) => {
-  await testWriteToCollections(
-    UPDATE_COLLECTION_NAMES,
+  await testWriteToCollectionsWithoutStateCodePrefix(
+    SHARED_UPDATE_COLLECTION_NAMES,
     getUserContext(testEnv).firestore(),
     assertFails
   );
 });
 
 test.each([
+  ["ND", getNDUser],
   ["TN", getTNUser],
   ["Recidiviz", getRecidivizUser],
-])("%s user can write", async (userType, getUserContext) => {
-  await testWriteToCollections(
-    UPDATE_COLLECTION_NAMES,
+])(
+  "%s user cannot write without proper recordID format",
+  async (userType, getUserContext) => {
+    await testWriteToCollectionsWithoutStateCodePrefix(
+      SHARED_UPDATE_COLLECTION_NAMES,
+      getUserContext(testEnv).firestore(),
+      assertFails
+    );
+  }
+);
+
+test.each([
+  ["Recidiviz", getRecidivizUser],
+  ["TN", getTNUser],
+])("%s user can write TN data", async (userType, getUserContext) => {
+  await testWriteToCollectionsForStateWithStateCodePrefix(
+    SHARED_UPDATE_COLLECTION_NAMES,
     getUserContext(testEnv).firestore(),
-    assertSucceeds
+    assertSucceeds,
+    "US_TN"
   );
 });
+
+test.each([
+  ["Recidiviz", getRecidivizUser],
+  ["ND", getNDUser],
+])("%s user can write ND data", async (userType, getUserContext) => {
+  await testWriteToCollectionsForStateWithStateCodePrefix(
+    SHARED_UPDATE_COLLECTION_NAMES,
+    getUserContext(testEnv).firestore(),
+    assertSucceeds,
+    "US_ND"
+  );
+});
+
+test.each([
+  ["TN", getTNUser, "ND"],
+  ["ND", getNDUser, "TN"],
+])(
+  "%s user cannot write cross-state data",
+  async (userType, getUserContext, state) => {
+    await testWriteToCollectionsForStateWithStateCodePrefix(
+      SHARED_UPDATE_COLLECTION_NAMES,
+      getUserContext(testEnv).firestore(),
+      assertFails,
+      `US_${state}`
+    );
+  }
+);
+
+test.each([
+  ["TN", getTNUser, "ND", getNDUser],
+  ["ND", getNDUser, "TN", getTNUser],
+])(
+  "%s user cannot overwrite another state's data",
+  async (userState, getUserContext, otherUserState, getOtherUserContext) => {
+    await testWriteToCollectionsForStateWithStateCodePrefix(
+      SHARED_UPDATE_COLLECTION_NAMES,
+      getOtherUserContext(testEnv).firestore(),
+      assertSucceeds,
+      `US_${otherUserState}`
+    );
+
+    await testWriteToCollectionsForStateWithStateCodePrefix(
+      SHARED_UPDATE_COLLECTION_NAMES,
+      getUserContext(testEnv).firestore(),
+      assertFails,
+      `US_${otherUserState}`
+    );
+  }
+);
+
+test.each([
+  ["TN", getTNUser],
+  ["ND", getNDUser],
+])(
+  "Recidiviz user can overwrite %s data",
+  async (otherUserState, getOtherUserContext) => {
+    await testWriteToCollectionsForStateWithStateCodePrefix(
+      SHARED_UPDATE_COLLECTION_NAMES,
+      getOtherUserContext(testEnv).firestore(),
+      assertSucceeds,
+      `US_${otherUserState}`
+    );
+
+    await testWriteToCollectionsForStateWithStateCodePrefix(
+      SHARED_UPDATE_COLLECTION_NAMES,
+      getRecidivizUser(testEnv).firestore(),
+      assertSucceeds,
+      `US_${otherUserState}`
+    );
+  }
+);
+
+test.each([
+  ["TN", getTNUser],
+  ["ND", getNDUser],
+  ["Recidiviz", getRecidivizUser],
+])(
+  "%s user cannot write to the old update collection",
+  async (userType, getUserContext) => {
+    await assertFails(
+      setDoc(
+        doc(
+          getUserContext(testEnv).firestore(),
+          US_TN_ONLY_UPDATE_COLLECTION_NAME,
+          "foo"
+        ),
+        {}
+      )
+    );
+  }
+);
+
+test.each([
+  ["us_tn", getTNUser],
+  ["us_nd", getNDUser],
+])(
+  "%s user can write to their own personal update collection",
+  async (userState, getUserContext) => {
+    await assertSucceeds(
+      setDoc(
+        doc(
+          getUserContext(testEnv).firestore(),
+          PERSONAL_UPDATE_COLLECTION_NAME,
+          `user@${userState}.gov`
+        ),
+        {}
+      )
+    );
+  }
+);
+
+test.each([
+  ["us_tn", getTNUser],
+  ["us_nd", getNDUser],
+])(
+  "%s user cannot write to another user's personal update collection",
+  async (userState, getUserContext) => {
+    await assertFails(
+      setDoc(
+        doc(
+          getUserContext(testEnv).firestore(),
+          PERSONAL_UPDATE_COLLECTION_NAME,
+          `otherUser@${userState}.gov`
+        ),
+        {}
+      )
+    );
+  }
+);

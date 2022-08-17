@@ -116,6 +116,8 @@ beforeEach(() => {
         state_code: mockOfficer.info.stateCode,
       },
     };
+    // @ts-ignore
+    rootStore.tenantStore.currentTenantId = mockOfficer.info.stateCode;
   });
   doBackendMock();
 });
@@ -203,7 +205,10 @@ test("caseload syncs with stored value changes", async () => {
   // which is not 100% realistic but good enough for now
   const mockStoredOfficers = ["OFFICER1", "OFFICER3"];
   mockSubscribeToUserUpdates.mockImplementation((email, handler) => {
-    handler({ selectedOfficerIds: mockStoredOfficers });
+    handler({
+      stateCode: mockOfficer.info.stateCode,
+      selectedOfficerIds: mockStoredOfficers,
+    });
     return mockUnsub;
   });
 
@@ -388,7 +393,7 @@ test("select existing client", () => {
 });
 
 test("select unfetched client", async () => {
-  workflowsStore.hydrate();
+  await waitForHydration();
 
   const idToSelect = "unknownId";
   mockGetClient.mockResolvedValue({
@@ -396,13 +401,14 @@ test("select unfetched client", async () => {
     pseudonymizedId: idToSelect,
   });
 
-  workflowsStore.updateSelectedClient(idToSelect);
-
-  expect(workflowsStore.selectedClient).toBeUndefined();
+  await workflowsStore.updateSelectedClient(idToSelect);
 
   await when(() => workflowsStore.selectedClient !== undefined);
 
-  expect(mockGetClient).toHaveBeenCalledWith(idToSelect);
+  expect(mockGetClient).toHaveBeenCalledWith(
+    idToSelect,
+    ineligibleClient.stateCode
+  );
   expect(workflowsStore.selectedClient?.pseudonymizedId).toBe(idToSelect);
 });
 
@@ -431,7 +437,7 @@ test("tracking call waits for client to be instantiated", async () => {
   );
 
   // triggers an additional fetch to populate the expected client
-  workflowsStore.updateSelectedClient(eligibleClient.pseudonymizedId);
+  await workflowsStore.updateSelectedClient(eligibleClient.pseudonymizedId);
 
   await trackingPromise;
 

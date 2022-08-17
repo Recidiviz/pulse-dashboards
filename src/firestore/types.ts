@@ -53,6 +53,7 @@ export function isUserRecord(
  * User-level data generated within this application
  */
 export type UserUpdateRecord = {
+  stateCode: string;
   // this is for supervisors or others without caseloads to configure their default view
   savedOfficers?: string[];
   // this persists their most recent caseload selection

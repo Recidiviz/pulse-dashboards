@@ -170,7 +170,7 @@ export class WorkflowsStore implements Hydratable {
           },
         };
       } else {
-        userRecord = await getUser(email);
+        userRecord = await getUser(email, stateCode);
       }
 
       if (userRecord) {
@@ -210,7 +210,12 @@ export class WorkflowsStore implements Hydratable {
   }
 
   async fetchClient(clientId: string): Promise<void> {
-    const clientRecord = await getClient(clientId);
+    if (!this.rootStore.currentTenantId) return;
+
+    const clientRecord = await getClient(
+      clientId,
+      this.rootStore.currentTenantId
+    );
     if (clientRecord) {
       this.updateClients([clientRecord]);
     } else {
@@ -229,8 +234,13 @@ export class WorkflowsStore implements Hydratable {
   }
 
   updateSelectedOfficers(officerIds: string[]): void {
-    if (!this.user) return;
-    updateSelectedOfficerIds(this.user.info.email, officerIds);
+    if (!this.user || !this.rootStore.currentTenantId) return;
+
+    updateSelectedOfficerIds(
+      this.user.info.email,
+      this.rootStore.currentTenantId,
+      officerIds
+    );
   }
 
   async updateSelectedClient(clientId?: string): Promise<void> {
@@ -247,7 +257,9 @@ export class WorkflowsStore implements Hydratable {
   }
 
   private setUserWithDefaults(userData: CombinedUserRecord) {
-    const updates: UserUpdateRecord = userData.updates ?? {};
+    const updates: UserUpdateRecord = userData.updates ?? {
+      stateCode: userData.info.stateCode,
+    };
 
     let selectedOfficerIds = updates.selectedOfficerIds ?? [];
 

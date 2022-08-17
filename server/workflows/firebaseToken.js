@@ -21,6 +21,8 @@ const { fetchOfflineUser } = require("../core");
 const { getAppMetadata } = require("../utils/getAppMetadata");
 const { isOfflineMode } = require("../utils/isOfflineMode");
 
+const { METADATA_NAMESPACE } = process.env;
+
 const projectId = process.env.FIREBASE_PROJECT || "demo-dev";
 const credentialFile = process.env.FIREBASE_CREDENTIAL;
 
@@ -42,7 +44,7 @@ async function getFirebaseToken(req, res) {
     stateCode = getAppMetadata({ user }).state_code;
     uid = user.email;
   } else {
-    uid = req.user.sub;
+    uid = req.user[`${METADATA_NAMESPACE}email_address`];
     stateCode = getAppMetadata(req).state_code;
   }
 

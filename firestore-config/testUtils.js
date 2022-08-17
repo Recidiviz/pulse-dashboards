@@ -27,13 +27,21 @@ export const ETL_COLLECTION_NAMES = [
   "compliantReportingReferrals",
 ];
 /**
- * Admin collections are read-only (administered by Recidiviz via console)
+ * Admin collections are read-only and only readable by the user (administered by Recidiviz via console)
  */
 export const ADMIN_COLLECTION_NAMES = ["featureVariants"];
 /**
- * Update collections are writeable
+ * Update collections are readable and writeable by all users within a state
  */
-export const UPDATE_COLLECTION_NAMES = ["userUpdates", "clientUpdates"];
+export const SHARED_UPDATE_COLLECTION_NAMES = ["clientUpdatesV2"];
+/**
+ * Update collections are readable and writeable only by TN or Recidiviz
+ */
+export const US_TN_ONLY_UPDATE_COLLECTION_NAME = "clientUpdates";
+/**
+ * User update collections are readable and writable only to the user
+ */
+export const PERSONAL_UPDATE_COLLECTION_NAME = "userUpdates";
 
 export function startTestEnv() {
   return initializeTestEnvironment({
@@ -52,18 +60,18 @@ export function getAnonUser(testEnv) {
 }
 
 export function getStatelessUser(testEnv) {
-  return testEnv.authenticatedContext("foo");
+  return testEnv.authenticatedContext("user@stateless.com");
 }
 
 export function getTNUser(testEnv) {
-  return testEnv.authenticatedContext("foo", {
+  return testEnv.authenticatedContext("user@us_tn.gov", {
     stateCode: "US_TN",
   });
 }
 
-export function getOutOfStateUser(testEnv) {
-  return testEnv.authenticatedContext("foo", {
-    stateCode: "US_ID",
+export function getNDUser(testEnv) {
+  return testEnv.authenticatedContext("user@us_nd.gov", {
+    stateCode: "US_ND",
   });
 }
 

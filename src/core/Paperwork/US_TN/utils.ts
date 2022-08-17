@@ -29,7 +29,8 @@ export async function updateFieldData(
   client: Client,
   fieldData: FormFieldData
 ): Promise<void> {
-  updateCompliantReportingDraft(updatedBy, client.recordId, fieldData);
+  const { stateCode, recordId } = client;
+  updateCompliantReportingDraft(updatedBy, stateCode, recordId, fieldData);
 
   await when(() => client.opportunityUpdates.compliantReporting !== undefined);
 

@@ -26,14 +26,14 @@ const authMock = jest.fn(() => ({ createCustomToken: createCustomTokenMock }));
 mockFirebaseAdmin.auth = authMock;
 
 test("requests Firebase auth token", async () => {
-  const userId = "TEST123";
+  const userId = "TEST123@somewhere.com";
   const stateCode = "us_xx";
   const mockFirebaseToken = "tokenabc123";
 
   createCustomTokenMock.mockResolvedValue(mockFirebaseToken);
   const mockReq = {
     user: {
-      sub: userId,
+      undefinedemail_address: userId,
       // this key includes an env variable that is not set in this test environment
       undefinedapp_metadata: { state_code: stateCode },
     },

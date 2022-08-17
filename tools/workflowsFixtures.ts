@@ -44,7 +44,9 @@ async function loadClientsFixture() {
   // Iterate through each record
   rawCases.forEach((record: Record<string, any>) => {
     bulkWriter.create(
-      db.doc(`${COLLECTIONS.clients}/${record.personExternalId}`),
+      db.doc(
+        `${COLLECTIONS.clients}/${record.stateCode}_${record.personExternalId}`
+      ),
       record
     );
   });

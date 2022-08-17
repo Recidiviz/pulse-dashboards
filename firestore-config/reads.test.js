@@ -16,18 +16,27 @@
 // =============================================================================
 
 import { assertFails, assertSucceeds } from "@firebase/rules-unit-testing";
-import { getDocs } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 
 import {
   ADMIN_COLLECTION_NAMES,
   ETL_COLLECTION_NAMES,
   getAnonUser,
-  getOutOfStateUser,
+  getNDUser,
   getRecidivizUser,
   getStatelessUser,
   getTNUser,
+  PERSONAL_UPDATE_COLLECTION_NAME,
+  SHARED_UPDATE_COLLECTION_NAMES,
   startTestEnv,
-  UPDATE_COLLECTION_NAMES,
+  US_TN_ONLY_UPDATE_COLLECTION_NAME,
 } from "./testUtils";
 
 let testEnv;
@@ -45,7 +54,7 @@ afterEach(async () => {
   await testEnv.clearFirestore();
 });
 
-async function testAllReads(db, assertFn) {
+async function testAllReadsUnrestricted(db, assertFn) {
   return Promise.all([
     ...ETL_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(getDocs(db.collection(collectionName)));
@@ -53,8 +62,38 @@ async function testAllReads(db, assertFn) {
     ...ADMIN_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(getDocs(db.collection(collectionName)));
     }),
-    ...UPDATE_COLLECTION_NAMES.map(async (collectionName) => {
+    ...SHARED_UPDATE_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(getDocs(db.collection(collectionName)));
+    }),
+  ]);
+}
+
+async function testAllReadsForState(db, assertFn, stateCode) {
+  return Promise.all([
+    ...ETL_COLLECTION_NAMES.map(async (collectionName) => {
+      await assertFn(
+        getDocs(
+          query(
+            collection(db, collectionName),
+            where("stateCode", "==", stateCode)
+          )
+        )
+      );
+    }),
+    ...ADMIN_COLLECTION_NAMES.map(async (collectionName) => {
+      await assertFn(
+        getDocs(
+          query(
+            collection(db, collectionName),
+            where("stateCode", "==", stateCode)
+          )
+        )
+      );
+    }),
+    ...SHARED_UPDATE_COLLECTION_NAMES.map(async (collectionName) => {
+      await assertFn(
+        getDoc(doc(collection(db, collectionName), `${stateCode}_12345`))
+      );
     }),
   ]);
 }
@@ -62,14 +101,140 @@ async function testAllReads(db, assertFn) {
 test.each([
   ["anon", getAnonUser],
   ["stateless", getStatelessUser],
-  ["other state", getOutOfStateUser],
-])("%s user cannot read", async (userType, getUserContext) => {
-  await testAllReads(getUserContext(testEnv).firestore(), assertFails);
+  ["ND", getNDUser],
+  ["TN", getTNUser],
+])("%s user cannot read unrestricted", async (userType, getUserContext) => {
+  await testAllReadsUnrestricted(
+    getUserContext(testEnv).firestore(),
+    assertFails
+  );
 });
+
+test.each([
+  ["anon", getAnonUser],
+  ["stateless", getStatelessUser],
+])("%s user cannot read state data", async (userType, getUserContext) => {
+  await testAllReadsForState(
+    getUserContext(testEnv).firestore(),
+    assertFails,
+    "US_TN"
+  );
+});
+
+test.each([["Recidiviz", getRecidivizUser]])(
+  "%s user can read unrestricted",
+  async (userType, getUserContext) => {
+    await testAllReadsUnrestricted(
+      getUserContext(testEnv).firestore(),
+      assertSucceeds
+    );
+  }
+);
+
+test.each([["TN"], ["ND"]])(
+  "Recidiviz user can read %s state data",
+  async (userState) => {
+    await testAllReadsForState(
+      getRecidivizUser(testEnv).firestore(),
+      assertSucceeds,
+      `US_${userState}`
+    );
+  }
+);
+
+test.each([
+  ["TN", getTNUser],
+  ["ND", getNDUser],
+])(
+  "%s user can read their own state data",
+  async (userState, getUserContext) => {
+    await testAllReadsForState(
+      getUserContext(testEnv).firestore(),
+      assertSucceeds,
+      `US_${userState}`
+    );
+  }
+);
+
+test.each([
+  ["TN", getTNUser, "ND"],
+  ["ND", getNDUser, "TN"],
+])(
+  "%s user cannot read cross-state data",
+  async (userState, getUserContext, otherState) => {
+    await testAllReadsForState(
+      getUserContext(testEnv).firestore(),
+      assertFails,
+      `US_${otherState}`
+    );
+  }
+);
 
 test.each([
   ["TN", getTNUser],
   ["Recidiviz", getRecidivizUser],
-])("%s user can read", async (userType, getUserContext) => {
-  await testAllReads(getUserContext(testEnv).firestore(), assertSucceeds);
-});
+])(
+  "%s user can read old clientUpdates collection",
+  async (userState, getUserContext) => {
+    await assertSucceeds(
+      getDocs(
+        collection(
+          getUserContext(testEnv).firestore(),
+          US_TN_ONLY_UPDATE_COLLECTION_NAME
+        )
+      )
+    );
+  }
+);
+
+test.each([
+  ["ND", getNDUser],
+  ["anon", getAnonUser],
+  ["stateless", getStatelessUser],
+])(
+  "%s user cannot read old clientUpdates collection",
+  async (userState, getUserContext) => {
+    await assertFails(
+      getDocs(
+        collection(
+          getUserContext(testEnv).firestore(),
+          US_TN_ONLY_UPDATE_COLLECTION_NAME
+        )
+      )
+    );
+  }
+);
+
+test.each([["us_nd", getNDUser, "us_tn", getTNUser]])(
+  "%s can read their own userUpdates",
+  async (userState, getUserContext) => {
+    await assertSucceeds(
+      getDoc(
+        doc(
+          collection(
+            getUserContext(testEnv).firestore(),
+            PERSONAL_UPDATE_COLLECTION_NAME
+          ),
+          `user@${userState}.gov`
+        )
+      )
+    );
+  }
+);
+
+test.each([["us_nd", getNDUser, "us_tn", getTNUser]])(
+  "%s cannot read other users' userUpdates",
+  async (userState, getUserContext) => {
+    await assertFails(
+      getDoc(
+        doc(
+          collection(
+            getUserContext(testEnv).firestore(),
+            PERSONAL_UPDATE_COLLECTION_NAME
+          ),
+          `other_user@${userState}.gov`
+        )
+      )
+    );
+  }
+);
