@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import createAuth0Client from "@auth0/auth0-spa-js";
+import * as Sentry from "@sentry/react";
 
 import { identify } from "../../analytics";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
@@ -31,6 +32,7 @@ import { TenantId } from "../types";
 import UserStore from "../UserStore";
 
 jest.mock("@auth0/auth0-spa-js");
+jest.mock("@sentry/react");
 jest.mock("../../firestore");
 jest.mock("../../analytics");
 jest.mock("../../utils/isIE11");
@@ -599,6 +601,7 @@ test("does not identify authorized users without ID hash", async () => {
   await store.authorize(mockHandleUrl);
 
   expect(mockIdentify).not.toHaveBeenCalled();
+  expect(Sentry.setUser).toHaveBeenCalledWith(null);
 });
 
 test("identifies authorized user if an ID hash is present", async () => {
@@ -613,4 +616,5 @@ test("identifies authorized user if an ID hash is present", async () => {
   await store.authorize(mockHandleUrl);
 
   expect(mockIdentify).toHaveBeenCalledWith(userHash);
+  expect(Sentry.setUser).toHaveBeenCalledWith({ id: userHash });
 });

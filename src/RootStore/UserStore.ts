@@ -21,6 +21,7 @@ import createAuth0Client, {
   LogoutOptions,
   User,
 } from "@auth0/auth0-spa-js";
+import * as Sentry from "@sentry/react";
 import { action, entries, makeAutoObservable, runInAction, when } from "mobx";
 import qs from "qs";
 
@@ -190,6 +191,10 @@ export default class UserStore {
     const userId = this.userAppMetadata?.user_hash;
     if (userId) {
       identify(userId);
+      Sentry.setUser({ id: userId });
+    } else {
+      // if we don't have a user ID make sure we don't have a lingering Sentry identity
+      Sentry.setUser(null);
     }
   }
 
