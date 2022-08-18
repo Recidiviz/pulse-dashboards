@@ -672,7 +672,9 @@ class CompliantReportingOpportunity implements Opportunity {
               ? "Needs one more passed drug screen"
               : undefined;
           case "paymentNeeded":
-            return paymentNeeded ? "Needs one more payment" : undefined;
+            return paymentNeeded
+              ? "Needs balance <$500 or a payment three months in a row"
+              : undefined;
           case "currentLevelEligibilityDate": {
             return currentLevelEligibilityDaysRemaining !== undefined
               ? `Needs ${currentLevelEligibilityDaysRemaining} more ${pluralizeWord(
@@ -733,7 +735,7 @@ class CompliantReportingOpportunity implements Opportunity {
         break;
       case "paymentNeeded":
         criterionSpecificCopy =
-          "make one payment towards your fines and fees balance";
+          "have a balance of less than $500 or make a payment three months in a row";
         break;
       case "recentRejectionCodes":
         // intentionally left blank; no note required in this case

@@ -145,10 +145,10 @@ describe.each([
   [
     "paymentNeeded",
     0,
-    "Needs one more payment",
+    "Needs balance <$500 or a payment three months in a row",
     undefined,
     /Fee balance/,
-    /make one payment/,
+    /make a payment three months in a row/,
   ],
   [
     "passedDrugScreenNeeded",
