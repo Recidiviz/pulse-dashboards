@@ -36,7 +36,7 @@ export const EarlyTerminationModule = observer(
   ({ client }: ClientProfileProps) => {
     if (!client.opportunities.earlyTermination) return null;
 
-    const colors = useStatusColors(client);
+    const colors = useStatusColors(client.opportunities.earlyTermination);
 
     return (
       <Wrapper {...colors}>

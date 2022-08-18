@@ -36,7 +36,7 @@ export const CompliantReportingModule = observer(
   ({ client }: ClientProfileProps) => {
     if (!client.opportunities.compliantReporting) return null;
 
-    const colors = useStatusColors(client);
+    const colors = useStatusColors(client.opportunities.compliantReporting);
 
     return (
       <Wrapper {...colors}>

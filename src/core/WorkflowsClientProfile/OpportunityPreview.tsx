@@ -81,7 +81,7 @@ const FormPreview = styled.img<Pick<StatusPalette, "border">>`
 
 export const OpportunityPreview = observer(
   ({ client, opportunity }: ClientWithOpportunityProps) => {
-    const colors = useStatusColors(client);
+    const colors = useStatusColors(opportunity);
 
     return (
       <PreviewWrapper {...colors}>

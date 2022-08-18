@@ -21,7 +21,11 @@ import { darken, rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import type { Client, OpportunityType } from "../../WorkflowsStore";
+import type {
+  Client,
+  Opportunity,
+  OpportunityType,
+} from "../../WorkflowsStore";
 
 export const STATUS_COLORS = {
   eligible: {
@@ -55,11 +59,11 @@ export const STATUS_COLORS = {
 
 export type StatusPalette = typeof STATUS_COLORS[keyof typeof STATUS_COLORS];
 
-export function useStatusColors(client: Client): StatusPalette {
-  if (client.opportunities.compliantReporting?.reviewStatus === "DENIED") {
+export function useStatusColors(opportunity: Opportunity): StatusPalette {
+  if (opportunity?.reviewStatus === "DENIED") {
     return STATUS_COLORS.ineligible;
   }
-  if (client.opportunities.compliantReporting?.almostEligible) {
+  if (opportunity?.almostEligible) {
     return STATUS_COLORS.almostEligible;
   }
   return STATUS_COLORS.eligible;

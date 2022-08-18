@@ -126,8 +126,8 @@ const StatusAwareButton = styled(DropdownToggle).attrs({
 
 export const OpportunityDenial = observer(
   ({ client, opportunity }: ClientWithOpportunityProps) => {
-    const colors = useStatusColors(client);
     if (!opportunity) return null;
+    const colors = useStatusColors(opportunity);
 
     const reasons =
       client.opportunityUpdates?.[opportunity.type]?.denial?.reasons;
