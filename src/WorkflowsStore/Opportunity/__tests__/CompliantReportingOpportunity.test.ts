@@ -58,8 +58,10 @@ beforeEach(() => {
   configure({ safeDescriptors: false });
   tk.freeze(new Date(2022, 7, 1));
   mockUpdates = jest.spyOn(Client.prototype, "opportunityUpdates", "get");
-  // mimics the initial value when nothing has been fetched yet
-  mockUpdates.mockReturnValue({});
+  // mimics the value when the fetch returns no updates
+  mockUpdates.mockReturnValue({
+    compliantReporting: { type: "compliantReporting" },
+  });
 });
 
 afterEach(() => {

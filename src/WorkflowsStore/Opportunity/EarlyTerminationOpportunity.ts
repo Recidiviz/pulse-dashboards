@@ -220,12 +220,14 @@ class EarlyTerminationOpportunity implements Opportunity {
       return "DENIED";
     }
 
-    if (updates) {
-      if (updates.completed) {
-        return "COMPLETED";
-      }
+    if (updates?.completed) {
+      return "COMPLETED";
+    }
+
+    if (updates?.referralForm) {
       return "IN_PROGRESS";
     }
+
     return "PENDING";
   }
 
