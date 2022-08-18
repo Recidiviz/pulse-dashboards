@@ -136,8 +136,12 @@ export const FullProfile = observer((): React.ReactElement | null => {
           <Divider />
           <Housing client={client} />
           <Divider />
-          <FinesAndFees client={client} />
-          <Divider />
+          {client.currentBalance !== undefined && (
+            <>
+              <FinesAndFees client={client} />
+              <Divider />
+            </>
+          )}
           <SpecialConditions client={client} />
         </div>
         <div>
