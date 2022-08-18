@@ -36,8 +36,8 @@ const US_ND_CONFIG: TenantConfig = {
   enableVitalsCaseloadButton: true,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   navigation: {
-    operations: [],
     workflows: [...WORKFLOWS_OPPORTUNITY_TYPES, "client"],
+    operations: [],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,
