@@ -64,7 +64,7 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
   } = useCoreStore();
 
   const navigationLayout = userStore.userAllowedNavigation;
-  if (!navigationLayout) return <div />;
+  if (!navigationLayout || !currentTenantId) return <div />;
 
   // Pathways is enabled if enabledPathwaysPages.length > 0
   const enabledPathwaysPages = navigationLayout.system || [];
@@ -129,7 +129,7 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
       return (
         <a
           className="ViewNavigation__navlink"
-          href={WORKFLOWS_METHODOLOGY_URL}
+          href={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
           target="_blank"
           rel="noopener noreferrer"
         >

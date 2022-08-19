@@ -33,6 +33,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import { Client, OpportunityType } from "../../WorkflowsStore";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { OpportunityCapsule } from "../ClientCapsule";
+import { TenantId } from "../models/types";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { workflowsUrl } from "../views";
 import { FORM_SIDEBAR_WIDTH } from "../WorkflowsLayouts";
@@ -123,6 +124,7 @@ export const OpportunityCaseloadSelection = observer(
   ({ opportunityType }: OpportunityCaseloadProps) => {
     const {
       workflowsStore: { eligibleOpportunities, almostEligibleOpportunities },
+      currentTenantId,
     } = useRootStore();
 
     const eligibleNow = eligibleOpportunities[opportunityType];
@@ -136,7 +138,9 @@ export const OpportunityCaseloadSelection = observer(
             Search for officer(s) below to review and refer eligible clients for
             Compliant Reporting.{" "}
             <a
-              href={WORKFLOWS_METHODOLOGY_URL}
+              // currentTenantId is coming from the StoreProvider RootStore which
+              // is only partially typed at this point but will always be of type TenantId.
+              href={WORKFLOWS_METHODOLOGY_URL[currentTenantId as TenantId]}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -146,6 +150,21 @@ export const OpportunityCaseloadSelection = observer(
         );
         break;
       case "earlyTermination":
+        introText = (
+          <>
+            Search for officer(s) below to review clients eligible for early
+            termination and download paperwork to file with the Court{" "}
+            <a
+              // currentTenantId is coming from the StoreProvider RootStore which
+              // is only partially typed at this point but will always be of type TenantId.
+              href={WORKFLOWS_METHODOLOGY_URL[currentTenantId as TenantId]}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Learn more
+            </a>
+          </>
+        );
         break;
       default:
         assertNever(opportunityType);
