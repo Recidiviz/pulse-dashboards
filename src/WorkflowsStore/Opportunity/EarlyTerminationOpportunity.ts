@@ -42,7 +42,6 @@ const DENIAL_REASONS_MAP = {
   "INT MEASURE":
     "Under active intermediate measure as a result of 1+ violations",
   "CASE PLAN NC": "Has not completed case plan goals",
-  "AR STATUS": "Under active revocation status",
   SO: "Being supervised for sex offense",
   "FINES/FEES": "Willfull nonpayment of fines/fees despite ability to pay",
   INC: "Incarcerated on another offense",
@@ -55,13 +54,13 @@ const DENIAL_REASONS_MAP = {
 const CRITERIA: Record<string, OpportunityCriterion> = {
   eligibleDate: {
     tooltip:
-      "Early termination date (as calculated by DOCSTARS) is in the past.",
+      "Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
   },
   supervisionLevel: {
-    tooltip: `Currently on diversion, minimum, medium, maximum, or IC-out supervision level.`,
+    tooltip: `Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.`,
   },
   supervisionType: {
-    tooltip: `Serving a suspended, deferred, IC-probation, or IC-parole sentence.`,
+    tooltip: `Serving a suspended, deferred, or IC-probation sentence.`,
   },
   revocationStatus: {
     tooltip: `Not on active revocation status.`,

@@ -39,9 +39,9 @@ export const earlyTerminationOpportunityStatuses: Record<
   OpportunityStatus,
   string
 > = {
-  PENDING: "Overdue for early termination",
-  IN_PROGRESS: "Early termination status in review",
-  COMPLETED: "Paperwork completed and filed with Court",
+  PENDING: "Needs review",
+  IN_PROGRESS: "Review in progress",
+  COMPLETED: "Paperwork completed",
   DENIED: "Currently ineligible",
   ALMOST: "Almost eligible",
 };
