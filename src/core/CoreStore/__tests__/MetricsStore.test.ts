@@ -16,8 +16,13 @@
 // =============================================================================
 import { runInAction } from "mobx";
 
+import flags from "../../../flags";
 import RootStore from "../../../RootStore";
+import LibertyPopulationOverTimeMetric from "../../models/LibertyPopulationOverTimeMetric";
+import OverTimeMetric from "../../models/OverTimeMetric";
+import PathwaysMetric from "../../models/PathwaysMetric";
 import PopulationProjectionOverTimeMetric from "../../models/PopulationProjectionOverTimeMetric";
+import SupervisionPopulationSnapshotMetric from "../../models/SupervisionPopulationSnapshotMetric";
 import VitalsMetrics from "../../models/VitalsMetrics";
 import CoreStore from "..";
 
@@ -50,6 +55,74 @@ describe("MetricsStore", () => {
       expect(
         coreStore.metricsStore.projectedPrisonPopulationOverTime
       ).toBeInstanceOf(PopulationProjectionOverTimeMetric);
+    });
+
+    it("defaults metrics to the old backend when no flags are configured", () => {
+      expect(
+        coreStore.metricsStore.libertyToPrisonPopulationOverTime
+      ).toBeInstanceOf(LibertyPopulationOverTimeMetric);
+    });
+
+    it("defaults metrics to the specified backend", () => {
+      flags.defaultMetricBackend = "NEW";
+      expect(
+        coreStore.metricsStore.libertyToPrisonPopulationOverTime
+      ).toBeInstanceOf(OverTimeMetric);
+    });
+
+    it("correctly overrides the metric backend", () => {
+      flags.defaultMetricBackend = "NEW";
+      flags.metricBackendOverrides = {
+        supervisionToPrisonPopulationByOfficer: "OLD_WITH_DIFFING",
+      };
+      expect(
+        coreStore.metricsStore.libertyToPrisonPopulationOverTime
+      ).toBeInstanceOf(OverTimeMetric);
+      expect(
+        coreStore.metricsStore.supervisionToPrisonPopulationByOfficer
+      ).toBeInstanceOf(SupervisionPopulationSnapshotMetric);
+    });
+  });
+
+  describe("all properties are the same on the old and new backends", () => {
+    // set these values here instead of in a beforeAll/beforeEach so they can be used in the test
+    // suite construction.
+    flags.defaultMetricBackend = "OLD";
+    coreStore = new CoreStore(RootStore);
+    const pathwaysMetrics = Object.entries(
+      Object.getOwnPropertyDescriptors(coreStore.metricsStore)
+    )
+      .map(([name, descriptor]) => {
+        return [name, descriptor?.get?.call(coreStore.metricsStore)];
+      })
+      .filter(([_name, result]) => {
+        return result instanceof PathwaysMetric;
+      });
+
+    it("has metrics", () => {
+      expect(pathwaysMetrics.length).toBeGreaterThanOrEqual(10); // arbitrary number to ensure we found some
+    });
+
+    // create multiple tests of the format
+    // MetricsStore › all properties are the same on the old and new backends › supervisionToPrisonPopulationByOfficer
+    it.each(pathwaysMetrics)("%s", (_name, metric) => {
+      const { newBackendMetric } = metric;
+      if (newBackendMetric) {
+        expect(newBackendMetric.id).toEqual(metric.id);
+        expect(newBackendMetric.rootStore).toEqual(metric.rootStore);
+        expect(newBackendMetric.tenantId).toEqual(metric.tenantId);
+        expect(newBackendMetric.filters).toEqual(metric.filters);
+        // Use !! to consider false and undefined equivalent
+        expect(!!newBackendMetric?.enableMetricModeToggle).toEqual(
+          !!metric.enableMetricModeToggle
+        );
+        expect(!!newBackendMetric.isHorizontal).toEqual(!!metric.isHorizontal);
+        expect(!!newBackendMetric.isGeographic).toEqual(!!metric.isGeographic);
+        expect(!!newBackendMetric.rotateLabels).toEqual(!!metric.rotateLabels);
+        expect(!!newBackendMetric.accessorIsNotFilterType).toEqual(
+          !!metric.accessorIsNotFilterType
+        );
+      }
     });
   });
 

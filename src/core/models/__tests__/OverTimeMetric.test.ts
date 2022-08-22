@@ -24,7 +24,6 @@ import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
 import { FILTER_TYPES } from "../../utils/constants";
 import OverTimeMetric from "../OverTimeMetric";
-import { createLibertyPopulationTimeSeries } from "../utils";
 
 const OLD_ENV = process.env;
 
@@ -90,11 +89,8 @@ describe("OverTimeMetric", () => {
     mockCoreStore.filtersStore.resetFilters();
     metric = new OverTimeMetric({
       id: "libertyToPrisonPopulationOverTime",
-      tenantId: mockTenantId,
-      sourceFilename: "liberty_to_prison_count_by_month",
       endpoint: "LibertyToPrisonTransitionsCount",
       rootStore: mockCoreStore,
-      dataTransformer: createLibertyPopulationTimeSeries,
       filters: {
         enabledFilters: [
           FILTER_TYPES.TIME_PERIOD,
@@ -143,17 +139,8 @@ describe("OverTimeMetric", () => {
 
     metric = new OverTimeMetric({
       id: "prisonPopulationOverTime",
-      tenantId: mockTenantId,
-      sourceFilename: "liberty_to_prison_count_by_month",
       rootStore: mockCoreStore,
-      dataTransformer: createLibertyPopulationTimeSeries,
-      filters: {
-        enabledFilters: [
-          FILTER_TYPES.TIME_PERIOD,
-          FILTER_TYPES.GENDER,
-          FILTER_TYPES.JUDICIAL_DISTRICT,
-        ],
-      },
+      endpoint: "PrisonPopulationOverTime",
     });
     metric.hydrate();
 
@@ -162,7 +149,7 @@ describe("OverTimeMetric", () => {
 
   it("calls the backend again when filters change", () => {
     runInAction(() => {
-      metric.rootStore?.filtersStore.setFilters({
+      metric.rootStore.filtersStore.setFilters({
         gender: ["MALE"],
         judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
       });

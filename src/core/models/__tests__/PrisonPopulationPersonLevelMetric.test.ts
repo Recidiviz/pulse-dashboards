@@ -26,6 +26,7 @@ import TenantStore from "../../../RootStore/TenantStore";
 import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
 import { FILTER_TYPES } from "../../utils/constants";
+import PersonLevelMetric from "../PersonLevelMetric";
 import PrisonPopulationPersonLevelMetric from "../PrisonPopulationPersonLevelMetric";
 import {
   createPrisonPopulationPersonLevelList,
@@ -143,6 +144,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
 
 describe("PrisonPopulationPersonLevelMetric", () => {
   let metric: PrisonPopulationPersonLevelMetric;
+  let newBackendMetric: PersonLevelMetric;
 
   beforeEach(() => {
     process.env = Object.assign(process.env, {
@@ -259,11 +261,24 @@ describe("PrisonPopulationPersonLevelMetric", () => {
 
   describe("dataSeries", () => {
     beforeEach(() => {
+      newBackendMetric = new PersonLevelMetric({
+        id: "prisonPopulationPersonLevel",
+        endpoint: "PrisonPopulationPersonLevel",
+        rootStore: mockCoreStore,
+        filters: {
+          enabledFilters: [
+            FILTER_TYPES.TIME_PERIOD,
+            FILTER_TYPES.GENDER,
+            FILTER_TYPES.LEGAL_STATUS,
+            FILTER_TYPES.AGE_GROUP,
+            FILTER_TYPES.FACILITY,
+          ],
+        },
+      });
       metric = new PrisonPopulationPersonLevelMetric({
         id: "prisonPopulationPersonLevel",
         tenantId: mockTenantId,
         sourceFilename: "prison_population_snapshot_person_level",
-        endpoint: "PrisonPopulationPersonLevel",
         rootStore: mockCoreStore,
         hasTimePeriodDimension: true,
         dataTransformer: createPrisonPopulationPersonLevelList,
@@ -276,6 +291,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
             FILTER_TYPES.FACILITY,
           ],
         },
+        newBackendMetric,
       });
       metric.hydrate();
     });

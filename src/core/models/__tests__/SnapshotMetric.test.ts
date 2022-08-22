@@ -24,7 +24,6 @@ import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
 import { FILTER_TYPES } from "../../utils/constants";
 import SnapshotMetric from "../SnapshotMetric";
-import { createLibertyPopulationSnapshot } from "../utils";
 
 const OLD_ENV = process.env;
 
@@ -70,12 +69,9 @@ describe("SnapshotMetric", () => {
     mockCoreStore.filtersStore.resetFilters();
     metric = new SnapshotMetric({
       id: "libertyToPrisonPopulationByDistrict",
-      tenantId: mockTenantId,
-      sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
       endpoint: "LibertyToPrisonTransitionsCount",
       rootStore: mockCoreStore,
       accessor: "judicialDistrict",
-      dataTransformer: createLibertyPopulationSnapshot,
       filters: {
         enabledFilters: [
           FILTER_TYPES.TIME_PERIOD,
@@ -83,7 +79,6 @@ describe("SnapshotMetric", () => {
           FILTER_TYPES.JUDICIAL_DISTRICT,
         ],
       },
-      hasTimePeriodDimension: true,
     });
 
     metric.hydrate();
@@ -102,7 +97,7 @@ describe("SnapshotMetric", () => {
   it("fetches metrics when initialized", () => {
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=judicial_district&filters[time_period]=months_0_6`
+        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6&group=judicial_district`
       ),
       RootStore.getTokenSilently
     );
@@ -122,8 +117,9 @@ describe("SnapshotMetric", () => {
 
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?group=judicial_district&filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
+        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
+          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1` +
+          `&filters[judicial_district]=JUDICIAL_DISTRICT_2&group=judicial_district`
       ),
       RootStore.getTokenSilently
     );

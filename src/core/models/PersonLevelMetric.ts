@@ -24,12 +24,13 @@ import { toHumanReadable, toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { TableColumn } from "../types/charts";
-import { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
+import PathwaysNewBackendMetric, {
+  BaseNewMetricConstructorOptions,
+} from "./PathwaysNewBackendMetric";
 import { PersonLevelDataRecord } from "./types";
 
 export default class PersonLevelMetric extends PathwaysNewBackendMetric<PersonLevelDataRecord> {
-  constructor(props: BaseMetricConstructorOptions<PersonLevelDataRecord>) {
+  constructor(props: BaseNewMetricConstructorOptions) {
     super(props);
 
     makeObservable<PersonLevelMetric>(this, {

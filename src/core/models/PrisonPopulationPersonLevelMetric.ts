@@ -30,7 +30,6 @@ import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { TableColumn } from "../types/charts";
 import { PersonLevelDiffer } from "./backendDiff/PersonLevelDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import PersonLevelMetric from "./PersonLevelMetric";
 import { PrisonPopulationPersonLevelRecord, TimePeriod } from "./types";
 import { filterPersonLevelRecordByDimensions, filterTimePeriod } from "./utils";
 
@@ -47,7 +46,6 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
 
     this.download = this.download.bind(this);
     this.differ = new PersonLevelDiffer(0); // only send counts to Sentry because diff values contain PII
-    this.newBackendMetric = new PersonLevelMetric(props);
   }
 
   get dataSeries(): PrisonPopulationPersonLevelRecord[] {

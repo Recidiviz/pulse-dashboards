@@ -17,6 +17,7 @@
  * =============================================================================
  *
  */
+import { snakeCase } from "lodash";
 import { sumBy } from "lodash/fp";
 import map from "lodash/fp/map";
 import { computed, makeObservable } from "mobx";
@@ -25,8 +26,9 @@ import { toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { PopulationFilterLabels } from "../types/filters";
-import { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
+import PathwaysNewBackendMetric, {
+  BaseNewMetricConstructorOptions,
+} from "./PathwaysNewBackendMetric";
 import { SnapshotDataRecord } from "./types";
 import { convertLengthOfStay } from "./utils";
 
@@ -34,7 +36,7 @@ export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDat
   accessor: keyof SnapshotDataRecord;
 
   constructor(
-    props: BaseMetricConstructorOptions<SnapshotDataRecord> & {
+    props: BaseNewMetricConstructorOptions & {
       accessor: keyof SnapshotDataRecord;
     }
   ) {
@@ -48,7 +50,6 @@ export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDat
 
     this.accessor = props.accessor;
     this.download = this.download.bind(this);
-    this.groupBy = this.accessor.toString();
   }
 
   get totalCount(): number | undefined {
@@ -129,5 +130,11 @@ export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDat
       },
       methodologyContent: this.methodology,
     });
+  }
+
+  getQueryParams(): URLSearchParams {
+    const queryParams = super.getQueryParams();
+    queryParams.append("group", snakeCase(this.accessor.toString()));
+    return queryParams;
   }
 }

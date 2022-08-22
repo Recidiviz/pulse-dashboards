@@ -26,6 +26,7 @@ import TenantStore from "../../../RootStore/TenantStore";
 import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
 import { FILTER_TYPES } from "../../utils/constants";
+import OverTimeMetric from "../OverTimeMetric";
 import SupervisionPopulationOverTimeMetric from "../SupervisionPopulationOverTimeMetric";
 import { createSupervisionPopulationTimeSeries } from "../utils";
 
@@ -95,6 +96,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
 
 describe("SupervisionPopulationOverTimeMetric", () => {
   let metric: SupervisionPopulationOverTimeMetric;
+  let newBackendMetric: OverTimeMetric;
 
   beforeEach(() => {
     process.env = Object.assign(process.env, {
@@ -228,11 +230,23 @@ describe("SupervisionPopulationOverTimeMetric", () => {
 
   describe("dataSeries", () => {
     beforeEach(() => {
+      newBackendMetric = new OverTimeMetric({
+        id: "prisonPopulationOverTime",
+        endpoint: "SupervisionToLibertyTransitionsCount",
+        rootStore: mockCoreStore,
+        filters: {
+          enabledFilters: [
+            FILTER_TYPES.TIME_PERIOD,
+            FILTER_TYPES.GENDER,
+            FILTER_TYPES.SUPERVISION_TYPE,
+            FILTER_TYPES.DISTRICT,
+          ],
+        },
+      });
       metric = new SupervisionPopulationOverTimeMetric({
         id: "prisonPopulationOverTime",
         tenantId: mockTenantId,
         sourceFilename: "supervision_to_liberty_count_by_month",
-        endpoint: "SupervisionToLibertyTransitionsCount",
         rootStore: mockCoreStore,
         dataTransformer: createSupervisionPopulationTimeSeries,
         filters: {
@@ -243,6 +257,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
             FILTER_TYPES.DISTRICT,
           ],
         },
+        newBackendMetric,
       });
       metric.hydrate();
     });

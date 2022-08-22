@@ -17,9 +17,10 @@
 
 import { snakeCase } from "lodash";
 import {
+  action,
   comparer,
   makeObservable,
-  override,
+  observable,
   reaction,
   runInAction,
   toJS,
@@ -27,50 +28,93 @@ import {
 
 import { callNewMetricsApi } from "../../api/metrics/metricsClient";
 import RootStore from "../../RootStore";
-import { PopulationFilterValues } from "../types/filters";
-import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import { MetricRecord, NewBackendRecord } from "./types";
+import { getMethodologyCopy, getMetricCopy } from "../content";
+import { MetricContent, PageContent } from "../content/types";
+import CoreStore from "../CoreStore";
+import { Filters, PopulationFilterValues } from "../types/filters";
+import { PathwaysPage } from "../views";
+import PathwaysMetric from "./PathwaysMetric";
+import {
+  MetricId,
+  MetricRecord,
+  NewBackendRecord,
+  PathwaysMetricRecords,
+  SimulationCompartment,
+  TenantId,
+} from "./types";
 import { formatDateString, getTimePeriodRawValue } from "./utils";
+
+export type BaseNewMetricConstructorOptions = {
+  id: MetricId;
+  endpoint: string;
+  rootStore: CoreStore;
+  filters?: Filters;
+  enableMetricModeToggle?: boolean;
+  compartment?: SimulationCompartment;
+  isHorizontal?: boolean;
+  isGeographic?: boolean;
+  rotateLabels?: boolean;
+  accessorIsNotFilterType?: boolean;
+};
 
 export default abstract class PathwaysNewBackendMetric<
   RecordFormat extends MetricRecord
-> extends PathwaysMetric<RecordFormat> {
+> {
+  readonly id: MetricId;
+
+  readonly endpoint: string;
+
+  readonly rootStore: CoreStore;
+
+  readonly filters: Filters;
+
+  readonly enableMetricModeToggle: boolean;
+
+  readonly tenantId?: TenantId;
+
+  readonly isHorizontal: boolean;
+
+  readonly isGeographic: boolean;
+
+  readonly rotateLabels: boolean;
+
+  readonly accessorIsNotFilterType: boolean;
+
+  isLoading?: boolean;
+
+  protected allRecords?: RecordFormat[];
+
+  error?: Error;
+
   lastUpdated?: Date;
 
   constructor({
-    rootStore,
     id,
-    tenantId,
-    sourceFilename,
-    dataTransformer,
-    filters,
-    enableMetricModeToggle,
-    compartment,
-    hasTimePeriodDimension,
-    isHorizontal,
-    isGeographic,
-    rotateLabels,
-    accessorIsNotFilterType,
     endpoint,
-  }: BaseMetricConstructorOptions<RecordFormat>) {
-    super({
-      rootStore,
-      id,
-      tenantId,
-      sourceFilename,
-      dataTransformer,
-      filters,
-      enableMetricModeToggle,
-      compartment,
-      hasTimePeriodDimension,
-      isHorizontal,
-      isGeographic,
-      rotateLabels,
-      accessorIsNotFilterType,
-      endpoint,
-    });
-    makeObservable(this, {
-      hydrate: override,
+    rootStore,
+    filters,
+    enableMetricModeToggle = false,
+    isHorizontal = false,
+    isGeographic = false,
+    rotateLabels = false,
+    accessorIsNotFilterType = false,
+  }: BaseNewMetricConstructorOptions) {
+    this.id = id;
+    this.endpoint = endpoint;
+    this.rootStore = rootStore;
+    this.tenantId = rootStore.currentTenantId;
+    this.filters = filters ?? rootStore.filtersStore.enabledFilters[id];
+    this.enableMetricModeToggle = enableMetricModeToggle;
+    this.isHorizontal = isHorizontal;
+    this.isGeographic = isGeographic;
+    this.rotateLabels = rotateLabels;
+    this.accessorIsNotFilterType = accessorIsNotFilterType;
+
+    makeObservable<PathwaysNewBackendMetric<RecordFormat>, "allRecords">(this, {
+      allRecords: observable.ref,
+      error: observable,
+      hydrate: action,
+      isLoading: observable,
     });
 
     reaction(
@@ -78,25 +122,14 @@ export default abstract class PathwaysNewBackendMetric<
         // Use toJS to ensure we access all the values of the filters. Reactions are only triggered
         // if data was accessed in the data function (this one), and so just returning
         // this.rootStore?.filters isn't enough to track a change to a property of filters.
-        return toJS(this.rootStore?.filters);
+        return toJS(this.rootStore.filters);
       },
       () => {
-        if (
-          !this.rootStore ||
-          !this.endpoint ||
-          // Update the data in allRecords when a filter changes, but only after allRecords has been
-          // read the first time.
-          !this.isHydrated ||
-          process.env.REACT_APP_DEPLOY_ENV === "production"
-        )
-          return;
+        // Update the data in allRecords when a filter changes, but only after allRecords has been
+        // read the first time.
+        if (!this.isHydrated) return;
 
-        this.fetchNewMetrics(this.getQueryParams()).then((results) => {
-          runInAction(() => {
-            this.allRecords = results.data;
-            this.lastUpdated = formatDateString(results.metadata?.lastUpdated);
-          });
-        });
+        this.hydrate();
       },
       {
         // Use a structural comparison instead of the default '==='. This actually compares the
@@ -121,12 +154,7 @@ export default abstract class PathwaysNewBackendMetric<
     if (!this.rootStore) {
       return queryParams;
     }
-    const groupBy = snakeCase(this.groupBy);
     const filterValues = this.rootStore.filters;
-
-    if (groupBy) {
-      queryParams.append("group", groupBy);
-    }
 
     this.filters.enabledFilters.forEach((filter) => {
       const key = filter as keyof PopulationFilterValues;
@@ -148,7 +176,49 @@ export default abstract class PathwaysNewBackendMetric<
     return queryParams;
   }
 
+  abstract get dataSeries(): PathwaysMetricRecords;
+
   abstract get dataSeriesForDiffing(): RecordFormat[];
+
+  get content(): MetricContent {
+    return getMetricCopy(this.rootStore?.currentTenantId)[this.id];
+  }
+
+  get chartTitle(): string {
+    return this.content.title;
+  }
+
+  /**
+   * Returns the note copy, unformatted. Child metric classes can override this
+   * function and format the note if necessary.
+   */
+  get note(): string | undefined {
+    return this.content.note;
+  }
+
+  get chartXAxisTitle(): string | undefined {
+    return this.content.chartXAxisTitle;
+  }
+
+  get chartYAxisTitle(): string | undefined {
+    return this.content.chartYAxisTitle;
+  }
+
+  /**
+   * Returns the methodology copy specific to this metric.
+   * Page methodology + metric methodology.
+   */
+  get methodology(): (PageContent | MetricContent)[] {
+    if (!this.rootStore?.currentTenantId) return [];
+    const methodology = getMethodologyCopy(this.rootStore.currentTenantId)
+      .system;
+    if (!methodology?.metricCopy || !methodology?.pageCopy) return [];
+
+    return [
+      methodology.pageCopy[this.rootStore.page as PathwaysPage],
+      methodology.metricCopy[this.id],
+    ];
+  }
 
   protected async fetchNewMetrics(
     params: URLSearchParams
@@ -167,6 +237,9 @@ export default abstract class PathwaysNewBackendMetric<
    * Fetches metric data and stores the result reactively on this Metric instance.
    */
   async hydrate(): Promise<void> {
+    if (PathwaysMetric.backendForMetric(this.id) === "OLD") {
+      return Promise.resolve();
+    }
     this.isLoading = true;
     this.error = undefined;
     this.fetchNewMetrics(this.getQueryParams())
@@ -183,5 +256,9 @@ export default abstract class PathwaysNewBackendMetric<
         this.isLoading = false;
         this.error = e;
       });
+  }
+
+  get records(): RecordFormat[] | undefined {
+    return this.allRecords;
   }
 }

@@ -27,6 +27,7 @@ import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
 import { FILTER_TYPES } from "../../utils/constants";
 import LibertyPopulationOverTimeMetric from "../LibertyPopulationOverTimeMetric";
+import OverTimeMetric from "../OverTimeMetric";
 import { createLibertyPopulationTimeSeries } from "../utils";
 
 const OLD_ENV = process.env;
@@ -93,6 +94,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
 
 describe("LibertyPopulationOverTimeMetric", () => {
   let metric: LibertyPopulationOverTimeMetric;
+  let newBackendMetric: OverTimeMetric;
 
   beforeEach(() => {
     process.env = Object.assign(process.env, {
@@ -203,11 +205,22 @@ describe("LibertyPopulationOverTimeMetric", () => {
 
   describe("dataSeries", () => {
     beforeEach(() => {
+      newBackendMetric = new OverTimeMetric({
+        id: "libertyToPrisonPopulationOverTime",
+        rootStore: mockCoreStore,
+        endpoint: "LibertyToPrisonTransitionsCount",
+        filters: {
+          enabledFilters: [
+            FILTER_TYPES.TIME_PERIOD,
+            FILTER_TYPES.GENDER,
+            FILTER_TYPES.JUDICIAL_DISTRICT,
+          ],
+        },
+      });
       metric = new LibertyPopulationOverTimeMetric({
         id: "prisonPopulationOverTime",
         tenantId: mockTenantId,
         sourceFilename: "liberty_to_prison_count_by_month",
-        endpoint: "LibertyToPrisonTransitionsCount",
         rootStore: mockCoreStore,
         dataTransformer: createLibertyPopulationTimeSeries,
         filters: {
@@ -217,6 +230,7 @@ describe("LibertyPopulationOverTimeMetric", () => {
             FILTER_TYPES.JUDICIAL_DISTRICT,
           ],
         },
+        newBackendMetric,
       });
       metric.hydrate();
     });
@@ -270,12 +284,10 @@ describe("LibertyPopulationOverTimeMetric", () => {
 
     it("calls the new API with filters", () => {
       runInAction(() => {
-        if (metric.rootStore) {
-          metric.rootStore.filtersStore.setFilters({
-            gender: ["MALE"],
-            judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
-          });
-        }
+        newBackendMetric.rootStore.filtersStore.setFilters({
+          gender: ["MALE"],
+          judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
+        });
       });
 
       expect(callNewMetricsApi).toHaveBeenCalledWith(

@@ -22,14 +22,14 @@ import { formatDate } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
-import { TimeSeriesDiffer } from "./backendDiff/TimeSeriesDiffer";
-import { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
+import PathwaysNewBackendMetric, {
+  BaseNewMetricConstructorOptions,
+} from "./PathwaysNewBackendMetric";
 import { TimeSeriesDataRecord } from "./types";
 import { getRecordDate } from "./utils";
 
 export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesDataRecord> {
-  constructor(props: BaseMetricConstructorOptions<TimeSeriesDataRecord>) {
+  constructor(props: BaseNewMetricConstructorOptions) {
     super(props);
 
     makeObservable<OverTimeMetric>(this, {
@@ -39,7 +39,6 @@ export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesD
     });
 
     this.download = this.download.bind(this);
-    this.differ = new TimeSeriesDiffer();
   }
 
   get dataSeries(): TimeSeriesDataRecord[] {

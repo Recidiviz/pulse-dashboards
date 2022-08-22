@@ -24,7 +24,6 @@ import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
 import { FILTER_TYPES } from "../../utils/constants";
 import PersonLevelMetric from "../PersonLevelMetric";
-import { createPrisonPopulationPersonLevelList } from "../utils";
 
 const OLD_ENV = process.env;
 
@@ -104,12 +103,8 @@ describe("PersonLevelMetric", () => {
     mockCoreStore.filtersStore.resetFilters();
     metric = new PersonLevelMetric({
       id: "prisonPopulationPersonLevel",
-      tenantId: mockTenantId,
-      sourceFilename: "prison_population_snapshot_person_level",
       endpoint: "PrisonPopulationPersonLevel",
       rootStore: mockCoreStore,
-      hasTimePeriodDimension: true,
-      dataTransformer: createPrisonPopulationPersonLevelList,
       filters: {
         enabledFilters: [
           FILTER_TYPES.TIME_PERIOD,

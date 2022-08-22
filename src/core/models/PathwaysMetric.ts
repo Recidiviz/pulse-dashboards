@@ -27,6 +27,7 @@ import {
 import { parseResponseByFileFormat } from "../../api/metrics";
 import { callMetricsApi } from "../../api/metrics/metricsClient";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
+import flags from "../../flags";
 import RootStore from "../../RootStore";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
@@ -62,8 +63,10 @@ export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   isGeographic?: boolean;
   rotateLabels?: boolean;
   accessorIsNotFilterType?: boolean;
-  endpoint?: string;
+  newBackendMetric?: PathwaysNewBackendMetric<any>;
 };
+
+type metricBackend = "OLD" | "OLD_WITH_DIFFING" | "NEW";
 
 /**
  * Represents a single dataset backed by our metrics API,
@@ -115,10 +118,6 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   accessorIsNotFilterType?: boolean = false;
 
-  endpoint?: string;
-
-  groupBy?: string;
-
   differ?: Differ<any, any>; // <any, any> isn't super great but the differs are temporary anyway
 
   newBackendMetric?: PathwaysNewBackendMetric<any>;
@@ -137,7 +136,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     isGeographic,
     rotateLabels,
     accessorIsNotFilterType,
-    endpoint,
+    newBackendMetric,
   }: BaseMetricConstructorOptions<RecordFormat>) {
     makeObservable<PathwaysMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
@@ -161,17 +160,17 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.isGeographic = isGeographic;
     this.rotateLabels = rotateLabels;
     this.accessorIsNotFilterType = accessorIsNotFilterType;
-    this.endpoint = endpoint;
+    this.newBackendMetric = newBackendMetric;
 
     reaction(
       () => {
-        return this.newBackendMetric?.allRecords;
+        return this.newBackendMetric?.records;
       },
       () => {
         if (
           !this.rootStore ||
-          !this.endpoint ||
           !this.newBackendMetric ||
+          PathwaysMetric.backendForMetric(this.id) !== "OLD_WITH_DIFFING" ||
           process.env.REACT_APP_DEPLOY_ENV === "production"
         )
           return;
@@ -187,6 +186,19 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
         }
       }
     );
+  }
+
+  static backendForMetric(metricName: MetricId): metricBackend {
+    const overrides = flags.metricBackendOverrides as Record<
+      MetricId,
+      metricBackend
+    >;
+    const defaultBackend =
+      (flags.defaultMetricBackend as metricBackend) ?? "OLD";
+    if (overrides) {
+      return overrides[metricName] ?? defaultBackend;
+    }
+    return defaultBackend;
   }
 
   get diffs(): Diff<any> | undefined {

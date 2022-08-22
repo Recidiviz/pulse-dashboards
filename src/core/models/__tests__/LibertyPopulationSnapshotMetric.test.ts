@@ -27,6 +27,7 @@ import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
 import { FILTER_TYPES } from "../../utils/constants";
 import LibertyPopulationSnapshotMetric from "../LibertyPopulationSnapshotMetric";
+import SnapshotMetric from "../SnapshotMetric";
 import { createLibertyPopulationSnapshot, formatDateString } from "../utils";
 
 const OLD_ENV = process.env;
@@ -118,6 +119,7 @@ jest.mock("../../../api/metrics/metricsClient", () => {
 
 describe("LibertyPopulationSnapshotMetric", () => {
   let metric: LibertyPopulationSnapshotMetric;
+  let newBackendMetric: SnapshotMetric;
 
   beforeEach(() => {
     process.env = Object.assign(process.env, {
@@ -276,11 +278,19 @@ describe("LibertyPopulationSnapshotMetric", () => {
         timePeriod: ["6"],
       });
 
+      newBackendMetric = new SnapshotMetric({
+        id: "libertyToPrisonPopulationByDistrict",
+        rootStore: mockCoreStore,
+        endpoint: "LibertyToPrisonTransitionsCount",
+        accessor: "judicialDistrict",
+        filters: {
+          enabledFilters: [FILTER_TYPES.TIME_PERIOD, FILTER_TYPES.GENDER],
+        },
+      });
       metric = new LibertyPopulationSnapshotMetric({
         id: "libertyToPrisonPopulationByDistrict",
         tenantId: mockTenantId,
         sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
-        endpoint: "LibertyToPrisonTransitionsCount",
         rootStore: mockCoreStore,
         accessor: "judicialDistrict",
         dataTransformer: createLibertyPopulationSnapshot,
@@ -288,6 +298,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
           enabledFilters: [FILTER_TYPES.TIME_PERIOD, FILTER_TYPES.GENDER],
         },
         hasTimePeriodDimension: true,
+        newBackendMetric,
       });
       metric.hydrate();
     });
@@ -295,7 +306,7 @@ describe("LibertyPopulationSnapshotMetric", () => {
     it("calls the new API and logs diffs", () => {
       expect(callNewMetricsApi).toHaveBeenCalledWith(
         encodeURI(
-          `${mockTenantId}/LibertyToPrisonTransitionsCount?group=judicial_district&filters[time_period]=months_0_6`
+          `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6&group=judicial_district`
         ),
         RootStore.getTokenSilently
       );

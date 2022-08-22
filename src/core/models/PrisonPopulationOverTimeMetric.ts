@@ -23,7 +23,6 @@ import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import { TimeSeriesDiffer } from "./backendDiff/TimeSeriesDiffer";
 import { recordsWithAggregateMetrics } from "./calculateAggregateMetrics";
-import OverTimeMetric from "./OverTimeMetric";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PrisonPopulationTimeSeriesRecord } from "./types";
 import { getRecordDate } from "./utils";
@@ -42,7 +41,6 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
 
     this.download = this.download.bind(this);
     this.differ = new TimeSeriesDiffer();
-    this.newBackendMetric = new OverTimeMetric(props);
   }
 
   get dataSeries(): PrisonPopulationTimeSeriesRecord[] {

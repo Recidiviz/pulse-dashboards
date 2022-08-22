@@ -25,7 +25,6 @@ import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import { TimeSeriesDiffer } from "./backendDiff/TimeSeriesDiffer";
 import { recordsWithAggregateMetrics } from "./calculateAggregateMetrics";
-import OverTimeMetric from "./OverTimeMetric";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { LibertyPopulationTimeSeriesRecord } from "./types";
 import { getRecordDate } from "./utils";
@@ -44,7 +43,6 @@ export default class LibertyPopulationOverTimeMetric extends PathwaysMetric<Libe
 
     this.download = this.download.bind(this);
     this.differ = new TimeSeriesDiffer();
-    this.newBackendMetric = new OverTimeMetric(props);
   }
 
   get dataSeries(): LibertyPopulationTimeSeriesRecord[] {
