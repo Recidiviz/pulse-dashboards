@@ -119,7 +119,10 @@ export type MetricRecord =
   | SupervisionPopulationSnapshotRecord
   | PrisonPopulationPersonLevelRecord
   | LibertyPopulationTimeSeriesRecord
-  | LibertyPopulationSnapshotRecord;
+  | LibertyPopulationSnapshotRecord
+  | TimeSeriesDataRecord
+  | SnapshotDataRecord
+  | PersonLevelDataRecord;
 
 export type NewBackendRecord<RecordType extends MetricRecord> = {
   data: RecordType[];
@@ -236,6 +239,7 @@ export type TimeSeriesDataRecord = {
   count: number;
   year: number;
   month: number;
+  avg90day: number;
 };
 
 /* Superset of all the SnapshotRecords, but with all fields except "count" optional */
@@ -244,6 +248,10 @@ export type SnapshotDataRecord = Partial<
     SupervisionPopulationSnapshotRecord &
     LibertyPopulationSnapshotRecord
 > & { count: number };
+
+export type PersonLevelDataRecord = PrisonPopulationPersonLevelRecord & {
+  lastUpdated?: Date;
+};
 
 export type VitalsTimeSeriesRecord = {
   date: string;
@@ -331,7 +339,10 @@ export type PathwaysMetricRecords =
   | SupervisionPopulationTimeSeriesRecord[]
   | LibertyPopulationTimeSeriesRecord[]
   | LibertyPopulationSnapshotRecord[]
-  | PrisonPopulationPersonLevelRecord[];
+  | PrisonPopulationPersonLevelRecord[]
+  | TimeSeriesDataRecord[]
+  | SnapshotDataRecord[]
+  | PersonLevelDataRecord[];
 
 export type MetricId =
   | "libertyToPrisonPopulationOverTime"

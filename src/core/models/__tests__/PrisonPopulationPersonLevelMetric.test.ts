@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import * as Sentry from "@sentry/react";
+
 import { runInAction } from "mobx";
 
 import {
@@ -22,8 +22,9 @@ import {
   callNewMetricsApi,
 } from "../../../api/metrics/metricsClient";
 import RootStore from "../../../RootStore";
+import TenantStore from "../../../RootStore/TenantStore";
+import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
-import FiltersStore from "../../CoreStore/FiltersStore";
 import { FILTER_TYPES } from "../../utils/constants";
 import PrisonPopulationPersonLevelMetric from "../PrisonPopulationPersonLevelMetric";
 import {
@@ -34,8 +35,11 @@ import {
 const OLD_ENV = process.env;
 
 const mockTenantId = "US_TN";
-const mockCoreStore = { currentTenantId: mockTenantId } as CoreStore;
-const filtersStore = new FiltersStore({ rootStore: mockCoreStore });
+const mockRootStore = {
+  userStore: {} as UserStore,
+  tenantStore: { currentTenantId: mockTenantId } as TenantStore,
+};
+const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
 jest.mock("../../../RootStore", () => ({
   getTokenSilently: jest.fn().mockReturnValue("auth token"),
 }));
@@ -137,8 +141,6 @@ jest.mock("../../../api/metrics/metricsClient", () => {
   };
 });
 
-jest.mock("@sentry/react");
-
 describe("PrisonPopulationPersonLevelMetric", () => {
   let metric: PrisonPopulationPersonLevelMetric;
 
@@ -147,7 +149,6 @@ describe("PrisonPopulationPersonLevelMetric", () => {
       REACT_APP_API_URL: "test-url",
       REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
     });
-    mockCoreStore.filtersStore = filtersStore;
     metric = new PrisonPopulationPersonLevelMetric({
       id: "prisonPopulationPersonLevel",
       tenantId: mockTenantId,
@@ -258,8 +259,6 @@ describe("PrisonPopulationPersonLevelMetric", () => {
 
   describe("dataSeries", () => {
     beforeEach(() => {
-      mockCoreStore.filtersStore = filtersStore;
-
       metric = new PrisonPopulationPersonLevelMetric({
         id: "prisonPopulationPersonLevel",
         tenantId: mockTenantId,
@@ -288,7 +287,7 @@ describe("PrisonPopulationPersonLevelMetric", () => {
         ),
         RootStore.getTokenSilently
       );
-      expect(Sentry.captureException).toHaveBeenCalled();
+      expect(metric.diffs?.totalDiffs && metric.diffs?.totalDiffs > 0);
     });
 
     it("filters by default values", () => {
@@ -403,8 +402,6 @@ describe("PrisonPopulationPersonLevelMetric", () => {
 
   describe("when the currentTenantId is US_TN", () => {
     beforeEach(() => {
-      mockCoreStore.filtersStore = filtersStore;
-
       if (metric.rootStore) {
         metric.rootStore.filtersStore.resetFilters();
       }

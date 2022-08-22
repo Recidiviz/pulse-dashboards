@@ -23,7 +23,7 @@ import { Differ } from "./Differ";
 
 /* eslint-disable class-methods-use-this */
 export class TimeSeriesDiffer extends Differ<TimeSeriesDataRecord, number> {
-  emptyValue = 0;
+  emptyValue = undefined;
 
   getKey(result: TimeSeriesDataRecord): string {
     return `${result.year}-${result.month}`;

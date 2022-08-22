@@ -16,48 +16,37 @@
 // =============================================================================
 
 import * as Sentry from "@sentry/react";
-import { snakeCase } from "lodash";
 import {
   action,
-  autorun,
-  get,
   makeObservable,
   observable,
+  reaction,
   runInAction,
-  toJS,
 } from "mobx";
 
 import { parseResponseByFileFormat } from "../../api/metrics";
-import {
-  callMetricsApi,
-  callNewMetricsApi,
-} from "../../api/metrics/metricsClient";
+import { callMetricsApi } from "../../api/metrics/metricsClient";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import RootStore from "../../RootStore";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
 import { Dimension } from "../types/dimensions";
-import {
-  EnabledFilters,
-  Filters,
-  PopulationFilterValues,
-} from "../types/filters";
+import { EnabledFilters, Filters } from "../types/filters";
 import { PathwaysPage } from "../views";
-import { Differ } from "./backendDiff/Differ";
+import { Diff, Differ } from "./backendDiff/Differ";
 import { DiffError } from "./backendDiff/DiffError";
 import { dimensionsByMetricType } from "./dimensions";
+import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
 import {
   Hydratable,
   MetricId,
   MetricRecord,
-  NewBackendRecord,
   PathwaysMetricRecords,
   RawMetricData,
   SimulationCompartment,
   TenantId,
 } from "./types";
-import { getTimePeriodRawValue } from "./utils";
 
 export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {
   id: MetricId;
@@ -100,10 +89,6 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     f: EnabledFilters
   ) => RecordFormat[];
 
-  protected newBackendDataTransformer?: (
-    d: NewBackendRecord<RecordFormat>
-  ) => RecordFormat[];
-
   eagerExpand: boolean;
 
   isLoading?: boolean;
@@ -135,6 +120,8 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
   groupBy?: string;
 
   differ?: Differ<any, any>; // <any, any> isn't super great but the differs are temporary anyway
+
+  newBackendMetric?: PathwaysNewBackendMetric<any>;
 
   constructor({
     rootStore,
@@ -176,55 +163,37 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     this.accessorIsNotFilterType = accessorIsNotFilterType;
     this.endpoint = endpoint;
 
-    autorun(() => {
-      if (
-        !this.rootStore ||
-        !this.allRecords?.length ||
-        !this.endpoint ||
-        process.env.REACT_APP_DEPLOY_ENV === "production"
-      )
-        return;
-      const groupBy = snakeCase(this.groupBy);
-      const filterValues = this.rootStore.filtersStore.filters;
+    reaction(
+      () => {
+        return this.newBackendMetric?.allRecords;
+      },
+      () => {
+        if (
+          !this.rootStore ||
+          !this.endpoint ||
+          !this.newBackendMetric ||
+          process.env.REACT_APP_DEPLOY_ENV === "production"
+        )
+          return;
 
-      const queryParams = new URLSearchParams();
-      if (groupBy) {
-        queryParams.append("group", groupBy);
+        if (this.diffs && this.diffs.totalDiffs > 0) {
+          Sentry.captureException(
+            new DiffError(
+              `${this.diffs.totalDiffs} diffs: ${JSON.stringify(
+                Object.fromEntries(this.diffs.samples)
+              )}`
+            )
+          );
+        }
       }
+    );
+  }
 
-      this.filters.enabledFilters.forEach((filter) => {
-        const key = filter as keyof PopulationFilterValues;
-        const values = toJS(get(filterValues, key));
-        const queryKey = snakeCase(key);
-        if (values) {
-          values.forEach((val: any) => {
-            if (queryKey === "time_period") {
-              const timePeriod = getTimePeriodRawValue(val);
-              if (timePeriod) {
-                queryParams.append(`filters[${queryKey}]`, timePeriod);
-              }
-            } else if (val !== "ALL") {
-              queryParams.append(`filters[${queryKey}]`, val);
-            }
-          });
-        }
-      });
-
-      this.fetchAndTransformNewMetrics(queryParams).then((results) => {
-        if (this.differ) {
-          const diffs = this.differ.diff(this.dataSeries, results);
-          if (diffs.totalDiffs > 0) {
-            Sentry.captureException(
-              new DiffError(
-                `${diffs.totalDiffs} diffs: ${JSON.stringify(
-                  Object.fromEntries(diffs.samples)
-                )}`
-              )
-            );
-          }
-        }
-      });
-    });
+  get diffs(): Diff<any> | undefined {
+    return this.differ?.diff(
+      this.dataSeries,
+      this.newBackendMetric?.dataSeriesForDiffing
+    );
   }
 
   abstract get dataSeries(): PathwaysMetricRecords;
@@ -279,6 +248,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
       runInAction(() => {
         this.allRecords = fetchedData;
         this.isLoading = false;
+        this.newBackendMetric?.hydrate();
       });
     } catch (e) {
       runInAction(() => {
@@ -318,29 +288,6 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
   protected async fetchMetrics(): Promise<Record<string, RawMetricData>> {
     const endpoint = `${this.tenantId}/pathways/${this.sourceFilename}`.toLowerCase();
     return callMetricsApi(endpoint, RootStore.getTokenSilently);
-  }
-
-  protected async fetchAndTransformNewMetrics(
-    params: URLSearchParams
-  ): Promise<RecordFormat[]> {
-    const apiResponse = await this.fetchNewMetrics(params);
-    if (apiResponse && this.newBackendDataTransformer) {
-      return this.newBackendDataTransformer(apiResponse);
-    }
-    return apiResponse?.data;
-  }
-
-  protected async fetchNewMetrics(
-    params: URLSearchParams
-  ): Promise<NewBackendRecord<RecordFormat>> {
-    return this.endpoint &&
-      process.env.REACT_APP_DEPLOY_ENV !== "production" &&
-      process.env.REACT_APP_NEW_BACKEND_API_URL
-      ? callNewMetricsApi(
-          `${this.tenantId}/${this.endpoint}?${params.toString()}`,
-          RootStore.getTokenSilently
-        )
-      : Promise.resolve({});
   }
 
   get records(): RecordFormat[] | undefined {

@@ -30,12 +30,9 @@ import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { TableColumn } from "../types/charts";
 import { PersonLevelDiffer } from "./backendDiff/PersonLevelDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
+import PersonLevelMetric from "./PersonLevelMetric";
 import { PrisonPopulationPersonLevelRecord, TimePeriod } from "./types";
-import {
-  addLastUpdatedToRecords,
-  filterPersonLevelRecordByDimensions,
-  filterTimePeriod,
-} from "./utils";
+import { filterPersonLevelRecordByDimensions, filterTimePeriod } from "./utils";
 
 export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<PrisonPopulationPersonLevelRecord> {
   constructor(
@@ -50,7 +47,7 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
 
     this.download = this.download.bind(this);
     this.differ = new PersonLevelDiffer(0); // only send counts to Sentry because diff values contain PII
-    this.newBackendDataTransformer = addLastUpdatedToRecords;
+    this.newBackendMetric = new PersonLevelMetric(props);
   }
 
   get dataSeries(): PrisonPopulationPersonLevelRecord[] {
@@ -115,15 +112,12 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
       const row: Record<string, any> = {};
       columns.forEach((c) => {
         if (c.Header === "Name") return;
-        row[c.Header] = c.titleCase
-          ? toTitleCase(
-              toHumanReadable(
-                d[
-                  c.accessor as keyof PrisonPopulationPersonLevelRecord
-                ].toString()
-              )
-            )
-          : d[c.accessor as keyof PrisonPopulationPersonLevelRecord];
+        const value = d[c.accessor as keyof PrisonPopulationPersonLevelRecord];
+        if (value) {
+          row[c.Header] = c.titleCase
+            ? toTitleCase(toHumanReadable(value.toString()))
+            : value;
+        }
       });
       data.push(row);
       labels.push(d.fullName);

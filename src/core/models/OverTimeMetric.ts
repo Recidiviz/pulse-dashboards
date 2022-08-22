@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2022 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { eachMonthOfInterval, startOfMonth, subMonths } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
 import { formatDate } from "../../utils";
@@ -22,19 +23,16 @@ import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import { TimeSeriesDiffer } from "./backendDiff/TimeSeriesDiffer";
-import { recordsWithAggregateMetrics } from "./calculateAggregateMetrics";
-import OverTimeMetric from "./OverTimeMetric";
-import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import { PrisonPopulationTimeSeriesRecord } from "./types";
+import { BaseMetricConstructorOptions } from "./PathwaysMetric";
+import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
+import { TimeSeriesDataRecord } from "./types";
 import { getRecordDate } from "./utils";
 
-export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<PrisonPopulationTimeSeriesRecord> {
-  constructor(
-    props: BaseMetricConstructorOptions<PrisonPopulationTimeSeriesRecord>
-  ) {
+export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesDataRecord> {
+  constructor(props: BaseMetricConstructorOptions<TimeSeriesDataRecord>) {
     super(props);
 
-    makeObservable<PrisonPopulationOverTimeMetric>(this, {
+    makeObservable<OverTimeMetric>(this, {
       mostRecentDate: computed,
       dataSeries: computed,
       downloadableData: computed,
@@ -42,17 +40,16 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
 
     this.download = this.download.bind(this);
     this.differ = new TimeSeriesDiffer();
-    this.newBackendMetric = new OverTimeMetric(props);
   }
 
-  get dataSeries(): PrisonPopulationTimeSeriesRecord[] {
+  get dataSeries(): TimeSeriesDataRecord[] {
     if (!this.rootStore || !this.allRecords?.length) return [];
-    const { filters, monthRange } = this.rootStore.filtersStore;
-    return recordsWithAggregateMetrics<PrisonPopulationTimeSeriesRecord>(
-      this,
-      filters,
-      monthRange
-    );
+    const { monthRange } = this.rootStore.filtersStore;
+    return this.extrapolateRecordsForRange(monthRange);
+  }
+
+  get dataSeriesForDiffing(): TimeSeriesDataRecord[] {
+    return this.dataSeries;
   }
 
   get mostRecentDate(): Date {
@@ -62,6 +59,8 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
       return new Date(9999, 11, 31);
     }
 
+    // Records are sorted by date on the backend in order to calculate 90 day averages, so we don't
+    // need to search through all of them.
     return getRecordDate(allRecords.slice(-1)[0]);
   }
 
@@ -72,7 +71,7 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
     const data: Record<string, number>[] = [];
     const labels: string[] = [];
 
-    this.dataSeries.forEach((d: PrisonPopulationTimeSeriesRecord) => {
+    this.dataSeries.forEach((d: TimeSeriesDataRecord) => {
       data.push({
         Population: Math.round(d.count),
         ...(d.avg90day && {
@@ -105,6 +104,32 @@ export default class PrisonPopulationOverTimeMetric extends PathwaysMetric<Priso
       },
       lastUpdatedOn: formatDate(this.mostRecentDate),
       methodologyContent: this.methodology,
+    });
+  }
+
+  extrapolateRecordsForRange(monthRange: number): TimeSeriesDataRecord[] {
+    const { mostRecentDate, records } = this;
+    const earliestDate = startOfMonth(subMonths(mostRecentDate, monthRange));
+
+    const recordsGrouped = new Map<string, TimeSeriesDataRecord>();
+    records?.forEach((record) => {
+      recordsGrouped.set(getRecordDate(record).toDateString(), record);
+    });
+
+    // For each month in range, if we have an entry for it add it to the array. If not, add an entry
+    // with a count of 0.
+    return eachMonthOfInterval({
+      start: earliestDate,
+      end: mostRecentDate,
+    }).map((date) => {
+      return (
+        recordsGrouped.get(date.toDateString()) ?? {
+          year: date.getFullYear(),
+          month: date.getMonth() + 1,
+          count: 0,
+          avg90day: 0,
+        }
+      );
     });
   }
 }

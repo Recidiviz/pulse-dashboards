@@ -40,6 +40,7 @@ import {
   PrisonPopulationTimeSeriesRecord,
   RawMetricData,
   SimulationCompartment,
+  SnapshotDataRecord,
   SupervisionPopulationSnapshotRecord,
   SupervisionPopulationTimeSeriesRecord,
   SupervisionType,
@@ -118,6 +119,15 @@ const mergeDefaults = (
       return { [k]: v };
     })
   );
+
+export function convertLengthOfStay(
+  record: SnapshotDataRecord
+): LengthOfStay | undefined {
+  return (
+    record.lengthOfStay &&
+    lengthOfStayMap[record.lengthOfStay.toLowerCase() as LengthOfStayRawValue]
+  );
+}
 
 export function createProjectionTimeSeries(
   rawRecords: RawMetricData

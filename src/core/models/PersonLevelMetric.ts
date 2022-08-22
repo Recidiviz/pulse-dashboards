@@ -1,6 +1,6 @@
 /*
  * Recidiviz - a data platform for criminal justice reform
- * Copyright (C) 2021 Recidiviz, Inc.
+ * Copyright (C) 2022 Recidiviz, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,77 +19,75 @@
  */
 import { computed, makeObservable } from "mobx";
 
-import { formatDate } from "../../utils";
+import tenants from "../../tenants";
+import { toHumanReadable, toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
-import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
-import { TimeSeriesDiffer } from "./backendDiff/TimeSeriesDiffer";
-import { recordsWithAggregateMetrics } from "./calculateAggregateMetrics";
-import OverTimeMetric from "./OverTimeMetric";
-import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
-import { LibertyPopulationTimeSeriesRecord } from "./types";
-import { getRecordDate } from "./utils";
+import { TableColumn } from "../types/charts";
+import { BaseMetricConstructorOptions } from "./PathwaysMetric";
+import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
+import { PersonLevelDataRecord } from "./types";
 
-export default class LibertyPopulationOverTimeMetric extends PathwaysMetric<LibertyPopulationTimeSeriesRecord> {
-  constructor(
-    props: BaseMetricConstructorOptions<LibertyPopulationTimeSeriesRecord>
-  ) {
+export default class PersonLevelMetric extends PathwaysNewBackendMetric<PersonLevelDataRecord> {
+  constructor(props: BaseMetricConstructorOptions<PersonLevelDataRecord>) {
     super(props);
 
-    makeObservable<LibertyPopulationOverTimeMetric>(this, {
-      mostRecentDate: computed,
+    makeObservable<PersonLevelMetric>(this, {
       dataSeries: computed,
       downloadableData: computed,
     });
 
     this.download = this.download.bind(this);
-    this.differ = new TimeSeriesDiffer();
-    this.newBackendMetric = new OverTimeMetric(props);
   }
 
-  get dataSeries(): LibertyPopulationTimeSeriesRecord[] {
-    if (!this.rootStore || !this.allRecords?.length) return [];
-    const { filters, monthRange } = this.rootStore.filtersStore;
-    return recordsWithAggregateMetrics<LibertyPopulationTimeSeriesRecord>(
-      this,
-      filters,
-      monthRange
-    );
+  get dataSeries(): PersonLevelDataRecord[] {
+    return this.allRecords ?? [];
   }
 
-  get mostRecentDate(): Date {
-    const { allRecords } = this;
+  get dataSeriesForDiffing(): PersonLevelDataRecord[] {
+    return this.dataSeries.map((record: PersonLevelDataRecord) => {
+      const mappedRecord = { ...record };
+      if (this.lastUpdated) {
+        mappedRecord.lastUpdated = this.lastUpdated;
+      }
+      return mappedRecord;
+    });
+  }
 
-    if (!allRecords || allRecords.length === 0) {
-      return new Date(9999, 11, 31);
-    }
-
-    return getRecordDate(allRecords.slice(-1)[0]);
+  get columns(): TableColumn[] | undefined {
+    if (!this.rootStore?.currentTenantId) return undefined;
+    return tenants[this.rootStore.currentTenantId].tableColumns?.[this.id];
   }
 
   get downloadableData(): DownloadableData | undefined {
-    if (!this.dataSeries) return undefined;
+    if (!this.dataSeries || !this.columns) return undefined;
+    const { columns } = this;
 
     const datasets = [] as DownloadableDataset[];
-    const data: Record<string, number>[] = [];
+    const data: Record<string, string>[] = [];
     const labels: string[] = [];
 
-    this.dataSeries.forEach((d: LibertyPopulationTimeSeriesRecord) => {
-      data.push({
-        value: Math.round(d.count),
-        "3-month rolling average": Math.round(d.avg90day),
+    this.dataSeries.forEach((d: PersonLevelDataRecord) => {
+      const row: Record<string, any> = {};
+      columns.forEach((c) => {
+        if (c.Header === "Name") return;
+        const value = d[c.accessor as keyof PersonLevelDataRecord];
+        if (value) {
+          row[c.Header] = c.titleCase
+            ? toTitleCase(toHumanReadable(value.toString()))
+            : value;
+        }
       });
-
-      labels.push(formatMonthAndYear(getRecordDate(d)));
+      data.push(row);
+      labels.push(d.fullName);
     });
 
     datasets.push({ data, label: "" });
-
     return {
       chartDatasets: datasets,
       chartLabels: labels,
       chartId: this.chartTitle,
-      dataExportLabel: "Month",
+      dataExportLabel: "Name",
     };
   }
 
@@ -103,7 +101,6 @@ export default class LibertyPopulationOverTimeMetric extends PathwaysMetric<Libe
       filters: {
         filtersDescription: this.rootStore?.filtersStore.filtersDescription,
       },
-      lastUpdatedOn: formatDate(this.mostRecentDate),
       methodologyContent: this.methodology,
     });
   }

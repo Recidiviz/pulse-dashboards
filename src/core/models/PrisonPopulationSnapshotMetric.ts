@@ -29,12 +29,9 @@ import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { SnapshotDiffer } from "./backendDiff/SnapshotDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
+import SnapshotMetric from "./SnapshotMetric";
 import { PrisonPopulationSnapshotRecord, TimePeriod } from "./types";
-import {
-  addLastUpdatedToRecords,
-  filterRecordByDimensions,
-  filterTimePeriod,
-} from "./utils";
+import { filterRecordByDimensions, filterTimePeriod } from "./utils";
 
 export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<PrisonPopulationSnapshotRecord> {
   accessor: keyof PrisonPopulationSnapshotRecord;
@@ -56,7 +53,7 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
     this.download = this.download.bind(this);
     this.groupBy = this.accessor;
     this.differ = new SnapshotDiffer(this.accessor);
-    this.newBackendDataTransformer = addLastUpdatedToRecords;
+    this.newBackendMetric = new SnapshotMetric(props);
   }
 
   get totalCount(): number {

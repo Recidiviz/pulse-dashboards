@@ -18,8 +18,9 @@ import { runInAction } from "mobx";
 
 import { callMetricsApi } from "../../../api/metrics/metricsClient";
 import RootStore from "../../../RootStore";
+import TenantStore from "../../../RootStore/TenantStore";
+import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
-import FiltersStore from "../../CoreStore/FiltersStore";
 import { FILTER_TYPES } from "../../utils/constants";
 import SupervisionPopulationSnapshotMetric from "../SupervisionPopulationSnapshotMetric";
 import {
@@ -30,8 +31,11 @@ import {
 const OLD_ENV = process.env;
 
 const mockTenantId = "US_TN";
-const mockCoreStore = { currentTenantId: mockTenantId } as CoreStore;
-const filtersStore = new FiltersStore({ rootStore: mockCoreStore });
+const mockRootStore = {
+  userStore: {} as UserStore,
+  tenantStore: { currentTenantId: mockTenantId } as TenantStore,
+};
+const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
 jest.mock("../../../RootStore", () => ({
   getTokenSilently: jest.fn().mockReturnValue("auth token"),
 }));
@@ -110,7 +114,6 @@ describe("SupervisionPopulationSnapshotMetric", () => {
     process.env = Object.assign(process.env, {
       REACT_APP_API_URL: "test-url",
     });
-    mockCoreStore.filtersStore = filtersStore;
     metric = new SupervisionPopulationSnapshotMetric({
       id: "supervisionToPrisonPopulationByDistrict",
       tenantId: mockTenantId,
@@ -246,8 +249,6 @@ describe("SupervisionPopulationSnapshotMetric", () => {
 
   describe("totalCount", () => {
     beforeEach(() => {
-      mockCoreStore.filtersStore = filtersStore;
-
       metric = new SupervisionPopulationSnapshotMetric({
         id: "supervisionToPrisonPopulationByDistrict",
         tenantId: mockTenantId,
@@ -287,11 +288,9 @@ describe("SupervisionPopulationSnapshotMetric", () => {
 
   describe("dataSeries", () => {
     beforeEach(() => {
-      filtersStore.setFilters({
+      mockCoreStore.filtersStore.setFilters({
         timePeriod: ["6"],
       });
-      mockCoreStore.filtersStore = filtersStore;
-
       metric = new SupervisionPopulationSnapshotMetric({
         id: "supervisionToPrisonPopulationByDistrict",
         tenantId: mockTenantId,

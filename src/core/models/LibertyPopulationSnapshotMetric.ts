@@ -30,12 +30,9 @@ import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { PopulationFilterLabels } from "../types/filters";
 import { SnapshotDiffer } from "./backendDiff/SnapshotDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
+import SnapshotMetric from "./SnapshotMetric";
 import { LibertyPopulationSnapshotRecord, TimePeriod } from "./types";
-import {
-  addLastUpdatedToRecords,
-  filterRecordByDimensions,
-  filterTimePeriod,
-} from "./utils";
+import { filterRecordByDimensions, filterTimePeriod } from "./utils";
 
 export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<LibertyPopulationSnapshotRecord> {
   accessor: keyof LibertyPopulationSnapshotRecord;
@@ -57,7 +54,7 @@ export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<Libe
     this.download = this.download.bind(this);
     this.groupBy = this.accessor;
     this.differ = new SnapshotDiffer(this.accessor);
-    this.newBackendDataTransformer = addLastUpdatedToRecords;
+    this.newBackendMetric = new SnapshotMetric(props);
   }
 
   get totalCount(): number {

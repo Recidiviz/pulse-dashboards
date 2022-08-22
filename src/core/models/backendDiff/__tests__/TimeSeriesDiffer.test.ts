@@ -27,11 +27,13 @@ it("diffs equal data out of order", () => {
       year: 2020,
       month: 1,
       count: 10,
+      avg90day: 5,
     },
     {
       year: 2020,
       month: 2,
       count: 20,
+      avg90day: 15,
     },
   ];
   const newData: TimeSeriesDataRecord[] = [
@@ -39,11 +41,13 @@ it("diffs equal data out of order", () => {
       year: 2020,
       month: 2,
       count: 20,
+      avg90day: 15,
     },
     {
       year: 2020,
       month: 1,
       count: 10,
+      avg90day: 5,
     },
   ];
 
@@ -58,23 +62,27 @@ it("diffs unequal data", () => {
       year: 2020,
       month: 1,
       count: 10,
+      avg90day: 5,
     },
     // Exists in old only
     {
       year: 2020,
       month: 2,
       count: 20,
+      avg90day: 15,
     },
     {
       year: 2020,
       month: 4,
       count: 0,
+      avg90day: 3,
     },
     // Exists in both
     {
       year: 2020,
       month: 3,
       count: 30,
+      avg90day: 10,
     },
   ];
 
@@ -84,18 +92,21 @@ it("diffs unequal data", () => {
       year: 2022,
       month: 1,
       count: 1,
+      avg90day: 0,
     },
     // Exists in both
     {
       year: 2020,
       month: 3,
       count: 30,
+      avg90day: 10,
     },
     // Exists in old but with different count
     {
       year: 2020,
       month: 1,
       count: 100,
+      avg90day: 5,
     },
   ];
 
@@ -110,14 +121,18 @@ it("diffs unequal data", () => {
   });
   expectedDiffs.set("2020-2", {
     oldValue: 20,
-    newValue: 0,
+    newValue: undefined,
   });
   expectedDiffs.set("2022-1", {
-    oldValue: 0,
+    oldValue: undefined,
     newValue: 1,
   });
+  expectedDiffs.set("2020-4", {
+    oldValue: 0,
+    newValue: undefined,
+  });
   const expectedDiffOutput: Diff<number> = {
-    totalDiffs: 3,
+    totalDiffs: 4,
     samples: expectedDiffs,
   };
 

@@ -38,23 +38,26 @@ export abstract class Differ<DataRecord, DiffValueType> {
 
   maxDiffs = 10;
 
-  diff(oldData: DataRecord[], newData: DataRecord[]): Diff<DiffValueType> {
+  diff(
+    oldData: DataRecord[] | undefined,
+    newData: DataRecord[] | undefined
+  ): Diff<DiffValueType> {
     const diffs = new Map<string, DiffValue<DiffValueType>>();
     let totalDiffs = 0;
 
     const oldResults = new Map<string, DiffValueType>();
-    oldData.forEach((value) => {
+    oldData?.forEach((value) => {
       oldResults.set(this.getKey(value), this.getValue(value));
     });
 
     const newResults = new Map<string, DiffValueType>();
-    newData.forEach((data) => {
+    newData?.forEach((data) => {
       const key = this.getKey(data);
       const value = this.getValue(data);
       newResults.set(key, value);
 
-      const oldValue = oldResults.get(key) || this.emptyValue;
-      const newValue = value || this.emptyValue;
+      const oldValue = oldResults.get(key) ?? this.emptyValue;
+      const newValue = value ?? this.emptyValue;
       if (!isEqualWith(oldValue, newValue, this.compare.bind(this))) {
         totalDiffs += 1;
         if (totalDiffs < this.maxDiffs) {
@@ -67,8 +70,8 @@ export abstract class Differ<DataRecord, DiffValueType> {
     });
 
     oldResults.forEach((value, key) => {
-      const oldValue = value || this.emptyValue;
-      const newValue = newResults.get(key) || this.emptyValue;
+      const oldValue = value ?? this.emptyValue;
+      const newValue = newResults.get(key) ?? this.emptyValue;
       if (
         !isEqualWith(oldValue, newValue, this.compare.bind(this)) &&
         !diffs.has(key)
