@@ -14,12 +14,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import moment from "moment";
+
 import { pluralize } from "../../../../utils";
 import type {
   Client,
   EarlyTerminationDraftData,
   EarlyTerminationReferralRecord,
 } from "../../../../WorkflowsStore";
+
+const FORM_DATE_FORMAT = "MMMM Do, YYYY";
 
 export const transform = (
   client: Client,
@@ -44,8 +48,10 @@ export const transform = (
     judgeName,
     convictionCounty: convictionCounty?.replaceAll("_", " ") ?? "",
     judicialDistrictCode: judicialDistrictCode?.replaceAll("_", " ") ?? "",
-    priorCourtDate,
-    probationExpirationDate,
+    priorCourtDate: moment(priorCourtDate).format(FORM_DATE_FORMAT),
+    probationExpirationDate: moment(probationExpirationDate).format(
+      FORM_DATE_FORMAT
+    ),
     sentenceLengthYears: pluralize(parseInt(sentenceLengthYears), "year"),
     plaintiff: "State of North Dakota",
     crimeNames: crimeNames?.join(", ") ?? "",
