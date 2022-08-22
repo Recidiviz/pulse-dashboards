@@ -24,7 +24,7 @@ import {
 } from "../../../firestore";
 import { Client } from "../../../WorkflowsStore";
 
-export async function updateFieldData(
+export async function updateCompliantReportingFormFieldData(
   updatedBy: string,
   client: Client,
   fieldData: FormFieldData

@@ -37,7 +37,7 @@ export type EarlyTerminationReferralRecord = {
     criminalNumber: string;
     judgeName: string;
     priorCourtDate: string;
-    sentenceLengthYears: number;
+    sentenceLengthYears: string;
     crimeNames: string[];
     probationExpirationDate: string;
     probationOfficerFullName: string;
@@ -46,6 +46,7 @@ export type EarlyTerminationReferralRecord = {
   metadata: {
     multipleSentences: boolean;
     outOfState: boolean;
+    ICOut: boolean;
   };
 };
 
@@ -73,18 +74,28 @@ export interface TransformedEarlyTerminationReferral {
   metadata: {
     multipleSentences: boolean;
     outOfState: boolean;
+    ICOut: boolean;
   };
 }
 
-export interface EarlyTerminationDraftData {
+// Extends Record to facilitate `additionalDepositionLines` dynamic keys
+export interface EarlyTerminationDraftData extends Record<string, string> {
+  courtName: string;
   clientName: string;
   convictionCounty: string;
+  plaintiff: string;
+  finesAndFees: string;
   judicialDistrictCode: string;
   criminalNumber: string;
   judgeName: string;
-  priorCourtDate: Date | string;
-  sentenceLengthYears: number;
-  crimeNames: string[];
-  probationExpirationDate: Date | string;
+  priorCourtDate: string;
+  sentenceLengthYears: string;
+  crimeNames: string;
+  probationExpirationDate: string;
   probationOfficerFullName: string;
+  statesAttorneyNumber: string;
+  statesAttorneyPhoneNumber: string;
+  statesAttorneyEmailAddress: string;
+  statesAttorneyMailingAddress: string;
+  sentenceLength: string;
 }

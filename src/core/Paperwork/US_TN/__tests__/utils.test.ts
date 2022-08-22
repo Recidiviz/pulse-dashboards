@@ -39,7 +39,7 @@ import { trackSetOpportunityStatus } from "../../../../analytics";
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../../WorkflowsStore";
 import { eligibleClient } from "../../../../WorkflowsStore/__fixtures__";
-import { updateFieldData } from "../utils";
+import { updateCompliantReportingFormFieldData } from "../utils";
 
 let testObserver: IDisposer;
 
@@ -79,7 +79,9 @@ test("track start of progress on pending review", async () => {
     compliantReporting: {},
   });
 
-  await updateFieldData("testUser", client, { clientFirstName: "Testabc" });
+  await updateCompliantReportingFormFieldData("testUser", client, {
+    clientFirstName: "Testabc",
+  });
 
   expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
     clientId: client.pseudonymizedId,
@@ -94,7 +96,9 @@ test("form updates should not track status change if it's already set", async ()
     compliantReporting: { referralForm: { data: { foo: "bar" } } },
   });
 
-  await updateFieldData("testUser", client, { clientFirstName: "Testabc" });
+  await updateCompliantReportingFormFieldData("testUser", client, {
+    clientFirstName: "Testabc",
+  });
 
   expect(trackSetOpportunityStatus).toHaveBeenCalledTimes(0);
   expect(trackSetOpportunityStatus).not.toHaveBeenCalledWith({

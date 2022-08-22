@@ -14,19 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { debounce } from "lodash";
-import { reaction } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { MutableRefObject, useEffect, useRef, useState } from "react";
+import React, { MutableRefObject, useRef } from "react";
 import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
 import { useRootStore } from "../../../components/StoreProvider";
-import { CombinedUserRecord } from "../../../firestore";
-import type { Client } from "../../../WorkflowsStore";
-import { useAnimatedValue } from "../utils";
+import { Client } from "../../../WorkflowsStore";
+import { useAnimatedValue, useReactiveInput } from "../utils";
 import { Input } from "./styles";
 import { FormDataType } from "./types";
-import { updateFieldData } from "./utils";
+import { updateCompliantReportingFormFieldData } from "./utils";
 
 export type FormInputValueGetter = (value: any) => any;
 
@@ -40,70 +37,32 @@ type FormInputWrapperProps = StyledComponentProps<
   never
 > & {
   name: keyof FormDataType;
-  getValue?: FormInputValueGetter;
-  buildValue?: FormInputValueBuilder;
 };
 
 interface FormInputProps extends FormInputWrapperProps {
   client: Client;
-  user: CombinedUserRecord;
 }
 
-const createDefaultValueGetter = (): FormInputValueGetter => {
-  return (data) => data;
-};
+const FormInput: React.FC<FormInputProps> = ({ client, name, ...props }) => {
+  const [value, onChange] = useReactiveInput({
+    name,
+    fetchFromStore: () =>
+      client.getCompliantReportingReferralDataField(name) as string,
+    persistToStore: (valueToStore: string) =>
+      client.setEarlyTerminationReferralDataField(name, valueToStore),
+    persistToFirestore: (valueToStore: string) =>
+      updateCompliantReportingFormFieldData(
+        client.currentUserName || "user",
+        client,
+        { [name]: valueToStore }
+      ),
+  });
 
-const createDefaultValueBuilder = (name: string): FormInputValueBuilder => {
-  return (data, value) => value;
-};
-
-const FormInput: React.FC<FormInputProps> = ({
-  client,
-  user,
-  name,
-  getValue = createDefaultValueGetter(),
-  buildValue = createDefaultValueBuilder(name),
-  ...props
-}) => {
-  const [value, setValue] = useState<string>(
-    getValue(client.getCompliantReportingReferralDataField(name))
-  );
   const inputRef = useRef<HTMLInputElement>(
     null
   ) as MutableRefObject<HTMLInputElement>;
 
   const hasAnimated = useAnimatedValue(inputRef, value);
-
-  useEffect(() => {
-    return reaction(
-      () => getValue(client.getCompliantReportingReferralDataField(name)),
-      (newValue) => setValue(newValue),
-      { name }
-    );
-  });
-
-  const updateFirestoreRef = useRef(
-    debounce((key, builtValue) => {
-      client.setCompliantReportingReferralDataField(name, builtValue);
-
-      updateFieldData(client.currentUserName || "user", client, {
-        [key]: builtValue,
-      });
-    }, 2000)
-  );
-
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value);
-
-    const builtValue = buildValue(
-      client.getCompliantReportingReferralDataField(name),
-      event.target.value
-    );
-
-    if (updateFirestoreRef.current) {
-      updateFirestoreRef.current(name, builtValue);
-    }
-  };
 
   return (
     <Input
@@ -120,20 +79,11 @@ const FormInput: React.FC<FormInputProps> = ({
 
 const FormInputWrapper: React.FC<FormInputWrapperProps> = (props) => {
   const { workflowsStore } = useRootStore();
-  if (
-    !workflowsStore?.selectedClient?.opportunityUpdates.compliantReporting ||
-    !workflowsStore.user
-  ) {
+  if (!workflowsStore?.selectedClient?.opportunityUpdates.compliantReporting) {
     return <Input {...props} disabled />;
   }
 
-  return (
-    <FormInput
-      client={workflowsStore.selectedClient}
-      user={workflowsStore.user}
-      {...props}
-    />
-  );
+  return <FormInput client={workflowsStore.selectedClient} {...props} />;
 };
 
 // Only re-render changed inputs

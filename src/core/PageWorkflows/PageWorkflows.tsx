@@ -33,6 +33,7 @@ import {
 } from "../WorkflowsClientProfile";
 import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTerminationClientProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
+import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 import { WorkflowsFormLayout } from "../WorkflowsLayouts";
 import WorkflowsRoute from "../WorkflowsRoute";
 
@@ -118,7 +119,7 @@ const PageWorkflows: React.FC = () => {
         >
           <WorkflowsFormLayout
             sidebarContents={<EarlyTerminationClientProfile />}
-            formContents={<div />}
+            formContents={<WorkflowsEarlyTerminationForm />}
           />
         </WorkflowsRoute>
         <WorkflowsRoute

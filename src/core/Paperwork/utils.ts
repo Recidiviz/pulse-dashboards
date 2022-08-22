@@ -14,11 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { isString } from "lodash";
-import { MutableRefObject, useEffect, useState } from "react";
+import { debounce, isString, throttle } from "lodash";
+import { reaction } from "mobx";
+import { rem } from "polished";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
+import * as React from "react";
+
+import { PrintablePageMargin } from "./styles";
 
 export const useAnimatedValue = (
-  input: MutableRefObject<HTMLInputElement>,
+  input: MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>,
   value?: string,
   duration = 1750,
   delay = 250
@@ -29,7 +34,7 @@ export const useAnimatedValue = (
   useEffect(() => {
     let animationFrameId = 0;
     const animate = () => {
-      if (!value || !isString(value)) return;
+      if (!input.current || !value || !isString(value)) return;
 
       const elapsed = +new Date() - mountedAt;
 
@@ -56,3 +61,123 @@ export const useAnimatedValue = (
 
   return animated;
 };
+
+export interface ResizeFormLayout {
+  margin: number;
+  scale: number;
+  scaledHeight: number;
+  transform: string;
+}
+
+export interface UseResizeForm {
+  layout: ResizeFormLayout;
+  resize: () => void;
+}
+
+export const useResizeForm = (
+  formRef: React.MutableRefObject<HTMLDivElement>,
+  pageSelector = `${PrintablePageMargin}`
+): UseResizeForm => {
+  const [layout, setLayout] = useState<ResizeFormLayout>({
+    margin: 0,
+    scale: 1,
+    scaledHeight: 0,
+    transform: "",
+  });
+
+  useEffect(() => {
+    const resize = throttle(() => {
+      const container = formRef.current;
+      const page = formRef.current?.querySelector(
+        pageSelector
+      ) as HTMLDivElement;
+
+      if (!page || !container) return;
+
+      const margin = 0.075 * container.offsetWidth;
+      const scale = (container.offsetWidth - margin * 2) / page.offsetWidth;
+      const scaledMargin = margin / scale;
+      const scaledHeight = page.offsetHeight * scale;
+
+      const transform = `scale(${scale})
+         translateX(${rem(scaledMargin)})
+         translateY(${rem(10 / scale)})`;
+
+      page.style.transform = transform;
+      container.style.minHeight = rem(scaledHeight + scaledMargin * 2);
+
+      setLayout({
+        margin,
+        transform,
+        scale,
+        scaledHeight,
+      });
+    }, 1000 / 60);
+
+    resize();
+
+    window.addEventListener("resize", resize);
+
+    return () => {
+      window.removeEventListener("resize", resize);
+    };
+  }, [formRef, pageSelector]);
+
+  return { layout, resize: () => window.dispatchEvent(new Event("resize")) };
+};
+
+type ReactiveInputValue = string | undefined;
+
+interface UseReactiveInputOptions {
+  name: string;
+  fetchFromStore: () => string | undefined;
+  persistToStore: (value: string) => void;
+  persistToFirestore: (value: string) => void;
+}
+
+function useReactiveInput<E extends HTMLInputElement | HTMLTextAreaElement>({
+  name,
+  fetchFromStore,
+  persistToStore,
+  persistToFirestore,
+}: UseReactiveInputOptions): [
+  ReactiveInputValue,
+  (event: React.ChangeEvent<E>) => void
+] {
+  /*
+    Hook which integrates a controlled input component and Firestore and MobX.
+    Firestore is updated two seconds after the user stops typing.
+    When the MobX value is updated (via a Firestore subscription or its onChange handler),
+    we update the controlled input's state value.
+   */
+  const [value, setValue] = useState<ReactiveInputValue>(fetchFromStore());
+
+  const updateFirestoreRef = useRef(
+    debounce((valueToStore: string) => {
+      persistToStore(valueToStore);
+      persistToFirestore(valueToStore);
+    }, 2000)
+  );
+
+  const onChange = (event: React.ChangeEvent<E>) => {
+    setValue(event.target.value);
+
+    if (updateFirestoreRef.current) {
+      updateFirestoreRef.current(event.target.value);
+    }
+  };
+
+  useEffect(() => {
+    return reaction(
+      () => fetchFromStore(),
+      (newValue) => {
+        setValue(newValue);
+      },
+      { name: `useReactiveInput(${name})` }
+    );
+  });
+
+  return [value, onChange];
+}
+
+export { useReactiveInput };

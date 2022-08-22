@@ -131,7 +131,7 @@ export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {
     convictionCounty: "NORTH_CENTRAL",
     judgeName: "JUDGE 1",
     priorCourtDate: "2020-01-03",
-    sentenceLengthYears: 3,
+    sentenceLengthYears: "3",
     crimeNames: ["CHARGE 1", "CHARGE 2"],
     probationExpirationDate: "2022-12-02",
     probationOfficerFullName: "Karl Fog",
@@ -167,5 +167,6 @@ export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {
   metadata: {
     multipleSentences: true,
     outOfState: false,
+    ICOut: false,
   },
 };

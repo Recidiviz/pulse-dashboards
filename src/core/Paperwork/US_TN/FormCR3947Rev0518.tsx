@@ -16,8 +16,10 @@
 // =============================================================================
 
 import React, { useContext } from "react";
+import styled from "styled-components/macro";
 
 import { FormViewerContext } from "../FormViewer";
+import { PrintablePage, PrintablePageMargin } from "../styles";
 import FormCheckbox from "./FormCheckbox";
 import FormFooter from "./FormFooter";
 import FormHeader from "./FormHeader";
@@ -31,12 +33,12 @@ import {
   Grid,
   HeaderRow,
   Item,
-  PrintablePage,
-  PrintablePageMargin,
   Row,
-  SpecialConditionsCheckbox,
 } from "./styles";
 
+const SpecialConditionsCheckbox = styled(FormCheckbox)`
+  margin-right: 0;
+`;
 const FormCR3947Rev0518: React.FC = () => {
   const formViewerContext = useContext(FormViewerContext);
 

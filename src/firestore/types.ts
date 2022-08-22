@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { FieldValue } from "@google-cloud/firestore";
 import type { Timestamp } from "firebase/firestore";
 
 import {
@@ -219,4 +220,7 @@ export type OpportunityUpdateRecord =
   | EarlyTerminationUpdateRecord
   | CompliantReportingUpdateRecord;
 
-export type FormFieldData = Record<string, boolean | string | string[]>;
+export type FormFieldData = Record<
+  string,
+  boolean | string | string[] | FieldValue
+>;

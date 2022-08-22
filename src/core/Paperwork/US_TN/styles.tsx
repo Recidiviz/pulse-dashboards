@@ -24,9 +24,7 @@ import { darken, rem } from "polished";
 import * as React from "react";
 import styled, { css } from "styled-components/macro";
 
-import { DIMENSIONS_PX } from "../FormGenerator";
 import type { FormViewerContextData } from "../FormViewer";
-import FormCheckbox from "./FormCheckbox";
 import FormInput from "./FormInput";
 
 const EDIT_BACKGROUND = iconToDataURI(
@@ -95,21 +93,6 @@ const Emphasize = styled.span`
   font-style: italic;
 `;
 
-const PrintablePage = styled.div.attrs({ className: "form-page" })`
-  background-color: white;
-  height: ${rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
-  max-height: ${rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
-  width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
-  max-width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
-  overflow: hidden;
-  color: black;
-  font-family: Arial, serif;
-  font-size: 9px;
-  position: relative;
-
-  line-height: 1.3;
-`;
-
 const FormContainer = styled.form<FormViewerContextData>`
   // Hide placeholders and blue background while printing
   ${({ isPrinting }) =>
@@ -137,18 +120,6 @@ const FormContainer = styled.form<FormViewerContextData>`
               background-color: ${darken(0.1, "aliceblue")};
             }
         `}
-`;
-
-const PrintablePageMargin = styled.div`
-  background-color: white;
-  padding: ${rem(18)};
-  box-sizing: content-box;
-  transform-origin: 0 0;
-
-  height: ${rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
-  max-height: ${rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
-  width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
-  max-width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
 `;
 
 const Row = styled.div`
@@ -198,10 +169,6 @@ const Checkbox = styled.input.attrs({
   margin: 0 0.25em 0 0;
 `;
 
-const SpecialConditionsCheckbox = styled(FormCheckbox)`
-  margin-right: 0;
-`;
-
 const FormSignatureGrid = styled(Grid).attrs({
   columns: "2fr 1fr 2fr 1fr",
   rows: "18px 18px",
@@ -226,8 +193,5 @@ export {
   HeaderRow,
   Input,
   Item,
-  PrintablePage,
-  PrintablePageMargin,
   Row,
-  SpecialConditionsCheckbox,
 };

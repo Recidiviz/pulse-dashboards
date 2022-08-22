@@ -150,7 +150,7 @@ class EarlyTerminationOpportunity implements Opportunity {
         priorCourtDate: fieldToDate(priorCourtDate),
         probationExpirationDate: fieldToDate(probationExpirationDate),
         probationOfficerFullName,
-        sentenceLengthYears,
+        sentenceLengthYears: parseInt(sentenceLengthYears),
         crimeNames,
       },
       reasons: transformedReasons,
@@ -281,6 +281,10 @@ class EarlyTerminationOpportunity implements Opportunity {
   // eslint-disable-next-line class-methods-use-this
   get requirementsAlmostMet(): OpportunityRequirement[] {
     return [];
+  }
+
+  get metadata(): TransformedEarlyTerminationReferral["metadata"] {
+    return this.transformedRecord.metadata;
   }
 }
 

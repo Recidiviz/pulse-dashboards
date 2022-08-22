@@ -14,11 +14,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Pill, spacing } from "@recidiviz/design-system";
-import { throttle } from "lodash";
+import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
-import { rem, transparentize } from "polished";
+import { rem } from "polished";
 import * as React from "react";
 import { useEffect } from "react";
 import styled from "styled-components/macro";
@@ -26,9 +24,10 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import type { Client } from "../../WorkflowsStore";
 import { generate } from "./FormGenerator";
-import { PrintablePage, PrintablePageMargin } from "./US_TN/styles";
+import { PrintablePage } from "./styles";
+import { useResizeForm } from "./utils";
 
-const FormViewerControls = styled.div`
+const FormViewerHeader = styled.div`
   padding: ${rem(spacing.xl)} ${rem(spacing.lg)};
   display: flex;
   justify-content: space-between;
@@ -44,18 +43,8 @@ const FormViewerGrid = styled.div`
 
 interface FormViewerProps {
   fileName: string;
+  statuses: (React.ReactChild | null)[];
 }
-
-const Status = styled(Pill)`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: ${rem(spacing.md)} ${rem(spacing.lg)};
-  margin-top: ${rem(spacing.sm)};
-
-  background-color: ${transparentize(0.85, palette.signal.highlight)};
-  color: white;
-`;
 
 export interface FormViewerContextData {
   isPrinting: boolean;
@@ -65,39 +54,11 @@ export const FormViewerContext = React.createContext<FormViewerContextData>({
   isPrinting: false,
 });
 
-const useResizeForm = (formRef: React.MutableRefObject<HTMLDivElement>) => {
-  useEffect(() => {
-    const resize = throttle(() => {
-      const container = formRef.current;
-      const page = formRef.current?.querySelector(
-        `${PrintablePageMargin}`
-      ) as HTMLDivElement;
-
-      if (!page || !container) return;
-
-      const margin = 0.075 * container.offsetWidth;
-      const scale = (container.offsetWidth - margin * 2) / page.offsetWidth;
-      const scaledMargin = margin / scale;
-      const scaledHeight = page.offsetHeight * scale;
-
-      page.style.transform = `scale(${scale})
-         translateX(${rem(scaledMargin)})
-         translateY(${rem(10 / scale)})`;
-
-      container.style.minHeight = rem(scaledHeight + scaledMargin * 2);
-    }, 1000 / 60);
-
-    resize();
-
-    window.addEventListener("resize", resize);
-
-    return () => {
-      window.removeEventListener("resize", resize);
-    };
-  }, [formRef]);
-};
-
-const FormViewer: React.FC<FormViewerProps> = ({ fileName, children }) => {
+const FormViewer: React.FC<FormViewerProps> = ({
+  fileName,
+  statuses,
+  children,
+}) => {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
   useResizeForm(formRef);
 
@@ -115,30 +76,9 @@ const FormViewer: React.FC<FormViewerProps> = ({ fileName, children }) => {
     }
   }, [formRef, isPrinting, fileName, client]);
 
-  // TODO(#1729) Remove compliant-reporting specific content
-  const { workflowsStore } = useRootStore();
-  const draft = workflowsStore.selectedClient?.compliantReportingReferralDraft;
-  let lastEdited;
-  if (draft) {
-    lastEdited = `Last edited by ${draft.updated.by} ${moment(
-      draft.updated.date.seconds * 1000
-    ).fromNow()}`;
-  } else {
-    lastEdited = `Prefilled with data from TDOC on ${
-      workflowsStore.selectedClient?.getCompliantReportingReferralDataField(
-        "dateToday"
-      ) ?? moment().format("MM-DD-YYYY")
-    }`;
-  }
-
   return (
     <FormViewerGrid>
-      <FormViewerControls>
-        <Status color={palette.slate85}>
-          Edit and collaborate on the document below
-        </Status>
-        <Status color={palette.slate85}>{lastEdited}</Status>
-      </FormViewerControls>
+      <FormViewerHeader>{statuses}</FormViewerHeader>
 
       <FormViewerContext.Provider value={{ isPrinting }}>
         <div ref={formRef}>{children}</div>

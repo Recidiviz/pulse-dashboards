@@ -16,11 +16,13 @@
 // =============================================================================
 import { palette } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import FormViewer from "../Paperwork/FormViewer";
+import { FormViewerStatus } from "../Paperwork/styles";
 import FormCR3947Rev0518 from "../Paperwork/US_TN";
 
 const CompliantReportingFormContainer = styled.div`
@@ -32,10 +34,32 @@ const CompliantReportingFormContainer = styled.div`
 const WorkflowsCompliantReportingForm: React.FC = () => {
   const { workflowsStore } = useRootStore();
 
+  const draft = workflowsStore.selectedClient?.compliantReportingReferralDraft;
+
+  let lastEdited;
+  if (draft) {
+    lastEdited = `Last edited by ${draft.updated.by} ${moment(
+      draft.updated.date.seconds * 1000
+    ).fromNow()}`;
+  } else {
+    lastEdited = `Prefilled with data from TDOC on ${
+      workflowsStore.selectedClient?.getCompliantReportingReferralDataField(
+        "dateToday"
+      ) ?? moment().format("MM-DD-YYYY")
+    }`;
+  }
   return (
     <CompliantReportingFormContainer>
       <FormViewer
         fileName={`${workflowsStore.selectedClient?.displayName} - Form CR3947 Rev05-18.pdf`}
+        statuses={[
+          <FormViewerStatus color={palette.slate85}>
+            Edit and collaborate on the document below
+          </FormViewerStatus>,
+          <FormViewerStatus color={palette.slate85}>
+            {lastEdited}
+          </FormViewerStatus>,
+        ]}
       >
         <FormCR3947Rev0518 />
       </FormViewer>

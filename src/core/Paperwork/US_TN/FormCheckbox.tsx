@@ -21,7 +21,7 @@ import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 import { useRootStore } from "../../../components/StoreProvider";
 import { Checkbox } from "./styles";
 import { FormDataType } from "./types";
-import { updateFieldData } from "./utils";
+import { updateCompliantReportingFormFieldData } from "./utils";
 
 export type FormCheckboxProps = StyledComponentProps<
   "input",
@@ -48,9 +48,13 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
 
     client.setCompliantReportingReferralDataField(name, event.target.checked);
 
-    updateFieldData(client.currentUserName || "user", client, {
-      [name]: event.target.checked,
-    });
+    updateCompliantReportingFormFieldData(
+      client.currentUserName || "user",
+      client,
+      {
+        [name]: event.target.checked,
+      }
+    );
   };
 
   return (

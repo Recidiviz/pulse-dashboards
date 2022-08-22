@@ -15,14 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { has } from "lodash";
+import { deleteField } from "firebase/firestore";
+import { has, sortBy } from "lodash";
 import {
   action,
   autorun,
   entries,
+  keys,
   makeObservable,
   observable,
   reaction,
+  remove,
   runInAction,
   set,
   when,
@@ -37,7 +40,8 @@ import {
   trackSetOpportunityStatus,
   trackSurfacedInList,
 } from "../analytics";
-import { transform as transformEarlyTermination } from "../core/Paperwork/US_ND/Transformer";
+import { transform as transformEarlyTermination } from "../core/Paperwork/US_ND/EarlyTermination/Transformer";
+import { updateEarlyTerminationDraftFieldData } from "../core/Paperwork/US_ND/EarlyTermination/utils";
 import { transform } from "../core/Paperwork/US_TN/Transformer";
 import {
   ClientRecord,
@@ -68,6 +72,7 @@ import {
 import {
   EarlyTerminationDraftData,
   EarlyTerminationReferralRecord,
+  TransformedEarlyTerminationReferral,
 } from "./Opportunity/EarlyTerminationReferralRecord";
 import {
   observableSubscription,
@@ -87,6 +92,8 @@ const SUPERVISION_LEVEL_MAP: Record<string, SupervisionLevel> = {
 };
 
 type OpportunityMapping = Partial<Record<OpportunityType, Opportunity>>;
+
+const ADDITIONAL_DEPOSITION_LINES_PREFIX = "additionalDepositionLines";
 
 export class Client {
   rootStore: RootStore;
@@ -261,7 +268,11 @@ export class Client {
             "earlyTermination",
             (result) => {
               if (result) {
-                handler(result);
+                runInAction(() => {
+                  handler(result);
+                  const data = result.referralForm?.data ?? {};
+                  set(this.earlyTerminationReferralDraftData, data);
+                });
               } else {
                 // empty object will replace undefined, signifying completed fetch
                 handler({ type: "earlyTermination" });
@@ -494,7 +505,7 @@ export class Client {
     return {};
   }
 
-  getEarlyTerminatonDataField(
+  getEarlyTerminationDataField(
     key: keyof EarlyTerminationDraftData
   ): EarlyTerminationDraftData[keyof EarlyTerminationDraftData] | undefined {
     // Destructure prior to assignment to register dependencies on both fields
@@ -517,6 +528,37 @@ export class Client {
     | EarlyTerminationReferralForm
     | undefined {
     return this.opportunityUpdates.earlyTermination?.referralForm;
+  }
+
+  get earlyTerminationAdditionalDepositionLines(): string[] {
+    const additionalDepositionLines = keys(
+      this.earlyTerminationReferralDraftData
+    )
+      .map((key: PropertyKey) => String(key))
+      .filter((key: string) =>
+        key.startsWith(ADDITIONAL_DEPOSITION_LINES_PREFIX)
+      );
+
+    return sortBy(additionalDepositionLines, (key) =>
+      Number(key.split(ADDITIONAL_DEPOSITION_LINES_PREFIX)[1])
+    );
+  }
+
+  earlyTerminationAddDepositionLine(): void {
+    const key = `${ADDITIONAL_DEPOSITION_LINES_PREFIX}${+new Date()}`;
+    updateEarlyTerminationDraftFieldData(this, key, "");
+  }
+
+  earlyTerminationRemoveDepositionLine(key: string): void {
+    remove(this.earlyTerminationReferralDraftData, key);
+
+    updateEarlyTerminationDraftFieldData(this, key, deleteField());
+  }
+
+  get earlyTerminationMetadata():
+    | TransformedEarlyTerminationReferral["metadata"]
+    | undefined {
+    return this.fetchedEarlyTerminationReferral?.current()?.metadata;
   }
 
   async trackFormViewed(formType: OpportunityType): Promise<void> {

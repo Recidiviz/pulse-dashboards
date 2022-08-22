@@ -14,11 +14,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Client } from "../../../WorkflowsStore";
-import {
+import { pluralize } from "../../../../utils";
+import type {
+  Client,
   EarlyTerminationDraftData,
   EarlyTerminationReferralRecord,
-} from "../../../WorkflowsStore/Opportunity/EarlyTerminationReferralRecord";
+} from "../../../../WorkflowsStore";
 
 export const transform = (
   client: Client,
@@ -41,13 +42,14 @@ export const transform = (
   return {
     clientName: client.displayName,
     judgeName,
-    convictionCounty,
+    convictionCounty: convictionCounty?.replaceAll("_", " ") ?? "",
+    judicialDistrictCode: judicialDistrictCode?.replaceAll("_", " ") ?? "",
     priorCourtDate,
     probationExpirationDate,
-    sentenceLengthYears,
-    crimeNames,
+    sentenceLength: pluralize(parseInt(sentenceLengthYears), "year"),
+    plaintiff: "State of North Dakota",
+    crimeNames: crimeNames?.join(", ") ?? "",
     probationOfficerFullName,
     criminalNumber,
-    judicialDistrictCode,
   };
 };
