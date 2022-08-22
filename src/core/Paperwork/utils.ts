@@ -22,6 +22,8 @@ import * as React from "react";
 
 import { PrintablePageMargin } from "./styles";
 
+export const REACTIVE_INPUT_UPDATE_DELAY = 2000;
+
 export const useAnimatedValue = (
   input: MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>,
   value?: string,
@@ -156,7 +158,7 @@ function useReactiveInput<E extends HTMLInputElement | HTMLTextAreaElement>({
     debounce((valueToStore: string) => {
       persistToStore(valueToStore);
       persistToFirestore(valueToStore);
-    }, 2000)
+    }, REACTIVE_INPUT_UPDATE_DELAY)
   );
 
   const onChange = (event: React.ChangeEvent<E>) => {

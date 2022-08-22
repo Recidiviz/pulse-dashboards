@@ -517,6 +517,14 @@ export class Client {
       : prefillData;
   }
 
+  getEarlyTerminationDraftAndPrefillData(): Partial<EarlyTerminationDraftData> {
+    // Destructure prior to assignment to register dependencies on both fields
+    const draftData = this.earlyTerminationReferralDraftData;
+    const prefillData = this.prefilledEarlyTerminationForm;
+
+    return { ...prefillData, ...draftData };
+  }
+
   async setEarlyTerminationReferralDataField(
     key: keyof EarlyTerminationDraftData,
     value: boolean | string | string[]

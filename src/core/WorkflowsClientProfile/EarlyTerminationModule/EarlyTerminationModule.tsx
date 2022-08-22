@@ -20,7 +20,6 @@ import React from "react";
 
 import {
   ActionButtons,
-  getPrintText,
   PrintButton,
   Title,
   useStatusColors,
@@ -58,7 +57,7 @@ export const EarlyTerminationModule = observer(
               buttonFill={colors.buttonFill}
               onClick={() => client.printReferralForm(OPPORTUNITY_TYPE)}
             >
-              {getPrintText(client, OPPORTUNITY_TYPE)}
+              {client.opportunities.earlyTermination.printText}
             </PrintButton>
           </div>
           <OpportunityDenial

@@ -31,7 +31,10 @@ const devAuthConfig = require("../src/auth_config_dev.json");
 const productionAuthConfig = require("../src/auth_config_production.json");
 const demoAuthConfig = require("../src/auth_config_demo.json");
 const api = require("./routes/api");
-const { newRevocationsParamValidations } = require("./routes/paramsValidation");
+const {
+  newRevocationsParamValidations,
+  workflowsTemplatesParamValidations,
+} = require("./routes/paramsValidation");
 const { validateStateCode } = require("./utils/validateStateCode");
 const { getFirebaseToken } = require("./workflows/firebaseToken");
 
@@ -178,6 +181,11 @@ app.get(
 app.get(`${stateApiBaseRoute}pathways/:file`, api.pathways);
 app.post("/api/generateFileLink", upload.single("zip"), api.generateFileLink);
 app.get("/file/:name", api.upload);
+app.get(
+  `${stateApiBaseRoute}workflows/templates`,
+  workflowsTemplatesParamValidations,
+  api.workflowsTemplates
+);
 
 // An App Engine-specific API for handling warmup requests on new instance initialization
 app.get("/_ah/warmup", () => {

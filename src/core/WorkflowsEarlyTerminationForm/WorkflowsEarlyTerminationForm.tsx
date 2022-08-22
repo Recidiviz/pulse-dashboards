@@ -15,15 +15,19 @@
 // =============================================================================
 
 import { palette } from "@recidiviz/design-system";
+import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import * as React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { Client } from "../../WorkflowsStore";
+import { generate } from "../Paperwork/DOCXFormGenerator";
 import FormViewer from "../Paperwork/FormViewer";
 import { FormViewerStatus } from "../Paperwork/styles";
 import FormEarlyTermination from "../Paperwork/US_ND/EarlyTermination/FormEarlyTermination";
+import { REACTIVE_INPUT_UPDATE_DELAY } from "../Paperwork/utils";
 
 const EarlyTerminationFormContainer = styled.div`
   background-color: ${palette.pine1};
@@ -31,10 +35,40 @@ const EarlyTerminationFormContainer = styled.div`
   height: 100%;
 `;
 
+const collectAdditionalDepositionLinesToPrint = (client: Client) => {
+  return client.earlyTerminationAdditionalDepositionLines.map((key) =>
+    client.getEarlyTerminationDataField(key)
+  );
+};
+
+const formDownloader = async (
+  fileName: string,
+  client: Client
+): Promise<void> => {
+  await new Promise((resolve) =>
+    setTimeout(resolve, REACTIVE_INPUT_UPDATE_DELAY)
+  );
+
+  const templateUrl = `${process.env.REACT_APP_API_URL}/api/${client.stateCode}/workflows/templates?filename=early_termination_template.docx`;
+
+  const contents = {
+    ...toJS(client.getEarlyTerminationDraftAndPrefillData()),
+    additionalDepositionLines: collectAdditionalDepositionLinesToPrint(client),
+  };
+
+  await generate(
+    fileName,
+    templateUrl,
+    contents,
+    client.rootStore.getTokenSilently
+  );
+};
+
 const WorkflowsEarlyTerminationForm = () => {
   const { workflowsStore } = useRootStore();
 
   const client = workflowsStore.selectedClient;
+
   const draft = client?.earlyTerminationReferralDraft;
 
   let lastEdited = null;
@@ -49,14 +83,13 @@ const WorkflowsEarlyTerminationForm = () => {
 
   return (
     <EarlyTerminationFormContainer>
-      <>
-        <FormViewer
-          fileName={`${client?.displayName} - Form SFN 9281.pdf`}
-          statuses={[lastEdited]}
-        >
-          <FormEarlyTermination />
-        </FormViewer>
-      </>
+      <FormViewer
+        fileName={`${client?.displayName} - Form SFN 9281.docx`}
+        statuses={[lastEdited]}
+        formDownloader={formDownloader}
+      >
+        <FormEarlyTermination />
+      </FormViewer>
     </EarlyTerminationFormContainer>
   );
 };

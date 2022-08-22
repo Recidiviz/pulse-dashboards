@@ -46,7 +46,7 @@ export const transform = (
     judicialDistrictCode: judicialDistrictCode?.replaceAll("_", " ") ?? "",
     priorCourtDate,
     probationExpirationDate,
-    sentenceLength: pluralize(parseInt(sentenceLengthYears), "year"),
+    sentenceLengthYears: pluralize(parseInt(sentenceLengthYears), "year"),
     plaintiff: "State of North Dakota",
     crimeNames: crimeNames?.join(", ") ?? "",
     probationOfficerFullName,

@@ -36,6 +36,17 @@ jest.mock("@sentry/node", () => ({
   },
   init: () => {},
 }));
+jest.mock("express-jwt", () => {
+  return () => {
+    const jwt = (req, res, next) => {
+      next();
+    };
+    jwt.unless = jest.fn().mockImplementation(() => (req, res, next) => {
+      next();
+    });
+    return jwt;
+  };
+});
 jest.mock("../../utils/getAppMetadata", () => {
   return {
     getAppMetadata: jest.fn().mockImplementation(() => {
@@ -277,6 +288,74 @@ describe("Server tests", () => {
     });
   });
 
+  describe("GET api/:stateCode/workflows/templates", () => {
+    beforeEach(() => {
+      process.env = Object.assign(process.env, {
+        IS_OFFLINE: "true",
+        AUTH_ENV: "test",
+      });
+      jest.resetModules();
+      jest.mock("../../utils/getAppMetadata", () => {
+        return {
+          getAppMetadata: jest.fn().mockImplementation(() => {
+            return {
+              state_code: "US_ND",
+            };
+          }),
+        };
+      });
+      app = require("../../app").app;
+    });
+
+    describe("when user state code does not match request", () => {
+      beforeEach(() => {
+        process.env = Object.assign(process.env, {
+          IS_OFFLINE: "false",
+          AUTH_ENV: "test",
+        });
+        jest.resetModules();
+
+        jest.mock("../../utils/getAppMetadata", () => {
+          return {
+            getAppMetadata: jest.fn().mockImplementation(() => {
+              return {
+                state_code: "US_MO",
+              };
+            }),
+          };
+        });
+        app = require("../../app").app;
+      });
+      it("fails when the user state code does not match request", async () => {
+        const response = await request(app).get(
+          "/api/US_ND/workflows/templates?filename=early_termination_template.docx"
+        );
+        expect(response.statusCode).toEqual(401);
+        expect(response.text).toEqual(
+          "User is not authorized for stateCode: US_ND"
+        );
+      });
+    });
+
+    it("succeeds when user state code matches the request", async () => {
+      const response = await request(app).get(
+        "/api/US_ND/workflows/templates?filename=early_termination_template.docx"
+      );
+      expect(response.statusCode).toEqual(200);
+    });
+
+    it("fails when missing the filename param", async () => {
+      const response = await request(app).get(
+        "/api/US_ND/workflows/templates?filename="
+      );
+      expect(response.statusCode).toEqual(500);
+      expect(response.body.status).toEqual(500);
+      expect(response.body.errors).toEqual([
+        "Failed to send file  for stateCode US_ND. Error: EISDIR, read",
+      ]);
+    });
+  });
+
   describe("When a route handler throws an error", () => {
     beforeEach(() => {
       process.env = Object.assign(process.env, {
@@ -284,6 +363,7 @@ describe("Server tests", () => {
         AUTH_ENV: "test",
       });
       jest.resetModules();
+      jest.unmock("express-jwt");
       app = require("../../app").app;
     });
 

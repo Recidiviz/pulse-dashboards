@@ -209,6 +209,18 @@ class EarlyTerminationOpportunity implements Opportunity {
     return false;
   }
 
+  get printText(): string {
+    if (this.client.formIsPrinting) {
+      return "Downloading .DOCX...";
+    }
+
+    if (this.client.opportunityUpdates?.earlyTermination?.completed) {
+      return "Re-download .DOCX";
+    }
+
+    return "Download .DOCX";
+  }
+
   get rank(): number {
     return rankByReviewStatus(this);
   }

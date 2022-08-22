@@ -20,7 +20,7 @@ import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components/macro";
 
-import { DIMENSIONS_PX } from "../../FormGenerator";
+import { DIMENSIONS_PX } from "../../PDFFormGenerator";
 import { useResizeForm } from "../../utils";
 import AdditionalDepositionLines from "./AdditionalDepositionLines";
 import FormHeading from "./FormHeading";
@@ -131,14 +131,17 @@ export const FormEarlyTermination: React.FC = () => {
               <FormInput name="judgeName" placeholder="Judge name" /> on{" "}
               <FormInput name="priorCourtDate" placeholder="Court date" />, and
               was sentenced to{" "}
-              <FormInput name="sentenceLength" placeholder="Sentence length" />{" "}
+              <FormInput
+                name="sentenceLengthYears"
+                placeholder="Sentence length"
+              />{" "}
               supervised probation for the crime(s) of: <br />
               <FormTextarea name="crimeNames" style={{ width: "100%" }} />
             </li>
             <li>
               That the Defendant owes{" "}
-              <FormInput name="finesAndFees" placeholder="$0.00" /> in fines,
-              costs, and fees to the District Court.
+              <FormInput name="finesAndFees" placeholder="Dollar amount" /> in
+              fines, costs, and fees to the District Court.
             </li>
             <li>
               That the Defendant has satisfactorily met all other conditions of

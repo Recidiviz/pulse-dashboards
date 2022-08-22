@@ -702,6 +702,18 @@ class CompliantReportingOpportunity implements Opportunity {
     );
   }
 
+  get printText(): string {
+    if (this.client.formIsPrinting) {
+      return "Printing PDF...";
+    }
+
+    if (this.client.opportunityUpdates?.compliantReporting?.completed) {
+      return "Reprint PDF";
+    }
+
+    return "Print PDF";
+  }
+
   get almostEligibleRecommendedNote():
     | { title: string; text: string }
     | undefined {

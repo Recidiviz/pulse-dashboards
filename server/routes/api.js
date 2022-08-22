@@ -96,6 +96,23 @@ function respondWithForbidden(res) {
   );
 }
 
+function workflowsTemplates(req, res, next) {
+  const { stateCode } = req.params;
+  const { filename } = req.query;
+  const filepath = path.resolve(
+    __dirname,
+    `../assets/workflowsTemplates/${stateCode}/${filename}`
+  );
+  res.sendFile(filepath, {}, (err) => {
+    if (err) {
+      const error = {
+        message: `Failed to send file ${filename} for stateCode ${stateCode}. ${err}`,
+      };
+      next(error);
+    }
+  });
+}
+
 function newRevocations(req, res) {
   const { stateCode } = req.params;
   const metricType = "newRevocation";
@@ -322,5 +339,6 @@ module.exports = {
   refreshCache,
   generateFileLink,
   upload,
+  workflowsTemplates,
   SERVER_ERROR,
 };

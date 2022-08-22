@@ -97,5 +97,4 @@ export interface EarlyTerminationDraftData extends Record<string, string> {
   statesAttorneyPhoneNumber: string;
   statesAttorneyEmailAddress: string;
   statesAttorneyMailingAddress: string;
-  sentenceLength: string;
 }

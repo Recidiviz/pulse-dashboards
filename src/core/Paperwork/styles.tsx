@@ -2,7 +2,7 @@ import { palette, Pill, spacing } from "@recidiviz/design-system";
 import { rem, transparentize } from "polished";
 import styled from "styled-components/macro";
 
-import { DIMENSIONS_PX } from "./FormGenerator";
+import { DIMENSIONS_PX } from "./PDFFormGenerator";
 
 export const FormViewerStatus = styled(Pill)`
   display: flex;

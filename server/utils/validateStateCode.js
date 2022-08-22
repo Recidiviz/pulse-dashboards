@@ -46,7 +46,6 @@ const validateStateCode = () => {
         );
     }
   };
-
   validator.unless = unless;
 
   return validator;

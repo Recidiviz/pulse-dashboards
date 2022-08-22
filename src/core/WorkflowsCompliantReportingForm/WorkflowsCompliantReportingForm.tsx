@@ -15,14 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { palette } from "@recidiviz/design-system";
+import jsPDF from "jspdf";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { Client } from "../../WorkflowsStore";
 import FormViewer from "../Paperwork/FormViewer";
-import { FormViewerStatus } from "../Paperwork/styles";
+import { generate } from "../Paperwork/PDFFormGenerator";
+import { FormViewerStatus, PrintablePage } from "../Paperwork/styles";
 import FormCR3947Rev0518 from "../Paperwork/US_TN";
 
 const CompliantReportingFormContainer = styled.div`
@@ -31,10 +34,21 @@ const CompliantReportingFormContainer = styled.div`
   height: 100%;
 `;
 
+const formDownloader = async (
+  fileName: string,
+  client: Client,
+  formContents: HTMLElement
+) => {
+  return generate(formContents, `${PrintablePage}`).then((pdf: jsPDF) => {
+    pdf.save(fileName);
+  });
+};
+
 const WorkflowsCompliantReportingForm: React.FC = () => {
   const { workflowsStore } = useRootStore();
+  const client = workflowsStore.selectedClient;
 
-  const draft = workflowsStore.selectedClient?.compliantReportingReferralDraft;
+  const draft = client?.compliantReportingReferralDraft;
 
   let lastEdited;
   if (draft) {
@@ -51,7 +65,7 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
   return (
     <CompliantReportingFormContainer>
       <FormViewer
-        fileName={`${workflowsStore.selectedClient?.displayName} - Form CR3947 Rev05-18.pdf`}
+        fileName={`${client?.displayName} - Form CR3947 Rev05-18.pdf`}
         statuses={[
           <FormViewerStatus color={palette.slate85}>
             Edit and collaborate on the document below
@@ -60,6 +74,7 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
             {lastEdited}
           </FormViewerStatus>,
         ]}
+        formDownloader={formDownloader}
       >
         <FormCR3947Rev0518 />
       </FormViewer>

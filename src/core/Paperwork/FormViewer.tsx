@@ -22,9 +22,7 @@ import { useEffect } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import type { Client } from "../../WorkflowsStore";
-import { generate } from "./FormGenerator";
-import { PrintablePage } from "./styles";
+import { Client } from "../../WorkflowsStore";
 import { useResizeForm } from "./utils";
 
 const FormViewerHeader = styled.div`
@@ -44,6 +42,12 @@ const FormViewerGrid = styled.div`
 interface FormViewerProps {
   fileName: string;
   statuses: (React.ReactChild | null)[];
+  formDownloader: (
+    fileName: string,
+    client: Client,
+    formContents: HTMLElement
+  ) => Promise<void>;
+  children: React.ReactNode;
 }
 
 export interface FormViewerContextData {
@@ -57,6 +61,7 @@ export const FormViewerContext = React.createContext<FormViewerContextData>({
 const FormViewer: React.FC<FormViewerProps> = ({
   fileName,
   statuses,
+  formDownloader,
   children,
 }) => {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
@@ -67,14 +72,15 @@ const FormViewer: React.FC<FormViewerProps> = ({
 
   // Generate the form and save it once the print styles have been rendered
   useEffect(() => {
-    if (isPrinting && formRef.current) {
-      generate(formRef.current, `${PrintablePage}`).then((pdf) => {
-        pdf.save(fileName);
-        // if isPrinting is defined then client is too
-        (client as Client).setFormIsPrinting(false);
-      });
+    async function download() {
+      if (isPrinting && formRef.current && client) {
+        await formDownloader(fileName, client, formRef.current);
+        client.setFormIsPrinting(false);
+      }
     }
-  }, [formRef, isPrinting, fileName, client]);
+
+    download();
+  }, [formRef, isPrinting, formDownloader, fileName, client]);
 
   return (
     <FormViewerGrid>

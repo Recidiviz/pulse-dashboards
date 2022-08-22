@@ -92,6 +92,9 @@ const newRevocationsParamValidations = [
     ),
 ];
 
+const workflowsTemplatesParamValidations = [query("filename").notEmpty()];
+
 module.exports = {
   newRevocationsParamValidations,
+  workflowsTemplatesParamValidations,
 };

@@ -21,11 +21,7 @@ import { darken, rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import type {
-  Client,
-  Opportunity,
-  OpportunityType,
-} from "../../WorkflowsStore";
+import type { Opportunity } from "../../WorkflowsStore";
 
 export const STATUS_COLORS = {
   eligible: {
@@ -110,18 +106,3 @@ export const Title = observer(({ titleText, statusMessage }: TitleProps) => {
     </TitleText>
   );
 });
-
-export const getPrintText = (
-  client: Client,
-  opportunityType: OpportunityType
-): string => {
-  if (client.formIsPrinting) {
-    return "Printing PDF...";
-  }
-
-  if (client.opportunityUpdates?.[opportunityType]?.completed) {
-    return "Reprint PDF";
-  }
-
-  return "Print PDF";
-};

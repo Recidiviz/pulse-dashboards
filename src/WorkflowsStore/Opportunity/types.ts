@@ -65,6 +65,7 @@ export interface Opportunity {
   almostEligible: boolean;
   almostEligibleRecommendedNote?: { title: string; text: string };
   client: Client;
+  printText: string;
   rank: number;
   requirementsAlmostMet: OpportunityRequirement[];
   requirementsMet: OpportunityRequirement[];
