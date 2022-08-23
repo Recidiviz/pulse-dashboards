@@ -351,6 +351,7 @@ export function subscribeToOfficers(
     where("stateCode", "==", stateCode),
     where("hasCaseload", "==", true),
   ];
+
   if (district) {
     constraints.push(where("district", "==", district));
   }

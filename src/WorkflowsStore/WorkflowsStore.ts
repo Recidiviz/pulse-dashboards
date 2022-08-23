@@ -286,6 +286,7 @@ export class WorkflowsStore implements Hydratable {
    */
   private updateCaseloadSources() {
     const { user: userInfo } = this;
+    const { workflowsEnableAllDistricts } = this.rootStore.tenantStore;
 
     if (userInfo) {
       this.compliantReportingEligibleCount = observableSubscription(
@@ -301,7 +302,7 @@ export class WorkflowsStore implements Hydratable {
       this.officers = observableSubscription((handler) =>
         subscribeToOfficers(
           userInfo.info.stateCode,
-          userInfo.info.district,
+          workflowsEnableAllDistricts ? undefined : userInfo.info.district,
           handler
         )
       );

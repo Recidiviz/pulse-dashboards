@@ -116,4 +116,9 @@ export default class TenantStore {
       this.rootStore.userStore.allowedSupervisionLocationIds.length > 0
     );
   }
+
+  get workflowsEnableAllDistricts(): boolean {
+    if (!this.currentTenantId) return false;
+    return !!tenants[this.currentTenantId]?.workflowsEnableAllDistricts;
+  }
 }

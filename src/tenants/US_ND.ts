@@ -34,6 +34,7 @@ const US_ND_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_ND],
   enableUserRestrictions: false,
   enableVitalsCaseloadButton: true,
+  workflowsEnableAllDistricts: true,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   navigation: {
     workflows: [...WORKFLOWS_OPPORTUNITY_TYPES, "client"],

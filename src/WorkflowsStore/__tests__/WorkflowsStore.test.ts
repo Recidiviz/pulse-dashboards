@@ -33,6 +33,7 @@ import {
   UserUpdateRecord,
 } from "../../firestore";
 import { RootStore } from "../../RootStore";
+import { US_ND } from "../../RootStore/TenantStore/pathwaysTenants";
 import type { WorkflowsStore } from "..";
 import {
   eligibleClient,
@@ -324,6 +325,48 @@ test("subscribe to all clients in saved caseload", async () => {
   );
 
   expect(mockSubscribeToCaseloads).toHaveBeenCalled();
+});
+
+test("subscribe to all officers if workflowsEnableAllDistricts is true", async () => {
+  runInAction(() => {
+    // @ts-ignore
+    rootStore.tenantStore.currentTenantId = US_ND;
+  });
+
+  mockSubscribeToOfficers.mockImplementation(
+    (stateCode, district, handleResults) => {
+      expect(district).toBeUndefined();
+      handleResults(mockOfficers);
+      return mockUnsub;
+    }
+  );
+
+  await waitForHydration();
+
+  // simulate a UI displaying officer list
+  testObserver = keepAlive(computed(() => workflowsStore.availableOfficers));
+  await when(() => workflowsStore.availableOfficers.length > 0);
+});
+
+test("subscribe to district only officers if workflowsEnableAllDistricts is false", async () => {
+  runInAction(() => {
+    // @ts-ignore
+    rootStore.tenantStore.currentTenantId = "US_TN";
+  });
+
+  mockSubscribeToOfficers.mockImplementation(
+    (stateCode, district, handleResults) => {
+      expect(district).toEqual("DISTRICT 1");
+      handleResults(mockOfficers);
+      return mockUnsub;
+    }
+  );
+
+  await waitForHydration();
+
+  // simulate a UI displaying officer list
+  testObserver = keepAlive(computed(() => workflowsStore.availableOfficers));
+  await when(() => workflowsStore.availableOfficers.length > 0);
 });
 
 test("don't subscribe to clients if no officers are selected", async () => {

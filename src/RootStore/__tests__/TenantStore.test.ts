@@ -16,6 +16,7 @@
 // =============================================================================
 import RootStore from "..";
 import { US_MO, US_PA } from "../TenantStore/lanternTenants";
+import { US_ND, US_TN } from "../TenantStore/pathwaysTenants";
 import TenantStore, {
   CURRENT_TENANT_IN_SESSION,
 } from "../TenantStore/TenantStore";
@@ -39,6 +40,16 @@ describe("TenantStore", () => {
     ({
       userStore: mockUserStore as UserStore,
     } as typeof RootStore);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
 
   describe("enableUserRestrictions", () => {
     it("returns true when a current tenant has restrictions enabled", () => {
@@ -119,6 +130,52 @@ describe("TenantStore", () => {
     });
   });
 
+  describe("workflowsEnableAllDistricts", () => {
+    beforeEach(() => {
+      sessionStorage.clear();
+      jest.clearAllMocks();
+      jest.resetAllMocks();
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+      jest.resetAllMocks();
+    });
+
+    it("returns true when a current tenant enables viewing all districts", () => {
+      const mockRootStore = createMockRootStore({
+        userIsLoading: false,
+        availableStateCodes: ["US_ND"],
+        userHasAccess: () => true,
+        user: {
+          [metadataField]: { state_code: US_ND },
+          email_verified: true,
+        },
+      });
+
+      const tstore = new TenantStore({
+        rootStore: mockRootStore,
+      });
+      expect(tstore.workflowsEnableAllDistricts).toEqual(true);
+    });
+
+    it("returns false when a current tenant does not support viewing all districts", () => {
+      const mockRootStore = createMockRootStore({
+        userIsLoading: false,
+        availableStateCodes: ["US_TN"],
+        userHasAccess: () => true,
+        user: {
+          [metadataField]: { state_code: US_TN },
+          email_verified: true,
+        },
+      });
+      tenantStore = new TenantStore({
+        rootStore: mockRootStore,
+      });
+      expect(tenantStore.workflowsEnableAllDistricts).toEqual(false);
+    });
+  });
+
   describe("when there is a CURRENT_TENANT_IN_SESSION", () => {
     beforeEach(() => {
       sessionStorage.setItem(CURRENT_TENANT_IN_SESSION, tenantIdFromStorage);
@@ -128,6 +185,7 @@ describe("TenantStore", () => {
 
     afterEach(() => {
       jest.clearAllMocks();
+      jest.resetAllMocks();
     });
 
     it("currentTenantId is set to CURRENT_TENANT_IN_SESSION if there is not a user", async () => {
