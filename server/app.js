@@ -146,8 +146,7 @@ function errorHandler(err, _req, res, next) {
     next(err);
   }
 }
-
-if (!isOfflineMode) {
+if (!isOfflineMode && authEnv !== "test") {
   app.use(checkJwt.unless({ path: routesExemptFromJwtValidation }));
 
   // Verify that the user has access to state-specific date

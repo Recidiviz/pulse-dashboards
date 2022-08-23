@@ -215,6 +215,7 @@ function vitals(req, res) {
   const appMetadata = getAppMetadata(req);
   const allowed =
     appMetadata.state_code === "recidiviz" ||
+    isOfflineMode ||
     appMetadata.routes?.operations ||
     appMetadata.routes?.community_practices;
   if (!allowed) {
@@ -239,6 +240,7 @@ function pathways(req, res) {
 
   const allowed =
     appMetadata.state_code === "recidiviz" ||
+    isOfflineMode ||
     (appMetadata.can_access_leadership_dashboard &&
       Object.entries(appMetadata.routes).some(([route, status]) => {
         // routes have the format `system_prisonToSupervision: true`

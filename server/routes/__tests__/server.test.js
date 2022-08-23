@@ -249,7 +249,7 @@ describe("Server tests", () => {
   describe("GET api/:stateCode/pathways/:file", () => {
     beforeEach(() => {
       process.env = Object.assign(process.env, {
-        IS_OFFLINE: "true",
+        IS_OFFLINE: "false",
         AUTH_ENV: "test",
       });
       jest.resetModules();
@@ -311,7 +311,7 @@ describe("Server tests", () => {
       beforeEach(() => {
         process.env = Object.assign(process.env, {
           IS_OFFLINE: "false",
-          AUTH_ENV: "test",
+          AUTH_ENV: "dev",
         });
         jest.resetModules();
 
@@ -367,13 +367,13 @@ describe("Server tests", () => {
       app = require("../../app").app;
     });
 
-    it("responds with a formatted error resposne", () => {
+    it("responds with a formatted error response", () => {
       return request(app)
         .get("/api/US_MO/newRevocations/revocations_matrix_events_by_month")
         .then((response) => {
           expect(response.statusCode).toEqual(500);
           expect(response.body.errors).toEqual([
-            "No authorization token was found",
+            "Cannot read properties of undefined (reading 'flattenedValueMatrix')",
           ]);
           expect(response.body.status).toEqual(500);
           expect(Sentry.Handlers.errorHandler).toHaveBeenCalledTimes(1);
