@@ -13,9 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-import { TenantId } from "../../RootStore/types";
-
 // =============================================================================
 export const SIMULATION_COMPARTMENTS = {
   SUPERVISION: "SUPERVISION",
@@ -74,9 +71,15 @@ export const supervisionFiltersOrder = [
   FILTER_TYPES.RACE,
 ];
 
-export const WORKFLOWS_METHODOLOGY_URL: Partial<Record<TenantId, string>> = {
+export const WORKFLOWS_METHODOLOGY_URL: Record<string, string> = {
   US_TN:
     "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view?usp=sharing",
   US_ND:
     "https://drive.google.com/file/d/1eHbSEOjjT9FvxffSbXOYEfOYPJheeu6t/view",
+};
+
+export const WORKFLOWS_POLICY_OR_METHODOLOGY_URL: Record<string, string> = {
+  US_TN:
+    "https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view?usp=sharing",
+  US_ND: WORKFLOWS_METHODOLOGY_URL.US_ND,
 };

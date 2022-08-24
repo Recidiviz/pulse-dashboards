@@ -15,7 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, palette, Sans14, spacing } from "@recidiviz/design-system";
+import {
+  Button,
+  Icon,
+  palette,
+  Sans14,
+  spacing,
+  TooltipTrigger,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { darken, rem, rgba } from "polished";
 import React from "react";
@@ -92,6 +99,29 @@ export const PrintButton = styled(Button)<{ buttonFill: string }>`
 const TitleText = styled(Sans14)`
   color: ${palette.pine1};
 `;
+
+export const InfoTooltipWrapper = styled(TooltipTrigger)`
+  vertical-align: text-bottom;
+`;
+
+const InfoLink = styled.a`
+  color: ${palette.slate30};
+
+  &:hover,
+  &:focus {
+    color: ${palette.slate60};
+  }
+`;
+
+export const InfoButton = ({
+  infoUrl,
+}: {
+  infoUrl: string | undefined;
+}): React.ReactElement => (
+  <InfoLink href={infoUrl} target="_blank" rel="noreferrer">
+    <Icon kind="Info" size={12} />
+  </InfoLink>
+);
 
 type TitleProps = {
   titleText: string;

@@ -91,6 +91,21 @@ const SUPERVISION_LEVEL_MAP: Record<string, SupervisionLevel> = {
   "STANDARD: MINIMUM": "Minimum",
 };
 
+type ClientDetailsCopy = {
+  supervisionStartDate?: {
+    tooltip: string;
+  };
+};
+
+export const CLIENT_DETAILS_COPY: Record<string, ClientDetailsCopy> = {
+  US_ND: {
+    supervisionStartDate: {
+      tooltip:
+        "This date is included in the filled form as the date that the Defendant was sentenced; in rare cases, the sentencing date and supervision start date may differ. Double check the date in the form to ensure that the sentencing date and supervision start date match in this case.",
+    },
+  },
+};
+
 type OpportunityMapping = Partial<Record<OpportunityType, Opportunity>>;
 
 const ADDITIONAL_DEPOSITION_LINES_PREFIX = "additionalDepositionLines";
@@ -596,5 +611,9 @@ export class Client {
       clientId: this.pseudonymizedId,
       opportunityType,
     });
+  }
+
+  get detailsCopy(): ClientDetailsCopy {
+    return CLIENT_DETAILS_COPY[this.stateCode];
   }
 }

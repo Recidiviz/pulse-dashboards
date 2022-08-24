@@ -21,7 +21,6 @@ import {
   palette,
   Sans14,
   spacing,
-  TooltipTrigger,
   typography,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
@@ -30,7 +29,8 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { Opportunity } from "../../WorkflowsStore";
-import { StatusPalette } from "./common";
+import { WORKFLOWS_POLICY_OR_METHODOLOGY_URL } from "../utils/constants";
+import { InfoButton, InfoTooltipWrapper, StatusPalette } from "./common";
 import { OpportunityRecommendedLanguageModal } from "./OpportunityRecommendedLanguageModal";
 
 const CriterionIcon = styled(Icon)`
@@ -60,29 +60,6 @@ const CriterionWrapper = styled.li`
 const KeepTogether = styled.span`
   white-space: nowrap;
 `;
-
-const InfoTooltipWrapper = styled(TooltipTrigger)`
-  vertical-align: text-bottom;
-`;
-
-const InfoLink = styled.a`
-  color: ${palette.slate30};
-
-  &:hover,
-  &:focus {
-    color: ${palette.slate60};
-  }
-`;
-
-const InfoButton = () => (
-  <InfoLink
-    href="https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view?usp=sharing"
-    target="_blank"
-    rel="noreferrer"
-  >
-    <Icon kind="Info" size={12} />
-  </InfoLink>
-);
 
 const ListDivider = styled(Sans14)`
   align-items: center;
@@ -124,7 +101,13 @@ export const CriteriaList = observer(
                   <>
                     {" "}
                     <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                      <InfoButton />
+                      <InfoButton
+                        infoUrl={
+                          WORKFLOWS_POLICY_OR_METHODOLOGY_URL[
+                            opportunity.client.stateCode
+                          ]
+                        }
+                      />
                     </InfoTooltipWrapper>
                   </>
                 )}
@@ -152,7 +135,13 @@ export const CriteriaList = observer(
                   {textTokens.slice(-1)}{" "}
                   {tooltip && (
                     <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                      <InfoButton />
+                      <InfoButton
+                        infoUrl={
+                          WORKFLOWS_POLICY_OR_METHODOLOGY_URL[
+                            opportunity.client.stateCode
+                          ]
+                        }
+                      />
                     </InfoTooltipWrapper>
                   )}
                 </KeepTogether>
