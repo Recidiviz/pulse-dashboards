@@ -19,11 +19,15 @@ import React from "react";
 
 import LibertyPopulationOverTimeMetric from "../models/LibertyPopulationOverTimeMetric";
 import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshotMetric";
+import OverTimeMetric from "../models/OverTimeMetric";
 import PathwaysMetric from "../models/PathwaysMetric";
+import PathwaysNewBackendMetric from "../models/PathwaysNewBackendMetric";
+import PersonLevelMetric from "../models/PersonLevelMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
+import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import { MetricRecord } from "../models/types";
@@ -35,10 +39,34 @@ import VizPopulationProjectionOverTime from "../VizPopulationProjectionOverTime"
 import VizPopulationSnapshot from "../VizPopulationSnapshot";
 
 type MetricVizMapperProps = {
-  metric: PathwaysMetric<MetricRecord>;
+  metric: PathwaysMetric<MetricRecord> | PathwaysNewBackendMetric<MetricRecord>;
 };
 
 const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
+  if (metric instanceof OverTimeMetric) {
+    switch (metric.id) {
+      case "prisonPopulationOverTime":
+      case "supervisionPopulationOverTime":
+        return <VizPopulationOverTime metric={metric} />;
+      default:
+        return <VizCountOverTimeWithAvg metric={metric} />;
+    }
+  }
+
+  if (metric instanceof SnapshotMetric) {
+    switch (metric.id) {
+      case "supervisionToPrisonPopulationByLengthOfStay":
+      case "supervisionToLibertyPopulationByLengthOfStay":
+        return <VizLengthOfStay metric={metric} />;
+      default:
+        return <VizPopulationSnapshot metric={metric} />;
+    }
+  }
+
+  if (metric instanceof PersonLevelMetric) {
+    return <VizPopulationPersonLevel metric={metric} />;
+  }
+
   if (metric instanceof PopulationProjectionOverTimeMetric) {
     return <VizPopulationProjectionOverTime metric={metric} />;
   }

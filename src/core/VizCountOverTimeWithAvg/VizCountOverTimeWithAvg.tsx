@@ -28,6 +28,7 @@ import { ResponsiveOrdinalFrame } from "semiotic";
 import { getTicks } from "../../utils";
 import styles from "../CoreConstants.module.scss";
 import LibertyPopulationOverTimeMetric from "../models/LibertyPopulationOverTimeMetric";
+import OverTimeMetric from "../models/OverTimeMetric";
 import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
@@ -39,7 +40,8 @@ type VizCountOverTimeWithAvgProps = {
   metric:
     | SupervisionPopulationOverTimeMetric
     | PrisonPopulationOverTimeMetric
-    | LibertyPopulationOverTimeMetric;
+    | LibertyPopulationOverTimeMetric
+    | OverTimeMetric;
 };
 
 const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({

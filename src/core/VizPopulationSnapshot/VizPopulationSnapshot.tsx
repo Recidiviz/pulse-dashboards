@@ -33,6 +33,7 @@ import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshotMetric";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
+import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import { Dimension } from "../types/dimensions";
@@ -44,7 +45,8 @@ type VizPopulationOverTimeProps = {
   metric:
     | PrisonPopulationSnapshotMetric
     | SupervisionPopulationSnapshotMetric
-    | LibertyPopulationSnapshotMetric;
+    | LibertyPopulationSnapshotMetric
+    | SnapshotMetric;
 };
 
 const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
@@ -110,7 +112,12 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     metric.isHorizontal ? "value" : "accessorLabel",
     metric.isHorizontal
   );
-  const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
+  const latestUpdate = formatDate(
+    metric instanceof SnapshotMetric
+      ? metric.lastUpdated
+      : dataSeries[0]?.lastUpdated,
+    "MMMM dd, yyyy"
+  );
 
   const { maxTickValue, tickValues, ticksMargin } = getTicks(
     Math.max(...data.map((d) => d.value))

@@ -22,30 +22,41 @@ import React from "react";
 import { ResponsiveXYFrame } from "semiotic";
 
 import { formatDate, formatPercent, getTicks } from "../../utils";
+import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
-import { SupervisionPopulationSnapshotRecord } from "../models/types";
+import { SnapshotDataRecord } from "../models/types";
 import { filterUnknownLengthOfStay } from "../models/utils";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizLengthOfStayProps = {
-  metric: SupervisionPopulationSnapshotMetric;
+  metric: SupervisionPopulationSnapshotMetric | SnapshotMetric;
 };
 
 const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
   const { dataSeries, chartTitle, chartXAxisTitle, chartYAxisTitle } = metric;
 
+  const snapshotSeries = dataSeries as SnapshotDataRecord[];
+
   // TODO #1838
   // Remove this filter once consolidated backend is in place
   // and we no longer receive unknown LOS values
-  const filteredRecords = dataSeries.filter(
-    (record: SupervisionPopulationSnapshotRecord) => {
+  const filteredRecords = snapshotSeries
+    .filter((record: SnapshotDataRecord) => {
       return filterUnknownLengthOfStay(record.lengthOfStay);
-    }
-  );
+    })
+    .sort((a, b) => {
+      // At this point lengthOfStay isn't null because we just filtered it out, so these if
+      // statements are just to make TypeScript happy.
+      if (!a.lengthOfStay) return 1;
+      if (!b.lengthOfStay) return -1;
+      return parseInt(a.lengthOfStay) - parseInt(b.lengthOfStay);
+    });
 
   const latestUpdate = formatDate(
-    filteredRecords[0]?.lastUpdated,
+    metric instanceof SnapshotMetric
+      ? metric.lastUpdated
+      : filteredRecords[0]?.lastUpdated,
     "MMMM dd, yyyy"
   );
 

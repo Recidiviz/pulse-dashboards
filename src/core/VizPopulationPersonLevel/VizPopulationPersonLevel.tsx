@@ -21,11 +21,12 @@ import React from "react";
 
 import PathwaysTable from "../../components/PathwaysTable";
 import { formatDate, toHumanReadable, toTitleCase } from "../../utils";
+import PersonLevelMetric from "../models/PersonLevelMetric";
 import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizPopulationPersonLevelProps = {
-  metric: PrisonPopulationPersonLevelMetric;
+  metric: PrisonPopulationPersonLevelMetric | PersonLevelMetric;
 };
 
 export const createTitleCasedCell = ({
@@ -42,7 +43,12 @@ const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
   const { dataSeries, chartTitle, columns, id } = metric;
   if (!columns) return null;
 
-  const latestUpdate = formatDate(dataSeries[0]?.lastUpdated, "MMMM dd, yyyy");
+  const latestUpdate = formatDate(
+    metric instanceof PersonLevelMetric
+      ? metric.lastUpdated
+      : dataSeries[0]?.lastUpdated,
+    "MMMM dd, yyyy"
+  );
 
   return (
     <div className="VizPopulationPersonLevel">

@@ -387,9 +387,9 @@ export const filterTimePeriod = (
 };
 
 export const filterUnknownLengthOfStay = (
-  recordLengthOfStayValue: LengthOfStay
+  recordLengthOfStayValue: LengthOfStay | undefined
 ): boolean => {
-  return recordLengthOfStayValue !== "UNKNOWN";
+  return !!recordLengthOfStayValue && recordLengthOfStayValue !== "UNKNOWN";
 };
 
 export const filterRecordByDimensions = (
