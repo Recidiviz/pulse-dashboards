@@ -77,6 +77,7 @@ describe("SnapshotMetric", () => {
           FILTER_TYPES.TIME_PERIOD,
           FILTER_TYPES.GENDER,
           FILTER_TYPES.JUDICIAL_DISTRICT,
+          FILTER_TYPES.AGE_GROUP,
         ],
       },
     });
@@ -111,6 +112,24 @@ describe("SnapshotMetric", () => {
     runInAction(() => {
       metric.rootStore?.filtersStore.setFilters({
         gender: ["MALE"],
+        ageGroup: ["25-29", "30-34"],
+      });
+    });
+
+    expect(callNewMetricsApi).toHaveBeenCalledWith(
+      encodeURI(
+        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
+          `&filters[gender]=MALE&filters[age_group]=25-29&filters[age_group]=30-34` +
+          `&group=judicial_district`
+      ),
+      RootStore.getTokenSilently
+    );
+  });
+
+  it("does not filter on the group by value", () => {
+    runInAction(() => {
+      metric.rootStore?.filtersStore.setFilters({
+        gender: ["MALE"],
         judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
       });
     });
@@ -118,8 +137,7 @@ describe("SnapshotMetric", () => {
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
         `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1` +
-          `&filters[judicial_district]=JUDICIAL_DISTRICT_2&group=judicial_district`
+          `&filters[gender]=MALE&group=judicial_district`
       ),
       RootStore.getTokenSilently
     );

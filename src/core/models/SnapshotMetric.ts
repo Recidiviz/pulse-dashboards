@@ -135,6 +135,9 @@ export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDat
   getQueryParams(): URLSearchParams {
     const queryParams = super.getQueryParams();
     queryParams.append("group", snakeCase(this.accessor.toString()));
+    // On snapshot by dimension pages, filters for the accessor just highlight that value instead of
+    // filtering out values that don't match.
+    queryParams.delete(`filters[${snakeCase(this.accessor.toString())}]`);
     return queryParams;
   }
 }
