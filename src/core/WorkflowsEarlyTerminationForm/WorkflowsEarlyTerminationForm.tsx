@@ -36,8 +36,9 @@ const EarlyTerminationFormContainer = styled.div`
 `;
 
 const collectAdditionalDepositionLinesToPrint = (client: Client) => {
-  return client.earlyTerminationAdditionalDepositionLines.map((key) =>
-    client.getEarlyTerminationDataField(key)
+  const { earlyTermination } = client.opportunities;
+  return earlyTermination?.additionalDepositionLines.map(
+    (key) => earlyTermination?.formData[key]
   );
 };
 
@@ -50,9 +51,10 @@ const formDownloader = async (
   );
 
   const templateUrl = `${process.env.REACT_APP_API_URL}/api/${client.stateCode}/workflows/templates?filename=early_termination_template.docx`;
+  const { earlyTermination } = client.opportunities;
 
   const contents = {
-    ...toJS(client.getEarlyTerminationDraftAndPrefillData()),
+    ...toJS(earlyTermination?.formData),
     additionalDepositionLines: collectAdditionalDepositionLinesToPrint(client),
   };
 

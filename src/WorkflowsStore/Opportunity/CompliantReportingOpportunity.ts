@@ -19,21 +19,29 @@ import * as Sentry from "@sentry/react";
 import assertNever from "assert-never";
 import { differenceInCalendarDays, isEqual } from "date-fns";
 import { mapValues } from "lodash";
-import { makeAutoObservable, toJS } from "mobx";
+import { action, makeAutoObservable, observable, set, toJS } from "mobx";
 
+import { transform } from "../../core/Paperwork/US_TN/Transformer";
 import { formatRelativeToNow } from "../../core/utils/timePeriod";
 import {
   CompliantReportingEligibleRecord,
   CompliantReportingFinesFeesEligible,
+  subscribeToCompliantReportingReferral,
 } from "../../firestore";
 import { formatWorkflowsDate, pluralizeWord } from "../../utils";
 import { Client, UNKNOWN } from "../Client";
 import {
   fieldToDate,
+  observableSubscription,
   OpportunityValidationError,
   optionalFieldToDate,
+  SubscriptionValue,
 } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
+import {
+  CompliantReportingReferralRecord,
+  TransformedCompliantReportingReferral,
+} from "./CompliantReportingReferralRecord";
 import {
   DenialReasonsMap,
   Opportunity,
@@ -162,6 +170,10 @@ class CompliantReportingOpportunity implements Opportunity {
 
   readonly denialReasonsMap: DenialReasonsMap;
 
+  draftData: Partial<TransformedCompliantReportingReferral>;
+
+  private fetchedCompliantReportingReferral: SubscriptionValue<CompliantReportingReferralRecord>;
+
   constructor(record: CompliantReportingEligibleRecord, client: Client) {
     makeAutoObservable<
       CompliantReportingOpportunity,
@@ -169,11 +181,22 @@ class CompliantReportingOpportunity implements Opportunity {
     >(this, {
       record: true,
       transformedRecord: true,
+      draftData: true,
+      setDataField: action,
     });
 
     this.client = client;
     this.record = record;
     this.denialReasonsMap = DENIAL_REASONS_MAP;
+    this.draftData = observable<Partial<TransformedCompliantReportingReferral>>(
+      {}
+    );
+
+    this.fetchedCompliantReportingReferral = observableSubscription((handler) =>
+      subscribeToCompliantReportingReferral(this.client.recordId, (result) => {
+        if (result) handler(result);
+      })
+    );
   }
 
   private get transformedRecord() {
@@ -774,6 +797,27 @@ class CompliantReportingOpportunity implements Opportunity {
     );
 
     return { title, text };
+  }
+
+  get prefilledData(): Partial<TransformedCompliantReportingReferral> {
+    const prefillSourceInformation = this.fetchedCompliantReportingReferral.current();
+
+    if (prefillSourceInformation) {
+      return transform(this.client, prefillSourceInformation);
+    }
+
+    return {};
+  }
+
+  get formData(): Partial<TransformedCompliantReportingReferral> {
+    return { ...toJS(this.prefilledData), ...toJS(this.draftData) };
+  }
+
+  async setDataField(
+    key: keyof TransformedCompliantReportingReferral | string,
+    value: boolean | string | string[]
+  ): Promise<void> {
+    set(this.draftData, key, value);
   }
 
   private get validAlmostEligibleKeys() {

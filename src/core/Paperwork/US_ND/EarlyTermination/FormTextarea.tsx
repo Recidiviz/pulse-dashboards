@@ -60,38 +60,37 @@ interface FormTextareaProps extends FormTextareaWrapperProps {
   client: Client;
 }
 
-const FormTextarea: React.FC<FormTextareaProps> = ({
-  client,
-  name,
-  ...props
-}: FormTextareaProps) => {
-  const [value, onChange] = useReactiveInput<HTMLTextAreaElement>({
-    name,
-    fetchFromStore: () => client.getEarlyTerminationDataField(name) as string,
-    persistToStore: (valueToStore: string) =>
-      client.setEarlyTerminationReferralDataField(name, valueToStore),
-    persistToFirestore: (valueToStore: string) =>
-      updateEarlyTerminationDraftFieldData(client, name, valueToStore),
-  });
+const FormTextarea: React.FC<FormTextareaProps> = observer(
+  ({ client, name, ...props }: FormTextareaProps) => {
+    const { earlyTermination } = client.opportunities;
+    const [value, onChange] = useReactiveInput<HTMLTextAreaElement>({
+      name,
+      fetchFromStore: () => earlyTermination?.formData[name] as string,
+      persistToStore: (valueToStore: string) =>
+        earlyTermination?.setDataField(name, valueToStore),
+      persistToFirestore: (valueToStore: string) =>
+        updateEarlyTerminationDraftFieldData(client, name, valueToStore),
+    });
 
-  const inputRef = useRef<HTMLTextAreaElement>(
-    null
-  ) as MutableRefObject<HTMLTextAreaElement>;
+    const inputRef = useRef<HTMLTextAreaElement>(
+      null
+    ) as MutableRefObject<HTMLTextAreaElement>;
 
-  // On mount, the autosize input has its value set, which causes it to resize to fit its content. During animation,
-  // we modify the element's value attribute in place which does not trigger resize.
-  useAnimatedValue(inputRef, value);
+    // On mount, the autosize input has its value set, which causes it to resize to fit its content. During animation,
+    // we modify the element's value attribute in place which does not trigger resize.
+    useAnimatedValue(inputRef, value);
 
-  return (
-    <Textarea
-      ref={inputRef}
-      name={name}
-      value={value}
-      onChange={onChange}
-      {...props}
-    />
-  );
-};
+    return (
+      <Textarea
+        ref={inputRef}
+        name={name}
+        value={value}
+        onChange={onChange}
+        {...props}
+      />
+    );
+  }
+);
 
 const FormTextareaWrapper = ({ name, ...props }: FormTextareaWrapperProps) => {
   const { workflowsStore } = useRootStore();

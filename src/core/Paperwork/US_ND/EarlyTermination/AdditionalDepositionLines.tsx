@@ -70,22 +70,22 @@ const AdditionalDepositionLineFormTextarea = styled(FormTextarea)`
 
 const AdditionalDepositionLines: React.FC = () => {
   const client = useRootStore().workflowsStore.selectedClient;
-  if (!client) {
+  const earlyTermination = client?.opportunities?.earlyTermination;
+
+  if (!earlyTermination) {
     return null;
   }
 
   return (
     <>
-      {client.earlyTerminationAdditionalDepositionLines.map((key) => {
+      {earlyTermination.additionalDepositionLines.map((key) => {
         return (
           <AddLineListItem key={key}>
             <AdditionalDepositionLineFormTextarea name={key} minRows={2} />
             <RemoveButtonContainer>
               <TooltipTrigger contents={<span>Remove</span>}>
                 <RemoveButton
-                  onClick={() =>
-                    client.earlyTerminationRemoveDepositionLine(key)
-                  }
+                  onClick={() => earlyTermination.removeDepositionLine(key)}
                 />
               </TooltipTrigger>
             </RemoveButtonContainer>
@@ -93,7 +93,7 @@ const AdditionalDepositionLines: React.FC = () => {
         );
       })}
       <li>
-        <AddALine onClick={() => client.earlyTerminationAddDepositionLine()}>
+        <AddALine onClick={() => earlyTermination.addDepositionLine()}>
           Add a line...
         </AddALine>
       </li>

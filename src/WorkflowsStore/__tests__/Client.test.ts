@@ -32,11 +32,11 @@ import {
 import { RootStore } from "../../RootStore";
 import { eligibleClient, mockOfficer } from "../__fixtures__";
 import { Client } from "../Client";
+import { OPPORTUNITY_TYPES } from "../Opportunity";
 import {
   CompliantReportingReferralRecord,
   TransformedCompliantReportingReferral,
-} from "../CompliantReportingReferralRecord";
-import { OPPORTUNITY_TYPES } from "../Opportunity";
+} from "../Opportunity/CompliantReportingReferralRecord";
 import { dateToTimestamp } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 
@@ -101,11 +101,13 @@ test("fetch CompliantReportingReferral uses recordId", async () => {
   );
 
   testObserver = keepAlive(
-    computed(() => [client.prefilledCompliantReferralForm])
+    computed(() => [client.opportunities.compliantReporting?.prefilledData])
   );
 
   await when(
-    () => client.prefilledCompliantReferralForm.poFirstName !== undefined
+    () =>
+      client.opportunities.compliantReporting?.prefilledData.poFirstName !==
+      undefined
   );
 
   expect(mockSubscribeToCompliantReportingReferral).toHaveBeenCalled();

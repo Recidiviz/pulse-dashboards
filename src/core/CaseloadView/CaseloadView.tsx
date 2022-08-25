@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
@@ -30,7 +31,7 @@ const Wrapper = styled.div`
   padding-bottom: ${rem(spacing.md * 4)};
 `;
 
-export const CaseloadView: React.FC = () => {
+export const CaseloadView: React.FC = observer(() => {
   const {
     workflowsStore: { opportunityTypes },
   } = useRootStore();
@@ -52,4 +53,4 @@ export const CaseloadView: React.FC = () => {
       </Wrapper>
     </WorkflowsNavLayout>
   );
-};
+});

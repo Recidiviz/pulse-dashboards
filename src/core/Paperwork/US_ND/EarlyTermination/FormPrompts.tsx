@@ -67,7 +67,11 @@ const FormPrompts: React.FC<React.HTMLAttributes<HTMLElement>> = (
   const { workflowsStore } = useRootStore();
 
   const client = workflowsStore.selectedClient;
-  const metadata = client?.earlyTerminationMetadata;
+  const earlyTermination = client?.opportunities?.earlyTermination;
+
+  if (!earlyTermination) return null;
+
+  const { metadata } = earlyTermination;
 
   return <section {...props}>{getMetadataPrompts(client, metadata)}</section>;
 };

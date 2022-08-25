@@ -15,18 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
+import { deleteField } from "firebase/firestore";
+import { sortBy } from "lodash";
+import { action, keys, makeAutoObservable, remove, set, toJS } from "mobx";
 
+import { transform } from "../../core/Paperwork/US_ND/EarlyTermination/Transformer";
+import { updateEarlyTerminationDraftFieldData } from "../../core/Paperwork/US_ND/EarlyTermination/utils";
+import { subscribeToEarlyTerminationReferral } from "../../firestore";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
-import { fieldToDate, OpportunityValidationError } from "../utils";
+import {
+  fieldToDate,
+  observableSubscription,
+  OpportunityValidationError,
+  SubscriptionValue,
+} from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 import {
+  EarlyTerminationDraftData,
   EarlyTerminationReferralRecord,
   TransformedEarlyTerminationReferral,
 } from "./EarlyTerminationReferralRecord";
 import {
   DenialReasonsMap,
+  EarlyTerminationFormInterface,
   Opportunity,
   OpportunityCriterion,
   OpportunityRequirement,
@@ -67,30 +79,48 @@ const CRITERIA: Record<string, OpportunityCriterion> = {
   },
 };
 
-class EarlyTerminationOpportunity implements Opportunity {
+const ADDITIONAL_DEPOSITION_LINES_PREFIX = "additionalDepositionLines";
+
+class EarlyTerminationOpportunity
+  implements Opportunity, EarlyTerminationFormInterface {
   client: Client;
 
   readonly type: OpportunityType = "earlyTermination";
 
-  private record: EarlyTerminationReferralRecord;
-
   readonly denialReasonsMap: DenialReasonsMap;
 
-  constructor(record: EarlyTerminationReferralRecord, client: Client) {
+  draftData: Partial<EarlyTerminationDraftData>;
+
+  private fetchedEarlyTerminationReferral: SubscriptionValue<EarlyTerminationReferralRecord>;
+
+  constructor(client: Client) {
     makeAutoObservable<
       EarlyTerminationOpportunity,
       "record" | "transformedRecord"
     >(this, {
       record: true,
+      client: false,
       transformedRecord: true,
+      draftData: true,
+      setDataField: action,
     });
 
     this.client = client;
-    this.record = record;
     this.denialReasonsMap = DENIAL_REASONS_MAP;
+    this.draftData = {};
+    this.fetchedEarlyTerminationReferral = observableSubscription((handler) =>
+      subscribeToEarlyTerminationReferral(this.client.recordId, (result) => {
+        if (result) handler(result);
+      })
+    );
+  }
+
+  get record(): EarlyTerminationReferralRecord | undefined {
+    return this.fetchedEarlyTerminationReferral.current();
   }
 
   private get transformedRecord() {
+    if (!this.record) return;
     const {
       stateCode,
       externalId,
@@ -160,6 +190,8 @@ class EarlyTerminationOpportunity implements Opportunity {
     return transformedRecord;
   }
 
+  // TODO(#2263): This is currently not being called. we need to consider a different interface for validating and hydrating,
+  // possibly using the `hydrate` pattern for workflows models.
   /**
    * Throws OpportunityValidationError if it detects any condition in external configuration
    * or the object's input or output that indicates this Opportunity should be excluded.
@@ -167,6 +199,7 @@ class EarlyTerminationOpportunity implements Opportunity {
    * Don't call this in the constructor because it causes MobX to explode!
    */
   validate(): void {
+    if (!this.transformedRecord) return;
     const {
       reasons: {
         pastEarlyDischarge,
@@ -252,6 +285,7 @@ class EarlyTerminationOpportunity implements Opportunity {
   }
 
   get requirementsMet(): OpportunityRequirement[] {
+    if (!this.transformedRecord) return [];
     const requirements: OpportunityRequirement[] = [];
     const {
       reasons: {
@@ -295,8 +329,52 @@ class EarlyTerminationOpportunity implements Opportunity {
     return [];
   }
 
-  get metadata(): TransformedEarlyTerminationReferral["metadata"] {
-    return this.transformedRecord.metadata;
+  get metadata(): TransformedEarlyTerminationReferral["metadata"] | undefined {
+    return this.transformedRecord?.metadata;
+  }
+
+  get prefilledData(): Partial<EarlyTerminationDraftData> {
+    if (this.record) {
+      return transform(this.client, this.record);
+    }
+
+    return {};
+  }
+
+  get additionalDepositionLines(): string[] {
+    if (!this.draftData) return [];
+    const additionalDepositionLines = keys(this.draftData)
+      .map((key: PropertyKey) => String(key))
+      .filter((key: string) =>
+        key.startsWith(ADDITIONAL_DEPOSITION_LINES_PREFIX)
+      );
+
+    return sortBy(additionalDepositionLines, (key) =>
+      Number(key.split(ADDITIONAL_DEPOSITION_LINES_PREFIX)[1])
+    );
+  }
+
+  addDepositionLine(): void {
+    const key = `${ADDITIONAL_DEPOSITION_LINES_PREFIX}${+new Date()}`;
+    updateEarlyTerminationDraftFieldData(this.client, key, "");
+  }
+
+  removeDepositionLine(key: string): void {
+    if (!this.draftData) return;
+    remove(this.draftData, key);
+
+    updateEarlyTerminationDraftFieldData(this.client, key, deleteField());
+  }
+
+  get formData(): Partial<EarlyTerminationDraftData> {
+    return { ...toJS(this.prefilledData), ...toJS(this.draftData) };
+  }
+
+  async setDataField(
+    key: keyof EarlyTerminationDraftData | string,
+    value: boolean | string | string[]
+  ): Promise<void> {
+    set(this.draftData, key, value);
   }
 }
 
@@ -305,14 +383,11 @@ class EarlyTerminationOpportunity implements Opportunity {
  */
 export function createEarlyTerminationOpportunity(
   eligible: boolean | undefined,
-  record: EarlyTerminationReferralRecord | undefined,
   client: Client
 ): EarlyTerminationOpportunity | undefined {
-  if (!record || !eligible) return undefined;
+  if (!eligible) return undefined;
   try {
-    const opp = new EarlyTerminationOpportunity(record, client);
-    opp.validate();
-    return opp;
+    return new EarlyTerminationOpportunity(client);
   } catch (e) {
     // constructor performs further validation that may fail
     if (e instanceof OpportunityValidationError) {

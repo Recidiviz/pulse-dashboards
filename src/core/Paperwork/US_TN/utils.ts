@@ -24,21 +24,24 @@ import {
 } from "../../../firestore";
 import { Client } from "../../../WorkflowsStore";
 
-export async function updateCompliantReportingFormFieldData(
+export function updateCompliantReportingFormFieldData(
   updatedBy: string,
   client: Client,
   fieldData: FormFieldData
-): Promise<void> {
+): void {
   const { stateCode, recordId } = client;
   updateCompliantReportingDraft(updatedBy, stateCode, recordId, fieldData);
 
-  await when(() => client.opportunityUpdates.compliantReporting !== undefined);
-
-  if (client.opportunities.compliantReporting?.reviewStatus === "PENDING") {
-    trackSetOpportunityStatus({
-      clientId: client.pseudonymizedId,
-      status: "IN_PROGRESS",
-      opportunityType: "compliantReporting",
-    });
-  }
+  when(
+    () => client.opportunityUpdates.compliantReporting !== undefined,
+    () => {
+      if (client.opportunities.compliantReporting?.reviewStatus === "PENDING") {
+        trackSetOpportunityStatus({
+          clientId: client.pseudonymizedId,
+          status: "IN_PROGRESS",
+          opportunityType: "compliantReporting",
+        });
+      }
+    }
+  );
 }

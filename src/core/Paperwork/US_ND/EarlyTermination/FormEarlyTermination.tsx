@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { spacing } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components/macro";
@@ -277,4 +276,4 @@ export const FormEarlyTermination: React.FC = () => {
   );
 };
 
-export default observer(FormEarlyTermination);
+export default FormEarlyTermination;

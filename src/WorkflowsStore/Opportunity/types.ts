@@ -16,6 +16,11 @@
 // =============================================================================
 
 import { Client } from "../Client";
+import { TransformedCompliantReportingReferral } from "./CompliantReportingReferralRecord";
+import {
+  EarlyTerminationDraftData,
+  TransformedEarlyTerminationReferral,
+} from "./EarlyTerminationReferralRecord";
 
 export type OpportunityCriterion = {
   // TODO: text as templates?
@@ -55,6 +60,9 @@ export type OpportunityStatus = typeof OPPORTUNITY_STATUS_RANKED[number];
 
 export type DenialReasonsMap = Record<string, string>;
 
+type ReferralFormDraftData =
+  | Partial<EarlyTerminationDraftData>
+  | Partial<TransformedCompliantReportingReferral>;
 /**
  * An Opportunity is associated with a single client.
  * The client is assumed to be eligible for the Opportunity unless the
@@ -75,4 +83,23 @@ export interface Opportunity {
   readonly type: OpportunityType;
   validate: () => void;
   denialReasonsMap: DenialReasonsMap;
+  prefilledData: ReferralFormDraftData;
+  draftData: ReferralFormDraftData;
+  setDataField: (
+    key: string,
+    value: boolean | string | string[]
+  ) => Promise<void>;
+  formData: Partial<TransformedCompliantReportingReferral>;
 }
+
+export interface EarlyTerminationFormInterface {
+  metadata: TransformedEarlyTerminationReferral["metadata"] | undefined;
+  addDepositionLine: () => void;
+  removeDepositionLine: (key: string) => void;
+  additionalDepositionLines: string[];
+  formData: Partial<EarlyTerminationDraftData>;
+}
+
+export type CompliantReportingOpportunity = Opportunity;
+export type EarlyTerminationOpportunity = EarlyTerminationFormInterface &
+  Opportunity;

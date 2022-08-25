@@ -67,53 +67,50 @@ const StyledAutosizeInput = styled.span`
   }
 `;
 
-const FormInput: React.FC<FormInputProps> = ({
-  client,
-  name,
-  style,
-  ...props
-}: FormInputProps) => {
-  /*
+const FormInput: React.FC<FormInputProps> = observer(
+  ({ client, name, style, ...props }: FormInputProps) => {
+    const { earlyTermination } = client.opportunities;
+    /*
    On mount, the autosize input has its value set, which causes it to resize to fit its content. During animation,
    we modify the element's value attribute in place which does not trigger resize.
    */
+    const [value, onChange] = useReactiveInput<HTMLInputElement>({
+      name,
+      fetchFromStore: () => earlyTermination?.formData[name] as string,
+      persistToStore: (valueToStore: string) =>
+        earlyTermination?.setDataField(name, valueToStore),
+      persistToFirestore: (valueToStore: string) =>
+        updateEarlyTerminationDraftFieldData(client, name, valueToStore),
+    });
 
-  const [value, onChange] = useReactiveInput<HTMLInputElement>({
-    name,
-    fetchFromStore: () => client.getEarlyTerminationDataField(name) as string,
-    persistToStore: (valueToStore: string) =>
-      client.setEarlyTerminationReferralDataField(name, valueToStore),
-    persistToFirestore: (valueToStore: string) =>
-      updateEarlyTerminationDraftFieldData(client, name, valueToStore),
-  });
+    const inputRef = useRef<HTMLInputElement>(
+      null
+    ) as MutableRefObject<HTMLInputElement>;
 
-  const inputRef = useRef<HTMLInputElement>(
-    null
-  ) as MutableRefObject<HTMLInputElement>;
+    const setInputRef = React.useCallback(
+      (inputElement: HTMLInputElement | null) => {
+        if (inputElement) {
+          inputRef.current = inputElement;
+        }
+      },
+      []
+    );
 
-  const setInputRef = React.useCallback(
-    (inputElement: HTMLInputElement | null) => {
-      if (inputElement) {
-        inputRef.current = inputElement;
-      }
-    },
-    []
-  );
+    useAnimatedValue(inputRef, value);
 
-  useAnimatedValue(inputRef, value);
-
-  return (
-    <StyledAutosizeInput>
-      <AutosizeInput
-        inputRef={setInputRef}
-        value={value}
-        onChange={onChange}
-        name={name}
-        {...props}
-      />
-    </StyledAutosizeInput>
-  );
-};
+    return (
+      <StyledAutosizeInput>
+        <AutosizeInput
+          inputRef={setInputRef}
+          value={value}
+          onChange={onChange}
+          name={name}
+          {...props}
+        />
+      </StyledAutosizeInput>
+    );
+  }
+);
 
 const FormInputWrapper: React.FC<FormInputWrapperProps> = ({
   ...props

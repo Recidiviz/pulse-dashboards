@@ -79,7 +79,7 @@ test("track start of progress on pending review", async () => {
     compliantReporting: {},
   });
 
-  await updateCompliantReportingFormFieldData("testUser", client, {
+  updateCompliantReportingFormFieldData("testUser", client, {
     clientFirstName: "Testabc",
   });
 
@@ -96,7 +96,7 @@ test("form updates should not track status change if it's already set", async ()
     compliantReporting: { referralForm: { data: { foo: "bar" } } },
   });
 
-  await updateCompliantReportingFormFieldData("testUser", client, {
+  updateCompliantReportingFormFieldData("testUser", client, {
     clientFirstName: "Testabc",
   });
 

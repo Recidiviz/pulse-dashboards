@@ -44,12 +44,12 @@ interface FormInputProps extends FormInputWrapperProps {
 }
 
 const FormInput: React.FC<FormInputProps> = ({ client, name, ...props }) => {
+  const { compliantReporting } = client.opportunities;
   const [value, onChange] = useReactiveInput({
     name,
-    fetchFromStore: () =>
-      client.getCompliantReportingReferralDataField(name) as string,
+    fetchFromStore: () => compliantReporting?.formData[name] as string,
     persistToStore: (valueToStore: string) =>
-      client.setEarlyTerminationReferralDataField(name, valueToStore),
+      compliantReporting?.setDataField(name, valueToStore),
     persistToFirestore: (valueToStore: string) =>
       updateCompliantReportingFormFieldData(
         client.currentUserName || "user",

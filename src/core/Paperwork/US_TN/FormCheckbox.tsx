@@ -39,14 +39,16 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
     return null;
   }
 
+  const { compliantReporting } = workflowsStore.selectedClient.opportunities;
+
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const client = workflowsStore.selectedClient;
-    if (!client || !workflowsStore.user) {
+    if (!client || !workflowsStore.user || !compliantReporting) {
       event.preventDefault();
       return;
     }
 
-    client.setCompliantReportingReferralDataField(name, event.target.checked);
+    compliantReporting.setDataField(name, event.target.checked);
 
     updateCompliantReportingFormFieldData(
       client.currentUserName || "user",
@@ -60,11 +62,7 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
   return (
     <Checkbox
       {...props}
-      checked={
-        !!workflowsStore.selectedClient.getCompliantReportingReferralDataField(
-          name
-        )
-      }
+      checked={!!compliantReporting?.formData[name]}
       id={name}
       name={name}
       onChange={onChange}
