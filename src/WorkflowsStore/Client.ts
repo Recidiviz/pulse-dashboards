@@ -56,12 +56,22 @@ import { OTHER_KEY } from "./WorkflowsStore";
 
 export const UNKNOWN = "Unknown" as const;
 
-// these are the only values supported for now, limited to the Compliant Reporting flow
-type SupervisionLevel = "Medium" | "Minimum" | typeof UNKNOWN;
+type SupervisionLevel =
+  | "Medium"
+  | "Minimum"
+  | "Maximum"
+  | "Diversion"
+  | "Interstate Compact"
+  | typeof UNKNOWN;
 
 const SUPERVISION_LEVEL_MAP: Record<string, SupervisionLevel> = {
   "STANDARD: MEDIUM": "Medium",
   "STANDARD: MINIMUM": "Minimum",
+  MINIMUM: "Minimum",
+  MEDIUM: "Medium",
+  MAXIMUM: "Maximum",
+  DIVERSION: "Diversion",
+  INTERSTATE_COMPACT: "Interstate Compact",
 };
 
 type ClientDetailsCopy = {
