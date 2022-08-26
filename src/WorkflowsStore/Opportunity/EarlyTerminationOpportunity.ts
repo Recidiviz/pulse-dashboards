@@ -55,6 +55,7 @@ const DENIAL_REASONS_MAP = {
     "Under active intermediate measure as a result of 1+ violations",
   "CASE PLAN NC": "Has not completed case plan goals",
   SO: "Being supervised for sex offense",
+  DOP: "Being supervised for an offense resulting in the death of a person",
   "FINES/FEES": "Willfull nonpayment of fines/fees despite ability to pay",
   INC: "Incarcerated on another offense",
   "SA DECLINE": "State's Attorney permanently declined consideration",
