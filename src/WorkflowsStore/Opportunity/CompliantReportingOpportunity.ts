@@ -158,7 +158,7 @@ const DENIAL_REASONS_MAP = {
   DEDU: "DEDU: Serious compliance problems ",
   DEIJ: "DEIJ: Not allowed per court",
   DEIR: "DEIR: Failure to report as instructed",
-  [OTHER_KEY]: "Please specify a reason",
+  [OTHER_KEY]: "Other, please specify a reason",
 };
 
 class CompliantReportingOpportunity implements Opportunity {

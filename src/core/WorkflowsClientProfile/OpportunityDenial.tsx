@@ -40,7 +40,7 @@ const Wrapper = styled.div`
 
 const OtherInputWrapper = styled.div`
   display: block;
-  margin: ${rem(spacing.sm)} 2.5rem 2rem;
+  margin: ${rem(spacing.sm)} 2.5rem 1rem;
 `;
 
 const OtherInput = styled.textarea.attrs({ type: "text" })`
@@ -64,7 +64,8 @@ export const IconPad = styled.span`
 
 const DropdownContainer = styled.div`
   min-width: 21rem;
-  min-height: 21rem;
+  min-height: 17rem;
+  margin-bottom: 1rem;
 `;
 
 const SelectReasonText = styled.div`
@@ -78,28 +79,32 @@ const DropdownItem = styled.div<{ first?: boolean }>`
     props.first ? `1px solid ${palette.slate20}` : 0};
   padding: ${(props) => (props.first ? "1rem" : "0.25rem 1rem 0.25rem")};
 
-  &:hover {
-    background-color: ${palette.slate10};
-  }
-
   > .Checkbox__container {
     height: 100%;
     width: 100%;
     margin-bottom: 0;
 
+    &:hover {
+      > .Checkbox__box {
+        background-color: ${palette.slate10};
+      }
+
+      > .Checkbox__input:checked ~ .Checkbox__box {
+        background-color: ${palette.signal.links};
+      }
+    }
+
     > .Checkbox__label {
       top: 0;
+    }
+
+    > .Checkbox__box {
+      border-radius: 3px;
     }
 
     > .Checkbox__input:checked ~ .Checkbox__box {
       background-color: ${palette.signal.highlight};
       border-color: transparent;
-    }
-
-    > .Checkbox__input:checked ~ .Checkbox__box {
-      &:hover {
-        background-color: ${palette.signal.links};
-      }
     }
   }
 `;

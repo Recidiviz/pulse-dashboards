@@ -58,7 +58,7 @@ const DENIAL_REASONS_MAP = {
   "FINES/FEES": "Willfull nonpayment of fines/fees despite ability to pay",
   INC: "Incarcerated on another offense",
   "SA DECLINE": "State's Attorney permanently declined consideration",
-  [OTHER_KEY]: "Please specify a reason",
+  [OTHER_KEY]: "Other, please specify a reason",
 };
 
 // This could be configured externally once it's fleshed out
