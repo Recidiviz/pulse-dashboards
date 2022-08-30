@@ -1,6 +1,6 @@
 # Pulse Dashboard
 
-[![Build Status](https://github.com/Recidiviz/pulse-dashboards/actions/workflows/build.yml/badge.svg)](https://github.com/Recidiviz/pulse-dashboards/actions) [![Coverage Status](https://coveralls.io/repos/github/Recidiviz/pulse-dashboards/badge.svg?branch=main)](https://coveralls.io/github/Recidiviz/pulse-dashboards?branch=main)
+[![Build Status](https://github.com/Recidiviz/pulse-dashboard/actions/workflows/build.yml/badge.svg)](https://github.com/Recidiviz/pulse-dashboard/actions) [![Coverage Status](https://coveralls.io/repos/github/Recidiviz/pulse-dashboard/badge.svg?branch=main)](https://coveralls.io/github/Recidiviz/pulse-dashboard?branch=main)
 
 Bringing criminal justice analysis to decision makers to help reduce incarceration.
 
@@ -18,7 +18,7 @@ Bringing criminal justice analysis to decision makers to help reduce incarcerati
 
 1. Grab the source:
 
-   `git clone git@github.com:Recidiviz/pulse-dashboards.git`
+   `git clone git@github.com:Recidiviz/pulse-dashboard.git`
 
 1. Ensure you are using the correct version of Node (if you don't use NVM, just check the .nvmrc file and ensure you are using that version).
 
@@ -135,7 +135,7 @@ To run Jest manually:
 
 `jest [optional-filepath]`
 
-Linting is done with a combination of [eslint](#eslint) and [Prettier](#Prettier). `react-scripts` runs some minimal linting by default as part of its build process; errors on those linting rules will cause our build scripts to fail, but errors in our broader [configuration](https://github.com/Recidiviz/pulse-dashboards/.eslintrc.json) will not.
+Linting is done with a combination of [eslint](#eslint) and [Prettier](#Prettier). `react-scripts` runs some minimal linting by default as part of its build process; errors on those linting rules will cause our build scripts to fail, but errors in our broader [configuration](https://github.com/Recidiviz/pulse-dashboard/.eslintrc.json) will not.
 
 However, we have configured a pre-commit Git hook that prevents developers from committing code that fails our lint tests. It also auto-reformats that code as much as possible before executing the commit.
 
@@ -153,7 +153,7 @@ To run eslint manually:
 
 `eslint .`
 
-> **Note**: we are gradually adding linting enforcement to our existing code, so not everything may be subject to linting yet. Refer to the [ignore file](https://github.com/Recidiviz/pulse-dashboards/.eslintignore) for details. While this transition is underway, if you are adding new files or substantially rewriting existing ones, you are encouraged to whitelist them for linting by updating the configuration file.
+> **Note**: we are gradually adding linting enforcement to our existing code, so not everything may be subject to linting yet. Refer to the [ignore file](https://github.com/Recidiviz/pulse-dashboard/.eslintignore) for details. While this transition is underway, if you are adding new files or substantially rewriting existing ones, you are encouraged to whitelist them for linting by updating the configuration file.
 
 ### Syncing content
 
@@ -191,7 +191,7 @@ To create the required databases and add data to them, use the [load_fixtures](h
 
 **Tip:** To inspect and/or edit the database contents locally, you can use a GUI like [Postico](https://eggerapps.at/postico/), and connect to the `postgres` database using the host/user/password defined in [docker-compose.yaml](https://github.com/Recidiviz/recidiviz-data/blob/62210d3ebab17c4424abcb17395989f1209e8f0e/docker-compose.yaml#L87-L91). If you edit the contents manually, run the [reset_cache](https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/tools/pathways/reset_cache.py) script to update the cache with the new contents.
 
-To run the frontend against a local new backend, run (now from `pulse-dashboards`):
+To run the frontend against a local new backend, run (now from `pulse-dashboard`):
 
 `yarn dev:be`
 
@@ -210,7 +210,7 @@ You can launch in offline mode locally via: `yarn offline`
 If you are running in offline mode, you may need to run through the following steps first:
 
 1. Ensure that your environment is set up correctly by following steps 1 - 9 in the [Set Up Your Frontend Development doc](https://docs.google.com/document/d/1y-yJwZN6yM1s5OKqTDCk56FN2p7ZA62buwph1YdnJAc/edit). Check the `.nvmrc` to see the latest Node version you'll need to install and use.
-1. Make sure your local repository has all the latest changes from the main branch. Run the following git commands from the `pulse-dashboards/` directory:
+1. Make sure your local repository has all the latest changes from the main branch. Run the following git commands from the `pulse-dashboard/` directory:
 
    ```
    :> git checkout main
@@ -386,7 +386,7 @@ See Enzyme [API](http://airbnb.io/enzyme/docs/api/) for more information.
 
 ### eslint
 
-[eslint](https://eslint.org/) is a flexible linter for JavaScript. We have configured eslint to adhere to the Airbnb style guides for [Javascript](https://github.com/airbnb/javascript) and [React](https://github.com/airbnb/javascript/tree/master/react), with a few [exceptions](https://github.com/Recidiviz/pulse-dashboards/.eslintrc.json), in addition to the base eslint JS rules.
+[eslint](https://eslint.org/) is a flexible linter for JavaScript. We have configured eslint to adhere to the Airbnb style guides for [Javascript](https://github.com/airbnb/javascript) and [React](https://github.com/airbnb/javascript/tree/master/react), with a few [exceptions](https://github.com/Recidiviz/pulse-dashboard/.eslintrc.json), in addition to the base eslint JS rules.
 
 To run the linter, see [Linting & running tests](#linting--running-tests).
 

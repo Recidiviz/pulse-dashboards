@@ -67,16 +67,16 @@ const DENIAL_REASONS_MAP = {
 const CRITERIA: Record<string, OpportunityCriterion> = {
   eligibleDate: {
     tooltip:
-      "Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
+      "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
   },
   supervisionLevel: {
-    tooltip: `Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.`,
+    tooltip: `Policy requirement: Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.`,
   },
   supervisionType: {
-    tooltip: `Serving a suspended, deferred, or IC-probation sentence.`,
+    tooltip: `Policy requirement: Serving a suspended, deferred, or IC-probation sentence.`,
   },
   revocationStatus: {
-    tooltip: `Not on active revocation status.`,
+    tooltip: `Policy requirement: Not on active revocation status.`,
   },
 };
 
