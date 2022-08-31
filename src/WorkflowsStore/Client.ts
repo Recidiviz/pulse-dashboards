@@ -202,11 +202,8 @@ export class Client {
     this.specialConditionsTerminatedDate = optionalFieldToDate(
       record.specialConditionsTerminatedDate
     );
-    // TODO #2191 Remove earliestSupervisionStartDateInLatestSystem once it is no longer
-    // used for US_TN
     this.supervisionStartDate = optionalFieldToDate(
-      record.earliestSupervisionStartDateInLatestSystem ??
-        record.supervisionStartDate
+      record.supervisionStartDate
     );
 
     set(this.opportunityUpdateSubscriptions, {

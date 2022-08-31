@@ -111,9 +111,6 @@ export type ClientRecord = {
   supervisionLevelStart?: Timestamp | string;
   address?: string;
   phoneNumber?: string;
-  // TODO #2191 Remove earliestSupervisionStartDateInLatestSystem once it is no longer
-  // used for US_TN
-  earliestSupervisionStartDateInLatestSystem?: string;
   supervisionStartDate?: string;
   expirationDate?: Timestamp | string;
   currentBalance?: number;
