@@ -70,24 +70,31 @@ const WorkflowsEarlyTerminationForm = () => {
   const { workflowsStore } = useRootStore();
 
   const client = workflowsStore.selectedClient;
-
   const draft = client?.earlyTerminationReferralDraft;
 
-  let lastEdited = null;
+  let lastEdited;
   if (draft) {
-    lastEdited = (
-      <FormViewerStatus color={palette.slate85}>
-        Last edited by {draft.updated.by}{" "}
-        {moment(draft.updated.date.seconds * 1000).fromNow()}
-      </FormViewerStatus>
-    );
+    lastEdited = `Last edited by ${draft.updated.by} ${moment(
+      draft.updated.date.seconds * 1000
+    ).fromNow()}`;
+  } else {
+    lastEdited = `Prefilled with data from ND DOCR on ${moment().format(
+      "MM-DD-YYYY"
+    )}`;
   }
 
   return (
     <EarlyTerminationFormContainer>
       <FormViewer
         fileName={`${client?.displayName} - Form SFN 9281.docx`}
-        statuses={[lastEdited]}
+        statuses={[
+          <FormViewerStatus color={palette.slate85}>
+            Edit and collaborate on the document below
+          </FormViewerStatus>,
+          <FormViewerStatus color={palette.slate85}>
+            {lastEdited}
+          </FormViewerStatus>,
+        ]}
         formDownloader={formDownloader}
       >
         <FormEarlyTermination />

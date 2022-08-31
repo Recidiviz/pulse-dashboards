@@ -49,8 +49,8 @@ export const transform = (
   return {
     ...data,
     allDockets,
-    dateToday: formatWorkflowsDate(new Date()),
     clientFullName: client.displayName,
+    dateToday: formatWorkflowsDate(new Date()),
     telephoneNumber: client.formattedPhoneNumber,
     specialConditionsCounselingAngerManagementComplete: !!data.specialConditionsCounselingAngerManagementCompleteDate,
     specialConditionsCounselingMentalHealthComplete: !!data.specialConditionsCounselingMentalHealthCompleteDate,

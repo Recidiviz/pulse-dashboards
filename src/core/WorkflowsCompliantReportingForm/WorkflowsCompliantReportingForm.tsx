@@ -47,7 +47,6 @@ const formDownloader = async (
 const WorkflowsCompliantReportingForm: React.FC = () => {
   const { workflowsStore } = useRootStore();
   const client = workflowsStore.selectedClient;
-  const compliantReporting = client?.opportunities.compliantReporting;
 
   const draft = client?.compliantReportingReferralDraft;
 
@@ -57,9 +56,9 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
       draft.updated.date.seconds * 1000
     ).fromNow()}`;
   } else {
-    lastEdited = `Prefilled with data from TDOC on ${
-      compliantReporting?.formData.dateToday ?? moment().format("MM-DD-YYYY")
-    }`;
+    lastEdited = `Prefilled with data from TDOC on ${moment().format(
+      "MM-DD-YYYY"
+    )}`;
   }
   return (
     <CompliantReportingFormContainer>
