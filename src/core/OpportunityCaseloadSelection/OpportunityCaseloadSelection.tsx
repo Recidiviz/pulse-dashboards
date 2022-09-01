@@ -166,6 +166,23 @@ export const OpportunityCaseloadSelection = observer(
           </>
         );
         break;
+      case "earnedDischarge":
+        introText = (
+          <>
+            Search for officer(s) below to review clients eligible for earned
+            discharge and complete discharge paperwork.{" "}
+            <a
+              // currentTenantId is coming from the StoreProvider RootStore which
+              // is only partially typed at this point but will always be of type TenantId.
+              href={WORKFLOWS_METHODOLOGY_URL[currentTenantId as TenantId]}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Learn more
+            </a>
+          </>
+        );
+        break;
       default:
         assertNever(opportunityType);
     }

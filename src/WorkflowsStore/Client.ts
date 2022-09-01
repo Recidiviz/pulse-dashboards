@@ -32,6 +32,7 @@ import {
   CompliantReportingUpdateRecord,
   EarlyTerminationReferralForm,
   EarlyTerminationUpdateRecord,
+  EarnedDischargeUpdateRecord,
   FullName,
   SpecialConditionCode,
   SpecialConditionsStatus,
@@ -45,8 +46,10 @@ import {
   createCompliantReportingOpportunity,
   createEarlyTerminationOpportunity,
   EarlyTerminationOpportunity,
+  EarnedDischargeOpportunity,
   OpportunityType,
 } from "./Opportunity";
+import { createEarnedDischargeOpportunity } from "./Opportunity/EarnedDischargeOpportunity";
 import {
   observableSubscription,
   optionalFieldToDate,
@@ -92,6 +95,7 @@ export const CLIENT_DETAILS_COPY: Record<string, ClientDetailsCopy> = {
 type OpportunityMapping = {
   earlyTermination: EarlyTerminationOpportunity | undefined;
   compliantReporting: CompliantReportingOpportunity | undefined;
+  earnedDischarge: EarnedDischargeOpportunity | undefined;
 };
 
 export class Client {
@@ -264,6 +268,10 @@ export class Client {
         this.record.earlyTerminationEligible,
         this
       ),
+      earnedDischarge: createEarnedDischargeOpportunity(
+        this.record.earnedDischargeEligible,
+        this
+      ),
     };
   }
 
@@ -293,6 +301,7 @@ export class Client {
   get opportunityUpdates(): {
     compliantReporting?: CompliantReportingUpdateRecord;
     earlyTermination?: EarlyTerminationUpdateRecord;
+    earnedDischarge?: EarnedDischargeUpdateRecord;
   } {
     return {
       compliantReporting: this.opportunityUpdateSubscriptions.compliantReporting?.current(),

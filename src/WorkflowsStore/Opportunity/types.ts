@@ -22,14 +22,10 @@ import {
   TransformedEarlyTerminationReferral,
 } from "./EarlyTerminationReferralRecord";
 
-export type OpportunityCriterion = {
-  // TODO: text as templates?
-  tooltip?: string;
-};
-
 export const OPPORTUNITY_TYPES = [
   "compliantReporting",
   "earlyTermination",
+  "earnedDischarge",
 ] as const;
 /**
  * Values of this union map to key prefixes in client records
@@ -41,6 +37,7 @@ export function isOpportunityType(s: string): s is OpportunityType {
 export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   compliantReporting: "Compliant Reporting",
   earlyTermination: "Early Termination",
+  earnedDischarge: "Earned Discharge",
 };
 
 export type OpportunityRequirement = {
@@ -60,9 +57,6 @@ export type OpportunityStatus = typeof OPPORTUNITY_STATUS_RANKED[number];
 
 export type DenialReasonsMap = Record<string, string>;
 
-type ReferralFormDraftData =
-  | Partial<EarlyTerminationDraftData>
-  | Partial<TransformedCompliantReportingReferral>;
 /**
  * An Opportunity is associated with a single client.
  * The client is assumed to be eligible for the Opportunity unless the
@@ -73,7 +67,6 @@ export interface Opportunity {
   almostEligible: boolean;
   almostEligibleRecommendedNote?: { title: string; text: string };
   client: Client;
-  printText: string;
   rank: number;
   requirementsAlmostMet: OpportunityRequirement[];
   requirementsMet: OpportunityRequirement[];
@@ -83,23 +76,36 @@ export interface Opportunity {
   readonly type: OpportunityType;
   validate: () => void;
   denialReasonsMap: DenialReasonsMap;
-  prefilledData: ReferralFormDraftData;
-  draftData: ReferralFormDraftData;
+}
+
+export interface CompliantReportingFormInterface {
+  printText: string;
+  formData: Partial<TransformedCompliantReportingReferral>;
+  // TODO: Remove draftData once opportunity update subscriptions move to Opportunity class
+  draftData: Partial<TransformedCompliantReportingReferral>;
   setDataField: (
     key: string,
     value: boolean | string | string[]
   ) => Promise<void>;
-  formData: Partial<TransformedCompliantReportingReferral>;
 }
 
 export interface EarlyTerminationFormInterface {
+  printText: string;
   metadata: TransformedEarlyTerminationReferral["metadata"] | undefined;
   addDepositionLine: () => void;
   removeDepositionLine: (key: string) => void;
   additionalDepositionLines: string[];
   formData: Partial<EarlyTerminationDraftData>;
+  // TODO: Remove draftData once opportunity update subscriptions move to Opportunity class
+  draftData: Partial<EarlyTerminationDraftData>;
+  setDataField: (
+    key: string,
+    value: boolean | string | string[]
+  ) => Promise<void>;
 }
 
-export type CompliantReportingOpportunity = Opportunity;
+export type CompliantReportingOpportunity = CompliantReportingFormInterface &
+  Opportunity;
 export type EarlyTerminationOpportunity = EarlyTerminationFormInterface &
   Opportunity;
+export type EarnedDischargeOpportunity = Opportunity;

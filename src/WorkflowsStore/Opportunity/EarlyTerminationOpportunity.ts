@@ -40,7 +40,6 @@ import {
   DenialReasonsMap,
   EarlyTerminationFormInterface,
   Opportunity,
-  OpportunityCriterion,
   OpportunityRequirement,
   OpportunityStatus,
   OpportunityType,
@@ -64,7 +63,7 @@ const DENIAL_REASONS_MAP = {
 
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
-const CRITERIA: Record<string, OpportunityCriterion> = {
+const CRITERIA: Record<string, Partial<OpportunityRequirement>> = {
   eligibleDate: {
     tooltip:
       "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
@@ -141,29 +140,29 @@ class EarlyTerminationOpportunity
       metadata,
     } = this.record;
 
-    const transformedReasons: TransformedEarlyTerminationReferral["reasons"] = {};
+    const transformedCriteria: TransformedEarlyTerminationReferral["criteria"] = {};
 
     reasons.forEach(({ criteriaName, reason }) => {
       switch (criteriaName) {
         case "SUPERVISION_EARLY_DISCHARGE_DATE_WITHIN_30_DAYS":
-          transformedReasons.pastEarlyDischarge = {
+          transformedCriteria.pastEarlyDischarge = {
             eligibleDate: reason.eligibleDate
               ? fieldToDate(reason.eligibleDate)
               : undefined,
           };
           break;
         case "US_ND_NOT_IN_ACTIVE_REVOCATION_STATUS":
-          transformedReasons.notActiveRevocationStatus = {
+          transformedCriteria.notActiveRevocationStatus = {
             revocationDate: reason.revocationDate
               ? fieldToDate(reason.revocationDate)
               : undefined,
           };
           break;
         case "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SUPERVISION_LEVEL":
-          transformedReasons.eligibleSupervisionLevel = reason;
+          transformedCriteria.eligibleSupervisionLevel = reason;
           break;
         case "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SENTENCE_TYPE":
-          transformedReasons.eligibleSupervisionType = reason;
+          transformedCriteria.eligibleSupervisionType = reason;
           break;
         default:
       }
@@ -184,7 +183,7 @@ class EarlyTerminationOpportunity
         sentenceLengthYears: parseInt(sentenceLengthYears),
         crimeNames,
       },
-      reasons: transformedReasons,
+      criteria: transformedCriteria,
       metadata,
     };
 
@@ -202,7 +201,7 @@ class EarlyTerminationOpportunity
   validate(): void {
     if (!this.transformedRecord) return;
     const {
-      reasons: {
+      criteria: {
         pastEarlyDischarge,
         eligibleSupervisionLevel,
         eligibleSupervisionType,
@@ -289,7 +288,7 @@ class EarlyTerminationOpportunity
     if (!this.transformedRecord) return [];
     const requirements: OpportunityRequirement[] = [];
     const {
-      reasons: {
+      criteria: {
         pastEarlyDischarge,
         eligibleSupervisionLevel,
         eligibleSupervisionType,
@@ -380,7 +379,7 @@ class EarlyTerminationOpportunity
 }
 
 /**
- * Returns an `Opportunity` if the provided data indicates the client is eligible
+ * Returns an `EarlyTerminationOpportunity` if the provided data indicates the client is eligible
  */
 export function createEarlyTerminationOpportunity(
   eligible: boolean | undefined,

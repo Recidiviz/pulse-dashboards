@@ -23,6 +23,7 @@ import styled from "styled-components/macro";
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import isIE11 from "../../utils/isIE11";
+import { OPPORTUNITY_LABELS } from "../../WorkflowsStore";
 import { CaseloadView } from "../CaseloadView";
 import ModelHydrator from "../ModelHydrator";
 import { OpportunityCaseloadSelection } from "../OpportunityCaseloadSelection";
@@ -120,6 +121,37 @@ const PageWorkflows: React.FC = () => {
           <WorkflowsFormLayout
             sidebarContents={<EarlyTerminationClientProfile />}
             formContents={<WorkflowsEarlyTerminationForm />}
+          />
+        </WorkflowsRoute>
+        <WorkflowsRoute
+          exact
+          path={workflowsRoute({ name: "general", client: true })}
+        >
+          <FullProfile />
+        </WorkflowsRoute>
+        <WorkflowsRoute
+          exact
+          path={workflowsRoute({ name: "earnedDischarge", client: false })}
+        >
+          <WorkflowsFormLayout
+            sidebarContents={
+              <>
+                <SidebarHeading>
+                  {OPPORTUNITY_LABELS.earnedDischarge}
+                </SidebarHeading>
+                <OpportunityCaseloadSelection opportunityType="earnedDischarge" />
+              </>
+            }
+            formContents={null}
+          />
+        </WorkflowsRoute>
+        <WorkflowsRoute
+          exact
+          path={workflowsRoute({ name: "earnedDischarge", client: true })}
+        >
+          <WorkflowsFormLayout
+            sidebarContents={<div />}
+            formContents={<div />}
           />
         </WorkflowsRoute>
         <WorkflowsRoute

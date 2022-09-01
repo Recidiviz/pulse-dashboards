@@ -46,6 +46,17 @@ export const earlyTerminationOpportunityStatuses: Record<
   ALMOST: "Almost eligible",
 };
 
+export const earnedDischargeOpportunityStatuses: Record<
+  OpportunityStatus,
+  string
+> = {
+  PENDING: "Needs review",
+  IN_PROGRESS: "Earned discharge review in progress",
+  COMPLETED: "Earned discharge paperwork complete",
+  DENIED: "Currently ineligible",
+  ALMOST: "Almost eligible",
+};
+
 export function formatNoteDate(date: Date): string {
   return format(date, "MMMM do");
 }

@@ -271,18 +271,21 @@ export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   compliantReporting: "compliantReporting",
   general: "client",
   earlyTermination: "earlyTermination",
+  earnedDischarge: "earnedDischarge",
 };
 
 const WORKFLOWS_SEARCH_ROUTES: Record<WorkflowsPage, string> = {
   general: `/${PATHWAYS_VIEWS.workflows}/clients`,
   compliantReporting: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.compliantReporting}`,
   earlyTermination: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earlyTermination}`,
+  earnedDischarge: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earnedDischarge}`,
 };
 
 const WORKFLOWS_CLIENT_PATH_ROUTES: Record<WorkflowsPage, string> = {
   general: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.general}/:clientId`,
   compliantReporting: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.compliantReporting}/:clientId`,
   earlyTermination: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earlyTermination}/:clientId`,
+  earnedDischarge: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earnedDischarge}/:clientId`,
 };
 
 /**

@@ -43,9 +43,9 @@ import {
   TransformedCompliantReportingReferral,
 } from "./CompliantReportingReferralRecord";
 import {
+  CompliantReportingFormInterface,
   DenialReasonsMap,
   Opportunity,
-  OpportunityCriterion,
   OpportunityRequirement,
   OpportunityStatus,
   OpportunityType,
@@ -97,7 +97,7 @@ const COMPLIANT_REPORTING_ACTIVE_CATEGORIES = ["c1", "c2", "c3", "c4"];
 
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
-const CRITERIA: Record<string, OpportunityCriterion> = {
+const CRITERIA: Record<string, Partial<OpportunityRequirement>> = {
   drug: {
     tooltip:
       "Policy requirement: Passed drug screen in the last 12 months for non-drug offenders. Passed 2 drug screens in last 12 months for drug offenders, most recent is negative.",
@@ -161,7 +161,8 @@ const DENIAL_REASONS_MAP = {
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
-class CompliantReportingOpportunity implements Opportunity {
+class CompliantReportingOpportunity
+  implements Opportunity, CompliantReportingFormInterface {
   client: Client;
 
   readonly type: OpportunityType = "compliantReporting";
@@ -614,7 +615,7 @@ class CompliantReportingOpportunity implements Opportunity {
 
     const configMap: Record<
       keyof AlmostEligibleCriteria,
-      OpportunityCriterion
+      Partial<OpportunityRequirement>
     > = {
       passedDrugScreenNeeded: CRITERIA.drug,
       currentLevelEligibilityDate: CRITERIA.timeOnSupervision,
@@ -830,7 +831,7 @@ class CompliantReportingOpportunity implements Opportunity {
 }
 
 /**
- * Returns an `Opportunity` if the provided data indicates the client is eligible or almost eligible
+ * Returns an `CompliantReportingOpportunity` if the provided data indicates the client is eligible or almost eligible
  */
 export function createCompliantReportingOpportunity(
   record: CompliantReportingEligibleRecord | undefined,

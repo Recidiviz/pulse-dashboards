@@ -76,10 +76,13 @@ export const WORKFLOWS_METHODOLOGY_URL: Record<string, string> = {
     "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view?usp=sharing",
   US_ND:
     "https://drive.google.com/file/d/1eHbSEOjjT9FvxffSbXOYEfOYPJheeu6t/view",
+  US_ID:
+    "http://forms.idoc.idaho.gov/WebLink/0/edoc/282369/Termination%20of%20Probation%20or%20Parole%20Supervision.pdf",
 };
 
 export const WORKFLOWS_POLICY_OR_METHODOLOGY_URL: Record<string, string> = {
   US_TN:
     "https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view?usp=sharing",
   US_ND: WORKFLOWS_METHODOLOGY_URL.US_ND,
+  US_ID: WORKFLOWS_METHODOLOGY_URL.US_ID,
 };

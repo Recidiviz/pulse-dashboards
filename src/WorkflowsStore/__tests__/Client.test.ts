@@ -101,12 +101,12 @@ test("fetch CompliantReportingReferral uses recordId", async () => {
   );
 
   testObserver = keepAlive(
-    computed(() => [client.opportunities.compliantReporting?.prefilledData])
+    computed(() => [client.opportunities.compliantReporting?.formData])
   );
 
   await when(
     () =>
-      client.opportunities.compliantReporting?.prefilledData.poFirstName !==
+      client.opportunities.compliantReporting?.formData.poFirstName !==
       undefined
   );
 

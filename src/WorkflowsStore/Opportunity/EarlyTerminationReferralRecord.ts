@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-type EarlyTerminationReason = {
+type EarlyTerminationCriteriaMet = {
   eligibleDate?: string;
   supervisionType?: string;
   revocationDate?: string;
@@ -24,7 +24,7 @@ type EarlyTerminationReason = {
 
 export type EarlyTerminationCriteria = {
   criteriaName: string;
-  reason: EarlyTerminationReason;
+  reason: EarlyTerminationCriteriaMet;
 };
 
 export type EarlyTerminationReferralRecord = {
@@ -65,7 +65,7 @@ export interface TransformedEarlyTerminationReferral {
     probationExpirationDate: Date;
     probationOfficerFullName: string;
   };
-  reasons: {
+  criteria: {
     pastEarlyDischarge?: { eligibleDate?: Date };
     eligibleSupervisionLevel?: { supervisionLevel?: string };
     eligibleSupervisionType?: { supervisionType?: string };

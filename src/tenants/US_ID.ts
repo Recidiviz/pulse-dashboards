@@ -23,6 +23,9 @@ import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
+import { OpportunityType } from "../WorkflowsStore";
+
+const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = ["earnedDischarge"];
 
 const US_ID_CONFIG: TenantConfig = {
   name: "Idaho",
@@ -31,7 +34,10 @@ const US_ID_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_ID],
   enableUserRestrictions: false,
   enableVitalsCaseloadButton: true,
+  workflowsEnableAllDistricts: false,
+  opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   navigation: {
+    workflows: [...WORKFLOWS_OPPORTUNITY_TYPES, "client"],
     operations: [],
     system: [
       PATHWAYS_PAGES.libertyToPrison,

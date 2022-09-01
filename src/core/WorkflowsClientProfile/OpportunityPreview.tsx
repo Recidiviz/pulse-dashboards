@@ -35,6 +35,7 @@ import { ClientWithOpportunityProps } from "./types";
 const FORM_PREVIEW: Record<OpportunityType, string> = {
   compliantReporting: compliantReportingFormPreviewSrc,
   earlyTermination: earlyTerminationFormPreviewSrc,
+  earnedDischarge: "",
 };
 
 const PreviewWrapper = styled(Wrapper)`
