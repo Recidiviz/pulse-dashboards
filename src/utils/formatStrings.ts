@@ -129,7 +129,15 @@ const violationCountLabel = (count: string): string =>
 /**
  * @returns appropriately singular or plural (+s) form of `term`
  */
-const pluralizeWord = (count: number, term: string): string => {
+const pluralizeWord = (
+  count: number,
+  term: string,
+  irregularTerm?: string
+): string => {
+  if (irregularTerm) {
+    return count !== 1 ? irregularTerm : term;
+  }
+
   return count !== 1 ? `${term}s` : term;
 };
 

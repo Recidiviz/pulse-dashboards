@@ -27,6 +27,8 @@ import {
   formatName,
   getDimensionLabel,
   getTicks,
+  pluralize,
+  pluralizeWord,
 } from "../../utils";
 import { sortByLabel } from "../../utils/datasets";
 import styles from "../CoreConstants.module.scss";
@@ -35,6 +37,7 @@ import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshot
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
 import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
+import { SupervisionPopulationSnapshotRecord } from "../models/types";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import { Dimension } from "../types/dimensions";
 import { PopulationFilterLabels } from "../types/filters";
@@ -229,6 +232,32 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
               {formatName(accessorLabel)}
             </tspan>
           </text>
+        );
+      },
+      tooltipContent: (d: any) => {
+        const { pieces } = d;
+        const pieceData = pieces[0];
+
+        const caseloadData = dataSeries[
+          pieceData.index
+        ] as SupervisionPopulationSnapshotRecord;
+
+        return (
+          <PathwaysTooltip
+            label={pieceData.tooltipLabel}
+            value={isRate ? `${pieceData.value}%` : pieceData.value}
+            average={
+              isRate
+                ? `(${pluralize(caseloadData.count, "admission")} / ${
+                    caseloadData.caseload
+                  } unique ${pluralizeWord(
+                    caseloadData.caseload,
+                    "person",
+                    "people"
+                  )} on caseload)`
+                : undefined
+            }
+          />
         );
       },
     }),
