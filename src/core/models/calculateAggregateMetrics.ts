@@ -22,6 +22,7 @@ import {
   map,
   pipe,
   property,
+  sortBy,
   sum,
   sumBy,
   values,
@@ -82,7 +83,8 @@ export function recordsWithAggregateMetrics<T = MetricRecord>(
 
       return memo;
     }, []),
-    filter(matchingDateRange)
+    filter(matchingDateRange),
+    sortBy(["year", "month"])
   )(records);
 }
 
