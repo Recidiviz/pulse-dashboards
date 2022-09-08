@@ -2,10 +2,11 @@ name: "CodeQL"
 
 on:
   schedule:
-    - cron: '15 23 * * 3'
+    - cron: '0 11 * * *'
 
 jobs:
   analyze:
+    if: github.repository == 'Recidiviz/pulse-dashboards'
     name: Analyze
     runs-on: ubuntu-latest
     permissions:
