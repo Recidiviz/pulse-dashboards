@@ -28,6 +28,7 @@ import { toHumanReadable, toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { TableColumn } from "../types/charts";
+import { PopulationFilterLabels } from "../types/filters";
 import { PersonLevelDiffer } from "./backendDiff/PersonLevelDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { PrisonPopulationPersonLevelRecord, TimePeriod } from "./types";
@@ -112,9 +113,16 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
         if (c.Header === "Name") return;
         const value = d[c.accessor as keyof PrisonPopulationPersonLevelRecord];
         if (value) {
-          row[c.Header] = c.titleCase
-            ? toTitleCase(toHumanReadable(value.toString()))
-            : value;
+          if (c.useFilterLabels) {
+            row[c.Header] = this.rootStore?.filtersStore.getFilterLabel(
+              c.accessor as keyof PopulationFilterLabels,
+              value.toString()
+            );
+          } else if (c.useTitleCase) {
+            row[c.Header] = toTitleCase(toHumanReadable(value.toString()));
+          } else {
+            row[c.Header] = value;
+          }
         }
       });
       data.push(row);

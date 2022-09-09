@@ -18,28 +18,26 @@ import "./VizPopulationPersonLevel.scss";
 
 import { observer } from "mobx-react-lite";
 import React from "react";
+import { Column } from "react-table";
 
 import PathwaysTable from "../../components/PathwaysTable";
 import { formatDate, toHumanReadable, toTitleCase } from "../../utils";
+import { useCoreStore } from "../CoreStoreProvider";
 import PersonLevelMetric from "../models/PersonLevelMetric";
 import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
+import { TableColumn } from "../types/charts";
+import { PopulationFilterLabels } from "../types/filters";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizPopulationPersonLevelProps = {
   metric: PrisonPopulationPersonLevelMetric | PersonLevelMetric;
 };
 
-export const createTitleCasedCell = ({
-  value,
-}: {
-  value: string;
-}): JSX.Element => {
-  return <div>{toTitleCase(toHumanReadable(value))}</div>;
-};
-
 const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
   metric,
 }) => {
+  const { filtersStore } = useCoreStore();
+  const { getFilterLabel } = filtersStore;
   const { dataSeries, chartTitle, columns, id } = metric;
   if (!columns) return null;
 
@@ -49,6 +47,32 @@ const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
       : dataSeries[0]?.lastUpdated,
     "MMMM dd, yyyy"
   );
+
+  const createTableColumn = (column: TableColumn): Column => {
+    const { useTitleCase, useFilterLabels, accessor } = column;
+
+    if (useFilterLabels) {
+      return {
+        ...column,
+        Cell: ({ value }: { value: string }) => (
+          <div>
+            {getFilterLabel(accessor as keyof PopulationFilterLabels, value)}
+          </div>
+        ),
+      };
+    }
+
+    if (useTitleCase) {
+      return {
+        ...column,
+        Cell: ({ value }: { value: string }) => (
+          <div>{toTitleCase(toHumanReadable(value))}</div>
+        ),
+      };
+    }
+
+    return column;
+  };
 
   return (
     <div className="VizPopulationPersonLevel">
@@ -63,9 +87,7 @@ const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
       </div>
       <div className="VizPopulationPersonLevel__table">
         <PathwaysTable
-          columns={columns.map((c) =>
-            c.titleCase ? { ...c, Cell: createTitleCasedCell } : c
-          )}
+          columns={columns.map((c) => createTableColumn(c))}
           data={dataSeries}
         />
       </div>

@@ -25,7 +25,8 @@ export type ChartDataType = {
 export type TableColumn = {
   Header: string;
   accessor: string;
-  titleCase: boolean;
+  useFilterLabels: boolean;
+  useTitleCase?: boolean;
   width?: number;
 };
 
