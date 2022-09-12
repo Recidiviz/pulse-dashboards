@@ -97,7 +97,7 @@ into an area where you feel less comfortable or need to learn something new.
 Once you have selected an issue and assigned it to yourself, you will start
 writing the code on an appropriately named branch on your local machine. If you
 are part of the Recidiviz Team, you may push branches directly to the
-`recidiviz/pulse-dashboard` remote. Otherwise, you may push branches to a [fork](https://help.github.com/articles/fork-a-repo/)
+`recidiviz/pulse-dashboards` remote. Otherwise, you may push branches to a [fork](https://help.github.com/articles/fork-a-repo/)
 of the repository.
 
 Before issuing a pull request, run our linting and test suite over your changes
