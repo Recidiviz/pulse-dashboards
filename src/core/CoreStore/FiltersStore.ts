@@ -41,12 +41,7 @@ import {
   PopulationFilters,
   PopulationFilterValues,
 } from "../types/filters";
-import {
-  FILTER_TYPES,
-  prisonFiltersOrder,
-  SIMULATION_COMPARTMENTS,
-  supervisionFiltersOrder,
-} from "../utils/constants";
+import { FILTER_TYPES, filtersOrder } from "../utils/constants";
 import enabledFilters from "../utils/enabledFilters";
 import filterOptions, {
   defaultMetricMode,
@@ -195,12 +190,7 @@ export default class FiltersStore {
   get sortedFilters(): EnabledFilters {
     const { current: metric } = this.rootStore.metricsStore;
 
-    const order: EnabledFilters =
-      metric.compartment === SIMULATION_COMPARTMENTS.SUPERVISION
-        ? supervisionFiltersOrder
-        : prisonFiltersOrder;
-
-    return order.filter((item: EnabledFilter) =>
+    return filtersOrder.filter((item: EnabledFilter) =>
       metric.filters?.enabledFilters.includes(item)
     );
   }
