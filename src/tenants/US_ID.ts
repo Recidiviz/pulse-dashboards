@@ -100,6 +100,7 @@ const US_ID_CONFIG: TenantConfig = {
     "supervision",
     "supervisionToPrison",
     "supervisionToLiberty",
+    "workflows",
   ],
   tableColumns: enabledTableColumns[pathways.US_ID],
   vitalsMetrics: [
