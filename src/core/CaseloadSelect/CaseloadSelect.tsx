@@ -75,15 +75,14 @@ const buildSelectOption = (officer: StaffRecord): SelectOption => {
 
 const DistrictIndicator = observer(() => {
   const {
-    workflowsStore: { user },
+    workflowsStore: { caseloadDistrict },
   } = useRootStore();
-  const district = user?.info.district;
 
-  if (!district) return null;
+  if (!caseloadDistrict) return null;
 
   return (
     <ValuePill>
-      D{district}&nbsp;
+      D{caseloadDistrict}&nbsp;
       <Icon kind="Place" size={12} color={palette.slate60} />
     </ValuePill>
   );

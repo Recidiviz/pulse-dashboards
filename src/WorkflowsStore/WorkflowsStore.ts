@@ -282,11 +282,20 @@ export class WorkflowsStore implements Hydratable {
   }
 
   /**
+   * This provides the district to use for caseload filtering. It returns undefined if the user is enabled to see all
+   * districts, or if the user does not have a district to filter by.
+   */
+  get caseloadDistrict(): string | undefined {
+    const district = this.user?.info.district;
+    const { workflowsEnableAllDistricts } = this.rootStore.tenantStore;
+    return workflowsEnableAllDistricts ? undefined : district;
+  }
+
+  /**
    * Updates data sources queried based on current caseload
    */
   private updateCaseloadSources() {
     const { user: userInfo } = this;
-    const { workflowsEnableAllDistricts } = this.rootStore.tenantStore;
 
     if (userInfo) {
       this.compliantReportingEligibleCount = observableSubscription(
@@ -302,7 +311,7 @@ export class WorkflowsStore implements Hydratable {
       this.officers = observableSubscription((handler) =>
         subscribeToOfficers(
           userInfo.info.stateCode,
-          workflowsEnableAllDistricts ? undefined : userInfo.info.district,
+          this.caseloadDistrict,
           handler
         )
       );
