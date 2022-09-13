@@ -49,6 +49,7 @@ import {
   OpportunityType,
 } from "../WorkflowsStore";
 import { EarlyTerminationReferralRecord } from "../WorkflowsStore/Opportunity/EarlyTerminationReferralRecord";
+import { LSUReferralRecord } from "../WorkflowsStore/Opportunity/LSUReferralRecord";
 import {
   ClientRecord,
   ClientUpdateRecord,
@@ -118,6 +119,7 @@ const collectionNames = {
   clientOpportunityUpdates: "clientOpportunityUpdates",
   compliantReportingReferrals: "compliantReportingReferrals",
   earlyTerminationReferrals: "earlyTerminationReferrals",
+  LSUReferrals: "LSUReferrals",
   featureVariants: "featureVariants",
 };
 
@@ -156,6 +158,10 @@ const collections = {
     db,
     collectionNames.earlyTerminationReferrals
   ) as CollectionReference<EarlyTerminationReferralRecord>,
+  LSUReferrals: collection(
+    db,
+    collectionNames.LSUReferrals
+  ) as CollectionReference<LSUReferralRecord>,
   featureVariants: collection(
     db,
     collectionNames.featureVariants
@@ -439,6 +445,15 @@ export function subscribeToEarlyTerminationReferral(
       handleResults(result.data());
     }
   );
+}
+
+export function subscribeToLSUReferral(
+  clientId: string,
+  handleResults: (results: LSUReferralRecord | undefined) => void
+): Unsubscribe {
+  return onSnapshot(doc(collections.LSUReferrals, clientId), (result) => {
+    handleResults(result.data());
+  });
 }
 
 // TODO(#2108): Clean up requests to `clientUpdates` after fully migrating to `clientUpdatesV2`

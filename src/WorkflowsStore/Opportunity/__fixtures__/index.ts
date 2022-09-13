@@ -22,6 +22,7 @@ import {
 } from "../../../firestore";
 import { dateToTimestamp } from "../../utils";
 import { EarlyTerminationReferralRecord } from "../EarlyTerminationReferralRecord";
+import { LSUReferralRecord } from "../LSUReferralRecord";
 
 export const compliantReportingEligibleClientRecord: RequireKeys<
   ClientRecord,
@@ -169,4 +170,69 @@ export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {
     outOfState: false,
     ICOut: false,
   },
+};
+
+export const LSUReferralRecordFixture: LSUReferralRecord = {
+  stateCode: "US_ID",
+  externalId: "001",
+  formInformation: {
+    clientName: "Betty Rubble",
+  },
+  reasons: [
+    {
+      criteriaName: "RISK_LEVEL",
+      reason: {
+        eligibleRiskLevel: {
+          riskLevel: "MEDIUM",
+          lastIncrease: "2022-01-03",
+        },
+      },
+    },
+    {
+      criteriaName: "NEGATIVE_UA_WITHIN_90_DAYS",
+      reason: {
+        lastNegativeUA: "2022-01-03",
+      },
+    },
+    {
+      criteriaName: "NO_FELONY_CONVICTIONS",
+      reason: {
+        lastFelonyConviction: undefined,
+      },
+    },
+    {
+      criteriaName: "NO_VIOLENT_OR_DUI_CONVICTIONS",
+      reason: {
+        lastViolentOrDUIConviction: undefined,
+      },
+    },
+    {
+      criteriaName: "VERIFIED_EMPLOYMENT",
+      reason: {
+        employmentVerifiedDate: "2022-06-03",
+      },
+    },
+  ],
+};
+
+export const LSUEligibleClientRecord: RequireKeys<
+  ClientRecord,
+  "LSUEligible"
+> = {
+  recordId: "us_id_001",
+  personName: {
+    givenNames: "BETTY",
+    surname: "RUBBLE",
+  },
+  personExternalId: "001",
+  pseudonymizedId: "p001",
+  stateCode: "US_ID",
+  officerId: "OFFICER3",
+  supervisionType: "PROBATION",
+  supervisionLevel: "STANDARD: MEDIUM",
+  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  address: "123 Bedrock Lane",
+  phoneNumber: "5555555678",
+  expirationDate: dateToTimestamp("2024-12-31"),
+  LSUEligible: true,
 };

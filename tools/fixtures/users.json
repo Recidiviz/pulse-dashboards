@@ -30,5 +30,13 @@
     "id": "OFFICER3",
     "stateCode": "US_ND",
     "hasCaseload": true
+  },
+  {
+    "name": "Test Officer4",
+    "email": "test-officer-3@example.com",
+    "district": "DISTRICT 1",
+    "id": "OFFICER4",
+    "stateCode": "US_ID",
+    "hasCaseload": true
   }
 ]

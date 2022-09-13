@@ -25,7 +25,10 @@ import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { OpportunityType } from "../WorkflowsStore";
 
-const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = ["earnedDischarge"];
+const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
+  "earnedDischarge",
+  "LSU",
+];
 
 const US_ID_CONFIG: TenantConfig = {
   name: "Idaho",

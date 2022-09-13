@@ -25,7 +25,7 @@ import styled from "styled-components/macro";
 import * as pathwaysTenants from "../../RootStore/TenantStore/pathwaysTenants";
 import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
 import { Client } from "../../WorkflowsStore";
-import { WORKFLOWS_POLICY_OR_METHODOLOGY_URL } from "../utils/constants";
+import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { InfoButton, InfoTooltipWrapper } from "./common";
 import { ClientProfileProps } from "./types";
@@ -220,9 +220,7 @@ export const Supervision = ({
               <>
                 <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
                   <InfoButton
-                    infoUrl={
-                      WORKFLOWS_POLICY_OR_METHODOLOGY_URL[client.stateCode]
-                    }
+                    infoUrl={WORKFLOWS_METHODOLOGY_URL[client.stateCode]}
                   />
                 </InfoTooltipWrapper>
               </>

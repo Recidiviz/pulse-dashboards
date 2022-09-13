@@ -315,5 +315,28 @@
     "lastSpecialConditionsNote": "2021-12-31",
     "specialConditionsFlag": "current",
     "earlyTerminationEligible": true
+  },
+  {
+    "personName": {
+      "givenNames": "BETTY",
+      "surname": "RUBBLE",
+      "middleNames": "JANE"
+    },
+    "personExternalId": "001",
+    "pseudonymizedId": "p001",
+    "stateCode": "US_ID",
+    "officerId": "OFFICER4",
+    "district": "DISTRICT 1",
+    "supervisionType": "PROBATION",
+    "supervisionLevel": "STANDARD: MEDIUM",
+    "supervisionLevelStart": "2019-12-20",
+    "address": "123 Bedrock Lane",
+    "phoneNumber": "5555555678",
+    "expirationDate": "2024-12-31",
+    "currentBalance": 1221.88,
+    "lastPaymentAmount": 125.75,
+    "lastPaymentDate": "2022-01-04",
+    "specialConditionsFlag": "current",
+    "LSUEligible": true
   }
 ]

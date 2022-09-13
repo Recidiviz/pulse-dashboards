@@ -156,6 +156,29 @@ const PageWorkflows: React.FC = () => {
         </WorkflowsRoute>
         <WorkflowsRoute
           exact
+          path={workflowsRoute({ name: "LSU", client: false })}
+        >
+          <WorkflowsFormLayout
+            sidebarContents={
+              <>
+                <SidebarHeading>{OPPORTUNITY_LABELS.LSU}</SidebarHeading>
+                <OpportunityCaseloadSelection opportunityType="LSU" />
+              </>
+            }
+            formContents={null}
+          />
+        </WorkflowsRoute>
+        <WorkflowsRoute
+          exact
+          path={workflowsRoute({ name: "LSU", client: true })}
+        >
+          <WorkflowsFormLayout
+            sidebarContents={<div />}
+            formContents={<div />}
+          />
+        </WorkflowsRoute>
+        <WorkflowsRoute
+          exact
           path={workflowsRoute({ name: "general", client: true })}
         >
           <FullProfile />

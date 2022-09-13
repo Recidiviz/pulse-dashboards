@@ -17,4 +17,5 @@
 
 export * from "./CompliantReportingOpportunity";
 export * from "./EarlyTerminationOpportunity";
+export * from "./LSUOpportunity";
 export * from "./types";

@@ -272,6 +272,7 @@ export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   general: "client",
   earlyTermination: "earlyTermination",
   earnedDischarge: "earnedDischarge",
+  LSU: "LSU",
 };
 
 const WORKFLOWS_SEARCH_ROUTES: Record<WorkflowsPage, string> = {
@@ -279,6 +280,7 @@ const WORKFLOWS_SEARCH_ROUTES: Record<WorkflowsPage, string> = {
   compliantReporting: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.compliantReporting}`,
   earlyTermination: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earlyTermination}`,
   earnedDischarge: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earnedDischarge}`,
+  LSU: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.LSU}`,
 };
 
 const WORKFLOWS_CLIENT_PATH_ROUTES: Record<WorkflowsPage, string> = {
@@ -286,6 +288,7 @@ const WORKFLOWS_CLIENT_PATH_ROUTES: Record<WorkflowsPage, string> = {
   compliantReporting: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.compliantReporting}/:clientId`,
   earlyTermination: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earlyTermination}/:clientId`,
   earnedDischarge: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earnedDischarge}/:clientId`,
+  LSU: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.LSU}/:clientId`,
 };
 
 /**

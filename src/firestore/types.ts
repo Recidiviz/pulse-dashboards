@@ -23,6 +23,7 @@ import {
 } from "../WorkflowsStore";
 import { TransformedEarlyTerminationReferral } from "../WorkflowsStore/Opportunity/EarlyTerminationReferralRecord";
 import { TransformedEarnedDischargeReferral } from "../WorkflowsStore/Opportunity/EarnedDischargeReferralRecord";
+import { TransformedLSUReferral } from "../WorkflowsStore/Opportunity/LSUReferralRecord";
 
 /**
  * Staff-level data exported from the Recidiviz data platform.
@@ -127,6 +128,7 @@ export type ClientRecord = {
   compliantReportingEligible?: CompliantReportingEligibleRecord;
   earlyTerminationEligible?: boolean;
   earnedDischargeEligible?: boolean;
+  LSUEligible?: boolean;
 };
 
 export type CompliantReportingFinesFeesEligible =
@@ -168,6 +170,7 @@ export type ClientUpdateRecord = {
   compliantReporting?: CompliantReportingUpdateRecord;
   earlyTermination?: EarlyTerminationUpdateRecord;
   earnedDischarge?: EarnedDischargeUpdateRecord;
+  LSU?: LSUUpdateRecord;
 };
 
 type UpdateLog = {
@@ -193,6 +196,8 @@ export type CompliantReportingReferralForm = ReferralFormEdits<TransformedCompli
 export type EarlyTerminationReferralForm = ReferralFormEdits<TransformedEarlyTerminationReferral>;
 
 export type EarnedDischargeReferralForm = ReferralFormEdits<TransformedEarnedDischargeReferral>;
+
+export type LSUReferralForm = ReferralFormEdits<TransformedLSUReferral>;
 
 export type OpportunityEdits<FormEdits = ReferralFormEdits> = {
   denial?: Denial;
@@ -220,6 +225,10 @@ export type CompliantReportingUpdateRecord = OpportunityUpdateRecordBase<
 export type EarnedDischargeUpdateRecord = OpportunityUpdateRecordBase<
   "earnedDischarge",
   EarnedDischargeReferralForm
+>;
+export type LSUUpdateRecord = OpportunityUpdateRecordBase<
+  "LSU",
+  LSUReferralForm
 >;
 export type OpportunityUpdateRecord =
   | EarlyTerminationUpdateRecord

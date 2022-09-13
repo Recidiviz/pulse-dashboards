@@ -183,6 +183,23 @@ export const OpportunityCaseloadSelection = observer(
           </>
         );
         break;
+      case "LSU":
+        introText = (
+          <>
+            Search for officer(s) below to review eligible clients for LSU and
+            complete a transfer chrono.{" "}
+            <a
+              // currentTenantId is coming from the StoreProvider RootStore which
+              // is only partially typed at this point but will always be of type TenantId.
+              href={WORKFLOWS_METHODOLOGY_URL[currentTenantId as TenantId]}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Learn more
+            </a>
+          </>
+        );
+        break;
       default:
         assertNever(opportunityType);
     }

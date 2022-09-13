@@ -26,6 +26,7 @@ export const OPPORTUNITY_TYPES = [
   "compliantReporting",
   "earlyTermination",
   "earnedDischarge",
+  "LSU",
 ] as const;
 /**
  * Values of this union map to key prefixes in client records
@@ -38,6 +39,7 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   compliantReporting: "Compliant Reporting",
   earlyTermination: "Early Termination",
   earnedDischarge: "Earned Discharge",
+  LSU: "Limited Supervision Unit",
 };
 
 export type OpportunityRequirement = {
@@ -109,3 +111,4 @@ export type CompliantReportingOpportunity = CompliantReportingFormInterface &
 export type EarlyTerminationOpportunity = EarlyTerminationFormInterface &
   Opportunity;
 export type EarnedDischargeOpportunity = Opportunity;
+export type LSUOpportunity = Opportunity;

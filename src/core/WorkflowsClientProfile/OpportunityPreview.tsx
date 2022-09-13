@@ -36,6 +36,7 @@ const FORM_PREVIEW: Record<OpportunityType, string> = {
   compliantReporting: compliantReportingFormPreviewSrc,
   earlyTermination: earlyTerminationFormPreviewSrc,
   earnedDischarge: "",
+  LSU: "",
 };
 
 const PreviewWrapper = styled(Wrapper)`

@@ -103,9 +103,7 @@ export const CriteriaList = observer(
                     <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
                       <InfoButton
                         infoUrl={
-                          WORKFLOWS_POLICY_OR_METHODOLOGY_URL[
-                            opportunity.client.stateCode
-                          ]
+                          WORKFLOWS_POLICY_OR_METHODOLOGY_URL[opportunity.type]
                         }
                       />
                     </InfoTooltipWrapper>
@@ -137,9 +135,7 @@ export const CriteriaList = observer(
                     <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
                       <InfoButton
                         infoUrl={
-                          WORKFLOWS_POLICY_OR_METHODOLOGY_URL[
-                            opportunity.client.stateCode
-                          ]
+                          WORKFLOWS_POLICY_OR_METHODOLOGY_URL[opportunity.type]
                         }
                       />
                     </InfoTooltipWrapper>

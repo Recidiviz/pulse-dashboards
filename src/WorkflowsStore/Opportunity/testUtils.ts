@@ -32,6 +32,10 @@ export const INCOMPLETE_UPDATE: ClientUpdateRecord = {
     type: "earlyTermination",
     referralForm: { updated: UPDATE_RECORD },
   },
+  LSU: {
+    type: "LSU",
+    referralForm: { updated: UPDATE_RECORD },
+  },
 };
 
 export const DENIED_UPDATE: ClientUpdateRecord = {
@@ -43,6 +47,10 @@ export const DENIED_UPDATE: ClientUpdateRecord = {
     type: "earlyTermination",
     denial: { reasons: ["ABC"], updated: UPDATE_RECORD },
   },
+  LSU: {
+    type: "LSU",
+    denial: { reasons: ["ABC"], updated: UPDATE_RECORD },
+  },
 };
 
 export const COMPLETED_UPDATE: ClientUpdateRecord = {
@@ -52,6 +60,10 @@ export const COMPLETED_UPDATE: ClientUpdateRecord = {
   },
   earlyTermination: {
     type: "earlyTermination",
+    completed: { update: UPDATE_RECORD },
+  },
+  LSU: {
+    type: "LSU",
     completed: { update: UPDATE_RECORD },
   },
 };

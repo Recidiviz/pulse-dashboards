@@ -34,6 +34,7 @@ import {
   EarlyTerminationUpdateRecord,
   EarnedDischargeUpdateRecord,
   FullName,
+  LSUUpdateRecord,
   SpecialConditionCode,
   SpecialConditionsStatus,
   subscribeToOpportunityUpdate,
@@ -47,9 +48,11 @@ import {
   createEarlyTerminationOpportunity,
   EarlyTerminationOpportunity,
   EarnedDischargeOpportunity,
+  LSUOpportunity,
   OpportunityType,
 } from "./Opportunity";
 import { createEarnedDischargeOpportunity } from "./Opportunity/EarnedDischargeOpportunity";
+import { createLSUOpportunity } from "./Opportunity/LSUOpportunity";
 import {
   observableSubscription,
   optionalFieldToDate,
@@ -96,6 +99,7 @@ type OpportunityMapping = {
   earlyTermination: EarlyTerminationOpportunity | undefined;
   compliantReporting: CompliantReportingOpportunity | undefined;
   earnedDischarge: EarnedDischargeOpportunity | undefined;
+  LSU: LSUOpportunity | undefined;
 };
 
 export class Client {
@@ -272,6 +276,7 @@ export class Client {
         this.record.earnedDischargeEligible,
         this
       ),
+      LSU: createLSUOpportunity(this.record.LSUEligible, this),
     };
   }
 
@@ -302,6 +307,7 @@ export class Client {
     compliantReporting?: CompliantReportingUpdateRecord;
     earlyTermination?: EarlyTerminationUpdateRecord;
     earnedDischarge?: EarnedDischargeUpdateRecord;
+    LSU?: LSUUpdateRecord;
   } {
     return {
       compliantReporting: this.opportunityUpdateSubscriptions.compliantReporting?.current(),

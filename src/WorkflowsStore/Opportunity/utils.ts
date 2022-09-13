@@ -57,6 +57,14 @@ export const earnedDischargeOpportunityStatuses: Record<
   ALMOST: "Almost eligible",
 };
 
+export const LSUOpportunityStatuses: Record<OpportunityStatus, string> = {
+  PENDING: "May be eligible",
+  IN_PROGRESS: "LSU transfer chrono in progress",
+  COMPLETED: "LSU transfer chrono complete",
+  DENIED: "Currently ineligible",
+  ALMOST: "Almost eligible",
+};
+
 export function formatNoteDate(date: Date): string {
   return format(date, "MMMM do");
 }
