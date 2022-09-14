@@ -24,7 +24,7 @@ import sumBy from "lodash/fp/sumBy";
 import values from "lodash/fp/values";
 import { computed, makeObservable } from "mobx";
 
-import { toTitleCase } from "../../utils";
+import { humanReadableTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { PopulationFilterLabels } from "../types/filters";
@@ -163,7 +163,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
       chartDatasets: datasets,
       chartLabels: labels,
       chartId: this.chartTitle,
-      dataExportLabel: toTitleCase(this.accessor),
+      dataExportLabel: humanReadableTitleCase(this.accessor),
     };
   }
 
