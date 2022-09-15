@@ -30,7 +30,7 @@
   &__body {
     display: flex;
     flex-flow: column;
-    width: 100%;
+    width: calc(100% - 30rem);
     padding-bottom: 1rem;
     padding-left: 4.5rem;
     padding-right: 5rem;
@@ -57,6 +57,7 @@
       max-width: 100%;
     }
     &__body {
+      width: 100%;
       padding-left: 2.5rem;
       padding-right: 2.5rem;
     }

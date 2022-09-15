@@ -20,13 +20,10 @@
 
 .PathwaysTable {
   width: 100%;
+  min-width: 1300px !important;
   text-align: left;
   color: $pine-1;
   @include sans-14;
-
-  @media screen and (max-width: $core-breakpoint-sm) {
-    min-width: 800px !important;
-  }
 
   &__head {
     color: $slate-80;

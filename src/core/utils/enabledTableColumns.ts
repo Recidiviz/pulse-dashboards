@@ -26,6 +26,16 @@ import {
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { TableColumns } from "../types/charts";
 
+export const defaultTableColumnsWidths = {
+  name: 150,
+  id: 100,
+  gender: 100,
+  age: 80,
+  facility: 100,
+  admissionReason: 200,
+  race: 200,
+};
+
 export const DefaultTableColumns: TableColumns = {
   prisonPopulationPersonLevel: [
     {
@@ -33,41 +43,43 @@ export const DefaultTableColumns: TableColumns = {
       accessor: "fullName",
       useTitleCase: true,
       useFilterLabels: false,
-      width: 150,
+      width: defaultTableColumnsWidths.name,
     },
     {
       Header: "DOC ID",
       accessor: "stateId",
       useFilterLabels: false,
-      width: 100,
+      width: defaultTableColumnsWidths.id,
     },
     {
       Header: "Gender",
       accessor: "gender",
       useFilterLabels: true,
-      width: 80,
+      width: defaultTableColumnsWidths.gender,
     },
     {
       Header: "Age",
       accessor: "age",
       useFilterLabels: false,
-      width: 80,
+      width: defaultTableColumnsWidths.age,
     },
     {
       Header: "Facility",
       accessor: "facility",
       useFilterLabels: false,
-      width: 80,
+      width: defaultTableColumnsWidths.facility,
     },
     {
       Header: "Admission Reason",
       accessor: "admissionReason",
       useFilterLabels: true,
+      width: defaultTableColumnsWidths.admissionReason,
     },
     {
       Header: "Race",
       accessor: "race",
       useFilterLabels: true,
+      width: defaultTableColumnsWidths.race,
     },
   ],
   prisonToSupervisionPopulationPersonLevel: [
@@ -76,31 +88,31 @@ export const DefaultTableColumns: TableColumns = {
       accessor: "fullName",
       useTitleCase: true,
       useFilterLabels: false,
-      width: 150,
+      width: defaultTableColumnsWidths.name,
     },
     {
       Header: "DOC ID",
       accessor: "stateId",
       useFilterLabels: false,
-      width: 100,
+      width: defaultTableColumnsWidths.id,
     },
     {
       Header: "Gender",
       accessor: "gender",
       useFilterLabels: true,
-      width: 80,
+      width: defaultTableColumnsWidths.gender,
     },
     {
       Header: "Age",
       accessor: "age",
       useFilterLabels: false,
-      width: 80,
+      width: defaultTableColumnsWidths.age,
     },
     {
       Header: "Facility",
       accessor: "facility",
       useFilterLabels: false,
-      width: 100,
+      width: defaultTableColumnsWidths.facility,
     },
     {
       Header: "Race",

@@ -35,14 +35,8 @@
   }
 
   &__table {
-    overflow-y: overlay !important;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: overlay !important;
+    overflow: auto;
     margin-top: 1.938rem;
-
-    @media screen and (max-width: $core-breakpoint-sm) {
-      overflow-x: overlay !important;
-      overflow-x: auto;
-    }
   }
 }

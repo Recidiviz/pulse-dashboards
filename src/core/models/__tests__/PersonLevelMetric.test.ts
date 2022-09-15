@@ -23,6 +23,7 @@ import TenantStore from "../../../RootStore/TenantStore";
 import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
 import { FILTER_TYPES } from "../../utils/constants";
+import { defaultTableColumnsWidths } from "../../utils/enabledTableColumns";
 import PersonLevelMetric from "../PersonLevelMetric";
 
 const OLD_ENV = process.env;
@@ -165,41 +166,43 @@ describe("PersonLevelMetric", () => {
         accessor: "fullName",
         useTitleCase: true,
         useFilterLabels: false,
-        width: 150,
+        width: defaultTableColumnsWidths.name,
       },
       {
         Header: "DOC ID",
         accessor: "stateId",
         useFilterLabels: false,
-        width: 100,
+        width: defaultTableColumnsWidths.id,
       },
       {
         Header: "Gender",
         accessor: "gender",
         useFilterLabels: true,
-        width: 80,
+        width: defaultTableColumnsWidths.gender,
       },
       {
         Header: "Age",
         accessor: "age",
         useFilterLabels: false,
-        width: 80,
+        width: defaultTableColumnsWidths.age,
       },
       {
         Header: "Facility",
         accessor: "facility",
         useFilterLabels: false,
-        width: 80,
+        width: defaultTableColumnsWidths.facility,
       },
       {
         Header: "Admission Reason",
         accessor: "admissionReason",
         useFilterLabels: true,
+        width: defaultTableColumnsWidths.admissionReason,
       },
       {
         Header: "Race",
         accessor: "race",
         useFilterLabels: true,
+        width: defaultTableColumnsWidths.race,
       },
     ];
     expect(metric.columns).toEqual(expected);
