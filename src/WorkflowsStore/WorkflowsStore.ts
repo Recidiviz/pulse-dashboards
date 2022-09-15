@@ -197,7 +197,7 @@ export class WorkflowsStore implements Hydratable {
       }
     } catch (e) {
       runInAction(() => {
-        this.error = e;
+        this.error = e as Error;
       });
     }
     runInAction(() => {

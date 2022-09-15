@@ -136,6 +136,14 @@ class EarnedDischargeOpportunity implements Opportunity {
   get requirementsAlmostMet(): OpportunityRequirement[] {
     return [];
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  get denial() {
+    return undefined;
+  }
+
+  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-empty-function
+  hydrate(): void {}
 }
 
 /**

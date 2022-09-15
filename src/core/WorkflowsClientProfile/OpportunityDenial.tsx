@@ -134,8 +134,7 @@ export const OpportunityDenial = observer(
     if (!opportunity) return null;
     const colors = useStatusColors(opportunity);
 
-    const reasons =
-      client.opportunityUpdates?.[opportunity.type]?.denial?.reasons;
+    const reasons = opportunity.denial?.reasons;
 
     const buttonProps = {
       background: colors.background,
@@ -194,10 +193,7 @@ export const OpportunityDenial = observer(
               {reasons?.includes(OTHER_KEY) && (
                 <OtherInputWrapper>
                   <OtherInput
-                    defaultValue={
-                      client.opportunityUpdates?.[opportunity.type]?.denial
-                        ?.otherReason
-                    }
+                    defaultValue={opportunity.denial?.otherReason}
                     placeholder="Please specify a reason…"
                     onChange={debounce(
                       (event) =>

@@ -48,8 +48,6 @@ const FormInput: React.FC<FormInputProps> = ({ client, name, ...props }) => {
   const [value, onChange] = useReactiveInput({
     name,
     fetchFromStore: () => compliantReporting?.formData[name] as string,
-    persistToStore: (valueToStore: string) =>
-      compliantReporting?.setDataField(name, valueToStore),
     persistToFirestore: (valueToStore: string) =>
       updateCompliantReportingFormFieldData(
         client.currentUserName || "user",
@@ -79,7 +77,10 @@ const FormInput: React.FC<FormInputProps> = ({ client, name, ...props }) => {
 
 const FormInputWrapper: React.FC<FormInputWrapperProps> = (props) => {
   const { workflowsStore } = useRootStore();
-  if (!workflowsStore?.selectedClient?.opportunityUpdates.compliantReporting) {
+  if (
+    workflowsStore?.selectedClient?.opportunities.compliantReporting
+      ?.isLoading !== false
+  ) {
     return <Input {...props} disabled />;
   }
 

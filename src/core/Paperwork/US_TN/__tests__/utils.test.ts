@@ -32,35 +32,47 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, configure, observable, set } from "mobx";
+import { configure } from "mobx";
 import { IDisposer } from "mobx-utils";
 
 import { trackSetOpportunityStatus } from "../../../../analytics";
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../../WorkflowsStore";
 import { eligibleClient } from "../../../../WorkflowsStore/__fixtures__";
+import {
+  CollectionDocumentSubscription,
+  DocumentSubscription,
+  OpportunityUpdateSubscription,
+} from "../../../../WorkflowsStore/subscriptions";
 import { updateCompliantReportingFormFieldData } from "../utils";
 
 let testObserver: IDisposer;
 
 jest.mock("../../../../analytics");
 jest.mock("../../../../firestore");
+jest.mock("../../../../WorkflowsStore/subscriptions");
+
+const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
+  typeof CollectionDocumentSubscription
+>;
+const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.MockedClass<
+  typeof OpportunityUpdateSubscription
+>;
 
 let client: Client;
 let rootStore: RootStore;
-let mockUpdate: typeof Client.prototype["opportunityUpdates"];
+let mockReferralSub: DocumentSubscription<any>;
+let mockUpdatesSub: DocumentSubscription<any>;
 
 beforeEach(() => {
   // this lets us spy on mobx computed getters
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
   client = new Client(eligibleClient, rootStore);
+  [mockReferralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+  [mockUpdatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
 
-  // update this to simulate fetched data and pipe it through MobX
-  mockUpdate = observable({});
-  jest
-    .spyOn(Client.prototype, "opportunityUpdates", "get")
-    .mockReturnValue(computed(() => mockUpdate).get());
+  mockReferralSub.isLoading = false;
 });
 
 afterEach(() => {
@@ -75,9 +87,7 @@ afterEach(() => {
 
 test("track start of progress on pending review", async () => {
   // simulating a fetch that has found no updates yet
-  set(mockUpdate, {
-    compliantReporting: {},
-  });
+  mockUpdatesSub.isLoading = false;
 
   updateCompliantReportingFormFieldData("testUser", client, {
     clientFirstName: "Testabc",
@@ -92,9 +102,8 @@ test("track start of progress on pending review", async () => {
 
 test("form updates should not track status change if it's already set", async () => {
   // simulate fetching existing edits to the form
-  set(mockUpdate, {
-    compliantReporting: { referralForm: { data: { foo: "bar" } } },
-  });
+  mockUpdatesSub.data = { referralForm: { data: { foo: "bar" } } };
+  mockUpdatesSub.isLoading = false;
 
   updateCompliantReportingFormFieldData("testUser", client, {
     clientFirstName: "Testabc",

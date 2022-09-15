@@ -18,7 +18,7 @@ async function updateEarlyTerminationDraftFieldData(
     { [name]: valueToStore }
   );
 
-  await when(() => client.opportunityUpdates.earlyTermination !== undefined);
+  await when(() => client.opportunities.earlyTermination?.isLoading === false);
 
   if (client.opportunities.earlyTermination?.reviewStatus === "PENDING") {
     trackSetOpportunityStatus({

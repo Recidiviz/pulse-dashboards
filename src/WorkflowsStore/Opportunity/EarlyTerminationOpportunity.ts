@@ -17,19 +17,23 @@
 
 import { deleteField } from "firebase/firestore";
 import { sortBy } from "lodash";
-import { action, keys, makeAutoObservable, remove, set, toJS } from "mobx";
+import { makeAutoObservable, remove, toJS } from "mobx";
 
 import { transform } from "../../core/Paperwork/US_ND/EarlyTermination/Transformer";
 import { updateEarlyTerminationDraftFieldData } from "../../core/Paperwork/US_ND/EarlyTermination/utils";
-import { subscribeToEarlyTerminationReferral } from "../../firestore";
+import {
+  Denial,
+  EarlyTerminationUpdateRecord,
+  UpdateLog,
+} from "../../firestore";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import {
-  fieldToDate,
-  observableSubscription,
-  OpportunityValidationError,
-  SubscriptionValue,
-} from "../utils";
+  CollectionDocumentSubscription,
+  DocumentSubscription,
+  OpportunityUpdateSubscription,
+} from "../subscriptions";
+import { fieldToDate, OpportunityValidationError } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 import {
   EarlyTerminationDraftData,
@@ -89,9 +93,9 @@ class EarlyTerminationOpportunity
 
   readonly denialReasonsMap: DenialReasonsMap;
 
-  draftData: Partial<EarlyTerminationDraftData>;
+  private referralSubscription: DocumentSubscription<EarlyTerminationReferralRecord>;
 
-  private fetchedEarlyTerminationReferral: SubscriptionValue<EarlyTerminationReferralRecord>;
+  private updatesSubscription: DocumentSubscription<EarlyTerminationUpdateRecord>;
 
   constructor(client: Client) {
     makeAutoObservable<
@@ -101,22 +105,23 @@ class EarlyTerminationOpportunity
       record: true,
       client: false,
       transformedRecord: true,
-      draftData: true,
-      setDataField: action,
     });
 
     this.client = client;
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.draftData = {};
-    this.fetchedEarlyTerminationReferral = observableSubscription((handler) =>
-      subscribeToEarlyTerminationReferral(this.client.recordId, (result) => {
-        if (result) handler(result);
-      })
+    this.referralSubscription = new CollectionDocumentSubscription(
+      "earlyTerminationReferrals",
+      client.recordId
+    );
+    this.updatesSubscription = new OpportunityUpdateSubscription(
+      client.recordId,
+      client.id,
+      "earlyTermination"
     );
   }
 
   get record(): EarlyTerminationReferralRecord | undefined {
-    return this.fetchedEarlyTerminationReferral.current();
+    return this.referralSubscription.data;
   }
 
   private get transformedRecord() {
@@ -242,12 +247,20 @@ class EarlyTerminationOpportunity
     return false;
   }
 
+  get updates() {
+    return this.updatesSubscription.data;
+  }
+
+  get formLastUpdated(): UpdateLog | undefined {
+    return this.updates?.referralForm?.updated;
+  }
+
   get printText(): string {
     if (this.client.formIsPrinting) {
       return "Downloading .DOCX...";
     }
 
-    if (this.client.opportunityUpdates?.earlyTermination?.completed) {
+    if (this.updates?.completed) {
       return "Re-download .DOCX";
     }
 
@@ -259,7 +272,7 @@ class EarlyTerminationOpportunity
   }
 
   get reviewStatus(): OpportunityStatus {
-    const updates = this.client.opportunityUpdates.earlyTermination;
+    const { updates } = this;
     if ((updates?.denial?.reasons?.length || 0) !== 0) {
       return "DENIED";
     }
@@ -342,12 +355,11 @@ class EarlyTerminationOpportunity
   }
 
   get additionalDepositionLines(): string[] {
-    if (!this.draftData) return [];
-    const additionalDepositionLines = keys(this.draftData)
-      .map((key: PropertyKey) => String(key))
-      .filter((key: string) =>
-        key.startsWith(ADDITIONAL_DEPOSITION_LINES_PREFIX)
-      );
+    const additionalDepositionLines = Object.keys(
+      this.draftData
+    ).filter((key: string) =>
+      key.startsWith(ADDITIONAL_DEPOSITION_LINES_PREFIX)
+    );
 
     return sortBy(additionalDepositionLines, (key) =>
       Number(key.split(ADDITIONAL_DEPOSITION_LINES_PREFIX)[1])
@@ -370,11 +382,29 @@ class EarlyTerminationOpportunity
     return { ...toJS(this.prefilledData), ...toJS(this.draftData) };
   }
 
-  async setDataField(
-    key: keyof EarlyTerminationDraftData | string,
-    value: boolean | string | string[]
-  ): Promise<void> {
-    set(this.draftData, key, value);
+  hydrate(): void {
+    this.referralSubscription.hydrate();
+    this.updatesSubscription.hydrate();
+  }
+
+  get isLoading(): boolean | undefined {
+    if (
+      this.referralSubscription.isLoading === undefined ||
+      this.updatesSubscription.isLoading === undefined
+    ) {
+      return undefined;
+    }
+    return (
+      this.referralSubscription.isLoading || this.updatesSubscription.isLoading
+    );
+  }
+
+  get draftData(): Partial<EarlyTerminationDraftData> {
+    return this.updates?.referralForm?.data ?? {};
+  }
+
+  get denial(): Denial | undefined {
+    return this.updates?.denial;
   }
 }
 

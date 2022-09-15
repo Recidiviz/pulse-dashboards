@@ -48,6 +48,7 @@ import { Client } from "../Client";
 import { dateToTimestamp } from "../utils";
 
 jest.mock("../../firestore");
+jest.mock("../subscriptions");
 
 const mockGetClient = getClient as jest.MockedFunction<typeof getClient>;
 const mockGetUser = getUser as jest.MockedFunction<typeof getUser>;

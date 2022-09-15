@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, configure, observable, runInAction, set, when } from "mobx";
+import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
@@ -25,7 +25,6 @@ import {
 } from "../../analytics";
 import { transform } from "../../core/Paperwork/US_TN/Transformer";
 import {
-  subscribeToCompliantReportingReferral,
   updateOpportunityCompleted,
   updateOpportunityDenial,
 } from "../../firestore";
@@ -37,6 +36,10 @@ import {
   CompliantReportingReferralRecord,
   TransformedCompliantReportingReferral,
 } from "../Opportunity/CompliantReportingReferralRecord";
+import {
+  CollectionDocumentSubscription,
+  OpportunityUpdateSubscription,
+} from "../subscriptions";
 import { dateToTimestamp } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 
@@ -45,72 +48,48 @@ let testObserver: IDisposer;
 jest.mock("../../analytics");
 jest.mock("../../firestore");
 jest.mock("../../core/Paperwork/US_TN/Transformer");
+jest.mock("../subscriptions");
 
 const mockTransform = transform as jest.MockedFunction<typeof transform>;
-const mockSubscribeToCompliantReportingReferral = subscribeToCompliantReportingReferral as jest.MockedFunction<
-  typeof subscribeToCompliantReportingReferral
->;
 const mockupdateOpportunityDenial = updateOpportunityDenial as jest.MockedFunction<
   typeof updateOpportunityDenial
 >;
 const mockUpdateOpportunityCompleted = updateOpportunityCompleted as jest.MockedFunction<
   typeof updateOpportunityCompleted
 >;
+const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
+  typeof CollectionDocumentSubscription
+>;
+const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.MockedClass<
+  typeof OpportunityUpdateSubscription
+>;
 
 let client: Client;
 let rootStore: RootStore;
-let mockUpdate: typeof Client.prototype["opportunityUpdates"];
+let referralSub: CollectionDocumentSubscription<any>;
+let updatesSub: OpportunityUpdateSubscription<any>;
 
 beforeEach(() => {
   // this lets us spy on mobx computed getters
   configure({ safeDescriptors: false });
+  jest.resetAllMocks();
   rootStore = new RootStore();
   client = new Client(eligibleClient, rootStore);
 
-  // update this to simulate fetched data and pipe it through MobX
-  mockUpdate = observable({});
-  jest
-    .spyOn(Client.prototype, "opportunityUpdates", "get")
-    .mockReturnValue(computed(() => mockUpdate).get());
+  [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+  [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+  // for simplicity we will mark all the subs as hydrated, though we may update data later
+  referralSub.isLoading = false;
+  updatesSub.isLoading = false;
 });
 
 afterEach(() => {
   configure({ safeDescriptors: true });
-  jest.resetAllMocks();
 
   // clean up any Mobx observers to avoid leaks
   if (testObserver) {
     testObserver();
   }
-});
-
-test("fetch CompliantReportingReferral uses recordId", async () => {
-  const record = { poFirstName: "Bob" } as CompliantReportingReferralRecord;
-  mockTransform.mockImplementation(
-    (_: Client, data: CompliantReportingReferralRecord) => {
-      return (data as unknown) as Partial<TransformedCompliantReportingReferral>;
-    }
-  );
-
-  mockSubscribeToCompliantReportingReferral.mockImplementation(
-    (recordId, handler) => {
-      expect(recordId).toBe(client.recordId);
-      handler(record);
-      return jest.fn();
-    }
-  );
-
-  testObserver = keepAlive(
-    computed(() => [client.opportunities.compliantReporting?.formData])
-  );
-
-  await when(
-    () =>
-      client.opportunities.compliantReporting?.formData.poFirstName !==
-      undefined
-  );
-
-  expect(mockSubscribeToCompliantReportingReferral).toHaveBeenCalled();
 });
 
 test.each(OPPORTUNITY_TYPES)(
@@ -251,15 +230,12 @@ test.each(OPPORTUNITY_TYPES)(
 test("don't record a completion if user is ineligible", () => {
   runInAction(() => {
     rootStore.workflowsStore.user = mockOfficer;
-  });
-
-  set(mockUpdate, {
-    compliantReporting: {
+    updatesSub.data = {
       denial: {
         reasons: ["test"],
         updated: { by: "test", date: dateToTimestamp("2022-02-01") },
       },
-    },
+    };
   });
 
   client.printReferralForm("compliantReporting");
@@ -273,45 +249,33 @@ test("compliant reporting review status", () => {
     "Needs referral"
   );
 
-  set(mockUpdate, {
-    compliantReporting: {
-      denial: {
-        reasons: ["test"],
-        updated: { by: "test", date: dateToTimestamp("2022-02-01") },
-      },
+  updatesSub.data = {
+    denial: {
+      reasons: ["test"],
+      updated: { by: "test", date: dateToTimestamp("2022-02-01") },
     },
-  });
-
+  };
   expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
     "Currently ineligible"
   );
 
-  set(mockUpdate, {
-    compliantReporting: {
-      referralForm: {},
-    },
-  });
+  updatesSub.data = { referralForm: {} };
   expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
     "Referral in progress"
   );
 
-  set(mockUpdate, {
-    compliantReporting: {
-      completed: {
-        by: "test",
-        date: {},
-      },
+  updatesSub.data = {
+    completed: {
+      by: "test",
+      date: {},
     },
-  });
+  };
   expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
     "Referral form complete"
   );
 });
 
 test("form view tracking", async () => {
-  // tracking call waits for the initial update fetch so we have to mock it
-  set(mockUpdate, { compliantReporting: {} });
-
   await client.trackFormViewed("compliantReporting");
 
   expect(trackReferralFormViewed).toHaveBeenCalledWith({
@@ -326,13 +290,11 @@ test("form view tracking waits for updates", async () => {
   // simulate fetch latency
   setTimeout(() => {
     runInAction(() => {
-      set(mockUpdate, {
-        compliantReporting: {
-          completed: {
-            update: { by: "abc", date: dateToTimestamp("2022-01-01") },
-          },
+      updatesSub.data = {
+        completed: {
+          update: { by: "abc", date: dateToTimestamp("2022-01-01") },
         },
-      });
+      };
     });
   }, 10);
 
@@ -346,9 +308,6 @@ test("form view tracking waits for updates", async () => {
 });
 
 test("list view tracking", async () => {
-  // tracking call waits for the initial update fetch so we have to mock it
-  set(mockUpdate, { compliantReporting: {} });
-
   await client.trackListViewed("compliantReporting");
 
   expect(trackSurfacedInList).toHaveBeenCalledWith({
@@ -363,13 +322,11 @@ test("list view tracking waits for updates", async () => {
   // simulate fetch latency
   setTimeout(() => {
     runInAction(() => {
-      set(mockUpdate, {
-        compliantReporting: {
-          completed: {
-            update: { by: "abc", date: dateToTimestamp("2022-01-01") },
-          },
+      updatesSub.data = {
+        completed: {
+          update: { by: "abc", date: dateToTimestamp("2022-01-01") },
         },
-      });
+      };
     });
   }, 10);
 
@@ -380,4 +337,32 @@ test("list view tracking waits for updates", async () => {
     clientId: client.pseudonymizedId,
     opportunityType: "compliantReporting",
   });
+});
+
+test("fetch CompliantReportingReferral uses recordId", async () => {
+  const record = { poFirstName: "Bob" } as CompliantReportingReferralRecord;
+  mockTransform.mockImplementation(
+    (_: Client, data: CompliantReportingReferralRecord) => {
+      return (data as unknown) as Partial<TransformedCompliantReportingReferral>;
+    }
+  );
+
+  runInAction(() => {
+    CollectionDocumentSubscriptionMock.prototype.data = record;
+  });
+
+  testObserver = keepAlive(
+    computed(() => [client.opportunities.compliantReporting?.formData])
+  );
+
+  await when(
+    () =>
+      client.opportunities.compliantReporting?.formData.poFirstName !==
+      undefined
+  );
+
+  expect(CollectionDocumentSubscriptionMock).toHaveBeenCalledWith(
+    "compliantReportingReferrals",
+    eligibleClient.recordId
+  );
 });

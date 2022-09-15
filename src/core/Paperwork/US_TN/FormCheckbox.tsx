@@ -48,8 +48,6 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
       return;
     }
 
-    compliantReporting.setDataField(name, event.target.checked);
-
     updateCompliantReportingFormFieldData(
       client.currentUserName || "user",
       client,

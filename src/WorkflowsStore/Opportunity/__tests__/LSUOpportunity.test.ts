@@ -15,18 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { configure, when } from "mobx";
+import { configure } from "mobx";
 import tk from "timekeeper";
 
-import { subscribeToLSUReferral } from "../../../firestore";
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
+import {
+  CollectionDocumentSubscription,
+  OpportunityUpdateSubscription,
+} from "../../subscriptions";
 import {
   LSUEligibleClientRecord,
   LSUReferralRecordFixture,
 } from "../__fixtures__";
-import { createLSUOpportunity } from "../LSUOpportunity";
-import { LSUCriteria, LSUReferralRecord } from "../LSUReferralRecord";
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,
@@ -35,47 +36,39 @@ import {
 import { Opportunity } from "../types";
 import { LSUOpportunityStatuses } from "../utils";
 
-type LSUOpportunity = {
-  record: LSUReferralRecord | undefined;
-};
+jest.mock("../../../firestore");
+jest.mock("../../subscriptions");
 
-let et: Opportunity & LSUOpportunity;
+const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
+  typeof CollectionDocumentSubscription
+>;
+const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.MockedClass<
+  typeof OpportunityUpdateSubscription
+>;
+
+let opp: Opportunity;
 let client: Client;
 let root: RootStore;
-
-jest.mock("../../../firestore");
-let mockUpdates: jest.SpyInstance;
-
-const mockSubscribeToLSUReferral = subscribeToLSUReferral as jest.MockedFunction<
-  typeof subscribeToLSUReferral
->;
+let referralSub: CollectionDocumentSubscription<any>;
+let updatesSub: OpportunityUpdateSubscription<any>;
 
 function createTestUnit(clientRecord: typeof LSUEligibleClientRecord) {
   root = new RootStore();
   client = new Client(clientRecord, root);
 
-  const maybeOpportunity = createLSUOpportunity(
-    clientRecord.LSUEligible,
-    client
-  );
+  const maybeOpportunity = client.opportunities.LSU;
 
   if (maybeOpportunity === undefined) {
     throw new Error("Unable to create opportunity instance");
   }
 
-  client.opportunities.LSU = maybeOpportunity;
-  et = maybeOpportunity;
+  opp = maybeOpportunity;
 }
 
 beforeEach(() => {
   // this lets us spy on observables, e.g. computed getters
   configure({ safeDescriptors: false });
   tk.freeze(new Date(2022, 7, 1));
-  mockUpdates = jest.spyOn(Client.prototype, "opportunityUpdates", "get");
-  // mimics the value when the fetch returns no updates
-  mockUpdates.mockReturnValue({
-    LSU: { type: "LSU" },
-  });
 });
 
 afterEach(() => {
@@ -86,53 +79,94 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
-    mockSubscribeToLSUReferral.mockImplementation((_clientId, handler) => {
-      handler(LSUReferralRecordFixture);
-      return jest.fn();
-    });
     createTestUnit(LSUEligibleClientRecord);
+
+    [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+    referralSub.isLoading = false;
+    referralSub.data = LSUReferralRecordFixture;
+
+    [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+    updatesSub.isLoading = false;
   });
 
   test("review status", () => {
-    expect(et.reviewStatus).toBe("PENDING");
+    expect(opp.reviewStatus).toBe("PENDING");
 
-    mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
-    expect(et.reviewStatus).toBe("IN_PROGRESS");
+    updatesSub.data = INCOMPLETE_UPDATE.LSU;
+    expect(opp.reviewStatus).toBe("IN_PROGRESS");
 
-    mockUpdates.mockReturnValue(DENIED_UPDATE);
-    expect(et.reviewStatus).toBe("DENIED");
+    updatesSub.data = DENIED_UPDATE.LSU;
+    expect(opp.reviewStatus).toBe("DENIED");
 
-    mockUpdates.mockReturnValue(COMPLETED_UPDATE);
-    expect(et.reviewStatus).toBe("COMPLETED");
+    updatesSub.data = COMPLETED_UPDATE.LSU;
+    expect(opp.reviewStatus).toBe("COMPLETED");
   });
 
   test("short status message", () => {
-    expect(et.statusMessageShort).toBe(LSUOpportunityStatuses.PENDING);
+    expect(opp.statusMessageShort).toBe(LSUOpportunityStatuses.PENDING);
 
-    mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
-    expect(et.statusMessageShort).toBe(LSUOpportunityStatuses.IN_PROGRESS);
+    updatesSub.data = INCOMPLETE_UPDATE.LSU;
+    expect(opp.statusMessageShort).toBe(LSUOpportunityStatuses.IN_PROGRESS);
 
-    mockUpdates.mockReturnValue(DENIED_UPDATE);
-    expect(et.statusMessageShort).toBe(LSUOpportunityStatuses.DENIED);
+    updatesSub.data = DENIED_UPDATE.LSU;
+    expect(opp.statusMessageShort).toBe(LSUOpportunityStatuses.DENIED);
 
-    mockUpdates.mockReturnValue(COMPLETED_UPDATE);
-    expect(et.statusMessageShort).toBe(LSUOpportunityStatuses.COMPLETED);
+    updatesSub.data = COMPLETED_UPDATE.LSU;
+    expect(opp.statusMessageShort).toBe(LSUOpportunityStatuses.COMPLETED);
   });
 
   test("extended status message", () => {
-    expect(et.statusMessageLong).toBe(LSUOpportunityStatuses.PENDING);
+    expect(opp.statusMessageLong).toBe(LSUOpportunityStatuses.PENDING);
   });
 
   test("rank by status", () => {
-    expect(et.rank).toBe(0);
+    expect(opp.rank).toBe(0);
   });
 
   test("requirements almost met", () => {
-    expect(et.requirementsAlmostMet).toEqual([]);
+    expect(opp.requirementsAlmostMet).toEqual([]);
   });
 
-  test("requirements met", async () => {
-    await when(() => et.record !== undefined);
-    expect(et.requirementsMet).toMatchSnapshot();
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
   });
+});
+
+describe("hydration is lowest common denominator of all subscriptions", () => {
+  beforeEach(() => {
+    createTestUnit(LSUEligibleClientRecord);
+
+    [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+
+    [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+  });
+
+  test.each([
+    [undefined, undefined, undefined],
+    [undefined, true, undefined],
+    [undefined, false, undefined],
+    [true, true, true],
+    [true, false, true],
+    [false, false, false],
+  ])("%s + %s = %s", (statusA, statusB, result) => {
+    referralSub.isLoading = statusA;
+    updatesSub.isLoading = statusB;
+    expect(opp.isLoading).toBe(result);
+
+    referralSub.isLoading = statusB;
+    updatesSub.isLoading = statusA;
+    expect(opp.isLoading).toBe(result);
+  });
+});
+
+test("hydrate", () => {
+  createTestUnit(LSUEligibleClientRecord);
+
+  [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+
+  [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+
+  opp.hydrate();
+  expect(referralSub.hydrate).toHaveBeenCalled();
+  expect(updatesSub.hydrate).toHaveBeenCalled();
 });

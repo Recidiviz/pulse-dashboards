@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Hydratable } from "../../core/models/types";
+import { Denial, UpdateLog } from "../../firestore";
 import { Client } from "../Client";
 import { TransformedCompliantReportingReferral } from "./CompliantReportingReferralRecord";
 import {
@@ -65,7 +67,7 @@ export type DenialReasonsMap = Record<string, string>;
  * `almostEligible` flag is set. There is no "ineligible" flag! Ineligibility
  * must be indicated by the absence of an Opportunity.
  */
-export interface Opportunity {
+export interface Opportunity extends Hydratable {
   almostEligible: boolean;
   almostEligibleRecommendedNote?: { title: string; text: string };
   client: Client;
@@ -78,32 +80,23 @@ export interface Opportunity {
   readonly type: OpportunityType;
   validate: () => void;
   denialReasonsMap: DenialReasonsMap;
+  denial: Denial | undefined;
 }
 
-export interface CompliantReportingFormInterface {
+export interface BaseForm {
   printText: string;
+  formLastUpdated: UpdateLog | undefined;
+}
+export interface CompliantReportingFormInterface extends BaseForm {
   formData: Partial<TransformedCompliantReportingReferral>;
-  // TODO: Remove draftData once opportunity update subscriptions move to Opportunity class
-  draftData: Partial<TransformedCompliantReportingReferral>;
-  setDataField: (
-    key: string,
-    value: boolean | string | string[]
-  ) => Promise<void>;
 }
 
-export interface EarlyTerminationFormInterface {
-  printText: string;
+export interface EarlyTerminationFormInterface extends BaseForm {
   metadata: TransformedEarlyTerminationReferral["metadata"] | undefined;
   addDepositionLine: () => void;
   removeDepositionLine: (key: string) => void;
   additionalDepositionLines: string[];
   formData: Partial<EarlyTerminationDraftData>;
-  // TODO: Remove draftData once opportunity update subscriptions move to Opportunity class
-  draftData: Partial<EarlyTerminationDraftData>;
-  setDataField: (
-    key: string,
-    value: boolean | string | string[]
-  ) => Promise<void>;
 }
 
 export type CompliantReportingOpportunity = CompliantReportingFormInterface &

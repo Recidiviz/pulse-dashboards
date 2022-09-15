@@ -21,10 +21,10 @@ import styled from "styled-components/macro";
 
 import styles from "./CoreConstants.module.scss";
 import ModelHydrator from "./ModelHydrator";
-import { Hydratable } from "./models/types";
+import { HydratablePathwaysMetric } from "./models/types";
 
 type withMetricHydratorProps = {
-  metric: Hydratable;
+  metric: HydratablePathwaysMetric;
 };
 
 const MetricVizHydrator = styled(ModelHydrator)`

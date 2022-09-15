@@ -17,12 +17,12 @@
 import { palette } from "@recidiviz/design-system";
 import jsPDF from "jspdf";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
+import { FormLastEdited } from "../FormLastEdited";
 import FormViewer from "../Paperwork/FormViewer";
 import { generate } from "../Paperwork/PDFFormGenerator";
 import { FormViewerStatus, PrintablePage } from "../Paperwork/styles";
@@ -45,21 +45,10 @@ const formDownloader = async (
 };
 
 const WorkflowsCompliantReportingForm: React.FC = () => {
-  const { workflowsStore } = useRootStore();
-  const client = workflowsStore.selectedClient;
+  const {
+    workflowsStore: { selectedClient: client },
+  } = useRootStore();
 
-  const draft = client?.compliantReportingReferralDraft;
-
-  let lastEdited;
-  if (draft) {
-    lastEdited = `Last edited by ${draft.updated.by} ${moment(
-      draft.updated.date.seconds * 1000
-    ).fromNow()}`;
-  } else {
-    lastEdited = `Prefilled with data from TDOC on ${moment().format(
-      "MM-DD-YYYY"
-    )}`;
-  }
   return (
     <CompliantReportingFormContainer>
       <FormViewer
@@ -69,7 +58,10 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
             Edit and collaborate on the document below
           </FormViewerStatus>,
           <FormViewerStatus color={palette.slate85}>
-            {lastEdited}
+            <FormLastEdited
+              agencyName="TDOC"
+              form={client?.opportunities.compliantReporting}
+            />
           </FormViewerStatus>,
         ]}
         formDownloader={formDownloader}

@@ -105,12 +105,12 @@ export const authenticate = async (
   return signInWithCustomToken(auth, firebaseToken);
 };
 
-const db = getFirestore(app);
+export const db = getFirestore(app);
 if (useOfflineFirestore) {
   connectFirestoreEmulator(db, "localhost", 8080);
 }
 
-const collectionNames = {
+export const collectionNames = {
   staff: "staff",
   userUpdates: "userUpdates",
   clients: "clients",
@@ -123,13 +123,15 @@ const collectionNames = {
   featureVariants: "featureVariants",
 };
 
+export type CollectionName = keyof typeof collectionNames;
+
 if (isDemoMode()) {
   Object.entries(collectionNames).forEach(([key, value]) => {
     collectionNames[key as keyof typeof collectionNames] = `DEMO_${value}`;
   });
 }
 
-const collections = {
+export const collections = {
   staff: collection(
     db,
     collectionNames.staff
@@ -421,39 +423,6 @@ export function subscribeToEligibleCount(
       handleResults(results.size);
     }
   );
-}
-
-export function subscribeToCompliantReportingReferral(
-  recordId: string,
-  handleResults: (results: CompliantReportingReferralRecord | undefined) => void
-): Unsubscribe {
-  return onSnapshot(
-    doc(collections.compliantReportingReferrals, recordId),
-    (result) => {
-      handleResults(result.data());
-    }
-  );
-}
-
-export function subscribeToEarlyTerminationReferral(
-  clientId: string,
-  handleResults: (results: EarlyTerminationReferralRecord | undefined) => void
-): Unsubscribe {
-  return onSnapshot(
-    doc(collections.earlyTerminationReferrals, clientId),
-    (result) => {
-      handleResults(result.data());
-    }
-  );
-}
-
-export function subscribeToLSUReferral(
-  clientId: string,
-  handleResults: (results: LSUReferralRecord | undefined) => void
-): Unsubscribe {
-  return onSnapshot(doc(collections.LSUReferrals, clientId), (result) => {
-    handleResults(result.data());
-  });
 }
 
 // TODO(#2108): Clean up requests to `clientUpdates` after fully migrating to `clientUpdatesV2`

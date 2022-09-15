@@ -21,7 +21,7 @@ import {
   OpportunityType,
   TransformedCompliantReportingReferral,
 } from "../WorkflowsStore";
-import { TransformedEarlyTerminationReferral } from "../WorkflowsStore/Opportunity/EarlyTerminationReferralRecord";
+import { EarlyTerminationDraftData } from "../WorkflowsStore/Opportunity/EarlyTerminationReferralRecord";
 import { TransformedEarnedDischargeReferral } from "../WorkflowsStore/Opportunity/EarnedDischargeReferralRecord";
 import { TransformedLSUReferral } from "../WorkflowsStore/Opportunity/LSUReferralRecord";
 
@@ -173,7 +173,7 @@ export type ClientUpdateRecord = {
   LSU?: LSUUpdateRecord;
 };
 
-type UpdateLog = {
+export type UpdateLog = {
   date: Timestamp;
   by: string;
 };
@@ -185,15 +185,15 @@ export type Denial = {
 };
 
 type ReferralFormEdits<
-  FormData extends Record<string, any> = Record<string, any>
+  DraftData extends Record<string, any> = Record<string, any>
 > = {
   updated: UpdateLog;
-  data?: Partial<FormData>;
+  data?: Partial<DraftData>;
 };
 
 export type CompliantReportingReferralForm = ReferralFormEdits<TransformedCompliantReportingReferral>;
 
-export type EarlyTerminationReferralForm = ReferralFormEdits<TransformedEarlyTerminationReferral>;
+export type EarlyTerminationReferralForm = ReferralFormEdits<EarlyTerminationDraftData>;
 
 export type EarnedDischargeReferralForm = ReferralFormEdits<TransformedEarnedDischargeReferral>;
 

@@ -17,14 +17,14 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { subscribeToLSUReferral } from "../../firestore";
+import { LSUUpdateRecord } from "../../firestore";
 import { Client } from "../Client";
 import {
-  fieldToDate,
-  observableSubscription,
-  OpportunityValidationError,
-  SubscriptionValue,
-} from "../utils";
+  CollectionDocumentSubscription,
+  DocumentSubscription,
+  OpportunityUpdateSubscription,
+} from "../subscriptions";
+import { fieldToDate, OpportunityValidationError } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 import { LSUReferralRecord, TransformedLSUReferral } from "./LSUReferralRecord";
 import {
@@ -84,7 +84,9 @@ class LSUOpportunity implements Opportunity {
 
   readonly denialReasonsMap: DenialReasonsMap;
 
-  private fetchedLSUReferral: SubscriptionValue<LSUReferralRecord>;
+  private referralSubscription: DocumentSubscription<LSUReferralRecord>;
+
+  private updatesSubscription: DocumentSubscription<LSUUpdateRecord>;
 
   constructor(client: Client) {
     makeAutoObservable<LSUOpportunity, "record" | "transformedRecord">(this, {
@@ -95,15 +97,19 @@ class LSUOpportunity implements Opportunity {
 
     this.client = client;
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.fetchedLSUReferral = observableSubscription((handler) =>
-      subscribeToLSUReferral(this.client.recordId, (result) => {
-        if (result) handler(result);
-      })
+    this.referralSubscription = new CollectionDocumentSubscription<LSUReferralRecord>(
+      "LSUReferrals",
+      client.recordId
+    );
+    this.updatesSubscription = new OpportunityUpdateSubscription<LSUUpdateRecord>(
+      client.recordId,
+      client.id,
+      "LSU"
     );
   }
 
   get record(): LSUReferralRecord | undefined {
-    return this.fetchedLSUReferral.current();
+    return this.referralSubscription.data;
   }
 
   private get transformedRecord() {
@@ -191,9 +197,17 @@ class LSUOpportunity implements Opportunity {
     return rankByReviewStatus(this);
   }
 
+  get updates() {
+    return this.updatesSubscription.data;
+  }
+
+  get denial() {
+    return this.updates?.denial;
+  }
+
   get reviewStatus(): OpportunityStatus {
-    const updates = this.client.opportunityUpdates.LSU;
-    if ((updates?.denial?.reasons?.length || 0) !== 0) {
+    const { updates, denial } = this;
+    if ((denial?.reasons?.length || 0) !== 0) {
       return "DENIED";
     }
 
@@ -274,6 +288,23 @@ class LSUOpportunity implements Opportunity {
   // eslint-disable-next-line class-methods-use-this
   get requirementsAlmostMet(): OpportunityRequirement[] {
     return [];
+  }
+
+  hydrate(): void {
+    this.referralSubscription.hydrate();
+    this.updatesSubscription.hydrate();
+  }
+
+  get isLoading(): boolean | undefined {
+    if (
+      this.referralSubscription.isLoading === undefined ||
+      this.updatesSubscription.isLoading === undefined
+    ) {
+      return undefined;
+    }
+    return (
+      this.referralSubscription.isLoading || this.updatesSubscription.isLoading
+    );
   }
 }
 

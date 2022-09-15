@@ -66,8 +66,6 @@ const FormTextarea: React.FC<FormTextareaProps> = observer(
     const [value, onChange] = useReactiveInput<HTMLTextAreaElement>({
       name,
       fetchFromStore: () => earlyTermination?.formData[name] as string,
-      persistToStore: (valueToStore: string) =>
-        earlyTermination?.setDataField(name, valueToStore),
       persistToFirestore: (valueToStore: string) =>
         updateEarlyTerminationDraftFieldData(client, name, valueToStore),
     });
@@ -95,7 +93,10 @@ const FormTextarea: React.FC<FormTextareaProps> = observer(
 const FormTextareaWrapper = ({ name, ...props }: FormTextareaWrapperProps) => {
   const { workflowsStore } = useRootStore();
 
-  if (!workflowsStore?.selectedClient?.opportunityUpdates.earlyTermination) {
+  if (
+    workflowsStore?.selectedClient?.opportunities.earlyTermination
+      ?.isLoading !== false
+  ) {
     return <Textarea {...props} disabled />;
   }
 

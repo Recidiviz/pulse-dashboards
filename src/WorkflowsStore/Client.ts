@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { entries, makeObservable, runInAction, set, when } from "mobx";
+import { entries, makeObservable, when } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
 import {
@@ -28,16 +28,9 @@ import {
 } from "../analytics";
 import {
   ClientRecord,
-  CompliantReportingReferralForm,
-  CompliantReportingUpdateRecord,
-  EarlyTerminationReferralForm,
-  EarlyTerminationUpdateRecord,
-  EarnedDischargeUpdateRecord,
   FullName,
-  LSUUpdateRecord,
   SpecialConditionCode,
   SpecialConditionsStatus,
-  subscribeToOpportunityUpdate,
   updateOpportunityCompleted,
   updateOpportunityDenial,
 } from "../firestore";
@@ -46,18 +39,14 @@ import {
   CompliantReportingOpportunity,
   createCompliantReportingOpportunity,
   createEarlyTerminationOpportunity,
+  createLSUOpportunity,
   EarlyTerminationOpportunity,
   EarnedDischargeOpportunity,
   LSUOpportunity,
   OpportunityType,
 } from "./Opportunity";
 import { createEarnedDischargeOpportunity } from "./Opportunity/EarnedDischargeOpportunity";
-import { createLSUOpportunity } from "./Opportunity/LSUOpportunity";
-import {
-  observableSubscription,
-  optionalFieldToDate,
-  SubscriptionValue,
-} from "./utils";
+import { optionalFieldToDate } from "./utils";
 import { OTHER_KEY } from "./WorkflowsStore";
 
 export const UNKNOWN = "Unknown" as const;
@@ -153,24 +142,18 @@ export class Client {
 
   specialConditionsTerminatedDate?: Date;
 
-  private opportunityUpdateSubscriptions: {
-    compliantReporting?: SubscriptionValue<CompliantReportingUpdateRecord>;
-    earlyTermination?: SubscriptionValue<EarlyTerminationUpdateRecord>;
-  } = {};
-
   formIsPrinting = false;
 
   opportunities: OpportunityMapping;
 
   constructor(record: ClientRecord, rootStore: RootStore) {
-    makeObservable<Client, "opportunityUpdateSubscriptions">(this, {
+    makeObservable(this, {
       opportunities: true,
       record: true,
       currentUserEmail: true,
       formIsPrinting: true,
       opportunitiesAlmostEligible: true,
       opportunitiesEligible: true,
-      opportunityUpdateSubscriptions: true,
       printReferralForm: true,
       setFormIsPrinting: true,
     });
@@ -214,55 +197,6 @@ export class Client {
       record.supervisionStartDate
     );
 
-    set(this.opportunityUpdateSubscriptions, {
-      compliantReporting: observableSubscription<CompliantReportingUpdateRecord>(
-        (handler) => {
-          return subscribeToOpportunityUpdate<CompliantReportingUpdateRecord>(
-            this.id,
-            this.recordId,
-            "compliantReporting",
-            (result) => {
-              if (result) {
-                runInAction(() => {
-                  handler(result);
-                  const data = result.referralForm?.data ?? {};
-                  if (this.opportunities.compliantReporting) {
-                    set(this.opportunities.compliantReporting.draftData, data);
-                  }
-                });
-              } else {
-                // empty object will replace undefined, signifying completed fetch
-                handler({ type: "compliantReporting" });
-              }
-            }
-          );
-        }
-      ),
-      earlyTermination: observableSubscription<EarlyTerminationUpdateRecord>(
-        (handler) => {
-          return subscribeToOpportunityUpdate<EarlyTerminationUpdateRecord>(
-            this.id,
-            this.recordId,
-            "earlyTermination",
-            (result) => {
-              if (result) {
-                runInAction(() => {
-                  handler(result);
-                  const data = result.referralForm?.data ?? {};
-                  if (this.opportunities.earlyTermination) {
-                    set(this.opportunities.earlyTermination.draftData, data);
-                  }
-                });
-              } else {
-                // empty object will replace undefined, signifying completed fetch
-                handler({ type: "earlyTermination" });
-              }
-            }
-          );
-        }
-      ),
-    });
-
     this.opportunities = {
       compliantReporting: createCompliantReportingOpportunity(
         this.record.compliantReportingEligible,
@@ -301,18 +235,6 @@ export class Client {
       (o) => o.id === this.officerId
     );
     return officer?.district;
-  }
-
-  get opportunityUpdates(): {
-    compliantReporting?: CompliantReportingUpdateRecord;
-    earlyTermination?: EarlyTerminationUpdateRecord;
-    earnedDischarge?: EarnedDischargeUpdateRecord;
-    LSU?: LSUUpdateRecord;
-  } {
-    return {
-      compliantReporting: this.opportunityUpdateSubscriptions.compliantReporting?.current(),
-      earlyTermination: this.opportunityUpdateSubscriptions.earlyTermination?.current(),
-    };
   }
 
   get opportunitiesEligible(): OpportunityMapping {
@@ -428,22 +350,8 @@ export class Client {
     }
   }
 
-  /* Compliant Reporting */
-  get compliantReportingReferralDraft():
-    | CompliantReportingReferralForm
-    | undefined {
-    return this.opportunityUpdates.compliantReporting?.referralForm;
-  }
-
-  /* Early Termination */
-  get earlyTerminationReferralDraft():
-    | EarlyTerminationReferralForm
-    | undefined {
-    return this.opportunityUpdates.earlyTermination?.referralForm;
-  }
-
   async trackFormViewed(formType: OpportunityType): Promise<void> {
-    await when(() => this.opportunityUpdates[formType] !== undefined);
+    await when(() => this.opportunities[formType]?.isLoading === false);
 
     trackReferralFormViewed({
       clientId: this.pseudonymizedId,
@@ -452,7 +360,7 @@ export class Client {
   }
 
   async trackListViewed(listType: OpportunityType): Promise<void> {
-    await when(() => this.opportunityUpdates[listType] !== undefined);
+    await when(() => this.opportunities[listType]?.isLoading === false);
 
     trackSurfacedInList({
       clientId: this.pseudonymizedId,

@@ -328,8 +328,11 @@ export type ViewMethodology = {
 export interface Hydratable {
   isLoading?: boolean;
   error?: Error;
-  dataSeries?: PathwaysMetricRecords;
   hydrate: () => void;
+}
+
+export interface HydratablePathwaysMetric extends Hydratable {
+  dataSeries?: PathwaysMetricRecords;
 }
 
 export type PathwaysMetricRecords =

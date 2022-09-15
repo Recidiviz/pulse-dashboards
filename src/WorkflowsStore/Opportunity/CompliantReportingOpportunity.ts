@@ -19,23 +19,28 @@ import * as Sentry from "@sentry/react";
 import assertNever from "assert-never";
 import { differenceInCalendarDays, isEqual } from "date-fns";
 import { mapValues } from "lodash";
-import { action, makeAutoObservable, observable, set, toJS } from "mobx";
+import { makeAutoObservable, toJS } from "mobx";
 
 import { transform } from "../../core/Paperwork/US_TN/Transformer";
 import { formatRelativeToNow } from "../../core/utils/timePeriod";
 import {
   CompliantReportingEligibleRecord,
   CompliantReportingFinesFeesEligible,
-  subscribeToCompliantReportingReferral,
+  CompliantReportingUpdateRecord,
+  Denial,
+  UpdateLog,
 } from "../../firestore";
 import { formatWorkflowsDate, pluralizeWord } from "../../utils";
 import { Client, UNKNOWN } from "../Client";
 import {
+  CollectionDocumentSubscription,
+  DocumentSubscription,
+  OpportunityUpdateSubscription,
+} from "../subscriptions";
+import {
   fieldToDate,
-  observableSubscription,
   OpportunityValidationError,
   optionalFieldToDate,
-  SubscriptionValue,
 } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 import {
@@ -171,9 +176,9 @@ class CompliantReportingOpportunity
 
   readonly denialReasonsMap: DenialReasonsMap;
 
-  draftData: Partial<TransformedCompliantReportingReferral>;
+  private referralSubscription: DocumentSubscription<CompliantReportingReferralRecord>;
 
-  private fetchedCompliantReportingReferral: SubscriptionValue<CompliantReportingReferralRecord>;
+  private updatesSubscription: DocumentSubscription<CompliantReportingUpdateRecord>;
 
   constructor(record: CompliantReportingEligibleRecord, client: Client) {
     makeAutoObservable<
@@ -183,20 +188,20 @@ class CompliantReportingOpportunity
       record: true,
       transformedRecord: true,
       draftData: true,
-      setDataField: action,
     });
 
     this.client = client;
     this.record = record;
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.draftData = observable<Partial<TransformedCompliantReportingReferral>>(
-      {}
-    );
 
-    this.fetchedCompliantReportingReferral = observableSubscription((handler) =>
-      subscribeToCompliantReportingReferral(this.client.recordId, (result) => {
-        if (result) handler(result);
-      })
+    this.referralSubscription = new CollectionDocumentSubscription<CompliantReportingReferralRecord>(
+      "compliantReportingReferrals",
+      client.recordId
+    );
+    this.updatesSubscription = new OpportunityUpdateSubscription<CompliantReportingUpdateRecord>(
+      client.recordId,
+      client.id,
+      "compliantReporting"
     );
   }
 
@@ -344,10 +349,14 @@ class CompliantReportingOpportunity
     return rankByReviewStatus(this);
   }
 
-  get reviewStatus(): OpportunityStatus {
-    const updates = this.client.opportunityUpdates.compliantReporting;
+  get updates(): CompliantReportingUpdateRecord | undefined {
+    return this.updatesSubscription.data;
+  }
 
-    if ((updates?.denial?.reasons?.length || 0) !== 0) {
+  get reviewStatus(): OpportunityStatus {
+    const { updates, denial } = this;
+
+    if ((denial?.reasons?.length || 0) !== 0) {
       return "DENIED";
     }
 
@@ -381,10 +390,8 @@ class CompliantReportingOpportunity
     if (reviewStatus === "DENIED") {
       const baseMessage = defaultOpportunityStatuses[reviewStatus];
       let additionalText = "";
-      if (this.client.opportunityUpdates.compliantReporting?.denial) {
-        additionalText = ` (${this.client.opportunityUpdates.compliantReporting.denial.reasons.join(
-          ", "
-        )})`;
+      if (this.denial) {
+        additionalText = ` (${this.denial.reasons.join(", ")})`;
       }
       return `${baseMessage}${additionalText}`;
     }
@@ -731,7 +738,7 @@ class CompliantReportingOpportunity
       return "Printing PDF...";
     }
 
-    if (this.client.opportunityUpdates?.compliantReporting?.completed) {
+    if (this.updates?.completed) {
       return "Reprint PDF";
     }
 
@@ -801,7 +808,7 @@ class CompliantReportingOpportunity
   }
 
   get prefilledData(): Partial<TransformedCompliantReportingReferral> {
-    const prefillSourceInformation = this.fetchedCompliantReportingReferral.current();
+    const prefillSourceInformation = this.referralSubscription.data;
 
     if (prefillSourceInformation) {
       return transform(this.client, prefillSourceInformation);
@@ -814,19 +821,41 @@ class CompliantReportingOpportunity
     return { ...toJS(this.prefilledData), ...toJS(this.draftData) };
   }
 
-  async setDataField(
-    key: keyof TransformedCompliantReportingReferral | string,
-    value: boolean | string | string[]
-  ): Promise<void> {
-    set(this.draftData, key, value);
-  }
-
   private get validAlmostEligibleKeys() {
     return (Object.keys(
       this.requirementAlmostMetMap
     ) as (keyof AlmostEligibleCriteria)[]).filter(
       (key) => this.requirementAlmostMetMap[key] !== undefined
     );
+  }
+
+  hydrate(): void {
+    this.referralSubscription.hydrate();
+    this.updatesSubscription.hydrate();
+  }
+
+  get isLoading(): boolean | undefined {
+    if (
+      this.referralSubscription.isLoading === undefined ||
+      this.updatesSubscription.isLoading === undefined
+    ) {
+      return undefined;
+    }
+    return (
+      this.referralSubscription.isLoading || this.updatesSubscription.isLoading
+    );
+  }
+
+  get draftData(): Partial<TransformedCompliantReportingReferral> {
+    return this.updates?.referralForm?.data ?? {};
+  }
+
+  get formLastUpdated(): UpdateLog | undefined {
+    return this.updates?.referralForm?.updated;
+  }
+
+  get denial(): Denial | undefined {
+    return this.updates?.denial;
   }
 }
 

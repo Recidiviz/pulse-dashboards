@@ -133,14 +133,12 @@ type ReactiveInputValue = string | undefined;
 interface UseReactiveInputOptions {
   name: string;
   fetchFromStore: () => string | undefined;
-  persistToStore: (value: string) => void;
   persistToFirestore: (value: string) => void;
 }
 
 function useReactiveInput<E extends HTMLInputElement | HTMLTextAreaElement>({
   name,
   fetchFromStore,
-  persistToStore,
   persistToFirestore,
 }: UseReactiveInputOptions): [
   ReactiveInputValue,
@@ -156,7 +154,6 @@ function useReactiveInput<E extends HTMLInputElement | HTMLTextAreaElement>({
 
   const updateFirestoreRef = useRef(
     debounce((valueToStore: string) => {
-      persistToStore(valueToStore);
       persistToFirestore(valueToStore);
     }, REACTIVE_INPUT_UPDATE_DELAY)
   );

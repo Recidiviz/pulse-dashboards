@@ -21,6 +21,10 @@ import tk from "timekeeper";
 
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
+import {
+  CollectionDocumentSubscription,
+  OpportunityUpdateSubscription,
+} from "../../subscriptions";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import {
   compliantReportingAlmostEligibleClientRecord,
@@ -35,10 +39,20 @@ import {
 import { Opportunity } from "../types";
 import { defaultOpportunityStatuses } from "../utils";
 
+jest.mock("../../subscriptions");
+
 let cr: Opportunity;
 let client: Client;
 let root: RootStore;
-let mockUpdates: jest.SpyInstance;
+let referralSub: CollectionDocumentSubscription<any>;
+let updatesSub: OpportunityUpdateSubscription<any>;
+
+const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
+  typeof CollectionDocumentSubscription
+>;
+const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.MockedClass<
+  typeof OpportunityUpdateSubscription
+>;
 
 function createTestUnit(
   clientRecord: typeof compliantReportingEligibleClientRecord
@@ -57,11 +71,6 @@ beforeEach(() => {
   // this lets us spy on observables, e.g. computed getters
   configure({ safeDescriptors: false });
   tk.freeze(new Date(2022, 7, 1));
-  mockUpdates = jest.spyOn(Client.prototype, "opportunityUpdates", "get");
-  // mimics the value when the fetch returns no updates
-  mockUpdates.mockReturnValue({
-    compliantReporting: { type: "compliantReporting" },
-  });
 });
 
 afterEach(() => {
@@ -73,59 +82,61 @@ afterEach(() => {
 describe("fully eligible", () => {
   beforeEach(() => {
     createTestUnit(compliantReportingEligibleClientRecord);
+    [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
   });
 
   test("review status", () => {
     expect(cr.reviewStatus).toBe("PENDING");
 
-    mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
+    updatesSub.data = INCOMPLETE_UPDATE.compliantReporting;
+
     expect(cr.reviewStatus).toBe("IN_PROGRESS");
 
-    mockUpdates.mockReturnValue(DENIED_UPDATE);
+    updatesSub.data = DENIED_UPDATE.compliantReporting;
     expect(cr.reviewStatus).toBe("DENIED");
 
-    mockUpdates.mockReturnValue(COMPLETED_UPDATE);
+    updatesSub.data = COMPLETED_UPDATE.compliantReporting;
     expect(cr.reviewStatus).toBe("COMPLETED");
   });
 
   test("short status message", () => {
     expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.PENDING);
 
-    mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
+    updatesSub.data = INCOMPLETE_UPDATE.compliantReporting;
     expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.IN_PROGRESS);
 
-    mockUpdates.mockReturnValue(DENIED_UPDATE);
+    updatesSub.data = DENIED_UPDATE.compliantReporting;
     expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.DENIED);
 
-    mockUpdates.mockReturnValue(COMPLETED_UPDATE);
+    updatesSub.data = COMPLETED_UPDATE.compliantReporting;
     expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.COMPLETED);
   });
 
   test("extended status message", () => {
     expect(cr.statusMessageLong).toBe(defaultOpportunityStatuses.PENDING);
 
-    mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
+    updatesSub.data = INCOMPLETE_UPDATE.compliantReporting;
     expect(cr.statusMessageLong).toBe(defaultOpportunityStatuses.IN_PROGRESS);
 
-    mockUpdates.mockReturnValue(DENIED_UPDATE);
+    updatesSub.data = DENIED_UPDATE.compliantReporting;
     expect(cr.statusMessageLong).toBe(
       `${defaultOpportunityStatuses.DENIED} (ABC)`
     );
 
-    mockUpdates.mockReturnValue(COMPLETED_UPDATE);
+    updatesSub.data = COMPLETED_UPDATE.compliantReporting;
     expect(cr.statusMessageLong).toBe(defaultOpportunityStatuses.COMPLETED);
   });
 
   test("rank by status", () => {
     expect(cr.rank).toBe(0);
 
-    mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
+    updatesSub.data = INCOMPLETE_UPDATE.compliantReporting;
     expect(cr.rank).toBe(1);
 
-    mockUpdates.mockReturnValue(DENIED_UPDATE);
+    updatesSub.data = DENIED_UPDATE.compliantReporting;
     expect(cr.rank).toBe(2);
 
-    mockUpdates.mockReturnValue(COMPLETED_UPDATE);
+    updatesSub.data = COMPLETED_UPDATE.compliantReporting;
     expect(cr.rank).toBe(3);
   });
 
@@ -206,43 +217,44 @@ describe.each([
       );
       testRecord.compliantReportingEligible.almostEligibleCriteria = almostEligibleCriteria;
       createTestUnit(testRecord);
+      [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
     });
 
     test("review status", () => {
       expect(cr.reviewStatus).toBe("ALMOST");
 
-      mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
+      updatesSub.data = INCOMPLETE_UPDATE.compliantReporting;
       expect(cr.reviewStatus).toBe("ALMOST");
 
-      mockUpdates.mockReturnValue(DENIED_UPDATE);
+      updatesSub.data = DENIED_UPDATE.compliantReporting;
       expect(cr.reviewStatus).toBe("DENIED");
 
-      mockUpdates.mockReturnValue(COMPLETED_UPDATE);
+      updatesSub.data = COMPLETED_UPDATE.compliantReporting;
       expect(cr.reviewStatus).toBe("ALMOST");
     });
 
     test("short status message", () => {
       expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.ALMOST);
 
-      mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
+      updatesSub.data = INCOMPLETE_UPDATE.compliantReporting;
       expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.ALMOST);
 
-      mockUpdates.mockReturnValue(COMPLETED_UPDATE);
+      updatesSub.data = COMPLETED_UPDATE.compliantReporting;
       expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.ALMOST);
 
-      mockUpdates.mockReturnValue(DENIED_UPDATE);
+      updatesSub.data = DENIED_UPDATE.compliantReporting;
       expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.DENIED);
     });
     test("extended status message", () => {
       expect(cr.statusMessageLong).toBe(expectedListText);
 
-      mockUpdates.mockReturnValue(INCOMPLETE_UPDATE);
+      updatesSub.data = INCOMPLETE_UPDATE.compliantReporting;
       expect(cr.statusMessageLong).toBe(expectedListText);
 
-      mockUpdates.mockReturnValue(COMPLETED_UPDATE);
+      updatesSub.data = COMPLETED_UPDATE.compliantReporting;
       expect(cr.statusMessageLong).toBe(expectedListText);
 
-      mockUpdates.mockReturnValue(DENIED_UPDATE);
+      updatesSub.data = DENIED_UPDATE.compliantReporting;
       expect(cr.statusMessageLong).toBe(
         `${defaultOpportunityStatuses.DENIED} (ABC)`
       );
@@ -251,7 +263,7 @@ describe.each([
     test("rank by status", () => {
       expect(cr.rank).toBe(expectedRank);
 
-      mockUpdates.mockReturnValue(DENIED_UPDATE);
+      updatesSub.data = DENIED_UPDATE.compliantReporting;
       expect(cr.rank).toBe(5);
     });
 
@@ -283,3 +295,40 @@ describe.each([
     });
   }
 );
+
+describe("hydration is lowest common denominator of all subscriptions", () => {
+  beforeEach(() => {
+    createTestUnit(compliantReportingEligibleClientRecord);
+    [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+    [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+  });
+
+  test.each([
+    [undefined, undefined, undefined],
+    [undefined, true, undefined],
+    [undefined, false, undefined],
+    [true, true, true],
+    [true, false, true],
+    [false, false, false],
+  ])("%s + %s = %s", (statusA, statusB, result) => {
+    referralSub.isLoading = statusA;
+    updatesSub.isLoading = statusB;
+    expect(cr.isLoading).toBe(result);
+
+    referralSub.isLoading = statusB;
+    updatesSub.isLoading = statusA;
+    expect(cr.isLoading).toBe(result);
+  });
+});
+
+test("hydrate", () => {
+  createTestUnit(compliantReportingEligibleClientRecord);
+
+  [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+
+  [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+
+  cr.hydrate();
+  expect(referralSub.hydrate).toHaveBeenCalled();
+  expect(updatesSub.hydrate).toHaveBeenCalled();
+});

@@ -24,7 +24,7 @@ import { animated, useTransition } from "react-spring/web.cjs";
 import styled from "styled-components/macro";
 
 import { Error, NoData } from "../components/HydrationStatus";
-import { Hydratable } from "./models/types";
+import { HydratablePathwaysMetric } from "./models/types";
 
 const Wrapper = styled.div`
   position: relative;
@@ -46,7 +46,7 @@ const StatusWrapper = styled(animated.div)`
  * Creates an atomic status variable for transitions
  */
 function getHydrationStatus(
-  model: Hydratable
+  model: HydratablePathwaysMetric
 ): "pending" | "error" | "done" | "no data" {
   const { dataSeries } = model;
   if (model.isLoading || model.isLoading === undefined) {
@@ -71,7 +71,7 @@ const crossFade = {
 
 type ModelHydratorProps = {
   children: React.ReactElement;
-  model: Hydratable;
+  model: HydratablePathwaysMetric;
   className?: string;
 };
 

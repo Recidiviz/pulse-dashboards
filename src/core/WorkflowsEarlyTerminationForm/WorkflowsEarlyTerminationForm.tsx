@@ -17,12 +17,12 @@
 import { palette } from "@recidiviz/design-system";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import * as React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
+import { FormLastEdited } from "../FormLastEdited";
 import { generate } from "../Paperwork/DOCXFormGenerator";
 import FormViewer from "../Paperwork/FormViewer";
 import { FormViewerStatus } from "../Paperwork/styles";
@@ -67,21 +67,9 @@ const formDownloader = async (
 };
 
 const WorkflowsEarlyTerminationForm = () => {
-  const { workflowsStore } = useRootStore();
-
-  const client = workflowsStore.selectedClient;
-  const draft = client?.earlyTerminationReferralDraft;
-
-  let lastEdited;
-  if (draft) {
-    lastEdited = `Last edited by ${draft.updated.by} ${moment(
-      draft.updated.date.seconds * 1000
-    ).fromNow()}`;
-  } else {
-    lastEdited = `Prefilled with data from ND DOCR on ${moment().format(
-      "MM-DD-YYYY"
-    )}`;
-  }
+  const {
+    workflowsStore: { selectedClient: client },
+  } = useRootStore();
 
   return (
     <EarlyTerminationFormContainer>
@@ -92,7 +80,10 @@ const WorkflowsEarlyTerminationForm = () => {
             Edit and collaborate on the document below
           </FormViewerStatus>,
           <FormViewerStatus color={palette.slate85}>
-            {lastEdited}
+            <FormLastEdited
+              agencyName="ND DOCR"
+              form={client?.opportunities.earlyTermination}
+            />
           </FormViewerStatus>,
         ]}
         formDownloader={formDownloader}

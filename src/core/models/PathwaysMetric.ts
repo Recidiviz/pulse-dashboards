@@ -40,7 +40,7 @@ import { DiffError } from "./backendDiff/DiffError";
 import { dimensionsByMetricType } from "./dimensions";
 import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
 import {
-  Hydratable,
+  HydratablePathwaysMetric,
   MetricId,
   MetricRecord,
   PathwaysMetricRecords,
@@ -77,7 +77,7 @@ type metricBackend = "OLD" | "OLD_WITH_DIFFING" | "NEW";
  * MetricsStore.
  */
 export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
-  implements Hydratable {
+  implements HydratablePathwaysMetric {
   rootStore?: CoreStore;
 
   id: MetricId;

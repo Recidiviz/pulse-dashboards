@@ -77,8 +77,6 @@ const FormInput: React.FC<FormInputProps> = observer(
     const [value, onChange] = useReactiveInput<HTMLInputElement>({
       name,
       fetchFromStore: () => earlyTermination?.formData[name] as string,
-      persistToStore: (valueToStore: string) =>
-        earlyTermination?.setDataField(name, valueToStore),
       persistToFirestore: (valueToStore: string) =>
         updateEarlyTerminationDraftFieldData(client, name, valueToStore),
     });
@@ -117,7 +115,10 @@ const FormInputWrapper: React.FC<FormInputWrapperProps> = ({
 }: FormInputWrapperProps) => {
   const { workflowsStore } = useRootStore();
 
-  if (!workflowsStore?.selectedClient?.opportunityUpdates.earlyTermination) {
+  if (
+    workflowsStore?.selectedClient?.opportunities.earlyTermination
+      ?.isLoading !== false
+  ) {
     return (
       <StyledAutosizeInput>
         <input {...props} disabled />
