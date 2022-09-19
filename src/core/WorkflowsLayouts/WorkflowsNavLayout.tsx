@@ -101,7 +101,7 @@ export const WorkflowsNavLayout: React.FC = ({ children }) => {
         <NavLinks>
           <li>
             <BrandedNavLink to={workflowsUrl("general")}>
-              Clients
+              All Clients
             </BrandedNavLink>
           </li>
           <li>

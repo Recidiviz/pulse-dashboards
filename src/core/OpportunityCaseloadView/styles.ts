@@ -14,4 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-export * from "./OpportunityCaseloadSelection";
+
+import {
+  palette,
+  Sans14,
+  Sans18,
+  Serif34,
+  spacing,
+} from "@recidiviz/design-system";
+import { rem } from "polished";
+import styled from "styled-components/macro";
+
+export const Heading = styled(Serif34)`
+  color: ${palette.pine2};
+  padding-bottom: ${rem(spacing.sm)};
+`;
+
+export const SubHeading = styled(Sans18)`
+  color: ${palette.slate70};
+  padding-bottom: ${rem(spacing.md)};
+`;
+
+export const SectionLabelText = styled(Sans14)`
+  color: ${palette.slate60};
+  margin-top: ${rem(spacing.md)};
+  border-bottom: 1px solid ${palette.slate20};
+  padding-bottom: ${rem(spacing.sm)};
+  padding-top: ${rem(spacing.md)};
+`;

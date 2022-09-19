@@ -14,15 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-import { palette, Sans18, spacing } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import React from "react";
 import styled from "styled-components/macro";
 
-export const Heading = styled(Sans18)`
-  border-bottom: 1px solid ${palette.slate20};
-  color: ${palette.pine3};
-  flex: 0 0 auto;
-  margin-top: ${rem(spacing.xl)};
-  padding-bottom: ${rem(spacing.sm)};
+import { OpportunityType } from "../../WorkflowsStore";
+import { CaseloadSelect } from "../CaseloadSelect";
+import { WorkflowsNavLayout } from "../WorkflowsLayouts";
+import { OpportunityList } from "./OpportunityList";
+
+const Wrapper = styled.div`
+  /* leaving extra space for the Intercom button */
+  padding-bottom: ${rem(spacing.md * 4)};
 `;
+
+type OpportunityCaseloadProps = {
+  opportunityType: OpportunityType;
+};
+
+export const OpportunityCaseloadView = observer(
+  ({ opportunityType }: OpportunityCaseloadProps) => {
+    return (
+      <WorkflowsNavLayout>
+        <Wrapper>
+          <CaseloadSelect />
+          <OpportunityList opportunityType={opportunityType} />
+        </Wrapper>
+      </WorkflowsNavLayout>
+    );
+  }
+);

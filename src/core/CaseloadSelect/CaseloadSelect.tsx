@@ -116,6 +116,10 @@ const ClearAll = (props: IndicatorProps<SelectOption, true>) => {
   );
 };
 
+const CaseloadSelectContainer = styled(Sans14)`
+  margin-bottom: ${rem(spacing.xxl)};
+`;
+
 type CaseloadSelectProps = {
   hideIndicators?: boolean;
 };
@@ -139,7 +143,7 @@ export const CaseloadSelect = observer(
     }
 
     return (
-      <Sans14>
+      <CaseloadSelectContainer>
         <ReactSelect
           components={customComponents}
           isMulti
@@ -215,7 +219,7 @@ export const CaseloadSelect = observer(
           }}
           value={workflowsStore.selectedOfficers.map(buildSelectOption)}
         />
-      </Sans14>
+      </CaseloadSelectContainer>
     );
   }
 );

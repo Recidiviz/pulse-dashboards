@@ -34,6 +34,7 @@ export type ClientCapsuleProps = {
   client: Client;
   status: React.ReactNode;
   textSize: "sm" | "lg";
+  hideId?: boolean;
 };
 
 const ClientName = styled.span`
@@ -53,6 +54,12 @@ const Wrapper = styled.div`
   column-gap: ${rem(spacing.sm)};
   display: grid;
   grid-template-columns: auto 1fr;
+  &:hover {
+    [class*="ClientName"] {
+      text-decoration: underline;
+      color: ${palette.signal.links};
+    }
+  }
 `;
 
 const ClientInfo = styled.div``;
@@ -89,6 +96,7 @@ const ClientCapsule: React.FC<ClientCapsuleProps> = ({
   client,
   status,
   textSize,
+  hideId = false,
 }) => {
   const IdentityEl = SIZES.identity[textSize];
   const StatusEl = SIZES.status[textSize];
@@ -99,8 +107,12 @@ const ClientCapsule: React.FC<ClientCapsuleProps> = ({
       <ClientInfo>
         <IdentityEl>
           <ClientName>{client.displayName}</ClientName>
-          <Separator> • </Separator>
-          <ClientId>{client.id}</ClientId>
+          {!hideId && (
+            <React.Fragment key="clientId">
+              <Separator> • </Separator>
+              <ClientId>{client.id}</ClientId>
+            </React.Fragment>
+          )}
         </IdentityEl>
         <StatusEl>{status}</StatusEl>
       </ClientInfo>

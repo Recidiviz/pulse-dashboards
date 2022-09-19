@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette, Sans14, spacing } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { groupBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -25,9 +25,9 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
 import { ProfileCapsule } from "../ClientCapsule";
+import { SectionLabelText } from "../OpportunityCaseloadView/styles";
 import { workflowsUrl } from "../views";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
-import { Heading } from "./styles";
 
 const CaseloadWrapper = styled.ul`
   column-gap: ${rem(spacing.md)};
@@ -38,11 +38,6 @@ const CaseloadWrapper = styled.ul`
   margin-top: ${rem(spacing.md)};
   padding: 0;
   row-gap: ${rem(spacing.sm)};
-`;
-
-const OfficerName = styled(Sans14)`
-  color: ${palette.pine2};
-  margin-top: ${rem(spacing.lg)};
 `;
 
 const Caseload = ({ clients }: { clients: Client[] }) => {
@@ -68,16 +63,12 @@ export const AllClients = observer(() => {
 
   return (
     <>
-      <Heading>
-        All clients
-        {selectedOfficerIds.length > 1 && " across selected caseloads"}
-      </Heading>
       {selectedOfficerIds.map((officerId) => (
         <React.Fragment key={officerId}>
           {selectedOfficerIds.length > 1 && (
-            <OfficerName>
+            <SectionLabelText>
               <WorkflowsOfficerName officerId={officerId} />
-            </OfficerName>
+            </SectionLabelText>
           )}
           {/* in practice there should never be a missing caseload,
               but fall back to an empty array for type safety */}

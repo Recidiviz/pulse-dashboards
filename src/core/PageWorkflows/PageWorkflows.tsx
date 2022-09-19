@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, typography } from "@recidiviz/design-system";
 import React, { useEffect } from "react";
 import { Switch } from "react-router-dom";
 import styled from "styled-components/macro";
@@ -23,10 +22,9 @@ import styled from "styled-components/macro";
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import isIE11 from "../../utils/isIE11";
-import { OPPORTUNITY_LABELS } from "../../WorkflowsStore";
 import { CaseloadView } from "../CaseloadView";
 import ModelHydrator from "../ModelHydrator";
-import { OpportunityCaseloadSelection } from "../OpportunityCaseloadSelection";
+import { OpportunityCaseloadView } from "../OpportunityCaseloadView";
 import { WORKFLOWS_PATHS, workflowsRoute } from "../views";
 import {
   CompliantReportingClientProfile,
@@ -37,11 +35,6 @@ import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 import { WorkflowsFormLayout } from "../WorkflowsLayouts";
 import WorkflowsRoute from "../WorkflowsRoute";
-
-const SidebarHeading = styled.h1`
-  ${typography.Sans18}
-  color: ${palette.pine2};
-`;
 
 const IE11Warning = styled.div`
   display: flex;
@@ -81,15 +74,7 @@ const PageWorkflows: React.FC = () => {
           exact
           path={workflowsRoute({ name: "compliantReporting", client: false })}
         >
-          <WorkflowsFormLayout
-            sidebarContents={
-              <>
-                <SidebarHeading>Compliant Reporting</SidebarHeading>
-                <OpportunityCaseloadSelection opportunityType="compliantReporting" />
-              </>
-            }
-            formContents={null}
-          />
+          <OpportunityCaseloadView opportunityType="compliantReporting" />
         </WorkflowsRoute>
         <WorkflowsRoute
           exact
@@ -104,15 +89,7 @@ const PageWorkflows: React.FC = () => {
           exact
           path={workflowsRoute({ name: "earlyTermination", client: false })}
         >
-          <WorkflowsFormLayout
-            sidebarContents={
-              <>
-                <SidebarHeading>Early Termination</SidebarHeading>
-                <OpportunityCaseloadSelection opportunityType="earlyTermination" />
-              </>
-            }
-            formContents={null}
-          />
+          <OpportunityCaseloadView opportunityType="earlyTermination" />
         </WorkflowsRoute>
         <WorkflowsRoute
           exact
@@ -133,17 +110,7 @@ const PageWorkflows: React.FC = () => {
           exact
           path={workflowsRoute({ name: "earnedDischarge", client: false })}
         >
-          <WorkflowsFormLayout
-            sidebarContents={
-              <>
-                <SidebarHeading>
-                  {OPPORTUNITY_LABELS.earnedDischarge}
-                </SidebarHeading>
-                <OpportunityCaseloadSelection opportunityType="earnedDischarge" />
-              </>
-            }
-            formContents={null}
-          />
+          <OpportunityCaseloadView opportunityType="earnedDischarge" />
         </WorkflowsRoute>
         <WorkflowsRoute
           exact
@@ -158,15 +125,7 @@ const PageWorkflows: React.FC = () => {
           exact
           path={workflowsRoute({ name: "LSU", client: false })}
         >
-          <WorkflowsFormLayout
-            sidebarContents={
-              <>
-                <SidebarHeading>{OPPORTUNITY_LABELS.LSU}</SidebarHeading>
-                <OpportunityCaseloadSelection opportunityType="LSU" />
-              </>
-            }
-            formContents={null}
-          />
+          <OpportunityCaseloadView opportunityType="LSU" />
         </WorkflowsRoute>
         <WorkflowsRoute
           exact

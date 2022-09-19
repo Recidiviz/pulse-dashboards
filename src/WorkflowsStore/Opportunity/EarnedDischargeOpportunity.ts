@@ -64,6 +64,8 @@ class EarnedDischargeOpportunity extends OpportunityBase<EarnedDischargeReferral
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
+    this.descriptionCTA =
+      "Review clients who may be eligible for earned discharge and complete the request form in CIS.";
   }
 
   get statusMessageShort(): string {

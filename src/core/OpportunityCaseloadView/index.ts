@@ -14,28 +14,5 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { spacing } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import React from "react";
-import styled from "styled-components/macro";
 
-import { CaseloadSelect } from "../CaseloadSelect";
-import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import { AllClients } from "./AllClients";
-
-const Wrapper = styled.div`
-  /* leaving extra space for the Intercom button */
-  padding-bottom: ${rem(spacing.md * 4)};
-`;
-
-export const CaseloadView: React.FC = observer(() => {
-  return (
-    <WorkflowsNavLayout>
-      <Wrapper>
-        <CaseloadSelect />
-        <AllClients />
-      </Wrapper>
-    </WorkflowsNavLayout>
-  );
-});
+export * from "./OpportunityCaseloadView";

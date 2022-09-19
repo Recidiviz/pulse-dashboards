@@ -167,6 +167,8 @@ export abstract class OpportunityBase<
     return [];
   }
 
+  descriptionCTA = "";
+
   // TODO(#2263): This is currently not being called. we need to consider a different interface for validating and hydrating,
   // possibly using the `hydrate` pattern for workflows models.
   // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-empty-function

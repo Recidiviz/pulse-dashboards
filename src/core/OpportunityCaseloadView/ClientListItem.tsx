@@ -20,22 +20,44 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { CaseloadSelect } from "../CaseloadSelect";
-import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import { AllClients } from "./AllClients";
+import { BrandedLink } from "../../components/BrandedLink";
+import { Opportunity } from "../../WorkflowsStore";
+import { OpportunityCapsule } from "../ClientCapsule";
+import { workflowsUrl } from "../views";
 
-const Wrapper = styled.div`
-  /* leaving extra space for the Intercom button */
-  padding-bottom: ${rem(spacing.md * 4)};
+const ListItem = styled.li`
+  padding: ${rem(spacing.md)} ${rem(spacing.md)} 0 0;
 `;
 
-export const CaseloadView: React.FC = observer(() => {
-  return (
-    <WorkflowsNavLayout>
-      <Wrapper>
-        <CaseloadSelect />
-        <AllClients />
-      </Wrapper>
-    </WorkflowsNavLayout>
-  );
-});
+const ClientLink = styled(BrandedLink)`
+  display: flex;
+  gap: ${rem(spacing.lg)};
+`;
+
+type ClientListItemProps = {
+  opportunity: Opportunity;
+};
+
+export const ClientListItem = observer(
+  ({ opportunity }: ClientListItemProps) => {
+    const { client } = opportunity;
+
+    return (
+      <ListItem key={client.id}>
+        <ClientLink
+          to={workflowsUrl(opportunity.type, {
+            clientId: client.pseudonymizedId,
+          })}
+        >
+          <OpportunityCapsule
+            avatarSize="lg"
+            client={client}
+            opportunity={opportunity}
+            textSize="sm"
+            hideId
+          />
+        </ClientLink>
+      </ListItem>
+    );
+  }
+);

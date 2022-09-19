@@ -80,6 +80,7 @@ export interface Opportunity extends Hydratable {
   readonly type: OpportunityType;
   validate: () => void;
   denialReasonsMap: DenialReasonsMap;
+  descriptionCTA: string;
   denial: Denial | undefined;
 }
 
