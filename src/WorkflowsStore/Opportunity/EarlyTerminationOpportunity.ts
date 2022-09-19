@@ -17,22 +17,12 @@
 
 import { deleteField } from "firebase/firestore";
 import { sortBy } from "lodash";
-import { makeAutoObservable, remove, toJS } from "mobx";
+import { computed, makeObservable } from "mobx";
 
 import { transform } from "../../core/Paperwork/US_ND/EarlyTermination/Transformer";
 import { updateEarlyTerminationDraftFieldData } from "../../core/Paperwork/US_ND/EarlyTermination/utils";
-import {
-  Denial,
-  EarlyTerminationUpdateRecord,
-  UpdateLog,
-} from "../../firestore";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
-import {
-  CollectionDocumentSubscription,
-  DocumentSubscription,
-  OpportunityUpdateSubscription,
-} from "../subscriptions";
 import { fieldToDate, OpportunityValidationError } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 import {
@@ -40,18 +30,9 @@ import {
   EarlyTerminationReferralRecord,
   TransformedEarlyTerminationReferral,
 } from "./EarlyTerminationReferralRecord";
-import {
-  DenialReasonsMap,
-  EarlyTerminationFormInterface,
-  Opportunity,
-  OpportunityRequirement,
-  OpportunityStatus,
-  OpportunityType,
-} from "./types";
-import {
-  earlyTerminationOpportunityStatuses,
-  rankByReviewStatus,
-} from "./utils";
+import { OpportunityWithFormBase } from "./OpportunityWithFormBase";
+import { EarlyTerminationFormInterface, OpportunityRequirement } from "./types";
+import { earlyTerminationOpportunityStatuses } from "./utils";
 
 const DENIAL_REASONS_MAP = {
   "INT MEASURE":
@@ -86,42 +67,24 @@ const CRITERIA: Record<string, Partial<OpportunityRequirement>> = {
 const ADDITIONAL_DEPOSITION_LINES_PREFIX = "additionalDepositionLines";
 
 class EarlyTerminationOpportunity
-  implements Opportunity, EarlyTerminationFormInterface {
-  client: Client;
-
-  readonly type: OpportunityType = "earlyTermination";
-
-  readonly denialReasonsMap: DenialReasonsMap;
-
-  private referralSubscription: DocumentSubscription<EarlyTerminationReferralRecord>;
-
-  private updatesSubscription: DocumentSubscription<EarlyTerminationUpdateRecord>;
-
+  extends OpportunityWithFormBase<
+    EarlyTerminationReferralRecord,
+    EarlyTerminationDraftData
+  >
+  implements EarlyTerminationFormInterface {
   constructor(client: Client) {
-    makeAutoObservable<
-      EarlyTerminationOpportunity,
-      "record" | "transformedRecord"
-    >(this, {
-      record: true,
-      client: false,
+    super(client, "earlyTermination");
+
+    makeObservable<EarlyTerminationOpportunity, "transformedRecord">(this, {
       transformedRecord: true,
+      printText: computed,
+      statusMessageShort: computed,
+      statusMessageLong: computed,
+      requirementsMet: computed,
+      requirementsAlmostMet: computed,
     });
 
-    this.client = client;
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.referralSubscription = new CollectionDocumentSubscription(
-      "earlyTerminationReferrals",
-      client.recordId
-    );
-    this.updatesSubscription = new OpportunityUpdateSubscription(
-      client.recordId,
-      client.id,
-      "earlyTermination"
-    );
-  }
-
-  get record(): EarlyTerminationReferralRecord | undefined {
-    return this.referralSubscription.data;
   }
 
   private get transformedRecord() {
@@ -242,18 +205,7 @@ class EarlyTerminationOpportunity
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  get almostEligible(): boolean {
-    return false;
-  }
-
-  get updates() {
-    return this.updatesSubscription.data;
-  }
-
-  get formLastUpdated(): UpdateLog | undefined {
-    return this.updates?.referralForm?.updated;
-  }
+  formDataTransformer = transform;
 
   get printText(): string {
     if (this.client.formIsPrinting) {
@@ -265,27 +217,6 @@ class EarlyTerminationOpportunity
     }
 
     return "Download .DOCX";
-  }
-
-  get rank(): number {
-    return rankByReviewStatus(this);
-  }
-
-  get reviewStatus(): OpportunityStatus {
-    const { updates } = this;
-    if ((updates?.denial?.reasons?.length || 0) !== 0) {
-      return "DENIED";
-    }
-
-    if (updates?.completed) {
-      return "COMPLETED";
-    }
-
-    if (updates?.referralForm) {
-      return "IN_PROGRESS";
-    }
-
-    return "PENDING";
   }
 
   get statusMessageShort(): string {
@@ -337,21 +268,8 @@ class EarlyTerminationOpportunity
     return requirements;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  get requirementsAlmostMet(): OpportunityRequirement[] {
-    return [];
-  }
-
   get metadata(): TransformedEarlyTerminationReferral["metadata"] | undefined {
     return this.transformedRecord?.metadata;
-  }
-
-  get prefilledData(): Partial<EarlyTerminationDraftData> {
-    if (this.record) {
-      return transform(this.client, this.record);
-    }
-
-    return {};
   }
 
   get additionalDepositionLines(): string[] {
@@ -373,38 +291,8 @@ class EarlyTerminationOpportunity
 
   removeDepositionLine(key: string): void {
     if (!this.draftData) return;
-    remove(this.draftData, key);
 
     updateEarlyTerminationDraftFieldData(this.client, key, deleteField());
-  }
-
-  get formData(): Partial<EarlyTerminationDraftData> {
-    return { ...toJS(this.prefilledData), ...toJS(this.draftData) };
-  }
-
-  hydrate(): void {
-    this.referralSubscription.hydrate();
-    this.updatesSubscription.hydrate();
-  }
-
-  get isLoading(): boolean | undefined {
-    if (
-      this.referralSubscription.isLoading === undefined ||
-      this.updatesSubscription.isLoading === undefined
-    ) {
-      return undefined;
-    }
-    return (
-      this.referralSubscription.isLoading || this.updatesSubscription.isLoading
-    );
-  }
-
-  get draftData(): Partial<EarlyTerminationDraftData> {
-    return this.updates?.referralForm?.data ?? {};
-  }
-
-  get denial(): Denial | undefined {
-    return this.updates?.denial;
   }
 }
 

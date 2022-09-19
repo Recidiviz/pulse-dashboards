@@ -27,7 +27,7 @@ import {
   ClientUpdateRecord,
   collectionNames,
   db,
-  OpportunityEdits,
+  OpportunityUpdateWithForm,
 } from "../../firestore";
 import { OpportunityType } from "../Opportunity";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
@@ -67,7 +67,7 @@ async function migrateOpportunityUpdate(
   opportunityType: OpportunityType
 ) {
   // if destination document does not already exist, we will look for a legacy document to migrate
-  let dataToMigrate: OpportunityEdits | undefined;
+  let dataToMigrate: OpportunityUpdateWithForm<Record<string, any>> | undefined;
   if (!(await getDoc(updateDocRef)).exists()) {
     const {
       docRef: v2UpdatesDocRef,

@@ -17,13 +17,7 @@
 import { FieldValue } from "@google-cloud/firestore";
 import type { Timestamp } from "firebase/firestore";
 
-import {
-  OpportunityType,
-  TransformedCompliantReportingReferral,
-} from "../WorkflowsStore";
-import { EarlyTerminationDraftData } from "../WorkflowsStore/Opportunity/EarlyTerminationReferralRecord";
-import { TransformedEarnedDischargeReferral } from "../WorkflowsStore/Opportunity/EarnedDischargeReferralRecord";
-import { TransformedLSUReferral } from "../WorkflowsStore/Opportunity/LSUReferralRecord";
+import { OpportunityType } from "../WorkflowsStore";
 
 /**
  * Staff-level data exported from the Recidiviz data platform.
@@ -164,13 +158,12 @@ export type CompliantReportingEligibleRecord = {
 };
 
 /**
- * A nested object of all client-level data generated within this application
+ * A nested object of all client-level data generated within this application.
+ * This is a legacy format and only used within a migration context.
+ * TODO(#2108): Remove this type after migration is complete
  */
 export type ClientUpdateRecord = {
-  compliantReporting?: CompliantReportingUpdateRecord;
-  earlyTermination?: EarlyTerminationUpdateRecord;
-  earnedDischarge?: EarnedDischargeUpdateRecord;
-  LSU?: LSUUpdateRecord;
+  [key in OpportunityType]?: Record<string, any>;
 };
 
 export type UpdateLog = {
@@ -184,57 +177,18 @@ export type Denial = {
   updated: UpdateLog;
 };
 
-type ReferralFormEdits<
-  DraftData extends Record<string, any> = Record<string, any>
-> = {
-  updated: UpdateLog;
-  data?: Partial<DraftData>;
-};
+export type FormFieldData = Record<
+  string,
+  boolean | string | string[] | FieldValue
+>;
 
-export type CompliantReportingReferralForm = ReferralFormEdits<TransformedCompliantReportingReferral>;
-
-export type EarlyTerminationReferralForm = ReferralFormEdits<EarlyTerminationDraftData>;
-
-export type EarnedDischargeReferralForm = ReferralFormEdits<TransformedEarnedDischargeReferral>;
-
-export type LSUReferralForm = ReferralFormEdits<TransformedLSUReferral>;
-
-export type OpportunityEdits<FormEdits = ReferralFormEdits> = {
+export type OpportunityUpdate = {
   denial?: Denial;
-  referralForm?: FormEdits;
   completed?: {
     update: UpdateLog;
   };
 };
 
-type OpportunityUpdateRecordBase<
-  OppType extends OpportunityType,
-  ReferralForm extends ReferralFormEdits
-> = {
-  type: OppType;
-} & OpportunityEdits<ReferralForm>;
-
-export type EarlyTerminationUpdateRecord = OpportunityUpdateRecordBase<
-  "earlyTermination",
-  EarlyTerminationReferralForm
->;
-export type CompliantReportingUpdateRecord = OpportunityUpdateRecordBase<
-  "compliantReporting",
-  CompliantReportingReferralForm
->;
-export type EarnedDischargeUpdateRecord = OpportunityUpdateRecordBase<
-  "earnedDischarge",
-  EarnedDischargeReferralForm
->;
-export type LSUUpdateRecord = OpportunityUpdateRecordBase<
-  "LSU",
-  LSUReferralForm
->;
-export type OpportunityUpdateRecord =
-  | EarlyTerminationUpdateRecord
-  | CompliantReportingUpdateRecord;
-
-export type FormFieldData = Record<
-  string,
-  boolean | string | string[] | FieldValue
->;
+export type OpportunityUpdateWithForm<FormType> = OpportunityUpdate & {
+  referralForm?: { updated: UpdateLog; data?: Partial<FormType> };
+};

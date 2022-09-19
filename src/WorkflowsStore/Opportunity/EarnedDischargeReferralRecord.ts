@@ -47,3 +47,7 @@ export interface TransformedEarnedDischargeReferral {
     courtOrderConditionsMet?: boolean;
   };
 }
+
+export type EarnedDischargeDraftData = {
+  clientName: string;
+};

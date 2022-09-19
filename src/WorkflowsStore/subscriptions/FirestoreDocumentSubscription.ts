@@ -52,6 +52,9 @@ export abstract class FirestoreDocumentSubscription<
       data: observable.struct,
       updateData: action,
       hydrate: action,
+      subscribe: action,
+      isLoading: observable,
+      error: observable,
     });
 
     // these automatically stop/start the listener based on whether any MobX
@@ -69,6 +72,10 @@ export abstract class FirestoreDocumentSubscription<
    */
   updateData(snapshot: DocumentSnapshot<DataFormat>): void {
     this.data = snapshot.data({ serverTimestamps: "estimate" });
+
+    if (this.isLoading) {
+      this.isLoading = false;
+    }
   }
 
   get isActive(): boolean {
@@ -82,10 +89,18 @@ export abstract class FirestoreDocumentSubscription<
   subscribe(): void {
     if (this.isActive) return;
 
+    if (this.isLoading === undefined) {
+      this.isLoading = true;
+    }
+
     this.cancelSnapshotListener = onSnapshot(this.dataSource, (result) =>
       this.updateData(result)
     );
   }
+
+  isLoading: boolean | undefined = undefined;
+
+  error: Error | undefined = undefined;
 
   hydrate(): void {
     this.subscribe();

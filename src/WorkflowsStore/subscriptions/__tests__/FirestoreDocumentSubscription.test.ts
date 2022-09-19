@@ -88,3 +88,17 @@ test("no duplicate listeners", () => {
   sub.subscribe();
   expect(onSnapshotMock).toHaveBeenCalledTimes(1);
 });
+
+test("hydration", () => {
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+
+  expect(sub.isLoading).toBeUndefined();
+
+  sub.hydrate();
+
+  expect(sub.isLoading).toBe(true);
+
+  mockReceive({});
+
+  expect(sub.isLoading).toBe(false);
+});

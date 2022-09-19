@@ -23,7 +23,6 @@ import {
   spacing,
 } from "@recidiviz/design-system";
 import { debounce, xor } from "lodash";
-import { entries } from "mobx";
 import { observer } from "mobx-react-lite";
 import { darken, rem } from "polished";
 import React from "react";
@@ -172,23 +171,25 @@ export const OpportunityDenial = observer(
               <SelectReasonText>
                 Not eligible? Select reason(s):
               </SelectReasonText>
-              {entries(opportunity?.denialReasonsMap).map(([code, desc]) => (
-                <DropdownItem>
-                  <Checkbox
-                    value={code}
-                    checked={reasons?.includes(code) || false}
-                    name="denial reason"
-                    onChange={() => {
-                      client.setOpportunityDenialReasons(
-                        xor(reasons, [code]).sort(),
-                        opportunity.type
-                      );
-                    }}
-                  >
-                    {desc}
-                  </Checkbox>
-                </DropdownItem>
-              ))}
+              {Object.entries(opportunity?.denialReasonsMap).map(
+                ([code, desc]) => (
+                  <DropdownItem>
+                    <Checkbox
+                      value={code}
+                      checked={reasons?.includes(code) || false}
+                      name="denial reason"
+                      onChange={() => {
+                        client.setOpportunityDenialReasons(
+                          xor(reasons, [code]).sort(),
+                          opportunity.type
+                        );
+                      }}
+                    >
+                      {desc}
+                    </Checkbox>
+                  </DropdownItem>
+                )
+              )}
 
               {reasons?.includes(OTHER_KEY) && (
                 <OtherInputWrapper>

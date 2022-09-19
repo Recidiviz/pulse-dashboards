@@ -215,10 +215,7 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
   ],
 };
 
-export const LSUEligibleClientRecord: RequireKeys<
-  ClientRecord,
-  "LSUEligible"
-> = {
+export const ineligibleClientRecord: ClientRecord = {
   recordId: "us_id_001",
   personName: {
     givenNames: "BETTY",
@@ -234,5 +231,12 @@ export const LSUEligibleClientRecord: RequireKeys<
   address: "123 Bedrock Lane",
   phoneNumber: "5555555678",
   expirationDate: dateToTimestamp("2024-12-31"),
+};
+
+export const LSUEligibleClientRecord: RequireKeys<
+  ClientRecord,
+  "LSUEligible"
+> = {
+  ...ineligibleClientRecord,
   LSUEligible: true,
 };

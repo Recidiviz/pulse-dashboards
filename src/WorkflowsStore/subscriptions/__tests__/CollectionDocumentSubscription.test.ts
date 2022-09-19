@@ -15,16 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { DocumentData } from "@google-cloud/firestore";
-import { doc, DocumentReference, onSnapshot } from "firebase/firestore";
+import { doc, DocumentReference } from "firebase/firestore";
 
 import { CollectionDocumentSubscription } from "../CollectionDocumentSubscription";
-import { getMockDocumentSnapshotHandler } from "../testUtils";
 
 jest.mock("firebase/firestore");
 
 const docMock = doc as jest.MockedFunction<typeof doc>;
 const mockRef = (jest.fn() as unknown) as DocumentReference;
-const onSnapshotMock = onSnapshot as jest.Mock;
 
 let sub: CollectionDocumentSubscription<DocumentData>;
 
@@ -45,18 +43,4 @@ test("dataSource", () => {
   );
 
   expect(sub.dataSource).toBe(mockRef);
-});
-
-test("hydration", () => {
-  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
-
-  expect(sub.isLoading).toBeUndefined();
-
-  sub.hydrate();
-
-  expect(sub.isLoading).toBe(true);
-
-  mockReceive({});
-
-  expect(sub.isLoading).toBe(false);
 });

@@ -44,7 +44,6 @@ let root: RootStore;
 let referralSub: CollectionDocumentSubscription<any>;
 let updatesSub: OpportunityUpdateSubscription<any>;
 
-jest.mock("../../../firestore");
 jest.mock("../../subscriptions");
 const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
   typeof CollectionDocumentSubscription
@@ -92,35 +91,22 @@ describe("fully eligible", () => {
     updatesSub.isLoading = false;
   });
 
-  test("review status", () => {
-    expect(et.reviewStatus).toBe("PENDING");
-
-    updatesSub.data = INCOMPLETE_UPDATE.earlyTermination;
-    expect(et.reviewStatus).toBe("IN_PROGRESS");
-
-    updatesSub.data = DENIED_UPDATE.earlyTermination;
-    expect(et.reviewStatus).toBe("DENIED");
-
-    updatesSub.data = COMPLETED_UPDATE.earlyTermination;
-    expect(et.reviewStatus).toBe("COMPLETED");
-  });
-
   test("short status message", () => {
     expect(et.statusMessageShort).toBe(
       earlyTerminationOpportunityStatuses.PENDING
     );
 
-    updatesSub.data = INCOMPLETE_UPDATE.earlyTermination;
+    updatesSub.data = INCOMPLETE_UPDATE;
     expect(et.statusMessageShort).toBe(
       earlyTerminationOpportunityStatuses.IN_PROGRESS
     );
 
-    updatesSub.data = DENIED_UPDATE.earlyTermination;
+    updatesSub.data = DENIED_UPDATE;
     expect(et.statusMessageShort).toBe(
       earlyTerminationOpportunityStatuses.DENIED
     );
 
-    updatesSub.data = COMPLETED_UPDATE.earlyTermination;
+    updatesSub.data = COMPLETED_UPDATE;
     expect(et.statusMessageShort).toBe(
       earlyTerminationOpportunityStatuses.COMPLETED
     );
@@ -191,43 +177,4 @@ xdescribe("invalid opportunity record", () => {
 
     expect(createEarlyTerminationOpportunity(true, client)).toBeUndefined();
   });
-});
-
-describe("hydration is lowest common denominator of all subscriptions", () => {
-  beforeEach(() => {
-    createTestUnit(earlyTerminationEligibleClientRecord);
-
-    [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
-
-    [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
-  });
-
-  test.each([
-    [undefined, undefined, undefined],
-    [undefined, true, undefined],
-    [undefined, false, undefined],
-    [true, true, true],
-    [true, false, true],
-    [false, false, false],
-  ])("%s + %s = %s", (statusA, statusB, result) => {
-    referralSub.isLoading = statusA;
-    updatesSub.isLoading = statusB;
-    expect(et.isLoading).toBe(result);
-
-    referralSub.isLoading = statusB;
-    updatesSub.isLoading = statusA;
-    expect(et.isLoading).toBe(result);
-  });
-});
-
-test("hydrate", () => {
-  createTestUnit(earlyTerminationEligibleClientRecord);
-
-  [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
-
-  [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
-
-  et.hydrate();
-  expect(referralSub.hydrate).toHaveBeenCalled();
-  expect(updatesSub.hydrate).toHaveBeenCalled();
 });

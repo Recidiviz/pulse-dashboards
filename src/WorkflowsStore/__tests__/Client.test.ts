@@ -15,15 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, configure, runInAction, when } from "mobx";
-import { IDisposer, keepAlive } from "mobx-utils";
+import { configure, runInAction } from "mobx";
+import { IDisposer } from "mobx-utils";
 
 import {
   trackReferralFormViewed,
   trackSetOpportunityStatus,
   trackSurfacedInList,
 } from "../../analytics";
-import { transform } from "../../core/Paperwork/US_TN/Transformer";
 import {
   updateOpportunityCompleted,
   updateOpportunityDenial,
@@ -32,10 +31,6 @@ import { RootStore } from "../../RootStore";
 import { eligibleClient, mockOfficer } from "../__fixtures__";
 import { Client } from "../Client";
 import { OPPORTUNITY_TYPES } from "../Opportunity";
-import {
-  CompliantReportingReferralRecord,
-  TransformedCompliantReportingReferral,
-} from "../Opportunity/CompliantReportingReferralRecord";
 import {
   CollectionDocumentSubscription,
   OpportunityUpdateSubscription,
@@ -50,7 +45,6 @@ jest.mock("../../firestore");
 jest.mock("../../core/Paperwork/US_TN/Transformer");
 jest.mock("../subscriptions");
 
-const mockTransform = transform as jest.MockedFunction<typeof transform>;
 const mockupdateOpportunityDenial = updateOpportunityDenial as jest.MockedFunction<
   typeof updateOpportunityDenial
 >;
@@ -337,32 +331,4 @@ test("list view tracking waits for updates", async () => {
     clientId: client.pseudonymizedId,
     opportunityType: "compliantReporting",
   });
-});
-
-test("fetch CompliantReportingReferral uses recordId", async () => {
-  const record = { poFirstName: "Bob" } as CompliantReportingReferralRecord;
-  mockTransform.mockImplementation(
-    (_: Client, data: CompliantReportingReferralRecord) => {
-      return (data as unknown) as Partial<TransformedCompliantReportingReferral>;
-    }
-  );
-
-  runInAction(() => {
-    CollectionDocumentSubscriptionMock.prototype.data = record;
-  });
-
-  testObserver = keepAlive(
-    computed(() => [client.opportunities.compliantReporting?.formData])
-  );
-
-  await when(
-    () =>
-      client.opportunities.compliantReporting?.formData.poFirstName !==
-      undefined
-  );
-
-  expect(CollectionDocumentSubscriptionMock).toHaveBeenCalledWith(
-    "compliantReportingReferrals",
-    eligibleClient.recordId
-  );
 });

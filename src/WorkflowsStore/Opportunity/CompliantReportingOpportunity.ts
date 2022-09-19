@@ -26,8 +26,8 @@ import { formatRelativeToNow } from "../../core/utils/timePeriod";
 import {
   CompliantReportingEligibleRecord,
   CompliantReportingFinesFeesEligible,
-  CompliantReportingUpdateRecord,
   Denial,
+  OpportunityUpdateWithForm,
   UpdateLog,
 } from "../../firestore";
 import { formatWorkflowsDate, pluralizeWord } from "../../utils";
@@ -166,6 +166,8 @@ const DENIAL_REASONS_MAP = {
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
+type CompliantReportingUpdateRecord = OpportunityUpdateWithForm<TransformedCompliantReportingReferral>;
+
 class CompliantReportingOpportunity
   implements Opportunity, CompliantReportingFormInterface {
   client: Client;
@@ -188,6 +190,7 @@ class CompliantReportingOpportunity
       record: true,
       transformedRecord: true,
       draftData: true,
+      denialReasonsMap: false,
     });
 
     this.client = client;
@@ -846,6 +849,8 @@ class CompliantReportingOpportunity
     );
   }
 
+  error: Error | undefined = undefined;
+
   get draftData(): Partial<TransformedCompliantReportingReferral> {
     return this.updates?.referralForm?.data ?? {};
   }
@@ -860,7 +865,7 @@ class CompliantReportingOpportunity
 }
 
 /**
- * Returns an `CompliantReportingOpportunity` if the provided data indicates the client is eligible or almost eligible
+ * Returns a `CompliantReportingOpportunity` if the provided data indicates the client is eligible or almost eligible
  */
 export function createCompliantReportingOpportunity(
   record: CompliantReportingEligibleRecord | undefined,

@@ -15,13 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  doc,
-  DocumentData,
-  DocumentReference,
-  DocumentSnapshot,
-} from "firebase/firestore";
-import { action, makeObservable, observable, override } from "mobx";
+import { doc, DocumentData, DocumentReference } from "firebase/firestore";
 
 import { CollectionName, collectionNames, db } from "../../firestore";
 import { FirestoreDocumentSubscription } from "./FirestoreDocumentSubscription";
@@ -36,35 +30,13 @@ export class CollectionDocumentSubscription<
 > extends FirestoreDocumentSubscription<RecordType> {
   readonly dataSource: DocumentReference<RecordType>;
 
-  isLoading?: boolean;
-
   constructor(collectionName: CollectionName, recordId: string) {
     super();
-
-    makeObservable(this, {
-      isLoading: observable,
-      subscribe: action,
-      updateData: override,
-    });
 
     this.dataSource = doc(
       db,
       collectionNames[collectionName],
       recordId
     ) as DocumentReference<RecordType>;
-  }
-
-  subscribe(): void {
-    if (this.isLoading === undefined) {
-      this.isLoading = true;
-    }
-    super.subscribe();
-  }
-
-  updateData(snapshot: DocumentSnapshot<RecordType>): void {
-    super.updateData(snapshot);
-    if (this.isLoading) {
-      this.isLoading = false;
-    }
   }
 }

@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientUpdateRecord } from "../../firestore";
 import { dateToTimestamp } from "../utils";
 
 const UPDATE_RECORD = {
@@ -23,47 +22,14 @@ const UPDATE_RECORD = {
   date: dateToTimestamp("2022-07-15"),
 };
 
-export const INCOMPLETE_UPDATE: ClientUpdateRecord = {
-  compliantReporting: {
-    type: "compliantReporting",
-    referralForm: { updated: UPDATE_RECORD },
-  },
-  earlyTermination: {
-    type: "earlyTermination",
-    referralForm: { updated: UPDATE_RECORD },
-  },
-  LSU: {
-    type: "LSU",
-    referralForm: { updated: UPDATE_RECORD },
-  },
+export const INCOMPLETE_UPDATE = {
+  referralForm: { updated: UPDATE_RECORD },
 };
 
-export const DENIED_UPDATE: ClientUpdateRecord = {
-  compliantReporting: {
-    type: "compliantReporting",
-    denial: { reasons: ["ABC"], updated: UPDATE_RECORD },
-  },
-  earlyTermination: {
-    type: "earlyTermination",
-    denial: { reasons: ["ABC"], updated: UPDATE_RECORD },
-  },
-  LSU: {
-    type: "LSU",
-    denial: { reasons: ["ABC"], updated: UPDATE_RECORD },
-  },
+export const DENIED_UPDATE = {
+  denial: { reasons: ["ABC"], updated: UPDATE_RECORD },
 };
 
-export const COMPLETED_UPDATE: ClientUpdateRecord = {
-  compliantReporting: {
-    type: "compliantReporting",
-    completed: { update: UPDATE_RECORD },
-  },
-  earlyTermination: {
-    type: "earlyTermination",
-    completed: { update: UPDATE_RECORD },
-  },
-  LSU: {
-    type: "LSU",
-    completed: { update: UPDATE_RECORD },
-  },
+export const COMPLETED_UPDATE = {
+  completed: { update: UPDATE_RECORD },
 };

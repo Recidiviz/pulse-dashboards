@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { configure } from "mobx";
-import tk from "timekeeper";
 
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
@@ -24,17 +23,14 @@ import {
   CollectionDocumentSubscription,
   OpportunityUpdateSubscription,
 } from "../../subscriptions";
-import {
-  LSUEligibleClientRecord,
-  LSUReferralRecordFixture,
-} from "../__fixtures__";
+import { ineligibleClientRecord } from "../__fixtures__";
+import { OpportunityBase } from "../OpportunityBase";
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,
   INCOMPLETE_UPDATE,
 } from "../testUtils";
-import { Opportunity } from "../types";
-import { LSUOpportunityStatuses } from "../utils";
+import { Opportunity, OpportunityType } from "../types";
 
 jest.mock("../../subscriptions");
 
@@ -51,69 +47,64 @@ let root: RootStore;
 let referralSub: CollectionDocumentSubscription<any>;
 let updatesSub: OpportunityUpdateSubscription<any>;
 
-function createTestUnit(clientRecord: typeof LSUEligibleClientRecord) {
+class TestOpportunity extends OpportunityBase<Record<string, any>> {}
+
+function createTestUnit() {
   root = new RootStore();
-  client = new Client(clientRecord, root);
-
-  const maybeOpportunity = client.opportunities.LSU;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  // using an ineligible to avoid wasted work creating opportunities we don't need
+  client = new Client(ineligibleClientRecord, root);
+  opp = new TestOpportunity(client, "TEST" as OpportunityType);
 }
 
 beforeEach(() => {
   // this lets us spy on observables, e.g. computed getters
   configure({ safeDescriptors: false });
-  tk.freeze(new Date(2022, 7, 1));
+  createTestUnit();
+
+  [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+
+  [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
 });
 
 afterEach(() => {
   jest.resetAllMocks();
-  tk.reset();
   configure({ safeDescriptors: true });
 });
 
-describe("fully eligible", () => {
-  beforeEach(() => {
-    createTestUnit(LSUEligibleClientRecord);
+describe("hydration is lowest common denominator of all subscriptions", () => {
+  test.each([
+    [undefined, undefined, undefined],
+    [undefined, true, undefined],
+    [undefined, false, undefined],
+    [true, true, true],
+    [true, false, true],
+    [false, false, false],
+  ])("%s + %s = %s", (statusA, statusB, result) => {
+    referralSub.isLoading = statusA;
+    updatesSub.isLoading = statusB;
+    expect(opp.isLoading).toBe(result);
 
-    [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
-    referralSub.isLoading = false;
-    referralSub.data = LSUReferralRecordFixture;
-
-    [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
-    updatesSub.isLoading = false;
+    referralSub.isLoading = statusB;
+    updatesSub.isLoading = statusA;
+    expect(opp.isLoading).toBe(result);
   });
+});
 
-  test("short status message", () => {
-    expect(opp.statusMessageShort).toBe(LSUOpportunityStatuses.PENDING);
+test("hydrate", () => {
+  opp.hydrate();
+  expect(referralSub.hydrate).toHaveBeenCalled();
+  expect(updatesSub.hydrate).toHaveBeenCalled();
+});
 
-    updatesSub.data = INCOMPLETE_UPDATE;
-    expect(opp.statusMessageShort).toBe(LSUOpportunityStatuses.IN_PROGRESS);
+test("review status", () => {
+  expect(opp.reviewStatus).toBe("PENDING");
 
-    updatesSub.data = DENIED_UPDATE;
-    expect(opp.statusMessageShort).toBe(LSUOpportunityStatuses.DENIED);
+  updatesSub.data = INCOMPLETE_UPDATE;
+  expect(opp.reviewStatus).toBe("IN_PROGRESS");
 
-    updatesSub.data = COMPLETED_UPDATE;
-    expect(opp.statusMessageShort).toBe(LSUOpportunityStatuses.COMPLETED);
-  });
+  updatesSub.data = DENIED_UPDATE;
+  expect(opp.reviewStatus).toBe("DENIED");
 
-  test("extended status message", () => {
-    expect(opp.statusMessageLong).toBe(LSUOpportunityStatuses.PENDING);
-  });
-
-  test("rank by status", () => {
-    expect(opp.rank).toBe(0);
-  });
-
-  test("requirements almost met", () => {
-    expect(opp.requirementsAlmostMet).toEqual([]);
-  });
-
-  test("requirements met", () => {
-    expect(opp.requirementsMet).toMatchSnapshot();
-  });
+  updatesSub.data = COMPLETED_UPDATE;
+  expect(opp.reviewStatus).toBe("COMPLETED");
 });

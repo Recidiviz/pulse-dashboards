@@ -26,7 +26,6 @@ import {
   connectFirestoreEmulator,
   deleteField,
   doc,
-  DocumentReference,
   DocumentSnapshot,
   getDoc,
   getDocs,
@@ -57,8 +56,7 @@ import {
   FeatureVariantRecord,
   FormFieldData,
   isUserRecord,
-  OpportunityEdits,
-  OpportunityUpdateRecord,
+  OpportunityUpdateWithForm,
   StaffRecord,
   UserUpdateRecord,
 } from "./types";
@@ -118,6 +116,7 @@ export const collectionNames = {
   clientUpdatesV2: "clientUpdatesV2",
   clientOpportunityUpdates: "clientOpportunityUpdates",
   compliantReportingReferrals: "compliantReportingReferrals",
+  earnedDischargeReferrals: "earnedDischargeReferrals",
   earlyTerminationReferrals: "earlyTerminationReferrals",
   LSUReferrals: "LSUReferrals",
   featureVariants: "featureVariants",
@@ -278,75 +277,6 @@ export function subscribeToClientUpdatesV2(
 }
 
 /**
- * This will migrate legacy data to the new subcollection, if there is no document in the
- * new subcollection but legacy data exists. It will not change any data in legacy collections,
- * but the expectation is that they will be ignored once the new collection is populated.
- * TODO(#2108): Remove this function after migration is complete
- */
-async function migrateOpportunityUpdate(
-  updateDocRef: DocumentReference,
-  clientId: string,
-  clientRecordId: string,
-  opportunityType: OpportunityType
-) {
-  // if destination document does not already exist, we will look for a legacy document to migrate
-  let dataToMigrate: OpportunityEdits | undefined;
-  if (!(await getDoc(updateDocRef)).exists()) {
-    const {
-      docRef: v2UpdatesDocRef,
-      oldDocument: v1UpdatesDoc,
-    } = await getClientUpdatesV2DocRef(clientId, clientRecordId);
-
-    // legacy format(s): object nested directly in the update doc
-    let legacyRecord = v1UpdatesDoc;
-    // this doc will only be returned if the v2 doc does not exist
-    if (!v1UpdatesDoc) {
-      legacyRecord = (await getDoc(v2UpdatesDocRef)).data();
-    }
-
-    dataToMigrate = legacyRecord?.[opportunityType];
-  }
-
-  if (dataToMigrate) {
-    // write old + new data to new destination
-    setDoc(updateDocRef, dataToMigrate);
-  }
-}
-
-/**
- * @param opportunityType needs to match `UpdateType`! This function does not verify that it does
- * @param handleResults will be called whenever data changes
- * @returns a callable unsubscribe handle
- */
-export function subscribeToOpportunityUpdate<
-  UpdateType extends OpportunityUpdateRecord
->(
-  clientId: string,
-  clientRecordId: string,
-  opportunityType: OpportunityType,
-  handleResults: (results?: UpdateType) => void
-): Unsubscribe {
-  const updateDocRef = doc(
-    collections.clientUpdatesV2,
-    clientRecordId,
-    collectionNames.clientOpportunityUpdates,
-    opportunityType
-  );
-
-  migrateOpportunityUpdate(
-    updateDocRef,
-    clientId,
-    clientRecordId,
-    opportunityType
-  );
-
-  return onSnapshot(updateDocRef, (result) => {
-    const data = result.data({ serverTimestamps: "estimate" });
-    handleResults(data && ({ ...data, type: opportunityType } as UpdateType));
-  });
-}
-
-/**
  * @param handleResults will be called whenever data changes
  * @returns a callable unsubscribe handle
  */
@@ -425,32 +355,10 @@ export function subscribeToEligibleCount(
   );
 }
 
-// TODO(#2108): Clean up requests to `clientUpdates` after fully migrating to `clientUpdatesV2`
-const getClientUpdatesV2DocRef = async function (
-  clientId: string,
-  recordId: string
-): Promise<{
-  docRef: DocumentReference<ClientUpdateRecord>;
-  oldDocument: ClientUpdateRecord | undefined;
-}> {
-  let oldDocument;
-  const docRef = doc(collections.clientUpdatesV2, recordId);
-  const newDocument = await getDoc(docRef);
-
-  if (!newDocument.exists()) {
-    // Get old document to merge with new updates
-    oldDocument = (
-      await getDoc(doc(collections.clientUpdates, clientId))
-    ).data();
-  }
-
-  return { docRef, oldDocument };
-};
-
 async function updateOpportunity(
   opportunityType: OpportunityType,
   recordId: string,
-  update: PartialWithFieldValue<OpportunityEdits>
+  update: PartialWithFieldValue<OpportunityUpdateWithForm<Record<string, any>>>
 ) {
   const opportunityDocRef = doc(
     collections.clientUpdatesV2,

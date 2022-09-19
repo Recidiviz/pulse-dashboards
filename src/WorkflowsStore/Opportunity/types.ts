@@ -83,20 +83,19 @@ export interface Opportunity extends Hydratable {
   denial: Denial | undefined;
 }
 
-export interface BaseForm {
+export interface BaseForm<FormDataType = Record<string, any>> {
   printText: string;
   formLastUpdated: UpdateLog | undefined;
+  formData: Partial<FormDataType>;
 }
-export interface CompliantReportingFormInterface extends BaseForm {
-  formData: Partial<TransformedCompliantReportingReferral>;
-}
+export type CompliantReportingFormInterface = BaseForm<TransformedCompliantReportingReferral>;
 
-export interface EarlyTerminationFormInterface extends BaseForm {
+export interface EarlyTerminationFormInterface
+  extends BaseForm<EarlyTerminationDraftData> {
   metadata: TransformedEarlyTerminationReferral["metadata"] | undefined;
   addDepositionLine: () => void;
   removeDepositionLine: (key: string) => void;
   additionalDepositionLines: string[];
-  formData: Partial<EarlyTerminationDraftData>;
 }
 
 export type CompliantReportingOpportunity = CompliantReportingFormInterface &

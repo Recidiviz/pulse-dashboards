@@ -51,3 +51,7 @@ export interface TransformedLSUReferral {
     verifiedEmployment?: { employmentVerifiedDate?: Date };
   };
 }
+
+export type LSUDraftData = {
+  clientName: string;
+};

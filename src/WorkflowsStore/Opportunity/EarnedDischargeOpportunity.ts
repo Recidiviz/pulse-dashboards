@@ -15,23 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
+import { computed, makeObservable } from "mobx";
 
 import { Client } from "../Client";
 import { OpportunityValidationError } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 import { EarnedDischargeReferralRecord } from "./EarnedDischargeReferralRecord";
-import {
-  DenialReasonsMap,
-  Opportunity,
-  OpportunityRequirement,
-  OpportunityStatus,
-  OpportunityType,
-} from "./types";
-import {
-  earnedDischargeOpportunityStatuses,
-  rankByReviewStatus,
-} from "./utils";
+import { OpportunityBase } from "./OpportunityBase";
+import { OpportunityRequirement } from "./types";
+import { earnedDischargeOpportunityStatuses } from "./utils";
 
 const DENIAL_REASONS_MAP = {
   SCNC: "Not compliant with special conditions",
@@ -62,60 +54,16 @@ const CRITERIA: Record<string, Partial<OpportunityRequirement>> = {
   },
 };
 
-class EarnedDischargeOpportunity implements Opportunity {
-  client: Client;
-
-  readonly type: OpportunityType = "earnedDischarge";
-
-  readonly denialReasonsMap: DenialReasonsMap;
-
+class EarnedDischargeOpportunity extends OpportunityBase<EarnedDischargeReferralRecord> {
   constructor(client: Client) {
-    makeAutoObservable<
-      EarnedDischargeOpportunity,
-      "record" | "transformedRecord"
-    >(this, {
-      record: true,
-      client: false,
-      transformedRecord: true,
+    super(client, "earnedDischarge");
+
+    makeObservable(this, {
+      statusMessageShort: computed,
+      statusMessageLong: computed,
     });
 
-    this.client = client;
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get record(): EarnedDischargeReferralRecord | undefined {
-    return {};
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  private get transformedRecord() {
-    return {};
-  }
-
-  // TODO(#2263): This is currently not being called. we need to consider a different interface for validating and hydrating,
-  // possibly using the `hydrate` pattern for workflows models.
-  /**
-   * Throws OpportunityValidationError if it detects any condition in external configuration
-   * or the object's input or output that indicates this Opportunity should be excluded.
-   * This may be due to feature gating rather than any actual problem with the input data.
-   * Don't call this in the constructor because it causes MobX to explode!
-   */
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-empty-function
-  validate(): void {}
-
-  // eslint-disable-next-line class-methods-use-this
-  get almostEligible(): boolean {
-    return false;
-  }
-
-  get rank(): number {
-    return rankByReviewStatus(this);
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get reviewStatus(): OpportunityStatus {
-    return "PENDING";
   }
 
   get statusMessageShort(): string {
@@ -126,24 +74,6 @@ class EarnedDischargeOpportunity implements Opportunity {
     // TODO #2141 Update status message once denial reason is added to the client update record
     return earnedDischargeOpportunityStatuses[this.reviewStatus];
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  get requirementsMet(): OpportunityRequirement[] {
-    return [];
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get requirementsAlmostMet(): OpportunityRequirement[] {
-    return [];
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get denial() {
-    return undefined;
-  }
-
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-empty-function
-  hydrate(): void {}
 }
 
 /**

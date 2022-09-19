@@ -78,8 +78,7 @@ export interface TransformedEarlyTerminationReferral {
   };
 }
 
-// Extends Record to facilitate `additionalDepositionLines` dynamic keys
-export interface EarlyTerminationDraftData extends Record<string, string> {
+export type EarlyTerminationDraftData = {
   courtName: string;
   clientName: string;
   convictionCounty: string;
@@ -97,4 +96,6 @@ export interface EarlyTerminationDraftData extends Record<string, string> {
   statesAttorneyPhoneNumber: string;
   statesAttorneyEmailAddress: string;
   statesAttorneyMailingAddress: string;
-}
+  // Extendable to facilitate `additionalDepositionLines` dynamic keys
+  [k: string]: string;
+};

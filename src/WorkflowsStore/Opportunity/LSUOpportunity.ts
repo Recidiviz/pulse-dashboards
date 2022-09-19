@@ -15,26 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
+import { computed, makeObservable } from "mobx";
 
-import { LSUUpdateRecord } from "../../firestore";
 import { Client } from "../Client";
-import {
-  CollectionDocumentSubscription,
-  DocumentSubscription,
-  OpportunityUpdateSubscription,
-} from "../subscriptions";
 import { fieldToDate, OpportunityValidationError } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
-import { LSUReferralRecord, TransformedLSUReferral } from "./LSUReferralRecord";
 import {
-  DenialReasonsMap,
-  Opportunity,
-  OpportunityRequirement,
-  OpportunityStatus,
-  OpportunityType,
-} from "./types";
-import { LSUOpportunityStatuses, rankByReviewStatus } from "./utils";
+  LSUDraftData,
+  LSUReferralRecord,
+  TransformedLSUReferral,
+} from "./LSUReferralRecord";
+import { OpportunityWithFormBase } from "./OpportunityWithFormBase";
+import { OpportunityRequirement } from "./types";
+import { LSUOpportunityStatuses } from "./utils";
 
 const DENIAL_REASONS_MAP = {
   SCNC:
@@ -77,39 +70,20 @@ const CRITERIA: Record<string, OpportunityRequirement> = {
   },
 };
 
-class LSUOpportunity implements Opportunity {
-  client: Client;
-
-  readonly type: OpportunityType = "LSU";
-
-  readonly denialReasonsMap: DenialReasonsMap;
-
-  private referralSubscription: DocumentSubscription<LSUReferralRecord>;
-
-  private updatesSubscription: DocumentSubscription<LSUUpdateRecord>;
-
+class LSUOpportunity extends OpportunityWithFormBase<
+  LSUReferralRecord,
+  LSUDraftData
+> {
   constructor(client: Client) {
-    makeAutoObservable<LSUOpportunity, "record" | "transformedRecord">(this, {
-      record: true,
-      client: false,
+    super(client, "LSU");
+    makeObservable<LSUOpportunity, "transformedRecord">(this, {
       transformedRecord: true,
+      statusMessageLong: computed,
+      statusMessageShort: computed,
+      requirementsMet: computed,
     });
 
-    this.client = client;
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.referralSubscription = new CollectionDocumentSubscription<LSUReferralRecord>(
-      "LSUReferrals",
-      client.recordId
-    );
-    this.updatesSubscription = new OpportunityUpdateSubscription<LSUUpdateRecord>(
-      client.recordId,
-      client.id,
-      "LSU"
-    );
-  }
-
-  get record(): LSUReferralRecord | undefined {
-    return this.referralSubscription.data;
   }
 
   private get transformedRecord() {
@@ -177,51 +151,6 @@ class LSUOpportunity implements Opportunity {
     return transformedRecord;
   }
 
-  // TODO(#2263): This is currently not being called. we need to consider a different interface for validating and hydrating,
-  // possibly using the `hydrate` pattern for workflows models.
-  /**
-   * Throws OpportunityValidationError if it detects any condition in external configuration
-   * or the object's input or output that indicates this Opportunity should be excluded.
-   * This may be due to feature gating rather than any actual problem with the input data.
-   * Don't call this in the constructor because it causes MobX to explode!
-   */
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-empty-function
-  validate(): void {}
-
-  // eslint-disable-next-line class-methods-use-this
-  get almostEligible(): boolean {
-    return false;
-  }
-
-  get rank(): number {
-    return rankByReviewStatus(this);
-  }
-
-  get updates() {
-    return this.updatesSubscription.data;
-  }
-
-  get denial() {
-    return this.updates?.denial;
-  }
-
-  get reviewStatus(): OpportunityStatus {
-    const { updates, denial } = this;
-    if ((denial?.reasons?.length || 0) !== 0) {
-      return "DENIED";
-    }
-
-    if (updates?.completed) {
-      return "COMPLETED";
-    }
-
-    if (updates?.referralForm) {
-      return "IN_PROGRESS";
-    }
-
-    return "PENDING";
-  }
-
   get statusMessageShort(): string {
     return LSUOpportunityStatuses[this.reviewStatus];
   }
@@ -283,28 +212,6 @@ class LSUOpportunity implements Opportunity {
     }
 
     return requirements;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get requirementsAlmostMet(): OpportunityRequirement[] {
-    return [];
-  }
-
-  hydrate(): void {
-    this.referralSubscription.hydrate();
-    this.updatesSubscription.hydrate();
-  }
-
-  get isLoading(): boolean | undefined {
-    if (
-      this.referralSubscription.isLoading === undefined ||
-      this.updatesSubscription.isLoading === undefined
-    ) {
-      return undefined;
-    }
-    return (
-      this.referralSubscription.isLoading || this.updatesSubscription.isLoading
-    );
   }
 }
 
