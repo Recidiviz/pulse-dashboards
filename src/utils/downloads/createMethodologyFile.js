@@ -47,8 +47,10 @@ function createMethodologyFile({
 
   infoChart.forEach((chart) => {
     if (chart.title) text += `${chart.title}\n`;
-    const methodology = chart.methodology.replace(/\*\*/g, ``);
-    text += `${wrap(methodology, { width: 80 })}\n`;
+    if (chart.methodology) {
+      const methodology = chart.methodology.replace(/\*\*/g, ``);
+      text += `${wrap(methodology, { width: 80 })}\n`;
+    }
     text += "\n";
   });
 

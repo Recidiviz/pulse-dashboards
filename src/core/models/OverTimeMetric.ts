@@ -73,9 +73,7 @@ export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesD
     this.dataSeries.forEach((d: TimeSeriesDataRecord) => {
       data.push({
         Population: Math.round(d.count),
-        ...(d.avg90day && {
-          "3-month rolling average": Math.round(d.avg90day),
-        }),
+        "3-month rolling average": Math.round(d.avg90day),
       });
 
       labels.push(formatMonthAndYear(getRecordDate(d)));

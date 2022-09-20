@@ -210,4 +210,56 @@ describe("OverTimeMetric", () => {
       },
     ]);
   });
+
+  it("has the correct downloadableData", () => {
+    const expected = {
+      chartDatasets: [
+        {
+          data: [
+            {
+              Population: 0,
+              "3-month rolling average": 0,
+            },
+            {
+              Population: 0,
+              "3-month rolling average": 0,
+            },
+            {
+              Population: 0,
+              "3-month rolling average": 0,
+            },
+            {
+              Population: 1000,
+              "3-month rolling average": 1000,
+            },
+            {
+              Population: 0,
+              "3-month rolling average": 1000,
+            },
+            {
+              Population: 3000,
+              "3-month rolling average": 1500,
+            },
+            {
+              Population: 4000,
+              "3-month rolling average": 2500,
+            },
+          ],
+          label: "",
+        },
+      ],
+      chartId: "Admissions from liberty to prison over time",
+      chartLabels: [
+        "Oct '21",
+        "Nov '21",
+        "Dec '21",
+        "Jan '22",
+        "Feb '22",
+        "Mar '22",
+        "Apr '22",
+      ],
+      dataExportLabel: "Month",
+    };
+    expect(metric.downloadableData).toEqual(expected);
+  });
 });
