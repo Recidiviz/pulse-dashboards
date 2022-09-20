@@ -142,6 +142,27 @@ describe("PersonLevelMetric", () => {
     expect(metric.isLoading).toEqual(false);
   });
 
+  it("sets isEmpty to false", () => {
+    expect(metric.isEmpty).toEqual(false);
+  });
+
+  it("sets isEmpty to true when there is no data", () => {
+    jest.mock("../../../api/metrics/metricsClient", () => {
+      return {
+        callNewMetricsApi: jest.fn().mockResolvedValue({}),
+      };
+    });
+
+    metric = new PersonLevelMetric({
+      id: "prisonPopulationPersonLevel",
+      rootStore: new CoreStore(mockRootStore),
+      endpoint: "PrisonPopulationPersonLevel",
+    });
+    metric.hydrate();
+
+    expect(metric.isEmpty).toEqual(true);
+  });
+
   it("calls the backend again when filters change", () => {
     runInAction(() => {
       metric.rootStore?.filtersStore.setFilters({

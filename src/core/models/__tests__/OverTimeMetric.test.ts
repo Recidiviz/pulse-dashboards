@@ -130,6 +130,27 @@ describe("OverTimeMetric", () => {
     expect(metric.mostRecentDate).toEqual(new Date(2022, 3));
   });
 
+  it("sets isEmpty to false", () => {
+    expect(metric.isEmpty).toEqual(false);
+  });
+
+  it("sets isEmpty to true when there is no data", () => {
+    jest.mock("../../../api/metrics/metricsClient", () => {
+      return {
+        callNewMetricsApi: jest.fn().mockResolvedValue({}),
+      };
+    });
+
+    metric = new OverTimeMetric({
+      id: "prisonPopulationOverTime",
+      rootStore: new CoreStore(mockRootStore),
+      endpoint: "PrisonPopulationOverTime",
+    });
+    metric.hydrate();
+
+    expect(metric.isEmpty).toEqual(true);
+  });
+
   it("does not throw when accessing the most recent date without loaded data", () => {
     jest.mock("../../../api/metrics/metricsClient", () => {
       return {

@@ -35,6 +35,7 @@ import { Filters, PopulationFilterValues } from "../types/filters";
 import { PathwaysPage } from "../views";
 import PathwaysMetric from "./PathwaysMetric";
 import {
+  HydratablePathwaysMetric,
   MetricId,
   MetricRecord,
   NewBackendRecord,
@@ -59,7 +60,7 @@ export type BaseNewMetricConstructorOptions = {
 
 export default abstract class PathwaysNewBackendMetric<
   RecordFormat extends MetricRecord
-> {
+> implements HydratablePathwaysMetric {
   readonly id: MetricId;
 
   readonly endpoint: string;
@@ -179,6 +180,8 @@ export default abstract class PathwaysNewBackendMetric<
   abstract get dataSeries(): PathwaysMetricRecords;
 
   abstract get dataSeriesForDiffing(): RecordFormat[];
+
+  abstract get isEmpty(): boolean;
 
   get content(): MetricContent {
     return getMetricCopy(this.rootStore?.currentTenantId)[this.id];

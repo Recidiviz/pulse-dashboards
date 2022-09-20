@@ -333,6 +333,7 @@ export interface Hydratable {
 
 export interface HydratablePathwaysMetric extends Hydratable {
   dataSeries?: PathwaysMetricRecords;
+  isEmpty?: boolean;
 }
 
 export type PathwaysMetricRecords =

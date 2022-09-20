@@ -56,6 +56,10 @@ export default class PersonLevelMetric extends PathwaysNewBackendMetric<PersonLe
     });
   }
 
+  get isEmpty(): boolean {
+    return !this.dataSeries.length;
+  }
+
   get columns(): TableColumn[] | undefined {
     if (!this.rootStore?.currentTenantId) return undefined;
     return tenants[this.rootStore.currentTenantId].tableColumns?.[this.id];

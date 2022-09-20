@@ -48,11 +48,10 @@ const StatusWrapper = styled(animated.div)`
 function getHydrationStatus(
   model: HydratablePathwaysMetric
 ): "pending" | "error" | "done" | "no data" {
-  const { dataSeries } = model;
   if (model.isLoading || model.isLoading === undefined) {
     return "pending";
   }
-  if (dataSeries && dataSeries.length < 1) {
+  if (model.isEmpty) {
     return "no data";
   }
   if (model.error) {

@@ -108,6 +108,28 @@ describe("SnapshotMetric", () => {
     expect(metric.totalCount).toBe(250);
   });
 
+  it("sets isEmpty to false", () => {
+    expect(metric.isEmpty).toEqual(false);
+  });
+
+  it("sets isEmpty to true when there is no data", () => {
+    jest.mock("../../../api/metrics/metricsClient", () => {
+      return {
+        callNewMetricsApi: jest.fn().mockResolvedValue({}),
+      };
+    });
+
+    metric = new SnapshotMetric({
+      id: "libertyToPrisonPopulationByDistrict",
+      rootStore: new CoreStore(mockRootStore),
+      endpoint: "LibertyToPrisonTransitionsCount",
+      accessor: "judicialDistrict",
+    });
+    metric.hydrate();
+
+    expect(metric.isEmpty).toEqual(true);
+  });
+
   it("calls the backend again when filters change", () => {
     runInAction(() => {
       metric.rootStore?.filtersStore.setFilters({

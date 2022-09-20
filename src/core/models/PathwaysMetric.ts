@@ -210,6 +210,10 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   abstract get dataSeries(): PathwaysMetricRecords;
 
+  get isEmpty(): boolean {
+    return this.dataSeries && this.dataSeries.length < 1;
+  }
+
   get content(): MetricContent {
     return getMetricCopy(this.rootStore?.currentTenantId)[this.id];
   }

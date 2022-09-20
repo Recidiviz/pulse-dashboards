@@ -81,6 +81,10 @@ export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDat
     });
   }
 
+  get isEmpty(): boolean {
+    return !this.totalCount;
+  }
+
   get downloadableData(): DownloadableData | undefined {
     if (!this.dataSeries) return undefined;
 
