@@ -35,7 +35,12 @@ test("requests Firebase auth token", async () => {
     user: {
       undefinedemail_address: userId,
       // this key includes an env variable that is not set in this test environment
-      undefinedapp_metadata: { state_code: stateCode },
+      undefinedapp_metadata: {
+        state_code: stateCode,
+        routes: {
+          workflows: true,
+        },
+      },
     },
   };
   const mockRes = {

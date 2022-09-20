@@ -38,17 +38,21 @@ firebaseAdmin.initializeApp(appOptions);
 async function getFirebaseToken(req, res) {
   let uid;
   let stateCode;
+  let appMetadata;
 
   if (isOfflineMode) {
     const user = fetchOfflineUser({});
-    stateCode = getAppMetadata({ user }).state_code;
+    appMetadata = getAppMetadata({ user });
     uid = user.email;
   } else {
     uid = req.user[`${METADATA_NAMESPACE}email_address`];
-    stateCode = getAppMetadata(req).state_code;
+    appMetadata = getAppMetadata(req);
   }
 
-  if (stateCode) {
+  stateCode = appMetadata.state_code;
+  const allowed = isOfflineMode || appMetadata.routes?.workflows;
+
+  if (stateCode && allowed) {
     stateCode = stateCode.toUpperCase();
     const firebaseToken = await firebaseAdmin
       .auth()
@@ -56,7 +60,9 @@ async function getFirebaseToken(req, res) {
 
     res.json({ firebaseToken });
   } else {
-    throw new Error("Missing state code");
+    throw new Error(
+      `Cannot generate token for user. State code is ${stateCode}`
+    );
   }
 }
 
