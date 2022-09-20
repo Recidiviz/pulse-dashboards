@@ -28,9 +28,9 @@ import {
 } from "../analytics";
 import {
   ClientRecord,
+  CompliantReportingEligibleRecord,
   FullName,
   SpecialConditionCode,
-  SpecialConditionsStatus,
   updateOpportunityCompleted,
   updateOpportunityDenial,
 } from "../firestore";
@@ -128,19 +128,15 @@ export class Client {
 
   lastPaymentDate?: Date;
 
-  feeExemptions?: string;
-
-  specialConditionsFlag?: SpecialConditionsStatus;
-
   probationSpecialConditions?: string[];
 
   paroleSpecialConditions?: SpecialConditionCode[];
 
-  nextSpecialConditionsCheck?: Date;
-
-  lastSpecialConditionsNote?: Date;
-
-  specialConditionsTerminatedDate?: Date;
+  // TODO(#2263): Set this to just boolean once client record is migrated
+  compliantReportingEligible:
+    | CompliantReportingEligibleRecord
+    | undefined
+    | boolean;
 
   formIsPrinting = false;
 
@@ -180,26 +176,16 @@ export class Client {
     this.currentBalance = record.currentBalance;
     this.lastPaymentDate = optionalFieldToDate(record.lastPaymentDate);
     this.lastPaymentAmount = record.lastPaymentAmount;
-    this.feeExemptions = record.feeExemptions;
-    this.specialConditionsFlag = record.specialConditionsFlag;
     this.probationSpecialConditions = record.specialConditions;
     this.paroleSpecialConditions = record.boardConditions ?? [];
-    this.nextSpecialConditionsCheck = optionalFieldToDate(
-      record.nextSpecialConditionsCheck
-    );
-    this.lastSpecialConditionsNote = optionalFieldToDate(
-      record.lastSpecialConditionsNote
-    );
-    this.specialConditionsTerminatedDate = optionalFieldToDate(
-      record.specialConditionsTerminatedDate
-    );
     this.supervisionStartDate = optionalFieldToDate(
       record.supervisionStartDate
     );
+    this.compliantReportingEligible = record.compliantReportingEligible;
 
     this.opportunities = {
       compliantReporting: createCompliantReportingOpportunity(
-        this.record.compliantReportingEligible,
+        this.compliantReportingEligible,
         this
       ),
       earlyTermination: createEarlyTerminationOpportunity(
@@ -326,7 +312,10 @@ export class Client {
   }
 
   printReferralForm(opportunityType: OpportunityType): void {
-    if (this.currentUserEmail) {
+    if (
+      this.currentUserEmail &&
+      this.opportunities[opportunityType]?.reviewStatus
+    ) {
       if (this.opportunities[opportunityType]?.reviewStatus !== "DENIED") {
         updateOpportunityCompleted(
           this.currentUserEmail,

@@ -24,23 +24,7 @@
     ],
     "specialConditionsTerminatedDate": "2021-12-31",
     "specialConditionsFlag": "terminated",
-    "compliantReportingEligible": {
-      "eligibilityCategory": "c1",
-      "eligibleLevelStart": "2019-10-26",
-      "judicialDistrict": "17",
-      "lifetimeOffensesExpired": ["HABITUAL TRAFFIC OFFENDER"],
-      "currentOffenses": [
-        "SALVIA DIVINORUM A PROD/MFG/DIST/POSS",
-        "ARSON",
-        "ATT FRAUD INSURANCE CLAIM - $60,000 OR MORE"
-      ],
-      "drugScreensPastYear": [{ "result": "DRUN", "date": "2022-01-26" }],
-      "sanctionsPastYear": [],
-      "mostRecentArrestCheck": "2022-01-03",
-      "pastOffenses": [],
-      "finesFeesEligible": "low_balance",
-      "zeroToleranceCodes": []
-    }
+    "compliantReportingEligible": true
   },
   {
     "personName": { "givenNames": "LINET", "surname": "HANSEN" },
@@ -64,47 +48,7 @@
     "nextSpecialConditionsCheck": "2022-12-31",
     "lastSpecialConditionsNote": "2021-12-31",
     "specialConditionsFlag": "current",
-    "compliantReportingEligible": {
-      "eligibilityCategory": "c3",
-      "eligibleLevelStart": "2019-12-20",
-      "judicialDistrict": "14",
-      "lifetimeOffensesExpired": [],
-      "currentOffenses": [
-        "DUI, 4TH OFFENSE & SUBSEQUENT",
-        "POSS FIREARM W/PRIOR VIOL/DEAD WPN CONV",
-        "AGGRAV ASLT WEAPON (BEER BOTTLE), FLIGHT-ESCA"
-      ],
-      "drugScreensPastYear": [
-        { "result": "DRUN", "date": "2021-09-17" },
-        { "result": "DRUM", "date": "2022-02-02" }
-      ],
-      "sanctionsPastYear": ["IPDS"],
-      "mostRecentArrestCheck": "2022-01-03",
-      "finesFeesEligible": "regular_payments",
-      "pastOffenses": [],
-      "zeroToleranceCodes": [
-        {
-          "contactNoteType": "ZTVR",
-          "contactNoteDate": "2018-04-20"
-        },
-        {
-          "contactNoteType": "VWAR",
-          "contactNoteDate": "2017-08-30"
-        },
-        {
-          "contactNoteType": "COHC",
-          "contactNoteDate": "2016-06-27"
-        },
-        {
-          "contactNoteType": "VWAR",
-          "contactNoteDate": "2018-01-30"
-        },
-        {
-          "contactNoteType": "COHC",
-          "contactNoteDate": "2019-07-29"
-        }
-      ]
-    }
+    "compliantReportingEligible": true
   },
 
   {
@@ -153,22 +97,7 @@
     "nextSpecialConditionsCheck": "2022-12-31",
     "lastSpecialConditionsNote": "2021-12-31",
     "specialConditionsFlag": "current",
-    "compliantReportingEligible": {
-      "eligibilityCategory": "c1",
-      "eligibleLevelStart": "2020-04-07",
-      "judicialDistrict": null,
-      "lifetimeOffensesExpired": ["TNCARE FRAUD"],
-      "currentOffenses": [
-        "FORGERY - COUNTERFEITING",
-        " BRIBERY OF A PUBLIC SERVANT"
-      ],
-      "drugScreensPastYear": [{ "result": "DRUX", "date": "2021-11-26" }],
-      "sanctionsPastYear": ["OPRD"],
-      "mostRecentArrestCheck": "2022-01-03",
-      "pastOffenses": [],
-      "finesFeesEligible": "exempt",
-      "zeroToleranceCodes": []
-    }
+    "compliantReportingEligible": true
   },
   {
     "personName": {
@@ -194,17 +123,7 @@
       "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS"
     ],
     "nextSpecialConditionsCheck": "2022-12-31",
-    "compliantReportingEligible": {
-      "eligibilityCategory": "c4",
-      "eligibleLevelStart": "2020-05-19",
-      "judicialDistrict": "14",
-      "lifetimeOffensesExpired": [],
-      "currentOffenses": ["FRAUD", "BURGLARY-OTHER THAN HABITATION"],
-      "drugScreensPastYear": [{ "result": "DRUN", "date": "2022-01-26" }],
-      "sanctionsPastYear": [],
-      "pastOffenses": [],
-      "finesFeesEligible": "low_balance"
-    }
+    "compliantReportingEligible": true
   },
   {
     "personName": {
@@ -228,23 +147,7 @@
     "lastPaymentDate": "2022-01-03",
     "specialConditions": [],
     "specialConditionsFlag": "none",
-    "compliantReportingEligible": {
-      "eligibilityCategory": "c2",
-      "eligibleLevelStart": "2021-02-11",
-      "judicialDistrict": "14",
-      "lifetimeOffensesExpired": [],
-      "currentOffenses": ["FRAUD", "BURGLARY-OTHER THAN HABITATION"],
-      "drugScreensPastYear": [{ "result": "DRUN", "date": "2022-01-26" }],
-      "sanctionsPastYear": [],
-      "pastOffenses": [
-        "AGGRAVATED ASSAULT",
-        "RECKLESS ENDANGERMENT -DEADLY WEAPON INVOLVED",
-        "BURGLARY-OTHER THAN HABITATION",
-        "DRIVE WITH LICENSE SUSP./CANC/REVOKED",
-        "POSSESSION OF DRUGS"
-      ],
-      "finesFeesEligible": "low_balance"
-    }
+    "compliantReportingEligible": true
   },
   {
     "personName": {
@@ -272,21 +175,7 @@
     "nextSpecialConditionsCheck": "2022-12-31",
     "lastSpecialConditionsNote": "2021-12-31",
     "specialConditionsFlag": "current",
-    "compliantReportingEligible": {
-      "eligibilityCategory": "c3",
-      "eligibleLevelStart": "2019-12-20",
-      "judicialDistrict": "14",
-      "lifetimeOffensesExpired": [],
-      "currentOffenses": [],
-      "drugScreensPastYear": [
-        { "result": "DRUN", "date": "2021-09-17" },
-        { "result": "DRUM", "date": "2022-02-02" }
-      ],
-      "sanctionsPastYear": ["IPDS"],
-      "mostRecentArrestCheck": "2022-01-03",
-      "finesFeesEligible": "regular_payments",
-      "pastOffenses": []
-    }
+    "compliantReportingEligible": true
   },
   {
     "personName": {

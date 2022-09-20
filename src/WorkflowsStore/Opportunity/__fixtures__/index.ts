@@ -16,18 +16,13 @@
 // =============================================================================
 import { Required as RequireKeys } from "utility-types";
 
-import {
-  ClientRecord,
-  CompliantReportingEligibleRecord,
-} from "../../../firestore";
+import { ClientRecord } from "../../../firestore";
 import { dateToTimestamp } from "../../utils";
+import { CompliantReportingReferralRecord } from "../CompliantReportingReferralRecord";
 import { EarlyTerminationReferralRecord } from "../EarlyTerminationReferralRecord";
 import { LSUReferralRecord } from "../LSUReferralRecord";
 
-export const compliantReportingEligibleClientRecord: RequireKeys<
-  ClientRecord,
-  "compliantReportingEligible"
-> = {
+export const compliantReportingEligibleClientRecord = {
   recordId: "us_xx_cr-eligible-1",
   personName: { givenNames: "Test", surname: "Name" },
   personExternalId: "cr-eligible-1",
@@ -38,32 +33,62 @@ export const compliantReportingEligibleClientRecord: RequireKeys<
   supervisionLevel: "STANDARD: MEDIUM",
   supervisionLevelStart: dateToTimestamp("2019-12-20"),
   currentBalance: 221.88,
-  specialConditionsFlag: "current",
-  lastSpecialConditionsNote: "2022-03-15",
   specialConditions: [],
-  compliantReportingEligible: {
-    stateCode: "US_XX",
-    eligibilityCategory: "c1",
-    remainingCriteriaNeeded: 0,
-    mostRecentArrestCheck: dateToTimestamp("2022-05-28"),
-    eligibleLevelStart: dateToTimestamp("2019-12-20"),
-    judicialDistrict: "A",
-    finesFeesEligible: "regular_payments",
-    drugScreensPastYear: [
-      { result: "DRUN", date: dateToTimestamp("2022-01-04") },
-    ],
-    sanctionsPastYear: [],
-    currentOffenses: ["EXAMPLE CURRENT"],
-    pastOffenses: [],
-    lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
-  },
+  compliantReportingEligible: true,
 };
 
-export const compliantReportingAlmostEligibleClientRecord: RequireKeys<
-  ClientRecord,
-  "compliantReportingEligible"
+export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecord> = {
+  stateCode: "US_XX",
+  tdocId: "cr-eligible-1",
+  eligibilityCategory: "c1",
+  remainingCriteriaNeeded: 0,
+  mostRecentArrestCheck: dateToTimestamp("2022-05-28"),
+  eligibleLevelStart: dateToTimestamp("2019-12-20"),
+  judicialDistrict: "A",
+  finesFeesEligible: "regular_payments",
+  drugScreensPastYear: [
+    { result: "DRUN", date: dateToTimestamp("2022-01-04") },
+  ],
+  sanctionsPastYear: [],
+  currentOffenses: ["EXAMPLE CURRENT"],
+  pastOffenses: [],
+  lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
+  specialConditionsFlag: "current",
+  lastSpecialConditionsNote: "2022-03-15",
+};
+
+export const compliantReportingAlmostEligibleCriteria: Required<
+  NonNullable<CompliantReportingReferralRecord["almostEligibleCriteria"]>
 > = {
+  passedDrugScreenNeeded: true,
+  paymentNeeded: true,
+  currentLevelEligibilityDate: "2022-08-15",
+  seriousSanctionsEligibilityDate: "2022-08-15",
+  recentRejectionCodes: ["TEST1"],
+};
+
+export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantReportingReferralRecord> = {
+  stateCode: "US_XX",
+  tdocId: "cr-almost-eligible-1",
+  almostEligibleCriteria: compliantReportingAlmostEligibleCriteria,
+  eligibilityCategory: "c1",
+  remainingCriteriaNeeded: 1,
+  mostRecentArrestCheck: dateToTimestamp("2022-05-28"),
+  eligibleLevelStart: dateToTimestamp("2019-12-20"),
+  judicialDistrict: "A",
+  finesFeesEligible: "regular_payments",
+  drugScreensPastYear: [],
+  sanctionsPastYear: [],
+  currentOffenses: ["EXAMPLE CURRENT"],
+  pastOffenses: [],
+  lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
+  specialConditionsFlag: "current",
+  lastSpecialConditionsNote: "2022-03-15",
+};
+
+export const compliantReportingAlmostEligibleClientRecord = {
   recordId: "us_xx_cr-almost-eligible-1",
+  compliantReportingEligible: true,
   personName: { givenNames: "Test", surname: "Name" },
   personExternalId: "cr-almost-eligible-1",
   pseudonymizedId: "pseudo-cr-almost-eligible-1",
@@ -73,33 +98,7 @@ export const compliantReportingAlmostEligibleClientRecord: RequireKeys<
   supervisionLevel: "STANDARD: MEDIUM",
   supervisionLevelStart: dateToTimestamp("2019-12-20"),
   currentBalance: 221.88,
-  specialConditionsFlag: "current",
-  lastSpecialConditionsNote: "2022-03-15",
   specialConditions: [],
-  compliantReportingEligible: {
-    stateCode: "US_XX",
-    eligibilityCategory: "c1",
-    remainingCriteriaNeeded: 1,
-    mostRecentArrestCheck: dateToTimestamp("2022-05-28"),
-    eligibleLevelStart: dateToTimestamp("2019-12-20"),
-    judicialDistrict: "A",
-    finesFeesEligible: "regular_payments",
-    drugScreensPastYear: [],
-    sanctionsPastYear: [],
-    currentOffenses: ["EXAMPLE CURRENT"],
-    pastOffenses: [],
-    lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
-  },
-};
-
-export const CompliantReportingAlmostEligibleCriteria: Required<
-  NonNullable<CompliantReportingEligibleRecord["almostEligibleCriteria"]>
-> = {
-  passedDrugScreenNeeded: true,
-  paymentNeeded: true,
-  currentLevelEligibilityDate: "2022-08-15",
-  seriousSanctionsEligibilityDate: "2022-08-15",
-  recentRejectionCodes: ["TEST1"],
 };
 
 export const earlyTerminationEligibleClientRecord: RequireKeys<

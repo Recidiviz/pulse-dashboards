@@ -45,7 +45,7 @@ jest.mock("../../firestore");
 jest.mock("../../core/Paperwork/US_TN/Transformer");
 jest.mock("../subscriptions");
 
-const mockupdateOpportunityDenial = updateOpportunityDenial as jest.MockedFunction<
+const mockUpdateOpportunityDenial = updateOpportunityDenial as jest.MockedFunction<
   typeof updateOpportunityDenial
 >;
 const mockUpdateOpportunityCompleted = updateOpportunityCompleted as jest.MockedFunction<
@@ -95,7 +95,7 @@ test.each(OPPORTUNITY_TYPES)(
 
     await client.setOpportunityDenialReasons(reasons, opportunityType);
 
-    expect(mockupdateOpportunityDenial).toHaveBeenCalledWith(
+    expect(mockUpdateOpportunityDenial).toHaveBeenCalledWith(
       mockOfficer.info.email,
       client.recordId,
       { reasons },
@@ -127,7 +127,7 @@ test.each(OPPORTUNITY_TYPES)(
 
     client.setOpportunityDenialReasons(reasons, opportunityType);
 
-    expect(mockupdateOpportunityDenial).toHaveBeenCalledWith(
+    expect(mockUpdateOpportunityDenial).toHaveBeenCalledWith(
       mockOfficer.info.email,
       client.recordId,
       { reasons },
@@ -139,7 +139,7 @@ test.each(OPPORTUNITY_TYPES)(
 
     client.setOpportunityDenialReasons(newReasons, opportunityType);
 
-    expect(mockupdateOpportunityDenial).toHaveBeenCalledWith(
+    expect(mockUpdateOpportunityDenial).toHaveBeenCalledWith(
       mockOfficer.info.email,
       client.recordId,
       { reasons: newReasons },
@@ -158,7 +158,7 @@ test.each(OPPORTUNITY_TYPES)(
     const otherReason = "some other reason";
     client.setOpportunityOtherReason(opportunityType, otherReason);
 
-    expect(mockupdateOpportunityDenial).toHaveBeenCalledWith(
+    expect(mockUpdateOpportunityDenial).toHaveBeenCalledWith(
       mockOfficer.info.email,
       client.recordId,
       { otherReason },

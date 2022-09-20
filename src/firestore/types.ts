@@ -85,8 +85,6 @@ export type FullName = {
   surname?: string;
 };
 
-export type SpecialConditionsStatus = "none" | "terminated" | "current";
-
 export type SpecialConditionCode = {
   condition: string;
   conditionDescription: string;
@@ -112,19 +110,20 @@ export type ClientRecord = {
   currentBalance?: number;
   lastPaymentAmount?: number;
   lastPaymentDate?: Timestamp | string;
-  feeExemptions?: string;
-  specialConditionsFlag?: SpecialConditionsStatus;
   specialConditions?: string[];
   boardConditions?: SpecialConditionCode[];
-  nextSpecialConditionsCheck?: Timestamp | string;
-  lastSpecialConditionsNote?: string;
-  specialConditionsTerminatedDate?: string;
-  compliantReportingEligible?: CompliantReportingEligibleRecord;
+  // TODO(#2263): Update this to a only be a boolean once the Client delegate is loading it
+  compliantReportingEligible?:
+    | CompliantReportingEligibleRecord
+    | undefined
+    | boolean;
   earlyTerminationEligible?: boolean;
   earnedDischargeEligible?: boolean;
   LSUEligible?: boolean;
 };
 
+// TODO(#2263): Remove CompliantReportingFinesFeesEligible and CompliantReportingEligibleRecord once Client record is migrated
+// to use boolean value for compliantReportingEligible.
 export type CompliantReportingFinesFeesEligible =
   | "low_balance"
   | "exempt"

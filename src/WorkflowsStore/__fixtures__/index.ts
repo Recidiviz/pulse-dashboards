@@ -70,8 +70,24 @@ export const ineligibleClient: ClientRecord = {
   currentBalance: 0,
   lastPaymentAmount: 50,
   lastPaymentDate: dateToTimestamp("2021-11-15"),
-  specialConditionsFlag: "current",
   specialConditions: ["SPECIAL CONDITIONS TEST TEST"],
+};
+
+export const compliantReportingReferralRecord = {
+  stateCode: "US_XX",
+  tdocId: "101",
+  eligibilityCategory: "c1",
+  remainingCriteriaNeeded: 0,
+  eligibleLevelStart: dateToTimestamp("2019-12-20"),
+  judicialDistrict: "A",
+  finesFeesEligible: "regular_payments",
+  drugScreensPastYear: [],
+  sanctionsPastYear: [],
+  currentOffenses: ["EXAMPLE"],
+  pastOffenses: [],
+  zeroToleranceCodes: [],
+  lifetimeOffensesExpired: ["EXAMPLE"],
+  specialConditionsFlag: "current",
 };
 
 export const eligibleClient: ClientRecord = {
@@ -88,22 +104,11 @@ export const eligibleClient: ClientRecord = {
   phoneNumber: "5555555678",
   expirationDate: dateToTimestamp("2024-12-31"),
   currentBalance: 221.88,
-  specialConditionsFlag: "current",
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
-  compliantReportingEligible: {
-    stateCode: "US_XX",
-    eligibilityCategory: "c1",
-    remainingCriteriaNeeded: 0,
-    eligibleLevelStart: dateToTimestamp("2019-12-20"),
-    judicialDistrict: "A",
-    finesFeesEligible: "regular_payments",
-    drugScreensPastYear: [],
-    sanctionsPastYear: [],
-    currentOffenses: ["EXAMPLE"],
-    pastOffenses: [],
-    zeroToleranceCodes: [],
-    lifetimeOffensesExpired: ["EXAMPLE"],
-  },
+  compliantReportingEligible: true,
+  earlyTerminationEligible: true,
+  earnedDischargeEligible: true,
+  LSUEligible: true,
 };
 
 export const mockClients = [ineligibleClient, eligibleClient];

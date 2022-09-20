@@ -28,8 +28,10 @@ import {
 import { WorkflowsStore } from "../../WorkflowsStore";
 import {
   compliantReportingAlmostEligibleClientRecord,
-  CompliantReportingAlmostEligibleCriteria,
+  compliantReportingAlmostEligibleCriteria,
+  compliantReportingAlmostEligibleReferralRecord,
   compliantReportingEligibleClientRecord,
+  compliantReportingReferralRecord,
 } from "../__fixtures__";
 import {
   COMPLETED_UPDATE,
@@ -54,13 +56,14 @@ const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.
   typeof OpportunityUpdateSubscription
 >;
 
+jest.mock("../../../firestore");
+
 function createTestUnit(
   clientRecord: typeof compliantReportingEligibleClientRecord
 ) {
   root = new RootStore();
   client = new Client(clientRecord, root);
   const maybeOpportunity = client.opportunities.compliantReporting;
-
   if (maybeOpportunity === undefined) {
     throw new Error("Unable to create opportunity instance");
   }
@@ -83,6 +86,7 @@ describe("fully eligible", () => {
   beforeEach(() => {
     createTestUnit(compliantReportingEligibleClientRecord);
     [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+    [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
   });
 
   test("review status", () => {
@@ -144,7 +148,8 @@ describe("fully eligible", () => {
     expect(cr.requirementsAlmostMet).toEqual([]);
   });
 
-  test("requirements met", () => {
+  test("requirements met", async () => {
+    referralSub.data = compliantReportingReferralRecord;
     expect(cr.requirementsMet).toMatchSnapshot();
   });
 
@@ -194,7 +199,7 @@ describe.each([
     /on medium supervision for /,
     /stay on your current supervision level/,
   ],
-] as [criterionKey: keyof typeof CompliantReportingAlmostEligibleCriteria, expectedRank: number, expectedListText: string, expectedToolip: RegExp | undefined, expectedMissingText: RegExp, expectedNote?: RegExp][])(
+] as [criterionKey: keyof typeof compliantReportingAlmostEligibleCriteria, expectedRank: number, expectedListText: string, expectedToolip: RegExp | undefined, expectedMissingText: RegExp, expectedNote?: RegExp][])(
   "almost eligible but for %s",
   (
     criterionKey,
@@ -210,14 +215,19 @@ describe.each([
         .mockReturnValue({ CompliantReportingAlmostEligible: {} });
 
       const almostEligibleCriteria = {
-        [criterionKey]: CompliantReportingAlmostEligibleCriteria[criterionKey],
+        [criterionKey]: compliantReportingAlmostEligibleCriteria[criterionKey],
       };
+
       const testRecord = cloneDeep(
-        compliantReportingAlmostEligibleClientRecord
+        compliantReportingAlmostEligibleReferralRecord
       );
-      testRecord.compliantReportingEligible.almostEligibleCriteria = almostEligibleCriteria;
-      createTestUnit(testRecord);
+      testRecord.almostEligibleCriteria = almostEligibleCriteria;
+
+      createTestUnit(compliantReportingAlmostEligibleClientRecord);
+
+      [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
       [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+      referralSub.data = testRecord;
     });
 
     test("review status", () => {
@@ -245,6 +255,7 @@ describe.each([
       updatesSub.data = DENIED_UPDATE;
       expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.DENIED);
     });
+
     test("extended status message", () => {
       expect(cr.statusMessageLong).toBe(expectedListText);
 

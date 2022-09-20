@@ -25,7 +25,6 @@ import { transform } from "../../core/Paperwork/US_TN/Transformer";
 import { formatRelativeToNow } from "../../core/utils/timePeriod";
 import {
   CompliantReportingEligibleRecord,
-  CompliantReportingFinesFeesEligible,
   Denial,
   OpportunityUpdateWithForm,
   UpdateLog,
@@ -44,7 +43,9 @@ import {
 } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 import {
+  CompliantReportingFinesFeesEligible,
   CompliantReportingReferralRecord,
+  SpecialConditionsStatus,
   TransformedCompliantReportingReferral,
 } from "./CompliantReportingReferralRecord";
 import {
@@ -70,20 +71,25 @@ type AlmostEligibleCriteria = {
 };
 
 type CompliantReportingRecordTransformed = {
+  almostEligibleCriteria?: AlmostEligibleCriteria;
+  currentOffenses: string[];
   eligibilityCategory: string;
+  eligibleLevelStart?: Date;
+  drugScreensPastYear: { result: string; date: Date }[];
+  finesFeesEligible: CompliantReportingFinesFeesEligible;
+  judicialDistrict: string;
+  lastSpecialConditionsNote?: Date | undefined;
+  lifetimeOffensesExpired: string[];
+  mostRecentArrestCheck?: Date;
+  nextSpecialConditionsCheck?: Date | undefined;
+  pastOffenses: string[];
   /** Any number greater than zero indicates the client is _almost_ eligible. */
   remainingCriteriaNeeded: number;
-  eligibleLevelStart?: Date;
-  currentOffenses: string[];
-  lifetimeOffensesExpired: string[];
-  judicialDistrict: string;
-  drugScreensPastYear: { result: string; date: Date }[];
   sanctionsPastYear: { type: string }[];
-  mostRecentArrestCheck?: Date;
-  finesFeesEligible: CompliantReportingFinesFeesEligible;
-  pastOffenses: string[];
+  specialConditionsFlag?: SpecialConditionsStatus;
+  specialConditionsTerminatedDate?: Date | undefined;
+  supervisionFeeExemption?: string;
   zeroToleranceCodes: { contactNoteType: string; contactNoteDate: Date }[];
-  almostEligibleCriteria?: AlmostEligibleCriteria;
 };
 
 // ranked roughly by actionability
@@ -174,8 +180,6 @@ class CompliantReportingOpportunity
 
   readonly type: OpportunityType = "compliantReporting";
 
-  private record: CompliantReportingEligibleRecord;
-
   readonly denialReasonsMap: DenialReasonsMap;
 
   private referralSubscription: DocumentSubscription<CompliantReportingReferralRecord>;
@@ -185,7 +189,7 @@ class CompliantReportingOpportunity
   readonly descriptionCTA =
     "Review and refer eligible clients for Compliant Reporting.";
 
-  constructor(record: CompliantReportingEligibleRecord, client: Client) {
+  constructor(client: Client) {
     makeAutoObservable<
       CompliantReportingOpportunity,
       "record" | "transformedRecord"
@@ -197,7 +201,6 @@ class CompliantReportingOpportunity
     });
 
     this.client = client;
-    this.record = record;
     this.denialReasonsMap = DENIAL_REASONS_MAP;
 
     this.referralSubscription = new CollectionDocumentSubscription<CompliantReportingReferralRecord>(
@@ -211,7 +214,12 @@ class CompliantReportingOpportunity
     );
   }
 
+  get record(): CompliantReportingReferralRecord | undefined {
+    return this.referralSubscription.data;
+  }
+
   private get transformedRecord() {
+    if (!this.record) return;
     const {
       almostEligibleCriteria,
       currentOffenses,
@@ -220,32 +228,46 @@ class CompliantReportingOpportunity
       eligibleLevelStart,
       finesFeesEligible,
       judicialDistrict,
+      lastSpecialConditionsNote,
       lifetimeOffensesExpired,
       mostRecentArrestCheck,
+      nextSpecialConditionsCheck,
       pastOffenses,
       remainingCriteriaNeeded,
       sanctionsPastYear,
+      specialConditionsFlag,
+      specialConditionsTerminatedDate,
+      supervisionFeeExemption,
       zeroToleranceCodes,
     } = this.record;
 
     const transformedRecord: CompliantReportingRecordTransformed = {
-      eligibilityCategory,
-      remainingCriteriaNeeded: remainingCriteriaNeeded ?? 0,
-      eligibleLevelStart: optionalFieldToDate(eligibleLevelStart),
       currentOffenses,
-      lifetimeOffensesExpired,
-      judicialDistrict: judicialDistrict ?? UNKNOWN,
+      eligibilityCategory,
+      eligibleLevelStart: optionalFieldToDate(eligibleLevelStart),
       drugScreensPastYear: drugScreensPastYear.map(({ result, date }) => ({
         result,
         date: fieldToDate(date),
       })),
+      finesFeesEligible,
+      judicialDistrict: judicialDistrict ?? UNKNOWN,
+      lastSpecialConditionsNote: optionalFieldToDate(lastSpecialConditionsNote),
+      lifetimeOffensesExpired,
+      mostRecentArrestCheck: optionalFieldToDate(mostRecentArrestCheck),
+      nextSpecialConditionsCheck: optionalFieldToDate(
+        nextSpecialConditionsCheck
+      ),
+      pastOffenses,
+      remainingCriteriaNeeded: remainingCriteriaNeeded ?? 0,
       sanctionsPastYear:
         sanctionsPastYear.map(({ ProposedSanction }) => ({
           type: ProposedSanction,
         })) || [],
-      mostRecentArrestCheck: optionalFieldToDate(mostRecentArrestCheck),
-      finesFeesEligible,
-      pastOffenses,
+      specialConditionsTerminatedDate: optionalFieldToDate(
+        specialConditionsTerminatedDate
+      ),
+      specialConditionsFlag,
+      supervisionFeeExemption,
       zeroToleranceCodes:
         zeroToleranceCodes?.map(({ contactNoteDate, contactNoteType }) => ({
           contactNoteType,
@@ -284,6 +306,7 @@ class CompliantReportingOpportunity
    * Don't call this in the constructor because it causes MobX to explode!
    */
   validate(): void {
+    if (!this.transformedRecord) return;
     const {
       eligibilityCategory,
       remainingCriteriaNeeded,
@@ -316,13 +339,13 @@ class CompliantReportingOpportunity
 
       if (
         this.validAlmostEligibleKeys.length !==
-        this.record.remainingCriteriaNeeded
+        this.record?.remainingCriteriaNeeded
       ) {
         // we can recover from this by displaying the valid criteria that remain,
         // but it should be logged for investigation
         Sentry.captureException(
           new OpportunityValidationError(
-            `Expected ${this.record.remainingCriteriaNeeded} valid almost-criteria 
+            `Expected ${this.record?.remainingCriteriaNeeded} valid almost-criteria
             for client ${this.client.pseudonymizedId} but only produced 
             ${this.validAlmostEligibleKeys.length}`
           )
@@ -422,24 +445,22 @@ class CompliantReportingOpportunity
   }
 
   get requirementsMet(): OpportunityRequirement[] {
+    if (!this.transformedRecord) return [];
+    const { supervisionLevel, supervisionLevelStart } = this.client;
     const {
-      supervisionLevel,
-      supervisionLevelStart,
-      specialConditionsFlag,
-      lastSpecialConditionsNote,
-      specialConditionsTerminatedDate,
-      feeExemptions,
-    } = this.client;
-    const {
+      currentOffenses,
+      drugScreensPastYear,
       eligibilityCategory,
       eligibleLevelStart,
+      supervisionFeeExemption,
+      finesFeesEligible,
       sanctionsPastYear,
-      drugScreensPastYear,
-      currentOffenses,
+      lastSpecialConditionsNote,
       lifetimeOffensesExpired,
       mostRecentArrestCheck,
-      finesFeesEligible,
       pastOffenses,
+      specialConditionsFlag,
+      specialConditionsTerminatedDate,
       zeroToleranceCodes,
     } = this.transformedRecord;
     const { requirementAlmostMetMap } = this;
@@ -510,7 +531,7 @@ class CompliantReportingOpportunity
       let feeText =
         "Fee balance for current sentence less than $2,000 and has made payments on three consecutive months";
       if (finesFeesEligible === "exempt") {
-        feeText = `Exemption: ${feeExemptions}`;
+        feeText = `Exemption: ${supervisionFeeExemption}`;
       } else if (finesFeesEligible === "low_balance") {
         feeText = "Fee balance less than $500";
       }
@@ -656,7 +677,7 @@ class CompliantReportingOpportunity
       passedDrugScreenNeeded,
       paymentNeeded,
       seriousSanctionsEligibilityDate: seriousSanctionsEligibilityDateString,
-    } = this.record.almostEligibleCriteria ?? {};
+    } = this.record?.almostEligibleCriteria ?? {};
 
     const currentLevelEligibilityDate = optionalFieldToDate(
       currentLevelEligibilityDateString
@@ -701,7 +722,7 @@ class CompliantReportingOpportunity
     } = this;
 
     return mapValues(
-      toJS(this.record.almostEligibleCriteria),
+      toJS(this.record?.almostEligibleCriteria),
       (value, key: keyof AlmostEligibleCriteria) => {
         switch (key) {
           case "passedDrugScreenNeeded":
@@ -871,13 +892,13 @@ class CompliantReportingOpportunity
  * Returns a `CompliantReportingOpportunity` if the provided data indicates the client is eligible or almost eligible
  */
 export function createCompliantReportingOpportunity(
-  record: CompliantReportingEligibleRecord | undefined,
+  // TODO(#2263): Remove record type when migrated to boolean field.
+  eligible: CompliantReportingEligibleRecord | boolean | undefined,
   client: Client
 ): CompliantReportingOpportunity | undefined {
-  if (!record) return undefined;
-
+  if (!eligible) return undefined;
   try {
-    const opp = new CompliantReportingOpportunity(record, client);
+    const opp = new CompliantReportingOpportunity(client);
     opp.validate();
     return opp;
   } catch (e) {
