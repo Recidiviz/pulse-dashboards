@@ -31,6 +31,7 @@ import {
   FullProfile,
 } from "../WorkflowsClientProfile";
 import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTerminationClientProfile";
+import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 import WorkflowsHomepage from "../WorkflowsHomepage";
@@ -139,7 +140,7 @@ const PageWorkflows: React.FC = () => {
           path={workflowsRoute({ name: "LSU", client: true })}
         >
           <WorkflowsFormLayout
-            sidebarContents={<div />}
+            sidebarContents={<LSUClientProfile />}
             formContents={<div />}
           />
         </WorkflowsRoute>
