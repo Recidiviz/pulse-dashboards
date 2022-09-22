@@ -160,16 +160,9 @@ class EarlyTerminationOpportunity
     return transformedRecord;
   }
 
-  // TODO(#2263): This is currently not being called. we need to consider a different interface for validating and hydrating,
-  // possibly using the `hydrate` pattern for workflows models.
-  /**
-   * Throws OpportunityValidationError if it detects any condition in external configuration
-   * or the object's input or output that indicates this Opportunity should be excluded.
-   * This may be due to feature gating rather than any actual problem with the input data.
-   * Don't call this in the constructor because it causes MobX to explode!
-   */
-  validate(): void {
-    if (!this.transformedRecord) return;
+  // TODO(#2263): Refactor isValid into a pipeline hydrate -> validate -> aggregate
+  get isValid(): boolean {
+    if (!this.transformedRecord) return false;
     const {
       criteria: {
         pastEarlyDischarge,
@@ -180,31 +173,24 @@ class EarlyTerminationOpportunity
     } = this.transformedRecord;
 
     if (!pastEarlyDischarge?.eligibleDate) {
-      throw new OpportunityValidationError(
-        "Missing early termination opportunity eligible date"
-      );
+      return false;
     }
 
     if (!eligibleSupervisionLevel?.supervisionLevel) {
-      throw new OpportunityValidationError(
-        "Missing early termination opportunity supervision level"
-      );
+      return false;
     }
 
     if (!eligibleSupervisionType?.supervisionType) {
-      throw new OpportunityValidationError(
-        "Missing early termination opportunity supervision type"
-      );
+      return false;
     }
 
     if (
       !notActiveRevocationStatus ||
       (notActiveRevocationStatus && notActiveRevocationStatus.revocationDate)
     ) {
-      throw new OpportunityValidationError(
-        "Early termination opportunity has revocation date"
-      );
+      return false;
     }
+    return true;
   }
 
   formDataTransformer = transform;

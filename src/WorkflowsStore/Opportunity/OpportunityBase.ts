@@ -140,6 +140,12 @@ export abstract class OpportunityBase<
   // so subclasses can use normal annotations instead of having to use `override`.
   // ===============================
 
+  // TODO(#2263): Refactor isValid into a pipeline hydrate -> validate -> aggregate
+  // eslint-disable-next-line class-methods-use-this
+  get isValid(): boolean {
+    return true;
+  }
+
   // eslint-disable-next-line class-methods-use-this
   get almostEligible(): boolean {
     return false;
@@ -168,9 +174,4 @@ export abstract class OpportunityBase<
   }
 
   descriptionCTA = "";
-
-  // TODO(#2263): This is currently not being called. we need to consider a different interface for validating and hydrating,
-  // possibly using the `hydrate` pattern for workflows models.
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-empty-function
-  validate(): void {}
 }

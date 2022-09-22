@@ -78,7 +78,7 @@ export interface Opportunity extends Hydratable {
   statusMessageShort: string;
   statusMessageLong: string;
   readonly type: OpportunityType;
-  validate: () => void;
+  isValid: boolean;
   denialReasonsMap: DenialReasonsMap;
   descriptionCTA: string;
   denial: Denial | undefined;

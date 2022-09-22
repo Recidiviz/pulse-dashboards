@@ -398,7 +398,7 @@ export class WorkflowsStore implements Hydratable {
     OPPORTUNITY_TYPES.forEach((opportunityType) => {
       const opportunities = this.caseloadClients
         .map((c) => c.opportunities[opportunityType])
-        .filter((opp): opp is Opportunity => opp !== undefined)
+        .filter((opp): opp is Opportunity => opp !== undefined && opp.isValid)
         .sort((a, b) => ascending(a?.rank, b?.rank));
 
       mapping[opportunityType] = opportunities;

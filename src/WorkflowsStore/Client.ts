@@ -225,7 +225,7 @@ export class Client {
 
   get opportunitiesEligible(): OpportunityMapping {
     return entries(this.opportunities).reduce((opportunities, [key, opp]) => {
-      if (opp !== undefined && !opp.almostEligible) {
+      if (opp !== undefined && !opp.almostEligible && opp.isValid) {
         return { ...opportunities, [key as OpportunityType]: opp };
       }
       return opportunities;
@@ -234,7 +234,7 @@ export class Client {
 
   get opportunitiesAlmostEligible(): OpportunityMapping {
     return entries(this.opportunities).reduce((opportunities, [key, opp]) => {
-      if (opp !== undefined && opp.almostEligible) {
+      if (opp !== undefined && opp.almostEligible && opp.isValid) {
         return { ...opportunities, [key as OpportunityType]: opp };
       }
       return opportunities;

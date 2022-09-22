@@ -299,14 +299,9 @@ class CompliantReportingOpportunity
     return transformedRecord;
   }
 
-  /**
-   * Throws OpportunityValidationError if it detects any condition in external configuration
-   * or the object's input or output that indicates this Opportunity should be excluded.
-   * This may be due to feature gating rather than any actual problem with the input data.
-   * Don't call this in the constructor because it causes MobX to explode!
-   */
-  validate(): void {
-    if (!this.transformedRecord) return;
+  // TODO(#2263): Refactor isValid into a pipeline hydrate -> validate -> aggregate
+  get isValid(): boolean {
+    if (!this.transformedRecord) return false;
     const {
       eligibilityCategory,
       remainingCriteriaNeeded,
@@ -315,7 +310,7 @@ class CompliantReportingOpportunity
     // only the explicitly allowed categories can be shown to users.
     // if any others are added they must be suppressed until explicitly enabled.
     if (!COMPLIANT_REPORTING_ACTIVE_CATEGORIES.includes(eligibilityCategory)) {
-      throw new OpportunityValidationError("Unsupported eligibility category");
+      return false;
     }
 
     if (remainingCriteriaNeeded) {
@@ -323,18 +318,14 @@ class CompliantReportingOpportunity
         !this.client.rootStore.workflowsStore.featureVariants
           .CompliantReportingAlmostEligible
       ) {
-        throw new OpportunityValidationError(
-          "Almost-eligible feature disabled"
-        );
+        return false;
       }
 
       // this is a critical error if we expect an almost-eligible client
       // but don't have any valid criteria to report, because it could result in the
       // client being erroneously marked eligible
       if (this.validAlmostEligibleKeys.length === 0) {
-        throw new OpportunityValidationError(
-          "Missing required valid almost-eligible criteria"
-        );
+        return false;
       }
 
       if (
@@ -353,9 +344,10 @@ class CompliantReportingOpportunity
       }
       // almost defined for now as missing exactly one criterion
       if (remainingCriteriaNeeded > 1) {
-        throw new OpportunityValidationError("Too many remaining criteria");
+        return false;
       }
     }
+    return true;
   }
 
   get almostEligible(): boolean {
@@ -899,7 +891,6 @@ export function createCompliantReportingOpportunity(
   if (!eligible) return undefined;
   try {
     const opp = new CompliantReportingOpportunity(client);
-    opp.validate();
     return opp;
   } catch (e) {
     // constructor performs further validation that may fail
