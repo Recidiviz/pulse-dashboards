@@ -15,27 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  WORKFLOWS_PAGES,
-  WorkflowsPageIdList,
-  workflowsRoute,
-  workflowsUrl,
-} from "../views";
-
-test("URL with no params", () => {
-  WorkflowsPageIdList.forEach((pageId) => {
-    expect(workflowsUrl(pageId)).toBe(
-      workflowsRoute({ name: pageId, client: false })
-    );
-  });
-});
-
-test("path to client", () => {
-  WorkflowsPageIdList.forEach((pageId) => {
-    // Home page does not have a client path
-    if (pageId === "home") return;
-    expect(workflowsUrl(pageId, { clientId: "test123" })).toBe(
-      `/workflows/${WORKFLOWS_PAGES[pageId]}/test123`
-    );
-  });
-});
+export { default } from "./WorkflowsHomepage";

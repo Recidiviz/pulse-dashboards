@@ -33,6 +33,7 @@ import {
 import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTerminationClientProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
+import WorkflowsHomepage from "../WorkflowsHomepage";
 import { WorkflowsFormLayout } from "../WorkflowsLayouts";
 import WorkflowsRoute from "../WorkflowsRoute";
 
@@ -70,6 +71,12 @@ const PageWorkflows: React.FC = () => {
   return (
     <ModelHydrator model={workflowsStore}>
       <Switch>
+        <WorkflowsRoute
+          exact
+          path={workflowsRoute({ name: "home", client: false })}
+        >
+          <WorkflowsHomepage />
+        </WorkflowsRoute>
         <WorkflowsRoute
           exact
           path={workflowsRoute({ name: "compliantReporting", client: false })}

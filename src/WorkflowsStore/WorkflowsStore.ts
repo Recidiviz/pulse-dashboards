@@ -330,6 +330,15 @@ export class WorkflowsStore implements Hydratable {
     }
   }
 
+  get hasMultipleOpportunities(): boolean {
+    const { currentTenantId } = this.rootStore;
+    if (!currentTenantId || !tenants[currentTenantId].opportunityTypes) {
+      return false;
+    }
+    const { opportunityTypes } = tenants[currentTenantId];
+    return !!(opportunityTypes && opportunityTypes.length > 1);
+  }
+
   get caseloadClients(): Client[] {
     return values(this.clients)
       .filter((c) => this.selectedOfficerIds.includes(c.officerId))
@@ -359,6 +368,36 @@ export class WorkflowsStore implements Hydratable {
     OPPORTUNITY_TYPES.forEach((opportunityType) => {
       const opportunities = this.caseloadClients
         .map((c) => c.opportunitiesAlmostEligible[opportunityType])
+        .filter((opp): opp is Opportunity => opp !== undefined)
+        .sort((a, b) => ascending(a?.rank, b?.rank));
+
+      mapping[opportunityType] = opportunities;
+    });
+    return mapping;
+  }
+
+  get allOpportunitiesLoaded(): boolean {
+    // Wait until we have clients until checking that opportunities are loading.
+    if (!this.caseloadClients.length) return false;
+    const opportunities: (Opportunity | undefined)[] = [];
+
+    OPPORTUNITY_TYPES.forEach((opportunityType) => {
+      this.caseloadClients.forEach((c) => {
+        opportunities.concat(c.opportunities[opportunityType] || []);
+      });
+    });
+    return (
+      opportunities.filter(
+        (opp) => opp?.isLoading === undefined || opp?.isLoading === true
+      ).length === 0
+    );
+  }
+
+  get allOpportunitiesByType(): Record<OpportunityType, Opportunity[]> {
+    const mapping = {} as Record<OpportunityType, Opportunity[]>;
+    OPPORTUNITY_TYPES.forEach((opportunityType) => {
+      const opportunities = this.caseloadClients
+        .map((c) => c.opportunities[opportunityType])
         .filter((opp): opp is Opportunity => opp !== undefined)
         .sort((a, b) => ascending(a?.rank, b?.rank));
 
@@ -409,6 +448,9 @@ export class WorkflowsStore implements Hydratable {
     return {};
   }
 
+  /**
+   * Opportunity types are ranked in order of how they should display on the Homepage
+   */
   get opportunityTypes(): OpportunityType[] {
     return (
       (this.rootStore.currentTenantId &&

@@ -40,7 +40,8 @@ const US_ID_CONFIG: TenantConfig = {
   workflowsEnableAllDistricts: false,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   navigation: {
-    workflows: [...WORKFLOWS_OPPORTUNITY_TYPES, "client"],
+    // The order of pages here determines where the user will land first when navigating from `/`
+    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "client"],
     operations: [],
     system: [
       PATHWAYS_PAGES.libertyToPrison,

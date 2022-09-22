@@ -24,7 +24,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { OPPORTUNITY_LABELS } from "../../WorkflowsStore/Opportunity/types";
 import RecidivizLogo from "../RecidivizLogo";
-import { PATHWAYS_VIEWS, workflowsUrl } from "../views";
+import { workflowsUrl } from "../views";
 
 const Wrapper = styled.div`
   background-color: ${palette.marble1};
@@ -43,6 +43,8 @@ const Main = styled.main`
   grid-column: 2;
   padding-right: ${rem(spacing.md)};
   padding-top: ${rem(spacing.sm)};
+  /* leaving extra space for the Intercom button */
+  padding-bottom: ${rem(spacing.md * 4)};
 `;
 
 const NavLinks = styled.ul`
@@ -95,10 +97,13 @@ export const WorkflowsNavLayout: React.FC = ({ children }) => {
   return (
     <Wrapper>
       <Sidebar>
-        <Link to={`/${PATHWAYS_VIEWS.workflows}`}>
+        <Link to={workflowsUrl("home")}>
           <RecidivizLogo />
         </Link>
         <NavLinks>
+          <li>
+            <BrandedNavLink to={workflowsUrl("home")}>Home</BrandedNavLink>
+          </li>
           <li>
             <BrandedNavLink to={workflowsUrl("general")}>
               All Clients

@@ -42,7 +42,6 @@ const RouteSync: React.FC = ({ children }) => {
   const [notFound, setNotFound] = useState(false);
   const [redirectPath, setRedirectPath] = useState<string | undefined>();
 
-  //
   useEffect(() => {
     const { page, clientId } = parseLocation(loc);
     setRedirectPath(undefined);
@@ -58,15 +57,14 @@ const RouteSync: React.FC = ({ children }) => {
     }
 
     if (!page) {
-      switch (currentTenantId) {
-        case "US_TN":
-          setRedirectPath(
-            workflowsRoute({ name: "compliantReporting", client: false })
-          );
-          break;
-        default:
-          setRedirectPath(workflowsRoute({ name: "general", client: false }));
-          break;
+      const { hasMultipleOpportunities, opportunityTypes } = workflowsStore;
+
+      if (hasMultipleOpportunities) {
+        setRedirectPath(workflowsRoute({ name: "home", client: false }));
+      } else {
+        setRedirectPath(
+          workflowsRoute({ name: opportunityTypes[0], client: false })
+        );
       }
     }
   }, [loc, workflowsStore, currentTenantId]);

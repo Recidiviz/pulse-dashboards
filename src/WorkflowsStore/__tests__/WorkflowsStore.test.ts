@@ -487,6 +487,20 @@ test("tracking call waits for client to be instantiated", async () => {
   expect(trackingSpy).toHaveBeenCalledWith("compliantReporting");
 });
 
+test("allOpportunitiesLoaded", async () => {
+  // allOpportunitiesLoaded is false when clients is empty/loading
+  populateClients([]);
+  expect(workflowsStore.allOpportunitiesLoaded).toBeFalse();
+
+  populateClients(mockClients);
+  // allOpportunitiesLoaded is false before hydration
+  expect(workflowsStore.allOpportunitiesLoaded).toBeFalse();
+
+  // allOpportunitiesLoaded is true after hydration / loading is finished
+  await waitForHydration();
+  expect(workflowsStore.allOpportunitiesLoaded).toBeTrue();
+});
+
 // TODO(#2346): Update this test when we are using hydrate interface and validating data
 // test.skip("only approved eligibility categories are surfaced", async () => {
 //   const mockEligibleClients: ClientRecord[] = [

@@ -21,6 +21,7 @@ import {
   Opportunity,
   OPPORTUNITY_STATUS_RANKED,
   OpportunityStatus,
+  OpportunityType,
 } from "./types";
 
 export function rankByReviewStatus(opp: Opportunity): number {
@@ -68,3 +69,36 @@ export const LSUOpportunityStatuses: Record<OpportunityStatus, string> = {
 export function formatNoteDate(date: Date): string {
   return format(date, "MMMM do");
 }
+
+export type OpportunityHeadersType = {
+  text: string;
+  highlightText: string;
+  callToAction: string;
+};
+
+export const opportunityHeaders: Record<
+  OpportunityType,
+  OpportunityHeadersType
+> = {
+  compliantReporting: {
+    text: "clients may be eligible for",
+    highlightText: "Compliant Reporting",
+    callToAction: "Review and refer eligible clients for Compliant Reporting.",
+  },
+  earlyTermination: {
+    text: "clients may be eligible for",
+    highlightText: "early termination",
+    callToAction:
+      "Review clients eligible for early termination and download the paperwork to file with the Court.",
+  },
+  earnedDischarge: {
+    text: `clients may be eligible for`,
+    highlightText: `earned discharge`,
+    callToAction: `Review clients who may be eligible for Earned Discharge and complete the request form in CIS.`,
+  },
+  LSU: {
+    text: `clients may be eligible for the`,
+    highlightText: `Limited Supervision Unit`,
+    callToAction: `Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.`,
+  },
+};

@@ -23,6 +23,7 @@ import styled, { css } from "styled-components/macro";
 interface AvatarProps {
   name: string;
   size?: number;
+  splitName?: boolean;
 }
 
 interface AvatarElementProps {
@@ -59,8 +60,22 @@ const AvatarInitials = styled(Sans14)<{ size: number }>`
   text-align: center;
 `;
 
-const ClientAvatar: React.FC<AvatarProps> = ({ name, size = 40 }) => {
-  const initials = name.split(" ").map((sub) => sub.charAt(0));
+const formatAvatarText = (text: string, splitName: boolean): string => {
+  return splitName
+    ? text
+        .split(" ")
+        .map((sub) => sub.charAt(0))
+        .slice(0, 2)
+        .join("")
+    : text;
+};
+
+const ClientAvatar: React.FC<AvatarProps> = ({
+  name,
+  size = 40,
+  splitName = true,
+}) => {
+  const initials = formatAvatarText(name, splitName);
 
   return (
     <AvatarElement size={size}>
@@ -71,10 +86,7 @@ const ClientAvatar: React.FC<AvatarProps> = ({ name, size = 40 }) => {
         colors={palette.data.defaultOrder}
         square={false}
       />
-      <AvatarInitials size={size}>
-        {initials[0]}
-        {initials.length > 1 ? initials[initials.length - 1] : ""}
-      </AvatarInitials>
+      <AvatarInitials size={size}>{initials}</AvatarInitials>
     </AvatarElement>
   );
 };

@@ -260,14 +260,18 @@ export const WORKFLOWS_PATHS = {
   workflows404: `/${PATHWAYS_VIEWS.workflows}/not-found`,
 };
 
-export type WorkflowsPage = OpportunityType | "general";
-// this slightly strange construction was needed because
-// `[...OPPORTUNITY_TYPES, "general"]` caused a TypeError in Jest,
-// something about how TypeScript creates readonly arrays?
-export const WorkflowsPageIdList = (["general"] as WorkflowsPage[]).concat(
-  OPPORTUNITY_TYPES
-);
+const WorkflowsGeneralPages = ["general", "home"] as const;
+
+export type WorkflowsPage =
+  | OpportunityType
+  | typeof WorkflowsGeneralPages[number];
+
+export const WorkflowsPageIdList = [
+  ...WorkflowsGeneralPages,
+  ...OPPORTUNITY_TYPES,
+];
 export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
+  home: "home",
   compliantReporting: "compliantReporting",
   general: "client",
   earlyTermination: "earlyTermination",
@@ -276,6 +280,7 @@ export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
 };
 
 const WORKFLOWS_SEARCH_ROUTES: Record<WorkflowsPage, string> = {
+  home: `/${PATHWAYS_VIEWS.workflows}/home`,
   general: `/${PATHWAYS_VIEWS.workflows}/clients`,
   compliantReporting: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.compliantReporting}`,
   earlyTermination: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earlyTermination}`,
@@ -284,6 +289,7 @@ const WORKFLOWS_SEARCH_ROUTES: Record<WorkflowsPage, string> = {
 };
 
 const WORKFLOWS_CLIENT_PATH_ROUTES: Record<WorkflowsPage, string> = {
+  home: `/${PATHWAYS_VIEWS.workflows}/home`,
   general: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.general}/:clientId`,
   compliantReporting: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.compliantReporting}/:clientId`,
   earlyTermination: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earlyTermination}/:clientId`,
