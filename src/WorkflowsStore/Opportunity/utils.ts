@@ -66,6 +66,14 @@ export const LSUOpportunityStatuses: Record<OpportunityStatus, string> = {
   ALMOST: "Almost eligible",
 };
 
+export const pastFTRDOpportunityStatuses: Record<OpportunityStatus, string> = {
+  PENDING: "Needs Review",
+  IN_PROGRESS: "Viewed",
+  COMPLETED: "Complete",
+  DENIED: "Currently ineligible",
+  ALMOST: "Almost eligible",
+};
+
 export function formatNoteDate(date: Date): string {
   return format(date, "MMMM do");
 }
@@ -100,5 +108,11 @@ export const opportunityHeaders: Record<
     text: `clients may be eligible for the`,
     highlightText: `Limited Supervision Unit`,
     callToAction: `Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.`,
+  },
+  pastFTRD: {
+    text: "clients have",
+    highlightText: "passed their full-term release date",
+    callToAction:
+      "Review clients who are past their full-term release date and email clerical to move them to history.",
   },
 };

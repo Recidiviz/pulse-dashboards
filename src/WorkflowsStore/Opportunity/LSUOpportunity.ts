@@ -84,8 +84,6 @@ class LSUOpportunity extends OpportunityWithFormBase<
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.descriptionCTA =
-      "Review clients who may be eligible for LSU and complete a transfer chrono.";
   }
 
   private get transformedRecord() {

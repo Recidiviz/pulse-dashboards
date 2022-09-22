@@ -120,6 +120,7 @@ export type ClientRecord = {
   earlyTerminationEligible?: boolean;
   earnedDischargeEligible?: boolean;
   LSUEligible?: boolean;
+  pastFTRDEligible?: boolean;
 };
 
 // TODO(#2263): Remove CompliantReportingFinesFeesEligible and CompliantReportingEligibleRecord once Client record is migrated

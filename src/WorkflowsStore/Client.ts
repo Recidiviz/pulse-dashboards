@@ -40,10 +40,12 @@ import {
   createCompliantReportingOpportunity,
   createEarlyTerminationOpportunity,
   createLSUOpportunity,
+  createPastFTRDOpportunity,
   EarlyTerminationOpportunity,
   EarnedDischargeOpportunity,
   LSUOpportunity,
   OpportunityType,
+  PastFTRDOpportunity,
 } from "./Opportunity";
 import { createEarnedDischargeOpportunity } from "./Opportunity/EarnedDischargeOpportunity";
 import { optionalFieldToDate } from "./utils";
@@ -89,6 +91,7 @@ type OpportunityMapping = {
   compliantReporting: CompliantReportingOpportunity | undefined;
   earnedDischarge: EarnedDischargeOpportunity | undefined;
   LSU: LSUOpportunity | undefined;
+  pastFTRD: PastFTRDOpportunity | undefined;
 };
 
 export class Client {
@@ -197,6 +200,7 @@ export class Client {
         this
       ),
       LSU: createLSUOpportunity(this.record.LSUEligible, this),
+      pastFTRD: createPastFTRDOpportunity(this.record.pastFTRDEligible, this),
     };
   }
 

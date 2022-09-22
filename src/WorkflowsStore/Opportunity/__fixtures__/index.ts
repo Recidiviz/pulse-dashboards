@@ -21,6 +21,7 @@ import { dateToTimestamp } from "../../utils";
 import { CompliantReportingReferralRecord } from "../CompliantReportingReferralRecord";
 import { EarlyTerminationReferralRecord } from "../EarlyTerminationReferralRecord";
 import { LSUReferralRecord } from "../LSUReferralRecord";
+import { PastFTRDReferralRecord } from "../PastFTRDReferralRecord";
 
 export const compliantReportingEligibleClientRecord = {
   recordId: "us_xx_cr-eligible-1",
@@ -238,4 +239,28 @@ export const LSUEligibleClientRecord: RequireKeys<
 > = {
   ...ineligibleClientRecord,
   LSUEligible: true,
+};
+
+export const pastFTRDRecordFixture: PastFTRDReferralRecord = {
+  stateCode: "US_ID",
+  externalId: "001",
+  formInformation: {
+    clientName: "Betty Rubble",
+  },
+  reasons: [
+    {
+      criteriaName: "SUPERVISION_PAST_FULL_TERM_COMPLETION_DATE",
+      reason: {
+        eligibleDate: "2022-01-03",
+      },
+    },
+  ],
+};
+
+export const pastFTRDEligibleClientRecord: RequireKeys<
+  ClientRecord,
+  "pastFTRDEligible"
+> = {
+  ...ineligibleClientRecord,
+  pastFTRDEligible: true,
 };

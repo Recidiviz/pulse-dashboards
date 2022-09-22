@@ -85,4 +85,5 @@ export const WORKFLOWS_POLICY_OR_METHODOLOGY_URL: Record<
     "http://forms.idoc.idaho.gov/WebLink/0/edoc/282369/Termination%20of%20Probation%20or%20Parole%20Supervision.pdf",
   LSU:
     "http://forms.idoc.idaho.gov/WebLink/0/edoc/273717/Limited%20Supervision%20Unit.pdf",
+  pastFTRD: WORKFLOWS_METHODOLOGY_URL.US_ID,
 };

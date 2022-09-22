@@ -145,6 +145,21 @@ const PageWorkflows: React.FC = () => {
         </WorkflowsRoute>
         <WorkflowsRoute
           exact
+          path={workflowsRoute({ name: "pastFTRD", client: false })}
+        >
+          <OpportunityCaseloadView opportunityType="pastFTRD" />
+        </WorkflowsRoute>
+        <WorkflowsRoute
+          exact
+          path={workflowsRoute({ name: "pastFTRD", client: true })}
+        >
+          <WorkflowsFormLayout
+            sidebarContents={<div />}
+            formContents={<div />}
+          />
+        </WorkflowsRoute>
+        <WorkflowsRoute
+          exact
           path={workflowsRoute({ name: "general", client: true })}
         >
           <FullProfile />

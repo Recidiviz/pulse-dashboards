@@ -277,6 +277,7 @@ export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   earlyTermination: "earlyTermination",
   earnedDischarge: "earnedDischarge",
   LSU: "LSU",
+  pastFTRD: "pastFTRD",
 };
 
 const WORKFLOWS_SEARCH_ROUTES: Record<WorkflowsPage, string> = {
@@ -286,6 +287,7 @@ const WORKFLOWS_SEARCH_ROUTES: Record<WorkflowsPage, string> = {
   earlyTermination: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earlyTermination}`,
   earnedDischarge: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earnedDischarge}`,
   LSU: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.LSU}`,
+  pastFTRD: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.pastFTRD}`,
 };
 
 const WORKFLOWS_CLIENT_PATH_ROUTES: Record<WorkflowsPage, string> = {
@@ -295,6 +297,7 @@ const WORKFLOWS_CLIENT_PATH_ROUTES: Record<WorkflowsPage, string> = {
   earlyTermination: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earlyTermination}/:clientId`,
   earnedDischarge: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earnedDischarge}/:clientId`,
   LSU: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.LSU}/:clientId`,
+  pastFTRD: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.pastFTRD}/:clientId`,
 };
 
 /**

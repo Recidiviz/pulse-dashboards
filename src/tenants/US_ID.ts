@@ -28,6 +28,7 @@ import { OpportunityType } from "../WorkflowsStore";
 const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   "earnedDischarge",
   "LSU",
+  "pastFTRD",
 ];
 
 const US_ID_CONFIG: TenantConfig = {

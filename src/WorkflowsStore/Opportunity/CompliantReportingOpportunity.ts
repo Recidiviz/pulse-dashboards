@@ -186,9 +186,6 @@ class CompliantReportingOpportunity
 
   private updatesSubscription: DocumentSubscription<CompliantReportingUpdateRecord>;
 
-  readonly descriptionCTA =
-    "Review and refer eligible clients for Compliant Reporting.";
-
   constructor(client: Client) {
     makeAutoObservable<
       CompliantReportingOpportunity,

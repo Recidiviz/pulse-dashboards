@@ -172,6 +172,4 @@ export abstract class OpportunityBase<
   get requirementsAlmostMet(): OpportunityRequirement[] {
     return [];
   }
-
-  descriptionCTA = "";
 }

@@ -29,6 +29,7 @@ export const OPPORTUNITY_TYPES = [
   "earlyTermination",
   "earnedDischarge",
   "LSU",
+  "pastFTRD",
 ] as const;
 /**
  * Values of this union map to key prefixes in client records
@@ -42,6 +43,7 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   earlyTermination: "Early Termination",
   earnedDischarge: "Earned Discharge",
   LSU: "Limited Supervision Unit",
+  pastFTRD: "Past FTRD",
 };
 
 export type OpportunityRequirement = {
@@ -80,7 +82,6 @@ export interface Opportunity extends Hydratable {
   readonly type: OpportunityType;
   isValid: boolean;
   denialReasonsMap: DenialReasonsMap;
-  descriptionCTA: string;
   denial: Denial | undefined;
 }
 
@@ -105,3 +106,4 @@ export type EarlyTerminationOpportunity = EarlyTerminationFormInterface &
   Opportunity;
 export type EarnedDischargeOpportunity = Opportunity;
 export type LSUOpportunity = Opportunity;
+export type PastFTRDOpportunity = Opportunity;

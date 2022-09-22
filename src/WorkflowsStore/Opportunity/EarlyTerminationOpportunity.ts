@@ -85,8 +85,6 @@ class EarlyTerminationOpportunity
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.descriptionCTA =
-      "Review clients eligible for early termination and download the paperwork to file with the Court.";
   }
 
   private get transformedRecord() {

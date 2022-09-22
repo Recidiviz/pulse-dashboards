@@ -109,6 +109,7 @@ export const eligibleClient: ClientRecord = {
   earlyTerminationEligible: true,
   earnedDischargeEligible: true,
   LSUEligible: true,
+  pastFTRDEligible: true,
 };
 
 export const mockClients = [ineligibleClient, eligibleClient];

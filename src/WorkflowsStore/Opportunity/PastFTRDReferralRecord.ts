@@ -15,9 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./CompliantReportingOpportunity";
-export * from "./EarlyTerminationOpportunity";
-export * from "./LSUOpportunity";
-export * from "./PastFTRDOpportunity";
-export * from "./types";
-export * from "./utils";
+type PastFTRDCriteriaMet = {
+  eligibleDate?: string;
+};
+
+export type PastFTRDCriteria = {
+  criteriaName: string;
+  reason: PastFTRDCriteriaMet;
+};
+
+export type PastFTRDReferralRecord = {
+  stateCode: string;
+  externalId: string;
+  formInformation: {
+    clientName: string;
+  };
+  reasons: PastFTRDCriteria[];
+};
+
+export interface TransformedPastFTRDReferral {
+  stateCode: string;
+  externalId: string;
+  formInformation: {
+    clientName: string;
+  };
+  criteria: {
+    eligibleDate?: Date;
+  };
+}
+
+export type PastFTRDDraftData = {
+  clientName: string;
+};

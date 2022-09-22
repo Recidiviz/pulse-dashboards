@@ -22,7 +22,11 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { pluralize } from "../../utils";
-import { OPPORTUNITY_LABELS, OpportunityType } from "../../WorkflowsStore";
+import {
+  OPPORTUNITY_LABELS,
+  opportunityHeaders,
+  OpportunityType,
+} from "../../WorkflowsStore";
 import { ClientListItem } from "./ClientListItem";
 import { Heading, SectionLabelText, SubHeading } from "./styles";
 
@@ -59,7 +63,9 @@ export const OpportunityList = observer(
           may be {almost && "almost"} eligible for{" "}
           {OPPORTUNITY_LABELS[opportunityType]}
         </Heading>
-        <SubHeading>{eligibleOpps[0].descriptionCTA}</SubHeading>
+        <SubHeading>
+          {opportunityHeaders[opportunityType]?.callToAction}
+        </SubHeading>
         <>
           {almostEligibleOpps.length > 0 && (
             <SectionLabelText>Eligible now</SectionLabelText>

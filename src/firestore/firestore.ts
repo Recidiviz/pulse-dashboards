@@ -43,12 +43,7 @@ import { mapValues, pickBy } from "lodash";
 
 import { isDemoMode } from "../utils/isDemoMode";
 import { isOfflineMode } from "../utils/isOfflineMode";
-import {
-  CompliantReportingReferralRecord,
-  OpportunityType,
-} from "../WorkflowsStore";
-import { EarlyTerminationReferralRecord } from "../WorkflowsStore/Opportunity/EarlyTerminationReferralRecord";
-import { LSUReferralRecord } from "../WorkflowsStore/Opportunity/LSUReferralRecord";
+import { OpportunityType } from "../WorkflowsStore";
 import {
   ClientRecord,
   ClientUpdateRecord,
@@ -119,6 +114,7 @@ export const collectionNames = {
   earnedDischargeReferrals: "earnedDischargeReferrals",
   earlyTerminationReferrals: "earlyTerminationReferrals",
   LSUReferrals: "LSUReferrals",
+  pastFTRDReferrals: "pastFTRDReferrals",
   featureVariants: "featureVariants",
 };
 
@@ -154,15 +150,13 @@ export const collections = {
   compliantReportingReferrals: collection(
     db,
     collectionNames.compliantReportingReferrals
-  ) as CollectionReference<CompliantReportingReferralRecord>,
+  ),
   earlyTerminationReferrals: collection(
     db,
     collectionNames.earlyTerminationReferrals
-  ) as CollectionReference<EarlyTerminationReferralRecord>,
-  LSUReferrals: collection(
-    db,
-    collectionNames.LSUReferrals
-  ) as CollectionReference<LSUReferralRecord>,
+  ),
+  LSUReferrals: collection(db, collectionNames.LSUReferrals),
+  PastFTRDReferrals: collection(db, collectionNames.pastFTRDReferrals),
   featureVariants: collection(
     db,
     collectionNames.featureVariants
