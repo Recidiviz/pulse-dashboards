@@ -21,10 +21,8 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { pluralize } from "../../utils";
 import {
-  OPPORTUNITY_LABELS,
-  opportunityHeaders,
+  generateOpportunityHeader,
   OpportunityType,
 } from "../../WorkflowsStore";
 import { ClientListItem } from "./ClientListItem";
@@ -56,16 +54,17 @@ export const OpportunityList = observer(
 
     const almostEligibleOpps = almostEligibleOpportunities[opportunityType];
 
+    const header = generateOpportunityHeader(
+      opportunityType,
+      eligibleOpps.length + almostEligibleOpps.length
+    );
+
     return (
       <>
         <Heading>
-          {pluralize(eligibleOpps.length + almostEligibleOpps.length, "client")}{" "}
-          may be {almost && "almost"} eligible for{" "}
-          {OPPORTUNITY_LABELS[opportunityType]}
+          {header.eligibilityText} {header.opportunityText}
         </Heading>
-        <SubHeading>
-          {opportunityHeaders[opportunityType]?.callToAction}
-        </SubHeading>
+        <SubHeading>{header.callToAction}</SubHeading>
         <>
           {almostEligibleOpps.length > 0 && (
             <SectionLabelText>Eligible now</SectionLabelText>

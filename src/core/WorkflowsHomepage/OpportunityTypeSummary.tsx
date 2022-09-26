@@ -30,8 +30,8 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import {
+  generateOpportunityHeader,
   Opportunity,
-  OpportunityHeadersType,
   OpportunityType,
 } from "../../WorkflowsStore";
 import { ClientAvatar } from "../Avatar";
@@ -107,23 +107,28 @@ const ClientAvatarWrapper = styled.div`
 const OpportunityTypeSummary = observer(
   ({
     opportunities,
-    header,
     opportunityType,
   }: {
     opportunities: Opportunity[];
-    header: OpportunityHeadersType;
     opportunityType: OpportunityType;
   }): React.ReactElement | null => {
     const sliceIndex = opportunities.length > 3 ? 2 : 3;
     const previewOpportunities = opportunities.slice(0, sliceIndex);
     const numOpportunitiesToDisplay = opportunities.length - sliceIndex;
 
+    const header = generateOpportunityHeader(
+      opportunityType,
+      opportunities.length
+    );
+
     return (
       <OpportunityTypeSummaryWrapper>
         <OpportunityHeaderWrapper>
           <OpportunityHeader>
-            {opportunities.length} {header.text}{" "}
-            <OpportunityHighlight>{header.highlightText}</OpportunityHighlight>
+            {header.eligibilityText}
+            <OpportunityHighlight>
+              {header.opportunityText}
+            </OpportunityHighlight>
           </OpportunityHeader>
           <OpportunityTypeSummaryCTA>
             {header.callToAction}

@@ -21,7 +21,6 @@ import React, { useEffect } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { opportunityHeaders } from "../../WorkflowsStore";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";
@@ -72,7 +71,6 @@ const WorkflowsHomepage = observer((): React.ReactElement | null => {
               <OpportunityTypeSummary
                 opportunities={allOpportunitiesByType[opportunityType]}
                 opportunityType={opportunityType}
-                header={opportunityHeaders[opportunityType]}
               />
             );
           }

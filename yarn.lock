@@ -18189,6 +18189,11 @@ simple-swizzle@^0.2.2:
   dependencies:
     is-arrayish "^0.3.1"
 
+simplur@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/simplur/-/simplur-3.0.1.tgz#f41f08f8a5d5d4e0cc5d93b2f4d3a1404cb8951c"
+  integrity sha512-bBAoTn75tuKh83opmZ1VoyVoQIsvLCKzSxuasAxbnKofrT8eGyOEIaXSuNfhi/hI160+fwsR7ObcbBpOyzDvXg==
+
 sisteransi@^1.0.5:
   version "1.0.5"
   resolved "https://registry.npmjs.org/sisteransi/-/sisteransi-1.0.5.tgz"
