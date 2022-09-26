@@ -21,7 +21,7 @@ import { Client } from "../Client";
 import { TransformedCompliantReportingReferral } from "./CompliantReportingReferralRecord";
 import {
   EarlyTerminationDraftData,
-  TransformedEarlyTerminationReferral,
+  EarlyTerminationReferralRecord,
 } from "./EarlyTerminationReferralRecord";
 
 export const OPPORTUNITY_TYPES = [
@@ -94,7 +94,7 @@ export type CompliantReportingFormInterface = BaseForm<TransformedCompliantRepor
 
 export interface EarlyTerminationFormInterface
   extends BaseForm<EarlyTerminationDraftData> {
-  metadata: TransformedEarlyTerminationReferral["metadata"] | undefined;
+  metadata: EarlyTerminationReferralRecord["metadata"] | undefined;
   addDepositionLine: () => void;
   removeDepositionLine: (key: string) => void;
   additionalDepositionLines: string[];

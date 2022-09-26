@@ -30,7 +30,7 @@ import {
   onBecomeUnobserved,
 } from "mobx";
 
-import { DocumentSubscription } from "./types";
+import { DocumentSubscription, TransformFunction } from "./types";
 
 export abstract class FirestoreDocumentSubscription<
   DataFormat extends DocumentData = DocumentData
@@ -41,11 +41,17 @@ export abstract class FirestoreDocumentSubscription<
    */
   data: DataFormat | undefined;
 
-  abstract readonly dataSource: DocumentReference<DataFormat>;
+  abstract readonly dataSource: DocumentReference;
 
   cancelSnapshotListener?: Unsubscribe;
 
-  constructor() {
+  transformRecord: TransformFunction<DataFormat>;
+
+  constructor(transformFunction?: TransformFunction<DataFormat>) {
+    // default passes through raw record, assuming it already conforms to the desired format
+    this.transformRecord =
+      transformFunction ?? ((d) => (d as DataFormat) ?? undefined);
+
     // note that dataSource is not observable by default.
     // in the base case there is really no need for it
     makeObservable<this, "updateData">(this, {
@@ -70,8 +76,10 @@ export abstract class FirestoreDocumentSubscription<
    * Stores data on the observable `this.data` property. Mainly intended
    * to be used by the callback for the listener created by `this.subscribe`.
    */
-  updateData(snapshot: DocumentSnapshot<DataFormat>): void {
-    this.data = snapshot.data({ serverTimestamps: "estimate" });
+  updateData(snapshot: DocumentSnapshot): void {
+    this.data = this.transformRecord(
+      snapshot.data({ serverTimestamps: "estimate" })
+    );
 
     if (this.isLoading) {
       this.isLoading = false;

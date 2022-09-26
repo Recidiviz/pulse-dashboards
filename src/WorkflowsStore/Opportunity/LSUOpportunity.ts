@@ -18,12 +18,12 @@
 import { computed, makeObservable } from "mobx";
 
 import { Client } from "../Client";
-import { fieldToDate, OpportunityValidationError } from "../utils";
+import { OpportunityValidationError } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 import {
   LSUDraftData,
   LSUReferralRecord,
-  TransformedLSUReferral,
+  transformReferral,
 } from "./LSUReferralRecord";
 import { OpportunityWithFormBase } from "./OpportunityWithFormBase";
 import { OpportunityRequirement } from "./types";
@@ -75,80 +75,14 @@ class LSUOpportunity extends OpportunityWithFormBase<
   LSUDraftData
 > {
   constructor(client: Client) {
-    super(client, "LSU");
-    makeObservable<LSUOpportunity, "transformedRecord">(this, {
-      transformedRecord: true,
+    super(client, "LSU", transformReferral);
+    makeObservable(this, {
       statusMessageLong: computed,
       statusMessageShort: computed,
       requirementsMet: computed,
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-  }
-
-  private get transformedRecord() {
-    if (!this.record) return;
-    const {
-      stateCode,
-      externalId,
-      formInformation: { clientName },
-      reasons,
-    } = this.record;
-
-    const transformedCriteria: TransformedLSUReferral["criteria"] = {};
-
-    reasons.forEach(({ criteriaName, reason }) => {
-      switch (criteriaName) {
-        case "RISK_LEVEL":
-          transformedCriteria.eligibleRiskLevel = {
-            riskLevel: reason.eligibleRiskLevel?.riskLevel,
-            lastIncrease: reason.eligibleRiskLevel?.lastIncrease
-              ? fieldToDate(reason.eligibleRiskLevel?.lastIncrease)
-              : undefined,
-          };
-          break;
-        case "NEGATIVE_UA_WITHIN_90_DAYS":
-          transformedCriteria.negativeUA = {
-            lastNegativeUA: reason.lastNegativeUA
-              ? fieldToDate(reason.lastNegativeUA)
-              : undefined,
-          };
-          break;
-        case "NO_FELONY_CONVICTIONS":
-          transformedCriteria.noFelonyConvictions = {
-            lastFelonyConviction: reason.lastFelonyConviction
-              ? fieldToDate(reason.lastFelonyConviction)
-              : undefined,
-          };
-          break;
-        case "NO_VIOLENT_OR_DUI_CONVICTIONS":
-          transformedCriteria.noViolentOrDUIConvictions = {
-            lastViolentOrDUIConviction: reason.lastViolentOrDUIConviction
-              ? fieldToDate(reason.lastViolentOrDUIConviction)
-              : undefined,
-          };
-          break;
-        case "VERIFIED_EMPLOYMENT":
-          transformedCriteria.verifiedEmployment = {
-            employmentVerifiedDate: reason.employmentVerifiedDate
-              ? fieldToDate(reason.employmentVerifiedDate)
-              : undefined,
-          };
-          break;
-        default:
-      }
-    });
-
-    const transformedRecord: TransformedLSUReferral = {
-      stateCode,
-      externalId,
-      formInformation: {
-        clientName,
-      },
-      criteria: transformedCriteria,
-    };
-
-    return transformedRecord;
   }
 
   get statusMessageShort(): string {
@@ -160,21 +94,21 @@ class LSUOpportunity extends OpportunityWithFormBase<
   }
 
   get requirementsMet(): OpportunityRequirement[] {
-    if (!this.transformedRecord) return [];
+    if (!this.record) return [];
     const requirements: OpportunityRequirement[] = [];
     const {
       criteria: {
-        eligibleRiskLevel,
-        negativeUA,
+        riskLevel,
+        negativeUaWithin90Days,
         noFelonyConvictions,
-        noViolentOrDUIConvictions,
+        noViolentOrDuiConvictions: noViolentOrDUIConvictions,
         verifiedEmployment,
       },
-    } = this.transformedRecord;
+    } = this.record;
 
-    if (eligibleRiskLevel?.riskLevel) {
+    if (riskLevel?.riskLevel) {
       const text =
-        eligibleRiskLevel.riskLevel === "LOW"
+        riskLevel.riskLevel === "LOW"
           ? "Currently low risk with no increase in risk level in past 90 days"
           : "Currently moderate risk with no increase in risk level in past 360 days";
       requirements.push({
@@ -183,32 +117,20 @@ class LSUOpportunity extends OpportunityWithFormBase<
       });
     }
 
-    if (negativeUA) {
-      requirements.push({
-        text: CRITERIA.negativeUA.text,
-        tooltip: CRITERIA.negativeUA.tooltip,
-      });
+    if (negativeUaWithin90Days) {
+      requirements.push(CRITERIA.negativeUA);
     }
 
     if (noFelonyConvictions) {
-      requirements.push({
-        text: CRITERIA.noFelonyConvictions.text,
-        tooltip: CRITERIA.noFelonyConvictions.tooltip,
-      });
+      requirements.push(CRITERIA.noFelonyConvictions);
     }
 
     if (noViolentOrDUIConvictions) {
-      requirements.push({
-        text: CRITERIA.noViolentOrDUIConvictions.text,
-        tooltip: CRITERIA.noViolentOrDUIConvictions.tooltip,
-      });
+      requirements.push(CRITERIA.noViolentOrDUIConvictions);
     }
 
     if (verifiedEmployment) {
-      requirements.push({
-        text: CRITERIA.verifiedEmployment.text,
-        tooltip: CRITERIA.verifiedEmployment.tooltip,
-      });
+      requirements.push(CRITERIA.verifiedEmployment);
     }
 
     return requirements;

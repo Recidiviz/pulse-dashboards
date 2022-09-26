@@ -20,58 +20,23 @@ import { computed, makeObservable } from "mobx";
 
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
-import { fieldToDate, OpportunityValidationError } from "../utils";
+import { OpportunityValidationError } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import {
   PastFTRDReferralRecord,
-  TransformedPastFTRDReferral,
+  transformReferral,
 } from "./PastFTRDReferralRecord";
 import { OpportunityRequirement } from "./types";
 import { pastFTRDOpportunityStatuses } from "./utils";
 
 class PastFTRDOpportunity extends OpportunityBase<PastFTRDReferralRecord> {
   constructor(client: Client) {
-    super(client, "pastFTRD");
-    makeObservable<PastFTRDOpportunity, "transformedRecord">(this, {
-      transformedRecord: true,
+    super(client, "pastFTRD", transformReferral);
+    makeObservable(this, {
       statusMessageShort: computed,
       statusMessageLong: computed,
       requirementsMet: computed,
     });
-  }
-
-  private get transformedRecord() {
-    if (!this.record) return;
-    const {
-      stateCode,
-      externalId,
-      formInformation: { clientName },
-      reasons,
-    } = this.record;
-
-    const transformedCriteria: TransformedPastFTRDReferral["criteria"] = {};
-
-    reasons.forEach(({ criteriaName, reason }) => {
-      switch (criteriaName) {
-        case "SUPERVISION_PAST_FULL_TERM_COMPLETION_DATE":
-          transformedCriteria.eligibleDate = reason.eligibleDate
-            ? fieldToDate(reason.eligibleDate)
-            : undefined;
-          break;
-        default:
-      }
-    });
-
-    const transformedRecord: TransformedPastFTRDReferral = {
-      stateCode,
-      externalId,
-      formInformation: {
-        clientName,
-      },
-      criteria: transformedCriteria,
-    };
-
-    return transformedRecord;
   }
 
   get statusMessageShort(): string {
@@ -83,16 +48,19 @@ class PastFTRDOpportunity extends OpportunityBase<PastFTRDReferralRecord> {
   }
 
   get requirementsMet(): OpportunityRequirement[] {
-    if (!this.transformedRecord) return [];
+    if (!this.record) return [];
     const requirements: OpportunityRequirement[] = [];
     const {
-      criteria: { eligibleDate },
-    } = this.transformedRecord;
+      criteria: { supervisionPastFullTermCompletionDate },
+    } = this.record;
 
-    if (eligibleDate) {
-      const daysPastEligibleDate = differenceInDays(new Date(), eligibleDate);
+    if (supervisionPastFullTermCompletionDate?.eligibleDate) {
+      const daysPastEligibleDate = differenceInDays(
+        new Date(),
+        supervisionPastFullTermCompletionDate.eligibleDate
+      );
       const text = `${daysPastEligibleDate} days past FTRD (${formatWorkflowsDate(
-        eligibleDate
+        supervisionPastFullTermCompletionDate.eligibleDate
       )})`;
       // There is no policy to refer to so the tooltip is undefined
       requirements.push({

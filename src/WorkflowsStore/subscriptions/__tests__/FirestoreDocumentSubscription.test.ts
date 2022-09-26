@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "@google-cloud/firestore";
 import { DocumentReference, onSnapshot } from "firebase/firestore";
 import { computed } from "mobx";
 import { keepAlive } from "mobx-utils";
@@ -101,4 +102,36 @@ test("hydration", () => {
   mockReceive({});
 
   expect(sub.isLoading).toBe(false);
+});
+
+test("no data transformer required", () => {
+  const mockData = {
+    question: "answer",
+  };
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+
+  sub = new TestSubscription();
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(sub.data).toEqual(mockData);
+});
+
+test("transform raw data", () => {
+  const mockData = {
+    question: "answer",
+  };
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+
+  const testTransform = (d?: DocumentData) => {
+    return { question: `${d?.question}???` };
+  };
+
+  sub = new TestSubscription(testTransform);
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(sub.data).toEqual({ question: "answer???" });
 });

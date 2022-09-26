@@ -24,6 +24,7 @@ import {
   CollectionDocumentSubscription,
   DocumentSubscription,
   OpportunityUpdateSubscription,
+  TransformFunction,
 } from "../subscriptions";
 import {
   DenialReasonsMap,
@@ -51,7 +52,11 @@ export abstract class OpportunityBase<
 
   protected updatesSubscription: DocumentSubscription<UpdateRecord>;
 
-  constructor(client: Client, type: OpportunityType) {
+  constructor(
+    client: Client,
+    type: OpportunityType,
+    transformReferral?: TransformFunction<ReferralRecord>
+  ) {
     makeObservable(this, {
       denial: computed,
       error: observable,
@@ -67,7 +72,8 @@ export abstract class OpportunityBase<
 
     this.referralSubscription = new CollectionDocumentSubscription<ReferralRecord>(
       `${type}Referrals` as const,
-      client.recordId
+      client.recordId,
+      transformReferral
     );
     this.updatesSubscription = new OpportunityUpdateSubscription<UpdateRecord>(
       client.recordId,

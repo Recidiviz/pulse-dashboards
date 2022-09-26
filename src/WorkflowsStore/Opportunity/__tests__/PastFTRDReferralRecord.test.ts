@@ -15,38 +15,38 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { cloneDeep } from "lodash";
+import { transformReferral } from "../PastFTRDReferralRecord";
 
-import { TransformFunction } from "../subscriptions";
-import { optionalFieldToDate } from "../utils";
-
-export interface PastFTRDReferralRecord {
-  stateCode: string;
-  externalId: string;
-  formInformation: {
-    clientName: string;
-  };
-  criteria: {
-    supervisionPastFullTermCompletionDate?: { eligibleDate?: Date };
-  };
-}
-
-export type PastFTRDDraftData = {
-  clientName: string;
-};
-
-export const transformReferral: TransformFunction<PastFTRDReferralRecord> = (
-  record
-) => {
-  if (!record) return;
-
-  const transformedRecord = cloneDeep(record) as PastFTRDReferralRecord;
-
-  transformedRecord.criteria.supervisionPastFullTermCompletionDate = {
-    eligibleDate: optionalFieldToDate(
-      record.criteria.supervisionPastFullTermCompletionDate?.eligibleDate
-    ),
+test("transform record", () => {
+  const rawRecord = {
+    stateCode: "US_ID",
+    externalId: "001",
+    formInformation: {
+      clientName: "Betty Rubble",
+    },
+    criteria: {
+      supervisionPastFullTermCompletionDate: {
+        eligibleDate: "2022-01-03",
+      },
+    },
   };
 
-  return transformedRecord;
-};
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});
+
+test("all criteria are optional", () => {
+  const rawRecord = {
+    stateCode: "US_ID",
+    externalId: "001",
+    formInformation: {
+      clientName: "Betty Rubble",
+    },
+    criteria: {
+      supervisionPastFullTermCompletionDate: {
+        eligibleDate: "2022-01-03",
+      },
+    },
+  };
+
+  expect(() => transformReferral(rawRecord)).not.toThrow();
+});

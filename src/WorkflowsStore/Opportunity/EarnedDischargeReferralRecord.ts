@@ -15,27 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-type EarnedDischargeCriteriaMet = {
-  minimumSentenceServed: string;
-  noNewOffenses: string;
-  courtOrderConditionsMet: string;
-};
-
-export type EarnedDischargeCriteria = {
-  criteriaName: string;
-  reason: EarnedDischargeCriteriaMet;
-};
-
-export type EarnedDischargeReferralRecord = {
-  stateCode?: string;
-  externalId?: string;
-  formInformation?: {
-    clientName: string;
-  };
-  reasons?: EarnedDischargeCriteria[];
-};
-
-export interface TransformedEarnedDischargeReferral {
+export interface EarnedDischargeReferralRecord {
   stateCode: string;
   externalId: string;
   formInformation: {

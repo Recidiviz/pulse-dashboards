@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { parseISO } from "date-fns";
 import { Required as RequireKeys } from "utility-types";
 
 import { ClientRecord } from "../../../firestore";
@@ -131,40 +132,28 @@ export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {
     clientName: "Jamie Jones",
     convictionCounty: "NORTH_CENTRAL",
     judgeName: "JUDGE 1",
-    priorCourtDate: "2020-01-03",
-    sentenceLengthYears: "3",
+    priorCourtDate: parseISO("2020-01-03"),
+    sentenceLengthYears: 3,
     crimeNames: ["CHARGE 1", "CHARGE 2"],
-    probationExpirationDate: "2022-12-02",
+    probationExpirationDate: parseISO("2022-12-02"),
     probationOfficerFullName: "Karl Fog",
     criminalNumber: "12345",
     judicialDistrictCode: "BISMARCK",
   },
-  reasons: [
-    {
-      criteriaName: "SUPERVISION_EARLY_DISCHARGE_DATE_WITHIN_30_DAYS",
-      reason: {
-        eligibleDate: "2022-01-03",
-      },
+  criteria: {
+    supervisionEarlyDischargeDateWithin30Days: {
+      eligibleDate: parseISO("2022-01-03"),
     },
-    {
-      criteriaName: "US_ND_NOT_IN_ACTIVE_REVOCATION_STATUS",
-      reason: {
-        revocationDate: undefined,
-      },
+    usNdNotInActiveRevocationStatus: {
+      revocationDate: undefined,
     },
-    {
-      criteriaName: "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SUPERVISION_LEVEL",
-      reason: {
-        supervisionLevel: "MEDIUM",
-      },
+    usNdImpliedValidEarlyTerminationSupervisionLevel: {
+      supervisionLevel: "MEDIUM",
     },
-    {
-      criteriaName: "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SENTENCE_TYPE",
-      reason: {
-        supervisionType: "PROBATION",
-      },
+    usNdImpliedValidEarlyTerminationSentenceType: {
+      supervisionType: "PROBATION",
     },
-  ],
+  },
   metadata: {
     multipleSentences: true,
     outOfState: false,
@@ -178,41 +167,24 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
   formInformation: {
     clientName: "Betty Rubble",
   },
-  reasons: [
-    {
-      criteriaName: "RISK_LEVEL",
-      reason: {
-        eligibleRiskLevel: {
-          riskLevel: "MEDIUM",
-          lastIncrease: "2022-01-03",
-        },
-      },
+  criteria: {
+    riskLevel: {
+      riskLevel: "MEDIUM",
+      lastIncrease: parseISO("2022-01-03"),
     },
-    {
-      criteriaName: "NEGATIVE_UA_WITHIN_90_DAYS",
-      reason: {
-        lastNegativeUA: "2022-01-03",
-      },
+    negativeUaWithin90Days: {
+      lastNegativeUa: parseISO("2022-01-03"),
     },
-    {
-      criteriaName: "NO_FELONY_CONVICTIONS",
-      reason: {
-        lastFelonyConviction: undefined,
-      },
+    noFelonyConvictions: {
+      lastFelonyConviction: undefined,
     },
-    {
-      criteriaName: "NO_VIOLENT_OR_DUI_CONVICTIONS",
-      reason: {
-        lastViolentOrDUIConviction: undefined,
-      },
+    noViolentOrDuiConvictions: {
+      lastViolentOrDuiConviction: undefined,
     },
-    {
-      criteriaName: "VERIFIED_EMPLOYMENT",
-      reason: {
-        employmentVerifiedDate: "2022-06-03",
-      },
+    verifiedEmployment: {
+      employmentVerifiedDate: parseISO("2022-06-03"),
     },
-  ],
+  },
 };
 
 export const ineligibleClientRecord: ClientRecord = {
@@ -247,14 +219,11 @@ export const pastFTRDRecordFixture: PastFTRDReferralRecord = {
   formInformation: {
     clientName: "Betty Rubble",
   },
-  reasons: [
-    {
-      criteriaName: "SUPERVISION_PAST_FULL_TERM_COMPLETION_DATE",
-      reason: {
-        eligibleDate: "2022-01-03",
-      },
+  criteria: {
+    supervisionPastFullTermCompletionDate: {
+      eligibleDate: parseISO("2022-01-03"),
     },
-  ],
+  },
 };
 
 export const pastFTRDEligibleClientRecord: RequireKeys<

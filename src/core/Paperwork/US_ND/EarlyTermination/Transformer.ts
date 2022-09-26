@@ -52,7 +52,7 @@ export const transform = (
     probationExpirationDate: moment(probationExpirationDate).format(
       FORM_DATE_FORMAT
     ),
-    sentenceLengthYears: pluralize(parseInt(sentenceLengthYears), "year"),
+    sentenceLengthYears: pluralize(sentenceLengthYears, "year"),
     plaintiff: "State of North Dakota",
     crimeNames: crimeNames?.join(", ") ?? "",
     probationOfficerFullName,

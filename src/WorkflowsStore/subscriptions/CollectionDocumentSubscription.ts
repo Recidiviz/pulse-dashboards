@@ -19,6 +19,7 @@ import { doc, DocumentData, DocumentReference } from "firebase/firestore";
 
 import { CollectionName, collectionNames, db } from "../../firestore";
 import { FirestoreDocumentSubscription } from "./FirestoreDocumentSubscription";
+import { TransformFunction } from "./types";
 
 /**
  * Subscribes to the specified document in the specified collection.
@@ -28,15 +29,15 @@ import { FirestoreDocumentSubscription } from "./FirestoreDocumentSubscription";
 export class CollectionDocumentSubscription<
   RecordType extends DocumentData
 > extends FirestoreDocumentSubscription<RecordType> {
-  readonly dataSource: DocumentReference<RecordType>;
+  readonly dataSource: DocumentReference;
 
-  constructor(collectionName: CollectionName, recordId: string) {
-    super();
+  constructor(
+    collectionName: CollectionName,
+    recordId: string,
+    transformFn?: TransformFunction<RecordType>
+  ) {
+    super(transformFn);
 
-    this.dataSource = doc(
-      db,
-      collectionNames[collectionName],
-      recordId
-    ) as DocumentReference<RecordType>;
+    this.dataSource = doc(db, collectionNames[collectionName], recordId);
   }
 }

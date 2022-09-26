@@ -15,42 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-type EarlyTerminationCriteriaMet = {
-  eligibleDate?: string;
-  supervisionType?: string;
-  revocationDate?: string;
-  supervisionLevel?: string;
-};
+import { cloneDeep } from "lodash";
 
-export type EarlyTerminationCriteria = {
-  criteriaName: string;
-  reason: EarlyTerminationCriteriaMet;
-};
+import { TransformFunction } from "../subscriptions";
+import { fieldToDate, optionalFieldToDate } from "../utils";
 
 export type EarlyTerminationReferralRecord = {
-  stateCode: string;
-  externalId: string;
-  formInformation: {
-    clientName: string;
-    convictionCounty: string;
-    judicialDistrictCode: string;
-    criminalNumber: string;
-    judgeName: string;
-    priorCourtDate: string;
-    sentenceLengthYears: string;
-    crimeNames: string[];
-    probationExpirationDate: string;
-    probationOfficerFullName: string;
-  };
-  reasons: EarlyTerminationCriteria[];
-  metadata: {
-    multipleSentences: boolean;
-    outOfState: boolean;
-    ICOut: boolean;
-  };
-};
-
-export interface TransformedEarlyTerminationReferral {
   stateCode: string;
   externalId: string;
   formInformation: {
@@ -66,17 +36,19 @@ export interface TransformedEarlyTerminationReferral {
     probationOfficerFullName: string;
   };
   criteria: {
-    pastEarlyDischarge?: { eligibleDate?: Date };
-    eligibleSupervisionLevel?: { supervisionLevel?: string };
-    eligibleSupervisionType?: { supervisionType?: string };
-    notActiveRevocationStatus?: { revocationDate?: Date };
+    supervisionEarlyDischargeDateWithin30Days?: { eligibleDate?: Date };
+    usNdImpliedValidEarlyTerminationSupervisionLevel?: {
+      supervisionLevel?: string;
+    };
+    usNdImpliedValidEarlyTerminationSentenceType?: { supervisionType?: string };
+    usNdNotInActiveRevocationStatus?: { revocationDate?: Date };
   };
   metadata: {
     multipleSentences: boolean;
     outOfState: boolean;
     ICOut: boolean;
   };
-}
+};
 
 export type EarlyTerminationDraftData = {
   courtName: string;
@@ -98,4 +70,77 @@ export type EarlyTerminationDraftData = {
   statesAttorneyMailingAddress: string;
   // Extendable to facilitate `additionalDepositionLines` dynamic keys
   [k: string]: string;
+};
+
+export const transformReferral: TransformFunction<EarlyTerminationReferralRecord> = (
+  record
+) => {
+  if (!record) return;
+
+  const { reasons, ...transformedRecord } = cloneDeep(record);
+
+  const {
+    formInformation: {
+      priorCourtDate,
+      probationExpirationDate,
+      sentenceLengthYears,
+    },
+
+    criteria,
+  } = record;
+
+  transformedRecord.formInformation.priorCourtDate = fieldToDate(
+    priorCourtDate
+  );
+  transformedRecord.formInformation.probationExpirationDate = fieldToDate(
+    probationExpirationDate
+  );
+  transformedRecord.formInformation.sentenceLengthYears = parseInt(
+    sentenceLengthYears
+  );
+
+  if (criteria) {
+    transformedRecord.criteria.supervisionEarlyDischargeDateWithin30Days = {
+      eligibleDate: fieldToDate(
+        criteria.supervisionEarlyDischargeDateWithin30Days.eligibleDate
+      ),
+    };
+    transformedRecord.criteria.usNdNotInActiveRevocationStatus = {
+      revocationDate: optionalFieldToDate(
+        criteria.usNdNotInActiveRevocationStatus.revocationDate
+      ),
+    };
+  } else {
+    // TODO(#2394): remove this fallback
+    const transformedCriteria: EarlyTerminationReferralRecord["criteria"] = {};
+
+    reasons.forEach(({ criteriaName, reason }: any) => {
+      switch (criteriaName) {
+        case "SUPERVISION_EARLY_DISCHARGE_DATE_WITHIN_30_DAYS":
+          transformedCriteria.supervisionEarlyDischargeDateWithin30Days = {
+            eligibleDate: reason.eligibleDate
+              ? fieldToDate(reason.eligibleDate)
+              : undefined,
+          };
+          break;
+        case "US_ND_NOT_IN_ACTIVE_REVOCATION_STATUS":
+          transformedCriteria.usNdNotInActiveRevocationStatus = {
+            revocationDate: reason.revocationDate
+              ? fieldToDate(reason.revocationDate)
+              : undefined,
+          };
+          break;
+        case "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SUPERVISION_LEVEL":
+          transformedCriteria.usNdImpliedValidEarlyTerminationSupervisionLevel = reason;
+          break;
+        case "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SENTENCE_TYPE":
+          transformedCriteria.usNdImpliedValidEarlyTerminationSentenceType = reason;
+          break;
+        default:
+      }
+    });
+    transformedRecord.criteria = transformedCriteria;
+  }
+
+  return transformedRecord as EarlyTerminationReferralRecord;
 };

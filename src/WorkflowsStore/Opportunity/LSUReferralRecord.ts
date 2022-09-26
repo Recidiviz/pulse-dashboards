@@ -15,43 +15,65 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-type LSUCriteriaMet = {
-  eligibleRiskLevel?: { riskLevel: string; lastIncrease: string };
-  lastNegativeUA?: string;
-  lastFelonyConviction?: string;
-  lastViolentOrDUIConviction?: string;
-  employmentVerifiedDate?: string;
-};
+import { cloneDeep } from "lodash";
 
-export type LSUCriteria = {
-  criteriaName: string;
-  reason: LSUCriteriaMet;
-};
+import { TransformFunction } from "../subscriptions";
+import { optionalFieldToDate } from "../utils";
 
-export type LSUReferralRecord = {
-  stateCode: string;
-  externalId: string;
-  formInformation: {
-    clientName: string;
-  };
-  reasons: LSUCriteria[];
-};
-
-export interface TransformedLSUReferral {
+export interface LSUReferralRecord {
   stateCode: string;
   externalId: string;
   formInformation: {
     clientName: string;
   };
   criteria: {
-    eligibleRiskLevel?: { riskLevel?: string; lastIncrease?: Date };
-    negativeUA?: { lastNegativeUA?: Date };
+    riskLevel?: { riskLevel?: string; lastIncrease?: Date };
+    negativeUaWithin90Days?: { lastNegativeUa?: Date };
     noFelonyConvictions?: { lastFelonyConviction?: Date };
-    noViolentOrDUIConvictions?: { lastViolentOrDUIConviction?: Date };
+    noViolentOrDuiConvictions?: { lastViolentOrDuiConviction?: Date };
     verifiedEmployment?: { employmentVerifiedDate?: Date };
   };
 }
 
 export type LSUDraftData = {
   clientName: string;
+};
+
+export const transformReferral: TransformFunction<LSUReferralRecord> = (
+  record
+) => {
+  if (!record) return;
+
+  const transformedRecord = cloneDeep(record) as LSUReferralRecord;
+
+  transformedRecord.criteria.riskLevel = {
+    riskLevel: record.criteria.riskLevel?.risklevel,
+    lastIncrease: optionalFieldToDate(record.criteria.riskLevel?.lastIncrease),
+  };
+
+  transformedRecord.criteria.negativeUaWithin90Days = {
+    lastNegativeUa: optionalFieldToDate(
+      record.criteria.negativeUaWithin90Days?.lastNegativeUA
+    ),
+  };
+
+  transformedRecord.criteria.noFelonyConvictions = {
+    lastFelonyConviction: optionalFieldToDate(
+      record.criteria.noFelonyConvictions?.lastFelonyConviction
+    ),
+  };
+
+  transformedRecord.criteria.noViolentOrDuiConvictions = {
+    lastViolentOrDuiConviction: optionalFieldToDate(
+      record.criteria.noViolentOrDUIConvictions?.lastViolentOrDUIConviction
+    ),
+  };
+
+  transformedRecord.criteria.verifiedEmployment = {
+    employmentVerifiedDate: optionalFieldToDate(
+      record.criteria.verifiedEmployment?.employmentVerifiedDate
+    ),
+  };
+
+  return transformedRecord;
 };

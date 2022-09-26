@@ -7,7 +7,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../../../components/StoreProvider";
 import {
   Client,
-  TransformedEarlyTerminationReferral,
+  EarlyTerminationReferralRecord,
 } from "../../../../WorkflowsStore";
 
 const PromptElement = styled.div`
@@ -31,7 +31,7 @@ const Prompt: React.FC = ({ children }) => {
 
 const getMetadataPrompts = (
   client?: Client,
-  metadata: Partial<TransformedEarlyTerminationReferral["metadata"]> = {}
+  metadata: Partial<EarlyTerminationReferralRecord["metadata"]> = {}
 ): React.ReactChild[] => {
   const prompts = [];
   if (metadata.outOfState) {

@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform record 1`] = `
+Object {
+  "criteria": Object {
+    "negativeUaWithin90Days": Object {
+      "lastNegativeUa": 2022-01-03T00:00:00.000Z,
+    },
+    "noFelonyConvictions": Object {
+      "lastFelonyConviction": undefined,
+    },
+    "noViolentOrDuiConvictions": Object {
+      "lastViolentOrDuiConviction": undefined,
+    },
+    "riskLevel": Object {
+      "lastIncrease": 2022-01-03T00:00:00.000Z,
+      "riskLevel": undefined,
+    },
+    "verifiedEmployment": Object {
+      "employmentVerifiedDate": 2022-06-03T00:00:00.000Z,
+    },
+  },
+  "externalId": "001",
+  "formInformation": Object {
+    "clientName": "Betty Rubble",
+  },
+  "stateCode": "US_ID",
+}
+`;

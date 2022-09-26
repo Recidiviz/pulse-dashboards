@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import { Hydratable } from "../../core/models/types";
 
 export interface Subscription<DataFormat> {
@@ -26,3 +28,7 @@ export interface Subscription<DataFormat> {
 export interface DocumentSubscription<DataFormat>
   extends Subscription<DataFormat | undefined>,
     Hydratable {}
+
+export type TransformFunction<DataFormat> = (
+  rawRecord: DocumentData | undefined
+) => DataFormat | undefined;
