@@ -25,7 +25,7 @@ import cssVars from "../CoreConstants.module.scss";
 import RecidivizLogo from "../RecidivizLogo";
 import { PATHWAYS_VIEWS } from "../views";
 
-export const FORM_SIDEBAR_WIDTH = 350;
+export const FORM_SIDEBAR_WIDTH = 400;
 
 const Wrapper = styled.div`
   ${typography.Sans16}

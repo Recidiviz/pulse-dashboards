@@ -21,15 +21,19 @@ import { computed, makeObservable } from "mobx";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OpportunityValidationError } from "../utils";
-import { OpportunityBase } from "./OpportunityBase";
+import { OpportunityWithFormBase } from "./OpportunityWithFormBase";
 import {
+  PastFTRDDraftData,
   PastFTRDReferralRecord,
   transformReferral,
 } from "./PastFTRDReferralRecord";
 import { OpportunityRequirement } from "./types";
 import { pastFTRDOpportunityStatuses } from "./utils";
 
-class PastFTRDOpportunity extends OpportunityBase<PastFTRDReferralRecord> {
+class PastFTRDOpportunity extends OpportunityWithFormBase<
+  PastFTRDReferralRecord,
+  PastFTRDDraftData
+> {
   constructor(client: Client) {
     super(client, "pastFTRD", transformReferral);
     makeObservable(this, {

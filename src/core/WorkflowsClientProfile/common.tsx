@@ -20,6 +20,7 @@ import {
   Icon,
   palette,
   Sans14,
+  Sans16,
   spacing,
   TooltipTrigger,
 } from "@recidiviz/design-system";
@@ -55,6 +56,15 @@ export const STATUS_COLORS = {
     background: rgba(palette.data.gold1, 0.1),
     border: rgba(palette.data.gold1, 0.5),
     text: palette.slate85,
+    buttonFill: palette.data.gold1,
+    link: palette.data.gold1,
+  },
+  alert: {
+    icon: palette.signal.error,
+    iconAlmost: palette.signal.error,
+    background: rgba(palette.signal.error, 0.05),
+    border: rgba(palette.slate, 0.1),
+    text: palette.signal.error,
     buttonFill: palette.data.gold1,
     link: palette.data.gold1,
   },
@@ -96,7 +106,7 @@ export const PrintButton = styled(Button)<{ buttonFill: string }>`
   }
 `;
 
-const TitleText = styled(Sans14)`
+export const TitleText = styled(Sans16)`
   color: ${palette.pine1};
 `;
 
@@ -111,6 +121,23 @@ const InfoLink = styled.a`
   &:focus {
     color: ${palette.slate60};
   }
+`;
+
+export const CriterionIcon = styled(Icon)`
+  grid-column: 1;
+  /* slight vertical offset to approximate baseline alignment */
+  margin-top: ${rem(1)};
+`;
+
+export const CriterionContentWrapper = styled(Sans14)`
+  grid-column: 2;
+`;
+
+export const CriterionWrapper = styled.li`
+  display: grid;
+  grid-template-columns: ${rem(spacing.lg)} 1fr;
+  margin: 0 0 8px;
+  line-height: 1.3;
 `;
 
 export const InfoButton = ({

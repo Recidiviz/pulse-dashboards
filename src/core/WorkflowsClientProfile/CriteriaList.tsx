@@ -15,33 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Icon,
-  IconSVG,
-  palette,
-  Sans14,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
+import { IconSVG, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem, rgba } from "polished";
+import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
 import { Opportunity } from "../../WorkflowsStore";
 import { WORKFLOWS_POLICY_OR_METHODOLOGY_URL } from "../utils/constants";
-import { InfoButton, InfoTooltipWrapper, StatusPalette } from "./common";
+import {
+  CriterionContentWrapper,
+  CriterionIcon,
+  CriterionWrapper,
+  InfoButton,
+  InfoTooltipWrapper,
+  StatusPalette,
+} from "./common";
 import { OpportunityRecommendedLanguageModal } from "./OpportunityRecommendedLanguageModal";
-
-const CriterionIcon = styled(Icon)`
-  grid-column: 1;
-  /* slight vertical offset to approximate baseline alignment */
-  margin-top: ${rem(1)};
-`;
-
-const CriterionContentWrapper = styled.div`
-  grid-column: 2;
-`;
 
 const Wrapper = styled.ul`
   ${typography.Sans14}
@@ -50,29 +40,8 @@ const Wrapper = styled.ul`
   padding: 0;
 `;
 
-const CriterionWrapper = styled.li`
-  display: grid;
-  grid-template-columns: ${rem(spacing.lg)} 1fr;
-  margin: 0 0 8px;
-  line-height: 1.3;
-`;
-
 const KeepTogether = styled.span`
   white-space: nowrap;
-`;
-
-const ListDivider = styled(Sans14)`
-  align-items: center;
-  color: ${palette.slate70};
-  display: flex;
-  gap: ${rem(spacing.sm)};
-  margin: ${rem(spacing.md)} 0;
-`;
-
-const DividerRule = styled.hr`
-  border-top: 1px solid ${rgba(palette.slate, 0.15)};
-  flex: 1 1 auto;
-  margin: 0;
 `;
 
 export const CriteriaList = observer(
@@ -113,10 +82,6 @@ export const CriteriaList = observer(
             </CriterionWrapper>
           );
         })}
-        <ListDivider>
-          <div>Completed</div>
-          <DividerRule />
-        </ListDivider>
         {opportunity.requirementsMet.map(({ text, tooltip }) => {
           // split text so we can prevent orphaned tooltips
           const textTokens = text.split(" ");
