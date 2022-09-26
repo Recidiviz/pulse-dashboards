@@ -41,6 +41,7 @@ import {
 } from "firebase/firestore";
 import { mapValues, pickBy } from "lodash";
 
+import { UserAppMetadata } from "../RootStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
 import { isOfflineMode } from "../utils/isOfflineMode";
 import { OpportunityType } from "../WorkflowsStore";
@@ -78,24 +79,33 @@ const app = initializeApp({
 // demo- is a Firebase-reserved prefix that will only work with local emulators
 const useOfflineFirestore = projectId.startsWith("demo-");
 
+// Authenticate with Firebase for users with access to workflows
 export const authenticate = async (
-  auth0Token: string
-): Promise<ReturnType<typeof signInWithCustomToken>> => {
-  const tokenExchangeResponse = await fetch(
-    `${process.env.REACT_APP_API_URL}/token`,
-    {
-      headers: {
-        Authorization: `Bearer ${auth0Token}`,
-      },
-    }
-  );
+  auth0Token: string,
+  appMetadata?: UserAppMetadata
+): Promise<ReturnType<typeof signInWithCustomToken> | undefined> => {
+  const shouldGenerateToken =
+    appMetadata?.state_code === "recidiviz" ||
+    isOfflineMode() ||
+    appMetadata?.routes?.workflows;
 
-  const { firebaseToken } = await tokenExchangeResponse.json();
-  const auth = getAuth(app);
-  if (useOfflineFirestore) {
-    connectAuthEmulator(auth, "http://localhost:9099");
+  if (shouldGenerateToken) {
+    const tokenExchangeResponse = await fetch(
+      `${process.env.REACT_APP_API_URL}/token`,
+      {
+        headers: {
+          Authorization: `Bearer ${auth0Token}`,
+        },
+      }
+    );
+
+    const { firebaseToken } = await tokenExchangeResponse.json();
+    const auth = getAuth(app);
+    if (useOfflineFirestore) {
+      connectAuthEmulator(auth, "http://localhost:9099");
+    }
+    return signInWithCustomToken(auth, firebaseToken);
   }
-  return signInWithCustomToken(auth, firebaseToken);
 };
 
 export const db = getFirestore(app);
