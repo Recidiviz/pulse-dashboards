@@ -115,6 +115,10 @@ export default class UserStore {
     if (isOfflineMode()) {
       this.isAuthorized = true;
       const offlineUser = await fetchOfflineUser({});
+      await authenticate(
+        "fakeAuth0Token",
+        offlineUser[`${METADATA_NAMESPACE}app_metadata`]
+      );
       runInAction(() => {
         this.user = offlineUser;
         this.userIsLoading = false;
@@ -156,6 +160,10 @@ export default class UserStore {
       if (await auth0.isAuthenticated()) {
         const user = await auth0.getUser();
         if (user) {
+          await authenticate(
+            await auth0.getTokenSilently(),
+            user[`${METADATA_NAMESPACE}app_metadata`]
+          );
           runInAction(() => {
             this.user = user;
             this.getToken = (options?: GetTokenSilentlyOptions) =>
@@ -164,10 +172,6 @@ export default class UserStore {
             this.isAuthorized = true;
             this.userIsLoading = false;
           });
-          await authenticate(
-            await auth0.getTokenSilently(),
-            this.userAppMetadata
-          );
           this.trackIdentity();
         } else {
           runInAction(() => {
