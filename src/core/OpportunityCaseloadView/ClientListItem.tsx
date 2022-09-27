@@ -14,16 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { spacing } from "@recidiviz/design-system";
+import { Button, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import React from "react";
+import { darken, rem } from "polished";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { BrandedLink } from "../../components/BrandedLink";
 import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityCapsule } from "../ClientCapsule";
 import { workflowsUrl } from "../views";
+import { STATUS_COLORS } from "../WorkflowsClientProfile/common";
 
 const ListItem = styled.li`
   padding: ${rem(spacing.md)} ${rem(spacing.md)} 0 0;
@@ -34,29 +36,65 @@ const ClientLink = styled(BrandedLink)`
   gap: ${rem(spacing.lg)};
 `;
 
+const ClientItemWrapper = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const NavigateToFormButton = styled(Button)`
+  background: ${STATUS_COLORS.eligible.buttonFill};
+  border-radius: 4px;
+  border: 1px solid ${STATUS_COLORS.eligible.buttonFill};
+
+  &:hover,
+  &:focus {
+    background: ${darken(0.1, STATUS_COLORS.eligible.buttonFill)};
+    border: 1px solid ${darken(0.1, STATUS_COLORS.eligible.buttonFill)};
+  }
+`;
+
 type ClientListItemProps = {
   opportunity: Opportunity;
 };
 
 export const ClientListItem = observer(
   ({ opportunity }: ClientListItemProps) => {
+    const [showButton, setShowButton] = useState(false);
     const { client } = opportunity;
 
     return (
       <ListItem key={client.id}>
-        <ClientLink
-          to={workflowsUrl(opportunity.type, {
-            clientId: client.pseudonymizedId,
-          })}
+        <ClientItemWrapper
+          onMouseEnter={() => setShowButton(true)}
+          onMouseLeave={() => setShowButton(false)}
         >
-          <OpportunityCapsule
-            avatarSize="lg"
-            client={client}
-            opportunity={opportunity}
-            textSize="sm"
-            hideId
-          />
-        </ClientLink>
+          <ClientLink
+            to={workflowsUrl(opportunity.type, {
+              clientId: client.pseudonymizedId,
+            })}
+          >
+            <OpportunityCapsule
+              avatarSize="lg"
+              client={client}
+              opportunity={opportunity}
+              textSize="sm"
+              hideId
+            />
+          </ClientLink>
+          {showButton && opportunity.displayFormButton && (
+            <Link
+              to={workflowsUrl(opportunity.type, {
+                clientId: client.pseudonymizedId,
+              })}
+            >
+              <NavigateToFormButton>
+                {opportunity.navigateToFormText}
+              </NavigateToFormButton>
+            </Link>
+          )}
+        </ClientItemWrapper>
       </ListItem>
     );
   }

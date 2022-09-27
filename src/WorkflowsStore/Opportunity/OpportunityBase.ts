@@ -52,6 +52,10 @@ export abstract class OpportunityBase<
 
   protected updatesSubscription: DocumentSubscription<UpdateRecord>;
 
+  displayFormButton = false;
+
+  navigateToFormText = "Navigate to form";
+
   constructor(
     client: Client,
     type: OpportunityType,

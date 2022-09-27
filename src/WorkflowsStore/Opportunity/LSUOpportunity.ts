@@ -74,6 +74,10 @@ class LSUOpportunity extends OpportunityWithFormBase<
   LSUReferralRecord,
   LSUDraftData
 > {
+  displayFormButton = true;
+
+  navigateToFormText = "Generate Chrono";
+
   constructor(client: Client) {
     super(client, "LSU", transformReferral);
     makeObservable(this, {

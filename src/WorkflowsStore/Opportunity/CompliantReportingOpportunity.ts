@@ -186,6 +186,10 @@ class CompliantReportingOpportunity
 
   private updatesSubscription: DocumentSubscription<CompliantReportingUpdateRecord>;
 
+  displayFormButton = true;
+
+  navigateToFormText = "Auto-fill referral";
+
   constructor(client: Client) {
     makeAutoObservable<
       CompliantReportingOpportunity,

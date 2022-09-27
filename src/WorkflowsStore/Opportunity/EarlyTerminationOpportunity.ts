@@ -75,6 +75,10 @@ class EarlyTerminationOpportunity
     EarlyTerminationDraftData
   >
   implements EarlyTerminationFormInterface {
+  displayFormButton = true;
+
+  navigateToFormText = "Auto-fill paperwork";
+
   constructor(client: Client) {
     super(client, "earlyTermination", transformReferral);
 

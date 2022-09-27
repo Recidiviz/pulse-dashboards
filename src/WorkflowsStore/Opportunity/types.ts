@@ -83,6 +83,8 @@ export interface Opportunity extends Hydratable {
   isValid: boolean;
   denialReasonsMap: DenialReasonsMap;
   denial: Denial | undefined;
+  displayFormButton: boolean;
+  navigateToFormText?: string;
 }
 
 export interface BaseForm<FormDataType = Record<string, any>> {
