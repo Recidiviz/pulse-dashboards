@@ -30,7 +30,6 @@ import { getMethodologyCopy, getPageCopy } from "../content";
 import { useCoreStore } from "../CoreStoreProvider";
 import { NavigationSection } from "../types/navigation";
 import { CoreViewIdList, isValidPathwaysRootPath } from "../views";
-import withRouteSync from "../withRouteSync";
 
 const PageNavigation: React.FC = () => {
   const isMobile = useIsMobile();
@@ -81,4 +80,4 @@ const PageNavigation: React.FC = () => {
   );
 };
 
-export default withRouteSync(observer(PageNavigation));
+export default observer(PageNavigation);

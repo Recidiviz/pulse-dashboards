@@ -18,7 +18,6 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import { useCoreStore } from "../CoreStoreProvider";
 import OverTimeMetric from "../models/OverTimeMetric";
 import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
@@ -29,13 +28,7 @@ import {
 } from "../models/types";
 import { getRecordDate } from "../models/utils";
 import withMetricHydrator from "../withMetricHydrator";
-import {
-  getChartBottom,
-  getChartTop,
-  getDateRange,
-  getDateSpacing,
-  MonthOptions,
-} from "./helpers";
+import { getChartBottom, getChartTop, getDateRange } from "./helpers";
 import PopulationTimeSeriesBaseChart from "./PopulationTimeSeriesBaseChart";
 
 type Props = {
@@ -55,14 +48,7 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
   data,
   metric,
 }) => {
-  const { filtersStore } = useCoreStore();
-
-  const timePeriod: MonthOptions = parseInt(
-    // the timePeriod filter will only ever be single-select so always use the 0 index
-    filtersStore.filters.timePeriod[0]
-  ) as MonthOptions;
-
-  const dateSpacing = Math.ceil(getDateSpacing(timePeriod) / 2);
+  const dateSpacing = data.length >= 60 ? 2 : 1;
 
   const historicalPopulation = data.map(
     (
@@ -78,8 +64,7 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
 
   const { beginDate, endDate } = getDateRange(
     historicalPopulation[0]?.date,
-    historicalPopulation.slice(-1)[0]?.date,
-    timePeriod
+    historicalPopulation.slice(-1)[0]?.date
   );
 
   // set top of chart to the nearest thousand above the highest historical point

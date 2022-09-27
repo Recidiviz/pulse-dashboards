@@ -102,6 +102,8 @@ describe("LibertyPopulationOverTimeMetric", () => {
       REACT_APP_DEPLOY_ENV: "dev",
       REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
     });
+    mockCoreStore.setPage("libertyToPrison");
+    mockCoreStore.setSection("countOverTime");
     mockCoreStore.filtersStore.resetFilters();
     metric = new LibertyPopulationOverTimeMetric({
       id: "libertyToPrisonPopulationOverTime",

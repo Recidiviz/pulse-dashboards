@@ -103,6 +103,8 @@ describe("SupervisionPopulationOverTimeMetric", () => {
       REACT_APP_API_URL: "test-url",
       REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
     });
+    mockCoreStore.setPage("supervisionToLiberty");
+    mockCoreStore.setSection("countOverTime");
     mockCoreStore.filtersStore.resetFilters();
     metric = new SupervisionPopulationOverTimeMetric({
       id: "prisonPopulationOverTime",
@@ -231,7 +233,7 @@ describe("SupervisionPopulationOverTimeMetric", () => {
   describe("dataSeries", () => {
     beforeEach(() => {
       newBackendMetric = new OverTimeMetric({
-        id: "prisonPopulationOverTime",
+        id: "supervisionToLibertyOverTime",
         endpoint: "SupervisionToLibertyTransitionsCount",
         rootStore: mockCoreStore,
         filters: {

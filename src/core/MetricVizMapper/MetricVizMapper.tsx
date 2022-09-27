@@ -59,7 +59,9 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
       case "supervisionToLibertyPopulationByLengthOfStay":
         return <VizLengthOfStay metric={metric} />;
       default:
-        return <VizPopulationSnapshot metric={metric} />;
+        // Adding "key" here forces React to unmount and remount the component. Without it, when
+        // changing pages, there is a brief flash of data before the loading indicator shows up.
+        return <VizPopulationSnapshot metric={metric} key={metric.id} />;
     }
   }
 

@@ -845,6 +845,13 @@ class CompliantReportingOpportunity
     );
   }
 
+  get isHydrated(): boolean {
+    return (
+      this.referralSubscription.isHydrated &&
+      this.updatesSubscription.isHydrated
+    );
+  }
+
   hydrate(): void {
     this.referralSubscription.hydrate();
     this.updatesSubscription.hydrate();

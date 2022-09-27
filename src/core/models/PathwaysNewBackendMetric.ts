@@ -32,7 +32,12 @@ import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
 import { Filters, PopulationFilterValues } from "../types/filters";
-import { PathwaysPage } from "../views";
+import {
+  getMetricIdsForPage,
+  getSectionIdForMetric,
+  PATHWAYS_PAGES,
+  PathwaysPage,
+} from "../views";
 import PathwaysMetric from "./PathwaysMetric";
 import {
   HydratablePathwaysMetric,
@@ -83,7 +88,15 @@ export default abstract class PathwaysNewBackendMetric<
 
   isLoading?: boolean;
 
+  isHydrated = false;
+
   protected allRecords?: RecordFormat[];
+
+  protected dataTransformer: (d: RecordFormat[]) => RecordFormat[] = (
+    d: RecordFormat[]
+  ) => {
+    return d;
+  };
 
   error?: Error;
 
@@ -116,6 +129,7 @@ export default abstract class PathwaysNewBackendMetric<
       error: observable,
       hydrate: action,
       isLoading: observable,
+      isHydrated: observable,
     });
 
     reaction(
@@ -123,13 +137,19 @@ export default abstract class PathwaysNewBackendMetric<
         // Use toJS to ensure we access all the values of the filters. Reactions are only triggered
         // if data was accessed in the data function (this one), and so just returning
         // this.rootStore?.filters isn't enough to track a change to a property of filters.
-        return toJS(this.rootStore.filters);
+        return {
+          filters: toJS(this.rootStore.filters),
+        };
       },
       () => {
-        // Update the data in allRecords when a filter changes, but only after allRecords has been
-        // read the first time.
-        if (!this.isHydrated) return;
-
+        // Don't rehydrate the metric if we are not currently viewing it. Instead, clear its
+        // hydration status so that the loading bar is displayed the next time we navigate to it.
+        if (!this.isCurrentlyViewedMetric) {
+          runInAction(() => {
+            this.isHydrated = false;
+          });
+          return;
+        }
         this.hydrate();
       },
       {
@@ -146,8 +166,13 @@ export default abstract class PathwaysNewBackendMetric<
     );
   }
 
-  get isHydrated(): boolean {
-    return this.isLoading === false && this.error === undefined;
+  get isCurrentlyViewedMetric(): boolean {
+    const { page, section } = this.rootStore;
+    return (
+      Object.keys(PATHWAYS_PAGES).includes(page) &&
+      getMetricIdsForPage(page as PathwaysPage).includes(this.id) &&
+      getSectionIdForMetric(this.id) === section
+    );
   }
 
   getQueryParams(): URLSearchParams {
@@ -248,16 +273,20 @@ export default abstract class PathwaysNewBackendMetric<
     this.fetchNewMetrics(this.getQueryParams())
       .then((fetchedData) => {
         runInAction(() => {
-          this.allRecords = fetchedData.data;
+          this.allRecords = this.dataTransformer(fetchedData.data);
           this.lastUpdated = formatDateString(
             fetchedData.metadata?.lastUpdated
           );
           this.isLoading = false;
+          this.isHydrated = true;
         });
       })
       .catch((e) => {
-        this.isLoading = false;
-        this.error = e;
+        runInAction(() => {
+          this.isLoading = false;
+          this.error = e;
+          this.isHydrated = false;
+        });
       });
   }
 

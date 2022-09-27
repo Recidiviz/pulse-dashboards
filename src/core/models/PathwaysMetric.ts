@@ -96,6 +96,8 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   isLoading?: boolean;
 
+  isHydrated = false;
+
   protected allRecords?: RecordFormat[];
 
   error?: Error;
@@ -264,12 +266,14 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
       runInAction(() => {
         this.allRecords = fetchedData;
         this.isLoading = false;
+        this.isHydrated = true;
         this.newBackendMetric?.hydrate();
       });
     } catch (e) {
       runInAction(() => {
         this.isLoading = false;
         this.error = e;
+        this.isHydrated = false;
       });
     }
   }

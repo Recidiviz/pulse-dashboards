@@ -81,6 +81,7 @@ export abstract class FirestoreDocumentSubscription<
       snapshot.data({ serverTimestamps: "estimate" })
     );
 
+    this.isHydrated = true;
     if (this.isLoading) {
       this.isLoading = false;
     }
@@ -109,6 +110,8 @@ export abstract class FirestoreDocumentSubscription<
   isLoading: boolean | undefined = undefined;
 
   error: Error | undefined = undefined;
+
+  isHydrated = false;
 
   hydrate(): void {
     this.subscribe();

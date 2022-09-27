@@ -65,6 +65,8 @@ export class WorkflowsStore implements Hydratable {
 
   isLoading?: boolean;
 
+  isHydrated = false;
+
   error?: Error;
 
   user?: CombinedUserRecord;
@@ -177,27 +179,31 @@ export class WorkflowsStore implements Hydratable {
         const { info, updates, featureVariants } = userRecord;
         // don't include featureVariants in user object so we can keep it private
         this.setUserWithDefaults({ info, updates });
-        this.featureVariantRecord = featureVariants;
-        // subscribe to updates after the initial fetch
-        this.userUpdatesSubscription = observableSubscription((syncToStore) =>
-          subscribeToUserUpdates(email, (userUpdates) => {
-            if (userUpdates) syncToStore(userUpdates);
-          })
-        );
-        this.featureVariantsSubscription = observableSubscription(
-          (syncToStore) =>
-            subscribeToFeatureVariants(email, (featureVariantUpdate) => {
-              // returning an empty objects helps us distinguish finding no result from awaiting
-              // the initial result (which will be exposed on the subscription as undefined)
-              syncToStore(featureVariantUpdate ?? {});
+        runInAction(() => {
+          this.featureVariantRecord = featureVariants;
+          // subscribe to updates after the initial fetch
+          this.isHydrated = true;
+          this.userUpdatesSubscription = observableSubscription((syncToStore) =>
+            subscribeToUserUpdates(email, (userUpdates) => {
+              if (userUpdates) syncToStore(userUpdates);
             })
-        );
+          );
+          this.featureVariantsSubscription = observableSubscription(
+            (syncToStore) =>
+              subscribeToFeatureVariants(email, (featureVariantUpdate) => {
+                // returning an empty objects helps us distinguish finding no result from awaiting
+                // the initial result (which will be exposed on the subscription as undefined)
+                syncToStore(featureVariantUpdate ?? {});
+              })
+          );
+        });
       } else {
         throw new Error(`Unable to retrieve user record for ${email}`);
       }
     } catch (e) {
       runInAction(() => {
         this.error = e as Error;
+        this.isHydrated = false;
       });
     }
     runInAction(() => {

@@ -115,6 +115,13 @@ export abstract class OpportunityBase<
     return "PENDING";
   }
 
+  get isHydrated(): boolean {
+    return (
+      this.referralSubscription.isHydrated &&
+      this.updatesSubscription.isHydrated
+    );
+  }
+
   /**
    * Initiates hydration for all subscriptions.
    */

@@ -33,7 +33,6 @@ const mockRootStore = {
   userStore: {} as UserStore,
   tenantStore: { currentTenantId: mockTenantId } as TenantStore,
 };
-const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
 
 global.fetch = jest.fn().mockResolvedValue({
   blob: () => "blob",
@@ -86,6 +85,9 @@ describe("OverTimeMetric", () => {
       REACT_APP_DEPLOY_ENV: "dev",
       REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
     });
+    const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
+    mockCoreStore.setPage("libertyToPrison");
+    mockCoreStore.setSection("countOverTime");
     mockCoreStore.filtersStore.resetFilters();
     metric = new OverTimeMetric({
       id: "libertyToPrisonPopulationOverTime",
@@ -105,6 +107,7 @@ describe("OverTimeMetric", () => {
 
   afterEach(() => {
     process.env = OLD_ENV;
+    jest.clearAllMocks();
   });
 
   afterAll(() => {
@@ -127,7 +130,9 @@ describe("OverTimeMetric", () => {
   });
 
   it("finds most recent month", () => {
-    expect(metric.mostRecentDate).toEqual(new Date(2022, 3));
+    expect(OverTimeMetric.mostRecentDate(metric.dataSeries)).toEqual(
+      new Date(2022, 3)
+    );
   });
 
   it("sets isEmpty to false", () => {
@@ -160,12 +165,14 @@ describe("OverTimeMetric", () => {
 
     metric = new OverTimeMetric({
       id: "prisonPopulationOverTime",
-      rootStore: mockCoreStore,
+      rootStore: new CoreStore(mockRootStore),
       endpoint: "PrisonPopulationOverTime",
     });
     metric.hydrate();
 
-    expect(metric.mostRecentDate).toEqual(new Date(9999, 11, 31));
+    expect(OverTimeMetric.mostRecentDate(metric.dataSeries)).toEqual(
+      new Date(9999, 11, 31)
+    );
   });
 
   it("calls the backend again when filters change", () => {
@@ -175,6 +182,76 @@ describe("OverTimeMetric", () => {
         judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
       });
     });
+
+    expect(callNewMetricsApi).toHaveBeenCalledWith(
+      encodeURI(
+        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
+          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
+      ),
+      RootStore.getTokenSilently
+    );
+  });
+
+  it("does not call the backend again when the page changes", () => {
+    expect(metric.isCurrentlyViewedMetric).toEqual(true);
+
+    runInAction(() => {
+      metric.rootStore.setPage("prison");
+      metric.rootStore.filtersStore.setFilters({
+        gender: ["MALE"],
+        judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
+      });
+    });
+
+    expect(metric.isCurrentlyViewedMetric).toEqual(false);
+
+    // The API will get called before we change the page, so we specifically test here that it
+    // doesn't get called with the new filter values
+    expect(callNewMetricsApi).not.toHaveBeenCalledWith(
+      encodeURI(
+        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
+          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
+      ),
+      RootStore.getTokenSilently
+    );
+  });
+
+  it("does not call the backend again when the section changes", () => {
+    expect(metric.isCurrentlyViewedMetric).toEqual(true);
+
+    runInAction(() => {
+      metric.rootStore.setSection("personLevelDetail");
+      metric.rootStore.filtersStore.setFilters({
+        gender: ["MALE"],
+        judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
+      });
+    });
+
+    expect(metric.isCurrentlyViewedMetric).toEqual(false);
+
+    // The API will get called before we change the page, so we specifically test here that it
+    // doesn't get called with the new filter values
+    expect(callNewMetricsApi).not.toHaveBeenCalledWith(
+      encodeURI(
+        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
+          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
+      ),
+      RootStore.getTokenSilently
+    );
+  });
+
+  it("calls the backend with current filter values when the section changes back", () => {
+    expect(metric.isCurrentlyViewedMetric).toEqual(true);
+    runInAction(() => {
+      metric.rootStore.setSection("personLevelDetail");
+      metric.rootStore.filtersStore.setFilters({
+        gender: ["MALE"],
+        judicialDistrict: ["JUDICIAL_DISTRICT_1", "JUDICIAL_DISTRICT_2"],
+      });
+      metric.rootStore.setSection("countOverTime");
+    });
+
+    expect(metric.isCurrentlyViewedMetric).toEqual(true);
 
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(

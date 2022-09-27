@@ -70,8 +70,7 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
 
   const { beginDate, endDate } = getDateRange(
     historicalPopulation[0].date,
-    projectedPopulation.slice(-1)[0].date,
-    timePeriod
+    projectedPopulation.slice(-1)[0].date
   );
 
   // update uncertainty range so areas align

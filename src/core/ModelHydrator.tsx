@@ -48,14 +48,14 @@ const StatusWrapper = styled(animated.div)`
 function getHydrationStatus(
   model: HydratablePathwaysMetric
 ): "pending" | "error" | "done" | "no data" {
-  if (model.isLoading || model.isLoading === undefined) {
+  if (model.error) {
+    return "error";
+  }
+  if (!model.isHydrated) {
     return "pending";
   }
   if (model.isEmpty) {
     return "no data";
-  }
-  if (model.error) {
-    return "error";
   }
   return "done";
 }
@@ -88,7 +88,7 @@ const ModelHydrator = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(
     autorun(() => {
-      if (model.isLoading === undefined) {
+      if (!model.isHydrated && !model.isLoading && !model.error) {
         model.hydrate();
       }
     })

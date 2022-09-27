@@ -327,6 +327,7 @@ export type ViewMethodology = {
  */
 export interface Hydratable {
   isLoading?: boolean;
+  isHydrated: boolean;
   error?: Error;
   hydrate: () => void;
 }

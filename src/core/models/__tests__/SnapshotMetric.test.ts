@@ -66,6 +66,8 @@ describe("SnapshotMetric", () => {
       REACT_APP_DEPLOY_ENV: "dev",
       REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
     });
+    mockCoreStore.setPage("libertyToPrison");
+    mockCoreStore.setSection("countByLocation");
     mockCoreStore.filtersStore.resetFilters();
     metric = new SnapshotMetric({
       id: "libertyToPrisonPopulationByDistrict",

@@ -20,6 +20,7 @@ import LibertyPopulationOverTimeMetric from "../models/LibertyPopulationOverTime
 import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshotMetric";
 import OverTimeMetric from "../models/OverTimeMetric";
 import PathwaysMetric from "../models/PathwaysMetric";
+import PathwaysNewBackendMetric from "../models/PathwaysNewBackendMetric";
 import PersonLevelMetric from "../models/PersonLevelMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
@@ -45,6 +46,11 @@ import type CoreStore from ".";
 export default class MetricsStore {
   protected readonly rootStore;
 
+  protected map?: Record<
+    string,
+    Record<string, PathwaysMetric<any> | PathwaysNewBackendMetric<any>>
+  >;
+
   constructor({ rootStore }: { rootStore: CoreStore }) {
     makeAutoObservable(this);
     this.rootStore = rootStore;
@@ -62,85 +68,88 @@ export default class MetricsStore {
 
     if (!Object.keys(PATHWAYS_PAGES).includes(page)) return undefined;
 
-    const map = {
-      [PATHWAYS_PAGES.libertyToPrison]: {
-        [PATHWAYS_SECTIONS.countOverTime]: this
-          .libertyToPrisonPopulationOverTime,
-        [PATHWAYS_SECTIONS.countByLocation]: this
-          .libertyToPrisonPopulationByDistrict,
-        [PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration]: this
-          .libertyToPrisonPopulationByPriorLengthOfIncarceration,
-        [PATHWAYS_SECTIONS.countByGender]: this
-          .libertyToPrisonPopulationByGender,
-        [PATHWAYS_SECTIONS.countByAgeGroup]: this
-          .libertyToPrisonPopulationByAgeGroup,
-        [PATHWAYS_SECTIONS.countByRace]: this.libertyToPrisonPopulationByRace,
-      },
-      [PATHWAYS_PAGES.prison]: {
-        [PATHWAYS_SECTIONS.projectedCountOverTime]: this
-          .projectedPrisonPopulationOverTime,
-        [PATHWAYS_SECTIONS.countOverTime]: this.prisonPopulationOverTime,
-        [PATHWAYS_SECTIONS.countByLocation]: this.prisonFacilityPopulation,
-        [PATHWAYS_SECTIONS.countByRace]: this.prisonPopulationByRace,
-        [PATHWAYS_SECTIONS.personLevelDetail]: this.prisonPopulationPersonLevel,
-      },
-      [PATHWAYS_PAGES.prisonToSupervision]: {
-        [PATHWAYS_SECTIONS.countOverTime]: this
-          .prisonToSupervisionPopulationOverTime,
-        [PATHWAYS_SECTIONS.countByAgeGroup]: this
-          .prisonToSupervisionPopulationByAge,
-        [PATHWAYS_SECTIONS.countByLocation]: this
-          .prisonToSupervisionPopulationByFacility,
-        [PATHWAYS_SECTIONS.countByRace]: this
-          .prisonToSupervisionPopulationByRace,
-        [PATHWAYS_SECTIONS.personLevelDetail]: this
-          .prisonToSupervisionPopulationPersonLevel,
-      },
-      [PATHWAYS_PAGES.supervision]: {
-        [PATHWAYS_SECTIONS.projectedCountOverTime]: this
-          .projectedSupervisionPopulationOverTime,
-        [PATHWAYS_SECTIONS.countOverTime]: this.supervisionPopulationOverTime,
-        [PATHWAYS_SECTIONS.countByLocation]: this
-          .supervisionPopulationByDistrict,
-        [PATHWAYS_SECTIONS.countByRace]: this.supervisionPopulationByRace,
-        [PATHWAYS_SECTIONS.countBySupervisionLevel]: this
-          .supervisionPopulationBySupervisionLevel,
-      },
-      [PATHWAYS_PAGES.supervisionToPrison]: {
-        [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToPrisonOverTime,
-        [PATHWAYS_SECTIONS.countByLocation]: this
-          .supervisionToPrisonPopulationByDistrict,
-        [PATHWAYS_SECTIONS.countByMostSevereViolation]: this
-          .supervisionToPrisonPopulationByMostSevereViolation,
-        [PATHWAYS_SECTIONS.countByNumberOfViolations]: this
-          .supervisionToPrisonPopulationByNumberOfViolations,
-        [PATHWAYS_SECTIONS.countByLengthOfStay]: this
-          .supervisionToPrisonPopulationByLengthOfStay,
-        [PATHWAYS_SECTIONS.countBySupervisionLevel]: this
-          .supervisionToPrisonPopulationBySupervisionLevel,
-        [PATHWAYS_SECTIONS.countByRace]: this
-          .supervisionToPrisonPopulationByRace,
-        [PATHWAYS_SECTIONS.countByGender]: this
-          .supervisionToPrisonPopulationByGender,
-        [PATHWAYS_SECTIONS.countByOfficer]: this
-          .supervisionToPrisonPopulationByOfficer,
-      },
-      [PATHWAYS_PAGES.supervisionToLiberty]: {
-        [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToLibertyOverTime,
-        [PATHWAYS_SECTIONS.countByLengthOfStay]: this
-          .supervisionToLibertyPopulationByLengthOfStay,
-        [PATHWAYS_SECTIONS.countByLocation]: this
-          .supervisionToLibertyPopulationByLocation,
-        [PATHWAYS_SECTIONS.countByGender]: this
-          .supervisionToLibertyPopulationByGender,
-        [PATHWAYS_SECTIONS.countByAgeGroup]: this
-          .supervisionToLibertyPopulationByAgeGroup,
-        [PATHWAYS_SECTIONS.countByRace]: this
-          .supervisionToLibertyPopulationByRace,
-      },
-    };
-    // @ts-ignore
-    return map[page][section];
+    if (!this.map) {
+      this.map = {
+        [PATHWAYS_PAGES.libertyToPrison]: {
+          [PATHWAYS_SECTIONS.countOverTime]: this
+            .libertyToPrisonPopulationOverTime,
+          [PATHWAYS_SECTIONS.countByLocation]: this
+            .libertyToPrisonPopulationByDistrict,
+          [PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration]: this
+            .libertyToPrisonPopulationByPriorLengthOfIncarceration,
+          [PATHWAYS_SECTIONS.countByGender]: this
+            .libertyToPrisonPopulationByGender,
+          [PATHWAYS_SECTIONS.countByAgeGroup]: this
+            .libertyToPrisonPopulationByAgeGroup,
+          [PATHWAYS_SECTIONS.countByRace]: this.libertyToPrisonPopulationByRace,
+        },
+        [PATHWAYS_PAGES.prison]: {
+          [PATHWAYS_SECTIONS.projectedCountOverTime]: this
+            .projectedPrisonPopulationOverTime,
+          [PATHWAYS_SECTIONS.countOverTime]: this.prisonPopulationOverTime,
+          [PATHWAYS_SECTIONS.countByLocation]: this.prisonFacilityPopulation,
+          [PATHWAYS_SECTIONS.countByRace]: this.prisonPopulationByRace,
+          [PATHWAYS_SECTIONS.personLevelDetail]: this
+            .prisonPopulationPersonLevel,
+        },
+        [PATHWAYS_PAGES.prisonToSupervision]: {
+          [PATHWAYS_SECTIONS.countOverTime]: this
+            .prisonToSupervisionPopulationOverTime,
+          [PATHWAYS_SECTIONS.countByAgeGroup]: this
+            .prisonToSupervisionPopulationByAge,
+          [PATHWAYS_SECTIONS.countByLocation]: this
+            .prisonToSupervisionPopulationByFacility,
+          [PATHWAYS_SECTIONS.countByRace]: this
+            .prisonToSupervisionPopulationByRace,
+          [PATHWAYS_SECTIONS.personLevelDetail]: this
+            .prisonToSupervisionPopulationPersonLevel,
+        },
+        [PATHWAYS_PAGES.supervision]: {
+          [PATHWAYS_SECTIONS.projectedCountOverTime]: this
+            .projectedSupervisionPopulationOverTime,
+          [PATHWAYS_SECTIONS.countOverTime]: this.supervisionPopulationOverTime,
+          [PATHWAYS_SECTIONS.countByLocation]: this
+            .supervisionPopulationByDistrict,
+          [PATHWAYS_SECTIONS.countByRace]: this.supervisionPopulationByRace,
+          [PATHWAYS_SECTIONS.countBySupervisionLevel]: this
+            .supervisionPopulationBySupervisionLevel,
+        },
+        [PATHWAYS_PAGES.supervisionToPrison]: {
+          [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToPrisonOverTime,
+          [PATHWAYS_SECTIONS.countByLocation]: this
+            .supervisionToPrisonPopulationByDistrict,
+          [PATHWAYS_SECTIONS.countByMostSevereViolation]: this
+            .supervisionToPrisonPopulationByMostSevereViolation,
+          [PATHWAYS_SECTIONS.countByNumberOfViolations]: this
+            .supervisionToPrisonPopulationByNumberOfViolations,
+          [PATHWAYS_SECTIONS.countByLengthOfStay]: this
+            .supervisionToPrisonPopulationByLengthOfStay,
+          [PATHWAYS_SECTIONS.countBySupervisionLevel]: this
+            .supervisionToPrisonPopulationBySupervisionLevel,
+          [PATHWAYS_SECTIONS.countByRace]: this
+            .supervisionToPrisonPopulationByRace,
+          [PATHWAYS_SECTIONS.countByGender]: this
+            .supervisionToPrisonPopulationByGender,
+          [PATHWAYS_SECTIONS.countByOfficer]: this
+            .supervisionToPrisonPopulationByOfficer,
+        },
+        [PATHWAYS_PAGES.supervisionToLiberty]: {
+          [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToLibertyOverTime,
+          [PATHWAYS_SECTIONS.countByLengthOfStay]: this
+            .supervisionToLibertyPopulationByLengthOfStay,
+          [PATHWAYS_SECTIONS.countByLocation]: this
+            .supervisionToLibertyPopulationByLocation,
+          [PATHWAYS_SECTIONS.countByGender]: this
+            .supervisionToLibertyPopulationByGender,
+          [PATHWAYS_SECTIONS.countByAgeGroup]: this
+            .supervisionToLibertyPopulationByAgeGroup,
+          [PATHWAYS_SECTIONS.countByRace]: this
+            .supervisionToLibertyPopulationByRace,
+        },
+      };
+    }
+
+    return this.map[page][section];
   }
 
   // LIBERTY TO PRISON

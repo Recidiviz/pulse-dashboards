@@ -34,18 +34,16 @@ export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesD
     super(props);
 
     makeObservable<OverTimeMetric>(this, {
-      mostRecentDate: computed,
       dataSeries: computed,
       downloadableData: computed,
     });
 
     this.download = this.download.bind(this);
+    this.dataTransformer = this.extrapolateRecords;
   }
 
   get dataSeries(): TimeSeriesDataRecord[] {
-    if (!this.rootStore || !this.allRecords?.length) return [];
-    const { monthRange } = this.rootStore.filtersStore;
-    return this.extrapolateRecordsForRange(monthRange);
+    return this.allRecords ?? [];
   }
 
   get dataSeriesForDiffing(): TimeSeriesDataRecord[] {
@@ -56,16 +54,14 @@ export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesD
     return !sumBy(this.dataSeries, "count");
   }
 
-  get mostRecentDate(): Date {
-    const { allRecords } = this;
-
-    if (!allRecords || allRecords.length === 0) {
+  static mostRecentDate(records?: TimeSeriesDataRecord[]): Date {
+    if (!records || records.length === 0) {
       return new Date(9999, 11, 31);
     }
 
     // Records are sorted by date on the backend in order to calculate 90 day averages, so we don't
     // need to search through all of them.
-    return getRecordDate(allRecords.slice(-1)[0]);
+    return getRecordDate(records.slice(-1)[0]);
   }
 
   get downloadableData(): DownloadableData | undefined {
@@ -104,13 +100,14 @@ export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesD
       filters: {
         filtersDescription: this.rootStore?.filtersStore.filtersDescription,
       },
-      lastUpdatedOn: formatDate(this.mostRecentDate),
+      lastUpdatedOn: formatDate(OverTimeMetric.mostRecentDate(this.allRecords)),
       methodologyContent: this.methodology,
     });
   }
 
-  extrapolateRecordsForRange(monthRange: number): TimeSeriesDataRecord[] {
-    const { mostRecentDate, records } = this;
+  extrapolateRecords(records: TimeSeriesDataRecord[]): TimeSeriesDataRecord[] {
+    const { monthRange } = this.rootStore.filtersStore;
+    const mostRecentDate = OverTimeMetric.mostRecentDate(records);
     const earliestDate = startOfMonth(subMonths(mostRecentDate, monthRange));
 
     const recordsGrouped = new Map<string, TimeSeriesDataRecord>();

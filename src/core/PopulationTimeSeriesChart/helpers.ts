@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { differenceInCalendarMonths } from "date-fns";
+
 import { formatDate } from "../../utils";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import PopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
@@ -95,30 +97,13 @@ export const prepareData = (
 
 export const getDateRange = (
   firstDate: Date,
-  lastDate: Date,
-  monthRange: MonthOptions
+  lastDate: Date
 ): { beginDate: Date; endDate: Date } => {
   // set range slightly wider than data
   const beginDate = new Date(firstDate);
   const endDate = new Date(lastDate);
 
-  let offset;
-  switch (monthRange) {
-    case 6:
-      offset = 1;
-      break;
-    case 12:
-      offset = 2;
-      break;
-    case 24:
-      offset = 4;
-      break;
-    case 60:
-      offset = 12;
-      break;
-    default:
-      offset = 4;
-  }
+  const offset = (differenceInCalendarMonths(lastDate, firstDate) - 1) / 6;
 
   beginDate.setDate(beginDate.getDate() - offset);
   endDate.setDate(endDate.getDate() + offset);

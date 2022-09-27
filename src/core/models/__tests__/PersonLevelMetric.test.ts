@@ -101,6 +101,8 @@ describe("PersonLevelMetric", () => {
       REACT_APP_DEPLOY_ENV: "dev",
       REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
     });
+    mockCoreStore.setPage("prison");
+    mockCoreStore.setSection("personLevelDetail");
     mockCoreStore.filtersStore.resetFilters();
     metric = new PersonLevelMetric({
       id: "prisonPopulationPersonLevel",
