@@ -25,6 +25,7 @@ import { OpportunityType } from "../WorkflowsStore";
  * based on the properties of this object.
  */
 export type StaffRecord = {
+  // TODO(#2410): Remove usage of name once givenNames and surname are in use.
   name: string;
   district?: string;
   id: string;
@@ -37,6 +38,8 @@ export type StaffRecord = {
    * Only staff with caseloads need to be included in filters
    */
   hasCaseload: boolean;
+  givenNames: string;
+  surname: string;
 };
 
 export type UserRecord = StaffRecord & { email: string };
