@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { transformReferral } from "../LSUReferralRecord";
+import { transformReferral } from "../EarnedDischargeReferralRecord";
 
-test("transform record", () => {
+test("transform dual/parole record", () => {
   const rawRecord = {
     stateCode: "US_ID",
     externalId: "001",
@@ -45,8 +45,9 @@ test("transform record", () => {
       supervisionNotPastFullTermCompletionDate: {
         eligibleDate: "2025-06-19",
       },
-      usIdNoActiveNco: {
-        activeNco: true,
+      usIdParoleDualSupervisionPastEarlyDischargeDate: {
+        eligibleDate: "2022-05-22",
+        sentenceType: "DUAL",
       },
     },
   };
@@ -54,7 +55,45 @@ test("transform record", () => {
   expect(transformReferral(rawRecord)).toMatchSnapshot();
 });
 
-test("optional criteria have sane fallbacks", () => {
+test("transform probation record", () => {
+  const rawRecord = {
+    stateCode: "US_ID",
+    externalId: "001",
+    formInformation: {
+      clientName: "Betty Rubble",
+    },
+    criteria: {
+      usIdLsirLevelLowModerateForXDays: {
+        riskLevel: "MODERATE",
+        eligibleDate: "2022-01-03",
+      },
+      negativeUaWithin90Days: {
+        latestUaDates: ["2022-01-03"],
+        latestUaResults: [false],
+      },
+      noFelonyWithin24Months: {
+        latestFelonyConvictions: ["2022-01-05", "2022-05-28"],
+      },
+      noViolentMisdemeanorWithin12Months: {
+        latestViolentConvictions: ["2022-03-09"],
+      },
+      usIdIncomeVerifiedWithin3Months: {
+        incomeVerifiedDate: "2022-06-03",
+      },
+      supervisionNotPastFullTermCompletionDate: {
+        eligibleDate: "2025-06-19",
+      },
+      probationPast1Year: {
+        eligibleDate: "2022-05-22",
+        sentenceType: "DUAL",
+      },
+    },
+  };
+
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});
+
+test("option criteria have sane fallbacks", () => {
   const rawRecord = {
     stateCode: "US_ID",
     externalId: "001",
@@ -75,7 +114,10 @@ test("optional criteria have sane fallbacks", () => {
       supervisionNotPastFullTermCompletionDate: {
         eligibleDate: "2025-06-19",
       },
-      usIdNoActiveNco: null,
+      probationPast1Year: {
+        eligibleDate: "2022-05-22",
+        sentenceType: "DUAL",
+      },
     },
   };
 

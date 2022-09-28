@@ -18,7 +18,29 @@
 import { cloneDeep } from "lodash";
 
 import { TransformFunction } from "../subscriptions";
-import { optionalFieldToDate } from "../utils";
+import {
+  fieldToDate,
+  optionalFieldToDate,
+  optionalFieldToDateArray,
+} from "../utils";
+
+export type LSUEarnedDischargeCommonCriteria = {
+  negativeUaWithin90Days: {
+    latestUaDates: Date[];
+    latestUaResults: boolean[];
+  };
+  noFelonyWithin24Months: { latestFelonyConvictions: Date[] };
+  noViolentMisdemeanorWithin12Months: {
+    latestViolentConvictions: Date[];
+  };
+  usIdIncomeVerifiedWithin3Months: {
+    incomeVerifiedDate?: Date;
+  };
+  usIdLsirLevelLowModerateForXDays: {
+    eligibleDate: Date;
+    riskLevel: "LOW" | "MODERATE";
+  };
+};
 
 export interface LSUReferralRecord {
   stateCode: string;
@@ -26,17 +48,60 @@ export interface LSUReferralRecord {
   formInformation: {
     clientName: string;
   };
-  criteria: {
-    riskLevel?: { riskLevel?: string; lastIncrease?: Date };
-    negativeUaWithin90Days?: { lastNegativeUa?: Date };
-    noFelonyConvictions?: { lastFelonyConviction?: Date };
-    noViolentOrDuiConvictions?: { lastViolentOrDuiConviction?: Date };
-    verifiedEmployment?: { employmentVerifiedDate?: Date };
+  criteria: LSUEarnedDischargeCommonCriteria & {
+    usIdNoActiveNco: {
+      activeNco: boolean;
+    };
   };
 }
 
 export type LSUDraftData = {
   clientName: string;
+};
+
+export const transformLSUEarnedDischargeCommonCriteria: TransformFunction<LSUEarnedDischargeCommonCriteria> = (
+  criteria
+) => {
+  if (!criteria) return;
+
+  const transformedCriteria: LSUEarnedDischargeCommonCriteria = {
+    usIdLsirLevelLowModerateForXDays: {
+      riskLevel: criteria.usIdLsirLevelLowModerateForXDays.riskLevel,
+      eligibleDate: fieldToDate(
+        criteria.usIdLsirLevelLowModerateForXDays.eligibleDate
+      ),
+    },
+
+    negativeUaWithin90Days: {
+      latestUaDates:
+        optionalFieldToDateArray(
+          criteria.negativeUaWithin90Days?.latestUaDates
+        ) ?? [],
+      latestUaResults: criteria.negativeUaWithin90Days?.latestUaResults ?? [],
+    },
+
+    noFelonyWithin24Months: {
+      latestFelonyConvictions:
+        optionalFieldToDateArray(
+          criteria.noFelonyWithin24Months?.latestFelonyConvictions
+        ) ?? [],
+    },
+
+    noViolentMisdemeanorWithin12Months: {
+      latestViolentConvictions:
+        optionalFieldToDateArray(
+          criteria.noViolentMisdemeanorWithin12Months?.latestViolentConvictions
+        ) ?? [],
+    },
+
+    usIdIncomeVerifiedWithin3Months: {
+      incomeVerifiedDate: optionalFieldToDate(
+        criteria.usIdIncomeVerifiedWithin3Months.incomeVerifiedDate
+      ),
+    },
+  };
+
+  return transformedCriteria;
 };
 
 export const transformReferral: TransformFunction<LSUReferralRecord> = (
@@ -45,35 +110,24 @@ export const transformReferral: TransformFunction<LSUReferralRecord> = (
   if (!record) return;
 
   const transformedRecord = cloneDeep(record) as LSUReferralRecord;
+  const { criteria } = record;
 
-  transformedRecord.criteria.riskLevel = {
-    riskLevel: record.criteria.riskLevel?.risklevel,
-    lastIncrease: optionalFieldToDate(record.criteria.riskLevel?.lastIncrease),
+  const transformedCommonCriteria = transformLSUEarnedDischargeCommonCriteria(
+    criteria
+  );
+
+  transformedRecord.criteria = {
+    ...transformedRecord.criteria,
+    ...transformedCommonCriteria,
   };
 
-  transformedRecord.criteria.negativeUaWithin90Days = {
-    lastNegativeUa: optionalFieldToDate(
-      record.criteria.negativeUaWithin90Days?.lastNegativeUA
-    ),
+  transformedRecord.criteria.usIdNoActiveNco = {
+    activeNco: criteria.usIdNoActiveNco?.activeNco ?? false,
   };
 
-  transformedRecord.criteria.noFelonyConvictions = {
-    lastFelonyConviction: optionalFieldToDate(
-      record.criteria.noFelonyConvictions?.lastFelonyConviction
-    ),
-  };
-
-  transformedRecord.criteria.noViolentOrDuiConvictions = {
-    lastViolentOrDuiConviction: optionalFieldToDate(
-      record.criteria.noViolentOrDUIConvictions?.lastViolentOrDUIConviction
-    ),
-  };
-
-  transformedRecord.criteria.verifiedEmployment = {
-    employmentVerifiedDate: optionalFieldToDate(
-      record.criteria.verifiedEmployment?.employmentVerifiedDate
-    ),
-  };
+  // delete vestigial criterion left over from TES we don't use in the front end
+  // @ts-expect-error
+  delete transformedRecord.criteria.supervisionNotPastFullTermCompletionDate;
 
   return transformedRecord;
 };

@@ -15,19 +15,70 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { cloneDeep } from "lodash";
+
+import { TransformFunction } from "../subscriptions";
+import { fieldToDate } from "../utils";
+import {
+  LSUEarnedDischargeCommonCriteria,
+  transformLSUEarnedDischargeCommonCriteria,
+} from "./LSUReferralRecord";
+
 export interface EarnedDischargeReferralRecord {
   stateCode: string;
   externalId: string;
   formInformation: {
     clientName: string;
   };
-  criteria: {
-    sentenceLength?: number;
-    noNewOffenses?: boolean;
-    courtOrderConditionsMet?: boolean;
+  criteria: LSUEarnedDischargeCommonCriteria & {
+    pastEarnedDischargeEligibleDate: {
+      eligibleDate: Date;
+      sentenceType: "PROBATION" | "PAROLE" | "DUAL";
+    };
   };
 }
 
 export type EarnedDischargeDraftData = {
   clientName: string;
+};
+
+export const transformReferral: TransformFunction<EarnedDischargeReferralRecord> = (
+  record
+) => {
+  if (!record) return;
+
+  const transformedRecord = cloneDeep(record) as EarnedDischargeReferralRecord;
+  const { criteria } = record;
+
+  const transformedCommonCriteria = transformLSUEarnedDischargeCommonCriteria(
+    criteria
+  );
+
+  transformedRecord.criteria = {
+    ...transformedRecord.criteria,
+    ...transformedCommonCriteria,
+  };
+
+  transformedRecord.criteria.pastEarnedDischargeEligibleDate = {
+    eligibleDate: fieldToDate(
+      criteria.usIdParoleDualSupervisionPastEarlyDischargeDate?.eligibleDate ??
+        criteria.probationPast1Year?.eligibleDate
+    ),
+    sentenceType:
+      criteria.usIdParoleDualSupervisionPastEarlyDischargeDate?.sentenceType ??
+      criteria.probationPast1Year?.sentenceType,
+  };
+
+  delete (
+    // @ts-expect-error
+    transformedRecord.criteria.usIdParoleDualSupervisionPastEarlyDischargeDate
+  );
+  // @ts-expect-error
+  delete transformedRecord.criteria.probationPast1Year;
+
+  // delete vestigial criterion left over from TES we don't use in the front end
+  // @ts-expect-error
+  delete transformedRecord.criteria.supervisionNotPastFullTermCompletionDate;
+
+  return transformedRecord;
 };

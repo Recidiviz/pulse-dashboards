@@ -21,6 +21,7 @@ import { ClientRecord } from "../../../firestore";
 import { dateToTimestamp } from "../../utils";
 import { CompliantReportingReferralRecord } from "../CompliantReportingReferralRecord";
 import { EarlyTerminationReferralRecord } from "../EarlyTerminationReferralRecord";
+import { EarnedDischargeReferralRecord } from "../EarnedDischargeReferralRecord";
 import { LSUReferralRecord } from "../LSUReferralRecord";
 import { PastFTRDReferralRecord } from "../PastFTRDReferralRecord";
 
@@ -168,21 +169,56 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
     clientName: "Betty Rubble",
   },
   criteria: {
-    riskLevel: {
-      riskLevel: "MEDIUM",
-      lastIncrease: parseISO("2022-01-03"),
+    usIdLsirLevelLowModerateForXDays: {
+      riskLevel: "MODERATE",
+      eligibleDate: parseISO("2022-01-03"),
     },
     negativeUaWithin90Days: {
-      lastNegativeUa: parseISO("2022-01-03"),
+      latestUaDates: [parseISO("2022-05-28")],
+      latestUaResults: [false],
     },
-    noFelonyConvictions: {
-      lastFelonyConviction: undefined,
+    noFelonyWithin24Months: {
+      latestFelonyConvictions: [],
     },
-    noViolentOrDuiConvictions: {
-      lastViolentOrDuiConviction: undefined,
+    noViolentMisdemeanorWithin12Months: {
+      latestViolentConvictions: [],
     },
-    verifiedEmployment: {
-      employmentVerifiedDate: parseISO("2022-06-03"),
+    usIdIncomeVerifiedWithin3Months: {
+      incomeVerifiedDate: parseISO("2022-06-03"),
+    },
+    usIdNoActiveNco: {
+      activeNco: false,
+    },
+  },
+};
+
+export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord = {
+  stateCode: "US_ID",
+  externalId: "001",
+  formInformation: {
+    clientName: "Betty Rubble",
+  },
+  criteria: {
+    usIdLsirLevelLowModerateForXDays: {
+      riskLevel: "MODERATE",
+      eligibleDate: parseISO("2022-01-03"),
+    },
+    negativeUaWithin90Days: {
+      latestUaDates: [parseISO("2022-05-28")],
+      latestUaResults: [false],
+    },
+    noFelonyWithin24Months: {
+      latestFelonyConvictions: [],
+    },
+    noViolentMisdemeanorWithin12Months: {
+      latestViolentConvictions: [],
+    },
+    usIdIncomeVerifiedWithin3Months: {
+      incomeVerifiedDate: parseISO("2022-06-03"),
+    },
+    pastEarnedDischargeEligibleDate: {
+      eligibleDate: parseISO("2022-03-17"),
+      sentenceType: "PAROLE",
     },
   },
 };
@@ -211,6 +247,14 @@ export const LSUEligibleClientRecord: RequireKeys<
 > = {
   ...ineligibleClientRecord,
   LSUEligible: true,
+};
+
+export const EarnedDischargeEligibleClientRecord: RequireKeys<
+  ClientRecord,
+  "earnedDischargeEligible"
+> = {
+  ...ineligibleClientRecord,
+  earnedDischargeEligible: true,
 };
 
 export const pastFTRDRecordFixture: PastFTRDReferralRecord = {

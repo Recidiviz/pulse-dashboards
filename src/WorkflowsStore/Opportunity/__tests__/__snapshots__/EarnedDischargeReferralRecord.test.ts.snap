@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`optional criteria have sane fallbacks 1`] = `
+exports[`option criteria have sane fallbacks 1`] = `
 Object {
   "criteria": Object {
     "negativeUaWithin90Days": Object {
@@ -13,15 +13,16 @@ Object {
     "noViolentMisdemeanorWithin12Months": Object {
       "latestViolentConvictions": Array [],
     },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
     },
     "usIdLsirLevelLowModerateForXDays": Object {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
       "riskLevel": "MODERATE",
-    },
-    "usIdNoActiveNco": Object {
-      "activeNco": false,
     },
   },
   "externalId": "001",
@@ -32,7 +33,7 @@ Object {
 }
 `;
 
-exports[`transform record 1`] = `
+exports[`transform dual/parole record 1`] = `
 Object {
   "criteria": Object {
     "negativeUaWithin90Days": Object {
@@ -54,6 +55,10 @@ Object {
         2022-03-09T00:00:00.000Z,
       ],
     },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
     },
@@ -61,8 +66,47 @@ Object {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
       "riskLevel": "MODERATE",
     },
-    "usIdNoActiveNco": Object {
-      "activeNco": true,
+  },
+  "externalId": "001",
+  "formInformation": Object {
+    "clientName": "Betty Rubble",
+  },
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`transform probation record 1`] = `
+Object {
+  "criteria": Object {
+    "negativeUaWithin90Days": Object {
+      "latestUaDates": Array [
+        2022-01-03T00:00:00.000Z,
+      ],
+      "latestUaResults": Array [
+        false,
+      ],
+    },
+    "noFelonyWithin24Months": Object {
+      "latestFelonyConvictions": Array [
+        2022-01-05T00:00:00.000Z,
+        2022-05-28T00:00:00.000Z,
+      ],
+    },
+    "noViolentMisdemeanorWithin12Months": Object {
+      "latestViolentConvictions": Array [
+        2022-03-09T00:00:00.000Z,
+      ],
+    },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
+    "usIdIncomeVerifiedWithin3Months": Object {
+      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
+    },
+    "usIdLsirLevelLowModerateForXDays": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "MODERATE",
     },
   },
   "externalId": "001",

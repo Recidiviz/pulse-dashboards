@@ -85,3 +85,13 @@ export function optionalFieldToDate(
 ): Date | undefined {
   if (field) return fieldToDate(field);
 }
+
+export function fieldToDateArray(field: Timestamp[] | string[]): Date[] {
+  return field.map((d: Timestamp | string) => fieldToDate(d));
+}
+
+export function optionalFieldToDateArray(
+  field?: Timestamp[] | string[]
+): Date[] | undefined {
+  if (field) return fieldToDateArray(field);
+}

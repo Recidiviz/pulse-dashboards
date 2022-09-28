@@ -23,8 +23,8 @@ Array [
     "tooltip": "Policy requirement: Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months",
   },
   Object {
-    "text": "No active NCO, CPO, or restraining order",
-    "tooltip": "Policy requirement: Does not have an active NCO, CPO, or restraining order",
+    "text": "Minimum time has been served for eligibility",
+    "tooltip": "Policy requirement: If on probation, served minimum sentence according to the court; if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole.",
   },
 ]
 `;

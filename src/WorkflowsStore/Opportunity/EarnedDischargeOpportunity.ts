@@ -21,6 +21,10 @@ import { Client } from "../Client";
 import { OpportunityValidationError } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 import { EarnedDischargeReferralRecord } from "./EarnedDischargeReferralRecord";
+import {
+  LSU_EARNED_DISCHARGE_COMMON_CRITERIA,
+  LSUEarnedDishcargeCommonRequirementsMet,
+} from "./LSUOpportunity";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import { earnedDischargeOpportunityStatuses } from "./utils";
@@ -29,6 +33,7 @@ const DENIAL_REASONS_MAP = {
   SCNC: "Not compliant with special conditions",
   FFR:
     "Failure to make payments towards fines, fees, and restitution despite ability to pay",
+  INTERLOCK: "Has an active interlock device",
   PCD: "Parole Commission permanently denied early discharge request",
   CD: "Court permanently denied early discharge request",
   [OTHER_KEY]: "Other, please specify a reason",
@@ -38,19 +43,18 @@ const DENIAL_REASONS_MAP = {
 // to include all copy and other static data
 // TODO: Update the keys in this mapping once we know what the data looks like
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const CRITERIA: Record<string, Partial<OpportunityRequirement>> = {
-  minimumSentenceServed: {
+const CRITERIA: Record<
+  keyof EarnedDischargeReferralRecord["criteria"],
+  OpportunityRequirement
+> = {
+  ...LSU_EARNED_DISCHARGE_COMMON_CRITERIA,
+  pastEarnedDischargeEligibleDate: {
+    text: "Minimum time has been served for eligibility",
     tooltip:
-      "If on probation, served minimum sentence according to the court; if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole",
-  },
-  noNewOffenses: {
-    text: "No new criminal activity while under supervision",
-    tooltip:
-      "A criminal records check through NCIC/ILETS indicates no new criminal activity while under supervision",
-  },
-  courtOrderConditionsMet: {
-    text: "Compliant with all court-ordered conditions ",
-    tooltip: `Compliant with all court-ordered conditions`,
+      "Policy requirement: If on probation, served minimum sentence according to the court; " +
+      "if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent " +
+      "offense, served at least one-third of remaining sentence; if on parole for a life sentence, " +
+      "served at least five years on parole.",
   },
 };
 
@@ -73,6 +77,19 @@ class EarnedDischargeOpportunity extends OpportunityBase<EarnedDischargeReferral
   get statusMessageLong(): string {
     // TODO #2141 Update status message once denial reason is added to the client update record
     return earnedDischargeOpportunityStatuses[this.reviewStatus];
+  }
+
+  get requirementsMet(): OpportunityRequirement[] {
+    if (!this.record) return [];
+    const { criteria } = this.record;
+    const requirements = LSUEarnedDishcargeCommonRequirementsMet(criteria);
+
+    // TODO(#2415): Update this to be dynamic once sex offense info is in FE
+    if (criteria.pastEarnedDischargeEligibleDate) {
+      requirements.push(CRITERIA.pastEarnedDischargeEligibleDate);
+    }
+
+    return requirements;
   }
 }
 
