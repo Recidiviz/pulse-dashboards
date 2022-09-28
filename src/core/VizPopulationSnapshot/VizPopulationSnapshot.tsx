@@ -70,9 +70,15 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     enableMetricModeToggle,
   } = metric;
 
+  let supervisionLevelOrder;
+  if (!(metric instanceof PrisonPopulationSnapshotMetric)) {
+    supervisionLevelOrder = metric.supervisionLevelOrder;
+  }
+
   const { accessorIsNotFilterType: isNotFilter } = metric;
   const isRate =
     currentMetricMode === METRIC_MODES.RATES && enableMetricModeToggle;
+  const isSupervisionLevel = accessor === "supervisionLevel";
 
   const accessorFilter = filters[accessor as keyof PopulationFilterLabels];
 
@@ -113,7 +119,9 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
   sortByLabel(
     data,
     metric.isHorizontal ? "value" : "accessorLabel",
-    metric.isHorizontal
+    metric.isHorizontal,
+    "accessorValue",
+    isSupervisionLevel && supervisionLevelOrder
   );
   const latestUpdate = formatDate(
     metric instanceof SnapshotMetric

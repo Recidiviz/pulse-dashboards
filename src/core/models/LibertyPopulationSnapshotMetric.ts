@@ -28,6 +28,10 @@ import { toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { PopulationFilterLabels } from "../types/filters";
+import {
+  DefaultSupervisionLevelOrder,
+  OrderKeys,
+} from "../utils/enabledSupervisionLevelOrder";
 import { SnapshotDiffer } from "./backendDiff/SnapshotDiffer";
 import PathwaysMetric, { BaseMetricConstructorOptions } from "./PathwaysMetric";
 import { LibertyPopulationSnapshotRecord, TimePeriod } from "./types";
@@ -52,6 +56,11 @@ export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<Libe
     this.accessor = props.accessor;
     this.download = this.download.bind(this);
     this.differ = new SnapshotDiffer(this.accessor);
+  }
+
+  get supervisionLevelOrder(): OrderKeys | undefined {
+    if (!this.rootStore?.currentTenantId) return undefined;
+    return DefaultSupervisionLevelOrder;
   }
 
   get totalCount(): number {

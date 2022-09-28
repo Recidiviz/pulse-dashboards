@@ -26,6 +26,10 @@ import { toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
 import { PopulationFilterLabels } from "../types/filters";
+import {
+  DefaultSupervisionLevelOrder,
+  OrderKeys,
+} from "../utils/enabledSupervisionLevelOrder";
 import PathwaysNewBackendMetric, {
   BaseNewMetricConstructorOptions,
 } from "./PathwaysNewBackendMetric";
@@ -55,6 +59,11 @@ export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDat
   get totalCount(): number | undefined {
     if (!this.rootStore || !this.allRecords) return undefined;
     return sumBy("count", this.allRecords);
+  }
+
+  get supervisionLevelOrder(): OrderKeys | undefined {
+    if (!this.rootStore?.currentTenantId) return undefined;
+    return DefaultSupervisionLevelOrder;
   }
 
   get dataSeries(): SnapshotDataRecord[] {

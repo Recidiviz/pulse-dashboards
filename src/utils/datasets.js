@@ -116,7 +116,21 @@ export function centerSingleMonthDatasetIfNecessary(dataValues, labels) {
  *  -`labelIndex`: The index in the dataPoint array that contains the label
  *    to sort on
  */
-export function sortByLabel(dataPoints, labelKey, desc) {
+export function sortByLabel(
+  dataPoints,
+  labelKey,
+  desc,
+  valueKey,
+  supervisionLevelOrder
+) {
+  if (supervisionLevelOrder) {
+    return dataPoints.sort((a, b) => {
+      return (
+        supervisionLevelOrder[a[valueKey]] - supervisionLevelOrder[b[valueKey]]
+      );
+    });
+  }
+
   return dataPoints.sort((a, b) => {
     if (a[labelKey] === "All") return -1;
     if (b[labelKey] === "All") return 1;
