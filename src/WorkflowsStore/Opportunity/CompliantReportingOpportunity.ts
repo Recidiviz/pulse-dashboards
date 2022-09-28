@@ -261,9 +261,9 @@ class CompliantReportingOpportunity
       pastOffenses,
       remainingCriteriaNeeded: remainingCriteriaNeeded ?? 0,
       sanctionsPastYear:
-        sanctionsPastYear.map(({ ProposedSanction }) => ({
+        sanctionsPastYear?.map(({ ProposedSanction }) => ({
           type: ProposedSanction,
-        })) || [],
+        })) ?? [],
       specialConditionsTerminatedDate: optionalFieldToDate(
         specialConditionsTerminatedDate
       ),
