@@ -36,7 +36,7 @@ test("transform record", () => {
       probationOfficerFullName: "Fakename Officername",
     },
     criteria: {
-      supervisionEarlyDischargeDateWithin30Days: { eligibleDate: "2022-01-03" },
+      supervisionPastEarlyDischargeDate: { eligibleDate: "2022-01-03" },
       usNdImpliedValidEarlyTerminationSupervisionLevel: {
         supervisionLevel: "MEDIUM",
       },
@@ -72,7 +72,7 @@ test("revocation date may be defined", () => {
       probationOfficerFullName: "Fakename Officername",
     },
     criteria: {
-      supervisionEarlyDischargeDateWithin30Days: { eligibleDate: "2022-01-03" },
+      supervisionPastEarlyDischargeDate: { eligibleDate: "2022-01-03" },
       usNdImpliedValidEarlyTerminationSupervisionLevel: {
         supervisionLevel: "MEDIUM",
       },

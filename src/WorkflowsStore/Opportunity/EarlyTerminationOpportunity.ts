@@ -52,7 +52,7 @@ const CRITERIA: Record<
   keyof EarlyTerminationReferralRecord["criteria"],
   Partial<OpportunityRequirement>
 > = {
-  supervisionEarlyDischargeDateWithin30Days: {
+  supervisionPastEarlyDischargeDate: {
     tooltip:
       "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
   },
@@ -98,7 +98,7 @@ class EarlyTerminationOpportunity
     if (!this.record) return false;
     const {
       criteria: {
-        supervisionEarlyDischargeDateWithin30Days: pastEarlyDischarge,
+        supervisionPastEarlyDischargeDate: pastEarlyDischarge,
         usNdImpliedValidEarlyTerminationSupervisionLevel: eligibleSupervisionLevel,
         usNdImpliedValidEarlyTerminationSentenceType: eligibleSupervisionType,
         usNdNotInActiveRevocationStatus: notActiveRevocationStatus,
@@ -154,18 +154,18 @@ class EarlyTerminationOpportunity
     const requirements: OpportunityRequirement[] = [];
     const {
       criteria: {
-        supervisionEarlyDischargeDateWithin30Days,
+        supervisionPastEarlyDischargeDate,
         usNdImpliedValidEarlyTerminationSupervisionLevel,
         usNdImpliedValidEarlyTerminationSentenceType,
       },
     } = this.record;
 
-    if (supervisionEarlyDischargeDateWithin30Days?.eligibleDate) {
+    if (supervisionPastEarlyDischargeDate?.eligibleDate) {
       requirements.push({
         text: `Early termination date is ${formatWorkflowsDate(
-          supervisionEarlyDischargeDateWithin30Days?.eligibleDate
+          supervisionPastEarlyDischargeDate?.eligibleDate
         )}`,
-        tooltip: CRITERIA.supervisionEarlyDischargeDateWithin30Days.tooltip,
+        tooltip: CRITERIA.supervisionPastEarlyDischargeDate.tooltip,
       });
     }
 

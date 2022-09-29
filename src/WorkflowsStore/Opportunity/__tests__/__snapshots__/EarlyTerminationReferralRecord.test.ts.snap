@@ -3,9 +3,6 @@
 exports[`fallback to legacy format 1`] = `
 Object {
   "criteria": Object {
-    "supervisionEarlyDischargeDateWithin30Days": Object {
-      "eligibleDate": 2022-01-03T00:00:00.000Z,
-    },
     "usNdImpliedValidEarlyTerminationSentenceType": Object {
       "supervisionType": "PROBATION",
     },
@@ -44,7 +41,7 @@ Object {
 exports[`transform record 1`] = `
 Object {
   "criteria": Object {
-    "supervisionEarlyDischargeDateWithin30Days": Object {
+    "supervisionPastEarlyDischargeDate": Object {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
     "usNdImpliedValidEarlyTerminationSentenceType": Object {

@@ -36,7 +36,7 @@ export type EarlyTerminationReferralRecord = {
     probationOfficerFullName: string;
   };
   criteria: {
-    supervisionEarlyDischargeDateWithin30Days?: { eligibleDate?: Date };
+    supervisionPastEarlyDischargeDate?: { eligibleDate?: Date };
     usNdImpliedValidEarlyTerminationSupervisionLevel?: {
       supervisionLevel?: string;
     };
@@ -100,9 +100,9 @@ export const transformReferral: TransformFunction<EarlyTerminationReferralRecord
   );
 
   if (criteria) {
-    transformedRecord.criteria.supervisionEarlyDischargeDateWithin30Days = {
+    transformedRecord.criteria.supervisionPastEarlyDischargeDate = {
       eligibleDate: fieldToDate(
-        criteria.supervisionEarlyDischargeDateWithin30Days.eligibleDate
+        criteria.supervisionPastEarlyDischargeDate.eligibleDate
       ),
     };
     transformedRecord.criteria.usNdNotInActiveRevocationStatus = {
@@ -116,8 +116,8 @@ export const transformReferral: TransformFunction<EarlyTerminationReferralRecord
 
     reasons.forEach(({ criteriaName, reason }: any) => {
       switch (criteriaName) {
-        case "SUPERVISION_EARLY_DISCHARGE_DATE_WITHIN_30_DAYS":
-          transformedCriteria.supervisionEarlyDischargeDateWithin30Days = {
+        case "SUPERVISION_PAST_EARLY_DISCHARGE_DATE":
+          transformedCriteria.supervisionPastEarlyDischargeDate = {
             eligibleDate: reason.eligibleDate
               ? fieldToDate(reason.eligibleDate)
               : undefined,

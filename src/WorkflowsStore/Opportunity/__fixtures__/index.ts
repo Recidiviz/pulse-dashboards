@@ -142,7 +142,7 @@ export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {
     judicialDistrictCode: "BISMARCK",
   },
   criteria: {
-    supervisionEarlyDischargeDateWithin30Days: {
+    supervisionPastEarlyDischargeDate: {
       eligibleDate: parseISO("2022-01-03"),
     },
     usNdNotInActiveRevocationStatus: {
