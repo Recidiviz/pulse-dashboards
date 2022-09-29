@@ -121,10 +121,10 @@ export const collectionNames = {
   clientUpdatesV2: "clientUpdatesV2",
   clientOpportunityUpdates: "clientOpportunityUpdates",
   compliantReportingReferrals: "compliantReportingReferrals",
-  earnedDischargeReferrals: "earnedDischargeReferrals",
+  earnedDischargeReferrals: "US_ID-earnedDischargeReferrals",
   earlyTerminationReferrals: "earlyTerminationReferrals",
-  LSUReferrals: "LSUReferrals",
-  pastFTRDReferrals: "pastFTRDReferrals",
+  LSUReferrals: "US_ID-LSUReferrals",
+  pastFTRDReferrals: "US_ID-pastFTRDReferrals",
   featureVariants: "featureVariants",
 };
 
