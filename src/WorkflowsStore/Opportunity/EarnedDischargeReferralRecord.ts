@@ -62,11 +62,11 @@ export const transformReferral: TransformFunction<EarnedDischargeReferralRecord>
   transformedRecord.criteria.pastEarnedDischargeEligibleDate = {
     eligibleDate: fieldToDate(
       criteria.usIdParoleDualSupervisionPastEarlyDischargeDate?.eligibleDate ??
-        criteria.probationPast1Year?.eligibleDate
+        criteria.onProbationAtLeastOneYear?.eligibleDate
     ),
     sentenceType:
       criteria.usIdParoleDualSupervisionPastEarlyDischargeDate?.sentenceType ??
-      criteria.probationPast1Year?.sentenceType,
+      criteria.onProbationAtLeastOneYear?.sentenceType,
   };
 
   delete (
@@ -74,7 +74,7 @@ export const transformReferral: TransformFunction<EarnedDischargeReferralRecord>
     transformedRecord.criteria.usIdParoleDualSupervisionPastEarlyDischargeDate
   );
   // @ts-expect-error
-  delete transformedRecord.criteria.probationPast1Year;
+  delete transformedRecord.criteria.onProbationAtLeastOneYear;
 
   // delete vestigial criterion left over from TES we don't use in the front end
   // @ts-expect-error

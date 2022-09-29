@@ -83,7 +83,7 @@ test("transform probation record", () => {
       supervisionNotPastFullTermCompletionDate: {
         eligibleDate: "2025-06-19",
       },
-      probationPast1Year: {
+      onProbationAtLeastOneYear: {
         eligibleDate: "2022-05-22",
         sentenceType: "DUAL",
       },
@@ -114,7 +114,7 @@ test("option criteria have sane fallbacks", () => {
       supervisionNotPastFullTermCompletionDate: {
         eligibleDate: "2025-06-19",
       },
-      probationPast1Year: {
+      onProbationAtLeastOneYear: {
         eligibleDate: "2022-05-22",
         sentenceType: "DUAL",
       },
