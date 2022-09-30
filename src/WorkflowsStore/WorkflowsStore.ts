@@ -54,7 +54,11 @@ import {
   OPPORTUNITY_TYPES,
   OpportunityType,
 } from "./Opportunity/types";
-import { observableSubscription, SubscriptionValue } from "./utils";
+import {
+  observableSubscription,
+  staffNameComparator,
+  SubscriptionValue,
+} from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
 
@@ -415,7 +419,9 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get availableOfficers(): StaffRecord[] {
-    return this.officers?.current() ?? [];
+    const officers = this.officers?.current() ?? [];
+    officers.sort(staffNameComparator);
+    return officers;
   }
 
   get selectedClient(): Client | undefined {

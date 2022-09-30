@@ -19,6 +19,7 @@ import { addDays, differenceInDays, parseISO } from "date-fns";
 import { Timestamp, Unsubscribe } from "firebase/firestore";
 import { fromResource, IResource } from "mobx-utils";
 
+import { StaffRecord } from "../firestore/types";
 import { isDemoMode } from "../utils/isDemoMode";
 
 type Subscriber<Result> = (
@@ -94,4 +95,29 @@ export function optionalFieldToDateArray(
   field?: Timestamp[] | string[]
 ): Date[] | undefined {
   if (field) return fieldToDateArray(field);
+}
+
+export function staffNameComparator(a: StaffRecord, b: StaffRecord): number {
+  const alphabetAndSpacesOnlyRegex = /[^a-zA-Z\s]+/g;
+
+  const surnameA = String(a.surname)
+    .toLowerCase()
+    .replace(alphabetAndSpacesOnlyRegex, "");
+  const givenNamesA = String(a.givenNames)
+    .toLowerCase()
+    .replace(alphabetAndSpacesOnlyRegex, "");
+
+  const surnameB = String(b.surname)
+    .toLowerCase()
+    .replace(alphabetAndSpacesOnlyRegex, "");
+  const givenNamesB = String(b.givenNames)
+    .toLowerCase()
+    .replace(alphabetAndSpacesOnlyRegex, "");
+
+  if (surnameA > surnameB) return 1;
+  if (surnameA < surnameB) return -1;
+  if (surnameA === surnameB) {
+    return String(givenNamesA).localeCompare(givenNamesB);
+  }
+  return 0;
 }
