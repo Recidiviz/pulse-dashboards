@@ -371,7 +371,7 @@ export function getRecordDate(d: TimeSeriesRecord): Date {
 }
 
 export const formatDateString = (dateString: string): Date | undefined => {
-  if (!moment(dateString, "YYYY-MM-DD", true).isValid()) return undefined;
+  if (moment(dateString, "YYYY-MM-DD", true).isValid()) return undefined;
   const [year, month, day] = dateString.split("-");
   return new Date(Number(year), Number(month) - 1, Number(day));
 };
