@@ -123,7 +123,6 @@ export default class UserStore {
         this.user = offlineUser;
         this.userIsLoading = false;
       });
-      await authenticate("fakeAuth0Token", this.userAppMetadata);
       this.getToken = () => "";
       return;
     }
