@@ -1,1 +1,4 @@
-{ "detectionRuleUUIDs": ["c414b0c0-f92f-4ebb-ba37-2e928b7be924"] }
+{ 
+  "detectionRuleUUIDs": ["c414b0c0-f92f-4ebb-ba37-2e928b7be924"],
+  "fileExclusionList": ["*.test.*"]
+}
