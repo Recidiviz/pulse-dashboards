@@ -21,21 +21,21 @@ import React from "react";
 import { useRootStore } from "../../components/StoreProvider";
 import { Supervision } from "./Details";
 import { Heading } from "./Heading";
-import { PastFTRDModule } from "./PastFTRDModule";
+import { OpportunityModule } from "./OpportunityModule";
 
 export const PastFTRDClientProfile = observer(() => {
   const { workflowsStore } = useRootStore();
 
   const client = workflowsStore.selectedClient;
 
-  if (!client) {
+  if (!client?.opportunities.pastFTRD) {
     return null;
   }
 
   return (
     <article>
       <Heading client={client} />
-      <PastFTRDModule client={client} />
+      <OpportunityModule opportunity={client.opportunities.pastFTRD} />
       <Supervision client={client} />
     </article>
   );

@@ -84,6 +84,8 @@ export abstract class OpportunityWithFormBase<
   // instead of "override"
   // ==========================
 
+  navigateToFormText = "Navigate to form";
+
   // eslint-disable-next-line class-methods-use-this
   get printText(): string {
     return "";

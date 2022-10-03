@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { IconSVG, spacing, typography } from "@recidiviz/design-system";
+import {
+  Icon,
+  IconSVG,
+  Sans14,
+  spacing,
+  typography,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -23,14 +29,7 @@ import styled from "styled-components/macro";
 
 import { Opportunity } from "../../WorkflowsStore";
 import { WORKFLOWS_POLICY_OR_METHODOLOGY_URL } from "../utils/constants";
-import {
-  CriterionContentWrapper,
-  CriterionIcon,
-  CriterionWrapper,
-  InfoButton,
-  InfoTooltipWrapper,
-  StatusPalette,
-} from "./common";
+import { InfoButton, InfoTooltipWrapper, useStatusColors } from "./common";
 import { OpportunityRecommendedLanguageModal } from "./OpportunityRecommendedLanguageModal";
 
 const Wrapper = styled.ul`
@@ -44,14 +43,30 @@ const KeepTogether = styled.span`
   white-space: nowrap;
 `;
 
+const CriterionIcon = styled(Icon)`
+  grid-column: 1;
+  /* slight vertical offset to approximate baseline alignment */
+  margin-top: ${rem(1)};
+`;
+
+const CriterionContentWrapper = styled(Sans14)`
+  grid-column: 2;
+`;
+
+const CriterionWrapper = styled.li`
+  display: grid;
+  grid-template-columns: ${rem(spacing.lg)} 1fr;
+  margin: 0 0 8px;
+  line-height: 1.3;
+`;
+
 export const CriteriaList = observer(
-  ({
-    opportunity,
-    colors,
-  }: {
-    opportunity: Opportunity;
-    colors: StatusPalette;
-  }): React.ReactElement => {
+  ({ opportunity }: { opportunity: Opportunity }): React.ReactElement => {
+    const colors = useStatusColors(opportunity);
+    // TODO: do this more generically once the "alert" flavor of opportunity stabilizes
+    const bulletIcon =
+      opportunity.type === "pastFTRD" ? IconSVG.Error : IconSVG.Success;
+
     return (
       <Wrapper style={{ color: colors.text }}>
         {opportunity.requirementsAlmostMet.map(({ text, tooltip }) => {
@@ -87,11 +102,7 @@ export const CriteriaList = observer(
           const textTokens = text.split(" ");
           return (
             <CriterionWrapper key={text}>
-              <CriterionIcon
-                kind={IconSVG.Success}
-                color={colors.icon}
-                size={16}
-              />
+              <CriterionIcon kind={bulletIcon} color={colors.icon} size={16} />
               <CriterionContentWrapper>
                 {textTokens.slice(0, -1).join(" ")}{" "}
                 <KeepTogether>

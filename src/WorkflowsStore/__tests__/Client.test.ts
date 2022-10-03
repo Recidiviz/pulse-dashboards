@@ -60,8 +60,7 @@ const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.
 
 let client: Client;
 let rootStore: RootStore;
-let referralSub: CollectionDocumentSubscription<any>;
-let updatesSub: OpportunityUpdateSubscription<any>;
+let compliantReportingUpdatesSub: OpportunityUpdateSubscription<any>;
 
 beforeEach(() => {
   // this lets us spy on mobx computed getters
@@ -70,11 +69,22 @@ beforeEach(() => {
   rootStore = new RootStore();
   client = new Client(eligibleClient, rootStore);
 
-  [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
-  [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
   // for simplicity we will mark all the subs as hydrated, though we may update data later
-  referralSub.isLoading = false;
-  updatesSub.isLoading = false;
+  CollectionDocumentSubscriptionMock.mock.instances.forEach((sub) => {
+    // eslint-disable-next-line no-param-reassign
+    sub.isLoading = false;
+    // eslint-disable-next-line no-param-reassign
+    sub.isHydrated = true;
+  });
+  OpportunityUpdateSubscriptionMock.mock.instances.forEach((sub) => {
+    // eslint-disable-next-line no-param-reassign
+    sub.isLoading = false;
+    // eslint-disable-next-line no-param-reassign
+    sub.isHydrated = true;
+  });
+  [
+    compliantReportingUpdatesSub,
+  ] = OpportunityUpdateSubscriptionMock.mock.instances;
 });
 
 afterEach(() => {
@@ -224,7 +234,7 @@ test.each(OPPORTUNITY_TYPES)(
 test("don't record a completion if user is ineligible", () => {
   runInAction(() => {
     rootStore.workflowsStore.user = mockOfficer;
-    updatesSub.data = {
+    compliantReportingUpdatesSub.data = {
       denial: {
         reasons: ["test"],
         updated: { by: "test", date: dateToTimestamp("2022-02-01") },
@@ -236,37 +246,6 @@ test("don't record a completion if user is ineligible", () => {
 
   expect(mockUpdateOpportunityCompleted).not.toHaveBeenCalled();
   expect(trackSetOpportunityStatus).not.toHaveBeenCalled();
-});
-
-test("compliant reporting review status", () => {
-  expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
-    "Needs referral"
-  );
-
-  updatesSub.data = {
-    denial: {
-      reasons: ["test"],
-      updated: { by: "test", date: dateToTimestamp("2022-02-01") },
-    },
-  };
-  expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
-    "Currently ineligible"
-  );
-
-  updatesSub.data = { referralForm: {} };
-  expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
-    "Referral in progress"
-  );
-
-  updatesSub.data = {
-    completed: {
-      by: "test",
-      date: {},
-    },
-  };
-  expect(client.opportunities.compliantReporting?.statusMessageShort).toBe(
-    "Referral form complete"
-  );
 });
 
 test("form view tracking", async () => {
@@ -284,7 +263,7 @@ test("form view tracking waits for updates", async () => {
   // simulate fetch latency
   setTimeout(() => {
     runInAction(() => {
-      updatesSub.data = {
+      compliantReportingUpdatesSub.data = {
         completed: {
           update: { by: "abc", date: dateToTimestamp("2022-01-01") },
         },
@@ -316,7 +295,7 @@ test("list view tracking waits for updates", async () => {
   // simulate fetch latency
   setTimeout(() => {
     runInAction(() => {
-      updatesSub.data = {
+      compliantReportingUpdatesSub.data = {
         completed: {
           update: { by: "abc", date: dateToTimestamp("2022-01-01") },
         },

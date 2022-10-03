@@ -28,7 +28,6 @@ import {
   transformReferral,
 } from "./PastFTRDReferralRecord";
 import { OpportunityRequirement } from "./types";
-import { pastFTRDOpportunityStatuses } from "./utils";
 
 class PastFTRDOpportunity extends OpportunityWithFormBase<
   PastFTRDReferralRecord,
@@ -37,18 +36,8 @@ class PastFTRDOpportunity extends OpportunityWithFormBase<
   constructor(client: Client) {
     super(client, "pastFTRD", transformReferral);
     makeObservable(this, {
-      statusMessageShort: computed,
-      statusMessageLong: computed,
       requirementsMet: computed,
     });
-  }
-
-  get statusMessageShort(): string {
-    return pastFTRDOpportunityStatuses[this.reviewStatus];
-  }
-
-  get statusMessageLong(): string {
-    return pastFTRDOpportunityStatuses[this.reviewStatus];
   }
 
   get requirementsMet(): OpportunityRequirement[] {

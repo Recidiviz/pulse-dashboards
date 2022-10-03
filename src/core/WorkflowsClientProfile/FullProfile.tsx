@@ -32,8 +32,8 @@ import { useRootStore } from "../../components/StoreProvider";
 import { ProfileCapsule } from "../ClientCapsule";
 import { useClientTracking } from "../hooks/useClientTracking";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import { OpportunityPreview } from "./CompliantReportingModule";
 import { FinesAndFees, Housing, SpecialConditions } from "./Details";
+import { OpportunityModule } from "./OpportunityModule";
 import { SupervisionProgress } from "./SupervisionProgress";
 
 const COLUMNS = "1fr 1.2fr";
@@ -147,7 +147,10 @@ export const FullProfile = observer((): React.ReactElement | null => {
         <div>
           <SectionHeading>Opportunities</SectionHeading>
           {opportunity ? (
-            <OpportunityPreview client={client} opportunity={opportunity} />
+            <OpportunityModule
+              opportunity={opportunity}
+              formLinkButton={!!opportunity.navigateToFormText}
+            />
           ) : (
             <NoOpportunities>
               <Sans16>None for now</Sans16>

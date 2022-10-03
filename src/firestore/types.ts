@@ -190,6 +190,7 @@ export type OpportunityUpdate = {
   completed?: {
     update: UpdateLog;
   };
+  firstViewed?: UpdateLog;
 };
 
 export type OpportunityUpdateWithForm<FormType> = OpportunityUpdate & {

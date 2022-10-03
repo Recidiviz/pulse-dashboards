@@ -36,10 +36,9 @@ import {
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,
-  INCOMPLETE_UPDATE,
+  INCOMPLETE_FORM_UPDATE,
 } from "../testUtils";
 import { CompliantReportingOpportunity } from "../types";
-import { defaultOpportunityStatuses } from "../utils";
 
 jest.mock("../../subscriptions");
 
@@ -92,7 +91,7 @@ describe("fully eligible", () => {
   test("review status", () => {
     expect(cr.reviewStatus).toBe("PENDING");
 
-    updatesSub.data = INCOMPLETE_UPDATE;
+    updatesSub.data = INCOMPLETE_FORM_UPDATE;
 
     expect(cr.reviewStatus).toBe("IN_PROGRESS");
 
@@ -103,38 +102,10 @@ describe("fully eligible", () => {
     expect(cr.reviewStatus).toBe("COMPLETED");
   });
 
-  test("short status message", () => {
-    expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.PENDING);
-
-    updatesSub.data = INCOMPLETE_UPDATE;
-    expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.IN_PROGRESS);
-
-    updatesSub.data = DENIED_UPDATE;
-    expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.DENIED);
-
-    updatesSub.data = COMPLETED_UPDATE;
-    expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.COMPLETED);
-  });
-
-  test("extended status message", () => {
-    expect(cr.statusMessageLong).toBe(defaultOpportunityStatuses.PENDING);
-
-    updatesSub.data = INCOMPLETE_UPDATE;
-    expect(cr.statusMessageLong).toBe(defaultOpportunityStatuses.IN_PROGRESS);
-
-    updatesSub.data = DENIED_UPDATE;
-    expect(cr.statusMessageLong).toBe(
-      `${defaultOpportunityStatuses.DENIED} (ABC)`
-    );
-
-    updatesSub.data = COMPLETED_UPDATE;
-    expect(cr.statusMessageLong).toBe(defaultOpportunityStatuses.COMPLETED);
-  });
-
   test("rank by status", () => {
     expect(cr.rank).toBe(0);
 
-    updatesSub.data = INCOMPLETE_UPDATE;
+    updatesSub.data = INCOMPLETE_FORM_UPDATE;
     expect(cr.rank).toBe(1);
 
     updatesSub.data = DENIED_UPDATE;
@@ -233,7 +204,7 @@ describe.each([
     test("review status", () => {
       expect(cr.reviewStatus).toBe("ALMOST");
 
-      updatesSub.data = INCOMPLETE_UPDATE;
+      updatesSub.data = INCOMPLETE_FORM_UPDATE;
       expect(cr.reviewStatus).toBe("ALMOST");
 
       updatesSub.data = DENIED_UPDATE;
@@ -241,34 +212,6 @@ describe.each([
 
       updatesSub.data = COMPLETED_UPDATE;
       expect(cr.reviewStatus).toBe("ALMOST");
-    });
-
-    test("short status message", () => {
-      expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.ALMOST);
-
-      updatesSub.data = INCOMPLETE_UPDATE;
-      expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.ALMOST);
-
-      updatesSub.data = COMPLETED_UPDATE;
-      expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.ALMOST);
-
-      updatesSub.data = DENIED_UPDATE;
-      expect(cr.statusMessageShort).toBe(defaultOpportunityStatuses.DENIED);
-    });
-
-    test("extended status message", () => {
-      expect(cr.statusMessageLong).toBe(expectedListText);
-
-      updatesSub.data = INCOMPLETE_UPDATE;
-      expect(cr.statusMessageLong).toBe(expectedListText);
-
-      updatesSub.data = COMPLETED_UPDATE;
-      expect(cr.statusMessageLong).toBe(expectedListText);
-
-      updatesSub.data = DENIED_UPDATE;
-      expect(cr.statusMessageLong).toBe(
-        `${defaultOpportunityStatuses.DENIED} (ABC)`
-      );
     });
 
     test("rank by status", () => {

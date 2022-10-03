@@ -21,20 +21,20 @@ import React from "react";
 import { useRootStore } from "../../components/StoreProvider";
 import { Contact, Supervision } from "./Details";
 import { Heading } from "./Heading";
-import { LSUModule } from "./LSUModule";
+import { OpportunityModule } from "./OpportunityModule";
 
 export const LSUClientProfile = observer(() => {
   const { workflowsStore } = useRootStore();
 
   const client = workflowsStore.selectedClient;
-  if (!client) {
+  if (!client?.opportunities.LSU) {
     return null;
   }
 
   return (
     <article>
       <Heading client={client} />
-      <LSUModule client={client} />
+      <OpportunityModule opportunity={client.opportunities.LSU} />
       <Supervision client={client} />
       <Contact client={client} />
     </article>

@@ -16,9 +16,14 @@
 // =============================================================================
 
 import { DocumentData } from "firebase/firestore";
-import { action, computed, makeObservable, observable } from "mobx";
+import { action, computed, makeObservable, observable, when } from "mobx";
 
-import { Denial, OpportunityUpdate } from "../../firestore";
+import {
+  Denial,
+  OpportunityUpdate,
+  UpdateLog,
+  updateOpportunityFirstViewed,
+} from "../../firestore";
 import { Client } from "../Client";
 import {
   CollectionDocumentSubscription,
@@ -27,6 +32,7 @@ import {
   TransformFunction,
 } from "../subscriptions";
 import {
+  DefaultEligibility,
   DenialReasonsMap,
   Opportunity,
   OpportunityRequirement,
@@ -52,10 +58,6 @@ export abstract class OpportunityBase<
 
   protected updatesSubscription: DocumentSubscription<UpdateRecord>;
 
-  displayFormButton = false;
-
-  navigateToFormText = "Navigate to form";
-
   constructor(
     client: Client,
     type: OpportunityType,
@@ -69,6 +71,7 @@ export abstract class OpportunityBase<
       rank: computed,
       record: computed,
       reviewStatus: computed,
+      isHydrated: computed,
     });
 
     this.client = client;
@@ -99,12 +102,46 @@ export abstract class OpportunityBase<
   }
 
   get denial(): Denial | undefined {
-    return this.updates?.denial;
+    if (this.updates?.denial?.reasons.length) {
+      return this.updates?.denial;
+    }
+  }
+
+  get firstViewed(): UpdateLog | undefined {
+    return this.updates?.firstViewed;
+  }
+
+  /**
+   * If this.firstViewed is not yet set, this sets it by writing to Firestore.
+   */
+  setFirstViewedIfNeeded(): void {
+    when(
+      () => this.isHydrated,
+      () => {
+        if (this.firstViewed) return;
+        const userEmail = this.client.rootStore.workflowsStore.user?.info.email;
+        // should not happen in practice
+        if (!userEmail) return;
+
+        // ignore recidiviz admins and other non-state actors in prod
+        if (
+          process.env.REACT_APP_DEPLOY_ENV === "production" &&
+          this.client.rootStore.userStore.stateCode !== this.client.stateCode
+        )
+          return;
+
+        updateOpportunityFirstViewed(
+          userEmail,
+          this.client.recordId,
+          this.type
+        );
+      }
+    );
   }
 
   get reviewStatus(): OpportunityStatus {
     const { updates, denial } = this;
-    if ((denial?.reasons?.length || 0) !== 0) {
+    if (denial) {
       return "DENIED";
     }
 
@@ -112,12 +149,13 @@ export abstract class OpportunityBase<
       return "COMPLETED";
     }
 
-    if (updates?.referralForm) {
+    if (updates?.firstViewed || updates?.referralForm) {
       return "IN_PROGRESS";
     }
-
     return "PENDING";
   }
+
+  readonly defaultEligibility: DefaultEligibility = "ELIGIBLE";
 
   get isHydrated(): boolean {
     return (
@@ -169,16 +207,6 @@ export abstract class OpportunityBase<
   }
 
   denialReasonsMap: DenialReasonsMap = {};
-
-  // eslint-disable-next-line class-methods-use-this
-  get statusMessageShort(): string {
-    return "";
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get statusMessageLong(): string {
-    return "";
-  }
 
   // eslint-disable-next-line class-methods-use-this
   get requirementsMet(): OpportunityRequirement[] {

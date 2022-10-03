@@ -29,9 +29,8 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import Checkbox from "../../components/Checkbox";
-import { OTHER_KEY } from "../../WorkflowsStore";
+import { Opportunity, OTHER_KEY } from "../../WorkflowsStore";
 import { STATUS_COLORS, useStatusColors } from "./common";
-import { ClientWithOpportunityProps } from "./types";
 
 const Wrapper = styled.div`
   flex: 1 1 auto;
@@ -129,7 +128,7 @@ const StatusAwareButton = styled(DropdownToggle).attrs({
 `;
 
 export const OpportunityDenial = observer(
-  ({ client, opportunity }: ClientWithOpportunityProps) => {
+  ({ opportunity }: { opportunity: Opportunity }) => {
     if (!opportunity) return null;
     const colors = useStatusColors(opportunity);
 
@@ -161,7 +160,10 @@ export const OpportunityDenial = observer(
                   name="eligible"
                   onChange={() => {
                     if (reasons?.length) {
-                      client.setOpportunityDenialReasons([], opportunity.type);
+                      opportunity.client.setOpportunityDenialReasons(
+                        [],
+                        opportunity.type
+                      );
                     }
                   }}
                 >
@@ -179,7 +181,7 @@ export const OpportunityDenial = observer(
                       checked={reasons?.includes(code) || false}
                       name="denial reason"
                       onChange={() => {
-                        client.setOpportunityDenialReasons(
+                        opportunity.client.setOpportunityDenialReasons(
                           xor(reasons, [code]).sort(),
                           opportunity.type
                         );
@@ -198,7 +200,7 @@ export const OpportunityDenial = observer(
                     placeholder="Please specify a reason…"
                     onChange={debounce(
                       (event) =>
-                        client.setOpportunityOtherReason(
+                        opportunity.client.setOpportunityOtherReason(
                           opportunity.type,
                           event.target.value
                         ),

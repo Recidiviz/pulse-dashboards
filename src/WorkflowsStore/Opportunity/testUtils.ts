@@ -22,7 +22,11 @@ const UPDATE_RECORD = {
   date: dateToTimestamp("2022-07-15"),
 };
 
-export const INCOMPLETE_UPDATE = {
+export const VIEWED_UPDATE = {
+  firstViewed: UPDATE_RECORD,
+};
+
+export const INCOMPLETE_FORM_UPDATE = {
   referralForm: { updated: UPDATE_RECORD },
 };
 

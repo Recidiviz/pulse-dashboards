@@ -27,7 +27,6 @@ import {
 } from "./LSUOpportunity";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
-import { earnedDischargeOpportunityStatuses } from "./utils";
 
 const DENIAL_REASONS_MAP = {
   SCNC: "Not compliant with special conditions",
@@ -63,20 +62,10 @@ class EarnedDischargeOpportunity extends OpportunityBase<EarnedDischargeReferral
     super(client, "earnedDischarge");
 
     makeObservable(this, {
-      statusMessageShort: computed,
-      statusMessageLong: computed,
+      requirementsMet: computed,
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-  }
-
-  get statusMessageShort(): string {
-    return earnedDischargeOpportunityStatuses[this.reviewStatus];
-  }
-
-  get statusMessageLong(): string {
-    // TODO #2141 Update status message once denial reason is added to the client update record
-    return earnedDischargeOpportunityStatuses[this.reviewStatus];
   }
 
   get requirementsMet(): OpportunityRequirement[] {

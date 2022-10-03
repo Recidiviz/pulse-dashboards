@@ -63,32 +63,39 @@ export type OpportunityStatus = typeof OPPORTUNITY_STATUS_RANKED[number];
 
 export type DenialReasonsMap = Record<string, string>;
 
+export type DefaultEligibility = "ELIGIBLE" | "MAYBE";
+
 /**
  * An Opportunity is associated with a single client.
  * The client is assumed to be eligible for the Opportunity unless the
  * `almostEligible` flag is set. There is no "ineligible" flag! Ineligibility
  * must be indicated by the absence of an Opportunity.
+ * Common form fields are included as optional, for convenience in cases
+ * where form-related behavior is optional. Opportunity-specific extensions of this type
+ * should generally override them to be required.
  */
-export interface Opportunity extends Hydratable {
+export interface Opportunity extends Hydratable, Partial<BaseForm> {
   almostEligible: boolean;
+  // TODO: move this to status component once almost-eligible is standardized on TES
+  almostEligibleStatusMessage?: string;
   almostEligibleRecommendedNote?: { title: string; text: string };
   client: Client;
+  readonly defaultEligibility: DefaultEligibility;
   rank: number;
   requirementsAlmostMet: OpportunityRequirement[];
   requirementsMet: OpportunityRequirement[];
   reviewStatus: OpportunityStatus;
-  statusMessageShort: string;
-  statusMessageLong: string;
   readonly type: OpportunityType;
   isValid: boolean;
   denialReasonsMap: DenialReasonsMap;
   denial: Denial | undefined;
-  displayFormButton: boolean;
-  navigateToFormText?: string;
+  firstViewed: UpdateLog | undefined;
+  setFirstViewedIfNeeded: () => void;
 }
 
 export interface BaseForm<FormDataType = Record<string, any>> {
   printText: string;
+  navigateToFormText: string;
   formLastUpdated: UpdateLog | undefined;
   formData: Partial<FormDataType>;
 }

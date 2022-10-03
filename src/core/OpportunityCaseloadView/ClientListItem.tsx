@@ -77,13 +77,12 @@ export const ClientListItem = observer(
           >
             <OpportunityCapsule
               avatarSize="lg"
-              client={client}
               opportunity={opportunity}
               textSize="sm"
               hideId
             />
           </ClientLink>
-          {showButton && opportunity.displayFormButton && (
+          {showButton && opportunity.navigateToFormText && (
             <Link
               to={workflowsUrl(opportunity.type, {
                 clientId: client.pseudonymizedId,

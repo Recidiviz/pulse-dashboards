@@ -28,13 +28,7 @@ import {
   EarnedDischargeEligibleClientRecord,
   EarnedDischargeReferralRecordFixture,
 } from "../__fixtures__";
-import {
-  COMPLETED_UPDATE,
-  DENIED_UPDATE,
-  INCOMPLETE_UPDATE,
-} from "../testUtils";
 import { Opportunity } from "../types";
-import { earnedDischargeOpportunityStatuses } from "../utils";
 
 jest.mock("../../subscriptions");
 
@@ -88,33 +82,6 @@ describe("fully eligible", () => {
 
     [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
     updatesSub.isLoading = false;
-  });
-
-  test("short status message", () => {
-    expect(opp.statusMessageShort).toBe(
-      earnedDischargeOpportunityStatuses.PENDING
-    );
-
-    updatesSub.data = INCOMPLETE_UPDATE;
-    expect(opp.statusMessageShort).toBe(
-      earnedDischargeOpportunityStatuses.IN_PROGRESS
-    );
-
-    updatesSub.data = DENIED_UPDATE;
-    expect(opp.statusMessageShort).toBe(
-      earnedDischargeOpportunityStatuses.DENIED
-    );
-
-    updatesSub.data = COMPLETED_UPDATE;
-    expect(opp.statusMessageShort).toBe(
-      earnedDischargeOpportunityStatuses.COMPLETED
-    );
-  });
-
-  test("extended status message", () => {
-    expect(opp.statusMessageLong).toBe(
-      earnedDischargeOpportunityStatuses.PENDING
-    );
   });
 
   test("rank by status", () => {

@@ -15,17 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Button,
-  Icon,
-  palette,
-  Sans14,
-  Sans16,
-  spacing,
-  TooltipTrigger,
-} from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
-import { darken, rem, rgba } from "polished";
+import { Icon, palette, TooltipTrigger } from "@recidiviz/design-system";
+import { rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
@@ -73,6 +64,9 @@ export const STATUS_COLORS = {
 export type StatusPalette = typeof STATUS_COLORS[keyof typeof STATUS_COLORS];
 
 export function useStatusColors(opportunity: Opportunity): StatusPalette {
+  // TODO: do this more generically once the "alert" flavor of opportunity stabilizes
+  if (opportunity.type === "pastFTRD") return STATUS_COLORS.alert;
+
   if (opportunity?.reviewStatus === "DENIED") {
     return STATUS_COLORS.ineligible;
   }
@@ -81,34 +75,6 @@ export function useStatusColors(opportunity: Opportunity): StatusPalette {
   }
   return STATUS_COLORS.eligible;
 }
-
-export const Wrapper = styled.div<{ background: string; border: string }>`
-  background-color: ${({ background: backgroundColor }) => backgroundColor};
-  border-color: ${({ border: borderColor }) => borderColor};
-  border-style: solid;
-  border-width: 1px 0;
-  color: ${palette.pine1};
-  margin: 0 -${rem(spacing.md)};
-  padding: ${rem(spacing.md)};
-`;
-
-export const ActionButtons = styled.div`
-  display: flex;
-`;
-
-export const PrintButton = styled(Button)<{ buttonFill: string }>`
-  background: ${(props) => props.buttonFill};
-  margin-right: ${rem(spacing.sm)};
-
-  &:hover,
-  &:focus {
-    background: ${(props) => darken(0.1, props.buttonFill)};
-  }
-`;
-
-export const TitleText = styled(Sans16)`
-  color: ${palette.pine1};
-`;
 
 export const InfoTooltipWrapper = styled(TooltipTrigger)`
   vertical-align: text-bottom;
@@ -123,23 +89,6 @@ const InfoLink = styled.a`
   }
 `;
 
-export const CriterionIcon = styled(Icon)`
-  grid-column: 1;
-  /* slight vertical offset to approximate baseline alignment */
-  margin-top: ${rem(1)};
-`;
-
-export const CriterionContentWrapper = styled(Sans14)`
-  grid-column: 2;
-`;
-
-export const CriterionWrapper = styled.li`
-  display: grid;
-  grid-template-columns: ${rem(spacing.lg)} 1fr;
-  margin: 0 0 8px;
-  line-height: 1.3;
-`;
-
 export const InfoButton = ({
   infoUrl,
 }: {
@@ -149,17 +98,3 @@ export const InfoButton = ({
     <Icon kind="Info" size={12} />
   </InfoLink>
 );
-
-type TitleProps = {
-  titleText: string;
-  statusMessage: string;
-};
-
-export const Title = observer(({ titleText, statusMessage }: TitleProps) => {
-  return (
-    <TitleText>
-      {`${titleText}: `}
-      {statusMessage}
-    </TitleText>
-  );
-});

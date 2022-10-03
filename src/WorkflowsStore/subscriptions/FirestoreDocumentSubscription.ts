@@ -61,6 +61,7 @@ export abstract class FirestoreDocumentSubscription<
       subscribe: action,
       isLoading: observable,
       error: observable,
+      isHydrated: observable,
     });
 
     // these automatically stop/start the listener based on whether any MobX

@@ -18,32 +18,42 @@
 import { observer } from "mobx-react-lite";
 
 import { Opportunity } from "../../WorkflowsStore";
-import { useClientTracking } from "../hooks/useClientTracking";
-import { EligibilityStatus, WorkflowProgress } from "../OpportunityStatus";
-import ClientCapsule, { ClientCapsuleProps } from "./ClientCapsule";
 
-type Props = Omit<ClientCapsuleProps, "status" | "client"> & {
+type EligibilityStatusProps = {
   opportunity: Opportunity;
+  includeReasons?: boolean;
 };
+export const EligibilityStatus: React.FC<EligibilityStatusProps> = observer(
+  ({ opportunity, includeReasons }) => {
+    const {
+      almostEligible,
+      almostEligibleStatusMessage,
+      defaultEligibility,
+      denial,
+      isHydrated,
+    } = opportunity;
 
-export const OpportunityCapsule = observer(
-  ({ opportunity, ...otherProps }: Props) => {
-    const { client, isHydrated } = opportunity;
-    useClientTracking(client, () => {
-      client.trackListViewed(opportunity.type);
-    });
+    if (!isHydrated) return null;
 
-    let status: React.ReactNode = null;
-
-    if (isHydrated) {
-      status = (
+    if (denial?.reasons.length) {
+      return (
         <>
-          <EligibilityStatus opportunity={opportunity} includeReasons /> •{" "}
-          <WorkflowProgress opportunity={opportunity} />
+          Currently ineligible
+          {includeReasons && ` (${denial.reasons.join(", ")})`}
         </>
       );
     }
 
-    return <ClientCapsule client={client} status={status} {...otherProps} />;
+    if (almostEligible) {
+      return includeReasons && almostEligibleStatusMessage ? (
+        <>{almostEligibleStatusMessage}</>
+      ) : (
+        <>Almost eligible</>
+      );
+    }
+
+    if (defaultEligibility === "MAYBE") return <>May be eligible</>;
+
+    return <>Eligible</>;
   }
 );

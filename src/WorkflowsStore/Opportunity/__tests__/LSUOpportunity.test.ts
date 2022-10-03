@@ -28,13 +28,7 @@ import {
   LSUEligibleClientRecord,
   LSUReferralRecordFixture,
 } from "../__fixtures__";
-import {
-  COMPLETED_UPDATE,
-  DENIED_UPDATE,
-  INCOMPLETE_UPDATE,
-} from "../testUtils";
 import { Opportunity } from "../types";
-import { LSUOpportunityStatuses } from "../utils";
 
 jest.mock("../../subscriptions");
 
@@ -86,23 +80,6 @@ describe("fully eligible", () => {
 
     [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
     updatesSub.isLoading = false;
-  });
-
-  test("short status message", () => {
-    expect(opp.statusMessageShort).toBe(LSUOpportunityStatuses.PENDING);
-
-    updatesSub.data = INCOMPLETE_UPDATE;
-    expect(opp.statusMessageShort).toBe(LSUOpportunityStatuses.IN_PROGRESS);
-
-    updatesSub.data = DENIED_UPDATE;
-    expect(opp.statusMessageShort).toBe(LSUOpportunityStatuses.DENIED);
-
-    updatesSub.data = COMPLETED_UPDATE;
-    expect(opp.statusMessageShort).toBe(LSUOpportunityStatuses.COMPLETED);
-  });
-
-  test("extended status message", () => {
-    expect(opp.statusMessageLong).toBe(LSUOpportunityStatuses.PENDING);
   });
 
   test("rank by status", () => {

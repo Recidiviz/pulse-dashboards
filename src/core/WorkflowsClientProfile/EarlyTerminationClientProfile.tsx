@@ -20,22 +20,25 @@ import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { Contact, Supervision } from "./Details";
-import { EarlyTerminationModule } from "./EarlyTerminationModule";
 import { Heading } from "./Heading";
+import { OpportunityModule } from "./OpportunityModule";
 
 export const EarlyTerminationClientProfile = observer(() => {
   const { workflowsStore } = useRootStore();
 
   const client = workflowsStore.selectedClient;
 
-  if (!client) {
+  if (!client?.opportunities.earlyTermination) {
     return null;
   }
 
   return (
     <article>
       <Heading client={client} />
-      <EarlyTerminationModule client={client} />
+      <OpportunityModule
+        opportunity={client.opportunities.earlyTermination}
+        formPrintButton
+      />
       <Supervision client={client} />
       <Contact client={client} />
     </article>

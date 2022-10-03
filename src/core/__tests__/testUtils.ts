@@ -15,5 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "../OpportunityPreview";
-export * from "./CompliantReportingModule";
+import { Client, Opportunity } from "../../WorkflowsStore";
+
+export const mockOpportunity: Opportunity = {
+  almostEligible: false,
+  client: {} as Client,
+  defaultEligibility: "ELIGIBLE",
+  denial: undefined,
+  denialReasonsMap: {},
+  firstViewed: undefined,
+  hydrate: () => undefined,
+  isHydrated: true,
+  isValid: true,
+  rank: 0,
+  requirementsAlmostMet: [],
+  requirementsMet: [],
+  reviewStatus: "PENDING",
+  setFirstViewedIfNeeded: () => undefined,
+  type: "pastFTRD",
+};

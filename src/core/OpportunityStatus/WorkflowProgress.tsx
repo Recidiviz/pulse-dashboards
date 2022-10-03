@@ -15,4 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./PastFTRDModule";
+import { observer } from "mobx-react-lite";
+import React from "react";
+
+import { formatDate } from "../../utils";
+import { Opportunity } from "../../WorkflowsStore";
+import WorkflowsOfficerName from "../WorkflowsOfficerName";
+
+type OpportunityWorkflowStatusProps = {
+  opportunity: Opportunity;
+};
+
+export const WorkflowProgress: React.FC<OpportunityWorkflowStatusProps> = observer(
+  ({ opportunity }) => {
+    const { firstViewed, isHydrated } = opportunity;
+
+    if (!isHydrated) return null;
+
+    if (firstViewed) {
+      return (
+        <>
+          Viewed on {formatDate(firstViewed.date.toDate())} by{" "}
+          <WorkflowsOfficerName officerEmail={firstViewed.by} />
+        </>
+      );
+    }
+
+    return <>Needs review</>;
+  }
+);

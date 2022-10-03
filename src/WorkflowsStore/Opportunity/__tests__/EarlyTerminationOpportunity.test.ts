@@ -28,13 +28,7 @@ import {
   earlyTerminationEligibleClientRecord,
   earlyTerminationReferralRecord,
 } from "../__fixtures__";
-import {
-  COMPLETED_UPDATE,
-  DENIED_UPDATE,
-  INCOMPLETE_UPDATE,
-} from "../testUtils";
 import { Opportunity } from "../types";
-import { earlyTerminationOpportunityStatuses } from "../utils";
 
 let et: Opportunity;
 let client: Client;
@@ -87,33 +81,6 @@ describe("fully eligible", () => {
 
     [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
     updatesSub.isLoading = false;
-  });
-
-  test("short status message", () => {
-    expect(et.statusMessageShort).toBe(
-      earlyTerminationOpportunityStatuses.PENDING
-    );
-
-    updatesSub.data = INCOMPLETE_UPDATE;
-    expect(et.statusMessageShort).toBe(
-      earlyTerminationOpportunityStatuses.IN_PROGRESS
-    );
-
-    updatesSub.data = DENIED_UPDATE;
-    expect(et.statusMessageShort).toBe(
-      earlyTerminationOpportunityStatuses.DENIED
-    );
-
-    updatesSub.data = COMPLETED_UPDATE;
-    expect(et.statusMessageShort).toBe(
-      earlyTerminationOpportunityStatuses.COMPLETED
-    );
-  });
-
-  test("extended status message", () => {
-    expect(et.statusMessageLong).toBe(
-      earlyTerminationOpportunityStatuses.PENDING
-    );
   });
 
   test("rank by status", () => {

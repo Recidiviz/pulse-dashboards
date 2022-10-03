@@ -435,6 +435,16 @@ export async function updateOpportunityCompleted(
   });
 }
 
+export async function updateOpportunityFirstViewed(
+  userEmail: string,
+  recordId: string,
+  opportunityType: OpportunityType
+): Promise<void> {
+  return updateOpportunity(opportunityType, recordId, {
+    firstViewed: { by: userEmail, date: serverTimestamp() },
+  });
+}
+
 export function updateSelectedOfficerIds(
   userEmail: string,
   stateCode: string,

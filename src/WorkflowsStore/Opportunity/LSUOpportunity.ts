@@ -29,7 +29,6 @@ import {
 } from "./LSUReferralRecord";
 import { OpportunityWithFormBase } from "./OpportunityWithFormBase";
 import { OpportunityRequirement } from "./types";
-import { LSUOpportunityStatuses } from "./utils";
 
 const DENIAL_REASONS_MAP = {
   SCNC:
@@ -135,27 +134,15 @@ class LSUOpportunity extends OpportunityWithFormBase<
   LSUReferralRecord,
   LSUDraftData
 > {
-  displayFormButton = true;
-
   navigateToFormText = "Generate Chrono";
 
   constructor(client: Client) {
     super(client, "LSU", transformReferral);
     makeObservable(this, {
-      statusMessageLong: computed,
-      statusMessageShort: computed,
       requirementsMet: computed,
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-  }
-
-  get statusMessageShort(): string {
-    return LSUOpportunityStatuses[this.reviewStatus];
-  }
-
-  get statusMessageLong(): string {
-    return LSUOpportunityStatuses[this.reviewStatus];
   }
 
   get requirementsMet(): OpportunityRequirement[] {

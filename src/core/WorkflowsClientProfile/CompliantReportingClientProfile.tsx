@@ -19,7 +19,6 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { CompliantReportingModule } from "./CompliantReportingModule";
 import {
   Contact,
   FinesAndFees,
@@ -28,20 +27,24 @@ import {
   Supervision,
 } from "./Details";
 import { Heading } from "./Heading";
+import { OpportunityModule } from "./OpportunityModule";
 
 export const CompliantReportingClientProfile = observer(() => {
   const { workflowsStore } = useRootStore();
 
   const client = workflowsStore.selectedClient;
 
-  if (!client) {
+  if (!client?.opportunities.compliantReporting) {
     return null;
   }
 
   return (
     <article>
       <Heading client={client} />
-      <CompliantReportingModule client={client} />
+      <OpportunityModule
+        opportunity={client.opportunities.compliantReporting}
+        formPrintButton
+      />
       <SpecialConditions client={client} />
       <Supervision client={client} />
       <Contact client={client} />

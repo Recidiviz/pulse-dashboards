@@ -275,6 +275,10 @@
       "server/**/*.js",
       "!src/auth0/rules/*.js",
       "src/**/*.js"
+    ],
+    "testMatch": [
+      "**/__tests__/**/!(testUtils).[jt]s?(x)",
+      "**/?(*.)+(spec|test).[jt]s?(x)"
     ]
   },
   "resolutions": {

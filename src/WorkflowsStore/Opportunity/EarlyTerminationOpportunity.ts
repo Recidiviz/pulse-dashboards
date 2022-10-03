@@ -32,7 +32,6 @@ import {
 } from "./EarlyTerminationReferralRecord";
 import { OpportunityWithFormBase } from "./OpportunityWithFormBase";
 import { EarlyTerminationFormInterface, OpportunityRequirement } from "./types";
-import { earlyTerminationOpportunityStatuses } from "./utils";
 
 const DENIAL_REASONS_MAP = {
   "INT MEASURE":
@@ -75,8 +74,6 @@ class EarlyTerminationOpportunity
     EarlyTerminationDraftData
   >
   implements EarlyTerminationFormInterface {
-  displayFormButton = true;
-
   navigateToFormText = "Auto-fill paperwork";
 
   constructor(client: Client) {
@@ -84,8 +81,6 @@ class EarlyTerminationOpportunity
 
     makeObservable(this, {
       printText: computed,
-      statusMessageShort: computed,
-      statusMessageLong: computed,
       requirementsMet: computed,
       requirementsAlmostMet: computed,
     });
@@ -138,15 +133,6 @@ class EarlyTerminationOpportunity
     }
 
     return "Download .DOCX";
-  }
-
-  get statusMessageShort(): string {
-    return earlyTerminationOpportunityStatuses[this.reviewStatus];
-  }
-
-  get statusMessageLong(): string {
-    // TODO #2141 Update status message once denial reason is added to the client update record
-    return earlyTerminationOpportunityStatuses[this.reviewStatus];
   }
 
   get requirementsMet(): OpportunityRequirement[] {

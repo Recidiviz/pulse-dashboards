@@ -21,59 +21,12 @@ import simplur from "simplur";
 import {
   Opportunity,
   OPPORTUNITY_STATUS_RANKED,
-  OpportunityStatus,
   OpportunityType,
 } from "./types";
 
 export function rankByReviewStatus(opp: Opportunity): number {
   return OPPORTUNITY_STATUS_RANKED.indexOf(opp.reviewStatus);
 }
-
-export const defaultOpportunityStatuses: Record<OpportunityStatus, string> = {
-  PENDING: "Needs referral",
-  DENIED: "Currently ineligible",
-  COMPLETED: "Referral form complete",
-  IN_PROGRESS: "Referral in progress",
-  ALMOST: "Almost eligible",
-};
-
-export const earlyTerminationOpportunityStatuses: Record<
-  OpportunityStatus,
-  string
-> = {
-  PENDING: "Needs review",
-  IN_PROGRESS: "Review in progress",
-  COMPLETED: "Paperwork completed",
-  DENIED: "Currently ineligible",
-  ALMOST: "Almost eligible",
-};
-
-export const earnedDischargeOpportunityStatuses: Record<
-  OpportunityStatus,
-  string
-> = {
-  PENDING: "Needs review",
-  IN_PROGRESS: "Earned discharge review in progress",
-  COMPLETED: "Earned discharge paperwork complete",
-  DENIED: "Currently ineligible",
-  ALMOST: "Almost eligible",
-};
-
-export const LSUOpportunityStatuses: Record<OpportunityStatus, string> = {
-  PENDING: "May be eligible",
-  IN_PROGRESS: "LSU transfer chrono in progress",
-  COMPLETED: "LSU transfer chrono complete",
-  DENIED: "Currently ineligible",
-  ALMOST: "Almost eligible",
-};
-
-export const pastFTRDOpportunityStatuses: Record<OpportunityStatus, string> = {
-  PENDING: "Needs Review",
-  IN_PROGRESS: "Viewed",
-  COMPLETED: "Complete",
-  DENIED: "Currently ineligible",
-  ALMOST: "Almost eligible",
-};
 
 export function formatNoteDate(date: Date): string {
   return format(date, "MMMM do");

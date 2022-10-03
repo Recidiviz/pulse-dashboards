@@ -21,18 +21,27 @@ import React from "react";
 import { useRootStore } from "../../components/StoreProvider";
 
 type WorkflowsOfficerNameProps = {
-  officerId: string;
+  officerId?: string;
+  officerEmail?: string;
 };
 
 const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
   officerId,
+  officerEmail,
 }) => {
-  const { workflowsStore } = useRootStore();
+  const {
+    workflowsStore: { availableOfficers },
+  } = useRootStore();
+
+  if (!officerId && !officerEmail) return null;
 
   return (
     <span>
-      {workflowsStore.availableOfficers.find((o) => o.id === officerId)?.name ??
-        officerId}
+      {availableOfficers.find((o) => {
+        return officerId ? o.id === officerId : o.email === officerEmail;
+      })?.name ??
+        officerId ??
+        officerEmail}
     </span>
   );
 };

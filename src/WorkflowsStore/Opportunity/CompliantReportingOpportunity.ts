@@ -19,7 +19,7 @@ import * as Sentry from "@sentry/react";
 import assertNever from "assert-never";
 import { differenceInCalendarDays, isEqual } from "date-fns";
 import { mapValues } from "lodash";
-import { makeAutoObservable, toJS } from "mobx";
+import { makeAutoObservable, toJS, when } from "mobx";
 
 import { transform } from "../../core/Paperwork/US_TN/Transformer";
 import { formatRelativeToNow } from "../../core/utils/timePeriod";
@@ -28,6 +28,7 @@ import {
   Denial,
   OpportunityUpdateWithForm,
   UpdateLog,
+  updateOpportunityFirstViewed,
 } from "../../firestore";
 import { formatWorkflowsDate, pluralizeWord } from "../../utils";
 import { Client, UNKNOWN } from "../Client";
@@ -56,11 +57,7 @@ import {
   OpportunityStatus,
   OpportunityType,
 } from "./types";
-import {
-  defaultOpportunityStatuses,
-  formatNoteDate,
-  rankByReviewStatus,
-} from "./utils";
+import { formatNoteDate, rankByReviewStatus } from "./utils";
 
 type AlmostEligibleCriteria = {
   currentLevelEligibilityDate?: Date;
@@ -180,13 +177,13 @@ class CompliantReportingOpportunity
 
   readonly type: OpportunityType = "compliantReporting";
 
+  readonly defaultEligibility = "ELIGIBLE";
+
   readonly denialReasonsMap: DenialReasonsMap;
 
   private referralSubscription: DocumentSubscription<CompliantReportingReferralRecord>;
 
   private updatesSubscription: DocumentSubscription<CompliantReportingUpdateRecord>;
-
-  displayFormButton = true;
 
   navigateToFormText = "Auto-fill referral";
 
@@ -375,6 +372,35 @@ class CompliantReportingOpportunity
     return this.updatesSubscription.data;
   }
 
+  get firstViewed(): UpdateLog | undefined {
+    return this.updates?.firstViewed;
+  }
+
+  /**
+   * If this.firstViewed is not yet set, this sets it by writing to Firestore.
+   */
+  setFirstViewedIfNeeded(): void {
+    when(
+      () => this.isHydrated,
+      () => {
+        if (this.firstViewed) return;
+        const userEmail = this.client.rootStore.workflowsStore.user?.info.email;
+        // should not happen in practice
+        if (!userEmail) return;
+
+        // ignore recidiviz admins and other non-state actors
+        if (this.client.rootStore.userStore.stateCode !== this.client.stateCode)
+          return;
+
+        updateOpportunityFirstViewed(
+          userEmail,
+          this.client.recordId,
+          this.type
+        );
+      }
+    );
+  }
+
   get reviewStatus(): OpportunityStatus {
     const { updates, denial } = this;
 
@@ -397,30 +423,14 @@ class CompliantReportingOpportunity
     return "PENDING";
   }
 
-  get statusMessageShort(): string {
-    return defaultOpportunityStatuses[this.reviewStatus];
-  }
-
-  get statusMessageLong(): string {
+  get almostEligibleStatusMessage(): string | undefined {
     const {
       validAlmostEligibleKeys,
-      reviewStatus,
       almostEligible,
       requirementAlmostMetMap,
     } = this;
 
-    if (reviewStatus === "DENIED") {
-      const baseMessage = defaultOpportunityStatuses[reviewStatus];
-      let additionalText = "";
-      if (this.denial) {
-        additionalText = ` (${this.denial.reasons.join(", ")})`;
-      }
-      return `${baseMessage}${additionalText}`;
-    }
-
-    if (!almostEligible) {
-      return defaultOpportunityStatuses[reviewStatus];
-    }
+    if (!almostEligible) return;
 
     if (validAlmostEligibleKeys.length > 1) {
       return `Needs ${validAlmostEligibleKeys.length} updates`;
