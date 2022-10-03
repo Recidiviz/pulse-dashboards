@@ -20,6 +20,7 @@ import { rem } from "polished";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import * as React from "react";
 
+import { useRootStore } from "../../components/StoreProvider";
 import { PrintablePageMargin } from "./styles";
 
 export const REACTIVE_INPUT_UPDATE_DELAY = 2000;
@@ -30,8 +31,9 @@ export const useAnimatedValue = (
   duration = 1750,
   delay = 250
 ): boolean => {
-  const [mountedAt] = useState<number>(+new Date() + delay);
+  const [mountedAt, setMountedAt] = useState<number>(+new Date() + delay);
   const [animated, setAnimated] = useState<boolean>(false);
+  const client = useRootStore().workflowsStore?.selectedClient;
 
   useEffect(() => {
     let animationFrameId = 0;
@@ -60,6 +62,19 @@ export const useAnimatedValue = (
       cancelAnimationFrame(animationFrameId);
     };
   }, [input, mountedAt, duration, value, setAnimated]);
+
+  // Effect that triggers when a user selects the Print/Download CTA and stops the form-filling animation
+  useEffect(() => {
+    return reaction(
+      () => client?.formIsPrinting,
+      (formIsPrinting) => {
+        if (formIsPrinting) {
+          setMountedAt(0);
+          setAnimated(true);
+        }
+      }
+    );
+  }, [client]);
 
   return animated;
 };
