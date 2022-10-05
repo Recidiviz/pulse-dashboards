@@ -16,16 +16,47 @@
 // =============================================================================
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
+import { OpportunityType } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import RecidivizLogo from "../RecidivizLogo";
 import { PATHWAYS_VIEWS } from "../views";
+import { CompliantReportingClientProfile } from "../WorkflowsClientProfile";
+import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTerminationClientProfile";
+import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
+import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
+import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 
 export const FORM_SIDEBAR_WIDTH = 400;
+
+const PAGE_CONTENT: Record<OpportunityType, any> = {
+  compliantReporting: {
+    sidebarContents: <CompliantReportingClientProfile />,
+    formContents: <WorkflowsCompliantReportingForm />,
+  },
+  earlyTermination: {
+    sidebarContents: <EarlyTerminationClientProfile />,
+    formContents: <WorkflowsEarlyTerminationForm />,
+  },
+  earnedDischarge: {
+    sidebarContents: <div />,
+    formContents: <div />,
+  },
+  LSU: {
+    sidebarContents: <LSUClientProfile />,
+    formContents: <div />,
+  },
+  pastFTRD: {
+    sidebarContents: <div />,
+    formContents: <div />,
+  },
+};
 
 const Wrapper = styled.div`
   ${typography.Sans16}
@@ -68,19 +99,19 @@ const SidebarWrapper: React.FC = ({ children }) => {
 
 const FormWrapper = styled.div``;
 
-type FormLayoutProps = {
-  sidebarContents: React.ReactNode;
-  formContents: React.ReactNode;
-};
+export const WorkflowsFormLayout = observer(() => {
+  const {
+    workflowsStore: { selectedOpportunityType: opportunityType },
+  } = useRootStore();
 
-export const WorkflowsFormLayout = ({
-  sidebarContents,
-  formContents,
-}: FormLayoutProps): JSX.Element => {
+  if (!opportunityType) return null;
+
   return (
     <Wrapper>
-      <SidebarWrapper>{sidebarContents}</SidebarWrapper>
-      <FormWrapper>{formContents}</FormWrapper>
+      <SidebarWrapper>
+        {PAGE_CONTENT[opportunityType].sidebarContents}
+      </SidebarWrapper>
+      <FormWrapper>{PAGE_CONTENT[opportunityType].formContents}</FormWrapper>
     </Wrapper>
   );
-};
+});

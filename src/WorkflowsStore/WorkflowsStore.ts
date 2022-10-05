@@ -83,6 +83,8 @@ export class WorkflowsStore implements Hydratable {
 
   private selectedClientPseudoId?: string;
 
+  selectedOpportunityType?: OpportunityType;
+
   private compliantReportingEligibleCount?: SubscriptionValue<number>;
 
   private clientsSubscription?: SubscriptionValue<ClientRecord[]>;
@@ -260,6 +262,10 @@ export class WorkflowsStore implements Hydratable {
     if (clientId && !has(this.clients, clientId)) {
       await this.fetchClient(clientId);
     }
+  }
+
+  updateSelectedOpportunityType(opportunityType?: OpportunityType): void {
+    this.selectedOpportunityType = opportunityType;
   }
 
   get selectedOfficers(): StaffRecord[] {

@@ -21,10 +21,7 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import {
-  generateOpportunityHeader,
-  OpportunityType,
-} from "../../WorkflowsStore";
+import { generateOpportunityHeader } from "../../WorkflowsStore";
 import { ClientListItem } from "./ClientListItem";
 import { Heading, SectionLabelText, SubHeading } from "./styles";
 
@@ -38,54 +35,52 @@ const ClientList = styled.ul`
   row-gap: ${rem(spacing.sm)};
 `;
 
-type OpportunityListProps = {
-  almost?: boolean;
-  opportunityType: OpportunityType;
-};
+export const OpportunityList = observer(() => {
+  const {
+    workflowsStore: {
+      almostEligibleOpportunities,
+      eligibleOpportunities,
+      selectedOpportunityType: opportunityType,
+    },
+  } = useRootStore();
 
-export const OpportunityList = observer(
-  ({ almost, opportunityType }: OpportunityListProps) => {
-    const {
-      workflowsStore: { almostEligibleOpportunities, eligibleOpportunities },
-    } = useRootStore();
+  if (!opportunityType) return null;
+  const eligibleOpps = eligibleOpportunities[opportunityType];
+  if (!eligibleOpps.length) return null;
 
-    const eligibleOpps = eligibleOpportunities[opportunityType];
-    if (!eligibleOpps.length) return null;
+  const almostEligibleOpps = almostEligibleOpportunities[opportunityType];
 
-    const almostEligibleOpps = almostEligibleOpportunities[opportunityType];
+  const header = generateOpportunityHeader(
+    opportunityType,
+    eligibleOpps.length + almostEligibleOpps.length
+  );
 
-    const header = generateOpportunityHeader(
-      opportunityType,
-      eligibleOpps.length + almostEligibleOpps.length
-    );
-
-    return (
+  return (
+    <>
+      <Heading>
+        {header.eligibilityText} {header.opportunityText}
+      </Heading>
+      <SubHeading>{header.callToAction}</SubHeading>
       <>
-        <Heading>
-          {header.eligibilityText} {header.opportunityText}
-        </Heading>
-        <SubHeading>{header.callToAction}</SubHeading>
+        {almostEligibleOpps.length > 0 && (
+          <SectionLabelText>Eligible now</SectionLabelText>
+        )}
+        <ClientList>
+          {eligibleOpps.map((opportunity) => (
+            <ClientListItem opportunity={opportunity} />
+          ))}
+        </ClientList>
+      </>
+      {almostEligibleOpps.length > 0 && (
         <>
-          {almostEligibleOpps.length > 0 && (
-            <SectionLabelText>Eligible now</SectionLabelText>
-          )}
+          <SectionLabelText>Almost eligible</SectionLabelText>
           <ClientList>
-            {eligibleOpps.map((opportunity) => (
+            {almostEligibleOpps.map((opportunity) => (
               <ClientListItem opportunity={opportunity} />
             ))}
           </ClientList>
         </>
-        {almostEligibleOpps.length > 0 && (
-          <>
-            <SectionLabelText>Almost eligible</SectionLabelText>
-            <ClientList>
-              {almostEligibleOpps.map((opportunity) => (
-                <ClientListItem opportunity={opportunity} />
-              ))}
-            </ClientList>
-          </>
-        )}
-      </>
-    );
-  }
-);
+      )}
+    </>
+  );
+});

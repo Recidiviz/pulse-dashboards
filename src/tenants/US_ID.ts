@@ -42,7 +42,7 @@ const US_ID_CONFIG: TenantConfig = {
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   navigation: {
     // The order of pages here determines where the user will land first when navigating from `/`
-    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "client"],
+    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],
     operations: [],
     system: [
       PATHWAYS_PAGES.libertyToPrison,

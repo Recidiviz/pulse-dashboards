@@ -99,7 +99,8 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
           <ActionButtons>
             {formLinkButton && opportunity.navigateToFormText && (
               <Link
-                to={workflowsUrl(opportunity.type, {
+                to={workflowsUrl("opportunityAction", {
+                  opportunityType: opportunity.type,
                   clientId: opportunity.client.pseudonymizedId,
                 })}
               >

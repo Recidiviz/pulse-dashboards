@@ -71,7 +71,8 @@ export const ClientListItem = observer(
           onMouseLeave={() => setShowButton(false)}
         >
           <ClientLink
-            to={workflowsUrl(opportunity.type, {
+            to={workflowsUrl("opportunityClients", {
+              opportunityType: opportunity.type,
               clientId: client.pseudonymizedId,
             })}
           >
@@ -84,7 +85,8 @@ export const ClientListItem = observer(
           </ClientLink>
           {showButton && opportunity.navigateToFormText && (
             <Link
-              to={workflowsUrl(opportunity.type, {
+              to={workflowsUrl("opportunityAction", {
+                opportunityType: opportunity.type,
                 clientId: client.pseudonymizedId,
               })}
             >

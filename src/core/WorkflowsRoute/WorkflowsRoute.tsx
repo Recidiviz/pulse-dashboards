@@ -20,7 +20,7 @@ import { Redirect, Route, RouteProps, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { isOpportunityType } from "../../WorkflowsStore/Opportunity/types";
-import { WORKFLOWS_PATHS, workflowsRoute } from "../views";
+import { WORKFLOWS_PATHS, workflowsUrl } from "../views";
 
 // react-router does not seem to export this type directly
 type RouterLocation = ReturnType<typeof useLocation>;
@@ -50,6 +50,11 @@ const RouteSync: React.FC = ({ children }) => {
     workflowsStore.updateSelectedClient(clientId).catch(() => {
       setNotFound(true);
     });
+    if (page && isOpportunityType(page)) {
+      workflowsStore.updateSelectedOpportunityType(page);
+    } else {
+      workflowsStore.updateSelectedOpportunityType(undefined);
+    }
 
     // issue tracking calls as needed
     if (clientId && page && isOpportunityType(page)) {
@@ -60,10 +65,12 @@ const RouteSync: React.FC = ({ children }) => {
       const { hasMultipleOpportunities, opportunityTypes } = workflowsStore;
 
       if (hasMultipleOpportunities) {
-        setRedirectPath(workflowsRoute({ name: "home", client: false }));
+        setRedirectPath(workflowsUrl("home"));
       } else {
         setRedirectPath(
-          workflowsRoute({ name: opportunityTypes[0], client: false })
+          workflowsUrl("opportunityClients", {
+            opportunityType: opportunityTypes[0],
+          })
         );
       }
     }
@@ -76,7 +83,6 @@ const RouteSync: React.FC = ({ children }) => {
   if (redirectPath) {
     return <Redirect to={redirectPath} />;
   }
-
   return <>{children}</>;
 };
 

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import {
-  WORKFLOWS_PAGES,
+  WorkflowsPage,
   WorkflowsPageIdList,
   workflowsRoute,
   workflowsUrl,
@@ -24,18 +24,38 @@ import {
 
 test("URL with no params", () => {
   WorkflowsPageIdList.forEach((pageId) => {
-    expect(workflowsUrl(pageId)).toBe(
-      workflowsRoute({ name: pageId, client: false })
+    expect(workflowsUrl(pageId)).toBe(workflowsRoute({ routeName: pageId }));
+  });
+});
+
+test("URL with opportunityType", () => {
+  const OPPORTUNITY_PAGES = [
+    "opportunityClients",
+    "opportunityAction",
+    "clientPreview",
+  ] as WorkflowsPage[];
+  OPPORTUNITY_PAGES.forEach((pageId) => {
+    expect(
+      workflowsUrl(pageId, { opportunityType: "compliantReporting" })
+    ).toBe(
+      workflowsRoute({
+        routeName: pageId,
+      }).replace(":opportunityType", "compliantReporting")
     );
   });
 });
 
-test("path to client", () => {
-  WorkflowsPageIdList.forEach((pageId) => {
-    // Home page does not have a client path
-    if (pageId === "home") return;
+test("URL with clientId", () => {
+  const CLIENT_PAGES = [
+    "opportunityAction",
+    "clientProfile",
+    "clientPreview",
+  ] as WorkflowsPage[];
+  CLIENT_PAGES.forEach((pageId) => {
     expect(workflowsUrl(pageId, { clientId: "test123" })).toBe(
-      `/workflows/${WORKFLOWS_PAGES[pageId]}/test123`
+      workflowsRoute({
+        routeName: pageId,
+      }).replace(":clientId", "test123")
     );
   });
 });

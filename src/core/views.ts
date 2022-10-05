@@ -16,10 +16,7 @@
 // =============================================================================
 
 import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
-import {
-  OPPORTUNITY_TYPES,
-  OpportunityType,
-} from "../WorkflowsStore/Opportunity/types";
+import { OpportunityType } from "../WorkflowsStore/Opportunity/types";
 import { MetricId, SimulationCompartment, TenantId } from "./models/types";
 
 export type CoreView = keyof typeof CORE_VIEWS;
@@ -255,68 +252,55 @@ export function getSectionIdForMetric(metric: MetricId): PathwaysSection {
 }
 
 export const WORKFLOWS_PATHS = {
-  opportunityType: `/${PATHWAYS_VIEWS.workflows}/:opportunityType`,
+  opportunityClients: `/${PATHWAYS_VIEWS.workflows}/:opportunityType`,
+  opportunityAction: `/${PATHWAYS_VIEWS.workflows}/:opportunityType/:clientId`,
   workflows: `/${PATHWAYS_VIEWS.workflows}`,
   workflows404: `/${PATHWAYS_VIEWS.workflows}/not-found`,
+  home: `/${PATHWAYS_VIEWS.workflows}/home`,
+  caseloadClients: `/${PATHWAYS_VIEWS.workflows}/clients`,
+  clientProfile: `/${PATHWAYS_VIEWS.workflows}/clients/:clientId`,
+  clientPreview: `/${PATHWAYS_VIEWS.workflows}/:opportunityType/preview/:clientId`,
 };
-
-const WorkflowsGeneralPages = ["general", "home"] as const;
-
-export type WorkflowsPage =
-  | OpportunityType
-  | typeof WorkflowsGeneralPages[number];
 
 export const WorkflowsPageIdList = [
-  ...WorkflowsGeneralPages,
-  ...OPPORTUNITY_TYPES,
-];
+  "caseloadClients",
+  "clientProfile",
+  "home",
+  "opportunityClients",
+  "opportunityAction",
+  "clientPreview",
+  "workflows",
+  "workflows404",
+] as const;
+
+export type WorkflowsPage = typeof WorkflowsPageIdList[number];
+
 export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   home: "home",
-  compliantReporting: "compliantReporting",
-  general: "client",
-  earlyTermination: "earlyTermination",
-  earnedDischarge: "earnedDischarge",
-  LSU: "LSU",
-  pastFTRD: "pastFTRD",
-};
-
-const WORKFLOWS_SEARCH_ROUTES: Record<WorkflowsPage, string> = {
-  home: `/${PATHWAYS_VIEWS.workflows}/home`,
-  general: `/${PATHWAYS_VIEWS.workflows}/clients`,
-  compliantReporting: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.compliantReporting}`,
-  earlyTermination: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earlyTermination}`,
-  earnedDischarge: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earnedDischarge}`,
-  LSU: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.LSU}`,
-  pastFTRD: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.pastFTRD}`,
-};
-
-const WORKFLOWS_CLIENT_PATH_ROUTES: Record<WorkflowsPage, string> = {
-  home: `/${PATHWAYS_VIEWS.workflows}/home`,
-  general: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.general}/:clientId`,
-  compliantReporting: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.compliantReporting}/:clientId`,
-  earlyTermination: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earlyTermination}/:clientId`,
-  earnedDischarge: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.earnedDischarge}/:clientId`,
-  LSU: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.LSU}/:clientId`,
-  pastFTRD: `/${PATHWAYS_VIEWS.workflows}/${WORKFLOWS_PAGES.pastFTRD}/:clientId`,
+  caseloadClients: "caseloadClients",
+  clientProfile: "clientProfile",
+  opportunityClients: "opportunityClients",
+  opportunityAction: "opportunityAction",
+  clientPreview: "clientPreview",
+  workflows: "workflows",
+  workflows404: "workflows404",
 };
 
 /**
  * @returns the route template string for a Workflows page
  */
 export function workflowsRoute({
-  name,
-  client,
+  routeName,
 }: {
-  name: WorkflowsPage;
-  client: boolean;
+  routeName: WorkflowsPage;
 }): string {
-  if (client) {
-    return WORKFLOWS_CLIENT_PATH_ROUTES[name];
-  }
-  return WORKFLOWS_SEARCH_ROUTES[name];
+  return WORKFLOWS_PATHS[routeName];
 }
 
-type WorkflowsRouteParams = { clientId: string };
+type WorkflowsRouteParams = {
+  clientId?: string;
+  opportunityType?: OpportunityType;
+};
 
 /**
  * @returns an absolute path for the specified route + params (where applicable)
@@ -326,11 +310,12 @@ export function workflowsUrl(
   params?: WorkflowsRouteParams
 ): string {
   if (params) {
-    return Object.keys(params).reduce((route, param) => {
-      return route.replace(`:${param}`, params[param as keyof typeof params]);
-    }, WORKFLOWS_CLIENT_PATH_ROUTES[routeName]);
+    return Object.keys(params).reduce((path, param) => {
+      const value = params[param as keyof typeof params];
+      return value ? path.replace(`:${param}`, value) : path;
+    }, WORKFLOWS_PATHS[routeName]);
   }
-  return WORKFLOWS_SEARCH_ROUTES[routeName];
+  return WORKFLOWS_PATHS[routeName];
 }
 
 const pathnameToView: Record<string, CoreView> = {

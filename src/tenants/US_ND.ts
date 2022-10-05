@@ -37,7 +37,7 @@ const US_ND_CONFIG: TenantConfig = {
   workflowsEnableAllDistricts: true,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   navigation: {
-    workflows: [...WORKFLOWS_OPPORTUNITY_TYPES, "client", "home"],
+    workflows: [...WORKFLOWS_OPPORTUNITY_TYPES, "clients", "home"],
     operations: [],
     system: [
       PATHWAYS_PAGES.libertyToPrison,

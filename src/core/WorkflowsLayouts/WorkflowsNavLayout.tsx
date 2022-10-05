@@ -105,7 +105,7 @@ export const WorkflowsNavLayout: React.FC = ({ children }) => {
             <BrandedNavLink to={workflowsUrl("home")}>Home</BrandedNavLink>
           </li>
           <li>
-            <BrandedNavLink to={workflowsUrl("general")}>
+            <BrandedNavLink to={workflowsUrl("caseloadClients")}>
               All Clients
             </BrandedNavLink>
           </li>
@@ -117,7 +117,11 @@ export const WorkflowsNavLayout: React.FC = ({ children }) => {
               {opportunityTypes.map((opportunityType) => {
                 return (
                   <li>
-                    <BrandedNavLink to={workflowsUrl(opportunityType)}>
+                    <BrandedNavLink
+                      to={workflowsUrl("opportunityClients", {
+                        opportunityType,
+                      })}
+                    >
                       {OPPORTUNITY_LABELS[opportunityType]}
                     </BrandedNavLink>
                   </li>

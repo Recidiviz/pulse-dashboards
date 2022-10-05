@@ -43,7 +43,9 @@ const CaseloadWrapper = styled.ul`
 const Caseload = ({ clients }: { clients: Client[] }) => {
   const items = clients.map((client: Client) => (
     <li key={client.id}>
-      <Link to={workflowsUrl("general", { clientId: client.pseudonymizedId })}>
+      <Link
+        to={workflowsUrl("clientProfile", { clientId: client.pseudonymizedId })}
+      >
         <ProfileCapsule avatarSize="lg" client={client} textSize="sm" />
       </Link>
     </li>

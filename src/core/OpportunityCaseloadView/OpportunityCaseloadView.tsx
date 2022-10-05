@@ -20,7 +20,6 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { OpportunityType } from "../../WorkflowsStore";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { OpportunityList } from "./OpportunityList";
@@ -30,19 +29,13 @@ const Wrapper = styled.div`
   padding-bottom: ${rem(spacing.md * 4)};
 `;
 
-type OpportunityCaseloadProps = {
-  opportunityType: OpportunityType;
-};
-
-export const OpportunityCaseloadView = observer(
-  ({ opportunityType }: OpportunityCaseloadProps) => {
-    return (
-      <WorkflowsNavLayout>
-        <Wrapper>
-          <CaseloadSelect />
-          <OpportunityList opportunityType={opportunityType} />
-        </Wrapper>
-      </WorkflowsNavLayout>
-    );
-  }
-);
+export const OpportunityCaseloadView = observer(() => {
+  return (
+    <WorkflowsNavLayout>
+      <Wrapper>
+        <CaseloadSelect />
+        <OpportunityList />
+      </Wrapper>
+    </WorkflowsNavLayout>
+  );
+});

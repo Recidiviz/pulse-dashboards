@@ -26,14 +26,7 @@ import { CaseloadView } from "../CaseloadView";
 import ModelHydrator from "../ModelHydrator";
 import { OpportunityCaseloadView } from "../OpportunityCaseloadView";
 import { WORKFLOWS_PATHS, workflowsRoute } from "../views";
-import {
-  CompliantReportingClientProfile,
-  FullProfile,
-} from "../WorkflowsClientProfile";
-import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTerminationClientProfile";
-import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
-import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
-import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
+import { FullProfile } from "../WorkflowsClientProfile";
 import WorkflowsHomepage from "../WorkflowsHomepage";
 import { WorkflowsFormLayout } from "../WorkflowsLayouts";
 import WorkflowsRoute from "../WorkflowsRoute";
@@ -72,104 +65,40 @@ const PageWorkflows: React.FC = () => {
   return (
     <ModelHydrator model={workflowsStore}>
       <Switch>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({ name: "home", client: false })}
-        >
+        <WorkflowsRoute exact path={workflowsRoute({ routeName: "home" })}>
           <WorkflowsHomepage />
         </WorkflowsRoute>
         <WorkflowsRoute
           exact
-          path={workflowsRoute({ name: "compliantReporting", client: false })}
-        >
-          <OpportunityCaseloadView opportunityType="compliantReporting" />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({ name: "compliantReporting", client: true })}
-        >
-          <WorkflowsFormLayout
-            sidebarContents={<CompliantReportingClientProfile />}
-            formContents={<WorkflowsCompliantReportingForm />}
-          />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({ name: "earlyTermination", client: false })}
-        >
-          <OpportunityCaseloadView opportunityType="earlyTermination" />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({ name: "earlyTermination", client: true })}
-        >
-          <WorkflowsFormLayout
-            sidebarContents={<EarlyTerminationClientProfile />}
-            formContents={<WorkflowsEarlyTerminationForm />}
-          />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({ name: "general", client: true })}
-        >
-          <FullProfile />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({ name: "earnedDischarge", client: false })}
-        >
-          <OpportunityCaseloadView opportunityType="earnedDischarge" />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({ name: "earnedDischarge", client: true })}
-        >
-          <WorkflowsFormLayout
-            sidebarContents={<div />}
-            formContents={<div />}
-          />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({ name: "LSU", client: false })}
-        >
-          <OpportunityCaseloadView opportunityType="LSU" />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({ name: "LSU", client: true })}
-        >
-          <WorkflowsFormLayout
-            sidebarContents={<LSUClientProfile />}
-            formContents={<div />}
-          />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({ name: "pastFTRD", client: false })}
-        >
-          <OpportunityCaseloadView opportunityType="pastFTRD" />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({ name: "pastFTRD", client: true })}
-        >
-          <WorkflowsFormLayout
-            sidebarContents={<div />}
-            formContents={<div />}
-          />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({ name: "general", client: true })}
-        >
-          <FullProfile />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({ name: "general", client: false })}
+          path={workflowsRoute({
+            routeName: "caseloadClients",
+          })}
         >
           <CaseloadView />
+        </WorkflowsRoute>
+        <WorkflowsRoute
+          exact
+          path={workflowsRoute({
+            routeName: "clientProfile",
+          })}
+        >
+          <FullProfile />
+        </WorkflowsRoute>
+        <WorkflowsRoute
+          exact
+          path={workflowsRoute({
+            routeName: "opportunityClients",
+          })}
+        >
+          <OpportunityCaseloadView />
+        </WorkflowsRoute>
+        <WorkflowsRoute
+          exact
+          path={workflowsRoute({
+            routeName: "opportunityAction",
+          })}
+        >
+          <WorkflowsFormLayout />
         </WorkflowsRoute>
         <WorkflowsRoute exact path={WORKFLOWS_PATHS.workflows} />
         <NotFound />

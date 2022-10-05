@@ -35,7 +35,7 @@ import {
   OpportunityType,
 } from "../../WorkflowsStore";
 import { ClientAvatar } from "../Avatar";
-import { workflowsRoute } from "../views";
+import { workflowsUrl } from "../views";
 
 const OpportunityTypeSummaryWrapper = styled.div`
   margin: ${rem(spacing.xxl)} 6rem 4rem 6rem;
@@ -134,7 +134,7 @@ const OpportunityTypeSummary = observer(
             {header.callToAction}
           </OpportunityTypeSummaryCTA>
           <ViewAllLink
-            to={workflowsRoute({ name: opportunityType, client: false })}
+            to={workflowsUrl("opportunityClients", { opportunityType })}
           >
             View all{" "}
             <ViewAllArrow>
