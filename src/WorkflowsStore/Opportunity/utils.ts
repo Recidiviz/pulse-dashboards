@@ -44,29 +44,29 @@ export const generateOpportunityHeader = (
 ): OpportunityHeadersType => {
   const headers = {
     compliantReporting: {
-      eligibilityText: simplur`${count} client[|s] may be eligible for`,
+      eligibilityText: simplur`${count} client[|s] may be eligible for `,
       opportunityText: "Compliant Reporting",
       callToAction:
         "Review and refer eligible clients for Compliant Reporting.",
     },
     earlyTermination: {
-      eligibilityText: simplur`${count} client[|s] may be eligible for`,
+      eligibilityText: simplur`${count} client[|s] may be eligible for `,
       opportunityText: "early termination",
       callToAction:
         "Review clients eligible for early termination and download the paperwork to file with the Court.",
     },
     earnedDischarge: {
-      eligibilityText: simplur`${count} client[|s] may be eligible for`,
+      eligibilityText: simplur`${count} client[|s] may be eligible for `,
       opportunityText: `earned discharge`,
       callToAction: `Review clients who may be eligible for Earned Discharge and complete the request form in CIS.`,
     },
     LSU: {
-      eligibilityText: simplur`${count} client[|s] may be eligible for the`,
+      eligibilityText: simplur`${count} client[|s] may be eligible for the `,
       opportunityText: `Limited Supervision Unit`,
       callToAction: `Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.`,
     },
     pastFTRD: {
-      eligibilityText: simplur`${count} client[|s] ha[s|ve]`,
+      eligibilityText: simplur`${count} client[|s] ha[s|ve] `,
       opportunityText: "passed their full-term release date",
       callToAction:
         "Review clients who are past their full-term release date and email clerical to move them to history.",

@@ -61,6 +61,7 @@ const AvatarInitials = styled(Sans14)<{ size: number }>`
 `;
 
 const formatAvatarText = (text: string, splitName: boolean): string => {
+  if (!text) return "";
   return splitName
     ? text
         .split(" ")

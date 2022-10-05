@@ -147,6 +147,13 @@ export class WorkflowsStore implements Hydratable {
     );
   }
 
+  get hasOpportunities(): boolean {
+    return (
+      this.allOpportunitiesLoaded &&
+      Object.values(this.allValidatedOpportunitiesByType).flat().length > 0
+    );
+  }
+
   /**
    * Performs initial data fetches to enable Workflows functionality and manages loading state.
    * Expects user authentication to already be complete.
@@ -397,21 +404,28 @@ export class WorkflowsStore implements Hydratable {
   get allOpportunitiesLoaded(): boolean {
     // Wait until we have clients until checking that opportunities are loading.
     if (!this.caseloadClients.length) return false;
-    const opportunities: (Opportunity | undefined)[] = [];
 
-    OPPORTUNITY_TYPES.forEach((opportunityType) => {
-      this.caseloadClients.forEach((c) => {
-        opportunities.concat(c.opportunities[opportunityType] || []);
-      });
-    });
     return (
-      opportunities.filter(
-        (opp) => opp?.isLoading === undefined || opp?.isLoading === true
-      ).length === 0
+      this.potentialOpportunities.filter((opp) => !opp.isHydrated).length ===
+        0 && this.selectedOfficerIds.length > 0
     );
   }
 
-  get allOpportunitiesByType(): Record<OpportunityType, Opportunity[]> {
+  get potentialOpportunities(): Opportunity[] {
+    const loadingOpportunities: Opportunity[] = [];
+    OPPORTUNITY_TYPES.forEach((opportunityType) => {
+      const opportunities = this.caseloadClients
+        .map((c) => c.opportunities[opportunityType])
+        .filter((opp): opp is Opportunity => opp !== undefined);
+      loadingOpportunities.concat(opportunities);
+    });
+    return loadingOpportunities;
+  }
+
+  get allValidatedOpportunitiesByType(): Record<
+    OpportunityType,
+    Opportunity[]
+  > {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     OPPORTUNITY_TYPES.forEach((opportunityType) => {
       const opportunities = this.caseloadClients

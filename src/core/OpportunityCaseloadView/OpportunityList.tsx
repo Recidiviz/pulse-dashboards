@@ -18,10 +18,15 @@ import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
+import simplur from "simplur";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { generateOpportunityHeader } from "../../WorkflowsStore";
+import {
+  generateOpportunityHeader,
+  OPPORTUNITY_LABELS,
+} from "../../WorkflowsStore";
+import WorkflowsNoResults from "../WorkflowsNoResults";
 import { ClientListItem } from "./ClientListItem";
 import { Heading, SectionLabelText, SubHeading } from "./styles";
 
@@ -38,47 +43,69 @@ const ClientList = styled.ul`
 export const OpportunityList = observer(() => {
   const {
     workflowsStore: {
+      selectedOfficerIds,
       almostEligibleOpportunities,
       eligibleOpportunities,
+      allOpportunitiesLoaded,
+      hasOpportunities,
       selectedOpportunityType: opportunityType,
     },
   } = useRootStore();
-
   if (!opportunityType) return null;
+
+  const opportunityLabel = OPPORTUNITY_LABELS[opportunityType];
   const eligibleOpps = eligibleOpportunities[opportunityType];
-  if (!eligibleOpps.length) return null;
-
   const almostEligibleOpps = almostEligibleOpportunities[opportunityType];
+  const totalOpps = eligibleOpps.length + almostEligibleOpps.length;
+  const displayInitialState = !selectedOfficerIds.length;
+  const displayOpportunityList = allOpportunitiesLoaded && hasOpportunities;
+  const displayNoResults = allOpportunitiesLoaded && !hasOpportunities;
 
-  const header = generateOpportunityHeader(
-    opportunityType,
-    eligibleOpps.length + almostEligibleOpps.length
-  );
+  const header = generateOpportunityHeader(opportunityType, totalOpps);
 
   return (
     <>
-      <Heading>
-        {header.eligibilityText} {header.opportunityText}
-      </Heading>
-      <SubHeading>{header.callToAction}</SubHeading>
-      <>
-        {almostEligibleOpps.length > 0 && (
-          <SectionLabelText>Eligible now</SectionLabelText>
-        )}
-        <ClientList>
-          {eligibleOpps.map((opportunity) => (
-            <ClientListItem opportunity={opportunity} />
-          ))}
-        </ClientList>
-      </>
-      {almostEligibleOpps.length > 0 && (
+      {displayInitialState && (
+        <WorkflowsNoResults
+          headerText={opportunityLabel}
+          callToActionText={`Search for officers above to review and refer eligible clients for ${opportunityLabel.toLowerCase()}.`}
+        />
+      )}
+
+      {displayNoResults && (
+        <WorkflowsNoResults
+          callToActionText={simplur`None of the clients on the selected ${[
+            selectedOfficerIds.length,
+          ]} officer['s|s'] caseloads are eligible for ${opportunityLabel.toLowerCase()}. Search for another officer.`}
+        />
+      )}
+
+      {displayOpportunityList && (
         <>
-          <SectionLabelText>Almost eligible</SectionLabelText>
-          <ClientList>
-            {almostEligibleOpps.map((opportunity) => (
-              <ClientListItem opportunity={opportunity} />
-            ))}
-          </ClientList>
+          <Heading>
+            {header.eligibilityText} {header.opportunityText}
+          </Heading>
+          <SubHeading>{header.callToAction}</SubHeading>
+          <>
+            {eligibleOpps.length > 0 && almostEligibleOpps.length > 0 && (
+              <SectionLabelText>Eligible now</SectionLabelText>
+            )}
+            <ClientList>
+              {eligibleOpps.map((opportunity) => (
+                <ClientListItem opportunity={opportunity} />
+              ))}
+            </ClientList>
+          </>
+          {almostEligibleOpps.length > 0 && (
+            <>
+              <SectionLabelText>Almost Eligible</SectionLabelText>
+              <ClientList>
+                {almostEligibleOpps.map((opportunity) => (
+                  <ClientListItem opportunity={opportunity} />
+                ))}
+              </ClientList>
+            </>
+          )}
         </>
       )}
     </>

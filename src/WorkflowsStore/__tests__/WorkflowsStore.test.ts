@@ -501,6 +501,26 @@ test("allOpportunitiesLoaded", async () => {
   expect(workflowsStore.allOpportunitiesLoaded).toBeTrue();
 });
 
+describe("hasOpportunities", () => {
+  test("hasOpportunities is false there are no clients loaded", async () => {
+    await waitForHydration();
+    populateClients([]);
+    expect(workflowsStore.hasOpportunities).toBeFalse();
+  });
+
+  test("hasOpportunities is false if no client is eligible", async () => {
+    await waitForHydration();
+    populateClients([ineligibleClient]);
+    expect(workflowsStore.hasOpportunities).toBeFalse();
+  });
+
+  test("hasOpportunities is true if any client is eligible", async () => {
+    await waitForHydration();
+    populateClients(mockClients);
+    expect(workflowsStore.hasOpportunities).toBeTrue();
+  });
+});
+
 // TODO(#2346): Update this test when we are using hydrate interface and validating data
 // test.skip("only approved eligibility categories are surfaced", async () => {
 //   const mockEligibleClients: ClientRecord[] = [

@@ -27,6 +27,7 @@ import { Client } from "../../WorkflowsStore";
 import { ProfileCapsule } from "../ClientCapsule";
 import { SectionLabelText } from "../OpportunityCaseloadView/styles";
 import { workflowsUrl } from "../views";
+import WorkflowsNoResults from "../WorkflowsNoResults";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 
 const CaseloadWrapper = styled.ul`
@@ -59,7 +60,13 @@ export const AllClients = observer(() => {
     workflowsStore: { caseloadClients, selectedOfficerIds },
   } = useRootStore();
 
-  if (!selectedOfficerIds.length) return null;
+  if (!selectedOfficerIds.length)
+    return (
+      <WorkflowsNoResults
+        headerText="All Clients"
+        callToActionText="Search for officer(s) above to view their entire caseload."
+      />
+    );
 
   const caseloads = groupBy(caseloadClients, "officerId");
 

@@ -14,22 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette, Sans18 } from "@recidiviz/design-system";
-import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { useEffect } from "react";
-import styled from "styled-components/macro";
+import React from "react";
+import simplur from "simplur";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { OPPORTUNITY_LABELS, OpportunityType } from "../../WorkflowsStore";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
+import WorkflowsNoResults from "../WorkflowsNoResults";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";
 
-const NoResultsText = styled(Sans18)`
-  color: ${palette.slate70};
-  margin: 0 25%;
-  text-align: center;
-`;
+function getWelcomeText(userName: string | undefined): string {
+  if (!userName) return "Welcome";
+  return `Welcome, ${userName}`;
+}
+
+function getSelectOpportunitiesText(
+  opportunityTypes: OpportunityType[]
+): string {
+  const topTwoOpportunities = opportunityTypes.slice(0, 2);
+  let selectOpportunityText = `${OPPORTUNITY_LABELS[topTwoOpportunities[0]]}`;
+  if (topTwoOpportunities.length > 1) {
+    selectOpportunityText += ` and ${
+      OPPORTUNITY_LABELS[topTwoOpportunities[1]]
+    }`;
+  }
+  return selectOpportunityText;
+}
 
 const WorkflowsHomepage = observer((): React.ReactElement | null => {
   const {
@@ -37,39 +49,34 @@ const WorkflowsHomepage = observer((): React.ReactElement | null => {
       allOpportunitiesLoaded,
       selectedOfficerIds,
       opportunityTypes,
-      allOpportunitiesByType,
+      allValidatedOpportunitiesByType,
+      hasOpportunities,
+      user,
     },
   } = useRootStore();
 
-  const allOpportunities = Object.values(allOpportunitiesByType).flat();
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(
-    autorun(() => {
-      allOpportunities.forEach((opp) => {
-        if (opp?.isLoading === undefined) {
-          opp?.hydrate();
-        }
-      });
-    }),
-    [allOpportunities]
-  );
-
-  const hasOpportunities = allOpportunities.length > 0;
-
-  const displayNoResults =
-    selectedOfficerIds.length && allOpportunitiesLoaded && !hasOpportunities;
+  const welcomeText = getWelcomeText(user?.info.givenNames);
+  const selectOpportunitiesText = getSelectOpportunitiesText(opportunityTypes);
+  const displayInitialState = !selectedOfficerIds.length;
+  const displayNoResults = allOpportunitiesLoaded && !hasOpportunities;
+  const displayOpportunities = allOpportunitiesLoaded && hasOpportunities;
 
   return (
     <WorkflowsNavLayout>
       <CaseloadSelect />
-      {allOpportunitiesLoaded &&
-        hasOpportunities &&
+      {displayInitialState && (
+        <WorkflowsNoResults
+          headerText={welcomeText}
+          callToActionText={`Search for officers above to review and refer eligible clients for 
+          opportunities like ${selectOpportunitiesText}.`}
+        />
+      )}
+      {displayOpportunities &&
         opportunityTypes.map((opportunityType) => {
-          if (allOpportunitiesByType[opportunityType].length) {
+          if (allValidatedOpportunitiesByType[opportunityType].length) {
             return (
               <OpportunityTypeSummary
-                opportunities={allOpportunitiesByType[opportunityType]}
+                opportunities={allValidatedOpportunitiesByType[opportunityType]}
                 opportunityType={opportunityType}
               />
             );
@@ -77,10 +84,12 @@ const WorkflowsHomepage = observer((): React.ReactElement | null => {
           return null;
         })}
       {!!displayNoResults && (
-        <NoResultsText>
-          None of the clients on the selected officer(s) caseloads are eligible
-          for opportunities. Search for another officer.
-        </NoResultsText>
+        <WorkflowsNoResults
+          callToActionText={simplur`None of the clients on the selected ${[
+            selectedOfficerIds.length,
+          ]} officer['s|s'] caseloads are eligible
+        for opportunities. Search for another officer.`}
+        />
       )}
     </WorkflowsNavLayout>
   );
