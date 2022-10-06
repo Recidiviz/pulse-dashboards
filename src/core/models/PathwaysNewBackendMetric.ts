@@ -251,14 +251,10 @@ export default abstract class PathwaysNewBackendMetric<
   protected async fetchNewMetrics(
     params: URLSearchParams
   ): Promise<NewBackendRecord<RecordFormat>> {
-    return this.endpoint &&
-      process.env.REACT_APP_DEPLOY_ENV !== "production" &&
-      process.env.REACT_APP_NEW_BACKEND_API_URL
-      ? callNewMetricsApi(
-          `${this.tenantId}/${this.endpoint}?${params.toString()}`,
-          RootStore.getTokenSilently
-        )
-      : Promise.resolve({});
+    return callNewMetricsApi(
+      `${this.tenantId}/${this.endpoint}?${params.toString()}`,
+      RootStore.getTokenSilently
+    );
   }
 
   /**
