@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { eachMonthOfInterval, startOfMonth, subMonths } from "date-fns";
-import { sumBy } from "lodash";
 import { computed, makeObservable } from "mobx";
 
 import { formatDate } from "../../utils";
@@ -51,7 +50,7 @@ export default class OverTimeMetric extends PathwaysNewBackendMetric<TimeSeriesD
   }
 
   get isEmpty(): boolean {
-    return !sumBy(this.dataSeries, "count");
+    return !this.dataSeries?.length;
   }
 
   static mostRecentDate(records?: TimeSeriesDataRecord[]): Date {

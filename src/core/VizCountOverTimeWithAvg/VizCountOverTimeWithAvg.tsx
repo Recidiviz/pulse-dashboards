@@ -101,7 +101,11 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
   ];
 
   const { maxTickValue, tickValues, ticksMargin } = getTicks(
-    Math.max(...data.map((d) => d.value), ...data.map((d) => d.average))
+    Math.max(
+      ...data.map((d) => d.value),
+      ...data.map((d) => d.average),
+      1 /* ensure at least one tick */
+    )
   );
 
   const yRange = [0, maxTickValue];
