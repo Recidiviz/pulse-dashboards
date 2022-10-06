@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+
+import { isAbortException } from "../../core/utils/exceptions";
+
 /**
  * Validates the response object from fetch and returns the resolved response data.
  * Throws an error if response is not OK (status >= 400)
@@ -32,19 +35,19 @@ async function validateResponse(response) {
   }
 }
 
-async function fetchWithRetry(endpoint, options, retryTimes) {
+async function fetchWithRetry(endpoint, options, retryTimes, signal) {
   try {
-    const response = await fetch(endpoint, options);
+    const response = await fetch(endpoint, { ...options, signal });
     return await validateResponse(response);
   } catch (error) {
-    if (retryTimes === 1) {
+    if (retryTimes === 1 || isAbortException(error)) {
       throw error;
     }
     return fetchWithRetry(endpoint, options, retryTimes - 1);
   }
 }
 
-async function callApi(url, getTokenSilently) {
+async function callApi(url, getTokenSilently, abortSignal) {
   const token = await getTokenSilently();
 
   const retryTimes = 3;
@@ -55,7 +58,8 @@ async function callApi(url, getTokenSilently) {
         Authorization: `Bearer ${token}`,
       },
     },
-    retryTimes
+    retryTimes,
+    abortSignal
   );
 
   return responseJson;
@@ -76,9 +80,9 @@ async function callMetricsApi(endpoint, getTokenSilently) {
  * invoking the given API endpoint. Takes in the |endpoint| as a string and the |getTokenSilently|
  * function, which will be used to authenticate the client against the API.
  */
-async function callNewMetricsApi(endpoint, getTokenSilently) {
+async function callNewMetricsApi(endpoint, getTokenSilently, abortSignal) {
   const url = `${process.env.REACT_APP_NEW_BACKEND_API_URL}/pathways/${endpoint}`;
-  return callApi(url, getTokenSilently);
+  return callApi(url, getTokenSilently, abortSignal);
 }
 
 /**

@@ -42,9 +42,6 @@ const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
 jest.mock("../../../RootStore", () => ({
   getTokenSilently: jest.fn().mockReturnValue("auth token"),
 }));
-global.fetch = jest.fn().mockResolvedValue({
-  blob: () => "blob",
-});
 
 jest.mock("../../../api/metrics/metricsClient", () => {
   return {
@@ -308,7 +305,8 @@ describe("LibertyPopulationSnapshotMetric", () => {
         encodeURI(
           `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6&group=judicial_district`
         ),
-        RootStore.getTokenSilently
+        RootStore.getTokenSilently,
+        expect.any(AbortSignal)
       );
       expect(metric.diffs?.totalDiffs && metric.diffs?.totalDiffs > 0);
     });

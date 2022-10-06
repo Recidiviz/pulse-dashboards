@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { disableFetchMocks, enableFetchMocks } from "jest-fetch-mock";
 import { runInAction } from "mobx";
 
 import { callMetricsApi } from "../../../api/metrics/metricsClient";
@@ -32,9 +33,6 @@ const filtersStore = new FiltersStore({ rootStore: mockCoreStore });
 jest.mock("../../../RootStore", () => ({
   getTokenSilently: jest.fn().mockReturnValue("auth token"),
 }));
-global.fetch = jest.fn().mockResolvedValue({
-  blob: () => "blob",
-});
 
 jest.mock("../../../api/metrics/metricsClient", () => {
   return {
@@ -81,6 +79,11 @@ jest.mock("../../../api/metrics/metricsClient", () => {
 describe("PopulationProjectionOverTimeMetric", () => {
   let metric: PopulationProjectionOverTimeMetric;
 
+  beforeAll(() => {
+    enableFetchMocks();
+    fetchMock.mockResponse("blob");
+  });
+
   beforeEach(() => {
     process.env = Object.assign(process.env, {
       REACT_APP_API_URL: "test-url",
@@ -104,6 +107,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
     jest.resetModules();
     jest.restoreAllMocks();
     jest.resetAllMocks();
+    disableFetchMocks();
     process.env = OLD_ENV;
   });
 
@@ -229,14 +233,14 @@ describe("PopulationProjectionOverTimeMetric", () => {
   });
 
   describe("fetchMethodologyPdf", () => {
-    let pdf: Record<string, string>;
+    let pdf: Record<string, any>;
 
     beforeEach(async () => {
       pdf = await metric.fetchMethodologyPDF();
     });
 
     it("successfully fetches the methodology PDF", () => {
-      expect(fetch).toHaveBeenCalledWith(
+      expect(fetchMock).toHaveBeenCalledWith(
         `test-url/api/${mockTenantId.toLowerCase()}/projections/methodology.pdf`,
         {
           headers: {
@@ -245,11 +249,13 @@ describe("PopulationProjectionOverTimeMetric", () => {
         }
       );
 
-      expect(pdf).toEqual({
-        data: "blob",
-        name: "population_projections_methodology.pdf",
-        type: "binary",
-      });
+      expect(pdf).toEqual(
+        expect.objectContaining({
+          name: "population_projections_methodology.pdf",
+          type: "binary",
+        })
+      );
+      expect(pdf.data.text()).resolves.toBe("blob");
     });
   });
 });

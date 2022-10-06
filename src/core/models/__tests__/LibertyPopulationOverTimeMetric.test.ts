@@ -42,9 +42,6 @@ const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
 jest.mock("../../../RootStore", () => ({
   getTokenSilently: jest.fn().mockReturnValue("auth token"),
 }));
-global.fetch = jest.fn().mockResolvedValue({
-  blob: () => "blob",
-});
 
 jest.mock("../../../api/metrics/metricsClient", () => {
   return {
@@ -242,7 +239,8 @@ describe("LibertyPopulationOverTimeMetric", () => {
         encodeURI(
           `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`
         ),
-        RootStore.getTokenSilently
+        RootStore.getTokenSilently,
+        expect.any(AbortSignal)
       );
       expect(metric.diffs?.totalDiffs && metric.diffs?.totalDiffs > 0);
     });
@@ -279,7 +277,8 @@ describe("LibertyPopulationOverTimeMetric", () => {
         encodeURI(
           `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`
         ),
-        RootStore.getTokenSilently
+        RootStore.getTokenSilently,
+        expect.any(AbortSignal)
       );
       expect(metric.diffs?.totalDiffs === 0);
     });
@@ -297,7 +296,8 @@ describe("LibertyPopulationOverTimeMetric", () => {
           `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
             `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
         ),
-        RootStore.getTokenSilently
+        RootStore.getTokenSilently,
+        expect.any(AbortSignal)
       );
     });
 

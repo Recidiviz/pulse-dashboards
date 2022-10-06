@@ -32,6 +32,7 @@ import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
 import { Filters, PopulationFilterValues } from "../types/filters";
+import { isAbortException } from "../utils/exceptions";
 import {
   getMetricIdsForPage,
   getSectionIdForMetric,
@@ -101,6 +102,8 @@ export default abstract class PathwaysNewBackendMetric<
   error?: Error;
 
   lastUpdated?: Date;
+
+  protected abortController?: AbortController;
 
   constructor({
     id,
@@ -251,9 +254,14 @@ export default abstract class PathwaysNewBackendMetric<
   protected async fetchNewMetrics(
     params: URLSearchParams
   ): Promise<NewBackendRecord<RecordFormat>> {
+    // This could abort requests that have already completed, but that's not a big deal.
+    this.abortController?.abort();
+    this.abortController = new AbortController();
+
     return callNewMetricsApi(
       `${this.tenantId}/${this.endpoint}?${params.toString()}`,
-      RootStore.getTokenSilently
+      RootStore.getTokenSilently,
+      this.abortController.signal
     );
   }
 
@@ -278,11 +286,16 @@ export default abstract class PathwaysNewBackendMetric<
         });
       })
       .catch((e) => {
-        runInAction(() => {
-          this.isLoading = false;
-          this.error = e;
-          this.isHydrated = false;
-        });
+        // Just ignore abort exceptions because it means there is another request active.
+        // This needs to be checked here rather than in fetchNewMetrics, otherwise the empty data
+        // from the aborted request could override the actual data we want.
+        if (!isAbortException(e)) {
+          runInAction(() => {
+            this.isLoading = false;
+            this.error = e;
+            this.isHydrated = false;
+          });
+        }
       });
   }
 

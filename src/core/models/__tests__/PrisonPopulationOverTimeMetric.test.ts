@@ -36,9 +36,6 @@ const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
 jest.mock("../../../RootStore", () => ({
   getTokenSilently: jest.fn().mockReturnValue("auth token"),
 }));
-global.fetch = jest.fn().mockResolvedValue({
-  blob: () => "blob",
-});
 
 jest.mock("../../../api/metrics/metricsClient", () => {
   return {

@@ -37,9 +37,6 @@ const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
 jest.mock("../../../RootStore", () => ({
   getTokenSilently: jest.fn().mockReturnValue("auth token"),
 }));
-global.fetch = jest.fn().mockResolvedValue({
-  blob: () => "blob",
-});
 
 jest.mock("../../../api/metrics/metricsClient", () => {
   return {
@@ -136,7 +133,8 @@ describe("PersonLevelMetric", () => {
       encodeURI(
         `${mockTenantId}/PrisonPopulationPersonLevel?filters[time_period]=months_0_6`
       ),
-      RootStore.getTokenSilently
+      RootStore.getTokenSilently,
+      expect.any(AbortSignal)
     );
   });
 
@@ -178,7 +176,8 @@ describe("PersonLevelMetric", () => {
         `${mockTenantId}/PrisonPopulationPersonLevel?filters[time_period]=months_0_6` +
           `&filters[gender]=MALE&filters[facility]=Bedrock`
       ),
-      RootStore.getTokenSilently
+      RootStore.getTokenSilently,
+      expect.any(AbortSignal)
     );
   });
 

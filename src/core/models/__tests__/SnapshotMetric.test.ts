@@ -15,57 +15,56 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { waitFor } from "@testing-library/dom";
+import { disableFetchMocks, enableFetchMocks } from "jest-fetch-mock";
 import { runInAction } from "mobx";
 
-import { callNewMetricsApi } from "../../../api/metrics/metricsClient";
-import RootStore from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
 import { FILTER_TYPES } from "../../utils/constants";
+import { isAbortException } from "../../utils/exceptions";
 import SnapshotMetric from "../SnapshotMetric";
 
 const OLD_ENV = process.env;
 
 const mockTenantId = "US_TN";
-const mockRootStore = {
-  userStore: {} as UserStore,
-  tenantStore: { currentTenantId: mockTenantId } as TenantStore,
-};
-const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
-
-global.fetch = jest.fn().mockResolvedValue({
-  blob: () => "blob",
-});
-
-jest.mock("../../../api/metrics/metricsClient", () => {
-  return {
-    callNewMetricsApi: jest.fn().mockResolvedValue({
-      data: [
-        {
-          judicialDistrict: "1",
-          count: 150,
-        },
-        {
-          judicialDistrict: "2",
-          count: 100,
-        },
-      ],
-      metadata: {
-        lastUpdated: "2022-01-01",
-      },
-    }),
-  };
-});
+const BASE_URL = `http://localhost:5000/pathways/${mockTenantId}/LibertyToPrisonTransitionsCount`;
 
 describe("SnapshotMetric", () => {
   let metric: SnapshotMetric;
 
+  beforeAll(() => {
+    enableFetchMocks();
+  });
+
   beforeEach(() => {
+    const mockRootStore = {
+      userStore: {} as UserStore,
+      tenantStore: { currentTenantId: mockTenantId } as TenantStore,
+    };
+    const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
     process.env = Object.assign(process.env, {
       REACT_APP_DEPLOY_ENV: "dev",
       REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
     });
+    fetchMock.mockResponse(
+      JSON.stringify({
+        data: [
+          {
+            judicialDistrict: "1",
+            count: 150,
+          },
+          {
+            judicialDistrict: "2",
+            count: 100,
+          },
+        ],
+        metadata: {
+          lastUpdated: "2022-01-01",
+        },
+      })
+    );
     mockCoreStore.setPage("libertyToPrison");
     mockCoreStore.setSection("countByLocation");
     mockCoreStore.filtersStore.resetFilters();
@@ -83,26 +82,26 @@ describe("SnapshotMetric", () => {
         ],
       },
     });
-
     metric.hydrate();
   });
 
   afterEach(() => {
     process.env = OLD_ENV;
+    fetchMock.resetMocks();
   });
 
   afterAll(() => {
     jest.resetModules();
     jest.restoreAllMocks();
     jest.resetAllMocks();
+    disableFetchMocks();
   });
 
   it("fetches metrics when initialized", () => {
-    expect(callNewMetricsApi).toHaveBeenCalledWith(
+    expect(fetchMock.mock.calls[0][0]).toEqual(
       encodeURI(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6&group=judicial_district`
-      ),
-      RootStore.getTokenSilently
+        `${BASE_URL}?filters[time_period]=months_0_6&group=judicial_district`
+      )
     );
   });
 
@@ -121,6 +120,10 @@ describe("SnapshotMetric", () => {
       };
     });
 
+    const mockRootStore = {
+      userStore: {} as UserStore,
+      tenantStore: { currentTenantId: mockTenantId } as TenantStore,
+    };
     metric = new SnapshotMetric({
       id: "libertyToPrisonPopulationByDistrict",
       rootStore: new CoreStore(mockRootStore),
@@ -132,7 +135,7 @@ describe("SnapshotMetric", () => {
     expect(metric.isEmpty).toEqual(true);
   });
 
-  it("calls the backend again when filters change", () => {
+  it("calls the backend again when filters change", async () => {
     runInAction(() => {
       metric.rootStore?.filtersStore.setFilters({
         gender: ["MALE"],
@@ -140,17 +143,18 @@ describe("SnapshotMetric", () => {
       });
     });
 
-    expect(callNewMetricsApi).toHaveBeenCalledWith(
+    // Add `waitFor` to give time for all calls to actually be made before we check
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    expect(fetchMock.mock.calls[1][0]).toEqual(
       encodeURI(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
+        `${BASE_URL}?filters[time_period]=months_0_6` +
           `&filters[gender]=MALE&filters[age_group]=25-29&filters[age_group]=30-34` +
           `&group=judicial_district`
-      ),
-      RootStore.getTokenSilently
+      )
     );
   });
 
-  it("does not filter on the group by value", () => {
+  it("does not filter on the group by value", async () => {
     runInAction(() => {
       metric.rootStore?.filtersStore.setFilters({
         gender: ["MALE"],
@@ -158,12 +162,12 @@ describe("SnapshotMetric", () => {
       });
     });
 
-    expect(callNewMetricsApi).toHaveBeenCalledWith(
+    // Add `waitFor` to give time for all calls to actually be made before we check
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    expect(fetchMock.mock.calls[1][0]).toEqual(
       encodeURI(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&group=judicial_district`
-      ),
-      RootStore.getTokenSilently
+        `${BASE_URL}?filters[time_period]=months_0_6&filters[gender]=MALE&group=judicial_district`
+      )
     );
   });
 
@@ -177,6 +181,95 @@ describe("SnapshotMetric", () => {
       {
         judicialDistrict: "2",
         count: 100,
+        populationProportion: "40",
+      },
+    ]);
+  });
+
+  it("aborts in-progress requests and keeps the value from the final request", async () => {
+    fetchMock.resetMocks();
+    fetchMock
+      // Slow request
+      .mockResponseOnce(
+        () =>
+          new Promise((resolve) =>
+            setTimeout(
+              () =>
+                resolve({
+                  body: JSON.stringify({
+                    data: [
+                      {
+                        judicialDistrict: "1",
+                        count: 50,
+                      },
+                      {
+                        judicialDistrict: "2",
+                        count: 100,
+                      },
+                    ],
+                    metadata: {
+                      lastUpdated: "2022-01-01",
+                    },
+                  }),
+                }),
+              1000
+            )
+          )
+      )
+      // Fast request
+      .mockResponseOnce(
+        JSON.stringify({
+          data: [
+            {
+              judicialDistrict: "1",
+              count: 270,
+            },
+            {
+              judicialDistrict: "2",
+              count: 180,
+            },
+          ],
+          metadata: {
+            lastUpdated: "2022-01-01",
+          },
+        })
+      );
+    // Trigger the slow request
+    runInAction(() => {
+      metric.rootStore?.filtersStore.setFilters({
+        gender: ["MALE"],
+      });
+    });
+
+    // Trigger the fast request
+    runInAction(() => {
+      metric.rootStore?.filtersStore.setFilters({
+        gender: ["FEMALE"],
+      });
+    });
+
+    // Add `waitFor` to give time for all calls to actually be made before we check
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    expect(fetchMock.mock.calls[0][0]).toEqual(
+      encodeURI(
+        `${BASE_URL}?filters[time_period]=months_0_6&filters[gender]=MALE&group=judicial_district`
+      )
+    );
+    expect(fetchMock.mock.calls[1][0]).toEqual(
+      encodeURI(
+        `${BASE_URL}?filters[time_period]=months_0_6&filters[gender]=FEMALE&group=judicial_district`
+      )
+    );
+    expect(isAbortException(fetchMock.mock.results[0].value)).toBe(true);
+    expect(metric.dataSeries).toEqual([
+      {
+        judicialDistrict: "1",
+        count: 270,
+        populationProportion: "60",
+      },
+      {
+        judicialDistrict: "2",
+        count: 180,
         populationProportion: "40",
       },
     ]);

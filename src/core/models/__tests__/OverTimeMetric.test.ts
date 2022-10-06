@@ -34,10 +34,6 @@ const mockRootStore = {
   tenantStore: { currentTenantId: mockTenantId } as TenantStore,
 };
 
-global.fetch = jest.fn().mockResolvedValue({
-  blob: () => "blob",
-});
-
 jest.mock("../../../api/metrics/metricsClient", () => {
   return {
     callNewMetricsApi: jest.fn().mockResolvedValue({
@@ -121,7 +117,8 @@ describe("OverTimeMetric", () => {
       encodeURI(
         `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`
       ),
-      RootStore.getTokenSilently
+      RootStore.getTokenSilently,
+      expect.any(AbortSignal)
     );
   });
 
@@ -188,7 +185,8 @@ describe("OverTimeMetric", () => {
         `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
           `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
       ),
-      RootStore.getTokenSilently
+      RootStore.getTokenSilently,
+      expect.any(AbortSignal)
     );
   });
 
@@ -212,7 +210,8 @@ describe("OverTimeMetric", () => {
         `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
           `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
       ),
-      RootStore.getTokenSilently
+      RootStore.getTokenSilently,
+      expect.any(AbortSignal)
     );
   });
 
@@ -236,7 +235,8 @@ describe("OverTimeMetric", () => {
         `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
           `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
       ),
-      RootStore.getTokenSilently
+      RootStore.getTokenSilently,
+      expect.any(AbortSignal)
     );
   });
 
@@ -258,7 +258,8 @@ describe("OverTimeMetric", () => {
         `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
           `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
       ),
-      RootStore.getTokenSilently
+      RootStore.getTokenSilently,
+      expect.any(AbortSignal)
     );
   });
 
