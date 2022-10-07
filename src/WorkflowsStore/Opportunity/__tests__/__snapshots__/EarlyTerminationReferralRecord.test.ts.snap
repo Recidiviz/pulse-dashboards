@@ -1,43 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`fallback to legacy format 1`] = `
-Object {
-  "criteria": Object {
-    "usNdImpliedValidEarlyTerminationSentenceType": Object {
-      "supervisionType": "PROBATION",
-    },
-    "usNdImpliedValidEarlyTerminationSupervisionLevel": Object {
-      "supervisionLevel": "MEDIUM",
-    },
-    "usNdNotInActiveRevocationStatus": Object {
-      "revocationDate": undefined,
-    },
-  },
-  "externalId": "abc123",
-  "formInformation": Object {
-    "clientName": "Firstname Lastname",
-    "convictionCounty": "Bloom",
-    "crimeNames": Array [
-      "Crime1",
-      "crime2",
-    ],
-    "criminalNumber": "123456",
-    "judgeName": "Judgename",
-    "judicialDistrictCode": "XX",
-    "priorCourtDate": 2022-01-01T00:00:00.000Z,
-    "probationExpirationDate": 2024-05-01T00:00:00.000Z,
-    "probationOfficerFullName": "Fakename Officername",
-    "sentenceLengthYears": 2,
-  },
-  "metadata": Object {
-    "ICOut": false,
-    "multipleSentences": false,
-    "outOfState": false,
-  },
-  "stateCode": "US_OZ",
-}
-`;
-
 exports[`transform record 1`] = `
 Object {
   "criteria": Object {

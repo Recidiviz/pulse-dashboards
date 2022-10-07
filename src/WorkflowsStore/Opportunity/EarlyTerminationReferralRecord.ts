@@ -99,48 +99,16 @@ export const transformReferral: TransformFunction<EarlyTerminationReferralRecord
     sentenceLengthYears
   );
 
-  if (criteria) {
-    transformedRecord.criteria.supervisionPastEarlyDischargeDate = {
-      eligibleDate: fieldToDate(
-        criteria.supervisionPastEarlyDischargeDate.eligibleDate
-      ),
-    };
-    transformedRecord.criteria.usNdNotInActiveRevocationStatus = {
-      revocationDate: optionalFieldToDate(
-        criteria.usNdNotInActiveRevocationStatus.revocationDate
-      ),
-    };
-  } else {
-    // TODO(#2394): remove this fallback
-    const transformedCriteria: EarlyTerminationReferralRecord["criteria"] = {};
-
-    reasons.forEach(({ criteriaName, reason }: any) => {
-      switch (criteriaName) {
-        case "SUPERVISION_PAST_EARLY_DISCHARGE_DATE":
-          transformedCriteria.supervisionPastEarlyDischargeDate = {
-            eligibleDate: reason.eligibleDate
-              ? fieldToDate(reason.eligibleDate)
-              : undefined,
-          };
-          break;
-        case "US_ND_NOT_IN_ACTIVE_REVOCATION_STATUS":
-          transformedCriteria.usNdNotInActiveRevocationStatus = {
-            revocationDate: reason.revocationDate
-              ? fieldToDate(reason.revocationDate)
-              : undefined,
-          };
-          break;
-        case "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SUPERVISION_LEVEL":
-          transformedCriteria.usNdImpliedValidEarlyTerminationSupervisionLevel = reason;
-          break;
-        case "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SENTENCE_TYPE":
-          transformedCriteria.usNdImpliedValidEarlyTerminationSentenceType = reason;
-          break;
-        default:
-      }
-    });
-    transformedRecord.criteria = transformedCriteria;
-  }
+  transformedRecord.criteria.supervisionPastEarlyDischargeDate = {
+    eligibleDate: fieldToDate(
+      criteria.supervisionPastEarlyDischargeDate.eligibleDate
+    ),
+  };
+  transformedRecord.criteria.usNdNotInActiveRevocationStatus = {
+    revocationDate: optionalFieldToDate(
+      criteria.usNdNotInActiveRevocationStatus.revocationDate
+    ),
+  };
 
   return transformedRecord as EarlyTerminationReferralRecord;
 };
