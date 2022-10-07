@@ -110,7 +110,15 @@ export const LSUEarnedDishcargeCommonRequirementsMet = (
   }
 
   if (!some(negativeUaWithin90Days?.latestUaResults)) {
-    requirements.push(LSU_CRITERIA.negativeUaWithin90Days);
+    // TODO(#2468): Reassess how to indicate no UA required
+    if (negativeUaWithin90Days.latestUaDates.length === 0) {
+      requirements.push({
+        text: "No UA needed",
+        tooltip: LSU_CRITERIA.negativeUaWithin90Days.tooltip,
+      });
+    } else {
+      requirements.push(LSU_CRITERIA.negativeUaWithin90Days);
+    }
   }
 
   if (noFelonyWithin24Months?.latestFelonyConvictions.length === 0) {

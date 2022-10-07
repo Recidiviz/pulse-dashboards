@@ -94,3 +94,33 @@ describe("fully eligible", () => {
     expect(opp.requirementsMet).toMatchSnapshot();
   });
 });
+
+describe("no UA required", () => {
+  beforeEach(() => {
+    createTestUnit(LSUEligibleClientRecord);
+
+    [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+    referralSub.isLoading = false;
+    const record = LSUReferralRecordFixture;
+    record.criteria.negativeUaWithin90Days = {
+      latestUaDates: [],
+      latestUaResults: [],
+    };
+    referralSub.data = record;
+
+    [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+    updatesSub.isLoading = false;
+  });
+
+  test("rank by status", () => {
+    expect(opp.rank).toBe(0);
+  });
+
+  test("requirements almost met", () => {
+    expect(opp.requirementsAlmostMet).toEqual([]);
+  });
+
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+  });
+});
