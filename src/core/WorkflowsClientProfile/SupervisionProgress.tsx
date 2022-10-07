@@ -82,12 +82,11 @@ const TimelineChart = styled.svg`
 `;
 
 const TimelineSentence = styled.line`
-  stroke: ${palette.data.gold1};
   stroke-width: ${rem(1)};
 `;
 
 const TimelineToday = styled.circle`
-  fill: ${palette.data.gold1};
+  r: ${rem(4.5)};
 `;
 
 function formatDateRange(start: Date, end: Date): string {
@@ -127,6 +126,8 @@ export const SupervisionProgress = ({
     return <Supervision client={client} />;
 
   const today = startOfDay(new Date());
+  const expired = expirationDate < today;
+
   const timelinePosition = scaleTime()
     .domain([
       supervisionStartDate,
@@ -134,6 +135,9 @@ export const SupervisionProgress = ({
       Math.max(expirationDate.valueOf(), today.valueOf()),
     ])
     .range([0, 100]);
+
+  const timelineOffset =
+    timelinePosition(today) - timelinePosition(expirationDate);
 
   return (
     <Wrapper>
@@ -152,19 +156,46 @@ export const SupervisionProgress = ({
 
       <TimelineChart>
         <TimelineSentence
+          stroke={palette.data.gold1}
           x1={0}
-          x2={`${timelinePosition(expirationDate)}%`}
+          x2={`${timelinePosition(expirationDate) - (expired ? 0.5 : 0)}%`}
           y1="50%"
           y2="50%"
         />
+        {expired && (
+          <>
+            <TimelineSentence
+              stroke={palette.slate80}
+              x1={`${timelinePosition(expirationDate)}%`}
+              x2={`${timelinePosition(expirationDate)}%`}
+              y1="0%"
+              y2="100%"
+            />
+            <TimelineSentence
+              stroke={palette.signal.error}
+              x1={`${timelinePosition(expirationDate) + 0.5}%`}
+              x2={`${timelinePosition(today)}%`}
+              y1="50%"
+              y2="50%"
+            />
+          </>
+        )}
         <TimelineToday
+          fill={expired ? palette.signal.error : palette.data.gold1}
           cx={`${timelinePosition(today)}%`}
           cy="50%"
-          r={rem(4.5)}
         />
       </TimelineChart>
 
-      <TimelineDates style={{ width: `${timelinePosition(expirationDate)}%` }}>
+      <TimelineDates
+        style={{
+          width: `${
+            expired && timelineOffset > 10
+              ? timelinePosition(expirationDate) + timelinePosition(today) / 10
+              : timelinePosition(expirationDate)
+          }%`,
+        }}
+      >
         <div>
           Start: <span>{formatWorkflowsDate(supervisionStartDate)}</span>
         </div>
