@@ -31,10 +31,6 @@ export interface PastFTRDReferralRecord {
   };
 }
 
-export type PastFTRDDraftData = {
-  clientName: string;
-};
-
 export const transformReferral: TransformFunction<PastFTRDReferralRecord> = (
   record
 ) => {
