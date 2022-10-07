@@ -241,6 +241,26 @@ Example usage:
 
 The Firebase emulator has its own set of fixtures that it automatically imports when starting up; to change those fixtures, edit the fixture files in `tools/fixtures` and then run `yarn update-workflows-fixture`.
 
+### Running the Frontend and Backend together in Offline mode with the new Pathways backend
+
+When working on metrics that use the new Pathways backend, you can run a new backend in offline mode by running `yarn offline:be` (this is temporary until we have ironed out all the kinks- eventually, `yarn offline` will be able to do this).
+
+Before running this, first follow the same steps from the above section on offline mode. Then:
+
+- If you do not already have Docker installed, install it from <https://www.docker.com/products/docker-desktop>
+- If you use a Mac, you may need to turn off AirPlay Receiver in System Preferences --> Sharing in order to make port 5000 available.
+- Configure docker authentication by running `gcloud auth configure-docker us-docker.pkg.dev`
+
+Run `yarn offline:be`, which runs the necessary containers for the new backend and its databases. The output from the backend docker container will be interspersed with the output from the other services that start up (redis, emulators, etc.) Once the server starts up, it will import fixture data from `server/core/demo_data` into a PostgreSQL database that the backend reads from. If fixture data changes during development, the server will restart and re-import the data. Because of the way Flask works, this import happens twice when you run `yarn offline:be`, but only once if fixture files change while it's running.
+
+It is possible that the frontend finishes loading before the backend has finished setting up. If that happens, you may see a "no data available" indicator in the frontend and/or failed requests in the console. To fix this, wait for the container output to display the message "finished initializing pathways database" and refresh the page (this should take no more than a minute).
+
+To generate new fixture data, run `./tools/generate_pathways_fixtures.sh`.
+
+To load fixture data from a GCS bucket, run `gsutil -m cp "gs://$BUCKET_NAME/US_OZ/*.csv" ./server/core/demo_data/`.
+
+To swap out the backend for a specific metric, set its id to "OLD" or "NEW in the development `metricBackendOverrides` section in [flags.js](https://github.com/Recidiviz/pulse-dashboards/blob/main/src/flags.js). To swap out the backend for all supported metrics, change the `defaultMetricBackend` to "OLD" or "NEW".
+
 ## Deploys
 
 As noted above, the Dashboard is two components: a React frontend and a Node/Express backend providing a thin API. The app can be run locally, in staging, in demo, and in production. Deploying to demo, staging and production are very similar, as described below.

@@ -36,6 +36,8 @@
     "demo": "npm-run-all --parallel spa:demo server:demo",
     "server:offline": "env-cmd -e offline npm-run-all --parallel server redis-server firebase-emulator",
     "offline": "env-cmd -e offline npm-run-all --parallel spa:offline server redis-server firebase-emulator",
+    "pathways-backend": "sh tools/run_pathways_backend.sh",
+    "offline:be": "npm-run-all --parallel pathways-backend offline",
     "sync-content": "env-cmd -e sync-content ts-node tools/syncContentFromSheets.ts && prettier --write src/core/content/*",
     "firebase-emulator": "firebase --project=demo-dev emulators:start --import firestore-config/emulator-fixtures",
     "update-workflows-fixture": "firebase emulators:exec --project=demo-dev --only firestore --export-on-exit firestore-config/emulator-fixtures 'NODE_OPTIONS=\"--unhandled-rejections=strict\" ts-node tools/workflowsFixtures.ts'",

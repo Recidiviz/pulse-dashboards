@@ -28,6 +28,7 @@ import {
 
 import { callNewMetricsApi } from "../../api/metrics/metricsClient";
 import RootStore from "../../RootStore";
+import { isOfflineMode } from "../../utils/isOfflineMode";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
@@ -119,7 +120,7 @@ export default abstract class PathwaysNewBackendMetric<
     this.id = id;
     this.endpoint = endpoint;
     this.rootStore = rootStore;
-    this.tenantId = rootStore.currentTenantId;
+    this.tenantId = isOfflineMode() ? undefined : rootStore.currentTenantId;
     this.filters = filters ?? rootStore.filtersStore.enabledFilters[id];
     this.enableMetricModeToggle = enableMetricModeToggle;
     this.isHorizontal = isHorizontal;
@@ -212,7 +213,7 @@ export default abstract class PathwaysNewBackendMetric<
   abstract get isEmpty(): boolean;
 
   get content(): MetricContent {
-    return getMetricCopy(this.rootStore?.currentTenantId)[this.id];
+    return getMetricCopy(this.tenantId)[this.id];
   }
 
   get chartTitle(): string {
@@ -240,9 +241,8 @@ export default abstract class PathwaysNewBackendMetric<
    * Page methodology + metric methodology.
    */
   get methodology(): (PageContent | MetricContent)[] {
-    if (!this.rootStore?.currentTenantId) return [];
-    const methodology = getMethodologyCopy(this.rootStore.currentTenantId)
-      .system;
+    if (!this.tenantId) return [];
+    const methodology = getMethodologyCopy(this.tenantId).system;
     if (!methodology?.metricCopy || !methodology?.pageCopy) return [];
 
     return [
@@ -258,8 +258,9 @@ export default abstract class PathwaysNewBackendMetric<
     this.abortController?.abort();
     this.abortController = new AbortController();
 
+    const stateCode = isOfflineMode() ? "US_OZ" : this.tenantId;
     return callNewMetricsApi(
-      `${this.tenantId}/${this.endpoint}?${params.toString()}`,
+      `${stateCode}/${this.endpoint}?${params.toString()}`,
       RootStore.getTokenSilently,
       this.abortController.signal
     );
