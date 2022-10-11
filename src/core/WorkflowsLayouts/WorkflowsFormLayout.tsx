@@ -29,7 +29,9 @@ import RecidivizLogo from "../RecidivizLogo";
 import { PATHWAYS_VIEWS } from "../views";
 import { CompliantReportingClientProfile } from "../WorkflowsClientProfile";
 import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTerminationClientProfile";
+import { EarnedDischargeClientProfile } from "../WorkflowsClientProfile/EarnedDischargeClientProfile";
 import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
+import { PastFTRDClientProfile } from "../WorkflowsClientProfile/PastFTRDClientProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 
@@ -45,7 +47,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
     formContents: <WorkflowsEarlyTerminationForm />,
   },
   earnedDischarge: {
-    sidebarContents: <div />,
+    sidebarContents: <EarnedDischargeClientProfile />,
     formContents: <div />,
   },
   LSU: {
@@ -53,7 +55,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
     formContents: <div />,
   },
   pastFTRD: {
-    sidebarContents: <div />,
+    sidebarContents: <PastFTRDClientProfile />,
     formContents: <div />,
   },
 };

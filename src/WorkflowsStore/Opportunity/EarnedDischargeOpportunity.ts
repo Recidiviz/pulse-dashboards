@@ -20,7 +20,10 @@ import { computed, makeObservable } from "mobx";
 import { Client } from "../Client";
 import { OpportunityValidationError } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
-import { EarnedDischargeReferralRecord } from "./EarnedDischargeReferralRecord";
+import {
+  EarnedDischargeReferralRecord,
+  transformReferral,
+} from "./EarnedDischargeReferralRecord";
 import {
   LSU_EARNED_DISCHARGE_COMMON_CRITERIA,
   LSUEarnedDishcargeCommonRequirementsMet,
@@ -59,7 +62,7 @@ const CRITERIA: Record<
 
 class EarnedDischargeOpportunity extends OpportunityBase<EarnedDischargeReferralRecord> {
   constructor(client: Client) {
-    super(client, "earnedDischarge");
+    super(client, "earnedDischarge", transformReferral);
 
     makeObservable(this, {
       requirementsMet: computed,
