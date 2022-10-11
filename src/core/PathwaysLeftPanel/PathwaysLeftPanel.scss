@@ -21,7 +21,6 @@
 $pathways-left-panel-width: 23rem;
 
 .PathwaysLeftPanel {
-  min-width: $pathways-left-panel-width;
   width: $pathways-left-panel-width;
   margin: 0 4.5rem;
   position: sticky;
@@ -43,11 +42,11 @@ $pathways-left-panel-width: 23rem;
   }
 
   @media screen and (max-width: $core-breakpoint-ml) {
-    min-width: $pathways-left-panel-width - 2rem;
+    width: $pathways-left-panel-width - 2rem;
   }
 
   @media screen and (max-width: $core-breakpoint-md) {
-    min-width: $pathways-left-panel-width - 5rem;
+    width: $pathways-left-panel-width - 5rem;
   }
 
   @media screen and (max-width: $core-breakpoint-sm) {

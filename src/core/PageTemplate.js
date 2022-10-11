@@ -32,7 +32,7 @@ const PageTemplate = ({
 }) => (
   <div className="PageTemplate">
     {mobileNavigation}
-    <div className="PageTemplate__left-panel">{leftPanel}</div>
+    {leftPanel && <div className="PageTemplate__left-panel">{leftPanel}</div>}
     <div className="PageTemplate__body">
       {filters}
       <div className="row gap-20 pos-r">

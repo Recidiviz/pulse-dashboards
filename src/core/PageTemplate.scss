@@ -30,10 +30,14 @@
   &__body {
     display: flex;
     flex-flow: column;
-    width: calc(100% - 30rem);
+    width: 70vw;
     padding-bottom: 1rem;
     padding-left: 4.5rem;
     padding-right: 5rem;
+
+    &:only-child {
+      width: 100%;
+    }
 
     & > .Sticky {
       position: unset !important;

@@ -27,7 +27,7 @@ import {
 import { TableColumns } from "../types/charts";
 
 export const defaultTableColumnsWidths = {
-  name: 150,
+  name: 180,
   id: 100,
   gender: 100,
   age: 80,
