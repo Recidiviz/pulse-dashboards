@@ -70,7 +70,8 @@ const DisabledMenuList = ({
 type SelectOption = { label: string; value: string };
 
 const buildSelectOption = (officer: StaffRecord): SelectOption => {
-  return { label: officer.name, value: officer.id };
+  const name = `${officer.givenNames} ${officer.surname}`.trim();
+  return { label: name, value: officer.id };
 };
 
 const DistrictIndicator = observer(() => {

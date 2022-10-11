@@ -20,7 +20,6 @@ import { staffNameComparator } from "../utils";
 test("staffNameComparator", () => {
   const sortableStaff: StaffRecord[] = [
     {
-      name: "John Doe",
       id: "1",
       stateCode: "us_xx",
       email: null,
@@ -29,7 +28,6 @@ test("staffNameComparator", () => {
       surname: "Doe",
     },
     {
-      name: "Jane Doe",
       id: "2",
       stateCode: "us_xx",
       email: null,
@@ -38,7 +36,6 @@ test("staffNameComparator", () => {
       surname: "Doe",
     },
     {
-      name: "Chad Doe-Adams",
       id: "3",
       stateCode: "us_xx",
       email: null,
@@ -47,7 +44,6 @@ test("staffNameComparator", () => {
       surname: "Doe-Adams",
     },
     {
-      name: "Bob Adams-Doe",
       id: "4",
       stateCode: "us_xx",
       email: null,
@@ -56,7 +52,6 @@ test("staffNameComparator", () => {
       surname: "Adams-Doe",
     },
     {
-      name: "Brad Collins (Doe)",
       id: "4",
       stateCode: "us_xx",
       email: null,
@@ -67,7 +62,9 @@ test("staffNameComparator", () => {
   ];
 
   const sortedStaff = sortableStaff.sort(staffNameComparator);
-  expect(sortedStaff.map((s) => s.name)).toEqual([
+  expect(
+    sortedStaff.map((s) => `${s.givenNames} ${s.surname}`.trim())
+  ).toEqual([
     "Bob Adams-Doe",
     "Brad Collins (Doe)",
     "Jane Doe",

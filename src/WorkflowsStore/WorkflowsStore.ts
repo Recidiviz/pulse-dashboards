@@ -178,7 +178,6 @@ export class WorkflowsStore implements Hydratable {
         userRecord = {
           info: {
             id: "RECIDIVIZ",
-            name: "Recidiviz Staff",
             email,
             stateCode: currentTenantId,
             hasCaseload: false,

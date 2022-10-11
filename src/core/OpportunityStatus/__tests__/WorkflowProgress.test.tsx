@@ -32,7 +32,9 @@ beforeEach(() => {
 
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
-      availableOfficers: [{ name: "Test User", email: "test@example.gov" }],
+      availableOfficers: [
+        { givenNames: "Test", surname: "User", email: "test@example.gov" },
+      ],
     },
   });
 });

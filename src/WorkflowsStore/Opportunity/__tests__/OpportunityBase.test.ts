@@ -66,7 +66,6 @@ function createTestUnit() {
       givenNames: "",
       hasCaseload: false,
       id: "abc123",
-      name: "",
       surname: "",
     },
   };

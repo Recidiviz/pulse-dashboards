@@ -22,7 +22,6 @@ export const mockOfficer: CombinedUserRecord = {
   info: {
     id: "OFFICER1",
     district: "DISTRICT 1",
-    name: "Test Officer",
     stateCode: "US_XX",
     email: "test-officer@example.com",
     hasCaseload: true,
@@ -35,7 +34,6 @@ export const mockSupervisor: CombinedUserRecord = {
   info: {
     id: "SUPERVISOR1",
     district: "DISTRICT 1",
-    name: "Test Supervisor",
     stateCode: "US_XX",
     email: "test-supervisor@example.com",
     hasCaseload: false,
@@ -47,7 +45,6 @@ export const mockSupervisor: CombinedUserRecord = {
 export const mockDirector: CombinedUserRecord = {
   info: {
     id: "DIRECTOR1",
-    name: "Test Director",
     stateCode: "US_XX",
     email: "test-director@example.com",
     hasCaseload: false,
@@ -122,7 +119,6 @@ export const mockClients = [ineligibleClient, eligibleClient];
 
 export const mockOfficers: StaffRecord[] = [
   {
-    name: "Foo Fakename",
     id: "OFFICER2",
     stateCode: mockOfficer.info.stateCode,
     district: "1",
@@ -132,7 +128,6 @@ export const mockOfficers: StaffRecord[] = [
     surname: "Fakename",
   },
   {
-    name: "Bar Realname",
     id: "OFFICER3",
     stateCode: mockOfficer.info.stateCode,
     district: "1",

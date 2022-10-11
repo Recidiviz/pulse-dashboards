@@ -35,15 +35,15 @@ const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
 
   if (!officerId && !officerEmail) return null;
 
-  return (
-    <span>
-      {availableOfficers.find((o) => {
-        return officerId ? o.id === officerId : o.email === officerEmail;
-      })?.name ??
-        officerId ??
-        officerEmail}
-    </span>
-  );
+  const officer = availableOfficers.find((o) => {
+    return officerId ? o.id === officerId : o.email === officerEmail;
+  });
+  const officerFullName =
+    officer === undefined
+      ? ""
+      : `${officer.givenNames} ${officer.surname}`.trim();
+
+  return <span>{officerFullName ?? officerId ?? officerEmail}</span>;
 };
 
 export default observer(WorkflowsOfficerName);
