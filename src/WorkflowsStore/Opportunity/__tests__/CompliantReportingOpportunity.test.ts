@@ -33,12 +33,12 @@ import {
   compliantReportingEligibleClientRecord,
   compliantReportingReferralRecord,
 } from "../__fixtures__";
+import type { CompliantReportingOpportunity } from "../CompliantReportingOpportunity";
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,
   INCOMPLETE_FORM_UPDATE,
 } from "../testUtils";
-import { CompliantReportingOpportunity } from "../types";
 
 jest.mock("../../subscriptions");
 
@@ -294,6 +294,8 @@ test("fetch CompliantReportingReferral uses recordId", async () => {
 
   expect(CollectionDocumentSubscriptionMock).toHaveBeenCalledWith(
     "compliantReportingReferrals",
-    compliantReportingEligibleClientRecord.recordId
+    compliantReportingEligibleClientRecord.recordId,
+    undefined,
+    expect.any(Function)
   );
 });

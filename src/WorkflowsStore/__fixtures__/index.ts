@@ -109,10 +109,10 @@ export const eligibleClient: ClientRecord = {
   currentBalance: 221.88,
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
   compliantReportingEligible: true,
-  earlyTerminationEligible: true,
-  earnedDischargeEligible: true,
-  LSUEligible: true,
-  pastFTRDEligible: true,
+  earlyTerminationEligible: false,
+  earnedDischargeEligible: false,
+  LSUEligible: false,
+  pastFTRDEligible: false,
 };
 
 export const mockClients = [ineligibleClient, eligibleClient];

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { deleteField } from "firebase/firestore";
+import { deleteField, DocumentData } from "firebase/firestore";
 import { sortBy } from "lodash";
 import { computed, makeObservable } from "mobx";
 
@@ -31,7 +31,7 @@ import {
   transformReferral,
 } from "./EarlyTerminationReferralRecord";
 import { OpportunityWithFormBase } from "./OpportunityWithFormBase";
-import { EarlyTerminationFormInterface, OpportunityRequirement } from "./types";
+import { OpportunityRequirement } from "./types";
 
 const DENIAL_REASONS_MAP = {
   "INT MEASURE":
@@ -68,16 +68,57 @@ const CRITERIA: Record<
 
 const ADDITIONAL_DEPOSITION_LINES_PREFIX = "additionalDepositionLines";
 
-class EarlyTerminationOpportunity
-  extends OpportunityWithFormBase<
-    EarlyTerminationReferralRecord,
-    EarlyTerminationDraftData
-  >
-  implements EarlyTerminationFormInterface {
+function validateRecord(
+  record: DocumentData | undefined
+): DocumentData | undefined {
+  if (!record) return;
+
+  const {
+    criteria: {
+      supervisionPastEarlyDischargeDate: pastEarlyDischarge,
+      usNdImpliedValidEarlyTerminationSupervisionLevel: eligibleSupervisionLevel,
+      usNdImpliedValidEarlyTerminationSentenceType: eligibleSupervisionType,
+      usNdNotInActiveRevocationStatus: notActiveRevocationStatus,
+    },
+  } = record;
+
+  if (!pastEarlyDischarge?.eligibleDate) {
+    throw new OpportunityValidationError(
+      "Missing early termination opportunity eligible date"
+    );
+  }
+
+  if (!eligibleSupervisionLevel?.supervisionLevel) {
+    throw new OpportunityValidationError(
+      "Missing early termination opportunity supervision level"
+    );
+  }
+
+  if (!eligibleSupervisionType?.supervisionType) {
+    throw new OpportunityValidationError(
+      "Missing early termination opportunity supervision type"
+    );
+  }
+
+  if (
+    !notActiveRevocationStatus ||
+    (notActiveRevocationStatus && notActiveRevocationStatus.revocationDate)
+  ) {
+    throw new OpportunityValidationError(
+      "Early termination opportunity has revocation date"
+    );
+  }
+  return record;
+}
+
+export class EarlyTerminationOpportunity extends OpportunityWithFormBase<
+  EarlyTerminationReferralRecord,
+  EarlyTerminationDraftData
+> {
   navigateToFormText = "Auto-fill paperwork";
 
   constructor(client: Client) {
-    super(client, "earlyTermination", transformReferral);
+    super(client, "earlyTermination", transformReferral, validateRecord);
 
     makeObservable(this, {
       printText: computed,
@@ -86,39 +127,6 @@ class EarlyTerminationOpportunity
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-  }
-
-  // TODO(#2263): Refactor isValid into a pipeline hydrate -> validate -> aggregate
-  get isValid(): boolean {
-    if (!this.record) return false;
-    const {
-      criteria: {
-        supervisionPastEarlyDischargeDate: pastEarlyDischarge,
-        usNdImpliedValidEarlyTerminationSupervisionLevel: eligibleSupervisionLevel,
-        usNdImpliedValidEarlyTerminationSentenceType: eligibleSupervisionType,
-        usNdNotInActiveRevocationStatus: notActiveRevocationStatus,
-      },
-    } = this.record;
-
-    if (!pastEarlyDischarge?.eligibleDate) {
-      return false;
-    }
-
-    if (!eligibleSupervisionLevel?.supervisionLevel) {
-      return false;
-    }
-
-    if (!eligibleSupervisionType?.supervisionType) {
-      return false;
-    }
-
-    if (
-      !notActiveRevocationStatus ||
-      (notActiveRevocationStatus && notActiveRevocationStatus.revocationDate)
-    ) {
-      return false;
-    }
-    return true;
   }
 
   formDataTransformer = transform;
@@ -201,25 +209,5 @@ class EarlyTerminationOpportunity
     if (!this.draftData) return;
 
     updateEarlyTerminationDraftFieldData(this.client, key, deleteField());
-  }
-}
-
-/**
- * Returns an `EarlyTerminationOpportunity` if the provided data indicates the client is eligible
- */
-export function createEarlyTerminationOpportunity(
-  eligible: boolean | undefined,
-  client: Client
-): EarlyTerminationOpportunity | undefined {
-  if (!eligible) return undefined;
-  try {
-    return new EarlyTerminationOpportunity(client);
-  } catch (e) {
-    // constructor performs further validation that may fail
-    if (e instanceof OpportunityValidationError) {
-      return undefined;
-    }
-    // don't handle anything unexpected, it's probably a bug!
-    throw e;
   }
 }

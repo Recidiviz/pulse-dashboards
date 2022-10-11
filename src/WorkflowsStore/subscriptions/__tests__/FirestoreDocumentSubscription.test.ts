@@ -104,7 +104,7 @@ test("hydration", () => {
   expect(sub.isLoading).toBe(false);
 });
 
-test("no data transformer required", () => {
+test("no data transformer or validation function required", () => {
   const mockData = {
     question: "answer",
   };
@@ -134,4 +134,63 @@ test("transform raw data", () => {
 
   mockReceive(mockData);
   expect(sub.data).toEqual({ question: "answer???" });
+});
+
+test("raw data fails validation", () => {
+  const mockData = {
+    question: "answer",
+  };
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+  const testError = new Error("Test doc fails validation");
+  const testValidate = (d?: DocumentData) => {
+    throw testError;
+  };
+
+  sub = new TestSubscription(undefined, testValidate);
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(sub.data).toEqual(undefined);
+  expect(sub.isHydrated).toEqual(false);
+  expect(sub.error).toEqual(testError);
+  expect(sub.isLoading).toEqual(false);
+});
+
+test("raw data passes validation", () => {
+  const mockData = {
+    question: "answer",
+  };
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+  const testValidate = (d?: DocumentData) => {
+    return d;
+  };
+
+  sub = new TestSubscription(undefined, testValidate);
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(sub.data).toEqual(mockData);
+  expect(sub.isHydrated).toEqual(true);
+  expect(sub.error).toEqual(undefined);
+  expect(sub.isLoading).toEqual(false);
+});
+
+test("stale data cleared when validation fails", () => {
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+  const testValidate = (d?: DocumentData) => {
+    if (d?.foo === "bar") return d;
+    throw new Error("validation failed");
+  };
+
+  sub = new TestSubscription(undefined, testValidate);
+
+  sub.subscribe();
+
+  mockReceive({ foo: "bar" });
+  expect(sub.data).toBeDefined();
+  mockReceive({ bar: "foo" });
+  expect(sub.data).toBeUndefined();
+  expect(sub.error).toBeDefined();
 });

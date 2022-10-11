@@ -32,3 +32,7 @@ export interface DocumentSubscription<DataFormat>
 export type TransformFunction<DataFormat> = (
   rawRecord: DocumentData | undefined
 ) => DataFormat | undefined;
+
+export type ValidateFunction<DataFormat> = (
+  rawRecord: DocumentData | undefined
+) => DataFormat | undefined;

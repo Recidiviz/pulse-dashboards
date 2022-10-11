@@ -18,7 +18,6 @@
 import { computed, makeObservable } from "mobx";
 
 import { Client } from "../Client";
-import { OpportunityValidationError } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 import {
   EarnedDischargeReferralRecord,
@@ -26,7 +25,7 @@ import {
 } from "./EarnedDischargeReferralRecord";
 import {
   LSU_EARNED_DISCHARGE_COMMON_CRITERIA,
-  LSUEarnedDishcargeCommonRequirementsMet,
+  LSUEarnedDischargeCommonRequirementsMet,
 } from "./LSUOpportunity";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
@@ -60,7 +59,7 @@ const CRITERIA: Record<
   },
 };
 
-class EarnedDischargeOpportunity extends OpportunityBase<EarnedDischargeReferralRecord> {
+export class EarnedDischargeOpportunity extends OpportunityBase<EarnedDischargeReferralRecord> {
   constructor(client: Client) {
     super(client, "earnedDischarge", transformReferral);
 
@@ -74,7 +73,7 @@ class EarnedDischargeOpportunity extends OpportunityBase<EarnedDischargeReferral
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
     const { criteria } = this.record;
-    const requirements = LSUEarnedDishcargeCommonRequirementsMet(criteria);
+    const requirements = LSUEarnedDischargeCommonRequirementsMet(criteria);
 
     // TODO(#2415): Update this to be dynamic once sex offense info is in FE
     if (criteria.pastEarnedDischargeEligibleDate) {
@@ -82,25 +81,5 @@ class EarnedDischargeOpportunity extends OpportunityBase<EarnedDischargeReferral
     }
 
     return requirements;
-  }
-}
-
-/**
- * Returns an `EarnedDischargeOpportunity` if the provided data indicates the client is eligible
- */
-export function createEarnedDischargeOpportunity(
-  eligible: boolean | undefined,
-  client: Client
-): EarnedDischargeOpportunity | undefined {
-  if (!eligible) return undefined;
-  try {
-    return new EarnedDischargeOpportunity(client);
-  } catch (e) {
-    // constructor performs further validation that may fail
-    if (e instanceof OpportunityValidationError) {
-      return undefined;
-    }
-    // don't handle anything unexpected, it's probably a bug!
-    throw e;
   }
 }

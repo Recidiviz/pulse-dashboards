@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { DocumentData } from "firebase/firestore";
-import { action, computed, makeObservable, observable, when } from "mobx";
+import { action, computed, makeObservable, when } from "mobx";
 
 import {
   Denial,
@@ -30,6 +30,7 @@ import {
   DocumentSubscription,
   OpportunityUpdateSubscription,
   TransformFunction,
+  ValidateFunction,
 } from "../subscriptions";
 import {
   DefaultEligibility,
@@ -61,11 +62,12 @@ export abstract class OpportunityBase<
   constructor(
     client: Client,
     type: OpportunityType,
-    transformReferral?: TransformFunction<ReferralRecord>
+    transformReferral?: TransformFunction<ReferralRecord>,
+    validateRecord?: ValidateFunction<DocumentData>
   ) {
     makeObservable(this, {
       denial: computed,
-      error: observable,
+      error: computed,
       hydrate: action,
       isLoading: computed,
       rank: computed,
@@ -80,7 +82,8 @@ export abstract class OpportunityBase<
     this.referralSubscription = new CollectionDocumentSubscription<ReferralRecord>(
       `${type}Referrals` as const,
       client.recordId,
-      transformReferral
+      transformReferral,
+      validateRecord
     );
     this.updatesSubscription = new OpportunityUpdateSubscription<UpdateRecord>(
       client.recordId,
@@ -187,7 +190,9 @@ export abstract class OpportunityBase<
     );
   }
 
-  error: Error | undefined = undefined;
+  get error(): Error | undefined {
+    return this.referralSubscription.error || this.updatesSubscription.error;
+  }
 
   // ===============================
   // properties below this line are stubs and in most cases should be overridden
@@ -217,4 +222,6 @@ export abstract class OpportunityBase<
   get requirementsAlmostMet(): OpportunityRequirement[] {
     return [];
   }
+
+  navigateToFormText?: string | undefined;
 }

@@ -150,7 +150,7 @@ export class WorkflowsStore implements Hydratable {
   get hasOpportunities(): boolean {
     return (
       this.allOpportunitiesLoaded &&
-      Object.values(this.allValidatedOpportunitiesByType).flat().length > 0
+      Object.values(this.allOpportunitiesByType).flat().length > 0
     );
   }
 
@@ -379,10 +379,10 @@ export class WorkflowsStore implements Hydratable {
     OPPORTUNITY_TYPES.forEach((opportunityType) => {
       const opportunities = this.caseloadClients
         .map((c) => c.opportunitiesEligible[opportunityType])
-        .filter((opp): opp is Opportunity => opp !== undefined)
+        .filter((opp) => opp !== undefined)
         .sort((a, b) => ascending(a?.rank, b?.rank));
 
-      mapping[opportunityType] = opportunities;
+      mapping[opportunityType] = opportunities as Opportunity[];
     });
     return mapping;
   }
@@ -392,10 +392,10 @@ export class WorkflowsStore implements Hydratable {
     OPPORTUNITY_TYPES.forEach((opportunityType) => {
       const opportunities = this.caseloadClients
         .map((c) => c.opportunitiesAlmostEligible[opportunityType])
-        .filter((opp): opp is Opportunity => opp !== undefined)
+        .filter((opp) => opp !== undefined)
         .sort((a, b) => ascending(a?.rank, b?.rank));
 
-      mapping[opportunityType] = opportunities;
+      mapping[opportunityType] = opportunities as Opportunity[];
     });
     return mapping;
   }
@@ -403,36 +403,34 @@ export class WorkflowsStore implements Hydratable {
   get allOpportunitiesLoaded(): boolean {
     // Wait until we have clients until checking that opportunities are loading.
     if (!this.caseloadClients.length) return false;
-
     return (
-      this.potentialOpportunities.filter((opp) => !opp.isHydrated).length ===
-        0 && this.selectedOfficerIds.length > 0
+      this.potentialOpportunities.filter(
+        (opp) => !(opp.isHydrated || opp.error !== undefined)
+      ).length === 0 && this.selectedOfficerIds.length > 0
     );
   }
 
   get potentialOpportunities(): Opportunity[] {
-    const loadingOpportunities: Opportunity[] = [];
-    OPPORTUNITY_TYPES.forEach((opportunityType) => {
-      const opportunities = this.caseloadClients
-        .map((c) => c.opportunities[opportunityType])
-        .filter((opp): opp is Opportunity => opp !== undefined);
-      loadingOpportunities.concat(opportunities);
-    });
-    return loadingOpportunities;
-  }
-
-  get allValidatedOpportunitiesByType(): Record<
-    OpportunityType,
-    Opportunity[]
-  > {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     OPPORTUNITY_TYPES.forEach((opportunityType) => {
       const opportunities = this.caseloadClients
         .map((c) => c.opportunities[opportunityType])
-        .filter((opp): opp is Opportunity => opp !== undefined && opp.isValid)
+        .filter((opp) => opp !== undefined);
+
+      mapping[opportunityType] = opportunities as Opportunity[];
+    });
+    return Object.values(mapping).flat();
+  }
+
+  get allOpportunitiesByType(): Record<OpportunityType, Opportunity[]> {
+    const mapping = {} as Record<OpportunityType, Opportunity[]>;
+    OPPORTUNITY_TYPES.forEach((opportunityType) => {
+      const opportunities = this.caseloadClients
+        .map((c) => c.opportunities[opportunityType])
+        .filter((opp) => !!opp?.isHydrated)
         .sort((a, b) => ascending(a?.rank, b?.rank));
 
-      mapping[opportunityType] = opportunities;
+      mapping[opportunityType] = opportunities as Opportunity[];
     });
     return mapping;
   }

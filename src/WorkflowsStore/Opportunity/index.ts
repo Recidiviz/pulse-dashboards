@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
 export * from "./CompliantReportingOpportunity";
 export * from "./EarlyTerminationOpportunity";
+export * from "./EarnedDischargeOpportunity";
 export * from "./LSUOpportunity";
 export * from "./PastFTRDOpportunity";
 export * from "./types";

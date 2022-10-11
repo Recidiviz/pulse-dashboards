@@ -44,6 +44,7 @@ import {
   mockSupervisor,
 } from "../__fixtures__";
 import { Client } from "../Client";
+import { CompliantReportingOpportunity } from "../Opportunity";
 import { dateToTimestamp } from "../utils";
 
 jest.mock("../../firestore");
@@ -487,18 +488,31 @@ test("tracking call waits for client to be instantiated", async () => {
   expect(trackingSpy).toHaveBeenCalledWith("compliantReporting");
 });
 
-test("allOpportunitiesLoaded", async () => {
-  // allOpportunitiesLoaded is false when clients is empty/loading
-  populateClients([]);
-  expect(workflowsStore.allOpportunitiesLoaded).toBeFalse();
+describe("allOpportunitiesLoaded", () => {
+  test("allOpportunitiesLoaded is false when clients is empty", async () => {
+    populateClients([]);
+    await waitForHydration();
+    expect(workflowsStore.allOpportunitiesLoaded).toBeFalse();
+  });
 
-  populateClients(mockClients);
-  // allOpportunitiesLoaded is false before hydration
-  expect(workflowsStore.allOpportunitiesLoaded).toBeFalse();
+  test("allOpportunitiesLoaded is false when clients are loading", async () => {
+    populateClients(mockClients);
+    await waitForHydration();
+    expect(workflowsStore.allOpportunitiesLoaded).toBeFalse();
+  });
 
-  // allOpportunitiesLoaded is true after hydration / loading is finished
-  await waitForHydration();
-  expect(workflowsStore.allOpportunitiesLoaded).toBeTrue();
+  test("allOpportunitiesLoaded is true when opportunities are hydrated", async () => {
+    const isHydratedMock = jest.spyOn(
+      CompliantReportingOpportunity.prototype,
+      "isHydrated",
+      "get"
+    );
+    populateClients(mockClients);
+    await waitForHydration();
+
+    isHydratedMock.mockReturnValue(true);
+    expect(workflowsStore.allOpportunitiesLoaded).toBeTrue();
+  });
 });
 
 describe("hasOpportunities", () => {
@@ -508,236 +522,24 @@ describe("hasOpportunities", () => {
     expect(workflowsStore.hasOpportunities).toBeFalse();
   });
 
-  test("hasOpportunities is false if no client is eligible", async () => {
+  test("hasOpportunities is false if no client has opportunities", async () => {
     await waitForHydration();
     populateClients([ineligibleClient]);
     expect(workflowsStore.hasOpportunities).toBeFalse();
   });
 
-  test("hasOpportunities is true if any client is eligible", async () => {
-    await waitForHydration();
+  test("hasOpportunities is true if any client has opportunities", async () => {
+    const isHydratedMock = jest.spyOn(
+      CompliantReportingOpportunity.prototype,
+      "isHydrated",
+      "get"
+    );
     populateClients(mockClients);
+    await waitForHydration();
+    isHydratedMock.mockReturnValue(true);
     expect(workflowsStore.hasOpportunities).toBeTrue();
   });
 });
-
-// TODO(#2346): Update this test when we are using hydrate interface and validating data
-// test.skip("only approved eligibility categories are surfaced", async () => {
-//   const mockEligibleClients: ClientRecord[] = [
-//     {
-//       ...eligibleClient,
-//       personExternalId: "c1",
-//       pseudonymizedId: "c1p",
-//       compliantReportingEligible: true,
-//     },
-//     {
-//       ...eligibleClient,
-//       personExternalId: "c2",
-//       pseudonymizedId: "c2p",
-//       compliantReportingEligible: true,
-//     },
-//     {
-//       ...eligibleClient,
-//       personExternalId: "c3",
-//       pseudonymizedId: "c3p",
-//       compliantReportingEligible: true,
-//     },
-//     {
-//       ...eligibleClient,
-//       personExternalId: "c4",
-//       pseudonymizedId: "c4p",
-//       compliantReportingEligible: true,
-//     },
-//   ];
-//   const mockIneligibleCategoryClients: ClientRecord[] = [
-//     {
-//       ...eligibleClient,
-//       personExternalId: "c4_review",
-//       pseudonymizedId: "c4_review_p",
-//       compliantReportingEligible: false,
-//     },
-//     {
-//       ...eligibleClient,
-//       personExternalId: "unexpected_value",
-//       pseudonymizedId: "unexpected_value_p",
-//       compliantReportingEligible: false,
-//     },
-//   ];
-
-//   mockSubscribeToCaseloads.mockImplementation(
-//     (stateCode, officerIds, handler) => {
-//       handler([...mockEligibleClients, ...mockIneligibleCategoryClients]);
-//       return mockUnsub;
-//     }
-//   );
-
-//   await waitForHydration();
-
-//   // simulate a UI displaying client list
-//   testObserver = keepAlive(
-//     computed(() => workflowsStore.eligibleOpportunities)
-//   );
-
-//   expect(workflowsStore.eligibleOpportunities.compliantReporting.length).toBe(
-//     mockEligibleClients.length
-//   );
-//   mockEligibleClients.forEach((expectedClient) =>
-//     expect(
-//       workflowsStore.eligibleOpportunities.compliantReporting.find(
-//         (opp) => opp.client.id === expectedClient.personExternalId
-//       )
-//     ).toBeDefined()
-//   );
-
-//   mockIneligibleCategoryClients.forEach((unexpectedClient) =>
-//     expect(
-//       workflowsStore.eligibleOpportunities.compliantReporting.find(
-//         (opp) => opp.client.id === unexpectedClient.personExternalId
-//       )
-//     ).toBeUndefined()
-//   );
-// });
-
-// function getMockAlmostEligibleClients(): ClientRecord[] {
-//   return [
-//     {
-//       ...eligibleClient,
-//       personExternalId: "almost1",
-//       pseudonymizedId: "almost1p",
-//       compliantReportingEligible: true,
-//       compliantReportingEligible: {
-//         eligibilityCategory: "c1",
-//         remainingCriteriaNeeded: 1,
-//         almostEligibleCriteria: {
-//           passedDrugScreenNeeded: true,
-//         },
-//       },
-//     },
-//     // clients below will still be excluded, needing >1 criteria
-//     {
-//       ...eligibleClient,
-//       personExternalId: "almost2",
-//       pseudonymizedId: "almost2p",
-//       compliantReportingEligible: {
-//         ...eligibilityFields,
-//         eligibilityCategory: "c2",
-//         remainingCriteriaNeeded: 3,
-//         almostEligibleCriteria: {
-//           passedDrugScreenNeeded: true,
-//           paymentNeeded: true,
-//           recentRejectionCodes: ["ABCD"],
-//         },
-//       },
-//     },
-//     {
-//       ...eligibleClient,
-//       personExternalId: "almost3",
-//       pseudonymizedId: "almost3p",
-//       compliantReportingEligible: {
-//         ...eligibilityFields,
-//         eligibilityCategory: "c3",
-//         remainingCriteriaNeeded: 2,
-//         almostEligibleCriteria: {
-//           passedDrugScreenNeeded: true,
-//           paymentNeeded: true,
-//         },
-//       },
-//     },
-//   ];
-// }
-
-// // TODO(#2346): Update this test when we are using hydrate interface and validating data
-// test.skip("filter out clients who are almost eligible", async () => {
-//   const mockAlmostEligibleClients = getMockAlmostEligibleClients();
-
-//   const eligibilityFields = {
-//     ...eligibleClient.compliantReportingEligible,
-//   };
-//   const mockEligibleClients = [
-//     {
-//       ...eligibleClient,
-//       personExternalId: "eligible1",
-//       pseudonymizedId: "eligible1p",
-//       compliantReportingEligible: {
-//         ...eligibilityFields,
-//         eligibilityCategory: "c1",
-//         remainingCriteriaNeeded: 0,
-//       },
-//     },
-//   ];
-
-//   mockSubscribeToCaseloads.mockImplementation(
-//     (stateCode, officerIds, handler) => {
-//       handler([...mockAlmostEligibleClients, ...mockEligibleClients]);
-//       return mockUnsub;
-//     }
-//   );
-
-//   await waitForHydration();
-
-//   // simulate a UI displaying client list
-//   testObserver = keepAlive(
-//     computed(() => workflowsStore.eligibleOpportunities)
-//   );
-
-//   expect(workflowsStore.eligibleOpportunities.compliantReporting.length).toBe(
-//     mockEligibleClients.length
-//   );
-//   mockEligibleClients.forEach((expectedClient) =>
-//     expect(
-//       workflowsStore.eligibleOpportunities.compliantReporting.find(
-//         (opp) => opp.client.id === expectedClient.personExternalId
-//       )
-//     ).toBeDefined()
-//   );
-
-//   mockAlmostEligibleClients.forEach((unexpectedClient) =>
-//     expect(
-//       workflowsStore.eligibleOpportunities.compliantReporting.find(
-//         (opp) => opp.client.id === unexpectedClient.personExternalId
-//       )
-//     ).toBeUndefined()
-//   );
-// });
-
-// TODO(#2346): Update this test when we are using hydrate interface and validating data
-// test.skip("list clients who are almost eligible", async () => {
-//   // requires active feature flag
-//   mockGetUser.mockResolvedValue({
-//     ...mockOfficer,
-//     featureVariants: { CompliantReportingAlmostEligible: {} },
-//   });
-
-//   const mockAlmostEligibleClients = getMockAlmostEligibleClients();
-
-//   mockSubscribeToCaseloads.mockImplementation(
-//     (stateCode, officerIds, handler) => {
-//       handler([...mockAlmostEligibleClients]);
-//       return mockUnsub;
-//     }
-//   );
-
-//   await waitForHydration();
-
-//   // simulate a UI displaying client list
-//   testObserver = keepAlive(
-//     computed(() => workflowsStore.eligibleOpportunities.compliantReporting)
-//   );
-
-//   expect(workflowsStore.eligibleOpportunities.compliantReporting.length).toBe(
-//     0
-//   );
-
-//   expect(
-//     workflowsStore.almostEligibleOpportunities.compliantReporting.length
-//   ).toBe(1);
-
-//   expect(
-//     workflowsStore.almostEligibleOpportunities.compliantReporting.find(
-//       (opp) => opp.client.id === mockAlmostEligibleClients[0].personExternalId
-//     )
-//   ).toBeDefined();
-// });
 
 test("variant with no active date", async () => {
   mockGetUser.mockResolvedValue({

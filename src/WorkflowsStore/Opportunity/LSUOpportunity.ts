@@ -19,7 +19,6 @@ import { some } from "lodash";
 import { computed, makeObservable } from "mobx";
 
 import { Client } from "../Client";
-import { OpportunityValidationError } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 import {
   LSUDraftData,
@@ -86,7 +85,7 @@ export const LSU_CRITERIA: Record<
   },
 };
 
-export const LSUEarnedDishcargeCommonRequirementsMet = (
+export const LSUEarnedDischargeCommonRequirementsMet = (
   criteria: LSUEarnedDischargeCommonCriteria
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
@@ -138,7 +137,7 @@ export const LSUEarnedDishcargeCommonRequirementsMet = (
   return requirements;
 };
 
-class LSUOpportunity extends OpportunityWithFormBase<
+export class LSUOpportunity extends OpportunityWithFormBase<
   LSUReferralRecord,
   LSUDraftData
 > {
@@ -156,32 +155,12 @@ class LSUOpportunity extends OpportunityWithFormBase<
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
     const { criteria } = this.record;
-    const requirements = LSUEarnedDishcargeCommonRequirementsMet(criteria);
+    const requirements = LSUEarnedDischargeCommonRequirementsMet(criteria);
 
     if (!criteria.usIdNoActiveNco?.activeNco) {
       requirements.push(LSU_CRITERIA.usIdNoActiveNco);
     }
 
     return requirements;
-  }
-}
-
-/**
- * Returns an `LSUOpportunity` if the provided data indicates the client is eligible
- */
-export function createLSUOpportunity(
-  eligible: boolean | undefined,
-  client: Client
-): LSUOpportunity | undefined {
-  if (!eligible) return undefined;
-  try {
-    return new LSUOpportunity(client);
-  } catch (e) {
-    // constructor performs further validation that may fail
-    if (e instanceof OpportunityValidationError) {
-      return undefined;
-    }
-    // don't handle anything unexpected, it's probably a bug!
-    throw e;
   }
 }

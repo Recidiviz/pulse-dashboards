@@ -20,7 +20,7 @@ import { computed, makeObservable, toJS } from "mobx";
 
 import { OpportunityUpdateWithForm, UpdateLog } from "../../firestore";
 import { Client } from "../Client";
-import { TransformFunction } from "../subscriptions";
+import { TransformFunction, ValidateFunction } from "../subscriptions";
 import { OpportunityBase } from "./OpportunityBase";
 import { BaseForm, OpportunityType } from "./types";
 
@@ -46,9 +46,10 @@ export abstract class OpportunityWithFormBase<
   constructor(
     client: Client,
     type: OpportunityType,
-    transformReferral?: TransformFunction<ReferralRecord>
+    transformReferral?: TransformFunction<ReferralRecord>,
+    validateRecord?: ValidateFunction<DocumentData>
   ) {
-    super(client, type, transformReferral);
+    super(client, type, transformReferral, validateRecord);
 
     makeObservable(this, {
       draftData: computed,

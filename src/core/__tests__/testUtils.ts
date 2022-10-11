@@ -26,7 +26,6 @@ export const mockOpportunity: Opportunity = {
   firstViewed: undefined,
   hydrate: () => undefined,
   isHydrated: true,
-  isValid: true,
   rank: 0,
   requirementsAlmostMet: [],
   requirementsMet: [],

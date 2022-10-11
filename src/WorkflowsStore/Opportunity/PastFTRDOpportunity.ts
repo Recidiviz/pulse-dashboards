@@ -20,7 +20,6 @@ import { computed, makeObservable } from "mobx";
 
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
-import { OpportunityValidationError } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import {
   PastFTRDReferralRecord,
@@ -28,7 +27,7 @@ import {
 } from "./PastFTRDReferralRecord";
 import { OpportunityRequirement } from "./types";
 
-class PastFTRDOpportunity extends OpportunityBase<PastFTRDReferralRecord> {
+export class PastFTRDOpportunity extends OpportunityBase<PastFTRDReferralRecord> {
   constructor(client: Client) {
     super(client, "pastFTRD", transformReferral);
     makeObservable(this, {
@@ -58,25 +57,5 @@ class PastFTRDOpportunity extends OpportunityBase<PastFTRDReferralRecord> {
     }
 
     return requirements;
-  }
-}
-
-/**
- * Returns a `PastFTRDOpportunity` if the provided data indicates the client is eligible
- */
-export function createPastFTRDOpportunity(
-  eligible: boolean | undefined,
-  client: Client
-): PastFTRDOpportunity | undefined {
-  if (!eligible) return undefined;
-  try {
-    return new PastFTRDOpportunity(client);
-  } catch (e) {
-    // constructor performs further validation that may fail
-    if (e instanceof OpportunityValidationError) {
-      return undefined;
-    }
-    // don't handle anything unexpected, it's probably a bug!
-    throw e;
   }
 }

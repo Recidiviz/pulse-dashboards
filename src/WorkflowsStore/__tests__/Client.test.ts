@@ -67,7 +67,14 @@ beforeEach(() => {
   configure({ safeDescriptors: false });
   jest.resetAllMocks();
   rootStore = new RootStore();
-  client = new Client(eligibleClient, rootStore);
+  const eligibleClientWithAllOpps = {
+    ...eligibleClient,
+    earlyTerminationEligible: true,
+    earnedDischargeEligible: true,
+    LSUEligible: true,
+    pastFTRDEligible: true,
+  };
+  client = new Client(eligibleClientWithAllOpps, rootStore);
 
   // for simplicity we will mark all the subs as hydrated, though we may update data later
   CollectionDocumentSubscriptionMock.mock.instances.forEach((sub) => {

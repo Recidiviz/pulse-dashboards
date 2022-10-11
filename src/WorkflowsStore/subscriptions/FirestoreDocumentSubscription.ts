@@ -30,7 +30,11 @@ import {
   onBecomeUnobserved,
 } from "mobx";
 
-import { DocumentSubscription, TransformFunction } from "./types";
+import {
+  DocumentSubscription,
+  TransformFunction,
+  ValidateFunction,
+} from "./types";
 
 export abstract class FirestoreDocumentSubscription<
   DataFormat extends DocumentData = DocumentData
@@ -47,10 +51,17 @@ export abstract class FirestoreDocumentSubscription<
 
   transformRecord: TransformFunction<DataFormat>;
 
-  constructor(transformFunction?: TransformFunction<DataFormat>) {
+  validateRecord: ValidateFunction<DocumentData>;
+
+  constructor(
+    transformFunction?: TransformFunction<DataFormat>,
+    validateFunction?: ValidateFunction<DocumentData>
+  ) {
     // default passes through raw record, assuming it already conforms to the desired format
     this.transformRecord =
       transformFunction ?? ((d) => (d as DataFormat) ?? undefined);
+
+    this.validateRecord = validateFunction ?? ((d) => d as DocumentData);
 
     // note that dataSource is not observable by default.
     // in the base case there is really no need for it
@@ -76,13 +87,23 @@ export abstract class FirestoreDocumentSubscription<
   /**
    * Stores data on the observable `this.data` property. Mainly intended
    * to be used by the callback for the listener created by `this.subscribe`.
+   * Validates the record and does not set `this.data` property if the result
+   * fails validation.
    */
   updateData(snapshot: DocumentSnapshot): void {
-    this.data = this.transformRecord(
-      snapshot.data({ serverTimestamps: "estimate" })
-    );
+    let record;
+    try {
+      record = this.validateRecord(
+        this.transformRecord(snapshot.data({ serverTimestamps: "estimate" }))
+      ) as DataFormat;
 
-    this.isHydrated = true;
+      this.data = record;
+      this.isHydrated = true;
+    } catch (e) {
+      this.error = e as Error;
+      this.data = undefined;
+    }
+
     if (this.isLoading) {
       this.isLoading = false;
     }
@@ -97,7 +118,7 @@ export abstract class FirestoreDocumentSubscription<
    * create a redundant listener if one is already active.
    */
   subscribe(): void {
-    if (this.isActive) return;
+    if (this.isActive || this.isLoading) return;
 
     if (this.isLoading === undefined) {
       this.isLoading = true;

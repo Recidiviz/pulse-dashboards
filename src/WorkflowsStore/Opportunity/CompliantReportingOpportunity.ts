@@ -18,13 +18,13 @@
 import * as Sentry from "@sentry/react";
 import assertNever from "assert-never";
 import { differenceInCalendarDays, isEqual } from "date-fns";
+import { DocumentData } from "firebase/firestore";
 import { mapValues } from "lodash";
 import { makeAutoObservable, toJS, when } from "mobx";
 
 import { transform } from "../../core/Paperwork/US_TN/Transformer";
 import { formatRelativeToNow } from "../../core/utils/timePeriod";
 import {
-  CompliantReportingEligibleRecord,
   Denial,
   OpportunityUpdateWithForm,
   UpdateLog,
@@ -50,7 +50,7 @@ import {
   TransformedCompliantReportingReferral,
 } from "./CompliantReportingReferralRecord";
 import {
-  CompliantReportingFormInterface,
+  BaseForm,
   DenialReasonsMap,
   Opportunity,
   OpportunityRequirement,
@@ -171,8 +171,68 @@ const DENIAL_REASONS_MAP = {
 
 type CompliantReportingUpdateRecord = OpportunityUpdateWithForm<TransformedCompliantReportingReferral>;
 
-class CompliantReportingOpportunity
-  implements Opportunity, CompliantReportingFormInterface {
+const getRecordValidator = (client: Client) => (
+  record: DocumentData | undefined
+): DocumentData | undefined => {
+  if (!record) return;
+  const {
+    eligibilityCategory,
+    remainingCriteriaNeeded,
+    almostEligibleCriteria,
+  } = record;
+
+  // only the explicitly allowed categories can be shown to users.
+  // if any others are added they must be suppressed until explicitly enabled.
+  if (!COMPLIANT_REPORTING_ACTIVE_CATEGORIES.includes(eligibilityCategory)) {
+    throw new OpportunityValidationError("Unsupported eligibility category");
+  }
+
+  if (remainingCriteriaNeeded) {
+    if (
+      !client.rootStore.workflowsStore.featureVariants
+        .CompliantReportingAlmostEligible
+    ) {
+      throw new OpportunityValidationError("Almost-eligible feature disabled");
+    }
+
+    const definedAlmostEligibleKeys = almostEligibleCriteria
+      ? (Object.keys(
+          almostEligibleCriteria
+        ) as (keyof AlmostEligibleCriteria)[]).filter(
+          (key) => almostEligibleCriteria[key] !== undefined
+        )
+      : [];
+
+    // this is a critical error if we expect an almost-eligible client
+    // but don't have any valid criteria to report, because it could result in the
+    // client being erroneously marked eligible
+    if (definedAlmostEligibleKeys.length === 0) {
+      throw new OpportunityValidationError(
+        "Missing required valid almost-eligible criteria"
+      );
+    }
+
+    if (definedAlmostEligibleKeys.length !== remainingCriteriaNeeded) {
+      // we can recover from this by displaying the valid criteria that remain,
+      // but it should be logged for investigation
+      Sentry.captureException(
+        new OpportunityValidationError(
+          `Expected ${remainingCriteriaNeeded} valid almost-criteria for client ${client.pseudonymizedId}
+          but only produced ${definedAlmostEligibleKeys.length}`
+        )
+      );
+    }
+
+    // almost eligible is currently defined as missing exactly one criterion
+    if (remainingCriteriaNeeded > 1) {
+      throw new OpportunityValidationError(`Too many remaining criteria`);
+    }
+  }
+  return record;
+};
+
+export class CompliantReportingOpportunity
+  implements Opportunity, BaseForm<TransformedCompliantReportingReferral> {
   client: Client;
 
   readonly type: OpportunityType = "compliantReporting";
@@ -203,7 +263,9 @@ class CompliantReportingOpportunity
 
     this.referralSubscription = new CollectionDocumentSubscription<CompliantReportingReferralRecord>(
       "compliantReportingReferrals",
-      client.recordId
+      client.recordId,
+      undefined,
+      getRecordValidator(this.client)
     );
     this.updatesSubscription = new OpportunityUpdateSubscription<CompliantReportingUpdateRecord>(
       client.recordId,
@@ -295,57 +357,6 @@ class CompliantReportingOpportunity
       };
     }
     return transformedRecord;
-  }
-
-  // TODO(#2263): Refactor isValid into a pipeline hydrate -> validate -> aggregate
-  get isValid(): boolean {
-    if (!this.transformedRecord) return false;
-    const {
-      eligibilityCategory,
-      remainingCriteriaNeeded,
-    } = this.transformedRecord;
-
-    // only the explicitly allowed categories can be shown to users.
-    // if any others are added they must be suppressed until explicitly enabled.
-    if (!COMPLIANT_REPORTING_ACTIVE_CATEGORIES.includes(eligibilityCategory)) {
-      return false;
-    }
-
-    if (remainingCriteriaNeeded) {
-      if (
-        !this.client.rootStore.workflowsStore.featureVariants
-          .CompliantReportingAlmostEligible
-      ) {
-        return false;
-      }
-
-      // this is a critical error if we expect an almost-eligible client
-      // but don't have any valid criteria to report, because it could result in the
-      // client being erroneously marked eligible
-      if (this.validAlmostEligibleKeys.length === 0) {
-        return false;
-      }
-
-      if (
-        this.validAlmostEligibleKeys.length !==
-        this.record?.remainingCriteriaNeeded
-      ) {
-        // we can recover from this by displaying the valid criteria that remain,
-        // but it should be logged for investigation
-        Sentry.captureException(
-          new OpportunityValidationError(
-            `Expected ${this.record?.remainingCriteriaNeeded} valid almost-criteria
-            for client ${this.client.pseudonymizedId} but only produced 
-            ${this.validAlmostEligibleKeys.length}`
-          )
-        );
-      }
-      // almost defined for now as missing exactly one criterion
-      if (remainingCriteriaNeeded > 1) {
-        return false;
-      }
-    }
-    return true;
   }
 
   get almostEligible(): boolean {
@@ -726,7 +737,7 @@ class CompliantReportingOpportunity
 
     return mapValues(
       toJS(this.record?.almostEligibleCriteria),
-      (value, key: keyof AlmostEligibleCriteria) => {
+      (_value, key: keyof AlmostEligibleCriteria) => {
         switch (key) {
           case "passedDrugScreenNeeded":
             return passedDrugScreenNeeded
@@ -883,7 +894,9 @@ class CompliantReportingOpportunity
     );
   }
 
-  error: Error | undefined = undefined;
+  get error(): Error | undefined {
+    return this.referralSubscription.error || this.updatesSubscription.error;
+  }
 
   get draftData(): Partial<TransformedCompliantReportingReferral> {
     return this.updates?.referralForm?.data ?? {};
@@ -895,27 +908,5 @@ class CompliantReportingOpportunity
 
   get denial(): Denial | undefined {
     return this.updates?.denial;
-  }
-}
-
-/**
- * Returns a `CompliantReportingOpportunity` if the provided data indicates the client is eligible or almost eligible
- */
-export function createCompliantReportingOpportunity(
-  // TODO(#2263): Remove record type when migrated to boolean field.
-  eligible: CompliantReportingEligibleRecord | boolean | undefined,
-  client: Client
-): CompliantReportingOpportunity | undefined {
-  if (!eligible) return undefined;
-  try {
-    const opp = new CompliantReportingOpportunity(client);
-    return opp;
-  } catch (e) {
-    // constructor performs further validation that may fail
-    if (e instanceof OpportunityValidationError) {
-      return undefined;
-    }
-    // don't handle anything unexpected, it's probably a bug!
-    throw e;
   }
 }

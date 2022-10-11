@@ -37,17 +37,12 @@ import {
 import type { RootStore } from "../RootStore";
 import {
   CompliantReportingOpportunity,
-  createCompliantReportingOpportunity,
-  createEarlyTerminationOpportunity,
-  createLSUOpportunity,
-  createPastFTRDOpportunity,
   EarlyTerminationOpportunity,
   EarnedDischargeOpportunity,
   LSUOpportunity,
   OpportunityType,
   PastFTRDOpportunity,
 } from "./Opportunity";
-import { createEarnedDischargeOpportunity } from "./Opportunity/EarnedDischargeOpportunity";
 import { optionalFieldToDate } from "./utils";
 import { OTHER_KEY } from "./WorkflowsStore";
 
@@ -187,20 +182,19 @@ export class Client {
     this.compliantReportingEligible = record.compliantReportingEligible;
 
     this.opportunities = {
-      compliantReporting: createCompliantReportingOpportunity(
-        this.compliantReportingEligible,
-        this
-      ),
-      earlyTermination: createEarlyTerminationOpportunity(
-        this.record.earlyTerminationEligible,
-        this
-      ),
-      earnedDischarge: createEarnedDischargeOpportunity(
-        this.record.earnedDischargeEligible,
-        this
-      ),
-      LSU: createLSUOpportunity(this.record.LSUEligible, this),
-      pastFTRD: createPastFTRDOpportunity(this.record.pastFTRDEligible, this),
+      compliantReporting: this.compliantReportingEligible
+        ? new CompliantReportingOpportunity(this)
+        : undefined,
+      earlyTermination: this.record.earlyTerminationEligible
+        ? new EarlyTerminationOpportunity(this)
+        : undefined,
+      earnedDischarge: this.record.earnedDischargeEligible
+        ? new EarnedDischargeOpportunity(this)
+        : undefined,
+      LSU: this.record.LSUEligible ? new LSUOpportunity(this) : undefined,
+      pastFTRD: this.record.pastFTRDEligible
+        ? new PastFTRDOpportunity(this)
+        : undefined,
     };
   }
 
@@ -229,7 +223,7 @@ export class Client {
 
   get opportunitiesEligible(): OpportunityMapping {
     return entries(this.opportunities).reduce((opportunities, [key, opp]) => {
-      if (opp !== undefined && !opp.almostEligible && opp.isValid) {
+      if (opp?.isHydrated && !opp.almostEligible) {
         return { ...opportunities, [key as OpportunityType]: opp };
       }
       return opportunities;
@@ -238,7 +232,7 @@ export class Client {
 
   get opportunitiesAlmostEligible(): OpportunityMapping {
     return entries(this.opportunities).reduce((opportunities, [key, opp]) => {
-      if (opp !== undefined && opp.almostEligible && opp.isValid) {
+      if (opp?.isHydrated && opp.almostEligible) {
         return { ...opportunities, [key as OpportunityType]: opp };
       }
       return opportunities;

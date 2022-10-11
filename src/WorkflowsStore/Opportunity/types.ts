@@ -18,11 +18,6 @@
 import { Hydratable } from "../../core/models/types";
 import { Denial, UpdateLog } from "../../firestore";
 import { Client } from "../Client";
-import { TransformedCompliantReportingReferral } from "./CompliantReportingReferralRecord";
-import {
-  EarlyTerminationDraftData,
-  EarlyTerminationReferralRecord,
-} from "./EarlyTerminationReferralRecord";
 
 export const OPPORTUNITY_TYPES = [
   "compliantReporting",
@@ -86,7 +81,6 @@ export interface Opportunity extends Hydratable, Partial<BaseForm> {
   requirementsMet: OpportunityRequirement[];
   reviewStatus: OpportunityStatus;
   readonly type: OpportunityType;
-  isValid: boolean;
   denialReasonsMap: DenialReasonsMap;
   denial: Denial | undefined;
   firstViewed: UpdateLog | undefined;
@@ -99,20 +93,3 @@ export interface BaseForm<FormDataType = Record<string, any>> {
   formLastUpdated: UpdateLog | undefined;
   formData: Partial<FormDataType>;
 }
-export type CompliantReportingFormInterface = BaseForm<TransformedCompliantReportingReferral>;
-
-export interface EarlyTerminationFormInterface
-  extends BaseForm<EarlyTerminationDraftData> {
-  metadata: EarlyTerminationReferralRecord["metadata"] | undefined;
-  addDepositionLine: () => void;
-  removeDepositionLine: (key: string) => void;
-  additionalDepositionLines: string[];
-}
-
-export type CompliantReportingOpportunity = CompliantReportingFormInterface &
-  Opportunity;
-export type EarlyTerminationOpportunity = EarlyTerminationFormInterface &
-  Opportunity;
-export type EarnedDischargeOpportunity = Opportunity;
-export type LSUOpportunity = Opportunity;
-export type PastFTRDOpportunity = Opportunity;

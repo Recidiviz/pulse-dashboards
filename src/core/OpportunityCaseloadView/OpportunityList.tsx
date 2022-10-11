@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { spacing } from "@recidiviz/design-system";
+import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
+import React, { useEffect } from "react";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
@@ -41,16 +42,26 @@ const ClientList = styled.ul`
 `;
 
 export const OpportunityList = observer(() => {
+  const { workflowsStore } = useRootStore();
   const {
-    workflowsStore: {
-      selectedOfficerIds,
-      almostEligibleOpportunities,
-      eligibleOpportunities,
-      allOpportunitiesLoaded,
-      hasOpportunities,
-      selectedOpportunityType: opportunityType,
-    },
-  } = useRootStore();
+    selectedOfficerIds,
+    almostEligibleOpportunities,
+    eligibleOpportunities,
+    allOpportunitiesLoaded,
+    hasOpportunities,
+    selectedOpportunityType: opportunityType,
+  } = workflowsStore;
+
+  useEffect(
+    () =>
+      autorun(() => {
+        workflowsStore.potentialOpportunities.forEach((opp) => {
+          if (!opp.isHydrated) opp.hydrate();
+        });
+      }),
+    [workflowsStore]
+  );
+
   if (!opportunityType) return null;
 
   const opportunityLabel = OPPORTUNITY_LABELS[opportunityType];

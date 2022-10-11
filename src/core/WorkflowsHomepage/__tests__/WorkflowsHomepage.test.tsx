@@ -48,7 +48,7 @@ describe("WorkflowsHomepage", () => {
         allOpportunitiesLoaded: false,
         selectedOfficerIds: [],
         opportunityTypes: ["earlyTermination"],
-        allValidatedOpportunitiesByType: { earlyTermination: [] },
+        allOpportunitiesByType: { earlyTermination: [] },
         hasOpportunities: false,
         user: { info: { givenNames: "Recidiviz" } },
       },
@@ -69,7 +69,7 @@ describe("WorkflowsHomepage", () => {
         allOpportunitiesLoaded: true,
         selectedOfficerIds: ["123"],
         opportunityTypes: ["pastFTRD"],
-        allValidatedOpportunitiesByType: {
+        allOpportunitiesByType: {
           earlyTermination: [],
         },
         hasOpportunities: false,
@@ -96,7 +96,7 @@ describe("WorkflowsHomepage", () => {
         allOpportunitiesLoaded: true,
         selectedOfficerIds: ["123", "456"],
         opportunityTypes: ["pastFTRD"],
-        allValidatedOpportunitiesByType: {
+        allOpportunitiesByType: {
           earlyTermination: [],
         },
         hasOpportunities: false,
@@ -124,7 +124,7 @@ describe("WorkflowsHomepage", () => {
         allOpportunitiesLoaded: true,
         selectedOfficerIds: ["123"],
         opportunityTypes: ["pastFTRD"],
-        allValidatedOpportunitiesByType: {
+        allOpportunitiesByType: {
           pastFTRD: [mockOpportunity],
         },
         hasOpportunities: true,

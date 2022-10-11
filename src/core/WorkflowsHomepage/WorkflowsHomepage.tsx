@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 import simplur from "simplur";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -44,16 +45,25 @@ function getSelectOpportunitiesText(
 }
 
 const WorkflowsHomepage = observer((): React.ReactElement | null => {
+  const { workflowsStore } = useRootStore();
   const {
-    workflowsStore: {
-      allOpportunitiesLoaded,
-      selectedOfficerIds,
-      opportunityTypes,
-      allValidatedOpportunitiesByType,
-      hasOpportunities,
-      user,
-    },
-  } = useRootStore();
+    allOpportunitiesLoaded,
+    selectedOfficerIds,
+    opportunityTypes,
+    allOpportunitiesByType,
+    hasOpportunities,
+    user,
+  } = workflowsStore;
+
+  useEffect(
+    () =>
+      autorun(() => {
+        workflowsStore.potentialOpportunities.forEach((opp) => {
+          if (!opp.isHydrated) opp.hydrate();
+        });
+      }),
+    [workflowsStore]
+  );
 
   const welcomeText = getWelcomeText(user?.info.givenNames);
   const selectOpportunitiesText = getSelectOpportunitiesText(opportunityTypes);
@@ -73,10 +83,10 @@ const WorkflowsHomepage = observer((): React.ReactElement | null => {
       )}
       {displayOpportunities &&
         opportunityTypes.map((opportunityType) => {
-          if (allValidatedOpportunitiesByType[opportunityType].length) {
+          if (allOpportunitiesByType[opportunityType].length) {
             return (
               <OpportunityTypeSummary
-                opportunities={allValidatedOpportunitiesByType[opportunityType]}
+                opportunities={allOpportunitiesByType[opportunityType]}
                 opportunityType={opportunityType}
               />
             );
