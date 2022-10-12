@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { useEffect } from "react";
+import React from "react";
 import simplur from "simplur";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { OPPORTUNITY_LABELS, OpportunityType } from "../../WorkflowsStore";
 import { CaseloadSelect } from "../CaseloadSelect";
+import { OpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsNoResults from "../WorkflowsNoResults";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";
@@ -45,62 +45,48 @@ function getSelectOpportunitiesText(
 }
 
 const WorkflowsHomepage = observer((): React.ReactElement | null => {
-  const { workflowsStore } = useRootStore();
   const {
-    allOpportunitiesLoaded,
-    selectedOfficerIds,
-    opportunityTypes,
-    allOpportunitiesByType,
-    hasOpportunities,
-    user,
-  } = workflowsStore;
+    workflowsStore: {
+      selectedOfficerIds,
+      opportunityTypes,
+      allOpportunitiesByType,
+      user,
+    },
+  } = useRootStore();
 
-  useEffect(
-    () =>
-      autorun(() => {
-        workflowsStore.potentialOpportunities.forEach((opp) => {
-          if (!opp.isHydrated) opp.hydrate();
-        });
-      }),
-    [workflowsStore]
+  const initial = (
+    <WorkflowsNoResults
+      headerText={getWelcomeText(user?.info.givenNames)}
+      callToActionText={`Search for officers above to review and refer eligible clients for 
+        opportunities like ${getSelectOpportunitiesText(opportunityTypes)}.`}
+    />
   );
 
-  const welcomeText = getWelcomeText(user?.info.givenNames);
-  const selectOpportunitiesText = getSelectOpportunitiesText(opportunityTypes);
-  const displayInitialState = !selectedOfficerIds.length;
-  const displayNoResults = allOpportunitiesLoaded && !hasOpportunities;
-  const displayOpportunities = allOpportunitiesLoaded && hasOpportunities;
+  const empty = (
+    <WorkflowsNoResults
+      callToActionText={simplur`None of the clients on the selected ${[
+        selectedOfficerIds.length,
+      ]} officer['s|s'] caseloads are eligible for opportunities. Search for another officer.`}
+    />
+  );
+
+  const hydrated = opportunityTypes.map((opportunityType) => {
+    if (allOpportunitiesByType[opportunityType].length) {
+      return (
+        <OpportunityTypeSummary
+          key={opportunityType}
+          opportunities={allOpportunitiesByType[opportunityType]}
+          opportunityType={opportunityType}
+        />
+      );
+    }
+    return null;
+  });
 
   return (
     <WorkflowsNavLayout>
       <CaseloadSelect />
-      {displayInitialState && (
-        <WorkflowsNoResults
-          headerText={welcomeText}
-          callToActionText={`Search for officers above to review and refer eligible clients for 
-          opportunities like ${selectOpportunitiesText}.`}
-        />
-      )}
-      {displayOpportunities &&
-        opportunityTypes.map((opportunityType) => {
-          if (allOpportunitiesByType[opportunityType].length) {
-            return (
-              <OpportunityTypeSummary
-                opportunities={allOpportunitiesByType[opportunityType]}
-                opportunityType={opportunityType}
-              />
-            );
-          }
-          return null;
-        })}
-      {!!displayNoResults && (
-        <WorkflowsNoResults
-          callToActionText={simplur`None of the clients on the selected ${[
-            selectedOfficerIds.length,
-          ]} officer['s|s'] caseloads are eligible
-        for opportunities. Search for another officer.`}
-        />
-      )}
+      <OpportunitiesHydrator {...{ initial, empty, hydrated }} />
     </WorkflowsNavLayout>
   );
 });

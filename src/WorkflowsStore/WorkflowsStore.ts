@@ -246,11 +246,16 @@ export class WorkflowsStore implements Hydratable {
 
   updateClients(newClients: ClientRecord[] = []): void {
     newClients.forEach((record) => {
-      set(
-        this.clients,
-        record.pseudonymizedId,
-        new Client(record, this.rootStore)
-      );
+      const existingClient = this.clients[record.pseudonymizedId];
+      if (existingClient) {
+        existingClient.updateRecord(record);
+      } else {
+        set(
+          this.clients,
+          record.pseudonymizedId,
+          new Client(record, this.rootStore)
+        );
+      }
     });
   }
 

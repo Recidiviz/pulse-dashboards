@@ -70,7 +70,7 @@ describe("WorkflowsHomepage", () => {
         selectedOfficerIds: ["123"],
         opportunityTypes: ["pastFTRD"],
         allOpportunitiesByType: {
-          earlyTermination: [],
+          pastFTRD: [],
         },
         hasOpportunities: false,
         user: { info: { givenNames: "Recidiviz" } },
@@ -97,7 +97,7 @@ describe("WorkflowsHomepage", () => {
         selectedOfficerIds: ["123", "456"],
         opportunityTypes: ["pastFTRD"],
         allOpportunitiesByType: {
-          earlyTermination: [],
+          pastFTRD: [],
         },
         hasOpportunities: false,
         user: { info: { givenNames: "Recidiviz" } },

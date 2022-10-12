@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { entries, makeObservable, when } from "mobx";
+import { entries, makeObservable, remove, set, when } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
 import {
@@ -28,7 +28,6 @@ import {
 } from "../analytics";
 import {
   ClientRecord,
-  CompliantReportingEligibleRecord,
   FullName,
   SpecialConditionCode,
   updateOpportunityCompleted,
@@ -40,6 +39,8 @@ import {
   EarlyTerminationOpportunity,
   EarnedDischargeOpportunity,
   LSUOpportunity,
+  Opportunity,
+  OPPORTUNITY_TYPES,
   OpportunityType,
   PastFTRDOpportunity,
 } from "./Opportunity";
@@ -81,38 +82,65 @@ export const CLIENT_DETAILS_COPY: Record<string, ClientDetailsCopy> = {
   },
 };
 
+type OpportunityConfig = {
+  flag: `${OpportunityType}Eligible`;
+  OpportunityClass: {
+    new (client: Client): Opportunity;
+  };
+};
+
+const OPPORTUNITY_CREATION_MAPPING: Record<
+  OpportunityType,
+  OpportunityConfig
+> = {
+  compliantReporting: {
+    flag: "compliantReportingEligible",
+    OpportunityClass: CompliantReportingOpportunity,
+  },
+  earlyTermination: {
+    flag: "earlyTerminationEligible",
+    OpportunityClass: EarlyTerminationOpportunity,
+  },
+  earnedDischarge: {
+    flag: "earnedDischargeEligible",
+    OpportunityClass: EarnedDischargeOpportunity,
+  },
+  LSU: { flag: "LSUEligible", OpportunityClass: LSUOpportunity },
+  pastFTRD: { flag: "pastFTRDEligible", OpportunityClass: PastFTRDOpportunity },
+};
+
 type OpportunityMapping = {
-  earlyTermination: EarlyTerminationOpportunity | undefined;
-  compliantReporting: CompliantReportingOpportunity | undefined;
-  earnedDischarge: EarnedDischargeOpportunity | undefined;
-  LSU: LSUOpportunity | undefined;
-  pastFTRD: PastFTRDOpportunity | undefined;
+  earlyTermination?: EarlyTerminationOpportunity;
+  compliantReporting?: CompliantReportingOpportunity;
+  earnedDischarge?: EarnedDischargeOpportunity;
+  LSU?: LSUOpportunity;
+  pastFTRD?: PastFTRDOpportunity;
 };
 
 export class Client {
   rootStore: RootStore;
 
-  recordId: string;
+  recordId!: string;
 
-  id: string;
+  id!: string;
 
-  record: ClientRecord;
+  record!: ClientRecord;
 
-  pseudonymizedId: string;
+  pseudonymizedId!: string;
 
-  stateCode: string;
+  stateCode!: string;
 
-  fullName: FullName;
+  fullName!: FullName;
 
-  officerId: string;
+  officerId!: string;
 
-  supervisionType: string;
+  supervisionType!: string;
 
-  supervisionLevel: SupervisionLevel;
+  supervisionLevel!: SupervisionLevel;
 
   supervisionLevelStart?: Date;
 
-  address: string;
+  address!: string;
 
   private rawPhoneNumber?: string;
 
@@ -130,15 +158,9 @@ export class Client {
 
   paroleSpecialConditions?: SpecialConditionCode[];
 
-  // TODO(#2263): Set this to just boolean once client record is migrated
-  compliantReportingEligible:
-    | CompliantReportingEligibleRecord
-    | undefined
-    | boolean;
-
   formIsPrinting = false;
 
-  opportunities: OpportunityMapping;
+  opportunities: OpportunityMapping = {};
 
   constructor(record: ClientRecord, rootStore: RootStore) {
     makeObservable(this, {
@@ -150,10 +172,15 @@ export class Client {
       opportunitiesEligible: true,
       printReferralForm: true,
       setFormIsPrinting: true,
+      updateRecord: true,
     });
 
     this.rootStore = rootStore;
 
+    this.updateRecord(record);
+  }
+
+  updateRecord(record: ClientRecord): void {
     this.recordId = record.recordId;
     this.record = record;
     this.id = record.personExternalId;
@@ -179,23 +206,17 @@ export class Client {
     this.supervisionStartDate = optionalFieldToDate(
       record.supervisionStartDate
     );
-    this.compliantReportingEligible = record.compliantReportingEligible;
 
-    this.opportunities = {
-      compliantReporting: this.compliantReportingEligible
-        ? new CompliantReportingOpportunity(this)
-        : undefined,
-      earlyTermination: this.record.earlyTerminationEligible
-        ? new EarlyTerminationOpportunity(this)
-        : undefined,
-      earnedDischarge: this.record.earnedDischargeEligible
-        ? new EarnedDischargeOpportunity(this)
-        : undefined,
-      LSU: this.record.LSUEligible ? new LSUOpportunity(this) : undefined,
-      pastFTRD: this.record.pastFTRDEligible
-        ? new PastFTRDOpportunity(this)
-        : undefined,
-    };
+    OPPORTUNITY_TYPES.forEach((t) => {
+      const { flag, OpportunityClass } = OPPORTUNITY_CREATION_MAPPING[t];
+      if (record[flag]) {
+        if (!this.opportunities[t]) {
+          set(this.opportunities, t, new OpportunityClass(this));
+        }
+      } else {
+        remove(this.opportunities, t);
+      }
+    });
   }
 
   get displayName(): string {
