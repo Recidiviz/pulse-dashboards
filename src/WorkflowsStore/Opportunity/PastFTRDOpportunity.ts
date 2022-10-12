@@ -58,4 +58,9 @@ export class PastFTRDOpportunity extends OpportunityBase<PastFTRDReferralRecord>
 
     return requirements;
   }
+
+  get eligibilityDate(): Date | undefined {
+    return this.record?.criteria.supervisionPastFullTermCompletionDate
+      ?.eligibleDate;
+  }
 }

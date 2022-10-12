@@ -76,7 +76,6 @@ export interface Opportunity extends Hydratable, Partial<BaseForm> {
   almostEligibleRecommendedNote?: { title: string; text: string };
   client: Client;
   readonly defaultEligibility: DefaultEligibility;
-  rank: number;
   requirementsAlmostMet: OpportunityRequirement[];
   requirementsMet: OpportunityRequirement[];
   reviewStatus: OpportunityStatus;
@@ -85,6 +84,7 @@ export interface Opportunity extends Hydratable, Partial<BaseForm> {
   denial: Denial | undefined;
   firstViewed: UpdateLog | undefined;
   setFirstViewedIfNeeded: () => void;
+  eligibilityDate: Date | undefined;
 }
 
 export interface BaseForm<FormDataType = Record<string, any>> {

@@ -82,10 +82,6 @@ describe("fully eligible", () => {
     updatesSub.isLoading = false;
   });
 
-  test("rank by status", () => {
-    expect(opp.rank).toBe(0);
-  });
-
   test("requirements almost met", () => {
     expect(opp.requirementsAlmostMet).toEqual([]);
   });
@@ -110,10 +106,6 @@ describe("no UA required", () => {
 
     [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
     updatesSub.isLoading = false;
-  });
-
-  test("rank by status", () => {
-    expect(opp.rank).toBe(0);
   });
 
   test("requirements almost met", () => {

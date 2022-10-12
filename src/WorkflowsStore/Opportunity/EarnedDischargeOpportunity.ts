@@ -82,4 +82,9 @@ export class EarnedDischargeOpportunity extends OpportunityBase<EarnedDischargeR
 
     return requirements;
   }
+
+  get eligibilityDate(): Date | undefined {
+    if (!this.record) return;
+    return this.record.eligibleStartDate;
+  }
 }

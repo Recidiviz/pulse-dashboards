@@ -50,6 +50,7 @@ test("transform dual/parole record", () => {
         sentenceType: "DUAL",
       },
     },
+    eligibleStartDate: "2022-10-05",
   };
 
   expect(transformReferral(rawRecord)).toMatchSnapshot();
@@ -88,6 +89,7 @@ test("transform probation record", () => {
         sentenceType: "DUAL",
       },
     },
+    eligibleStartDate: "2022-10-05",
   };
 
   expect(transformReferral(rawRecord)).toMatchSnapshot();
@@ -119,6 +121,7 @@ test("option criteria have sane fallbacks", () => {
         sentenceType: "DUAL",
       },
     },
+    eligibleStartDate: "2022-10-05",
   };
 
   expect(transformReferral(rawRecord)).toMatchSnapshot();

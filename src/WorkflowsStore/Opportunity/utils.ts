@@ -14,10 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
+import { ascending } from "d3-array";
 import { format } from "date-fns";
 import simplur from "simplur";
 
+import {
+  COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED,
+  CompliantReportingOpportunity,
+} from "./CompliantReportingOpportunity";
 import {
   Opportunity,
   OPPORTUNITY_STATUS_RANKED,
@@ -25,6 +29,19 @@ import {
 } from "./types";
 
 export function rankByReviewStatus(opp: Opportunity): number {
+  if (opp instanceof CompliantReportingOpportunity) {
+    if (opp.almostEligible) {
+      // sort denials to the bottom
+      if (opp.reviewStatus === "DENIED") {
+        return COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED.length;
+      }
+      return Math.min(
+        ...opp.validAlmostEligibleKeys.map((key) =>
+          COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED.indexOf(key)
+        )
+      );
+    }
+  }
   return OPPORTUNITY_STATUS_RANKED.indexOf(opp.reviewStatus);
 }
 
@@ -74,4 +91,42 @@ export const generateOpportunityHeader = (
   };
 
   return headers[opportunityType];
+};
+
+export function sortByReviewStatus(
+  opp1: Opportunity,
+  opp2: Opportunity
+): number {
+  // Use the review status on the opportunity to sort.
+  // Compliant Reporting has additional conditions to determine the value of the rank.
+  const opp1ReviewStatus = rankByReviewStatus(opp1);
+  const opp2ReviewStatus = rankByReviewStatus(opp2);
+
+  return ascending(opp1ReviewStatus, opp2ReviewStatus);
+}
+
+export function sortByReviewStatusAndEligibilityDate(
+  opp1: Opportunity,
+  opp2: Opportunity
+): number {
+  // First, sort by review status
+  const rankSort = sortByReviewStatus(opp1, opp2);
+  if (rankSort === 0) {
+    // If the ranks are equivalent, sort by eligibilityDate
+    if (opp1.eligibilityDate && opp2.eligibilityDate) {
+      return ascending(opp1.eligibilityDate, opp2.eligibilityDate);
+    }
+  }
+  return rankSort;
+}
+
+export const opportunityToSortFunctionMapping: Record<
+  OpportunityType,
+  (a: Opportunity, b: Opportunity) => number
+> = {
+  earlyTermination: sortByReviewStatus,
+  compliantReporting: sortByReviewStatus,
+  earnedDischarge: sortByReviewStatusAndEligibilityDate,
+  LSU: sortByReviewStatusAndEligibilityDate,
+  pastFTRD: sortByReviewStatusAndEligibilityDate,
 };

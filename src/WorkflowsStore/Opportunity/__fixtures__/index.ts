@@ -190,6 +190,7 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
       activeNco: false,
     },
   },
+  eligibleStartDate: new Date(2022, 10, 5),
 };
 
 export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord = {
@@ -221,6 +222,7 @@ export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord
       sentenceType: "PAROLE",
     },
   },
+  eligibleStartDate: new Date(2022, 10, 5),
 };
 
 export const ineligibleClientRecord: ClientRecord = {

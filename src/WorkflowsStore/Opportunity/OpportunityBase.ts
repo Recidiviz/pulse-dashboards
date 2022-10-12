@@ -40,7 +40,6 @@ import {
   OpportunityStatus,
   OpportunityType,
 } from "./types";
-import { rankByReviewStatus } from "./utils";
 
 /**
  * Implements functionality shared by all Opportunities, most notably the `Hydratable` interface.
@@ -70,7 +69,6 @@ export abstract class OpportunityBase<
       error: computed,
       hydrate: action,
       isLoading: computed,
-      rank: computed,
       record: computed,
       reviewStatus: computed,
       isHydrated: computed,
@@ -98,10 +96,6 @@ export abstract class OpportunityBase<
 
   get updates(): UpdateRecord | undefined {
     return this.updatesSubscription.data;
-  }
-
-  get rank(): number {
-    return rankByReviewStatus(this);
   }
 
   get denial(): Denial | undefined {
@@ -224,4 +218,9 @@ export abstract class OpportunityBase<
   }
 
   navigateToFormText?: string | undefined;
+
+  // eslint-disable-next-line class-methods-use-this
+  get eligibilityDate(): Date | undefined {
+    return undefined;
+  }
 }

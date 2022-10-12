@@ -36,6 +36,7 @@ export interface EarnedDischargeReferralRecord {
       sentenceType: "PROBATION" | "PAROLE" | "DUAL";
     };
   };
+  eligibleStartDate: Date;
 }
 
 export type EarnedDischargeDraftData = {
@@ -80,5 +81,6 @@ export const transformReferral: TransformFunction<EarnedDischargeReferralRecord>
   // @ts-expect-error
   delete transformedRecord.criteria.supervisionNotPastFullTermCompletionDate;
 
+  transformedRecord.eligibleStartDate = fieldToDate(record.eligibleStartDate);
   return transformedRecord;
 };

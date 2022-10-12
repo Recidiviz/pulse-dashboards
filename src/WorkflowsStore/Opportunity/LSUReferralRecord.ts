@@ -53,6 +53,7 @@ export interface LSUReferralRecord {
       activeNco: boolean;
     };
   };
+  eligibleStartDate: Date;
 }
 
 export type LSUDraftData = {
@@ -128,6 +129,8 @@ export const transformReferral: TransformFunction<LSUReferralRecord> = (
   // delete vestigial criterion left over from TES we don't use in the front end
   // @ts-expect-error
   delete transformedRecord.criteria.supervisionNotPastFullTermCompletionDate;
+
+  transformedRecord.eligibleStartDate = fieldToDate(record.eligibleStartDate);
 
   return transformedRecord;
 };

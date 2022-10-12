@@ -49,6 +49,7 @@ test("transform record", () => {
         activeNco: true,
       },
     },
+    eligibleStartDate: "2022-10-05",
   };
 
   expect(transformReferral(rawRecord)).toMatchSnapshot();
@@ -77,6 +78,7 @@ test("optional criteria have sane fallbacks", () => {
       },
       usIdNoActiveNco: null,
     },
+    eligibleStartDate: "2022-10-05",
   };
 
   expect(transformReferral(rawRecord)).toMatchSnapshot();

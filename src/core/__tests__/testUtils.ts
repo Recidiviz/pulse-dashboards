@@ -26,10 +26,10 @@ export const mockOpportunity: Opportunity = {
   firstViewed: undefined,
   hydrate: () => undefined,
   isHydrated: true,
-  rank: 0,
   requirementsAlmostMet: [],
   requirementsMet: [],
   reviewStatus: "PENDING",
   setFirstViewedIfNeeded: () => undefined,
   type: "pastFTRD",
+  eligibilityDate: undefined,
 };

@@ -57,7 +57,7 @@ import {
   OpportunityStatus,
   OpportunityType,
 } from "./types";
-import { formatNoteDate, rankByReviewStatus } from "./utils";
+import { formatNoteDate } from "./utils";
 
 type AlmostEligibleCriteria = {
   currentLevelEligibilityDate?: Date;
@@ -90,7 +90,7 @@ type CompliantReportingRecordTransformed = {
 };
 
 // ranked roughly by actionability
-const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (keyof AlmostEligibleCriteria)[] = [
+export const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (keyof AlmostEligibleCriteria)[] = [
   "paymentNeeded",
   "passedDrugScreenNeeded",
   "recentRejectionCodes",
@@ -361,22 +361,6 @@ export class CompliantReportingOpportunity
 
   get almostEligible(): boolean {
     return this.validAlmostEligibleKeys.length > 0;
-  }
-
-  get rank(): number {
-    if (this.almostEligible) {
-      // sort denials to the bottom
-      if (this.reviewStatus === "DENIED") {
-        return COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED.length;
-      }
-      return Math.min(
-        ...this.validAlmostEligibleKeys.map((key) =>
-          COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED.indexOf(key)
-        )
-      );
-    }
-
-    return rankByReviewStatus(this);
   }
 
   get updates(): CompliantReportingUpdateRecord | undefined {
@@ -862,7 +846,7 @@ export class CompliantReportingOpportunity
     return { ...toJS(this.prefilledData), ...toJS(this.draftData) };
   }
 
-  private get validAlmostEligibleKeys() {
+  get validAlmostEligibleKeys(): (keyof AlmostEligibleCriteria)[] {
     return (Object.keys(
       this.requirementAlmostMetMap
     ) as (keyof AlmostEligibleCriteria)[]).filter(
@@ -909,4 +893,6 @@ export class CompliantReportingOpportunity
   get denial(): Denial | undefined {
     return this.updates?.denial;
   }
+
+  eligibilityDate: Date | undefined = undefined;
 }

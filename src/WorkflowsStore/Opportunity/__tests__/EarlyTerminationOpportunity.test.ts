@@ -83,10 +83,6 @@ describe("fully eligible", () => {
     updatesSub.isLoading = false;
   });
 
-  test("rank by status", () => {
-    expect(et.rank).toBe(0);
-  });
-
   test("requirements almost met", () => {
     expect(et.requirementsAlmostMet).toEqual([]);
   });

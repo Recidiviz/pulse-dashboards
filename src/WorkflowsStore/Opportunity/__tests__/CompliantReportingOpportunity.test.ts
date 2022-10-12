@@ -39,6 +39,7 @@ import {
   DENIED_UPDATE,
   INCOMPLETE_FORM_UPDATE,
 } from "../testUtils";
+import { rankByReviewStatus } from "../utils";
 
 jest.mock("../../subscriptions");
 
@@ -102,19 +103,6 @@ describe("fully eligible", () => {
     expect(cr.reviewStatus).toBe("COMPLETED");
   });
 
-  test("rank by status", () => {
-    expect(cr.rank).toBe(0);
-
-    updatesSub.data = INCOMPLETE_FORM_UPDATE;
-    expect(cr.rank).toBe(1);
-
-    updatesSub.data = DENIED_UPDATE;
-    expect(cr.rank).toBe(2);
-
-    updatesSub.data = COMPLETED_UPDATE;
-    expect(cr.rank).toBe(3);
-  });
-
   test("requirements almost met", () => {
     expect(cr.requirementsAlmostMet).toEqual([]);
   });
@@ -127,6 +115,10 @@ describe("fully eligible", () => {
   test("recommended note", () => {
     // this is for almost eligible only
     expect(cr.almostEligibleRecommendedNote).toBeUndefined();
+  });
+
+  test("rank by review status", () => {
+    expect(rankByReviewStatus(cr)).toEqual(0);
   });
 });
 
@@ -214,13 +206,6 @@ describe.each([
       expect(cr.reviewStatus).toBe("ALMOST");
     });
 
-    test("rank by status", () => {
-      expect(cr.rank).toBe(expectedRank);
-
-      updatesSub.data = DENIED_UPDATE;
-      expect(cr.rank).toBe(5);
-    });
-
     test("requirements almost met", () => {
       expect(cr.requirementsAlmostMet).toEqual([
         {
@@ -246,6 +231,11 @@ describe.each([
       } else {
         expect(cr.almostEligibleRecommendedNote).toBeUndefined();
       }
+    });
+
+    test("rank by review status", () => {
+      updatesSub.data = DENIED_UPDATE;
+      expect(rankByReviewStatus(cr)).toEqual(5);
     });
   }
 );

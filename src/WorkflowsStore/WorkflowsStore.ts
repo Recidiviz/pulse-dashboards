@@ -54,6 +54,7 @@ import {
   OPPORTUNITY_TYPES,
   OpportunityType,
 } from "./Opportunity/types";
+import { opportunityToSortFunctionMapping } from "./Opportunity/utils";
 import {
   observableSubscription,
   staffNameComparator,
@@ -380,7 +381,8 @@ export class WorkflowsStore implements Hydratable {
       const opportunities = this.caseloadClients
         .map((c) => c.opportunitiesEligible[opportunityType])
         .filter((opp) => opp !== undefined)
-        .sort((a, b) => ascending(a?.rank, b?.rank));
+        .map((opp) => opp as Opportunity)
+        .sort(opportunityToSortFunctionMapping[opportunityType]);
 
       mapping[opportunityType] = opportunities as Opportunity[];
     });
@@ -393,7 +395,8 @@ export class WorkflowsStore implements Hydratable {
       const opportunities = this.caseloadClients
         .map((c) => c.opportunitiesAlmostEligible[opportunityType])
         .filter((opp) => opp !== undefined)
-        .sort((a, b) => ascending(a?.rank, b?.rank));
+        .map((opp) => opp as Opportunity)
+        .sort(opportunityToSortFunctionMapping[opportunityType]);
 
       mapping[opportunityType] = opportunities as Opportunity[];
     });
@@ -428,7 +431,8 @@ export class WorkflowsStore implements Hydratable {
       const opportunities = this.caseloadClients
         .map((c) => c.opportunities[opportunityType])
         .filter((opp) => !!opp?.isHydrated)
-        .sort((a, b) => ascending(a?.rank, b?.rank));
+        .map((opp) => opp as Opportunity)
+        .sort(opportunityToSortFunctionMapping[opportunityType]);
 
       mapping[opportunityType] = opportunities as Opportunity[];
     });

@@ -163,4 +163,9 @@ export class LSUOpportunity extends OpportunityWithFormBase<
 
     return requirements;
   }
+
+  get eligibilityDate(): Date | undefined {
+    if (!this.record) return;
+    return this.record.eligibleStartDate;
+  }
 }
