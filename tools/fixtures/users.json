@@ -1,42 +1,47 @@
 [
   {
-    "name": "Test Officer1",
     "email": "test-officer@example.com",
     "district": "DISTRICT 50",
     "id": "OFFICER1",
     "stateCode": "US_TN",
-    "hasCaseload": true
+    "hasCaseload": true,
+    "givenNames": "Test",
+    "surname": "Officer1"
   },
   {
-    "name": "Test Officer2",
     "email": null,
     "district": "DISTRICT 50",
     "id": "OFFICER2",
     "stateCode": "US_TN",
-    "hasCaseload": true
+    "hasCaseload": true,
+    "givenNames": "Test",
+    "surname": "Officer2"
   },
   {
-    "name": "Test Supervisor",
     "email": "test-supervisor@example.com",
     "district": "DISTRICT 50",
     "id": "SUPERVISOR1",
     "stateCode": "US_TN",
-    "hasCaseload": false
+    "hasCaseload": false,
+    "givenNames": "Test",
+    "surname": "Supervisor"
   },
   {
-    "name": "Test Officer3",
     "email": "test-officer-3@example.com",
     "district": "DISTRICT 1",
     "id": "OFFICER3",
     "stateCode": "US_ND",
-    "hasCaseload": true
+    "hasCaseload": true,
+    "givenNames": "Test",
+    "surname": "Officer3"
   },
   {
-    "name": "Test Officer4",
     "email": "test-officer-3@example.com",
     "district": "DISTRICT 1",
     "id": "OFFICER4",
     "stateCode": "US_ID",
-    "hasCaseload": true
+    "hasCaseload": true,
+    "givenNames": "Test",
+    "surname": "Officer4"
   }
 ]
