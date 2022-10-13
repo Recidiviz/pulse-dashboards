@@ -44,6 +44,13 @@ export const OpportunityCapsule = observer(
       );
     }
 
-    return <ClientCapsule client={client} status={status} {...otherProps} />;
+    return (
+      <ClientCapsule
+        client={client}
+        status={status}
+        hideTooltip
+        {...otherProps}
+      />
+    );
   }
 );

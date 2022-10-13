@@ -27,6 +27,7 @@ import { OpportunityType } from "../../WorkflowsStore";
 import { workflowsUrl } from "../views";
 import { CompliantReportingClientProfile } from "../WorkflowsClientProfile";
 import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTerminationClientProfile";
+import { EarnedDischargeClientProfile } from "../WorkflowsClientProfile/EarnedDischargeClientProfile";
 import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
 import { PastFTRDClientProfile } from "../WorkflowsClientProfile/PastFTRDClientProfile";
 
@@ -42,7 +43,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
     ),
   },
   earnedDischarge: {
-    previewContents: <div />,
+    previewContents: <EarnedDischargeClientProfile />,
   },
   LSU: {
     previewContents: <LSUClientProfile formLinkButton />,

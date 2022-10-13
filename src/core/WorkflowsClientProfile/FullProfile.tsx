@@ -59,6 +59,14 @@ const Header = styled.div`
   grid-area: header;
   grid-template-columns: ${COLUMNS};
   padding: ${rem(spacing.lg)} 0 ${rem(spacing.md)};
+  cursor: default;
+
+  &:hover {
+    [class*="ClientName"] {
+      text-decoration: none;
+      color: ${palette.pine2};
+    }
+  }
 `;
 
 const ContactCell = styled.dl`
