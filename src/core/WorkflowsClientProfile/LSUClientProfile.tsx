@@ -23,20 +23,29 @@ import { Contact, Supervision } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
-export const LSUClientProfile = observer(() => {
-  const { workflowsStore } = useRootStore();
+type LSUClientProfileProps = {
+  formLinkButton?: boolean;
+};
 
-  const client = workflowsStore.selectedClient;
-  if (!client?.opportunities.LSU) {
-    return null;
+export const LSUClientProfile: React.FC<LSUClientProfileProps> = observer(
+  ({ formLinkButton }) => {
+    const { workflowsStore } = useRootStore();
+
+    const client = workflowsStore.selectedClient;
+    if (!client?.opportunities.LSU) {
+      return null;
+    }
+
+    return (
+      <article>
+        <Heading client={client} />
+        <OpportunityModule
+          opportunity={client.opportunities.LSU}
+          formLinkButton={formLinkButton}
+        />
+        <Supervision client={client} />
+        <Contact client={client} />
+      </article>
+    );
   }
-
-  return (
-    <article>
-      <Heading client={client} />
-      <OpportunityModule opportunity={client.opportunities.LSU} />
-      <Supervision client={client} />
-      <Contact client={client} />
-    </article>
-  );
-});
+);

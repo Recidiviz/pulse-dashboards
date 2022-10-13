@@ -121,7 +121,12 @@ export const FullProfile = observer((): React.ReactElement | null => {
     <WorkflowsNavLayout>
       <Wrapper>
         <Header>
-          <ProfileCapsule avatarSize="lg" client={client} textSize="lg" />
+          <ProfileCapsule
+            avatarSize="lg"
+            client={client}
+            textSize="lg"
+            hideTooltip
+          />
           <ContactCell>
             <div>
               <ContactLabel>Telephone</ContactLabel>

@@ -100,3 +100,9 @@ export function trackCaseloadSearch(metadata: {
 }): void {
   track("frontend.caseload_search", metadata);
 }
+
+export function trackOpportunityPreviewed(
+  metadata: ClientOpportunityTrackingMetadata
+): void {
+  track("frontend.opportunity_previewed", metadata);
+}

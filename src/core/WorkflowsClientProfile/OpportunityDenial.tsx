@@ -18,6 +18,7 @@
 import {
   Dropdown,
   DropdownMenu,
+  DropdownMenuItem,
   DropdownToggle,
   palette,
   spacing,
@@ -28,7 +29,7 @@ import { darken, rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import Checkbox from "../../components/Checkbox";
+import Checkbox from "../../components/Checkbox/Checkbox";
 import { Opportunity, OTHER_KEY } from "../../WorkflowsStore";
 import { STATUS_COLORS, useStatusColors } from "./common";
 
@@ -64,6 +65,22 @@ const DropdownContainer = styled.div`
   min-width: 21rem;
   min-height: 17rem;
   margin-bottom: 1rem;
+
+  > button {
+    background-color: transparent;
+    padding: 0;
+
+    &:hover,
+    &:focus,
+    &:active {
+      background-color: transparent;
+    }
+
+    &:focus {
+      .Checkbox__box {
+      background-color: ${palette.slate10};
+    }
+  }
 `;
 
 const SelectReasonText = styled.div`
@@ -93,7 +110,7 @@ const DropdownItem = styled.div<{ first?: boolean }>`
     }
 
     > .Checkbox__label {
-      top: 0;
+      top: -7px;
     }
 
     > .Checkbox__box {
@@ -153,43 +170,58 @@ export const OpportunityDenial = observer(
           <StatusAwareButton {...buttonProps}>{buttonText}</StatusAwareButton>
           <DropdownMenu>
             <DropdownContainer>
-              <DropdownItem first>
-                <Checkbox
-                  value="eligible"
-                  checked={!reasons?.length}
-                  name="eligible"
-                  onChange={() => {
-                    if (reasons?.length) {
-                      opportunity.client.setOpportunityDenialReasons(
-                        [],
-                        opportunity.type
-                      );
-                    }
-                  }}
-                >
-                  Eligible
-                </Checkbox>
-              </DropdownItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  if (reasons?.length) {
+                    opportunity.client.setOpportunityDenialReasons(
+                      [],
+                      opportunity.type
+                    );
+                  }
+                }}
+                preventCloseOnClickEvent
+              >
+                <DropdownItem>
+                  <Checkbox
+                    value="eligible"
+                    checked={!reasons?.length}
+                    name="eligible"
+                    onChange={() => {
+                      return undefined;
+                    }}
+                  >
+                    Eligible
+                  </Checkbox>
+                </DropdownItem>
+              </DropdownMenuItem>
               <SelectReasonText>
                 Not eligible? Select reason(s):
               </SelectReasonText>
               {Object.entries(opportunity?.denialReasonsMap).map(
                 ([code, desc]) => (
-                  <DropdownItem>
-                    <Checkbox
-                      value={code}
-                      checked={reasons?.includes(code) || false}
-                      name="denial reason"
-                      onChange={() => {
-                        opportunity.client.setOpportunityDenialReasons(
-                          xor(reasons, [code]).sort(),
-                          opportunity.type
-                        );
-                      }}
-                    >
-                      {desc}
-                    </Checkbox>
-                  </DropdownItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      opportunity.client.setOpportunityDenialReasons(
+                        xor(reasons, [code]).sort(),
+                        opportunity.type
+                      );
+                    }}
+                    preventCloseOnClickEvent
+                  >
+                    <DropdownItem>
+                      <Checkbox
+                        value={code}
+                        checked={reasons?.includes(code) || false}
+                        name="denial reason"
+                        onChange={() => {
+                          return undefined;
+                        }}
+                        disabled
+                      >
+                        {desc}
+                      </Checkbox>
+                    </DropdownItem>
+                  </DropdownMenuItem>
                 )
               )}
 

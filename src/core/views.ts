@@ -259,7 +259,7 @@ export const WORKFLOWS_PATHS = {
   home: `/${PATHWAYS_VIEWS.workflows}/home`,
   caseloadClients: `/${PATHWAYS_VIEWS.workflows}/clients`,
   clientProfile: `/${PATHWAYS_VIEWS.workflows}/clients/:clientId`,
-  clientPreview: `/${PATHWAYS_VIEWS.workflows}/:opportunityType/preview/:clientId`,
+  clientPreview: `/${PATHWAYS_VIEWS.workflows}/:opportunityType/:clientId/preview`,
 };
 
 export const WorkflowsPageIdList = [

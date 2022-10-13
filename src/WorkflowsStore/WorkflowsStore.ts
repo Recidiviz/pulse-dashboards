@@ -465,6 +465,15 @@ export class WorkflowsStore implements Hydratable {
     this.clients[clientId].trackFormViewed(formType);
   }
 
+  async trackClientOpportunityPreviewed(
+    clientId: string,
+    opportunityType: OpportunityType
+  ): Promise<void> {
+    await when(() => this.clients[clientId] !== undefined);
+
+    this.clients[clientId].trackOpportunityPreviewed(opportunityType);
+  }
+
   /**
    * All feature variants currently active for this user, taking into account
    * the activeDate for each feature and observing the current Date for reactivity

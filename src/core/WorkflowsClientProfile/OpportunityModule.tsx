@@ -25,7 +25,7 @@ import styled from "styled-components/macro";
 import { Opportunity, OPPORTUNITY_LABELS } from "../../WorkflowsStore";
 import { EligibilityStatus } from "../OpportunityStatus";
 import { workflowsUrl } from "../views";
-import { useStatusColors } from "./common";
+import { Separator, useStatusColors } from "./common";
 import { CriteriaList } from "./CriteriaList";
 import { OpportunityDenial } from "./OpportunityDenial";
 
@@ -35,8 +35,8 @@ const Wrapper = styled.div<{ background: string; border: string }>`
   border-style: solid;
   border-width: 1px 0;
   color: ${palette.pine1};
-  margin: 0 -${rem(spacing.md)};
-  padding: ${rem(spacing.md)};
+  margin: 0 -${rem(spacing.lg)};
+  padding: ${rem(spacing.md)} ${rem(spacing.lg)};
 `;
 
 const TitleText = styled(Sans16)`
@@ -86,14 +86,13 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
           {OPPORTUNITY_LABELS[opportunity.type]}
           {showEligibilityStatus && (
             <>
-              :{" "}
+              <Separator> • </Separator>
               <span style={{ color: colors.link }}>
                 <EligibilityStatus opportunity={opportunity} />
               </span>
             </>
           )}
         </TitleText>
-
         <CriteriaList opportunity={opportunity} />
         {(formPrintButton || showDenialButton || formLinkButton) && (
           <ActionButtons>
@@ -121,6 +120,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                 </FormActionButton>
               </div>
             )}
+
             {showDenialButton && (
               <OpportunityDenial opportunity={opportunity} />
             )}

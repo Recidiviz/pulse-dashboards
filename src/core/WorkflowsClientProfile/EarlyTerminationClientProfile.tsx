@@ -23,24 +23,32 @@ import { Contact, Supervision } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
-export const EarlyTerminationClientProfile = observer(() => {
-  const { workflowsStore } = useRootStore();
+type EarlyTerminationClientProfileProps = {
+  formLinkButton?: boolean;
+  formPrintButton?: boolean;
+};
 
-  const client = workflowsStore.selectedClient;
+export const EarlyTerminationClientProfile: React.FC<EarlyTerminationClientProfileProps> = observer(
+  ({ formLinkButton, formPrintButton = true }) => {
+    const { workflowsStore } = useRootStore();
 
-  if (!client?.opportunities.earlyTermination) {
-    return null;
+    const client = workflowsStore.selectedClient;
+
+    if (!client?.opportunities.earlyTermination) {
+      return null;
+    }
+
+    return (
+      <article>
+        <Heading client={client} />
+        <OpportunityModule
+          opportunity={client.opportunities.earlyTermination}
+          formLinkButton={formLinkButton}
+          formPrintButton={formPrintButton}
+        />
+        <Supervision client={client} />
+        <Contact client={client} />
+      </article>
+    );
   }
-
-  return (
-    <article>
-      <Heading client={client} />
-      <OpportunityModule
-        opportunity={client.opportunities.earlyTermination}
-        formPrintButton
-      />
-      <Supervision client={client} />
-      <Contact client={client} />
-    </article>
-  );
-});
+);

@@ -29,27 +29,36 @@ import {
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
-export const CompliantReportingClientProfile = observer(() => {
-  const { workflowsStore } = useRootStore();
+type CompliantReportingClientProfileProps = {
+  formLinkButton?: boolean;
+  formPrintButton?: boolean;
+};
 
-  const client = workflowsStore.selectedClient;
+export const CompliantReportingClientProfile: React.FC<CompliantReportingClientProfileProps> = observer(
+  ({ formLinkButton, formPrintButton }) => {
+    const { workflowsStore } = useRootStore();
 
-  if (!client?.opportunities.compliantReporting) {
-    return null;
+    const client = workflowsStore.selectedClient;
+
+    if (!client?.opportunities.compliantReporting) {
+      return null;
+    }
+
+    return (
+      <article>
+        <Heading client={client} />
+
+        <OpportunityModule
+          opportunity={client.opportunities.compliantReporting}
+          formLinkButton={formLinkButton}
+          formPrintButton={formPrintButton}
+        />
+        <SpecialConditions client={client} />
+        <Supervision client={client} />
+        <Contact client={client} />
+        <Housing client={client} />
+        <FinesAndFees client={client} />
+      </article>
+    );
   }
-
-  return (
-    <article>
-      <Heading client={client} />
-      <OpportunityModule
-        opportunity={client.opportunities.compliantReporting}
-        formPrintButton
-      />
-      <SpecialConditions client={client} />
-      <Supervision client={client} />
-      <Contact client={client} />
-      <Housing client={client} />
-      <FinesAndFees client={client} />
-    </article>
-  );
-});
+);

@@ -19,6 +19,7 @@ import { configure, runInAction } from "mobx";
 import { IDisposer } from "mobx-utils";
 
 import {
+  trackOpportunityPreviewed,
   trackReferralFormViewed,
   trackSetOpportunityStatus,
   trackSurfacedInList,
@@ -314,6 +315,38 @@ test("list view tracking waits for updates", async () => {
 
   expect(trackSurfacedInList).toHaveBeenCalledTimes(1);
   expect(trackSurfacedInList).toHaveBeenCalledWith({
+    clientId: client.pseudonymizedId,
+    opportunityType: "compliantReporting",
+  });
+});
+
+test("opportunity preview tracking", async () => {
+  await client.trackOpportunityPreviewed("compliantReporting");
+
+  expect(trackOpportunityPreviewed).toHaveBeenCalledWith({
+    clientId: client.pseudonymizedId,
+    opportunityType: "compliantReporting",
+  });
+});
+
+test("opportunity preview tracking waits for updates", async () => {
+  const trackingCall = client.trackOpportunityPreviewed("compliantReporting");
+
+  // simulate fetch latency
+  setTimeout(() => {
+    runInAction(() => {
+      compliantReportingUpdatesSub.data = {
+        completed: {
+          update: { by: "abc", date: dateToTimestamp("2022-01-01") },
+        },
+      };
+    });
+  }, 10);
+
+  await trackingCall;
+
+  expect(trackOpportunityPreviewed).toHaveBeenCalledTimes(1);
+  expect(trackOpportunityPreviewed).toHaveBeenCalledWith({
     clientId: client.pseudonymizedId,
     opportunityType: "compliantReporting",
   });

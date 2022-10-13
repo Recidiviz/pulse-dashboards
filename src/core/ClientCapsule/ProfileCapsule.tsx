@@ -24,6 +24,7 @@ type Props = Omit<ClientCapsuleProps, "status">;
 
 export const ProfileCapsule = ({
   client,
+  hideTooltip,
   ...otherProps
 }: Props): JSX.Element => {
   return (
@@ -37,6 +38,7 @@ export const ProfileCapsule = ({
             .join(", ")}
         </>
       }
+      hideTooltip={hideTooltip}
     />
   );
 };

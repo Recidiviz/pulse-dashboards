@@ -20,22 +20,38 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { OpportunityClientList } from "./OpportunityClientList";
+import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 
 const Wrapper = styled.div`
   /* leaving extra space for the Intercom button */
   padding-bottom: ${rem(spacing.md * 4)};
 `;
 
-export const OpportunityCaseloadView = observer(() => {
-  return (
-    <WorkflowsNavLayout>
-      <Wrapper>
-        <CaseloadSelect />
-        <OpportunityClientList />
-      </Wrapper>
-    </WorkflowsNavLayout>
-  );
-});
+type OpportunityCaseloadViewProps = {
+  preview?: boolean;
+};
+
+export const OpportunityCaseloadView = observer(
+  ({ preview = false }: OpportunityCaseloadViewProps) => {
+    const {
+      workflowsStore: { selectedOpportunityType: opportunityType },
+    } = useRootStore();
+
+    return (
+      <WorkflowsNavLayout>
+        <Wrapper>
+          <CaseloadSelect />
+          <OpportunityClientList />
+          <OpportunityPreviewModal
+            opportunityType={opportunityType}
+            isOpen={preview}
+          />
+        </Wrapper>
+      </WorkflowsNavLayout>
+    );
+  }
+);

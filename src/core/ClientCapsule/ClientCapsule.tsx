@@ -21,6 +21,7 @@ import {
   Sans18,
   Sans24,
   spacing,
+  TooltipTrigger,
 } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
@@ -28,6 +29,7 @@ import styled, { css } from "styled-components/macro";
 
 import { Client } from "../../WorkflowsStore";
 import { ClientAvatar } from "../Avatar";
+import { Separator } from "../WorkflowsClientProfile/common";
 
 export type ClientCapsuleProps = {
   avatarSize: "md" | "lg";
@@ -35,14 +37,11 @@ export type ClientCapsuleProps = {
   status: React.ReactNode;
   textSize: "sm" | "lg";
   hideId?: boolean;
+  hideTooltip?: boolean;
 };
 
 const ClientName = styled.span`
   color: ${palette.pine2};
-`;
-
-const Separator = styled.span`
-  color: ${palette.slate30};
 `;
 
 const ClientId = styled.span`
@@ -97,6 +96,7 @@ const ClientCapsule: React.FC<ClientCapsuleProps> = ({
   status,
   textSize,
   hideId = false,
+  hideTooltip = false,
 }) => {
   const IdentityEl = SIZES.identity[textSize];
   const StatusEl = SIZES.status[textSize];
@@ -106,7 +106,9 @@ const ClientCapsule: React.FC<ClientCapsuleProps> = ({
       <ClientAvatar name={client.displayName} size={SIZES.avatar[avatarSize]} />
       <ClientInfo>
         <IdentityEl>
-          <ClientName>{client.displayName}</ClientName>
+          <TooltipTrigger contents={!hideTooltip && "Go to profile"}>
+            <ClientName>{client.displayName}</ClientName>
+          </TooltipTrigger>
           {!hideId && (
             <React.Fragment key="clientId">
               <Separator> • </Separator>

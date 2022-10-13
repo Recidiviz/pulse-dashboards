@@ -20,6 +20,7 @@ import { format as formatPhone } from "phone-fns";
 
 import {
   trackClientProfileViewed,
+  trackOpportunityPreviewed,
   trackProfileOpportunityClicked,
   trackReferralFormPrinted,
   trackReferralFormViewed,
@@ -380,6 +381,17 @@ export class Client {
 
   trackProfileOpportunityClicked(opportunityType: OpportunityType): void {
     trackProfileOpportunityClicked({
+      clientId: this.pseudonymizedId,
+      opportunityType,
+    });
+  }
+
+  async trackOpportunityPreviewed(
+    opportunityType: OpportunityType
+  ): Promise<void> {
+    await when(() => this.opportunities[opportunityType]?.isLoading === false);
+
+    trackOpportunityPreviewed({
       clientId: this.pseudonymizedId,
       opportunityType,
     });

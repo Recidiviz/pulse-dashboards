@@ -36,19 +36,19 @@ export const STATUS_COLORS = {
     icon: palette.signal.highlight,
     iconAlmost: palette.data.gold1,
     background: "transparent",
-    border: rgba(palette.slate, 0.15),
+    border: rgba(palette.slate, 0.1),
     text: palette.pine4,
     buttonFill: palette.signal.links,
-    link: palette.signal.links,
+    link: palette.data.gold1,
   },
   ineligible: {
-    icon: palette.data.gold1,
+    icon: palette.signal.highlight,
     iconAlmost: palette.data.gold1,
-    background: rgba(palette.data.gold1, 0.1),
-    border: rgba(palette.data.gold1, 0.5),
-    text: palette.slate85,
-    buttonFill: palette.data.gold1,
-    link: palette.data.gold1,
+    background: "transparent",
+    border: rgba(palette.slate, 0.1),
+    text: palette.pine4,
+    buttonFill: palette.signal.links,
+    link: palette.signal.error,
   },
   alert: {
     icon: palette.signal.error,
@@ -78,6 +78,10 @@ export function useStatusColors(opportunity: Opportunity): StatusPalette {
 
 export const InfoTooltipWrapper = styled(TooltipTrigger)`
   vertical-align: text-bottom;
+`;
+
+export const Separator = styled.span`
+  color: ${palette.slate30};
 `;
 
 const InfoLink = styled.a`
