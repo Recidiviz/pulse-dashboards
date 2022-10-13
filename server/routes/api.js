@@ -99,14 +99,15 @@ function respondWithForbidden(res) {
 function workflowsTemplates(req, res, next) {
   const { stateCode } = req.params;
   const { filename } = req.query;
+  const sanitizedFileName = sanitizeFilename(filename);
   const filepath = path.resolve(
     __dirname,
-    `../assets/workflowsTemplates/${stateCode}/${filename}`
+    `../assets/workflowsTemplates/${stateCode}/${sanitizedFileName}`
   );
   res.sendFile(filepath, {}, (err) => {
     if (err) {
       const error = {
-        message: `Failed to send file ${filename} for stateCode ${stateCode}. ${err}`,
+        message: `Failed to send file ${sanitizedFileName} for stateCode ${stateCode}. ${err}`,
       };
       next(error);
     }
