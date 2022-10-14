@@ -19,6 +19,7 @@
 
 import fs from "fs";
 
+import { collectionNames } from "../src/firestore/firestore";
 import { deleteCollection, getDb } from "./firestoreUtils";
 
 const COLLECTIONS = {
@@ -27,9 +28,11 @@ const COLLECTIONS = {
   compliantReportingReferrals: "compliantReportingReferrals",
 };
 
-const OPPORTUNITY_COLLECTIONS = [
+const OPPORTUNITIES_WITH_FIXTURES: (keyof typeof collectionNames)[] = [
   "earlyTerminationReferrals",
-  "US_ID-LSUReferrals",
+  "LSUReferrals",
+  "earnedDischargeReferrals",
+  "pastFTRDReferrals",
 ];
 
 const db = getDb();
@@ -112,23 +115,23 @@ async function loadCompliantReportingReferralsFixture() {
 }
 
 async function loadOpportunityReferralFixtures() {
-  for await (const collectionName of OPPORTUNITY_COLLECTIONS) {
-    console.log(`wiping existing ${collectionName} referral data ...`);
-    await deleteCollection(db, collectionName);
+  for await (const opportunity of OPPORTUNITIES_WITH_FIXTURES) {
+    console.log(`wiping existing ${opportunity} referral data ...`);
+    await deleteCollection(db, opportunity);
 
-    console.log(`loading new ${collectionName} referral data...`);
+    console.log(`loading new ${opportunity} referral data...`);
     const bulkWriter = db.bulkWriter();
 
     const rawRecords = JSON.parse(
-      fs.readFileSync(`tools/fixtures/${collectionName}.json`).toString()
+      fs.readFileSync(`tools/fixtures/${opportunity}.json`).toString()
     );
 
     rawRecords.forEach((rawReferral: any) => {
       bulkWriter.create(
         db.doc(
-          `${collectionName}/${rawReferral.stateCode.toLowerCase()}_${
-            rawReferral.externalId
-          }`
+          `${
+            collectionNames[opportunity]
+          }/${rawReferral.stateCode.toLowerCase()}_${rawReferral.externalId}`
         ),
         rawReferral
       );
@@ -137,7 +140,7 @@ async function loadOpportunityReferralFixtures() {
     await bulkWriter.flush();
     await bulkWriter.close();
 
-    console.log(`new ${collectionName} referral data loaded successfully`);
+    console.log(`new ${opportunity} referral data loaded successfully`);
   }
 }
 

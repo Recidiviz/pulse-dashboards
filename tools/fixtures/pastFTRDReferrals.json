@@ -1,0 +1,13 @@
+[
+  {
+    "stateCode": "US_ID",
+    "externalId": "002",
+    "formInformation": {},
+    "criteria": {
+      "supervisionPastFullTermCompletionDate": {
+        "eligibleDate": "2022-07-10"
+      }
+    },
+    "caseNotes": {}
+  }
+]

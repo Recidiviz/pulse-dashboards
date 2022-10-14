@@ -223,11 +223,40 @@
     "supervisionLevelStart": "2019-12-20",
     "address": "123 Bedrock Lane",
     "phoneNumber": "5555555678",
+    "supervisionStartDate": "2022-01-01",
     "expirationDate": "2024-12-31",
     "currentBalance": 1221.88,
     "lastPaymentAmount": 125.75,
     "lastPaymentDate": "2022-01-04",
     "specialConditionsFlag": "current",
-    "LSUEligible": true
+    "LSUEligible": true,
+    "earnedDischargeEligible": true,
+    "pastFTRDEligible": false
+  },
+  {
+    "personName": {
+      "givenNames": "DINO",
+      "surname": "SAUR",
+      "middleNames": "DEE"
+    },
+    "personExternalId": "002",
+    "pseudonymizedId": "p002",
+    "stateCode": "US_ID",
+    "officerId": "OFFICER4",
+    "district": "DISTRICT 1",
+    "supervisionType": "PROBATION",
+    "supervisionLevel": "STANDARD: MINIMUM",
+    "supervisionLevelStart": "2019-12-20",
+    "address": "123 Bedrock Lane",
+    "phoneNumber": "5555555678",
+    "supervisionStartDate": "2020-07-11",
+    "expirationDate": "2022-07-10",
+    "currentBalance": 0,
+    "lastPaymentAmount": 17.84,
+    "lastPaymentDate": "2022-01-04",
+    "specialConditionsFlag": "current",
+    "LSUEligible": false,
+    "earnedDischargeEligible": false,
+    "pastFTRDEligible": true
   }
 ]

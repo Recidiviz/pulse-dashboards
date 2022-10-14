@@ -2,6 +2,7 @@
   {
     "stateCode": "US_ND",
     "externalId": "110",
+    "eligibleStartDate": "2022-01-13",
     "formInformation": {
       "clientName": "Jamie Jones",
       "convictionCounty": "NORTH_CENTRAL",
@@ -12,37 +13,35 @@
       "probationExpirationDate": "2022-12-02",
       "probationOfficerFullName": "Karl Fog",
       "criminalNumber": "12345",
-      "judicialDistrictCode": "BISMARCK"
+      "judicialDistrictCode": "BISMARCK",
+      "statesAttorneyEmailAddress": "state.attny.837@state.gov",
+      "statesAttorneyMailingAddress": "9234 Maine St., Ohiotown, ND",
+      "statesAttorneyPhoneNumber": "888-867-5309"
     },
-    "reasons": [
-      {
-        "criteriaName": "SUPERVISION_EARLY_DISCHARGE_DATE_WITHIN_30_DAYS",
-        "reason": {
-          "eligibleDate": "2022-01-03"
-        }
+    "criteria": {
+      "supervisionEarlyDischargeBeforeFullTermCompletionDate":{
+        "eligibleDate": "2025-04-03"
       },
-      {
-        "criteriaName": "US_ND_NOT_IN_ACTIVE_REVOCATION_STATUS",
-        "reason": {
-          "revocationDate": null
-        }
+      "supervisionNotPastFullTermCompletionDate":{
+        "eligibleDate": "2025-04-03"
       },
-      {
-        "criteriaName": "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SUPERVISION_LEVEL",
-        "reason": {
-          "supervisionLevel": "MEDIUM"
-        }
+      "supervisionPastEarlyDischargeDate":{
+        "eligibleDate": "2025-04-03"
       },
-      {
-        "criteriaName": "US_ND_IMPLIED_VALID_EARLY_TERMINATION_SENTENCE_TYPE",
-        "reason": {
-          "supervisionType": "PROBATION"
-        }
+      "usNdImpliedValidEarlyTerminationSentenceType":{
+        "supervisionType": "SUSPENDED"
+      },
+      "usNdImpliedValidEarlyTerminationSupervisionLevel":{
+        "supervisionLevel": "MINIMUM"
+      },
+      "usNdNotInActiveRevocationStatus":{
+        "revocationDate": null
       }
-    ],
+    },
     "metadata": {
       "multipleSentences": true,
-      "outOfState": false
+      "outOfState": false,
+      "ICOut": false
     }
   }
 ]
