@@ -50,22 +50,10 @@ import { OTHER_KEY } from "./WorkflowsStore";
 
 export const UNKNOWN = "Unknown" as const;
 
-type SupervisionLevel =
-  | "Medium"
-  | "Minimum"
-  | "Maximum"
-  | "Diversion"
-  | "Interstate Compact"
-  | typeof UNKNOWN;
-
-const SUPERVISION_LEVEL_MAP: Record<string, SupervisionLevel> = {
+const SUPERVISION_LEVEL_MAP: Record<string, string> = {
+  // TODO(#2287): remove these levels derived from TN raw data
   "STANDARD: MEDIUM": "Medium",
   "STANDARD: MINIMUM": "Minimum",
-  MINIMUM: "Minimum",
-  MEDIUM: "Medium",
-  MAXIMUM: "Maximum",
-  DIVERSION: "Diversion",
-  INTERSTATE_COMPACT: "Interstate Compact",
 };
 
 type ClientDetailsCopy = {
@@ -137,8 +125,6 @@ export class Client {
 
   supervisionType!: string;
 
-  supervisionLevel!: SupervisionLevel;
-
   supervisionLevelStart?: Date;
 
   address!: string;
@@ -173,6 +159,7 @@ export class Client {
       opportunitiesEligible: true,
       printReferralForm: true,
       setFormIsPrinting: true,
+      supervisionLevel: true,
       updateRecord: true,
     });
 
@@ -190,9 +177,6 @@ export class Client {
     this.fullName = record.personName;
     this.officerId = record.officerId;
     this.supervisionType = record.supervisionType;
-    this.supervisionLevel = record.supervisionLevel
-      ? SUPERVISION_LEVEL_MAP[record.supervisionLevel]
-      : UNKNOWN;
     this.supervisionLevelStart = optionalFieldToDate(
       record.supervisionLevelStart
     );
@@ -224,6 +208,22 @@ export class Client {
     return [this.fullName.givenNames, this.fullName.surname]
       .filter((n) => Boolean(n))
       .join(" ");
+  }
+
+  get supervisionLevel(): string {
+    const levelFromFilters = this.rootStore.workflowsStore.supervisionLevels.find(
+      (opt) => opt.value === this.record.supervisionLevel
+    )?.label;
+    // some levels are mapped locally for historical reasons (e.g., to patch gaps in ingest or handle raw data)
+    const locallyMappedLevel =
+      SUPERVISION_LEVEL_MAP[this.record.supervisionLevel ?? ""];
+    return (
+      levelFromFilters ??
+      locallyMappedLevel ??
+      // TODO(#2287): remove TN-specific override once data is migrated;
+      // this prevents a sudden proliferation of "Unknown" labels in TN in the interim
+      (this.stateCode === "US_TN" ? "" : UNKNOWN)
+    );
   }
 
   get formattedPhoneNumber(): string | undefined {

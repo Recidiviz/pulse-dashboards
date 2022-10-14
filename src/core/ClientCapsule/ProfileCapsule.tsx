@@ -16,29 +16,28 @@
 // =============================================================================
 
 import { identity } from "lodash";
+import { observer } from "mobx-react-lite";
 import React from "react";
 
 import ClientCapsule, { ClientCapsuleProps } from "./ClientCapsule";
 
 type Props = Omit<ClientCapsuleProps, "status">;
 
-export const ProfileCapsule = ({
-  client,
-  hideTooltip,
-  ...otherProps
-}: Props): JSX.Element => {
-  return (
-    <ClientCapsule
-      client={client}
-      {...otherProps}
-      status={
-        <>
-          {[client.supervisionType, client.supervisionLevel]
-            .filter(identity)
-            .join(", ")}
-        </>
-      }
-      hideTooltip={hideTooltip}
-    />
-  );
-};
+export const ProfileCapsule = observer(
+  ({ client, hideTooltip, ...otherProps }: Props): JSX.Element => {
+    return (
+      <ClientCapsule
+        client={client}
+        {...otherProps}
+        status={
+          <>
+            {[client.supervisionType, client.supervisionLevel]
+              .filter(identity)
+              .join(", ")}
+          </>
+        }
+        hideTooltip={hideTooltip}
+      />
+    );
+  }
+);

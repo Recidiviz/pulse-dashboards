@@ -30,6 +30,10 @@ import { now } from "mobx-utils";
 
 import { trackCaseloadSearch } from "../analytics";
 import { Hydratable } from "../core/models/types";
+import { FilterOption } from "../core/types/filters";
+import filterOptions, {
+  DefaultPopulationFilterOptions,
+} from "../core/utils/filterOptions";
 import {
   ClientRecord,
   CombinedUserRecord,
@@ -506,5 +510,17 @@ export class WorkflowsStore implements Hydratable {
         tenants[this.rootStore.currentTenantId].opportunityTypes) ??
       []
     );
+  }
+
+  /**
+   * Mapping of known supervision levels for the current tenant
+   */
+  get supervisionLevels(): FilterOption[] {
+    const { currentTenantId } = this.rootStore;
+    const options =
+      // the key is not guaranteed to be present, which is why we need a fallback
+      filterOptions[(currentTenantId ?? "") as keyof typeof filterOptions] ??
+      DefaultPopulationFilterOptions;
+    return options.supervisionLevel.options;
   }
 }
