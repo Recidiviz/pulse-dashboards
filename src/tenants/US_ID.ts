@@ -26,9 +26,9 @@ import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { OpportunityType } from "../WorkflowsStore";
 
 const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
+  "pastFTRD",
   "earnedDischarge",
   "LSU",
-  "pastFTRD",
 ];
 
 const US_ID_CONFIG: TenantConfig = {
