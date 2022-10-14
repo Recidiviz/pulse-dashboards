@@ -25,8 +25,12 @@ const COLLECTIONS = {
   clients: "clients",
   staff: "staff",
   compliantReportingReferrals: "compliantReportingReferrals",
-  earlyTerminationReferrals: "earlyTerminationReferrals",
 };
+
+const OPPORTUNITY_COLLECTIONS = [
+  "earlyTerminationReferrals",
+  "US_ID-LSUReferrals",
+];
 
 const db = getDb();
 
@@ -45,7 +49,9 @@ async function loadClientsFixture() {
   rawCases.forEach((record: Record<string, any>) => {
     bulkWriter.create(
       db.doc(
-        `${COLLECTIONS.clients}/${record.stateCode}_${record.personExternalId}`
+        `${COLLECTIONS.clients}/${record.stateCode.toLowerCase()}_${
+          record.personExternalId
+        }`
       ),
       record
     );
@@ -93,7 +99,7 @@ async function loadCompliantReportingReferralsFixture() {
   rawUsers.forEach((rawReferral: any) => {
     bulkWriter.create(
       db.doc(
-        `${COLLECTIONS.compliantReportingReferrals}/${rawReferral.tdocId}`
+        `${COLLECTIONS.compliantReportingReferrals}/us_tn_${rawReferral.tdocId}`
       ),
       rawReferral
     );
@@ -105,33 +111,37 @@ async function loadCompliantReportingReferralsFixture() {
   console.log("new compliant reporting referral data loaded successfully");
 }
 
-async function loadEarlyTerminationReferralsFixture() {
-  console.log("wiping existing referral data ...");
-  await deleteCollection(db, COLLECTIONS.earlyTerminationReferrals);
+async function loadOpportunityReferralFixtures() {
+  for await (const collectionName of OPPORTUNITY_COLLECTIONS) {
+    console.log(`wiping existing ${collectionName} referral data ...`);
+    await deleteCollection(db, collectionName);
 
-  console.log("loading new referral data...");
-  const bulkWriter = db.bulkWriter();
+    console.log(`loading new ${collectionName} referral data...`);
+    const bulkWriter = db.bulkWriter();
 
-  const rawUsers = JSON.parse(
-    fs.readFileSync("tools/fixtures/earlyTerminationReferrals.json").toString()
-  );
-
-  rawUsers.forEach((rawReferral: any) => {
-    bulkWriter.create(
-      db.doc(
-        `${COLLECTIONS.earlyTerminationReferrals}/${rawReferral.externalId}`
-      ),
-      rawReferral
+    const rawRecords = JSON.parse(
+      fs.readFileSync(`tools/fixtures/${collectionName}.json`).toString()
     );
-  });
 
-  await bulkWriter.flush();
-  await bulkWriter.close();
+    rawRecords.forEach((rawReferral: any) => {
+      bulkWriter.create(
+        db.doc(
+          `${collectionName}/${rawReferral.stateCode.toLowerCase()}_${
+            rawReferral.externalId
+          }`
+        ),
+        rawReferral
+      );
+    });
 
-  console.log("new early termination referral data loaded successfully");
+    await bulkWriter.flush();
+    await bulkWriter.close();
+
+    console.log(`new ${collectionName} referral data loaded successfully`);
+  }
 }
 
 loadUserFixture();
 loadClientsFixture();
 loadCompliantReportingReferralsFixture();
-loadEarlyTerminationReferralsFixture();
+loadOpportunityReferralFixtures();

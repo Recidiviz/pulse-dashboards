@@ -23,8 +23,10 @@ import {
   LSUEarnedDischargeCommonCriteria,
   transformLSUEarnedDischargeCommonCriteria,
 } from "./LSUReferralRecord";
+import { WithCaseNotes } from "./types";
+import { transformCaseNotes } from "./utils";
 
-export interface EarnedDischargeReferralRecord {
+export type EarnedDischargeReferralRecord = {
   stateCode: string;
   externalId: string;
   formInformation: {
@@ -37,7 +39,7 @@ export interface EarnedDischargeReferralRecord {
     };
   };
   eligibleStartDate: Date;
-}
+} & WithCaseNotes;
 
 export type EarnedDischargeDraftData = {
   clientName: string;
@@ -82,5 +84,8 @@ export const transformReferral: TransformFunction<EarnedDischargeReferralRecord>
   delete transformedRecord.criteria.supervisionNotPastFullTermCompletionDate;
 
   transformedRecord.eligibleStartDate = fieldToDate(record.eligibleStartDate);
+
+  transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
+
   return transformedRecord;
 };

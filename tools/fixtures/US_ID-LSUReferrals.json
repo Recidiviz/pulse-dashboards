@@ -1,0 +1,40 @@
+[
+  {
+    "stateCode": "US_ID",
+    "externalId": "001",
+    "eligibleStartDate": "2022-09-10",
+    "formInformation": {},
+    "criteria": {
+      "negativeUaWithin90Days": null,
+      "noFelonyWithin24Months": null,
+      "noViolentMisdemeanorWithin12Months": null,
+      "supervisionNotPastFullTermCompletionDate": {
+        "eligibleDate": "2032-10-12"
+      },
+      "usIdIncomeVerifiedWithin3Months": {
+        "incomeVerifiedDate": "2022-10-12"
+      },
+      "usIdLsirLevelLowModerateForXDays": {
+        "eligibleDate": "2022-10-10",
+        "riskLevel": "MODERATE"
+      },
+      "usIdNoActiveNco": null
+    },
+    "caseNotes": {
+      "Special Conditions": [{
+        "noteTitle": "MUST JOURNAL",
+        "noteBody": "Client must journal at least once a week",
+        "eventDate": "2022-08-22"
+      }],
+      "Treatment": [{
+        "noteTitle": "STARTED",
+        "noteBody": "Treatment started",
+        "eventDate": "2022-06-17"
+      },{
+        "noteTitle": "COMPLETED",
+        "noteBody": "Treatment successfully completed",
+        "eventDate": "2022-09-22"
+      }]
+    }
+  }
+]

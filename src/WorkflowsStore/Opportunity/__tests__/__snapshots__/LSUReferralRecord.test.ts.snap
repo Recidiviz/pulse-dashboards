@@ -2,6 +2,7 @@
 
 exports[`optional criteria have sane fallbacks 1`] = `
 Object {
+  "caseNotes": Object {},
   "criteria": Object {
     "negativeUaWithin90Days": Object {
       "latestUaDates": Array [],
@@ -35,6 +36,27 @@ Object {
 
 exports[`transform record 1`] = `
 Object {
+  "caseNotes": Object {
+    "ba bar": Array [
+      Object {
+        "eventDate": 2022-09-06T00:00:00.000Z,
+        "noteBody": "Body3",
+        "noteTitle": "Title3",
+      },
+    ],
+    "foo": Array [
+      Object {
+        "eventDate": 2022-04-06T00:00:00.000Z,
+        "noteBody": "Body1",
+        "noteTitle": "Title1",
+      },
+      Object {
+        "eventDate": 2022-06-06T00:00:00.000Z,
+        "noteBody": "Body2",
+        "noteTitle": "Title2",
+      },
+    ],
+  },
   "criteria": Object {
     "negativeUaWithin90Days": Object {
       "latestUaDates": Array [

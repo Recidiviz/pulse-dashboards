@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Contact, Supervision } from "./Details";
+import { CaseNotes, Contact, Supervision } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
@@ -37,6 +37,9 @@ export const EarnedDischargeClientProfile = observer(() => {
       <OpportunityModule opportunity={client.opportunities.earnedDischarge} />
       <Supervision client={client} />
       <Contact client={client} />
+      <CaseNotes
+        opportunityRecord={client.opportunities.earnedDischarge?.record}
+      />
     </article>
   );
 });

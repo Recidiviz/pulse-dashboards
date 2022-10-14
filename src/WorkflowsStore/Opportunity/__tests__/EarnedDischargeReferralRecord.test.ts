@@ -51,6 +51,15 @@ test("transform dual/parole record", () => {
       },
     },
     eligibleStartDate: "2022-10-05",
+    caseNotes: {
+      foo: [
+        {
+          eventDate: "2022-04-06",
+          noteBody: "Body1",
+          noteTitle: "Title1",
+        },
+      ],
+    },
   };
 
   expect(transformReferral(rawRecord)).toMatchSnapshot();
@@ -90,6 +99,15 @@ test("transform probation record", () => {
       },
     },
     eligibleStartDate: "2022-10-05",
+    caseNotes: {
+      foo: [
+        {
+          eventDate: "2022-04-06",
+          noteBody: "Body1",
+          noteTitle: "Title1",
+        },
+      ],
+    },
   };
 
   expect(transformReferral(rawRecord)).toMatchSnapshot();

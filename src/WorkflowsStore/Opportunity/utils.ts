@@ -18,6 +18,7 @@ import { ascending } from "d3-array";
 import { format } from "date-fns";
 import simplur from "simplur";
 
+import { fieldToDate } from "../utils";
 import {
   COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED,
   CompliantReportingOpportunity,
@@ -25,6 +26,7 @@ import {
 import {
   Opportunity,
   OPPORTUNITY_STATUS_RANKED,
+  OpportunityCaseNote,
   OpportunityType,
 } from "./types";
 
@@ -129,4 +131,24 @@ export const opportunityToSortFunctionMapping: Record<
   earnedDischarge: sortByReviewStatusAndEligibilityDate,
   LSU: sortByReviewStatusAndEligibilityDate,
   pastFTRD: sortByReviewStatusAndEligibilityDate,
+};
+
+export const transformCaseNotes = (
+  caseNotes: Record<string, Record<string, string>[]> | undefined
+): Record<string, OpportunityCaseNote[]> => {
+  if (!caseNotes) return {};
+
+  return Object.keys(caseNotes).reduce(
+    (processedNotes: Record<string, OpportunityCaseNote[]>, section) => {
+      return {
+        ...processedNotes,
+        [section]: caseNotes[section].map((note) => ({
+          noteTitle: note.noteTitle,
+          noteBody: note.noteBody,
+          eventDate: fieldToDate(note.eventDate),
+        })),
+      };
+    },
+    {}
+  );
 };

@@ -49,6 +49,27 @@ test("transform record", () => {
         activeNco: true,
       },
     },
+    caseNotes: {
+      foo: [
+        {
+          eventDate: "2022-04-06",
+          noteBody: "Body1",
+          noteTitle: "Title1",
+        },
+        {
+          eventDate: "2022-06-06",
+          noteBody: "Body2",
+          noteTitle: "Title2",
+        },
+      ],
+      "ba bar": [
+        {
+          eventDate: "2022-09-06",
+          noteBody: "Body3",
+          noteTitle: "Title3",
+        },
+      ],
+    },
     eligibleStartDate: "2022-10-05",
   };
 

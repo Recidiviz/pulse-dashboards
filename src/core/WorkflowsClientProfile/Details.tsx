@@ -24,7 +24,7 @@ import styled from "styled-components/macro";
 
 import * as pathwaysTenants from "../../RootStore/TenantStore/pathwaysTenants";
 import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
-import { Client } from "../../WorkflowsStore";
+import { Client, WithCaseNotes } from "../../WorkflowsStore";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { InfoButton, InfoTooltipWrapper } from "./common";
@@ -54,6 +54,14 @@ const DetailsContent = styled.dd`
 
 const SpecialConditionsCopy = styled.div`
   ${typography.Body12}
+`;
+
+const CaseNoteTitle = styled.span`
+  font-weight: 700;
+`;
+
+const CaseNoteDate = styled.span`
+  color: ${palette.slate60};
 `;
 
 type EmptySpecialConditionCopy = {
@@ -291,6 +299,61 @@ export const FinesAndFees = ({
               </DetailsContent>
             </>
           ) : null}
+        </DetailsList>
+      </DetailsContent>
+    </DetailsSection>
+  );
+};
+
+export const CaseNotes = ({
+  opportunityRecord,
+}: {
+  opportunityRecord?: WithCaseNotes;
+}): React.ReactElement => {
+  if (!opportunityRecord) {
+    return <div />;
+  }
+
+  const headingText = "Relevant Contact Notes";
+  const { caseNotes } = opportunityRecord;
+
+  if (Object.keys(caseNotes).length === 0) {
+    return (
+      <DetailsSection>
+        <DetailsHeading>{headingText}</DetailsHeading>
+        <DetailsContent>None</DetailsContent>
+      </DetailsSection>
+    );
+  }
+
+  return (
+    <DetailsSection>
+      <DetailsHeading>{headingText}</DetailsHeading>
+      <DetailsContent>
+        <DetailsList>
+          {Object.keys(caseNotes).map((section: string) => {
+            const notes = caseNotes[section];
+            return (
+              <React.Fragment key={section}>
+                <DetailsSubheading>{section}</DetailsSubheading>
+                <DetailsList>
+                  {notes.map((note) => {
+                    return (
+                      <DetailsContent
+                        key={`${note.noteTitle}-${note.eventDate}`}
+                      >
+                        <CaseNoteTitle>{note.noteTitle}:</CaseNoteTitle>{" "}
+                        {note.noteBody}{" "}
+                        <CaseNoteDate>
+                          {formatWorkflowsDate(note.eventDate)}
+                        </CaseNoteDate>
+                      </DetailsContent>
+                    );
+                  })}
+                </DetailsList>
+              </React.Fragment>
+            );
+          })}
         </DetailsList>
       </DetailsContent>
     </DetailsSection>

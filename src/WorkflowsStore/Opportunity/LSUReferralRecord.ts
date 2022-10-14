@@ -23,6 +23,8 @@ import {
   optionalFieldToDate,
   optionalFieldToDateArray,
 } from "../utils";
+import { WithCaseNotes } from "./types";
+import { transformCaseNotes } from "./utils";
 
 export type LSUEarnedDischargeCommonCriteria = {
   negativeUaWithin90Days: {
@@ -42,7 +44,7 @@ export type LSUEarnedDischargeCommonCriteria = {
   };
 };
 
-export interface LSUReferralRecord {
+export type LSUReferralRecord = {
   stateCode: string;
   externalId: string;
   formInformation: {
@@ -54,7 +56,7 @@ export interface LSUReferralRecord {
     };
   };
   eligibleStartDate: Date;
-}
+} & WithCaseNotes;
 
 export type LSUDraftData = {
   clientName: string;
@@ -131,6 +133,8 @@ export const transformReferral: TransformFunction<LSUReferralRecord> = (
   delete transformedRecord.criteria.supervisionNotPastFullTermCompletionDate;
 
   transformedRecord.eligibleStartDate = fieldToDate(record.eligibleStartDate);
+
+  transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
 
   return transformedRecord;
 };

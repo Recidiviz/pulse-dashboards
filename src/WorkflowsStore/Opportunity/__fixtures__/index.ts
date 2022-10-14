@@ -191,6 +191,27 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
     },
   },
   eligibleStartDate: new Date(2022, 10, 5),
+  caseNotes: {
+    "Special Conditions": [
+      {
+        noteTitle: "MUST JOURNAL",
+        noteBody: "Client must journal at least once a week",
+        eventDate: parseISO("2022-08-22"),
+      },
+    ],
+    Treatment: [
+      {
+        noteTitle: "STARTED",
+        noteBody: "Treatment started",
+        eventDate: parseISO("2022-06-17"),
+      },
+      {
+        noteTitle: "COMPLETED",
+        noteBody: "Treatment successfully completed",
+        eventDate: parseISO("2022-09-22"),
+      },
+    ],
+  },
 };
 
 export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord = {
@@ -223,6 +244,27 @@ export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord
     },
   },
   eligibleStartDate: new Date(2022, 10, 5),
+  caseNotes: {
+    "Special Conditions": [
+      {
+        noteTitle: "MUST JOURNAL",
+        noteBody: "Client must journal at least once a week",
+        eventDate: parseISO("2022-08-22"),
+      },
+    ],
+    Treatment: [
+      {
+        noteTitle: "STARTED",
+        noteBody: "Treatment started",
+        eventDate: parseISO("2022-06-17"),
+      },
+      {
+        noteTitle: "COMPLETED",
+        noteBody: "Treatment successfully completed",
+        eventDate: parseISO("2022-09-22"),
+      },
+    ],
+  },
 };
 
 export const ineligibleClientRecord: ClientRecord = {

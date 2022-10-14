@@ -60,6 +60,16 @@ export type DenialReasonsMap = Record<string, string>;
 
 export type DefaultEligibility = "ELIGIBLE" | "MAYBE";
 
+export type OpportunityCaseNote = {
+  noteTitle: string;
+  noteBody: string;
+  eventDate: Date;
+};
+
+export type WithCaseNotes = {
+  caseNotes: Record<string, OpportunityCaseNote[]>;
+};
+
 /**
  * An Opportunity is associated with a single client.
  * The client is assumed to be eligible for the Opportunity unless the
