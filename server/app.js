@@ -103,6 +103,23 @@ if (!authConfig.domain || !authConfig.audience) {
 
 app.use(morgan("dev"));
 app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:"],
+        connectSrc: ["'self'"],
+        fontSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        mediaSrc: ["'self'"],
+        frameSrc: ["'self'"],
+      },
+    },
+  })
+);
 app.use(helmet.frameguard({ action: "DENY" }));
 
 if (app.get("env") === "production") {
