@@ -37,6 +37,10 @@ export type EarnedDischargeReferralRecord = {
       eligibleDate: Date;
       sentenceType: "PROBATION" | "PAROLE" | "DUAL";
     };
+    usIdLsirLevelLowModerateForXDays: {
+      eligibleDate: Date;
+      riskLevel: "LOW" | "MODERATE";
+    };
   };
   eligibleStartDate: Date;
 } & WithCaseNotes;
@@ -60,6 +64,13 @@ export const transformReferral: TransformFunction<EarnedDischargeReferralRecord>
   transformedRecord.criteria = {
     ...transformedRecord.criteria,
     ...transformedCommonCriteria,
+  };
+
+  transformedRecord.criteria.usIdLsirLevelLowModerateForXDays = {
+    riskLevel: criteria.usIdLsirLevelLowModerateForXDays.riskLevel,
+    eligibleDate: fieldToDate(
+      criteria.usIdLsirLevelLowModerateForXDays.eligibleDate
+    ),
   };
 
   transformedRecord.criteria.pastEarnedDischargeEligibleDate = {

@@ -57,6 +57,12 @@ const CRITERIA: Record<
       "offense, served at least one-third of remaining sentence; if on parole for a life sentence, " +
       "served at least five years on parole.",
   },
+  usIdLsirLevelLowModerateForXDays: {
+    // The risk level text is an empty string but is always overwritten with a custom string based on actual risk level in requirementsMet
+    text: "",
+    tooltip:
+      "Policy requirement: Assessed at low risk level on LSI-R with no risk increase in past 90 days or moderate risk level on LSI-R with no risk increase in past 360 days",
+  },
 };
 
 export class EarnedDischargeOpportunity extends OpportunityBase<EarnedDischargeReferralRecord> {
@@ -78,6 +84,16 @@ export class EarnedDischargeOpportunity extends OpportunityBase<EarnedDischargeR
     // TODO(#2415): Update this to be dynamic once sex offense info is in FE
     if (criteria.pastEarnedDischargeEligibleDate) {
       requirements.push(CRITERIA.pastEarnedDischargeEligibleDate);
+    }
+    if (criteria.usIdLsirLevelLowModerateForXDays?.riskLevel) {
+      const text =
+        criteria.usIdLsirLevelLowModerateForXDays.riskLevel === "LOW"
+          ? "Currently low risk with no increase in risk level in past 90 days"
+          : "Currently moderate risk with no increase in risk level in past 360 days";
+      requirements.push({
+        text,
+        tooltip: CRITERIA.usIdLsirLevelLowModerateForXDays.tooltip,
+      });
     }
 
     return requirements;

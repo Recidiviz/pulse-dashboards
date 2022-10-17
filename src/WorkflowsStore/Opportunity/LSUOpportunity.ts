@@ -50,12 +50,6 @@ export const LSU_EARNED_DISCHARGE_COMMON_CRITERIA: Record<
   keyof LSUEarnedDischargeCommonCriteria,
   OpportunityRequirement
 > = {
-  usIdLsirLevelLowModerateForXDays: {
-    // The risk level text is an empty string but is always overwritten with a custom string based on actual risk level in requirementsMet
-    text: "",
-    tooltip:
-      "Policy requirement: Assessed at low risk level on LSI-R with no risk increase in past 90 days or moderate risk level on LSI-R with no risk increase in past 360 days",
-  },
   negativeUaWithin90Days: {
     text: "Negative UA within past 90 days",
     tooltip:
@@ -88,6 +82,11 @@ export const LSU_CRITERIA: Record<
     tooltip:
       "Policy requirement: Does not have an active NCO, CPO, or restraining order",
   },
+  lsirLevelLowFor90Days: {
+    text: "Currently low risk with no increase in risk level in past 90 days",
+    tooltip:
+      "Policy requirement: Assessed at low risk level on LSI-R with no risk increase in past 90 days",
+  },
 };
 
 export const LSUEarnedDischargeCommonRequirementsMet = (
@@ -95,23 +94,11 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
   const {
-    usIdLsirLevelLowModerateForXDays,
     negativeUaWithin90Days,
     noFelonyWithin24Months,
     noViolentMisdemeanorWithin12Months,
     usIdIncomeVerifiedWithin3Months,
   } = criteria;
-
-  if (usIdLsirLevelLowModerateForXDays?.riskLevel) {
-    const text =
-      usIdLsirLevelLowModerateForXDays.riskLevel === "LOW"
-        ? "Currently low risk with no increase in risk level in past 90 days"
-        : "Currently moderate risk with no increase in risk level in past 360 days";
-    requirements.push({
-      text,
-      tooltip: LSU_CRITERIA.usIdLsirLevelLowModerateForXDays.tooltip,
-    });
-  }
 
   if (!some(negativeUaWithin90Days?.latestUaResults)) {
     // TODO(#2468): Reassess how to indicate no UA required
@@ -169,6 +156,10 @@ export class LSUOpportunity extends OpportunityWithFormBase<
 
     if (!criteria.usIdNoActiveNco?.activeNco) {
       requirements.push(LSU_CRITERIA.usIdNoActiveNco);
+    }
+
+    if (criteria.lsirLevelLowFor90Days?.riskLevel === "LOW") {
+      requirements.push(LSU_CRITERIA.lsirLevelLowFor90Days);
     }
 
     return requirements;

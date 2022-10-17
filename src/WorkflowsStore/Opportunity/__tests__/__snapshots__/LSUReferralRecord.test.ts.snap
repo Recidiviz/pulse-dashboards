@@ -1,9 +1,76 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`can transform record with old criteria 1`] = `
+Object {
+  "caseNotes": Object {
+    "ba bar": Array [
+      Object {
+        "eventDate": 2022-09-06T00:00:00.000Z,
+        "noteBody": "Body3",
+        "noteTitle": "Title3",
+      },
+    ],
+    "foo": Array [
+      Object {
+        "eventDate": 2022-04-06T00:00:00.000Z,
+        "noteBody": "Body1",
+        "noteTitle": "Title1",
+      },
+      Object {
+        "eventDate": 2022-06-06T00:00:00.000Z,
+        "noteBody": "Body2",
+        "noteTitle": "Title2",
+      },
+    ],
+  },
+  "criteria": Object {
+    "lsirLevelLowFor90Days": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
+    "negativeUaWithin90Days": Object {
+      "latestUaDates": Array [
+        2022-01-03T00:00:00.000Z,
+      ],
+      "latestUaResults": Array [
+        false,
+      ],
+    },
+    "noFelonyWithin24Months": Object {
+      "latestFelonyConvictions": Array [
+        2022-01-05T00:00:00.000Z,
+        2022-05-28T00:00:00.000Z,
+      ],
+    },
+    "noViolentMisdemeanorWithin12Months": Object {
+      "latestViolentConvictions": Array [
+        2022-03-09T00:00:00.000Z,
+      ],
+    },
+    "usIdIncomeVerifiedWithin3Months": Object {
+      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
+    },
+    "usIdNoActiveNco": Object {
+      "activeNco": true,
+    },
+  },
+  "eligibleStartDate": 2022-10-05T00:00:00.000Z,
+  "externalId": "001",
+  "formInformation": Object {
+    "clientName": "Betty Rubble",
+  },
+  "stateCode": "US_ID",
+}
+`;
+
 exports[`optional criteria have sane fallbacks 1`] = `
 Object {
   "caseNotes": Object {},
   "criteria": Object {
+    "lsirLevelLowFor90Days": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
     "negativeUaWithin90Days": Object {
       "latestUaDates": Array [],
       "latestUaResults": Array [],
@@ -16,10 +83,6 @@ Object {
     },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
-    },
-    "usIdLsirLevelLowModerateForXDays": Object {
-      "eligibleDate": 2022-01-03T00:00:00.000Z,
-      "riskLevel": "MODERATE",
     },
     "usIdNoActiveNco": Object {
       "activeNco": false,
@@ -58,6 +121,10 @@ Object {
     ],
   },
   "criteria": Object {
+    "lsirLevelLowFor90Days": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "LOW",
+    },
     "negativeUaWithin90Days": Object {
       "latestUaDates": Array [
         2022-01-03T00:00:00.000Z,
@@ -79,10 +146,6 @@ Object {
     },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
-    },
-    "usIdLsirLevelLowModerateForXDays": Object {
-      "eligibleDate": 2022-01-03T00:00:00.000Z,
-      "riskLevel": "MODERATE",
     },
     "usIdNoActiveNco": Object {
       "activeNco": true,

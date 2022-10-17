@@ -25,8 +25,8 @@ test("transform record", () => {
       clientName: "Betty Rubble",
     },
     criteria: {
-      usIdLsirLevelLowModerateForXDays: {
-        riskLevel: "MODERATE",
+      lsirLevelLowFor90Days: {
+        riskLevel: "LOW",
         eligibleDate: "2022-01-03",
       },
       negativeUaWithin90Days: {
@@ -98,6 +98,65 @@ test("optional criteria have sane fallbacks", () => {
         eligibleDate: "2025-06-19",
       },
       usIdNoActiveNco: null,
+    },
+    eligibleStartDate: "2022-10-05",
+  };
+
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});
+
+test("can transform record with old criteria", () => {
+  const rawRecord = {
+    stateCode: "US_ID",
+    externalId: "001",
+    formInformation: {
+      clientName: "Betty Rubble",
+    },
+    criteria: {
+      usIdLsirLevelLowModerateForXDays: {
+        riskLevel: "MODERATE",
+        eligibleDate: "2022-01-03",
+      },
+      negativeUaWithin90Days: {
+        latestUaDates: ["2022-01-03"],
+        latestUaResults: [false],
+      },
+      noFelonyWithin24Months: {
+        latestFelonyConvictions: ["2022-01-05", "2022-05-28"],
+      },
+      noViolentMisdemeanorWithin12Months: {
+        latestViolentConvictions: ["2022-03-09"],
+      },
+      usIdIncomeVerifiedWithin3Months: {
+        incomeVerifiedDate: "2022-06-03",
+      },
+      supervisionNotPastFullTermCompletionDate: {
+        eligibleDate: "2025-06-19",
+      },
+      usIdNoActiveNco: {
+        activeNco: true,
+      },
+    },
+    caseNotes: {
+      foo: [
+        {
+          eventDate: "2022-04-06",
+          noteBody: "Body1",
+          noteTitle: "Title1",
+        },
+        {
+          eventDate: "2022-06-06",
+          noteBody: "Body2",
+          noteTitle: "Title2",
+        },
+      ],
+      "ba bar": [
+        {
+          eventDate: "2022-09-06",
+          noteBody: "Body3",
+          noteTitle: "Title3",
+        },
+      ],
     },
     eligibleStartDate: "2022-10-05",
   };

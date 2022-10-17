@@ -38,10 +38,6 @@ export type LSUEarnedDischargeCommonCriteria = {
   usIdIncomeVerifiedWithin3Months: {
     incomeVerifiedDate?: Date;
   };
-  usIdLsirLevelLowModerateForXDays: {
-    eligibleDate: Date;
-    riskLevel: "LOW" | "MODERATE";
-  };
 };
 
 export type LSUReferralRecord = {
@@ -70,6 +66,10 @@ export type LSUReferralRecord = {
   criteria: LSUEarnedDischargeCommonCriteria & {
     usIdNoActiveNco: {
       activeNco: boolean;
+    };
+    lsirLevelLowFor90Days: {
+      eligibleDate: Date;
+      riskLevel: "LOW";
     };
   };
 
@@ -101,13 +101,6 @@ export const transformLSUEarnedDischargeCommonCriteria: TransformFunction<LSUEar
   if (!criteria) return;
 
   const transformedCriteria: LSUEarnedDischargeCommonCriteria = {
-    usIdLsirLevelLowModerateForXDays: {
-      riskLevel: criteria.usIdLsirLevelLowModerateForXDays.riskLevel,
-      eligibleDate: fieldToDate(
-        criteria.usIdLsirLevelLowModerateForXDays.eligibleDate
-      ),
-    },
-
     negativeUaWithin90Days: {
       latestUaDates:
         optionalFieldToDateArray(
@@ -157,6 +150,15 @@ export const transformReferral: TransformFunction<LSUReferralRecord> = (
     ...transformedCommonCriteria,
   };
 
+  transformedRecord.criteria.lsirLevelLowFor90Days = {
+    riskLevel:
+      criteria.lsirLevelLowFor90Days?.riskLevel ??
+      criteria.usIdLsirLevelLowModerateForXDays?.riskLevel,
+    eligibleDate: criteria.lsirLevelLowFor90Days
+      ? fieldToDate(criteria.lsirLevelLowFor90Days.eligibleDate)
+      : fieldToDate(criteria.usIdLsirLevelLowModerateForXDays.eligibleDate),
+  };
+
   transformedRecord.criteria.usIdNoActiveNco = {
     activeNco: criteria.usIdNoActiveNco?.activeNco ?? false,
   };
@@ -164,6 +166,8 @@ export const transformReferral: TransformFunction<LSUReferralRecord> = (
   // delete vestigial criterion left over from TES we don't use in the front end
   // @ts-expect-error
   delete transformedRecord.criteria.supervisionNotPastFullTermCompletionDate;
+  // @ts-expect-error
+  delete transformedRecord.criteria.usIdLsirLevelLowModerateForXDays;
 
   transformedRecord.eligibleStartDate = fieldToDate(record.eligibleStartDate);
 
