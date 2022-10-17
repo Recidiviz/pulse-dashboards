@@ -39,9 +39,7 @@ const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
     return officerId ? o.id === officerId : o.email === officerEmail;
   });
   const officerFullName =
-    officer === undefined
-      ? ""
-      : `${officer.givenNames} ${officer.surname}`.trim();
+    officer && `${officer.givenNames} ${officer.surname}`.trim();
 
   return <span>{officerFullName ?? officerId ?? officerEmail}</span>;
 };
