@@ -135,10 +135,16 @@ export const useResizeForm = (
 
     resize();
 
-    window.addEventListener("resize", resize);
+    const eventList = ["resize", "scroll"];
+
+    eventList.forEach((eventName) =>
+      window.addEventListener(eventName, resize)
+    );
 
     return () => {
-      window.removeEventListener("resize", resize);
+      eventList.forEach((eventName) =>
+        window.removeEventListener(eventName, resize)
+      );
     };
   }, [formRef, pageSelector]);
 
