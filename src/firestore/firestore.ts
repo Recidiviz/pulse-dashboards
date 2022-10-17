@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { FieldValue } from "@google-cloud/firestore";
 import { initializeApp } from "firebase/app";
 import {
   connectAuthEmulator,
@@ -40,11 +41,13 @@ import {
   where,
 } from "firebase/firestore";
 import { mapValues, pickBy } from "lodash";
+import { when } from "mobx";
 
+import { trackSetOpportunityStatus } from "../analytics";
 import { UserAppMetadata } from "../RootStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
 import { isOfflineMode } from "../utils/isOfflineMode";
-import { OpportunityType } from "../WorkflowsStore";
+import { Opportunity, OpportunityType } from "../WorkflowsStore";
 import {
   ClientRecord,
   ClientUpdateRecord,
@@ -165,8 +168,8 @@ export const collections = {
     db,
     collectionNames.earlyTerminationReferrals
   ),
-  LSUReferrals: collection(db, collectionNames.LSUReferrals),
   PastFTRDReferrals: collection(db, collectionNames.pastFTRDReferrals),
+  LSUReferrals: collection(db, collectionNames.LSUReferrals),
   featureVariants: collection(
     db,
     collectionNames.featureVariants
@@ -460,18 +463,31 @@ export function updateSelectedOfficerIds(
   );
 }
 
-/* Early Termination */
-// TODO: Combine updateCompliantReportingDraft and this once no longer querying clientUpdates?
-export const updateEarlyTerminationDraft = async function (
-  updatedBy: string,
-  recordId: string,
-  data: FormFieldData
+export const updateOpportunityDraftData = async function (
+  opportunity: Opportunity,
+  name: string,
+  value: FieldValue | string | number | boolean
 ): Promise<void> {
+  const { client } = opportunity;
   const update = {
     referralForm: {
-      updated: { by: updatedBy, date: serverTimestamp() },
-      data,
+      updated: {
+        by: client.currentUserEmail || "user",
+        date: serverTimestamp(),
+      },
+      data: { [name]: value },
     },
   };
-  return updateOpportunity("earlyTermination", recordId, update);
+
+  await updateOpportunity(opportunity.type, client.recordId, update);
+
+  await when(() => opportunity.isHydrated);
+
+  if (opportunity.reviewStatus === "PENDING") {
+    trackSetOpportunityStatus({
+      clientId: client.pseudonymizedId,
+      status: "IN_PROGRESS",
+      opportunityType: opportunity.type,
+    });
+  }
 };

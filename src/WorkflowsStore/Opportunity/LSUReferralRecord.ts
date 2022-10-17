@@ -48,18 +48,51 @@ export type LSUReferralRecord = {
   stateCode: string;
   externalId: string;
   formInformation: {
-    clientName: string;
+    chargeDescriptions?: string[];
+    currentAddress?: string;
+    currentPhoneNumber?: string;
+    assessmentDate?: string;
+    assessmentScore?: number;
+    emailAddress?: string;
+    employerName?: string;
+    employerAddress?: string;
+    employmentStartDate?: string;
+    employmentDateVerified?: string;
+    drugScreenDate?: string;
+    drugScreenResult?: boolean;
+    ncicReviewDate?: string;
+    ncicNoteTitle?: string;
+    ncicNoteBody?: string;
+    txDischargeDate?: string;
+    txNoteTitle?: string;
+    txNoteBody?: string;
   };
   criteria: LSUEarnedDischargeCommonCriteria & {
     usIdNoActiveNco: {
       activeNco: boolean;
     };
   };
+
   eligibleStartDate: Date;
 } & WithCaseNotes;
 
 export type LSUDraftData = {
   clientName: string;
+  chargeDescriptions: string;
+  contactInformation: string;
+  employmentInformation: string;
+  assessmentInformation: string;
+  substanceTest: string;
+  courtFinesAndRestitution: string;
+  costOfSupervision: string;
+  iletsReviewDate: string;
+  courtOrderDate: string;
+  treatmentCompletionDate: string;
+  specialConditionsCompletedDates: string;
+  pendingSpecialConditions: string;
+  ncicCheck: string;
+  currentClientGoals: string;
+  clientSummary: string;
 };
 
 export const transformLSUEarnedDischargeCommonCriteria: TransformFunction<LSUEarnedDischargeCommonCriteria> = (

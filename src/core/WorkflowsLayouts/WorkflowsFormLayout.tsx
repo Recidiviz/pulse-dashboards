@@ -34,6 +34,7 @@ import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
 import { PastFTRDClientProfile } from "../WorkflowsClientProfile/PastFTRDClientProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
+import WorkflowsLSUForm from "../WorkflowsLSUForm";
 
 export const FORM_SIDEBAR_WIDTH = 400;
 
@@ -52,7 +53,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   },
   LSU: {
     sidebarContents: <LSUClientProfile />,
-    formContents: <div />,
+    formContents: <WorkflowsLSUForm />,
   },
   pastFTRD: {
     sidebarContents: <PastFTRDClientProfile />,

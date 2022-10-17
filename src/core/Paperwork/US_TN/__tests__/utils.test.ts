@@ -72,7 +72,7 @@ beforeEach(() => {
   [mockReferralSub] = CollectionDocumentSubscriptionMock.mock.instances;
   [mockUpdatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
 
-  mockReferralSub.isLoading = false;
+  mockReferralSub.isHydrated = true;
 });
 
 afterEach(() => {
@@ -87,7 +87,7 @@ afterEach(() => {
 
 test("track start of progress on pending review", async () => {
   // simulating a fetch that has found no updates yet
-  mockUpdatesSub.isLoading = false;
+  mockUpdatesSub.isHydrated = true;
 
   updateCompliantReportingFormFieldData("testUser", client, {
     clientFirstName: "Testabc",
@@ -103,7 +103,7 @@ test("track start of progress on pending review", async () => {
 test("form updates should not track status change if it's already set", async () => {
   // simulate fetching existing edits to the form
   mockUpdatesSub.data = { referralForm: { data: { foo: "bar" } } };
-  mockUpdatesSub.isLoading = false;
+  mockUpdatesSub.isHydrated = true;
 
   updateCompliantReportingFormFieldData("testUser", client, {
     clientFirstName: "Testabc",

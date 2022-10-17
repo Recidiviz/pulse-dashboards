@@ -24,9 +24,12 @@ import type { TextareaAutosizeProps } from "react-textarea-autosize/dist/declara
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../../../components/StoreProvider";
-import { Client, EarlyTerminationDraftData } from "../../../../WorkflowsStore";
+import {
+  EarlyTerminationDraftData,
+  EarlyTerminationOpportunity,
+  Opportunity,
+} from "../../../../WorkflowsStore";
 import { useAnimatedValue, useReactiveInput } from "../../utils";
-import { updateEarlyTerminationDraftFieldData } from "./utils";
 
 export const Textarea = styled(TextareaAutosize)`
   display: inline-block;
@@ -57,18 +60,15 @@ interface FormTextareaWrapperProps extends TextareaAutosizeProps {
 }
 
 interface FormTextareaProps extends FormTextareaWrapperProps {
-  client: Client;
+  opportunity: Opportunity;
 }
 
 const FormTextarea: React.FC<FormTextareaProps> = observer(
-  ({ client, name, ...props }: FormTextareaProps) => {
-    const { earlyTermination } = client.opportunities;
-    const [value, onChange] = useReactiveInput<HTMLTextAreaElement>({
-      name,
-      fetchFromStore: () => earlyTermination?.formData[name] as string,
-      persistToFirestore: (valueToStore: string) =>
-        updateEarlyTerminationDraftFieldData(client, name, valueToStore),
-    });
+  ({ opportunity, name, ...props }: FormTextareaProps) => {
+    const [value, onChange] = useReactiveInput<
+      EarlyTerminationOpportunity,
+      HTMLTextAreaElement
+    >(name, opportunity as EarlyTerminationOpportunity);
 
     const inputRef = useRef<HTMLTextAreaElement>(
       null
@@ -92,21 +92,14 @@ const FormTextarea: React.FC<FormTextareaProps> = observer(
 
 const FormTextareaWrapper = ({ name, ...props }: FormTextareaWrapperProps) => {
   const { workflowsStore } = useRootStore();
+  const opportunity =
+    workflowsStore?.selectedClient?.opportunities.earlyTermination;
 
-  if (
-    workflowsStore?.selectedClient?.opportunities.earlyTermination
-      ?.isLoading !== false
-  ) {
+  if (!opportunity?.isHydrated) {
     return <Textarea {...props} disabled />;
   }
 
-  return (
-    <FormTextarea
-      client={workflowsStore.selectedClient}
-      name={name}
-      {...props}
-    />
-  );
+  return <FormTextarea opportunity={opportunity} name={name} {...props} />;
 };
 
 export default observer(FormTextareaWrapper);

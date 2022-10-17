@@ -19,7 +19,7 @@
 
 import fs from "fs";
 
-import { collectionNames } from "../src/firestore/firestore";
+import { collectionNames } from "../src/firestore";
 import { deleteCollection, getDb } from "./firestoreUtils";
 
 const COLLECTIONS = {
@@ -86,34 +86,6 @@ async function loadUserFixture() {
   console.log("new staff data loaded successfully");
 }
 
-async function loadCompliantReportingReferralsFixture() {
-  console.log("wiping existing referral data ...");
-  await deleteCollection(db, COLLECTIONS.compliantReportingReferrals);
-
-  console.log("loading new referral data...");
-  const bulkWriter = db.bulkWriter();
-
-  const rawUsers = JSON.parse(
-    fs
-      .readFileSync("tools/fixtures/compliantReportingReferrals.json")
-      .toString()
-  );
-
-  rawUsers.forEach((rawReferral: any) => {
-    bulkWriter.create(
-      db.doc(
-        `${COLLECTIONS.compliantReportingReferrals}/us_tn_${rawReferral.tdocId}`
-      ),
-      rawReferral
-    );
-  });
-
-  await bulkWriter.flush();
-  await bulkWriter.close();
-
-  console.log("new compliant reporting referral data loaded successfully");
-}
-
 async function loadOpportunityReferralFixtures() {
   for await (const opportunity of OPPORTUNITIES_WITH_FIXTURES) {
     console.log(`wiping existing ${opportunity} referral data ...`);
@@ -146,5 +118,4 @@ async function loadOpportunityReferralFixtures() {
 
 loadUserFixture();
 loadClientsFixture();
-loadCompliantReportingReferralsFixture();
 loadOpportunityReferralFixtures();

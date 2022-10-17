@@ -33,7 +33,7 @@ export function updateCompliantReportingFormFieldData(
   updateCompliantReportingDraft(updatedBy, stateCode, recordId, fieldData);
 
   when(
-    () => client.opportunities.compliantReporting?.isLoading === false,
+    () => client.opportunities.compliantReporting?.isHydrated === true,
     () => {
       if (client.opportunities.compliantReporting?.reviewStatus === "PENDING") {
         trackSetOpportunityStatus({

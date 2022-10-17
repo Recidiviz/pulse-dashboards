@@ -358,7 +358,7 @@ export class Client {
   }
 
   async trackFormViewed(formType: OpportunityType): Promise<void> {
-    await when(() => this.opportunities[formType]?.isLoading === false);
+    await when(() => this.opportunities[formType]?.isHydrated === true);
 
     trackReferralFormViewed({
       clientId: this.pseudonymizedId,
@@ -367,7 +367,7 @@ export class Client {
   }
 
   async trackListViewed(listType: OpportunityType): Promise<void> {
-    await when(() => this.opportunities[listType]?.isLoading === false);
+    await when(() => this.opportunities[listType]?.isHydrated === true);
 
     trackSurfacedInList({
       clientId: this.pseudonymizedId,
@@ -389,7 +389,7 @@ export class Client {
   async trackOpportunityPreviewed(
     opportunityType: OpportunityType
   ): Promise<void> {
-    await when(() => this.opportunities[opportunityType]?.isLoading === false);
+    await when(() => this.opportunities[opportunityType]?.isHydrated === true);
 
     trackOpportunityPreviewed({
       clientId: this.pseudonymizedId,

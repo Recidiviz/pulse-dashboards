@@ -24,10 +24,9 @@ import { TransformFunction, ValidateFunction } from "../subscriptions";
 import { OpportunityBase } from "./OpportunityBase";
 import { BaseForm, OpportunityType } from "./types";
 
-export type FormDataTransformer<
-  ReferralRecord extends DocumentData,
-  FormToDisplay
-> = (client: Client, record: ReferralRecord) => Partial<FormToDisplay>;
+export type PrefilledDataTransformer<
+  FormInformation
+> = () => Partial<FormInformation>;
 
 /**
  * Implements functionality shared by all Opportunities with form automation.
@@ -69,7 +68,7 @@ export abstract class OpportunityWithFormBase<
 
   get prefilledData(): Partial<FormDisplayType> {
     if (this.record) {
-      return this.formDataTransformer(this.client, this.record);
+      return this.prefilledDataTransformer();
     }
 
     return {};
@@ -92,8 +91,6 @@ export abstract class OpportunityWithFormBase<
     return "";
   }
 
-  formDataTransformer: FormDataTransformer<ReferralRecord, FormDisplayType> = (
-    client,
-    record
-  ) => record.formInformation;
+  prefilledDataTransformer: PrefilledDataTransformer<FormDisplayType> = () =>
+    this.record?.formInformation ?? {};
 }

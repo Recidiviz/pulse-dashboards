@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+// TODO(#2518): Investigate if this is necessary
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="window.d.ts"/>
+
 import { v4 as uuidv4 } from "uuid";
 
 import { OpportunityStatus, OpportunityType } from "./WorkflowsStore";

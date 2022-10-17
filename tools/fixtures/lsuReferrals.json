@@ -1,0 +1,71 @@
+[
+  {
+    "externalId": "001",
+    "stateCode": "US_ID",
+    "eligibleStartDate": "2022-04-28",
+    "supervisionStartDate": "2022-03-11",
+    "daysRemainingOnSupervision": "3943",
+    "formInformation": {
+      "chargeDescriptions": [
+        "BURGLARY",
+        "BURGLARY",
+        "POSSESSION OF A CONTROLLED SUBSTANCE"
+      ],
+      "currentAddress": "123 FAKE ST, TWIN FALLS, ID, 99999-9876",
+      "assessmentDate": "2022-03-03",
+      "assessmentScore": "25",
+      "employerName": "RECIDIVIZ",
+      "employerAddress": "456 FAKE ST, TWIN FALLS, ID, 99999-9876",
+      "employmentStartDate": "2022-03-03T00:00:00",
+      "employmentDateVerified": "2022-03-03T00:00:00",
+      "drugScreenDate": "2022-03-03",
+      "drugScreenResult": false
+    },
+    "reasons": [
+      {
+        "criteriaName": "NEGATIVE_UA_WITHIN_90_DAYS",
+        "reason": {
+          "latestUaDates": [
+            "2022-09-08"
+          ],
+          "latestUaResults": [
+            false
+          ]
+        }
+      },
+      {
+        "criteriaName": "NO_FELONY_WITHIN_24_MONTHS",
+        "reason": null
+      },
+      {
+        "criteriaName": "NO_VIOLENT_MISDEMEANOR_WITHIN_12_MONTHS",
+        "reason": null
+      },
+      {
+        "criteriaName": "SUPERVISION_NOT_PAST_FULL_TERM_COMPLETION_DATE",
+        "reason": {
+          "eligibleDate": "2033-07-14"
+        }
+      },
+      {
+        "criteriaName": "US_ID_INCOME_VERIFIED_WITHIN_3_MONTHS",
+        "reason": {
+          "incomeVerifiedDate": "2022-10-13"
+        }
+      },
+      {
+        "criteriaName": "US_ID_LSIR_LEVEL_LOW_MODERATE_FOR_X_DAYS",
+        "reason": {
+          "combinedDaysAtModerateOrLowLevel": 495,
+          "daysAtLevel": 34,
+          "riskLevel": "LOW"
+        }
+      },
+      {
+        "criteriaName": "US_ID_NO_ACTIVE_NCO",
+        "reason": null
+      }
+    ],
+    "caseNotes": null
+  }
+]

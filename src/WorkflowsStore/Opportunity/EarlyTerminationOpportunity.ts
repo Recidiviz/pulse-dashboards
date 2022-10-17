@@ -18,10 +18,10 @@
 import { deleteField, DocumentData } from "firebase/firestore";
 import { sortBy } from "lodash";
 import { computed, makeObservable } from "mobx";
+import moment from "moment";
 
-import { transform } from "../../core/Paperwork/US_ND/EarlyTermination/Transformer";
-import { updateEarlyTerminationDraftFieldData } from "../../core/Paperwork/US_ND/EarlyTermination/utils";
-import { formatWorkflowsDate } from "../../utils";
+import { updateOpportunityDraftData } from "../../firestore";
+import { formatWorkflowsDate, pluralize } from "../../utils";
 import { Client } from "../Client";
 import { OpportunityValidationError } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
@@ -32,6 +32,8 @@ import {
 } from "./EarlyTerminationReferralRecord";
 import { OpportunityWithFormBase } from "./OpportunityWithFormBase";
 import { OpportunityRequirement } from "./types";
+
+const FORM_DATE_FORMAT = "MMMM Do, YYYY";
 
 const DENIAL_REASONS_MAP = {
   "INT MEASURE":
@@ -129,7 +131,39 @@ export class EarlyTerminationOpportunity extends OpportunityWithFormBase<
     this.denialReasonsMap = DENIAL_REASONS_MAP;
   }
 
-  formDataTransformer = transform;
+  prefilledDataTransformer = (): Partial<EarlyTerminationDraftData> => {
+    if (!this.record) return {};
+
+    const {
+      formInformation: {
+        convictionCounty,
+        judicialDistrictCode,
+        criminalNumber,
+        judgeName,
+        priorCourtDate,
+        sentenceLengthYears,
+        crimeNames,
+        probationExpirationDate,
+        probationOfficerFullName,
+      },
+    } = this.record;
+
+    return {
+      clientName: this.client.displayName,
+      judgeName,
+      convictionCounty: convictionCounty?.replaceAll("_", " ") ?? "",
+      judicialDistrictCode: judicialDistrictCode?.replaceAll("_", " ") ?? "",
+      priorCourtDate: moment(priorCourtDate).format(FORM_DATE_FORMAT),
+      probationExpirationDate: moment(probationExpirationDate).format(
+        FORM_DATE_FORMAT
+      ),
+      sentenceLengthYears: pluralize(sentenceLengthYears, "year"),
+      plaintiff: "State of North Dakota",
+      crimeNames: crimeNames?.join(", ") ?? "",
+      probationOfficerFullName,
+      criminalNumber,
+    };
+  };
 
   get printText(): string {
     if (this.client.formIsPrinting) {
@@ -202,12 +236,11 @@ export class EarlyTerminationOpportunity extends OpportunityWithFormBase<
 
   addDepositionLine(): void {
     const key = `${ADDITIONAL_DEPOSITION_LINES_PREFIX}${+new Date()}`;
-    updateEarlyTerminationDraftFieldData(this.client, key, "");
+    updateOpportunityDraftData(this, key, "");
   }
 
   removeDepositionLine(key: string): void {
     if (!this.draftData) return;
-
-    updateEarlyTerminationDraftFieldData(this.client, key, deleteField());
+    updateOpportunityDraftData(this, key, deleteField());
   }
 }

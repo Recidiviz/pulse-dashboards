@@ -28,7 +28,8 @@ import {
   LSUEligibleClientRecord,
   LSUReferralRecordFixture,
 } from "../__fixtures__";
-import { Opportunity } from "../types";
+import { LSUOpportunity } from "../LSUOpportunity";
+import { LSUDraftData, LSUReferralRecord } from "../LSUReferralRecord";
 
 jest.mock("../../subscriptions");
 
@@ -39,7 +40,7 @@ const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.
   typeof OpportunityUpdateSubscription
 >;
 
-let opp: Opportunity;
+let opp: LSUOpportunity;
 let client: Client;
 let root: RootStore;
 let referralSub: CollectionDocumentSubscription<any>;
@@ -70,6 +71,10 @@ afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
+type ReferralGeneric = {
+  formInformation: Record<string, any>;
+};
+
 describe("fully eligible", () => {
   beforeEach(() => {
     createTestUnit(LSUEligibleClientRecord);
@@ -89,6 +94,133 @@ describe("fully eligible", () => {
   test("requirements met", () => {
     expect(opp.requirementsMet).toMatchSnapshot();
   });
+
+  interface LSUPrefilledDataTransformerTestProps {
+    property: keyof LSUDraftData;
+    formInformation: Partial<LSUReferralRecord["formInformation"]>;
+    expected: string;
+  }
+
+  test.each<LSUPrefilledDataTransformerTestProps>([
+    {
+      property: "employmentInformation",
+      expected: "Recidiviz\nVerified 02/02/2022",
+      formInformation: {
+        employerName: "Recidiviz",
+        employmentDateVerified: "2022-02-02 02:00",
+      },
+    },
+    {
+      property: "employmentInformation",
+      expected:
+        "Recidiviz\n123 Fake St.\nSan Francisco, CA\nStarted 01/01/2022\nVerified 02/02/2022",
+      formInformation: {
+        employerName: "Recidiviz",
+        employerAddress: "123 Fake St.\nSan Francisco, CA",
+        employmentDateVerified: "2022-02-02 02:00",
+        employmentStartDate: "2022-01-01 01:00",
+      },
+    },
+    {
+      property: "assessmentInformation",
+      expected: "Score: 6",
+      formInformation: { assessmentScore: 6 },
+    },
+    {
+      property: "assessmentInformation",
+      expected: "Last assessed: 02/02/2022",
+      formInformation: { assessmentDate: "2022-02-02 02:00" },
+    },
+    {
+      property: "assessmentInformation",
+      expected: "Score: 6\nLast assessed: 02/02/2022",
+      formInformation: {
+        assessmentDate: "2022-02-02 02:00",
+        assessmentScore: 6,
+      },
+    },
+    {
+      property: "substanceTest",
+      expected: "",
+
+      formInformation: {
+        drugScreenDate: undefined,
+        drugScreenResult: undefined,
+      },
+    },
+    {
+      property: "substanceTest",
+      expected: "",
+
+      formInformation: {
+        drugScreenDate: undefined,
+        drugScreenResult: false,
+      },
+    },
+    {
+      property: "substanceTest",
+      expected: "Tested positive on 02/02/2022",
+
+      formInformation: {
+        drugScreenDate: "2022-02-02 02:00",
+        drugScreenResult: true,
+      },
+    },
+    {
+      property: "substanceTest",
+      expected: "Tested negative on 02/02/2022",
+      formInformation: {
+        drugScreenDate: "2022-02-02 02:00",
+        drugScreenResult: false,
+      },
+    },
+
+    {
+      property: "treatmentCompletionDate",
+      expected: "TX COMPLETION on 02/02/2022",
+      formInformation: {
+        txDischargeDate: "2022-02-02",
+        txNoteTitle: "TX COMPLETION",
+      },
+    },
+    {
+      property: "treatmentCompletionDate",
+      expected:
+        "TX COMPLETION on 02/02/2022\nClient completed treatment with TX ORGANIZATION",
+      formInformation: {
+        txDischargeDate: "2022-02-02",
+        txNoteTitle: "TX COMPLETION",
+        txNoteBody: "Client completed treatment with TX ORGANIZATION",
+      },
+    },
+    {
+      property: "ncicCheck",
+      expected:
+        "Completed on 02/02/2022\nNo new charges since underlying offense/last PV.",
+      formInformation: {
+        ncicReviewDate: "2022-02-02",
+        ncicNoteBody: "No new charges since underlying offense/last PV.",
+      },
+    },
+  ])(
+    "opp.prefilledDataTransformer().$field",
+    ({ property, formInformation, expected }) => {
+      if (!opp.record) {
+        throw new Error("Opportunity must have a record set");
+      }
+
+      const originalFormInformation = formInformation;
+      opp.record.formInformation = {
+        ...originalFormInformation,
+        ...formInformation,
+      };
+
+      const { [property]: actual } = opp.prefilledData;
+      expect(actual).toEqual(expected);
+
+      opp.record.formInformation = originalFormInformation;
+    }
+  );
 });
 
 describe("no UA required", () => {

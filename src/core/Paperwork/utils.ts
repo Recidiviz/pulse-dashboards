@@ -17,10 +17,12 @@
 import { debounce, isString, throttle } from "lodash";
 import { reaction } from "mobx";
 import { rem } from "polished";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
 import * as React from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { updateOpportunityDraftData } from "../../firestore";
+import { BaseForm, Opportunity } from "../../WorkflowsStore";
 import { PrintablePageMargin } from "./styles";
 
 export const REACTIVE_INPUT_UPDATE_DELAY = 2000;
@@ -144,32 +146,27 @@ export const useResizeForm = (
 };
 
 type ReactiveInputValue = string | undefined;
+type ReactiveInputReturnValue<
+  E extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement
+> = [ReactiveInputValue, (event: React.ChangeEvent<E>) => void];
 
-interface UseReactiveInputOptions {
-  name: string;
-  fetchFromStore: () => string | undefined;
-  persistToFirestore: (value: string) => void;
-}
-
-function useReactiveInput<E extends HTMLInputElement | HTMLTextAreaElement>({
-  name,
-  fetchFromStore,
-  persistToFirestore,
-}: UseReactiveInputOptions): [
-  ReactiveInputValue,
-  (event: React.ChangeEvent<E>) => void
-] {
+function useReactiveInput<
+  F extends Opportunity & BaseForm,
+  E extends HTMLInputElement | HTMLTextAreaElement
+>(name: string, opportunity: F): ReactiveInputReturnValue<E> {
   /*
     Hook which integrates a controlled input component and Firestore and MobX.
     Firestore is updated two seconds after the user stops typing.
     When the MobX value is updated (via a Firestore subscription or its onChange handler),
     we update the controlled input's state value.
    */
+
+  const fetchFromStore = () => (opportunity.formData[name] as string) || "";
   const [value, setValue] = useState<ReactiveInputValue>(fetchFromStore());
 
   const updateFirestoreRef = useRef(
     debounce((valueToStore: string) => {
-      persistToFirestore(valueToStore);
+      updateOpportunityDraftData(opportunity, name, valueToStore);
     }, REACTIVE_INPUT_UPDATE_DELAY)
   );
 

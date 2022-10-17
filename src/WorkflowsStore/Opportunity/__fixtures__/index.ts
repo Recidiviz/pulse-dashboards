@@ -166,7 +166,19 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
   stateCode: "US_ID",
   externalId: "001",
   formInformation: {
-    clientName: "Betty Rubble",
+    chargeDescriptions: [
+      "GRAND THEFT BY POSSESSION",
+      "POSSESSION OF A CONTROLLED SUBSTANCE",
+      "ILLEGAL POSSESSION OF CONTROLLED SUBSTANCE W/INTENT TO DEL",
+    ],
+    currentAddress: "123 FAKE ST, TWIN FALLS, ID, 99999-9876",
+    assessmentDate: "2022-03-02",
+    assessmentScore: 25,
+    drugScreenDate: "2022-03-02",
+    drugScreenResult: false,
+    txDischargeDate: "2022-08-04",
+    txNoteTitle: "TX GOAL",
+    txNoteBody: "TX Goal: Complete GEO successfully.",
   },
   criteria: {
     usIdLsirLevelLowModerateForXDays: {

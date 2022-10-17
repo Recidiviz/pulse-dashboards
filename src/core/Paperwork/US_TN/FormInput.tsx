@@ -19,11 +19,13 @@ import React, { MutableRefObject, useRef } from "react";
 import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
 import { useRootStore } from "../../../components/StoreProvider";
-import { Client } from "../../../WorkflowsStore";
+import {
+  CompliantReportingOpportunity,
+  Opportunity,
+} from "../../../WorkflowsStore";
 import { useAnimatedValue, useReactiveInput } from "../utils";
 import { Input } from "./styles";
 import { FormDataType } from "./types";
-import { updateCompliantReportingFormFieldData } from "./utils";
 
 export type FormInputValueGetter = (value: any) => any;
 
@@ -40,22 +42,18 @@ type FormInputWrapperProps = StyledComponentProps<
 };
 
 interface FormInputProps extends FormInputWrapperProps {
-  client: Client;
+  opportunity: Opportunity;
 }
 
-const FormInput: React.FC<FormInputProps> = ({ client, name, ...props }) => {
-  const { compliantReporting } = client.opportunities;
-  const [value, onChange] = useReactiveInput({
-    name,
-    fetchFromStore: () => compliantReporting?.formData[name] as string,
-    persistToFirestore: (valueToStore: string) =>
-      updateCompliantReportingFormFieldData(
-        client.currentUserName || "user",
-        client,
-        { [name]: valueToStore }
-      ),
-  });
-
+const FormInput: React.FC<FormInputProps> = ({
+  opportunity,
+  name,
+  ...props
+}) => {
+  const [value, onChange] = useReactiveInput<
+    CompliantReportingOpportunity,
+    HTMLInputElement
+  >(name, opportunity as CompliantReportingOpportunity);
   const inputRef = useRef<HTMLInputElement>(
     null
   ) as MutableRefObject<HTMLInputElement>;
@@ -77,14 +75,14 @@ const FormInput: React.FC<FormInputProps> = ({ client, name, ...props }) => {
 
 const FormInputWrapper: React.FC<FormInputWrapperProps> = (props) => {
   const { workflowsStore } = useRootStore();
-  if (
-    workflowsStore?.selectedClient?.opportunities.compliantReporting
-      ?.isLoading !== false
-  ) {
+  const opportunity =
+    workflowsStore?.selectedClient?.opportunities.compliantReporting;
+
+  if (!opportunity?.isHydrated) {
     return <Input {...props} disabled />;
   }
 
-  return <FormInput client={workflowsStore.selectedClient} {...props} />;
+  return <FormInput opportunity={opportunity} {...props} />;
 };
 
 // Only re-render changed inputs
