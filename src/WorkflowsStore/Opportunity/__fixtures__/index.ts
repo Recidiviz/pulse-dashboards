@@ -181,7 +181,7 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
     txNoteBody: "TX Goal: Complete GEO successfully.",
   },
   criteria: {
-    lsirLevelLowFor90Days: {
+    usIdLsirLevelLowFor90Days: {
       riskLevel: "LOW",
       eligibleDate: parseISO("2022-01-03"),
     },

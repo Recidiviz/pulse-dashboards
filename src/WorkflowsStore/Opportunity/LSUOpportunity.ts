@@ -82,7 +82,7 @@ export const LSU_CRITERIA: Record<
     tooltip:
       "Policy requirement: Does not have an active NCO, CPO, or restraining order",
   },
-  lsirLevelLowFor90Days: {
+  usIdLsirLevelLowFor90Days: {
     text: "Currently low risk with no increase in risk level in past 90 days",
     tooltip:
       "Policy requirement: Assessed at low risk level on LSI-R with no risk increase in past 90 days",
@@ -158,8 +158,8 @@ export class LSUOpportunity extends OpportunityWithFormBase<
       requirements.push(LSU_CRITERIA.usIdNoActiveNco);
     }
 
-    if (criteria.lsirLevelLowFor90Days?.riskLevel === "LOW") {
-      requirements.push(LSU_CRITERIA.lsirLevelLowFor90Days);
+    if (criteria.usIdLsirLevelLowFor90Days?.riskLevel === "LOW") {
+      requirements.push(LSU_CRITERIA.usIdLsirLevelLowFor90Days);
     }
 
     return requirements;

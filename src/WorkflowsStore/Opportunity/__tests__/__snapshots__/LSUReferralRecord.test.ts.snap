@@ -24,10 +24,6 @@ Object {
     ],
   },
   "criteria": Object {
-    "lsirLevelLowFor90Days": Object {
-      "eligibleDate": 2022-01-03T00:00:00.000Z,
-      "riskLevel": "MODERATE",
-    },
     "negativeUaWithin90Days": Object {
       "latestUaDates": Array [
         2022-01-03T00:00:00.000Z,
@@ -50,6 +46,10 @@ Object {
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
     },
+    "usIdLsirLevelLowFor90Days": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
     "usIdNoActiveNco": Object {
       "activeNco": true,
     },
@@ -67,10 +67,6 @@ exports[`optional criteria have sane fallbacks 1`] = `
 Object {
   "caseNotes": Object {},
   "criteria": Object {
-    "lsirLevelLowFor90Days": Object {
-      "eligibleDate": 2022-01-03T00:00:00.000Z,
-      "riskLevel": "MODERATE",
-    },
     "negativeUaWithin90Days": Object {
       "latestUaDates": Array [],
       "latestUaResults": Array [],
@@ -83,6 +79,10 @@ Object {
     },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
+    },
+    "usIdLsirLevelLowFor90Days": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "MODERATE",
     },
     "usIdNoActiveNco": Object {
       "activeNco": false,
@@ -121,10 +121,6 @@ Object {
     ],
   },
   "criteria": Object {
-    "lsirLevelLowFor90Days": Object {
-      "eligibleDate": 2022-01-03T00:00:00.000Z,
-      "riskLevel": "LOW",
-    },
     "negativeUaWithin90Days": Object {
       "latestUaDates": Array [
         2022-01-03T00:00:00.000Z,
@@ -146,6 +142,10 @@ Object {
     },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
+    },
+    "usIdLsirLevelLowFor90Days": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "LOW",
     },
     "usIdNoActiveNco": Object {
       "activeNco": true,

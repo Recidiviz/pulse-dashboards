@@ -67,7 +67,7 @@ export type LSUReferralRecord = {
     usIdNoActiveNco: {
       activeNco: boolean;
     };
-    lsirLevelLowFor90Days: {
+    usIdLsirLevelLowFor90Days: {
       eligibleDate: Date;
       riskLevel: "LOW";
     };
@@ -150,12 +150,12 @@ export const transformReferral: TransformFunction<LSUReferralRecord> = (
     ...transformedCommonCriteria,
   };
 
-  transformedRecord.criteria.lsirLevelLowFor90Days = {
+  transformedRecord.criteria.usIdLsirLevelLowFor90Days = {
     riskLevel:
-      criteria.lsirLevelLowFor90Days?.riskLevel ??
+      criteria.usIdLsirLevelLowFor90Days?.riskLevel ??
       criteria.usIdLsirLevelLowModerateForXDays?.riskLevel,
-    eligibleDate: criteria.lsirLevelLowFor90Days
-      ? fieldToDate(criteria.lsirLevelLowFor90Days.eligibleDate)
+    eligibleDate: criteria.usIdLsirLevelLowFor90Days
+      ? fieldToDate(criteria.usIdLsirLevelLowFor90Days.eligibleDate)
       : fieldToDate(criteria.usIdLsirLevelLowModerateForXDays.eligibleDate),
   };
 

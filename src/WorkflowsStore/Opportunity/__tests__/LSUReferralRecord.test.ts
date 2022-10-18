@@ -25,7 +25,7 @@ test("transform record", () => {
       clientName: "Betty Rubble",
     },
     criteria: {
-      lsirLevelLowFor90Days: {
+      usIdLsirLevelLowFor90Days: {
         riskLevel: "LOW",
         eligibleDate: "2022-01-03",
       },
