@@ -30,6 +30,7 @@ export const mockOpportunity: Opportunity = {
   requirementsMet: [],
   reviewStatus: "PENDING",
   setFirstViewedIfNeeded: () => undefined,
+  setCompletedIfEligible: () => undefined,
   type: "pastFTRD",
   eligibilityDate: undefined,
 };

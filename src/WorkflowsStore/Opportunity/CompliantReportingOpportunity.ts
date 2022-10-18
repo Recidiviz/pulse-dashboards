@@ -22,12 +22,14 @@ import { DocumentData } from "firebase/firestore";
 import { mapValues } from "lodash";
 import { makeAutoObservable, toJS, when } from "mobx";
 
+import { trackSetOpportunityStatus } from "../../analytics";
 import { transform } from "../../core/Paperwork/US_TN/Transformer";
 import { formatRelativeToNow } from "../../core/utils/timePeriod";
 import {
   Denial,
   OpportunityUpdateWithForm,
   UpdateLog,
+  updateOpportunityCompleted,
   updateOpportunityFirstViewed,
 } from "../../firestore";
 import { formatWorkflowsDate, pluralizeWord } from "../../utils";
@@ -237,8 +239,6 @@ export class CompliantReportingOpportunity
 
   readonly type: OpportunityType = "compliantReporting";
 
-  readonly defaultEligibility = "ELIGIBLE";
-
   readonly denialReasonsMap: DenialReasonsMap;
 
   private referralSubscription: DocumentSubscription<CompliantReportingReferralRecord>;
@@ -272,10 +272,6 @@ export class CompliantReportingOpportunity
       client.id,
       "compliantReporting"
     );
-  }
-
-  get record(): CompliantReportingReferralRecord | undefined {
-    return this.referralSubscription.data;
   }
 
   private get transformedRecord() {
@@ -361,39 +357,6 @@ export class CompliantReportingOpportunity
 
   get almostEligible(): boolean {
     return this.validAlmostEligibleKeys.length > 0;
-  }
-
-  get updates(): CompliantReportingUpdateRecord | undefined {
-    return this.updatesSubscription.data;
-  }
-
-  get firstViewed(): UpdateLog | undefined {
-    return this.updates?.firstViewed;
-  }
-
-  /**
-   * If this.firstViewed is not yet set, this sets it by writing to Firestore.
-   */
-  setFirstViewedIfNeeded(): void {
-    when(
-      () => this.isHydrated,
-      () => {
-        if (this.firstViewed) return;
-        const userEmail = this.client.rootStore.workflowsStore.user?.info.email;
-        // should not happen in practice
-        if (!userEmail) return;
-
-        // ignore recidiviz admins and other non-state actors
-        if (this.client.rootStore.userStore.stateCode !== this.client.stateCode)
-          return;
-
-        updateOpportunityFirstViewed(
-          userEmail,
-          this.client.recordId,
-          this.type
-        );
-      }
-    );
   }
 
   get reviewStatus(): OpportunityStatus {
@@ -832,6 +795,7 @@ export class CompliantReportingOpportunity
     return { title, text };
   }
 
+  // TODO(#2541): inherit default implementation instead
   get prefilledData(): Partial<TransformedCompliantReportingReferral> {
     const prefillSourceInformation = this.referralSubscription.data;
 
@@ -842,10 +806,6 @@ export class CompliantReportingOpportunity
     return {};
   }
 
-  get formData(): Partial<TransformedCompliantReportingReferral> {
-    return { ...toJS(this.prefilledData), ...toJS(this.draftData) };
-  }
-
   get validAlmostEligibleKeys(): (keyof AlmostEligibleCriteria)[] {
     return (Object.keys(
       this.requirementAlmostMetMap
@@ -853,6 +813,72 @@ export class CompliantReportingOpportunity
       (key) => this.requirementAlmostMetMap[key] !== undefined
     );
   }
+
+  // =========================
+  // TODO(#2541): Below this line are properties that should be inherited from `OpportunityBase`;
+  // in the meantime these implementations should be identical to those inherited by other opportunities
+  // =========================
+  get record(): CompliantReportingReferralRecord | undefined {
+    return this.referralSubscription.data;
+  }
+
+  get updates(): CompliantReportingUpdateRecord | undefined {
+    return this.updatesSubscription.data;
+  }
+
+  get denial(): Denial | undefined {
+    return this.updates?.denial;
+  }
+
+  get firstViewed(): UpdateLog | undefined {
+    return this.updates?.firstViewed;
+  }
+
+  /**
+   * If this.firstViewed is not yet set, this sets it by writing to Firestore.
+   */
+  setFirstViewedIfNeeded(): void {
+    when(
+      () => this.isHydrated,
+      () => {
+        if (this.firstViewed) return;
+        const userEmail = this.client.rootStore.workflowsStore.user?.info.email;
+        // should not happen in practice
+        if (!userEmail) return;
+
+        // ignore recidiviz admins and other non-state actors
+        if (this.client.rootStore.userStore.stateCode !== this.client.stateCode)
+          return;
+
+        updateOpportunityFirstViewed(
+          userEmail,
+          this.client.recordId,
+          this.type
+        );
+      }
+    );
+  }
+
+  setCompletedIfEligible(): void {
+    when(
+      () => this.isHydrated,
+      () => {
+        const { currentUserEmail, recordId, pseudonymizedId } = this.client;
+        if (!currentUserEmail) return;
+        const { reviewStatus } = this;
+        if (reviewStatus === "DENIED" || reviewStatus === "COMPLETED") return;
+
+        updateOpportunityCompleted(currentUserEmail, recordId, this.type);
+        trackSetOpportunityStatus({
+          clientId: pseudonymizedId,
+          status: "COMPLETED",
+          opportunityType: this.type,
+        });
+      }
+    );
+  }
+
+  readonly defaultEligibility = "ELIGIBLE";
 
   get isHydrated(): boolean {
     return (
@@ -886,12 +912,12 @@ export class CompliantReportingOpportunity
     return this.updates?.referralForm?.data ?? {};
   }
 
-  get formLastUpdated(): UpdateLog | undefined {
-    return this.updates?.referralForm?.updated;
+  get formData(): Partial<TransformedCompliantReportingReferral> {
+    return { ...toJS(this.prefilledData), ...toJS(this.draftData) };
   }
 
-  get denial(): Denial | undefined {
-    return this.updates?.denial;
+  get formLastUpdated(): UpdateLog | undefined {
+    return this.updates?.referralForm?.updated;
   }
 
   eligibilityDate: Date | undefined = undefined;

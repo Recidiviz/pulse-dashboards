@@ -18,10 +18,12 @@
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable, when } from "mobx";
 
+import { trackSetOpportunityStatus } from "../../analytics";
 import {
   Denial,
   OpportunityUpdate,
   UpdateLog,
+  updateOpportunityCompleted,
   updateOpportunityFirstViewed,
 } from "../../firestore";
 import { Client } from "../Client";
@@ -72,6 +74,7 @@ export abstract class OpportunityBase<
       record: computed,
       reviewStatus: computed,
       isHydrated: computed,
+      setCompletedIfEligible: action,
     });
 
     this.client = client;
@@ -153,6 +156,25 @@ export abstract class OpportunityBase<
   }
 
   readonly defaultEligibility: DefaultEligibility = "ELIGIBLE";
+
+  setCompletedIfEligible(): void {
+    when(
+      () => this.isHydrated,
+      () => {
+        const { currentUserEmail, recordId, pseudonymizedId } = this.client;
+        if (!currentUserEmail) return;
+        const { reviewStatus } = this;
+        if (reviewStatus === "DENIED" || reviewStatus === "COMPLETED") return;
+
+        updateOpportunityCompleted(currentUserEmail, recordId, this.type);
+        trackSetOpportunityStatus({
+          clientId: pseudonymizedId,
+          status: "COMPLETED",
+          opportunityType: this.type,
+        });
+      }
+    );
+  }
 
   get isHydrated(): boolean {
     return (

@@ -29,6 +29,7 @@ import { useState } from "react";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
 
+import { trackReferralFormCopiedToClipboard } from "../../analytics";
 import { useRootStore } from "../../components/StoreProvider";
 import { FormLastEdited } from "../FormLastEdited";
 import { LSUFormFieldBaseProps, LSUFormFields } from "../Paperwork/US_ID/LSU";
@@ -113,6 +114,15 @@ const WorkflowsLSUForm: React.FC = () => {
     </LSUChronoPreview>
   );
 
+  const onCopyButtonClick = () => {
+    copyToClipboard();
+    opportunity.setCompletedIfEligible();
+    trackReferralFormCopiedToClipboard({
+      clientId: opportunity.client.pseudonymizedId,
+      opportunityType: opportunity.type,
+    });
+  };
+
   return (
     <LSUFormContainer>
       <LSUFormHeader>
@@ -130,11 +140,7 @@ const WorkflowsLSUForm: React.FC = () => {
             items={["Form", "Preview"]}
             onChange={(index) => setSelectedFormSection(index)}
           />
-          <Button
-            kind="primary"
-            shape="block"
-            onClick={() => copyToClipboard()}
-          >
+          <Button kind="primary" shape="block" onClick={onCopyButtonClick}>
             {isCopied ? "Note text copied!" : "Copy to Clipboard"}
           </Button>
         </FormHeaderSection>

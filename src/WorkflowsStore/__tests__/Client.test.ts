@@ -256,6 +256,20 @@ test("don't record a completion if user is ineligible", () => {
   expect(trackSetOpportunityStatus).not.toHaveBeenCalled();
 });
 
+test("don't record redundant completions for already completed workflows", () => {
+  runInAction(() => {
+    rootStore.workflowsStore.user = mockOfficer;
+    compliantReportingUpdatesSub.data = {
+      completed: { by: "test", date: dateToTimestamp("2022-02-01") },
+    };
+  });
+
+  client.printReferralForm("compliantReporting");
+
+  expect(mockUpdateOpportunityCompleted).not.toHaveBeenCalled();
+  expect(trackSetOpportunityStatus).not.toHaveBeenCalled();
+});
+
 test("form view tracking", async () => {
   await client.trackFormViewed("compliantReporting");
 

@@ -44,6 +44,7 @@ describe("sort", () => {
       requirementsMet: [],
       reviewStatus: "PENDING",
       setFirstViewedIfNeeded: () => undefined,
+      setCompletedIfEligible: () => undefined,
       type: "pastFTRD",
       eligibilityDate: new Date(2022, 10, 5),
     };
@@ -61,6 +62,7 @@ describe("sort", () => {
       requirementsMet: [],
       reviewStatus: "IN_PROGRESS",
       setFirstViewedIfNeeded: () => undefined,
+      setCompletedIfEligible: () => undefined,
       type: "pastFTRD",
       eligibilityDate: new Date(2022, 10, 8),
     };
@@ -78,6 +80,7 @@ describe("sort", () => {
       requirementsMet: [],
       reviewStatus: "DENIED",
       setFirstViewedIfNeeded: () => undefined,
+      setCompletedIfEligible: () => undefined,
       type: "pastFTRD",
       eligibilityDate: new Date(2022, 10, 7),
     };
@@ -106,6 +109,7 @@ describe("sort", () => {
       requirementsMet: [],
       reviewStatus: "DENIED",
       setFirstViewedIfNeeded: () => undefined,
+      setCompletedIfEligible: () => undefined,
       type: "pastFTRD",
       eligibilityDate: new Date(2022, 10, 6),
     };

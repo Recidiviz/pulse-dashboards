@@ -340,28 +340,13 @@ export class Client {
 
   printReferralForm(opportunityType: OpportunityType): void {
     const opportunity = this.opportunities[opportunityType];
-    if (this.currentUserEmail && opportunity?.isHydrated) {
-      if (opportunity.reviewStatus !== "DENIED") {
-        updateOpportunityCompleted(
-          this.currentUserEmail,
-          this.recordId,
-          opportunityType
-        );
-        if (opportunity.reviewStatus !== "COMPLETED") {
-          trackSetOpportunityStatus({
-            clientId: this.pseudonymizedId,
-            status: "COMPLETED",
-            opportunityType,
-          });
-        }
-      }
+    opportunity?.setCompletedIfEligible();
 
-      this.setFormIsPrinting(true);
-      trackReferralFormPrinted({
-        clientId: this.pseudonymizedId,
-        opportunityType,
-      });
-    }
+    this.setFormIsPrinting(true);
+    trackReferralFormPrinted({
+      clientId: this.pseudonymizedId,
+      opportunityType,
+    });
   }
 
   async trackFormViewed(formType: OpportunityType): Promise<void> {

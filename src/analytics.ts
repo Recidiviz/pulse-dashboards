@@ -122,3 +122,9 @@ export function trackOpportunityMarkedEligible(
 ): void {
   track("frontend.opportunity_marked_eligible", metadata);
 }
+
+export function trackReferralFormCopiedToClipboard(
+  metadata: ClientOpportunityTrackingMetadata
+): void {
+  track("frontend.referral_form_copied_to_clipboard", metadata);
+}

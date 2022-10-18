@@ -94,6 +94,7 @@ export interface Opportunity extends Hydratable, Partial<BaseForm> {
   denial: Denial | undefined;
   firstViewed: UpdateLog | undefined;
   setFirstViewedIfNeeded: () => void;
+  setCompletedIfEligible: () => void;
   eligibilityDate: Date | undefined;
 }
 

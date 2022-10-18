@@ -17,8 +17,10 @@
 
 import { configure, makeObservable, observable, runInAction } from "mobx";
 
+import { trackSetOpportunityStatus } from "../../../analytics";
 import {
   CombinedUserRecord,
+  updateOpportunityCompleted,
   updateOpportunityFirstViewed,
 } from "../../../firestore";
 import { RootStore } from "../../../RootStore";
@@ -39,6 +41,7 @@ import { Opportunity, OpportunityType } from "../types";
 
 jest.mock("../../subscriptions");
 jest.mock("../../../firestore");
+jest.mock("../../../analytics");
 
 const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
   typeof CollectionDocumentSubscription
@@ -47,6 +50,8 @@ const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.
   typeof OpportunityUpdateSubscription
 >;
 const updateOpportunityFirstViewedMock = updateOpportunityFirstViewed as jest.Mock;
+const updateOpportunityCompletedMock = updateOpportunityCompleted as jest.Mock;
+const trackSetOpportunityStatusMock = trackSetOpportunityStatus as jest.Mock;
 
 let opp: Opportunity;
 let client: Client;
@@ -230,5 +235,114 @@ describe("setFirstViewedIfNeeded", () => {
     opp.setFirstViewedIfNeeded();
 
     expect(updateOpportunityFirstViewedMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("setCompletedIfEligible", () => {
+  beforeEach(() => {
+    // add required mobx annotations to our mocks
+    referralSub.isHydrated = false;
+    makeObservable(referralSub, { isHydrated: observable });
+    updatesSub.isHydrated = false;
+    updatesSub.data = undefined;
+    makeObservable(updatesSub, { isHydrated: observable, data: observable });
+
+    // configure a mock user who is viewing this opportunity
+    root.workflowsStore.user = mockUser;
+    mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
+  });
+
+  test("waits for hydration", () => {
+    opp.setCompletedIfEligible();
+    expect(updateOpportunityCompletedMock).not.toHaveBeenCalled();
+
+    runInAction(() => {
+      referralSub.isHydrated = true;
+      updatesSub.isHydrated = true;
+    });
+
+    expect(updateOpportunityCompletedMock).toHaveBeenCalled();
+  });
+
+  test("updates Firestore", () => {
+    runInAction(() => {
+      referralSub.isHydrated = true;
+      updatesSub.isHydrated = true;
+    });
+
+    opp.setCompletedIfEligible();
+
+    expect(updateOpportunityCompletedMock).toHaveBeenCalledWith(
+      "test@email.gov",
+      ineligibleClientRecord.recordId,
+      "TEST"
+    );
+  });
+
+  test("tracks event", () => {
+    runInAction(() => {
+      referralSub.isHydrated = true;
+      updatesSub.isHydrated = true;
+    });
+
+    opp.setCompletedIfEligible();
+
+    expect(trackSetOpportunityStatusMock).toHaveBeenCalledWith({
+      clientId: ineligibleClientRecord.pseudonymizedId,
+      opportunityType: "TEST",
+      status: "COMPLETED",
+    });
+  });
+
+  test("does not update Firestore if client is ineligible", () => {
+    runInAction(() => {
+      referralSub.isHydrated = true;
+      updatesSub.isHydrated = true;
+      updatesSub.data = {
+        denial: { reasons: ["boo"], updated: { by: "foo", date: jest.fn() } },
+      };
+    });
+
+    opp.setCompletedIfEligible();
+
+    expect(updateOpportunityCompletedMock).not.toHaveBeenCalled();
+  });
+
+  test("does not update Firestore if workflow is already completed", () => {
+    runInAction(() => {
+      referralSub.isHydrated = true;
+      updatesSub.isHydrated = true;
+      updatesSub.data = { completed: { by: "foo", date: jest.fn() } };
+    });
+
+    opp.setCompletedIfEligible();
+
+    expect(updateOpportunityCompletedMock).not.toHaveBeenCalled();
+  });
+
+  test("does not track event if client is ineligible", () => {
+    runInAction(() => {
+      referralSub.isHydrated = true;
+      updatesSub.isHydrated = true;
+      updatesSub.data = {
+        denial: { reasons: ["boo"], updated: { by: "foo", date: jest.fn() } },
+      };
+    });
+
+    opp.setCompletedIfEligible();
+
+    expect(trackSetOpportunityStatusMock).not.toHaveBeenCalled();
+  });
+
+  test("does not track event if workflow is already completed", () => {
+    runInAction(() => {
+      referralSub.isHydrated = true;
+      updatesSub.isHydrated = true;
+      updatesSub.data = { completed: { by: "foo", date: jest.fn() } };
+    });
+
+    opp.setCompletedIfEligible();
+
+    expect(trackSetOpportunityStatusMock).not.toHaveBeenCalled();
   });
 });
