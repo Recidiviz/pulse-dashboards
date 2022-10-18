@@ -59,7 +59,11 @@ export const LSUFormFields: WebFormFieldWrapperProps[] = [
     name: "courtOrderDate",
     label: "Date Court Order/Parole Contract last reviewed with client",
   },
-  { name: "treatmentCompletionDate", label: "Treatment Completion Date" },
+  {
+    name: "treatmentCompletionDate",
+    label: "Treatment Completion Date",
+    textarea: true,
+  },
   {
     name: "specialConditionsCompletedDates",
     label: "Special Conditions Completed Date(s)",
