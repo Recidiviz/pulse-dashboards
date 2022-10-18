@@ -22,6 +22,7 @@ import {
   Sans16,
   spacing,
 } from "@recidiviz/design-system";
+import { sortBy } from "lodash";
 import { autorun, values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
@@ -35,6 +36,7 @@ import {
 } from "react-accessible-accordion";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import { Client, Opportunity } from "../../WorkflowsStore";
 import { useStatusColors } from "./common";
 import { OpportunityModule } from "./OpportunityModule";
@@ -111,9 +113,16 @@ const NoOpportunities = styled.div`
 
 export const OpportunitiesAccordion = observer(
   ({ client }: { client: Client }) => {
-    const opportunities = values(client.opportunities).filter(
-      (opp) => opp !== undefined
-    ) as Opportunity[];
+    const {
+      workflowsStore: { opportunityTypes },
+    } = useRootStore();
+
+    const opportunities = sortBy(
+      values(client.opportunities).filter(
+        (opp) => opp !== undefined
+      ) as Opportunity[],
+      (opp: Opportunity) => opportunityTypes.indexOf(opp.type)
+    );
 
     useEffect(
       () =>

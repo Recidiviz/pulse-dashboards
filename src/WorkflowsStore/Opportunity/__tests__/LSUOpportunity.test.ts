@@ -71,10 +71,6 @@ afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
-type ReferralGeneric = {
-  formInformation: Record<string, any>;
-};
-
 describe("fully eligible", () => {
   beforeEach(() => {
     createTestUnit(LSUEligibleClientRecord);
