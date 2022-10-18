@@ -71,6 +71,7 @@ export type LSUReferralRecord = {
       eligibleDate: Date;
       riskLevel: "LOW";
     };
+    onSupervisionAtLeastOneYear: { eligibleDate: Date };
   };
 
   eligibleStartDate: Date;
@@ -161,6 +162,11 @@ export const transformReferral: TransformFunction<LSUReferralRecord> = (
 
   transformedRecord.criteria.usIdNoActiveNco = {
     activeNco: criteria.usIdNoActiveNco?.activeNco ?? false,
+  };
+  transformedRecord.criteria.onSupervisionAtLeastOneYear = {
+    eligibleDate: fieldToDate(
+      criteria.onSupervisionAtLeastOneYear.eligibleDate
+    ),
   };
 
   // delete vestigial criterion left over from TES we don't use in the front end

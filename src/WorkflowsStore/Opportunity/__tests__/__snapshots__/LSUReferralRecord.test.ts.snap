@@ -43,6 +43,9 @@ Object {
         2022-03-09T00:00:00.000Z,
       ],
     },
+    "onSupervisionAtLeastOneYear": Object {
+      "eligibleDate": 2022-05-28T00:00:00.000Z,
+    },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
     },
@@ -76,6 +79,9 @@ Object {
     },
     "noViolentMisdemeanorWithin12Months": Object {
       "latestViolentConvictions": Array [],
+    },
+    "onSupervisionAtLeastOneYear": Object {
+      "eligibleDate": 2022-05-28T00:00:00.000Z,
     },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
@@ -139,6 +145,9 @@ Object {
       "latestViolentConvictions": Array [
         2022-03-09T00:00:00.000Z,
       ],
+    },
+    "onSupervisionAtLeastOneYear": Object {
+      "eligibleDate": 2022-05-28T00:00:00.000Z,
     },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,

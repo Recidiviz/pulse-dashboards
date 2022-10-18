@@ -198,6 +198,9 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
     usIdIncomeVerifiedWithin3Months: {
       incomeVerifiedDate: parseISO("2022-06-03"),
     },
+    onSupervisionAtLeastOneYear: {
+      eligibleDate: parseISO("2022-06-01"),
+    },
     usIdNoActiveNco: {
       activeNco: false,
     },

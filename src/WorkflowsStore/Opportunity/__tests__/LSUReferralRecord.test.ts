@@ -48,6 +48,9 @@ test("transform record", () => {
       usIdNoActiveNco: {
         activeNco: true,
       },
+      onSupervisionAtLeastOneYear: {
+        eligibleDate: "2022-05-28",
+      },
     },
     caseNotes: {
       foo: [
@@ -98,6 +101,9 @@ test("optional criteria have sane fallbacks", () => {
         eligibleDate: "2025-06-19",
       },
       usIdNoActiveNco: null,
+      onSupervisionAtLeastOneYear: {
+        eligibleDate: "2022-05-28",
+      },
     },
     eligibleStartDate: "2022-10-05",
   };
@@ -135,6 +141,9 @@ test("can transform record with old criteria", () => {
       },
       usIdNoActiveNco: {
         activeNco: true,
+      },
+      onSupervisionAtLeastOneYear: {
+        eligibleDate: "2022-05-28",
       },
     },
     caseNotes: {

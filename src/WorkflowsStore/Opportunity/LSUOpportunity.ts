@@ -87,6 +87,10 @@ export const LSU_CRITERIA: Record<
     tooltip:
       "Policy requirement: Assessed at low risk level on LSI-R with no risk increase in past 90 days",
   },
+  onSupervisionAtLeastOneYear: {
+    text: "On supervision for at least 12 months",
+    tooltip: "Has been on supervision for at least 12 months",
+  },
 };
 
 export const LSUEarnedDischargeCommonRequirementsMet = (
@@ -160,6 +164,10 @@ export class LSUOpportunity extends OpportunityWithFormBase<
 
     if (criteria.usIdLsirLevelLowFor90Days?.riskLevel === "LOW") {
       requirements.push(LSU_CRITERIA.usIdLsirLevelLowFor90Days);
+    }
+
+    if (criteria.onSupervisionAtLeastOneYear.eligibleDate <= new Date()) {
+      requirements.push(LSU_CRITERIA.onSupervisionAtLeastOneYear);
     }
 
     return requirements;

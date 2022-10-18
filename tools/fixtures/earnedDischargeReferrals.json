@@ -8,6 +8,9 @@
       "negativeUaWithin90Days": null,
       "noFelonyWithin24Months": null,
       "noViolentMisdemeanorWithin12Months": null,
+      "onSupervisionAtLeastOneYear": {
+        "eligibleDate": "2022-07-11"
+      },
       "supervisionNotPastFullTermCompletionDate": {
         "eligibleDate": "2032-10-12"
       },
