@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import "./OpportunityPreviewModal.scss";
-
 import { DrawerModal, Icon, palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -60,6 +58,10 @@ const ModalControls = styled.div`
   z-index: 10;
 `;
 
+const Wrapper = styled.div`
+  padding: 24px;
+`;
+
 type OpportunityCaseloadProps = {
   opportunityType?: OpportunityType;
   isOpen: boolean;
@@ -76,12 +78,14 @@ export const OpportunityPreviewModal = observer(
           history.push(workflowsUrl("opportunityClients", { opportunityType }))
         }
       >
-        <ModalControls>
-          <Link to={workflowsUrl("opportunityClients", { opportunityType })}>
-            <Icon kind="Close" size="14" color={palette.pine2} />
-          </Link>
-        </ModalControls>
-        {opportunityType && PAGE_CONTENT[opportunityType].previewContents}
+        <Wrapper>
+          <ModalControls>
+            <Link to={workflowsUrl("opportunityClients", { opportunityType })}>
+              <Icon kind="Close" size="14" color={palette.pine2} />
+            </Link>
+          </ModalControls>
+          {opportunityType && PAGE_CONTENT[opportunityType].previewContents}
+        </Wrapper>
       </DrawerModal>
     );
   }

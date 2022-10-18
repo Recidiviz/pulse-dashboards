@@ -63,8 +63,8 @@ export const IconPad = styled.span`
 
 const DropdownContainer = styled.div`
   min-width: 21rem;
+  max-width: 26rem;
   min-height: 17rem;
-  margin-bottom: 1rem;
 
   > button {
     background-color: transparent;
@@ -94,11 +94,13 @@ const DropdownItem = styled.div<{ first?: boolean }>`
   border-bottom: ${(props) =>
     props.first ? `1px solid ${palette.slate20}` : 0};
   padding: ${(props) => (props.first ? "1rem" : "0.25rem 1rem 0.25rem")};
+  line-height: 16px;
 
   > .Checkbox__container {
     height: 100%;
     width: 100%;
     margin-bottom: 0;
+    display: inline-block;
 
     &:hover {
       > .Checkbox__box {
@@ -111,7 +113,8 @@ const DropdownItem = styled.div<{ first?: boolean }>`
     }
 
     > .Checkbox__label {
-      top: -7px;
+      top: -1px;
+      white-space: normal;
     }
 
     > .Checkbox__box {

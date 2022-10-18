@@ -32,10 +32,11 @@ import { WORKFLOWS_POLICY_OR_METHODOLOGY_URL } from "../utils/constants";
 import { InfoButton, InfoTooltipWrapper, useStatusColors } from "./common";
 import { OpportunityRecommendedLanguageModal } from "./OpportunityRecommendedLanguageModal";
 
-const Wrapper = styled.ul`
+const Wrapper = styled.ul<{ alert?: boolean }>`
   ${typography.Sans14}
   list-style: none;
-  margin: ${rem(spacing.md)} 0;
+  margin: ${(props) =>
+    props.alert ? `${rem(spacing.xs)} 0` : `${rem(spacing.md)} 0`};
   padding: 0;
 `;
 
@@ -53,25 +54,25 @@ const CriterionContentWrapper = styled(Sans14)`
   grid-column: 2;
 `;
 
-const CriterionWrapper = styled.li`
+const CriterionWrapper = styled.li<{ alert?: boolean }>`
   display: grid;
   grid-template-columns: ${rem(spacing.lg)} 1fr;
-  margin: 0 0 8px;
+  margin: ${(props) => (props.alert ? "0" : "0 0 8px")};
   line-height: 1.3;
 `;
 
 export const CriteriaList = observer(
   ({ opportunity }: { opportunity: Opportunity }): React.ReactElement => {
     const colors = useStatusColors(opportunity);
+
     // TODO: do this more generically once the "alert" flavor of opportunity stabilizes
-    const bulletIcon =
-      opportunity.type === "pastFTRD" ? IconSVG.Error : IconSVG.Success;
+    const alert = opportunity.type === "pastFTRD";
 
     return (
-      <Wrapper style={{ color: colors.text }}>
+      <Wrapper style={{ color: colors.text }} alert={alert}>
         {opportunity.requirementsAlmostMet.map(({ text, tooltip }) => {
           return (
-            <CriterionWrapper key={text}>
+            <CriterionWrapper key={text} alert={alert}>
               <CriterionIcon
                 kind={IconSVG.Error}
                 color={colors.iconAlmost}
@@ -102,7 +103,11 @@ export const CriteriaList = observer(
           const textTokens = text.split(" ");
           return (
             <CriterionWrapper key={text}>
-              <CriterionIcon kind={bulletIcon} color={colors.icon} size={16} />
+              <CriterionIcon
+                kind={alert ? IconSVG.Error : IconSVG.Success}
+                color={colors.icon}
+                size={16}
+              />
               <CriterionContentWrapper>
                 {textTokens.slice(0, -1).join(" ")}{" "}
                 <KeepTogether>
