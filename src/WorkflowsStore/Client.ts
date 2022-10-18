@@ -20,6 +20,7 @@ import { format as formatPhone } from "phone-fns";
 
 import {
   trackClientProfileViewed,
+  trackOpportunityMarkedEligible,
   trackOpportunityPreviewed,
   trackProfileOpportunityClicked,
   trackReferralFormPrinted,
@@ -161,6 +162,7 @@ export class Client {
       setFormIsPrinting: true,
       supervisionLevel: true,
       updateRecord: true,
+      setOpportunityDenialReasons: true,
     });
 
     this.rootStore = rootStore;
@@ -273,41 +275,46 @@ export class Client {
     reasons: string[],
     opportunityType: OpportunityType
   ): Promise<void> {
-    if (this.currentUserEmail) {
-      // clear irrelevant "other" text if necessary
-      const deletions = reasons.includes(OTHER_KEY)
-        ? undefined
-        : { otherReason: true };
+    const { currentUserEmail, recordId, pseudonymizedId } = this;
+    if (!currentUserEmail) return;
 
-      await updateOpportunityDenial(
-        this.currentUserEmail,
-        this.recordId,
-        { reasons },
+    // clear irrelevant "other" text if necessary
+    const deletions = reasons.includes(OTHER_KEY)
+      ? undefined
+      : { otherReason: true };
+
+    await updateOpportunityDenial(
+      currentUserEmail,
+      recordId,
+      { reasons },
+      opportunityType,
+      deletions
+    );
+
+    await updateOpportunityCompleted(
+      currentUserEmail,
+      recordId,
+      opportunityType,
+      true
+    );
+
+    if (reasons.length) {
+      trackSetOpportunityStatus({
+        clientId: pseudonymizedId,
+        status: "DENIED",
         opportunityType,
-        deletions
-      );
-
-      await updateOpportunityCompleted(
-        this.currentUserEmail,
-        this.recordId,
+        deniedReasons: reasons,
+      });
+    } else {
+      trackSetOpportunityStatus({
+        clientId: pseudonymizedId,
+        status: "IN_PROGRESS",
         opportunityType,
-        true
-      );
-
-      if (reasons.length) {
-        trackSetOpportunityStatus({
-          clientId: this.pseudonymizedId,
-          status: "DENIED",
-          opportunityType,
-          deniedReasons: reasons,
-        });
-      } else {
-        trackSetOpportunityStatus({
-          clientId: this.pseudonymizedId,
-          status: "IN_PROGRESS",
-          opportunityType,
-        });
-      }
+      });
+      trackOpportunityMarkedEligible({
+        clientId: pseudonymizedId,
+        opportunityType,
+      });
     }
   }
 

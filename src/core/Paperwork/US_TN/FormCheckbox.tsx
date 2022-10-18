@@ -19,9 +19,9 @@ import React from "react";
 import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
 import { useRootStore } from "../../../components/StoreProvider";
+import { updateOpportunityDraftData } from "../../../firestore";
 import { Checkbox } from "./styles";
 import { FormDataType } from "./types";
-import { updateCompliantReportingFormFieldData } from "./utils";
 
 export type FormCheckboxProps = StyledComponentProps<
   "input",
@@ -48,13 +48,7 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
       return;
     }
 
-    updateCompliantReportingFormFieldData(
-      client.currentUserName || "user",
-      client,
-      {
-        [name]: event.target.checked,
-      }
-    );
+    updateOpportunityDraftData(compliantReporting, name, event.target.checked);
   };
 
   return (

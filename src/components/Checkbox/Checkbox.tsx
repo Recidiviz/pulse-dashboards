@@ -24,7 +24,7 @@ type Props = {
   name?: string;
   checked: boolean;
   disabled?: boolean;
-  onChange: () => void;
+  onChange?: () => void;
 };
 
 const Checkbox: React.FC<Props> = ({
@@ -39,7 +39,7 @@ const Checkbox: React.FC<Props> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCheck(e.target.checked);
-    onChange();
+    onChange?.();
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

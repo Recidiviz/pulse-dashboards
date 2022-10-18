@@ -78,7 +78,8 @@ const DropdownContainer = styled.div`
 
     &:focus {
       .Checkbox__box {
-      background-color: ${palette.slate10};
+        background-color: ${palette.slate10};
+      }
     }
   }
 `;
@@ -186,9 +187,7 @@ export const OpportunityDenial = observer(
                     value="eligible"
                     checked={!reasons?.length}
                     name="eligible"
-                    onChange={() => {
-                      return undefined;
-                    }}
+                    disabled
                   >
                     Eligible
                   </Checkbox>
@@ -213,9 +212,6 @@ export const OpportunityDenial = observer(
                         value={code}
                         checked={reasons?.includes(code) || false}
                         name="denial reason"
-                        onChange={() => {
-                          return undefined;
-                        }}
                         disabled
                       >
                         {desc}

@@ -68,6 +68,12 @@ export function trackReferralFormViewed(
   track("frontend.referral_form_viewed", metadata);
 }
 
+export function trackReferralFormFirstEdited(
+  metadata: ClientOpportunityTrackingMetadata
+): void {
+  track("frontend.referral_form_first_edited", metadata);
+}
+
 export const trackReferralFormPrinted = (
   metadata: ClientOpportunityTrackingMetadata
 ): void => {
@@ -109,4 +115,10 @@ export function trackOpportunityPreviewed(
   metadata: ClientOpportunityTrackingMetadata
 ): void {
   track("frontend.opportunity_previewed", metadata);
+}
+
+export function trackOpportunityMarkedEligible(
+  metadata: ClientOpportunityTrackingMetadata
+): void {
+  track("frontend.opportunity_marked_eligible", metadata);
 }

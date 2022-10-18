@@ -43,7 +43,10 @@ import {
 import { mapValues, pickBy } from "lodash";
 import { when } from "mobx";
 
-import { trackSetOpportunityStatus } from "../analytics";
+import {
+  trackReferralFormFirstEdited,
+  trackSetOpportunityStatus,
+} from "../analytics";
 import { UserAppMetadata } from "../RootStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
 import { isOfflineMode } from "../utils/isOfflineMode";
@@ -53,7 +56,6 @@ import {
   ClientUpdateRecord,
   CombinedUserRecord,
   FeatureVariantRecord,
-  FormFieldData,
   isUserRecord,
   OpportunityUpdateWithForm,
   StaffRecord,
@@ -375,20 +377,6 @@ async function updateOpportunity(
   return setDoc(opportunityDocRef, { ...update }, { merge: true });
 }
 
-export const updateCompliantReportingDraft = async function (
-  updatedBy: string,
-  stateCode: string,
-  recordId: string,
-  data: FormFieldData
-): Promise<void> {
-  return updateOpportunity("compliantReporting", recordId, {
-    referralForm: {
-      updated: { by: updatedBy, date: serverTimestamp() },
-      data,
-    },
-  });
-};
-
 export async function updateOpportunityDenial(
   userEmail: string,
   recordId: string,
@@ -468,7 +456,9 @@ export const updateOpportunityDraftData = async function (
   name: string,
   value: FieldValue | string | number | boolean
 ): Promise<void> {
-  const { client } = opportunity;
+  await when(() => opportunity.isHydrated);
+
+  const { client, formLastUpdated } = opportunity;
   const update = {
     referralForm: {
       updated: {
@@ -478,10 +468,16 @@ export const updateOpportunityDraftData = async function (
       data: { [name]: value },
     },
   };
+  const isFirstEdit = !formLastUpdated;
 
   await updateOpportunity(opportunity.type, client.recordId, update);
 
-  await when(() => opportunity.isHydrated);
+  if (isFirstEdit) {
+    trackReferralFormFirstEdited({
+      clientId: client.pseudonymizedId,
+      opportunityType: opportunity.type,
+    });
+  }
 
   if (opportunity.reviewStatus === "PENDING") {
     trackSetOpportunityStatus({
