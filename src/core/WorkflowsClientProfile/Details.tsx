@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
+import { descending } from "d3-array";
 import { parseJSON } from "date-fns";
 import { mapValues, toUpper } from "lodash";
 import { rem } from "polished";
@@ -337,19 +338,23 @@ export const CaseNotes = ({
               <React.Fragment key={section}>
                 <DetailsSubheading>{section}</DetailsSubheading>
                 <DetailsList>
-                  {notes.map((note) => {
-                    return (
-                      <DetailsContent
-                        key={`${note.noteTitle}-${note.eventDate}`}
-                      >
-                        <CaseNoteTitle>{note.noteTitle}:</CaseNoteTitle>{" "}
-                        {note.noteBody}{" "}
-                        <CaseNoteDate>
-                          {formatWorkflowsDate(note.eventDate)}
-                        </CaseNoteDate>
-                      </DetailsContent>
-                    );
-                  })}
+                  {notes
+                    .sort((noteA, noteB) =>
+                      descending(noteA.eventDate, noteB.eventDate)
+                    )
+                    .map((note) => {
+                      return (
+                        <DetailsContent
+                          key={`${note.noteTitle}-${note.eventDate}`}
+                        >
+                          <CaseNoteTitle>{note.noteTitle}:</CaseNoteTitle>{" "}
+                          {note.noteBody}{" "}
+                          <CaseNoteDate>
+                            {formatWorkflowsDate(note.eventDate)}
+                          </CaseNoteDate>
+                        </DetailsContent>
+                      );
+                    })}
                 </DetailsList>
               </React.Fragment>
             );
