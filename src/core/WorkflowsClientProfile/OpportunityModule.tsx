@@ -15,19 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, palette, Sans16, spacing } from "@recidiviz/design-system";
+import { Button, palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { darken, rem } from "polished";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { Opportunity, OPPORTUNITY_LABELS } from "../../WorkflowsStore";
-import { EligibilityStatus } from "../OpportunityStatus";
+import { Opportunity } from "../../WorkflowsStore";
 import { workflowsUrl } from "../views";
-import { Separator, useStatusColors } from "./common";
+import { useStatusColors } from "./common";
 import { CriteriaList } from "./CriteriaList";
 import { OpportunityDenial } from "./OpportunityDenial";
+import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
 
 const Wrapper = styled.div<{ background: string; border: string }>`
   background-color: ${({ background: backgroundColor }) => backgroundColor};
@@ -37,10 +37,6 @@ const Wrapper = styled.div<{ background: string; border: string }>`
   color: ${palette.pine1};
   margin: 0 -${rem(spacing.lg)};
   padding: ${rem(spacing.md)} ${rem(spacing.lg)};
-`;
-
-const TitleText = styled(Sans16)`
-  color: ${palette.pine1};
 `;
 
 const ActionButtons = styled.div`
@@ -68,31 +64,21 @@ type OpportunityModuleProps = {
   // form-related features (e.g. print button) are optional, but the corresponding fields
   // do need to be hydrated if you are trying to use any of them
   opportunity: Opportunity;
+  hideHeader?: boolean;
 };
 
 export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
-  ({ formLinkButton, formPrintButton, opportunity }) => {
+  ({ formLinkButton, formPrintButton, opportunity, hideHeader = false }) => {
     useEffect(() => {
       opportunity.setFirstViewedIfNeeded();
     }, [opportunity]);
 
     const colors = useStatusColors(opportunity);
     // TODO: do this more generically once the "alert" flavor of opportunity stabilizes
-    const showEligibilityStatus = opportunity.type !== "pastFTRD";
     const showDenialButton = opportunity.type !== "pastFTRD";
     return (
       <Wrapper {...colors}>
-        <TitleText>
-          {OPPORTUNITY_LABELS[opportunity.type]}
-          {showEligibilityStatus && (
-            <>
-              <Separator> • </Separator>
-              <span style={{ color: colors.link }}>
-                <EligibilityStatus opportunity={opportunity} />
-              </span>
-            </>
-          )}
-        </TitleText>
+        {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}
         <CriteriaList opportunity={opportunity} />
         {(formPrintButton || showDenialButton || formLinkButton) && (
           <ActionButtons>

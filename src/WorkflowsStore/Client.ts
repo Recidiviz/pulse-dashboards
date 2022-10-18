@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { entries, makeObservable, remove, set, when } from "mobx";
+import { entries, makeObservable, remove, set, values, when } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
 import {
@@ -406,5 +406,13 @@ export class Client {
 
   get detailsCopy(): ClientDetailsCopy {
     return CLIENT_DETAILS_COPY[this.stateCode];
+  }
+
+  get allClientOpportunitiesLoaded(): boolean {
+    return (
+      values(this.opportunities).filter(
+        (opp) => opp !== undefined && !(opp.isLoading === false)
+      ).length === 0
+    );
   }
 }

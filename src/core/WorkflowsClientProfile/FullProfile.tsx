@@ -15,14 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  palette,
-  Sans14,
-  Sans16,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
-import { values } from "mobx";
+import { palette, Sans16, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
@@ -33,7 +26,7 @@ import { ProfileCapsule } from "../ClientCapsule";
 import { useClientTracking } from "../hooks/useClientTracking";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { FinesAndFees, Housing, SpecialConditions } from "./Details";
-import { OpportunityModule } from "./OpportunityModule";
+import { OpportunitiesAccordion } from "./OpportunitiesAccordion";
 import { SupervisionProgress } from "./SupervisionProgress";
 
 const COLUMNS = "1fr 1.2fr";
@@ -95,23 +88,6 @@ const Divider = styled.hr`
   margin: ${rem(spacing.md)} 0;
 `;
 
-const NoOpportunities = styled.div`
-  align-items: center;
-  background: ${rgba(palette.slate, 0.05)};
-  border: 1px solid ${palette.slate20};
-  border-radius: ${rem(4)};
-  color: ${palette.slate70};
-  display: flex;
-  flex-direction: column;
-  height: ${rem(250)};
-  justify-content: center;
-  padding: ${rem(spacing.md)};
-
-  ${Sans16} {
-    color: ${palette.pine2};
-  }
-`;
-
 export const FullProfile = observer((): React.ReactElement | null => {
   const {
     workflowsStore: { selectedClient: client },
@@ -120,10 +96,6 @@ export const FullProfile = observer((): React.ReactElement | null => {
   useClientTracking(client, () => client?.trackProfileViewed());
 
   if (!client) return null;
-
-  const opportunity = values(client.opportunities).find(
-    (opp) => opp !== undefined
-  );
 
   return (
     <WorkflowsNavLayout>
@@ -159,17 +131,7 @@ export const FullProfile = observer((): React.ReactElement | null => {
         </div>
         <div>
           <SectionHeading>Opportunities</SectionHeading>
-          {opportunity ? (
-            <OpportunityModule
-              opportunity={opportunity}
-              formLinkButton={!!opportunity.navigateToFormText}
-            />
-          ) : (
-            <NoOpportunities>
-              <Sans16>None for now</Sans16>
-              <Sans14>New opportunities will appear here.</Sans14>
-            </NoOpportunities>
-          )}
+          <OpportunitiesAccordion client={client} />
         </div>
       </Wrapper>
     </WorkflowsNavLayout>
