@@ -31,6 +31,7 @@ import {
 import {
   ClientRecord,
   FullName,
+  OpportunityFlag,
   SpecialConditionCode,
   updateOpportunityCompleted,
   updateOpportunityDenial,
@@ -46,6 +47,7 @@ import {
   OpportunityType,
   PastFTRDOpportunity,
 } from "./Opportunity";
+import { SupervisionLevelDowngradeOpportunity } from "./Opportunity/SupervisionLevelDowngradeOpportunity";
 import { optionalFieldToDate } from "./utils";
 import { OTHER_KEY } from "./WorkflowsStore";
 
@@ -73,7 +75,7 @@ export const CLIENT_DETAILS_COPY: Record<string, ClientDetailsCopy> = {
 };
 
 type OpportunityConfig = {
-  flag: `${OpportunityType}Eligible`;
+  flag: OpportunityFlag;
   OpportunityClass: {
     new (client: Client): Opportunity;
   };
@@ -97,6 +99,10 @@ const OPPORTUNITY_CREATION_MAPPING: Record<
   },
   LSU: { flag: "LSUEligible", OpportunityClass: LSUOpportunity },
   pastFTRD: { flag: "pastFTRDEligible", OpportunityClass: PastFTRDOpportunity },
+  supervisionLevelDowngrade: {
+    flag: "supervisionLevelDowngradeEligible",
+    OpportunityClass: SupervisionLevelDowngradeOpportunity,
+  },
 };
 
 type OpportunityMapping = {
@@ -105,6 +111,7 @@ type OpportunityMapping = {
   earnedDischarge?: EarnedDischargeOpportunity;
   LSU?: LSUOpportunity;
   pastFTRD?: PastFTRDOpportunity;
+  supervisionLevelDowngrade?: SupervisionLevelDowngradeOpportunity;
 };
 
 export class Client {
@@ -196,7 +203,10 @@ export class Client {
 
     OPPORTUNITY_TYPES.forEach((t) => {
       const { flag, OpportunityClass } = OPPORTUNITY_CREATION_MAPPING[t];
-      if (record[flag]) {
+      if (
+        record[flag] &&
+        this.rootStore.workflowsStore.opportunityTypes.includes(t)
+      ) {
         if (!this.opportunities[t]) {
           set(this.opportunities, t, new OpportunityClass(this));
         }
@@ -213,10 +223,10 @@ export class Client {
   }
 
   get supervisionLevel(): string {
-    const levelFromFilters = this.rootStore.workflowsStore.supervisionLevels.find(
-      (opt) => opt.value === this.record.supervisionLevel
-    )?.label;
-    // some levels are mapped locally for historical reasons (e.g., to patch gaps in ingest or handle raw data)
+    const levelFromFilters = this.rootStore.workflowsStore.formatSupervisionLevel(
+      this.record.supervisionLevel
+    );
+    // TODO(#2287): some levels are mapped locally for historical reasons (e.g., to patch gaps in ingest or handle raw data)
     const locallyMappedLevel =
       SUPERVISION_LEVEL_MAP[this.record.supervisionLevel ?? ""];
     return (

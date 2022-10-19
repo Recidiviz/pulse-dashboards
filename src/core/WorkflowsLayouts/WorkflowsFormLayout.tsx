@@ -59,6 +59,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
     sidebarContents: <PastFTRDClientProfile />,
     formContents: <div />,
   },
+  supervisionLevelDowngrade: {},
 };
 
 const Wrapper = styled.div`

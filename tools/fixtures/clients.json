@@ -63,8 +63,8 @@
     "stateCode": "US_TN",
     "officerId": "OFFICER1",
     "district": "DISTRICT 50",
-    "supervisionType": "MISDEMEANOR PROBATIONER",
-    "supervisionLevel": "STANDARD: MINIMUM",
+    "supervisionType": "TN PROBATIONER",
+    "supervisionLevel": "MAXIMUM",
     "supervisionLevelStart": "2021-07-05",
     "address": "999 Main St, Nashville, TN 12345",
     "phoneNumber": "5555555678",
@@ -76,7 +76,8 @@
     "specialConditions": [
       "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS"
     ],
-    "compliantReportingEligible": null
+    "compliantReportingEligible": null,
+    "supervisionLevelDowngradeEligible": true
   },
   {
     "personName": { "givenNames": "RAMONDA", "surname": "UNDERWOOD" },

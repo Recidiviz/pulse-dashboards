@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { configure } from "mobx";
 import tk from "timekeeper";
 
 import { RootStore } from "../../../RootStore";
@@ -26,7 +27,7 @@ import {
 } from "../__fixtures__";
 import { Opportunity } from "../types";
 
-let et: Opportunity;
+let opp: Opportunity;
 let client: Client;
 let root: RootStore;
 let referralSub: CollectionDocumentSubscription<any>;
@@ -38,6 +39,9 @@ const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jes
 
 function createTestUnit(clientRecord: typeof pastFTRDEligibleClientRecord) {
   root = new RootStore();
+  jest
+    .spyOn(root.workflowsStore, "opportunityTypes", "get")
+    .mockReturnValue(["pastFTRD"]);
   client = new Client(clientRecord, root);
 
   const maybeOpportunity = client.opportunities.pastFTRD;
@@ -46,15 +50,18 @@ function createTestUnit(clientRecord: typeof pastFTRDEligibleClientRecord) {
     throw new Error("Unable to create opportunity instance");
   }
 
-  et = maybeOpportunity;
+  opp = maybeOpportunity;
 }
 
 beforeEach(() => {
+  // this lets us spy on observables, e.g. computed getters
+  configure({ safeDescriptors: false });
   tk.freeze(new Date(2022, 7, 1));
 });
 
 afterEach(() => {
   tk.reset();
+  configure({ safeDescriptors: true });
 });
 
 describe("fully eligible", () => {
@@ -67,6 +74,6 @@ describe("fully eligible", () => {
   });
 
   test("requirements met", () => {
-    expect(et.requirementsMet).toMatchSnapshot();
+    expect(opp.requirementsMet).toMatchSnapshot();
   });
 });

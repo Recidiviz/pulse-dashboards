@@ -131,6 +131,8 @@ export const collectionNames = {
   LSUReferrals: "US_ID-LSUReferrals",
   pastFTRDReferrals: "US_ID-pastFTRDReferrals",
   featureVariants: "featureVariants",
+  supervisionLevelDowngradeReferrals:
+    "US_TN-supervisionLevelDowngradeReferrals",
 };
 
 export type CollectionName = keyof typeof collectionNames;

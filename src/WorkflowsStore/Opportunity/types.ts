@@ -25,6 +25,7 @@ export const OPPORTUNITY_TYPES = [
   "earnedDischarge",
   "LSU",
   "pastFTRD",
+  "supervisionLevelDowngrade",
 ] as const;
 /**
  * Values of this union map to key prefixes in client records
@@ -39,6 +40,7 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   earnedDischarge: "Earned Discharge",
   LSU: "Limited Supervision Unit",
   pastFTRD: "Past FTRD",
+  supervisionLevelDowngrade: "Supervision Level Downgrade",
 };
 
 export type OpportunityRequirement = {

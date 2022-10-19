@@ -1,0 +1,19 @@
+[
+  {
+    "stateCode": "US_TN",
+    "externalId": "102",
+    "criteria": {
+      "usTnSupervisionLevelHigherThanAssessmentLevel": {
+        "assessmentLevel": "HIGH",
+        "latestAssessmentDate": "2021-08-20",
+        "supervisionLevel": "MAXIMUM"
+      }
+    },
+    "metadata": {
+      "violations": [
+        { "violationDate": "2021-05-03", "violationCode": "VRPT" },
+        { "violationDate": "2020-01-10", "violationCode": "ARRP" }
+      ]
+    }
+  }
+]

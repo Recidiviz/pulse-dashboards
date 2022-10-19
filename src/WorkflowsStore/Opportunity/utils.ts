@@ -104,6 +104,11 @@ export const generateOpportunityHydratedHeader = (
       callToAction:
         "Review clients who are past their full-term release date and email clerical to move them to history.",
     },
+    supervisionLevelDowngrade: {
+      eligibilityText: "",
+      opportunityText: "",
+      callToAction: "",
+    },
   };
 
   return headers[opportunityType];
@@ -145,6 +150,7 @@ export const opportunityToSortFunctionMapping: Record<
   earnedDischarge: sortByReviewStatusAndEligibilityDate,
   LSU: sortByReviewStatusAndEligibilityDate,
   pastFTRD: sortByReviewStatusAndEligibilityDate,
+  supervisionLevelDowngrade: sortByReviewStatus,
 };
 
 export const transformCaseNotes = (

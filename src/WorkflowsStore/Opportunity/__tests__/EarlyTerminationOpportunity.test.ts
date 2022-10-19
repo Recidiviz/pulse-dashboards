@@ -37,6 +37,7 @@ let referralSub: CollectionDocumentSubscription<any>;
 let updatesSub: OpportunityUpdateSubscription<any>;
 
 jest.mock("../../subscriptions");
+
 const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
   typeof CollectionDocumentSubscription
 >;
@@ -48,6 +49,9 @@ function createTestUnit(
   clientRecord: typeof earlyTerminationEligibleClientRecord
 ) {
   root = new RootStore();
+  jest
+    .spyOn(root.workflowsStore, "opportunityTypes", "get")
+    .mockReturnValue(["earlyTermination"]);
   client = new Client(clientRecord, root);
 
   const maybeOpportunity = client.opportunities.earlyTermination;

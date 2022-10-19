@@ -33,6 +33,7 @@ const OPPORTUNITIES_WITH_FIXTURES: (keyof typeof collectionNames)[] = [
   "LSUReferrals",
   "earnedDischargeReferrals",
   "pastFTRDReferrals",
+  "supervisionLevelDowngradeReferrals",
 ];
 
 const db = getDb();

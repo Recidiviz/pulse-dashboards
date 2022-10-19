@@ -48,6 +48,9 @@ let updatesSub: OpportunityUpdateSubscription<any>;
 
 function createTestUnit(clientRecord: typeof LSUEligibleClientRecord) {
   root = new RootStore();
+  jest
+    .spyOn(root.workflowsStore, "opportunityTypes", "get")
+    .mockReturnValue(["LSU"]);
   client = new Client(clientRecord, root);
 
   const maybeOpportunity = client.opportunities.LSU;

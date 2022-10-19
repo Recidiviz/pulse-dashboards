@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { palette, Sans12, spacing, typography } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
@@ -89,7 +90,7 @@ const BrandedNavLink = styled(NavLink).attrs({ exact: true })`
   }
 `;
 
-export const WorkflowsNavLayout: React.FC = ({ children }) => {
+export const WorkflowsNavLayout: React.FC = observer(({ children }) => {
   const {
     workflowsStore: { opportunityTypes },
   } = useRootStore();
@@ -134,4 +135,4 @@ export const WorkflowsNavLayout: React.FC = ({ children }) => {
       <Main>{children}</Main>
     </Wrapper>
   );
-};
+});

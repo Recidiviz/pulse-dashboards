@@ -49,6 +49,9 @@ function createTestUnit(
   clientRecord: typeof EarnedDischargeEligibleClientRecord
 ) {
   root = new RootStore();
+  jest
+    .spyOn(root.workflowsStore, "opportunityTypes", "get")
+    .mockReturnValue(["earnedDischarge"]);
   client = new Client(clientRecord, root);
 
   const maybeOpportunity = client.opportunities.earnedDischarge;

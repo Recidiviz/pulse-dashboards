@@ -100,7 +100,10 @@ export class WorkflowsStore implements Hydratable {
 
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
-    makeAutoObservable(this, { rootStore: false });
+    makeAutoObservable(this, {
+      rootStore: false,
+      formatSupervisionLevel: false,
+    });
 
     // update caseload subscriptions when selection changes
     reaction(
@@ -365,11 +368,7 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get hasMultipleOpportunities(): boolean {
-    const { currentTenantId } = this.rootStore;
-    if (!currentTenantId || !tenants[currentTenantId].opportunityTypes) {
-      return false;
-    }
-    const { opportunityTypes } = tenants[currentTenantId];
+    const { opportunityTypes } = this;
     return !!(opportunityTypes && opportunityTypes.length > 1);
   }
 
@@ -508,11 +507,24 @@ export class WorkflowsStore implements Hydratable {
    * Opportunity types are ranked in order of how they should display on the Homepage
    */
   get opportunityTypes(): OpportunityType[] {
-    return (
-      (this.rootStore.currentTenantId &&
-        tenants[this.rootStore.currentTenantId].opportunityTypes) ??
-      []
-    );
+    const {
+      isHydrated,
+      rootStore: { currentTenantId },
+    } = this;
+    if (!isHydrated || !currentTenantId) return [];
+
+    const opportunityTypes = tenants[currentTenantId]?.opportunityTypes ?? [];
+
+    if (
+      currentTenantId === "US_TN" &&
+      !this.featureVariants.usTnSupervisionLevelDowngrade
+    ) {
+      return opportunityTypes.filter(
+        (oppType) => oppType !== "supervisionLevelDowngrade"
+      );
+    }
+
+    return opportunityTypes;
   }
 
   /**
@@ -525,5 +537,10 @@ export class WorkflowsStore implements Hydratable {
       filterOptions[(currentTenantId ?? "") as keyof typeof filterOptions] ??
       DefaultPopulationFilterOptions;
     return options.supervisionLevel.options;
+  }
+
+  // TODO(#2287): return "UNKNOWN" instead of undefined once TN mapping is up to date
+  formatSupervisionLevel(levelId: string | undefined): string | undefined {
+    return this.supervisionLevels.find((opt) => opt.value === levelId)?.label;
   }
 }

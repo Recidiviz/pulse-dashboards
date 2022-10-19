@@ -74,7 +74,11 @@ beforeEach(() => {
     earnedDischargeEligible: true,
     LSUEligible: true,
     pastFTRDEligible: true,
+    supervisionLevelDowngradeEligible: true,
   };
+  jest
+    .spyOn(rootStore.workflowsStore, "opportunityTypes", "get")
+    .mockReturnValue([...OPPORTUNITY_TYPES]);
   client = new Client(eligibleClientWithAllOpps, rootStore);
 
   // for simplicity we will mark all the subs as hydrated, though we may update data later

@@ -61,7 +61,10 @@ export type UserUpdateRecord = {
 
 // TEST is useful for testing, as the name suggests,
 // but also so that we don't have an empty union when there are no feature variants in use
-export type FeatureVariant = "TEST" | "CompliantReportingAlmostEligible";
+export type FeatureVariant =
+  | "TEST"
+  | "CompliantReportingAlmostEligible"
+  | "usTnSupervisionLevelDowngrade";
 /**
  * For each feature, an optional activeDate can control when the user gets access.
  * If this is missing, access will be granted immediately.
@@ -92,6 +95,8 @@ export type SpecialConditionCode = {
   conditionDescription: string;
 };
 
+export type OpportunityFlag = `${OpportunityType}Eligible`;
+
 /**
  * A nested object of all client-level data from the Recidiviz data platform
  */
@@ -114,16 +119,7 @@ export type ClientRecord = {
   lastPaymentDate?: Timestamp | string;
   specialConditions?: string[];
   boardConditions?: SpecialConditionCode[];
-  // TODO(#2263): Update this to a only be a boolean once the Client delegate is loading it
-  compliantReportingEligible?:
-    | CompliantReportingEligibleRecord
-    | undefined
-    | boolean;
-  earlyTerminationEligible?: boolean;
-  earnedDischargeEligible?: boolean;
-  LSUEligible?: boolean;
-  pastFTRDEligible?: boolean;
-};
+} & Partial<Record<OpportunityFlag, boolean>>;
 
 // TODO(#2263): Remove CompliantReportingFinesFeesEligible and CompliantReportingEligibleRecord once Client record is migrated
 // to use boolean value for compliantReportingEligible.

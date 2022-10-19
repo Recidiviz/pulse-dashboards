@@ -62,6 +62,9 @@ function createTestUnit(
   clientRecord: typeof compliantReportingEligibleClientRecord
 ) {
   root = new RootStore();
+  jest
+    .spyOn(root.workflowsStore, "opportunityTypes", "get")
+    .mockReturnValue(["compliantReporting"]);
   client = new Client(clientRecord, root);
   const maybeOpportunity = client.opportunities.compliantReporting;
   if (maybeOpportunity === undefined) {

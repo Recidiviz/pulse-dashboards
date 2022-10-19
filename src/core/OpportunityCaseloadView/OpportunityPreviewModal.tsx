@@ -49,6 +49,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   pastFTRD: {
     previewContents: <PastFTRDClientProfile />,
   },
+  supervisionLevelDowngrade: {},
 };
 
 const ModalControls = styled.div`

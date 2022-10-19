@@ -32,7 +32,6 @@ import {
   UserUpdateRecord,
 } from "../../firestore";
 import { RootStore } from "../../RootStore";
-import { US_ND } from "../../RootStore/TenantStore/pathwaysTenants";
 import type { WorkflowsStore } from "..";
 import {
   eligibleClient,
@@ -50,6 +49,20 @@ import { dateToTimestamp } from "../utils";
 
 jest.mock("../../firestore");
 jest.mock("../subscriptions");
+jest.mock("../../tenants", () => ({
+  __esModule: true,
+  default: {
+    US_XX: {
+      opportunityTypes: ["compliantReporting"],
+    },
+    US_YY: {
+      workflowsEnableAllDistricts: true,
+    },
+    US_TN: {
+      opportunityTypes: ["compliantReporting", "supervisionLevelDowngrade"],
+    },
+  },
+}));
 
 const mockGetClient = getClient as jest.MockedFunction<typeof getClient>;
 const mockGetUser = getUser as jest.MockedFunction<typeof getUser>;
@@ -331,8 +344,7 @@ test("subscribe to all clients in saved caseload", async () => {
 
 test("subscribe to all officers if workflowsEnableAllDistricts is true", async () => {
   runInAction(() => {
-    // @ts-ignore
-    rootStore.tenantStore.currentTenantId = US_ND;
+    rootStore.tenantStore.currentTenantId = "US_YY" as any;
   });
 
   mockSubscribeToOfficers.mockImplementation(
@@ -493,12 +505,19 @@ describe("allOpportunitiesLoaded", () => {
   test("allOpportunitiesLoaded is true when clients are loaded and there are no clients", async () => {
     mockGetUser.mockResolvedValue(mockOfficer2); // officer2 has no clients
     await waitForHydration();
+    populateClients([]);
     expect(workflowsStore.allOpportunitiesLoaded).toBeTrue();
   });
 
   test("allOpportunitiesLoaded is false when clients are loading and we have not subscribed to clients", async () => {
     mockGetUser.mockResolvedValue(mockSupervisor);
     await waitForHydration();
+    expect(workflowsStore.allOpportunitiesLoaded).toBeFalse();
+  });
+
+  test("allOpportunitiesLoaded is false when clients are loading", async () => {
+    await waitForHydration();
+    populateClients(mockClients);
     expect(workflowsStore.allOpportunitiesLoaded).toBeFalse();
   });
 
@@ -535,8 +554,8 @@ describe("hasOpportunities", () => {
       "isHydrated",
       "get"
     );
-    populateClients(mockClients);
     await waitForHydration();
+    populateClients(mockClients);
     isHydratedMock.mockReturnValue(true);
     expect(workflowsStore.hasOpportunities).toBeTrue();
   });
@@ -589,4 +608,38 @@ test("variant with future active date", async () => {
   await waitForHydration();
 
   expect(workflowsStore.featureVariants).toEqual({});
+});
+
+describe("opportunityTypes for US_TN", () => {
+  beforeEach(() => {
+    runInAction(() => {
+      rootStore.tenantStore.currentTenantId = "US_TN";
+    });
+  });
+
+  test("includes supervisionLevelDowngrade", async () => {
+    mockSubscribeToFeatureVariants.mockImplementation((email, handler) => {
+      handler({ usTnSupervisionLevelDowngrade: {} });
+      return mockUnsub;
+    });
+
+    await waitForHydration();
+
+    expect(workflowsStore.opportunityTypes).toContain(
+      "supervisionLevelDowngrade"
+    );
+  });
+
+  test("does not include supervisionLevelDowngrade", async () => {
+    mockSubscribeToFeatureVariants.mockImplementation((email, handler) => {
+      handler({});
+      return mockUnsub;
+    });
+
+    await waitForHydration();
+
+    expect(workflowsStore.opportunityTypes).not.toContain(
+      "supervisionLevelDowngrade"
+    );
+  });
 });

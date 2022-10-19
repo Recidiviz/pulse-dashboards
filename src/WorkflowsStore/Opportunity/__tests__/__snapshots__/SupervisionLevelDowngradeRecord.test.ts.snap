@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform function 1`] = `
+Object {
+  "criteria": Object {
+    "usTnSupervisionLevelHigherThanAssessmentLevel": Object {
+      "assessmentLevel": "HIGH",
+      "latestAssessmentDate": 2021-08-20T00:00:00.000Z,
+      "supervisionLevel": "MAXIMUM",
+    },
+  },
+  "externalId": "abc123",
+  "metadata": Object {
+    "violations": Array [
+      Object {
+        "violationDate": 2021-05-03T00:00:00.000Z,
+        "violationType": undefined,
+      },
+      Object {
+        "violationDate": 2020-01-10T00:00:00.000Z,
+        "violationType": undefined,
+      },
+    ],
+  },
+  "stateCode": "US_XX",
+}
+`;

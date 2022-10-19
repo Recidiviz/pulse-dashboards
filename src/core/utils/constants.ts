@@ -86,4 +86,6 @@ export const WORKFLOWS_POLICY_OR_METHODOLOGY_URL: Record<
   LSU:
     "http://forms.idoc.idaho.gov/WebLink/0/edoc/273717/Limited%20Supervision%20Unit.pdf",
   pastFTRD: WORKFLOWS_METHODOLOGY_URL.US_ID,
+  supervisionLevelDowngrade:
+    "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view",
 };
