@@ -414,7 +414,10 @@ export class WorkflowsStore implements Hydratable {
 
   get allOpportunitiesLoaded(): boolean {
     // Wait until we have clients until checking that opportunities are loading.
-    if (!this.caseloadClients.length) return false;
+    if (!this.caseloadClients.length) {
+      // Differentiate between a pre- and post-fetch empty states
+      return this.clientsSubscription?.current() !== undefined;
+    }
     return (
       this.potentialOpportunities.filter(
         (opp) => !(opp.isHydrated || opp.error !== undefined)

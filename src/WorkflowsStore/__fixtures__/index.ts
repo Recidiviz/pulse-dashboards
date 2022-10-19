@@ -30,6 +30,18 @@ export const mockOfficer: CombinedUserRecord = {
   },
 };
 
+export const mockOfficer2: CombinedUserRecord = {
+  info: {
+    id: "OFFICER2",
+    stateCode: mockOfficer.info.stateCode,
+    district: "1",
+    hasCaseload: true,
+    email: "test-officer2@example.com",
+    givenNames: "Foo",
+    surname: "Fakename",
+  },
+};
+
 export const mockSupervisor: CombinedUserRecord = {
   info: {
     id: "SUPERVISOR1",

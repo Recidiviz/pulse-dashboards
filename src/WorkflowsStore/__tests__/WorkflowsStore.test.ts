@@ -40,6 +40,7 @@ import {
   mockClients,
   mockDirector,
   mockOfficer,
+  mockOfficer2,
   mockOfficers,
   mockSupervisor,
 } from "../__fixtures__";
@@ -489,14 +490,14 @@ test("tracking call waits for client to be instantiated", async () => {
 });
 
 describe("allOpportunitiesLoaded", () => {
-  test("allOpportunitiesLoaded is false when clients is empty", async () => {
-    populateClients([]);
+  test("allOpportunitiesLoaded is true when clients are loaded and there are no clients", async () => {
+    mockGetUser.mockResolvedValue(mockOfficer2); // officer2 has no clients
     await waitForHydration();
-    expect(workflowsStore.allOpportunitiesLoaded).toBeFalse();
+    expect(workflowsStore.allOpportunitiesLoaded).toBeTrue();
   });
 
-  test("allOpportunitiesLoaded is false when clients are loading", async () => {
-    populateClients(mockClients);
+  test("allOpportunitiesLoaded is false when clients are loading and we have not subscribed to clients", async () => {
+    mockGetUser.mockResolvedValue(mockSupervisor);
     await waitForHydration();
     expect(workflowsStore.allOpportunitiesLoaded).toBeFalse();
   });
