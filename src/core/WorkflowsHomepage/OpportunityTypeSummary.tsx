@@ -30,7 +30,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import {
-  generateOpportunityHeader,
+  generateOpportunityHydratedHeader,
   Opportunity,
   OpportunityType,
 } from "../../WorkflowsStore";
@@ -116,7 +116,7 @@ const OpportunityTypeSummary = observer(
     const previewOpportunities = opportunities.slice(0, sliceIndex);
     const numOpportunitiesToDisplay = opportunities.length - sliceIndex;
 
-    const header = generateOpportunityHeader(
+    const header = generateOpportunityHydratedHeader(
       opportunityType,
       opportunities.length
     );

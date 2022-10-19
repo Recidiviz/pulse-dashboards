@@ -25,6 +25,7 @@ import {
 } from "./CompliantReportingOpportunity";
 import {
   Opportunity,
+  OPPORTUNITY_LABELS,
   OPPORTUNITY_STATUS_RANKED,
   OpportunityCaseNote,
   OpportunityType,
@@ -57,7 +58,20 @@ export type OpportunityHeadersType = {
   callToAction: string;
 };
 
-export const generateOpportunityHeader = (
+export const generateOpportunityInitialHeader = (
+  opportunityType: OpportunityType
+): string => {
+  const opportunityLabel = OPPORTUNITY_LABELS[opportunityType];
+
+  switch (opportunityType) {
+    case "pastFTRD":
+      return "Search for officers above to review clients whose full-term release date has passed.";
+    default:
+      return `Search for officers above to review and refer eligible clients for ${opportunityLabel.toLowerCase()}.`;
+  }
+};
+
+export const generateOpportunityHydratedHeader = (
   opportunityType: OpportunityType,
   count: number
 ): OpportunityHeadersType => {

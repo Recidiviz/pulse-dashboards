@@ -22,7 +22,8 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import {
-  generateOpportunityHeader,
+  generateOpportunityHydratedHeader,
+  generateOpportunityInitialHeader,
   OPPORTUNITY_LABELS,
 } from "../../WorkflowsStore";
 import { OpportunitiesHydrator } from "../OpportunitiesHydrator";
@@ -57,12 +58,16 @@ export const OpportunityClientList = observer(() => {
   const almostEligibleOpps = almostEligibleOpportunities[opportunityType];
   const totalOpps = eligibleOpps.length + almostEligibleOpps.length;
 
-  const header = generateOpportunityHeader(opportunityType, totalOpps);
+  const hydratedHeader = generateOpportunityHydratedHeader(
+    opportunityType,
+    totalOpps
+  );
+  const initialHeader = generateOpportunityInitialHeader(opportunityType);
 
   const initial = (
     <WorkflowsNoResults
       headerText={opportunityLabel}
-      callToActionText={`Search for officers above to review and refer eligible clients for ${opportunityLabel.toLowerCase()}.`}
+      callToActionText={initialHeader}
     />
   );
 
@@ -77,9 +82,9 @@ export const OpportunityClientList = observer(() => {
   const hydrated = (
     <>
       <Heading>
-        {header.eligibilityText} {header.opportunityText}
+        {hydratedHeader.eligibilityText} {hydratedHeader.opportunityText}
       </Heading>
-      <SubHeading>{header.callToAction}</SubHeading>
+      <SubHeading>{hydratedHeader.callToAction}</SubHeading>
       <>
         {eligibleOpps.length > 0 && almostEligibleOpps.length > 0 && (
           <SectionLabelText>Eligible now</SectionLabelText>
