@@ -81,7 +81,7 @@ const Sidebar = styled.div`
 `;
 
 const SidebarSection = styled.section`
-  padding: ${rem(spacing.md)};
+  padding: ${rem(spacing.lg)};
 
   &:first-child {
     border-bottom: 1px solid ${palette.slate20};

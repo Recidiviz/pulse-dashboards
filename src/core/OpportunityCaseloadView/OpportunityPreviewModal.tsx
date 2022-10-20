@@ -60,7 +60,7 @@ const ModalControls = styled.div`
 `;
 
 const Wrapper = styled.div`
-  padding: 24px;
+  padding: ${rem(spacing.lg)};
 `;
 
 type OpportunityCaseloadProps = {

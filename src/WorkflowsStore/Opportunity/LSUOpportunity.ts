@@ -19,6 +19,7 @@ import dedent from "dedent";
 import { some } from "lodash";
 import { computed, makeObservable } from "mobx";
 import moment from "moment";
+import { format as formatPhone } from "phone-fns";
 
 import { Client } from "../Client";
 import { OTHER_KEY } from "../WorkflowsStore";
@@ -181,7 +182,9 @@ export class LSUOpportunity extends OpportunityWithFormBase<
       chargeDescriptions: form.chargeDescriptions?.join(",") ?? "",
       contactInformation: defaultFormValueJoiner(
         form.currentAddress,
-        form.currentPhoneNumber,
+        form.currentPhoneNumber
+          ? formatPhone("(NNN) NNN-NNNN", form.currentPhoneNumber)
+          : undefined,
         form.emailAddress
       ),
 
