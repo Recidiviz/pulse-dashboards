@@ -25,10 +25,10 @@ import { deleteCollection, getDb } from "./firestoreUtils";
 const COLLECTIONS = {
   clients: "clients",
   staff: "staff",
-  compliantReportingReferrals: "compliantReportingReferrals",
 };
 
 const OPPORTUNITIES_WITH_FIXTURES: (keyof typeof collectionNames)[] = [
+  "compliantReportingReferrals",
   "earlyTerminationReferrals",
   "LSUReferrals",
   "earnedDischargeReferrals",
@@ -100,11 +100,13 @@ async function loadOpportunityReferralFixtures() {
     );
 
     rawRecords.forEach((rawReferral: any) => {
+      // TN data still in a legacy format, so fall back to alternate field
+      const externalId = rawReferral.externalId ?? rawReferral.tdocId;
       bulkWriter.create(
         db.doc(
           `${
             collectionNames[opportunity]
-          }/${rawReferral.stateCode.toLowerCase()}_${rawReferral.externalId}`
+          }/${rawReferral.stateCode.toLowerCase()}_${externalId}`
         ),
         rawReferral
       );

@@ -48,3 +48,6 @@ dump.rdb
 
 # Typescript build artifacts
 *.tsbuildinfo
+
+# fixtures for offline mode
+firestore-config/emulator-fixtures
