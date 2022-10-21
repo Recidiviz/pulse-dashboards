@@ -143,34 +143,14 @@ describe("fully eligible", () => {
       expected: "",
 
       formInformation: {
-        drugScreenDate: undefined,
-        drugScreenResult: undefined,
-      },
-    },
-    {
-      property: "substanceTest",
-      expected: "",
-
-      formInformation: {
-        drugScreenDate: undefined,
-        drugScreenResult: false,
-      },
-    },
-    {
-      property: "substanceTest",
-      expected: "Tested positive on 02/02/2022",
-
-      formInformation: {
-        drugScreenDate: "2022-02-02 02:00",
-        drugScreenResult: true,
+        latestNegativeDrugScreenDate: undefined,
       },
     },
     {
       property: "substanceTest",
       expected: "Tested negative on 02/02/2022",
       formInformation: {
-        drugScreenDate: "2022-02-02 02:00",
-        drugScreenResult: false,
+        latestNegativeDrugScreenDate: "2022-02-02 02:00",
       },
     },
 

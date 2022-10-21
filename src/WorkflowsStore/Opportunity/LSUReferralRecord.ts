@@ -54,8 +54,7 @@ export type LSUReferralRecord = {
     employerAddress?: string;
     employmentStartDate?: string;
     employmentDateVerified?: string;
-    drugScreenDate?: string;
-    drugScreenResult?: boolean;
+    latestNegativeDrugScreenDate?: string;
     ncicReviewDate?: string;
     ncicNoteTitle?: string;
     ncicNoteBody?: string;

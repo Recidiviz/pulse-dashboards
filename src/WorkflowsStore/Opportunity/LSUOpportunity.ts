@@ -208,10 +208,10 @@ export class LSUOpportunity extends OpportunityWithFormBase<
         }
       `,
 
-      substanceTest: form.drugScreenDate
-        ? `Tested ${
-            form.drugScreenResult ? "positive" : "negative"
-          } on ${formatFormValueDate(form.drugScreenDate)}`
+      substanceTest: form.latestNegativeDrugScreenDate
+        ? `Tested negative on ${formatFormValueDate(
+            form.latestNegativeDrugScreenDate
+          )}`
         : "",
 
       ncicCheck: defaultFormValueJoiner(
