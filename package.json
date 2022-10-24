@@ -260,7 +260,8 @@
     "**/*.{ts,tsx}": [
       "bash -c tsc",
       "eslint --fix"
-    ]
+    ],
+    "**/*.json": "prettier -w"
   },
   "browserslist": {
     "production": [
