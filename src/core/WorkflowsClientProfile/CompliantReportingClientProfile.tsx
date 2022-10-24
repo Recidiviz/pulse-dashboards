@@ -35,7 +35,7 @@ type CompliantReportingClientProfileProps = {
 };
 
 export const CompliantReportingClientProfile: React.FC<CompliantReportingClientProfileProps> = observer(
-  ({ formLinkButton, formPrintButton }) => {
+  ({ formLinkButton, formPrintButton = true }) => {
     const { workflowsStore } = useRootStore();
 
     const client = workflowsStore.selectedClient;
