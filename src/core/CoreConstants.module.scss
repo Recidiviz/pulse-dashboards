@@ -19,6 +19,7 @@ $core-breakpoint-lg: 1920px;
 $core-breakpoint-ml: 1760px;
 $core-breakpoint-md: 1366px;
 $core-breakpoint-sm: 1280px; /* iPad Pro */
+$core-breakpoint-sxs: 1024px; /* iPad in landscape */
 $core-breakpoint-xs: 768px; /* iPad */
 
 $core-max-view-width: 93rem;
@@ -92,4 +93,5 @@ $core-focused-color: #e3e6e6;
   insetShadow30: $inset-shadow-30;
 
   breakpointSm: $core-breakpoint-sm;
+  breakpointSxs: $core-breakpoint-sxs;
 }

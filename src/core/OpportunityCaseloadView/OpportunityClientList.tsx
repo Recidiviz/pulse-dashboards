@@ -26,6 +26,7 @@ import {
   generateOpportunityInitialHeader,
   OPPORTUNITY_LABELS,
 } from "../../WorkflowsStore";
+import cssVars from "../CoreConstants.module.scss";
 import { OpportunitiesHydrator } from "../OpportunitiesHydrator";
 import WorkflowsNoResults from "../WorkflowsNoResults";
 import { ClientListItem } from "./ClientListItem";
@@ -34,11 +35,15 @@ import { Heading, SectionLabelText, SubHeading } from "./styles";
 const ClientList = styled.ul`
   column-gap: ${rem(spacing.md)};
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(${rem(500)}, 1fr));
+  grid-template-columns: 100%;
   list-style-type: none;
   margin: 0;
   padding: 0;
   row-gap: ${rem(spacing.sm)};
+
+  @media screen and (min-width: ${cssVars.breakpointSxs}) {
+    grid-template-columns: 50% 50%;
+  }
 `;
 
 export const OpportunityClientList = observer(() => {

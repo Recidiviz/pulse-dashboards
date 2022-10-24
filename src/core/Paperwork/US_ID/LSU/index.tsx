@@ -48,12 +48,7 @@ export const LSUFormFields: WebFormFieldWrapperProps[] = [
   { name: "costOfSupervision", label: "Cost of Supervision" },
   {
     name: "iletsReviewDate",
-    label: "ILETS Review Date",
-    helpText: {
-      persistent: true,
-      validationMsg: true,
-      children: "Note any protection orders or NCOs",
-    },
+    label: "ILETS Review Date [note any protection orders or NCOs]",
   },
   {
     name: "courtOrderDate",

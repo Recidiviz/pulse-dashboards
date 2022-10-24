@@ -288,7 +288,8 @@ export const FinesAndFees = ({
         <DetailsList>
           <DetailsSubheading>Remaining for current sentence</DetailsSubheading>
           <DetailsContent>
-            {client.currentBalance && formatAsCurrency(client.currentBalance)}
+            {client.currentBalance !== undefined &&
+              formatAsCurrency(client.currentBalance)}
           </DetailsContent>
 
           {client.lastPaymentAmount && client.lastPaymentDate ? (
