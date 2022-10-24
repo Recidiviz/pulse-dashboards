@@ -31,11 +31,11 @@ import {
 import { RootStore } from "../../RootStore";
 import { eligibleClient, mockOfficer } from "../__fixtures__";
 import { Client } from "../Client";
-import { OPPORTUNITY_TYPES } from "../Opportunity";
 import {
-  CollectionDocumentSubscription,
-  OpportunityUpdateSubscription,
-} from "../subscriptions";
+  CompliantReportingOpportunity,
+  OPPORTUNITY_TYPES,
+} from "../Opportunity";
+import { DocumentSubscription } from "../subscriptions";
 import { dateToTimestamp } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 
@@ -52,16 +52,10 @@ const mockUpdateOpportunityDenial = updateOpportunityDenial as jest.MockedFuncti
 const mockUpdateOpportunityCompleted = updateOpportunityCompleted as jest.MockedFunction<
   typeof updateOpportunityCompleted
 >;
-const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
-  typeof CollectionDocumentSubscription
->;
-const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.MockedClass<
-  typeof OpportunityUpdateSubscription
->;
 
 let client: Client;
 let rootStore: RootStore;
-let compliantReportingUpdatesSub: OpportunityUpdateSubscription<any>;
+let compliantReportingUpdatesSub: DocumentSubscription<any>;
 
 beforeEach(() => {
   // this lets us spy on mobx computed getters
@@ -82,21 +76,20 @@ beforeEach(() => {
   client = new Client(eligibleClientWithAllOpps, rootStore);
 
   // for simplicity we will mark all the subs as hydrated, though we may update data later
-  CollectionDocumentSubscriptionMock.mock.instances.forEach((sub) => {
-    // eslint-disable-next-line no-param-reassign
-    sub.isLoading = false;
-    // eslint-disable-next-line no-param-reassign
-    sub.isHydrated = true;
+  Object.values(client.opportunities).forEach((opp) => {
+    if (!opp) return;
+    /* eslint-disable no-param-reassign */
+    opp.referralSubscription.isLoading = false;
+    opp.referralSubscription.isHydrated = true;
+
+    opp.updatesSubscription.isLoading = false;
+    opp.updatesSubscription.isHydrated = true;
+    /* eslint-enable no-param-reassign */
+
+    if (opp instanceof CompliantReportingOpportunity) {
+      compliantReportingUpdatesSub = opp.updatesSubscription;
+    }
   });
-  OpportunityUpdateSubscriptionMock.mock.instances.forEach((sub) => {
-    // eslint-disable-next-line no-param-reassign
-    sub.isLoading = false;
-    // eslint-disable-next-line no-param-reassign
-    sub.isHydrated = true;
-  });
-  [
-    compliantReportingUpdatesSub,
-  ] = OpportunityUpdateSubscriptionMock.mock.instances;
 });
 
 afterEach(() => {

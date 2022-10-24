@@ -56,9 +56,9 @@ export abstract class OpportunityBase<
 
   client: Client;
 
-  protected referralSubscription: DocumentSubscription<ReferralRecord>;
+  referralSubscription: DocumentSubscription<ReferralRecord>;
 
-  protected updatesSubscription: DocumentSubscription<UpdateRecord>;
+  updatesSubscription: DocumentSubscription<UpdateRecord>;
 
   constructor(
     client: Client,

@@ -20,30 +20,20 @@ import tk from "timekeeper";
 
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
-import {
-  CollectionDocumentSubscription,
-  OpportunityUpdateSubscription,
-} from "../../subscriptions";
+import { DocumentSubscription } from "../../subscriptions";
 import {
   earlyTerminationEligibleClientRecord,
   earlyTerminationReferralRecord,
 } from "../__fixtures__";
-import { Opportunity } from "../types";
+import { EarlyTerminationOpportunity } from "../EarlyTerminationOpportunity";
 
-let et: Opportunity;
+let opp: EarlyTerminationOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: CollectionDocumentSubscription<any>;
-let updatesSub: OpportunityUpdateSubscription<any>;
+let referralSub: DocumentSubscription<any>;
+let updatesSub: DocumentSubscription<any>;
 
 jest.mock("../../subscriptions");
-
-const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
-  typeof CollectionDocumentSubscription
->;
-const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.MockedClass<
-  typeof OpportunityUpdateSubscription
->;
 
 function createTestUnit(
   clientRecord: typeof earlyTerminationEligibleClientRecord
@@ -60,7 +50,7 @@ function createTestUnit(
     throw new Error("Unable to create opportunity instance");
   }
 
-  et = maybeOpportunity;
+  opp = maybeOpportunity;
 }
 
 beforeEach(() => {
@@ -79,19 +69,19 @@ describe("fully eligible", () => {
   beforeEach(() => {
     createTestUnit(earlyTerminationEligibleClientRecord);
 
-    [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+    referralSub = opp.referralSubscription;
     referralSub.isLoading = false;
     referralSub.data = earlyTerminationReferralRecord;
 
-    [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+    updatesSub = opp.updatesSubscription;
     updatesSub.isLoading = false;
   });
 
   test("requirements almost met", () => {
-    expect(et.requirementsAlmostMet).toEqual([]);
+    expect(opp.requirementsAlmostMet).toEqual([]);
   });
 
   test("requirements met", () => {
-    expect(et.requirementsMet).toMatchSnapshot();
+    expect(opp.requirementsMet).toMatchSnapshot();
   });
 });

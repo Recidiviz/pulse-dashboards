@@ -19,22 +19,12 @@ import { configure } from "mobx";
 
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
-import {
-  CollectionDocumentSubscription,
-  OpportunityUpdateSubscription,
-} from "../../subscriptions";
+import { DocumentSubscription } from "../../subscriptions";
 import { ineligibleClientRecord } from "../__fixtures__";
 import { OpportunityWithFormBase } from "../OpportunityWithFormBase";
 import { OpportunityType } from "../types";
 
 jest.mock("../../subscriptions");
-
-const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
-  typeof CollectionDocumentSubscription
->;
-const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.MockedClass<
-  typeof OpportunityUpdateSubscription
->;
 
 type TestForm = { foo: string };
 
@@ -45,8 +35,8 @@ class TestOpportunity extends OpportunityWithFormBase<TestReferral, TestForm> {}
 let opp: TestOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: CollectionDocumentSubscription<any>;
-let updatesSub: OpportunityUpdateSubscription<any>;
+let referralSub: DocumentSubscription<any>;
+let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit() {
   root = new RootStore();
@@ -60,10 +50,10 @@ beforeEach(() => {
   configure({ safeDescriptors: false });
   createTestUnit();
 
-  [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+  referralSub = opp.referralSubscription;
+  updatesSub = opp.updatesSubscription;
   referralSub.isLoading = false;
 
-  [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
   referralSub.isLoading = false;
 });
 

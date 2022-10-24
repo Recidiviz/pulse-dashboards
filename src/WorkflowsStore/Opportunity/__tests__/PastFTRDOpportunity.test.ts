@@ -20,22 +20,19 @@ import tk from "timekeeper";
 
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
-import { CollectionDocumentSubscription } from "../../subscriptions";
+import { DocumentSubscription } from "../../subscriptions";
 import {
   pastFTRDEligibleClientRecord,
   pastFTRDRecordFixture,
 } from "../__fixtures__";
-import { Opportunity } from "../types";
+import { PastFTRDOpportunity } from "../PastFTRDOpportunity";
 
-let opp: Opportunity;
+let opp: PastFTRDOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: CollectionDocumentSubscription<any>;
+let referralSub: DocumentSubscription<any>;
 
 jest.mock("../../subscriptions");
-const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
-  typeof CollectionDocumentSubscription
->;
 
 function createTestUnit(clientRecord: typeof pastFTRDEligibleClientRecord) {
   root = new RootStore();
@@ -68,7 +65,7 @@ describe("fully eligible", () => {
   beforeEach(() => {
     createTestUnit(pastFTRDEligibleClientRecord);
 
-    [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+    referralSub = opp.referralSubscription;
     referralSub.isLoading = false;
     referralSub.data = pastFTRDRecordFixture;
   });

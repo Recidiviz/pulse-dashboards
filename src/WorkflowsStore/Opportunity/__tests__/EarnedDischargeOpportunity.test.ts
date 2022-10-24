@@ -20,30 +20,20 @@ import tk from "timekeeper";
 
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
-import {
-  CollectionDocumentSubscription,
-  OpportunityUpdateSubscription,
-} from "../../subscriptions";
+import { DocumentSubscription } from "../../subscriptions";
 import {
   EarnedDischargeEligibleClientRecord,
   EarnedDischargeReferralRecordFixture,
 } from "../__fixtures__";
-import { Opportunity } from "../types";
+import { EarnedDischargeOpportunity } from "../EarnedDischargeOpportunity";
 
 jest.mock("../../subscriptions");
 
-const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
-  typeof CollectionDocumentSubscription
->;
-const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.MockedClass<
-  typeof OpportunityUpdateSubscription
->;
-
-let opp: Opportunity;
+let opp: EarnedDischargeOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: CollectionDocumentSubscription<any>;
-let updatesSub: OpportunityUpdateSubscription<any>;
+let referralSub: DocumentSubscription<any>;
+let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(
   clientRecord: typeof EarnedDischargeEligibleClientRecord
@@ -79,11 +69,11 @@ describe("fully eligible", () => {
   beforeEach(() => {
     createTestUnit(EarnedDischargeEligibleClientRecord);
 
-    [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+    referralSub = opp.referralSubscription;
     referralSub.isLoading = false;
     referralSub.data = EarnedDischargeReferralRecordFixture;
 
-    [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+    updatesSub = opp.updatesSubscription;
     updatesSub.isLoading = false;
   });
 

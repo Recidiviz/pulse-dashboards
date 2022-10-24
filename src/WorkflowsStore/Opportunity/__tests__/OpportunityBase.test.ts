@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { configure, makeObservable, observable, runInAction } from "mobx";
+import { configure, runInAction } from "mobx";
 
 import { trackSetOpportunityStatus } from "../../../analytics";
 import {
@@ -25,10 +25,7 @@ import {
 } from "../../../firestore";
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
-import {
-  CollectionDocumentSubscription,
-  OpportunityUpdateSubscription,
-} from "../../subscriptions";
+import { DocumentSubscription } from "../../subscriptions";
 import { ineligibleClientRecord } from "../__fixtures__";
 import { OpportunityBase } from "../OpportunityBase";
 import {
@@ -37,27 +34,21 @@ import {
   INCOMPLETE_FORM_UPDATE,
   VIEWED_UPDATE,
 } from "../testUtils";
-import { Opportunity, OpportunityType } from "../types";
+import { OpportunityType } from "../types";
 
 jest.mock("../../subscriptions");
 jest.mock("../../../firestore");
 jest.mock("../../../analytics");
 
-const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
-  typeof CollectionDocumentSubscription
->;
-const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.MockedClass<
-  typeof OpportunityUpdateSubscription
->;
 const updateOpportunityFirstViewedMock = updateOpportunityFirstViewed as jest.Mock;
 const updateOpportunityCompletedMock = updateOpportunityCompleted as jest.Mock;
 const trackSetOpportunityStatusMock = trackSetOpportunityStatus as jest.Mock;
 
-let opp: Opportunity;
+let opp: OpportunityBase<any>;
 let client: Client;
 let root: RootStore;
-let referralSub: CollectionDocumentSubscription<any>;
-let updatesSub: OpportunityUpdateSubscription<any>;
+let referralSub: DocumentSubscription<any>;
+let updatesSub: DocumentSubscription<any>;
 let mockUser: CombinedUserRecord;
 let mockUserStateCode: jest.SpyInstance;
 
@@ -92,9 +83,8 @@ beforeEach(() => {
   configure({ safeDescriptors: false });
   createTestUnit();
 
-  [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
-
-  [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+  referralSub = opp.referralSubscription;
+  updatesSub = opp.updatesSubscription;
 });
 
 afterEach(() => {
@@ -160,13 +150,6 @@ test("review status", () => {
 
 describe("setFirstViewedIfNeeded", () => {
   beforeEach(() => {
-    // add required mobx annotations to our mocks
-    referralSub.isHydrated = false;
-    makeObservable(referralSub, { isHydrated: observable });
-    updatesSub.isHydrated = false;
-    updatesSub.data = undefined;
-    makeObservable(updatesSub, { isHydrated: observable, data: observable });
-
     // configure a mock user who is viewing this opportunity
     root.workflowsStore.user = mockUser;
     mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
@@ -240,13 +223,6 @@ describe("setFirstViewedIfNeeded", () => {
 
 describe("setCompletedIfEligible", () => {
   beforeEach(() => {
-    // add required mobx annotations to our mocks
-    referralSub.isHydrated = false;
-    makeObservable(referralSub, { isHydrated: observable });
-    updatesSub.isHydrated = false;
-    updatesSub.data = undefined;
-    makeObservable(updatesSub, { isHydrated: observable, data: observable });
-
     // configure a mock user who is viewing this opportunity
     root.workflowsStore.user = mockUser;
     mockUserStateCode.mockReturnValue(mockUser.info.stateCode);

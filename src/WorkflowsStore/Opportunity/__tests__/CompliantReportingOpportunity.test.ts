@@ -21,10 +21,7 @@ import tk from "timekeeper";
 
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
-import {
-  CollectionDocumentSubscription,
-  OpportunityUpdateSubscription,
-} from "../../subscriptions";
+import { DocumentSubscription } from "../../subscriptions";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import {
   compliantReportingAlmostEligibleClientRecord,
@@ -40,21 +37,15 @@ import {
   INCOMPLETE_FORM_UPDATE,
 } from "../testUtils";
 import { rankByReviewStatus } from "../utils";
+import { constructorSpy } from "./testUtils";
 
 jest.mock("../../subscriptions");
 
 let cr: CompliantReportingOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: CollectionDocumentSubscription<any>;
-let updatesSub: OpportunityUpdateSubscription<any>;
-
-const CollectionDocumentSubscriptionMock = CollectionDocumentSubscription as jest.MockedClass<
-  typeof CollectionDocumentSubscription
->;
-const OpportunityUpdateSubscriptionMock = OpportunityUpdateSubscription as jest.MockedClass<
-  typeof OpportunityUpdateSubscription
->;
+let referralSub: DocumentSubscription<any>;
+let updatesSub: DocumentSubscription<any>;
 
 jest.mock("../../../firestore");
 
@@ -88,8 +79,8 @@ afterEach(() => {
 describe("fully eligible", () => {
   beforeEach(() => {
     createTestUnit(compliantReportingEligibleClientRecord);
-    [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
-    [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
+    referralSub = cr.referralSubscription;
+    updatesSub = cr.updatesSubscription;
   });
 
   test("review status", () => {
@@ -191,8 +182,8 @@ describe.each([
 
       createTestUnit(compliantReportingAlmostEligibleClientRecord);
 
-      [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
-      [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+      referralSub = cr.referralSubscription;
+      updatesSub = cr.updatesSubscription;
       referralSub.data = testRecord;
     });
 
@@ -246,8 +237,8 @@ describe.each([
 describe("hydration is lowest common denominator of all subscriptions", () => {
   beforeEach(() => {
     createTestUnit(compliantReportingEligibleClientRecord);
-    [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
-    [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+    referralSub = cr.referralSubscription;
+    updatesSub = cr.updatesSubscription;
   });
 
   test.each([
@@ -271,9 +262,8 @@ describe("hydration is lowest common denominator of all subscriptions", () => {
 test("hydrate", () => {
   createTestUnit(compliantReportingEligibleClientRecord);
 
-  [referralSub] = CollectionDocumentSubscriptionMock.mock.instances;
-
-  [updatesSub] = OpportunityUpdateSubscriptionMock.mock.instances;
+  referralSub = cr.referralSubscription;
+  updatesSub = cr.updatesSubscription;
 
   cr.hydrate();
   expect(referralSub.hydrate).toHaveBeenCalled();
@@ -285,7 +275,7 @@ test("fetch CompliantReportingReferral uses recordId", async () => {
 
   cr.hydrate();
 
-  expect(CollectionDocumentSubscriptionMock).toHaveBeenCalledWith(
+  expect(constructorSpy).toHaveBeenCalledWith(
     "compliantReportingReferrals",
     compliantReportingEligibleClientRecord.recordId,
     undefined,

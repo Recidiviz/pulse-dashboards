@@ -241,9 +241,9 @@ export class CompliantReportingOpportunity
 
   readonly denialReasonsMap: DenialReasonsMap;
 
-  private referralSubscription: DocumentSubscription<CompliantReportingReferralRecord>;
+  referralSubscription: DocumentSubscription<CompliantReportingReferralRecord>;
 
-  private updatesSubscription: DocumentSubscription<CompliantReportingUpdateRecord>;
+  updatesSubscription: DocumentSubscription<CompliantReportingUpdateRecord>;
 
   navigateToFormText = "Auto-fill referral";
 
