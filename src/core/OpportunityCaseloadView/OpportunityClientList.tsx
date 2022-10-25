@@ -113,5 +113,9 @@ export const OpportunityClientList = observer(() => {
     </>
   );
 
-  return <OpportunitiesHydrator {...{ initial, empty, hydrated }} />;
+  return (
+    <OpportunitiesHydrator
+      {...{ initial, empty, hydrated, opportunityTypes: [opportunityType] }}
+    />
+  );
 });

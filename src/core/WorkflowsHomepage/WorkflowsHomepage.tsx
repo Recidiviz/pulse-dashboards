@@ -86,7 +86,9 @@ const WorkflowsHomepage = observer((): React.ReactElement | null => {
   return (
     <WorkflowsNavLayout>
       <CaseloadSelect />
-      <OpportunitiesHydrator {...{ initial, empty, hydrated }} />
+      <OpportunitiesHydrator
+        {...{ initial, empty, hydrated, opportunityTypes }}
+      />
     </WorkflowsNavLayout>
   );
 });

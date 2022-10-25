@@ -44,7 +44,11 @@ import {
   mockSupervisor,
 } from "../__fixtures__";
 import { Client } from "../Client";
-import { CompliantReportingOpportunity } from "../Opportunity";
+import {
+  CompliantReportingOpportunity,
+  EarlyTerminationOpportunity,
+  LSUOpportunity,
+} from "../Opportunity";
 import { dateToTimestamp } from "../utils";
 
 jest.mock("../../firestore");
@@ -53,7 +57,7 @@ jest.mock("../../tenants", () => ({
   __esModule: true,
   default: {
     US_XX: {
-      opportunityTypes: ["compliantReporting"],
+      opportunityTypes: ["compliantReporting", "LSU"],
     },
     US_YY: {
       workflowsEnableAllDistricts: true,
@@ -501,27 +505,54 @@ test("tracking call waits for client to be instantiated", async () => {
   expect(trackingSpy).toHaveBeenCalledWith("compliantReporting");
 });
 
-describe("allOpportunitiesLoaded", () => {
-  test("allOpportunitiesLoaded is true when clients are loaded and there are no clients", async () => {
+describe("opportunitiesLoaded", () => {
+  test("opportunitiesLoaded is true when clients are loaded and there are no clients", async () => {
     mockGetUser.mockResolvedValue(mockOfficer2); // officer2 has no clients
     await waitForHydration();
     populateClients([]);
-    expect(workflowsStore.allOpportunitiesLoaded).toBeTrue();
+    expect(
+      workflowsStore.opportunitiesLoaded(["compliantReporting"])
+    ).toBeTrue();
   });
 
-  test("allOpportunitiesLoaded is false when clients are loading and we have not subscribed to clients", async () => {
+  test("opportunitiesLoaded is false when clients are loading and we have not subscribed to clients", async () => {
     mockGetUser.mockResolvedValue(mockSupervisor);
     await waitForHydration();
-    expect(workflowsStore.allOpportunitiesLoaded).toBeFalse();
+    expect(
+      workflowsStore.opportunitiesLoaded(["compliantReporting"])
+    ).toBeFalse();
   });
 
-  test("allOpportunitiesLoaded is false when clients are loading", async () => {
+  test("opportunitiesLoaded is false when clients are loading", async () => {
     await waitForHydration();
     populateClients(mockClients);
-    expect(workflowsStore.allOpportunitiesLoaded).toBeFalse();
+    expect(
+      workflowsStore.opportunitiesLoaded(["compliantReporting"])
+    ).toBeFalse();
   });
 
-  test("allOpportunitiesLoaded is true when opportunities are hydrated", async () => {
+  test("opportunitiesLoaded is false when not all provided opportunities are hydrated", async () => {
+    const compliantReportingIsHydratedMock = jest.spyOn(
+      CompliantReportingOpportunity.prototype,
+      "isHydrated",
+      "get"
+    );
+    const lsuIsHydratedMock = jest.spyOn(
+      LSUOpportunity.prototype,
+      "isHydrated",
+      "get"
+    );
+    await waitForHydration();
+    populateClients(mockClients);
+
+    compliantReportingIsHydratedMock.mockReturnValue(true);
+    lsuIsHydratedMock.mockReturnValue(false);
+    expect(
+      workflowsStore.opportunitiesLoaded(["compliantReporting", "LSU"])
+    ).toBeFalse();
+  });
+
+  test("opportunitiesLoaded is true when opportunities are hydrated", async () => {
     const isHydratedMock = jest.spyOn(
       CompliantReportingOpportunity.prototype,
       "isHydrated",
@@ -531,24 +562,26 @@ describe("allOpportunitiesLoaded", () => {
     await waitForHydration();
 
     isHydratedMock.mockReturnValue(true);
-    expect(workflowsStore.allOpportunitiesLoaded).toBeTrue();
+    expect(
+      workflowsStore.opportunitiesLoaded(["compliantReporting"])
+    ).toBeTrue();
   });
 });
 
 describe("hasOpportunities", () => {
-  test("hasOpportunities is false there are no clients loaded", async () => {
+  test("hasOpportunities is false if there are no clients loaded", async () => {
     await waitForHydration();
     populateClients([]);
-    expect(workflowsStore.hasOpportunities).toBeFalse();
+    expect(workflowsStore.hasOpportunities(["compliantReporting"])).toBeFalse();
   });
 
   test("hasOpportunities is false if no client has opportunities", async () => {
     await waitForHydration();
     populateClients([ineligibleClient]);
-    expect(workflowsStore.hasOpportunities).toBeFalse();
+    expect(workflowsStore.hasOpportunities(["compliantReporting"])).toBeFalse();
   });
 
-  test("hasOpportunities is true if any client has opportunities", async () => {
+  test("hasOpportunities is false if no client has opportunities for those types", async () => {
     const isHydratedMock = jest.spyOn(
       CompliantReportingOpportunity.prototype,
       "isHydrated",
@@ -557,7 +590,30 @@ describe("hasOpportunities", () => {
     await waitForHydration();
     populateClients(mockClients);
     isHydratedMock.mockReturnValue(true);
-    expect(workflowsStore.hasOpportunities).toBeTrue();
+    expect(workflowsStore.hasOpportunities(["earlyTermination"])).toBeFalse();
+  });
+
+  test("hasOpportunities is true if any client has opportunities for any of the provided types", async () => {
+    const compliantReportingIsHydratedMock = jest.spyOn(
+      CompliantReportingOpportunity.prototype,
+      "isHydrated",
+      "get"
+    );
+    const earlyTerminationIsHydratedMock = jest.spyOn(
+      EarlyTerminationOpportunity.prototype,
+      "isHydrated",
+      "get"
+    );
+    await waitForHydration();
+    populateClients(mockClients);
+    compliantReportingIsHydratedMock.mockReturnValue(true);
+    earlyTerminationIsHydratedMock.mockReturnValue(true);
+    expect(
+      workflowsStore.hasOpportunities([
+        "earlyTermination",
+        "compliantReporting",
+      ])
+    ).toBeTrue();
   });
 });
 

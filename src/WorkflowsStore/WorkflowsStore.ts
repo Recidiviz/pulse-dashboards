@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { ascending } from "d3-array";
+import { pick } from "lodash";
 import {
   entries,
   has,
@@ -155,10 +156,14 @@ export class WorkflowsStore implements Hydratable {
     );
   }
 
-  get hasOpportunities(): boolean {
+  hasOpportunities(opportunityTypes: OpportunityType[]): boolean {
+    const opportunitiesByTypes = pick(
+      this.allOpportunitiesByType,
+      opportunityTypes
+    );
     return (
-      this.allOpportunitiesLoaded &&
-      Object.values(this.allOpportunitiesByType).flat().length > 0
+      this.opportunitiesLoaded(opportunityTypes) &&
+      Object.values(opportunitiesByTypes).flat().length > 0
     );
   }
 
@@ -411,26 +416,25 @@ export class WorkflowsStore implements Hydratable {
     return mapping;
   }
 
-  get allOpportunitiesLoaded(): boolean {
+  opportunitiesLoaded(opportunityTypes: OpportunityType[]): boolean {
     // Wait until we have clients until checking that opportunities are loading.
     if (!this.caseloadClients.length) {
       // Differentiate between a pre- and post-fetch empty states
       return this.clientsSubscription?.current() !== undefined;
     }
     return (
-      this.potentialOpportunities.filter(
+      this.potentialOpportunities(opportunityTypes).filter(
         (opp) => !(opp.isHydrated || opp.error !== undefined)
       ).length === 0 && this.selectedOfficerIds.length > 0
     );
   }
 
-  get potentialOpportunities(): Opportunity[] {
+  potentialOpportunities(opportunityTypes: OpportunityType[]): Opportunity[] {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
-    OPPORTUNITY_TYPES.forEach((opportunityType) => {
+    opportunityTypes.forEach((opportunityType) => {
       const opportunities = this.caseloadClients
         .map((c) => c.opportunities[opportunityType])
         .filter((opp) => opp !== undefined);
-
       mapping[opportunityType] = opportunities as Opportunity[];
     });
     return Object.values(mapping).flat();

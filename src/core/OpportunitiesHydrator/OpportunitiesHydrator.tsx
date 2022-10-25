@@ -21,35 +21,45 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { OpportunityType } from "../../WorkflowsStore/Opportunity/types";
 
 type OpportunitiesHydratorProps = {
   initial: React.ReactNode;
   empty: React.ReactNode;
   hydrated: React.ReactNode;
+  opportunityTypes: OpportunityType[];
 };
 
 export const OpportunitiesHydrator = observer(
-  ({ initial, empty, hydrated }: OpportunitiesHydratorProps) => {
+  ({
+    initial,
+    empty,
+    hydrated,
+    opportunityTypes,
+  }: OpportunitiesHydratorProps) => {
     const { workflowsStore } = useRootStore();
-    const {
-      allOpportunitiesLoaded,
-      selectedOfficerIds,
-      hasOpportunities,
-    } = workflowsStore;
+    const { selectedOfficerIds } = workflowsStore;
 
     useEffect(
       () =>
         autorun(() => {
-          workflowsStore.potentialOpportunities.forEach((opp) => {
-            if (!opp.isHydrated) opp.hydrate();
-          });
+          workflowsStore
+            .potentialOpportunities(opportunityTypes)
+            .forEach((opp) => {
+              if (!opp.isHydrated) opp.hydrate();
+            });
         }),
-      [workflowsStore]
+      [workflowsStore, opportunityTypes]
     );
 
     const displayInitialState = !selectedOfficerIds.length;
-    const displayLoading = !allOpportunitiesLoaded;
-    const displayNoResults = allOpportunitiesLoaded && !hasOpportunities;
+    const displayLoading =
+      !displayInitialState &&
+      !workflowsStore.opportunitiesLoaded(opportunityTypes);
+    const displayNoResults =
+      !displayInitialState &&
+      !displayLoading &&
+      !workflowsStore.hasOpportunities(opportunityTypes);
 
     if (displayInitialState) return <>{initial}</>;
 

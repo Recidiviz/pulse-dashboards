@@ -19,6 +19,7 @@ import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 
 import { useRootStore } from "../../../components/StoreProvider";
+import { OpportunityType } from "../../../WorkflowsStore/Opportunity/types";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import WorkflowsHomepage from "..";
 
@@ -45,11 +46,11 @@ describe("WorkflowsHomepage", () => {
   test("renders Welcome page on initial state", () => {
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
-        allOpportunitiesLoaded: false,
+        opportunitiesLoaded: () => false,
         selectedOfficerIds: [],
         opportunityTypes: ["earlyTermination"],
         allOpportunitiesByType: { earlyTermination: [] },
-        hasOpportunities: false,
+        hasOpportunities: () => false,
         user: { info: { givenNames: "Recidiviz" } },
       },
     });
@@ -63,16 +64,58 @@ describe("WorkflowsHomepage", () => {
     expect(screen.getByText("Welcome, Recidiviz")).toBeInTheDocument();
   });
 
+  test("renders loading indicator", () => {
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        opportunitiesLoaded: () => false,
+        selectedOfficerIds: ["123"],
+        opportunityTypes: ["earlyTermination"],
+        allOpportunitiesByType: { earlyTermination: [] },
+        hasOpportunities: () => true,
+        user: { info: { givenNames: "Recidiviz" } },
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsHomepage />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText("Loading data...")).toBeInTheDocument();
+  });
+
+  test("renders loading indicator when some but not all have loaded", () => {
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        opportunitiesLoaded: (opp: OpportunityType) => opp === "LSU",
+        selectedOfficerIds: ["123"],
+        opportunityTypes: ["earlyTermination", "LSU"],
+        allOpportunitiesByType: { earlyTermination: [], LSU: [] },
+        hasOpportunities: () => true,
+        user: { info: { givenNames: "Recidiviz" } },
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsHomepage />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText("Loading data...")).toBeInTheDocument();
+  });
+
   test("render no results", () => {
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
-        allOpportunitiesLoaded: true,
+        opportunitiesLoaded: () => true,
         selectedOfficerIds: ["123"],
         opportunityTypes: ["pastFTRD"],
         allOpportunitiesByType: {
           pastFTRD: [],
         },
-        hasOpportunities: false,
+        hasOpportunities: () => false,
         user: { info: { givenNames: "Recidiviz" } },
       },
     });
@@ -93,13 +136,13 @@ describe("WorkflowsHomepage", () => {
   test("render no results from multiple officers", () => {
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
-        allOpportunitiesLoaded: true,
+        opportunitiesLoaded: () => true,
         selectedOfficerIds: ["123", "456"],
         opportunityTypes: ["pastFTRD"],
         allOpportunitiesByType: {
           pastFTRD: [],
         },
-        hasOpportunities: false,
+        hasOpportunities: () => false,
         user: { info: { givenNames: "Recidiviz" } },
       },
     });
@@ -121,13 +164,13 @@ describe("WorkflowsHomepage", () => {
     mockOpportunity.client.officerId = "123";
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
-        allOpportunitiesLoaded: true,
+        opportunitiesLoaded: () => true,
         selectedOfficerIds: ["123"],
         opportunityTypes: ["pastFTRD"],
         allOpportunitiesByType: {
           pastFTRD: [mockOpportunity],
         },
-        hasOpportunities: true,
+        hasOpportunities: () => true,
         user: { info: { givenNames: "Recidiviz" } },
       },
     });

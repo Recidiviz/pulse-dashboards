@@ -127,7 +127,33 @@ export const eligibleClient: ClientRecord = {
   pastFTRDEligible: false,
 };
 
-export const mockClients = [ineligibleClient, eligibleClient];
+export const lsuEligibleClient: ClientRecord = {
+  recordId: "us_xx_102",
+  personName: { givenNames: "REBEKAH", surname: "CORTES" },
+  personExternalId: "102",
+  pseudonymizedId: "p102",
+  stateCode: "US_XX",
+  officerId: "OFFICER1",
+  supervisionType: "MISDEMEANOR PROBATIONER",
+  supervisionLevel: "STANDARD: MINIMUM",
+  supervisionLevelStart: dateToTimestamp("2021-07-05"),
+  address: "123 Main St, Nashville, TN 12345",
+  phoneNumber: "5555555678",
+  expirationDate: dateToTimestamp("2024-12-31"),
+  currentBalance: 221.88,
+  specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
+  compliantReportingEligible: false,
+  earlyTerminationEligible: false,
+  earnedDischargeEligible: false,
+  LSUEligible: true,
+  pastFTRDEligible: false,
+};
+
+export const mockClients = [
+  ineligibleClient,
+  eligibleClient,
+  lsuEligibleClient,
+];
 
 export const mockOfficers: StaffRecord[] = [
   {
