@@ -96,7 +96,7 @@
     "date-fns": "^2.19.0",
     "debug": "~2.6.9",
     "dedent": "^0.7.0",
-    "docxtemplater": "^3.31.2",
+    "docxtemplater": "^3.31.5",
     "dot-prop": "^5.1.0",
     "dotenv": "^8.2.0",
     "downloadjs": "^1.4.7",
