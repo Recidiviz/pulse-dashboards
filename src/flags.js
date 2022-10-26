@@ -5,7 +5,9 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
       enableRevocationRateByExit: false,
       enableVitalsGoalLine: false,
       defaultMetricBackend: "OLD",
-      metricBackendOverrides: {},
+      metricBackendOverrides: {
+        prisonPopulationOverTime: "NEW",
+      },
     }
   : process.env.REACT_APP_DEPLOY_ENV === "staging"
   ? {
