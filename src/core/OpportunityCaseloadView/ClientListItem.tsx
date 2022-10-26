@@ -21,7 +21,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { BrandedLink } from "../../components/BrandedLink";
+import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityCapsule } from "../ClientCapsule";
 import { workflowsUrl } from "../views";
@@ -31,9 +31,15 @@ const ListItem = styled.li`
   padding: ${rem(spacing.md)} ${rem(spacing.md)} 0 0;
 `;
 
-const ClientLink = styled(BrandedLink)`
-  display: flex;
-  gap: ${rem(spacing.lg)};
+const ClientLink = styled.button`
+  border: none;
+  text-align: left;
+  background: none;
+
+  &:hover,
+  &:focus {
+    cursor: pointer;
+  }
 `;
 
 const ClientItemWrapper = styled.div`
@@ -70,6 +76,7 @@ export const ClientListItem = observer(
   ({ opportunity }: ClientListItemProps) => {
     const [showButton, setShowButton] = useState(false);
     const { client } = opportunity;
+    const { workflowsStore } = useRootStore();
 
     return (
       <ListItem key={client.id}>
@@ -78,10 +85,9 @@ export const ClientListItem = observer(
           onMouseLeave={() => setShowButton(false)}
         >
           <ClientLink
-            to={workflowsUrl("clientPreview", {
-              opportunityType: opportunity.type,
-              clientId: client.pseudonymizedId,
-            })}
+            onClick={() =>
+              workflowsStore.updateSelectedClient(client.pseudonymizedId)
+            }
           >
             <OpportunityCapsule
               avatarSize="lg"

@@ -85,6 +85,7 @@ const App = () => (
                     <ProtectedRoute path={PATHWAYS_PATHS.system} component={PageSystem} />
                     <ProtectedRoute path={PATHWAYS_PATHS.operations} component={PageVitals} />
                     <ProtectedRoute path={PATHWAYS_PATHS.methodology} component={PageMethodology} />
+                    <Redirect from={`${WORKFLOWS_PATHS.workflows}/:opportunityType/:clientId/preview`} to={WORKFLOWS_PATHS.clientProfile} />
                     <ProtectedRoute path={WORKFLOWS_PATHS.workflows} component={PageWorkflows} />
                     <Route path="/profile" component={Profile} />
                     <Redirect from="/system" to="/system/prison" />

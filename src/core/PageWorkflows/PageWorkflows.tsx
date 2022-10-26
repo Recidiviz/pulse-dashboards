@@ -87,14 +87,6 @@ const PageWorkflows: React.FC = () => {
         <WorkflowsRoute
           exact
           path={workflowsRoute({
-            routeName: "clientPreview",
-          })}
-        >
-          <OpportunityCaseloadView preview />
-        </WorkflowsRoute>
-        <WorkflowsRoute
-          exact
-          path={workflowsRoute({
             routeName: "opportunityClients",
           })}
         >

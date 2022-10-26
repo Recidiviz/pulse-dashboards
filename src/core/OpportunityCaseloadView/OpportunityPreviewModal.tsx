@@ -14,15 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { DrawerModal, Icon, palette, spacing } from "@recidiviz/design-system";
+import {
+  Button,
+  DrawerModal,
+  Icon,
+  palette,
+  spacing,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
-import { Link, useHistory } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import { OpportunityType } from "../../WorkflowsStore";
-import { workflowsUrl } from "../views";
 import { CompliantReportingClientProfile } from "../WorkflowsClientProfile";
 import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTerminationClientProfile";
 import { EarnedDischargeClientProfile } from "../WorkflowsClientProfile/EarnedDischargeClientProfile";
@@ -65,25 +70,39 @@ const Wrapper = styled.div`
 
 type OpportunityCaseloadProps = {
   opportunityType?: OpportunityType;
-  isOpen: boolean;
+  clientIsSelected: boolean;
 };
 
 export const OpportunityPreviewModal = observer(
-  ({ opportunityType, isOpen }: OpportunityCaseloadProps) => {
-    const history = useHistory();
+  ({ opportunityType, clientIsSelected }: OpportunityCaseloadProps) => {
+    const { workflowsStore } = useRootStore();
+
+    // Managing the modal isOpen state here instead of tying it directly to
+    // selectedClient helps to smooth out the open/close transition
+    const [modalIsOpen, setModalIsOpen] = useState(clientIsSelected);
+    useEffect(() => {
+      setModalIsOpen(clientIsSelected);
+    }, [clientIsSelected]);
 
     return (
       <DrawerModal
-        isOpen={isOpen}
-        onRequestClose={() =>
-          history.push(workflowsUrl("opportunityClients", { opportunityType }))
-        }
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        onAfterClose={() => {
+          workflowsStore.updateSelectedClient(undefined);
+        }}
+        closeTimeoutMS={1000}
       >
         <Wrapper>
           <ModalControls>
-            <Link to={workflowsUrl("opportunityClients", { opportunityType })}>
+            <Button
+              kind="link"
+              onClick={() => {
+                setModalIsOpen(false);
+              }}
+            >
               <Icon kind="Close" size="14" color={palette.pine2} />
-            </Link>
+            </Button>
           </ModalControls>
           {opportunityType && PAGE_CONTENT[opportunityType].previewContents}
         </Wrapper>

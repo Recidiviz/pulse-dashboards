@@ -259,7 +259,6 @@ export const WORKFLOWS_PATHS = {
   home: `/${PATHWAYS_VIEWS.workflows}/home`,
   caseloadClients: `/${PATHWAYS_VIEWS.workflows}/clients`,
   clientProfile: `/${PATHWAYS_VIEWS.workflows}/clients/:clientId`,
-  clientPreview: `/${PATHWAYS_VIEWS.workflows}/:opportunityType/:clientId/preview`,
 };
 
 export const WorkflowsPageIdList = [
@@ -268,7 +267,6 @@ export const WorkflowsPageIdList = [
   "home",
   "opportunityClients",
   "opportunityAction",
-  "clientPreview",
   "workflows",
   "workflows404",
 ] as const;
@@ -281,7 +279,6 @@ export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   clientProfile: "clientProfile",
   opportunityClients: "opportunityClients",
   opportunityAction: "opportunityAction",
-  clientPreview: "clientPreview",
   workflows: "workflows",
   workflows404: "workflows404",
 };

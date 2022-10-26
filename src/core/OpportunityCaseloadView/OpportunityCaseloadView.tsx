@@ -38,7 +38,10 @@ type OpportunityCaseloadViewProps = {
 export const OpportunityCaseloadView = observer(
   ({ preview = false }: OpportunityCaseloadViewProps) => {
     const {
-      workflowsStore: { selectedOpportunityType: opportunityType },
+      workflowsStore: {
+        selectedOpportunityType: opportunityType,
+        selectedClient,
+      },
     } = useRootStore();
 
     return (
@@ -48,7 +51,7 @@ export const OpportunityCaseloadView = observer(
           <OpportunityClientList />
           <OpportunityPreviewModal
             opportunityType={opportunityType}
-            isOpen={preview}
+            clientIsSelected={!!selectedClient}
           />
         </Wrapper>
       </WorkflowsNavLayout>

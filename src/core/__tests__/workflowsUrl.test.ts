@@ -32,7 +32,6 @@ test("URL with opportunityType", () => {
   const OPPORTUNITY_PAGES = [
     "opportunityClients",
     "opportunityAction",
-    "clientPreview",
   ] as WorkflowsPage[];
   OPPORTUNITY_PAGES.forEach((pageId) => {
     expect(
@@ -49,7 +48,6 @@ test("URL with clientId", () => {
   const CLIENT_PAGES = [
     "opportunityAction",
     "clientProfile",
-    "clientPreview",
   ] as WorkflowsPage[];
   CLIENT_PAGES.forEach((pageId) => {
     expect(workflowsUrl(pageId, { clientId: "test123" })).toBe(
