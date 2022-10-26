@@ -63,7 +63,7 @@ export type DenialReasonsMap = Record<string, string>;
 export type DefaultEligibility = "ELIGIBLE" | "MAYBE";
 
 export type OpportunityCaseNote = {
-  noteTitle: string;
+  noteTitle?: string;
   noteBody: string;
   eventDate: Date;
 };

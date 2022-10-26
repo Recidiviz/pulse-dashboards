@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { cloneDeep, Dictionary } from "lodash";
+import { Dictionary } from "lodash";
 
+import { toTitleCase } from "../../utils";
 import { Client } from "../Client";
 import { TransformFunction, ValidateFunction } from "../subscriptions";
-import { fieldToDate } from "../utils";
+import { fieldToDate, OpportunityValidationError } from "../utils";
+import { WithCaseNotes } from "./types";
 
 export type SupervisionLevelDowngradeReferralRecord = {
   stateCode: string;
@@ -31,51 +33,78 @@ export type SupervisionLevelDowngradeReferralRecord = {
       supervisionLevel: string;
     };
   };
+} & WithCaseNotes;
 
-  metadata: {
-    violations: { violationDate: Date; violationType: string }[];
-  };
-};
-
-export const transformReferral: TransformFunction<SupervisionLevelDowngradeReferralRecord> = (
-  record
-) => {
-  if (!record) return;
-
-  const transformedRecord = cloneDeep(
+export function getTransformer(
+  supervisionLevelFormatter: (raw: string) => string | undefined
+): TransformFunction<SupervisionLevelDowngradeReferralRecord> {
+  const transformReferral: TransformFunction<SupervisionLevelDowngradeReferralRecord> = (
     record
-  ) as SupervisionLevelDowngradeReferralRecord;
+  ) => {
+    if (!record) {
+      throw new Error("No record found");
+    }
 
-  transformedRecord.criteria.usTnSupervisionLevelHigherThanAssessmentLevel.latestAssessmentDate = fieldToDate(
-    record.criteria.usTnSupervisionLevelHigherThanAssessmentLevel
-      .latestAssessmentDate
-  );
-  transformedRecord.metadata.violations = record.metadata.violations.map(
-    ({ violationType, violationDate }: Dictionary<string>) => ({
-      violationType,
-      violationDate: fieldToDate(violationDate),
-    })
-  );
+    const {
+      stateCode,
+      externalId,
+      criteria: {
+        usTnSupervisionLevelHigherThanAssessmentLevel: {
+          latestAssessmentDate,
+          assessmentLevel,
+          supervisionLevel,
+        },
+      },
+      metadata: { violations },
+    } = record;
 
-  return transformedRecord;
-};
+    const usTnSupervisionLevelHigherThanAssessmentLevel = {
+      latestAssessmentDate: fieldToDate(latestAssessmentDate),
+      assessmentLevel: toTitleCase(assessmentLevel),
+      supervisionLevel:
+        supervisionLevelFormatter(supervisionLevel) ?? supervisionLevel,
+    };
+
+    const caseNotes = {
+      Violations: violations.map(
+        ({ violationCode, violationDate }: Dictionary<string>) => {
+          return {
+            noteBody: violationCode,
+            eventDate: fieldToDate(violationDate),
+          };
+        }
+      ),
+    };
+
+    return {
+      stateCode,
+      externalId,
+      criteria: {
+        usTnSupervisionLevelHigherThanAssessmentLevel,
+      },
+      caseNotes,
+    };
+  };
+
+  return transformReferral;
+}
 
 export function getValidator(
   client: Client
 ): ValidateFunction<SupervisionLevelDowngradeReferralRecord> {
   return (record) => {
-    if (!record) return;
+    if (!record) {
+      throw new Error("No record to validate");
+    }
 
     const {
       supervisionLevel,
     } = record.criteria.usTnSupervisionLevelHigherThanAssessmentLevel;
 
-    if (
-      client.rootStore.workflowsStore.formatSupervisionLevel(
-        supervisionLevel
-      ) !== client.supervisionLevel
-    )
-      return;
+    if (supervisionLevel !== client.supervisionLevel)
+      throw new OpportunityValidationError(
+        "Supervision level does not match client record"
+      );
     return record as SupervisionLevelDowngradeReferralRecord;
   };
 }

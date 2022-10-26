@@ -105,9 +105,11 @@ export const generateOpportunityHydratedHeader = (
         "Review clients who are past their full-term release date and email clerical to move them to history.",
     },
     supervisionLevelDowngrade: {
-      eligibilityText: "",
-      opportunityText: "",
-      callToAction: "",
+      eligibilityText: simplur`${count} client[|s] may be `,
+      opportunityText:
+        "supervised at a higher level than their latest risk score designates",
+      callToAction:
+        "Change their supervision level in TOMIS and they will disappear from this list.",
     },
   };
 

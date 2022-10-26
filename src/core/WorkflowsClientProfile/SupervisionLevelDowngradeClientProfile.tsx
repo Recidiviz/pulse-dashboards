@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Supervision } from "./Details";
+import { CaseNotes, Supervision } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
@@ -37,6 +37,10 @@ export const SupervisionLevelDowngradeClientProfile = observer(() => {
       <Heading client={client} />
       <OpportunityModule opportunity={opp} />
       <Supervision client={client} />
+      <CaseNotes
+        opportunityRecord={opp.record}
+        headingText="Relevant Contact Codes"
+      />
     </article>
   );
 });

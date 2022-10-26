@@ -309,14 +309,15 @@ export const FinesAndFees = ({
 
 export const CaseNotes = ({
   opportunityRecord,
+  headingText = "Relevant Contact Notes",
 }: {
   opportunityRecord?: WithCaseNotes;
+  headingText?: string;
 }): React.ReactElement => {
   if (!opportunityRecord) {
     return <div />;
   }
 
-  const headingText = "Relevant Contact Notes";
   const { caseNotes } = opportunityRecord;
 
   if (Object.keys(caseNotes).length === 0) {
@@ -343,12 +344,15 @@ export const CaseNotes = ({
                     .sort((noteA, noteB) =>
                       descending(noteA.eventDate, noteB.eventDate)
                     )
-                    .map((note) => {
+                    .map((note, index) => {
                       return (
-                        <DetailsContent
-                          key={`${note.noteTitle}-${note.eventDate}`}
-                        >
-                          <CaseNoteTitle>{note.noteTitle}:</CaseNoteTitle>{" "}
+                        // eslint-disable-next-line react/no-array-index-key
+                        <DetailsContent key={index}>
+                          {note.noteTitle && (
+                            <>
+                              <CaseNoteTitle>{note.noteTitle}:</CaseNoteTitle>{" "}
+                            </>
+                          )}
                           {note.noteBody}{" "}
                           <CaseNoteDate>
                             {formatWorkflowsDate(note.eventDate)}

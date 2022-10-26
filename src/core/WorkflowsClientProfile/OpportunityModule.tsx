@@ -40,6 +40,7 @@ const Wrapper = styled.div<{ background: string; border: string }>`
 `;
 
 const ActionButtons = styled.div`
+  margin-top: ${rem(spacing.md)};
   display: flex;
 `;
 

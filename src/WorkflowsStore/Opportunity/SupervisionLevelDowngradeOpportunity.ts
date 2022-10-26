@@ -15,23 +15,49 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { makeObservable } from "mobx";
+
+import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../WorkflowsStore";
 import { OpportunityBase } from "./OpportunityBase";
 import {
+  getTransformer,
   getValidator,
   SupervisionLevelDowngradeReferralRecord,
-  transformReferral,
 } from "./SupervisionLevelDowngradeReferralRecord";
+import { OpportunityRequirement } from "./types";
 
 export class SupervisionLevelDowngradeOpportunity extends OpportunityBase<SupervisionLevelDowngradeReferralRecord> {
   constructor(client: Client) {
     super(
       client,
       "supervisionLevelDowngrade",
-      transformReferral,
+      getTransformer((raw: string) =>
+        client.rootStore.workflowsStore.formatSupervisionLevel(raw)
+      ),
       getValidator(client)
     );
+
+    makeObservable(this, { requirementsMet: true });
+  }
+
+  get requirementsMet(): OpportunityRequirement[] {
+    if (!this.record) return [];
+
+    const {
+      assessmentLevel,
+      latestAssessmentDate,
+      supervisionLevel,
+    } = this.record.criteria.usTnSupervisionLevelHigherThanAssessmentLevel;
+
+    return [
+      {
+        text: `Current supervision level: ${supervisionLevel}; last risk score: ${assessmentLevel} (as of ${formatWorkflowsDate(
+          latestAssessmentDate
+        )})`,
+      },
+    ];
   }
 
   readonly isAlert = true;

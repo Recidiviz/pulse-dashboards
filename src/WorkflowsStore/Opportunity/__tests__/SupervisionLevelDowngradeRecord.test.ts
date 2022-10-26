@@ -17,9 +17,10 @@
 
 import { identity } from "lodash";
 
+import { OpportunityValidationError } from "../../utils";
 import {
+  getTransformer,
   getValidator,
-  transformReferral,
 } from "../SupervisionLevelDowngradeReferralRecord";
 
 const supervisionLevelDowngradeRecordRaw = {
@@ -40,12 +41,6 @@ const supervisionLevelDowngradeRecordRaw = {
   },
 };
 
-test("transform function", () => {
-  expect(
-    transformReferral(supervisionLevelDowngradeRecordRaw)
-  ).toMatchSnapshot();
-});
-
 const mockClient = {
   supervisionLevel: "MAXIMUM",
   rootStore: {
@@ -54,6 +49,12 @@ const mockClient = {
     },
   },
 };
+
+test("transform function", () => {
+  expect(
+    getTransformer(identity)(supervisionLevelDowngradeRecordRaw)
+  ).toMatchSnapshot();
+});
 
 test("record validates", () => {
   const validator = getValidator(mockClient as any);
@@ -65,5 +66,7 @@ test("record does not validate", () => {
     ...mockClient,
     supervisionLevel: "MEDIUM",
   } as any);
-  expect(validator(supervisionLevelDowngradeRecordRaw)).toBeUndefined();
+  expect(() => validator(supervisionLevelDowngradeRecordRaw)).toThrow(
+    OpportunityValidationError
+  );
 });

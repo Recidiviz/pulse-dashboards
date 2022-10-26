@@ -37,7 +37,7 @@ const Wrapper = styled.ul<{ alert?: boolean }>`
   ${typography.Sans14}
   list-style: none;
   margin: ${(props) =>
-    props.alert ? `${rem(spacing.xs)} 0` : `${rem(spacing.md)} 0`};
+    props.alert ? `${rem(spacing.sm)} 0` : `${rem(spacing.md)} 0`};
   padding: 0;
 `;
 
