@@ -53,12 +53,6 @@ import { OTHER_KEY } from "./WorkflowsStore";
 
 export const UNKNOWN = "Unknown" as const;
 
-const SUPERVISION_LEVEL_MAP: Record<string, string> = {
-  // TODO(#2287): remove these levels derived from TN raw data
-  "STANDARD: MEDIUM": "Medium",
-  "STANDARD: MINIMUM": "Minimum",
-};
-
 type ClientDetailsCopy = {
   supervisionStartDate?: {
     tooltip: string;
@@ -223,18 +217,8 @@ export class Client {
   }
 
   get supervisionLevel(): string {
-    const levelFromFilters = this.rootStore.workflowsStore.formatSupervisionLevel(
+    return this.rootStore.workflowsStore.formatSupervisionLevel(
       this.record.supervisionLevel
-    );
-    // TODO(#2287): some levels are mapped locally for historical reasons (e.g., to patch gaps in ingest or handle raw data)
-    const locallyMappedLevel =
-      SUPERVISION_LEVEL_MAP[this.record.supervisionLevel ?? ""];
-    return (
-      levelFromFilters ??
-      locallyMappedLevel ??
-      // TODO(#2287): remove TN-specific override once data is migrated;
-      // this prevents a sudden proliferation of "Unknown" labels in TN in the interim
-      (this.stateCode === "US_TN" ? "" : UNKNOWN)
     );
   }
 

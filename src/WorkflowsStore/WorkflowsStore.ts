@@ -53,7 +53,7 @@ import {
 } from "../firestore";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
-import { Client } from "./Client";
+import { Client, UNKNOWN } from "./Client";
 import {
   Opportunity,
   OPPORTUNITY_TYPES,
@@ -543,8 +543,10 @@ export class WorkflowsStore implements Hydratable {
     return options.supervisionLevel.options;
   }
 
-  // TODO(#2287): return "UNKNOWN" instead of undefined once TN mapping is up to date
-  formatSupervisionLevel(levelId: string | undefined): string | undefined {
-    return this.supervisionLevels.find((opt) => opt.value === levelId)?.label;
+  formatSupervisionLevel(levelId: string | undefined): string {
+    return (
+      this.supervisionLevels.find((opt) => opt.value === levelId)?.label ??
+      UNKNOWN
+    );
   }
 }
