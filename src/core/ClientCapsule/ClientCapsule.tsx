@@ -69,6 +69,11 @@ const clientStatusStyles = css`
 
 const ClientStatusSm = styled(Sans14)`
   ${clientStatusStyles}
+  width: ${rem(288)};
+
+  @media (max-width: 1372px) {
+    width: ${rem(240)};
+  }
 `;
 
 const ClientStatusLg = styled(Sans16)`

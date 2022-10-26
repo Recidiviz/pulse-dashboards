@@ -41,7 +41,7 @@ const ClientList = styled.ul`
   padding: 0;
   row-gap: ${rem(spacing.sm)};
 
-  @media screen and (min-width: ${cssVars.breakpointSxs}) {
+  @media screen and (min-width: ${cssVars.breakpointSm}) {
     grid-template-columns: 50% 50%;
   }
 `;

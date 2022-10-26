@@ -47,6 +47,9 @@ const NavigateToFormButton = styled(Button)`
   background: ${STATUS_COLORS.eligible.buttonFill};
   border-radius: 4px;
   border: 1px solid ${STATUS_COLORS.eligible.buttonFill};
+  max-height: 32px;
+  min-height: 32px;
+  max-width: ${rem(175)};
 
   &:hover,
   &:focus {
@@ -58,6 +61,10 @@ const NavigateToFormButton = styled(Button)`
 type ClientListItemProps = {
   opportunity: Opportunity;
 };
+
+const ButtonSpacer = styled.div`
+  flex: 1 0 16px;
+`;
 
 export const ClientListItem = observer(
   ({ opportunity }: ClientListItemProps) => {
@@ -83,6 +90,7 @@ export const ClientListItem = observer(
               hideId
             />
           </ClientLink>
+          <ButtonSpacer />
           {showButton && opportunity.navigateToFormText && (
             <Link
               to={workflowsUrl("opportunityAction", {
