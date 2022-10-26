@@ -21,7 +21,11 @@ import styled from "styled-components/macro";
 
 import { Opportunity, OPPORTUNITY_LABELS } from "../../WorkflowsStore";
 import { EligibilityStatus } from "../OpportunityStatus";
-import { Separator, useStatusColors } from "./common";
+import {
+  useShowEligibilityStatus,
+  useStatusColors,
+} from "../utils/workflowsUtils";
+import { Separator } from "./common";
 
 const TitleText = styled(Sans16)`
   color: ${palette.pine1};
@@ -37,9 +41,7 @@ type OpportunityModuleHeaderProps = {
 export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> = observer(
   ({ opportunity }) => {
     const colors = useStatusColors(opportunity);
-
-    // TODO: do this more generically once the "alert" flavor of opportunity stabilizes
-    const showEligibilityStatus = opportunity.type !== "pastFTRD";
+    const showEligibilityStatus = useShowEligibilityStatus(opportunity);
 
     return (
       <TitleText>

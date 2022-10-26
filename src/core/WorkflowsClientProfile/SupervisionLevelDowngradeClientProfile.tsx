@@ -15,24 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Client, Opportunity } from "../../WorkflowsStore";
+import { observer } from "mobx-react-lite";
+import React from "react";
 
-export const mockOpportunity: Opportunity = {
-  almostEligible: false,
-  client: {} as Client,
-  defaultEligibility: "ELIGIBLE",
-  denial: undefined,
-  denialReasonsMap: {},
-  firstViewed: undefined,
-  hydrate: () => undefined,
-  isHydrated: true,
-  requirementsAlmostMet: [],
-  requirementsMet: [],
-  reviewStatus: "PENDING",
-  setFirstViewedIfNeeded: () => undefined,
-  setCompletedIfEligible: () => undefined,
-  type: "pastFTRD",
-  eligibilityDate: undefined,
-  isAlert: false,
-  supportsDenial: false,
-};
+import { useRootStore } from "../../components/StoreProvider";
+import { Supervision } from "./Details";
+import { Heading } from "./Heading";
+import { OpportunityModule } from "./OpportunityModule";
+
+export const SupervisionLevelDowngradeClientProfile = observer(() => {
+  const { workflowsStore } = useRootStore();
+
+  const client = workflowsStore.selectedClient;
+  const opp = client?.opportunities.supervisionLevelDowngrade;
+  if (!client || !opp) {
+    return null;
+  }
+
+  return (
+    <article>
+      <Heading client={client} />
+      <OpportunityModule opportunity={opp} />
+      <Supervision client={client} />
+    </article>
+  );
+});

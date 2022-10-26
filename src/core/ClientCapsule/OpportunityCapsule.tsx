@@ -20,6 +20,7 @@ import { observer } from "mobx-react-lite";
 import { Opportunity } from "../../WorkflowsStore";
 import { useClientTracking } from "../hooks/useClientTracking";
 import { EligibilityStatus, WorkflowProgress } from "../OpportunityStatus";
+import { useShowEligibilityStatus } from "../utils/workflowsUtils";
 import ClientCapsule, { ClientCapsuleProps } from "./ClientCapsule";
 
 type Props = Omit<ClientCapsuleProps, "status" | "client"> & {
@@ -32,13 +33,18 @@ export const OpportunityCapsule = observer(
     useClientTracking(client, () => {
       client.trackListViewed(opportunity.type);
     });
+    const showEligibilityStatus = useShowEligibilityStatus(opportunity);
 
     let status: React.ReactNode = null;
 
     if (isHydrated) {
       status = (
         <>
-          <EligibilityStatus opportunity={opportunity} includeReasons /> •{" "}
+          {showEligibilityStatus && (
+            <>
+              <EligibilityStatus opportunity={opportunity} includeReasons /> •{" "}
+            </>
+          )}
           <WorkflowProgress opportunity={opportunity} />
         </>
       );

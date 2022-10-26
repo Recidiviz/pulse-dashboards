@@ -24,8 +24,8 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityCapsule } from "../ClientCapsule";
+import { OPPORTUNITY_STATUS_COLORS } from "../utils/workflowsUtils";
 import { workflowsUrl } from "../views";
-import { STATUS_COLORS } from "../WorkflowsClientProfile/common";
 
 const ListItem = styled.li`
   padding: ${rem(spacing.md)} ${rem(spacing.md)} 0 0;
@@ -50,17 +50,18 @@ const ClientItemWrapper = styled.div`
 `;
 
 const NavigateToFormButton = styled(Button)`
-  background: ${STATUS_COLORS.eligible.buttonFill};
+  background: ${OPPORTUNITY_STATUS_COLORS.eligible.buttonFill};
   border-radius: 4px;
-  border: 1px solid ${STATUS_COLORS.eligible.buttonFill};
+  border: 1px solid ${OPPORTUNITY_STATUS_COLORS.eligible.buttonFill};
   max-height: 32px;
   min-height: 32px;
   max-width: ${rem(175)};
 
   &:hover,
   &:focus {
-    background: ${darken(0.1, STATUS_COLORS.eligible.buttonFill)};
-    border: 1px solid ${darken(0.1, STATUS_COLORS.eligible.buttonFill)};
+    background: ${darken(0.1, OPPORTUNITY_STATUS_COLORS.eligible.buttonFill)};
+    border: 1px solid
+      ${darken(0.1, OPPORTUNITY_STATUS_COLORS.eligible.buttonFill)};
   }
 `;
 

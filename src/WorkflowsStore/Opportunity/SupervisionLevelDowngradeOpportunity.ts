@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Client } from "../Client";
+import { OTHER_KEY } from "../WorkflowsStore";
 import { OpportunityBase } from "./OpportunityBase";
 import {
   getValidator,
@@ -32,4 +33,11 @@ export class SupervisionLevelDowngradeOpportunity extends OpportunityBase<Superv
       getValidator(client)
     );
   }
+
+  readonly isAlert = true;
+
+  denialReasonsMap = {
+    COURT: "COURT: Court mandates supervision at a higher level",
+    [OTHER_KEY]: "Other: please specify a reason",
+  };
 }

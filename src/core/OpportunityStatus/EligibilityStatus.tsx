@@ -31,14 +31,17 @@ export const EligibilityStatus: React.FC<EligibilityStatusProps> = observer(
       defaultEligibility,
       denial,
       isHydrated,
+      isAlert,
     } = opportunity;
 
     if (!isHydrated) return null;
 
     if (denial?.reasons.length) {
+      const statusText = isAlert ? "Override" : "Currently ineligible";
+
       return (
         <>
-          Currently ineligible
+          {statusText}
           {includeReasons && ` (${denial.reasons.join(", ")})`}
         </>
       );

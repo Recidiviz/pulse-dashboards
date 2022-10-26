@@ -29,7 +29,8 @@ import styled from "styled-components/macro";
 
 import { Opportunity } from "../../WorkflowsStore";
 import { WORKFLOWS_POLICY_OR_METHODOLOGY_URL } from "../utils/constants";
-import { InfoButton, InfoTooltipWrapper, useStatusColors } from "./common";
+import { useStatusColors } from "../utils/workflowsUtils";
+import { InfoButton, InfoTooltipWrapper } from "./common";
 import { OpportunityRecommendedLanguageModal } from "./OpportunityRecommendedLanguageModal";
 
 const Wrapper = styled.ul<{ alert?: boolean }>`
@@ -65,8 +66,7 @@ export const CriteriaList = observer(
   ({ opportunity }: { opportunity: Opportunity }): React.ReactElement => {
     const colors = useStatusColors(opportunity);
 
-    // TODO: do this more generically once the "alert" flavor of opportunity stabilizes
-    const alert = opportunity.type === "pastFTRD";
+    const alert = opportunity.isAlert;
 
     return (
       <Wrapper style={{ color: colors.text }} alert={alert}>

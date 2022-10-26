@@ -33,6 +33,7 @@ import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTe
 import { EarnedDischargeClientProfile } from "../WorkflowsClientProfile/EarnedDischargeClientProfile";
 import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
 import { PastFTRDClientProfile } from "../WorkflowsClientProfile/PastFTRDClientProfile";
+import { SupervisionLevelDowngradeClientProfile } from "../WorkflowsClientProfile/SupervisionLevelDowngradeClientProfile";
 
 const PAGE_CONTENT: Record<OpportunityType, any> = {
   compliantReporting: {
@@ -54,7 +55,9 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   pastFTRD: {
     previewContents: <PastFTRDClientProfile />,
   },
-  supervisionLevelDowngrade: {},
+  supervisionLevelDowngrade: {
+    previewContents: <SupervisionLevelDowngradeClientProfile />,
+  },
 };
 
 const ModalControls = styled.div`

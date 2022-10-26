@@ -98,6 +98,8 @@ export interface Opportunity extends Hydratable, Partial<BaseForm> {
   setFirstViewedIfNeeded: () => void;
   setCompletedIfEligible: () => void;
   eligibilityDate: Date | undefined;
+  readonly isAlert: boolean;
+  supportsDenial: boolean;
 }
 
 export interface BaseForm<FormDataType = Record<string, any>> {

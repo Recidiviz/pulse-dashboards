@@ -38,7 +38,7 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { Client, Opportunity } from "../../WorkflowsStore";
-import { useStatusColors } from "./common";
+import { useStatusColors } from "../utils/workflowsUtils";
 import { OpportunityModule } from "./OpportunityModule";
 import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
 

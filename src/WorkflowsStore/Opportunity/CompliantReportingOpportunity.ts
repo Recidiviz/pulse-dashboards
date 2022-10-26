@@ -247,6 +247,10 @@ export class CompliantReportingOpportunity
 
   navigateToFormText = "Auto-fill referral";
 
+  readonly isAlert = false;
+
+  supportsDenial = true;
+
   constructor(client: Client) {
     makeAutoObservable<
       CompliantReportingOpportunity,

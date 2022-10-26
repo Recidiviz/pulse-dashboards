@@ -16,65 +16,8 @@
 // =============================================================================
 
 import { Icon, palette, TooltipTrigger } from "@recidiviz/design-system";
-import { rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
-
-import type { Opportunity } from "../../WorkflowsStore";
-
-export const STATUS_COLORS = {
-  eligible: {
-    icon: palette.signal.highlight,
-    iconAlmost: palette.data.gold1,
-    background: rgba(palette.signal.highlight, 0.1),
-    border: rgba(palette.signal.highlight, 0.3),
-    text: palette.pine4,
-    buttonFill: palette.signal.links,
-    link: palette.signal.links,
-  },
-  almostEligible: {
-    icon: palette.signal.highlight,
-    iconAlmost: palette.data.gold1,
-    background: "transparent",
-    border: rgba(palette.slate, 0.1),
-    text: palette.pine4,
-    buttonFill: palette.signal.links,
-    link: palette.data.gold1,
-  },
-  ineligible: {
-    icon: palette.signal.highlight,
-    iconAlmost: palette.data.gold1,
-    background: "transparent",
-    border: rgba(palette.slate, 0.1),
-    text: palette.pine4,
-    buttonFill: palette.signal.links,
-    link: palette.signal.error,
-  },
-  alert: {
-    icon: palette.signal.error,
-    iconAlmost: palette.signal.error,
-    background: rgba(palette.signal.error, 0.05),
-    border: rgba(palette.slate, 0.1),
-    text: palette.signal.error,
-    buttonFill: palette.data.gold1,
-    link: palette.data.gold1,
-  },
-} as const;
-
-export type StatusPalette = typeof STATUS_COLORS[keyof typeof STATUS_COLORS];
-
-export function useStatusColors(opportunity: Opportunity): StatusPalette {
-  // TODO: do this more generically once the "alert" flavor of opportunity stabilizes
-  if (opportunity.type === "pastFTRD") return STATUS_COLORS.alert;
-
-  if (opportunity?.reviewStatus === "DENIED") {
-    return STATUS_COLORS.ineligible;
-  }
-  if (opportunity?.almostEligible) {
-    return STATUS_COLORS.almostEligible;
-  }
-  return STATUS_COLORS.eligible;
-}
 
 export const InfoTooltipWrapper = styled(TooltipTrigger)`
   vertical-align: text-bottom;

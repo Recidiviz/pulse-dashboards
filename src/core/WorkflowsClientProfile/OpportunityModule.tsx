@@ -23,10 +23,10 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { Opportunity } from "../../WorkflowsStore";
+import { OpportunityDenial } from "../OpportunityDenial";
+import { useStatusColors } from "../utils/workflowsUtils";
 import { workflowsUrl } from "../views";
-import { useStatusColors } from "./common";
 import { CriteriaList } from "./CriteriaList";
-import { OpportunityDenial } from "./OpportunityDenial";
 import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
 
 const Wrapper = styled.div<{ background: string; border: string }>`
@@ -74,8 +74,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     }, [opportunity]);
 
     const colors = useStatusColors(opportunity);
-    // TODO: do this more generically once the "alert" flavor of opportunity stabilizes
-    const showDenialButton = opportunity.type !== "pastFTRD";
+    const showDenialButton = opportunity.supportsDenial;
     return (
       <Wrapper {...colors}>
         {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}

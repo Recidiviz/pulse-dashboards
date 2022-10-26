@@ -60,6 +60,11 @@ export abstract class OpportunityBase<
 
   updatesSubscription: DocumentSubscription<UpdateRecord>;
 
+  /**
+   * The "alert" flavor of opportunity receives a different UI treatment
+   */
+  readonly isAlert: boolean = false;
+
   constructor(
     client: Client,
     type: OpportunityType,
@@ -91,6 +96,10 @@ export abstract class OpportunityBase<
       client.id,
       type
     );
+  }
+
+  get supportsDenial(): boolean {
+    return Object.keys(this.denialReasonsMap).length > 0;
   }
 
   get record(): ReferralRecord | undefined {

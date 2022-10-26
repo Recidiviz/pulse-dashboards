@@ -15,24 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Client, Opportunity } from "../../WorkflowsStore";
-
-export const mockOpportunity: Opportunity = {
-  almostEligible: false,
-  client: {} as Client,
-  defaultEligibility: "ELIGIBLE",
-  denial: undefined,
-  denialReasonsMap: {},
-  firstViewed: undefined,
-  hydrate: () => undefined,
-  isHydrated: true,
-  requirementsAlmostMet: [],
-  requirementsMet: [],
-  reviewStatus: "PENDING",
-  setFirstViewedIfNeeded: () => undefined,
-  setCompletedIfEligible: () => undefined,
-  type: "pastFTRD",
-  eligibilityDate: undefined,
-  isAlert: false,
-  supportsDenial: false,
-};
+export * from "./OpportunityDenial";

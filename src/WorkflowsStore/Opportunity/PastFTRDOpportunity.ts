@@ -28,6 +28,8 @@ import {
 import { OpportunityRequirement } from "./types";
 
 export class PastFTRDOpportunity extends OpportunityBase<PastFTRDReferralRecord> {
+  readonly isAlert = true;
+
   constructor(client: Client) {
     super(client, "pastFTRD", transformReferral);
     makeObservable(this, {

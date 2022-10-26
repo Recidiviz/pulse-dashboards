@@ -47,6 +47,8 @@ describe("sort", () => {
       setCompletedIfEligible: () => undefined,
       type: "pastFTRD",
       eligibilityDate: new Date(2022, 10, 5),
+      isAlert: false,
+      supportsDenial: false,
     };
 
     opp2 = {
@@ -65,6 +67,8 @@ describe("sort", () => {
       setCompletedIfEligible: () => undefined,
       type: "pastFTRD",
       eligibilityDate: new Date(2022, 10, 8),
+      isAlert: false,
+      supportsDenial: false,
     };
 
     opp3 = {
@@ -83,6 +87,8 @@ describe("sort", () => {
       setCompletedIfEligible: () => undefined,
       type: "pastFTRD",
       eligibilityDate: new Date(2022, 10, 7),
+      isAlert: false,
+      supportsDenial: false,
     };
   });
 
@@ -112,6 +118,8 @@ describe("sort", () => {
       setCompletedIfEligible: () => undefined,
       type: "pastFTRD",
       eligibilityDate: new Date(2022, 10, 6),
+      isAlert: false,
+      supportsDenial: false,
     };
     const opps = [opp2, opp4, opp3, opp1];
     expect(
