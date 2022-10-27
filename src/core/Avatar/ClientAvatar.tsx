@@ -45,7 +45,6 @@ const AvatarElement = styled.div(
     & svg {
       left: 0;
       position: absolute;
-      top: 0;
     }
   `
 );

@@ -90,17 +90,27 @@ const ClientsWrapper = styled.div`
 `;
 
 const ClientAvatarWrapper = styled.div`
+  margin-left: -10px;
+
+  & > div {
+    border: 2px solid transparent;
+  }
+
+  &:not(:only-child) > div {
+    border: 2px solid ${palette.white};
+  }
+
   &:nth-child(1) {
-    transform: translateX(15px);
+    z-index: 0;
   }
   &:nth-child(2) {
-    transform: translateX(5px);
+    z-index: 1;
   }
   &:nth-child(3) {
-    transform: translateX(-5px);
+    z-index: 2;
   }
   &:nth-child(4) {
-    transform: translateX(-15px);
+    z-index: 3;
   }
 `;
 
