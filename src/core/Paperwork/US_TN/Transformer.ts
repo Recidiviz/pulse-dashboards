@@ -13,14 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { DocumentData } from "firebase/firestore";
 import moment from "moment";
 
 import { formatAsCurrency, formatWorkflowsDate } from "../../../utils";
 import type { Client } from "../../../WorkflowsStore";
-import {
-  CompliantReportingReferralRecord,
-  TransformedCompliantReportingReferral,
-} from "../../../WorkflowsStore";
+import { CompliantReportingDraftData } from "../../../WorkflowsStore";
 
 function formatSentenceLength(
   startDate: string,
@@ -37,8 +35,8 @@ function formatSentenceLength(
 
 export const transform = (
   client: Client,
-  data: CompliantReportingReferralRecord
-): Partial<TransformedCompliantReportingReferral> => {
+  data: DocumentData
+): Partial<CompliantReportingDraftData> => {
   let allDockets;
   try {
     allDockets = (JSON.parse(data.allDockets) as string[]).join(", ");
@@ -76,10 +74,12 @@ export const transform = (
     specialConditionsAlcDrugTreatmentIsOutpatient:
       data.specialConditionsAlcDrugTreatmentInOut === "OUTPATIENT",
 
-    supervisionFeeArrearagedAmount: formatAsCurrency(
-      data.supervisionFeeArrearagedAmount
-    ),
-    supervisionFeeAssessed: formatAsCurrency(data.supervisionFeeAssessed),
+    supervisionFeeArrearagedAmount: data.supervisionFeeArrearagedAmount
+      ? formatAsCurrency(data.supervisionFeeArrearagedAmount)
+      : "",
+    supervisionFeeAssessed: data.supervisionFeeAssessed
+      ? formatAsCurrency(data.supervisionFeeAssessed)
+      : "",
 
     currentOffenses0: data.currentOffenses[0] || "",
     currentOffenses1: data.currentOffenses[1] || "",

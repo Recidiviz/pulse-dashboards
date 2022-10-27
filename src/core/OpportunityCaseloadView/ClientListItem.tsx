@@ -98,7 +98,7 @@ export const ClientListItem = observer(
             />
           </ClientLink>
           <ButtonSpacer />
-          {showButton && opportunity.navigateToFormText && (
+          {showButton && opportunity.form?.navigateToFormText && (
             <Link
               to={workflowsUrl("opportunityAction", {
                 opportunityType: opportunity.type,
@@ -106,7 +106,7 @@ export const ClientListItem = observer(
               })}
             >
               <NavigateToFormButton>
-                {opportunity.navigateToFormText}
+                {opportunity.form.navigateToFormText}
               </NavigateToFormButton>
             </Link>
           )}

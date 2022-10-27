@@ -19,10 +19,10 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React from "react";
 
-import { BaseForm } from "../../WorkflowsStore";
+import { FormBase } from "../../WorkflowsStore/Opportunity/Forms/FormBase";
 
 type FormLastEditedProps = {
-  form?: BaseForm;
+  form?: FormBase<any>;
   agencyName: string;
 };
 

@@ -1,3 +1,3 @@
-import { TransformedCompliantReportingReferral } from "../../../WorkflowsStore";
+import { CompliantReportingDraftData } from "../../../WorkflowsStore";
 
-export type FormDataType = Partial<TransformedCompliantReportingReferral>;
+export type FormDataType = Partial<CompliantReportingDraftData>;

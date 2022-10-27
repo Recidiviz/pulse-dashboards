@@ -15,7 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Client, Opportunity } from "../../WorkflowsStore";
+import { Client, Opportunity, OpportunityType } from "../../WorkflowsStore";
+import { FormBase } from "../../WorkflowsStore/Opportunity/Forms/FormBase";
+import { OpportunityBase } from "../../WorkflowsStore/Opportunity/OpportunityBase";
+
+export const MockFormBase: FormBase<any> = {
+  client: {} as Client,
+  opportunity: {} as OpportunityBase<any, any>,
+  formLastUpdated: undefined,
+  draftData: {},
+  prefilledData: {},
+  formData: {},
+  printText: "",
+  navigateToFormText: "",
+  prefilledDataTransformer: () => ({}),
+  type: "pastFTRD" as OpportunityType,
+};
 
 export const mockOpportunity: Opportunity = {
   almostEligible: false,

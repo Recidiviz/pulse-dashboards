@@ -34,6 +34,7 @@ import {
   TransformFunction,
   ValidateFunction,
 } from "../subscriptions";
+import { FormBase } from "./Forms/FormBase";
 import {
   DefaultEligibility,
   DenialReasonsMap,
@@ -56,6 +57,8 @@ export abstract class OpportunityBase<
 
   client: Client;
 
+  form?: FormBase<any>;
+
   referralSubscription: DocumentSubscription<ReferralRecord>;
 
   updatesSubscription: DocumentSubscription<UpdateRecord>;
@@ -77,12 +80,14 @@ export abstract class OpportunityBase<
       hydrate: action,
       isLoading: computed,
       record: computed,
+      updates: computed,
       reviewStatus: computed,
       isHydrated: computed,
       setCompletedIfEligible: action,
     });
 
     this.client = client;
+    this.form = new FormBase(type, this);
     this.type = type;
 
     this.referralSubscription = new CollectionDocumentSubscription<ReferralRecord>(
@@ -225,12 +230,6 @@ export abstract class OpportunityBase<
   // so subclasses can use normal annotations instead of having to use `override`.
   // ===============================
 
-  // TODO(#2263): Refactor isValid into a pipeline hydrate -> validate -> aggregate
-  // eslint-disable-next-line class-methods-use-this
-  get isValid(): boolean {
-    return true;
-  }
-
   // eslint-disable-next-line class-methods-use-this
   get almostEligible(): boolean {
     return false;
@@ -247,8 +246,6 @@ export abstract class OpportunityBase<
   get requirementsAlmostMet(): OpportunityRequirement[] {
     return [];
   }
-
-  navigateToFormText?: string | undefined;
 
   // eslint-disable-next-line class-methods-use-this
   get eligibilityDate(): Date | undefined {

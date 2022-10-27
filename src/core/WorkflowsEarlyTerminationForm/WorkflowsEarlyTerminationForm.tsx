@@ -16,7 +16,6 @@
 
 import { palette } from "@recidiviz/design-system";
 import { toJS } from "mobx";
-import { observer } from "mobx-react-lite";
 import * as React from "react";
 import styled from "styled-components/macro";
 
@@ -25,6 +24,10 @@ import { Client } from "../../WorkflowsStore";
 import { FormLastEdited } from "../FormLastEdited";
 import { generate } from "../Paperwork/DOCXFormGenerator";
 import FormViewer from "../Paperwork/FormViewer";
+import {
+  connectComponentToOpportunityForm,
+  useOpportunityFormContext,
+} from "../Paperwork/OpportunityFormContext";
 import { FormViewerStatus } from "../Paperwork/styles";
 import FormEarlyTermination from "../Paperwork/US_ND/EarlyTermination/FormEarlyTermination";
 import { REACTIVE_INPUT_UPDATE_DELAY } from "../Paperwork/utils";
@@ -37,8 +40,8 @@ const EarlyTerminationFormContainer = styled.div`
 
 const collectAdditionalDepositionLinesToPrint = (client: Client) => {
   const { earlyTermination } = client.opportunities;
-  return earlyTermination?.additionalDepositionLines.map(
-    (key) => earlyTermination?.formData[key]
+  return earlyTermination?.form?.additionalDepositionLines.map(
+    (key) => earlyTermination?.form?.formData[key]
   );
 };
 
@@ -54,7 +57,7 @@ const formDownloader = async (
   const { earlyTermination } = client.opportunities;
 
   const contents = {
-    ...toJS(earlyTermination?.formData),
+    ...toJS(earlyTermination?.form?.formData),
     additionalDepositionLines: collectAdditionalDepositionLinesToPrint(client),
   };
 
@@ -71,6 +74,8 @@ const WorkflowsEarlyTerminationForm = () => {
     workflowsStore: { selectedClient: client },
   } = useRootStore();
 
+  const form = useOpportunityFormContext();
+
   return (
     <EarlyTerminationFormContainer>
       <FormViewer
@@ -80,10 +85,7 @@ const WorkflowsEarlyTerminationForm = () => {
             Edit and collaborate on the document below
           </FormViewerStatus>,
           <FormViewerStatus color={palette.slate85}>
-            <FormLastEdited
-              agencyName="ND DOCR"
-              form={client?.opportunities.earlyTermination}
-            />
+            <FormLastEdited agencyName="ND DOCR" form={form} />
           </FormViewerStatus>,
         ]}
         formDownloader={formDownloader}
@@ -94,4 +96,7 @@ const WorkflowsEarlyTerminationForm = () => {
   );
 };
 
-export default observer(WorkflowsEarlyTerminationForm);
+export default connectComponentToOpportunityForm(
+  WorkflowsEarlyTerminationForm,
+  "earlyTermination"
+);

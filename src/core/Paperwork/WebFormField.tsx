@@ -29,8 +29,7 @@ import * as React from "react";
 import { useEffect, useRef } from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { LSUOpportunity } from "../../WorkflowsStore";
+import { useOpportunityFormContext } from "./OpportunityFormContext";
 import { useAnimatedValue, useReactiveInput } from "./utils";
 
 const ThemeContainer = styled.div`
@@ -52,28 +51,23 @@ const ThemeContainer = styled.div`
 
 type BaseProps = TextFieldProps & TextFieldHTMLProps;
 
-export interface WebFormFieldWrapperProps extends BaseProps {
+export interface WebFormFieldProps extends BaseProps {
   name: string;
   errorMessage?: string;
 }
 
-interface WebFormFieldProps extends WebFormFieldWrapperProps {
-  opportunity: LSUOpportunity;
-}
-
 const WebFormField: React.FC<WebFormFieldProps> = ({
   name,
-  opportunity,
   errorMessage,
   ...props
 }) => {
+  const opportunityForm = useOpportunityFormContext();
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const foundationRef = useRef<MDCTextFieldFoundation>(null);
 
   const [value, onChange] = useReactiveInput<
-    typeof opportunity,
     HTMLInputElement | HTMLTextAreaElement
-  >(name, opportunity);
+  >(name, opportunityForm);
 
   useAnimatedValue(inputRef, value);
 
@@ -109,15 +103,4 @@ const WebFormField: React.FC<WebFormFieldProps> = ({
   );
 };
 
-const WebFormFieldWrapper: React.FC<WebFormFieldWrapperProps> = ({
-  ...props
-}) => {
-  const { workflowsStore } = useRootStore();
-  const opportunity = workflowsStore?.selectedClient?.opportunities?.LSU;
-
-  if (!opportunity) return null;
-
-  return <WebFormField {...props} opportunity={opportunity} />;
-};
-
-export default observer(WebFormFieldWrapper);
+export default observer(WebFormField);

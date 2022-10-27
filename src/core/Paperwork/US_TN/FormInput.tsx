@@ -18,11 +18,7 @@ import { observer } from "mobx-react-lite";
 import React, { MutableRefObject, useRef } from "react";
 import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
-import { useRootStore } from "../../../components/StoreProvider";
-import {
-  CompliantReportingOpportunity,
-  Opportunity,
-} from "../../../WorkflowsStore";
+import { useOpportunityFormContext } from "../OpportunityFormContext";
 import { useAnimatedValue, useReactiveInput } from "../utils";
 import { Input } from "./styles";
 import { FormDataType } from "./types";
@@ -31,7 +27,7 @@ export type FormInputValueGetter = (value: any) => any;
 
 export type FormInputValueBuilder = (data: any, value: string) => string;
 
-type FormInputWrapperProps = StyledComponentProps<
+type FormInputProps = StyledComponentProps<
   "input",
   DefaultTheme,
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -41,19 +37,9 @@ type FormInputWrapperProps = StyledComponentProps<
   name: keyof FormDataType;
 };
 
-interface FormInputProps extends FormInputWrapperProps {
-  opportunity: Opportunity;
-}
-
-const FormInput: React.FC<FormInputProps> = ({
-  opportunity,
-  name,
-  ...props
-}) => {
-  const [value, onChange] = useReactiveInput<
-    CompliantReportingOpportunity,
-    HTMLInputElement
-  >(name, opportunity as CompliantReportingOpportunity);
+const FormInput: React.FC<FormInputProps> = ({ name, ...props }) => {
+  const form = useOpportunityFormContext();
+  const [value, onChange] = useReactiveInput<HTMLInputElement>(name, form);
   const inputRef = useRef<HTMLInputElement>(
     null
   ) as MutableRefObject<HTMLInputElement>;
@@ -73,17 +59,5 @@ const FormInput: React.FC<FormInputProps> = ({
   );
 };
 
-const FormInputWrapper: React.FC<FormInputWrapperProps> = (props) => {
-  const { workflowsStore } = useRootStore();
-  const opportunity =
-    workflowsStore?.selectedClient?.opportunities.compliantReporting;
-
-  if (!opportunity?.isHydrated) {
-    return <Input {...props} disabled />;
-  }
-
-  return <FormInput opportunity={opportunity} {...props} />;
-};
-
 // Only re-render changed inputs
-export default observer(FormInputWrapper);
+export default observer(FormInput);

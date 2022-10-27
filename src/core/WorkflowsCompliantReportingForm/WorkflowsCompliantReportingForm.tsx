@@ -16,7 +16,6 @@
 // =============================================================================
 import { palette } from "@recidiviz/design-system";
 import jsPDF from "jspdf";
-import { observer } from "mobx-react-lite";
 import React from "react";
 import styled from "styled-components/macro";
 
@@ -24,6 +23,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
 import { FormLastEdited } from "../FormLastEdited";
 import FormViewer from "../Paperwork/FormViewer";
+import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
 import { generate } from "../Paperwork/PDFFormGenerator";
 import { FormViewerStatus, PrintablePage } from "../Paperwork/styles";
 import FormCR3947Rev0518 from "../Paperwork/US_TN";
@@ -60,7 +60,7 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
           <FormViewerStatus color={palette.slate85}>
             <FormLastEdited
               agencyName="TDOC"
-              form={client?.opportunities.compliantReporting}
+              form={client?.opportunities.compliantReporting?.form}
             />
           </FormViewerStatus>,
         ]}
@@ -72,4 +72,7 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
   );
 };
 
-export default observer(WorkflowsCompliantReportingForm);
+export default connectComponentToOpportunityForm(
+  WorkflowsCompliantReportingForm,
+  "compliantReporting"
+);

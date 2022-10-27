@@ -31,6 +31,7 @@ import {
   compliantReportingReferralRecord,
 } from "../__fixtures__";
 import type { CompliantReportingOpportunity } from "../CompliantReportingOpportunity";
+import { transformCompliantReportingReferral } from "../CompliantReportingReferralRecord";
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,
@@ -278,7 +279,7 @@ test("fetch CompliantReportingReferral uses recordId", async () => {
   expect(constructorSpy).toHaveBeenCalledWith(
     "compliantReportingReferrals",
     compliantReportingEligibleClientRecord.recordId,
-    undefined,
+    transformCompliantReportingReferral,
     expect.any(Function)
   );
 });

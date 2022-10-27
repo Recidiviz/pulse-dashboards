@@ -21,8 +21,8 @@ import * as React from "react";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { updateOpportunityDraftData } from "../../firestore";
-import { BaseForm, Opportunity } from "../../WorkflowsStore";
+import { updateFormDraftData } from "../../firestore";
+import { FormBase } from "../../WorkflowsStore/Opportunity/Forms/FormBase";
 import { PrintablePageMargin } from "./styles";
 
 export const REACTIVE_INPUT_UPDATE_DELAY = 2000;
@@ -156,10 +156,10 @@ type ReactiveInputReturnValue<
   E extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement
 > = [ReactiveInputValue, (event: React.ChangeEvent<E>) => void];
 
-function useReactiveInput<
-  F extends Opportunity & BaseForm,
-  E extends HTMLInputElement | HTMLTextAreaElement
->(name: string, opportunity: F): ReactiveInputReturnValue<E> {
+function useReactiveInput<E extends HTMLInputElement | HTMLTextAreaElement>(
+  name: string,
+  form: FormBase<any>
+): ReactiveInputReturnValue<E> {
   /*
     Hook which integrates a controlled input component and Firestore and MobX.
     Firestore is updated two seconds after the user stops typing.
@@ -167,12 +167,12 @@ function useReactiveInput<
     we update the controlled input's state value.
    */
 
-  const fetchFromStore = () => (opportunity.formData[name] as string) || "";
+  const fetchFromStore = () => (form.formData[name] as string) || "";
   const [value, setValue] = useState<ReactiveInputValue>(fetchFromStore());
 
   const updateFirestoreRef = useRef(
     debounce((valueToStore: string) => {
-      updateOpportunityDraftData(opportunity, name, valueToStore);
+      updateFormDraftData(form, name, valueToStore);
     }, REACTIVE_INPUT_UPDATE_DELAY)
   );
 

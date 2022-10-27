@@ -15,13 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { deleteField, DocumentData } from "firebase/firestore";
-import { sortBy } from "lodash";
+import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable } from "mobx";
-import moment from "moment";
 
-import { updateOpportunityDraftData } from "../../firestore";
-import { formatWorkflowsDate, pluralize } from "../../utils";
+import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OpportunityValidationError } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
@@ -30,10 +27,9 @@ import {
   EarlyTerminationReferralRecord,
   transformReferral,
 } from "./EarlyTerminationReferralRecord";
-import { OpportunityWithFormBase } from "./OpportunityWithFormBase";
+import { EarlyTerminationForm } from "./Forms/EarlyTerminationForm";
+import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
-
-const FORM_DATE_FORMAT = "MMMM Do, YYYY";
 
 const DENIAL_REASONS_MAP = {
   "INT MEASURE":
@@ -67,8 +63,6 @@ const CRITERIA: Record<
     tooltip: `Policy requirement: Not on active revocation status.`,
   },
 };
-
-const ADDITIONAL_DEPOSITION_LINES_PREFIX = "additionalDepositionLines";
 
 function validateRecord(
   record: DocumentData | undefined
@@ -113,68 +107,22 @@ function validateRecord(
   return record;
 }
 
-export class EarlyTerminationOpportunity extends OpportunityWithFormBase<
+export class EarlyTerminationOpportunity extends OpportunityBase<
   EarlyTerminationReferralRecord,
   EarlyTerminationDraftData
 > {
-  navigateToFormText = "Auto-fill paperwork";
+  form: EarlyTerminationForm;
 
   constructor(client: Client) {
     super(client, "earlyTermination", transformReferral, validateRecord);
 
     makeObservable(this, {
-      printText: computed,
       requirementsMet: computed,
       requirementsAlmostMet: computed,
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-  }
-
-  prefilledDataTransformer = (): Partial<EarlyTerminationDraftData> => {
-    if (!this.record) return {};
-
-    const {
-      formInformation: {
-        convictionCounty,
-        judicialDistrictCode,
-        criminalNumber,
-        judgeName,
-        priorCourtDate,
-        sentenceLengthYears,
-        crimeNames,
-        probationExpirationDate,
-        probationOfficerFullName,
-      },
-    } = this.record;
-
-    return {
-      clientName: this.client.displayName,
-      judgeName,
-      convictionCounty: convictionCounty?.replaceAll("_", " ") ?? "",
-      judicialDistrictCode: judicialDistrictCode?.replaceAll("_", " ") ?? "",
-      priorCourtDate: moment(priorCourtDate).format(FORM_DATE_FORMAT),
-      probationExpirationDate: moment(probationExpirationDate).format(
-        FORM_DATE_FORMAT
-      ),
-      sentenceLengthYears: pluralize(sentenceLengthYears, "year"),
-      plaintiff: "State of North Dakota",
-      crimeNames: crimeNames?.join(", ") ?? "",
-      probationOfficerFullName,
-      criminalNumber,
-    };
-  };
-
-  get printText(): string {
-    if (this.client.formIsPrinting) {
-      return "Downloading .DOCX...";
-    }
-
-    if (this.updates?.completed) {
-      return "Re-download .DOCX";
-    }
-
-    return "Download .DOCX";
+    this.form = new EarlyTerminationForm(this.type, this);
   }
 
   get requirementsMet(): OpportunityRequirement[] {
@@ -220,27 +168,5 @@ export class EarlyTerminationOpportunity extends OpportunityWithFormBase<
 
   get metadata(): EarlyTerminationReferralRecord["metadata"] | undefined {
     return this.record?.metadata;
-  }
-
-  get additionalDepositionLines(): string[] {
-    const additionalDepositionLines = Object.keys(
-      this.draftData
-    ).filter((key: string) =>
-      key.startsWith(ADDITIONAL_DEPOSITION_LINES_PREFIX)
-    );
-
-    return sortBy(additionalDepositionLines, (key) =>
-      Number(key.split(ADDITIONAL_DEPOSITION_LINES_PREFIX)[1])
-    );
-  }
-
-  addDepositionLine(): void {
-    const key = `${ADDITIONAL_DEPOSITION_LINES_PREFIX}${+new Date()}`;
-    updateOpportunityDraftData(this, key, "");
-  }
-
-  removeDepositionLine(key: string): void {
-    if (!this.draftData) return;
-    updateOpportunityDraftData(this, key, deleteField());
   }
 }

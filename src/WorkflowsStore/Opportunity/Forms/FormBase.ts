@@ -15,14 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable, toJS } from "mobx";
 
-import { OpportunityUpdateWithForm, UpdateLog } from "../../firestore";
-import { Client } from "../Client";
-import { TransformFunction, ValidateFunction } from "../subscriptions";
-import { OpportunityBase } from "./OpportunityBase";
-import { BaseForm, OpportunityType } from "./types";
+import { UpdateLog } from "../../../firestore";
+import { Client } from "../../Client";
+import { OpportunityBase } from "../OpportunityBase";
+import { OpportunityType } from "../types";
 
 export type PrefilledDataTransformer<
   FormInformation
@@ -33,22 +31,18 @@ export type PrefilledDataTransformer<
  * While this is an abstract class, it provides stubs rather than abstract properties, whenever possible,
  * to facilitate incremental development of new Opportunities.
  */
-export abstract class OpportunityWithFormBase<
-    ReferralRecord extends DocumentData,
-    FormDisplayType
-  >
-  extends OpportunityBase<
-    ReferralRecord,
-    OpportunityUpdateWithForm<FormDisplayType>
-  >
-  implements BaseForm<FormDisplayType> {
-  constructor(
-    client: Client,
-    type: OpportunityType,
-    transformReferral?: TransformFunction<ReferralRecord>,
-    validateRecord?: ValidateFunction<DocumentData>
-  ) {
-    super(client, type, transformReferral, validateRecord);
+
+export class FormBase<FormDisplayType> {
+  client: Client;
+
+  opportunity: OpportunityBase<any, any>;
+
+  type: OpportunityType;
+
+  constructor(type: OpportunityType, opportunity: OpportunityBase<any, any>) {
+    this.type = type;
+    this.opportunity = opportunity;
+    this.client = opportunity.client;
 
     makeObservable(this, {
       draftData: computed,
@@ -59,15 +53,15 @@ export abstract class OpportunityWithFormBase<
   }
 
   get formLastUpdated(): UpdateLog | undefined {
-    return this.updates?.referralForm?.updated;
+    return this.opportunity.updates?.referralForm?.updated;
   }
 
   get draftData(): Partial<FormDisplayType> {
-    return this.updates?.referralForm?.data ?? {};
+    return this.opportunity.updates?.referralForm?.data ?? {};
   }
 
   get prefilledData(): Partial<FormDisplayType> {
-    if (this.record) {
+    if (this.opportunity.record) {
       return this.prefilledDataTransformer();
     }
 
@@ -91,6 +85,7 @@ export abstract class OpportunityWithFormBase<
     return "";
   }
 
-  prefilledDataTransformer: PrefilledDataTransformer<FormDisplayType> = () =>
-    this.record?.formInformation ?? {};
+  prefilledDataTransformer(): Partial<FormDisplayType> {
+    return this.opportunity.record?.formInformation ?? {};
+  }
 }

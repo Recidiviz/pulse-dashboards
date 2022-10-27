@@ -20,76 +20,29 @@ import assertNever from "assert-never";
 import { differenceInCalendarDays, isEqual } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 import { mapValues } from "lodash";
-import { makeAutoObservable, toJS, when } from "mobx";
+import { makeObservable, toJS } from "mobx";
 
-import { trackSetOpportunityStatus } from "../../analytics";
-import { transform } from "../../core/Paperwork/US_TN/Transformer";
 import { formatRelativeToNow } from "../../core/utils/timePeriod";
-import {
-  Denial,
-  OpportunityUpdateWithForm,
-  UpdateLog,
-  updateOpportunityCompleted,
-  updateOpportunityFirstViewed,
-} from "../../firestore";
+import { OpportunityUpdateWithForm } from "../../firestore";
 import { formatWorkflowsDate, pluralizeWord } from "../../utils";
-import { Client, UNKNOWN } from "../Client";
-import {
-  CollectionDocumentSubscription,
-  DocumentSubscription,
-  OpportunityUpdateSubscription,
-} from "../subscriptions";
-import {
-  fieldToDate,
-  OpportunityValidationError,
-  optionalFieldToDate,
-} from "../utils";
+import { Client } from "../Client";
+import { OpportunityValidationError } from "../utils";
 import { OTHER_KEY } from "../WorkflowsStore";
 import {
-  CompliantReportingFinesFeesEligible,
+  AlmostEligibleCriteria,
+  CompliantReportingDraftData,
   CompliantReportingReferralRecord,
-  SpecialConditionsStatus,
-  TransformedCompliantReportingReferral,
+  transformCompliantReportingReferral,
 } from "./CompliantReportingReferralRecord";
+import { CompliantReportingForm } from "./Forms/CompliantReportingForm";
+import { OpportunityBase } from "./OpportunityBase";
 import {
-  BaseForm,
   DenialReasonsMap,
-  Opportunity,
   OpportunityRequirement,
   OpportunityStatus,
   OpportunityType,
 } from "./types";
 import { formatNoteDate } from "./utils";
-
-type AlmostEligibleCriteria = {
-  currentLevelEligibilityDate?: Date;
-  passedDrugScreenNeeded?: boolean;
-  paymentNeeded?: boolean;
-  recentRejectionCodes?: string[];
-  seriousSanctionsEligibilityDate?: Date;
-};
-
-type CompliantReportingRecordTransformed = {
-  almostEligibleCriteria?: AlmostEligibleCriteria;
-  currentOffenses: string[];
-  eligibilityCategory: string;
-  eligibleLevelStart?: Date;
-  drugScreensPastYear: { result: string; date: Date }[];
-  finesFeesEligible: CompliantReportingFinesFeesEligible;
-  judicialDistrict: string;
-  lastSpecialConditionsNote?: Date | undefined;
-  lifetimeOffensesExpired: string[];
-  mostRecentArrestCheck?: Date;
-  nextSpecialConditionsCheck?: Date | undefined;
-  pastOffenses: string[];
-  /** Any number greater than zero indicates the client is _almost_ eligible. */
-  remainingCriteriaNeeded: number;
-  sanctionsPastYear: { type: string }[];
-  specialConditionsFlag?: SpecialConditionsStatus;
-  specialConditionsTerminatedDate?: Date | undefined;
-  supervisionFeeExemption?: string;
-  zeroToleranceCodes: { contactNoteType: string; contactNoteDate: Date }[];
-};
 
 // ranked roughly by actionability
 export const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (keyof AlmostEligibleCriteria)[] = [
@@ -171,7 +124,7 @@ const DENIAL_REASONS_MAP = {
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
-type CompliantReportingUpdateRecord = OpportunityUpdateWithForm<TransformedCompliantReportingReferral>;
+type CompliantReportingUpdateRecord = OpportunityUpdateWithForm<CompliantReportingDraftData>;
 
 const getRecordValidator = (client: Client) => (
   record: DocumentData | undefined
@@ -233,130 +186,41 @@ const getRecordValidator = (client: Client) => (
   return record;
 };
 
-export class CompliantReportingOpportunity
-  implements Opportunity, BaseForm<TransformedCompliantReportingReferral> {
-  client: Client;
-
+export class CompliantReportingOpportunity extends OpportunityBase<
+  CompliantReportingReferralRecord,
+  CompliantReportingUpdateRecord
+> {
   readonly type: OpportunityType = "compliantReporting";
 
   readonly denialReasonsMap: DenialReasonsMap;
 
-  referralSubscription: DocumentSubscription<CompliantReportingReferralRecord>;
-
-  updatesSubscription: DocumentSubscription<CompliantReportingUpdateRecord>;
-
-  navigateToFormText = "Auto-fill referral";
+  form: CompliantReportingForm;
 
   readonly isAlert = false;
 
-  supportsDenial = true;
-
   constructor(client: Client) {
-    makeAutoObservable<
-      CompliantReportingOpportunity,
-      "record" | "transformedRecord"
-    >(this, {
-      record: true,
-      transformedRecord: true,
-      draftData: true,
-      denialReasonsMap: false,
-    });
+    super(
+      client,
+      "compliantReporting",
+      transformCompliantReportingReferral,
+      getRecordValidator(client)
+    );
 
-    this.client = client;
+    makeObservable<CompliantReportingOpportunity, "requirementAlmostMetMap">(
+      this,
+      {
+        almostEligible: true,
+        almostEligibleStatusMessage: true,
+        requirementsMet: true,
+        requirementsAlmostMet: true,
+        requirementAlmostMetMap: true,
+        almostEligibleRecommendedNote: true,
+        validAlmostEligibleKeys: true,
+      }
+    );
+
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-
-    this.referralSubscription = new CollectionDocumentSubscription<CompliantReportingReferralRecord>(
-      "compliantReportingReferrals",
-      client.recordId,
-      undefined,
-      getRecordValidator(this.client)
-    );
-    this.updatesSubscription = new OpportunityUpdateSubscription<CompliantReportingUpdateRecord>(
-      client.recordId,
-      client.id,
-      "compliantReporting"
-    );
-  }
-
-  private get transformedRecord() {
-    if (!this.record) return;
-    const {
-      almostEligibleCriteria,
-      currentOffenses,
-      drugScreensPastYear,
-      eligibilityCategory,
-      eligibleLevelStart,
-      finesFeesEligible,
-      judicialDistrict,
-      lastSpecialConditionsNote,
-      lifetimeOffensesExpired,
-      mostRecentArrestCheck,
-      nextSpecialConditionsCheck,
-      pastOffenses,
-      remainingCriteriaNeeded,
-      sanctionsPastYear,
-      specialConditionsFlag,
-      specialConditionsTerminatedDate,
-      supervisionFeeExemption,
-      zeroToleranceCodes,
-    } = this.record;
-
-    const transformedRecord: CompliantReportingRecordTransformed = {
-      currentOffenses,
-      eligibilityCategory,
-      eligibleLevelStart: optionalFieldToDate(eligibleLevelStart),
-      drugScreensPastYear: drugScreensPastYear.map(({ result, date }) => ({
-        result,
-        date: fieldToDate(date),
-      })),
-      finesFeesEligible,
-      judicialDistrict: judicialDistrict ?? UNKNOWN,
-      lastSpecialConditionsNote: optionalFieldToDate(lastSpecialConditionsNote),
-      lifetimeOffensesExpired,
-      mostRecentArrestCheck: optionalFieldToDate(mostRecentArrestCheck),
-      nextSpecialConditionsCheck: optionalFieldToDate(
-        nextSpecialConditionsCheck
-      ),
-      pastOffenses,
-      remainingCriteriaNeeded: remainingCriteriaNeeded ?? 0,
-      sanctionsPastYear:
-        sanctionsPastYear?.map(({ ProposedSanction }) => ({
-          type: ProposedSanction,
-        })) ?? [],
-      specialConditionsTerminatedDate: optionalFieldToDate(
-        specialConditionsTerminatedDate
-      ),
-      specialConditionsFlag,
-      supervisionFeeExemption,
-      zeroToleranceCodes:
-        zeroToleranceCodes?.map(({ contactNoteDate, contactNoteType }) => ({
-          contactNoteType,
-          contactNoteDate: new Date(contactNoteDate),
-        })) ?? [],
-    };
-
-    if (almostEligibleCriteria) {
-      const {
-        currentLevelEligibilityDate,
-        passedDrugScreenNeeded,
-        paymentNeeded,
-        recentRejectionCodes,
-        seriousSanctionsEligibilityDate,
-      } = almostEligibleCriteria;
-
-      transformedRecord.almostEligibleCriteria = {
-        currentLevelEligibilityDate: optionalFieldToDate(
-          currentLevelEligibilityDate
-        ),
-        passedDrugScreenNeeded,
-        paymentNeeded,
-        recentRejectionCodes,
-        seriousSanctionsEligibilityDate: optionalFieldToDate(
-          seriousSanctionsEligibilityDate
-        ),
-      };
-    }
-    return transformedRecord;
+    this.form = new CompliantReportingForm(this.type, this);
   }
 
   get almostEligible(): boolean {
@@ -410,7 +274,7 @@ export class CompliantReportingOpportunity
   }
 
   get requirementsMet(): OpportunityRequirement[] {
-    if (!this.transformedRecord) return [];
+    if (!this.record) return [];
     const { supervisionLevel, supervisionLevelStart } = this.client;
     const {
       currentOffenses,
@@ -427,7 +291,7 @@ export class CompliantReportingOpportunity
       specialConditionsFlag,
       specialConditionsTerminatedDate,
       zeroToleranceCodes,
-    } = this.transformedRecord;
+    } = this.record;
     const { requirementAlmostMetMap } = this;
 
     const requirements: OpportunityRequirement[] = [];
@@ -635,40 +499,6 @@ export class CompliantReportingOpportunity
     return requirements;
   }
 
-  private get almostEligibleCriteriaTransformed() {
-    const {
-      recentRejectionCodes,
-      currentLevelEligibilityDate: currentLevelEligibilityDateString,
-      passedDrugScreenNeeded,
-      paymentNeeded,
-      seriousSanctionsEligibilityDate: seriousSanctionsEligibilityDateString,
-    } = this.record?.almostEligibleCriteria ?? {};
-
-    const currentLevelEligibilityDate = optionalFieldToDate(
-      currentLevelEligibilityDateString
-    );
-    const currentLevelEligibilityDaysRemaining =
-      currentLevelEligibilityDate &&
-      differenceInCalendarDays(currentLevelEligibilityDate, new Date());
-
-    const seriousSanctionsEligibilityDate = optionalFieldToDate(
-      seriousSanctionsEligibilityDateString
-    );
-    const seriousSanctionsEligibilityDaysRemaining =
-      seriousSanctionsEligibilityDate &&
-      differenceInCalendarDays(seriousSanctionsEligibilityDate, new Date());
-
-    return {
-      passedDrugScreenNeeded,
-      paymentNeeded,
-      currentLevelEligibilityDate,
-      currentLevelEligibilityDaysRemaining,
-      seriousSanctionsEligibilityDate,
-      seriousSanctionsEligibilityDaysRemaining,
-      recentRejectionCodes,
-    };
-  }
-
   /**
    * Maps each possible almost-eligible criterion to a display value,
    * where valid data exists for this client.
@@ -676,15 +506,25 @@ export class CompliantReportingOpportunity
   private get requirementAlmostMetMap(): Partial<
     Record<keyof AlmostEligibleCriteria, string | undefined>
   > {
+    if (!this.record?.almostEligibleCriteria) {
+      return {};
+    }
+
     const {
-      almostEligibleCriteriaTransformed: {
-        recentRejectionCodes,
-        currentLevelEligibilityDaysRemaining,
-        passedDrugScreenNeeded,
-        paymentNeeded,
-        seriousSanctionsEligibilityDaysRemaining,
-      },
-    } = this;
+      currentLevelEligibilityDate,
+      recentRejectionCodes,
+      passedDrugScreenNeeded,
+      paymentNeeded,
+      seriousSanctionsEligibilityDate,
+    } = this.record?.almostEligibleCriteria;
+
+    const currentLevelEligibilityDaysRemaining = currentLevelEligibilityDate
+      ? differenceInCalendarDays(currentLevelEligibilityDate, new Date())
+      : undefined;
+
+    const seriousSanctionsEligibilityDaysRemaining = seriousSanctionsEligibilityDate
+      ? differenceInCalendarDays(seriousSanctionsEligibilityDate, new Date())
+      : undefined;
 
     return mapValues(
       toJS(this.record?.almostEligibleCriteria),
@@ -725,23 +565,15 @@ export class CompliantReportingOpportunity
     );
   }
 
-  get printText(): string {
-    if (this.client.formIsPrinting) {
-      return "Printing PDF...";
-    }
-
-    if (this.updates?.completed) {
-      return "Reprint PDF";
-    }
-
-    return "Print PDF";
-  }
-
   get almostEligibleRecommendedNote():
     | { title: string; text: string }
     | undefined {
     // note functionality only supports a single missing criterion
-    if (this.validAlmostEligibleKeys.length !== 1) return undefined;
+    if (
+      this.validAlmostEligibleKeys.length !== 1 ||
+      !this.record?.almostEligibleCriteria
+    )
+      return undefined;
 
     const missingCriterionKey = this.validAlmostEligibleKeys[0];
 
@@ -750,11 +582,9 @@ export class CompliantReportingOpportunity
     if (!title) return undefined;
 
     const {
-      almostEligibleCriteriaTransformed: {
-        currentLevelEligibilityDate,
-        seriousSanctionsEligibilityDate,
-      },
-    } = this;
+      currentLevelEligibilityDate,
+      seriousSanctionsEligibilityDate,
+    } = this.record?.almostEligibleCriteria;
 
     let criterionSpecificCopy: string | undefined;
     switch (missingCriterionKey) {
@@ -799,17 +629,6 @@ export class CompliantReportingOpportunity
     return { title, text };
   }
 
-  // TODO(#2541): inherit default implementation instead
-  get prefilledData(): Partial<TransformedCompliantReportingReferral> {
-    const prefillSourceInformation = this.referralSubscription.data;
-
-    if (prefillSourceInformation) {
-      return transform(this.client, prefillSourceInformation);
-    }
-
-    return {};
-  }
-
   get validAlmostEligibleKeys(): (keyof AlmostEligibleCriteria)[] {
     return (Object.keys(
       this.requirementAlmostMetMap
@@ -817,112 +636,4 @@ export class CompliantReportingOpportunity
       (key) => this.requirementAlmostMetMap[key] !== undefined
     );
   }
-
-  // =========================
-  // TODO(#2541): Below this line are properties that should be inherited from `OpportunityBase`;
-  // in the meantime these implementations should be identical to those inherited by other opportunities
-  // =========================
-  get record(): CompliantReportingReferralRecord | undefined {
-    return this.referralSubscription.data;
-  }
-
-  get updates(): CompliantReportingUpdateRecord | undefined {
-    return this.updatesSubscription.data;
-  }
-
-  get denial(): Denial | undefined {
-    return this.updates?.denial;
-  }
-
-  get firstViewed(): UpdateLog | undefined {
-    return this.updates?.firstViewed;
-  }
-
-  /**
-   * If this.firstViewed is not yet set, this sets it by writing to Firestore.
-   */
-  setFirstViewedIfNeeded(): void {
-    when(
-      () => this.isHydrated,
-      () => {
-        if (this.firstViewed) return;
-        const userEmail = this.client.rootStore.workflowsStore.user?.info.email;
-        // should not happen in practice
-        if (!userEmail) return;
-
-        // ignore recidiviz admins and other non-state actors
-        if (this.client.rootStore.userStore.stateCode !== this.client.stateCode)
-          return;
-
-        updateOpportunityFirstViewed(
-          userEmail,
-          this.client.recordId,
-          this.type
-        );
-      }
-    );
-  }
-
-  setCompletedIfEligible(): void {
-    when(
-      () => this.isHydrated,
-      () => {
-        const { currentUserEmail, recordId, pseudonymizedId } = this.client;
-        if (!currentUserEmail) return;
-        const { reviewStatus } = this;
-        if (reviewStatus === "DENIED" || reviewStatus === "COMPLETED") return;
-
-        updateOpportunityCompleted(currentUserEmail, recordId, this.type);
-        trackSetOpportunityStatus({
-          clientId: pseudonymizedId,
-          status: "COMPLETED",
-          opportunityType: this.type,
-        });
-      }
-    );
-  }
-
-  readonly defaultEligibility = "ELIGIBLE";
-
-  get isHydrated(): boolean {
-    return (
-      this.referralSubscription.isHydrated &&
-      this.updatesSubscription.isHydrated
-    );
-  }
-
-  hydrate(): void {
-    this.referralSubscription.hydrate();
-    this.updatesSubscription.hydrate();
-  }
-
-  get isLoading(): boolean | undefined {
-    if (
-      this.referralSubscription.isLoading === undefined ||
-      this.updatesSubscription.isLoading === undefined
-    ) {
-      return undefined;
-    }
-    return (
-      this.referralSubscription.isLoading || this.updatesSubscription.isLoading
-    );
-  }
-
-  get error(): Error | undefined {
-    return this.referralSubscription.error || this.updatesSubscription.error;
-  }
-
-  get draftData(): Partial<TransformedCompliantReportingReferral> {
-    return this.updates?.referralForm?.data ?? {};
-  }
-
-  get formData(): Partial<TransformedCompliantReportingReferral> {
-    return { ...toJS(this.prefilledData), ...toJS(this.draftData) };
-  }
-
-  get formLastUpdated(): UpdateLog | undefined {
-    return this.updates?.referralForm?.updated;
-  }
-
-  eligibilityDate: Date | undefined = undefined;
 }

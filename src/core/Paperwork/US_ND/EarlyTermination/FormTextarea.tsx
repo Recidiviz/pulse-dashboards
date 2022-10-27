@@ -23,12 +23,8 @@ import TextareaAutosize from "react-textarea-autosize";
 import type { TextareaAutosizeProps } from "react-textarea-autosize/dist/declarations/src";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
-import {
-  EarlyTerminationDraftData,
-  EarlyTerminationOpportunity,
-  Opportunity,
-} from "../../../../WorkflowsStore";
+import { EarlyTerminationDraftData } from "../../../../WorkflowsStore";
+import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { useAnimatedValue, useReactiveInput } from "../../utils";
 
 export const Textarea = styled(TextareaAutosize)`
@@ -55,20 +51,18 @@ export const Textarea = styled(TextareaAutosize)`
   }
 `;
 
-interface FormTextareaWrapperProps extends TextareaAutosizeProps {
+interface FormTextareaProps extends TextareaAutosizeProps {
   name: Extract<keyof EarlyTerminationDraftData, string>;
 }
 
-interface FormTextareaProps extends FormTextareaWrapperProps {
-  opportunity: Opportunity;
-}
-
 const FormTextarea: React.FC<FormTextareaProps> = observer(
-  ({ opportunity, name, ...props }: FormTextareaProps) => {
-    const [value, onChange] = useReactiveInput<
-      EarlyTerminationOpportunity,
-      HTMLTextAreaElement
-    >(name, opportunity as EarlyTerminationOpportunity);
+  ({ name, ...props }: FormTextareaProps) => {
+    const opportunityForm = useOpportunityFormContext();
+
+    const [value, onChange] = useReactiveInput<HTMLTextAreaElement>(
+      name,
+      opportunityForm
+    );
 
     const inputRef = useRef<HTMLTextAreaElement>(
       null
@@ -90,16 +84,4 @@ const FormTextarea: React.FC<FormTextareaProps> = observer(
   }
 );
 
-const FormTextareaWrapper = ({ name, ...props }: FormTextareaWrapperProps) => {
-  const { workflowsStore } = useRootStore();
-  const opportunity =
-    workflowsStore?.selectedClient?.opportunities.earlyTermination;
-
-  if (!opportunity?.isHydrated) {
-    return <Textarea {...props} disabled />;
-  }
-
-  return <FormTextarea opportunity={opportunity} name={name} {...props} />;
-};
-
-export default observer(FormTextareaWrapper);
+export default FormTextarea;

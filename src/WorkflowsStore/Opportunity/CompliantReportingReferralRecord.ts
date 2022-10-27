@@ -15,8 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Timestamp } from "firebase/firestore";
+import { DocumentData, Timestamp } from "firebase/firestore";
 
+import { UNKNOWN } from "../Client";
+import { TransformFunction } from "../subscriptions";
+import { fieldToDate, optionalFieldToDate } from "../utils";
+
+export type AlmostEligibleCriteria = {
+  currentLevelEligibilityDate?: Date;
+  passedDrugScreenNeeded?: boolean;
+  paymentNeeded?: boolean;
+  recentRejectionCodes?: string[];
+  seriousSanctionsEligibilityDate?: Date;
+};
+
+export type CompliantReportingReferralRecord = {
+  almostEligibleCriteria?: AlmostEligibleCriteria;
+  currentOffenses: string[];
+  eligibilityCategory: string;
+  eligibleLevelStart?: Date;
+  drugScreensPastYear: { result: string; date: Date }[];
+  finesFeesEligible: CompliantReportingFinesFeesEligible;
+  judicialDistrict: string;
+  lastSpecialConditionsNote?: Date | undefined;
+  lifetimeOffensesExpired: string[];
+  mostRecentArrestCheck: Date;
+  nextSpecialConditionsCheck?: Date | undefined;
+  pastOffenses: string[];
+  /** Any number greater than zero indicates the client is _almost_ eligible. */
+  remainingCriteriaNeeded: number;
+  sanctionsPastYear: { type: string }[];
+  specialConditionsFlag?: SpecialConditionsStatus;
+  specialConditionsTerminatedDate?: Date | undefined;
+  supervisionFeeExemption?: string;
+  zeroToleranceCodes: { contactNoteType: string; contactNoteDate: Date }[];
+};
 export type CompliantReportingFinesFeesEligible =
   | "low_balance"
   | "exempt"
@@ -24,103 +57,7 @@ export type CompliantReportingFinesFeesEligible =
 
 export type SpecialConditionsStatus = "none" | "terminated" | "current";
 
-export type CompliantReportingReferralRecord = {
-  allDockets: string;
-  almostEligibleCriteria?: {
-    currentLevelEligibilityDate?: string;
-    passedDrugScreenNeeded?: boolean;
-    paymentNeeded?: boolean;
-    recentRejectionCodes?: string[];
-    seriousSanctionsEligibilityDate?: string;
-  };
-  clientFirstName: string;
-  clientLastName: string;
-  convictionCounty: string;
-  courtName: string;
-  courtCostsBalance: string;
-  courtCostsMonthlyAmt1: string;
-  courtCostsMonthlyAmt2: string;
-  courtCostsPaid: boolean;
-  currentEmployer: string;
-  currentOffenses: string[];
-  dateToday: string;
-  driversLicense: string;
-  driversLicenseSuspended: string;
-  driversLicenseRevoked: string;
-  drugScreensPastYear: { result: string; date: Timestamp | string }[];
-  eligibilityCategory: string;
-  eligibleLevelStart: Timestamp | string;
-  expirationDate: string;
-  finesFeesEligible: CompliantReportingFinesFeesEligible;
-  judicialDistrict: string | null;
-  lastSpecialConditionsNote?: string;
-  lifetimeOffensesExpired: string[];
-  mostRecentArrestCheck?: Timestamp | string;
-  nextSpecialConditionsCheck?: Timestamp | string;
-  pastOffenses: string[];
-  physicalAddress: string;
-  poFirstName: string;
-  poLastName: string;
-  /** Any number greater than zero indicates the client is _almost_ eligible.
-   * In practice this field should not be optional once it is supported by ETL,
-   * but for backwards compatibility it is for now
-   */
-  remainingCriteriaNeeded?: number;
-  restitutionAmt: string;
-  restitutionMonthlyPayment: string;
-  restitutionMonthlyPaymentTo: string[];
-  sanctionsPastYear: { ProposedSanction: string }[];
-  sentenceStartDate: string;
-  sentenceLengthDays: string;
-  specialConditionsAlcDrugAssessment: string;
-  specialConditionsAlcDrugAssessmentComplete: boolean;
-  specialConditionsAlcDrugAssessmentCompleteDate: string;
-  specialConditionsAlcDrugScreen: boolean;
-  specialConditionsAlcDrugScreenDate: string;
-  specialConditionsAlcDrugTreatment: boolean;
-  specialConditionsAlcDrugTreatmentCompleteDate: string;
-  specialConditionsAlcDrugTreatmentCurrent: boolean;
-  specialConditionsAlcDrugTreatmentInOut: "INPATIENT" | "OUTPATIENT";
-  specialConditionsCommunityService: boolean;
-  specialConditionsCommunityServiceCompletionDate: string;
-  specialConditionsCommunityServiceCurrent: boolean;
-  specialConditionsCommunityServiceHours: string;
-  specialConditionsCounseling: boolean;
-  specialConditionsCounselingAngerManagement: boolean;
-  specialConditionsCounselingAngerManagementCompleteDate: string;
-  specialConditionsCounselingAngerManagementCurrent: boolean;
-  specialConditionsCounselingMentalHealth: boolean;
-  specialConditionsCounselingMentalHealthCompleteDate: string;
-  specialConditionsCounselingMentalHealthCurrent: boolean;
-  specialConditionsFlag: SpecialConditionsStatus;
-  specialConditionsProgrammingFsw: boolean;
-  specialConditionsProgrammingFswCompletionDate: string;
-  specialConditionsProgrammingFswCurrent: boolean;
-  specialConditionsProgramming: boolean;
-  specialConditionsProgrammingCognitiveBehavior: boolean;
-  specialConditionsProgrammingCognitiveBehaviorCompletionDate: string;
-  specialConditionsProgrammingCognitiveBehaviorCurrent: boolean;
-  specialConditionsProgrammingSafe: boolean;
-  specialConditionsProgrammingSafeCompletionDate: string;
-  specialConditionsProgrammingSafeCurrent: boolean;
-  specialConditionsProgrammingVictimImpact: boolean;
-  specialConditionsProgrammingVictimImpactCompletionDate: string;
-  specialConditionsProgrammingVictimImpactCurrent: boolean;
-  specialConditionsTerminatedDate?: string;
-  stateCode: string;
-  supervisionFeeArrearaged: boolean;
-  supervisionFeeArrearagedAmount: number;
-  supervisionFeeAssessed: number;
-  supervisionFeeExemption: string;
-  supervisionFeeExemptionExpirDate: string;
-  supervisionFeeExemptionType: string;
-  supervisionFeeWaived: string;
-  supervisionType: string;
-  tdocId: string;
-  zeroToleranceCodes?: { contactNoteType: string; contactNoteDate: string }[];
-};
-
-export interface TransformedCompliantReportingReferral {
+export interface CompliantReportingDraftData {
   /* Computed fields */
   clientFullName: string;
   poFullName: string;
@@ -233,3 +170,97 @@ export interface TransformedCompliantReportingReferral {
   specialConditionsProgrammingVictimImpactComplete: boolean;
   specialConditionsProgrammingFswComplete: boolean;
 }
+
+type RawCompliantReportingReferralRecord = DocumentData & {
+  drugScreensPastYear: {
+    result: string;
+    date: Timestamp | string;
+  }[];
+  sanctionsPastYear?: { ProposedSanction: string }[];
+  zeroToleranceCodes?: { contactNoteType: string; contactNoteDate: string }[];
+};
+
+export const transformCompliantReportingReferral: TransformFunction<CompliantReportingReferralRecord> = (
+  record
+) => {
+  if (!record) return;
+
+  const {
+    almostEligibleCriteria,
+    currentOffenses,
+    drugScreensPastYear,
+    eligibilityCategory,
+    eligibleLevelStart,
+    finesFeesEligible,
+    judicialDistrict,
+    lastSpecialConditionsNote,
+    lifetimeOffensesExpired,
+    mostRecentArrestCheck,
+    nextSpecialConditionsCheck,
+    pastOffenses,
+    remainingCriteriaNeeded,
+    sanctionsPastYear,
+    specialConditionsFlag,
+    specialConditionsTerminatedDate,
+    supervisionFeeExemption,
+    zeroToleranceCodes,
+    ...data
+  } = record as RawCompliantReportingReferralRecord;
+
+  const transformedRecord: CompliantReportingReferralRecord = {
+    ...data,
+    currentOffenses,
+    eligibilityCategory,
+    eligibleLevelStart: optionalFieldToDate(eligibleLevelStart),
+    drugScreensPastYear: drugScreensPastYear.map(({ result, date }) => ({
+      result,
+      date: fieldToDate(date),
+    })),
+    finesFeesEligible,
+    judicialDistrict: judicialDistrict ?? UNKNOWN,
+    lastSpecialConditionsNote: optionalFieldToDate(lastSpecialConditionsNote),
+    lifetimeOffensesExpired,
+    mostRecentArrestCheck: fieldToDate(mostRecentArrestCheck),
+    nextSpecialConditionsCheck: optionalFieldToDate(nextSpecialConditionsCheck),
+    pastOffenses,
+    remainingCriteriaNeeded: remainingCriteriaNeeded ?? 0,
+    sanctionsPastYear:
+      sanctionsPastYear?.map(({ ProposedSanction }) => ({
+        type: ProposedSanction,
+      })) ?? [],
+    specialConditionsTerminatedDate: optionalFieldToDate(
+      specialConditionsTerminatedDate
+    ),
+    specialConditionsFlag,
+    supervisionFeeExemption,
+    zeroToleranceCodes:
+      zeroToleranceCodes?.map(({ contactNoteDate, contactNoteType }) => ({
+        contactNoteType,
+        contactNoteDate: new Date(contactNoteDate),
+      })) ?? [],
+  };
+
+  if (almostEligibleCriteria) {
+    const {
+      currentLevelEligibilityDate,
+      passedDrugScreenNeeded,
+      paymentNeeded,
+      recentRejectionCodes,
+      seriousSanctionsEligibilityDate,
+    } = almostEligibleCriteria;
+
+    transformedRecord.almostEligibleCriteria = {
+      currentLevelEligibilityDate: optionalFieldToDate(
+        currentLevelEligibilityDate
+      ),
+      seriousSanctionsEligibilityDate: optionalFieldToDate(
+        seriousSanctionsEligibilityDate
+      ),
+      passedDrugScreenNeeded,
+      paymentNeeded,
+      recentRejectionCodes,
+    };
+  }
+
+  return transformedRecord;
+};

@@ -70,10 +70,12 @@ describe("fully eligible", () => {
 
     referralSub = opp.referralSubscription;
     referralSub.isLoading = false;
+    referralSub.isHydrated = true;
     referralSub.data = LSUReferralRecordFixture;
 
     updatesSub = opp.updatesSubscription;
     updatesSub.isLoading = false;
+    updatesSub.isHydrated = true;
   });
 
   test("requirements almost met", () => {
@@ -184,7 +186,7 @@ describe("fully eligible", () => {
         ...formInformation,
       };
 
-      const { [property]: actual } = opp.prefilledData;
+      const { [property]: actual } = opp.form.prefilledData;
       expect(actual).toEqual(expected);
 
       opp.record.formInformation = originalFormInformation;
@@ -198,6 +200,7 @@ describe("no UA required", () => {
 
     referralSub = opp.referralSubscription;
     referralSub.isLoading = false;
+    referralSub.isHydrated = true;
     const record = LSUReferralRecordFixture;
     record.criteria.negativeUaWithin90Days = {
       latestUaDates: [],
@@ -207,6 +210,7 @@ describe("no UA required", () => {
 
     updatesSub = opp.updatesSubscription;
     updatesSub.isLoading = false;
+    referralSub.isHydrated = true;
   });
 
   test("requirements almost met", () => {

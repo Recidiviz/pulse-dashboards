@@ -17,6 +17,9 @@
 export * from "./CompliantReportingOpportunity";
 export * from "./EarlyTerminationOpportunity";
 export * from "./EarnedDischargeOpportunity";
+export { CompliantReportingForm } from "./Forms/CompliantReportingForm";
+export { EarlyTerminationForm } from "./Forms/EarlyTerminationForm";
+export { LSUForm } from "./Forms/LSUForm";
 export * from "./LSUOpportunity";
 export * from "./PastFTRDOpportunity";
 export * from "./types";

@@ -147,7 +147,7 @@ export const OpportunitiesAccordion = observer(
       return (
         <OpportunityModule
           opportunity={opportunities[0]}
-          formLinkButton={!!opportunities[0].navigateToFormText}
+          formLinkButton={!!opportunities[0].form}
         />
       );
     }
@@ -168,7 +168,7 @@ export const OpportunitiesAccordion = observer(
                 <AccordionBody>
                   <OpportunityModule
                     opportunity={opportunity}
-                    formLinkButton={!!opportunity.navigateToFormText}
+                    formLinkButton={!!opportunity.form}
                     hideHeader
                   />
                 </AccordionBody>

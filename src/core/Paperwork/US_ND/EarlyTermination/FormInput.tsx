@@ -22,22 +22,14 @@ import { MutableRefObject, useRef } from "react";
 import AutosizeInput from "react-input-autosize";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
-import {
-  EarlyTerminationDraftData,
-  EarlyTerminationOpportunity,
-  Opportunity,
-} from "../../../../WorkflowsStore";
+import { EarlyTerminationDraftData } from "../../../../WorkflowsStore";
+import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { useAnimatedValue, useReactiveInput } from "../../utils";
 
-interface FormInputWrapperProps {
+interface FormInputProps {
   name: Extract<keyof EarlyTerminationDraftData, string>;
   placeholder?: string;
   style?: React.InputHTMLAttributes<HTMLInputElement>["style"];
-}
-
-interface FormInputProps extends FormInputWrapperProps {
-  opportunity: Opportunity;
 }
 
 const StyledAutosizeInput = styled.span`
@@ -71,15 +63,16 @@ const StyledAutosizeInput = styled.span`
 `;
 
 const FormInput: React.FC<FormInputProps> = observer(
-  ({ opportunity, name, style, ...props }: FormInputProps) => {
+  ({ name, style, ...props }: FormInputProps) => {
     /*
    On mount, the autosize input has its value set, which causes it to resize to fit its content. During animation,
    we modify the element's value attribute in place which does not trigger resize.
    */
-    const [value, onChange] = useReactiveInput<
-      EarlyTerminationOpportunity,
-      HTMLInputElement
-    >(name, opportunity as EarlyTerminationOpportunity);
+    const opportunityForm = useOpportunityFormContext();
+    const [value, onChange] = useReactiveInput<HTMLInputElement>(
+      name,
+      opportunityForm
+    );
 
     const inputRef = useRef<HTMLInputElement>(
       null
@@ -110,22 +103,4 @@ const FormInput: React.FC<FormInputProps> = observer(
   }
 );
 
-const FormInputWrapper: React.FC<FormInputWrapperProps> = ({
-  ...props
-}: FormInputWrapperProps) => {
-  const { workflowsStore } = useRootStore();
-  const opportunity =
-    workflowsStore?.selectedClient?.opportunities.earlyTermination;
-
-  if (!opportunity?.isHydrated) {
-    return (
-      <StyledAutosizeInput>
-        <input {...props} disabled />
-      </StyledAutosizeInput>
-    );
-  }
-
-  return <FormInput opportunity={opportunity} {...props} />;
-};
-
-export default observer(FormInputWrapper);
+export default FormInput;

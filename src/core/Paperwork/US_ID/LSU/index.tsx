@@ -15,14 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WebFormFieldWrapperProps } from "../../WebFormField";
+import { WebFormFieldProps } from "../../WebFormField";
 
 export const LSUFormFieldBaseProps = {
   pattern: "^[^~{}]+$",
   errorMessage: "Cannot contain ~ { or } characters",
 };
 
-export const LSUFormFields: WebFormFieldWrapperProps[] = [
+export const LSUFormFields: WebFormFieldProps[] = [
   {
     name: "chargeDescriptions",
     label: "Crime(s)",

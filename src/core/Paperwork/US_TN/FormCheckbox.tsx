@@ -18,8 +18,8 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
-import { useRootStore } from "../../../components/StoreProvider";
-import { updateOpportunityDraftData } from "../../../firestore";
+import { updateFormDraftData } from "../../../firestore";
+import { useOpportunityFormContext } from "../OpportunityFormContext";
 import { Checkbox } from "./styles";
 import { FormDataType } from "./types";
 
@@ -33,28 +33,16 @@ export type FormCheckboxProps = StyledComponentProps<
 };
 
 const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
-  const { workflowsStore } = useRootStore();
-
-  if (!workflowsStore.selectedClient) {
-    return null;
-  }
-
-  const { compliantReporting } = workflowsStore.selectedClient.opportunities;
+  const opportunityForm = useOpportunityFormContext();
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const client = workflowsStore.selectedClient;
-    if (!client || !workflowsStore.user || !compliantReporting) {
-      event.preventDefault();
-      return;
-    }
-
-    updateOpportunityDraftData(compliantReporting, name, event.target.checked);
+    updateFormDraftData(opportunityForm, name, event.target.checked);
   };
 
   return (
     <Checkbox
       {...props}
-      checked={!!compliantReporting?.formData[name]}
+      checked={!!opportunityForm.formData[name]}
       id={name}
       name={name}
       onChange={onChange}

@@ -50,7 +50,8 @@ import {
 import { UserAppMetadata } from "../RootStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
 import { isOfflineMode } from "../utils/isOfflineMode";
-import { Opportunity, OpportunityType } from "../WorkflowsStore";
+import { OpportunityType } from "../WorkflowsStore";
+import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
 import {
   ClientRecord,
   ClientUpdateRecord,
@@ -452,14 +453,16 @@ export function updateSelectedOfficerIds(
   );
 }
 
-export const updateOpportunityDraftData = async function (
-  opportunity: Opportunity,
+export const updateFormDraftData = async function (
+  form: FormBase<any>,
   name: string,
   value: FieldValue | string | number | boolean
 ): Promise<void> {
+  const { opportunity, formLastUpdated } = form;
+  const { client } = opportunity;
+
   await when(() => opportunity.isHydrated);
 
-  const { client, formLastUpdated } = opportunity;
   const update = {
     referralForm: {
       updated: {
@@ -471,7 +474,7 @@ export const updateOpportunityDraftData = async function (
   };
   const isFirstEdit = !formLastUpdated;
 
-  await updateOpportunity(opportunity.type, client.recordId, update);
+  await updateOpportunity(form.type, client.recordId, update);
 
   if (isFirstEdit) {
     trackReferralFormFirstEdited({
@@ -484,7 +487,7 @@ export const updateOpportunityDraftData = async function (
     trackSetOpportunityStatus({
       clientId: client.pseudonymizedId,
       status: "IN_PROGRESS",
-      opportunityType: opportunity.type,
+      opportunityType: form.type,
     });
   }
 };

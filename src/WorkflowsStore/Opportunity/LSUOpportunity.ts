@@ -15,24 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import dedent from "dedent";
 import { some } from "lodash";
 import { computed, makeObservable } from "mobx";
-import moment from "moment";
-import { format as formatPhone } from "phone-fns";
 
 import { Client } from "../Client";
 import { OTHER_KEY } from "../WorkflowsStore";
+import { LSUForm } from "./Forms/LSUForm";
 import {
   LSUDraftData,
   LSUEarnedDischargeCommonCriteria,
   LSUReferralRecord,
   transformReferral,
 } from "./LSUReferralRecord";
-import {
-  OpportunityWithFormBase,
-  PrefilledDataTransformer,
-} from "./OpportunityWithFormBase";
+import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 
 const DENIAL_REASONS_MAP = {
@@ -134,16 +129,11 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
   return requirements;
 };
 
-const defaultFormValueJoiner = (...items: (string | undefined)[]) =>
-  items.filter((item) => item).join("\n");
-
-const formatFormValueDate = (date: string) => moment(date).format("MM/DD/YYYY");
-
-export class LSUOpportunity extends OpportunityWithFormBase<
+export class LSUOpportunity extends OpportunityBase<
   LSUReferralRecord,
   LSUDraftData
 > {
-  navigateToFormText = "Generate Chrono";
+  form: LSUForm;
 
   constructor(client: Client) {
     super(client, "LSU", transformReferral);
@@ -152,6 +142,7 @@ export class LSUOpportunity extends OpportunityWithFormBase<
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
+    this.form = new LSUForm(this.type, this);
   }
 
   get requirementsMet(): OpportunityRequirement[] {
@@ -173,64 +164,6 @@ export class LSUOpportunity extends OpportunityWithFormBase<
 
     return requirements;
   }
-
-  prefilledDataTransformer: PrefilledDataTransformer<LSUDraftData> = () => {
-    if (!this.record) return {};
-
-    const { formInformation: form } = this.record;
-    return {
-      chargeDescriptions: form.chargeDescriptions?.join(",") ?? "",
-      contactInformation: defaultFormValueJoiner(
-        form.currentAddress,
-        form.currentPhoneNumber
-          ? formatPhone("(NNN) NNN-NNNN", form.currentPhoneNumber)
-          : undefined,
-        form.emailAddress
-      ),
-
-      employmentInformation: defaultFormValueJoiner(
-        form.employerName,
-        form.employerAddress,
-        form.employmentStartDate
-          ? `Started ${formatFormValueDate(form.employmentStartDate)}`
-          : "",
-        form.employmentDateVerified
-          ? `Verified ${formatFormValueDate(form.employmentDateVerified)}`
-          : ""
-      ),
-
-      assessmentInformation: dedent`
-        ${form.assessmentScore ? `Score: ${form.assessmentScore}` : ""}
-        ${
-          form.assessmentDate
-            ? `Last assessed: ${formatFormValueDate(form.assessmentDate)}`
-            : ""
-        }
-      `,
-
-      substanceTest: form.latestNegativeDrugScreenDate
-        ? `Tested negative on ${formatFormValueDate(
-            form.latestNegativeDrugScreenDate
-          )}`
-        : "",
-
-      ncicCheck: defaultFormValueJoiner(
-        form.ncicReviewDate
-          ? `Completed on ${formatFormValueDate(form.ncicReviewDate)}`
-          : "",
-        form.ncicNoteBody
-      ),
-
-      treatmentCompletionDate: defaultFormValueJoiner(
-        form.txDischargeDate
-          ? `${form.txNoteTitle} on ${formatFormValueDate(
-              form.txDischargeDate
-            )}`
-          : "",
-        form.txNoteBody
-      ),
-    };
-  };
 
   get eligibilityDate(): Date | undefined {
     if (!this.record) return;

@@ -82,7 +82,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         <CriteriaList opportunity={opportunity} />
         {(formPrintButton || showDenialButton || formLinkButton) && (
           <ActionButtons>
-            {formLinkButton && opportunity.navigateToFormText && (
+            {formLinkButton && opportunity.form && (
               <Link
                 to={workflowsUrl("opportunityAction", {
                   opportunityType: opportunity.type,
@@ -90,11 +90,11 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                 })}
               >
                 <FormActionButton buttonFill={colors.buttonFill}>
-                  {opportunity.navigateToFormText}
+                  {opportunity.form.navigateToFormText}
                 </FormActionButton>
               </Link>
             )}
-            {formPrintButton && opportunity.printText && (
+            {formPrintButton && opportunity.form && (
               <div>
                 <FormActionButton
                   buttonFill={colors.buttonFill}
@@ -102,7 +102,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                     opportunity.client.printReferralForm(opportunity.type)
                   }
                 >
-                  {opportunity.printText}
+                  {opportunity.form.printText}
                 </FormActionButton>
               </div>
             )}

@@ -41,23 +41,19 @@ export const compliantReportingEligibleClientRecord = {
 };
 
 export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecord> = {
-  stateCode: "US_XX",
-  tdocId: "cr-eligible-1",
   eligibilityCategory: "c1",
   remainingCriteriaNeeded: 0,
-  mostRecentArrestCheck: dateToTimestamp("2022-05-28"),
-  eligibleLevelStart: dateToTimestamp("2019-12-20"),
+  mostRecentArrestCheck: parseISO("2022-05-28"),
+  eligibleLevelStart: parseISO("2019-12-20"),
   judicialDistrict: "A",
   finesFeesEligible: "regular_payments",
-  drugScreensPastYear: [
-    { result: "DRUN", date: dateToTimestamp("2022-01-04") },
-  ],
+  drugScreensPastYear: [{ result: "DRUN", date: parseISO("2022-01-04") }],
   sanctionsPastYear: [],
   currentOffenses: ["EXAMPLE CURRENT"],
   pastOffenses: [],
   lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
   specialConditionsFlag: "current",
-  lastSpecialConditionsNote: "2022-03-15",
+  lastSpecialConditionsNote: parseISO("2022-03-15"),
 };
 
 export const compliantReportingAlmostEligibleCriteria: Required<
@@ -65,19 +61,17 @@ export const compliantReportingAlmostEligibleCriteria: Required<
 > = {
   passedDrugScreenNeeded: true,
   paymentNeeded: true,
-  currentLevelEligibilityDate: "2022-08-15",
-  seriousSanctionsEligibilityDate: "2022-08-15",
+  currentLevelEligibilityDate: parseISO("2022-08-15"),
+  seriousSanctionsEligibilityDate: parseISO("2022-08-15"),
   recentRejectionCodes: ["TEST1"],
 };
 
 export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantReportingReferralRecord> = {
-  stateCode: "US_XX",
-  tdocId: "cr-almost-eligible-1",
   almostEligibleCriteria: compliantReportingAlmostEligibleCriteria,
   eligibilityCategory: "c1",
   remainingCriteriaNeeded: 1,
-  mostRecentArrestCheck: dateToTimestamp("2022-05-28"),
-  eligibleLevelStart: dateToTimestamp("2019-12-20"),
+  mostRecentArrestCheck: parseISO("2022-05-28"),
+  eligibleLevelStart: parseISO("2019-12-20"),
   judicialDistrict: "A",
   finesFeesEligible: "regular_payments",
   drugScreensPastYear: [],
@@ -86,7 +80,7 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
   pastOffenses: [],
   lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
   specialConditionsFlag: "current",
-  lastSpecialConditionsNote: "2022-03-15",
+  lastSpecialConditionsNote: parseISO("2022-03-15"),
 };
 
 export const compliantReportingAlmostEligibleClientRecord = {

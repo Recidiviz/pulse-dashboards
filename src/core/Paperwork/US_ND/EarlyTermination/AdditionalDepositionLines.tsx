@@ -24,7 +24,8 @@ import { observer } from "mobx-react-lite";
 import { rem, transparentize } from "polished";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
+import { EarlyTerminationForm } from "../../../../WorkflowsStore";
+import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import FormTextarea from "./FormTextarea";
 
 const AddALine = styled.button.attrs({ type: "button" })`
@@ -69,23 +70,18 @@ const AdditionalDepositionLineFormTextarea = styled(FormTextarea)`
 `;
 
 const AdditionalDepositionLines: React.FC = () => {
-  const client = useRootStore().workflowsStore.selectedClient;
-  const earlyTermination = client?.opportunities?.earlyTermination;
-
-  if (!earlyTermination) {
-    return null;
-  }
+  const opportunityForm = useOpportunityFormContext() as EarlyTerminationForm;
 
   return (
     <>
-      {earlyTermination.additionalDepositionLines.map((key) => {
+      {opportunityForm.additionalDepositionLines.map((key) => {
         return (
           <AddLineListItem key={key}>
             <AdditionalDepositionLineFormTextarea name={key} minRows={2} />
             <RemoveButtonContainer>
               <TooltipTrigger contents={<span>Remove</span>}>
                 <RemoveButton
-                  onClick={() => earlyTermination.removeDepositionLine(key)}
+                  onClick={() => opportunityForm.removeDepositionLine(key)}
                 />
               </TooltipTrigger>
             </RemoveButtonContainer>
@@ -93,7 +89,7 @@ const AdditionalDepositionLines: React.FC = () => {
         );
       })}
       <li>
-        <AddALine onClick={() => earlyTermination.addDepositionLine()}>
+        <AddALine onClick={() => opportunityForm.addDepositionLine()}>
           Add a line...
         </AddALine>
       </li>

@@ -18,6 +18,7 @@
 import { Hydratable } from "../../core/models/types";
 import { Denial, UpdateLog } from "../../firestore";
 import { Client } from "../Client";
+import { FormBase } from "./Forms/FormBase";
 
 export const OPPORTUNITY_TYPES = [
   "compliantReporting",
@@ -81,13 +82,14 @@ export type WithCaseNotes = {
  * where form-related behavior is optional. Opportunity-specific extensions of this type
  * should generally override them to be required.
  */
-export interface Opportunity extends Hydratable, Partial<BaseForm> {
+export interface Opportunity extends Hydratable {
   almostEligible: boolean;
   // TODO: move this to status component once almost-eligible is standardized on TES
   almostEligibleStatusMessage?: string;
   almostEligibleRecommendedNote?: { title: string; text: string };
   client: Client;
   readonly defaultEligibility: DefaultEligibility;
+  form?: FormBase<any>;
   requirementsAlmostMet: OpportunityRequirement[];
   requirementsMet: OpportunityRequirement[];
   reviewStatus: OpportunityStatus;
@@ -100,11 +102,4 @@ export interface Opportunity extends Hydratable, Partial<BaseForm> {
   eligibilityDate: Date | undefined;
   readonly isAlert: boolean;
   supportsDenial: boolean;
-}
-
-export interface BaseForm<FormDataType = Record<string, any>> {
-  printText: string;
-  navigateToFormText: string;
-  formLastUpdated: UpdateLog | undefined;
-  formData: Partial<FormDataType>;
 }

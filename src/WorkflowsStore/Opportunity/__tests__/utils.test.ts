@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { MockFormBase } from "../../../core/__tests__/testUtils";
 import { Client } from "../../Client";
 import { Opportunity } from "../types";
 import {
@@ -24,6 +25,7 @@ import {
 
 jest.mock("../../subscriptions");
 jest.mock("../../../firestore");
+jest.mock("../Forms/FormBase");
 
 let opp1: Opportunity;
 let opp2: Opportunity;
@@ -58,6 +60,7 @@ describe("sort", () => {
       denial: undefined,
       denialReasonsMap: {},
       firstViewed: undefined,
+      form: MockFormBase,
       hydrate: () => undefined,
       isHydrated: true,
       requirementsAlmostMet: [],

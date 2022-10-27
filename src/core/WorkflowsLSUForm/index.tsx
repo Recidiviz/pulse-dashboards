@@ -23,7 +23,6 @@ import {
   Sans24,
   spacing,
 } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
 import useClipboard from "react-use-clipboard";
@@ -32,6 +31,7 @@ import styled from "styled-components/macro";
 import { trackReferralFormCopiedToClipboard } from "../../analytics";
 import { useRootStore } from "../../components/StoreProvider";
 import { FormLastEdited } from "../FormLastEdited";
+import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
 import { LSUFormFieldBaseProps, LSUFormFields } from "../Paperwork/US_ID/LSU";
 import template from "../Paperwork/US_ID/LSU/Chrono";
 import WebFormField from "../Paperwork/WebFormField";
@@ -86,7 +86,7 @@ const WorkflowsLSUForm: React.FC = () => {
   const { workflowsStore } = useRootStore();
   const opportunity = workflowsStore?.selectedClient?.opportunities?.LSU;
   const [selectedFormSection, setSelectedFormSection] = useState(0);
-  const chrono = template(opportunity?.formData);
+  const chrono = template(opportunity?.form.formData);
 
   const [isCopied, copyToClipboard] = useClipboard(chrono, {
     successDuration: animation.extendedDurationMs,
@@ -131,7 +131,7 @@ const WorkflowsLSUForm: React.FC = () => {
             Transfer Chrono
             <br />
             <LastEditedMessage>
-              <FormLastEdited agencyName="IDOC" form={opportunity} />
+              <FormLastEdited agencyName="IDOC" form={opportunity.form} />
             </LastEditedMessage>
           </FormHeading>
         </FormHeaderSection>
@@ -150,4 +150,4 @@ const WorkflowsLSUForm: React.FC = () => {
   );
 };
 
-export default observer(WorkflowsLSUForm);
+export default connectComponentToOpportunityForm(WorkflowsLSUForm, "LSU");

@@ -27,6 +27,7 @@ import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
 import { DocumentSubscription } from "../../subscriptions";
 import { ineligibleClientRecord } from "../__fixtures__";
+import { FormBase } from "../Forms/FormBase";
 import { OpportunityBase } from "../OpportunityBase";
 import {
   COMPLETED_UPDATE,
@@ -52,7 +53,14 @@ let updatesSub: DocumentSubscription<any>;
 let mockUser: CombinedUserRecord;
 let mockUserStateCode: jest.SpyInstance;
 
-class TestOpportunity extends OpportunityBase<Record<string, any>> {}
+class TestOpportunity extends OpportunityBase<Record<string, any>> {
+  form: FormBase<any>;
+
+  constructor(oppClient: Client, type: OpportunityType) {
+    super(oppClient, type);
+    this.form = new FormBase<any>("LSU", this);
+  }
+}
 
 function createTestUnit() {
   mockUser = {
@@ -321,4 +329,14 @@ describe("setCompletedIfEligible", () => {
 
     expect(trackSetOpportunityStatusMock).not.toHaveBeenCalled();
   });
+});
+
+test("form updates override prefilled data", () => {
+  referralSub.data = { formInformation: { foo: "test1" } };
+
+  expect(opp.form?.formData).toEqual({ foo: "test1" });
+
+  updatesSub.data = { referralForm: { data: { foo: "test2" } } };
+
+  expect(opp.form?.formData).toEqual({ foo: "test2" });
 });
