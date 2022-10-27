@@ -27,15 +27,60 @@
       }
     },
     "caseNotes": {
-      "Treatment": [{
-        "noteTitle": "STARTED",
-        "noteBody": "Treatment started",
-        "eventDate": "2022-06-17"
-      },{
-        "noteTitle": "COMPLETED",
-        "noteBody": "Treatment successfully completed",
-        "eventDate": "2022-09-22"
-      }]
+      "Treatment": [
+        {
+          "noteTitle": "STARTED",
+          "noteBody": "Treatment started",
+          "eventDate": "2022-06-17"
+        },
+        {
+          "noteTitle": "COMPLETED",
+          "noteBody": "Treatment successfully completed",
+          "eventDate": "2022-09-22"
+        }
+      ]
+    }
+  },
+  {
+    "stateCode": "US_ID",
+    "externalId": "002",
+    "eligibleStartDate": "2022-07-10",
+    "formInformation": {},
+    "criteria": {
+      "negativeUaWithin90Days": null,
+      "noFelonyWithin24Months": null,
+      "noViolentMisdemeanorWithin12Months": null,
+      "onSupervisionAtLeastOneYear": {
+        "eligibleDate": "2022-05-11"
+      },
+      "supervisionNotPastFullTermCompletionDate": {
+        "eligibleDate": "2032-08-12"
+      },
+      "usIdIncomeVerifiedWithin3Months": {
+        "incomeVerifiedDate": "2022-08-12"
+      },
+      "usIdLsirLevelLowModerateForXDays": {
+        "eligibleDate": "2022-08-10",
+        "riskLevel": "MODERATE"
+      },
+      "usIdParoleDualSupervisionPastEarlyDischargeDate": {
+        "eligibleDate": "2022-06-05",
+        "sentenceType": "PAROLE"
+      }
+    },
+    "caseNotes": {
+      "Treatment": [
+        {
+          "noteTitle": "STARTED",
+          "noteBody": "Treatment started",
+          "eventDate": "2022-06-17"
+        },
+        {
+          "noteTitle": "COMPLETED",
+          "noteBody": "Treatment successfully completed",
+          "eventDate": "2022-09-22"
+        }
+      ]
     }
   }
 ]

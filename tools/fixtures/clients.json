@@ -257,7 +257,7 @@
     "lastPaymentDate": "2022-01-04",
     "specialConditionsFlag": "current",
     "LSUEligible": false,
-    "earnedDischargeEligible": false,
+    "earnedDischargeEligible": true,
     "pastFTRDEligible": true
   }
 ]
