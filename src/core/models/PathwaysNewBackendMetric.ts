@@ -78,8 +78,6 @@ export default abstract class PathwaysNewBackendMetric<
 
   readonly enableMetricModeToggle: boolean;
 
-  readonly tenantId?: TenantId;
-
   readonly isHorizontal: boolean;
 
   readonly isGeographic: boolean;
@@ -120,7 +118,6 @@ export default abstract class PathwaysNewBackendMetric<
     this.id = id;
     this.endpoint = endpoint;
     this.rootStore = rootStore;
-    this.tenantId = isOfflineMode() ? undefined : rootStore.currentTenantId;
     this.filters = filters ?? rootStore.filtersStore.enabledFilters[id];
     this.enableMetricModeToggle = enableMetricModeToggle;
     this.isHorizontal = isHorizontal;
@@ -143,6 +140,7 @@ export default abstract class PathwaysNewBackendMetric<
         // this.rootStore?.filters isn't enough to track a change to a property of filters.
         return {
           filters: toJS(this.rootStore.filters),
+          tenant: this.rootStore.currentTenantId,
         };
       },
       () => {
@@ -211,6 +209,10 @@ export default abstract class PathwaysNewBackendMetric<
   abstract get dataSeriesForDiffing(): RecordFormat[];
 
   abstract get isEmpty(): boolean;
+
+  get tenantId(): TenantId | undefined {
+    return isOfflineMode() ? undefined : this.rootStore.currentTenantId;
+  }
 
   get content(): MetricContent {
     return getMetricCopy(this.tenantId)[this.id];

@@ -190,6 +190,21 @@ describe("OverTimeMetric", () => {
     );
   });
 
+  it("calls the backend again when the tenant changes", () => {
+    const newTenantId = "US_CO";
+    runInAction(() => {
+      metric.rootStore.tenantStore.currentTenantId = newTenantId;
+    });
+
+    expect(callNewMetricsApi).toHaveBeenCalledWith(
+      encodeURI(
+        `${newTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`
+      ),
+      RootStore.getTokenSilently,
+      expect.any(AbortSignal)
+    );
+  });
+
   it("does not call the backend again when the page changes", () => {
     expect(metric.isCurrentlyViewedMetric).toEqual(true);
 
