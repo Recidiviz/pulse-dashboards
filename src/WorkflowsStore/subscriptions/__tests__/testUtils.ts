@@ -37,3 +37,37 @@ export function getMockDocumentSnapshotHandler(
     });
   };
 }
+
+/**
+ * wraps the objects in `mockData` in a mock QuerySnapshot interface
+ */
+function mockQuerySnapshotResults(mockData: any[]) {
+  return {
+    forEach(callback: (result: any) => void) {
+      mockData.forEach((d) => {
+        callback({ data: () => d });
+      });
+    },
+  };
+}
+
+/**
+ * @returns a reference to the callback that receives subscription data,
+ * so that test data can be piped through the subscription on demand
+ */
+export function getMockQuerySnapshotHandler(
+  snapshotMock: jest.Mock
+): (mockData: any[]) => void {
+  let subscriptionHandler: any;
+
+  snapshotMock.mockImplementation((query, handler) => {
+    subscriptionHandler = handler;
+  });
+
+  snapshotMock();
+  snapshotMock.mockClear();
+
+  return function mockReceiveQuerySnapshot(mockData: any[]): void {
+    subscriptionHandler(mockQuerySnapshotResults(mockData));
+  };
+}

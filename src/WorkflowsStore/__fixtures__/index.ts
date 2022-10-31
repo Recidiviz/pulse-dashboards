@@ -54,17 +54,6 @@ export const mockSupervisor: CombinedUserRecord = {
   },
 };
 
-export const mockDirector: CombinedUserRecord = {
-  info: {
-    id: "DIRECTOR1",
-    stateCode: "US_XX",
-    email: "test-director@example.com",
-    hasCaseload: false,
-    givenNames: "Test",
-    surname: "Director",
-  },
-};
-
 export const ineligibleClient: ClientRecord = {
   recordId: "us_xx_100",
   personName: {

@@ -16,7 +16,12 @@
 // =============================================================================
 
 import { MockDocumentSubscription } from "./MockDocumentSubscription";
+import { MockQuerySubscription } from "./MockQuerySubscription";
 
 export const CollectionDocumentSubscription = MockDocumentSubscription;
 
 export const OpportunityUpdateSubscription = MockDocumentSubscription;
+
+export const ClientsSubscription = MockQuerySubscription;
+
+export const StaffSubscription = MockQuerySubscription;

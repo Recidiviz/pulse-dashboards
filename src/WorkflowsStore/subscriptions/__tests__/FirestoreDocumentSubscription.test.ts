@@ -21,7 +21,7 @@ import { computed } from "mobx";
 import { keepAlive } from "mobx-utils";
 
 import { FirestoreDocumentSubscription } from "../FirestoreDocumentSubscription";
-import { getMockDocumentSnapshotHandler } from "../testUtils";
+import { getMockDocumentSnapshotHandler } from "./testUtils";
 
 jest.mock("firebase/firestore");
 

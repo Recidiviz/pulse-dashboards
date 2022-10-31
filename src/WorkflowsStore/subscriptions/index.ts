@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "./ClientsSubscription";
 export * from "./CollectionDocumentSubscription";
 export * from "./OpportunityUpdateSubscription";
+export * from "./StaffSubscription";
 export * from "./types";

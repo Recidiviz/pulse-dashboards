@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { add } from "date-fns";
-import { keyBy } from "lodash";
 import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
@@ -24,10 +23,7 @@ import {
   ClientRecord,
   getClient,
   getUser,
-  subscribeToCaseloads,
-  subscribeToEligibleCount,
   subscribeToFeatureVariants,
-  subscribeToOfficers,
   subscribeToUserUpdates,
   UserUpdateRecord,
 } from "../../firestore";
@@ -37,7 +33,6 @@ import {
   eligibleClient,
   ineligibleClient,
   mockClients,
-  mockDirector,
   mockOfficer,
   mockOfficer2,
   mockOfficers,
@@ -70,15 +65,6 @@ jest.mock("../../tenants", () => ({
 
 const mockGetClient = getClient as jest.MockedFunction<typeof getClient>;
 const mockGetUser = getUser as jest.MockedFunction<typeof getUser>;
-const mockSubscribeToEligibleCount = subscribeToEligibleCount as jest.MockedFunction<
-  typeof subscribeToEligibleCount
->;
-const mockSubscribeToOfficers = subscribeToOfficers as jest.MockedFunction<
-  typeof subscribeToOfficers
->;
-const mockSubscribeToCaseloads = subscribeToCaseloads as jest.MockedFunction<
-  typeof subscribeToCaseloads
->;
 const mockSubscribeToUserUpdates = subscribeToUserUpdates as jest.MockedFunction<
   typeof subscribeToUserUpdates
 >;
@@ -94,19 +80,6 @@ const mockUnsub = jest.fn();
 
 function doBackendMock() {
   mockGetUser.mockResolvedValue(mockOfficer);
-  mockSubscribeToEligibleCount.mockImplementation(
-    (opportunityType, stateCode, ids, handler) => {
-      handler(1);
-      return mockUnsub;
-    }
-  );
-  mockSubscribeToCaseloads.mockImplementation(
-    (stateCode, officerIds, handler) => {
-      expect(stateCode).toBe(mockOfficer.info.stateCode);
-      handler(mockClients);
-      return mockUnsub;
-    }
-  );
 }
 
 async function waitForHydration(): Promise<void> {
@@ -117,14 +90,14 @@ async function waitForHydration(): Promise<void> {
 
 function populateClients(clients: ClientRecord[]): void {
   runInAction(() => {
-    workflowsStore.clients = keyBy(
-      clients.map((r) => new Client(r, rootStore)),
-      "pseudonymizedId"
-    );
+    workflowsStore.clientsSubscription.data = clients;
+    workflowsStore.clientsSubscription.isHydrated = true;
+    workflowsStore.clientsSubscription.isLoading = false;
   });
 }
 
 beforeEach(() => {
+  jest.resetAllMocks();
   // this lets us spy on observables, e.g. the tenant ID getter
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
@@ -144,7 +117,6 @@ beforeEach(() => {
 
 afterEach(() => {
   configure({ safeDescriptors: true });
-  jest.resetAllMocks();
   window.localStorage.clear();
 
   // clean up any Mobx observers to avoid leaks
@@ -263,164 +235,43 @@ test("receive feature variants from subscription", async () => {
   });
 });
 
-test("subscribe to officers in user's district", async () => {
-  mockSubscribeToOfficers.mockImplementation(
-    (stateCode, district, handleResults) => {
-      expect(stateCode).toBe(mockOfficer.info.stateCode);
-      expect(district).toBe(mockOfficer.info.district);
-      handleResults(mockOfficers);
-      return mockUnsub;
-    }
-  );
-
+test("officers from subscription", async () => {
   await waitForHydration();
-
-  // simulate a UI displaying officer list
-  testObserver = keepAlive(computed(() => workflowsStore.availableOfficers));
-
-  await when(() => workflowsStore.availableOfficers.length > 0);
-
-  expect(mockSubscribeToOfficers).toHaveBeenCalled();
-
-  expect(workflowsStore.availableOfficers).toEqual(mockOfficers);
-});
-
-test("subscribe to all officers if user has no district", async () => {
-  mockGetUser.mockResolvedValue(mockDirector);
-  mockSubscribeToOfficers.mockImplementation(
-    (stateCode, district, handleResults) => {
-      expect(stateCode).toBe(mockDirector.info.stateCode);
-      expect(district).toBeUndefined();
-      handleResults(mockOfficers);
-      return mockUnsub;
-    }
-  );
-
-  await waitForHydration();
-
-  // simulate a UI displaying officer list
-  testObserver = keepAlive(computed(() => workflowsStore.availableOfficers));
-
-  await when(() => workflowsStore.availableOfficers.length > 0);
-
-  expect(mockSubscribeToOfficers).toHaveBeenCalled();
-
-  expect(workflowsStore.availableOfficers).toEqual(mockOfficers);
-});
-
-test("subscribe to all clients in default caseload", async () => {
-  await waitForHydration();
-
-  // simulate a UI displaying client list
-  testObserver = keepAlive(computed(() => workflowsStore.caseloadClients));
-
-  expect(mockSubscribeToCaseloads).toHaveBeenCalled();
-});
-
-test("subscribe to all clients in saved caseload", async () => {
-  const mockSavedOfficers = ["OFFICER1", "OFFICER2", "OFFICER3"];
-  mockGetUser.mockResolvedValue({
-    ...mockSupervisor,
-    updates: {
-      ...(mockSupervisor.updates as UserUpdateRecord),
-      savedOfficers: mockSavedOfficers,
-    },
+  runInAction(() => {
+    workflowsStore.officersSubscription.data = mockOfficers;
   });
-
-  mockSubscribeToCaseloads.mockImplementation(
-    (stateCode, officerIds, handler) => {
-      expect(stateCode).toBe(mockOfficer.info.stateCode);
-      expect(officerIds).toEqual(mockSavedOfficers);
-      handler([]);
-      return mockUnsub;
-    }
-  );
-
-  await waitForHydration();
-
-  // simulate a UI displaying client list
-  testObserver = keepAlive(
-    computed(() => workflowsStore.eligibleOpportunities.compliantReporting)
-  );
-
-  expect(mockSubscribeToCaseloads).toHaveBeenCalled();
+  expect(workflowsStore.availableOfficers).toEqual(mockOfficers);
 });
 
-test("subscribe to all officers if workflowsEnableAllDistricts is true", async () => {
+test("update clients from subscription", async () => {
+  await waitForHydration();
+
+  populateClients(mockClients);
+  expect(workflowsStore.clients).toEqual({
+    [mockClients[0].pseudonymizedId]: expect.any(Client),
+    [mockClients[1].pseudonymizedId]: expect.any(Client),
+    [mockClients[2].pseudonymizedId]: expect.any(Client),
+  });
+  mockClients.forEach(({ pseudonymizedId }) => {
+    expect(workflowsStore.clients[pseudonymizedId].pseudonymizedId).toBe(
+      pseudonymizedId
+    );
+  });
+});
+
+test("caseloadDistrict reflects user data", async () => {
+  await waitForHydration();
+  expect(workflowsStore.caseloadDistrict).toBe(mockOfficer.info.district);
+});
+
+test("workflowsEnableAllDistricts overrides caseloadDistrict", async () => {
   runInAction(() => {
     rootStore.tenantStore.currentTenantId = "US_YY" as any;
   });
 
-  mockSubscribeToOfficers.mockImplementation(
-    (stateCode, district, handleResults) => {
-      expect(district).toBeUndefined();
-      handleResults(mockOfficers);
-      return mockUnsub;
-    }
-  );
-
   await waitForHydration();
 
-  // simulate a UI displaying officer list
-  testObserver = keepAlive(computed(() => workflowsStore.availableOfficers));
-  await when(() => workflowsStore.availableOfficers.length > 0);
-});
-
-test("subscribe to district only officers if workflowsEnableAllDistricts is false", async () => {
-  runInAction(() => {
-    // @ts-ignore
-    rootStore.tenantStore.currentTenantId = "US_TN";
-  });
-
-  mockSubscribeToOfficers.mockImplementation(
-    (stateCode, district, handleResults) => {
-      expect(district).toEqual("DISTRICT 1");
-      handleResults(mockOfficers);
-      return mockUnsub;
-    }
-  );
-
-  await waitForHydration();
-
-  // simulate a UI displaying officer list
-  testObserver = keepAlive(computed(() => workflowsStore.availableOfficers));
-  await when(() => workflowsStore.availableOfficers.length > 0);
-});
-
-test("don't subscribe to clients if no officers are selected", async () => {
-  mockGetUser.mockResolvedValue(mockSupervisor);
-
-  await waitForHydration();
-
-  // simulate a UI displaying client list
-  testObserver = keepAlive(
-    computed(() => workflowsStore.eligibleOpportunities.compliantReporting)
-  );
-
-  expect(mockSubscribeToCaseloads).not.toHaveBeenCalled();
-});
-
-test("clean up caseload subscriptions on change", async () => {
-  await waitForHydration();
-
-  // simulate a component consuming this value, because it will automatically unsubscribe
-  // when no longer observed; we are testing the use case of the underlying filter changing
-  // while the computed value is continuously observed
-  testObserver = keepAlive(computed(() => workflowsStore.caseloadClients));
-
-  await when(() => workflowsStore.caseloadClients !== undefined);
-
-  expect(mockUnsub).not.toHaveBeenCalled();
-
-  runInAction(() => {
-    (workflowsStore.user as any).updates = {
-      selectedOfficerIds: ["OFFICER2"],
-    };
-  });
-
-  await when(() => workflowsStore.caseloadClients !== undefined);
-
-  expect(mockUnsub).toHaveBeenCalled();
+  expect(workflowsStore.caseloadDistrict).toBeUndefined();
 });
 
 test("no client selected", async () => {
@@ -438,14 +289,12 @@ test("no client selected", async () => {
   expect(workflowsStore.selectedClient).toBeUndefined();
 });
 
-test("select existing client", () => {
+test("select existing client", async () => {
   populateClients(mockClients);
 
   const idToSelect = ineligibleClient.pseudonymizedId;
 
-  runInAction(() => {
-    workflowsStore.updateSelectedClient(idToSelect);
-  });
+  await workflowsStore.updateSelectedClient(idToSelect);
 
   // simulate a UI displaying client data
   testObserver = keepAlive(computed(() => workflowsStore.selectedClient));

@@ -15,28 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DocumentData } from "firebase/firestore";
+import { makeObservable, observable } from "mobx";
 
-import { Hydratable } from "../../core/models/types";
+import { constructorSpy } from "../../Opportunity/__tests__/testUtils";
+import { QuerySubscription } from "../types";
 
-export interface Subscription<DataFormat> {
-  data: DataFormat;
-  subscribe: () => void;
-  unsubscribe: () => void;
+export class MockQuerySubscription implements QuerySubscription<any> {
+  data: any[] = [];
+
+  subscribe = jest.fn();
+
+  unsubscribe = jest.fn();
+
+  hydrate = jest.fn();
+
+  isHydrated = false;
+
+  isLoading = undefined;
+
+  constructor(...args: any[]) {
+    makeObservable(this, {
+      data: observable,
+      isHydrated: observable,
+      isLoading: observable,
+    });
+    constructorSpy(...args);
+  }
 }
-
-export interface DocumentSubscription<DataFormat>
-  extends Subscription<DataFormat | undefined>,
-    Hydratable {}
-
-export interface QuerySubscription<DataFormat>
-  extends Subscription<DataFormat[]>,
-    Hydratable {}
-
-export type TransformFunction<DataFormat> = (
-  rawRecord: DocumentData | undefined
-) => DataFormat | undefined;
-
-export type ValidateFunction<DataFormat> = (
-  rawRecord: DocumentData | undefined
-) => DataFormat | undefined;

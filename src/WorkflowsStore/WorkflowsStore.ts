@@ -43,10 +43,7 @@ import {
   getClient,
   getUser,
   StaffRecord,
-  subscribeToCaseloads,
-  subscribeToEligibleCount,
   subscribeToFeatureVariants,
-  subscribeToOfficers,
   subscribeToUserUpdates,
   updateSelectedOfficerIds,
   UserUpdateRecord,
@@ -60,6 +57,7 @@ import {
   OpportunityType,
 } from "./Opportunity/types";
 import { opportunityToSortFunctionMapping } from "./Opportunity/utils";
+import { ClientsSubscription, StaffSubscription } from "./subscriptions";
 import {
   observableSubscription,
   staffNameComparator,
@@ -91,13 +89,11 @@ export class WorkflowsStore implements Hydratable {
 
   selectedOpportunityType?: OpportunityType;
 
-  private compliantReportingEligibleCount?: SubscriptionValue<number>;
-
-  private clientsSubscription?: SubscriptionValue<ClientRecord[]>;
-
   clients: Record<string, Client> = {};
 
-  private officers?: SubscriptionValue<StaffRecord[]>;
+  officersSubscription: StaffSubscription;
+
+  clientsSubscription: ClientsSubscription;
 
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
@@ -106,20 +102,14 @@ export class WorkflowsStore implements Hydratable {
       formatSupervisionLevel: false,
     });
 
-    // update caseload subscriptions when selection changes
-    reaction(
-      () => [this.selectedOfficerIds],
-      () => {
-        this.updateCaseloadSources();
-      }
-    );
+    this.officersSubscription = new StaffSubscription(rootStore);
+    this.clientsSubscription = new ClientsSubscription(this);
 
     // force new caseload data subscriptions when feature flags change,
     // because data sources may be affected by flags
     reaction(
       () => [this.featureVariantRecord],
       () => {
-        this.updateCaseloadSources();
         if (this.selectedClientPseudoId) {
           this.fetchClient(this.selectedClientPseudoId);
         }
@@ -128,7 +118,7 @@ export class WorkflowsStore implements Hydratable {
 
     // persistent storage for subscription results
     reaction(
-      () => [this.clientsSubscription?.current()],
+      () => [this.clientsSubscription.data],
       ([newClients]) => {
         this.updateClients(newClients);
       }
@@ -152,6 +142,14 @@ export class WorkflowsStore implements Hydratable {
             this.featureVariantRecord = featureVariants;
           }
         });
+      }
+    );
+
+    // clear saved caseload search when changing tenants, to prevent cross-contamination
+    reaction(
+      () => [this.rootStore.currentTenantId],
+      () => {
+        this.updateSelectedOfficers([]);
       }
     );
   }
@@ -333,45 +331,6 @@ export class WorkflowsStore implements Hydratable {
     return workflowsEnableAllDistricts ? undefined : district;
   }
 
-  /**
-   * Updates data sources queried based on current caseload
-   */
-  private updateCaseloadSources() {
-    const { user: userInfo } = this;
-
-    if (userInfo) {
-      this.compliantReportingEligibleCount = observableSubscription(
-        (handler) => {
-          return subscribeToEligibleCount(
-            "compliantReporting",
-            userInfo.info.stateCode,
-            this.selectedOfficerIds,
-            handler
-          );
-        }
-      );
-      this.officers = observableSubscription((handler) =>
-        subscribeToOfficers(
-          userInfo.info.stateCode,
-          this.caseloadDistrict,
-          handler
-        )
-      );
-
-      if (this.selectedOfficerIds.length) {
-        this.clientsSubscription = observableSubscription((syncToStore) =>
-          subscribeToCaseloads(
-            userInfo.info.stateCode,
-            this.selectedOfficerIds,
-            (results) => syncToStore(results)
-          )
-        );
-      } else {
-        this.clientsSubscription = undefined;
-      }
-    }
-  }
-
   get hasMultipleOpportunities(): boolean {
     const { opportunityTypes } = this;
     return !!(opportunityTypes && opportunityTypes.length > 1);
@@ -418,9 +377,12 @@ export class WorkflowsStore implements Hydratable {
 
   opportunitiesLoaded(opportunityTypes: OpportunityType[]): boolean {
     // Wait until we have clients until checking that opportunities are loading.
-    if (!this.caseloadClients.length) {
-      // Differentiate between a pre- and post-fetch empty states
-      return this.clientsSubscription?.current() !== undefined;
+    if (
+      !this.caseloadClients.length &&
+      (!this.clientsSubscription.isHydrated ||
+        this.clientsSubscription.isLoading)
+    ) {
+      return false;
     }
     return (
       this.potentialOpportunities(opportunityTypes).filter(
@@ -455,7 +417,7 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get availableOfficers(): StaffRecord[] {
-    const officers = this.officers?.current() ?? [];
+    const officers = [...this.officersSubscription.data];
     officers.sort(staffNameComparator);
     return officers;
   }
