@@ -71,9 +71,16 @@ export type FeatureVariant =
  * The `variant` property can be used to segment users to different variants of the feature,
  * e.g. for A/B testing.
  */
-export type FeatureVariantRecord = Partial<
-  Record<FeatureVariant, { activeDate?: Timestamp; variant?: string }>
+type FeatureVariantMapping = Record<
+  FeatureVariant,
+  { activeDate?: Timestamp; variant?: string }
 >;
+export type FeatureVariantRecord = Partial<FeatureVariantMapping>;
+export const defaultFeatureVariantsActive: FeatureVariantMapping = {
+  TEST: {},
+  CompliantReportingAlmostEligible: {},
+  usTnSupervisionLevelDowngrade: {},
+};
 
 /**
  * Combines user data from this application and the Recidiviz platform into a single object

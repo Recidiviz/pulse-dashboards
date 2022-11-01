@@ -235,6 +235,43 @@ test("receive feature variants from subscription", async () => {
   });
 });
 
+test("feature variants inactive by default", async () => {
+  mockGetUser.mockResolvedValue({
+    ...mockOfficer,
+    featureVariants: undefined,
+  });
+
+  await waitForHydration();
+
+  expect(workflowsStore.featureVariants).toEqual({});
+});
+
+test("feature variants active by default for Recidiviz users", async () => {
+  mockGetUser.mockResolvedValue({
+    ...mockOfficer,
+    featureVariants: undefined,
+  });
+
+  runInAction(() => {
+    rootStore.userStore.user = {
+      email: "foo@example.com",
+      [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+        state_code: "RECIDIVIZ",
+      },
+    };
+  });
+
+  await waitForHydration();
+
+  expect(workflowsStore.featureVariants).toMatchInlineSnapshot(`
+    Object {
+      "CompliantReportingAlmostEligible": Object {},
+      "TEST": Object {},
+      "usTnSupervisionLevelDowngrade": Object {},
+    }
+  `);
+});
+
 test("officers from subscription", async () => {
   await waitForHydration();
   runInAction(() => {

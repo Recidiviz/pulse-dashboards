@@ -38,6 +38,7 @@ import filterOptions, {
 import {
   ClientRecord,
   CombinedUserRecord,
+  defaultFeatureVariantsActive,
   FeatureVariant,
   FeatureVariantRecord,
   getClient,
@@ -205,7 +206,8 @@ export class WorkflowsStore implements Hydratable {
         // don't include featureVariants in user object so we can keep it private
         this.setUserWithDefaults({ info, updates });
         runInAction(() => {
-          this.featureVariantRecord = featureVariants;
+          // replacing undefined as a hydration signal
+          this.featureVariantRecord = featureVariants ?? {};
           // subscribe to updates after the initial fetch
           this.isHydrated = true;
           this.userUpdatesSubscription = observableSubscription((syncToStore) =>
@@ -451,22 +453,30 @@ export class WorkflowsStore implements Hydratable {
    * the activeDate for each feature and observing the current Date for reactivity
    */
   get featureVariants(): Partial<Record<FeatureVariant, { variant?: string }>> {
-    if (this.featureVariantRecord) {
-      return entries(this.featureVariantRecord).reduce(
-        (activeVariants, [variantName, variantInfo]) => {
-          if (!variantInfo) return activeVariants;
+    // this should only happen pre-hydration
+    if (!this.featureVariantRecord) return {};
 
-          const { variant, activeDate } = variantInfo;
-          // check date once a minute so there isn't too much lag when we cross the threshold
-          if (activeDate && activeDate.toMillis() > now(1000 * 60))
-            return activeVariants;
-          return { ...activeVariants, [variantName]: { variant } };
-        },
-        {}
-      );
+    const configuredFlags = entries(this.featureVariantRecord);
+    // for internal users, all flags default to on rather than off
+    if (
+      !configuredFlags.length &&
+      this.rootStore.userStore.stateCode === "RECIDIVIZ"
+    ) {
+      return defaultFeatureVariantsActive;
     }
 
-    return {};
+    return configuredFlags.reduce(
+      (activeVariants, [variantName, variantInfo]) => {
+        if (!variantInfo) return activeVariants;
+
+        const { variant, activeDate } = variantInfo;
+        // check date once a minute so there isn't too much lag when we cross the threshold
+        if (activeDate && activeDate.toMillis() > now(1000 * 60))
+          return activeVariants;
+        return { ...activeVariants, [variantName]: { variant } };
+      },
+      {}
+    );
   }
 
   /**
