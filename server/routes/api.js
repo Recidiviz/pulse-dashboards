@@ -274,7 +274,7 @@ function pathways(req, res) {
   );
 }
 
-function generateFileLink(req, res) {
+function generateFileLink(req, res, next) {
   const { file } = req;
   const fileName = `${uuid.v4()}-${sanitizeFilename(file.originalname)}`;
   const protocol = process.env.AUTH_ENV === "development" ? `http` : `https`;
@@ -283,15 +283,16 @@ function generateFileLink(req, res) {
 
   fs.writeFile(`/tmp/${fileName}`, file.buffer, function (err) {
     if (err) {
-      throw new Error(
-        `Failed to write file for download: ${fileName}. ${err.message}`
-      );
+      const error = {
+        message: `Failed to write file for download: ${fileName}. ${err.message}`,
+      };
+      next(error);
     }
   });
   res.send(`${protocol}://${reqHeadersHost}/file/${fileName}`);
 }
 
-function upload(req, res) {
+function upload(req, res, next) {
   const options = {
     root: "/tmp",
     headers: {
@@ -304,9 +305,10 @@ function upload(req, res) {
 
   res.sendFile(fileName, options, (sendErr) => {
     if (sendErr) {
-      throw new Error(
-        `Failed to send file for download: ${fileName}. ${sendErr.message}`
-      );
+      const error = {
+        message: `Failed to send file for download: ${fileName}. ${sendErr.message}`,
+      };
+      next(error);
     }
     /*
     Chrome iOS sends two requests when downloading content. The first request has
@@ -319,9 +321,10 @@ function upload(req, res) {
       fs.unlink(path.join("/tmp", fileName), (delErr) => {
         /* Delete temp file after it's been sent */
         if (delErr) {
-          throw new Error(
-            `Failed to delete file: ${fileName}. ${delErr.message}`
-          );
+          const error = {
+            message: `Failed to delete file: ${fileName}. ${delErr.message}`,
+          };
+          next(error);
         }
       });
     }
