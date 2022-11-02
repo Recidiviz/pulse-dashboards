@@ -108,7 +108,7 @@ function formatTimeToGo(expirationDate: Date): string {
   const lastDay = startOfDay(expirationDate);
 
   return `${formatDateRange(today, lastDay)} ${
-    today > lastDay ? "past EXP" : "to go"
+    today > lastDay ? "past end" : "to go"
   }`;
 }
 
@@ -200,7 +200,7 @@ export const SupervisionProgress = ({
           Start: <span>{formatWorkflowsDate(supervisionStartDate)}</span>
         </div>
         <div>
-          EXP: <span>{formatWorkflowsDate(expirationDate)}</span>
+          End: <span>{formatWorkflowsDate(expirationDate)}</span>
         </div>
       </TimelineDates>
     </Wrapper>
