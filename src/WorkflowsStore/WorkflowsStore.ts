@@ -51,6 +51,7 @@ import {
 } from "../firestore";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
+import { isOfflineMode } from "../utils/isOfflineMode";
 import { Client, UNKNOWN } from "./Client";
 import {
   Opportunity,
@@ -195,6 +196,17 @@ export class WorkflowsStore implements Hydratable {
             hasCaseload: false,
             givenNames: "Recidiviz",
             surname: "Staff",
+          },
+        };
+      } else if (isOfflineMode()) {
+        userRecord = {
+          info: {
+            id: `${stateCode.toLowerCase()}_${email}`,
+            email,
+            stateCode,
+            hasCaseload: false,
+            givenNames: user?.name || "Demo",
+            surname: "",
           },
         };
       } else {

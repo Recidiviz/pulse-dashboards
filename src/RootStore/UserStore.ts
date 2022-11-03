@@ -124,6 +124,7 @@ export default class UserStore {
         this.userIsLoading = false;
       });
       this.getToken = () => "";
+      this.logout = () => null;
       return;
     }
 

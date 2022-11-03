@@ -31,7 +31,7 @@ export async function fetchOfflineUser(
   options: OfflineUserOptions
 ): Promise<User> {
   if (!isOfflineMode()) {
-    throw new Error(`fetchOfflineUser can only be used in demo mode!`);
+    throw new Error(`fetchOfflineUser can only be used in offline mode!`);
   }
   const queryParams = qs.stringify(options, { addQueryPrefix: true });
   const response = await fetch(

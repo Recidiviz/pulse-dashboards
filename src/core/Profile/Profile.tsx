@@ -24,6 +24,7 @@ import { Link } from "react-router-dom";
 
 import StateSelection from "../../components/StateSelection";
 import { useRootStore } from "../../components/StoreProvider";
+import { isOfflineMode } from "../../utils/isOfflineMode";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 
@@ -50,7 +51,11 @@ const Profile = () => {
             <Link to="/">
               <Button className="Profile__button">Back to dashboard</Button>
             </Link>
-            <Button className="Profile__button" onClick={onLogout}>
+            <Button
+              className="Profile__button"
+              onClick={onLogout}
+              disabled={isOfflineMode()}
+            >
               Log out
             </Button>
           </div>
