@@ -107,9 +107,8 @@ export const generateOpportunityHydratedHeader = (
     supervisionLevelDowngrade: {
       eligibilityText: simplur`${count} client[|s] may be `,
       opportunityText:
-        "supervised at a higher level than their latest risk score designates",
-      callToAction:
-        "Change their supervision level in TOMIS and they will disappear from this list.",
+        "supervised at a higher level than their latest risk score",
+      callToAction: "Change their supervision level in TOMIS.",
     },
   };
 

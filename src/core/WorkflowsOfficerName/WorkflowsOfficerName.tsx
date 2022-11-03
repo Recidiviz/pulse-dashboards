@@ -38,8 +38,12 @@ const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
   const officer = availableOfficers.find((o) => {
     return officerId ? o.id === officerId : o.email === officerEmail;
   });
-  const officerFullName =
-    officer && `${officer.givenNames} ${officer.surname}`.trim();
+
+  let officerFullName: string | undefined;
+  // unlikely but not impossible that name data could be missing
+  if (officer?.givenNames && officer?.surname) {
+    officerFullName = `${officer.givenNames} ${officer.surname}`.trim();
+  }
 
   return <span>{officerFullName ?? officerId ?? officerEmail}</span>;
 };

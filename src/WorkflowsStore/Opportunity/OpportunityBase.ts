@@ -87,7 +87,6 @@ export abstract class OpportunityBase<
     });
 
     this.client = client;
-    this.form = new FormBase(type, this);
     this.type = type;
 
     this.referralSubscription = new CollectionDocumentSubscription<ReferralRecord>(
