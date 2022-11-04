@@ -89,4 +89,6 @@ export const WORKFLOWS_POLICY_OR_METHODOLOGY_URL: Record<
   pastFTRD: WORKFLOWS_METHODOLOGY_URL.US_ID,
   supervisionLevelDowngrade:
     "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view",
+  usTnExpiration:
+    "https://drive.google.com/file/d/1IpetvPM49g_c-D-HzGdf7v6QAe_z5IHn/view?usp=sharing",
 };

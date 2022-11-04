@@ -64,7 +64,8 @@ export type UserUpdateRecord = {
 export type FeatureVariant =
   | "TEST"
   | "CompliantReportingAlmostEligible"
-  | "usTnSupervisionLevelDowngrade";
+  | "usTnSupervisionLevelDowngrade"
+  | "usTnExpiration";
 /**
  * For each feature, an optional activeDate can control when the user gets access.
  * If this is missing, access will be granted immediately.
@@ -80,6 +81,7 @@ export const defaultFeatureVariantsActive: FeatureVariantMapping = {
   TEST: {},
   CompliantReportingAlmostEligible: {},
   usTnSupervisionLevelDowngrade: {},
+  usTnExpiration: {},
 };
 
 /**

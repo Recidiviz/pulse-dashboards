@@ -69,6 +69,7 @@ beforeEach(() => {
     LSUEligible: true,
     pastFTRDEligible: true,
     supervisionLevelDowngradeEligible: true,
+    usTnExpirationEligible: true,
   };
   jest
     .spyOn(rootStore.workflowsStore, "opportunityTypes", "get")

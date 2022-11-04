@@ -133,6 +133,7 @@ export const collectionNames = {
   pastFTRDReferrals: "US_ID-pastFTRDReferrals",
   featureVariants: "featureVariants",
   supervisionLevelDowngradeReferrals: "US_TN-supervisionLevelDowngrade",
+  usTnExpirationReferrals: "US_TN-expirationReferrals",
 };
 
 export type CollectionName = keyof typeof collectionNames;

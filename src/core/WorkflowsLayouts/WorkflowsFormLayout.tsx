@@ -32,6 +32,7 @@ import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTe
 import { EarnedDischargeClientProfile } from "../WorkflowsClientProfile/EarnedDischargeClientProfile";
 import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
 import { PastFTRDClientProfile } from "../WorkflowsClientProfile/PastFTRDClientProfile";
+import { UsTnExpirationClientProfile } from "../WorkflowsClientProfile/UsTnExpirationClientProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 import WorkflowsLSUForm from "../WorkflowsLSUForm";
@@ -60,6 +61,10 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
     formContents: <div />,
   },
   supervisionLevelDowngrade: {},
+  usTnExpiration: {
+    sidebarContents: <UsTnExpirationClientProfile />,
+    formContents: <div />, // TODO(#2582): Add form
+  },
 };
 
 const Wrapper = styled.div`

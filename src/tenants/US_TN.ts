@@ -31,6 +31,7 @@ import { OpportunityType } from "../WorkflowsStore";
 const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   "compliantReporting",
   "supervisionLevelDowngrade",
+  "usTnExpiration",
 ];
 
 const US_TN_CONFIG: TenantConfig = {

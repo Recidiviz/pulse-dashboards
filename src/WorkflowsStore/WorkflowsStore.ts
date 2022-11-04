@@ -501,14 +501,19 @@ export class WorkflowsStore implements Hydratable {
     } = this;
     if (!isHydrated || !currentTenantId) return [];
 
-    const opportunityTypes = tenants[currentTenantId]?.opportunityTypes ?? [];
+    let opportunityTypes = tenants[currentTenantId]?.opportunityTypes ?? [];
 
     if (
       currentTenantId === "US_TN" &&
       !this.featureVariants.usTnSupervisionLevelDowngrade
     ) {
-      return opportunityTypes.filter(
+      opportunityTypes = opportunityTypes.filter(
         (oppType) => oppType !== "supervisionLevelDowngrade"
+      );
+    }
+    if (currentTenantId === "US_TN" && !this.featureVariants.usTnExpiration) {
+      opportunityTypes = opportunityTypes.filter(
+        (oppType) => oppType !== "usTnExpiration"
       );
     }
 

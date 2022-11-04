@@ -110,6 +110,12 @@ export const generateOpportunityHydratedHeader = (
         "supervised at a higher level than their latest risk score",
       callToAction: "Change their supervision level in TOMIS.",
     },
+    usTnExpiration: {
+      // TODO(#2614): fill these in
+      eligibilityText: "TODO eligibility text",
+      opportunityText: "TODO opportunity text",
+      callToAction: "TODO CTA",
+    },
   };
 
   return headers[opportunityType];
@@ -152,6 +158,7 @@ export const opportunityToSortFunctionMapping: Record<
   LSU: sortByReviewStatusAndEligibilityDate,
   pastFTRD: sortByReviewStatusAndEligibilityDate,
   supervisionLevelDowngrade: sortByReviewStatus,
+  usTnExpiration: sortByReviewStatusAndEligibilityDate,
 };
 
 export const transformCaseNotes = (

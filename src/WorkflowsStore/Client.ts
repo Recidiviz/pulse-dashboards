@@ -48,6 +48,7 @@ import {
   PastFTRDOpportunity,
 } from "./Opportunity";
 import { SupervisionLevelDowngradeOpportunity } from "./Opportunity/SupervisionLevelDowngradeOpportunity";
+import { UsTnExpirationOpportunity } from "./Opportunity/UsTnExpirationOpportunity";
 import { optionalFieldToDate } from "./utils";
 import { OTHER_KEY } from "./WorkflowsStore";
 
@@ -97,6 +98,10 @@ const OPPORTUNITY_CREATION_MAPPING: Record<
     flag: "supervisionLevelDowngradeEligible",
     OpportunityClass: SupervisionLevelDowngradeOpportunity,
   },
+  usTnExpiration: {
+    flag: "usTnExpirationEligible",
+    OpportunityClass: UsTnExpirationOpportunity,
+  },
 };
 
 type OpportunityMapping = {
@@ -106,6 +111,7 @@ type OpportunityMapping = {
   LSU?: LSUOpportunity;
   pastFTRD?: PastFTRDOpportunity;
   supervisionLevelDowngrade?: SupervisionLevelDowngradeOpportunity;
+  usTnExpiration?: UsTnExpirationOpportunity;
 };
 
 export class Client {

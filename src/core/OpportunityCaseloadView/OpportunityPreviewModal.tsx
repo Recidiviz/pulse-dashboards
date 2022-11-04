@@ -34,6 +34,7 @@ import { EarnedDischargeClientProfile } from "../WorkflowsClientProfile/EarnedDi
 import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
 import { PastFTRDClientProfile } from "../WorkflowsClientProfile/PastFTRDClientProfile";
 import { SupervisionLevelDowngradeClientProfile } from "../WorkflowsClientProfile/SupervisionLevelDowngradeClientProfile";
+import { UsTnExpirationClientProfile } from "../WorkflowsClientProfile/UsTnExpirationClientProfile";
 
 const PAGE_CONTENT: Record<OpportunityType, any> = {
   compliantReporting: {
@@ -57,6 +58,9 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   },
   supervisionLevelDowngrade: {
     previewContents: <SupervisionLevelDowngradeClientProfile />,
+  },
+  usTnExpiration: {
+    previewContents: <UsTnExpirationClientProfile />,
   },
 };
 
