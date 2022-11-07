@@ -40,7 +40,7 @@ export const CompliantReportingClientProfile: React.FC<CompliantReportingClientP
 
     const client = workflowsStore.selectedClient;
 
-    if (!client?.opportunities.compliantReporting) {
+    if (!client?.verifiedOpportunities.compliantReporting) {
       return null;
     }
 
@@ -49,7 +49,7 @@ export const CompliantReportingClientProfile: React.FC<CompliantReportingClientP
         <Heading client={client} />
 
         <OpportunityModule
-          opportunity={client.opportunities.compliantReporting}
+          opportunity={client.verifiedOpportunities.compliantReporting}
           formLinkButton={formLinkButton}
           formPrintButton={formPrintButton}
         />

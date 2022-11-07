@@ -481,20 +481,22 @@ describe("hasOpportunities", () => {
   });
 
   test("hasOpportunities is true if any client has opportunities for any of the provided types", async () => {
-    const compliantReportingIsHydratedMock = jest.spyOn(
-      CompliantReportingOpportunity.prototype,
-      "isHydrated",
-      "get"
-    );
-    const earlyTerminationIsHydratedMock = jest.spyOn(
-      EarlyTerminationOpportunity.prototype,
-      "isHydrated",
-      "get"
-    );
+    jest
+      .spyOn(CompliantReportingOpportunity.prototype, "isHydrated", "get")
+      .mockReturnValue(true);
+    jest
+      .spyOn(CompliantReportingOpportunity.prototype, "isLoading", "get")
+      .mockReturnValue(false);
+    jest
+      .spyOn(EarlyTerminationOpportunity.prototype, "isHydrated", "get")
+      .mockReturnValue(true);
+    jest
+      .spyOn(EarlyTerminationOpportunity.prototype, "isLoading", "get")
+      .mockReturnValue(false);
+
     await waitForHydration();
     populateClients(mockClients);
-    compliantReportingIsHydratedMock.mockReturnValue(true);
-    earlyTerminationIsHydratedMock.mockReturnValue(true);
+
     expect(
       workflowsStore.hasOpportunities([
         "earlyTermination",

@@ -28,14 +28,14 @@ export const PastFTRDClientProfile = observer(() => {
 
   const client = workflowsStore.selectedClient;
 
-  if (!client?.opportunities.pastFTRD) {
+  if (!client?.verifiedOpportunities.pastFTRD) {
     return null;
   }
 
   return (
     <article>
       <Heading client={client} />
-      <OpportunityModule opportunity={client.opportunities.pastFTRD} />
+      <OpportunityModule opportunity={client.verifiedOpportunities.pastFTRD} />
       <Supervision client={client} />
     </article>
   );

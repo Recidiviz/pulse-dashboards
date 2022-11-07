@@ -77,7 +77,7 @@ beforeEach(() => {
   client = new Client(eligibleClientWithAllOpps, rootStore);
 
   // for simplicity we will mark all the subs as hydrated, though we may update data later
-  Object.values(client.opportunities).forEach((opp) => {
+  Object.values(client.potentialOpportunities).forEach((opp) => {
     if (!opp) return;
     /* eslint-disable no-param-reassign */
     opp.referralSubscription.isLoading = false;

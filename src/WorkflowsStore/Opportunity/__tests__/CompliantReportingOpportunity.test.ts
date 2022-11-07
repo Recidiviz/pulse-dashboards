@@ -58,7 +58,7 @@ function createTestUnit(
     .spyOn(root.workflowsStore, "opportunityTypes", "get")
     .mockReturnValue(["compliantReporting"]);
   client = new Client(clientRecord, root);
-  const maybeOpportunity = client.opportunities.compliantReporting;
+  const maybeOpportunity = client.potentialOpportunities.compliantReporting;
   if (maybeOpportunity === undefined) {
     throw new Error("Unable to create opportunity instance");
   }

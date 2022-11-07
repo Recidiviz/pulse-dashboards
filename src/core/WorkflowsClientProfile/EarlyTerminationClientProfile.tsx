@@ -34,7 +34,7 @@ export const EarlyTerminationClientProfile: React.FC<EarlyTerminationClientProfi
 
     const client = workflowsStore.selectedClient;
 
-    if (!client?.opportunities.earlyTermination) {
+    if (!client?.verifiedOpportunities.earlyTermination) {
       return null;
     }
 
@@ -42,7 +42,7 @@ export const EarlyTerminationClientProfile: React.FC<EarlyTerminationClientProfi
       <article>
         <Heading client={client} />
         <OpportunityModule
-          opportunity={client.opportunities.earlyTermination}
+          opportunity={client.verifiedOpportunities.earlyTermination}
           formLinkButton={formLinkButton}
           formPrintButton={formPrintButton}
         />

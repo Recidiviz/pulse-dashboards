@@ -33,9 +33,9 @@ export const connectComponentToOpportunityForm = (
     const {
       workflowsStore: { selectedClient: client },
     } = useRootStore();
-    const opportunity = client?.opportunities?.[opportunityType];
+    const opportunity = client?.verifiedOpportunities[opportunityType];
 
-    if (!opportunity || !opportunity.isHydrated) {
+    if (!opportunity) {
       return null;
     }
 

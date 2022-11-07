@@ -26,7 +26,7 @@ export const UsTnExpirationClientProfile = observer(() => {
   const { workflowsStore } = useRootStore();
 
   const client = workflowsStore.selectedClient;
-  const opp = client?.opportunities.usTnExpiration;
+  const opp = client?.verifiedOpportunities.usTnExpiration;
   if (!client || !opp) {
     return null;
   }

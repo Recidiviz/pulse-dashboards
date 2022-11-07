@@ -41,7 +41,7 @@ function createTestUnit(clientRecord: typeof pastFTRDEligibleClientRecord) {
     .mockReturnValue(["pastFTRD"]);
   client = new Client(clientRecord, root);
 
-  const maybeOpportunity = client.opportunities.pastFTRD;
+  const maybeOpportunity = client.potentialOpportunities.pastFTRD;
 
   if (maybeOpportunity === undefined) {
     throw new Error("Unable to create opportunity instance");

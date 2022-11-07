@@ -23,7 +23,7 @@ import {
   spacing,
 } from "@recidiviz/design-system";
 import { sortBy } from "lodash";
-import { autorun, values } from "mobx";
+import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React, { useEffect } from "react";
@@ -118,7 +118,7 @@ export const OpportunitiesAccordion = observer(
     } = useRootStore();
 
     const opportunities = sortBy(
-      values(client.opportunities).filter(
+      Object.values(client.verifiedOpportunities).filter(
         (opp) => opp !== undefined
       ) as Opportunity[],
       (opp: Opportunity) => opportunityTypes.indexOf(opp.type)

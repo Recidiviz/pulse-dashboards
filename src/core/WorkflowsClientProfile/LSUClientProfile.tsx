@@ -32,7 +32,7 @@ export const LSUClientProfile: React.FC<LSUClientProfileProps> = observer(
     const { workflowsStore } = useRootStore();
 
     const client = workflowsStore.selectedClient;
-    if (!client?.opportunities.LSU) {
+    if (!client?.verifiedOpportunities.LSU) {
       return null;
     }
 
@@ -40,12 +40,14 @@ export const LSUClientProfile: React.FC<LSUClientProfileProps> = observer(
       <article>
         <Heading client={client} />
         <OpportunityModule
-          opportunity={client.opportunities.LSU}
+          opportunity={client.verifiedOpportunities.LSU}
           formLinkButton={formLinkButton}
         />
         <Supervision client={client} />
         <Contact client={client} />
-        <CaseNotes opportunityRecord={client.opportunities.LSU?.record} />
+        <CaseNotes
+          opportunityRecord={client.verifiedOpportunities.LSU?.record}
+        />
       </article>
     );
   }

@@ -43,7 +43,7 @@ function createTestUnit(clientRecord: typeof LSUEligibleClientRecord) {
     .mockReturnValue(["LSU"]);
   client = new Client(clientRecord, root);
 
-  const maybeOpportunity = client.opportunities.LSU;
+  const maybeOpportunity = client.potentialOpportunities.LSU;
 
   if (maybeOpportunity === undefined) {
     throw new Error("Unable to create opportunity instance");

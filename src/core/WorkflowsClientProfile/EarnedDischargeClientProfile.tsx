@@ -27,18 +27,20 @@ export const EarnedDischargeClientProfile = observer(() => {
   const { workflowsStore } = useRootStore();
 
   const client = workflowsStore.selectedClient;
-  if (!client?.opportunities.earnedDischarge) {
+  if (!client?.verifiedOpportunities.earnedDischarge) {
     return null;
   }
 
   return (
     <article>
       <Heading client={client} />
-      <OpportunityModule opportunity={client.opportunities.earnedDischarge} />
+      <OpportunityModule
+        opportunity={client.verifiedOpportunities.earnedDischarge}
+      />
       <Supervision client={client} />
       <Contact client={client} />
       <CaseNotes
-        opportunityRecord={client.opportunities.earnedDischarge?.record}
+        opportunityRecord={client.verifiedOpportunities.earnedDischarge?.record}
       />
     </article>
   );

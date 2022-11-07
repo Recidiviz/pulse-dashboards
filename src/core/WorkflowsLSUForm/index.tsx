@@ -84,7 +84,8 @@ const ChronoField = styled.strong`
 
 const WorkflowsLSUForm: React.FC = () => {
   const { workflowsStore } = useRootStore();
-  const opportunity = workflowsStore?.selectedClient?.opportunities?.LSU;
+  const opportunity =
+    workflowsStore?.selectedClient?.verifiedOpportunities?.LSU;
   const [selectedFormSection, setSelectedFormSection] = useState(0);
   const chrono = template(opportunity?.form.formData);
 

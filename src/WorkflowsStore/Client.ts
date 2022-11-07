@@ -155,11 +155,16 @@ export class Client {
 
   formIsPrinting = false;
 
-  opportunities: OpportunityMapping = {};
+  /**
+   * These are all the opportunities we expect to be able to hydrate,
+   * but some may be invalid or feature gated
+   */
+  potentialOpportunities: OpportunityMapping = {};
 
   constructor(record: ClientRecord, rootStore: RootStore) {
     makeObservable(this, {
-      opportunities: true,
+      potentialOpportunities: true,
+      verifiedOpportunities: true,
       record: true,
       currentUserEmail: true,
       formIsPrinting: true,
@@ -207,11 +212,11 @@ export class Client {
         record[flag] &&
         this.rootStore.workflowsStore.opportunityTypes.includes(t)
       ) {
-        if (!this.opportunities[t]) {
-          set(this.opportunities, t, new OpportunityClass(this));
+        if (!this.potentialOpportunities[t]) {
+          set(this.potentialOpportunities, t, new OpportunityClass(this));
         }
       } else {
-        remove(this.opportunities, t);
+        remove(this.potentialOpportunities, t);
       }
     });
   }
@@ -245,22 +250,47 @@ export class Client {
     return officer?.district;
   }
 
+  /**
+   * This mapping will only contain opportunities that are actually hydrated and valid;
+   * in most cases these are the only ones that should ever be shown to users
+   */
+  get verifiedOpportunities(): OpportunityMapping {
+    return entries(this.potentialOpportunities).reduce(
+      (opportunities, [opportunityType, opportunity]) => {
+        if (!opportunity?.isHydrated || opportunity.error) {
+          return opportunities;
+        }
+        return {
+          ...opportunities,
+          [opportunityType as OpportunityType]: opportunity,
+        };
+      },
+      {} as OpportunityMapping
+    );
+  }
+
   get opportunitiesEligible(): OpportunityMapping {
-    return entries(this.opportunities).reduce((opportunities, [key, opp]) => {
-      if (opp?.isHydrated && !opp.almostEligible) {
-        return { ...opportunities, [key as OpportunityType]: opp };
-      }
-      return opportunities;
-    }, {} as OpportunityMapping);
+    return Object.entries(this.verifiedOpportunities).reduce(
+      (opportunities, [key, opp]) => {
+        if (opp && !opp.almostEligible) {
+          return { ...opportunities, [key as OpportunityType]: opp };
+        }
+        return opportunities;
+      },
+      {} as OpportunityMapping
+    );
   }
 
   get opportunitiesAlmostEligible(): OpportunityMapping {
-    return entries(this.opportunities).reduce((opportunities, [key, opp]) => {
-      if (opp?.isHydrated && opp.almostEligible) {
-        return { ...opportunities, [key as OpportunityType]: opp };
-      }
-      return opportunities;
-    }, {} as OpportunityMapping);
+    return Object.entries(this.verifiedOpportunities).reduce(
+      (opportunities, [key, opp]) => {
+        if (opp && opp.almostEligible) {
+          return { ...opportunities, [key as OpportunityType]: opp };
+        }
+        return opportunities;
+      },
+      {} as OpportunityMapping
+    );
   }
 
   get currentUserEmail(): string | null | undefined {
@@ -339,7 +369,7 @@ export class Client {
   }
 
   printReferralForm(opportunityType: OpportunityType): void {
-    const opportunity = this.opportunities[opportunityType];
+    const opportunity = this.verifiedOpportunities[opportunityType];
     opportunity?.setCompletedIfEligible();
 
     this.setFormIsPrinting(true);
@@ -350,7 +380,7 @@ export class Client {
   }
 
   async trackFormViewed(formType: OpportunityType): Promise<void> {
-    await when(() => this.opportunities[formType]?.isHydrated === true);
+    await when(() => this.verifiedOpportunities[formType] !== undefined);
 
     trackReferralFormViewed({
       clientId: this.pseudonymizedId,
@@ -359,7 +389,7 @@ export class Client {
   }
 
   async trackListViewed(listType: OpportunityType): Promise<void> {
-    await when(() => this.opportunities[listType]?.isHydrated === true);
+    await when(() => this.verifiedOpportunities[listType] !== undefined);
 
     trackSurfacedInList({
       clientId: this.pseudonymizedId,
@@ -381,7 +411,7 @@ export class Client {
   async trackOpportunityPreviewed(
     opportunityType: OpportunityType
   ): Promise<void> {
-    await when(() => this.opportunities[opportunityType]?.isHydrated === true);
+    await when(() => this.verifiedOpportunities[opportunityType] !== undefined);
 
     trackOpportunityPreviewed({
       clientId: this.pseudonymizedId,
@@ -395,7 +425,7 @@ export class Client {
 
   get allClientOpportunitiesLoaded(): boolean {
     return (
-      values(this.opportunities).filter(
+      values(this.potentialOpportunities).filter(
         (opp) => opp !== undefined && !(opp.isLoading === false)
       ).length === 0
     );

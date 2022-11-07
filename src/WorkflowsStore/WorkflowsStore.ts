@@ -400,7 +400,7 @@ export class WorkflowsStore implements Hydratable {
     }
     return (
       this.potentialOpportunities(opportunityTypes).filter(
-        (opp) => !(opp.isHydrated || opp.error !== undefined)
+        (opp) => opp.isLoading !== false
       ).length === 0 && this.selectedOfficerIds.length > 0
     );
   }
@@ -409,7 +409,7 @@ export class WorkflowsStore implements Hydratable {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     opportunityTypes.forEach((opportunityType) => {
       const opportunities = this.caseloadClients
-        .map((c) => c.opportunities[opportunityType])
+        .map((c) => c.potentialOpportunities[opportunityType])
         .filter((opp) => opp !== undefined);
       mapping[opportunityType] = opportunities as Opportunity[];
     });
@@ -420,8 +420,8 @@ export class WorkflowsStore implements Hydratable {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     OPPORTUNITY_TYPES.forEach((opportunityType) => {
       const opportunities = this.caseloadClients
-        .map((c) => c.opportunities[opportunityType])
-        .filter((opp) => !!opp?.isHydrated)
+        .map((c) => c.verifiedOpportunities[opportunityType])
+        .filter((opp) => !!opp)
         .map((opp) => opp as Opportunity)
         .sort(opportunityToSortFunctionMapping[opportunityType]);
 

@@ -27,7 +27,7 @@ export const SupervisionLevelDowngradeClientProfile = observer(() => {
   const { workflowsStore } = useRootStore();
 
   const client = workflowsStore.selectedClient;
-  const opp = client?.opportunities.supervisionLevelDowngrade;
+  const opp = client?.verifiedOpportunities.supervisionLevelDowngrade;
   if (!client || !opp) {
     return null;
   }

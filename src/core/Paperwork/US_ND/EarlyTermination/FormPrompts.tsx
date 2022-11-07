@@ -67,7 +67,7 @@ const FormPrompts: React.FC<React.HTMLAttributes<HTMLElement>> = (
   const { workflowsStore } = useRootStore();
 
   const client = workflowsStore.selectedClient;
-  const earlyTermination = client?.opportunities?.earlyTermination;
+  const earlyTermination = client?.verifiedOpportunities?.earlyTermination;
 
   if (!earlyTermination) return null;
 

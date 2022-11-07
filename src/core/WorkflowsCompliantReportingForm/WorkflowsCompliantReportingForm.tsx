@@ -60,7 +60,7 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
           <FormViewerStatus color={palette.slate85}>
             <FormLastEdited
               agencyName="TDOC"
-              form={client?.opportunities.compliantReporting?.form}
+              form={client?.verifiedOpportunities.compliantReporting?.form}
             />
           </FormViewerStatus>,
         ]}

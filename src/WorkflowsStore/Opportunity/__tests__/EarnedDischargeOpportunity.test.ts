@@ -44,7 +44,7 @@ function createTestUnit(
     .mockReturnValue(["earnedDischarge"]);
   client = new Client(clientRecord, root);
 
-  const maybeOpportunity = client.opportunities.earnedDischarge;
+  const maybeOpportunity = client.potentialOpportunities.earnedDischarge;
 
   if (maybeOpportunity === undefined) {
     throw new Error("Unable to create opportunity instance");
