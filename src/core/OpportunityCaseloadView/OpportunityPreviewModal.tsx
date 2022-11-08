@@ -77,19 +77,25 @@ const Wrapper = styled.div`
 
 type OpportunityCaseloadProps = {
   opportunityType?: OpportunityType;
-  clientIsSelected: boolean;
+  selectedClientId?: string;
 };
 
 export const OpportunityPreviewModal = observer(
-  ({ opportunityType, clientIsSelected }: OpportunityCaseloadProps) => {
+  ({ opportunityType, selectedClientId }: OpportunityCaseloadProps) => {
     const { workflowsStore } = useRootStore();
 
     // Managing the modal isOpen state here instead of tying it directly to
-    // selectedClient helps to smooth out the open/close transition
-    const [modalIsOpen, setModalIsOpen] = useState(clientIsSelected);
+    // selectedClientId helps to smooth out the open/close transition
+    const [modalIsOpen, setModalIsOpen] = useState(!!selectedClientId);
     useEffect(() => {
-      setModalIsOpen(clientIsSelected);
-    }, [clientIsSelected]);
+      if (selectedClientId && opportunityType)
+        workflowsStore.trackClientOpportunityPreviewed(
+          selectedClientId,
+          opportunityType
+        );
+      setModalIsOpen(!!selectedClientId);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedClientId]);
 
     return (
       <DrawerModal

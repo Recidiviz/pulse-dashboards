@@ -51,7 +51,7 @@ export const OpportunityCaseloadView = observer(
           <OpportunityClientList />
           <OpportunityPreviewModal
             opportunityType={opportunityType}
-            clientIsSelected={!!selectedClient}
+            selectedClientId={selectedClient?.pseudonymizedId}
           />
         </Wrapper>
       </WorkflowsNavLayout>

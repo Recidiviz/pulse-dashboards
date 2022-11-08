@@ -28,11 +28,11 @@ type RouterLocation = ReturnType<typeof useLocation>;
 function parseLocation(loc: RouterLocation) {
   // slicing off empty string at 0 caused by leading slash,
   // and 1 which should always be "workflows"
-  const [page, clientId, preview]: Array<
-    string | undefined
-  > = loc.pathname.split("/").slice(2);
+  const [page, clientId]: Array<string | undefined> = loc.pathname
+    .split("/")
+    .slice(2);
 
-  return { page, clientId, preview };
+  return { page, clientId };
 }
 
 const RouteSync: React.FC = ({ children }) => {
@@ -43,7 +43,7 @@ const RouteSync: React.FC = ({ children }) => {
   const [redirectPath, setRedirectPath] = useState<string | undefined>();
 
   useEffect(() => {
-    const { page, clientId, preview } = parseLocation(loc);
+    const { page, clientId } = parseLocation(loc);
     setRedirectPath(undefined);
 
     // sync location data into the store
@@ -58,9 +58,7 @@ const RouteSync: React.FC = ({ children }) => {
 
     // issue tracking calls as needed
     if (clientId && page && isOpportunityType(page)) {
-      if (preview) {
-        workflowsStore.trackClientOpportunityPreviewed(clientId, page);
-      } else workflowsStore.trackClientFormViewed(clientId, page);
+      workflowsStore.trackClientFormViewed(clientId, page);
     }
 
     if (!page) {
