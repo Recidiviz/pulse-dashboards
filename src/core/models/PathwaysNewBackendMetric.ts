@@ -28,6 +28,7 @@ import {
 
 import { callNewMetricsApi } from "../../api/metrics/metricsClient";
 import RootStore from "../../RootStore";
+import { isDemoMode } from "../../utils/isDemoMode";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
@@ -211,7 +212,9 @@ export default abstract class PathwaysNewBackendMetric<
   abstract get isEmpty(): boolean;
 
   get tenantId(): TenantId | undefined {
-    return isOfflineMode() ? undefined : this.rootStore.currentTenantId;
+    return isOfflineMode() || isDemoMode()
+      ? undefined
+      : this.rootStore.currentTenantId;
   }
 
   get content(): MetricContent {
@@ -260,7 +263,7 @@ export default abstract class PathwaysNewBackendMetric<
     this.abortController?.abort();
     this.abortController = new AbortController();
 
-    const stateCode = isOfflineMode() ? "US_OZ" : this.tenantId;
+    const stateCode = isOfflineMode() || isDemoMode() ? "US_OZ" : this.tenantId;
     return callNewMetricsApi(
       `${stateCode}/${this.endpoint}?${params.toString()}`,
       RootStore.getTokenSilently,
