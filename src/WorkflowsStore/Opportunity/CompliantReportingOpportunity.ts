@@ -143,13 +143,6 @@ const getRecordValidator = (client: Client) => (
   }
 
   if (remainingCriteriaNeeded) {
-    if (
-      !client.rootStore.workflowsStore.featureVariants
-        .CompliantReportingAlmostEligible
-    ) {
-      throw new OpportunityValidationError("Almost-eligible feature disabled");
-    }
-
     const definedAlmostEligibleKeys = almostEligibleCriteria
       ? (Object.keys(
           almostEligibleCriteria
@@ -181,6 +174,17 @@ const getRecordValidator = (client: Client) => (
     // almost eligible is currently defined as missing exactly one criterion
     if (remainingCriteriaNeeded > 1) {
       throw new OpportunityValidationError(`Too many remaining criteria`);
+    }
+
+    // drug screen criteria remain behind a feature gate while initial backstop analysis is ongoing
+    if (
+      definedAlmostEligibleKeys.includes("passedDrugScreenNeeded") &&
+      !client.rootStore.workflowsStore.featureVariants
+        .CompliantReportingAlmostEligible
+    ) {
+      throw new OpportunityValidationError(
+        "Missing drug screen feature disabled"
+      );
     }
   }
   return record;
