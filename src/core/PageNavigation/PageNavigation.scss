@@ -21,32 +21,6 @@
     padding: 0 1rem;
   }
 
-  &--core {
-    & > li {
-      margin-left: 1rem;
-    }
-
-    .PageNavigation {
-      &__option {
-        color: $pine-3;
-        width: 6.33rem;
-        border-top: 0.25rem solid transparent;
-
-        &:hover {
-          color: $signal-highlight;
-        }
-
-        &--selected {
-          border-top: 0.25rem solid $signal-highlight;
-
-          &:focus {
-            color: $pine-3;
-          }
-        }
-      }
-    }
-  }
-
   &--pathways {
     & > li {
       flex-grow: 1;

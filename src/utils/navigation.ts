@@ -18,13 +18,7 @@ import { QueryParamConfigMap, StringParam } from "use-query-params";
 
 import { Navigation } from "../core/types/navigation";
 import { FILTER_TYPES } from "../core/utils/constants";
-import {
-  CORE_PAGES,
-  CORE_VIEWS,
-  PATHWAYS_PAGES,
-  PATHWAYS_VIEWS,
-  WORKFLOWS_PAGES,
-} from "../core/views";
+import { PATHWAYS_PAGES, PATHWAYS_VIEWS, WORKFLOWS_PAGES } from "../core/views";
 import { TenantId } from "../RootStore/types";
 import TENANTS from "../tenants";
 
@@ -51,16 +45,12 @@ export function getAllowedMethodology(
       allowedMethodology.push(page);
   });
   return {
-    // TODO #1561 Remove methodlogy key once CORE dashboard is removed
-    methodology: allowed.community?.includes("practices") ? ["practices"] : [],
     "id-methodology": allowedMethodology,
   };
 }
 
 export function getPathWithoutParams(pathname: string): string {
   const viewsAndPages: string[] = [
-    ...Object.values(CORE_VIEWS),
-    ...Object.values(CORE_PAGES),
     ...Object.values(PATHWAYS_VIEWS),
     ...Object.values(PATHWAYS_PAGES),
     ...Object.values(WORKFLOWS_PAGES),

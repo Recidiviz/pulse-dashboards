@@ -15,14 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { groupByMonth, isValidOffice, isValidOfficer, sum } from "../utils";
+import { groupByMonth } from "../utils";
 
 describe("Utils for bar chars", () => {
-  it("#sum", () => {
-    expect(sum("1", "2")).toBe(3);
-    expect(sum("1", "asd")).toBe(1);
-  });
-
   it("#groupByMonth", () => {
     const given = [
       { year: "2017", month: "1", count: "3", district: "1" },
@@ -37,34 +32,5 @@ describe("Utils for bar chars", () => {
     ];
 
     expect(groupByMonth(["count"])(given)).toEqual(expected);
-  });
-
-  it("#isValidOffice", () => {
-    expect(isValidOffice(["all"])({ district: "bismarck" })).toBeTrue();
-    expect(
-      isValidOffice(["beaulah", "bismarck"])({ district: "beaulah" })
-    ).toBeTrue();
-  });
-
-  it("#isValidOfficer", () => {
-    const offices = {
-      1: "bismarck",
-      2: "jamestown",
-      3: "minot",
-      4: "fargo",
-    };
-    expect(
-      isValidOfficer(offices)({
-        district: "1",
-        officer_external_id: "19: Woodstock Bird",
-      })
-    ).toBeTrue();
-
-    expect(
-      isValidOfficer(offices)({
-        district: "1",
-        officer_external_id: "OFFICER_UNKNOWN",
-      })
-    ).toBeFalse();
   });
 });

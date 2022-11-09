@@ -68,22 +68,3 @@ cron:
     # Every day at 06:15 UTC / 02:15 EST / 23:15 PST
     schedule: every day 06:15
     target: default
-
-  # CORE
-  - description: "Refresh US_ND goals external cache"
-    url: /api/US_ND/goals/refreshCache
-    # Every day at 07:00 UTC / 03:00 EST / 00:00 PST
-    schedule: every day 07:00
-    target: default
-
-  - description: "Refresh US_ND communityExplore external cache"
-    url: /api/US_ND/communityExplore/refreshCache
-    # Every day at 07:00 UTC / 03:00 EST / 00:00 PST
-    schedule: every day 07:00
-    target: default
-
-  - description: "Refresh US_ND facilitiesExplore external cache"
-    url: /api/US_ND/facilitiesExplore/refreshCache
-    # Every day at 07:00 UTC / 03:00 EST / 00:00 PST
-    schedule: every day 07:00
-    target: default

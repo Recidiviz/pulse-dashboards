@@ -24,8 +24,6 @@ import ErrorMessage from "../components/ErrorMessage";
 import NotFound from "../components/NotFound";
 import StoreProvider, { useRootStore } from "../components/StoreProvider";
 import VerificationNeeded from "../components/VerificationNeeded";
-import UsNDCommunityExplore from "../core/community/Explore";
-import CoreLayout from "../core/CoreLayout";
 import MethodologyPathways from "../core/MethodologyPathways";
 import MethodologyProjections from "../core/MethodologyProjections/Methodology";
 import PageSystem from "../core/PageSystem";
@@ -33,20 +31,16 @@ import PageVitals from "../core/PageVitals";
 import PathwaysLayout from "../core/PathwaysLayout";
 import LanternLayout from "../lantern/LanternLayout";
 import Revocations from "../lantern/Revocations";
-import { US_ND } from "../RootStore/TenantStore/coreTenants";
 import { US_MO, US_PA } from "../RootStore/TenantStore/lanternTenants";
 import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
 
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 
 jest.mock("../utils/initIntercomSettings");
-jest.mock("../utils/initFontAwesome");
 jest.mock("../utils/i18nSettings");
 jest.mock("../lantern/LanternLayout");
 jest.mock("../lantern/Revocations");
-jest.mock("../core/CoreLayout");
 jest.mock("../core/PathwaysLayout");
-jest.mock("../core/community/Explore");
 jest.mock("../components/NotFound");
 jest.mock("@recidiviz/design-system");
 jest.mock("../components/StoreProvider");
@@ -61,7 +55,6 @@ describe("App tests", () => {
   const metadataField = `${METADATA_NAMESPACE}app_metadata`;
 
   const mockRevocationsId = "mo-community-revocations-id";
-  const mockNDCommunityExploreId = "nd-community-explore-id";
   const mockNotFoundId = "not-found-id";
   const mockLoadingTestId = "loading-test-id";
   const mockErrorId = "error-test-id";
@@ -69,11 +62,10 @@ describe("App tests", () => {
   const mockMethodologyProjectionsId = "projections-methodology-id";
   const mockMethodologyPathwaysId = "pathways-methodology-id";
   const mockPathwaysPrisonId = "pathways-prison-id";
-  const mockCommunityPracticesId = "community-practices-id";
+  const mockOperationsId = "operations-id";
 
   const RevocationsMock = Revocations.type;
   const LanternLayoutMock = LanternLayout.type;
-  const CoreLayoutMock = CoreLayout.type;
   const PathwaysLayoutMock = PathwaysLayout.type;
   const MethodologyPathwaysMock = MethodologyPathways.type;
   const PageSystemMock = PageSystem.type;
@@ -81,15 +73,11 @@ describe("App tests", () => {
   let userStore = {};
 
   LanternLayoutMock.mockImplementation(({ children }) => children);
-  CoreLayoutMock.mockImplementation(({ children }) => children);
   PathwaysLayoutMock.mockImplementation(({ children }) => children);
   StoreProvider.mockImplementation(({ children }) => children);
   RevocationsMock.mockReturnValue(mockWithTestId(mockRevocationsId));
-  UsNDCommunityExplore.mockReturnValue(
-    mockWithTestId(mockNDCommunityExploreId)
-  );
   PageSystemMock.mockReturnValue(mockWithTestId(mockPathwaysPrisonId));
-  PageVitalsMock.mockReturnValue(mockWithTestId(mockCommunityPracticesId));
+  PageVitalsMock.mockReturnValue(mockWithTestId(mockOperationsId));
   NotFound.mockReturnValue(mockWithTestId(mockNotFoundId));
   Loading.mockReturnValue(mockWithTestId(mockLoadingTestId));
   ErrorMessage.mockReturnValue(mockWithTestId(mockErrorId));
@@ -107,8 +95,7 @@ describe("App tests", () => {
       isAuthorized: true,
       userAppMetadata: { can_access_leadership_dashboard: true },
       userAllowedNavigation: {
-        community: ["explore", "practices", "projections"],
-        methodology: ["practices", "projections"],
+        methodology: ["projections"],
         system: ["prison"],
         "id-methodology": ["operations", "system"],
       },
@@ -132,7 +119,6 @@ describe("App tests", () => {
       const { getByTestId } = render(<App />);
 
       expect(LanternLayoutMock).toHaveBeenCalledTimes(1);
-      expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
       expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
       expect(getByTestId(mockRevocationsId)).toBeInTheDocument();
     });
@@ -148,42 +134,8 @@ describe("App tests", () => {
       const { getByTestId } = render(<App />);
 
       expect(LanternLayoutMock).toHaveBeenCalledTimes(1);
-      expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
       expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
       expect(getByTestId(mockRevocationsId)).toBeInTheDocument();
-    });
-  });
-
-  describe("Core layout", () => {
-    it("should render Core Layout for a ND user with community explore page", () => {
-      window.history.pushState({}, "", "/community/explore");
-      const user = { [metadataField]: { state_code: US_ND } };
-
-      useRootStore.mockReturnValue({
-        userStore: { ...userStore, ...user, stateCode: US_ND },
-        currentTenantId: US_ND,
-      });
-
-      const { getByTestId } = render(<App />);
-      expect(CoreLayoutMock).toHaveBeenCalledTimes(1);
-      expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
-      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
-      expect(getByTestId(mockNDCommunityExploreId)).toBeInTheDocument();
-    });
-
-    it("should not render Core Layout for a ID user", () => {
-      window.history.pushState({}, "", "/community/practices");
-      const user = { [metadataField]: { state_code: US_ID } };
-
-      useRootStore.mockReturnValue({
-        userStore: { ...userStore, ...user, stateCode: US_ID },
-        currentTenantId: US_ID,
-      });
-
-      render(<App />);
-      expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
-      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
-      expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -199,7 +151,6 @@ describe("App tests", () => {
 
       const { getByTestId } = render(<App />);
       expect(PathwaysLayoutMock).toHaveBeenCalledTimes(1);
-      expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
       expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
       expect(getByTestId(mockPathwaysPrisonId)).toBeInTheDocument();
     });
@@ -244,27 +195,8 @@ describe("App tests", () => {
       const { getByTestId, container } = render(<App />);
       expect(container.children.length).toBe(1);
       expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
-      expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
       expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
       expect(getByTestId(mockNotFoundId)).toBeInTheDocument();
-    });
-  });
-
-  describe("Methodology page", () => {
-    it("should render the Vitals Practices Methodology page", () => {
-      window.history.pushState({}, "", "/methodology/practices");
-      const user = { [metadataField]: { state_code: US_ND } };
-
-      useRootStore.mockReturnValue({
-        userStore: { ...userStore, ...user, stateCode: US_ND },
-        currentTenantId: US_ND,
-      });
-
-      const { container, getByTestId } = render(<App />);
-
-      expect(CoreLayoutMock).toHaveBeenCalledTimes(1);
-      expect(container.children.length).toBe(1);
-      expect(getByTestId(mockMethodologyPathwaysId)).toBeInTheDocument();
     });
   });
 
@@ -280,7 +212,6 @@ describe("App tests", () => {
 
       const { container, getByTestId } = render(<App />);
 
-      expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
       expect(PathwaysLayoutMock).toHaveBeenCalledTimes(1);
       expect(container.children.length).toBe(1);
       expect(getByTestId(mockMethodologyPathwaysId)).toBeInTheDocument();
@@ -297,7 +228,6 @@ describe("App tests", () => {
 
       const { container, getByTestId } = render(<App />);
 
-      expect(CoreLayoutMock).toHaveBeenCalledTimes(0);
       expect(PathwaysLayoutMock).toHaveBeenCalledTimes(1);
       expect(container.children.length).toBe(1);
       expect(getByTestId(mockMethodologyPathwaysId)).toBeInTheDocument();

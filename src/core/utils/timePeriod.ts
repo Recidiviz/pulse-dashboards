@@ -15,20 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { differenceInMonths } from "date-fns";
-import moment from "moment";
-
-import { monthNamesWithYears } from "../../utils/months";
-
-export function getYearFromNow(yearDifference = 0): string {
-  return moment().add(yearDifference, "years").format("YYYY");
-}
-
-export const monthNamesWithYearsFromNumbers = function monthNamesShortWithYearsFromNumbers(
-  monthNumbers: string[],
-  abbreviated: boolean
-): string[] {
-  return monthNamesWithYears(monthNumbers, abbreviated, false);
-};
 
 export function formatTimePeriodLabel(months: string): string {
   const numMonths = Number(months);
@@ -48,7 +34,3 @@ export function formatRelativeToNow(start: Date): string {
   if (months < 24) return `${months} months`;
   return `${Math.floor(months / 12)} years`;
 }
-
-export default {
-  getYearFromNow,
-};

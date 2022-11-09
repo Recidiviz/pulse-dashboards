@@ -289,7 +289,7 @@ describe("getRoutePermission", () => {
       [metadataField]: {
         state_code: "US_MO",
         routes: {
-          community_practices: true,
+          system_prison: true,
         },
       },
     };
@@ -298,7 +298,7 @@ describe("getRoutePermission", () => {
       authSettings: testAuthSettings,
     });
     await store.authorize(mockHandleUrl);
-    expect(store.getRoutePermission("practices")).toBe(true);
+    expect(store.getRoutePermission("prison")).toBe(true);
   });
 
   test("when permission is not found returns false", async () => {
@@ -402,7 +402,6 @@ describe("userAllowedNavigation", () => {
       prison: [PATHWAYS_SECTIONS.countOverTime],
       supervision: [PATHWAYS_SECTIONS.countOverTime],
       "id-methodology": [PATHWAYS_VIEWS.system],
-      methodology: [],
     };
   });
 
@@ -425,7 +424,6 @@ describe("userAllowedNavigation", () => {
     const expected = {
       "id-methodology": ["system"],
       libertyToPrison: ["countOverTime"],
-      methodology: [],
       system: ["libertyToPrison"],
     };
     expect(store.userAllowedNavigation).toEqual(expected);
@@ -453,7 +451,6 @@ describe("userAllowedNavigation", () => {
       "id-methodology": ["system"],
       libertyToPrison: ["countOverTime"],
       prison: ["countOverTime"],
-      methodology: [],
       system: ["libertyToPrison", "prison"],
     };
     expect(store.userAllowedNavigation).toEqual(expected);
@@ -480,7 +477,6 @@ describe("userAllowedNavigation", () => {
     const expected = {
       "id-methodology": ["system"],
       libertyToPrison: ["countOverTime"],
-      methodology: [],
       system: ["libertyToPrison"],
     };
     expect(store.userAllowedNavigation).toEqual(expected);
@@ -551,14 +547,12 @@ describe("userAllowedNavigation", () => {
         supervision: [PATHWAYS_SECTIONS.countOverTime],
         supervisionToPrison: [PATHWAYS_SECTIONS.countByOfficer],
         "id-methodology": [PATHWAYS_VIEWS.system],
-        methodology: [],
       };
 
       await store.authorize(mockHandleUrl);
       const expected = {
         "id-methodology": ["system"],
         libertyToPrison: ["countOverTime"],
-        methodology: [],
         system: ["libertyToPrison"],
         supervisionToPrison: [],
       };
@@ -576,14 +570,12 @@ describe("userAllowedNavigation", () => {
         prison: [PATHWAYS_SECTIONS.countOverTime],
         supervision: [PATHWAYS_SECTIONS.countOverTime],
         "id-methodology": [PATHWAYS_VIEWS.system],
-        methodology: [],
       };
 
       await store.authorize(mockHandleUrl);
       const expected = {
         "id-methodology": ["system"],
         libertyToPrison: ["countOverTime"],
-        methodology: [],
         system: ["libertyToPrison"],
       };
       expect(store.userAllowedNavigation).toEqual(expected);

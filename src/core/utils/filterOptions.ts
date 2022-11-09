@@ -32,7 +32,6 @@ import {
   PopulationFilterValues,
   SetPopulationFilters,
 } from "../types/filters";
-import { CORE_VIEWS } from "../views";
 import { FILTER_TYPES, METRIC_MODES } from "./constants";
 
 export const metricModeOptions = [
@@ -127,7 +126,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.community, CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.GENDER]: {
     type: FILTER_TYPES.GENDER,
@@ -145,7 +143,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.community, CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.SUPERVISION_TYPE]: {
     type: FILTER_TYPES.SUPERVISION_TYPE,
@@ -166,7 +163,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.community],
   },
   [FILTER_TYPES.AGE_GROUP]: {
     type: FILTER_TYPES.AGE_GROUP,
@@ -190,7 +186,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.LEGAL_STATUS]: {
     type: FILTER_TYPES.LEGAL_STATUS,
@@ -209,7 +204,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.ADMISSION_REASON]: {
     type: FILTER_TYPES.ADMISSION_REASON,
@@ -239,7 +233,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.FACILITY]: {
     type: FILTER_TYPES.FACILITY,
@@ -259,7 +252,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.DISTRICT]: {
     type: FILTER_TYPES.DISTRICT,
@@ -279,7 +271,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.JUDICIAL_DISTRICT]: {
     type: FILTER_TYPES.JUDICIAL_DISTRICT,
@@ -319,7 +310,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.MOST_SEVERE_VIOLATION]: {
     type: FILTER_TYPES.MOST_SEVERE_VIOLATION,
@@ -340,7 +330,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.NUMBER_OF_VIOLATIONS]: {
     type: FILTER_TYPES.NUMBER_OF_VIOLATIONS,
@@ -361,7 +350,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.SUPERVISION_LEVEL]: {
     type: FILTER_TYPES.SUPERVISION_LEVEL,
@@ -379,7 +367,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.RACE]: {
     type: FILTER_TYPES.RACE,
@@ -397,7 +384,6 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
 };
 
@@ -566,7 +552,6 @@ export const CoPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.ADMISSION_REASON]: {
     type: FILTER_TYPES.ADMISSION_REASON,
@@ -594,7 +579,6 @@ export const CoPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.RACE]: {
     type: FILTER_TYPES.RACE,
@@ -623,7 +607,6 @@ export const CoPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
 };
 
@@ -652,7 +635,6 @@ export const IdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.GENDER]: {
     type: FILTER_TYPES.GENDER,
@@ -671,7 +653,6 @@ export const IdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.community, CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.FACILITY]: {
     type: FILTER_TYPES.FACILITY,
@@ -737,7 +718,6 @@ export const IdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.DISTRICT]: {
     type: FILTER_TYPES.DISTRICT,
@@ -799,7 +779,6 @@ export const IdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.RACE]: {
     type: FILTER_TYPES.RACE,
@@ -828,7 +807,6 @@ export const IdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.SUPERVISION_LEVEL]: {
     type: FILTER_TYPES.SUPERVISION_LEVEL,
@@ -853,7 +831,6 @@ export const IdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
 };
 
@@ -881,7 +858,6 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.SUPERVISION_LEVEL]: {
     type: FILTER_TYPES.SUPERVISION_LEVEL,
@@ -909,7 +885,6 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.ADMISSION_REASON]: {
     type: FILTER_TYPES.ADMISSION_REASON,
@@ -932,7 +907,6 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.FACILITY]: {
     type: FILTER_TYPES.FACILITY,
@@ -962,7 +936,6 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.DISTRICT]: {
     type: FILTER_TYPES.DISTRICT,
@@ -995,7 +968,6 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.JUDICIAL_DISTRICT]: {
     type: FILTER_TYPES.JUDICIAL_DISTRICT,
@@ -1042,7 +1014,6 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.RACE]: {
     type: FILTER_TYPES.RACE,
@@ -1066,7 +1037,6 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.SUPERVISION_TYPE]: {
     type: FILTER_TYPES.SUPERVISION_TYPE,
@@ -1084,7 +1054,6 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.community],
   },
 };
 
@@ -1111,7 +1080,6 @@ export const MePopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.FACILITY]: {
     type: FILTER_TYPES.FACILITY,
@@ -1156,7 +1124,6 @@ export const MePopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.SUPERVISION_LEVEL]: {
     type: FILTER_TYPES.SUPERVISION_LEVEL,
@@ -1178,7 +1145,6 @@ export const MePopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.DISTRICT]: {
     type: FILTER_TYPES.DISTRICT,
@@ -1197,7 +1163,6 @@ export const MePopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.JUDICIAL_DISTRICT]: {
     type: FILTER_TYPES.JUDICIAL_DISTRICT,
@@ -1228,7 +1193,6 @@ export const MePopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.SUPERVISION_TYPE]: {
     type: FILTER_TYPES.SUPERVISION_TYPE,
@@ -1248,7 +1212,6 @@ export const MePopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.community],
   },
   [FILTER_TYPES.RACE]: {
     type: FILTER_TYPES.RACE,
@@ -1277,7 +1240,6 @@ export const MePopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
 };
 
@@ -1466,7 +1428,6 @@ export const MiPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.RACE]: {
     type: FILTER_TYPES.RACE,
@@ -1494,7 +1455,6 @@ export const MiPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.LEGAL_STATUS]: {
     type: FILTER_TYPES.LEGAL_STATUS,
@@ -1525,7 +1485,6 @@ export const MiPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
 };
 
@@ -1553,7 +1512,6 @@ export const MoPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.RACE]: {
     type: FILTER_TYPES.RACE,
@@ -1577,7 +1535,6 @@ export const MoPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.DISTRICT]: {
     type: FILTER_TYPES.DISTRICT,
@@ -1601,7 +1558,6 @@ export const MoPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
 };
 
@@ -1692,7 +1648,6 @@ export const NdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.LEGAL_STATUS]: {
     type: FILTER_TYPES.LEGAL_STATUS,
@@ -1722,7 +1677,6 @@ export const NdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.DISTRICT]: {
     type: FILTER_TYPES.DISTRICT,
@@ -1772,7 +1726,6 @@ export const NdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.JUDICIAL_DISTRICT]: {
     type: FILTER_TYPES.JUDICIAL_DISTRICT,
@@ -1796,7 +1749,6 @@ export const NdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.SUPERVISION_LEVEL]: {
     type: FILTER_TYPES.SUPERVISION_LEVEL,
@@ -1817,7 +1769,6 @@ export const NdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.SUPERVISION_TYPE]: {
     type: FILTER_TYPES.SUPERVISION_TYPE,
@@ -1836,7 +1787,6 @@ export const NdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.community],
   },
   [FILTER_TYPES.RACE]: {
     type: FILTER_TYPES.RACE,
@@ -1865,7 +1815,6 @@ export const NdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.ADMISSION_REASON]: {
     type: FILTER_TYPES.ADMISSION_REASON,
@@ -1896,7 +1845,6 @@ export const NdPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
 };
 
@@ -1919,7 +1867,6 @@ export const DemoPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.LEGAL_STATUS]: {
     type: FILTER_TYPES.LEGAL_STATUS,
@@ -1937,7 +1884,6 @@ export const DemoPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.FACILITY]: {
     type: FILTER_TYPES.FACILITY,
@@ -1957,7 +1903,6 @@ export const DemoPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.DISTRICT]: {
     type: FILTER_TYPES.DISTRICT,
@@ -1977,7 +1922,6 @@ export const DemoPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.MOST_SEVERE_VIOLATION]: {
     type: FILTER_TYPES.MOST_SEVERE_VIOLATION,
@@ -1995,7 +1939,6 @@ export const DemoPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.NUMBER_OF_VIOLATIONS]: {
     type: FILTER_TYPES.NUMBER_OF_VIOLATIONS,
@@ -2013,7 +1956,6 @@ export const DemoPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
   [FILTER_TYPES.RACE]: {
     type: FILTER_TYPES.RACE,
@@ -2031,7 +1973,6 @@ export const DemoPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-    enabledViews: [CORE_VIEWS.facilities],
   },
 };
 

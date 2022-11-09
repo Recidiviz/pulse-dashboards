@@ -33,7 +33,6 @@ import { DEFAULT_ENTITY_ID, METRIC_TYPES } from "./PageVitals/types";
 import { PopulationFilterLabels } from "./types/filters";
 import { convertLabelsToValues } from "./utils/filterOptions";
 import {
-  CORE_PAGES,
   getDefaultPathwaysSectionByPage,
   PATHWAYS_VIEWS,
   PathwaysPage,
@@ -102,7 +101,7 @@ const withRouteSync = <Props extends RouteParams>(
 
     // prepare query params to sync with store
     const queryParams =
-      viewId === PATHWAYS_VIEWS.operations || pageId === CORE_PAGES.practices
+      viewId === PATHWAYS_VIEWS.operations
         ? metricQueryParams
         : filterQueryParams;
     const [query, setQuery] = useQueryParams(queryParams);
@@ -115,10 +114,7 @@ const withRouteSync = <Props extends RouteParams>(
         setSection(sectionId);
         setPage(pageId as PathwaysPage);
 
-        if (
-          viewId === PATHWAYS_VIEWS.operations ||
-          pageId === CORE_PAGES.practices
-        ) {
+        if (viewId === PATHWAYS_VIEWS.operations) {
           const metricId =
             vitalsStore.metrics.find((m) => {
               return m.name === cleanQuery.selectedMetric;
@@ -142,10 +138,7 @@ const withRouteSync = <Props extends RouteParams>(
         vitalsStore.setCurrentEntityId(entityId);
         setSection(sectionId);
         setPage(pageId as PathwaysPage);
-        if (
-          viewId === PATHWAYS_VIEWS.operations ||
-          pageId === CORE_PAGES.practices
-        ) {
+        if (viewId === PATHWAYS_VIEWS.operations) {
           const metricName =
             vitalsStore.metrics.find((m) => {
               return m.id === vitalsStore.selectedMetricId;

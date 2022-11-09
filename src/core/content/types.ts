@@ -19,7 +19,7 @@
  */
 
 import { MetricId } from "../models/types";
-import { CoreOrPathwaysPage, PathwaysPage, PathwaysSection } from "../views";
+import { PathwaysPage, PathwaysSection } from "../views";
 
 export type PageContent = {
   title: string;
@@ -37,7 +37,7 @@ export type PageCopy = {
 };
 
 export type StateSpecificPageCopy = {
-  [key in CoreOrPathwaysPage]?: Partial<PageContent>;
+  [key in PathwaysPage]?: Partial<PageContent>;
 };
 
 export type MetricContent = {

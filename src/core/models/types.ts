@@ -298,13 +298,6 @@ export interface MethodologyContent {
 }
 
 export type ViewMethodology = {
-  explore?: { title: string };
-  practices?: {
-    title: string;
-    description: string;
-    pageCopy: Record<string, MethodologyContent>;
-    metricCopy: Record<string, MethodologyContent>;
-  };
   operations?: {
     title: string;
     description: string;

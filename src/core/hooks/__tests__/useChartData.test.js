@@ -26,7 +26,7 @@ import useChartData from "../useChartData";
 jest.mock("../../../api/metrics/metricsClient");
 jest.mock("../../../components/StoreProvider");
 
-const mockUrl = "us_nd/community/goals";
+const mockUrl = "system/prison";
 const mockFile = "admissions_by_type_by_month";
 
 describe("useChartData", () => {

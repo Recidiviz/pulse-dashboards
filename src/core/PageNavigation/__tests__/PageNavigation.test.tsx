@@ -34,7 +34,7 @@ jest.mock("react-router-dom", () => ({
   // @ts-ignore
   ...jest.requireActual("react-router-dom"),
   useLocation: jest.fn().mockReturnValue({
-    pathname: "/community/practices",
+    pathname: "/system",
   }),
 }));
 
@@ -60,7 +60,7 @@ describe("CoreLayout tests", () => {
     (useRootStore as jest.Mock).mockReturnValue({
       userStore: {
         userAllowedNavigation: {
-          community: ["page1", "page2", "page3"],
+          system: ["page1", "page2", "page3"],
         },
       },
       currentTenantId: "US_ID",

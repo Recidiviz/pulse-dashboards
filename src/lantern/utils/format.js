@@ -47,7 +47,6 @@ export const getTimeDescription = (
     allOptions: admissionOptions,
     summingOption: admissionOptions[0],
     selectedOptions: admissionTypeOptions,
-    isCore: false,
     isShortFormat: false,
   });
 

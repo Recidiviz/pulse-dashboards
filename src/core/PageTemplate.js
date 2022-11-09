@@ -21,11 +21,8 @@ import "./PageTemplate.scss";
 import PropTypes from "prop-types";
 import React from "react";
 
-import ImportantNotesBar from "./ImportantNotesBar";
-
 const PageTemplate = ({
   children,
-  importantNotes,
   filters = null,
   leftPanel = null,
   mobileNavigation = null,
@@ -36,9 +33,6 @@ const PageTemplate = ({
     <div className="PageTemplate__body">
       {filters}
       <div className="row gap-20 pos-r">
-        {importantNotes.length !== 0 && (
-          <ImportantNotesBar importantNotes={importantNotes} />
-        )}
         <div className="PageTemplate__content">{children}</div>
       </div>
     </div>
@@ -46,7 +40,6 @@ const PageTemplate = ({
 );
 
 PageTemplate.defaultProps = {
-  importantNotes: [],
   filters: null,
   leftPanel: null,
   mobileNavigation: null,
@@ -54,12 +47,6 @@ PageTemplate.defaultProps = {
 
 PageTemplate.propTypes = {
   children: PropTypes.node.isRequired,
-  importantNotes: PropTypes.arrayOf(
-    PropTypes.shape({
-      header: PropTypes.string.isRequired,
-      body: PropTypes.string.isRequired,
-    }).isRequired
-  ),
   filters: PropTypes.node,
   leftPanel: PropTypes.node,
   mobileNavigation: PropTypes.node,

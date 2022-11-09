@@ -21,53 +21,7 @@ import pipe from "lodash/fp/pipe";
 import reduce from "lodash/fp/reduce";
 import sumBy from "lodash/fp/sumBy";
 import toInteger from "lodash/fp/toInteger";
-import upperCase from "lodash/fp/upperCase";
 import values from "lodash/fp/values";
-
-import { configureDownloadButtons } from "../utils/configureDownloadButtons";
-
-/**
- * Casts arguments to integer and sum it.
- */
-export const sum = (a, b) => toInteger(a) + toInteger(b);
-
-/**
- * Internal function for concatinating arrays at the time of merge.
- * Links: https://lodash.com/docs/4.17.15#mergeWith
- */
-export const mergeAllResolver = (objValue, srcValue) =>
-  Array.isArray(objValue) ? objValue.concat(srcValue) : [objValue, srcValue];
-
-/**
- * Takes in an array of objects where each value should be an array and wraps
- * a given value in an array if it is not already an array.
- */
-export const ensureWrappedInArray = (dataArrays) => {
-  return Object.fromEntries(
-    Object.entries(dataArrays).map(([key, value]) => [
-      key,
-      Array.isArray(value) ? value : [value],
-    ])
-  );
-};
-
-/**
- * Checks if officer has valid and not empty name.
- */
-export const isValidOfficer = (offices) => ({
-  officer_external_id: officerIDRaw,
-  district: officeId,
-}) => {
-  const officeName = offices[toInteger(officeId)];
-  return officeName && officerIDRaw !== "OFFICER_UNKNOWN";
-};
-
-export const isValidOffice = (visibleOffices) => ({ district: officeId }) => {
-  if (visibleOffices.length === 1 && visibleOffices[0] === "all") {
-    return true;
-  }
-  return visibleOffices.includes(officeId);
-};
 
 /**
  * Groups dataset by month/year and sum all bar counters.
@@ -89,36 +43,3 @@ export const groupByMonth = (barKeys) => (dataset) =>
       ),
     }))
   )(dataset);
-
-export function configureDownloads({
-  chartId,
-  chartLabels,
-  countsByType,
-  exportLabel,
-  bars,
-  filters,
-  dataExportLabel,
-  getTokenSilently,
-}) {
-  const downloadableDataFormat = bars.map((bar) => ({
-    label: bar.label,
-    data: countsByType[bar.key],
-  }));
-
-  const chartTitle = upperCase(exportLabel);
-
-  configureDownloadButtons({
-    chartId,
-    chartTitle,
-    chartDatasets: downloadableDataFormat,
-    chartLabels,
-    chartBox: document.getElementById(chartId),
-    filters,
-    convertValuesToNumbers: false,
-    dataExportLabel,
-    getTokenSilently,
-  });
-}
-
-export const isOfficerIdsHidden = (offices) =>
-  (offices.length === 1 && offices[0] === "all") || offices.length > 3;

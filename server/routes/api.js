@@ -171,39 +171,6 @@ function newRevocationFile(req, res) {
   }
 }
 
-function goals(req, res) {
-  const { stateCode } = req.params;
-  const metricType = "goals";
-  const cacheKey = getCacheKey({ stateCode, metricType });
-  cacheResponse(
-    cacheKey,
-    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
-    responder(res)
-  );
-}
-
-function communityExplore(req, res) {
-  const { stateCode } = req.params;
-  const metricType = "communityExplore";
-  const cacheKey = getCacheKey({ stateCode, metricType });
-  cacheResponse(
-    cacheKey,
-    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
-    responder(res)
-  );
-}
-
-function facilitiesExplore(req, res) {
-  const { stateCode } = req.params;
-  const metricType = "facilitiesExplore";
-  const cacheKey = getCacheKey({ stateCode, metricType });
-  cacheResponse(
-    cacheKey,
-    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
-    responder(res)
-  );
-}
-
 function populationProjectionsMethodology(req, res) {
   const { stateCode } = req.params;
   const file = `${path.resolve(
@@ -335,9 +302,6 @@ module.exports = {
   offlineUser,
   newRevocations,
   newRevocationFile,
-  goals,
-  communityExplore,
-  facilitiesExplore,
   populationProjectionsMethodology,
   vitals,
   pathways,

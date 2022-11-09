@@ -17,24 +17,7 @@
 
 import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
 import { OpportunityType } from "../WorkflowsStore/Opportunity/types";
-import { MetricId, SimulationCompartment, TenantId } from "./models/types";
-
-export type CoreView = keyof typeof CORE_VIEWS;
-/**
- * Maps from view names to root paths
- */
-export const CORE_VIEWS = {
-  community: "community",
-  facilities: "facilities",
-  goals: "goals",
-  methodology: "methodology",
-} as const;
-export const CoreViewIdList = Object.keys(CORE_VIEWS);
-export type CoreViewRootPath = typeof CORE_VIEWS[CoreView];
-
-export const isValidCoreRootPath = (str: string): boolean => {
-  return Object.values(CORE_VIEWS).includes(str as CoreViewRootPath);
-};
+import { MetricId, TenantId } from "./models/types";
 
 export type PathwaysView = keyof typeof PATHWAYS_VIEWS;
 /**
@@ -53,19 +36,7 @@ export const isValidPathwaysRootPath = (str: string): boolean => {
   return Object.values(PATHWAYS_VIEWS).includes(str as PathwaysViewRootPath);
 };
 
-export type ViewRootPath = CoreViewRootPath | PathwaysViewRootPath;
-
-export const CORE_PATHS: Record<string, string> = {
-  goals: `/${CORE_VIEWS.goals}`,
-  communityExplore: `/${CORE_VIEWS.community}/explore`,
-  communityProjections: `/${CORE_VIEWS.community}/projections`,
-  communityPractices: `/${CORE_VIEWS.community}/practices/:entityId?`,
-  facilitiesExplore: `/${CORE_VIEWS.facilities}/explore`,
-  facilitiesProjections: `/${CORE_VIEWS.facilities}/projections`,
-  methodology: `/${CORE_VIEWS.methodology}/:dashboard`,
-  methodologyVitals: `/${CORE_VIEWS.methodology}/practices`,
-  methodologyProjections: `/${CORE_VIEWS.methodology}/projections`,
-};
+export type ViewRootPath = PathwaysViewRootPath;
 
 export const PATHWAYS_PATHS: Record<string, string> = {
   system: `/${PATHWAYS_VIEWS.system}/:pageId/:sectionId?`,
@@ -74,14 +45,6 @@ export const PATHWAYS_PATHS: Record<string, string> = {
   methodologySystem: `/${PATHWAYS_VIEWS.methodology}/system`,
   methodologyOperations: `/${PATHWAYS_VIEWS.methodology}/operations`,
 };
-
-export type CorePage = keyof typeof CORE_PAGES;
-export const CORE_PAGES = {
-  explore: "explore",
-  projections: "projections",
-  practices: "practices",
-} as const;
-export const CorePageIdList = Object.keys(CORE_PAGES);
 
 export type PathwaysPage = keyof typeof PATHWAYS_PAGES;
 export const PATHWAYS_PAGES = {
@@ -94,8 +57,6 @@ export const PATHWAYS_PAGES = {
 } as const;
 export const PathwaysPageIdList = Object.keys(PATHWAYS_PAGES);
 export type PathwaysPageRootPath = typeof PATHWAYS_PAGES[PathwaysPage];
-
-export type CoreOrPathwaysPage = CorePage | PathwaysPage;
 
 export type PathwaysSection = keyof typeof PATHWAYS_SECTIONS;
 export const PATHWAYS_SECTIONS: Record<string, string> = {
@@ -313,23 +274,4 @@ export function workflowsUrl(
     }, WORKFLOWS_PATHS[routeName]);
   }
   return WORKFLOWS_PATHS[routeName];
-}
-
-const pathnameToView: Record<string, CoreView> = {
-  [CORE_PATHS.goals]: "goals",
-  [CORE_PATHS.communityExplore]: "community",
-  [CORE_PATHS.communityProjections]: "community",
-  [CORE_PATHS.communityPractices]: "community",
-  [CORE_PATHS.facilitiesExplore]: "facilities",
-  [CORE_PATHS.facilitiesProjections]: "facilities",
-  [CORE_PATHS.methodologyVitals]: "methodology",
-  [CORE_PATHS.methodologyProjections]: "methodology",
-};
-
-export function getCompartmentFromView(view: CoreView): SimulationCompartment {
-  return view === CORE_VIEWS.community ? "SUPERVISION" : "INCARCERATION";
-}
-
-export function getViewFromPathname(pathname: string): CoreView {
-  return pathnameToView[pathname];
 }

@@ -62,7 +62,6 @@ export const flatOptions = (options) =>
 export const formatSelectOptionValue = ({
   allOptions,
   selectedOptions,
-  isCore,
   summingOption,
   isShortFormat = true,
 }) => {
@@ -86,11 +85,6 @@ export const formatSelectOptionValue = ({
     selectedGroups[0].options.length === selectedValues.length
   ) {
     return `${selectedGroups[0].label} - ${selectedGroups[0].allSelectedLabel}`;
-  }
-
-  // labels for core filters
-  if (isCore) {
-    return `${selectedOptions.length} selected`;
   }
 
   if (isShortFormat) {

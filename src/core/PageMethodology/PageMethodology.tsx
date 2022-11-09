@@ -37,7 +37,6 @@ const PageMethodology: React.FC = () => {
     operations: MethodologyPathways,
     projections: MethodologyProjections,
     system: MethodologyPathways,
-    practices: MethodologyPathways,
   };
 
   const Methodology = methodologies[dashboard];

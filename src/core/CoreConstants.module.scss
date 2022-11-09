@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-// TODO(#900): Move Core SCSS constants into this file
 $core-breakpoint-lg: 1920px;
 $core-breakpoint-ml: 1760px;
 $core-breakpoint-md: 1366px;
@@ -65,8 +64,6 @@ $slate-80: rgba(53, 83, 98, 0.8);
 $slate-85: rgba(53, 83, 98, 0.85);
 
 /* Colors missing from system design */
-$core-dropdown-color: #e9ebeb;
-$core-element-hover-color: #d2d8d8;
 $core-border-color: #d2d8d8;
 $core-focused-color: #e3e6e6;
 

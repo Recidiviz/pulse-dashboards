@@ -24,21 +24,15 @@ import {
 describe("getPathsFromNavigation", () => {
   it("returns the correct allowed paths paths", () => {
     const navigation = {
-      goals: [],
-      community: ["explore", "practices"],
-      methodology: ["practices"],
-      facilities: ["explore"],
+      "id-methodology": ["operations"],
+      system: ["prison"],
     };
     const allowedPaths = getPathsFromNavigation(navigation);
     const expected = [
-      "/goals",
-      "/community/explore",
-      "/community/practices",
-      "/community",
-      "/methodology/practices",
-      "/methodology",
-      "/facilities/explore",
-      "/facilities",
+      "/id-methodology/operations",
+      "/id-methodology",
+      "/system/prison",
+      "/system",
     ];
     expect(allowedPaths).toEqual(expected);
   });
@@ -46,13 +40,8 @@ describe("getPathsFromNavigation", () => {
 
 describe("getPathWithoutParams", () => {
   it("returns the full path when given a path without params", () => {
-    const path = "/community/practices";
+    const path = "/operations";
     expect(getPathWithoutParams(path)).toEqual(path);
-  });
-
-  it("returns the path without params when given a path with params", () => {
-    const basePath = "/community/practices";
-    expect(getPathWithoutParams(`${basePath}/office-a`)).toEqual(basePath);
   });
 
   it("returns the path without params when given a path with params", () => {

@@ -79,9 +79,6 @@ const {
 const {
   newRevocations,
   newRevocationFile,
-  goals,
-  communityExplore,
-  facilitiesExplore,
   refreshCache,
   responder,
 } = require("../api");
@@ -139,12 +136,7 @@ describe("API GET tests", () => {
   }
 
   describe("API fetching and caching for GET requests", () => {
-    const metricControllers = [
-      [newRevocations],
-      [goals],
-      [communityExplore],
-      [facilitiesExplore],
-    ];
+    const metricControllers = [[newRevocations]];
 
     afterEach(async () => {
       await clearMemoryCache();

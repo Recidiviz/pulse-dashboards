@@ -227,23 +227,6 @@ describe("Server tests", () => {
           expect(response.statusCode).toEqual(200);
         });
     });
-
-    it("should respond with a 403 when cron job header is invalid for goals", () => {
-      return request(app)
-        .get("/api/US_ND/goals/refreshCache")
-        .then((response) => {
-          expect(response.statusCode).toEqual(403);
-        });
-    });
-
-    it("should respond successfully when cron job header is valid for goals", () => {
-      return request(app)
-        .get("/api/US_ND/goals/refreshCache")
-        .set("X-Appengine-Cron", "true")
-        .then((response) => {
-          expect(response.statusCode).toEqual(200);
-        });
-    });
   });
 
   describe("GET api/:stateCode/pathways/:file", () => {

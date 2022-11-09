@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { US_ND } from "../../RootStore/TenantStore/coreTenants";
 import {
   US_CO,
   US_ID,
   US_ME,
   US_MI,
   US_MO,
+  US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { EnabledFiltersByMetric } from "../types/filters";

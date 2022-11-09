@@ -24,12 +24,11 @@ import { Link, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { CORE_TENANTS } from "../../RootStore/TenantStore/coreTenants";
 import { PATHWAYS_TENANTS } from "../../RootStore/TenantStore/pathwaysTenants";
 import { getMethodologyCopy, getPageCopy } from "../content";
 import { useCoreStore } from "../CoreStoreProvider";
 import { NavigationSection } from "../types/navigation";
-import { CoreViewIdList, isValidPathwaysRootPath } from "../views";
+import { isValidPathwaysRootPath } from "../views";
 
 const PageNavigation: React.FC = () => {
   const isMobile = useIsMobile();
@@ -39,7 +38,6 @@ const PageNavigation: React.FC = () => {
   const currentView = pathname.split("/")[1];
   const navigationLayout = userStore.userAllowedNavigation;
   const pageOptions = navigationLayout[currentView] ?? [];
-  const isCoreView = CORE_TENANTS.includes(currentTenantId);
   const isPathwaysView = PATHWAYS_TENANTS.includes(currentTenantId);
   // TODO(#2016): Remove try-catch once getMethodologyCopy() always returns copy
   let mergePageAndMethodologyCopy = getPageCopy(currentTenantId);
@@ -57,8 +55,6 @@ const PageNavigation: React.FC = () => {
       className={cx("PageNavigation", {
         "PageNavigation--pathways":
           isPathwaysView && !isMobile && isValidPathwaysRootPath(currentView),
-        "PageNavigation--core":
-          isCoreView && CoreViewIdList.includes(currentView),
         "PageNavigation--mobile": isMobile && isPathwaysView,
       })}
     >

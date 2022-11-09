@@ -32,9 +32,9 @@ describe("NewRevocationsMetrics", () => {
 
   it("throws an error if instantiated with wrong metric type", () => {
     expect(
-      () => new NewRevocationsMetrics(COLLECTIONS.COMMUNITY_EXPLORE, stateCode)
+      () => new NewRevocationsMetrics(COLLECTIONS.PATHWAYS, stateCode)
     ).toThrowError(
-      `Incorrect metricType for metric class NewRevocationsMetrics: ${COLLECTIONS.COMMUNITY_EXPLORE}`
+      `Incorrect metricType for metric class NewRevocationsMetrics: ${COLLECTIONS.PATHWAYS}`
     );
   });
 

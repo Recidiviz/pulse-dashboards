@@ -16,7 +16,6 @@
 // =============================================================================
 import { makeAutoObservable, reaction } from "mobx";
 
-import { PATHWAYS_TENANTS } from "../../RootStore/TenantStore/pathwaysTenants";
 import TENANTS from "../../tenants";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { formatISODateString, formatPercent } from "../../utils/formatStrings";
@@ -296,11 +295,8 @@ export default class VitalsStore {
   async downloadData(): Promise<void> {
     if (!this.rootStore.currentTenantId) return;
     const methodologyCopy = getMethodologyCopy(this.rootStore.currentTenantId);
-    const methodology = PATHWAYS_TENANTS.includes(
-      this.rootStore.currentTenantId
-    )
-      ? methodologyCopy.operations
-      : methodologyCopy.practices;
+    const methodology = methodologyCopy.operations;
+
     return downloadChartAsData({
       fileContents: [
         this.timeSeriesDownloadableData,

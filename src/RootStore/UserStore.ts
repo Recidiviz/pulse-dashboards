@@ -33,11 +33,7 @@ import {
   NavigationSection,
   RoutePermission,
 } from "../core/types/navigation";
-import {
-  CorePageIdList,
-  PATHWAYS_SECTIONS,
-  PathwaysPageIdList,
-} from "../core/views";
+import { PATHWAYS_SECTIONS, PathwaysPageIdList } from "../core/views";
 import { authenticate } from "../firestore";
 import tenants from "../tenants";
 import isIE11 from "../utils/isIE11";
@@ -317,12 +313,6 @@ export default class UserStore {
     if (pagesWithRestrictions) {
       pagesWithRestrictions.forEach((page) => {
         if (!this.canAccessRestrictedPage(page)) {
-          // TODO #1561 Remove this block once CORE dashboard is removed
-          if (CorePageIdList.includes(page)) {
-            if (!allowed.community || allowed.community.indexOf(page) < 0)
-              return;
-            allowed.community.splice(allowed.community.indexOf(page), 1);
-          }
           // System page permissions are on the page level,
           // so remove them as necessary from the system key array
           if (PathwaysPageIdList.includes(page)) {

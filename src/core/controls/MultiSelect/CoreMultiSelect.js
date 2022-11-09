@@ -79,7 +79,6 @@ const CoreMultiSelect = ({
       ),
       ValueContainer: (valueContainerProps) => (
         <ValueContainer
-          isCore
           allOptions={options}
           summingOption={summingOption}
           {...valueContainerProps}

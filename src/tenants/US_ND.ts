@@ -91,11 +91,6 @@ const US_ND_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countByAgeGroup,
       PATHWAYS_SECTIONS.countByRace,
     ],
-
-    goals: [],
-    community: ["explore", "practices"],
-    methodology: ["practices"],
-    facilities: ["explore"],
     "id-methodology": ["system", "operations"],
   },
   pagesWithRestrictions: [
@@ -106,7 +101,6 @@ const US_ND_CONFIG: TenantConfig = {
     "supervisionToPrison",
     "supervisionToLiberty",
     "supervision",
-    "practices",
     "workflows",
   ],
   tableColumns: enabledTableColumns[pathways.US_ND],

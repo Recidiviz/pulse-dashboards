@@ -189,9 +189,6 @@ app.get(
   newRevocationsParamValidations,
   api.newRevocationFile
 );
-app.get(`${stateApiBaseRoute}goals`, api.goals);
-app.get(`${stateApiBaseRoute}community/explore`, api.communityExplore);
-app.get(`${stateApiBaseRoute}facilities/explore`, api.facilitiesExplore);
 app.get(`${stateApiBaseRoute}vitals`, api.vitals);
 app.get(
   `${stateApiBaseRoute}projections/methodology.pdf`,

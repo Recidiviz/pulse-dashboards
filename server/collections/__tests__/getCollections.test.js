@@ -25,13 +25,6 @@ describe("getCollections", () => {
       const collections = getCollections("US_ND");
       expect(collections).not.toHaveProperty(COLLECTIONS.NEW_REVOCATION);
     });
-
-    it("has the collections without dimensions", () => {
-      const collections = getCollections("US_ND");
-      expect(collections).toHaveProperty(COLLECTIONS.GOALS);
-      expect(collections).toHaveProperty(COLLECTIONS.COMMUNITY_EXPLORE);
-      expect(collections).toHaveProperty(COLLECTIONS.FACILITIES_EXPLORE);
-    });
   });
 
   describe("when a stateCode has a collection with dimensions requiring validation", () => {

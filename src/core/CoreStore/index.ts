@@ -21,11 +21,10 @@ import type UserStore from "../../RootStore/UserStore";
 import { TenantId } from "../models/types";
 import { PopulationFilterValues } from "../types/filters";
 import {
-  CORE_PAGES,
-  CorePage,
-  CoreView,
   DEFAULT_PATHWAYS_PAGE,
   DEFAULT_PATHWAYS_SECTION_BY_PAGE,
+  PATHWAYS_PAGES,
+  PATHWAYS_VIEWS,
   PathwaysPage,
   PathwaysSection,
   PathwaysView,
@@ -50,9 +49,9 @@ export default class CoreStore {
 
   vitalsStore: VitalsStore;
 
-  view: PathwaysView | CoreView = "community";
+  view: PathwaysView = PATHWAYS_VIEWS.operations;
 
-  page: PathwaysPage | CorePage = CORE_PAGES.practices;
+  page: PathwaysPage = PATHWAYS_PAGES.prison;
 
   section: PathwaysSection =
     DEFAULT_PATHWAYS_SECTION_BY_PAGE[DEFAULT_PATHWAYS_PAGE];
@@ -75,11 +74,11 @@ export default class CoreStore {
     this.setSection = this.setSection.bind(this);
   }
 
-  setView(view: PathwaysView | CoreView): void {
+  setView(view: PathwaysView): void {
     this.view = view;
   }
 
-  setPage(page: PathwaysPage | CorePage): void {
+  setPage(page: PathwaysPage): void {
     this.page = page;
   }
 

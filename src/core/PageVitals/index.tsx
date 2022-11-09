@@ -21,7 +21,6 @@ import "./PageVitals.scss";
 import { Loading } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { useLocation } from "react-router-dom";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { useCoreStore } from "../CoreStoreProvider";
@@ -31,7 +30,7 @@ import MethodologyLink from "../MethodologyLink";
 import MobileNavigation from "../MobileNavigation";
 import { ENTITY_TYPES } from "../models/types";
 import PageTemplate from "../PageTemplate";
-import { CORE_PATHS, PATHWAYS_PATHS } from "../views";
+import { PATHWAYS_PATHS } from "../views";
 import VitalsCaseloadButton from "../VitalsCaseloadButton";
 import VitalsMonthlyChange from "../VitalsMonthlyChange";
 import VitalsSummaryBreadcrumbs from "../VitalsSummaryBreadcrumbs";
@@ -43,10 +42,7 @@ import withRouteSync from "../withRouteSync";
 
 const PageVitals: React.FC = () => {
   const isMobile = useIsMobile();
-  const { pathname } = useLocation();
-  const currentView = pathname.split("/")[1].toLowerCase();
-  const isCoreView = currentView === "community";
-  const displayHeader = isCoreView || (!isCoreView && !isMobile);
+  const displayHeader = !isMobile;
 
   const { metricsStore, vitalsStore } = useCoreStore();
   const { isLoading, isError } = metricsStore.vitals;
@@ -82,13 +78,7 @@ const PageVitals: React.FC = () => {
           <VitalsSummaryBreadcrumbs />
           <DetailsGroup expand>
             <DownloadDataButton handleOnClick={downloadData} />
-            <MethodologyLink
-              path={
-                isCoreView
-                  ? CORE_PATHS.methodologyVitals
-                  : PATHWAYS_PATHS.methodologyOperations
-              }
-            />
+            <MethodologyLink path={PATHWAYS_PATHS.methodologyOperations} />
           </DetailsGroup>
         </div>
       )}
@@ -96,16 +86,10 @@ const PageVitals: React.FC = () => {
       <div className="PageVitals__SummaryCards">
         <VitalsSummaryCards />
       </div>
-      {isMobile && !isCoreView && (
+      {isMobile && (
         <DetailsGroup expand>
           <DownloadDataButton handleOnClick={downloadData} />
-          <MethodologyLink
-            path={
-              isCoreView
-                ? CORE_PATHS.methodologyVitals
-                : PATHWAYS_PATHS.methodologyOperations
-            }
-          />
+          <MethodologyLink path={PATHWAYS_PATHS.methodologyOperations} />
         </DetailsGroup>
       )}
       <div className="PageVitals__SummarySection">

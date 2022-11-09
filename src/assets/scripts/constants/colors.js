@@ -305,48 +305,4 @@ const GREYS = {
   "grey-900": "#313435",
 };
 
-const CORE_COLORS = {
-  forest: { main: "rgba(37, 99, 111, 1)", dark: "rgba(0, 75, 91, 1)" },
-  gold: { main: "rgba(217, 169, 95, 1)", dark: "rgba(183, 135, 61, 1)" },
-  crimson: { main: "rgba(186, 79, 79, 1)", dark: "rgba(164, 57, 57, 1)" },
-  indigo: { main: "rgba(76, 98, 144, 1)", dark: "rgba(62, 84, 130, 1)" },
-  teal: { main: "rgba(144, 174, 181, 1)", dark: "rgba(110, 140, 147, 1)" },
-  salmon: { main: "rgba(204, 152, 156, 1)", dark: "rgba(171, 119, 123, 1)" },
-  gray: { main: "rgba(194, 203, 208, 1)" },
-};
-
-// A placeholder color rotator for charts that need to dynamically pick colors
-const COLOR_ROTATION = [
-  CORE_COLORS.forest.main,
-  CORE_COLORS.gold.main,
-  CORE_COLORS.crimson.main,
-  CORE_COLORS.indigo.main,
-  CORE_COLORS.teal.main,
-  CORE_COLORS.salmon.main,
-  CORE_COLORS.gray.main,
-];
-
-const COLORS_GOOD_BAD = {
-  good: CORE_COLORS.forest.main,
-  bad: CORE_COLORS.crimson.main,
-};
-
-const COLORS_STACKED_TWO_VALUES = COLOR_ROTATION.slice(0, 2);
-
-const COLORS_THREE_VALUES = COLOR_ROTATION.slice(0, 3);
-
-const COLORS_FIVE_VALUES = COLOR_ROTATION.slice(0, 5);
-
-const COLORS_SEVEN_VALUES = COLOR_ROTATION;
-
-export {
-  COLOR_ROTATION,
-  COLORS,
-  COLORS_FIVE_VALUES,
-  COLORS_GOOD_BAD,
-  COLORS_SEVEN_VALUES,
-  COLORS_STACKED_TWO_VALUES,
-  COLORS_THREE_VALUES,
-  CORE_COLORS,
-  GREYS,
-};
+export { COLORS, GREYS };

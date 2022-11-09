@@ -87,7 +87,6 @@ export type PopulationFilter = {
   options: FilterOption[];
   defaultOption: FilterOption;
   defaultValue: string;
-  enabledViews: string[];
   locationNameMap?: Record<string, string>;
 };
 

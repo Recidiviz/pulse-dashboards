@@ -24,9 +24,7 @@ describe("getMetricsByType", () => {
   test.each([
     ["US_MO", COLLECTIONS.NEW_REVOCATION, NewRevocationsMetrics],
     ["US_PA", COLLECTIONS.NEW_REVOCATION, NewRevocationsMetrics],
-    ["US_ND", COLLECTIONS.GOALS, BaseMetrics],
-    ["US_ND", COLLECTIONS.COMMUNITY_EXPLORE, BaseMetrics],
-    ["US_ND", COLLECTIONS.FACILITIES_EXPLORE, BaseMetrics],
+    ["US_ND", COLLECTIONS.PATHWAYS, BaseMetrics],
   ])(
     "stateCode %s for metric %s returns a %p metric class",
     (stateCode, metricType, metricClass) => {

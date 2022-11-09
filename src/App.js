@@ -32,37 +32,24 @@ import NotFound from "./components/NotFound";
 import SentryErrorBoundary from "./components/SentryErrorBoundary";
 import StoreProvider from "./components/StoreProvider";
 import VerificationNeeded from "./components/VerificationNeeded";
-import UsNdCommunityExplore from "./core/community/Explore";
-import CoreLayout from "./core/CoreLayout";
-import UsNdFacilitiesExplore from "./core/facilities/Explore";
-import CoreGoalsView from "./core/goals/CoreGoalsView";
 import PageMethodology from "./core/PageMethodology";
 import PageSystem from "./core/PageSystem";
 import PageVitals from "./core/PageVitals";
 import PageWorkflows from "./core/PageWorkflows";
 import PathwaysLayout from "./core/PathwaysLayout";
 import Profile from "./core/Profile";
-import {
-  CORE_PATHS,
-  CORE_VIEWS,
-  PATHWAYS_PATHS,
-  PATHWAYS_VIEWS,
-  WORKFLOWS_PATHS,
-} from "./core/views";
+import { PATHWAYS_PATHS, PATHWAYS_VIEWS, WORKFLOWS_PATHS } from "./core/views";
 import LanternLayout from "./lantern/LanternLayout";
 import Revocations from "./lantern/Revocations";
 import { LANTERN_VIEWS } from "./lantern/views";
 import ProtectedRoute from "./ProtectedRoute";
 import RedirectHome from "./RedirectHome";
-import { CORE_TENANTS } from "./RootStore/TenantStore/coreTenants";
 import { LANTERN_TENANTS } from "./RootStore/TenantStore/lanternTenants";
 import { PATHWAYS_TENANTS } from "./RootStore/TenantStore/pathwaysTenants";
 import { initI18n } from "./utils/i18nSettings";
-import initFontAwesome from "./utils/initFontAwesome";
 import initIntercomSettings from "./utils/initIntercomSettings";
 import { isDemoMode } from "./utils/isDemoMode";
 
-initFontAwesome();
 if (!isDemoMode()) {
   initIntercomSettings();
 }
@@ -79,7 +66,6 @@ const App = () => (
             <Switch>
               <Route path="/verify" component={VerificationNeeded} />
               <AuthWall>
-
                 <PathwaysLayout tenantIds={PATHWAYS_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat(SHARED_VIEWS)}>
                   <Switch>
                     <ProtectedRoute path={PATHWAYS_PATHS.system} component={PageSystem} />
@@ -102,24 +88,6 @@ const App = () => (
                     <NotFound />
                   </Switch>
                 </LanternLayout>
-
-                <CoreLayout tenantIds={CORE_TENANTS}  views={Object.values(CORE_VIEWS).concat(SHARED_VIEWS)}>
-                  <Switch>
-                    <ProtectedRoute path={CORE_PATHS.goals} component={CoreGoalsView} />
-                    <ProtectedRoute path={CORE_PATHS.communityExplore} component={UsNdCommunityExplore} />
-                    <ProtectedRoute path={CORE_PATHS.facilitiesExplore} component={UsNdFacilitiesExplore} />
-                    <ProtectedRoute path={CORE_PATHS.communityPractices} component={PageVitals}/>
-                    <ProtectedRoute path={CORE_PATHS.methodology} component={PageMethodology} />
-                    <Route path="/profile" component={Profile} />
-                    <RedirectHome />
-                    <Redirect from="/snapshots" to="/goals" />
-                    <Redirect from="/revocations" to="/goals" />
-                    <Redirect from="/reincarcerations" to="/goals" />
-                    <Redirect from="/community/goals" to="/goals" />
-                    <Redirect from="/facilities/goals" to="/goals" />
-                    <NotFound />
-                  </Switch>
-                </CoreLayout>
               </AuthWall>
             </Switch>
           </QueryParamProvider>
