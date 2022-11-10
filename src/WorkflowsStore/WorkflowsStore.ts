@@ -16,14 +16,13 @@
 // =============================================================================
 
 import { ascending } from "d3-array";
-import { pick } from "lodash";
+import { identity, pick } from "lodash";
 import {
-  entries,
   has,
   makeAutoObservable,
   reaction,
-  runInAction,
   set,
+  toJS,
   values,
   when,
 } from "mobx";
@@ -42,16 +41,13 @@ import {
   FeatureVariant,
   FeatureVariantRecord,
   getClient,
-  getUser,
   StaffRecord,
-  subscribeToFeatureVariants,
-  subscribeToUserUpdates,
   updateSelectedOfficerIds,
+  UserMetadata,
   UserUpdateRecord,
 } from "../firestore";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
-import { isOfflineMode } from "../utils/isOfflineMode";
 import { Client, UNKNOWN } from "./Client";
 import {
   Opportunity,
@@ -59,12 +55,13 @@ import {
   OpportunityType,
 } from "./Opportunity/types";
 import { opportunityToSortFunctionMapping } from "./Opportunity/utils";
-import { ClientsSubscription, StaffSubscription } from "./subscriptions";
 import {
-  observableSubscription,
-  staffNameComparator,
-  SubscriptionValue,
-} from "./utils";
+  ClientsSubscription,
+  CollectionDocumentSubscription,
+  StaffSubscription,
+  UserSubscription,
+} from "./subscriptions";
+import { staffNameComparator } from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
 
@@ -73,19 +70,13 @@ export const OTHER_KEY = "Other";
 export class WorkflowsStore implements Hydratable {
   rootStore: RootStore;
 
-  isLoading?: boolean;
+  private hydrationError?: unknown;
 
-  isHydrated = false;
+  userSubscription: UserSubscription;
 
-  error?: Error;
+  userUpdatesSubscription?: CollectionDocumentSubscription<UserUpdateRecord>;
 
-  user?: CombinedUserRecord;
-
-  private userUpdatesSubscription?: SubscriptionValue<UserUpdateRecord>;
-
-  private featureVariantRecord?: FeatureVariantRecord;
-
-  private featureVariantsSubscription?: SubscriptionValue<FeatureVariantRecord>;
+  featureVariantsSubscription?: CollectionDocumentSubscription<FeatureVariantRecord>;
 
   private selectedClientPseudoId?: string;
 
@@ -106,44 +97,13 @@ export class WorkflowsStore implements Hydratable {
 
     this.officersSubscription = new StaffSubscription(rootStore);
     this.clientsSubscription = new ClientsSubscription(this);
+    this.userSubscription = new UserSubscription(rootStore);
 
-    // force new caseload data subscriptions when feature flags change,
-    // because data sources may be affected by flags
-    reaction(
-      () => [this.featureVariantRecord],
-      () => {
-        if (this.selectedClientPseudoId) {
-          this.fetchClient(this.selectedClientPseudoId);
-        }
-      }
-    );
-
-    // persistent storage for subscription results
+    // persistent storage for clients across subscription changes
     reaction(
       () => [this.clientsSubscription.data],
       ([newClients]) => {
         this.updateClients(newClients);
-      }
-    );
-    reaction(
-      () => [this.userUpdatesSubscription?.current()],
-      ([userUpdates]) => {
-        runInAction(() => {
-          if (this.user && userUpdates) {
-            this.user.updates = userUpdates;
-          }
-        });
-      }
-    );
-    reaction(
-      () => [this.featureVariantsSubscription?.current()],
-      ([featureVariants]) => {
-        runInAction(() => {
-          // featureVariants should only be undefined while the initial fetch is pending
-          if (featureVariants) {
-            this.featureVariantRecord = featureVariants;
-          }
-        });
       }
     );
 
@@ -152,6 +112,21 @@ export class WorkflowsStore implements Hydratable {
       () => [this.rootStore.currentTenantId],
       () => {
         this.updateSelectedOfficers([]);
+      }
+    );
+
+    // log default caseload search injection, when applicable
+    when(
+      () => !!this.user,
+      () => {
+        const { selectedOfficerIds } = this.user?.updates ?? {};
+        const { isDefaultOfficerSelection } = this.user?.metadata ?? {};
+        if (selectedOfficerIds && isDefaultOfficerSelection) {
+          trackCaseloadSearch({
+            officerCount: selectedOfficerIds.length,
+            isDefault: true,
+          });
+        }
       }
     );
   }
@@ -171,14 +146,10 @@ export class WorkflowsStore implements Hydratable {
    * Performs initial data fetches to enable Workflows functionality and manages loading state.
    * Expects user authentication to already be complete.
    */
-  async hydrate(): Promise<void> {
-    runInAction(() => {
-      this.isLoading = true;
-      this.error = undefined;
-    });
+  hydrate(): void {
     try {
-      const { userStore, currentTenantId } = this.rootStore;
-      const { user, stateCode } = userStore;
+      const { userStore } = this.rootStore;
+      const { user } = userStore;
       const email = user?.email;
 
       if (!email) {
@@ -186,68 +157,81 @@ export class WorkflowsStore implements Hydratable {
         throw new Error("Missing email for current user.");
       }
 
-      let userRecord: CombinedUserRecord | undefined;
-      if (stateCode === "RECIDIVIZ" && currentTenantId) {
-        userRecord = {
-          info: {
-            id: "RECIDIVIZ",
-            email,
-            stateCode: currentTenantId,
-            hasCaseload: false,
-            givenNames: "Recidiviz",
-            surname: "Staff",
-          },
-        };
-      } else if (isOfflineMode()) {
-        userRecord = {
-          info: {
-            id: `${stateCode.toLowerCase()}_${email}`,
-            email,
-            stateCode,
-            hasCaseload: false,
-            givenNames: user?.name || "Demo",
-            surname: "",
-          },
-        };
-      } else {
-        userRecord = await getUser(email, stateCode);
-      }
+      this.userSubscription.hydrate();
 
-      if (userRecord) {
-        const { info, updates, featureVariants } = userRecord;
-        // don't include featureVariants in user object so we can keep it private
-        this.setUserWithDefaults({ info, updates });
-        runInAction(() => {
-          // replacing undefined as a hydration signal
-          this.featureVariantRecord = featureVariants ?? {};
-          // subscribe to updates after the initial fetch
-          this.isHydrated = true;
-          this.userUpdatesSubscription = observableSubscription((syncToStore) =>
-            subscribeToUserUpdates(email, (userUpdates) => {
-              if (userUpdates) syncToStore(userUpdates);
-            })
-          );
-          this.featureVariantsSubscription = observableSubscription(
-            (syncToStore) =>
-              subscribeToFeatureVariants(email, (featureVariantUpdate) => {
-                // returning an empty objects helps us distinguish finding no result from awaiting
-                // the initial result (which will be exposed on the subscription as undefined)
-                syncToStore(featureVariantUpdate ?? {});
-              })
-          );
-        });
-      } else {
-        throw new Error(`Unable to retrieve user record for ${email}`);
+      // we don't really ever expect the user to change during a session,
+      // so to prevent memory leaks we will not overwrite existing subscription objects
+      if (!this.userUpdatesSubscription) {
+        this.userUpdatesSubscription = new CollectionDocumentSubscription(
+          "userUpdates",
+          email.toLowerCase()
+        );
       }
+      this.userUpdatesSubscription.hydrate();
+
+      if (!this.featureVariantsSubscription) {
+        this.featureVariantsSubscription = new CollectionDocumentSubscription(
+          "featureVariants",
+          email.toLowerCase()
+        );
+      }
+      this.featureVariantsSubscription.hydrate();
     } catch (e) {
-      runInAction(() => {
-        this.error = e as Error;
-        this.isHydrated = false;
-      });
+      this.hydrationError = e;
     }
-    runInAction(() => {
-      this.isLoading = false;
-    });
+  }
+
+  get isHydrated(): boolean {
+    return !!(
+      this.userSubscription.isHydrated &&
+      this.userUpdatesSubscription?.isHydrated &&
+      this.featureVariantsSubscription?.isHydrated &&
+      // error and hydration are mutually exclusive for this class
+      !this.error
+    );
+  }
+
+  get isLoading(): boolean | undefined {
+    const subsLoading = [
+      this.userSubscription.isLoading,
+      this.userUpdatesSubscription?.isLoading,
+      this.featureVariantsSubscription?.isLoading,
+    ];
+
+    if (subsLoading.some((status) => status === undefined)) return undefined;
+
+    return subsLoading.some(identity);
+  }
+
+  get error(): Error | undefined {
+    const errorSources = [
+      this.hydrationError,
+      this.userSubscription.error,
+      this.userUpdatesSubscription?.error,
+      this.featureVariantsSubscription?.error,
+    ].filter(identity);
+
+    if (errorSources.length) return new AggregateError(errorSources);
+  }
+
+  get user(): CombinedUserRecord | undefined {
+    if (!this.isHydrated) return undefined;
+
+    const [info] = this.userSubscription.data;
+
+    const updates = this.userUpdatesSubscription?.data ?? {
+      stateCode: info.stateCode,
+    };
+
+    const metadata: UserMetadata = {};
+
+    // set default caseload to the user's own, when applicable
+    if (!updates.selectedOfficerIds && info.hasCaseload) {
+      updates.selectedOfficerIds = [info.id];
+      metadata.isDefaultOfficerSelection = true;
+    }
+
+    return { info, updates, metadata };
   }
 
   get selectedOfficerIds(): string[] {
@@ -308,31 +292,6 @@ export class WorkflowsStore implements Hydratable {
     return this.availableOfficers.filter(
       (officer) => this.selectedOfficerIds.indexOf(officer.id) !== -1
     );
-  }
-
-  private setUserWithDefaults(userData: CombinedUserRecord) {
-    const updates: UserUpdateRecord = userData.updates ?? {
-      stateCode: userData.info.stateCode,
-    };
-
-    let selectedOfficerIds = updates.selectedOfficerIds ?? [];
-
-    if (!selectedOfficerIds.length) {
-      if (updates.savedOfficers?.length) {
-        selectedOfficerIds = updates.savedOfficers;
-      } else if (userData.info.hasCaseload) {
-        selectedOfficerIds = [userData.info.id];
-      }
-    }
-
-    updates.selectedOfficerIds = selectedOfficerIds;
-
-    this.user = { ...userData, updates };
-
-    trackCaseloadSearch({
-      officerCount: selectedOfficerIds.length,
-      isDefault: true,
-    });
   }
 
   /**
@@ -465,10 +424,14 @@ export class WorkflowsStore implements Hydratable {
    * the activeDate for each feature and observing the current Date for reactivity
    */
   get featureVariants(): Partial<Record<FeatureVariant, { variant?: string }>> {
-    // this should only happen pre-hydration
-    if (!this.featureVariantRecord) return {};
+    if (!this.featureVariantsSubscription?.isHydrated) return {};
 
-    const configuredFlags = entries(this.featureVariantRecord);
+    const featureVariantsRecord = this.featureVariantsSubscription?.data;
+
+    const configuredFlags = Object.entries(
+      // need a plain object without mobx annotations for iteration
+      featureVariantsRecord ? toJS(featureVariantsRecord) : {}
+    );
     // for internal users, all flags default to on rather than off
     if (
       !configuredFlags.length &&

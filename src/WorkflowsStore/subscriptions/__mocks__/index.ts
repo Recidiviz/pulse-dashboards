@@ -25,3 +25,5 @@ export const OpportunityUpdateSubscription = MockDocumentSubscription;
 export const ClientsSubscription = MockQuerySubscription;
 
 export const StaffSubscription = MockQuerySubscription;
+
+export const UserSubscription = MockQuerySubscription;

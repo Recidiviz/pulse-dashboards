@@ -43,6 +43,7 @@ export function getMockDocumentSnapshotHandler(
  */
 function mockQuerySnapshotResults(mockData: any[]) {
   return {
+    size: mockData.length,
     forEach(callback: (result: any) => void) {
       mockData.forEach((d) => {
         callback({ data: () => d });

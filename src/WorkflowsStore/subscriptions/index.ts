@@ -20,3 +20,4 @@ export * from "./CollectionDocumentSubscription";
 export * from "./OpportunityUpdateSubscription";
 export * from "./StaffSubscription";
 export * from "./types";
+export * from "./UserSubscription";

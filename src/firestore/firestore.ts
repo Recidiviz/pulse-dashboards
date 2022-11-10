@@ -28,7 +28,6 @@ import {
   deleteField,
   doc,
   DocumentSnapshot,
-  getDoc,
   getDocs,
   getFirestore,
   limit,
@@ -55,9 +54,7 @@ import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
 import {
   ClientRecord,
   ClientUpdateRecord,
-  CombinedUserRecord,
   FeatureVariantRecord,
-  isUserRecord,
   OpportunityUpdateWithForm,
   StaffRecord,
   UserUpdateRecord,
@@ -180,65 +177,6 @@ export const collections = {
     collectionNames.featureVariants
   ) as CollectionReference<FeatureVariantRecord>,
 };
-
-export async function getUser(
-  email: string,
-  stateCode: string
-): Promise<CombinedUserRecord | undefined> {
-  const queryEmail = email.toLowerCase();
-  const [
-    infoSnapshot,
-    updateSnapshot,
-    featureVariantSnapshot,
-  ] = await Promise.all([
-    getDocs(
-      query(
-        collections.staff,
-        where("email", "==", queryEmail),
-        where("stateCode", "==", stateCode),
-        limit(1)
-      )
-    ),
-    getDoc(doc(collections.userUpdates, queryEmail)),
-    getDoc(doc(collections.featureVariants, queryEmail)),
-  ]);
-  const info = infoSnapshot.docs[0]?.data();
-  if (!info || !isUserRecord(info)) return undefined;
-
-  const updates = updateSnapshot.data();
-  const featureVariants = featureVariantSnapshot.data();
-
-  return {
-    info,
-    updates,
-    featureVariants,
-  };
-}
-
-export function subscribeToUserUpdates(
-  email: string,
-  handleResults: (results?: UserUpdateRecord) => void
-): Unsubscribe {
-  return onSnapshot(
-    doc(collections.userUpdates, email.toLowerCase()),
-    (result) => {
-      handleResults(result.data());
-    }
-  );
-}
-
-export function subscribeToFeatureVariants(
-  email: string,
-  handleResults: (results?: FeatureVariantRecord) => void
-): Unsubscribe {
-  return onSnapshot(
-    doc(collections.featureVariants, email.toLowerCase()),
-    (result) => {
-      const featureVariants = result.data();
-      handleResults(featureVariants);
-    }
-  );
-}
 
 export async function getClient(
   clientId: string,

@@ -16,32 +16,10 @@
 // =============================================================================
 
 import { addDays, differenceInDays, parseISO } from "date-fns";
-import { Timestamp, Unsubscribe } from "firebase/firestore";
-import { fromResource, IResource } from "mobx-utils";
+import { Timestamp } from "firebase/firestore";
 
 import { StaffRecord } from "../firestore/types";
 import { isDemoMode } from "../utils/isDemoMode";
-
-type Subscriber<Result> = (
-  handleRecords: (results: Result) => void
-) => Unsubscribe | undefined;
-
-export type SubscriptionValue<Result> = IResource<Result | undefined>;
-
-export function observableSubscription<ObservableType>(
-  subscriber: Subscriber<ObservableType>
-): SubscriptionValue<ObservableType> {
-  let unsubscribe: Unsubscribe | undefined;
-
-  return fromResource<ObservableType>(
-    (setCurrent) => {
-      unsubscribe = subscriber(setCurrent);
-    },
-    () => {
-      if (unsubscribe) unsubscribe();
-    }
-  );
-}
 
 export function dateToTimestamp(isodate: string): Timestamp {
   return new Timestamp(new Date(isodate).getTime() / 1000, 0);

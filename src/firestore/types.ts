@@ -53,8 +53,6 @@ export function isUserRecord(
  */
 export type UserUpdateRecord = {
   stateCode: string;
-  // this is for supervisors or others without caseloads to configure their default view
-  savedOfficers?: string[];
   // this persists their most recent caseload selection
   selectedOfficerIds?: string[];
 };
@@ -85,12 +83,20 @@ export const defaultFeatureVariantsActive: FeatureVariantMapping = {
 };
 
 /**
+ * Properties that may be derived from user data but are not directly persisted in Firestore
+ */
+export type UserMetadata = {
+  isDefaultOfficerSelection?: boolean;
+};
+
+/**
  * Combines user data from this application and the Recidiviz platform into a single object
  */
 export type CombinedUserRecord = {
   info: UserRecord;
   updates?: UserUpdateRecord;
   featureVariants?: FeatureVariantRecord;
+  metadata?: UserMetadata;
 };
 
 export type FullName = {

@@ -105,7 +105,9 @@ afterEach(() => {
 test.each(OPPORTUNITY_TYPES)(
   "set %s opportunity ineligible",
   async (opportunityType) => {
-    rootStore.workflowsStore.user = mockOfficer;
+    jest
+      .spyOn(rootStore.workflowsStore, "user", "get")
+      .mockReturnValue(mockOfficer);
 
     const reasons = ["test1", "test2"];
 
@@ -137,7 +139,9 @@ test.each(OPPORTUNITY_TYPES)(
 test.each(OPPORTUNITY_TYPES)(
   "set %s opportunity ineligible for other reason",
   (opportunityType) => {
-    rootStore.workflowsStore.user = mockOfficer;
+    jest
+      .spyOn(rootStore.workflowsStore, "user", "get")
+      .mockReturnValue(mockOfficer);
 
     const reasons = ["test1", OTHER_KEY];
 
@@ -169,7 +173,9 @@ test.each(OPPORTUNITY_TYPES)(
 test.each(OPPORTUNITY_TYPES)(
   "set %s opportunity other reason",
   (opportunityType) => {
-    rootStore.workflowsStore.user = mockOfficer;
+    jest
+      .spyOn(rootStore.workflowsStore, "user", "get")
+      .mockReturnValue(mockOfficer);
 
     const otherReason = "some other reason";
     client.setOpportunityOtherReason(opportunityType, otherReason);
@@ -186,7 +192,9 @@ test.each(OPPORTUNITY_TYPES)(
 test.each(OPPORTUNITY_TYPES)(
   "clear denial reasons for opportunity %s",
   async (opportunityType) => {
-    rootStore.workflowsStore.user = mockOfficer;
+    jest
+      .spyOn(rootStore.workflowsStore, "user", "get")
+      .mockReturnValue(mockOfficer);
 
     const reasons = ["test1", OTHER_KEY];
     await client.setOpportunityDenialReasons(reasons, opportunityType);
@@ -205,7 +213,9 @@ test.each(OPPORTUNITY_TYPES)(
 test.each(OPPORTUNITY_TYPES)(
   "print client reporting form for %s opportunity",
   (opportunityType) => {
-    rootStore.workflowsStore.user = mockOfficer;
+    jest
+      .spyOn(rootStore.workflowsStore, "user", "get")
+      .mockReturnValue(mockOfficer);
 
     expect(client.formIsPrinting).toBe(false);
 
@@ -220,7 +230,9 @@ test.each(OPPORTUNITY_TYPES)(
 test.each(OPPORTUNITY_TYPES)(
   "mark client as completed when printing form for %s opportunity",
   (opportunityType) => {
-    rootStore.workflowsStore.user = mockOfficer;
+    jest
+      .spyOn(rootStore.workflowsStore, "user", "get")
+      .mockReturnValue(mockOfficer);
 
     client.printReferralForm(opportunityType);
 
@@ -239,7 +251,9 @@ test.each(OPPORTUNITY_TYPES)(
 
 test("don't record a completion if user is ineligible", () => {
   runInAction(() => {
-    rootStore.workflowsStore.user = mockOfficer;
+    jest
+      .spyOn(rootStore.workflowsStore, "user", "get")
+      .mockReturnValue(mockOfficer);
     compliantReportingUpdatesSub.data = {
       denial: {
         reasons: ["test"],
@@ -256,7 +270,9 @@ test("don't record a completion if user is ineligible", () => {
 
 test("don't record redundant completions for already completed workflows", () => {
   runInAction(() => {
-    rootStore.workflowsStore.user = mockOfficer;
+    jest
+      .spyOn(rootStore.workflowsStore, "user", "get")
+      .mockReturnValue(mockOfficer);
     compliantReportingUpdatesSub.data = {
       completed: { by: "test", date: dateToTimestamp("2022-02-01") },
     };

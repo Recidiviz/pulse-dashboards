@@ -159,7 +159,7 @@ test("review status", () => {
 describe("setFirstViewedIfNeeded", () => {
   beforeEach(() => {
     // configure a mock user who is viewing this opportunity
-    root.workflowsStore.user = mockUser;
+    jest.spyOn(root.workflowsStore, "user", "get").mockReturnValue(mockUser);
     mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
   });
 
@@ -232,7 +232,7 @@ describe("setFirstViewedIfNeeded", () => {
 describe("setCompletedIfEligible", () => {
   beforeEach(() => {
     // configure a mock user who is viewing this opportunity
-    root.workflowsStore.user = mockUser;
+    jest.spyOn(root.workflowsStore, "user", "get").mockReturnValue(mockUser);
     mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
   });
 

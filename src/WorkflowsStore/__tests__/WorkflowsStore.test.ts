@@ -19,12 +19,11 @@ import { add } from "date-fns";
 import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
+import { trackCaseloadSearch } from "../../analytics";
 import {
   ClientRecord,
+  CombinedUserRecord,
   getClient,
-  getUser,
-  subscribeToFeatureVariants,
-  subscribeToUserUpdates,
   UserUpdateRecord,
 } from "../../firestore";
 import { RootStore } from "../../RootStore";
@@ -46,6 +45,7 @@ import {
 } from "../Opportunity";
 import { dateToTimestamp } from "../utils";
 
+jest.mock("../../analytics");
 jest.mock("../../firestore");
 jest.mock("../subscriptions");
 jest.mock("../../tenants", () => ({
@@ -64,28 +64,46 @@ jest.mock("../../tenants", () => ({
 }));
 
 const mockGetClient = getClient as jest.MockedFunction<typeof getClient>;
-const mockGetUser = getUser as jest.MockedFunction<typeof getUser>;
-const mockSubscribeToUserUpdates = subscribeToUserUpdates as jest.MockedFunction<
-  typeof subscribeToUserUpdates
->;
-const mockSubscribeToFeatureVariants = subscribeToFeatureVariants as jest.MockedFunction<
-  typeof subscribeToFeatureVariants
->;
 
 let rootStore: RootStore;
 let workflowsStore: WorkflowsStore;
 let testObserver: IDisposer;
 
-const mockUnsub = jest.fn();
-
-function doBackendMock() {
-  mockGetUser.mockResolvedValue(mockOfficer);
+function mockAuthedUser() {
+  // mock successful authentication from Auth0
+  runInAction(() => {
+    rootStore.userStore.user = {
+      email: mockOfficer.info.email,
+      [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+        state_code: mockOfficer.info.stateCode,
+      },
+    };
+    rootStore.tenantStore.setCurrentTenantId(mockOfficer.info.stateCode as any);
+  });
 }
 
-async function waitForHydration(): Promise<void> {
+async function waitForHydration({
+  info,
+  updates,
+  featureVariants,
+}: CombinedUserRecord = mockOfficer): Promise<void> {
   workflowsStore.hydrate();
 
-  await when(() => !workflowsStore.isLoading);
+  // mock the results of active firestore subscriptions
+  runInAction(() => {
+    workflowsStore.userSubscription.data = [info];
+    workflowsStore.userSubscription.isHydrated = true;
+
+    /* eslint-disable @typescript-eslint/no-non-null-assertion */
+    // these subs will not be null because we called hydrate() above!
+    workflowsStore.userUpdatesSubscription!.data = updates;
+    workflowsStore.userUpdatesSubscription!.isHydrated = true;
+    workflowsStore.featureVariantsSubscription!.data = featureVariants;
+    workflowsStore.featureVariantsSubscription!.isHydrated = true;
+    /* eslint-enable @typescript-eslint/no-non-null-assertion */
+  });
+
+  await when(() => workflowsStore.isHydrated);
 }
 
 function populateClients(clients: ClientRecord[]): void {
@@ -102,17 +120,7 @@ beforeEach(() => {
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
   workflowsStore = rootStore.workflowsStore;
-  runInAction(() => {
-    rootStore.userStore.user = {
-      email: "foo@example.com",
-      [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-        state_code: mockOfficer.info.stateCode,
-      },
-    };
-    // @ts-ignore
-    rootStore.tenantStore.currentTenantId = mockOfficer.info.stateCode;
-  });
-  doBackendMock();
+  mockAuthedUser();
 });
 
 afterEach(() => {
@@ -125,48 +133,123 @@ afterEach(() => {
   }
 });
 
-test("hydration progress", async () => {
-  expect(workflowsStore.error).toBeUndefined();
-  expect(workflowsStore.isLoading).toBeUndefined();
+test("hydration fails without authentication", () => {
+  runInAction(() => {
+    rootStore.userStore.user = undefined;
+  });
+  workflowsStore.hydrate();
+  expect(workflowsStore.error).toEqual(expect.any(Error));
+});
 
+test("hydration creates subscriptions", () => {
+  expect(workflowsStore.userUpdatesSubscription).toBeUndefined();
+  expect(workflowsStore.featureVariantsSubscription).toBeUndefined();
+
+  workflowsStore.hydrate();
+
+  expect(workflowsStore.userUpdatesSubscription).toBeDefined();
+  expect(workflowsStore.featureVariantsSubscription).toBeDefined();
+});
+
+test("hydration triggers subscriptions", () => {
+  workflowsStore.hydrate();
+
+  expect(workflowsStore.userSubscription.hydrate).toHaveBeenCalled();
+  expect(workflowsStore.userUpdatesSubscription?.hydrate).toHaveBeenCalled();
+  expect(
+    workflowsStore.featureVariantsSubscription?.hydrate
+  ).toHaveBeenCalled();
+});
+
+test("hydration reflects subscriptions", async () => {
+  expect(workflowsStore.isHydrated).toBe(false);
+
+  workflowsStore.hydrate();
+
+  runInAction(() => {
+    workflowsStore.userSubscription.isHydrated = true;
+  });
+  expect(workflowsStore.isHydrated).toBe(false);
+
+  runInAction(() => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    workflowsStore.userUpdatesSubscription!.isHydrated = true;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    workflowsStore.featureVariantsSubscription!.isHydrated = true;
+  });
+
+  expect(workflowsStore.isHydrated).toBe(true);
+});
+
+describe("hydration loading reflects subscriptions", () => {
+  test.each([
+    [undefined, undefined, undefined, undefined],
+    [undefined, true, true, undefined],
+    [undefined, false, true, undefined],
+    [true, true, true, true],
+    [true, false, true, true],
+    [false, false, false, false],
+  ])("%s + %s + %s = %s", (statusA, statusB, statusC, result) => {
+    mockAuthedUser();
+    workflowsStore.hydrate();
+
+    runInAction(() => {
+      workflowsStore.userSubscription.isLoading = statusA;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      workflowsStore.userUpdatesSubscription!.isLoading = statusB;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      workflowsStore.featureVariantsSubscription!.isLoading = statusC;
+    });
+
+    expect(workflowsStore.isLoading).toBe(result);
+  });
+});
+
+test("hydration error reflects subscriptions", () => {
+  mockAuthedUser();
+  workflowsStore.hydrate();
+
+  runInAction(() => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    workflowsStore.userUpdatesSubscription!.error = new Error("TEST");
+  });
+
+  expect(workflowsStore.error).toEqual(expect.any(Error));
+});
+
+test("user data waits for hydration to be complete", () => {
+  mockAuthedUser();
+  workflowsStore.hydrate();
+
+  expect(workflowsStore.user).toBeUndefined();
+});
+
+test("user data reflects subscriptions", async () => {
   await waitForHydration();
 
-  expect(workflowsStore.user).toBeDefined();
+  expect(workflowsStore.user?.info).toEqual(mockOfficer.info);
 });
 
 test("caseload defaults to self", async () => {
   await waitForHydration();
 
   expect(workflowsStore.selectedOfficerIds).toEqual([mockOfficer.info.id]);
-});
-
-test("caseload defaults to all saved officers when present", async () => {
-  const mockSavedOfficers = ["OFFICER1", "OFFICER2", "OFFICER3"];
-  mockGetUser.mockResolvedValue({
-    ...mockOfficer,
-    updates: {
-      ...(mockOfficer.updates as UserUpdateRecord),
-      selectedOfficerIds: undefined,
-      savedOfficers: mockSavedOfficers,
-    },
+  expect(trackCaseloadSearch).toHaveBeenCalledWith({
+    officerCount: 1,
+    isDefault: true,
   });
-
-  await waitForHydration();
-
-  expect(workflowsStore.selectedOfficerIds).toEqual(mockSavedOfficers);
 });
 
 test("caseload defaults to no officers if user has no caseload and no saved officers", async () => {
-  mockGetUser.mockResolvedValue(mockSupervisor);
-
-  await waitForHydration();
+  await waitForHydration(mockSupervisor);
 
   expect(workflowsStore.selectedOfficerIds).toEqual([]);
 });
 
 test("caseload defaults to stored value", async () => {
   const mockStoredOfficers = ["OFFICER1", "OFFICER3"];
-  mockGetUser.mockResolvedValue({
+
+  await waitForHydration({
     ...mockOfficer,
     updates: {
       ...(mockOfficer.updates as UserUpdateRecord),
@@ -174,61 +257,41 @@ test("caseload defaults to stored value", async () => {
     },
   });
 
-  await waitForHydration();
-
   expect(workflowsStore.selectedOfficerIds).toEqual(mockStoredOfficers);
 });
 
-test("default caseload skips empty stored value", async () => {
-  mockGetUser.mockResolvedValue({
+test("default caseload does not override empty stored value", async () => {
+  await waitForHydration({
     ...mockOfficer,
     updates: {
       ...(mockOfficer.updates as UserUpdateRecord),
       selectedOfficerIds: [],
     },
   });
-
-  await waitForHydration();
-  expect(workflowsStore.selectedOfficerIds).toEqual([mockOfficer.info.id]);
+  expect(workflowsStore.selectedOfficerIds).toEqual([]);
 });
 
 test("caseload syncs with stored value changes", async () => {
-  // simulate a database write; this will be read immediately after the default,
-  // which is not 100% realistic but good enough for now
   const mockStoredOfficers = ["OFFICER1", "OFFICER3"];
-  mockSubscribeToUserUpdates.mockImplementation((email, handler) => {
-    handler({
-      stateCode: mockOfficer.info.stateCode,
-      selectedOfficerIds: mockStoredOfficers,
-    });
-    return mockUnsub;
-  });
 
   await waitForHydration();
+
+  runInAction(() => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    rootStore.workflowsStore.userUpdatesSubscription!.data = {
+      stateCode: mockOfficer.info.stateCode,
+      selectedOfficerIds: mockStoredOfficers,
+    };
+  });
 
   expect(workflowsStore.selectedOfficerIds).toEqual(mockStoredOfficers);
 });
 
 test("receive feature variants at startup", async () => {
-  mockGetUser.mockResolvedValue({
+  await waitForHydration({
     ...mockOfficer,
     featureVariants: { TEST: {} },
   });
-
-  await waitForHydration();
-
-  expect(workflowsStore.featureVariants).toEqual({
-    TEST: {},
-  });
-});
-
-test("receive feature variants from subscription", async () => {
-  mockSubscribeToFeatureVariants.mockImplementation((email, handler) => {
-    handler({ TEST: {} });
-    return mockUnsub;
-  });
-
-  await waitForHydration();
 
   expect(workflowsStore.featureVariants).toEqual({
     TEST: {},
@@ -236,22 +299,15 @@ test("receive feature variants from subscription", async () => {
 });
 
 test("feature variants inactive by default", async () => {
-  mockGetUser.mockResolvedValue({
+  await waitForHydration({
     ...mockOfficer,
     featureVariants: undefined,
   });
-
-  await waitForHydration();
 
   expect(workflowsStore.featureVariants).toEqual({});
 });
 
 test("feature variants active by default for Recidiviz users", async () => {
-  mockGetUser.mockResolvedValue({
-    ...mockOfficer,
-    featureVariants: undefined,
-  });
-
   runInAction(() => {
     rootStore.userStore.user = {
       email: "foo@example.com",
@@ -261,7 +317,10 @@ test("feature variants active by default for Recidiviz users", async () => {
     };
   });
 
-  await waitForHydration();
+  await waitForHydration({
+    ...mockOfficer,
+    featureVariants: undefined,
+  });
 
   expect(workflowsStore.featureVariants).toMatchInlineSnapshot(`
     Object {
@@ -394,8 +453,8 @@ test("tracking call waits for client to be instantiated", async () => {
 
 describe("opportunitiesLoaded", () => {
   test("opportunitiesLoaded is true when clients are loaded and there are no clients", async () => {
-    mockGetUser.mockResolvedValue(mockOfficer2); // officer2 has no clients
-    await waitForHydration();
+    // officer2 has no clients
+    await waitForHydration(mockOfficer2);
     populateClients([]);
     expect(
       workflowsStore.opportunitiesLoaded(["compliantReporting"])
@@ -403,8 +462,7 @@ describe("opportunitiesLoaded", () => {
   });
 
   test("opportunitiesLoaded is false when clients are loading and we have not subscribed to clients", async () => {
-    mockGetUser.mockResolvedValue(mockSupervisor);
-    await waitForHydration();
+    await waitForHydration(mockSupervisor);
     expect(
       workflowsStore.opportunitiesLoaded(["compliantReporting"])
     ).toBeFalse();
@@ -507,12 +565,10 @@ describe("hasOpportunities", () => {
 });
 
 test("variant with no active date", async () => {
-  mockGetUser.mockResolvedValue({
+  await waitForHydration({
     ...mockOfficer,
     featureVariants: { TEST: { variant: "a" } },
   });
-
-  await waitForHydration();
 
   expect(workflowsStore.featureVariants).toEqual({
     TEST: { variant: "a" },
@@ -520,7 +576,7 @@ test("variant with no active date", async () => {
 });
 
 test("variant with past active date", async () => {
-  mockGetUser.mockResolvedValue({
+  await waitForHydration({
     ...mockOfficer,
     featureVariants: {
       TEST: {
@@ -531,15 +587,13 @@ test("variant with past active date", async () => {
     },
   });
 
-  await waitForHydration();
-
   expect(workflowsStore.featureVariants).toEqual({
     TEST: {},
   });
 });
 
 test("variant with future active date", async () => {
-  mockGetUser.mockResolvedValue({
+  await waitForHydration({
     ...mockOfficer,
     featureVariants: {
       TEST: {
@@ -549,8 +603,6 @@ test("variant with future active date", async () => {
       },
     },
   });
-
-  await waitForHydration();
 
   expect(workflowsStore.featureVariants).toEqual({});
 });
@@ -563,12 +615,10 @@ describe("opportunityTypes for US_TN", () => {
   });
 
   test("includes supervisionLevelDowngrade", async () => {
-    mockSubscribeToFeatureVariants.mockImplementation((email, handler) => {
-      handler({ usTnSupervisionLevelDowngrade: {} });
-      return mockUnsub;
+    await waitForHydration({
+      ...mockOfficer,
+      featureVariants: { usTnSupervisionLevelDowngrade: {} },
     });
-
-    await waitForHydration();
 
     expect(workflowsStore.opportunityTypes).toContain(
       "supervisionLevelDowngrade"
@@ -576,12 +626,10 @@ describe("opportunityTypes for US_TN", () => {
   });
 
   test("does not include supervisionLevelDowngrade", async () => {
-    mockSubscribeToFeatureVariants.mockImplementation((email, handler) => {
-      handler({});
-      return mockUnsub;
+    await waitForHydration({
+      ...mockOfficer,
+      featureVariants: {},
     });
-
-    await waitForHydration();
 
     expect(workflowsStore.opportunityTypes).not.toContain(
       "supervisionLevelDowngrade"
