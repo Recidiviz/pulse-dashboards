@@ -24,7 +24,8 @@
     ],
     "specialConditionsTerminatedDate": "2021-12-31",
     "specialConditionsFlag": "terminated",
-    "compliantReportingEligible": true
+    "compliantReportingEligible": true,
+    "allEligibleOpportunities": ["compliantReporting"]
   },
   {
     "personName": { "givenNames": "LINET", "surname": "HANSEN" },
@@ -50,7 +51,8 @@
     "lastSpecialConditionsNote": "2021-12-31",
     "specialConditionsFlag": "current",
     "compliantReportingEligible": true,
-    "usTnExpirationEligible": true
+    "usTnExpirationEligible": true,
+    "allEligibleOpportunities": ["compliantReporting", "usTnExpiration"]
   },
 
   {
@@ -78,7 +80,8 @@
       "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS"
     ],
     "compliantReportingEligible": null,
-    "supervisionLevelDowngradeEligible": true
+    "supervisionLevelDowngradeEligible": true,
+    "allEligibleOpportunities": ["supervisionLevelDowngrade"]
   },
   {
     "personName": { "givenNames": "RAMONDA", "surname": "UNDERWOOD" },
@@ -101,7 +104,8 @@
     "nextSpecialConditionsCheck": "2022-12-31",
     "lastSpecialConditionsNote": "2021-12-31",
     "specialConditionsFlag": "current",
-    "compliantReportingEligible": true
+    "compliantReportingEligible": true,
+    "allEligibleOpportunities": ["compliantReporting"]
   },
   {
     "personName": {
@@ -127,7 +131,8 @@
       "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS"
     ],
     "nextSpecialConditionsCheck": "2022-12-31",
-    "compliantReportingEligible": true
+    "compliantReportingEligible": true,
+    "allEligibleOpportunities": ["compliantReporting"]
   },
   {
     "personName": {
@@ -151,7 +156,8 @@
     "lastPaymentDate": "2022-01-03",
     "specialConditions": [],
     "specialConditionsFlag": "none",
-    "compliantReportingEligible": true
+    "compliantReportingEligible": true,
+    "allEligibleOpportunities": ["compliantReporting"]
   },
   {
     "personName": {
@@ -179,7 +185,8 @@
     "nextSpecialConditionsCheck": "2022-12-31",
     "lastSpecialConditionsNote": "2021-12-31",
     "specialConditionsFlag": "current",
-    "compliantReportingEligible": true
+    "compliantReportingEligible": true,
+    "allEligibleOpportunities": ["compliantReporting"]
   },
   {
     "personName": {
@@ -207,7 +214,8 @@
     "nextSpecialConditionsCheck": "2022-12-31",
     "lastSpecialConditionsNote": "2021-12-31",
     "specialConditionsFlag": "current",
-    "earlyTerminationEligible": true
+    "earlyTerminationEligible": true,
+    "allEligibleOpportunities": ["earlyTermination"]
   },
   {
     "personName": {
@@ -233,7 +241,8 @@
     "specialConditionsFlag": "current",
     "LSUEligible": true,
     "earnedDischargeEligible": true,
-    "pastFTRDEligible": false
+    "pastFTRDEligible": false,
+    "allEligibleOpportunities": ["LSU", "earnedDischarge"]
   },
   {
     "personName": {
@@ -259,6 +268,7 @@
     "specialConditionsFlag": "current",
     "LSUEligible": false,
     "earnedDischargeEligible": true,
-    "pastFTRDEligible": true
+    "pastFTRDEligible": true,
+    "allEligibleOpportunities": ["pastFTRD", "earnedDischarge"]
   }
 ]

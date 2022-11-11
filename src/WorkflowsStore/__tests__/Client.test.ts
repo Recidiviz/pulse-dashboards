@@ -64,12 +64,7 @@ beforeEach(() => {
   rootStore = new RootStore();
   const eligibleClientWithAllOpps = {
     ...eligibleClient,
-    earlyTerminationEligible: true,
-    earnedDischargeEligible: true,
-    LSUEligible: true,
-    pastFTRDEligible: true,
-    supervisionLevelDowngradeEligible: true,
-    usTnExpirationEligible: true,
+    allEligibleOpportunities: [...OPPORTUNITY_TYPES],
   };
   jest
     .spyOn(rootStore.workflowsStore, "opportunityTypes", "get")

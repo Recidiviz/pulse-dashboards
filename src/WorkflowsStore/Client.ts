@@ -31,7 +31,6 @@ import {
 import {
   ClientRecord,
   FullName,
-  OpportunityFlag,
   SpecialConditionCode,
   updateOpportunityCompleted,
   updateOpportunityDenial,
@@ -43,7 +42,6 @@ import {
   EarnedDischargeOpportunity,
   LSUOpportunity,
   Opportunity,
-  OPPORTUNITY_TYPES,
   OpportunityType,
   PastFTRDOpportunity,
 } from "./Opportunity";
@@ -69,39 +67,17 @@ export const CLIENT_DETAILS_COPY: Record<string, ClientDetailsCopy> = {
   },
 };
 
-type OpportunityConfig = {
-  flag: OpportunityFlag;
-  OpportunityClass: {
-    new (client: Client): Opportunity;
-  };
-};
-
 const OPPORTUNITY_CREATION_MAPPING: Record<
   OpportunityType,
-  OpportunityConfig
+  new (client: Client) => Opportunity
 > = {
-  compliantReporting: {
-    flag: "compliantReportingEligible",
-    OpportunityClass: CompliantReportingOpportunity,
-  },
-  earlyTermination: {
-    flag: "earlyTerminationEligible",
-    OpportunityClass: EarlyTerminationOpportunity,
-  },
-  earnedDischarge: {
-    flag: "earnedDischargeEligible",
-    OpportunityClass: EarnedDischargeOpportunity,
-  },
-  LSU: { flag: "LSUEligible", OpportunityClass: LSUOpportunity },
-  pastFTRD: { flag: "pastFTRDEligible", OpportunityClass: PastFTRDOpportunity },
-  supervisionLevelDowngrade: {
-    flag: "supervisionLevelDowngradeEligible",
-    OpportunityClass: SupervisionLevelDowngradeOpportunity,
-  },
-  usTnExpiration: {
-    flag: "usTnExpirationEligible",
-    OpportunityClass: UsTnExpirationOpportunity,
-  },
+  compliantReporting: CompliantReportingOpportunity,
+  earlyTermination: EarlyTerminationOpportunity,
+  earnedDischarge: EarnedDischargeOpportunity,
+  LSU: LSUOpportunity,
+  pastFTRD: PastFTRDOpportunity,
+  supervisionLevelDowngrade: SupervisionLevelDowngradeOpportunity,
+  usTnExpiration: UsTnExpirationOpportunity,
 };
 
 type OpportunityMapping = {
@@ -206,17 +182,20 @@ export class Client {
       record.supervisionStartDate
     );
 
-    OPPORTUNITY_TYPES.forEach((t) => {
-      const { flag, OpportunityClass } = OPPORTUNITY_CREATION_MAPPING[t];
+    record.allEligibleOpportunities.forEach((opportunityType) => {
+      const OpportunityClass = OPPORTUNITY_CREATION_MAPPING[opportunityType];
       if (
-        record[flag] &&
-        this.rootStore.workflowsStore.opportunityTypes.includes(t)
+        this.rootStore.workflowsStore.opportunityTypes.includes(opportunityType)
       ) {
-        if (!this.potentialOpportunities[t]) {
-          set(this.potentialOpportunities, t, new OpportunityClass(this));
+        if (!this.potentialOpportunities[opportunityType]) {
+          set(
+            this.potentialOpportunities,
+            opportunityType,
+            new OpportunityClass(this)
+          );
         }
       } else {
-        remove(this.potentialOpportunities, t);
+        remove(this.potentialOpportunities, opportunityType);
       }
     });
   }

@@ -110,8 +110,6 @@ export type SpecialConditionCode = {
   conditionDescription: string;
 };
 
-export type OpportunityFlag = `${OpportunityType}Eligible`;
-
 /**
  * A nested object of all client-level data from the Recidiviz data platform
  */
@@ -134,7 +132,8 @@ export type ClientRecord = {
   lastPaymentDate?: Timestamp | string;
   specialConditions?: string[];
   boardConditions?: SpecialConditionCode[];
-} & Partial<Record<OpportunityFlag, boolean>>;
+  allEligibleOpportunities: OpportunityType[];
+};
 
 // TODO(#2263): Remove CompliantReportingFinesFeesEligible and CompliantReportingEligibleRecord once Client record is migrated
 // to use boolean value for compliantReportingEligible.

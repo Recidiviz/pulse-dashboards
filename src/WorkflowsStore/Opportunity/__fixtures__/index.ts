@@ -19,6 +19,7 @@ import { Required as RequireKeys } from "utility-types";
 
 import { ClientRecord } from "../../../firestore";
 import { dateToTimestamp } from "../../utils";
+import { OpportunityType } from "..";
 import { CompliantReportingReferralRecord } from "../CompliantReportingReferralRecord";
 import { EarlyTerminationReferralRecord } from "../EarlyTerminationReferralRecord";
 import { EarnedDischargeReferralRecord } from "../EarnedDischargeReferralRecord";
@@ -37,7 +38,7 @@ export const compliantReportingEligibleClientRecord = {
   supervisionLevelStart: dateToTimestamp("2019-12-20"),
   currentBalance: 221.88,
   specialConditions: [],
-  compliantReportingEligible: true,
+  allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
 };
 
 export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecord> = {
@@ -85,7 +86,6 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
 
 export const compliantReportingAlmostEligibleClientRecord = {
   recordId: "us_xx_cr-almost-eligible-1",
-  compliantReportingEligible: true,
   personName: { givenNames: "Test", surname: "Name" },
   personExternalId: "cr-almost-eligible-1",
   pseudonymizedId: "pseudo-cr-almost-eligible-1",
@@ -96,12 +96,10 @@ export const compliantReportingAlmostEligibleClientRecord = {
   supervisionLevelStart: dateToTimestamp("2019-12-20"),
   currentBalance: 221.88,
   specialConditions: [],
+  allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
 };
 
-export const earlyTerminationEligibleClientRecord: RequireKeys<
-  ClientRecord,
-  "earlyTerminationEligible"
-> = {
+export const earlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> = {
   recordId: "us_nd_110",
   personName: {
     givenNames: "JAMIE",
@@ -117,7 +115,13 @@ export const earlyTerminationEligibleClientRecord: RequireKeys<
   address: "123 Bedrock Lane",
   phoneNumber: "5555555678",
   expirationDate: dateToTimestamp("2024-12-31"),
-  earlyTerminationEligible: true,
+  allEligibleOpportunities: ["earlyTermination"],
+  supervisionStartDate: "2020-02-22",
+  currentBalance: 0,
+  lastPaymentAmount: 125.75,
+  lastPaymentDate: dateToTimestamp("2022-01-03"),
+  specialConditions: [],
+  boardConditions: [],
 };
 
 export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {
@@ -291,22 +295,17 @@ export const ineligibleClientRecord: ClientRecord = {
   address: "123 Bedrock Lane",
   phoneNumber: "5555555678",
   expirationDate: dateToTimestamp("2024-12-31"),
+  allEligibleOpportunities: [],
 };
 
-export const LSUEligibleClientRecord: RequireKeys<
-  ClientRecord,
-  "LSUEligible"
-> = {
+export const LSUEligibleClientRecord: ClientRecord = {
   ...ineligibleClientRecord,
-  LSUEligible: true,
+  allEligibleOpportunities: ["LSU"],
 };
 
-export const EarnedDischargeEligibleClientRecord: RequireKeys<
-  ClientRecord,
-  "earnedDischargeEligible"
-> = {
+export const EarnedDischargeEligibleClientRecord: ClientRecord = {
   ...ineligibleClientRecord,
-  earnedDischargeEligible: true,
+  allEligibleOpportunities: ["earnedDischarge"],
 };
 
 export const pastFTRDRecordFixture: PastFTRDReferralRecord = {
@@ -322,10 +321,7 @@ export const pastFTRDRecordFixture: PastFTRDReferralRecord = {
   },
 };
 
-export const pastFTRDEligibleClientRecord: RequireKeys<
-  ClientRecord,
-  "pastFTRDEligible"
-> = {
+export const pastFTRDEligibleClientRecord: ClientRecord = {
   ...ineligibleClientRecord,
-  pastFTRDEligible: true,
+  allEligibleOpportunities: ["pastFTRD"],
 };
