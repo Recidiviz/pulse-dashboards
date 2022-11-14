@@ -56,11 +56,6 @@ const RouteSync: React.FC = ({ children }) => {
       workflowsStore.updateSelectedOpportunityType(undefined);
     }
 
-    // issue tracking calls as needed
-    if (clientId && page && isOpportunityType(page)) {
-      workflowsStore.trackClientFormViewed(clientId, page);
-    }
-
     if (!page) {
       const { hasMultipleOpportunities, opportunityTypes } = workflowsStore;
 

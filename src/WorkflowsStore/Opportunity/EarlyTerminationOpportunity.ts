@@ -20,8 +20,7 @@ import { computed, makeObservable } from "mobx";
 
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
-import { OpportunityValidationError } from "../utils";
-import { OTHER_KEY } from "../WorkflowsStore";
+import { OpportunityValidationError, OTHER_KEY } from "../utils";
 import {
   EarlyTerminationDraftData,
   EarlyTerminationReferralRecord,

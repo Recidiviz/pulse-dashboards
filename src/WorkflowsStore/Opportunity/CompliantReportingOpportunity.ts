@@ -26,8 +26,7 @@ import { formatRelativeToNow } from "../../core/utils/timePeriod";
 import { OpportunityUpdateWithForm } from "../../firestore";
 import { formatWorkflowsDate, pluralizeWord } from "../../utils";
 import { Client } from "../Client";
-import { OpportunityValidationError } from "../utils";
-import { OTHER_KEY } from "../WorkflowsStore";
+import { OpportunityValidationError, OTHER_KEY } from "../utils";
 import {
   AlmostEligibleCriteria,
   CompliantReportingDraftData,

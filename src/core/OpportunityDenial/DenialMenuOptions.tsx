@@ -22,7 +22,8 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
-import { Opportunity, OTHER_KEY } from "../../WorkflowsStore";
+import { Opportunity } from "../../WorkflowsStore";
+import { OTHER_KEY } from "../../WorkflowsStore/utils";
 import { OPPORTUNITY_STATUS_COLORS } from "../utils/workflowsUtils";
 import { DropdownItem } from "./DropdownItem";
 
@@ -52,10 +53,7 @@ export const DenialMenuOptions = observer(
         {Object.entries(opportunity?.denialReasonsMap).map(([code, desc]) => (
           <DropdownMenuItem
             onClick={() => {
-              opportunity.client.setOpportunityDenialReasons(
-                xor(reasons, [code]).sort(),
-                opportunity.type
-              );
+              opportunity.setDenialReasons(xor(reasons, [code]).sort());
             }}
             preventCloseOnClickEvent
           >
@@ -78,11 +76,7 @@ export const DenialMenuOptions = observer(
               defaultValue={opportunity.denial?.otherReason}
               placeholder="Please specify a reason…"
               onChange={debounce(
-                (event) =>
-                  opportunity.client.setOpportunityOtherReason(
-                    opportunity.type,
-                    event.target.value
-                  ),
+                (event) => opportunity.setOtherReasonText(event.target.value),
                 500
               )}
             />

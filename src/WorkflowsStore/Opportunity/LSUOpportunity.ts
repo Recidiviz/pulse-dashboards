@@ -19,7 +19,7 @@ import { some } from "lodash";
 import { computed, makeObservable } from "mobx";
 
 import { Client } from "../Client";
-import { OTHER_KEY } from "../WorkflowsStore";
+import { OTHER_KEY } from "../utils";
 import { LSUForm } from "./Forms/LSUForm";
 import {
   LSUDraftData,

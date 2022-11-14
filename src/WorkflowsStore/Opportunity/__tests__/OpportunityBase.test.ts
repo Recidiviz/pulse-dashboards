@@ -17,15 +17,23 @@
 
 import { configure, runInAction } from "mobx";
 
-import { trackSetOpportunityStatus } from "../../../analytics";
+import {
+  trackOpportunityMarkedEligible,
+  trackOpportunityPreviewed,
+  trackSetOpportunityStatus,
+  trackSurfacedInList,
+} from "../../../analytics";
 import {
   CombinedUserRecord,
+  OpportunityUpdate,
   updateOpportunityCompleted,
+  updateOpportunityDenial,
   updateOpportunityFirstViewed,
 } from "../../../firestore";
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
 import { DocumentSubscription } from "../../subscriptions";
+import { OTHER_KEY } from "../../utils";
 import { ineligibleClientRecord } from "../__fixtures__";
 import { FormBase } from "../Forms/FormBase";
 import { OpportunityBase } from "../OpportunityBase";
@@ -44,6 +52,8 @@ jest.mock("../../../analytics");
 const updateOpportunityFirstViewedMock = updateOpportunityFirstViewed as jest.Mock;
 const updateOpportunityCompletedMock = updateOpportunityCompleted as jest.Mock;
 const trackSetOpportunityStatusMock = trackSetOpportunityStatus as jest.Mock;
+const mockUpdateOpportunityDenial = updateOpportunityDenial as jest.Mock;
+const mockUpdateOpportunityCompleted = updateOpportunityCompleted as jest.Mock;
 
 let opp: OpportunityBase<any>;
 let client: Client;
@@ -80,6 +90,44 @@ function createTestUnit() {
   opp = new TestOpportunity(client, "TEST" as OpportunityType);
 }
 
+function mockHydration({
+  referralData,
+  updateData,
+}: {
+  referralData?: any;
+  updateData?: OpportunityUpdate;
+} = {}) {
+  runInAction(() => {
+    referralSub.isHydrated = true;
+    updatesSub.isHydrated = true;
+    if (referralData) {
+      referralSub.data = referralData;
+    }
+    if (updateData) {
+      updatesSub.data = updateData;
+    }
+  });
+}
+
+function mockDenied() {
+  mockHydration({
+    updateData: {
+      denial: {
+        reasons: ["boo"],
+        updated: { by: "foo", date: jest.fn() as any },
+      },
+    },
+  });
+}
+
+function mockCompleted() {
+  mockHydration({
+    updateData: {
+      completed: { update: { by: "foo", date: jest.fn() as any } },
+    },
+  });
+}
+
 const originalEnv = process.env;
 
 beforeEach(() => {
@@ -93,6 +141,10 @@ beforeEach(() => {
 
   referralSub = opp.referralSubscription;
   updatesSub = opp.updatesSubscription;
+
+  // configure a mock user who is viewing this opportunity
+  jest.spyOn(root.workflowsStore, "user", "get").mockReturnValue(mockUser);
+  mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
 });
 
 afterEach(() => {
@@ -157,29 +209,17 @@ test("review status", () => {
 });
 
 describe("setFirstViewedIfNeeded", () => {
-  beforeEach(() => {
-    // configure a mock user who is viewing this opportunity
-    jest.spyOn(root.workflowsStore, "user", "get").mockReturnValue(mockUser);
-    mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
-  });
-
   test("waits for hydration", () => {
     opp.setFirstViewedIfNeeded();
     expect(updateOpportunityFirstViewedMock).not.toHaveBeenCalled();
 
-    runInAction(() => {
-      referralSub.isHydrated = true;
-      updatesSub.isHydrated = true;
-    });
+    mockHydration();
 
     expect(updateOpportunityFirstViewedMock).toHaveBeenCalled();
   });
 
   test("updates Firestore when there are no updates", () => {
-    runInAction(() => {
-      referralSub.isHydrated = true;
-      updatesSub.isHydrated = true;
-    });
+    mockHydration();
 
     opp.setFirstViewedIfNeeded();
 
@@ -191,10 +231,8 @@ describe("setFirstViewedIfNeeded", () => {
   });
 
   test("does not update Firestore", () => {
-    runInAction(() => {
-      referralSub.isHydrated = true;
-      updatesSub.isHydrated = true;
-      updatesSub.data = { firstViewed: { by: "foo", date: jest.fn() } };
+    mockHydration({
+      updateData: { firstViewed: { by: "foo", date: jest.fn() as any } },
     });
 
     opp.setFirstViewedIfNeeded();
@@ -203,10 +241,8 @@ describe("setFirstViewedIfNeeded", () => {
   });
 
   test("does not ignore Recidiviz users", () => {
-    runInAction(() => {
-      referralSub.isHydrated = true;
-      updatesSub.isHydrated = true;
-    });
+    mockHydration();
+
     mockUserStateCode.mockReturnValue("RECIDIVIZ");
 
     opp.setFirstViewedIfNeeded();
@@ -217,10 +253,8 @@ describe("setFirstViewedIfNeeded", () => {
   test("ignores Recidiviz users in prod", () => {
     process.env.REACT_APP_DEPLOY_ENV = "production";
 
-    runInAction(() => {
-      referralSub.isHydrated = true;
-      updatesSub.isHydrated = true;
-    });
+    mockHydration();
+
     mockUserStateCode.mockReturnValue("RECIDIVIZ");
 
     opp.setFirstViewedIfNeeded();
@@ -240,19 +274,13 @@ describe("setCompletedIfEligible", () => {
     opp.setCompletedIfEligible();
     expect(updateOpportunityCompletedMock).not.toHaveBeenCalled();
 
-    runInAction(() => {
-      referralSub.isHydrated = true;
-      updatesSub.isHydrated = true;
-    });
+    mockHydration();
 
     expect(updateOpportunityCompletedMock).toHaveBeenCalled();
   });
 
   test("updates Firestore", () => {
-    runInAction(() => {
-      referralSub.isHydrated = true;
-      updatesSub.isHydrated = true;
-    });
+    mockHydration();
 
     opp.setCompletedIfEligible();
 
@@ -264,10 +292,7 @@ describe("setCompletedIfEligible", () => {
   });
 
   test("tracks event", () => {
-    runInAction(() => {
-      referralSub.isHydrated = true;
-      updatesSub.isHydrated = true;
-    });
+    mockHydration();
 
     opp.setCompletedIfEligible();
 
@@ -279,13 +304,7 @@ describe("setCompletedIfEligible", () => {
   });
 
   test("does not update Firestore if client is ineligible", () => {
-    runInAction(() => {
-      referralSub.isHydrated = true;
-      updatesSub.isHydrated = true;
-      updatesSub.data = {
-        denial: { reasons: ["boo"], updated: { by: "foo", date: jest.fn() } },
-      };
-    });
+    mockDenied();
 
     opp.setCompletedIfEligible();
 
@@ -293,11 +312,7 @@ describe("setCompletedIfEligible", () => {
   });
 
   test("does not update Firestore if workflow is already completed", () => {
-    runInAction(() => {
-      referralSub.isHydrated = true;
-      updatesSub.isHydrated = true;
-      updatesSub.data = { completed: { by: "foo", date: jest.fn() } };
-    });
+    mockCompleted();
 
     opp.setCompletedIfEligible();
 
@@ -305,13 +320,7 @@ describe("setCompletedIfEligible", () => {
   });
 
   test("does not track event if client is ineligible", () => {
-    runInAction(() => {
-      referralSub.isHydrated = true;
-      updatesSub.isHydrated = true;
-      updatesSub.data = {
-        denial: { reasons: ["boo"], updated: { by: "foo", date: jest.fn() } },
-      };
-    });
+    mockDenied();
 
     opp.setCompletedIfEligible();
 
@@ -319,11 +328,7 @@ describe("setCompletedIfEligible", () => {
   });
 
   test("does not track event if workflow is already completed", () => {
-    runInAction(() => {
-      referralSub.isHydrated = true;
-      updatesSub.isHydrated = true;
-      updatesSub.data = { completed: { by: "foo", date: jest.fn() } };
-    });
+    mockCompleted();
 
     opp.setCompletedIfEligible();
 
@@ -339,4 +344,113 @@ test("form updates override prefilled data", () => {
   updatesSub.data = { referralForm: { data: { foo: "test2" } } };
 
   expect(opp.form?.formData).toEqual({ foo: "test2" });
+});
+
+describe("setDenialReasons", () => {
+  beforeEach(() => {
+    mockUpdateOpportunityDenial.mockResolvedValue(undefined);
+    mockUpdateOpportunityCompleted.mockResolvedValue(undefined);
+  });
+
+  test("updates reasons", async () => {
+    const reasons = ["test1", "test2"];
+
+    await opp.setDenialReasons(reasons);
+
+    expect(updateOpportunityDenial).toHaveBeenCalledWith(
+      mockUser.info.email,
+      client.recordId,
+      { reasons },
+      opp.type,
+      { otherReason: true }
+    );
+  });
+
+  test("reverts completion", async () => {
+    const reasons = ["test1", "test2"];
+
+    await opp.setDenialReasons(reasons);
+    expect(updateOpportunityCompleted).toHaveBeenCalledWith(
+      mockUser.info.email,
+      client.recordId,
+      opp.type,
+      true
+    );
+  });
+
+  test("doesn't delete otherReason when OTHER is included", async () => {
+    const reasons = ["test1", OTHER_KEY];
+
+    await opp.setDenialReasons(reasons);
+
+    expect(mockUpdateOpportunityDenial).toHaveBeenCalledWith(
+      mockUser.info.email,
+      client.recordId,
+      { reasons },
+      opp.type,
+      undefined
+    );
+  });
+
+  test("tracks denial status", async () => {
+    const reasons = ["test1", "test2"];
+
+    await opp.setDenialReasons(reasons);
+
+    expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
+      clientId: client.pseudonymizedId,
+      status: "DENIED",
+      opportunityType: opp.type,
+      deniedReasons: reasons,
+    });
+    expect(trackOpportunityMarkedEligible).not.toHaveBeenCalled();
+  });
+
+  test("setting no reasons undoes a denial", async () => {
+    const reasons: string[] = [];
+
+    await opp.setDenialReasons(reasons);
+
+    expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
+      clientId: client.pseudonymizedId,
+      status: "IN_PROGRESS",
+      opportunityType: opp.type,
+    });
+    expect(trackOpportunityMarkedEligible).toHaveBeenCalledWith({
+      clientId: client.pseudonymizedId,
+      opportunityType: opp.type,
+    });
+  });
+});
+
+test("setOtherReasonText", async () => {
+  mockHydration();
+
+  const otherReason = "some other reason";
+  await opp.setOtherReasonText(otherReason);
+
+  expect(updateOpportunityDenial).toHaveBeenCalledWith(
+    mockUser.info.email,
+    client.recordId,
+    { otherReason },
+    opp.type
+  );
+});
+
+test("list view tracking", () => {
+  opp.trackListViewed();
+
+  expect(trackSurfacedInList).toHaveBeenCalledWith({
+    clientId: client.pseudonymizedId,
+    opportunityType: opp.type,
+  });
+});
+
+test("preview tracking", async () => {
+  opp.trackPreviewed();
+
+  expect(trackOpportunityPreviewed).toHaveBeenCalledWith({
+    clientId: client.pseudonymizedId,
+    opportunityType: opp.type,
+  });
 });

@@ -98,9 +98,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
               <div>
                 <FormActionButton
                   buttonFill={colors.buttonFill}
-                  onClick={() =>
-                    opportunity.client.printReferralForm(opportunity.type)
-                  }
+                  onClick={() => opportunity.form?.print()}
                 >
                   {opportunity.form.printText}
                 </FormActionButton>

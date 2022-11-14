@@ -66,27 +66,33 @@ const FormViewer: React.FC<FormViewerProps> = ({
 }) => {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
   useResizeForm(formRef);
-
-  const client = useRootStore().workflowsStore.selectedClient;
-  const isPrinting = client?.formIsPrinting ?? false;
+  const { workflowsStore } = useRootStore();
+  const { selectedClient: client, formIsPrinting } = workflowsStore;
 
   // Generate the form and save it once the print styles have been rendered
   useEffect(() => {
     async function download() {
-      if (isPrinting && formRef.current && client) {
+      if (formIsPrinting && formRef.current && client) {
         await formDownloader(fileName, client, formRef.current);
-        client.setFormIsPrinting(false);
+        workflowsStore.formIsPrinting = false;
       }
     }
 
     download();
-  }, [formRef, isPrinting, formDownloader, fileName, client]);
+  }, [
+    formRef,
+    formIsPrinting,
+    formDownloader,
+    fileName,
+    client,
+    workflowsStore,
+  ]);
 
   return (
     <FormViewerGrid>
       <FormViewerHeader>{statuses}</FormViewerHeader>
 
-      <FormViewerContext.Provider value={{ isPrinting }}>
+      <FormViewerContext.Provider value={{ isPrinting: formIsPrinting }}>
         <div ref={formRef}>{children}</div>
       </FormViewerContext.Provider>
     </FormViewerGrid>

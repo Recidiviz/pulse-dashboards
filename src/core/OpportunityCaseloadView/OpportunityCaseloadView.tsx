@@ -31,30 +31,25 @@ const Wrapper = styled.div`
   padding-bottom: ${rem(spacing.md * 4)};
 `;
 
-type OpportunityCaseloadViewProps = {
-  preview?: boolean;
-};
+export const OpportunityCaseloadView = observer(() => {
+  const {
+    workflowsStore: {
+      selectedOpportunityType: opportunityType,
+      selectedClient,
+    },
+  } = useRootStore();
 
-export const OpportunityCaseloadView = observer(
-  ({ preview = false }: OpportunityCaseloadViewProps) => {
-    const {
-      workflowsStore: {
-        selectedOpportunityType: opportunityType,
-        selectedClient,
-      },
-    } = useRootStore();
+  if (!opportunityType) return null;
 
-    return (
-      <WorkflowsNavLayout>
-        <Wrapper>
-          <CaseloadSelect />
-          <OpportunityClientList />
-          <OpportunityPreviewModal
-            opportunityType={opportunityType}
-            selectedClientId={selectedClient?.pseudonymizedId}
-          />
-        </Wrapper>
-      </WorkflowsNavLayout>
-    );
-  }
-);
+  return (
+    <WorkflowsNavLayout>
+      <Wrapper>
+        <CaseloadSelect />
+        <OpportunityClientList />
+        <OpportunityPreviewModal
+          opportunity={selectedClient?.verifiedOpportunities[opportunityType]}
+        />
+      </Wrapper>
+    </WorkflowsNavLayout>
+  );
+});

@@ -27,7 +27,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { OpportunityType } from "../../WorkflowsStore";
+import { Opportunity, OpportunityType } from "../../WorkflowsStore";
 import { CompliantReportingClientProfile } from "../WorkflowsClientProfile";
 import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTerminationClientProfile";
 import { EarnedDischargeClientProfile } from "../WorkflowsClientProfile/EarnedDischargeClientProfile";
@@ -76,30 +76,26 @@ const Wrapper = styled.div`
 `;
 
 type OpportunityCaseloadProps = {
-  opportunityType?: OpportunityType;
-  selectedClientId?: string;
+  opportunity?: Opportunity;
 };
 
 export const OpportunityPreviewModal = observer(
-  ({ opportunityType, selectedClientId }: OpportunityCaseloadProps) => {
+  ({ opportunity }: OpportunityCaseloadProps) => {
     const { workflowsStore } = useRootStore();
 
     // Managing the modal isOpen state here instead of tying it directly to
-    // selectedClientId helps to smooth out the open/close transition
-    const [modalIsOpen, setModalIsOpen] = useState(!!selectedClientId);
+    // props helps to smooth out the open/close transition
+    const [modalIsOpen, setModalIsOpen] = useState(!!opportunity);
     useEffect(() => {
-      if (selectedClientId && opportunityType)
-        workflowsStore.trackClientOpportunityPreviewed(
-          selectedClientId,
-          opportunityType
-        );
-      setModalIsOpen(!!selectedClientId);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedClientId]);
+      setModalIsOpen(!!opportunity);
+    }, [opportunity]);
 
     return (
       <DrawerModal
         isOpen={modalIsOpen}
+        onAfterOpen={() => {
+          opportunity?.trackPreviewed();
+        }}
         onRequestClose={() => setModalIsOpen(false)}
         onAfterClose={() => {
           workflowsStore.updateSelectedClient(undefined);
@@ -117,7 +113,7 @@ export const OpportunityPreviewModal = observer(
               <Icon kind="Close" size="14" color={palette.pine2} />
             </Button>
           </ModalControls>
-          {opportunityType && PAGE_CONTENT[opportunityType].previewContents}
+          {opportunity && PAGE_CONTENT[opportunity.type].previewContents}
         </Wrapper>
       </DrawerModal>
     );

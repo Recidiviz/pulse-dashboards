@@ -104,4 +104,8 @@ export interface Opportunity extends Hydratable {
   eligibilityDate: Date | undefined;
   readonly isAlert: boolean;
   supportsDenial: boolean;
+  setDenialReasons: (reasons: string[]) => Promise<void>;
+  setOtherReasonText: (otherReason?: string) => Promise<void>;
+  trackListViewed: () => void;
+  trackPreviewed: () => void;
 }

@@ -65,8 +65,6 @@ import { staffNameComparator } from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
 
-export const OTHER_KEY = "Other";
-
 export class WorkflowsStore implements Hydratable {
   rootStore: RootStore;
 
@@ -87,6 +85,8 @@ export class WorkflowsStore implements Hydratable {
   officersSubscription: StaffSubscription;
 
   clientsSubscription: ClientsSubscription;
+
+  private formPrintingFlag = false;
 
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
@@ -401,24 +401,6 @@ export class WorkflowsStore implements Hydratable {
       : undefined;
   }
 
-  async trackClientFormViewed(
-    clientId: string,
-    formType: OpportunityType
-  ): Promise<void> {
-    await when(() => this.clients[clientId] !== undefined);
-
-    this.clients[clientId].trackFormViewed(formType);
-  }
-
-  async trackClientOpportunityPreviewed(
-    clientId: string,
-    opportunityType: OpportunityType
-  ): Promise<void> {
-    await when(() => this.clients[clientId] !== undefined);
-
-    this.clients[clientId].trackOpportunityPreviewed(opportunityType);
-  }
-
   /**
    * All feature variants currently active for this user, taking into account
    * the activeDate for each feature and observing the current Date for reactivity
@@ -500,5 +482,13 @@ export class WorkflowsStore implements Hydratable {
       this.supervisionLevels.find((opt) => opt.value === levelId)?.label ??
       UNKNOWN
     );
+  }
+
+  get formIsPrinting(): boolean {
+    return this.formPrintingFlag;
+  }
+
+  set formIsPrinting(value: boolean) {
+    this.formPrintingFlag = value;
   }
 }

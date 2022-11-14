@@ -19,7 +19,7 @@ import { makeObservable } from "mobx";
 
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
-import { OTHER_KEY } from "../WorkflowsStore";
+import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import {
   getTransformer,

@@ -29,7 +29,6 @@ import {
 import { RootStore } from "../../RootStore";
 import type { WorkflowsStore } from "..";
 import {
-  eligibleClient,
   ineligibleClient,
   mockClients,
   mockOfficer,
@@ -417,38 +416,6 @@ test("select unfetched client", async () => {
     ineligibleClient.stateCode
   );
   expect(workflowsStore.selectedClient?.pseudonymizedId).toBe(idToSelect);
-});
-
-test("track call on client", async () => {
-  populateClients(mockClients);
-
-  const trackingSpy = jest.spyOn(Client.prototype, "trackFormViewed");
-
-  await workflowsStore.trackClientFormViewed(
-    eligibleClient.pseudonymizedId,
-    "compliantReporting"
-  );
-
-  expect(trackingSpy).toHaveBeenCalledWith("compliantReporting");
-});
-
-test("tracking call waits for client to be instantiated", async () => {
-  populateClients([]);
-  mockGetClient.mockResolvedValue(eligibleClient);
-
-  const trackingSpy = jest.spyOn(Client.prototype, "trackFormViewed");
-
-  const trackingPromise = workflowsStore.trackClientFormViewed(
-    eligibleClient.pseudonymizedId,
-    "compliantReporting"
-  );
-
-  // triggers an additional fetch to populate the expected client
-  await workflowsStore.updateSelectedClient(eligibleClient.pseudonymizedId);
-
-  await trackingPromise;
-
-  expect(trackingSpy).toHaveBeenCalledWith("compliantReporting");
 });
 
 describe("opportunitiesLoaded", () => {

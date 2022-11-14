@@ -18,7 +18,7 @@
 import { makeObservable } from "mobx";
 
 import { Client } from "../Client";
-import { OTHER_KEY } from "../WorkflowsStore";
+import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import { UsTnExpirationReferralRecord } from "./UsTnExpirationReferralRecord";

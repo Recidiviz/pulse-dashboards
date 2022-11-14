@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Client, Opportunity, OpportunityType } from "../../WorkflowsStore";
+import { Client, Opportunity } from "../../WorkflowsStore";
 import { FormBase } from "../../WorkflowsStore/Opportunity/Forms/FormBase";
 import { OpportunityBase } from "../../WorkflowsStore/Opportunity/OpportunityBase";
 
@@ -29,7 +29,10 @@ export const MockFormBase: FormBase<any> = {
   printText: "",
   navigateToFormText: "",
   prefilledDataTransformer: () => ({}),
-  type: "pastFTRD" as OpportunityType,
+  type: "pastFTRD",
+  trackViewed: () => undefined,
+  formIsPrinting: false,
+  print: () => undefined,
 };
 
 export const mockOpportunity: Opportunity = {
@@ -45,9 +48,13 @@ export const mockOpportunity: Opportunity = {
   requirementsMet: [],
   reviewStatus: "PENDING",
   setFirstViewedIfNeeded: () => undefined,
+  setDenialReasons: async () => undefined,
   setCompletedIfEligible: () => undefined,
+  setOtherReasonText: async () => undefined,
   type: "pastFTRD",
   eligibilityDate: undefined,
   isAlert: false,
   supportsDenial: false,
+  trackListViewed: () => undefined,
+  trackPreviewed: () => undefined,
 };

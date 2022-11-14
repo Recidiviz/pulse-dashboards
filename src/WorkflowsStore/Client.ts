@@ -15,26 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { entries, makeObservable, remove, set, values, when } from "mobx";
+import { entries, makeObservable, remove, set, values } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
 import {
   trackClientProfileViewed,
-  trackOpportunityMarkedEligible,
-  trackOpportunityPreviewed,
   trackProfileOpportunityClicked,
   trackReferralFormPrinted,
-  trackReferralFormViewed,
-  trackSetOpportunityStatus,
-  trackSurfacedInList,
 } from "../analytics";
-import {
-  ClientRecord,
-  FullName,
-  SpecialConditionCode,
-  updateOpportunityCompleted,
-  updateOpportunityDenial,
-} from "../firestore";
+import { ClientRecord, FullName, SpecialConditionCode } from "../firestore";
 import type { RootStore } from "../RootStore";
 import {
   CompliantReportingOpportunity,
@@ -48,7 +37,6 @@ import {
 import { SupervisionLevelDowngradeOpportunity } from "./Opportunity/SupervisionLevelDowngradeOpportunity";
 import { UsTnExpirationOpportunity } from "./Opportunity/UsTnExpirationOpportunity";
 import { optionalFieldToDate } from "./utils";
-import { OTHER_KEY } from "./WorkflowsStore";
 
 export const UNKNOWN = "Unknown" as const;
 
@@ -129,8 +117,6 @@ export class Client {
 
   paroleSpecialConditions?: SpecialConditionCode[];
 
-  formIsPrinting = false;
-
   /**
    * These are all the opportunities we expect to be able to hydrate,
    * but some may be invalid or feature gated
@@ -143,14 +129,11 @@ export class Client {
       verifiedOpportunities: true,
       record: true,
       currentUserEmail: true,
-      formIsPrinting: true,
       opportunitiesAlmostEligible: true,
       opportunitiesEligible: true,
       printReferralForm: true,
-      setFormIsPrinting: true,
       supervisionLevel: true,
       updateRecord: true,
-      setOpportunityDenialReasons: true,
     });
 
     this.rootStore = rootStore;
@@ -280,99 +263,14 @@ export class Client {
     return this.rootStore.workflowsStore.user?.info.email;
   }
 
-  async setOpportunityDenialReasons(
-    reasons: string[],
-    opportunityType: OpportunityType
-  ): Promise<void> {
-    const { currentUserEmail, recordId, pseudonymizedId } = this;
-    if (!currentUserEmail) return;
-
-    // clear irrelevant "other" text if necessary
-    const deletions = reasons.includes(OTHER_KEY)
-      ? undefined
-      : { otherReason: true };
-
-    await updateOpportunityDenial(
-      currentUserEmail,
-      recordId,
-      { reasons },
-      opportunityType,
-      deletions
-    );
-
-    await updateOpportunityCompleted(
-      currentUserEmail,
-      recordId,
-      opportunityType,
-      true
-    );
-
-    if (reasons.length) {
-      trackSetOpportunityStatus({
-        clientId: pseudonymizedId,
-        status: "DENIED",
-        opportunityType,
-        deniedReasons: reasons,
-      });
-    } else {
-      trackSetOpportunityStatus({
-        clientId: pseudonymizedId,
-        status: "IN_PROGRESS",
-        opportunityType,
-      });
-      trackOpportunityMarkedEligible({
-        clientId: pseudonymizedId,
-        opportunityType,
-      });
-    }
-  }
-
-  async setOpportunityOtherReason(
-    opportunityType: OpportunityType,
-    otherReason?: string
-  ): Promise<void> {
-    if (this.currentUserEmail) {
-      await updateOpportunityDenial(
-        this.currentUserEmail,
-        this.recordId,
-        {
-          otherReason,
-        },
-        opportunityType
-      );
-    }
-  }
-
-  setFormIsPrinting(value: boolean): void {
-    this.formIsPrinting = value;
-  }
-
   printReferralForm(opportunityType: OpportunityType): void {
     const opportunity = this.verifiedOpportunities[opportunityType];
     opportunity?.setCompletedIfEligible();
 
-    this.setFormIsPrinting(true);
+    this.rootStore.workflowsStore.formIsPrinting = true;
     trackReferralFormPrinted({
       clientId: this.pseudonymizedId,
       opportunityType,
-    });
-  }
-
-  async trackFormViewed(formType: OpportunityType): Promise<void> {
-    await when(() => this.verifiedOpportunities[formType] !== undefined);
-
-    trackReferralFormViewed({
-      clientId: this.pseudonymizedId,
-      opportunityType: formType,
-    });
-  }
-
-  async trackListViewed(listType: OpportunityType): Promise<void> {
-    await when(() => this.verifiedOpportunities[listType] !== undefined);
-
-    trackSurfacedInList({
-      clientId: this.pseudonymizedId,
-      opportunityType: listType,
     });
   }
 
@@ -382,17 +280,6 @@ export class Client {
 
   trackProfileOpportunityClicked(opportunityType: OpportunityType): void {
     trackProfileOpportunityClicked({
-      clientId: this.pseudonymizedId,
-      opportunityType,
-    });
-  }
-
-  async trackOpportunityPreviewed(
-    opportunityType: OpportunityType
-  ): Promise<void> {
-    await when(() => this.verifiedOpportunities[opportunityType] !== undefined);
-
-    trackOpportunityPreviewed({
       clientId: this.pseudonymizedId,
       opportunityType,
     });

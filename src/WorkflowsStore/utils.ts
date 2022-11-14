@@ -99,3 +99,5 @@ export function staffNameComparator(a: StaffRecord, b: StaffRecord): number {
   }
   return 0;
 }
+
+export const OTHER_KEY = "Other";

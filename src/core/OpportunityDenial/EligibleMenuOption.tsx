@@ -37,10 +37,7 @@ export const EligibleMenuOption = observer(
         <DropdownMenuItem
           onClick={() => {
             if (reasons?.length) {
-              opportunity.client.setOpportunityDenialReasons(
-                [],
-                opportunity.type
-              );
+              opportunity.setDenialReasons([]);
             }
           }}
           preventCloseOnClickEvent

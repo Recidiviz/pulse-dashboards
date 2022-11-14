@@ -31,7 +31,7 @@ export const OpportunityCapsule = observer(
   ({ opportunity, ...otherProps }: Props) => {
     const { client, isHydrated } = opportunity;
     useClientTracking(client, () => {
-      client.trackListViewed(opportunity.type);
+      opportunity.trackListViewed();
     });
     const showEligibilityStatus = useShowEligibilityStatus(opportunity);
 

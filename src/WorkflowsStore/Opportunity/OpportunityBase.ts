@@ -18,12 +18,18 @@
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable, when } from "mobx";
 
-import { trackSetOpportunityStatus } from "../../analytics";
+import {
+  trackOpportunityMarkedEligible,
+  trackOpportunityPreviewed,
+  trackSetOpportunityStatus,
+  trackSurfacedInList,
+} from "../../analytics";
 import {
   Denial,
   OpportunityUpdate,
   UpdateLog,
   updateOpportunityCompleted,
+  updateOpportunityDenial,
   updateOpportunityFirstViewed,
 } from "../../firestore";
 import { Client } from "../Client";
@@ -34,6 +40,7 @@ import {
   TransformFunction,
   ValidateFunction,
 } from "../subscriptions";
+import { OTHER_KEY } from "../utils";
 import { FormBase } from "./Forms/FormBase";
 import {
   DefaultEligibility,
@@ -221,6 +228,77 @@ export abstract class OpportunityBase<
 
   get error(): Error | undefined {
     return this.referralSubscription.error || this.updatesSubscription.error;
+  }
+
+  async setDenialReasons(reasons: string[]): Promise<void> {
+    const { currentUserEmail, recordId, pseudonymizedId } = this.client;
+    if (!currentUserEmail) return;
+
+    // clear irrelevant "other" text if necessary
+    const deletions = reasons.includes(OTHER_KEY)
+      ? undefined
+      : { otherReason: true };
+
+    await updateOpportunityDenial(
+      currentUserEmail,
+      recordId,
+      { reasons },
+      this.type,
+      deletions
+    );
+
+    await updateOpportunityCompleted(
+      currentUserEmail,
+      recordId,
+      this.type,
+      true
+    );
+
+    if (reasons.length) {
+      trackSetOpportunityStatus({
+        clientId: pseudonymizedId,
+        status: "DENIED",
+        opportunityType: this.type,
+        deniedReasons: reasons,
+      });
+    } else {
+      trackSetOpportunityStatus({
+        clientId: pseudonymizedId,
+        status: "IN_PROGRESS",
+        opportunityType: this.type,
+      });
+      trackOpportunityMarkedEligible({
+        clientId: pseudonymizedId,
+        opportunityType: this.type,
+      });
+    }
+  }
+
+  async setOtherReasonText(otherReason?: string): Promise<void> {
+    if (this.client.currentUserEmail) {
+      await updateOpportunityDenial(
+        this.client.currentUserEmail,
+        this.client.recordId,
+        {
+          otherReason,
+        },
+        this.type
+      );
+    }
+  }
+
+  trackListViewed(): void {
+    trackSurfacedInList({
+      clientId: this.client.pseudonymizedId,
+      opportunityType: this.type,
+    });
+  }
+
+  trackPreviewed(): void {
+    trackOpportunityPreviewed({
+      clientId: this.client.pseudonymizedId,
+      opportunityType: this.type,
+    });
   }
 
   // ===============================

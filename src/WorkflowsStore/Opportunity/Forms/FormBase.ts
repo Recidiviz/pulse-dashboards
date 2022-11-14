@@ -15,8 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, makeObservable, toJS } from "mobx";
+import { action, computed, makeObservable, toJS } from "mobx";
 
+import {
+  trackReferralFormPrinted,
+  trackReferralFormViewed,
+} from "../../../analytics";
 import { UpdateLog } from "../../../firestore";
 import { Client } from "../../Client";
 import { OpportunityBase } from "../OpportunityBase";
@@ -49,6 +53,8 @@ export class FormBase<FormDisplayType> {
       formData: computed,
       formLastUpdated: computed,
       prefilledData: computed,
+      formIsPrinting: computed,
+      print: action,
     });
   }
 
@@ -70,6 +76,32 @@ export class FormBase<FormDisplayType> {
 
   get formData(): Partial<FormDisplayType> {
     return { ...toJS(this.prefilledData), ...toJS(this.draftData) };
+  }
+
+  trackViewed(): void {
+    trackReferralFormViewed({
+      clientId: this.client.pseudonymizedId,
+      opportunityType: this.type,
+    });
+  }
+
+  get formIsPrinting(): boolean {
+    return this.client.rootStore.workflowsStore.formIsPrinting;
+  }
+
+  set formIsPrinting(value: boolean) {
+    this.client.rootStore.workflowsStore.formIsPrinting = value;
+  }
+
+  print(): void {
+    this.opportunity?.setCompletedIfEligible();
+
+    this.formIsPrinting = true;
+
+    trackReferralFormPrinted({
+      clientId: this.client.pseudonymizedId,
+      opportunityType: this.type,
+    });
   }
 
   // ==========================

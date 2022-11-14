@@ -6,7 +6,7 @@ export class CompliantReportingForm extends FormBase<CompliantReportingDraftData
   navigateToFormText = "Auto-fill referral";
 
   get printText(): string {
-    if (this.client.formIsPrinting) {
+    if (this.formIsPrinting) {
       return "Printing PDF...";
     }
 
