@@ -6,7 +6,7 @@ Feature: Login as a user with access to all districts
 
     Background:
         Given I am on the login page
-        And I login as an "admin" user
+        And I login to Lantern as a "admin" user
 
     Scenario: Viewing the District Filter
         Then I should see "ALL" selected in the district filter

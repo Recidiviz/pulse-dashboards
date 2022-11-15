@@ -19,30 +19,6 @@ import { uniq } from "lodash";
 
 import lanternPage from "../pages/lanternPage";
 
-Given("I am on the Lantern Dashboard", function () {
-  lanternPage.open();
-});
-
-Given(
-  "I am a user that has {int} district restrictions",
-  function (numRestrictedDistricts) {
-    const offlineUserMock = browser.mock("**/api/offlineUser");
-    const restrictions = [null, ["TCSTL"], ["13", "TCSTL"]][
-      numRestrictedDistricts
-    ];
-    const offlineUser = {
-      name: "demo",
-      email: "demo",
-      [`${process.env.METADATA_NAMESPACE}app_metadata`]: {
-        state_code: "US_MO",
-        allowed_supervision_location_ids: restrictions,
-        allowed_supervision_location_level: "level_1_supervision_location",
-      },
-    };
-    offlineUserMock.respond(offlineUser);
-  }
-);
-
 Given("I wait for {int} seconds", async (s) => {
   await new Promise((resolve) => setTimeout(resolve, s * 1000));
 });

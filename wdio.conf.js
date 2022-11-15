@@ -1,3 +1,6 @@
+const { execSync } = require("child_process");
+const firebase = require("./firebase.json");
+
 exports.config = {
   credentials: {
     admin: {
@@ -41,6 +44,7 @@ exports.config = {
     login: ["./src/cucumber/features/login.feature"],
     lantern: ["./src/cucumber/features/lantern/*.feature"],
     userAccess: ["./src/cucumber/features/lantern/userAccessLevels/*.feature"],
+    workflows: ["./src/cucumber/features/workflows/*.feature"],
   },
   // Patterns to exclude.
   exclude: [
@@ -156,7 +160,7 @@ exports.config = {
   cucumberOpts: {
     // <string[]> (file/dir) require files before executing features
     require: [
-      "./src/cucumber/steps/*.js",
+      "./src/cucumber/steps/**/*.js",
       "./src/cucumber/features/support/*.js",
     ],
     // <boolean> show full backtrace for errors
@@ -245,9 +249,19 @@ exports.config = {
   // },
   /**
    * Runs before a Cucumber scenario
+   * @param world
    */
-  // beforeScenario: function (world) {
-  // },
+  async beforeScenario() {
+    /* Reset the database after each scenario for tests running on offline mode */
+
+    /* Delete all data from emulator project */
+    execSync(
+      `curl -v -X DELETE 'http://localhost:${firebase.emulators.firestore.port}/emulator/v1/projects/${process.env.FIREBASE_PROJECT}/databases/(default)/documents'`
+    );
+    /* Load fixtures to firestore database */
+    // eslint-disable-next-line global-require
+    require("./tools/workflowsFixtures");
+  },
   /**
    * Runs before a Cucumber step
    */
@@ -263,11 +277,11 @@ exports.config = {
    */
   // eslint-disable-next-line
   afterScenario: async function (world) {
-    // For tests run on demo mode, we want to skip full page reloads because we
-    // are not going to go through the log in flow.
     const { tags } = world.pickle;
     const tagNames = tags.map((t) => t.name);
     if (tagNames.includes("@skip-session-reload")) return;
+
+    /* For tests that do not run on offline mode, we need to reload the session after authentication. */
     await browser.reloadSession();
   },
   /**

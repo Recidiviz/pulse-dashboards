@@ -4,7 +4,7 @@ Feature: Switch Tenants on Lantern
     And click on my user profile to switch to a different state's page
 
     Background:
-        Given I am logged in as a "admin" user
+        Given I am logged into Lantern as a "admin" user
 
     Scenario: Navigating to the Profile page
         When I click on the profile link

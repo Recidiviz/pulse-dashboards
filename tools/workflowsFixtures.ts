@@ -89,10 +89,12 @@ async function loadUserFixture() {
 
 async function loadOpportunityReferralFixtures() {
   for await (const opportunity of OPPORTUNITIES_WITH_FIXTURES) {
-    console.log(`wiping existing ${opportunity} referral data ...`);
-    await deleteCollection(db, opportunity);
+    console.log(
+      `wiping existing ${collectionNames[opportunity]} referral data ...`
+    );
+    await deleteCollection(db, collectionNames[opportunity]);
 
-    console.log(`loading new ${opportunity} referral data...`);
+    console.log(`loading new ${collectionNames[opportunity]} referral data...`);
     const bulkWriter = db.bulkWriter();
 
     const rawRecords = JSON.parse(
@@ -115,7 +117,9 @@ async function loadOpportunityReferralFixtures() {
     await bulkWriter.flush();
     await bulkWriter.close();
 
-    console.log(`new ${opportunity} referral data loaded successfully`);
+    console.log(
+      `new ${collectionNames[opportunity]} referral data loaded successfully`
+    );
   }
 }
 

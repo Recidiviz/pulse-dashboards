@@ -17,6 +17,7 @@
     "test-e2e-lantern": "env-cmd -e e2e wdio ./wdio.conf.js --suite lantern --retry 2",
     "test-e2e-users": "env-cmd -e e2e,offline wdio ./wdio.conf.js --suite userAccess --retry 2",
     "test-e2e-login": "env-cmd -e e2e,offline wdio ./wdio.conf.js --suite login --retry 2",
+    "test-e2e-workflows": "env-cmd -e e2e,offline wdio ./wdio.conf.js --suite workflows --retry 2",
     "test-react": "TZ=UTC react-scripts test --resetMocks=false --verbose=false",
     "test-server": "TZ=UTC jest ./server --resetMocks=false",
     "test-filters": "TZ=UTC jest ./shared-filters --resetMocks=false",

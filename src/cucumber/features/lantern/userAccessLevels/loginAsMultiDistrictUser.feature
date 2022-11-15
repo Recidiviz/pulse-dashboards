@@ -6,7 +6,7 @@ Feature: Login as a user with access to multiple districts
 
     Background:
         Given I am on the login page
-        And I login as an "restrictedAccessUser2" user
+        And I login to Lantern as a "restrictedAccessUser2" user
     
     Scenario: The page should reflect my restrictions
         Then I should see "2 Items" selected in the district filter

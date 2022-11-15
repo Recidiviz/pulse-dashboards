@@ -44,7 +44,7 @@ const WorkflowsNoResults = ({
   callToActionText,
 }: WorkflowsNoResultsProps): React.ReactElement | null => {
   return (
-    <WorkflowsNoResultsWrapper>
+    <WorkflowsNoResultsWrapper className="WorkflowsHomepageText">
       {headerText && <HeaderText>{headerText}</HeaderText>}
       <CallToActionText>{callToActionText}</CallToActionText>
     </WorkflowsNoResultsWrapper>
