@@ -116,6 +116,7 @@ app.use(
         objectSrc: ["'none'"],
         mediaSrc: ["'self'"],
         frameSrc: ["'self'"],
+        "require-trusted-types-for": ["'script'"],
       },
     },
   })
