@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Loading } from "@recidiviz/design-system";
+import { some } from "lodash";
 import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
@@ -23,49 +24,42 @@ import React, { useEffect } from "react";
 import { useRootStore } from "../../components/StoreProvider";
 import { OpportunityType } from "../../WorkflowsStore/Opportunity/types";
 
-type OpportunitiesHydratorProps = {
-  initial: React.ReactNode;
-  empty: React.ReactNode;
+type ClientOpportunitiesHydratorProps = {
   hydrated: React.ReactNode;
+  empty: React.ReactNode;
   opportunityTypes: OpportunityType[];
 };
 
-export const OpportunitiesHydrator = observer(
-  ({
-    initial,
-    empty,
-    hydrated,
-    opportunityTypes,
-  }: OpportunitiesHydratorProps) => {
-    const { workflowsStore } = useRootStore();
-    const { selectedOfficerIds } = workflowsStore;
+export const SelectedPersonOpportunitiesHydrator = observer(
+  ({ hydrated, empty, opportunityTypes }: ClientOpportunitiesHydratorProps) => {
+    const {
+      workflowsStore: { selectedClient: client },
+    } = useRootStore();
 
     useEffect(
       () =>
         autorun(() => {
-          workflowsStore
-            .potentialOpportunities(opportunityTypes)
-            .forEach((opp) => {
-              if (!opp.isHydrated) opp.hydrate();
-            });
+          opportunityTypes.forEach((opportunityType) => {
+            client?.potentialOpportunities[opportunityType]?.hydrate();
+          });
         }),
-      [workflowsStore, opportunityTypes]
+      [client, opportunityTypes]
     );
 
-    const displayInitialState = !selectedOfficerIds.length;
-    const displayLoading =
-      !displayInitialState &&
-      !workflowsStore.opportunitiesLoaded(opportunityTypes);
-    const displayNoResults =
-      !displayInitialState &&
-      !displayLoading &&
-      !workflowsStore.hasOpportunities(opportunityTypes);
+    const displayLoading = some(
+      opportunityTypes.map(
+        (oppType) => client?.potentialOpportunities[oppType]?.isLoading
+      )
+    );
 
-    if (displayInitialState) return <>{initial}</>;
+    const displayEmpty =
+      opportunityTypes.filter(
+        (oppType) => oppType in (client?.verifiedOpportunities ?? {})
+      ).length === 0;
 
     if (displayLoading) return <Loading />;
 
-    if (displayNoResults) return <>{empty}</>;
+    if (displayEmpty) return <>{empty}</>;
 
     return <>{hydrated}</>;
   }

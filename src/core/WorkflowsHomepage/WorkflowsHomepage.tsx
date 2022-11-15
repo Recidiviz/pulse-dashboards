@@ -21,7 +21,7 @@ import simplur from "simplur";
 import { useRootStore } from "../../components/StoreProvider";
 import { OPPORTUNITY_LABELS, OpportunityType } from "../../WorkflowsStore";
 import { CaseloadSelect } from "../CaseloadSelect";
-import { OpportunitiesHydrator } from "../OpportunitiesHydrator";
+import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsNoResults from "../WorkflowsNoResults";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";
@@ -86,7 +86,7 @@ const WorkflowsHomepage = observer((): React.ReactElement | null => {
   return (
     <WorkflowsNavLayout>
       <CaseloadSelect />
-      <OpportunitiesHydrator
+      <CaseloadOpportunitiesHydrator
         {...{ initial, empty, hydrated, opportunityTypes }}
       />
     </WorkflowsNavLayout>

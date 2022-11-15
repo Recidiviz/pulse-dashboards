@@ -15,18 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Loading,
-  palette,
-  Sans14,
-  Sans16,
-  spacing,
-} from "@recidiviz/design-system";
+import { palette, Sans14, Sans16, spacing } from "@recidiviz/design-system";
 import { sortBy } from "lodash";
-import { autorun } from "mobx";
+import { keys } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Accordion,
   AccordionItem,
@@ -36,8 +30,8 @@ import {
 } from "react-accessible-accordion";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { Client, Opportunity } from "../../WorkflowsStore";
+import { Client, Opportunity, OpportunityType } from "../../WorkflowsStore";
+import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { OpportunityModule } from "./OpportunityModule";
 import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
@@ -113,9 +107,9 @@ const NoOpportunities = styled.div`
 
 export const OpportunitiesAccordion = observer(
   ({ client }: { client: Client }) => {
-    const {
-      workflowsStore: { opportunityTypes },
-    } = useRootStore();
+    const opportunityTypes = keys(
+      client.potentialOpportunities
+    ) as OpportunityType[];
 
     const opportunities = sortBy(
       Object.values(client.verifiedOpportunities).filter(
@@ -124,59 +118,50 @@ export const OpportunitiesAccordion = observer(
       (opp: Opportunity) => opportunityTypes.indexOf(opp.type)
     );
 
-    useEffect(
-      () =>
-        autorun(() => {
-          opportunities.forEach((opp) => {
-            if (!opp?.isHydrated) opp?.hydrate();
-          });
-        }),
-      [opportunities]
+    const empty = (
+      <NoOpportunities>
+        <Sans16>None for now</Sans16>
+        <Sans14>New opportunities will appear here.</Sans14>
+      </NoOpportunities>
     );
 
-    if (!client.allClientOpportunitiesLoaded) return <Loading />;
-    if (opportunities.length === 0) {
-      return (
-        <NoOpportunities>
-          <Sans16>None for now</Sans16>
-          <Sans14>New opportunities will appear here.</Sans14>
-        </NoOpportunities>
-      );
-    }
-    if (opportunities.length === 1) {
-      return (
+    const hydrated =
+      opportunities.length === 1 ? (
         <OpportunityModule
           opportunity={opportunities[0]}
           formLinkButton={!!opportunities[0].form}
         />
+      ) : (
+        <Accordion allowZeroExpanded preExpanded={[0]}>
+          {opportunities.map((opportunity, index) => {
+            if (!opportunity) return undefined;
+            const colors = useStatusColors(opportunity);
+            return (
+              <OpportunityWrapper {...colors}>
+                <AccordionItem uuid={index}>
+                  <AccordionItemHeading>
+                    <AccordionButton>
+                      <OpportunityModuleHeader opportunity={opportunity} />
+                    </AccordionButton>
+                  </AccordionItemHeading>
+                  <AccordionBody>
+                    <OpportunityModule
+                      opportunity={opportunity}
+                      formLinkButton={!!opportunity.form}
+                      hideHeader
+                    />
+                  </AccordionBody>
+                </AccordionItem>
+              </OpportunityWrapper>
+            );
+          })}
+        </Accordion>
       );
-    }
 
     return (
-      <Accordion allowZeroExpanded preExpanded={[0]}>
-        {opportunities.map((opportunity, index) => {
-          if (!opportunity) return undefined;
-          const colors = useStatusColors(opportunity);
-          return (
-            <OpportunityWrapper {...colors}>
-              <AccordionItem uuid={index}>
-                <AccordionItemHeading>
-                  <AccordionButton>
-                    <OpportunityModuleHeader opportunity={opportunity} />
-                  </AccordionButton>
-                </AccordionItemHeading>
-                <AccordionBody>
-                  <OpportunityModule
-                    opportunity={opportunity}
-                    formLinkButton={!!opportunity.form}
-                    hideHeader
-                  />
-                </AccordionBody>
-              </AccordionItem>
-            </OpportunityWrapper>
-          );
-        })}
-      </Accordion>
+      <SelectedPersonOpportunitiesHydrator
+        {...{ empty, hydrated, opportunityTypes }}
+      />
     );
   }
 );

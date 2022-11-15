@@ -25,6 +25,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { OpportunityType } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
+import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import RecidivizLogo from "../RecidivizLogo";
 import { PATHWAYS_VIEWS } from "../views";
 import { CompliantReportingClientProfile } from "../WorkflowsClientProfile";
@@ -110,17 +111,29 @@ const FormWrapper = styled.div``;
 
 export const WorkflowsFormLayout = observer(() => {
   const {
-    workflowsStore: { selectedOpportunityType: opportunityType },
+    workflowsStore: {
+      selectedOpportunityType: opportunityType,
+      selectedClient: client,
+    },
   } = useRootStore();
 
-  if (!opportunityType) return null;
+  if (!opportunityType || !client) return null;
 
-  return (
+  const hydrated = (
     <Wrapper>
       <SidebarWrapper>
         {PAGE_CONTENT[opportunityType].sidebarContents}
       </SidebarWrapper>
       <FormWrapper>{PAGE_CONTENT[opportunityType].formContents}</FormWrapper>
     </Wrapper>
+  );
+
+  // TODO(#2684): Replace this with a graceful fallback page
+  const empty = <div />;
+
+  return (
+    <SelectedPersonOpportunitiesHydrator
+      {...{ hydrated, empty, opportunityTypes: [opportunityType] }}
+    />
   );
 });

@@ -27,7 +27,7 @@ import {
   OPPORTUNITY_LABELS,
 } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
-import { OpportunitiesHydrator } from "../OpportunitiesHydrator";
+import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import WorkflowsNoResults from "../WorkflowsNoResults";
 import { ClientListItem } from "./ClientListItem";
 import { Heading, SectionLabelText, SubHeading } from "./styles";
@@ -114,7 +114,7 @@ export const OpportunityClientList = observer(() => {
   );
 
   return (
-    <OpportunitiesHydrator
+    <CaseloadOpportunitiesHydrator
       {...{ initial, empty, hydrated, opportunityTypes: [opportunityType] }}
     />
   );
