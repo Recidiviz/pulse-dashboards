@@ -132,7 +132,7 @@ const OpportunityTypeSummary = observer(
     );
 
     return (
-      <OpportunityTypeSummaryWrapper>
+      <OpportunityTypeSummaryWrapper className="OpportunityTypeSummaryWrapper">
         <OpportunityHeaderWrapper>
           <OpportunityHeader>
             {header.eligibilityText}
@@ -144,6 +144,7 @@ const OpportunityTypeSummary = observer(
             {header.callToAction}
           </OpportunityTypeSummaryCTA>
           <ViewAllLink
+            className={`ViewAllLink__${opportunityType}`}
             to={workflowsUrl("opportunityClients", { opportunityType })}
           >
             View all{" "}
@@ -158,7 +159,7 @@ const OpportunityTypeSummary = observer(
             </ViewAllArrow>
           </ViewAllLink>
         </OpportunityHeaderWrapper>
-        <ClientsWrapper>
+        <ClientsWrapper className="OpportunityClientsWrapper">
           {previewOpportunities.map((opportunity) => (
             <ClientAvatarWrapper>
               <JusticeInvolvedPersonAvatar

@@ -4,9 +4,15 @@ Feature: Login as a US_TN user and see homepage
     I want to login to the Workflows dashboard
     And see the Workflows Homepage
 
-    Background:
-        Given I am logged in as a "US_TN" user
-    
-    Scenario: I should see the homepage
-        Then I should see the homepage welcome message for the "US_TN" user
+    Scenario Outline: Searching for an officer's opportunities
+        Given I am logged in as a "<stateCode>" user
+        Then I should see the homepage welcome message for the "<stateCode>" user
+        When I select officer "<officerId>" from the dropdown
+        Then I should see <numOpportunities> opportunities listed
+        And I should see <numOpportunities> set of client avatars
+        When I click on View all for "<opportunityType>"
+        Then I should navigate to the "<opportunityType>" opportunity page
 
+    Examples:
+        | stateCode | officerId | numOpportunities | opportunityType    |
+        | US_TN     | OFFICER1  | 1                | compliantReporting |

@@ -14,11 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Then } from "@cucumber/cucumber";
+import { Then, When } from "@cucumber/cucumber";
 
 import workflowsHomepage from "../../pages/workflowsHomepage";
 import users from "../fixtures/users";
+import { waitForElementsToExist, waitForNavigation } from "../utils";
 
+/**
+ * When
+ * */
+When("I click on View all for {string}", async (opportunityType) => {
+  const viewAllLink = await browser.$(`.ViewAllLink__${opportunityType}`);
+  await waitForNavigation(viewAllLink.click());
+});
+
+/**
+ * Then
+ * */
 Then(
   "I should see the homepage welcome message for the {string} user",
   async (stateCode) => {
@@ -27,3 +39,15 @@ Then(
     expect(promptText).toMatch(`Welcome, ${users[stateCode].name}`);
   }
 );
+
+Then("I should see {int} opportunities listed", async (numOpportunities) => {
+  const opportunities = await workflowsHomepage.opportunitySummaries();
+  await waitForElementsToExist(opportunities);
+  expect(opportunities.length).toEqual(numOpportunities);
+});
+
+Then("I should see {int} set of client avatars", async (numOpportunities) => {
+  const avatarWrappers = await workflowsHomepage.clientAvatars();
+  await waitForElementsToExist(avatarWrappers);
+  expect(avatarWrappers.length).toEqual(numOpportunities);
+});

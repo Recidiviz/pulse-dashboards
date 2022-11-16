@@ -196,7 +196,7 @@
     "@types/react-textarea-autosize": "^8.0.0",
     "@typescript-eslint/eslint-plugin": "^4.9.1",
     "@typescript-eslint/parser": "^4.9.1",
-    "@wdio/cli": "^7.3.0",
+    "@wdio/cli": "^7.26.0",
     "@wdio/cucumber-framework": "^7.19.5",
     "@wdio/devtools-service": "^6.3.7",
     "@wdio/local-runner": "^7.3.0",

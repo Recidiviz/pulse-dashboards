@@ -9,6 +9,14 @@ class WorkflowsHomepage extends Page {
   async promptText() {
     return $(".WorkflowsHomepageText");
   }
+
+  async opportunitySummaries() {
+    return browser.$$(".OpportunityTypeSummaryWrapper");
+  }
+
+  async clientAvatars() {
+    return browser.$$(".OpportunityClientsWrapper");
+  }
 }
 
 export default new WorkflowsHomepage({ redirectPause: 3000 });

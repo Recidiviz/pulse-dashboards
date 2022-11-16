@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2022 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,29 +16,33 @@
 // =============================================================================
 import { Then, When } from "@cucumber/cucumber";
 
-import lanternPage from "../pages/lanternPage";
-import profilePage from "../pages/profilePage";
-
 /**
  * When
  * */
-When("I click on the profile link", async () => {
-  await lanternPage.navigateToProfile();
-});
-
-When("I select the state {string}", async (stateName) => {
-  await profilePage.selectStateOption(stateName);
+When("I select officer {string} from the dropdown", async (officerId) => {
+  const container = await browser.react$("SelectContainer");
+  await container.click();
+  const option = await browser.react$("Option", {
+    props: {
+      value: officerId,
+    },
+  });
+  option.click();
+  // Wait for Loading spinner to appear and disappear
+  const loadingSpinner = await $("div=Loading data...");
+  await loadingSpinner.waitForExist();
+  await loadingSpinner.waitForExist({ reverse: true });
 });
 
 /**
  * Then
  * */
-Then("I should see the Profile page", async () => {
-  const prompt = await profilePage.promptText();
-  expect(await prompt.getText()).toEqual("Select a state");
-});
-
-Then("I should see the Pennsylvania dashboard", async () => {
-  const title = await lanternPage.revocationsOverTimeTitle();
-  expect(await title.getText()).toMatch("Number of recommitments from parole");
-});
+Then(
+  "I should navigate to the {string} opportunity page",
+  async (opportunityType) => {
+    const url = await browser.getUrl();
+    expect(url).toEqual(
+      expect.stringContaining(`/workflows/${opportunityType}`)
+    );
+  }
+);

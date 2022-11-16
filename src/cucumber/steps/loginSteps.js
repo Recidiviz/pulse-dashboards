@@ -21,6 +21,9 @@ import loginPage from "../pages/loginPage";
 import workflowsHomepage from "../pages/workflowsHomepage";
 import users from "./fixtures/users";
 
+/**
+ * Given
+ * */
 Given("I am on the login page", async function () {
   await loginPage.open();
 });
@@ -31,19 +34,25 @@ Given("I am logged into Lantern as a {string} user", async (userLevel) => {
   await loginPage.login(username, password);
 });
 
-When("I login to Lantern as a {string} user", async (userLevel) => {
-  const { username, password } = browser.config.credentials[userLevel];
-  await loginPage.login(username, password);
-});
-
-Then("I should see the Lantern landing page", async () => {
-  const layout = await lanternPage.lanternLayout();
-  expect(await layout.isExisting()).toEqual(true);
-});
-
 Given("I am logged in as a {string} user", async function (stateCode) {
   const offlineUserMock = await browser.mock("**/api/offlineUser");
   const offlineUser = users[stateCode];
   offlineUserMock.respond(offlineUser);
   await workflowsHomepage.open();
+});
+
+/**
+ * When
+ * */
+When("I login to Lantern as a {string} user", async (userLevel) => {
+  const { username, password } = browser.config.credentials[userLevel];
+  await loginPage.login(username, password);
+});
+
+/**
+ * Then
+ * */
+Then("I should see the Lantern landing page", async () => {
+  const layout = await lanternPage.lanternLayout();
+  expect(await layout.isExisting()).toEqual(true);
 });

@@ -19,10 +19,16 @@ import { uniq } from "lodash";
 
 import lanternPage from "../pages/lanternPage";
 
+/**
+ * Given
+ * */
 Given("I wait for {int} seconds", async (s) => {
   await new Promise((resolve) => setTimeout(resolve, s * 1000));
 });
 
+/**
+ * When
+ * */
 When(
   "I select district {string} from the District Filter",
   async (districtId) => {
@@ -44,6 +50,9 @@ When("I am viewing the Case Table", async () => {
   });
 });
 
+/**
+ * Then
+ * */
 Then("I should only see cases from district {string}", async (districtIds) => {
   const caseTableDistrictColumns = await lanternPage.caseTableDistrictColumns();
   const columnValues = await Promise.all(
