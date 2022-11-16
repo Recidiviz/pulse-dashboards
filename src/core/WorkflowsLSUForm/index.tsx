@@ -119,7 +119,7 @@ const WorkflowsLSUForm: React.FC = () => {
     copyToClipboard();
     opportunity.setCompletedIfEligible();
     trackReferralFormCopiedToClipboard({
-      clientId: opportunity.client.pseudonymizedId,
+      clientId: opportunity.person.pseudonymizedId,
       opportunityType: opportunity.type,
     });
   };

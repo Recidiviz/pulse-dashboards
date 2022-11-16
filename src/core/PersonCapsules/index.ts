@@ -15,28 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useEffect } from "react";
-
-import type { Client } from "../../WorkflowsStore";
-
-/**
- * Ensures the given tracking function is called only once per client,
- * de-duplicating across possible re-renders of the same client.
- * @param trackingFn will be called even if `client` is undefined! Be sure it handles this case.
- */
-export function useClientTracking(
-  client: Client | undefined,
-  trackingFn: () => void
-): void {
-  // track when clients are displayed in the list
-  useEffect(
-    () => {
-      trackingFn();
-    },
-    // Client instance references are not stable across subscription updates,
-    // but the underlying data will be. This prevents logging clients twice when
-    // subscription data is refreshed.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [client?.pseudonymizedId]
-  );
-}
+export * from "./JusticeInvolvedPersonCapsule";
+export * from "./OpportunityCapsule";
+export * from "./ProfileCapsule";

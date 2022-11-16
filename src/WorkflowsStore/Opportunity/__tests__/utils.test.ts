@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Client } from "../../Client";
+import { JusticeInvolvedPerson } from "../../types";
 import { Opportunity } from "../types";
 import {
   sortByReviewStatus,
@@ -32,7 +32,7 @@ let opp3: Opportunity;
 
 const mockOpportunityBase: Opportunity = {
   almostEligible: false,
-  client: {} as Client,
+  person: {} as JusticeInvolvedPerson,
   defaultEligibility: "ELIGIBLE",
   denial: undefined,
   denialReasonsMap: {},

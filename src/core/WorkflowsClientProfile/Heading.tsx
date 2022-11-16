@@ -21,7 +21,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { ProfileCapsule } from "../ClientCapsule";
+import { ProfileCapsule } from "../PersonCapsules";
 import { workflowsUrl } from "../views";
 import { ClientProfileProps } from "./types";
 
@@ -36,7 +36,7 @@ export const Heading = observer(({ client }: ClientProfileProps) => {
       <Link
         to={workflowsUrl("clientProfile", { clientId: client.pseudonymizedId })}
       >
-        <ProfileCapsule avatarSize="md" client={client} textSize="sm" />
+        <ProfileCapsule avatarSize="md" person={client} textSize="sm" />
       </Link>
     </HeadingWrapper>
   );

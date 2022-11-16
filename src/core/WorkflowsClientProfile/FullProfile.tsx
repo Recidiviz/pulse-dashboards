@@ -22,8 +22,8 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { ProfileCapsule } from "../ClientCapsule";
-import { useClientTracking } from "../hooks/useClientTracking";
+import { usePersonTracking } from "../hooks/usePersonTracking";
+import { ProfileCapsule } from "../PersonCapsules";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { FinesAndFees, Housing, SpecialConditions } from "./Details";
 import { OpportunitiesAccordion } from "./OpportunitiesAccordion";
@@ -53,13 +53,6 @@ const Header = styled.div`
   grid-template-columns: ${COLUMNS};
   padding: ${rem(spacing.lg)} 0 ${rem(spacing.md)};
   cursor: default;
-
-  &:hover {
-    [class*="ClientName"] {
-      text-decoration: none;
-      color: ${palette.pine2};
-    }
-  }
 `;
 
 const ContactCell = styled.dl`
@@ -93,7 +86,7 @@ export const FullProfile = observer((): React.ReactElement | null => {
     workflowsStore: { selectedClient: client },
   } = useRootStore();
 
-  useClientTracking(client, () => client?.trackProfileViewed());
+  usePersonTracking(client, () => client?.trackProfileViewed());
 
   if (!client) return null;
 
@@ -103,9 +96,10 @@ export const FullProfile = observer((): React.ReactElement | null => {
         <Header>
           <ProfileCapsule
             avatarSize="lg"
-            client={client}
+            person={client}
             textSize="lg"
             hideTooltip
+            nameHoverState={false}
           />
           <ContactCell>
             <div>
@@ -131,7 +125,7 @@ export const FullProfile = observer((): React.ReactElement | null => {
         </div>
         <div>
           <SectionHeading>Opportunities</SectionHeading>
-          <OpportunitiesAccordion client={client} />
+          <OpportunitiesAccordion person={client} />
         </div>
       </Wrapper>
     </WorkflowsNavLayout>

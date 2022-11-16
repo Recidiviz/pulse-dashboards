@@ -115,7 +115,11 @@ function formatTimeToGo(expirationDate: Date): string {
 export const SupervisionProgress = ({
   client,
 }: ClientProfileProps): React.ReactElement => {
-  const { supervisionStartDate, expirationDate, officerId } = client;
+  const {
+    supervisionStartDate,
+    expirationDate,
+    assignedStaffId: officerId,
+  } = client;
 
   // can't visualize anything if we don't have both valid dates
   if (

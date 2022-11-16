@@ -23,7 +23,7 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
-import { OpportunityCapsule } from "../ClientCapsule";
+import { OpportunityCapsule } from "../PersonCapsules";
 import { OPPORTUNITY_STATUS_COLORS } from "../utils/workflowsUtils";
 import { workflowsUrl } from "../views";
 
@@ -31,7 +31,7 @@ const ListItem = styled.li`
   padding: ${rem(spacing.md)} ${rem(spacing.md)} 0 0;
 `;
 
-const ClientLink = styled.button`
+const PersonLink = styled.button`
   border: none;
   text-align: left;
   background: none;
@@ -42,7 +42,7 @@ const ClientLink = styled.button`
   }
 `;
 
-const ClientItemWrapper = styled.div`
+const PersonItemWrapper = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -65,7 +65,7 @@ const NavigateToFormButton = styled(Button)`
   }
 `;
 
-type ClientListItemProps = {
+type PersonListItemProps = {
   opportunity: Opportunity;
 };
 
@@ -73,21 +73,21 @@ const ButtonSpacer = styled.div`
   flex: 1 0 16px;
 `;
 
-export const ClientListItem = observer(
-  ({ opportunity }: ClientListItemProps) => {
+export const PersonListItem = observer(
+  ({ opportunity }: PersonListItemProps) => {
     const [showButton, setShowButton] = useState(false);
-    const { client } = opportunity;
+    const { person } = opportunity;
     const { workflowsStore } = useRootStore();
 
     return (
-      <ListItem key={client.id}>
-        <ClientItemWrapper
+      <ListItem key={person.externalId}>
+        <PersonItemWrapper
           onMouseEnter={() => setShowButton(true)}
           onMouseLeave={() => setShowButton(false)}
         >
-          <ClientLink
+          <PersonLink
             onClick={() =>
-              workflowsStore.updateSelectedClient(client.pseudonymizedId)
+              workflowsStore.updateSelectedPerson(person.pseudonymizedId)
             }
           >
             <OpportunityCapsule
@@ -96,13 +96,13 @@ export const ClientListItem = observer(
               textSize="sm"
               hideId
             />
-          </ClientLink>
+          </PersonLink>
           <ButtonSpacer />
           {showButton && opportunity.form?.navigateToFormText && (
             <Link
               to={workflowsUrl("opportunityAction", {
                 opportunityType: opportunity.type,
-                clientId: client.pseudonymizedId,
+                clientId: person.pseudonymizedId,
               })}
             >
               <NavigateToFormButton>
@@ -110,7 +110,7 @@ export const ClientListItem = observer(
               </NavigateToFormButton>
             </Link>
           )}
-        </ClientItemWrapper>
+        </PersonItemWrapper>
       </ListItem>
     );
   }

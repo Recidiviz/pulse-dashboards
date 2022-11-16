@@ -243,7 +243,7 @@ export const Supervision = ({
 
           <DetailsSubheading>Assigned to</DetailsSubheading>
           <DetailsContent>
-            <WorkflowsOfficerName officerId={client.officerId} />
+            <WorkflowsOfficerName officerId={client.assignedStaffId} />
           </DetailsContent>
         </DetailsList>
       </DetailsContent>

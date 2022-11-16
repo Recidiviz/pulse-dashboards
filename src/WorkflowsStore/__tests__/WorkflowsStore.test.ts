@@ -343,15 +343,15 @@ test("update clients from subscription", async () => {
   await waitForHydration();
 
   populateClients(mockClients);
-  expect(workflowsStore.clients).toEqual({
+  expect(workflowsStore.justiceInvolvedPersons).toEqual({
     [mockClients[0].pseudonymizedId]: expect.any(Client),
     [mockClients[1].pseudonymizedId]: expect.any(Client),
     [mockClients[2].pseudonymizedId]: expect.any(Client),
   });
   mockClients.forEach(({ pseudonymizedId }) => {
-    expect(workflowsStore.clients[pseudonymizedId].pseudonymizedId).toBe(
-      pseudonymizedId
-    );
+    expect(
+      workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId
+    ).toBe(pseudonymizedId);
   });
 });
 
@@ -390,7 +390,7 @@ test("select existing client", async () => {
 
   const idToSelect = ineligibleClient.pseudonymizedId;
 
-  await workflowsStore.updateSelectedClient(idToSelect);
+  await workflowsStore.updateSelectedPerson(idToSelect);
 
   // simulate a UI displaying client data
   testObserver = keepAlive(computed(() => workflowsStore.selectedClient));
@@ -407,7 +407,7 @@ test("select unfetched client", async () => {
     pseudonymizedId: idToSelect,
   });
 
-  await workflowsStore.updateSelectedClient(idToSelect);
+  await workflowsStore.updateSelectedPerson(idToSelect);
 
   await when(() => workflowsStore.selectedClient !== undefined);
 

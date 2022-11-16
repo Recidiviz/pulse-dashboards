@@ -27,48 +27,52 @@ import { rem } from "polished";
 import React from "react";
 import styled, { css } from "styled-components/macro";
 
-import { Client } from "../../WorkflowsStore";
-import { ClientAvatar } from "../Avatar";
+import { JusticeInvolvedPerson } from "../../WorkflowsStore";
+import { JusticeInvolvedPersonAvatar } from "../Avatar";
 import { Separator } from "../WorkflowsClientProfile/common";
 
-export type ClientCapsuleProps = {
+export type JusticeInvolvedPersonCapsuleProps = {
   avatarSize: "md" | "lg";
-  client: Client;
+  person: JusticeInvolvedPerson;
   status: React.ReactNode;
   textSize: "sm" | "lg";
   hideId?: boolean;
   hideTooltip?: boolean;
+  nameHoverState?: boolean;
 };
 
-const ClientName = styled.span`
+const PersonName = styled.span`
   color: ${palette.pine2};
 `;
 
-const ClientId = styled.span`
+const PersonId = styled.span`
   color: ${palette.data.teal1};
 `;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ nameHoverState: boolean }>`
   align-items: center;
   column-gap: ${rem(spacing.sm)};
   display: grid;
   grid-template-columns: auto 1fr;
-  &:hover {
-    [class*="ClientName"] {
-      text-decoration: underline;
-      color: ${palette.signal.links};
-    }
-  }
+  ${(props) =>
+    props.nameHoverState
+      ? `&:hover {
+          ${PersonName} {
+            text-decoration: underline;
+            color: ${palette.signal.links};
+          }
+        }`
+      : ""}
 `;
 
-const ClientInfo = styled.div``;
+const PersonInfo = styled.div``;
 
-const clientStatusStyles = css`
+const personStatusStyles = css`
   color: ${palette.slate60};
 `;
 
-const ClientStatusSm = styled(Sans14)`
-  ${clientStatusStyles}
+const PersonStatusSm = styled(Sans14)`
+  ${personStatusStyles}
   width: ${rem(288)};
 
   @media (max-width: 1372px) {
@@ -76,8 +80,8 @@ const ClientStatusSm = styled(Sans14)`
   }
 `;
 
-const ClientStatusLg = styled(Sans16)`
-  ${clientStatusStyles}
+const PersonStatusLg = styled(Sans16)`
+  ${personStatusStyles}
 `;
 
 const SIZES = {
@@ -90,41 +94,43 @@ const SIZES = {
     lg: Sans24,
   },
   status: {
-    sm: ClientStatusSm,
-    lg: ClientStatusLg,
+    sm: PersonStatusSm,
+    lg: PersonStatusLg,
   },
 };
 
-const ClientCapsule: React.FC<ClientCapsuleProps> = ({
+export const JusticeInvolvedPersonCapsule: React.FC<JusticeInvolvedPersonCapsuleProps> = ({
   avatarSize,
-  client,
+  person,
   status,
   textSize,
   hideId = false,
   hideTooltip = false,
+  nameHoverState = true,
 }) => {
   const IdentityEl = SIZES.identity[textSize];
   const StatusEl = SIZES.status[textSize];
 
   return (
-    <Wrapper>
-      <ClientAvatar name={client.displayName} size={SIZES.avatar[avatarSize]} />
-      <ClientInfo>
+    <Wrapper nameHoverState={nameHoverState}>
+      <JusticeInvolvedPersonAvatar
+        name={person.displayName}
+        size={SIZES.avatar[avatarSize]}
+      />
+      <PersonInfo>
         <IdentityEl>
           <TooltipTrigger contents={!hideTooltip && "Go to profile"}>
-            <ClientName>{client.displayName}</ClientName>
+            <PersonName>{person.displayName}</PersonName>
           </TooltipTrigger>
           {!hideId && (
-            <React.Fragment key="clientId">
+            <React.Fragment key="personExternalId">
               <Separator> • </Separator>
-              <ClientId>{client.id}</ClientId>
+              <PersonId>{person.externalId}</PersonId>
             </React.Fragment>
           )}
         </IdentityEl>
         <StatusEl>{status}</StatusEl>
-      </ClientInfo>
+      </PersonInfo>
     </Wrapper>
   );
 };
-
-export default ClientCapsule;

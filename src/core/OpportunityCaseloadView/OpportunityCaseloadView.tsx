@@ -23,7 +23,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import { OpportunityClientList } from "./OpportunityClientList";
+import { OpportunityPersonList } from "./OpportunityPersonList";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 
 const Wrapper = styled.div`
@@ -45,7 +45,7 @@ export const OpportunityCaseloadView = observer(() => {
     <WorkflowsNavLayout>
       <Wrapper>
         <CaseloadSelect />
-        <OpportunityClientList />
+        <OpportunityPersonList />
         <OpportunityPreviewModal
           opportunity={selectedClient?.verifiedOpportunities[opportunityType]}
         />

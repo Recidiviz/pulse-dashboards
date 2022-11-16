@@ -161,7 +161,8 @@ describe("WorkflowsHomepage", () => {
   });
 
   test("render opportunities", () => {
-    mockOpportunity.client.officerId = "123";
+    // @ts-expect-error
+    mockOpportunity.person.assignedStaffId = "123";
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
         opportunitiesLoaded: () => true,

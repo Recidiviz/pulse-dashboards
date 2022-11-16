@@ -18,6 +18,7 @@
 import { some } from "lodash";
 import { computed, makeObservable } from "mobx";
 
+import { OpportunityUpdateWithForm } from "../../firestore";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import { LSUForm } from "./Forms/LSUForm";
@@ -130,19 +131,20 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
 };
 
 export class LSUOpportunity extends OpportunityBase<
+  Client,
   LSUReferralRecord,
-  LSUDraftData
+  OpportunityUpdateWithForm<LSUDraftData>
 > {
   form: LSUForm;
 
   constructor(client: Client) {
-    super(client, "LSU", transformReferral);
+    super(client, "LSU", client.rootStore, transformReferral);
     makeObservable(this, {
       requirementsMet: computed,
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.form = new LSUForm(this.type, this);
+    this.form = new LSUForm(this.type, this, client.rootStore);
   }
 
   get requirementsMet(): OpportunityRequirement[] {

@@ -18,6 +18,7 @@
 import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable } from "mobx";
 
+import { OpportunityUpdateWithForm } from "../../firestore";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OpportunityValidationError, OTHER_KEY } from "../utils";
@@ -107,13 +108,20 @@ function validateRecord(
 }
 
 export class EarlyTerminationOpportunity extends OpportunityBase<
+  Client,
   EarlyTerminationReferralRecord,
-  EarlyTerminationDraftData
+  OpportunityUpdateWithForm<EarlyTerminationDraftData>
 > {
   form: EarlyTerminationForm;
 
   constructor(client: Client) {
-    super(client, "earlyTermination", transformReferral, validateRecord);
+    super(
+      client,
+      "earlyTermination",
+      client.rootStore,
+      transformReferral,
+      validateRecord
+    );
 
     makeObservable(this, {
       requirementsMet: computed,
@@ -121,7 +129,7 @@ export class EarlyTerminationOpportunity extends OpportunityBase<
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.form = new EarlyTerminationForm(this.type, this);
+    this.form = new EarlyTerminationForm(this.type, this, client.rootStore);
   }
 
   get requirementsMet(): OpportunityRequirement[] {

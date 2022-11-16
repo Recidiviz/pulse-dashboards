@@ -29,10 +29,10 @@ import {
 import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import WorkflowsNoResults from "../WorkflowsNoResults";
-import { ClientListItem } from "./ClientListItem";
+import { PersonListItem } from "./PersonListItem";
 import { Heading, SectionLabelText, SubHeading } from "./styles";
 
-const ClientList = styled.ul`
+const PersonList = styled.ul`
   column-gap: ${rem(spacing.md)};
   display: grid;
   grid-template-columns: 100%;
@@ -46,7 +46,7 @@ const ClientList = styled.ul`
   }
 `;
 
-export const OpportunityClientList = observer(() => {
+export const OpportunityPersonList = observer(() => {
   const {
     workflowsStore: {
       selectedOfficerIds,
@@ -94,20 +94,20 @@ export const OpportunityClientList = observer(() => {
         {eligibleOpps.length > 0 && almostEligibleOpps.length > 0 && (
           <SectionLabelText>Eligible now</SectionLabelText>
         )}
-        <ClientList>
+        <PersonList>
           {eligibleOpps.map((opportunity) => (
-            <ClientListItem opportunity={opportunity} />
+            <PersonListItem opportunity={opportunity} />
           ))}
-        </ClientList>
+        </PersonList>
       </>
       {almostEligibleOpps.length > 0 && (
         <>
           <SectionLabelText>Almost Eligible</SectionLabelText>
-          <ClientList>
+          <PersonList>
             {almostEligibleOpps.map((opportunity) => (
-              <ClientListItem opportunity={opportunity} />
+              <PersonListItem opportunity={opportunity} />
             ))}
-          </ClientList>
+          </PersonList>
         </>
       )}
     </>

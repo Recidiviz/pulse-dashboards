@@ -32,7 +32,7 @@ import {
   updateOpportunityDenial,
   updateOpportunityFirstViewed,
 } from "../../firestore";
-import { Client } from "../Client";
+import { RootStore } from "../../RootStore";
 import {
   CollectionDocumentSubscription,
   DocumentSubscription,
@@ -40,6 +40,7 @@ import {
   TransformFunction,
   ValidateFunction,
 } from "../subscriptions";
+import { JusticeInvolvedPerson } from "../types";
 import { OTHER_KEY } from "../utils";
 import { FormBase } from "./Forms/FormBase";
 import {
@@ -57,14 +58,17 @@ import {
  * to facilitate incremental development of new opportunities.
  */
 export abstract class OpportunityBase<
+  PersonType extends JusticeInvolvedPerson,
   ReferralRecord extends DocumentData,
   UpdateRecord extends DocumentData = OpportunityUpdate
-> implements Opportunity {
+> implements Opportunity<PersonType> {
   readonly type: OpportunityType;
 
-  client: Client;
+  rootStore: RootStore;
 
-  form?: FormBase<any>;
+  person: PersonType;
+
+  form?: FormBase<any, any>;
 
   referralSubscription: DocumentSubscription<ReferralRecord>;
 
@@ -76,8 +80,9 @@ export abstract class OpportunityBase<
   readonly isAlert: boolean = false;
 
   constructor(
-    client: Client,
+    person: PersonType,
     type: OpportunityType,
+    rootStore: RootStore,
     transformReferral?: TransformFunction<ReferralRecord>,
     validateRecord?: ValidateFunction<DocumentData>
   ) {
@@ -93,18 +98,19 @@ export abstract class OpportunityBase<
       setCompletedIfEligible: action,
     });
 
-    this.client = client;
+    this.person = person;
     this.type = type;
+    this.rootStore = rootStore;
 
     this.referralSubscription = new CollectionDocumentSubscription<ReferralRecord>(
       `${type}Referrals` as const,
-      client.recordId,
+      person.recordId,
       transformReferral,
       validateRecord
     );
     this.updatesSubscription = new OpportunityUpdateSubscription<UpdateRecord>(
-      client.recordId,
-      client.id,
+      person.recordId,
+      person.externalId,
       type
     );
   }
@@ -131,6 +137,10 @@ export abstract class OpportunityBase<
     return this.updates?.firstViewed;
   }
 
+  get currentUserEmail(): string | null | undefined {
+    return this.rootStore.workflowsStore.user?.info.email;
+  }
+
   /**
    * If this.firstViewed is not yet set, this sets it by writing to Firestore.
    */
@@ -139,20 +149,20 @@ export abstract class OpportunityBase<
       () => this.isHydrated,
       () => {
         if (this.firstViewed) return;
-        const userEmail = this.client.rootStore.workflowsStore.user?.info.email;
+        const { currentUserEmail } = this;
         // should not happen in practice
-        if (!userEmail) return;
+        if (!currentUserEmail) return;
 
         // ignore recidiviz admins and other non-state actors in prod
         if (
           process.env.REACT_APP_DEPLOY_ENV === "production" &&
-          this.client.rootStore.userStore.stateCode !== this.client.stateCode
+          this.rootStore.userStore.stateCode !== this.person.stateCode
         )
           return;
 
         updateOpportunityFirstViewed(
-          userEmail,
-          this.client.recordId,
+          currentUserEmail,
+          this.person.recordId,
           this.type
         );
       }
@@ -181,8 +191,9 @@ export abstract class OpportunityBase<
     when(
       () => this.isHydrated,
       () => {
-        const { currentUserEmail, recordId, pseudonymizedId } = this.client;
+        const { currentUserEmail } = this;
         if (!currentUserEmail) return;
+        const { recordId, pseudonymizedId } = this.person;
         const { reviewStatus } = this;
         if (reviewStatus === "DENIED" || reviewStatus === "COMPLETED") return;
 
@@ -231,8 +242,9 @@ export abstract class OpportunityBase<
   }
 
   async setDenialReasons(reasons: string[]): Promise<void> {
-    const { currentUserEmail, recordId, pseudonymizedId } = this.client;
+    const { currentUserEmail } = this;
     if (!currentUserEmail) return;
+    const { recordId, pseudonymizedId } = this.person;
 
     // clear irrelevant "other" text if necessary
     const deletions = reasons.includes(OTHER_KEY)
@@ -275,10 +287,10 @@ export abstract class OpportunityBase<
   }
 
   async setOtherReasonText(otherReason?: string): Promise<void> {
-    if (this.client.currentUserEmail) {
+    if (this.currentUserEmail) {
       await updateOpportunityDenial(
-        this.client.currentUserEmail,
-        this.client.recordId,
+        this.currentUserEmail,
+        this.person.recordId,
         {
           otherReason,
         },
@@ -289,14 +301,14 @@ export abstract class OpportunityBase<
 
   trackListViewed(): void {
     trackSurfacedInList({
-      clientId: this.client.pseudonymizedId,
+      clientId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });
   }
 
   trackPreviewed(): void {
     trackOpportunityPreviewed({
-      clientId: this.client.pseudonymizedId,
+      clientId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });
   }

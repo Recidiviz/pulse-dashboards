@@ -21,8 +21,8 @@ import {
   trackReferralFormPrinted,
   trackReferralFormViewed,
 } from "../../../analytics";
-import { UpdateLog } from "../../../firestore";
-import { Client } from "../../Client";
+import { OpportunityUpdateWithForm, UpdateLog } from "../../../firestore";
+import { RootStore } from "../../../RootStore";
 import { OpportunityBase } from "../OpportunityBase";
 import { OpportunityType } from "../types";
 
@@ -36,17 +36,31 @@ export type PrefilledDataTransformer<
  * to facilitate incremental development of new Opportunities.
  */
 
-export class FormBase<FormDisplayType> {
-  client: Client;
+export class FormBase<
+  FormDisplayType,
+  OpportunityModel extends OpportunityBase<
+    any,
+    any,
+    OpportunityUpdateWithForm<any>
+  > = OpportunityBase<any, any, OpportunityUpdateWithForm<any>>
+> {
+  protected rootStore: RootStore;
 
-  opportunity: OpportunityBase<any, any>;
+  person: OpportunityModel["person"];
+
+  opportunity: OpportunityModel;
 
   type: OpportunityType;
 
-  constructor(type: OpportunityType, opportunity: OpportunityBase<any, any>) {
+  constructor(
+    type: OpportunityType,
+    opportunity: OpportunityModel,
+    rootStore: RootStore
+  ) {
     this.type = type;
     this.opportunity = opportunity;
-    this.client = opportunity.client;
+    this.person = opportunity.person;
+    this.rootStore = rootStore;
 
     makeObservable(this, {
       draftData: computed,
@@ -80,17 +94,17 @@ export class FormBase<FormDisplayType> {
 
   trackViewed(): void {
     trackReferralFormViewed({
-      clientId: this.client.pseudonymizedId,
+      clientId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });
   }
 
   get formIsPrinting(): boolean {
-    return this.client.rootStore.workflowsStore.formIsPrinting;
+    return this.rootStore.workflowsStore.formIsPrinting;
   }
 
   set formIsPrinting(value: boolean) {
-    this.client.rootStore.workflowsStore.formIsPrinting = value;
+    this.rootStore.workflowsStore.formIsPrinting = value;
   }
 
   print(): void {
@@ -99,7 +113,7 @@ export class FormBase<FormDisplayType> {
     this.formIsPrinting = true;
 
     trackReferralFormPrinted({
-      clientId: this.client.pseudonymizedId,
+      clientId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });
   }

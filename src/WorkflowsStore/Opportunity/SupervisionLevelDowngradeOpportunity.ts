@@ -28,11 +28,15 @@ import {
 } from "./SupervisionLevelDowngradeReferralRecord";
 import { OpportunityRequirement } from "./types";
 
-export class SupervisionLevelDowngradeOpportunity extends OpportunityBase<SupervisionLevelDowngradeReferralRecord> {
+export class SupervisionLevelDowngradeOpportunity extends OpportunityBase<
+  Client,
+  SupervisionLevelDowngradeReferralRecord
+> {
   constructor(client: Client) {
     super(
       client,
       "supervisionLevelDowngrade",
+      client.rootStore,
       getTransformer((raw: string) =>
         client.rootStore.workflowsStore.formatSupervisionLevel(raw)
       ),

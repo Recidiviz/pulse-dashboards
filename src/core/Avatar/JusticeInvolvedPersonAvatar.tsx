@@ -70,7 +70,7 @@ const formatAvatarText = (text: string, splitName: boolean): string => {
     : text;
 };
 
-const ClientAvatar: React.FC<AvatarProps> = ({
+export const JusticeInvolvedPersonAvatar: React.FC<AvatarProps> = ({
   name,
   size = 40,
   splitName = true,
@@ -90,5 +90,3 @@ const ClientAvatar: React.FC<AvatarProps> = ({
     </AvatarElement>
   );
 };
-
-export { ClientAvatar };

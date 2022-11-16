@@ -65,9 +65,12 @@ const CRITERIA: Record<
   },
 };
 
-export class EarnedDischargeOpportunity extends OpportunityBase<EarnedDischargeReferralRecord> {
+export class EarnedDischargeOpportunity extends OpportunityBase<
+  Client,
+  EarnedDischargeReferralRecord
+> {
   constructor(client: Client) {
-    super(client, "earnedDischarge", transformReferral);
+    super(client, "earnedDischarge", client.rootStore, transformReferral);
 
     makeObservable(this, {
       requirementsMet: computed,

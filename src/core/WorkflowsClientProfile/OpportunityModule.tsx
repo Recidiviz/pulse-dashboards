@@ -86,7 +86,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
               <Link
                 to={workflowsUrl("opportunityAction", {
                   opportunityType: opportunity.type,
-                  clientId: opportunity.client.pseudonymizedId,
+                  clientId: opportunity.person.pseudonymizedId,
                 })}
               >
                 <FormActionButton buttonFill={colors.buttonFill}>

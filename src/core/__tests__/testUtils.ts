@@ -16,28 +16,10 @@
 // =============================================================================
 
 import { Client, Opportunity } from "../../WorkflowsStore";
-import { FormBase } from "../../WorkflowsStore/Opportunity/Forms/FormBase";
-import { OpportunityBase } from "../../WorkflowsStore/Opportunity/OpportunityBase";
 
-export const MockFormBase: FormBase<any> = {
-  client: {} as Client,
-  opportunity: {} as OpportunityBase<any, any>,
-  formLastUpdated: undefined,
-  draftData: {},
-  prefilledData: {},
-  formData: {},
-  printText: "",
-  navigateToFormText: "",
-  prefilledDataTransformer: () => ({}),
-  type: "pastFTRD",
-  trackViewed: () => undefined,
-  formIsPrinting: false,
-  print: () => undefined,
-};
-
-export const mockOpportunity: Opportunity = {
+export const mockOpportunity: Opportunity<Client> = {
   almostEligible: false,
-  client: {} as Client,
+  person: {} as Client,
   defaultEligibility: "ELIGIBLE",
   denial: undefined,
   denialReasonsMap: {},

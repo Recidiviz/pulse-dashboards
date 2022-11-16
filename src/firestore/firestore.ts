@@ -318,15 +318,15 @@ export const updateFormDraftData = async function (
   name: string,
   value: FieldValue | string | number | boolean
 ): Promise<void> {
-  const { opportunity, formLastUpdated } = form;
-  const { client } = opportunity;
+  const { opportunity, formLastUpdated, type } = form;
+  const { person } = opportunity;
 
   await when(() => opportunity.isHydrated);
 
   const update = {
     referralForm: {
       updated: {
-        by: client.currentUserEmail || "user",
+        by: opportunity.currentUserEmail || "user",
         date: serverTimestamp(),
       },
       data: { [name]: value },
@@ -334,20 +334,20 @@ export const updateFormDraftData = async function (
   };
   const isFirstEdit = !formLastUpdated;
 
-  await updateOpportunity(form.type, client.recordId, update);
+  await updateOpportunity(type, person.recordId, update);
 
   if (isFirstEdit) {
     trackReferralFormFirstEdited({
-      clientId: client.pseudonymizedId,
-      opportunityType: opportunity.type,
+      clientId: person.pseudonymizedId,
+      opportunityType: type,
     });
   }
 
   if (opportunity.reviewStatus === "PENDING") {
     trackSetOpportunityStatus({
-      clientId: client.pseudonymizedId,
+      clientId: person.pseudonymizedId,
       status: "IN_PROGRESS",
-      opportunityType: form.type,
+      opportunityType: type,
     });
   }
 };

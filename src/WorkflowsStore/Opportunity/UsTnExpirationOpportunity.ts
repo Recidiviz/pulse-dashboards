@@ -23,9 +23,12 @@ import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import { UsTnExpirationReferralRecord } from "./UsTnExpirationReferralRecord";
 
-export class UsTnExpirationOpportunity extends OpportunityBase<UsTnExpirationReferralRecord> {
+export class UsTnExpirationOpportunity extends OpportunityBase<
+  Client,
+  UsTnExpirationReferralRecord
+> {
   constructor(client: Client) {
-    super(client, "usTnExpiration");
+    super(client, "usTnExpiration", client.rootStore);
 
     makeObservable(this, { requirementsMet: true });
   }

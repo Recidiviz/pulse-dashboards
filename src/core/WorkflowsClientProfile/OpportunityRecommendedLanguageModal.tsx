@@ -126,7 +126,7 @@ export const OpportunityRecommendedLanguageModal = observer(
             {opportunity.almostEligibleRecommendedNote.title}
           </ModalTitle>
           <LanguagePrompt>
-            Let {opportunity.client.fullName.givenNames} know they are almost
+            Let {opportunity.person.fullName.givenNames} know they are almost
             eligible:
           </LanguagePrompt>
           <RecommendedLanguage>

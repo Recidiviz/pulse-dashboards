@@ -34,7 +34,7 @@ import {
   Opportunity,
   OpportunityType,
 } from "../../WorkflowsStore";
-import { ClientAvatar } from "../Avatar";
+import { JusticeInvolvedPersonAvatar } from "../Avatar";
 import { workflowsUrl } from "../views";
 
 const OpportunityTypeSummaryWrapper = styled.div`
@@ -161,12 +161,15 @@ const OpportunityTypeSummary = observer(
         <ClientsWrapper>
           {previewOpportunities.map((opportunity) => (
             <ClientAvatarWrapper>
-              <ClientAvatar size={56} name={opportunity.client.displayName} />
+              <JusticeInvolvedPersonAvatar
+                size={56}
+                name={opportunity.person.displayName}
+              />
             </ClientAvatarWrapper>
           ))}
           {numOpportunitiesToDisplay > 0 && (
             <ClientAvatarWrapper>
-              <ClientAvatar
+              <JusticeInvolvedPersonAvatar
                 size={56}
                 name={`+ ${numOpportunitiesToDisplay}`}
                 splitName={false}

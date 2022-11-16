@@ -4,7 +4,7 @@ import React, { createContext, useContext } from "react";
 import { useRootStore } from "../../components/StoreProvider";
 import { OpportunityType } from "../../WorkflowsStore";
 import { FormBase } from "../../WorkflowsStore/Opportunity/Forms/FormBase";
-import { useClientTracking } from "../hooks/useClientTracking";
+import { usePersonTracking } from "../hooks/usePersonTracking";
 
 /**
  * A helper to create a Context and Provider with no upfront default value, and
@@ -36,7 +36,7 @@ export const connectComponentToOpportunityForm = (
     } = useRootStore();
     const opportunity = client?.verifiedOpportunities[opportunityType];
 
-    useClientTracking(client, () => {
+    usePersonTracking(client, () => {
       opportunity?.form?.trackViewed();
     });
 

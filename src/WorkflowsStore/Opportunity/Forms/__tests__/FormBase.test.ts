@@ -30,18 +30,18 @@ jest.mock("../../../../analytics");
 jest.mock("../../../subscriptions");
 
 let rootStore: RootStore;
-let opp: OpportunityBase<any>;
+let opp: OpportunityBase<any, any>;
 let client: Client;
 let form: FormBase<any>;
 
-class TestOpportunity extends OpportunityBase<Record<string, any>> {}
+class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {}
 
 function createTestUnit() {
   rootStore = new RootStore();
   client = { pseudonymizedId: "TEST123", rootStore } as Client;
-  opp = new TestOpportunity(client, "LSU");
+  opp = new TestOpportunity(client, "LSU", rootStore);
   jest.spyOn(opp, "isHydrated", "get").mockReturnValue(true);
-  form = new FormBase<any>("LSU", opp);
+  form = new FormBase<any>("LSU", opp, rootStore);
   opp.form = form;
 }
 

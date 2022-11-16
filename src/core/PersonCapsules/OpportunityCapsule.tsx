@@ -18,19 +18,22 @@
 import { observer } from "mobx-react-lite";
 
 import { Opportunity } from "../../WorkflowsStore";
-import { useClientTracking } from "../hooks/useClientTracking";
+import { usePersonTracking } from "../hooks/usePersonTracking";
 import { EligibilityStatus, WorkflowProgress } from "../OpportunityStatus";
 import { useShowEligibilityStatus } from "../utils/workflowsUtils";
-import ClientCapsule, { ClientCapsuleProps } from "./ClientCapsule";
+import {
+  JusticeInvolvedPersonCapsule,
+  JusticeInvolvedPersonCapsuleProps,
+} from "./JusticeInvolvedPersonCapsule";
 
-type Props = Omit<ClientCapsuleProps, "status" | "client"> & {
+type Props = Omit<JusticeInvolvedPersonCapsuleProps, "status" | "person"> & {
   opportunity: Opportunity;
 };
 
 export const OpportunityCapsule = observer(
   ({ opportunity, ...otherProps }: Props) => {
-    const { client, isHydrated } = opportunity;
-    useClientTracking(client, () => {
+    const { person, isHydrated } = opportunity;
+    usePersonTracking(person, () => {
       opportunity.trackListViewed();
     });
     const showEligibilityStatus = useShowEligibilityStatus(opportunity);
@@ -51,8 +54,8 @@ export const OpportunityCapsule = observer(
     }
 
     return (
-      <ClientCapsule
-        client={client}
+      <JusticeInvolvedPersonCapsule
+        person={person}
         status={status}
         hideTooltip
         {...otherProps}

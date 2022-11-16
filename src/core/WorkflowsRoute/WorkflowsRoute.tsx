@@ -28,11 +28,11 @@ type RouterLocation = ReturnType<typeof useLocation>;
 function parseLocation(loc: RouterLocation) {
   // slicing off empty string at 0 caused by leading slash,
   // and 1 which should always be "workflows"
-  const [page, clientId]: Array<string | undefined> = loc.pathname
+  const [page, personId]: Array<string | undefined> = loc.pathname
     .split("/")
     .slice(2);
 
-  return { page, clientId };
+  return { page, personId };
 }
 
 const RouteSync: React.FC = ({ children }) => {
@@ -43,11 +43,11 @@ const RouteSync: React.FC = ({ children }) => {
   const [redirectPath, setRedirectPath] = useState<string | undefined>();
 
   useEffect(() => {
-    const { page, clientId } = parseLocation(loc);
+    const { page, personId } = parseLocation(loc);
     setRedirectPath(undefined);
 
     // sync location data into the store
-    workflowsStore.updateSelectedClient(clientId).catch(() => {
+    workflowsStore.updateSelectedPerson(personId).catch(() => {
       setNotFound(true);
     });
     if (page && isOpportunityType(page)) {

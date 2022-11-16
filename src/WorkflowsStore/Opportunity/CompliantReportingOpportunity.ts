@@ -192,6 +192,7 @@ const getRecordValidator = (client: Client) => (
 };
 
 export class CompliantReportingOpportunity extends OpportunityBase<
+  Client,
   CompliantReportingReferralRecord,
   CompliantReportingUpdateRecord
 > {
@@ -207,6 +208,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     super(
       client,
       "compliantReporting",
+      client.rootStore,
       transformCompliantReportingReferral,
       getRecordValidator(client)
     );
@@ -225,7 +227,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     );
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.form = new CompliantReportingForm(this.type, this);
+    this.form = new CompliantReportingForm(this.type, this, client.rootStore);
   }
 
   get almostEligible(): boolean {
@@ -280,7 +282,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
-    const { supervisionLevel, supervisionLevelStart } = this.client;
+    const { supervisionLevel, supervisionLevelStart } = this.person;
     const {
       currentOffenses,
       drugScreensPastYear,
@@ -548,7 +550,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
               ? `Needs ${currentLevelEligibilityDaysRemaining} more ${pluralizeWord(
                   currentLevelEligibilityDaysRemaining,
                   "day"
-                )} on ${this.client.supervisionLevel.toLowerCase()}`
+                )} on ${this.person.supervisionLevel.toLowerCase()}`
               : undefined;
           }
           case "seriousSanctionsEligibilityDate": {
@@ -623,7 +625,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 
     if (!criterionSpecificCopy) return undefined;
 
-    const text = `Hey ${this.client.fullName.givenNames}, you’ve been doing well and are 
+    const text = `Hey ${this.person.fullName.givenNames}, you’ve been doing well and are 
     almost eligible for Compliant Reporting, which would let you switch to telephone
     check-ins, rather than needing to report to the office. If you ${criterionSpecificCopy}, 
     you will meet all of the requirements and I can refer you.`.replace(

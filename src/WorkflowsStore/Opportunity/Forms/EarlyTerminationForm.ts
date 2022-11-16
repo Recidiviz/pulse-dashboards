@@ -14,7 +14,7 @@ export class EarlyTerminationForm extends FormBase<EarlyTerminationDraftData> {
   navigateToFormText = "Auto-fill paperwork";
 
   prefilledDataTransformer(): Partial<EarlyTerminationDraftData> {
-    if (!this.opportunity.record || !this.client) return {};
+    if (!this.opportunity.record || !this.person) return {};
 
     const {
       formInformation: {
@@ -31,7 +31,7 @@ export class EarlyTerminationForm extends FormBase<EarlyTerminationDraftData> {
     } = this.opportunity.record;
 
     return {
-      clientName: this.client.displayName,
+      clientName: this.person.displayName,
       judgeName,
       convictionCounty: convictionCounty?.replaceAll("_", " ") ?? "",
       judicialDistrictCode: judicialDistrictCode?.replaceAll("_", " ") ?? "",

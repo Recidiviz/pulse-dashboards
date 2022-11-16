@@ -22,5 +22,7 @@ export { EarlyTerminationForm } from "./Forms/EarlyTerminationForm";
 export { LSUForm } from "./Forms/LSUForm";
 export * from "./LSUOpportunity";
 export * from "./PastFTRDOpportunity";
+export * from "./SupervisionLevelDowngradeOpportunity";
 export * from "./types";
+export * from "./UsTnExpirationOpportunity";
 export * from "./utils";

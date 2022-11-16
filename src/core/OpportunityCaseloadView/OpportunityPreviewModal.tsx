@@ -98,7 +98,7 @@ export const OpportunityPreviewModal = observer(
         }}
         onRequestClose={() => setModalIsOpen(false)}
         onAfterClose={() => {
-          workflowsStore.updateSelectedClient(undefined);
+          workflowsStore.updateSelectedPerson(undefined);
         }}
         closeTimeoutMS={1000}
       >

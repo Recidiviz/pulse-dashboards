@@ -19,13 +19,13 @@ import React from "react";
 
 import { CaseloadSelect } from "../CaseloadSelect";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import { AllClients } from "./AllClients";
+import { AllCaseloads } from "./AllCaseloads";
 
 export const CaseloadView: React.FC = observer(() => {
   return (
     <WorkflowsNavLayout>
       <CaseloadSelect />
-      <AllClients />
+      <AllCaseloads />
     </WorkflowsNavLayout>
   );
 });

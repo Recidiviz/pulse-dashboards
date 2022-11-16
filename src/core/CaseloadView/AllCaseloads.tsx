@@ -23,9 +23,9 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Client } from "../../WorkflowsStore";
-import { ProfileCapsule } from "../ClientCapsule";
+import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { SectionLabelText } from "../OpportunityCaseloadView/styles";
+import { ProfileCapsule } from "../PersonCapsules";
 import { workflowsUrl } from "../views";
 import WorkflowsNoResults from "../WorkflowsNoResults";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
@@ -41,13 +41,13 @@ const CaseloadWrapper = styled.ul`
   row-gap: ${rem(spacing.sm)};
 `;
 
-const Caseload = ({ clients }: { clients: Client[] }) => {
-  const items = clients.map((client: Client) => (
-    <li key={client.id}>
+const Caseload = ({ persons }: { persons: JusticeInvolvedPerson[] }) => {
+  const items = persons.map((person) => (
+    <li key={person.externalId}>
       <Link
-        to={workflowsUrl("clientProfile", { clientId: client.pseudonymizedId })}
+        to={workflowsUrl("clientProfile", { clientId: person.pseudonymizedId })}
       >
-        <ProfileCapsule avatarSize="lg" client={client} textSize="sm" />
+        <ProfileCapsule avatarSize="lg" person={person} textSize="sm" />
       </Link>
     </li>
   ));
@@ -55,9 +55,9 @@ const Caseload = ({ clients }: { clients: Client[] }) => {
   return <CaseloadWrapper>{items}</CaseloadWrapper>;
 };
 
-export const AllClients = observer(() => {
+export const AllCaseloads = observer(() => {
   const {
-    workflowsStore: { caseloadClients, selectedOfficerIds },
+    workflowsStore: { caseloadPersons, selectedOfficerIds },
   } = useRootStore();
 
   if (!selectedOfficerIds.length)
@@ -68,7 +68,7 @@ export const AllClients = observer(() => {
       />
     );
 
-  const caseloads = groupBy(caseloadClients, "officerId");
+  const caseloads = groupBy(caseloadPersons, "assignedStaffId");
 
   return (
     <>
@@ -81,7 +81,7 @@ export const AllClients = observer(() => {
           )}
           {/* in practice there should never be a missing caseload,
               but fall back to an empty array for type safety */}
-          <Caseload clients={caseloads[officerId] ?? []} />
+          <Caseload persons={caseloads[officerId] ?? []} />
         </React.Fragment>
       ))}
     </>

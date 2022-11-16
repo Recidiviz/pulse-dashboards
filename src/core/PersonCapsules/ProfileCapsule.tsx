@@ -15,6 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { default as ClientCapsule } from "./ClientCapsule";
-export * from "./OpportunityCapsule";
-export * from "./ProfileCapsule";
+import { identity } from "lodash";
+import { observer } from "mobx-react-lite";
+import React from "react";
+
+import { Client } from "../../WorkflowsStore";
+import {
+  JusticeInvolvedPersonCapsule,
+  JusticeInvolvedPersonCapsuleProps,
+} from "./JusticeInvolvedPersonCapsule";
+
+type Props = Omit<JusticeInvolvedPersonCapsuleProps, "status">;
+
+export const ProfileCapsule = observer(
+  ({ person, ...otherProps }: Props): JSX.Element => {
+    let status: React.ReactNode;
+    if (person instanceof Client) {
+      status = (
+        <>
+          {[person.supervisionType, person.supervisionLevel]
+            .filter(identity)
+            .join(", ")}
+        </>
+      );
+    }
+
+    return (
+      <JusticeInvolvedPersonCapsule
+        person={person}
+        {...otherProps}
+        status={status}
+      />
+    );
+  }
+);

@@ -55,7 +55,7 @@ const trackSetOpportunityStatusMock = trackSetOpportunityStatus as jest.Mock;
 const mockUpdateOpportunityDenial = updateOpportunityDenial as jest.Mock;
 const mockUpdateOpportunityCompleted = updateOpportunityCompleted as jest.Mock;
 
-let opp: OpportunityBase<any>;
+let opp: OpportunityBase<Client, any>;
 let client: Client;
 let root: RootStore;
 let referralSub: DocumentSubscription<any>;
@@ -63,12 +63,12 @@ let updatesSub: DocumentSubscription<any>;
 let mockUser: CombinedUserRecord;
 let mockUserStateCode: jest.SpyInstance;
 
-class TestOpportunity extends OpportunityBase<Record<string, any>> {
+class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {
   form: FormBase<any>;
 
   constructor(oppClient: Client, type: OpportunityType) {
-    super(oppClient, type);
-    this.form = new FormBase<any>("LSU", this);
+    super(oppClient, type, root);
+    this.form = new FormBase<any>("LSU", this, root);
   }
 }
 

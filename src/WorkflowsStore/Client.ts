@@ -33,9 +33,10 @@ import {
   Opportunity,
   OpportunityType,
   PastFTRDOpportunity,
+  SupervisionLevelDowngradeOpportunity,
+  UsTnExpirationOpportunity,
 } from "./Opportunity";
-import { SupervisionLevelDowngradeOpportunity } from "./Opportunity/SupervisionLevelDowngradeOpportunity";
-import { UsTnExpirationOpportunity } from "./Opportunity/UsTnExpirationOpportunity";
+import { JusticeInvolvedPerson, OpportunityMapping } from "./types";
 import { optionalFieldToDate } from "./utils";
 
 export const UNKNOWN = "Unknown" as const;
@@ -57,7 +58,7 @@ export const CLIENT_DETAILS_COPY: Record<string, ClientDetailsCopy> = {
 
 const OPPORTUNITY_CREATION_MAPPING: Record<
   OpportunityType,
-  new (client: Client) => Opportunity
+  new (client: Client) => Opportunity<Client>
 > = {
   compliantReporting: CompliantReportingOpportunity,
   earlyTermination: EarlyTerminationOpportunity,
@@ -68,32 +69,10 @@ const OPPORTUNITY_CREATION_MAPPING: Record<
   usTnExpiration: UsTnExpirationOpportunity,
 };
 
-type OpportunityMapping = {
-  earlyTermination?: EarlyTerminationOpportunity;
-  compliantReporting?: CompliantReportingOpportunity;
-  earnedDischarge?: EarnedDischargeOpportunity;
-  LSU?: LSUOpportunity;
-  pastFTRD?: PastFTRDOpportunity;
-  supervisionLevelDowngrade?: SupervisionLevelDowngradeOpportunity;
-  usTnExpiration?: UsTnExpirationOpportunity;
-};
-
-export class Client {
+export class Client implements JusticeInvolvedPerson {
   rootStore: RootStore;
 
-  recordId!: string;
-
-  id!: string;
-
   record!: ClientRecord;
-
-  pseudonymizedId!: string;
-
-  stateCode!: string;
-
-  fullName!: FullName;
-
-  officerId!: string;
 
   supervisionType!: string;
 
@@ -128,7 +107,6 @@ export class Client {
       potentialOpportunities: true,
       verifiedOpportunities: true,
       record: true,
-      currentUserEmail: true,
       opportunitiesAlmostEligible: true,
       opportunitiesEligible: true,
       printReferralForm: true,
@@ -141,14 +119,32 @@ export class Client {
     this.updateRecord(record);
   }
 
+  get recordId(): string {
+    return this.record.recordId;
+  }
+
+  get externalId(): string {
+    return this.record.personExternalId;
+  }
+
+  get pseudonymizedId(): string {
+    return this.record.pseudonymizedId;
+  }
+
+  get stateCode(): string {
+    return this.record.stateCode.toUpperCase();
+  }
+
+  get fullName(): FullName {
+    return this.record.personName;
+  }
+
+  get assignedStaffId(): string {
+    return this.record.officerId;
+  }
+
   updateRecord(record: ClientRecord): void {
-    this.recordId = record.recordId;
     this.record = record;
-    this.id = record.personExternalId;
-    this.pseudonymizedId = record.pseudonymizedId;
-    this.stateCode = record.stateCode.toUpperCase();
-    this.fullName = record.personName;
-    this.officerId = record.officerId;
     this.supervisionType = record.supervisionType;
     this.supervisionLevelStart = optionalFieldToDate(
       record.supervisionLevelStart
@@ -207,7 +203,7 @@ export class Client {
 
   get officerDistrict(): string | undefined {
     const officer = this.rootStore.workflowsStore?.availableOfficers.find(
-      (o) => o.id === this.officerId
+      (o) => o.id === this.assignedStaffId
     );
     return officer?.district;
   }
@@ -255,14 +251,6 @@ export class Client {
     );
   }
 
-  get currentUserEmail(): string | null | undefined {
-    return this.rootStore.workflowsStore.user?.info.email;
-  }
-
-  get currentUserName(): string | null | undefined {
-    return this.rootStore.workflowsStore.user?.info.email;
-  }
-
   printReferralForm(opportunityType: OpportunityType): void {
     const opportunity = this.verifiedOpportunities[opportunityType];
     opportunity?.setCompletedIfEligible();
@@ -289,7 +277,7 @@ export class Client {
     return CLIENT_DETAILS_COPY[this.stateCode];
   }
 
-  get allClientOpportunitiesLoaded(): boolean {
+  get allOpportunitiesLoaded(): boolean {
     return (
       values(this.potentialOpportunities).filter(
         (opp) => opp !== undefined && !(opp.isLoading === false)

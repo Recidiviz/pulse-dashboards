@@ -17,7 +17,7 @@
 
 import { Hydratable } from "../../core/models/types";
 import { Denial, UpdateLog } from "../../firestore";
-import { Client } from "../Client";
+import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
 
 export const OPPORTUNITY_TYPES = [
@@ -84,12 +84,14 @@ export type WithCaseNotes = {
  * where form-related behavior is optional. Opportunity-specific extensions of this type
  * should generally override them to be required.
  */
-export interface Opportunity extends Hydratable {
+export interface Opportunity<
+  PersonType extends JusticeInvolvedPerson = JusticeInvolvedPerson
+> extends Hydratable {
   almostEligible: boolean;
   // TODO: move this to status component once almost-eligible is standardized on TES
   almostEligibleStatusMessage?: string;
   almostEligibleRecommendedNote?: { title: string; text: string };
-  client: Client;
+  person: PersonType;
   readonly defaultEligibility: DefaultEligibility;
   form?: FormBase<any>;
   requirementsAlmostMet: OpportunityRequirement[];

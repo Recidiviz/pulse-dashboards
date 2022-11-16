@@ -27,11 +27,14 @@ import {
 } from "./PastFTRDReferralRecord";
 import { OpportunityRequirement } from "./types";
 
-export class PastFTRDOpportunity extends OpportunityBase<PastFTRDReferralRecord> {
+export class PastFTRDOpportunity extends OpportunityBase<
+  Client,
+  PastFTRDReferralRecord
+> {
   readonly isAlert = true;
 
   constructor(client: Client) {
-    super(client, "pastFTRD", transformReferral);
+    super(client, "pastFTRD", client.rootStore, transformReferral);
     makeObservable(this, {
       requirementsMet: computed,
     });

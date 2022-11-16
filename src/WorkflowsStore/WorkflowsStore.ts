@@ -61,6 +61,7 @@ import {
   StaffSubscription,
   UserSubscription,
 } from "./subscriptions";
+import { JusticeInvolvedPerson } from "./types";
 import { staffNameComparator } from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
@@ -76,11 +77,11 @@ export class WorkflowsStore implements Hydratable {
 
   featureVariantsSubscription?: CollectionDocumentSubscription<FeatureVariantRecord>;
 
-  private selectedClientPseudoId?: string;
+  private selectedPersonPseudoId?: string;
 
   selectedOpportunityType?: OpportunityType;
 
-  clients: Record<string, Client> = {};
+  justiceInvolvedPersons: Record<string, JusticeInvolvedPerson> = {};
 
   officersSubscription: StaffSubscription;
 
@@ -254,12 +255,14 @@ export class WorkflowsStore implements Hydratable {
 
   updateClients(newClients: ClientRecord[] = []): void {
     newClients.forEach((record) => {
-      const existingClient = this.clients[record.pseudonymizedId];
-      if (existingClient) {
+      const existingClient = this.justiceInvolvedPersons[
+        record.pseudonymizedId
+      ];
+      if (existingClient instanceof Client) {
         existingClient.updateRecord(record);
       } else {
         set(
-          this.clients,
+          this.justiceInvolvedPersons,
           record.pseudonymizedId,
           new Client(record, this.rootStore)
         );
@@ -277,10 +280,10 @@ export class WorkflowsStore implements Hydratable {
     );
   }
 
-  async updateSelectedClient(clientId?: string): Promise<void> {
-    this.selectedClientPseudoId = clientId;
-    if (clientId && !has(this.clients, clientId)) {
-      await this.fetchClient(clientId);
+  async updateSelectedPerson(personId?: string): Promise<void> {
+    this.selectedPersonPseudoId = personId;
+    if (personId && !has(this.justiceInvolvedPersons, personId)) {
+      await this.fetchClient(personId);
     }
   }
 
@@ -309,9 +312,9 @@ export class WorkflowsStore implements Hydratable {
     return !!(opportunityTypes && opportunityTypes.length > 1);
   }
 
-  get caseloadClients(): Client[] {
-    return values(this.clients)
-      .filter((c) => this.selectedOfficerIds.includes(c.officerId))
+  get caseloadPersons(): JusticeInvolvedPerson[] {
+    return values(this.justiceInvolvedPersons)
+      .filter((p) => this.selectedOfficerIds.includes(p.assignedStaffId))
       .sort((a, b) => {
         return (
           ascending(a.fullName.surname, b.fullName.surname) ||
@@ -323,7 +326,7 @@ export class WorkflowsStore implements Hydratable {
   get eligibleOpportunities(): Record<OpportunityType, Opportunity[]> {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     OPPORTUNITY_TYPES.forEach((opportunityType) => {
-      const opportunities = this.caseloadClients
+      const opportunities = this.caseloadPersons
         .map((c) => c.opportunitiesEligible[opportunityType])
         .filter((opp) => opp !== undefined)
         .map((opp) => opp as Opportunity)
@@ -337,7 +340,7 @@ export class WorkflowsStore implements Hydratable {
   get almostEligibleOpportunities(): Record<OpportunityType, Opportunity[]> {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     OPPORTUNITY_TYPES.forEach((opportunityType) => {
-      const opportunities = this.caseloadClients
+      const opportunities = this.caseloadPersons
         .map((c) => c.opportunitiesAlmostEligible[opportunityType])
         .filter((opp) => opp !== undefined)
         .map((opp) => opp as Opportunity)
@@ -351,7 +354,7 @@ export class WorkflowsStore implements Hydratable {
   opportunitiesLoaded(opportunityTypes: OpportunityType[]): boolean {
     // Wait until we have clients until checking that opportunities are loading.
     if (
-      !this.caseloadClients.length &&
+      !this.caseloadPersons.length &&
       (!this.clientsSubscription.isHydrated ||
         this.clientsSubscription.isLoading)
     ) {
@@ -367,7 +370,7 @@ export class WorkflowsStore implements Hydratable {
   potentialOpportunities(opportunityTypes: OpportunityType[]): Opportunity[] {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     opportunityTypes.forEach((opportunityType) => {
-      const opportunities = this.caseloadClients
+      const opportunities = this.caseloadPersons
         .map((c) => c.potentialOpportunities[opportunityType])
         .filter((opp) => opp !== undefined);
       mapping[opportunityType] = opportunities as Opportunity[];
@@ -378,7 +381,7 @@ export class WorkflowsStore implements Hydratable {
   get allOpportunitiesByType(): Record<OpportunityType, Opportunity[]> {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     OPPORTUNITY_TYPES.forEach((opportunityType) => {
-      const opportunities = this.caseloadClients
+      const opportunities = this.caseloadPersons
         .map((c) => c.verifiedOpportunities[opportunityType])
         .filter((opp) => !!opp)
         .map((opp) => opp as Opportunity)
@@ -395,9 +398,15 @@ export class WorkflowsStore implements Hydratable {
     return officers;
   }
 
+  get selectedPerson(): JusticeInvolvedPerson | undefined {
+    return this.selectedPersonPseudoId
+      ? this.justiceInvolvedPersons[this.selectedPersonPseudoId]
+      : undefined;
+  }
+
   get selectedClient(): Client | undefined {
-    return this.selectedClientPseudoId
-      ? this.clients[this.selectedClientPseudoId]
+    return this.selectedPerson instanceof Client
+      ? this.selectedPerson
       : undefined;
   }
 

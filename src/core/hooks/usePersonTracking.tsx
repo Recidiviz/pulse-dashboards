@@ -15,29 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { identity } from "lodash";
-import { observer } from "mobx-react-lite";
-import React from "react";
+import { useEffect } from "react";
 
-import ClientCapsule, { ClientCapsuleProps } from "./ClientCapsule";
+import type { JusticeInvolvedPerson } from "../../WorkflowsStore";
 
-type Props = Omit<ClientCapsuleProps, "status">;
-
-export const ProfileCapsule = observer(
-  ({ client, hideTooltip, ...otherProps }: Props): JSX.Element => {
-    return (
-      <ClientCapsule
-        client={client}
-        {...otherProps}
-        status={
-          <>
-            {[client.supervisionType, client.supervisionLevel]
-              .filter(identity)
-              .join(", ")}
-          </>
-        }
-        hideTooltip={hideTooltip}
-      />
-    );
-  }
-);
+/**
+ * Ensures the given tracking function is called only once per person,
+ * de-duplicating across possible re-renders of the same person.
+ * @param trackingFn will be called even if `person` is undefined! Be sure it handles this case.
+ */
+export function usePersonTracking(
+  person: JusticeInvolvedPerson | undefined,
+  trackingFn: () => void
+): void {
+  useEffect(
+    () => {
+      trackingFn();
+    },
+    // Using the ID prevents logging redundant events if the object reference itself is not stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [person?.pseudonymizedId]
+  );
+}

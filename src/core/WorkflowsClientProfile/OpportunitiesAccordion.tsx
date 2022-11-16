@@ -30,7 +30,11 @@ import {
 } from "react-accessible-accordion";
 import styled from "styled-components/macro";
 
-import { Client, Opportunity, OpportunityType } from "../../WorkflowsStore";
+import {
+  JusticeInvolvedPerson,
+  Opportunity,
+  OpportunityType,
+} from "../../WorkflowsStore";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { OpportunityModule } from "./OpportunityModule";
@@ -106,13 +110,13 @@ const NoOpportunities = styled.div`
 `;
 
 export const OpportunitiesAccordion = observer(
-  ({ client }: { client: Client }) => {
+  ({ person }: { person: JusticeInvolvedPerson }) => {
     const opportunityTypes = keys(
-      client.potentialOpportunities
+      person.potentialOpportunities
     ) as OpportunityType[];
 
     const opportunities = sortBy(
-      Object.values(client.verifiedOpportunities).filter(
+      Object.values(person.verifiedOpportunities).filter(
         (opp) => opp !== undefined
       ) as Opportunity[],
       (opp: Opportunity) => opportunityTypes.indexOf(opp.type)
