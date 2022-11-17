@@ -16,15 +16,19 @@
 // =============================================================================
 
 import { FullName } from "../firestore";
+import { Expect, Extends } from "../utils/typeUtils";
+import { Client } from "./Client";
 import {
   CompliantReportingOpportunity,
   EarlyTerminationOpportunity,
   EarnedDischargeOpportunity,
   LSUOpportunity,
+  OpportunityType,
   PastFTRDOpportunity,
   SupervisionLevelDowngradeOpportunity,
   UsTnExpirationOpportunity,
 } from "./Opportunity";
+import { OpportunityBase } from "./Opportunity/OpportunityBase";
 
 export type OpportunityMapping = {
   earlyTermination?: EarlyTerminationOpportunity;
@@ -35,6 +39,14 @@ export type OpportunityMapping = {
   supervisionLevelDowngrade?: SupervisionLevelDowngradeOpportunity;
   usTnExpiration?: UsTnExpirationOpportunity;
 };
+// The following line will typecheck only if OpportunityMapping is exhaustive
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type CheckOpportunityMappingType = Expect<
+  Extends<
+    Required<OpportunityMapping>,
+    Record<OpportunityType, OpportunityBase<Client, any, any>>
+  >
+>;
 
 export type JusticeInvolvedPerson = {
   /**
