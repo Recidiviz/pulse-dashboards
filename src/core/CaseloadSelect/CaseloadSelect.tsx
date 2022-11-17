@@ -146,6 +146,7 @@ export const CaseloadSelect = observer(
     return (
       <CaseloadSelectContainer>
         <ReactSelect
+          className="CaseloadSelect"
           components={customComponents}
           isMulti
           isOptionDisabled={() => disableAdditionalSelections}

@@ -86,15 +86,17 @@ export const OpportunityPersonList = observer(() => {
 
   const hydrated = (
     <>
-      <Heading>
+      <Heading className="PersonList__Heading">
         {hydratedHeader.eligibilityText} {hydratedHeader.opportunityText}
       </Heading>
-      <SubHeading>{hydratedHeader.callToAction}</SubHeading>
+      <SubHeading className="PersonList__Subheading">
+        {hydratedHeader.callToAction}
+      </SubHeading>
       <>
         {eligibleOpps.length > 0 && almostEligibleOpps.length > 0 && (
           <SectionLabelText>Eligible now</SectionLabelText>
         )}
-        <PersonList>
+        <PersonList className="PersonList">
           {eligibleOpps.map((opportunity) => (
             <PersonListItem opportunity={opportunity} />
           ))}
@@ -103,7 +105,7 @@ export const OpportunityPersonList = observer(() => {
       {almostEligibleOpps.length > 0 && (
         <>
           <SectionLabelText>Almost Eligible</SectionLabelText>
-          <PersonList>
+          <PersonList className="PersonList__AlmostEligible">
             {almostEligibleOpps.map((opportunity) => (
               <PersonListItem opportunity={opportunity} />
             ))}

@@ -119,6 +119,7 @@ export const WorkflowsNavLayout: React.FC = observer(({ children }) => {
                 return (
                   <li>
                     <BrandedNavLink
+                      className={`BrandedNavLink__${opportunityType}`}
                       to={workflowsUrl("opportunityClients", {
                         opportunityType,
                       })}

@@ -20,18 +20,22 @@ import { Then, When } from "@cucumber/cucumber";
  * When
  * */
 When("I select officer {string} from the dropdown", async (officerId) => {
-  const container = await browser.react$("SelectContainer");
+  const container = await $(".CaseloadSelect");
   await container.click();
   const option = await browser.react$("Option", {
     props: {
       value: officerId,
     },
   });
-  option.click();
-  // Wait for Loading spinner to appear and disappear
-  const loadingSpinner = await $("div=Loading data...");
-  await loadingSpinner.waitForExist();
-  await loadingSpinner.waitForExist({ reverse: true });
+  await option.waitForExist();
+  await option.click();
+  await browser.pause(500);
+});
+
+When("I click on the {string} button", async (buttonClassName) => {
+  const button = await $(`.${buttonClassName}`);
+  await button.click();
+  await browser.pause(1000);
 });
 
 /**
@@ -46,3 +50,9 @@ Then(
     );
   }
 );
+
+Then("I should navigate to the {string} form page", async (opportunityType) => {
+  const url = await browser.getUrl();
+  const pattern = new RegExp(`/workflows/${opportunityType}/[\\d\\D]+$`);
+  expect(url).toEqual(expect.stringMatching(pattern));
+});

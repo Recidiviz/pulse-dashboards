@@ -1,5 +1,6 @@
 const { execSync } = require("child_process");
 const firebase = require("./firebase.json");
+const { loadWorkflowsFixtures } = require("./tools/workflowsFixtures");
 
 exports.config = {
   credentials: {
@@ -259,8 +260,7 @@ exports.config = {
       `curl -v -X DELETE 'http://localhost:${firebase.emulators.firestore.port}/emulator/v1/projects/${process.env.FIREBASE_PROJECT}/databases/(default)/documents'`
     );
     /* Load fixtures to firestore database */
-    // eslint-disable-next-line global-require
-    require("./tools/workflowsFixtures");
+    await loadWorkflowsFixtures();
   },
   /**
    * Runs before a Cucumber step

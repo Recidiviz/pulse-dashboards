@@ -86,6 +86,7 @@ export const PersonListItem = observer(
           onMouseLeave={() => setShowButton(false)}
         >
           <PersonLink
+            className="PersonListItem__Link"
             onClick={() =>
               workflowsStore.updateSelectedPerson(person.pseudonymizedId)
             }
@@ -105,7 +106,7 @@ export const PersonListItem = observer(
                 clientId: person.pseudonymizedId,
               })}
             >
-              <NavigateToFormButton>
+              <NavigateToFormButton className="NavigateToFormButton">
                 {opportunity.form.navigateToFormText}
               </NavigateToFormButton>
             </Link>

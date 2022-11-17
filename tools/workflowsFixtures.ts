@@ -38,7 +38,7 @@ const OPPORTUNITIES_WITH_FIXTURES: (keyof typeof collectionNames)[] = [
 
 const db = getDb();
 
-async function loadClientsFixture() {
+export async function loadClientsFixture(): Promise<void> {
   console.log("wiping existing client data ...");
   await deleteCollection(db, COLLECTIONS.clients);
 
@@ -66,7 +66,7 @@ async function loadClientsFixture() {
     .then(() => console.log("new client data loaded successfully"));
 }
 
-async function loadUserFixture() {
+export async function loadUserFixture(): Promise<void> {
   console.log("wiping existing staff data ...");
   await deleteCollection(db, COLLECTIONS.staff);
 
@@ -87,7 +87,7 @@ async function loadUserFixture() {
   console.log("new staff data loaded successfully");
 }
 
-async function loadOpportunityReferralFixtures() {
+export async function loadOpportunityReferralFixtures(): Promise<void> {
   for await (const opportunity of OPPORTUNITIES_WITH_FIXTURES) {
     console.log(
       `wiping existing ${collectionNames[opportunity]} referral data ...`
@@ -123,6 +123,10 @@ async function loadOpportunityReferralFixtures() {
   }
 }
 
-loadUserFixture();
-loadClientsFixture();
-loadOpportunityReferralFixtures();
+export async function loadWorkflowsFixtures(): Promise<void> {
+  await Promise.all([
+    loadUserFixture(),
+    loadClientsFixture(),
+    loadOpportunityReferralFixtures(),
+  ]);
+}

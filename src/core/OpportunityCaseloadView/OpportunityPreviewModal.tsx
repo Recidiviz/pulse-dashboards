@@ -105,6 +105,7 @@ export const OpportunityPreviewModal = observer(
         <Wrapper>
           <ModalControls>
             <Button
+              className="OpportunityPreviewModal__close"
               kind="link"
               onClick={() => {
                 setModalIsOpen(false);
