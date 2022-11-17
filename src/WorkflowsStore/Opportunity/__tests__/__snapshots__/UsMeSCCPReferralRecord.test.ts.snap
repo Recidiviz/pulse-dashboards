@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform record 1`] = `
+Object {
+  "criteria": Object {
+    "usMeMinimumOrCommunityCustody": Object {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeServedXPortionOfSentence": Object {
+      "eligibleDate": 2022-11-03T00:00:00.000Z,
+    },
+    "usMeXMonthsRemainingOnSentence": Object {
+      "eligibleDate": 2022-08-07T00:00:00.000Z,
+    },
+  },
+  "externalId": "001",
+  "stateCode": "US_ME",
+}
+`;
