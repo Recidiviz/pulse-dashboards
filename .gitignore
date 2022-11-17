@@ -30,6 +30,7 @@ gae*.yaml
 src/assets/scripts/metrics/*.json
 recidiviz-production-*.json
 recidiviz-dev-*.json
+recidiviz-dashboard-*.json
 
 # Logs
 logs
