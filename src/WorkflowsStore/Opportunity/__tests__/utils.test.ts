@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { JusticeInvolvedPerson } from "../../types";
+import { mockOpportunity } from "../../../core/__tests__/testUtils";
 import { Opportunity } from "../types";
 import {
   sortByReviewStatus,
@@ -30,46 +30,22 @@ let opp1: Opportunity;
 let opp2: Opportunity;
 let opp3: Opportunity;
 
-const mockOpportunityBase: Opportunity = {
-  almostEligible: false,
-  person: {} as JusticeInvolvedPerson,
-  defaultEligibility: "ELIGIBLE",
-  denial: undefined,
-  denialReasonsMap: {},
-  eligibilityDate: undefined,
-  firstViewed: undefined,
-  hydrate: () => undefined,
-  isAlert: false,
-  isHydrated: true,
-  requirementsAlmostMet: [],
-  requirementsMet: [],
-  reviewStatus: "PENDING",
-  setCompletedIfEligible: () => undefined,
-  setDenialReasons: async () => undefined,
-  setFirstViewedIfNeeded: () => undefined,
-  setOtherReasonText: async () => undefined,
-  supportsDenial: false,
-  trackListViewed: () => undefined,
-  trackPreviewed: () => undefined,
-  type: "pastFTRD",
-};
-
 describe("sort", () => {
   beforeEach(() => {
     opp1 = {
-      ...mockOpportunityBase,
+      ...mockOpportunity,
       reviewStatus: "PENDING",
       eligibilityDate: new Date(2022, 10, 5),
     };
 
     opp2 = {
-      ...mockOpportunityBase,
+      ...mockOpportunity,
       reviewStatus: "IN_PROGRESS",
       eligibilityDate: new Date(2022, 10, 8),
     };
 
     opp3 = {
-      ...mockOpportunityBase,
+      ...mockOpportunity,
       reviewStatus: "DENIED",
       eligibilityDate: new Date(2022, 10, 7),
     };
@@ -86,7 +62,7 @@ describe("sort", () => {
 
   test("sort by rank and eligibility date", () => {
     const opp4: Opportunity = {
-      ...mockOpportunityBase,
+      ...mockOpportunity,
       reviewStatus: "DENIED",
       eligibilityDate: new Date(2022, 10, 6),
     };

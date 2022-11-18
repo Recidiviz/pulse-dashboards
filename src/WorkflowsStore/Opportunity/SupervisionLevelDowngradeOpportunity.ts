@@ -32,6 +32,9 @@ export class SupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
   SupervisionLevelDowngradeReferralRecord
 > {
+  readonly policyOrMethodologyUrl =
+    "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view";
+
   constructor(client: Client) {
     super(
       client,

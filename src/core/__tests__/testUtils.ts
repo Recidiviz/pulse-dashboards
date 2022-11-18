@@ -26,6 +26,7 @@ export const mockOpportunity: Opportunity<Client> = {
   firstViewed: undefined,
   hydrate: () => undefined,
   isHydrated: true,
+  policyOrMethodologyUrl: "https://example.com",
   requirementsAlmostMet: [],
   requirementsMet: [],
   reviewStatus: "PENDING",

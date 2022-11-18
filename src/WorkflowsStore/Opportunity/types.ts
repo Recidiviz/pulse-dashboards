@@ -120,6 +120,7 @@ export interface Opportunity<
   setOtherReasonText: (otherReason?: string) => Promise<void>;
   trackListViewed: () => void;
   trackPreviewed: () => void;
+  readonly policyOrMethodologyUrl: string;
 }
 
 export type OpportunityFactory<

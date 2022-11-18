@@ -324,6 +324,8 @@ export abstract class OpportunityBase<
     return false;
   }
 
+  readonly policyOrMethodologyUrl: string = "OVERRIDE_ME";
+
   denialReasonsMap: DenialReasonsMap = {};
 
   // eslint-disable-next-line class-methods-use-this

@@ -69,6 +69,9 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
   Client,
   EarnedDischargeReferralRecord
 > {
+  readonly policyOrMethodologyUrl =
+    "http://forms.idoc.idaho.gov/WebLink/0/edoc/282369/Termination%20of%20Probation%20or%20Parole%20Supervision.pdf";
+
   constructor(client: Client) {
     super(client, "earnedDischarge", client.rootStore, transformReferral);
 

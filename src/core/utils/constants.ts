@@ -13,10 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-import { OpportunityType } from "../../WorkflowsStore";
-
 // =============================================================================
+
 export const SIMULATION_COMPARTMENTS = {
   SUPERVISION: "SUPERVISION",
   INCARCERATION: "INCARCERATION",
@@ -73,22 +71,4 @@ export const WORKFLOWS_METHODOLOGY_URL: Record<string, string> = {
     "https://drive.google.com/file/d/1eHbSEOjjT9FvxffSbXOYEfOYPJheeu6t/view",
   US_ID:
     "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
-};
-
-export const WORKFLOWS_POLICY_OR_METHODOLOGY_URL: Record<
-  OpportunityType,
-  string
-> = {
-  compliantReporting:
-    "https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view?usp=sharing",
-  earlyTermination: WORKFLOWS_METHODOLOGY_URL.US_ND,
-  earnedDischarge:
-    "http://forms.idoc.idaho.gov/WebLink/0/edoc/282369/Termination%20of%20Probation%20or%20Parole%20Supervision.pdf",
-  LSU:
-    "http://forms.idoc.idaho.gov/WebLink/0/edoc/273717/Limited%20Supervision%20Unit.pdf",
-  pastFTRD: WORKFLOWS_METHODOLOGY_URL.US_ID,
-  supervisionLevelDowngrade:
-    "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view",
-  usTnExpiration:
-    "https://drive.google.com/file/d/1IpetvPM49g_c-D-HzGdf7v6QAe_z5IHn/view?usp=sharing",
 };

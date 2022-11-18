@@ -27,6 +27,9 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
   Client,
   UsTnExpirationReferralRecord
 > {
+  readonly policyOrMethodologyUrl =
+    "https://drive.google.com/file/d/1IpetvPM49g_c-D-HzGdf7v6QAe_z5IHn/view?usp=sharing";
+
   constructor(client: Client) {
     super(client, "usTnExpiration", client.rootStore);
 

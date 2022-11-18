@@ -28,7 +28,6 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { Opportunity } from "../../WorkflowsStore";
-import { WORKFLOWS_POLICY_OR_METHODOLOGY_URL } from "../utils/constants";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { InfoButton, InfoTooltipWrapper } from "./common";
 import { OpportunityRecommendedLanguageModal } from "./OpportunityRecommendedLanguageModal";
@@ -87,9 +86,7 @@ export const CriteriaList = observer(
                     {" "}
                     <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
                       <InfoButton
-                        infoUrl={
-                          WORKFLOWS_POLICY_OR_METHODOLOGY_URL[opportunity.type]
-                        }
+                        infoUrl={opportunity.policyOrMethodologyUrl}
                       />
                     </InfoTooltipWrapper>
                   </>
@@ -115,9 +112,7 @@ export const CriteriaList = observer(
                   {tooltip && (
                     <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
                       <InfoButton
-                        infoUrl={
-                          WORKFLOWS_POLICY_OR_METHODOLOGY_URL[opportunity.type]
-                        }
+                        infoUrl={opportunity.policyOrMethodologyUrl}
                       />
                     </InfoTooltipWrapper>
                   )}

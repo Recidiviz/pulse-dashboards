@@ -137,6 +137,9 @@ export class LSUOpportunity extends OpportunityBase<
 > {
   form: LSUForm;
 
+  readonly policyOrMethodologyUrl =
+    "http://forms.idoc.idaho.gov/WebLink/0/edoc/273717/Limited%20Supervision%20Unit.pdf";
+
   constructor(client: Client) {
     super(client, "LSU", client.rootStore, transformReferral);
     makeObservable(this, {

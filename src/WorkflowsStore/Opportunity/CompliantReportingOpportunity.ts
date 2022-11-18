@@ -204,6 +204,9 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 
   readonly isAlert = false;
 
+  readonly policyOrMethodologyUrl =
+    "https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view";
+
   constructor(client: Client) {
     super(
       client,
