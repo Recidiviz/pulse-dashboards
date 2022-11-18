@@ -40,6 +40,7 @@ const US_ID_CONFIG: TenantConfig = {
   enableVitalsCaseloadButton: true,
   workflowsEnableAllDistricts: false,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
+  workflowsSupportedSystems: ["SUPERVISION"],
   navigation: {
     // The order of pages here determines where the user will land first when navigating from `/`
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],

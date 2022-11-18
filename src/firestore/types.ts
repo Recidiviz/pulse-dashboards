@@ -110,16 +110,21 @@ export type SpecialConditionCode = {
   conditionDescription: string;
 };
 
-/**
- * A nested object of all client-level data from the Recidiviz data platform
- */
-export type ClientRecord = {
+export type JusticeInvolvedPersonRecord = {
   recordId: string;
   personExternalId: string;
   pseudonymizedId: string;
   stateCode: string;
   personName: FullName;
+  allEligibleOpportunities: OpportunityType[];
   officerId: string;
+};
+
+/**
+ * Data from the Recidiviz data platform about a person on supervision
+ */
+export type ClientRecord = JusticeInvolvedPersonRecord & {
+  personType: "CLIENT";
   supervisionType: string;
   supervisionLevel?: string;
   supervisionLevelStart?: Timestamp | string;
@@ -132,7 +137,18 @@ export type ClientRecord = {
   lastPaymentDate?: Timestamp | string;
   specialConditions?: string[];
   boardConditions?: SpecialConditionCode[];
-  allEligibleOpportunities: OpportunityType[];
+};
+
+/**
+ * Data from the Recidiviz data platform about an incarcerated person
+ */
+export type ResidentRecord = JusticeInvolvedPersonRecord & {
+  personType: "RESIDENT";
+  facilityId?: string;
+  unitId?: string;
+  custodyLevel?: string;
+  admissionDate?: string;
+  releaseDate?: string;
 };
 
 // TODO(#2263): Remove CompliantReportingFinesFeesEligible and CompliantReportingEligibleRecord once Client record is migrated

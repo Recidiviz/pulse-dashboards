@@ -21,11 +21,7 @@ import fs from "fs";
 
 import { collectionNames } from "../src/firestore";
 import { deleteCollection, getDb } from "./firestoreUtils";
-
-const COLLECTIONS = {
-  clients: "clients",
-  staff: "staff",
-};
+import { residentsData } from "./fixtures/residents";
 
 const OPPORTUNITIES_WITH_FIXTURES: (keyof typeof collectionNames)[] = [
   "compliantReportingReferrals",
@@ -40,7 +36,7 @@ const db = getDb();
 
 export async function loadClientsFixture(): Promise<void> {
   console.log("wiping existing client data ...");
-  await deleteCollection(db, COLLECTIONS.clients);
+  await deleteCollection(db, collectionNames.clients);
 
   console.log("loading new client data...");
   const bulkWriter = db.bulkWriter();
@@ -53,7 +49,7 @@ export async function loadClientsFixture(): Promise<void> {
   rawCases.forEach((record: Record<string, any>) => {
     bulkWriter.create(
       db.doc(
-        `${COLLECTIONS.clients}/${record.stateCode.toLowerCase()}_${
+        `${collectionNames.clients}/${record.stateCode.toLowerCase()}_${
           record.personExternalId
         }`
       ),
@@ -66,9 +62,33 @@ export async function loadClientsFixture(): Promise<void> {
     .then(() => console.log("new client data loaded successfully"));
 }
 
+export async function loadResidentsFixture(): Promise<void> {
+  console.log("wiping existing resident data ...");
+  await deleteCollection(db, collectionNames.residents);
+
+  console.log("loading new resident data...");
+  const bulkWriter = db.bulkWriter();
+
+  // Iterate through each record
+  residentsData.forEach((record) => {
+    bulkWriter.create(
+      db.doc(
+        `${collectionNames.residents}/${record.stateCode.toLowerCase()}_${
+          record.personExternalId
+        }`
+      ),
+      record
+    );
+  });
+
+  bulkWriter
+    .close()
+    .then(() => console.log("new resident data loaded successfully"));
+}
+
 export async function loadUserFixture(): Promise<void> {
   console.log("wiping existing staff data ...");
-  await deleteCollection(db, COLLECTIONS.staff);
+  await deleteCollection(db, collectionNames.staff);
 
   console.log("loading new staff data...");
   const bulkWriter = db.bulkWriter();
@@ -78,7 +98,7 @@ export async function loadUserFixture(): Promise<void> {
   );
 
   rawUsers.forEach((rawUser: any) => {
-    bulkWriter.create(db.collection(COLLECTIONS.staff).doc(), rawUser);
+    bulkWriter.create(db.collection(collectionNames.staff).doc(), rawUser);
   });
 
   await bulkWriter.flush();
@@ -127,6 +147,7 @@ export async function loadWorkflowsFixtures(): Promise<void> {
   await Promise.all([
     loadUserFixture(),
     loadClientsFixture(),
+    loadResidentsFixture(),
     loadOpportunityReferralFixtures(),
   ]);
 }

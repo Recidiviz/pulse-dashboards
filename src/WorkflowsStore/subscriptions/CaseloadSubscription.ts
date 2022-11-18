@@ -15,18 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { collection, Query, query, where } from "firebase/firestore";
+import {
+  collection,
+  DocumentData,
+  Query,
+  query,
+  where,
+} from "firebase/firestore";
 
-import { ClientRecord, collectionNames, db } from "../../firestore";
+import { CollectionName, collectionNames, db } from "../../firestore";
 import { WorkflowsStore } from "../WorkflowsStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 
-export class ClientsSubscription extends FirestoreQuerySubscription<ClientRecord> {
+export class CaseloadSubscription<
+  RecordType extends DocumentData
+> extends FirestoreQuerySubscription<RecordType> {
   workflowsStore: WorkflowsStore;
 
-  constructor(workflowsStore: WorkflowsStore) {
+  collectionId: string;
+
+  personType: RecordType["personType"];
+
+  constructor(
+    workflowsStore: WorkflowsStore,
+    collectionKey: CollectionName,
+    personType: RecordType["personType"]
+  ) {
     super();
     this.workflowsStore = workflowsStore;
+    this.collectionId = collectionNames[collectionKey];
+    this.personType = personType;
   }
 
   get dataSource(): Query | undefined {
@@ -39,18 +57,19 @@ export class ClientsSubscription extends FirestoreQuerySubscription<ClientRecord
       return undefined;
     }
 
+    const { collectionId, personType } = this;
     return query(
-      collection(db, collectionNames.clients),
+      collection(db, collectionId),
       where("stateCode", "==", currentTenantId),
       where("officerId", "in", selectedOfficerIds)
     ).withConverter({
       fromFirestore(snapshot, options) {
         const doc = snapshot.data(options);
-        return { ...doc, recordId: snapshot.id };
+        return { ...doc, recordId: snapshot.id, personType };
       },
       // these collections are read-only, so this should never be used, but it is required by Firestore
       toFirestore(record: any) {
-        throw new Error(`Writing to ${collectionNames.clients} is not allowed`);
+        throw new Error(`Writing to ${collectionId} is not allowed`);
       },
     });
   }

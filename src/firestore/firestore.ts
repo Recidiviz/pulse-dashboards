@@ -56,6 +56,7 @@ import {
   ClientUpdateRecord,
   FeatureVariantRecord,
   OpportunityUpdateWithForm,
+  ResidentRecord,
   StaffRecord,
   UserUpdateRecord,
 } from "./types";
@@ -120,6 +121,7 @@ export const collectionNames = {
   staff: "staff",
   userUpdates: "userUpdates",
   clients: "clients",
+  residents: "residents",
   clientUpdates: "clientUpdates",
   clientUpdatesV2: "clientUpdatesV2",
   clientOpportunityUpdates: "clientOpportunityUpdates",
@@ -185,7 +187,7 @@ export async function getClient(
   // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
   const results = await getDocs(
     query(
-      collections.clients,
+      collection(db, collectionNames.clients),
       where("pseudonymizedId", "==", clientId),
       where("stateCode", "==", stateCode),
       limit(1)
@@ -193,7 +195,35 @@ export async function getClient(
   );
 
   const result = results.docs[0];
-  if (result.exists()) return { ...result.data(), recordId: result.id };
+  if (result.exists())
+    return {
+      ...(result.data() as Omit<ClientRecord, "recordId" | "personType">),
+      recordId: result.id,
+      personType: "CLIENT",
+    };
+}
+
+export async function getResident(
+  residentId: string,
+  stateCode: string
+): Promise<ResidentRecord | undefined> {
+  // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
+  const results = await getDocs(
+    query(
+      collection(db, collectionNames.residents),
+      where("pseudonymizedId", "==", residentId),
+      where("stateCode", "==", stateCode),
+      limit(1)
+    )
+  );
+
+  const result = results.docs[0];
+  if (result.exists())
+    return {
+      ...(result.data() as Omit<ClientRecord, "recordId" | "personType">),
+      recordId: result.id,
+      personType: "RESIDENT",
+    };
 }
 
 /**

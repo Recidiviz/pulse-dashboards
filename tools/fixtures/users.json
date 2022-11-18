@@ -36,12 +36,21 @@
     "surname": "Officer3"
   },
   {
-    "email": "test-officer-3@example.com",
+    "email": "test-officer-4@example.com",
     "district": "DISTRICT 1",
     "id": "OFFICER4",
     "stateCode": "US_ID",
     "hasCaseload": true,
     "givenNames": "Test",
     "surname": "Officer4"
+  },
+  {
+    "email": "test-officer-5@example.com",
+    "district": null,
+    "id": "OFFICER5",
+    "stateCode": "US_ME",
+    "hasCaseload": true,
+    "givenNames": "Test",
+    "surname": "Officer5"
   }
 ]

@@ -15,9 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./CaseloadSubscription";
-export * from "./CollectionDocumentSubscription";
-export * from "./OpportunityUpdateSubscription";
-export * from "./StaffSubscription";
-export * from "./types";
-export * from "./UserSubscription";
+import { ResidentRecord } from "../../src/firestore/types";
+
+export const residentsData: Omit<
+  ResidentRecord,
+  "personType" | "recordId"
+>[] = [
+  {
+    allEligibleOpportunities: [],
+    officerId: "OFFICER5",
+    stateCode: "US_ME",
+    personExternalId: "RES001",
+    personName: {
+      givenNames: "First",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres001",
+  },
+];

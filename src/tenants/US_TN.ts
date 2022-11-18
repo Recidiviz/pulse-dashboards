@@ -42,6 +42,7 @@ const US_TN_CONFIG: TenantConfig = {
   enableVitalsCaseloadButton: false,
   workflowsEnableAllDistricts: false,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
+  workflowsSupportedSystems: ["SUPERVISION"],
   navigation: {
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],
     system: [

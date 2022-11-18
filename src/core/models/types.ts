@@ -57,7 +57,10 @@ export type TenantConfig = {
   pagesWithRestrictions?: string[];
   tableColumns?: TableColumns;
   opportunityTypes?: OpportunityType[];
+  workflowsSupportedSystems?: SystemId[];
 };
+
+export type SystemId = "INCARCERATION" | "SUPERVISION";
 
 export type Gender = "ALL" | "FEMALE" | "MALE";
 export type AgeGroup =

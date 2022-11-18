@@ -26,7 +26,7 @@ import { EarnedDischargeReferralRecord } from "../EarnedDischargeReferralRecord"
 import { LSUReferralRecord } from "../LSUReferralRecord";
 import { PastFTRDReferralRecord } from "../PastFTRDReferralRecord";
 
-export const compliantReportingEligibleClientRecord = {
+export const compliantReportingEligibleClientRecord: ClientRecord = {
   recordId: "us_xx_cr-eligible-1",
   personName: { givenNames: "Test", surname: "Name" },
   personExternalId: "cr-eligible-1",
@@ -39,6 +39,7 @@ export const compliantReportingEligibleClientRecord = {
   currentBalance: 221.88,
   specialConditions: [],
   allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
+  personType: "CLIENT",
 };
 
 export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecord> = {
@@ -84,7 +85,7 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
   lastSpecialConditionsNote: parseISO("2022-03-15"),
 };
 
-export const compliantReportingAlmostEligibleClientRecord = {
+export const compliantReportingAlmostEligibleClientRecord: ClientRecord = {
   recordId: "us_xx_cr-almost-eligible-1",
   personName: { givenNames: "Test", surname: "Name" },
   personExternalId: "cr-almost-eligible-1",
@@ -97,9 +98,11 @@ export const compliantReportingAlmostEligibleClientRecord = {
   currentBalance: 221.88,
   specialConditions: [],
   allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
+  personType: "CLIENT",
 };
 
 export const earlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> = {
+  personType: "CLIENT",
   recordId: "us_nd_110",
   personName: {
     givenNames: "JAMIE",
@@ -296,6 +299,7 @@ export const ineligibleClientRecord: ClientRecord = {
   phoneNumber: "5555555678",
   expirationDate: dateToTimestamp("2024-12-31"),
   allEligibleOpportunities: [],
+  personType: "CLIENT",
 };
 
 export const LSUEligibleClientRecord: ClientRecord = {

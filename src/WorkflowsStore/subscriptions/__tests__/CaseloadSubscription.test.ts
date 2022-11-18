@@ -18,8 +18,9 @@
 import { collection, query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
 
+import { ClientRecord } from "../../../firestore";
 import { WorkflowsStore } from "../../WorkflowsStore";
-import { ClientsSubscription } from "../ClientsSubscription";
+import { CaseloadSubscription } from "../CaseloadSubscription";
 
 jest.mock("firebase/firestore");
 
@@ -29,7 +30,7 @@ const collectionMock = collection as jest.Mock;
 const withConverterMock = jest.fn();
 
 let workflowsStoreMock: WorkflowsStore;
-let sub: ClientsSubscription;
+let sub: CaseloadSubscription<ClientRecord>;
 
 beforeEach(() => {
   jest.resetAllMocks();
@@ -40,7 +41,11 @@ beforeEach(() => {
     selectedOfficerIds: ["TEST1"],
     rootStore: { currentTenantId: "US_ND" },
   }) as WorkflowsStore;
-  sub = new ClientsSubscription(workflowsStoreMock);
+  sub = new CaseloadSubscription<ClientRecord>(
+    workflowsStoreMock,
+    "clients",
+    "CLIENT"
+  );
 });
 
 test("dataSource reflects observables", () => {
@@ -103,7 +108,7 @@ test("dataSource can be unset and reset", () => {
   expect(whereMock).toHaveBeenCalledWith("officerId", "in", ["TEST1", "TEST2"]);
 });
 
-test("FirestoreConverter inserts recordId property when reading snapshot", () => {
+test("FirestoreConverter inserts inferred properties when reading snapshot", () => {
   const mockRecord = {
     foo: "bar",
   };
@@ -118,5 +123,6 @@ test("FirestoreConverter inserts recordId property when reading snapshot", () =>
   expect(converter.fromFirestore(mockDocumentSnapshot)).toEqual({
     foo: "bar",
     recordId: "test123",
+    personType: "CLIENT",
   });
 });

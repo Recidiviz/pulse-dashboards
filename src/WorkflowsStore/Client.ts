@@ -15,28 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { entries, makeObservable, remove, set, values } from "mobx";
+import { makeObservable, override } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
 import {
   trackClientProfileViewed,
   trackProfileOpportunityClicked,
-  trackReferralFormPrinted,
 } from "../analytics";
-import { ClientRecord, FullName, SpecialConditionCode } from "../firestore";
+import { ClientRecord, SpecialConditionCode } from "../firestore";
 import type { RootStore } from "../RootStore";
+import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import {
   CompliantReportingOpportunity,
   EarlyTerminationOpportunity,
   EarnedDischargeOpportunity,
   LSUOpportunity,
   Opportunity,
+  OpportunityFactory,
   OpportunityType,
   PastFTRDOpportunity,
   SupervisionLevelDowngradeOpportunity,
+  SupervisionOpportunityType,
   UsTnExpirationOpportunity,
 } from "./Opportunity";
-import { JusticeInvolvedPerson, OpportunityMapping } from "./types";
 import { optionalFieldToDate } from "./utils";
 
 export const UNKNOWN = "Unknown" as const;
@@ -56,9 +57,9 @@ export const CLIENT_DETAILS_COPY: Record<string, ClientDetailsCopy> = {
   },
 };
 
-const OPPORTUNITY_CREATION_MAPPING: Record<
-  OpportunityType,
-  new (client: Client) => Opportunity<Client>
+const supervisionOpportunityConstructors: Record<
+  SupervisionOpportunityType,
+  new (c: Client) => Opportunity<Client>
 > = {
   compliantReporting: CompliantReportingOpportunity,
   earlyTermination: EarlyTerminationOpportunity,
@@ -69,10 +70,21 @@ const OPPORTUNITY_CREATION_MAPPING: Record<
   usTnExpiration: UsTnExpirationOpportunity,
 };
 
-export class Client implements JusticeInvolvedPerson {
-  rootStore: RootStore;
+export const createClientOpportunity: OpportunityFactory<
+  SupervisionOpportunityType,
+  Client
+> = (type, person): Opportunity => {
+  if (person instanceof Client) {
+    return new supervisionOpportunityConstructors[type](person);
+  }
+  throw new Error("Unsupported opportunity");
+};
 
-  record!: ClientRecord;
+/**
+ * Represents a person on supervision
+ */
+export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
+  rootStore: RootStore;
 
   supervisionType!: string;
 
@@ -96,22 +108,11 @@ export class Client implements JusticeInvolvedPerson {
 
   paroleSpecialConditions?: SpecialConditionCode[];
 
-  /**
-   * These are all the opportunities we expect to be able to hydrate,
-   * but some may be invalid or feature gated
-   */
-  potentialOpportunities: OpportunityMapping = {};
-
   constructor(record: ClientRecord, rootStore: RootStore) {
+    super(record, rootStore, createClientOpportunity);
     makeObservable(this, {
-      potentialOpportunities: true,
-      verifiedOpportunities: true,
-      record: true,
-      opportunitiesAlmostEligible: true,
-      opportunitiesEligible: true,
-      printReferralForm: true,
       supervisionLevel: true,
-      updateRecord: true,
+      updateRecord: override,
     });
 
     this.rootStore = rootStore;
@@ -119,32 +120,8 @@ export class Client implements JusticeInvolvedPerson {
     this.updateRecord(record);
   }
 
-  get recordId(): string {
-    return this.record.recordId;
-  }
-
-  get externalId(): string {
-    return this.record.personExternalId;
-  }
-
-  get pseudonymizedId(): string {
-    return this.record.pseudonymizedId;
-  }
-
-  get stateCode(): string {
-    return this.record.stateCode.toUpperCase();
-  }
-
-  get fullName(): FullName {
-    return this.record.personName;
-  }
-
-  get assignedStaffId(): string {
-    return this.record.officerId;
-  }
-
   updateRecord(record: ClientRecord): void {
-    this.record = record;
+    super.updateRecord(record);
     this.supervisionType = record.supervisionType;
     this.supervisionLevelStart = optionalFieldToDate(
       record.supervisionLevelStart
@@ -160,29 +137,6 @@ export class Client implements JusticeInvolvedPerson {
     this.supervisionStartDate = optionalFieldToDate(
       record.supervisionStartDate
     );
-
-    record.allEligibleOpportunities.forEach((opportunityType) => {
-      const OpportunityClass = OPPORTUNITY_CREATION_MAPPING[opportunityType];
-      if (
-        this.rootStore.workflowsStore.opportunityTypes.includes(opportunityType)
-      ) {
-        if (!this.potentialOpportunities[opportunityType]) {
-          set(
-            this.potentialOpportunities,
-            opportunityType,
-            new OpportunityClass(this)
-          );
-        }
-      } else {
-        remove(this.potentialOpportunities, opportunityType);
-      }
-    });
-  }
-
-  get displayName(): string {
-    return [this.fullName.givenNames, this.fullName.surname]
-      .filter((n) => Boolean(n))
-      .join(" ");
   }
 
   get supervisionLevel(): string {
@@ -208,60 +162,6 @@ export class Client implements JusticeInvolvedPerson {
     return officer?.district;
   }
 
-  /**
-   * This mapping will only contain opportunities that are actually hydrated and valid;
-   * in most cases these are the only ones that should ever be shown to users
-   */
-  get verifiedOpportunities(): OpportunityMapping {
-    return entries(this.potentialOpportunities).reduce(
-      (opportunities, [opportunityType, opportunity]) => {
-        if (!opportunity?.isHydrated || opportunity.error) {
-          return opportunities;
-        }
-        return {
-          ...opportunities,
-          [opportunityType as OpportunityType]: opportunity,
-        };
-      },
-      {} as OpportunityMapping
-    );
-  }
-
-  get opportunitiesEligible(): OpportunityMapping {
-    return Object.entries(this.verifiedOpportunities).reduce(
-      (opportunities, [key, opp]) => {
-        if (opp && !opp.almostEligible) {
-          return { ...opportunities, [key as OpportunityType]: opp };
-        }
-        return opportunities;
-      },
-      {} as OpportunityMapping
-    );
-  }
-
-  get opportunitiesAlmostEligible(): OpportunityMapping {
-    return Object.entries(this.verifiedOpportunities).reduce(
-      (opportunities, [key, opp]) => {
-        if (opp && opp.almostEligible) {
-          return { ...opportunities, [key as OpportunityType]: opp };
-        }
-        return opportunities;
-      },
-      {} as OpportunityMapping
-    );
-  }
-
-  printReferralForm(opportunityType: OpportunityType): void {
-    const opportunity = this.verifiedOpportunities[opportunityType];
-    opportunity?.setCompletedIfEligible();
-
-    this.rootStore.workflowsStore.formIsPrinting = true;
-    trackReferralFormPrinted({
-      clientId: this.pseudonymizedId,
-      opportunityType,
-    });
-  }
-
   trackProfileViewed(): void {
     trackClientProfileViewed({ clientId: this.pseudonymizedId });
   }
@@ -275,13 +175,5 @@ export class Client implements JusticeInvolvedPerson {
 
   get detailsCopy(): ClientDetailsCopy {
     return CLIENT_DETAILS_COPY[this.stateCode];
-  }
-
-  get allOpportunitiesLoaded(): boolean {
-    return (
-      values(this.potentialOpportunities).filter(
-        (opp) => opp !== undefined && !(opp.isLoading === false)
-      ).length === 0
-    );
   }
 }

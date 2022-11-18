@@ -29,7 +29,9 @@ const US_ME_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_ME],
   enableUserRestrictions: false,
   enableVitalsCaseloadButton: false,
+  workflowsSupportedSystems: ["INCARCERATION"],
   navigation: {
+    workflows: ["home", "clients"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,

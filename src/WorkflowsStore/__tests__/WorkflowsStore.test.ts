@@ -24,6 +24,7 @@ import {
   ClientRecord,
   CombinedUserRecord,
   getClient,
+  ResidentRecord,
   UserUpdateRecord,
 } from "../../firestore";
 import { RootStore } from "../../RootStore";
@@ -42,6 +43,7 @@ import {
   EarlyTerminationOpportunity,
   LSUOpportunity,
 } from "../Opportunity";
+import { Resident } from "../Resident";
 import { dateToTimestamp } from "../utils";
 
 jest.mock("../../analytics");
@@ -52,12 +54,19 @@ jest.mock("../../tenants", () => ({
   default: {
     US_XX: {
       opportunityTypes: ["compliantReporting", "LSU"],
+      workflowsSupportedSystems: ["SUPERVISION"],
     },
     US_YY: {
       workflowsEnableAllDistricts: true,
+      workflowsSupportedSystems: ["SUPERVISION"],
     },
     US_TN: {
       opportunityTypes: ["compliantReporting", "supervisionLevelDowngrade"],
+      workflowsSupportedSystems: ["SUPERVISION"],
+    },
+    US_ME: {
+      opportunityTypes: [],
+      workflowsSupportedSystems: ["INCARCERATION"],
     },
   },
 }));
@@ -465,15 +474,15 @@ describe("opportunitiesLoaded", () => {
   });
 
   test("opportunitiesLoaded is true when opportunities are hydrated", async () => {
-    const isHydratedMock = jest.spyOn(
+    const isLoadingMock = jest.spyOn(
       CompliantReportingOpportunity.prototype,
-      "isHydrated",
+      "isLoading",
       "get"
     );
-    populateClients(mockClients);
     await waitForHydration();
+    populateClients(mockClients);
 
-    isHydratedMock.mockReturnValue(true);
+    isLoadingMock.mockReturnValue(false);
     expect(
       workflowsStore.opportunitiesLoaded(["compliantReporting"])
     ).toBeTrue();
@@ -601,5 +610,43 @@ describe("opportunityTypes for US_TN", () => {
     expect(workflowsStore.opportunityTypes).not.toContain(
       "supervisionLevelDowngrade"
     );
+  });
+});
+
+describe("residents for US_ME", () => {
+  test("populate residents", async () => {
+    const mockResidents: ResidentRecord[] = [
+      {
+        allEligibleOpportunities: [],
+        officerId: "TEST1",
+        personExternalId: "res1",
+        personName: {},
+        personType: "RESIDENT",
+        pseudonymizedId: "pres1",
+        recordId: "abc123",
+        stateCode: "US_ME",
+      },
+    ];
+
+    runInAction(() => {
+      rootStore.tenantStore.currentTenantId = "US_ME";
+    });
+
+    await waitForHydration();
+
+    runInAction(() => {
+      workflowsStore.residentsSubscription.data = mockResidents;
+      workflowsStore.residentsSubscription.isHydrated = true;
+      workflowsStore.residentsSubscription.isLoading = false;
+    });
+
+    expect(workflowsStore.justiceInvolvedPersons).toEqual({
+      [mockResidents[0].pseudonymizedId]: expect.any(Resident),
+    });
+    mockResidents.forEach(({ pseudonymizedId }) => {
+      expect(
+        workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId
+      ).toBe(pseudonymizedId);
+    });
   });
 });

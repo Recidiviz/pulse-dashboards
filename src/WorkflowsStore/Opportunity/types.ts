@@ -20,7 +20,7 @@ import { Denial, UpdateLog } from "../../firestore";
 import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
 
-export const OPPORTUNITY_TYPES = [
+const SUPERVISION_OPPORTUNITY_TYPES = [
   "compliantReporting",
   "earlyTermination",
   "earnedDischarge",
@@ -28,6 +28,16 @@ export const OPPORTUNITY_TYPES = [
   "pastFTRD",
   "supervisionLevelDowngrade",
   "usTnExpiration",
+] as const;
+export type SupervisionOpportunityType = typeof SUPERVISION_OPPORTUNITY_TYPES[number];
+
+// TODO(#2602): add SCCP to this array
+const INCARCERATION_OPPORTUNITY_TYPES = [] as const;
+export type IncarcerationOpportunityType = typeof INCARCERATION_OPPORTUNITY_TYPES[number];
+
+const OPPORTUNITY_TYPES = [
+  ...SUPERVISION_OPPORTUNITY_TYPES,
+  ...INCARCERATION_OPPORTUNITY_TYPES,
 ] as const;
 /**
  * Values of this union map to key prefixes in client records
@@ -111,3 +121,8 @@ export interface Opportunity<
   trackListViewed: () => void;
   trackPreviewed: () => void;
 }
+
+export type OpportunityFactory<
+  OpportunitySubtype extends OpportunityType,
+  PersonType extends JusticeInvolvedPerson
+> = (type: OpportunitySubtype, person: PersonType) => Opportunity;

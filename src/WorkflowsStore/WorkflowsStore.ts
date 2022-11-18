@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import assertNever from "assert-never";
 import { ascending } from "d3-array";
 import { identity, pick } from "lodash";
 import {
@@ -29,7 +30,7 @@ import {
 import { now } from "mobx-utils";
 
 import { trackCaseloadSearch } from "../analytics";
-import { Hydratable } from "../core/models/types";
+import { Hydratable, SystemId } from "../core/models/types";
 import { FilterOption } from "../core/types/filters";
 import filterOptions, {
   DefaultPopulationFilterOptions,
@@ -41,6 +42,8 @@ import {
   FeatureVariant,
   FeatureVariantRecord,
   getClient,
+  getResident,
+  ResidentRecord,
   StaffRecord,
   updateSelectedOfficerIds,
   UserMetadata,
@@ -49,14 +52,11 @@ import {
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
 import { Client, UNKNOWN } from "./Client";
-import {
-  Opportunity,
-  OPPORTUNITY_TYPES,
-  OpportunityType,
-} from "./Opportunity/types";
+import { Opportunity, OpportunityType } from "./Opportunity/types";
 import { opportunityToSortFunctionMapping } from "./Opportunity/utils";
+import { Resident } from "./Resident";
 import {
-  ClientsSubscription,
+  CaseloadSubscription,
   CollectionDocumentSubscription,
   StaffSubscription,
   UserSubscription,
@@ -85,7 +85,9 @@ export class WorkflowsStore implements Hydratable {
 
   officersSubscription: StaffSubscription;
 
-  clientsSubscription: ClientsSubscription;
+  clientsSubscription: CaseloadSubscription<ClientRecord>;
+
+  residentsSubscription: CaseloadSubscription<ResidentRecord>;
 
   private formPrintingFlag = false;
 
@@ -97,14 +99,23 @@ export class WorkflowsStore implements Hydratable {
     });
 
     this.officersSubscription = new StaffSubscription(rootStore);
-    this.clientsSubscription = new ClientsSubscription(this);
+    this.clientsSubscription = new CaseloadSubscription<ClientRecord>(
+      this,
+      "clients",
+      "CLIENT"
+    );
+    this.residentsSubscription = new CaseloadSubscription<ResidentRecord>(
+      this,
+      "residents",
+      "RESIDENT"
+    );
     this.userSubscription = new UserSubscription(rootStore);
 
-    // persistent storage for clients across subscription changes
+    // persistent storage for justice-involved persons across subscription changes
     reaction(
-      () => [this.clientsSubscription.data],
-      ([newClients]) => {
-        this.updateClients(newClients);
+      () => [this.caseloadSubscription?.data],
+      ([newRecords]) => {
+        this.updateCaseload(newRecords);
       }
     );
 
@@ -239,33 +250,47 @@ export class WorkflowsStore implements Hydratable {
     return this.user?.updates?.selectedOfficerIds ?? [];
   }
 
-  async fetchClient(clientId: string): Promise<void> {
+  async fetchPerson(personId: string): Promise<void> {
     if (!this.rootStore.currentTenantId) return;
 
-    const clientRecord = await getClient(
-      clientId,
-      this.rootStore.currentTenantId
-    );
-    if (clientRecord) {
-      this.updateClients([clientRecord]);
+    const personRecord =
+      this.activeSystem === "SUPERVISION"
+        ? await getClient(personId, this.rootStore.currentTenantId)
+        : await getResident(personId, this.rootStore.currentTenantId);
+    if (personRecord) {
+      this.updateCaseload([personRecord]);
     } else {
-      throw new Error(`client ${clientId} not found`);
+      throw new Error(`person with ID ${personId} not found`);
     }
   }
 
-  updateClients(newClients: ClientRecord[] = []): void {
-    newClients.forEach((record) => {
-      const existingClient = this.justiceInvolvedPersons[
-        record.pseudonymizedId
-      ];
-      if (existingClient instanceof Client) {
-        existingClient.updateRecord(record);
+  updatePerson(record: ResidentRecord, PersonClass: typeof Resident): void;
+
+  updatePerson(record: ClientRecord, PersonClass: typeof Client): void;
+
+  updatePerson(
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    record: any,
+    PersonClass: typeof Client | typeof Resident
+  ): void {
+    const existingPerson = this.justiceInvolvedPersons[record.pseudonymizedId];
+    if (existingPerson instanceof PersonClass) {
+      existingPerson.updateRecord(record);
+    } else {
+      set(
+        this.justiceInvolvedPersons,
+        record.pseudonymizedId,
+        new PersonClass(record, this.rootStore)
+      );
+    }
+  }
+
+  updateCaseload(newPersons: (ClientRecord | ResidentRecord)[] = []): void {
+    newPersons.forEach((newRecord) => {
+      if (newRecord.personType === "CLIENT") {
+        this.updatePerson(newRecord, Client);
       } else {
-        set(
-          this.justiceInvolvedPersons,
-          record.pseudonymizedId,
-          new Client(record, this.rootStore)
-        );
+        this.updatePerson(newRecord, Resident);
       }
     });
   }
@@ -283,7 +308,7 @@ export class WorkflowsStore implements Hydratable {
   async updateSelectedPerson(personId?: string): Promise<void> {
     this.selectedPersonPseudoId = personId;
     if (personId && !has(this.justiceInvolvedPersons, personId)) {
-      await this.fetchClient(personId);
+      await this.fetchPerson(personId);
     }
   }
 
@@ -295,6 +320,35 @@ export class WorkflowsStore implements Hydratable {
     return this.availableOfficers.filter(
       (officer) => this.selectedOfficerIds.indexOf(officer.id) !== -1
     );
+  }
+
+  get activeSystem(): SystemId | undefined {
+    const { currentTenantId } = this.rootStore;
+    const { workflowsSupportedSystems } = currentTenantId
+      ? tenants[currentTenantId]
+      : { workflowsSupportedSystems: undefined };
+
+    if (!workflowsSupportedSystems?.length) {
+      return;
+    }
+    // for now only one system per tenant is supported.
+    // If there are more beyond the first one they will be ignored
+    return workflowsSupportedSystems[0];
+  }
+
+  get caseloadSubscription():
+    | CaseloadSubscription<ClientRecord | ResidentRecord>
+    | undefined {
+    switch (this.activeSystem) {
+      case "INCARCERATION":
+        return this.residentsSubscription;
+      case "SUPERVISION":
+        return this.clientsSubscription;
+      case undefined:
+        return;
+      default:
+        assertNever(this.activeSystem);
+    }
   }
 
   /**
@@ -325,7 +379,7 @@ export class WorkflowsStore implements Hydratable {
 
   get eligibleOpportunities(): Record<OpportunityType, Opportunity[]> {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
-    OPPORTUNITY_TYPES.forEach((opportunityType) => {
+    this.opportunityTypes.forEach((opportunityType) => {
       const opportunities = this.caseloadPersons
         .map((c) => c.opportunitiesEligible[opportunityType])
         .filter((opp) => opp !== undefined)
@@ -339,7 +393,7 @@ export class WorkflowsStore implements Hydratable {
 
   get almostEligibleOpportunities(): Record<OpportunityType, Opportunity[]> {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
-    OPPORTUNITY_TYPES.forEach((opportunityType) => {
+    this.opportunityTypes.forEach((opportunityType) => {
       const opportunities = this.caseloadPersons
         .map((c) => c.opportunitiesAlmostEligible[opportunityType])
         .filter((opp) => opp !== undefined)
@@ -352,11 +406,11 @@ export class WorkflowsStore implements Hydratable {
   }
 
   opportunitiesLoaded(opportunityTypes: OpportunityType[]): boolean {
-    // Wait until we have clients until checking that opportunities are loading.
+    // Wait until we have an active caseload before checking that opportunities are loading.
     if (
       !this.caseloadPersons.length &&
-      (!this.clientsSubscription.isHydrated ||
-        this.clientsSubscription.isLoading)
+      (!this.caseloadSubscription?.isHydrated ||
+        this.caseloadSubscription.isLoading)
     ) {
       return false;
     }
@@ -380,7 +434,7 @@ export class WorkflowsStore implements Hydratable {
 
   get allOpportunitiesByType(): Record<OpportunityType, Opportunity[]> {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
-    OPPORTUNITY_TYPES.forEach((opportunityType) => {
+    this.opportunityTypes.forEach((opportunityType) => {
       const opportunities = this.caseloadPersons
         .map((c) => c.verifiedOpportunities[opportunityType])
         .filter((opp) => !!opp)

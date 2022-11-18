@@ -25,6 +25,7 @@ jest.mock("@auth0/auth0-spa-js");
 jest.mock("../../firestore", () => {
   return {
     authenticate: jest.fn(() => Promise.resolve()),
+    collectionNames: {},
   };
 });
 jest.mock("../../api/metrics");

@@ -77,6 +77,7 @@ export const ineligibleClient: ClientRecord = {
   lastPaymentDate: dateToTimestamp("2021-11-15"),
   specialConditions: ["SPECIAL CONDITIONS TEST TEST"],
   allEligibleOpportunities: [],
+  personType: "CLIENT",
 };
 
 export const compliantReportingReferralRecord = {
@@ -97,6 +98,7 @@ export const compliantReportingReferralRecord = {
 };
 
 export const eligibleClient: ClientRecord = {
+  personType: "CLIENT",
   recordId: "us_xx_101",
   personName: { givenNames: "LINET", surname: "HANSEN" },
   personExternalId: "101",
@@ -115,6 +117,7 @@ export const eligibleClient: ClientRecord = {
 };
 
 export const lsuEligibleClient: ClientRecord = {
+  personType: "CLIENT",
   recordId: "us_xx_102",
   personName: { givenNames: "REBEKAH", surname: "CORTES" },
   personExternalId: "102",

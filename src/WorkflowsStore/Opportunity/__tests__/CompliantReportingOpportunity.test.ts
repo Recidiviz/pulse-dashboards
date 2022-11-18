@@ -19,6 +19,7 @@ import { cloneDeep } from "lodash";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
+import { ClientRecord } from "../../../firestore";
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
 import { DocumentSubscription } from "../../subscriptions";
@@ -50,9 +51,7 @@ let updatesSub: DocumentSubscription<any>;
 
 jest.mock("../../../firestore");
 
-function createTestUnit(
-  clientRecord: typeof compliantReportingEligibleClientRecord
-) {
+function createTestUnit(clientRecord: ClientRecord) {
   root = new RootStore();
   jest
     .spyOn(root.workflowsStore, "opportunityTypes", "get")
