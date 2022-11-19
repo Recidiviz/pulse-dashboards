@@ -77,8 +77,7 @@ test("inject record for Recidiviz users", () => {
 
   sub.subscribe();
 
-  mockReceive([]);
-
+  // data should be available immediately
   expect(sub.data).toMatchInlineSnapshot(`
     Array [
       Object {
@@ -91,6 +90,21 @@ test("inject record for Recidiviz users", () => {
       },
     ]
   `);
+
+  // Firestore listener should not clobber our injected data
+  mockReceive([]);
+  expect(sub.data).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "email": "test@example.com",
+          "givenNames": "Recidiviz",
+          "hasCaseload": false,
+          "id": "RECIDIVIZ",
+          "stateCode": "US_XX",
+          "surname": "Staff",
+        },
+      ]
+  `);
 });
 
 test("inject record in offline mode", () => {
@@ -101,8 +115,7 @@ test("inject record in offline mode", () => {
 
   sub.subscribe();
 
-  mockReceive([]);
-
+  // data should be available immediately
   expect(sub.data).toMatchInlineSnapshot(`
     Array [
       Object {
@@ -114,6 +127,21 @@ test("inject record in offline mode", () => {
         "surname": "",
       },
     ]
+  `);
+
+  // Firestore listener should not clobber our injected data
+  mockReceive([]);
+  expect(sub.data).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "email": "test@example.com",
+          "givenNames": "Demo",
+          "hasCaseload": false,
+          "id": "us_xx_test@example.com",
+          "stateCode": "US_XX",
+          "surname": "",
+        },
+      ]
   `);
 });
 

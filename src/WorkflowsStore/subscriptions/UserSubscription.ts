@@ -24,7 +24,7 @@ import {
   QuerySnapshot,
   where,
 } from "firebase/firestore";
-import { makeObservable, override } from "mobx";
+import { computed, makeObservable, override } from "mobx";
 
 import {
   collectionNames,
@@ -46,13 +46,27 @@ const validateUserRecord: ValidateFunction<UserRecord> = (doc) => {
   throw new Error("Invalid user record");
 };
 
+/**
+ * stubs out the minimum properties required by FirestoreQuerySubscription.updateData
+ */
+function mockOverrideSnapshot(record: StaffRecord) {
+  const resultsSubstitute = [{ data: () => record }];
+  return ({
+    forEach: resultsSubstitute.forEach.bind(resultsSubstitute),
+  } as unknown) as QuerySnapshot;
+}
+
 export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
   private rootStore: RootStore;
 
   constructor(rootStore: RootStore) {
     super(undefined, validateUserRecord);
     this.rootStore = rootStore;
-    makeObservable<this, "updateData">(this, { updateData: override });
+    makeObservable<this, "updateData">(this, {
+      updateData: override,
+      subscribe: override,
+      dataOverride: computed,
+    });
   }
 
   get dataSource(): Query<DocumentData> | undefined {
@@ -75,19 +89,18 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
     );
   }
 
-  protected updateData(
-    snapshot: QuerySnapshot<DocumentData> | undefined
-  ): void {
-    // in some cases below we may need to override the Firestore query results;
-    // because the application requires a user record to hydrate and bootstrap itself,
-    // we simplify logic elsewhere by just injecting it here
-    let injectedUserData: StaffRecord | undefined;
-
+  /**
+   * For internal users we will construct a local override
+   * instead of expecting any data from Firestore
+   */
+  get dataOverride(): StaffRecord | undefined {
     const {
       currentTenantId,
       user,
       userStore: { stateCode },
     } = this.rootStore;
+
+    let injectedUserData: StaffRecord | undefined;
 
     // inject dynamic fixture data in offline mode
     if (isOfflineMode()) {
@@ -114,17 +127,29 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
       };
     }
 
-    if (injectedUserData) {
-      // mock the snapshot interface for the superclass with the minimal properties required
-      const resultsSubstitute = [{ data: () => injectedUserData }];
-      const snapshotSubstitute = ({
-        forEach: resultsSubstitute.forEach.bind(resultsSubstitute),
-      } as unknown) as QuerySnapshot;
-      super.updateData(snapshotSubstitute);
+    return injectedUserData;
+  }
+
+  subscribe(): void {
+    super.subscribe();
+    const { dataOverride } = this;
+
+    if (dataOverride) {
+      // deactivate Firestore listener since we are overriding it anyway
+      this.cancelSnapshotListener?.();
+      // trigger immediately since there is nothing to subscribe to;
+      // update method will handle the actual data injection
+      this.updateData(undefined);
     }
-    // if we haven't injected OR received a record, the result should be considered invalid;
-    // the application cannot function without a user record
-    else if (snapshot?.size === 0) {
+  }
+
+  protected updateData(
+    snapshot: QuerySnapshot<DocumentData> | undefined
+  ): void {
+    // if an override is set, it will always take precedence over what is passed in
+    if (this.dataOverride) {
+      super.updateData(mockOverrideSnapshot(this.dataOverride));
+    } else if (snapshot?.size === 0) {
       this.isLoading = false;
       this.isHydrated = false;
       this.error = new Error("No user record found");
