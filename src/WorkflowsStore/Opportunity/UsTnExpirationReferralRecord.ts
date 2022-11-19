@@ -15,7 +15,59 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { WithCaseNotes } from ".";
+
 export type UsTnExpirationReferralRecord = {
   stateCode: string;
   externalId: string;
-};
+  // Form Information structure from https://docs.google.com/spreadsheets/d/1enzAosYDOrSvshOhJVwm4NZuPSdcIaxV3Ec2_cyzjOw/edit#gid=1757109567
+  formInformation: {
+    // Offender expired his/her probation on ___
+    // Try to read from criteria instead of formInformation
+
+    // Offender plead guilty to ___
+    currentOffenses?: string[];
+
+    // Offender appeared in the [county] on case [numbers].
+    convictionCounties?: string;
+    docketNumbers?: string[];
+
+    // ANY SEX OFFENSE HISTORY
+    latestPseCode?: string;
+    latestPseDate?: Date;
+    latestSexOffenses?: string[];
+
+    // GANG AFFILIATION
+    gangAffiliation?: string;
+
+    // LAST KNOWN ADDRESS
+    // Try to read from client profile instead of formInformation
+
+    // EMPLOYMENT HISTORY
+    latestEmpContactCode?: string;
+    latestEmpComment?: string;
+
+    // FEE HISTORY
+    latestFeeContactCode?: string;
+    // pull balance, payment date, and amount from client profile
+
+    // SPECIAL CONDITIONS
+    latestSpeContactCode?: string;
+    latestSpeContactDate?: Date;
+    latestSpeContactComment?: string;
+    // pull conditions from client profile
+
+    // VOTERS RIGHTS RESTORATION
+    vrrCode?: string;
+  };
+
+  criteria: {
+    supervisionPastFullTermCompletionDate: { eligibleDate: Date };
+    usTnNoZeroToleranceCodes: {
+      zeroToleranceCodes?: string[];
+    };
+    usTnNotOnLifetimeSupervisionOrLifetimeSentence: {
+      lifetimeFlag?: boolean;
+    };
+  };
+} & WithCaseNotes;

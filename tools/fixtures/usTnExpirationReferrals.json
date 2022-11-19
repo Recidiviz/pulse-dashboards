@@ -1,6 +1,45 @@
 [
   {
     "stateCode": "US_TN",
-    "externalId": "101"
+    "externalId": "101",
+    "formInformation": {
+      "currentOffenses": [
+        "FAILURE TO APPEAR (FELONY)",
+        "FAILURE TO APPEAR (FELONY)"
+      ],
+      "convictionCounties": ["010"],
+      "docketNumbers": ["123", "456"],
+      "latestPseCode": "PSET",
+      "latestPseDate": "2022-06-01",
+      "latestPseOffenses": ["PSE offense"],
+      "gangAffiliation": "Gang A",
+      "latestEmpContactCode": "12345",
+      "latestEmpComment": "Comment about employment",
+      "latestFeeContactCode": "FEEP",
+      "latestSpeContactCode": "SPEC",
+      "latestSpeContactDate": "2022-05-05",
+      "latestSpeContactComment": "Special conditions check",
+      "vrrCode": "VRRE"
+    },
+    "caseNotes": {
+      "Revocation Hearings": [
+        {
+          "noteTitle": "COHC",
+          "noteBody": "Court hearing",
+          "eventDate": "2022-06-17"
+        }
+      ]
+    },
+    "criteria": {
+      "supervisionPastFullTermCompletionDate": {
+        "eligibleDate": "2022-11-02"
+      },
+      "usTnNoZeroToleranceCodes": {
+        "zeroToleranceCodes": []
+      },
+      "usTnNotOnLifetimeSupervisionOrLifetimeSentence": {
+        "lifetimeFlag": false
+      }
+    }
   }
 ]
