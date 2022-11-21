@@ -39,7 +39,21 @@ test("URL with opportunityType", () => {
     ).toBe(
       workflowsRoute({
         routeName: pageId,
-      }).replace(":opportunityType", "compliantReporting")
+      }).replace(":opportunityTypeUrl", "compliantReporting")
+    );
+  });
+});
+
+test("URL with opportunityType with custom URL", () => {
+  const OPPORTUNITY_PAGES = [
+    "opportunityClients",
+    "opportunityAction",
+  ] as WorkflowsPage[];
+  OPPORTUNITY_PAGES.forEach((pageId) => {
+    expect(workflowsUrl(pageId, { opportunityType: "usTnExpiration" })).toBe(
+      workflowsRoute({
+        routeName: pageId,
+      }).replace(":opportunityTypeUrl", "expiration")
     );
   });
 });

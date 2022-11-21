@@ -43,9 +43,6 @@ const OPPORTUNITY_TYPES = [
  * Values of this union map to key prefixes in client records
  */
 export type OpportunityType = typeof OPPORTUNITY_TYPES[number];
-export function isOpportunityType(s: string): s is OpportunityType {
-  return OPPORTUNITY_TYPES.includes(s as OpportunityType);
-}
 export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   compliantReporting: "Compliant Reporting",
   earlyTermination: "Early Termination",
@@ -55,6 +52,28 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   supervisionLevelDowngrade: "Supervision Level Downgrade",
   usTnExpiration: "Expiration (TEPE)",
 };
+
+export const OPPORTUNITY_TYPE_URLS: Record<OpportunityType, string> = {
+  compliantReporting: "compliantReporting",
+  earlyTermination: "earlyTermination",
+  earnedDischarge: "earnedDischarge",
+  LSU: "LSU",
+  pastFTRD: "pastFTRD",
+  supervisionLevelDowngrade: "supervisionLevelDowngrade",
+  usTnExpiration: "expiration",
+};
+export const OPPORTUNITY_TYPES_FOR_URL: Record<
+  string,
+  OpportunityType
+> = Object.fromEntries(
+  Object.entries(OPPORTUNITY_TYPE_URLS).map(([k, v]) => [
+    v,
+    k as OpportunityType,
+  ])
+);
+export function isOpportunityTypeUrl(s: string): boolean {
+  return s in OPPORTUNITY_TYPES_FOR_URL;
+}
 
 export type OpportunityRequirement = {
   text: string;

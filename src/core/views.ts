@@ -16,7 +16,10 @@
 // =============================================================================
 
 import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
-import { OpportunityType } from "../WorkflowsStore/Opportunity/types";
+import {
+  OPPORTUNITY_TYPE_URLS,
+  OpportunityType,
+} from "../WorkflowsStore/Opportunity/types";
 import { MetricId, TenantId } from "./models/types";
 
 export type PathwaysView = keyof typeof PATHWAYS_VIEWS;
@@ -213,8 +216,8 @@ export function getSectionIdForMetric(metric: MetricId): PathwaysSection {
 }
 
 export const WORKFLOWS_PATHS = {
-  opportunityClients: `/${PATHWAYS_VIEWS.workflows}/:opportunityType`,
-  opportunityAction: `/${PATHWAYS_VIEWS.workflows}/:opportunityType/:clientId`,
+  opportunityClients: `/${PATHWAYS_VIEWS.workflows}/:opportunityTypeUrl`,
+  opportunityAction: `/${PATHWAYS_VIEWS.workflows}/:opportunityTypeUrl/:clientId`,
   workflows: `/${PATHWAYS_VIEWS.workflows}`,
   workflows404: `/${PATHWAYS_VIEWS.workflows}/not-found`,
   home: `/${PATHWAYS_VIEWS.workflows}/home`,
@@ -268,9 +271,15 @@ export function workflowsUrl(
   params?: WorkflowsRouteParams
 ): string {
   if (params) {
-    return Object.keys(params).reduce((path, param) => {
-      const value = params[param as keyof typeof params];
-      return value ? path.replace(`:${param}`, value) : path;
+    const transformedParams = {
+      ...params,
+      ...(params.opportunityType && {
+        opportunityTypeUrl: OPPORTUNITY_TYPE_URLS[params.opportunityType],
+      }),
+    };
+    return Object.keys(transformedParams).reduce((path, param) => {
+      const value = transformedParams[param as keyof typeof params];
+      return value ? path.replace(new RegExp(`:${param}(?=$|/)`), value) : path;
     }, WORKFLOWS_PATHS[routeName]);
   }
   return WORKFLOWS_PATHS[routeName];

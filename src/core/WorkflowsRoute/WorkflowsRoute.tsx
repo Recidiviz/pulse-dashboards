@@ -21,7 +21,10 @@ import React, { useEffect, useState } from "react";
 import { Redirect, Route, RouteProps, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { isOpportunityType } from "../../WorkflowsStore/Opportunity/types";
+import {
+  isOpportunityTypeUrl,
+  OPPORTUNITY_TYPES_FOR_URL,
+} from "../../WorkflowsStore/Opportunity/types";
 import { WORKFLOWS_PATHS, workflowsUrl } from "../views";
 
 // react-router does not seem to export this type directly
@@ -52,8 +55,10 @@ const RouteSync = observer(function RouteSync({ children }) {
     workflowsStore.updateSelectedPerson(personId).catch(() => {
       setNotFound(true);
     });
-    if (page && isOpportunityType(page)) {
-      workflowsStore.updateSelectedOpportunityType(page);
+    if (page && isOpportunityTypeUrl(page)) {
+      workflowsStore.updateSelectedOpportunityType(
+        OPPORTUNITY_TYPES_FOR_URL[page]
+      );
     } else {
       workflowsStore.updateSelectedOpportunityType(undefined);
     }
