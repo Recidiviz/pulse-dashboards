@@ -66,6 +66,8 @@ export const generateOpportunityInitialHeader = (
   switch (opportunityType) {
     case "pastFTRD":
       return "Search for officers above to review clients whose full-term release date has passed.";
+    case "usTnExpiration":
+      return "Search for officers above to review clients whose supervision expiration date is within 30 days or has passed.";
     default:
       return `Search for officers above to review and refer eligible clients for ${opportunityLabel.toLowerCase()}.`;
   }
@@ -111,10 +113,9 @@ export const generateOpportunityHydratedHeader = (
       callToAction: "Change their supervision level in TOMIS.",
     },
     usTnExpiration: {
-      // TODO(#2614): fill these in
-      eligibilityText: "TODO eligibility text",
-      opportunityText: "TODO opportunity text",
-      callToAction: "TODO CTA",
+      eligibilityText: simplur`${count} client[|s] [is|are] `,
+      opportunityText: "within 30 days of expiration",
+      callToAction: "Complete and submit their auto-generated TEPE note",
     },
   };
 

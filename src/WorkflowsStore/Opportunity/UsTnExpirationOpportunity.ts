@@ -17,11 +17,36 @@
 
 import { makeObservable } from "mobx";
 
+import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
-import { UsTnExpirationReferralRecord } from "./UsTnExpirationReferralRecord";
+import {
+  getValidator,
+  transformReferral,
+  UsTnExpirationReferralRecord,
+} from "./UsTnExpirationReferralRecord";
+
+const DENIAL_REASONS_MAP = {
+  DATE: "DATE: Expiration date is incorrect or missing",
+  [OTHER_KEY]: "Other: please specify a reason",
+};
+
+const CRITERIA: Record<
+  keyof Required<UsTnExpirationReferralRecord>["criteria"],
+  OpportunityRequirement
+> = {
+  supervisionPastFullTermCompletionDate: {
+    text: "Expiration date is $EXPIRATION_DATE",
+  },
+  usTnNoZeroToleranceCodes: {
+    text: "No zero tolerance codes since most recent sentence effective date",
+  },
+  usTnNotOnLifetimeSupervisionOrLifetimeSentence: {
+    text: "Not on lifetime supervision or lifetime sentence",
+  },
+};
 
 export class UsTnExpirationOpportunity extends OpportunityBase<
   Client,
@@ -31,27 +56,49 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
     "https://drive.google.com/file/d/1IpetvPM49g_c-D-HzGdf7v6QAe_z5IHn/view?usp=sharing";
 
   constructor(client: Client) {
-    super(client, "usTnExpiration", client.rootStore);
+    super(
+      client,
+      "usTnExpiration",
+      client.rootStore,
+      transformReferral,
+      getValidator(client)
+    );
 
     makeObservable(this, { requirementsMet: true });
+    this.denialReasonsMap = DENIAL_REASONS_MAP;
   }
 
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
 
-    // TODO(#2613): fill this in
+    const { criteria } = this.record;
+    const requirements: OpportunityRequirement[] = [];
 
-    return [
-      {
-        text: `Expiration date is [TODO]`,
-      },
-    ];
+    if (criteria?.supervisionPastFullTermCompletionDate) {
+      requirements.push({
+        text: CRITERIA.supervisionPastFullTermCompletionDate.text.replace(
+          "$EXPIRATION_DATE",
+          formatWorkflowsDate(
+            criteria.supervisionPastFullTermCompletionDate.eligibleDate
+          )
+        ),
+        tooltip: CRITERIA.supervisionPastFullTermCompletionDate.tooltip,
+      });
+    }
+    if (criteria?.usTnNoZeroToleranceCodes) {
+      requirements.push(CRITERIA.usTnNoZeroToleranceCodes);
+    }
+    if (criteria?.usTnNotOnLifetimeSupervisionOrLifetimeSentence) {
+      requirements.push(
+        CRITERIA.usTnNotOnLifetimeSupervisionOrLifetimeSentence
+      );
+    }
+
+    return requirements;
   }
 
-  denialReasonsMap = {
-    DATE: "DATE: Expiration date is incorrect or missing",
-    [OTHER_KEY]: "Other: please specify a reason",
-  };
-
-  // TODO(#2613): fill in eligibilityDate and other stubs as appropriate
+  get eligibilityDate(): Date | undefined {
+    return this.record?.criteria?.supervisionPastFullTermCompletionDate
+      ?.eligibleDate;
+  }
 }

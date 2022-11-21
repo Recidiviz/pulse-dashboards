@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Supervision } from "./Details";
+import { CaseNotes, Supervision } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
@@ -36,6 +36,9 @@ export const UsTnExpirationClientProfile = observer(() => {
       <Heading client={client} />
       <OpportunityModule opportunity={opp} />
       <Supervision client={client} />
+      <CaseNotes
+        opportunityRecord={client.verifiedOpportunities.usTnExpiration?.record}
+      />
     </article>
   );
 });

@@ -32,7 +32,7 @@
     },
     "criteria": {
       "supervisionPastFullTermCompletionDate": {
-        "eligibleDate": "2022-11-02"
+        "eligibleDate": "2022-02-11"
       },
       "usTnNoZeroToleranceCodes": {
         "zeroToleranceCodes": []

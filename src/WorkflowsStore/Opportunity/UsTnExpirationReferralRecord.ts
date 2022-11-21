@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WithCaseNotes } from ".";
+import { cloneDeep } from "lodash";
+
+import { Client } from "..";
+import { TransformFunction, ValidateFunction } from "../subscriptions";
+import { fieldToDate, OpportunityValidationError } from "../utils";
+import { transformCaseNotes, WithCaseNotes } from ".";
 
 export type UsTnExpirationReferralRecord = {
   stateCode: string;
@@ -71,3 +76,41 @@ export type UsTnExpirationReferralRecord = {
     };
   };
 } & WithCaseNotes;
+
+export const transformReferral: TransformFunction<UsTnExpirationReferralRecord> = (
+  record
+) => {
+  if (!record) return;
+
+  const transformedRecord = cloneDeep(record) as UsTnExpirationReferralRecord;
+  const { criteria } = record;
+
+  transformedRecord.criteria.supervisionPastFullTermCompletionDate = {
+    eligibleDate: fieldToDate(
+      criteria.supervisionPastFullTermCompletionDate.eligibleDate
+    ),
+  };
+
+  transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
+  return transformedRecord;
+};
+
+export function getValidator(
+  client: Client
+): ValidateFunction<UsTnExpirationReferralRecord> {
+  return (record) => {
+    if (!record) {
+      throw new Error("No record to validate");
+    }
+
+    const {
+      eligibleDate,
+    } = record.criteria.supervisionPastFullTermCompletionDate;
+
+    if (eligibleDate.getTime() !== client.expirationDate?.getTime())
+      throw new OpportunityValidationError(
+        "Expiration date does not match client record"
+      );
+    return record as UsTnExpirationReferralRecord;
+  };
+}

@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform function 1`] = `
+Object {
+  "caseNotes": Object {},
+  "criteria": Object {
+    "supervisionPastFullTermCompletionDate": Object {
+      "eligibleDate": 2022-03-03T00:00:00.000Z,
+    },
+  },
+  "externalId": "abc123",
+  "stateCode": "US_XX",
+}
+`;

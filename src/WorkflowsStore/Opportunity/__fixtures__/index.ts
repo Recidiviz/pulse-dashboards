@@ -25,6 +25,27 @@ import { EarlyTerminationReferralRecord } from "../EarlyTerminationReferralRecor
 import { EarnedDischargeReferralRecord } from "../EarnedDischargeReferralRecord";
 import { LSUReferralRecord } from "../LSUReferralRecord";
 import { PastFTRDReferralRecord } from "../PastFTRDReferralRecord";
+import { UsTnExpirationReferralRecord } from "../UsTnExpirationReferralRecord";
+
+export const ineligibleClientRecord: ClientRecord = {
+  recordId: "us_xx_001",
+  personName: {
+    givenNames: "BETTY",
+    surname: "RUBBLE",
+  },
+  personExternalId: "001",
+  pseudonymizedId: "p001",
+  stateCode: "US_XX",
+  officerId: "OFFICER3",
+  supervisionType: "PROBATION",
+  supervisionLevel: "MEDIUM",
+  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  address: "123 Bedrock Lane",
+  phoneNumber: "5555555678",
+  expirationDate: dateToTimestamp("2024-12-31"),
+  allEligibleOpportunities: [],
+  personType: "CLIENT",
+};
 
 export const compliantReportingEligibleClientRecord: ClientRecord = {
   recordId: "us_xx_cr-eligible-1",
@@ -99,6 +120,41 @@ export const compliantReportingAlmostEligibleClientRecord: ClientRecord = {
   specialConditions: [],
   allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
   personType: "CLIENT",
+};
+
+export const UsTnExpirationEligibleClientRecord: ClientRecord = {
+  ...ineligibleClientRecord,
+  allEligibleOpportunities: ["usTnExpiration"],
+};
+
+export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord = {
+  stateCode: "US_TN",
+  externalId: "101",
+  formInformation: {
+    currentOffenses: ["Charge A", "Charge B"],
+    docketNumbers: ["12345"],
+    latestEmpContactCode: "EMPV",
+  },
+  criteria: {
+    supervisionPastFullTermCompletionDate: {
+      eligibleDate: parseISO("2022-02-02"),
+    },
+    usTnNoZeroToleranceCodes: {
+      zeroToleranceCodes: [],
+    },
+    usTnNotOnLifetimeSupervisionOrLifetimeSentence: {
+      lifetimeFlag: false,
+    },
+  },
+  caseNotes: {
+    "Special Conditions": [
+      {
+        noteTitle: "MUST JOURNAL",
+        noteBody: "Client must journal at least once a week",
+        eventDate: parseISO("2022-08-22"),
+      },
+    ],
+  },
 };
 
 export const earlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> = {
@@ -280,26 +336,6 @@ export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord
       },
     ],
   },
-};
-
-export const ineligibleClientRecord: ClientRecord = {
-  recordId: "us_id_001",
-  personName: {
-    givenNames: "BETTY",
-    surname: "RUBBLE",
-  },
-  personExternalId: "001",
-  pseudonymizedId: "p001",
-  stateCode: "US_ID",
-  officerId: "OFFICER3",
-  supervisionType: "PROBATION",
-  supervisionLevel: "MEDIUM",
-  supervisionLevelStart: dateToTimestamp("2019-12-20"),
-  address: "123 Bedrock Lane",
-  phoneNumber: "5555555678",
-  expirationDate: dateToTimestamp("2024-12-31"),
-  allEligibleOpportunities: [],
-  personType: "CLIENT",
 };
 
 export const LSUEligibleClientRecord: ClientRecord = {
