@@ -63,7 +63,7 @@ const ViewAllArrow = styled.div`
   padding-bottom: 1px;
 `;
 
-const ViewAllLink = styled(Link).attrs({ exact: true })`
+const ViewAllLink = styled(Link)`
   ${typography.Sans18}
   color: ${palette.signal.links};
   display: flex;
@@ -114,73 +114,69 @@ const ClientAvatarWrapper = styled.div`
   }
 `;
 
-const OpportunityTypeSummary = observer(
-  ({
-    opportunities,
+const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
+  opportunities,
+  opportunityType,
+}: {
+  opportunities: Opportunity[];
+  opportunityType: OpportunityType;
+}): React.ReactElement | null {
+  const sliceIndex = opportunities.length > 3 ? 2 : 3;
+  const previewOpportunities = opportunities.slice(0, sliceIndex);
+  const numOpportunitiesToDisplay = opportunities.length - sliceIndex;
+
+  const header = generateOpportunityHydratedHeader(
     opportunityType,
-  }: {
-    opportunities: Opportunity[];
-    opportunityType: OpportunityType;
-  }): React.ReactElement | null => {
-    const sliceIndex = opportunities.length > 3 ? 2 : 3;
-    const previewOpportunities = opportunities.slice(0, sliceIndex);
-    const numOpportunitiesToDisplay = opportunities.length - sliceIndex;
+    opportunities.length
+  );
 
-    const header = generateOpportunityHydratedHeader(
-      opportunityType,
-      opportunities.length
-    );
-
-    return (
-      <OpportunityTypeSummaryWrapper className="OpportunityTypeSummaryWrapper">
-        <OpportunityHeaderWrapper>
-          <OpportunityHeader>
-            {header.eligibilityText}
-            <OpportunityHighlight>
-              {header.opportunityText}
-            </OpportunityHighlight>
-          </OpportunityHeader>
-          <OpportunityTypeSummaryCTA>
-            {header.callToAction}
-          </OpportunityTypeSummaryCTA>
-          <ViewAllLink
-            className={`ViewAllLink__${opportunityType}`}
-            to={workflowsUrl("opportunityClients", { opportunityType })}
-          >
-            View all{" "}
-            <ViewAllArrow>
-              <Icon
-                className="ViewAllLink__icon"
-                kind={IconSVG.Arrow}
-                fill={palette.signal.links}
-                height={16}
-                width={16}
-              />
-            </ViewAllArrow>
-          </ViewAllLink>
-        </OpportunityHeaderWrapper>
-        <ClientsWrapper className="OpportunityClientsWrapper">
-          {previewOpportunities.map((opportunity) => (
-            <ClientAvatarWrapper>
-              <JusticeInvolvedPersonAvatar
-                size={56}
-                name={opportunity.person.displayName}
-              />
-            </ClientAvatarWrapper>
-          ))}
-          {numOpportunitiesToDisplay > 0 && (
-            <ClientAvatarWrapper>
-              <JusticeInvolvedPersonAvatar
-                size={56}
-                name={`+ ${numOpportunitiesToDisplay}`}
-                splitName={false}
-              />
-            </ClientAvatarWrapper>
-          )}
-        </ClientsWrapper>
-      </OpportunityTypeSummaryWrapper>
-    );
-  }
-);
+  return (
+    <OpportunityTypeSummaryWrapper className="OpportunityTypeSummaryWrapper">
+      <OpportunityHeaderWrapper>
+        <OpportunityHeader>
+          {header.eligibilityText}
+          <OpportunityHighlight>{header.opportunityText}</OpportunityHighlight>
+        </OpportunityHeader>
+        <OpportunityTypeSummaryCTA>
+          {header.callToAction}
+        </OpportunityTypeSummaryCTA>
+        <ViewAllLink
+          className={`ViewAllLink__${opportunityType}`}
+          to={workflowsUrl("opportunityClients", { opportunityType })}
+        >
+          View all{" "}
+          <ViewAllArrow>
+            <Icon
+              className="ViewAllLink__icon"
+              kind={IconSVG.Arrow}
+              fill={palette.signal.links}
+              height={16}
+              width={16}
+            />
+          </ViewAllArrow>
+        </ViewAllLink>
+      </OpportunityHeaderWrapper>
+      <ClientsWrapper className="OpportunityClientsWrapper">
+        {previewOpportunities.map((opportunity) => (
+          <ClientAvatarWrapper key={opportunity.person.recordId}>
+            <JusticeInvolvedPersonAvatar
+              size={56}
+              name={opportunity.person.displayName}
+            />
+          </ClientAvatarWrapper>
+        ))}
+        {numOpportunitiesToDisplay > 0 && (
+          <ClientAvatarWrapper>
+            <JusticeInvolvedPersonAvatar
+              size={56}
+              name={`+ ${numOpportunitiesToDisplay}`}
+              splitName={false}
+            />
+          </ClientAvatarWrapper>
+        )}
+      </ClientsWrapper>
+    </OpportunityTypeSummaryWrapper>
+  );
+});
 
 export default OpportunityTypeSummary;

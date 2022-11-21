@@ -62,45 +62,47 @@ const StyledAutosizeInput = styled.span`
   }
 `;
 
-const FormInput: React.FC<FormInputProps> = observer(
-  ({ name, style, ...props }: FormInputProps) => {
-    /*
+const FormInput: React.FC<FormInputProps> = observer(function FormInput({
+  name,
+  style,
+  ...props
+}: FormInputProps) {
+  /*
    On mount, the autosize input has its value set, which causes it to resize to fit its content. During animation,
    we modify the element's value attribute in place which does not trigger resize.
    */
-    const opportunityForm = useOpportunityFormContext();
-    const [value, onChange] = useReactiveInput<HTMLInputElement>(
-      name,
-      opportunityForm
-    );
+  const opportunityForm = useOpportunityFormContext();
+  const [value, onChange] = useReactiveInput<HTMLInputElement>(
+    name,
+    opportunityForm
+  );
 
-    const inputRef = useRef<HTMLInputElement>(
-      null
-    ) as MutableRefObject<HTMLInputElement>;
+  const inputRef = useRef<HTMLInputElement>(
+    null
+  ) as MutableRefObject<HTMLInputElement>;
 
-    const setInputRef = React.useCallback(
-      (inputElement: HTMLInputElement | null) => {
-        if (inputElement) {
-          inputRef.current = inputElement;
-        }
-      },
-      []
-    );
+  const setInputRef = React.useCallback(
+    (inputElement: HTMLInputElement | null) => {
+      if (inputElement) {
+        inputRef.current = inputElement;
+      }
+    },
+    []
+  );
 
-    useAnimatedValue(inputRef, value);
+  useAnimatedValue(inputRef, value);
 
-    return (
-      <StyledAutosizeInput>
-        <AutosizeInput
-          inputRef={setInputRef}
-          value={value}
-          onChange={onChange}
-          name={name}
-          {...props}
-        />
-      </StyledAutosizeInput>
-    );
-  }
-);
+  return (
+    <StyledAutosizeInput>
+      <AutosizeInput
+        inputRef={setInputRef}
+        value={value}
+        onChange={onChange}
+        name={name}
+        {...props}
+      />
+    </StyledAutosizeInput>
+  );
+});
 
 export default FormInput;

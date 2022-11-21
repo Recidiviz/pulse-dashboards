@@ -24,7 +24,7 @@ type EligibilityStatusProps = {
   includeReasons?: boolean;
 };
 export const EligibilityStatus: React.FC<EligibilityStatusProps> = observer(
-  ({ opportunity, includeReasons }) => {
+  function EligibilityStatus({ opportunity, includeReasons }) {
     const {
       almostEligible,
       almostEligibleStatusMessage,

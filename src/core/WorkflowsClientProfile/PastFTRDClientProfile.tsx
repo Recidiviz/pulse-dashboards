@@ -23,7 +23,7 @@ import { Supervision } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
-export const PastFTRDClientProfile = observer(() => {
+export const PastFTRDClientProfile = observer(function PastFTRDClientProfile() {
   const { workflowsStore } = useRootStore();
 
   const client = workflowsStore.selectedClient;

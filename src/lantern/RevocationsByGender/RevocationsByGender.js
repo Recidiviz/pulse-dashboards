@@ -31,7 +31,7 @@ import createGenerateChartData from "./createGenerateChartData";
 const DEFAULT_MODE = "MALE";
 
 const RevocationsByGender = observer(
-  ({ containerHeight, timeDescription }, ref) => {
+  function RevocationsByGender({ containerHeight, timeDescription }, ref) {
     const { currentTenantId } = useRootStore();
     const { revocationsChartStore } = useDataStore();
     const CHART_TITLE = translate("revocationsByGenderChartTitle");

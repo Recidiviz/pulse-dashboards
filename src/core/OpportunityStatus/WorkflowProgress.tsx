@@ -27,7 +27,7 @@ type OpportunityWorkflowStatusProps = {
 };
 
 export const WorkflowProgress: React.FC<OpportunityWorkflowStatusProps> = observer(
-  ({ opportunity }) => {
+  function WorkflowProgress({ opportunity }) {
     const { firstViewed, isHydrated } = opportunity;
 
     if (!isHydrated) return null;

@@ -27,25 +27,26 @@ import {
 
 type Props = Omit<JusticeInvolvedPersonCapsuleProps, "status">;
 
-export const ProfileCapsule = observer(
-  ({ person, ...otherProps }: Props): JSX.Element => {
-    let status: React.ReactNode;
-    if (person instanceof Client) {
-      status = (
-        <>
-          {[person.supervisionType, person.supervisionLevel]
-            .filter(identity)
-            .join(", ")}
-        </>
-      );
-    }
-
-    return (
-      <JusticeInvolvedPersonCapsule
-        person={person}
-        {...otherProps}
-        status={status}
-      />
+export const ProfileCapsule = observer(function ProfileCapsule({
+  person,
+  ...otherProps
+}: Props): JSX.Element {
+  let status: React.ReactNode;
+  if (person instanceof Client) {
+    status = (
+      <>
+        {[person.supervisionType, person.supervisionLevel]
+          .filter(identity)
+          .join(", ")}
+      </>
     );
   }
-);
+
+  return (
+    <JusticeInvolvedPersonCapsule
+      person={person}
+      {...otherProps}
+      status={status}
+    />
+  );
+});

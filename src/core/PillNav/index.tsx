@@ -82,6 +82,7 @@ const PillNav: React.FC<PillNavProps> = ({ items, onChange }) => {
       <>
         {items.map((children: string, index: number) => (
           <PillNavItem
+            key={children}
             as="button"
             type="button"
             selected={selectedIndex === index}

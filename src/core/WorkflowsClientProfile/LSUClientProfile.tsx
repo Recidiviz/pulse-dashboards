@@ -28,7 +28,7 @@ type LSUClientProfileProps = {
 };
 
 export const LSUClientProfile: React.FC<LSUClientProfileProps> = observer(
-  ({ formLinkButton }) => {
+  function LSUClientProfile({ formLinkButton }) {
     const { workflowsStore } = useRootStore();
 
     const client = workflowsStore.selectedClient;

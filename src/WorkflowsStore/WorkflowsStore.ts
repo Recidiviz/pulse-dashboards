@@ -19,6 +19,7 @@ import assertNever from "assert-never";
 import { ascending } from "d3-array";
 import { identity, pick } from "lodash";
 import {
+  action,
   has,
   makeAutoObservable,
   reaction,
@@ -96,6 +97,7 @@ export class WorkflowsStore implements Hydratable {
     makeAutoObservable(this, {
       rootStore: false,
       formatSupervisionLevel: false,
+      hydrate: action,
     });
 
     this.officersSubscription = new StaffSubscription(rootStore);

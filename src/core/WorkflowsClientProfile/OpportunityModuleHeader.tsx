@@ -39,7 +39,7 @@ type OpportunityModuleHeaderProps = {
 };
 
 export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> = observer(
-  ({ opportunity }) => {
+  function OpportunityModuleHeader({ opportunity }) {
     const colors = useStatusColors(opportunity);
     const showEligibilityStatus = useShowEligibilityStatus(opportunity);
 

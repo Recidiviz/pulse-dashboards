@@ -30,7 +30,9 @@ const HeadingWrapper = styled.div`
   max-width: 90%;
 `;
 
-export const Heading = observer(({ client }: ClientProfileProps) => {
+export const Heading = observer(function Heading({
+  client,
+}: ClientProfileProps) {
   return (
     <HeadingWrapper>
       <Link

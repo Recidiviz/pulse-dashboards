@@ -23,6 +23,7 @@ import {
   Sans24,
   spacing,
 } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
 import useClipboard from "react-use-clipboard";
@@ -82,7 +83,7 @@ const ChronoField = styled.strong`
   color: black;
 `;
 
-const WorkflowsLSUForm: React.FC = () => {
+const WorkflowsLSUForm = observer(function WorkflowsLSUForm() {
   const { workflowsStore } = useRootStore();
   const opportunity =
     workflowsStore?.selectedClient?.verifiedOpportunities?.LSU;
@@ -149,6 +150,6 @@ const WorkflowsLSUForm: React.FC = () => {
       {selectedFormSection === 0 ? form : preview}
     </LSUFormContainer>
   );
-};
+});
 
 export default connectComponentToOpportunityForm(WorkflowsLSUForm, "LSU");

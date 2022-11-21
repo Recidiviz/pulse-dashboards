@@ -61,67 +61,65 @@ const CriterionWrapper = styled.li<{ alert?: boolean }>`
   line-height: 1.3;
 `;
 
-export const CriteriaList = observer(
-  ({ opportunity }: { opportunity: Opportunity }): React.ReactElement => {
-    const colors = useStatusColors(opportunity);
+export const CriteriaList = observer(function CriteriaList({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}): React.ReactElement {
+  const colors = useStatusColors(opportunity);
 
-    const alert = opportunity.isAlert;
+  const alert = opportunity.isAlert;
 
-    return (
-      <Wrapper style={{ color: colors.text }} alert={alert}>
-        {opportunity.requirementsAlmostMet.map(({ text, tooltip }) => {
-          return (
-            <CriterionWrapper key={text} alert={alert}>
-              <CriterionIcon
-                kind={IconSVG.Error}
-                color={colors.iconAlmost}
-                size={16}
-              />
-              <CriterionContentWrapper>
-                <OpportunityRecommendedLanguageModal opportunity={opportunity}>
-                  {text}
-                </OpportunityRecommendedLanguageModal>
+  return (
+    <Wrapper style={{ color: colors.text }} alert={alert}>
+      {opportunity.requirementsAlmostMet.map(({ text, tooltip }) => {
+        return (
+          <CriterionWrapper key={text} alert={alert}>
+            <CriterionIcon
+              kind={IconSVG.Error}
+              color={colors.iconAlmost}
+              size={16}
+            />
+            <CriterionContentWrapper>
+              <OpportunityRecommendedLanguageModal opportunity={opportunity}>
+                {text}
+              </OpportunityRecommendedLanguageModal>
+              {tooltip && (
+                <>
+                  {" "}
+                  <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
+                    <InfoButton infoUrl={opportunity.policyOrMethodologyUrl} />
+                  </InfoTooltipWrapper>
+                </>
+              )}
+            </CriterionContentWrapper>
+          </CriterionWrapper>
+        );
+      })}
+      {opportunity.requirementsMet.map(({ text, tooltip }) => {
+        // split text so we can prevent orphaned tooltips
+        const textTokens = text.split(" ");
+        return (
+          <CriterionWrapper key={text}>
+            <CriterionIcon
+              kind={alert ? IconSVG.Error : IconSVG.Success}
+              color={colors.icon}
+              size={16}
+            />
+            <CriterionContentWrapper>
+              {textTokens.slice(0, -1).join(" ")}{" "}
+              <KeepTogether>
+                {textTokens.slice(-1)}{" "}
                 {tooltip && (
-                  <>
-                    {" "}
-                    <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                      <InfoButton
-                        infoUrl={opportunity.policyOrMethodologyUrl}
-                      />
-                    </InfoTooltipWrapper>
-                  </>
+                  <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
+                    <InfoButton infoUrl={opportunity.policyOrMethodologyUrl} />
+                  </InfoTooltipWrapper>
                 )}
-              </CriterionContentWrapper>
-            </CriterionWrapper>
-          );
-        })}
-        {opportunity.requirementsMet.map(({ text, tooltip }) => {
-          // split text so we can prevent orphaned tooltips
-          const textTokens = text.split(" ");
-          return (
-            <CriterionWrapper key={text}>
-              <CriterionIcon
-                kind={alert ? IconSVG.Error : IconSVG.Success}
-                color={colors.icon}
-                size={16}
-              />
-              <CriterionContentWrapper>
-                {textTokens.slice(0, -1).join(" ")}{" "}
-                <KeepTogether>
-                  {textTokens.slice(-1)}{" "}
-                  {tooltip && (
-                    <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                      <InfoButton
-                        infoUrl={opportunity.policyOrMethodologyUrl}
-                      />
-                    </InfoTooltipWrapper>
-                  )}
-                </KeepTogether>
-              </CriterionContentWrapper>
-            </CriterionWrapper>
-          );
-        })}
-      </Wrapper>
-    );
-  }
-);
+              </KeepTogether>
+            </CriterionContentWrapper>
+          </CriterionWrapper>
+        );
+      })}
+    </Wrapper>
+  );
+});

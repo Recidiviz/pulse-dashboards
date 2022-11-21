@@ -13,6 +13,10 @@
   ],
   "rules": {
     "no-console": ["error", { "allow": ["warn", "error"] }],
+    "react/display-name": ["error"],
     "react/react-in-jsx-scope": "off"
+  },
+  "settings": {
+    "componentWrapperFunctions": ["observer"]
   }
 }

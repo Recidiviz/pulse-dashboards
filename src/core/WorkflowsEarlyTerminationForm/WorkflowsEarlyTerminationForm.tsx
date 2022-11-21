@@ -80,14 +80,16 @@ const WorkflowsEarlyTerminationForm = () => {
     <EarlyTerminationFormContainer>
       <FormViewer
         fileName={`${client?.displayName} - Form SFN 9281.docx`}
-        statuses={[
-          <FormViewerStatus color={palette.slate85}>
-            Edit and collaborate on the document below
-          </FormViewerStatus>,
-          <FormViewerStatus color={palette.slate85}>
-            <FormLastEdited agencyName="ND DOCR" form={form} />
-          </FormViewerStatus>,
-        ]}
+        statuses={
+          <>
+            <FormViewerStatus color={palette.slate85}>
+              Edit and collaborate on the document below
+            </FormViewerStatus>
+            <FormViewerStatus color={palette.slate85}>
+              <FormLastEdited agencyName="ND DOCR" form={form} />
+            </FormViewerStatus>
+          </>
+        }
         formDownloader={formDownloader}
       >
         <FormEarlyTermination />

@@ -30,7 +30,7 @@ import createGenerateChartData from "./createGenerateChartData";
 const DEFAULT_MODE = "counts";
 
 const RevocationsByDistrict = observer(
-  ({ containerHeight, timeDescription }, ref) => {
+  function RevocationsByDistrict({ containerHeight, timeDescription }, ref) {
     const dataStore = useDataStore();
     const { revocationsChartStore } = dataStore;
     const { districtChartData, currentDistricts } = revocationsChartStore;

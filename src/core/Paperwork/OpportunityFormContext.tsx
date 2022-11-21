@@ -30,7 +30,7 @@ export const connectComponentToOpportunityForm = (
   FormComponent: React.FC,
   opportunityType: OpportunityType
 ): React.FC => {
-  return observer(() => {
+  return observer(function ConnectComponentToOpportunityForm() {
     const {
       workflowsStore: { selectedClient: client },
     } = useRootStore();

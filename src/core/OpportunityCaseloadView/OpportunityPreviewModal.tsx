@@ -21,7 +21,6 @@ import {
   palette,
   spacing,
 } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components/macro";
@@ -79,44 +78,44 @@ type OpportunityCaseloadProps = {
   opportunity?: Opportunity;
 };
 
-export const OpportunityPreviewModal = observer(
-  ({ opportunity }: OpportunityCaseloadProps) => {
-    const { workflowsStore } = useRootStore();
+export const OpportunityPreviewModal = ({
+  opportunity,
+}: OpportunityCaseloadProps): JSX.Element => {
+  const { workflowsStore } = useRootStore();
 
-    // Managing the modal isOpen state here instead of tying it directly to
-    // props helps to smooth out the open/close transition
-    const [modalIsOpen, setModalIsOpen] = useState(!!opportunity);
-    useEffect(() => {
-      setModalIsOpen(!!opportunity);
-    }, [opportunity]);
+  // Managing the modal isOpen state here instead of tying it directly to
+  // props helps to smooth out the open/close transition
+  const [modalIsOpen, setModalIsOpen] = useState(!!opportunity);
+  useEffect(() => {
+    setModalIsOpen(!!opportunity);
+  }, [opportunity]);
 
-    return (
-      <DrawerModal
-        isOpen={modalIsOpen}
-        onAfterOpen={() => {
-          opportunity?.trackPreviewed();
-        }}
-        onRequestClose={() => setModalIsOpen(false)}
-        onAfterClose={() => {
-          workflowsStore.updateSelectedPerson(undefined);
-        }}
-        closeTimeoutMS={1000}
-      >
-        <Wrapper>
-          <ModalControls>
-            <Button
-              className="OpportunityPreviewModal__close"
-              kind="link"
-              onClick={() => {
-                setModalIsOpen(false);
-              }}
-            >
-              <Icon kind="Close" size="14" color={palette.pine2} />
-            </Button>
-          </ModalControls>
-          {opportunity && PAGE_CONTENT[opportunity.type].previewContents}
-        </Wrapper>
-      </DrawerModal>
-    );
-  }
-);
+  return (
+    <DrawerModal
+      isOpen={modalIsOpen}
+      onAfterOpen={() => {
+        opportunity?.trackPreviewed();
+      }}
+      onRequestClose={() => setModalIsOpen(false)}
+      onAfterClose={() => {
+        workflowsStore.updateSelectedPerson(undefined);
+      }}
+      closeTimeoutMS={1000}
+    >
+      <Wrapper>
+        <ModalControls>
+          <Button
+            className="OpportunityPreviewModal__close"
+            kind="link"
+            onClick={() => {
+              setModalIsOpen(false);
+            }}
+          >
+            <Icon kind="Close" size="14" color={palette.pine2} />
+          </Button>
+        </ModalControls>
+        {opportunity && PAGE_CONTENT[opportunity.type].previewContents}
+      </Wrapper>
+    </DrawerModal>
+  );
+};

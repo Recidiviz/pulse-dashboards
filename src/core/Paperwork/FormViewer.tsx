@@ -41,7 +41,7 @@ const FormViewerGrid = styled.div`
 
 interface FormViewerProps {
   fileName: string;
-  statuses: (React.ReactChild | null)[];
+  statuses: JSX.Element;
   formDownloader: (
     fileName: string,
     client: Client,

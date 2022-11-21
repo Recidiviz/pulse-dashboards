@@ -69,7 +69,12 @@ type OpportunityModuleProps = {
 };
 
 export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
-  ({ formLinkButton, formPrintButton, opportunity, hideHeader = false }) => {
+  function OpportunityModule({
+    formLinkButton,
+    formPrintButton,
+    opportunity,
+    hideHeader = false,
+  }) {
     useEffect(() => {
       opportunity.setFirstViewedIfNeeded();
     }, [opportunity]);

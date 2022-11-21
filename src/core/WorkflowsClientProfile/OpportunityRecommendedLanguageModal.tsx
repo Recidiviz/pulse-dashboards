@@ -90,7 +90,10 @@ type OpportunityRecommendedLanguageModalProps = {
 };
 
 export const OpportunityRecommendedLanguageModal = observer(
-  ({ opportunity, children }: OpportunityRecommendedLanguageModalProps) => {
+  function OpportunityRecommendedLanguageModal({
+    opportunity,
+    children,
+  }: OpportunityRecommendedLanguageModalProps) {
     const [showModal, setShowModal] = useState(false);
     const [isCopied, copyToClipboard] = useClipboard(
       opportunity.almostEligibleRecommendedNote?.text ?? "",

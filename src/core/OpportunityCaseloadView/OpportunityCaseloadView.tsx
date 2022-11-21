@@ -31,25 +31,27 @@ const Wrapper = styled.div`
   padding-bottom: ${rem(spacing.md * 4)};
 `;
 
-export const OpportunityCaseloadView = observer(() => {
-  const {
-    workflowsStore: {
-      selectedOpportunityType: opportunityType,
-      selectedClient,
-    },
-  } = useRootStore();
+export const OpportunityCaseloadView = observer(
+  function OpportunityCaseloadView() {
+    const {
+      workflowsStore: {
+        selectedOpportunityType: opportunityType,
+        selectedClient,
+      },
+    } = useRootStore();
 
-  if (!opportunityType) return null;
+    if (!opportunityType) return null;
 
-  return (
-    <WorkflowsNavLayout>
-      <Wrapper>
-        <CaseloadSelect />
-        <OpportunityPersonList />
-        <OpportunityPreviewModal
-          opportunity={selectedClient?.verifiedOpportunities[opportunityType]}
-        />
-      </Wrapper>
-    </WorkflowsNavLayout>
-  );
-});
+    return (
+      <WorkflowsNavLayout>
+        <Wrapper>
+          <CaseloadSelect />
+          <OpportunityPersonList />
+          <OpportunityPreviewModal
+            opportunity={selectedClient?.verifiedOpportunities[opportunityType]}
+          />
+        </Wrapper>
+      </WorkflowsNavLayout>
+    );
+  }
+);

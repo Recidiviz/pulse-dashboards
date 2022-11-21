@@ -28,33 +28,35 @@ const SelectReasonText = styled.div`
   padding: 0.5rem 1rem;
 `;
 
-export const EligibleMenuOption = observer(
-  ({ opportunity }: { opportunity: Opportunity }) => {
-    const reasons = opportunity.denial?.reasons;
+export const EligibleMenuOption = observer(function EligibleMenuOption({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}) {
+  const reasons = opportunity.denial?.reasons;
 
-    return (
-      <>
-        <DropdownMenuItem
-          onClick={() => {
-            if (reasons?.length) {
-              opportunity.setDenialReasons([]);
-            }
-          }}
-          preventCloseOnClickEvent
-        >
-          <DropdownItem>
-            <Checkbox
-              value="eligible"
-              checked={!reasons?.length}
-              name="eligible"
-              disabled
-            >
-              Eligible
-            </Checkbox>
-          </DropdownItem>
-        </DropdownMenuItem>
-        <SelectReasonText>Not eligible? Select reason(s):</SelectReasonText>
-      </>
-    );
-  }
-);
+  return (
+    <>
+      <DropdownMenuItem
+        onClick={() => {
+          if (reasons?.length) {
+            opportunity.setDenialReasons([]);
+          }
+        }}
+        preventCloseOnClickEvent
+      >
+        <DropdownItem>
+          <Checkbox
+            value="eligible"
+            checked={!reasons?.length}
+            name="eligible"
+            disabled
+          >
+            Eligible
+          </Checkbox>
+        </DropdownItem>
+      </DropdownMenuItem>
+      <SelectReasonText>Not eligible? Select reason(s):</SelectReasonText>
+    </>
+  );
+});

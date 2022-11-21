@@ -27,7 +27,7 @@ import { isDenominatorsMatrixStatisticallySignificant } from "../utils/significa
 import RevocationsByDimensionComponent from "./RevocationsByDimensionComponent";
 
 const RevocationsByDimension = observer(
-  (
+  function RevocationsByDimension(
     {
       chartId,
       className,
@@ -44,7 +44,7 @@ const RevocationsByDimension = observer(
       includeWarning,
     },
     ref
-  ) => {
+  ) {
     const [mode, setMode] = useState(defaultMode);
 
     if (dataStore.isLoading || dataStore.isStatePopulationLoading) {

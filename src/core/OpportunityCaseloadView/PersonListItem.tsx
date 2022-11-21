@@ -73,46 +73,46 @@ const ButtonSpacer = styled.div`
   flex: 1 0 16px;
 `;
 
-export const PersonListItem = observer(
-  ({ opportunity }: PersonListItemProps) => {
-    const [showButton, setShowButton] = useState(false);
-    const { person } = opportunity;
-    const { workflowsStore } = useRootStore();
+export const PersonListItem = observer(function PersonListItem({
+  opportunity,
+}: PersonListItemProps) {
+  const [showButton, setShowButton] = useState(false);
+  const { person } = opportunity;
+  const { workflowsStore } = useRootStore();
 
-    return (
-      <ListItem key={person.externalId}>
-        <PersonItemWrapper
-          onMouseEnter={() => setShowButton(true)}
-          onMouseLeave={() => setShowButton(false)}
+  return (
+    <ListItem key={person.externalId}>
+      <PersonItemWrapper
+        onMouseEnter={() => setShowButton(true)}
+        onMouseLeave={() => setShowButton(false)}
+      >
+        <PersonLink
+          className="PersonListItem__Link"
+          onClick={() =>
+            workflowsStore.updateSelectedPerson(person.pseudonymizedId)
+          }
         >
-          <PersonLink
-            className="PersonListItem__Link"
-            onClick={() =>
-              workflowsStore.updateSelectedPerson(person.pseudonymizedId)
-            }
+          <OpportunityCapsule
+            avatarSize="lg"
+            opportunity={opportunity}
+            textSize="sm"
+            hideId
+          />
+        </PersonLink>
+        <ButtonSpacer />
+        {showButton && opportunity.form?.navigateToFormText && (
+          <Link
+            to={workflowsUrl("opportunityAction", {
+              opportunityType: opportunity.type,
+              clientId: person.pseudonymizedId,
+            })}
           >
-            <OpportunityCapsule
-              avatarSize="lg"
-              opportunity={opportunity}
-              textSize="sm"
-              hideId
-            />
-          </PersonLink>
-          <ButtonSpacer />
-          {showButton && opportunity.form?.navigateToFormText && (
-            <Link
-              to={workflowsUrl("opportunityAction", {
-                opportunityType: opportunity.type,
-                clientId: person.pseudonymizedId,
-              })}
-            >
-              <NavigateToFormButton className="NavigateToFormButton">
-                {opportunity.form.navigateToFormText}
-              </NavigateToFormButton>
-            </Link>
-          )}
-        </PersonItemWrapper>
-      </ListItem>
-    );
-  }
-);
+            <NavigateToFormButton className="NavigateToFormButton">
+              {opportunity.form.navigateToFormText}
+            </NavigateToFormButton>
+          </Link>
+        )}
+      </PersonItemWrapper>
+    </ListItem>
+  );
+});

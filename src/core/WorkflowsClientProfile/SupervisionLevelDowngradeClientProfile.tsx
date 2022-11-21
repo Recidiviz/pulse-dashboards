@@ -23,24 +23,26 @@ import { CaseNotes, Supervision } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
-export const SupervisionLevelDowngradeClientProfile = observer(() => {
-  const { workflowsStore } = useRootStore();
+export const SupervisionLevelDowngradeClientProfile = observer(
+  function SupervisionLevelDowngradeClientProfile() {
+    const { workflowsStore } = useRootStore();
 
-  const client = workflowsStore.selectedClient;
-  const opp = client?.verifiedOpportunities.supervisionLevelDowngrade;
-  if (!client || !opp) {
-    return null;
+    const client = workflowsStore.selectedClient;
+    const opp = client?.verifiedOpportunities.supervisionLevelDowngrade;
+    if (!client || !opp) {
+      return null;
+    }
+
+    return (
+      <article>
+        <Heading client={client} />
+        <OpportunityModule opportunity={opp} />
+        <Supervision client={client} />
+        <CaseNotes
+          opportunityRecord={opp.record}
+          headingText="Relevant Contact Codes"
+        />
+      </article>
+    );
   }
-
-  return (
-    <article>
-      <Heading client={client} />
-      <OpportunityModule opportunity={opp} />
-      <Supervision client={client} />
-      <CaseNotes
-        opportunityRecord={opp.record}
-        headingText="Relevant Contact Codes"
-      />
-    </article>
-  );
-});
+);

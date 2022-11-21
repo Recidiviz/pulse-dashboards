@@ -27,7 +27,7 @@ type FormLastEditedProps = {
 };
 
 export const FormLastEdited: React.FC<FormLastEditedProps> = observer(
-  ({ agencyName, form }) => {
+  function FormLastEdited({ agencyName, form }) {
     const { formLastUpdated } = form || {};
     if (formLastUpdated) {
       return (

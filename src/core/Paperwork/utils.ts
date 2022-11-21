@@ -35,7 +35,7 @@ export const useAnimatedValue = (
 ): boolean => {
   const [mountedAt, setMountedAt] = useState<number>(+new Date() + delay);
   const [animated, setAnimated] = useState<boolean>(false);
-  const { formIsPrinting } = useRootStore().workflowsStore;
+  const { workflowsStore } = useRootStore();
 
   useEffect(() => {
     let animationFrameId = 0;
@@ -68,15 +68,15 @@ export const useAnimatedValue = (
   // Effect that triggers when a user selects the Print/Download CTA and stops the form-filling animation
   useEffect(() => {
     return reaction(
-      () => formIsPrinting,
+      () => workflowsStore.formIsPrinting,
       () => {
-        if (formIsPrinting) {
+        if (workflowsStore.formIsPrinting) {
           setMountedAt(0);
           setAnimated(true);
         }
       }
     );
-  }, [formIsPrinting]);
+  }, [workflowsStore]);
 
   return animated;
 };

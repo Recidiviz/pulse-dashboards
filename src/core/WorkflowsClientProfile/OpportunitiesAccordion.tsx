@@ -109,63 +109,69 @@ const NoOpportunities = styled.div`
   }
 `;
 
-export const OpportunitiesAccordion = observer(
-  ({ person }: { person: JusticeInvolvedPerson }) => {
-    const opportunityTypes = keys(
-      person.potentialOpportunities
-    ) as OpportunityType[];
+const AccordionSection = ({ opportunity }: { opportunity: Opportunity }) => {
+  const colors = useStatusColors(opportunity);
+  return (
+    <OpportunityWrapper {...colors}>
+      <AccordionItem uuid={opportunity.type}>
+        <AccordionItemHeading>
+          <AccordionButton>
+            <OpportunityModuleHeader opportunity={opportunity} />
+          </AccordionButton>
+        </AccordionItemHeading>
+        <AccordionBody>
+          <OpportunityModule
+            opportunity={opportunity}
+            formLinkButton={!!opportunity.form}
+            hideHeader
+          />
+        </AccordionBody>
+      </AccordionItem>
+    </OpportunityWrapper>
+  );
+};
 
-    const opportunities = sortBy(
-      Object.values(person.verifiedOpportunities).filter(
-        (opp) => opp !== undefined
-      ) as Opportunity[],
-      (opp: Opportunity) => opportunityTypes.indexOf(opp.type)
-    );
+export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
+  person,
+}: {
+  person: JusticeInvolvedPerson;
+}) {
+  const opportunityTypes = keys(
+    person.potentialOpportunities
+  ) as OpportunityType[];
 
-    const empty = (
-      <NoOpportunities>
-        <Sans16>None for now</Sans16>
-        <Sans14>New opportunities will appear here.</Sans14>
-      </NoOpportunities>
-    );
+  const opportunities = sortBy(
+    Object.values(person.verifiedOpportunities).filter(
+      (opp) => opp !== undefined
+    ) as Opportunity[],
+    (opp: Opportunity) => opportunityTypes.indexOf(opp.type)
+  );
 
-    const hydrated =
-      opportunities.length === 1 ? (
-        <OpportunityModule
-          opportunity={opportunities[0]}
-          formLinkButton={!!opportunities[0].form}
-        />
-      ) : (
-        <Accordion allowZeroExpanded preExpanded={[0]}>
-          {opportunities.map((opportunity, index) => {
-            if (!opportunity) return undefined;
-            const colors = useStatusColors(opportunity);
-            return (
-              <OpportunityWrapper {...colors}>
-                <AccordionItem uuid={index}>
-                  <AccordionItemHeading>
-                    <AccordionButton>
-                      <OpportunityModuleHeader opportunity={opportunity} />
-                    </AccordionButton>
-                  </AccordionItemHeading>
-                  <AccordionBody>
-                    <OpportunityModule
-                      opportunity={opportunity}
-                      formLinkButton={!!opportunity.form}
-                      hideHeader
-                    />
-                  </AccordionBody>
-                </AccordionItem>
-              </OpportunityWrapper>
-            );
-          })}
-        </Accordion>
-      );
+  const empty = (
+    <NoOpportunities>
+      <Sans16>None for now</Sans16>
+      <Sans14>New opportunities will appear here.</Sans14>
+    </NoOpportunities>
+  );
 
-    return (
-      <SelectedPersonOpportunitiesHydrator
-        {...{ empty, hydrated, opportunityTypes }}
+  const hydrated =
+    opportunities.length === 1 ? (
+      <OpportunityModule
+        opportunity={opportunities[0]}
+        formLinkButton={!!opportunities[0].form}
       />
+    ) : (
+      <Accordion allowZeroExpanded preExpanded={[0]}>
+        {opportunities.map((opportunity) => {
+          if (!opportunity) return undefined;
+          return <AccordionSection opportunity={opportunity} />;
+        })}
+      </Accordion>
     );
-  }
-);
+
+  return (
+    <SelectedPersonOpportunitiesHydrator
+      {...{ empty, hydrated, opportunityTypes }}
+    />
+  );
+});

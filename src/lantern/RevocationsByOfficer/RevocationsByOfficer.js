@@ -31,7 +31,7 @@ const MAX_OFFICERS_COUNT = 50;
 const DEFAULT_MODE = "counts";
 
 const RevocationsByOfficer = observer(
-  ({ containerHeight, timeDescription }, ref) => {
+  function RevocationsByOfficer({ containerHeight, timeDescription }, ref) {
     const dataStore = useDataStore();
     const { revocationsChartStore } = dataStore;
     const CHART_TITLE = `${translate("revocationsByOfficerChartTitle")}`;

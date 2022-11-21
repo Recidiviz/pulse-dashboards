@@ -31,7 +31,11 @@ type ClientOpportunitiesHydratorProps = {
 };
 
 export const SelectedPersonOpportunitiesHydrator = observer(
-  ({ hydrated, empty, opportunityTypes }: ClientOpportunitiesHydratorProps) => {
+  function SelectedPersonOpportunitiesHydrator({
+    hydrated,
+    empty,
+    opportunityTypes,
+  }: ClientOpportunitiesHydratorProps) {
     const {
       workflowsStore: { selectedClient: client },
     } = useRootStore();
@@ -39,9 +43,12 @@ export const SelectedPersonOpportunitiesHydrator = observer(
     useEffect(
       () =>
         autorun(() => {
-          opportunityTypes.forEach((opportunityType) => {
-            client?.potentialOpportunities[opportunityType]?.hydrate();
-          });
+          if (client) {
+            const { potentialOpportunities } = client;
+            opportunityTypes.forEach((opportunityType) => {
+              potentialOpportunities[opportunityType]?.hydrate();
+            });
+          }
         }),
       [client, opportunityTypes]
     );

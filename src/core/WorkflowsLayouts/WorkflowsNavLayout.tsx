@@ -90,50 +90,52 @@ const BrandedNavLink = styled(NavLink).attrs({ exact: true })`
   }
 `;
 
-export const WorkflowsNavLayout: React.FC = observer(({ children }) => {
-  const {
-    workflowsStore: { opportunityTypes },
-  } = useRootStore();
+export const WorkflowsNavLayout: React.FC = observer(
+  function WorkflowsNavLayout({ children }) {
+    const {
+      workflowsStore: { opportunityTypes },
+    } = useRootStore();
 
-  return (
-    <Wrapper>
-      <Sidebar>
-        <Link to={workflowsUrl("home")}>
-          <RecidivizLogo />
-        </Link>
-        <NavLinks>
-          <li>
-            <BrandedNavLink to={workflowsUrl("home")}>Home</BrandedNavLink>
-          </li>
-          <li>
-            <BrandedNavLink to={workflowsUrl("caseloadClients")}>
-              All Clients
-            </BrandedNavLink>
-          </li>
-          <li>
-            <NavSection>
-              <li>
-                <NavSectionLabel>Shortcuts</NavSectionLabel>
-              </li>
-              {opportunityTypes.map((opportunityType) => {
-                return (
-                  <li>
-                    <BrandedNavLink
-                      className={`BrandedNavLink__${opportunityType}`}
-                      to={workflowsUrl("opportunityClients", {
-                        opportunityType,
-                      })}
-                    >
-                      {OPPORTUNITY_LABELS[opportunityType]}
-                    </BrandedNavLink>
-                  </li>
-                );
-              })}
-            </NavSection>
-          </li>
-        </NavLinks>
-      </Sidebar>
-      <Main>{children}</Main>
-    </Wrapper>
-  );
-});
+    return (
+      <Wrapper>
+        <Sidebar>
+          <Link to={workflowsUrl("home")}>
+            <RecidivizLogo />
+          </Link>
+          <NavLinks>
+            <li>
+              <BrandedNavLink to={workflowsUrl("home")}>Home</BrandedNavLink>
+            </li>
+            <li>
+              <BrandedNavLink to={workflowsUrl("caseloadClients")}>
+                All Clients
+              </BrandedNavLink>
+            </li>
+            <li>
+              <NavSection>
+                <li>
+                  <NavSectionLabel>Shortcuts</NavSectionLabel>
+                </li>
+                {opportunityTypes.map((opportunityType) => {
+                  return (
+                    <li key={opportunityType}>
+                      <BrandedNavLink
+                        className={`BrandedNavLink__${opportunityType}`}
+                        to={workflowsUrl("opportunityClients", {
+                          opportunityType,
+                        })}
+                      >
+                        {OPPORTUNITY_LABELS[opportunityType]}
+                      </BrandedNavLink>
+                    </li>
+                  );
+                })}
+              </NavSection>
+            </li>
+          </NavLinks>
+        </Sidebar>
+        <Main>{children}</Main>
+      </Wrapper>
+    );
+  }
+);

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { runInAction } from "mobx";
+import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { Redirect, Route, RouteProps, useLocation } from "react-router-dom";
 
@@ -35,7 +37,7 @@ function parseLocation(loc: RouterLocation) {
   return { page, personId };
 }
 
-const RouteSync: React.FC = ({ children }) => {
+const RouteSync = observer(function RouteSync({ children }) {
   const { workflowsStore, currentTenantId } = useRootStore();
   const loc = useLocation();
 
@@ -57,17 +59,23 @@ const RouteSync: React.FC = ({ children }) => {
     }
 
     if (!page) {
-      const { hasMultipleOpportunities, opportunityTypes } = workflowsStore;
+      // we aren't actually mutating any observables here,
+      // but we just don't want the access tracked in this effect
+      // (it is mixing observable and unobservable dependencies, which could lead
+      // to unpredictable or undesirable re-renders)
+      runInAction(() => {
+        const { hasMultipleOpportunities, opportunityTypes } = workflowsStore;
 
-      if (hasMultipleOpportunities) {
-        setRedirectPath(workflowsUrl("home"));
-      } else {
-        setRedirectPath(
-          workflowsUrl("opportunityClients", {
-            opportunityType: opportunityTypes[0],
-          })
-        );
-      }
+        if (hasMultipleOpportunities) {
+          setRedirectPath(workflowsUrl("home"));
+        } else {
+          setRedirectPath(
+            workflowsUrl("opportunityClients", {
+              opportunityType: opportunityTypes[0],
+            })
+          );
+        }
+      });
     }
   }, [loc, workflowsStore, currentTenantId]);
 
@@ -79,7 +87,7 @@ const RouteSync: React.FC = ({ children }) => {
     return <Redirect to={redirectPath} />;
   }
   return <>{children}</>;
-};
+});
 
 /**
  * Wraps a react-router Route to sync route data to the Workflows datastore.

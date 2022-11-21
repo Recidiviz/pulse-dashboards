@@ -22,23 +22,27 @@ import { CaseNotes, Supervision } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
-export const UsTnExpirationClientProfile = observer(() => {
-  const { workflowsStore } = useRootStore();
+export const UsTnExpirationClientProfile = observer(
+  function UsTnExpirationClientProfile() {
+    const { workflowsStore } = useRootStore();
 
-  const client = workflowsStore.selectedClient;
-  const opp = client?.verifiedOpportunities.usTnExpiration;
-  if (!client || !opp) {
-    return null;
+    const client = workflowsStore.selectedClient;
+    const opp = client?.verifiedOpportunities.usTnExpiration;
+    if (!client || !opp) {
+      return null;
+    }
+
+    return (
+      <article>
+        <Heading client={client} />
+        <OpportunityModule opportunity={opp} />
+        <Supervision client={client} />
+        <CaseNotes
+          opportunityRecord={
+            client.verifiedOpportunities.usTnExpiration?.record
+          }
+        />
+      </article>
+    );
   }
-
-  return (
-    <article>
-      <Heading client={client} />
-      <OpportunityModule opportunity={opp} />
-      <Supervision client={client} />
-      <CaseNotes
-        opportunityRecord={client.verifiedOpportunities.usTnExpiration?.record}
-      />
-    </article>
-  );
-});
+);

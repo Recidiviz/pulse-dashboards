@@ -109,7 +109,7 @@ const SidebarWrapper: React.FC = ({ children }) => {
 
 const FormWrapper = styled.div``;
 
-export const WorkflowsFormLayout = observer(() => {
+export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
   const {
     workflowsStore: {
       selectedOpportunityType: opportunityType,

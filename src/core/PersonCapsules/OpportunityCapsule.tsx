@@ -30,36 +30,37 @@ type Props = Omit<JusticeInvolvedPersonCapsuleProps, "status" | "person"> & {
   opportunity: Opportunity;
 };
 
-export const OpportunityCapsule = observer(
-  ({ opportunity, ...otherProps }: Props) => {
-    const { person, isHydrated } = opportunity;
-    usePersonTracking(person, () => {
-      opportunity.trackListViewed();
-    });
-    const showEligibilityStatus = useShowEligibilityStatus(opportunity);
+export const OpportunityCapsule = observer(function OpportunityCapsule({
+  opportunity,
+  ...otherProps
+}: Props) {
+  const { person, isHydrated } = opportunity;
+  usePersonTracking(person, () => {
+    opportunity.trackListViewed();
+  });
+  const showEligibilityStatus = useShowEligibilityStatus(opportunity);
 
-    let status: React.ReactNode = null;
+  let status: React.ReactNode = null;
 
-    if (isHydrated) {
-      status = (
-        <>
-          {showEligibilityStatus && (
-            <>
-              <EligibilityStatus opportunity={opportunity} includeReasons /> •{" "}
-            </>
-          )}
-          <WorkflowProgress opportunity={opportunity} />
-        </>
-      );
-    }
-
-    return (
-      <JusticeInvolvedPersonCapsule
-        person={person}
-        status={status}
-        hideTooltip
-        {...otherProps}
-      />
+  if (isHydrated) {
+    status = (
+      <>
+        {showEligibilityStatus && (
+          <>
+            <EligibilityStatus opportunity={opportunity} includeReasons /> •{" "}
+          </>
+        )}
+        <WorkflowProgress opportunity={opportunity} />
+      </>
     );
   }
-);
+
+  return (
+    <JusticeInvolvedPersonCapsule
+      person={person}
+      status={status}
+      hideTooltip
+      {...otherProps}
+    />
+  );
+});

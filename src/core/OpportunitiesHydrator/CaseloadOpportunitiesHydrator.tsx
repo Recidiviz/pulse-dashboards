@@ -31,12 +31,12 @@ type OpportunitiesHydratorProps = {
 };
 
 export const CaseloadOpportunitiesHydrator = observer(
-  ({
+  function CaseloadOpportunitiesHydrator({
     initial,
     empty,
     hydrated,
     opportunityTypes,
-  }: OpportunitiesHydratorProps) => {
+  }: OpportunitiesHydratorProps) {
     const { workflowsStore } = useRootStore();
     const { selectedOfficerIds } = workflowsStore;
 

@@ -45,44 +45,47 @@ const OtherInput = styled.textarea.attrs({ type: "text" })`
     border-color: ${OPPORTUNITY_STATUS_COLORS.ineligible.border};
   }
 `;
-export const DenialMenuOptions = observer(
-  ({ opportunity }: { opportunity: Opportunity }) => {
-    const reasons = opportunity.denial?.reasons;
-    return (
-      <>
-        {Object.entries(opportunity?.denialReasonsMap).map(([code, desc]) => (
-          <DropdownMenuItem
-            onClick={() => {
-              opportunity.setDenialReasons(xor(reasons, [code]).sort());
-            }}
-            preventCloseOnClickEvent
-          >
-            <DropdownItem>
-              <Checkbox
-                value={code}
-                checked={reasons?.includes(code) || false}
-                name="denial reason"
-                disabled
-              >
-                {desc}
-              </Checkbox>
-            </DropdownItem>
-          </DropdownMenuItem>
-        ))}
+export const DenialMenuOptions = observer(function DenialMenuOptions({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}) {
+  const reasons = opportunity.denial?.reasons;
+  return (
+    <>
+      {Object.entries(opportunity?.denialReasonsMap).map(([code, desc]) => (
+        <DropdownMenuItem
+          key={code}
+          onClick={() => {
+            opportunity.setDenialReasons(xor(reasons, [code]).sort());
+          }}
+          preventCloseOnClickEvent
+        >
+          <DropdownItem>
+            <Checkbox
+              value={code}
+              checked={reasons?.includes(code) || false}
+              name="denial reason"
+              disabled
+            >
+              {desc}
+            </Checkbox>
+          </DropdownItem>
+        </DropdownMenuItem>
+      ))}
 
-        {reasons?.includes(OTHER_KEY) && (
-          <OtherInputWrapper>
-            <OtherInput
-              defaultValue={opportunity.denial?.otherReason}
-              placeholder="Please specify a reason…"
-              onChange={debounce(
-                (event) => opportunity.setOtherReasonText(event.target.value),
-                500
-              )}
-            />
-          </OtherInputWrapper>
-        )}
-      </>
-    );
-  }
-);
+      {reasons?.includes(OTHER_KEY) && (
+        <OtherInputWrapper>
+          <OtherInput
+            defaultValue={opportunity.denial?.otherReason}
+            placeholder="Please specify a reason…"
+            onChange={debounce(
+              (event) => opportunity.setOtherReasonText(event.target.value),
+              500
+            )}
+          />
+        </OtherInputWrapper>
+      )}
+    </>
+  );
+});

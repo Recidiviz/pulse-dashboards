@@ -44,53 +44,55 @@ function getSelectOpportunitiesText(
   return selectOpportunityText;
 }
 
-const WorkflowsHomepage = observer((): React.ReactElement | null => {
-  const {
-    workflowsStore: {
-      selectedOfficerIds,
-      opportunityTypes,
-      allOpportunitiesByType,
-      user,
-    },
-  } = useRootStore();
+const WorkflowsHomepage = observer(
+  function WorkflowsHomepage(): React.ReactElement | null {
+    const {
+      workflowsStore: {
+        selectedOfficerIds,
+        opportunityTypes,
+        allOpportunitiesByType,
+        user,
+      },
+    } = useRootStore();
 
-  const initial = (
-    <WorkflowsNoResults
-      headerText={getWelcomeText(user?.info.givenNames)}
-      callToActionText={`Search for officers above to review and refer eligible clients for 
+    const initial = (
+      <WorkflowsNoResults
+        headerText={getWelcomeText(user?.info.givenNames)}
+        callToActionText={`Search for officers above to review and refer eligible clients for 
         opportunities like ${getSelectOpportunitiesText(opportunityTypes)}.`}
-    />
-  );
-
-  const empty = (
-    <WorkflowsNoResults
-      callToActionText={simplur`None of the clients on the selected ${[
-        selectedOfficerIds.length,
-      ]} officer['s|s'] caseloads are eligible for opportunities. Search for another officer.`}
-    />
-  );
-
-  const hydrated = opportunityTypes.map((opportunityType) => {
-    if (allOpportunitiesByType[opportunityType].length) {
-      return (
-        <OpportunityTypeSummary
-          key={opportunityType}
-          opportunities={allOpportunitiesByType[opportunityType]}
-          opportunityType={opportunityType}
-        />
-      );
-    }
-    return null;
-  });
-
-  return (
-    <WorkflowsNavLayout>
-      <CaseloadSelect />
-      <CaseloadOpportunitiesHydrator
-        {...{ initial, empty, hydrated, opportunityTypes }}
       />
-    </WorkflowsNavLayout>
-  );
-});
+    );
+
+    const empty = (
+      <WorkflowsNoResults
+        callToActionText={simplur`None of the clients on the selected ${[
+          selectedOfficerIds.length,
+        ]} officer['s|s'] caseloads are eligible for opportunities. Search for another officer.`}
+      />
+    );
+
+    const hydrated = opportunityTypes.map((opportunityType) => {
+      if (allOpportunitiesByType[opportunityType].length) {
+        return (
+          <OpportunityTypeSummary
+            key={opportunityType}
+            opportunities={allOpportunitiesByType[opportunityType]}
+            opportunityType={opportunityType}
+          />
+        );
+      }
+      return null;
+    });
+
+    return (
+      <WorkflowsNavLayout>
+        <CaseloadSelect />
+        <CaseloadOpportunitiesHydrator
+          {...{ initial, empty, hydrated, opportunityTypes }}
+        />
+      </WorkflowsNavLayout>
+    );
+  }
+);
 
 export default WorkflowsHomepage;

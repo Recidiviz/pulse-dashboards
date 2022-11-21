@@ -14,18 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { CaseloadSelect } from "../CaseloadSelect";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { AllCaseloads } from "./AllCaseloads";
 
-export const CaseloadView: React.FC = observer(() => {
+export const CaseloadView: React.FC = () => {
   return (
     <WorkflowsNavLayout>
       <CaseloadSelect />
       <AllCaseloads />
     </WorkflowsNavLayout>
   );
-});
+};

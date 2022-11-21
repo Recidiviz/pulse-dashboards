@@ -28,7 +28,7 @@ import { VIOLATION_TYPE } from "../utils/constants";
 import createGenerateChartData from "./createGenerateChartData";
 
 const RevocationsByViolation = observer(
-  ({ containerHeight, timeDescription }, ref) => {
+  function RevocationsByViolation({ containerHeight, timeDescription }, ref) {
     const { filtersStore, dataStore } = useLanternStore();
     const { revocationsChartStore } = dataStore;
     const CHART_TITLE = "Relative frequency of violation types";

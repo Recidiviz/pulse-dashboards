@@ -30,7 +30,7 @@ import createGenerateChartData from "./createGenerateChartData";
 const DEFAULT_MODE = "WHITE";
 
 const RevocationsByRace = observer(
-  ({ containerHeight, timeDescription }, ref) => {
+  function RevocationsByRace({ containerHeight, timeDescription }, ref) {
     const { revocationsChartStore } = useDataStore();
     const { currentTenantId } = useRootStore();
     const CHART_TITLE = translate("revocationsByRaceChartTitle");

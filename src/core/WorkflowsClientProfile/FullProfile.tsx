@@ -81,53 +81,55 @@ const Divider = styled.hr`
   margin: ${rem(spacing.md)} 0;
 `;
 
-export const FullProfile = observer((): React.ReactElement | null => {
-  const {
-    workflowsStore: { selectedClient: client },
-  } = useRootStore();
+export const FullProfile = observer(
+  function FullProfile(): React.ReactElement | null {
+    const {
+      workflowsStore: { selectedClient: client },
+    } = useRootStore();
 
-  usePersonTracking(client, () => client?.trackProfileViewed());
+    usePersonTracking(client, () => client?.trackProfileViewed());
 
-  if (!client) return null;
+    if (!client) return null;
 
-  return (
-    <WorkflowsNavLayout>
-      <Wrapper>
-        <Header>
-          <ProfileCapsule
-            avatarSize="lg"
-            person={client}
-            textSize="lg"
-            hideTooltip
-            nameHoverState={false}
-          />
-          <ContactCell>
-            <div>
-              <ContactLabel>Telephone</ContactLabel>
-              <ContactValue>{client.formattedPhoneNumber}</ContactValue>
-            </div>
-          </ContactCell>
-        </Header>
-        <div>
-          <SectionHeading>Progress toward success</SectionHeading>
-          <Divider />
-          <SupervisionProgress client={client} />
-          <Divider />
-          <Housing client={client} />
-          <Divider />
-          {client.currentBalance !== undefined && (
-            <>
-              <FinesAndFees client={client} />
-              <Divider />
-            </>
-          )}
-          <SpecialConditions client={client} />
-        </div>
-        <div>
-          <SectionHeading>Opportunities</SectionHeading>
-          <OpportunitiesAccordion person={client} />
-        </div>
-      </Wrapper>
-    </WorkflowsNavLayout>
-  );
-});
+    return (
+      <WorkflowsNavLayout>
+        <Wrapper>
+          <Header>
+            <ProfileCapsule
+              avatarSize="lg"
+              person={client}
+              textSize="lg"
+              hideTooltip
+              nameHoverState={false}
+            />
+            <ContactCell>
+              <div>
+                <ContactLabel>Telephone</ContactLabel>
+                <ContactValue>{client.formattedPhoneNumber}</ContactValue>
+              </div>
+            </ContactCell>
+          </Header>
+          <div>
+            <SectionHeading>Progress toward success</SectionHeading>
+            <Divider />
+            <SupervisionProgress client={client} />
+            <Divider />
+            <Housing client={client} />
+            <Divider />
+            {client.currentBalance !== undefined && (
+              <>
+                <FinesAndFees client={client} />
+                <Divider />
+              </>
+            )}
+            <SpecialConditions client={client} />
+          </div>
+          <div>
+            <SectionHeading>Opportunities</SectionHeading>
+            <OpportunitiesAccordion person={client} />
+          </div>
+        </Wrapper>
+      </WorkflowsNavLayout>
+    );
+  }
+);

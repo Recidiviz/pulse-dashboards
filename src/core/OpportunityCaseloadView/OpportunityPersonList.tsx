@@ -46,7 +46,7 @@ const PersonList = styled.ul`
   }
 `;
 
-export const OpportunityPersonList = observer(() => {
+export const OpportunityPersonList = observer(function OpportunityPersonList() {
   const {
     workflowsStore: {
       selectedOfficerIds,
@@ -98,7 +98,10 @@ export const OpportunityPersonList = observer(() => {
         )}
         <PersonList className="PersonList">
           {eligibleOpps.map((opportunity) => (
-            <PersonListItem opportunity={opportunity} />
+            <PersonListItem
+              key={opportunity.person.recordId}
+              opportunity={opportunity}
+            />
           ))}
         </PersonList>
       </>
@@ -107,7 +110,10 @@ export const OpportunityPersonList = observer(() => {
           <SectionLabelText>Almost Eligible</SectionLabelText>
           <PersonList className="PersonList__AlmostEligible">
             {almostEligibleOpps.map((opportunity) => (
-              <PersonListItem opportunity={opportunity} />
+              <PersonListItem
+                key={opportunity.person.recordId}
+                opportunity={opportunity}
+              />
             ))}
           </PersonList>
         </>

@@ -56,7 +56,7 @@ interface FormTextareaProps extends TextareaAutosizeProps {
 }
 
 const FormTextarea: React.FC<FormTextareaProps> = observer(
-  ({ name, ...props }: FormTextareaProps) => {
+  function FormTextarea({ name, ...props }: FormTextareaProps) {
     const opportunityForm = useOpportunityFormContext();
 
     const [value, onChange] = useReactiveInput<HTMLTextAreaElement>(

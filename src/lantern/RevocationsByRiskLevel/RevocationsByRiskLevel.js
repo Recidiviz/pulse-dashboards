@@ -30,7 +30,7 @@ import createGenerateChartData from "./createGenerateChartData";
 const DEFAULT_MODE = "rates";
 
 const RevocationsByRiskLevel = observer(
-  ({ containerHeight, timeDescription }, ref) => {
+  function RevocationsByRiskLevel({ containerHeight, timeDescription }, ref) {
     const dataStore = useDataStore();
     const { revocationsChartStore } = dataStore;
     const CHART_TITLE = translate("revocationsByRiskLevelChartTitle");

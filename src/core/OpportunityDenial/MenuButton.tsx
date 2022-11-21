@@ -43,25 +43,27 @@ const StatusAwareButton = styled(DropdownToggle).attrs({
   }
 `;
 
-export const MenuButton = observer(
-  ({ opportunity }: { opportunity: Opportunity }) => {
-    const colors = useStatusColors(opportunity);
+export const MenuButton = observer(function MenuButton({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}) {
+  const colors = useStatusColors(opportunity);
 
-    const reasons = opportunity.denial?.reasons;
+  const reasons = opportunity.denial?.reasons;
 
-    const buttonProps = {
-      background: colors.background,
-      border: reasons?.length ? colors.border : undefined,
-      textColor: reasons?.length ? colors.text : undefined,
-    };
+  const buttonProps = {
+    background: colors.background,
+    border: reasons?.length ? colors.border : undefined,
+    textColor: reasons?.length ? colors.text : undefined,
+  };
 
-    let buttonText = opportunity.isAlert ? "Override?" : "Update eligibility";
-    if (reasons?.length) {
-      buttonText = `${reasons[0]}${
-        reasons.length > 1 ? ` + ${reasons.length - 1} more` : ""
-      }`;
-    }
-
-    return <StatusAwareButton {...buttonProps}>{buttonText}</StatusAwareButton>;
+  let buttonText = opportunity.isAlert ? "Override?" : "Update eligibility";
+  if (reasons?.length) {
+    buttonText = `${reasons[0]}${
+      reasons.length > 1 ? ` + ${reasons.length - 1} more` : ""
+    }`;
   }
-);
+
+  return <StatusAwareButton {...buttonProps}>{buttonText}</StatusAwareButton>;
+});

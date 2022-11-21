@@ -55,7 +55,7 @@ const Caseload = ({ persons }: { persons: JusticeInvolvedPerson[] }) => {
   return <CaseloadWrapper>{items}</CaseloadWrapper>;
 };
 
-export const AllCaseloads = observer(() => {
+export const AllCaseloads = observer(function AllCaseloads() {
   const {
     workflowsStore: { caseloadPersons, selectedOfficerIds },
   } = useRootStore();

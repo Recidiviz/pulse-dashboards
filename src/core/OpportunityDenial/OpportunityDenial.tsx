@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { Dropdown, DropdownMenu, palette } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
 import { Opportunity } from "../../WorkflowsStore";
@@ -55,22 +54,24 @@ const DropdownContainer = styled.div`
   }
 `;
 
-export const OpportunityDenial = observer(
-  ({ opportunity }: { opportunity: Opportunity }) => {
-    return (
-      <Wrapper>
-        <Dropdown>
-          <MenuButton opportunity={opportunity} />
-          <DropdownMenu>
-            <DropdownContainer>
-              {!opportunity.isAlert && (
-                <EligibleMenuOption opportunity={opportunity} />
-              )}
-              <DenialMenuOptions opportunity={opportunity} />
-            </DropdownContainer>
-          </DropdownMenu>
-        </Dropdown>
-      </Wrapper>
-    );
-  }
-);
+export const OpportunityDenial = ({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}): JSX.Element => {
+  return (
+    <Wrapper>
+      <Dropdown>
+        <MenuButton opportunity={opportunity} />
+        <DropdownMenu>
+          <DropdownContainer>
+            {!opportunity.isAlert && (
+              <EligibleMenuOption opportunity={opportunity} />
+            )}
+            <DenialMenuOptions opportunity={opportunity} />
+          </DropdownContainer>
+        </DropdownMenu>
+      </Dropdown>
+    </Wrapper>
+  );
+};

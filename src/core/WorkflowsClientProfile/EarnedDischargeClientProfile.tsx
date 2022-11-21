@@ -23,25 +23,29 @@ import { CaseNotes, Contact, Supervision } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
-export const EarnedDischargeClientProfile = observer(() => {
-  const { workflowsStore } = useRootStore();
+export const EarnedDischargeClientProfile = observer(
+  function EarnedDischargeClientProfile() {
+    const { workflowsStore } = useRootStore();
 
-  const client = workflowsStore.selectedClient;
-  if (!client?.verifiedOpportunities.earnedDischarge) {
-    return null;
+    const client = workflowsStore.selectedClient;
+    if (!client?.verifiedOpportunities.earnedDischarge) {
+      return null;
+    }
+
+    return (
+      <article>
+        <Heading client={client} />
+        <OpportunityModule
+          opportunity={client.verifiedOpportunities.earnedDischarge}
+        />
+        <Supervision client={client} />
+        <Contact client={client} />
+        <CaseNotes
+          opportunityRecord={
+            client.verifiedOpportunities.earnedDischarge?.record
+          }
+        />
+      </article>
+    );
   }
-
-  return (
-    <article>
-      <Heading client={client} />
-      <OpportunityModule
-        opportunity={client.verifiedOpportunities.earnedDischarge}
-      />
-      <Supervision client={client} />
-      <Contact client={client} />
-      <CaseNotes
-        opportunityRecord={client.verifiedOpportunities.earnedDischarge?.record}
-      />
-    </article>
-  );
-});
+);

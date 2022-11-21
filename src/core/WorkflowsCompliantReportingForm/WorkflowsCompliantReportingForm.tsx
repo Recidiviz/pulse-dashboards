@@ -53,17 +53,19 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
     <CompliantReportingFormContainer>
       <FormViewer
         fileName={`${client?.displayName} - Form CR3947 Rev05-18.pdf`}
-        statuses={[
-          <FormViewerStatus color={palette.slate85}>
-            Edit and collaborate on the document below
-          </FormViewerStatus>,
-          <FormViewerStatus color={palette.slate85}>
-            <FormLastEdited
-              agencyName="TDOC"
-              form={client?.verifiedOpportunities.compliantReporting?.form}
-            />
-          </FormViewerStatus>,
-        ]}
+        statuses={
+          <>
+            <FormViewerStatus color={palette.slate85}>
+              Edit and collaborate on the document below
+            </FormViewerStatus>
+            <FormViewerStatus color={palette.slate85}>
+              <FormLastEdited
+                agencyName="TDOC"
+                form={client?.verifiedOpportunities.compliantReporting?.form}
+              />
+            </FormViewerStatus>
+          </>
+        }
         formDownloader={formDownloader}
       >
         <FormCR3947Rev0518 />
