@@ -33,17 +33,26 @@ import {
 import { FullName, JusticeInvolvedPersonRecord } from "../firestore";
 import { RootStore } from "../RootStore";
 import { OpportunityFactory, OpportunityType } from "./Opportunity";
-import { JusticeInvolvedPerson, OpportunityMapping } from "./types";
+import {
+  JusticeInvolvedPerson,
+  OpportunityMapping,
+  OpportunityTypeForRecord,
+  PersonClassForRecord,
+  PersonRecordType,
+} from "./types";
 
 export class JusticeInvolvedPersonBase<
-  RecordType extends JusticeInvolvedPersonRecord = JusticeInvolvedPersonRecord
+  RecordType extends PersonRecordType = JusticeInvolvedPersonRecord
 > implements JusticeInvolvedPerson {
   record: RecordType;
 
   constructor(
     record: RecordType,
     rootStore: RootStore,
-    opportunityFactory: OpportunityFactory<OpportunityType, any>
+    opportunityFactory: OpportunityFactory<
+      OpportunityTypeForRecord<RecordType>,
+      PersonClassForRecord<RecordType>
+    >
   ) {
     this.record = record;
 
@@ -61,14 +70,17 @@ export class JusticeInvolvedPersonBase<
       const incomingOpps = intersection(
         this.record.allEligibleOpportunities,
         rootStore.workflowsStore.opportunityTypes
-      );
+      ) as OpportunityTypeForRecord<RecordType>[];
       incomingOpps.forEach((opportunityType) => {
         runInAction(() => {
           if (!this.potentialOpportunities[opportunityType]) {
             set(
               this.potentialOpportunities,
               opportunityType,
-              opportunityFactory(opportunityType, this)
+              opportunityFactory(
+                opportunityType,
+                (this as unknown) as PersonClassForRecord<RecordType>
+              )
             );
           }
         });

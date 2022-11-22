@@ -132,6 +132,7 @@ export const collectionNames = {
   pastFTRDReferrals: "US_ID-pastFTRDReferrals",
   featureVariants: "featureVariants",
   supervisionLevelDowngradeReferrals: "US_TN-supervisionLevelDowngrade",
+  usMeSCCPReferrals: "US_ME-SCCPReferrals",
   usTnExpirationReferrals: "US_TN-expirationReferrals",
 };
 
@@ -220,7 +221,7 @@ export async function getResident(
   const result = results.docs[0];
   if (result.exists())
     return {
-      ...(result.data() as Omit<ClientRecord, "recordId" | "personType">),
+      ...(result.data() as Omit<ResidentRecord, "recordId" | "personType">),
       recordId: result.id,
       personType: "RESIDENT",
     };

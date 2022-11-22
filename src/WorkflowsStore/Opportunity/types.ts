@@ -31,8 +31,7 @@ const SUPERVISION_OPPORTUNITY_TYPES = [
 ] as const;
 export type SupervisionOpportunityType = typeof SUPERVISION_OPPORTUNITY_TYPES[number];
 
-// TODO(#2602): add SCCP to this array
-const INCARCERATION_OPPORTUNITY_TYPES = [] as const;
+const INCARCERATION_OPPORTUNITY_TYPES = ["usMeSCCP"] as const;
 export type IncarcerationOpportunityType = typeof INCARCERATION_OPPORTUNITY_TYPES[number];
 
 const OPPORTUNITY_TYPES = [
@@ -50,6 +49,7 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   LSU: "Limited Supervision Unit",
   pastFTRD: "Past FTRD",
   supervisionLevelDowngrade: "Supervision Level Downgrade",
+  usMeSCCP: "Supervised Community Confinement Program",
   usTnExpiration: "Expiration (TEPE)",
 };
 
@@ -60,6 +60,7 @@ export const OPPORTUNITY_TYPE_URLS: Record<OpportunityType, string> = {
   LSU: "LSU",
   pastFTRD: "pastFTRD",
   supervisionLevelDowngrade: "supervisionLevelDowngrade",
+  usMeSCCP: "SCCP",
   usTnExpiration: "expiration",
 };
 export const OPPORTUNITY_TYPES_FOR_URL: Record<

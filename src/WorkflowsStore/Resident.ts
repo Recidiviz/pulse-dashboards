@@ -18,20 +18,35 @@
 import { ResidentRecord } from "../firestore";
 import { RootStore } from "../RootStore";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
-import { OpportunityFactory, OpportunityType } from "./Opportunity";
+import {
+  IncarcerationOpportunityType,
+  Opportunity,
+  OpportunityFactory,
+  UsMeSCCPOpportunity,
+} from "./Opportunity";
 import { optionalFieldToDate } from "./utils";
 
+const residentialOpportunityConstructors: Record<
+  IncarcerationOpportunityType,
+  new (c: Resident) => Opportunity<Resident>
+> = {
+  usMeSCCP: UsMeSCCPOpportunity,
+};
+
 const createResidentOpportunity: OpportunityFactory<
-  // TODO(#2602): use IncarcerationOpportunityType and implement this function
-  OpportunityType,
+  IncarcerationOpportunityType,
   Resident
 > = (type, person) => {
-  throw new Error("not implemented");
+  return new residentialOpportunityConstructors[type](person);
 };
 
 export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
+  rootStore: RootStore;
+
   constructor(record: ResidentRecord, rootStore: RootStore) {
     super(record, rootStore, createResidentOpportunity);
+
+    this.rootStore = rootStore;
   }
 
   get facilityId(): string | undefined {

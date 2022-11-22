@@ -62,6 +62,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
     formContents: <div />,
   },
   supervisionLevelDowngrade: {},
+  usMeSCCP: {},
   usTnExpiration: {
     sidebarContents: <UsTnExpirationClientProfile />,
     formContents: <div />, // TODO(#2582): Add form

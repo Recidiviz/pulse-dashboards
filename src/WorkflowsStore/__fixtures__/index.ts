@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { ClientRecord, CombinedUserRecord, StaffRecord } from "../../firestore";
-import { OpportunityType } from "../Opportunity";
+import { SupervisionOpportunityType } from "../Opportunity";
 import { dateToTimestamp } from "../utils";
 
 export const mockOfficer: CombinedUserRecord = {
@@ -113,7 +113,9 @@ export const eligibleClient: ClientRecord = {
   expirationDate: dateToTimestamp("2024-12-31"),
   currentBalance: 221.88,
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
-  allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
+  allEligibleOpportunities: [
+    "compliantReporting",
+  ] as SupervisionOpportunityType[],
 };
 
 export const lsuEligibleClient: ClientRecord = {

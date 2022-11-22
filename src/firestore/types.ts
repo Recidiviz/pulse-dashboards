@@ -17,7 +17,11 @@
 import { FieldValue } from "@google-cloud/firestore";
 import type { Timestamp } from "firebase/firestore";
 
-import { OpportunityType } from "../WorkflowsStore";
+import {
+  IncarcerationOpportunityType,
+  OpportunityType,
+  SupervisionOpportunityType,
+} from "../WorkflowsStore";
 
 /**
  * Staff-level data exported from the Recidiviz data platform.
@@ -116,7 +120,9 @@ export type JusticeInvolvedPersonRecord = {
   pseudonymizedId: string;
   stateCode: string;
   personName: FullName;
-  allEligibleOpportunities: OpportunityType[];
+  allEligibleOpportunities:
+    | SupervisionOpportunityType[]
+    | IncarcerationOpportunityType[];
   officerId: string;
 };
 
@@ -137,6 +143,7 @@ export type ClientRecord = JusticeInvolvedPersonRecord & {
   lastPaymentDate?: Timestamp | string;
   specialConditions?: string[];
   boardConditions?: SpecialConditionCode[];
+  allEligibleOpportunities: SupervisionOpportunityType[];
 };
 
 /**
@@ -147,8 +154,9 @@ export type ResidentRecord = JusticeInvolvedPersonRecord & {
   facilityId?: string;
   unitId?: string;
   custodyLevel?: string;
-  admissionDate?: string;
-  releaseDate?: string;
+  admissionDate?: Timestamp | string;
+  releaseDate?: Timestamp | string;
+  allEligibleOpportunities: IncarcerationOpportunityType[];
 };
 
 // TODO(#2263): Remove CompliantReportingFinesFeesEligible and CompliantReportingEligibleRecord once Client record is migrated

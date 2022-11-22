@@ -15,22 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FullName } from "../firestore";
+import {
+  ClientRecord,
+  FullName,
+  JusticeInvolvedPersonRecord,
+  ResidentRecord,
+} from "../firestore";
 import { Expect, Extends } from "../utils/typeUtils";
 import { Client } from "./Client";
 import {
   CompliantReportingOpportunity,
   EarlyTerminationOpportunity,
   EarnedDischargeOpportunity,
+  IncarcerationOpportunityType,
   LSUOpportunity,
-  OpportunityType,
   PastFTRDOpportunity,
   SupervisionLevelDowngradeOpportunity,
+  SupervisionOpportunityType,
+  UsMeSCCPOpportunity,
   UsTnExpirationOpportunity,
 } from "./Opportunity";
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
+import { Resident } from "./Resident";
 
-export type OpportunityMapping = {
+export type SupervisionOpportunityMapping = {
   earlyTermination?: EarlyTerminationOpportunity;
   compliantReporting?: CompliantReportingOpportunity;
   earnedDischarge?: EarnedDischargeOpportunity;
@@ -39,14 +47,31 @@ export type OpportunityMapping = {
   supervisionLevelDowngrade?: SupervisionLevelDowngradeOpportunity;
   usTnExpiration?: UsTnExpirationOpportunity;
 };
-// The following line will typecheck only if OpportunityMapping is exhaustive
+// The following line will typecheck only if the keys of
+// SupervisionOpportunityMapping are exhaustive
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-type CheckOpportunityMappingType = Expect<
+type CheckSupervisionOpportunityMappingType = Expect<
   Extends<
-    Required<OpportunityMapping>,
-    Record<OpportunityType, OpportunityBase<Client, any, any>>
+    Required<SupervisionOpportunityMapping>,
+    Record<SupervisionOpportunityType, OpportunityBase<Client, any, any>>
   >
 >;
+
+export type IncarcerationOpportunityMapping = {
+  usMeSCCP?: UsMeSCCPOpportunity;
+};
+// The following line will typecheck only if the keys of
+// IncarcerationOpportunityMapping are exhaustive
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type CheckIncarcerationOpportunityMappingType = Expect<
+  Extends<
+    Required<IncarcerationOpportunityMapping>,
+    Record<IncarcerationOpportunityType, OpportunityBase<Resident, any, any>>
+  >
+>;
+
+export type OpportunityMapping = IncarcerationOpportunityMapping &
+  SupervisionOpportunityMapping;
 
 export type JusticeInvolvedPerson = {
   /**
@@ -85,3 +110,24 @@ export type JusticeInvolvedPerson = {
   opportunitiesAlmostEligible: OpportunityMapping;
   allOpportunitiesLoaded: boolean;
 };
+
+export type PersonRecordType =
+  | JusticeInvolvedPersonRecord
+  | ClientRecord
+  | ResidentRecord;
+
+export type PersonClassForRecord<
+  RecordType extends PersonRecordType
+> = RecordType extends ResidentRecord
+  ? Resident
+  : RecordType extends ClientRecord
+  ? Client
+  : JusticeInvolvedPerson;
+
+export type OpportunityTypeForRecord<
+  PersonRecord extends PersonRecordType
+> = PersonRecord extends ClientRecord
+  ? SupervisionOpportunityType
+  : PersonRecord extends ResidentRecord
+  ? IncarcerationOpportunityType
+  : never;

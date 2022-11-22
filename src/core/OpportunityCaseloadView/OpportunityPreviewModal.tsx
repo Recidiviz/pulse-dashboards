@@ -58,6 +58,9 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   supervisionLevelDowngrade: {
     previewContents: <SupervisionLevelDowngradeClientProfile />,
   },
+  usMeSCCP: {
+    previewContents: <div />,
+  },
   usTnExpiration: {
     previewContents: <UsTnExpirationClientProfile />,
   },

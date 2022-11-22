@@ -24,5 +24,6 @@ export * from "./LSUOpportunity";
 export * from "./PastFTRDOpportunity";
 export * from "./SupervisionLevelDowngradeOpportunity";
 export * from "./types";
+export * from "./UsMeSCCPOpportunity";
 export * from "./UsTnExpirationOpportunity";
 export * from "./utils";

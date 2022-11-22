@@ -17,15 +17,20 @@
 import { parseISO } from "date-fns";
 import { Required as RequireKeys } from "utility-types";
 
-import { ClientRecord } from "../../../firestore";
+import { ClientRecord, ResidentRecord } from "../../../firestore";
 import { dateToTimestamp } from "../../utils";
-import { OpportunityType } from "..";
+import { SupervisionOpportunityType } from "..";
 import { CompliantReportingReferralRecord } from "../CompliantReportingReferralRecord";
 import { EarlyTerminationReferralRecord } from "../EarlyTerminationReferralRecord";
 import { EarnedDischargeReferralRecord } from "../EarnedDischargeReferralRecord";
 import { LSUReferralRecord } from "../LSUReferralRecord";
 import { PastFTRDReferralRecord } from "../PastFTRDReferralRecord";
+import { UsMeSCCPReferralRecord } from "../UsMeSCCPReferralRecord";
 import { UsTnExpirationReferralRecord } from "../UsTnExpirationReferralRecord";
+
+//
+// Tennessee
+//
 
 export const ineligibleClientRecord: ClientRecord = {
   recordId: "us_xx_001",
@@ -59,7 +64,9 @@ export const compliantReportingEligibleClientRecord: ClientRecord = {
   supervisionLevelStart: dateToTimestamp("2019-12-20"),
   currentBalance: 221.88,
   specialConditions: [],
-  allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
+  allEligibleOpportunities: [
+    "compliantReporting",
+  ] as SupervisionOpportunityType[],
   personType: "CLIENT",
 };
 
@@ -118,7 +125,9 @@ export const compliantReportingAlmostEligibleClientRecord: ClientRecord = {
   supervisionLevelStart: dateToTimestamp("2019-12-20"),
   currentBalance: 221.88,
   specialConditions: [],
-  allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
+  allEligibleOpportunities: [
+    "compliantReporting",
+  ] as SupervisionOpportunityType[],
   personType: "CLIENT",
 };
 
@@ -156,6 +165,10 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord =
     ],
   },
 };
+
+//
+// North Dakota
+//
 
 export const earlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> = {
   personType: "CLIENT",
@@ -218,6 +231,10 @@ export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {
     ICOut: false,
   },
 };
+
+//
+// Idaho
+//
 
 export const LSUReferralRecordFixture: LSUReferralRecord = {
   stateCode: "US_ID",
@@ -364,4 +381,48 @@ export const pastFTRDRecordFixture: PastFTRDReferralRecord = {
 export const pastFTRDEligibleClientRecord: ClientRecord = {
   ...ineligibleClientRecord,
   allEligibleOpportunities: ["pastFTRD"],
+};
+
+//
+// Maine
+//
+
+export const usMePersonRecord: ResidentRecord = {
+  recordId: "us_me_111",
+  personType: "RESIDENT",
+  stateCode: "US_ME",
+  personName: {
+    givenNames: "Manny",
+    surname: "Delgado",
+  },
+  personExternalId: "111",
+  pseudonymizedId: "p111",
+  custodyLevel: "MINIMUM",
+  officerId: "CASE_MANAGER_1",
+  admissionDate: "2020-03-10",
+  releaseDate: "2025-05-20",
+  allEligibleOpportunities: ["usMeSCCP"],
+};
+
+export const usMeSCCPRecordFixture: UsMeSCCPReferralRecord = {
+  stateCode: "US_ME",
+  externalId: "111",
+  criteria: {
+    usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+    usMeServedXPortionOfSentence: {
+      eligibleDate: parseISO("2022-10-12"),
+    },
+    usMeXMonthsRemainingOnSentence: {
+      eligibleDate: parseISO("2022-08-14"),
+    },
+  },
+  caseNotes: {
+    foo: [
+      {
+        noteTitle: "A title",
+        noteBody: "A body",
+        eventDate: parseISO("2022-06-28"),
+      },
+    ],
+  },
 };

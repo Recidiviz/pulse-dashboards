@@ -42,8 +42,6 @@ const DENIAL_REASONS_MAP = {
 
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
-// TODO: Update the keys in this mapping once we know what the data looks like
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CRITERIA: Record<
   keyof EarnedDischargeReferralRecord["criteria"],
   OpportunityRequirement

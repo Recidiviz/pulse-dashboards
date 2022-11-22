@@ -112,6 +112,13 @@ export const generateOpportunityHydratedHeader = (
         "supervised at a higher level than their latest risk score",
       callToAction: "Change their supervision level in TOMIS.",
     },
+    usMeSCCP: {
+      eligibilityText: simplur`${count} resident[|s] may be eligible for `,
+      opportunityText: "Supervised Community Confinement Program",
+      callToAction:
+        "Search for case manager(s) below to review residents in their unit who are approaching " +
+        "SCCP eligibility and complete application paperwork.",
+    },
     usTnExpiration: {
       eligibilityText: simplur`${count} client[|s] [is|are] `,
       opportunityText: "within 30 days of expiration",
@@ -159,6 +166,7 @@ export const opportunityToSortFunctionMapping: Record<
   LSU: sortByReviewStatusAndEligibilityDate,
   pastFTRD: sortByReviewStatusAndEligibilityDate,
   supervisionLevelDowngrade: sortByReviewStatus,
+  usMeSCCP: sortByReviewStatus,
   usTnExpiration: sortByReviewStatusAndEligibilityDate,
 };
 
