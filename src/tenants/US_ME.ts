@@ -22,6 +22,9 @@ import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
+import { OpportunityType } from "../WorkflowsStore";
+
+const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = ["usMeSCCP"];
 
 const US_ME_CONFIG: TenantConfig = {
   name: "Maine",
@@ -29,9 +32,10 @@ const US_ME_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_ME],
   enableUserRestrictions: false,
   enableVitalsCaseloadButton: false,
+  opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["INCARCERATION"],
   navigation: {
-    workflows: ["home", "clients"],
+    workflows: ["home", "clients", ...WORKFLOWS_OPPORTUNITY_TYPES],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,

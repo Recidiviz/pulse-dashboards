@@ -1,0 +1,18 @@
+[
+  {
+    "stateCode": "US_ME",
+    "externalId": "RES001",
+    "criteria": {
+      "usMeMinimumOrCommunityCustody": { "custodyLevel": "MINIMUM" },
+      "usMeServedXPortionOfSentence": { "eligibleDate": "2022-08-10" },
+      "usMeXMonthsRemainingOnSentence": { "eligibleDate": "2022-09-22" }
+    },
+    "caseNotes": {
+      "Education": {
+        "eventDate": "2022-06-02",
+        "noteTitle": "Graduated",
+        "noteBody": "Completed coding course"
+      }
+    }
+  }
+]

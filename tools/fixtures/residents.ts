@@ -22,7 +22,7 @@ export const residentsData: Omit<
   "personType" | "recordId"
 >[] = [
   {
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: ["usMeSCCP"],
     officerId: "OFFICER5",
     stateCode: "US_ME",
     personExternalId: "RES001",
