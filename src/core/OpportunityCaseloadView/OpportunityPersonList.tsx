@@ -61,7 +61,9 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
   const opportunityLabel = OPPORTUNITY_LABELS[opportunityType];
   const eligibleOpps = eligibleOpportunities[opportunityType];
   const almostEligibleOpps = almostEligibleOpportunities[opportunityType];
-  const totalOpps = eligibleOpps.length + almostEligibleOpps.length;
+  // TODO(#2710): Revisit this once we tighten up the typing on these properties
+  const totalOpps =
+    (eligibleOpps?.length ?? 0) + (almostEligibleOpps?.length ?? 0);
 
   const hydratedHeader = generateOpportunityHydratedHeader(
     opportunityType,
@@ -93,11 +95,11 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
         {hydratedHeader.callToAction}
       </SubHeading>
       <>
-        {eligibleOpps.length > 0 && almostEligibleOpps.length > 0 && (
+        {eligibleOpps?.length > 0 && almostEligibleOpps?.length > 0 && (
           <SectionLabelText>Eligible now</SectionLabelText>
         )}
         <PersonList className="PersonList">
-          {eligibleOpps.map((opportunity) => (
+          {eligibleOpps?.map((opportunity) => (
             <PersonListItem
               key={opportunity.person.recordId}
               opportunity={opportunity}
@@ -105,7 +107,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
           ))}
         </PersonList>
       </>
-      {almostEligibleOpps.length > 0 && (
+      {almostEligibleOpps?.length > 0 && (
         <>
           <SectionLabelText>Almost Eligible</SectionLabelText>
           <PersonList className="PersonList__AlmostEligible">
