@@ -8,11 +8,31 @@
       "usMeXMonthsRemainingOnSentence": { "eligibleDate": "2022-09-22" }
     },
     "caseNotes": {
-      "Education": {
-        "eventDate": "2022-06-02",
-        "noteTitle": "Graduated",
-        "noteBody": "Completed coding course"
-      }
+      "Education": [
+        {
+          "eventDate": "2022-06-02",
+          "noteTitle": "Graduated",
+          "noteBody": "Completed coding course"
+        }
+      ]
+    }
+  },
+  {
+    "stateCode": "US_ME",
+    "externalId": "RES002",
+    "criteria": {
+      "usMeMinimumOrCommunityCustody": { "custodyLevel": "MINIMUM" },
+      "usMeServedXPortionOfSentence": { "eligibleDate": "2021-06-12" },
+      "usMeXMonthsRemainingOnSentence": { "eligibleDate": "2022-05-27" }
+    },
+    "caseNotes": {
+      "Employment Training": [
+        {
+          "eventDate": "2021-12-02",
+          "noteTitle": "Graduated",
+          "noteBody": "Completed course"
+        }
+      ]
     }
   }
 ]

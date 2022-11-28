@@ -29,7 +29,7 @@ import { Client, WithCaseNotes } from "../../WorkflowsStore";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { InfoButton, InfoTooltipWrapper } from "./common";
-import { ClientProfileProps } from "./types";
+import { ClientProfileProps, ResidentProfileProps } from "./types";
 
 const DetailsSection = styled.dl``;
 
@@ -245,6 +245,36 @@ export const Supervision = ({
           <DetailsContent>
             <WorkflowsOfficerName officerId={client.assignedStaffId} />
           </DetailsContent>
+        </DetailsList>
+      </DetailsContent>
+    </DetailsSection>
+  );
+};
+
+export const Incarceration = ({
+  resident,
+}: ResidentProfileProps): React.ReactElement => {
+  return (
+    <DetailsSection>
+      <DetailsHeading>Incarceration</DetailsHeading>
+      <DetailsContent>
+        <DetailsList>
+          <DetailsSubheading>Start</DetailsSubheading>
+          <DetailsContent>
+            {formatWorkflowsDate(resident.admissionDate)}
+          </DetailsContent>
+          <DetailsSubheading>Release</DetailsSubheading>
+          <DetailsContent>
+            {formatWorkflowsDate(resident.releaseDate)}
+          </DetailsContent>
+          <DetailsSubheading>Case Manager</DetailsSubheading>
+          <DetailsContent>
+            <WorkflowsOfficerName officerId={resident.assignedStaffId} />
+          </DetailsContent>
+          <DetailsSubheading>Facility</DetailsSubheading>
+          <DetailsContent>{resident.facilityId}</DetailsContent>
+          <DetailsSubheading>Unit</DetailsSubheading>
+          <DetailsContent>{resident.unitId}</DetailsContent>
         </DetailsList>
       </DetailsContent>
     </DetailsSection>

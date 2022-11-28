@@ -34,7 +34,7 @@ export const PastFTRDClientProfile = observer(function PastFTRDClientProfile() {
 
   return (
     <article>
-      <Heading client={client} />
+      <Heading person={client} />
       <OpportunityModule opportunity={client.verifiedOpportunities.pastFTRD} />
       <Supervision client={client} />
     </article>

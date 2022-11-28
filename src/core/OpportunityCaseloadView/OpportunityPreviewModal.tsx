@@ -33,6 +33,7 @@ import { EarnedDischargeClientProfile } from "../WorkflowsClientProfile/EarnedDi
 import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
 import { PastFTRDClientProfile } from "../WorkflowsClientProfile/PastFTRDClientProfile";
 import { SupervisionLevelDowngradeClientProfile } from "../WorkflowsClientProfile/SupervisionLevelDowngradeClientProfile";
+import { UsMeSCCPResidentProfile } from "../WorkflowsClientProfile/UsMeSCCPResidentProfile";
 import { UsTnExpirationClientProfile } from "../WorkflowsClientProfile/UsTnExpirationClientProfile";
 
 const PAGE_CONTENT: Record<OpportunityType, any> = {
@@ -59,7 +60,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
     previewContents: <SupervisionLevelDowngradeClientProfile />,
   },
   usMeSCCP: {
-    previewContents: <div />,
+    previewContents: <UsMeSCCPResidentProfile />,
   },
   usTnExpiration: {
     previewContents: <UsTnExpirationClientProfile />,

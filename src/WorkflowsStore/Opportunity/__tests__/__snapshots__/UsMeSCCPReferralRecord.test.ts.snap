@@ -2,6 +2,15 @@
 
 exports[`transform record 1`] = `
 Object {
+  "caseNotes": Object {
+    "foo": Array [
+      Object {
+        "eventDate": 2022-06-28T00:00:00.000Z,
+        "noteBody": "A body",
+        "noteTitle": "A title",
+      },
+    ],
+  },
   "criteria": Object {
     "usMeMinimumOrCommunityCustody": Object {
       "custodyLevel": "MINIMUM",

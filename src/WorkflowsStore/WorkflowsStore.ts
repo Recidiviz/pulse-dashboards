@@ -466,6 +466,12 @@ export class WorkflowsStore implements Hydratable {
       : undefined;
   }
 
+  get selectedResident(): Resident | undefined {
+    return this.selectedPerson instanceof Resident
+      ? this.selectedPerson
+      : undefined;
+  }
+
   /**
    * All feature variants currently active for this user, taking into account
    * the activeDate for each feature and observing the current Date for reactivity

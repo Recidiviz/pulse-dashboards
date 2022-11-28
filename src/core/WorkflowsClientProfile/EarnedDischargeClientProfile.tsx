@@ -34,7 +34,7 @@ export const EarnedDischargeClientProfile = observer(
 
     return (
       <article>
-        <Heading client={client} />
+        <Heading person={client} />
         <OpportunityModule
           opportunity={client.verifiedOpportunities.earnedDischarge}
         />

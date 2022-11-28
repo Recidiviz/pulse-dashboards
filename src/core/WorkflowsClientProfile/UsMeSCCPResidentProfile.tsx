@@ -19,34 +19,33 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { CaseNotes, Contact, Supervision } from "./Details";
+import { CaseNotes, Incarceration } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
-type LSUClientProfileProps = {
+type UsMeSCCPResidentProfileProps = {
   formLinkButton?: boolean;
 };
 
-export const LSUClientProfile: React.FC<LSUClientProfileProps> = observer(
-  function LSUClientProfile({ formLinkButton }) {
+export const UsMeSCCPResidentProfile: React.FC<UsMeSCCPResidentProfileProps> = observer(
+  function UsMeSCCPResidentProfile({ formLinkButton }) {
     const { workflowsStore } = useRootStore();
 
-    const client = workflowsStore.selectedClient;
-    if (!client?.verifiedOpportunities.LSU) {
+    const resident = workflowsStore.selectedResident;
+    if (!resident?.verifiedOpportunities.usMeSCCP) {
       return null;
     }
 
     return (
       <article>
-        <Heading person={client} />
+        <Heading person={resident} />
         <OpportunityModule
-          opportunity={client.verifiedOpportunities.LSU}
+          opportunity={resident.verifiedOpportunities.usMeSCCP}
           formLinkButton={formLinkButton}
         />
-        <Supervision client={client} />
-        <Contact client={client} />
+        <Incarceration resident={resident} />
         <CaseNotes
-          opportunityRecord={client.verifiedOpportunities.LSU?.record}
+          opportunityRecord={resident.verifiedOpportunities.usMeSCCP?.record}
         />
       </article>
     );

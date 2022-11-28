@@ -23,7 +23,7 @@ import styled from "styled-components/macro";
 
 import { ProfileCapsule } from "../PersonCapsules";
 import { workflowsUrl } from "../views";
-import { ClientProfileProps } from "./types";
+import { PersonProfileProps } from "./types";
 
 const HeadingWrapper = styled.div`
   margin-bottom: ${rem(spacing.md)};
@@ -31,14 +31,14 @@ const HeadingWrapper = styled.div`
 `;
 
 export const Heading = observer(function Heading({
-  client,
-}: ClientProfileProps) {
+  person,
+}: PersonProfileProps) {
   return (
     <HeadingWrapper>
       <Link
-        to={workflowsUrl("clientProfile", { clientId: client.pseudonymizedId })}
+        to={workflowsUrl("clientProfile", { clientId: person.pseudonymizedId })}
       >
-        <ProfileCapsule avatarSize="md" person={client} textSize="sm" />
+        <ProfileCapsule avatarSize="md" person={person} textSize="sm" />
       </Link>
     </HeadingWrapper>
   );

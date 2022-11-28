@@ -30,6 +30,15 @@ test("transform record", () => {
         eligibleDate: "2022-08-07",
       },
     },
+    caseNotes: {
+      foo: [
+        {
+          noteTitle: "A title",
+          noteBody: "A body",
+          eventDate: "2022-06-28",
+        },
+      ],
+    },
   };
 
   expect(transformReferral(rawRecord)).toMatchSnapshot();

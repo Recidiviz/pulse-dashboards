@@ -22,6 +22,7 @@ import { cloneDeep } from "lodash";
 import { TransformFunction } from "../subscriptions";
 import { fieldToDate } from "../utils";
 import { WithCaseNotes } from "./types";
+import { transformCaseNotes } from "./utils";
 
 export type UsMeSCCPReferralRecord = {
   stateCode: string;
@@ -47,6 +48,8 @@ export const transformReferral: TransformFunction<UsMeSCCPReferralRecord> = (
   transformedRecord.criteria.usMeXMonthsRemainingOnSentence.eligibleDate = fieldToDate(
     record.criteria.usMeXMonthsRemainingOnSentence.eligibleDate
   );
+
+  transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
 
   return transformedRecord;
 };

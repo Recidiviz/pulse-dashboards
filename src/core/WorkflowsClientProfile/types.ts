@@ -15,10 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Client, Opportunity } from "../../WorkflowsStore";
+import type { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
+import { Client } from "../../WorkflowsStore";
+import { Resident } from "../../WorkflowsStore/Resident";
+
+export type PersonProfileProps = {
+  person: JusticeInvolvedPerson;
+};
 
 export type ClientProfileProps = {
   client: Client;
+};
+
+export type ResidentProfileProps = {
+  resident: Resident;
 };
 
 export type ClientWithOpportunityProps = ClientProfileProps & {

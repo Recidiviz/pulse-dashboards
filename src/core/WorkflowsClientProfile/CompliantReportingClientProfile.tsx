@@ -49,7 +49,7 @@ export const CompliantReportingClientProfile: React.FC<CompliantReportingClientP
 
     return (
       <article>
-        <Heading client={client} />
+        <Heading person={client} />
 
         <OpportunityModule
           opportunity={client.verifiedOpportunities.compliantReporting}

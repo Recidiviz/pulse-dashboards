@@ -43,7 +43,7 @@ export const EarlyTerminationClientProfile: React.FC<EarlyTerminationClientProfi
 
     return (
       <article>
-        <Heading client={client} />
+        <Heading person={client} />
         <OpportunityModule
           opportunity={client.verifiedOpportunities.earlyTermination}
           formLinkButton={formLinkButton}

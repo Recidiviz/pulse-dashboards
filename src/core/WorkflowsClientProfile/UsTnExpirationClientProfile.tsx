@@ -34,7 +34,7 @@ export const UsTnExpirationClientProfile = observer(
 
     return (
       <article>
-        <Heading client={client} />
+        <Heading person={client} />
         <OpportunityModule opportunity={opp} />
         <Supervision client={client} />
         <CaseNotes

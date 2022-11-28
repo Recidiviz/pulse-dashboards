@@ -35,7 +35,7 @@ export const SupervisionLevelDowngradeClientProfile = observer(
 
     return (
       <article>
-        <Heading client={client} />
+        <Heading person={client} />
         <OpportunityModule opportunity={opp} />
         <Supervision client={client} />
         <CaseNotes
