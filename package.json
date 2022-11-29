@@ -14,6 +14,7 @@
     "build": "env-cmd -e production react-scripts build",
     "build-staging": "env-cmd -e staging react-scripts build",
     "build-demo": "env-cmd -e staging-demo react-scripts build",
+    "build-offline": "env-cmd -e e2e,offline react-scripts build",
     "test-e2e-lantern": "env-cmd -e e2e wdio ./wdio.conf.js --suite lantern --retry 2",
     "test-e2e-users": "env-cmd -e e2e,offline wdio ./wdio.conf.js --suite userAccess --retry 2",
     "test-e2e-login": "env-cmd -e e2e,offline wdio ./wdio.conf.js --suite login --retry 2",

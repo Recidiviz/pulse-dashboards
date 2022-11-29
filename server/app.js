@@ -211,6 +211,11 @@ app.get("/_ah/warmup", () => {
   console.log("Responding to warmup request...");
 });
 
+// Health check for Docker
+app.get("/health", (req, res) => {
+  res.json({ ok: true });
+});
+
 // authenticates the user to Firestore with Auth0 credential
 app.get("/token", getFirebaseToken);
 
