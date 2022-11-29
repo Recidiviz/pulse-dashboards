@@ -20,6 +20,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { Client } from "../../WorkflowsStore";
+import { Resident } from "../../WorkflowsStore/Resident";
 import {
   JusticeInvolvedPersonCapsule,
   JusticeInvolvedPersonCapsuleProps,
@@ -40,6 +41,8 @@ export const ProfileCapsule = observer(function ProfileCapsule({
           .join(", ")}
       </>
     );
+  } else if (person instanceof Resident) {
+    status = <>{person.custodyLevel}</>;
   }
 
   return (

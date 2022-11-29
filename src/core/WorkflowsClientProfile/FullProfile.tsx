@@ -22,12 +22,24 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { Client } from "../../WorkflowsStore";
+import { Resident } from "../../WorkflowsStore/Resident";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import { ProfileCapsule } from "../PersonCapsules";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import { FinesAndFees, Housing, SpecialConditions } from "./Details";
+import {
+  ClientHousing,
+  FinesAndFees,
+  ResidentHousing,
+  SpecialConditions,
+} from "./Details";
 import { OpportunitiesAccordion } from "./OpportunitiesAccordion";
-import { SupervisionProgress } from "./SupervisionProgress";
+import { IncarcerationProgress, SupervisionProgress } from "./SentenceProgress";
+import {
+  ClientProfileProps,
+  PersonProfileProps,
+  ResidentProfileProps,
+} from "./types";
 
 const COLUMNS = "1fr 1.2fr";
 
@@ -81,15 +93,83 @@ const Divider = styled.hr`
   margin: ${rem(spacing.md)} 0;
 `;
 
+const AdditionalDetails = ({
+  person,
+}: PersonProfileProps): React.ReactElement => {
+  if (person instanceof Client) {
+    return <ClientDetails client={person} />;
+  }
+
+  if (person instanceof Resident) {
+    return <ResidentDetails resident={person} />;
+  }
+
+  return <div />;
+};
+
+const ClientDetails = ({ client }: ClientProfileProps): React.ReactElement => {
+  return (
+    <>
+      <SectionHeading>Progress toward success</SectionHeading>
+      <Divider />
+      <SupervisionProgress client={client} />
+      <Divider />
+      <ClientHousing client={client} />
+      <Divider />
+      {client.currentBalance !== undefined && (
+        <>
+          <FinesAndFees client={client} />
+          <Divider />
+        </>
+      )}
+      <SpecialConditions client={client} />
+    </>
+  );
+};
+
+const ResidentDetails = ({
+  resident,
+}: ResidentProfileProps): React.ReactElement => {
+  return (
+    <>
+      <SectionHeading>Progress toward success</SectionHeading>
+      <Divider />
+      <IncarcerationProgress resident={resident} />
+      <Divider />
+      <ResidentHousing resident={resident} />
+      <Divider />
+    </>
+  );
+};
+
+const ContactDetails = ({
+  person,
+}: PersonProfileProps): React.ReactElement | null => {
+  if (!(person instanceof Client)) return null;
+
+  return (
+    <ContactCell>
+      <div>
+        <ContactLabel>Telephone</ContactLabel>
+        <ContactValue>{person.formattedPhoneNumber}</ContactValue>
+      </div>
+    </ContactCell>
+  );
+};
+
 export const FullProfile = observer(
   function FullProfile(): React.ReactElement | null {
     const {
-      workflowsStore: { selectedClient: client },
+      workflowsStore: { selectedPerson: person },
     } = useRootStore();
 
-    usePersonTracking(client, () => client?.trackProfileViewed());
+    // TODO(#2726): Expand logging to cover residents
+    usePersonTracking(
+      person,
+      () => person instanceof Client && person?.trackProfileViewed()
+    );
 
-    if (!client) return null;
+    if (!person) return null;
 
     return (
       <WorkflowsNavLayout>
@@ -97,36 +177,19 @@ export const FullProfile = observer(
           <Header>
             <ProfileCapsule
               avatarSize="lg"
-              person={client}
+              person={person}
               textSize="lg"
               hideTooltip
               nameHoverState={false}
             />
-            <ContactCell>
-              <div>
-                <ContactLabel>Telephone</ContactLabel>
-                <ContactValue>{client.formattedPhoneNumber}</ContactValue>
-              </div>
-            </ContactCell>
+            <ContactDetails person={person} />
           </Header>
           <div>
-            <SectionHeading>Progress toward success</SectionHeading>
-            <Divider />
-            <SupervisionProgress client={client} />
-            <Divider />
-            <Housing client={client} />
-            <Divider />
-            {client.currentBalance !== undefined && (
-              <>
-                <FinesAndFees client={client} />
-                <Divider />
-              </>
-            )}
-            <SpecialConditions client={client} />
+            <AdditionalDetails person={person} />
           </div>
           <div>
             <SectionHeading>Opportunities</SectionHeading>
-            <OpportunitiesAccordion person={client} />
+            <OpportunitiesAccordion person={person} />
           </div>
         </Wrapper>
       </WorkflowsNavLayout>

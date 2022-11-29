@@ -294,7 +294,9 @@ export const Contact = ({ client }: ClientProfileProps): React.ReactElement => {
     </DetailsSection>
   );
 };
-export const Housing = ({ client }: ClientProfileProps): React.ReactElement => {
+export const ClientHousing = ({
+  client,
+}: ClientProfileProps): React.ReactElement => {
   return (
     <DetailsSection>
       <DetailsHeading>Housing</DetailsHeading>
@@ -302,6 +304,24 @@ export const Housing = ({ client }: ClientProfileProps): React.ReactElement => {
         <DetailsList>
           <DetailsSubheading>Address</DetailsSubheading>
           <DetailsContent>{client.address}</DetailsContent>
+        </DetailsList>
+      </DetailsContent>
+    </DetailsSection>
+  );
+};
+
+export const ResidentHousing = ({
+  resident,
+}: ResidentProfileProps): React.ReactElement => {
+  return (
+    <DetailsSection>
+      <DetailsHeading>Housing</DetailsHeading>
+      <DetailsContent>
+        <DetailsList>
+          <DetailsSubheading>Facility</DetailsSubheading>
+          <DetailsContent>{resident.facilityId}</DetailsContent>
+          <DetailsSubheading>Unit</DetailsSubheading>
+          <DetailsContent>{resident.unitId}</DetailsContent>
         </DetailsList>
       </DetailsContent>
     </DetailsSection>

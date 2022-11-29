@@ -29,8 +29,8 @@ import styled from "styled-components/macro";
 
 import { formatWorkflowsDate } from "../../utils";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
-import { Supervision } from "./Details";
-import { ClientProfileProps } from "./types";
+import { Incarceration, Supervision } from "./Details";
+import { ClientProfileProps, ResidentProfileProps } from "./types";
 
 const Wrapper = styled.div``;
 
@@ -112,36 +112,33 @@ function formatTimeToGo(expirationDate: Date): string {
   }`;
 }
 
-export const SupervisionProgress = ({
-  client,
-}: ClientProfileProps): React.ReactElement => {
-  const {
-    supervisionStartDate,
-    expirationDate,
-    assignedStaffId: officerId,
-  } = client;
-
+export const ProgressTimeline = ({
+  startDate,
+  endDate,
+  officerId,
+  fallbackComponent,
+}: {
+  startDate?: Date;
+  endDate?: Date;
+  officerId?: string;
+  fallbackComponent: React.ReactNode;
+}): React.ReactElement => {
   // can't visualize anything if we don't have both valid dates
-  if (
-    !supervisionStartDate ||
-    !expirationDate ||
-    expirationDate <= supervisionStartDate
-  )
-    return <Supervision client={client} />;
+  if (!startDate || !endDate || endDate <= startDate)
+    return <>{fallbackComponent}</>;
 
   const today = startOfDay(new Date());
-  const expired = expirationDate < today;
+  const expired = endDate < today;
 
   const timelinePosition = scaleTime()
     .domain([
-      supervisionStartDate,
+      startDate,
       // timeline must extend past expiration if it's in the past
-      Math.max(expirationDate.valueOf(), today.valueOf()),
+      Math.max(endDate.valueOf(), today.valueOf()),
     ])
     .range([0, 100]);
 
-  const timelineOffset =
-    timelinePosition(today) - timelinePosition(expirationDate);
+  const timelineOffset = timelinePosition(today) - timelinePosition(endDate);
 
   return (
     <Wrapper>
@@ -149,8 +146,8 @@ export const SupervisionProgress = ({
         <div>
           <Title>Supervision</Title>
           <Sans14>
-            {formatSentenceLength(supervisionStartDate, expirationDate)} (
-            {formatTimeToGo(expirationDate)})
+            {formatSentenceLength(startDate, endDate)} (
+            {formatTimeToGo(endDate)})
           </Sans14>
         </div>
         <OfficerAssignment>
@@ -162,7 +159,7 @@ export const SupervisionProgress = ({
         <TimelineSentence
           stroke={palette.data.gold1}
           x1={0}
-          x2={`${timelinePosition(expirationDate) - (expired ? 0.5 : 0)}%`}
+          x2={`${timelinePosition(endDate) - (expired ? 0.5 : 0)}%`}
           y1="50%"
           y2="50%"
         />
@@ -170,14 +167,14 @@ export const SupervisionProgress = ({
           <>
             <TimelineSentence
               stroke={palette.slate80}
-              x1={`${timelinePosition(expirationDate)}%`}
-              x2={`${timelinePosition(expirationDate)}%`}
+              x1={`${timelinePosition(endDate)}%`}
+              x2={`${timelinePosition(endDate)}%`}
               y1="0%"
               y2="100%"
             />
             <TimelineSentence
               stroke={palette.signal.error}
-              x1={`${timelinePosition(expirationDate) + 0.5}%`}
+              x1={`${timelinePosition(endDate) + 0.5}%`}
               x2={`${timelinePosition(today)}%`}
               y1="50%"
               y2="50%"
@@ -195,18 +192,52 @@ export const SupervisionProgress = ({
         style={{
           width: `${
             expired && timelineOffset > 10
-              ? timelinePosition(expirationDate) + timelinePosition(today) / 10
-              : timelinePosition(expirationDate)
+              ? timelinePosition(endDate) + timelinePosition(today) / 10
+              : timelinePosition(endDate)
           }%`,
         }}
       >
         <div>
-          Start: <span>{formatWorkflowsDate(supervisionStartDate)}</span>
+          Start: <span>{formatWorkflowsDate(startDate)}</span>
         </div>
         <div>
-          End: <span>{formatWorkflowsDate(expirationDate)}</span>
+          End: <span>{formatWorkflowsDate(endDate)}</span>
         </div>
       </TimelineDates>
     </Wrapper>
+  );
+};
+
+export const SupervisionProgress = ({
+  client,
+}: ClientProfileProps): React.ReactElement => {
+  const {
+    supervisionStartDate,
+    expirationDate,
+    assignedStaffId: officerId,
+  } = client;
+
+  return (
+    <ProgressTimeline
+      startDate={supervisionStartDate}
+      endDate={expirationDate}
+      officerId={officerId}
+      fallbackComponent={<Supervision client={client} />}
+    />
+  );
+};
+
+export const IncarcerationProgress = ({
+  resident,
+}: ResidentProfileProps): React.ReactElement => {
+  const { admissionDate, releaseDate, assignedStaffId: officerId } = resident;
+
+  return (
+    <ProgressTimeline
+      startDate={admissionDate}
+      endDate={releaseDate}
+      officerId={officerId}
+      fallbackComponent={<Incarceration resident={resident} />}
+    />
   );
 };

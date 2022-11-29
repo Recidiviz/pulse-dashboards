@@ -20,9 +20,9 @@ import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import {
+  ClientHousing,
   Contact,
   FinesAndFees,
-  Housing,
   SpecialConditions,
   Supervision,
 } from "./Details";
@@ -59,7 +59,7 @@ export const CompliantReportingClientProfile: React.FC<CompliantReportingClientP
         <SpecialConditions client={client} />
         <Supervision client={client} />
         <Contact client={client} />
-        <Housing client={client} />
+        <ClientHousing client={client} />
         <FinesAndFees client={client} />
       </article>
     );

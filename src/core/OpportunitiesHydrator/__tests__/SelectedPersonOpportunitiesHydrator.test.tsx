@@ -47,7 +47,7 @@ const setUp = ({
   pastFTRDHydrateMock = jest.fn();
   const mockRoot = {
     workflowsStore: {
-      selectedClient: {
+      selectedPerson: {
         potentialOpportunities: {
           LSU: {
             hydrate: lsuHydrateMock,
@@ -66,14 +66,14 @@ const setUp = ({
   };
   if (lsuVerified) {
     // @ts-ignore
-    mockRoot.workflowsStore.selectedClient.verifiedOpportunities.LSU = {
+    mockRoot.workflowsStore.selectedPerson.verifiedOpportunities.LSU = {
       isLoading: lsuLoading,
       isHydrated: lsuHydrated,
     };
   }
   if (pastFTRDVerified) {
     // @ts-ignore
-    mockRoot.workflowsStore.selectedClient.verifiedOpportunities.pastFTRD = {
+    mockRoot.workflowsStore.selectedPerson.verifiedOpportunities.pastFTRD = {
       isLoading: pastFTRDLoading,
       isHydrated: pastFTRDHydrated,
     };

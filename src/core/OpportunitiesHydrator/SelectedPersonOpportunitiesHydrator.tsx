@@ -24,7 +24,7 @@ import React, { useEffect } from "react";
 import { useRootStore } from "../../components/StoreProvider";
 import { OpportunityType } from "../../WorkflowsStore/Opportunity/types";
 
-type ClientOpportunitiesHydratorProps = {
+type PersonOpportunitiesHydratorProps = {
   hydrated: React.ReactNode;
   empty: React.ReactNode;
   opportunityTypes: OpportunityType[];
@@ -35,33 +35,33 @@ export const SelectedPersonOpportunitiesHydrator = observer(
     hydrated,
     empty,
     opportunityTypes,
-  }: ClientOpportunitiesHydratorProps) {
+  }: PersonOpportunitiesHydratorProps) {
     const {
-      workflowsStore: { selectedClient: client },
+      workflowsStore: { selectedPerson: person },
     } = useRootStore();
 
     useEffect(
       () =>
         autorun(() => {
-          if (client) {
-            const { potentialOpportunities } = client;
+          if (person) {
+            const { potentialOpportunities } = person;
             opportunityTypes.forEach((opportunityType) => {
               potentialOpportunities[opportunityType]?.hydrate();
             });
           }
         }),
-      [client, opportunityTypes]
+      [person, opportunityTypes]
     );
 
     const displayLoading = some(
       opportunityTypes.map(
-        (oppType) => client?.potentialOpportunities[oppType]?.isLoading
+        (oppType) => person?.potentialOpportunities[oppType]?.isLoading
       )
     );
 
     const displayEmpty =
       opportunityTypes.filter(
-        (oppType) => oppType in (client?.verifiedOpportunities ?? {})
+        (oppType) => oppType in (person?.verifiedOpportunities ?? {})
       ).length === 0;
 
     if (displayLoading) return <Loading />;
