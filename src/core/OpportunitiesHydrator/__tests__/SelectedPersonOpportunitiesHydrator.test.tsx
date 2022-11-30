@@ -108,7 +108,7 @@ const expectStateToBe = (expectedState: "HYDRATED" | "EMPTY" | "LOADING") => {
   }
 };
 
-describe("ClientOpportunityHydrator tests", () => {
+describe("SelectedPersonOpportunityHydrator tests", () => {
   it("calls hydrate on all specified opportunities", () => {
     setUp({});
 

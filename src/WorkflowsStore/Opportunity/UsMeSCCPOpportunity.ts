@@ -20,6 +20,7 @@ import { computed, makeObservable } from "mobx";
 
 import { Resident } from "../Resident";
 import { OTHER_KEY } from "../utils";
+import { UsMeSCCPForm } from "./Forms/UsMeSCCPForm";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import {
@@ -60,7 +61,7 @@ const CRITERIA_COPY: Record<
     tooltip:
       "No more than thirty (30) months remaining on the term of imprisonment or, " +
       "in the case of a split sentence, on the unsuspended portion, after consideration " +
-      "of any deductions that the resident has received and retained uner Title 17-A, " +
+      "of any deductions that the resident has received and retained under Title 17-A, " +
       "Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines " +
       "that the average statewide case load is no more than ninety (90) adult community " +
       "corrections clients to one probation officer.",
@@ -72,6 +73,8 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
   UsMeSCCPReferralRecord
 > {
   resident: Resident;
+
+  form: UsMeSCCPForm;
 
   policyOrMethodologyUrl =
     "https://www.maine.gov/sos/cec/rules/03/201/c10s272.docx";
@@ -85,6 +88,8 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
+
+    this.form = new UsMeSCCPForm("usMeSCCP", this, resident.rootStore);
   }
 
   get requirementsMet(): OpportunityRequirement[] {

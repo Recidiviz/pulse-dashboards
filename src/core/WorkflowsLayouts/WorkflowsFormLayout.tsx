@@ -26,6 +26,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import { OpportunityType } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
+import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import RecidivizLogo from "../RecidivizLogo";
 import { PATHWAYS_VIEWS } from "../views";
 import { CompliantReportingClientProfile } from "../WorkflowsClientProfile";
@@ -33,6 +34,7 @@ import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTe
 import { EarnedDischargeClientProfile } from "../WorkflowsClientProfile/EarnedDischargeClientProfile";
 import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
 import { PastFTRDClientProfile } from "../WorkflowsClientProfile/PastFTRDClientProfile";
+import { UsMeSCCPResidentProfile } from "../WorkflowsClientProfile/UsMeSCCPResidentProfile";
 import { UsTnExpirationClientProfile } from "../WorkflowsClientProfile/UsTnExpirationClientProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
@@ -62,7 +64,10 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
     formContents: <div />,
   },
   supervisionLevelDowngrade: {},
-  usMeSCCP: {},
+  usMeSCCP: {
+    sidebarContents: <UsMeSCCPResidentProfile />,
+    formContents: <FormSCCP />,
+  },
   usTnExpiration: {
     sidebarContents: <UsTnExpirationClientProfile />,
     formContents: <div />, // TODO(#2582): Add form
@@ -114,11 +119,11 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
   const {
     workflowsStore: {
       selectedOpportunityType: opportunityType,
-      selectedClient: client,
+      selectedPerson,
     },
   } = useRootStore();
 
-  if (!opportunityType || !client) return null;
+  if (!opportunityType || !selectedPerson) return null;
 
   const hydrated = (
     <Wrapper>

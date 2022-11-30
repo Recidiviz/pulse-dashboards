@@ -20,47 +20,31 @@
       "employmentDateVerified": "2022-03-03T00:00:00",
       "latestNegativeDrugScreenDate": "2022-03-02"
     },
-    "reasons": [
-      {
-        "criteriaName": "NEGATIVE_UA_WITHIN_90_DAYS",
-        "reason": {
-          "latestUaDates": ["2022-09-08"],
-          "latestUaResults": [false]
-        }
+    "criteria": {
+      "negativeUaWithin90Days": {
+        "latestUaDates": ["2022-09-08"],
+        "latestUaResults": [false]
       },
-      {
-        "criteriaName": "NO_FELONY_WITHIN_24_MONTHS",
-        "reason": null
+      "noFelonyWithin24Months": {
+        "latestFelonyConvictions": []
       },
-      {
-        "criteriaName": "NO_VIOLENT_MISDEMEANOR_WITHIN_12_MONTHS",
-        "reason": null
+      "noViolentMisdemeanorWithin12Months": {
+        "latestViolentConvictions": []
       },
-      {
-        "criteriaName": "SUPERVISION_NOT_PAST_FULL_TERM_COMPLETION_DATE",
-        "reason": {
-          "eligibleDate": "2033-07-14"
-        }
+      "usIdIncomeVerifiedWithin3Months": {
+        "incomeVerifiedDate": "2022-10-13"
       },
-      {
-        "criteriaName": "US_ID_INCOME_VERIFIED_WITHIN_3_MONTHS",
-        "reason": {
-          "incomeVerifiedDate": "2022-10-13"
-        }
+      "usIdNoActiveNco": {
+        "activeNco": null
       },
-      {
-        "criteriaName": "US_ID_LSIR_LEVEL_LOW_MODERATE_FOR_X_DAYS",
-        "reason": {
-          "combinedDaysAtModerateOrLowLevel": 495,
-          "daysAtLevel": 34,
-          "riskLevel": "LOW"
-        }
+      "usIdLsirLevelLowFor90Days": {
+        "eligibleDate": "2021-02-15",
+        "riskLevel": "LOW"
       },
-      {
-        "criteriaName": "US_ID_NO_ACTIVE_NCO",
-        "reason": null
+      "onSupervisionAtLeastOneYear": {
+        "eligibleDate": "2021-10-16"
       }
-    ],
+    },
     "caseNotes": null
   }
 ]

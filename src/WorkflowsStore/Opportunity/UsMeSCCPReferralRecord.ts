@@ -34,6 +34,13 @@ export type UsMeSCCPReferralRecord = {
   };
 } & WithCaseNotes;
 
+export type UsMeSCCPDraftData = {
+  residentName: string;
+  mdocNo: string;
+  facilityHousingUnit: string;
+  caseManager: string;
+};
+
 export const transformReferral: TransformFunction<UsMeSCCPReferralRecord> = (
   record
 ) => {

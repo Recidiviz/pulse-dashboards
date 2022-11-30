@@ -60,7 +60,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
     previewContents: <SupervisionLevelDowngradeClientProfile />,
   },
   usMeSCCP: {
-    previewContents: <UsMeSCCPResidentProfile />,
+    previewContents: <UsMeSCCPResidentProfile formLinkButton />,
   },
   usTnExpiration: {
     previewContents: <UsTnExpirationClientProfile />,

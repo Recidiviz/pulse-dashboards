@@ -35,7 +35,7 @@ import { FormLastEdited } from "../FormLastEdited";
 import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
 import { LSUFormFieldBaseProps, LSUFormFields } from "../Paperwork/US_ID/LSU";
 import template from "../Paperwork/US_ID/LSU/Chrono";
-import WebFormField from "../Paperwork/WebFormField";
+import { WebForm } from "../Paperwork/WebForm";
 import PillNav from "../PillNav";
 
 const LSUFormHeader = styled.div`
@@ -97,18 +97,11 @@ const WorkflowsLSUForm = observer(function WorkflowsLSUForm() {
   if (!opportunity) {
     return null;
   }
-  const form = (
-    <>
-      {LSUFormFields.map((props) => (
-        <WebFormField
-          {...LSUFormFieldBaseProps}
-          {...props}
-          key={props.name}
-          style={{ marginTop: rem(spacing.md) }}
-        />
-      ))}
-    </>
-  );
+  const formFields = LSUFormFields.map((props) => ({
+    ...LSUFormFieldBaseProps,
+    ...props,
+  }));
+
   const preview = (
     <LSUChronoPreview>
       <ChronoField>Note Title: </ChronoField> <span>LSU Transfer Chrono</span>
@@ -147,7 +140,7 @@ const WorkflowsLSUForm = observer(function WorkflowsLSUForm() {
           </Button>
         </FormHeaderSection>
       </LSUFormHeader>
-      {selectedFormSection === 0 ? form : preview}
+      {selectedFormSection === 0 ? <WebForm fields={formFields} /> : preview}
     </LSUFormContainer>
   );
 });

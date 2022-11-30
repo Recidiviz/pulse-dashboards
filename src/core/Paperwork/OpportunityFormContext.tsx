@@ -32,11 +32,11 @@ export const connectComponentToOpportunityForm = (
 ): React.FC => {
   return observer(function ConnectComponentToOpportunityForm() {
     const {
-      workflowsStore: { selectedClient: client },
+      workflowsStore: { selectedPerson },
     } = useRootStore();
-    const opportunity = client?.verifiedOpportunities[opportunityType];
+    const opportunity = selectedPerson?.verifiedOpportunities[opportunityType];
 
-    usePersonTracking(client, () => {
+    usePersonTracking(selectedPerson, () => {
       opportunity?.form?.trackViewed();
     });
 
