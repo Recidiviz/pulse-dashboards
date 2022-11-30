@@ -39,6 +39,7 @@ import { UsTnExpirationClientProfile } from "../WorkflowsClientProfile/UsTnExpir
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 import WorkflowsLSUForm from "../WorkflowsLSUForm";
+import WorkflowsUsTnExpirationForm from "../WorkflowsUsTnExpirationForm";
 
 export const FORM_SIDEBAR_WIDTH = 400;
 
@@ -70,7 +71,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   },
   usTnExpiration: {
     sidebarContents: <UsTnExpirationClientProfile />,
-    formContents: <div />, // TODO(#2582): Add form
+    formContents: <WorkflowsUsTnExpirationForm />,
   },
 };
 

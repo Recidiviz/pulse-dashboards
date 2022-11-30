@@ -17,14 +17,17 @@
 
 import { makeObservable } from "mobx";
 
+import { OpportunityUpdateWithForm } from "../../firestore";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
+import { UsTnExpirationForm } from "./Forms/UsTnExpirationForm";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import {
   getValidator,
   transformReferral,
+  UsTnExpirationDraftData,
   UsTnExpirationReferralRecord,
 } from "./UsTnExpirationReferralRecord";
 
@@ -50,8 +53,11 @@ const CRITERIA: Record<
 
 export class UsTnExpirationOpportunity extends OpportunityBase<
   Client,
-  UsTnExpirationReferralRecord
+  UsTnExpirationReferralRecord,
+  OpportunityUpdateWithForm<UsTnExpirationDraftData>
 > {
+  form: UsTnExpirationForm;
+
   readonly policyOrMethodologyUrl =
     "https://drive.google.com/file/d/1IpetvPM49g_c-D-HzGdf7v6QAe_z5IHn/view?usp=sharing";
 
@@ -66,6 +72,7 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
 
     makeObservable(this, { requirementsMet: true });
     this.denialReasonsMap = DENIAL_REASONS_MAP;
+    this.form = new UsTnExpirationForm(this.type, this, client.rootStore);
   }
 
   get requirementsMet(): OpportunityRequirement[] {

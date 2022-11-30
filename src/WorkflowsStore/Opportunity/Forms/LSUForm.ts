@@ -1,14 +1,9 @@
 import dedent from "dedent";
-import moment from "moment";
 import { format as formatPhone } from "phone-fns";
 
 import { LSUDraftData } from "../LSUReferralRecord";
+import { defaultFormValueJoiner, formatFormValueDateMMDDYYYYY } from "../utils";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
-
-const defaultFormValueJoiner = (...items: (string | undefined)[]) =>
-  items.filter((item) => item).join("\n");
-
-const formatFormValueDate = (date: string) => moment(date).format("MM/DD/YYYY");
 
 export class LSUForm extends FormBase<LSUDraftData> {
   navigateToFormText = "Generate Chrono";
@@ -31,10 +26,12 @@ export class LSUForm extends FormBase<LSUDraftData> {
         form.employerName,
         form.employerAddress,
         form.employmentStartDate
-          ? `Started ${formatFormValueDate(form.employmentStartDate)}`
+          ? `Started ${formatFormValueDateMMDDYYYYY(form.employmentStartDate)}`
           : "",
         form.employmentDateVerified
-          ? `Verified ${formatFormValueDate(form.employmentDateVerified)}`
+          ? `Verified ${formatFormValueDateMMDDYYYYY(
+              form.employmentDateVerified
+            )}`
           : ""
       ),
 
@@ -42,27 +39,29 @@ export class LSUForm extends FormBase<LSUDraftData> {
         ${form.assessmentScore ? `Score: ${form.assessmentScore}` : ""}
         ${
           form.assessmentDate
-            ? `Last assessed: ${formatFormValueDate(form.assessmentDate)}`
+            ? `Last assessed: ${formatFormValueDateMMDDYYYYY(
+                form.assessmentDate
+              )}`
             : ""
         }
       `,
 
       substanceTest: form.latestNegativeDrugScreenDate
-        ? `Tested negative on ${formatFormValueDate(
+        ? `Tested negative on ${formatFormValueDateMMDDYYYYY(
             form.latestNegativeDrugScreenDate
           )}`
         : "",
 
       ncicCheck: defaultFormValueJoiner(
         form.ncicReviewDate
-          ? `Completed on ${formatFormValueDate(form.ncicReviewDate)}`
+          ? `Completed on ${formatFormValueDateMMDDYYYYY(form.ncicReviewDate)}`
           : "",
         form.ncicNoteBody
       ),
 
       treatmentCompletionDate: defaultFormValueJoiner(
         form.txDischargeDate
-          ? `${form.txNoteTitle} on ${formatFormValueDate(
+          ? `${form.txNoteTitle} on ${formatFormValueDateMMDDYYYYY(
               form.txDischargeDate
             )}`
           : "",

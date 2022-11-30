@@ -95,6 +95,19 @@ export const transformReferral: TransformFunction<UsTnExpirationReferralRecord> 
   return transformedRecord;
 };
 
+export type UsTnExpirationDraftData = {
+  expirationDate: string;
+  currentOffenses: string;
+  convictionCounties: string;
+  docketNumbers: string;
+  sexOffenseInformation: string;
+  address: string;
+  employmentInformation: string;
+  feeHistory: string;
+  specialConditions: string;
+  votersRightsInformation: string;
+};
+
 export function getValidator(
   client: Client
 ): ValidateFunction<UsTnExpirationReferralRecord> {

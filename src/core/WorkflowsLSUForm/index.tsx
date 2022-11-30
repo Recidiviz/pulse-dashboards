@@ -14,74 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import {
-  animation,
-  Button,
-  palette,
-  Sans12,
-  Sans14,
-  Sans24,
-  spacing,
-} from "@recidiviz/design-system";
+import { animation, Button } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import { useState } from "react";
 import useClipboard from "react-use-clipboard";
-import styled from "styled-components/macro";
 
 import { trackReferralFormCopiedToClipboard } from "../../analytics";
 import { useRootStore } from "../../components/StoreProvider";
+import {
+  FormContainer,
+  FormHeaderSection,
+  FormHeading,
+  LastEditedMessage,
+  NoteFormHeader,
+  NotePreview,
+  NotePreviewContainer,
+  PageFieldTitle,
+} from "../controls/WorkflowsNotePreview";
 import { FormLastEdited } from "../FormLastEdited";
 import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
 import { LSUFormFieldBaseProps, LSUFormFields } from "../Paperwork/US_ID/LSU";
 import template from "../Paperwork/US_ID/LSU/Chrono";
 import { WebForm } from "../Paperwork/WebForm";
 import PillNav from "../PillNav";
-
-const LSUFormHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: ${rem(spacing.lg)} 0;
-  border-bottom: 1px solid ${palette.marble5};
-  margin-bottom: ${rem(spacing.lg)};
-`;
-
-const FormHeaderSection = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${rem(spacing.md)};
-`;
-
-const FormHeading = styled(Sans24)`
-  color: ${palette.pine1};
-`;
-
-const LSUFormContainer = styled.div`
-  margin: 0 ${rem(spacing.xl)};
-  padding-bottom: ${rem(spacing.xl)};
-`;
-
-const LastEditedMessage = styled(Sans12)`
-  color: ${palette.slate85};
-`;
-
-const NotePreview = styled.article`
-  background-color: ${palette.marble1};
-  border: 1px solid ${palette.slate30};
-  padding: ${rem(spacing.md)} ${rem(spacing.lg)};
-  white-space: pre;
-  max-width: ${rem(960)};
-`;
-
-const LSUChronoPreview = styled(Sans14)`
-  display: grid;
-  grid-template-columns: minmax(min-content, 100px) 1fr;
-  grid-template-rows: min-content;
-  gap: ${rem(spacing.md)};
-`;
-const ChronoField = styled.strong`
-  color: black;
-`;
 
 const WorkflowsLSUForm = observer(function WorkflowsLSUForm() {
   const { workflowsStore } = useRootStore();
@@ -103,10 +58,12 @@ const WorkflowsLSUForm = observer(function WorkflowsLSUForm() {
   }));
 
   const preview = (
-    <LSUChronoPreview>
-      <ChronoField>Note Title: </ChronoField> <span>LSU Transfer Chrono</span>
-      <ChronoField>Note: </ChronoField> <NotePreview>{chrono}</NotePreview>
-    </LSUChronoPreview>
+    <NotePreviewContainer>
+      <PageFieldTitle>Note Title: </PageFieldTitle>{" "}
+      <span>LSU Transfer Chrono</span>
+      <PageFieldTitle>Note: </PageFieldTitle>{" "}
+      <NotePreview>{chrono}</NotePreview>
+    </NotePreviewContainer>
   );
 
   const onCopyButtonClick = () => {
@@ -119,8 +76,8 @@ const WorkflowsLSUForm = observer(function WorkflowsLSUForm() {
   };
 
   return (
-    <LSUFormContainer>
-      <LSUFormHeader>
+    <FormContainer>
+      <NoteFormHeader>
         <FormHeaderSection>
           <FormHeading>
             Transfer Chrono
@@ -139,9 +96,9 @@ const WorkflowsLSUForm = observer(function WorkflowsLSUForm() {
             {isCopied ? "Note text copied!" : "Copy to Clipboard"}
           </Button>
         </FormHeaderSection>
-      </LSUFormHeader>
+      </NoteFormHeader>
       {selectedFormSection === 0 ? <WebForm fields={formFields} /> : preview}
-    </LSUFormContainer>
+    </FormContainer>
   );
 });
 

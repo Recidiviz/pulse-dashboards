@@ -16,6 +16,7 @@
 // =============================================================================
 import { ascending } from "d3-array";
 import { format } from "date-fns";
+import moment from "moment";
 import simplur from "simplur";
 
 import { fieldToDate } from "../utils";
@@ -188,4 +189,27 @@ export const transformCaseNotes = (
     },
     {}
   );
+};
+
+export const defaultFormValueJoiner = (
+  ...items: (string | undefined)[]
+): string => items.filter((item) => item).join("\n");
+
+export const formatFormValueDateMMDDYYYYY = (date: string): string =>
+  moment(date).format("MM/DD/YYYY");
+
+export const displayString = (
+  str: string | undefined,
+  prefix?: string
+): string => {
+  const displayText = str || "";
+  return !prefix ? displayText : `${prefix} ${displayText}`;
+};
+
+export const displayList = (
+  lst: string[] | undefined,
+  prefix?: string
+): string => {
+  const displayText = lst && lst.length > 0 ? lst.join(", ") : "";
+  return !prefix ? displayText : `${prefix} ${displayText}`;
 };
