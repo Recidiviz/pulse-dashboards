@@ -51,7 +51,7 @@ export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> = o
         {showEligibilityStatus && (
           <>
             <Separator> • </Separator>
-            <span style={{ color: colors.link }}>
+            <span className="EligibilityStatus" style={{ color: colors.link }}>
               <EligibilityStatus opportunity={opportunity} />
             </span>
           </>

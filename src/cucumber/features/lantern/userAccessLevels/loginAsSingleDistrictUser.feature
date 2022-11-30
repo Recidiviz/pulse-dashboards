@@ -1,12 +1,11 @@
-@skip-session-reload
+@skip-offline-fixtures
 Feature: Login as a single district user
     As a MO Supervisor that has access to one district
     I want to login to the Lantern dashboard
     And see data related to the district I can access
 
     Background:
-        Given I am on the login page
-        And I login to Lantern as a "restrictedAccessUser1" user
+        Given I am logged into Lantern as a "restrictedAccessUser1" user
         And I wait for 2 seconds
 
     Scenario: The page should reflect my restrictions

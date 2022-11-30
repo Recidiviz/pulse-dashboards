@@ -1,12 +1,11 @@
-@skip-session-reload
+@skip-offline-fixtures
 Feature: Login as a user with access to all districts
     As a MO user that has unrestricted access
     I want to login to the Lantern dashboard
     And see all of the available data
 
     Background:
-        Given I am on the login page
-        And I login to Lantern as a "admin" user
+        Given I am logged into Lantern as a "admin" user
 
     Scenario: Viewing the District Filter
         Then I should see "ALL" selected in the district filter

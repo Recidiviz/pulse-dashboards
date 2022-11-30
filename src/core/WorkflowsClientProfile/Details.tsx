@@ -176,7 +176,7 @@ export const SpecialConditions = ({
   if (!emptySpecialConditionStrings) return null;
 
   return (
-    <DetailsSection>
+    <DetailsSection className="DetailsSection">
       <DetailsHeading>Probation Special Conditions</DetailsHeading>
       <DetailsContent>
         {getProbationSpecialConditionsMarkup(

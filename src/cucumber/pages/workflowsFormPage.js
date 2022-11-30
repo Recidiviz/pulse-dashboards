@@ -17,30 +17,28 @@
 /* eslint-disable class-methods-use-this */
 import Page from ".";
 
-class WorkflowsOpportunityPage extends Page {
-  async open(opportunityType) {
-    await super.open(`${browser.config.baseUrl}/workflows/${opportunityType}`);
+class WorkflowsFormPage extends Page {
+  async open(opportunityType, pseudonymizedId) {
+    await super.open(
+      `${browser.config.baseUrl}/workflows/${opportunityType}/${pseudonymizedId}`
+    );
   }
 
-  async pageHeading() {
-    return $(".PersonList__Heading");
+  async formViewerContainer() {
+    return $(".WorkflowsFormContainer");
   }
 
-  async pageSubheading() {
-    return $(".PersonList__Subheading");
+  async criteriaList() {
+    return $(".CriteraList");
   }
 
-  async eligibleClientList() {
-    return $("ul.PersonList");
+  async detailsSection() {
+    return $(".DetailsSection");
   }
 
-  async almostEligibleClientList() {
-    return $("ul.PersonList__AlmostEligible");
-  }
-
-  async navigateToFormButton() {
-    return $("button.NavigateToFormButton");
+  async formActionButton() {
+    return $(".WorkflowsFormActionButton");
   }
 }
 
-export default new WorkflowsOpportunityPage({ redirectPause: 3000 });
+export default new WorkflowsFormPage({ redirectPause: 3000 });

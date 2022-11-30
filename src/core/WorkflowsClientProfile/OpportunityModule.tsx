@@ -102,6 +102,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
             {formPrintButton && opportunity.form && (
               <div>
                 <FormActionButton
+                  className="WorkflowsFormActionButton"
                   buttonFill={colors.buttonFill}
                   onClick={() => opportunity.form?.print()}
                 >

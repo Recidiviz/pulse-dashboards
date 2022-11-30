@@ -71,7 +71,11 @@ export const CriteriaList = observer(function CriteriaList({
   const alert = opportunity.isAlert;
 
   return (
-    <Wrapper style={{ color: colors.text }} alert={alert}>
+    <Wrapper
+      style={{ color: colors.text }}
+      alert={alert}
+      className="CriteraList"
+    >
       {opportunity.requirementsAlmostMet.map(({ text, tooltip }) => {
         return (
           <CriterionWrapper key={text} alert={alert}>

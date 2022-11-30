@@ -1,4 +1,3 @@
-@skip-session-reload
 Feature: Login as a US_TN user and see homepage
     As a TN user
     I want to login to the Workflows dashboard

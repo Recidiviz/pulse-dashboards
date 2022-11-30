@@ -50,7 +50,7 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
   } = useRootStore();
 
   return (
-    <CompliantReportingFormContainer>
+    <CompliantReportingFormContainer className="WorkflowsFormContainer">
       <FormViewer
         fileName={`${client?.displayName} - Form CR3947 Rev05-18.pdf`}
         statuses={

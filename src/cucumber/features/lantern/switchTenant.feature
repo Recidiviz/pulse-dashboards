@@ -1,3 +1,4 @@
+@reload-session
 Feature: Switch Tenants on Lantern
     As an admin user
     I want to login to the Lantern dashboard

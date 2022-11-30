@@ -1,12 +1,11 @@
-@skip-session-reload
+@skip-offline-fixtures
 Feature: Login as a user with access to multiple districts
     As a MO Supervisor that has access to multiple districts
     I want to login to the Lantern dashboard
     And see data related to the districts I can access
 
     Background:
-        Given I am on the login page
-        And I login to Lantern as a "restrictedAccessUser2" user
+        Given I am logged into Lantern as a "restrictedAccessUser2" user
     
     Scenario: The page should reflect my restrictions
         Then I should see "2 Items" selected in the district filter

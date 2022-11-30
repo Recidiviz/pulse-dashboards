@@ -1,4 +1,3 @@
-@skip-session-reload
 Feature: View the Client List on the Opportunity Page
     As a Workflows user
     I want to login to the Workflows dashboard

@@ -1,6 +1,10 @@
 const { execSync } = require("child_process");
+const fs = require("fs");
+const path = require("path");
 const firebase = require("./firebase.json");
 const { loadWorkflowsFixtures } = require("./tools/workflowsFixtures");
+
+global.downloadDir = path.join("/tmp", "tempDownloads");
 
 exports.config = {
   credentials: {
@@ -73,17 +77,29 @@ exports.config = {
       // maxInstances can get overwritten per capability.
       maxInstances: 1,
       browserName: "chrome",
-      "goog:chromeOptions":
-        process.env.RUN_TESTS_HEADLESS === "true"
-          ? {
-              args: [
+      "goog:chromeOptions": {
+        prefs: {
+          // Set up safeBrowsing and download preferences for downloading files headless
+          safebrowsing: {
+            enabled: false,
+            disable_download_protection: true,
+          },
+          download: {
+            directory_upgrade: true,
+            prompt_for_download: false,
+            default_directory: global.downloadDir,
+          },
+        },
+        args:
+          process.env.RUN_TESTS_HEADLESS === "true"
+            ? [
                 "--headless",
                 "--no-sandbox",
                 "--window-size=1280,800",
                 "--disable-gpu",
-              ],
-            }
-          : {},
+              ]
+            : [],
+      },
     },
   ],
   //
@@ -133,7 +149,7 @@ exports.config = {
   // Services take over a specific job you don't want to take care of. They enhance
   // your test setup with almost no effort. Unlike plugins, they don't add new
   // commands. Instead, they hook themselves up into the test process.
-  services: [],
+  services: ["devtools"],
   // Framework you want to run your specs with.
   // The following are supported: Mocha, Jasmine, and Cucumber
   // see also: https://webdriver.io/docs/frameworks
@@ -205,8 +221,13 @@ exports.config = {
    * @param {Object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  // onPrepare: function (config, capabilities) {
-  // },
+  onPrepare() {
+    // make sure download directory exists
+    if (!fs.existsSync(global.downloadDir)) {
+      // if it doesn't exist, create it
+      fs.mkdirSync(global.downloadDir);
+    }
+  },
   /**
    * Gets executed before a worker process is spawned and can be used to initialise specific service
    * for that worker as well as modify runtime environments in an async fashion.
@@ -252,8 +273,17 @@ exports.config = {
    * Runs before a Cucumber scenario
    * @param world
    */
-  async beforeScenario() {
+  async beforeScenario(world) {
     /* Reset the database after each scenario for tests running on offline mode */
+
+    /* Do not load offline fixtures if scenario logs in thru auth0 */
+    const { tags } = world.pickle;
+    const tagNames = tags.map((t) => t.name);
+    if (
+      tagNames.includes("@reload-session") ||
+      tagNames.includes("@skip-offline-fixtures")
+    )
+      return;
 
     /* Delete all data from emulator project */
     execSync(
@@ -279,10 +309,16 @@ exports.config = {
   afterScenario: async function (world) {
     const { tags } = world.pickle;
     const tagNames = tags.map((t) => t.name);
-    if (tagNames.includes("@skip-session-reload")) return;
+
+    // Remove test files after each scenario
+    if (tagNames.includes("@remove-temp-directory")) {
+      fs.rmSync(global.downloadDir, { force: true, recursive: true });
+    }
 
     /* For tests that do not run on offline mode, we need to reload the session after authentication. */
-    await browser.reloadSession();
+    if (tagNames.includes("@reload-session")) {
+      await browser.reloadSession();
+    }
   },
   /**
    * Runs after a Cucumber feature

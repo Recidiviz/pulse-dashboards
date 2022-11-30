@@ -1,4 +1,5 @@
 @login-admin
+@reload-session
 Feature: Toggle Revocations Charts
     As an admin user on the Lantern dashboard
     I want to click on each of the revocations charts
