@@ -34,6 +34,7 @@ const US_ME_CONFIG: TenantConfig = {
   enableVitalsCaseloadButton: false,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["INCARCERATION"],
+  workflowsOfficerTitleOverride: "case manager",
   navigation: {
     workflows: ["home", "clients", ...WORKFLOWS_OPPORTUNITY_TYPES],
     system: [

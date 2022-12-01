@@ -19,7 +19,7 @@ import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 
 import { useRootStore } from "../../../components/StoreProvider";
-import { OpportunityType } from "../../../WorkflowsStore/Opportunity/types";
+import { OpportunityType } from "../../../WorkflowsStore";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import WorkflowsHomepage from "..";
 
@@ -31,6 +31,16 @@ jest.mock("../../CaseloadSelect", () => ({
 }));
 
 const useRootStoreMock = useRootStore as jest.Mock;
+
+const baseWorkflowsStoreMock = {
+  opportunitiesLoaded: () => false,
+  selectedOfficerIds: ["123"],
+  opportunityTypes: ["earlyTermination"],
+  allOpportunitiesByType: { earlyTermination: [] },
+  hasOpportunities: () => false,
+  user: { info: { givenNames: "Recidiviz" } },
+  workflowsOfficerTitle: "officer",
+};
 
 describe("WorkflowsHomepage", () => {
   beforeEach(() => {
@@ -46,12 +56,8 @@ describe("WorkflowsHomepage", () => {
   test("renders Welcome page on initial state", () => {
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
-        opportunitiesLoaded: () => false,
+        ...baseWorkflowsStoreMock,
         selectedOfficerIds: [],
-        opportunityTypes: ["earlyTermination"],
-        allOpportunitiesByType: { earlyTermination: [] },
-        hasOpportunities: () => false,
-        user: { info: { givenNames: "Recidiviz" } },
       },
     });
 
@@ -67,12 +73,8 @@ describe("WorkflowsHomepage", () => {
   test("renders loading indicator", () => {
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
-        opportunitiesLoaded: () => false,
-        selectedOfficerIds: ["123"],
-        opportunityTypes: ["earlyTermination"],
-        allOpportunitiesByType: { earlyTermination: [] },
+        ...baseWorkflowsStoreMock,
         hasOpportunities: () => true,
-        user: { info: { givenNames: "Recidiviz" } },
       },
     });
 
@@ -88,12 +90,11 @@ describe("WorkflowsHomepage", () => {
   test("renders loading indicator when some but not all have loaded", () => {
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
+        ...baseWorkflowsStoreMock,
         opportunitiesLoaded: (opp: OpportunityType) => opp === "LSU",
-        selectedOfficerIds: ["123"],
         opportunityTypes: ["earlyTermination", "LSU"],
         allOpportunitiesByType: { earlyTermination: [], LSU: [] },
         hasOpportunities: () => true,
-        user: { info: { givenNames: "Recidiviz" } },
       },
     });
 
@@ -109,14 +110,8 @@ describe("WorkflowsHomepage", () => {
   test("render no results", () => {
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
+        ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
-        selectedOfficerIds: ["123"],
-        opportunityTypes: ["pastFTRD"],
-        allOpportunitiesByType: {
-          pastFTRD: [],
-        },
-        hasOpportunities: () => false,
-        user: { info: { givenNames: "Recidiviz" } },
       },
     });
 
@@ -136,14 +131,9 @@ describe("WorkflowsHomepage", () => {
   test("render no results from multiple officers", () => {
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
+        ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
         selectedOfficerIds: ["123", "456"],
-        opportunityTypes: ["pastFTRD"],
-        allOpportunitiesByType: {
-          pastFTRD: [],
-        },
-        hasOpportunities: () => false,
-        user: { info: { givenNames: "Recidiviz" } },
       },
     });
 
@@ -160,19 +150,40 @@ describe("WorkflowsHomepage", () => {
     ).toBeInTheDocument();
   });
 
+  test("render no results respects officer title override", () => {
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        opportunitiesLoaded: () => true,
+        workflowsOfficerTitle: "unicorn",
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsHomepage />
+      </BrowserRouter>
+    );
+
+    expect(
+      screen.getByText(
+        "None of the clients on the selected unicorn's caseloads are eligible for opportunities. Search for another officer."
+      )
+    ).toBeInTheDocument();
+  });
+
   test("render opportunities", () => {
     // @ts-expect-error
     mockOpportunity.person.assignedStaffId = "123";
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
+        ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
-        selectedOfficerIds: ["123"],
         opportunityTypes: ["pastFTRD"],
         allOpportunitiesByType: {
           pastFTRD: [mockOpportunity],
         },
         hasOpportunities: () => true,
-        user: { info: { givenNames: "Recidiviz" } },
       },
     });
 

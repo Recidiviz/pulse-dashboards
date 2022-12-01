@@ -109,13 +109,14 @@ const ValueRemover = (props: MultiValueRemoveProps<SelectOption>) => {
   );
 };
 
-const ClearAll = (props: IndicatorProps<SelectOption, true>) => {
-  return (
-    <components.ClearIndicator {...props}>
-      <>Clear Officers</>
-    </components.ClearIndicator>
-  );
-};
+const ClearAll = (officerTitle: string) =>
+  function ClearAllButton(props: IndicatorProps<SelectOption, true>) {
+    return (
+      <components.ClearIndicator {...props}>
+        <>Clear {officerTitle}s</>
+      </components.ClearIndicator>
+    );
+  };
 
 const CaseloadSelectContainer = styled(Sans14)`
   margin-bottom: ${rem(spacing.xxl)};
@@ -130,15 +131,21 @@ export const CaseloadSelect = observer(function CaseloadSelect({
 }: CaseloadSelectProps) {
   const { workflowsStore } = useRootStore();
 
+  const {
+    availableOfficers,
+    selectedOfficers,
+    workflowsOfficerTitle,
+  } = workflowsStore;
+
   const customComponents: SelectComponentsConfig<SelectOption, true> = {
-    ClearIndicator: ClearAll,
+    ClearIndicator: ClearAll(workflowsOfficerTitle),
     DropdownIndicator: null,
     IndicatorsContainer,
     MultiValueRemove: ValueRemover,
   };
 
   const disableAdditionalSelections =
-    workflowsStore.selectedOfficers.length >= SELECTED_OFFICER_LIMIT;
+    selectedOfficers.length >= SELECTED_OFFICER_LIMIT;
 
   if (disableAdditionalSelections) {
     customComponents.MenuList = DisabledMenuList;
@@ -160,8 +167,8 @@ export const CaseloadSelect = observer(function CaseloadSelect({
             isDefault: false,
           });
         }}
-        options={workflowsStore.availableOfficers.map(buildSelectOption)}
-        placeholder="Search for one or more officers …"
+        options={availableOfficers.map(buildSelectOption)}
+        placeholder={`Search for one or more ${workflowsOfficerTitle}s …`}
         styles={{
           clearIndicator: (base) => ({
             ...base,
@@ -170,6 +177,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
             fontSize: rem(14),
             margin: `0 ${rem(spacing.md)}`,
             padding: 0,
+            textTransform: "capitalize",
             "&:hover": {
               color: palette.slate,
             },
@@ -220,7 +228,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
             gap: rem(spacing.sm),
           }),
         }}
-        value={workflowsStore.selectedOfficers.map(buildSelectOption)}
+        value={selectedOfficers.map(buildSelectOption)}
       />
     </CaseloadSelectContainer>
   );

@@ -69,6 +69,11 @@ export const generateOpportunityInitialHeader = (
       return "Search for officers above to review clients whose full-term release date has passed.";
     case "usTnExpiration":
       return "Search for officers above to review clients whose supervision expiration date is within 30 days or has passed.";
+    case "usMeSCCP":
+      return (
+        "Search for case managers above to review residents in their unit who are approaching SCCP " +
+        "eligibility and complete application paperwork."
+      );
     default:
       return `Search for officers above to review and refer eligible clients for ${opportunityLabel.toLowerCase()}.`;
   }
@@ -117,7 +122,7 @@ export const generateOpportunityHydratedHeader = (
       eligibilityText: simplur`${count} resident[|s] may be eligible for `,
       opportunityText: "Supervised Community Confinement Program",
       callToAction:
-        "Search for case manager(s) below to review residents in their unit who are approaching " +
+        "Search for case managers above to review residents in their unit who are approaching " +
         "SCCP eligibility and complete application paperwork.",
     },
     usTnExpiration: {

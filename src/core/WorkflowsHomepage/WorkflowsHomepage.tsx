@@ -52,14 +52,15 @@ const WorkflowsHomepage = observer(
         opportunityTypes,
         allOpportunitiesByType,
         user,
+        workflowsOfficerTitle,
       },
     } = useRootStore();
 
     const initial = (
       <WorkflowsNoResults
         headerText={getWelcomeText(user?.info.givenNames)}
-        callToActionText={`Search for officers above to review and refer eligible clients for 
-        opportunities like ${getSelectOpportunitiesText(opportunityTypes)}.`}
+        callToActionText={`Search for ${workflowsOfficerTitle}s above to review and refer eligible clients for
+          opportunities like ${getSelectOpportunitiesText(opportunityTypes)}.`}
       />
     );
 
@@ -67,7 +68,7 @@ const WorkflowsHomepage = observer(
       <WorkflowsNoResults
         callToActionText={simplur`None of the clients on the selected ${[
           selectedOfficerIds.length,
-        ]} officer['s|s'] caseloads are eligible for opportunities. Search for another officer.`}
+        ]} ${workflowsOfficerTitle}['s|s'] caseloads are eligible for opportunities. Search for another officer.`}
       />
     );
 

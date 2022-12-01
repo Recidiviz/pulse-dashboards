@@ -57,14 +57,18 @@ const Caseload = ({ persons }: { persons: JusticeInvolvedPerson[] }) => {
 
 export const AllCaseloads = observer(function AllCaseloads() {
   const {
-    workflowsStore: { caseloadPersons, selectedOfficerIds },
+    workflowsStore: {
+      caseloadPersons,
+      selectedOfficerIds,
+      workflowsOfficerTitle,
+    },
   } = useRootStore();
 
   if (!selectedOfficerIds.length)
     return (
       <WorkflowsNoResults
         headerText="All Clients"
-        callToActionText="Search for officer(s) above to view their entire caseload."
+        callToActionText={`Search for ${workflowsOfficerTitle}s above to view their entire caseload.`}
       />
     );
 

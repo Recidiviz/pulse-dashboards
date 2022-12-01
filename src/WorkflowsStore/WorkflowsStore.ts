@@ -53,8 +53,11 @@ import {
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
 import { Client, UNKNOWN } from "./Client";
-import { Opportunity, OpportunityType } from "./Opportunity/types";
-import { opportunityToSortFunctionMapping } from "./Opportunity/utils";
+import {
+  Opportunity,
+  opportunityToSortFunctionMapping,
+  OpportunityType,
+} from "./Opportunity";
 import { Resident } from "./Resident";
 import {
   CaseloadSubscription,
@@ -561,5 +564,14 @@ export class WorkflowsStore implements Hydratable {
 
   set formIsPrinting(value: boolean) {
     this.formPrintingFlag = value;
+  }
+
+  /**
+   * Title to display for officers in workflows
+   */
+  get workflowsOfficerTitle(): string {
+    const { currentTenantId } = this.rootStore;
+    if (!currentTenantId) return "officer";
+    return tenants[currentTenantId].workflowsOfficerTitleOverride ?? "officer";
   }
 }

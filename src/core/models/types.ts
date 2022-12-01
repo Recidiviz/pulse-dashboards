@@ -28,6 +28,7 @@ import { MetricCopy, PageCopy } from "../content/types";
 import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
 import { Navigation } from "../types/navigation";
+
 /**
  * All data comes back from the server as string values;
  * it will be up to us to cast those strings to other types as needed
@@ -51,6 +52,7 @@ export type TenantConfig = {
   enableUserRestrictions: boolean;
   enableVitalsCaseloadButton: boolean;
   workflowsEnableAllDistricts?: boolean;
+  workflowsOfficerTitleOverride?: string;
   navigation?: Navigation;
   betaNavigation?: Navigation;
   vitalsMetrics?: VitalsMetric[];
