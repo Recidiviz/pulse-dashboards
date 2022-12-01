@@ -14,14 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette, Sans12, Sans24, spacing } from "@recidiviz/design-system";
+import {
+  Button,
+  palette,
+  Sans12,
+  Sans24,
+  spacing,
+} from "@recidiviz/design-system";
+import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { useState } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../../../components/StoreProvider";
+import { Resident } from "../../../../WorkflowsStore/Resident";
 import { FormLastEdited } from "../../../FormLastEdited";
+import {
+  downloadMultipleZipped,
+  FileGeneratorArgs,
+} from "../../DOCXFormGenerator";
 import { connectComponentToOpportunityForm } from "../../OpportunityFormContext";
+import { REACTIVE_INPUT_UPDATE_DELAY } from "../../utils";
 import { WebForm } from "../../WebForm";
 import { WebFormFieldProps } from "../../WebFormField";
 
@@ -59,14 +73,49 @@ const SCCPFormFields: WebFormFieldProps[] = [
   { name: "caseManager", label: "Case Manager" },
 ];
 
+const formDownloader = async (resident: Resident): Promise<void> => {
+  await new Promise((resolve) =>
+    setTimeout(resolve, REACTIVE_INPUT_UPDATE_DELAY)
+  );
+
+  const { usMeSCCP } = resident.verifiedOpportunities;
+
+  const contents = {
+    ...toJS(usMeSCCP?.form?.formData),
+  };
+
+  const fileInputs: FileGeneratorArgs[] = [
+    "SCCP_program_plan",
+    "SCCP_warrantless_searches",
+    "SCCP_extradition_waiver",
+    "SCCP_disclosure",
+  ].map((filename) => {
+    return [
+      `${resident.displayName} ${filename}.docx`,
+      `${process.env.REACT_APP_API_URL}/api/${resident.stateCode}/workflows/templates?filename=${filename}.docx`,
+      contents,
+    ];
+  });
+
+  await downloadMultipleZipped(
+    `${resident.displayName} SCCP Packet.zip`,
+    fileInputs,
+    resident.rootStore.getTokenSilently
+  );
+};
+
 const Form = observer(function FormSCCP() {
   const { workflowsStore } = useRootStore();
   const opportunity =
     workflowsStore?.selectedPerson?.verifiedOpportunities?.usMeSCCP;
 
+  const [isDownloading, setIsDownloading] = useState(false);
+
   if (!opportunity) {
     return null;
   }
+
+  const resident = opportunity.person;
 
   return (
     <FormContainer>
@@ -79,6 +128,20 @@ const Form = observer(function FormSCCP() {
               <FormLastEdited agencyName="MDOC" form={opportunity.form} />
             </LastEditedMessage>
           </FormHeading>
+        </FormHeaderSection>
+        <FormHeaderSection>
+          <Button
+            kind="primary"
+            shape="block"
+            disabled={isDownloading}
+            onClick={async () => {
+              setIsDownloading(true);
+              await formDownloader(resident);
+              setIsDownloading(false);
+            }}
+          >
+            {isDownloading ? "Downloading..." : "Download .DOCX"}
+          </Button>
         </FormHeaderSection>
       </FormHeader>
       <WebForm fields={SCCPFormFields} />

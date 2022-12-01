@@ -23,11 +23,21 @@ import UserStore from "../../RootStore/UserStore";
 
 const DEFAULT_EMPTY_SPACE = "        ";
 
-const renderAndSaveDocument = (
+type FormContents = Record<string, any>;
+
+type GeneratedFileType = "blob" | "arraybuffer";
+
+export type FileGeneratorArgs = [
   fileName: string,
-  formContents: Record<string, any>,
-  template: ArrayBuffer
-): void => {
+  templateUrl: string,
+  formContents: FormContents
+];
+
+const renderDocument = (
+  formContents: FormContents,
+  template: ArrayBuffer,
+  generatedType: GeneratedFileType
+) => {
   const zip = new PizZip(template);
   const docxTemplate = new Docxtemplater(zip, {
     paragraphLoop: true,
@@ -38,20 +48,48 @@ const renderAndSaveDocument = (
   docxTemplate.setData(formContents);
   docxTemplate.render();
 
-  const document = docxTemplate.getZip().generate({
-    type: "blob",
+  return docxTemplate.getZip().generate({
+    type: generatedType,
     mimeType:
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   });
-  saveAs(document, fileName);
 };
 
-export const generate = async (
+const renderAndSaveDocument = (
   fileName: string,
-  templateUrl: string,
-  formContents: Record<string, any>,
-  getTokenSilently: UserStore["getTokenSilently"]
+  formContents: FormContents,
+  template: ArrayBuffer
+): void => {
+  saveAs(renderDocument(formContents, template, "blob"), fileName);
+};
+
+export const downloadSingle = async (
+  ...[fileName, templateUrl, formContents, getTokenSilently]: [
+    ...FileGeneratorArgs,
+    UserStore["getTokenSilently"]
+  ]
 ): Promise<void> => {
   const template = await fetchWorkflowsTemplates(templateUrl, getTokenSilently);
   return renderAndSaveDocument(fileName, formContents, template);
+};
+
+export const downloadMultipleZipped = async (
+  zipFileName: string,
+  fileInputs: FileGeneratorArgs[],
+  getTokenSilently: UserStore["getTokenSilently"]
+): Promise<void> => {
+  const zip = new PizZip();
+
+  await Promise.all(
+    fileInputs.map(async ([fileName, templateUrl, formContents]) => {
+      const template = await fetchWorkflowsTemplates(
+        templateUrl,
+        getTokenSilently
+      );
+      const doc = renderDocument(formContents, template, "arraybuffer");
+      zip.file(fileName, doc);
+    })
+  );
+
+  saveAs(zip.generate({ type: "blob" }), zipFileName);
 };

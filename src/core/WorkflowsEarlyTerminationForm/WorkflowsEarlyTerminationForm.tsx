@@ -22,7 +22,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
 import { FormLastEdited } from "../FormLastEdited";
-import { generate } from "../Paperwork/DOCXFormGenerator";
+import { downloadSingle } from "../Paperwork/DOCXFormGenerator";
 import FormViewer from "../Paperwork/FormViewer";
 import {
   connectComponentToOpportunityForm,
@@ -61,7 +61,7 @@ const formDownloader = async (
     additionalDepositionLines: collectAdditionalDepositionLinesToPrint(client),
   };
 
-  await generate(
+  await downloadSingle(
     fileName,
     templateUrl,
     contents,
