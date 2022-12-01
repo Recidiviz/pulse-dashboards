@@ -404,9 +404,10 @@ export const usMePersonRecord: ResidentRecord = {
   allEligibleOpportunities: ["usMeSCCP"],
 };
 
-export const usMeSCCPRecordFixture: UsMeSCCPReferralRecord = {
+export const usMeSCCPEligibleRecordFixture: UsMeSCCPReferralRecord = {
   stateCode: "US_ME",
   externalId: "111",
+  ineligibleCriteria: {},
   criteria: {
     usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
     usMeServedXPortionOfSentence: {
@@ -414,6 +415,31 @@ export const usMeSCCPRecordFixture: UsMeSCCPReferralRecord = {
     },
     usMeXMonthsRemainingOnSentence: {
       eligibleDate: parseISO("2022-08-14"),
+    },
+  },
+  caseNotes: {
+    foo: [
+      {
+        noteTitle: "A title",
+        noteBody: "A body",
+        eventDate: parseISO("2022-06-28"),
+      },
+    ],
+  },
+};
+
+export const usMeSCCPAlmostEligibleRecordFixture: UsMeSCCPReferralRecord = {
+  stateCode: "US_ME",
+  externalId: "111",
+  ineligibleCriteria: {
+    usMeXMonthsRemainingOnSentence: {
+      eligibleDate: parseISO("2023-06-14"),
+    },
+  },
+  criteria: {
+    usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+    usMeServedXPortionOfSentence: {
+      eligibleDate: parseISO("2022-10-12"),
     },
   },
   caseNotes: {

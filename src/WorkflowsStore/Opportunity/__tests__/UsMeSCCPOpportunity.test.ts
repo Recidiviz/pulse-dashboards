@@ -21,7 +21,11 @@ import tk from "timekeeper";
 import { RootStore } from "../../../RootStore";
 import { Resident } from "../../Resident";
 import { DocumentSubscription } from "../../subscriptions";
-import { usMePersonRecord, usMeSCCPRecordFixture } from "../__fixtures__";
+import {
+  usMePersonRecord,
+  usMeSCCPAlmostEligibleRecordFixture,
+  usMeSCCPEligibleRecordFixture,
+} from "../__fixtures__";
 import { UsMeSCCPOpportunity } from "../UsMeSCCPOpportunity";
 
 let opp: UsMeSCCPOpportunity;
@@ -64,10 +68,59 @@ describe("fully eligible", () => {
 
     referralSub = opp.referralSubscription;
     referralSub.isLoading = false;
-    referralSub.data = usMeSCCPRecordFixture;
+    referralSub.data = usMeSCCPEligibleRecordFixture;
   });
 
   test("requirements met", () => {
     expect(opp.requirementsMet).toMatchSnapshot();
+  });
+
+  test("almost eligible", () => {
+    expect(opp.almostEligible).toBeFalse();
+    expect(opp.requirementsAlmostMet).toHaveLength(0);
+  });
+});
+
+describe("almost eligible", () => {
+  beforeEach(() => {
+    createTestUnit(usMePersonRecord);
+
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.data = usMeSCCPAlmostEligibleRecordFixture;
+  });
+
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+    expect(opp.requirementsAlmostMet).toMatchSnapshot();
+  });
+
+  test("almost eligible", () => {
+    expect(opp.almostEligible).toBeTrue();
+  });
+});
+
+describe("ensure requirements text updates when source changes", () => {
+  test("from eligible to ineligible", () => {
+    // This is specifically to check for a bug where the first time we built
+    // requirements we accidentally overwrote the source template instead of
+    // copying it which made the requirements text never update until a reload.
+    createTestUnit(usMePersonRecord);
+
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.data = usMeSCCPEligibleRecordFixture;
+
+    const textEligible = opp.requirementsMet.find(({ text }) =>
+      text.includes("months remaining on sentence")
+    )!.text;
+
+    referralSub.data = usMeSCCPAlmostEligibleRecordFixture;
+
+    const textAlmostEligible = opp.requirementsAlmostMet.find(({ text }) =>
+      text.includes("months remaining on sentence")
+    )!.text;
+
+    expect(textEligible).not.toEqual(textAlmostEligible);
   });
 });

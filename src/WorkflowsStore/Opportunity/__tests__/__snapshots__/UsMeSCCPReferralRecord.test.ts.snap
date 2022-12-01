@@ -1,5 +1,34 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`transform almost-eligible record 1`] = `
+Object {
+  "caseNotes": Object {
+    "foo": Array [
+      Object {
+        "eventDate": 2022-06-28T00:00:00.000Z,
+        "noteBody": "A body",
+        "noteTitle": "A title",
+      },
+    ],
+  },
+  "criteria": Object {
+    "usMeMinimumOrCommunityCustody": Object {
+      "custodyLevel": "MINIMUM",
+    },
+  },
+  "externalId": "002",
+  "ineligibleCriteria": Object {
+    "usMeServedXPortionOfSentence": Object {
+      "eligibleDate": 2023-01-03T00:00:00.000Z,
+    },
+    "usMeXMonthsRemainingOnSentence": Object {
+      "eligibleDate": 2022-12-07T00:00:00.000Z,
+    },
+  },
+  "stateCode": "US_ME",
+}
+`;
+
 exports[`transform record 1`] = `
 Object {
   "caseNotes": Object {
@@ -23,6 +52,7 @@ Object {
     },
   },
   "externalId": "001",
+  "ineligibleCriteria": Object {},
   "stateCode": "US_ME",
 }
 `;

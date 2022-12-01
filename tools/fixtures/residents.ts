@@ -35,7 +35,7 @@ export const residentsData: Omit<
     unitId: "UNIT A",
     custodyLevel: "MINIMUM",
     admissionDate: "2019-08-12",
-    releaseDate: "2024-01-01",
+    releaseDate: "2025-10-22",
   },
   {
     allEligibleOpportunities: ["usMeSCCP"],
@@ -51,6 +51,6 @@ export const residentsData: Omit<
     unitId: "UNIT B",
     custodyLevel: "MINIMUM",
     admissionDate: "2020-08-12",
-    releaseDate: "2025-06-04",
+    releaseDate: "2024-11-27",
   },
 ];

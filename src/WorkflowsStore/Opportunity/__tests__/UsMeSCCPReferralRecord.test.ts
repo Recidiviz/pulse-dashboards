@@ -15,10 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { transformReferral } from "../UsMeSCCPReferralRecord";
+import {
+  transformReferral,
+  UsMeSCCPReferralRecord,
+} from "../UsMeSCCPReferralRecord";
 
 test("transform record", () => {
-  const rawRecord = {
+  const rawRecord: Record<keyof UsMeSCCPReferralRecord, any> = {
     stateCode: "US_ME",
     externalId: "001",
     criteria: {
@@ -28,6 +31,36 @@ test("transform record", () => {
       },
       usMeXMonthsRemainingOnSentence: {
         eligibleDate: "2022-08-07",
+      },
+    },
+    ineligibleCriteria: {},
+    caseNotes: {
+      foo: [
+        {
+          noteTitle: "A title",
+          noteBody: "A body",
+          eventDate: "2022-06-28",
+        },
+      ],
+    },
+  };
+
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});
+
+test("transform almost-eligible record", () => {
+  const rawRecord: Record<keyof UsMeSCCPReferralRecord, any> = {
+    stateCode: "US_ME",
+    externalId: "002",
+    criteria: {
+      usMeMinimumOrCommunityCustody: { custodyLevel: "MINIMUM" },
+    },
+    ineligibleCriteria: {
+      usMeServedXPortionOfSentence: {
+        eligibleDate: "2023-01-03",
+      },
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: "2022-12-07",
       },
     },
     caseNotes: {

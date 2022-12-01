@@ -16,7 +16,8 @@
 // =============================================================================
 
 import { differenceInMonths } from "date-fns";
-import { computed, makeObservable } from "mobx";
+import { cloneDeep } from "lodash";
+import { computed, makeObservable, observable } from "mobx";
 
 import { Resident } from "../Resident";
 import { OTHER_KEY } from "../utils";
@@ -25,6 +26,7 @@ import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import {
   transformReferral,
+  UsMeSCCPCriteria,
   UsMeSCCPReferralRecord,
 } from "./UsMeSCCPReferralRecord";
 
@@ -39,7 +41,7 @@ const DENIAL_REASONS_MAP = {
 };
 
 const CRITERIA_COPY: Record<
-  keyof UsMeSCCPReferralRecord["criteria"],
+  keyof UsMeSCCPCriteria,
   Required<OpportunityRequirement>
 > = {
   usMeMinimumOrCommunityCustody: {
@@ -68,6 +70,59 @@ const CRITERIA_COPY: Record<
   },
 };
 
+const requirementsForCriteria = (
+  criteria: Partial<UsMeSCCPCriteria>
+): OpportunityRequirement[] => {
+  const requirements: OpportunityRequirement[] = [];
+
+  const {
+    usMeMinimumOrCommunityCustody,
+    usMeServedXPortionOfSentence,
+    usMeXMonthsRemainingOnSentence,
+  } = cloneDeep(CRITERIA_COPY);
+
+  if (criteria.usMeMinimumOrCommunityCustody) {
+    usMeMinimumOrCommunityCustody.text = usMeMinimumOrCommunityCustody.text.replace(
+      "$CUSTODY_LEVEL",
+      criteria.usMeMinimumOrCommunityCustody.custodyLevel.toLowerCase()
+    );
+    requirements.push(usMeMinimumOrCommunityCustody);
+  }
+
+  if (criteria.usMeServedXPortionOfSentence) {
+    // TODO(#2708): Figure out when this is 1/2 and when this is 2/3
+    const lengthCondition: "5 years or less" | "more than 5 years" =
+      "5 years or less";
+    const minimumFraction: "1/2" | "2/3" = "1/2";
+
+    usMeServedXPortionOfSentence.text = usMeServedXPortionOfSentence.text.replace(
+      "$MINIMUM_FRACTION",
+      minimumFraction
+    );
+    usMeServedXPortionOfSentence.tooltip = usMeServedXPortionOfSentence.tooltip
+      .replace("$MINIMUM_FRACTION", minimumFraction)
+      .replace("$LENGTH_CONDITION", lengthCondition);
+    requirements.push(usMeServedXPortionOfSentence);
+  }
+
+  if (criteria.usMeXMonthsRemainingOnSentence) {
+    const monthsRemaining =
+      differenceInMonths(
+        criteria.usMeXMonthsRemainingOnSentence.eligibleDate,
+        new Date()
+      ) + 30;
+
+    usMeXMonthsRemainingOnSentence.text = usMeXMonthsRemainingOnSentence.text.replace(
+      "$MONTHS_REMAINING",
+      `${monthsRemaining}`
+    );
+
+    requirements.push(usMeXMonthsRemainingOnSentence);
+  }
+
+  return requirements;
+};
+
 export class UsMeSCCPOpportunity extends OpportunityBase<
   Resident,
   UsMeSCCPReferralRecord
@@ -79,12 +134,17 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
   policyOrMethodologyUrl =
     "https://www.maine.gov/sos/cec/rules/03/201/c10s272.docx";
 
+  almostEligibleRecommendedNote = undefined;
+
   constructor(resident: Resident) {
     super(resident, "usMeSCCP", resident.rootStore, transformReferral);
     this.resident = resident;
 
     makeObservable(this, {
+      almostEligible: computed,
+      almostEligibleRecommendedNote: observable,
       requirementsMet: computed,
+      requirementsAlmostMet: computed,
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
@@ -92,53 +152,19 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
     this.form = new UsMeSCCPForm("usMeSCCP", this, resident.rootStore);
   }
 
+  get almostEligible(): boolean {
+    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
+  }
+
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
     const { criteria } = this.record;
-    const requirements: OpportunityRequirement[] = [];
+    return requirementsForCriteria(criteria);
+  }
 
-    const {
-      usMeMinimumOrCommunityCustody,
-      usMeServedXPortionOfSentence,
-      usMeXMonthsRemainingOnSentence,
-    } = CRITERIA_COPY;
-
-    if (criteria.usMeMinimumOrCommunityCustody) {
-      // TODO(#2708): Figure out when this is 1/2 and when this is 2/3
-      usMeMinimumOrCommunityCustody.text = usMeMinimumOrCommunityCustody.text.replace(
-        "$CUSTODY_LEVEL",
-        criteria.usMeMinimumOrCommunityCustody.custodyLevel.toLowerCase()
-      );
-      requirements.push(usMeMinimumOrCommunityCustody);
-    }
-    if (criteria.usMeServedXPortionOfSentence?.eligibleDate <= new Date()) {
-      const lengthCondition: "5 years or less" | "more than 5 years" =
-        "5 years or less";
-      const minimumFraction: "1/2" | "2/3" = "1/2";
-
-      usMeServedXPortionOfSentence.text = usMeServedXPortionOfSentence.text.replace(
-        "$MINIMUM_FRACTION",
-        minimumFraction
-      );
-      usMeServedXPortionOfSentence.tooltip = usMeServedXPortionOfSentence.tooltip
-        .replace("$MINIMUM_FRACTION", minimumFraction)
-        .replace("$LENGTH_CONDITION", lengthCondition);
-      requirements.push(usMeServedXPortionOfSentence);
-    }
-
-    if (criteria.usMeXMonthsRemainingOnSentence?.eligibleDate <= new Date()) {
-      const monthsRemaining = this.resident.releaseDate
-        ? differenceInMonths(this.resident.releaseDate, new Date())
-        : "Under 36";
-
-      usMeXMonthsRemainingOnSentence.text = usMeXMonthsRemainingOnSentence.text.replace(
-        "$MONTHS_REMAINING",
-        `${monthsRemaining}`
-      );
-
-      requirements.push(usMeXMonthsRemainingOnSentence);
-    }
-
-    return requirements;
+  get requirementsAlmostMet(): OpportunityRequirement[] {
+    if (!this.record) return [];
+    const { ineligibleCriteria } = this.record;
+    return requirementsForCriteria(ineligibleCriteria);
   }
 }

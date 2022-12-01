@@ -3,9 +3,11 @@
     "stateCode": "US_ME",
     "externalId": "RES001",
     "criteria": {
-      "usMeMinimumOrCommunityCustody": { "custodyLevel": "MINIMUM" },
-      "usMeServedXPortionOfSentence": { "eligibleDate": "2022-08-10" },
-      "usMeXMonthsRemainingOnSentence": { "eligibleDate": "2022-09-22" }
+      "usMeMinimumOrCommunityCustody": { "custodyLevel": "COMMUNITY" },
+      "usMeServedXPortionOfSentence": { "eligibleDate": "2022-08-10" }
+    },
+    "ineligibleCriteria": {
+      "usMeXMonthsRemainingOnSentence": { "eligibleDate": "2023-04-22" }
     },
     "caseNotes": {
       "Education": [
@@ -25,6 +27,7 @@
       "usMeServedXPortionOfSentence": { "eligibleDate": "2021-06-12" },
       "usMeXMonthsRemainingOnSentence": { "eligibleDate": "2022-05-27" }
     },
+    "ineligibleCriteria": {},
     "caseNotes": {
       "Employment Training": [
         {

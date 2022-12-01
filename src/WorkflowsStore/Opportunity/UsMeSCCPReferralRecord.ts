@@ -24,14 +24,17 @@ import { fieldToDate } from "../utils";
 import { WithCaseNotes } from "./types";
 import { transformCaseNotes } from "./utils";
 
+export type UsMeSCCPCriteria = {
+  usMeMinimumOrCommunityCustody: { custodyLevel: string };
+  usMeServedXPortionOfSentence: { eligibleDate: Date };
+  usMeXMonthsRemainingOnSentence: { eligibleDate: Date };
+};
+
 export type UsMeSCCPReferralRecord = {
   stateCode: string;
   externalId: string;
-  criteria: {
-    usMeMinimumOrCommunityCustody: { custodyLevel: string };
-    usMeServedXPortionOfSentence: { eligibleDate: Date };
-    usMeXMonthsRemainingOnSentence: { eligibleDate: Date };
-  };
+  criteria: Partial<UsMeSCCPCriteria>;
+  ineligibleCriteria: Partial<UsMeSCCPCriteria>;
 } & WithCaseNotes;
 
 export type UsMeSCCPDraftData = {
@@ -41,6 +44,28 @@ export type UsMeSCCPDraftData = {
   caseManager: string;
 };
 
+const transformCriteria = (
+  criteria: Partial<Record<keyof UsMeSCCPCriteria, Record<string, string>>>
+): Partial<UsMeSCCPCriteria> => {
+  const transformedCriteria = cloneDeep(criteria) as Partial<UsMeSCCPCriteria>;
+
+  if (transformedCriteria.usMeServedXPortionOfSentence) {
+    transformedCriteria.usMeServedXPortionOfSentence.eligibleDate = fieldToDate(
+      // @ts-expect-error: We know this field exists since the one we checked above is a clone of it
+      criteria.usMeServedXPortionOfSentence.eligibleDate
+    );
+  }
+
+  if (transformedCriteria.usMeXMonthsRemainingOnSentence) {
+    transformedCriteria.usMeXMonthsRemainingOnSentence.eligibleDate = fieldToDate(
+      // @ts-expect-error: We know this field exists since the one we checked above is a clone of it
+      criteria.usMeXMonthsRemainingOnSentence.eligibleDate
+    );
+  }
+
+  return transformedCriteria;
+};
+
 export const transformReferral: TransformFunction<UsMeSCCPReferralRecord> = (
   record
 ) => {
@@ -48,12 +73,9 @@ export const transformReferral: TransformFunction<UsMeSCCPReferralRecord> = (
 
   const transformedRecord = cloneDeep(record) as UsMeSCCPReferralRecord;
 
-  transformedRecord.criteria.usMeServedXPortionOfSentence.eligibleDate = fieldToDate(
-    record.criteria.usMeServedXPortionOfSentence.eligibleDate
-  );
-
-  transformedRecord.criteria.usMeXMonthsRemainingOnSentence.eligibleDate = fieldToDate(
-    record.criteria.usMeXMonthsRemainingOnSentence.eligibleDate
+  transformedRecord.criteria = transformCriteria(record.criteria);
+  transformedRecord.ineligibleCriteria = transformCriteria(
+    record.ineligibleCriteria
   );
 
   transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
