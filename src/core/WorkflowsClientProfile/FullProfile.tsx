@@ -163,11 +163,9 @@ export const FullProfile = observer(
       workflowsStore: { selectedPerson: person },
     } = useRootStore();
 
-    // TODO(#2726): Expand logging to cover residents
-    usePersonTracking(
-      person,
-      () => person instanceof Client && person?.trackProfileViewed()
-    );
+    usePersonTracking(person, () => {
+      person?.trackProfileViewed();
+    });
 
     if (!person) return null;
 

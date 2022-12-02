@@ -200,6 +200,7 @@ export abstract class OpportunityBase<
         updateOpportunityCompleted(currentUserEmail, recordId, this.type);
         trackSetOpportunityStatus({
           clientId: pseudonymizedId,
+          justiceInvolvedPersonId: pseudonymizedId,
           status: "COMPLETED",
           opportunityType: this.type,
         });
@@ -269,6 +270,7 @@ export abstract class OpportunityBase<
     if (reasons.length) {
       trackSetOpportunityStatus({
         clientId: pseudonymizedId,
+        justiceInvolvedPersonId: pseudonymizedId,
         status: "DENIED",
         opportunityType: this.type,
         deniedReasons: reasons,
@@ -276,11 +278,13 @@ export abstract class OpportunityBase<
     } else {
       trackSetOpportunityStatus({
         clientId: pseudonymizedId,
+        justiceInvolvedPersonId: pseudonymizedId,
         status: "IN_PROGRESS",
         opportunityType: this.type,
       });
       trackOpportunityMarkedEligible({
         clientId: pseudonymizedId,
+        justiceInvolvedPersonId: pseudonymizedId,
         opportunityType: this.type,
       });
     }
@@ -302,6 +306,7 @@ export abstract class OpportunityBase<
   trackListViewed(): void {
     trackSurfacedInList({
       clientId: this.person.pseudonymizedId,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });
   }
@@ -309,6 +314,7 @@ export abstract class OpportunityBase<
   trackPreviewed(): void {
     trackOpportunityPreviewed({
       clientId: this.person.pseudonymizedId,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });
   }

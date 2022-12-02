@@ -57,51 +57,51 @@ const track = (eventName: string, metadata?: Record<string, unknown>): void => {
   }
 };
 
-type ClientOpportunityTrackingMetadata = {
+type OpportunityTrackingMetadata = {
+  // TODO(#2726): remove this field once BQ has been migrated to the new one
   clientId: string;
+  justiceInvolvedPersonId: string;
   opportunityType: OpportunityType;
 };
 
 export function trackReferralFormViewed(
-  metadata: ClientOpportunityTrackingMetadata
+  metadata: OpportunityTrackingMetadata
 ): void {
   track("frontend.referral_form_viewed", metadata);
 }
 
 export function trackReferralFormFirstEdited(
-  metadata: ClientOpportunityTrackingMetadata
+  metadata: OpportunityTrackingMetadata
 ): void {
   track("frontend.referral_form_first_edited", metadata);
 }
 
 export const trackReferralFormPrinted = (
-  metadata: ClientOpportunityTrackingMetadata
+  metadata: OpportunityTrackingMetadata
 ): void => {
   track("frontend.referral_form_printed", metadata);
 };
 
 export function trackSurfacedInList(
-  metadata: ClientOpportunityTrackingMetadata
+  metadata: OpportunityTrackingMetadata
 ): void {
   track("frontend.surfaced_in_list", metadata);
 }
 
 export function trackSetOpportunityStatus<
-  Metadata extends ClientOpportunityTrackingMetadata & {
+  Metadata extends OpportunityTrackingMetadata & {
     status: OpportunityStatus;
   }
 >(metadata: Metadata): void {
   track("frontend.opportunity_status_updated", metadata);
 }
 
-export function trackClientProfileViewed(metadata: { clientId: string }): void {
+export function trackProfileViewed(metadata: {
+  // TODO(#2726): remove this field once BQ has been migrated to the new one
+  clientId: string;
+  justiceInvolvedPersonId: string;
+}): void {
   track("frontend.profile_viewed", metadata);
-}
-
-export function trackProfileOpportunityClicked(
-  metadata: ClientOpportunityTrackingMetadata
-): void {
-  track("frontend.profile_opportunity_link_clicked", metadata);
 }
 
 export function trackCaseloadSearch(metadata: {
@@ -112,19 +112,19 @@ export function trackCaseloadSearch(metadata: {
 }
 
 export function trackOpportunityPreviewed(
-  metadata: ClientOpportunityTrackingMetadata
+  metadata: OpportunityTrackingMetadata
 ): void {
   track("frontend.opportunity_previewed", metadata);
 }
 
 export function trackOpportunityMarkedEligible(
-  metadata: ClientOpportunityTrackingMetadata
+  metadata: OpportunityTrackingMetadata
 ): void {
   track("frontend.opportunity_marked_eligible", metadata);
 }
 
 export function trackReferralFormCopiedToClipboard(
-  metadata: ClientOpportunityTrackingMetadata
+  metadata: OpportunityTrackingMetadata
 ): void {
   track("frontend.referral_form_copied_to_clipboard", metadata);
 }

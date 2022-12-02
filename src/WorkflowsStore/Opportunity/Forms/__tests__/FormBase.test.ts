@@ -60,6 +60,7 @@ test("form view tracking", () => {
 
   expect(trackReferralFormViewed).toHaveBeenCalledWith({
     clientId: client.pseudonymizedId,
+    justiceInvolvedPersonId: client.pseudonymizedId,
     opportunityType: "LSU",
   });
 });
@@ -84,6 +85,7 @@ describe("form printing", () => {
     form.print();
     expect(trackReferralFormPrinted).toHaveBeenCalledWith({
       clientId: client.pseudonymizedId,
+      justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: form.type,
     });
   });

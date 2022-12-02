@@ -109,6 +109,7 @@ export type JusticeInvolvedPerson = {
    */
   opportunitiesAlmostEligible: OpportunityMapping;
   allOpportunitiesLoaded: boolean;
+  trackProfileViewed: () => void;
 };
 
 export type PersonRecordType =

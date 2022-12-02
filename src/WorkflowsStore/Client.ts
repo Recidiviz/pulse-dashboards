@@ -18,10 +18,6 @@
 import { makeObservable, override } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
-import {
-  trackClientProfileViewed,
-  trackProfileOpportunityClicked,
-} from "../analytics";
 import { ClientRecord, SpecialConditionCode } from "../firestore";
 import type { RootStore } from "../RootStore";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
@@ -32,7 +28,6 @@ import {
   LSUOpportunity,
   Opportunity,
   OpportunityFactory,
-  OpportunityType,
   PastFTRDOpportunity,
   SupervisionLevelDowngradeOpportunity,
   SupervisionOpportunityType,
@@ -160,17 +155,6 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       (o) => o.id === this.assignedStaffId
     );
     return officer?.district;
-  }
-
-  trackProfileViewed(): void {
-    trackClientProfileViewed({ clientId: this.pseudonymizedId });
-  }
-
-  trackProfileOpportunityClicked(opportunityType: OpportunityType): void {
-    trackProfileOpportunityClicked({
-      clientId: this.pseudonymizedId,
-      opportunityType,
-    });
   }
 
   get detailsCopy(): ClientDetailsCopy {

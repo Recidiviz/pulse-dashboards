@@ -298,6 +298,7 @@ describe("setCompletedIfEligible", () => {
 
     expect(trackSetOpportunityStatusMock).toHaveBeenCalledWith({
       clientId: ineligibleClientRecord.pseudonymizedId,
+      justiceInvolvedPersonId: ineligibleClientRecord.pseudonymizedId,
       opportunityType: "TEST",
       status: "COMPLETED",
     });
@@ -399,6 +400,7 @@ describe("setDenialReasons", () => {
 
     expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
       clientId: client.pseudonymizedId,
+      justiceInvolvedPersonId: client.pseudonymizedId,
       status: "DENIED",
       opportunityType: opp.type,
       deniedReasons: reasons,
@@ -413,11 +415,13 @@ describe("setDenialReasons", () => {
 
     expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
       clientId: client.pseudonymizedId,
+      justiceInvolvedPersonId: client.pseudonymizedId,
       status: "IN_PROGRESS",
       opportunityType: opp.type,
     });
     expect(trackOpportunityMarkedEligible).toHaveBeenCalledWith({
       clientId: client.pseudonymizedId,
+      justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
     });
   });
@@ -442,6 +446,7 @@ test("list view tracking", () => {
 
   expect(trackSurfacedInList).toHaveBeenCalledWith({
     clientId: client.pseudonymizedId,
+    justiceInvolvedPersonId: client.pseudonymizedId,
     opportunityType: opp.type,
   });
 });
@@ -451,6 +456,7 @@ test("preview tracking", async () => {
 
   expect(trackOpportunityPreviewed).toHaveBeenCalledWith({
     clientId: client.pseudonymizedId,
+    justiceInvolvedPersonId: client.pseudonymizedId,
     opportunityType: opp.type,
   });
 });

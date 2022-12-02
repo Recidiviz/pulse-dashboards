@@ -71,6 +71,7 @@ const WorkflowsLSUForm = observer(function WorkflowsLSUForm() {
     opportunity.setCompletedIfEligible();
     trackReferralFormCopiedToClipboard({
       clientId: opportunity.person.pseudonymizedId,
+      justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
       opportunityType: opportunity.type,
     });
   };

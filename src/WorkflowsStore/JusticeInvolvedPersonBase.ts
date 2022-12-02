@@ -30,6 +30,7 @@ import {
   values,
 } from "mobx";
 
+import { trackProfileViewed } from "../analytics";
 import { FullName, JusticeInvolvedPersonRecord } from "../firestore";
 import { RootStore } from "../RootStore";
 import { OpportunityFactory, OpportunityType } from "./Opportunity";
@@ -185,5 +186,12 @@ export class JusticeInvolvedPersonBase<
 
   updateRecord(newRecord: RecordType): void {
     this.record = newRecord;
+  }
+
+  trackProfileViewed(): void {
+    trackProfileViewed({
+      clientId: this.pseudonymizedId,
+      justiceInvolvedPersonId: this.pseudonymizedId,
+    });
   }
 }
