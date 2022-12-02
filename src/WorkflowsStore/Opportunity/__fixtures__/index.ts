@@ -408,7 +408,7 @@ export const usMeSCCPEligibleRecordFixture: UsMeSCCPReferralRecord = {
   stateCode: "US_ME",
   externalId: "111",
   ineligibleCriteria: {},
-  criteria: {
+  eligibleCriteria: {
     usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
     usMeServedXPortionOfSentence: {
       eligibleDate: parseISO("2022-10-12"),
@@ -436,7 +436,7 @@ export const usMeSCCPAlmostEligibleRecordFixture: UsMeSCCPReferralRecord = {
       eligibleDate: parseISO("2023-06-14"),
     },
   },
-  criteria: {
+  eligibleCriteria: {
     usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
     usMeServedXPortionOfSentence: {
       eligibleDate: parseISO("2022-10-12"),

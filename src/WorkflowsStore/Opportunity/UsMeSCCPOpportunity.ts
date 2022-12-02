@@ -158,8 +158,8 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
 
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
-    const { criteria } = this.record;
-    return requirementsForCriteria(criteria);
+    const { eligibleCriteria } = this.record;
+    return requirementsForCriteria(eligibleCriteria);
   }
 
   get requirementsAlmostMet(): OpportunityRequirement[] {

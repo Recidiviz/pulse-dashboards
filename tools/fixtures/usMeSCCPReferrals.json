@@ -2,7 +2,7 @@
   {
     "stateCode": "US_ME",
     "externalId": "RES001",
-    "criteria": {
+    "eligibleCriteria": {
       "usMeMinimumOrCommunityCustody": { "custodyLevel": "COMMUNITY" },
       "usMeServedXPortionOfSentence": { "eligibleDate": "2022-08-10" }
     },
@@ -22,7 +22,7 @@
   {
     "stateCode": "US_ME",
     "externalId": "RES002",
-    "criteria": {
+    "eligibleCriteria": {
       "usMeMinimumOrCommunityCustody": { "custodyLevel": "MINIMUM" },
       "usMeServedXPortionOfSentence": { "eligibleDate": "2021-06-12" },
       "usMeXMonthsRemainingOnSentence": { "eligibleDate": "2022-05-27" }

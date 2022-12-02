@@ -24,7 +24,7 @@ test("transform record", () => {
   const rawRecord: Record<keyof UsMeSCCPReferralRecord, any> = {
     stateCode: "US_ME",
     externalId: "001",
-    criteria: {
+    eligibleCriteria: {
       usMeMinimumOrCommunityCustody: { custodyLevel: "MINIMUM" },
       usMeServedXPortionOfSentence: {
         eligibleDate: "2022-11-03",
@@ -52,7 +52,7 @@ test("transform almost-eligible record", () => {
   const rawRecord: Record<keyof UsMeSCCPReferralRecord, any> = {
     stateCode: "US_ME",
     externalId: "002",
-    criteria: {
+    eligibleCriteria: {
       usMeMinimumOrCommunityCustody: { custodyLevel: "MINIMUM" },
     },
     ineligibleCriteria: {

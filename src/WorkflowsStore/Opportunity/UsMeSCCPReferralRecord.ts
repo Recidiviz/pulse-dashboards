@@ -33,7 +33,7 @@ export type UsMeSCCPCriteria = {
 export type UsMeSCCPReferralRecord = {
   stateCode: string;
   externalId: string;
-  criteria: Partial<UsMeSCCPCriteria>;
+  eligibleCriteria: Partial<UsMeSCCPCriteria>;
   ineligibleCriteria: Partial<UsMeSCCPCriteria>;
 } & WithCaseNotes;
 
@@ -73,7 +73,9 @@ export const transformReferral: TransformFunction<UsMeSCCPReferralRecord> = (
 
   const transformedRecord = cloneDeep(record) as UsMeSCCPReferralRecord;
 
-  transformedRecord.criteria = transformCriteria(record.criteria);
+  transformedRecord.eligibleCriteria = transformCriteria(
+    record.eligibleCriteria
+  );
   transformedRecord.ineligibleCriteria = transformCriteria(
     record.ineligibleCriteria
   );

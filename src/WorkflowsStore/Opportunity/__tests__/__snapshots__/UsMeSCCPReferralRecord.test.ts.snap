@@ -11,7 +11,7 @@ Object {
       },
     ],
   },
-  "criteria": Object {
+  "eligibleCriteria": Object {
     "usMeMinimumOrCommunityCustody": Object {
       "custodyLevel": "MINIMUM",
     },
@@ -40,7 +40,7 @@ Object {
       },
     ],
   },
-  "criteria": Object {
+  "eligibleCriteria": Object {
     "usMeMinimumOrCommunityCustody": Object {
       "custodyLevel": "MINIMUM",
     },
