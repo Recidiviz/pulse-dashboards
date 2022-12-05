@@ -31,6 +31,7 @@ import {
   onBecomeObserved,
   onBecomeUnobserved,
   reaction,
+  runInAction,
 } from "mobx";
 import { IDisposer } from "mobx-utils";
 
@@ -122,8 +123,20 @@ export abstract class FirestoreQuerySubscription<
     if (!this.dataSource) {
       this.updateData(undefined);
     } else {
-      this.cancelSnapshotListener = onSnapshot(this.dataSource, (result) =>
-        this.updateData(result)
+      this.cancelSnapshotListener = onSnapshot(
+        this.dataSource,
+        (result) => this.updateData(result),
+        (error) => {
+          runInAction(() => {
+            // an error that occurs after data is fetched is considered a partial failure,
+            // but this one means that the fetch operation itself failed and therefore so does hydration.
+            this.error = error;
+            this.isHydrated = false;
+            this.isLoading = false;
+            this.data = [];
+          });
+          Sentry.captureException(error);
+        }
       );
     }
 

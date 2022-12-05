@@ -16,14 +16,23 @@
 // =============================================================================
 
 import { DocumentData } from "@google-cloud/firestore";
-import { DocumentReference, onSnapshot } from "firebase/firestore";
+import * as Sentry from "@sentry/react";
+import {
+  DocumentReference,
+  FirestoreError,
+  onSnapshot,
+} from "firebase/firestore";
 import { computed } from "mobx";
 import { keepAlive } from "mobx-utils";
 
 import { FirestoreDocumentSubscription } from "../FirestoreDocumentSubscription";
-import { getMockDocumentSnapshotHandler } from "./testUtils";
+import {
+  getMockDocumentSnapshotHandler,
+  getMockSnapshotErrorHandler,
+} from "./testUtils";
 
 jest.mock("firebase/firestore");
+jest.mock("@sentry/react");
 
 const onSnapshotMock = onSnapshot as jest.Mock;
 
@@ -193,4 +202,21 @@ test("stale data cleared when validation fails", () => {
   mockReceive({ bar: "foo" });
   expect(sub.data).toBeUndefined();
   expect(sub.error).toBeDefined();
+});
+
+test("handles Firestore error", () => {
+  const mockReceiveError = getMockSnapshotErrorHandler(onSnapshotMock);
+  const testError: FirestoreError = {
+    message: "test message",
+    code: "permission-denied",
+    name: "FirebaseError",
+  };
+  sub.subscribe();
+
+  mockReceiveError(testError);
+  expect(Sentry.captureException).toHaveBeenCalledWith(testError);
+  expect(sub.error).toEqual(testError);
+  expect(sub.isHydrated).toBe(false);
+  expect(sub.isLoading).toBeFalse();
+  expect(sub.data).toBeUndefined();
 });

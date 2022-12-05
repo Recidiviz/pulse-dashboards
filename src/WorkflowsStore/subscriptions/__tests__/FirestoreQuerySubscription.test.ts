@@ -15,14 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DocumentData, onSnapshot, Query } from "firebase/firestore";
+import * as Sentry from "@sentry/react";
+import {
+  DocumentData,
+  FirestoreError,
+  onSnapshot,
+  Query,
+} from "firebase/firestore";
 import { computed, IObservableValue, observable } from "mobx";
 import { keepAlive } from "mobx-utils";
 
 import { FirestoreQuerySubscription } from "../FirestoreQuerySubscription";
-import { getMockQuerySnapshotHandler } from "./testUtils";
+import {
+  getMockQuerySnapshotHandler,
+  getMockSnapshotErrorHandler,
+} from "./testUtils";
 
 jest.mock("firebase/firestore");
+jest.mock("@sentry/react");
 
 const onSnapshotMock = onSnapshot as jest.Mock;
 
@@ -268,5 +278,22 @@ test("stale data cleared when validation fails", () => {
   mockReceive([{ foo: "bar" }]);
   expect(sub.data).not.toEqual([]);
   mockReceive([{ bar: "foo" }]);
+  expect(sub.data).toEqual([]);
+});
+
+test("handles Firestore error", () => {
+  const mockReceiveError = getMockSnapshotErrorHandler(onSnapshotMock);
+  const testError: FirestoreError = {
+    message: "test message",
+    code: "permission-denied",
+    name: "FirebaseError",
+  };
+  sub.subscribe();
+
+  mockReceiveError(testError);
+  expect(Sentry.captureException).toHaveBeenCalledWith(testError);
+  expect(sub.error).toEqual(testError);
+  expect(sub.isHydrated).toBe(false);
+  expect(sub.isLoading).toBe(false);
   expect(sub.data).toEqual([]);
 });

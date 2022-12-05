@@ -23,20 +23,16 @@ import {
 } from "firebase/auth";
 import {
   collection,
-  CollectionReference,
   connectFirestoreEmulator,
   deleteField,
   doc,
-  DocumentSnapshot,
   getDocs,
   getFirestore,
   limit,
-  onSnapshot,
   PartialWithFieldValue,
   query,
   serverTimestamp,
   setDoc,
-  Unsubscribe,
   where,
 } from "firebase/firestore";
 import { mapValues, pickBy } from "lodash";
@@ -53,12 +49,8 @@ import { OpportunityType } from "../WorkflowsStore";
 import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
 import {
   ClientRecord,
-  ClientUpdateRecord,
-  FeatureVariantRecord,
   OpportunityUpdateWithForm,
   ResidentRecord,
-  StaffRecord,
-  UserUpdateRecord,
 } from "./types";
 
 function getFirestoreProjectId() {
@@ -144,43 +136,6 @@ if (isDemoMode()) {
   });
 }
 
-export const collections = {
-  staff: collection(
-    db,
-    collectionNames.staff
-  ) as CollectionReference<StaffRecord>,
-  userUpdates: collection(
-    db,
-    collectionNames.userUpdates
-  ) as CollectionReference<UserUpdateRecord>,
-  clients: collection(
-    db,
-    collectionNames.clients
-  ) as CollectionReference<ClientRecord>,
-  clientUpdates: collection(
-    db,
-    collectionNames.clientUpdates
-  ) as CollectionReference<ClientUpdateRecord>,
-  clientUpdatesV2: collection(
-    db,
-    collectionNames.clientUpdatesV2
-  ) as CollectionReference,
-  compliantReportingReferrals: collection(
-    db,
-    collectionNames.compliantReportingReferrals
-  ),
-  earlyTerminationReferrals: collection(
-    db,
-    collectionNames.earlyTerminationReferrals
-  ),
-  PastFTRDReferrals: collection(db, collectionNames.pastFTRDReferrals),
-  LSUReferrals: collection(db, collectionNames.LSUReferrals),
-  featureVariants: collection(
-    db,
-    collectionNames.featureVariants
-  ) as CollectionReference<FeatureVariantRecord>,
-};
-
 export async function getClient(
   clientId: string,
   stateCode: string
@@ -227,43 +182,14 @@ export async function getResident(
     };
 }
 
-/**
- * @param handleResults will be called whenever data changes
- * @returns a callable unsubscribe handle
- */
-export function subscribeToClientUpdates(
-  clientId: string,
-  handleResults: (results?: ClientUpdateRecord) => void
-): Unsubscribe {
-  return onSnapshot(
-    doc(collections.clientUpdates, clientId),
-    (result: DocumentSnapshot<ClientUpdateRecord>) =>
-      handleResults(result.data({ serverTimestamps: "estimate" }))
-  );
-}
-
-/**
- * @param handleResults will be called whenever data changes
- * @returns a callable unsubscribe handle
- */
-export function subscribeToClientUpdatesV2(
-  recordId: string,
-  handleResults: (results?: ClientUpdateRecord) => void
-): Unsubscribe {
-  return onSnapshot(
-    doc(collections.clientUpdatesV2, recordId),
-    (result: DocumentSnapshot<ClientUpdateRecord>) =>
-      handleResults(result.data({ serverTimestamps: "estimate" }))
-  );
-}
-
 async function updateOpportunity(
   opportunityType: OpportunityType,
   recordId: string,
   update: PartialWithFieldValue<OpportunityUpdateWithForm<Record<string, any>>>
 ) {
   const opportunityDocRef = doc(
-    collections.clientUpdatesV2,
+    db,
+    collectionNames.clientUpdatesV2,
     `${recordId}/${collectionNames.clientOpportunityUpdates}/${opportunityType}`
   );
 
@@ -335,7 +261,7 @@ export function updateSelectedOfficerIds(
   selectedOfficerIds: string[]
 ): Promise<void> {
   return setDoc(
-    doc(collections.userUpdates, userEmail),
+    doc(db, collectionNames.userUpdates, userEmail),
     {
       stateCode,
       selectedOfficerIds,

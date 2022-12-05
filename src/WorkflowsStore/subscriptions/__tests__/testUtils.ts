@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FirestoreError } from "firebase/firestore";
+
 /**
  * @returns a reference to the callback that receives subscription data,
  * so that test data can be piped through the subscription on demand
@@ -70,5 +72,27 @@ export function getMockQuerySnapshotHandler(
 
   return function mockReceiveQuerySnapshot(mockData: any[]): void {
     subscriptionHandler(mockQuerySnapshotResults(mockData));
+  };
+}
+
+/**
+ *
+ * @returns a reference to the callback that receives an error from Firestore,
+ * so it can be tested on demand
+ */
+export function getMockSnapshotErrorHandler(
+  snapshotMock: jest.Mock
+): (error: FirestoreError) => void {
+  let errorHandler: any;
+
+  snapshotMock.mockImplementation((query, onNext, onError) => {
+    errorHandler = onError;
+  });
+
+  snapshotMock();
+  snapshotMock.mockClear();
+
+  return function mockReceiveFirestoreError(error: FirestoreError): void {
+    errorHandler(error);
   };
 }

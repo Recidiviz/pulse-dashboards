@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as Sentry from "@sentry/react";
 import {
   DocumentData,
   DocumentReference,
@@ -73,6 +74,7 @@ export abstract class FirestoreDocumentSubscription<
       isLoading: observable,
       error: observable,
       isHydrated: observable,
+      setError: action,
     });
 
     // these automatically stop/start the listener based on whether any MobX
@@ -99,14 +101,25 @@ export abstract class FirestoreDocumentSubscription<
 
       this.data = record;
       this.isHydrated = true;
+      this.error = undefined;
     } catch (e) {
-      this.error = e as Error;
-      this.data = undefined;
+      this.setError(e instanceof Error ? e : new Error(`${e}`));
     }
 
     if (this.isLoading) {
       this.isLoading = false;
     }
+  }
+
+  /**
+   * Sets all hydration properties as needed to represent an error state.
+   * Error and hydrated states are mutually exclusive for this class!
+   */
+  setError(e: Error): void {
+    this.error = e;
+    this.data = undefined;
+    this.isHydrated = false;
+    this.isLoading = false;
   }
 
   get isActive(): boolean {
@@ -124,8 +137,13 @@ export abstract class FirestoreDocumentSubscription<
       this.isLoading = true;
     }
 
-    this.cancelSnapshotListener = onSnapshot(this.dataSource, (result) =>
-      this.updateData(result)
+    this.cancelSnapshotListener = onSnapshot(
+      this.dataSource,
+      (result) => this.updateData(result),
+      (error) => {
+        this.setError(error);
+        Sentry.captureException(error);
+      }
     );
   }
 
