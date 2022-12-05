@@ -111,12 +111,14 @@ describe("ensure requirements text updates when source changes", () => {
     referralSub.isLoading = false;
     referralSub.data = usMeSCCPEligibleRecordFixture;
 
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     const textEligible = opp.requirementsMet.find(({ text }) =>
       text.includes("months remaining on sentence")
     )!.text;
 
     referralSub.data = usMeSCCPAlmostEligibleRecordFixture;
 
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     const textAlmostEligible = opp.requirementsAlmostMet.find(({ text }) =>
       text.includes("months remaining on sentence")
     )!.text;
