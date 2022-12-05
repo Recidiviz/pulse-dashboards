@@ -30,53 +30,71 @@ const collectionMock = collection as jest.Mock;
 let rootStoreMock: RootStore;
 let sub: StaffSubscription;
 
-beforeEach(() => {
-  jest.resetAllMocks();
+describe("StaffSubscription tests", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
 
-  rootStoreMock = observable({
-    currentTenantId: "US_ND",
-    workflowsStore: { caseloadDistrict: "TEST" },
-  }) as RootStore;
-  sub = new StaffSubscription(rootStoreMock);
-});
-
-test("dataSource reflects observables", () => {
-  sub.subscribe();
-
-  // args may be undefined because of incomplete firestore mocking,
-  // generally we don't care about that in these tests
-  expect(collectionMock).toHaveBeenCalledWith(undefined, "staff");
-  expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
-  expect(whereMock).toHaveBeenCalledWith("hasCaseload", "==", true);
-  expect(whereMock).toHaveBeenCalledWith("district", "==", "TEST");
-  expect(queryMock).toHaveBeenCalled();
-});
-
-test("dataSource omits district filter", () => {
-  runInAction(() => {
-    // @ts-ignore
-    rootStoreMock.workflowsStore.caseloadDistrict = undefined;
+    rootStoreMock = observable({
+      currentTenantId: "US_ND",
+      workflowsStore: { caseloadDistrict: "TEST", activeSystem: "SUPERVISION" },
+    }) as RootStore;
+    sub = new StaffSubscription(rootStoreMock);
   });
 
-  sub.subscribe();
+  test("dataSource reflects observables", () => {
+    sub.subscribe();
 
-  expect(whereMock).not.toHaveBeenCalledWith(
-    "district",
-    "==",
-    expect.anything()
-  );
-});
-
-test("dataSource reacts to observables", () => {
-  sub.subscribe();
-
-  runInAction(() => {
-    // @ts-ignore
-    rootStoreMock.currentTenantId = "US_TN";
-    // @ts-ignore
-    rootStoreMock.workflowsStore.caseloadDistrict = "TEST2";
+    // args may be undefined because of incomplete firestore mocking,
+    // generally we don't care about that in these tests
+    expect(collectionMock).toHaveBeenCalledWith(undefined, "staff");
+    expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
+    expect(whereMock).toHaveBeenCalledWith("hasCaseload", "==", true);
+    expect(whereMock).toHaveBeenCalledWith("district", "==", "TEST");
+    expect(queryMock).toHaveBeenCalled();
   });
 
-  expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
-  expect(whereMock).toHaveBeenCalledWith("district", "==", "TEST2");
+  test("dataSource omits district filter", () => {
+    runInAction(() => {
+      // @ts-ignore
+      rootStoreMock.workflowsStore.caseloadDistrict = undefined;
+    });
+
+    sub.subscribe();
+
+    expect(whereMock).not.toHaveBeenCalledWith(
+      "district",
+      "==",
+      expect.anything()
+    );
+  });
+
+  test("dataSource reacts to observables", () => {
+    sub.subscribe();
+
+    runInAction(() => {
+      // @ts-ignore
+      rootStoreMock.currentTenantId = "US_TN";
+      // @ts-ignore
+      rootStoreMock.workflowsStore.caseloadDistrict = "TEST2";
+    });
+
+    expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
+    expect(whereMock).toHaveBeenCalledWith("district", "==", "TEST2");
+  });
+
+  test("dataSource officer filter respects activeSystem", () => {
+    runInAction(() => {
+      // @ts-ignore
+      rootStoreMock.workflowsStore.activeSystem = "INCARCERATION";
+    });
+
+    sub.subscribe();
+
+    expect(whereMock).toHaveBeenCalledWith("hasFacilityCaseload", "==", true);
+    expect(whereMock).not.toHaveBeenCalledWith(
+      "hasCaseload",
+      "==",
+      expect.anything()
+    );
+  });
 });

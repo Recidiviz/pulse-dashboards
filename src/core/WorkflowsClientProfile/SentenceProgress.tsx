@@ -113,11 +113,13 @@ function formatTimeToGo(expirationDate: Date): string {
 }
 
 export const ProgressTimeline = ({
+  header,
   startDate,
   endDate,
   officerId,
   fallbackComponent,
 }: {
+  header: string;
   startDate?: Date;
   endDate?: Date;
   officerId?: string;
@@ -144,7 +146,7 @@ export const ProgressTimeline = ({
     <Wrapper>
       <VizHeader>
         <div>
-          <Title>Supervision</Title>
+          <Title>{header}</Title>
           <Sans14>
             {formatSentenceLength(startDate, endDate)} (
             {formatTimeToGo(endDate)})
@@ -219,6 +221,7 @@ export const SupervisionProgress = ({
 
   return (
     <ProgressTimeline
+      header="Supervision"
       startDate={supervisionStartDate}
       endDate={expirationDate}
       officerId={officerId}
@@ -234,6 +237,7 @@ export const IncarcerationProgress = ({
 
   return (
     <ProgressTimeline
+      header="Incarceration"
       startDate={admissionDate}
       endDate={releaseDate}
       officerId={officerId}

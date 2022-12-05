@@ -30,17 +30,19 @@ export class StaffSubscription extends FirestoreQuerySubscription<StaffRecord> {
   }
 
   get dataSource(): Query {
-    const district = this.rootStore.workflowsStore.caseloadDistrict;
+    const { caseloadDistrict, activeSystem } = this.rootStore.workflowsStore;
 
     const stateCode = this.rootStore.currentTenantId;
+    const caseloadField =
+      activeSystem === "INCARCERATION" ? "hasFacilityCaseload" : "hasCaseload";
 
     const constraints = [
       where("stateCode", "==", stateCode),
-      where("hasCaseload", "==", true),
+      where(caseloadField, "==", true),
     ];
 
-    if (district) {
-      constraints.push(where("district", "==", district));
+    if (caseloadDistrict) {
+      constraints.push(where("district", "==", caseloadDistrict));
     }
 
     return query(collection(db, collectionNames.staff), ...constraints);
