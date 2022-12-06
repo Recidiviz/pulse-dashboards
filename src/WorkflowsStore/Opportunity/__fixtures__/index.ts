@@ -404,6 +404,23 @@ export const usMePersonRecord: ResidentRecord = {
   allEligibleOpportunities: ["usMeSCCP"],
 };
 
+export const usMePersonRecordShorterSentence: ResidentRecord = {
+  recordId: "us_me_112",
+  personType: "RESIDENT",
+  stateCode: "US_ME",
+  personName: {
+    givenNames: "Rose",
+    surname: "Newton",
+  },
+  personExternalId: "112",
+  pseudonymizedId: "p112",
+  custodyLevel: "MINIMUM",
+  officerId: "CASE_MANAGER_1",
+  admissionDate: "2020-03-10",
+  releaseDate: "2024-05-20",
+  allEligibleOpportunities: ["usMeSCCP"],
+};
+
 export const usMeSCCPEligibleRecordFixture: UsMeSCCPReferralRecord = {
   stateCode: "US_ME",
   externalId: "111",
@@ -412,9 +429,35 @@ export const usMeSCCPEligibleRecordFixture: UsMeSCCPReferralRecord = {
     usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
     usMeServedXPortionOfSentence: {
       eligibleDate: parseISO("2022-10-12"),
+      xPortionServed: "2/3",
     },
     usMeXMonthsRemainingOnSentence: {
       eligibleDate: parseISO("2022-08-14"),
+    },
+  },
+  caseNotes: {
+    foo: [
+      {
+        noteTitle: "A title",
+        noteBody: "A body",
+        eventDate: parseISO("2022-06-28"),
+      },
+    ],
+  },
+};
+
+export const usMeSCCPEligibleRecordHalfPortionFixture: UsMeSCCPReferralRecord = {
+  stateCode: "US_ME",
+  externalId: "112",
+  ineligibleCriteria: {},
+  eligibleCriteria: {
+    usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+    usMeServedXPortionOfSentence: {
+      eligibleDate: parseISO("2022-04-15"),
+      xPortionServed: "1/2",
+    },
+    usMeXMonthsRemainingOnSentence: {
+      eligibleDate: parseISO("2021-12-20"),
     },
   },
   caseNotes: {
@@ -440,6 +483,7 @@ export const usMeSCCPAlmostEligibleRecordFixture: UsMeSCCPReferralRecord = {
     usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
     usMeServedXPortionOfSentence: {
       eligibleDate: parseISO("2022-10-12"),
+      xPortionServed: "2/3",
     },
   },
   caseNotes: {

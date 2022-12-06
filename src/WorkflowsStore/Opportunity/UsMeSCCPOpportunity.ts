@@ -52,7 +52,7 @@ const CRITERIA_COPY: Record<
     text: "Served at least $MINIMUM_FRACTION of sentence",
     tooltip:
       "Served at least $MINIMUM_FRACTION of the term of imprisonment imposed or, in the case of " +
-      "a split sentence, at least 2/3 of the unsuspended portion, after consideration of any " +
+      "a split sentence, at least $MINIMUM_FRACTION of the unsuspended portion, after consideration of any " +
       "deductions that the prisoner has received and retained under Title 17A, section 2302, " +
       "subsection 1; section 2305; section 2307; section 2308; section 2309; section 2310; or " +
       "section 2311 if the term of imprisonment or, in the case of a split sentence, the " +
@@ -90,17 +90,16 @@ const requirementsForCriteria = (
   }
 
   if (criteria.usMeServedXPortionOfSentence) {
-    // TODO(#2708): Figure out when this is 1/2 and when this is 2/3
-    const lengthCondition: "5 years or less" | "more than 5 years" =
-      "5 years or less";
-    const minimumFraction: "1/2" | "2/3" = "1/2";
+    const { xPortionServed } = criteria.usMeServedXPortionOfSentence;
+    const lengthCondition =
+      xPortionServed === "1/2" ? "5 years or less" : "more than 5 years";
 
     usMeServedXPortionOfSentence.text = usMeServedXPortionOfSentence.text.replace(
       "$MINIMUM_FRACTION",
-      minimumFraction
+      xPortionServed
     );
     usMeServedXPortionOfSentence.tooltip = usMeServedXPortionOfSentence.tooltip
-      .replace("$MINIMUM_FRACTION", minimumFraction)
+      .replaceAll("$MINIMUM_FRACTION", xPortionServed)
       .replace("$LENGTH_CONDITION", lengthCondition);
     requirements.push(usMeServedXPortionOfSentence);
   }

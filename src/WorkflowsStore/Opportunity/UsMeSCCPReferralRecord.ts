@@ -26,7 +26,10 @@ import { transformCaseNotes } from "./utils";
 
 export type UsMeSCCPCriteria = {
   usMeMinimumOrCommunityCustody: { custodyLevel: string };
-  usMeServedXPortionOfSentence: { eligibleDate: Date };
+  usMeServedXPortionOfSentence: {
+    eligibleDate: Date;
+    xPortionServed: "1/2" | "2/3";
+  };
   usMeXMonthsRemainingOnSentence: { eligibleDate: Date };
 };
 

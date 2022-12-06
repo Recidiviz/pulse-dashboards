@@ -4,7 +4,10 @@
     "externalId": "RES001",
     "eligibleCriteria": {
       "usMeMinimumOrCommunityCustody": { "custodyLevel": "COMMUNITY" },
-      "usMeServedXPortionOfSentence": { "eligibleDate": "2022-08-10" }
+      "usMeServedXPortionOfSentence": {
+        "eligibleDate": "2022-08-10",
+        "xPortionServed": "2/3"
+      }
     },
     "ineligibleCriteria": {
       "usMeXMonthsRemainingOnSentence": { "eligibleDate": "2023-04-22" }
@@ -24,7 +27,10 @@
     "externalId": "RES002",
     "eligibleCriteria": {
       "usMeMinimumOrCommunityCustody": { "custodyLevel": "MINIMUM" },
-      "usMeServedXPortionOfSentence": { "eligibleDate": "2021-06-12" },
+      "usMeServedXPortionOfSentence": {
+        "eligibleDate": "2021-06-12",
+        "xPortionServed": "1/2"
+      },
       "usMeXMonthsRemainingOnSentence": { "eligibleDate": "2022-05-27" }
     },
     "ineligibleCriteria": {},

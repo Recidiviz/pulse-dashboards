@@ -49,7 +49,8 @@
     "district": null,
     "id": "OFFICER5",
     "stateCode": "US_ME",
-    "hasCaseload": true,
+    "hasCaseload": false,
+    "hasFacilityCaseload": true,
     "givenNames": "Test",
     "surname": "Officer5"
   }

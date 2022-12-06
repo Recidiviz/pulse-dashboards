@@ -23,8 +23,10 @@ import { Resident } from "../../Resident";
 import { DocumentSubscription } from "../../subscriptions";
 import {
   usMePersonRecord,
+  usMePersonRecordShorterSentence,
   usMeSCCPAlmostEligibleRecordFixture,
   usMeSCCPEligibleRecordFixture,
+  usMeSCCPEligibleRecordHalfPortionFixture,
 } from "../__fixtures__";
 import { UsMeSCCPOpportunity } from "../UsMeSCCPOpportunity";
 
@@ -79,6 +81,17 @@ describe("fully eligible", () => {
     expect(opp.almostEligible).toBeFalse();
     expect(opp.requirementsAlmostMet).toHaveLength(0);
   });
+});
+
+test("requirements for half sentence served", () => {
+  createTestUnit(usMePersonRecordShorterSentence);
+
+  referralSub = opp.referralSubscription;
+  referralSub.isLoading = false;
+  referralSub.isHydrated = true;
+  referralSub.data = usMeSCCPEligibleRecordHalfPortionFixture;
+
+  expect(opp.requirementsMet[1]).toMatchSnapshot();
 });
 
 describe("almost eligible", () => {
