@@ -25,6 +25,7 @@ import {
   respondWithOfflineUser,
   TEMP_DOWNLOAD_PATH,
   waitForFileToExist,
+  waitForNetworkIdle,
 } from "../utils";
 
 /**
@@ -59,9 +60,8 @@ When("I click on the export form button", async () => {
   await button.waitForExist();
   await allowHeadlessDownloads();
 
-  await button.click();
   // Wait for file to download
-  await browser.pause(3000);
+  await Promise.all([button.click(), waitForNetworkIdle()]);
 });
 
 When("I click on the {string} dropdown", async (dropdownButtonText) => {

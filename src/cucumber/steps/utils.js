@@ -55,6 +55,62 @@ async function waitForNavigation(navigationEvent) {
   await Promise.all([pages[0].waitForNavigation(), navigationEvent]);
 }
 
+async function waitForNetworkIdle() {
+  const pup = await browser.getPuppeteer();
+  const pages = await pup.pages();
+  const page = pages[0];
+
+  let inflight = 0;
+  let resolve;
+  const maxInflightRequests = 2;
+  const timeout = 1500;
+
+  // Puppeteer's method waitForNetworkIdle is not currently included in the latest release of wdio. There are plans to include it
+  // in the next release, but in the meantime we try to roll our own. This was borrowed / adapted by several comments in this thread:
+  // https://github.com/puppeteer/puppeteer/issues/1353#issuecomment-629271737
+  /* eslint-disable no-use-before-define */
+  let timeoutId = setTimeout(onTimeout, timeout);
+
+  function onRequestStarted() {
+    inflight += 1;
+    if (inflight > maxInflightRequests) {
+      // Clear timeout and wait for inflight requests to finish
+      clearTimeout(timeoutId);
+    }
+  }
+
+  function onRequestFinished() {
+    inflight -= 1;
+    if (inflight === 0) {
+      // If there's no more inflight requests cancel timeout and resolve promise
+      clearTimeout(timeoutId);
+      resolve();
+    }
+    if (inflight === maxInflightRequests) {
+      // If inflight requests equal max allowed requests reset timeout
+      timeoutId = setTimeout(onTimeout, timeout);
+    }
+  }
+
+  function onTimeout() {
+    // Remove listeners and resolve promise on timeout. This will not raise an error on timeouts,
+    // but the test may fail if it didn't wait long enough.
+    page.removeListener("request", onRequestStarted);
+    page.removeListener("requestfinished", onRequestFinished);
+    page.removeListener("requestfailed", onRequestFinished);
+    resolve();
+  }
+
+  page.on("request", onRequestStarted);
+  page.on("requestfinished", onRequestFinished);
+  page.on("requestfailed", onRequestFinished);
+  /* eslint-enable no-use-before-define */
+
+  return new Promise((res) => {
+    resolve = res;
+  });
+}
+
 async function waitForFileToExist(filePath, timeout) {
   return new Promise(function (resolve, reject) {
     const dir = path.dirname(filePath);
@@ -94,4 +150,5 @@ export {
   waitForElementsToExist,
   waitForFileToExist,
   waitForNavigation,
+  waitForNetworkIdle,
 };

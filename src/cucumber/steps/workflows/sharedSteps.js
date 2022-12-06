@@ -16,6 +16,7 @@
 // =============================================================================
 import { Then, When } from "@cucumber/cucumber";
 
+import { waitForNavigation, waitForNetworkIdle } from "../utils";
 /**
  * When
  * */
@@ -28,14 +29,13 @@ When("I select officer {string} from the dropdown", async (officerId) => {
     },
   });
   await option.waitForExist();
-  await option.click();
-  await browser.pause(500);
+  // Wait for data to load
+  await Promise.all([option.click(), waitForNetworkIdle()]);
 });
 
 When("I click on the {string} button", async (buttonClassName) => {
   const button = await $(`.${buttonClassName}`);
-  await button.click();
-  await browser.pause(1000);
+  await waitForNavigation(button.click());
 });
 
 /**
