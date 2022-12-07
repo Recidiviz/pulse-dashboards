@@ -14,25 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+// https://webdriver.io/docs/pageobjects/
 /* eslint-disable class-methods-use-this */
-import Page from "./basePage";
-
-class WorkflowsHomepage extends Page {
-  open() {
-    super.open(`${browser.config.baseUrl}/workflows/home`);
+export default class Page {
+  constructor({ redirectPause = 2000 }) {
+    this.redirectPause = redirectPause;
   }
 
-  async promptText() {
-    return $(".WorkflowsHomepageText");
+  async open(path) {
+    await browser.url(path);
+    await browser.pause(this.redirectPause);
   }
 
-  async opportunitySummaries() {
-    return browser.$$(".OpportunityTypeSummaryWrapper");
-  }
-
-  async clientAvatars() {
-    return browser.$$(".OpportunityClientsWrapper");
+  async userMenu() {
+    return $(".ProfileLink");
   }
 }
-
-export default new WorkflowsHomepage({ redirectPause: 3000 });

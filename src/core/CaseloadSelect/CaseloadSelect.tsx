@@ -154,6 +154,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   return (
     <CaseloadSelectContainer>
       <ReactSelect
+        classNamePrefix="CaseloadSelect"
         className="CaseloadSelect"
         components={customComponents}
         isMulti

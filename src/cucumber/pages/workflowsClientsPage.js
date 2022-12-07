@@ -17,22 +17,10 @@
 /* eslint-disable class-methods-use-this */
 import Page from "./basePage";
 
-class WorkflowsHomepage extends Page {
-  open() {
-    super.open(`${browser.config.baseUrl}/workflows/home`);
-  }
-
-  async promptText() {
-    return $(".WorkflowsHomepageText");
-  }
-
-  async opportunitySummaries() {
-    return browser.$$(".OpportunityTypeSummaryWrapper");
-  }
-
-  async clientAvatars() {
-    return browser.$$(".OpportunityClientsWrapper");
+class WorkflowsClientsPage extends Page {
+  async open() {
+    await super.open(`${browser.config.baseUrl}/workflows/clients`);
   }
 }
 
-export default new WorkflowsHomepage({ redirectPause: 3000 });
+export default new WorkflowsClientsPage({ redirectPause: 3000 });

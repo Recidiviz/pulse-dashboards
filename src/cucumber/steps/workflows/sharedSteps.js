@@ -14,9 +14,40 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Then, When } from "@cucumber/cucumber";
+import { Given, Then, When } from "@cucumber/cucumber";
 
-import { waitForNavigation, waitForNetworkIdle } from "../utils";
+import {
+  WorkflowsClientsPage,
+  WorkflowsHomepage,
+  WorkflowsOpportunityPage,
+} from "../../pages";
+import {
+  respondWithOfflineUser,
+  waitForNavigation,
+  waitForNetworkIdle,
+} from "../utils";
+
+const pageMapping = {
+  home: WorkflowsHomepage,
+  clients: WorkflowsClientsPage,
+  opportunity: WorkflowsOpportunityPage,
+};
+
+/**
+ * Given
+ * */
+Given(
+  "I am a {string} user on the {string} page",
+  async (stateCode, pageName) => {
+    await respondWithOfflineUser(stateCode);
+    if (pageMapping[pageName]) {
+      await pageMapping[pageName].open();
+    } else {
+      await pageMapping.opportunity.open(pageName);
+    }
+  }
+);
+
 /**
  * When
  * */
