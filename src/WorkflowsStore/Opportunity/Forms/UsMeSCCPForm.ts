@@ -30,7 +30,7 @@ export class UsMeSCCPForm extends FormBase<
 
     const residentName = this.person.displayName;
     const mdocNo = this.person.externalId;
-    const facilityHousingUnit = `${this.person.facilityId ?? ""} ${
+    const facilityHousingUnit = `${this.person.facilityId ?? ""}/${
       this.person.unitId ?? ""
     }`;
     const caseManagerRecord = this.rootStore.workflowsStore.availableOfficers.find(
