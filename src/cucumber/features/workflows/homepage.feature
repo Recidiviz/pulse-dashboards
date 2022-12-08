@@ -6,12 +6,12 @@ Feature: Login as a US_TN user and see homepage
     Scenario Outline: Searching for an officer's opportunities
         Given I am logged in as a "<stateCode>" user
         Then I should see the homepage welcome message for the "<stateCode>" user
-        When I select officer "<officerId>" from the dropdown
+        When I select officer "<officerName>" from the dropdown
         Then I should see <numOpportunities> opportunities listed
         And I should see <numOpportunities> set of client avatars
         When I click on View all for "<opportunityType>"
         Then I should navigate to the "<opportunityType>" opportunity page
 
     Examples:
-        | stateCode | officerId | numOpportunities | opportunityType    |
-        | US_TN     | OFFICER1  | 1                | compliantReporting |
+        | stateCode | officerName   | numOpportunities | opportunityType    |
+        | US_TN     | Test Officer1 | 1                | compliantReporting |

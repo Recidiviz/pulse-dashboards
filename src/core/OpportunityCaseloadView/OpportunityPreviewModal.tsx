@@ -106,7 +106,7 @@ export const OpportunityPreviewModal = ({
       }}
       closeTimeoutMS={1000}
     >
-      <Wrapper>
+      <Wrapper className="OpportunityPreviewModal">
         <ModalControls>
           <Button
             className="OpportunityPreviewModal__close"

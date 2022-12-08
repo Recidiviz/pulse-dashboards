@@ -34,15 +34,14 @@ Given("There are no officers pre-selected in the dropdown", async () => {
  * When
  * */
 
-When("I clear the officer with ID {string}", async (officerId) => {
-  const option = await browser.react$("MultiValue", {
-    props: {
-      data: { value: officerId },
-    },
-  });
-  const clearIcon = await option.shadow$(
-    ".CaseloadSelect__multi-value__remove"
+When("I clear the officer {string}", async (officerName) => {
+  const option = await $(
+    `div.CaseloadSelect__multi-value__label=${officerName}`
   );
+  await option.waitForExist();
+  const clearIcon = await option.$(function () {
+    return this.nextSibling;
+  });
   await clearIcon.waitForExist();
   await clearIcon.click();
 });
@@ -58,13 +57,11 @@ When("I click on the Clear Officers link", async () => {
  * Then
  * */
 Then(
-  "I should see the officer {string} with ID {string} selected in the search bar",
-  async (officerName, officerId) => {
-    const selectedOption = await browser.react$("MultiValue", {
-      props: {
-        data: { value: officerId },
-      },
-    });
+  "I should see the officer {string} selected in the search bar",
+  async (officerName) => {
+    const selectedOption = await $(
+      `div.CaseloadSelect__multi-value__label=${officerName}`
+    );
     await selectedOption.waitForExist();
     const selectedOptionText = await selectedOption.getText();
     expect(selectedOptionText).toEqual(officerName);

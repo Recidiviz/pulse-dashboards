@@ -145,9 +145,7 @@ Then("the form should export for filename {string}", async (filename) => {
 Then(
   "I should see the eligibility dropdown that has a reason listed like {string}",
   async (ineligibleReason) => {
-    const dropdownContainer = await browser.react$(
-      "OpportunityDenial__DropdownContainer"
-    );
+    const dropdownContainer = await $(".OpportunityDenialDropdown");
     await dropdownContainer.waitForExist();
     const dropdownText = await dropdownContainer.getText();
     expect(dropdownText).toEqual(expect.stringContaining("Eligible"));

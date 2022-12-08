@@ -51,14 +51,10 @@ Given(
 /**
  * When
  * */
-When("I select officer {string} from the dropdown", async (officerId) => {
+When("I select officer {string} from the dropdown", async (officerName) => {
   const container = await $(".CaseloadSelect");
   await container.click();
-  const option = await browser.react$("Option", {
-    props: {
-      value: officerId,
-    },
-  });
+  const option = await $(`div.CaseloadSelect__option=${officerName}`);
   await option.waitForExist();
   // Wait for data to load
   await Promise.all([option.click(), waitForNetworkIdle()]);

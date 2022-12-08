@@ -64,7 +64,7 @@ export const OpportunityDenial = ({
       <Dropdown>
         <MenuButton opportunity={opportunity} />
         <DropdownMenu>
-          <DropdownContainer>
+          <DropdownContainer className="OpportunityDenialDropdown">
             {!opportunity.isAlert && (
               <EligibleMenuOption opportunity={opportunity} />
             )}
