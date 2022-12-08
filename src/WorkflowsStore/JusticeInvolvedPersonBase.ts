@@ -190,7 +190,6 @@ export class JusticeInvolvedPersonBase<
 
   trackProfileViewed(): void {
     trackProfileViewed({
-      clientId: this.pseudonymizedId,
       justiceInvolvedPersonId: this.pseudonymizedId,
     });
   }

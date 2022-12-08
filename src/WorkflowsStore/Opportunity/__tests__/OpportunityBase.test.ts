@@ -420,7 +420,6 @@ describe("setDenialReasons", () => {
       opportunityType: opp.type,
     });
     expect(trackOpportunityMarkedEligible).toHaveBeenCalledWith({
-      clientId: client.pseudonymizedId,
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
     });
@@ -445,7 +444,6 @@ test("list view tracking", () => {
   opp.trackListViewed();
 
   expect(trackSurfacedInList).toHaveBeenCalledWith({
-    clientId: client.pseudonymizedId,
     justiceInvolvedPersonId: client.pseudonymizedId,
     opportunityType: opp.type,
   });
@@ -455,7 +453,6 @@ test("preview tracking", async () => {
   opp.trackPreviewed();
 
   expect(trackOpportunityPreviewed).toHaveBeenCalledWith({
-    clientId: client.pseudonymizedId,
     justiceInvolvedPersonId: client.pseudonymizedId,
     opportunityType: opp.type,
   });

@@ -103,7 +103,6 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
     const markCompleted = () => {
       opportunity.setCompletedIfEligible();
       trackReferralFormCopiedToClipboard({
-        clientId: opportunity.person.pseudonymizedId,
         justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
         opportunityType: opportunity.type,
       });

@@ -295,7 +295,6 @@ export const updateFormDraftData = async function (
 
   if (isFirstEdit) {
     trackReferralFormFirstEdited({
-      clientId: person.pseudonymizedId,
       justiceInvolvedPersonId: person.pseudonymizedId,
       opportunityType: type,
     });
@@ -303,7 +302,6 @@ export const updateFormDraftData = async function (
 
   if (opportunity.reviewStatus === "PENDING") {
     trackSetOpportunityStatus({
-      clientId: person.pseudonymizedId,
       justiceInvolvedPersonId: person.pseudonymizedId,
       status: "IN_PROGRESS",
       opportunityType: type,

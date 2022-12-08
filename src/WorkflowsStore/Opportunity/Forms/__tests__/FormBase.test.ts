@@ -59,7 +59,6 @@ test("form view tracking", () => {
   form.trackViewed();
 
   expect(trackReferralFormViewed).toHaveBeenCalledWith({
-    clientId: client.pseudonymizedId,
     justiceInvolvedPersonId: client.pseudonymizedId,
     opportunityType: "LSU",
   });
@@ -84,7 +83,6 @@ describe("form printing", () => {
   test("sends tracking event", () => {
     form.print();
     expect(trackReferralFormPrinted).toHaveBeenCalledWith({
-      clientId: client.pseudonymizedId,
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: form.type,
     });

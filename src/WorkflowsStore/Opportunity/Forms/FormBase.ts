@@ -94,7 +94,6 @@ export class FormBase<
 
   trackViewed(): void {
     trackReferralFormViewed({
-      clientId: this.person.pseudonymizedId,
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });
@@ -114,7 +113,6 @@ export class FormBase<
     this.formIsPrinting = true;
 
     trackReferralFormPrinted({
-      clientId: this.person.pseudonymizedId,
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });

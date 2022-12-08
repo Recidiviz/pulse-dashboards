@@ -58,8 +58,6 @@ const track = (eventName: string, metadata?: Record<string, unknown>): void => {
 };
 
 type OpportunityTrackingMetadata = {
-  // TODO(#2726): remove this field once BQ has been migrated to the new one
-  clientId: string;
   justiceInvolvedPersonId: string;
   opportunityType: OpportunityType;
 };
@@ -97,8 +95,6 @@ export function trackSetOpportunityStatus<
 }
 
 export function trackProfileViewed(metadata: {
-  // TODO(#2726): remove this field once BQ has been migrated to the new one
-  clientId: string;
   justiceInvolvedPersonId: string;
 }): void {
   track("frontend.profile_viewed", metadata);

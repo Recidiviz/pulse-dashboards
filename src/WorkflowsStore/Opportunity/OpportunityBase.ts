@@ -283,7 +283,6 @@ export abstract class OpportunityBase<
         opportunityType: this.type,
       });
       trackOpportunityMarkedEligible({
-        clientId: pseudonymizedId,
         justiceInvolvedPersonId: pseudonymizedId,
         opportunityType: this.type,
       });
@@ -305,7 +304,6 @@ export abstract class OpportunityBase<
 
   trackListViewed(): void {
     trackSurfacedInList({
-      clientId: this.person.pseudonymizedId,
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });
@@ -313,7 +311,6 @@ export abstract class OpportunityBase<
 
   trackPreviewed(): void {
     trackOpportunityPreviewed({
-      clientId: this.person.pseudonymizedId,
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });
