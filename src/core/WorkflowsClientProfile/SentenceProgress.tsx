@@ -112,18 +112,25 @@ function formatTimeToGo(expirationDate: Date): string {
   }`;
 }
 
+type TimelineLabels = {
+  start: string;
+  end: string;
+};
+
 export const ProgressTimeline = ({
   header,
   startDate,
   endDate,
   officerId,
   fallbackComponent,
+  timelineLabels,
 }: {
   header: string;
   startDate?: Date;
   endDate?: Date;
   officerId?: string;
   fallbackComponent: React.ReactNode;
+  timelineLabels: TimelineLabels;
 }): React.ReactElement => {
   // can't visualize anything if we don't have both valid dates
   if (!startDate || !endDate || endDate <= startDate)
@@ -200,10 +207,10 @@ export const ProgressTimeline = ({
         }}
       >
         <div>
-          Start: <span>{formatWorkflowsDate(startDate)}</span>
+          {timelineLabels.start}: <span>{formatWorkflowsDate(startDate)}</span>
         </div>
         <div>
-          End: <span>{formatWorkflowsDate(endDate)}</span>
+          {timelineLabels.end}: <span>{formatWorkflowsDate(endDate)}</span>
         </div>
       </TimelineDates>
     </Wrapper>
@@ -226,6 +233,7 @@ export const SupervisionProgress = ({
       endDate={expirationDate}
       officerId={officerId}
       fallbackComponent={<Supervision client={client} />}
+      timelineLabels={{ start: "Start", end: "End" }}
     />
   );
 };
@@ -242,6 +250,7 @@ export const IncarcerationProgress = ({
       endDate={releaseDate}
       officerId={officerId}
       fallbackComponent={<Incarceration resident={resident} />}
+      timelineLabels={{ start: "Start", end: "Release" }}
     />
   );
 };
