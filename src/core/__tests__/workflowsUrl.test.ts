@@ -58,16 +58,16 @@ test("URL with opportunityType with custom URL", () => {
   });
 });
 
-test("URL with clientId", () => {
+test("URL with person ID", () => {
   const CLIENT_PAGES = [
     "opportunityAction",
     "clientProfile",
   ] as WorkflowsPage[];
   CLIENT_PAGES.forEach((pageId) => {
-    expect(workflowsUrl(pageId, { clientId: "test123" })).toBe(
+    expect(workflowsUrl(pageId, { justiceInvolvedPersonId: "test123" })).toBe(
       workflowsRoute({
         routeName: pageId,
-      }).replace(":clientId", "test123")
+      }).replace(":justiceInvolvedPersonId", "test123")
     );
   });
 });

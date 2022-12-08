@@ -23,7 +23,8 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { JusticeInvolvedPerson } from "../../WorkflowsStore";
+import { toTitleCase } from "../../utils";
+import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { SectionLabelText } from "../OpportunityCaseloadView/styles";
 import { ProfileCapsule } from "../PersonCapsules";
 import { workflowsUrl } from "../views";
@@ -45,7 +46,10 @@ const Caseload = ({ persons }: { persons: JusticeInvolvedPerson[] }) => {
   const items = persons.map((person) => (
     <li key={person.externalId}>
       <Link
-        to={workflowsUrl("clientProfile", { clientId: person.pseudonymizedId })}
+        to={workflowsUrl(
+          person instanceof Client ? "clientProfile" : "residentProfile",
+          { justiceInvolvedPersonId: person.pseudonymizedId }
+        )}
       >
         <ProfileCapsule avatarSize="lg" person={person} textSize="sm" />
       </Link>
@@ -61,13 +65,14 @@ export const AllCaseloads = observer(function AllCaseloads() {
       caseloadPersons,
       selectedOfficerIds,
       workflowsOfficerTitle,
+      justiceInvolvedPersonTitle,
     },
   } = useRootStore();
 
   if (!selectedOfficerIds.length)
     return (
       <WorkflowsNoResults
-        headerText="All Clients"
+        headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s`}
         callToActionText={`Search for ${workflowsOfficerTitle}s above to view their entire caseload.`}
       />
     );

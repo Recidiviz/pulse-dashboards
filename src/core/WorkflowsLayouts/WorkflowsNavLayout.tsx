@@ -23,6 +23,7 @@ import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { toTitleCase } from "../../utils";
 import { OPPORTUNITY_LABELS } from "../../WorkflowsStore/Opportunity/types";
 import RecidivizLogo from "../RecidivizLogo";
 import { workflowsUrl } from "../views";
@@ -93,7 +94,11 @@ const BrandedNavLink = styled(NavLink).attrs({ exact: true })`
 export const WorkflowsNavLayout: React.FC = observer(
   function WorkflowsNavLayout({ children }) {
     const {
-      workflowsStore: { opportunityTypes },
+      workflowsStore: {
+        opportunityTypes,
+        justiceInvolvedPersonTitle,
+        activeSystem,
+      },
     } = useRootStore();
 
     return (
@@ -107,8 +112,14 @@ export const WorkflowsNavLayout: React.FC = observer(
               <BrandedNavLink to={workflowsUrl("home")}>Home</BrandedNavLink>
             </li>
             <li>
-              <BrandedNavLink to={workflowsUrl("caseloadClients")}>
-                All Clients
+              <BrandedNavLink
+                to={workflowsUrl(
+                  activeSystem === "SUPERVISION"
+                    ? "caseloadClients"
+                    : "caseloadResidents"
+                )}
+              >
+                All {toTitleCase(justiceInvolvedPersonTitle)}s
               </BrandedNavLink>
             </li>
             <li>

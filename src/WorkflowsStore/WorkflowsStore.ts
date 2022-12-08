@@ -574,4 +574,20 @@ export class WorkflowsStore implements Hydratable {
     if (!currentTenantId) return "officer";
     return tenants[currentTenantId].workflowsOfficerTitleOverride ?? "officer";
   }
+
+  /**
+   * Generic to use for justice-involved persons in workflows
+   */
+  get justiceInvolvedPersonTitle(): string {
+    switch (this.activeSystem) {
+      case "INCARCERATION":
+        return "resident";
+      case "SUPERVISION":
+        return "client";
+      case undefined:
+        return "person";
+      default:
+        assertNever(this.activeSystem);
+    }
+  }
 }

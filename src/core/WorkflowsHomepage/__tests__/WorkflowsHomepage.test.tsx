@@ -40,6 +40,7 @@ const baseWorkflowsStoreMock = {
   hasOpportunities: () => false,
   user: { info: { givenNames: "Recidiviz" } },
   workflowsOfficerTitle: "officer",
+  justiceInvolvedPersonTitle: "client",
 };
 
 describe("WorkflowsHomepage", () => {
@@ -167,7 +168,7 @@ describe("WorkflowsHomepage", () => {
 
     expect(
       screen.getByText(
-        "None of the clients on the selected unicorn's caseloads are eligible for opportunities. Search for another officer."
+        "None of the clients on the selected unicorn's caseloads are eligible for opportunities. Search for another unicorn."
       )
     ).toBeInTheDocument();
   });

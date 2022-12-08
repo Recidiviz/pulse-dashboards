@@ -21,6 +21,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { Client } from "../../WorkflowsStore";
 import { ProfileCapsule } from "../PersonCapsules";
 import { workflowsUrl } from "../views";
 import { PersonProfileProps } from "./types";
@@ -36,7 +37,10 @@ export const Heading = observer(function Heading({
   return (
     <HeadingWrapper>
       <Link
-        to={workflowsUrl("clientProfile", { clientId: person.pseudonymizedId })}
+        to={workflowsUrl(
+          person instanceof Client ? "clientProfile" : "residentProfile",
+          { justiceInvolvedPersonId: person.pseudonymizedId }
+        )}
       >
         <ProfileCapsule avatarSize="md" person={person} textSize="sm" />
       </Link>

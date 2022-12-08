@@ -217,17 +217,21 @@ export function getSectionIdForMetric(metric: MetricId): PathwaysSection {
 
 export const WORKFLOWS_PATHS = {
   opportunityClients: `/${PATHWAYS_VIEWS.workflows}/:opportunityTypeUrl`,
-  opportunityAction: `/${PATHWAYS_VIEWS.workflows}/:opportunityTypeUrl/:clientId`,
+  opportunityAction: `/${PATHWAYS_VIEWS.workflows}/:opportunityTypeUrl/:justiceInvolvedPersonId`,
   workflows: `/${PATHWAYS_VIEWS.workflows}`,
   workflows404: `/${PATHWAYS_VIEWS.workflows}/not-found`,
   home: `/${PATHWAYS_VIEWS.workflows}/home`,
   caseloadClients: `/${PATHWAYS_VIEWS.workflows}/clients`,
-  clientProfile: `/${PATHWAYS_VIEWS.workflows}/clients/:clientId`,
+  caseloadResidents: `/${PATHWAYS_VIEWS.workflows}/residents`,
+  clientProfile: `/${PATHWAYS_VIEWS.workflows}/clients/:justiceInvolvedPersonId`,
+  residentProfile: `/${PATHWAYS_VIEWS.workflows}/residents/:justiceInvolvedPersonId`,
 };
 
 export const WorkflowsPageIdList = [
   "caseloadClients",
+  "caseloadResidents",
   "clientProfile",
+  "residentProfile",
   "home",
   "opportunityClients",
   "opportunityAction",
@@ -241,6 +245,8 @@ export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   home: "home",
   caseloadClients: "caseloadClients",
   clientProfile: "clientProfile",
+  caseloadResidents: "caseloadResidents",
+  residentProfile: "residentProfile",
   opportunityClients: "opportunityClients",
   opportunityAction: "opportunityAction",
   workflows: "workflows",
@@ -259,7 +265,7 @@ export function workflowsRoute({
 }
 
 type WorkflowsRouteParams = {
-  clientId?: string;
+  justiceInvolvedPersonId?: string;
   opportunityType?: OpportunityType;
 };
 

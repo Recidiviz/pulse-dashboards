@@ -104,7 +104,7 @@ export const PersonListItem = observer(function PersonListItem({
           <Link
             to={workflowsUrl("opportunityAction", {
               opportunityType: opportunity.type,
-              clientId: person.pseudonymizedId,
+              justiceInvolvedPersonId: person.pseudonymizedId,
             })}
           >
             <NavigateToFormButton className="NavigateToFormButton">
