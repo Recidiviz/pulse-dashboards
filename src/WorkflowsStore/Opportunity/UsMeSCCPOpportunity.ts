@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInMonths } from "date-fns";
+import { differenceInDays, differenceInMonths } from "date-fns";
 import { cloneDeep } from "lodash";
 import { computed, makeObservable, observable } from "mobx";
 
@@ -165,5 +165,21 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
     if (!this.record) return [];
     const { ineligibleCriteria } = this.record;
     return requirementsForCriteria(ineligibleCriteria);
+  }
+
+  get almostEligibleStatusMessage(): string | undefined {
+    if (!this.almostEligible) return;
+    const usMeXMonthsRemainingOnSentence = this.record?.ineligibleCriteria
+      ?.usMeXMonthsRemainingOnSentence;
+    const eligibleDate = usMeXMonthsRemainingOnSentence?.eligibleDate;
+
+    if (!eligibleDate) return "Status unknown";
+
+    const monthsRemaining = differenceInMonths(eligibleDate, new Date());
+    let daysRemaining;
+    if (monthsRemaining === 0) {
+      daysRemaining = `and ${differenceInDays(eligibleDate, new Date())} days `;
+    }
+    return `${monthsRemaining + 30} months ${daysRemaining || ""}until release`;
   }
 }

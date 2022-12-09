@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { parseISO } from "date-fns";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
@@ -110,6 +111,38 @@ describe("almost eligible", () => {
 
   test("almost eligible", () => {
     expect(opp.almostEligible).toBeTrue();
+  });
+
+  test("almostEligibleStatusMessage", () => {
+    expect(opp.almostEligibleStatusMessage).toEqual("35 months until release");
+  });
+
+  test("almostEligibleStatusMessage with days", () => {
+    const almostEligibleInDays = {
+      ...usMeSCCPAlmostEligibleRecordFixture,
+      ineligibleCriteria: {
+        usMeXMonthsRemainingOnSentence: {
+          eligibleDate: parseISO("2023-01-14"),
+        },
+      },
+    };
+    referralSub.data = almostEligibleInDays;
+    expect(opp.almostEligibleStatusMessage).toEqual(
+      "30 months and 13 days until release"
+    );
+  });
+
+  test("almostEligibleStatusMessage with no date", () => {
+    const almostEligibleInDays = {
+      ...usMeSCCPAlmostEligibleRecordFixture,
+      ineligibleCriteria: {
+        usMeXMonthsRemainingOnSentence: {
+          eligibleDate: undefined,
+        },
+      },
+    };
+    referralSub.data = almostEligibleInDays;
+    expect(opp.almostEligibleStatusMessage).toEqual("Status unknown");
   });
 });
 
