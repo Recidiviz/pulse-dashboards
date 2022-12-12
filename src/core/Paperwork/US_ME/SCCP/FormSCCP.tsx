@@ -21,9 +21,10 @@ import {
   Sans24,
   spacing,
 } from "@recidiviz/design-system";
-import { toJS } from "mobx";
+import * as Sentry from "@sentry/react";
+import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
+import { rem, rgba } from "polished";
 import { useState } from "react";
 import styled from "styled-components/macro";
 
@@ -36,14 +37,18 @@ import {
 } from "../../DOCXFormGenerator";
 import { connectComponentToOpportunityForm } from "../../OpportunityFormContext";
 import { REACTIVE_INPUT_UPDATE_DELAY } from "../../utils";
-import { WebForm } from "../../WebForm";
-import { WebFormFieldProps } from "../../WebFormField";
+import p1 from "./assets/p1.png";
+import p2 from "./assets/p2.png";
+import p3 from "./assets/p3.png";
+import p4 from "./assets/p4.png";
+import p5 from "./assets/p5.png";
+import p6 from "./assets/p6.png";
 
 const FormHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: ${rem(spacing.lg)} 0;
-  border-bottom: 1px solid ${palette.marble5};
+  padding: ${rem(spacing.lg)} ${rem(spacing.xl)};
+  border-bottom: 1px solid ${palette.pine2};
   margin-bottom: ${rem(spacing.lg)};
 `;
 
@@ -54,35 +59,56 @@ const FormHeaderSection = styled.div`
 `;
 
 const FormHeading = styled(Sans24)`
-  color: ${palette.pine1};
+  color: ${palette.marble1};
 `;
 
 const FormContainer = styled.div`
-  margin: 0 ${rem(spacing.xl)};
+  background-color: ${palette.pine1};
+  color: ${palette.marble1};
+  min-height: 100vh;
   padding-bottom: ${rem(spacing.xl)};
 `;
 
 const LastEditedMessage = styled(Sans12)`
-  color: ${palette.slate85};
+  color: ${palette.marble1};
+  margin-top: ${rem(spacing.sm)};
 `;
 
-const SCCPFormFields: WebFormFieldProps[] = [
-  { name: "residentName", label: "Resident's Name" },
-  { name: "mdocNo", label: "MDOC No." },
-  { name: "facilityHousingUnit", label: "Facility/Housing Unit" },
-  { name: "caseManager", label: "Case Manager" },
-];
+const DownloadButton = styled(Button).attrs({
+  kind: "primary",
+  shape: "block",
+})`
+  background-color: ${rgba(palette.marble1, 0.1)};
+  padding: ${rem(spacing.sm)} ${rem(spacing.md)};
+`;
+
+const FormPreviewContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.md)};
+  padding: ${rem(spacing.xl)} 10%;
+  width: 100%;
+`;
+
+const FormPreviewPage = styled.img`
+  height: auto;
+  width: 100%;
+`;
+
+const previewImages = [p1, p2, p3, p4, p5, p6];
 
 const formDownloader = async (resident: Resident): Promise<void> => {
   await new Promise((resolve) =>
     setTimeout(resolve, REACTIVE_INPUT_UPDATE_DELAY)
   );
 
-  const { usMeSCCP } = resident.verifiedOpportunities;
-
-  const contents = {
-    ...toJS(usMeSCCP?.form?.formData),
-  };
+  let contents: FileGeneratorArgs[2];
+  // we are not mutating any observables here, just telling Mobx not to track this access
+  runInAction(() => {
+    contents = {
+      ...toJS(resident.verifiedOpportunities.usMeSCCP?.form?.formData),
+    };
+  });
 
   const fileInputs: FileGeneratorArgs[] = [
     "SCCP_program_plan",
@@ -121,30 +147,39 @@ const Form = observer(function FormSCCP() {
     <FormContainer>
       <FormHeader>
         <FormHeaderSection>
-          <FormHeading>
-            SCCP Program Plan
-            <br />
+          <div>
+            <FormHeading>SCCP Program Plan</FormHeading>
             <LastEditedMessage>
               <FormLastEdited agencyName="MDOC" form={opportunity.form} />
             </LastEditedMessage>
-          </FormHeading>
+          </div>
         </FormHeaderSection>
         <FormHeaderSection>
-          <Button
-            kind="primary"
-            shape="block"
+          <DownloadButton
             disabled={isDownloading}
             onClick={async () => {
               setIsDownloading(true);
-              await formDownloader(resident);
+              try {
+                await formDownloader(resident);
+              } catch (e) {
+                Sentry.captureException(e);
+              }
               setIsDownloading(false);
             }}
           >
             {isDownloading ? "Downloading..." : "Download .DOCX"}
-          </Button>
+          </DownloadButton>
         </FormHeaderSection>
       </FormHeader>
-      <WebForm fields={SCCPFormFields} />
+      <FormPreviewContainer>
+        {previewImages.map((imageUrl, index) => (
+          <FormPreviewPage
+            key={imageUrl}
+            src={imageUrl}
+            alt={`SCCP Program Plan preview, page ${index + 1}`}
+          />
+        ))}
+      </FormPreviewContainer>
     </FormContainer>
   );
 });

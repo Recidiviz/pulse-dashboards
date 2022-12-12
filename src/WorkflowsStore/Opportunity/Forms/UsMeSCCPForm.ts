@@ -23,7 +23,7 @@ export class UsMeSCCPForm extends FormBase<
   UsMeSCCPDraftData,
   UsMeSCCPOpportunity
 > {
-  navigateToFormText = "Auto-fill paperwork";
+  navigateToFormText = "Generate paperwork";
 
   prefilledDataTransformer: PrefilledDataTransformer<UsMeSCCPDraftData> = () => {
     if (!this.opportunity.record) return {};
