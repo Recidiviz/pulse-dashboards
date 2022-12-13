@@ -18,6 +18,9 @@ Object {
   },
   "externalId": "002",
   "ineligibleCriteria": Object {
+    "usMeNoClassAOrBViolationFor90Days": Object {
+      "eligibleDate": 2022-11-15T00:00:00.000Z,
+    },
     "usMeServedXPortionOfSentence": Object {
       "eligibleDate": 2023-01-03T00:00:00.000Z,
     },
@@ -44,6 +47,8 @@ Object {
     "usMeMinimumOrCommunityCustody": Object {
       "custodyLevel": "MINIMUM",
     },
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
     "usMeServedXPortionOfSentence": Object {
       "eligibleDate": 2022-11-03T00:00:00.000Z,
     },

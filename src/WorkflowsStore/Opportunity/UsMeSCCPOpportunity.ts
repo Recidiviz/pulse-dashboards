@@ -33,14 +33,12 @@ import {
 const DENIAL_REASONS_MAP = {
   "CASE PLAN": "Not compliant with case plan goals",
   PROGRAM: "Has not completed required core programming",
-  DISCIPLINE:
-    "Found guilty of a Class A or B disciplinary violation in the past 90 days " +
-    "or has a Class A or B disciplinary violation pending",
+  DISCIPLINE: "Has a Class A or B disciplinary violation pending",
   DECLINE: "Client declined opportunity to apply for SCCP",
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
-const CRITERIA_COPY: Record<
+const ELIGIBLE_CRITERIA_COPY: Record<
   keyof UsMeSCCPCriteria,
   Required<OpportunityRequirement>
 > = {
@@ -68,9 +66,59 @@ const CRITERIA_COPY: Record<
       "that the average statewide case load is no more than ninety (90) adult community " +
       "corrections clients to one probation officer.",
   },
+  usMeNoClassAOrBViolationFor90Days: {
+    text:
+      "No Class A or B disciplines pending or occurring in the past 90 days",
+    tooltip:
+      "Must not have been found guilty of a Class A or B disciplinary violation within ninety " +
+      "(90) days of submitting the plan to be transferred to supervised community confinement " +
+      "or anytime thereafter prior to the scheduled transfer and must not have a Class A or B " +
+      "disciplinary report pending at the time of submitting the plan or scheduled transfer.",
+  },
+  usMeNoDetainersWarrantsOrOther: {
+    text: "No detainers, warrants, or other pending holds",
+    tooltip:
+      "Must have no detainers, warrants, or other pending holds preventing participation in a " +
+      "community program as set out in Department Policy (AF) 23.1",
+  },
 };
 
-const requirementsForCriteria = (
+const INELIGIBLE_CRITERIA_COPY = {
+  usMeXMonthsRemainingOnSentence:
+    ELIGIBLE_CRITERIA_COPY.usMeXMonthsRemainingOnSentence,
+  usMeNoClassAOrBViolationFor90Days: {
+    text: "Needs $DAYS_REMAINING more days without a Class A or B discipline",
+    tooltip: ELIGIBLE_CRITERIA_COPY.usMeNoClassAOrBViolationFor90Days.tooltip,
+  },
+};
+
+function hydrateXMonthsRemainingRequirement(
+  criterion: UsMeSCCPCriteria["usMeXMonthsRemainingOnSentence"],
+  copy: OpportunityRequirement
+) {
+  const monthsRemaining =
+    differenceInMonths(criterion.eligibleDate, new Date()) + 30;
+
+  return {
+    text: copy.text.replace("$MONTHS_REMAINING", `${monthsRemaining}`),
+    tooltip: copy.tooltip,
+  };
+}
+function hydrateDaysWithoutViolationRequirementText(
+  criterion: NonNullable<UsMeSCCPCriteria["usMeNoClassAOrBViolationFor90Days"]>
+) {
+  const daysRemaining = differenceInDays(
+    criterion.eligibleDate,
+    new Date()
+  ).toString();
+
+  return INELIGIBLE_CRITERIA_COPY.usMeNoClassAOrBViolationFor90Days.text.replace(
+    "$DAYS_REMAINING",
+    daysRemaining
+  );
+}
+
+const requirementsForEligibleCriteria = (
   criteria: Partial<UsMeSCCPCriteria>
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
@@ -79,7 +127,9 @@ const requirementsForCriteria = (
     usMeMinimumOrCommunityCustody,
     usMeServedXPortionOfSentence,
     usMeXMonthsRemainingOnSentence,
-  } = cloneDeep(CRITERIA_COPY);
+    usMeNoDetainersWarrantsOrOther,
+    usMeNoClassAOrBViolationFor90Days,
+  } = cloneDeep(ELIGIBLE_CRITERIA_COPY);
 
   if (criteria.usMeMinimumOrCommunityCustody) {
     usMeMinimumOrCommunityCustody.text = usMeMinimumOrCommunityCustody.text.replace(
@@ -105,18 +155,53 @@ const requirementsForCriteria = (
   }
 
   if (criteria.usMeXMonthsRemainingOnSentence) {
-    const monthsRemaining =
-      differenceInMonths(
-        criteria.usMeXMonthsRemainingOnSentence.eligibleDate,
-        new Date()
-      ) + 30;
-
-    usMeXMonthsRemainingOnSentence.text = usMeXMonthsRemainingOnSentence.text.replace(
-      "$MONTHS_REMAINING",
-      `${monthsRemaining}`
+    requirements.push(
+      hydrateXMonthsRemainingRequirement(
+        criteria.usMeXMonthsRemainingOnSentence,
+        usMeXMonthsRemainingOnSentence
+      )
     );
+  }
 
-    requirements.push(usMeXMonthsRemainingOnSentence);
+  if (criteria.usMeNoDetainersWarrantsOrOther === null) {
+    requirements.push(usMeNoDetainersWarrantsOrOther);
+  }
+
+  if (criteria.usMeNoClassAOrBViolationFor90Days === null) {
+    requirements.push(usMeNoClassAOrBViolationFor90Days);
+  }
+
+  return requirements;
+};
+
+const requirementsForIneligibleCriteria = (
+  criteria: Partial<UsMeSCCPCriteria>
+): OpportunityRequirement[] => {
+  const requirements: OpportunityRequirement[] = [];
+
+  const {
+    usMeXMonthsRemainingOnSentence,
+    usMeNoClassAOrBViolationFor90Days,
+  } = cloneDeep(INELIGIBLE_CRITERIA_COPY);
+
+  if (criteria.usMeXMonthsRemainingOnSentence) {
+    if (criteria.usMeXMonthsRemainingOnSentence) {
+      requirements.push(
+        hydrateXMonthsRemainingRequirement(
+          criteria.usMeXMonthsRemainingOnSentence,
+          usMeXMonthsRemainingOnSentence
+        )
+      );
+    }
+  }
+
+  if (criteria.usMeNoClassAOrBViolationFor90Days) {
+    requirements.push({
+      text: hydrateDaysWithoutViolationRequirementText(
+        criteria.usMeNoClassAOrBViolationFor90Days
+      ),
+      tooltip: usMeNoClassAOrBViolationFor90Days.tooltip,
+    });
   }
 
   return requirements;
@@ -158,28 +243,44 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
     const { eligibleCriteria } = this.record;
-    return requirementsForCriteria(eligibleCriteria);
+    return requirementsForEligibleCriteria(eligibleCriteria);
   }
 
   get requirementsAlmostMet(): OpportunityRequirement[] {
     if (!this.record) return [];
     const { ineligibleCriteria } = this.record;
-    return requirementsForCriteria(ineligibleCriteria);
+    return requirementsForIneligibleCriteria(ineligibleCriteria);
   }
 
   get almostEligibleStatusMessage(): string | undefined {
     if (!this.almostEligible) return;
-    const usMeXMonthsRemainingOnSentence = this.record?.ineligibleCriteria
-      ?.usMeXMonthsRemainingOnSentence;
-    const eligibleDate = usMeXMonthsRemainingOnSentence?.eligibleDate;
+    const {
+      usMeXMonthsRemainingOnSentence,
+      usMeNoClassAOrBViolationFor90Days,
+    } = this.record?.ineligibleCriteria ?? {};
 
-    if (!eligibleDate) return "Status unknown";
+    if (usMeXMonthsRemainingOnSentence) {
+      const { eligibleDate } = usMeXMonthsRemainingOnSentence;
 
-    const monthsRemaining = differenceInMonths(eligibleDate, new Date());
-    let daysRemaining;
-    if (monthsRemaining === 0) {
-      daysRemaining = `and ${differenceInDays(eligibleDate, new Date())} days `;
+      const monthsRemaining = differenceInMonths(eligibleDate, new Date());
+      let daysRemaining;
+      if (monthsRemaining === 0) {
+        daysRemaining = `and ${differenceInDays(
+          eligibleDate,
+          new Date()
+        )} days `;
+      }
+      return `${monthsRemaining + 30} months ${
+        daysRemaining || ""
+      }until release`;
     }
-    return `${monthsRemaining + 30} months ${daysRemaining || ""}until release`;
+
+    if (usMeNoClassAOrBViolationFor90Days) {
+      return hydrateDaysWithoutViolationRequirementText(
+        usMeNoClassAOrBViolationFor90Days
+      );
+    }
+
+    return "Status unknown";
   }
 }

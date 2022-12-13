@@ -32,6 +32,8 @@ test("transform record", () => {
       usMeXMonthsRemainingOnSentence: {
         eligibleDate: "2022-08-07",
       },
+      usMeNoDetainersWarrantsOrOther: null,
+      usMeNoClassAOrBViolationFor90Days: null,
     },
     ineligibleCriteria: {},
     caseNotes: {
@@ -61,6 +63,9 @@ test("transform almost-eligible record", () => {
       },
       usMeXMonthsRemainingOnSentence: {
         eligibleDate: "2022-12-07",
+      },
+      usMeNoClassAOrBViolationFor90Days: {
+        eligibleDate: "2022-11-15",
       },
     },
     caseNotes: {

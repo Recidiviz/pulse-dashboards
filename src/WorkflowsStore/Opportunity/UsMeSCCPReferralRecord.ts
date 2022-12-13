@@ -31,6 +31,8 @@ export type UsMeSCCPCriteria = {
     xPortionServed: "1/2" | "2/3";
   };
   usMeXMonthsRemainingOnSentence: { eligibleDate: Date };
+  usMeNoDetainersWarrantsOrOther: null;
+  usMeNoClassAOrBViolationFor90Days: null | { eligibleDate: Date };
 };
 
 export type UsMeSCCPReferralRecord = {
@@ -63,6 +65,13 @@ const transformCriteria = (
     transformedCriteria.usMeXMonthsRemainingOnSentence.eligibleDate = fieldToDate(
       // @ts-expect-error: We know this field exists since the one we checked above is a clone of it
       criteria.usMeXMonthsRemainingOnSentence.eligibleDate
+    );
+  }
+
+  if (transformedCriteria.usMeNoClassAOrBViolationFor90Days) {
+    transformedCriteria.usMeNoClassAOrBViolationFor90Days.eligibleDate = fieldToDate(
+      // @ts-expect-error: We know this field exists since the one we checked above is a clone of it
+      criteria.usMeNoClassAOrBViolationFor90Days.eligibleDate
     );
   }
 

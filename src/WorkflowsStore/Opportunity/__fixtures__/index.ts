@@ -434,6 +434,8 @@ export const usMeSCCPEligibleRecordFixture: UsMeSCCPReferralRecord = {
     usMeXMonthsRemainingOnSentence: {
       eligibleDate: parseISO("2022-08-14"),
     },
+    usMeNoClassAOrBViolationFor90Days: null,
+    usMeNoDetainersWarrantsOrOther: null,
   },
   caseNotes: {
     foo: [
@@ -459,6 +461,8 @@ export const usMeSCCPEligibleRecordHalfPortionFixture: UsMeSCCPReferralRecord = 
     usMeXMonthsRemainingOnSentence: {
       eligibleDate: parseISO("2021-12-20"),
     },
+    usMeNoDetainersWarrantsOrOther: null,
+    usMeNoClassAOrBViolationFor90Days: null,
   },
   caseNotes: {
     foo: [
@@ -471,7 +475,7 @@ export const usMeSCCPEligibleRecordHalfPortionFixture: UsMeSCCPReferralRecord = 
   },
 };
 
-export const usMeSCCPAlmostEligibleRecordFixture: UsMeSCCPReferralRecord = {
+export const usMeSCCPAlmostEligibleXMonthsRecordFixture: UsMeSCCPReferralRecord = {
   stateCode: "US_ME",
   externalId: "111",
   ineligibleCriteria: {
@@ -485,6 +489,38 @@ export const usMeSCCPAlmostEligibleRecordFixture: UsMeSCCPReferralRecord = {
       eligibleDate: parseISO("2022-10-12"),
       xPortionServed: "2/3",
     },
+    usMeNoDetainersWarrantsOrOther: null,
+    usMeNoClassAOrBViolationFor90Days: null,
+  },
+  caseNotes: {
+    foo: [
+      {
+        noteTitle: "A title",
+        noteBody: "A body",
+        eventDate: parseISO("2022-06-28"),
+      },
+    ],
+  },
+};
+
+export const usMeSCCPAlmostEligibleViolationRecordFixture: UsMeSCCPReferralRecord = {
+  stateCode: "US_ME",
+  externalId: "111",
+  ineligibleCriteria: {
+    usMeNoClassAOrBViolationFor90Days: {
+      eligibleDate: parseISO("2023-02-15"),
+    },
+  },
+  eligibleCriteria: {
+    usMeXMonthsRemainingOnSentence: {
+      eligibleDate: parseISO("2022-06-14"),
+    },
+    usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+    usMeServedXPortionOfSentence: {
+      eligibleDate: parseISO("2022-10-12"),
+      xPortionServed: "2/3",
+    },
+    usMeNoDetainersWarrantsOrOther: null,
   },
   caseNotes: {
     foo: [

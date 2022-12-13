@@ -25,7 +25,8 @@ import { DocumentSubscription } from "../../subscriptions";
 import {
   usMePersonRecord,
   usMePersonRecordShorterSentence,
-  usMeSCCPAlmostEligibleRecordFixture,
+  usMeSCCPAlmostEligibleViolationRecordFixture,
+  usMeSCCPAlmostEligibleXMonthsRecordFixture,
   usMeSCCPEligibleRecordFixture,
   usMeSCCPEligibleRecordHalfPortionFixture,
 } from "../__fixtures__";
@@ -95,13 +96,13 @@ test("requirements for half sentence served", () => {
   expect(opp.requirementsMet[1]).toMatchSnapshot();
 });
 
-describe("almost eligible", () => {
+describe("almost eligible but for months remaining", () => {
   beforeEach(() => {
     createTestUnit(usMePersonRecord);
 
     referralSub = opp.referralSubscription;
     referralSub.isLoading = false;
-    referralSub.data = usMeSCCPAlmostEligibleRecordFixture;
+    referralSub.data = usMeSCCPAlmostEligibleXMonthsRecordFixture;
   });
 
   test("requirements met", () => {
@@ -119,7 +120,7 @@ describe("almost eligible", () => {
 
   test("almostEligibleStatusMessage with days", () => {
     const almostEligibleInDays = {
-      ...usMeSCCPAlmostEligibleRecordFixture,
+      ...usMeSCCPAlmostEligibleXMonthsRecordFixture,
       ineligibleCriteria: {
         usMeXMonthsRemainingOnSentence: {
           eligibleDate: parseISO("2023-01-14"),
@@ -130,19 +131,6 @@ describe("almost eligible", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
       "30 months and 13 days until release"
     );
-  });
-
-  test("almostEligibleStatusMessage with no date", () => {
-    const almostEligibleInDays = {
-      ...usMeSCCPAlmostEligibleRecordFixture,
-      ineligibleCriteria: {
-        usMeXMonthsRemainingOnSentence: {
-          eligibleDate: undefined,
-        },
-      },
-    };
-    referralSub.data = almostEligibleInDays;
-    expect(opp.almostEligibleStatusMessage).toEqual("Status unknown");
   });
 });
 
@@ -162,7 +150,7 @@ describe("ensure requirements text updates when source changes", () => {
       text.includes("months remaining on sentence")
     )!.text;
 
-    referralSub.data = usMeSCCPAlmostEligibleRecordFixture;
+    referralSub.data = usMeSCCPAlmostEligibleXMonthsRecordFixture;
 
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     const textAlmostEligible = opp.requirementsAlmostMet.find(({ text }) =>
@@ -170,5 +158,30 @@ describe("ensure requirements text updates when source changes", () => {
     )!.text;
 
     expect(textEligible).not.toEqual(textAlmostEligible);
+  });
+});
+
+describe("almost eligible but for class A/B discipline", () => {
+  beforeEach(() => {
+    createTestUnit(usMePersonRecord);
+
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.data = usMeSCCPAlmostEligibleViolationRecordFixture;
+  });
+
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+    expect(opp.requirementsAlmostMet).toMatchSnapshot();
+  });
+
+  test("almost eligible", () => {
+    expect(opp.almostEligible).toBeTrue();
+  });
+
+  test("almostEligibleStatusMessage", () => {
+    expect(opp.almostEligibleStatusMessage).toMatchInlineSnapshot(
+      `"Needs 45 more days without a Class A or B discipline"`
+    );
   });
 });

@@ -53,4 +53,20 @@ export const residentsData: Omit<
     admissionDate: "2020-08-12",
     releaseDate: "2024-11-27",
   },
+  {
+    allEligibleOpportunities: ["usMeSCCP"],
+    officerId: "OFFICER5",
+    stateCode: "US_ME",
+    personExternalId: "RES003",
+    personName: {
+      givenNames: "Third",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres003",
+    facilityId: "FACILITY NAME",
+    unitId: "UNIT B",
+    custodyLevel: "MINIMUM",
+    admissionDate: "2020-09-12",
+    releaseDate: "2024-10-27",
+  },
 ];
