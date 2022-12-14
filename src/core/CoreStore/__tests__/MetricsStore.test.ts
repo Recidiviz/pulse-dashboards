@@ -22,6 +22,7 @@ import LibertyPopulationOverTimeMetric from "../../models/LibertyPopulationOverT
 import OverTimeMetric from "../../models/OverTimeMetric";
 import PathwaysMetric from "../../models/PathwaysMetric";
 import PopulationProjectionOverTimeMetric from "../../models/PopulationProjectionOverTimeMetric";
+import SupervisionPopulationOverTimeMetric from "../../models/SupervisionPopulationOverTimeMetric";
 import SupervisionPopulationSnapshotMetric from "../../models/SupervisionPopulationSnapshotMetric";
 import VitalsMetrics from "../../models/VitalsMetrics";
 import CoreStore from "..";
@@ -47,6 +48,12 @@ describe("MetricsStore", () => {
   });
 
   describe("metrics", () => {
+    beforeEach(() => {
+      flags.defaultMetricBackend = "OLD";
+      // @ts-ignore
+      flags.metricBackendOverrides = {};
+    });
+
     it("has a reference to the vitals metrics", () => {
       expect(coreStore.metricsStore.vitals).toBeInstanceOf(VitalsMetrics);
     });
@@ -74,12 +81,16 @@ describe("MetricsStore", () => {
       flags.defaultMetricBackend = "NEW";
       flags.metricBackendOverrides = {
         prisonPopulationOverTime: "NEW",
-        supervisionToPrisonOverTime: "NEW",
+        libertyToPrisonPopulationOverTime: "NEW",
+        supervisionToPrisonOverTime: "OLD",
         supervisionToPrisonPopulationByOfficer: "OLD_WITH_DIFFING",
       };
       expect(
         coreStore.metricsStore.libertyToPrisonPopulationOverTime
       ).toBeInstanceOf(OverTimeMetric);
+      expect(coreStore.metricsStore.supervisionToPrisonOverTime).toBeInstanceOf(
+        SupervisionPopulationOverTimeMetric
+      );
       expect(
         coreStore.metricsStore.supervisionToPrisonPopulationByOfficer
       ).toBeInstanceOf(SupervisionPopulationSnapshotMetric);
