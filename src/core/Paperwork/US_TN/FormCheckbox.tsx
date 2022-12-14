@@ -47,6 +47,7 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
       name={name}
       onChange={onChange}
       type="checkbox"
+      className="fs-exclude"
     />
   );
 };

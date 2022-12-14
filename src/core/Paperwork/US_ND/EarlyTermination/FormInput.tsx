@@ -99,6 +99,7 @@ const FormInput: React.FC<FormInputProps> = observer(function FormInput({
         value={value}
         onChange={onChange}
         name={name}
+        className="fs-exclude"
         {...props}
       />
     </StyledAutosizeInput>

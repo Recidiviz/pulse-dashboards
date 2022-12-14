@@ -98,6 +98,7 @@ const WebFormField: React.FC<WebFormFieldProps> = ({
         onChange={onChange}
         foundationRef={foundationRef}
         inputRef={inputRef}
+        className="fs-exclude"
       />
     </ThemeContainer>
   );

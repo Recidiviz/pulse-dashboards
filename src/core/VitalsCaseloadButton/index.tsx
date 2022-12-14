@@ -49,7 +49,7 @@ const VitalsCaseloadButton: React.FC = () => {
     return <div />;
 
   return (
-    <div className="VitalsCaseloadButton__button">
+    <div className="VitalsCaseloadButton__button fs-exclude">
       <Button
         onClick={() =>
           window.open(

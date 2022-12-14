@@ -120,16 +120,18 @@ export const JusticeInvolvedPersonCapsule: React.FC<JusticeInvolvedPersonCapsule
       <PersonInfo>
         <IdentityEl>
           <TooltipTrigger contents={!hideTooltip && "Go to profile"}>
-            <PersonName className="PersonName">{person.displayName}</PersonName>
+            <PersonName className="PersonName fs-exclude">
+              {person.displayName}
+            </PersonName>
           </TooltipTrigger>
           {!hideId && (
             <React.Fragment key="personExternalId">
               <Separator> • </Separator>
-              <PersonId>{person.externalId}</PersonId>
+              <PersonId className="fs-exclude">{person.externalId}</PersonId>
             </React.Fragment>
           )}
         </IdentityEl>
-        <StatusEl className="WorkflowsStatus">{status}</StatusEl>
+        <StatusEl className="WorkflowsStatus fs-exclude">{status}</StatusEl>
       </PersonInfo>
     </Wrapper>
   );

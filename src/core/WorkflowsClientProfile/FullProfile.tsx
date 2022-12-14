@@ -151,7 +151,9 @@ const ContactDetails = ({
     <ContactCell>
       <div>
         <ContactLabel>Telephone</ContactLabel>
-        <ContactValue>{person.formattedPhoneNumber}</ContactValue>
+        <ContactValue className="fs-exclude">
+          {person.formattedPhoneNumber}
+        </ContactValue>
       </div>
     </ContactCell>
   );

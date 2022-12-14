@@ -29,6 +29,8 @@ import ReactSelect, {
   components,
   IndicatorContainerProps,
   MenuListComponentProps,
+  MultiValueProps,
+  OptionProps,
   SelectComponentsConfig,
 } from "react-select";
 import { IndicatorProps } from "react-select/src/components/indicators";
@@ -101,6 +103,22 @@ const IndicatorsContainer = ({
   );
 };
 
+const Option = ({ children, ...props }: OptionProps<SelectOption, true>) => {
+  return (
+    <components.Option className="fs-exclude" {...props}>
+      {children}
+    </components.Option>
+  );
+};
+
+const MultiValue = ({ children, ...props }: MultiValueProps<SelectOption>) => {
+  return (
+    <components.MultiValue className="fs-exclude" {...props}>
+      {children}
+    </components.MultiValue>
+  );
+};
+
 const ValueRemover = (props: MultiValueRemoveProps<SelectOption>) => {
   return (
     <components.MultiValueRemove {...props}>
@@ -142,6 +160,8 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     DropdownIndicator: null,
     IndicatorsContainer,
     MultiValueRemove: ValueRemover,
+    Option,
+    MultiValue,
   };
 
   const disableAdditionalSelections =

@@ -86,7 +86,9 @@ export const JusticeInvolvedPersonAvatar: React.FC<AvatarProps> = ({
         colors={palette.data.defaultOrder}
         square={false}
       />
-      <AvatarInitials size={size}>{initials}</AvatarInitials>
+      <AvatarInitials className="fs-exclude" size={size}>
+        {initials}
+      </AvatarInitials>
     </AvatarElement>
   );
 };

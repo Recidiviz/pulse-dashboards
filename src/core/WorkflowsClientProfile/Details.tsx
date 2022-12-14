@@ -178,7 +178,7 @@ export const SpecialConditions = ({
   return (
     <DetailsSection className="DetailsSection">
       <DetailsHeading>Probation Special Conditions</DetailsHeading>
-      <DetailsContent>
+      <DetailsContent className="fs-exclude">
         {getProbationSpecialConditionsMarkup(
           client,
           emptySpecialConditionStrings.probation
@@ -186,7 +186,7 @@ export const SpecialConditions = ({
       </DetailsContent>
 
       <DetailsHeading>Parole Special Conditions</DetailsHeading>
-      <DetailsContent>
+      <DetailsContent className="fs-exclude">
         <>
           {!client.paroleSpecialConditions?.length &&
             emptySpecialConditionStrings.parole}
@@ -288,7 +288,9 @@ export const Contact = ({ client }: ClientProfileProps): React.ReactElement => {
       <DetailsContent>
         <DetailsList>
           <DetailsSubheading>Telephone</DetailsSubheading>
-          <DetailsContent>{client.phoneNumber}</DetailsContent>
+          <DetailsContent className="fs-exclude">
+            {client.phoneNumber}
+          </DetailsContent>
         </DetailsList>
       </DetailsContent>
     </DetailsSection>
@@ -303,7 +305,9 @@ export const ClientHousing = ({
       <DetailsContent>
         <DetailsList>
           <DetailsSubheading>Address</DetailsSubheading>
-          <DetailsContent>{client.address}</DetailsContent>
+          <DetailsContent className="fs-exclude">
+            {client.address}
+          </DetailsContent>
         </DetailsList>
       </DetailsContent>
     </DetailsSection>
@@ -389,7 +393,7 @@ export const CaseNotes = ({
             return (
               <React.Fragment key={section}>
                 <DetailsSubheading>{section}</DetailsSubheading>
-                <DetailsList>
+                <DetailsList className="fs-exclude">
                   {notes
                     .sort((noteA, noteB) =>
                       descending(noteA.eventDate, noteB.eventDate)

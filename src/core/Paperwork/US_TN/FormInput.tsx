@@ -55,6 +55,7 @@ const FormInput: React.FC<FormInputProps> = ({ name, ...props }) => {
       name={name}
       type="text"
       onChange={onChange}
+      className="fs-exclude"
     />
   );
 };

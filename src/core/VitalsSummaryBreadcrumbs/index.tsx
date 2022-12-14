@@ -17,6 +17,7 @@
 
 import "./VitalsSummaryBreadcrumbs.scss";
 
+import cn from "classnames";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -106,7 +107,13 @@ const VitalsSummaryBreadcrumbs: React.FC = () => {
           </div>
         )}
       </div>
-      <div className="VitalsSummaryBreadcrumbs--current">{current}</div>
+      <div
+        className={cn("VitalsSummaryBreadcrumbs--current", {
+          "fs-exclude": entityType === ENTITY_TYPES.PO,
+        })}
+      >
+        {current}
+      </div>
     </div>
   );
 };

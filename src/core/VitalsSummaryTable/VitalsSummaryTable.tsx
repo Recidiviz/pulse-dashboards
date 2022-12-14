@@ -245,7 +245,11 @@ const VitalsSummaryTable: React.FC = () => {
                   const { column } = cell;
                   return (
                     <td
-                      className={`VitalsSummaryTable__cell--${column.id}`}
+                      className={cx(`VitalsSummaryTable__cell--${column.id}`, {
+                        "fs-exclude":
+                          column.id === "entity" &&
+                          entityType === ENTITY_TYPES.PO,
+                      })}
                       {...cell.getCellProps()}
                     >
                       {cell.render("Cell")}

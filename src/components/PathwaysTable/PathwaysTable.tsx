@@ -53,7 +53,7 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
       const row = rows[index];
       prepareRow(row);
       return (
-        <div className="tr" {...row.getRowProps({ style })}>
+        <div className="tr fs-exclude" {...row.getRowProps({ style })}>
           {row.cells.map((cell) => {
             return (
               <div

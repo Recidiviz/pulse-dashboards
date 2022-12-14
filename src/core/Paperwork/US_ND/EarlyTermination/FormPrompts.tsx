@@ -23,7 +23,7 @@ const PromptElement = styled.div`
 
 const Prompt: React.FC = ({ children }) => {
   return (
-    <PromptElement>
+    <PromptElement className="fs-exclude">
       <Icon size={14} kind="Info" /> {children}
     </PromptElement>
   );

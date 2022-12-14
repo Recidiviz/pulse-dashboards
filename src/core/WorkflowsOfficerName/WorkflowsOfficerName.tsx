@@ -45,7 +45,11 @@ const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
     officerFullName = `${officer.givenNames} ${officer.surname}`.trim();
   }
 
-  return <span>{officerFullName ?? officerId ?? officerEmail}</span>;
+  return (
+    <span className="fs-exclude">
+      {officerFullName ?? officerId ?? officerEmail}
+    </span>
+  );
 };
 
 export default observer(WorkflowsOfficerName);

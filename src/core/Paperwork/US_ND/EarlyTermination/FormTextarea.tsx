@@ -78,6 +78,7 @@ const FormTextarea: React.FC<FormTextareaProps> = observer(
         name={name}
         value={value}
         onChange={onChange}
+        className="fs-exclude"
         {...props}
       />
     );
