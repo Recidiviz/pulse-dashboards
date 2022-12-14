@@ -27,6 +27,7 @@ import { ResponsiveOrdinalFrame } from "semiotic";
 
 import { getTicks } from "../../utils";
 import styles from "../CoreConstants.module.scss";
+import { useCoreStore } from "../CoreStoreProvider";
 import LibertyPopulationOverTimeMetric from "../models/LibertyPopulationOverTimeMetric";
 import OverTimeMetric from "../models/OverTimeMetric";
 import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
@@ -34,6 +35,7 @@ import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulation
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import PopulationTimeSeriesLegend from "../PopulationTimeSeriesChart/PopulationTimeSeriesLegend";
+import VizPathways from "../VizPathways";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizCountOverTimeWithAvgProps = {
@@ -47,6 +49,8 @@ type VizCountOverTimeWithAvgProps = {
 const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
   metric,
 }) => {
+  const { filtersStore } = useCoreStore();
+  const { filtersDescription } = filtersStore;
   const [hoveredId, setHoveredId] = useState(null);
 
   const { dataSeries, chartTitle } = metric;
@@ -111,13 +115,16 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
   const yRange = [0, maxTickValue];
 
   return (
-    <div className="VizPathways VizCountOverTimeWithAvg">
-      <div className="VizPathways__header">
-        <div className="VizPathways__title">{chartTitle}</div>
+    <VizPathways
+      className="VizCountOverTimeWithAvg"
+      title={chartTitle}
+      legend={
         <PopulationTimeSeriesLegend
           items={["Monthly count", "3-month rolling average"]}
         />
-      </div>
+      }
+      subtitle={filtersDescription}
+    >
       <ResponsiveOrdinalFrame
         responsiveWidth
         hoverAnnotation
@@ -180,7 +187,7 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
           },
         ]}
       />
-    </div>
+    </VizPathways>
   );
 };
 

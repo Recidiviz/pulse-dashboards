@@ -42,6 +42,7 @@ import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import { Dimension } from "../types/dimensions";
 import { PopulationFilterLabels } from "../types/filters";
 import { METRIC_MODES } from "../utils/constants";
+import VizPathways from "../VizPathways";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizPopulationOverTimeProps = {
@@ -61,6 +62,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     getFilterLabel,
     getFilterLongLabel,
     currentMetricMode,
+    filtersDescription,
   } = filtersStore;
   const {
     dataSeries,
@@ -301,26 +303,22 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
   } as ResponsiveFrameProps;
 
   return (
-    <div>
-      <div
-        className={cn("VizPopulationSnapshot VizPathways", {
-          "VizPopulationSnapshot__labels--not-rotated": !metric.rotateLabels,
-          "VizPopulationSnapshot__horizontal-bar": metric.isHorizontal,
-        })}
-      >
-        <div className="VizPathways__header">
-          <div className="VizPathways__title">
-            {chartTitle} <span>as of {latestUpdate}</span>
-          </div>
+    <VizPathways
+      className={cn("VizPopulationSnapshot", {
+        "VizPopulationSnapshot__labels--not-rotated": !metric.rotateLabels,
+        "VizPopulationSnapshot__horizontal-bar": metric.isHorizontal,
+      })}
+      title={chartTitle}
+      latestUpdate={latestUpdate}
+      subtitle={filtersDescription}
+    >
+      <ResponsiveOrdinalFrame {...chartProps} />
+      {chartXAxisTitle && (
+        <div className="VizPopulationSnapshot__chartXAxisTitle">
+          {chartXAxisTitle}
         </div>
-        <ResponsiveOrdinalFrame {...chartProps} />
-        {chartXAxisTitle && (
-          <div className="VizPopulationSnapshot__chartXAxisTitle">
-            {chartXAxisTitle}
-          </div>
-        )}
-      </div>
-    </div>
+      )}
+    </VizPathways>
   );
 };
 

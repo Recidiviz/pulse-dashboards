@@ -147,7 +147,7 @@ export default class FiltersStore {
         ) {
           const { title } = this.filterOptions[key as keyof PopulationFilters];
           acc.push(
-            `${title}:, ${
+            `${title}: ${
               this.filtersLabels[key as keyof PopulationFilterLabels]
             }`
           );
@@ -157,7 +157,7 @@ export default class FiltersStore {
       },
       [] as string[]
     );
-    return filtersStrings.join("\n").concat("\n");
+    return filtersStrings.join(";\n").concat("\n");
   }
 
   get currentMetricMode(): string {
@@ -174,7 +174,7 @@ export default class FiltersStore {
         filter.options
       )
         .map((o) => o.label)
-        .join(",");
+        .join(", ");
       acc[filterType as keyof PopulationFilterLabels] = labels;
       return acc;
     }, {} as PopulationFilterLabels);

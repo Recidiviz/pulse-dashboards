@@ -22,11 +22,13 @@ import React from "react";
 import { ResponsiveXYFrame } from "semiotic";
 
 import { formatDate, formatPercent, getTicks } from "../../utils";
+import { useCoreStore } from "../CoreStoreProvider";
 import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import { SnapshotDataRecord } from "../models/types";
 import { filterUnknownLengthOfStay } from "../models/utils";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
+import VizPathways from "../VizPathways";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizLengthOfStayProps = {
@@ -34,6 +36,8 @@ type VizLengthOfStayProps = {
 };
 
 const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
+  const { filtersStore } = useCoreStore();
+  const { filtersDescription } = filtersStore;
   const { dataSeries, chartTitle, chartXAxisTitle, chartYAxisTitle } = metric;
 
   const snapshotSeries = dataSeries as SnapshotDataRecord[];
@@ -81,60 +85,58 @@ const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
   const yRange = [0, maxTickValue];
 
   return (
-    <div>
-      <div className="VizPathways VizLengthOfStay">
-        <div className="VizPathways__header">
-          <div className="VizPathways__title">
-            {chartTitle} <span>as of {latestUpdate}</span>
-          </div>
-        </div>
-        <div className="VizLengthOfStay__chart-container">
-          {chartYAxisTitle && (
-            <div className="VizLengthOfStay__chartYAxisTitle">
-              {chartYAxisTitle}
-            </div>
-          )}
-          <ResponsiveXYFrame
-            responsiveWidth
-            hoverAnnotation
-            tooltipContent={(d: any) => (
-              <PathwaysTooltip
-                label={`${d.lengthOfStay} months`}
-                value={`${formatPercent(d.cohortProportion)}`}
-              />
-            )}
-            // @ts-ignore
-            lines={[{ data }]}
-            lineDataAccessor="data"
-            lineClass="VizPathways__historicalLine"
-            xAccessor="lengthOfStay"
-            yAccessor="cohortProportion"
-            size={[558, 558]}
-            margin={{ left: 75, bottom: 75, right: 50, top: 56 }}
-            xExtent={[0, 60]}
-            yExtent={yRange}
-            pointClass="VizPathways__point"
-            lineType={{ type: "line", interpolator: curveCatmullRom }}
-            axes={[
-              {
-                orient: "left",
-                tickFormat: (n: number) => `${n}%`,
-                ticks: 5,
-              },
-              {
-                orient: "bottom",
-                tickValues: data.map((d) => d.lengthOfStay),
-              },
-            ]}
-          />
-        </div>
-        {chartXAxisTitle && (
-          <div className="VizLengthOfStay__chartXAxisTitle">
-            {chartXAxisTitle}
+    <VizPathways
+      className="VizLengthOfStay"
+      title={chartTitle}
+      latestUpdate={latestUpdate}
+      subtitle={filtersDescription}
+    >
+      <div className="VizLengthOfStay__chart-container">
+        {chartYAxisTitle && (
+          <div className="VizLengthOfStay__chartYAxisTitle">
+            {chartYAxisTitle}
           </div>
         )}
+        <ResponsiveXYFrame
+          responsiveWidth
+          hoverAnnotation
+          tooltipContent={(d: any) => (
+            <PathwaysTooltip
+              label={`${d.lengthOfStay} months`}
+              value={`${formatPercent(d.cohortProportion)}`}
+            />
+          )}
+          // @ts-ignore
+          lines={[{ data }]}
+          lineDataAccessor="data"
+          lineClass="VizPathways__historicalLine"
+          xAccessor="lengthOfStay"
+          yAccessor="cohortProportion"
+          size={[558, 558]}
+          margin={{ left: 75, bottom: 75, right: 50, top: 56 }}
+          xExtent={[0, 60]}
+          yExtent={yRange}
+          pointClass="VizPathways__point"
+          lineType={{ type: "line", interpolator: curveCatmullRom }}
+          axes={[
+            {
+              orient: "left",
+              tickFormat: (n: number) => `${n}%`,
+              ticks: 5,
+            },
+            {
+              orient: "bottom",
+              tickValues: data.map((d) => d.lengthOfStay),
+            },
+          ]}
+        />
       </div>
-    </div>
+      {chartXAxisTitle && (
+        <div className="VizLengthOfStay__chartXAxisTitle">
+          {chartXAxisTitle}
+        </div>
+      )}
+    </VizPathways>
   );
 };
 

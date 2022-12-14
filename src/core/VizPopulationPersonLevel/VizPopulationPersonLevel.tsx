@@ -27,6 +27,7 @@ import PersonLevelMetric from "../models/PersonLevelMetric";
 import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
 import { TableColumn } from "../types/charts";
 import { PopulationFilterLabels } from "../types/filters";
+import VizPathways from "../VizPathways";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizPopulationPersonLevelProps = {
@@ -37,7 +38,7 @@ const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
   metric,
 }) => {
   const { filtersStore } = useCoreStore();
-  const { getFilterLabel } = filtersStore;
+  const { getFilterLabel, filtersDescription } = filtersStore;
   const { dataSeries, chartTitle, columns, id } = metric;
   if (!columns) return null;
 
@@ -75,23 +76,26 @@ const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
   };
 
   return (
-    <div className="VizPopulationPersonLevel">
-      <div className="VizPopulationPersonLevel__header">
-        <div className="VizPopulationPersonLevel__title">
-          {chartTitle} <span>as of {latestUpdate}</span>
-        </div>
+    <VizPathways
+      className="VizPopulationPersonLevel"
+      withPadding={false}
+      title={chartTitle}
+      legend={
         <div className="VizPopulationPersonLevel__title">
           Total: {dataSeries.length.toLocaleString()}{" "}
           {id.includes("prisonToSupervision") ? "releases" : "people"}
         </div>
-      </div>
+      }
+      latestUpdate={latestUpdate}
+      subtitle={filtersDescription}
+    >
       <div className="VizPopulationPersonLevel__table">
         <PathwaysTable
           columns={columns.map((c) => createTableColumn(c))}
           data={dataSeries}
         />
       </div>
-    </div>
+    </VizPathways>
   );
 };
 

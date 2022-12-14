@@ -92,7 +92,7 @@ describe("FiltersStore", () => {
         admissionReason: ["NEW_ADMISSION"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
-        "Time Period:, 6 months\nGender:, All\nAdmission Reason:, New court commitment\n"
+        "Time Period: 6 months;\nGender: All;\nAdmission Reason: New court commitment\n"
       );
     });
 
@@ -107,7 +107,7 @@ describe("FiltersStore", () => {
         supervisionType: ["PAROLE"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
-        "Time Period:, 1 year\nGender:, All\nSupervision Type:, Parole/Dual\n"
+        "Time Period: 1 year;\nGender: All;\nSupervision Type: Parole/Dual\n"
       );
     });
 
@@ -122,7 +122,7 @@ describe("FiltersStore", () => {
         facility: ["CAPP", "ISCC"],
       });
       expect(coreStore.filtersStore.filtersDescription).toEqual(
-        "Time Period:, 1 year\nGender:, All\nFacility:, CAPP,ISCC\n"
+        "Time Period: 1 year;\nGender: All;\nFacility: CAPP, ISCC\n"
       );
     });
   });

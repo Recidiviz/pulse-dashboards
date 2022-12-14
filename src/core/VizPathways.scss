@@ -19,13 +19,12 @@
 @import "./CoreConstants.module.scss";
 
 .VizPathways {
-  padding-left: 2.5rem;
-
   &__header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    padding-top: 2.5rem;
-    padding-right: 3rem;
+    padding: 2.5rem 3rem 0;
+    gap: 0.5rem;
   }
 
   &__title {
@@ -34,6 +33,16 @@
     & span {
       color: $slate-80;
     }
+  }
+
+  &__subtitle {
+    padding-top: 0.5rem;
+    @include sans-14;
+    color: $slate-60;
+  }
+
+  &__content {
+    padding-left: 2.5rem;
   }
 
   &__point {

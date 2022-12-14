@@ -16,13 +16,19 @@
 // =============================================================================
 import "./MoreFilters.scss";
 
-import { Button, Icon, IconSVG } from "@recidiviz/design-system";
+import {
+  Button,
+  Icon,
+  IconSVG,
+  TooltipTrigger,
+} from "@recidiviz/design-system";
 import { get } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 
 import Modal from "../../components/Modal";
 import RadioGroup from "../../controls/RadioGroup";
+import useIsMobile from "../../hooks/useIsMobile";
 import CheckboxGroup from "../controls/CheckboxGroup";
 import { useCoreStore } from "../CoreStoreProvider";
 import {
@@ -46,6 +52,9 @@ const MoreFilters: React.FC<Props> = ({
 
   const { filtersStore } = useCoreStore();
   const { filters } = filtersStore;
+  const isMobile = useIsMobile();
+
+  const availableMoreFilters: string[] = [];
 
   useEffect(() => {
     updateFilters({});
@@ -80,6 +89,21 @@ const MoreFilters: React.FC<Props> = ({
     setOpen(false);
   };
 
+  const MoreFiltersButton = (
+    <button
+      className="DetailsGroup__button"
+      type="button"
+      aria-expanded="true"
+      onClick={() => setOpen(!open)}
+    >
+      <Icon
+        className="DetailsGroup__icon MoreFilters__icon"
+        kind={IconSVG.Close}
+      />
+      More filters {activeFiltersCount !== 0 && `(${activeFiltersCount})`}
+    </button>
+  );
+
   if (enabledFilters.length < 1) return null;
   return (
     <>
@@ -103,6 +127,7 @@ const MoreFilters: React.FC<Props> = ({
       >
         {enabledFilters.map((filterType) => {
           const filter = filterOptions[filterType];
+          availableMoreFilters.push(filter.title);
           return (
             <div className="MoreFilters" key={`${filterType}`}>
               <div className="MoreFilters__header">{filter.title}</div>
@@ -130,18 +155,16 @@ const MoreFilters: React.FC<Props> = ({
           );
         })}
       </Modal>
-      <button
-        className="DetailsGroup__button"
-        type="button"
-        aria-expanded="true"
-        onClick={() => setOpen(!open)}
-      >
-        <Icon
-          className="DetailsGroup__icon MoreFilters__icon"
-          kind={IconSVG.Close}
-        />
-        More filters {activeFiltersCount !== 0 && `(${activeFiltersCount})`}
-      </button>
+      {!isMobile ? (
+        <TooltipTrigger
+          className="MoreFilters__tooltip"
+          contents={availableMoreFilters.join(", ")}
+        >
+          {MoreFiltersButton}
+        </TooltipTrigger>
+      ) : (
+        MoreFiltersButton
+      )}
     </>
   );
 };

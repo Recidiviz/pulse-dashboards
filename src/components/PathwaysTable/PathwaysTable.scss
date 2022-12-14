@@ -31,10 +31,7 @@
 
   &__head {
     color: $slate-80;
-
-    & .tr {
-      border: 0 !important;
-    }
+    border-bottom: 1px solid $slate-20;
 
     &--sortable {
       display: flex;
@@ -56,9 +53,13 @@
     }
   }
 
+  & :last-child {
+    border-bottom: 0 !important;
+  }
+
   & .tr {
     display: flex;
-    border-top: 1px solid $slate-20;
+    border-bottom: 1px solid $slate-20;
   }
 
   & .td {

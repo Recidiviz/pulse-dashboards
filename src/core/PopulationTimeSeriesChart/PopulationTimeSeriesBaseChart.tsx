@@ -25,6 +25,8 @@ import { scaleTime } from "d3-scale";
 import React from "react";
 import { ResponsiveXYFrame } from "semiotic";
 
+import { useCoreStore } from "../CoreStoreProvider";
+import VizPathways from "../VizPathways";
 import { ChartPoint, formatMonthAndYear, getTickValues } from "./helpers";
 import PopulationTimeSeriesTooltip from "./PopulationTimeSeriesTooltip";
 
@@ -55,6 +57,9 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   endDate,
   ...chartProps
 }) => {
+  const { filtersStore } = useCoreStore();
+  const { filtersDescription } = filtersStore;
+
   const historicalLine = {
     class: "VizPathways__historicalLine",
     data: historicalPopulation,
@@ -73,10 +78,11 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
     : getTickValues(historicalPopulation, dateSpacing);
 
   return (
-    <div className="VizPathways PopulationTimeSeriesChart">
-      <div className="VizPathways__header">
-        <div className="VizPathways__title">{title}</div>
-      </div>
+    <VizPathways
+      className="PopulationTimeSeriesChart"
+      title={title}
+      subtitle={filtersDescription}
+    >
       <ResponsiveXYFrame
         responsiveWidth
         summaryDataAccessor="data"
@@ -119,7 +125,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
         ]}
         {...chartProps}
       />
-    </div>
+    </VizPathways>
   );
 };
 
