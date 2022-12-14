@@ -93,7 +93,7 @@
     "downloadjs": "^1.4.7",
     "env-cmd": "^9.0.3",
     "escape-html": "^1.0.3",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "express-jwt": "^6.1.2",
     "express-rate-limit": "^6.4.0",
     "express-unless": "^1.0.0",
