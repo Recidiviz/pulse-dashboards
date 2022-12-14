@@ -7,6 +7,7 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
       defaultMetricBackend: "OLD",
       metricBackendOverrides: {
         prisonPopulationOverTime: "NEW",
+        prisonToSupervisionPopulationOverTime: "NEW",
         libertyToPrisonPopulationOverTime: "NEW",
         supervisionToPrisonOverTime: "NEW",
       },
@@ -18,6 +19,7 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
       defaultMetricBackend: "OLD_WITH_DIFFING",
       metricBackendOverrides: {
         prisonPopulationOverTime: "NEW",
+        prisonToSupervisionPopulationOverTime: "NEW",
         libertyToPrisonPopulationOverTime: "NEW",
         supervisionToPrisonOverTime: "NEW",
         // The new backend doesn't have officer names yet
@@ -31,6 +33,7 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
       defaultMetricBackend: "OLD_WITH_DIFFING",
       metricBackendOverrides: {
         prisonPopulationOverTime: "NEW",
+        prisonToSupervisionPopulationOverTime: "NEW",
         libertyToPrisonPopulationOverTime: "NEW",
         supervisionToPrisonOverTime: "NEW",
         // The new backend doesn't have officer names yet

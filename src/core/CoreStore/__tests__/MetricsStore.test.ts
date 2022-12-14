@@ -81,6 +81,7 @@ describe("MetricsStore", () => {
       flags.defaultMetricBackend = "NEW";
       flags.metricBackendOverrides = {
         prisonPopulationOverTime: "NEW",
+        prisonToSupervisionPopulationOverTime: "NEW",
         libertyToPrisonPopulationOverTime: "NEW",
         supervisionToPrisonOverTime: "OLD",
         supervisionToPrisonPopulationByOfficer: "OLD_WITH_DIFFING",
