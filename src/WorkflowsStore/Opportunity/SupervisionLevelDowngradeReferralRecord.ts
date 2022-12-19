@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { toTitleCase } from "../../utils";
+import { formatWorkflowsDate, toTitleCase } from "../../utils";
 import { Client } from "../Client";
 import { TransformFunction, ValidateFunction } from "../subscriptions";
 import { fieldToDate, OpportunityValidationError } from "../utils";
+import { OpportunityRequirement } from "./types";
 
 export type SupervisionLevelDowngradeReferralRecord = {
   stateCode: string;
@@ -90,4 +91,22 @@ export function getBaseSLDValidator(
   };
 
   return validator;
+}
+
+export function formatBaseSLDRequirements(
+  transformedRecord: SupervisionLevelDowngradeReferralRecord
+): OpportunityRequirement[] {
+  const {
+    assessmentLevel,
+    latestAssessmentDate,
+    supervisionLevel,
+  } = transformedRecord.criteria.supervisionLevelHigherThanAssessmentLevel;
+
+  return [
+    {
+      text: `Current supervision level: ${supervisionLevel}; last risk score: ${assessmentLevel} (as of ${formatWorkflowsDate(
+        latestAssessmentDate
+      )})`,
+    },
+  ];
 }

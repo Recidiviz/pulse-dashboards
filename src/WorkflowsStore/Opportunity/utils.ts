@@ -118,6 +118,12 @@ export const generateOpportunityHydratedHeader = (
         "supervised at a higher level than their latest risk score",
       callToAction: "Change their supervision level in TOMIS.",
     },
+    usIdSupervisionLevelDowngrade: {
+      eligibilityText: simplur`${count} client[|s] are being `,
+      opportunityText:
+        "supervised at a level that does not match their latest risk score",
+      callToAction: "Change their supervision level in Atlas",
+    },
     usMeSCCP: {
       eligibilityText: simplur`${count} resident[|s] may be eligible for `,
       opportunityText: "Supervised Community Confinement Program",
@@ -172,6 +178,7 @@ export const opportunityToSortFunctionMapping: Record<
   LSU: sortByReviewStatusAndEligibilityDate,
   pastFTRD: sortByReviewStatusAndEligibilityDate,
   supervisionLevelDowngrade: sortByReviewStatus,
+  usIdSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
   usMeSCCP: sortByReviewStatus,
   usTnExpiration: sortByReviewStatusAndEligibilityDate,
 };

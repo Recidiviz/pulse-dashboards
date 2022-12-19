@@ -36,6 +36,7 @@ import {
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
+import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
 import { Resident } from "./Resident";
 
 export type SupervisionOpportunityMapping = {
@@ -45,6 +46,7 @@ export type SupervisionOpportunityMapping = {
   LSU?: LSUOpportunity;
   pastFTRD?: PastFTRDOpportunity;
   supervisionLevelDowngrade?: UsTnSupervisionLevelDowngradeOpportunity;
+  usIdSupervisionLevelDowngrade?: UsIdSupervisionLevelDowngradeOpportunity;
   usTnExpiration?: UsTnExpirationOpportunity;
 };
 // The following line will typecheck only if the keys of

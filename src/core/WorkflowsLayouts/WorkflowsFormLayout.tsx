@@ -65,6 +65,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
     formContents: <div />,
   },
   supervisionLevelDowngrade: {},
+  usIdSupervisionLevelDowngrade: {},
   usMeSCCP: {
     sidebarContents: <UsMeSCCPResidentProfile />,
     formContents: <FormSCCP />,

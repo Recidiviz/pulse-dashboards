@@ -17,10 +17,10 @@
 
 import { makeObservable } from "mobx";
 
-import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
+import { formatBaseSLDRequirements } from "./SupervisionLevelDowngradeReferralRecord";
 import { OpportunityRequirement } from "./types";
 import {
   getTransformer,
@@ -52,19 +52,7 @@ export class UsTnSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
 
-    const {
-      assessmentLevel,
-      latestAssessmentDate,
-      supervisionLevel,
-    } = this.record.criteria.supervisionLevelHigherThanAssessmentLevel;
-
-    return [
-      {
-        text: `Current supervision level: ${supervisionLevel}; last risk score: ${assessmentLevel} (as of ${formatWorkflowsDate(
-          latestAssessmentDate
-        )})`,
-      },
-    ];
+    return formatBaseSLDRequirements(this.record);
   }
 
   readonly isAlert = true;

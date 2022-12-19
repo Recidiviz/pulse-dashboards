@@ -27,6 +27,7 @@ const SUPERVISION_OPPORTUNITY_TYPES = [
   "LSU",
   "pastFTRD",
   "supervisionLevelDowngrade",
+  "usIdSupervisionLevelDowngrade",
   "usTnExpiration",
 ] as const;
 export type SupervisionOpportunityType = typeof SUPERVISION_OPPORTUNITY_TYPES[number];
@@ -49,6 +50,7 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   LSU: "Limited Supervision Unit",
   pastFTRD: "Past FTRD",
   supervisionLevelDowngrade: "Supervision Level Downgrade",
+  usIdSupervisionLevelDowngrade: "Supervision Level Downgrade",
   usMeSCCP: "Supervised Community Confinement Program",
   usTnExpiration: "Expiration (TEPE)",
 };
@@ -60,6 +62,7 @@ export const OPPORTUNITY_TYPE_URLS: Record<OpportunityType, string> = {
   LSU: "LSU",
   pastFTRD: "pastFTRD",
   supervisionLevelDowngrade: "supervisionLevelDowngrade",
+  usIdSupervisionLevelDowngrade: "supervisionLevelDowngrade",
   usMeSCCP: "SCCP",
   usTnExpiration: "expiration",
 };

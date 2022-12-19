@@ -33,6 +33,7 @@ import {
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
+import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
 import { optionalFieldToDate } from "./utils";
 
 export const UNKNOWN = "Unknown" as const;
@@ -62,6 +63,7 @@ const supervisionOpportunityConstructors: Record<
   LSU: LSUOpportunity,
   pastFTRD: PastFTRDOpportunity,
   supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
+  usIdSupervisionLevelDowngrade: UsIdSupervisionLevelDowngradeOpportunity,
   usTnExpiration: UsTnExpirationOpportunity,
 };
 
