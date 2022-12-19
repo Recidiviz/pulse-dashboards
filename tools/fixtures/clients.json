@@ -229,7 +229,7 @@
     "officerId": "OFFICER4",
     "district": "DISTRICT 1",
     "supervisionType": "PROBATION",
-    "supervisionLevel": "STANDARD: MEDIUM",
+    "supervisionLevel": "MEDIUM",
     "supervisionLevelStart": "2019-12-20",
     "address": "123 Bedrock Lane",
     "phoneNumber": "5555555678",
@@ -242,7 +242,11 @@
     "LSUEligible": true,
     "earnedDischargeEligible": true,
     "pastFTRDEligible": false,
-    "allEligibleOpportunities": ["LSU", "earnedDischarge"]
+    "allEligibleOpportunities": [
+      "LSU",
+      "earnedDischarge",
+      "usIdSupervisionLevelDowngrade"
+    ]
   },
   {
     "personName": {
@@ -256,7 +260,7 @@
     "officerId": "OFFICER4",
     "district": "DISTRICT 1",
     "supervisionType": "PROBATION",
-    "supervisionLevel": "STANDARD: MINIMUM",
+    "supervisionLevel": "MINIMUM",
     "supervisionLevelStart": "2019-12-20",
     "address": "123 Bedrock Lane",
     "phoneNumber": "5555555678",
@@ -270,5 +274,28 @@
     "earnedDischargeEligible": true,
     "pastFTRDEligible": true,
     "allEligibleOpportunities": ["pastFTRD", "earnedDischarge"]
+  },
+  {
+    "personName": {
+      "givenNames": "SYLVESTER",
+      "surname": "SLATE"
+    },
+    "personExternalId": "003",
+    "pseudonymizedId": "p003",
+    "stateCode": "US_ID",
+    "officerId": "OFFICER4",
+    "district": "DISTRICT 1",
+    "supervisionType": "PAROLE",
+    "supervisionLevel": "HIGH",
+    "supervisionLevelStart": "2021-02-02",
+    "address": "77 Limestone Lane",
+    "phoneNumber": "5555555678",
+    "supervisionStartDate": "2021-07-11",
+    "expirationDate": "2025-06-09",
+    "currentBalance": 0,
+    "lastPaymentAmount": 17.84,
+    "lastPaymentDate": "2022-10-04",
+    "specialConditionsFlag": "current",
+    "allEligibleOpportunities": ["usIdSupervisionLevelDowngrade"]
   }
 ]

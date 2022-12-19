@@ -125,6 +125,7 @@ export const collectionNames = {
   featureVariants: "featureVariants",
   supervisionLevelDowngradeReferrals: "US_TN-supervisionLevelDowngrade",
   usMeSCCPReferrals: "US_ME-SCCPReferrals",
+  usIdSupervisionLevelDowngradeReferrals: "US_ID-supervisionLevelDowngrade",
   usTnExpirationReferrals: "US_TN-expirationReferrals",
 };
 
