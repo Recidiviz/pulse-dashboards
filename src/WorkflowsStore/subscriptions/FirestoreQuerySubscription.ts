@@ -54,11 +54,11 @@ export abstract class FirestoreQuerySubscription<
 
   transformRecord: TransformFunction<DataFormat>;
 
-  validateRecord: ValidateFunction<DocumentData>;
+  validateRecord: ValidateFunction<DataFormat>;
 
   constructor(
     transformFunction?: TransformFunction<DataFormat>,
-    validateFunction?: ValidateFunction<DocumentData>
+    validateFunction?: ValidateFunction<DataFormat>
   ) {
     makeObservable<this, "updateData">(this, {
       data: observable,
@@ -73,9 +73,19 @@ export abstract class FirestoreQuerySubscription<
 
     // defaults pass through raw data, assuming it already conforms to the desired format
     this.transformRecord =
-      transformFunction ?? ((d) => (d as DataFormat) ?? undefined);
+      transformFunction ??
+      ((d) => {
+        if (d) {
+          return d as DataFormat;
+        }
+        throw new Error("No record found");
+      });
 
-    this.validateRecord = validateFunction ?? ((d) => d as DocumentData);
+    this.validateRecord =
+      validateFunction ??
+      ((d) => {
+        /* do no validation */
+      });
 
     onBecomeObserved(this, "data", () => this.subscribe());
     onBecomeUnobserved(this, "data", () => this.unsubscribe());
@@ -88,9 +98,12 @@ export abstract class FirestoreQuerySubscription<
 
     snapshot?.forEach((doc) => {
       try {
-        const record = this.validateRecord(
-          this.transformRecord(doc.data({ serverTimestamps: "estimate" }))
-        ) as DataFormat;
+        const record = this.transformRecord(
+          doc.data({ serverTimestamps: "estimate" })
+        );
+
+        this.validateRecord(record);
+
         if (record) {
           docs.push(record);
         }

@@ -40,10 +40,7 @@ import { ValidateFunction } from "./types";
 
 const validateUserRecord: ValidateFunction<UserRecord> = (doc) => {
   if (!doc) throw new Error("No record to validate");
-  if (isUserRecord(doc as StaffRecord)) {
-    return doc as UserRecord;
-  }
-  throw new Error("Invalid user record");
+  if (!isUserRecord(doc as StaffRecord)) throw new Error("Invalid user record");
 };
 
 /**

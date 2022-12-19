@@ -52,17 +52,27 @@ export abstract class FirestoreDocumentSubscription<
 
   transformRecord: TransformFunction<DataFormat>;
 
-  validateRecord: ValidateFunction<DocumentData>;
+  validateRecord: ValidateFunction<DataFormat>;
 
   constructor(
     transformFunction?: TransformFunction<DataFormat>,
-    validateFunction?: ValidateFunction<DocumentData>
+    validateFunction?: ValidateFunction<DataFormat>
   ) {
     // default passes through raw record, assuming it already conforms to the desired format
     this.transformRecord =
-      transformFunction ?? ((d) => (d as DataFormat) ?? undefined);
+      transformFunction ??
+      ((d) => {
+        if (d) {
+          return d as DataFormat;
+        }
+        throw new Error("No record found");
+      });
 
-    this.validateRecord = validateFunction ?? ((d) => d as DocumentData);
+    this.validateRecord =
+      validateFunction ??
+      ((d) => {
+        /* do no validation */
+      });
 
     // note that dataSource is not observable by default.
     // in the base case there is really no need for it
@@ -95,9 +105,11 @@ export abstract class FirestoreDocumentSubscription<
   updateData(snapshot: DocumentSnapshot): void {
     let record;
     try {
-      record = this.validateRecord(
-        this.transformRecord(snapshot.data({ serverTimestamps: "estimate" }))
+      record = this.transformRecord(
+        snapshot.data({ serverTimestamps: "estimate" })
       ) as DataFormat;
+
+      this.validateRecord(record);
 
       this.data = record;
       this.isHydrated = true;

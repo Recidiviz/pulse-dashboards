@@ -75,7 +75,9 @@ export type EarlyTerminationDraftData = {
 export const transformReferral: TransformFunction<EarlyTerminationReferralRecord> = (
   record
 ) => {
-  if (!record) return;
+  if (!record) {
+    throw new Error("No record found");
+  }
 
   const { reasons, ...transformedRecord } = cloneDeep(record);
 

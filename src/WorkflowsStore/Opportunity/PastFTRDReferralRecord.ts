@@ -34,7 +34,9 @@ export interface PastFTRDReferralRecord {
 export const transformReferral: TransformFunction<PastFTRDReferralRecord> = (
   record
 ) => {
-  if (!record) return;
+  if (!record) {
+    throw new Error("No record found");
+  }
 
   const transformedRecord = cloneDeep(record) as PastFTRDReferralRecord;
 

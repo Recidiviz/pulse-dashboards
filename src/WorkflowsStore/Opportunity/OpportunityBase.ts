@@ -84,7 +84,7 @@ export abstract class OpportunityBase<
     type: OpportunityType,
     rootStore: RootStore,
     transformReferral?: TransformFunction<ReferralRecord>,
-    validateRecord?: ValidateFunction<DocumentData>
+    validateRecord?: ValidateFunction<ReferralRecord>
   ) {
     makeObservable(this, {
       denial: computed,

@@ -342,7 +342,8 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get caseloadSubscription():
-    | CaseloadSubscription<ClientRecord | ResidentRecord>
+    | CaseloadSubscription<ClientRecord>
+    | CaseloadSubscription<ResidentRecord>
     | undefined {
     switch (this.activeSystem) {
       case "INCARCERATION":

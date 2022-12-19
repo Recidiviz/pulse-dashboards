@@ -35,7 +35,7 @@ export class CollectionDocumentSubscription<
     collectionName: CollectionName,
     recordId: string,
     transformFn?: TransformFunction<RecordType>,
-    validateFn?: ValidateFunction<DocumentData>
+    validateFn?: ValidateFunction<RecordType>
   ) {
     super(transformFn, validateFn);
 

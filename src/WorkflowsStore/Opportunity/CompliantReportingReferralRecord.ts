@@ -183,7 +183,9 @@ type RawCompliantReportingReferralRecord = DocumentData & {
 export const transformCompliantReportingReferral: TransformFunction<CompliantReportingReferralRecord> = (
   record
 ) => {
-  if (!record) return;
+  if (!record) {
+    throw new Error("No record found");
+  }
 
   const {
     almostEligibleCriteria,

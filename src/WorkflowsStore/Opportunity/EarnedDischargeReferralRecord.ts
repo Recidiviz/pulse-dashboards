@@ -52,7 +52,9 @@ export type EarnedDischargeDraftData = {
 export const transformReferral: TransformFunction<EarnedDischargeReferralRecord> = (
   record
 ) => {
-  if (!record) return;
+  if (!record) {
+    throw new Error("Record not found");
+  }
 
   const transformedRecord = cloneDeep(record) as EarnedDischargeReferralRecord;
   const { criteria } = record;

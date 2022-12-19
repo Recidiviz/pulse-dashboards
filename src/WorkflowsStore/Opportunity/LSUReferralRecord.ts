@@ -98,7 +98,9 @@ export type LSUDraftData = {
 export const transformLSUEarnedDischargeCommonCriteria: TransformFunction<LSUEarnedDischargeCommonCriteria> = (
   criteria
 ) => {
-  if (!criteria) return;
+  if (!criteria) {
+    throw new Error("No criteria found");
+  }
 
   const transformedCriteria: LSUEarnedDischargeCommonCriteria = {
     negativeUaWithin90Days: {
@@ -136,7 +138,9 @@ export const transformLSUEarnedDischargeCommonCriteria: TransformFunction<LSUEar
 export const transformReferral: TransformFunction<LSUReferralRecord> = (
   record
 ) => {
-  if (!record) return;
+  if (!record) {
+    throw new Error("No record found");
+  }
 
   const transformedRecord = cloneDeep(record) as LSUReferralRecord;
   const { criteria } = record;

@@ -80,7 +80,9 @@ export type UsTnExpirationReferralRecord = {
 export const transformReferral: TransformFunction<UsTnExpirationReferralRecord> = (
   record
 ) => {
-  if (!record) return;
+  if (!record) {
+    throw new Error("Record not found");
+  }
 
   const transformedRecord = cloneDeep(record) as UsTnExpirationReferralRecord;
   const { criteria } = record;
@@ -111,19 +113,14 @@ export type UsTnExpirationDraftData = {
 export function getValidator(
   client: Client
 ): ValidateFunction<UsTnExpirationReferralRecord> {
-  return (record) => {
-    if (!record) {
-      throw new Error("No record to validate");
-    }
-
+  return (transformedRecord) => {
     const {
       eligibleDate,
-    } = record.criteria.supervisionPastFullTermCompletionDate;
+    } = transformedRecord.criteria.supervisionPastFullTermCompletionDate;
 
     if (eligibleDate.getTime() !== client.expirationDate?.getTime())
       throw new OpportunityValidationError(
         "Expiration date does not match client record"
       );
-    return record as UsTnExpirationReferralRecord;
   };
 }

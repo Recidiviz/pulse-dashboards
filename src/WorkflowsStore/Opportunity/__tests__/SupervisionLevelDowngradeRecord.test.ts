@@ -50,15 +50,16 @@ const mockClient = {
   },
 };
 
+const getTransformedRecord = () =>
+  getTransformer(identity)(supervisionLevelDowngradeRecordRaw);
+
 test("transform function", () => {
-  expect(
-    getTransformer(identity)(supervisionLevelDowngradeRecordRaw)
-  ).toMatchSnapshot();
+  expect(getTransformedRecord()).toMatchSnapshot();
 });
 
 test("record validates", () => {
   const validator = getValidator(mockClient as any);
-  expect(validator(supervisionLevelDowngradeRecordRaw)).toBeDefined();
+  expect(validator(getTransformedRecord())).toBeDefined();
 });
 
 test("record does not validate", () => {
@@ -66,7 +67,7 @@ test("record does not validate", () => {
     ...mockClient,
     supervisionLevel: "MEDIUM",
   } as any);
-  expect(() => validator(supervisionLevelDowngradeRecordRaw)).toThrow(
+  expect(() => validator(getTransformedRecord())).toThrow(
     OpportunityValidationError
   );
 });

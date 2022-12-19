@@ -81,7 +81,9 @@ const transformCriteria = (
 export const transformReferral: TransformFunction<UsMeSCCPReferralRecord> = (
   record
 ) => {
-  if (!record) return;
+  if (!record) {
+    throw new Error("No record found");
+  }
 
   const transformedRecord = cloneDeep(record) as UsMeSCCPReferralRecord;
 
