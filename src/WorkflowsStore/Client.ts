@@ -29,9 +29,9 @@ import {
   Opportunity,
   OpportunityFactory,
   PastFTRDOpportunity,
-  SupervisionLevelDowngradeOpportunity,
   SupervisionOpportunityType,
   UsTnExpirationOpportunity,
+  UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
 import { optionalFieldToDate } from "./utils";
 
@@ -61,7 +61,7 @@ const supervisionOpportunityConstructors: Record<
   earnedDischarge: EarnedDischargeOpportunity,
   LSU: LSUOpportunity,
   pastFTRD: PastFTRDOpportunity,
-  supervisionLevelDowngrade: SupervisionLevelDowngradeOpportunity,
+  supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
   usTnExpiration: UsTnExpirationOpportunity,
 };
 

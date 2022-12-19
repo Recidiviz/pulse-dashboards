@@ -180,6 +180,8 @@ test("hydration reflects subscriptions", async () => {
   expect(workflowsStore.isHydrated).toBe(false);
 
   runInAction(() => {
+    // @ts-expect-error
+    workflowsStore.userSubscription.data = [{ stateCode: "US_XX" }];
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     workflowsStore.userUpdatesSubscription!.isHydrated = true;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

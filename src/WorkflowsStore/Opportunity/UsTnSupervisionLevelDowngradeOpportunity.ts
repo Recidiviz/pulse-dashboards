@@ -21,16 +21,16 @@ import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
+import { OpportunityRequirement } from "./types";
 import {
   getTransformer,
   getValidator,
-  SupervisionLevelDowngradeReferralRecord,
-} from "./SupervisionLevelDowngradeReferralRecord";
-import { OpportunityRequirement } from "./types";
+  UsTnSupervisionLevelDowngradeReferralRecord,
+} from "./UsTnSupervisionLevelDowngradeReferralRecord";
 
-export class SupervisionLevelDowngradeOpportunity extends OpportunityBase<
+export class UsTnSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
-  SupervisionLevelDowngradeReferralRecord
+  UsTnSupervisionLevelDowngradeReferralRecord
 > {
   readonly policyOrMethodologyUrl =
     "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view";
@@ -56,7 +56,7 @@ export class SupervisionLevelDowngradeOpportunity extends OpportunityBase<
       assessmentLevel,
       latestAssessmentDate,
       supervisionLevel,
-    } = this.record.criteria.usTnSupervisionLevelHigherThanAssessmentLevel;
+    } = this.record.criteria.supervisionLevelHigherThanAssessmentLevel;
 
     return [
       {

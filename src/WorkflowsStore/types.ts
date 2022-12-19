@@ -30,10 +30,10 @@ import {
   IncarcerationOpportunityType,
   LSUOpportunity,
   PastFTRDOpportunity,
-  SupervisionLevelDowngradeOpportunity,
   SupervisionOpportunityType,
   UsMeSCCPOpportunity,
   UsTnExpirationOpportunity,
+  UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
 import { Resident } from "./Resident";
@@ -44,7 +44,7 @@ export type SupervisionOpportunityMapping = {
   earnedDischarge?: EarnedDischargeOpportunity;
   LSU?: LSUOpportunity;
   pastFTRD?: PastFTRDOpportunity;
-  supervisionLevelDowngrade?: SupervisionLevelDowngradeOpportunity;
+  supervisionLevelDowngrade?: UsTnSupervisionLevelDowngradeOpportunity;
   usTnExpiration?: UsTnExpirationOpportunity;
 };
 // The following line will typecheck only if the keys of

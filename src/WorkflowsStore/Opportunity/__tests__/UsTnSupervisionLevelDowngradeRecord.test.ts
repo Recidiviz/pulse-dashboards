@@ -15,19 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { identity } from "lodash";
+import { cloneDeep, identity } from "lodash";
 
 import { OpportunityValidationError } from "../../utils";
 import {
   getTransformer,
   getValidator,
-} from "../SupervisionLevelDowngradeReferralRecord";
+  UsTnSupervisionLevelDowngradeReferralRecord,
+} from "../UsTnSupervisionLevelDowngradeReferralRecord";
 
-const supervisionLevelDowngradeRecordRaw = {
+const usTnSupervisionLevelDowngradeRecordRaw = {
   stateCode: "US_XX",
   externalId: "abc123",
   criteria: {
-    usTnSupervisionLevelHigherThanAssessmentLevel: {
+    supervisionLevelHigherThanAssessmentLevel: {
       assessmentLevel: "HIGH",
       latestAssessmentDate: "2021-08-20",
       supervisionLevel: "MAXIMUM",
@@ -51,15 +52,39 @@ const mockClient = {
 };
 
 const getTransformedRecord = () =>
-  getTransformer(identity)(supervisionLevelDowngradeRecordRaw);
+  getTransformer(identity)(
+    usTnSupervisionLevelDowngradeRecordRaw
+  ) as UsTnSupervisionLevelDowngradeReferralRecord;
 
 test("transform function", () => {
   expect(getTransformedRecord()).toMatchSnapshot();
 });
 
+test("transform function processes old key", () => {
+  const record = cloneDeep(usTnSupervisionLevelDowngradeRecordRaw) as Record<
+    string,
+    any
+  >;
+  record.criteria = {
+    usTnSupervisionLevelHigherThanAssessmentLevel: {
+      assessmentLevel: "HIGH",
+      latestAssessmentDate: "2021-08-20",
+      supervisionLevel: "MAXIMUM",
+    },
+  };
+  const transforedRecord = getTransformer(identity)(record);
+  expect(
+    "usTnSupervisionLevelHigherThanAssessmentLevel" in transforedRecord.criteria
+  ).toBeFalse();
+  expect(
+    "supervisionLevelHigherThanAssessmentLevel" in transforedRecord.criteria
+  ).toBeTrue();
+  expect(transforedRecord).toMatchSnapshot();
+});
+
 test("record validates", () => {
   const validator = getValidator(mockClient as any);
-  expect(validator(getTransformedRecord())).toBeDefined();
+  expect(() => validator(getTransformedRecord())).not.toThrow();
 });
 
 test("record does not validate", () => {
