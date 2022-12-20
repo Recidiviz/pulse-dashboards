@@ -51,7 +51,7 @@
     "@auth0/auth0-spa-js": "^1.12.1",
     "@google-cloud/storage": "^5.0.0",
     "@material/textfield": "^14.0.0",
-    "@recidiviz/design-system": "^4.1.0",
+    "@recidiviz/design-system": "^4.2.0",
     "@rmwc/textfield": "^8.0.1",
     "@sentry/node": "^6.19.7",
     "@sentry/react": "^6.19.7",

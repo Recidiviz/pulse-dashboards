@@ -3291,10 +3291,10 @@
     "@react-spring/shared" "~9.4.4"
     "@react-spring/types" "~9.4.4"
 
-"@recidiviz/design-system@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.npmjs.org/@recidiviz/design-system/-/design-system-4.1.0.tgz"
-  integrity sha512-SCPMc/XWOA3135eatqPkM4uQ9JRO2NcAexL3FM8xsW6cUldGJRDnZZ99zE0yElgHDga5fS7blsqRf5YNP6rYOg==
+"@recidiviz/design-system@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@recidiviz/design-system/-/design-system-4.2.0.tgz#60bdab6ec7728bde8ef9b18eb124e4e3e5ca2d4d"
+  integrity sha512-s2MK6FA4xPL7+wbAfTh8Eseyisang0OABYcfO1OJMIWHMvCFIk0Cu2t9GFQPL9UPD3Hyx0vEFVzS7+27js/wGw==
   dependencies:
     "@fontsource/libre-baskerville" "^4.1.0"
     "@fontsource/public-sans" "^4.5.3"
