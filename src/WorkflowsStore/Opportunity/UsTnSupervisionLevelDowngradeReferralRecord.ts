@@ -52,6 +52,9 @@ export function getTransformer(
     const baseTransformer = getBaseSLDTransformer(supervisionLevelFormatter);
 
     const baseTransformedRecord = baseTransformer(localRecord);
+    if (!baseTransformedRecord) {
+      throw new Error("Unable to transform base SLD record");
+    }
 
     const {
       metadata: { violations },

@@ -127,6 +127,30 @@ test("no data transformer or validation function required", () => {
   expect(sub.data).toEqual(mockData);
 });
 
+test("handles empty response gracefully", () => {
+  const mockData = undefined;
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+
+  sub = new TestSubscription();
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(sub.data).toBeUndefined();
+});
+
+test("passes empty object through instead of detecting as falsy", () => {
+  const mockData = {};
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+
+  sub = new TestSubscription();
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(sub.data).toEqual(mockData);
+});
+
 test("transform raw data", () => {
   const mockData = {
     question: "answer",
@@ -173,6 +197,24 @@ test("raw data passes validation", () => {
   const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
   const testValidate = (d?: DocumentData) => {
     return d;
+  };
+
+  sub = new TestSubscription(undefined, testValidate);
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(sub.data).toEqual(mockData);
+  expect(sub.isHydrated).toEqual(true);
+  expect(sub.error).toEqual(undefined);
+  expect(sub.isLoading).toEqual(false);
+});
+
+test("validator is not called on undefined data", () => {
+  const mockData = undefined;
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+  const testValidate = (d?: DocumentData) => {
+    throw new Error("I should not be thrown");
   };
 
   sub = new TestSubscription(undefined, testValidate);

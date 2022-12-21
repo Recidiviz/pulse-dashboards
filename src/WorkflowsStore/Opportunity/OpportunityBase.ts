@@ -27,6 +27,7 @@ import {
 import {
   Denial,
   OpportunityUpdate,
+  OpportunityUpdateWithForm,
   UpdateLog,
   updateOpportunityCompleted,
   updateOpportunityDenial,
@@ -60,7 +61,7 @@ import {
 export abstract class OpportunityBase<
   PersonType extends JusticeInvolvedPerson,
   ReferralRecord extends DocumentData,
-  UpdateRecord extends DocumentData = OpportunityUpdate
+  UpdateRecord extends OpportunityUpdateWithForm<any> = OpportunityUpdate
 > implements Opportunity<PersonType> {
   readonly type: OpportunityType;
 

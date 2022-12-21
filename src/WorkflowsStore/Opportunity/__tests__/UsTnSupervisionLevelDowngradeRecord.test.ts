@@ -72,14 +72,20 @@ test("transform function processes old key", () => {
       supervisionLevel: "MAXIMUM",
     },
   };
-  const transforedRecord = getTransformer(identity)(record);
+  const transformedRecord = getTransformer(identity)(record);
+  if (!transformedRecord) {
+    throw new Error(
+      "unable to transform usTnSupervisionLevelDowngradeRecordRaw"
+    );
+  }
   expect(
-    "usTnSupervisionLevelHigherThanAssessmentLevel" in transforedRecord.criteria
+    "usTnSupervisionLevelHigherThanAssessmentLevel" in
+      transformedRecord.criteria
   ).toBeFalse();
   expect(
-    "supervisionLevelHigherThanAssessmentLevel" in transforedRecord.criteria
+    "supervisionLevelHigherThanAssessmentLevel" in transformedRecord.criteria
   ).toBeTrue();
-  expect(transforedRecord).toMatchSnapshot();
+  expect(transformedRecord).toMatchSnapshot();
 });
 
 test("record validates", () => {

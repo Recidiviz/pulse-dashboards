@@ -38,7 +38,7 @@ export function getBaseSLDTransformer(
 ): TransformFunction<SupervisionLevelDowngradeReferralRecord> {
   const transformer: TransformFunction<SupervisionLevelDowngradeReferralRecord> = (
     record
-  ) => {
+  ): SupervisionLevelDowngradeReferralRecord => {
     if (!record) {
       throw new Error("No record found");
     }

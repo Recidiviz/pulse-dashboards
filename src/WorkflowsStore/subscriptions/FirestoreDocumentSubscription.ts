@@ -36,6 +36,7 @@ import {
   TransformFunction,
   ValidateFunction,
 } from "./types";
+import { defaultTransformFunction, defaultValidateFunction } from "./utils";
 
 export abstract class FirestoreDocumentSubscription<
   DataFormat extends DocumentData = DocumentData
@@ -55,24 +56,13 @@ export abstract class FirestoreDocumentSubscription<
   validateRecord: ValidateFunction<DataFormat>;
 
   constructor(
-    transformFunction?: TransformFunction<DataFormat>,
-    validateFunction?: ValidateFunction<DataFormat>
+    transformFunction: TransformFunction<DataFormat> = defaultTransformFunction,
+    validateFunction: ValidateFunction<DataFormat> = defaultValidateFunction
   ) {
     // default passes through raw record, assuming it already conforms to the desired format
-    this.transformRecord =
-      transformFunction ??
-      ((d) => {
-        if (d) {
-          return d as DataFormat;
-        }
-        throw new Error("No record found");
-      });
+    this.transformRecord = transformFunction;
 
-    this.validateRecord =
-      validateFunction ??
-      ((d) => {
-        /* do no validation */
-      });
+    this.validateRecord = validateFunction;
 
     // note that dataSource is not observable by default.
     // in the base case there is really no need for it
@@ -103,13 +93,12 @@ export abstract class FirestoreDocumentSubscription<
    * fails validation.
    */
   updateData(snapshot: DocumentSnapshot): void {
-    let record;
     try {
-      record = this.transformRecord(
+      const record = this.transformRecord(
         snapshot.data({ serverTimestamps: "estimate" })
-      ) as DataFormat;
+      );
 
-      this.validateRecord(record);
+      if (record !== undefined) this.validateRecord(record);
 
       this.data = record;
       this.isHydrated = true;

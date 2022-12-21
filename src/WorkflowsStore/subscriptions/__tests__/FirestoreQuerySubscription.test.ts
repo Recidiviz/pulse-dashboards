@@ -200,6 +200,18 @@ test("no data transformer or validation function required", () => {
   expect(sub.data).toEqual(mockData);
 });
 
+test("handles empty response gracefully by default", () => {
+  const mockData: unknown[] = [];
+  const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
+
+  sub = getTestUnit();
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(sub.data).toEqual(mockData);
+});
+
 test("transform raw data", () => {
   const mockData = [
     {
@@ -262,6 +274,25 @@ test("raw data passes validation", () => {
   expect(sub.isHydrated).toBe(true);
   expect(sub.error).toBeUndefined();
   expect(sub.isLoading).toBe(false);
+});
+
+test("validator is not called on undefined data", () => {
+  const mockData = [{ some: "data" }];
+  const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
+  const testTransform = (d?: DocumentData) => undefined;
+  const testValidate = (d?: DocumentData) => {
+    throw new Error("I should not be thrown");
+  };
+
+  sub = getTestUnit(testTransform, testValidate);
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(sub.data).toEqual([]);
+  expect(sub.isHydrated).toEqual(true);
+  expect(sub.error).toBeUndefined();
+  expect(sub.isLoading).toEqual(false);
 });
 
 test("stale data cleared when validation fails", () => {

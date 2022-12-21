@@ -127,7 +127,7 @@ type CompliantReportingUpdateRecord = OpportunityUpdateWithForm<CompliantReporti
 
 const getRecordValidator = (client: Client) => (
   record: DocumentData | undefined
-): DocumentData | undefined => {
+): void => {
   if (!record) {
     throw new OpportunityValidationError("No opportunity record found");
   }
@@ -188,7 +188,6 @@ const getRecordValidator = (client: Client) => (
       );
     }
   }
-  return record;
 };
 
 export class CompliantReportingOpportunity extends OpportunityBase<

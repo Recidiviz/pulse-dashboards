@@ -40,6 +40,7 @@ import {
   TransformFunction,
   ValidateFunction,
 } from "./types";
+import { defaultTransformFunction, defaultValidateFunction } from "./utils";
 
 export abstract class FirestoreQuerySubscription<
   DataFormat extends DocumentData
@@ -57,8 +58,8 @@ export abstract class FirestoreQuerySubscription<
   validateRecord: ValidateFunction<DataFormat>;
 
   constructor(
-    transformFunction?: TransformFunction<DataFormat>,
-    validateFunction?: ValidateFunction<DataFormat>
+    transformFunction: TransformFunction<DataFormat> = defaultTransformFunction,
+    validateFunction: ValidateFunction<DataFormat> = defaultValidateFunction
   ) {
     makeObservable<this, "updateData">(this, {
       data: observable,
@@ -71,21 +72,9 @@ export abstract class FirestoreQuerySubscription<
       resetHydration: action,
     });
 
-    // defaults pass through raw data, assuming it already conforms to the desired format
-    this.transformRecord =
-      transformFunction ??
-      ((d) => {
-        if (d) {
-          return d as DataFormat;
-        }
-        throw new Error("No record found");
-      });
+    this.transformRecord = transformFunction;
 
-    this.validateRecord =
-      validateFunction ??
-      ((d) => {
-        /* do no validation */
-      });
+    this.validateRecord = validateFunction;
 
     onBecomeObserved(this, "data", () => this.subscribe());
     onBecomeUnobserved(this, "data", () => this.unsubscribe());
@@ -102,9 +91,9 @@ export abstract class FirestoreQuerySubscription<
           doc.data({ serverTimestamps: "estimate" })
         );
 
-        this.validateRecord(record);
+        if (record !== undefined) this.validateRecord(record);
 
-        if (record) {
+        if (record !== undefined) {
           docs.push(record);
         }
       } catch (e) {

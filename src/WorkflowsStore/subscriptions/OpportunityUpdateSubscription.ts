@@ -15,18 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  doc,
-  DocumentData,
-  DocumentReference,
-  getDoc,
-  setDoc,
-} from "firebase/firestore";
+import { doc, DocumentReference, getDoc, setDoc } from "firebase/firestore";
 
 import {
   ClientUpdateRecord,
   collectionNames,
   db,
+  OpportunityUpdate,
   OpportunityUpdateWithForm,
 } from "../../firestore";
 import { OpportunityType } from "../Opportunity";
@@ -91,7 +86,7 @@ async function migrateOpportunityUpdate(
 }
 
 export class OpportunityUpdateSubscription<
-  RecordType extends DocumentData
+  RecordType extends OpportunityUpdate
 > extends CollectionDocumentSubscription<RecordType> {
   // needs to be redefined because it's read-only but otherwise unchanged
   readonly dataSource: DocumentReference<RecordType>;

@@ -21,6 +21,7 @@ import { fieldToDate, OpportunityValidationError } from "../../utils";
 import {
   getValidator,
   transformReferral,
+  UsTnExpirationReferralRecord,
 } from "../UsTnExpirationReferralRecord";
 
 const usTnExpirationRecordRaw = {
@@ -49,7 +50,9 @@ test("transform function", () => {
 test("record validates", () => {
   const validator = getValidator(mockClient as any);
   expect(() =>
-    validator(transformReferral(usTnExpirationRecordRaw))
+    validator(
+      transformReferral(usTnExpirationRecordRaw) as UsTnExpirationReferralRecord
+    )
   ).not.toThrow(OpportunityValidationError);
 });
 
@@ -58,7 +61,9 @@ test("record does not validate", () => {
     ...mockClient,
     expirationDate: fieldToDate("2022-04-04"),
   } as any);
-  expect(() => validator(transformReferral(usTnExpirationRecordRaw))).toThrow(
-    OpportunityValidationError
-  );
+  expect(() =>
+    validator(
+      transformReferral(usTnExpirationRecordRaw) as UsTnExpirationReferralRecord
+    )
+  ).toThrow(OpportunityValidationError);
 });
