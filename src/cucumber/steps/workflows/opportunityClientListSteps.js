@@ -16,7 +16,7 @@
 // =============================================================================
 import { Given, Then, When } from "@cucumber/cucumber";
 
-import workflowsOpportunityPage from "../../pages/workflowsOpportunityPage";
+import { WorkflowsOpportunityPage } from "../../pages";
 
 /**
  * Given
@@ -57,39 +57,22 @@ When("I exit the preview modal", async () => {
 Then(
   "I should see the {string} heading and subheading",
   async (opportunityName) => {
-    const heading = await workflowsOpportunityPage.pageHeading();
-    const subheading = await workflowsOpportunityPage.pageSubheading();
+    const headingEl = await WorkflowsOpportunityPage.pageHeading();
+    const subheadingEl = await WorkflowsOpportunityPage.pageSubheading();
 
-    expect(await heading.getText()).toEqual(
-      expect.stringContaining(opportunityName)
-    );
-    expect((await subheading.getText()).length).toBeGreaterThan(0);
+    const heading = await headingEl.getText();
+    const subheading = await subheadingEl.getText();
+
+    expect(heading).toEqual(expect.stringContaining(opportunityName));
+    expect(subheading.length).toBeGreaterThan(0);
   }
 );
 
 Then("I should see {int} clients listed", async (numClients) => {
-  const clientList = await workflowsOpportunityPage.eligibleClientList();
+  const clientList = await WorkflowsOpportunityPage.eligibleClientList();
   const clients = await clientList.$$("li");
   expect(clients.length).toEqual(numClients);
 });
-
-Then(
-  "I should see the button {string} to navigate to the form",
-  async (buttonText) => {
-    const navigateToFormButton = await workflowsOpportunityPage.navigateToFormButton();
-    expect(await navigateToFormButton.getText()).toEqual(buttonText);
-  }
-);
-
-Then(
-  "I should see a preview of the opportunity for {string}",
-  async (clientName) => {
-    const previewWrapper = await $(".OpportunityPreviewModal");
-    await previewWrapper.waitForExist();
-    const text = await previewWrapper.getText();
-    expect(text).toEqual(expect.stringContaining(clientName));
-  }
-);
 
 Then("I should see the client status update", async () => {
   const status = await $(".WorkflowsStatus");

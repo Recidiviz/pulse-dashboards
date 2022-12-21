@@ -18,7 +18,7 @@ import { Given, Then, When } from "@cucumber/cucumber";
 import fs from "fs";
 import path from "path";
 
-import workflowsFormPage from "../../pages/workflowsFormPage";
+import { WorkflowsFormPage } from "../../pages";
 import {
   allowHeadlessDownloads,
   clickOutsideElement,
@@ -35,7 +35,7 @@ Given(
   "I am a {string} user on the {string} form page for {string}",
   async (stateCode, opportunityType, pseudonymizedId) => {
     await respondWithOfflineUser(stateCode);
-    await workflowsFormPage.open(opportunityType, pseudonymizedId);
+    await WorkflowsFormPage.open(opportunityType, pseudonymizedId);
   }
 );
 
@@ -48,7 +48,7 @@ When(
   async (inputId, inputValue) => {
     const formField = await $(`input#${inputId}`);
     await formField.setValue(inputValue);
-    const criteriaList = await workflowsFormPage.criteriaList();
+    const criteriaList = await WorkflowsFormPage.criteriaList();
     await criteriaList.click();
     // Wait for data to save to firestore
     await browser.pause(2000);
@@ -56,7 +56,7 @@ When(
 );
 
 When("I click on the export form button", async () => {
-  const button = await workflowsFormPage.formActionButton();
+  const button = await WorkflowsFormPage.formActionButton();
   await button.waitForExist();
   await allowHeadlessDownloads();
 
@@ -82,31 +82,11 @@ When("I click on the checkbox for {string}", async (checkboxValue) => {
  * Then
  * */
 Then("I should see the text {string} on the form", async (formText) => {
-  const formViewerContainer = await workflowsFormPage.formViewerContainer();
+  const formViewerContainer = await WorkflowsFormPage.formViewerContainer();
   expect(await formViewerContainer.getText()).toEqual(
     expect.stringContaining(formText)
   );
 });
-
-Then(
-  "I should see the criteria list with the text {string}",
-  async (criteriaText) => {
-    const criteriaList = await workflowsFormPage.criteriaList();
-    expect(await criteriaList.getText()).toEqual(
-      expect.stringContaining(criteriaText)
-    );
-  }
-);
-
-Then(
-  "I should see the details section with the text {string}",
-  async (detailsText) => {
-    const detailsSection = await workflowsFormPage.detailsSection();
-    expect(await detailsSection.getText()).toEqual(
-      expect.stringContaining(detailsText)
-    );
-  }
-);
 
 Then(
   "the value {string} should be saved in the form for the field {string}",
@@ -124,7 +104,7 @@ Then(
 Then(
   "I should see the export form button {string}",
   async (exportButtonText) => {
-    const button = await workflowsFormPage.formActionButton();
+    const button = await WorkflowsFormPage.formActionButton();
     await button.waitForExist();
     expect(await button.getText()).toEqual(exportButtonText);
   }

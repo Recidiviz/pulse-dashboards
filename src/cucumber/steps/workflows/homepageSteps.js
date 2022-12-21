@@ -16,7 +16,7 @@
 // =============================================================================
 import { Then, When } from "@cucumber/cucumber";
 
-import workflowsHomepage from "../../pages/workflowsHomepage";
+import { WorkflowsHomepage } from "../../pages";
 import users from "../fixtures/users";
 import { waitForElementsToExist, waitForNavigation } from "../utils";
 
@@ -34,20 +34,20 @@ When("I click on View all for {string}", async (opportunityType) => {
 Then(
   "I should see the homepage welcome message for the {string} user",
   async (stateCode) => {
-    const promptElement = await workflowsHomepage.promptText();
+    const promptElement = await WorkflowsHomepage.promptText();
     const promptText = await promptElement.getText();
     expect(promptText).toMatch(`Welcome, ${users[stateCode].name}`);
   }
 );
 
 Then("I should see {int} opportunities listed", async (numOpportunities) => {
-  const opportunities = await workflowsHomepage.opportunitySummaries();
+  const opportunities = await WorkflowsHomepage.opportunitySummaries();
   await waitForElementsToExist(opportunities);
   expect(opportunities.length).toEqual(numOpportunities);
 });
 
 Then("I should see {int} set of client avatars", async (numOpportunities) => {
-  const avatarWrappers = await workflowsHomepage.clientAvatars();
+  const avatarWrappers = await WorkflowsHomepage.clientAvatars();
   await waitForElementsToExist(avatarWrappers);
   expect(avatarWrappers.length).toEqual(numOpportunities);
 });

@@ -37,6 +37,7 @@ export const Heading = observer(function Heading({
   return (
     <HeadingWrapper>
       <Link
+        className="PersonProfileLink"
         to={workflowsUrl(
           person instanceof Client ? "clientProfile" : "residentProfile",
           { justiceInvolvedPersonId: person.pseudonymizedId }

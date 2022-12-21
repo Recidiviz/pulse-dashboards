@@ -18,6 +18,7 @@ import { Given, Then, When } from "@cucumber/cucumber";
 
 import {
   WorkflowsClientsPage,
+  WorkflowsFormPage,
   WorkflowsHomepage,
   WorkflowsOpportunityPage,
 } from "../../pages";
@@ -62,6 +63,7 @@ When("I select officer {string} from the dropdown", async (officerName) => {
 
 When("I click on the {string} button", async (buttonClassName) => {
   const button = await $(`.${buttonClassName}`);
+  await button.waitForExist();
   await waitForNavigation(button.click());
 });
 
@@ -78,8 +80,56 @@ Then(
   }
 );
 
+Then(
+  "I should navigate to the person profile page for person ID {string}",
+  async (personID) => {
+    const url = await browser.getUrl();
+    expect(url).toEqual(
+      expect.stringContaining(`/workflows/clients/${personID}`)
+    );
+  }
+);
+
 Then("I should navigate to the {string} form page", async (opportunityType) => {
   const url = await browser.getUrl();
   const pattern = new RegExp(`/workflows/${opportunityType}/[\\d\\D]+$`);
   expect(url).toEqual(expect.stringMatching(pattern));
 });
+
+Then(
+  "I should see the criteria list with the text {string}",
+  async (criteriaText) => {
+    const criteriaList = await WorkflowsFormPage.criteriaList();
+    expect(await criteriaList.getText()).toEqual(
+      expect.stringContaining(criteriaText)
+    );
+  }
+);
+
+Then(
+  "I should see the details section with the text {string}",
+  async (detailsText) => {
+    const detailsSection = await WorkflowsFormPage.detailsSection();
+    expect(await detailsSection.getText()).toEqual(
+      expect.stringContaining(detailsText)
+    );
+  }
+);
+
+Then(
+  "I should see the button {string} to navigate to the form",
+  async (buttonText) => {
+    const navigateToFormButton = await WorkflowsOpportunityPage.navigateToFormButton();
+    expect(await navigateToFormButton.getText()).toEqual(buttonText);
+  }
+);
+
+Then(
+  "I should see a preview of the opportunity for {string}",
+  async (clientName) => {
+    const previewWrapper = await $(".OpportunityPreviewModal");
+    await previewWrapper.waitForExist();
+    const text = await previewWrapper.getText();
+    expect(text).toEqual(expect.stringContaining(clientName));
+  }
+);

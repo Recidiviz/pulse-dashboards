@@ -94,7 +94,10 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                   justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
                 })}
               >
-                <FormActionButton buttonFill={colors.buttonFill}>
+                <FormActionButton
+                  className="NavigateToFormButton"
+                  buttonFill={colors.buttonFill}
+                >
                   {opportunity.form.navigateToFormText}
                 </FormActionButton>
               </Link>
