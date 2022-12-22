@@ -19,11 +19,11 @@ import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components/macro";
 
+import DOCXFormInput from "../../DOCXFormInput";
 import { DIMENSIONS_PX } from "../../PDFFormGenerator";
 import { useResizeForm } from "../../utils";
 import AdditionalDepositionLines from "./AdditionalDepositionLines";
 import FormHeading from "./FormHeading";
-import FormInput from "./FormInput";
 import FormPrompts from "./FormPrompts";
 import FormTextarea from "./FormTextarea";
 
@@ -127,10 +127,10 @@ export const FormEarlyTermination: React.FC = () => {
           <ol type="a">
             <li>
               That the Defendant appeared before Judge{" "}
-              <FormInput name="judgeName" placeholder="Judge name" /> on{" "}
-              <FormInput name="priorCourtDate" placeholder="Court date" />, and
-              was sentenced to{" "}
-              <FormInput
+              <DOCXFormInput name="judgeName" placeholder="Judge name" /> on{" "}
+              <DOCXFormInput name="priorCourtDate" placeholder="Court date" />,
+              and was sentenced to{" "}
+              <DOCXFormInput
                 name="sentenceLengthYears"
                 placeholder="Sentence length"
               />{" "}
@@ -139,8 +139,8 @@ export const FormEarlyTermination: React.FC = () => {
             </li>
             <li>
               That the Defendant owes{" "}
-              <FormInput name="finesAndFees" placeholder="Dollar amount" /> in
-              fines, costs, and fees to the District Court.
+              <DOCXFormInput name="finesAndFees" placeholder="Dollar amount" />{" "}
+              in fines, costs, and fees to the District Court.
             </li>
             <li>
               That the Defendant has satisfactorily met all other conditions of
@@ -148,7 +148,7 @@ export const FormEarlyTermination: React.FC = () => {
             </li>
             <li>
               That the Defendant&apos;s probation will expire{" "}
-              <FormInput name="probationExpirationDate" />.
+              <DOCXFormInput name="probationExpirationDate" />.
             </li>
 
             <AdditionalDepositionLines />
@@ -183,7 +183,7 @@ export const FormEarlyTermination: React.FC = () => {
           <SectionHeading>Approval of Termination of Probation</SectionHeading>
           <section>
             [3]{" "}
-            <FormInput
+            <DOCXFormInput
               name="probationOfficerFullName"
               placeholder="Probation officer name"
             />{" "}
@@ -241,13 +241,13 @@ export const FormEarlyTermination: React.FC = () => {
             style={{ boxSizing: "content-box", width: "210px" }}
           />
           <br />
-          <FormInput
+          <DOCXFormInput
             name="statesAttorneyPhoneNumber"
             placeholder="SA phone number"
             style={{ minWidth: "210px" }}
           />
           <br />
-          <FormInput
+          <DOCXFormInput
             name="statesAttorneyEmailAddress"
             placeholder="SA e-mail service address"
             style={{ minWidth: "210px" }}

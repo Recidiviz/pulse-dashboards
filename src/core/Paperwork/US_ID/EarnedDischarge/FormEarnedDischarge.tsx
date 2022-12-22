@@ -28,14 +28,17 @@ import { FormContainer } from "../../FormContainer";
 import { connectComponentToOpportunityForm } from "../../OpportunityFormContext";
 import { DIMENSIONS_PX } from "../../PDFFormGenerator";
 import FormHeading from "./FormHeading";
+import FormSummarySection from "./FormSummarySection";
 
 export const US_ND_EARLY_DISCHARGE_FORM_FONT_FAMILY = `Verdana, Geneva, sans-serif`;
-const FORM_LINE_HEIGHT = 1.3;
+export const US_ND_EARLY_DISCHARGE_FORM_LETTER_SPACING = `-0.02em`;
+const FORM_LINE_HEIGHT = 1.0;
 
 const FormPage = styled.div`
   font-family: ${US_ND_EARLY_DISCHARGE_FORM_FONT_FAMILY};
   line-height: ${FORM_LINE_HEIGHT};
-  letter-spacing: 0;
+  display: flex;
+  flex-direction: column;
   font-size: ${rem(11)};
   color: black;
   background-color: white;
@@ -70,7 +73,7 @@ const Form = observer(function FormEarnedDischarge() {
     >
       <FormPage>
         <FormHeading />
-        Hi! I am a form. I will have more content later
+        <FormSummarySection />
       </FormPage>
     </FormContainer>
   );

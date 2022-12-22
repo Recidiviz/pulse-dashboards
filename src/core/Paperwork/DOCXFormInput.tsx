@@ -1,19 +1,21 @@
-// Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// =============================================================================
+/*
+ * Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2022 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * =============================================================================
+ */
 import { animation, palette } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { transparentize } from "polished";
@@ -22,12 +24,11 @@ import { MutableRefObject, useRef } from "react";
 import AutosizeInput from "react-input-autosize";
 import styled from "styled-components/macro";
 
-import { EarlyTerminationDraftData } from "../../../../WorkflowsStore";
-import { useOpportunityFormContext } from "../../OpportunityFormContext";
-import { useAnimatedValue, useReactiveInput } from "../../utils";
+import { useOpportunityFormContext } from "./OpportunityFormContext";
+import { useAnimatedValue, useReactiveInput } from "./utils";
 
-interface FormInputProps {
-  name: Extract<keyof EarlyTerminationDraftData, string>;
+export interface DOCXFormInputProps<DraftData> {
+  name: Extract<keyof DraftData, string>;
   placeholder?: string;
   style?: React.InputHTMLAttributes<HTMLInputElement>["style"];
 }
@@ -62,11 +63,11 @@ const StyledAutosizeInput = styled.span`
   }
 `;
 
-const FormInput: React.FC<FormInputProps> = observer(function FormInput({
+const DOCXFormInput = observer(function FormInput<DraftData>({
   name,
   style,
   ...props
-}: FormInputProps) {
+}: DOCXFormInputProps<DraftData>) {
   /*
    On mount, the autosize input has its value set, which causes it to resize to fit its content. During animation,
    we modify the element's value attribute in place which does not trigger resize.
@@ -106,4 +107,4 @@ const FormInput: React.FC<FormInputProps> = observer(function FormInput({
   );
 });
 
-export default FormInput;
+export default DOCXFormInput;

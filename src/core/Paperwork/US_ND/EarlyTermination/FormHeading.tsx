@@ -17,7 +17,7 @@
 import * as React from "react";
 import styled from "styled-components/macro";
 
-import FormInput from "./FormInput";
+import DOCXFormInput from "../../DOCXFormInput";
 import {
   FormHeadingContainer,
   FormHeadingLineItemSuffix,
@@ -60,7 +60,7 @@ const FormHeading: React.FC = () => {
         <LineItemLeft>STATE OF NORTH DAKOTA</LineItemLeft>
         <LineItemLeft suffix="ss. ">
           COUNTY OF{" "}
-          <FormInput
+          <DOCXFormInput
             name="convictionCounty"
             style={{ maxWidth: "100px" }}
             placeholder="County name"
@@ -68,7 +68,7 @@ const FormHeading: React.FC = () => {
         </LineItemLeft>
         <LineItem>&nbsp;</LineItem>
         <LineItemLeft>
-          <FormInput name="plaintiff" style={{ maxWidth: "160px" }} />,
+          <DOCXFormInput name="plaintiff" style={{ maxWidth: "160px" }} />,
         </LineItemLeft>
         <LineItemLeft>
           <span style={{ textIndent: 120 }}>Plaintiff</span>
@@ -79,7 +79,7 @@ const FormHeading: React.FC = () => {
         </LineItemLeft>
         <LineItemLeft />
         <LineItemLeft>
-          <FormInput name="clientName" style={{ maxWidth: "160px" }} />,
+          <DOCXFormInput name="clientName" style={{ maxWidth: "160px" }} />,
         </LineItemLeft>
         <LineItemLeft>
           <span style={{ textIndent: 120 }}>Defendant </span>
@@ -88,7 +88,7 @@ const FormHeading: React.FC = () => {
       <FormHeadingSection style={{ flex: 1 }}>
         <LineItem style={{ textAlign: "right" }}>IN DISTRICT COURT</LineItem>
         <LineItem style={{ textAlign: "right" }}>
-          <FormInput
+          <DOCXFormInput
             name="judicialDistrictCode"
             style={{ maxWidth: "200px" }}
           />{" "}
@@ -97,7 +97,7 @@ const FormHeading: React.FC = () => {
         <LineItem>&nbsp;</LineItem>
         <LineItem>
           Criminal No.{" "}
-          <FormInput
+          <DOCXFormInput
             name="criminalNumber"
             placeholder="Criminal Number"
             style={{ maxWidth: "272px" }}
@@ -105,7 +105,7 @@ const FormHeading: React.FC = () => {
         </LineItem>
         <LineItem>
           SA No.{" "}
-          <FormInput
+          <DOCXFormInput
             name="statesAttorneyNumber"
             placeholder="States Attorney Number"
             style={{ maxWidth: "298px" }}

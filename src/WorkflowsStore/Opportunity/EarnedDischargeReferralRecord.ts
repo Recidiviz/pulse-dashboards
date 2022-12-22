@@ -49,29 +49,29 @@ export type EarnedDischargeDraftData = {
   clientName: string;
   supervisionType: string;
   idocNumber: number;
-  ftrDate: Date;
+  ftrDate: string;
   probationOfficerFullName: string;
-  conditionCompliane: string;
+  conditionCompliance: string;
   meetsIdocRequirements: string;
   ncicCheck: string;
-  ncicCheckDate: Date;
+  ncicCheckDate: string;
   crimeName: string;
   sentencingJudge: string;
   sentencingCounty: string;
-  sentencingDate: Date;
+  sentencingDate: string;
   caseNumber: string;
   sentenceMin: string;
   sentenceMax: string;
   initialRestitution: number;
-  lastRestitutionPaymentDate: Date;
+  lastRestitutionPaymentDate: string;
   currentRestitutionBalance: number;
   initialFines: number;
-  lastFinesPaymentDate: Date;
+  lastFinesPaymentDate: string;
   currentFinesBalance: number;
   initialLsirScore: number;
-  initialLsirDate: Date;
+  initialLsirDate: string;
   currentLsirScore: number;
-  currentLsirDate: Date;
+  currentLsirDate: string;
 };
 
 export const transformReferral: TransformFunction<EarnedDischargeReferralRecord> = (

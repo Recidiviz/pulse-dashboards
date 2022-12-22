@@ -97,7 +97,7 @@ export const FormContainer = ({
   agencyName,
   opportunity,
   children,
-}: FormHeaderProps) => {
+}: FormHeaderProps): React.ReactElement => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   return (

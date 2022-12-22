@@ -17,6 +17,7 @@
  * =============================================================================
  */
 
+import { formatWorkflowsDate } from "../../../utils";
 import { EarnedDischargeDraftData } from "../EarnedDischargeReferralRecord";
 import { FormBase } from "./FormBase";
 
@@ -31,7 +32,10 @@ export class UsIdEarnedDischargeForm extends FormBase<EarnedDischargeDraftData> 
       clientName: this.person.displayName,
       supervisionType: this.person.supervisionType,
       idocNumber: this.person.externalId,
-      ftrDate: this.person.expirationDate,
+      ftrDate: formatWorkflowsDate(this.person.expirationDate),
+      conditionCompliance: "Yes",
+      meetsIdocRequirements: "Yes",
+      ncicCheck: "Yes",
     };
   }
 }

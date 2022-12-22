@@ -25,7 +25,10 @@ import { toTitleCase } from "../../../../utils";
 import { UsIdEarnedDischargeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsIdEarlyDischargeForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import idocLogo from "./assets/idocLogo.png";
-import { US_ND_EARLY_DISCHARGE_FORM_FONT_FAMILY } from "./FormEarnedDischarge";
+import {
+  US_ND_EARLY_DISCHARGE_FORM_FONT_FAMILY,
+  US_ND_EARLY_DISCHARGE_FORM_LETTER_SPACING,
+} from "./FormEarnedDischarge";
 
 const Logo = styled.img`
   width: 200px;
@@ -46,12 +49,12 @@ const HeadingText = styled.div`
 
 const MainHeading = styled.h1`
   font-family: ${US_ND_EARLY_DISCHARGE_FORM_FONT_FAMILY};
-  letter-spacing: -0.02em;
+  letter-spacing: ${US_ND_EARLY_DISCHARGE_FORM_LETTER_SPACING};
 `;
 
 const Subheading = styled.h2`
   font-family: ${US_ND_EARLY_DISCHARGE_FORM_FONT_FAMILY};
-  letter-spacing: -0.02em;
+  letter-spacing: ${US_ND_EARLY_DISCHARGE_FORM_LETTER_SPACING};
 `;
 
 const HeadingSeparator = styled.hr`
