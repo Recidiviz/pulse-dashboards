@@ -26,6 +26,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import { OpportunityType } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
+import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import RecidivizLogo from "../RecidivizLogo";
 import { PATHWAYS_VIEWS } from "../views";
@@ -54,7 +55,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   },
   earnedDischarge: {
     sidebarContents: <EarnedDischargeClientProfile />,
-    formContents: <div />,
+    formContents: <FormEarnedDischarge />,
   },
   LSU: {
     sidebarContents: <LSUClientProfile />,

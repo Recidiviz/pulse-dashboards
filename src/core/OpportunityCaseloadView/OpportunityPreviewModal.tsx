@@ -48,7 +48,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
     ),
   },
   earnedDischarge: {
-    previewContents: <EarnedDischargeClientProfile />,
+    previewContents: <EarnedDischargeClientProfile formLinkButton />,
   },
   LSU: {
     previewContents: <LSUClientProfile formLinkButton />,

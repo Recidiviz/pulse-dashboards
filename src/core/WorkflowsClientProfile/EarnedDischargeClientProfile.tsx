@@ -23,8 +23,14 @@ import { CaseNotes, Contact, Supervision } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
+type EarnedDischargeClientProfileProps = {
+  formLinkButton?: boolean;
+};
+
 export const EarnedDischargeClientProfile = observer(
-  function EarnedDischargeClientProfile() {
+  function EarnedDischargeClientProfile({
+    formLinkButton,
+  }: EarnedDischargeClientProfileProps) {
     const { workflowsStore } = useRootStore();
 
     const client = workflowsStore.selectedClient;
@@ -37,6 +43,7 @@ export const EarnedDischargeClientProfile = observer(
         <Heading person={client} />
         <OpportunityModule
           opportunity={client.verifiedOpportunities.earnedDischarge}
+          formLinkButton={formLinkButton}
         />
         <Supervision client={client} />
         <Contact client={client} />

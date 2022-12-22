@@ -17,12 +17,15 @@
 
 import { computed, makeObservable } from "mobx";
 
+import { OpportunityUpdateWithForm } from "../../firestore";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import {
+  EarnedDischargeDraftData,
   EarnedDischargeReferralRecord,
   transformReferral,
 } from "./EarnedDischargeReferralRecord";
+import { UsIdEarnedDischargeForm } from "./Forms/UsIdEarlyDischargeForm";
 import {
   LSU_EARNED_DISCHARGE_COMMON_CRITERIA,
   LSUEarnedDischargeCommonRequirementsMet,
@@ -65,10 +68,13 @@ const CRITERIA: Record<
 
 export class EarnedDischargeOpportunity extends OpportunityBase<
   Client,
-  EarnedDischargeReferralRecord
+  EarnedDischargeReferralRecord,
+  OpportunityUpdateWithForm<EarnedDischargeDraftData>
 > {
   readonly policyOrMethodologyUrl =
     "http://forms.idoc.idaho.gov/WebLink/0/edoc/282369/Termination%20of%20Probation%20or%20Parole%20Supervision.pdf";
+
+  form?: UsIdEarnedDischargeForm;
 
   constructor(client: Client) {
     super(client, "earnedDischarge", client.rootStore, transformReferral);
@@ -78,6 +84,18 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
+
+    if (
+      client.rootStore.workflowsStore.featureVariants.usIdEarnedDischargeForm
+    ) {
+      this.form = new UsIdEarnedDischargeForm(
+        "earnedDischarge",
+        this,
+        client.rootStore
+      );
+    } else {
+      this.form = undefined;
+    }
   }
 
   get requirementsMet(): OpportunityRequirement[] {
