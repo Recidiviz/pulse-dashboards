@@ -29,6 +29,7 @@ export class UsIdEarnedDischargeForm extends FormBase<EarnedDischargeDraftData> 
     // TODO: fill out more fields from the record once we get them
     return {
       clientName: this.person.displayName,
+      supervisionType: this.person.supervisionType,
       idocNumber: this.person.externalId,
       ftrDate: this.person.expirationDate,
     };

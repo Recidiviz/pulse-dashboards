@@ -47,6 +47,7 @@ export type EarnedDischargeReferralRecord = {
 
 export type EarnedDischargeDraftData = {
   clientName: string;
+  supervisionType: string;
   idocNumber: number;
   ftrDate: Date;
   probationOfficerFullName: string;

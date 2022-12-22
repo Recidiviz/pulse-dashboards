@@ -27,12 +27,13 @@ import { useRootStore } from "../../../../components/StoreProvider";
 import { FormContainer } from "../../FormContainer";
 import { connectComponentToOpportunityForm } from "../../OpportunityFormContext";
 import { DIMENSIONS_PX } from "../../PDFFormGenerator";
+import FormHeading from "./FormHeading";
 
-const FORM_FONT_FAMILY = `"Times New Roman", serif`;
+export const US_ND_EARLY_DISCHARGE_FORM_FONT_FAMILY = `Verdana, Geneva, sans-serif`;
 const FORM_LINE_HEIGHT = 1.3;
 
 const FormPage = styled.div`
-  font-family: ${FORM_FONT_FAMILY};
+  font-family: ${US_ND_EARLY_DISCHARGE_FORM_FONT_FAMILY};
   line-height: ${FORM_LINE_HEIGHT};
   letter-spacing: 0;
   font-size: ${rem(11)};
@@ -41,7 +42,7 @@ const FormPage = styled.div`
   box-sizing: content-box;
 
   min-height: ${rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
-  padding: ${rem(18)};
+  padding: ${rem(54)} ${rem(72)};
 
   ol li {
     margin-bottom: ${rem(spacing.xs)};
@@ -67,7 +68,10 @@ const Form = observer(function FormEarnedDischarge() {
       }}
       opportunity={opportunity}
     >
-      <FormPage>Hi! I am a form. I will have more content later</FormPage>
+      <FormPage>
+        <FormHeading />
+        Hi! I am a form. I will have more content later
+      </FormPage>
     </FormContainer>
   );
 });
