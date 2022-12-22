@@ -184,7 +184,7 @@ export const FullProfile = observer(
             />
             <ContactDetails person={person} />
           </Header>
-          <div>
+          <div className="ProfileDetails">
             <AdditionalDetails person={person} />
           </div>
           <div>

@@ -150,7 +150,7 @@ export const ProgressTimeline = ({
   const timelineOffset = timelinePosition(today) - timelinePosition(endDate);
 
   return (
-    <Wrapper>
+    <Wrapper className="SentenceProgress">
       <VizHeader>
         <div>
           <Title>{header}</Title>

@@ -20,6 +20,7 @@ import {
   WorkflowsClientsPage,
   WorkflowsFormPage,
   WorkflowsHomepage,
+  WorkflowsJIIProfilePage,
   WorkflowsOpportunityPage,
 } from "../../pages";
 import {
@@ -32,6 +33,7 @@ const pageMapping = {
   home: WorkflowsHomepage,
   clients: WorkflowsClientsPage,
   opportunity: WorkflowsOpportunityPage,
+  profile: WorkflowsJIIProfilePage,
 };
 
 /**
@@ -46,6 +48,14 @@ Given(
     } else {
       await pageMapping.opportunity.open(pageName);
     }
+  }
+);
+
+Given(
+  "I am a {string} user on the profile page for person ID {string}",
+  async (stateCode, personID) => {
+    await respondWithOfflineUser(stateCode);
+    await pageMapping.profile.open(personID);
   }
 );
 

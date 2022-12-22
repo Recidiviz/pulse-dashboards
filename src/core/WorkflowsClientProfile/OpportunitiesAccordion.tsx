@@ -112,7 +112,7 @@ const NoOpportunities = styled.div`
 const AccordionSection = ({ opportunity }: { opportunity: Opportunity }) => {
   const colors = useStatusColors(opportunity);
   return (
-    <OpportunityWrapper {...colors}>
+    <OpportunityWrapper className="ProfileOpportunityItem" {...colors}>
       <AccordionItem uuid={opportunity.type}>
         <AccordionItemHeading>
           <AccordionButton>
@@ -156,10 +156,12 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
 
   const hydrated =
     opportunities.length === 1 ? (
-      <OpportunityModule
-        opportunity={opportunities[0]}
-        formLinkButton={!!opportunities[0].form}
-      />
+      <div className="ProfileOpportunityItem">
+        <OpportunityModule
+          opportunity={opportunities[0]}
+          formLinkButton={!!opportunities[0].form}
+        />
+      </div>
     ) : (
       <Accordion allowZeroExpanded preExpanded={[0]}>
         {opportunities.map((opportunity) => {

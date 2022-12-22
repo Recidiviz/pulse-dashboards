@@ -17,9 +17,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Timestamp } from "@google-cloud/firestore";
+import { sub } from "date-fns";
 import fs from "fs";
 
 import { collectionNames } from "../src/firestore";
+import { defaultFeatureVariantsActive } from "../src/firestore/types";
+import { dateToTimestamp } from "../src/WorkflowsStore/utils";
 import { deleteCollection, getDb } from "./firestoreUtils";
 import { residentsData } from "./fixtures/residents";
 
@@ -63,6 +67,30 @@ export async function loadClientsFixture(): Promise<void> {
   bulkWriter
     .close()
     .then(() => console.log("new client data loaded successfully"));
+}
+
+export async function loadFeatureVariantsFixture(): Promise<void> {
+  console.log("wiping existing featureVariants data ...");
+  await deleteCollection(db, collectionNames.featureVariants);
+
+  console.log("loading new featureVariants data...");
+  const bulkWriter = db.bulkWriter();
+
+  const featureVariant = {
+    ...defaultFeatureVariantsActive,
+    usTnExpiration: {
+      activeDate: new Timestamp(0, 0),
+    },
+  };
+
+  // Iterate through each record
+  bulkWriter.create(
+    db.doc(`${collectionNames.featureVariants}/notarealemail@recidiviz.org`),
+    featureVariant
+  );
+  bulkWriter
+    .close()
+    .then(() => console.log("new client featureVariants loaded successfully"));
 }
 
 export async function loadResidentsFixture(): Promise<void> {
@@ -152,5 +180,6 @@ export async function loadWorkflowsFixtures(): Promise<void> {
     loadClientsFixture(),
     loadResidentsFixture(),
     loadOpportunityReferralFixtures(),
+    loadFeatureVariantsFixture(),
   ]);
 }

@@ -14,4 +14,4 @@ Feature: Login as a US_TN user and see homepage
 
     Examples:
         | stateCode | officerName   | numOpportunities | opportunityType    |
-        | US_TN     | Test Officer1 | 1                | compliantReporting |
+        | US_TN     | Test Officer1 | 3                | compliantReporting |
