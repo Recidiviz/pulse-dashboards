@@ -41,6 +41,7 @@ const FormHeaderBar = styled.div`
   position: sticky;
   top: 0;
   background-color: ${palette.pine1};
+  z-index: 999;
 `;
 
 const FormHeaderSection = styled.div`
@@ -70,6 +71,7 @@ const FormContainerElement = styled.div`
   background-color: ${palette.pine1};
   color: ${palette.marble1};
   min-height: 100vh;
+  height: 100%;
   padding-bottom: ${rem(spacing.xl)};
 `;
 
@@ -79,6 +81,8 @@ const FormPreviewContainer = styled.div`
   gap: ${rem(spacing.md)};
   padding: ${rem(spacing.xl)} 10%;
   width: 100%;
+  height: 100%;
+  background-color: ${palette.pine1};
 `;
 
 type FormHeaderProps = {

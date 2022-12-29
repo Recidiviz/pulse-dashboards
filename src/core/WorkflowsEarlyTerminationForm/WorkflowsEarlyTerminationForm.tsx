@@ -14,29 +14,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
 import { toJS } from "mobx";
-import * as React from "react";
-import styled from "styled-components/macro";
+import { observer } from "mobx-react-lite";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
-import { FormLastEdited } from "../FormLastEdited";
 import { downloadSingle } from "../Paperwork/DOCXFormGenerator";
+import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import {
   connectComponentToOpportunityForm,
   useOpportunityFormContext,
 } from "../Paperwork/OpportunityFormContext";
-import { FormViewerStatus } from "../Paperwork/styles";
 import FormEarlyTermination from "../Paperwork/US_ND/EarlyTermination/FormEarlyTermination";
 import { REACTIVE_INPUT_UPDATE_DELAY } from "../Paperwork/utils";
-
-const EarlyTerminationFormContainer = styled.div`
-  background-color: ${palette.pine1};
-  border-left: 1px solid ${palette.slate20};
-  height: 100%;
-`;
 
 const collectAdditionalDepositionLinesToPrint = (client: Client) => {
   const { earlyTermination } = client.verifiedOpportunities;
@@ -77,28 +68,24 @@ const WorkflowsEarlyTerminationForm = () => {
   const form = useOpportunityFormContext();
 
   return (
-    <EarlyTerminationFormContainer>
+    <FormContainer
+      heading="Early Termination"
+      agencyName="ND DOCR"
+      downloadButtonLabel={form.printText}
+      onClickDownload={async () => form.print()}
+      opportunity={form.opportunity}
+    >
       <FormViewer
         fileName={`${client?.displayName} - Form SFN 9281.docx`}
-        statuses={
-          <>
-            <FormViewerStatus color={palette.slate85}>
-              Edit and collaborate on the document below
-            </FormViewerStatus>
-            <FormViewerStatus color={palette.slate85}>
-              <FormLastEdited agencyName="ND DOCR" form={form} />
-            </FormViewerStatus>
-          </>
-        }
         formDownloader={formDownloader}
       >
         <FormEarlyTermination />
       </FormViewer>
-    </EarlyTerminationFormContainer>
+    </FormContainer>
   );
 };
 
 export default connectComponentToOpportunityForm(
-  WorkflowsEarlyTerminationForm,
+  observer(WorkflowsEarlyTerminationForm),
   "earlyTermination"
 );

@@ -14,9 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import * as React from "react";
 import { useEffect } from "react";
 import styled from "styled-components/macro";
@@ -24,14 +22,6 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
 import { useResizeForm } from "./utils";
-
-const FormViewerHeader = styled.div`
-  padding: ${rem(spacing.xl)} ${rem(spacing.lg)};
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin-top: -${rem(spacing.sm)};
-`;
 
 const FormViewerGrid = styled.div`
   display: grid;
@@ -41,7 +31,6 @@ const FormViewerGrid = styled.div`
 
 interface FormViewerProps {
   fileName: string;
-  statuses: JSX.Element;
   formDownloader: (
     fileName: string,
     client: Client,
@@ -60,7 +49,6 @@ export const FormViewerContext = React.createContext<FormViewerContextData>({
 
 const FormViewer: React.FC<FormViewerProps> = ({
   fileName,
-  statuses,
   formDownloader,
   children,
 }) => {
@@ -90,8 +78,6 @@ const FormViewer: React.FC<FormViewerProps> = ({
 
   return (
     <FormViewerGrid>
-      <FormViewerHeader>{statuses}</FormViewerHeader>
-
       <FormViewerContext.Provider value={{ isPrinting: formIsPrinting }}>
         <div ref={formRef}>{children}</div>
       </FormViewerContext.Provider>

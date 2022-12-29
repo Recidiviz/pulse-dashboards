@@ -14,25 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette } from "@recidiviz/design-system";
 import jsPDF from "jspdf";
+import { observer } from "mobx-react-lite";
 import React from "react";
-import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
-import { FormLastEdited } from "../FormLastEdited";
+import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
-import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
+import {
+  connectComponentToOpportunityForm,
+  useOpportunityFormContext,
+} from "../Paperwork/OpportunityFormContext";
 import { generate } from "../Paperwork/PDFFormGenerator";
-import { FormViewerStatus, PrintablePage } from "../Paperwork/styles";
+import { PrintablePage } from "../Paperwork/styles";
 import FormCR3947Rev0518 from "../Paperwork/US_TN";
-
-const CompliantReportingFormContainer = styled.div`
-  background-color: ${palette.pine2};
-  border-left: 1px solid ${palette.slate20};
-  height: 100%;
-`;
 
 const formDownloader = async (
   fileName: string,
@@ -49,32 +45,27 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
     workflowsStore: { selectedClient: client },
   } = useRootStore();
 
+  const form = useOpportunityFormContext();
+
   return (
-    <CompliantReportingFormContainer className="WorkflowsFormContainer">
+    <FormContainer
+      heading="Compliant Reporting"
+      agencyName="TDOC"
+      downloadButtonLabel={form.printText}
+      onClickDownload={async () => form.print()}
+      opportunity={form.opportunity}
+    >
       <FormViewer
         fileName={`${client?.displayName} - Form CR3947 Rev05-18.pdf`}
-        statuses={
-          <>
-            <FormViewerStatus color={palette.slate85}>
-              Edit and collaborate on the document below
-            </FormViewerStatus>
-            <FormViewerStatus color={palette.slate85}>
-              <FormLastEdited
-                agencyName="TDOC"
-                form={client?.verifiedOpportunities.compliantReporting?.form}
-              />
-            </FormViewerStatus>
-          </>
-        }
         formDownloader={formDownloader}
       >
         <FormCR3947Rev0518 />
       </FormViewer>
-    </CompliantReportingFormContainer>
+    </FormContainer>
   );
 };
 
 export default connectComponentToOpportunityForm(
-  WorkflowsCompliantReportingForm,
+  observer(WorkflowsCompliantReportingForm),
   "compliantReporting"
 );

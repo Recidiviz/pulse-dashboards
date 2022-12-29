@@ -113,7 +113,7 @@ export const useResizeForm = (
 
       if (!page || !container) return;
 
-      const margin = 0.075 * container.offsetWidth;
+      const margin = 0;
       const scale = (container.offsetWidth - margin * 2) / page.offsetWidth;
       const scaledMargin = margin / scale;
       const scaledHeight = page.offsetHeight * scale;
