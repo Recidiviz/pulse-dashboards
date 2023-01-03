@@ -25,7 +25,7 @@ import {
   EarnedDischargeReferralRecord,
   transformReferral,
 } from "./EarnedDischargeReferralRecord";
-import { UsIdEarnedDischargeForm } from "./Forms/UsIdEarlyDischargeForm";
+import { UsIdEarnedDischargeForm } from "./Forms/UsIdEarnedDischargeForm";
 import {
   LSU_EARNED_DISCHARGE_COMMON_CRITERIA,
   LSUEarnedDischargeCommonRequirementsMet,

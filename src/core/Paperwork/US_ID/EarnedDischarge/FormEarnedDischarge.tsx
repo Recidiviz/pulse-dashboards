@@ -26,16 +26,17 @@ import { useRootStore } from "../../../../components/StoreProvider";
 import { FormContainer } from "../../FormContainer";
 import { connectComponentToOpportunityForm } from "../../OpportunityFormContext";
 import { DIMENSIONS_PX } from "../../PDFFormGenerator";
-import FormCrimeTable from "./FormCrimeTable";
+import { FORM_US_ID_EARLY_DISCHARGE_FORM_FONT_FAMILY } from "./FormComponents";
+import { FormCrimeTable } from "./FormCrimeTable";
+import { FormFeesTable } from "./FormFeesTable";
 import FormHeading from "./FormHeading";
-import FormSummarySection from "./FormSummarySection";
+import { FormLsirTable } from "./FormLsirTable";
+import { FormSummarySection } from "./FormSummarySection";
 
-export const US_ND_EARLY_DISCHARGE_FORM_FONT_FAMILY = `Verdana, Geneva, sans-serif`;
-export const US_ND_EARLY_DISCHARGE_FORM_LETTER_SPACING = `-0.02em`;
 const FORM_LINE_HEIGHT = 1.0;
 
 const FormPage = styled.div`
-  font-family: ${US_ND_EARLY_DISCHARGE_FORM_FONT_FAMILY};
+  font-family: ${FORM_US_ID_EARLY_DISCHARGE_FORM_FONT_FAMILY};
   line-height: ${FORM_LINE_HEIGHT};
   display: flex;
   flex-direction: column;
@@ -75,6 +76,8 @@ const Form = observer(function FormEarnedDischarge() {
         <FormHeading />
         <FormSummarySection />
         <FormCrimeTable />
+        <FormFeesTable />
+        <FormLsirTable />
       </FormPage>
     </FormContainer>
   );

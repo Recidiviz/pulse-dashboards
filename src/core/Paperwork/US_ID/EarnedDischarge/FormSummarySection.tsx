@@ -17,12 +17,13 @@
  * =============================================================================
  */
 
-import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
 import { EarnedDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/EarnedDischargeReferralRecord";
-import DOCXFormInput from "../../DOCXFormInput";
-import { US_ND_EARLY_DISCHARGE_FORM_LETTER_SPACING } from "./FormEarnedDischarge";
+import {
+  FORM_US_ID_EARLY_DISCHARGE_LETTER_SPACING,
+  FormEDInput,
+} from "./FormComponents";
 
 const SummaryContainer = styled.table`
   border: none;
@@ -31,7 +32,7 @@ const SummaryContainer = styled.table`
   table-layout: fixed;
   width: 100%;
 
-  letter-spacing: ${US_ND_EARLY_DISCHARGE_FORM_LETTER_SPACING};
+  letter-spacing: ${FORM_US_ID_EARLY_DISCHARGE_LETTER_SPACING};
   white-space: nowrap;
 
   & td:nth-child(even) {
@@ -59,56 +60,57 @@ const Item = ({ title, name, placeholder }: ItemProps) => {
     <>
       <td>{title}:</td>
       <td>
-        <DOCXFormInput<EarnedDischargeDraftData>
-          name={name}
-          placeholder={placeholder}
-        />
+        <FormEDInput name={name} placeholder={placeholder} />
       </td>
     </>
   );
 };
 
-const FormSummarySection = () => {
+export const FormSummarySection: React.FC = () => {
   return (
     <SummaryContainer>
-      <tr>
-        <Item title="Client Name" name="clientName" placeholder="Client Name" />
-        <Item
-          title="Condition Compliance"
-          name="conditionCompliance"
-          placeholder="Y/N"
-        />
-      </tr>
-      <tr>
-        <Item title="IDOC #" name="idocNumber" placeholder="" />
-        <Item
-          title="Meets IDOC Requirements"
-          name="meetsIdocRequirements"
-          placeholder="Y/N"
-        />
-      </tr>
-      <tr>
-        <Item
-          title="Full Term Release Date"
-          name="ftrDate"
-          placeholder="Choose Date"
-        />
-        <Item title="NCIC Check" name="ncicCheck" placeholder="Y/N" />
-      </tr>
-      <tr>
-        <Item
-          title="P&P Officer"
-          name="probationOfficerFullName"
-          placeholder="Supervisor Name"
-        />
-        <Item
-          title="NCIC Check Date"
-          name="ncicCheckDate"
-          placeholder="Choose Date"
-        />
-      </tr>
+      <tbody>
+        <tr>
+          <Item
+            title="Client Name"
+            name="clientName"
+            placeholder="Client Name"
+          />
+          <Item
+            title="Condition Compliance"
+            name="conditionCompliance"
+            placeholder="Y/N"
+          />
+        </tr>
+        <tr>
+          <Item title="IDOC #" name="idocNumber" placeholder="" />
+          <Item
+            title="Meets IDOC Requirements"
+            name="meetsIdocRequirements"
+            placeholder="Y/N"
+          />
+        </tr>
+        <tr>
+          <Item
+            title="Full Term Release Date"
+            name="ftrDate"
+            placeholder="Choose Date"
+          />
+          <Item title="NCIC Check" name="ncicCheck" placeholder="Y/N" />
+        </tr>
+        <tr>
+          <Item
+            title="P&P Officer"
+            name="probationOfficerFullName"
+            placeholder="Supervisor Name"
+          />
+          <Item
+            title="NCIC Check Date"
+            name="ncicCheckDate"
+            placeholder="Choose Date"
+          />
+        </tr>
+      </tbody>
     </SummaryContainer>
   );
 };
-
-export default observer(FormSummarySection);

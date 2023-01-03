@@ -167,6 +167,16 @@ test("formInformation parses", () => {
           sentenceFTRD: "2023-07-30",
         },
       ],
+      initialRestitution: 4289.63,
+      lastRestitutionPaymentDate: "2022-08-09",
+      currentRestitutionBalance: 0,
+      initialFines: 98.25,
+      lastFinesPaymentDate: "2022-09-08",
+      currentFinesBalance: 12.18,
+      initialLsirScore: 27,
+      initialLsirDate: "2020-03-28",
+      currentLsirScore: 19,
+      currentLsirDate: "2022-10-24",
     },
     criteria: {
       usIdLsirLevelLowModerateForXDays: {

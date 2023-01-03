@@ -17,26 +17,20 @@
  * =============================================================================
  */
 
-import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
-import { EarnedDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/EarnedDischargeReferralRecord";
-import DOCXFormInput, { DOCXFormInputProps } from "../../DOCXFormInput";
+import {
+  FORM_US_ID_EARLY_DISCHARGE_BACKGROUND_COLOR,
+  FormEDInputCell,
+  FormEDSectionLabel,
+  FormEDTable,
+} from "./FormComponents";
 
-const CrimeTable = styled.table`
-  border: black solid 1.5px;
-  margin-top: 1rem;
-  width: 100%;
-
-  & th {
-    background: rgb(227, 227, 226);
+const CrimeTable = styled(FormEDTable)`
+  & thead {
+    background: ${FORM_US_ID_EARLY_DISCHARGE_BACKGROUND_COLOR};
     font-weight: 500;
     padding-top: 0.2rem;
-  }
-
-  & th,
-  td {
-    padding-left: 0.4rem;
   }
 `;
 
@@ -48,20 +42,10 @@ const Col = styled.col<ColProps>`
   width: ${(p) => p.width}%;
 `;
 
-const InputCell = (props: DOCXFormInputProps<EarnedDischargeDraftData>) => (
-  <td>
-    <DOCXFormInput<EarnedDischargeDraftData> {...props} />
-  </td>
-);
-
-const TableLabel = styled.div`
-  font-weight: 600;
-`;
-
-const FormCrimeTable = () => {
+export const FormCrimeTable: React.FC = () => {
   return (
     <div>
-      <TableLabel>Crime:</TableLabel>
+      <FormEDSectionLabel>Crime:</FormEDSectionLabel>
       <CrimeTable>
         <colgroup>
           <Col width={35} />
@@ -77,63 +61,71 @@ const FormCrimeTable = () => {
             <th>Sentence Date</th>
           </tr>
           <tr>
-            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-            <th />
+            <td />
             <th>County</th>
             <th>Sentence</th>
             <th>FTRD</th>
           </tr>
           <tr>
-            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-            <th />
-            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-            <th />
+            <td />
+            <td />
             <th>(min/max)</th>
-            {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-            <th />
+            <td />
           </tr>
         </thead>
         <tbody>
           <tr>
-            <InputCell name="crimeName" placeholder="Crime" />
-            <InputCell name="sentencingJudge" placeholder="Sentencing judge" />
-            <InputCell name="caseNumber" placeholder="Case #" />
-            <InputCell name="sentencingDate" placeholder="Sentence date" />
+            <FormEDInputCell name="crimeName" placeholder="Crime" />
+            <FormEDInputCell
+              name="sentencingJudge"
+              placeholder="Sentencing judge"
+            />
+            <FormEDInputCell name="caseNumber" placeholder="Case #" />
+            <FormEDInputCell
+              name="sentencingDate"
+              placeholder="Sentence date"
+            />
           </tr>
           <tr>
             <td />
-            <InputCell
+            <FormEDInputCell
               name="sentencingCounty"
               placeholder="Sentencing county"
             />
-            <InputCell name="sentenceMin" placeholder="Sentence min" />
-            <InputCell name="sentenceFTRD" placeholder="FTRD" />
+            <FormEDInputCell name="sentenceMin" placeholder="Sentence min" />
+            <FormEDInputCell name="sentenceFTRD" placeholder="FTRD" />
           </tr>
           <tr>
             <td />
             <td />
-            <InputCell name="sentenceMax" placeholder="Sentence max" />
+            <FormEDInputCell name="sentenceMax" placeholder="Sentence max" />
             <td />
           </tr>
           <tr>
-            <InputCell name="crimeName2" placeholder="Crime" />
-            <InputCell name="sentencingJudge2" placeholder="Sentencing judge" />
-            <InputCell name="caseNumber2" placeholder="Case #" />
-            <InputCell name="sentencingDate2" placeholder="Sentence date" />
+            <FormEDInputCell name="crimeName2" placeholder="Crime" />
+            <FormEDInputCell
+              name="sentencingJudge2"
+              placeholder="Sentencing judge"
+            />
+            <FormEDInputCell name="caseNumber2" placeholder="Case #" />
+            <FormEDInputCell
+              name="sentencingDate2"
+              placeholder="Sentence date"
+            />
           </tr>
           <tr>
             <td />
-            <InputCell
+            <FormEDInputCell
               name="sentencingCounty2"
               placeholder="Sentencing county"
             />
-            <InputCell name="sentenceMin2" placeholder="Sentence min" />
-            <InputCell name="sentenceFTRD2" placeholder="FTRD" />
+            <FormEDInputCell name="sentenceMin2" placeholder="Sentence min" />
+            <FormEDInputCell name="sentenceFTRD2" placeholder="FTRD" />
           </tr>
           <tr>
             <td />
             <td />
-            <InputCell name="sentenceMax2" placeholder="Sentence max" />
+            <FormEDInputCell name="sentenceMax2" placeholder="Sentence max" />
             <td />
           </tr>
         </tbody>
@@ -141,5 +133,3 @@ const FormCrimeTable = () => {
     </div>
   );
 };
-
-export default observer(FormCrimeTable);

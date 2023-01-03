@@ -41,6 +41,16 @@ export type EarnedDischargeReferralRecord = {
       sentenceMax: string;
       sentenceFTRD: Date;
     }[];
+    initialRestitution?: number;
+    lastRestitutionPaymentDate?: Date;
+    currentRestitutionBalance?: number;
+    initialFines?: number;
+    lastFinesPaymentDate?: Date;
+    currentFinesBalance?: number;
+    initialLsirScore?: number;
+    initialLsirDate?: Date;
+    currentLsirScore?: number;
+    currentLsirDate?: Date;
   };
   criteria: LSUEarnedDischargeCommonCriteria & {
     pastEarnedDischargeEligibleDate: {
@@ -58,7 +68,7 @@ export type EarnedDischargeReferralRecord = {
 export type EarnedDischargeDraftData = {
   clientName: string;
   supervisionType: string;
-  idocNumber: number;
+  idocNumber: string;
   ftrDate: string;
   probationOfficerFullName: string;
   conditionCompliance: string;
@@ -81,15 +91,15 @@ export type EarnedDischargeDraftData = {
   sentenceMin2: string;
   sentenceMax2: string;
   sentenceFTRD2: string;
-  initialRestitution: number;
+  initialRestitution: string;
   lastRestitutionPaymentDate: string;
-  currentRestitutionBalance: number;
-  initialFines: number;
+  currentRestitutionBalance: string;
+  initialFines: string;
   lastFinesPaymentDate: string;
-  currentFinesBalance: number;
-  initialLsirScore: number;
+  currentFinesBalance: string;
+  initialLsirScore: string;
   initialLsirDate: string;
-  currentLsirScore: number;
+  currentLsirScore: string;
   currentLsirDate: string;
 };
 
@@ -144,11 +154,42 @@ export const transformReferral: TransformFunction<EarnedDischargeReferralRecord>
 
   transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
 
-  const { ncicCheckDate, crimeInformation } = record.formInformation;
+  const {
+    ncicCheckDate,
+    crimeInformation,
+    lastRestitutionPaymentDate,
+    lastFinesPaymentDate,
+    initialLsirDate,
+    currentLsirDate,
+  } = record.formInformation;
 
   if (ncicCheckDate) {
     transformedRecord.formInformation.ncicCheckDate = fieldToDate(
       ncicCheckDate
+    );
+  }
+
+  if (lastRestitutionPaymentDate) {
+    transformedRecord.formInformation.lastRestitutionPaymentDate = fieldToDate(
+      lastRestitutionPaymentDate
+    );
+  }
+
+  if (lastFinesPaymentDate) {
+    transformedRecord.formInformation.lastFinesPaymentDate = fieldToDate(
+      lastFinesPaymentDate
+    );
+  }
+
+  if (initialLsirDate) {
+    transformedRecord.formInformation.initialLsirDate = fieldToDate(
+      initialLsirDate
+    );
+  }
+
+  if (currentLsirDate) {
+    transformedRecord.formInformation.currentLsirDate = fieldToDate(
+      currentLsirDate
     );
   }
 

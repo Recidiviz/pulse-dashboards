@@ -18,22 +18,27 @@
  */
 
 import { formatWorkflowsDate } from "../../../utils";
-import {
-  EarnedDischargeDraftData,
-  EarnedDischargeReferralRecord,
-} from "../EarnedDischargeReferralRecord";
+import { EarnedDischargeOpportunity } from "../EarnedDischargeOpportunity";
+import { EarnedDischargeDraftData } from "../EarnedDischargeReferralRecord";
 import { FormBase } from "./FormBase";
+import {
+  transformPossibleDateFields,
+  transformPossibleNumberFields,
+} from "./utils";
 
-export class UsIdEarnedDischargeForm extends FormBase<EarnedDischargeDraftData> {
+export class UsIdEarnedDischargeForm extends FormBase<
+  EarnedDischargeDraftData,
+  EarnedDischargeOpportunity
+> {
   navigateToFormText = "Generate paperwork";
 
   prefilledDataTransformer(): Partial<EarnedDischargeDraftData> {
     if (!this.opportunity.record || !this.person) return {};
 
-    const record = this.opportunity.record as EarnedDischargeReferralRecord;
     const {
-      formInformation: { ncicCheckDate, crimeInformation },
-    } = record;
+      record: { formInformation },
+    } = this.opportunity;
+    const { crimeInformation } = formInformation;
 
     const initialData: Partial<EarnedDischargeDraftData> = {
       clientName: this.person.displayName,
@@ -43,11 +48,22 @@ export class UsIdEarnedDischargeForm extends FormBase<EarnedDischargeDraftData> 
       conditionCompliance: "Yes",
       meetsIdocRequirements: "Yes",
       ncicCheck: "Yes",
+      ...transformPossibleDateFields(formInformation, [
+        "ncicCheckDate",
+        "initialLsirDate",
+        "currentLsirDate",
+        "lastFinesPaymentDate",
+        "lastRestitutionPaymentDate",
+      ]),
+      ...transformPossibleNumberFields(formInformation, [
+        "initialFines",
+        "initialRestitution",
+        "initialLsirScore",
+        "currentFinesBalance",
+        "currentRestitutionBalance",
+        "currentLsirScore",
+      ]),
     };
-
-    if (ncicCheckDate) {
-      initialData.ncicCheckDate = formatWorkflowsDate(ncicCheckDate);
-    }
 
     if (crimeInformation) {
       if (crimeInformation.length > 0) {
