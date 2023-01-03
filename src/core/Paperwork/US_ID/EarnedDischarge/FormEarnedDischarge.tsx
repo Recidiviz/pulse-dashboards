@@ -31,6 +31,7 @@ import { FormCrimeTable } from "./FormCrimeTable";
 import { FormFeesTable } from "./FormFeesTable";
 import FormHeading from "./FormHeading";
 import { FormLsirTable } from "./FormLsirTable";
+import { FormStaticContent } from "./FormStaticContent";
 import { FormSummarySection } from "./FormSummarySection";
 
 const FORM_LINE_HEIGHT = 1.0;
@@ -78,6 +79,7 @@ const Form = observer(function FormEarnedDischarge() {
         <FormCrimeTable />
         <FormFeesTable />
         <FormLsirTable />
+        <FormStaticContent />
       </FormPage>
     </FormContainer>
   );

@@ -21,6 +21,7 @@ import styled from "styled-components/macro";
 
 import {
   FORM_US_ID_EARLY_DISCHARGE_BACKGROUND_COLOR,
+  FormColGroup,
   FormEDInputCell,
   FormEDSectionLabel,
   FormEDTable,
@@ -34,25 +35,12 @@ const CrimeTable = styled(FormEDTable)`
   }
 `;
 
-type ColProps = {
-  width: number;
-};
-
-const Col = styled.col<ColProps>`
-  width: ${(p) => p.width}%;
-`;
-
 export const FormCrimeTable: React.FC = () => {
   return (
     <div>
       <FormEDSectionLabel>Crime:</FormEDSectionLabel>
       <CrimeTable>
-        <colgroup>
-          <Col width={35} />
-          <Col width={28} />
-          <Col width={15} />
-          <Col width={21} />
-        </colgroup>
+        <FormColGroup widths={[35, 28, 15, 21]} />
         <thead>
           <tr>
             <th>Crime</th>

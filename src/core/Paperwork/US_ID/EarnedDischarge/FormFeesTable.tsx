@@ -36,6 +36,7 @@ const FeesTable = styled(FormEDTable)`
   }
   & th:first-child {
     background: ${FORM_US_ID_EARLY_DISCHARGE_BACKGROUND_COLOR};
+    padding-right: 0.5rem;
   }
   & tbody th {
     text-align: right;

@@ -28,6 +28,7 @@ import idocLogo from "./assets/idocLogo.png";
 import {
   FORM_US_ID_EARLY_DISCHARGE_FORM_FONT_FAMILY,
   FORM_US_ID_EARLY_DISCHARGE_LETTER_SPACING,
+  FormEDSeparator,
 } from "./FormComponents";
 
 const Logo = styled.img`
@@ -57,10 +58,6 @@ const Subheading = styled.h2`
   letter-spacing: ${FORM_US_ID_EARLY_DISCHARGE_LETTER_SPACING};
 `;
 
-const HeadingSeparator = styled.hr`
-  border: 1px solid black;
-`;
-
 const FormHeading: React.FC = () => {
   const form = useOpportunityFormContext() as UsIdEarnedDischargeForm;
 
@@ -77,7 +74,7 @@ const FormHeading: React.FC = () => {
           <Subheading>Earned Discharge from {supervisionType}</Subheading>
         </HeadingText>
       </ContentContainer>
-      <HeadingSeparator />
+      <FormEDSeparator />
     </div>
   );
 };

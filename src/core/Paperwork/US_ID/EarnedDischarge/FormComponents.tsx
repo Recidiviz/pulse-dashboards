@@ -32,6 +32,11 @@ export const FormEDInput = (props: FormEDInputProps): React.ReactElement => (
   <DOCXFormInput<EarnedDischargeDraftData> {...props} />
 );
 
+export const FormEDSeparator = styled.hr`
+  border: 1px solid black;
+  width: 100%;
+`;
+
 export const FormEDSectionLabel = styled.div`
   font-weight: 600;
   margin-bottom: 1rem;
@@ -49,6 +54,22 @@ export const FormEDTable = styled.table`
     font-weight: normal;
   }
 `;
+
+type FormColGroupsProps = {
+  widths: number[];
+};
+
+export const FormColGroup = ({
+  widths,
+}: FormColGroupsProps): React.ReactElement => {
+  return (
+    <colgroup>
+      {widths.map((w) => (
+        <col style={{ width: `${w}%` }} />
+      ))}
+    </colgroup>
+  );
+};
 
 export const FormEDInputCell = (
   props: FormEDInputProps
