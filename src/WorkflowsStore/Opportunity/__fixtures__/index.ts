@@ -305,9 +305,7 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
 export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord = {
   stateCode: "US_ID",
   externalId: "001",
-  formInformation: {
-    clientName: "Betty Rubble",
-  },
+  formInformation: {},
   criteria: {
     usIdLsirLevelLowModerateForXDays: {
       riskLevel: "MODERATE",

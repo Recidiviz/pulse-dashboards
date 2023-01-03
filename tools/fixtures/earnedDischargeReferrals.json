@@ -45,7 +45,31 @@
     "stateCode": "US_ID",
     "externalId": "002",
     "eligibleStartDate": "2022-07-10",
-    "formInformation": {},
+    "formInformation": {
+      "ncicCheckDate": "2022-11-10",
+      "crimeInformation": [
+        {
+          "crimeName": "Shoplifting",
+          "sentencingJudge": "Starla Murieta",
+          "sentencingCounty": "Duane",
+          "sentencingDate": "2022-08-12",
+          "caseNumber": "12858",
+          "sentenceMin": "3 months",
+          "sentenceMax": "12 months",
+          "sentenceFTRD": "2023-08-11"
+        },
+        {
+          "crimeName": "Public Intoxication",
+          "sentencingJudge": "Raymond Dart",
+          "sentencingCounty": "Duane",
+          "sentencingDate": "2022-09-30",
+          "caseNumber": "13085",
+          "sentenceMin": "2 months",
+          "sentenceMax": "10 months",
+          "sentenceFTRD": "2023-07-30"
+        }
+      ]
+    },
     "criteria": {
       "negativeUaWithin90Days": null,
       "noFelonyWithin24Months": null,

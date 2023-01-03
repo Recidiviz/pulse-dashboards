@@ -31,17 +31,14 @@ const SummaryContainer = styled.table`
   table-layout: fixed;
   width: 100%;
 
-  margin-top: 1rem;
-
-  font-size: 14pt;
   letter-spacing: ${US_ND_EARLY_DISCHARGE_FORM_LETTER_SPACING};
   white-space: nowrap;
 
-  & td:nth-child(2n) {
+  & td:nth-child(even) {
     padding-left: 0.5rem;
     text-align: left;
   }
-  & td:nth-child(2n-1) {
+  & td:nth-child(odd) {
     text-align: right;
   }
 

@@ -17,7 +17,6 @@
  * =============================================================================
  */
 
-import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import * as React from "react";
@@ -27,6 +26,7 @@ import { useRootStore } from "../../../../components/StoreProvider";
 import { FormContainer } from "../../FormContainer";
 import { connectComponentToOpportunityForm } from "../../OpportunityFormContext";
 import { DIMENSIONS_PX } from "../../PDFFormGenerator";
+import FormCrimeTable from "./FormCrimeTable";
 import FormHeading from "./FormHeading";
 import FormSummarySection from "./FormSummarySection";
 
@@ -39,7 +39,7 @@ const FormPage = styled.div`
   line-height: ${FORM_LINE_HEIGHT};
   display: flex;
   flex-direction: column;
-  font-size: ${rem(11)};
+  font-size: 14pt;
   color: black;
   background-color: white;
   box-sizing: content-box;
@@ -47,8 +47,8 @@ const FormPage = styled.div`
   min-height: ${rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
   padding: ${rem(54)} ${rem(72)};
 
-  ol li {
-    margin-bottom: ${rem(spacing.xs)};
+  & > * {
+    margin-bottom: 2rem;
   }
 `;
 
@@ -74,6 +74,7 @@ const Form = observer(function FormEarnedDischarge() {
       <FormPage>
         <FormHeading />
         <FormSummarySection />
+        <FormCrimeTable />
       </FormPage>
     </FormContainer>
   );

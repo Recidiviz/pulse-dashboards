@@ -21,9 +21,7 @@ test("transform dual/parole record", () => {
   const rawRecord = {
     stateCode: "US_ID",
     externalId: "001",
-    formInformation: {
-      clientName: "Betty Rubble",
-    },
+    formInformation: {},
     criteria: {
       usIdLsirLevelLowModerateForXDays: {
         riskLevel: "MODERATE",
@@ -69,9 +67,7 @@ test("transform probation record", () => {
   const rawRecord = {
     stateCode: "US_ID",
     externalId: "001",
-    formInformation: {
-      clientName: "Betty Rubble",
-    },
+    formInformation: {},
     criteria: {
       usIdLsirLevelLowModerateForXDays: {
         riskLevel: "MODERATE",
@@ -113,12 +109,64 @@ test("transform probation record", () => {
   expect(transformReferral(rawRecord)).toMatchSnapshot();
 });
 
-test("option criteria have sane fallbacks", () => {
+test("optional criteria have sane fallbacks", () => {
+  const rawRecord = {
+    stateCode: "US_ID",
+    externalId: "001",
+    formInformation: {},
+    criteria: {
+      usIdLsirLevelLowModerateForXDays: {
+        riskLevel: "MODERATE",
+        eligibleDate: "2022-01-03",
+      },
+      negativeUaWithin90Days: null,
+      noFelonyWithin24Months: null,
+      noViolentMisdemeanorWithin12Months: null,
+      usIdIncomeVerifiedWithin3Months: {
+        incomeVerifiedDate: "2022-06-03",
+      },
+      supervisionNotPastFullTermCompletionDate: {
+        eligibleDate: "2025-06-19",
+      },
+      onProbationAtLeastOneYear: {
+        eligibleDate: "2022-05-22",
+        sentenceType: "DUAL",
+      },
+    },
+    eligibleStartDate: "2022-10-05",
+  };
+
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});
+
+test("formInformation parses", () => {
   const rawRecord = {
     stateCode: "US_ID",
     externalId: "001",
     formInformation: {
-      clientName: "Betty Rubble",
+      ncicCheckDate: "2022-11-10",
+      crimeInformation: [
+        {
+          crimeName: "Shoplifting",
+          sentencingJudge: "Starla Murieta",
+          sentencingCounty: "Duane",
+          sentencingDate: "2022-08-12",
+          caseNumber: "12858",
+          sentenceMin: "3 months",
+          sentenceMax: "12 months",
+          sentenceFTRD: "2023-08-11",
+        },
+        {
+          crimeName: "Public Intoxication",
+          sentencingJudge: "Raymond Dart",
+          sentencingCounty: "Duane",
+          sentencingDate: "2022-09-30",
+          caseNumber: "13085",
+          sentenceMin: "2 months",
+          sentenceMax: "10 months",
+          sentenceFTRD: "2023-07-30",
+        },
+      ],
     },
     criteria: {
       usIdLsirLevelLowModerateForXDays: {

@@ -18,7 +18,10 @@
  */
 
 import { formatWorkflowsDate } from "../../../utils";
-import { EarnedDischargeDraftData } from "../EarnedDischargeReferralRecord";
+import {
+  EarnedDischargeDraftData,
+  EarnedDischargeReferralRecord,
+} from "../EarnedDischargeReferralRecord";
 import { FormBase } from "./FormBase";
 
 export class UsIdEarnedDischargeForm extends FormBase<EarnedDischargeDraftData> {
@@ -27,8 +30,12 @@ export class UsIdEarnedDischargeForm extends FormBase<EarnedDischargeDraftData> 
   prefilledDataTransformer(): Partial<EarnedDischargeDraftData> {
     if (!this.opportunity.record || !this.person) return {};
 
-    // TODO: fill out more fields from the record once we get them
-    return {
+    const record = this.opportunity.record as EarnedDischargeReferralRecord;
+    const {
+      formInformation: { ncicCheckDate, crimeInformation },
+    } = record;
+
+    const initialData: Partial<EarnedDischargeDraftData> = {
       clientName: this.person.displayName,
       supervisionType: this.person.supervisionType,
       idocNumber: this.person.externalId,
@@ -37,5 +44,43 @@ export class UsIdEarnedDischargeForm extends FormBase<EarnedDischargeDraftData> 
       meetsIdocRequirements: "Yes",
       ncicCheck: "Yes",
     };
+
+    if (ncicCheckDate) {
+      initialData.ncicCheckDate = formatWorkflowsDate(ncicCheckDate);
+    }
+
+    if (crimeInformation) {
+      if (crimeInformation.length > 0) {
+        initialData.crimeName = crimeInformation[0].crimeName;
+        initialData.sentencingJudge = crimeInformation[0].sentencingJudge;
+        initialData.sentencingCounty = crimeInformation[0].sentencingCounty;
+        initialData.sentencingDate = formatWorkflowsDate(
+          crimeInformation[0].sentencingDate
+        );
+        initialData.caseNumber = crimeInformation[0].caseNumber;
+        initialData.sentenceMin = crimeInformation[0].sentenceMin;
+        initialData.sentenceMax = crimeInformation[0].sentenceMax;
+        initialData.sentenceFTRD = formatWorkflowsDate(
+          crimeInformation[0].sentenceFTRD
+        );
+      }
+
+      if (crimeInformation.length > 1) {
+        initialData.crimeName2 = crimeInformation[1].crimeName;
+        initialData.sentencingJudge2 = crimeInformation[1].sentencingJudge;
+        initialData.sentencingCounty2 = crimeInformation[1].sentencingCounty;
+        initialData.sentencingDate2 = formatWorkflowsDate(
+          crimeInformation[1].sentencingDate
+        );
+        initialData.caseNumber2 = crimeInformation[1].caseNumber;
+        initialData.sentenceMin2 = crimeInformation[1].sentenceMin;
+        initialData.sentenceMax2 = crimeInformation[1].sentenceMax;
+        initialData.sentenceFTRD2 = formatWorkflowsDate(
+          crimeInformation[1].sentenceFTRD
+        );
+      }
+    }
+
+    return initialData;
   }
 }

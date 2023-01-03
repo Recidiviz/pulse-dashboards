@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`option criteria have sane fallbacks 1`] = `
+exports[`formInformation parses 1`] = `
 Object {
   "caseNotes": Object {},
   "criteria": Object {
@@ -29,8 +29,63 @@ Object {
   "eligibleStartDate": 2022-10-05T00:00:00.000Z,
   "externalId": "001",
   "formInformation": Object {
-    "clientName": "Betty Rubble",
+    "crimeInformation": Array [
+      Object {
+        "caseNumber": "12858",
+        "crimeName": "Shoplifting",
+        "sentenceFTRD": 2023-08-11T00:00:00.000Z,
+        "sentenceMax": "12 months",
+        "sentenceMin": "3 months",
+        "sentencingCounty": "Duane",
+        "sentencingDate": 2022-08-12T00:00:00.000Z,
+        "sentencingJudge": "Starla Murieta",
+      },
+      Object {
+        "caseNumber": "13085",
+        "crimeName": "Public Intoxication",
+        "sentenceFTRD": 2023-07-30T00:00:00.000Z,
+        "sentenceMax": "10 months",
+        "sentenceMin": "2 months",
+        "sentencingCounty": "Duane",
+        "sentencingDate": 2022-09-30T00:00:00.000Z,
+        "sentencingJudge": "Raymond Dart",
+      },
+    ],
+    "ncicCheckDate": 2022-11-10T00:00:00.000Z,
   },
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`optional criteria have sane fallbacks 1`] = `
+Object {
+  "caseNotes": Object {},
+  "criteria": Object {
+    "negativeUaWithin90Days": Object {
+      "latestUaDates": Array [],
+      "latestUaResults": Array [],
+    },
+    "noFelonyWithin24Months": Object {
+      "latestFelonyConvictions": Array [],
+    },
+    "noViolentMisdemeanorWithin12Months": Object {
+      "latestViolentConvictions": Array [],
+    },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
+    "usIdIncomeVerifiedWithin3Months": Object {
+      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
+    },
+    "usIdLsirLevelLowModerateForXDays": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
+  },
+  "eligibleStartDate": 2022-10-05T00:00:00.000Z,
+  "externalId": "001",
+  "formInformation": Object {},
   "stateCode": "US_ID",
 }
 `;
@@ -80,9 +135,7 @@ Object {
   },
   "eligibleStartDate": 2022-10-05T00:00:00.000Z,
   "externalId": "001",
-  "formInformation": Object {
-    "clientName": "Betty Rubble",
-  },
+  "formInformation": Object {},
   "stateCode": "US_ID",
 }
 `;
@@ -132,9 +185,7 @@ Object {
   },
   "eligibleStartDate": 2022-10-05T00:00:00.000Z,
   "externalId": "001",
-  "formInformation": Object {
-    "clientName": "Betty Rubble",
-  },
+  "formInformation": Object {},
   "stateCode": "US_ID",
 }
 `;

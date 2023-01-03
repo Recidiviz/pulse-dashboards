@@ -30,7 +30,17 @@ export type EarnedDischargeReferralRecord = {
   stateCode: string;
   externalId: string;
   formInformation: {
-    clientName: string;
+    ncicCheckDate?: Date;
+    crimeInformation?: {
+      crimeName: string;
+      sentencingJudge: string;
+      sentencingCounty: string;
+      sentencingDate: Date;
+      caseNumber: string;
+      sentenceMin: string;
+      sentenceMax: string;
+      sentenceFTRD: Date;
+    }[];
   };
   criteria: LSUEarnedDischargeCommonCriteria & {
     pastEarnedDischargeEligibleDate: {
@@ -62,6 +72,15 @@ export type EarnedDischargeDraftData = {
   caseNumber: string;
   sentenceMin: string;
   sentenceMax: string;
+  sentenceFTRD: string;
+  crimeName2: string;
+  sentencingJudge2: string;
+  sentencingCounty2: string;
+  sentencingDate2: string;
+  caseNumber2: string;
+  sentenceMin2: string;
+  sentenceMax2: string;
+  sentenceFTRD2: string;
   initialRestitution: number;
   lastRestitutionPaymentDate: string;
   currentRestitutionBalance: number;
@@ -124,6 +143,24 @@ export const transformReferral: TransformFunction<EarnedDischargeReferralRecord>
   transformedRecord.eligibleStartDate = fieldToDate(record.eligibleStartDate);
 
   transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
+
+  const { ncicCheckDate, crimeInformation } = record.formInformation;
+
+  if (ncicCheckDate) {
+    transformedRecord.formInformation.ncicCheckDate = fieldToDate(
+      ncicCheckDate
+    );
+  }
+
+  if (crimeInformation) {
+    transformedRecord.formInformation.crimeInformation = crimeInformation.map(
+      (info: Record<string, any>) => ({
+        ...info,
+        sentencingDate: fieldToDate(info.sentencingDate),
+        sentenceFTRD: fieldToDate(info.sentenceFTRD),
+      })
+    );
+  }
 
   return transformedRecord;
 };

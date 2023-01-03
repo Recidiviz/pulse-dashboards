@@ -18,12 +18,10 @@
 // =============================================================================
 
 import { Timestamp } from "@google-cloud/firestore";
-import { sub } from "date-fns";
 import fs from "fs";
 
 import { collectionNames } from "../src/firestore";
 import { defaultFeatureVariantsActive } from "../src/firestore/types";
-import { dateToTimestamp } from "../src/WorkflowsStore/utils";
 import { deleteCollection, getDb } from "./firestoreUtils";
 import { residentsData } from "./fixtures/residents";
 
