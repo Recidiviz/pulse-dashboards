@@ -523,6 +523,11 @@ export class WorkflowsStore implements Hydratable {
 
     let opportunityTypes = tenants[currentTenantId]?.opportunityTypes ?? [];
 
+    if (!this.featureVariants.usIdSupervisionLevelDowngrade) {
+      opportunityTypes = opportunityTypes.filter(
+        (oppType) => oppType !== "usIdSupervisionLevelDowngrade"
+      );
+    }
     if (
       currentTenantId === "US_TN" &&
       !this.featureVariants.usTnSupervisionLevelDowngrade

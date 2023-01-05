@@ -29,6 +29,7 @@ const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   "pastFTRD",
   "earnedDischarge",
   "LSU",
+  "usIdSupervisionLevelDowngrade",
 ];
 
 const US_ID_CONFIG: TenantConfig = {
