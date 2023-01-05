@@ -20,7 +20,7 @@
     "test-e2e-users": "env-cmd -e e2e wdio ./wdio.conf.js --suite userAccess --retry 2",
     "test-e2e-workflows": "env-cmd -e e2e,offline wdio ./wdio.conf.js --suite workflows --retry 2",
     "test-react": "TZ=UTC react-scripts test --resetMocks=false --verbose=false",
-    "test-server": "TZ=UTC jest ./server --resetMocks=false",
+    "test-server": "TZ=UTC jest ./server --setupFilesAfterEnv ./server/setupTests.js --resetMocks=false --runInBand",
     "test-filters": "TZ=UTC jest ./shared-filters --resetMocks=false",
     "test-firestore": "TZ=UTC firebase emulators:exec --only firestore 'yarn jest ./firestore-config --env=node'",
     "test": "yarn test-server && yarn test-filters && yarn test-react",

@@ -24,8 +24,8 @@ describe("cacheManager", () => {
   });
 
   describe("getCache", () => {
-    let getCache;
-
+    let getCacheTest;
+    let redis;
     describe("in demo mode", () => {
       beforeEach(() => {
         process.env = Object.assign(process.env, {
@@ -33,11 +33,17 @@ describe("cacheManager", () => {
           NODE_ENV: "development",
         });
         jest.resetModules();
-        getCache = require("../cacheManager").getCache;
+        const { getCache, redisInstance } = require("../cacheManager");
+        redis = redisInstance;
+        getCacheTest = getCache;
+      });
+
+      afterEach(async () => {
+        await redis.quit();
       });
 
       it("returns a memory cache with 'none' store", () => {
-        const cache = getCache();
+        const cache = getCacheTest();
         expect(cache.store.name).toEqual("none");
       });
     });
@@ -49,11 +55,17 @@ describe("cacheManager", () => {
           NODE_ENV: "test",
         });
         jest.resetModules();
-        getCache = require("../cacheManager").getCache;
+        const { getCache, redisInstance } = require("../cacheManager");
+        redis = redisInstance;
+        getCacheTest = getCache;
+      });
+
+      afterEach(async () => {
+        await redis.quit();
       });
 
       it("returns a memory cache", () => {
-        const cache = getCache();
+        const cache = getCacheTest();
         expect(cache.store.name).toEqual("memory");
       });
     });
@@ -65,11 +77,18 @@ describe("cacheManager", () => {
           NODE_ENV: "development",
         });
         jest.resetModules();
-        getCache = require("../cacheManager").getCache;
+        const { getCache, redisInstance } = require("../cacheManager");
+
+        redis = redisInstance;
+        getCacheTest = getCache;
+      });
+
+      afterEach(async () => {
+        await redis.quit();
       });
 
       it("returns a redis cache", () => {
-        const cache = getCache();
+        const cache = getCacheTest();
         expect(cache.store.name).toEqual("redis");
       });
     });

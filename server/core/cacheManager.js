@@ -104,5 +104,6 @@ function cacheResponse(cacheKey, fetchValue, callback) {
 module.exports = {
   cacheResponse,
   getCache,
+  redisInstance,
   clearMemoryCache,
 };
