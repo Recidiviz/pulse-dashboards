@@ -83,4 +83,10 @@ export class UsIdSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       "OVERRIDE: Client is being overridden to a different supervision level",
     [OTHER_KEY]: "Other: please specify a reason",
   };
+
+  get eligibilityDate(): Date | undefined {
+    if (!this.record) return;
+    return this.record.criteria.supervisionLevelHigherThanAssessmentLevel
+      .latestAssessmentDate;
+  }
 }
