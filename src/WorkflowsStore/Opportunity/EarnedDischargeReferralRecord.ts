@@ -31,26 +31,29 @@ export type EarnedDischargeReferralRecord = {
   externalId: string;
   formInformation: {
     ncicCheckDate?: Date;
-    crimeInformation?: {
-      crimeName: string;
-      sentencingJudge: string;
-      sentencingCounty: string;
-      sentencingDate: Date;
-      caseNumber: string;
-      sentenceMin: string;
-      sentenceMax: string;
-      sentenceFTRD: Date;
+    fullTermReleaseDates?: Date[];
+    chargeDescriptions?: string[];
+    judgeNames?: {
+      givenNames: string;
+      middleNames: string;
+      nameSuffix: string;
+      surname: string;
     }[];
+    countyNames?: string[];
+    sentenceMax?: number[];
+    sentenceMin?: number[];
+    caseNumbers?: string[];
+    dateImposed?: Date[];
     initialRestitution?: number;
     lastRestitutionPaymentDate?: Date;
     currentRestitutionBalance?: number;
     initialFines?: number;
     lastFinesPaymentDate?: Date;
     currentFinesBalance?: number;
-    initialLsirScore?: number;
-    initialLsirDate?: Date;
-    currentLsirScore?: number;
-    currentLsirDate?: Date;
+    firstAssessmentScore?: number;
+    firstAssessmentDate?: Date;
+    latestAssessmentScore?: number;
+    latestAssessmentDate?: Date;
   };
   criteria: LSUEarnedDischargeCommonCriteria & {
     pastEarnedDischargeEligibleDate: {
@@ -65,6 +68,16 @@ export type EarnedDischargeReferralRecord = {
   eligibleStartDate: Date;
 } & WithCaseNotes;
 
+export type EarnedDischargeCrimeTableKeys =
+  | "judgeNames"
+  | "countyNames"
+  | "dateImposed"
+  | "caseNumbers"
+  | "chargeDescriptions"
+  | "sentenceMin"
+  | "sentenceMax"
+  | "fullTermReleaseDates";
+
 export type EarnedDischargeDraftData = {
   clientName: string;
   supervisionType: string;
@@ -75,33 +88,18 @@ export type EarnedDischargeDraftData = {
   meetsIdocRequirements: string;
   ncicCheck: string;
   ncicCheckDate: string;
-  crimeName: string;
-  sentencingJudge: string;
-  sentencingCounty: string;
-  sentencingDate: string;
-  caseNumber: string;
-  sentenceMin: string;
-  sentenceMax: string;
-  sentenceFTRD: string;
-  crimeName2: string;
-  sentencingJudge2: string;
-  sentencingCounty2: string;
-  sentencingDate2: string;
-  caseNumber2: string;
-  sentenceMin2: string;
-  sentenceMax2: string;
-  sentenceFTRD2: string;
   initialRestitution: string;
   lastRestitutionPaymentDate: string;
   currentRestitutionBalance: string;
   initialFines: string;
   lastFinesPaymentDate: string;
   currentFinesBalance: string;
-  initialLsirScore: string;
-  initialLsirDate: string;
-  currentLsirScore: string;
-  currentLsirDate: string;
-};
+  firstAssessmentScore: string;
+  firstAssessmentDate: string;
+  latestAssessmentScore: string;
+  latestAssessmentDate: string;
+  numCrimeEntries: number;
+} & Record<`${EarnedDischargeCrimeTableKeys}${number}`, string>;
 
 export const transformReferral: TransformFunction<EarnedDischargeReferralRecord> = (
   record
@@ -156,11 +154,13 @@ export const transformReferral: TransformFunction<EarnedDischargeReferralRecord>
 
   const {
     ncicCheckDate,
-    crimeInformation,
+    dateImposed,
+    fullTermReleaseDates,
     lastRestitutionPaymentDate,
     lastFinesPaymentDate,
-    initialLsirDate,
-    currentLsirDate,
+    firstAssessmentDate,
+    latestAssessmentDate,
+    judgeNames,
   } = record.formInformation;
 
   if (ncicCheckDate) {
@@ -181,25 +181,39 @@ export const transformReferral: TransformFunction<EarnedDischargeReferralRecord>
     );
   }
 
-  if (initialLsirDate) {
-    transformedRecord.formInformation.initialLsirDate = fieldToDate(
-      initialLsirDate
+  if (firstAssessmentDate) {
+    transformedRecord.formInformation.firstAssessmentDate = fieldToDate(
+      firstAssessmentDate
     );
   }
 
-  if (currentLsirDate) {
-    transformedRecord.formInformation.currentLsirDate = fieldToDate(
-      currentLsirDate
+  if (latestAssessmentDate) {
+    transformedRecord.formInformation.latestAssessmentDate = fieldToDate(
+      latestAssessmentDate
     );
   }
 
-  if (crimeInformation) {
-    transformedRecord.formInformation.crimeInformation = crimeInformation.map(
-      (info: Record<string, any>) => ({
-        ...info,
-        sentencingDate: fieldToDate(info.sentencingDate),
-        sentenceFTRD: fieldToDate(info.sentenceFTRD),
-      })
+  if (dateImposed) {
+    transformedRecord.formInformation.dateImposed = dateImposed.map(
+      (d: string) => fieldToDate(d)
+    );
+  }
+
+  if (fullTermReleaseDates) {
+    transformedRecord.formInformation.fullTermReleaseDates = fullTermReleaseDates.map(
+      (d: string) => fieldToDate(d)
+    );
+  }
+
+  if (judgeNames) {
+    transformedRecord.formInformation.judgeNames = judgeNames.map(
+      (blob: string) => {
+        try {
+          return JSON.parse(blob);
+        } catch (e) {
+          return {};
+        }
+      }
     );
   }
 

@@ -17,8 +17,15 @@
  * =============================================================================
  */
 
+import { observer } from "mobx-react-lite";
+import React from "react";
 import styled from "styled-components/macro";
 
+import {
+  EarnedDischargeCrimeTableKeys,
+  EarnedDischargeDraftData,
+} from "../../../../WorkflowsStore/Opportunity/EarnedDischargeReferralRecord";
+import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import {
   FORM_US_ID_EARLY_DISCHARGE_BACKGROUND_COLOR,
   FormColGroup,
@@ -35,7 +42,93 @@ const CrimeTable = styled(FormEDTable)`
   }
 `;
 
-export const FormCrimeTable: React.FC = () => {
+type CrimeTableInputCellProps = {
+  index: number;
+  field: EarnedDischargeCrimeTableKeys;
+  placeholder: string;
+};
+
+const CrimeTableInputCell: React.FC<CrimeTableInputCellProps> = ({
+  index,
+  field,
+  placeholder,
+}) => {
+  return (
+    <FormEDInputCell
+      // @ts-expect-error Should go away once we upgrade to TS4.9
+      name={`${field}${index}`}
+      placeholder={placeholder}
+    />
+  );
+};
+
+type CrimeRowsProps = {
+  index: number;
+};
+
+const CrimeRows: React.FC<CrimeRowsProps> = ({ index }) => {
+  return (
+    <>
+      <tr>
+        <CrimeTableInputCell
+          index={index}
+          field="chargeDescriptions"
+          placeholder="Crime"
+        />
+        <CrimeTableInputCell
+          index={index}
+          field="judgeNames"
+          placeholder="Sentencing Judge"
+        />
+        <CrimeTableInputCell
+          index={index}
+          field="caseNumbers"
+          placeholder="Case #"
+        />
+        <CrimeTableInputCell
+          index={index}
+          field="dateImposed"
+          placeholder="Sentence date"
+        />
+      </tr>
+      <tr>
+        <td />
+        <CrimeTableInputCell
+          index={index}
+          field="countyNames"
+          placeholder="Sentencing county"
+        />
+        <CrimeTableInputCell
+          index={index}
+          field="sentenceMin"
+          placeholder="Sentence min"
+        />
+        <CrimeTableInputCell
+          index={index}
+          field="fullTermReleaseDates"
+          placeholder="FTRD"
+        />
+      </tr>
+      <tr>
+        <td />
+        <td />
+        <CrimeTableInputCell
+          index={index}
+          field="sentenceMax"
+          placeholder="Sentence max"
+        />
+        <td />
+      </tr>
+    </>
+  );
+};
+
+export const FormCrimeTable = observer(function FormCrimeTable() {
+  const formData = useOpportunityFormContext()
+    .formData as Partial<EarnedDischargeDraftData>;
+
+  const numCrimeEntries = formData.numCrimeEntries || 1;
+
   return (
     <div>
       <FormEDSectionLabel>Crime:</FormEDSectionLabel>
@@ -62,62 +155,11 @@ export const FormCrimeTable: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <FormEDInputCell name="crimeName" placeholder="Crime" />
-            <FormEDInputCell
-              name="sentencingJudge"
-              placeholder="Sentencing judge"
-            />
-            <FormEDInputCell name="caseNumber" placeholder="Case #" />
-            <FormEDInputCell
-              name="sentencingDate"
-              placeholder="Sentence date"
-            />
-          </tr>
-          <tr>
-            <td />
-            <FormEDInputCell
-              name="sentencingCounty"
-              placeholder="Sentencing county"
-            />
-            <FormEDInputCell name="sentenceMin" placeholder="Sentence min" />
-            <FormEDInputCell name="sentenceFTRD" placeholder="FTRD" />
-          </tr>
-          <tr>
-            <td />
-            <td />
-            <FormEDInputCell name="sentenceMax" placeholder="Sentence max" />
-            <td />
-          </tr>
-          <tr>
-            <FormEDInputCell name="crimeName2" placeholder="Crime" />
-            <FormEDInputCell
-              name="sentencingJudge2"
-              placeholder="Sentencing judge"
-            />
-            <FormEDInputCell name="caseNumber2" placeholder="Case #" />
-            <FormEDInputCell
-              name="sentencingDate2"
-              placeholder="Sentence date"
-            />
-          </tr>
-          <tr>
-            <td />
-            <FormEDInputCell
-              name="sentencingCounty2"
-              placeholder="Sentencing county"
-            />
-            <FormEDInputCell name="sentenceMin2" placeholder="Sentence min" />
-            <FormEDInputCell name="sentenceFTRD2" placeholder="FTRD" />
-          </tr>
-          <tr>
-            <td />
-            <td />
-            <FormEDInputCell name="sentenceMax2" placeholder="Sentence max" />
-            <td />
-          </tr>
+          {Array.from(Array(numCrimeEntries).keys()).map((i) => (
+            <CrimeRows index={i} />
+          ))}
         </tbody>
       </CrimeTable>
     </div>
   );
-};
+});

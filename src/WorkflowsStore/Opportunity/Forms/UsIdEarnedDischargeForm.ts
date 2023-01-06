@@ -38,7 +38,16 @@ export class UsIdEarnedDischargeForm extends FormBase<
     const {
       record: { formInformation },
     } = this.opportunity;
-    const { crimeInformation } = formInformation;
+    const {
+      chargeDescriptions,
+      judgeNames,
+      countyNames,
+      dateImposed,
+      caseNumbers,
+      sentenceMax,
+      sentenceMin,
+      fullTermReleaseDates,
+    } = formInformation;
 
     const initialData: Partial<EarnedDischargeDraftData> = {
       clientName: this.person.displayName,
@@ -50,51 +59,89 @@ export class UsIdEarnedDischargeForm extends FormBase<
       ncicCheck: "Yes",
       ...transformPossibleDateFields(formInformation, [
         "ncicCheckDate",
-        "initialLsirDate",
-        "currentLsirDate",
+        "firstAssessmentDate",
+        "latestAssessmentDate",
         "lastFinesPaymentDate",
         "lastRestitutionPaymentDate",
       ]),
       ...transformPossibleNumberFields(formInformation, [
         "initialFines",
         "initialRestitution",
-        "initialLsirScore",
+        "firstAssessmentScore",
         "currentFinesBalance",
         "currentRestitutionBalance",
-        "currentLsirScore",
+        "latestAssessmentScore",
       ]),
     };
 
-    if (crimeInformation) {
-      if (crimeInformation.length > 0) {
-        initialData.crimeName = crimeInformation[0].crimeName;
-        initialData.sentencingJudge = crimeInformation[0].sentencingJudge;
-        initialData.sentencingCounty = crimeInformation[0].sentencingCounty;
-        initialData.sentencingDate = formatWorkflowsDate(
-          crimeInformation[0].sentencingDate
-        );
-        initialData.caseNumber = crimeInformation[0].caseNumber;
-        initialData.sentenceMin = crimeInformation[0].sentenceMin;
-        initialData.sentenceMax = crimeInformation[0].sentenceMax;
-        initialData.sentenceFTRD = formatWorkflowsDate(
-          crimeInformation[0].sentenceFTRD
-        );
-      }
+    initialData.numCrimeEntries = Math.max(
+      fullTermReleaseDates?.length || 0,
+      chargeDescriptions?.length || 0,
+      judgeNames?.length || 0,
+      countyNames?.length || 0,
+      sentenceMax?.length || 0,
+      sentenceMin?.length || 0,
+      caseNumbers?.length || 0,
+      dateImposed?.length || 0
+    );
 
-      if (crimeInformation.length > 1) {
-        initialData.crimeName2 = crimeInformation[1].crimeName;
-        initialData.sentencingJudge2 = crimeInformation[1].sentencingJudge;
-        initialData.sentencingCounty2 = crimeInformation[1].sentencingCounty;
-        initialData.sentencingDate2 = formatWorkflowsDate(
-          crimeInformation[1].sentencingDate
-        );
-        initialData.caseNumber2 = crimeInformation[1].caseNumber;
-        initialData.sentenceMin2 = crimeInformation[1].sentenceMin;
-        initialData.sentenceMax2 = crimeInformation[1].sentenceMax;
-        initialData.sentenceFTRD2 = formatWorkflowsDate(
-          crimeInformation[1].sentenceFTRD
-        );
-      }
+    // TODO: Remove expect-error once on TS 4.9
+    if (countyNames) {
+      countyNames.forEach((county, index) => {
+        // @ts-expect-error
+        initialData[`countyNames${index}`] = county;
+      });
+    }
+
+    if (judgeNames) {
+      judgeNames.forEach((judge, index) => {
+        // @ts-expect-error
+        initialData[
+          `judgeNames${index}`
+        ] = `${judge.givenNames} ${judge.surname}`;
+      });
+    }
+
+    if (dateImposed) {
+      dateImposed.forEach((date, index) => {
+        // @ts-expect-error
+        initialData[`dateImposed${index}`] = formatWorkflowsDate(date);
+      });
+    }
+
+    if (caseNumbers) {
+      caseNumbers.forEach((caseNum, index) => {
+        // @ts-expect-error
+        initialData[`caseNumbers${index}`] = caseNum;
+      });
+    }
+
+    if (sentenceMax) {
+      sentenceMax.forEach((val, index) => {
+        // @ts-expect-error
+        initialData[`sentenceMax${index}`] = val.toString();
+      });
+    }
+
+    if (sentenceMin) {
+      sentenceMin.forEach((val, index) => {
+        // @ts-expect-error
+        initialData[`sentenceMin${index}`] = val.toString();
+      });
+    }
+
+    if (fullTermReleaseDates) {
+      fullTermReleaseDates.forEach((date, index) => {
+        // @ts-expect-error
+        initialData[`fullTermReleaseDates${index}`] = formatWorkflowsDate(date);
+      });
+    }
+
+    if (chargeDescriptions) {
+      chargeDescriptions.forEach((charge, index) => {
+        // @ts-expect-error
+        initialData[`chargeDescriptions${index}`] = charge;
+      });
     }
 
     return initialData;

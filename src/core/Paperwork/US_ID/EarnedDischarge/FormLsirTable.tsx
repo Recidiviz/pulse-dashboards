@@ -48,20 +48,26 @@ export const FormLsirTable: React.FC = () => {
           <tr>
             <th>Initial Score:</th>
             <FormEDInputCell
-              name="initialLsirScore"
+              name="firstAssessmentScore"
               placeholder="Enter score"
             />
             <th>Current Score:</th>
             <FormEDInputCell
-              name="currentLsirScore"
+              name="latestAssessmentScore"
               placeholder="Enter score"
             />
           </tr>
           <tr>
             <th>Date:</th>
-            <FormEDInputCell name="initialLsirDate" placeholder="Enter date" />
+            <FormEDInputCell
+              name="firstAssessmentDate"
+              placeholder="Enter date"
+            />
             <th>Date:</th>
-            <FormEDInputCell name="currentLsirDate" placeholder="Enter date" />
+            <FormEDInputCell
+              name="latestAssessmentDate"
+              placeholder="Enter date"
+            />
           </tr>
         </tbody>
       </LsirTable>
