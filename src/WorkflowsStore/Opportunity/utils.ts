@@ -19,7 +19,7 @@ import { format } from "date-fns";
 import moment from "moment";
 import simplur from "simplur";
 
-import { fieldToDate } from "../utils";
+import { optionalFieldToDate } from "../utils";
 import {
   COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED,
   CompliantReportingOpportunity,
@@ -195,7 +195,7 @@ export const transformCaseNotes = (
         [section]: caseNotes[section].map((note) => ({
           noteTitle: note.noteTitle,
           noteBody: note.noteBody,
-          eventDate: fieldToDate(note.eventDate),
+          eventDate: optionalFieldToDate(note.eventDate),
         })),
       };
     },

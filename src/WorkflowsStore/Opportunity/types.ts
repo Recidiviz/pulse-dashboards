@@ -100,8 +100,8 @@ export type DefaultEligibility = "ELIGIBLE" | "MAYBE";
 
 export type OpportunityCaseNote = {
   noteTitle?: string;
-  noteBody: string;
-  eventDate: Date;
+  noteBody?: string;
+  eventDate?: Date;
 };
 
 export type WithCaseNotes = {

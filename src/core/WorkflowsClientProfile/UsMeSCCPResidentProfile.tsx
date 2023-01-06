@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Incarceration } from "./Details";
+import { CaseNotes, Incarceration } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
@@ -35,7 +35,6 @@ export const UsMeSCCPResidentProfile: React.FC<UsMeSCCPResidentProfileProps> = o
     if (!resident?.verifiedOpportunities.usMeSCCP) {
       return null;
     }
-    // TODO(#2786) Add back CaseNotes once data is available for US_ME
     return (
       <article>
         <Heading person={resident} />
@@ -44,9 +43,9 @@ export const UsMeSCCPResidentProfile: React.FC<UsMeSCCPResidentProfileProps> = o
           formLinkButton={formLinkButton}
         />
         <Incarceration resident={resident} />
-        {/* <CaseNotes
+        <CaseNotes
           opportunityRecord={resident.verifiedOpportunities.usMeSCCP?.record}
-        /> */}
+        />
       </article>
     );
   }
