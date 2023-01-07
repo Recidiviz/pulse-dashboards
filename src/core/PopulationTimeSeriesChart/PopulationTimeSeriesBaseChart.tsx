@@ -88,6 +88,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
         summaryDataAccessor="data"
         summaryClass="projection-area"
         hoverAnnotation
+        // eslint-disable-next-line react/no-unstable-nested-components
         tooltipContent={(d: any) => <PopulationTimeSeriesTooltip d={d} />}
         // @ts-ignore
         lines={

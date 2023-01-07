@@ -144,6 +144,7 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
           setHoveredId(null);
           return null;
         }}
+        // eslint-disable-next-line react/no-unstable-nested-components
         tooltipContent={(d: any) => {
           const pieceData = d.pieces[0];
           return <ChartCountOverTimeWithAvgTooltip data={pieceData} />;
@@ -168,6 +169,7 @@ const VizCountOverTimeWithAvg: React.FC<VizCountOverTimeWithAvgProps> = ({
         rAccessor="value"
         rExtent={yRange}
         // @ts-ignore
+        // eslint-disable-next-line react/no-unstable-nested-components
         oLabel={(date: string, _: any, index: number) => {
           if (data.length < 25 || index % 2 === 0) {
             return (
@@ -199,9 +201,9 @@ type ChartCountOverTimeWithAvgTooltipProps = {
   };
 };
 
-const ChartCountOverTimeWithAvgTooltip: React.FC<ChartCountOverTimeWithAvgTooltipProps> = ({
-  data,
-}) => {
+const ChartCountOverTimeWithAvgTooltip: React.FC<
+  ChartCountOverTimeWithAvgTooltipProps
+> = ({ data }) => {
   const { date, value, average } = data;
   return (
     <PathwaysTooltip

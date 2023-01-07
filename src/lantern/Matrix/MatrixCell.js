@@ -27,13 +27,13 @@ import { REPORTED_VIOLATIONS, VIOLATION_TYPE } from "../utils/constants";
 const minRadius = 25;
 const maxRadius = 50;
 
-const MatrixCell = ({
+function MatrixCell({
   count,
   maxCount,
   violationType,
   reportedViolations,
   onClick,
-}) => {
+}) {
   const { filters } = useLanternStore();
   const ratio = maxCount > 0 ? count / maxCount : 0;
   const radius = Math.max(minRadius, Math.ceil(ratio * maxRadius) + 20);
@@ -81,7 +81,7 @@ const MatrixCell = ({
       </div>
     </div>
   );
-};
+}
 
 MatrixCell.propTypes = {
   count: PropTypes.number.isRequired,

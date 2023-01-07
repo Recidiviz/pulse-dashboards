@@ -19,7 +19,7 @@ import React from "react";
 
 import Loading from "../components/Loading";
 
-const LoadingChart = ({ containerHeight }) => {
+function LoadingChart({ containerHeight }) {
   const loadingContainerStyles =
     containerHeight > 0
       ? {
@@ -35,7 +35,7 @@ const LoadingChart = ({ containerHeight }) => {
       <Loading />
     </div>
   );
-};
+}
 
 LoadingChart.defaultProps = { containerHeight: null };
 

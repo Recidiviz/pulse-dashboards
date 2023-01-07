@@ -26,9 +26,9 @@ type VizPopulationProjectionOverTimeProps = {
   metric: PopulationProjectionOverTimeMetric;
 };
 
-const VizPopulationProjectionOverTime: React.FC<VizPopulationProjectionOverTimeProps> = ({
-  metric,
-}) => {
+const VizPopulationProjectionOverTime: React.FC<
+  VizPopulationProjectionOverTimeProps
+> = ({ metric }) => {
   const { dataSeries, chartTitle, error, simulationDate, isLoading } = metric;
 
   return (

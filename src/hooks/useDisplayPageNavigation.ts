@@ -24,10 +24,10 @@ const useDisplayPageNavigation = (): boolean => {
   const { pathname } = useLocation();
   const view = pathname.split("/")[1];
   const navigationLayout = userStore.userAllowedNavigation;
-  const pageOptions = useMemo(() => navigationLayout[view] ?? [], [
-    navigationLayout,
-    view,
-  ]);
+  const pageOptions = useMemo(
+    () => navigationLayout[view] ?? [],
+    [navigationLayout, view]
+  );
 
   const [isDisplayPageNavigation, setIsDisplayPageNavigation] = useState(
     pageOptions.length > 1

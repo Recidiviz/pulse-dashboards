@@ -22,7 +22,7 @@ import { OpportunityUpdateSubscription } from "../OpportunityUpdateSubscription"
 jest.mock("firebase/firestore");
 
 const docMock = doc as jest.MockedFunction<typeof doc>;
-const mockRef = (jest.fn() as unknown) as DocumentReference;
+const mockRef = jest.fn() as unknown as DocumentReference;
 
 const getDocMock = getDoc as jest.Mock;
 

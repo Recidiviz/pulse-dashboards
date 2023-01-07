@@ -129,7 +129,8 @@ Then(
 Then(
   "I should see the button {string} to navigate to the form",
   async (buttonText) => {
-    const navigateToFormButton = await WorkflowsOpportunityPage.navigateToFormButton();
+    const navigateToFormButton =
+      await WorkflowsOpportunityPage.navigateToFormButton();
     expect(await navigateToFormButton.getText()).toEqual(buttonText);
   }
 );

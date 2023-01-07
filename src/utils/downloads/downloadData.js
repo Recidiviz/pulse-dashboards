@@ -288,6 +288,22 @@ export function downloadChartAsImage({
   });
 }
 
+// Newer versions of Typescript infer the argument types too narrowly for this function;
+// previously they all were just typed as any
+/**
+ * @param {Object} opts
+ * @param {any} opts.chartTitle
+ * @param {any} opts.fileContents
+ * @param {any} [opts.filters]
+ * @param {any} [opts.timeWindowDescription]
+ * @param {boolean} opts.shouldZipDownload
+ * @param {boolean} [opts.fixLabelsInColumns]
+ * @param {any} [opts.methodologyContent]
+ * @param {any} [opts.methodologyPDF]
+ * @param {any} opts.getTokenSilently
+ * @param {any} [opts.lastUpdatedOn]
+ * @param {boolean} [opts.includeFiltersDescriptionInCSV]
+ */
 export function downloadChartAsData({
   chartTitle,
   fileContents,

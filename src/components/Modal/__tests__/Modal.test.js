@@ -23,11 +23,7 @@ describe("Modal.js", () => {
   const mockHide = jest.fn();
 
   it("should render standard modal", () => {
-    render(
-      <>
-        <Modal isShowing>Some content</Modal>
-      </>
-    );
+    render(<Modal isShowing>Some content</Modal>);
 
     expect(screen.queryByText("Some content")).toBeInTheDocument();
   });

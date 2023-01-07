@@ -5,7 +5,7 @@ import React from "react";
 
 import warningIcon from "../assets/static/images/warning.svg";
 
-const ErrorMessage = ({ error }) => {
+function ErrorMessage({ error }) {
   return (
     <div className="Error">
       <img src={warningIcon} alt="Error icon" className="Error__icon" />
@@ -17,7 +17,7 @@ const ErrorMessage = ({ error }) => {
       </p>
     </div>
   );
-};
+}
 
 ErrorMessage.defaultProps = {
   error: new Error("Something went wrong while loading this chart."),

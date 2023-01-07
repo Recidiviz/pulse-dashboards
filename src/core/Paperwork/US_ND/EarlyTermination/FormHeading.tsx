@@ -33,13 +33,13 @@ interface FormHeadingLineItemProps {
   style?: any;
 }
 
-const LineItem = ({
+function LineItem({
   className,
   children,
   separator = "",
   suffix = "",
   style = {},
-}: FormHeadingLineItemProps) => {
+}: FormHeadingLineItemProps) {
   return (
     <div className={className} style={style}>
       <span>{children}</span>
@@ -47,7 +47,7 @@ const LineItem = ({
       <FormHeadingLineItemSuffix>{suffix}</FormHeadingLineItemSuffix>
     </div>
   );
-};
+}
 
 const LineItemLeft = styled(LineItem).attrs({
   separator: ")",

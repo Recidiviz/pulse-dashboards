@@ -41,7 +41,7 @@ SortableIcon.defaultProps = {
   order: null,
 };
 
-const Sortable = ({ children, order = null, onClick }) => {
+function Sortable({ children, order = null, onClick }) {
   return (
     <button className="Sortable" type="button" onClick={onClick}>
       {children}
@@ -49,7 +49,7 @@ const Sortable = ({ children, order = null, onClick }) => {
       <SortableIcon order={order} />
     </button>
   );
-};
+}
 
 Sortable.defaultProps = {
   order: null,

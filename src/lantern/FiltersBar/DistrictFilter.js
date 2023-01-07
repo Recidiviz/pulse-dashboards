@@ -25,13 +25,9 @@ import { useLanternStore } from "../LanternStoreProvider";
 import DistrictFilterDropown from "./DistrictFilterDropown";
 import FilterField from "./FilterField";
 
-const DistrictFilter = () => {
-  const {
-    filters,
-    filtersStore,
-    userRestrictionsStore,
-    districtsStore,
-  } = useLanternStore();
+function DistrictFilter() {
+  const { filters, filtersStore, userRestrictionsStore, districtsStore } =
+    useLanternStore();
   const { allowedSupervisionLocationIds } = userRestrictionsStore;
   const {
     isLoading,
@@ -68,6 +64,6 @@ const DistrictFilter = () => {
       />
     </FilterField>
   );
-};
+}
 
 export default observer(DistrictFilter);

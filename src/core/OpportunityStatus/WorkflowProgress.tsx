@@ -26,8 +26,8 @@ type OpportunityWorkflowStatusProps = {
   opportunity: Opportunity;
 };
 
-export const WorkflowProgress: React.FC<OpportunityWorkflowStatusProps> = observer(
-  function WorkflowProgress({ opportunity }) {
+export const WorkflowProgress: React.FC<OpportunityWorkflowStatusProps> =
+  observer(function WorkflowProgress({ opportunity }) {
     const { firstViewed, isHydrated } = opportunity;
 
     if (!isHydrated) return null;
@@ -42,5 +42,4 @@ export const WorkflowProgress: React.FC<OpportunityWorkflowStatusProps> = observ
     }
 
     return <>Needs review</>;
-  }
-);
+  });

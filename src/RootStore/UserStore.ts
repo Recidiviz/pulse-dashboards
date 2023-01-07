@@ -179,9 +179,10 @@ export default class UserStore {
           appState: { targetUrl: window.location.href },
         });
       }
-    } catch (error) {
+    } catch (caught) {
+      const error = caught instanceof Error ? caught : new Error(`${caught}`);
       if (error.message === "Invalid state" && this.auth0) {
-        await this.auth0.logout();
+        this.auth0.logout();
         this.auth0.loginWithRedirect();
       } else {
         this.authError = error;
@@ -257,8 +258,8 @@ export default class UserStore {
    * Returns the allowedSupervisionLocationIds for the given user.
    */
   get allowedSupervisionLocationIds(): string[] {
-    const allowedSupervisionLocationIds = this.userAppMetadata
-      ?.allowed_supervision_location_ids;
+    const allowedSupervisionLocationIds =
+      this.userAppMetadata?.allowed_supervision_location_ids;
     return allowedSupervisionLocationIds || [];
   }
 
@@ -300,9 +301,8 @@ export default class UserStore {
    */
   get userAllowedNavigation(): Navigation | undefined {
     if (!this.rootStore?.currentTenantId) return {};
-    const { navigation, betaNavigation, pagesWithRestrictions } = tenants[
-      this.rootStore.currentTenantId
-    ];
+    const { navigation, betaNavigation, pagesWithRestrictions } =
+      tenants[this.rootStore.currentTenantId];
 
     const allowed =
       this.shouldSeeBetaCharts && betaNavigation ? betaNavigation : navigation;

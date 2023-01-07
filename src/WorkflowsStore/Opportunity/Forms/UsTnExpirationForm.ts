@@ -36,69 +36,68 @@ function voterRightsText(code: string): string {
 export class UsTnExpirationForm extends FormBase<UsTnExpirationDraftData> {
   navigateToFormText = "Generate TEPE note";
 
-  prefilledDataTransformer: PrefilledDataTransformer<UsTnExpirationDraftData> = () => {
-    if (!this.opportunity.record) return {};
+  prefilledDataTransformer: PrefilledDataTransformer<UsTnExpirationDraftData> =
+    () => {
+      if (!this.opportunity.record) return {};
 
-    const {
-      formInformation: form,
-      criteria: criterion,
-    } = this.opportunity.record;
+      const { formInformation: form, criteria: criterion } =
+        this.opportunity.record;
 
-    const { person } = this.opportunity;
+      const { person } = this.opportunity;
 
-    return {
-      expirationDate: criterion.supervisionPastFullTermCompletionDate
-        ?.eligibleDate
-        ? formatFormValueDateMMDDYYYYY(
-            criterion.supervisionPastFullTermCompletionDate?.eligibleDate
-          )
-        : "",
-      currentOffenses: displayList(form.currentOffenses),
-      convictionCounties: displayString(form.convictionCounties),
-      docketNumbers: displayList(form.docketNumbers),
-      sexOffenseInformation: defaultFormValueJoiner(
-        `${displayString(form.latestPseCode)} ${
-          form.latestPseDate
-            ? `on ${formatFormValueDateMMDDYYYYY(form.latestPseDate)}`
-            : ""
-        }`,
-        displayList(form.latestPseOffenses, "Offenses:")
-      ),
-      address: person.address,
-      employmentInformation: defaultFormValueJoiner(
-        displayString(form.latestEmpContactCode, "Latest EMP contact code:"),
-        displayString(form.latestEmpComment)
-      ),
-      feeHistory: defaultFormValueJoiner(
-        displayString(form.latestFeeContactCode, "Latest fee conatct code:"),
-        person.currentBalance
-          ? `Current balance: $${person.currentBalance}`
+      return {
+        expirationDate: criterion.supervisionPastFullTermCompletionDate
+          ?.eligibleDate
+          ? formatFormValueDateMMDDYYYYY(
+              criterion.supervisionPastFullTermCompletionDate?.eligibleDate
+            )
           : "",
-        person.lastPaymentAmount
-          ? `Latest payment: $${person.lastPaymentAmount} ${
-              person.lastPaymentDate
-                ? `on ${formatFormValueDateMMDDYYYYY(
-                    person.lastPaymentDate.toString()
-                  )}`
-                : ""
-            }`
-          : ""
-      ),
-      specialConditions: defaultFormValueJoiner(
-        displayList(person.probationSpecialConditions),
-        person.paroleSpecialConditions
-          ? person.paroleSpecialConditions.join(", ")
-          : "",
-        `${displayString(form.latestSpeContactCode)} ${
-          form.latestSpeContactDate
-            ? `on ${formatFormValueDateMMDDYYYYY(form.latestSpeContactDate)}`
+        currentOffenses: displayList(form.currentOffenses),
+        convictionCounties: displayString(form.convictionCounties),
+        docketNumbers: displayList(form.docketNumbers),
+        sexOffenseInformation: defaultFormValueJoiner(
+          `${displayString(form.latestPseCode)} ${
+            form.latestPseDate
+              ? `on ${formatFormValueDateMMDDYYYYY(form.latestPseDate)}`
+              : ""
+          }`,
+          displayList(form.latestPseOffenses, "Offenses:")
+        ),
+        address: person.address,
+        employmentInformation: defaultFormValueJoiner(
+          displayString(form.latestEmpContactCode, "Latest EMP contact code:"),
+          displayString(form.latestEmpComment)
+        ),
+        feeHistory: defaultFormValueJoiner(
+          displayString(form.latestFeeContactCode, "Latest fee conatct code:"),
+          person.currentBalance
+            ? `Current balance: $${person.currentBalance}`
+            : "",
+          person.lastPaymentAmount
+            ? `Latest payment: $${person.lastPaymentAmount} ${
+                person.lastPaymentDate
+                  ? `on ${formatFormValueDateMMDDYYYYY(
+                      person.lastPaymentDate.toString()
+                    )}`
+                  : ""
+              }`
             : ""
-        }`,
-        displayString(form.latestSpeContactComment)
-      ),
-      votersRightsInformation: form.vrrCode
-        ? voterRightsText(form.vrrCode.toUpperCase())
-        : "",
+        ),
+        specialConditions: defaultFormValueJoiner(
+          displayList(person.probationSpecialConditions),
+          person.paroleSpecialConditions
+            ? person.paroleSpecialConditions.join(", ")
+            : "",
+          `${displayString(form.latestSpeContactCode)} ${
+            form.latestSpeContactDate
+              ? `on ${formatFormValueDateMMDDYYYYY(form.latestSpeContactDate)}`
+              : ""
+          }`,
+          displayString(form.latestSpeContactComment)
+        ),
+        votersRightsInformation: form.vrrCode
+          ? voterRightsText(form.vrrCode.toUpperCase())
+          : "",
+      };
     };
-  };
 }

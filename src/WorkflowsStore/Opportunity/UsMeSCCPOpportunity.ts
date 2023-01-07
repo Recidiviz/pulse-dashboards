@@ -67,8 +67,7 @@ const ELIGIBLE_CRITERIA_COPY: Record<
       "corrections clients to one probation officer.",
   },
   usMeNoClassAOrBViolationFor90Days: {
-    text:
-      "No Class A or B disciplines pending or occurring in the past 90 days",
+    text: "No Class A or B disciplines pending or occurring in the past 90 days",
     tooltip:
       "Must not have been found guilty of a Class A or B disciplinary violation within ninety " +
       "(90) days of submitting the plan to be transferred to supervised community confinement " +
@@ -132,10 +131,11 @@ const requirementsForEligibleCriteria = (
   } = cloneDeep(ELIGIBLE_CRITERIA_COPY);
 
   if (criteria.usMeMinimumOrCommunityCustody) {
-    usMeMinimumOrCommunityCustody.text = usMeMinimumOrCommunityCustody.text.replace(
-      "$CUSTODY_LEVEL",
-      criteria.usMeMinimumOrCommunityCustody.custodyLevel.toLowerCase()
-    );
+    usMeMinimumOrCommunityCustody.text =
+      usMeMinimumOrCommunityCustody.text.replace(
+        "$CUSTODY_LEVEL",
+        criteria.usMeMinimumOrCommunityCustody.custodyLevel.toLowerCase()
+      );
     requirements.push(usMeMinimumOrCommunityCustody);
   }
 
@@ -144,10 +144,11 @@ const requirementsForEligibleCriteria = (
     const lengthCondition =
       xPortionServed === "1/2" ? "5 years or less" : "more than 5 years";
 
-    usMeServedXPortionOfSentence.text = usMeServedXPortionOfSentence.text.replace(
-      "$MINIMUM_FRACTION",
-      xPortionServed
-    );
+    usMeServedXPortionOfSentence.text =
+      usMeServedXPortionOfSentence.text.replace(
+        "$MINIMUM_FRACTION",
+        xPortionServed
+      );
     usMeServedXPortionOfSentence.tooltip = usMeServedXPortionOfSentence.tooltip
       .replaceAll("$MINIMUM_FRACTION", xPortionServed)
       .replace("$LENGTH_CONDITION", lengthCondition);
@@ -179,10 +180,8 @@ const requirementsForIneligibleCriteria = (
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
 
-  const {
-    usMeXMonthsRemainingOnSentence,
-    usMeNoClassAOrBViolationFor90Days,
-  } = cloneDeep(INELIGIBLE_CRITERIA_COPY);
+  const { usMeXMonthsRemainingOnSentence, usMeNoClassAOrBViolationFor90Days } =
+    cloneDeep(INELIGIBLE_CRITERIA_COPY);
 
   if (criteria.usMeXMonthsRemainingOnSentence) {
     if (criteria.usMeXMonthsRemainingOnSentence) {

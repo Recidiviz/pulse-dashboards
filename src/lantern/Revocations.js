@@ -43,7 +43,7 @@ import {
 } from "./utils/constants";
 import { getTimeDescription } from "./utils/format";
 
-const Revocations = () => {
+function Revocations() {
   const lanternStore = useLanternStore();
   const { pageStore } = useRootStore();
   const { filters, filterOptions } = lanternStore.filtersStore;
@@ -118,7 +118,7 @@ const Revocations = () => {
       </div>
     </div>
   );
-};
+}
 
 Revocations.propTypes = {};
 

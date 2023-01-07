@@ -23,57 +23,59 @@ import { COLORS } from "../assets/scripts/constants/colors";
 import { translate } from "../utils/i18nSettings";
 import { standardTooltipForCountMetricLabel } from "../utils/tooltips";
 
-const RevocationCountChart = ({ chartId, data, xAxisLabel }) => (
-  <Bar
-    id={chartId}
-    data={data}
-    options={{
-      plugins: {
-        datalabels: {
+function RevocationCountChart({ chartId, data, xAxisLabel }) {
+  return (
+    <Bar
+      id={chartId}
+      data={data}
+      options={{
+        plugins: {
+          datalabels: {
+            display: false,
+          },
+        },
+        legend: {
           display: false,
         },
-      },
-      legend: {
-        display: false,
-      },
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        xAxes: [
-          {
-            scaleLabel: {
-              display: true,
-              labelString: xAxisLabel,
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          xAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: xAxisLabel,
+              },
+              stacked: true,
             },
-            stacked: true,
-          },
-        ],
-        yAxes: [
-          {
-            id: "y-axis-0",
-            scaleLabel: {
-              display: true,
-              labelString: `Number of people ${translate("revoked")}`,
+          ],
+          yAxes: [
+            {
+              id: "y-axis-0",
+              scaleLabel: {
+                display: true,
+                labelString: `Number of people ${translate("revoked")}`,
+              },
+              stacked: true,
+              ticks: {
+                precision: 0,
+              },
             },
-            stacked: true,
-            ticks: {
-              precision: 0,
-            },
-          },
-        ],
-      },
-      tooltips: {
-        backgroundColor: COLORS["grey-800-light"],
-        footerFontSize: 9,
-        mode: "index",
-        intersect: false,
-        callbacks: {
-          label: standardTooltipForCountMetricLabel,
+          ],
         },
-      },
-    }}
-  />
-);
+        tooltips: {
+          backgroundColor: COLORS["grey-800-light"],
+          footerFontSize: 9,
+          mode: "index",
+          intersect: false,
+          callbacks: {
+            label: standardTooltipForCountMetricLabel,
+          },
+        },
+      }}
+    />
+  );
+}
 
 RevocationCountChart.propTypes = {
   chartId: PropTypes.string.isRequired,

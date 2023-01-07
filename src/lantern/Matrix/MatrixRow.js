@@ -24,7 +24,7 @@ import { matrixViolationTypeToLabel } from "../../utils/formatStrings";
 import { useLanternStore } from "../LanternStoreProvider";
 import { REPORTED_VIOLATIONS, VIOLATION_TYPE } from "../utils/constants";
 
-const MatrixRow = ({ children, violationType, sum, onClick }) => {
+function MatrixRow({ children, violationType, sum, onClick }) {
   const { filters } = useLanternStore();
 
   const isRowSelected =
@@ -54,7 +54,7 @@ const MatrixRow = ({ children, violationType, sum, onClick }) => {
       </span>
     </div>
   );
-};
+}
 
 MatrixRow.propTypes = {
   children: PropTypes.arrayOf(PropTypes.node).isRequired,

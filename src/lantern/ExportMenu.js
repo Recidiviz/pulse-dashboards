@@ -28,7 +28,7 @@ import {
 import { useLanternStore } from "./LanternStoreProvider";
 
 // ExportMenu used by Lantern charts only
-const ExportMenu = ({
+function ExportMenu({
   chartId,
   timeWindowDescription,
   metricTitle,
@@ -38,7 +38,7 @@ const ExportMenu = ({
   datasets,
   labels,
   dataExportLabel,
-}) => {
+}) {
   const { filtersStore, methodology, userStore } = useLanternStore();
   const { getTokenSilently } = userStore;
   const [isModalOpened, setIsModalOpened] = useState(false);
@@ -171,7 +171,7 @@ const ExportMenu = ({
       </Modal>
     </span>
   );
-};
+}
 
 ExportMenu.defaultProps = {
   regularElement: false,

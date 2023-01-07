@@ -80,8 +80,11 @@ const WebFormField: React.FC<WebFormFieldProps> = ({
     element.style.height = `${element.scrollHeight + offset}px`;
   }, [inputRef, value]);
 
-  let { persistent, children, validationMsg = false } = (props.helpText ||
-    {}) as TextFieldHelperTextProps;
+  let {
+    persistent,
+    children,
+    validationMsg = false,
+  } = (props.helpText || {}) as TextFieldHelperTextProps;
 
   if (foundationRef.current && !foundationRef.current.isValid()) {
     validationMsg = true;

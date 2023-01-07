@@ -78,8 +78,8 @@ Then("I should see the client status update", async () => {
   const status = await $(".WorkflowsStatus");
   await status.waitForExist();
   const text = await status.getText();
-  const expectedStatus = new RegExp(
-    "Viewed on \\d{1,2}/\\d{1,2}/\\d{1,2} by notarealemail@recidiviz.org"
-  );
+  const expectedStatus =
+    /Viewed on \\d{1,2}\/\\d{1,2}\/\\d{1,2} by notarealemail@recidiviz.org/;
+
   expect(text).toEqual(expect.stringMatching(expectedStatus));
 });

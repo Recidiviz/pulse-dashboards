@@ -39,7 +39,7 @@ const getDefaultLegendOptions = (labelColors) => {
     : { display: false };
 };
 
-const BarChartWithLabels = ({
+function BarChartWithLabels({
   id,
   data,
   labelColors,
@@ -48,62 +48,64 @@ const BarChartWithLabels = ({
   numerators,
   denominators,
   legendOptions,
-}) => (
-  <Bar
-    id={id}
-    data={data}
-    options={{
-      plugins: {
-        datalabels: {
-          display: false,
-        },
-      },
-      legend: legendOptions || getDefaultLegendOptions(labelColors),
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        xAxes: [
-          {
-            scaleLabel: {
-              display: true,
-              labelString: xAxisLabel,
-            },
+}) {
+  return (
+    <Bar
+      id={id}
+      data={data}
+      options={{
+        plugins: {
+          datalabels: {
+            display: false,
           },
-        ],
-        yAxes: [
-          {
-            ticks: {
-              beginAtZero: true,
-              callback: axisCallbackForPercentage(),
-            },
-            scaleLabel: {
-              display: true,
-              labelString: yAxisLabel,
-            },
-          },
-        ],
-      },
-      tooltips: {
-        backgroundColor: COLORS["grey-800-light"],
-        footerFontSize: 9,
-        mode: "index",
-        intersect: false,
-        callbacks: {
-          label: (tooltipItem, tooltipData) =>
-            tooltipForRateMetricWithCounts(
-              id,
-              tooltipItem,
-              tooltipData,
-              numerators,
-              denominators
-            ),
-          footer: (tooltipItem) =>
-            tooltipForFooterWithCounts(tooltipItem, denominators),
         },
-      },
-    }}
-  />
-);
+        legend: legendOptions || getDefaultLegendOptions(labelColors),
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          xAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: xAxisLabel,
+              },
+            },
+          ],
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true,
+                callback: axisCallbackForPercentage(),
+              },
+              scaleLabel: {
+                display: true,
+                labelString: yAxisLabel,
+              },
+            },
+          ],
+        },
+        tooltips: {
+          backgroundColor: COLORS["grey-800-light"],
+          footerFontSize: 9,
+          mode: "index",
+          intersect: false,
+          callbacks: {
+            label: (tooltipItem, tooltipData) =>
+              tooltipForRateMetricWithCounts(
+                id,
+                tooltipItem,
+                tooltipData,
+                numerators,
+                denominators
+              ),
+            footer: (tooltipItem) =>
+              tooltipForFooterWithCounts(tooltipItem, denominators),
+          },
+        },
+      }}
+    />
+  );
+}
 
 BarChartWithLabels.defaultProps = {
   labelColors: [],

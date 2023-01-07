@@ -146,7 +146,7 @@ describe("API GET tests", () => {
 
     test.each(metricControllers)(
       "%p fetches metrics only if data is not cached in store",
-      async (controllerFn, done) => {
+      async (controllerFn) => {
         await requestAndExpectFetchMetricsCalled(controllerFn, 1);
         await requestAndExpectFetchMetricsCalled(controllerFn, 0);
 
@@ -154,8 +154,6 @@ describe("API GET tests", () => {
 
         await requestAndExpectFetchMetricsCalled(controllerFn, 1);
         await requestAndExpectFetchMetricsCalled(controllerFn, 0);
-
-        done();
       }
     );
 

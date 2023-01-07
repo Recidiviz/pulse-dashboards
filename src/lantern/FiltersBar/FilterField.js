@@ -20,14 +20,14 @@ import cn from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 
-const FilterField = ({ label, children, className }) => {
+function FilterField({ label, children, className }) {
   return (
     <div className={cn("FilterField", className)}>
       <h4 className={cn("FilterField__label")}>{label}</h4>
       {children}
     </div>
   );
-};
+}
 
 FilterField.defaultProps = {
   className: null,

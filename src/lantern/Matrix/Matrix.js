@@ -57,7 +57,7 @@ const getInteger = (field) => pipe(get(field), toInteger);
 const sumByInteger = (field) => sumBy(getInteger(field));
 const sumRow = pipe(values, sum);
 
-const Matrix = ({ timeDescription }) => {
+function Matrix({ timeDescription }) {
   const { dataStore, filters, filtersStore } = useLanternStore();
   const { filterOptions } = filtersStore;
   const store = dataStore.matrixStore;
@@ -233,7 +233,7 @@ const Matrix = ({ timeDescription }) => {
       </div>
     </div>
   );
-};
+}
 
 Matrix.propTypes = {
   timeDescription: PropTypes.string.isRequired,

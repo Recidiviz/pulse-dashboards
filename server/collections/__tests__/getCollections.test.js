@@ -37,9 +37,8 @@ describe("getCollections", () => {
         expect(collections).toHaveProperty(COLLECTIONS.NEW_REVOCATION);
         Object.keys(collections[COLLECTIONS.NEW_REVOCATION]).forEach(
           (metricName) => {
-            const { dimensions } = collections[COLLECTIONS.NEW_REVOCATION][
-              metricName
-            ];
+            const { dimensions } =
+              collections[COLLECTIONS.NEW_REVOCATION][metricName];
             if (dimensions) {
               expect(expectedDimensions).toEqual(
                 expect.arrayContaining(Object.keys(dimensions))

@@ -41,7 +41,7 @@ const cancelSnapshotMock = jest.fn();
 let sub: FirestoreDocumentSubscription<any>;
 
 class TestSubscription extends FirestoreDocumentSubscription {
-  dataSource = (jest.fn() as unknown) as DocumentReference;
+  dataSource = jest.fn() as unknown as DocumentReference;
 }
 
 beforeEach(() => {

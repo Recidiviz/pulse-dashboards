@@ -198,7 +198,8 @@ describe("BaseDataStore", () => {
       });
 
       it("makes a request to the correct endpoint for the apiData", () => {
-        const expectedEndpoint = `${mockTenantId}/newRevocations/revocations_matrix_distribution_by_district
+        const expectedEndpoint =
+          `${mockTenantId}/newRevocations/revocations_matrix_distribution_by_district
         ?metricPeriodMonths=12&chargeCategory=All&reportedViolations=All&violationType=All&supervisionType=All
         &supervisionLevel=All&levelOneSupervisionLocation[0]=All&levelTwoSupervisionLocation[0]=All&
         admissionType[0]=All`.replace(/\n\s+/g, "");
@@ -268,13 +269,14 @@ describe("BaseDataStore", () => {
     });
 
     it("fetches a new subset file with new filter query params", () => {
-      const expectedEndpoint = `${mockTenantId}/newRevocations/revocations_matrix_distribution_by_district?
+      const expectedEndpoint =
+        `${mockTenantId}/newRevocations/revocations_matrix_distribution_by_district?
       metricPeriodMonths=12&chargeCategory=All&reportedViolations=All&violationType=All&
       supervisionType=All&supervisionLevel=All&levelOneSupervisionLocation[0]=All&
       levelTwoSupervisionLocation[0]=All&admissionType[0]=All`.replace(
-        /\n\s+/g,
-        ""
-      );
+          /\n\s+/g,
+          ""
+        );
 
       lanternStore.filtersStore.setFilters({
         violationType: "LAW",

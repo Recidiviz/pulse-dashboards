@@ -70,21 +70,22 @@ export const compliantReportingEligibleClientRecord: ClientRecord = {
   personType: "CLIENT",
 };
 
-export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecord> = {
-  eligibilityCategory: "c1",
-  remainingCriteriaNeeded: 0,
-  mostRecentArrestCheck: parseISO("2022-05-28"),
-  eligibleLevelStart: parseISO("2019-12-20"),
-  judicialDistrict: "A",
-  finesFeesEligible: "regular_payments",
-  drugScreensPastYear: [{ result: "DRUN", date: parseISO("2022-01-04") }],
-  sanctionsPastYear: [],
-  currentOffenses: ["EXAMPLE CURRENT"],
-  pastOffenses: [],
-  lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
-  specialConditionsFlag: "current",
-  lastSpecialConditionsNote: parseISO("2022-03-15"),
-};
+export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecord> =
+  {
+    eligibilityCategory: "c1",
+    remainingCriteriaNeeded: 0,
+    mostRecentArrestCheck: parseISO("2022-05-28"),
+    eligibleLevelStart: parseISO("2019-12-20"),
+    judicialDistrict: "A",
+    finesFeesEligible: "regular_payments",
+    drugScreensPastYear: [{ result: "DRUN", date: parseISO("2022-01-04") }],
+    sanctionsPastYear: [],
+    currentOffenses: ["EXAMPLE CURRENT"],
+    pastOffenses: [],
+    lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
+    specialConditionsFlag: "current",
+    lastSpecialConditionsNote: parseISO("2022-03-15"),
+  };
 
 export const compliantReportingAlmostEligibleCriteria: Required<
   NonNullable<CompliantReportingReferralRecord["almostEligibleCriteria"]>
@@ -96,22 +97,23 @@ export const compliantReportingAlmostEligibleCriteria: Required<
   recentRejectionCodes: ["TEST1"],
 };
 
-export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantReportingReferralRecord> = {
-  almostEligibleCriteria: compliantReportingAlmostEligibleCriteria,
-  eligibilityCategory: "c1",
-  remainingCriteriaNeeded: 1,
-  mostRecentArrestCheck: parseISO("2022-05-28"),
-  eligibleLevelStart: parseISO("2019-12-20"),
-  judicialDistrict: "A",
-  finesFeesEligible: "regular_payments",
-  drugScreensPastYear: [],
-  sanctionsPastYear: [],
-  currentOffenses: ["EXAMPLE CURRENT"],
-  pastOffenses: [],
-  lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
-  specialConditionsFlag: "current",
-  lastSpecialConditionsNote: parseISO("2022-03-15"),
-};
+export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantReportingReferralRecord> =
+  {
+    almostEligibleCriteria: compliantReportingAlmostEligibleCriteria,
+    eligibilityCategory: "c1",
+    remainingCriteriaNeeded: 1,
+    mostRecentArrestCheck: parseISO("2022-05-28"),
+    eligibleLevelStart: parseISO("2019-12-20"),
+    judicialDistrict: "A",
+    finesFeesEligible: "regular_payments",
+    drugScreensPastYear: [],
+    sanctionsPastYear: [],
+    currentOffenses: ["EXAMPLE CURRENT"],
+    pastOffenses: [],
+    lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
+    specialConditionsFlag: "current",
+    lastSpecialConditionsNote: parseISO("2022-03-15"),
+  };
 
 export const compliantReportingAlmostEligibleClientRecord: ClientRecord = {
   recordId: "us_xx_cr-almost-eligible-1",
@@ -136,35 +138,36 @@ export const UsTnExpirationEligibleClientRecord: ClientRecord = {
   allEligibleOpportunities: ["usTnExpiration"],
 };
 
-export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord = {
-  stateCode: "US_TN",
-  externalId: "101",
-  formInformation: {
-    currentOffenses: ["Charge A", "Charge B"],
-    docketNumbers: ["12345"],
-    latestEmpContactCode: "EMPV",
-  },
-  criteria: {
-    supervisionPastFullTermCompletionDate: {
-      eligibleDate: parseISO("2022-02-02"),
+export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord =
+  {
+    stateCode: "US_TN",
+    externalId: "101",
+    formInformation: {
+      currentOffenses: ["Charge A", "Charge B"],
+      docketNumbers: ["12345"],
+      latestEmpContactCode: "EMPV",
     },
-    usTnNoZeroToleranceCodes: {
-      zeroToleranceCodes: [],
-    },
-    usTnNotOnLifetimeSupervisionOrLifetimeSentence: {
-      lifetimeFlag: false,
-    },
-  },
-  caseNotes: {
-    "Special Conditions": [
-      {
-        noteTitle: "MUST JOURNAL",
-        noteBody: "Client must journal at least once a week",
-        eventDate: parseISO("2022-08-22"),
+    criteria: {
+      supervisionPastFullTermCompletionDate: {
+        eligibleDate: parseISO("2022-02-02"),
       },
-    ],
-  },
-};
+      usTnNoZeroToleranceCodes: {
+        zeroToleranceCodes: [],
+      },
+      usTnNotOnLifetimeSupervisionOrLifetimeSentence: {
+        lifetimeFlag: false,
+      },
+    },
+    caseNotes: {
+      "Special Conditions": [
+        {
+          noteTitle: "MUST JOURNAL",
+          noteBody: "Client must journal at least once a week",
+          eventDate: parseISO("2022-08-22"),
+        },
+      ],
+    },
+  };
 
 //
 // North Dakota
@@ -302,56 +305,57 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
   },
 };
 
-export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord = {
-  stateCode: "US_ID",
-  externalId: "001",
-  formInformation: {},
-  criteria: {
-    usIdLsirLevelLowModerateForXDays: {
-      riskLevel: "MODERATE",
-      eligibleDate: parseISO("2022-01-03"),
-    },
-    negativeUaWithin90Days: {
-      latestUaDates: [parseISO("2022-05-28")],
-      latestUaResults: [false],
-    },
-    noFelonyWithin24Months: {
-      latestFelonyConvictions: [],
-    },
-    noViolentMisdemeanorWithin12Months: {
-      latestViolentConvictions: [],
-    },
-    usIdIncomeVerifiedWithin3Months: {
-      incomeVerifiedDate: parseISO("2022-06-03"),
-    },
-    pastEarnedDischargeEligibleDate: {
-      eligibleDate: parseISO("2022-03-17"),
-      sentenceType: "PAROLE",
-    },
-  },
-  eligibleStartDate: new Date(2022, 10, 5),
-  caseNotes: {
-    "Special Conditions": [
-      {
-        noteTitle: "MUST JOURNAL",
-        noteBody: "Client must journal at least once a week",
-        eventDate: parseISO("2022-08-22"),
+export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord =
+  {
+    stateCode: "US_ID",
+    externalId: "001",
+    formInformation: {},
+    criteria: {
+      usIdLsirLevelLowModerateForXDays: {
+        riskLevel: "MODERATE",
+        eligibleDate: parseISO("2022-01-03"),
       },
-    ],
-    Treatment: [
-      {
-        noteTitle: "STARTED",
-        noteBody: "Treatment started",
-        eventDate: parseISO("2022-06-17"),
+      negativeUaWithin90Days: {
+        latestUaDates: [parseISO("2022-05-28")],
+        latestUaResults: [false],
       },
-      {
-        noteTitle: "COMPLETED",
-        noteBody: "Treatment successfully completed",
-        eventDate: parseISO("2022-09-22"),
+      noFelonyWithin24Months: {
+        latestFelonyConvictions: [],
       },
-    ],
-  },
-};
+      noViolentMisdemeanorWithin12Months: {
+        latestViolentConvictions: [],
+      },
+      usIdIncomeVerifiedWithin3Months: {
+        incomeVerifiedDate: parseISO("2022-06-03"),
+      },
+      pastEarnedDischargeEligibleDate: {
+        eligibleDate: parseISO("2022-03-17"),
+        sentenceType: "PAROLE",
+      },
+    },
+    eligibleStartDate: new Date(2022, 10, 5),
+    caseNotes: {
+      "Special Conditions": [
+        {
+          noteTitle: "MUST JOURNAL",
+          noteBody: "Client must journal at least once a week",
+          eventDate: parseISO("2022-08-22"),
+        },
+      ],
+      Treatment: [
+        {
+          noteTitle: "STARTED",
+          noteBody: "Treatment started",
+          eventDate: parseISO("2022-06-17"),
+        },
+        {
+          noteTitle: "COMPLETED",
+          noteBody: "Treatment successfully completed",
+          eventDate: parseISO("2022-09-22"),
+        },
+      ],
+    },
+  };
 
 export const LSUEligibleClientRecord: ClientRecord = {
   ...ineligibleClientRecord,
@@ -446,87 +450,90 @@ export const usMeSCCPEligibleRecordFixture: UsMeSCCPReferralRecord = {
   },
 };
 
-export const usMeSCCPEligibleRecordHalfPortionFixture: UsMeSCCPReferralRecord = {
-  stateCode: "US_ME",
-  externalId: "112",
-  ineligibleCriteria: {},
-  eligibleCriteria: {
-    usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
-    usMeServedXPortionOfSentence: {
-      eligibleDate: parseISO("2022-04-15"),
-      xPortionServed: "1/2",
-    },
-    usMeXMonthsRemainingOnSentence: {
-      eligibleDate: parseISO("2021-12-20"),
-    },
-    usMeNoDetainersWarrantsOrOther: null,
-    usMeNoClassAOrBViolationFor90Days: null,
-  },
-  caseNotes: {
-    foo: [
-      {
-        noteTitle: "A title",
-        noteBody: "A body",
-        eventDate: parseISO("2022-06-28"),
+export const usMeSCCPEligibleRecordHalfPortionFixture: UsMeSCCPReferralRecord =
+  {
+    stateCode: "US_ME",
+    externalId: "112",
+    ineligibleCriteria: {},
+    eligibleCriteria: {
+      usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+      usMeServedXPortionOfSentence: {
+        eligibleDate: parseISO("2022-04-15"),
+        xPortionServed: "1/2",
       },
-    ],
-  },
-};
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: parseISO("2021-12-20"),
+      },
+      usMeNoDetainersWarrantsOrOther: null,
+      usMeNoClassAOrBViolationFor90Days: null,
+    },
+    caseNotes: {
+      foo: [
+        {
+          noteTitle: "A title",
+          noteBody: "A body",
+          eventDate: parseISO("2022-06-28"),
+        },
+      ],
+    },
+  };
 
-export const usMeSCCPAlmostEligibleXMonthsRecordFixture: UsMeSCCPReferralRecord = {
-  stateCode: "US_ME",
-  externalId: "111",
-  ineligibleCriteria: {
-    usMeXMonthsRemainingOnSentence: {
-      eligibleDate: parseISO("2023-06-14"),
-    },
-  },
-  eligibleCriteria: {
-    usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
-    usMeServedXPortionOfSentence: {
-      eligibleDate: parseISO("2022-10-12"),
-      xPortionServed: "2/3",
-    },
-    usMeNoDetainersWarrantsOrOther: null,
-    usMeNoClassAOrBViolationFor90Days: null,
-  },
-  caseNotes: {
-    foo: [
-      {
-        noteTitle: "A title",
-        noteBody: "A body",
-        eventDate: parseISO("2022-06-28"),
+export const usMeSCCPAlmostEligibleXMonthsRecordFixture: UsMeSCCPReferralRecord =
+  {
+    stateCode: "US_ME",
+    externalId: "111",
+    ineligibleCriteria: {
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: parseISO("2023-06-14"),
       },
-    ],
-  },
-};
+    },
+    eligibleCriteria: {
+      usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+      usMeServedXPortionOfSentence: {
+        eligibleDate: parseISO("2022-10-12"),
+        xPortionServed: "2/3",
+      },
+      usMeNoDetainersWarrantsOrOther: null,
+      usMeNoClassAOrBViolationFor90Days: null,
+    },
+    caseNotes: {
+      foo: [
+        {
+          noteTitle: "A title",
+          noteBody: "A body",
+          eventDate: parseISO("2022-06-28"),
+        },
+      ],
+    },
+  };
 
-export const usMeSCCPAlmostEligibleViolationRecordFixture: UsMeSCCPReferralRecord = {
-  stateCode: "US_ME",
-  externalId: "111",
-  ineligibleCriteria: {
-    usMeNoClassAOrBViolationFor90Days: {
-      eligibleDate: parseISO("2023-02-15"),
-    },
-  },
-  eligibleCriteria: {
-    usMeXMonthsRemainingOnSentence: {
-      eligibleDate: parseISO("2022-06-14"),
-    },
-    usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
-    usMeServedXPortionOfSentence: {
-      eligibleDate: parseISO("2022-10-12"),
-      xPortionServed: "2/3",
-    },
-    usMeNoDetainersWarrantsOrOther: null,
-  },
-  caseNotes: {
-    foo: [
-      {
-        noteTitle: "A title",
-        noteBody: "A body",
-        eventDate: parseISO("2022-06-28"),
+export const usMeSCCPAlmostEligibleViolationRecordFixture: UsMeSCCPReferralRecord =
+  {
+    stateCode: "US_ME",
+    externalId: "111",
+    ineligibleCriteria: {
+      usMeNoClassAOrBViolationFor90Days: {
+        eligibleDate: parseISO("2023-02-15"),
       },
-    ],
-  },
-};
+    },
+    eligibleCriteria: {
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: parseISO("2022-06-14"),
+      },
+      usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+      usMeServedXPortionOfSentence: {
+        eligibleDate: parseISO("2022-10-12"),
+        xPortionServed: "2/3",
+      },
+      usMeNoDetainersWarrantsOrOther: null,
+    },
+    caseNotes: {
+      foo: [
+        {
+          noteTitle: "A title",
+          noteBody: "A body",
+          eventDate: parseISO("2022-06-28"),
+        },
+      ],
+    },
+  };

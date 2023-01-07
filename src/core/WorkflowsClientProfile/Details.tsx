@@ -97,10 +97,8 @@ function getProbationSpecialConditionsMarkup(
   emptySpecialConditionString: string
 ): JSX.Element {
   // we will flatten the nested lists of conditions into this
-  const conditionsToDisplay: (
-    | NonNullable<ParsedSpecialCondition>
-    | string
-  )[] = [];
+  const conditionsToDisplay: (NonNullable<ParsedSpecialCondition> | string)[] =
+    [];
 
   client.probationSpecialConditions?.forEach((conditionsJson) => {
     try {
@@ -126,6 +124,7 @@ function getProbationSpecialConditionsMarkup(
           // note that we have to convert the actual values back to uppercase
           // to display them properly
           conditionsToDisplay.push(
+            // eslint-disable-next-line camelcase
             mapValues({ note_update_date, conditions_on_date }, toUpper)
           );
         }
@@ -168,9 +167,9 @@ function getProbationSpecialConditionsMarkup(
   );
 }
 
-export const SpecialConditions = ({
+export function SpecialConditions({
   client,
-}: ClientProfileProps): React.ReactElement | null => {
+}: ClientProfileProps): React.ReactElement | null {
   const emptySpecialConditionStrings =
     STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_STRINGS[client.stateCode];
   if (!emptySpecialConditionStrings) return null;
@@ -210,11 +209,11 @@ export const SpecialConditions = ({
       </DetailsContent>
     </DetailsSection>
   );
-};
+}
 
-export const Supervision = ({
+export function Supervision({
   client,
-}: ClientProfileProps): React.ReactElement => {
+}: ClientProfileProps): React.ReactElement {
   const tooltip = client.detailsCopy?.supervisionStartDate?.tooltip;
 
   return (
@@ -226,13 +225,11 @@ export const Supervision = ({
           <DetailsContent>
             {formatWorkflowsDate(client.supervisionStartDate)}{" "}
             {tooltip && (
-              <>
-                <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                  <InfoButton
-                    infoUrl={WORKFLOWS_METHODOLOGY_URL[client.stateCode]}
-                  />
-                </InfoTooltipWrapper>
-              </>
+              <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
+                <InfoButton
+                  infoUrl={WORKFLOWS_METHODOLOGY_URL[client.stateCode]}
+                />
+              </InfoTooltipWrapper>
             )}
           </DetailsContent>
 
@@ -249,11 +246,11 @@ export const Supervision = ({
       </DetailsContent>
     </DetailsSection>
   );
-};
+}
 
-export const Incarceration = ({
+export function Incarceration({
   resident,
-}: ResidentProfileProps): React.ReactElement => {
+}: ResidentProfileProps): React.ReactElement {
   return (
     <DetailsSection>
       <DetailsHeading>Incarceration</DetailsHeading>
@@ -279,9 +276,9 @@ export const Incarceration = ({
       </DetailsContent>
     </DetailsSection>
   );
-};
+}
 
-export const Contact = ({ client }: ClientProfileProps): React.ReactElement => {
+export function Contact({ client }: ClientProfileProps): React.ReactElement {
   return (
     <DetailsSection>
       <DetailsHeading>Contact</DetailsHeading>
@@ -295,10 +292,10 @@ export const Contact = ({ client }: ClientProfileProps): React.ReactElement => {
       </DetailsContent>
     </DetailsSection>
   );
-};
-export const ClientHousing = ({
+}
+export function ClientHousing({
   client,
-}: ClientProfileProps): React.ReactElement => {
+}: ClientProfileProps): React.ReactElement {
   return (
     <DetailsSection>
       <DetailsHeading>Housing</DetailsHeading>
@@ -312,11 +309,11 @@ export const ClientHousing = ({
       </DetailsContent>
     </DetailsSection>
   );
-};
+}
 
-export const ResidentHousing = ({
+export function ResidentHousing({
   resident,
-}: ResidentProfileProps): React.ReactElement => {
+}: ResidentProfileProps): React.ReactElement {
   return (
     <DetailsSection>
       <DetailsHeading>Housing</DetailsHeading>
@@ -330,11 +327,11 @@ export const ResidentHousing = ({
       </DetailsContent>
     </DetailsSection>
   );
-};
+}
 
-export const FinesAndFees = ({
+export function FinesAndFees({
   client,
-}: ClientProfileProps): React.ReactElement => {
+}: ClientProfileProps): React.ReactElement {
   return (
     <DetailsSection>
       <DetailsHeading>Fines and Fees</DetailsHeading>
@@ -359,15 +356,15 @@ export const FinesAndFees = ({
       </DetailsContent>
     </DetailsSection>
   );
-};
+}
 
-export const CaseNotes = ({
+export function CaseNotes({
   opportunityRecord,
   headingText = "Relevant Contact Notes",
 }: {
   opportunityRecord?: WithCaseNotes;
   headingText?: string;
-}): React.ReactElement => {
+}): React.ReactElement {
   if (!opportunityRecord) {
     return <div />;
   }
@@ -422,4 +419,4 @@ export const CaseNotes = ({
       </DetailsContent>
     </DetailsSection>
   );
-};
+}

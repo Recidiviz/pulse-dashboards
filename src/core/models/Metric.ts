@@ -88,7 +88,7 @@ export default abstract class Metric<RecordFormat extends MetricRecord> {
     } catch (e) {
       runInAction(() => {
         this.isLoading = false;
-        this.isError = e;
+        this.isError = e instanceof Error ? e : new Error(`${e}`);
       });
     }
   }

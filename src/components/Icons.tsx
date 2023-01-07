@@ -18,7 +18,7 @@
 import { ExternalPropsContext } from "@recidiviz/design-system";
 import React, { useContext } from "react";
 
-export const IconGoSvg = (): React.ReactElement => {
+export function IconGoSvg(): React.ReactElement {
   const { color, ...iconProps } = useContext(ExternalPropsContext);
 
   return (
@@ -31,9 +31,9 @@ export const IconGoSvg = (): React.ReactElement => {
       <path d="M8 0C3.6 0 0 3.6 0 8C0 12.4 3.6 16 8 16C12.4 16 16 12.4 16 8C16 3.6 12.4 0 8 0ZM8 12V9H4V7H8V4L12 8L8 12Z" />
     </svg>
   );
-};
+}
 
-export const IconPeopleSvg = (): React.ReactElement => {
+export function IconPeopleSvg(): React.ReactElement {
   const { color, ...iconProps } = useContext(ExternalPropsContext);
 
   return (
@@ -47,4 +47,4 @@ export const IconPeopleSvg = (): React.ReactElement => {
       <path d="M15.0992 6.40311L13.2992 5.20311C13.6992 4.80311 13.9992 4.20311 13.9992 3.50311V2.60311C13.9992 1.40311 13.0992 0.203112 11.8992 0.00311178C10.6992 -0.196888 9.69922 0.503112 9.19922 1.40311C10.2992 2.40311 10.9992 3.80311 10.9992 5.40311V6.40311C10.9992 7.30311 10.7992 8.20311 10.3992 8.90311C10.3992 8.90311 11.5992 9.80311 11.5992 9.90311H14.9992C15.5992 9.90311 15.9992 9.50311 15.9992 8.90311V8.10311C15.9992 7.40311 15.6992 6.80311 15.0992 6.40311Z" />
     </svg>
   );
-};
+}

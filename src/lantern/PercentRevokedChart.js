@@ -25,7 +25,7 @@ import { getRateAnnotation } from "./utils/rate";
 import { tooltipForFooterWithCounts } from "./utils/significantStatistics";
 import { tooltipForRateMetricWithCounts } from "./utils/tooltips";
 
-const PercentRevokedChart = ({
+function PercentRevokedChart({
   chartId,
   data,
   averageRate,
@@ -35,70 +35,72 @@ const PercentRevokedChart = ({
   yAxisLabel,
   includeWarning,
   hideRateLine,
-}) => (
-  <Bar
-    id={chartId}
-    data={data}
-    options={{
-      plugins: {
-        datalabels: {
+}) {
+  return (
+    <Bar
+      id={chartId}
+      data={data}
+      options={{
+        plugins: {
+          datalabels: {
+            display: false,
+          },
+        },
+        annotation: !hideRateLine && getRateAnnotation(averageRate),
+        legend: {
           display: false,
         },
-      },
-      annotation: !hideRateLine && getRateAnnotation(averageRate),
-      legend: {
-        display: false,
-      },
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        xAxes: [
-          {
-            scaleLabel: {
-              display: true,
-              labelString: xAxisLabel,
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          xAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: xAxisLabel,
+              },
+              stacked: true,
             },
-            stacked: true,
-          },
-        ],
-        yAxes: [
-          {
-            id: "y-axis-0",
-            scaleLabel: {
-              display: true,
-              labelString: yAxisLabel,
+          ],
+          yAxes: [
+            {
+              id: "y-axis-0",
+              scaleLabel: {
+                display: true,
+                labelString: yAxisLabel,
+              },
+              stacked: true,
+              ticks: {
+                callback: axisCallbackForPercentage(),
+                precision: 0,
+              },
             },
-            stacked: true,
-            ticks: {
-              callback: axisCallbackForPercentage(),
-              precision: 0,
-            },
-          },
-        ],
-      },
-      tooltips: {
-        backgroundColor: COLORS["grey-800-light"],
-        footerFontSize: 9,
-        mode: "index",
-        intersect: false,
-        callbacks: {
-          label: (tooltipItem, tooltipData) =>
-            tooltipForRateMetricWithCounts(
-              chartId,
-              tooltipItem,
-              tooltipData,
-              numerators,
-              denominators,
-              includeWarning
-            ),
-          footer: (tooltipItem) =>
-            includeWarning &&
-            tooltipForFooterWithCounts(tooltipItem, denominators),
+          ],
         },
-      },
-    }}
-  />
-);
+        tooltips: {
+          backgroundColor: COLORS["grey-800-light"],
+          footerFontSize: 9,
+          mode: "index",
+          intersect: false,
+          callbacks: {
+            label: (tooltipItem, tooltipData) =>
+              tooltipForRateMetricWithCounts(
+                chartId,
+                tooltipItem,
+                tooltipData,
+                numerators,
+                denominators,
+                includeWarning
+              ),
+            footer: (tooltipItem) =>
+              includeWarning &&
+              tooltipForFooterWithCounts(tooltipItem, denominators),
+          },
+        },
+      }}
+    />
+  );
+}
 
 PercentRevokedChart.propTypes = {
   chartId: PropTypes.string.isRequired,

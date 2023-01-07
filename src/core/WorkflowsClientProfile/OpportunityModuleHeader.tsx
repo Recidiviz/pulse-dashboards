@@ -38,8 +38,8 @@ type OpportunityModuleHeaderProps = {
   opportunity: Opportunity;
 };
 
-export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> = observer(
-  function OpportunityModuleHeader({ opportunity }) {
+export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
+  observer(function OpportunityModuleHeader({ opportunity }) {
     const colors = useStatusColors(opportunity);
     const showEligibilityStatus = useShowEligibilityStatus(opportunity);
 
@@ -58,5 +58,4 @@ export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> = o
         )}
       </TitleText>
     );
-  }
-);
+  });

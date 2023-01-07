@@ -34,8 +34,8 @@ type CompliantReportingClientProfileProps = {
   formPrintButton?: boolean;
 };
 
-export const CompliantReportingClientProfile: React.FC<CompliantReportingClientProfileProps> = observer(
-  function CompliantReportingClientProfile({
+export const CompliantReportingClientProfile: React.FC<CompliantReportingClientProfileProps> =
+  observer(function CompliantReportingClientProfile({
     formLinkButton,
     formPrintButton,
   }) {
@@ -63,5 +63,4 @@ export const CompliantReportingClientProfile: React.FC<CompliantReportingClientP
         <FinesAndFees client={client} />
       </article>
     );
-  }
-);
+  });

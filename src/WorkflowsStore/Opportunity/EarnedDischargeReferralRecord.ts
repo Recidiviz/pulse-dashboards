@@ -101,9 +101,9 @@ export type EarnedDischargeDraftData = {
   numCrimeEntries: number;
 } & Record<`${EarnedDischargeCrimeTableKeys}${number}`, string>;
 
-export const transformReferral: TransformFunction<EarnedDischargeReferralRecord> = (
-  record
-) => {
+export const transformReferral: TransformFunction<
+  EarnedDischargeReferralRecord
+> = (record) => {
   if (!record) {
     throw new Error("Record not found");
   }
@@ -111,9 +111,8 @@ export const transformReferral: TransformFunction<EarnedDischargeReferralRecord>
   const transformedRecord = cloneDeep(record) as EarnedDischargeReferralRecord;
   const { criteria } = record;
 
-  const transformedCommonCriteria = transformLSUEarnedDischargeCommonCriteria(
-    criteria
-  );
+  const transformedCommonCriteria =
+    transformLSUEarnedDischargeCommonCriteria(criteria);
 
   transformedRecord.criteria = {
     ...transformedRecord.criteria,
@@ -164,9 +163,8 @@ export const transformReferral: TransformFunction<EarnedDischargeReferralRecord>
   } = record.formInformation;
 
   if (ncicCheckDate) {
-    transformedRecord.formInformation.ncicCheckDate = fieldToDate(
-      ncicCheckDate
-    );
+    transformedRecord.formInformation.ncicCheckDate =
+      fieldToDate(ncicCheckDate);
   }
 
   if (lastRestitutionPaymentDate) {
@@ -176,21 +174,18 @@ export const transformReferral: TransformFunction<EarnedDischargeReferralRecord>
   }
 
   if (lastFinesPaymentDate) {
-    transformedRecord.formInformation.lastFinesPaymentDate = fieldToDate(
-      lastFinesPaymentDate
-    );
+    transformedRecord.formInformation.lastFinesPaymentDate =
+      fieldToDate(lastFinesPaymentDate);
   }
 
   if (firstAssessmentDate) {
-    transformedRecord.formInformation.firstAssessmentDate = fieldToDate(
-      firstAssessmentDate
-    );
+    transformedRecord.formInformation.firstAssessmentDate =
+      fieldToDate(firstAssessmentDate);
   }
 
   if (latestAssessmentDate) {
-    transformedRecord.formInformation.latestAssessmentDate = fieldToDate(
-      latestAssessmentDate
-    );
+    transformedRecord.formInformation.latestAssessmentDate =
+      fieldToDate(latestAssessmentDate);
   }
 
   if (dateImposed) {
@@ -200,9 +195,8 @@ export const transformReferral: TransformFunction<EarnedDischargeReferralRecord>
   }
 
   if (fullTermReleaseDates) {
-    transformedRecord.formInformation.fullTermReleaseDates = fullTermReleaseDates.map(
-      (d: string) => fieldToDate(d)
-    );
+    transformedRecord.formInformation.fullTermReleaseDates =
+      fullTermReleaseDates.map((d: string) => fieldToDate(d));
   }
 
   if (judgeNames) {

@@ -99,7 +99,9 @@ const SIZES = {
   },
 };
 
-export const JusticeInvolvedPersonCapsule: React.FC<JusticeInvolvedPersonCapsuleProps> = ({
+export const JusticeInvolvedPersonCapsule: React.FC<
+  JusticeInvolvedPersonCapsuleProps
+> = ({
   avatarSize,
   person,
   status,

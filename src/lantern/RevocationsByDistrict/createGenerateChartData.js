@@ -136,21 +136,20 @@ const generateCountChartData = (districtChartData, currentDistricts) => {
   return { data: { datasets, labels }, denominators: [] };
 };
 
-const createGenerateChartData = (districtChartData, currentDistricts) => (
-  mode
-) => {
-  switch (mode) {
-    case "counts":
-      return generateCountChartData(districtChartData, currentDistricts);
-    case "exits":
-    case "rates":
-    default:
-      return generatePercentChartData(
-        districtChartData,
-        currentDistricts,
-        mode
-      );
-  }
-};
+const createGenerateChartData =
+  (districtChartData, currentDistricts) => (mode) => {
+    switch (mode) {
+      case "counts":
+        return generateCountChartData(districtChartData, currentDistricts);
+      case "exits":
+      case "rates":
+      default:
+        return generatePercentChartData(
+          districtChartData,
+          currentDistricts,
+          mode
+        );
+    }
+  };
 
 export default createGenerateChartData;

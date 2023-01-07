@@ -72,9 +72,9 @@ export type EarlyTerminationDraftData = {
   [k: string]: string;
 };
 
-export const transformReferral: TransformFunction<EarlyTerminationReferralRecord> = (
-  record
-) => {
+export const transformReferral: TransformFunction<
+  EarlyTerminationReferralRecord
+> = (record) => {
   if (!record) {
     throw new Error("No record found");
   }
@@ -91,15 +91,13 @@ export const transformReferral: TransformFunction<EarlyTerminationReferralRecord
     criteria,
   } = record;
 
-  transformedRecord.formInformation.priorCourtDate = fieldToDate(
-    priorCourtDate
-  );
+  transformedRecord.formInformation.priorCourtDate =
+    fieldToDate(priorCourtDate);
   transformedRecord.formInformation.probationExpirationDate = fieldToDate(
     probationExpirationDate
   );
-  transformedRecord.formInformation.sentenceLengthYears = parseInt(
-    sentenceLengthYears
-  );
+  transformedRecord.formInformation.sentenceLengthYears =
+    parseInt(sentenceLengthYears);
 
   transformedRecord.criteria.supervisionPastEarlyDischargeDate = {
     eligibleDate: fieldToDate(

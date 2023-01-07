@@ -28,7 +28,7 @@ import { isOfflineMode } from "../../utils/isOfflineMode";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 
-const Profile = () => {
+function Profile() {
   const { userStore } = useRootStore();
   const { user, logout } = userStore;
 
@@ -43,23 +43,21 @@ const Profile = () => {
   return (
     <PageTemplate mobileNavigation={<MobileNavigation title="Profile" />}>
       <div className="Profile">
-        <>
-          <div className="Profile__title">{user.email}</div>
-          <div className="Profile__subtitle">{userStore.stateName}</div>
-          <StateSelection />
-          <div>
-            <Link to="/">
-              <Button className="Profile__button">Back to dashboard</Button>
-            </Link>
-            <Button
-              className="Profile__button"
-              onClick={onLogout}
-              disabled={isOfflineMode()}
-            >
-              Log out
-            </Button>
-          </div>
-        </>
+        <div className="Profile__title">{user.email}</div>
+        <div className="Profile__subtitle">{userStore.stateName}</div>
+        <StateSelection />
+        <div>
+          <Link to="/">
+            <Button className="Profile__button">Back to dashboard</Button>
+          </Link>
+          <Button
+            className="Profile__button"
+            onClick={onLogout}
+            disabled={isOfflineMode()}
+          >
+            Log out
+          </Button>
+        </div>
         <div className="Profile__footer">
           © {new Date().getFullYear()}
           <a
@@ -89,6 +87,6 @@ const Profile = () => {
       </div>
     </PageTemplate>
   );
-};
+}
 
 export default observer(Profile);

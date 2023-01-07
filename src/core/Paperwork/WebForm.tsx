@@ -24,7 +24,7 @@ type WebFormProps = {
   fields: WebFormFieldProps[];
 };
 
-export const WebForm = ({ fields }: WebFormProps): JSX.Element => {
+export function WebForm({ fields }: WebFormProps): JSX.Element {
   return (
     <div>
       {fields.map((props) => (
@@ -36,4 +36,4 @@ export const WebForm = ({ fields }: WebFormProps): JSX.Element => {
       ))}
     </div>
   );
-};
+}

@@ -64,9 +64,9 @@ export default class PrisonPopulationPersonLevelMetric extends PathwaysMetric<Pr
             filters
           ) &&
           filterTimePeriod(
-            this.hasTimePeriodDimension,
             record.timePeriod,
-            timePeriod[0] as TimePeriod
+            timePeriod[0] as TimePeriod,
+            this.hasTimePeriodDimension
           )
         );
       }

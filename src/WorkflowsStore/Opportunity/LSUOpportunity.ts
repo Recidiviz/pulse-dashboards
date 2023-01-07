@@ -32,10 +32,8 @@ import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 
 const DENIAL_REASONS_MAP = {
-  SCNC:
-    "SCNC: Not compliant with all court-ordered conditions and special conditions",
-  FFR:
-    "FFR: Failure to make payments toward fines, fees, and restitution despite ability to pay",
+  SCNC: "SCNC: Not compliant with all court-ordered conditions and special conditions",
+  FFR: "FFR: Failure to make payments toward fines, fees, and restitution despite ability to pay",
   "NCO/CPO": "NCO/CPO: Has an active NCO, CPO, or restraining order",
   INTERLOCK: "INTERLOCK: Has an active interlock device",
   [OTHER_KEY]: "Other, please specify a reason",

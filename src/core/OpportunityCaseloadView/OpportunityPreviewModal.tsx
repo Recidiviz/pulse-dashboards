@@ -86,9 +86,9 @@ type OpportunityCaseloadProps = {
   opportunity?: Opportunity;
 };
 
-export const OpportunityPreviewModal = ({
+export function OpportunityPreviewModal({
   opportunity,
-}: OpportunityCaseloadProps): JSX.Element => {
+}: OpportunityCaseloadProps): JSX.Element {
   const { workflowsStore } = useRootStore();
 
   // Managing the modal isOpen state here instead of tying it directly to
@@ -126,4 +126,4 @@ export const OpportunityPreviewModal = ({
       </Wrapper>
     </DrawerModal>
   );
-};
+}

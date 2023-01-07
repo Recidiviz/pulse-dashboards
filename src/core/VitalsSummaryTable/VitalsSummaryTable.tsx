@@ -46,6 +46,27 @@ function getEntityTypeName(entityType: EntityType): string {
   }
 }
 
+function getLinkCell(basePath: string) {
+  return function LinkCell({
+    value,
+  }: {
+    value: {
+      entityId: string;
+      entityName: string;
+      entityType: string;
+    };
+  }) {
+    return (
+      <Link
+        className="VitalsSummaryTable__link"
+        to={`${basePath}/${encrypt(value.entityId)}`}
+      >
+        {value.entityName}
+      </Link>
+    );
+  };
+}
+
 const VitalsSummaryTable: React.FC = () => {
   const { pathname } = useLocation();
   const basePath = getPathWithoutParams(pathname);
@@ -57,13 +78,6 @@ const VitalsSummaryTable: React.FC = () => {
     metrics,
   } = vitalsStore;
 
-  const createBubbleTableCell = ({ value }: { value: number }) => (
-    <BubbleTableCell value={value} />
-  );
-
-  const createDeltaTableCell = ({ value }: { value: number }) => (
-    <DeltaTableCell value={value} />
-  );
   const { entityType } = summaries[0].entity;
 
   const overallColumns = useMemo(() => {
@@ -72,13 +86,13 @@ const VitalsSummaryTable: React.FC = () => {
         Header: "30D change" as MetricTypeLabel,
         accessor: "overall30Day" as MetricValueAccessor,
         sortType: "basic",
-        Cell: createDeltaTableCell,
+        Cell: DeltaTableCell,
       },
       {
         Header: "90D change" as MetricTypeLabel,
         accessor: "overall90Day" as MetricValueAccessor,
         sortType: "basic",
-        Cell: createDeltaTableCell,
+        Cell: DeltaTableCell,
       },
     ];
     const overallCol = metrics
@@ -87,7 +101,7 @@ const VitalsSummaryTable: React.FC = () => {
         Header: m.name,
         accessor: m.accessor,
         sortType: "basic",
-        Cell: createBubbleTableCell,
+        Cell: BubbleTableCell,
       }));
     return overallCol.concat(changeCols);
   }, [metrics]);
@@ -100,7 +114,7 @@ const VitalsSummaryTable: React.FC = () => {
           id: m.id,
           accessor: m.accessor,
           sortType: "basic",
-          Cell: createBubbleTableCell,
+          Cell: BubbleTableCell,
         };
         return col;
       });
@@ -127,22 +141,7 @@ const VitalsSummaryTable: React.FC = () => {
                 return 1;
               return 0;
             },
-            Cell: ({
-              value,
-            }: {
-              value: {
-                entityId: string;
-                entityName: string;
-                entityType: string;
-              };
-            }) => (
-              <Link
-                className="VitalsSummaryTable__link"
-                to={`${basePath}/${encrypt(value.entityId)}`}
-              >
-                {value.entityName}
-              </Link>
-            ),
+            Cell: getLinkCell(basePath),
           },
         ],
       },
@@ -158,9 +157,10 @@ const VitalsSummaryTable: React.FC = () => {
     [entityType, overallColumns, metricColumns, basePath]
   );
 
-  const sortBy = useMemo(() => ({ id: selectedSortBy, desc: false }), [
-    selectedSortBy,
-  ]);
+  const sortBy = useMemo(
+    () => ({ id: selectedSortBy, desc: false }),
+    [selectedSortBy]
+  );
 
   const {
     getTableProps,

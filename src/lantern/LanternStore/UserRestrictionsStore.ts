@@ -78,9 +78,8 @@ export default class UserRestrictionsStore {
       const authError = new Error(ERROR_MESSAGES.unauthorized);
       Sentry.captureException(authError, {
         tags: {
-          allowedSupervisionLocationIds: this.rootStore.userStore.allowedSupervisionLocationIds.join(
-            ","
-          ),
+          allowedSupervisionLocationIds:
+            this.rootStore.userStore.allowedSupervisionLocationIds.join(","),
         },
       });
       this.rootStore.userStore.setAuthError(authError);

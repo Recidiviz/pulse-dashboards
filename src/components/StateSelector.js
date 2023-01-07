@@ -23,7 +23,7 @@ import Select from "react-select";
 import { getStateNameForStateCode } from "../utils/navigation";
 import { useRootStore } from "./StoreProvider";
 
-const StateSelector = ({ onChange }) => {
+function StateSelector({ onChange }) {
   const { userStore, tenantStore } = useRootStore();
   const availableStatesOptions = userStore.availableStateCodes
     .sort()
@@ -44,7 +44,7 @@ const StateSelector = ({ onChange }) => {
       isSearchable
     />
   );
-};
+}
 
 StateSelector.propTypes = {
   onChange: PropTypes.func.isRequired,

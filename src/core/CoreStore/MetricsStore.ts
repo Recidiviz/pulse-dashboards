@@ -71,80 +71,80 @@ export default class MetricsStore {
     if (!this.map) {
       this.map = {
         [PATHWAYS_PAGES.libertyToPrison]: {
-          [PATHWAYS_SECTIONS.countOverTime]: this
-            .libertyToPrisonPopulationOverTime,
-          [PATHWAYS_SECTIONS.countByLocation]: this
-            .libertyToPrisonPopulationByDistrict,
-          [PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration]: this
-            .libertyToPrisonPopulationByPriorLengthOfIncarceration,
-          [PATHWAYS_SECTIONS.countByGender]: this
-            .libertyToPrisonPopulationByGender,
-          [PATHWAYS_SECTIONS.countByAgeGroup]: this
-            .libertyToPrisonPopulationByAgeGroup,
+          [PATHWAYS_SECTIONS.countOverTime]:
+            this.libertyToPrisonPopulationOverTime,
+          [PATHWAYS_SECTIONS.countByLocation]:
+            this.libertyToPrisonPopulationByDistrict,
+          [PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration]:
+            this.libertyToPrisonPopulationByPriorLengthOfIncarceration,
+          [PATHWAYS_SECTIONS.countByGender]:
+            this.libertyToPrisonPopulationByGender,
+          [PATHWAYS_SECTIONS.countByAgeGroup]:
+            this.libertyToPrisonPopulationByAgeGroup,
           [PATHWAYS_SECTIONS.countByRace]: this.libertyToPrisonPopulationByRace,
         },
         [PATHWAYS_PAGES.prison]: {
-          [PATHWAYS_SECTIONS.projectedCountOverTime]: this
-            .projectedPrisonPopulationOverTime,
+          [PATHWAYS_SECTIONS.projectedCountOverTime]:
+            this.projectedPrisonPopulationOverTime,
           [PATHWAYS_SECTIONS.countOverTime]: this.prisonPopulationOverTime,
           [PATHWAYS_SECTIONS.countByLocation]: this.prisonFacilityPopulation,
           [PATHWAYS_SECTIONS.countByRace]: this.prisonPopulationByRace,
-          [PATHWAYS_SECTIONS.personLevelDetail]: this
-            .prisonPopulationPersonLevel,
+          [PATHWAYS_SECTIONS.personLevelDetail]:
+            this.prisonPopulationPersonLevel,
         },
         [PATHWAYS_PAGES.prisonToSupervision]: {
-          [PATHWAYS_SECTIONS.countOverTime]: this
-            .prisonToSupervisionPopulationOverTime,
-          [PATHWAYS_SECTIONS.countByAgeGroup]: this
-            .prisonToSupervisionPopulationByAge,
-          [PATHWAYS_SECTIONS.countByLocation]: this
-            .prisonToSupervisionPopulationByFacility,
-          [PATHWAYS_SECTIONS.countByRace]: this
-            .prisonToSupervisionPopulationByRace,
-          [PATHWAYS_SECTIONS.personLevelDetail]: this
-            .prisonToSupervisionPopulationPersonLevel,
+          [PATHWAYS_SECTIONS.countOverTime]:
+            this.prisonToSupervisionPopulationOverTime,
+          [PATHWAYS_SECTIONS.countByAgeGroup]:
+            this.prisonToSupervisionPopulationByAge,
+          [PATHWAYS_SECTIONS.countByLocation]:
+            this.prisonToSupervisionPopulationByFacility,
+          [PATHWAYS_SECTIONS.countByRace]:
+            this.prisonToSupervisionPopulationByRace,
+          [PATHWAYS_SECTIONS.personLevelDetail]:
+            this.prisonToSupervisionPopulationPersonLevel,
         },
         [PATHWAYS_PAGES.supervision]: {
-          [PATHWAYS_SECTIONS.projectedCountOverTime]: this
-            .projectedSupervisionPopulationOverTime,
+          [PATHWAYS_SECTIONS.projectedCountOverTime]:
+            this.projectedSupervisionPopulationOverTime,
           [PATHWAYS_SECTIONS.countOverTime]: this.supervisionPopulationOverTime,
-          [PATHWAYS_SECTIONS.countByLocation]: this
-            .supervisionPopulationByDistrict,
+          [PATHWAYS_SECTIONS.countByLocation]:
+            this.supervisionPopulationByDistrict,
           [PATHWAYS_SECTIONS.countByRace]: this.supervisionPopulationByRace,
-          [PATHWAYS_SECTIONS.countBySupervisionLevel]: this
-            .supervisionPopulationBySupervisionLevel,
+          [PATHWAYS_SECTIONS.countBySupervisionLevel]:
+            this.supervisionPopulationBySupervisionLevel,
         },
         [PATHWAYS_PAGES.supervisionToPrison]: {
           [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToPrisonOverTime,
-          [PATHWAYS_SECTIONS.countByLocation]: this
-            .supervisionToPrisonPopulationByDistrict,
-          [PATHWAYS_SECTIONS.countByMostSevereViolation]: this
-            .supervisionToPrisonPopulationByMostSevereViolation,
-          [PATHWAYS_SECTIONS.countByNumberOfViolations]: this
-            .supervisionToPrisonPopulationByNumberOfViolations,
-          [PATHWAYS_SECTIONS.countByLengthOfStay]: this
-            .supervisionToPrisonPopulationByLengthOfStay,
-          [PATHWAYS_SECTIONS.countBySupervisionLevel]: this
-            .supervisionToPrisonPopulationBySupervisionLevel,
-          [PATHWAYS_SECTIONS.countByRace]: this
-            .supervisionToPrisonPopulationByRace,
-          [PATHWAYS_SECTIONS.countByGender]: this
-            .supervisionToPrisonPopulationByGender,
-          [PATHWAYS_SECTIONS.countByOfficer]: this
-            .supervisionToPrisonPopulationByOfficer,
+          [PATHWAYS_SECTIONS.countByLocation]:
+            this.supervisionToPrisonPopulationByDistrict,
+          [PATHWAYS_SECTIONS.countByMostSevereViolation]:
+            this.supervisionToPrisonPopulationByMostSevereViolation,
+          [PATHWAYS_SECTIONS.countByNumberOfViolations]:
+            this.supervisionToPrisonPopulationByNumberOfViolations,
+          [PATHWAYS_SECTIONS.countByLengthOfStay]:
+            this.supervisionToPrisonPopulationByLengthOfStay,
+          [PATHWAYS_SECTIONS.countBySupervisionLevel]:
+            this.supervisionToPrisonPopulationBySupervisionLevel,
+          [PATHWAYS_SECTIONS.countByRace]:
+            this.supervisionToPrisonPopulationByRace,
+          [PATHWAYS_SECTIONS.countByGender]:
+            this.supervisionToPrisonPopulationByGender,
+          [PATHWAYS_SECTIONS.countByOfficer]:
+            this.supervisionToPrisonPopulationByOfficer,
         },
         [PATHWAYS_PAGES.supervisionToLiberty]: {
           [PATHWAYS_SECTIONS.countOverTime]: this.supervisionToLibertyOverTime,
-          [PATHWAYS_SECTIONS.countByLengthOfStay]: this
-            .supervisionToLibertyPopulationByLengthOfStay,
-          [PATHWAYS_SECTIONS.countByLocation]: this
-            .supervisionToLibertyPopulationByLocation,
-          [PATHWAYS_SECTIONS.countByGender]: this
-            .supervisionToLibertyPopulationByGender,
-          [PATHWAYS_SECTIONS.countByAgeGroup]: this
-            .supervisionToLibertyPopulationByAgeGroup,
-          [PATHWAYS_SECTIONS.countByRace]: this
-            .supervisionToLibertyPopulationByRace,
+          [PATHWAYS_SECTIONS.countByLengthOfStay]:
+            this.supervisionToLibertyPopulationByLengthOfStay,
+          [PATHWAYS_SECTIONS.countByLocation]:
+            this.supervisionToLibertyPopulationByLocation,
+          [PATHWAYS_SECTIONS.countByGender]:
+            this.supervisionToLibertyPopulationByGender,
+          [PATHWAYS_SECTIONS.countByAgeGroup]:
+            this.supervisionToLibertyPopulationByAgeGroup,
+          [PATHWAYS_SECTIONS.countByRace]:
+            this.supervisionToLibertyPopulationByRace,
         },
       };
     }
@@ -171,8 +171,9 @@ export default class MetricsStore {
       sourceFilename: "liberty_to_prison_count_by_month",
       rootStore: this.rootStore,
       dataTransformer: createLibertyPopulationTimeSeries,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .libertyToPrisonPopulationOverTime,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .libertyToPrisonPopulationOverTime,
       newBackendMetric,
     });
   }
@@ -202,8 +203,9 @@ export default class MetricsStore {
       accessor: "judicialDistrict",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .libertyToPrisonPopulationByDistrict,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .libertyToPrisonPopulationByDistrict,
       rotateLabels: true,
       isGeographic: true,
       newBackendMetric,
@@ -234,8 +236,9 @@ export default class MetricsStore {
       accessor: "race",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .libertyToPrisonPopulationByRace,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .libertyToPrisonPopulationByRace,
       rotateLabels: true,
       newBackendMetric,
     });
@@ -264,8 +267,9 @@ export default class MetricsStore {
       accessor: "ageGroup",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .libertyToPrisonPopulationByAgeGroup,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .libertyToPrisonPopulationByAgeGroup,
       newBackendMetric,
     });
   }
@@ -293,8 +297,9 @@ export default class MetricsStore {
       accessor: "gender",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .libertyToPrisonPopulationByGender,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .libertyToPrisonPopulationByGender,
       newBackendMetric,
     });
   }
@@ -321,8 +326,9 @@ export default class MetricsStore {
       dataTransformer: createLibertyPopulationSnapshot,
       accessor: "priorLengthOfIncarceration",
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .libertyToPrisonPopulationByPriorLengthOfIncarceration,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .libertyToPrisonPopulationByPriorLengthOfIncarceration,
       accessorIsNotFilterType: true,
       newBackendMetric,
     });
@@ -347,8 +353,8 @@ export default class MetricsStore {
       sourceFilename: "prison_population_time_series",
       rootStore: this.rootStore,
       dataTransformer: createPrisonPopulationTimeSeries,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .prisonPopulationOverTime,
+      filters:
+        this.rootStore.filtersStore.enabledFilters.prisonPopulationOverTime,
       newBackendMetric,
     });
   }
@@ -362,8 +368,9 @@ export default class MetricsStore {
       sourceFilename: "prison_population_projection_time_series",
       rootStore: this.rootStore,
       dataTransformer: createProjectionTimeSeries,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .projectedPrisonPopulationOverTime,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .projectedPrisonPopulationOverTime,
     });
   }
 
@@ -391,8 +398,8 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       enableMetricModeToggle: true,
       dataTransformer: createPrisonPopulationSnapshot,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .prisonFacilityPopulation,
+      filters:
+        this.rootStore.filtersStore.enabledFilters.prisonFacilityPopulation,
       rotateLabels: true,
       isGeographic: true,
       newBackendMetric,
@@ -422,8 +429,8 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       enableMetricModeToggle: true,
       dataTransformer: createPrisonPopulationSnapshot,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .prisonPopulationByRace,
+      filters:
+        this.rootStore.filtersStore.enabledFilters.prisonPopulationByRace,
       rotateLabels: true,
       newBackendMetric,
     });
@@ -447,8 +454,8 @@ export default class MetricsStore {
       sourceFilename: "prison_population_snapshot_person_level",
       rootStore: this.rootStore,
       dataTransformer: createPrisonPopulationPersonLevelList,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .prisonPopulationPersonLevel,
+      filters:
+        this.rootStore.filtersStore.enabledFilters.prisonPopulationPersonLevel,
       newBackendMetric,
     });
   }
@@ -472,8 +479,9 @@ export default class MetricsStore {
       sourceFilename: "prison_to_supervision_count_by_month",
       rootStore: this.rootStore,
       dataTransformer: createPrisonPopulationTimeSeries,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .prisonToSupervisionPopulationOverTime,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .prisonToSupervisionPopulationOverTime,
       newBackendMetric,
     });
   }
@@ -501,8 +509,9 @@ export default class MetricsStore {
       dataTransformer: createPrisonPopulationSnapshot,
       accessor: "ageGroup",
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .prisonToSupervisionPopulationByAge,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .prisonToSupervisionPopulationByAge,
       newBackendMetric,
     });
   }
@@ -532,8 +541,9 @@ export default class MetricsStore {
       dataTransformer: createPrisonPopulationSnapshot,
       accessor: "facility",
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .prisonToSupervisionPopulationByFacility,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .prisonToSupervisionPopulationByFacility,
       rotateLabels: true,
       isGeographic: true,
       newBackendMetric,
@@ -564,8 +574,9 @@ export default class MetricsStore {
       dataTransformer: createPrisonPopulationSnapshot,
       accessor: "race",
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .prisonToSupervisionPopulationByRace,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .prisonToSupervisionPopulationByRace,
       rotateLabels: true,
       newBackendMetric,
     });
@@ -590,8 +601,9 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       hasTimePeriodDimension: true,
       dataTransformer: createPrisonPopulationPersonLevelList,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .prisonToSupervisionPopulationPersonLevel,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .prisonToSupervisionPopulationPersonLevel,
       newBackendMetric,
     });
   }
@@ -616,8 +628,9 @@ export default class MetricsStore {
       compartment: "SUPERVISION",
       rootStore: this.rootStore,
       dataTransformer: createSupervisionPopulationTimeSeries,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionPopulationOverTime,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionPopulationOverTime,
       newBackendMetric,
     });
   }
@@ -631,8 +644,9 @@ export default class MetricsStore {
       sourceFilename: "supervision_population_projection_time_series",
       rootStore: this.rootStore,
       dataTransformer: createProjectionTimeSeries,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .projectedSupervisionPopulationOverTime,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .projectedSupervisionPopulationOverTime,
     });
   }
 
@@ -661,8 +675,9 @@ export default class MetricsStore {
       enableMetricModeToggle: true,
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "district",
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionPopulationByDistrict,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionPopulationByDistrict,
       rotateLabels: true,
       isGeographic: true,
       newBackendMetric,
@@ -693,8 +708,8 @@ export default class MetricsStore {
       enableMetricModeToggle: true,
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "race",
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionPopulationByRace,
+      filters:
+        this.rootStore.filtersStore.enabledFilters.supervisionPopulationByRace,
       rotateLabels: true,
       newBackendMetric,
     });
@@ -722,8 +737,9 @@ export default class MetricsStore {
       rootStore: this.rootStore,
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "supervisionLevel",
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionPopulationBySupervisionLevel,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionPopulationBySupervisionLevel,
       rotateLabels: true,
       newBackendMetric,
     });
@@ -749,8 +765,8 @@ export default class MetricsStore {
       compartment: "SUPERVISION",
       rootStore: this.rootStore,
       dataTransformer: createSupervisionPopulationTimeSeries,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToPrisonOverTime,
+      filters:
+        this.rootStore.filtersStore.enabledFilters.supervisionToPrisonOverTime,
       newBackendMetric,
     });
   }
@@ -781,8 +797,9 @@ export default class MetricsStore {
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
       dataTransformer: createSupervisionPopulationSnapshot,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToPrisonPopulationByDistrict,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionToPrisonPopulationByDistrict,
       rotateLabels: true,
       isGeographic: true,
       newBackendMetric,
@@ -811,8 +828,9 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "mostSevereViolation",
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToPrisonPopulationByMostSevereViolation,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionToPrisonPopulationByMostSevereViolation,
       newBackendMetric,
     });
   }
@@ -839,8 +857,9 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "numberOfViolations",
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToPrisonPopulationByNumberOfViolations,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionToPrisonPopulationByNumberOfViolations,
       newBackendMetric,
     });
   }
@@ -868,8 +887,9 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "lengthOfStay",
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToPrisonPopulationByLengthOfStay,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionToPrisonPopulationByLengthOfStay,
       accessorIsNotFilterType: true,
       newBackendMetric,
     });
@@ -900,8 +920,9 @@ export default class MetricsStore {
       accessor: "supervisionLevel",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToPrisonPopulationBySupervisionLevel,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionToPrisonPopulationBySupervisionLevel,
       rotateLabels: true,
       newBackendMetric,
     });
@@ -931,8 +952,9 @@ export default class MetricsStore {
       accessor: "gender",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToPrisonPopulationByGender,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionToPrisonPopulationByGender,
       newBackendMetric,
     });
   }
@@ -962,8 +984,9 @@ export default class MetricsStore {
       accessor: "race",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToPrisonPopulationByRace,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionToPrisonPopulationByRace,
       rotateLabels: true,
       newBackendMetric,
     });
@@ -995,8 +1018,9 @@ export default class MetricsStore {
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
       isHorizontal: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToPrisonPopulationByOfficer,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionToPrisonPopulationByOfficer,
       accessorIsNotFilterType: true,
       newBackendMetric,
     });
@@ -1022,8 +1046,8 @@ export default class MetricsStore {
       compartment: "SUPERVISION",
       rootStore: this.rootStore,
       dataTransformer: createSupervisionPopulationTimeSeries,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToLibertyOverTime,
+      filters:
+        this.rootStore.filtersStore.enabledFilters.supervisionToLibertyOverTime,
       newBackendMetric,
     });
   }
@@ -1050,8 +1074,9 @@ export default class MetricsStore {
       dataTransformer: createSupervisionPopulationSnapshot,
       accessor: "lengthOfStay",
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToLibertyPopulationByLengthOfStay,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionToLibertyPopulationByLengthOfStay,
       newBackendMetric,
     });
   }
@@ -1081,8 +1106,9 @@ export default class MetricsStore {
       accessor: "race",
       hasTimePeriodDimension: true,
       enableMetricModeToggle: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToLibertyPopulationByRace,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionToLibertyPopulationByRace,
       rotateLabels: true,
       newBackendMetric,
     });
@@ -1114,8 +1140,9 @@ export default class MetricsStore {
       accessor: "district",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToLibertyPopulationByLocation,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionToLibertyPopulationByLocation,
       rotateLabels: true,
       isGeographic: true,
       newBackendMetric,
@@ -1146,8 +1173,9 @@ export default class MetricsStore {
       accessor: "gender",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToLibertyPopulationByGender,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionToLibertyPopulationByGender,
       newBackendMetric,
     });
   }
@@ -1176,8 +1204,9 @@ export default class MetricsStore {
       accessor: "ageGroup",
       enableMetricModeToggle: true,
       hasTimePeriodDimension: true,
-      filters: this.rootStore.filtersStore.enabledFilters
-        .supervisionToLibertyPopulationByAgeGroup,
+      filters:
+        this.rootStore.filtersStore.enabledFilters
+          .supervisionToLibertyPopulationByAgeGroup,
       newBackendMetric,
     });
   }

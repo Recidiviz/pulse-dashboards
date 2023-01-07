@@ -55,9 +55,8 @@ const RevocationsByDimension = observer(
       return <ErrorMessage />;
     }
 
-    const { data, numerators, denominators, averageRate } = generateChartData(
-      mode
-    );
+    const { data, numerators, denominators, averageRate } =
+      generateChartData(mode);
 
     const showWarning =
       includeWarning &&

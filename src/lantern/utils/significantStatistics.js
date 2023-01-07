@@ -57,9 +57,8 @@ function tooltipForFooterWithCounts([{ index }], denominators) {
   const isNested = denominators.every((denominator) =>
     Array.isArray(denominator)
   );
-  const isStatisticsSignificant = (isNested
-    ? denominators
-    : [denominators]
+  const isStatisticsSignificant = (
+    isNested ? denominators : [denominators]
   ).every((denominator) =>
     isDenominatorStatisticallySignificant(denominator[index])
   );

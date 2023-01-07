@@ -21,10 +21,8 @@ function createOmnipresentContext<A extends unknown | null>() {
   return [useCtx, ctx.Provider] as const; // 'as const' makes TypeScript infer a tuple
 }
 
-export const [
-  useOpportunityFormContext,
-  OpportunityFormProvider,
-] = createOmnipresentContext<FormBase<any>>(); // specify type, but no need to specify value upfront!
+export const [useOpportunityFormContext, OpportunityFormProvider] =
+  createOmnipresentContext<FormBase<any>>(); // specify type, but no need to specify value upfront!
 
 export const connectComponentToOpportunityForm = (
   FormComponent: React.FC,

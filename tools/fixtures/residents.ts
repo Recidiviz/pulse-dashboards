@@ -17,56 +17,54 @@
 
 import { ResidentRecord } from "../../src/firestore/types";
 
-export const residentsData: Omit<
-  ResidentRecord,
-  "personType" | "recordId"
->[] = [
-  {
-    allEligibleOpportunities: ["usMeSCCP"],
-    officerId: "OFFICER5",
-    stateCode: "US_ME",
-    personExternalId: "RES001",
-    personName: {
-      givenNames: "First",
-      surname: "Resident",
+export const residentsData: Omit<ResidentRecord, "personType" | "recordId">[] =
+  [
+    {
+      allEligibleOpportunities: ["usMeSCCP"],
+      officerId: "OFFICER5",
+      stateCode: "US_ME",
+      personExternalId: "RES001",
+      personName: {
+        givenNames: "First",
+        surname: "Resident",
+      },
+      pseudonymizedId: "anonres001",
+      facilityId: "FACILITY NAME",
+      unitId: "UNIT A",
+      custodyLevel: "MINIMUM",
+      admissionDate: "2019-08-12",
+      releaseDate: "2025-10-22",
     },
-    pseudonymizedId: "anonres001",
-    facilityId: "FACILITY NAME",
-    unitId: "UNIT A",
-    custodyLevel: "MINIMUM",
-    admissionDate: "2019-08-12",
-    releaseDate: "2025-10-22",
-  },
-  {
-    allEligibleOpportunities: ["usMeSCCP"],
-    officerId: "OFFICER5",
-    stateCode: "US_ME",
-    personExternalId: "RES002",
-    personName: {
-      givenNames: "Second",
-      surname: "Resident",
+    {
+      allEligibleOpportunities: ["usMeSCCP"],
+      officerId: "OFFICER5",
+      stateCode: "US_ME",
+      personExternalId: "RES002",
+      personName: {
+        givenNames: "Second",
+        surname: "Resident",
+      },
+      pseudonymizedId: "anonres002",
+      facilityId: "FACILITY NAME",
+      unitId: "UNIT B",
+      custodyLevel: "MINIMUM",
+      admissionDate: "2020-08-12",
+      releaseDate: "2024-11-27",
     },
-    pseudonymizedId: "anonres002",
-    facilityId: "FACILITY NAME",
-    unitId: "UNIT B",
-    custodyLevel: "MINIMUM",
-    admissionDate: "2020-08-12",
-    releaseDate: "2024-11-27",
-  },
-  {
-    allEligibleOpportunities: ["usMeSCCP"],
-    officerId: "OFFICER5",
-    stateCode: "US_ME",
-    personExternalId: "RES003",
-    personName: {
-      givenNames: "Third",
-      surname: "Resident",
+    {
+      allEligibleOpportunities: ["usMeSCCP"],
+      officerId: "OFFICER5",
+      stateCode: "US_ME",
+      personExternalId: "RES003",
+      personName: {
+        givenNames: "Third",
+        surname: "Resident",
+      },
+      pseudonymizedId: "anonres003",
+      facilityId: "FACILITY NAME",
+      unitId: "UNIT B",
+      custodyLevel: "MINIMUM",
+      admissionDate: "2020-09-12",
+      releaseDate: "2024-10-27",
     },
-    pseudonymizedId: "anonres003",
-    facilityId: "FACILITY NAME",
-    unitId: "UNIT B",
-    custodyLevel: "MINIMUM",
-    admissionDate: "2020-09-12",
-    releaseDate: "2024-10-27",
-  },
-];
+  ];

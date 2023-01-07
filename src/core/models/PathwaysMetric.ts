@@ -77,7 +77,8 @@ type metricBackend = "OLD" | "OLD_WITH_DIFFING" | "NEW";
  * MetricsStore.
  */
 export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
-  implements HydratablePathwaysMetric {
+  implements HydratablePathwaysMetric
+{
   rootStore?: CoreStore;
 
   id: MetricId;
@@ -246,8 +247,9 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
    */
   get methodology(): (PageContent | MetricContent)[] {
     if (!this.rootStore?.currentTenantId) return [];
-    const methodology = getMethodologyCopy(this.rootStore.currentTenantId)
-      .system;
+    const methodology = getMethodologyCopy(
+      this.rootStore.currentTenantId
+    ).system;
     if (!methodology?.metricCopy || !methodology?.pageCopy) return [];
 
     return [
@@ -272,7 +274,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     } catch (e) {
       runInAction(() => {
         this.isLoading = false;
-        this.error = e;
+        this.error = e instanceof Error ? e : new Error(`${e}`);
         this.isHydrated = false;
       });
     }
@@ -306,7 +308,8 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
    * Fetches the metric data from the server.
    */
   protected async fetchMetrics(): Promise<Record<string, RawMetricData>> {
-    const endpoint = `${this.tenantId}/pathways/${this.sourceFilename}`.toLowerCase();
+    const endpoint =
+      `${this.tenantId}/pathways/${this.sourceFilename}`.toLowerCase();
     return callMetricsApi(endpoint, RootStore.getTokenSilently);
   }
 

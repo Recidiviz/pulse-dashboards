@@ -60,7 +60,7 @@ const formDownloader = async (
   );
 };
 
-const WorkflowsEarlyTerminationForm = () => {
+function WorkflowsEarlyTerminationForm() {
   const {
     workflowsStore: { selectedClient: client },
   } = useRootStore();
@@ -83,7 +83,7 @@ const WorkflowsEarlyTerminationForm = () => {
       </FormViewer>
     </FormContainer>
   );
-};
+}
 
 export default connectComponentToOpportunityForm(
   observer(WorkflowsEarlyTerminationForm),

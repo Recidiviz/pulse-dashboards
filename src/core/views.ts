@@ -161,55 +161,54 @@ export function getMetricIdsForPage(page: PathwaysPage): MetricId[] {
   return PATHWAYS_METRIC_IDS_BY_PAGE[page];
 }
 
-export const PATHWAYS_SECTION_BY_METRIC_ID: Record<
-  MetricId,
-  PathwaysSection
-> = {
-  libertyToPrisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
-  libertyToPrisonPopulationByDistrict: PATHWAYS_SECTIONS.countByLocation,
-  libertyToPrisonPopulationByGender: PATHWAYS_SECTIONS.countByGender,
-  libertyToPrisonPopulationByAgeGroup: PATHWAYS_SECTIONS.countByAgeGroup,
-  libertyToPrisonPopulationByRace: PATHWAYS_SECTIONS.countByRace,
-  libertyToPrisonPopulationByPriorLengthOfIncarceration:
-    PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration,
-  prisonPopulationPersonLevel: PATHWAYS_SECTIONS.personLevelDetail,
-  prisonFacilityPopulation: PATHWAYS_SECTIONS.countByLocation,
-  prisonPopulationByRace: PATHWAYS_SECTIONS.countByRace,
-  prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
-  projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS.projectedCountOverTime,
-  projectedSupervisionPopulationOverTime:
-    PATHWAYS_SECTIONS.projectedCountOverTime,
-  prisonToSupervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
-  prisonToSupervisionPopulationByAge: PATHWAYS_SECTIONS.countByAgeGroup,
-  prisonToSupervisionPopulationByFacility: PATHWAYS_SECTIONS.countByLocation,
-  prisonToSupervisionPopulationByRace: PATHWAYS_SECTIONS.countByRace,
-  prisonToSupervisionPopulationPersonLevel: PATHWAYS_SECTIONS.personLevelDetail,
-  supervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
-  supervisionPopulationByDistrict: PATHWAYS_SECTIONS.countByLocation,
-  supervisionPopulationByRace: PATHWAYS_SECTIONS.countByRace,
-  supervisionPopulationBySupervisionLevel:
-    PATHWAYS_SECTIONS.countBySupervisionLevel,
-  supervisionToPrisonOverTime: PATHWAYS_SECTIONS.countOverTime,
-  supervisionToPrisonPopulationByDistrict: PATHWAYS_SECTIONS.countByLocation,
-  supervisionToPrisonPopulationByMostSevereViolation:
-    PATHWAYS_SECTIONS.countByMostSevereViolation,
-  supervisionToPrisonPopulationByNumberOfViolations:
-    PATHWAYS_SECTIONS.countByNumberOfViolations,
-  supervisionToPrisonPopulationByLengthOfStay:
-    PATHWAYS_SECTIONS.countByLengthOfStay,
-  supervisionToPrisonPopulationBySupervisionLevel:
-    PATHWAYS_SECTIONS.countBySupervisionLevel,
-  supervisionToPrisonPopulationByGender: PATHWAYS_SECTIONS.countByGender,
-  supervisionToPrisonPopulationByRace: PATHWAYS_SECTIONS.countByRace,
-  supervisionToPrisonPopulationByOfficer: PATHWAYS_SECTIONS.countByOfficer,
-  supervisionToLibertyOverTime: PATHWAYS_SECTIONS.countOverTime,
-  supervisionToLibertyPopulationByLengthOfStay:
-    PATHWAYS_SECTIONS.countByLengthOfStay,
-  supervisionToLibertyPopulationByLocation: PATHWAYS_SECTIONS.countByLocation,
-  supervisionToLibertyPopulationByGender: PATHWAYS_SECTIONS.countByGender,
-  supervisionToLibertyPopulationByAgeGroup: PATHWAYS_SECTIONS.countByAgeGroup,
-  supervisionToLibertyPopulationByRace: PATHWAYS_SECTIONS.countByRace,
-};
+export const PATHWAYS_SECTION_BY_METRIC_ID: Record<MetricId, PathwaysSection> =
+  {
+    libertyToPrisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
+    libertyToPrisonPopulationByDistrict: PATHWAYS_SECTIONS.countByLocation,
+    libertyToPrisonPopulationByGender: PATHWAYS_SECTIONS.countByGender,
+    libertyToPrisonPopulationByAgeGroup: PATHWAYS_SECTIONS.countByAgeGroup,
+    libertyToPrisonPopulationByRace: PATHWAYS_SECTIONS.countByRace,
+    libertyToPrisonPopulationByPriorLengthOfIncarceration:
+      PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration,
+    prisonPopulationPersonLevel: PATHWAYS_SECTIONS.personLevelDetail,
+    prisonFacilityPopulation: PATHWAYS_SECTIONS.countByLocation,
+    prisonPopulationByRace: PATHWAYS_SECTIONS.countByRace,
+    prisonPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
+    projectedPrisonPopulationOverTime: PATHWAYS_SECTIONS.projectedCountOverTime,
+    projectedSupervisionPopulationOverTime:
+      PATHWAYS_SECTIONS.projectedCountOverTime,
+    prisonToSupervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
+    prisonToSupervisionPopulationByAge: PATHWAYS_SECTIONS.countByAgeGroup,
+    prisonToSupervisionPopulationByFacility: PATHWAYS_SECTIONS.countByLocation,
+    prisonToSupervisionPopulationByRace: PATHWAYS_SECTIONS.countByRace,
+    prisonToSupervisionPopulationPersonLevel:
+      PATHWAYS_SECTIONS.personLevelDetail,
+    supervisionPopulationOverTime: PATHWAYS_SECTIONS.countOverTime,
+    supervisionPopulationByDistrict: PATHWAYS_SECTIONS.countByLocation,
+    supervisionPopulationByRace: PATHWAYS_SECTIONS.countByRace,
+    supervisionPopulationBySupervisionLevel:
+      PATHWAYS_SECTIONS.countBySupervisionLevel,
+    supervisionToPrisonOverTime: PATHWAYS_SECTIONS.countOverTime,
+    supervisionToPrisonPopulationByDistrict: PATHWAYS_SECTIONS.countByLocation,
+    supervisionToPrisonPopulationByMostSevereViolation:
+      PATHWAYS_SECTIONS.countByMostSevereViolation,
+    supervisionToPrisonPopulationByNumberOfViolations:
+      PATHWAYS_SECTIONS.countByNumberOfViolations,
+    supervisionToPrisonPopulationByLengthOfStay:
+      PATHWAYS_SECTIONS.countByLengthOfStay,
+    supervisionToPrisonPopulationBySupervisionLevel:
+      PATHWAYS_SECTIONS.countBySupervisionLevel,
+    supervisionToPrisonPopulationByGender: PATHWAYS_SECTIONS.countByGender,
+    supervisionToPrisonPopulationByRace: PATHWAYS_SECTIONS.countByRace,
+    supervisionToPrisonPopulationByOfficer: PATHWAYS_SECTIONS.countByOfficer,
+    supervisionToLibertyOverTime: PATHWAYS_SECTIONS.countOverTime,
+    supervisionToLibertyPopulationByLengthOfStay:
+      PATHWAYS_SECTIONS.countByLengthOfStay,
+    supervisionToLibertyPopulationByLocation: PATHWAYS_SECTIONS.countByLocation,
+    supervisionToLibertyPopulationByGender: PATHWAYS_SECTIONS.countByGender,
+    supervisionToLibertyPopulationByAgeGroup: PATHWAYS_SECTIONS.countByAgeGroup,
+    supervisionToLibertyPopulationByRace: PATHWAYS_SECTIONS.countByRace,
+  };
 
 export function getSectionIdForMetric(metric: MetricId): PathwaysSection {
   return PATHWAYS_SECTION_BY_METRIC_ID[metric];

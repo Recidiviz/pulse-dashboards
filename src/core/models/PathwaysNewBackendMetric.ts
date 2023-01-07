@@ -68,7 +68,8 @@ export type BaseNewMetricConstructorOptions = {
 
 export default abstract class PathwaysNewBackendMetric<
   RecordFormat extends MetricRecord
-> implements HydratablePathwaysMetric {
+> implements HydratablePathwaysMetric
+{
   readonly id: MetricId;
 
   readonly endpoint: string;
@@ -93,6 +94,8 @@ export default abstract class PathwaysNewBackendMetric<
 
   protected allRecords?: RecordFormat[];
 
+  // this is just a noop stub method to be overridden when needed
+  // eslint-disable-next-line class-methods-use-this
   protected dataTransformer: (d: RecordFormat[]) => RecordFormat[] = (
     d: RecordFormat[]
   ) => {

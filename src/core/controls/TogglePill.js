@@ -21,7 +21,7 @@ import cx from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 
-const TogglePill = ({ currentValue, onChange, leftPill, rightPill }) => {
+function TogglePill({ currentValue, onChange, leftPill, rightPill }) {
   return (
     <div className="TogglePill">
       {[leftPill, rightPill].map(({ value, label }) => (
@@ -38,7 +38,7 @@ const TogglePill = ({ currentValue, onChange, leftPill, rightPill }) => {
       ))}
     </div>
   );
-};
+}
 
 TogglePill.propTypes = {
   currentValue: PropTypes.string.isRequired,

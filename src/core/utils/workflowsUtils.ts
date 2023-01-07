@@ -68,7 +68,8 @@ export const OPPORTUNITY_STATUS_COLORS = {
   },
 } as const;
 
-export type StatusPalette = typeof OPPORTUNITY_STATUS_COLORS[keyof typeof OPPORTUNITY_STATUS_COLORS];
+export type StatusPalette =
+  typeof OPPORTUNITY_STATUS_COLORS[keyof typeof OPPORTUNITY_STATUS_COLORS];
 
 export function useStatusColors(opportunity: Opportunity): StatusPalette {
   if (opportunity.isAlert) {

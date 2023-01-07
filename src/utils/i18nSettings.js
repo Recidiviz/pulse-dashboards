@@ -15,30 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { I18n } from "i18n";
+import i18next from "i18next";
 
 import { TRANSLATIONS } from "../RootStore/TenantStore/lanternTenants";
 
-export const i18n = new I18n();
+export const i18n = i18next;
 
 export function initI18n() {
-  i18n.configure({
-    staticCatalog: {
-      US_MO: TRANSLATIONS.US_MO,
-      US_PA: TRANSLATIONS.US_PA,
+  i18next.init({
+    resources: {
+      US_MO: { lantern: TRANSLATIONS.US_MO },
+      US_PA: { lantern: TRANSLATIONS.US_PA },
     },
-    defaultLocale: "US_PA",
-    missingKeyFn(locale, value) {
-      return value;
-    },
+    ns: "lantern",
+    lng: "US_PA",
+    supportedLngs: ["US_PA", "US_MO"],
+    returnObjects: true,
   });
 }
 
 export function setTranslateLocale(tenant) {
-  i18n.setLocale(tenant);
+  return i18next.changeLanguage(tenant);
 }
 
 export function translate(term) {
-  /* eslint-disable no-underscore-dangle */
-  return i18n.__(term);
+  return i18next.t(term);
 }

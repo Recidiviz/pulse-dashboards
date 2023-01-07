@@ -119,18 +119,16 @@ export type PersonRecordType =
   | ClientRecord
   | ResidentRecord;
 
-export type PersonClassForRecord<
-  RecordType extends PersonRecordType
-> = RecordType extends ResidentRecord
-  ? Resident
-  : RecordType extends ClientRecord
-  ? Client
-  : JusticeInvolvedPerson;
+export type PersonClassForRecord<RecordType extends PersonRecordType> =
+  RecordType extends ResidentRecord
+    ? Resident
+    : RecordType extends ClientRecord
+    ? Client
+    : JusticeInvolvedPerson;
 
-export type OpportunityTypeForRecord<
-  PersonRecord extends PersonRecordType
-> = PersonRecord extends ClientRecord
-  ? SupervisionOpportunityType
-  : PersonRecord extends ResidentRecord
-  ? IncarcerationOpportunityType
-  : never;
+export type OpportunityTypeForRecord<PersonRecord extends PersonRecordType> =
+  PersonRecord extends ClientRecord
+    ? SupervisionOpportunityType
+    : PersonRecord extends ResidentRecord
+    ? IncarcerationOpportunityType
+    : never;

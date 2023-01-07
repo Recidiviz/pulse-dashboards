@@ -49,7 +49,8 @@ jest.mock("../../subscriptions");
 jest.mock("../../../firestore");
 jest.mock("../../../analytics");
 
-const updateOpportunityFirstViewedMock = updateOpportunityFirstViewed as jest.Mock;
+const updateOpportunityFirstViewedMock =
+  updateOpportunityFirstViewed as jest.Mock;
 const updateOpportunityCompletedMock = updateOpportunityCompleted as jest.Mock;
 const trackSetOpportunityStatusMock = trackSetOpportunityStatus as jest.Mock;
 const mockUpdateOpportunityDenial = updateOpportunityDenial as jest.Mock;

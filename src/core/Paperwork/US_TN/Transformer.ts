@@ -50,8 +50,10 @@ export const transform = (
     clientFullName: client.displayName,
     dateToday: formatWorkflowsDate(new Date()),
     telephoneNumber: client.formattedPhoneNumber,
-    specialConditionsCounselingAngerManagementComplete: !!data.specialConditionsCounselingAngerManagementCompleteDate,
-    specialConditionsCounselingMentalHealthComplete: !!data.specialConditionsCounselingMentalHealthCompleteDate,
+    specialConditionsCounselingAngerManagementComplete:
+      !!data.specialConditionsCounselingAngerManagementCompleteDate,
+    specialConditionsCounselingMentalHealthComplete:
+      !!data.specialConditionsCounselingMentalHealthCompleteDate,
 
     currentOffenses: data.currentOffenses || [],
     restitutionMonthlyPaymentTo:

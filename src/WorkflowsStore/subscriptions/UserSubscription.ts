@@ -48,9 +48,9 @@ const validateUserRecord: ValidateFunction<UserRecord> = (doc) => {
  */
 function mockOverrideSnapshot(record: StaffRecord) {
   const resultsSubstitute = [{ data: () => record }];
-  return ({
+  return {
     forEach: resultsSubstitute.forEach.bind(resultsSubstitute),
-  } as unknown) as QuerySnapshot;
+  } as unknown as QuerySnapshot;
 }
 
 export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {

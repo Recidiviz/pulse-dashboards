@@ -32,21 +32,24 @@ import {
 } from "./SupervisionLevelDowngradeReferralRecord";
 import { OpportunityRequirement } from "./types";
 
-export type UsIdSupervisionLevelDowngradeReferralRecord = SupervisionLevelDowngradeReferralRecord;
+export type UsIdSupervisionLevelDowngradeReferralRecord =
+  SupervisionLevelDowngradeReferralRecord;
 
-const getRecordValidator = (client: Client) => (
-  record: DocumentData | undefined
-): ValidateFunction<SupervisionLevelDowngradeReferralRecord> => {
-  const featureFlags = client.rootStore.workflowsStore.featureVariants;
+const getRecordValidator =
+  (client: Client) =>
+  (
+    record: DocumentData | undefined
+  ): ValidateFunction<SupervisionLevelDowngradeReferralRecord> => {
+    const featureFlags = client.rootStore.workflowsStore.featureVariants;
 
-  if (!featureFlags.usIdSupervisionLevelDowngrade) {
-    throw new OpportunityValidationError(
-      "usIdSupervisionLevelDowngrade opportunity is not enabled for this user."
-    );
-  }
+    if (!featureFlags.usIdSupervisionLevelDowngrade) {
+      throw new OpportunityValidationError(
+        "usIdSupervisionLevelDowngrade opportunity is not enabled for this user."
+      );
+    }
 
-  return getBaseSLDValidator(client);
-};
+    return getBaseSLDValidator(client);
+  };
 
 export class UsIdSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,

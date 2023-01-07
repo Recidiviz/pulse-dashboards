@@ -4,7 +4,7 @@ import ScrollableAnchor from "react-scrollable-anchor";
 
 import ModelInfrastructureBlock from "./ModelInfrastructureBlock";
 
-const MethodologyBlock = ({ contentBlock, target }) => {
+function MethodologyBlock({ contentBlock, target }) {
   return (
     <ScrollableAnchor id={target}>
       <div>
@@ -34,7 +34,7 @@ const MethodologyBlock = ({ contentBlock, target }) => {
       </div>
     </ScrollableAnchor>
   );
-};
+}
 MethodologyBlock.propTypes = {
   target: PropTypes.string.isRequired,
   contentBlock: PropTypes.shape({

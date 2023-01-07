@@ -32,17 +32,13 @@ import { nullSafeCell } from "./utils/helpers";
 
 export const CASES_PER_PAGE = 15;
 
-const CaseTable = ({ timeDescription }) => {
+function CaseTable({ timeDescription }) {
   const { dataStore } = useLanternStore();
   const store = dataStore.caseTableStore;
   const TABLE_TITLE = translate("caseTableTitle");
   const [page, setPage] = useState(0);
-  const {
-    columns,
-    formatTableData,
-    formatExportData,
-    formatAdmissionHistory,
-  } = store;
+  const { columns, formatTableData, formatExportData, formatAdmissionHistory } =
+    store;
   const { sortOrder, sortField, toggleOrder, comparator } = useSort(
     formatAdmissionHistory
   );
@@ -123,7 +119,7 @@ const CaseTable = ({ timeDescription }) => {
       )}
     </div>
   );
-};
+}
 
 CaseTable.propTypes = {
   timeDescription: PropTypes.string.isRequired,

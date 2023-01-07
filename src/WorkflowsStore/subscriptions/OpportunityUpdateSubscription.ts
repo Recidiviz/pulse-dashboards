@@ -64,10 +64,8 @@ async function migrateOpportunityUpdate(
   // if destination document does not already exist, we will look for a legacy document to migrate
   let dataToMigrate: OpportunityUpdateWithForm<Record<string, any>> | undefined;
   if (!(await getDoc(updateDocRef)).exists()) {
-    const {
-      docRef: v2UpdatesDocRef,
-      oldDocument: v1UpdatesDoc,
-    } = await getClientUpdatesV2DocRef(clientId, clientRecordId);
+    const { docRef: v2UpdatesDocRef, oldDocument: v1UpdatesDoc } =
+      await getClientUpdatesV2DocRef(clientId, clientRecordId);
 
     // legacy format(s): object nested directly in the update doc
     let legacyRecord = v1UpdatesDoc;

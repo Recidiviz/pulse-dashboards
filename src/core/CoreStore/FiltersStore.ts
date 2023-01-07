@@ -166,9 +166,8 @@ export default class FiltersStore {
 
   get filtersLabels(): PopulationFilterLabels {
     return keys(this.filters).reduce((acc, filterType) => {
-      const filter = this.filterOptions[
-        filterType as keyof PopulationFilterLabels
-      ];
+      const filter =
+        this.filterOptions[filterType as keyof PopulationFilterLabels];
       const labels = getFilterOptions(
         this.filters[filter.type] as string[],
         filter.options

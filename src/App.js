@@ -58,8 +58,8 @@ initI18n();
 const SHARED_VIEWS = ["", "profile"];
 
 // prettier-ignore
-const App = () => (
-    <StoreProvider>
+function App() {
+  return (<StoreProvider>
       <Router>
         <SentryErrorBoundary>
           <QueryParamProvider ReactRouterRoute={Route}>
@@ -93,7 +93,7 @@ const App = () => (
           </QueryParamProvider>
         </SentryErrorBoundary>
       </Router>
-    </StoreProvider>
-);
+    </StoreProvider>)
+}
 
 export default App;

@@ -1,7 +1,7 @@
 import React from "react";
 import { Table } from "reactstrap";
 
-const ModelInfrastructureBlock = () => {
+function ModelInfrastructureBlock() {
   return (
     <div className="Methodology__block--content">
       <p>
@@ -247,5 +247,5 @@ const ModelInfrastructureBlock = () => {
       </p>
     </div>
   );
-};
+}
 export default ModelInfrastructureBlock;

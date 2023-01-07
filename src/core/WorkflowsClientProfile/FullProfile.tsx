@@ -93,9 +93,7 @@ const Divider = styled.hr`
   margin: ${rem(spacing.md)} 0;
 `;
 
-const AdditionalDetails = ({
-  person,
-}: PersonProfileProps): React.ReactElement => {
+function AdditionalDetails({ person }: PersonProfileProps): React.ReactElement {
   if (person instanceof Client) {
     return <ClientDetails client={person} />;
   }
@@ -105,9 +103,9 @@ const AdditionalDetails = ({
   }
 
   return <div />;
-};
+}
 
-const ClientDetails = ({ client }: ClientProfileProps): React.ReactElement => {
+function ClientDetails({ client }: ClientProfileProps): React.ReactElement {
   return (
     <>
       <SectionHeading>Progress toward success</SectionHeading>
@@ -125,11 +123,11 @@ const ClientDetails = ({ client }: ClientProfileProps): React.ReactElement => {
       <SpecialConditions client={client} />
     </>
   );
-};
+}
 
-const ResidentDetails = ({
+function ResidentDetails({
   resident,
-}: ResidentProfileProps): React.ReactElement => {
+}: ResidentProfileProps): React.ReactElement {
   return (
     <>
       <SectionHeading>Progress toward success</SectionHeading>
@@ -140,11 +138,11 @@ const ResidentDetails = ({
       <Divider />
     </>
   );
-};
+}
 
-const ContactDetails = ({
+function ContactDetails({
   person,
-}: PersonProfileProps): React.ReactElement | null => {
+}: PersonProfileProps): React.ReactElement | null {
   if (!(person instanceof Client)) return null;
 
   return (
@@ -157,7 +155,7 @@ const ContactDetails = ({
       </div>
     </ContactCell>
   );
-};
+}
 
 export const FullProfile = observer(
   function FullProfile(): React.ReactElement | null {

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isEqual } from "lodash";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
@@ -62,11 +63,8 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
 
   const { compartment } = data[0];
 
-  const {
-    historicalPopulation,
-    projectedPopulation,
-    uncertainty,
-  } = prepareData(metric, data);
+  const { historicalPopulation, projectedPopulation, uncertainty } =
+    prepareData(metric, data);
 
   const { beginDate, endDate } = getDateRange(
     historicalPopulation[0].date,
@@ -115,8 +113,8 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
     {
       type: "y",
       value:
-        gender === ["ALL"] &&
-        legalStatus === ["ALL"] &&
+        isEqual(gender, ["ALL"]) &&
+        isEqual(legalStatus, ["ALL"]) &&
         compartment === "INCARCERATION"
           ? TOTAL_INCARCERATED_LIMIT
           : 1e6,
@@ -152,6 +150,7 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
       // additional components
       summaries={projectionArea}
       annotations={annotations}
+      // eslint-disable-next-line react/no-unstable-nested-components
       svgAnnotationRules={(d: any) => {
         // don't display hover annotations on corners of projection box
         if (d.d.parentSummary !== undefined) {

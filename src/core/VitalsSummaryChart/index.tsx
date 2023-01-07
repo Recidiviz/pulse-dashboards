@@ -20,6 +20,7 @@ import "./VitalsSummaryChart.scss";
 import { curveCatmullRom } from "d3-shape";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
+import { ResponsiveOrdinalFrame } from "semiotic";
 
 import flags from "../../flags";
 import { formatISODateString, formatPercent } from "../../utils/formatStrings";
@@ -27,9 +28,6 @@ import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import { METRIC_TYPES } from "../PageVitals/types";
 import VitalsSummaryTooltip from "./VitalsSummaryTooltip";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
-const ResponsiveOrdinalFrame = require("semiotic/lib/ResponsiveOrdinalFrame") as any;
 
 const goals = {
   [METRIC_TYPES.OVERALL]: 80,
@@ -170,6 +168,7 @@ const VitalsSummaryChart: React.FC = () => {
           setHoveredId(null);
           return null;
         }}
+        // eslint-disable-next-line react/no-unstable-nested-components
         tooltipContent={(d: any) => {
           const pieceData = d.pieces[0];
           const columnData = d.column.pieceData[0];
@@ -195,6 +194,8 @@ const VitalsSummaryChart: React.FC = () => {
         rAccessor="value"
         rExtent={[0, 100]}
         size={[0, 295]}
+        // @ts-expect-error - this signature is accurate, probably an error in semiotic types
+        // eslint-disable-next-line react/no-unstable-nested-components
         oLabel={(date: string, _: any, index: number) => {
           // Display the first and then every 30 labels
           if (index === 0 || (index + 1) % 30 === 0) {

@@ -38,12 +38,10 @@ export function compareViolationRecords(aRecordLabel, bRecordLabel) {
     (violation) => bRecords[violation]
   );
 
-  const aMostSevereViolationIndex = violationsBySeverity.indexOf(
-    aMostSevereViolation
-  );
-  const bMostSevereViolationIndex = violationsBySeverity.indexOf(
-    bMostSevereViolation
-  );
+  const aMostSevereViolationIndex =
+    violationsBySeverity.indexOf(aMostSevereViolation);
+  const bMostSevereViolationIndex =
+    violationsBySeverity.indexOf(bMostSevereViolation);
 
   if (aMostSevereViolationIndex !== bMostSevereViolationIndex) {
     return bMostSevereViolationIndex - aMostSevereViolationIndex;

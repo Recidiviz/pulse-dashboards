@@ -44,13 +44,14 @@ import {
 import { formatNoteDate } from "./utils";
 
 // ranked roughly by actionability
-export const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (keyof AlmostEligibleCriteria)[] = [
-  "paymentNeeded",
-  "passedDrugScreenNeeded",
-  "recentRejectionCodes",
-  "seriousSanctionsEligibilityDate",
-  "currentLevelEligibilityDate",
-];
+export const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (keyof AlmostEligibleCriteria)[] =
+  [
+    "paymentNeeded",
+    "passedDrugScreenNeeded",
+    "recentRejectionCodes",
+    "seriousSanctionsEligibilityDate",
+    "currentLevelEligibilityDate",
+  ];
 
 /**
  * Clients with values other than these should not appear as eligible in the UI.
@@ -123,72 +124,73 @@ const DENIAL_REASONS_MAP = {
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
-type CompliantReportingUpdateRecord = OpportunityUpdateWithForm<CompliantReportingDraftData>;
+type CompliantReportingUpdateRecord =
+  OpportunityUpdateWithForm<CompliantReportingDraftData>;
 
-const getRecordValidator = (client: Client) => (
-  record: DocumentData | undefined
-): void => {
-  if (!record) {
-    throw new OpportunityValidationError("No opportunity record found");
-  }
-  const {
-    eligibilityCategory,
-    remainingCriteriaNeeded,
-    almostEligibleCriteria,
-  } = record;
+const getRecordValidator =
+  (client: Client) =>
+  (record: DocumentData | undefined): void => {
+    if (!record) {
+      throw new OpportunityValidationError("No opportunity record found");
+    }
+    const {
+      eligibilityCategory,
+      remainingCriteriaNeeded,
+      almostEligibleCriteria,
+    } = record;
 
-  // only the explicitly allowed categories can be shown to users.
-  // if any others are added they must be suppressed until explicitly enabled.
-  if (!COMPLIANT_REPORTING_ACTIVE_CATEGORIES.includes(eligibilityCategory)) {
-    throw new OpportunityValidationError("Unsupported eligibility category");
-  }
-
-  if (remainingCriteriaNeeded) {
-    const definedAlmostEligibleKeys = almostEligibleCriteria
-      ? (Object.keys(
-          almostEligibleCriteria
-        ) as (keyof AlmostEligibleCriteria)[]).filter(
-          (key) => almostEligibleCriteria[key] !== undefined
-        )
-      : [];
-
-    // this is a critical error if we expect an almost-eligible client
-    // but don't have any valid criteria to report, because it could result in the
-    // client being erroneously marked eligible
-    if (definedAlmostEligibleKeys.length === 0) {
-      throw new OpportunityValidationError(
-        "Missing required valid almost-eligible criteria"
-      );
+    // only the explicitly allowed categories can be shown to users.
+    // if any others are added they must be suppressed until explicitly enabled.
+    if (!COMPLIANT_REPORTING_ACTIVE_CATEGORIES.includes(eligibilityCategory)) {
+      throw new OpportunityValidationError("Unsupported eligibility category");
     }
 
-    if (definedAlmostEligibleKeys.length !== remainingCriteriaNeeded) {
-      // we can recover from this by displaying the valid criteria that remain,
-      // but it should be logged for investigation
-      Sentry.captureException(
-        new OpportunityValidationError(
-          `Expected ${remainingCriteriaNeeded} valid almost-criteria for client ${client.pseudonymizedId}
+    if (remainingCriteriaNeeded) {
+      const definedAlmostEligibleKeys = almostEligibleCriteria
+        ? (
+            Object.keys(
+              almostEligibleCriteria
+            ) as (keyof AlmostEligibleCriteria)[]
+          ).filter((key) => almostEligibleCriteria[key] !== undefined)
+        : [];
+
+      // this is a critical error if we expect an almost-eligible client
+      // but don't have any valid criteria to report, because it could result in the
+      // client being erroneously marked eligible
+      if (definedAlmostEligibleKeys.length === 0) {
+        throw new OpportunityValidationError(
+          "Missing required valid almost-eligible criteria"
+        );
+      }
+
+      if (definedAlmostEligibleKeys.length !== remainingCriteriaNeeded) {
+        // we can recover from this by displaying the valid criteria that remain,
+        // but it should be logged for investigation
+        Sentry.captureException(
+          new OpportunityValidationError(
+            `Expected ${remainingCriteriaNeeded} valid almost-criteria for client ${client.pseudonymizedId}
           but only produced ${definedAlmostEligibleKeys.length}`
-        )
-      );
-    }
+          )
+        );
+      }
 
-    // almost eligible is currently defined as missing exactly one criterion
-    if (remainingCriteriaNeeded > 1) {
-      throw new OpportunityValidationError(`Too many remaining criteria`);
-    }
+      // almost eligible is currently defined as missing exactly one criterion
+      if (remainingCriteriaNeeded > 1) {
+        throw new OpportunityValidationError(`Too many remaining criteria`);
+      }
 
-    // drug screen criteria remain behind a feature gate while initial backstop analysis is ongoing
-    if (
-      definedAlmostEligibleKeys.includes("passedDrugScreenNeeded") &&
-      !client.rootStore.workflowsStore.featureVariants
-        .CompliantReportingAlmostEligible
-    ) {
-      throw new OpportunityValidationError(
-        "Missing drug screen feature disabled"
-      );
+      // drug screen criteria remain behind a feature gate while initial backstop analysis is ongoing
+      if (
+        definedAlmostEligibleKeys.includes("passedDrugScreenNeeded") &&
+        !client.rootStore.workflowsStore.featureVariants
+          .CompliantReportingAlmostEligible
+      ) {
+        throw new OpportunityValidationError(
+          "Missing drug screen feature disabled"
+        );
+      }
     }
-  }
-};
+  };
 
 export class CompliantReportingOpportunity extends OpportunityBase<
   Client,
@@ -259,11 +261,8 @@ export class CompliantReportingOpportunity extends OpportunityBase<
   }
 
   get almostEligibleStatusMessage(): string | undefined {
-    const {
-      validAlmostEligibleKeys,
-      almostEligible,
-      requirementAlmostMetMap,
-    } = this;
+    const { validAlmostEligibleKeys, almostEligible, requirementAlmostMetMap } =
+      this;
 
     if (!almostEligible) return;
 
@@ -525,15 +524,16 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       passedDrugScreenNeeded,
       paymentNeeded,
       seriousSanctionsEligibilityDate,
-    } = this.record?.almostEligibleCriteria;
+    } = this.record?.almostEligibleCriteria ?? {};
 
     const currentLevelEligibilityDaysRemaining = currentLevelEligibilityDate
       ? differenceInCalendarDays(currentLevelEligibilityDate, new Date())
       : undefined;
 
-    const seriousSanctionsEligibilityDaysRemaining = seriousSanctionsEligibilityDate
-      ? differenceInCalendarDays(seriousSanctionsEligibilityDate, new Date())
-      : undefined;
+    const seriousSanctionsEligibilityDaysRemaining =
+      seriousSanctionsEligibilityDate
+        ? differenceInCalendarDays(seriousSanctionsEligibilityDate, new Date())
+        : undefined;
 
     return mapValues(
       toJS(this.record?.almostEligibleCriteria),
@@ -590,10 +590,8 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     // not expected to happen in practice but Typescript doesn't know that
     if (!title) return undefined;
 
-    const {
-      currentLevelEligibilityDate,
-      seriousSanctionsEligibilityDate,
-    } = this.record?.almostEligibleCriteria;
+    const { currentLevelEligibilityDate, seriousSanctionsEligibilityDate } =
+      this.record?.almostEligibleCriteria ?? {};
 
     let criterionSpecificCopy: string | undefined;
     switch (missingCriterionKey) {
@@ -627,22 +625,23 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 
     if (!criterionSpecificCopy) return undefined;
 
-    const text = `Hey ${this.person.fullName.givenNames}, you’ve been doing well and are 
+    const text =
+      `Hey ${this.person.fullName.givenNames}, you’ve been doing well and are 
     almost eligible for Compliant Reporting, which would let you switch to telephone
     check-ins, rather than needing to report to the office. If you ${criterionSpecificCopy}, 
     you will meet all of the requirements and I can refer you.`.replace(
-      /\s+/gm,
-      " "
-    );
+        /\s+/gm,
+        " "
+      );
 
     return { title, text };
   }
 
   get validAlmostEligibleKeys(): (keyof AlmostEligibleCriteria)[] {
-    return (Object.keys(
-      this.requirementAlmostMetMap
-    ) as (keyof AlmostEligibleCriteria)[]).filter(
-      (key) => this.requirementAlmostMetMap[key] !== undefined
-    );
+    return (
+      Object.keys(
+        this.requirementAlmostMetMap
+      ) as (keyof AlmostEligibleCriteria)[]
+    ).filter((key) => this.requirementAlmostMetMap[key] !== undefined);
   }
 }

@@ -62,7 +62,8 @@ export abstract class OpportunityBase<
   PersonType extends JusticeInvolvedPerson,
   ReferralRecord extends DocumentData,
   UpdateRecord extends OpportunityUpdateWithForm<any> = OpportunityUpdate
-> implements Opportunity<PersonType> {
+> implements Opportunity<PersonType>
+{
   readonly type: OpportunityType;
 
   rootStore: RootStore;
@@ -103,12 +104,13 @@ export abstract class OpportunityBase<
     this.type = type;
     this.rootStore = rootStore;
 
-    this.referralSubscription = new CollectionDocumentSubscription<ReferralRecord>(
-      `${type}Referrals` as const,
-      person.recordId,
-      transformReferral,
-      validateRecord
-    );
+    this.referralSubscription =
+      new CollectionDocumentSubscription<ReferralRecord>(
+        `${type}Referrals` as const,
+        person.recordId,
+        transformReferral,
+        validateRecord
+      );
     this.updatesSubscription = new OpportunityUpdateSubscription<UpdateRecord>(
       person.recordId,
       person.externalId,

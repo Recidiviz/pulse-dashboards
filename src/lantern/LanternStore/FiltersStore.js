@@ -86,11 +86,11 @@ export default class FiltersStore {
     if (!this.filterOptions || !districtKeys || !districtKeys.filterKey)
       return {};
     return {
-      [METRIC_PERIOD_MONTHS]: this.filterOptions[METRIC_PERIOD_MONTHS]
-        .defaultValue,
+      [METRIC_PERIOD_MONTHS]:
+        this.filterOptions[METRIC_PERIOD_MONTHS].defaultValue,
       [CHARGE_CATEGORY]: this.filterOptions[CHARGE_CATEGORY].defaultValue,
-      [REPORTED_VIOLATIONS]: this.filterOptions[REPORTED_VIOLATIONS]
-        .defaultValue,
+      [REPORTED_VIOLATIONS]:
+        this.filterOptions[REPORTED_VIOLATIONS].defaultValue,
       [VIOLATION_TYPE]: this.filterOptions[VIOLATION_TYPE].defaultValue,
       [SUPERVISION_TYPE]: this.filterOptions[SUPERVISION_TYPE].defaultValue,
       [SUPERVISION_LEVEL]: this.filterOptions[SUPERVISION_LEVEL].defaultValue,

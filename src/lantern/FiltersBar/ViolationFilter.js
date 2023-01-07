@@ -30,7 +30,7 @@ import { useLanternStore } from "../LanternStoreProvider";
 import { REPORTED_VIOLATIONS, VIOLATION_TYPE } from "../utils/constants";
 import FilterField from "./FilterField";
 
-const ViolationFilter = () => {
+function ViolationFilter() {
   const { filtersStore, filters } = useLanternStore();
   const { filterOptions } = filtersStore;
   const reportedViolations = get(filters, REPORTED_VIOLATIONS);
@@ -72,6 +72,6 @@ const ViolationFilter = () => {
       </FilterField>
     </div>
   );
-};
+}
 
 export default observer(ViolationFilter);

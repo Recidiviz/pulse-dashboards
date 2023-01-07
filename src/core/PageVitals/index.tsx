@@ -46,11 +46,8 @@ const PageVitals: React.FC = () => {
 
   const { metricsStore, vitalsStore } = useCoreStore();
   const { isLoading, isError } = metricsStore.vitals;
-  const {
-    currentEntitySummary,
-    downloadData,
-    childEntitySummaryRows,
-  } = vitalsStore;
+  const { currentEntitySummary, downloadData, childEntitySummaryRows } =
+    vitalsStore;
 
   window.scrollTo({
     top: 0,

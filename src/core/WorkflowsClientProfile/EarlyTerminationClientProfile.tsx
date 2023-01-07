@@ -28,8 +28,11 @@ type EarlyTerminationClientProfileProps = {
   formPrintButton?: boolean;
 };
 
-export const EarlyTerminationClientProfile: React.FC<EarlyTerminationClientProfileProps> = observer(
-  function EarlyTerminationClientProfile({ formLinkButton, formPrintButton }) {
+export const EarlyTerminationClientProfile: React.FC<EarlyTerminationClientProfileProps> =
+  observer(function EarlyTerminationClientProfile({
+    formLinkButton,
+    formPrintButton,
+  }) {
     const { workflowsStore } = useRootStore();
 
     const client = workflowsStore.selectedClient;
@@ -50,5 +53,4 @@ export const EarlyTerminationClientProfile: React.FC<EarlyTerminationClientProfi
         <Contact client={client} />
       </article>
     );
-  }
-);
+  });

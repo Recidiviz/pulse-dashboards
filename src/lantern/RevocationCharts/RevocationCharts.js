@@ -32,13 +32,10 @@ import RevocationsByRace from "../RevocationsByRace";
 import RevocationsByRiskLevel from "../RevocationsByRiskLevel";
 import RevocationsByViolation from "../RevocationsByViolation";
 
-const RevocationCharts = ({ timeDescription }) => {
+function RevocationCharts({ timeDescription }) {
   const dataStore = useDataStore();
-  const {
-    availableChartIds,
-    selectedChart,
-    setSelectedChart,
-  } = dataStore.revocationsChartStore;
+  const { availableChartIds, selectedChart, setSelectedChart } =
+    dataStore.revocationsChartStore;
   const { containerHeight, containerRef } = useContainerHeight();
   const props = { ref: containerRef, timeDescription, containerHeight };
 
@@ -82,7 +79,7 @@ const RevocationCharts = ({ timeDescription }) => {
       </div>
     </div>
   );
-};
+}
 
 RevocationCharts.propTypes = {
   timeDescription: PropTypes.string.isRequired,

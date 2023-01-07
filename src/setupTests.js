@@ -14,16 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import "jest-extended";
 import "@testing-library/jest-dom/extend-expect";
 import "@testing-library/react-hooks/dont-cleanup-after-each";
 import "jest-canvas-mock";
 
 import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
 import { configure } from "enzyme";
+import * as matchers from "jest-extended";
 import { configure as configureMobx } from "mobx";
 
 import { initI18n } from "./utils/i18nSettings";
+
+expect.extend(matchers);
 
 configureMobx({
   enforceActions: "never",

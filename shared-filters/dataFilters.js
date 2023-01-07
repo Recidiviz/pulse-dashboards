@@ -34,153 +34,148 @@ const {
   ADMISSION_TYPE,
 } = getFilterKeys();
 
-const matchesTopLevelFilters = ({
-  filters,
-  skippedFilters = [],
-  treatCategoryAllAsAbsent = false,
-}) => (item, dimensionKey = undefined) => {
-  if (
-    (dimensionKey === undefined || dimensionKey === "metric_period_months") &&
-    filters[METRIC_PERIOD_MONTHS] &&
-    !skippedFilters.includes(METRIC_PERIOD_MONTHS) &&
-    !nullSafeComparison(
-      item.metric_period_months,
-      filters[METRIC_PERIOD_MONTHS]
-    )
-  ) {
-    return false;
-  }
+const matchesTopLevelFilters =
+  ({ filters, skippedFilters = [], treatCategoryAllAsAbsent = false }) =>
+  (item, dimensionKey = undefined) => {
+    if (
+      (dimensionKey === undefined || dimensionKey === "metric_period_months") &&
+      filters[METRIC_PERIOD_MONTHS] &&
+      !skippedFilters.includes(METRIC_PERIOD_MONTHS) &&
+      !nullSafeComparison(
+        item.metric_period_months,
+        filters[METRIC_PERIOD_MONTHS]
+      )
+    ) {
+      return false;
+    }
 
-  if (
-    (dimensionKey === undefined || dimensionKey === "district") &&
-    filters[DISTRICT] &&
-    !skippedFilters.includes(DISTRICT) &&
-    !(treatCategoryAllAsAbsent && includesAllItemFirst(filters[DISTRICT])) &&
-    !nullSafeComparison(item.district, filters[DISTRICT])
-  ) {
-    return false;
-  }
+    if (
+      (dimensionKey === undefined || dimensionKey === "district") &&
+      filters[DISTRICT] &&
+      !skippedFilters.includes(DISTRICT) &&
+      !(treatCategoryAllAsAbsent && includesAllItemFirst(filters[DISTRICT])) &&
+      !nullSafeComparison(item.district, filters[DISTRICT])
+    ) {
+      return false;
+    }
 
-  if (
-    (dimensionKey === undefined ||
-      dimensionKey === "level_1_supervision_location") &&
-    filters[LEVEL_1_SUPERVISION_LOCATION] &&
-    !skippedFilters.includes(LEVEL_1_SUPERVISION_LOCATION) &&
-    !(
-      treatCategoryAllAsAbsent &&
-      includesAllItemFirst(filters[LEVEL_1_SUPERVISION_LOCATION])
-    ) &&
-    !nullSafeComparison(
-      item.level_1_supervision_location,
-      filters[LEVEL_1_SUPERVISION_LOCATION]
-    )
-  ) {
-    return false;
-  }
+    if (
+      (dimensionKey === undefined ||
+        dimensionKey === "level_1_supervision_location") &&
+      filters[LEVEL_1_SUPERVISION_LOCATION] &&
+      !skippedFilters.includes(LEVEL_1_SUPERVISION_LOCATION) &&
+      !(
+        treatCategoryAllAsAbsent &&
+        includesAllItemFirst(filters[LEVEL_1_SUPERVISION_LOCATION])
+      ) &&
+      !nullSafeComparison(
+        item.level_1_supervision_location,
+        filters[LEVEL_1_SUPERVISION_LOCATION]
+      )
+    ) {
+      return false;
+    }
 
-  if (
-    (dimensionKey === undefined ||
-      dimensionKey === "level_2_supervision_location") &&
-    filters[LEVEL_2_SUPERVISION_LOCATION] &&
-    !skippedFilters.includes(LEVEL_2_SUPERVISION_LOCATION) &&
-    !(
-      treatCategoryAllAsAbsent &&
-      includesAllItemFirst(filters[LEVEL_2_SUPERVISION_LOCATION])
-    ) &&
-    !nullSafeComparison(
-      item.level_2_supervision_location,
-      filters[LEVEL_2_SUPERVISION_LOCATION]
-    )
-  ) {
-    return false;
-  }
+    if (
+      (dimensionKey === undefined ||
+        dimensionKey === "level_2_supervision_location") &&
+      filters[LEVEL_2_SUPERVISION_LOCATION] &&
+      !skippedFilters.includes(LEVEL_2_SUPERVISION_LOCATION) &&
+      !(
+        treatCategoryAllAsAbsent &&
+        includesAllItemFirst(filters[LEVEL_2_SUPERVISION_LOCATION])
+      ) &&
+      !nullSafeComparison(
+        item.level_2_supervision_location,
+        filters[LEVEL_2_SUPERVISION_LOCATION]
+      )
+    ) {
+      return false;
+    }
 
-  if (
-    (dimensionKey === undefined || dimensionKey === "charge_category") &&
-    filters[CHARGE_CATEGORY] &&
-    !skippedFilters.includes(CHARGE_CATEGORY) &&
-    !(treatCategoryAllAsAbsent && isAllItem(filters[CHARGE_CATEGORY])) &&
-    !nullSafeComparison(item.charge_category, filters[CHARGE_CATEGORY])
-  ) {
-    return false;
-  }
-  if (
-    (dimensionKey === undefined || dimensionKey === "supervision_type") &&
-    filters[SUPERVISION_TYPE] &&
-    !skippedFilters.includes(SUPERVISION_TYPE) &&
-    !(treatCategoryAllAsAbsent && isAllItem(filters[SUPERVISION_TYPE])) &&
-    !nullSafeComparison(item.supervision_type, filters[SUPERVISION_TYPE])
-  ) {
-    return false;
-  }
-  if (
-    (dimensionKey === undefined || dimensionKey === "admission_type") &&
-    filters[ADMISSION_TYPE] &&
-    !skippedFilters.includes(ADMISSION_TYPE) &&
-    !(
-      treatCategoryAllAsAbsent && includesAllItemFirst(filters[ADMISSION_TYPE])
-    ) &&
-    !nullSafeComparison(item.admission_type, filters[ADMISSION_TYPE])
-  ) {
-    return false;
-  }
-  if (
-    (dimensionKey === undefined || dimensionKey === "supervision_level") &&
-    filters[SUPERVISION_LEVEL] &&
-    !skippedFilters.includes(SUPERVISION_LEVEL) &&
-    !nullSafeComparison(item.supervision_level, filters[SUPERVISION_LEVEL]) &&
-    !(treatCategoryAllAsAbsent && isAllItem(filters[SUPERVISION_LEVEL]))
-  ) {
-    return false;
-  }
-  return true;
-};
+    if (
+      (dimensionKey === undefined || dimensionKey === "charge_category") &&
+      filters[CHARGE_CATEGORY] &&
+      !skippedFilters.includes(CHARGE_CATEGORY) &&
+      !(treatCategoryAllAsAbsent && isAllItem(filters[CHARGE_CATEGORY])) &&
+      !nullSafeComparison(item.charge_category, filters[CHARGE_CATEGORY])
+    ) {
+      return false;
+    }
+    if (
+      (dimensionKey === undefined || dimensionKey === "supervision_type") &&
+      filters[SUPERVISION_TYPE] &&
+      !skippedFilters.includes(SUPERVISION_TYPE) &&
+      !(treatCategoryAllAsAbsent && isAllItem(filters[SUPERVISION_TYPE])) &&
+      !nullSafeComparison(item.supervision_type, filters[SUPERVISION_TYPE])
+    ) {
+      return false;
+    }
+    if (
+      (dimensionKey === undefined || dimensionKey === "admission_type") &&
+      filters[ADMISSION_TYPE] &&
+      !skippedFilters.includes(ADMISSION_TYPE) &&
+      !(
+        treatCategoryAllAsAbsent &&
+        includesAllItemFirst(filters[ADMISSION_TYPE])
+      ) &&
+      !nullSafeComparison(item.admission_type, filters[ADMISSION_TYPE])
+    ) {
+      return false;
+    }
+    if (
+      (dimensionKey === undefined || dimensionKey === "supervision_level") &&
+      filters[SUPERVISION_LEVEL] &&
+      !skippedFilters.includes(SUPERVISION_LEVEL) &&
+      !nullSafeComparison(item.supervision_level, filters[SUPERVISION_LEVEL]) &&
+      !(treatCategoryAllAsAbsent && isAllItem(filters[SUPERVISION_LEVEL]))
+    ) {
+      return false;
+    }
+    return true;
+  };
 
-const matchesMatrixFilters = (filters, treatCategoryAllAsAbsent) => (
-  item,
-  dimensionKey
-) => {
-  if (
-    (dimensionKey === undefined || dimensionKey === "violation_type") &&
-    filters[VIOLATION_TYPE] &&
-    !nullSafeComparison(item.violation_type, filters[VIOLATION_TYPE]) &&
-    !(treatCategoryAllAsAbsent && isAllItem(filters[VIOLATION_TYPE]))
-  ) {
-    return false;
-  }
+const matchesMatrixFilters =
+  (filters, treatCategoryAllAsAbsent) => (item, dimensionKey) => {
+    if (
+      (dimensionKey === undefined || dimensionKey === "violation_type") &&
+      filters[VIOLATION_TYPE] &&
+      !nullSafeComparison(item.violation_type, filters[VIOLATION_TYPE]) &&
+      !(treatCategoryAllAsAbsent && isAllItem(filters[VIOLATION_TYPE]))
+    ) {
+      return false;
+    }
 
-  if (
-    (dimensionKey === undefined || dimensionKey === "reported_violations") &&
-    filters[REPORTED_VIOLATIONS] &&
-    !nullSafeComparison(
-      item.reported_violations,
-      filters[REPORTED_VIOLATIONS]
-    ) &&
-    !(treatCategoryAllAsAbsent && isAllItem(filters[REPORTED_VIOLATIONS]))
-  ) {
-    return false;
-  }
-  return true;
-};
+    if (
+      (dimensionKey === undefined || dimensionKey === "reported_violations") &&
+      filters[REPORTED_VIOLATIONS] &&
+      !nullSafeComparison(
+        item.reported_violations,
+        filters[REPORTED_VIOLATIONS]
+      ) &&
+      !(treatCategoryAllAsAbsent && isAllItem(filters[REPORTED_VIOLATIONS]))
+    ) {
+      return false;
+    }
+    return true;
+  };
 
-const matchesAllFilters = ({
-  filters,
-  skippedFilters = [],
-  treatCategoryAllAsAbsent = false,
-}) => (item, dimensionKey = undefined) => {
-  const topLevelFilterFn = matchesTopLevelFilters({
-    filters,
-    skippedFilters,
-    treatCategoryAllAsAbsent,
-  });
-  const matrixFilterFn = matchesMatrixFilters(
-    filters,
-    treatCategoryAllAsAbsent
-  );
-  return (
-    topLevelFilterFn(item, dimensionKey) && matrixFilterFn(item, dimensionKey)
-  );
-};
+const matchesAllFilters =
+  ({ filters, skippedFilters = [], treatCategoryAllAsAbsent = false }) =>
+  (item, dimensionKey = undefined) => {
+    const topLevelFilterFn = matchesTopLevelFilters({
+      filters,
+      skippedFilters,
+      treatCategoryAllAsAbsent,
+    });
+    const matrixFilterFn = matchesMatrixFilters(
+      filters,
+      treatCategoryAllAsAbsent
+    );
+    return (
+      topLevelFilterFn(item, dimensionKey) && matrixFilterFn(item, dimensionKey)
+    );
+  };
 
 module.exports = {
   matchesAllFilters,

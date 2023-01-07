@@ -47,7 +47,7 @@ function SentryErrorBoundary({
   }, [history]);
   return (
     <Sentry.ErrorBoundary
-      fallback={({ error }) => <ErrorMessage error={error} />}
+      fallback={ErrorMessage}
       beforeCapture={handleBeforeCapture}
     >
       {children}

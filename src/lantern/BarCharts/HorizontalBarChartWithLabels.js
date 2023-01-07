@@ -25,14 +25,14 @@ import { COLORS } from "../../assets/scripts/constants/colors";
 import { tooltipForFooterWithCounts } from "../utils/significantStatistics";
 import { tooltipForRateMetricWithCounts } from "../utils/tooltips";
 
-const HorizontalBarChartWithLabels = ({
+function HorizontalBarChartWithLabels({
   id,
   data,
   numerators,
   denominators,
   includeWarning,
   stacked,
-}) => {
+}) {
   const includePercentageInTooltip = stacked;
 
   return (
@@ -122,7 +122,7 @@ const HorizontalBarChartWithLabels = ({
       }}
     />
   );
-};
+}
 
 HorizontalBarChartWithLabels.propTypes = {
   id: PropTypes.string.isRequired,

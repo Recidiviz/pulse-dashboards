@@ -158,30 +158,25 @@ describe("test for currentSpan", () => {
       "4",
     ];
 
-    const monthNamesWithYears = currentSpanMethods.monthNamesAllWithYearsFromNumbers(
-      monthNumbers,
-      true
-    );
+    const monthNamesWithYears =
+      currentSpanMethods.monthNamesAllWithYearsFromNumbers(monthNumbers, true);
     expect(monthNamesWithYears).toEqual(dataExpected);
 
-    const monthNamesWithYearsDifferentOrderArray = currentSpanMethods.monthNamesAllWithYearsFromNumbers(
-      monthNumbersOutOfOrder,
-      true
-    );
+    const monthNamesWithYearsDifferentOrderArray =
+      currentSpanMethods.monthNamesAllWithYearsFromNumbers(
+        monthNumbersOutOfOrder,
+        true
+      );
     expect(monthNamesWithYearsDifferentOrderArray).toEqual(
       expectedForDifferentOrder
     );
 
-    const monthNamesWithYearsEmptyArray = currentSpanMethods.monthNamesAllWithYearsFromNumbers(
-      [],
-      undefined
-    );
+    const monthNamesWithYearsEmptyArray =
+      currentSpanMethods.monthNamesAllWithYearsFromNumbers([], undefined);
     expect(monthNamesWithYearsEmptyArray).toEqual([]);
 
-    const monthNamesWithYearsSmallArray = currentSpanMethods.monthNamesAllWithYearsFromNumbers(
-      longArray,
-      true
-    );
+    const monthNamesWithYearsSmallArray =
+      currentSpanMethods.monthNamesAllWithYearsFromNumbers(longArray, true);
     expect(monthNamesWithYearsSmallArray).toEqual(expectedForLongArray);
   });
 

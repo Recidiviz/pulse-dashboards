@@ -40,7 +40,8 @@ import { defaultTransformFunction, defaultValidateFunction } from "./utils";
 
 export abstract class FirestoreDocumentSubscription<
   DataFormat extends DocumentData = DocumentData
-> implements DocumentSubscription<DataFormat> {
+> implements DocumentSubscription<DataFormat>
+{
   /**
    * Observable handle for fetched data. Always holds the most recently fetched data,
    * which may become stale while the subscription is inactive.

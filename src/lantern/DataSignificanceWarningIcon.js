@@ -19,7 +19,7 @@ import React from "react";
 
 import WarningIcon from "../controls/WarningIcon";
 
-const DataSignificanceWarningIcon = () => {
+function DataSignificanceWarningIcon() {
   const text = `
       Some of the subgroups in this chart are smaller than 100,
       which means the group is too small to make generalizations
@@ -28,6 +28,6 @@ const DataSignificanceWarningIcon = () => {
   `;
 
   return <WarningIcon tooltipText={text} />;
-};
+}
 
 export default DataSignificanceWarningIcon;

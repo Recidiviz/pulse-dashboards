@@ -43,13 +43,13 @@ beforeEach(() => {
 
   configure({ safeDescriptors: false });
 
-  rootStoreMock = ({
+  rootStoreMock = {
     currentTenantId: "US_XX",
     userStore: {
       stateCode: "US_XX",
     },
     user: { email: "test@example.com" },
-  } as unknown) as RootStore;
+  } as unknown as RootStore;
   sub = new UserSubscription(rootStoreMock);
 });
 

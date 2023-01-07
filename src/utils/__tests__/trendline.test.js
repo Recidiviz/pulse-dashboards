@@ -58,12 +58,8 @@ describe("test for file trendline", () => {
       data: [],
     };
     const expectedData = [
-      -972.1228571428562,
-      -225.47190476190406,
-      521.1790476190481,
-      1267.8300000000002,
-      2014.4809523809524,
-      2761.1319047619045,
+      -972.1228571428562, -225.47190476190406, 521.1790476190481,
+      1267.8300000000002, 2014.4809523809524, 2761.1319047619045,
     ];
 
     const datasetEmptyPoint = trendlineMethods.generateTrendlineDataset([], "");
@@ -97,18 +93,10 @@ describe("test for file trendline", () => {
 
   it("trendline slope", () => {
     const trendlineValues = [
-      805.3846153846154,
-      775.0705128205128,
-      744.7564102564103,
-      714.4423076923076,
-      684.1282051282051,
-      653.8141025641025,
-      623.5,
-      593.1858974358975,
-      562.8717948717949,
-      532.5576923076924,
-      502.2435897435898,
-      471.92948717948724,
+      805.3846153846154, 775.0705128205128, 744.7564102564103,
+      714.4423076923076, 684.1282051282051, 653.8141025641025, 623.5,
+      593.1858974358975, 562.8717948717949, 532.5576923076924,
+      502.2435897435898, 471.92948717948724,
     ];
     const trendlineWithInvalidValues = [
       205.3846157846154,
@@ -135,20 +123,15 @@ describe("test for file trendline", () => {
     );
     expect(trendlineTestInvalidEntries).toBe(22.212072616239322);
 
-    const trendlineTestUndefinedEntries = trendlineMethods.trendlineSlope(
-      undefined
-    );
+    const trendlineTestUndefinedEntries =
+      trendlineMethods.trendlineSlope(undefined);
     expect(trendlineTestUndefinedEntries).toBe(0);
   });
 
   it("trendline data", () => {
     const expectedData = [
-      -972.1228571428562,
-      -225.47190476190406,
-      521.1790476190481,
-      1267.8300000000002,
-      2014.4809523809524,
-      2761.1319047619045,
+      -972.1228571428562, -225.47190476190406, 521.1790476190481,
+      1267.8300000000002, 2014.4809523809524, 2761.1319047619045,
     ];
     const expectedIncorrectData = [
       NaN,

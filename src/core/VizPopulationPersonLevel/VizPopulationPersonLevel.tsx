@@ -34,11 +34,29 @@ type VizPopulationPersonLevelProps = {
   metric: PrisonPopulationPersonLevelMetric | PersonLevelMetric;
 };
 
+function getFilterLabelCell(accessor: string) {
+  return function FilterLabelCell({ value }: { value: string }) {
+    const {
+      filtersStore: { getFilterLabel },
+    } = useCoreStore();
+
+    return (
+      <div>
+        {getFilterLabel(accessor as keyof PopulationFilterLabels, value)}
+      </div>
+    );
+  };
+}
+
+const TitleCaseCell = ({ value }: { value: string }) => (
+  <div>{toTitleCase(toHumanReadable(value))}</div>
+);
+
 const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
   metric,
 }) => {
   const { filtersStore } = useCoreStore();
-  const { getFilterLabel, filtersDescription } = filtersStore;
+  const { filtersDescription } = filtersStore;
   const { dataSeries, chartTitle, columns, id } = metric;
   if (!columns) return null;
 
@@ -55,20 +73,14 @@ const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
     if (useFilterLabels) {
       return {
         ...column,
-        Cell: ({ value }: { value: string }) => (
-          <div>
-            {getFilterLabel(accessor as keyof PopulationFilterLabels, value)}
-          </div>
-        ),
+        Cell: getFilterLabelCell(accessor),
       };
     }
 
     if (useTitleCase) {
       return {
         ...column,
-        Cell: ({ value }: { value: string }) => (
-          <div>{toTitleCase(toHumanReadable(value))}</div>
-        ),
+        Cell: TitleCaseCell,
       };
     }
 

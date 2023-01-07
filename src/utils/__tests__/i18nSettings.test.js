@@ -42,8 +42,8 @@ describe("i18nSettings", () => {
 
   describe("translate", () => {
     describe("when translate locale is US_MO", () => {
-      beforeAll(() => {
-        setTranslateLocale("US_MO");
+      beforeEach(async () => {
+        await setTranslateLocale("US_MO");
       });
 
       it("translates a known term", () => {
@@ -58,8 +58,8 @@ describe("i18nSettings", () => {
     });
 
     describe("when translate locale is US_PA", () => {
-      beforeAll(() => {
-        setTranslateLocale("US_PA");
+      beforeEach(async () => {
+        await setTranslateLocale("US_PA");
       });
 
       it("translates a known term", () => {
@@ -77,8 +77,20 @@ describe("i18nSettings", () => {
       });
 
       it("defaults to US_PA locale", () => {
-        expect(i18n.getLocale()).toEqual("US_PA");
+        expect(i18n.language).toBe("US_PA");
       });
+    });
+
+    test("translations can be arrays", () => {
+      expect(translate("violationsBySeverity")).toEqual([
+        "law",
+        "high_tech",
+        "absc",
+        "subs",
+        "em",
+        "med_tech",
+        "low_tech",
+      ]);
     });
   });
 });

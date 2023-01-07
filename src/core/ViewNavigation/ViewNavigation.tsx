@@ -27,6 +27,7 @@ import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathw
 import { ReactComponent as WorkflowsLogo } from "../../assets/static/images/workflows.svg";
 import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
+import { TenantId } from "../models/types";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { PATHWAYS_VIEWS } from "../views";
 
@@ -35,6 +36,8 @@ const ViewTooltip: React.FC<{ title: string; body?: string }> = ({
   title,
   body,
 }) => {
+  if (!children) return null;
+
   return (
     <div className="ViewNavigation__tooltip-box">
       {children}
@@ -50,112 +53,28 @@ interface ViewNavigationProps {
   drawer?: boolean;
 }
 
-const ViewNavigation: React.FC<ViewNavigationProps> = ({
-  children,
-  drawer = false,
-}) => {
-  const { pathname } = useLocation();
-  const view = pathname.split("/")[1];
-  const {
-    filtersStore,
-    vitalsStore,
-    currentTenantId,
-    userStore,
-  } = useCoreStore();
+type OptionalLinkProps = { enabled: boolean };
 
-  const navigationLayout = userStore.userAllowedNavigation;
-  if (!navigationLayout || !currentTenantId) return <div />;
+function PathwaysLink({ enabled }: OptionalLinkProps) {
+  const { filtersStore } = useCoreStore();
 
-  // Pathways is enabled if enabledPathwaysPages.length > 0
-  const enabledPathwaysPages = navigationLayout.system || [];
-  // Operations is enabled if enableOperations !== undefined
-  const enableOperations = navigationLayout.operations;
-  const enableWorkflows = Boolean(navigationLayout.workflows);
+  if (!enabled) return null;
 
-  const PathwaysLink = () => {
-    return enabledPathwaysPages.length > 0 ? (
-      <NavLink
-        activeClassName="ViewNavigation__navlink--active"
-        className="ViewNavigation__navlink"
-        to={`/${PATHWAYS_VIEWS.system}`}
-        onClick={() => filtersStore.resetFilters()}
-      >
-        <PathwaysLogo className="ViewNavigation__icon" />
-        <div className="ViewNavigation__navlink-heading">
-          System-Level Trends
-        </div>
-      </NavLink>
-    ) : null;
-  };
+  return (
+    <NavLink
+      activeClassName="ViewNavigation__navlink--active"
+      className="ViewNavigation__navlink"
+      to={`/${PATHWAYS_VIEWS.system}`}
+      onClick={() => filtersStore.resetFilters()}
+    >
+      <PathwaysLogo className="ViewNavigation__icon" />
+      <div className="ViewNavigation__navlink-heading">System-Level Trends</div>
+    </NavLink>
+  );
+}
 
-  const OperationsLink = () => {
-    return enableOperations ? (
-      <NavLink
-        activeClassName="ViewNavigation__navlink--active"
-        className="ViewNavigation__navlink"
-        to={`/${PATHWAYS_VIEWS.operations}`}
-        onClick={() => vitalsStore.resetCurrentEntityId()}
-      >
-        <OperationsLogo className="ViewNavigation__icon" />
-        <div className="ViewNavigation__navlink-heading">
-          Operational Metrics
-        </div>
-      </NavLink>
-    ) : null;
-  };
-
-  const WorkflowsLink = () => {
-    return enableWorkflows ? (
-      <NavLink
-        activeClassName="ViewNavigation__navlink--active"
-        className="ViewNavigation__navlink"
-        to={`/${PATHWAYS_VIEWS.workflows}`}
-      >
-        <WorkflowsLogo className="ViewNavigation__icon" />
-        <div className="ViewNavigation__navlink-heading">Workflows</div>
-      </NavLink>
-    ) : null;
-  };
-
-  const MethodologyLink = () => {
-    const linkContents = (
-      <>
-        <MethodologyLogo className="ViewNavigation__icon" />
-        <div className="ViewNavigation__navlink-heading">Methodology</div>
-      </>
-    );
-
-    if (view === PATHWAYS_VIEWS.workflows) {
-      return (
-        <a
-          className="ViewNavigation__navlink"
-          href={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {linkContents}
-        </a>
-      );
-    }
-
-    const methodologyView =
-      view === PATHWAYS_VIEWS.profile || view === PATHWAYS_VIEWS.methodology
-        ? PATHWAYS_VIEWS.system
-        : view;
-    return (
-      <NavLink
-        className="ViewNavigation__navlink"
-        to={{
-          pathname: `/${PATHWAYS_VIEWS.methodology}/${methodologyView}`,
-          search: `?stateCode=${currentTenantId}`,
-        }}
-      >
-        {linkContents}
-      </NavLink>
-    );
-  };
-
-  const ProfileNavLink = () => (
+function ProfileNavLink() {
+  return (
     <NavLink
       activeClassName="ViewNavigation__navlink--active"
       className="ViewNavigation__navlink"
@@ -165,15 +84,107 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
       <div className="ViewNavigation__navlink-heading">Profile</div>
     </NavLink>
   );
+}
+
+function MethodologyLink({
+  currentTenantId,
+  view,
+}: {
+  currentTenantId: TenantId;
+  view: string;
+}) {
+  const linkContents = (
+    <>
+      <MethodologyLogo className="ViewNavigation__icon" />
+      <div className="ViewNavigation__navlink-heading">Methodology</div>
+    </>
+  );
+
+  if (view === PATHWAYS_VIEWS.workflows) {
+    return (
+      <a
+        className="ViewNavigation__navlink"
+        href={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {linkContents}
+      </a>
+    );
+  }
+
+  const methodologyView =
+    view === PATHWAYS_VIEWS.profile || view === PATHWAYS_VIEWS.methodology
+      ? PATHWAYS_VIEWS.system
+      : view;
+  return (
+    <NavLink
+      className="ViewNavigation__navlink"
+      to={{
+        pathname: `/${PATHWAYS_VIEWS.methodology}/${methodologyView}`,
+        search: `?stateCode=${currentTenantId}`,
+      }}
+    >
+      {linkContents}
+    </NavLink>
+  );
+}
+
+function WorkflowsLink({ enabled }: OptionalLinkProps) {
+  if (!enabled) return null;
+
+  return (
+    <NavLink
+      activeClassName="ViewNavigation__navlink--active"
+      className="ViewNavigation__navlink"
+      to={`/${PATHWAYS_VIEWS.workflows}`}
+    >
+      <WorkflowsLogo className="ViewNavigation__icon" />
+      <div className="ViewNavigation__navlink-heading">Workflows</div>
+    </NavLink>
+  );
+}
+
+function OperationsLink({ enabled }: OptionalLinkProps) {
+  const { vitalsStore } = useCoreStore();
+
+  if (!enabled) return null;
+  return (
+    <NavLink
+      activeClassName="ViewNavigation__navlink--active"
+      className="ViewNavigation__navlink"
+      to={`/${PATHWAYS_VIEWS.operations}`}
+      onClick={() => vitalsStore.resetCurrentEntityId()}
+    >
+      <OperationsLogo className="ViewNavigation__icon" />
+      <div className="ViewNavigation__navlink-heading">Operational Metrics</div>
+    </NavLink>
+  );
+}
+
+const ViewNavigation: React.FC<ViewNavigationProps> = ({
+  children,
+  drawer = false,
+}) => {
+  const { pathname } = useLocation();
+  const view = pathname.split("/")[1];
+  const { currentTenantId, userStore } = useCoreStore();
+
+  const navigationLayout = userStore.userAllowedNavigation;
+  if (!navigationLayout || !currentTenantId) return <div />;
+
+  const enabledPathwaysPages = (navigationLayout.system || []).length > 0;
+  const enableOperations = !!navigationLayout.operations;
+  const enableWorkflows = !!navigationLayout.workflows;
 
   if (drawer) {
     return (
       <div className="ViewNavigation__mobile">
-        <PathwaysLink />
+        <PathwaysLink enabled={enabledPathwaysPages} />
         {children}
-        <OperationsLink />
-        <WorkflowsLink />
-        <MethodologyLink />
+        <OperationsLink enabled={enableOperations} />
+        <WorkflowsLink enabled={enableWorkflows} />
+        <MethodologyLink currentTenantId={currentTenantId} view={view} />
         <ProfileNavLink />
       </div>
     );
@@ -189,26 +200,26 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
         }
         body="A real-time map of the corrections system and how people are moving through it"
       >
-        <PathwaysLink />
+        <PathwaysLink enabled={enabledPathwaysPages} />
       </ViewTooltip>
 
       <ViewTooltip
         title="Operational Metrics"
         body="A birds-eye view of staff- and region-level trends"
       >
-        <OperationsLink />
+        <OperationsLink enabled={enableOperations} />
       </ViewTooltip>
 
       <ViewTooltip
         title="Workflows"
         body="A tool to identify and take action on opportunities to improve outcomes"
       >
-        <WorkflowsLink />
+        <WorkflowsLink enabled={enableWorkflows} />
       </ViewTooltip>
 
       <div className="ViewNavigation__bottom">
         <ViewTooltip title="Methodology">
-          <MethodologyLink />
+          <MethodologyLink currentTenantId={currentTenantId} view={view} />
         </ViewTooltip>
 
         <ViewTooltip title="Profile">

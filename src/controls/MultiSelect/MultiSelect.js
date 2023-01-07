@@ -27,14 +27,14 @@ import GroupHeading from "./GroupHeading";
 import Option from "./Option";
 import ValueContainer from "./ValueContainer";
 
-const MultiSelect = ({
+function MultiSelect({
   summingOption,
   options,
   value,
   onChange,
   className,
   ...props
-}) => {
+}) {
   const ref = useRef();
   useEffect(() => {
     if (ref.current && ref.current.state.menuIsOpen) {
@@ -59,10 +59,12 @@ const MultiSelect = ({
   );
   const replacedComponents = useMemo(
     () => ({
+      // eslint-disable-next-line react/no-unstable-nested-components
       GroupHeading: (groupHeadingProps) => (
         <GroupHeading onChange={handleChange} {...groupHeadingProps} />
       ),
       Option,
+      // eslint-disable-next-line react/no-unstable-nested-components
       ValueContainer: (valueContainerProps) => (
         <ValueContainer
           allOptions={options}
@@ -108,7 +110,7 @@ const MultiSelect = ({
       {...props}
     />
   );
-};
+}
 
 MultiSelect.defaultProps = {
   className: "",

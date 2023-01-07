@@ -73,7 +73,8 @@ function validateRecord(
   const {
     criteria: {
       supervisionPastEarlyDischargeDate: pastEarlyDischarge,
-      usNdImpliedValidEarlyTerminationSupervisionLevel: eligibleSupervisionLevel,
+      usNdImpliedValidEarlyTerminationSupervisionLevel:
+        eligibleSupervisionLevel,
       usNdImpliedValidEarlyTerminationSentenceType: eligibleSupervisionType,
       usNdNotInActiveRevocationStatus: notActiveRevocationStatus,
     },

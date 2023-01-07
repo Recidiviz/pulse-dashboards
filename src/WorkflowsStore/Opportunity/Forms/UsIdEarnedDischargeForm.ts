@@ -85,17 +85,14 @@ export class UsIdEarnedDischargeForm extends FormBase<
       dateImposed?.length || 0
     );
 
-    // TODO: Remove expect-error once on TS 4.9
     if (countyNames) {
       countyNames.forEach((county, index) => {
-        // @ts-expect-error
         initialData[`countyNames${index}`] = county;
       });
     }
 
     if (judgeNames) {
       judgeNames.forEach((judge, index) => {
-        // @ts-expect-error
         initialData[
           `judgeNames${index}`
         ] = `${judge.givenNames} ${judge.surname}`;
@@ -104,42 +101,36 @@ export class UsIdEarnedDischargeForm extends FormBase<
 
     if (dateImposed) {
       dateImposed.forEach((date, index) => {
-        // @ts-expect-error
         initialData[`dateImposed${index}`] = formatWorkflowsDate(date);
       });
     }
 
     if (caseNumbers) {
       caseNumbers.forEach((caseNum, index) => {
-        // @ts-expect-error
         initialData[`caseNumbers${index}`] = caseNum;
       });
     }
 
     if (sentenceMax) {
       sentenceMax.forEach((val, index) => {
-        // @ts-expect-error
         initialData[`sentenceMax${index}`] = val.toString();
       });
     }
 
     if (sentenceMin) {
       sentenceMin.forEach((val, index) => {
-        // @ts-expect-error
         initialData[`sentenceMin${index}`] = val.toString();
       });
     }
 
     if (fullTermReleaseDates) {
       fullTermReleaseDates.forEach((date, index) => {
-        // @ts-expect-error
         initialData[`fullTermReleaseDates${index}`] = formatWorkflowsDate(date);
       });
     }
 
     if (chargeDescriptions) {
       chargeDescriptions.forEach((charge, index) => {
-        // @ts-expect-error
         initialData[`chargeDescriptions${index}`] = charge;
       });
     }

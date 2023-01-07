@@ -21,12 +21,12 @@ import { components } from "react-select";
 
 import { optionPropType } from "../propTypes";
 
-const GroupHeading = ({
+function GroupHeading({
   children: label,
   selectProps: { options, value: previousOptions },
   onChange,
   ...props
-}) => {
+}) {
   const groupOptions = options.find((o) => o.label === label).options;
 
   const getIsOptionSelected = (option) =>
@@ -78,7 +78,7 @@ const GroupHeading = ({
       </label>
     </components.GroupHeading>
   );
-};
+}
 
 GroupHeading.propTypes = {
   children: PropTypes.node.isRequired,

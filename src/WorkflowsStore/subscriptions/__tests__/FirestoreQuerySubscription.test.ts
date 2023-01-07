@@ -55,7 +55,7 @@ function getTestUnit(...constructorArgs: any[]) {
       // hook to let us trigger an undefined query
       if (!val) return;
 
-      return (jest.fn().mockReturnValue(val) as unknown) as Query;
+      return jest.fn().mockReturnValue(val) as unknown as Query;
     }
   }
 

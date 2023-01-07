@@ -28,15 +28,15 @@ import {
 } from "./SupervisionLevelDowngradeReferralRecord";
 import { WithCaseNotes } from "./types";
 
-export type UsTnSupervisionLevelDowngradeReferralRecord = SupervisionLevelDowngradeReferralRecord &
-  WithCaseNotes;
+export type UsTnSupervisionLevelDowngradeReferralRecord =
+  SupervisionLevelDowngradeReferralRecord & WithCaseNotes;
 
 export function getTransformer(
   supervisionLevelFormatter: (raw: string) => string | undefined
 ): TransformFunction<UsTnSupervisionLevelDowngradeReferralRecord> {
-  const transformer: TransformFunction<UsTnSupervisionLevelDowngradeReferralRecord> = (
-    record
-  ) => {
+  const transformer: TransformFunction<
+    UsTnSupervisionLevelDowngradeReferralRecord
+  > = (record) => {
     if (!record) {
       throw new Error("No record found");
     }
@@ -45,7 +45,8 @@ export function getTransformer(
 
     const { usTnSupervisionLevelHigherThanAssessmentLevel } = record.criteria;
     if (usTnSupervisionLevelHigherThanAssessmentLevel) {
-      localRecord.criteria.supervisionLevelHigherThanAssessmentLevel = usTnSupervisionLevelHigherThanAssessmentLevel;
+      localRecord.criteria.supervisionLevelHigherThanAssessmentLevel =
+        usTnSupervisionLevelHigherThanAssessmentLevel;
       delete localRecord.criteria.usTnSupervisionLevelHigherThanAssessmentLevel;
     }
 

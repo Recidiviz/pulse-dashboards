@@ -65,9 +65,9 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
             (dimensionId) => record[dimensionId] === "ALL"
           ) &&
           filterTimePeriod(
-            this.hasTimePeriodDimension,
             record.timePeriod,
-            timePeriod[0] as TimePeriod
+            timePeriod[0] as TimePeriod,
+            this.hasTimePeriodDimension
           )
         );
       }
@@ -98,9 +98,9 @@ export default class PrisonPopulationSnapshotMetric extends PathwaysMetric<Priso
             this.accessor
           ) &&
           filterTimePeriod(
-            this.hasTimePeriodDimension,
             record.timePeriod,
-            timePeriod[0] as TimePeriod
+            timePeriod[0] as TimePeriod,
+            this.hasTimePeriodDimension
           )
         );
       }

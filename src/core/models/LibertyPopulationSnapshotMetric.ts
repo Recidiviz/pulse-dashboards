@@ -75,9 +75,9 @@ export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<Libe
             (dimensionId) => record[dimensionId] === "ALL"
           ) &&
           filterTimePeriod(
-            this.hasTimePeriodDimension,
             record.timePeriod,
-            timePeriod[0] as TimePeriod
+            timePeriod[0] as TimePeriod,
+            this.hasTimePeriodDimension
           )
         );
       }
@@ -108,9 +108,9 @@ export default class LibertyPopulationSnapshotMetric extends PathwaysMetric<Libe
             this.accessor
           ) &&
           filterTimePeriod(
-            this.hasTimePeriodDimension,
             record.timePeriod,
-            timePeriod[0] as TimePeriod
+            timePeriod[0] as TimePeriod,
+            this.hasTimePeriodDimension
           )
         );
       }

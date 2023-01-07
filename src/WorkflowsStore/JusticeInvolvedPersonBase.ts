@@ -44,7 +44,8 @@ import {
 
 export class JusticeInvolvedPersonBase<
   RecordType extends PersonRecordType = JusticeInvolvedPersonRecord
-> implements JusticeInvolvedPerson {
+> implements JusticeInvolvedPerson
+{
   record: RecordType;
 
   constructor(
@@ -80,7 +81,7 @@ export class JusticeInvolvedPersonBase<
               opportunityType,
               opportunityFactory(
                 opportunityType,
-                (this as unknown) as PersonClassForRecord<RecordType>
+                this as unknown as PersonClassForRecord<RecordType>
               )
             );
           }

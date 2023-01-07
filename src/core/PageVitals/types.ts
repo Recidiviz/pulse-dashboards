@@ -29,7 +29,8 @@ export const METRIC_TYPES = {
   DOWNGRADE: "DOWNGRADE",
 } as const;
 
-export type MetricTypeLabel = typeof METRIC_TYPE_LABELS[keyof typeof METRIC_TYPE_LABELS];
+export type MetricTypeLabel =
+  typeof METRIC_TYPE_LABELS[keyof typeof METRIC_TYPE_LABELS];
 export const METRIC_TYPE_LABELS = {
   OVERALL: "Overall across all practices",
   DISCHARGE: "Timely discharge",

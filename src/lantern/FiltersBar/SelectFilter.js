@@ -24,7 +24,7 @@ import Select from "../../controls/Select";
 import { useLanternStore } from "../LanternStoreProvider";
 import FilterField from "./FilterField";
 
-const SelectFilter = ({ label, dimension }) => {
+function SelectFilter({ label, dimension }) {
   const { filtersStore } = useLanternStore();
   const { filters, filterOptions } = filtersStore;
   const value = get(filters, dimension);
@@ -46,7 +46,7 @@ const SelectFilter = ({ label, dimension }) => {
       />
     </FilterField>
   );
-};
+}
 
 SelectFilter.propTypes = {
   label: PropTypes.string.isRequired,

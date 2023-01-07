@@ -20,14 +20,14 @@ import React from "react";
 import MultiSelect from "../../controls/MultiSelect";
 import Select from "../../controls/Select";
 
-const DistrictFilterDropdown = ({
+function DistrictFilterDropdown({
   restrictedValues,
   selected,
   options,
   isLoading,
   onValueChange,
   defaultValue,
-}) => {
+}) {
   if (restrictedValues.length === 1) {
     const singleValue = {
       label: restrictedValues[0],
@@ -66,7 +66,7 @@ const DistrictFilterDropdown = ({
       {...defaultValueProps}
     />
   );
-};
+}
 
 const SelectOption = {
   label: PropTypes.string.isRequired,

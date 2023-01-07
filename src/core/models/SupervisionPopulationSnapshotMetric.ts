@@ -75,9 +75,9 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
             (dimensionId) => record[dimensionId] === "ALL"
           ) &&
           filterTimePeriod(
-            this.hasTimePeriodDimension,
             record.timePeriod,
-            timePeriod[0] as TimePeriod
+            timePeriod[0] as TimePeriod,
+            this.hasTimePeriodDimension
           )
         );
       }
@@ -108,9 +108,9 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
             this.accessor
           ) &&
           filterTimePeriod(
-            this.hasTimePeriodDimension,
             record.timePeriod,
-            timePeriod[0] as TimePeriod
+            timePeriod[0] as TimePeriod,
+            this.hasTimePeriodDimension
           )
         );
       }

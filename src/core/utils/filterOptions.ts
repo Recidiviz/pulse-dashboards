@@ -96,17 +96,18 @@ export const getFilterOptions = (
   );
 };
 
-const setFilters = (
-  filterKey: keyof PopulationFilters
-): SetPopulationFilters => (filtersStore) => (options) => {
-  // Filters are set by both multi-select and single-select components
-  // so the options can be either an array or a string,
-  // but we always want to the filter values to be arrays in the filtersStore
-  const values = Array.isArray(options)
-    ? options.map((o) => o.value)
-    : [options.value];
-  filtersStore.setFilters({ [filterKey]: values });
-};
+const setFilters =
+  (filterKey: keyof PopulationFilters): SetPopulationFilters =>
+  (filtersStore) =>
+  (options) => {
+    // Filters are set by both multi-select and single-select components
+    // so the options can be either an array or a string,
+    // but we always want to the filter values to be arrays in the filtersStore
+    const values = Array.isArray(options)
+      ? options.map((o) => o.value)
+      : [options.value];
+    filtersStore.setFilters({ [filterKey]: values });
+  };
 
 export const DefaultPopulationFilterOptions: PopulationFilters = {
   [FILTER_TYPES.TIME_PERIOD]: {

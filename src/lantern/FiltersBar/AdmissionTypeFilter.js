@@ -27,13 +27,12 @@ import { useLanternStore } from "../LanternStoreProvider";
 import { ADMISSION_TYPE } from "../utils/constants";
 import FilterField from "./FilterField";
 
-const AdmissionTypeFilter = () => {
+function AdmissionTypeFilter() {
   const { filtersStore } = useLanternStore();
   const { filters, filterOptions } = filtersStore;
   const value = get(filters, ADMISSION_TYPE);
-  const { options, defaultOption, summingOption } = filterOptions[
-    ADMISSION_TYPE
-  ];
+  const { options, defaultOption, summingOption } =
+    filterOptions[ADMISSION_TYPE];
 
   const onValueChange = (selected) => {
     filtersStore.setFilters({ [ADMISSION_TYPE]: map("value", selected) });
@@ -55,6 +54,6 @@ const AdmissionTypeFilter = () => {
       />
     </FilterField>
   );
-};
+}
 
 export default observer(AdmissionTypeFilter);

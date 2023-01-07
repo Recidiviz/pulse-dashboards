@@ -57,17 +57,19 @@ const DisabledMessage = styled.div`
   padding: 12px;
 `;
 
-const DisabledMenuList = ({
+function DisabledMenuList({
   children,
   ...props
-}: MenuListComponentProps<{ label: string; value: string }, true>) => (
-  <components.MenuList {...props}>
-    <DisabledMessage>
-      Cannot select more than {SELECTED_OFFICER_LIMIT} officers.
-    </DisabledMessage>
-    {children}
-  </components.MenuList>
-);
+}: MenuListComponentProps<{ label: string; value: string }, true>) {
+  return (
+    <components.MenuList {...props}>
+      <DisabledMessage>
+        Cannot select more than {SELECTED_OFFICER_LIMIT} officers.
+      </DisabledMessage>
+      {children}
+    </components.MenuList>
+  );
+}
 
 type SelectOption = { label: string; value: string };
 
@@ -91,17 +93,17 @@ const DistrictIndicator = observer(function DistrictIndicator() {
   );
 });
 
-const IndicatorsContainer = ({
+function IndicatorsContainer({
   children,
   ...props
-}: IndicatorContainerProps<SelectOption, true>) => {
+}: IndicatorContainerProps<SelectOption, true>) {
   return (
     <components.IndicatorsContainer {...props}>
       {children}
       <DistrictIndicator />
     </components.IndicatorsContainer>
   );
-};
+}
 
 const Option = ({ children, ...props }: OptionProps<SelectOption, true>) => {
   return (
@@ -149,11 +151,8 @@ export const CaseloadSelect = observer(function CaseloadSelect({
 }: CaseloadSelectProps) {
   const { workflowsStore } = useRootStore();
 
-  const {
-    availableOfficers,
-    selectedOfficers,
-    workflowsOfficerTitle,
-  } = workflowsStore;
+  const { availableOfficers, selectedOfficers, workflowsOfficerTitle } =
+    workflowsStore;
 
   const customComponents: SelectComponentsConfig<SelectOption, true> = {
     ClearIndicator: ClearAll(workflowsOfficerTitle),

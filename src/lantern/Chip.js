@@ -21,7 +21,7 @@ import cn from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 
-const Chip = ({ label, onClick, onDelete, isSelected, isSmall }) => {
+function Chip({ label, onClick, onDelete, isSelected, isSmall }) {
   return (
     <div
       className={cn("Chip", {
@@ -43,7 +43,7 @@ const Chip = ({ label, onClick, onDelete, isSelected, isSmall }) => {
       )}
     </div>
   );
-};
+}
 
 Chip.defaultProps = {
   onClick: () => {},

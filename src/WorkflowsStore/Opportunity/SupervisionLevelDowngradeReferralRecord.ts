@@ -36,9 +36,9 @@ export type SupervisionLevelDowngradeReferralRecord = {
 export function getBaseSLDTransformer(
   supervisionLevelFormatter: (raw: string) => string | undefined
 ): TransformFunction<SupervisionLevelDowngradeReferralRecord> {
-  const transformer: TransformFunction<SupervisionLevelDowngradeReferralRecord> = (
-    record
-  ): SupervisionLevelDowngradeReferralRecord => {
+  const transformer: TransformFunction<
+    SupervisionLevelDowngradeReferralRecord
+  > = (record): SupervisionLevelDowngradeReferralRecord => {
     if (!record) {
       throw new Error("No record found");
     }
@@ -80,9 +80,8 @@ export function getBaseSLDValidator(
   const validator: ValidateFunction<SupervisionLevelDowngradeReferralRecord> = (
     transformedRecord
   ) => {
-    const {
-      supervisionLevel,
-    } = transformedRecord.criteria.supervisionLevelHigherThanAssessmentLevel;
+    const { supervisionLevel } =
+      transformedRecord.criteria.supervisionLevelHigherThanAssessmentLevel;
 
     if (supervisionLevel !== client.supervisionLevel)
       throw new OpportunityValidationError(
@@ -96,11 +95,8 @@ export function getBaseSLDValidator(
 export function formatBaseSLDRequirements(
   transformedRecord: SupervisionLevelDowngradeReferralRecord
 ): OpportunityRequirement[] {
-  const {
-    assessmentLevel,
-    latestAssessmentDate,
-    supervisionLevel,
-  } = transformedRecord.criteria.supervisionLevelHigherThanAssessmentLevel;
+  const { assessmentLevel, latestAssessmentDate, supervisionLevel } =
+    transformedRecord.criteria.supervisionLevelHigherThanAssessmentLevel;
 
   return [
     {

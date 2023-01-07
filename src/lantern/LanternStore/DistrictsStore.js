@@ -119,12 +119,8 @@ export default class DistrictsStore {
   setDistrictIdToLabel() {
     if (!this.apiData || !this.apiData.data) return;
     const districtIdToLabel = {};
-    const {
-      primaryIdKey,
-      secondaryIdKey,
-      primaryLabelKey,
-      secondaryLabelKey,
-    } = this.districtKeys;
+    const { primaryIdKey, secondaryIdKey, primaryLabelKey, secondaryLabelKey } =
+      this.districtKeys;
 
     this.apiData.data.forEach((d) => {
       districtIdToLabel[d[primaryIdKey]] = d[primaryLabelKey];

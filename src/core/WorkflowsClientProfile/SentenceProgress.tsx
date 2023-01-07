@@ -217,9 +217,9 @@ export const ProgressTimeline = ({
   );
 };
 
-export const SupervisionProgress = ({
+export function SupervisionProgress({
   client,
-}: ClientProfileProps): React.ReactElement => {
+}: ClientProfileProps): React.ReactElement {
   const {
     supervisionStartDate,
     expirationDate,
@@ -236,11 +236,11 @@ export const SupervisionProgress = ({
       timelineLabels={{ start: "Start", end: "End" }}
     />
   );
-};
+}
 
-export const IncarcerationProgress = ({
+export function IncarcerationProgress({
   resident,
-}: ResidentProfileProps): React.ReactElement => {
+}: ResidentProfileProps): React.ReactElement {
   const { admissionDate, releaseDate, assignedStaffId: officerId } = resident;
 
   return (
@@ -253,4 +253,4 @@ export const IncarcerationProgress = ({
       timelineLabels={{ start: "Start", end: "Release" }}
     />
   );
-};
+}

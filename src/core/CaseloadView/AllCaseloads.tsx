@@ -42,7 +42,7 @@ const CaseloadWrapper = styled.ul`
   row-gap: ${rem(spacing.sm)};
 `;
 
-const Caseload = ({ persons }: { persons: JusticeInvolvedPerson[] }) => {
+function Caseload({ persons }: { persons: JusticeInvolvedPerson[] }) {
   const items = persons.map((person) => (
     <li key={person.externalId}>
       <Link
@@ -57,7 +57,7 @@ const Caseload = ({ persons }: { persons: JusticeInvolvedPerson[] }) => {
   ));
 
   return <CaseloadWrapper>{items}</CaseloadWrapper>;
-};
+}
 
 export const AllCaseloads = observer(function AllCaseloads() {
   const {

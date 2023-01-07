@@ -17,12 +17,8 @@
 import { compareStrings } from ".";
 
 export function generateNestedOptions(districts, districtKeys) {
-  const {
-    secondaryLabelKey,
-    primaryLabelKey,
-    primaryIdKey,
-    valueKey,
-  } = districtKeys;
+  const { secondaryLabelKey, primaryLabelKey, primaryIdKey, valueKey } =
+    districtKeys;
   const filterOptions = {};
 
   districts.forEach((district) => {

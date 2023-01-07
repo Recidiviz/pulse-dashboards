@@ -28,18 +28,18 @@ import { optionPropType } from "../../../controls/propTypes";
 import { getNewOptions } from "../../../controls/utils";
 import { coreSelectCustomStyles } from "../utils";
 
-const CustomScrollBarWrapper = ({ children }) => {
+function CustomScrollBarWrapper({ children }) {
   return <div style={{ overflowY: "auto", maxHeight: 250 }}>{children}</div>;
-};
+}
 
-const CoreMultiSelect = ({
+function CoreMultiSelect({
   summingOption,
   options,
   value,
   onChange,
   className = "",
   ...props
-}) => {
+}) {
   const ref = useRef();
 
   useEffect(() => {
@@ -67,16 +67,20 @@ const CoreMultiSelect = ({
   const replacedComponents = useMemo(
     () => ({
       IndicatorSeparator: () => null,
+      // TODO: should refactor to resolve these warnings if/when converted to TS
+      // eslint-disable-next-line react/no-unstable-nested-components
       GroupHeading: (groupHeadingProps) => (
         <GroupHeading onChange={handleChange} {...groupHeadingProps} />
       ),
       Option,
       MenuList: CustomScrollBarWrapper,
+      // eslint-disable-next-line react/no-unstable-nested-components
       DropdownIndicator: () => (
         <div className="CoreMultiSelect__custom-indicator">
           <span className="CoreMultiSelect__custom-arrow" />
         </div>
       ),
+      // eslint-disable-next-line react/no-unstable-nested-components
       ValueContainer: (valueContainerProps) => (
         <ValueContainer
           allOptions={options}
@@ -108,7 +112,7 @@ const CoreMultiSelect = ({
       {...props}
     />
   );
-};
+}
 
 CoreMultiSelect.defaultProps = {
   className: "",

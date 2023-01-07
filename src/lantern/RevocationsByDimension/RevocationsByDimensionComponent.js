@@ -24,7 +24,7 @@ import React from "react";
 import DataSignificanceWarningIcon from "../DataSignificanceWarningIcon";
 import ExportMenu from "../ExportMenu";
 
-const RevocationsByDimensionComponent = ({
+function RevocationsByDimensionComponent({
   chartTitle,
   chartId,
   className,
@@ -37,31 +37,34 @@ const RevocationsByDimensionComponent = ({
   modeSwitcher,
   classModifier,
   dataExportLabel,
-}) => (
-  <div className="RevocationsByDimension">
-    <h4 className="RevocationsByDimension__title">
-      {chartTitle}
-      {showWarning && <DataSignificanceWarningIcon />}
-      <ExportMenu
-        chartId={chartId}
-        datasets={datasets}
-        labels={labels}
-        metricTitle={metricTitle}
-        timeWindowDescription={timeDescription}
-        dataExportLabel={dataExportLabel}
-      />
-    </h4>
-    <h6 className="RevocationsByDimension__time">{timeDescription}</h6>
-    {modeSwitcher}
-    <div
-      className={cn("RevocationsByDimension__chart-wrapper", className, {
-        [`RevocationsByDimension__chart-wrapper--${classModifier}`]: classModifier,
-      })}
-    >
-      {chart}
+}) {
+  return (
+    <div className="RevocationsByDimension">
+      <h4 className="RevocationsByDimension__title">
+        {chartTitle}
+        {showWarning && <DataSignificanceWarningIcon />}
+        <ExportMenu
+          chartId={chartId}
+          datasets={datasets}
+          labels={labels}
+          metricTitle={metricTitle}
+          timeWindowDescription={timeDescription}
+          dataExportLabel={dataExportLabel}
+        />
+      </h4>
+      <h6 className="RevocationsByDimension__time">{timeDescription}</h6>
+      {modeSwitcher}
+      <div
+        className={cn("RevocationsByDimension__chart-wrapper", className, {
+          [`RevocationsByDimension__chart-wrapper--${classModifier}`]:
+            classModifier,
+        })}
+      >
+        {chart}
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
 RevocationsByDimensionComponent.defaultProps = {
   showWarning: false,

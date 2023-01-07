@@ -36,12 +36,14 @@ const InfoLink = styled.a`
   }
 `;
 
-export const InfoButton = ({
+export function InfoButton({
   infoUrl,
 }: {
   infoUrl: string | undefined;
-}): React.ReactElement => (
-  <InfoLink href={infoUrl} target="_blank" rel="noreferrer">
-    <Icon kind="Info" size={12} />
-  </InfoLink>
-);
+}): React.ReactElement {
+  return (
+    <InfoLink href={infoUrl} target="_blank" rel="noreferrer">
+      <Icon kind="Info" size={12} />
+    </InfoLink>
+  );
+}

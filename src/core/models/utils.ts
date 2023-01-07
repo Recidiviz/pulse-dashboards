@@ -377,9 +377,9 @@ export const formatDateString = (dateString: string): Date | undefined => {
 };
 
 export const filterTimePeriod = (
-  shouldFilter = false,
   recordTimePeriodValue: TimePeriod,
-  filterTimePeriodValue: TimePeriod
+  filterTimePeriodValue: TimePeriod,
+  shouldFilter = false
 ): boolean => {
   return shouldFilter
     ? Number(recordTimePeriodValue) <= Number(filterTimePeriodValue)
@@ -413,14 +413,17 @@ export const filterRecordByDimensions = (
   });
 };
 
-export const properties = (...keys: string[]): CallableFunction => (
-  obj: Record<string, any>
-) => keys.map((key) => property(key, obj));
+export const properties =
+  (...keys: string[]): CallableFunction =>
+  (obj: Record<string, any>) =>
+    keys.map((key) => property(key, obj));
 
 type AndPredicate = (item: any) => boolean;
 
-export const and = (...predicates: AndPredicate[]): AndPredicate => (item) =>
-  every(predicates, (predicate) => predicate(item));
+export const and =
+  (...predicates: AndPredicate[]): AndPredicate =>
+  (item) =>
+    every(predicates, (predicate) => predicate(item));
 
 interface DateFilters {
   monthRange: number;

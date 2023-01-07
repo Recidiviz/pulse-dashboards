@@ -62,13 +62,13 @@ test("staffNameComparator", () => {
   ];
 
   const sortedStaff = sortableStaff.sort(staffNameComparator);
-  expect(
-    sortedStaff.map((s) => `${s.givenNames} ${s.surname}`.trim())
-  ).toEqual([
-    "Bob Adams-Doe",
-    "Brad Collins (Doe)",
-    "Jane Doe",
-    "John Doe",
-    "Chad Doe-Adams",
-  ]);
+  expect(sortedStaff.map((s) => `${s.givenNames} ${s.surname}`.trim())).toEqual(
+    [
+      "Bob Adams-Doe",
+      "Brad Collins (Doe)",
+      "Jane Doe",
+      "John Doe",
+      "Chad Doe-Adams",
+    ]
+  );
 });

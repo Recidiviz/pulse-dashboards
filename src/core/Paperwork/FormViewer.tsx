@@ -76,9 +76,13 @@ const FormViewer: React.FC<FormViewerProps> = ({
     workflowsStore,
   ]);
 
+  const contextObject = React.useMemo(() => {
+    return { isPrinting: formIsPrinting };
+  }, [formIsPrinting]);
+
   return (
     <FormViewerGrid>
-      <FormViewerContext.Provider value={{ isPrinting: formIsPrinting }}>
+      <FormViewerContext.Provider value={contextObject}>
         <div ref={formRef}>{children}</div>
       </FormViewerContext.Provider>
     </FormViewerGrid>

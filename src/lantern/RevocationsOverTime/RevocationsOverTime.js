@@ -43,7 +43,7 @@ import {
   monthNamesAllWithYearsFromNumbers,
 } from "../utils/currentSpan";
 
-const RevocationsOverTime = ({ timeDescription }) => {
+function RevocationsOverTime({ timeDescription }) {
   const { filters, dataStore } = useLanternStore();
   const store = dataStore.revocationsOverTimeStore;
   const CHART_TITLE = translate("revocationsOverTimeChartTitle");
@@ -186,7 +186,7 @@ const RevocationsOverTime = ({ timeDescription }) => {
       />
     </div>
   );
-};
+}
 
 RevocationsOverTime.propTypes = {
   timeDescription: PropTypes.string.isRequired,

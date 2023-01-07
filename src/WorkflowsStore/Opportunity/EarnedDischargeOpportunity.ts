@@ -35,8 +35,7 @@ import { OpportunityRequirement } from "./types";
 
 const DENIAL_REASONS_MAP = {
   SCNC: "Not compliant with special conditions",
-  FFR:
-    "Failure to make payments towards fines, fees, and restitution despite ability to pay",
+  FFR: "Failure to make payments towards fines, fees, and restitution despite ability to pay",
   INTERLOCK: "Has an active interlock device",
   PCD: "Parole Commission permanently denied early discharge request",
   CD: "Court permanently denied early discharge request",

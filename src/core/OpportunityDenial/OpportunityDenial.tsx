@@ -54,11 +54,11 @@ const DropdownContainer = styled.div`
   }
 `;
 
-export const OpportunityDenial = ({
+export function OpportunityDenial({
   opportunity,
 }: {
   opportunity: Opportunity;
-}): JSX.Element => {
+}): JSX.Element {
   return (
     <Wrapper>
       <Dropdown>
@@ -74,4 +74,4 @@ export const OpportunityDenial = ({
       </Dropdown>
     </Wrapper>
   );
-};
+}

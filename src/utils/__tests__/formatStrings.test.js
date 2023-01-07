@@ -148,58 +148,48 @@ describe("formatStrings", () => {
         const testDate = new Date("2020-02-14T11:01:58.135Z");
         tk.freeze(testDate);
 
-        const periodMonth = utils.getPeriodLabelFromMetricPeriodMonthsFilter(
-          12
-        );
+        const periodMonth =
+          utils.getPeriodLabelFromMetricPeriodMonthsFilter(12);
         expect(periodMonth).toBe("3/1/2019 to present");
 
-        const emptyPeriodMonth = utils.getPeriodLabelFromMetricPeriodMonthsFilter(
-          undefined
-        );
+        const emptyPeriodMonth =
+          utils.getPeriodLabelFromMetricPeriodMonthsFilter(undefined);
         expect(emptyPeriodMonth).toBe("Invalid date to present");
 
-        const incorrectPeriodMonth = utils.getPeriodLabelFromMetricPeriodMonthsFilter(
-          "period month"
-        );
+        const incorrectPeriodMonth =
+          utils.getPeriodLabelFromMetricPeriodMonthsFilter("period month");
         expect(incorrectPeriodMonth).toBe("Invalid date to present");
       });
     });
 
     describe("getTrailingLabelFromMetricPeriodMonthsFilter", () => {
       it("formats the trailing label for the time period correctly", () => {
-        const periodMonth = utils.getTrailingLabelFromMetricPeriodMonthsFilter(
-          5
-        );
+        const periodMonth =
+          utils.getTrailingLabelFromMetricPeriodMonthsFilter(5);
         expect(periodMonth).toBe("Last 0.4166666666666667 years");
 
-        const emptyPeriodMonth = utils.getTrailingLabelFromMetricPeriodMonthsFilter(
-          undefined
-        );
+        const emptyPeriodMonth =
+          utils.getTrailingLabelFromMetricPeriodMonthsFilter(undefined);
         expect(emptyPeriodMonth).toBe("Last NaN years");
 
-        const periodLastMonth = utils.getTrailingLabelFromMetricPeriodMonthsFilter(
-          "12"
-        );
+        const periodLastMonth =
+          utils.getTrailingLabelFromMetricPeriodMonthsFilter("12");
         expect(periodLastMonth).toBe("Last 12 months");
 
-        const periodCurrentMonth = utils.getTrailingLabelFromMetricPeriodMonthsFilter(
-          "1"
-        );
+        const periodCurrentMonth =
+          utils.getTrailingLabelFromMetricPeriodMonthsFilter("1");
         expect(periodCurrentMonth).toBe("Current month");
 
-        const period3Month = utils.getTrailingLabelFromMetricPeriodMonthsFilter(
-          "3"
-        );
+        const period3Month =
+          utils.getTrailingLabelFromMetricPeriodMonthsFilter("3");
         expect(period3Month).toBe("Last 3 months");
 
-        const period6Month = utils.getTrailingLabelFromMetricPeriodMonthsFilter(
-          "6"
-        );
+        const period6Month =
+          utils.getTrailingLabelFromMetricPeriodMonthsFilter("6");
         expect(period6Month).toBe("Last 6 months");
 
-        const period36Month = utils.getTrailingLabelFromMetricPeriodMonthsFilter(
-          "36"
-        );
+        const period36Month =
+          utils.getTrailingLabelFromMetricPeriodMonthsFilter("36");
         expect(period36Month).toBe("Last 3 years");
       });
     });

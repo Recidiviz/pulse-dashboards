@@ -109,7 +109,7 @@ const NoOpportunities = styled.div`
   }
 `;
 
-const AccordionSection = ({ opportunity }: { opportunity: Opportunity }) => {
+function AccordionSection({ opportunity }: { opportunity: Opportunity }) {
   const colors = useStatusColors(opportunity);
   return (
     <OpportunityWrapper className="ProfileOpportunityItem" {...colors}>
@@ -129,7 +129,7 @@ const AccordionSection = ({ opportunity }: { opportunity: Opportunity }) => {
       </AccordionItem>
     </OpportunityWrapper>
   );
-};
+}
 
 export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
   person,

@@ -180,9 +180,9 @@ type RawCompliantReportingReferralRecord = DocumentData & {
   zeroToleranceCodes?: { contactNoteType: string; contactNoteDate: string }[];
 };
 
-export const transformCompliantReportingReferral: TransformFunction<CompliantReportingReferralRecord> = (
-  record
-) => {
+export const transformCompliantReportingReferral: TransformFunction<
+  CompliantReportingReferralRecord
+> = (record) => {
   if (!record) {
     throw new Error("No record found");
   }

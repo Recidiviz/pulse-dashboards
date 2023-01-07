@@ -60,10 +60,8 @@ export class EarlyTerminationForm extends FormBase<EarlyTerminationDraftData> {
   }
 
   get additionalDepositionLines(): string[] {
-    const additionalDepositionLines = Object.keys(
-      this.draftData
-    ).filter((key: string) =>
-      key.startsWith(ADDITIONAL_DEPOSITION_LINES_PREFIX)
+    const additionalDepositionLines = Object.keys(this.draftData).filter(
+      (key: string) => key.startsWith(ADDITIONAL_DEPOSITION_LINES_PREFIX)
     );
 
     return sortBy(additionalDepositionLines, (key) =>

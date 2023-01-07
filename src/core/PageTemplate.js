@@ -21,23 +21,33 @@ import "./PageTemplate.scss";
 import PropTypes from "prop-types";
 import React from "react";
 
-const PageTemplate = ({
+// Newer versions of Typescript infer the argument types too narrowly for this function;
+// previously they all were just typed as any
+/**
+ * @param {Object} props
+ * @param {any} [props.filters]
+ * @param {any} [props.leftPanel]
+ * @param {any} [props.mobileNavigation]
+ */
+function PageTemplate({
   children,
   filters = null,
   leftPanel = null,
   mobileNavigation = null,
-}) => (
-  <div className="PageTemplate">
-    {mobileNavigation}
-    {leftPanel && <div className="PageTemplate__left-panel">{leftPanel}</div>}
-    <div className="PageTemplate__body">
-      {filters}
-      <div className="row gap-20 pos-r">
-        <div className="PageTemplate__content">{children}</div>
+}) {
+  return (
+    <div className="PageTemplate">
+      {mobileNavigation}
+      {leftPanel && <div className="PageTemplate__left-panel">{leftPanel}</div>}
+      <div className="PageTemplate__body">
+        {filters}
+        <div className="row gap-20 pos-r">
+          <div className="PageTemplate__content">{children}</div>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+}
 
 PageTemplate.defaultProps = {
   filters: null,

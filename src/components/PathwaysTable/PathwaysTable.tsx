@@ -31,20 +31,15 @@ type Props = {
 };
 
 const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable(
-    {
-      columns,
-      data,
-    },
-    useSortBy,
-    useFlexLayout
-  );
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      {
+        columns,
+        data,
+      },
+      useSortBy,
+      useFlexLayout
+    );
 
   const scrollBarSize = useMemo(() => getScrollBarWidth(), []);
 

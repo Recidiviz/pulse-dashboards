@@ -30,10 +30,12 @@ const SUPERVISION_OPPORTUNITY_TYPES = [
   "usIdSupervisionLevelDowngrade",
   "usTnExpiration",
 ] as const;
-export type SupervisionOpportunityType = typeof SUPERVISION_OPPORTUNITY_TYPES[number];
+export type SupervisionOpportunityType =
+  typeof SUPERVISION_OPPORTUNITY_TYPES[number];
 
 const INCARCERATION_OPPORTUNITY_TYPES = ["usMeSCCP"] as const;
-export type IncarcerationOpportunityType = typeof INCARCERATION_OPPORTUNITY_TYPES[number];
+export type IncarcerationOpportunityType =
+  typeof INCARCERATION_OPPORTUNITY_TYPES[number];
 
 const OPPORTUNITY_TYPES = [
   ...SUPERVISION_OPPORTUNITY_TYPES,
@@ -66,15 +68,13 @@ export const OPPORTUNITY_TYPE_URLS: Record<OpportunityType, string> = {
   usMeSCCP: "SCCP",
   usTnExpiration: "expiration",
 };
-export const OPPORTUNITY_TYPES_FOR_URL: Record<
-  string,
-  OpportunityType
-> = Object.fromEntries(
-  Object.entries(OPPORTUNITY_TYPE_URLS).map(([k, v]) => [
-    v,
-    k as OpportunityType,
-  ])
-);
+export const OPPORTUNITY_TYPES_FOR_URL: Record<string, OpportunityType> =
+  Object.fromEntries(
+    Object.entries(OPPORTUNITY_TYPE_URLS).map(([k, v]) => [
+      v,
+      k as OpportunityType,
+    ])
+  );
 export function isOpportunityTypeUrl(s: string): boolean {
   return s in OPPORTUNITY_TYPES_FOR_URL;
 }

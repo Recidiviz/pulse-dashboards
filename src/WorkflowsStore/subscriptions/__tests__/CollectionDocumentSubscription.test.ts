@@ -22,7 +22,7 @@ import { CollectionDocumentSubscription } from "../CollectionDocumentSubscriptio
 jest.mock("firebase/firestore");
 
 const docMock = doc as jest.MockedFunction<typeof doc>;
-const mockRef = (jest.fn() as unknown) as DocumentReference;
+const mockRef = jest.fn() as unknown as DocumentReference;
 
 let sub: CollectionDocumentSubscription<DocumentData>;
 

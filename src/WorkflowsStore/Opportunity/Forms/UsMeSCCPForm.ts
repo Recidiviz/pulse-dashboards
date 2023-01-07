@@ -25,24 +25,26 @@ export class UsMeSCCPForm extends FormBase<
 > {
   navigateToFormText = "Generate paperwork";
 
-  prefilledDataTransformer: PrefilledDataTransformer<UsMeSCCPDraftData> = () => {
-    if (!this.opportunity.record) return {};
+  prefilledDataTransformer: PrefilledDataTransformer<UsMeSCCPDraftData> =
+    () => {
+      if (!this.opportunity.record) return {};
 
-    const residentName = this.person.displayName;
-    const mdocNo = this.person.externalId;
-    const facilityHousingUnit = `${this.person.facilityId ?? ""}/${
-      this.person.unitId ?? ""
-    }`;
-    const caseManagerRecord = this.rootStore.workflowsStore.availableOfficers.find(
-      (r) => r.id === this.person.assignedStaffId
-    );
-    const caseManager = `${caseManagerRecord?.givenNames} ${caseManagerRecord?.surname}`;
+      const residentName = this.person.displayName;
+      const mdocNo = this.person.externalId;
+      const facilityHousingUnit = `${this.person.facilityId ?? ""}/${
+        this.person.unitId ?? ""
+      }`;
+      const caseManagerRecord =
+        this.rootStore.workflowsStore.availableOfficers.find(
+          (r) => r.id === this.person.assignedStaffId
+        );
+      const caseManager = `${caseManagerRecord?.givenNames} ${caseManagerRecord?.surname}`;
 
-    return {
-      caseManager,
-      facilityHousingUnit,
-      mdocNo,
-      residentName,
+      return {
+        caseManager,
+        facilityHousingUnit,
+        mdocNo,
+        residentName,
+      };
     };
-  };
 }

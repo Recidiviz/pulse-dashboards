@@ -18,7 +18,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 
-const Pagination = ({ beginning, end, total, createUpdatePage }) => {
+function Pagination({ beginning, end, total, createUpdatePage }) {
   const start = beginning + 1;
 
   const range = start !== end ? `${start}-${end}` : beginning + 1;
@@ -38,7 +38,7 @@ const Pagination = ({ beginning, end, total, createUpdatePage }) => {
       )}
     </div>
   );
-};
+}
 
 Pagination.propTypes = {
   beginning: PropTypes.number.isRequired,

@@ -79,11 +79,11 @@ type ModelHydratorProps = {
  * otherwise renders a loading state. Also initiates hydration of the model
  * if it is not already pending.
  */
-const ModelHydrator = ({
+function ModelHydrator({
   children,
   model,
   className,
-}: ModelHydratorProps): React.ReactElement => {
+}: ModelHydratorProps): React.ReactElement {
   // this is fine, mobx autoruns don't need dependencies
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(
@@ -130,6 +130,6 @@ const ModelHydrator = ({
       })}
     </Wrapper>
   );
-};
+}
 
 export default observer(ModelHydrator);

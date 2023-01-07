@@ -44,7 +44,8 @@ import { defaultTransformFunction, defaultValidateFunction } from "./utils";
 
 export abstract class FirestoreQuerySubscription<
   DataFormat extends DocumentData
-> implements QuerySubscription<DataFormat> {
+> implements QuerySubscription<DataFormat>
+{
   data: DataFormat[] = [];
 
   abstract get dataSource(): Query | undefined;

@@ -77,9 +77,9 @@ export type UsTnExpirationReferralRecord = {
   };
 } & WithCaseNotes;
 
-export const transformReferral: TransformFunction<UsTnExpirationReferralRecord> = (
-  record
-) => {
+export const transformReferral: TransformFunction<
+  UsTnExpirationReferralRecord
+> = (record) => {
   if (!record) {
     throw new Error("Record not found");
   }
@@ -114,9 +114,8 @@ export function getValidator(
   client: Client
 ): ValidateFunction<UsTnExpirationReferralRecord> {
   return (transformedRecord) => {
-    const {
-      eligibleDate,
-    } = transformedRecord.criteria.supervisionPastFullTermCompletionDate;
+    const { eligibleDate } =
+      transformedRecord.criteria.supervisionPastFullTermCompletionDate;
 
     if (eligibleDate.getTime() !== client.expirationDate?.getTime())
       throw new OpportunityValidationError(

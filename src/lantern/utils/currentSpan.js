@@ -18,12 +18,10 @@
 import { COLORS } from "../../assets/scripts/constants/colors";
 import { MONTH_NAMES, monthNamesWithYears } from "../../utils/months";
 
-const monthNamesAllWithYearsFromNumbers = function monthNamesShortWithYearsFromNumbers(
-  monthNumbers,
-  abbreviated
-) {
-  return monthNamesWithYears(monthNumbers, abbreviated, true);
-};
+const monthNamesAllWithYearsFromNumbers =
+  function monthNamesShortWithYearsFromNumbers(monthNumbers, abbreviated) {
+    return monthNamesWithYears(monthNumbers, abbreviated, true);
+  };
 
 const getCurrentMonthName = function getCurrentMonthName() {
   const now = new Date();

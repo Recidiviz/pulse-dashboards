@@ -19,7 +19,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import ReactTooltip from "react-tooltip";
 
-const WarningIcon = ({ tooltipText, className = "" }) => {
+function WarningIcon({ tooltipText, className = "" }) {
   const id = `_${Math.random().toString(36).substr(2, 9)}`;
 
   return (
@@ -31,7 +31,7 @@ const WarningIcon = ({ tooltipText, className = "" }) => {
       </ReactTooltip>
     </>
   );
-};
+}
 
 WarningIcon.defaultProps = {
   className: "",

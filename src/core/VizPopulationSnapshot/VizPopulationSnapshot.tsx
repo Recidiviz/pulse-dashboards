@@ -196,6 +196,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
         tickValues,
       },
     ],
+    // eslint-disable-next-line react/no-unstable-nested-components
     oLabel: (accessorLabel: string, _: any) => {
       return <text textAnchor="middle">{accessorLabel}</text>;
     },
@@ -209,6 +210,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
       setHoveredId(null);
       return null;
     },
+    // eslint-disable-next-line react/no-unstable-nested-components
     tooltipContent: (d: any) => {
       const { pieces } = d;
       const pieceData = pieces[0];
@@ -235,6 +237,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           tickValues,
         },
       ],
+      // eslint-disable-next-line react/no-unstable-nested-components
       oLabel: (accessorLabel: string, _: any) => {
         return (
           <text textAnchor="end">
@@ -244,6 +247,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           </text>
         );
       },
+      // eslint-disable-next-line react/no-unstable-nested-components
       tooltipContent: (d: any) => {
         const { pieces } = d;
         const pieceData = pieces[0];
@@ -285,6 +289,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
           tickValues,
         },
       ],
+      // eslint-disable-next-line react/no-unstable-nested-components
       oLabel: (accessorLabel: string, _: any) => {
         return (
           <text textAnchor="middle">

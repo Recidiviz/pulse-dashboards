@@ -26,9 +26,8 @@ import { RootStore } from "../../../RootStore";
 import { OpportunityBase } from "../OpportunityBase";
 import { OpportunityType } from "../types";
 
-export type PrefilledDataTransformer<
-  FormInformation
-> = () => Partial<FormInformation>;
+export type PrefilledDataTransformer<FormInformation> =
+  () => Partial<FormInformation>;
 
 /**
  * Implements functionality shared by all Opportunities with form automation.

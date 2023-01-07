@@ -39,16 +39,16 @@ type WorkflowsNoResultsProps = {
   callToActionText: string;
 };
 
-const WorkflowsNoResults = ({
+function WorkflowsNoResults({
   headerText,
   callToActionText,
-}: WorkflowsNoResultsProps): React.ReactElement | null => {
+}: WorkflowsNoResultsProps): React.ReactElement | null {
   return (
     <WorkflowsNoResultsWrapper className="WorkflowsHomepageText">
       {headerText && <HeaderText>{headerText}</HeaderText>}
       <CallToActionText>{callToActionText}</CallToActionText>
     </WorkflowsNoResultsWrapper>
   );
-};
+}
 
 export default WorkflowsNoResults;

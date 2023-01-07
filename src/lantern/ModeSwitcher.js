@@ -21,18 +21,20 @@ import React from "react";
 import { genderValueToLabel, raceValueToLabel } from "../utils/formatStrings";
 import Chip from "./Chip";
 
-const ModeSwitcher = ({ mode, setMode, buttons }) => (
-  <div className="ModeSwitcher pB-20">
-    {buttons.map(({ label, value }) => (
-      <Chip
-        key={value}
-        label={label}
-        isSelected={value === mode}
-        onClick={() => setMode(value)}
-      />
-    ))}
-  </div>
-);
+function ModeSwitcher({ mode, setMode, buttons }) {
+  return (
+    <div className="ModeSwitcher pB-20">
+      {buttons.map(({ label, value }) => (
+        <Chip
+          key={value}
+          label={label}
+          isSelected={value === mode}
+          onClick={() => setMode(value)}
+        />
+      ))}
+    </div>
+  );
+}
 
 ModeSwitcher.propTypes = {
   mode: PropTypes.oneOf(

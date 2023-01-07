@@ -100,6 +100,7 @@ const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
         <ResponsiveXYFrame
           responsiveWidth
           hoverAnnotation
+          // eslint-disable-next-line react/no-unstable-nested-components
           tooltipContent={(d: any) => (
             <PathwaysTooltip
               label={`${d.lengthOfStay} months`}

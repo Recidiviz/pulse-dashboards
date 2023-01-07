@@ -54,11 +54,7 @@ const CrimeTableInputCell: React.FC<CrimeTableInputCellProps> = ({
   placeholder,
 }) => {
   return (
-    <FormEDInputCell
-      // @ts-expect-error Should go away once we upgrade to TS4.9
-      name={`${field}${index}`}
-      placeholder={placeholder}
-    />
+    <FormEDInputCell name={`${field}${index}`} placeholder={placeholder} />
   );
 };
 

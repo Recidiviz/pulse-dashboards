@@ -27,8 +27,8 @@ type UsMeSCCPResidentProfileProps = {
   formLinkButton?: boolean;
 };
 
-export const UsMeSCCPResidentProfile: React.FC<UsMeSCCPResidentProfileProps> = observer(
-  function UsMeSCCPResidentProfile({ formLinkButton }) {
+export const UsMeSCCPResidentProfile: React.FC<UsMeSCCPResidentProfileProps> =
+  observer(function UsMeSCCPResidentProfile({ formLinkButton }) {
     const { workflowsStore } = useRootStore();
 
     const resident = workflowsStore.selectedResident;
@@ -48,5 +48,4 @@ export const UsMeSCCPResidentProfile: React.FC<UsMeSCCPResidentProfileProps> = o
         />
       </article>
     );
-  }
-);
+  });
