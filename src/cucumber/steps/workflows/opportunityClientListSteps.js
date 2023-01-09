@@ -79,7 +79,7 @@ Then("I should see the client status update", async () => {
   await status.waitForExist();
   const text = await status.getText();
   const expectedStatus =
-    /Viewed on \\d{1,2}\/\\d{1,2}\/\\d{1,2} by notarealemail@recidiviz.org/;
+    /Viewed on \d{1,2}\/\d{1,2}\/\d{1,2} by notarealemail@recidiviz.org/;
 
   expect(text).toEqual(expect.stringMatching(expectedStatus));
 });
