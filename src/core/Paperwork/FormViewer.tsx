@@ -83,7 +83,9 @@ const FormViewer: React.FC<FormViewerProps> = ({
   return (
     <FormViewerGrid>
       <FormViewerContext.Provider value={contextObject}>
-        <div ref={formRef}>{children}</div>
+        <div className="WorkflowsFormContainer" ref={formRef}>
+          {children}
+        </div>
       </FormViewerContext.Provider>
     </FormViewerGrid>
   );
