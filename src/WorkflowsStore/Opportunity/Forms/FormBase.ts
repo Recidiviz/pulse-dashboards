@@ -18,7 +18,7 @@
 import { action, computed, makeObservable, toJS } from "mobx";
 
 import {
-  trackReferralFormPrinted,
+  trackReferralFormDownloaded,
   trackReferralFormViewed,
 } from "../../../analytics";
 import { OpportunityUpdateWithForm, UpdateLog } from "../../../firestore";
@@ -66,8 +66,8 @@ export class FormBase<
       formData: computed,
       formLastUpdated: computed,
       prefilledData: computed,
-      formIsPrinting: computed,
-      print: action,
+      formIsDownloading: computed,
+      download: action,
     });
   }
 
@@ -98,20 +98,20 @@ export class FormBase<
     });
   }
 
-  get formIsPrinting(): boolean {
-    return this.rootStore.workflowsStore.formIsPrinting;
+  get formIsDownloading(): boolean {
+    return this.rootStore.workflowsStore.formIsDownloading;
   }
 
-  set formIsPrinting(value: boolean) {
-    this.rootStore.workflowsStore.formIsPrinting = value;
+  set formIsDownloading(value: boolean) {
+    this.rootStore.workflowsStore.formIsDownloading = value;
   }
 
-  print(): void {
+  download(): void {
     this.opportunity?.setCompletedIfEligible();
 
-    this.formIsPrinting = true;
+    this.formIsDownloading = true;
 
-    trackReferralFormPrinted({
+    trackReferralFormDownloaded({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });
@@ -126,7 +126,7 @@ export class FormBase<
   navigateToFormText = "Navigate to form";
 
   // eslint-disable-next-line class-methods-use-this
-  get printText(): string {
+  get downloadText(): string {
     return "";
   }
 

@@ -18,7 +18,7 @@
 import { configure } from "mobx";
 
 import {
-  trackReferralFormPrinted,
+  trackReferralFormDownloaded,
   trackReferralFormViewed,
 } from "../../../../analytics";
 import { RootStore } from "../../../../RootStore";
@@ -64,25 +64,25 @@ test("form view tracking", () => {
   });
 });
 
-describe("form printing", () => {
+describe("form downloading", () => {
   test("sets a flag", () => {
-    expect(rootStore.workflowsStore.formIsPrinting).toBe(false);
+    expect(rootStore.workflowsStore.formIsDownloading).toBe(false);
 
-    form.print();
+    form.download();
 
-    expect(rootStore.workflowsStore.formIsPrinting).toBe(true);
+    expect(rootStore.workflowsStore.formIsDownloading).toBe(true);
   });
 
   test("updates opportunity status", () => {
     jest.spyOn(opp, "setCompletedIfEligible");
-    form.print();
+    form.download();
 
     expect(opp.setCompletedIfEligible).toHaveBeenCalled();
   });
 
   test("sends tracking event", () => {
-    form.print();
-    expect(trackReferralFormPrinted).toHaveBeenCalledWith({
+    form.download();
+    expect(trackReferralFormDownloaded).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: form.type,
     });

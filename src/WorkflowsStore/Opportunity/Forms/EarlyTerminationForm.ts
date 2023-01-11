@@ -47,8 +47,8 @@ export class EarlyTerminationForm extends FormBase<EarlyTerminationDraftData> {
     };
   }
 
-  get printText(): string {
-    if (this.formIsPrinting) {
+  get downloadText(): string {
+    if (this.formIsDownloading) {
       return "Downloading .DOCX...";
     }
 

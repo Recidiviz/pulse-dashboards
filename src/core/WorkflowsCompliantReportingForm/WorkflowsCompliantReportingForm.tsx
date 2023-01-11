@@ -51,8 +51,8 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
     <FormContainer
       heading="Compliant Reporting"
       agencyName="TDOC"
-      downloadButtonLabel={form.printText}
-      onClickDownload={async () => form.print()}
+      downloadButtonLabel={form.downloadText}
+      onClickDownload={async () => form.download()}
       opportunity={form.opportunity}
     >
       <FormViewer

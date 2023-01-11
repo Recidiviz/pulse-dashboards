@@ -74,10 +74,10 @@ export function trackReferralFormFirstEdited(
   track("frontend.referral_form_first_edited", metadata);
 }
 
-export const trackReferralFormPrinted = (
+export const trackReferralFormDownloaded = (
   metadata: OpportunityTrackingMetadata
 ): void => {
-  track("frontend.referral_form_printed", metadata);
+  track("frontend.referral_form_downloaded", metadata);
 };
 
 export function trackSurfacedInList(

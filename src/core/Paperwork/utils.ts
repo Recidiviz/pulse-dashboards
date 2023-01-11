@@ -65,12 +65,12 @@ export const useAnimatedValue = (
     };
   }, [input, mountedAt, duration, value, setAnimated]);
 
-  // Effect that triggers when a user selects the Print/Download CTA and stops the form-filling animation
+  // Effect that triggers when a user selects the Download CTA and stops the form-filling animation
   useEffect(() => {
     return reaction(
-      () => workflowsStore.formIsPrinting,
+      () => workflowsStore.formIsDownloading,
       () => {
-        if (workflowsStore.formIsPrinting) {
+        if (workflowsStore.formIsDownloading) {
           setMountedAt(0);
           setAnimated(true);
         }

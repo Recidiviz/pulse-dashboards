@@ -9,16 +9,16 @@ export class CompliantReportingForm extends FormBase<
 > {
   navigateToFormText = "Auto-fill referral";
 
-  get printText(): string {
-    if (this.formIsPrinting) {
-      return "Printing PDF...";
+  get downloadText(): string {
+    if (this.formIsDownloading) {
+      return "Downloading PDF...";
     }
 
     if (this.opportunity.updates?.completed) {
-      return "Reprint PDF";
+      return "Re-download PDF";
     }
 
-    return "Print PDF";
+    return "Download PDF";
   }
 
   prefilledDataTransformer(): Partial<CompliantReportingDraftData> {

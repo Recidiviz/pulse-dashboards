@@ -40,12 +40,18 @@ import { UsTnExpirationClientProfile } from "../WorkflowsClientProfile/UsTnExpir
 const PAGE_CONTENT: Record<OpportunityType, any> = {
   compliantReporting: {
     previewContents: (
-      <CompliantReportingClientProfile formPrintButton={false} formLinkButton />
+      <CompliantReportingClientProfile
+        formDownloadButton={false}
+        formLinkButton
+      />
     ),
   },
   earlyTermination: {
     previewContents: (
-      <EarlyTerminationClientProfile formPrintButton={false} formLinkButton />
+      <EarlyTerminationClientProfile
+        formDownloadButton={false}
+        formLinkButton
+      />
     ),
   },
   earnedDischarge: {

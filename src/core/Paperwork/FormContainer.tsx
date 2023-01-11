@@ -118,7 +118,7 @@ export const FormContainer = ({
         <FormHeaderSection>
           <DownloadButton
             className="WorkflowsFormActionButton"
-            disabled={isDownloading}
+            disabled={opportunity.form?.formIsDownloading || isDownloading}
             onClick={async () => {
               setIsDownloading(true);
               try {

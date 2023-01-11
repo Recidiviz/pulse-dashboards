@@ -61,8 +61,8 @@ const FormActionButton = styled(Button).attrs({
 
 type OpportunityModuleProps = {
   formLinkButton?: boolean;
-  formPrintButton?: boolean;
-  // form-related features (e.g. print button) are optional, but the corresponding fields
+  formDownloadButton?: boolean;
+  // form-related features (e.g. download button) are optional, but the corresponding fields
   // do need to be hydrated if you are trying to use any of them
   opportunity: Opportunity;
   hideHeader?: boolean;
@@ -71,7 +71,7 @@ type OpportunityModuleProps = {
 export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
   function OpportunityModule({
     formLinkButton,
-    formPrintButton,
+    formDownloadButton,
     opportunity,
     hideHeader = false,
   }) {
@@ -85,7 +85,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
       <Wrapper {...colors}>
         {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}
         <CriteriaList opportunity={opportunity} />
-        {(formPrintButton || showDenialButton || formLinkButton) && (
+        {(formDownloadButton || showDenialButton || formLinkButton) && (
           <ActionButtons>
             {formLinkButton && opportunity.form && (
               <Link
@@ -102,14 +102,14 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                 </FormActionButton>
               </Link>
             )}
-            {formPrintButton && opportunity.form && (
+            {formDownloadButton && opportunity.form && (
               <div>
                 <FormActionButton
                   className="WorkflowsFormActionButton"
                   buttonFill={colors.buttonFill}
-                  onClick={() => opportunity.form?.print()}
+                  onClick={() => opportunity.form?.download()}
                 >
-                  {opportunity.form.printText}
+                  {opportunity.form.downloadText}
                 </FormActionButton>
               </div>
             )}

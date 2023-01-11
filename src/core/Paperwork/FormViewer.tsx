@@ -40,11 +40,11 @@ interface FormViewerProps {
 }
 
 export interface FormViewerContextData {
-  isPrinting: boolean;
+  isDownloading: boolean;
 }
 
 export const FormViewerContext = React.createContext<FormViewerContextData>({
-  isPrinting: false,
+  isDownloading: false,
 });
 
 const FormViewer: React.FC<FormViewerProps> = ({
@@ -55,21 +55,21 @@ const FormViewer: React.FC<FormViewerProps> = ({
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
   useResizeForm(formRef);
   const { workflowsStore } = useRootStore();
-  const { selectedClient: client, formIsPrinting } = workflowsStore;
+  const { selectedClient: client, formIsDownloading } = workflowsStore;
 
-  // Generate the form and save it once the print styles have been rendered
+  // Generate the form and save it once the download styles have been rendered
   useEffect(() => {
     async function download() {
-      if (formIsPrinting && formRef.current && client) {
+      if (formIsDownloading && formRef.current && client) {
         await formDownloader(fileName, client, formRef.current);
-        workflowsStore.formIsPrinting = false;
+        workflowsStore.formIsDownloading = false;
       }
     }
 
     download();
   }, [
     formRef,
-    formIsPrinting,
+    formIsDownloading,
     formDownloader,
     fileName,
     client,
@@ -77,8 +77,8 @@ const FormViewer: React.FC<FormViewerProps> = ({
   ]);
 
   const contextObject = React.useMemo(() => {
-    return { isPrinting: formIsPrinting };
-  }, [formIsPrinting]);
+    return { isDownloading: formIsDownloading };
+  }, [formIsDownloading]);
 
   return (
     <FormViewerGrid>

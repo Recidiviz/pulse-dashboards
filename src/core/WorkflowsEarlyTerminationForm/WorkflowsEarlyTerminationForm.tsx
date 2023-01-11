@@ -29,7 +29,7 @@ import {
 import FormEarlyTermination from "../Paperwork/US_ND/EarlyTermination/FormEarlyTermination";
 import { REACTIVE_INPUT_UPDATE_DELAY } from "../Paperwork/utils";
 
-const collectAdditionalDepositionLinesToPrint = (client: Client) => {
+const collectAdditionalDepositionLinesToDownload = (client: Client) => {
   const { earlyTermination } = client.verifiedOpportunities;
   return earlyTermination?.form?.additionalDepositionLines.map(
     (key) => earlyTermination?.form?.formData[key]
@@ -49,7 +49,8 @@ const formDownloader = async (
 
   const contents = {
     ...toJS(earlyTermination?.form?.formData),
-    additionalDepositionLines: collectAdditionalDepositionLinesToPrint(client),
+    additionalDepositionLines:
+      collectAdditionalDepositionLinesToDownload(client),
   };
 
   await downloadSingle(
@@ -71,8 +72,8 @@ function WorkflowsEarlyTerminationForm() {
     <FormContainer
       heading="Early Termination"
       agencyName="ND DOCR"
-      downloadButtonLabel={form.printText}
-      onClickDownload={async () => form.print()}
+      downloadButtonLabel={form.downloadText}
+      onClickDownload={async () => form.download()}
       opportunity={form.opportunity}
     >
       <FormViewer

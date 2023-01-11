@@ -94,9 +94,9 @@ const Emphasize = styled.span`
 `;
 
 const FormContainer = styled.form<FormViewerContextData>`
-  // Hide placeholders and blue background while printing
-  ${({ isPrinting }) =>
-    isPrinting
+  // Hide placeholders and blue background while downloading
+  ${({ isDownloading }) =>
+    isDownloading
       ? css`
           // :placeholder-shown is a hack for modifying placeholder styles in html2canvas
           ${Input}:placeholder-shown,

@@ -25,13 +25,13 @@ import { OpportunityModule } from "./OpportunityModule";
 
 type EarlyTerminationClientProfileProps = {
   formLinkButton?: boolean;
-  formPrintButton?: boolean;
+  formDownloadButton?: boolean;
 };
 
 export const EarlyTerminationClientProfile: React.FC<EarlyTerminationClientProfileProps> =
   observer(function EarlyTerminationClientProfile({
     formLinkButton,
-    formPrintButton,
+    formDownloadButton,
   }) {
     const { workflowsStore } = useRootStore();
 
@@ -47,7 +47,7 @@ export const EarlyTerminationClientProfile: React.FC<EarlyTerminationClientProfi
         <OpportunityModule
           opportunity={client.verifiedOpportunities.earlyTermination}
           formLinkButton={formLinkButton}
-          formPrintButton={formPrintButton}
+          formDownloadButton={formDownloadButton}
         />
         <Supervision client={client} />
         <Contact client={client} />

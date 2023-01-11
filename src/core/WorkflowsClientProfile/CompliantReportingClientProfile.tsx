@@ -31,13 +31,13 @@ import { OpportunityModule } from "./OpportunityModule";
 
 type CompliantReportingClientProfileProps = {
   formLinkButton?: boolean;
-  formPrintButton?: boolean;
+  formDownloadButton?: boolean;
 };
 
 export const CompliantReportingClientProfile: React.FC<CompliantReportingClientProfileProps> =
   observer(function CompliantReportingClientProfile({
     formLinkButton,
-    formPrintButton,
+    formDownloadButton,
   }) {
     const { workflowsStore } = useRootStore();
 
@@ -54,7 +54,7 @@ export const CompliantReportingClientProfile: React.FC<CompliantReportingClientP
         <OpportunityModule
           opportunity={client.verifiedOpportunities.compliantReporting}
           formLinkButton={formLinkButton}
-          formPrintButton={formPrintButton}
+          formDownloadButton={formDownloadButton}
         />
         <SpecialConditions client={client} />
         <Supervision client={client} />

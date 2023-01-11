@@ -93,7 +93,7 @@ export class WorkflowsStore implements Hydratable {
 
   residentsSubscription: CaseloadSubscription<ResidentRecord>;
 
-  private formPrintingFlag = false;
+  private formDownloadingFlag = false;
 
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
@@ -564,12 +564,12 @@ export class WorkflowsStore implements Hydratable {
     );
   }
 
-  get formIsPrinting(): boolean {
-    return this.formPrintingFlag;
+  get formIsDownloading(): boolean {
+    return this.formDownloadingFlag;
   }
 
-  set formIsPrinting(value: boolean) {
-    this.formPrintingFlag = value;
+  set formIsDownloading(value: boolean) {
+    this.formDownloadingFlag = value;
   }
 
   /**
