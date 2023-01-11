@@ -119,7 +119,7 @@ export const generateOpportunityHydratedHeader = (
       callToAction: "Change their supervision level in TOMIS.",
     },
     usIdSupervisionLevelDowngrade: {
-      eligibilityText: simplur`${count} client[|s] are being `,
+      eligibilityText: simplur`${count} client[|s] [is|are] being `,
       opportunityText:
         "supervised at a level that does not match their latest risk score",
       callToAction: "Change their supervision level in Atlas",
