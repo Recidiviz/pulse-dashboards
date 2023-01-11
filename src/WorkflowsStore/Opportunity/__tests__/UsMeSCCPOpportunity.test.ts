@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import {
   usMePersonRecordShorterSentence,
   usMeSCCPAlmostEligibleViolationRecordFixture,
   usMeSCCPAlmostEligibleXMonthsRecordFixture,
+  usMeSCCPAlmostEligibleXPortionOfSentenceRecordFixture,
   usMeSCCPEligibleRecordFixture,
   usMeSCCPEligibleRecordHalfPortionFixture,
 } from "../__fixtures__";
@@ -182,6 +183,31 @@ describe("almost eligible but for class A/B discipline", () => {
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toMatchInlineSnapshot(
       `"Needs 45 more days without a Class A or B discipline"`
+    );
+  });
+});
+
+describe("almost eligible but for fraction of sentence served", () => {
+  beforeEach(() => {
+    createTestUnit(usMePersonRecord);
+
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.data = usMeSCCPAlmostEligibleXPortionOfSentenceRecordFixture;
+  });
+
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+    expect(opp.requirementsAlmostMet).toMatchSnapshot();
+  });
+
+  test("almost eligible", () => {
+    expect(opp.almostEligible).toBeTrue();
+  });
+
+  test("almostEligibleStatusMessage", () => {
+    expect(opp.almostEligibleStatusMessage).toMatchInlineSnapshot(
+      `"Needs to serve 3 more months on sentence."`
     );
   });
 });

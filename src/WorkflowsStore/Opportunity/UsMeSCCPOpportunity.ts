@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -89,6 +89,10 @@ const INELIGIBLE_CRITERIA_COPY = {
     text: "Needs $DAYS_REMAINING more days without a Class A or B discipline",
     tooltip: ELIGIBLE_CRITERIA_COPY.usMeNoClassAOrBViolationFor90Days.tooltip,
   },
+  usMeServedXPortionOfSentence: {
+    text: "Needs to serve $MONTHS_REMAINING more months on sentence.",
+    tooltip: ELIGIBLE_CRITERIA_COPY.usMeServedXPortionOfSentence.tooltip,
+  },
 };
 
 function hydrateXMonthsRemainingRequirement(
@@ -103,6 +107,26 @@ function hydrateXMonthsRemainingRequirement(
     tooltip: copy.tooltip,
   };
 }
+
+function hydrateServedXPortionOfSentence(
+  criterion: UsMeSCCPCriteria["usMeServedXPortionOfSentence"],
+  copy: Required<OpportunityRequirement>
+): OpportunityRequirement {
+  const { xPortionServed, eligibleDate } = criterion;
+  const lengthCondition =
+    xPortionServed === "1/2" ? "5 years or less" : "more than 5 years";
+  const monthsRemaining = differenceInMonths(eligibleDate, new Date());
+
+  const text = copy.text
+    .replace("$MINIMUM_FRACTION", xPortionServed)
+    .replace("$MONTHS_REMAINING", `${monthsRemaining}`);
+  const tooltip = copy.tooltip
+    .replaceAll("$MINIMUM_FRACTION", xPortionServed)
+    .replace("$LENGTH_CONDITION", lengthCondition);
+
+  return { text, tooltip };
+}
+
 function hydrateDaysWithoutViolationRequirementText(
   criterion: NonNullable<UsMeSCCPCriteria["usMeNoClassAOrBViolationFor90Days"]>
 ) {
@@ -140,19 +164,12 @@ const requirementsForEligibleCriteria = (
   }
 
   if (criteria.usMeServedXPortionOfSentence) {
-    const { xPortionServed } = criteria.usMeServedXPortionOfSentence;
-    const lengthCondition =
-      xPortionServed === "1/2" ? "5 years or less" : "more than 5 years";
-
-    usMeServedXPortionOfSentence.text =
-      usMeServedXPortionOfSentence.text.replace(
-        "$MINIMUM_FRACTION",
-        xPortionServed
-      );
-    usMeServedXPortionOfSentence.tooltip = usMeServedXPortionOfSentence.tooltip
-      .replaceAll("$MINIMUM_FRACTION", xPortionServed)
-      .replace("$LENGTH_CONDITION", lengthCondition);
-    requirements.push(usMeServedXPortionOfSentence);
+    requirements.push(
+      hydrateServedXPortionOfSentence(
+        criteria.usMeServedXPortionOfSentence,
+        usMeServedXPortionOfSentence
+      )
+    );
   }
 
   if (criteria.usMeXMonthsRemainingOnSentence) {
@@ -180,18 +197,28 @@ const requirementsForIneligibleCriteria = (
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
 
-  const { usMeXMonthsRemainingOnSentence, usMeNoClassAOrBViolationFor90Days } =
-    cloneDeep(INELIGIBLE_CRITERIA_COPY);
+  const {
+    usMeXMonthsRemainingOnSentence,
+    usMeNoClassAOrBViolationFor90Days,
+    usMeServedXPortionOfSentence,
+  } = cloneDeep(INELIGIBLE_CRITERIA_COPY);
 
   if (criteria.usMeXMonthsRemainingOnSentence) {
-    if (criteria.usMeXMonthsRemainingOnSentence) {
-      requirements.push(
-        hydrateXMonthsRemainingRequirement(
-          criteria.usMeXMonthsRemainingOnSentence,
-          usMeXMonthsRemainingOnSentence
-        )
-      );
-    }
+    requirements.push(
+      hydrateXMonthsRemainingRequirement(
+        criteria.usMeXMonthsRemainingOnSentence,
+        usMeXMonthsRemainingOnSentence
+      )
+    );
+  }
+
+  if (criteria.usMeServedXPortionOfSentence) {
+    requirements.push(
+      hydrateServedXPortionOfSentence(
+        criteria.usMeServedXPortionOfSentence,
+        usMeServedXPortionOfSentence
+      )
+    );
   }
 
   if (criteria.usMeNoClassAOrBViolationFor90Days) {
@@ -256,6 +283,7 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
     const {
       usMeXMonthsRemainingOnSentence,
       usMeNoClassAOrBViolationFor90Days,
+      usMeServedXPortionOfSentence,
     } = this.record?.ineligibleCriteria ?? {};
 
     if (usMeXMonthsRemainingOnSentence) {
@@ -278,6 +306,15 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
       return hydrateDaysWithoutViolationRequirementText(
         usMeNoClassAOrBViolationFor90Days
       );
+    }
+
+    if (usMeServedXPortionOfSentence) {
+      const { usMeServedXPortionOfSentence: copy } = cloneDeep(
+        INELIGIBLE_CRITERIA_COPY
+      );
+
+      return hydrateServedXPortionOfSentence(usMeServedXPortionOfSentence, copy)
+        .text;
     }
 
     return "Status unknown";

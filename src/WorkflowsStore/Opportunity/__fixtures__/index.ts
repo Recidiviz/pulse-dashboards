@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -576,6 +576,37 @@ export const usMeSCCPAlmostEligibleViolationRecordFixture: UsMeSCCPReferralRecor
         xPortionServed: "2/3",
       },
       usMeNoDetainersWarrantsOrOther: null,
+    },
+    caseNotes: {
+      foo: [
+        {
+          noteTitle: "A title",
+          noteBody: "A body",
+          eventDate: parseISO("2022-06-28"),
+        },
+      ],
+    },
+  };
+
+export const usMeSCCPAlmostEligibleXPortionOfSentenceRecordFixture: UsMeSCCPReferralRecord =
+  {
+    stateCode: "US_ME",
+    externalId: "111",
+    ineligibleCriteria: {
+      usMeServedXPortionOfSentence: {
+        eligibleDate: parseISO("2023-04-12"),
+        xPortionServed: "2/3",
+      },
+    },
+    eligibleCriteria: {
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: parseISO("2022-06-14"),
+      },
+      usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+      usMeNoDetainersWarrantsOrOther: null,
+      usMeNoClassAOrBViolationFor90Days: {
+        eligibleDate: parseISO("2022-10-15"),
+      },
     },
     caseNotes: {
       foo: [
