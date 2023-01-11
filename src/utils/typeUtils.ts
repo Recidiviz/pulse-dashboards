@@ -56,3 +56,7 @@ export type UnionToIntersection<U> = (
 ) extends (k: infer I) => void
   ? I
   : never;
+
+export type PartialRecord<K extends string | number | symbol, V> = Partial<
+  Record<K, V>
+>;

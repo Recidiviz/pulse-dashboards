@@ -17,7 +17,7 @@
 
 import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
 import {
-  OPPORTUNITY_TYPE_URLS,
+  OPPORTUNITY_URL_BY_TYPE,
   OpportunityType,
 } from "../WorkflowsStore/Opportunity/types";
 import { MetricId, TenantId } from "./models/types";
@@ -279,7 +279,7 @@ export function workflowsUrl(
     const transformedParams = {
       ...params,
       ...(params.opportunityType && {
-        opportunityTypeUrl: OPPORTUNITY_TYPE_URLS[params.opportunityType],
+        opportunityTypeUrl: OPPORTUNITY_URL_BY_TYPE[params.opportunityType],
       }),
     };
     return Object.keys(transformedParams).reduce((path, param) => {

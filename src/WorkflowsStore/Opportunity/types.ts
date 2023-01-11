@@ -17,6 +17,8 @@
 
 import { Hydratable } from "../../core/models/types";
 import { Denial, UpdateLog } from "../../firestore";
+import { TenantId } from "../../RootStore/types";
+import { PartialRecord } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
 
@@ -57,26 +59,58 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   usTnExpiration: "Expiration (TEPE)",
 };
 
-export const OPPORTUNITY_TYPE_URLS: Record<OpportunityType, string> = {
-  compliantReporting: "compliantReporting",
-  earlyTermination: "earlyTermination",
-  earnedDischarge: "earnedDischarge",
-  LSU: "LSU",
-  pastFTRD: "pastFTRD",
-  supervisionLevelDowngrade: "supervisionLevelDowngrade",
-  usIdSupervisionLevelDowngrade: "supervisionLevelDowngrade",
-  usMeSCCP: "SCCP",
-  usTnExpiration: "expiration",
+export const OPPORTUNITY_TYPE_URLS_BY_STATE: PartialRecord<
+  TenantId,
+  PartialRecord<OpportunityType, string>
+> = {
+  US_TN: {
+    supervisionLevelDowngrade: "supervisionLevelDowngrade",
+    compliantReporting: "compliantReporting",
+    usTnExpiration: "expiration",
+  },
+  US_ND: {
+    earlyTermination: "earlyTermination",
+  },
+  US_ID: {
+    earnedDischarge: "earnedDischarge",
+    LSU: "LSU",
+    pastFTRD: "pastFTRD",
+    usIdSupervisionLevelDowngrade: "supervisionLevelDowngrade",
+  },
+  US_ME: {
+    usMeSCCP: "SCCP",
+  },
 };
-export const OPPORTUNITY_TYPES_FOR_URL: Record<string, OpportunityType> =
-  Object.fromEntries(
-    Object.entries(OPPORTUNITY_TYPE_URLS).map(([k, v]) => [
-      v,
-      k as OpportunityType,
-    ])
-  );
-export function isOpportunityTypeUrl(s: string): boolean {
-  return s in OPPORTUNITY_TYPES_FOR_URL;
+
+// This is safe to do since all types are unique so the keys won't clash
+export const OPPORTUNITY_URL_BY_TYPE = Object.entries(
+  OPPORTUNITY_TYPE_URLS_BY_STATE
+).reduce(
+  (acc: PartialRecord<OpportunityType, string>, [_, opportunityToUrl]) => {
+    return { ...acc, ...opportunityToUrl };
+  },
+  {}
+) as Record<OpportunityType, string>;
+
+// When inverting, we need to keep the state code since urls are not unique
+export const OPPORTUNITY_TYPE_FOR_URL_BY_STATE: PartialRecord<
+  TenantId,
+  Record<string, OpportunityType>
+> = Object.fromEntries(
+  Object.entries(OPPORTUNITY_TYPE_URLS_BY_STATE).map(
+    ([stateCode, urlByType]) => [
+      stateCode,
+      Object.fromEntries(
+        Object.entries(urlByType).map(([oppType, url]) => [url, oppType])
+      ),
+    ]
+  )
+);
+export function isOpportunityTypeUrlForState(
+  stateCode: TenantId,
+  s: string
+): boolean {
+  return s in (OPPORTUNITY_TYPE_FOR_URL_BY_STATE[stateCode] ?? {});
 }
 
 export type OpportunityRequirement = {
