@@ -69,7 +69,9 @@ export type FeatureVariant =
   | "usTnSupervisionLevelDowngrade"
   | "usTnExpiration"
   | "usIdEarnedDischargeForm"
-  | "usIdSupervisionLevelDowngrade";
+  | "usIdSupervisionLevelDowngrade"
+  | "usIdLengthOfStayAlmostEligible"
+  | "usIdIncomeVerificationAlmostEligible";
 /**
  * For each feature, an optional activeDate can control when the user gets access.
  * If this is missing, access will be granted immediately.
@@ -88,6 +90,8 @@ export const defaultFeatureVariantsActive: FeatureVariantMapping = {
   usTnExpiration: {},
   usIdEarnedDischargeForm: {},
   usIdSupervisionLevelDowngrade: {},
+  usIdLengthOfStayAlmostEligible: {},
+  usIdIncomeVerificationAlmostEligible: {},
 };
 
 /**

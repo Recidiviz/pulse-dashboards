@@ -35,8 +35,20 @@ export type LSUEarnedDischargeCommonCriteria = {
   noViolentMisdemeanorWithin12Months: {
     latestViolentConvictions: Date[];
   };
-  usIdIncomeVerifiedWithin3Months: {
+  usIdIncomeVerifiedWithin3Months?: {
     incomeVerifiedDate?: Date;
+  };
+};
+
+export type LSUEarnedDischargeIneligibleCriteria = {
+  onSupervisionAtLeastOneYear?: {
+    eligible_date?: Date;
+  };
+  usIdIncomeVerifiedWithin3Months?: {
+    incomeVerifiedDate?: Date;
+  };
+  pastEarnedDischargeEligibleDate?: {
+    eligible_date?: Date;
   };
 };
 
@@ -62,6 +74,17 @@ export type LSUReferralRecord = {
     txNoteTitle?: string;
     txNoteBody?: string;
   };
+  eligibleCriteria: LSUEarnedDischargeCommonCriteria & {
+    usIdNoActiveNco: {
+      activeNco: boolean;
+    };
+    usIdLsirLevelLowFor90Days: {
+      eligibleDate: Date;
+      riskLevel: "LOW";
+    };
+    onSupervisionAtLeastOneYear?: { eligibleDate?: Date };
+  };
+  ineligibleCriteria: Partial<LSUEarnedDischargeIneligibleCriteria>;
   criteria: LSUEarnedDischargeCommonCriteria & {
     usIdNoActiveNco: {
       activeNco: boolean;
@@ -70,7 +93,7 @@ export type LSUReferralRecord = {
       eligibleDate: Date;
       riskLevel: "LOW";
     };
-    onSupervisionAtLeastOneYear: { eligibleDate: Date };
+    onSupervisionAtLeastOneYear?: { eligibleDate?: Date };
   };
 
   eligibleStartDate: Date;

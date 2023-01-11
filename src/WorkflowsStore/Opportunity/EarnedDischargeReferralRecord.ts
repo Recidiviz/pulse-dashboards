@@ -21,6 +21,7 @@ import { TransformFunction } from "../subscriptions";
 import { fieldToDate } from "../utils";
 import {
   LSUEarnedDischargeCommonCriteria,
+  LSUEarnedDischargeIneligibleCriteria,
   transformLSUEarnedDischargeCommonCriteria,
 } from "./LSUReferralRecord";
 import { WithCaseNotes } from "./types";
@@ -55,8 +56,19 @@ export type EarnedDischargeReferralRecord = {
     latestAssessmentScore?: number;
     latestAssessmentDate?: Date;
   };
+  ineligibleCriteria: Partial<LSUEarnedDischargeIneligibleCriteria>;
+  eligibleCriteria: LSUEarnedDischargeCommonCriteria & {
+    pastEarnedDischargeEligibleDate?: {
+      eligibleDate: Date;
+      sentenceType: "PROBATION" | "PAROLE" | "DUAL";
+    };
+    usIdLsirLevelLowModerateForXDays: {
+      eligibleDate: Date;
+      riskLevel: "LOW" | "MODERATE";
+    };
+  };
   criteria: LSUEarnedDischargeCommonCriteria & {
-    pastEarnedDischargeEligibleDate: {
+    pastEarnedDischargeEligibleDate?: {
       eligibleDate: Date;
       sentenceType: "PROBATION" | "PAROLE" | "DUAL";
     };

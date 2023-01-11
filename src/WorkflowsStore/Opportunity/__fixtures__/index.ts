@@ -281,6 +281,32 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
       activeNco: false,
     },
   },
+  eligibleCriteria: {
+    usIdLsirLevelLowFor90Days: {
+      riskLevel: "LOW",
+      eligibleDate: parseISO("2022-01-03"),
+    },
+    negativeUaWithin90Days: {
+      latestUaDates: [parseISO("2022-05-28")],
+      latestUaResults: [false],
+    },
+    noFelonyWithin24Months: {
+      latestFelonyConvictions: [],
+    },
+    noViolentMisdemeanorWithin12Months: {
+      latestViolentConvictions: [],
+    },
+    usIdIncomeVerifiedWithin3Months: {
+      incomeVerifiedDate: parseISO("2022-06-03"),
+    },
+    onSupervisionAtLeastOneYear: {
+      eligibleDate: parseISO("2022-06-01"),
+    },
+    usIdNoActiveNco: {
+      activeNco: false,
+    },
+  },
+  ineligibleCriteria: {},
   eligibleStartDate: new Date(2022, 10, 5),
   caseNotes: {
     "Special Conditions": [
@@ -333,6 +359,30 @@ export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord
         sentenceType: "PAROLE",
       },
     },
+    eligibleCriteria: {
+      usIdLsirLevelLowModerateForXDays: {
+        riskLevel: "MODERATE",
+        eligibleDate: parseISO("2022-01-03"),
+      },
+      negativeUaWithin90Days: {
+        latestUaDates: [parseISO("2022-05-28")],
+        latestUaResults: [false],
+      },
+      noFelonyWithin24Months: {
+        latestFelonyConvictions: [],
+      },
+      noViolentMisdemeanorWithin12Months: {
+        latestViolentConvictions: [],
+      },
+      usIdIncomeVerifiedWithin3Months: {
+        incomeVerifiedDate: parseISO("2022-06-03"),
+      },
+      pastEarnedDischargeEligibleDate: {
+        eligibleDate: parseISO("2022-03-17"),
+        sentenceType: "PAROLE",
+      },
+    },
+    ineligibleCriteria: {},
     eligibleStartDate: new Date(2022, 10, 5),
     caseNotes: {
       "Special Conditions": [

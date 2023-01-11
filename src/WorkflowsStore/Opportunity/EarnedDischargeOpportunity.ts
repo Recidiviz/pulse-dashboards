@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../firestore";
 import { Client } from "../Client";
-import { OTHER_KEY } from "../utils";
+import { ValidateFunction } from "../subscriptions";
+import { OpportunityValidationError, OTHER_KEY } from "../utils";
 import {
   EarnedDischargeDraftData,
   EarnedDischargeReferralRecord,
@@ -65,6 +67,33 @@ const CRITERIA: Record<
   },
 };
 
+const getRecordValidator =
+  (client: Client): ValidateFunction<EarnedDischargeReferralRecord> =>
+  (record: DocumentData | undefined): void => {
+    const featureFlags = client.rootStore.workflowsStore.featureVariants;
+    const ineligibleCriteriaKeys =
+      (record?.ineligibleCriteria && Object.keys(record?.ineligibleCriteria)) ??
+      [];
+
+    if (
+      !featureFlags.usIdLengthOfStayAlmostEligible &&
+      ineligibleCriteriaKeys.includes("pastEarnedDischargeEligibleDate")
+    ) {
+      throw new OpportunityValidationError(
+        "usIdLengthOfStayAlmostEligible opportunity is not enabled for this user."
+      );
+    }
+
+    if (
+      !featureFlags.usIdIncomeVerificationAlmostEligible &&
+      ineligibleCriteriaKeys.includes("usIdIncomeVerifiedWithin3Months")
+    ) {
+      throw new OpportunityValidationError(
+        "usIdIncomeVerificationAlmostEligible opportunity is not enabled for this user."
+      );
+    }
+  };
+
 export class EarnedDischargeOpportunity extends OpportunityBase<
   Client,
   EarnedDischargeReferralRecord,
@@ -76,7 +105,13 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
   form?: UsIdEarnedDischargeForm;
 
   constructor(client: Client) {
-    super(client, "earnedDischarge", client.rootStore, transformReferral);
+    super(
+      client,
+      "earnedDischarge",
+      client.rootStore,
+      transformReferral,
+      getRecordValidator(client)
+    );
 
     makeObservable(this, {
       requirementsMet: computed,

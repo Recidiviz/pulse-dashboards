@@ -15,12 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { some } from "lodash";
 import { computed, makeObservable } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../firestore";
 import { Client } from "../Client";
-import { OTHER_KEY } from "../utils";
+import { ValidateFunction } from "../subscriptions";
+import { OpportunityValidationError, OTHER_KEY } from "../utils";
 import { LSUForm } from "./Forms/LSUForm";
 import {
   LSUDraftData,
@@ -128,6 +130,33 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
   return requirements;
 };
 
+const getRecordValidator =
+  (client: Client): ValidateFunction<LSUReferralRecord> =>
+  (record: DocumentData | undefined): void => {
+    const featureFlags = client.rootStore.workflowsStore.featureVariants;
+    const ineligibleCriteriaKeys =
+      (record?.ineligibleCriteria && Object.keys(record?.ineligibleCriteria)) ??
+      [];
+
+    if (
+      !featureFlags.usIdLengthOfStayAlmostEligible &&
+      ineligibleCriteriaKeys.includes("onSupervisionAtLeastOneYear")
+    ) {
+      throw new OpportunityValidationError(
+        "usIdLengthOfStayAlmostEligible opportunity is not enabled for this user."
+      );
+    }
+
+    if (
+      !featureFlags.usIdIncomeVerificationAlmostEligible &&
+      ineligibleCriteriaKeys.includes("usIdIncomeVerifiedWithin3Months")
+    ) {
+      throw new OpportunityValidationError(
+        "usIdIncomeVerificationAlmostEligible opportunity is not enabled for this user."
+      );
+    }
+  };
+
 export class LSUOpportunity extends OpportunityBase<
   Client,
   LSUReferralRecord,
@@ -139,7 +168,13 @@ export class LSUOpportunity extends OpportunityBase<
     "http://forms.idoc.idaho.gov/WebLink/0/edoc/273717/Limited%20Supervision%20Unit.pdf";
 
   constructor(client: Client) {
-    super(client, "LSU", client.rootStore, transformReferral);
+    super(
+      client,
+      "LSU",
+      client.rootStore,
+      transformReferral,
+      getRecordValidator(client)
+    );
     makeObservable(this, {
       requirementsMet: computed,
     });
@@ -161,7 +196,10 @@ export class LSUOpportunity extends OpportunityBase<
       requirements.push(LSU_CRITERIA.usIdLsirLevelLowFor90Days);
     }
 
-    if (criteria.onSupervisionAtLeastOneYear.eligibleDate <= new Date()) {
+    if (
+      criteria.onSupervisionAtLeastOneYear?.eligibleDate &&
+      criteria.onSupervisionAtLeastOneYear?.eligibleDate <= new Date()
+    ) {
       requirements.push(LSU_CRITERIA.onSupervisionAtLeastOneYear);
     }
 
