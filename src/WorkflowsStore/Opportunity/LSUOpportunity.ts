@@ -70,7 +70,7 @@ export const LSU_EARNED_DISCHARGE_COMMON_CRITERIA: Record<
 };
 
 export const LSU_CRITERIA: Record<
-  keyof LSUReferralRecord["criteria"],
+  keyof LSUReferralRecord["eligibleCriteria"],
   OpportunityRequirement
 > = {
   ...LSU_EARNED_DISCHARGE_COMMON_CRITERIA,
@@ -185,20 +185,21 @@ export class LSUOpportunity extends OpportunityBase<
 
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
-    const { criteria } = this.record;
-    const requirements = LSUEarnedDischargeCommonRequirementsMet(criteria);
+    const { eligibleCriteria } = this.record;
+    const requirements =
+      LSUEarnedDischargeCommonRequirementsMet(eligibleCriteria);
 
-    if (!criteria.usIdNoActiveNco?.activeNco) {
+    if (!eligibleCriteria.usIdNoActiveNco?.activeNco) {
       requirements.push(LSU_CRITERIA.usIdNoActiveNco);
     }
 
-    if (criteria.usIdLsirLevelLowFor90Days?.riskLevel === "LOW") {
+    if (eligibleCriteria.usIdLsirLevelLowFor90Days?.riskLevel === "LOW") {
       requirements.push(LSU_CRITERIA.usIdLsirLevelLowFor90Days);
     }
 
     if (
-      criteria.onSupervisionAtLeastOneYear?.eligibleDate &&
-      criteria.onSupervisionAtLeastOneYear?.eligibleDate <= new Date()
+      eligibleCriteria.onSupervisionAtLeastOneYear?.eligibleDate &&
+      eligibleCriteria.onSupervisionAtLeastOneYear?.eligibleDate <= new Date()
     ) {
       requirements.push(LSU_CRITERIA.onSupervisionAtLeastOneYear);
     }

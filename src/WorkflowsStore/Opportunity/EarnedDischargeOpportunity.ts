@@ -47,7 +47,7 @@ const DENIAL_REASONS_MAP = {
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
 const CRITERIA: Record<
-  keyof EarnedDischargeReferralRecord["criteria"],
+  keyof EarnedDischargeReferralRecord["eligibleCriteria"],
   OpportunityRequirement
 > = {
   ...LSU_EARNED_DISCHARGE_COMMON_CRITERIA,
@@ -134,16 +134,17 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
 
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
-    const { criteria } = this.record;
-    const requirements = LSUEarnedDischargeCommonRequirementsMet(criteria);
+    const { eligibleCriteria } = this.record;
+    const requirements =
+      LSUEarnedDischargeCommonRequirementsMet(eligibleCriteria);
 
     // TODO(#2415): Update this to be dynamic once sex offense info is in FE
-    if (criteria.pastEarnedDischargeEligibleDate) {
+    if (eligibleCriteria.pastEarnedDischargeEligibleDate) {
       requirements.push(CRITERIA.pastEarnedDischargeEligibleDate);
     }
-    if (criteria.usIdLsirLevelLowModerateForXDays?.riskLevel) {
+    if (eligibleCriteria.usIdLsirLevelLowModerateForXDays?.riskLevel) {
       const text =
-        criteria.usIdLsirLevelLowModerateForXDays.riskLevel === "LOW"
+        eligibleCriteria.usIdLsirLevelLowModerateForXDays.riskLevel === "LOW"
           ? "Currently low risk with no increase in risk level in past 90 days"
           : "Currently moderate risk with no increase in risk level in past 360 days";
       requirements.push({

@@ -22,7 +22,8 @@ test("transform dual/parole record", () => {
     stateCode: "US_ID",
     externalId: "001",
     formInformation: {},
-    criteria: {
+    ineligibleCriteria: {},
+    eligibleCriteria: {
       usIdLsirLevelLowModerateForXDays: {
         riskLevel: "MODERATE",
         eligibleDate: "2022-01-03",
@@ -68,7 +69,8 @@ test("transform probation record", () => {
     stateCode: "US_ID",
     externalId: "001",
     formInformation: {},
-    criteria: {
+    ineligibleCriteria: {},
+    eligibleCriteria: {
       usIdLsirLevelLowModerateForXDays: {
         riskLevel: "MODERATE",
         eligibleDate: "2022-01-03",
@@ -114,7 +116,8 @@ test("optional criteria have sane fallbacks", () => {
     stateCode: "US_ID",
     externalId: "001",
     formInformation: {},
-    criteria: {
+    ineligibleCriteria: {},
+    eligibleCriteria: {
       usIdLsirLevelLowModerateForXDays: {
         riskLevel: "MODERATE",
         eligibleDate: "2022-01-03",
@@ -168,7 +171,8 @@ test("formInformation parses", () => {
       latestAssessmentScore: 19,
       latestAssessmentDate: "2022-10-24",
     },
-    criteria: {
+    ineligibleCriteria: {},
+    eligibleCriteria: {
       usIdLsirLevelLowModerateForXDays: {
         riskLevel: "MODERATE",
         eligibleDate: "2022-01-03",

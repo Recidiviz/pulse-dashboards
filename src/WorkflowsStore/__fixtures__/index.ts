@@ -137,6 +137,25 @@ export const lsuEligibleClient: ClientRecord = {
   allEligibleOpportunities: ["LSU"],
 };
 
+export const lsuAlmostEligibleClient: ClientRecord = {
+  personType: "CLIENT",
+  recordId: "us_xx_103",
+  personName: { givenNames: "CHAD", surname: "KROGER" },
+  personExternalId: "103",
+  pseudonymizedId: "p103",
+  stateCode: "US_XX",
+  officerId: "OFFICER1",
+  supervisionType: "MISDEMEANOR PROBATIONER",
+  supervisionLevel: "STANDARD: MINIMUM",
+  supervisionLevelStart: dateToTimestamp("2021-07-05"),
+  address: "123 Main St, Nashville, TN 12345",
+  phoneNumber: "5555555678",
+  expirationDate: dateToTimestamp("2024-12-31"),
+  currentBalance: 221.88,
+  specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
+  allEligibleOpportunities: ["LSU"],
+};
+
 export const mockClients = [
   ineligibleClient,
   eligibleClient,

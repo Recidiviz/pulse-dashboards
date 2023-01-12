@@ -42,13 +42,14 @@ export type LSUEarnedDischargeCommonCriteria = {
 
 export type LSUEarnedDischargeIneligibleCriteria = {
   onSupervisionAtLeastOneYear?: {
-    eligible_date?: Date;
+    eligibleDate?: Date;
   };
   usIdIncomeVerifiedWithin3Months?: {
     incomeVerifiedDate?: Date;
   };
   pastEarnedDischargeEligibleDate?: {
-    eligible_date?: Date;
+    eligibleDate?: Date;
+    sentenceType?: "PROBATION" | "PAROLE" | "DUAL";
   };
 };
 
@@ -85,17 +86,6 @@ export type LSUReferralRecord = {
     onSupervisionAtLeastOneYear?: { eligibleDate?: Date };
   };
   ineligibleCriteria: Partial<LSUEarnedDischargeIneligibleCriteria>;
-  criteria: LSUEarnedDischargeCommonCriteria & {
-    usIdNoActiveNco: {
-      activeNco: boolean;
-    };
-    usIdLsirLevelLowFor90Days: {
-      eligibleDate: Date;
-      riskLevel: "LOW";
-    };
-    onSupervisionAtLeastOneYear?: { eligibleDate?: Date };
-  };
-
   eligibleStartDate: Date;
 } & WithCaseNotes;
 
@@ -120,37 +110,39 @@ export type LSUDraftData = {
 
 export const transformLSUEarnedDischargeCommonCriteria: TransformFunction<
   LSUEarnedDischargeCommonCriteria
-> = (criteria) => {
-  if (!criteria) {
-    throw new Error("No criteria found");
+> = (eligibleCriteria) => {
+  if (!eligibleCriteria) {
+    throw new Error("No eligible criteria found");
   }
 
   const transformedCriteria: LSUEarnedDischargeCommonCriteria = {
     negativeUaWithin90Days: {
       latestUaDates:
         optionalFieldToDateArray(
-          criteria.negativeUaWithin90Days?.latestUaDates
+          eligibleCriteria.negativeUaWithin90Days?.latestUaDates
         ) ?? [],
-      latestUaResults: criteria.negativeUaWithin90Days?.latestUaResults ?? [],
+      latestUaResults:
+        eligibleCriteria.negativeUaWithin90Days?.latestUaResults ?? [],
     },
 
     noFelonyWithin24Months: {
       latestFelonyConvictions:
         optionalFieldToDateArray(
-          criteria.noFelonyWithin24Months?.latestFelonyConvictions
+          eligibleCriteria.noFelonyWithin24Months?.latestFelonyConvictions
         ) ?? [],
     },
 
     noViolentMisdemeanorWithin12Months: {
       latestViolentConvictions:
         optionalFieldToDateArray(
-          criteria.noViolentMisdemeanorWithin12Months?.latestViolentConvictions
+          eligibleCriteria.noViolentMisdemeanorWithin12Months
+            ?.latestViolentConvictions
         ) ?? [],
     },
 
     usIdIncomeVerifiedWithin3Months: {
       incomeVerifiedDate: optionalFieldToDate(
-        criteria.usIdIncomeVerifiedWithin3Months.incomeVerifiedDate
+        eligibleCriteria.usIdIncomeVerifiedWithin3Months.incomeVerifiedDate
       ),
     },
   };
@@ -166,39 +158,43 @@ export const transformReferral: TransformFunction<LSUReferralRecord> = (
   }
 
   const transformedRecord = cloneDeep(record) as LSUReferralRecord;
-  const { criteria } = record;
+  const { eligibleCriteria } = record;
 
   const transformedCommonCriteria =
-    transformLSUEarnedDischargeCommonCriteria(criteria);
+    transformLSUEarnedDischargeCommonCriteria(eligibleCriteria);
 
-  transformedRecord.criteria = {
-    ...transformedRecord.criteria,
+  transformedRecord.eligibleCriteria = {
+    ...transformedRecord.eligibleCriteria,
     ...transformedCommonCriteria,
   };
 
-  transformedRecord.criteria.usIdLsirLevelLowFor90Days = {
+  transformedRecord.eligibleCriteria.usIdLsirLevelLowFor90Days = {
     riskLevel:
-      criteria.usIdLsirLevelLowFor90Days?.riskLevel ??
-      criteria.usIdLsirLevelLowModerateForXDays?.riskLevel,
-    eligibleDate: criteria.usIdLsirLevelLowFor90Days
-      ? fieldToDate(criteria.usIdLsirLevelLowFor90Days.eligibleDate)
-      : fieldToDate(criteria.usIdLsirLevelLowModerateForXDays.eligibleDate),
+      eligibleCriteria.usIdLsirLevelLowFor90Days?.riskLevel ??
+      eligibleCriteria.usIdLsirLevelLowModerateForXDays?.riskLevel,
+    eligibleDate: eligibleCriteria.usIdLsirLevelLowFor90Days
+      ? fieldToDate(eligibleCriteria.usIdLsirLevelLowFor90Days.eligibleDate)
+      : fieldToDate(
+          eligibleCriteria.usIdLsirLevelLowModerateForXDays.eligibleDate
+        ),
   };
 
-  transformedRecord.criteria.usIdNoActiveNco = {
-    activeNco: criteria.usIdNoActiveNco?.activeNco ?? false,
+  transformedRecord.eligibleCriteria.usIdNoActiveNco = {
+    activeNco: eligibleCriteria.usIdNoActiveNco?.activeNco ?? false,
   };
-  transformedRecord.criteria.onSupervisionAtLeastOneYear = {
+  transformedRecord.eligibleCriteria.onSupervisionAtLeastOneYear = {
     eligibleDate: fieldToDate(
-      criteria.onSupervisionAtLeastOneYear.eligibleDate
+      eligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate
     ),
   };
 
   // delete vestigial criterion left over from TES we don't use in the front end
+  delete (
+    // @ts-expect-error
+    transformedRecord.eligibleCriteria.supervisionNotPastFullTermCompletionDate
+  );
   // @ts-expect-error
-  delete transformedRecord.criteria.supervisionNotPastFullTermCompletionDate;
-  // @ts-expect-error
-  delete transformedRecord.criteria.usIdLsirLevelLowModerateForXDays;
+  delete transformedRecord.eligibleCriteria.usIdLsirLevelLowModerateForXDays;
 
   transformedRecord.eligibleStartDate = fieldToDate(record.eligibleStartDate);
 

@@ -296,6 +296,125 @@
     "lastPaymentAmount": 17.84,
     "lastPaymentDate": "2022-10-04",
     "specialConditionsFlag": "current",
-    "allEligibleOpportunities": ["usIdSupervisionLevelDowngrade"]
+    "allEligibleOpportunities": [
+      "usIdSupervisionLevelDowngrade",
+      "LSU",
+      "earnedDischarge"
+    ]
+  },
+  {
+    "personName": {
+      "givenNames": "FRAN",
+      "surname": "DRESCHER"
+    },
+    "personExternalId": "005",
+    "pseudonymizedId": "p005",
+    "stateCode": "US_ID",
+    "officerId": "OFFICER6",
+    "district": "DISTRICT 1",
+    "supervisionType": "PAROLE",
+    "supervisionLevel": "HIGH",
+    "supervisionLevelStart": "2021-02-02",
+    "address": "77 Limestone Lane",
+    "phoneNumber": "5555555678",
+    "supervisionStartDate": "2021-07-11",
+    "expirationDate": "2025-06-09",
+    "currentBalance": 0,
+    "lastPaymentAmount": 17.84,
+    "lastPaymentDate": "2022-10-04",
+    "specialConditionsFlag": "current",
+    "allEligibleOpportunities": ["LSU"]
+  },
+  {
+    "personName": {
+      "givenNames": "ASH",
+      "surname": "KETCHUM"
+    },
+    "personExternalId": "006",
+    "pseudonymizedId": "p006",
+    "stateCode": "US_ID",
+    "officerId": "OFFICER6",
+    "district": "DISTRICT 1",
+    "supervisionType": "PAROLE",
+    "supervisionLevel": "HIGH",
+    "supervisionLevelStart": "2021-02-02",
+    "address": "77 Limestone Lane",
+    "phoneNumber": "5555555678",
+    "supervisionStartDate": "2021-07-11",
+    "expirationDate": "2025-06-09",
+    "currentBalance": 0,
+    "lastPaymentAmount": 17.84,
+    "lastPaymentDate": "2022-10-04",
+    "specialConditionsFlag": "current",
+    "allEligibleOpportunities": ["LSU"]
+  },
+  {
+    "personName": {
+      "givenNames": "CANDY",
+      "surname": "RAIN"
+    },
+    "personExternalId": "004",
+    "pseudonymizedId": "p004",
+    "stateCode": "US_ID",
+    "officerId": "OFFICER6",
+    "district": "DISTRICT 1",
+    "supervisionType": "PAROLE",
+    "supervisionLevel": "HIGH",
+    "supervisionLevelStart": "2021-02-02",
+    "address": "77 Limestone Lane",
+    "phoneNumber": "5555555678",
+    "supervisionStartDate": "2021-07-11",
+    "expirationDate": "2025-06-09",
+    "currentBalance": 0,
+    "lastPaymentAmount": 17.84,
+    "lastPaymentDate": "2022-10-04",
+    "specialConditionsFlag": "current",
+    "allEligibleOpportunities": ["earnedDischarge"]
+  },
+  {
+    "personName": {
+      "givenNames": "CARRIE",
+      "surname": "UNDERWOOD"
+    },
+    "personExternalId": "007",
+    "pseudonymizedId": "p007",
+    "stateCode": "US_ID",
+    "officerId": "OFFICER6",
+    "district": "DISTRICT 1",
+    "supervisionType": "PAROLE",
+    "supervisionLevel": "HIGH",
+    "supervisionLevelStart": "2021-02-02",
+    "address": "77 Limestone Lane",
+    "phoneNumber": "5555555678",
+    "supervisionStartDate": "2021-07-11",
+    "expirationDate": "2025-06-09",
+    "currentBalance": 0,
+    "lastPaymentAmount": 17.84,
+    "lastPaymentDate": "2022-10-04",
+    "specialConditionsFlag": "current",
+    "allEligibleOpportunities": ["earnedDischarge"]
+  },
+  {
+    "personName": {
+      "givenNames": "LARRY",
+      "surname": "DAVID"
+    },
+    "personExternalId": "008",
+    "pseudonymizedId": "p008",
+    "stateCode": "US_ID",
+    "officerId": "OFFICER6",
+    "district": "DISTRICT 1",
+    "supervisionType": "PAROLE",
+    "supervisionLevel": "HIGH",
+    "supervisionLevelStart": "2021-02-02",
+    "address": "77 Limestone Lane",
+    "phoneNumber": "5555555678",
+    "supervisionStartDate": "2021-07-11",
+    "expirationDate": "2025-06-09",
+    "currentBalance": 0,
+    "lastPaymentAmount": 17.84,
+    "lastPaymentDate": "2022-10-04",
+    "specialConditionsFlag": "current",
+    "allEligibleOpportunities": ["earnedDischarge"]
   }
 ]

@@ -24,7 +24,8 @@ test("transform record", () => {
     formInformation: {
       clientName: "Betty Rubble",
     },
-    criteria: {
+    ineligibleCriteria: {},
+    eligibleCriteria: {
       usIdLsirLevelLowFor90Days: {
         riskLevel: "LOW",
         eligibleDate: "2022-01-03",
@@ -86,7 +87,8 @@ test("optional criteria have sane fallbacks", () => {
     formInformation: {
       clientName: "Betty Rubble",
     },
-    criteria: {
+    ineligibleCriteria: {},
+    eligibleCriteria: {
       usIdLsirLevelLowModerateForXDays: {
         riskLevel: "MODERATE",
         eligibleDate: "2022-01-03",
@@ -118,7 +120,8 @@ test("can transform record with old criteria", () => {
     formInformation: {
       clientName: "Betty Rubble",
     },
-    criteria: {
+    ineligibleCriteria: {},
+    eligibleCriteria: {
       usIdLsirLevelLowModerateForXDays: {
         riskLevel: "MODERATE",
         eligibleDate: "2022-01-03",

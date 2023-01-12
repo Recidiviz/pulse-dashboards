@@ -67,16 +67,6 @@ export type EarnedDischargeReferralRecord = {
       riskLevel: "LOW" | "MODERATE";
     };
   };
-  criteria: LSUEarnedDischargeCommonCriteria & {
-    pastEarnedDischargeEligibleDate?: {
-      eligibleDate: Date;
-      sentenceType: "PROBATION" | "PAROLE" | "DUAL";
-    };
-    usIdLsirLevelLowModerateForXDays: {
-      eligibleDate: Date;
-      riskLevel: "LOW" | "MODERATE";
-    };
-  };
   eligibleStartDate: Date;
 } & WithCaseNotes;
 
@@ -121,43 +111,48 @@ export const transformReferral: TransformFunction<
   }
 
   const transformedRecord = cloneDeep(record) as EarnedDischargeReferralRecord;
-  const { criteria } = record;
+  const { eligibleCriteria } = record;
 
   const transformedCommonCriteria =
-    transformLSUEarnedDischargeCommonCriteria(criteria);
+    transformLSUEarnedDischargeCommonCriteria(eligibleCriteria);
 
-  transformedRecord.criteria = {
-    ...transformedRecord.criteria,
+  transformedRecord.eligibleCriteria = {
+    ...transformedRecord.eligibleCriteria,
     ...transformedCommonCriteria,
   };
 
-  transformedRecord.criteria.usIdLsirLevelLowModerateForXDays = {
-    riskLevel: criteria.usIdLsirLevelLowModerateForXDays.riskLevel,
+  transformedRecord.eligibleCriteria.usIdLsirLevelLowModerateForXDays = {
+    riskLevel: eligibleCriteria.usIdLsirLevelLowModerateForXDays.riskLevel,
     eligibleDate: fieldToDate(
-      criteria.usIdLsirLevelLowModerateForXDays.eligibleDate
+      eligibleCriteria.usIdLsirLevelLowModerateForXDays.eligibleDate
     ),
   };
 
-  transformedRecord.criteria.pastEarnedDischargeEligibleDate = {
+  transformedRecord.eligibleCriteria.pastEarnedDischargeEligibleDate = {
     eligibleDate: fieldToDate(
-      criteria.usIdParoleDualSupervisionPastEarlyDischargeDate?.eligibleDate ??
-        criteria.onProbationAtLeastOneYear?.eligibleDate
+      eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
+        ?.eligibleDate ??
+        eligibleCriteria.onProbationAtLeastOneYear?.eligibleDate
     ),
     sentenceType:
-      criteria.usIdParoleDualSupervisionPastEarlyDischargeDate?.sentenceType ??
-      criteria.onProbationAtLeastOneYear?.sentenceType,
+      eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
+        ?.sentenceType ??
+      eligibleCriteria.onProbationAtLeastOneYear?.sentenceType,
   };
 
+  const transformedEligibleCriteria = transformedRecord.eligibleCriteria;
   delete (
     // @ts-expect-error
-    transformedRecord.criteria.usIdParoleDualSupervisionPastEarlyDischargeDate
+    transformedEligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
   );
   // @ts-expect-error
-  delete transformedRecord.criteria.onProbationAtLeastOneYear;
+  delete transformedRecord.eligibleCriteria.onProbationAtLeastOneYear;
 
   // delete vestigial criterion left over from TES we don't use in the front end
-  // @ts-expect-error
-  delete transformedRecord.criteria.supervisionNotPastFullTermCompletionDate;
+  delete (
+    // @ts-expect-error
+    transformedRecord.eligibleCriteria.supervisionNotPastFullTermCompletionDate
+  );
 
   transformedRecord.eligibleStartDate = fieldToDate(record.eligibleStartDate);
 

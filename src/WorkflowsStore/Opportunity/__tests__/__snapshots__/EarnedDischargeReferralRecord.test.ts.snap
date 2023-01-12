@@ -3,7 +3,7 @@
 exports[`formInformation parses 1`] = `
 Object {
   "caseNotes": Object {},
-  "criteria": Object {
+  "eligibleCriteria": Object {
     "negativeUaWithin90Days": Object {
       "latestUaDates": Array [],
       "latestUaResults": Array [],
@@ -90,6 +90,7 @@ Object {
       15,
     ],
   },
+  "ineligibleCriteria": Object {},
   "stateCode": "US_ID",
 }
 `;
@@ -97,7 +98,7 @@ Object {
 exports[`optional criteria have sane fallbacks 1`] = `
 Object {
   "caseNotes": Object {},
-  "criteria": Object {
+  "eligibleCriteria": Object {
     "negativeUaWithin90Days": Object {
       "latestUaDates": Array [],
       "latestUaResults": Array [],
@@ -123,6 +124,7 @@ Object {
   "eligibleStartDate": 2022-10-05T00:00:00.000Z,
   "externalId": "001",
   "formInformation": Object {},
+  "ineligibleCriteria": Object {},
   "stateCode": "US_ID",
 }
 `;
@@ -138,7 +140,7 @@ Object {
       },
     ],
   },
-  "criteria": Object {
+  "eligibleCriteria": Object {
     "negativeUaWithin90Days": Object {
       "latestUaDates": Array [
         2022-01-03T00:00:00.000Z,
@@ -173,6 +175,7 @@ Object {
   "eligibleStartDate": 2022-10-05T00:00:00.000Z,
   "externalId": "001",
   "formInformation": Object {},
+  "ineligibleCriteria": Object {},
   "stateCode": "US_ID",
 }
 `;
@@ -188,7 +191,7 @@ Object {
       },
     ],
   },
-  "criteria": Object {
+  "eligibleCriteria": Object {
     "negativeUaWithin90Days": Object {
       "latestUaDates": Array [
         2022-01-03T00:00:00.000Z,
@@ -223,6 +226,7 @@ Object {
   "eligibleStartDate": 2022-10-05T00:00:00.000Z,
   "externalId": "001",
   "formInformation": Object {},
+  "ineligibleCriteria": Object {},
   "stateCode": "US_ID",
 }
 `;

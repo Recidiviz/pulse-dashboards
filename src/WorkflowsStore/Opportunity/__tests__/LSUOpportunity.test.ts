@@ -202,7 +202,7 @@ describe("no UA required", () => {
     referralSub.isLoading = false;
     referralSub.isHydrated = true;
     const record = LSUReferralRecordFixture;
-    record.criteria.negativeUaWithin90Days = {
+    record.eligibleCriteria.negativeUaWithin90Days = {
       latestUaDates: [],
       latestUaResults: [],
     };
