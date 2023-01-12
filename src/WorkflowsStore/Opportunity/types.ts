@@ -54,7 +54,7 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   LSU: "Limited Supervision Unit",
   pastFTRD: "Past FTRD",
   supervisionLevelDowngrade: "Supervision Level Downgrade",
-  usIdSupervisionLevelDowngrade: "Supervision Level Downgrade",
+  usIdSupervisionLevelDowngrade: "Supervision Level Mismatch",
   usMeSCCP: "Supervised Community Confinement Program",
   usTnExpiration: "Expiration (TEPE)",
 };
@@ -75,7 +75,7 @@ export const OPPORTUNITY_TYPE_URLS_BY_STATE: PartialRecord<
     earnedDischarge: "earnedDischarge",
     LSU: "LSU",
     pastFTRD: "pastFTRD",
-    usIdSupervisionLevelDowngrade: "supervisionLevelDowngrade",
+    usIdSupervisionLevelDowngrade: "supervisionLevelMismatch",
   },
   US_ME: {
     usMeSCCP: "SCCP",

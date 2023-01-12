@@ -100,7 +100,7 @@ export function formatBaseSLDRequirements(
 
   return [
     {
-      text: `Current supervision level: ${supervisionLevel}; last risk score: ${assessmentLevel} (as of ${formatWorkflowsDate(
+      text: `Current supervision level: ${supervisionLevel}; Last risk score: ${assessmentLevel} (as of ${formatWorkflowsDate(
         latestAssessmentDate
       )})`,
     },
