@@ -38,18 +38,22 @@ const AuthWall: React.FC = ({ children }) => {
   const stateCodeParam = new URLSearchParams(search).get("stateCode");
   const history = useHistory();
 
-  useEffect(() =>
-    // return when's disposer so it is cleaned up if it never runs
-    when(
-      () => !userStore.isAuthorized,
-      // handler keeps React Router in sync with URL changes
-      // that may happen in `authorize` after redirect
-      () =>
-        userStore.authorize((targetUrl: string) => {
-          const url = new URL(targetUrl);
-          history.replace(url.pathname);
-        })
-    )
+  useEffect(
+    () =>
+      // return when's disposer so it is cleaned up if it never runs
+      when(
+        () => !userStore.isAuthorized,
+        // handler keeps React Router in sync with URL changes
+        // that may happen in `authorize` after redirect
+        () =>
+          userStore.authorize((targetUrl: string) => {
+            const url = new URL(targetUrl);
+            history.replace(url.pathname);
+          })
+      ),
+    // these references should never really change, so this is essentially
+    // calling the effect on mount and cleaning it up on unmount
+    [history, userStore]
   );
 
   if (userStore.authError) {
