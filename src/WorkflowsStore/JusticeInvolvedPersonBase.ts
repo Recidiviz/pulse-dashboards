@@ -31,7 +31,11 @@ import {
 } from "mobx";
 
 import { trackProfileViewed } from "../analytics";
-import { FullName, JusticeInvolvedPersonRecord } from "../firestore";
+import {
+  FullName,
+  JusticeInvolvedPersonRecord,
+  StaffRecord,
+} from "../firestore";
 import { RootStore } from "../RootStore";
 import { OpportunityFactory, OpportunityType } from "./Opportunity";
 import {
@@ -46,6 +50,8 @@ export class JusticeInvolvedPersonBase<
   RecordType extends PersonRecordType = JusticeInvolvedPersonRecord
 > implements JusticeInvolvedPerson
 {
+  rootStore: RootStore;
+
   record: RecordType;
 
   constructor(
@@ -56,6 +62,8 @@ export class JusticeInvolvedPersonBase<
       PersonClassForRecord<RecordType>
     >
   ) {
+    this.rootStore = rootStore;
+
     this.record = record;
 
     makeObservable(this, {
@@ -120,6 +128,16 @@ export class JusticeInvolvedPersonBase<
 
   get assignedStaffId(): string {
     return this.record.officerId;
+  }
+
+  get assignedStaff(): StaffRecord | undefined {
+    return this.rootStore.workflowsStore?.availableOfficers.find(
+      (o) => o.id === this.assignedStaffId
+    );
+  }
+
+  get assignedStaffDistrict(): string | undefined {
+    return this.assignedStaff?.district;
   }
 
   get displayName(): string {

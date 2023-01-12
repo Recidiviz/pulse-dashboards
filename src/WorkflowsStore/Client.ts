@@ -81,8 +81,6 @@ export const createClientOpportunity: OpportunityFactory<
  * Represents a person on supervision
  */
 export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
-  rootStore: RootStore;
-
   supervisionType!: string;
 
   supervisionLevelStart?: Date;
@@ -111,8 +109,6 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       supervisionLevel: true,
       updateRecord: override,
     });
-
-    this.rootStore = rootStore;
 
     this.updateRecord(record);
   }
@@ -150,13 +146,6 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   get phoneNumber(): string {
     return this.formattedPhoneNumber || UNKNOWN;
-  }
-
-  get officerDistrict(): string | undefined {
-    const officer = this.rootStore.workflowsStore?.availableOfficers.find(
-      (o) => o.id === this.assignedStaffId
-    );
-    return officer?.district;
   }
 
   get detailsCopy(): ClientDetailsCopy {

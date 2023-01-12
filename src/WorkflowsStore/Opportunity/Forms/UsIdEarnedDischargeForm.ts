@@ -35,6 +35,8 @@ export class UsIdEarnedDischargeForm extends FormBase<
   prefilledDataTransformer(): Partial<EarnedDischargeDraftData> {
     if (!this.opportunity.record || !this.person) return {};
 
+    const { assignedStaff } = this.person;
+
     const {
       record: { formInformation },
     } = this.opportunity;
@@ -52,6 +54,9 @@ export class UsIdEarnedDischargeForm extends FormBase<
     const initialData: Partial<EarnedDischargeDraftData> = {
       clientName: this.person.displayName,
       supervisionType: this.person.supervisionType,
+      probationOfficerFullName: assignedStaff
+        ? `${assignedStaff.givenNames} ${assignedStaff.surname}`
+        : "",
       idocNumber: this.person.externalId,
       ftrDate: formatWorkflowsDate(this.person.expirationDate),
       conditionCompliance: "Yes",

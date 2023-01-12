@@ -41,12 +41,8 @@ const createResidentOpportunity: OpportunityFactory<
 };
 
 export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
-  rootStore: RootStore;
-
   constructor(record: ResidentRecord, rootStore: RootStore) {
     super(record, rootStore, createResidentOpportunity);
-
-    this.rootStore = rootStore;
   }
 
   get facilityId(): string | undefined {
