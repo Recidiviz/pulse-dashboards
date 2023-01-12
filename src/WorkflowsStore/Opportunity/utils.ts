@@ -99,7 +99,7 @@ export const generateOpportunityHydratedHeader = (
     earnedDischarge: {
       eligibilityText: simplur`${count} client[|s] may be eligible for `,
       opportunityText: `earned discharge`,
-      callToAction: `Review clients who may be eligible for Earned Discharge and complete the request form in CIS.`,
+      callToAction: `Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.`,
     },
     LSU: {
       eligibilityText: simplur`${count} client[|s] may be eligible for the `,
