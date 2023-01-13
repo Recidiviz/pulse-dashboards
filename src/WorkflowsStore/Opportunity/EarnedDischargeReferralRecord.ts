@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@ import { cloneDeep } from "lodash";
 import { TransformFunction } from "../subscriptions";
 import { fieldToDate } from "../utils";
 import {
-  LSUEarnedDischargeCommonCriteria,
+  LSUEarnedDischargeEligibleCriteria,
   LSUEarnedDischargeIneligibleCriteria,
-  transformLSUEarnedDischargeCommonCriteria,
+  transformLSUEarnedDischargeCriteria,
 } from "./LSUReferralRecord";
 import { WithCaseNotes } from "./types";
 import { transformCaseNotes } from "./utils";
@@ -57,7 +57,7 @@ export type EarnedDischargeReferralRecord = {
     latestAssessmentDate?: Date;
   };
   ineligibleCriteria: Partial<LSUEarnedDischargeIneligibleCriteria>;
-  eligibleCriteria: LSUEarnedDischargeCommonCriteria & {
+  eligibleCriteria: LSUEarnedDischargeEligibleCriteria & {
     pastEarnedDischargeEligibleDate?: {
       eligibleDate: Date;
       sentenceType: "PROBATION" | "PAROLE" | "DUAL";
@@ -111,14 +111,18 @@ export const transformReferral: TransformFunction<
   }
 
   const transformedRecord = cloneDeep(record) as EarnedDischargeReferralRecord;
-  const { eligibleCriteria } = record;
+  const { eligibleCriteria, ineligibleCriteria } = record;
 
-  const transformedCommonCriteria =
-    transformLSUEarnedDischargeCommonCriteria(eligibleCriteria);
+  const transformedCommonCriteria = transformLSUEarnedDischargeCriteria(record);
 
   transformedRecord.eligibleCriteria = {
     ...transformedRecord.eligibleCriteria,
-    ...transformedCommonCriteria,
+    ...transformedCommonCriteria?.eligibleCriteria,
+  };
+
+  transformedRecord.ineligibleCriteria = {
+    ...transformedRecord.ineligibleCriteria,
+    ...transformedCommonCriteria?.ineligibleCriteria,
   };
 
   transformedRecord.eligibleCriteria.usIdLsirLevelLowModerateForXDays = {
@@ -128,22 +132,47 @@ export const transformReferral: TransformFunction<
     ),
   };
 
-  transformedRecord.eligibleCriteria.pastEarnedDischargeEligibleDate = {
-    eligibleDate: fieldToDate(
-      eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
-        ?.eligibleDate ??
-        eligibleCriteria.onProbationAtLeastOneYear?.eligibleDate
-    ),
-    sentenceType:
-      eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
-        ?.sentenceType ??
-      eligibleCriteria.onProbationAtLeastOneYear?.sentenceType,
-  };
+  // Almost eligible and eligible criteria
+  if (transformedRecord.eligibleCriteria?.pastEarnedDischargeEligibleDate) {
+    transformedRecord.eligibleCriteria.pastEarnedDischargeEligibleDate = {
+      eligibleDate: fieldToDate(
+        eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
+          ?.eligibleDate ??
+          eligibleCriteria.onProbationAtLeastOneYear?.eligibleDate
+      ),
+      sentenceType:
+        eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
+          ?.sentenceType ??
+        eligibleCriteria.onProbationAtLeastOneYear?.sentenceType,
+    };
+  }
 
-  const transformedEligibleCriteria = transformedRecord.eligibleCriteria;
+  if (transformedRecord.ineligibleCriteria?.pastEarnedDischargeEligibleDate) {
+    transformedRecord.ineligibleCriteria.pastEarnedDischargeEligibleDate = {
+      eligibleDate: fieldToDate(
+        ineligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
+          ?.eligibleDate ??
+          ineligibleCriteria.onProbationAtLeastOneYear?.eligibleDate
+      ),
+      sentenceType:
+        ineligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
+          ?.sentenceType ??
+        ineligibleCriteria.onProbationAtLeastOneYear?.sentenceType,
+    };
+  }
+
+  if (transformedRecord.ineligibleCriteria?.onProbationAtLeastOneYear) {
+    transformedRecord.ineligibleCriteria.onProbationAtLeastOneYear = {
+      eligibleDate:
+        ineligibleCriteria.onProbationAtLeastOneYear?.eligibleDate &&
+        fieldToDate(ineligibleCriteria.onProbationAtLeastOneYear?.eligibleDate),
+    };
+  }
+
   delete (
     // @ts-expect-error
-    transformedEligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
+    // prettier-ignore
+    transformedRecord.eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
   );
   // @ts-expect-error
   delete transformedRecord.eligibleCriteria.onProbationAtLeastOneYear;

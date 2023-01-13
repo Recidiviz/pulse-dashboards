@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -117,6 +117,42 @@ test("optional criteria have sane fallbacks", () => {
     externalId: "001",
     formInformation: {},
     ineligibleCriteria: {},
+    eligibleCriteria: {
+      usIdLsirLevelLowModerateForXDays: {
+        riskLevel: "MODERATE",
+        eligibleDate: "2022-01-03",
+      },
+      negativeUaWithin90Days: null,
+      noFelonyWithin24Months: null,
+      noViolentMisdemeanorWithin12Months: null,
+      usIdIncomeVerifiedWithin3Months: {
+        incomeVerifiedDate: "2022-06-03",
+      },
+      supervisionNotPastFullTermCompletionDate: {
+        eligibleDate: "2025-06-19",
+      },
+      onProbationAtLeastOneYear: {
+        eligibleDate: "2022-05-22",
+        sentenceType: "DUAL",
+      },
+    },
+    eligibleStartDate: "2022-10-05",
+  };
+
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});
+
+test("transforms records with eligible and ineligible criteria", () => {
+  const rawRecord = {
+    stateCode: "US_ID",
+    externalId: "001",
+    formInformation: {},
+    ineligibleCriteria: {
+      usIdParoleDualSupervisionPastEarlyDischargeDate: {
+        eligibleDate: "2025-06-19",
+        sentenceType: "PAROLE",
+      },
+    },
     eligibleCriteria: {
       usIdLsirLevelLowModerateForXDays: {
         riskLevel: "MODERATE",

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import { OpportunityValidationError, OTHER_KEY } from "../utils";
 import { LSUForm } from "./Forms/LSUForm";
 import {
   LSUDraftData,
-  LSUEarnedDischargeCommonCriteria,
+  LSUEarnedDischargeEligibleCriteria,
   LSUReferralRecord,
   transformReferral,
 } from "./LSUReferralRecord";
@@ -44,7 +44,7 @@ const DENIAL_REASONS_MAP = {
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
 export const LSU_EARNED_DISCHARGE_COMMON_CRITERIA: Record<
-  keyof LSUEarnedDischargeCommonCriteria,
+  keyof LSUEarnedDischargeEligibleCriteria,
   OpportunityRequirement
 > = {
   negativeUaWithin90Days: {
@@ -91,7 +91,7 @@ export const LSU_CRITERIA: Record<
 };
 
 export const LSUEarnedDischargeCommonRequirementsMet = (
-  criteria: LSUEarnedDischargeCommonCriteria
+  eligibleCriteria: LSUEarnedDischargeEligibleCriteria
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
   const {
@@ -99,7 +99,7 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
     noFelonyWithin24Months,
     noViolentMisdemeanorWithin12Months,
     usIdIncomeVerifiedWithin3Months,
-  } = criteria;
+  } = eligibleCriteria;
 
   if (!some(negativeUaWithin90Days?.latestUaResults)) {
     // TODO(#2468): Reassess how to indicate no UA required

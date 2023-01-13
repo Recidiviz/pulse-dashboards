@@ -14,10 +14,6 @@ Object {
     "noViolentMisdemeanorWithin12Months": Object {
       "latestViolentConvictions": Array [],
     },
-    "pastEarnedDischargeEligibleDate": Object {
-      "eligibleDate": 2022-05-22T00:00:00.000Z,
-      "sentenceType": "DUAL",
-    },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
     },
@@ -109,10 +105,6 @@ Object {
     "noViolentMisdemeanorWithin12Months": Object {
       "latestViolentConvictions": Array [],
     },
-    "pastEarnedDischargeEligibleDate": Object {
-      "eligibleDate": 2022-05-22T00:00:00.000Z,
-      "sentenceType": "DUAL",
-    },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
     },
@@ -159,10 +151,6 @@ Object {
       "latestViolentConvictions": Array [
         2022-03-09T00:00:00.000Z,
       ],
-    },
-    "pastEarnedDischargeEligibleDate": Object {
-      "eligibleDate": 2022-05-22T00:00:00.000Z,
-      "sentenceType": "DUAL",
     },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
@@ -211,10 +199,6 @@ Object {
         2022-03-09T00:00:00.000Z,
       ],
     },
-    "pastEarnedDischargeEligibleDate": Object {
-      "eligibleDate": 2022-05-22T00:00:00.000Z,
-      "sentenceType": "DUAL",
-    },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
     },
@@ -227,6 +211,41 @@ Object {
   "externalId": "001",
   "formInformation": Object {},
   "ineligibleCriteria": Object {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`transforms records with eligible and ineligible criteria 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "negativeUaWithin90Days": Object {
+      "latestUaDates": Array [],
+      "latestUaResults": Array [],
+    },
+    "noFelonyWithin24Months": Object {
+      "latestFelonyConvictions": Array [],
+    },
+    "noViolentMisdemeanorWithin12Months": Object {
+      "latestViolentConvictions": Array [],
+    },
+    "usIdIncomeVerifiedWithin3Months": Object {
+      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
+    },
+    "usIdLsirLevelLowModerateForXDays": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
+  },
+  "eligibleStartDate": 2022-10-05T00:00:00.000Z,
+  "externalId": "001",
+  "formInformation": Object {},
+  "ineligibleCriteria": Object {
+    "usIdParoleDualSupervisionPastEarlyDischargeDate": Object {
+      "eligibleDate": "2025-06-19",
+      "sentenceType": "PAROLE",
+    },
+  },
   "stateCode": "US_ID",
 }
 `;

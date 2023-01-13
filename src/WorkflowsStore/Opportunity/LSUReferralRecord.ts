@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import {
 import { WithCaseNotes } from "./types";
 import { transformCaseNotes } from "./utils";
 
-export type LSUEarnedDischargeCommonCriteria = {
+export type LSUEarnedDischargeEligibleCriteria = {
   negativeUaWithin90Days: {
     latestUaDates: Date[];
     latestUaResults: boolean[];
@@ -42,6 +42,9 @@ export type LSUEarnedDischargeCommonCriteria = {
 
 export type LSUEarnedDischargeIneligibleCriteria = {
   onSupervisionAtLeastOneYear?: {
+    eligibleDate?: Date;
+  };
+  onProbationAtLeastOneYear?: {
     eligibleDate?: Date;
   };
   usIdIncomeVerifiedWithin3Months?: {
@@ -75,7 +78,7 @@ export type LSUReferralRecord = {
     txNoteTitle?: string;
     txNoteBody?: string;
   };
-  eligibleCriteria: LSUEarnedDischargeCommonCriteria & {
+  eligibleCriteria: LSUEarnedDischargeEligibleCriteria & {
     usIdNoActiveNco: {
       activeNco: boolean;
     };
@@ -108,44 +111,63 @@ export type LSUDraftData = {
   clientSummary: string;
 };
 
-export const transformLSUEarnedDischargeCommonCriteria: TransformFunction<
-  LSUEarnedDischargeCommonCriteria
-> = (eligibleCriteria) => {
-  if (!eligibleCriteria) {
+export type TransformedCriteria = {
+  ineligibleCriteria: Partial<LSUEarnedDischargeIneligibleCriteria>;
+  eligibleCriteria: Partial<LSUEarnedDischargeEligibleCriteria>;
+};
+
+export const transformLSUEarnedDischargeCriteria: TransformFunction<
+  TransformedCriteria
+> = (record) => {
+  if (!record || !record.eligibleCriteria) {
     throw new Error("No eligible criteria found");
   }
 
-  const transformedCriteria: LSUEarnedDischargeCommonCriteria = {
-    negativeUaWithin90Days: {
-      latestUaDates:
-        optionalFieldToDateArray(
-          eligibleCriteria.negativeUaWithin90Days?.latestUaDates
-        ) ?? [],
-      latestUaResults:
-        eligibleCriteria.negativeUaWithin90Days?.latestUaResults ?? [],
-    },
+  const { eligibleCriteria, ineligibleCriteria } = record;
 
-    noFelonyWithin24Months: {
-      latestFelonyConvictions:
-        optionalFieldToDateArray(
-          eligibleCriteria.noFelonyWithin24Months?.latestFelonyConvictions
-        ) ?? [],
+  const transformedCriteria: TransformedCriteria = {
+    eligibleCriteria: {
+      negativeUaWithin90Days: {
+        latestUaDates:
+          optionalFieldToDateArray(
+            eligibleCriteria.negativeUaWithin90Days?.latestUaDates
+          ) ?? [],
+        latestUaResults:
+          eligibleCriteria.negativeUaWithin90Days?.latestUaResults ?? [],
+      },
+      noFelonyWithin24Months: {
+        latestFelonyConvictions:
+          optionalFieldToDateArray(
+            eligibleCriteria.noFelonyWithin24Months?.latestFelonyConvictions
+          ) ?? [],
+      },
+      noViolentMisdemeanorWithin12Months: {
+        latestViolentConvictions:
+          optionalFieldToDateArray(
+            eligibleCriteria.noViolentMisdemeanorWithin12Months
+              ?.latestViolentConvictions
+          ) ?? [],
+      },
     },
+    ineligibleCriteria: {},
+  };
 
-    noViolentMisdemeanorWithin12Months: {
-      latestViolentConvictions:
-        optionalFieldToDateArray(
-          eligibleCriteria.noViolentMisdemeanorWithin12Months
-            ?.latestViolentConvictions
-        ) ?? [],
-    },
-
-    usIdIncomeVerifiedWithin3Months: {
+  // Almost eligible and eligible shared criteria
+  if (eligibleCriteria.usIdIncomeVerifiedWithin3Months) {
+    transformedCriteria.eligibleCriteria.usIdIncomeVerifiedWithin3Months = {
       incomeVerifiedDate: optionalFieldToDate(
         eligibleCriteria.usIdIncomeVerifiedWithin3Months.incomeVerifiedDate
       ),
-    },
-  };
+    };
+  }
+
+  if (ineligibleCriteria.usIdIncomeVerifiedWithin3Months) {
+    transformedCriteria.ineligibleCriteria.usIdIncomeVerifiedWithin3Months = {
+      incomeVerifiedDate: optionalFieldToDate(
+        eligibleCriteria.usIdIncomeVerifiedWithin3Months.incomeVerifiedDate
+      ),
+    };
+  }
 
   return transformedCriteria;
 };
@@ -158,14 +180,18 @@ export const transformReferral: TransformFunction<LSUReferralRecord> = (
   }
 
   const transformedRecord = cloneDeep(record) as LSUReferralRecord;
-  const { eligibleCriteria } = record;
+  const { eligibleCriteria, ineligibleCriteria } = record;
 
-  const transformedCommonCriteria =
-    transformLSUEarnedDischargeCommonCriteria(eligibleCriteria);
+  const transformedCommonCriteria = transformLSUEarnedDischargeCriteria(record);
 
   transformedRecord.eligibleCriteria = {
     ...transformedRecord.eligibleCriteria,
-    ...transformedCommonCriteria,
+    ...transformedCommonCriteria?.eligibleCriteria,
+  };
+
+  transformedRecord.ineligibleCriteria = {
+    ...transformedRecord.ineligibleCriteria,
+    ...transformedCommonCriteria?.ineligibleCriteria,
   };
 
   transformedRecord.eligibleCriteria.usIdLsirLevelLowFor90Days = {
@@ -182,11 +208,25 @@ export const transformReferral: TransformFunction<LSUReferralRecord> = (
   transformedRecord.eligibleCriteria.usIdNoActiveNco = {
     activeNco: eligibleCriteria.usIdNoActiveNco?.activeNco ?? false,
   };
-  transformedRecord.eligibleCriteria.onSupervisionAtLeastOneYear = {
-    eligibleDate: fieldToDate(
-      eligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate
-    ),
-  };
+
+  // Almost eligible and eligible shared criteria
+  if (transformedRecord.eligibleCriteria.onSupervisionAtLeastOneYear) {
+    transformedRecord.eligibleCriteria.onSupervisionAtLeastOneYear = {
+      eligibleDate:
+        eligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate &&
+        fieldToDate(eligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate),
+    };
+  }
+
+  if (transformedRecord.ineligibleCriteria.onSupervisionAtLeastOneYear) {
+    transformedRecord.ineligibleCriteria.onSupervisionAtLeastOneYear = {
+      eligibleDate:
+        ineligibleCriteria.onSupervisionAtLeastOneYear?.eligibleDate &&
+        fieldToDate(
+          ineligibleCriteria.onSupervisionAtLeastOneYear?.eligibleDate
+        ),
+    };
+  }
 
   // delete vestigial criterion left over from TES we don't use in the front end
   delete (
