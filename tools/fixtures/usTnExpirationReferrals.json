@@ -3,23 +3,33 @@
     "stateCode": "US_TN",
     "externalId": "101",
     "formInformation": {
-      "currentOffenses": [
-        "FAILURE TO APPEAR (FELONY)",
-        "FAILURE TO APPEAR (FELONY)"
-      ],
+      "offenses": ["FAILURE TO APPEAR (FELONY)", "FAILURE TO APPEAR (FELONY)"],
       "convictionCounties": ["010"],
       "docketNumbers": ["123", "456"],
-      "latestPseCode": "PSET",
-      "latestPseDate": "2022-06-01",
-      "latestPseOffenses": ["PSE offense"],
+      "latestPse": {
+        "contactDate": "2022-06-01",
+        "contactType": "PSET"
+      },
+      "sexOffenses": ["sex offense"],
       "gangAffiliation": "Gang A",
-      "latestEmpContactCode": "12345",
-      "latestEmpComment": "Comment about employment",
-      "latestFeeContactCode": "FEEP",
-      "latestSpeContactCode": "SPEC",
-      "latestSpeContactDate": "2022-05-05",
-      "latestSpeContactComment": "Special conditions check",
-      "vrrCode": "VRRE"
+      "latestEmp": {
+        "contactDate": "2022-05-05",
+        "contactType": "EMPV",
+        "contactComment": "Comment about employment"
+      },
+      "latestFee": {
+        "contactDate": "2022-04-04",
+        "contactType": "FEEP"
+      },
+      "latestSpe": {
+        "contactDate": "2022-05-05",
+        "contactType": "SPEC",
+        "contactComment": "Special conditions check"
+      },
+      "latestVrr": {
+        "contactDate": "2022-03-03",
+        "contactType": "VRRE"
+      }
     },
     "caseNotes": {
       "Revocation Hearings": [
@@ -31,13 +41,11 @@
       ]
     },
     "criteria": {
-      "supervisionPastFullTermCompletionDate": {
+      "supervisionPastFullTermCompletionDateOrUpcoming60Day": {
         "eligibleDate": "2022-02-11"
       },
-      "usTnNoZeroToleranceCodes": {
-        "zeroToleranceCodes": []
-      },
-      "usTnNotOnLifetimeSupervisionOrLifetimeSentence": {
+      "usTnNoZeroToleranceCodesSpans": {},
+      "usTnNotOnLifeSentenceOrLifetimeSupervision": {
         "lifetimeFlag": false
       }
     }

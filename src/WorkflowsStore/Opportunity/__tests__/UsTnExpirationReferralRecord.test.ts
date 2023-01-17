@@ -28,8 +28,12 @@ const usTnExpirationRecordRaw = {
   stateCode: "US_XX",
   externalId: "abc123",
   criteria: {
-    supervisionPastFullTermCompletionDate: {
+    supervisionPastFullTermCompletionDateOrUpcoming60Day: {
       eligibleDate: "2022-03-03",
+    },
+    usTnNoZeroToleranceCodesSpans: {},
+    usTnNotOnLifeSentenceOrLifetimeSupervision: {
+      lifetimeFlag: false,
     },
   },
 };

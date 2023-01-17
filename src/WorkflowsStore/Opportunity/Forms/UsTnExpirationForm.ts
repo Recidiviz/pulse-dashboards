@@ -14,7 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { UsTnExpirationDraftData } from "../UsTnExpirationReferralRecord";
+import {
+  UsTnExpirationDraftData,
+  UsTnExpirationReferralRecord,
+} from "../UsTnExpirationReferralRecord";
 import {
   defaultFormValueJoiner,
   displayList,
@@ -40,36 +43,40 @@ export class UsTnExpirationForm extends FormBase<UsTnExpirationDraftData> {
     () => {
       if (!this.opportunity.record) return {};
 
-      const { formInformation: form, criteria: criterion } =
-        this.opportunity.record;
+      const { formInformation: form, criteria: criterion } = this.opportunity
+        .record as UsTnExpirationReferralRecord;
 
       const { person } = this.opportunity;
 
       return {
-        expirationDate: criterion.supervisionPastFullTermCompletionDate
-          ?.eligibleDate
-          ? formatFormValueDateMMDDYYYYY(
-              criterion.supervisionPastFullTermCompletionDate?.eligibleDate
-            )
-          : "",
-        currentOffenses: displayList(form.currentOffenses),
-        convictionCounties: displayString(form.convictionCounties),
+        expirationDate: formatFormValueDateMMDDYYYYY(
+          criterion.supervisionPastFullTermCompletionDateOrUpcoming60Day
+            .eligibleDate
+        ),
+        currentOffenses: displayList(form.offenses),
+        convictionCounties: displayList(form.convictionCounties),
         docketNumbers: displayList(form.docketNumbers),
         sexOffenseInformation: defaultFormValueJoiner(
-          `${displayString(form.latestPseCode)} ${
-            form.latestPseDate
-              ? `on ${formatFormValueDateMMDDYYYYY(form.latestPseDate)}`
+          `${displayString(form.latestPse?.contactType)} ${
+            form.latestPse
+              ? `on ${formatFormValueDateMMDDYYYYY(form.latestPse.contactDate)}`
               : ""
           }`,
-          displayList(form.latestPseOffenses, "Offenses:")
+          displayList(form.sexOffenses, "Offenses:")
         ),
         address: person.address,
         employmentInformation: defaultFormValueJoiner(
-          displayString(form.latestEmpContactCode, "Latest EMP contact code:"),
-          displayString(form.latestEmpComment)
+          displayString(
+            form.latestEmp?.contactType,
+            "Latest EMP contact code:"
+          ),
+          displayString(form.latestEmp?.contactComment)
         ),
         feeHistory: defaultFormValueJoiner(
-          displayString(form.latestFeeContactCode, "Latest fee conatct code:"),
+          displayString(
+            form.latestFee?.contactType,
+            "Latest fee conatct code:"
+          ),
           person.currentBalance
             ? `Current balance: $${person.currentBalance}`
             : "",
@@ -88,15 +95,15 @@ export class UsTnExpirationForm extends FormBase<UsTnExpirationDraftData> {
           person.paroleSpecialConditions
             ? person.paroleSpecialConditions.join(", ")
             : "",
-          `${displayString(form.latestSpeContactCode)} ${
-            form.latestSpeContactDate
-              ? `on ${formatFormValueDateMMDDYYYYY(form.latestSpeContactDate)}`
+          `${displayString(form.latestSpe?.contactType)} ${
+            form.latestSpe
+              ? `on ${formatFormValueDateMMDDYYYYY(form.latestSpe.contactDate)}`
               : ""
           }`,
-          displayString(form.latestSpeContactComment)
+          displayString(form.latestSpe?.contactComment)
         ),
-        votersRightsInformation: form.vrrCode
-          ? voterRightsText(form.vrrCode.toUpperCase())
+        votersRightsInformation: form.latestVrr
+          ? voterRightsText(form.latestVrr.contactType.toUpperCase())
           : "",
       };
     };

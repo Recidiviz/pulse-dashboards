@@ -40,13 +40,13 @@ const CRITERIA: Record<
   keyof Required<UsTnExpirationReferralRecord>["criteria"],
   OpportunityRequirement
 > = {
-  supervisionPastFullTermCompletionDate: {
+  supervisionPastFullTermCompletionDateOrUpcoming60Day: {
     text: "Expiration date is $EXPIRATION_DATE",
   },
-  usTnNoZeroToleranceCodes: {
+  usTnNoZeroToleranceCodesSpans: {
     text: "No zero tolerance codes since most recent sentence effective date",
   },
-  usTnNotOnLifetimeSupervisionOrLifetimeSentence: {
+  usTnNotOnLifeSentenceOrLifetimeSupervision: {
     text: "Not on lifetime supervision or lifetime sentence",
   },
 };
@@ -81,31 +81,31 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
     const { criteria } = this.record;
     const requirements: OpportunityRequirement[] = [];
 
-    if (criteria?.supervisionPastFullTermCompletionDate) {
+    if (criteria?.supervisionPastFullTermCompletionDateOrUpcoming60Day) {
       requirements.push({
-        text: CRITERIA.supervisionPastFullTermCompletionDate.text.replace(
+        text: CRITERIA.supervisionPastFullTermCompletionDateOrUpcoming60Day.text.replace(
           "$EXPIRATION_DATE",
           formatWorkflowsDate(
-            criteria.supervisionPastFullTermCompletionDate.eligibleDate
+            criteria.supervisionPastFullTermCompletionDateOrUpcoming60Day
+              .eligibleDate
           )
         ),
-        tooltip: CRITERIA.supervisionPastFullTermCompletionDate.tooltip,
+        tooltip:
+          CRITERIA.supervisionPastFullTermCompletionDateOrUpcoming60Day.tooltip,
       });
     }
-    if (criteria?.usTnNoZeroToleranceCodes) {
-      requirements.push(CRITERIA.usTnNoZeroToleranceCodes);
+    if (criteria?.usTnNoZeroToleranceCodesSpans) {
+      requirements.push(CRITERIA.usTnNoZeroToleranceCodesSpans);
     }
-    if (criteria?.usTnNotOnLifetimeSupervisionOrLifetimeSentence) {
-      requirements.push(
-        CRITERIA.usTnNotOnLifetimeSupervisionOrLifetimeSentence
-      );
+    if (criteria?.usTnNotOnLifeSentenceOrLifetimeSupervision) {
+      requirements.push(CRITERIA.usTnNotOnLifeSentenceOrLifetimeSupervision);
     }
 
     return requirements;
   }
 
   get eligibilityDate(): Date | undefined {
-    return this.record?.criteria?.supervisionPastFullTermCompletionDate
-      ?.eligibleDate;
+    return this.record?.criteria
+      ?.supervisionPastFullTermCompletionDateOrUpcoming60Day?.eligibleDate;
   }
 }

@@ -143,18 +143,22 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord =
     stateCode: "US_TN",
     externalId: "101",
     formInformation: {
-      currentOffenses: ["Charge A", "Charge B"],
+      offenses: ["Charge A", "Charge B"],
       docketNumbers: ["12345"],
-      latestEmpContactCode: "EMPV",
+      convictionCounties: ["123", "456"],
+      sexOffenses: [],
+      latestEmp: {
+        contactDate: parseISO("2022-01-01"),
+        contactType: "EMPV",
+        contactComment: "EMPLOYMENT VERIFIED",
+      },
     },
     criteria: {
-      supervisionPastFullTermCompletionDate: {
+      supervisionPastFullTermCompletionDateOrUpcoming60Day: {
         eligibleDate: parseISO("2022-02-02"),
       },
-      usTnNoZeroToleranceCodes: {
-        zeroToleranceCodes: [],
-      },
-      usTnNotOnLifetimeSupervisionOrLifetimeSentence: {
+      usTnNoZeroToleranceCodesSpans: {},
+      usTnNotOnLifeSentenceOrLifetimeSupervision: {
         lifetimeFlag: false,
       },
     },

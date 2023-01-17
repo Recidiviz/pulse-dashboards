@@ -207,7 +207,7 @@ export const defaultFormValueJoiner = (
   ...items: (string | undefined)[]
 ): string => items.filter((item) => item).join("\n");
 
-export const formatFormValueDateMMDDYYYYY = (date: string): string =>
+export const formatFormValueDateMMDDYYYYY = (date: string | Date): string =>
   moment(date).format("MM/DD/YYYY");
 
 export const displayString = (

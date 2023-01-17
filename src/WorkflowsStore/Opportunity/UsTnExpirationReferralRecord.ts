@@ -19,60 +19,44 @@ import { cloneDeep } from "lodash";
 
 import { Client } from "..";
 import { TransformFunction, ValidateFunction } from "../subscriptions";
-import { fieldToDate, OpportunityValidationError } from "../utils";
+import {
+  fieldToDate,
+  OpportunityValidationError,
+  optionalFieldToDateArray,
+} from "../utils";
 import { transformCaseNotes, WithCaseNotes } from ".";
+
+type Contact = {
+  contactDate: Date;
+  contactType: string;
+  contactComment?: string;
+};
 
 export type UsTnExpirationReferralRecord = {
   stateCode: string;
   externalId: string;
-  // Form Information structure from https://docs.google.com/spreadsheets/d/1enzAosYDOrSvshOhJVwm4NZuPSdcIaxV3Ec2_cyzjOw/edit#gid=1757109567
   formInformation: {
-    // Offender expired his/her probation on ___
-    // Try to read from criteria instead of formInformation
-
-    // Offender plead guilty to ___
-    currentOffenses?: string[];
-
-    // Offender appeared in the [county] on case [numbers].
-    convictionCounties?: string;
-    docketNumbers?: string[];
-
-    // ANY SEX OFFENSE HISTORY
-    latestPseCode?: string;
-    latestPseDate?: Date;
-    latestSexOffenses?: string[];
-
-    // GANG AFFILIATION
-    gangAffiliation?: string;
-
-    // LAST KNOWN ADDRESS
-    // Try to read from client profile instead of formInformation
-
-    // EMPLOYMENT HISTORY
-    latestEmpContactCode?: string;
-    latestEmpComment?: string;
-
-    // FEE HISTORY
-    latestFeeContactCode?: string;
-    // pull balance, payment date, and amount from client profile
-
-    // SPECIAL CONDITIONS
-    latestSpeContactCode?: string;
-    latestSpeContactDate?: Date;
-    latestSpeContactComment?: string;
-    // pull conditions from client profile
-
-    // VOTERS RIGHTS RESTORATION
-    vrrCode?: string;
+    latestPse?: Contact;
+    latestEmp?: Contact;
+    latestSpe?: Contact;
+    latestVrr?: Contact;
+    latestFee?: Contact;
+    sexOffenses: string[];
+    offenses: string[];
+    docketNumbers: string[];
+    convictionCounties: string[];
+    gangAffiliationId?: string;
   };
 
   criteria: {
-    supervisionPastFullTermCompletionDate: { eligibleDate: Date };
-    usTnNoZeroToleranceCodes: {
-      zeroToleranceCodes?: string[];
+    supervisionPastFullTermCompletionDateOrUpcoming60Day: {
+      eligibleDate: Date;
     };
-    usTnNotOnLifetimeSupervisionOrLifetimeSentence: {
-      lifetimeFlag?: boolean;
+    usTnNoZeroToleranceCodesSpans: {
+      zeroToleranceCodeDates?: Date[];
+    };
+    usTnNotOnLifeSentenceOrLifetimeSupervision: {
+      lifetimeFlag: boolean;
     };
   };
 } & WithCaseNotes;
@@ -87,9 +71,16 @@ export const transformReferral: TransformFunction<
   const transformedRecord = cloneDeep(record) as UsTnExpirationReferralRecord;
   const { criteria } = record;
 
-  transformedRecord.criteria.supervisionPastFullTermCompletionDate = {
-    eligibleDate: fieldToDate(
-      criteria.supervisionPastFullTermCompletionDate.eligibleDate
+  transformedRecord.criteria.supervisionPastFullTermCompletionDateOrUpcoming60Day =
+    {
+      eligibleDate: fieldToDate(
+        criteria.supervisionPastFullTermCompletionDateOrUpcoming60Day
+          .eligibleDate
+      ),
+    };
+  transformedRecord.criteria.usTnNoZeroToleranceCodesSpans = {
+    zeroToleranceCodeDates: optionalFieldToDateArray(
+      criteria.usTnNoZeroToleranceCodesSpans.zeroToleranceCodeDates
     ),
   };
 
@@ -115,7 +106,8 @@ export function getValidator(
 ): ValidateFunction<UsTnExpirationReferralRecord> {
   return (transformedRecord) => {
     const { eligibleDate } =
-      transformedRecord.criteria.supervisionPastFullTermCompletionDate;
+      transformedRecord.criteria
+        .supervisionPastFullTermCompletionDateOrUpcoming60Day;
 
     if (eligibleDate.getTime() !== client.expirationDate?.getTime())
       throw new OpportunityValidationError(
