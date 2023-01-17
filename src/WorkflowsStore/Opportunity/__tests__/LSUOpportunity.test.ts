@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { cloneDeep } from "lodash";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
@@ -219,5 +220,93 @@ describe("no UA required", () => {
 
   test("requirements met", () => {
     expect(opp.requirementsMet).toMatchSnapshot();
+  });
+});
+
+describe("almost eligible income verified within 3 months", () => {
+  const almostEligibleIncomeVerified = cloneDeep(LSUReferralRecordFixture);
+
+  almostEligibleIncomeVerified.ineligibleCriteria.usIdIncomeVerifiedWithin3Months =
+    almostEligibleIncomeVerified.eligibleCriteria.usIdIncomeVerifiedWithin3Months;
+
+  delete almostEligibleIncomeVerified.eligibleCriteria
+    .usIdIncomeVerifiedWithin3Months;
+
+  beforeEach(() => {
+    createTestUnit(LSUEligibleClientRecord);
+
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.data = almostEligibleIncomeVerified;
+
+    updatesSub = opp.updatesSubscription;
+    updatesSub.isLoading = false;
+  });
+
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+    expect(opp.requirementsAlmostMet).toMatchSnapshot();
+  });
+
+  test("requirements almost met", () => {
+    expect(opp.almostEligible).toBeTrue();
+    expect(opp.requirementsAlmostMet).toEqual([
+      {
+        text: "Needs employment verification",
+        tooltip:
+          "Policy requirement: Verified employment status, full-time student, or adequate lawful " +
+          "income from non-employment sources have been confirmed within past 3 months.",
+      },
+    ]);
+  });
+
+  test("almostEligibleStatusMessage", () => {
+    expect(opp.almostEligibleStatusMessage).toEqual(
+      "Needs employment verification"
+    );
+  });
+});
+
+describe("almost eligible on supervision at least a year", () => {
+  const almostEligibleSupervisionLength = cloneDeep(LSUReferralRecordFixture);
+
+  almostEligibleSupervisionLength.ineligibleCriteria.onSupervisionAtLeastOneYear =
+    almostEligibleSupervisionLength.eligibleCriteria.onSupervisionAtLeastOneYear;
+
+  delete almostEligibleSupervisionLength.eligibleCriteria
+    .onSupervisionAtLeastOneYear;
+  beforeEach(() => {
+    createTestUnit(LSUEligibleClientRecord);
+
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.data = almostEligibleSupervisionLength;
+
+    updatesSub = opp.updatesSubscription;
+    updatesSub.isLoading = false;
+  });
+
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+  });
+
+  test("requirements almost met", () => {
+    expect(opp.almostEligible).toBeTrue();
+    expect(opp.requirementsAlmostMet).toEqual([
+      {
+        text: "Needs 28 more months on supervision",
+        tooltip:
+          "Policy requirement: If on probation, served minimum sentence according to the court; " +
+          "if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent " +
+          "offense, served at least one-third of remaining sentence; if on parole for a life sentence, served " +
+          "at least five years on parole.",
+      },
+    ]);
+  });
+
+  test("almostEligibleStatusMessage", () => {
+    expect(opp.almostEligibleStatusMessage).toEqual(
+      "Needs 28 more months on supervision"
+    );
   });
 });

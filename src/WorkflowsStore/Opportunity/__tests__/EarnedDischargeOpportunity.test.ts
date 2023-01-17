@@ -22,6 +22,8 @@ import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
 import { DocumentSubscription } from "../../subscriptions";
 import {
+  earnedDischargeAlmostEligibleSupervisionLength,
+  earnedDischargeAlmostEligibleVerifiedIncome,
   EarnedDischargeEligibleClientRecord,
   EarnedDischargeReferralRecordFixture,
 } from "../__fixtures__";
@@ -78,10 +80,84 @@ describe("fully eligible", () => {
   });
 
   test("requirements almost met", () => {
+    expect(opp.almostEligible).toBeFalse();
     expect(opp.requirementsAlmostMet).toEqual([]);
   });
 
   test("requirements met", () => {
     expect(opp.requirementsMet).toMatchSnapshot();
+  });
+});
+
+describe("almost eligible income verified within 3 months", () => {
+  beforeEach(() => {
+    createTestUnit(EarnedDischargeEligibleClientRecord);
+
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.data = earnedDischargeAlmostEligibleVerifiedIncome;
+
+    updatesSub = opp.updatesSubscription;
+    updatesSub.isLoading = false;
+  });
+
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+    expect(opp.requirementsAlmostMet).toMatchSnapshot();
+  });
+
+  test("requirements almost met", () => {
+    expect(opp.almostEligible).toBeTrue();
+    expect(opp.requirementsAlmostMet).toEqual([
+      {
+        text: "Needs employment verification",
+        tooltip:
+          "Policy requirement: Verified employment status, full-time student, or adequate lawful " +
+          "income from non-employment sources have been confirmed within past 3 months.",
+      },
+    ]);
+  });
+
+  test("almostEligibleStatusMessage", () => {
+    expect(opp.almostEligibleStatusMessage).toEqual(
+      "Needs employment verification"
+    );
+  });
+});
+
+describe("almost eligible on probation at least a year", () => {
+  beforeEach(() => {
+    createTestUnit(EarnedDischargeEligibleClientRecord);
+
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.data = earnedDischargeAlmostEligibleSupervisionLength;
+
+    updatesSub = opp.updatesSubscription;
+    updatesSub.isLoading = false;
+  });
+
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+  });
+
+  test("requirements almost met", () => {
+    expect(opp.almostEligible).toBeTrue();
+    expect(opp.requirementsAlmostMet).toEqual([
+      {
+        text: "Needs 46 more months on supervision",
+        tooltip:
+          "Policy requirement: If on probation, served minimum sentence according to the court; " +
+          "if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent " +
+          "offense, served at least one-third of remaining sentence; if on parole for a life sentence, served " +
+          "at least five years on parole.",
+      },
+    ]);
+  });
+
+  test("almostEligibleStatusMessage", () => {
+    expect(opp.almostEligibleStatusMessage).toEqual(
+      "Needs 46 more months on supervision"
+    );
   });
 });

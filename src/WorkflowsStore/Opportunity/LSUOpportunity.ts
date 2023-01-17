@@ -15,14 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { differenceInMonths } from "date-fns";
 import { DocumentData } from "firebase/firestore";
-import { some } from "lodash";
+import { cloneDeep, some } from "lodash";
 import { computed, makeObservable } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../firestore";
 import { Client } from "../Client";
 import { ValidateFunction } from "../subscriptions";
 import { OpportunityValidationError, OTHER_KEY } from "../utils";
+import { INELIGIBLE_CRITERIA_COPY } from "./EarnedDischargeOpportunity";
 import { LSUForm } from "./Forms/LSUForm";
 import {
   LSUDraftData,
@@ -177,10 +179,70 @@ export class LSUOpportunity extends OpportunityBase<
     );
     makeObservable(this, {
       requirementsMet: computed,
+      almostEligible: computed,
+      requirementsAlmostMet: computed,
+      almostEligibleStatusMessage: computed,
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
     this.form = new LSUForm(this.type, this, client.rootStore);
+  }
+
+  get almostEligible(): boolean {
+    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
+  }
+
+  get requirementsAlmostMet(): OpportunityRequirement[] {
+    if (!this.record) return [];
+    const { ineligibleCriteria } = this.record;
+    const requirements: OpportunityRequirement[] = [];
+    const { usIdIncomeVerifiedWithin3Months, onSupervisionAtLeastOneYear } =
+      cloneDeep(INELIGIBLE_CRITERIA_COPY);
+
+    if (ineligibleCriteria.usIdIncomeVerifiedWithin3Months) {
+      requirements.push(usIdIncomeVerifiedWithin3Months);
+    }
+
+    if (
+      ineligibleCriteria.onSupervisionAtLeastOneYear &&
+      ineligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate
+    ) {
+      const monthsRemaining =
+        differenceInMonths(
+          ineligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate,
+          new Date()
+        ) + 30;
+      onSupervisionAtLeastOneYear.text =
+        onSupervisionAtLeastOneYear.text.replace(
+          "$MONTHS_REMAINING",
+          `${monthsRemaining}`
+        );
+      requirements.push(onSupervisionAtLeastOneYear);
+    }
+    return requirements;
+  }
+
+  get almostEligibleStatusMessage(): string | undefined {
+    if (!this.almostEligible) return;
+    const { usIdIncomeVerifiedWithin3Months, onSupervisionAtLeastOneYear } =
+      this.record?.ineligibleCriteria ?? {};
+    if (usIdIncomeVerifiedWithin3Months) {
+      return INELIGIBLE_CRITERIA_COPY.usIdIncomeVerifiedWithin3Months.text;
+    }
+    if (
+      onSupervisionAtLeastOneYear &&
+      onSupervisionAtLeastOneYear.eligibleDate
+    ) {
+      const monthsRemaining =
+        differenceInMonths(
+          onSupervisionAtLeastOneYear.eligibleDate,
+          new Date()
+        ) + 30;
+      return INELIGIBLE_CRITERIA_COPY.onSupervisionAtLeastOneYear.text.replace(
+        "$MONTHS_REMAINING",
+        `${monthsRemaining}`
+      );
+    }
   }
 
   get requirementsMet(): OpportunityRequirement[] {

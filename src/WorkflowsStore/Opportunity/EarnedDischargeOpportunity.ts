@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { differenceInMonths } from "date-fns";
 import { DocumentData } from "firebase/firestore";
+import { cloneDeep } from "lodash";
 import { computed, makeObservable } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../firestore";
@@ -46,7 +48,7 @@ const DENIAL_REASONS_MAP = {
 
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
-const CRITERIA: Record<
+const ELIGIBLE_CRITERIA_COPY: Record<
   keyof EarnedDischargeReferralRecord["eligibleCriteria"],
   OpportunityRequirement
 > = {
@@ -64,6 +66,40 @@ const CRITERIA: Record<
     text: "",
     tooltip:
       "Policy requirement: Assessed at low risk level on LSI-R with no risk increase in past 90 days or moderate risk level on LSI-R with no risk increase in past 360 days",
+  },
+};
+
+export const INELIGIBLE_CRITERIA_COPY: Record<
+  keyof EarnedDischargeReferralRecord["ineligibleCriteria"],
+  OpportunityRequirement
+> = {
+  onSupervisionAtLeastOneYear: {
+    text: "Needs $MONTHS_REMAINING more months on supervision",
+    tooltip:
+      "Policy requirement: If on probation, served minimum sentence according to the court; if on parole " +
+      "for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at " +
+      "least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole.",
+  },
+  usIdIncomeVerifiedWithin3Months: {
+    text: "Needs employment verification",
+    tooltip:
+      "Policy requirement: Verified employment status, full-time student, or adequate lawful " +
+      "income from non-employment sources have been confirmed within past 3 months.",
+  },
+  onProbationAtLeastOneYear: {
+    text: "Needs $MONTHS_REMAINING more months on supervision",
+    tooltip:
+      "Policy requirement: If on probation, served minimum sentence according to the court; if on parole " +
+      "for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at " +
+      "least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole.",
+  },
+  pastEarnedDischargeEligibleDate: {
+    text: "Needs $MONTHS_REMAINING more months on supervision",
+    tooltip:
+      "Policy requirement: If on probation, served minimum sentence according to the court; " +
+      "if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent " +
+      "offense, served at least one-third of remaining sentence; if on parole for a life sentence, " +
+      "served at least five years on parole.",
   },
 };
 
@@ -114,7 +150,10 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
     );
 
     makeObservable(this, {
+      almostEligible: computed,
       requirementsMet: computed,
+      requirementsAlmostMet: computed,
+      almostEligibleStatusMessage: computed,
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
@@ -132,6 +171,93 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
     }
   }
 
+  get almostEligible(): boolean {
+    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
+  }
+
+  get requirementsAlmostMet(): OpportunityRequirement[] {
+    if (!this.record) return [];
+    const { ineligibleCriteria } = this.record;
+    const requirements: OpportunityRequirement[] = [];
+    const {
+      usIdIncomeVerifiedWithin3Months,
+      pastEarnedDischargeEligibleDate,
+      onProbationAtLeastOneYear,
+    } = cloneDeep(INELIGIBLE_CRITERIA_COPY);
+
+    if (ineligibleCriteria.usIdIncomeVerifiedWithin3Months) {
+      requirements.push(usIdIncomeVerifiedWithin3Months);
+    }
+
+    if (
+      ineligibleCriteria.pastEarnedDischargeEligibleDate &&
+      ineligibleCriteria.pastEarnedDischargeEligibleDate.eligibleDate
+    ) {
+      const monthsRemaining =
+        differenceInMonths(
+          ineligibleCriteria.pastEarnedDischargeEligibleDate.eligibleDate,
+          new Date()
+        ) + 30;
+      pastEarnedDischargeEligibleDate.text =
+        pastEarnedDischargeEligibleDate.text.replace(
+          "$MONTHS_REMAINING",
+          `${monthsRemaining}`
+        );
+      requirements.push(pastEarnedDischargeEligibleDate);
+    }
+    if (
+      ineligibleCriteria.onProbationAtLeastOneYear &&
+      ineligibleCriteria.onProbationAtLeastOneYear.eligibleDate
+    ) {
+      const monthsRemaining =
+        differenceInMonths(
+          ineligibleCriteria.onProbationAtLeastOneYear.eligibleDate,
+          new Date()
+        ) + 30;
+      onProbationAtLeastOneYear.text = onProbationAtLeastOneYear.text.replace(
+        "$MONTHS_REMAINING",
+        `${monthsRemaining}`
+      );
+      requirements.push(onProbationAtLeastOneYear);
+    }
+    return requirements;
+  }
+
+  get almostEligibleStatusMessage(): string | undefined {
+    if (!this.almostEligible) return;
+    const {
+      usIdIncomeVerifiedWithin3Months,
+      pastEarnedDischargeEligibleDate,
+      onProbationAtLeastOneYear,
+    } = this.record?.ineligibleCriteria ?? {};
+    if (usIdIncomeVerifiedWithin3Months) {
+      return INELIGIBLE_CRITERIA_COPY.usIdIncomeVerifiedWithin3Months.text;
+    }
+    if (
+      pastEarnedDischargeEligibleDate &&
+      pastEarnedDischargeEligibleDate.eligibleDate
+    ) {
+      const monthsRemaining =
+        differenceInMonths(
+          pastEarnedDischargeEligibleDate.eligibleDate,
+          new Date()
+        ) + 30;
+      return INELIGIBLE_CRITERIA_COPY.onProbationAtLeastOneYear.text.replace(
+        "$MONTHS_REMAINING",
+        `${monthsRemaining}`
+      );
+    }
+    if (onProbationAtLeastOneYear && onProbationAtLeastOneYear.eligibleDate) {
+      const monthsRemaining =
+        differenceInMonths(onProbationAtLeastOneYear.eligibleDate, new Date()) +
+        30;
+      return INELIGIBLE_CRITERIA_COPY.onProbationAtLeastOneYear.text.replace(
+        "$MONTHS_REMAINING",
+        `${monthsRemaining}`
+      );
+    }
+  }
+
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
     const { eligibleCriteria } = this.record;
@@ -140,7 +266,7 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
 
     // TODO(#2415): Update this to be dynamic once sex offense info is in FE
     if (eligibleCriteria.pastEarnedDischargeEligibleDate) {
-      requirements.push(CRITERIA.pastEarnedDischargeEligibleDate);
+      requirements.push(ELIGIBLE_CRITERIA_COPY.pastEarnedDischargeEligibleDate);
     }
     if (eligibleCriteria.usIdLsirLevelLowModerateForXDays?.riskLevel) {
       const text =
@@ -149,7 +275,8 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
           : "Currently moderate risk with no increase in risk level in past 360 days";
       requirements.push({
         text,
-        tooltip: CRITERIA.usIdLsirLevelLowModerateForXDays.tooltip,
+        tooltip:
+          ELIGIBLE_CRITERIA_COPY.usIdLsirLevelLowModerateForXDays.tooltip,
       });
     }
 
