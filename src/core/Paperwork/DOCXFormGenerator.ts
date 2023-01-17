@@ -23,18 +23,19 @@ import UserStore from "../../RootStore/UserStore";
 
 const DEFAULT_EMPTY_SPACE = "        ";
 
-type FormContents = Record<string, any>;
+export type DocxTemplateFormContents = Record<string, any>;
 
 type GeneratedFileType = "blob" | "arraybuffer";
 
 export type FileGeneratorArgs = [
   fileName: string,
-  templateUrl: string,
-  formContents: FormContents
+  stateCode: string,
+  templateName: string,
+  formContents: DocxTemplateFormContents
 ];
 
 const renderDocument = (
-  formContents: FormContents,
+  formContents: DocxTemplateFormContents,
   template: ArrayBuffer,
   generatedType: GeneratedFileType
 ) => {
@@ -57,19 +58,23 @@ const renderDocument = (
 
 const renderAndSaveDocument = (
   fileName: string,
-  formContents: FormContents,
+  formContents: DocxTemplateFormContents,
   template: ArrayBuffer
 ): void => {
   saveAs(renderDocument(formContents, template, "blob"), fileName);
 };
 
 export const downloadSingle = async (
-  ...[fileName, templateUrl, formContents, getTokenSilently]: [
+  ...[fileName, stateCode, templateName, formContents, getTokenSilently]: [
     ...FileGeneratorArgs,
     UserStore["getTokenSilently"]
   ]
 ): Promise<void> => {
-  const template = await fetchWorkflowsTemplates(templateUrl, getTokenSilently);
+  const template = await fetchWorkflowsTemplates(
+    stateCode,
+    templateName,
+    getTokenSilently
+  );
   return renderAndSaveDocument(fileName, formContents, template);
 };
 
@@ -81,14 +86,17 @@ export const downloadMultipleZipped = async (
   const zip = new PizZip();
 
   await Promise.all(
-    fileInputs.map(async ([fileName, templateUrl, formContents]) => {
-      const template = await fetchWorkflowsTemplates(
-        templateUrl,
-        getTokenSilently
-      );
-      const doc = renderDocument(formContents, template, "arraybuffer");
-      zip.file(fileName, doc);
-    })
+    fileInputs.map(
+      async ([fileName, stateCode, templateName, formContents]) => {
+        const template = await fetchWorkflowsTemplates(
+          stateCode,
+          templateName,
+          getTokenSilently
+        );
+        const doc = renderDocument(formContents, template, "arraybuffer");
+        zip.file(fileName, doc);
+      }
+    )
   );
 
   saveAs(zip.generate({ type: "blob" }), zipFileName);

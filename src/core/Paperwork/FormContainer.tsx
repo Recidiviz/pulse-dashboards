@@ -1,6 +1,6 @@
 /*
  * Recidiviz - a data platform for criminal justice reform
- * Copyright (C) 2022 Recidiviz, Inc.
+ * Copyright (C) 2023 Recidiviz, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ import styled from "styled-components/macro";
 
 import { OpportunityBase } from "../../WorkflowsStore/Opportunity/OpportunityBase";
 import { FormLastEdited } from "../FormLastEdited";
+import { REACTIVE_INPUT_UPDATE_DELAY } from "./utils";
 
 const FormHeaderBar = styled.div`
   display: flex;
@@ -121,6 +122,14 @@ export const FormContainer = ({
             disabled={opportunity.form?.formIsDownloading || isDownloading}
             onClick={async () => {
               setIsDownloading(true);
+
+              opportunity.form?.download();
+
+              // Wait for any inputs to save their state
+              await new Promise((resolve) =>
+                setTimeout(resolve, REACTIVE_INPUT_UPDATE_DELAY)
+              );
+
               try {
                 await onClickDownload();
               } catch (e) {

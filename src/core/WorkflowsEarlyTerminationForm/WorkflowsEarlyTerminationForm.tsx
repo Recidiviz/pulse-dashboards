@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ import {
   useOpportunityFormContext,
 } from "../Paperwork/OpportunityFormContext";
 import FormEarlyTermination from "../Paperwork/US_ND/EarlyTermination/FormEarlyTermination";
-import { REACTIVE_INPUT_UPDATE_DELAY } from "../Paperwork/utils";
 
 const collectAdditionalDepositionLinesToDownload = (client: Client) => {
   const { earlyTermination } = client.verifiedOpportunities;
@@ -40,11 +39,6 @@ const formDownloader = async (
   fileName: string,
   client: Client
 ): Promise<void> => {
-  await new Promise((resolve) =>
-    setTimeout(resolve, REACTIVE_INPUT_UPDATE_DELAY)
-  );
-
-  const templateUrl = `${process.env.REACT_APP_API_URL}/api/${client.stateCode}/workflows/templates?filename=early_termination_template.docx`;
   const { earlyTermination } = client.verifiedOpportunities;
 
   const contents = {
@@ -55,7 +49,8 @@ const formDownloader = async (
 
   await downloadSingle(
     fileName,
-    templateUrl,
+    client.stateCode,
+    "early_termination_template.docx",
     contents,
     client.rootStore.getTokenSilently
   );

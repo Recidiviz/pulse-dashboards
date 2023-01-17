@@ -1,6 +1,6 @@
 /*
  * Recidiviz - a data platform for criminal justice reform
- * Copyright (C) 2022 Recidiviz, Inc.
+ * Copyright (C) 2023 Recidiviz, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,15 @@
  * =============================================================================
  */
 
+import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../../../components/StoreProvider";
+import { Client } from "../../../../WorkflowsStore";
+import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import { connectComponentToOpportunityForm } from "../../OpportunityFormContext";
 import { DIMENSIONS_PX } from "../../PDFFormGenerator";
@@ -54,10 +57,27 @@ const FormPage = styled.div`
   }
 `;
 
+const formDownloader = async (client: Client): Promise<void> => {
+  const contents = {
+    ...toJS(
+      client.verifiedOpportunities.earnedDischarge?.form?.prepareDataForTemplate()
+    ),
+  };
+
+  await downloadSingle(
+    `${client.displayName} Earned Discharge Application.docx`,
+    client.stateCode,
+    "earned_discharge_template.docx",
+    contents,
+    client.rootStore.getTokenSilently
+  );
+};
+
 const Form = observer(function FormEarnedDischarge() {
-  const { workflowsStore } = useRootStore();
-  const opportunity =
-    workflowsStore?.selectedPerson?.verifiedOpportunities?.earnedDischarge;
+  const {
+    workflowsStore: { selectedClient: client },
+  } = useRootStore();
+  const opportunity = client?.verifiedOpportunities?.earnedDischarge;
 
   if (!opportunity) {
     return null;
@@ -68,9 +88,7 @@ const Form = observer(function FormEarnedDischarge() {
       heading="Earned Discharge"
       agencyName="IDOC"
       downloadButtonLabel="Download .DOCX"
-      onClickDownload={async () => {
-        /* do nothing for now */
-      }}
+      onClickDownload={async () => formDownloader(client)}
       opportunity={opportunity}
     >
       <FormPage>

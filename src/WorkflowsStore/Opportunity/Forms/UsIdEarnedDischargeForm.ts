@@ -17,7 +17,8 @@
  * =============================================================================
  */
 
-import { formatWorkflowsDate } from "../../../utils";
+import { DocxTemplateFormContents } from "../../../core/Paperwork/DOCXFormGenerator";
+import { formatWorkflowsDate, toTitleCase } from "../../../utils";
 import { EarnedDischargeOpportunity } from "../EarnedDischargeOpportunity";
 import { EarnedDischargeDraftData } from "../EarnedDischargeReferralRecord";
 import { FormBase } from "./FormBase";
@@ -53,7 +54,7 @@ export class UsIdEarnedDischargeForm extends FormBase<
 
     const initialData: Partial<EarnedDischargeDraftData> = {
       clientName: this.person.displayName,
-      supervisionType: this.person.supervisionType,
+      supervisionType: toTitleCase(this.person.supervisionType),
       probationOfficerFullName: assignedStaff
         ? `${assignedStaff.givenNames} ${assignedStaff.surname}`
         : "",
@@ -141,5 +142,47 @@ export class UsIdEarnedDischargeForm extends FormBase<
     }
 
     return initialData;
+  }
+
+  prepareDataForTemplate(): DocxTemplateFormContents {
+    const { formData } = this;
+
+    const templateData: DocxTemplateFormContents = {
+      clientName: formData.clientName,
+      supervisionType: formData.supervisionType,
+      idocNumber: formData.idocNumber,
+      ftrDate: formData.ftrDate,
+      probationOfficerFullName: formData.probationOfficerFullName,
+      conditionCompliance: formData.conditionCompliance,
+      meetsIdocRequirements: formData.meetsIdocRequirements,
+      ncicCheck: formData.ncicCheck,
+      ncicCheckDate: formData.ncicCheckDate,
+      initialRestitution: formData.initialRestitution,
+      lastRestitutionPaymentDate: formData.lastRestitutionPaymentDate,
+      currentRestitutionBalance: formData.currentRestitutionBalance,
+      initialFines: formData.initialFines,
+      lastFinesPaymentDate: formData.lastFinesPaymentDate,
+      currentFinesBalance: formData.currentFinesBalance,
+      firstAssessmentScore: formData.firstAssessmentScore,
+      firstAssessmentDate: formData.firstAssessmentDate,
+      latestAssessmentScore: formData.latestAssessmentScore,
+      latestAssessmentDate: formData.latestAssessmentDate,
+      offenses: [],
+    };
+
+    for (let i = 0; i < (formData.numCrimeEntries ?? 0); i += 1) {
+      templateData.offenses.push({
+        judgeName: formData[`judgeNames${i}`],
+        countyName: formData[`countyNames${i}`],
+        dateImposed: formData[`dateImposed${i}`],
+        caseNumber: formData[`caseNumbers${i}`],
+        chargeDescription: formData[`chargeDescriptions${i}`],
+        sentenceMin: formData[`sentenceMin${i}`],
+        sentenceMax: formData[`sentenceMax${i}`],
+        fullTermReleaseDate: formData[`fullTermReleaseDates${i}`],
+      });
+    }
+
+    return templateData;
   }
 }

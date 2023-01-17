@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,12 +21,12 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../../../components/StoreProvider";
 import { Resident } from "../../../../WorkflowsStore/Resident";
 import {
+  DocxTemplateFormContents,
   downloadMultipleZipped,
   FileGeneratorArgs,
 } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import { connectComponentToOpportunityForm } from "../../OpportunityFormContext";
-import { REACTIVE_INPUT_UPDATE_DELAY } from "../../utils";
 import p1 from "./assets/p1.png";
 import p2 from "./assets/p2.png";
 import p3 from "./assets/p3.png";
@@ -42,11 +42,7 @@ const FormPreviewPage = styled.img`
 const previewImages = [p1, p2, p3, p4, p5, p6];
 
 const formDownloader = async (resident: Resident): Promise<void> => {
-  await new Promise((resolve) =>
-    setTimeout(resolve, REACTIVE_INPUT_UPDATE_DELAY)
-  );
-
-  let contents: FileGeneratorArgs[2];
+  let contents: DocxTemplateFormContents;
   // we are not mutating any observables here, just telling Mobx not to track this access
   runInAction(() => {
     contents = {
@@ -62,7 +58,8 @@ const formDownloader = async (resident: Resident): Promise<void> => {
   ].map((filename) => {
     return [
       `${resident.displayName} ${filename}.docx`,
-      `${process.env.REACT_APP_API_URL}/api/${resident.stateCode}/workflows/templates?filename=${filename}.docx`,
+      resident.stateCode,
+      `${filename}.docx`,
       contents,
     ];
   });
