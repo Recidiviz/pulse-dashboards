@@ -308,7 +308,7 @@
       },
       "usIdParoleDualSupervisionPastEarlyDischargeDate": {
         "eligibleDate": "2022-06-05",
-        "sentenceType": "PAROLE"
+        "sentenceType": "DUAL"
       }
     },
     "caseNotes": {

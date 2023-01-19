@@ -402,7 +402,7 @@ export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord
       },
       pastEarnedDischargeEligibleDate: {
         eligibleDate: parseISO("2022-03-17"),
-        sentenceType: "PAROLE",
+        sentenceType: "DUAL",
       },
     },
     ineligibleCriteria: {},

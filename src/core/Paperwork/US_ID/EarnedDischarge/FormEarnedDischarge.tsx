@@ -29,11 +29,13 @@ import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import { connectComponentToOpportunityForm } from "../../OpportunityFormContext";
 import { DIMENSIONS_PX } from "../../PDFFormGenerator";
+import { useResizeForm } from "../../utils";
 import { FORM_US_ID_EARLY_DISCHARGE_FORM_FONT_FAMILY } from "./FormComponents";
 import { FormCrimeTable } from "./FormCrimeTable";
 import { FormFeesTable } from "./FormFeesTable";
 import FormHeading from "./FormHeading";
 import { FormLsirTable } from "./FormLsirTable";
+import FormPrompts from "./FormPrompts";
 import { FormStaticContent } from "./FormStaticContent";
 import { FormSummarySection } from "./FormSummarySection";
 
@@ -91,6 +93,7 @@ const Form = observer(function FormEarnedDischarge() {
       onClickDownload={async () => formDownloader(client)}
       opportunity={opportunity}
     >
+      <FormPrompts opportunity={opportunity} />
       <FormPage>
         <FormHeading />
         <FormSummarySection />

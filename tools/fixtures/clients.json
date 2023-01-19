@@ -404,7 +404,7 @@
     "stateCode": "US_ID",
     "officerId": "OFFICER6",
     "district": "DISTRICT 1",
-    "supervisionType": "PAROLE",
+    "supervisionType": "DUAL",
     "supervisionLevel": "HIGH",
     "supervisionLevelStart": "2021-02-02",
     "address": "77 Limestone Lane",
