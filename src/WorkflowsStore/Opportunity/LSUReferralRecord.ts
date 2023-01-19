@@ -151,11 +151,14 @@ export const transformLSUEarnedDischargeCriteria: TransformFunction<
     };
   }
 
-  if (ineligibleCriteria.usIdIncomeVerifiedWithin3Months) {
+  if (
+    Object.prototype.hasOwnProperty.call(
+      ineligibleCriteria,
+      "usIdIncomeVerifiedWithin3Months"
+    )
+  ) {
     transformedCriteria.ineligibleCriteria.usIdIncomeVerifiedWithin3Months = {
-      incomeVerifiedDate: optionalFieldToDate(
-        eligibleCriteria.usIdIncomeVerifiedWithin3Months.incomeVerifiedDate
-      ),
+      incomeVerifiedDate: undefined,
     };
   }
 

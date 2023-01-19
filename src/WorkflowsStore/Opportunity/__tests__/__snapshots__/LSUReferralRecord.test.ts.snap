@@ -59,7 +59,7 @@ Object {
   },
   "ineligibleCriteria": Object {
     "usIdIncomeVerifiedWithin3Months": Object {
-      "incomeVerifiedDate": 2024-06-03T00:00:00.000Z,
+      "incomeVerifiedDate": undefined,
     },
   },
   "stateCode": "US_ID",
