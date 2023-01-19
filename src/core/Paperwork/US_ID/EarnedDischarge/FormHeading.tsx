@@ -32,13 +32,14 @@ import {
 } from "./FormComponents";
 
 const Logo = styled.img`
-  width: 200px;
+  width: 100px;
+  height: auto;
 `;
 
 const ContentContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  padding-bottom: ${rem(18)};
+  padding-bottom: ${rem(2)};
 `;
 
 const HeadingText = styled.div`
@@ -51,11 +52,13 @@ const HeadingText = styled.div`
 const MainHeading = styled.h1`
   font-family: ${FORM_US_ID_EARLY_DISCHARGE_FORM_FONT_FAMILY};
   letter-spacing: ${FORM_US_ID_EARLY_DISCHARGE_LETTER_SPACING};
+  font-size: ${rem(16)};
 `;
 
 const Subheading = styled.h2`
   font-family: ${FORM_US_ID_EARLY_DISCHARGE_FORM_FONT_FAMILY};
   letter-spacing: ${FORM_US_ID_EARLY_DISCHARGE_LETTER_SPACING};
+  font-size: ${rem(12)};
 `;
 
 const FormHeading: React.FC = () => {

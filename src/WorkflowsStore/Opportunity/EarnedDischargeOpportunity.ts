@@ -195,11 +195,10 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
       ineligibleCriteria.pastEarnedDischargeEligibleDate &&
       ineligibleCriteria.pastEarnedDischargeEligibleDate.eligibleDate
     ) {
-      const monthsRemaining =
-        differenceInMonths(
-          ineligibleCriteria.pastEarnedDischargeEligibleDate.eligibleDate,
-          new Date()
-        ) + 30;
+      const monthsRemaining = differenceInMonths(
+        ineligibleCriteria.pastEarnedDischargeEligibleDate.eligibleDate,
+        new Date()
+      );
       pastEarnedDischargeEligibleDate.text =
         pastEarnedDischargeEligibleDate.text.replace(
           "$MONTHS_REMAINING",
@@ -211,11 +210,10 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
       ineligibleCriteria.onProbationAtLeastOneYear &&
       ineligibleCriteria.onProbationAtLeastOneYear.eligibleDate
     ) {
-      const monthsRemaining =
-        differenceInMonths(
-          ineligibleCriteria.onProbationAtLeastOneYear.eligibleDate,
-          new Date()
-        ) + 30;
+      const monthsRemaining = differenceInMonths(
+        ineligibleCriteria.onProbationAtLeastOneYear.eligibleDate,
+        new Date()
+      );
       onProbationAtLeastOneYear.text = onProbationAtLeastOneYear.text.replace(
         "$MONTHS_REMAINING",
         `${monthsRemaining}`
@@ -239,20 +237,20 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
       pastEarnedDischargeEligibleDate &&
       pastEarnedDischargeEligibleDate.eligibleDate
     ) {
-      const monthsRemaining =
-        differenceInMonths(
-          pastEarnedDischargeEligibleDate.eligibleDate,
-          new Date()
-        ) + 30;
+      const monthsRemaining = differenceInMonths(
+        pastEarnedDischargeEligibleDate.eligibleDate,
+        new Date()
+      );
       return INELIGIBLE_CRITERIA_COPY.onProbationAtLeastOneYear.text.replace(
         "$MONTHS_REMAINING",
         `${monthsRemaining}`
       );
     }
     if (onProbationAtLeastOneYear && onProbationAtLeastOneYear.eligibleDate) {
-      const monthsRemaining =
-        differenceInMonths(onProbationAtLeastOneYear.eligibleDate, new Date()) +
-        30;
+      const monthsRemaining = differenceInMonths(
+        onProbationAtLeastOneYear.eligibleDate,
+        new Date()
+      );
       return INELIGIBLE_CRITERIA_COPY.onProbationAtLeastOneYear.text.replace(
         "$MONTHS_REMAINING",
         `${monthsRemaining}`

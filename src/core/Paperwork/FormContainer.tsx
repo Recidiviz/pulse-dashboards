@@ -25,6 +25,7 @@ import {
   spacing,
 } from "@recidiviz/design-system";
 import * as Sentry from "@sentry/react";
+import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import { useState } from "react";
 import styled from "styled-components/macro";
@@ -95,14 +96,14 @@ type FormHeaderProps = {
   children: React.ReactNode;
 };
 
-export const FormContainer = ({
+export const FormContainer = observer(function FormContainer({
   downloadButtonLabel,
   heading,
   onClickDownload,
   agencyName,
   opportunity,
   children,
-}: FormHeaderProps): React.ReactElement => {
+}: FormHeaderProps): React.ReactElement {
   const [isDownloading, setIsDownloading] = useState(false);
 
   return (
@@ -145,4 +146,4 @@ export const FormContainer = ({
       <FormPreviewContainer>{children}</FormPreviewContainer>
     </FormContainerElement>
   );
-};
+});

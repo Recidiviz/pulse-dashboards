@@ -39,24 +39,30 @@ import FormPrompts from "./FormPrompts";
 import { FormStaticContent } from "./FormStaticContent";
 import { FormSummarySection } from "./FormSummarySection";
 
-const FORM_LINE_HEIGHT = 1.0;
+const FORM_LINE_HEIGHT = 0.9;
 
 const FormPage = styled.div`
   font-family: ${FORM_US_ID_EARLY_DISCHARGE_FORM_FONT_FAMILY};
   line-height: ${FORM_LINE_HEIGHT};
   display: flex;
   flex-direction: column;
-  font-size: 14pt;
+  font-size: ${rem(9)};
   color: black;
   background-color: white;
   box-sizing: content-box;
 
   min-height: ${rem(DIMENSIONS_PX.HEIGHT - DIMENSIONS_PX.MARGIN)};
-  padding: ${rem(54)} ${rem(72)};
+  padding: ${rem(24)} ${rem(32)};
 
   & > * {
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
   }
+`;
+
+const FormTransformContainer = styled.section`
+  transform-origin: 0 0;
+  width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
+  max-width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
 `;
 
 const formDownloader = async (client: Client): Promise<void> => {
@@ -76,6 +82,10 @@ const formDownloader = async (client: Client): Promise<void> => {
 };
 
 const Form = observer(function FormEarnedDischarge() {
+  const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+
+  const { resize } = useResizeForm(formRef, `${FormTransformContainer}`);
+
   const {
     workflowsStore: { selectedClient: client },
   } = useRootStore();
@@ -93,15 +103,24 @@ const Form = observer(function FormEarnedDischarge() {
       onClickDownload={async () => formDownloader(client)}
       opportunity={opportunity}
     >
-      <FormPrompts opportunity={opportunity} />
-      <FormPage>
-        <FormHeading />
-        <FormSummarySection />
-        <FormCrimeTable />
-        <FormFeesTable />
-        <FormLsirTable />
-        <FormStaticContent />
-      </FormPage>
+      <div
+        ref={formRef}
+        onClickCapture={() => resize()}
+        onKeyDownCapture={() => resize()}
+        onChangeCapture={() => resize()}
+      >
+        <FormPrompts opportunity={opportunity} />
+        <FormTransformContainer>
+          <FormPage>
+            <FormHeading />
+            <FormSummarySection />
+            <FormCrimeTable />
+            <FormFeesTable />
+            <FormLsirTable />
+            <FormStaticContent />
+          </FormPage>
+        </FormTransformContainer>
+      </div>
     </FormContainer>
   );
 });

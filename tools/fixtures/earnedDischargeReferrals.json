@@ -151,7 +151,7 @@
     "eligibleCriteria": {
       "negativeUaWithin90Days": null,
       "noFelonyWithin24Months": null,
-      "onSupervisionAtLeastOneYear": {
+      "onProbationAtLeastOneYear": {
         "eligibleDate": "2022-05-11"
       },
       "supervisionNotPastFullTermCompletionDate": {
@@ -219,7 +219,7 @@
     "eligibleCriteria": {
       "negativeUaWithin90Days": null,
       "noFelonyWithin24Months": null,
-      "onSupervisionAtLeastOneYear": {
+      "onProbationAtLeastOneYear": {
         "eligibleDate": "2022-05-11"
       },
       "supervisionNotPastFullTermCompletionDate": {
@@ -284,8 +284,8 @@
       "latestAssessmentDate": "2022-10-24"
     },
     "ineligibleCriteria": {
-      "onSupervisionAtLeastOneYear": {
-        "eligibleDate": "2022-05-11"
+      "onProbationAtLeastOneYear": {
+        "eligibleDate": "2023-05-11"
       }
     },
     "eligibleCriteria": {

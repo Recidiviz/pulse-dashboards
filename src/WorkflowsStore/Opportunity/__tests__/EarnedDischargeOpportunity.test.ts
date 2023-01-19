@@ -145,7 +145,7 @@ describe("almost eligible on probation at least a year", () => {
     expect(opp.almostEligible).toBeTrue();
     expect(opp.requirementsAlmostMet).toEqual([
       {
-        text: "Needs 46 more months on supervision",
+        text: "Needs 16 more months on supervision",
         tooltip:
           "Policy requirement: If on probation, served minimum sentence according to the court; " +
           "if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent " +
@@ -157,7 +157,7 @@ describe("almost eligible on probation at least a year", () => {
 
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
-      "Needs 46 more months on supervision"
+      "Needs 16 more months on supervision"
     );
   });
 });

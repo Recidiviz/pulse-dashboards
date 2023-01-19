@@ -152,7 +152,7 @@ export const FormCrimeTable = observer(function FormCrimeTable() {
         </thead>
         <tbody>
           {Array.from(Array(numCrimeEntries).keys()).map((i) => (
-            <CrimeRows index={i} />
+            <CrimeRows index={i} key={i} />
           ))}
         </tbody>
       </CrimeTable>

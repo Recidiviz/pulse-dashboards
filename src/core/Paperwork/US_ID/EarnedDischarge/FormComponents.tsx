@@ -33,7 +33,7 @@ export const FormEDInput = (props: FormEDInputProps): React.ReactElement => (
 );
 
 export const FormEDSeparator = styled.hr`
-  border: 1px solid black;
+  border: 0.5px solid black;
   width: 100%;
 `;
 
@@ -64,8 +64,9 @@ export const FormColGroup = ({
 }: FormColGroupsProps): React.ReactElement => {
   return (
     <colgroup>
-      {widths.map((w) => (
-        <col style={{ width: `${w}%` }} />
+      {widths.map((w, index) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <col style={{ width: `${w}%` }} key={`${w}-${index}`} />
       ))}
     </colgroup>
   );

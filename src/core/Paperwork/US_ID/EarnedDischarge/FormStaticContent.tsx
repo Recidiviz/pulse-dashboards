@@ -1,6 +1,6 @@
 /*
  * Recidiviz - a data platform for criminal justice reform
- * Copyright (C) 2022 Recidiviz, Inc.
+ * Copyright (C) 2023 Recidiviz, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ const DeclarationSection = styled.div`
   line-height: 1.3;
 
   & > div {
-    margin-top: 3rem;
+    margin-top: 2rem;
   }
 `;
 
@@ -40,7 +40,7 @@ const DisabledTextInput = styled.div`
 `;
 
 const SignatureContainer = styled.table`
-  margin-top: 4rem;
+  margin-top: 1rem;
   border: none;
   width: 100%;
 `;
@@ -48,13 +48,14 @@ const SignatureContainer = styled.table`
 const FilingSection = styled.div`
   font-style: italic;
   line-height: 2;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 `;
 
 const SectionLabel = styled(FormEDSectionLabel)`
-  margin-top: 4rem;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
   &:first-child {
-    margin-top: 3rem;
+    margin-top: 1rem;
   }
 `;
 

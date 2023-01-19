@@ -81,8 +81,6 @@ export const createClientOpportunity: OpportunityFactory<
  * Represents a person on supervision
  */
 export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
-  supervisionType!: string;
-
   supervisionLevelStart?: Date;
 
   address!: string;
@@ -115,7 +113,6 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   updateRecord(record: ClientRecord): void {
     super.updateRecord(record);
-    this.supervisionType = record.supervisionType;
     this.supervisionLevelStart = optionalFieldToDate(
       record.supervisionLevelStart
     );
@@ -130,6 +127,12 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     this.supervisionStartDate = optionalFieldToDate(
       record.supervisionStartDate
     );
+  }
+
+  get supervisionType(): string {
+    const { supervisionType } = this.record;
+
+    return supervisionType === "INTERNAL_UNKNOWN" ? "Unknown" : supervisionType;
   }
 
   get supervisionLevel(): string {
