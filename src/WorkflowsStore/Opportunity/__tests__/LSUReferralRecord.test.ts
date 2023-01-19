@@ -36,9 +36,6 @@ test("transform record", () => {
       noFelonyWithin24Months: {
         latestFelonyConvictions: ["2022-01-05", "2022-05-28"],
       },
-      noViolentMisdemeanorWithin12Months: {
-        latestViolentConvictions: ["2022-03-09"],
-      },
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },
@@ -95,7 +92,6 @@ test("optional criteria have sane fallbacks", () => {
       },
       negativeUaWithin90Days: null,
       noFelonyWithin24Months: null,
-      noViolentMisdemeanorWithin12Months: null,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },
@@ -131,9 +127,6 @@ test("can transform record with old criteria", () => {
       },
       noFelonyWithin24Months: {
         latestFelonyConvictions: ["2022-01-05", "2022-05-28"],
-      },
-      noViolentMisdemeanorWithin12Months: {
-        latestViolentConvictions: ["2022-03-09"],
       },
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
@@ -194,9 +187,6 @@ test("can transform record with eligible and ineligible criteria", () => {
       },
       noFelonyWithin24Months: {
         latestFelonyConvictions: ["2022-01-05", "2022-05-28"],
-      },
-      noViolentMisdemeanorWithin12Months: {
-        latestViolentConvictions: ["2022-03-09"],
       },
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2024-06-03",

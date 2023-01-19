@@ -38,11 +38,6 @@ Object {
         2022-05-28T00:00:00.000Z,
       ],
     },
-    "noViolentMisdemeanorWithin12Months": Object {
-      "latestViolentConvictions": Array [
-        2022-03-09T00:00:00.000Z,
-      ],
-    },
     "onSupervisionAtLeastOneYear": Object {
       "eligibleDate": 2022-05-28T00:00:00.000Z,
     },
@@ -109,11 +104,6 @@ Object {
         2022-05-28T00:00:00.000Z,
       ],
     },
-    "noViolentMisdemeanorWithin12Months": Object {
-      "latestViolentConvictions": Array [
-        2022-03-09T00:00:00.000Z,
-      ],
-    },
     "onSupervisionAtLeastOneYear": Object {
       "eligibleDate": 2022-05-28T00:00:00.000Z,
     },
@@ -148,9 +138,6 @@ Object {
     },
     "noFelonyWithin24Months": Object {
       "latestFelonyConvictions": Array [],
-    },
-    "noViolentMisdemeanorWithin12Months": Object {
-      "latestViolentConvictions": Array [],
     },
     "onSupervisionAtLeastOneYear": Object {
       "eligibleDate": 2022-05-28T00:00:00.000Z,
@@ -212,11 +199,6 @@ Object {
       "latestFelonyConvictions": Array [
         2022-01-05T00:00:00.000Z,
         2022-05-28T00:00:00.000Z,
-      ],
-    },
-    "noViolentMisdemeanorWithin12Months": Object {
-      "latestViolentConvictions": Array [
-        2022-03-09T00:00:00.000Z,
       ],
     },
     "onSupervisionAtLeastOneYear": Object {

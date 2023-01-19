@@ -7,7 +7,6 @@
     "eligibleCriteria": {
       "negativeUaWithin90Days": null,
       "noFelonyWithin24Months": null,
-      "noViolentMisdemeanorWithin12Months": null,
       "onSupervisionAtLeastOneYear": {
         "eligibleDate": "2022-07-11"
       },
@@ -77,7 +76,6 @@
     "eligibleCriteria": {
       "negativeUaWithin90Days": null,
       "noFelonyWithin24Months": null,
-      "noViolentMisdemeanorWithin12Months": null,
       "onSupervisionAtLeastOneYear": {
         "eligibleDate": "2022-05-11"
       },
@@ -153,7 +151,6 @@
     "eligibleCriteria": {
       "negativeUaWithin90Days": null,
       "noFelonyWithin24Months": null,
-      "noViolentMisdemeanorWithin12Months": null,
       "onSupervisionAtLeastOneYear": {
         "eligibleDate": "2022-05-11"
       },
@@ -222,7 +219,6 @@
     "eligibleCriteria": {
       "negativeUaWithin90Days": null,
       "noFelonyWithin24Months": null,
-      "noViolentMisdemeanorWithin12Months": null,
       "onSupervisionAtLeastOneYear": {
         "eligibleDate": "2022-05-11"
       },
@@ -295,7 +291,6 @@
     "eligibleCriteria": {
       "negativeUaWithin90Days": null,
       "noFelonyWithin24Months": null,
-      "noViolentMisdemeanorWithin12Months": null,
       "supervisionNotPastFullTermCompletionDate": {
         "eligibleDate": "2032-08-12"
       },

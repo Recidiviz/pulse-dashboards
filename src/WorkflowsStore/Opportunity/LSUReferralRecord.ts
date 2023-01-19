@@ -32,9 +32,6 @@ export type LSUEarnedDischargeEligibleCriteria = {
     latestUaResults: boolean[];
   };
   noFelonyWithin24Months: { latestFelonyConvictions: Date[] };
-  noViolentMisdemeanorWithin12Months: {
-    latestViolentConvictions: Date[];
-  };
   usIdIncomeVerifiedWithin3Months?: {
     incomeVerifiedDate?: Date;
   };
@@ -139,13 +136,6 @@ export const transformLSUEarnedDischargeCriteria: TransformFunction<
         latestFelonyConvictions:
           optionalFieldToDateArray(
             eligibleCriteria.noFelonyWithin24Months?.latestFelonyConvictions
-          ) ?? [],
-      },
-      noViolentMisdemeanorWithin12Months: {
-        latestViolentConvictions:
-          optionalFieldToDateArray(
-            eligibleCriteria.noViolentMisdemeanorWithin12Months
-              ?.latestViolentConvictions
           ) ?? [],
       },
     },

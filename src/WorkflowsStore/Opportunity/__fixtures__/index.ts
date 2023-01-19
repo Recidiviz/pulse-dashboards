@@ -272,9 +272,6 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
     noFelonyWithin24Months: {
       latestFelonyConvictions: [],
     },
-    noViolentMisdemeanorWithin12Months: {
-      latestViolentConvictions: [],
-    },
     usIdIncomeVerifiedWithin3Months: {
       incomeVerifiedDate: parseISO("2022-06-03"),
     },
@@ -339,10 +336,6 @@ export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecord = {
     noFelonyWithin24Months: {
       latestFelonyConvictions: [],
     },
-    noViolentMisdemeanorWithin12Months: {
-      latestViolentConvictions: [],
-    },
-
     onSupervisionAtLeastOneYear: {
       eligibleDate: parseISO("2022-06-01"),
     },
@@ -394,9 +387,6 @@ export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord
       noFelonyWithin24Months: {
         latestFelonyConvictions: [],
       },
-      noViolentMisdemeanorWithin12Months: {
-        latestViolentConvictions: [],
-      },
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: parseISO("2022-06-03"),
       },
@@ -446,9 +436,6 @@ export const earnedDischargeAlmostEligibleSupervisionLength: EarnedDischargeRefe
       },
       noFelonyWithin24Months: {
         latestFelonyConvictions: [],
-      },
-      noViolentMisdemeanorWithin12Months: {
-        latestViolentConvictions: [],
       },
       pastEarnedDischargeEligibleDate: {
         eligibleDate: parseISO("2022-03-17"),
@@ -503,9 +490,6 @@ export const earnedDischargeAlmostEligibleVerifiedIncome: EarnedDischargeReferra
       },
       noFelonyWithin24Months: {
         latestFelonyConvictions: [],
-      },
-      noViolentMisdemeanorWithin12Months: {
-        latestViolentConvictions: [],
       },
       pastEarnedDischargeEligibleDate: {
         eligibleDate: parseISO("2022-03-17"),

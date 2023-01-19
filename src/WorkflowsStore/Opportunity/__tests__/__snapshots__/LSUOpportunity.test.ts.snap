@@ -11,10 +11,6 @@ Array [
     "tooltip": "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
   },
   Object {
-    "text": "No violent or DUI misdemeanor convictions in past 12 months",
-    "tooltip": "Policy requirement: Has not committed a violent misdemeanor or DUI misdemeanor while on probation or parole in past 12 months",
-  },
-  Object {
     "text": "No active NCO, CPO, or restraining order",
     "tooltip": "Policy requirement: Does not have an active NCO, CPO, or restraining order",
   },
@@ -49,10 +45,6 @@ Array [
     "tooltip": "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
   },
   Object {
-    "text": "No violent or DUI misdemeanor convictions in past 12 months",
-    "tooltip": "Policy requirement: Has not committed a violent misdemeanor or DUI misdemeanor while on probation or parole in past 12 months",
-  },
-  Object {
     "text": "Verified compliant employment",
     "tooltip": "Policy requirement: Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months",
   },
@@ -76,10 +68,6 @@ Array [
   Object {
     "text": "No felony convictions in past 24 months",
     "tooltip": "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
-  },
-  Object {
-    "text": "No violent or DUI misdemeanor convictions in past 12 months",
-    "tooltip": "Policy requirement: Has not committed a violent misdemeanor or DUI misdemeanor while on probation or parole in past 12 months",
   },
   Object {
     "text": "Verified compliant employment",
@@ -109,10 +97,6 @@ Array [
   Object {
     "text": "No felony convictions in past 24 months",
     "tooltip": "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
-  },
-  Object {
-    "text": "No violent or DUI misdemeanor convictions in past 12 months",
-    "tooltip": "Policy requirement: Has not committed a violent misdemeanor or DUI misdemeanor while on probation or parole in past 12 months",
   },
   Object {
     "text": "Verified compliant employment",

@@ -40,6 +40,7 @@ const DENIAL_REASONS_MAP = {
   FFR: "FFR: Failure to make payments toward fines, fees, and restitution despite ability to pay",
   "NCO/CPO": "NCO/CPO: Has an active NCO, CPO, or restraining order",
   INTERLOCK: "INTERLOCK: Has an active interlock device",
+  MIS: "Has had a violent misdemeanor conviction in the past 12 months",
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
@@ -58,11 +59,6 @@ export const LSU_EARNED_DISCHARGE_COMMON_CRITERIA: Record<
     text: "No felony convictions in past 24 months",
     tooltip:
       "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
-  },
-  noViolentMisdemeanorWithin12Months: {
-    text: "No violent or DUI misdemeanor convictions in past 12 months",
-    tooltip:
-      "Policy requirement: Has not committed a violent misdemeanor or DUI misdemeanor while on probation or parole in past 12 months",
   },
   usIdIncomeVerifiedWithin3Months: {
     text: "Verified compliant employment",
@@ -99,7 +95,6 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
   const {
     negativeUaWithin90Days,
     noFelonyWithin24Months,
-    noViolentMisdemeanorWithin12Months,
     usIdIncomeVerifiedWithin3Months,
   } = eligibleCriteria;
 
@@ -117,12 +112,6 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
 
   if (noFelonyWithin24Months?.latestFelonyConvictions.length === 0) {
     requirements.push(LSU_CRITERIA.noFelonyWithin24Months);
-  }
-
-  if (
-    noViolentMisdemeanorWithin12Months?.latestViolentConvictions.length === 0
-  ) {
-    requirements.push(LSU_CRITERIA.noViolentMisdemeanorWithin12Months);
   }
 
   if (usIdIncomeVerifiedWithin3Months?.incomeVerifiedDate) {

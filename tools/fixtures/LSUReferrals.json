@@ -29,9 +29,6 @@
       "noFelonyWithin24Months": {
         "latestFelonyConvictions": []
       },
-      "noViolentMisdemeanorWithin12Months": {
-        "latestViolentConvictions": []
-      },
       "usIdIncomeVerifiedWithin3Months": {
         "incomeVerifiedDate": "2022-10-13"
       },
@@ -82,9 +79,6 @@
       "noFelonyWithin24Months": {
         "latestFelonyConvictions": []
       },
-      "noViolentMisdemeanorWithin12Months": {
-        "latestViolentConvictions": []
-      },
       "usIdIncomeVerifiedWithin3Months": {
         "incomeVerifiedDate": "2022-10-13"
       },
@@ -129,9 +123,6 @@
       },
       "noFelonyWithin24Months": {
         "latestFelonyConvictions": []
-      },
-      "noViolentMisdemeanorWithin12Months": {
-        "latestViolentConvictions": []
       },
       "usIdNoActiveNco": {
         "activeNco": null

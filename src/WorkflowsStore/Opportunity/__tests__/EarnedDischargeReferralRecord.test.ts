@@ -35,9 +35,6 @@ test("transform dual/parole record", () => {
       noFelonyWithin24Months: {
         latestFelonyConvictions: ["2022-01-05", "2022-05-28"],
       },
-      noViolentMisdemeanorWithin12Months: {
-        latestViolentConvictions: ["2022-03-09"],
-      },
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },
@@ -82,9 +79,6 @@ test("transform probation record", () => {
       noFelonyWithin24Months: {
         latestFelonyConvictions: ["2022-01-05", "2022-05-28"],
       },
-      noViolentMisdemeanorWithin12Months: {
-        latestViolentConvictions: ["2022-03-09"],
-      },
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },
@@ -124,7 +118,6 @@ test("optional criteria have sane fallbacks", () => {
       },
       negativeUaWithin90Days: null,
       noFelonyWithin24Months: null,
-      noViolentMisdemeanorWithin12Months: null,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },
@@ -160,7 +153,6 @@ test("transforms records with eligible and ineligible criteria", () => {
       },
       negativeUaWithin90Days: null,
       noFelonyWithin24Months: null,
-      noViolentMisdemeanorWithin12Months: null,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },
@@ -215,7 +207,6 @@ test("formInformation parses", () => {
       },
       negativeUaWithin90Days: null,
       noFelonyWithin24Months: null,
-      noViolentMisdemeanorWithin12Months: null,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },
