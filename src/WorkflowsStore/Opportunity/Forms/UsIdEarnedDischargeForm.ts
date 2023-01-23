@@ -18,7 +18,11 @@
  */
 
 import { DocxTemplateFormContents } from "../../../core/Paperwork/DOCXFormGenerator";
-import { formatWorkflowsDate, toTitleCase } from "../../../utils";
+import {
+  formatDurationFromDays,
+  formatWorkflowsDate,
+  toTitleCase,
+} from "../../../utils";
 import { EarnedDischargeOpportunity } from "../EarnedDischargeOpportunity";
 import { EarnedDischargeDraftData } from "../EarnedDischargeReferralRecord";
 import { FormBase } from "./FormBase";
@@ -99,9 +103,9 @@ export class UsIdEarnedDischargeForm extends FormBase<
 
     if (judgeNames) {
       judgeNames.forEach((judge, index) => {
-        initialData[
-          `judgeNames${index}`
-        ] = `${judge.givenNames} ${judge.surname}`;
+        initialData[`judgeNames${index}`] = `${toTitleCase(
+          judge.givenNames
+        )} ${toTitleCase(judge.surname)}`;
       });
     }
 
@@ -119,13 +123,13 @@ export class UsIdEarnedDischargeForm extends FormBase<
 
     if (sentenceMax) {
       sentenceMax.forEach((val, index) => {
-        initialData[`sentenceMax${index}`] = val.toString();
+        initialData[`sentenceMax${index}`] = formatDurationFromDays(val);
       });
     }
 
     if (sentenceMin) {
       sentenceMin.forEach((val, index) => {
-        initialData[`sentenceMin${index}`] = val.toString();
+        initialData[`sentenceMin${index}`] = formatDurationFromDays(val);
       });
     }
 

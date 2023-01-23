@@ -220,6 +220,10 @@ function formatWorkflowsDate(date?: Date): string {
   return formatDate(date, "MMM d, yyyy");
 }
 
+function formatDurationFromDays(days: number): string {
+  return moment.duration(days, "days").humanize();
+}
+
 function getFirstName(fullName: string): string {
   return fullName.split(" ")[0];
 }
@@ -339,6 +343,7 @@ export {
   encrypt,
   formatDate,
   formatDistrictLabel,
+  formatDurationFromDays,
   formatISODateString,
   formatLargeNumber,
   formatName,

@@ -101,6 +101,7 @@ const DOCXFormInput = observer(function FormInput<DraftData>({
         onChange={onChange}
         name={name}
         className="fs-exclude"
+        inputStyle={style}
         {...props}
       />
     </StyledAutosizeInput>

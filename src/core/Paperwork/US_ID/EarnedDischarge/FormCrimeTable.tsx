@@ -46,15 +46,21 @@ type CrimeTableInputCellProps = {
   index: number;
   field: EarnedDischargeCrimeTableKeys;
   placeholder: string;
+  style?: React.InputHTMLAttributes<HTMLInputElement>["style"];
 };
 
 const CrimeTableInputCell: React.FC<CrimeTableInputCellProps> = ({
   index,
   field,
   placeholder,
+  style,
 }) => {
   return (
-    <FormEDInputCell name={`${field}${index}`} placeholder={placeholder} />
+    <FormEDInputCell
+      name={`${field}${index}`}
+      placeholder={placeholder}
+      style={style}
+    />
   );
 };
 
@@ -70,21 +76,25 @@ const CrimeRows: React.FC<CrimeRowsProps> = ({ index }) => {
           index={index}
           field="chargeDescriptions"
           placeholder="Crime"
+          style={{ maxWidth: "160px" }}
         />
         <CrimeTableInputCell
           index={index}
           field="judgeNames"
           placeholder="Sentencing Judge"
+          style={{ maxWidth: "126px" }}
         />
         <CrimeTableInputCell
           index={index}
           field="caseNumbers"
           placeholder="Case #"
+          style={{ maxWidth: "67px" }}
         />
         <CrimeTableInputCell
           index={index}
           field="dateImposed"
           placeholder="Sentence date"
+          style={{ maxWidth: "91px" }}
         />
       </tr>
       <tr>
@@ -93,16 +103,19 @@ const CrimeRows: React.FC<CrimeRowsProps> = ({ index }) => {
           index={index}
           field="countyNames"
           placeholder="Sentencing county"
+          style={{ maxWidth: "126px" }}
         />
         <CrimeTableInputCell
           index={index}
           field="sentenceMin"
           placeholder="Sentence min"
+          style={{ maxWidth: "67px" }}
         />
         <CrimeTableInputCell
           index={index}
           field="fullTermReleaseDates"
           placeholder="FTRD"
+          style={{ maxWidth: "91px" }}
         />
       </tr>
       <tr>
@@ -112,6 +125,7 @@ const CrimeRows: React.FC<CrimeRowsProps> = ({ index }) => {
           index={index}
           field="sentenceMax"
           placeholder="Sentence max"
+          style={{ maxWidth: "67px" }}
         />
         <td />
       </tr>

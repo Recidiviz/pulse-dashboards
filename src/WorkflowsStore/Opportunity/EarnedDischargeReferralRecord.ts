@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { cloneDeep } from "lodash";
+import { camelCase, cloneDeep } from "lodash";
 
 import { TransformFunction } from "../subscriptions";
 import { fieldToDate } from "../utils";
@@ -239,7 +239,9 @@ export const transformReferral: TransformFunction<
     transformedRecord.formInformation.judgeNames = judgeNames.map(
       (blob: string) => {
         try {
-          return JSON.parse(blob);
+          return Object.fromEntries(
+            Object.entries(JSON.parse(blob)).map(([k, v]) => [camelCase(k), v])
+          );
         } catch (e) {
           return {};
         }
