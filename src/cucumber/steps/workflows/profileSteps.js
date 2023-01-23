@@ -41,9 +41,10 @@ Then("I should see an accordion with {int} opportunities", async (numOpps) => {
 Then(
   "I should see a sentence progress timeline show {string}",
   async (monthsLeft) => {
+    const monthsLeftRegex = new RegExp(monthsLeft);
     const sentenceTimeline = await $(".SentenceProgress");
     await sentenceTimeline.waitForExist();
     const timelineText = await sentenceTimeline.getText();
-    expect(timelineText).toEqual(expect.stringContaining(monthsLeft));
+    expect(timelineText).toEqual(expect.stringMatching(monthsLeftRegex));
   }
 );

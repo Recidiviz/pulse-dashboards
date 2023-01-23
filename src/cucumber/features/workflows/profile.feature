@@ -11,8 +11,8 @@ Feature: View a justice-involved individual's profile
         And I should see a sentence progress timeline show "<monthsLeft>"
 
      Examples:
-        | stateCode | monthsLeft                     | personID | numOpps | listOfDetailHeaders                                                                           |
-        | US_TN     | 10 months (10 months past end) | p101     | 2       | Supervision, Housing, Fines and Fees, Probation Special Conditions, Parole Special Conditions |
+        | stateCode | monthsLeft                         | personID | numOpps | listOfDetailHeaders                                                                           |
+        | US_TN     | 10 months \(\\d+ months past end\) | p101     | 2       | Supervision, Housing, Fines and Fees, Probation Special Conditions, Parole Special Conditions |
 
     Scenario Outline: View client profile with one opportunity
         Given I am a "<stateCode>" user on the profile page for person ID "<personID>"

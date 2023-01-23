@@ -33,7 +33,7 @@ Feature: Fill and export the Workflows form
 
      Examples:
         | stateCode | pseudonymizedId | opportunityType     | exportButtonText | filename                                 |
-        | US_TN     | p101            | compliantReporting  | Print PDF        | LINET HANSEN - Form CR3947 Rev05-18.pdf  | 
+        | US_TN     | p101            | compliantReporting  | Download PDF     | LINET HANSEN - Form CR3947 Rev05-18.pdf  | 
 
     Scenario Outline: Update eligibility for eligible clients
         Given I am a "<stateCode>" user on the "<opportunityType>" form page for "<pseudonymizedId>"
