@@ -17,6 +17,8 @@
 
 import { isAbortException } from "../../core/utils/exceptions";
 
+// TODO(#1838): Refactor to use APIStore
+
 /**
  * Validates the response object from fetch and returns the resolved response data.
  * Throws an error if response is not OK (status >= 400)
