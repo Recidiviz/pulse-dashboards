@@ -58,13 +58,13 @@ export type EarnedDischargeReferralRecord = {
   };
   ineligibleCriteria: Partial<LSUEarnedDischargeIneligibleCriteria>;
   eligibleCriteria: LSUEarnedDischargeEligibleCriteria & {
-    pastEarnedDischargeEligibleDate?: {
-      eligibleDate: Date;
-      sentenceType: "PROBATION" | "PAROLE" | "DUAL";
-    };
     usIdLsirLevelLowModerateForXDays: {
       eligibleDate: Date;
       riskLevel: "LOW" | "MODERATE";
+    };
+    pastEarnedDischargeEligibleDate?: {
+      eligibleDate?: Date;
+      sentenceType?: "PROBATION" | "PAROLE" | "DUAL";
     };
   };
   eligibleStartDate: Date;
@@ -125,6 +125,7 @@ export const transformReferral: TransformFunction<
     ...transformedCommonCriteria?.ineligibleCriteria,
   };
 
+  /* usIdLsirLevelLowModerateForXDays */
   transformedRecord.eligibleCriteria.usIdLsirLevelLowModerateForXDays = {
     riskLevel: eligibleCriteria.usIdLsirLevelLowModerateForXDays.riskLevel,
     eligibleDate: fieldToDate(
@@ -132,8 +133,13 @@ export const transformReferral: TransformFunction<
     ),
   };
 
-  // Almost eligible and eligible criteria
-  if (transformedRecord.eligibleCriteria?.pastEarnedDischargeEligibleDate) {
+  /* Collapse `usIdParoleDualSupervisionPastEarlyDischargeDate` and `onProbationAtLeastOneYear` 
+     into `pastEarnedDischargeEligibleDate`. */
+  /* eligibleCriteria */
+  if (
+    eligibleCriteria?.usIdParoleDualSupervisionPastEarlyDischargeDate ||
+    eligibleCriteria?.onProbationAtLeastOneYear
+  ) {
     transformedRecord.eligibleCriteria.pastEarnedDischargeEligibleDate = {
       eligibleDate: fieldToDate(
         eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
@@ -147,37 +153,40 @@ export const transformReferral: TransformFunction<
     };
   }
 
-  if (transformedRecord.ineligibleCriteria?.pastEarnedDischargeEligibleDate) {
+  /* ineligibleCriteria */
+  if (
+    ineligibleCriteria?.usIdParoleDualSupervisionPastEarlyDischargeDate ||
+    ineligibleCriteria?.onProbationAtLeastOneYear
+  ) {
     transformedRecord.ineligibleCriteria.pastEarnedDischargeEligibleDate = {
       eligibleDate: fieldToDate(
         ineligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
           ?.eligibleDate ??
-          ineligibleCriteria.onProbationAtLeastOneYear?.eligibleDate
+          eligibleCriteria.onProbationAtLeastOneYear?.eligibleDate
       ),
       sentenceType:
         ineligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
           ?.sentenceType ??
-        ineligibleCriteria.onProbationAtLeastOneYear?.sentenceType,
+        eligibleCriteria.onProbationAtLeastOneYear?.sentenceType,
     };
   }
 
-  if (transformedRecord.ineligibleCriteria?.onProbationAtLeastOneYear) {
-    transformedRecord.ineligibleCriteria.onProbationAtLeastOneYear = {
-      eligibleDate:
-        ineligibleCriteria.onProbationAtLeastOneYear?.eligibleDate &&
-        fieldToDate(ineligibleCriteria.onProbationAtLeastOneYear?.eligibleDate),
-    };
-  }
-
+  // delete vestigial criterion left over from TES we don't use in the front end
   delete (
     // @ts-expect-error
     // prettier-ignore
     transformedRecord.eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
   );
+  delete (
+    // @ts-expect-error
+    // prettier-ignore
+    transformedRecord.ineligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
+  );
   // @ts-expect-error
   delete transformedRecord.eligibleCriteria.onProbationAtLeastOneYear;
+  // @ts-expect-error
+  delete transformedRecord.ineligibleCriteria.onProbationAtLeastOneYear;
 
-  // delete vestigial criterion left over from TES we don't use in the front end
   delete (
     // @ts-expect-error
     transformedRecord.eligibleCriteria.supervisionNotPastFullTermCompletionDate
@@ -248,6 +257,5 @@ export const transformReferral: TransformFunction<
       }
     );
   }
-
   return transformedRecord;
 };

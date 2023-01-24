@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInMonths } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 import { cloneDeep, some } from "lodash";
 import { computed, makeObservable } from "mobx";
@@ -34,6 +33,7 @@ import {
 } from "./LSUReferralRecord";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
+import { monthsOrDaysRemainingFromToday } from "./utils";
 
 const DENIAL_REASONS_MAP = {
   SCNC: "SCNC: Not compliant with all court-ordered conditions and special conditions",
@@ -123,7 +123,7 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
 
 const getRecordValidator =
   (client: Client): ValidateFunction<LSUReferralRecord> =>
-  (record: DocumentData | undefined): void => {
+  (record: LSUReferralRecord): void => {
     const featureFlags = client.rootStore.workflowsStore.featureVariants;
     const ineligibleCriteriaKeys =
       (record?.ineligibleCriteria && Object.keys(record?.ineligibleCriteria)) ??
@@ -196,15 +196,13 @@ export class LSUOpportunity extends OpportunityBase<
       ineligibleCriteria.onSupervisionAtLeastOneYear &&
       ineligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate
     ) {
-      const monthsRemaining =
-        differenceInMonths(
-          ineligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate,
-          new Date()
-        ) + 30;
+      const monthsOrDaysRemaining = monthsOrDaysRemainingFromToday(
+        ineligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate
+      );
       onSupervisionAtLeastOneYear.text =
         onSupervisionAtLeastOneYear.text.replace(
-          "$MONTHS_REMAINING",
-          `${monthsRemaining}`
+          "$TIME_REMAINING",
+          `${monthsOrDaysRemaining}`
         );
       requirements.push(onSupervisionAtLeastOneYear);
     }
@@ -222,14 +220,12 @@ export class LSUOpportunity extends OpportunityBase<
       onSupervisionAtLeastOneYear &&
       onSupervisionAtLeastOneYear.eligibleDate
     ) {
-      const monthsRemaining =
-        differenceInMonths(
-          onSupervisionAtLeastOneYear.eligibleDate,
-          new Date()
-        ) + 30;
+      const monthsOrDaysRemaining = monthsOrDaysRemainingFromToday(
+        onSupervisionAtLeastOneYear.eligibleDate
+      );
       return INELIGIBLE_CRITERIA_COPY.onSupervisionAtLeastOneYear.text.replace(
-        "$MONTHS_REMAINING",
-        `${monthsRemaining}`
+        "$TIME_REMAINING",
+        `${monthsOrDaysRemaining}`
       );
     }
   }

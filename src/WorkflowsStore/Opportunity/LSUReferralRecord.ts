@@ -38,18 +38,19 @@ export type LSUEarnedDischargeEligibleCriteria = {
 };
 
 export type LSUEarnedDischargeIneligibleCriteria = {
+  /* LSU */
   onSupervisionAtLeastOneYear?: {
     eligibleDate?: Date;
+    sentenceType?: "PROBATION" | "PAROLE" | "DUAL";
   };
-  onProbationAtLeastOneYear?: {
-    eligibleDate?: Date;
-  };
-  usIdIncomeVerifiedWithin3Months?: {
-    incomeVerifiedDate?: Date;
-  };
+  /* Earned Discharge */
   pastEarnedDischargeEligibleDate?: {
     eligibleDate?: Date;
     sentenceType?: "PROBATION" | "PAROLE" | "DUAL";
+  };
+  /* LSU & Earned Discharge */
+  usIdIncomeVerifiedWithin3Months?: {
+    incomeVerifiedDate?: Date;
   };
 };
 
@@ -83,7 +84,10 @@ export type LSUReferralRecord = {
       eligibleDate: Date;
       riskLevel: "LOW";
     };
-    onSupervisionAtLeastOneYear?: { eligibleDate?: Date };
+    onSupervisionAtLeastOneYear?: {
+      eligibleDate?: Date;
+      sentenceType?: "PROBATION" | "PAROLE" | "DUAL";
+    };
   };
   ineligibleCriteria: Partial<LSUEarnedDischargeIneligibleCriteria>;
   eligibleStartDate: Date;
@@ -203,7 +207,7 @@ export const transformReferral: TransformFunction<LSUReferralRecord> = (
   };
 
   // Almost eligible and eligible shared criteria
-  if (transformedRecord.eligibleCriteria.onSupervisionAtLeastOneYear) {
+  if (eligibleCriteria.onSupervisionAtLeastOneYear) {
     transformedRecord.eligibleCriteria.onSupervisionAtLeastOneYear = {
       eligibleDate:
         eligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate &&
@@ -211,7 +215,7 @@ export const transformReferral: TransformFunction<LSUReferralRecord> = (
     };
   }
 
-  if (transformedRecord.ineligibleCriteria.onSupervisionAtLeastOneYear) {
+  if (ineligibleCriteria.onSupervisionAtLeastOneYear) {
     transformedRecord.ineligibleCriteria.onSupervisionAtLeastOneYear = {
       eligibleDate:
         ineligibleCriteria.onSupervisionAtLeastOneYear?.eligibleDate &&

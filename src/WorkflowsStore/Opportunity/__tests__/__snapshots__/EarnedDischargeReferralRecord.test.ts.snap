@@ -11,6 +11,10 @@ Object {
     "noFelonyWithin24Months": Object {
       "latestFelonyConvictions": Array [],
     },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
     },
@@ -99,6 +103,10 @@ Object {
     "noFelonyWithin24Months": Object {
       "latestFelonyConvictions": Array [],
     },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
     },
@@ -140,6 +148,10 @@ Object {
         2022-01-05T00:00:00.000Z,
         2022-05-28T00:00:00.000Z,
       ],
+    },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
     },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
@@ -183,6 +195,10 @@ Object {
         2022-05-28T00:00:00.000Z,
       ],
     },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
     },
@@ -210,6 +226,10 @@ Object {
     "noFelonyWithin24Months": Object {
       "latestFelonyConvictions": Array [],
     },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
     "usIdIncomeVerifiedWithin3Months": Object {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
     },
@@ -222,8 +242,8 @@ Object {
   "externalId": "001",
   "formInformation": Object {},
   "ineligibleCriteria": Object {
-    "usIdParoleDualSupervisionPastEarlyDischargeDate": Object {
-      "eligibleDate": "2025-06-19",
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2025-06-19T00:00:00.000Z,
       "sentenceType": "PAROLE",
     },
   },

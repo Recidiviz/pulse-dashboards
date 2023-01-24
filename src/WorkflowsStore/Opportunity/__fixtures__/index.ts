@@ -437,16 +437,12 @@ export const earnedDischargeAlmostEligibleSupervisionLength: EarnedDischargeRefe
       noFelonyWithin24Months: {
         latestFelonyConvictions: [],
       },
-      pastEarnedDischargeEligibleDate: {
-        eligibleDate: parseISO("2022-03-17"),
-        sentenceType: "PAROLE",
-      },
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: parseISO("2022-06-03"),
       },
     },
     ineligibleCriteria: {
-      onProbationAtLeastOneYear: {
+      pastEarnedDischargeEligibleDate: {
         eligibleDate: parseISO("2023-12-10"),
       },
     },

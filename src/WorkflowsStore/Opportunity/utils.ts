@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { ascending } from "d3-array";
-import { format } from "date-fns";
+import { differenceInDays, differenceInMonths, format } from "date-fns";
 import moment from "moment";
 import simplur from "simplur";
 
@@ -224,4 +224,12 @@ export const displayList = (
 ): string => {
   const displayText = lst && lst.length > 0 ? lst.join(", ") : "";
   return !prefix ? displayText : `${prefix} ${displayText}`;
+};
+
+export const monthsOrDaysRemainingFromToday = (eligibleDate: Date): string => {
+  const months = differenceInMonths(eligibleDate, new Date());
+  if (months === 0) {
+    return simplur`${differenceInDays(eligibleDate, new Date())} more day[|s]`;
+  }
+  return simplur`${months} more month[|s]`;
 };

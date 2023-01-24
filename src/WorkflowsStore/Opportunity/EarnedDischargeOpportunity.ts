@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInMonths } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { computed, makeObservable } from "mobx";
@@ -36,6 +35,7 @@ import {
 } from "./LSUOpportunity";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
+import { monthsOrDaysRemainingFromToday } from "./utils";
 
 const DENIAL_REASONS_MAP = {
   SCNC: "Not compliant with special conditions",
@@ -76,7 +76,11 @@ export const INELIGIBLE_CRITERIA_COPY: Record<
   OpportunityRequirement
 > = {
   onSupervisionAtLeastOneYear: {
-    text: "Needs $MONTHS_REMAINING more months on supervision",
+    text: "Needs $TIME_REMAINING on supervision",
+    tooltip: "Policy requirement: Has been on supervision for at least 1 year",
+  },
+  pastEarnedDischargeEligibleDate: {
+    text: "Needs $TIME_REMAINING on supervision",
     tooltip:
       "Policy requirement: If on probation, served minimum sentence according to the court; if on parole " +
       "for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at " +
@@ -88,26 +92,11 @@ export const INELIGIBLE_CRITERIA_COPY: Record<
       "Policy requirement: Verified employment status, full-time student, or adequate lawful " +
       "income from non-employment sources have been confirmed within past 3 months.",
   },
-  onProbationAtLeastOneYear: {
-    text: "Needs $MONTHS_REMAINING more months on supervision",
-    tooltip:
-      "Policy requirement: If on probation, served minimum sentence according to the court; if on parole " +
-      "for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at " +
-      "least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole.",
-  },
-  pastEarnedDischargeEligibleDate: {
-    text: "Needs $MONTHS_REMAINING more months on supervision",
-    tooltip:
-      "Policy requirement: If on probation, served minimum sentence according to the court; " +
-      "if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent " +
-      "offense, served at least one-third of remaining sentence; if on parole for a life sentence, " +
-      "served at least five years on parole.",
-  },
 };
 
 const getRecordValidator =
   (client: Client): ValidateFunction<EarnedDischargeReferralRecord> =>
-  (record: DocumentData | undefined): void => {
+  (record: EarnedDischargeReferralRecord): void => {
     const featureFlags = client.rootStore.workflowsStore.featureVariants;
     const ineligibleCriteriaKeys =
       (record?.ineligibleCriteria && Object.keys(record?.ineligibleCriteria)) ??
@@ -181,11 +170,8 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
     if (!this.record) return [];
     const { ineligibleCriteria } = this.record;
     const requirements: OpportunityRequirement[] = [];
-    const {
-      usIdIncomeVerifiedWithin3Months,
-      pastEarnedDischargeEligibleDate,
-      onProbationAtLeastOneYear,
-    } = cloneDeep(INELIGIBLE_CRITERIA_COPY);
+    const { usIdIncomeVerifiedWithin3Months, pastEarnedDischargeEligibleDate } =
+      cloneDeep(INELIGIBLE_CRITERIA_COPY);
 
     if (ineligibleCriteria.usIdIncomeVerifiedWithin3Months) {
       requirements.push(usIdIncomeVerifiedWithin3Months);
@@ -195,41 +181,24 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
       ineligibleCriteria.pastEarnedDischargeEligibleDate &&
       ineligibleCriteria.pastEarnedDischargeEligibleDate.eligibleDate
     ) {
-      const monthsRemaining = differenceInMonths(
-        ineligibleCriteria.pastEarnedDischargeEligibleDate.eligibleDate,
-        new Date()
+      const monthsOrDaysRemaining = monthsOrDaysRemainingFromToday(
+        ineligibleCriteria.pastEarnedDischargeEligibleDate.eligibleDate
       );
       pastEarnedDischargeEligibleDate.text =
         pastEarnedDischargeEligibleDate.text.replace(
-          "$MONTHS_REMAINING",
-          `${monthsRemaining}`
+          "$TIME_REMAINING",
+          `${monthsOrDaysRemaining}`
         );
       requirements.push(pastEarnedDischargeEligibleDate);
     }
-    if (
-      ineligibleCriteria.onProbationAtLeastOneYear &&
-      ineligibleCriteria.onProbationAtLeastOneYear.eligibleDate
-    ) {
-      const monthsRemaining = differenceInMonths(
-        ineligibleCriteria.onProbationAtLeastOneYear.eligibleDate,
-        new Date()
-      );
-      onProbationAtLeastOneYear.text = onProbationAtLeastOneYear.text.replace(
-        "$MONTHS_REMAINING",
-        `${monthsRemaining}`
-      );
-      requirements.push(onProbationAtLeastOneYear);
-    }
+
     return requirements;
   }
 
   get almostEligibleStatusMessage(): string | undefined {
     if (!this.almostEligible) return;
-    const {
-      usIdIncomeVerifiedWithin3Months,
-      pastEarnedDischargeEligibleDate,
-      onProbationAtLeastOneYear,
-    } = this.record?.ineligibleCriteria ?? {};
+    const { usIdIncomeVerifiedWithin3Months, pastEarnedDischargeEligibleDate } =
+      this.record?.ineligibleCriteria ?? {};
     if (usIdIncomeVerifiedWithin3Months) {
       return INELIGIBLE_CRITERIA_COPY.usIdIncomeVerifiedWithin3Months.text;
     }
@@ -237,23 +206,13 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
       pastEarnedDischargeEligibleDate &&
       pastEarnedDischargeEligibleDate.eligibleDate
     ) {
-      const monthsRemaining = differenceInMonths(
-        pastEarnedDischargeEligibleDate.eligibleDate,
-        new Date()
+      const monthsOrDaysRemaining = monthsOrDaysRemainingFromToday(
+        pastEarnedDischargeEligibleDate.eligibleDate
       );
-      return INELIGIBLE_CRITERIA_COPY.onProbationAtLeastOneYear.text.replace(
-        "$MONTHS_REMAINING",
-        `${monthsRemaining}`
-      );
-    }
-    if (onProbationAtLeastOneYear && onProbationAtLeastOneYear.eligibleDate) {
-      const monthsRemaining = differenceInMonths(
-        onProbationAtLeastOneYear.eligibleDate,
-        new Date()
-      );
-      return INELIGIBLE_CRITERIA_COPY.onProbationAtLeastOneYear.text.replace(
-        "$MONTHS_REMAINING",
-        `${monthsRemaining}`
+
+      return INELIGIBLE_CRITERIA_COPY.pastEarnedDischargeEligibleDate.text.replace(
+        "$TIME_REMAINING",
+        `${monthsOrDaysRemaining}`
       );
     }
   }

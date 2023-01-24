@@ -15,9 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import tk from "timekeeper";
+
 import { mockOpportunity } from "../../../core/__tests__/testUtils";
 import { Opportunity } from "../types";
 import {
+  monthsOrDaysRemainingFromToday,
   sortByReviewStatus,
   sortByReviewStatusAndEligibilityDate,
 } from "../utils";
@@ -29,6 +32,28 @@ jest.mock("../Forms/FormBase");
 let opp1: Opportunity;
 let opp2: Opportunity;
 let opp3: Opportunity;
+
+describe("monthsOrDaysRemainingFromToday", () => {
+  beforeEach(() => {
+    tk.freeze(new Date(2023, 1, 23));
+  });
+
+  afterAll(() => {
+    tk.reset();
+  });
+
+  test("months remaining", () => {
+    expect(monthsOrDaysRemainingFromToday(new Date(2023, 5, 23))).toEqual(
+      "4 more months"
+    );
+  });
+
+  test("days remaining", () => {
+    expect(monthsOrDaysRemainingFromToday(new Date(2023, 1, 30))).toEqual(
+      "7 more days"
+    );
+  });
+});
 
 describe("sort", () => {
   beforeEach(() => {

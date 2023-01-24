@@ -271,7 +271,9 @@ describe("almost eligible on supervision at least a year", () => {
   const almostEligibleSupervisionLength = cloneDeep(LSUReferralRecordFixture);
 
   almostEligibleSupervisionLength.ineligibleCriteria.onSupervisionAtLeastOneYear =
-    almostEligibleSupervisionLength.eligibleCriteria.onSupervisionAtLeastOneYear;
+    {
+      eligibleDate: new Date(2022, 12, 1),
+    };
 
   delete almostEligibleSupervisionLength.eligibleCriteria
     .onSupervisionAtLeastOneYear;
@@ -294,19 +296,59 @@ describe("almost eligible on supervision at least a year", () => {
     expect(opp.almostEligible).toBeTrue();
     expect(opp.requirementsAlmostMet).toEqual([
       {
-        text: "Needs 28 more months on supervision",
+        text: "Needs 5 more months on supervision",
         tooltip:
-          "Policy requirement: If on probation, served minimum sentence according to the court; " +
-          "if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent " +
-          "offense, served at least one-third of remaining sentence; if on parole for a life sentence, served " +
-          "at least five years on parole.",
+          "Policy requirement: Has been on supervision for at least 1 year",
       },
     ]);
   });
 
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
-      "Needs 28 more months on supervision"
+      "Needs 5 more months on supervision"
+    );
+  });
+});
+
+describe("almost eligible days remaining on supervision", () => {
+  const almostEligibleSupervisionLength = cloneDeep(LSUReferralRecordFixture);
+  almostEligibleSupervisionLength.ineligibleCriteria.onSupervisionAtLeastOneYear =
+    {
+      eligibleDate: new Date(2023, 1, 30),
+    };
+
+  delete almostEligibleSupervisionLength.eligibleCriteria
+    .onSupervisionAtLeastOneYear;
+  beforeEach(() => {
+    createTestUnit(LSUEligibleClientRecord);
+    tk.freeze(new Date(2023, 1, 23));
+
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.data = almostEligibleSupervisionLength;
+
+    updatesSub = opp.updatesSubscription;
+    updatesSub.isLoading = false;
+  });
+
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+  });
+
+  test("requirements almost met", () => {
+    expect(opp.almostEligible).toBeTrue();
+    expect(opp.requirementsAlmostMet).toEqual([
+      {
+        text: "Needs 7 more days on supervision",
+        tooltip:
+          "Policy requirement: Has been on supervision for at least 1 year",
+      },
+    ]);
+  });
+
+  test("almostEligibleStatusMessage", () => {
+    expect(opp.almostEligibleStatusMessage).toEqual(
+      "Needs 7 more days on supervision"
     );
   });
 });

@@ -161,3 +161,42 @@ describe("almost eligible on probation at least a year", () => {
     );
   });
 });
+
+describe("almost eligible days remaining on length of stay", () => {
+  beforeEach(() => {
+    createTestUnit(EarnedDischargeEligibleClientRecord);
+    tk.freeze(new Date(2022, 1, 23));
+    earnedDischargeAlmostEligibleSupervisionLength.ineligibleCriteria.pastEarnedDischargeEligibleDate =
+      { eligibleDate: new Date(2022, 1, 24) };
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.data = earnedDischargeAlmostEligibleSupervisionLength;
+
+    updatesSub = opp.updatesSubscription;
+    updatesSub.isLoading = false;
+  });
+
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+  });
+
+  test("requirements almost met", () => {
+    expect(opp.almostEligible).toBeTrue();
+    expect(opp.requirementsAlmostMet).toEqual([
+      {
+        text: "Needs 1 more day on supervision",
+        tooltip:
+          "Policy requirement: If on probation, served minimum sentence according to the court; " +
+          "if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent " +
+          "offense, served at least one-third of remaining sentence; if on parole for a life sentence, served " +
+          "at least five years on parole.",
+      },
+    ]);
+  });
+
+  test("almostEligibleStatusMessage", () => {
+    expect(opp.almostEligibleStatusMessage).toEqual(
+      "Needs 1 more day on supervision"
+    );
+  });
+});
