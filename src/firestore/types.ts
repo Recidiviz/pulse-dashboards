@@ -66,7 +66,6 @@ export type UserUpdateRecord = {
 export type FeatureVariant =
   | "TEST"
   | "CompliantReportingAlmostEligible"
-  | "usTnSupervisionLevelDowngrade"
   | "usTnExpiration"
   | "usIdEarnedDischargeForm"
   | "usIdSupervisionLevelDowngrade"
@@ -86,7 +85,6 @@ export type FeatureVariantRecord = Partial<FeatureVariantMapping>;
 export const defaultFeatureVariantsActive: FeatureVariantMapping = {
   TEST: {},
   CompliantReportingAlmostEligible: {},
-  usTnSupervisionLevelDowngrade: {},
   usTnExpiration: {},
   usIdEarnedDischargeForm: {},
   usIdSupervisionLevelDowngrade: {},

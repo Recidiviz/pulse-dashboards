@@ -61,7 +61,11 @@ jest.mock("../../tenants", () => ({
       workflowsSupportedSystems: ["SUPERVISION"],
     },
     US_TN: {
-      opportunityTypes: ["compliantReporting", "supervisionLevelDowngrade"],
+      opportunityTypes: [
+        "compliantReporting",
+        "supervisionLevelDowngrade",
+        "usTnExpiration",
+      ],
       workflowsSupportedSystems: ["SUPERVISION"],
     },
     US_ME: {
@@ -341,7 +345,6 @@ test("feature variants active by default for Recidiviz users", async () => {
       "usIdLengthOfStayAlmostEligible": Object {},
       "usIdSupervisionLevelDowngrade": Object {},
       "usTnExpiration": Object {},
-      "usTnSupervisionLevelDowngrade": Object {},
     }
   `);
 });
@@ -596,26 +599,21 @@ describe("opportunityTypes for US_TN", () => {
     });
   });
 
-  test("includes supervisionLevelDowngrade", async () => {
-    await waitForHydration({
-      ...mockOfficer,
-      featureVariants: { usTnSupervisionLevelDowngrade: {} },
-    });
-
-    expect(workflowsStore.opportunityTypes).toContain(
-      "supervisionLevelDowngrade"
-    );
+  test("includes all non-gated opportunityTypes", async () => {
+    await waitForHydration({ ...mockOfficer });
+    expect(workflowsStore.opportunityTypes.sort()).toEqual([
+      "compliantReporting",
+      "supervisionLevelDowngrade",
+    ]);
   });
 
-  test("does not include supervisionLevelDowngrade", async () => {
+  test("includes usTnExpiration", async () => {
     await waitForHydration({
       ...mockOfficer,
-      featureVariants: {},
+      featureVariants: { usTnExpiration: {} },
     });
 
-    expect(workflowsStore.opportunityTypes).not.toContain(
-      "supervisionLevelDowngrade"
-    );
+    expect(workflowsStore.opportunityTypes).toContain("usTnExpiration");
   });
 });
 

@@ -528,14 +528,6 @@ export class WorkflowsStore implements Hydratable {
         (oppType) => oppType !== "usIdSupervisionLevelDowngrade"
       );
     }
-    if (
-      currentTenantId === "US_TN" &&
-      !this.featureVariants.usTnSupervisionLevelDowngrade
-    ) {
-      opportunityTypes = opportunityTypes.filter(
-        (oppType) => oppType !== "supervisionLevelDowngrade"
-      );
-    }
     if (currentTenantId === "US_TN" && !this.featureVariants.usTnExpiration) {
       opportunityTypes = opportunityTypes.filter(
         (oppType) => oppType !== "usTnExpiration"
