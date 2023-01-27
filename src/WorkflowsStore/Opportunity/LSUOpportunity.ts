@@ -83,8 +83,8 @@ export const LSU_CRITERIA: Record<
       "Policy requirement: Assessed at low risk level on LSI-R with no risk increase in past 90 days",
   },
   onSupervisionAtLeastOneYear: {
-    text: "On supervision for at least 12 months",
-    tooltip: "Has been on supervision for at least 12 months",
+    text: "On supervision at least 1 year",
+    tooltip: "Has been on supervision for at least 1 year",
   },
 };
 
