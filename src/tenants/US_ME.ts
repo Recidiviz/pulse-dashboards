@@ -90,7 +90,15 @@ const US_ME_CONFIG: TenantConfig = {
     ],
     "id-methodology": ["system"],
   },
-  pagesWithRestrictions: ["prison", "workflows"],
+  pagesWithRestrictions: [
+    "libertyToPrison",
+    "prison",
+    "prisonToSupervision",
+    "supervisionToPrison",
+    "supervisionToLiberty",
+    "supervision",
+    "workflows",
+  ],
   tableColumns: enabledTableColumns[pathways.US_ME],
 };
 
