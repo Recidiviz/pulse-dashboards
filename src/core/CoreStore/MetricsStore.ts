@@ -16,28 +16,22 @@
 // =============================================================================
 import { makeAutoObservable } from "mobx";
 
-import LibertyPopulationOverTimeMetric from "../models/LibertyPopulationOverTimeMetric";
 import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshotMetric";
 import OverTimeMetric from "../models/OverTimeMetric";
 import PathwaysMetric from "../models/PathwaysMetric";
 import PathwaysNewBackendMetric from "../models/PathwaysNewBackendMetric";
 import PersonLevelMetric from "../models/PersonLevelMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
-import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
 import SnapshotMetric from "../models/SnapshotMetric";
-import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import {
   createLibertyPopulationSnapshot,
-  createLibertyPopulationTimeSeries,
   createPrisonPopulationPersonLevelList,
   createPrisonPopulationSnapshot,
-  createPrisonPopulationTimeSeries,
   createProjectionTimeSeries,
   createSupervisionPopulationSnapshot,
-  createSupervisionPopulationTimeSeries,
 } from "../models/utils";
 import VitalsMetrics from "../models/VitalsMetrics";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../views";
@@ -153,28 +147,11 @@ export default class MetricsStore {
   }
 
   // LIBERTY TO PRISON
-  get libertyToPrisonPopulationOverTime():
-    | LibertyPopulationOverTimeMetric
-    | OverTimeMetric {
-    const id = "libertyToPrisonPopulationOverTime";
-    const newBackendMetric = new OverTimeMetric({
-      id,
+  get libertyToPrisonPopulationOverTime(): OverTimeMetric {
+    return new OverTimeMetric({
+      id: "libertyToPrisonPopulationOverTime",
       endpoint: "LibertyToPrisonTransitionsOverTime",
       rootStore: this.rootStore,
-    });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new LibertyPopulationOverTimeMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "liberty_to_prison_count_by_month",
-      rootStore: this.rootStore,
-      dataTransformer: createLibertyPopulationTimeSeries,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .libertyToPrisonPopulationOverTime,
-      newBackendMetric,
     });
   }
 
@@ -335,27 +312,11 @@ export default class MetricsStore {
   }
 
   // PRISON
-  get prisonPopulationOverTime():
-    | PrisonPopulationOverTimeMetric
-    | OverTimeMetric {
-    const id = "prisonPopulationOverTime";
-    const newBackendMetric = new OverTimeMetric({
-      id,
+  get prisonPopulationOverTime(): OverTimeMetric {
+    return new OverTimeMetric({
+      id: "prisonPopulationOverTime",
       endpoint: "PrisonPopulationOverTime",
       rootStore: this.rootStore,
-    });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new PrisonPopulationOverTimeMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "prison_population_time_series",
-      rootStore: this.rootStore,
-      dataTransformer: createPrisonPopulationTimeSeries,
-      filters:
-        this.rootStore.filtersStore.enabledFilters.prisonPopulationOverTime,
-      newBackendMetric,
     });
   }
 
@@ -461,28 +422,11 @@ export default class MetricsStore {
   }
 
   // PRISON TO SUPERVISION
-  get prisonToSupervisionPopulationOverTime():
-    | PrisonPopulationOverTimeMetric
-    | OverTimeMetric {
-    const id = "prisonToSupervisionPopulationOverTime";
-    const newBackendMetric = new OverTimeMetric({
-      id,
+  get prisonToSupervisionPopulationOverTime(): OverTimeMetric {
+    return new OverTimeMetric({
+      id: "prisonToSupervisionPopulationOverTime",
       endpoint: "PrisonToSupervisionTransitionsOverTime",
       rootStore: this.rootStore,
-    });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new PrisonPopulationOverTimeMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "prison_to_supervision_count_by_month",
-      rootStore: this.rootStore,
-      dataTransformer: createPrisonPopulationTimeSeries,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .prisonToSupervisionPopulationOverTime,
-      newBackendMetric,
     });
   }
 
@@ -609,29 +553,11 @@ export default class MetricsStore {
   }
 
   // SUPERVISION
-  get supervisionPopulationOverTime():
-    | SupervisionPopulationOverTimeMetric
-    | OverTimeMetric {
-    const id = "supervisionPopulationOverTime";
-    const newBackendMetric = new OverTimeMetric({
-      id,
+  get supervisionPopulationOverTime(): OverTimeMetric {
+    return new OverTimeMetric({
+      id: "supervisionPopulationOverTime",
       endpoint: "SupervisionPopulationOverTime",
       rootStore: this.rootStore,
-    });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationOverTimeMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_population_time_series",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationTimeSeries,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionPopulationOverTime,
-      newBackendMetric,
     });
   }
 
@@ -746,28 +672,11 @@ export default class MetricsStore {
   }
 
   // SUPERVISION TO PRISON
-  get supervisionToPrisonOverTime():
-    | SupervisionPopulationOverTimeMetric
-    | OverTimeMetric {
-    const id = "supervisionToPrisonOverTime";
-    const newBackendMetric = new OverTimeMetric({
-      id,
+  get supervisionToPrisonOverTime(): OverTimeMetric {
+    return new OverTimeMetric({
+      id: "supervisionToPrisonOverTime",
       endpoint: "SupervisionToPrisonTransitionsOverTime",
       rootStore: this.rootStore,
-    });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationOverTimeMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_prison_count_by_month",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationTimeSeries,
-      filters:
-        this.rootStore.filtersStore.enabledFilters.supervisionToPrisonOverTime,
-      newBackendMetric,
     });
   }
 
@@ -1027,28 +936,11 @@ export default class MetricsStore {
   }
 
   // SUPERVISION TO LIBERTY
-  get supervisionToLibertyOverTime():
-    | SupervisionPopulationOverTimeMetric
-    | OverTimeMetric {
-    const id = "supervisionToLibertyOverTime";
-    const newBackendMetric = new OverTimeMetric({
-      id,
+  get supervisionToLibertyOverTime(): OverTimeMetric {
+    return new OverTimeMetric({
+      id: "supervisionToLibertyOverTime",
       endpoint: "SupervisionToLibertyTransitionsOverTime",
       rootStore: this.rootStore,
-    });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationOverTimeMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_liberty_count_by_month",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationTimeSeries,
-      filters:
-        this.rootStore.filtersStore.enabledFilters.supervisionToLibertyOverTime,
-      newBackendMetric,
     });
   }
 

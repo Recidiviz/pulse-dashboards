@@ -18,11 +18,10 @@ import { runInAction } from "mobx";
 
 import flags from "../../../flags";
 import RootStore from "../../../RootStore";
-import LibertyPopulationOverTimeMetric from "../../models/LibertyPopulationOverTimeMetric";
+import LibertyPopulationSnapshotMetric from "../../models/LibertyPopulationSnapshotMetric";
 import OverTimeMetric from "../../models/OverTimeMetric";
 import PathwaysMetric from "../../models/PathwaysMetric";
 import PopulationProjectionOverTimeMetric from "../../models/PopulationProjectionOverTimeMetric";
-import SupervisionPopulationOverTimeMetric from "../../models/SupervisionPopulationOverTimeMetric";
 import SupervisionPopulationSnapshotMetric from "../../models/SupervisionPopulationSnapshotMetric";
 import VitalsMetrics from "../../models/VitalsMetrics";
 import CoreStore from "..";
@@ -66,8 +65,8 @@ describe("MetricsStore", () => {
 
     it("defaults metrics to the old backend when no flags are configured", () => {
       expect(
-        coreStore.metricsStore.libertyToPrisonPopulationOverTime
-      ).toBeInstanceOf(LibertyPopulationOverTimeMetric);
+        coreStore.metricsStore.libertyToPrisonPopulationByAgeGroup
+      ).toBeInstanceOf(LibertyPopulationSnapshotMetric);
     });
 
     it("defaults metrics to the specified backend", () => {
@@ -80,20 +79,8 @@ describe("MetricsStore", () => {
     it("correctly overrides the metric backend", () => {
       flags.defaultMetricBackend = "NEW";
       flags.metricBackendOverrides = {
-        prisonPopulationOverTime: "NEW",
-        supervisionPopulationOverTime: "NEW",
-        supervisionToLibertyOverTime: "NEW",
-        prisonToSupervisionPopulationOverTime: "NEW",
-        libertyToPrisonPopulationOverTime: "NEW",
-        supervisionToPrisonOverTime: "OLD",
         supervisionToPrisonPopulationByOfficer: "OLD_WITH_DIFFING",
       };
-      expect(
-        coreStore.metricsStore.libertyToPrisonPopulationOverTime
-      ).toBeInstanceOf(OverTimeMetric);
-      expect(coreStore.metricsStore.supervisionToPrisonOverTime).toBeInstanceOf(
-        SupervisionPopulationOverTimeMetric
-      );
       expect(
         coreStore.metricsStore.supervisionToPrisonPopulationByOfficer
       ).toBeInstanceOf(SupervisionPopulationSnapshotMetric);

@@ -17,18 +17,15 @@
 
 import React from "react";
 
-import LibertyPopulationOverTimeMetric from "../models/LibertyPopulationOverTimeMetric";
 import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshotMetric";
 import OverTimeMetric from "../models/OverTimeMetric";
 import PathwaysMetric from "../models/PathwaysMetric";
 import PathwaysNewBackendMetric from "../models/PathwaysNewBackendMetric";
 import PersonLevelMetric from "../models/PersonLevelMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
-import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
 import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
 import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
 import SnapshotMetric from "../models/SnapshotMetric";
-import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import { MetricRecord } from "../models/types";
 import VizCountOverTimeWithAvg from "../VizCountOverTimeWithAvg";
@@ -92,28 +89,6 @@ const MetricVizMapper: React.FC<MetricVizMapperProps> = ({ metric }) => {
 
   if (metric instanceof PrisonPopulationPersonLevelMetric) {
     return <VizPopulationPersonLevel metric={metric} />;
-  }
-
-  if (metric instanceof PrisonPopulationOverTimeMetric) {
-    switch (metric.id) {
-      case "prisonToSupervisionPopulationOverTime":
-        return <VizCountOverTimeWithAvg metric={metric} />;
-      default:
-        return <VizPopulationOverTime metric={metric} />;
-    }
-  }
-
-  if (metric instanceof LibertyPopulationOverTimeMetric) {
-    return <VizCountOverTimeWithAvg metric={metric} />;
-  }
-
-  if (metric instanceof SupervisionPopulationOverTimeMetric) {
-    switch (metric.id) {
-      case "supervisionPopulationOverTime":
-        return <VizPopulationOverTime metric={metric} />;
-      default:
-        return <VizCountOverTimeWithAvg metric={metric} />;
-    }
   }
 
   // there are no other metric types, so this should only be reached when developing new ones

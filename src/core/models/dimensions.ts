@@ -20,12 +20,6 @@ import { DIMENSION_TYPES } from "../utils/constants";
 
 export const dimensionsByMetricType = {
   // LIBERTY TO PRISON
-  liberty_to_prison_count_by_month: [
-    DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.AGE_GROUP,
-    DIMENSION_TYPES.JUDICIAL_DISTRICT,
-    DIMENSION_TYPES.RACE,
-  ],
   liberty_to_prison_population_snapshot_by_dimension: [
     DIMENSION_TYPES.GENDER,
     DIMENSION_TYPES.AGE_GROUP,
@@ -34,13 +28,6 @@ export const dimensionsByMetricType = {
     DIMENSION_TYPES.PRIOR_LENGTH_OF_INCARCERATION,
   ],
   // PRISON
-  prison_population_time_series: [
-    DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.ADMISSION_REASON,
-    DIMENSION_TYPES.FACILITY,
-    DIMENSION_TYPES.AGE_GROUP,
-    DIMENSION_TYPES.RACE,
-  ],
   prison_population_projection_time_series: [
     DIMENSION_TYPES.GENDER,
     DIMENSION_TYPES.LEGAL_STATUS,
@@ -61,12 +48,6 @@ export const dimensionsByMetricType = {
     DIMENSION_TYPES.RACE,
   ],
   // PRISON TO SUPERVISION
-  prison_to_supervision_count_by_month: [
-    DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.FACILITY,
-    DIMENSION_TYPES.AGE_GROUP,
-    DIMENSION_TYPES.RACE,
-  ],
   prison_to_supervision_population_snapshot_by_dimension: [
     DIMENSION_TYPES.GENDER,
     DIMENSION_TYPES.FACILITY,
@@ -80,11 +61,6 @@ export const dimensionsByMetricType = {
     DIMENSION_TYPES.RACE,
   ],
   // SUPERVISION
-  supervision_population_time_series: [
-    DIMENSION_TYPES.DISTRICT,
-    DIMENSION_TYPES.SUPERVISION_LEVEL,
-    DIMENSION_TYPES.RACE,
-  ],
   supervision_population_projection_time_series: [DIMENSION_TYPES.GENDER],
   supervision_population_snapshot_by_dimension: [
     DIMENSION_TYPES.DISTRICT,
@@ -92,16 +68,6 @@ export const dimensionsByMetricType = {
     DIMENSION_TYPES.RACE,
   ],
   // SUPERVISION TO PRISON
-  supervision_to_prison_count_by_month: [
-    DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.SUPERVISION_TYPE,
-    DIMENSION_TYPES.DISTRICT,
-    DIMENSION_TYPES.AGE_GROUP,
-    DIMENSION_TYPES.MOST_SEVERE_VIOLATION,
-    DIMENSION_TYPES.NUMBER_OF_VIOLATIONS,
-    DIMENSION_TYPES.SUPERVISION_LEVEL,
-    DIMENSION_TYPES.RACE,
-  ],
   supervision_to_prison_population_snapshot_by_dimension: [
     DIMENSION_TYPES.GENDER,
     DIMENSION_TYPES.SUPERVISION_TYPE,
@@ -123,14 +89,6 @@ export const dimensionsByMetricType = {
     DIMENSION_TYPES.OFFICER_NAME,
   ],
   // SUPERVISION TO LIBERTY
-  supervision_to_liberty_count_by_month: [
-    DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.SUPERVISION_TYPE,
-    DIMENSION_TYPES.DISTRICT,
-    DIMENSION_TYPES.AGE_GROUP,
-    DIMENSION_TYPES.RACE,
-    DIMENSION_TYPES.SUPERVISION_LEVEL,
-  ],
   supervision_to_liberty_population_snapshot_by_dimension: [
     DIMENSION_TYPES.GENDER,
     DIMENSION_TYPES.SUPERVISION_TYPE,

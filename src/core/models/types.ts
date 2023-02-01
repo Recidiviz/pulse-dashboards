@@ -119,12 +119,9 @@ export type MetricRecord =
   | PopulationProjectionTimeSeriesRecord
   | VitalsSummaryRecord
   | VitalsTimeSeriesRecord
-  | PrisonPopulationTimeSeriesRecord
   | PrisonPopulationSnapshotRecord
-  | SupervisionPopulationTimeSeriesRecord
   | SupervisionPopulationSnapshotRecord
   | PrisonPopulationPersonLevelRecord
-  | LibertyPopulationTimeSeriesRecord
   | LibertyPopulationSnapshotRecord
   | TimeSeriesDataRecord
   | SnapshotDataRecord
@@ -174,18 +171,6 @@ export type PrisonPopulationPersonLevelRecord = {
   race: string;
 };
 
-export type PrisonPopulationTimeSeriesRecord = {
-  count: number;
-  avg90day: number;
-  year: number;
-  month: number;
-  gender: Gender;
-  ageGroup: AgeGroup;
-  admissionReason: string;
-  facility: string;
-  race: string;
-};
-
 export type SupervisionPopulationSnapshotRecord = {
   count: number;
   lastUpdated: Date;
@@ -203,21 +188,6 @@ export type SupervisionPopulationSnapshotRecord = {
   caseload: number;
 };
 
-export type SupervisionPopulationTimeSeriesRecord = {
-  count: number;
-  avg90day: number;
-  year: number;
-  month: number;
-  gender: Gender;
-  supervisionType: SupervisionType;
-  district: string;
-  mostSevereViolation: string;
-  numberOfViolations: string;
-  supervisionLevel: string;
-  race: string;
-  ageGroup: AgeGroup;
-};
-
 export type LibertyPopulationSnapshotRecord = {
   count: number;
   lastUpdated: Date;
@@ -227,18 +197,6 @@ export type LibertyPopulationSnapshotRecord = {
   race: string;
   priorLengthOfIncarceration: string;
   timePeriod: TimePeriod;
-};
-
-export type LibertyPopulationTimeSeriesRecord = {
-  count: number;
-  avg90day: number;
-  year: number;
-  month: number;
-  gender: Gender;
-  judicialDistrict: string;
-  race: string;
-  ageGroup: AgeGroup;
-  priorLengthOfIncarceration: string;
 };
 
 export type TimeSeriesDataRecord = {
@@ -339,9 +297,6 @@ export type PathwaysMetricRecords =
   | PopulationProjectionTimeSeriesRecord[]
   | PrisonPopulationSnapshotRecord[]
   | SupervisionPopulationSnapshotRecord[]
-  | PrisonPopulationTimeSeriesRecord[]
-  | SupervisionPopulationTimeSeriesRecord[]
-  | LibertyPopulationTimeSeriesRecord[]
   | LibertyPopulationSnapshotRecord[]
   | PrisonPopulationPersonLevelRecord[]
   | TimeSeriesDataRecord[]

@@ -19,15 +19,10 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import OverTimeMetric from "../models/OverTimeMetric";
-import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
-import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
 import PopulationTimeSeriesChart from "../PopulationTimeSeriesChart";
 
 type VizPopulationOverTimeProps = {
-  metric:
-    | PrisonPopulationOverTimeMetric
-    | SupervisionPopulationOverTimeMetric
-    | OverTimeMetric;
+  metric: OverTimeMetric;
 };
 
 const VizPopulationOverTime: React.FC<VizPopulationOverTimeProps> = ({

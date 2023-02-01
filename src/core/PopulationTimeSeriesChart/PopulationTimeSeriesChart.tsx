@@ -19,28 +19,16 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import OverTimeMetric from "../models/OverTimeMetric";
-import PrisonPopulationOverTimeMetric from "../models/PrisonPopulationOverTimeMetric";
-import SupervisionPopulationOverTimeMetric from "../models/SupervisionPopulationOverTimeMetric";
-import {
-  PrisonPopulationTimeSeriesRecord,
-  SupervisionPopulationTimeSeriesRecord,
-  TimeSeriesDataRecord,
-} from "../models/types";
+import { TimeSeriesDataRecord } from "../models/types";
 import { getRecordDate } from "../models/utils";
 import withMetricHydrator from "../withMetricHydrator";
 import { getChartBottom, getChartTop, getDateRange } from "./helpers";
 import PopulationTimeSeriesBaseChart from "./PopulationTimeSeriesBaseChart";
 
 type Props = {
-  metric:
-    | PrisonPopulationOverTimeMetric
-    | SupervisionPopulationOverTimeMetric
-    | OverTimeMetric;
+  metric: OverTimeMetric;
   title: string;
-  data:
-    | PrisonPopulationTimeSeriesRecord[]
-    | SupervisionPopulationTimeSeriesRecord[]
-    | TimeSeriesDataRecord[];
+  data: TimeSeriesDataRecord[];
 };
 
 const PopulationTimeSeriesChart: React.FC<Props> = ({
@@ -50,17 +38,10 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
 }) => {
   const dateSpacing = data.length >= 60 ? 2 : 1;
 
-  const historicalPopulation = data.map(
-    (
-      d:
-        | PrisonPopulationTimeSeriesRecord
-        | SupervisionPopulationTimeSeriesRecord
-        | TimeSeriesDataRecord
-    ) => ({
-      date: getRecordDate(d),
-      value: d.count,
-    })
-  );
+  const historicalPopulation = data.map((d: TimeSeriesDataRecord) => ({
+    date: getRecordDate(d),
+    value: d.count,
+  }));
 
   const { beginDate, endDate } = getDateRange(
     historicalPopulation[0]?.date,
