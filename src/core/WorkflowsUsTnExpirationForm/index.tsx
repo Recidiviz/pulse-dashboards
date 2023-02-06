@@ -49,6 +49,7 @@ import tepeTemplate, {
 } from "../Paperwork/US_TN/Expiration/TEPENote";
 import WebFormField from "../Paperwork/WebFormField";
 import PillNav from "../PillNav";
+import { WriteToTOMISModal } from "./WriteToTOMISModal";
 
 const WorkflowsUsTnExpirationForm: React.FC = observer(
   function WorkflowsUsTnExpirationForm() {
@@ -70,6 +71,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
       successDuration: animation.extendedDurationMs,
     });
     const [pageNumberCopied, setPageNumberCopied] = useState(-1);
+    const [showTOMISPreviewModal, setShowTOMISPreviewModal] = useState(false);
 
     useEffect(() => {
       if (pageToCopy) {
@@ -109,7 +111,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
     };
 
     const preview = (
-      <NotePreviewContainer>
+      <NotePreviewContainer className="formPreview">
         <PageFieldTitle>Note Title: </PageFieldTitle> <span>TEPE</span>
         <>
           {paginatedNote.map((page, index) => (
@@ -144,7 +146,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
     };
 
     return (
-      <FormContainer>
+      <FormContainer className="WorkflowsFormContainer">
         <NoteFormHeader>
           <FormHeaderSection>
             <FormHeading>
@@ -163,9 +165,22 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
             <Button kind="primary" shape="block" onClick={onCopyButtonClick}>
               {isCopied ? "Note text copied!" : "Copy to Clipboard"}
             </Button>
+            <Button
+              kind="primary"
+              shape="block"
+              onClick={() => setShowTOMISPreviewModal(true)}
+            >
+              Submit to TOMIS
+            </Button>
           </FormHeaderSection>
         </NoteFormHeader>
         {selectedFormSection === 0 ? form : preview}
+        <WriteToTOMISModal
+          showModal={showTOMISPreviewModal}
+          onCloseFn={() => setShowTOMISPreviewModal(false)}
+          paginatedNote={paginatedNote}
+          person={opportunity.person}
+        />
       </FormContainer>
     );
   }

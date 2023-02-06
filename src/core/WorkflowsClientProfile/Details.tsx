@@ -381,7 +381,7 @@ export function CaseNotes({
   }
 
   return (
-    <DetailsSection>
+    <DetailsSection className="DetailsSection">
       <DetailsHeading>{headingText}</DetailsHeading>
       <DetailsContent>
         <DetailsList>

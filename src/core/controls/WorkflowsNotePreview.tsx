@@ -73,6 +73,9 @@ export const PageFieldTitle = styled.strong`
 export const PagePreviewWithHover = styled.article`
   background-color: ${palette.marble1};
   border: 1px solid ${palette.slate30};
+  color: ${palette.pine1};
+  line-height: ${rem(18)};
+  height: ${rem(214)};
   padding: ${rem(spacing.md)} ${rem(spacing.lg)};
   white-space: pre;
   max-width: ${rem(960)};
@@ -81,4 +84,20 @@ export const PagePreviewWithHover = styled.article`
     background: ${rgba(palette.signal.highlight, 0.05)};
     border: 1px solid ${palette.signal.highlight};
   }
+`;
+
+export const SmallPagePreviewWithHover = styled(PagePreviewWithHover)<{
+  selected: boolean;
+}>`
+  font-size: ${rem(2.5)};
+  line-height: ${rem(3.5)};
+  padding: ${rem(spacing.xs)};
+  height: ${rem(48)};
+  width: ${rem(132)};
+
+  ${(props) =>
+    props.selected &&
+    `
+      border: 1px solid ${palette.signal.highlight};
+    `}
 `;

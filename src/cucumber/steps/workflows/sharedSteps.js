@@ -77,6 +77,13 @@ When("I click on the {string} button", async (buttonClassName) => {
   await waitForNavigation(button.click());
 });
 
+When("I click on the button with text {string}", async (buttonText) => {
+  const button = await $(`button=${buttonText}`);
+  await button.waitForExist();
+  // Don't do waitForNavigation because not all button clicks result in a new URL being navigated to
+  await button.click();
+});
+
 /**
  * Then
  * */

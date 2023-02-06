@@ -15,12 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 /* eslint-disable class-methods-use-this */
+import { OPPORTUNITY_URL_BY_TYPE } from "../../WorkflowsStore/Opportunity/types";
 import Page from "./basePage";
 
 class WorkflowsFormPage extends Page {
   async open(opportunityType, pseudonymizedId) {
+    const pageName = OPPORTUNITY_URL_BY_TYPE[opportunityType];
     await super.open(
-      `${browser.config.baseUrl}/workflows/${opportunityType}/${pseudonymizedId}`
+      `${browser.config.baseUrl}/workflows/${pageName}/${pseudonymizedId}`
     );
   }
 

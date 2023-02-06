@@ -24,6 +24,7 @@ import {
   clickOutsideElement,
   respondWithOfflineUser,
   TEMP_DOWNLOAD_PATH,
+  waitForElementsToExist,
   waitForFileToExist,
   waitForNetworkIdle,
 } from "../utils";
@@ -47,11 +48,15 @@ When(
   "I click into the {string} form field and update the value to {string}",
   async (inputId, inputValue) => {
     const formField = await $(`input#${inputId}`);
+    // For some reason if you clear the web form inputs without focusing into them first, they put
+    // their old value back when you set the value. Since this will probably never happen outside of
+    // testing, just click in the test.
+    await formField.click();
     await formField.setValue(inputValue);
     const criteriaList = await WorkflowsFormPage.criteriaList();
     await criteriaList.click();
     // Wait for data to save to firestore
-    await browser.pause(2000);
+    await browser.pause(2500);
   }
 );
 
@@ -76,6 +81,12 @@ When("I click on the checkbox for {string}", async (checkboxValue) => {
   await eligibilityCheckbox.waitForExist();
   await eligibilityCheckbox.click();
   await clickOutsideElement();
+});
+
+When("I click on preview page {int}", async (pageNumber) => {
+  const pages = await $$(".TEPESmallPagePreview");
+  await waitForElementsToExist(pages);
+  await pages[pageNumber - 1].click();
 });
 
 /**
@@ -152,4 +163,31 @@ Then("I should see the {string} dropdown", async (dropdownLabel) => {
   const dropdownButton = await $(`button=${dropdownLabel}`);
   await dropdownButton.waitForExist();
   expect(await dropdownButton.getText()).toEqual(dropdownLabel);
+});
+
+Then("the value {string} should appear in the form preview", async (value) => {
+  const preview = await $(".formPreview");
+  await preview.waitForExist();
+  const text = await preview.getText();
+  expect(text).toEqual(expect.stringContaining(value));
+});
+
+Then("the value {string} should appear in the preview modal", async (value) => {
+  const preview = await $(".WriteToTOMISModal");
+  await preview.waitForExist();
+  const text = await preview.getText();
+  expect(text).toEqual(expect.stringContaining(value));
+});
+
+Then("the value {string} should appear in the page preview", async (value) => {
+  const preview = await $(".TEPEPagePreview");
+  await preview.waitForExist();
+  const text = await preview.getText();
+  expect(text).toEqual(expect.stringContaining(value));
+});
+
+Then("there should be {int} pages of notes", async (numPages) => {
+  const pages = await $$(".TEPESmallPagePreview");
+  await waitForElementsToExist(pages);
+  expect(pages.length).toEqual(numPages);
 });
