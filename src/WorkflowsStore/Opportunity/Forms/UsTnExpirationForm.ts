@@ -50,7 +50,7 @@ export class UsTnExpirationForm extends FormBase<UsTnExpirationDraftData> {
 
       return {
         expirationDate: formatFormValueDateMMDDYYYYY(
-          criterion.supervisionPastFullTermCompletionDateOrUpcoming60Day
+          criterion.supervisionPastFullTermCompletionDateOrUpcoming1Day
             .eligibleDate
         ),
         currentOffenses: displayList(form.offenses),

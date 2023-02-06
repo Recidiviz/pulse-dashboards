@@ -40,7 +40,7 @@ const CRITERIA: Record<
   keyof Required<UsTnExpirationReferralRecord>["criteria"],
   OpportunityRequirement
 > = {
-  supervisionPastFullTermCompletionDateOrUpcoming60Day: {
+  supervisionPastFullTermCompletionDateOrUpcoming1Day: {
     text: "Expiration date is $EXPIRATION_DATE",
   },
   usTnNoZeroToleranceCodesSpans: {
@@ -81,17 +81,17 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
     const { criteria } = this.record;
     const requirements: OpportunityRequirement[] = [];
 
-    if (criteria?.supervisionPastFullTermCompletionDateOrUpcoming60Day) {
+    if (criteria?.supervisionPastFullTermCompletionDateOrUpcoming1Day) {
       requirements.push({
-        text: CRITERIA.supervisionPastFullTermCompletionDateOrUpcoming60Day.text.replace(
+        text: CRITERIA.supervisionPastFullTermCompletionDateOrUpcoming1Day.text.replace(
           "$EXPIRATION_DATE",
           formatWorkflowsDate(
-            criteria.supervisionPastFullTermCompletionDateOrUpcoming60Day
+            criteria.supervisionPastFullTermCompletionDateOrUpcoming1Day
               .eligibleDate
           )
         ),
         tooltip:
-          CRITERIA.supervisionPastFullTermCompletionDateOrUpcoming60Day.tooltip,
+          CRITERIA.supervisionPastFullTermCompletionDateOrUpcoming1Day.tooltip,
       });
     }
     if (criteria?.usTnNoZeroToleranceCodesSpans) {
@@ -106,6 +106,6 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
 
   get eligibilityDate(): Date | undefined {
     return this.record?.criteria
-      ?.supervisionPastFullTermCompletionDateOrUpcoming60Day?.eligibleDate;
+      ?.supervisionPastFullTermCompletionDateOrUpcoming1Day?.eligibleDate;
   }
 }

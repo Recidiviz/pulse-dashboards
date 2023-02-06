@@ -49,10 +49,10 @@ export type UsTnExpirationReferralRecord = {
   };
 
   criteria: {
-    supervisionPastFullTermCompletionDateOrUpcoming60Day: {
+    supervisionPastFullTermCompletionDateOrUpcoming1Day: {
       eligibleDate: Date;
     };
-    usTnNoZeroToleranceCodesSpans: {
+    usTnNoZeroToleranceCodesSpans?: {
       zeroToleranceCodeDates?: Date[];
     };
     usTnNotOnLifeSentenceOrLifetimeSupervision: {
@@ -71,16 +71,16 @@ export const transformReferral: TransformFunction<
   const transformedRecord = cloneDeep(record) as UsTnExpirationReferralRecord;
   const { criteria } = record;
 
-  transformedRecord.criteria.supervisionPastFullTermCompletionDateOrUpcoming60Day =
+  transformedRecord.criteria.supervisionPastFullTermCompletionDateOrUpcoming1Day =
     {
       eligibleDate: fieldToDate(
-        criteria.supervisionPastFullTermCompletionDateOrUpcoming60Day
+        criteria.supervisionPastFullTermCompletionDateOrUpcoming1Day
           .eligibleDate
       ),
     };
   transformedRecord.criteria.usTnNoZeroToleranceCodesSpans = {
     zeroToleranceCodeDates: optionalFieldToDateArray(
-      criteria.usTnNoZeroToleranceCodesSpans.zeroToleranceCodeDates
+      criteria.usTnNoZeroToleranceCodesSpans?.zeroToleranceCodeDates
     ),
   };
 
@@ -107,7 +107,7 @@ export function getValidator(
   return (transformedRecord) => {
     const { eligibleDate } =
       transformedRecord.criteria
-        .supervisionPastFullTermCompletionDateOrUpcoming60Day;
+        .supervisionPastFullTermCompletionDateOrUpcoming1Day;
 
     if (eligibleDate.getTime() !== client.expirationDate?.getTime())
       throw new OpportunityValidationError(

@@ -41,7 +41,7 @@
       ]
     },
     "criteria": {
-      "supervisionPastFullTermCompletionDateOrUpcoming60Day": {
+      "supervisionPastFullTermCompletionDateOrUpcoming1Day": {
         "eligibleDate": "2022-02-11"
       },
       "usTnNoZeroToleranceCodesSpans": {},
