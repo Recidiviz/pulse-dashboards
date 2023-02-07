@@ -22,6 +22,7 @@ import demoAuthConfig from "../auth_config_demo.json";
 import devAuthConfig from "../auth_config_dev.json";
 import productionAuthConfig from "../auth_config_production.json";
 import { WorkflowsStore } from "../WorkflowsStore";
+import APIStore from "./APIStore";
 import PageStore from "./PageStore";
 import TenantStore from "./TenantStore";
 import { TenantId } from "./types";
@@ -86,6 +87,8 @@ export class RootStore {
 
   workflowsStore: WorkflowsStore;
 
+  apiStore: APIStore;
+
   constructor() {
     makeObservable(this, {
       currentTenantId: computed,
@@ -102,6 +105,8 @@ export class RootStore {
     this.pageStore = new PageStore({ rootStore: this });
 
     this.workflowsStore = new WorkflowsStore({ rootStore: this });
+
+    this.apiStore = new APIStore(this.userStore);
   }
 
   get currentTenantId(): TenantId | undefined {

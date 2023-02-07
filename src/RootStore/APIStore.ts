@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-import { runInAction, when } from "mobx";
-
 import UserStore from "./UserStore";
 
 interface RequestProps {
@@ -29,36 +26,8 @@ interface RequestProps {
 class API {
   userStore: UserStore;
 
-  isSessionInitialized: boolean;
-
-  csrfToken: string;
-
   constructor(userStore: UserStore) {
     this.userStore = userStore;
-    this.isSessionInitialized = false;
-    this.csrfToken = "";
-
-    when(
-      () => userStore.isAuthorized,
-      () => this.initializeSession()
-    );
-  }
-
-  async initializeSession(): Promise<void | string> {
-    try {
-      const response = (await this.get(
-        `/workflows/${this.userStore.stateCode}/init`
-      )) as Response;
-      const { csrf } = await response.json();
-
-      runInAction(() => {
-        if (csrf !== "") this.csrfToken = csrf;
-        this.isSessionInitialized = true;
-      });
-    } catch (error) {
-      if (error instanceof Error) return error.message;
-      return String(error);
-    }
   }
 
   async request({
@@ -75,7 +44,6 @@ class API {
 
     const headers: HeadersInit = {
       Authorization: `Bearer ${token}`,
-      "X-CSRF-Token": this.csrfToken,
       "Content-Type": "application/json",
     };
 
@@ -85,14 +53,8 @@ class API {
       headers,
     });
 
-    const json = await response.json();
-
-    if (json.status === 400 && json.code === "invalid_csrf_token") {
-      await this.initializeSession();
-      if (!retrying) {
-        return this.request({ path, method, body, retrying: true });
-      }
-    }
+    // Clone response in order to read json here but still return Response obj (and use .json() there)
+    const json = await response.clone().json();
 
     if (!response.ok) {
       throw new Error(
@@ -101,8 +63,7 @@ class API {
             Errors: ${JSON.stringify(json.errors)}`
       );
     }
-
-    return json;
+    return response;
   }
 
   async get(
@@ -114,7 +75,7 @@ class API {
 
   async post(
     path: string,
-    body: Record<string, string> = {}
+    body: Record<string, unknown> = {}
   ): Promise<Body | Response | string> {
     return this.request({ path, body, method: "POST" });
   }

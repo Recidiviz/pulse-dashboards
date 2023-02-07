@@ -21,6 +21,7 @@ import {
   getAuth,
   signInWithCustomToken,
 } from "firebase/auth";
+import type { Timestamp } from "firebase/firestore";
 import {
   collection,
   connectFirestoreEmulator,
@@ -45,12 +46,13 @@ import {
 import { UserAppMetadata } from "../RootStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
 import { isOfflineMode } from "../utils/isOfflineMode";
-import { OpportunityType } from "../WorkflowsStore";
+import { OpportunityType, UsTnExpirationOpportunity } from "../WorkflowsStore";
 import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
 import {
   ClientRecord,
   OpportunityUpdateWithForm,
   ResidentRecord,
+  UsTnExpirationOpportunityUpdate,
 } from "./types";
 
 function getFirestoreProjectId() {
@@ -183,10 +185,12 @@ export async function getResident(
     };
 }
 
-async function updateOpportunity(
+async function updateOpportunity<
+  T extends OpportunityUpdateWithForm<Record<string, any>>
+>(
   opportunityType: OpportunityType,
   recordId: string,
-  update: PartialWithFieldValue<OpportunityUpdateWithForm<Record<string, any>>>
+  update: PartialWithFieldValue<T>
 ) {
   const opportunityDocRef = doc(
     db,
@@ -308,4 +312,32 @@ export const updateFormDraftData = async function (
       opportunityType: type,
     });
   }
+};
+
+export const updateUsTnExpirationContactNoteSubmitted = async function (
+  opportunity: UsTnExpirationOpportunity,
+  recordId: string,
+  contactNote: Record<number, string[]>,
+  submittedTimestamp: Timestamp
+) {
+  // Ignore recidiviz and non-state users in prod
+  if (
+    process.env.REACT_APP_DEPLOY_ENV === "production" &&
+    opportunity.rootStore.userStore.stateCode !== opportunity.person.stateCode
+  )
+    return;
+
+  const contactNoteUpdate: UsTnExpirationOpportunityUpdate = {
+    contactNote: {
+      status: "PENDING",
+      submitted: {
+        by: opportunity.currentUserEmail || "user",
+        date: submittedTimestamp,
+      },
+      note: contactNote,
+      noteStatus: {},
+    },
+  };
+
+  return updateOpportunity(opportunity.type, recordId, contactNoteUpdate);
 };

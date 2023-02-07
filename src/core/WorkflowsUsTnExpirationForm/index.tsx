@@ -45,6 +45,7 @@ import {
 } from "../Paperwork/US_TN/Expiration";
 import tepeTemplate, {
   charLimitedNote,
+  paginatedTEPENoteByLine,
   paginateTEPENote,
 } from "../Paperwork/US_TN/Expiration/TEPENote";
 import WebFormField from "../Paperwork/WebFormField";
@@ -178,8 +179,8 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
         <WriteToTOMISModal
           showModal={showTOMISPreviewModal}
           onCloseFn={() => setShowTOMISPreviewModal(false)}
-          paginatedNote={paginatedNote}
-          person={opportunity.person}
+          paginatedNote={paginatedTEPENoteByLine(fullCharLimitedTEPENote, 10)}
+          opportunity={opportunity}
         />
       </FormContainer>
     );

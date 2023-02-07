@@ -24,12 +24,14 @@ import {
   Sans24,
   spacing,
 } from "@recidiviz/design-system";
+import { Timestamp } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components/macro";
 
-import { JusticeInvolvedPerson } from "../../WorkflowsStore";
+import { updateUsTnExpirationContactNoteSubmitted } from "../../firestore/firestore";
+import { UsTnExpirationOpportunity } from "../../WorkflowsStore";
 import {
   PagePreviewWithHover,
   SmallPagePreviewWithHover,
@@ -98,23 +100,54 @@ const Disclaimer = styled(Sans14)`
 type writeToTOMISModalProps = {
   showModal: boolean;
   onCloseFn: () => void;
-  paginatedNote: string[];
-  person: JusticeInvolvedPerson;
+  paginatedNote: string[][];
+  opportunity: UsTnExpirationOpportunity;
 };
 
 export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   showModal,
   onCloseFn,
   paginatedNote,
-  person,
+  opportunity,
 }: writeToTOMISModalProps) {
   const [pageNumberSelected, setPageNumberSelected] = useState(0);
-  return (
-    <StyledModal
-      isOpen={showModal}
-      onRequestClose={onCloseFn}
-      className="WriteToTOMISModal"
-    >
+  const { person } = opportunity;
+
+  const submitTEPEContactNote = async function (body: Record<string, unknown>) {
+    return opportunity.rootStore.apiStore.post(
+      `${process.env.REACT_APP_NEW_BACKEND_API_URL}/workflows/external_request/${opportunity.rootStore.userStore.stateCode}/insert_tepe_contact_note`,
+      body
+    );
+  };
+
+  const onWriteButtonClick = () => {
+    const contactNoteObj: Record<number, string[]> = Object.fromEntries(
+      paginatedNote.map((page, index) => [Number(index + 1), page])
+    );
+
+    const contactNoteDateTime = new Date();
+    const userId = opportunity.rootStore.workflowsStore.user?.info.id;
+
+    // In non-production environments and requests by recidiviz users, the personExternalId and userId will be overriden in the backend.
+    const contactNoteRequestBody = {
+      personExternalId: person.externalId,
+      userId,
+      contactNote: contactNoteObj,
+      contactNoteDateTime,
+    };
+
+    updateUsTnExpirationContactNoteSubmitted(
+      opportunity,
+      person.recordId,
+      contactNoteObj,
+      Timestamp.fromDate(contactNoteDateTime)
+    );
+
+    submitTEPEContactNote(contactNoteRequestBody);
+  };
+
+  const submissionForm = (
+    <>
       <ModalControls>
         <Button kind="link" onClick={onCloseFn}>
           <Icon kind="Close" size="14" color={palette.pine2} />
@@ -129,7 +162,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
         {/* TODO(#2947): Add voters rights code */}
         <ContactTypes>Contact Types: TEPE</ContactTypes>
         <PagePreviewWithHover className="TEPEPagePreview">
-          {paginatedNote[pageNumberSelected]}
+          {paginatedNote[pageNumberSelected].join("\n")}
         </PagePreviewWithHover>
         <PagesContainer>
           {paginatedNote.map((page, index) => (
@@ -142,16 +175,12 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
               }}
               selected={index === pageNumberSelected}
             >
-              {page}
+              {page.join("\n")}
             </SmallPagePreviewWithHover>
           ))}
         </PagesContainer>
       </PreviewArea>
-      <WriteButton
-        kind="primary"
-        shape="block"
-        // TODO(#2920): Actually do stuff when the button is clicked.
-      >
+      <WriteButton kind="primary" shape="block" onClick={onWriteButtonClick}>
         Submit note to eTomis
       </WriteButton>
       <Disclaimer>
@@ -161,6 +190,20 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
         eTomis as a contact note. Once submitted, you will only be able to make
         any further edits to these notes directly in eTomis.
       </Disclaimer>
+    </>
+  );
+
+  const getModalContent = () => {
+    return submissionForm;
+  };
+
+  return (
+    <StyledModal
+      isOpen={showModal}
+      onRequestClose={onCloseFn}
+      className="WriteToTOMISModal"
+    >
+      {getModalContent()}
     </StyledModal>
   );
 });

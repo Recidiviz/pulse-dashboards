@@ -17,7 +17,12 @@
 
 import { makeObservable } from "mobx";
 
-import { OpportunityUpdateWithForm } from "../../firestore";
+import {
+  ExternalRequestUpdate,
+  ExternalSystemRequestStatus,
+  UsTnContactNote,
+  UsTnExpirationOpportunityUpdate,
+} from "../../firestore";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
@@ -27,7 +32,6 @@ import { OpportunityRequirement } from "./types";
 import {
   getValidator,
   transformReferral,
-  UsTnExpirationDraftData,
   UsTnExpirationReferralRecord,
 } from "./UsTnExpirationReferralRecord";
 
@@ -54,7 +58,7 @@ const CRITERIA: Record<
 export class UsTnExpirationOpportunity extends OpportunityBase<
   Client,
   UsTnExpirationReferralRecord,
-  OpportunityUpdateWithForm<UsTnExpirationDraftData>
+  UsTnExpirationOpportunityUpdate
 > {
   form: UsTnExpirationForm;
 
@@ -107,5 +111,15 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
   get eligibilityDate(): Date | undefined {
     return this.record?.criteria
       ?.supervisionPastFullTermCompletionDateOrUpcoming1Day?.eligibleDate;
+  }
+
+  get submittedContactNote():
+    | ExternalRequestUpdate<UsTnContactNote>
+    | undefined {
+    return this.updates?.contactNote;
+  }
+
+  get submittedContactNoteStatus(): ExternalSystemRequestStatus | undefined {
+    return this.submittedContactNote?.status;
   }
 }

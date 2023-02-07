@@ -22,6 +22,7 @@ import {
   OpportunityType,
   SupervisionOpportunityType,
 } from "../WorkflowsStore";
+import { UsTnExpirationDraftData } from "../WorkflowsStore/Opportunity/UsTnExpirationReferralRecord";
 
 /**
  * Staff-level data exported from the Recidiviz data platform.
@@ -235,3 +236,24 @@ export type OpportunityUpdate = {
 export type OpportunityUpdateWithForm<FormType> = OpportunityUpdate & {
   referralForm?: { updated: UpdateLog; data?: Partial<FormType> };
 };
+
+export type ExternalSystemRequestStatus =
+  | "PENDING"
+  | "IN_PROGRESS"
+  | "SUCCESS"
+  | "FAILURE";
+
+export type ExternalRequestUpdate<RequestData> = {
+  status: ExternalSystemRequestStatus;
+  submitted: UpdateLog;
+} & RequestData;
+
+export type UsTnContactNote = {
+  note: Record<number, string[]>;
+  noteStatus?: Record<number, ExternalSystemRequestStatus>;
+};
+
+export type UsTnExpirationOpportunityUpdate =
+  OpportunityUpdateWithForm<UsTnExpirationDraftData> & {
+    contactNote: ExternalRequestUpdate<UsTnContactNote>;
+  };

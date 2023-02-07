@@ -43,15 +43,21 @@ export function charLimitedNote(
   return wrap(fullText, { width: charsPerLine, indent: "", trim: true });
 }
 
-export function paginateTEPENote(text: string, linesPerPage: number): string[] {
+export function paginatedTEPENoteByLine(
+  text: string,
+  linesPerPage: number
+): string[][] {
   const allLines = text.split("\n");
-  const paginatedTEPENoteByLine: string[][] = [];
+  const note: string[][] = [];
   while (allLines.length > 0) {
-    paginatedTEPENoteByLine.push(allLines.splice(0, linesPerPage));
+    note.push(allLines.splice(0, linesPerPage));
   }
-  const paginatedTEPENote = paginatedTEPENoteByLine.map((page: string[]) =>
-    page.join("\n")
-  );
+  return note;
+}
+
+export function paginateTEPENote(text: string, linesPerPage: number): string[] {
+  const noteByLine = paginatedTEPENoteByLine(text, linesPerPage);
+  const paginatedTEPENote = noteByLine.map((page: string[]) => page.join("\n"));
   return paginatedTEPENote;
 }
 
