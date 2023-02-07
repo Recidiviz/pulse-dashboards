@@ -109,7 +109,7 @@
     "js-file-downloader": "^1.1.15",
     "jsonexport": "^3.0.1",
     "jspdf": "^2.5.1",
-    "jszip": "^3.7.1",
+    "jszip": "^3.8.0",
     "jwks-rsa": "^1.4.0",
     "lodash": "^4.17.21",
     "make-cancellable-promise": "^1.0.0",
