@@ -18,6 +18,7 @@
 import {
   Button,
   Icon,
+  Loading,
   Modal,
   palette,
   Sans14,
@@ -44,6 +45,10 @@ const StyledModal = styled(Modal)`
     padding: 0;
     max-width: 85vw;
     width: ${rem(740)};
+    min-height: ${rem(500)};
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `;
 
@@ -111,7 +116,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   opportunity,
 }: writeToTOMISModalProps) {
   const [pageNumberSelected, setPageNumberSelected] = useState(0);
-  const { person } = opportunity;
+  const { person, isNoteLoading } = opportunity;
 
   const submitTEPEContactNote = async function (body: Record<string, unknown>) {
     return opportunity.rootStore.apiStore.post(
@@ -146,8 +151,20 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     submitTEPEContactNote(contactNoteRequestBody);
   };
 
+  const loading = (
+    <div className="LoadingContainer">
+      <Loading showMessage={false} />
+      <ModalTitle>Submitting notes to TOMIS...</ModalTitle>
+      <Disclaimer style={{ textAlign: "center" }}>
+        This can take up to 30 seconds.
+        <br />
+        Do not refresh the page.
+      </Disclaimer>
+    </div>
+  );
+
   const submissionForm = (
-    <>
+    <div className="SubmissionFormContainer">
       <ModalControls>
         <Button kind="link" onClick={onCloseFn}>
           <Icon kind="Close" size="14" color={palette.pine2} />
@@ -190,10 +207,13 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
         eTomis as a contact note. Once submitted, you will only be able to make
         any further edits to these notes directly in eTomis.
       </Disclaimer>
-    </>
+    </div>
   );
 
   const getModalContent = () => {
+    if (isNoteLoading) {
+      return loading;
+    }
     return submissionForm;
   };
 
@@ -202,6 +222,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
       isOpen={showModal}
       onRequestClose={onCloseFn}
       className="WriteToTOMISModal"
+      shouldCloseOnOverlayClick={false}
     >
       {getModalContent()}
     </StyledModal>

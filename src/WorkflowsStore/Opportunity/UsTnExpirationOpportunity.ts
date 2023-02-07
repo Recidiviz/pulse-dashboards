@@ -122,4 +122,11 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
   get submittedContactNoteStatus(): ExternalSystemRequestStatus | undefined {
     return this.submittedContactNote?.status;
   }
+
+  get isNoteLoading(): boolean {
+    return (
+      this.submittedContactNoteStatus === "PENDING" ||
+      this.submittedContactNoteStatus === "IN_PROGRESS"
+    );
+  }
 }
