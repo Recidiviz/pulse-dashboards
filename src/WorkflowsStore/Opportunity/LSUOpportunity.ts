@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DocumentData } from "firebase/firestore";
 import { cloneDeep, some } from "lodash";
 import { computed, makeObservable } from "mobx";
 
