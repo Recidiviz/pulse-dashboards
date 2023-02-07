@@ -34,7 +34,7 @@ import styled from "styled-components/macro";
 import { updateUsTnExpirationContactNoteSubmitted } from "../../firestore/firestore";
 import { UsTnExpirationOpportunity } from "../../WorkflowsStore";
 import {
-  PagePreviewWithHover,
+  PagePreview,
   SmallPagePreviewWithHover,
 } from "../controls/WorkflowsNotePreview";
 
@@ -178,9 +178,9 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
         <ClientID>{person.externalId}</ClientID>
         {/* TODO(#2947): Add voters rights code */}
         <ContactTypes>Contact Types: TEPE</ContactTypes>
-        <PagePreviewWithHover className="TEPEPagePreview">
+        <PagePreview className="TEPEPagePreview">
           {paginatedNote[pageNumberSelected].join("\n")}
-        </PagePreviewWithHover>
+        </PagePreview>
         <PagesContainer>
           {paginatedNote.map((page, index) => (
             <SmallPagePreviewWithHover

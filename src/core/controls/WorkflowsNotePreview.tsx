@@ -70,7 +70,7 @@ export const PageFieldTitle = styled.strong`
   color: black;
 `;
 
-export const PagePreviewWithHover = styled.article`
+export const PagePreview = styled.article`
   background-color: ${palette.marble1};
   border: 1px solid ${palette.slate30};
   color: ${palette.pine1};
@@ -79,6 +79,9 @@ export const PagePreviewWithHover = styled.article`
   padding: ${rem(spacing.md)} ${rem(spacing.lg)};
   white-space: pre;
   max-width: ${rem(960)};
+`;
+
+export const PagePreviewWithHover = styled(PagePreview)`
   &:hover,
   &:focus {
     background: ${rgba(palette.signal.highlight, 0.05)};
