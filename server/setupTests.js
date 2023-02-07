@@ -20,3 +20,9 @@ const { redisInstance } = require("./core/cacheManager");
 afterAll(async () => {
   await redisInstance.quit();
 });
+
+process.env = {
+  ...process.env,
+  GOOGLE_APPLICATION_CREDENTIALS: "test-service-account.json",
+  GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE: "test-target-audience",
+};

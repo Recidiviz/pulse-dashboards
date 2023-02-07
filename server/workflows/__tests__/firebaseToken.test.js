@@ -42,7 +42,34 @@ test("requests Firebase auth token", async () => {
     json: jest.fn(),
   };
 
-  await getFirebaseToken(mockReq, mockRes);
+  await getFirebaseToken()(mockReq, mockRes);
+
+  expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
+    stateCode: stateCode.toUpperCase(),
+  });
+  expect(mockRes.json).toHaveBeenCalledWith({
+    firebaseToken: mockFirebaseToken,
+  });
+});
+
+test("requests Firebase auth token for impersonated user", async () => {
+  const userId = "impersonatedEmail@somewhere.com";
+  const stateCode = "us_yy";
+  const mockFirebaseToken = "tokenabc123";
+  const impersonateUser = true;
+
+  createCustomTokenMock.mockResolvedValue(mockFirebaseToken);
+  const mockReq = {
+    query: {
+      impersonatedEmail: userId,
+      impersonatedStateCode: stateCode,
+    },
+  };
+  const mockRes = {
+    json: jest.fn(),
+  };
+
+  await getFirebaseToken(impersonateUser)(mockReq, mockRes);
 
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
     stateCode: stateCode.toUpperCase(),

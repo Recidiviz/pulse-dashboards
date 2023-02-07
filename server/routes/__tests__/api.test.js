@@ -71,6 +71,19 @@ jest.mock("../../filters/filterHelpers", () => {
 
 jest.mock("../../utils/cacheKeys");
 
+jest.mock("google-auth-library", () => {
+  return {
+    GoogleAuth: jest.fn().mockImplementation(() => ({
+      getIdTokenClient: jest.fn().mockImplementation(() => ({
+        request: jest.fn().mockReturnValue({
+          data: { restrictions: true },
+        }),
+      })),
+    })),
+  };
+});
+
+const { GoogleAuth } = require("google-auth-library");
 const { default: fetchMetrics } = require("../../core/fetchMetrics");
 const {
   default: fetchAndFilterNewRevocationFile,
@@ -81,6 +94,7 @@ const {
   newRevocationFile,
   refreshCache,
   responder,
+  getImpersonatedUserRestrictions,
 } = require("../api");
 
 const { clearMemoryCache } = require("../../core/cacheManager");
@@ -355,6 +369,23 @@ describe("API GET tests", () => {
       callback(null, data);
 
       expect(set).toHaveBeenCalledWith("Cache-Control", "no-store, max-age=0");
+    });
+  });
+
+  describe("getImpersonatedUserRestrictions", () => {
+    beforeEach(async () => {
+      jest.resetModules();
+      await fakeRequest(getImpersonatedUserRestrictions, {
+        query: {
+          impersonatedStateCode: "US_TN",
+          impersonatedEmail: "test-email",
+        },
+      });
+    });
+    it("calls GoogleAuth with the service account credentials", () => {
+      expect(GoogleAuth).toHaveBeenCalledWith({
+        credentials: { type: "service_account" },
+      });
     });
   });
 });

@@ -35,29 +35,39 @@ if (!isOfflineMode && credentialFile) {
 
 firebaseAdmin.initializeApp(appOptions);
 
-async function getFirebaseToken(req, res) {
-  let uid;
-  let stateCode;
+function getFirebaseToken(impersonateUser = false) {
+  return async function (req, res) {
+    let uid;
+    let stateCode;
 
-  if (isOfflineMode) {
-    const user = fetchOfflineUser({});
-    stateCode = getAppMetadata({ user }).state_code;
-    uid = user.email;
-  } else {
-    uid = req.user[`${METADATA_NAMESPACE}email_address`];
-    stateCode = getAppMetadata(req).state_code;
-  }
+    if (isOfflineMode) {
+      const user = fetchOfflineUser({});
+      stateCode = getAppMetadata({ user }).state_code;
+      uid = user.email;
+    } else if (impersonateUser) {
+      const { impersonatedEmail, impersonatedStateCode } = req.query;
+      uid = impersonatedEmail;
+      stateCode = impersonatedStateCode;
+    } else {
+      uid = req.user[`${METADATA_NAMESPACE}email_address`];
+      stateCode = getAppMetadata(req).state_code;
+    }
 
-  if (stateCode) {
+    if (!uid) {
+      throw new Error("Missing user email address");
+    }
+
+    if (!stateCode) {
+      throw new Error("Missing state code");
+    }
+
     stateCode = stateCode.toUpperCase();
     const firebaseToken = await firebaseAdmin
       .auth()
       .createCustomToken(uid, { stateCode });
 
     res.json({ firebaseToken });
-  } else {
-    throw new Error("Missing state code");
-  }
+  };
 }
 
 module.exports = {

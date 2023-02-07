@@ -21,6 +21,7 @@ const { clearMemoryCache } = require("../../core/cacheManager");
 
 const OLD_ENV = process.env;
 
+jest.mock("firebase-admin");
 jest.mock("@sentry/node", () => ({
   Handlers: {
     errorHandler: jest.fn(() => {

@@ -26,6 +26,7 @@ const path = require("path");
 const escape = require("escape-html");
 const sanitizeFilename = require("sanitize-filename");
 const { snakeCase } = require("lodash");
+const { GoogleAuth } = require("google-auth-library");
 
 const {
   refreshRedisCache,
@@ -43,6 +44,11 @@ const {
   getNewRevocationsFiltersByMetricName,
 } = require("../filters");
 const { formatKeysToSnakeCase } = require("../utils");
+
+// eslint-disable-next-line import/no-dynamic-require
+const serviceAccount = require(path.join(
+  `../../${process.env.GOOGLE_APPLICATION_CREDENTIALS}`
+));
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -298,7 +304,25 @@ function upload(req, res, next) {
   });
 }
 
+async function getImpersonatedUserRestrictions(req, res) {
+  const { impersonatedEmail: email, impersonatedStateCode: stateCode } =
+    req.query;
+  const url = `${process.env.RECIDIVIZ_DATA_API_URL}/auth/dashboard_user_restrictions_by_email?email_address=${email}&region_code=${stateCode}`;
+  try {
+    const auth = new GoogleAuth({ credentials: serviceAccount });
+    const client = await auth.getIdTokenClient(
+      process.env.GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE
+    );
+    const response = await client.request({ url });
+    responder(res)(null, response.data);
+  } catch (error) {
+    console.error(error);
+    responder(res)(error);
+  }
+}
+
 module.exports = {
+  getImpersonatedUserRestrictions,
   offlineUser,
   newRevocations,
   newRevocationFile,

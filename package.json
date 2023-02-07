@@ -205,6 +205,7 @@
     "devtools": "^7.27.0",
     "enzyme": "^3.11.0",
     "eslint-plugin-wdio": "^7.0.0",
+    "google-auth-library": "^8.7.0",
     "google-spreadsheet": "^3.1.15",
     "husky": "^4.2.3",
     "jest-canvas-mock": "^2.3.0",
@@ -249,7 +250,8 @@
   "jest": {
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(css|scss|sass)$": "<rootDir>/__mocks__/styleMock.js"
+      "\\.(css|scss|sass)$": "<rootDir>/__mocks__/styleMock.js",
+      "test-service-account.json": "<rootDir>/__mocks__/test-service-account.json"
     },
     "collectCoverageFrom": [
       "server/**/*.js",

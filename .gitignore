@@ -33,6 +33,7 @@ src/assets/scripts/metrics/*.json
 recidiviz-production-*.json
 recidiviz-dev-*.json
 recidiviz-dashboard-*.json
+recidiviz-staging-*.json
 
 # Logs
 logs
