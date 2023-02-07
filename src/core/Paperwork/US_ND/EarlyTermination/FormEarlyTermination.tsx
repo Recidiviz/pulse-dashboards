@@ -131,7 +131,7 @@ export const FormEarlyTermination: React.FC = () => {
               <DOCXFormInput name="priorCourtDate" placeholder="Court date" />,
               and was sentenced to{" "}
               <DOCXFormInput
-                name="sentenceLengthYears"
+                name="sentenceLengthMonths"
                 placeholder="Sentence length"
               />{" "}
               supervised probation for the crime(s) of: <br />

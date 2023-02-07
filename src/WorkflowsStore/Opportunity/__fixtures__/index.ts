@@ -211,7 +211,7 @@ export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {
     convictionCounty: "NORTH_CENTRAL",
     judgeName: "JUDGE 1",
     priorCourtDate: parseISO("2020-01-03"),
-    sentenceLengthYears: 3,
+    sentenceLengthMonths: 36,
     crimeNames: ["CHARGE 1", "CHARGE 2"],
     probationExpirationDate: parseISO("2022-12-02"),
     probationOfficerFullName: "Karl Fog",

@@ -8,7 +8,7 @@
       "convictionCounty": "NORTH_CENTRAL",
       "judgeName": "JUDGE 1",
       "priorCourtDate": "2020-01-03",
-      "sentenceLengthYears": 3,
+      "sentenceLengthMonths": 36,
       "crimeNames": ["CHARGE 1", "CHARGE 2"],
       "probationExpirationDate": "2022-12-02",
       "probationOfficerFullName": "Karl Fog",
@@ -19,22 +19,22 @@
       "statesAttorneyPhoneNumber": "888-867-5309"
     },
     "criteria": {
-      "supervisionEarlyDischargeBeforeFullTermCompletionDate":{
+      "supervisionEarlyDischargeBeforeFullTermCompletionDate": {
         "eligibleDate": "2025-04-03"
       },
-      "supervisionNotPastFullTermCompletionDate":{
+      "supervisionNotPastFullTermCompletionDate": {
         "eligibleDate": "2025-04-03"
       },
-      "supervisionPastEarlyDischargeDate":{
+      "supervisionPastEarlyDischargeDate": {
         "eligibleDate": "2025-04-03"
       },
-      "usNdImpliedValidEarlyTerminationSentenceType":{
+      "usNdImpliedValidEarlyTerminationSentenceType": {
         "supervisionType": "SUSPENDED"
       },
-      "usNdImpliedValidEarlyTerminationSupervisionLevel":{
+      "usNdImpliedValidEarlyTerminationSupervisionLevel": {
         "supervisionLevel": "MINIMUM"
       },
-      "usNdNotInActiveRevocationStatus":{
+      "usNdNotInActiveRevocationStatus": {
         "revocationDate": null
       }
     },

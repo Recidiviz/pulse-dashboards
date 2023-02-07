@@ -30,7 +30,7 @@ Object {
     "priorCourtDate": 2022-01-01T00:00:00.000Z,
     "probationExpirationDate": 2024-05-01T00:00:00.000Z,
     "probationOfficerFullName": "Fakename Officername",
-    "sentenceLengthYears": 2,
+    "sentenceLengthMonths": 24,
   },
   "metadata": Object {
     "ICOut": false,

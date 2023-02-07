@@ -23,7 +23,7 @@ export class EarlyTerminationForm extends FormBase<EarlyTerminationDraftData> {
         criminalNumber,
         judgeName,
         priorCourtDate,
-        sentenceLengthYears,
+        sentenceLengthMonths,
         crimeNames,
         probationExpirationDate,
         probationOfficerFullName,
@@ -39,7 +39,7 @@ export class EarlyTerminationForm extends FormBase<EarlyTerminationDraftData> {
       probationExpirationDate: moment(probationExpirationDate).format(
         FORM_DATE_FORMAT
       ),
-      sentenceLengthYears: pluralize(sentenceLengthYears, "year"),
+      sentenceLengthMonths: pluralize(sentenceLengthMonths, "month"),
       plaintiff: "State of North Dakota",
       crimeNames: crimeNames?.join(", ") ?? "",
       probationOfficerFullName,

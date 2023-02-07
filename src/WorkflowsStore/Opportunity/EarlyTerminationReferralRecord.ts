@@ -30,7 +30,7 @@ export type EarlyTerminationReferralRecord = {
     criminalNumber: string;
     judgeName: string;
     priorCourtDate: Date;
-    sentenceLengthYears: number;
+    sentenceLengthMonths: number;
     crimeNames: string[];
     probationExpirationDate: Date;
     probationOfficerFullName: string;
@@ -60,7 +60,7 @@ export type EarlyTerminationDraftData = {
   criminalNumber: string;
   judgeName: string;
   priorCourtDate: string;
-  sentenceLengthYears: string;
+  sentenceLengthMonths: string;
   crimeNames: string;
   probationExpirationDate: string;
   probationOfficerFullName: string;
@@ -85,7 +85,7 @@ export const transformReferral: TransformFunction<
     formInformation: {
       priorCourtDate,
       probationExpirationDate,
-      sentenceLengthYears,
+      sentenceLengthMonths,
     },
 
     criteria,
@@ -96,8 +96,9 @@ export const transformReferral: TransformFunction<
   transformedRecord.formInformation.probationExpirationDate = fieldToDate(
     probationExpirationDate
   );
-  transformedRecord.formInformation.sentenceLengthYears =
-    parseInt(sentenceLengthYears);
+
+  transformedRecord.formInformation.sentenceLengthMonths =
+    parseInt(sentenceLengthMonths);
 
   transformedRecord.criteria.supervisionPastEarlyDischargeDate = {
     eligibleDate: fieldToDate(
