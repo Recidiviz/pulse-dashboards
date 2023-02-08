@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { mapValues, toUpper } from "lodash";
 import { makeObservable, override } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
@@ -76,6 +77,18 @@ export const createClientOpportunity: OpportunityFactory<
   }
   throw new Error("Unsupported opportunity");
 };
+
+// TODO(#1735): the real type should be cleaner than this
+export type ParsedSpecialCondition = {
+  // eslint-disable-next-line camelcase
+  note_update_date: string;
+  // eslint-disable-next-line camelcase
+  conditions_on_date: string | null;
+};
+
+export type ParsedSpecialConditionOrString =
+  | NonNullable<ParsedSpecialCondition>
+  | string;
 
 /**
  * Represents a person on supervision
@@ -153,5 +166,49 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   get detailsCopy(): ClientDetailsCopy {
     return CLIENT_DETAILS_COPY[this.stateCode];
+  }
+
+  get formattedProbationSpecialConditions(): ParsedSpecialConditionOrString[] {
+    // we will flatten the nested lists of conditions into this
+    const conditionsToDisplay: ParsedSpecialConditionOrString[] = [];
+
+    // TODO(#1735): after data/ETL change we should expect structured data
+    // rather than a JSON-ish string
+    this.probationSpecialConditions?.forEach((conditionsJson) => {
+      try {
+        const conditionsForSentence: {
+          // eslint-disable-next-line camelcase
+          note_update_date: string;
+          // eslint-disable-next-line camelcase
+          conditions_on_date: string | null;
+        }[] = JSON.parse(
+          // the specialConditions strings are almost valid JSON,
+          // except they may include NULL instead of null as a value;
+          // work around this by converting to lowercase
+          conditionsJson.toLowerCase()
+        );
+
+        conditionsForSentence.forEach(
+          // eslint-disable-next-line camelcase
+          ({ note_update_date, conditions_on_date }) => {
+            // don't display nulls
+            // eslint-disable-next-line camelcase
+            if (!conditions_on_date) return;
+
+            // note that we have to convert the actual values back to uppercase
+            // to display them properly
+            conditionsToDisplay.push(
+              // eslint-disable-next-line camelcase
+              mapValues({ note_update_date, conditions_on_date }, toUpper)
+            );
+          }
+        );
+      } catch (e) {
+        // if we couldn't hack our way to valid JSON,
+        // display the whole ugly string so there's no data loss
+        conditionsToDisplay.push(conditionsJson);
+      }
+    });
+    return conditionsToDisplay;
   }
 }

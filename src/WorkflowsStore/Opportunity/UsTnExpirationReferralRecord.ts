@@ -26,7 +26,7 @@ import {
 } from "../utils";
 import { transformCaseNotes, WithCaseNotes } from ".";
 
-type Contact = {
+export type Contact = {
   contactDate: Date;
   contactType: string;
   contactComment?: string;

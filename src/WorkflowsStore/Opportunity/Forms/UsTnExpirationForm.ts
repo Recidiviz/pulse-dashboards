@@ -14,9 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { compact } from "lodash";
+
+import { SpecialConditionCode } from "../../../firestore";
+import { ParsedSpecialConditionOrString } from "../../Client";
+import { UsTnExpirationOpportunity } from "../UsTnExpirationOpportunity";
 import {
+  Contact,
   UsTnExpirationDraftData,
-  UsTnExpirationReferralRecord,
 } from "../UsTnExpirationReferralRecord";
 import {
   defaultFormValueJoiner,
@@ -36,15 +41,61 @@ function voterRightsText(code: string): string {
   return "";
 }
 
-export class UsTnExpirationForm extends FormBase<UsTnExpirationDraftData> {
+function formatSpecialConditions(
+  latestSpe?: Contact,
+  paroleSpecialConditions?: SpecialConditionCode[],
+  probationSpecialConditions?: ParsedSpecialConditionOrString[]
+): string[] {
+  const specialConditionsText = [];
+  if (latestSpe) {
+    specialConditionsText.push(
+      `Latest SPE Contact Code and Comment: ${latestSpe.contactType} - ${
+        latestSpe.contactComment ?? ""
+      }`
+    );
+  }
+
+  if (paroleSpecialConditions?.length) {
+    const conditions = paroleSpecialConditions.map(
+      ({ condition, conditionDescription }) =>
+        `${condition} (${conditionDescription})`
+    );
+    specialConditionsText.push(
+      `Board conditions to be monitored: ${displayList(conditions)}`
+    );
+  }
+
+  if (probationSpecialConditions?.length) {
+    const conditions = compact(
+      probationSpecialConditions.map(
+        (condition: ParsedSpecialConditionOrString) => {
+          if (typeof condition === "string") {
+            return condition;
+          }
+          return condition.conditions_on_date;
+        }
+      )
+    );
+    specialConditionsText.push(
+      `Special conditions on current sentences: ${displayList(conditions)}`
+    );
+  }
+
+  return specialConditionsText;
+}
+
+export class UsTnExpirationForm extends FormBase<
+  UsTnExpirationDraftData,
+  UsTnExpirationOpportunity
+> {
   navigateToFormText = "Generate TEPE note";
 
   prefilledDataTransformer: PrefilledDataTransformer<UsTnExpirationDraftData> =
     () => {
       if (!this.opportunity.record) return {};
 
-      const { formInformation: form, criteria: criterion } = this.opportunity
-        .record as UsTnExpirationReferralRecord;
+      const { formInformation: form, criteria: criterion } =
+        this.opportunity.record;
 
       const { person } = this.opportunity;
 
@@ -91,16 +142,11 @@ export class UsTnExpirationForm extends FormBase<UsTnExpirationDraftData> {
             : ""
         ),
         specialConditions: defaultFormValueJoiner(
-          displayList(person.probationSpecialConditions),
-          person.paroleSpecialConditions
-            ? person.paroleSpecialConditions.join(", ")
-            : "",
-          `${displayString(form.latestSpe?.contactType)} ${
-            form.latestSpe
-              ? `on ${formatFormValueDateMMDDYYYYY(form.latestSpe.contactDate)}`
-              : ""
-          }`,
-          displayString(form.latestSpe?.contactComment)
+          ...formatSpecialConditions(
+            form.latestSpe,
+            person.paroleSpecialConditions,
+            person.formattedProbationSpecialConditions
+          )
         ),
         votersRightsInformation: form.latestVrr
           ? voterRightsText(form.latestVrr.contactType.toUpperCase())

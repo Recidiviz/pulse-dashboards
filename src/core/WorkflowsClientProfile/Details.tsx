@@ -82,59 +82,13 @@ const STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_STRINGS: Record<
   },
 };
 
-// TODO(#1735): the real type should be cleaner than this
-type ParsedSpecialCondition = {
-  // eslint-disable-next-line camelcase
-  note_update_date: string;
-  // eslint-disable-next-line camelcase
-  conditions_on_date: string | null;
-};
-
 // TODO(#1735): after data/ETL change we should expect structured data
 // rather than a JSON-ish string
 function getProbationSpecialConditionsMarkup(
   client: Client,
   emptySpecialConditionString: string
 ): JSX.Element {
-  // we will flatten the nested lists of conditions into this
-  const conditionsToDisplay: (NonNullable<ParsedSpecialCondition> | string)[] =
-    [];
-
-  client.probationSpecialConditions?.forEach((conditionsJson) => {
-    try {
-      const conditionsForSentence: {
-        // eslint-disable-next-line camelcase
-        note_update_date: string;
-        // eslint-disable-next-line camelcase
-        conditions_on_date: string | null;
-      }[] = JSON.parse(
-        // the specialConditions strings are almost valid JSON,
-        // except they may include NULL instead of null as a value;
-        // work around this by converting to lowercase
-        conditionsJson.toLowerCase()
-      );
-
-      conditionsForSentence.forEach(
-        // eslint-disable-next-line camelcase
-        ({ note_update_date, conditions_on_date }) => {
-          // don't display nulls
-          // eslint-disable-next-line camelcase
-          if (!conditions_on_date) return;
-
-          // note that we have to convert the actual values back to uppercase
-          // to display them properly
-          conditionsToDisplay.push(
-            // eslint-disable-next-line camelcase
-            mapValues({ note_update_date, conditions_on_date }, toUpper)
-          );
-        }
-      );
-    } catch (e) {
-      // if we couldn't hack our way to valid JSON,
-      // display the whole ugly string so there's no data loss
-      conditionsToDisplay.push(conditionsJson);
-    }
-  });
+  const conditionsToDisplay = client.formattedProbationSpecialConditions;
 
   return (
     <>
