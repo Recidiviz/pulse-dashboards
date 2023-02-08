@@ -22,8 +22,12 @@ import { CaseNotes, Supervision } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
-export const UsTnExpirationClientProfile = observer(
-  function UsTnExpirationClientProfile() {
+type UsTnExpirationClientProfileProps = {
+  formLinkButton?: boolean;
+};
+
+export const UsTnExpirationClientProfile: React.FC<UsTnExpirationClientProfileProps> =
+  observer(function UsTnExpirationClientProfile({ formLinkButton }) {
     const { workflowsStore } = useRootStore();
 
     const client = workflowsStore.selectedClient;
@@ -35,7 +39,7 @@ export const UsTnExpirationClientProfile = observer(
     return (
       <article>
         <Heading person={client} />
-        <OpportunityModule opportunity={opp} />
+        <OpportunityModule opportunity={opp} formLinkButton={formLinkButton} />
         <Supervision client={client} />
         <CaseNotes
           opportunityRecord={
@@ -44,5 +48,4 @@ export const UsTnExpirationClientProfile = observer(
         />
       </article>
     );
-  }
-);
+  });

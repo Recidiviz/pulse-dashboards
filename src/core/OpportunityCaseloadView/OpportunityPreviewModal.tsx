@@ -73,7 +73,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
     previewContents: <UsMeSCCPResidentProfile formLinkButton />,
   },
   usTnExpiration: {
-    previewContents: <UsTnExpirationClientProfile />,
+    previewContents: <UsTnExpirationClientProfile formLinkButton />,
   },
 };
 
