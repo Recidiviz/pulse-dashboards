@@ -16,12 +16,14 @@
 // =============================================================================
 
 import {
+  animation,
   Button,
   Icon,
   Loading,
   Modal,
   palette,
   Sans14,
+  Sans16,
   Sans24,
   spacing,
 } from "@recidiviz/design-system";
@@ -29,8 +31,10 @@ import { Timestamp } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
+import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
 
+import { trackReferralFormCopiedToClipboard } from "../../analytics";
 import { updateUsTnExpirationContactNoteSubmitted } from "../../firestore/firestore";
 import { UsTnExpirationOpportunity } from "../../WorkflowsStore";
 import {
@@ -58,7 +62,7 @@ const ModalTitle = styled(Sans24)`
 `;
 
 const ModalControls = styled.div`
-  padding: ${rem(spacing.lg)} ${rem(spacing.md)} ${rem(spacing.sm)};
+  padding: ${rem(spacing.lg)} ${rem(spacing.lg)} ${rem(spacing.sm)};
   text-align: right;
 `;
 
@@ -92,7 +96,7 @@ const PagesContainer = styled.div`
   margin: ${rem(spacing.sm)} 0px 0px;
 `;
 
-const WriteButton = styled(Button)`
+const ActionButton = styled(Button).attrs({ kind: "primary", shape: "block" })`
   margin: ${rem(spacing.lg)} ${rem(spacing.xl)} ${rem(spacing.sm)};
   padding: ${rem(spacing.md)};
 `;
@@ -100,6 +104,12 @@ const WriteButton = styled(Button)`
 const Disclaimer = styled(Sans14)`
   color: ${palette.slate80};
   padding: ${rem(spacing.sm)} ${rem(spacing.xl)} ${rem(spacing.lg)};
+`;
+
+const ModalText = styled(Sans16)`
+  color: ${palette.slate80};
+  padding-bottom: ${rem(spacing.sm)};
+  padding-left: ${rem(spacing.xl)};
 `;
 
 type writeToTOMISModalProps = {
@@ -116,7 +126,27 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   opportunity,
 }: writeToTOMISModalProps) {
   const [pageNumberSelected, setPageNumberSelected] = useState(0);
-  const { person, isNoteLoading } = opportunity;
+  const { person, isNoteLoading, submittedContactNoteStatus } = opportunity;
+
+  const [isCopied, copyToClipboard] = useClipboard(
+    paginatedNote[pageNumberSelected].join("\n"),
+    {
+      successDuration: animation.extendedDurationMs,
+    }
+  );
+
+  const markCompleted = () => {
+    opportunity.setCompletedIfEligible();
+    trackReferralFormCopiedToClipboard({
+      justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
+      opportunityType: opportunity.type,
+    });
+  };
+
+  const onCopyButtonClick = () => {
+    copyToClipboard();
+    markCompleted();
+  };
 
   const submitTEPEContactNote = async function (body: Record<string, unknown>) {
     return opportunity.rootStore.apiStore.post(
@@ -151,8 +181,8 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     submitTEPEContactNote(contactNoteRequestBody);
   };
 
-  const loading = (
-    <div className="LoadingContainer">
+  const loadingModal = (
+    <div className="LoadingModal">
       <Loading showMessage={false} />
       <ModalTitle>Submitting notes to TOMIS...</ModalTitle>
       <Disclaimer style={{ textAlign: "center" }}>
@@ -163,8 +193,35 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     </div>
   );
 
-  const submissionForm = (
-    <div className="SubmissionFormContainer">
+  const previewArea = (
+    <PreviewArea>
+      <ClientName>{person.displayName}</ClientName>
+      <ClientID>{person.externalId}</ClientID>
+      {/* TODO(#2947): Add voters rights code */}
+      <ContactTypes>Contact Types: TEPE</ContactTypes>
+      <PagePreview className="TEPEPagePreview">
+        {paginatedNote[pageNumberSelected].join("\n")}
+      </PagePreview>
+      <PagesContainer>
+        {paginatedNote.map((page, index) => (
+          <SmallPagePreviewWithHover
+            className="TEPESmallPagePreview"
+            // eslint-disable-next-line react/no-array-index-key
+            key={index}
+            onClick={() => {
+              setPageNumberSelected(index);
+            }}
+            selected={index === pageNumberSelected}
+          >
+            {page.join("\n")}
+          </SmallPagePreviewWithHover>
+        ))}
+      </PagesContainer>
+    </PreviewArea>
+  );
+
+  const submissionModal = (
+    <div className="SubmissionModal">
       <ModalControls>
         <Button kind="link" onClick={onCloseFn}>
           <Icon kind="Close" size="14" color={palette.pine2} />
@@ -173,33 +230,10 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
       <ModalTitle>
         Review {paginatedNote.length} pages and submit TEPE note to eTomis
       </ModalTitle>
-      <PreviewArea>
-        <ClientName>{person.displayName}</ClientName>
-        <ClientID>{person.externalId}</ClientID>
-        {/* TODO(#2947): Add voters rights code */}
-        <ContactTypes>Contact Types: TEPE</ContactTypes>
-        <PagePreview className="TEPEPagePreview">
-          {paginatedNote[pageNumberSelected].join("\n")}
-        </PagePreview>
-        <PagesContainer>
-          {paginatedNote.map((page, index) => (
-            <SmallPagePreviewWithHover
-              className="TEPESmallPagePreview"
-              // eslint-disable-next-line react/no-array-index-key
-              key={index}
-              onClick={() => {
-                setPageNumberSelected(index);
-              }}
-              selected={index === pageNumberSelected}
-            >
-              {page.join("\n")}
-            </SmallPagePreviewWithHover>
-          ))}
-        </PagesContainer>
-      </PreviewArea>
-      <WriteButton kind="primary" shape="block" onClick={onWriteButtonClick}>
+      {previewArea}
+      <ActionButton onClick={onWriteButtonClick}>
         Submit note to eTomis
-      </WriteButton>
+      </ActionButton>
       <Disclaimer>
         {/* TODO(#2947): Make it sound less awkward for one page. */}
         This note has {paginatedNote.length} page(s). When you click submit, all{" "}
@@ -210,11 +244,41 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     </div>
   );
 
+  const failureModal = (
+    <div className="FailureModal" style={{ width: "100%" }}>
+      <ModalControls>
+        <Button kind="link" onClick={onCloseFn}>
+          <Icon kind="Close" size="14" color={palette.pine2} />
+        </Button>
+      </ModalControls>
+      <ModalTitle>
+        <Icon kind="Error" size="44" color={palette.signal.error} />
+        <br />
+        <br /> Note did not submit to TOMIS
+      </ModalTitle>
+      <ModalText>
+        Copy each page of the note below and submit them directly in TOMIS
+      </ModalText>
+      {previewArea}
+      <ActionButton
+        onClick={onCopyButtonClick}
+        style={{ marginBottom: `${rem(spacing.lg)}`, minWidth: "7vw" }}
+      >
+        {isCopied
+          ? `Page ${pageNumberSelected + 1} copied!`
+          : `Copy page ${pageNumberSelected + 1}`}
+      </ActionButton>
+    </div>
+  );
+
   const getModalContent = () => {
     if (isNoteLoading) {
-      return loading;
+      return loadingModal;
     }
-    return submissionForm;
+    if (submittedContactNoteStatus === "FAILURE") {
+      return failureModal;
+    }
+    return submissionModal;
   };
 
   return (

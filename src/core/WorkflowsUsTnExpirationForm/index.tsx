@@ -61,12 +61,6 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
     const completedTEPENOTE = tepeTemplate(opportunity?.form.formData);
     const fullCharLimitedTEPENote = charLimitedNote(completedTEPENOTE, 70);
     const paginatedNote = paginateTEPENote(fullCharLimitedTEPENote, 10);
-    const [isCopied, copyToClipboard] = useClipboard(
-      paginatedNote.join("\n---\n"),
-      {
-        successDuration: animation.extendedDurationMs,
-      }
-    );
     const [pageToCopy, setPageToCopy] = useState("");
     const [isPageCopied, copyPageToClipboard] = useClipboard(pageToCopy, {
       successDuration: animation.extendedDurationMs,
@@ -141,11 +135,6 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
       </NotePreviewContainer>
     );
 
-    const onCopyButtonClick = () => {
-      copyToClipboard();
-      markCompleted();
-    };
-
     return (
       <FormContainer className="WorkflowsFormContainer">
         <NoteFormHeader>
@@ -163,15 +152,14 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
               items={["Form", "Preview"]}
               onChange={(index) => setSelectedFormSection(index)}
             />
-            <Button kind="primary" shape="block" onClick={onCopyButtonClick}>
-              {isCopied ? "Note text copied!" : "Copy to Clipboard"}
-            </Button>
             <Button
               kind="primary"
               shape="block"
               onClick={() => setShowTOMISPreviewModal(true)}
             >
-              Submit to TOMIS
+              {opportunity.submittedContactNoteStatus === "FAILURE"
+                ? "Copy to clipboard"
+                : "Submit to TOMIS"}
             </Button>
           </FormHeaderSection>
         </NoteFormHeader>
