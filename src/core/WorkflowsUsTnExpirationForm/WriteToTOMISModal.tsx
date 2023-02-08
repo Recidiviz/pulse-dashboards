@@ -51,13 +51,21 @@ const StyledModal = styled(Modal)`
     width: ${rem(740)};
     min-height: ${rem(500)};
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
   }
 `;
 
+const CenteredContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+`;
+
 const ModalTitle = styled(Sans24)`
-  color: ${palette.pine2};
+  color: ${palette.pine1};
   padding: ${rem(spacing.md)} ${rem(spacing.xl)};
 `;
 
@@ -99,6 +107,8 @@ const PagesContainer = styled.div`
 const ActionButton = styled(Button).attrs({ kind: "primary", shape: "block" })`
   margin: ${rem(spacing.lg)} ${rem(spacing.xl)} ${rem(spacing.sm)};
   padding: ${rem(spacing.md)};
+  align-self: flex-start;
+  flex: none;
 `;
 
 const Disclaimer = styled(Sans14)`
@@ -108,8 +118,10 @@ const Disclaimer = styled(Sans14)`
 
 const ModalText = styled(Sans16)`
   color: ${palette.slate80};
-  padding-bottom: ${rem(spacing.sm)};
-  padding-left: ${rem(spacing.xl)};
+`;
+
+const OKButton = styled(Button)`
+  padding: ${rem(spacing.md)} ${rem(60)};
 `;
 
 type writeToTOMISModalProps = {
@@ -126,11 +138,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   opportunity,
 }: writeToTOMISModalProps) {
   const [pageNumberSelected, setPageNumberSelected] = useState(0);
-  const {
-    person,
-    isNoteLoading,
-    externalRequestStatus: submittedContactNoteStatus,
-  } = opportunity;
+  const { person } = opportunity;
 
   const [isCopied, copyToClipboard] = useClipboard(
     paginatedNote[pageNumberSelected].join("\n"),
@@ -191,16 +199,46 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     submitTEPEContactNote(contactNoteRequestBody);
   };
 
+  const closeButtonControls = (
+    <ModalControls>
+      <Button kind="link" onClick={onCloseFn}>
+        <Icon kind="Close" size="14" color={palette.pine2} />
+      </Button>
+    </ModalControls>
+  );
+
   const loadingModal = (
-    <div className="LoadingModal">
-      <Loading showMessage={false} />
+    <CenteredContainer className="LoadingModal">
+      {/* Styled components don't seem to work with <Loading>, which expands to fill all available area.
+      Put a non-flex div around it to reduce the size of the container it's filling. */}
+      <div>
+        <Loading showMessage={false} />
+      </div>
       <ModalTitle>Submitting notes to TOMIS...</ModalTitle>
-      <Disclaimer style={{ textAlign: "center" }}>
+      <ModalText>
         This can take up to 30 seconds.
         <br />
         Do not refresh the page.
-      </Disclaimer>
-    </div>
+      </ModalText>
+    </CenteredContainer>
+  );
+
+  const success = (
+    <>
+      {closeButtonControls}
+      <CenteredContainer>
+        <Icon kind="Success" size="44" color={palette.signal.highlight} />
+        <br />
+        <br />
+        <ModalTitle>{`${paginatedNote.length}-page TEPE note successfully submitted`}</ModalTitle>
+        <ModalText>View them in TOMIS</ModalText>
+        <br />
+        <br />
+        <OKButton onClick={onCloseFn} shape="block">
+          Got it
+        </OKButton>
+      </CenteredContainer>
+    </>
   );
 
   const previewArea = (
@@ -232,12 +270,8 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   );
 
   const submissionModal = (
-    <div className="SubmissionModal">
-      <ModalControls>
-        <Button kind="link" onClick={onCloseFn}>
-          <Icon kind="Close" size="14" color={palette.pine2} />
-        </Button>
-      </ModalControls>
+    <>
+      {closeButtonControls}
       <ModalTitle>
         Review {paginatedNote.length} pages and submit TEPE note to eTomis
       </ModalTitle>
@@ -252,22 +286,20 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
         eTomis as a contact note. Once submitted, you will only be able to make
         any further edits to these notes directly in eTomis.
       </Disclaimer>
-    </div>
+    </>
   );
 
   const failureModal = (
     <div className="FailureModal" style={{ width: "100%" }}>
-      <ModalControls>
-        <Button kind="link" onClick={onCloseFn}>
-          <Icon kind="Close" size="14" color={palette.pine2} />
-        </Button>
-      </ModalControls>
+      {closeButtonControls}
       <ModalTitle>
         <Icon kind="Error" size="44" color={palette.signal.error} />
         <br />
         <br /> Note did not submit to TOMIS
       </ModalTitle>
-      <ModalText>
+      <ModalText
+        style={{ padding: `0px ${rem(spacing.xl)} ${rem(spacing.sm)}` }}
+      >
         Copy each page of the note below and submit them directly in TOMIS
       </ModalText>
       {previewArea}
@@ -283,13 +315,17 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   );
 
   const getModalContent = () => {
-    if (isNoteLoading) {
-      return loadingModal;
+    switch (opportunity.externalRequestStatus) {
+      case "SUCCESS":
+        return success;
+      case "PENDING":
+      case "IN_PROGRESS":
+        return loadingModal;
+      case "FAILURE":
+        return failureModal;
+      default:
+        return submissionModal;
     }
-    if (submittedContactNoteStatus === "FAILURE") {
-      return failureModal;
-    }
-    return submissionModal;
   };
 
   return (

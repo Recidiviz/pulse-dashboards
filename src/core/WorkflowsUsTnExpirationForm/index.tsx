@@ -17,6 +17,8 @@
 import {
   animation,
   Button,
+  palette,
+  Sans14,
   spacing,
   TooltipTrigger,
 } from "@recidiviz/design-system";
@@ -24,9 +26,11 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useEffect, useState } from "react";
 import useClipboard from "react-use-clipboard";
+import styled from "styled-components/macro";
 
 import { trackReferralFormCopiedToClipboard } from "../../analytics";
 import { useRootStore } from "../../components/StoreProvider";
+import { formatDate } from "../../utils";
 import {
   FormContainer,
   FormHeaderSection,
@@ -52,6 +56,11 @@ import WebFormField from "../Paperwork/WebFormField";
 import WebFormSelectField from "../Paperwork/WebFormSelectField";
 import PillNav from "../PillNav";
 import { WriteToTOMISModal } from "./WriteToTOMISModal";
+
+const SubmittedText = styled(Sans14)`
+  color: ${palette.slate85};
+  width: 125px;
+`;
 
 const WorkflowsUsTnExpirationForm: React.FC = observer(
   function WorkflowsUsTnExpirationForm() {
@@ -159,15 +168,24 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
               items={["Form", "Preview"]}
               onChange={(index) => setSelectedFormSection(index)}
             />
-            <Button
-              kind="primary"
-              shape="block"
-              onClick={() => setShowTOMISPreviewModal(true)}
-            >
-              {opportunity.externalRequestStatus === "FAILURE"
-                ? "Copy to clipboard"
-                : "Submit to TOMIS"}
-            </Button>
+            {opportunity.externalRequestStatus === "SUCCESS" ? (
+              <SubmittedText>
+                {`Note submitted to TOMIS on ${formatDate(
+                  opportunity.externalRequestData?.submitted.date.toDate()
+                )}
+                `}
+              </SubmittedText>
+            ) : (
+              <Button
+                kind="primary"
+                shape="block"
+                onClick={() => setShowTOMISPreviewModal(true)}
+              >
+                {opportunity.externalRequestStatus === "FAILURE"
+                  ? "Copy to clipboard"
+                  : "Submit to TOMIS"}
+              </Button>
+            )}
           </FormHeaderSection>
         </NoteFormHeader>
         {selectedFormSection === 0 ? form : preview}

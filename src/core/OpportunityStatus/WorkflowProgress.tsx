@@ -38,10 +38,7 @@ export const WorkflowProgress: React.FC<OpportunityWorkflowStatusProps> =
 
     if (!isHydrated) return null;
 
-    if (
-      supportsExternalRequest &&
-      externalRequestData?.status === "SUCCEEDED"
-    ) {
+    if (supportsExternalRequest && externalRequestData?.status === "SUCCESS") {
       return (
         <>
           {externalRequestStatusMessage}{" "}
