@@ -166,6 +166,9 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
 
     const contactNoteDateTime = new Date();
     const userId = opportunity.rootStore.workflowsStore.user?.info.id;
+    const votersRightsCode = opportunity.form.formData.contactTypes
+      ?.split(", ")
+      .filter((code) => code !== "TEPE");
 
     // In non-production environments and requests by recidiviz users, the personExternalId and userId will be overriden in the backend.
     const contactNoteRequestBody = {
@@ -173,6 +176,9 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
       userId,
       contactNote: contactNoteObj,
       contactNoteDateTime,
+      ...(votersRightsCode?.length && {
+        votersRightsCode: votersRightsCode[0],
+      }),
     };
 
     updateUsTnExpirationContactNoteSubmitted(
@@ -201,8 +207,9 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     <PreviewArea>
       <ClientName>{person.displayName}</ClientName>
       <ClientID>{person.externalId}</ClientID>
-      {/* TODO(#2947): Add voters rights code */}
-      <ContactTypes>Contact Types: TEPE</ContactTypes>
+      <ContactTypes>
+        Contact Types: {opportunity.form.formData.contactTypes}
+      </ContactTypes>
       <PagePreview className="TEPEPagePreview">
         {paginatedNote[pageNumberSelected].join("\n")}
       </PagePreview>

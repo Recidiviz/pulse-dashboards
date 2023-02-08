@@ -89,6 +89,7 @@ export const transformReferral: TransformFunction<
 };
 
 export type UsTnExpirationDraftData = {
+  contactTypes: string;
   expirationDate: string;
   currentOffenses: string;
   convictionCounties: string;

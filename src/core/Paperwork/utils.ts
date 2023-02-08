@@ -153,13 +153,15 @@ export const useResizeForm = (
 
 type ReactiveInputValue = string | undefined;
 type ReactiveInputReturnValue<
-  E extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement
+  E extends
+    | HTMLInputElement
+    | HTMLTextAreaElement
+    | HTMLSelectElement = HTMLInputElement
 > = [ReactiveInputValue, (event: React.ChangeEvent<E>) => void];
 
-function useReactiveInput<E extends HTMLInputElement | HTMLTextAreaElement>(
-  name: string,
-  form: FormBase<any>
-): ReactiveInputReturnValue<E> {
+function useReactiveInput<
+  E extends HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+>(name: string, form: FormBase<any>): ReactiveInputReturnValue<E> {
   /*
     Hook which integrates a controlled input component and Firestore and MobX.
     Firestore is updated two seconds after the user stops typing.

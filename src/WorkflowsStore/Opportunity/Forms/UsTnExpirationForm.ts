@@ -41,6 +41,10 @@ function voterRightsText(code: string): string {
   return "";
 }
 
+function contactTypes(voterRightsCode?: string): string {
+  return ["TEPE", voterRightsCode].filter((v) => v).join(", ");
+}
+
 function formatSpecialConditions(
   latestSpe?: Contact,
   paroleSpecialConditions?: SpecialConditionCode[],
@@ -100,6 +104,7 @@ export class UsTnExpirationForm extends FormBase<
       const { person } = this.opportunity;
 
       return {
+        contactTypes: contactTypes(form.latestVrr?.contactType.toUpperCase()),
         expirationDate: formatFormValueDateMMDDYYYYY(
           criterion.supervisionPastFullTermCompletionDateOrUpcoming1Day
             .eligibleDate

@@ -49,6 +49,7 @@ import tepeTemplate, {
   paginateTEPENote,
 } from "../Paperwork/US_TN/Expiration/TEPENote";
 import WebFormField from "../Paperwork/WebFormField";
+import WebFormSelectField from "../Paperwork/WebFormSelectField";
 import PillNav from "../PillNav";
 import { WriteToTOMISModal } from "./WriteToTOMISModal";
 
@@ -80,6 +81,12 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
     }
     const form = (
       <>
+        <WebFormSelectField
+          name="contactTypes"
+          label="Contact types"
+          options={["TEPE, VRRE", "TEPE, VRRI", "TEPE"]}
+          required
+        />
         {UsTnExpirationFormFields.map((props) => (
           <WebFormField
             {...UsTnExpirationFormFieldBaseProps}
