@@ -28,9 +28,30 @@ type OpportunityWorkflowStatusProps = {
 
 export const WorkflowProgress: React.FC<OpportunityWorkflowStatusProps> =
   observer(function WorkflowProgress({ opportunity }) {
-    const { firstViewed, isHydrated } = opportunity;
+    const {
+      firstViewed,
+      isHydrated,
+      supportsExternalRequest,
+      externalRequestData,
+      externalRequestStatusMessage,
+    } = opportunity;
 
     if (!isHydrated) return null;
+
+    if (
+      supportsExternalRequest &&
+      externalRequestData?.status === "SUCCEEDED"
+    ) {
+      return (
+        <>
+          {externalRequestStatusMessage}{" "}
+          {formatDate(externalRequestData.submitted.date.toDate())} by{" "}
+          <WorkflowsOfficerName
+            officerEmail={externalRequestData.submitted.by}
+          />
+        </>
+      );
+    }
 
     if (firstViewed) {
       return (

@@ -157,7 +157,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
               shape="block"
               onClick={() => setShowTOMISPreviewModal(true)}
             >
-              {opportunity.submittedContactNoteStatus === "FAILURE"
+              {opportunity.externalRequestStatus === "FAILURE"
                 ? "Copy to clipboard"
                 : "Submit to TOMIS"}
             </Button>

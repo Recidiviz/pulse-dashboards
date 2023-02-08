@@ -126,7 +126,11 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   opportunity,
 }: writeToTOMISModalProps) {
   const [pageNumberSelected, setPageNumberSelected] = useState(0);
-  const { person, isNoteLoading, submittedContactNoteStatus } = opportunity;
+  const {
+    person,
+    isNoteLoading,
+    externalRequestStatus: submittedContactNoteStatus,
+  } = opportunity;
 
   const [isCopied, copyToClipboard] = useClipboard(
     paginatedNote[pageNumberSelected].join("\n"),

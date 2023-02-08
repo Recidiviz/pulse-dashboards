@@ -60,6 +60,10 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
   UsTnExpirationReferralRecord,
   UsTnExpirationOpportunityUpdate
 > {
+  readonly supportsExternalRequest = true;
+
+  readonly externalRequestStatusMessage = "TEPE note submitted on";
+
   form: UsTnExpirationForm;
 
   readonly policyOrMethodologyUrl =
@@ -113,20 +117,20 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
       ?.supervisionPastFullTermCompletionDateOrUpcoming1Day?.eligibleDate;
   }
 
-  get submittedContactNote():
+  get externalRequestData():
     | ExternalRequestUpdate<UsTnContactNote>
     | undefined {
     return this.updates?.contactNote;
   }
 
-  get submittedContactNoteStatus(): ExternalSystemRequestStatus | undefined {
-    return this.submittedContactNote?.status;
+  get externalRequestStatus(): ExternalSystemRequestStatus | undefined {
+    return this.externalRequestData?.status;
   }
 
   get isNoteLoading(): boolean {
     return (
-      this.submittedContactNoteStatus === "PENDING" ||
-      this.submittedContactNoteStatus === "IN_PROGRESS"
+      this.externalRequestStatus === "PENDING" ||
+      this.externalRequestStatus === "IN_PROGRESS"
     );
   }
 }

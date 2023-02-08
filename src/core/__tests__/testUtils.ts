@@ -40,4 +40,5 @@ export const mockOpportunity: Opportunity<Client> = {
   supportsDenial: false,
   trackListViewed: () => undefined,
   trackPreviewed: () => undefined,
+  supportsExternalRequest: false,
 };

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Hydratable } from "../../core/models/types";
-import { Denial, UpdateLog } from "../../firestore";
+import { Denial, ExternalRequestUpdate, UpdateLog } from "../../firestore";
 import { TenantId } from "../../RootStore/types";
 import { PartialRecord } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../types";
@@ -173,6 +173,9 @@ export interface Opportunity<
   eligibilityDate: Date | undefined;
   readonly isAlert: boolean;
   supportsDenial: boolean;
+  readonly supportsExternalRequest: boolean;
+  externalRequestData?: ExternalRequestUpdate<any>;
+  readonly externalRequestStatusMessage?: string;
   setDenialReasons: (reasons: string[]) => Promise<void>;
   setOtherReasonText: (otherReason?: string) => Promise<void>;
   trackListViewed: () => void;

@@ -81,6 +81,11 @@ export abstract class OpportunityBase<
    */
   readonly isAlert: boolean = false;
 
+  /**
+   * If the opportunity allows external system requests
+   */
+  readonly supportsExternalRequest: boolean = false;
+
   constructor(
     person: PersonType,
     type: OpportunityType,
