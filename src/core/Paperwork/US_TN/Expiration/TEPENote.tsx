@@ -14,26 +14,53 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import dedent from "dedent";
 import wrap from "word-wrap";
 
 import { UsTnExpirationDraftData } from "../../../../WorkflowsStore/Opportunity/UsTnExpirationReferralRecord";
 
-const tepeTemplate = (form?: Partial<UsTnExpirationDraftData>): string => {
-  const fullNote = dedent`
-  Offender expired his/her probation on ${form?.expirationDate ?? "N/A"}
-  Offender plead guilty to ${form?.currentOffenses ?? "N/A"}
-  Offender appeared in ${form?.convictionCounties ?? "N/A"} on case ${
-    form?.docketNumbers ?? "N/A"
-  }
-  Any Sex Offense History: \n${form?.sexOffenseInformation ?? "N/A"}
-  Last Known Address: ${form?.address ?? "N/A"}
-  Employment History: \n${form?.employmentInformation ?? "N/A"}
-  Fee History: \n${form?.feeHistory ?? "N/A"}
-  Special Conditions: \n${form?.specialConditions ?? "N/A"}
-  Voter Rights Restoration: ${form?.votersRightsInformation ?? "N/A"}`;
+function orNA(contents: string | undefined): string {
+  return contents === "" || contents === undefined ? "N/A" : contents;
+}
 
-  return fullNote.replace(/[~`]/g, "");
+function noteLine(prefix: string, fieldValue: string | undefined): string {
+  return `${prefix} ${orNA(fieldValue)}`;
+}
+
+const tepeTemplate = (form?: Partial<UsTnExpirationDraftData>): string => {
+  const lines = [
+    noteLine("Subject expired his/her probation on", form?.expirationDate),
+    `Offender appeared in ${orNA(form?.convictionCounties)} on case ${orNA(
+      form?.docketNumbers
+    )}`,
+    noteLine("Offender was convicted of", form?.currentOffenses),
+    noteLine("Sex offense history:", form?.sexOffenseInformation),
+    noteLine("Alcohol use and drug history:", form?.alcoholDrugInformation),
+    noteLine("Employment history:", form?.employmentInformation),
+    noteLine("Fee history:", form?.feeHistory),
+    noteLine("Special conditions:", form?.specialConditions),
+    noteLine("Revocation hearings:", form?.revocationHearings),
+    noteLine(
+      "New misdemeanor or felony offenses while on supervision:",
+      form?.newOffenses
+    ),
+    noteLine(
+      "History of prior violence, escape, bond jumping, etc:",
+      form?.historyOfPriorViolenceEtc
+    ),
+    noteLine(
+      "Medical or psychological history:",
+      form?.medicalPsychologicalHistory
+    ),
+    noteLine("Gang affiliation:", form?.gangAffiliation),
+    noteLine("Transfer history:", form?.transferHistory),
+    noteLine(
+      "Victim name and concerns for future contact with victims:",
+      form?.victimInformation
+    ),
+    noteLine("Voter Rights Restoration:", form?.votersRightsInformation),
+    noteLine("Last Known Address:", form?.address),
+  ];
+  return lines.join("\n").replace(/[~`]/g, "");
 };
 
 export function charLimitedNote(

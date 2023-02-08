@@ -28,15 +28,23 @@ test("TEPE with invalid characters", () => {
 
   const tepeForm = tepeTemplate(formWithError);
   expect(tepeForm).toEqual(dedent`
-  Offender expired his/her probation on N/A
-  Offender plead guilty to offense
+  Subject expired his/her probation on N/A
   Offender appeared in county A on case N/A
-  Any Sex Offense History: \nN/A
-  Last Known Address: N/A
-  Employment History: \nN/A
-  Fee History: \nN/A
-  Special Conditions: \nN/A
-  Voter Rights Restoration: N/A`);
+  Offender was convicted of offense
+  Sex offense history: N/A
+  Alcohol use and drug history: N/A
+  Employment history: N/A
+  Fee history: N/A
+  Special conditions: N/A
+  Revocation hearings: N/A
+  New misdemeanor or felony offenses while on supervision: N/A
+  History of prior violence, escape, bond jumping, etc: N/A
+  Medical or psychological history: N/A
+  Gang affiliation: N/A
+  Transfer history: N/A
+  Victim name and concerns for future contact with victims: N/A
+  Voter Rights Restoration: N/A
+  Last Known Address: N/A`);
 });
 
 test("Ensure note is char limited", () => {

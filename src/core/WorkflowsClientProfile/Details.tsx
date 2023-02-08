@@ -18,7 +18,6 @@
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { descending } from "d3-array";
 import { parseJSON } from "date-fns";
-import { mapValues, toUpper } from "lodash";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";

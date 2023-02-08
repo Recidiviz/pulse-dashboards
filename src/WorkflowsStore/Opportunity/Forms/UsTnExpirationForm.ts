@@ -113,11 +113,11 @@ export class UsTnExpirationForm extends FormBase<
         convictionCounties: displayList(form.convictionCounties),
         docketNumbers: displayList(form.docketNumbers),
         sexOffenseInformation: defaultFormValueJoiner(
-          `${displayString(form.latestPse?.contactType)} ${
-            form.latestPse
-              ? `on ${formatFormValueDateMMDDYYYYY(form.latestPse.contactDate)}`
-              : ""
-          }`,
+          form.latestPse
+            ? `${displayString(
+                form.latestPse.contactType
+              )} on ${formatFormValueDateMMDDYYYYY(form.latestPse.contactDate)}`
+            : "",
           displayList(form.sexOffenses, "Offenses:")
         ),
         address: person.address,
@@ -156,6 +156,7 @@ export class UsTnExpirationForm extends FormBase<
         votersRightsInformation: form.latestVrr
           ? voterRightsText(form.latestVrr.contactType.toUpperCase())
           : "",
+        gangAffiliation: displayString(form.gangAffiliationId),
       };
     };
 }

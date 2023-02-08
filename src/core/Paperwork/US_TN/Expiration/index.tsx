@@ -25,43 +25,84 @@ export const UsTnExpirationFormFieldBaseProps = {
 export const UsTnExpirationFormFields: WebFormFieldProps[] = [
   {
     name: "expirationDate",
-    label: "Probation Expiration Date",
-  },
-  {
-    name: "currentOffenses",
-    label: "Current Offenses",
+    label: "Expiration date",
   },
   {
     name: "convictionCounties",
-    label: "Conviction Counties",
+    label: "Counties",
   },
   {
     name: "docketNumbers",
-    label: "Docket numbers for active cases",
+    label: "Case number(s)",
+  },
+  {
+    name: "currentOffenses",
+    label: "Charges",
   },
   {
     name: "sexOffenseInformation",
-    label: "Sex Offense History",
+    label: "Any sex offense history",
     textarea: true,
   },
-  { name: "address", label: "Last Known Address" },
+  {
+    name: "alcoholDrugInformation",
+    label: "Alcohol use and drug history",
+    textarea: true,
+  },
   {
     name: "employmentInformation",
-    label: "Employment History",
+    label: "Employment history",
     textarea: true,
   },
   {
     name: "feeHistory",
-    label: "Fee History",
+    label: "Fee history",
     textarea: true,
   },
   {
     name: "specialConditions",
-    label: "Special Conditions",
+    label: "Special conditions",
+    textarea: true,
+  },
+  {
+    name: "revocationHearings",
+    label: "Revocation hearings",
+    textarea: true,
+  },
+  {
+    name: "newOffenses",
+    label: "New misdemeanor or felony offenses while on supervision",
+    textarea: true,
+  },
+  {
+    name: "historyOfPriorViolenceEtc",
+    label: "History of prior violence, escape, bond jumping, etc.",
+    textarea: true,
+  },
+  {
+    name: "transferHistory",
+    label: "Transfer history",
+    textarea: true,
+  },
+  {
+    name: "medicalPsychologicalHistory",
+    label: "Medical or psychological history",
+    textarea: true,
+  },
+  { name: "gangAffiliation", label: "Gang Affiliation" },
+  {
+    name: "victimInformation",
+    label: "Victim's name and any concerns for future contact",
     textarea: true,
   },
   {
     name: "votersRightsInformation",
-    label: "Voters Rights Restoration",
+    label: "Voter rights restoration",
+  },
+  { name: "address", label: "Last Known Address" },
+  {
+    name: "additionalNotes",
+    label: "Additional notes (Optional)",
+    textarea: true,
   },
 ];

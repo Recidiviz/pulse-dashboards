@@ -95,11 +95,20 @@ export type UsTnExpirationDraftData = {
   convictionCounties: string;
   docketNumbers: string;
   sexOffenseInformation: string;
+  alcoholDrugInformation: string;
   address: string;
   employmentInformation: string;
   feeHistory: string;
   specialConditions: string;
+  revocationHearings: string;
+  newOffenses: string;
+  historyOfPriorViolenceEtc: string;
+  transferHistory: string;
+  medicalPsychologicalHistory: string;
+  gangAffiliation: string;
+  victimInformation: string;
   votersRightsInformation: string;
+  additionalNotes: string;
 };
 
 export function getValidator(

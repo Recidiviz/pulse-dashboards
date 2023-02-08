@@ -205,7 +205,7 @@ export const transformCaseNotes = (
 
 export const defaultFormValueJoiner = (
   ...items: (string | undefined)[]
-): string => items.filter((item) => item).join("\n");
+): string => items.filter((item) => item && item !== "").join("\n");
 
 export const formatFormValueDateMMDDYYYYY = (date: string | Date): string =>
   moment(date).format("MM/DD/YYYY");
@@ -222,8 +222,9 @@ export const displayList = (
   lst: string[] | undefined,
   prefix?: string
 ): string => {
-  const displayText = lst && lst.length > 0 ? lst.join(", ") : "";
-  return !prefix ? displayText : `${prefix} ${displayText}`;
+  const hasContents = lst?.length;
+  const displayText = hasContents ? lst.join(", ") : "";
+  return !prefix || !hasContents ? displayText : `${prefix} ${displayText}`;
 };
 
 export const monthsOrDaysRemainingFromToday = (eligibleDate: Date): string => {
