@@ -333,7 +333,6 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
       isOpen={showModal}
       onRequestClose={onCloseFn}
       className="WriteToTOMISModal"
-      shouldCloseOnOverlayClick={false}
     >
       {getModalContent()}
     </StyledModal>

@@ -144,6 +144,17 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
       </NotePreviewContainer>
     );
 
+    const onModalCloseFn = () => {
+      if (
+        opportunity.externalRequestStatus === "PENDING" ||
+        opportunity.externalRequestStatus === "IN_PROGRESS"
+      ) {
+        // Don't allow the user to close the modal on overlay click while the TOMIS request is in progress
+        return;
+      }
+      setShowTOMISPreviewModal(false);
+    };
+
     return (
       <FormContainer className="WorkflowsFormContainer">
         <NoteFormHeader>
@@ -184,7 +195,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
         {selectedFormSection === 0 ? form : preview}
         <WriteToTOMISModal
           showModal={showTOMISPreviewModal}
-          onCloseFn={() => setShowTOMISPreviewModal(false)}
+          onCloseFn={onModalCloseFn}
           paginatedNote={paginatedTEPENoteByLine(fullCharLimitedTEPENote, 10)}
           opportunity={opportunity}
         />
