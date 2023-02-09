@@ -44,7 +44,8 @@ test("TEPE with invalid characters", () => {
   Transfer history: N/A
   Victim name and concerns for future contact with victims: N/A
   Voter Rights Restoration: N/A
-  Last Known Address: N/A`);
+  Last known address: N/A
+  Additional notes: N/A`);
 });
 
 test("Ensure note is char limited", () => {

@@ -58,7 +58,8 @@ const tepeTemplate = (form?: Partial<UsTnExpirationDraftData>): string => {
       form?.victimInformation
     ),
     noteLine("Voter Rights Restoration:", form?.votersRightsInformation),
-    noteLine("Last Known Address:", form?.address),
+    noteLine("Last known address:", form?.address),
+    noteLine("Additional notes:", form?.additionalNotes),
   ];
   return lines.join("\n").replace(/[~`]/g, "");
 };
