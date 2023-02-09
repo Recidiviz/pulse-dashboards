@@ -107,7 +107,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                 <FormActionButton
                   className="WorkflowsFormActionButton"
                   buttonFill={colors.buttonFill}
-                  onClick={() => opportunity.form?.download()}
+                  onClick={() => opportunity.form?.markDownloading()}
                 >
                   {opportunity.form.downloadText}
                 </FormActionButton>

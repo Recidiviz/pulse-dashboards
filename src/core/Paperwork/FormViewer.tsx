@@ -1,4 +1,5 @@
-// Copyright (C) 2022 Recidiviz, Inc.
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +17,9 @@
 
 import { observer } from "mobx-react-lite";
 import * as React from "react";
-import { useEffect } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Client } from "../../WorkflowsStore";
 import { useResizeForm } from "./utils";
 
 const FormViewerGrid = styled.div`
@@ -30,12 +29,7 @@ const FormViewerGrid = styled.div`
 `;
 
 interface FormViewerProps {
-  fileName: string;
-  formDownloader: (
-    fileName: string,
-    client: Client,
-    formContents: HTMLElement
-  ) => Promise<void>;
+  formRef?: React.MutableRefObject<HTMLDivElement>;
   children: React.ReactNode;
 }
 
@@ -47,34 +41,13 @@ export const FormViewerContext = React.createContext<FormViewerContextData>({
   isDownloading: false,
 });
 
-const FormViewer: React.FC<FormViewerProps> = ({
-  fileName,
-  formDownloader,
-  children,
-}) => {
-  const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
-  useResizeForm(formRef);
+const FormViewer: React.FC<FormViewerProps> = ({ formRef, children }) => {
+  const backupFormRef =
+    React.useRef() as React.MutableRefObject<HTMLDivElement>;
+  const internalFormRef = formRef ?? backupFormRef;
+  useResizeForm(internalFormRef);
   const { workflowsStore } = useRootStore();
-  const { selectedClient: client, formIsDownloading } = workflowsStore;
-
-  // Generate the form and save it once the download styles have been rendered
-  useEffect(() => {
-    async function download() {
-      if (formIsDownloading && formRef.current && client) {
-        await formDownloader(fileName, client, formRef.current);
-        workflowsStore.formIsDownloading = false;
-      }
-    }
-
-    download();
-  }, [
-    formRef,
-    formIsDownloading,
-    formDownloader,
-    fileName,
-    client,
-    workflowsStore,
-  ]);
+  const { formIsDownloading } = workflowsStore;
 
   const contextObject = React.useMemo(() => {
     return { isDownloading: formIsDownloading };
@@ -83,7 +56,7 @@ const FormViewer: React.FC<FormViewerProps> = ({
   return (
     <FormViewerGrid>
       <FormViewerContext.Provider value={contextObject}>
-        <div className="WorkflowsFormContainer" ref={formRef}>
+        <div className="WorkflowsFormContainer" ref={internalFormRef}>
           {children}
         </div>
       </FormViewerContext.Provider>

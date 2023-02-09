@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Client } from "../../WorkflowsStore";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import {
@@ -30,16 +29,6 @@ import { generate } from "../Paperwork/PDFFormGenerator";
 import { PrintablePage } from "../Paperwork/styles";
 import FormCR3947Rev0518 from "../Paperwork/US_TN";
 
-const formDownloader = async (
-  fileName: string,
-  client: Client,
-  formContents: HTMLElement
-) => {
-  return generate(formContents, `${PrintablePage}`).then((pdf: jsPDF) => {
-    pdf.save(fileName);
-  });
-};
-
 const WorkflowsCompliantReportingForm: React.FC = () => {
   const {
     workflowsStore: { selectedClient: client },
@@ -47,18 +36,23 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
 
   const form = useOpportunityFormContext();
 
+  const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+
+  const onClickDownload = async () => {
+    return generate(formRef.current, `${PrintablePage}`).then((pdf: jsPDF) => {
+      pdf.save(`${client?.displayName} - Form CR3947 Rev05-18.pdf`);
+    });
+  };
+
   return (
     <FormContainer
       heading="Compliant Reporting"
       agencyName="TDOC"
       downloadButtonLabel={form.downloadText}
-      onClickDownload={async () => form.download()}
+      onClickDownload={async () => onClickDownload()}
       opportunity={form.opportunity}
     >
-      <FormViewer
-        fileName={`${client?.displayName} - Form CR3947 Rev05-18.pdf`}
-        formDownloader={formDownloader}
-      >
+      <FormViewer formRef={formRef}>
         <FormCR3947Rev0518 />
       </FormViewer>
     </FormContainer>

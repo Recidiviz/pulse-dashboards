@@ -94,7 +94,7 @@ export const FormSummarySection: React.FC = () => {
           <Item
             title="Full Term Release Date"
             name="ftrDate"
-            placeholder="Choose Date"
+            placeholder="Enter Date"
           />
           <Item title="NCIC Check" name="ncicCheck" placeholder="Y/N" />
         </tr>
@@ -107,7 +107,7 @@ export const FormSummarySection: React.FC = () => {
           <Item
             title="NCIC Check Date"
             name="ncicCheckDate"
-            placeholder="Choose Date"
+            placeholder="Enter Date"
           />
         </tr>
       </tbody>

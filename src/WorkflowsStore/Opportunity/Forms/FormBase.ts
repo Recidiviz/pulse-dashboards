@@ -67,7 +67,7 @@ export class FormBase<
       formLastUpdated: computed,
       prefilledData: computed,
       formIsDownloading: computed,
-      download: action,
+      markDownloading: action,
     });
   }
 
@@ -106,7 +106,7 @@ export class FormBase<
     this.rootStore.workflowsStore.formIsDownloading = value;
   }
 
-  download(): void {
+  markDownloading(): void {
     this.opportunity?.setCompletedIfEligible();
 
     this.formIsDownloading = true;

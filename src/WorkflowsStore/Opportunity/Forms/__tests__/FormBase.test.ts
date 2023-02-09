@@ -68,20 +68,20 @@ describe("form downloading", () => {
   test("sets a flag", () => {
     expect(rootStore.workflowsStore.formIsDownloading).toBe(false);
 
-    form.download();
+    form.markDownloading();
 
     expect(rootStore.workflowsStore.formIsDownloading).toBe(true);
   });
 
   test("updates opportunity status", () => {
     jest.spyOn(opp, "setCompletedIfEligible");
-    form.download();
+    form.markDownloading();
 
     expect(opp.setCompletedIfEligible).toHaveBeenCalled();
   });
 
   test("sends tracking event", () => {
-    form.download();
+    form.markDownloading();
     expect(trackReferralFormDownloaded).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: form.type,

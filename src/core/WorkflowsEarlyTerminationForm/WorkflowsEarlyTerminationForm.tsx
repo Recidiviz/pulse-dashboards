@@ -35,27 +35,6 @@ const collectAdditionalDepositionLinesToDownload = (client: Client) => {
   );
 };
 
-const formDownloader = async (
-  fileName: string,
-  client: Client
-): Promise<void> => {
-  const { earlyTermination } = client.verifiedOpportunities;
-
-  const contents = {
-    ...toJS(earlyTermination?.form?.formData),
-    additionalDepositionLines:
-      collectAdditionalDepositionLinesToDownload(client),
-  };
-
-  await downloadSingle(
-    fileName,
-    client.stateCode,
-    "early_termination_template.docx",
-    contents,
-    client.rootStore.getTokenSilently
-  );
-};
-
 function WorkflowsEarlyTerminationForm() {
   const {
     workflowsStore: { selectedClient: client },
@@ -63,18 +42,35 @@ function WorkflowsEarlyTerminationForm() {
 
   const form = useOpportunityFormContext();
 
+  if (!client) return <div />;
+
+  const onClickDownload = async (): Promise<void> => {
+    const { earlyTermination } = client.verifiedOpportunities;
+
+    const contents = {
+      ...toJS(earlyTermination?.form?.formData),
+      additionalDepositionLines:
+        collectAdditionalDepositionLinesToDownload(client),
+    };
+
+    await downloadSingle(
+      `${client?.displayName} - Form SFN 9281.docx`,
+      client.stateCode,
+      "early_termination_template.docx",
+      contents,
+      client.rootStore.getTokenSilently
+    );
+  };
+
   return (
     <FormContainer
       heading="Early Termination"
       agencyName="ND DOCR"
       downloadButtonLabel={form.downloadText}
-      onClickDownload={async () => form.download()}
+      onClickDownload={async () => onClickDownload()}
       opportunity={form.opportunity}
     >
-      <FormViewer
-        fileName={`${client?.displayName} - Form SFN 9281.docx`}
-        formDownloader={formDownloader}
-      >
+      <FormViewer>
         <FormEarlyTermination />
       </FormViewer>
     </FormContainer>

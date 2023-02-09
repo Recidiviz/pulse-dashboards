@@ -25,9 +25,9 @@ import {
   spacing,
 } from "@recidiviz/design-system";
 import * as Sentry from "@sentry/react";
+import { runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
-import { useState } from "react";
 import styled from "styled-components/macro";
 
 import { OpportunityBase } from "../../WorkflowsStore/Opportunity/OpportunityBase";
@@ -104,7 +104,9 @@ export const FormContainer = observer(function FormContainer({
   opportunity,
   children,
 }: FormHeaderProps): React.ReactElement {
-  const [isDownloading, setIsDownloading] = useState(false);
+  const { form } = opportunity;
+
+  if (!form) return <div />;
 
   return (
     <FormContainerElement>
@@ -113,18 +115,16 @@ export const FormContainer = observer(function FormContainer({
           <div>
             <FormHeading>{heading}</FormHeading>
             <LastEditedMessage>
-              <FormLastEdited agencyName={agencyName} form={opportunity.form} />
+              <FormLastEdited agencyName={agencyName} form={form} />
             </LastEditedMessage>
           </div>
         </FormHeaderSection>
         <FormHeaderSection>
           <DownloadButton
             className="WorkflowsFormActionButton"
-            disabled={opportunity.form?.formIsDownloading || isDownloading}
+            disabled={form.formIsDownloading}
             onClick={async () => {
-              setIsDownloading(true);
-
-              opportunity.form?.download();
+              form.markDownloading();
 
               // Wait for any inputs to save their state
               await new Promise((resolve) =>
@@ -136,10 +136,12 @@ export const FormContainer = observer(function FormContainer({
               } catch (e) {
                 Sentry.captureException(e);
               }
-              setIsDownloading(false);
+              runInAction(() => {
+                form.formIsDownloading = false;
+              });
             }}
           >
-            {isDownloading ? "Downloading..." : downloadButtonLabel}
+            {form.formIsDownloading ? "Downloading..." : downloadButtonLabel}
           </DownloadButton>
         </FormHeaderSection>
       </FormHeaderBar>
