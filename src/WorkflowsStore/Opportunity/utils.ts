@@ -68,7 +68,7 @@ export const generateOpportunityInitialHeader = (
     case "pastFTRD":
       return "Search for officers above to review clients whose full-term release date has passed.";
     case "usTnExpiration":
-      return "Search for officers above to review clients whose supervision expiration date is within 30 days or has passed.";
+      return "Search for officers above to review clients who may be on or past their supervision expiration date.";
     case "usMeSCCP":
       return (
         "Search for case managers above to review residents in their unit who are approaching SCCP " +
@@ -132,9 +132,10 @@ export const generateOpportunityHydratedHeader = (
         "SCCP eligibility and complete application paperwork.",
     },
     usTnExpiration: {
-      eligibilityText: simplur`${count} client[|s] [is|are] `,
-      opportunityText: "within 30 days of expiration",
-      callToAction: "Complete and submit their auto-generated TEPE note",
+      eligibilityText: simplur`${count} client[|s] may be `,
+      opportunityText: "on or past their expiration date",
+      callToAction:
+        "Review these clients and complete their auto-generated TEPE Note.",
     },
   };
 

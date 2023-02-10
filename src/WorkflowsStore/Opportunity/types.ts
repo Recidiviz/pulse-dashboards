@@ -56,7 +56,7 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   supervisionLevelDowngrade: "Supervision Level Downgrade",
   usIdSupervisionLevelDowngrade: "Supervision Level Mismatch",
   usMeSCCP: "Supervised Community Confinement Program",
-  usTnExpiration: "Expiration (TEPE)",
+  usTnExpiration: "Expiration",
 };
 
 export const OPPORTUNITY_TYPE_URLS_BY_STATE: PartialRecord<
@@ -65,8 +65,8 @@ export const OPPORTUNITY_TYPE_URLS_BY_STATE: PartialRecord<
 > = {
   US_TN: {
     supervisionLevelDowngrade: "supervisionLevelDowngrade",
-    compliantReporting: "compliantReporting",
     usTnExpiration: "expiration",
+    compliantReporting: "compliantReporting",
   },
   US_ND: {
     earlyTermination: "earlyTermination",

@@ -25,7 +25,10 @@ import {
   UsTnExpirationEligibleClientRecord,
   UsTnExpirationReferralRecordFixture,
 } from "../__fixtures__";
-import { UsTnExpirationOpportunity } from "../UsTnExpirationOpportunity";
+import {
+  hydrateExpirationDateRequirementText,
+  UsTnExpirationOpportunity,
+} from "../UsTnExpirationOpportunity";
 
 jest.mock("../../subscriptions");
 
@@ -83,5 +86,29 @@ describe("fully eligible", () => {
 
   test("requirements met", () => {
     expect(opp.requirementsMet).toMatchSnapshot();
+  });
+
+  test("hydrate same day", () => {
+    tk.reset();
+    tk.freeze(new Date(2022, 1, 2, 16, 30));
+
+    const actual = hydrateExpirationDateRequirementText(
+      UsTnExpirationReferralRecordFixture.criteria
+        .supervisionPastFullTermCompletionDateOrUpcoming1Day
+    );
+
+    expect(actual).toEqual("Expiration date is today (Feb 2, 2022)");
+  });
+
+  test("hydrate text for 1 day past", () => {
+    tk.reset();
+    tk.freeze(new Date(2022, 1, 3, 16, 30));
+
+    const actual = hydrateExpirationDateRequirementText(
+      UsTnExpirationReferralRecordFixture.criteria
+        .supervisionPastFullTermCompletionDateOrUpcoming1Day
+    );
+
+    expect(actual).toEqual("1 day past expiration date (Feb 2, 2022)");
   });
 });

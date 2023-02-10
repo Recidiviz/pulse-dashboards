@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import isTodeay, { differenceInDays } from "date-fns";
 import { makeObservable } from "mobx";
+import simplur from "simplur";
 
 import {
   ExternalRequestUpdate,
@@ -48,12 +50,28 @@ const CRITERIA: Record<
     text: "Expiration date is $EXPIRATION_DATE",
   },
   usTnNoZeroToleranceCodesSpans: {
-    text: "No zero tolerance codes since most recent sentence effective date",
+    text: "No zero tolerance codes since most recent sentence imposed date",
   },
   usTnNotOnLifeSentenceOrLifetimeSupervision: {
     text: "Not on lifetime supervision or lifetime sentence",
   },
 };
+
+export function hydrateExpirationDateRequirementText(
+  criterion: Required<UsTnExpirationReferralRecord>["criteria"]["supervisionPastFullTermCompletionDateOrUpcoming1Day"]
+) {
+  const eligibleDate = criterion?.eligibleDate;
+  const today = new Date();
+
+  // .toDateString() returns only the date part of the Date() as a string
+  if (eligibleDate.toDateString() === today.toDateString()) {
+    return `Expiration date is today (${formatWorkflowsDate(eligibleDate)})`;
+  }
+  const daysPast = differenceInDays(today, eligibleDate);
+  return simplur`${daysPast} day[|s] past expiration date (${formatWorkflowsDate(
+    eligibleDate
+  )})`;
+}
 
 export class UsTnExpirationOpportunity extends OpportunityBase<
   Client,
@@ -91,12 +109,8 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
 
     if (criteria?.supervisionPastFullTermCompletionDateOrUpcoming1Day) {
       requirements.push({
-        text: CRITERIA.supervisionPastFullTermCompletionDateOrUpcoming1Day.text.replace(
-          "$EXPIRATION_DATE",
-          formatWorkflowsDate(
-            criteria.supervisionPastFullTermCompletionDateOrUpcoming1Day
-              .eligibleDate
-          )
+        text: hydrateExpirationDateRequirementText(
+          criteria.supervisionPastFullTermCompletionDateOrUpcoming1Day
         ),
         tooltip:
           CRITERIA.supervisionPastFullTermCompletionDateOrUpcoming1Day.tooltip,
