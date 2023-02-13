@@ -86,16 +86,41 @@ const WebFormField: React.FC<WebFormFieldProps> = ({
     validationMsg = false,
   } = (props.helpText || {}) as TextFieldHelperTextProps;
 
-  if (foundationRef.current && !foundationRef.current.isValid()) {
-    validationMsg = true;
-    persistent = true;
-    children = errorMessage;
+  const isValidTextarea = (
+    pattern: string | undefined,
+    textareaValue: string | undefined
+  ) => {
+    if (pattern && textareaValue) {
+      const re = new RegExp(pattern);
+      return re.test(textareaValue);
+    }
+    return true;
+  };
+
+  if (foundationRef.current) {
+    if (
+      (!props.textarea && !foundationRef.current.isValid()) ||
+      (props.textarea &&
+        !isValidTextarea(props.pattern, foundationRef.current?.getValue()))
+    ) {
+      validationMsg = true;
+      persistent = true;
+      children = errorMessage;
+    }
   }
+
+  const isInvalid = () => {
+    // If the field is an input, rely on the invalid property. Otherwise, determine the validity manually.
+    return !props.textarea
+      ? props.invalid
+      : !isValidTextarea(props.pattern, foundationRef.current?.getValue());
+  };
 
   return (
     <ThemeContainer>
       <TextField
         {...props}
+        invalid={isInvalid()}
         helpText={{ validationMsg, persistent, children }}
         value={value}
         onChange={onChange}

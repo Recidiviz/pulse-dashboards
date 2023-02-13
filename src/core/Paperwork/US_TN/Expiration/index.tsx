@@ -18,7 +18,7 @@
 import { WebFormFieldProps } from "../../WebFormField";
 
 export const UsTnExpirationFormFieldBaseProps = {
-  pattern: "^[^~`]+$",
+  pattern: "[^~`]+$",
   errorMessage: "Cannot contain ~ or ` characters",
 };
 

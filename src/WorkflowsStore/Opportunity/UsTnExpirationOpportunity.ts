@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import isTodeay, { differenceInDays } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { makeObservable } from "mobx";
 import simplur from "simplur";
 
