@@ -18,7 +18,7 @@
 import { cloneDeep, some } from "lodash";
 import { computed, makeObservable } from "mobx";
 
-import { OpportunityUpdateWithForm } from "../../firestore";
+import { OpportunityUpdateWithForm } from "../../FirestoreStore";
 import { Client } from "../Client";
 import { ValidateFunction } from "../subscriptions";
 import { OpportunityValidationError, OTHER_KEY } from "../utils";

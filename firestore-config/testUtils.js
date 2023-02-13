@@ -66,17 +66,27 @@ export function getStatelessUser(testEnv) {
 export function getTNUser(testEnv) {
   return testEnv.authenticatedContext("user@us_tn.gov", {
     stateCode: "US_TN",
+    impersonator: false,
   });
 }
 
 export function getNDUser(testEnv) {
   return testEnv.authenticatedContext("user@us_nd.gov", {
     stateCode: "US_ND",
+    impersonator: false,
   });
 }
 
 export function getRecidivizUser(testEnv) {
   return testEnv.authenticatedContext("admin", {
     stateCode: "RECIDIVIZ",
+    impersonator: false,
+  });
+}
+
+export function getImpersonatedUser(testEnv) {
+  return testEnv.authenticatedContext("user@us_tn.gov", {
+    stateCode: "US_TN",
+    impersonator: true,
   });
 }

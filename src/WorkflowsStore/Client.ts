@@ -19,7 +19,7 @@ import { mapValues, toUpper } from "lodash";
 import { makeObservable, override } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
-import { ClientRecord, SpecialConditionCode } from "../firestore";
+import { ClientRecord, SpecialConditionCode } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import {

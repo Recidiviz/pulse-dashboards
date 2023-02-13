@@ -19,7 +19,6 @@ import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import useClipboard from "react-use-clipboard";
 
-import { trackReferralFormCopiedToClipboard } from "../../analytics";
 import { useRootStore } from "../../components/StoreProvider";
 import {
   FormContainer,
@@ -39,7 +38,7 @@ import { WebForm } from "../Paperwork/WebForm";
 import PillNav from "../PillNav";
 
 const WorkflowsLSUForm = observer(function WorkflowsLSUForm() {
-  const { workflowsStore } = useRootStore();
+  const { workflowsStore, analyticsStore } = useRootStore();
   const opportunity =
     workflowsStore?.selectedClient?.verifiedOpportunities?.LSU;
   const [selectedFormSection, setSelectedFormSection] = useState(0);
@@ -69,7 +68,7 @@ const WorkflowsLSUForm = observer(function WorkflowsLSUForm() {
   const onCopyButtonClick = () => {
     copyToClipboard();
     opportunity.setCompletedIfEligible();
-    trackReferralFormCopiedToClipboard({
+    analyticsStore.trackReferralFormCopiedToClipboard({
       justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
       opportunityType: opportunity.type,
     });

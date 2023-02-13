@@ -17,11 +17,7 @@
 
 import { action, computed, makeObservable, toJS } from "mobx";
 
-import {
-  trackReferralFormDownloaded,
-  trackReferralFormViewed,
-} from "../../../analytics";
-import { OpportunityUpdateWithForm, UpdateLog } from "../../../firestore";
+import { OpportunityUpdateWithForm, UpdateLog } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { OpportunityBase } from "../OpportunityBase";
 import { OpportunityType } from "../types";
@@ -92,7 +88,7 @@ export class FormBase<
   }
 
   trackViewed(): void {
-    trackReferralFormViewed({
+    this.rootStore.analyticsStore.trackReferralFormViewed({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });
@@ -111,7 +107,7 @@ export class FormBase<
 
     this.formIsDownloading = true;
 
-    trackReferralFormDownloaded({
+    this.rootStore.analyticsStore.trackReferralFormDownloaded({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });

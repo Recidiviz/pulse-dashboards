@@ -25,6 +25,10 @@ const createCustomTokenMock = jest.fn();
 const authMock = jest.fn(() => ({ createCustomToken: createCustomTokenMock }));
 mockFirebaseAdmin.auth = authMock;
 
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
 test("requests Firebase auth token", async () => {
   const userId = "TEST123@somewhere.com";
   const stateCode = "us_xx";
@@ -46,6 +50,7 @@ test("requests Firebase auth token", async () => {
 
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
     stateCode: stateCode.toUpperCase(),
+    impersonator: false,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -60,6 +65,9 @@ test("requests Firebase auth token for impersonated user", async () => {
 
   createCustomTokenMock.mockResolvedValue(mockFirebaseToken);
   const mockReq = {
+    user: {
+      undefinedapp_metadata: { state_code: "recidiviz" },
+    },
     query: {
       impersonatedEmail: userId,
       impersonatedStateCode: stateCode,
@@ -73,8 +81,40 @@ test("requests Firebase auth token for impersonated user", async () => {
 
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
     stateCode: stateCode.toUpperCase(),
+    impersonator: true,
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
+  });
+});
+
+test("responds with 403 forbidden when requested by a non-recidiviz user", async () => {
+  const userId = "impersonatedEmail@somewhere.com";
+  const stateCode = "us_yy";
+  const impersonateUser = true;
+
+  const mockReq = {
+    user: {
+      undefinedapp_metadata: { state_code: stateCode },
+    },
+    query: {
+      impersonatedEmail: userId,
+      impersonatedStateCode: stateCode,
+    },
+  };
+
+  const send = jest.fn();
+  const mockRes = {
+    status: jest.fn().mockImplementation(() => {
+      return { send };
+    }),
+  };
+
+  await getFirebaseToken(impersonateUser)(mockReq, mockRes);
+
+  expect(createCustomTokenMock).not.toHaveBeenCalled();
+  expect(send).toHaveBeenCalledWith({
+    status: 403,
+    errors: ["User does not have permission to access this resource"],
   });
 });

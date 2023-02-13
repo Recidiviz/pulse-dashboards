@@ -25,7 +25,7 @@ import * as Sentry from "@sentry/react";
 import { action, entries, makeAutoObservable, runInAction, when } from "mobx";
 import qs from "qs";
 
-import { identify } from "../analytics";
+import { fetchImpersonatedUserAppMetadata } from "../api/fetchImpersonatedUserAppMetadata";
 import { fetchOfflineUser } from "../api/fetchOfflineUser";
 import { ERROR_MESSAGES } from "../constants/errorMessages";
 import {
@@ -34,7 +34,6 @@ import {
   RoutePermission,
 } from "../core/types/navigation";
 import { PATHWAYS_SECTIONS, PathwaysPageIdList } from "../core/views";
-import { authenticate } from "../firestore";
 import tenants from "../tenants";
 import isIE11 from "../utils/isIE11";
 import { isOfflineMode } from "../utils/isOfflineMode";
@@ -111,7 +110,7 @@ export default class UserStore {
     if (isOfflineMode()) {
       this.isAuthorized = true;
       const offlineUser = await fetchOfflineUser({});
-      await authenticate(
+      await this.rootStore?.firestoreStore.authenticate(
         "fakeAuth0Token",
         offlineUser[`${METADATA_NAMESPACE}app_metadata`]
       );
@@ -156,7 +155,7 @@ export default class UserStore {
       if (await auth0.isAuthenticated()) {
         const user = await auth0.getUser();
         if (user) {
-          await authenticate(
+          await this.rootStore?.firestoreStore.authenticate(
             await auth0.getTokenSilently(),
             user[`${METADATA_NAMESPACE}app_metadata`]
           );
@@ -190,11 +189,66 @@ export default class UserStore {
     }
   }
 
+  async impersonateUser(
+    impersonatedEmail: string,
+    impersonatedStateCode: string
+  ): Promise<void> {
+    this.isAuthorized = false;
+    this.userIsLoading = true;
+    this.rootStore?.workflowsStore.disposeUserProfileSubscriptions();
+
+    try {
+      // Firestore authentication
+      await this.rootStore?.firestoreStore.authenticateImpersonatedUser(
+        impersonatedEmail,
+        impersonatedStateCode,
+        this.getTokenSilently,
+        this.userAppMetadata
+      );
+
+      // Fetch dashboard userAppMetadata to build mocked auth0 user
+      const userRestrictions = await fetchImpersonatedUserAppMetadata(
+        impersonatedEmail,
+        impersonatedStateCode,
+        this.getTokenSilently
+      );
+
+      runInAction(() => {
+        this.user = {
+          email: impersonatedEmail,
+          email_verified: true,
+          given_name: "Impersonated User",
+          [`${METADATA_NAMESPACE}app_metadata`]: {
+            ...userRestrictions,
+            state_code: impersonatedStateCode,
+          },
+          impersonator: true,
+          name: "Impersonated User",
+          state_code: impersonatedStateCode,
+        };
+        this.rootStore?.tenantStore.setCurrentTenantId(
+          impersonatedStateCode as TenantId
+        );
+        this.isAuthorized = true;
+        this.userIsLoading = false;
+      });
+    } catch (error) {
+      this.setAuthError(error as Error);
+    }
+  }
+
+  /**
+   * Returns whether a Recidiviz user is impersonating a user
+   */
+  get isImpersonating(): boolean {
+    return this.user?.impersonator;
+  }
+
   async trackIdentity(): Promise<void> {
     await when(() => this.userAppMetadata !== undefined);
     const userId = this.userAppMetadata?.user_hash;
     if (userId) {
-      identify(userId);
+      this.rootStore?.analyticsStore.identify(userId);
       Sentry.setUser({ id: userId });
     } else {
       // if we don't have a user ID make sure we don't have a lingering Sentry identity
@@ -232,7 +286,7 @@ export default class UserStore {
    */
   get shouldSeeBetaCharts(): boolean {
     return (
-      this.stateCode === "RECIDIVIZ" ||
+      this.isRecidivizUser ||
       this.userAppMetadata?.should_see_beta_charts ||
       false
     );
@@ -308,7 +362,7 @@ export default class UserStore {
       this.shouldSeeBetaCharts && betaNavigation ? betaNavigation : navigation;
     if (!allowed) return {};
 
-    if (this.stateCode === "RECIDIVIZ") return allowed;
+    if (this.isRecidivizUser) return allowed;
 
     if (pagesWithRestrictions) {
       pagesWithRestrictions.forEach((page) => {
@@ -360,6 +414,10 @@ export default class UserStore {
     return this.auth0?.loginWithRedirect({
       appState: { targetUrl: window.location.href },
     });
+  }
+
+  get isRecidivizUser(): boolean {
+    return this.stateCode === "RECIDIVIZ";
   }
 
   async getTokenSilently(): Promise<any> {

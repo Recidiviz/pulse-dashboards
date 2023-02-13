@@ -17,14 +17,12 @@
 import createAuth0Client from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
 
-import { identify } from "../../analytics";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import {
   PATHWAYS_PAGES,
   PATHWAYS_SECTIONS,
   PATHWAYS_VIEWS,
 } from "../../core/views";
-import { authenticate } from "../../firestore";
 import tenants from "../../tenants";
 import isIE11 from "../../utils/isIE11";
 import RootStore from "..";
@@ -33,8 +31,7 @@ import UserStore from "../UserStore";
 
 jest.mock("@auth0/auth0-spa-js");
 jest.mock("@sentry/react");
-jest.mock("../../firestore");
-jest.mock("../../analytics");
+jest.mock("firebase/firestore");
 jest.mock("../../utils/isIE11");
 
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
@@ -45,12 +42,19 @@ const mockHandleRedirectCallback = jest.fn();
 const mockIsAuthenticated = jest.fn();
 const mockLoginWithRedirect = jest.fn();
 const mockGetTokenSilently = jest.fn();
-const mockFirestoreAuthenticate = authenticate as jest.Mock;
-
-const mockIdentify = identify as jest.Mock<typeof identify>;
 
 const mockHandleUrl = jest.fn();
 const mockIsIE11 = isIE11 as jest.Mock<boolean>;
+
+const mockRootStore = {
+  analyticsStore: {
+    identify: jest.fn(),
+  },
+  firestoreStore: {
+    authenticate: jest.fn(),
+    authenticateImpersonatedUser: jest.fn(),
+  },
+} as unknown as typeof RootStore;
 
 const tenantId = "US_MO";
 const metadataField = `${METADATA_NAMESPACE}app_metadata`;
@@ -119,14 +123,28 @@ test("Invalid state thrown in authorize redirects to login", async () => {
 test("authorized when authenticated", async () => {
   mockIsAuthenticated.mockResolvedValue(true);
   mockGetUser.mockResolvedValue({ email_verified: true, ...metadata });
-  mockFirestoreAuthenticate.mockResolvedValue({});
-
   const store = new UserStore({
     authSettings: testAuthSettings,
+    rootStore: mockRootStore,
   });
   await store.authorize(mockHandleUrl);
   expect(store.isAuthorized).toBe(true);
   expect(store.userIsLoading).toBe(false);
+});
+
+test("error thrown in firebase token fetch sets authError", async () => {
+  mockIsAuthenticated.mockResolvedValue(true);
+  mockGetUser.mockResolvedValue({ email_verified: true, ...metadata });
+  mockRootStore.firestoreStore.authenticate = jest.fn(() => {
+    throw new Error("firebase token error");
+  });
+  const store = new UserStore({
+    authSettings: testAuthSettings,
+    rootStore: mockRootStore,
+  });
+  await store.authorize(mockHandleUrl);
+  expect(store.isAuthorized).toBe(false);
+  expect(store.authError?.message).toBeDefined();
 });
 
 test("redirect to Auth0 when unauthenticated", async () => {
@@ -331,7 +349,10 @@ describe("canAccessRestrictedPage", () => {
       authSettings: testAuthSettings,
       rootStore: {
         currentTenantId: tenantId,
-      } as typeof RootStore,
+        firestoreStore: {
+          authenticate: jest.fn(),
+        },
+      } as unknown as typeof RootStore,
     });
     await store.authorize(mockHandleUrl);
     expect(store.canAccessRestrictedPage("anyBogusPage")).toBe(true);
@@ -375,7 +396,10 @@ describe("canAccessRestrictedPage", () => {
       authSettings: testAuthSettings,
       rootStore: {
         currentTenantId: tenantId,
-      } as typeof RootStore,
+        firestoreStore: {
+          authenticate: jest.fn(),
+        },
+      } as unknown as typeof RootStore,
     });
     await store.authorize(mockHandleUrl);
 
@@ -386,6 +410,7 @@ describe("canAccessRestrictedPage", () => {
 
 describe("userAllowedNavigation", () => {
   const stateCode = "US_TN";
+  let store: UserStore;
 
   beforeEach(() => {
     tenants[stateCode].pagesWithRestrictions = [
@@ -403,6 +428,15 @@ describe("userAllowedNavigation", () => {
       supervision: [PATHWAYS_SECTIONS.countOverTime],
       "id-methodology": [PATHWAYS_VIEWS.system],
     };
+    store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: {
+        currentTenantId: stateCode,
+        firestoreStore: {
+          authenticate: jest.fn(),
+        },
+      } as unknown as typeof RootStore,
+    });
   });
 
   test("returns the navigation object minus pagesWithRestrictions when user routes is empty", async () => {
@@ -414,12 +448,6 @@ describe("userAllowedNavigation", () => {
       },
     };
     mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
-    const store = new UserStore({
-      authSettings: testAuthSettings,
-      rootStore: {
-        currentTenantId: stateCode,
-      } as typeof RootStore,
-    });
     await store.authorize(mockHandleUrl);
     const expected = {
       "id-methodology": ["system"],
@@ -440,12 +468,6 @@ describe("userAllowedNavigation", () => {
       },
     };
     mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
-    const store = new UserStore({
-      authSettings: testAuthSettings,
-      rootStore: {
-        currentTenantId: stateCode,
-      } as typeof RootStore,
-    });
     await store.authorize(mockHandleUrl);
     const expected = {
       "id-methodology": ["system"],
@@ -467,12 +489,6 @@ describe("userAllowedNavigation", () => {
       },
     };
     mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
-    const store = new UserStore({
-      authSettings: testAuthSettings,
-      rootStore: {
-        currentTenantId: stateCode,
-      } as typeof RootStore,
-    });
     await store.authorize(mockHandleUrl);
     const expected = {
       "id-methodology": ["system"],
@@ -495,19 +511,12 @@ describe("userAllowedNavigation", () => {
       },
     };
     mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
-    const store = new UserStore({
-      authSettings: testAuthSettings,
-      rootStore: {
-        currentTenantId: stateCode,
-      } as typeof RootStore,
-    });
     await store.authorize(mockHandleUrl);
     expect(store.userAllowedNavigation).toEqual(tenants[stateCode].navigation);
   });
 
   describe("when the browser isIE11", () => {
     let tenantMetadata;
-    let store: UserStore;
     beforeEach(() => {
       mockIsIE11.mockReturnValue(true);
       mockIsAuthenticated.mockResolvedValue(true);
@@ -526,12 +535,6 @@ describe("userAllowedNavigation", () => {
       mockGetUser.mockResolvedValue({
         email_verified: true,
         ...tenantMetadata,
-      });
-      store = new UserStore({
-        authSettings: testAuthSettings,
-        rootStore: {
-          currentTenantId: stateCode,
-        } as typeof RootStore,
       });
     });
 
@@ -589,10 +592,14 @@ test("does not identify authorized users without ID hash", async () => {
     email_verified: true,
     ...metadata,
   });
-  const store = new UserStore({ authSettings: testAuthSettings });
+
+  const store = new UserStore({
+    authSettings: testAuthSettings,
+    rootStore: mockRootStore,
+  });
   await store.authorize(mockHandleUrl);
 
-  expect(mockIdentify).not.toHaveBeenCalled();
+  expect(mockRootStore.analyticsStore.identify).not.toHaveBeenCalled();
   expect(Sentry.setUser).toHaveBeenCalledWith(null);
 });
 
@@ -604,9 +611,12 @@ test("identifies authorized user if an ID hash is present", async () => {
     [metadataField]: { state_code: tenantId, user_hash: userHash },
   });
 
-  const store = new UserStore({ authSettings: testAuthSettings });
+  const store = new UserStore({
+    authSettings: testAuthSettings,
+    rootStore: mockRootStore,
+  });
   await store.authorize(mockHandleUrl);
 
-  expect(mockIdentify).toHaveBeenCalledWith(userHash);
+  expect(mockRootStore.analyticsStore.identify).toHaveBeenCalledWith(userHash);
   expect(Sentry.setUser).toHaveBeenCalledWith({ id: userHash });
 });

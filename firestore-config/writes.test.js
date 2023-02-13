@@ -22,6 +22,7 @@ import {
   ADMIN_COLLECTION_NAMES,
   ETL_COLLECTION_NAMES,
   getAnonUser,
+  getImpersonatedUser,
   getNDUser,
   getRecidivizUser,
   getStatelessUser,
@@ -41,6 +42,7 @@ function testWriteToCollectionsWithoutStateCodePrefix(
 ) {
   return Promise.all(
     collectionNames.map((collectionName) =>
+      // eslint-disable-next-line no-restricted-syntax
       assertFn(setDoc(doc(db, collectionName, "foo"), {}))
     )
   );
@@ -54,6 +56,7 @@ function testWriteToCollectionsForStateWithStateCodePrefix(
 ) {
   return Promise.all(
     collectionNames.map((collectionName) =>
+      // eslint-disable-next-line no-restricted-syntax
       assertFn(setDoc(doc(db, collectionName, `${stateCode}_someID`), {}))
     )
   );
@@ -207,6 +210,7 @@ test.each([
   "%s user cannot write to the old update collection",
   async (userType, getUserContext) => {
     await assertFails(
+      // eslint-disable-next-line no-restricted-syntax
       setDoc(
         doc(
           getUserContext(testEnv).firestore(),
@@ -226,6 +230,7 @@ test.each([
   "%s user can write to their own personal update collection",
   async (userState, getUserContext) => {
     await assertSucceeds(
+      // eslint-disable-next-line no-restricted-syntax
       setDoc(
         doc(
           getUserContext(testEnv).firestore(),
@@ -245,6 +250,7 @@ test.each([
   "%s user cannot write to another user's personal update collection",
   async (userState, getUserContext) => {
     await assertFails(
+      // eslint-disable-next-line no-restricted-syntax
       setDoc(
         doc(
           getUserContext(testEnv).firestore(),
@@ -256,3 +262,30 @@ test.each([
     );
   }
 );
+
+test("impersonating user cannot write to collections", async () => {
+  await testWriteToCollectionsForStateWithStateCodePrefix(
+    SHARED_UPDATE_COLLECTION_NAMES,
+    getImpersonatedUser(testEnv).firestore(),
+    assertFails,
+    "US_TN"
+  );
+});
+
+test("impersonating user cannot write to personal update collection", async () => {
+  await testWriteToCollectionsWithoutStateCodePrefix(
+    [PERSONAL_UPDATE_COLLECTION_NAME],
+    getImpersonatedUser(testEnv).firestore(),
+    assertFails,
+    "US_TN"
+  );
+});
+
+test("impersonating user cannot write to old update collection", async () => {
+  await testWriteToCollectionsWithoutStateCodePrefix(
+    [US_TN_ONLY_UPDATE_COLLECTION_NAME],
+    getImpersonatedUser(testEnv).firestore(),
+    assertFails,
+    "US_TN"
+  );
+});

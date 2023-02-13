@@ -17,19 +17,94 @@
 
 import "./Profile.scss";
 
-import { Button } from "@recidiviz/design-system";
+import { Button, palette } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import React, { useCallback } from "react";
+import React, { MutableRefObject, useCallback, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import styled from "styled-components/macro";
 
 import StateSelection from "../../components/StateSelection";
+import StateSelector from "../../components/StateSelector";
 import { useRootStore } from "../../components/StoreProvider";
+import { stopImpersonating } from "../../utils/impersonation";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 
+const EmailInput = styled.input`
+  display: inline-block;
+  min-height: 1.1em;
+  border-color: ${palette.slate10};
+  border-radius: 4px;
+  border-width: 1px;
+  margin: 0.5rem 0;
+  width: 100%;
+  font-family: "Public Sans", sans-serif;
+  min-height: 2rem;
+  padding: 0.5rem;
+`;
+
+const ImpersonationSection: React.FC<{
+  isImpersonating: boolean;
+  defaultStateCode: string;
+  onSubmit: ({
+    email,
+    stateCode,
+  }: {
+    email: string;
+    stateCode: string;
+  }) => void;
+}> = ({ defaultStateCode, isImpersonating, onSubmit }) => {
+  const [stateCode, setStateCode] = useState(defaultStateCode);
+  const inputRef = useRef<HTMLInputElement>(
+    null
+  ) as MutableRefObject<HTMLInputElement>;
+
+  const setInputRef = React.useCallback(
+    (inputElement: HTMLInputElement | null) => {
+      if (inputElement) {
+        inputRef.current = inputElement;
+      }
+    },
+    []
+  );
+  return (
+    <div className="Profile__impersonation">
+      <div className="Profile__impersonation__title">
+        Select state and enter e-mail address to impersonate:
+      </div>
+      <div className="Profile__impersonation__StateSelector">
+        <StateSelector onChange={(option) => setStateCode(option.value)} />
+      </div>
+      <div className="Profile__impersonation__email">
+        <EmailInput
+          ref={setInputRef}
+          placeholder="Enter an email to impersonate..."
+        />
+      </div>
+      <div className="Profile__impersonation__submit">
+        <Button
+          className="Profile__impersonation__button"
+          onClick={() => onSubmit({ email: inputRef.current.value, stateCode })}
+          disabled={isOfflineMode()}
+        >
+          Impersonate
+        </Button>
+        {isImpersonating ? (
+          <Button
+            className="Profile__impersonation__button__stop"
+            onClick={() => stopImpersonating()}
+          >
+            Stop Impersonating
+          </Button>
+        ) : null}
+      </div>
+    </div>
+  );
+};
+
 function Profile() {
-  const { userStore } = useRootStore();
+  const { userStore, tenantStore } = useRootStore();
   const { user, logout } = userStore;
 
   const onLogout = useCallback(
@@ -39,12 +114,35 @@ function Profile() {
     },
     [logout]
   );
+  const showImpersonationSection =
+    userStore.user.impersonator || userStore.isRecidivizUser;
+
+  const handleImpersonation = async ({
+    email,
+    stateCode,
+  }: {
+    email: string;
+    stateCode: string;
+  }) => {
+    await userStore.impersonateUser(email, stateCode);
+  };
 
   return (
     <PageTemplate mobileNavigation={<MobileNavigation title="Profile" />}>
       <div className="Profile">
-        <div className="Profile__title">{user.email}</div>
-        <div className="Profile__subtitle">{userStore.stateName}</div>
+        <div className="Profile__header-container">
+          <div className="Profile__title-container">
+            <div className="Profile__title">{user.email}</div>
+            <div className="Profile__subtitle">{userStore.stateName}</div>
+          </div>
+          {showImpersonationSection && (
+            <ImpersonationSection
+              defaultStateCode={tenantStore.currentTenantId}
+              onSubmit={handleImpersonation}
+              isImpersonating={userStore.isImpersonating}
+            />
+          )}
+        </div>
         <StateSelection />
         <div>
           <Link to="/">

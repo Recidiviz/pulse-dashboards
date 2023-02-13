@@ -18,7 +18,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
-import { updateFormDraftData } from "../../../firestore";
+import { useRootStore } from "../../../components/StoreProvider";
 import { useOpportunityFormContext } from "../OpportunityFormContext";
 import { Checkbox } from "./styles";
 import { FormDataType } from "./types";
@@ -33,10 +33,14 @@ export type FormCheckboxProps = StyledComponentProps<
 };
 
 const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
+  const { firestoreStore } = useRootStore();
   const opportunityForm = useOpportunityFormContext();
-
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    updateFormDraftData(opportunityForm, name, event.target.checked);
+    firestoreStore.updateFormDraftData(
+      opportunityForm,
+      name,
+      event.target.checked
+    );
   };
 
   return (

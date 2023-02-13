@@ -37,7 +37,10 @@ describe("StaffSubscription tests", () => {
     rootStoreMock = observable({
       currentTenantId: "US_ND",
       workflowsStore: { caseloadDistrict: "TEST", activeSystem: "SUPERVISION" },
-    }) as RootStore;
+      firestoreStore: {
+        db: jest.fn(),
+      },
+    }) as unknown as RootStore;
     sub = new StaffSubscription(rootStoreMock);
   });
 
@@ -46,7 +49,10 @@ describe("StaffSubscription tests", () => {
 
     // args may be undefined because of incomplete firestore mocking,
     // generally we don't care about that in these tests
-    expect(collectionMock).toHaveBeenCalledWith(undefined, "staff");
+    expect(collectionMock).toHaveBeenCalledWith(
+      rootStoreMock.firestoreStore.db,
+      "staff"
+    );
     expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
     expect(whereMock).toHaveBeenCalledWith("hasCaseload", "==", true);
     expect(whereMock).toHaveBeenCalledWith("district", "==", "TEST");

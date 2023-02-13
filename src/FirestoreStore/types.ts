@@ -24,6 +24,28 @@ import {
 } from "../WorkflowsStore";
 import { UsTnExpirationDraftData } from "../WorkflowsStore/Opportunity/UsTnExpirationReferralRecord";
 
+export const collectionNames = {
+  staff: "staff",
+  userUpdates: "userUpdates",
+  clients: "clients",
+  residents: "residents",
+  clientUpdates: "clientUpdates",
+  clientUpdatesV2: "clientUpdatesV2",
+  clientOpportunityUpdates: "clientOpportunityUpdates",
+  compliantReportingReferrals: "compliantReportingReferrals",
+  earnedDischargeReferrals: "US_ID-earnedDischargeReferrals",
+  earlyTerminationReferrals: "earlyTerminationReferrals",
+  LSUReferrals: "US_ID-LSUReferrals",
+  pastFTRDReferrals: "US_ID-pastFTRDReferrals",
+  featureVariants: "featureVariants",
+  supervisionLevelDowngradeReferrals: "US_TN-supervisionLevelDowngrade",
+  usMeSCCPReferrals: "US_ME-SCCPReferrals",
+  usIdSupervisionLevelDowngradeReferrals: "US_ID-supervisionLevelDowngrade",
+  usTnExpirationReferrals: "US_TN-expirationReferrals",
+};
+
+export type CollectionName = keyof typeof collectionNames;
+
 /**
  * Staff-level data exported from the Recidiviz data platform.
  * Staff may be identified independently as users and as officers with active caseloads

@@ -22,12 +22,7 @@ import RootStore from "..";
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 
 jest.mock("@auth0/auth0-spa-js");
-jest.mock("../../firestore", () => {
-  return {
-    authenticate: jest.fn(() => Promise.resolve()),
-    collectionNames: {},
-  };
-});
+jest.mock("../../FirestoreStore");
 jest.mock("../../api/metrics");
 jest.mock("../TenantStore", () => {
   return jest.fn().mockImplementation(() => ({
@@ -46,6 +41,14 @@ describe("RootStore", () => {
 
   it("contains a UserStore", () => {
     expect(RootStore.userStore).toBeDefined();
+  });
+
+  it("contains a FirestoreStore", () => {
+    expect(RootStore.firestoreStore).toBeDefined();
+  });
+
+  it("contains an AnalyticsStore", () => {
+    expect(RootStore.analyticsStore).toBeDefined();
   });
 
   it("contains a currentTenantId", () => {

@@ -15,20 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { doc, DocumentReference, getDoc, setDoc } from "firebase/firestore";
-
 import {
+  doc,
+  DocumentReference,
+  Firestore,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";
+
+import FirestoreStore, {
   ClientUpdateRecord,
   collectionNames,
-  db,
   OpportunityUpdate,
   OpportunityUpdateWithForm,
-} from "../../firestore";
+} from "../../FirestoreStore";
 import { OpportunityType } from "../Opportunity";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
 
 // TODO(#2108): Clean up requests to `clientUpdates` after fully migrating to `clientUpdatesV2`
 const getClientUpdatesV2DocRef = async function (
+  db: Firestore,
   clientId: string,
   recordId: string
 ): Promise<{
@@ -56,6 +62,7 @@ const getClientUpdatesV2DocRef = async function (
  * TODO(#2108): Remove this function after migration is complete
  */
 async function migrateOpportunityUpdate(
+  db: Firestore,
   updateDocRef: DocumentReference,
   clientId: string,
   clientRecordId: string,
@@ -65,7 +72,7 @@ async function migrateOpportunityUpdate(
   let dataToMigrate: OpportunityUpdateWithForm<Record<string, any>> | undefined;
   if (!(await getDoc(updateDocRef)).exists()) {
     const { docRef: v2UpdatesDocRef, oldDocument: v1UpdatesDoc } =
-      await getClientUpdatesV2DocRef(clientId, clientRecordId);
+      await getClientUpdatesV2DocRef(db, clientId, clientRecordId);
 
     // legacy format(s): object nested directly in the update doc
     let legacyRecord = v1UpdatesDoc;
@@ -79,6 +86,7 @@ async function migrateOpportunityUpdate(
 
   if (dataToMigrate) {
     // write old + new data to new destination
+    // eslint-disable-next-line no-restricted-syntax
     setDoc(updateDocRef, dataToMigrate);
   }
 }
@@ -92,15 +100,16 @@ export class OpportunityUpdateSubscription<
   opportunityType: OpportunityType;
 
   constructor(
+    firestoreStore: FirestoreStore,
     clientRecordId: string,
     clientId: string,
     opportunityType: OpportunityType
   ) {
     const collectionName = "clientUpdatesV2";
-    super(collectionName, clientRecordId);
+    super(firestoreStore, collectionName, clientRecordId);
 
     this.dataSource = doc(
-      db,
+      firestoreStore.db,
       collectionName,
       clientRecordId,
       collectionNames.clientOpportunityUpdates,
@@ -109,8 +118,10 @@ export class OpportunityUpdateSubscription<
 
     this.opportunityType = opportunityType;
 
+    if (firestoreStore.rootStore.isImpersonating) return;
     // TODO(#2108): remove the in-place migration once all legacy data is moved over
     migrateOpportunityUpdate(
+      firestoreStore.db,
       this.dataSource,
       clientId,
       clientRecordId,

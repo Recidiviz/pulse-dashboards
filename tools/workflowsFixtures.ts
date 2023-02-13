@@ -20,8 +20,8 @@
 import { Timestamp } from "@google-cloud/firestore";
 import fs from "fs";
 
-import { collectionNames } from "../src/firestore";
-import { defaultFeatureVariantsActive } from "../src/firestore/types";
+import { collectionNames } from "../src/FirestoreStore";
+import { defaultFeatureVariantsActive } from "../src/FirestoreStore/types";
 import { deleteCollection, getDb } from "./firestoreUtils";
 import { residentsData } from "./fixtures/residents";
 

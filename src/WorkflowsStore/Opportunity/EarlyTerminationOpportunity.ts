@@ -19,7 +19,7 @@ import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
-import { OpportunityUpdateWithForm } from "../../firestore";
+import { OpportunityUpdateWithForm } from "../../FirestoreStore";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OpportunityValidationError, OTHER_KEY } from "../utils";

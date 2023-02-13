@@ -15,5 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./firestore";
+export { default } from "./FirestoreStore";
 export * from "./types";

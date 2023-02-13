@@ -19,20 +19,11 @@ import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable, when } from "mobx";
 
 import {
-  trackOpportunityMarkedEligible,
-  trackOpportunityPreviewed,
-  trackSetOpportunityStatus,
-  trackSurfacedInList,
-} from "../../analytics";
-import {
   Denial,
   OpportunityUpdate,
   OpportunityUpdateWithForm,
   UpdateLog,
-  updateOpportunityCompleted,
-  updateOpportunityDenial,
-  updateOpportunityFirstViewed,
-} from "../../firestore";
+} from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import {
   CollectionDocumentSubscription,
@@ -111,12 +102,14 @@ export abstract class OpportunityBase<
 
     this.referralSubscription =
       new CollectionDocumentSubscription<ReferralRecord>(
+        this.rootStore.firestoreStore,
         `${type}Referrals` as const,
         person.recordId,
         transformReferral,
         validateRecord
       );
     this.updatesSubscription = new OpportunityUpdateSubscription<UpdateRecord>(
+      this.rootStore.firestoreStore,
       person.recordId,
       person.externalId,
       type
@@ -168,7 +161,7 @@ export abstract class OpportunityBase<
         )
           return;
 
-        updateOpportunityFirstViewed(
+        this.rootStore.firestoreStore.updateOpportunityFirstViewed(
           currentUserEmail,
           this.person.recordId,
           this.type
@@ -205,8 +198,12 @@ export abstract class OpportunityBase<
         const { reviewStatus } = this;
         if (reviewStatus === "DENIED" || reviewStatus === "COMPLETED") return;
 
-        updateOpportunityCompleted(currentUserEmail, recordId, this.type);
-        trackSetOpportunityStatus({
+        this.rootStore.firestoreStore.updateOpportunityCompleted(
+          currentUserEmail,
+          recordId,
+          this.type
+        );
+        this.rootStore.analyticsStore.trackSetOpportunityStatus({
           clientId: pseudonymizedId,
           justiceInvolvedPersonId: pseudonymizedId,
           status: "COMPLETED",
@@ -260,7 +257,7 @@ export abstract class OpportunityBase<
       ? undefined
       : { otherReason: true };
 
-    await updateOpportunityDenial(
+    await this.rootStore.firestoreStore.updateOpportunityDenial(
       currentUserEmail,
       recordId,
       { reasons },
@@ -268,7 +265,7 @@ export abstract class OpportunityBase<
       deletions
     );
 
-    await updateOpportunityCompleted(
+    await this.rootStore.firestoreStore.updateOpportunityCompleted(
       currentUserEmail,
       recordId,
       this.type,
@@ -276,7 +273,7 @@ export abstract class OpportunityBase<
     );
 
     if (reasons.length) {
-      trackSetOpportunityStatus({
+      this.rootStore.analyticsStore.trackSetOpportunityStatus({
         clientId: pseudonymizedId,
         justiceInvolvedPersonId: pseudonymizedId,
         status: "DENIED",
@@ -284,13 +281,13 @@ export abstract class OpportunityBase<
         deniedReasons: reasons,
       });
     } else {
-      trackSetOpportunityStatus({
+      this.rootStore.analyticsStore.trackSetOpportunityStatus({
         clientId: pseudonymizedId,
         justiceInvolvedPersonId: pseudonymizedId,
         status: "IN_PROGRESS",
         opportunityType: this.type,
       });
-      trackOpportunityMarkedEligible({
+      this.rootStore.analyticsStore.trackOpportunityMarkedEligible({
         justiceInvolvedPersonId: pseudonymizedId,
         opportunityType: this.type,
       });
@@ -299,7 +296,7 @@ export abstract class OpportunityBase<
 
   async setOtherReasonText(otherReason?: string): Promise<void> {
     if (this.currentUserEmail) {
-      await updateOpportunityDenial(
+      await this.rootStore.firestoreStore.updateOpportunityDenial(
         this.currentUserEmail,
         this.person.recordId,
         {
@@ -311,14 +308,14 @@ export abstract class OpportunityBase<
   }
 
   trackListViewed(): void {
-    trackSurfacedInList({
+    this.rootStore.analyticsStore.trackSurfacedInList({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });
   }
 
   trackPreviewed(): void {
-    trackOpportunityPreviewed({
+    this.rootStore.analyticsStore.trackOpportunityPreviewed({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
     });

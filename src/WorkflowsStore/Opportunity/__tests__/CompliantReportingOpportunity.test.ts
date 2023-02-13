@@ -19,7 +19,7 @@ import { cloneDeep } from "lodash";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
-import { ClientRecord } from "../../../firestore";
+import { ClientRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
 import { DocumentSubscription } from "../../subscriptions";
@@ -41,6 +41,7 @@ import {
 import { rankByReviewStatus } from "../utils";
 import { constructorSpy } from "./testUtils";
 
+jest.mock("firebase/firestore");
 jest.mock("../../subscriptions");
 
 let cr: CompliantReportingOpportunity;
@@ -48,8 +49,6 @@ let client: Client;
 let root: RootStore;
 let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
-
-jest.mock("../../../firestore");
 
 function createTestUnit(clientRecord: ClientRecord) {
   root = new RootStore();
@@ -68,6 +67,7 @@ beforeEach(() => {
   // this lets us spy on observables, e.g. computed getters
   configure({ safeDescriptors: false });
   tk.freeze(new Date(2022, 7, 1));
+  jest.resetAllMocks();
 });
 
 afterEach(() => {
@@ -272,10 +272,10 @@ test("hydrate", () => {
 
 test("fetch CompliantReportingReferral uses recordId", async () => {
   createTestUnit(compliantReportingEligibleClientRecord);
-
   cr.hydrate();
 
   expect(constructorSpy).toHaveBeenCalledWith(
+    root.firestoreStore,
     "compliantReportingReferrals",
     compliantReportingEligibleClientRecord.recordId,
     transformCompliantReportingReferral,

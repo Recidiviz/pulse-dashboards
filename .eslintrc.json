@@ -14,7 +14,14 @@
   "rules": {
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "react/display-name": ["error"],
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "no-restricted-syntax": [
+      "error",
+      {
+        "message": "Do not use Firestore's setDoc directly, use the FirestoreStore.updateDocument method instead.",
+        "selector": "CallExpression[callee.name='setDoc']"
+      }
+    ]
   },
   "settings": {
     "componentWrapperFunctions": ["observer"]

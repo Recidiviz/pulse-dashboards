@@ -107,9 +107,7 @@ export function OpportunityPreviewModal({
   return (
     <DrawerModal
       isOpen={modalIsOpen}
-      onAfterOpen={() => {
-        opportunity?.trackPreviewed();
-      }}
+      onAfterOpen={() => opportunity?.trackPreviewed()}
       onRequestClose={() => setModalIsOpen(false)}
       onAfterClose={() => {
         workflowsStore.updateSelectedPerson(undefined);

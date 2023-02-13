@@ -21,7 +21,6 @@ import * as React from "react";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { updateFormDraftData } from "../../firestore";
 import { FormBase } from "../../WorkflowsStore/Opportunity/Forms/FormBase";
 import { PrintablePageMargin } from "./styles";
 
@@ -168,13 +167,13 @@ function useReactiveInput<
     When the MobX value is updated (via a Firestore subscription or its onChange handler),
     we update the controlled input's state value.
    */
-
+  const { firestoreStore } = useRootStore();
   const fetchFromStore = () => (form.formData[name] as string) || "";
   const [value, setValue] = useState<ReactiveInputValue>(fetchFromStore());
 
   const updateFirestoreRef = useRef(
     debounce((valueToStore: string) => {
-      updateFormDraftData(form, name, valueToStore);
+      firestoreStore.updateFormDraftData(form, name, valueToStore);
     }, REACTIVE_INPUT_UPDATE_DELAY)
   );
 

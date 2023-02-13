@@ -17,13 +17,19 @@
 import { DocumentData } from "@google-cloud/firestore";
 import { doc, DocumentReference, getDoc } from "firebase/firestore";
 
+import FirestoreStore from "../../../FirestoreStore";
+import RootStore from "../../../RootStore";
 import { OpportunityUpdateSubscription } from "../OpportunityUpdateSubscription";
 
 jest.mock("firebase/firestore");
 
 const docMock = doc as jest.MockedFunction<typeof doc>;
 const mockRef = jest.fn() as unknown as DocumentReference;
-
+const firestoreStoreMock = new FirestoreStore({
+  rootStore: {
+    isImpersonating: false,
+  } as unknown as typeof RootStore,
+});
 const getDocMock = getDoc as jest.Mock;
 
 let sub: OpportunityUpdateSubscription<DocumentData>;
@@ -38,6 +44,7 @@ test("dataSource", () => {
   getDocMock.mockResolvedValue({ exists: jest.fn().mockReturnValue(true) });
 
   sub = new OpportunityUpdateSubscription(
+    firestoreStoreMock,
     "record123",
     "client123",
     "compliantReporting"
@@ -60,6 +67,7 @@ test("attempts to migrate legacy data", () => {
   getDocMock.mockResolvedValue({ exists: jest.fn().mockReturnValue(true) });
 
   sub = new OpportunityUpdateSubscription(
+    firestoreStoreMock,
     "record123",
     "client123",
     "compliantReporting"

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentRecord } from "../../firestore";
+import { ResidentRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { Resident } from "../Resident";
 

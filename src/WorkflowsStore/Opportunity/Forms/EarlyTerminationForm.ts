@@ -2,7 +2,6 @@ import { deleteField } from "firebase/firestore";
 import { sortBy } from "lodash";
 import moment from "moment";
 
-import { updateFormDraftData } from "../../../firestore";
 import { pluralize } from "../../../utils";
 import { EarlyTerminationDraftData } from "../EarlyTerminationReferralRecord";
 import { FormBase } from "./FormBase";
@@ -71,11 +70,10 @@ export class EarlyTerminationForm extends FormBase<EarlyTerminationDraftData> {
 
   addDepositionLine(): void {
     const key = `${ADDITIONAL_DEPOSITION_LINES_PREFIX}${+new Date()}`;
-    updateFormDraftData(this, key, "");
+    this.rootStore.firestoreStore.updateFormDraftData(this, key, "");
   }
 
   removeDepositionLine(key: string): void {
-    if (!this.draftData) return;
-    updateFormDraftData(this, key, deleteField());
+    this.rootStore.firestoreStore.updateFormDraftData(this, key, deleteField());
   }
 }

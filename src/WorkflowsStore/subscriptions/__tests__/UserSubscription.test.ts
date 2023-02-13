@@ -49,6 +49,9 @@ beforeEach(() => {
       stateCode: "US_XX",
     },
     user: { email: "test@example.com" },
+    firestoreStore: {
+      db: jest.fn(),
+    },
   } as unknown as RootStore;
   sub = new UserSubscription(rootStoreMock);
 });
@@ -60,9 +63,10 @@ afterEach(() => {
 test("dataSource reflects user auth data", () => {
   sub.subscribe();
 
-  // args may be undefined because of incomplete firestore mocking,
-  // generally we don't care about that in these tests
-  expect(collection).toHaveBeenCalledWith(undefined, "staff");
+  expect(collection).toHaveBeenCalledWith(
+    rootStoreMock.firestoreStore.db,
+    "staff"
+  );
   expect(where).toHaveBeenCalledWith("stateCode", "==", "US_XX");
   expect(where).toHaveBeenCalledWith("email", "==", "test@example.com");
   expect(limit).toHaveBeenCalledWith(1);

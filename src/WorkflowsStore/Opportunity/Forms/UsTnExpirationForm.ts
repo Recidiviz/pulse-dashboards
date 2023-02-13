@@ -16,7 +16,7 @@
 // =============================================================================
 import { compact } from "lodash";
 
-import { SpecialConditionCode } from "../../../firestore";
+import { SpecialConditionCode } from "../../../FirestoreStore";
 import { ParsedSpecialConditionOrString } from "../../Client";
 import { UsTnExpirationOpportunity } from "../UsTnExpirationOpportunity";
 import {

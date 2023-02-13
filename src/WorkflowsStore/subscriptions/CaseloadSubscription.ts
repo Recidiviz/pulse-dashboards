@@ -23,7 +23,7 @@ import {
   where,
 } from "firebase/firestore";
 
-import { CollectionName, collectionNames, db } from "../../firestore";
+import { CollectionName, collectionNames } from "../../FirestoreStore";
 import { WorkflowsStore } from "../WorkflowsStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 
@@ -50,7 +50,7 @@ export class CaseloadSubscription<
   get dataSource(): Query | undefined {
     const {
       selectedOfficerIds,
-      rootStore: { currentTenantId },
+      rootStore: { currentTenantId, firestoreStore },
     } = this.workflowsStore;
 
     if (!currentTenantId || !selectedOfficerIds.length) {
@@ -59,7 +59,7 @@ export class CaseloadSubscription<
 
     const { collectionId, personType } = this;
     return query(
-      collection(db, collectionId),
+      collection(firestoreStore.db, collectionId),
       where("stateCode", "==", currentTenantId),
       where("officerId", "in", selectedOfficerIds)
     ).withConverter({

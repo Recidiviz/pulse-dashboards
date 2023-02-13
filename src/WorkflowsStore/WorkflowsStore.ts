@@ -30,7 +30,6 @@ import {
 } from "mobx";
 import { now } from "mobx-utils";
 
-import { trackCaseloadSearch } from "../analytics";
 import { Hydratable, SystemId } from "../core/models/types";
 import { FilterOption } from "../core/types/filters";
 import filterOptions, {
@@ -42,14 +41,11 @@ import {
   defaultFeatureVariantsActive,
   FeatureVariant,
   FeatureVariantRecord,
-  getClient,
-  getResident,
   ResidentRecord,
   StaffRecord,
-  updateSelectedOfficerIds,
   UserMetadata,
   UserUpdateRecord,
-} from "../firestore";
+} from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
 import { Client, UNKNOWN } from "./Client";
@@ -139,7 +135,7 @@ export class WorkflowsStore implements Hydratable {
         const { selectedOfficerIds } = this.user?.updates ?? {};
         const { isDefaultOfficerSelection } = this.user?.metadata ?? {};
         if (selectedOfficerIds && isDefaultOfficerSelection) {
-          trackCaseloadSearch({
+          this.rootStore.analyticsStore.trackCaseloadSearch({
             officerCount: selectedOfficerIds.length,
             isDefault: true,
           });
@@ -165,7 +161,7 @@ export class WorkflowsStore implements Hydratable {
    */
   hydrate(): void {
     try {
-      const { userStore } = this.rootStore;
+      const { userStore, firestoreStore } = this.rootStore;
       const { user } = userStore;
       const email = user?.email;
 
@@ -180,6 +176,7 @@ export class WorkflowsStore implements Hydratable {
       // so to prevent memory leaks we will not overwrite existing subscription objects
       if (!this.userUpdatesSubscription) {
         this.userUpdatesSubscription = new CollectionDocumentSubscription(
+          firestoreStore,
           "userUpdates",
           email.toLowerCase()
         );
@@ -188,6 +185,7 @@ export class WorkflowsStore implements Hydratable {
 
       if (!this.featureVariantsSubscription) {
         this.featureVariantsSubscription = new CollectionDocumentSubscription(
+          firestoreStore,
           "featureVariants",
           email.toLowerCase()
         );
@@ -206,6 +204,14 @@ export class WorkflowsStore implements Hydratable {
       // error and hydration are mutually exclusive for this class
       !this.error
     );
+  }
+
+  disposeUserProfileSubscriptions(): void {
+    this.userUpdatesSubscription?.unsubscribe();
+    this.featureVariantsSubscription?.unsubscribe();
+
+    this.userUpdatesSubscription = undefined;
+    this.featureVariantsSubscription = undefined;
   }
 
   get isLoading(): boolean | undefined {
@@ -260,8 +266,14 @@ export class WorkflowsStore implements Hydratable {
 
     const personRecord =
       this.activeSystem === "SUPERVISION"
-        ? await getClient(personId, this.rootStore.currentTenantId)
-        : await getResident(personId, this.rootStore.currentTenantId);
+        ? await this.rootStore.firestoreStore.getClient(
+            personId,
+            this.rootStore.currentTenantId
+          )
+        : await this.rootStore.firestoreStore.getResident(
+            personId,
+            this.rootStore.currentTenantId
+          );
     if (personRecord) {
       this.updateCaseload([personRecord]);
     } else {
@@ -303,7 +315,7 @@ export class WorkflowsStore implements Hydratable {
   updateSelectedOfficers(officerIds: string[]): void {
     if (!this.user || !this.rootStore.currentTenantId) return;
 
-    updateSelectedOfficerIds(
+    this.rootStore.firestoreStore.updateSelectedOfficerIds(
       this.user.info.email,
       this.rootStore.currentTenantId,
       officerIds
@@ -496,7 +508,6 @@ export class WorkflowsStore implements Hydratable {
     ) {
       return defaultFeatureVariantsActive;
     }
-
     return configuredFlags.reduce(
       (activeVariants, [variantName, variantInfo]) => {
         if (!variantInfo) return activeVariants;

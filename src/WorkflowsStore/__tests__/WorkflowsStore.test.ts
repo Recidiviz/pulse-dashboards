@@ -19,15 +19,14 @@ import { add } from "date-fns";
 import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
-import { trackCaseloadSearch } from "../../analytics";
-import {
+import FirestoreStore, {
   ClientRecord,
   CombinedUserRecord,
-  getClient,
   ResidentRecord,
   UserUpdateRecord,
-} from "../../firestore";
+} from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
+import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import type { WorkflowsStore } from "..";
 import {
   ineligibleClient,
@@ -46,8 +45,15 @@ import {
 import { Resident } from "../Resident";
 import { dateToTimestamp } from "../utils";
 
-jest.mock("../../analytics");
-jest.mock("../../firestore");
+jest.mock("firebase/firestore", () => {
+  const originalModule = jest.requireActual("firebase/firestore");
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    connectFirestoreEmulator: jest.fn(),
+  };
+});
 jest.mock("../subscriptions");
 jest.mock("../../tenants", () => ({
   __esModule: true,
@@ -74,8 +80,6 @@ jest.mock("../../tenants", () => ({
     },
   },
 }));
-
-const mockGetClient = getClient as jest.MockedFunction<typeof getClient>;
 
 let rootStore: RootStore;
 let workflowsStore: WorkflowsStore;
@@ -132,6 +136,7 @@ beforeEach(() => {
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
   workflowsStore = rootStore.workflowsStore;
+  jest.spyOn(AnalyticsStore.prototype, "trackCaseloadSearch");
   mockAuthedUser();
 });
 
@@ -246,9 +251,8 @@ test("user data reflects subscriptions", async () => {
 
 test("caseload defaults to self", async () => {
   await waitForHydration();
-
   expect(workflowsStore.selectedOfficerIds).toEqual([mockOfficer.info.id]);
-  expect(trackCaseloadSearch).toHaveBeenCalledWith({
+  expect(rootStore.analyticsStore.trackCaseloadSearch).toHaveBeenCalledWith({
     officerCount: 1,
     isDefault: true,
   });
@@ -420,7 +424,8 @@ test("select unfetched client", async () => {
   await waitForHydration();
 
   const idToSelect = "unknownId";
-  mockGetClient.mockResolvedValue({
+
+  jest.spyOn(FirestoreStore.prototype, "getClient").mockResolvedValue({
     ...ineligibleClient,
     pseudonymizedId: idToSelect,
   });
@@ -429,7 +434,7 @@ test("select unfetched client", async () => {
 
   await when(() => workflowsStore.selectedClient !== undefined);
 
-  expect(mockGetClient).toHaveBeenCalledWith(
+  expect(rootStore.firestoreStore.getClient).toHaveBeenCalledWith(
     idToSelect,
     ineligibleClient.stateCode
   );

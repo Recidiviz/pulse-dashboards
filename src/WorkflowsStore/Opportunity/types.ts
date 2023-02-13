@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Hydratable } from "../../core/models/types";
-import { Denial, ExternalRequestUpdate, UpdateLog } from "../../firestore";
+import { Denial, ExternalRequestUpdate, UpdateLog } from "../../FirestoreStore";
 import { TenantId } from "../../RootStore/types";
 import { PartialRecord } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../types";

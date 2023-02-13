@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentRecord } from "../../src/firestore/types";
+import { ResidentRecord } from "../../src/FirestoreStore/types";
 
 export const residentsData: Omit<ResidentRecord, "personType" | "recordId">[] =
   [

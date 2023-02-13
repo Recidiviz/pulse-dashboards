@@ -23,7 +23,7 @@ import { mapValues } from "lodash";
 import { makeObservable, toJS } from "mobx";
 
 import { formatRelativeToNow } from "../../core/utils/timePeriod";
-import { OpportunityUpdateWithForm } from "../../firestore";
+import { OpportunityUpdateWithForm } from "../../FirestoreStore";
 import { formatWorkflowsDate, pluralizeWord } from "../../utils";
 import { Client } from "../Client";
 import { OpportunityValidationError, OTHER_KEY } from "../utils";

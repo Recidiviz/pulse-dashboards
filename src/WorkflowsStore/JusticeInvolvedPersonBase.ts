@@ -30,12 +30,11 @@ import {
   values,
 } from "mobx";
 
-import { trackProfileViewed } from "../analytics";
 import {
   FullName,
   JusticeInvolvedPersonRecord,
   StaffRecord,
-} from "../firestore";
+} from "../FirestoreStore";
 import { RootStore } from "../RootStore";
 import { OpportunityFactory, OpportunityType } from "./Opportunity";
 import {
@@ -208,7 +207,7 @@ export class JusticeInvolvedPersonBase<
   }
 
   trackProfileViewed(): void {
-    trackProfileViewed({
+    this.rootStore.analyticsStore.trackProfileViewed({
       justiceInvolvedPersonId: this.pseudonymizedId,
     });
   }

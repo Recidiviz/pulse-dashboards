@@ -17,20 +17,9 @@
 
 import { configure, runInAction } from "mobx";
 
-import {
-  trackOpportunityMarkedEligible,
-  trackOpportunityPreviewed,
-  trackSetOpportunityStatus,
-  trackSurfacedInList,
-} from "../../../analytics";
-import {
-  CombinedUserRecord,
-  OpportunityUpdate,
-  updateOpportunityCompleted,
-  updateOpportunityDenial,
-  updateOpportunityFirstViewed,
-} from "../../../firestore";
+import { CombinedUserRecord, OpportunityUpdate } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
+import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import { Client } from "../../Client";
 import { DocumentSubscription } from "../../subscriptions";
 import { OTHER_KEY } from "../../utils";
@@ -46,15 +35,7 @@ import {
 import { OpportunityType } from "../types";
 
 jest.mock("../../subscriptions");
-jest.mock("../../../firestore");
-jest.mock("../../../analytics");
-
-const updateOpportunityFirstViewedMock =
-  updateOpportunityFirstViewed as jest.Mock;
-const updateOpportunityCompletedMock = updateOpportunityCompleted as jest.Mock;
-const trackSetOpportunityStatusMock = trackSetOpportunityStatus as jest.Mock;
-const mockUpdateOpportunityDenial = updateOpportunityDenial as jest.Mock;
-const mockUpdateOpportunityCompleted = updateOpportunityCompleted as jest.Mock;
+jest.mock("firebase/firestore");
 
 let opp: OpportunityBase<Client, any>;
 let client: Client;
@@ -145,6 +126,11 @@ beforeEach(() => {
 
   // configure a mock user who is viewing this opportunity
   jest.spyOn(root.workflowsStore, "user", "get").mockReturnValue(mockUser);
+
+  jest.spyOn(AnalyticsStore.prototype, "trackSetOpportunityStatus");
+  jest.spyOn(AnalyticsStore.prototype, "trackSurfacedInList");
+  jest.spyOn(AnalyticsStore.prototype, "trackOpportunityPreviewed");
+  jest.spyOn(AnalyticsStore.prototype, "trackOpportunityMarkedEligible");
   mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
 });
 
@@ -210,13 +196,18 @@ test("review status", () => {
 });
 
 describe("setFirstViewedIfNeeded", () => {
+  beforeEach(() => {
+    jest.spyOn(root.firestoreStore, "updateOpportunityFirstViewed");
+  });
   test("waits for hydration", () => {
     opp.setFirstViewedIfNeeded();
-    expect(updateOpportunityFirstViewedMock).not.toHaveBeenCalled();
+    expect(
+      root.firestoreStore.updateOpportunityFirstViewed
+    ).not.toHaveBeenCalled();
 
     mockHydration();
 
-    expect(updateOpportunityFirstViewedMock).toHaveBeenCalled();
+    expect(root.firestoreStore.updateOpportunityFirstViewed).toHaveBeenCalled();
   });
 
   test("updates Firestore when there are no updates", () => {
@@ -224,7 +215,9 @@ describe("setFirstViewedIfNeeded", () => {
 
     opp.setFirstViewedIfNeeded();
 
-    expect(updateOpportunityFirstViewedMock).toHaveBeenCalledWith(
+    expect(
+      root.firestoreStore.updateOpportunityFirstViewed
+    ).toHaveBeenCalledWith(
       "test@email.gov",
       ineligibleClientRecord.recordId,
       "TEST"
@@ -238,7 +231,9 @@ describe("setFirstViewedIfNeeded", () => {
 
     opp.setFirstViewedIfNeeded();
 
-    expect(updateOpportunityFirstViewedMock).not.toHaveBeenCalled();
+    expect(
+      root.firestoreStore.updateOpportunityFirstViewed
+    ).not.toHaveBeenCalled();
   });
 
   test("does not ignore Recidiviz users", () => {
@@ -248,7 +243,7 @@ describe("setFirstViewedIfNeeded", () => {
 
     opp.setFirstViewedIfNeeded();
 
-    expect(updateOpportunityFirstViewedMock).toHaveBeenCalled();
+    expect(root.firestoreStore.updateOpportunityFirstViewed).toHaveBeenCalled();
   });
 
   test("ignores Recidiviz users in prod", () => {
@@ -260,7 +255,9 @@ describe("setFirstViewedIfNeeded", () => {
 
     opp.setFirstViewedIfNeeded();
 
-    expect(updateOpportunityFirstViewedMock).not.toHaveBeenCalled();
+    expect(
+      root.firestoreStore.updateOpportunityFirstViewed
+    ).not.toHaveBeenCalled();
   });
 });
 
@@ -268,16 +265,19 @@ describe("setCompletedIfEligible", () => {
   beforeEach(() => {
     // configure a mock user who is viewing this opportunity
     jest.spyOn(root.workflowsStore, "user", "get").mockReturnValue(mockUser);
+    jest.spyOn(root.firestoreStore, "updateOpportunityCompleted");
     mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
   });
 
   test("waits for hydration", () => {
     opp.setCompletedIfEligible();
-    expect(updateOpportunityCompletedMock).not.toHaveBeenCalled();
+    expect(
+      root.firestoreStore.updateOpportunityCompleted
+    ).not.toHaveBeenCalled();
 
     mockHydration();
 
-    expect(updateOpportunityCompletedMock).toHaveBeenCalled();
+    expect(root.firestoreStore.updateOpportunityCompleted).toHaveBeenCalled();
   });
 
   test("updates Firestore", () => {
@@ -285,7 +285,7 @@ describe("setCompletedIfEligible", () => {
 
     opp.setCompletedIfEligible();
 
-    expect(updateOpportunityCompletedMock).toHaveBeenCalledWith(
+    expect(root.firestoreStore.updateOpportunityCompleted).toHaveBeenCalledWith(
       "test@email.gov",
       ineligibleClientRecord.recordId,
       "TEST"
@@ -297,7 +297,7 @@ describe("setCompletedIfEligible", () => {
 
     opp.setCompletedIfEligible();
 
-    expect(trackSetOpportunityStatusMock).toHaveBeenCalledWith({
+    expect(root.analyticsStore.trackSetOpportunityStatus).toHaveBeenCalledWith({
       clientId: ineligibleClientRecord.pseudonymizedId,
       justiceInvolvedPersonId: ineligibleClientRecord.pseudonymizedId,
       opportunityType: "TEST",
@@ -310,7 +310,9 @@ describe("setCompletedIfEligible", () => {
 
     opp.setCompletedIfEligible();
 
-    expect(updateOpportunityCompletedMock).not.toHaveBeenCalled();
+    expect(
+      root.firestoreStore.updateOpportunityCompleted
+    ).not.toHaveBeenCalled();
   });
 
   test("does not update Firestore if workflow is already completed", () => {
@@ -318,7 +320,9 @@ describe("setCompletedIfEligible", () => {
 
     opp.setCompletedIfEligible();
 
-    expect(updateOpportunityCompletedMock).not.toHaveBeenCalled();
+    expect(
+      root.firestoreStore.updateOpportunityCompleted
+    ).not.toHaveBeenCalled();
   });
 
   test("does not track event if client is ineligible", () => {
@@ -326,7 +330,9 @@ describe("setCompletedIfEligible", () => {
 
     opp.setCompletedIfEligible();
 
-    expect(trackSetOpportunityStatusMock).not.toHaveBeenCalled();
+    expect(
+      root.analyticsStore.trackSetOpportunityStatus
+    ).not.toHaveBeenCalled();
   });
 
   test("does not track event if workflow is already completed", () => {
@@ -334,7 +340,9 @@ describe("setCompletedIfEligible", () => {
 
     opp.setCompletedIfEligible();
 
-    expect(trackSetOpportunityStatusMock).not.toHaveBeenCalled();
+    expect(
+      root.analyticsStore.trackSetOpportunityStatus
+    ).not.toHaveBeenCalled();
   });
 });
 
@@ -350,8 +358,8 @@ test("form updates override prefilled data", () => {
 
 describe("setDenialReasons", () => {
   beforeEach(() => {
-    mockUpdateOpportunityDenial.mockResolvedValue(undefined);
-    mockUpdateOpportunityCompleted.mockResolvedValue(undefined);
+    jest.spyOn(root.firestoreStore, "updateOpportunityDenial");
+    jest.spyOn(root.firestoreStore, "updateOpportunityCompleted");
   });
 
   test("updates reasons", async () => {
@@ -359,7 +367,7 @@ describe("setDenialReasons", () => {
 
     await opp.setDenialReasons(reasons);
 
-    expect(updateOpportunityDenial).toHaveBeenCalledWith(
+    expect(root.firestoreStore.updateOpportunityDenial).toHaveBeenCalledWith(
       mockUser.info.email,
       client.recordId,
       { reasons },
@@ -372,7 +380,7 @@ describe("setDenialReasons", () => {
     const reasons = ["test1", "test2"];
 
     await opp.setDenialReasons(reasons);
-    expect(updateOpportunityCompleted).toHaveBeenCalledWith(
+    expect(root.firestoreStore.updateOpportunityCompleted).toHaveBeenCalledWith(
       mockUser.info.email,
       client.recordId,
       opp.type,
@@ -385,7 +393,7 @@ describe("setDenialReasons", () => {
 
     await opp.setDenialReasons(reasons);
 
-    expect(mockUpdateOpportunityDenial).toHaveBeenCalledWith(
+    expect(root.firestoreStore.updateOpportunityDenial).toHaveBeenCalledWith(
       mockUser.info.email,
       client.recordId,
       { reasons },
@@ -394,67 +402,73 @@ describe("setDenialReasons", () => {
     );
   });
 
+  test("setOtherReasonText", async () => {
+    mockHydration();
+
+    const otherReason = "some other reason";
+    await opp.setOtherReasonText(otherReason);
+
+    expect(root.firestoreStore.updateOpportunityDenial).toHaveBeenCalledWith(
+      mockUser.info.email,
+      client.recordId,
+      { otherReason },
+      opp.type
+    );
+  });
+});
+
+describe("tracking", () => {
+  test("setting no reasons undoes a denial", async () => {
+    const reasons: string[] = [];
+
+    await opp.setDenialReasons(reasons);
+
+    expect(root.analyticsStore.trackSetOpportunityStatus).toHaveBeenCalledWith({
+      clientId: client.pseudonymizedId,
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      status: "IN_PROGRESS",
+      opportunityType: opp.type,
+    });
+    expect(
+      root.analyticsStore.trackOpportunityMarkedEligible
+    ).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: opp.type,
+    });
+  });
+
   test("tracks denial status", async () => {
     const reasons = ["test1", "test2"];
 
     await opp.setDenialReasons(reasons);
 
-    expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
+    expect(root.analyticsStore.trackSetOpportunityStatus).toHaveBeenCalledWith({
       clientId: client.pseudonymizedId,
       justiceInvolvedPersonId: client.pseudonymizedId,
       status: "DENIED",
       opportunityType: opp.type,
       deniedReasons: reasons,
     });
-    expect(trackOpportunityMarkedEligible).not.toHaveBeenCalled();
+    expect(
+      root.analyticsStore.trackOpportunityMarkedEligible
+    ).not.toHaveBeenCalled();
   });
 
-  test("setting no reasons undoes a denial", async () => {
-    const reasons: string[] = [];
+  test("list view tracking", () => {
+    opp.trackListViewed();
 
-    await opp.setDenialReasons(reasons);
-
-    expect(trackSetOpportunityStatus).toHaveBeenCalledWith({
-      clientId: client.pseudonymizedId,
-      justiceInvolvedPersonId: client.pseudonymizedId,
-      status: "IN_PROGRESS",
-      opportunityType: opp.type,
-    });
-    expect(trackOpportunityMarkedEligible).toHaveBeenCalledWith({
+    expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
     });
   });
-});
 
-test("setOtherReasonText", async () => {
-  mockHydration();
+  test("preview tracking", async () => {
+    opp.trackPreviewed();
 
-  const otherReason = "some other reason";
-  await opp.setOtherReasonText(otherReason);
-
-  expect(updateOpportunityDenial).toHaveBeenCalledWith(
-    mockUser.info.email,
-    client.recordId,
-    { otherReason },
-    opp.type
-  );
-});
-
-test("list view tracking", () => {
-  opp.trackListViewed();
-
-  expect(trackSurfacedInList).toHaveBeenCalledWith({
-    justiceInvolvedPersonId: client.pseudonymizedId,
-    opportunityType: opp.type,
-  });
-});
-
-test("preview tracking", async () => {
-  opp.trackPreviewed();
-
-  expect(trackOpportunityPreviewed).toHaveBeenCalledWith({
-    justiceInvolvedPersonId: client.pseudonymizedId,
-    opportunityType: opp.type,
+    expect(root.analyticsStore.trackOpportunityPreviewed).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: opp.type,
+    });
   });
 });

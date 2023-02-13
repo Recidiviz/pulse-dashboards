@@ -37,9 +37,8 @@ import { IndicatorProps } from "react-select/src/components/indicators";
 import { MultiValueRemoveProps } from "react-select/src/components/MultiValue";
 import styled from "styled-components/macro";
 
-import { trackCaseloadSearch } from "../../analytics";
 import { useRootStore } from "../../components/StoreProvider";
-import { StaffRecord } from "../../firestore";
+import { StaffRecord } from "../../FirestoreStore";
 
 // This is a query limitation imposed by Firestore
 const SELECTED_OFFICER_LIMIT = 10;
@@ -149,7 +148,7 @@ type CaseloadSelectProps = {
 export const CaseloadSelect = observer(function CaseloadSelect({
   hideIndicators = false,
 }: CaseloadSelectProps) {
-  const { workflowsStore } = useRootStore();
+  const { workflowsStore, analyticsStore } = useRootStore();
 
   const { availableOfficers, selectedOfficers, workflowsOfficerTitle } =
     workflowsStore;
@@ -182,7 +181,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
           workflowsStore.updateSelectedOfficers(
             newValue.map((item) => item.value)
           );
-          trackCaseloadSearch({
+          analyticsStore.trackCaseloadSearch({
             officerCount: newValue.length,
             isDefault: false,
           });

@@ -28,7 +28,6 @@ import { useEffect, useState } from "react";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
 
-import { trackReferralFormCopiedToClipboard } from "../../analytics";
 import { useRootStore } from "../../components/StoreProvider";
 import { formatDate } from "../../utils";
 import {
@@ -64,7 +63,7 @@ const SubmittedText = styled(Sans14)`
 
 const WorkflowsUsTnExpirationForm: React.FC = observer(
   function WorkflowsUsTnExpirationForm() {
-    const { workflowsStore } = useRootStore();
+    const { workflowsStore, analyticsStore } = useRootStore();
     const opportunity =
       workflowsStore?.selectedClient?.verifiedOpportunities?.usTnExpiration;
     const [selectedFormSection, setSelectedFormSection] = useState(0);
@@ -115,7 +114,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
 
     const markCompleted = () => {
       opportunity.setCompletedIfEligible();
-      trackReferralFormCopiedToClipboard({
+      analyticsStore.trackReferralFormCopiedToClipboard({
         justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
         opportunityType: opportunity.type,
       });

@@ -23,7 +23,7 @@ import {
   runInAction,
 } from "mobx";
 
-import { JusticeInvolvedPersonRecord } from "../../firestore";
+import { JusticeInvolvedPersonRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
 import { OpportunityFactory, OpportunityType } from "../Opportunity";

@@ -18,7 +18,7 @@
 import { collection, query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
 
-import { ClientRecord } from "../../../firestore";
+import { ClientRecord } from "../../../FirestoreStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { CaseloadSubscription } from "../CaseloadSubscription";
 
@@ -39,8 +39,13 @@ beforeEach(() => {
 
   workflowsStoreMock = observable({
     selectedOfficerIds: ["TEST1"],
-    rootStore: { currentTenantId: "US_ND" },
-  }) as WorkflowsStore;
+    rootStore: {
+      currentTenantId: "US_ND",
+      firestoreStore: {
+        db: jest.fn(),
+      },
+    },
+  }) as unknown as WorkflowsStore;
   sub = new CaseloadSubscription<ClientRecord>(
     workflowsStoreMock,
     "clients",
@@ -51,9 +56,10 @@ beforeEach(() => {
 test("dataSource reflects observables", () => {
   sub.subscribe();
 
-  // args may be undefined because of incomplete firestore mocking,
-  // generally we don't care about that in these tests
-  expect(collectionMock).toHaveBeenCalledWith(undefined, "clients");
+  expect(collectionMock).toHaveBeenCalledWith(
+    workflowsStoreMock.rootStore.firestoreStore.db,
+    "clients"
+  );
   expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
   expect(whereMock).toHaveBeenCalledWith("officerId", "in", ["TEST1"]);
   expect(queryMock).toHaveBeenCalled();

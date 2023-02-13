@@ -26,6 +26,28 @@
     padding-top: 2rem;
     max-width: 100%;
   }
+  &__header-container {
+    display: flex;
+    flex-flow: row wrap;
+    border-bottom: 1px solid $slate-20;
+    margin-bottom: 2rem;
+    justify-content: space-between;
+  }
+  &__title-container {
+    display: flex;
+    flex-flow: column nowrap;
+  }
+  &__impersonation {
+    margin-bottom: 2rem;
+  }
+  &__impersonation__submit {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+  }
+  &__impersonation__StateSelector {
+    width: 100%;
+  }
   &__title {
     @include serif-34;
     color: $pine-3;
@@ -40,9 +62,6 @@
     color: $slate-80;
     margin-top: 0 !important;
     padding-bottom: 2rem;
-    border-bottom: 1px solid $slate-20;
-    margin-bottom: 2rem;
-    width: 100%;
   }
   &__button {
     // && trick to increase specificity

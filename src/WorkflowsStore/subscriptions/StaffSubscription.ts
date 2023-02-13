@@ -17,7 +17,7 @@
 
 import { collection, Query, query, where } from "firebase/firestore";
 
-import { collectionNames, db, StaffRecord } from "../../firestore";
+import { collectionNames, StaffRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 
@@ -45,6 +45,9 @@ export class StaffSubscription extends FirestoreQuerySubscription<StaffRecord> {
       constraints.push(where("district", "==", caseloadDistrict));
     }
 
-    return query(collection(db, collectionNames.staff), ...constraints);
+    return query(
+      collection(this.rootStore.firestoreStore.db, collectionNames.staff),
+      ...constraints
+    );
   }
 }

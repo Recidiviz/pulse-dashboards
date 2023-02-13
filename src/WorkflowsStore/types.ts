@@ -20,7 +20,7 @@ import {
   FullName,
   JusticeInvolvedPersonRecord,
   ResidentRecord,
-} from "../firestore";
+} from "../FirestoreStore";
 import { Expect, Extends } from "../utils/typeUtils";
 import { Client } from "./Client";
 import {

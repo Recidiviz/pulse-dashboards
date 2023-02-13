@@ -322,6 +322,7 @@ async function getImpersonatedUserRestrictions(req, res) {
 }
 
 module.exports = {
+  respondWithForbidden,
   getImpersonatedUserRestrictions,
   offlineUser,
   newRevocations,

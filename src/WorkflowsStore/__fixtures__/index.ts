@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord, CombinedUserRecord, StaffRecord } from "../../firestore";
+import {
+  ClientRecord,
+  CombinedUserRecord,
+  StaffRecord,
+} from "../../FirestoreStore";
 import { SupervisionOpportunityType } from "../Opportunity";
 import { dateToTimestamp } from "../utils";
 

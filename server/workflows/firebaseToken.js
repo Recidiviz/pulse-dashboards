@@ -20,6 +20,7 @@ const fs = require("fs");
 const { fetchOfflineUser } = require("../core");
 const { getAppMetadata } = require("../utils/getAppMetadata");
 const { isOfflineMode } = require("../utils/isOfflineMode");
+const { respondWithForbidden } = require("../routes/api");
 
 const { METADATA_NAMESPACE } = process.env;
 
@@ -39,18 +40,23 @@ function getFirebaseToken(impersonateUser = false) {
   return async function (req, res) {
     let uid;
     let stateCode;
+    const appMetadata = getAppMetadata(req);
 
     if (isOfflineMode) {
       const user = fetchOfflineUser({});
       stateCode = getAppMetadata({ user }).state_code;
       uid = user.email;
     } else if (impersonateUser) {
+      if (appMetadata.state_code.toLowerCase() !== "recidiviz") {
+        respondWithForbidden(res);
+        return;
+      }
       const { impersonatedEmail, impersonatedStateCode } = req.query;
       uid = impersonatedEmail;
       stateCode = impersonatedStateCode;
     } else {
       uid = req.user[`${METADATA_NAMESPACE}email_address`];
-      stateCode = getAppMetadata(req).state_code;
+      stateCode = appMetadata.state_code;
     }
 
     if (!uid) {
@@ -64,7 +70,7 @@ function getFirebaseToken(impersonateUser = false) {
     stateCode = stateCode.toUpperCase();
     const firebaseToken = await firebaseAdmin
       .auth()
-      .createCustomToken(uid, { stateCode });
+      .createCustomToken(uid, { stateCode, impersonator: impersonateUser });
 
     res.json({ firebaseToken });
   };

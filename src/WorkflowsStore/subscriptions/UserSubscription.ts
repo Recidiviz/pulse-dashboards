@@ -28,11 +28,10 @@ import { computed, makeObservable, override } from "mobx";
 
 import {
   collectionNames,
-  db,
   isUserRecord,
   StaffRecord,
   UserRecord,
-} from "../../firestore";
+} from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
@@ -68,18 +67,19 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
 
   get dataSource(): Query<DocumentData> | undefined {
     const {
-      userStore: { stateCode },
+      userStore: { stateCode, userIsLoading },
       currentTenantId,
       user,
+      firestoreStore,
     } = this.rootStore;
     const email = user?.email;
     // this should not happen if the user is authorized
-    if (!email) return;
+    if (!email || userIsLoading) return;
     // only RECIDIVIZ users can cross state boundaries
     if (stateCode !== currentTenantId && stateCode !== "RECIDIVIZ") return;
 
     return query(
-      collection(db, collectionNames.staff),
+      collection(firestoreStore.db, collectionNames.staff),
       where("email", "==", email.toLowerCase()),
       where("stateCode", "==", currentTenantId),
       limit(1)

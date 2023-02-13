@@ -26,7 +26,7 @@ import {
 } from "../utils";
 
 jest.mock("../../subscriptions");
-jest.mock("../../../firestore");
+jest.mock("firebase/firestore");
 jest.mock("../Forms/FormBase");
 
 let opp1: Opportunity;

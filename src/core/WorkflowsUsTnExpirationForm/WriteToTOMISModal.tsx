@@ -34,8 +34,6 @@ import { useState } from "react";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
 
-import { trackReferralFormCopiedToClipboard } from "../../analytics";
-import { updateUsTnExpirationContactNoteSubmitted } from "../../firestore/firestore";
 import { UsTnExpirationOpportunity } from "../../WorkflowsStore";
 import {
   PagePreview,
@@ -138,7 +136,10 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   opportunity,
 }: writeToTOMISModalProps) {
   const [pageNumberSelected, setPageNumberSelected] = useState(0);
-  const { person } = opportunity;
+  const {
+    person,
+    rootStore: { firestoreStore, analyticsStore },
+  } = opportunity;
 
   const [isCopied, copyToClipboard] = useClipboard(
     paginatedNote[pageNumberSelected].join("\n"),
@@ -149,7 +150,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
 
   const markCompleted = () => {
     opportunity.setCompletedIfEligible();
-    trackReferralFormCopiedToClipboard({
+    analyticsStore.trackReferralFormCopiedToClipboard({
       justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
       opportunityType: opportunity.type,
     });
@@ -189,7 +190,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
       }),
     };
 
-    updateUsTnExpirationContactNoteSubmitted(
+    firestoreStore.updateUsTnExpirationContactNoteSubmitted(
       opportunity,
       person.recordId,
       contactNoteObj,

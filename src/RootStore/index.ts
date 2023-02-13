@@ -21,13 +21,14 @@ import { computed, configure, makeObservable, onReactionError } from "mobx";
 import demoAuthConfig from "../auth_config_demo.json";
 import devAuthConfig from "../auth_config_dev.json";
 import productionAuthConfig from "../auth_config_production.json";
+import FirestoreStore from "../FirestoreStore";
 import { WorkflowsStore } from "../WorkflowsStore";
+import AnalyticsStore from "./AnalyticsStore";
 import APIStore from "./APIStore";
 import PageStore from "./PageStore";
 import TenantStore from "./TenantStore";
 import { TenantId } from "./types";
 import UserStore from "./UserStore";
-
 /**
  * Returns the auth settings configured for the current environment, if any.
  */
@@ -89,9 +90,14 @@ export class RootStore {
 
   apiStore: APIStore;
 
+  analyticsStore: AnalyticsStore;
+
+  firestoreStore: FirestoreStore;
+
   constructor() {
     makeObservable(this, {
       currentTenantId: computed,
+      isImpersonating: computed,
       user: computed,
     });
 
@@ -107,6 +113,10 @@ export class RootStore {
     this.workflowsStore = new WorkflowsStore({ rootStore: this });
 
     this.apiStore = new APIStore(this.userStore);
+
+    this.analyticsStore = new AnalyticsStore({ rootStore: this });
+
+    this.firestoreStore = new FirestoreStore({ rootStore: this });
   }
 
   get currentTenantId(): TenantId | undefined {
@@ -115,6 +125,10 @@ export class RootStore {
 
   get user(): User | undefined {
     return this.userStore.user;
+  }
+
+  get isImpersonating(): boolean {
+    return this.userStore.isImpersonating;
   }
 
   get availableStateCodes(): string[] {

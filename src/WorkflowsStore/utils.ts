@@ -18,7 +18,7 @@
 import { addDays, differenceInDays, parseISO } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 
-import { StaffRecord } from "../firestore/types";
+import { StaffRecord } from "../FirestoreStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
 
 export function dateToTimestamp(isodate: string): Timestamp {

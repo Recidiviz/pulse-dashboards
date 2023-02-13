@@ -17,7 +17,7 @@
 import { parseISO } from "date-fns";
 import { Required as RequireKeys } from "utility-types";
 
-import { ClientRecord, ResidentRecord } from "../../../firestore";
+import { ClientRecord, ResidentRecord } from "../../../FirestoreStore";
 import { dateToTimestamp } from "../../utils";
 import { SupervisionOpportunityType } from "..";
 import { CompliantReportingReferralRecord } from "../CompliantReportingReferralRecord";

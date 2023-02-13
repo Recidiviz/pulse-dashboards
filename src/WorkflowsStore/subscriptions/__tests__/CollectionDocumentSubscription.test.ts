@@ -17,10 +17,15 @@
 import { DocumentData } from "@google-cloud/firestore";
 import { doc, DocumentReference } from "firebase/firestore";
 
+import FirestoreStore from "../../../FirestoreStore";
+import { RootStore } from "../../../RootStore";
 import { CollectionDocumentSubscription } from "../CollectionDocumentSubscription";
 
 jest.mock("firebase/firestore");
 
+const firestoreStoreMock = new FirestoreStore({
+  rootStore: jest.fn() as unknown as RootStore,
+});
 const docMock = doc as jest.MockedFunction<typeof doc>;
 const mockRef = jest.fn() as unknown as DocumentReference;
 
@@ -29,6 +34,7 @@ let sub: CollectionDocumentSubscription<DocumentData>;
 beforeEach(() => {
   docMock.mockReturnValue(mockRef);
   sub = new CollectionDocumentSubscription(
+    firestoreStoreMock,
     "compliantReportingReferrals",
     "abc123"
   );

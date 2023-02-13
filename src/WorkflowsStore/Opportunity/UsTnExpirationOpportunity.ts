@@ -24,7 +24,7 @@ import {
   ExternalSystemRequestStatus,
   UsTnContactNote,
   UsTnExpirationOpportunityUpdate,
-} from "../../firestore";
+} from "../../FirestoreStore";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";

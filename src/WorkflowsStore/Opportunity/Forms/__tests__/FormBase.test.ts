@@ -17,16 +17,12 @@
 
 import { configure } from "mobx";
 
-import {
-  trackReferralFormDownloaded,
-  trackReferralFormViewed,
-} from "../../../../analytics";
 import { RootStore } from "../../../../RootStore";
+import AnalyticsStore from "../../../../RootStore/AnalyticsStore";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import { FormBase } from "../FormBase";
 
-jest.mock("../../../../analytics");
 jest.mock("../../../subscriptions");
 
 let rootStore: RootStore;
@@ -49,6 +45,8 @@ beforeEach(() => {
   jest.resetAllMocks();
   configure({ safeDescriptors: false });
   createTestUnit();
+  jest.spyOn(AnalyticsStore.prototype, "trackReferralFormDownloaded");
+  jest.spyOn(AnalyticsStore.prototype, "trackReferralFormViewed");
 });
 
 afterEach(() => {
@@ -58,10 +56,12 @@ afterEach(() => {
 test("form view tracking", () => {
   form.trackViewed();
 
-  expect(trackReferralFormViewed).toHaveBeenCalledWith({
-    justiceInvolvedPersonId: client.pseudonymizedId,
-    opportunityType: "LSU",
-  });
+  expect(rootStore.analyticsStore.trackReferralFormViewed).toHaveBeenCalledWith(
+    {
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: "LSU",
+    }
+  );
 });
 
 describe("form downloading", () => {
@@ -82,7 +82,9 @@ describe("form downloading", () => {
 
   test("sends tracking event", () => {
     form.markDownloading();
-    expect(trackReferralFormDownloaded).toHaveBeenCalledWith({
+    expect(
+      rootStore.analyticsStore.trackReferralFormDownloaded
+    ).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: form.type,
     });
