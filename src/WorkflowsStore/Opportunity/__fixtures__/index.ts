@@ -87,6 +87,29 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
     lastSpecialConditionsNote: parseISO("2022-03-15"),
   };
 
+export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<CompliantReportingReferralRecord> =
+  {
+    // Required fields
+    eligibleLevelStart: parseISO("2019-12-20"),
+    mostRecentArrestCheck: parseISO("2022-05-28"),
+    drugScreensPastYear: [{ result: "DRUN", date: parseISO("2022-01-04") }],
+    sanctionsPastYear: [],
+    lifetimeOffensesExpired: [],
+
+    // Eligible with discretion: Prior offenses and lifetime offenses expired less than 10 years ago
+    pastOffenses: ["EXAMPLE PAST"],
+    offenseTypeEligibility: "2",
+
+    // Eligible with discretion: Previous zero-tolerance codes
+    eligibilityCategory: "c3",
+    zeroToleranceCodes: [
+      { contactNoteDate: parseISO("2022-06-01"), contactNoteType: "ZTVR" },
+    ],
+
+    // Eligible with discretion: Missing sentence information
+    currentOffenses: [],
+  };
+
 export const compliantReportingAlmostEligibleCriteria: Required<
   NonNullable<CompliantReportingReferralRecord["almostEligibleCriteria"]>
 > = {

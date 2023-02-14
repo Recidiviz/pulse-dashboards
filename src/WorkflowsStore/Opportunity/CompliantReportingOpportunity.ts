@@ -299,6 +299,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       specialConditionsFlag,
       specialConditionsTerminatedDate,
       zeroToleranceCodes,
+      offenseTypeEligibility,
     } = this.record;
     const { requirementAlmostMetMap } = this;
 
@@ -446,7 +447,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       tooltip: CRITERIA.lifetimeOffenses.tooltip,
     });
 
-    if (eligibilityCategory === "c2" && pastOffenses.length) {
+    if (offenseTypeEligibility === "2" && pastOffenses.length) {
       requirements.push({
         text: `Eligible with discretion: Prior offenses and lifetime offenses
         expired less than 10 years ago: ${pastOffenses.join("; ")}`,
@@ -466,11 +467,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       });
     }
 
-    if (
-      eligibilityCategory === "c3" &&
-      currentOffenses.length === 0 &&
-      pastOffenses.length === 0
-    ) {
+    if (eligibilityCategory === "c3" && currentOffenses.length === 0) {
       requirements.push({
         text: "Eligible with discretion: Missing sentence information",
         tooltip: CRITERIA.missingSentences.tooltip,

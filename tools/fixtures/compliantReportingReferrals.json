@@ -110,7 +110,7 @@
     "sanctionsPastYear": ["IPDS"],
     "mostRecentArrestCheck": "2022-01-03",
     "finesFeesEligible": "regular_payments",
-    "pastOffenses": [],
+    "pastOffenses": ["BURGLARY-AUTO"],
     "zeroToleranceCodes": [
       {
         "contactNoteType": "ZTVR",
@@ -179,7 +179,8 @@
     "specialConditionsProgrammingVictimImpactCompletionDate": null,
     "specialConditionsProgrammingFsw": null,
     "specialConditionsProgrammingFswCurrent": null,
-    "specialConditionsProgrammingFswCompletionDate": null
+    "specialConditionsProgrammingFswCompletionDate": null,
+    "offenseTypeEligibility": "2"
   },
   {
     "stateCode": "US_TN",

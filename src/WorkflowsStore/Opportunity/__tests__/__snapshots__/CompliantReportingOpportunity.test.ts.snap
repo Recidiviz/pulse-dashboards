@@ -1,5 +1,63 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`fully eligible eligible with discretion 1`] = `
+Array [
+  Object {
+    "text": "Currently on medium supervision level",
+    "tooltip": "Policy requirement: Currently on medium or minimum supervision.",
+  },
+  Object {
+    "text": "On medium supervision for 2 years",
+    "tooltip": "Policy requirement: On minimum supervision level for 1 year or medium level for 18 months.",
+  },
+  Object {
+    "text": "Negative arrest check on May 28, 2022",
+    "tooltip": "Policy requirement: No arrests in the last 1 year.",
+  },
+  Object {
+    "text": "No sanctions in the past year",
+    "tooltip": "Policy requirement: No sanctions higher than Level 1 in the last 1 year.",
+  },
+  Object {
+    "text": "Fee balance for current sentence less than $2,000 and has made payments on three consecutive months",
+    "tooltip": undefined,
+  },
+  Object {
+    "text": "Passed drug screens in last 12 months: DRUN on Jan 4, 2022",
+    "tooltip": "Policy requirement: Passed drug screen in the last 12 months for non-drug offenders. Passed 2 drug screens in last 12 months for drug offenders, most recent is negative.",
+  },
+  Object {
+    "text": "Special conditions up to date",
+    "tooltip": "Policy requirement: Special conditions are current.",
+  },
+  Object {
+    "text": "No DECF, DEDF, DEDU, DEIO, DEIR codes in the last 3 months",
+    "tooltip": "Policy requirement: Has reported as instructed without incident unless excused and documented by the officer.",
+  },
+  Object {
+    "text": "Valid current offenses: None",
+    "tooltip": "Policy requirement: Offense type not domestic abuse or sexual assault, DUI in past 5 years, not crime against person that resulted in physical bodily harm, not crime where victim was under 18.",
+  },
+  Object {
+    "text": "No lifetime offenses",
+    "tooltip": "Policy requirement: If the offender has a previous conviction for one of the crimes listed in Section VI.(A)(3) but is not currently on supervision for one of those crimes, then the  DD shall make a case by case determination as to whether an offender is suitable for CR. The DD review process is waived if the expiration date is more than ten years old.",
+  },
+  Object {
+    "text": "Eligible with discretion: Prior offenses and lifetime offenses
+        expired less than 10 years ago: EXAMPLE PAST",
+    "tooltip": "If the offender has a previous conviction for one of the crimes listed in Section VI.(A)(3) but is not currently on supervision for one of those crimes, then the  DD shall make a case by case determination as to whether an offender is suitable for CR. The DD review process is waived if the expiration date is more than ten years old.",
+  },
+  Object {
+    "text": "Eligible with discretion: Previous zero-tolerance codes ZTVR on Jun 1, 2022",
+    "tooltip": "If the person has received a zero tolerance code since starting their latest supervision, they may still be eligible for compliant reporting.",
+  },
+  Object {
+    "text": "Eligible with discretion: Missing sentence information",
+    "tooltip": "If the person is missing sentencing information, they may still be eligible for compliant reporting.",
+  },
+]
+`;
+
 exports[`fully eligible requirements met 1`] = `
 Array [
   Object {

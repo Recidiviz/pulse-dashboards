@@ -29,6 +29,7 @@ import {
   compliantReportingAlmostEligibleCriteria,
   compliantReportingAlmostEligibleReferralRecord,
   compliantReportingEligibleClientRecord,
+  compliantReportingEligibleWithDiscretionReferralRecord,
   compliantReportingReferralRecord,
 } from "../__fixtures__";
 import type { CompliantReportingOpportunity } from "../CompliantReportingOpportunity";
@@ -103,6 +104,11 @@ describe("fully eligible", () => {
 
   test("requirements met", async () => {
     referralSub.data = compliantReportingReferralRecord;
+    expect(cr.requirementsMet).toMatchSnapshot();
+  });
+
+  test("eligible with discretion", async () => {
+    referralSub.data = compliantReportingEligibleWithDiscretionReferralRecord;
     expect(cr.requirementsMet).toMatchSnapshot();
   });
 

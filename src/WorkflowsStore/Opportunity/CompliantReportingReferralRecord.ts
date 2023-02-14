@@ -49,6 +49,7 @@ export type CompliantReportingReferralRecord = {
   specialConditionsTerminatedDate?: Date | undefined;
   supervisionFeeExemption?: string;
   zeroToleranceCodes: { contactNoteType: string; contactNoteDate: Date }[];
+  offenseTypeEligibility: string;
 };
 export type CompliantReportingFinesFeesEligible =
   | "low_balance"
@@ -206,6 +207,7 @@ export const transformCompliantReportingReferral: TransformFunction<
     specialConditionsTerminatedDate,
     supervisionFeeExemption,
     zeroToleranceCodes,
+    offenseTypeEligibility,
     ...data
   } = record as RawCompliantReportingReferralRecord;
 
@@ -240,6 +242,7 @@ export const transformCompliantReportingReferral: TransformFunction<
         contactNoteType,
         contactNoteDate: new Date(contactNoteDate),
       })) ?? [],
+    offenseTypeEligibility,
   };
 
   if (almostEligibleCriteria) {
