@@ -89,12 +89,12 @@ export const UsTnExpirationFormFields: WebFormFieldProps[] = [
     label: "Medical or psychological history",
     textarea: true,
   },
-  { name: "gangAffiliation", label: "Gang Affiliation" },
   {
     name: "victimInformation",
     label: "Victim's name and any concerns for future contact",
     textarea: true,
   },
+  { name: "gangAffiliation", label: "Gang affiliation" },
   {
     name: "votersRightsInformation",
     label: "Voter rights restoration",
