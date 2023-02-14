@@ -53,9 +53,10 @@ function formatSpecialConditions(
   const specialConditionsText = [];
   if (latestSpe) {
     specialConditionsText.push(
-      `Latest SPE Contact Code and Comment: ${latestSpe.contactType} - ${
-        latestSpe.contactComment ?? ""
-      }`
+      defaultFormValueJoiner(
+        displayString(latestSpe.contactType, "Latest SPE code:"),
+        displayString(latestSpe.contactComment, "Comment: ")
+      )
     );
   }
 
@@ -113,12 +114,12 @@ export class UsTnExpirationForm extends FormBase<
         convictionCounties: displayList(form.convictionCounties),
         docketNumbers: displayList(form.docketNumbers),
         sexOffenseInformation: defaultFormValueJoiner(
+          displayList(form.sexOffenses),
           form.latestPse
             ? `${displayString(
                 form.latestPse.contactType
               )} on ${formatFormValueDateMMDDYYYYY(form.latestPse.contactDate)}`
-            : "",
-          displayList(form.sexOffenses, "Offenses:")
+            : ""
         ),
         address: person.address,
         employmentInformation: defaultFormValueJoiner(
@@ -131,7 +132,7 @@ export class UsTnExpirationForm extends FormBase<
         feeHistory: defaultFormValueJoiner(
           displayString(
             form.latestFee?.contactType,
-            "Latest fee conatct code:"
+            "Latest fee contact code:"
           ),
           person.currentBalance
             ? `Current balance: $${person.currentBalance}`

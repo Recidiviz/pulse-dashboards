@@ -26,10 +26,12 @@ import { PrintablePageMargin } from "./styles";
 
 export const REACTIVE_INPUT_UPDATE_DELAY = 2000;
 
+export const DEFAULT_ANIMATION_DURATION = 1750;
+
 export const useAnimatedValue = (
   input: MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>,
   value?: string,
-  duration = 1750,
+  duration = DEFAULT_ANIMATION_DURATION,
   delay = 250
 ): boolean => {
   const [mountedAt, setMountedAt] = useState<number>(+new Date() + delay);

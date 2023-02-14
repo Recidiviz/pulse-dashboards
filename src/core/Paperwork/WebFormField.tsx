@@ -30,7 +30,11 @@ import { useEffect, useRef } from "react";
 import styled from "styled-components/macro";
 
 import { useOpportunityFormContext } from "./OpportunityFormContext";
-import { useAnimatedValue, useReactiveInput } from "./utils";
+import {
+  DEFAULT_ANIMATION_DURATION,
+  useAnimatedValue,
+  useReactiveInput,
+} from "./utils";
 
 const ThemeContainer = styled.div`
   --mdc-typography-subtitle1-font-family: "Public Sans";
@@ -69,7 +73,11 @@ const WebFormField: React.FC<WebFormFieldProps> = ({
     HTMLInputElement | HTMLTextAreaElement
   >(name, opportunityForm);
 
-  useAnimatedValue(inputRef, value);
+  const duration = !value
+    ? DEFAULT_ANIMATION_DURATION
+    : DEFAULT_ANIMATION_DURATION * (value.length / 100);
+
+  useAnimatedValue(inputRef, value, duration);
 
   useEffect(() => {
     if (!inputRef.current) return;

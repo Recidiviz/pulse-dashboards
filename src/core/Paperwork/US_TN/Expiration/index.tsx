@@ -41,12 +41,12 @@ export const UsTnExpirationFormFields: WebFormFieldProps[] = [
   },
   {
     name: "sexOffenseInformation",
-    label: "Any sex offense history",
+    label: "Sex offense history",
     textarea: true,
   },
   {
     name: "alcoholDrugInformation",
-    label: "Alcohol use and drug history",
+    label: "Alcohol use / drug history",
     textarea: true,
   },
   {
@@ -81,7 +81,7 @@ export const UsTnExpirationFormFields: WebFormFieldProps[] = [
   },
   {
     name: "transferHistory",
-    label: "Transfer history",
+    label: "Transfer information",
     textarea: true,
   },
   {

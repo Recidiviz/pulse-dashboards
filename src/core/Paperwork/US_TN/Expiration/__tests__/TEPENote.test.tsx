@@ -30,22 +30,22 @@ test("TEPE with invalid characters", () => {
   expect(tepeForm).toEqual(dedent`
   Subject expired his/her probation on N/A
   Offender appeared in county A on case N/A
-  Offender was convicted of offense
-  Sex offense history: N/A
-  Alcohol use and drug history: N/A
-  Employment history: N/A
-  Fee history: N/A
-  Special conditions: N/A
-  Revocation hearings: N/A
-  New misdemeanor or felony offenses while on supervision: N/A
-  History of prior violence, escape, bond jumping, etc: N/A
-  Medical or psychological history: N/A
-  Gang affiliation: N/A
-  Transfer history: N/A
-  Victim name and concerns for future contact with victims: N/A
-  Voter Rights Restoration: N/A
-  Last known address: N/A
-  Additional notes: N/A`);
+  Offender currently serving sentences for offense
+  SEX OFFENSE HISTORY: N/A
+  ALCOHOL USE / DRUG HISTORY: N/A
+  EMPLOYMENT HISTORY: N/A
+  FEE HISTORY: N/A
+  SPECIAL CONDITIONS: N/A
+  REVOCATION HEARINGS: N/A
+  NEW MISDEAMEANOR OR FELONY OFFENSES WHILE ON SUPERVISION: N/A
+  HISTORY OF PRIOR VIOLENCE, ESCAPE, BOND JUMPING, ETC: N/A
+  MEDICAL OR PSYCHOLOGICAL HISTORY: N/A
+  GANG AFFILIATION: N/A
+  TRANSFER INFORMATION: N/A
+  VICTIM INFORMATION: N/A
+  VOTERS RIGHTS RESTORATION: N/A
+  LAST KNOWN ADDRESS: N/A
+  ADDITIONAL NOTES: N/A`);
 });
 
 test("Ensure note is char limited", () => {

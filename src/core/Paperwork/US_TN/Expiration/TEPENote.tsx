@@ -32,34 +32,31 @@ const tepeTemplate = (form?: Partial<UsTnExpirationDraftData>): string => {
     `Offender appeared in ${orNA(form?.convictionCounties)} on case ${orNA(
       form?.docketNumbers
     )}`,
-    noteLine("Offender was convicted of", form?.currentOffenses),
-    noteLine("Sex offense history:", form?.sexOffenseInformation),
-    noteLine("Alcohol use and drug history:", form?.alcoholDrugInformation),
-    noteLine("Employment history:", form?.employmentInformation),
-    noteLine("Fee history:", form?.feeHistory),
-    noteLine("Special conditions:", form?.specialConditions),
-    noteLine("Revocation hearings:", form?.revocationHearings),
+    noteLine("Offender currently serving sentences for", form?.currentOffenses),
+    noteLine("SEX OFFENSE HISTORY:", form?.sexOffenseInformation),
+    noteLine("ALCOHOL USE / DRUG HISTORY:", form?.alcoholDrugInformation),
+    noteLine("EMPLOYMENT HISTORY:", form?.employmentInformation),
+    noteLine("FEE HISTORY:", form?.feeHistory),
+    noteLine("SPECIAL CONDITIONS:", form?.specialConditions),
+    noteLine("REVOCATION HEARINGS:", form?.revocationHearings),
     noteLine(
-      "New misdemeanor or felony offenses while on supervision:",
+      "NEW MISDEAMEANOR OR FELONY OFFENSES WHILE ON SUPERVISION:",
       form?.newOffenses
     ),
     noteLine(
-      "History of prior violence, escape, bond jumping, etc:",
+      "HISTORY OF PRIOR VIOLENCE, ESCAPE, BOND JUMPING, ETC:",
       form?.historyOfPriorViolenceEtc
     ),
     noteLine(
-      "Medical or psychological history:",
+      "MEDICAL OR PSYCHOLOGICAL HISTORY:",
       form?.medicalPsychologicalHistory
     ),
-    noteLine("Gang affiliation:", form?.gangAffiliation),
-    noteLine("Transfer history:", form?.transferHistory),
-    noteLine(
-      "Victim name and concerns for future contact with victims:",
-      form?.victimInformation
-    ),
-    noteLine("Voter Rights Restoration:", form?.votersRightsInformation),
-    noteLine("Last known address:", form?.address),
-    noteLine("Additional notes:", form?.additionalNotes),
+    noteLine("GANG AFFILIATION:", form?.gangAffiliation),
+    noteLine("TRANSFER INFORMATION:", form?.transferHistory),
+    noteLine("VICTIM INFORMATION:", form?.victimInformation),
+    noteLine("VOTERS RIGHTS RESTORATION:", form?.votersRightsInformation),
+    noteLine("LAST KNOWN ADDRESS:", form?.address),
+    noteLine("ADDITIONAL NOTES:", form?.additionalNotes),
   ];
   return lines.join("\n").replace(/[~`]/g, "");
 };

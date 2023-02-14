@@ -92,11 +92,12 @@ export const PagePreviewWithHover = styled(PagePreview)`
 export const SmallPagePreviewWithHover = styled(PagePreviewWithHover)<{
   selected: boolean;
 }>`
-  font-size: ${rem(2.5)};
+  font-size: ${rem(2)};
   line-height: ${rem(3.5)};
   padding: ${rem(spacing.xs)};
   height: ${rem(48)};
   width: ${rem(132)};
+  cursor: pointer;
 
   ${(props) =>
     props.selected &&

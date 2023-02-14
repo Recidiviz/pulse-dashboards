@@ -46,14 +46,14 @@ const PillNavItem = styled(Sans14)`
   ${(props: PillNavItemProps) =>
     props.selected
       ? css`
-          background: ${rgba(palette.signal.highlight, 0.05)};
+          background: ${rgba(palette.signal.highlight, 0.15)};
           border: 1px solid ${rgba(palette.signal.highlight, 0.5)};
           color: ${palette.signal.links};
         `
       : css`
           border: 1px solid ${palette.slate20};
           border-radius: 0 32px 32px 0;
-          color: ${palette.slate85};
+          color: ${palette.slate60};
         `}
   &:first-child {
     border-radius: ${rem(spacing.xl)} 0 0 ${rem(spacing.xl)};
