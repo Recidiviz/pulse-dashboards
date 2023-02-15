@@ -244,7 +244,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   );
 
   const previewArea = (
-    <PreviewArea>
+    <PreviewArea className="fs-exclude">
       <ClientName>{person.displayName}</ClientName>
       <ClientID>{person.externalId}</ClientID>
       <ContactTypes>

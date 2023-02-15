@@ -137,6 +137,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
                 }
               >
                 <PagePreviewWithHover
+                  className="fs-exclude"
                   onClick={() => {
                     handleCopiedText(page, index);
                   }}
