@@ -19,6 +19,7 @@ import {
   ClientRecord,
   FullName,
   JusticeInvolvedPersonRecord,
+  PersonUpdateRecord,
   ResidentRecord,
 } from "../FirestoreStore";
 import { Expect, Extends } from "../utils/typeUtils";
@@ -38,6 +39,7 @@ import {
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
 import { Resident } from "./Resident";
+import { CollectionDocumentSubscription } from "./subscriptions";
 
 export type SupervisionOpportunityMapping = {
   earlyTermination?: EarlyTerminationOpportunity;
@@ -111,6 +113,10 @@ export type JusticeInvolvedPerson = {
    */
   opportunitiesAlmostEligible: OpportunityMapping;
   allOpportunitiesLoaded: boolean;
+  /**
+   * Contains the person updates, ex: preferredName
+   */
+  personUpdatesSubscription?: CollectionDocumentSubscription<PersonUpdateRecord>;
   trackProfileViewed: () => void;
 };
 

@@ -84,6 +84,14 @@ export type UserUpdateRecord = {
   selectedOfficerIds?: string[];
 };
 
+export type PersonUpdateType = "preferredName";
+/**
+ * Person-level data generated within this application
+ */
+export type PersonUpdateRecord = {
+  preferredName?: string;
+};
+
 // TEST is useful for testing, as the name suggests,
 // but also so that we don't have an empty union when there are no feature variants in use
 export type FeatureVariant =
@@ -93,7 +101,8 @@ export type FeatureVariant =
   | "usIdEarnedDischargeForm"
   | "usIdSupervisionLevelDowngrade"
   | "usIdLengthOfStayAlmostEligible"
-  | "usIdIncomeVerificationAlmostEligible";
+  | "usIdIncomeVerificationAlmostEligible"
+  | "personDetailsUpdates";
 /**
  * For each feature, an optional activeDate can control when the user gets access.
  * If this is missing, access will be granted immediately.
@@ -113,6 +122,7 @@ export const defaultFeatureVariantsActive: FeatureVariantMapping = {
   usIdSupervisionLevelDowngrade: {},
   usIdLengthOfStayAlmostEligible: {},
   usIdIncomeVerificationAlmostEligible: {},
+  personDetailsUpdates: {},
 };
 
 /**

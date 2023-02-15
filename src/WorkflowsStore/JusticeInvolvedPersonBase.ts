@@ -33,10 +33,13 @@ import {
 import {
   FullName,
   JusticeInvolvedPersonRecord,
+  PersonUpdateRecord,
+  PersonUpdateType,
   StaffRecord,
 } from "../FirestoreStore";
 import { RootStore } from "../RootStore";
 import { OpportunityFactory, OpportunityType } from "./Opportunity";
+import { CollectionDocumentSubscription } from "./subscriptions";
 import {
   JusticeInvolvedPerson,
   OpportunityMapping,
@@ -52,6 +55,11 @@ export class JusticeInvolvedPersonBase<
   rootStore: RootStore;
 
   record: RecordType;
+
+  // Subscription to the `clientUpdatesV2` collection.
+  // All JusticeInvolvedPerson updates (both Clients and Residents) are stored in `clientUpdatesv2`,
+  // so the name of the collection is misleading, all person updates are stored here.
+  personUpdatesSubscription?: CollectionDocumentSubscription<PersonUpdateRecord>;
 
   constructor(
     record: RecordType,
@@ -72,7 +80,15 @@ export class JusticeInvolvedPersonBase<
       opportunitiesAlmostEligible: computed,
       opportunitiesEligible: computed,
       updateRecord: action,
+      updates: computed,
     });
+
+    this.personUpdatesSubscription =
+      new CollectionDocumentSubscription<PersonUpdateRecord>(
+        this.rootStore.firestoreStore,
+        "clientUpdatesV2",
+        record.recordId
+      );
 
     // Create and destroy opportunity objects as needed
     autorun(() => {
@@ -143,6 +159,22 @@ export class JusticeInvolvedPersonBase<
     return [this.fullName.givenNames, this.fullName.surname]
       .filter((n) => Boolean(n))
       .join(" ");
+  }
+
+  get updates(): PersonUpdateRecord | undefined {
+    return this.personUpdatesSubscription?.data;
+  }
+
+  get preferredName(): string | undefined {
+    return this.rootStore.workflowsStore.featureVariants.personDetailsUpdates
+      ? this.updates?.preferredName
+      : undefined;
+  }
+
+  updatePerson(type: PersonUpdateType, update: string): Promise<void> {
+    return this.rootStore.firestoreStore.updatePerson(this.recordId, {
+      [type]: update,
+    });
   }
 
   /**

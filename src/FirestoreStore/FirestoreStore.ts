@@ -57,6 +57,7 @@ import {
   ClientRecord,
   collectionNames,
   OpportunityUpdateWithForm,
+  PersonUpdateType,
   ResidentRecord,
   UsTnExpirationOpportunityUpdate,
 } from "./types";
@@ -218,6 +219,22 @@ export default class FirestoreStore {
     }
     // eslint-disable-next-line no-restricted-syntax
     return setDoc(docRef, { ...update }, { merge: true });
+  }
+
+  // Function to add an update in `clientUpdatesV2`. All JusticeInvolvedPerson updates (both Clients and Residents)
+  // are being stored in `clientUpdatesv2`, so the name of the collection is misleading, all person updates are stored here.
+  async updatePerson(
+    recordId: string,
+    update: Record<PersonUpdateType, string>
+  ) {
+    const docRef = doc(this.db, collectionNames.clientUpdatesV2, `${recordId}`);
+
+    return this.updateDocument(
+      collectionNames.clientUpdatesV2,
+      recordId,
+      docRef,
+      { ...update }
+    );
   }
 
   async updateOpportunity(

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { palette, Sans16, spacing, typography } from "@recidiviz/design-system";
+import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
@@ -27,6 +28,7 @@ import { Resident } from "../../WorkflowsStore/Resident";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import { ProfileCapsule } from "../PersonCapsules";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
+import ClientDetailsInput from "./ClientDetailsInput";
 import {
   ClientHousing,
   FinesAndFees,
@@ -67,6 +69,12 @@ const Header = styled.div`
   cursor: default;
 `;
 
+const ContactDetailsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
+`;
+
 const ContactCell = styled.dl`
   ${typography.Sans14}
   color: ${palette.slate70};
@@ -79,8 +87,9 @@ const ContactLabel = styled.dt`
 
 const ContactValue = styled.dd`
   ${typography.Sans16}
-  color: ${palette.signal.links};
+  color: ${palette.pine2};
   margin: 0;
+  padding-top: 5px;
 `;
 
 const SectionHeading = styled(Sans16)`
@@ -140,27 +149,57 @@ function ResidentDetails({
   );
 }
 
+const PreferredName: React.FC<ClientProfileProps> = observer(
+  function PreferredName({ client }): React.ReactElement {
+    const displayName =
+      client.preferredName || toJS(client.fullName).givenNames || "Unknown";
+    return (
+      <ClientDetailsInput
+        text={displayName}
+        client={client}
+        updateType="preferredName"
+      />
+    );
+  }
+);
+
 function ContactDetails({
   person,
-}: PersonProfileProps): React.ReactElement | null {
+  personDetailsUpdates,
+}: PersonProfileProps & {
+  personDetailsUpdates: boolean;
+}): React.ReactElement | null {
   if (!(person instanceof Client)) return null;
 
   return (
-    <ContactCell>
-      <div>
-        <ContactLabel>Telephone</ContactLabel>
-        <ContactValue className="fs-exclude">
-          {person.formattedPhoneNumber}
-        </ContactValue>
-      </div>
-    </ContactCell>
+    <ContactDetailsContainer>
+      {personDetailsUpdates && (
+        <ContactCell>
+          <ContactLabel>Preferred Name</ContactLabel>
+          <ContactValue>
+            <PreferredName client={person} />
+          </ContactValue>
+        </ContactCell>
+      )}
+      <ContactCell>
+        <div>
+          <ContactLabel>Telephone</ContactLabel>
+          <ContactValue className="fs-exclude">
+            {person.formattedPhoneNumber}
+          </ContactValue>
+        </div>
+      </ContactCell>
+    </ContactDetailsContainer>
   );
 }
 
 export const FullProfile = observer(
   function FullProfile(): React.ReactElement | null {
     const {
-      workflowsStore: { selectedPerson: person },
+      workflowsStore: {
+        selectedPerson: person,
+        featureVariants: { personDetailsUpdates },
+      },
     } = useRootStore();
 
     usePersonTracking(person, () => {
@@ -180,7 +219,10 @@ export const FullProfile = observer(
               hideTooltip
               nameHoverState={false}
             />
-            <ContactDetails person={person} />
+            <ContactDetails
+              person={person}
+              personDetailsUpdates={!!personDetailsUpdates}
+            />
           </Header>
           <div className="ProfileDetails">
             <AdditionalDetails person={person} />
