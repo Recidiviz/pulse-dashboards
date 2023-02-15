@@ -148,17 +148,13 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     }
   );
 
-  const markCompleted = () => {
+  const onCopyButtonClick = () => {
+    copyToClipboard();
     opportunity.setCompletedIfEligible();
     analyticsStore.trackReferralFormCopiedToClipboard({
       justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
       opportunityType: opportunity.type,
     });
-  };
-
-  const onCopyButtonClick = () => {
-    copyToClipboard();
-    markCompleted();
   };
 
   const submitTEPEContactNote = async function (body: Record<string, unknown>) {
@@ -198,6 +194,11 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     );
 
     submitTEPEContactNote(contactNoteRequestBody);
+    opportunity.setCompletedIfEligible();
+    analyticsStore.trackReferralFormSubmitted({
+      justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
+      opportunityType: opportunity.type,
+    });
   };
 
   const closeButtonControls = (
