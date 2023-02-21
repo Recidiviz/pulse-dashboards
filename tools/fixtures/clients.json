@@ -25,7 +25,17 @@
     "specialConditionsTerminatedDate": "2021-12-31",
     "specialConditionsFlag": "terminated",
     "compliantReportingEligible": true,
-    "allEligibleOpportunities": ["compliantReporting"]
+    "allEligibleOpportunities": ["compliantReporting"],
+    "milestones": [
+      {
+        "text": "Birthday this month (February 10)",
+        "type": "BIRTHDAY_THIS_MONTH"
+      },
+      {
+        "text": "4 months on supervision",
+        "type": "MONTHS_ON_SUPERVISION"
+      }
+    ]
   },
   {
     "personName": { "givenNames": "LINET", "surname": "HANSEN" },
@@ -52,7 +62,17 @@
     "specialConditionsFlag": "current",
     "compliantReportingEligible": true,
     "usTnExpirationEligible": true,
-    "allEligibleOpportunities": ["compliantReporting", "usTnExpiration"]
+    "allEligibleOpportunities": ["compliantReporting", "usTnExpiration"],
+    "milestones": [
+      {
+        "text": "Birthday this month (February 10)",
+        "type": "BIRTHDAY_THIS_MONTH"
+      },
+      {
+        "text": "4 months on supervision",
+        "type": "MONTHS_ON_SUPERVISION"
+      }
+    ]
   },
 
   {
@@ -246,6 +266,16 @@
       "LSU",
       "earnedDischarge",
       "usIdSupervisionLevelDowngrade"
+    ],
+    "milestones": [
+      {
+        "text": "Birthday this month (February 10)",
+        "type": "BIRTHDAY_THIS_MONTH"
+      },
+      {
+        "text": "4 months on supervision",
+        "type": "MONTHS_ON_SUPERVISION"
+      }
     ]
   },
   {
@@ -273,7 +303,17 @@
     "LSUEligible": false,
     "earnedDischargeEligible": true,
     "pastFTRDEligible": true,
-    "allEligibleOpportunities": ["pastFTRD", "earnedDischarge"]
+    "allEligibleOpportunities": ["pastFTRD", "earnedDischarge"],
+    "milestones": [
+      {
+        "text": "42 months since last violation",
+        "type": "MONTHS_WITHOUT_VIOLATION"
+      },
+      {
+        "text": "43 months on supervision",
+        "type": "MONTHS_ON_SUPERVISION"
+      }
+    ]
   },
   {
     "personName": {
@@ -300,6 +340,16 @@
       "usIdSupervisionLevelDowngrade",
       "LSU",
       "earnedDischarge"
+    ],
+    "milestones": [
+      {
+        "text": "23 months since last violation",
+        "type": "MONTHS_WITHOUT_VIOLATION"
+      },
+      {
+        "text": "43 months on supervision",
+        "type": "MONTHS_ON_SUPERVISION"
+      }
     ]
   },
   {
@@ -323,7 +373,17 @@
     "lastPaymentAmount": 17.84,
     "lastPaymentDate": "2022-10-04",
     "specialConditionsFlag": "current",
-    "allEligibleOpportunities": ["LSU"]
+    "allEligibleOpportunities": ["LSU"],
+    "milestones": [
+      {
+        "text": "16 months since last violation",
+        "type": "MONTHS_WITHOUT_VIOLATION"
+      },
+      {
+        "text": "30 months on supervision",
+        "type": "MONTHS_ON_SUPERVISION"
+      }
+    ]
   },
   {
     "personName": {
@@ -346,7 +406,13 @@
     "lastPaymentAmount": 17.84,
     "lastPaymentDate": "2022-10-04",
     "specialConditionsFlag": "current",
-    "allEligibleOpportunities": ["LSU"]
+    "allEligibleOpportunities": ["LSU"],
+    "milestones": [
+      {
+        "text": "50 months on supervision",
+        "type": "MONTHS_ON_SUPERVISION"
+      }
+    ]
   },
   {
     "personName": {
@@ -369,7 +435,17 @@
     "lastPaymentAmount": 17.84,
     "lastPaymentDate": "2022-10-04",
     "specialConditionsFlag": "current",
-    "allEligibleOpportunities": ["earnedDischarge"]
+    "allEligibleOpportunities": ["earnedDischarge"],
+    "milestones": [
+      {
+        "text": "Birthday this month (February 18)",
+        "type": "BIRTHDAY_THIS_MONTH"
+      },
+      {
+        "text": "18 months on supervision",
+        "type": "MONTHS_ON_SUPERVISION"
+      }
+    ]
   },
   {
     "personName": {
@@ -392,7 +468,17 @@
     "lastPaymentAmount": 17.84,
     "lastPaymentDate": "2022-10-04",
     "specialConditionsFlag": "current",
-    "allEligibleOpportunities": ["earnedDischarge"]
+    "allEligibleOpportunities": ["earnedDischarge"],
+    "milestones": [
+      {
+        "text": "Birthday this month (February 23)",
+        "type": "BIRTHDAY_THIS_MONTH"
+      },
+      {
+        "text": "44 months with the same employer",
+        "type": "MONTHS_WITH_CURRENT_EMPLOYER"
+      }
+    ]
   },
   {
     "personName": {

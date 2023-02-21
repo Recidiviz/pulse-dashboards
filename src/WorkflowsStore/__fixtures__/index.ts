@@ -82,6 +82,16 @@ export const ineligibleClient: ClientRecord = {
   specialConditions: ["SPECIAL CONDITIONS TEST TEST"],
   allEligibleOpportunities: [],
   personType: "CLIENT",
+  milestones: [
+    {
+      text: "Birthday this month (February 28)",
+      type: "BIRTHDAY_THIS_MONTH",
+    },
+    {
+      text: "15 months on supervision",
+      type: "MONTHS_ON_SUPERVISION",
+    },
+  ],
 };
 
 export const compliantReportingReferralRecord = {
@@ -120,6 +130,16 @@ export const eligibleClient: ClientRecord = {
   allEligibleOpportunities: [
     "compliantReporting",
   ] as SupervisionOpportunityType[],
+  milestones: [
+    {
+      text: "Birthday this month (February 14)",
+      type: "BIRTHDAY_THIS_MONTH",
+    },
+    {
+      text: "15 months on supervision",
+      type: "MONTHS_ON_SUPERVISION",
+    },
+  ],
 };
 
 export const lsuEligibleClient: ClientRecord = {
@@ -139,6 +159,16 @@ export const lsuEligibleClient: ClientRecord = {
   currentBalance: 221.88,
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
   allEligibleOpportunities: ["LSU"],
+  milestones: [
+    {
+      text: "8 months without a violation",
+      type: "MONTHS_WITHOUT_VIOLATION",
+    },
+    {
+      text: "15 months on supervision",
+      type: "MONTHS_ON_SUPERVISION",
+    },
+  ],
 };
 
 export const lsuAlmostEligibleClient: ClientRecord = {

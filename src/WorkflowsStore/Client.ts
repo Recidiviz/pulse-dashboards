@@ -19,7 +19,11 @@ import { mapValues, toUpper } from "lodash";
 import { makeObservable, override } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
-import { ClientRecord, SpecialConditionCode } from "../FirestoreStore";
+import {
+  ClientRecord,
+  Milestone,
+  SpecialConditionCode,
+} from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import {
@@ -114,6 +118,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   paroleSpecialConditions?: SpecialConditionCode[];
 
+  milestones?: Milestone[];
+
   constructor(record: ClientRecord, rootStore: RootStore) {
     super(record, rootStore, createClientOpportunity);
     makeObservable(this, {
@@ -140,6 +146,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     this.supervisionStartDate = optionalFieldToDate(
       record.supervisionStartDate
     );
+    this.milestones = record.milestones;
   }
 
   get supervisionType(): string {

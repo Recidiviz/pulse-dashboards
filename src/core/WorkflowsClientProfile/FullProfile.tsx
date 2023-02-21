@@ -32,6 +32,7 @@ import ClientDetailsInput from "./ClientDetailsInput";
 import {
   ClientHousing,
   FinesAndFees,
+  Milestones,
   ResidentHousing,
   SpecialConditions,
 } from "./Details";
@@ -122,6 +123,15 @@ function ClientDetails({ client }: ClientProfileProps): React.ReactElement {
       <Divider />
       <SupervisionProgress client={client} />
       <Divider />
+      {client.milestones &&
+        client.milestones.length > 0 &&
+        client.rootStore.workflowsStore.featureVariants
+          .personDetailsUpdates && (
+          <>
+            <Milestones client={client} />
+            <Divider />
+          </>
+        )}
       <ClientHousing client={client} />
       <Divider />
       {client.currentBalance !== undefined && (

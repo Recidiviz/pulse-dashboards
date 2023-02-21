@@ -22,6 +22,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { ReactComponent as GoldStar } from "../../assets/static/images/goldStar.svg";
 import * as pathwaysTenants from "../../RootStore/TenantStore/pathwaysTenants";
 import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
 import { Client, WithCaseNotes } from "../../WorkflowsStore";
@@ -40,6 +41,15 @@ const DetailsHeading = styled.dt`
 `;
 
 const DetailsList = styled.dl``;
+
+const MilestonesList = styled.dl`
+  align-items: center;
+  display: flex;
+  gap: ${rem(spacing.sm)};
+  margin-bottom: ${rem(spacing.xs)};
+`;
+
+const MilestonesItem = styled.span``;
 
 const DetailsSubheading = styled.dt`
   ${typography.Sans14}
@@ -372,4 +382,30 @@ export function CaseNotes({
       </DetailsContent>
     </DetailsSection>
   );
+}
+
+export function Milestones({ client }: ClientProfileProps): React.ReactElement {
+  if (
+    client.milestones &&
+    client.milestones.length > 0 &&
+    client.rootStore.workflowsStore.featureVariants.personDetailsUpdates
+  ) {
+    return (
+      <DetailsSection>
+        <DetailsHeading>Milestones</DetailsHeading>
+        <DetailsContent>
+          {client.milestones?.map((milestone) => {
+            return (
+              <MilestonesList>
+                <GoldStar height="12" width="12" />
+                <MilestonesItem>{milestone.text}</MilestonesItem>
+              </MilestonesList>
+            );
+          })}
+        </DetailsContent>
+      </DetailsSection>
+    );
+  }
+
+  return <div />;
 }

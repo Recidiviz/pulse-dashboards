@@ -23,6 +23,7 @@ import {
   ClientHousing,
   Contact,
   FinesAndFees,
+  Milestones,
   SpecialConditions,
   Supervision,
 } from "./Details";
@@ -58,6 +59,7 @@ export const CompliantReportingClientProfile: React.FC<CompliantReportingClientP
         />
         <SpecialConditions client={client} />
         <Supervision client={client} />
+        <Milestones client={client} />
         <Contact client={client} />
         <ClientHousing client={client} />
         <FinesAndFees client={client} />

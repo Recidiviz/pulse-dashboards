@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { CaseNotes, Supervision } from "./Details";
+import { CaseNotes, Milestones, Supervision } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
@@ -41,6 +41,7 @@ export const UsTnExpirationClientProfile: React.FC<UsTnExpirationClientProfilePr
         <Heading person={client} />
         <OpportunityModule opportunity={opp} formLinkButton={formLinkButton} />
         <Supervision client={client} />
+        <Milestones client={client} />
         <CaseNotes
           opportunityRecord={
             client.verifiedOpportunities.usTnExpiration?.record

@@ -156,6 +156,16 @@ export type SpecialConditionCode = {
   conditionDescription: string;
 };
 
+export type MilestoneType =
+  | "BIRTHDAY_THIS_MONTH"
+  | "MONTHS_WITHOUT_VIOLATION"
+  | "MONTHS_ON_SUPERVISION"
+  | "MONTHS_WITH_CURRENT_EMPLOYER";
+export type Milestone = {
+  type: MilestoneType;
+  text: string;
+};
+
 export type JusticeInvolvedPersonRecord = {
   recordId: string;
   personExternalId: string;
@@ -186,6 +196,7 @@ export type ClientRecord = JusticeInvolvedPersonRecord & {
   specialConditions?: string[];
   boardConditions?: SpecialConditionCode[];
   allEligibleOpportunities: SupervisionOpportunityType[];
+  milestones?: Milestone[];
 };
 
 /**

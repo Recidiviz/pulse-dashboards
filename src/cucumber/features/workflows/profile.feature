@@ -12,7 +12,7 @@ Feature: View a justice-involved individual's profile
 
      Examples:
         | stateCode | monthsLeft                         | personID | numOpps | listOfDetailHeaders                                                                           |
-        | US_TN     | 10 months \(\\d+ months past end\) | p101     | 2       | Supervision, Housing, Fines and Fees, Probation Special Conditions, Parole Special Conditions |
+        | US_TN     | 10 months \(\\d+ months past end\) | p101     | 2       | Supervision, Milestones, Housing, Fines and Fees, Probation Special Conditions, Parole Special Conditions |
 
     Scenario Outline: View client profile with one opportunity
         Given I am a "<stateCode>" user on the profile page for person ID "<personID>"
@@ -21,4 +21,4 @@ Feature: View a justice-involved individual's profile
 
      Examples:
         | stateCode | personID | numOpps | listOfDetailHeaders                                                                           |
-        | US_TN     | p100     | 1       | Supervision, Housing, Fines and Fees, Probation Special Conditions, Parole Special Conditions |
+        | US_TN     | p100     | 1       | Supervision, Milestones, Housing, Fines and Fees, Probation Special Conditions, Parole Special Conditions |

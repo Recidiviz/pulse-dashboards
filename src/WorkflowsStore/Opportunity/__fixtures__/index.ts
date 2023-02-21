@@ -228,6 +228,16 @@ export const earlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> = {
   lastPaymentDate: dateToTimestamp("2022-01-03"),
   specialConditions: [],
   boardConditions: [],
+  milestones: [
+    {
+      text: "8 months without a violation",
+      type: "MONTHS_WITHOUT_VIOLATION",
+    },
+    {
+      text: "15 months on supervision",
+      type: "MONTHS_ON_SUPERVISION",
+    },
+  ],
 };
 
 export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {

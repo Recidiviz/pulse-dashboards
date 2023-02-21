@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Contact, Supervision } from "./Details";
+import { Contact, Milestones, Supervision } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
@@ -50,6 +50,7 @@ export const EarlyTerminationClientProfile: React.FC<EarlyTerminationClientProfi
           formDownloadButton={formDownloadButton}
         />
         <Supervision client={client} />
+        <Milestones client={client} />
         <Contact client={client} />
       </article>
     );
