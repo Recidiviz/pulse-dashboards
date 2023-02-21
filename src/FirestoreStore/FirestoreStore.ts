@@ -56,6 +56,7 @@ import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
 import {
   ClientRecord,
   collectionNames,
+  ContactMethodType,
   ExternalSystemRequestStatus,
   OpportunityUpdateWithForm,
   PersonUpdateType,
@@ -226,7 +227,7 @@ export default class FirestoreStore {
   // are being stored in `clientUpdatesv2`, so the name of the collection is misleading, all person updates are stored here.
   async updatePerson(
     recordId: string,
-    update: Record<PersonUpdateType, string>
+    update: Record<PersonUpdateType, string | ContactMethodType>
   ) {
     const docRef = doc(this.db, collectionNames.clientUpdatesV2, `${recordId}`);
 

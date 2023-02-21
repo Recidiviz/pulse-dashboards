@@ -84,12 +84,15 @@ export type UserUpdateRecord = {
   selectedOfficerIds?: string[];
 };
 
-export type PersonUpdateType = "preferredName";
+export type PersonUpdateType = "preferredName" | "preferredContactMethod";
+export const contactMethods = ["Call", "Text", "Email", "None"];
+export type ContactMethodType = typeof contactMethods[number];
 /**
  * Person-level data generated within this application
  */
 export type PersonUpdateRecord = {
   preferredName?: string;
+  preferredContactMethod?: ContactMethodType;
 };
 
 // TEST is useful for testing, as the name suggests,

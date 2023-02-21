@@ -36,6 +36,7 @@ import {
   SpecialConditions,
 } from "./Details";
 import { OpportunitiesAccordion } from "./OpportunitiesAccordion";
+import { PreferredContact } from "./PreferredContact";
 import { IncarcerationProgress, SupervisionProgress } from "./SentenceProgress";
 import {
   ClientProfileProps,
@@ -189,6 +190,14 @@ function ContactDetails({
           </ContactValue>
         </div>
       </ContactCell>
+      {personDetailsUpdates && (
+        <ContactCell>
+          <ContactLabel>Preferred Contact</ContactLabel>
+          <ContactValue>
+            <PreferredContact client={person} />
+          </ContactValue>
+        </ContactCell>
+      )}
     </ContactDetailsContainer>
   );
 }

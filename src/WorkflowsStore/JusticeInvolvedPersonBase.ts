@@ -31,6 +31,7 @@ import {
 } from "mobx";
 
 import {
+  ContactMethodType,
   FullName,
   JusticeInvolvedPersonRecord,
   PersonUpdateRecord,
@@ -81,6 +82,7 @@ export class JusticeInvolvedPersonBase<
       opportunitiesEligible: computed,
       updateRecord: action,
       updates: computed,
+      preferredContactMethod: computed,
     });
 
     this.personUpdatesSubscription =
@@ -171,10 +173,19 @@ export class JusticeInvolvedPersonBase<
       : undefined;
   }
 
-  updatePerson(type: PersonUpdateType, update: string): Promise<void> {
+  get preferredContactMethod(): ContactMethodType | undefined {
+    return this.rootStore.workflowsStore.featureVariants.personDetailsUpdates
+      ? this.updates?.preferredContactMethod
+      : undefined;
+  }
+
+  updatePerson(
+    type: PersonUpdateType,
+    update: string | ContactMethodType
+  ): Promise<void> {
     return this.rootStore.firestoreStore.updatePerson(this.recordId, {
       [type]: update,
-    });
+    } as Record<PersonUpdateType, string | ContactMethodType>);
   }
 
   /**
