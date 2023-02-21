@@ -283,6 +283,7 @@ export type ExternalRequestUpdate<RequestData> = {
 export type UsTnContactNote = {
   note: Record<number, string[]>;
   noteStatus?: Record<number, ExternalSystemRequestStatus>;
+  error?: string;
 };
 
 export type UsTnExpirationOpportunityUpdate =

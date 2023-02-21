@@ -175,6 +175,10 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord =
         contactType: "EMPV",
         contactComment: "EMPLOYMENT VERIFIED",
       },
+      latestVrr: {
+        contactDate: parseISO("2022-02-02"),
+        contactType: "VRRE",
+      },
     },
     criteria: {
       supervisionPastFullTermCompletionDateOrUpcoming1Day: {

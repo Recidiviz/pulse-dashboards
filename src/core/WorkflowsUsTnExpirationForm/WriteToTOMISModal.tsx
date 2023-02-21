@@ -27,6 +27,7 @@ import {
   Sans24,
   spacing,
 } from "@recidiviz/design-system";
+import * as Sentry from "@sentry/react";
 import { Timestamp } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -186,19 +187,33 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
       }),
     };
 
-    firestoreStore.updateUsTnExpirationContactNoteSubmitted(
+    firestoreStore.updateUsTnExpirationContactNoteStatus(
       opportunity,
       person.recordId,
       contactNoteObj,
-      Timestamp.fromDate(contactNoteDateTime)
+      Timestamp.fromDate(contactNoteDateTime),
+      "PENDING"
     );
 
-    submitTEPEContactNote(contactNoteRequestBody);
-    opportunity.setCompletedIfEligible();
-    analyticsStore.trackReferralFormSubmitted({
-      justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
-      opportunityType: opportunity.type,
-    });
+    submitTEPEContactNote(contactNoteRequestBody)
+      .then((_) => {
+        opportunity.setCompletedIfEligible();
+        analyticsStore.trackReferralFormSubmitted({
+          justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
+          opportunityType: opportunity.type,
+        });
+      })
+      .catch((e: Error) => {
+        firestoreStore.updateUsTnExpirationContactNoteStatus(
+          opportunity,
+          person.recordId,
+          contactNoteObj,
+          Timestamp.fromDate(contactNoteDateTime),
+          "FAILURE",
+          e.message
+        );
+        Sentry.captureException(e);
+      });
   };
 
   const closeButtonControls = (

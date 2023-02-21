@@ -56,6 +56,7 @@ import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
 import {
   ClientRecord,
   collectionNames,
+  ExternalSystemRequestStatus,
   OpportunityUpdateWithForm,
   PersonUpdateType,
   ResidentRecord,
@@ -369,11 +370,13 @@ export default class FirestoreStore {
     }
   }
 
-  async updateUsTnExpirationContactNoteSubmitted(
+  async updateUsTnExpirationContactNoteStatus(
     opportunity: UsTnExpirationOpportunity,
     recordId: string,
     contactNote: Record<number, string[]>,
-    submittedTimestamp: Timestamp
+    submittedTimestamp: Timestamp,
+    status: ExternalSystemRequestStatus,
+    error?: string
   ) {
     // Ignore recidiviz and non-state users in prod
     if (
@@ -384,13 +387,14 @@ export default class FirestoreStore {
 
     const contactNoteUpdate: UsTnExpirationOpportunityUpdate = {
       contactNote: {
-        status: "PENDING",
+        status,
         submitted: {
           by: opportunity.currentUserEmail || "user",
           date: submittedTimestamp,
         },
         note: contactNote,
         noteStatus: {},
+        error,
       },
     };
 
