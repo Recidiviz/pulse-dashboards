@@ -364,4 +364,29 @@ describe("Server tests", () => {
         });
     });
   });
+
+  describe("getImpersonatedUserRestrictions", () => {
+    beforeEach(() => {
+      process.env = Object.assign(process.env, {
+        IS_OFFLINE: "true",
+        AUTH_ENV: "test",
+      });
+      jest.resetModules();
+      app = require("../../app").app;
+    });
+
+    it("responds with error in offline mode", () => {
+      return request(app)
+        .get(
+          "/api/impersonateAuth0User?impersonatedstateCode=US_ID&impersonatedEmail=test@test.com"
+        )
+        .then((response) => {
+          expect(response.statusCode).toEqual(500);
+          expect(response.body.errors).toEqual([
+            "Impersonate user is not available in offline mode",
+          ]);
+          expect(response.body.status).toEqual(500);
+        });
+    });
+  });
 });

@@ -45,10 +45,16 @@ const {
 } = require("../filters");
 const { formatKeysToSnakeCase } = require("../utils");
 
-// eslint-disable-next-line import/no-dynamic-require
-const serviceAccount = require(path.join(
-  `../../${process.env.GOOGLE_APPLICATION_CREDENTIALS}`
-));
+let serviceAccount;
+
+if (!isOfflineMode) {
+  /* eslint-disable global-require */
+  // eslint-disable-next-line import/no-dynamic-require
+  serviceAccount = require(path.join(
+    `../../${process.env.GOOGLE_APPLICATION_CREDENTIALS}`
+  ));
+  /* eslint-enable global-require */
+}
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -305,6 +311,13 @@ function upload(req, res, next) {
 }
 
 async function getImpersonatedUserRestrictions(req, res) {
+  if (isOfflineMode) {
+    responder(res)(
+      new Error("Impersonate user is not available in offline mode")
+    );
+    return;
+  }
+
   const { impersonatedEmail: email, impersonatedStateCode: stateCode } =
     req.query;
   const url = `${process.env.RECIDIVIZ_DATA_API_URL}/auth/dashboard_user_restrictions_by_email?email_address=${email}&region_code=${stateCode}`;
