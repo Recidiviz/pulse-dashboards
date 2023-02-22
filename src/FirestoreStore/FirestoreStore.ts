@@ -395,7 +395,7 @@ export default class FirestoreStore {
         },
         note: contactNote,
         noteStatus: {},
-        error,
+        ...(error !== undefined && { error }),
       },
     };
 
