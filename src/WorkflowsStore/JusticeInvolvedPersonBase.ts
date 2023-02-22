@@ -82,6 +82,7 @@ export class JusticeInvolvedPersonBase<
       opportunitiesEligible: computed,
       updateRecord: action,
       updates: computed,
+      displayPreferredName: computed,
       preferredContactMethod: computed,
     });
 
@@ -159,6 +160,16 @@ export class JusticeInvolvedPersonBase<
 
   get displayName(): string {
     return [this.fullName.givenNames, this.fullName.surname]
+      .filter((n) => Boolean(n))
+      .join(" ");
+  }
+
+  get displayPreferredName(): string {
+    return [
+      this.fullName.givenNames,
+      this.preferredName ? `(${this.preferredName})` : undefined,
+      this.fullName.surname,
+    ]
       .filter((n) => Boolean(n))
       .join(" ");
   }

@@ -65,7 +65,7 @@ const formatAvatarText = (text: string, splitName: boolean): string => {
     ? text
         .split(" ")
         .map((sub) => sub.charAt(0))
-        .slice(0, 2)
+        .filter((_item, i, names) => i === 0 || i === names.length - 1)
         .join("")
     : text;
 };

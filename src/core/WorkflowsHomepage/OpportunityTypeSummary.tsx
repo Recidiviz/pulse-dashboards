@@ -161,7 +161,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
           <ClientAvatarWrapper key={opportunity.person.recordId}>
             <JusticeInvolvedPersonAvatar
               size={56}
-              name={opportunity.person.displayName}
+              name={opportunity.person.displayPreferredName}
             />
           </ClientAvatarWrapper>
         ))}

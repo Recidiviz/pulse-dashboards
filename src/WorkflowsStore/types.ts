@@ -93,6 +93,7 @@ export type JusticeInvolvedPerson = {
   stateCode: string;
   fullName: FullName;
   displayName: string;
+  displayPreferredName: string;
   assignedStaffId: string;
   /**
    * Contains all expected opportunity objects. Mainly useful for inspecting or interacting with

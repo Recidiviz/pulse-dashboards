@@ -23,6 +23,7 @@ import {
   spacing,
   TooltipTrigger,
 } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import styled, { css } from "styled-components/macro";
@@ -99,42 +100,42 @@ const SIZES = {
   },
 };
 
-export const JusticeInvolvedPersonCapsule: React.FC<
-  JusticeInvolvedPersonCapsuleProps
-> = ({
-  avatarSize,
-  person,
-  status,
-  textSize,
-  hideId = false,
-  hideTooltip = false,
-  nameHoverState = true,
-}) => {
-  const IdentityEl = SIZES.identity[textSize];
-  const StatusEl = SIZES.status[textSize];
+export const JusticeInvolvedPersonCapsule = observer(
+  function JusticeInvolvedPersonCapsule({
+    avatarSize,
+    person,
+    status,
+    textSize,
+    hideId = false,
+    hideTooltip = false,
+    nameHoverState = true,
+  }: JusticeInvolvedPersonCapsuleProps): JSX.Element {
+    const IdentityEl = SIZES.identity[textSize];
+    const StatusEl = SIZES.status[textSize];
 
-  return (
-    <Wrapper nameHoverState={nameHoverState}>
-      <JusticeInvolvedPersonAvatar
-        name={person.displayName}
-        size={SIZES.avatar[avatarSize]}
-      />
-      <PersonInfo>
-        <IdentityEl>
-          <TooltipTrigger contents={!hideTooltip && "Go to profile"}>
-            <PersonName className="PersonName fs-exclude">
-              {person.displayName}
-            </PersonName>
-          </TooltipTrigger>
-          {!hideId && (
-            <React.Fragment key="personExternalId">
-              <Separator> • </Separator>
-              <PersonId className="fs-exclude">{person.externalId}</PersonId>
-            </React.Fragment>
-          )}
-        </IdentityEl>
-        <StatusEl className="WorkflowsStatus fs-exclude">{status}</StatusEl>
-      </PersonInfo>
-    </Wrapper>
-  );
-};
+    return (
+      <Wrapper nameHoverState={nameHoverState}>
+        <JusticeInvolvedPersonAvatar
+          name={person.displayPreferredName}
+          size={SIZES.avatar[avatarSize]}
+        />
+        <PersonInfo>
+          <IdentityEl>
+            <TooltipTrigger contents={!hideTooltip && "Go to profile"}>
+              <PersonName className="PersonName fs-exclude">
+                {person.displayPreferredName}
+              </PersonName>
+            </TooltipTrigger>
+            {!hideId && (
+              <React.Fragment key="personExternalId">
+                <Separator> • </Separator>
+                <PersonId className="fs-exclude">{person.externalId}</PersonId>
+              </React.Fragment>
+            )}
+          </IdentityEl>
+          <StatusEl className="WorkflowsStatus fs-exclude">{status}</StatusEl>
+        </PersonInfo>
+      </Wrapper>
+    );
+  }
+);

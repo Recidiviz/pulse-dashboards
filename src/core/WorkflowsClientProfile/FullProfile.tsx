@@ -162,11 +162,11 @@ function ResidentDetails({
 
 const PreferredName: React.FC<ClientProfileProps> = observer(
   function PreferredName({ client }): React.ReactElement {
-    const displayName =
+    const name =
       client.preferredName || toJS(client.fullName).givenNames || "Unknown";
     return (
       <ClientDetailsInput
-        text={displayName}
+        text={name}
         client={client}
         updateType="preferredName"
       />
