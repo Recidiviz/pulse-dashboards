@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,17 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-export * from "./CompliantReportingOpportunity";
-export * from "./EarlyTerminationOpportunity";
-export * from "./EarnedDischargeOpportunity";
-export { CompliantReportingForm } from "./Forms/CompliantReportingForm";
-export { EarlyTerminationForm } from "./Forms/EarlyTerminationForm";
-export { LSUForm } from "./Forms/LSUForm";
-export * from "./LSUOpportunity";
-export * from "./PastFTRDOpportunity";
-export * from "./types";
-export * from "./UsMeSCCPOpportunity";
-export * from "./UsMoRestrictiveHousingStatusHearingOpportunity";
-export * from "./UsTnExpirationOpportunity";
-export * from "./UsTnSupervisionLevelDowngradeOpportunity";
-export * from "./utils";
+
+import {
+  transformReferral,
+  UsMoRestrictiveHousingStatusHearingReferralRecord,
+} from "../UsMoRestrictiveHousingStatusHearingReferralRecord";
+
+test("transform record", () => {
+  const rawRecord: Record<
+    keyof UsMoRestrictiveHousingStatusHearingReferralRecord,
+    any
+  > = {
+    stateCode: "US_MO",
+    externalId: "004",
+    criteria: {
+      usMoHasUpcomingHearing: {
+        nextReviewDate: "2023-11-03",
+      },
+    },
+    metadata: {
+      mostRecentHearingDate: "2022-09-03",
+      restrictiveHousingStartDate: "2022-10-01",
+    },
+  };
+
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});

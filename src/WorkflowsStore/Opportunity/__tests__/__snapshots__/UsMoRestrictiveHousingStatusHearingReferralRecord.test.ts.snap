@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform record 1`] = `
+Object {
+  "criteria": Object {
+    "usMoHasUpcomingHearing": Object {
+      "nextReviewDate": 2023-11-03T00:00:00.000Z,
+    },
+  },
+  "externalId": "004",
+  "metadata": Object {
+    "mostRecentHearingDate": 2022-09-03T00:00:00.000Z,
+    "restrictiveHousingStartDate": 2022-10-01T00:00:00.000Z,
+  },
+  "stateCode": "US_MO",
+}
+`;

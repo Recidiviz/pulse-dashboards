@@ -63,5 +63,14 @@
     "hasFacilityCaseload": true,
     "givenNames": "Test",
     "surname": "Officer6"
+  },
+  {
+    "email": "test-officer-7@example.com",
+    "district": null,
+    "id": "OFFICER7",
+    "stateCode": "US_MO",
+    "hasFacilityCaseload": true,
+    "givenNames": "Test",
+    "surname": "Officer7"
   }
 ]

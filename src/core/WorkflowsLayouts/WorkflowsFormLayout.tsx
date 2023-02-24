@@ -36,6 +36,7 @@ import { EarnedDischargeClientProfile } from "../WorkflowsClientProfile/EarnedDi
 import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
 import { PastFTRDClientProfile } from "../WorkflowsClientProfile/PastFTRDClientProfile";
 import { UsMeSCCPResidentProfile } from "../WorkflowsClientProfile/UsMeSCCPResidentProfile";
+import { UsMoRestrictiveHousingStatusHearingResidentProfile } from "../WorkflowsClientProfile/UsMoRestrictiveHousingStatusHearingResidentProfile";
 import { UsTnExpirationClientProfile } from "../WorkflowsClientProfile/UsTnExpirationClientProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
@@ -74,6 +75,10 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   usTnExpiration: {
     sidebarContents: <UsTnExpirationClientProfile />,
     formContents: <WorkflowsUsTnExpirationForm />,
+  },
+  usMoRestrictiveHousingStatusHearing: {
+    sidebarContents: <UsMoRestrictiveHousingStatusHearingResidentProfile />,
+    formContents: <div />,
   },
 };
 

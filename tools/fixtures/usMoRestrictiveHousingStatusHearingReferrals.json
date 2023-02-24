@@ -1,0 +1,26 @@
+[
+  {
+    "stateCode": "US_MO",
+    "externalId": "RES004",
+    "criteria": {
+      "usMoHasUpcomingHearing": {
+        "nextReviewDate": "2023-11-03"
+      },
+      "usMoInRestrictiveHousing": {
+        "confinementType": "confinement type"
+      }
+    },
+    "metadata": {
+      "mostRecentHearingDate": "2022-09-03",
+      "mostRecentHearingType": "hearing type",
+      "mostRecentHearingFacility": "FACILITY NAME",
+      "currentFacility": "FACILITY 01",
+      "restrictiveHousingStartDate": "2022-10-01",
+      "bedNumber": "03",
+      "roomNumber": "05",
+      "complexNumber": "2",
+      "buildingNumber": "13",
+      "housingUseCode": "123456"
+    }
+  }
+]

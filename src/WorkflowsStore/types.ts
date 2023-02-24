@@ -33,6 +33,7 @@ import {
   PastFTRDOpportunity,
   SupervisionOpportunityType,
   UsMeSCCPOpportunity,
+  UsMoRestrictiveHousingStatusHearingOpportunity,
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
@@ -63,6 +64,7 @@ type CheckSupervisionOpportunityMappingType = Expect<
 
 export type IncarcerationOpportunityMapping = {
   usMeSCCP?: UsMeSCCPOpportunity;
+  usMoRestrictiveHousingStatusHearing?: UsMoRestrictiveHousingStatusHearingOpportunity;
 };
 // The following line will typecheck only if the keys of
 // IncarcerationOpportunityMapping are exhaustive

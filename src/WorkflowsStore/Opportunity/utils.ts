@@ -137,6 +137,12 @@ export const generateOpportunityHydratedHeader = (
       callToAction:
         "Review these clients and complete their auto-generated TEPE Note.",
     },
+    usMoRestrictiveHousingStatusHearing: {
+      eligibilityText: simplur`${count} resident[|s] may be eligible for `,
+      opportunityText: "Restrictive Housing Status Hearing",
+      // TODO(#3053): Add CTA text for usMoRestrictiveHousingStatusHearing
+      callToAction: "TBD",
+    },
   };
 
   return headers[opportunityType];
@@ -182,6 +188,7 @@ export const opportunityToSortFunctionMapping: Record<
   usIdSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
   usMeSCCP: sortByReviewStatus,
   usTnExpiration: sortByReviewStatusAndEligibilityDate,
+  usMoRestrictiveHousingStatusHearing: sortByReviewStatusAndEligibilityDate,
 };
 
 export const transformCaseNotes = (

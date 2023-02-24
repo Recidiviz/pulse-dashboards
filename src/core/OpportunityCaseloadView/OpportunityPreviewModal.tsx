@@ -35,6 +35,7 @@ import { PastFTRDClientProfile } from "../WorkflowsClientProfile/PastFTRDClientP
 import { SupervisionLevelDowngradeClientProfile } from "../WorkflowsClientProfile/SupervisionLevelDowngradeClientProfile";
 import { UsIdSupervisionLevelDowngradeClientProfile } from "../WorkflowsClientProfile/UsIdSupervisionLevelDowngradeClientProfile";
 import { UsMeSCCPResidentProfile } from "../WorkflowsClientProfile/UsMeSCCPResidentProfile";
+import { UsMoRestrictiveHousingStatusHearingResidentProfile } from "../WorkflowsClientProfile/UsMoRestrictiveHousingStatusHearingResidentProfile";
 import { UsTnExpirationClientProfile } from "../WorkflowsClientProfile/UsTnExpirationClientProfile";
 
 const PAGE_CONTENT: Record<OpportunityType, any> = {
@@ -74,6 +75,9 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   },
   usTnExpiration: {
     previewContents: <UsTnExpirationClientProfile formLinkButton />,
+  },
+  usMoRestrictiveHousingStatusHearing: {
+    previewContents: <UsMoRestrictiveHousingStatusHearingResidentProfile />,
   },
 };
 

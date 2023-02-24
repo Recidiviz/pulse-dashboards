@@ -67,4 +67,20 @@ export const residentsData: Omit<ResidentRecord, "personType" | "recordId">[] =
       admissionDate: "2020-09-12",
       releaseDate: "2024-10-27",
     },
+    {
+      allEligibleOpportunities: ["usMoRestrictiveHousingStatusHearing"],
+      officerId: "OFFICER7",
+      stateCode: "US_MO",
+      personExternalId: "RES004",
+      personName: {
+        givenNames: "Fourth",
+        surname: "Resident",
+      },
+      pseudonymizedId: "anonres004",
+      facilityId: "FACILITY NAME",
+      unitId: "UNIT B",
+      custodyLevel: "MINIMUM",
+      admissionDate: "2020-09-12",
+      releaseDate: "2024-10-27",
+    },
   ];

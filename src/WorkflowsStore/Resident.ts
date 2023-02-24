@@ -23,6 +23,7 @@ import {
   Opportunity,
   OpportunityFactory,
   UsMeSCCPOpportunity,
+  UsMoRestrictiveHousingStatusHearingOpportunity,
 } from "./Opportunity";
 import { optionalFieldToDate } from "./utils";
 
@@ -31,6 +32,8 @@ const residentialOpportunityConstructors: Record<
   new (c: Resident) => Opportunity<Resident>
 > = {
   usMeSCCP: UsMeSCCPOpportunity,
+  usMoRestrictiveHousingStatusHearing:
+    UsMoRestrictiveHousingStatusHearingOpportunity,
 };
 
 const createResidentOpportunity: OpportunityFactory<

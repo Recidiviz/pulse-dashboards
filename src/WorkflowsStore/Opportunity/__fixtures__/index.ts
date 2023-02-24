@@ -26,6 +26,7 @@ import { EarnedDischargeReferralRecord } from "../EarnedDischargeReferralRecord"
 import { LSUReferralRecord } from "../LSUReferralRecord";
 import { PastFTRDReferralRecord } from "../PastFTRDReferralRecord";
 import { UsMeSCCPReferralRecord } from "../UsMeSCCPReferralRecord";
+import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { UsTnExpirationReferralRecord } from "../UsTnExpirationReferralRecord";
 
 //
@@ -768,5 +769,48 @@ export const usMeSCCPAlmostEligibleXPortionOfSentenceRecordFixture: UsMeSCCPRefe
           eventDate: parseISO("2022-06-28"),
         },
       ],
+    },
+  };
+
+export const usMoPersonRecord: ResidentRecord = {
+  recordId: "us_mo_111",
+  personType: "RESIDENT",
+  stateCode: "US_MO",
+  personName: {
+    givenNames: "Jessica",
+    surname: "Hyde",
+  },
+  personExternalId: "111",
+  pseudonymizedId: "p111",
+  custodyLevel: "MINIMUM",
+  officerId: "CASE_MANAGER_1",
+  admissionDate: "2020-03-10",
+  releaseDate: "2025-05-20",
+  allEligibleOpportunities: ["usMoRestrictiveHousingStatusHearing"],
+};
+
+export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHousingStatusHearingReferralRecord =
+  {
+    stateCode: "US_MO",
+    externalId: "004",
+    criteria: {
+      usMoHasUpcomingHearing: {
+        nextReviewDate: parseISO("2023-11-03"),
+      },
+      usMoInRestrictiveHousing: {
+        confinementType: "confinement type",
+      },
+    },
+    metadata: {
+      mostRecentHearingDate: parseISO("2022-09-03"),
+      mostRecentHearingType: "hearing type",
+      mostRecentHearingFacility: "FACILITY NAME",
+      currentFacility: "FACILITY 01",
+      restrictiveHousingStartDate: parseISO("2022-10-01"),
+      bedNumber: "03",
+      roomNumber: "05",
+      complexNumber: "2",
+      buildingNumber: "13",
+      housingUseCode: "123456",
     },
   };

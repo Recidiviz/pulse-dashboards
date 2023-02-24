@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fully eligible requirements met 1`] = `
+Array [
+  Object {
+    "text": "459 days until next review date (Nov 3, 2023)",
+  },
+]
+`;
