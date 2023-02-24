@@ -76,6 +76,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
     });
     const [pageNumberCopied, setPageNumberCopied] = useState(-1);
     const [showTOMISPreviewModal, setShowTOMISPreviewModal] = useState(false);
+    const { featureVariants } = workflowsStore;
 
     useEffect(() => {
       if (pageToCopy) {
@@ -179,24 +180,28 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
               items={["Form", "Preview"]}
               onChange={(index) => setSelectedFormSection(index)}
             />
-            {opportunity.externalRequestStatus === "SUCCESS" ? (
-              <SubmittedText>
-                {`Note submitted to TOMIS on ${formatDate(
-                  opportunity.externalRequestData?.submitted.date.toDate()
-                )}
+            {
+              /* eslint-disable-next-line no-nested-ternary */
+              !featureVariants.usTnExpirationEnableTomisButton ? null : opportunity.externalRequestStatus ===
+                "SUCCESS" ? (
+                <SubmittedText>
+                  {`Note submitted to TOMIS on ${formatDate(
+                    opportunity.externalRequestData?.submitted.date.toDate()
+                  )}
                 `}
-              </SubmittedText>
-            ) : (
-              <Button
-                kind="primary"
-                shape="block"
-                onClick={() => setShowTOMISPreviewModal(true)}
-              >
-                {opportunity.externalRequestStatus === "FAILURE"
-                  ? "Copy to clipboard"
-                  : "Submit to TOMIS"}
-              </Button>
-            )}
+                </SubmittedText>
+              ) : (
+                <Button
+                  kind="primary"
+                  shape="block"
+                  onClick={() => setShowTOMISPreviewModal(true)}
+                >
+                  {opportunity.externalRequestStatus === "FAILURE"
+                    ? "Copy to clipboard"
+                    : "Submit to TOMIS"}
+                </Button>
+              )
+            }
           </FormHeaderSection>
         </NoteFormHeader>
         {selectedFormSection === 0 ? form : preview}

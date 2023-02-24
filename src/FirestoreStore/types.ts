@@ -103,6 +103,7 @@ export type FeatureVariant =
   | "TEST"
   | "CompliantReportingAlmostEligible"
   | "usTnExpiration"
+  | "usTnExpirationEnableTomisButton"
   | "usIdEarnedDischargeForm"
   | "usIdSupervisionLevelDowngrade"
   | "usIdLengthOfStayAlmostEligible"
@@ -124,6 +125,7 @@ export const defaultFeatureVariantsActive: FeatureVariantMapping = {
   TEST: {},
   CompliantReportingAlmostEligible: {},
   usTnExpiration: {},
+  usTnExpirationEnableTomisButton: {},
   usIdEarnedDischargeForm: {},
   usIdSupervisionLevelDowngrade: {},
   usIdLengthOfStayAlmostEligible: {},
