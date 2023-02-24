@@ -197,6 +197,7 @@ export type ClientRecord = JusticeInvolvedPersonRecord & {
   boardConditions?: SpecialConditionCode[];
   allEligibleOpportunities: SupervisionOpportunityType[];
   milestones?: Milestone[];
+  emailAddress?: string;
 };
 
 /**

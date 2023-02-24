@@ -238,6 +238,7 @@ export const earlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> = {
       type: "MONTHS_ON_SUPERVISION",
     },
   ],
+  emailAddress: "jamie@jones.org",
 };
 
 export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {

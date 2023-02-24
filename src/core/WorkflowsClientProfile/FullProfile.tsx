@@ -74,24 +74,35 @@ const Header = styled.div`
 const ContactDetailsContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 25px;
+  justify-content: flex-end;
 `;
 
-const ContactCell = styled.dl`
+const ContactCell = styled.dl<{ flexBasis?: string }>`
   ${typography.Sans14}
   color: ${palette.slate70};
   margin: 0;
+  flex-basis: ${(props) => props.flexBasis || "auto"};
+  padding: 0 ${rem(spacing.md)};
+
+  :not(:last-child) {
+    border-right: 1px solid ${palette.slate20};
+  }
 `;
 
 const ContactLabel = styled.dt`
   font-weight: inherit;
 `;
 
-const ContactValue = styled.dd`
-  ${typography.Sans16}
+const ContactValue = styled.dd<{ alignRight?: boolean }>`
+  ${typography.Sans16};
   color: ${palette.pine2};
   margin: 0;
   padding-top: 5px;
+  text-align: ${(props) => (props.alignRight ? "right" : "left")};
+
+  :first-child {
+    padding-top: 0;
+  }
 `;
 
 const SectionHeading = styled(Sans16)`
@@ -103,6 +114,8 @@ const Divider = styled.hr`
   border-top: 1px solid ${palette.slate20};
   margin: ${rem(spacing.md)} 0;
 `;
+
+export const DETAILS_NOT_AVAILABLE_STRING = "currently not available";
 
 function AdditionalDetails({ person }: PersonProfileProps): React.ReactElement {
   if (person instanceof Client) {
@@ -184,24 +197,26 @@ function ContactDetails({
 
   return (
     <ContactDetailsContainer>
+      <ContactCell flexBasis="50%">
+        <div>
+          <ContactValue className="fs-exclude" alignRight>
+            {person.formattedPhoneNumber || "Phone number unavailable"}
+          </ContactValue>
+          <ContactValue className="fs-exclude" alignRight>
+            {person.emailAddress || "Email unavailable"}
+          </ContactValue>
+        </div>
+      </ContactCell>
       {personDetailsUpdates && (
-        <ContactCell>
+        <ContactCell flexBasis="25%">
           <ContactLabel>Preferred Name</ContactLabel>
           <ContactValue>
             <PreferredName client={person} />
           </ContactValue>
         </ContactCell>
       )}
-      <ContactCell>
-        <div>
-          <ContactLabel>Telephone</ContactLabel>
-          <ContactValue className="fs-exclude">
-            {person.formattedPhoneNumber}
-          </ContactValue>
-        </div>
-      </ContactCell>
       {personDetailsUpdates && (
-        <ContactCell>
+        <ContactCell flexBasis="25%">
           <ContactLabel>Preferred Contact</ContactLabel>
           <ContactValue>
             <PreferredContact client={person} />

@@ -120,6 +120,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   milestones?: Milestone[];
 
+  emailAddress?: string;
+
   constructor(record: ClientRecord, rootStore: RootStore) {
     super(record, rootStore, createClientOpportunity);
     makeObservable(this, {
@@ -147,6 +149,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       record.supervisionStartDate
     );
     this.milestones = record.milestones;
+    this.emailAddress = record.emailAddress;
   }
 
   get supervisionType(): string {

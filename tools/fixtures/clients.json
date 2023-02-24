@@ -35,7 +35,8 @@
         "text": "4 months on supervision",
         "type": "MONTHS_ON_SUPERVISION"
       }
-    ]
+    ],
+    "emailAddress": "tonye@thompson.net"
   },
   {
     "personName": { "givenNames": "LINET", "surname": "HANSEN" },
@@ -72,7 +73,8 @@
         "text": "4 months on supervision",
         "type": "MONTHS_ON_SUPERVISION"
       }
-    ]
+    ],
+    "emailAddress": "linet@hansen.net"
   },
 
   {
@@ -101,7 +103,8 @@
     ],
     "compliantReportingEligible": null,
     "supervisionLevelDowngradeEligible": true,
-    "allEligibleOpportunities": ["supervisionLevelDowngrade"]
+    "allEligibleOpportunities": ["supervisionLevelDowngrade"],
+    "emailAddress": "rebekah@cortes.net"
   },
   {
     "personName": { "givenNames": "RAMONDA", "surname": "UNDERWOOD" },
@@ -125,7 +128,8 @@
     "lastSpecialConditionsNote": "2021-12-31",
     "specialConditionsFlag": "current",
     "compliantReportingEligible": true,
-    "allEligibleOpportunities": ["compliantReporting"]
+    "allEligibleOpportunities": ["compliantReporting"],
+    "emailAddress": "ramonda@underwood.net"
   },
   {
     "personName": {
@@ -152,7 +156,8 @@
     ],
     "nextSpecialConditionsCheck": "2022-12-31",
     "compliantReportingEligible": true,
-    "allEligibleOpportunities": ["compliantReporting"]
+    "allEligibleOpportunities": ["compliantReporting"],
+    "emailAddress": "claribel@velazquez.net"
   },
   {
     "personName": {
@@ -177,7 +182,8 @@
     "specialConditions": [],
     "specialConditionsFlag": "none",
     "compliantReportingEligible": true,
-    "allEligibleOpportunities": ["compliantReporting"]
+    "allEligibleOpportunities": ["compliantReporting"],
+    "emailAddress": "sherri@renelle.net"
   },
   {
     "personName": {
@@ -313,7 +319,8 @@
         "text": "43 months on supervision",
         "type": "MONTHS_ON_SUPERVISION"
       }
-    ]
+    ],
+    "emailAddress": "dino@saur.net"
   },
   {
     "personName": {
@@ -350,7 +357,8 @@
         "text": "43 months on supervision",
         "type": "MONTHS_ON_SUPERVISION"
       }
-    ]
+    ],
+    "emailAddress": "sylvester@slate.net"
   },
   {
     "personName": {
@@ -383,7 +391,8 @@
         "text": "30 months on supervision",
         "type": "MONTHS_ON_SUPERVISION"
       }
-    ]
+    ],
+    "emailAddress": "fran@drescher.net"
   },
   {
     "personName": {
@@ -412,7 +421,8 @@
         "text": "50 months on supervision",
         "type": "MONTHS_ON_SUPERVISION"
       }
-    ]
+    ],
+    "emailAddress": "ash@ketchum.net"
   },
   {
     "personName": {
@@ -445,7 +455,8 @@
         "text": "18 months on supervision",
         "type": "MONTHS_ON_SUPERVISION"
       }
-    ]
+    ],
+    "emailAddress": "candy@rain.net"
   },
   {
     "personName": {
@@ -501,6 +512,7 @@
     "lastPaymentAmount": 17.84,
     "lastPaymentDate": "2022-10-04",
     "specialConditionsFlag": "current",
-    "allEligibleOpportunities": ["earnedDischarge"]
+    "allEligibleOpportunities": ["earnedDischarge"],
+    "emailAddress": "larry@david.net"
   }
 ]

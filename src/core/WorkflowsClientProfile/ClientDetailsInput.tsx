@@ -40,9 +40,8 @@ const Input = styled.input`
   font-weight: inherit;
   padding: 5px 9px 5px 1.5em;
   margin: -5px 0 0 -5px;
-  width: fit-content;
+  width: 100%;
   min-width: 1px;
-  flex-shrink: 3;
   background-image: ${EDIT_BACKGROUND};
   background-repeat: no-repeat;
   background-position: left 4px center;
