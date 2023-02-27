@@ -180,28 +180,26 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
               items={["Form", "Preview"]}
               onChange={(index) => setSelectedFormSection(index)}
             />
-            {
-              /* eslint-disable-next-line no-nested-ternary */
-              !featureVariants.usTnExpirationEnableTomisButton ? null : opportunity.externalRequestStatus ===
-                "SUCCESS" ? (
-                <SubmittedText>
-                  {`Note submitted to TOMIS on ${formatDate(
-                    opportunity.externalRequestData?.submitted.date.toDate()
-                  )}
+            {opportunity.externalRequestStatus === "SUCCESS" ? (
+              <SubmittedText>
+                {`Note submitted to TOMIS on ${formatDate(
+                  opportunity.externalRequestData?.submitted.date.toDate()
+                )}
                 `}
-                </SubmittedText>
-              ) : (
-                <Button
-                  kind="primary"
-                  shape="block"
-                  onClick={() => setShowTOMISPreviewModal(true)}
-                >
-                  {opportunity.externalRequestStatus === "FAILURE"
-                    ? "Copy to clipboard"
-                    : "Submit to TOMIS"}
-                </Button>
-              )
-            }
+              </SubmittedText>
+            ) : (
+              <Button
+                kind="primary"
+                shape="block"
+                onClick={() => setShowTOMISPreviewModal(true)}
+                style={{ minWidth: "7vw" }}
+              >
+                {!featureVariants.usTnExpirationSubmitToTomis ||
+                opportunity.externalRequestStatus === "FAILURE"
+                  ? "Copy note"
+                  : "Submit to TOMIS"}
+              </Button>
+            )}
           </FormHeaderSection>
         </NoteFormHeader>
         {selectedFormSection === 0 ? form : preview}
@@ -210,6 +208,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
           onCloseFn={onModalCloseFn}
           paginatedNote={paginatedTEPENoteByLine(fullCharLimitedTEPENote, 10)}
           opportunity={opportunity}
+          showSubmitPage={!!featureVariants.usTnExpirationSubmitToTomis}
         />
       </FormContainer>
     );

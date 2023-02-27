@@ -82,6 +82,7 @@ describe("WriteToTOMISModal", () => {
           ["page 2, line 1"],
         ]}
         opportunity={opp}
+        showSubmitPage
       />
     );
     submitButton = screen.getByRole("button", {

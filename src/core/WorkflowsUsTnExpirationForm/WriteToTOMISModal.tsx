@@ -128,6 +128,7 @@ type writeToTOMISModalProps = {
   onCloseFn: () => void;
   paginatedNote: string[][];
   opportunity: UsTnExpirationOpportunity;
+  showSubmitPage: boolean;
 };
 
 export const WriteToTOMISModal = observer(function WriteToTOMISModal({
@@ -135,6 +136,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   onCloseFn,
   paginatedNote,
   opportunity,
+  showSubmitPage,
 }: writeToTOMISModalProps) {
   const [pageNumberSelected, setPageNumberSelected] = useState(0);
   const {
@@ -331,7 +333,33 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     </div>
   );
 
+  const copyModal = (
+    <>
+      {closeButtonControls}
+      <ModalTitle>
+        Copy each page of the note below and submit in TOMIS
+      </ModalTitle>
+      {previewArea}
+      <ActionButton
+        onClick={onCopyButtonClick}
+        style={{ marginBottom: `${rem(spacing.lg)}`, minWidth: "7vw" }}
+      >
+        {isCopied
+          ? `Page ${pageNumberSelected + 1} copied!`
+          : `Copy page ${pageNumberSelected + 1}`}
+      </ActionButton>
+      <Disclaimer>
+        This note has {paginatedNote.length} pages. Make sure you copy and paste
+        each of the {paginatedNote.length} pages into TOMIS prior to submitting
+        the note.
+      </Disclaimer>
+    </>
+  );
+
   const getModalContent = () => {
+    if (!showSubmitPage) {
+      return copyModal;
+    }
     switch (opportunity.externalRequestStatus) {
       case "SUCCESS":
         return success;

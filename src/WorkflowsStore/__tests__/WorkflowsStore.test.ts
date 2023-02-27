@@ -351,7 +351,7 @@ test("feature variants active by default for Recidiviz users", async () => {
       "usIdSupervisionLevelDowngrade": Object {},
       "usMoRestrictiveHousingStatusHearing": Object {},
       "usTnExpiration": Object {},
-      "usTnExpirationEnableTomisButton": Object {},
+      "usTnExpirationSubmitToTomis": Object {},
     }
   `);
 });
