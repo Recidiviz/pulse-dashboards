@@ -5,7 +5,15 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
       enableRevocationRateByExit: false,
       enableVitalsGoalLine: false,
       defaultMetricBackend: "OLD",
-      metricBackendOverrides: {},
+      metricBackendOverrides: {
+        // These need to be set so that PathwaysMetric actually hydrates (since the default is OLD)
+        prisonPopulationOverTime: "NEW",
+        supervisionPopulationOverTime: "NEW",
+        supervisionToLibertyOverTime: "NEW",
+        prisonToSupervisionPopulationOverTime: "NEW",
+        libertyToPrisonPopulationOverTime: "NEW",
+        supervisionToPrisonOverTime: "NEW",
+      },
     }
   : process.env.REACT_APP_DEPLOY_ENV === "staging"
   ? {

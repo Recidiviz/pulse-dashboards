@@ -192,7 +192,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
   }
 
   static backendForMetric(metricName: MetricId): metricBackend {
-    const overrides = flags.metricBackendOverrides as Record<
+    const overrides = flags.metricBackendOverrides as unknown as Record<
       MetricId,
       metricBackend
     >;
