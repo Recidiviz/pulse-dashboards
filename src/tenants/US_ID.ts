@@ -40,6 +40,7 @@ const US_ID_CONFIG: TenantConfig = {
   enableUserRestrictions: false,
   enableVitalsCaseloadButton: true,
   workflowsEnableAllDistricts: false,
+  hasSupervisionTasks: true,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["SUPERVISION"],
   navigation: {

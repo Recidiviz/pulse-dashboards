@@ -56,6 +56,7 @@ function createTestUnit(clientRecord: ClientRecord) {
   jest
     .spyOn(root.workflowsStore, "opportunityTypes", "get")
     .mockReturnValue(["compliantReporting"]);
+  jest.spyOn(root.workflowsStore, "featureVariants", "get").mockReturnValue({});
   client = new Client(clientRecord, root);
   const maybeOpportunity = client.potentialOpportunities.compliantReporting;
   if (maybeOpportunity === undefined) {

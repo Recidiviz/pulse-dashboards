@@ -1,0 +1,60 @@
+/*
+ * Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2023 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * =============================================================================
+ */
+
+import { makeObservable } from "mobx";
+
+import { Client } from "../Client";
+import { ValidateFunction } from "../subscriptions";
+import { OpportunityValidationError } from "../utils";
+import { TasksBase } from "./TasksBase";
+import { SupervisionTasksRecord } from "./types";
+
+const getRecordValidator =
+  (client: Client): ValidateFunction<SupervisionTasksRecord> =>
+  () => {
+    const featureFlags = client.rootStore.workflowsStore.featureVariants;
+
+    if (!featureFlags.usIdSupervisionTasks) {
+      throw new OpportunityValidationError(
+        "usIdSupervisionTasks opportunity is not enabled for this user."
+      );
+    }
+  };
+
+export class UsIdSupervisionTasks extends TasksBase<
+  Client,
+  SupervisionTasksRecord
+> {
+  constructor(client: Client) {
+    super(
+      client.rootStore,
+      client,
+      "usIdSupervisionTasks",
+      getRecordValidator(client)
+    );
+    makeObservable(this, { needsEmployment: true });
+  }
+
+  get needsEmployment(): boolean {
+    return (
+      this.record?.needs?.map((need) => need.type).includes("employment") ??
+      false
+    );
+  }
+}

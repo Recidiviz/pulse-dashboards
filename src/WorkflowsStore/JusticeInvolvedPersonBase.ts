@@ -39,8 +39,10 @@ import {
   StaffRecord,
 } from "../FirestoreStore";
 import { RootStore } from "../RootStore";
+import { TaskFactory } from "./Client";
 import { OpportunityFactory, OpportunityType } from "./Opportunity";
 import { CollectionDocumentSubscription } from "./subscriptions";
+import { SupervisionTaskInterface } from "./Task/types";
 import {
   JusticeInvolvedPerson,
   OpportunityMapping,
@@ -68,7 +70,8 @@ export class JusticeInvolvedPersonBase<
     opportunityFactory: OpportunityFactory<
       OpportunityTypeForRecord<RecordType>,
       PersonClassForRecord<RecordType>
-    >
+    >,
+    taskFactory?: TaskFactory<PersonClassForRecord<RecordType>>
   ) {
     this.rootStore = rootStore;
 
@@ -76,6 +79,7 @@ export class JusticeInvolvedPersonBase<
 
     makeObservable(this, {
       record: observable,
+      supervisionTasks: observable,
       potentialOpportunities: observable,
       verifiedOpportunities: computed,
       opportunitiesAlmostEligible: computed,
@@ -92,6 +96,10 @@ export class JusticeInvolvedPersonBase<
         "clientUpdatesV2",
         record.recordId
       );
+
+    this.supervisionTasks = taskFactory
+      ? taskFactory(this as unknown as PersonClassForRecord<RecordType>)
+      : undefined;
 
     // Create and destroy opportunity objects as needed
     autorun(() => {
@@ -204,6 +212,8 @@ export class JusticeInvolvedPersonBase<
    * but some may be invalid or feature gated
    */
   potentialOpportunities: OpportunityMapping = {};
+
+  supervisionTasks?: SupervisionTaskInterface | undefined;
 
   /**
    * This mapping will only contain opportunities that are actually hydrated and valid;

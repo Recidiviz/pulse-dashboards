@@ -24,6 +24,7 @@ import { collectionNames } from "../src/FirestoreStore";
 import { defaultFeatureVariantsActive } from "../src/FirestoreStore/types";
 import { deleteCollection, getDb } from "./firestoreUtils";
 import { residentsData } from "./fixtures/residents";
+import { usIdSupervisionTasksData } from "./fixtures/usIdSupervisionTasks";
 
 const OPPORTUNITIES_WITH_FIXTURES: (keyof typeof collectionNames)[] = [
   "compliantReportingReferrals",
@@ -37,6 +38,11 @@ const OPPORTUNITIES_WITH_FIXTURES: (keyof typeof collectionNames)[] = [
   "usTnExpirationReferrals",
   "usMoRestrictiveHousingStatusHearingReferrals",
 ];
+
+const FIXTURES_TO_LOAD: Partial<Record<keyof typeof collectionNames, any>> = {
+  residents: residentsData,
+  usIdSupervisionTasks: usIdSupervisionTasksData,
+};
 
 const db = getDb();
 
@@ -92,28 +98,32 @@ export async function loadFeatureVariantsFixture(): Promise<void> {
     .then(() => console.log("new client featureVariants loaded successfully"));
 }
 
-export async function loadResidentsFixture(): Promise<void> {
-  console.log("wiping existing resident data ...");
-  await deleteCollection(db, collectionNames.residents);
+export async function loadFixtures(): Promise<void> {
+  for await (const [collectionName, data] of Object.entries(FIXTURES_TO_LOAD)) {
+    console.log(`wiping existing ${collectionName} data ...`);
+    const collectionKey = collectionName as keyof typeof collectionNames;
+    await deleteCollection(db, collectionNames[collectionKey]);
 
-  console.log("loading new resident data...");
-  const bulkWriter = db.bulkWriter();
+    console.log(`loading new ${collectionKey} data...`);
+    const bulkWriter = db.bulkWriter();
 
-  // Iterate through each record
-  residentsData.forEach((record) => {
-    bulkWriter.create(
-      db.doc(
-        `${collectionNames.residents}/${record.stateCode.toLowerCase()}_${
-          record.personExternalId
-        }`
-      ),
-      record
-    );
-  });
+    // Iterate through each record
+    data.forEach((record: any) => {
+      const externalId = record.externalId ?? record.personExternalId;
+      bulkWriter.create(
+        db.doc(
+          `${
+            collectionNames[collectionKey]
+          }/${record.stateCode.toLowerCase()}_${externalId}`
+        ),
+        record
+      );
+    });
 
-  bulkWriter
-    .close()
-    .then(() => console.log("new resident data loaded successfully"));
+    bulkWriter
+      .close()
+      .then(() => console.log(`new ${collectionKey} data loaded successfully`));
+  }
 }
 
 export async function loadUserFixture(): Promise<void> {
@@ -177,7 +187,7 @@ export async function loadWorkflowsFixtures(): Promise<void> {
   await Promise.all([
     loadUserFixture(),
     loadClientsFixture(),
-    loadResidentsFixture(),
+    loadFixtures(),
     loadOpportunityReferralFixtures(),
     loadFeatureVariantsFixture(),
   ]);

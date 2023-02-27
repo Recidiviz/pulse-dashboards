@@ -44,6 +44,7 @@ export const collectionNames = {
   usTnExpirationReferrals: "US_TN-expirationReferrals",
   usMoRestrictiveHousingStatusHearingReferrals:
     "US_MO-restrictiveHousingStatusHearingReferrals",
+  usIdSupervisionTasks: "US_ID-supervisionTasks",
 };
 
 export type CollectionName = keyof typeof collectionNames;
@@ -109,7 +110,8 @@ export type FeatureVariant =
   | "usIdLengthOfStayAlmostEligible"
   | "usIdIncomeVerificationAlmostEligible"
   | "personDetailsUpdates"
-  | "usMoRestrictiveHousingStatusHearing";
+  | "usMoRestrictiveHousingStatusHearing"
+  | "usIdSupervisionTasks";
 /**
  * For each feature, an optional activeDate can control when the user gets access.
  * If this is missing, access will be granted immediately.
@@ -132,6 +134,7 @@ export const defaultFeatureVariantsActive: FeatureVariantMapping = {
   usIdIncomeVerificationAlmostEligible: {},
   personDetailsUpdates: {},
   usMoRestrictiveHousingStatusHearing: {},
+  usIdSupervisionTasks: {},
 };
 
 /**

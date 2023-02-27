@@ -548,6 +548,14 @@ export class WorkflowsStore implements Hydratable {
     return opportunityTypes;
   }
 
+  get hasSupervisionTasks(): boolean {
+    const {
+      rootStore: { currentTenantId },
+    } = this;
+    if (!currentTenantId) return false;
+    return tenants[currentTenantId]?.hasSupervisionTasks ?? false;
+  }
+
   /**
    * Mapping of known supervision levels for the current tenant
    */

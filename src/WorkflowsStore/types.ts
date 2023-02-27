@@ -41,6 +41,7 @@ import { OpportunityBase } from "./Opportunity/OpportunityBase";
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
 import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
+import { SupervisionTaskInterface } from "./Task/types";
 
 export type SupervisionOpportunityMapping = {
   earlyTermination?: EarlyTerminationOpportunity;
@@ -97,6 +98,7 @@ export type JusticeInvolvedPerson = {
   displayName: string;
   displayPreferredName: string;
   assignedStaffId: string;
+  supervisionTasks?: SupervisionTaskInterface;
   /**
    * Contains all expected opportunity objects. Mainly useful for inspecting or interacting with
    * their loading and hydration status.

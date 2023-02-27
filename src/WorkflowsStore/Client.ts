@@ -39,6 +39,9 @@ import {
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
+import { SupervisionTaskInterface } from "./Task/types";
+import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
+import { JusticeInvolvedPerson } from "./types";
 import { optionalFieldToDate } from "./utils";
 
 export const UNKNOWN = "Unknown" as const;
@@ -82,6 +85,24 @@ export const createClientOpportunity: OpportunityFactory<
   throw new Error("Unsupported opportunity");
 };
 
+export type TaskFactory<PersonType extends JusticeInvolvedPerson> = (
+  person: PersonType
+) => SupervisionTaskInterface | undefined;
+
+const createClientSupervisionTasks: TaskFactory<Client> = (
+  person
+): SupervisionTaskInterface | undefined => {
+  const { featureVariants, hasSupervisionTasks } =
+    person.rootStore.workflowsStore;
+  if (
+    person instanceof Client &&
+    featureVariants.usIdSupervisionTasks &&
+    hasSupervisionTasks
+  ) {
+    return new UsIdSupervisionTasks(person);
+  }
+};
+
 // TODO(#1735): the real type should be cleaner than this
 export type ParsedSpecialCondition = {
   // eslint-disable-next-line camelcase
@@ -123,7 +144,12 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   emailAddress?: string;
 
   constructor(record: ClientRecord, rootStore: RootStore) {
-    super(record, rootStore, createClientOpportunity);
+    super(
+      record,
+      rootStore,
+      createClientOpportunity,
+      createClientSupervisionTasks
+    );
     makeObservable(this, {
       supervisionLevel: true,
       updateRecord: override,
