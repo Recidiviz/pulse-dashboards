@@ -409,3 +409,15 @@ export function Milestones({ client }: ClientProfileProps): React.ReactElement {
 
   return <div />;
 }
+
+export function ClientProfileDetails({
+  client,
+}: ClientProfileProps): React.ReactElement {
+  return (
+    <>
+      <Supervision client={client} />
+      <Milestones client={client} />
+      <Contact client={client} />
+    </>
+  );
+}

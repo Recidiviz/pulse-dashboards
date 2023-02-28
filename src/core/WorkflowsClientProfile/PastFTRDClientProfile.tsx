@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Milestones, Supervision } from "./Details";
+import { ClientProfileDetails } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
@@ -36,8 +36,7 @@ export const PastFTRDClientProfile = observer(function PastFTRDClientProfile() {
     <article>
       <Heading person={client} />
       <OpportunityModule opportunity={client.verifiedOpportunities.pastFTRD} />
-      <Supervision client={client} />
-      <Milestones client={client} />
+      <ClientProfileDetails client={client} />
     </article>
   );
 });

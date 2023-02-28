@@ -21,11 +21,9 @@ import React from "react";
 import { useRootStore } from "../../components/StoreProvider";
 import {
   ClientHousing,
-  Contact,
+  ClientProfileDetails,
   FinesAndFees,
-  Milestones,
   SpecialConditions,
-  Supervision,
 } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
@@ -58,9 +56,7 @@ export const CompliantReportingClientProfile: React.FC<CompliantReportingClientP
           formDownloadButton={formDownloadButton}
         />
         <SpecialConditions client={client} />
-        <Supervision client={client} />
-        <Milestones client={client} />
-        <Contact client={client} />
+        <ClientProfileDetails client={client} />
         <ClientHousing client={client} />
         <FinesAndFees client={client} />
       </article>

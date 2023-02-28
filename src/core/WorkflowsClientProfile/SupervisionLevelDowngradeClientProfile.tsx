@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { CaseNotes, Supervision } from "./Details";
+import { CaseNotes, ClientProfileDetails } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
@@ -32,12 +32,11 @@ export const SupervisionLevelDowngradeClientProfile = observer(
     if (!client || !opp) {
       return null;
     }
-
     return (
       <article>
         <Heading person={client} />
         <OpportunityModule opportunity={opp} />
-        <Supervision client={client} />
+        <ClientProfileDetails client={client} />
         <CaseNotes
           opportunityRecord={opp.record}
           headingText="Relevant Contact Codes"

@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { CaseNotes, Contact, Milestones, Supervision } from "./Details";
+import { CaseNotes, ClientProfileDetails } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
@@ -43,9 +43,7 @@ export const LSUClientProfile: React.FC<LSUClientProfileProps> = observer(
           opportunity={client.verifiedOpportunities.LSU}
           formLinkButton={formLinkButton}
         />
-        <Supervision client={client} />
-        <Milestones client={client} />
-        <Contact client={client} />
+        <ClientProfileDetails client={client} />
         <CaseNotes
           opportunityRecord={client.verifiedOpportunities.LSU?.record}
         />
