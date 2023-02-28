@@ -18,8 +18,10 @@
 import {
   Dropdown,
   DropdownMenu,
+  DropdownMenuItem,
   DropdownToggle,
   palette,
+  Sans14,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
@@ -32,9 +34,33 @@ import {
 } from "../../FirestoreStore";
 import { ClientProfileProps } from "./types";
 
-const DropdownContainer = styled.div`
+const DropdownContainer = styled(Sans14)`
   display: flex;
   flex-direction: column;
+
+  > button {
+    border-radius: 8px;
+    color: ${palette.pine3};
+    padding: 10px 16px;
+    border: none;
+    background-color: transparent;
+    font: inherit;
+    width: 100%;
+    text-align: left;
+
+    &:first-child,
+    :last-child {
+      margin-top: 0;
+      margin-bottom: 1px;
+    }
+
+    &:hover,
+    &:focus,
+    &:active {
+      background-color: ${palette.slate10};
+      color: ${palette.signal.links};
+    }
+  }
 `;
 
 const ContactButton = styled(DropdownToggle).attrs({
@@ -46,6 +72,7 @@ const ContactButton = styled(DropdownToggle).attrs({
   padding-left: 0;
   min-height: 16px;
   color: ${palette.signal.links};
+  background-color: transparent;
 
   &:hover,
   &:focus,
@@ -54,22 +81,7 @@ const ContactButton = styled(DropdownToggle).attrs({
   }
 `;
 
-const ContactOption = styled.button`
-  border-radius: 8px;
-  color: ${palette.pine3};
-  padding: 10px 16px;
-  border: none;
-  background-color: transparent;
-  font: inherit;
-  width: 100%;
-  text-align: left;
-
-  &:hover,
-  &:focus,
-  &:active {
-    background-color: ${palette.slate10};
-  }
-`;
+const ContactOption = styled.div``;
 
 export const PreferredContact: React.FC<ClientProfileProps> = observer(
   function PreferredContact({ client }): React.ReactElement {
@@ -95,9 +107,9 @@ export const PreferredContact: React.FC<ClientProfileProps> = observer(
           <DropdownContainer>
             {contactMethods.map((option) => {
               return (
-                <ContactOption onClick={() => handleClick(option)}>
-                  {option}
-                </ContactOption>
+                <DropdownMenuItem onClick={() => handleClick(option)}>
+                  <ContactOption>{option}</ContactOption>
+                </DropdownMenuItem>
               );
             })}
           </DropdownContainer>

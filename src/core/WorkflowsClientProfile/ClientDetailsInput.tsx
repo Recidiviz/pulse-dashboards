@@ -28,7 +28,8 @@ import styled from "styled-components/macro";
 
 import { PersonUpdateType } from "../../FirestoreStore";
 import { Client } from "../../WorkflowsStore";
-import { REACTIVE_INPUT_UPDATE_DELAY } from "../Paperwork/utils";
+
+const INPUT_DELAY = 1000;
 
 const EDIT_BACKGROUND = iconToDataURI(
   <Icon kind={IconSVG.Edit} color={palette.signal.links} />
@@ -75,7 +76,7 @@ function useReactiveClientInput<E extends HTMLInputElement>(
   const updateFirestoreRef = useRef(
     debounce((valueToStore: string) => {
       client.updatePerson(updateType, valueToStore);
-    }, REACTIVE_INPUT_UPDATE_DELAY)
+    }, INPUT_DELAY)
   );
 
   const onChange = (event: React.ChangeEvent<E>) => {
