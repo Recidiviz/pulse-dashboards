@@ -646,6 +646,7 @@ export const IdPopulationFilterOptions: PopulationFilters = {
       { label: "All", value: "ALL" },
       { label: "Female", value: "FEMALE" },
       { label: "Male", value: "MALE" },
+      { label: "Trans Female", value: "TRANS_FEMALE" },
       { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
@@ -705,6 +706,11 @@ export const IdPopulationFilterOptions: PopulationFilters = {
         label: "PWCC",
         longLabel: "Pocatello Women's Correctional Center",
         value: "PWCC",
+      },
+      {
+        label: "SAWC",
+        longLabel: "St. Anthony Work Center",
+        value: "SAWC",
       },
       { label: "CJ", longLabel: "County Jail", value: "CJ" },
       { label: "OOS", longLabel: "Out of state", value: "OOS" },

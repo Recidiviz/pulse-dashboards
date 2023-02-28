@@ -88,22 +88,11 @@ export const DEFAULT_PATHWAYS_SECTION_BY_PAGE: Record<string, string> = {
   [PATHWAYS_PAGES.supervisionToLiberty]: PATHWAYS_SECTIONS.countOverTime,
 };
 
-const defaltPathwaysWithProjectionsSectionByPage: Record<string, string> = {
-  ...DEFAULT_PATHWAYS_SECTION_BY_PAGE,
-  [PATHWAYS_PAGES.prison]: PATHWAYS_SECTIONS.projectedCountOverTime,
-  [PATHWAYS_PAGES.supervision]: PATHWAYS_SECTIONS.projectedCountOverTime,
-};
-
 export function getDefaultPathwaysSectionByPage(
   pageId: string,
   currentTenantId?: TenantId
 ): string {
-  switch (currentTenantId) {
-    case US_ID:
-      return defaltPathwaysWithProjectionsSectionByPage[pageId];
-    default:
-      return DEFAULT_PATHWAYS_SECTION_BY_PAGE[pageId];
-  }
+  return DEFAULT_PATHWAYS_SECTION_BY_PAGE[pageId];
 }
 
 const PATHWAYS_METRIC_IDS_BY_PAGE: Record<PathwaysPage, MetricId[]> = {

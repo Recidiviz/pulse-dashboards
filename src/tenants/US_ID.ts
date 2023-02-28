@@ -57,13 +57,14 @@ const US_ID_CONFIG: TenantConfig = {
     ],
     libertyToPrison: [
       PATHWAYS_SECTIONS.countOverTime,
+      PATHWAYS_SECTIONS.countByLocation,
       PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration,
       PATHWAYS_SECTIONS.countByGender,
       PATHWAYS_SECTIONS.countByAgeGroup,
       PATHWAYS_SECTIONS.countByRace,
     ],
     prison: [
-      PATHWAYS_SECTIONS.projectedCountOverTime,
+      PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLocation,
       PATHWAYS_SECTIONS.countByRace,
       PATHWAYS_SECTIONS.personLevelDetail,
@@ -76,7 +77,7 @@ const US_ID_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.personLevelDetail,
     ],
     supervision: [
-      PATHWAYS_SECTIONS.projectedCountOverTime,
+      PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLocation,
       PATHWAYS_SECTIONS.countBySupervisionLevel,
       PATHWAYS_SECTIONS.countByRace,
@@ -85,7 +86,8 @@ const US_ID_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLengthOfStay,
       PATHWAYS_SECTIONS.countByLocation,
-      PATHWAYS_SECTIONS.countByOfficer,
+      // TODO #3088 Re-enable officer chart when data is ready
+      // PATHWAYS_SECTIONS.countByOfficer,
       PATHWAYS_SECTIONS.countBySupervisionLevel,
       PATHWAYS_SECTIONS.countByGender,
       PATHWAYS_SECTIONS.countByRace,
