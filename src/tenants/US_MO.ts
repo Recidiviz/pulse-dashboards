@@ -22,6 +22,11 @@ import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
+import { OpportunityType } from "../WorkflowsStore";
+
+const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
+  "usMoRestrictiveHousingStatusHearing",
+];
 
 const US_MO_CONFIG: TenantConfig = {
   name: "Missouri",
@@ -29,7 +34,10 @@ const US_MO_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_MO],
   enableUserRestrictions: true,
   enableVitalsCaseloadButton: false,
+  opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
+  workflowsSupportedSystems: ["INCARCERATION"],
   navigation: {
+    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,
@@ -94,6 +102,7 @@ const US_MO_CONFIG: TenantConfig = {
     "supervisionToPrison",
     "supervisionToLiberty",
     "supervision",
+    "workflows",
   ],
   tableColumns: enabledTableColumns[pathways.US_MO],
 };
