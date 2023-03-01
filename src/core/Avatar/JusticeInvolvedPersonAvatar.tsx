@@ -82,7 +82,7 @@ export const JusticeInvolvedPersonAvatar: React.FC<AvatarProps> = ({
       <Avatar
         variant="marble"
         size={size}
-        name={name}
+        name={initials}
         colors={palette.data.defaultOrder}
         square={false}
       />
