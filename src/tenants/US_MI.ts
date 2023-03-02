@@ -28,7 +28,6 @@ const US_MI_CONFIG: TenantConfig = {
   stateCode: "MI",
   availableStateCodes: [pathways.US_MI],
   enableUserRestrictions: false,
-  enableVitalsCaseloadButton: false,
   navigation: {
     system: [PATHWAYS_PAGES.prison],
     libertyToPrison: [

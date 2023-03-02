@@ -50,7 +50,6 @@ export type TenantConfig = {
   domain?: string;
   availableStateCodes: string[];
   enableUserRestrictions: boolean;
-  enableVitalsCaseloadButton: boolean;
   workflowsEnableAllDistricts?: boolean;
   workflowsOfficerTitleOverride?: string;
   navigation?: Navigation;

@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
 import {
   OPPORTUNITY_URL_BY_TYPE,
   OpportunityType,

@@ -24,8 +24,6 @@ export const defaultOfflineUser = {
     state_code: "recidiviz",
     allowed_supervision_location_ids: [],
     allowed_supervision_location_level: null,
-    can_access_leadership_dashboard: true,
-    can_access_case_triage: true,
     should_see_beta_charts: true,
     routes: {
       system_prison: true,

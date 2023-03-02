@@ -221,24 +221,23 @@ function pathways(req, res) {
   const allowed =
     appMetadata.state_code === "recidiviz" ||
     isOfflineMode ||
-    (appMetadata.can_access_leadership_dashboard &&
-      Object.entries(appMetadata.routes).some(([route, status]) => {
-        // routes have the format `system_prisonToSupervision: true`
-        // metric names have the format `prison_to_supervision_count_by_month`
-        if (!status) {
-          return false;
-        }
-        const routeParts = route.split("_");
-        if (routeParts.length !== 2 || routeParts[0] !== "system") {
-          return false;
-        }
+    Object.entries(appMetadata.routes).some(([route, status]) => {
+      // routes have the format `system_prisonToSupervision: true`
+      // metric names have the format `prison_to_supervision_count_by_month`
+      if (!status) {
+        return false;
+      }
+      const routeParts = route.split("_");
+      if (routeParts.length !== 2 || routeParts[0] !== "system") {
+        return false;
+      }
 
-        return (
-          metricName.startsWith(snakeCase(routeParts[1])) &&
-          // Make sure we don't consider system_prison as eligible for prison_to_supervision_count_by_month
-          !metricName.startsWith(`${snakeCase(routeParts[1])}_to_`)
-        );
-      }));
+      return (
+        metricName.startsWith(snakeCase(routeParts[1])) &&
+        // Make sure we don't consider system_prison as eligible for prison_to_supervision_count_by_month
+        !metricName.startsWith(`${snakeCase(routeParts[1])}_to_`)
+      );
+    });
 
   if (!allowed) {
     respondWithForbidden(res);

@@ -33,7 +33,6 @@ const US_MO_CONFIG: TenantConfig = {
   stateCode: "MO",
   availableStateCodes: [pathways.US_MO],
   enableUserRestrictions: true,
-  enableVitalsCaseloadButton: false,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["INCARCERATION"],
   navigation: {

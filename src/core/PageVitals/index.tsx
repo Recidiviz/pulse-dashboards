@@ -31,7 +31,6 @@ import MobileNavigation from "../MobileNavigation";
 import { ENTITY_TYPES } from "../models/types";
 import PageTemplate from "../PageTemplate";
 import { PATHWAYS_PATHS } from "../views";
-import VitalsCaseloadButton from "../VitalsCaseloadButton";
 import VitalsMonthlyChange from "../VitalsMonthlyChange";
 import VitalsSummaryBreadcrumbs from "../VitalsSummaryBreadcrumbs";
 import VitalsSummaryCards from "../VitalsSummaryCards";
@@ -97,9 +96,6 @@ const PageVitals: React.FC = () => {
           <VitalsMonthlyChange />
           <VitalsSummaryChart />
         </div>
-      </div>
-      <div className="PageVitals__CaseloadButton">
-        <VitalsCaseloadButton />
       </div>
       <div className="PageVitals__Table">
         {currentEntitySummary.entityType !== ENTITY_TYPES.PO &&

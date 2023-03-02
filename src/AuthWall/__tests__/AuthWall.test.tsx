@@ -20,7 +20,6 @@ import React from "react";
 
 import mockWithTestId from "../../../__helpers__/mockWithTestId";
 import { useRootStore } from "../../components/StoreProvider";
-import { ERROR_MESSAGES } from "../../constants";
 import { render } from "../../testUtils";
 import AuthWall from "../AuthWall";
 
@@ -52,10 +51,7 @@ beforeEach(() => {
     isAuthorized: true,
     availableStateCodes: ["US_MO"],
     authError: undefined,
-    userAppMetadata: {
-      can_access_leadership_dashboard: true,
-      can_access_case_triage: true,
-    },
+    userAppMetadata: {},
     setAuthError: authErrorMock,
   };
 });
@@ -76,30 +72,7 @@ test("shows loading component when userIsLoading", () => {
   expect(getByTestId(mockLoadingTestId)).toBeInTheDocument();
 });
 
-test("renders children when can_access_leadership_dashboard", () => {
-  userStore.userAppMetadata = {
-    can_access_leadership_dashboard: true,
-    can_access_case_triage: false,
-  };
-
-  (useRootStore as jest.Mock).mockReturnValue({
-    userStore,
-    currentTenantId: "US_MO",
-  });
-  const { getByText } = render(
-    <AuthWall>
-      {/* @ts-ignore */}
-      <div tenantIds={["US_MO"]} views={["community"]}>
-        AUTHORIZED
-      </div>
-    </AuthWall>
-  );
-  expect(getByText("AUTHORIZED")).toBeInTheDocument();
-});
-
 test("renders children when can_access_leadership_dashboard property does not exist", () => {
-  userStore.userAppMetadata = {};
-
   (useRootStore as jest.Mock).mockReturnValue({
     userStore,
     currentTenantId: "US_MO",
@@ -113,64 +86,9 @@ test("renders children when can_access_leadership_dashboard property does not ex
     </AuthWall>
   );
   expect(getByText("AUTHORIZED")).toBeInTheDocument();
-});
-
-test("redirects to case triage when !can_access_leadership_dashboard and can_access_case_triage", () => {
-  // delete and re-create the window location object for this test
-  const { location } = window;
-  // @ts-ignore
-  delete window.location;
-  window.location = { ...window.location, href: "original-url" };
-
-  userStore.userAppMetadata = {
-    can_access_leadership_dashboard: false,
-    can_access_case_triage: true,
-  };
-
-  (useRootStore as jest.Mock).mockReturnValue({
-    userStore,
-    currentTenantId: "US_MO",
-  });
-  render(
-    <AuthWall>
-      {/* @ts-ignore */}
-      <div tenantIds={["US_MO"]} views={["community"]}>
-        AUTHORIZED
-      </div>
-    </AuthWall>
-  );
-  expect(window.location.href).toMatch("test-case-triage-url");
-  // reset window location to its original object
-  window.location = location;
-});
-
-test("sets an auth error when !can_access_leadership_dashboard and !can_access_case_triage", () => {
-  userStore.userAppMetadata = {
-    can_access_leadership_dashboard: false,
-    can_access_case_triage: false,
-  };
-
-  (useRootStore as jest.Mock).mockReturnValue({
-    userStore,
-    currentTenantId: "US_MO",
-  });
-  render(
-    <AuthWall>
-      {/* @ts-ignore */}
-      <div tenantIds={["US_MO"]} views={["community"]}>
-        AUTHORIZED
-      </div>
-    </AuthWall>
-  );
-  expect(authErrorMock).toHaveBeenCalledWith(ERROR_MESSAGES.unauthorized);
 });
 
 test("returns Not Found when the pathname is not in the layout views", () => {
-  userStore.userAppMetadata = {
-    can_access_leadership_dashboard: false,
-    can_access_case_triage: false,
-  };
-
   (useRootStore as jest.Mock).mockReturnValue({
     userStore,
     currentTenantId: "US_MO",

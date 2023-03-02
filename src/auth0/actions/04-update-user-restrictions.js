@@ -84,14 +84,6 @@ exports.onExecutePostLogin = async (event, api) => {
         restrictions.allowed_supervision_location_level
       );
       api.user.setAppMetadata(
-        "can_access_case_triage",
-        restrictions.can_access_case_triage || false
-      );
-      api.user.setAppMetadata(
-        "can_access_leadership_dashboard",
-        restrictions.can_access_leadership_dashboard || false
-      );
-      api.user.setAppMetadata(
         "should_see_beta_charts",
         restrictions.should_see_beta_charts || false
       );

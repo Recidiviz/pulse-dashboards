@@ -17,9 +17,6 @@
 import { ViewMethodology } from "../../models/types";
 import { getMetricCopy, getPageCopy } from "..";
 
-const CASE_TRIAGE_METHODOLOGY_URL =
-  "https://drive.google.com/file/d/11e-fmxSlACDzwSm-X6qD1OF7vFi62qOU/view";
-
 /**
  * All methodology attribute blocks are in Markdown
  */
@@ -37,11 +34,11 @@ export const usIdMethodology: ViewMethodology = {
                           - The number of people supervised under Sex Offense standards who have had an LSI-R within 90 days of release on parole, within 45 days of intake for those on probation, and then every 365 days if the original LSI-R is over 16.
                       \n- **Timely F2F contacts:** Sum of the following:
                           - Number of people on General caseload Low supervision who have had a face-to-face contact within the last 180 days.
-                          - Number of people on General caseload Moderate supervision who have had two face-to-face contacts within the last 90 days. Note: Within Case Triage, officers will see one contact recommended every 45 days for Moderate supervision clients, which may cause small differences between the values. See [Case Triage FAQ and methodology](${CASE_TRIAGE_METHODOLOGY_URL}) for more details.
-                          - Number of people on General caseload High supervision who have had two face-to-face contacts within the last 30 days. Note: Within Case Triage, officers will see one contact recommended every 15 days for High supervision clients, which may cause small differences between the values. See [Case Triage FAQ and methodology](${CASE_TRIAGE_METHODOLOGY_URL}) for more details.
+                          - Number of people on General caseload Moderate supervision who have had two face-to-face contacts within the last 90 days.
+                          - Number of people on General caseload High supervision who have had two face-to-face contacts within the last 30 days.
                           - Number of people on Sex Offense level one supervision who have had a face-to-face contact within the last 90 days.
                           - Number of people on Sex Offense level two supervision who have had a face-to-face contact within the last 30 days.
-                          - Number of people on Sex Offense level three supervision who have had 2 face-to-face contacts within the last 30 days. Note: Within Case Triage, officers will see one contact recommended every 15 days for people on Sex Offense level three supervision, which may cause small differences between the values. See [Case Triage FAQ and methodology](${CASE_TRIAGE_METHODOLOGY_URL}) for more details.
+                          - Number of people on Sex Offense level three supervision who have had 2 face-to-face contacts within the last 30 days.
                       \n- **Supervision & risk level match:** The number of people on supervision who have a supervision level that is the same or below the risk level designated by their latest risk assessment score.
                       \n\nThe denominator of each rate calculation is all people on supervision in a given day for a given region. For example, the denominators of the percentages for District 3 represent the total number of people on supervision in District 3.`,
       },

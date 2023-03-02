@@ -101,7 +101,6 @@ Expected frontend environment variables include:
 - `REACT_APP_SENTRY_ENV` - The environment for reporting Sentry errors
 - `REACT_APP_SENTRY_DSN` - The public DSN URL to use for sending Sentry errors, can be found on the Sentry project page.
 - `REACT_APP_DEPLOY_ENV` - The current deploy environment: `production`, `staging`, or `dev`
-- `REACT_APP_CASE_TRIAGE_URL` - URL to the Case Triage app for the caseload redirection
 - `REACT_APP_NEW_BACKEND_API_URL` - URL of the new Pathways backend
 
 Expected backend environment variables include:

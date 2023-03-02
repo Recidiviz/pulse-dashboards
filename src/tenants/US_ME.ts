@@ -31,7 +31,6 @@ const US_ME_CONFIG: TenantConfig = {
   stateCode: "ME",
   availableStateCodes: [pathways.US_ME],
   enableUserRestrictions: false,
-  enableVitalsCaseloadButton: false,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["INCARCERATION"],
   workflowsOfficerTitleOverride: "case manager",

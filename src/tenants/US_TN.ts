@@ -39,7 +39,6 @@ const US_TN_CONFIG: TenantConfig = {
   stateCode: "TN",
   availableStateCodes: [pathways.US_TN],
   enableUserRestrictions: false,
-  enableVitalsCaseloadButton: false,
   workflowsEnableAllDistricts: false,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["SUPERVISION"],

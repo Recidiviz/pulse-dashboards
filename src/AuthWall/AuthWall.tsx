@@ -25,7 +25,6 @@ import { useHistory, useLocation } from "react-router-dom";
 
 import NotFound from "../components/NotFound";
 import { useRootStore } from "../components/StoreProvider";
-import { ERROR_MESSAGES } from "../constants";
 
 /**
  * Verifies authorization before rendering its children.
@@ -34,7 +33,6 @@ const AuthWall: React.FC = ({ children }) => {
   const { pathname, search } = useLocation();
   const currentView = pathname.split("/")[1];
   const { userStore, currentTenantId, tenantStore } = useRootStore();
-  const { userAppMetadata } = userStore;
   const stateCodeParam = new URLSearchParams(search).get("stateCode");
   const history = useHistory();
 
@@ -68,26 +66,6 @@ const AuthWall: React.FC = ({ children }) => {
     );
   }
   if (userStore.isAuthorized) {
-    if (
-      userAppMetadata.can_access_leadership_dashboard !== undefined &&
-      !userAppMetadata.can_access_leadership_dashboard
-    ) {
-      if (
-        userAppMetadata.can_access_case_triage !== undefined &&
-        userAppMetadata.can_access_case_triage
-      ) {
-        window.location.href =
-          process.env.REACT_APP_CASE_TRIAGE_URL || "about:blank";
-        return (
-          <div className="Loading__container">
-            <Loading />
-          </div>
-        );
-      }
-
-      userStore.setAuthError(ERROR_MESSAGES.unauthorized);
-    }
-
     if (userStore.stateCode?.toLowerCase() === "recidiviz" && stateCodeParam)
       tenantStore.setCurrentTenantId(stateCodeParam);
 

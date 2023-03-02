@@ -38,7 +38,6 @@ const US_ID_CONFIG: TenantConfig = {
   domain: "idoc.idaho.gov",
   availableStateCodes: [pathways.US_ID],
   enableUserRestrictions: false,
-  enableVitalsCaseloadButton: true,
   workflowsEnableAllDistricts: false,
   hasSupervisionTasks: true,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,

@@ -53,7 +53,6 @@ jest.mock("../../utils/getAppMetadata", () => {
     getAppMetadata: jest.fn().mockImplementation(() => {
       return {
         state_code: "US_MO",
-        can_access_leadership_dashboard: true,
         routes: {
           system_prison: true,
           system_prisonToSupervision: false,

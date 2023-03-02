@@ -93,7 +93,7 @@ describe("App tests", () => {
     jest.clearAllMocks();
     userStore = {
       isAuthorized: true,
-      userAppMetadata: { can_access_leadership_dashboard: true },
+      userAppMetadata: {},
       userAllowedNavigation: {
         methodology: ["projections"],
         system: ["prison"],
