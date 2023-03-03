@@ -187,15 +187,11 @@ export class JusticeInvolvedPersonBase<
   }
 
   get preferredName(): string | undefined {
-    return this.rootStore.workflowsStore.featureVariants.personDetailsUpdates
-      ? this.updates?.preferredName
-      : undefined;
+    return this.updates?.preferredName;
   }
 
   get preferredContactMethod(): ContactMethodType | undefined {
-    return this.rootStore.workflowsStore.featureVariants.personDetailsUpdates
-      ? this.updates?.preferredContactMethod
-      : undefined;
+    return this.updates?.preferredContactMethod;
   }
 
   updatePerson(

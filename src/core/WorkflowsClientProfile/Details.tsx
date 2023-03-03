@@ -385,11 +385,7 @@ export function CaseNotes({
 }
 
 export function Milestones({ client }: ClientProfileProps): React.ReactElement {
-  if (
-    client.milestones &&
-    client.milestones.length > 0 &&
-    client.rootStore.workflowsStore.featureVariants.personDetailsUpdates
-  ) {
+  if (client.milestones && client.milestones.length > 0) {
     return (
       <DetailsSection>
         <DetailsHeading>Milestones</DetailsHeading>

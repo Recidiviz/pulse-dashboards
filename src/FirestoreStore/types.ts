@@ -109,7 +109,6 @@ export type FeatureVariant =
   | "usIdSupervisionLevelDowngrade"
   | "usIdLengthOfStayAlmostEligible"
   | "usIdIncomeVerificationAlmostEligible"
-  | "personDetailsUpdates"
   | "usMoRestrictiveHousingStatusHearing"
   | "usIdSupervisionTasks";
 /**
@@ -132,7 +131,6 @@ export const defaultFeatureVariantsActive: FeatureVariantMapping = {
   usIdSupervisionLevelDowngrade: {},
   usIdLengthOfStayAlmostEligible: {},
   usIdIncomeVerificationAlmostEligible: {},
-  personDetailsUpdates: {},
   usMoRestrictiveHousingStatusHearing: {},
   usIdSupervisionTasks: {},
 };

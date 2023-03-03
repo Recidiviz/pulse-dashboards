@@ -136,15 +136,12 @@ function ClientDetails({ client }: ClientProfileProps): React.ReactElement {
       <Divider />
       <SupervisionProgress client={client} />
       <Divider />
-      {client.milestones &&
-        client.milestones.length > 0 &&
-        client.rootStore.workflowsStore.featureVariants
-          .personDetailsUpdates && (
-          <>
-            <Milestones client={client} />
-            <Divider />
-          </>
-        )}
+      {client.milestones && client.milestones.length > 0 && (
+        <>
+          <Milestones client={client} />
+          <Divider />
+        </>
+      )}
       <ClientHousing client={client} />
       <Divider />
       {client.currentBalance !== undefined && (
@@ -189,10 +186,7 @@ const PreferredName: React.FC<ClientProfileProps> = observer(
 
 function ContactDetails({
   person,
-  personDetailsUpdates,
-}: PersonProfileProps & {
-  personDetailsUpdates: boolean;
-}): React.ReactElement | null {
+}: PersonProfileProps): React.ReactElement | null {
   if (!(person instanceof Client)) return null;
 
   return (
@@ -207,22 +201,18 @@ function ContactDetails({
           </ContactValue>
         </div>
       </ContactCell>
-      {personDetailsUpdates && (
-        <ContactCell flexBasis="25%">
-          <ContactLabel>Preferred Name</ContactLabel>
-          <ContactValue>
-            <PreferredName client={person} />
-          </ContactValue>
-        </ContactCell>
-      )}
-      {personDetailsUpdates && (
-        <ContactCell flexBasis="25%">
-          <ContactLabel>Preferred Contact</ContactLabel>
-          <ContactValue>
-            <PreferredContact client={person} />
-          </ContactValue>
-        </ContactCell>
-      )}
+      <ContactCell flexBasis="25%">
+        <ContactLabel>Preferred Name</ContactLabel>
+        <ContactValue>
+          <PreferredName client={person} />
+        </ContactValue>
+      </ContactCell>
+      <ContactCell flexBasis="25%">
+        <ContactLabel>Preferred Contact</ContactLabel>
+        <ContactValue>
+          <PreferredContact client={person} />
+        </ContactValue>
+      </ContactCell>
     </ContactDetailsContainer>
   );
 }
@@ -230,10 +220,7 @@ function ContactDetails({
 export const FullProfile = observer(
   function FullProfile(): React.ReactElement | null {
     const {
-      workflowsStore: {
-        selectedPerson: person,
-        featureVariants: { personDetailsUpdates },
-      },
+      workflowsStore: { selectedPerson: person },
     } = useRootStore();
 
     usePersonTracking(person, () => {
@@ -253,10 +240,7 @@ export const FullProfile = observer(
               hideTooltip
               nameHoverState={false}
             />
-            <ContactDetails
-              person={person}
-              personDetailsUpdates={!!personDetailsUpdates}
-            />
+            <ContactDetails person={person} />
           </Header>
           <div className="ProfileDetails">
             <AdditionalDetails person={person} />
