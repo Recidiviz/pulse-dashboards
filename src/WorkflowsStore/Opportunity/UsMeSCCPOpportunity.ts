@@ -19,6 +19,7 @@ import { differenceInDays, differenceInMonths } from "date-fns";
 import { cloneDeep } from "lodash";
 import { computed, makeObservable, observable } from "mobx";
 
+import { pluralizeWord } from "../../utils";
 import { Resident } from "../Resident";
 import { OTHER_KEY } from "../utils";
 import { UsMeSCCPForm } from "./Forms/UsMeSCCPForm";
@@ -90,7 +91,7 @@ const INELIGIBLE_CRITERIA_COPY = {
     tooltip: ELIGIBLE_CRITERIA_COPY.usMeNoClassAOrBViolationFor90Days.tooltip,
   },
   usMeServedXPortionOfSentence: {
-    text: "Needs to serve $MONTHS_REMAINING more months on sentence.",
+    text: "Needs to serve $TIME_REMAINING more $TIME_UNIT on sentence.",
     tooltip: ELIGIBLE_CRITERIA_COPY.usMeServedXPortionOfSentence.tooltip,
   },
 };
@@ -117,9 +118,16 @@ function hydrateServedXPortionOfSentence(
     xPortionServed === "1/2" ? "5 years or less" : "more than 5 years";
   const monthsRemaining = differenceInMonths(eligibleDate, new Date());
 
+  const isDays = monthsRemaining === 0;
+  const timeRemaining = isDays
+    ? differenceInDays(eligibleDate, new Date())
+    : monthsRemaining;
+  const timeUnit = pluralizeWord(timeRemaining, isDays ? "day" : "month");
+
   const text = copy.text
     .replace("$MINIMUM_FRACTION", xPortionServed)
-    .replace("$MONTHS_REMAINING", `${monthsRemaining}`);
+    .replace("$TIME_UNIT", timeUnit)
+    .replace("$TIME_REMAINING", `${timeRemaining}`);
   const tooltip = copy.tooltip
     .replaceAll("$MINIMUM_FRACTION", xPortionServed)
     .replace("$LENGTH_CONDITION", lengthCondition);
