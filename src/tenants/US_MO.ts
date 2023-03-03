@@ -35,6 +35,7 @@ const US_MO_CONFIG: TenantConfig = {
   enableUserRestrictions: true,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["INCARCERATION"],
+  workflowsOfficerTitleOverride: "location", // probably should be facility but we append "s" to make these plural
   navigation: {
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],
     system: [

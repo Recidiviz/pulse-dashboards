@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { addDays } from "date-fns";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
@@ -26,6 +27,7 @@ import {
   UsMoRestrictiveHousingStatusHearingRecordFixture,
 } from "../__fixtures__";
 import { UsMoRestrictiveHousingStatusHearingOpportunity } from "../UsMoRestrictiveHousingStatusHearingOpportunity";
+import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../UsMoRestrictiveHousingStatusHearingReferralRecord";
 
 let opp: UsMoRestrictiveHousingStatusHearingOpportunity;
 let resident: Resident;
@@ -51,10 +53,12 @@ function createTestUnit(residentRecord: typeof usMoPersonRecord) {
   opp = maybeOpportunity;
 }
 
+const today = new Date(2022, 7, 1);
+
 beforeEach(() => {
   // this lets us spy on observables, e.g. computed getters
   configure({ safeDescriptors: false });
-  tk.freeze(new Date(2022, 7, 1));
+  tk.freeze(today);
 });
 
 afterEach(() => {
@@ -72,6 +76,40 @@ describe("fully eligible", () => {
   });
 
   test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+  });
+
+  test("requirements met, eligible today", () => {
+    const fixtureEligibleToday: UsMoRestrictiveHousingStatusHearingReferralRecord =
+      {
+        ...UsMoRestrictiveHousingStatusHearingRecordFixture,
+        criteria: {
+          usMoHasUpcomingHearing: {
+            nextReviewDate: today,
+          },
+          usMoInRestrictiveHousing: {
+            confinementType: "confinement type",
+          },
+        },
+      };
+    referralSub.data = fixtureEligibleToday;
+    expect(opp.requirementsMet).toMatchSnapshot();
+  });
+
+  test("requirements met, eligible tomorrow", () => {
+    const fixtureEligibleTomorrow: UsMoRestrictiveHousingStatusHearingReferralRecord =
+      {
+        ...UsMoRestrictiveHousingStatusHearingRecordFixture,
+        criteria: {
+          usMoHasUpcomingHearing: {
+            nextReviewDate: addDays(today, 1),
+          },
+          usMoInRestrictiveHousing: {
+            confinementType: "confinement type",
+          },
+        },
+      };
+    referralSub.data = fixtureEligibleTomorrow;
     expect(opp.requirementsMet).toMatchSnapshot();
   });
 });

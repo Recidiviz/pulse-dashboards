@@ -17,7 +17,7 @@
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { descending } from "d3-array";
-import { parseJSON } from "date-fns";
+import { differenceInDays, parseJSON } from "date-fns";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
@@ -26,6 +26,7 @@ import { ReactComponent as GoldStar } from "../../assets/static/images/goldStar.
 import * as pathwaysTenants from "../../RootStore/TenantStore/pathwaysTenants";
 import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
 import { Client, WithCaseNotes } from "../../WorkflowsStore";
+import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../../WorkflowsStore/Opportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { InfoButton, InfoTooltipWrapper } from "./common";
@@ -404,6 +405,93 @@ export function Milestones({ client }: ClientProfileProps): React.ReactElement {
   }
 
   return <div />;
+}
+
+// We haven't decided yet what end dates we want to show for MO individuals. To keep the sidebar
+// simple, we've opted not to hydrate start or end dates in the MO resident record.
+// MO workflows also currently treat facilities as staff, so we don't want to show a heading for
+// case manager (since our record will actually show the facility ID there). Since this is different
+// enough from other facilities workflows, add a separate component for MO Incarceration instead of
+// the generic Incarceration one.
+export function UsMoIncarceration({
+  resident,
+}: ResidentProfileProps): React.ReactElement {
+  return (
+    <DetailsSection>
+      <DetailsHeading>Incarceration</DetailsHeading>
+      <DetailsContent>
+        <DetailsList>
+          <DetailsSubheading>Facility</DetailsSubheading>
+          <DetailsContent>{resident.facilityId}</DetailsContent>
+        </DetailsList>
+      </DetailsContent>
+    </DetailsSection>
+  );
+}
+
+export function UsMoRestrictiveHousingPlacement({
+  opportunityRecord,
+}: {
+  opportunityRecord: UsMoRestrictiveHousingStatusHearingReferralRecord;
+}): React.ReactElement {
+  return (
+    <DetailsSection>
+      <DetailsHeading>Current Restrictive Housing Placement</DetailsHeading>
+      <DetailsContent>
+        <DetailsList>
+          <DetailsSubheading>Type</DetailsSubheading>
+          <DetailsContent className="fs-exclude">
+            {opportunityRecord?.metadata.housingUseCode}
+          </DetailsContent>
+
+          <DetailsSubheading>Length of Stay</DetailsSubheading>
+          <DetailsContent className="fs-exclude">
+            {formatWorkflowsDate(
+              opportunityRecord.metadata.restrictiveHousingStartDate
+            )}{" "}
+            to {formatWorkflowsDate(new Date())}
+            <CaseNoteDate>
+              {" "}
+              –{" "}
+              {differenceInDays(
+                new Date(),
+                opportunityRecord.metadata.restrictiveHousingStartDate
+              )}{" "}
+              days
+            </CaseNoteDate>
+          </DetailsContent>
+
+          <DetailsSubheading>Current Location</DetailsSubheading>
+          <DetailsContent className="fs-exclude">
+            Building {opportunityRecord.metadata.buildingNumber}, Complex{" "}
+            {opportunityRecord.metadata.complexNumber}, Room{" "}
+            {opportunityRecord.metadata.roomNumber}, Bed{" "}
+            {opportunityRecord.metadata.bedNumber}
+          </DetailsContent>
+
+          <DetailsSubheading>
+            Last Restrictive Housing Status Hearing
+          </DetailsSubheading>
+          <DetailsContent className="fs-exclude">
+            {formatWorkflowsDate(
+              opportunityRecord.metadata.mostRecentHearingDate
+            )}{" "}
+            (
+            {differenceInDays(
+              new Date(),
+              opportunityRecord.metadata.mostRecentHearingDate
+            )}{" "}
+            days ago)
+          </DetailsContent>
+
+          <DetailsSubheading>Last Hearing Facility</DetailsSubheading>
+          <DetailsContent className="fs-exclude">
+            {opportunityRecord?.metadata.mostRecentHearingFacility}
+          </DetailsContent>
+        </DetailsList>
+      </DetailsContent>
+    </DetailsSection>
+  );
 }
 
 export function ClientProfileDetails({

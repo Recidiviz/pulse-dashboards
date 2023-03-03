@@ -3,7 +3,23 @@
 exports[`fully eligible requirements met 1`] = `
 Array [
   Object {
-    "text": "459 days until next review date (Nov 3, 2023)",
+    "text": "Next review date (Nov 3, 2023) is in 459 days",
+  },
+]
+`;
+
+exports[`fully eligible requirements met, eligible today 1`] = `
+Array [
+  Object {
+    "text": "Next review date (Aug 1, 2022) is today",
+  },
+]
+`;
+
+exports[`fully eligible requirements met, eligible tomorrow 1`] = `
+Array [
+  Object {
+    "text": "Next review date (Aug 2, 2022) is tomorrow",
   },
 ]
 `;

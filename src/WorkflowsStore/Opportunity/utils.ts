@@ -138,10 +138,11 @@ export const generateOpportunityHydratedHeader = (
         "Review these clients and complete their auto-generated TEPE Note.",
     },
     usMoRestrictiveHousingStatusHearing: {
-      eligibilityText: simplur`${count} resident[|s] may be eligible for `,
+      // This is slightly awkward phrasing, but we concatenate the eligibility text + opportunity
+      // text together, so this is the way to get the opportunity text at the end of the sentence.
+      eligibilityText: simplur`${count} resident[|s] [is|are] within 7 days of being due for a `,
       opportunityText: "Restrictive Housing Status Hearing",
-      // TODO(#3053): Add CTA text for usMoRestrictiveHousingStatusHearing
-      callToAction: "TBD",
+      callToAction: "Conduct a Restrictive Housing Status Hearing",
     },
   };
 

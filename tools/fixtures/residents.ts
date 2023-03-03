@@ -69,7 +69,7 @@ export const residentsData: Omit<ResidentRecord, "personType" | "recordId">[] =
     },
     {
       allEligibleOpportunities: ["usMoRestrictiveHousingStatusHearing"],
-      officerId: "OFFICER7",
+      officerId: "FACILITY1", // We treat facilities as staff in MO facilities workflows
       stateCode: "US_MO",
       personExternalId: "RES004",
       personName: {
@@ -77,10 +77,9 @@ export const residentsData: Omit<ResidentRecord, "personType" | "recordId">[] =
         surname: "Resident",
       },
       pseudonymizedId: "anonres004",
-      facilityId: "FACILITY NAME",
+      facilityId: "FACILITY1",
       unitId: "UNIT B",
       custodyLevel: "MINIMUM",
-      admissionDate: "2020-09-12",
-      releaseDate: "2024-10-27",
+      // Resident record query doesn't currently write start/end dates for MO
     },
   ];

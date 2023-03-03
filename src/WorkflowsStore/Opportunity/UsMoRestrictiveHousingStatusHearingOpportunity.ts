@@ -15,18 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInDays } from "date-fns";
+import { differenceInDays, startOfToday } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { formatWorkflowsDate } from "../../utils";
 import { Resident } from "../Resident";
+import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import {
   transformReferral,
   UsMoRestrictiveHousingStatusHearingReferralRecord,
 } from "./UsMoRestrictiveHousingStatusHearingReferralRecord";
+
+const DENIAL_REASONS_MAP = {
+  DATA: "Record of hearing in another file or table",
+  [OTHER_KEY]: "Other, please specify a reason",
+};
 
 export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityBase<
   Resident,
@@ -36,8 +42,7 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
 
   readonly isAlert = true;
 
-  // TODO(#3053): Add Workflows methodology for US_MO
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ME;
+  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MO;
 
   constructor(resident: Resident) {
     super(
@@ -47,6 +52,7 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
       transformReferral
     );
     this.resident = resident;
+    this.denialReasonsMap = DENIAL_REASONS_MAP;
 
     makeObservable(this, {
       requirementsMet: computed,
@@ -61,14 +67,25 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
     } = this.record;
 
     if (usMoHasUpcomingHearing.nextReviewDate) {
-      const daysTillNextReviewDate = differenceInDays(
+      const daysUntilNextReviewDate = differenceInDays(
         usMoHasUpcomingHearing.nextReviewDate,
-        new Date()
+        // startOfToday is important here because eligibility dates don't have times, so they're
+        // parsed as midnight. differenceInDays rounds down, so we need to compare with today's
+        // midnight so we don't end up off by one.
+        startOfToday()
       );
-      const text = `${daysTillNextReviewDate} days until next review date (${formatWorkflowsDate(
+      let daysString;
+      if (daysUntilNextReviewDate === 0) {
+        daysString = "today";
+      } else if (daysUntilNextReviewDate === 1) {
+        daysString = "tomorrow";
+      } else {
+        daysString = `in ${daysUntilNextReviewDate} days`;
+      }
+
+      const text = `Next review date (${formatWorkflowsDate(
         usMoHasUpcomingHearing.nextReviewDate
-      )})`;
-      // TODO(#3053): Add Workflows methodology for US_MO
+      )}) is ${daysString}`;
       requirements.push({
         text,
       });

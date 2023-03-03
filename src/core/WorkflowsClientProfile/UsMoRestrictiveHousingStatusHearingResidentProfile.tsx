@@ -16,10 +16,9 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Incarceration } from "./Details";
+import { UsMoIncarceration, UsMoRestrictiveHousingPlacement } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
 
@@ -28,18 +27,19 @@ export const UsMoRestrictiveHousingStatusHearingResidentProfile = observer(
     const { workflowsStore } = useRootStore();
 
     const resident = workflowsStore.selectedResident;
-    if (!resident?.verifiedOpportunities.usMoRestrictiveHousingStatusHearing) {
+    const opportunity =
+      resident?.verifiedOpportunities.usMoRestrictiveHousingStatusHearing;
+    if (!opportunity || !opportunity.record) {
       return null;
     }
     return (
       <article>
         <Heading person={resident} />
-        <OpportunityModule
-          opportunity={
-            resident.verifiedOpportunities.usMoRestrictiveHousingStatusHearing
-          }
+        <OpportunityModule opportunity={opportunity} />
+        <UsMoIncarceration resident={resident} />
+        <UsMoRestrictiveHousingPlacement
+          opportunityRecord={opportunity.record}
         />
-        <Incarceration resident={resident} />
       </article>
     );
   }

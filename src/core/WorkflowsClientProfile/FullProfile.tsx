@@ -162,8 +162,15 @@ function ResidentDetails({
     <>
       <SectionHeading>Progress toward success</SectionHeading>
       <Divider />
-      <IncarcerationProgress resident={resident} />
-      <Divider />
+      {
+        // MO residents don't have start/end dates or officer IDs in their resident record
+        resident.stateCode !== "US_MO" && (
+          <>
+            <IncarcerationProgress resident={resident} />
+            <Divider />
+          </>
+        )
+      }
       <ResidentHousing resident={resident} />
       <Divider />
     </>
