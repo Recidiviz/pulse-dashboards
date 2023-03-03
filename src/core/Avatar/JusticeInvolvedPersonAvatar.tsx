@@ -59,7 +59,7 @@ const AvatarInitials = styled(Sans14)<{ size: number }>`
   text-align: center;
 `;
 
-const formatAvatarText = (text: string, splitName: boolean): string => {
+export const formatAvatarText = (text: string, splitName: boolean): string => {
   if (!text) return "";
   return splitName
     ? text

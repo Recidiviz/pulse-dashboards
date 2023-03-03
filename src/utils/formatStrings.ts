@@ -17,7 +17,7 @@
 import CryptoJS from "crypto-js";
 import Base64 from "crypto-js/enc-base64";
 import SHA256 from "crypto-js/sha256";
-import { format, parseISO } from "date-fns";
+import { format, isToday, parseISO } from "date-fns";
 import ceil from "lodash/ceil";
 import lowerCase from "lodash/fp/lowerCase";
 import pipe from "lodash/fp/pipe";
@@ -337,12 +337,18 @@ const getDimensionLabel = (
   return dimensionValue;
 };
 
+const formatDueDateFromToday = (dueDate: Date): string => {
+  if (isToday(dueDate)) return "today";
+  return moment(dueDate).from(moment().startOf("day"));
+};
+
 export {
   convertCurlyQuotesToStraight,
   decrypt,
   encrypt,
   formatDate,
   formatDistrictLabel,
+  formatDueDateFromToday,
   formatDurationFromDays,
   formatISODateString,
   formatLargeNumber,

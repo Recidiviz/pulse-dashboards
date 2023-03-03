@@ -393,7 +393,9 @@ export function Milestones({ client }: ClientProfileProps): React.ReactElement {
         <DetailsContent>
           {client.milestones?.map((milestone) => {
             return (
-              <MilestonesList>
+              <MilestonesList
+                key={`${client.pseudonymizedId}-${milestone.type}`}
+              >
                 <GoldStar height="12" width="12" />
                 <MilestonesItem>{milestone.text}</MilestonesItem>
               </MilestonesList>

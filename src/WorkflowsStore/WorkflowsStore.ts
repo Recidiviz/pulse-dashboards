@@ -61,6 +61,7 @@ import {
   StaffSubscription,
   UserSubscription,
 } from "./subscriptions";
+import { WorkflowsTasksStore } from "./Task/WorkflowsTasksStore";
 import { JusticeInvolvedPerson } from "./types";
 import { staffNameComparator } from "./utils";
 
@@ -90,6 +91,8 @@ export class WorkflowsStore implements Hydratable {
   residentsSubscription: CaseloadSubscription<ResidentRecord>;
 
   private formDownloadingFlag = false;
+
+  workflowsTasksStore: WorkflowsTasksStore;
 
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
@@ -142,6 +145,8 @@ export class WorkflowsStore implements Hydratable {
         }
       }
     );
+
+    this.workflowsTasksStore = new WorkflowsTasksStore(this);
   }
 
   hasOpportunities(opportunityTypes: OpportunityType[]): boolean {
@@ -425,17 +430,29 @@ export class WorkflowsStore implements Hydratable {
 
   opportunitiesLoaded(opportunityTypes: OpportunityType[]): boolean {
     // Wait until we have an active caseload before checking that opportunities are loading.
-    if (
-      !this.caseloadPersons.length &&
-      (!this.caseloadSubscription?.isHydrated ||
-        this.caseloadSubscription.isLoading)
-    ) {
-      return false;
-    }
+    if (!this.caseloadLoaded()) return false;
+
     return (
       this.potentialOpportunities(opportunityTypes).filter(
         (opp) => opp.isLoading !== false
       ).length === 0 && this.selectedOfficerIds.length > 0
+    );
+  }
+
+  caseloadLoaded(): boolean {
+    return (
+      this.caseloadPersons.length > 0 ||
+      (this.caseloadSubscription?.isHydrated &&
+        !this.caseloadSubscription.isLoading) ||
+      false
+    );
+  }
+
+  supervisionTasksLoaded(): boolean {
+    // Wait until we have an active caseload before checking that tasks are loading.
+    if (!this.caseloadLoaded()) return false;
+    return this.caseloadPersons.every(
+      (person) => person.supervisionTasks?.isHydrated
     );
   }
 
@@ -548,12 +565,27 @@ export class WorkflowsStore implements Hydratable {
     return opportunityTypes;
   }
 
+  /**
+   * Whether or not the loaded caseload has any supervision tasks for the selected officer.
+   */
   get hasSupervisionTasks(): boolean {
+    return this.caseloadPersons.some((person) => {
+      return (
+        person.supervisionTasks?.isHydrated &&
+        person.supervisionTasks?.tasks.length > 0
+      );
+    });
+  }
+
+  /**
+   * Whether or not this tenant has the supervision tasks feature.
+   */
+  get allowSupervisionTasks(): boolean {
     const {
       rootStore: { currentTenantId },
     } = this;
     if (!currentTenantId) return false;
-    return tenants[currentTenantId]?.hasSupervisionTasks ?? false;
+    return tenants[currentTenantId]?.allowSupervisionTasks ?? false;
   }
 
   /**

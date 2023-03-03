@@ -14,18 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import {
-  Button,
-  DrawerModal,
-  Icon,
-  palette,
-  spacing,
-} from "@recidiviz/design-system";
-import { rem } from "polished";
-import React, { useEffect, useState } from "react";
-import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import React from "react";
+
 import { Opportunity, OpportunityType } from "../../WorkflowsStore";
 import { CompliantReportingClientProfile } from "../WorkflowsClientProfile";
 import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTerminationClientProfile";
@@ -37,6 +28,7 @@ import { UsIdSupervisionLevelDowngradeClientProfile } from "../WorkflowsClientPr
 import { UsMeSCCPResidentProfile } from "../WorkflowsClientProfile/UsMeSCCPResidentProfile";
 import { UsMoRestrictiveHousingStatusHearingResidentProfile } from "../WorkflowsClientProfile/UsMoRestrictiveHousingStatusHearingResidentProfile";
 import { UsTnExpirationClientProfile } from "../WorkflowsClientProfile/UsTnExpirationClientProfile";
+import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 
 const PAGE_CONTENT: Record<OpportunityType, any> = {
   compliantReporting: {
@@ -81,17 +73,6 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   },
 };
 
-const ModalControls = styled.div`
-  padding: 0 ${rem(spacing.md)};
-  margin-bottom: -1.3rem;
-  text-align: right;
-  z-index: 10;
-`;
-
-const Wrapper = styled.div`
-  padding: ${rem(spacing.lg)};
-`;
-
 type OpportunityCaseloadProps = {
   opportunity?: Opportunity;
 };
@@ -99,39 +80,13 @@ type OpportunityCaseloadProps = {
 export function OpportunityPreviewModal({
   opportunity,
 }: OpportunityCaseloadProps): JSX.Element {
-  const { workflowsStore } = useRootStore();
-
-  // Managing the modal isOpen state here instead of tying it directly to
-  // props helps to smooth out the open/close transition
-  const [modalIsOpen, setModalIsOpen] = useState(!!opportunity);
-  useEffect(() => {
-    setModalIsOpen(!!opportunity);
-  }, [opportunity]);
-
   return (
-    <DrawerModal
-      isOpen={modalIsOpen}
+    <WorkflowsPreviewModal
+      isOpen={!!opportunity}
       onAfterOpen={() => opportunity?.trackPreviewed()}
-      onRequestClose={() => setModalIsOpen(false)}
-      onAfterClose={() => {
-        workflowsStore.updateSelectedPerson(undefined);
-      }}
-      closeTimeoutMS={1000}
-    >
-      <Wrapper className="OpportunityPreviewModal">
-        <ModalControls>
-          <Button
-            className="OpportunityPreviewModal__close"
-            kind="link"
-            onClick={() => {
-              setModalIsOpen(false);
-            }}
-          >
-            <Icon kind="Close" size="14" color={palette.pine2} />
-          </Button>
-        </ModalControls>
-        {opportunity && PAGE_CONTENT[opportunity.type].previewContents}
-      </Wrapper>
-    </DrawerModal>
+      pageContent={
+        opportunity && PAGE_CONTENT[opportunity.type].previewContents
+      }
+    />
   );
 }

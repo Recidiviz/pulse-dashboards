@@ -16,6 +16,7 @@
 // =============================================================================
 import { Hydratable } from "../../core/models/types";
 import { Expect, Extends } from "../../utils/typeUtils";
+import { JusticeInvolvedPerson } from "../types";
 
 const SUPERVISION_TASKS_TYPES = ["usIdSupervisionTasks"] as const;
 export type SupervisionTasksType = typeof SUPERVISION_TASKS_TYPES[number];
@@ -42,9 +43,16 @@ type CheckSupervisionTaskDetailsMappingType = Expect<
   >
 >;
 
-type SupervisionNeedType = "employment";
+export const SUPERVISION_NEED_TYPES = ["employment"] as const;
 
-export type SupervisionTaskType = "homeVisit" | "assessment" | "contact";
+export type SupervisionNeedType = typeof SUPERVISION_NEED_TYPES[number];
+
+export const SUPERVISION_TASK_TYPES = [
+  "homeVisit",
+  "assessment",
+  "contact",
+] as const;
+export type SupervisionTaskType = typeof SUPERVISION_TASK_TYPES[number];
 type SupervisionDetails = HomeVisitDetails | AssessmentDetails | ContactDetails;
 
 type SupervisionDetailsForTask = {
@@ -53,10 +61,22 @@ type SupervisionDetailsForTask = {
   contact: ContactDetails;
 };
 
-export type SupervisionTask<T extends SupervisionTaskType> = {
+export type SupervisionTask<
+  T extends SupervisionTaskType = SupervisionTaskType
+> = {
   type: T;
-  dueDate: string;
+  dueDate: Date;
   details: SupervisionDetailsForTask[T];
+  isOverdue: boolean;
+  dueDateFromToday: string;
+  person: JusticeInvolvedPerson;
+};
+
+export type SupervisionTaskRecord = Pick<
+  SupervisionTask,
+  "type" | "details"
+> & {
+  dueDate: string;
 };
 
 export type SupervisionNeed = {
@@ -67,7 +87,7 @@ export interface SupervisionTasksRecord {
   externalId: string;
   officerId: string;
   stateCode: string;
-  tasks: SupervisionTask<SupervisionTaskType>[];
+  tasks: SupervisionTaskRecord[];
   needs?: SupervisionNeed[];
 }
 
@@ -75,8 +95,10 @@ export interface SupervisionTasksRecord {
  * A SupervisionTask is associated with a single client and it has a list of tasks.
  */
 export interface SupervisionTaskInterface extends Hydratable {
-  readonly tasks?: SupervisionTask<SupervisionTaskType>[] | undefined;
-  readonly needs?: SupervisionNeed[] | undefined;
-  overdueTasks: SupervisionTask<SupervisionTaskType>[];
-  upcomingTasks: SupervisionTask<SupervisionTaskType>[];
+  readonly tasks: SupervisionTask[];
+  readonly needs: SupervisionNeed[];
+  overdueTasks: SupervisionTask[];
+  upcomingTasks: SupervisionTask[];
+  tasksOrderedByPriority: SupervisionTask[];
+  trackPreviewed: () => void;
 }

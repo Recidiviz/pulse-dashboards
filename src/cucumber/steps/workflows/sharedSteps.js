@@ -145,7 +145,7 @@ Then(
 Then(
   "I should see a preview of the opportunity for {string}",
   async (clientName) => {
-    const previewWrapper = await $(".OpportunityPreviewModal");
+    const previewWrapper = await $(".WorkflowsPreviewModal");
     await previewWrapper.waitForExist();
     const text = await previewWrapper.getText();
     expect(text).toEqual(expect.stringContaining(clientName));

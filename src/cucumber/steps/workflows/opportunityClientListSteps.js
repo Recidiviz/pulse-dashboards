@@ -46,7 +46,7 @@ When("I click on the client {string}", async (personName) => {
 });
 
 When("I exit the preview modal", async () => {
-  const closeButton = await $(".OpportunityPreviewModal__close");
+  const closeButton = await $(".WorkflowsPreviewModal__close");
   await closeButton.waitForExist();
   await closeButton.click();
 });

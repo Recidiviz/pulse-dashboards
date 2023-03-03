@@ -30,6 +30,7 @@ import { FullProfile } from "../WorkflowsClientProfile";
 import WorkflowsHomepage from "../WorkflowsHomepage";
 import { WorkflowsFormLayout } from "../WorkflowsLayouts";
 import WorkflowsRoute from "../WorkflowsRoute";
+import { WorkflowsTasks } from "../WorkflowsTasks";
 
 const IE11Warning = styled.div`
   display: flex;
@@ -89,6 +90,14 @@ const PageWorkflows: React.FC = () => {
           ]}
         >
           <CaseloadView />
+        </WorkflowsRoute>
+        <WorkflowsRoute
+          exact
+          path={workflowsRoute({
+            routeName: "tasks",
+          })}
+        >
+          <WorkflowsTasks />
         </WorkflowsRoute>
         <WorkflowsRoute
           exact

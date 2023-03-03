@@ -101,3 +101,9 @@ export function staffNameComparator(a: StaffRecord, b: StaffRecord): number {
 }
 
 export const OTHER_KEY = "Other";
+
+type Entries<T> = {
+  [K in keyof T]: [K, T[K]];
+}[keyof T][];
+export const getEntries = <T extends object>(obj: T) =>
+  Object.entries(obj) as Entries<T>;

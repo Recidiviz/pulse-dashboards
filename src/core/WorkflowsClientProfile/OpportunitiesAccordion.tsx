@@ -42,9 +42,14 @@ import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
 
 const OpportunityWrapper = styled.div<{ background: string; border: string }>`
   background-color: ${({ background: backgroundColor }) => backgroundColor};
-  border-color: ${({ border: borderColor }) => borderColor};
-  border-style: solid;
   border-width: 1px 0;
+  border-color: ${({ border: borderColor }) => borderColor};
+  &:first-child {
+    border-top-style: solid;
+  }
+  &:nth-child(n + 1) {
+    border-bottom-style: solid;
+  }
 `;
 
 const AccordionButton = styled(AccordionItemButton)`
@@ -92,6 +97,10 @@ const AccordionBody = styled(AccordionItemPanel)`
   }
 `;
 
+const AccordionWrapper = styled(Accordion)`
+  margin: 0 -1.5rem;
+`;
+
 const NoOpportunities = styled.div`
   align-items: center;
   background: ${rgba(palette.slate, 0.05)};
@@ -133,8 +142,10 @@ function AccordionSection({ opportunity }: { opportunity: Opportunity }) {
 
 export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
   person,
+  hideEmpty = false,
 }: {
   person: JusticeInvolvedPerson;
+  hideEmpty?: boolean;
 }) {
   const opportunityTypes = keys(
     person.potentialOpportunities
@@ -147,7 +158,7 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
     (opp: Opportunity) => opportunityTypes.indexOf(opp.type)
   );
 
-  const empty = (
+  const empty = hideEmpty ? null : (
     <NoOpportunities>
       <Sans16>None for now</Sans16>
       <Sans14>New opportunities will appear here.</Sans14>
@@ -163,12 +174,12 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
         />
       </div>
     ) : (
-      <Accordion allowZeroExpanded preExpanded={[0]}>
+      <AccordionWrapper allowZeroExpanded preExpanded={[0]}>
         {opportunities.map((opportunity) => {
           if (!opportunity) return undefined;
           return <AccordionSection opportunity={opportunity} />;
         })}
-      </Accordion>
+      </AccordionWrapper>
     );
 
   return (

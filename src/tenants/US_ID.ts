@@ -39,12 +39,12 @@ const US_ID_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_ID],
   enableUserRestrictions: false,
   workflowsEnableAllDistricts: false,
-  hasSupervisionTasks: true,
+  allowSupervisionTasks: true,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["SUPERVISION"],
   navigation: {
     // The order of pages here determines where the user will land first when navigating from `/`
-    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],
+    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients", "tasks"],
     operations: [],
     system: [
       PATHWAYS_PAGES.libertyToPrison,

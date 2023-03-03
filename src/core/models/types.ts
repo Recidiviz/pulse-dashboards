@@ -58,7 +58,7 @@ export type TenantConfig = {
   pagesWithRestrictions?: string[];
   tableColumns?: TableColumns;
   opportunityTypes?: OpportunityType[];
-  hasSupervisionTasks?: boolean;
+  allowSupervisionTasks?: boolean;
   workflowsSupportedSystems?: SystemId[];
 };
 

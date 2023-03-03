@@ -208,6 +208,7 @@ export const WORKFLOWS_PATHS = {
   workflows: `/${PATHWAYS_VIEWS.workflows}`,
   workflows404: `/${PATHWAYS_VIEWS.workflows}/not-found`,
   home: `/${PATHWAYS_VIEWS.workflows}/home`,
+  tasks: `/${PATHWAYS_VIEWS.workflows}/tasks`,
   caseloadClients: `/${PATHWAYS_VIEWS.workflows}/clients`,
   caseloadResidents: `/${PATHWAYS_VIEWS.workflows}/residents`,
   clientProfile: `/${PATHWAYS_VIEWS.workflows}/clients/:justiceInvolvedPersonId`,
@@ -224,6 +225,7 @@ export const WorkflowsPageIdList = [
   "opportunityAction",
   "workflows",
   "workflows404",
+  "tasks",
 ] as const;
 
 export type WorkflowsPage = typeof WorkflowsPageIdList[number];
@@ -236,6 +238,7 @@ export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   residentProfile: "residentProfile",
   opportunityClients: "opportunityClients",
   opportunityAction: "opportunityAction",
+  tasks: "tasks",
   workflows: "workflows",
   workflows404: "workflows404",
 };

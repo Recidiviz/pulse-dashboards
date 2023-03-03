@@ -22,7 +22,12 @@ import { clone } from "lodash";
 import { makeAutoObservable } from "mobx";
 import { v4 as uuidv4 } from "uuid";
 
+import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { OpportunityStatus, OpportunityType } from "../../WorkflowsStore";
+import {
+  SupervisionNeedType,
+  SupervisionTaskType,
+} from "../../WorkflowsStore/Task/types";
 import type RootStore from "..";
 
 const isAnalyticsEnabled = process.env.NODE_ENV !== "development";
@@ -30,6 +35,11 @@ const isAnalyticsEnabled = process.env.NODE_ENV !== "development";
 type OpportunityTrackingMetadata = {
   justiceInvolvedPersonId: string;
   opportunityType: OpportunityType;
+};
+
+type TasksTrackingMetadata = {
+  justiceInvolvedPersonId: string;
+  taskTypes: (SupervisionTaskType | SupervisionNeedType)[];
 };
 
 export default class AnalyticsStore {
@@ -125,6 +135,10 @@ export default class AnalyticsStore {
     this.track("frontend.opportunity_previewed", metadata);
   }
 
+  trackTaskPreviewed(metadata: TasksTrackingMetadata): void {
+    this.track("frontend.tasks_previewed", metadata);
+  }
+
   trackOpportunityMarkedEligible(metadata: OpportunityTrackingMetadata): void {
     this.track("frontend.opportunity_marked_eligible", metadata);
   }
@@ -137,5 +151,12 @@ export default class AnalyticsStore {
 
   trackReferralFormSubmitted(metadata: OpportunityTrackingMetadata): void {
     this.track("frontend.referral_form_submitted", metadata);
+  }
+
+  trackTaskFilterSelected(metadata: {
+    taskCategory: SupervisionTaskCategory;
+    selectedOfficerIds: string[];
+  }): void {
+    this.track("frontend.task_filter_selected", metadata);
   }
 }

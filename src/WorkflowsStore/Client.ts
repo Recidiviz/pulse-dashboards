@@ -92,12 +92,12 @@ export type TaskFactory<PersonType extends JusticeInvolvedPerson> = (
 const createClientSupervisionTasks: TaskFactory<Client> = (
   person
 ): SupervisionTaskInterface | undefined => {
-  const { featureVariants, hasSupervisionTasks } =
+  const { featureVariants, allowSupervisionTasks } =
     person.rootStore.workflowsStore;
   if (
     person instanceof Client &&
     featureVariants.usIdSupervisionTasks &&
-    hasSupervisionTasks
+    allowSupervisionTasks
   ) {
     return new UsIdSupervisionTasks(person);
   }

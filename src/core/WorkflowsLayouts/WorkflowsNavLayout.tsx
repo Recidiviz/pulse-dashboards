@@ -98,6 +98,7 @@ export const WorkflowsNavLayout: React.FC = observer(
         opportunityTypes,
         justiceInvolvedPersonTitle,
         activeSystem,
+        allowSupervisionTasks,
       },
     } = useRootStore();
 
@@ -111,6 +112,13 @@ export const WorkflowsNavLayout: React.FC = observer(
             <li>
               <BrandedNavLink to={workflowsUrl("home")}>Home</BrandedNavLink>
             </li>
+            {allowSupervisionTasks && (
+              <li>
+                <BrandedNavLink to={workflowsUrl("tasks")}>
+                  Tasks
+                </BrandedNavLink>
+              </li>
+            )}
             <li>
               <BrandedNavLink
                 to={workflowsUrl(
