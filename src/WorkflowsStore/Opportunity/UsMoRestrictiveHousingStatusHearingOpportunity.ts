@@ -27,6 +27,7 @@ import { OpportunityRequirement } from "./types";
 import {
   transformReferral,
   UsMoRestrictiveHousingStatusHearingReferralRecord,
+  validateReferral,
 } from "./UsMoRestrictiveHousingStatusHearingReferralRecord";
 
 const DENIAL_REASONS_MAP = {
@@ -49,7 +50,8 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
       resident,
       "usMoRestrictiveHousingStatusHearing",
       resident.rootStore,
-      transformReferral
+      transformReferral,
+      validateReferral
     );
     this.resident = resident;
     this.denialReasonsMap = DENIAL_REASONS_MAP;

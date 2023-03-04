@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isBefore, startOfToday } from "date-fns";
 import { cloneDeep } from "lodash";
 
-import { TransformFunction } from "../subscriptions";
-import { fieldToDate } from "../utils";
+import { TransformFunction, ValidateFunction } from "../subscriptions";
+import { fieldToDate, OpportunityValidationError } from "../utils";
 
 export type UsMoRestrictiveHousingStatusHearingReferralRecord = {
   stateCode: string;
@@ -69,4 +70,21 @@ export const transformReferral: TransformFunction<
   );
 
   return transformedRecord;
+};
+
+export const validateReferral: ValidateFunction<
+  UsMoRestrictiveHousingStatusHearingReferralRecord
+> = (record) => {
+  const { nextReviewDate } = record.criteria.usMoHasUpcomingHearing;
+
+  if (
+    isBefore(
+      nextReviewDate,
+      // startOfToday is important here because eligibility dates don't have times, so they're
+      // parsed as midnight. If we used new Date(), we would exclude today.
+      startOfToday()
+    )
+  ) {
+    throw new OpportunityValidationError("Next review date is in the past");
+  }
 };

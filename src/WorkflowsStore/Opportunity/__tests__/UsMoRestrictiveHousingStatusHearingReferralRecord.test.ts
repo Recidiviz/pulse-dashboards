@@ -15,28 +15,72 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import tk from "timekeeper";
+
+import { OpportunityValidationError } from "../../utils";
 import {
   transformReferral,
   UsMoRestrictiveHousingStatusHearingReferralRecord,
+  validateReferral,
 } from "../UsMoRestrictiveHousingStatusHearingReferralRecord";
 
+const rawRecord: Record<
+  keyof UsMoRestrictiveHousingStatusHearingReferralRecord,
+  any
+> = {
+  stateCode: "US_MO",
+  externalId: "004",
+  criteria: {
+    usMoHasUpcomingHearing: {
+      nextReviewDate: "2023-11-03",
+    },
+  },
+  metadata: {
+    mostRecentHearingDate: "2022-09-03",
+    restrictiveHousingStartDate: "2022-10-01",
+  },
+};
+const today = new Date(2023, 10, 3);
+
+beforeEach(() => {
+  tk.freeze(today);
+});
+
+afterEach(() => {
+  tk.reset();
+});
+
 test("transform record", () => {
-  const rawRecord: Record<
-    keyof UsMoRestrictiveHousingStatusHearingReferralRecord,
-    any
-  > = {
-    stateCode: "US_MO",
-    externalId: "004",
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});
+
+test("record validates: next review date today", () => {
+  expect(() =>
+    validateReferral(
+      transformReferral(
+        rawRecord
+      ) as UsMoRestrictiveHousingStatusHearingReferralRecord
+    )
+  ).not.toThrow(OpportunityValidationError);
+});
+
+test("record does not validate: next review date yesterday", () => {
+  const recordYesterday = {
+    ...rawRecord,
     criteria: {
       usMoHasUpcomingHearing: {
-        nextReviewDate: "2023-11-03",
+        nextReviewDate: "2023-11-02",
+      },
+      usMoInRestrictiveHousing: {
+        confinementType: "confinement type",
       },
     },
-    metadata: {
-      mostRecentHearingDate: "2022-09-03",
-      restrictiveHousingStartDate: "2022-10-01",
-    },
   };
-
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(() =>
+    validateReferral(
+      transformReferral(
+        recordYesterday
+      ) as UsMoRestrictiveHousingStatusHearingReferralRecord
+    )
+  ).toThrow(OpportunityValidationError);
 });
