@@ -135,8 +135,7 @@ export class WorkflowsTasksStore {
       .filter(
         (person) =>
           !!person.supervisionTasks &&
-          person.supervisionTasks.overdueTasks.length > 0 &&
-          !(person.supervisionTasks.upcomingTasks.length > 0)
+          person.supervisionTasks.overdueTasks.length > 0
       )
       .sort((personA, personB) => {
         if (!personA.supervisionTasks || !personB.supervisionTasks) return 0;
