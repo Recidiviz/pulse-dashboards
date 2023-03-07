@@ -16,7 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
-import assertNever from "assert-never";
 import { isPast } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable } from "mobx";
@@ -111,8 +110,8 @@ export abstract class TasksBase<
     return this.tasks.filter((task) => !task.isOverdue);
   }
 
-  get tasksOrderedByPriority(): SupervisionTask<SupervisionTaskType>[] {
-    return this.tasks.sort(taskPriorityComparator);
+  get orderedTasks(): SupervisionTask<SupervisionTaskType>[] {
+    return this.tasks.sort(taskDueDateComparator);
   }
 
   get isHydrated(): boolean {
@@ -142,26 +141,6 @@ export abstract class TasksBase<
   }
 }
 
-export const priorityForTask = (
-  task: SupervisionTask<SupervisionTaskType>
-): number => {
-  const isOverdue = task.dueDate && isPast(task.dueDate);
-  switch (task.type) {
-    case "assessment":
-      return isOverdue ? 1 : 2;
-    case "homeVisit":
-      return isOverdue ? 3 : 4;
-    case "contact":
-      return isOverdue ? 5 : 6;
-    default:
-      assertNever(task.type);
-  }
-};
-
-export const taskPriorityComparator = (
-  a: SupervisionTask<any>,
-  b: SupervisionTask<any>
-) => priorityForTask(a) - priorityForTask(b);
 export const taskDueDateComparator = (
   a: SupervisionTask<any>,
   b: SupervisionTask<any>

@@ -99,6 +99,6 @@ export interface SupervisionTaskInterface extends Hydratable {
   readonly needs: SupervisionNeed[];
   overdueTasks: SupervisionTask[];
   upcomingTasks: SupervisionTask[];
-  tasksOrderedByPriority: SupervisionTask[];
+  orderedTasks: SupervisionTask[];
   trackPreviewed: () => void;
 }

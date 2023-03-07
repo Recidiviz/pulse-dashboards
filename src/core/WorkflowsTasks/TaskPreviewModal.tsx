@@ -135,7 +135,7 @@ export const TaskPreviewModal = observer(function TaskPreviewModal() {
             <Divider />
           )}
           <PreviewTasks
-            tasks={selectedClient.supervisionTasks?.tasks ?? []}
+            tasks={selectedClient.supervisionTasks?.orderedTasks ?? []}
             needs={selectedClient.supervisionTasks?.needs ?? []}
           />
           <Supervision client={selectedClient} />

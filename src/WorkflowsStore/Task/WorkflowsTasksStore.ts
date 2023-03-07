@@ -140,8 +140,8 @@ export class WorkflowsTasksStore {
       .sort((personA, personB) => {
         if (!personA.supervisionTasks || !personB.supervisionTasks) return 0;
         return (
-          +personA.supervisionTasks.tasksOrderedByPriority[0].dueDate -
-          +personB.supervisionTasks.tasksOrderedByPriority[0].dueDate
+          +personA.supervisionTasks.orderedTasks[0].dueDate -
+          +personB.supervisionTasks.orderedTasks[0].dueDate
         );
       });
 
@@ -155,8 +155,8 @@ export class WorkflowsTasksStore {
       .sort((personA, personB) => {
         if (!personA.supervisionTasks || !personB.supervisionTasks) return 0;
         return (
-          +personA.supervisionTasks.tasksOrderedByPriority[0].dueDate -
-          +personB.supervisionTasks.tasksOrderedByPriority[0].dueDate
+          +personA.supervisionTasks.orderedTasks[0].dueDate -
+          +personB.supervisionTasks.orderedTasks[0].dueDate
         );
       });
 

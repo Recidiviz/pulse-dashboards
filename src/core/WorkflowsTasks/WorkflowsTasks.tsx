@@ -128,8 +128,7 @@ type TaskListItemProps = {
 const TaskListItem: React.FC<TaskListItemProps> = observer(
   function TaskListItem({ person, task }: TaskListItemProps) {
     const { workflowsStore } = useRootStore();
-    const orderedTasks = person.supervisionTasks?.tasksOrderedByPriority ?? [];
-
+    const orderedTasks = person.supervisionTasks?.orderedTasks ?? [];
     const taskToDisplay = task || orderedTasks[0];
     if (!taskToDisplay) {
       return null;
@@ -163,7 +162,7 @@ const TaskListItem: React.FC<TaskListItemProps> = observer(
 const NeedListItem: React.FC<TaskListItemProps> = observer(
   function NeedListItem({ person, task }: TaskListItemProps) {
     const { workflowsStore } = useRootStore();
-    const orderedTasks = person.supervisionTasks?.tasksOrderedByPriority ?? [];
+    const orderedTasks = person.supervisionTasks?.orderedTasks ?? [];
 
     return (
       <TaskListTooltip person={person} tasks={orderedTasks}>
