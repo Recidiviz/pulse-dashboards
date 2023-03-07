@@ -109,8 +109,7 @@ export type FeatureVariant =
   | "usIdSupervisionLevelDowngrade"
   | "usIdLengthOfStayAlmostEligible"
   | "usIdIncomeVerificationAlmostEligible"
-  | "usMoRestrictiveHousingStatusHearing"
-  | "usIdSupervisionTasks";
+  | "usMoRestrictiveHousingStatusHearing";
 /**
  * For each feature, an optional activeDate can control when the user gets access.
  * If this is missing, access will be granted immediately.
@@ -132,7 +131,6 @@ export const defaultFeatureVariantsActive: FeatureVariantMapping = {
   usIdLengthOfStayAlmostEligible: {},
   usIdIncomeVerificationAlmostEligible: {},
   usMoRestrictiveHousingStatusHearing: {},
-  usIdSupervisionTasks: {},
 };
 
 /**

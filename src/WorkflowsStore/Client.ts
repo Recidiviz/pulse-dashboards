@@ -92,13 +92,8 @@ export type TaskFactory<PersonType extends JusticeInvolvedPerson> = (
 const createClientSupervisionTasks: TaskFactory<Client> = (
   person
 ): SupervisionTaskInterface | undefined => {
-  const { featureVariants, allowSupervisionTasks } =
-    person.rootStore.workflowsStore;
-  if (
-    person instanceof Client &&
-    featureVariants.usIdSupervisionTasks &&
-    allowSupervisionTasks
-  ) {
+  const { allowSupervisionTasks } = person.rootStore.workflowsStore;
+  if (person instanceof Client && allowSupervisionTasks) {
     return new UsIdSupervisionTasks(person);
   }
 };

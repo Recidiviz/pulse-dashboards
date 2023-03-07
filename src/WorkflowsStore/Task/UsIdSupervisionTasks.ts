@@ -20,34 +20,15 @@
 import { makeObservable } from "mobx";
 
 import { Client } from "../Client";
-import { ValidateFunction } from "../subscriptions";
-import { OpportunityValidationError } from "../utils";
 import { TasksBase } from "./TasksBase";
 import { SupervisionTasksRecord } from "./types";
-
-const getRecordValidator =
-  (client: Client): ValidateFunction<SupervisionTasksRecord> =>
-  () => {
-    const featureFlags = client.rootStore.workflowsStore.featureVariants;
-
-    if (!featureFlags.usIdSupervisionTasks) {
-      throw new OpportunityValidationError(
-        "usIdSupervisionTasks opportunity is not enabled for this user."
-      );
-    }
-  };
 
 export class UsIdSupervisionTasks extends TasksBase<
   Client,
   SupervisionTasksRecord
 > {
   constructor(client: Client) {
-    super(
-      client.rootStore,
-      client,
-      "usIdSupervisionTasks",
-      getRecordValidator(client)
-    );
+    super(client.rootStore, client, "usIdSupervisionTasks");
     makeObservable(this, { needsEmployment: true });
   }
 

@@ -348,7 +348,6 @@ test("feature variants active by default for Recidiviz users", async () => {
       "usIdIncomeVerificationAlmostEligible": Object {},
       "usIdLengthOfStayAlmostEligible": Object {},
       "usIdSupervisionLevelDowngrade": Object {},
-      "usIdSupervisionTasks": Object {},
       "usMoRestrictiveHousingStatusHearing": Object {},
       "usTnExpiration": Object {},
       "usTnExpirationSubmitToTomis": Object {},
