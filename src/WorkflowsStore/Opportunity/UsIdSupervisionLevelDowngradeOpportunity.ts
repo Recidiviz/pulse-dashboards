@@ -17,12 +17,10 @@
  * =============================================================================
  */
 
-import { DocumentData } from "firebase/firestore";
 import { makeObservable } from "mobx";
 
 import { Client } from "../Client";
-import { ValidateFunction } from "../subscriptions";
-import { OpportunityValidationError, OTHER_KEY } from "../utils";
+import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import {
   formatBaseSLDRequirements,
@@ -34,22 +32,6 @@ import { OpportunityRequirement } from "./types";
 
 export type UsIdSupervisionLevelDowngradeReferralRecord =
   SupervisionLevelDowngradeReferralRecord;
-
-const getRecordValidator =
-  (client: Client) =>
-  (
-    record: DocumentData | undefined
-  ): ValidateFunction<SupervisionLevelDowngradeReferralRecord> => {
-    const featureFlags = client.rootStore.workflowsStore.featureVariants;
-
-    if (!featureFlags.usIdSupervisionLevelDowngrade) {
-      throw new OpportunityValidationError(
-        "usIdSupervisionLevelDowngrade opportunity is not enabled for this user."
-      );
-    }
-
-    return getBaseSLDValidator(client);
-  };
 
 export class UsIdSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
@@ -63,7 +45,7 @@ export class UsIdSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       getBaseSLDTransformer((raw: string) =>
         client.rootStore.workflowsStore.formatSupervisionLevel(raw)
       ),
-      getRecordValidator(client)
+      getBaseSLDValidator(client)
     );
 
     makeObservable(this, { requirementsMet: true });

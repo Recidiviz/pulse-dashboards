@@ -148,17 +148,11 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
 
-    if (
-      client.rootStore.workflowsStore.featureVariants.usIdEarnedDischargeForm
-    ) {
-      this.form = new UsIdEarnedDischargeForm(
-        "earnedDischarge",
-        this,
-        client.rootStore
-      );
-    } else {
-      this.form = undefined;
-    }
+    this.form = new UsIdEarnedDischargeForm(
+      "earnedDischarge",
+      this,
+      client.rootStore
+    );
   }
 
   get almostEligible(): boolean {
