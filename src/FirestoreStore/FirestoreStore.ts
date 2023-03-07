@@ -355,6 +355,11 @@ export default class FirestoreStore {
 
     await this.updateOpportunity(type, person.recordId, update);
 
+    this.rootStore.analyticsStore.trackReferralFormEdited({
+      justiceInvolvedPersonId: person.pseudonymizedId,
+      opportunityType: type,
+    });
+
     if (isFirstEdit) {
       this.rootStore.analyticsStore.trackReferralFormFirstEdited({
         justiceInvolvedPersonId: person.pseudonymizedId,

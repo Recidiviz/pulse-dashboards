@@ -104,6 +104,10 @@ export default class AnalyticsStore {
     this.track("frontend.referral_form_first_edited", metadata);
   }
 
+  trackReferralFormEdited(metadata: OpportunityTrackingMetadata): void {
+    this.track("frontend.referral_form_edited", metadata);
+  }
+
   trackReferralFormDownloaded(metadata: OpportunityTrackingMetadata): void {
     this.track("frontend.referral_form_downloaded", metadata);
   }
