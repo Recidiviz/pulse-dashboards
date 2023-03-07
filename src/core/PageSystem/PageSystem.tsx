@@ -41,7 +41,7 @@ const PageSystem: React.FC = () => {
   if (!metric) return <div />;
 
   const { title, summary } = pageContent;
-  const { download, isLoading, note } = metric;
+  const { download, isHydrated, note } = metric;
   const { filterOptions, sortedFilters } = filtersStore;
 
   return (
@@ -62,7 +62,7 @@ const PageSystem: React.FC = () => {
       <MetricVizMapper metric={metric} />
       <ChartNote
         note={note}
-        isLoading={isLoading}
+        isHydrated={isHydrated}
         chartTitle={metric.chartTitle}
       />
     </PageTemplate>

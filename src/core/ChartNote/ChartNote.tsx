@@ -26,17 +26,17 @@ import { PATHWAYS_PATHS } from "../views";
 type Props = {
   note: string;
   chartTitle: string;
-  isLoading?: boolean;
+  isHydrated?: boolean;
 };
 
 const ChartNote: React.FC<Props> = ({
   note,
   chartTitle,
-  isLoading = false,
+  isHydrated = false,
 }) => {
   const { currentTenantId } = useCoreStore();
 
-  if (isLoading || !note) {
+  if (!isHydrated || !note) {
     return (
       <div className="ChartNote">
         <br />
