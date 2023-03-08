@@ -62,7 +62,7 @@ import {
   UserSubscription,
 } from "./subscriptions";
 import { WorkflowsTasksStore } from "./Task/WorkflowsTasksStore";
-import { JusticeInvolvedPerson } from "./types";
+import { EligibilityStatus, JusticeInvolvedPerson } from "./types";
 import { staffNameComparator } from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
@@ -400,11 +400,13 @@ export class WorkflowsStore implements Hydratable {
       });
   }
 
-  get eligibleOpportunities(): Record<OpportunityType, Opportunity[]> {
+  opportunitiesByEligibilityStatus(
+    opportunityStatus: EligibilityStatus
+  ): Record<OpportunityType, Opportunity[]> {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     this.opportunityTypes.forEach((opportunityType) => {
       const opportunities = this.caseloadPersons
-        .map((c) => c.opportunitiesEligible[opportunityType])
+        .map((c) => c[opportunityStatus][opportunityType])
         .filter((opp) => opp !== undefined)
         .map((opp) => opp as Opportunity)
         .sort(opportunityToSortFunctionMapping[opportunityType]);
@@ -414,18 +416,16 @@ export class WorkflowsStore implements Hydratable {
     return mapping;
   }
 
-  get almostEligibleOpportunities(): Record<OpportunityType, Opportunity[]> {
-    const mapping = {} as Record<OpportunityType, Opportunity[]>;
-    this.opportunityTypes.forEach((opportunityType) => {
-      const opportunities = this.caseloadPersons
-        .map((c) => c.opportunitiesAlmostEligible[opportunityType])
-        .filter((opp) => opp !== undefined)
-        .map((opp) => opp as Opportunity)
-        .sort(opportunityToSortFunctionMapping[opportunityType]);
+  get eligibleOpportunities(): Record<OpportunityType, Opportunity[]> {
+    return this.opportunitiesByEligibilityStatus("opportunitiesEligible");
+  }
 
-      mapping[opportunityType] = opportunities as Opportunity[];
-    });
-    return mapping;
+  get almostEligibleOpportunities(): Record<OpportunityType, Opportunity[]> {
+    return this.opportunitiesByEligibilityStatus("opportunitiesAlmostEligible");
+  }
+
+  get deniedOpportunities(): Record<OpportunityType, Opportunity[]> {
+    return this.opportunitiesByEligibilityStatus("opportunitiesDenied");
   }
 
   opportunitiesLoaded(opportunityTypes: OpportunityType[]): boolean {

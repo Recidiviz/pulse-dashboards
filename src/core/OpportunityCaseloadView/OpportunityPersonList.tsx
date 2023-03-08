@@ -22,6 +22,7 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import {
+  generateOpportunityDeniedSectionTitle,
   generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,
   OPPORTUNITY_LABELS,
@@ -52,6 +53,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
       selectedOfficerIds,
       almostEligibleOpportunities,
       eligibleOpportunities,
+      deniedOpportunities,
       selectedOpportunityType: opportunityType,
       justiceInvolvedPersonTitle,
       workflowsOfficerTitle,
@@ -63,9 +65,12 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
   const opportunityLabel = OPPORTUNITY_LABELS[opportunityType];
   const eligibleOpps = eligibleOpportunities[opportunityType];
   const almostEligibleOpps = almostEligibleOpportunities[opportunityType];
+  const deniedOpps = deniedOpportunities[opportunityType];
   // TODO(#2710): Revisit this once we tighten up the typing on these properties
   const totalOpps =
-    (eligibleOpps?.length ?? 0) + (almostEligibleOpps?.length ?? 0);
+    (eligibleOpps?.length ?? 0) +
+    (almostEligibleOpps?.length ?? 0) +
+    (deniedOpps?.length ?? 0);
 
   const hydratedHeader = generateOpportunityHydratedHeader(
     opportunityType,
@@ -97,9 +102,11 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
         {hydratedHeader.callToAction}
       </SubHeading>
       <>
-        {eligibleOpps?.length > 0 && almostEligibleOpps?.length > 0 && (
-          <SectionLabelText>Eligible now</SectionLabelText>
-        )}
+        {eligibleOpps?.length > 0 &&
+          !eligibleOpps[0].isAlert &&
+          (almostEligibleOpps?.length > 0 || deniedOpps?.length > 0) && (
+            <SectionLabelText>Eligible now</SectionLabelText>
+          )}
         <PersonList className="PersonList">
           {eligibleOpps?.map((opportunity) => (
             <PersonListItem
@@ -114,6 +121,21 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
           <SectionLabelText>Almost Eligible</SectionLabelText>
           <PersonList className="PersonList__AlmostEligible">
             {almostEligibleOpps.map((opportunity) => (
+              <PersonListItem
+                key={opportunity.person.recordId}
+                opportunity={opportunity}
+              />
+            ))}
+          </PersonList>
+        </>
+      )}
+      {deniedOpps?.length > 0 && (
+        <>
+          <SectionLabelText>
+            {generateOpportunityDeniedSectionTitle(deniedOpps[0])}
+          </SectionLabelText>
+          <PersonList className="PersonList__Denied">
+            {deniedOpps.map((opportunity) => (
               <PersonListItem
                 key={opportunity.person.recordId}
                 opportunity={opportunity}

@@ -59,6 +59,17 @@ export type OpportunityHeadersType = {
   callToAction: string;
 };
 
+export const generateOpportunityDeniedSectionTitle = (
+  opportunity: Opportunity
+): string => {
+  const { deniedSectionTitle, isAlert } = opportunity;
+  const deniedSectionDefaultTitle = isAlert
+    ? "Overridden"
+    : "Marked ineligible";
+
+  return deniedSectionTitle || deniedSectionDefaultTitle;
+};
+
 export const generateOpportunityInitialHeader = (
   opportunityType: OpportunityType
 ): string => {

@@ -73,6 +73,11 @@ export abstract class OpportunityBase<
   readonly isAlert: boolean = false;
 
   /**
+   * The title of denied section on the opportunity page
+   */
+  readonly deniedSectionTitle?: string;
+
+  /**
    * If the opportunity allows external system requests
    */
   readonly supportsExternalRequest: boolean = false;
@@ -330,6 +335,10 @@ export abstract class OpportunityBase<
   // eslint-disable-next-line class-methods-use-this
   get almostEligible(): boolean {
     return false;
+  }
+
+  get denied(): boolean {
+    return !!this.denial;
   }
 
   readonly policyOrMethodologyUrl: string = "OVERRIDE_ME";

@@ -38,6 +38,10 @@ class WorkflowsOpportunityPage extends Page {
     return $("ul.PersonList__AlmostEligible");
   }
 
+  async deniedClientList() {
+    return $("ul.PersonList__Denied");
+  }
+
   async navigateToFormButton() {
     return $("button.NavigateToFormButton");
   }

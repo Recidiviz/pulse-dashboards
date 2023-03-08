@@ -188,6 +188,7 @@ export interface Opportunity<
   trackListViewed: () => void;
   trackPreviewed: () => void;
   readonly policyOrMethodologyUrl: string;
+  readonly deniedSectionTitle?: string;
 }
 
 export type OpportunityFactory<

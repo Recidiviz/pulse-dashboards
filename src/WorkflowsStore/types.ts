@@ -117,6 +117,10 @@ export type JusticeInvolvedPerson = {
    * Subset of `verifiedOpportunities` that are almost eligible.
    */
   opportunitiesAlmostEligible: OpportunityMapping;
+  /**
+   * Subset of `verifiedOpportunities` that have been marked ineligible.
+   */
+  opportunitiesDenied: OpportunityMapping;
   allOpportunitiesLoaded: boolean;
   /**
    * Contains the person updates, ex: preferredName
@@ -143,3 +147,8 @@ export type OpportunityTypeForRecord<PersonRecord extends PersonRecordType> =
     : PersonRecord extends ResidentRecord
     ? IncarcerationOpportunityType
     : never;
+
+export type EligibilityStatus =
+  | "opportunitiesEligible"
+  | "opportunitiesAlmostEligible"
+  | "opportunitiesDenied";
