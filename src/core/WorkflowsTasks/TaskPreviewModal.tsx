@@ -97,7 +97,7 @@ const PreviewTasks = function PreviewTasks({
           return (
             <TaskItem>
               <TaskName>{TASK_TO_DISPLAY_NAME[task.type]}</TaskName>
-              <TaskDivider>·</TaskDivider>
+              <TaskDivider> &bull; </TaskDivider>
               <TaskDueDate marginLeft="0" overdue={task.isOverdue}>
                 Due {task.dueDateFromToday}
               </TaskDueDate>

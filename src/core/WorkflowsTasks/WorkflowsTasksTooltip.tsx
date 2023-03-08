@@ -147,9 +147,20 @@ const NeedsSection: React.FC<{ person: JusticeInvolvedPerson }> = observer(
   }
 );
 
+const PersonSection: React.FC<{ person: JusticeInvolvedPerson }> = observer(
+  function PersonSection({ person }) {
+    return (
+      <TooltipSection>
+        <SectionHeader>{person.displayName}</SectionHeader>
+      </TooltipSection>
+    );
+  }
+);
+
 const TooltipDetails: React.FC<TooltipDetailsProps> = ({ person, tasks }) => {
   return (
     <TooltipContainer>
+      <PersonSection person={person} />
       <OpportunitiesSection person={person} />
       <TasksSection tasks={tasks} />
       <NeedsSection person={person} />

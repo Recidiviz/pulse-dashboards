@@ -68,8 +68,8 @@ const TasksDescription = styled(Caption)`
 const TaskCategoryPill = styled(Pill).attrs({
   color: palette.slate10,
 })`
-  color: ${palette.slate85};
   cursor: pointer;
+  color: ${palette.slate85};
 `;
 
 const TaskCategories = styled.div`
@@ -91,6 +91,7 @@ const TaskClient = styled.div`
   display: flex;
   align-items: center;
   margin-top: ${rem(spacing.md)};
+  cursor: pointer;
 `;
 
 const TaskClientItem = styled.div`
@@ -135,16 +136,14 @@ const TaskListItem: React.FC<TaskListItemProps> = observer(
     }
     return (
       <TaskListTooltip person={person} tasks={orderedTasks}>
-        <TaskClient>
+        <TaskClient
+          onClick={() =>
+            workflowsStore.updateSelectedPerson(person.pseudonymizedId)
+          }
+        >
           <JusticeInvolvedPersonAvatar name={person.displayName} size={24} />
           <TaskClientItem>
-            <TaskClientName
-              onClick={() =>
-                workflowsStore.updateSelectedPerson(person.pseudonymizedId)
-              }
-            >
-              {person.displayName}
-            </TaskClientName>
+            <TaskClientName>{person.displayName}</TaskClientName>
             <TaskClientTasksCount>
               {task ? null : simplur`${orderedTasks.length} task[|s]`}
             </TaskClientTasksCount>
@@ -166,16 +165,14 @@ const NeedListItem: React.FC<TaskListItemProps> = observer(
 
     return (
       <TaskListTooltip person={person} tasks={orderedTasks}>
-        <TaskClient>
+        <TaskClient
+          onClick={() =>
+            workflowsStore.updateSelectedPerson(person.pseudonymizedId)
+          }
+        >
           <JusticeInvolvedPersonAvatar name={person.displayName} size={32} />
           <TaskClientItem>
-            <TaskClientName
-              onClick={() =>
-                workflowsStore.updateSelectedPerson(person.pseudonymizedId)
-              }
-            >
-              {person.displayName}
-            </TaskClientName>
+            <TaskClientName>{person.displayName}</TaskClientName>
             <TaskClientTasksCount>
               {orderedTasks.length > 0 &&
                 simplur` ${orderedTasks.length} task[|s]`}

@@ -107,10 +107,9 @@ export class WorkflowsTasksStore {
         personsByNeed[need.type].push(person);
       });
     });
-
     getEntries(personsByNeed).forEach(([type, persons]) => {
       personsByNeed[type] = orderBy(persons, (person) =>
-        person.displayName.toLowerCase()
+        person.fullName?.surname?.toLowerCase()
       );
     });
 
