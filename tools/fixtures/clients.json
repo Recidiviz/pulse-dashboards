@@ -26,6 +26,12 @@
     "specialConditionsFlag": "terminated",
     "compliantReportingEligible": true,
     "allEligibleOpportunities": ["compliantReporting"],
+    "currentEmployers": [
+      {
+        "name": "Tire store",
+        "address": "456 Blue Drive"
+      }
+    ],
     "milestones": [
       {
         "text": "Birthday this month (February 10)",
@@ -64,6 +70,12 @@
     "compliantReportingEligible": true,
     "usTnExpirationEligible": true,
     "allEligibleOpportunities": ["compliantReporting", "usTnExpiration"],
+    "currentEmployers": [
+      {
+        "name": "Photography Studio",
+        "address": "41048 Creekside Road"
+      }
+    ],
     "milestones": [
       {
         "text": "Birthday this month (February 10)",
@@ -104,6 +116,12 @@
     "compliantReportingEligible": null,
     "supervisionLevelDowngradeEligible": true,
     "allEligibleOpportunities": ["supervisionLevelDowngrade"],
+    "currentEmployers": [
+      {
+        "name": "Ceramics R Us",
+        "address": "2948 Telegraph Road"
+      }
+    ],
     "emailAddress": "rebekah@cortes.net"
   },
   {
@@ -129,6 +147,11 @@
     "specialConditionsFlag": "current",
     "compliantReportingEligible": true,
     "allEligibleOpportunities": ["compliantReporting"],
+    "currentEmployers": [
+      {
+        "name": "The Noodle Store"
+      }
+    ],
     "emailAddress": "ramonda@underwood.net"
   },
   {
@@ -183,6 +206,11 @@
     "specialConditionsFlag": "none",
     "compliantReportingEligible": true,
     "allEligibleOpportunities": ["compliantReporting"],
+    "currentEmployers": [
+      {
+        "name": "Tire store"
+      }
+    ],
     "emailAddress": "sherri@renelle.net"
   },
   {
@@ -212,7 +240,13 @@
     "lastSpecialConditionsNote": "2021-12-31",
     "specialConditionsFlag": "current",
     "compliantReportingEligible": true,
-    "allEligibleOpportunities": ["compliantReporting"]
+    "allEligibleOpportunities": ["compliantReporting"],
+    "currentEmployers": [
+      {
+        "name": "Tire store",
+        "address": "492 White Lotus St"
+      }
+    ]
   },
   {
     "personName": {
@@ -241,7 +275,17 @@
     "lastSpecialConditionsNote": "2021-12-31",
     "specialConditionsFlag": "current",
     "earlyTerminationEligible": true,
-    "allEligibleOpportunities": ["earlyTermination"]
+    "allEligibleOpportunities": ["earlyTermination"],
+    "currentEmployers": [
+      {
+        "name": "Film Production South",
+        "address": "456 Skywalker Lane"
+      },
+      {
+        "name": "Film Production East",
+        "address": "456 Solo Drive"
+      }
+    ]
   },
   {
     "personName": {
@@ -272,6 +316,11 @@
       "LSU",
       "earnedDischarge",
       "usIdSupervisionLevelDowngrade"
+    ],
+    "currentEmployers": [
+      {
+        "name": "Tire store"
+      }
     ],
     "milestones": [
       {
@@ -310,6 +359,12 @@
     "earnedDischargeEligible": true,
     "pastFTRDEligible": true,
     "allEligibleOpportunities": ["pastFTRD", "earnedDischarge"],
+    "currentEmployers": [
+      {
+        "name": "The Makerspace",
+        "address": "456 Tinker Trail"
+      }
+    ],
     "milestones": [
       {
         "text": "42 months since last violation",
@@ -348,6 +403,12 @@
       "LSU",
       "earnedDischarge"
     ],
+    "currentEmployers": [
+      {
+        "name": "Cameraworks",
+        "address": "456 Shutterfly Lane"
+      }
+    ],
     "milestones": [
       {
         "text": "23 months since last violation",
@@ -382,6 +443,12 @@
     "lastPaymentDate": "2022-10-04",
     "specialConditionsFlag": "current",
     "allEligibleOpportunities": ["LSU"],
+    "currentEmployers": [
+      {
+        "name": "Blue Bean Coffee",
+        "address": "456 Dark Roast Way"
+      }
+    ],
     "milestones": [
       {
         "text": "16 months since last violation",
@@ -416,6 +483,12 @@
     "lastPaymentDate": "2022-10-04",
     "specialConditionsFlag": "current",
     "allEligibleOpportunities": ["LSU"],
+    "currentEmployers": [
+      {
+        "name": "NASA",
+        "address": "456 Shuttle St"
+      }
+    ],
     "milestones": [
       {
         "text": "50 months on supervision",
@@ -446,6 +519,12 @@
     "lastPaymentDate": "2022-10-04",
     "specialConditionsFlag": "current",
     "allEligibleOpportunities": ["earnedDischarge"],
+    "currentEmployers": [
+      {
+        "name": "The Penny Ice Cream Store",
+        "address": "456 Sweets Dr"
+      }
+    ],
     "milestones": [
       {
         "text": "Birthday this month (February 18)",
@@ -480,6 +559,15 @@
     "lastPaymentDate": "2022-10-04",
     "specialConditionsFlag": "current",
     "allEligibleOpportunities": ["earnedDischarge"],
+    "currentEmployers": [
+      {
+        "name": "Software R Us"
+      },
+      {
+        "name": "AI Poems",
+        "address": "456 WeWrite Way"
+      }
+    ],
     "milestones": [
       {
         "text": "Birthday this month (February 23)",
@@ -513,6 +601,12 @@
     "lastPaymentDate": "2022-10-04",
     "specialConditionsFlag": "current",
     "allEligibleOpportunities": ["earnedDischarge"],
+    "currentEmployers": [
+      {
+        "name": "Comedy Central",
+        "address": "493 Laugh St"
+      }
+    ],
     "emailAddress": "larry@david.net"
   }
 ]

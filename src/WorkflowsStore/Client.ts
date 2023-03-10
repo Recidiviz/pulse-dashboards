@@ -20,6 +20,7 @@ import { makeObservable, override } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
 import {
+  ClientEmployer,
   ClientRecord,
   Milestone,
   SpecialConditionCode,
@@ -134,6 +135,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   paroleSpecialConditions?: SpecialConditionCode[];
 
+  currentEmployers?: ClientEmployer[];
+
   milestones?: Milestone[];
 
   emailAddress?: string;
@@ -169,6 +172,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     this.supervisionStartDate = optionalFieldToDate(
       record.supervisionStartDate
     );
+    this.currentEmployers = record.currentEmployers;
     this.milestones = record.milestones;
     this.emailAddress = record.emailAddress;
   }

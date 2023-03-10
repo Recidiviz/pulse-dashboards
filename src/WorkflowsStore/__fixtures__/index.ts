@@ -82,6 +82,12 @@ export const ineligibleClient: ClientRecord = {
   specialConditions: ["SPECIAL CONDITIONS TEST TEST"],
   allEligibleOpportunities: [],
   personType: "CLIENT",
+  currentEmployers: [
+    {
+      name: "Tire store",
+      address: "456 Bedrock Lane",
+    },
+  ],
   milestones: [
     {
       text: "Birthday this month (February 28)",
@@ -129,6 +135,12 @@ export const eligibleClient: ClientRecord = {
   allEligibleOpportunities: [
     "compliantReporting",
   ] as SupervisionOpportunityType[],
+  currentEmployers: [
+    {
+      name: "The Penny Ice Cream Store",
+      address: "456 Sweet Drive",
+    },
+  ],
   milestones: [
     {
       text: "Birthday this month (February 14)",
@@ -158,6 +170,12 @@ export const lsuEligibleClient: ClientRecord = {
   currentBalance: 221.88,
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
   allEligibleOpportunities: ["LSU"],
+  currentEmployers: [
+    {
+      name: "Photography Studio",
+      address: "392 Telegraph Drive, Nashville, TN 12345",
+    },
+  ],
   milestones: [
     {
       text: "8 months without a violation",
@@ -187,6 +205,16 @@ export const lsuAlmostEligibleClient: ClientRecord = {
   currentBalance: 221.88,
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
   allEligibleOpportunities: ["LSU"],
+  currentEmployers: [
+    {
+      name: "Paint Your Own Ceramics",
+      address: "593 MLK Blvd",
+    },
+    {
+      name: "Paints-A-Lot",
+      address: "595 MLK Blvd",
+    },
+  ],
 };
 
 export const mockClients = [

@@ -179,6 +179,11 @@ export type JusticeInvolvedPersonRecord = {
   officerId: string;
 };
 
+export type ClientEmployer = {
+  name: string;
+  address?: string;
+};
+
 /**
  * Data from the Recidiviz data platform about a person on supervision
  */
@@ -197,6 +202,7 @@ export type ClientRecord = JusticeInvolvedPersonRecord & {
   specialConditions?: string[];
   boardConditions?: SpecialConditionCode[];
   allEligibleOpportunities: SupervisionOpportunityType[];
+  currentEmployers?: ClientEmployer[];
   milestones?: Milestone[];
   emailAddress?: string;
 };

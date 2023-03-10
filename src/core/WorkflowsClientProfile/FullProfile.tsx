@@ -30,6 +30,7 @@ import { ProfileCapsule } from "../PersonCapsules";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import ClientDetailsInput from "./ClientDetailsInput";
 import {
+  ClientEmployer,
   ClientHousing,
   FinesAndFees,
   Milestones,
@@ -144,6 +145,12 @@ function ClientDetails({ client }: ClientProfileProps): React.ReactElement {
       )}
       <ClientHousing client={client} />
       <Divider />
+      {client.currentEmployers && client.currentEmployers.length > 0 && (
+        <>
+          <ClientEmployer employers={client.currentEmployers} />
+          <Divider />
+        </>
+      )}
       {client.currentBalance !== undefined && (
         <>
           <FinesAndFees client={client} />

@@ -23,6 +23,7 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { ReactComponent as GoldStar } from "../../assets/static/images/goldStar.svg";
+import { ClientEmployer as ClientEmployerType } from "../../FirestoreStore/types";
 import * as pathwaysTenants from "../../RootStore/TenantStore/pathwaysTenants";
 import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
 import { Client, WithCaseNotes } from "../../WorkflowsStore";
@@ -287,6 +288,34 @@ export function ResidentHousing({
           <DetailsContent>{resident.facilityId}</DetailsContent>
           <DetailsSubheading>Unit</DetailsSubheading>
           <DetailsContent>{resident.unitId}</DetailsContent>
+        </DetailsList>
+      </DetailsContent>
+    </DetailsSection>
+  );
+}
+
+export function ClientEmployer({
+  employers,
+}: {
+  employers: ClientEmployerType[];
+}): React.ReactElement {
+  return (
+    <DetailsSection>
+      <DetailsHeading>Employment</DetailsHeading>
+      <DetailsContent>
+        <DetailsList>
+          {employers.map((employer) => {
+            return (
+              <>
+                <DetailsSubheading>Employer</DetailsSubheading>
+                <DetailsContent className="fs-exclude">
+                  {employer.name}
+                  <br />
+                  {employer.address}
+                </DetailsContent>
+              </>
+            );
+          })}
         </DetailsList>
       </DetailsContent>
     </DetailsSection>

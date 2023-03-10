@@ -229,6 +229,12 @@ export const earlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> = {
   lastPaymentDate: dateToTimestamp("2022-01-03"),
   specialConditions: [],
   boardConditions: [],
+  currentEmployers: [
+    {
+      name: "Tire store",
+      address: "456 Bedrock Lane",
+    },
+  ],
   milestones: [
     {
       text: "8 months without a violation",
