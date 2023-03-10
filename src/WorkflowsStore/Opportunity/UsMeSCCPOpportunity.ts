@@ -48,7 +48,7 @@ const ELIGIBLE_CRITERIA_COPY: Record<
     tooltip: "Currently on minimum or community custody",
   },
   usMeServedXPortionOfSentence: {
-    text: "Served at least $MINIMUM_FRACTION of sentence",
+    text: "$SERVED_CONDITION $MINIMUM_FRACTION of sentence",
     tooltip:
       "Served at least $MINIMUM_FRACTION of the term of imprisonment imposed or, in the case of " +
       "a split sentence, at least $MINIMUM_FRACTION of the unsuspended portion, after consideration of any " +
@@ -117,17 +117,22 @@ function hydrateServedXPortionOfSentence(
   const lengthCondition =
     xPortionServed === "1/2" ? "5 years or less" : "more than 5 years";
   const monthsRemaining = differenceInMonths(eligibleDate, new Date());
+  const daysRemaining = differenceInDays(eligibleDate, new Date());
 
   const isDays = monthsRemaining === 0;
-  const timeRemaining = isDays
-    ? differenceInDays(eligibleDate, new Date())
-    : monthsRemaining;
+  const timeRemaining = isDays ? daysRemaining : monthsRemaining;
   const timeUnit = pluralizeWord(timeRemaining, isDays ? "day" : "month");
+
+  const servedCondition =
+    monthsRemaining >= -3 && monthsRemaining < 0
+      ? `Within ${-daysRemaining} days of having served`
+      : "Served at least";
 
   const text = copy.text
     .replace("$MINIMUM_FRACTION", xPortionServed)
     .replace("$TIME_UNIT", timeUnit)
-    .replace("$TIME_REMAINING", `${timeRemaining}`);
+    .replace("$TIME_REMAINING", `${timeRemaining}`)
+    .replace("$SERVED_CONDITION", servedCondition);
   const tooltip = copy.tooltip
     .replaceAll("$MINIMUM_FRACTION", xPortionServed)
     .replace("$LENGTH_CONDITION", lengthCondition);
