@@ -175,7 +175,9 @@ export class JusticeInvolvedPersonBase<
   get displayPreferredName(): string {
     return [
       this.fullName.givenNames,
-      this.preferredName ? `(${this.preferredName})` : undefined,
+      this.preferredName && this.preferredName !== this.fullName.givenNames
+        ? `(${this.preferredName})`
+        : undefined,
       this.fullName.surname,
     ]
       .filter((n) => Boolean(n))

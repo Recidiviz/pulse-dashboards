@@ -57,7 +57,8 @@ const Input = styled.input`
 type ReactiveInputValue = string;
 type ReactiveInputReturnValue<E extends HTMLInputElement> = [
   ReactiveInputValue,
-  (event: React.ChangeEvent<E>) => void
+  (event: React.ChangeEvent<E>) => void,
+  (event: React.FocusEvent<E>) => void
 ];
 function useReactiveClientInput<E extends HTMLInputElement>(
   text: string,
@@ -87,6 +88,12 @@ function useReactiveClientInput<E extends HTMLInputElement>(
     }
   };
 
+  const onBlur = (event: React.FocusEvent<E>) => {
+    if (updateType === "preferredName" && !event.target.value) {
+      setValue(client.fullName.givenNames || "Unknown");
+    }
+  };
+
   useEffect(() => {
     return reaction(
       () => fetchFromStore(),
@@ -98,7 +105,7 @@ function useReactiveClientInput<E extends HTMLInputElement>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return [value, onChange];
+  return [value, onChange, onBlur];
 }
 
 type ClientDetailsInputProps = {
@@ -112,7 +119,7 @@ const ClientDetailsInput: React.FC<ClientDetailsInputProps> = ({
   client,
   updateType,
 }) => {
-  const [value, onChange] = useReactiveClientInput<HTMLInputElement>(
+  const [value, onChange, onBlur] = useReactiveClientInput<HTMLInputElement>(
     text,
     client,
     updateType
@@ -124,6 +131,7 @@ const ClientDetailsInput: React.FC<ClientDetailsInputProps> = ({
       name={text}
       type="text"
       onChange={onChange}
+      onBlur={onBlur}
       className="fs-exclude"
     />
   );
