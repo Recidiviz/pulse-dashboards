@@ -97,13 +97,13 @@ export class UsIdEarnedDischargeForm extends FormBase<
 
     if (countyNames) {
       countyNames.forEach((county, index) => {
-        initialData[`countyNames${index}`] = county;
+        initialData[`countyNames${index}`] = `${county} County`;
       });
     }
 
     if (judgeNames) {
       judgeNames.forEach((judge, index) => {
-        initialData[`judgeNames${index}`] = `${toTitleCase(
+        initialData[`judgeNames${index}`] = `Judge ${toTitleCase(
           judge.givenNames
         )} ${toTitleCase(judge.surname)}`;
       });
