@@ -50,13 +50,13 @@ const PersonList = styled.ul`
 export const OpportunityPersonList = observer(function OpportunityPersonList() {
   const {
     workflowsStore: {
-      selectedOfficerIds,
+      selectedSearchIds,
       almostEligibleOpportunities,
       eligibleOpportunities,
       deniedOpportunities,
       selectedOpportunityType: opportunityType,
       justiceInvolvedPersonTitle,
-      workflowsOfficerTitle,
+      workflowsSearchFieldTitle,
     },
   } = useRootStore();
 
@@ -88,8 +88,8 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
   const empty = (
     <WorkflowsNoResults
       callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
-        selectedOfficerIds.length,
-      ]} ${workflowsOfficerTitle}['s|s'] caseloads are eligible for ${opportunityLabel.toLowerCase()}. Search for another ${workflowsOfficerTitle}.`}
+        selectedSearchIds.length,
+      ]} ${workflowsSearchFieldTitle}['s|s'] caseloads are eligible for ${opportunityLabel.toLowerCase()}. Search for another ${workflowsSearchFieldTitle}.`}
     />
   );
 

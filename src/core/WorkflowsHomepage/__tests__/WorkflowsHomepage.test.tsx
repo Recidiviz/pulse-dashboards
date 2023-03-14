@@ -34,12 +34,12 @@ const useRootStoreMock = useRootStore as jest.Mock;
 
 const baseWorkflowsStoreMock = {
   opportunitiesLoaded: () => false,
-  selectedOfficerIds: ["123"],
+  selectedSearchIds: ["123"],
   opportunityTypes: ["earlyTermination"],
   allOpportunitiesByType: { earlyTermination: [] },
   hasOpportunities: () => false,
   user: { info: { givenNames: "Recidiviz" } },
-  workflowsOfficerTitle: "officer",
+  workflowsSearchFieldTitle: "officer",
   justiceInvolvedPersonTitle: "client",
 };
 
@@ -58,7 +58,7 @@ describe("WorkflowsHomepage", () => {
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
         ...baseWorkflowsStoreMock,
-        selectedOfficerIds: [],
+        selectedSearchIds: [],
       },
     });
 
@@ -134,7 +134,7 @@ describe("WorkflowsHomepage", () => {
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
-        selectedOfficerIds: ["123", "456"],
+        selectedSearchIds: ["123", "456"],
       },
     });
 
@@ -156,7 +156,7 @@ describe("WorkflowsHomepage", () => {
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
-        workflowsOfficerTitle: "unicorn",
+        workflowsSearchFieldTitle: "unicorn",
       },
     });
 

@@ -51,7 +51,7 @@ export type TenantConfig = {
   availableStateCodes: string[];
   enableUserRestrictions: boolean;
   workflowsEnableAllDistricts?: boolean;
-  workflowsOfficerTitleOverride?: string;
+  workflowsOfficerTitleOverride?: string; // TODO(#3117): Move this into SystemId-specific config
   navigation?: Navigation;
   betaNavigation?: Navigation;
   vitalsMetrics?: VitalsMetric[];
@@ -63,6 +63,7 @@ export type TenantConfig = {
 };
 
 export type SystemId = "INCARCERATION" | "SUPERVISION";
+export type SearchType = "OFFICER"; // TODO(#3117): Add LOCATION
 
 export type Gender = "ALL" | "FEMALE" | "MALE";
 export type AgeGroup =

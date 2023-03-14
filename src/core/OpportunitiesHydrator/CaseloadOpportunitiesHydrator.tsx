@@ -38,7 +38,7 @@ export const CaseloadOpportunitiesHydrator = observer(
     opportunityTypes,
   }: OpportunitiesHydratorProps) {
     const { workflowsStore } = useRootStore();
-    const { selectedOfficerIds } = workflowsStore;
+    const { selectedSearchIds } = workflowsStore;
 
     useEffect(
       () =>
@@ -52,7 +52,7 @@ export const CaseloadOpportunitiesHydrator = observer(
       [workflowsStore, opportunityTypes]
     );
 
-    const displayInitialState = !selectedOfficerIds.length;
+    const displayInitialState = !selectedSearchIds.length;
     const displayLoading =
       !displayInitialState &&
       !workflowsStore.opportunitiesLoaded(opportunityTypes);

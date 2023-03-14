@@ -127,7 +127,7 @@ export class WorkflowsStore implements Hydratable {
     reaction(
       () => [this.rootStore.currentTenantId],
       () => {
-        this.updateSelectedOfficers([]);
+        this.updateSelectedSearch([]);
       }
     );
 
@@ -135,12 +135,15 @@ export class WorkflowsStore implements Hydratable {
     when(
       () => !!this.user,
       () => {
-        const { selectedOfficerIds } = this.user?.updates ?? {};
+        const { selectedSearchIds, selectedOfficerIds } =
+          this.user?.updates ?? {};
         const { isDefaultOfficerSelection } = this.user?.metadata ?? {};
-        if (selectedOfficerIds && isDefaultOfficerSelection) {
+        const selectedSeach = selectedSearchIds ?? selectedOfficerIds;
+        if (selectedSeach && isDefaultOfficerSelection) {
           this.rootStore.analyticsStore.trackCaseloadSearch({
-            officerCount: selectedOfficerIds.length,
+            searchCount: selectedSeach.length,
             isDefault: true,
+            searchType: "OFFICER",
           });
         }
       }
@@ -254,16 +257,26 @@ export class WorkflowsStore implements Hydratable {
     const metadata: UserMetadata = {};
 
     // set default caseload to the user's own, when applicable
-    if (!updates.selectedOfficerIds && info.hasCaseload) {
-      updates.selectedOfficerIds = [info.id];
+    // TODO(#3117): Only do this when we are in a search-by-officer state
+    if (
+      !(updates.selectedOfficerIds || updates.selectedSearchIds) &&
+      info.hasCaseload
+    ) {
+      updates.selectedSearchIds = [info.id];
       metadata.isDefaultOfficerSelection = true;
     }
 
     return { info, updates, metadata };
   }
 
-  get selectedOfficerIds(): string[] {
-    return this.user?.updates?.selectedOfficerIds ?? [];
+  get selectedSearchIds(): string[] {
+    return (
+      this.user?.updates?.selectedSearchIds ??
+      // fall back to selectedOfficerIds since the field was renamed from that to selectedSearchIds
+      // TODO(#3154) get rid of selectedOfficerIds altogether
+      this.user?.updates?.selectedOfficerIds ??
+      []
+    );
   }
 
   async fetchPerson(personId: string): Promise<void> {
@@ -317,13 +330,13 @@ export class WorkflowsStore implements Hydratable {
     });
   }
 
-  updateSelectedOfficers(officerIds: string[]): void {
+  updateSelectedSearch(searchIds: string[]): void {
     if (!this.user || !this.rootStore.currentTenantId) return;
 
-    this.rootStore.firestoreStore.updateSelectedOfficerIds(
+    this.rootStore.firestoreStore.updateSelectedSearchIds(
       this.user.info.email,
       this.rootStore.currentTenantId,
-      officerIds
+      searchIds
     );
   }
 
@@ -340,7 +353,7 @@ export class WorkflowsStore implements Hydratable {
 
   get selectedOfficers(): StaffRecord[] {
     return this.availableOfficers.filter(
-      (officer) => this.selectedOfficerIds.indexOf(officer.id) !== -1
+      (officer) => this.selectedSearchIds.indexOf(officer.id) !== -1
     );
   }
 
@@ -391,7 +404,7 @@ export class WorkflowsStore implements Hydratable {
 
   get caseloadPersons(): JusticeInvolvedPerson[] {
     return values(this.justiceInvolvedPersons)
-      .filter((p) => this.selectedOfficerIds.includes(p.assignedStaffId))
+      .filter((p) => this.selectedSearchIds.includes(p.assignedStaffId))
       .sort((a, b) => {
         return (
           ascending(a.fullName.surname, b.fullName.surname) ||
@@ -435,7 +448,7 @@ export class WorkflowsStore implements Hydratable {
     return (
       this.potentialOpportunities(opportunityTypes).filter(
         (opp) => opp.isLoading !== false
-      ).length === 0 && this.selectedOfficerIds.length > 0
+      ).length === 0 && this.selectedSearchIds.length > 0
     );
   }
 
@@ -611,9 +624,9 @@ export class WorkflowsStore implements Hydratable {
   }
 
   /**
-   * Title to display for officers in workflows
+   * Title to display for the search bar in workflows
    */
-  get workflowsOfficerTitle(): string {
+  get workflowsSearchFieldTitle(): string {
     const { currentTenantId } = this.rootStore;
     if (!currentTenantId) return "officer";
     return tenants[currentTenantId].workflowsOfficerTitleOverride ?? "officer";

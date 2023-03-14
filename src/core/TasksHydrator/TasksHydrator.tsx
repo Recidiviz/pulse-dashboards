@@ -34,7 +34,7 @@ export const CaseloadTasksHydrator = observer(function CaseloadTasksHydrator({
   hydrated,
 }: OpportunitiesHydratorProps) {
   const { workflowsStore } = useRootStore();
-  const { selectedOfficerIds } = workflowsStore;
+  const { selectedSearchIds } = workflowsStore;
 
   useEffect(
     () =>
@@ -47,7 +47,7 @@ export const CaseloadTasksHydrator = observer(function CaseloadTasksHydrator({
     [workflowsStore]
   );
 
-  const displayInitialState = !selectedOfficerIds.length;
+  const displayInitialState = !selectedSearchIds.length;
 
   const displayLoading =
     !displayInitialState && !workflowsStore.supervisionTasksLoaded();

@@ -251,17 +251,18 @@ test("user data reflects subscriptions", async () => {
 
 test("caseload defaults to self", async () => {
   await waitForHydration();
-  expect(workflowsStore.selectedOfficerIds).toEqual([mockOfficer.info.id]);
+  expect(workflowsStore.selectedSearchIds).toEqual([mockOfficer.info.id]);
   expect(rootStore.analyticsStore.trackCaseloadSearch).toHaveBeenCalledWith({
-    officerCount: 1,
+    searchCount: 1,
     isDefault: true,
+    searchType: "OFFICER",
   });
 });
 
 test("caseload defaults to no officers if user has no caseload and no saved officers", async () => {
   await waitForHydration(mockSupervisor);
 
-  expect(workflowsStore.selectedOfficerIds).toEqual([]);
+  expect(workflowsStore.selectedSearchIds).toEqual([]);
 });
 
 test("caseload defaults to stored value", async () => {
@@ -275,7 +276,7 @@ test("caseload defaults to stored value", async () => {
     },
   });
 
-  expect(workflowsStore.selectedOfficerIds).toEqual(mockStoredOfficers);
+  expect(workflowsStore.selectedSearchIds).toEqual(mockStoredOfficers);
 });
 
 test("default caseload does not override empty stored value", async () => {
@@ -286,7 +287,7 @@ test("default caseload does not override empty stored value", async () => {
       selectedOfficerIds: [],
     },
   });
-  expect(workflowsStore.selectedOfficerIds).toEqual([]);
+  expect(workflowsStore.selectedSearchIds).toEqual([]);
 });
 
 test("caseload syncs with stored value changes", async () => {
@@ -302,7 +303,7 @@ test("caseload syncs with stored value changes", async () => {
     };
   });
 
-  expect(workflowsStore.selectedOfficerIds).toEqual(mockStoredOfficers);
+  expect(workflowsStore.selectedSearchIds).toEqual(mockStoredOfficers);
 });
 
 test("receive feature variants at startup", async () => {

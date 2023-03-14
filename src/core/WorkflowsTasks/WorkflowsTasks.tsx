@@ -336,16 +336,16 @@ const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
     workflowsStore: {
       workflowsTasksStore: store,
       justiceInvolvedPersonTitle,
-      selectedOfficerIds,
-      workflowsOfficerTitle,
+      selectedSearchIds,
+      workflowsSearchFieldTitle,
     },
   } = useRootStore();
 
   const empty = (
     <WorkflowsNoResults
       callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
-        selectedOfficerIds.length,
-      ]} ${workflowsOfficerTitle}['s|s'] caseloads have any tasks. Search for another ${workflowsOfficerTitle}.`}
+        selectedSearchIds.length,
+      ]} ${workflowsSearchFieldTitle}['s|s'] caseloads have any tasks. Search for another ${workflowsSearchFieldTitle}.`}
     />
   );
 

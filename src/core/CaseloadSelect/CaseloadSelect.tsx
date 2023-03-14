@@ -150,11 +150,11 @@ export const CaseloadSelect = observer(function CaseloadSelect({
 }: CaseloadSelectProps) {
   const { workflowsStore, analyticsStore } = useRootStore();
 
-  const { availableOfficers, selectedOfficers, workflowsOfficerTitle } =
+  const { availableOfficers, selectedOfficers, workflowsSearchFieldTitle } =
     workflowsStore;
 
   const customComponents: SelectComponentsConfig<SelectOption, true> = {
-    ClearIndicator: ClearAll(workflowsOfficerTitle),
+    ClearIndicator: ClearAll(workflowsSearchFieldTitle),
     DropdownIndicator: null,
     IndicatorsContainer,
     MultiValueRemove: ValueRemover,
@@ -178,7 +178,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
         isMulti
         isOptionDisabled={() => disableAdditionalSelections}
         onChange={(newValue) => {
-          workflowsStore.updateSelectedOfficers(
+          workflowsStore.updateSelectedSearch(
             newValue.map((item) => item.value)
           );
           analyticsStore.trackCaseloadSearch({
@@ -187,7 +187,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
           });
         }}
         options={availableOfficers.map(buildSelectOption)}
-        placeholder={`Search for one or more ${workflowsOfficerTitle}s …`}
+        placeholder={`Search for one or more ${workflowsSearchFieldTitle}s …`}
         styles={{
           clearIndicator: (base) => ({
             ...base,

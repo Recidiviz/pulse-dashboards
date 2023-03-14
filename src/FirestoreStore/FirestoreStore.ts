@@ -316,10 +316,10 @@ export default class FirestoreStore {
     });
   }
 
-  updateSelectedOfficerIds(
+  updateSelectedSearchIds(
     userEmail: string,
     stateCode: string,
-    selectedOfficerIds: string[]
+    selectedSearchIds: string[]
   ): Promise<void> | undefined {
     return this.updateDocument(
       collectionNames.userUpdates,
@@ -327,7 +327,10 @@ export default class FirestoreStore {
       doc(this.db, collectionNames.userUpdates, userEmail),
       {
         stateCode,
-        selectedOfficerIds,
+        selectedSearchIds,
+        // selectedOfficerIds was renamed to selectedSearchIds, so delete the old field to make
+        // the data a bit more manageable.
+        selectedOfficerIds: deleteField(),
       }
     );
   }

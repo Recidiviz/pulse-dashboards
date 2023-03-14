@@ -49,11 +49,11 @@ export class CaseloadSubscription<
 
   get dataSource(): Query | undefined {
     const {
-      selectedOfficerIds,
+      selectedSearchIds,
       rootStore: { currentTenantId, firestoreStore },
     } = this.workflowsStore;
 
-    if (!currentTenantId || !selectedOfficerIds.length) {
+    if (!currentTenantId || !selectedSearchIds.length) {
       return undefined;
     }
 
@@ -61,7 +61,7 @@ export class CaseloadSubscription<
     return query(
       collection(firestoreStore.db, collectionId),
       where("stateCode", "==", currentTenantId),
-      where("officerId", "in", selectedOfficerIds)
+      where("officerId", "in", selectedSearchIds)
     ).withConverter({
       fromFirestore(snapshot, options) {
         const doc = snapshot.data(options);

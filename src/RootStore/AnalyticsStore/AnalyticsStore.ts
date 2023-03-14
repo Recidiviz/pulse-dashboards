@@ -22,6 +22,7 @@ import { clone } from "lodash";
 import { makeAutoObservable } from "mobx";
 import { v4 as uuidv4 } from "uuid";
 
+import { SearchType } from "../../core/models/types";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { OpportunityStatus, OpportunityType } from "../../WorkflowsStore";
 import {
@@ -129,8 +130,9 @@ export default class AnalyticsStore {
   }
 
   trackCaseloadSearch(metadata: {
-    officerCount: number;
+    searchCount: number;
     isDefault: boolean;
+    searchType: SearchType;
   }): void {
     this.track("frontend.caseload_search", metadata);
   }

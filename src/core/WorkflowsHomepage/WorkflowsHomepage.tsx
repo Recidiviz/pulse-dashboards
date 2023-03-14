@@ -48,11 +48,11 @@ const WorkflowsHomepage = observer(
   function WorkflowsHomepage(): React.ReactElement | null {
     const {
       workflowsStore: {
-        selectedOfficerIds,
+        selectedSearchIds,
         opportunityTypes,
         allOpportunitiesByType,
         user,
-        workflowsOfficerTitle,
+        workflowsSearchFieldTitle,
         justiceInvolvedPersonTitle,
       },
     } = useRootStore();
@@ -60,7 +60,7 @@ const WorkflowsHomepage = observer(
     const initial = (
       <WorkflowsNoResults
         headerText={getWelcomeText(user?.info.givenNames)}
-        callToActionText={`Search for ${workflowsOfficerTitle}s above to review and refer eligible ${justiceInvolvedPersonTitle}s for
+        callToActionText={`Search for ${workflowsSearchFieldTitle}s above to review and refer eligible ${justiceInvolvedPersonTitle}s for
           opportunities like ${getSelectOpportunitiesText(opportunityTypes)}.`}
       />
     );
@@ -68,8 +68,8 @@ const WorkflowsHomepage = observer(
     const empty = (
       <WorkflowsNoResults
         callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
-          selectedOfficerIds.length,
-        ]} ${workflowsOfficerTitle}['s|s'] caseloads are eligible for opportunities. Search for another ${workflowsOfficerTitle}.`}
+          selectedSearchIds.length,
+        ]} ${workflowsSearchFieldTitle}['s|s'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`}
       />
     );
 

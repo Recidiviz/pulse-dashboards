@@ -38,7 +38,7 @@ beforeEach(() => {
   queryMock.mockReturnValue({ withConverter: withConverterMock });
 
   workflowsStoreMock = observable({
-    selectedOfficerIds: ["TEST1"],
+    selectedSearchIds: ["TEST1"],
     rootStore: {
       currentTenantId: "US_ND",
       firestoreStore: {
@@ -68,7 +68,7 @@ test("dataSource reflects observables", () => {
 test("dataSource is undefined if no officers are selected", () => {
   runInAction(() => {
     // @ts-ignore
-    workflowsStoreMock.selectedOfficerIds = [];
+    workflowsStoreMock.selectedSearchIds = [];
   });
 
   sub.subscribe();
@@ -86,7 +86,7 @@ test("dataSource reacts to observables", () => {
     // @ts-ignore
     workflowsStoreMock.rootStore.currentTenantId = "US_TN";
     // @ts-ignore
-    workflowsStoreMock.selectedOfficerIds = ["TEST1", "TEST2"];
+    workflowsStoreMock.selectedSearchIds = ["TEST1", "TEST2"];
   });
 
   expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
@@ -98,7 +98,7 @@ test("dataSource can be unset and reset", () => {
 
   runInAction(() => {
     // @ts-ignore
-    workflowsStoreMock.selectedOfficerIds = [];
+    workflowsStoreMock.selectedSearchIds = [];
   });
 
   expect(sub.dataSource).toBeUndefined();
@@ -107,7 +107,7 @@ test("dataSource can be unset and reset", () => {
     // @ts-ignore
     workflowsStoreMock.rootStore.currentTenantId = "US_TN";
     // @ts-ignore
-    workflowsStoreMock.selectedOfficerIds = ["TEST1", "TEST2"];
+    workflowsStoreMock.selectedSearchIds = ["TEST1", "TEST2"];
   });
 
   expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");

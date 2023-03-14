@@ -63,17 +63,17 @@ export const AllCaseloads = observer(function AllCaseloads() {
   const {
     workflowsStore: {
       caseloadPersons,
-      selectedOfficerIds,
-      workflowsOfficerTitle,
+      selectedSearchIds,
+      workflowsSearchFieldTitle,
       justiceInvolvedPersonTitle,
     },
   } = useRootStore();
 
-  if (!selectedOfficerIds.length)
+  if (!selectedSearchIds.length)
     return (
       <WorkflowsNoResults
         headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s`}
-        callToActionText={`Search for ${workflowsOfficerTitle}s above to view their entire caseload.`}
+        callToActionText={`Search for ${workflowsSearchFieldTitle}s above to view their entire caseload.`}
       />
     );
 
@@ -81,9 +81,9 @@ export const AllCaseloads = observer(function AllCaseloads() {
 
   return (
     <>
-      {selectedOfficerIds.map((officerId) => (
+      {selectedSearchIds.map((officerId) => (
         <React.Fragment key={officerId}>
-          {selectedOfficerIds.length > 1 && (
+          {selectedSearchIds.length > 1 && (
             <SectionLabelText>
               <WorkflowsOfficerName officerId={officerId} />
             </SectionLabelText>

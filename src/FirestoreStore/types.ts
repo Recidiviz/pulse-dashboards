@@ -84,6 +84,8 @@ export function isUserRecord(
 export type UserUpdateRecord = {
   stateCode: string;
   // this persists their most recent caseload selection
+  selectedSearchIds?: string[];
+  // previous version of ^, leaving in for backwards compatibility
   selectedOfficerIds?: string[];
 };
 
