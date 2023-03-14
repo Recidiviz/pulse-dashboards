@@ -20,7 +20,7 @@
 import { cloneDeep } from "lodash";
 
 import { TransformFunction } from "../subscriptions";
-import { fieldToDate } from "../utils";
+import { fieldToDate, optionalFieldToDate } from "../utils";
 import { WithCaseNotes } from "./types";
 import { transformCaseNotes } from "./utils";
 
@@ -32,7 +32,11 @@ export type UsMeSCCPCriteria = {
   };
   usMeXMonthsRemainingOnSentence: { eligibleDate: Date };
   usMeNoDetainersWarrantsOrOther: null;
-  usMeNoClassAOrBViolationFor90Days: null | { eligibleDate: Date };
+  usMeNoClassAOrBViolationFor90Days: null | {
+    eligibleDate?: Date;
+    highestClassViol: string;
+    violType: string;
+  };
 };
 
 export type UsMeSCCPReferralRecord = {
@@ -71,7 +75,7 @@ const transformCriteria = (
 
   if (transformedCriteria.usMeNoClassAOrBViolationFor90Days) {
     transformedCriteria.usMeNoClassAOrBViolationFor90Days.eligibleDate =
-      fieldToDate(
+      optionalFieldToDate(
         // @ts-expect-error: We know this field exists since the one we checked above is a clone of it
         criteria.usMeNoClassAOrBViolationFor90Days.eligibleDate
       );

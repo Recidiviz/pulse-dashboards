@@ -723,6 +723,8 @@ export const usMeSCCPAlmostEligibleViolationRecordFixture: UsMeSCCPReferralRecor
     ineligibleCriteria: {
       usMeNoClassAOrBViolationFor90Days: {
         eligibleDate: parseISO("2023-02-15"),
+        highestClassViol: "highestClassViol",
+        violType: "violType",
       },
     },
     eligibleCriteria: {
@@ -765,6 +767,8 @@ export const usMeSCCPAlmostEligibleXPortionOfSentenceRecordFixture: UsMeSCCPRefe
       usMeNoDetainersWarrantsOrOther: null,
       usMeNoClassAOrBViolationFor90Days: {
         eligibleDate: parseISO("2022-10-15"),
+        highestClassViol: "highestClassViol",
+        violType: "violType",
       },
     },
     caseNotes: {

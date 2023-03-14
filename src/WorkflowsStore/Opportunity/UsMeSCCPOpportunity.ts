@@ -87,7 +87,9 @@ const INELIGIBLE_CRITERIA_COPY = {
   usMeXMonthsRemainingOnSentence:
     ELIGIBLE_CRITERIA_COPY.usMeXMonthsRemainingOnSentence,
   usMeNoClassAOrBViolationFor90Days: {
-    text: "Needs $DAYS_REMAINING more days without a Class A or B discipline",
+    // The violation text is an empty string but is always overwritten with a custom string based on
+    // the presence of an eligibility date in hydrateDaysWithoutViolationRequirementText
+    text: "",
     tooltip: ELIGIBLE_CRITERIA_COPY.usMeNoClassAOrBViolationFor90Days.tooltip,
   },
   usMeServedXPortionOfSentence: {
@@ -143,15 +145,15 @@ function hydrateServedXPortionOfSentence(
 function hydrateDaysWithoutViolationRequirementText(
   criterion: NonNullable<UsMeSCCPCriteria["usMeNoClassAOrBViolationFor90Days"]>
 ) {
-  const daysRemaining = differenceInDays(
-    criterion.eligibleDate,
-    new Date()
-  ).toString();
+  if (criterion.eligibleDate) {
+    const daysRemaining = differenceInDays(
+      criterion.eligibleDate,
+      new Date()
+    ).toString();
+    return `Needs ${daysRemaining} more days without a Class A or B discipline`;
+  }
 
-  return INELIGIBLE_CRITERIA_COPY.usMeNoClassAOrBViolationFor90Days.text.replace(
-    "$DAYS_REMAINING",
-    daysRemaining
-  );
+  return `Class ${criterion.highestClassViol} violation: ${criterion.violType}`;
 }
 
 const requirementsForEligibleCriteria = (
