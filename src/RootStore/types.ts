@@ -46,6 +46,16 @@ export type UserAppMetadata = {
   user_hash?: string;
 };
 
+// TODO #3160 remove this type once we change the shape of UserAppMetadata
+export type RawUserAppMetadata = {
+  stateCode: Lowercase<TenantId>;
+  allowedSupervisionLocationIds?: string[];
+  allowedSupervisionLocationLevel?: string;
+  shouldSeeBetaCharts: boolean;
+  routes?: Record<string, boolean>;
+  userHash?: string;
+};
+
 export type LanternMethodologyByTenant = {
   [key in LanternTenants]: LanternMethodology;
 };

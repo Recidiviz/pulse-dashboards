@@ -27,6 +27,8 @@ const escape = require("escape-html");
 const sanitizeFilename = require("sanitize-filename");
 const { snakeCase } = require("lodash");
 const { GoogleAuth } = require("google-auth-library");
+const Base64 = require("crypto-js/enc-base64");
+const SHA256 = require("crypto-js/sha256");
 
 const {
   refreshRedisCache,
@@ -317,9 +319,9 @@ async function getImpersonatedUserRestrictions(req, res) {
     return;
   }
 
-  const { impersonatedEmail: email, impersonatedStateCode: stateCode } =
-    req.query;
-  const url = `${process.env.RECIDIVIZ_DATA_API_URL}/auth/dashboard_user_restrictions_by_email?email_address=${email}&region_code=${stateCode}`;
+  const { impersonatedEmail: email } = req.query;
+  const userHash = Base64.stringify(SHA256(email));
+  const url = `${process.env.RECIDIVIZ_DATA_API_URL}/auth/users/${userHash}`;
   try {
     const auth = new GoogleAuth({ credentials: serviceAccount });
     const client = await auth.getIdTokenClient(

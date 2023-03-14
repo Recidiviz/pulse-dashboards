@@ -35,6 +35,7 @@ import {
 } from "../core/types/navigation";
 import { PATHWAYS_SECTIONS, PathwaysPageIdList } from "../core/views";
 import tenants from "../tenants";
+import { transformImpersonatedUserAppMetadata } from "../utils/impersonation";
 import isIE11 from "../utils/isIE11";
 import { isOfflineMode } from "../utils/isOfflineMode";
 import { getAllowedMethodology } from "../utils/navigation";
@@ -207,11 +208,15 @@ export default class UserStore {
       );
 
       // Fetch dashboard userAppMetadata to build mocked auth0 user
-      const userRestrictions = await fetchImpersonatedUserAppMetadata(
+      const fetchedRestrictions = await fetchImpersonatedUserAppMetadata(
         impersonatedEmail,
         impersonatedStateCode,
         this.getTokenSilently
       );
+
+      // TODO #3160 remove this transform once we change the shape of UserAppMetadata
+      const userRestrictions =
+        transformImpersonatedUserAppMetadata(fetchedRestrictions);
 
       runInAction(() => {
         this.user = {
