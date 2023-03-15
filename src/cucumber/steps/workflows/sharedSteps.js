@@ -24,7 +24,7 @@ import {
   WorkflowsOpportunityPage,
 } from "../../pages";
 import {
-  respondWithOfflineUser,
+  switchUserStateCode,
   waitForNavigation,
   waitForNetworkIdle,
 } from "../utils";
@@ -42,7 +42,8 @@ const pageMapping = {
 Given(
   "I am a {string} user on the {string} page",
   async (stateCode, pageName) => {
-    await respondWithOfflineUser(stateCode);
+    WorkflowsHomepage.open();
+    await switchUserStateCode(stateCode);
     if (pageMapping[pageName]) {
       await pageMapping[pageName].open();
     } else {
@@ -54,7 +55,8 @@ Given(
 Given(
   "I am a {string} user on the profile page for person ID {string}",
   async (stateCode, personID) => {
-    await respondWithOfflineUser(stateCode);
+    WorkflowsHomepage.open();
+    await switchUserStateCode(stateCode);
     await pageMapping.profile.open(personID);
   }
 );

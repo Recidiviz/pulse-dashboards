@@ -27,11 +27,11 @@ class WorkflowsHomepage extends Page {
   }
 
   async opportunitySummaries() {
-    return browser.$$(".OpportunityTypeSummaryWrapper");
+    return $$(".OpportunityTypeSummaryWrapper");
   }
 
   async clientAvatars() {
-    return browser.$$(".OpportunityClientsWrapper");
+    return $$(".OpportunityClientsWrapper");
   }
 }
 

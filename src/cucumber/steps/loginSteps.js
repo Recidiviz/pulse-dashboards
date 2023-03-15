@@ -19,7 +19,7 @@ import { Given, Then } from "@cucumber/cucumber";
 import lanternPage from "../pages/lanternPage";
 import loginPage from "../pages/loginPage";
 import workflowsHomepage from "../pages/workflowsHomepage";
-import users from "./fixtures/users";
+import { switchUserStateCode } from "./utils";
 
 /**
  * Given
@@ -33,10 +33,8 @@ Given("I am logged into Lantern as a {string} user", async (userLevel) => {
 
 /* Login for Workflows, Pathways */
 Given("I am logged in as a {string} user", async function (stateCode) {
-  const offlineUserMock = await browser.mock("**/api/offlineUser");
-  const offlineUser = users[stateCode];
-  offlineUserMock.respond(offlineUser);
-  await workflowsHomepage.open();
+  workflowsHomepage.open();
+  await switchUserStateCode(stateCode);
 });
 
 /**

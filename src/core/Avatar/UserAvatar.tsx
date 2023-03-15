@@ -104,7 +104,7 @@ const UserAvatar: React.FC<AvatarProps> = ({ size = 32 }) => {
   }
 
   return (
-    <AvatarElement size={size}>
+    <AvatarElement size={size} className="UserAvatar">
       <AvatarImage
         style={{
           backgroundImage: `url("${user.picture}")`,

@@ -17,7 +17,7 @@
 import { Then, When } from "@cucumber/cucumber";
 
 import { WorkflowsHomepage } from "../../pages";
-import users from "../fixtures/users";
+import { defaultOfflineUser } from "../fixtures/users";
 import { waitForElementsToExist, waitForNavigation } from "../utils";
 
 /**
@@ -31,16 +31,15 @@ When("I click on View all for {string}", async (opportunityType) => {
 /**
  * Then
  * */
-Then(
-  "I should see the homepage welcome message for the {string} user",
-  async (stateCode) => {
-    const promptElement = await WorkflowsHomepage.promptText();
-    const promptText = await promptElement.getText();
-    expect(promptText).toMatch(`Welcome, ${users[stateCode].name}`);
-  }
-);
+Then("I should see the homepage welcome message", async () => {
+  const promptElement = await WorkflowsHomepage.promptText();
+  const promptText = await promptElement.getText();
+  expect(promptText).toMatch(`Welcome, ${defaultOfflineUser.name}`);
+});
 
 Then("I should see {int} opportunities listed", async (numOpportunities) => {
+  const wrapper = await $(".OpportunityTypeSummaryWrapper");
+  await wrapper.waitForExist();
   const opportunities = await WorkflowsHomepage.opportunitySummaries();
   await waitForElementsToExist(opportunities);
   expect(opportunities.length).toEqual(numOpportunities);

@@ -56,10 +56,14 @@ const StateSelection: React.FC = () => {
           <button
             type="button"
             key={option.value}
-            className={cn("StateSelection__select-item", {
-              "StateSelection__select-item--selected":
-                option.value === tenantStore.currentTenantId,
-            })}
+            className={cn(
+              "StateSelection__select-item",
+              `StateSelection__${option.value}`,
+              {
+                "StateSelection__select-item--selected":
+                  option.value === tenantStore.currentTenantId,
+              }
+            )}
             onClick={() => handleOnClick(option)}
           >
             {option.label}

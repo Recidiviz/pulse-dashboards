@@ -17,9 +17,16 @@
 import fs from "fs";
 import path from "path";
 
-import users from "./fixtures/users";
-
 const TEMP_DOWNLOAD_PATH = path.join("/tmp", "tempDownloads");
+
+async function switchUserStateCode(stateCode) {
+  const profileLink = await $(".UserAvatar");
+  await profileLink.isExisting();
+  await profileLink.click();
+  const stateSelection = await $(`.StateSelection__${stateCode}`);
+  await stateSelection.isExisting();
+  await stateSelection.click();
+}
 
 async function clickOutsideElement() {
   const body = await $("body");
@@ -32,12 +39,6 @@ async function allowHeadlessDownloads() {
     behavior: "allow",
     downloadPath: TEMP_DOWNLOAD_PATH,
   });
-}
-
-async function respondWithOfflineUser(stateCode) {
-  const offlineUserMock = await browser.mock("**/api/offlineUser");
-  const offlineUser = users[stateCode];
-  return offlineUserMock.respond(offlineUser);
 }
 
 async function waitForElementsToExist(elements) {
@@ -145,7 +146,7 @@ async function waitForFileToExist(filePath, timeout) {
 export {
   allowHeadlessDownloads,
   clickOutsideElement,
-  respondWithOfflineUser,
+  switchUserStateCode,
   TEMP_DOWNLOAD_PATH,
   waitForElementsToExist,
   waitForFileToExist,

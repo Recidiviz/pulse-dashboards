@@ -37,18 +37,3 @@ export const defaultOfflineUser = {
     user_hash: "hash123abc",
   },
 };
-
-const usTnUser = {
-  ...defaultOfflineUser,
-  name: "US_TN Demo Jones",
-  [`${process.env.METADATA_NAMESPACE}app_metadata`]: {
-    state_code: "US_TN",
-    routes: {
-      workflows: true,
-    },
-  },
-};
-
-export default {
-  US_TN: usTnUser,
-};

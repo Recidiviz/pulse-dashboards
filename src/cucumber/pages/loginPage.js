@@ -23,7 +23,7 @@ class LoginPage extends Page {
   }
 
   async usernameInput() {
-    return $('input[type="email"]');
+    return $("input#username");
   }
 
   async passwordInput() {
@@ -31,11 +31,12 @@ class LoginPage extends Page {
   }
 
   async submitBtn() {
-    return $('form button[type="submit"]');
+    return $('button[type="submit"]');
   }
 
   async login(username, password) {
     await (await this.usernameInput()).addValue(username);
+    await (await this.submitBtn()).click();
     await (await this.passwordInput()).addValue(password);
     await (await this.submitBtn()).click();
     await browser.pause(this.redirectPause);

@@ -18,11 +18,11 @@ import { Given, Then, When } from "@cucumber/cucumber";
 import fs from "fs";
 import path from "path";
 
-import { WorkflowsFormPage } from "../../pages";
+import { WorkflowsFormPage, WorkflowsHomepage } from "../../pages";
 import {
   allowHeadlessDownloads,
   clickOutsideElement,
-  respondWithOfflineUser,
+  switchUserStateCode,
   TEMP_DOWNLOAD_PATH,
   waitForElementsToExist,
   waitForFileToExist,
@@ -35,7 +35,8 @@ import {
 Given(
   "I am a {string} user on the {string} form page for {string}",
   async (stateCode, opportunityType, pseudonymizedId) => {
-    await respondWithOfflineUser(stateCode);
+    WorkflowsHomepage.open();
+    await switchUserStateCode(stateCode);
     await WorkflowsFormPage.open(opportunityType, pseudonymizedId);
   }
 );

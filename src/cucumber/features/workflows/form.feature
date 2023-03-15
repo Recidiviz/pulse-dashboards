@@ -12,9 +12,9 @@ Feature: Fill and export the Workflows form
         And I should see the details section with the text "<detailsText>"
 
         Examples:
-            | stateCode | pseudonymizedId | opportunityType    | formText                     | criteriaText            | detailsText                  |
-            | US_TN     | p101            | compliantReporting | Telephone Reporting Referral | Valid current offenses: | Probation Special Conditions |
-            | US_TN     | p101            | usTnExpiration     | Probation Expiration Date    | Expiration date is      | Relevant Contact Notes       |
+            | stateCode | pseudonymizedId | opportunityType    | formText                     | criteriaText                                                    | detailsText                  |
+            | US_TN     | p101            | compliantReporting | Telephone Reporting Referral | Valid current offenses:                                         | Probation Special Conditions |
+            | US_TN     | p101            | usTnExpiration     | Expiration date              | No zero tolerance codes since most recent sentence imposed date | Relevant Contact Notes       |
 
     Scenario Outline: Update the form
         Given I am a "<stateCode>" user on the "<opportunityType>" form page for "<pseudonymizedId>"

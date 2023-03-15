@@ -17,6 +17,7 @@
 import { Given, Then, When } from "@cucumber/cucumber";
 
 import { WorkflowsOpportunityPage } from "../../pages";
+import { waitForElementsToExist } from "../utils";
 
 /**
  * Given
@@ -71,6 +72,7 @@ Then(
 Then("I should see {int} clients listed", async (numClients) => {
   const clientList = await WorkflowsOpportunityPage.eligibleClientList();
   const clients = await clientList.$$("li");
+  await waitForElementsToExist(clients);
   expect(clients.length).toEqual(numClients);
 });
 
