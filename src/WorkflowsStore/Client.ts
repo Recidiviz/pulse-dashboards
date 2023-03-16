@@ -36,6 +36,7 @@ import {
   OpportunityFactory,
   PastFTRDOpportunity,
   SupervisionOpportunityType,
+  UsMeEarlyTerminationOpportunity,
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
@@ -74,6 +75,7 @@ const supervisionOpportunityConstructors: Record<
   supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
   usIdSupervisionLevelDowngrade: UsIdSupervisionLevelDowngradeOpportunity,
   usTnExpiration: UsTnExpirationOpportunity,
+  usMeEarlyTermination: UsMeEarlyTerminationOpportunity,
 };
 
 export const createClientOpportunity: OpportunityFactory<

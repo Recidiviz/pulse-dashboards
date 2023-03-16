@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fully eligible requirements met 1`] = `
+Array [
+  Object {
+    "text": "Early termination past half full term release date is Apr 3, 2024",
+    "tooltip": "TBD",
+  },
+  Object {
+    "text": "Currently on probation sentence",
+    "tooltip": "TBD",
+  },
+  Object {
+    "text": "No convictions in past 6 months",
+    "tooltip": "TBD",
+  },
+]
+`;

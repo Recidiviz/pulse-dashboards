@@ -24,7 +24,10 @@ import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { OpportunityType } from "../WorkflowsStore";
 
-const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = ["usMeSCCP"];
+const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
+  "usMeSCCP",
+  "usMeEarlyTermination",
+];
 
 const US_ME_CONFIG: TenantConfig = {
   name: "Maine",

@@ -1,0 +1,32 @@
+[
+  {
+    "stateCode": "US_ME",
+    "externalId": "009",
+    "criteria": {
+      "noConvictionWithin6Months": {
+        "latestConvictions": []
+      },
+      "supervisionPastHalfFullTermReleaseDate": {
+        "sentenceType": "PROBATION",
+        "eligibleDate": "2024-04-03"
+      }
+    },
+    "metadata": {
+      "supervisionHalfTimeDate": "2024-05-03"
+    },
+    "caseNotes": {
+      "Treatment": [
+        {
+          "noteTitle": "STARTED",
+          "noteBody": "Treatment started",
+          "eventDate": "2022-06-17"
+        },
+        {
+          "noteTitle": "COMPLETED",
+          "noteBody": "Treatment successfully completed",
+          "eventDate": "2022-09-22"
+        }
+      ]
+    }
+  }
+]

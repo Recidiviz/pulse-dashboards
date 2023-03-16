@@ -25,6 +25,7 @@ import { EarlyTerminationReferralRecord } from "../EarlyTerminationReferralRecor
 import { EarnedDischargeReferralRecord } from "../EarnedDischargeReferralRecord";
 import { LSUReferralRecord } from "../LSUReferralRecord";
 import { PastFTRDReferralRecord } from "../PastFTRDReferralRecord";
+import { UsMeEarlyTerminationReferralRecord } from "../UsMeEarlyTerminationReferralRecord";
 import { UsMeSCCPReferralRecord } from "../UsMeSCCPReferralRecord";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { UsTnExpirationReferralRecord } from "../UsTnExpirationReferralRecord";
@@ -245,7 +246,7 @@ export const earlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> = {
       type: "MONTHS_ON_SUPERVISION",
     },
   ],
-  emailAddress: "jamie@jones.org",
+  emailAddress: "jamie@example.com",
 };
 
 export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {
@@ -781,6 +782,81 @@ export const usMeSCCPAlmostEligibleXPortionOfSentenceRecordFixture: UsMeSCCPRefe
       ],
     },
   };
+
+export const usMeEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> =
+  {
+    personType: "CLIENT",
+    recordId: "us_nd_009",
+    personName: {
+      givenNames: "LAURA",
+      surname: "PALMER",
+    },
+    personExternalId: "009",
+    pseudonymizedId: "p009",
+    stateCode: "US_ME",
+    officerId: "OFFICER8",
+    supervisionType: "PROBATION",
+    supervisionLevel: "MEDIUM",
+    supervisionLevelStart: dateToTimestamp("2019-12-20"),
+    address: "123 Bedrock Lane",
+    phoneNumber: "5555555678",
+    expirationDate: dateToTimestamp("2024-12-31"),
+    allEligibleOpportunities: ["usMeEarlyTermination"],
+    supervisionStartDate: "2020-02-22",
+    currentBalance: 0,
+    lastPaymentAmount: 125.75,
+    lastPaymentDate: dateToTimestamp("2022-01-03"),
+    specialConditions: [],
+    boardConditions: [],
+    currentEmployers: [
+      {
+        name: "Tire store",
+        address: "456 Bedrock Lane",
+      },
+    ],
+    milestones: [
+      {
+        text: "8 months without a violation",
+        type: "MONTHS_WITHOUT_VIOLATION",
+      },
+      {
+        text: "15 months on supervision",
+        type: "MONTHS_ON_SUPERVISION",
+      },
+    ],
+    emailAddress: "laura@example.com",
+  };
+
+export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRecord =
+  {
+    stateCode: "US_ME",
+    externalId: "009",
+    criteria: {
+      noConvictionWithin6Months: {
+        latestConvictions: [],
+      },
+      supervisionPastHalfFullTermReleaseDate: {
+        sentenceType: "PROBATION",
+        eligibleDate: parseISO("2024-04-03"),
+      },
+    },
+    metadata: {
+      supervisionHalfTimeDate: parseISO("2024-05-03"),
+    },
+    caseNotes: {
+      foo: [
+        {
+          noteTitle: "A title",
+          noteBody: "A body",
+          eventDate: parseISO("2022-06-28"),
+        },
+      ],
+    },
+  };
+
+//
+// Missouri
+//
 
 export const usMoPersonRecord: ResidentRecord = {
   recordId: "us_mo_111",

@@ -32,6 +32,7 @@ import {
   LSUOpportunity,
   PastFTRDOpportunity,
   SupervisionOpportunityType,
+  UsMeEarlyTerminationOpportunity,
   UsMeSCCPOpportunity,
   UsMoRestrictiveHousingStatusHearingOpportunity,
   UsTnExpirationOpportunity,
@@ -52,6 +53,7 @@ export type SupervisionOpportunityMapping = {
   supervisionLevelDowngrade?: UsTnSupervisionLevelDowngradeOpportunity;
   usIdSupervisionLevelDowngrade?: UsIdSupervisionLevelDowngradeOpportunity;
   usTnExpiration?: UsTnExpirationOpportunity;
+  usMeEarlyTermination?: UsMeEarlyTerminationOpportunity;
 };
 // The following line will typecheck only if the keys of
 // SupervisionOpportunityMapping are exhaustive

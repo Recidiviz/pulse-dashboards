@@ -37,6 +37,7 @@ const OPPORTUNITIES_WITH_FIXTURES: (keyof typeof collectionNames)[] = [
   "usMeSCCPReferrals",
   "usTnExpirationReferrals",
   "usMoRestrictiveHousingStatusHearingReferrals",
+  "usMeEarlyTerminationReferrals",
 ];
 
 const FIXTURES_TO_LOAD: Partial<Record<keyof typeof collectionNames, any>> = {

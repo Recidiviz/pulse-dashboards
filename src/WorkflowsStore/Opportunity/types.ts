@@ -31,6 +31,7 @@ const SUPERVISION_OPPORTUNITY_TYPES = [
   "supervisionLevelDowngrade",
   "usIdSupervisionLevelDowngrade",
   "usTnExpiration",
+  "usMeEarlyTermination",
 ] as const;
 export type SupervisionOpportunityType =
   typeof SUPERVISION_OPPORTUNITY_TYPES[number];
@@ -61,6 +62,7 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   usMeSCCP: "Supervised Community Confinement Program",
   usTnExpiration: "Expiration",
   usMoRestrictiveHousingStatusHearing: "Restrictive Housing Status Hearing",
+  usMeEarlyTermination: "Early Termination from Probation",
 };
 
 export const OPPORTUNITY_TYPE_URLS_BY_STATE: PartialRecord<
@@ -83,6 +85,7 @@ export const OPPORTUNITY_TYPE_URLS_BY_STATE: PartialRecord<
   },
   US_ME: {
     usMeSCCP: "SCCP",
+    usMeEarlyTermination: "earlyTermination",
   },
   US_MO: {
     usMoRestrictiveHousingStatusHearing: "restrictiveHousingStatusHearing",

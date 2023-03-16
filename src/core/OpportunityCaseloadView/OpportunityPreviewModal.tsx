@@ -25,6 +25,7 @@ import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
 import { PastFTRDClientProfile } from "../WorkflowsClientProfile/PastFTRDClientProfile";
 import { SupervisionLevelDowngradeClientProfile } from "../WorkflowsClientProfile/SupervisionLevelDowngradeClientProfile";
 import { UsIdSupervisionLevelDowngradeClientProfile } from "../WorkflowsClientProfile/UsIdSupervisionLevelDowngradeClientProfile";
+import { UsMeEarlyTerminationClientProfile } from "../WorkflowsClientProfile/UsMeEarlyTerminationClientProfile";
 import { UsMeSCCPResidentProfile } from "../WorkflowsClientProfile/UsMeSCCPResidentProfile";
 import { UsMoRestrictiveHousingStatusHearingResidentProfile } from "../WorkflowsClientProfile/UsMoRestrictiveHousingStatusHearingResidentProfile";
 import { UsTnExpirationClientProfile } from "../WorkflowsClientProfile/UsTnExpirationClientProfile";
@@ -70,6 +71,9 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   },
   usMoRestrictiveHousingStatusHearing: {
     previewContents: <UsMoRestrictiveHousingStatusHearingResidentProfile />,
+  },
+  usMeEarlyTermination: {
+    previewContents: <UsMeEarlyTerminationClientProfile />,
   },
 };
 

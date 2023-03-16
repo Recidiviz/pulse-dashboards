@@ -155,6 +155,12 @@ export const generateOpportunityHydratedHeader = (
       opportunityText: "Restrictive Housing Status Hearing",
       callToAction: "Conduct a Restrictive Housing Status Hearing",
     },
+    usMeEarlyTermination: {
+      eligibilityText: simplur`${count} client[|s] may be eligible for `,
+      opportunityText: "early termination from probation",
+      callToAction:
+        "Review clients eligible for early termination from probation",
+    },
   };
 
   return headers[opportunityType];
@@ -201,6 +207,7 @@ export const opportunityToSortFunctionMapping: Record<
   usMeSCCP: sortByReviewStatus,
   usTnExpiration: sortByReviewStatusAndEligibilityDate,
   usMoRestrictiveHousingStatusHearing: sortByReviewStatusAndEligibilityDate,
+  usMeEarlyTermination: sortByReviewStatus,
 };
 
 export const transformCaseNotes = (
