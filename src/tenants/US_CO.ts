@@ -26,6 +26,7 @@ import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 const US_CO_CONFIG: TenantConfig = {
   name: "Colorado",
   stateCode: "CO",
+  domain: "state.co.us",
   availableStateCodes: [pathways.US_CO],
   enableUserRestrictions: false,
   navigation: {

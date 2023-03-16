@@ -26,6 +26,7 @@ import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 const US_MI_CONFIG: TenantConfig = {
   name: "Michigan",
   stateCode: "MI",
+  domain: "michigan.gov",
   availableStateCodes: [pathways.US_MI],
   enableUserRestrictions: false,
   navigation: {

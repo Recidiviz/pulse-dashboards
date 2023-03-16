@@ -31,6 +31,7 @@ const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
 const US_MO_CONFIG: TenantConfig = {
   name: "Missouri",
   stateCode: "MO",
+  domain: "doc.mo.gov",
   availableStateCodes: [pathways.US_MO],
   enableUserRestrictions: true,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,

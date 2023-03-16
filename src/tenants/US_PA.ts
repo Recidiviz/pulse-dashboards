@@ -24,6 +24,7 @@ import * as lantern from "../RootStore/TenantStore/lanternTenants";
 const US_PA_CONFIG: TenantConfig = {
   name: "Pennsylvania",
   stateCode: "PA",
+  domain: "pa.gov",
   availableStateCodes: [lantern.US_PA],
   enableUserRestrictions: false,
   navigation: {

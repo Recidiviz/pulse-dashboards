@@ -37,6 +37,7 @@ const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
 const US_TN_CONFIG: TenantConfig = {
   name: "Tennessee",
   stateCode: "TN",
+  domain: "tn.gov",
   availableStateCodes: [pathways.US_TN],
   enableUserRestrictions: false,
   workflowsEnableAllDistricts: false,

@@ -34,3 +34,7 @@ export function transformImpersonatedUserAppMetadata(
     user_hash: rawData?.userHash,
   };
 }
+
+export function getEmailDomain(email: string) {
+  return email.split("@").pop();
+}

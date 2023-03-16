@@ -32,6 +32,7 @@ const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
 const US_ME_CONFIG: TenantConfig = {
   name: "Maine",
   stateCode: "ME",
+  domain: "maine.gov",
   availableStateCodes: [pathways.US_ME],
   enableUserRestrictions: false,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,

@@ -68,6 +68,8 @@ type ConstructorProps = {
 export default class UserStore {
   authError?: Error;
 
+  impersonationError?: Error;
+
   readonly authSettings?: Auth0ClientOptions;
 
   auth0?: Auth0Client;
@@ -89,6 +91,7 @@ export default class UserStore {
       rootStore: false,
       authSettings: false,
       setAuthError: action.bound,
+      setImpersonationError: action.bound,
       userHasAccess: action.bound,
       getTokenSilently: action.bound,
       loginWithRedirect: action.bound,
@@ -194,7 +197,6 @@ export default class UserStore {
     impersonatedEmail: string,
     impersonatedStateCode: string
   ): Promise<void> {
-    this.isAuthorized = false;
     this.userIsLoading = true;
     this.rootStore?.workflowsStore.disposeUserProfileSubscriptions();
 
@@ -234,11 +236,13 @@ export default class UserStore {
         this.rootStore?.tenantStore.setCurrentTenantId(
           impersonatedStateCode as TenantId
         );
-        this.isAuthorized = true;
         this.userIsLoading = false;
       });
     } catch (error) {
-      this.setAuthError(error as Error);
+      runInAction(() => {
+        this.setImpersonationError(error as Error);
+        this.userIsLoading = false;
+      });
     }
   }
 
@@ -401,6 +405,10 @@ export default class UserStore {
 
   setAuthError(error: Error): void {
     this.authError = error;
+  }
+
+  setImpersonationError(error: Error): void {
+    this.impersonationError = error;
   }
 
   async loginWithRedirect(): Promise<void> {

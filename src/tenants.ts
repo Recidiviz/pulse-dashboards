@@ -45,6 +45,7 @@ const TENANTS: Tenants = {
   [pathways.US_TN]: US_TN_CONFIG,
   RECIDIVIZ: {
     name: "Recidiviz",
+    domain: "recidiviz.org",
     stateCode: "Recidiviz",
     // US_PA is the last non-Pathways tenant
     availableStateCodes: pathways.PATHWAYS_TENANTS,
