@@ -53,7 +53,6 @@ export type TenantConfig = {
   workflowsEnableAllDistricts?: boolean;
   workflowsOfficerTitleOverride?: string; // TODO(#3117): Move this into SystemId-specific config
   navigation?: Navigation;
-  betaNavigation?: Navigation;
   vitalsMetrics?: VitalsMetric[];
   pagesWithRestrictions?: string[];
   tableColumns?: TableColumns;

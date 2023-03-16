@@ -41,7 +41,6 @@ export type UserAppMetadata = {
   blocked_state_codes?: Lowercase<TenantId>[];
   allowed_supervision_location_ids?: string[];
   allowed_supervision_location_level?: string;
-  should_see_beta_charts: boolean;
   routes?: Record<string, boolean>;
   user_hash?: string;
 };
@@ -51,7 +50,6 @@ export type RawUserAppMetadata = {
   stateCode: Lowercase<TenantId>;
   allowedSupervisionLocationIds?: string[];
   allowedSupervisionLocationLevel?: string;
-  shouldSeeBetaCharts: boolean;
   routes?: Record<string, boolean>;
   userHash?: string;
 };

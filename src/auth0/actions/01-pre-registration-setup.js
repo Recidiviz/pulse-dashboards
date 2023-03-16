@@ -147,11 +147,6 @@ exports.onExecutePreUserRegistration = async (event, api) => {
           // restrictions.allowed_supervision_location_level
           restrictions.allowedSupervisionLocationLevel
         );
-        api.user.setAppMetadata(
-          "should_see_beta_charts",
-          // restrictions.should_see_beta_charts || false
-          restrictions.shouldSeeBetaCharts || false
-        );
         // api.user.setAppMetadata("user_hash", restrictions.user_hash)
         api.user.setAppMetadata("user_hash", restrictions.userHash)
         api.user.setAppMetadata("routes", restrictions.routes || null);

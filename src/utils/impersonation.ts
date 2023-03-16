@@ -30,7 +30,6 @@ export function transformImpersonatedUserAppMetadata(
     allowed_supervision_location_ids: rawData?.allowedSupervisionLocationIds,
     allowed_supervision_location_level:
       rawData?.allowedSupervisionLocationLevel,
-    should_see_beta_charts: rawData?.shouldSeeBetaCharts,
     routes: rawData?.routes,
     user_hash: rawData?.userHash,
   };

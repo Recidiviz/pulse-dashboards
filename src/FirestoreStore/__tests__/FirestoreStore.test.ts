@@ -67,7 +67,6 @@ describe("FirestoreStore", () => {
       const auth0Token = "token123";
       const appMetadata: UserAppMetadata = {
         state_code: "us_nd",
-        should_see_beta_charts: false,
         routes: {
           workflows: true,
         },
@@ -80,7 +79,6 @@ describe("FirestoreStore", () => {
       const auth0Token = "token123";
       const appMetadata: UserAppMetadata = {
         state_code: "us_nd",
-        should_see_beta_charts: false,
         routes: {
           workflows: false,
         },
@@ -92,7 +90,6 @@ describe("FirestoreStore", () => {
       const auth0Token = "token123";
       const appMetadata: UserAppMetadata = {
         state_code: "recidiviz",
-        should_see_beta_charts: false,
       };
       await store.authenticate(auth0Token, appMetadata);
       expect(mockFetchFirebaseToken).toBeCalled();
@@ -122,7 +119,6 @@ describe("FirestoreStore", () => {
     test("Should fetch impersonated token if recidiviz user", async () => {
       const appMetadata: UserAppMetadata = {
         state_code: "recidiviz",
-        should_see_beta_charts: false,
         routes: {
           workflows: true,
         },
@@ -139,7 +135,6 @@ describe("FirestoreStore", () => {
     test("Should not fetch impersonated if user is not recidiviz", async () => {
       const appMetadata: UserAppMetadata = {
         state_code: "us_nd",
-        should_see_beta_charts: false,
         routes: {
           workflows: false,
         },
