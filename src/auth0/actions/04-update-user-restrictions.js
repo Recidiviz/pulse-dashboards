@@ -21,6 +21,9 @@
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
+  const Base64 = require("crypto-js/enc-base64");
+  const SHA256 = require("crypto-js/sha256");
+
   const { app_metadata, email } = event.user;
   const stateCode = app_metadata.state_code?.toLowerCase();
   const authorizedDomains = ["recidiviz.org", "csg.org", "recidiviz-test.org"]; // add authorized domains here
@@ -71,24 +74,29 @@ exports.onExecutePostLogin = async (event, api) => {
         "idoc.idaho.gov"
       );
 
-      const url = `${event.secrets.RECIDIVIZ_APP_URL}/auth/dashboard_user_restrictions_by_email?email_address=${request_email}&region_code=${stateCode}`;
+      const userHash = Base64.stringify(SHA256(request_email?.toLowerCase()))
+      const url = `${event.secrets.RECIDIVIZ_APP_URL}auth/users/${userHash}`;
 
       const apiResponse = await client.request({ url, retry: true });
       const restrictions = apiResponse.data;
       api.user.setAppMetadata(
         "allowed_supervision_location_ids",
-        restrictions.allowed_supervision_location_ids || []
+        // restrictions.allowed_supervision_location_ids || []
+        restrictions.allowedSupervisionLocationIds || []
       );
       api.user.setAppMetadata(
         "allowed_supervision_location_level",
-        restrictions.allowed_supervision_location_level
+        // restrictions.allowed_supervision_location_level
+        restrictions.allowedSupervisionLocationLevel
       );
       api.user.setAppMetadata(
         "should_see_beta_charts",
-        restrictions.should_see_beta_charts || false
+        // restrictions.should_see_beta_charts || false
+        restrictions.shouldSeeBetaCharts || false
       );
+      // api.user.setAppMetadata("user_hash", restrictions.user_hash)
+      api.user.setAppMetadata("user_hash", restrictions.userHash)
       api.user.setAppMetadata("routes", restrictions.routes || null);
-      api.user.setAppMetadata("user_hash", restrictions.user_hash)
     } catch (apiError) {
       Sentry.captureMessage(
         `Error while updating user permissions on login for user: ${event.user.email}`

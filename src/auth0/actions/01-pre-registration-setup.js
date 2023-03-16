@@ -36,6 +36,9 @@ exports.onExecutePreUserRegistration = async (event, api) => {
    */
   const Sentry = require("@sentry/node");
   const { GoogleAuth } = require("google-auth-library");
+  const Base64 = require("crypto-js/enc-base64");
+  const SHA256 = require("crypto-js/sha256");
+
   Sentry.init({
     dsn: event.secrets.SENTRY_DSN,
     environment: event.secrets.SENTRY_ENV,
@@ -129,22 +132,28 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         const client = await auth.getIdTokenClient(
           event.secrets.TARGET_AUDIENCE
         );
-        const url = `${event.secrets.RECIDIVIZ_APP_URL}/auth/dashboard_user_restrictions_by_email?email_address=${event.user.email}&region_code=${stateCode}`;
+        const userHash = Base64.stringify(SHA256(event.user.email?.toLowerCase()))
+        const url = `${event.secrets.RECIDIVIZ_APP_URL}auth/users/${userHash}`;
         const apiResponse = await client.request({ url, retry: true });
         const restrictions = apiResponse.data;
 
         api.user.setAppMetadata(
           "allowed_supervision_location_ids",
-          restrictions.allowed_supervision_location_ids || []
+          // restrictions.allowed_supervision_location_ids || []
+          restrictions.allowedSupervisionLocationIds || []
         );
         api.user.setAppMetadata(
           "allowed_supervision_location_level",
-          restrictions.allowed_supervision_location_level
+          // restrictions.allowed_supervision_location_level
+          restrictions.allowedSupervisionLocationLevel
         );
         api.user.setAppMetadata(
           "should_see_beta_charts",
-          restrictions.should_see_beta_charts || false
+          // restrictions.should_see_beta_charts || false
+          restrictions.shouldSeeBetaCharts || false
         );
+        // api.user.setAppMetadata("user_hash", restrictions.user_hash)
+        api.user.setAppMetadata("user_hash", restrictions.userHash)
         api.user.setAppMetadata("routes", restrictions.routes || null);
         return;
       } catch (apiError) {
