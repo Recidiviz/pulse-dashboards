@@ -1,0 +1,14 @@
+[
+  {
+    "stateCode": "US_MI",
+    "externalId": "cr-eligible-1",
+    "criteria": {
+      "notAlreadyOnLowestEligibleSupervisionLevel": {
+        "supervisionLevel": "MAXIMUM"
+      },
+      "usMiClassificationReviewPastDueDate": {
+        "eligibleDate": "2022-12-12"
+      }
+    }
+  }
+]

@@ -45,7 +45,10 @@
     "emailAddress": "tonye@thompson.net"
   },
   {
-    "personName": { "givenNames": "LINET", "surname": "HANSEN" },
+    "personName": {
+      "givenNames": "LINET",
+      "surname": "HANSEN"
+    },
     "personExternalId": "101",
     "pseudonymizedId": "p101",
     "stateCode": "US_TN",
@@ -88,7 +91,6 @@
     ],
     "emailAddress": "linet@hansen.net"
   },
-
   {
     "personName": {
       "givenNames": "REBEKAH",
@@ -125,7 +127,10 @@
     "emailAddress": "rebekah@cortes.net"
   },
   {
-    "personName": { "givenNames": "RAMONDA", "surname": "UNDERWOOD" },
+    "personName": {
+      "givenNames": "RAMONDA",
+      "surname": "UNDERWOOD"
+    },
     "personExternalId": "104",
     "pseudonymizedId": "p104",
     "stateCode": "US_TN",
@@ -608,6 +613,43 @@
       }
     ],
     "emailAddress": "larry@david.net"
+  },
+  {
+    "recordId": "us_mi_001",
+    "personName": {
+      "givenNames": "PATRICK",
+      "surname": "STAR"
+    },
+    "personExternalId": "001",
+    "pseudonymizedId": "p001",
+    "stateCode": "US_MI",
+    "officerId": "OFFICER8",
+    "supervisionType": "PROBATION",
+    "supervisionLevel": "MEDIUM",
+    "supervisionLevelStart": "2019-12-20",
+    "address": "123 Bedrock Lane",
+    "phoneNumber": "5555555678",
+    "expirationDate": "2024-12-31",
+    "allEligibleOpportunities": [],
+    "personType": "CLIENT"
+  },
+  {
+    "recordId": "us_mi_cr-eligible-1",
+    "personName": {
+      "givenNames": "EUGENE",
+      "surname": "KRABS"
+    },
+    "personExternalId": "cr-eligible-1",
+    "pseudonymizedId": "pseudo-cr-eligible-1",
+    "stateCode": "US_MI",
+    "officerId": "OFFICER8",
+    "supervisionType": "PROBATIONER",
+    "supervisionLevel": "HIGH",
+    "supervisionLevelStart": "2019-12-20",
+    "currentBalance": 221.88,
+    "specialConditions": [],
+    "allEligibleOpportunities": ["usMiClassificationReview"],
+    "personType": "CLIENT"
   },
   {
     "personName": {

@@ -27,6 +27,7 @@ import { SupervisionLevelDowngradeClientProfile } from "../WorkflowsClientProfil
 import { UsIdSupervisionLevelDowngradeClientProfile } from "../WorkflowsClientProfile/UsIdSupervisionLevelDowngradeClientProfile";
 import { UsMeEarlyTerminationClientProfile } from "../WorkflowsClientProfile/UsMeEarlyTerminationClientProfile";
 import { UsMeSCCPResidentProfile } from "../WorkflowsClientProfile/UsMeSCCPResidentProfile";
+import { UsMiClassificationReviewClientProfile } from "../WorkflowsClientProfile/UsMiClassificationReviewClientProfile";
 import { UsMoRestrictiveHousingStatusHearingResidentProfile } from "../WorkflowsClientProfile/UsMoRestrictiveHousingStatusHearingResidentProfile";
 import { UsTnExpirationClientProfile } from "../WorkflowsClientProfile/UsTnExpirationClientProfile";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
@@ -62,6 +63,9 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   },
   usIdSupervisionLevelDowngrade: {
     previewContents: <UsIdSupervisionLevelDowngradeClientProfile />,
+  },
+  usMiClassificationReview: {
+    previewContents: <UsMiClassificationReviewClientProfile />,
   },
   usMeSCCP: {
     previewContents: <UsMeSCCPResidentProfile formLinkButton />,

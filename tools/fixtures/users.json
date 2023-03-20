@@ -69,9 +69,19 @@
     "district": null,
     "id": "OFFICER7",
     "stateCode": "US_MO",
-    "hasFacilityCaseload": false,
+    "hasFacilityCaseload": true,
     "givenNames": "Test",
     "surname": "Officer7"
+  },
+  {
+    "email": "test-officer-8@example.com",
+    "district": null,
+    "id": "OFFICER8",
+    "stateCode": "US_MI",
+    "hasCaseload": true,
+    "hasFacilityCaseload": false,
+    "givenNames": "Test",
+    "surname": "Officer8"
   },
   {
     "email": null,

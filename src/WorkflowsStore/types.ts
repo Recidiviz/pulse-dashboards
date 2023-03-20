@@ -40,6 +40,7 @@ import {
 } from "./Opportunity";
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
+import { UsMiClassificationReviewOpportunity } from "./Opportunity/UsMiClassificationReviewOpportunity";
 import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { SupervisionTaskInterface } from "./Task/types";
@@ -52,6 +53,7 @@ export type SupervisionOpportunityMapping = {
   pastFTRD?: PastFTRDOpportunity;
   supervisionLevelDowngrade?: UsTnSupervisionLevelDowngradeOpportunity;
   usIdSupervisionLevelDowngrade?: UsIdSupervisionLevelDowngradeOpportunity;
+  usMiClassificationReview?: UsMiClassificationReviewOpportunity;
   usTnExpiration?: UsTnExpirationOpportunity;
   usMeEarlyTermination?: UsMeEarlyTerminationOpportunity;
 };

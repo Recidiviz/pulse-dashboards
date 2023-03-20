@@ -135,6 +135,12 @@ export const generateOpportunityHydratedHeader = (
         "supervised at a level that does not match their latest risk score",
       callToAction: "Change their supervision level in Atlas",
     },
+    usMiClassificationReview: {
+      eligibilityText: simplur`${count} client[|s] may be `,
+      opportunityText: "eligible for a supervision level downgrade",
+      // TODO(#2969): Update copy once finalized
+      callToAction: "Change their supervision level in MIDOC",
+    },
     usMeSCCP: {
       eligibilityText: simplur`${count} resident[|s] may be eligible for `,
       opportunityText: "Supervised Community Confinement Program",
@@ -154,6 +160,11 @@ export const generateOpportunityHydratedHeader = (
       eligibilityText: simplur`${count} resident[|s] [is|are] within 7 days of being due for a `,
       opportunityText: "Restrictive Housing Status Hearing",
       callToAction: "Conduct a Restrictive Housing Status Hearing",
+    },
+    usMiClassificationReviewReferrals: {
+      eligibilityText: simplur`${count} client[|s] may be eligible for a supervision level downgrade`,
+      opportunityText: "Classification Review",
+      callToAction: "N/A",
     },
     usMeEarlyTermination: {
       eligibilityText: simplur`${count} client[|s] may be eligible for `,
@@ -204,6 +215,7 @@ export const opportunityToSortFunctionMapping: Record<
   pastFTRD: sortByReviewStatusAndEligibilityDate,
   supervisionLevelDowngrade: sortByReviewStatus,
   usIdSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
+  usMiClassificationReview: sortByReviewStatusAndEligibilityDate,
   usMeSCCP: sortByReviewStatus,
   usTnExpiration: sortByReviewStatusAndEligibilityDate,
   usMoRestrictiveHousingStatusHearing: sortByReviewStatusAndEligibilityDate,

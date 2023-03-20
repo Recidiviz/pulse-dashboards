@@ -41,6 +41,7 @@ export const collectionNames = {
   supervisionLevelDowngradeReferrals: "US_TN-supervisionLevelDowngrade",
   usMeSCCPReferrals: "US_ME-SCCPReferrals",
   usIdSupervisionLevelDowngradeReferrals: "US_ID-supervisionLevelDowngrade",
+  usMiClassificationReviewReferrals: "US_MI-classificationReviewReferrals",
   usTnExpirationReferrals: "US_TN-expirationReferrals",
   usMoRestrictiveHousingStatusHearingReferrals:
     "US_MO-restrictiveHousingStatusHearingReferrals",
@@ -109,6 +110,7 @@ export type FeatureVariant =
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
   | "usIdLengthOfStayAlmostEligible"
+  | "usMiClassificationReview"
   | "usIdIncomeVerificationAlmostEligible"
   | "usMoRestrictiveHousingStatusHearing"
   | "usMeEarlyTermination";
@@ -130,6 +132,7 @@ export const defaultFeatureVariantsActive: FeatureVariantMapping = {
   usTnExpirationSubmitToTomis: {},
   usIdLengthOfStayAlmostEligible: {},
   usIdIncomeVerificationAlmostEligible: {},
+  usMiClassificationReview: {},
   usMoRestrictiveHousingStatusHearing: {},
   usMeEarlyTermination: {},
 };

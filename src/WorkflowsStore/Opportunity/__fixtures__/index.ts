@@ -900,3 +900,45 @@ export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHo
       housingUseCode: "123456",
     },
   };
+
+//
+// Michigan
+//
+
+export const usMiClassificationReviewIneligibleClientRecord: ClientRecord = {
+  recordId: "us_mi_001",
+  personName: {
+    givenNames: "PATRICK",
+    surname: "STAR",
+  },
+  personExternalId: "001",
+  pseudonymizedId: "p001",
+  stateCode: "US_MI",
+  officerId: "OFFICER3",
+  supervisionType: "PROBATION",
+  supervisionLevel: "MEDIUM",
+  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  address: "123 Bedrock Lane",
+  phoneNumber: "5555555678",
+  expirationDate: dateToTimestamp("2024-12-31"),
+  allEligibleOpportunities: [],
+  personType: "CLIENT",
+};
+
+export const usMiClassificationReviewEligibleClientRecord: ClientRecord = {
+  recordId: "us_xx_cr-eligible-1",
+  personName: { givenNames: "Eugene", surname: "Krabs" },
+  personExternalId: "cr-eligible-1",
+  pseudonymizedId: "pseudo-cr-eligible-1",
+  stateCode: "US_XX",
+  officerId: "OFFICER1",
+  supervisionType: "PROBATIONER",
+  supervisionLevel: "MEDIUM",
+  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  currentBalance: 221.88,
+  specialConditions: [],
+  allEligibleOpportunities: [
+    "usMiClassificationReview",
+  ] as SupervisionOpportunityType[],
+  personType: "CLIENT",
+};
