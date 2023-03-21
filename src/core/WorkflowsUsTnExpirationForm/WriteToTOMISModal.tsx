@@ -173,15 +173,15 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     );
 
     const contactNoteDateTime = new Date();
-    const userId = opportunity.rootStore.workflowsStore.user?.info.id;
+    const staffId = opportunity.rootStore.workflowsStore.user?.info.id;
     const votersRightsCode = opportunity.form.formData.contactTypes
       ?.split(", ")
       .filter((code) => code !== "TEPE");
 
-    // In non-production environments and requests by recidiviz users, the personExternalId and userId will be overriden in the backend.
+    // In non-production environments and requests by recidiviz users, the personExternalId and staffId will be overriden in the backend.
     const contactNoteRequestBody = {
       personExternalId: person.externalId,
-      userId,
+      staffId,
       contactNote: contactNoteObj,
       contactNoteDateTime,
       ...(votersRightsCode?.length && {
