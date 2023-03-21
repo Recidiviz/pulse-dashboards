@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,17 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MockDocumentSubscription } from "./MockDocumentSubscription";
-import { MockQuerySubscription } from "./MockQuerySubscription";
+import { Searchable } from "../core/models/types";
+import { LocationRecord } from "../FirestoreStore";
 
-export const CollectionDocumentSubscription = MockDocumentSubscription;
+export class Location implements Searchable {
+  record: LocationRecord;
 
-export const OpportunityUpdateSubscription = MockDocumentSubscription;
+  constructor(record: LocationRecord) {
+    this.record = record;
+  }
 
-export const CaseloadSubscription = MockQuerySubscription;
+  get searchLabel(): string {
+    return this.record.name;
+  }
 
-export const StaffSubscription = MockQuerySubscription;
-
-export const UserSubscription = MockQuerySubscription;
-
-export const LocationSubscription = MockQuerySubscription;
+  get searchId(): string {
+    return this.record.id;
+  }
+}

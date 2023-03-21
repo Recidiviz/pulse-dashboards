@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ClientRecord, ResidentRecord } from "../../FirestoreStore";
 import {
   US_CO,
   US_ID,
@@ -51,7 +52,6 @@ export type TenantConfig = {
   availableStateCodes: string[];
   enableUserRestrictions: boolean;
   workflowsEnableAllDistricts?: boolean;
-  workflowsOfficerTitleOverride?: string; // TODO(#3117): Move this into SystemId-specific config
   navigation?: Navigation;
   vitalsMetrics?: VitalsMetric[];
   pagesWithRestrictions?: string[];
@@ -59,10 +59,32 @@ export type TenantConfig = {
   opportunityTypes?: OpportunityType[];
   allowSupervisionTasks?: boolean;
   workflowsSupportedSystems?: SystemId[];
+  workflowsSystemConfigs?: {
+    INCARCERATION?: WorkflowsSystemConfig<ResidentSearchFields>;
+    SUPERVISION?: WorkflowsSystemConfig<ClientSearchFields>;
+  };
+};
+
+export type ResidentSearchFields = Pick<
+  ResidentRecord,
+  "officerId" | "facilityId" | "unitId"
+>;
+
+export type ClientSearchFields = Pick<ClientRecord, "officerId">;
+
+export type WorkflowsSystemConfig<T> = {
+  searchType: SearchType;
+  searchField: keyof T;
+  searchTitleOverride?: string;
+};
+
+export type Searchable = {
+  searchLabel: string;
+  searchId: string;
 };
 
 export type SystemId = "INCARCERATION" | "SUPERVISION";
-export type SearchType = "OFFICER"; // TODO(#3117): Add LOCATION
+export type SearchType = "OFFICER" | "LOCATION";
 
 export type Gender = "ALL" | "FEMALE" | "MALE";
 export type AgeGroup =

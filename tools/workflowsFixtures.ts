@@ -23,6 +23,7 @@ import fs from "fs";
 import { collectionNames } from "../src/FirestoreStore";
 import { defaultFeatureVariantsActive } from "../src/FirestoreStore/types";
 import { deleteCollection, getDb } from "./firestoreUtils";
+import { locationsData } from "./fixtures/locations";
 import { residentsData } from "./fixtures/residents";
 import { usIdSupervisionTasksData } from "./fixtures/usIdSupervisionTasks";
 
@@ -41,8 +42,16 @@ const OPPORTUNITIES_WITH_FIXTURES: (keyof typeof collectionNames)[] = [
   "usMeEarlyTerminationReferrals",
 ];
 
-const FIXTURES_TO_LOAD: Partial<Record<keyof typeof collectionNames, any>> = {
+export type FixtureData<T> = {
+  data: T[];
+  idFunc: (arg0: T) => string;
+};
+
+const FIXTURES_TO_LOAD: Partial<
+  Record<keyof typeof collectionNames, FixtureData<any>>
+> = {
   residents: residentsData,
+  locations: locationsData,
   usIdSupervisionTasks: usIdSupervisionTasksData,
 };
 
@@ -101,7 +110,9 @@ export async function loadFeatureVariantsFixture(): Promise<void> {
 }
 
 export async function loadFixtures(): Promise<void> {
-  for await (const [collectionName, data] of Object.entries(FIXTURES_TO_LOAD)) {
+  for await (const [collectionName, fixtureData] of Object.entries(
+    FIXTURES_TO_LOAD
+  )) {
     console.log(`wiping existing ${collectionName} data ...`);
     const collectionKey = collectionName as keyof typeof collectionNames;
     await deleteCollection(db, collectionNames[collectionKey]);
@@ -110,8 +121,8 @@ export async function loadFixtures(): Promise<void> {
     const bulkWriter = db.bulkWriter();
 
     // Iterate through each record
-    data.forEach((record: any) => {
-      const externalId = record.externalId ?? record.personExternalId;
+    fixtureData.data.forEach((record: any) => {
+      const externalId = fixtureData.idFunc(record);
       bulkWriter.create(
         db.doc(
           `${

@@ -285,4 +285,8 @@ export class JusticeInvolvedPersonBase<
       justiceInvolvedPersonId: this.pseudonymizedId,
     });
   }
+
+  get searchIdValue(): any {
+    return this.assignedStaffId;
+  }
 }

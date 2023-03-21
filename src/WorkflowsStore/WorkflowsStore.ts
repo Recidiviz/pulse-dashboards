@@ -17,7 +17,7 @@
 
 import assertNever from "assert-never";
 import { ascending } from "d3-array";
-import { identity, pick } from "lodash";
+import { identity, pick, sortBy } from "lodash";
 import {
   action,
   has,
@@ -30,7 +30,13 @@ import {
 } from "mobx";
 import { now } from "mobx-utils";
 
-import { Hydratable, SystemId } from "../core/models/types";
+import {
+  Hydratable,
+  Searchable,
+  SearchType,
+  SystemId,
+  WorkflowsSystemConfig,
+} from "../core/models/types";
 import { FilterOption } from "../core/types/filters";
 import filterOptions, {
   DefaultPopulationFilterOptions,
@@ -41,6 +47,7 @@ import {
   defaultFeatureVariantsActive,
   FeatureVariant,
   FeatureVariantRecord,
+  LocationRecord,
   ResidentRecord,
   StaffRecord,
   UserMetadata,
@@ -49,6 +56,8 @@ import {
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
 import { Client, UNKNOWN } from "./Client";
+import { Location } from "./Location";
+import { Officer } from "./Officer";
 import {
   Opportunity,
   opportunityToSortFunctionMapping,
@@ -58,6 +67,7 @@ import { Resident } from "./Resident";
 import {
   CaseloadSubscription,
   CollectionDocumentSubscription,
+  LocationSubscription,
   StaffSubscription,
   UserSubscription,
 } from "./subscriptions";
@@ -90,6 +100,8 @@ export class WorkflowsStore implements Hydratable {
 
   residentsSubscription: CaseloadSubscription<ResidentRecord>;
 
+  locationsSubscription: LocationSubscription;
+
   private formDownloadingFlag = false;
 
   workflowsTasksStore: WorkflowsTasksStore;
@@ -114,6 +126,7 @@ export class WorkflowsStore implements Hydratable {
       "RESIDENT"
     );
     this.userSubscription = new UserSubscription(rootStore);
+    this.locationsSubscription = new LocationSubscription(rootStore);
 
     // persistent storage for justice-involved persons across subscription changes
     reaction(
@@ -123,11 +136,12 @@ export class WorkflowsStore implements Hydratable {
       }
     );
 
-    // clear saved caseload search when changing tenants, to prevent cross-contamination
+    // clear saved caseload and search when changing tenants, to prevent cross-contamination
     reaction(
       () => [this.rootStore.currentTenantId],
       () => {
         this.updateSelectedSearch([]);
+        this.justiceInvolvedPersons = {};
       }
     );
 
@@ -138,10 +152,10 @@ export class WorkflowsStore implements Hydratable {
         const { selectedSearchIds, selectedOfficerIds } =
           this.user?.updates ?? {};
         const { isDefaultOfficerSelection } = this.user?.metadata ?? {};
-        const selectedSeach = selectedSearchIds ?? selectedOfficerIds;
-        if (selectedSeach && isDefaultOfficerSelection) {
+        const selectedSearch = selectedSearchIds ?? selectedOfficerIds;
+        if (selectedSearch && isDefaultOfficerSelection) {
           this.rootStore.analyticsStore.trackCaseloadSearch({
-            searchCount: selectedSeach.length,
+            searchCount: selectedSearch.length,
             isDefault: true,
             searchType: "OFFICER",
           });
@@ -257,10 +271,10 @@ export class WorkflowsStore implements Hydratable {
     const metadata: UserMetadata = {};
 
     // set default caseload to the user's own, when applicable
-    // TODO(#3117): Only do this when we are in a search-by-officer state
     if (
       !(updates.selectedOfficerIds || updates.selectedSearchIds) &&
-      info.hasCaseload
+      info.hasCaseload &&
+      this.searchType === "OFFICER"
     ) {
       updates.selectedSearchIds = [info.id];
       metadata.isDefaultOfficerSelection = true;
@@ -351,9 +365,9 @@ export class WorkflowsStore implements Hydratable {
     this.selectedOpportunityType = opportunityType;
   }
 
-  get selectedOfficers(): StaffRecord[] {
-    return this.availableOfficers.filter(
-      (officer) => this.selectedSearchIds.indexOf(officer.id) !== -1
+  get selectedSearchables(): Searchable[] {
+    return this.availableSearchables.filter((searchable) =>
+      this.selectedSearchIds.includes(searchable.searchId)
     );
   }
 
@@ -369,6 +383,22 @@ export class WorkflowsStore implements Hydratable {
     // for now only one system per tenant is supported.
     // If there are more beyond the first one they will be ignored
     return workflowsSupportedSystems[0];
+  }
+
+  get searchType(): SearchType | undefined {
+    return this.activeSystemConfig?.searchType;
+  }
+
+  get searchField(): keyof ClientRecord | keyof ResidentRecord {
+    const searchField = this.activeSystemConfig?.searchField;
+    if (searchField) {
+      return searchField;
+    }
+
+    if (this.searchType === "LOCATION") {
+      return "facilityId";
+    }
+    return "officerId";
   }
 
   get caseloadSubscription():
@@ -404,7 +434,7 @@ export class WorkflowsStore implements Hydratable {
 
   get caseloadPersons(): JusticeInvolvedPerson[] {
     return values(this.justiceInvolvedPersons)
-      .filter((p) => this.selectedSearchIds.includes(p.assignedStaffId))
+      .filter((p) => this.selectedSearchIds.includes(p.searchIdValue))
       .sort((a, b) => {
         return (
           ascending(a.fullName.surname, b.fullName.surname) ||
@@ -498,6 +528,28 @@ export class WorkflowsStore implements Hydratable {
     const officers = [...this.officersSubscription.data];
     officers.sort(staffNameComparator);
     return officers;
+  }
+
+  get availableLocations(): LocationRecord[] {
+    const locations = [...this.locationsSubscription.data];
+    return sortBy(locations, ["name"]);
+  }
+
+  get availableSearchables(): Searchable[] {
+    switch (this.searchType) {
+      case "LOCATION": {
+        return this.availableLocations.map(
+          (location) => new Location(location)
+        );
+      }
+      case "OFFICER": {
+        return this.availableOfficers.map((officer) => new Officer(officer));
+      }
+      case undefined:
+        return [];
+      default:
+        assertNever(this.searchType);
+    }
   }
 
   get selectedPerson(): JusticeInvolvedPerson | undefined {
@@ -627,9 +679,7 @@ export class WorkflowsStore implements Hydratable {
    * Title to display for the search bar in workflows
    */
   get workflowsSearchFieldTitle(): string {
-    const { currentTenantId } = this.rootStore;
-    if (!currentTenantId) return "officer";
-    return tenants[currentTenantId].workflowsOfficerTitleOverride ?? "officer";
+    return this.activeSystemConfig?.searchTitleOverride ?? "officer";
   }
 
   /**
@@ -646,5 +696,22 @@ export class WorkflowsStore implements Hydratable {
       default:
         assertNever(this.activeSystem);
     }
+  }
+
+  get activeSystemConfig():
+    | WorkflowsSystemConfig<ClientRecord>
+    | WorkflowsSystemConfig<ResidentRecord>
+    | undefined {
+    const { currentTenantId } = this.rootStore;
+    if (!currentTenantId || !this.activeSystem) {
+      return undefined;
+    }
+
+    return (
+      tenants[currentTenantId].workflowsSystemConfigs?.[this.activeSystem] ?? {
+        searchField: "officerId",
+        searchType: "OFFICER",
+      }
+    );
   }
 }

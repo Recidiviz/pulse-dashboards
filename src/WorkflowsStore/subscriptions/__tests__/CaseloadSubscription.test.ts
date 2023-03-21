@@ -39,6 +39,7 @@ beforeEach(() => {
 
   workflowsStoreMock = observable({
     selectedSearchIds: ["TEST1"],
+    searchField: "officerId",
     rootStore: {
       currentTenantId: "US_ND",
       firestoreStore: {
@@ -53,7 +54,11 @@ beforeEach(() => {
   );
 });
 
-test("dataSource reflects observables", () => {
+test("dataSource reflects observables with defined search field", () => {
+  runInAction(() => {
+    // @ts-ignore
+    workflowsStoreMock.searchField = "facilityId";
+  });
   sub.subscribe();
 
   expect(collectionMock).toHaveBeenCalledWith(
@@ -61,7 +66,7 @@ test("dataSource reflects observables", () => {
     "clients"
   );
   expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
-  expect(whereMock).toHaveBeenCalledWith("officerId", "in", ["TEST1"]);
+  expect(whereMock).toHaveBeenCalledWith("facilityId", "in", ["TEST1"]);
   expect(queryMock).toHaveBeenCalled();
 });
 

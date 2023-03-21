@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,17 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MockDocumentSubscription } from "./MockDocumentSubscription";
-import { MockQuerySubscription } from "./MockQuerySubscription";
+import { LocationRecord } from "../../src/FirestoreStore/types";
+import { FixtureData } from "../workflowsFixtures";
 
-export const CollectionDocumentSubscription = MockDocumentSubscription;
+const data: LocationRecord[] = [
+  {
+    stateCode: "US_MO",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "FACILITY1",
+    name: "Facility #1",
+  },
+  {
+    stateCode: "US_MO",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "FACILITY2",
+    name: "Facility #2",
+  },
+];
 
-export const OpportunityUpdateSubscription = MockDocumentSubscription;
-
-export const CaseloadSubscription = MockQuerySubscription;
-
-export const StaffSubscription = MockQuerySubscription;
-
-export const UserSubscription = MockQuerySubscription;
-
-export const LocationSubscription = MockQuerySubscription;
+export const locationsData: FixtureData<LocationRecord> = {
+  data,
+  idFunc: (r) => r.id,
+};

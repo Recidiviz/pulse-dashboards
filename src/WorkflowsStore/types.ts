@@ -131,6 +131,11 @@ export type JusticeInvolvedPerson = {
    */
   personUpdatesSubscription?: CollectionDocumentSubscription<PersonUpdateRecord>;
   trackProfileViewed: () => void;
+  /**
+   * The value of the field on the person record that is used to return search results. Defaults to
+   * the person's assigned staff ID.
+   */
+  searchIdValue: any;
 };
 
 export type PersonRecordType =

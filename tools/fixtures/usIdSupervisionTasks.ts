@@ -17,8 +17,9 @@
 import { addDays, endOfToday, formatISO, subDays } from "date-fns";
 
 import { SupervisionTasksRecord } from "../../src/WorkflowsStore/Task/types";
+import { FixtureData } from "../workflowsFixtures";
 
-export const usIdSupervisionTasksData: SupervisionTasksRecord[] = [
+const data: SupervisionTasksRecord[] = [
   {
     stateCode: "US_ID",
     externalId: "008",
@@ -45,3 +46,8 @@ export const usIdSupervisionTasksData: SupervisionTasksRecord[] = [
     needs: [{ type: "employment" }],
   },
 ];
+
+export const usIdSupervisionTasksData: FixtureData<SupervisionTasksRecord> = {
+  data,
+  idFunc: (r) => r.externalId,
+};

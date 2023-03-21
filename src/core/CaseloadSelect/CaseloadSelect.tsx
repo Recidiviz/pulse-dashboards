@@ -38,10 +38,10 @@ import { MultiValueRemoveProps } from "react-select/src/components/MultiValue";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { StaffRecord } from "../../FirestoreStore";
+import { Searchable } from "../models/types";
 
 // This is a query limitation imposed by Firestore
-const SELECTED_OFFICER_LIMIT = 10;
+const SELECTED_SEARCH_LIMIT = 10;
 
 const ValuePill = styled(Pill).attrs({ color: palette.slate20, filled: false })`
   align-self: flex-start;
@@ -56,25 +56,25 @@ const DisabledMessage = styled.div`
   padding: 12px;
 `;
 
-function DisabledMenuList({
-  children,
-  ...props
-}: MenuListComponentProps<{ label: string; value: string }, true>) {
-  return (
-    <components.MenuList {...props}>
-      <DisabledMessage>
-        Cannot select more than {SELECTED_OFFICER_LIMIT} officers.
-      </DisabledMessage>
-      {children}
-    </components.MenuList>
-  );
-}
+const Disabled = (searchFieldTitle: string) =>
+  function DisabledMenuList({
+    children,
+    ...props
+  }: MenuListComponentProps<{ label: string; value: string }, true>) {
+    return (
+      <components.MenuList {...props}>
+        <DisabledMessage>
+          Cannot select more than {SELECTED_SEARCH_LIMIT} {searchFieldTitle}s.
+        </DisabledMessage>
+        {children}
+      </components.MenuList>
+    );
+  };
 
 type SelectOption = { label: string; value: string };
 
-const buildSelectOption = (officer: StaffRecord): SelectOption => {
-  const name = `${officer.givenNames} ${officer.surname}`.trim();
-  return { label: name, value: officer.id };
+const buildSelectOption = (record: Searchable): SelectOption => {
+  return { label: record.searchLabel, value: record.searchId };
 };
 
 const DistrictIndicator = observer(function DistrictIndicator() {
@@ -128,11 +128,11 @@ const ValueRemover = (props: MultiValueRemoveProps<SelectOption>) => {
   );
 };
 
-const ClearAll = (officerTitle: string) =>
+const ClearAll = (searchFieldTitle: string) =>
   function ClearAllButton(props: IndicatorProps<SelectOption, true>) {
     return (
       <components.ClearIndicator {...props}>
-        <>Clear {officerTitle}s</>
+        <>Clear {searchFieldTitle}s</>
       </components.ClearIndicator>
     );
   };
@@ -150,8 +150,12 @@ export const CaseloadSelect = observer(function CaseloadSelect({
 }: CaseloadSelectProps) {
   const { workflowsStore, analyticsStore } = useRootStore();
 
-  const { availableOfficers, selectedOfficers, workflowsSearchFieldTitle } =
-    workflowsStore;
+  const {
+    availableSearchables,
+    selectedSearchables,
+    workflowsSearchFieldTitle,
+    searchType,
+  } = workflowsStore;
 
   const customComponents: SelectComponentsConfig<SelectOption, true> = {
     ClearIndicator: ClearAll(workflowsSearchFieldTitle),
@@ -163,10 +167,10 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   };
 
   const disableAdditionalSelections =
-    selectedOfficers.length >= SELECTED_OFFICER_LIMIT;
+    selectedSearchables.length >= SELECTED_SEARCH_LIMIT;
 
   if (disableAdditionalSelections) {
-    customComponents.MenuList = DisabledMenuList;
+    customComponents.MenuList = Disabled(workflowsSearchFieldTitle);
   }
 
   return (
@@ -184,9 +188,10 @@ export const CaseloadSelect = observer(function CaseloadSelect({
           analyticsStore.trackCaseloadSearch({
             officerCount: newValue.length,
             isDefault: false,
+            searchType,
           });
         }}
-        options={availableOfficers.map(buildSelectOption)}
+        options={availableSearchables.map(buildSelectOption)}
         placeholder={`Search for one or more ${workflowsSearchFieldTitle}s …`}
         styles={{
           clearIndicator: (base) => ({
@@ -247,7 +252,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
             gap: rem(spacing.sm),
           }),
         }}
-        value={selectedOfficers.map(buildSelectOption)}
+        value={selectedSearchables.map(buildSelectOption)}
       />
     </CaseloadSelectContainer>
   );

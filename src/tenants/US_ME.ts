@@ -37,7 +37,13 @@ const US_ME_CONFIG: TenantConfig = {
   enableUserRestrictions: false,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["INCARCERATION"],
-  workflowsOfficerTitleOverride: "case manager",
+  workflowsSystemConfigs: {
+    INCARCERATION: {
+      searchType: "OFFICER",
+      searchField: "officerId",
+      searchTitleOverride: "case manager",
+    },
+  },
   navigation: {
     workflows: ["home", "clients", ...WORKFLOWS_OPPORTUNITY_TYPES],
     system: [

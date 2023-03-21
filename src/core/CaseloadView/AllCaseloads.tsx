@@ -29,7 +29,6 @@ import { SectionLabelText } from "../OpportunityCaseloadView/styles";
 import { ProfileCapsule } from "../PersonCapsules";
 import { workflowsUrl } from "../views";
 import WorkflowsNoResults from "../WorkflowsNoResults";
-import WorkflowsOfficerName from "../WorkflowsOfficerName";
 
 const CaseloadWrapper = styled.ul`
   column-gap: ${rem(spacing.md)};
@@ -63,13 +62,13 @@ export const AllCaseloads = observer(function AllCaseloads() {
   const {
     workflowsStore: {
       caseloadPersons,
-      selectedSearchIds,
+      selectedSearchables,
       workflowsSearchFieldTitle,
       justiceInvolvedPersonTitle,
     },
   } = useRootStore();
 
-  if (!selectedSearchIds.length)
+  if (!selectedSearchables.length)
     return (
       <WorkflowsNoResults
         headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s`}
@@ -77,20 +76,20 @@ export const AllCaseloads = observer(function AllCaseloads() {
       />
     );
 
-  const caseloads = groupBy(caseloadPersons, "assignedStaffId");
+  const caseloads = groupBy(caseloadPersons, "searchIdValue");
 
   return (
     <>
-      {selectedSearchIds.map((officerId) => (
-        <React.Fragment key={officerId}>
-          {selectedSearchIds.length > 1 && (
+      {selectedSearchables.map((searchable) => (
+        <React.Fragment key={searchable.searchId}>
+          {selectedSearchables.length > 1 && (
             <SectionLabelText>
-              <WorkflowsOfficerName officerId={officerId} />
+              <span className="fs-exclude">{searchable.searchLabel}</span>
             </SectionLabelText>
           )}
           {/* in practice there should never be a missing caseload,
               but fall back to an empty array for type safety */}
-          <Caseload persons={caseloads[officerId] ?? []} />
+          <Caseload persons={caseloads[searchable.searchId] ?? []} />
         </React.Fragment>
       ))}
     </>

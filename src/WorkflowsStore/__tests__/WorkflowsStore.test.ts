@@ -31,6 +31,7 @@ import type { WorkflowsStore } from "..";
 import {
   ineligibleClient,
   mockClients,
+  mockLocations,
   mockOfficer,
   mockOfficer2,
   mockOfficers,
@@ -77,6 +78,17 @@ jest.mock("../../tenants", () => ({
     US_ME: {
       opportunityTypes: [],
       workflowsSupportedSystems: ["INCARCERATION"],
+    },
+    US_MO: {
+      opportunityTypes: ["usMoRestrictiveHousingStatusHearing"],
+      workflowsSupportedSystems: ["INCARCERATION"],
+      workflowsSystemConfigs: {
+        INCARCERATION: {
+          searchType: "LOCATION",
+          searchField: "facilityId",
+          searchTitleOverride: "location",
+        },
+      },
     },
   },
 }));
@@ -259,7 +271,16 @@ test("caseload defaults to self", async () => {
   });
 });
 
-test("caseload defaults to no officers if user has no caseload and no saved officers", async () => {
+test("caseload defaults to no selected search if the user has no saved search and the state is not search-by-officer", async () => {
+  runInAction(() => {
+    rootStore.tenantStore.currentTenantId = "US_MO";
+  });
+
+  await waitForHydration();
+  expect(workflowsStore.selectedSearchIds).toEqual([]);
+});
+
+test("caseload defaults to no selected search if user has no caseload and no saved search", async () => {
   await waitForHydration(mockSupervisor);
 
   expect(workflowsStore.selectedSearchIds).toEqual([]);
@@ -272,11 +293,28 @@ test("caseload defaults to stored value", async () => {
     ...mockOfficer,
     updates: {
       ...(mockOfficer.updates as UserUpdateRecord),
-      selectedOfficerIds: mockStoredOfficers,
+      selectedSearchIds: mockStoredOfficers,
     },
   });
 
   expect(workflowsStore.selectedSearchIds).toEqual(mockStoredOfficers);
+});
+
+test("caseload defaults to stored value for states that are not search-by-officer", async () => {
+  runInAction(() => {
+    rootStore.tenantStore.currentTenantId = "US_MO";
+  });
+  const mockStoredLocations = ["LOC1", "LOC3"];
+
+  await waitForHydration({
+    ...mockOfficer,
+    updates: {
+      ...(mockOfficer.updates as UserUpdateRecord),
+      selectedSearchIds: mockStoredLocations,
+    },
+  });
+
+  expect(workflowsStore.selectedSearchIds).toEqual(mockStoredLocations);
 });
 
 test("default caseload does not override empty stored value", async () => {
@@ -284,7 +322,7 @@ test("default caseload does not override empty stored value", async () => {
     ...mockOfficer,
     updates: {
       ...(mockOfficer.updates as UserUpdateRecord),
-      selectedOfficerIds: [],
+      selectedSearchIds: [],
     },
   });
   expect(workflowsStore.selectedSearchIds).toEqual([]);
@@ -299,7 +337,7 @@ test("caseload syncs with stored value changes", async () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     rootStore.workflowsStore.userUpdatesSubscription!.data = {
       stateCode: mockOfficer.info.stateCode,
-      selectedOfficerIds: mockStoredOfficers,
+      selectedSearchIds: mockStoredOfficers,
     };
   });
 
@@ -364,6 +402,69 @@ test("officers from subscription", async () => {
   expect(workflowsStore.availableOfficers).toEqual(mockOfficers);
 });
 
+test("locations from subscription", async () => {
+  await waitForHydration();
+  runInAction(() => {
+    workflowsStore.locationsSubscription.data = mockLocations;
+  });
+  expect(workflowsStore.availableLocations).toEqual(mockLocations);
+});
+
+test("available searchables for search by officer", async () => {
+  await waitForHydration();
+  runInAction(() => {
+    workflowsStore.officersSubscription.data = mockOfficers;
+    workflowsStore.locationsSubscription.data = mockLocations;
+  });
+
+  const actual = workflowsStore.availableSearchables.map((searchable) => {
+    return {
+      searchLabel: searchable.searchLabel,
+      searchId: searchable.searchId,
+    };
+  });
+  const expected = [
+    {
+      searchLabel: "Foo Fakename",
+      searchId: "OFFICER2",
+    },
+    {
+      searchLabel: "Bar Realname",
+      searchId: "OFFICER3",
+    },
+  ];
+
+  expect(actual).toEqual(expected);
+});
+
+test("available searchables for search by location", async () => {
+  await waitForHydration();
+  runInAction(() => {
+    rootStore.tenantStore.currentTenantId = "US_MO";
+    workflowsStore.officersSubscription.data = mockOfficers;
+    workflowsStore.locationsSubscription.data = mockLocations;
+  });
+
+  const actual = workflowsStore.availableSearchables.map((searchable) => {
+    return {
+      searchLabel: searchable.searchLabel,
+      searchId: searchable.searchId,
+    };
+  });
+  const expected = [
+    {
+      searchLabel: "Facility 1",
+      searchId: "FAC1",
+    },
+    {
+      searchLabel: "Facility 2",
+      searchId: "FAC2",
+    },
+  ];
+
+  expect(actual).toEqual(expected);
+});
+
 test("update clients from subscription", async () => {
   await waitForHydration();
 
@@ -399,7 +500,7 @@ test("no client selected", async () => {
   await waitForHydration();
 
   runInAction(() => {
-    (workflowsStore.user as any).updates = { selectedOfficerIds: ["OFFICER1"] };
+    (workflowsStore.user as any).updates = { selectedSearchIds: ["OFFICER1"] };
   });
 
   // simulate a UI displaying CR data

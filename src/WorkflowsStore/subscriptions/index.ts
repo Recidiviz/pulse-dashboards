@@ -17,6 +17,7 @@
 
 export * from "./CaseloadSubscription";
 export * from "./CollectionDocumentSubscription";
+export * from "./LocationSubscription";
 export * from "./OpportunityUpdateSubscription";
 export * from "./StaffSubscription";
 export * from "./types";

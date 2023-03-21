@@ -17,6 +17,7 @@
 import { FieldValue } from "@google-cloud/firestore";
 import type { Timestamp } from "firebase/firestore";
 
+import { SystemId } from "../core/models/types";
 import {
   IncarcerationOpportunityType,
   OpportunityType,
@@ -32,6 +33,7 @@ export const collectionNames = {
   clientUpdates: "clientUpdates",
   clientUpdatesV2: "clientUpdatesV2",
   clientOpportunityUpdates: "clientOpportunityUpdates",
+  locations: "locations",
   compliantReportingReferrals: "compliantReportingReferrals",
   earnedDischargeReferrals: "US_ID-earnedDischargeReferrals",
   earlyTerminationReferrals: "earlyTerminationReferrals",
@@ -226,6 +228,14 @@ export type ResidentRecord = JusticeInvolvedPersonRecord & {
   admissionDate?: Timestamp | string;
   releaseDate?: Timestamp | string;
   allEligibleOpportunities: IncarcerationOpportunityType[];
+};
+
+export type LocationRecord = {
+  stateCode: string;
+  system: SystemId;
+  idType: keyof ClientRecord | keyof ResidentRecord;
+  id: string;
+  name: string;
 };
 
 // TODO(#2263): Remove CompliantReportingFinesFeesEligible and CompliantReportingEligibleRecord once Client record is migrated

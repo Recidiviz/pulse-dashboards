@@ -7,48 +7,50 @@ Feature: View the Client List on the Opportunity Page
     Scenario Outline: Searching for an officer's opportunities
         Given I am logged in as a "<stateCode>" user
         And I navigate to the "<opportunityType>" opportunity page
-        When I select officer "<officerName>" from the dropdown
+        When I select "<searchValue>" from the dropdown
         Then I should see the "<opportunityName>" heading and subheading
         And I should see <numClients> clients listed
 
-     Examples:
-        | stateCode | officerName    | numClients | opportunityType     | opportunityName     |
-        | US_TN     | Test Officer1  | 2          | compliantReporting  | Compliant Reporting |
+        Examples:
+            | stateCode | searchValue   | numClients | opportunityType                     | opportunityName                    |
+            | US_TN     | Test Officer1 | 2          | compliantReporting                  | Compliant Reporting                |
+            | US_MO     | Facility #1   | 1          | usMoRestrictiveHousingStatusHearing | Restrictive Housing Status Hearing |
 
     Scenario Outline: Searching for multiple officers' opportunities
         Given I am logged in as a "<stateCode>" user
         And I navigate to the "<opportunityType>" opportunity page
-        When I select officer "<officerName>" from the dropdown
-        And I select officer "<secondOfficerName>" from the dropdown
+        When I select "<searchValue>" from the dropdown
+        And I select "<secondSearchValue>" from the dropdown
         Then I should see <numClients> clients listed
 
-    Examples:
-        | stateCode | officerName    | secondOfficerName    | numClients | opportunityType    |
-        | US_TN     | Test Officer1  | Test Officer2        | 3          | compliantReporting |
+        Examples:
+            | stateCode | searchValue   | secondSearchValue | numClients | opportunityType                     |
+            | US_TN     | Test Officer1 | Test Officer2     | 3          | compliantReporting                  |
+            | US_MO     | Facility #1   | Facility #2       | 2          | usMoRestrictiveHousingStatusHearing |
 
     Scenario Outline: Navigating to a form for an eligible opportunity
         Given I am logged in as a "<stateCode>" user
         And I navigate to the "<opportunityType>" opportunity page
-        When I select officer "<officerName>" from the dropdown
+        When I select "<searchValue>" from the dropdown
         And I hover over a client's name
         Then I should see the button "<buttonText>" to navigate to the form
         When I click on the "NavigateToFormButton" button
         Then I should navigate to the "<opportunityType>" form page
-        
 
-     Examples:
-        | stateCode | officerName      | opportunityType    | buttonText         |
-        | US_TN     | Test Officer1    | compliantReporting | Auto-fill referral |
+
+        Examples:
+            | stateCode | searchValue   | opportunityType    | buttonText         |
+            | US_TN     | Test Officer1 | compliantReporting | Auto-fill referral |
 
     Scenario Outline: Opening the preview
         Given I am logged in as a "<stateCode>" user
         And I navigate to the "<opportunityType>" opportunity page
-        When I select officer "<officerName>" from the dropdown
+        When I select "<searchValue>" from the dropdown
         And I click on the client "<clientName>"
         Then I should see a preview of the opportunity for "<clientName>"
         When I exit the preview modal
         Then I should see the client status update
 
-     Examples:
-        | stateCode | officerName      | clientName    | opportunityType    |
-        | US_TN     | Test Officer1    | LINET HANSEN  | compliantReporting |
+        Examples:
+            | stateCode | searchValue   | clientName   | opportunityType    |
+            | US_TN     | Test Officer1 | LINET HANSEN | compliantReporting |

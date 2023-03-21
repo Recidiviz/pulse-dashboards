@@ -50,6 +50,7 @@ export class CaseloadSubscription<
   get dataSource(): Query | undefined {
     const {
       selectedSearchIds,
+      searchField,
       rootStore: { currentTenantId, firestoreStore },
     } = this.workflowsStore;
 
@@ -61,7 +62,7 @@ export class CaseloadSubscription<
     return query(
       collection(firestoreStore.db, collectionId),
       where("stateCode", "==", currentTenantId),
-      where("officerId", "in", selectedSearchIds)
+      where(searchField, "in", selectedSearchIds)
     ).withConverter({
       fromFirestore(snapshot, options) {
         const doc = snapshot.data(options);

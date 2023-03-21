@@ -122,7 +122,7 @@ export class WorkflowsTasksStore {
 
     this.workflowsStore.rootStore.analyticsStore.trackTaskFilterSelected({
       taskCategory: this.selectedCategory,
-      selectedOfficerIds: this.workflowsStore.selectedSearchIds,
+      selectedSearchIds: this.workflowsStore.selectedSearchIds,
     });
   }
 

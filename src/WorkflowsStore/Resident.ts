@@ -17,6 +17,7 @@
 
 import { ResidentRecord } from "../FirestoreStore";
 import { RootStore } from "../RootStore";
+import tenants from "../tenants";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import {
   IncarcerationOpportunityType,
@@ -66,5 +67,15 @@ export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
 
   get releaseDate(): Date | undefined {
     return optionalFieldToDate(this.record.releaseDate);
+  }
+
+  get searchIdValue(): any {
+    const { currentTenantId } = this.rootStore;
+    const searchField =
+      currentTenantId &&
+      tenants[currentTenantId]?.workflowsSystemConfigs?.INCARCERATION
+        ?.searchField;
+
+    return searchField ? this.record[searchField] : this.assignedStaffId;
   }
 }

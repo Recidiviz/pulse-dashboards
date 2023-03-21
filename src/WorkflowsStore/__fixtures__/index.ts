@@ -18,6 +18,7 @@
 import {
   ClientRecord,
   CombinedUserRecord,
+  LocationRecord,
   StaffRecord,
 } from "../../FirestoreStore";
 import { SupervisionOpportunityType } from "../Opportunity";
@@ -241,5 +242,22 @@ export const mockOfficers: StaffRecord[] = [
     email: null,
     givenNames: "Bar",
     surname: "Realname",
+  },
+];
+
+export const mockLocations: LocationRecord[] = [
+  {
+    id: "FAC1",
+    stateCode: "US_MO",
+    idType: "facilityId",
+    name: "Facility 1",
+    system: "INCARCERATION",
+  },
+  {
+    id: "FAC2",
+    stateCode: "US_MO",
+    idType: "facilityId",
+    name: "Facility 2",
+    system: "INCARCERATION",
   },
 ];

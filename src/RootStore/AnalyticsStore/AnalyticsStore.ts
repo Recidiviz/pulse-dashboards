@@ -161,7 +161,7 @@ export default class AnalyticsStore {
 
   trackTaskFilterSelected(metadata: {
     taskCategory: SupervisionTaskCategory;
-    selectedOfficerIds: string[];
+    selectedSearchIds: string[];
   }): void {
     this.track("frontend.task_filter_selected", metadata);
   }

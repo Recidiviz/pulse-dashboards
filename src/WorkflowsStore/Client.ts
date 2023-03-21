@@ -26,6 +26,7 @@ import {
   SpecialConditionCode,
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
+import tenants from "../tenants";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import {
   CompliantReportingOpportunity,
@@ -249,5 +250,15 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       }
     });
     return conditionsToDisplay;
+  }
+
+  get searchIdValue(): any {
+    const { currentTenantId } = this.rootStore;
+    const searchField =
+      currentTenantId &&
+      tenants[currentTenantId]?.workflowsSystemConfigs?.SUPERVISION
+        ?.searchField;
+
+    return searchField ? this.record[searchField] : this.assignedStaffId;
   }
 }
