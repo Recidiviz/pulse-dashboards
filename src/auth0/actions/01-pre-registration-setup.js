@@ -137,6 +137,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         const apiResponse = await client.request({ url, retry: true });
         const restrictions = apiResponse.data;
 
+        api.user.setAppMetadata("role", restrictions.role || null);
         api.user.setAppMetadata(
           "allowed_supervision_location_ids",
           // restrictions.allowed_supervision_location_ids || []
