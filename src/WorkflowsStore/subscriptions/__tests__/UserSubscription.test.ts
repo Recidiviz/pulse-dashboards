@@ -48,7 +48,11 @@ beforeEach(() => {
     userStore: {
       stateCode: "US_XX",
     },
-    user: { email: "test@example.com" },
+    user: {
+      email: "test@example.com",
+      given_name: "Geri",
+      family_name: "Halliwell",
+    },
     firestoreStore: {
       db: jest.fn(),
     },
@@ -149,7 +153,45 @@ test("inject record in offline mode", () => {
   `);
 });
 
+test("inject record for staff user without caseload", () => {
+  jest.spyOn(sub, "dataSource", "get").mockReturnValue(jest.fn() as any);
+  const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
+
+  sub.subscribe();
+
+  // data should be available immediately
+  expect(sub.data).toMatchInlineSnapshot(`
+    Array [
+      Object {
+        "email": "test@example.com",
+        "givenNames": "Geri",
+        "hasCaseload": false,
+        "id": "us_xx_test@example.com",
+        "stateCode": "US_XX",
+        "surname": "Halliwell",
+      },
+    ]
+  `);
+
+  // Firestore listener should not clobber our injected data
+  mockReceive([]);
+  expect(sub.data).toMatchInlineSnapshot(`
+    Array [
+      Object {
+        "email": "test@example.com",
+        "givenNames": "Geri",
+        "hasCaseload": false,
+        "id": "us_xx_test@example.com",
+        "stateCode": "US_XX",
+        "surname": "Halliwell",
+      },
+    ]
+  `);
+});
+
 test("reject empty result", () => {
+  // @ts-ignore
+  rootStoreMock.user = undefined;
   jest.spyOn(sub, "dataSource", "get").mockReturnValue(jest.fn() as any);
   const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
 

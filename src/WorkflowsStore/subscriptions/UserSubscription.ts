@@ -33,6 +33,7 @@ import {
   UserRecord,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
+import { splitAuth0UserName } from "../../utils/formatStrings";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 import { ValidateFunction } from "./types";
@@ -87,7 +88,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
   }
 
   /**
-   * For internal users we will construct a local override
+   * For internal users and users without caseloads, we will construct a local override
    * instead of expecting any data from Firestore
    */
   get dataOverride(): StaffRecord | undefined {
@@ -97,12 +98,14 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
       userStore: { stateCode },
     } = this.rootStore;
 
+    const userId = `${stateCode.toLowerCase()}_${user?.email}`;
+
     let injectedUserData: StaffRecord | undefined;
 
     // inject dynamic fixture data in offline mode
     if (isOfflineMode()) {
       injectedUserData = {
-        id: `${stateCode.toLowerCase()}_${user?.email}`,
+        id: userId,
         email: user?.email ?? null,
         stateCode,
         hasCaseload: false,
@@ -122,8 +125,21 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
         givenNames: "Recidiviz",
         surname: "Staff",
       };
-    }
+      // If the user does not have a caseload, they might not have a record in the
+      // staff collection. Use the user info from auth0.
+    } else if (user) {
+      let splitName;
+      if (user.name) splitName = splitAuth0UserName(user.name);
 
+      injectedUserData = {
+        id: userId,
+        email: user.email ?? null,
+        stateCode,
+        hasCaseload: false,
+        givenNames: (user.given_name || splitName?.firstName) ?? "",
+        surname: (user.family_name || splitName?.lastName) ?? "",
+      };
+    }
     return injectedUserData;
   }
 
@@ -143,16 +159,16 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
   protected updateData(
     snapshot: QuerySnapshot<DocumentData> | undefined
   ): void {
-    // if an override is set, it will always take precedence over what is passed in
-    if (this.dataOverride) {
+    // When an override is set and we do not have results from firestore, use the override.
+    if (this.dataOverride && (!snapshot || snapshot?.size === 0)) {
       super.updateData(mockOverrideSnapshot(this.dataOverride));
-    } else if (snapshot?.size === 0) {
+    } else if (snapshot?.size) {
+      super.updateData(snapshot);
+    } else {
       this.isLoading = false;
       this.isHydrated = false;
       this.error = new Error("No user record found");
       this.data = [];
-    } else {
-      super.updateData(snapshot);
     }
   }
 }

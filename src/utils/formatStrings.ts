@@ -342,6 +342,18 @@ const formatDueDateFromToday = (dueDate: Date): string => {
   return moment(dueDate).from(moment().startOf("day"));
 };
 
+function splitAuth0UserName(
+  name: string
+): Record<"firstName" | "lastName", string> {
+  let splitName;
+  if (name.includes(",")) {
+    splitName = name.split(", ");
+  } else {
+    splitName = name.split(" ").reverse();
+  }
+  return { lastName: splitName[0], firstName: splitName[1] };
+}
+
 export {
   convertCurlyQuotesToStraight,
   decrypt,
@@ -375,6 +387,7 @@ export {
   raceValueToHumanReadable,
   raceValueToLabel,
   safeToInt,
+  splitAuth0UserName,
   toHtmlFriendly,
   toHumanReadable,
   toInt,
