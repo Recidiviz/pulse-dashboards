@@ -80,6 +80,9 @@ describe("MetricsStore", () => {
       flags.defaultMetricBackend = "NEW";
       flags.metricBackendOverrides = {
         supervisionToPrisonPopulationByOfficer: "OLD_WITH_DIFFING",
+        // next two lines needed for to make the type work
+        projectedPrisonPopulationOverTime: "OLD",
+        projectedSupervisionPopulationOverTime: "OLD",
       };
       expect(
         coreStore.metricsStore.supervisionToPrisonPopulationByOfficer

@@ -19,19 +19,25 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
   ? {
       enableRevocationRateByExit: false,
       enableVitalsGoalLine: false,
-      defaultMetricBackend: "OLD_WITH_DIFFING",
+      defaultMetricBackend: "NEW",
       metricBackendOverrides: {
         // The new backend doesn't have officer names yet
         supervisionToPrisonPopulationByOfficer: "OLD",
+        // The new backend doesn't handle projections yet
+        projectedPrisonPopulationOverTime: "OLD",
+        projectedSupervisionPopulationOverTime: "OLD",
       },
     }
   : {
       // Development
       enableRevocationRateByExit: false,
       enableVitalsGoalLine: false,
-      defaultMetricBackend: "OLD_WITH_DIFFING",
+      defaultMetricBackend: "NEW",
       metricBackendOverrides: {
         // The new backend doesn't have officer names yet
         supervisionToPrisonPopulationByOfficer: "OLD",
+        // The new backend doesn't handle projections yet
+        projectedPrisonPopulationOverTime: "OLD",
+        projectedSupervisionPopulationOverTime: "OLD",
       },
     };
