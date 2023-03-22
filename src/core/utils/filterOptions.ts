@@ -726,6 +726,59 @@ export const IdPopulationFilterOptions: PopulationFilters = {
       return this.defaultOption.value;
     },
   },
+  [FILTER_TYPES.JUDICIAL_DISTRICT]: {
+    type: FILTER_TYPES.JUDICIAL_DISTRICT,
+    title: "Judicial District",
+    setFilters: setFilters(FILTER_TYPES.JUDICIAL_DISTRICT),
+    options: [
+      { label: "All", value: "ALL" },
+      {
+        label: "District 1",
+        longLabel: "First Judicial District",
+        value: "FIRST JUDICIAL DISTRICT",
+      },
+      {
+        label: "District 2",
+        longLabel: "Second Judicial District",
+        value: "SECOND JUDICIAL DISTRICT",
+      },
+      {
+        label: "District 3",
+        longLabel: "Third Judicial District",
+        value: "THIRD JUDICIAL DISTRICT",
+      },
+      {
+        label: "District 4",
+        longLabel: "Fourth Judicial District",
+        value: "FOURTH JUDICIAL DISTRICT",
+      },
+      {
+        label: "District 5",
+        longLabel: "Fifth Judicial District",
+        value: "FIFTH JUDICIAL DISTRICT",
+      },
+      {
+        label: "District 6",
+        longLabel: "Sixth Judicial District",
+        value: "SIXTH JUDICIAL DISTRICT",
+      },
+      {
+        label: "District 7",
+        longLabel: "Seventh Judicial District",
+        value: "SEVENTH JUDICIAL DISTRICT",
+      },
+      {
+        label: "Unknown",
+        value: "UNKNOWN",
+      },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
   [FILTER_TYPES.DISTRICT]: {
     type: FILTER_TYPES.DISTRICT,
     title: "District",

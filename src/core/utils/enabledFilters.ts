@@ -370,6 +370,7 @@ export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   libertyToPrisonPopulationOverTime: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
       FILTER_TYPES.AGE_GROUP,
@@ -378,6 +379,7 @@ export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   libertyToPrisonPopulationByDistrict: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
       FILTER_TYPES.AGE_GROUP,
@@ -386,6 +388,7 @@ export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   libertyToPrisonPopulationByPriorLengthOfIncarceration: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
       FILTER_TYPES.AGE_GROUP,
@@ -394,6 +397,7 @@ export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   libertyToPrisonPopulationByGender: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
       FILTER_TYPES.AGE_GROUP,
@@ -402,6 +406,7 @@ export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   libertyToPrisonPopulationByAgeGroup: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
       FILTER_TYPES.AGE_GROUP,
@@ -410,6 +415,7 @@ export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   libertyToPrisonPopulationByRace: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.JUDICIAL_DISTRICT,
       FILTER_TYPES.GENDER,
       FILTER_TYPES.RACE,
       FILTER_TYPES.AGE_GROUP,
