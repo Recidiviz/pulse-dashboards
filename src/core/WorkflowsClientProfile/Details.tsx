@@ -23,7 +23,6 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { ReactComponent as GoldStar } from "../../assets/static/images/goldStar.svg";
-import { ClientEmployer as ClientEmployerType } from "../../FirestoreStore/types";
 import * as pathwaysTenants from "../../RootStore/TenantStore/pathwaysTenants";
 import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
 import { Client, WithCaseNotes } from "../../WorkflowsStore";
@@ -31,7 +30,11 @@ import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../../Workflo
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { InfoButton, InfoTooltipWrapper } from "./common";
-import { ClientProfileProps, ResidentProfileProps } from "./types";
+import {
+  ClientProfileProps,
+  OpportunityProfileProps,
+  ResidentProfileProps,
+} from "./types";
 
 const DetailsSection = styled.dl``;
 
@@ -295,10 +298,11 @@ export function ResidentHousing({
 }
 
 export function ClientEmployer({
-  employers,
-}: {
-  employers: ClientEmployerType[];
-}): React.ReactElement {
+  client,
+}: ClientProfileProps): React.ReactElement | null {
+  const employers = client.currentEmployers;
+  if (!employers || employers.length < 1) return null;
+
   return (
     <DetailsSection>
       <DetailsHeading>Employment</DetailsHeading>
@@ -352,22 +356,23 @@ export function FinesAndFees({
 }
 
 export function CaseNotes({
-  opportunityRecord,
-  headingText = "Relevant Contact Notes",
-}: {
-  opportunityRecord?: WithCaseNotes;
-  headingText?: string;
-}): React.ReactElement {
-  if (!opportunityRecord) {
-    return <div />;
+  opportunity,
+}: OpportunityProfileProps): React.ReactElement | null {
+  if (!opportunity.record) return null;
+
+  const { caseNotes } = opportunity.record as Partial<WithCaseNotes>;
+  if (!caseNotes) {
+    return null;
   }
 
-  const { caseNotes } = opportunityRecord;
+  let { caseNotesTitle } = opportunity;
+
+  caseNotesTitle ??= "Relevant Contact Notes";
 
   if (Object.keys(caseNotes).length === 0) {
     return (
       <DetailsSection>
-        <DetailsHeading>{headingText}</DetailsHeading>
+        <DetailsHeading>{caseNotesTitle}</DetailsHeading>
         <DetailsContent>None</DetailsContent>
       </DetailsSection>
     );
@@ -375,7 +380,7 @@ export function CaseNotes({
 
   return (
     <DetailsSection className="DetailsSection">
-      <DetailsHeading>{headingText}</DetailsHeading>
+      <DetailsHeading>{caseNotesTitle}</DetailsHeading>
       <DetailsContent>
         <DetailsList>
           {Object.keys(caseNotes).map((section: string) => {
@@ -461,10 +466,12 @@ export function UsMoIncarceration({
 }
 
 export function UsMoRestrictiveHousingPlacement({
-  opportunityRecord,
-}: {
-  opportunityRecord: UsMoRestrictiveHousingStatusHearingReferralRecord;
-}): React.ReactElement {
+  opportunity,
+}: OpportunityProfileProps): React.ReactElement | null {
+  const opportunityRecord =
+    opportunity.record as UsMoRestrictiveHousingStatusHearingReferralRecord;
+  if (!opportunityRecord) return null;
+
   return (
     <DetailsSection>
       <DetailsHeading>Current Restrictive Housing Placement</DetailsHeading>

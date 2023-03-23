@@ -147,7 +147,7 @@ function ClientDetails({ client }: ClientProfileProps): React.ReactElement {
       <Divider />
       {client.currentEmployers && client.currentEmployers.length > 0 && (
         <>
-          <ClientEmployer employers={client.currentEmployers} />
+          <ClientEmployer client={client} />
           <Divider />
         </>
       )}

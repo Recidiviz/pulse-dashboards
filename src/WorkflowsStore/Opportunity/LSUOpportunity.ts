@@ -18,6 +18,7 @@
 import { cloneDeep, some } from "lodash";
 import { computed, makeObservable } from "mobx";
 
+import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../FirestoreStore";
 import { Client } from "../Client";
 import { ValidateFunction } from "../subscriptions";
@@ -153,6 +154,11 @@ export class LSUOpportunity extends OpportunityBase<
   OpportunityUpdateWithForm<LSUDraftData>
 > {
   form: LSUForm;
+
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
+    "ClientProfileDetails",
+    "CaseNotes",
+  ];
 
   readonly policyOrMethodologyUrl =
     "http://forms.idoc.idaho.gov/WebLink/0/edoc/273717/Limited%20Supervision%20Unit.pdf";

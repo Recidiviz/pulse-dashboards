@@ -17,6 +17,7 @@
 
 import { makeObservable } from "mobx";
 
+import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
@@ -34,6 +35,13 @@ export class UsTnSupervisionLevelDowngradeOpportunity extends OpportunityBase<
 > {
   readonly policyOrMethodologyUrl =
     "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view";
+
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
+    "ClientProfileDetails",
+    "CaseNotes",
+  ];
+
+  readonly caseNotesTitle = "Relevant Contact Codes";
 
   constructor(client: Client) {
     super(

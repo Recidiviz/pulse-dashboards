@@ -19,6 +19,7 @@ import { differenceInDays } from "date-fns";
 import { makeObservable } from "mobx";
 import simplur from "simplur";
 
+import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import {
   ExternalRequestUpdate,
   ExternalSystemRequestStatus,
@@ -86,6 +87,11 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
 
   readonly policyOrMethodologyUrl =
     "https://drive.google.com/file/d/1IpetvPM49g_c-D-HzGdf7v6QAe_z5IHn/view?usp=sharing";
+
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
+    "ClientProfileDetails",
+    "CaseNotes",
+  ];
 
   constructor(client: Client) {
     super(

@@ -18,6 +18,7 @@
 import { Client, Opportunity } from "../../WorkflowsStore";
 
 export const mockOpportunity: Opportunity<Client> = {
+  record: {},
   almostEligible: false,
   person: {} as Client,
   defaultEligibility: "ELIGIBLE",
@@ -40,5 +41,6 @@ export const mockOpportunity: Opportunity<Client> = {
   supportsDenial: false,
   trackListViewed: () => undefined,
   trackPreviewed: () => undefined,
+  opportunityProfileModules: [],
   supportsExternalRequest: false,
 };

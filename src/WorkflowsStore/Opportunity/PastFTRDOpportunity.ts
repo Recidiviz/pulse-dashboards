@@ -19,6 +19,7 @@ import { differenceInDays } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
+import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OpportunityBase } from "./OpportunityBase";
@@ -35,6 +36,10 @@ export class PastFTRDOpportunity extends OpportunityBase<
   readonly isAlert = true;
 
   readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ID;
+
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
+    "ClientProfileDetails",
+  ];
 
   constructor(client: Client) {
     super(client, "pastFTRD", client.rootStore, transformReferral);

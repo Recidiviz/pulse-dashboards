@@ -19,6 +19,7 @@
 
 import { makeObservable } from "mobx";
 
+import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { TransformFunction } from "../subscriptions";
@@ -77,6 +78,10 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
   Client,
   UsMiClassificationReviewReferralRecord
 > {
+  readonly sidebarModules: OpportunityProfileModuleName[] = [
+    "ClientProfileDetails",
+  ];
+
   constructor(client: Client) {
     super(
       client,

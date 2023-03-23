@@ -18,6 +18,7 @@
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable, when } from "mobx";
 
+import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import {
   Denial,
   OpportunityUpdate,
@@ -66,6 +67,8 @@ export abstract class OpportunityBase<
   referralSubscription: DocumentSubscription<ReferralRecord>;
 
   updatesSubscription: DocumentSubscription<UpdateRecord>;
+
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [];
 
   /**
    * The "alert" flavor of opportunity receives a different UI treatment

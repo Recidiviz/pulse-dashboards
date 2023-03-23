@@ -18,6 +18,7 @@
 import { cloneDeep } from "lodash";
 import { computed, makeObservable } from "mobx";
 
+import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../FirestoreStore";
 import { Client } from "../Client";
 import { ValidateFunction } from "../subscriptions";
@@ -129,6 +130,11 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
     "http://forms.idoc.idaho.gov/WebLink/0/edoc/282369/Termination%20of%20Probation%20or%20Parole%20Supervision.pdf";
 
   form?: UsIdEarnedDischargeForm;
+
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
+    "ClientProfileDetails",
+    "CaseNotes",
+  ];
 
   constructor(client: Client) {
     super(

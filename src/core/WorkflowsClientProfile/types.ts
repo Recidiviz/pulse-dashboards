@@ -31,6 +31,9 @@ export type ResidentProfileProps = {
   resident: Resident;
 };
 
-export type ClientWithOpportunityProps = ClientProfileProps & {
+export type OpportunityProfileProps = {
   opportunity: Opportunity;
 };
+
+export type ClientWithOpportunityProps = ClientProfileProps &
+  OpportunityProfileProps;

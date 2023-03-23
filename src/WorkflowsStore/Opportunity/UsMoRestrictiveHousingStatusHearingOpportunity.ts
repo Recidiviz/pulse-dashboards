@@ -19,6 +19,7 @@ import { differenceInDays, startOfToday } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
+import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../utils";
 import { Resident } from "../Resident";
 import { OTHER_KEY } from "../utils";
@@ -39,6 +40,11 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
   Resident,
   UsMoRestrictiveHousingStatusHearingReferralRecord
 > {
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
+    "UsMoIncarceration",
+    "UsMoRestrictiveHousingPlacement",
+  ];
+
   resident: Resident;
 
   readonly isAlert = true;

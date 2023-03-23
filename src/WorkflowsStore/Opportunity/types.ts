@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import { Hydratable } from "../../core/models/types";
+import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { Denial, ExternalRequestUpdate, UpdateLog } from "../../FirestoreStore";
 import { TenantId } from "../../RootStore/types";
 import { PartialRecord } from "../../utils/typeUtils";
@@ -169,6 +172,7 @@ export type WithCaseNotes = {
 export interface Opportunity<
   PersonType extends JusticeInvolvedPerson = JusticeInvolvedPerson
 > extends Hydratable {
+  record: DocumentData | undefined;
   almostEligible: boolean;
   // TODO: move this to status component once almost-eligible is standardized on TES
   almostEligibleStatusMessage?: string;
@@ -197,6 +201,8 @@ export interface Opportunity<
   trackPreviewed: () => void;
   readonly policyOrMethodologyUrl: string;
   readonly deniedSectionTitle?: string;
+  readonly opportunityProfileModules: OpportunityProfileModuleName[];
+  readonly caseNotesTitle?: string;
 }
 
 export type OpportunityFactory<

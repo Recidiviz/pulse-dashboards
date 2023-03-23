@@ -19,6 +19,7 @@
 
 import { makeObservable } from "mobx";
 
+import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
@@ -56,6 +57,10 @@ export class UsIdSupervisionLevelDowngradeOpportunity extends OpportunityBase<
 
     return formatBaseSLDRequirements(this.record);
   }
+
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
+    "ClientProfileDetails",
+  ];
 
   readonly policyOrMethodologyUrl =
     "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=share_link";

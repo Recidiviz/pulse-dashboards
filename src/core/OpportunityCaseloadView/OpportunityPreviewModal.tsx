@@ -15,71 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
-
-import { Opportunity, OpportunityType } from "../../WorkflowsStore";
-import { CompliantReportingClientProfile } from "../WorkflowsClientProfile";
-import { EarlyTerminationClientProfile } from "../WorkflowsClientProfile/EarlyTerminationClientProfile";
-import { EarnedDischargeClientProfile } from "../WorkflowsClientProfile/EarnedDischargeClientProfile";
-import { LSUClientProfile } from "../WorkflowsClientProfile/LSUClientProfile";
-import { PastFTRDClientProfile } from "../WorkflowsClientProfile/PastFTRDClientProfile";
-import { SupervisionLevelDowngradeClientProfile } from "../WorkflowsClientProfile/SupervisionLevelDowngradeClientProfile";
-import { UsIdSupervisionLevelDowngradeClientProfile } from "../WorkflowsClientProfile/UsIdSupervisionLevelDowngradeClientProfile";
-import { UsMeEarlyTerminationClientProfile } from "../WorkflowsClientProfile/UsMeEarlyTerminationClientProfile";
-import { UsMeSCCPResidentProfile } from "../WorkflowsClientProfile/UsMeSCCPResidentProfile";
-import { UsMiClassificationReviewClientProfile } from "../WorkflowsClientProfile/UsMiClassificationReviewClientProfile";
-import { UsMoRestrictiveHousingStatusHearingResidentProfile } from "../WorkflowsClientProfile/UsMoRestrictiveHousingStatusHearingResidentProfile";
-import { UsTnExpirationClientProfile } from "../WorkflowsClientProfile/UsTnExpirationClientProfile";
+import { Opportunity } from "../../WorkflowsStore";
+import { OpportunityProfile } from "../WorkflowsClientProfile/OpportunityProfile";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
-
-const PAGE_CONTENT: Record<OpportunityType, any> = {
-  compliantReporting: {
-    previewContents: (
-      <CompliantReportingClientProfile
-        formDownloadButton={false}
-        formLinkButton
-      />
-    ),
-  },
-  earlyTermination: {
-    previewContents: (
-      <EarlyTerminationClientProfile
-        formDownloadButton={false}
-        formLinkButton
-      />
-    ),
-  },
-  earnedDischarge: {
-    previewContents: <EarnedDischargeClientProfile formLinkButton />,
-  },
-  LSU: {
-    previewContents: <LSUClientProfile formLinkButton />,
-  },
-  pastFTRD: {
-    previewContents: <PastFTRDClientProfile />,
-  },
-  supervisionLevelDowngrade: {
-    previewContents: <SupervisionLevelDowngradeClientProfile />,
-  },
-  usIdSupervisionLevelDowngrade: {
-    previewContents: <UsIdSupervisionLevelDowngradeClientProfile />,
-  },
-  usMiClassificationReview: {
-    previewContents: <UsMiClassificationReviewClientProfile />,
-  },
-  usMeSCCP: {
-    previewContents: <UsMeSCCPResidentProfile formLinkButton />,
-  },
-  usTnExpiration: {
-    previewContents: <UsTnExpirationClientProfile formLinkButton />,
-  },
-  usMoRestrictiveHousingStatusHearing: {
-    previewContents: <UsMoRestrictiveHousingStatusHearingResidentProfile />,
-  },
-  usMeEarlyTermination: {
-    previewContents: <UsMeEarlyTerminationClientProfile />,
-  },
-};
 
 type OpportunityCaseloadProps = {
   opportunity?: Opportunity;
@@ -93,7 +31,11 @@ export function OpportunityPreviewModal({
       isOpen={!!opportunity}
       onAfterOpen={() => opportunity?.trackPreviewed()}
       pageContent={
-        opportunity && PAGE_CONTENT[opportunity.type].previewContents
+        <OpportunityProfile
+          opportunity={opportunity}
+          formLinkButton={!!opportunity?.form}
+          formPrintButton={false}
+        />
       }
     />
   );

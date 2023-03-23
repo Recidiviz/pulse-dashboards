@@ -23,6 +23,7 @@ import { mapValues } from "lodash";
 import { makeObservable, toJS } from "mobx";
 
 import { formatRelativeToNow } from "../../core/utils/timePeriod";
+import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../FirestoreStore";
 import { formatWorkflowsDate, pluralizeWord } from "../../utils";
 import { Client } from "../Client";
@@ -207,6 +208,13 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 
   readonly policyOrMethodologyUrl =
     "https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view";
+
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
+    "SpecialConditions",
+    "ClientProfileDetails",
+    "ClientHousing",
+    "FinesAndFees",
+  ];
 
   constructor(client: Client) {
     super(

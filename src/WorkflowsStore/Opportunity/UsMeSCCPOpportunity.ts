@@ -19,6 +19,7 @@ import { differenceInDays, differenceInMonths } from "date-fns";
 import { cloneDeep } from "lodash";
 import { computed, makeObservable, observable } from "mobx";
 
+import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { pluralizeWord } from "../../utils";
 import { Resident } from "../Resident";
 import { OTHER_KEY } from "../utils";
@@ -260,6 +261,11 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
     "https://www.maine.gov/sos/cec/rules/03/201/c10s272.docx";
 
   almostEligibleRecommendedNote = undefined;
+
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
+    "Incarceration",
+    "CaseNotes",
+  ];
 
   constructor(resident: Resident) {
     super(resident, "usMeSCCP", resident.rootStore, transformReferral);

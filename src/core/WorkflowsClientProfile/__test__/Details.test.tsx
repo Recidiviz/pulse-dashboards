@@ -20,7 +20,7 @@
 import { render, screen } from "@testing-library/react";
 import { parseISO } from "date-fns";
 
-import { OpportunityCaseNote } from "../../../WorkflowsStore";
+import { Opportunity, OpportunityCaseNote } from "../../../WorkflowsStore";
 import { CaseNotes } from "../Details";
 
 describe("CaseNotes tests", () => {
@@ -47,7 +47,11 @@ describe("CaseNotes tests", () => {
       ],
     };
 
-    render(<CaseNotes opportunityRecord={{ caseNotes }} />);
+    render(
+      <CaseNotes
+        opportunity={{ record: { caseNotes } } as unknown as Opportunity}
+      />
+    );
 
     const fooTag = screen.getByText("foo");
     const barTag = screen.getByText("bar");
@@ -84,7 +88,13 @@ describe("CaseNotes tests", () => {
       ],
     };
 
-    render(<CaseNotes opportunityRecord={{ caseNotes: unorderedNotes }} />);
+    render(
+      <CaseNotes
+        opportunity={
+          { record: { caseNotes: unorderedNotes } } as unknown as Opportunity
+        }
+      />
+    );
 
     const fooTag = screen.getByText("foo");
     const fooNoteTexts = fooTag.nextSibling?.textContent ?? "";

@@ -19,6 +19,7 @@ import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
+import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../FirestoreStore";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
@@ -117,6 +118,10 @@ export class EarlyTerminationOpportunity extends OpportunityBase<
   form: EarlyTerminationForm;
 
   readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ND;
+
+  opportunityProfileModules: OpportunityProfileModuleName[] = [
+    "ClientProfileDetails",
+  ];
 
   constructor(client: Client) {
     super(
