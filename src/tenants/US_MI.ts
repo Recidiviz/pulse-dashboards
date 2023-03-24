@@ -26,6 +26,7 @@ import { OpportunityType } from "../WorkflowsStore";
 
 const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   "usMiClassificationReview",
+  "usMiEarlyDischarge",
 ];
 
 const US_MI_CONFIG: TenantConfig = {

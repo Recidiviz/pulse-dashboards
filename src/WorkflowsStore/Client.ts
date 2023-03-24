@@ -43,6 +43,7 @@ import {
 } from "./Opportunity";
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
 import { UsMiClassificationReviewOpportunity } from "./Opportunity/UsMiClassificationReviewOpportunity";
+import { UsMiEarlyDischargeOpportunity } from "./Opportunity/UsMiEarlyDischargeOpportunity";
 import { SupervisionTaskInterface } from "./Task/types";
 import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
 import { JusticeInvolvedPerson } from "./types";
@@ -77,6 +78,7 @@ const supervisionOpportunityConstructors: Record<
   supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
   usIdSupervisionLevelDowngrade: UsIdSupervisionLevelDowngradeOpportunity,
   usMiClassificationReview: UsMiClassificationReviewOpportunity,
+  usMiEarlyDischarge: UsMiEarlyDischargeOpportunity,
   usTnExpiration: UsTnExpirationOpportunity,
   usMeEarlyTermination: UsMeEarlyTerminationOpportunity,
 };

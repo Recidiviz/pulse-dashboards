@@ -41,6 +41,7 @@ import {
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
 import { UsMiClassificationReviewOpportunity } from "./Opportunity/UsMiClassificationReviewOpportunity";
+import { UsMiEarlyDischargeOpportunity } from "./Opportunity/UsMiEarlyDischargeOpportunity";
 import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { SupervisionTaskInterface } from "./Task/types";
@@ -54,6 +55,7 @@ export type SupervisionOpportunityMapping = {
   supervisionLevelDowngrade?: UsTnSupervisionLevelDowngradeOpportunity;
   usIdSupervisionLevelDowngrade?: UsIdSupervisionLevelDowngradeOpportunity;
   usMiClassificationReview?: UsMiClassificationReviewOpportunity;
+  usMiEarlyDischarge?: UsMiEarlyDischargeOpportunity;
   usTnExpiration?: UsTnExpirationOpportunity;
   usMeEarlyTermination?: UsMeEarlyTerminationOpportunity;
 };

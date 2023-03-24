@@ -1,0 +1,45 @@
+[
+  {
+    "stateCode": "US_MI",
+    "externalId": "ed-eligible-1",
+    "criteria": {
+      "supervisionPastHalfFullTermReleaseDate": {
+        "eligibleDate": "2022-03-01"
+      },
+      "supervisionNotPastFullTermCompletionDate": {
+        "eligibleDate": "2022-03-01"
+      },
+      "supervisionLevelIsNotHigh": {
+        "supervisionLevel": "MINIMUM"
+      },
+      "servingAtLeastOneYearOnParoleSupervision": {
+        "projectedCompletionDateMax": "2025-03-01"
+      },
+      "usMiParoleDualSupervisionPastEarlyDischargeDate": {
+        "sentenceType": "PAROLE",
+        "eligibleDate": "2023-01-01"
+      },
+      "usMiNoPendingDetainer": {
+        "pendingDetainer": false
+      },
+      "usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision": {
+        "latestIneligibleConvictions": []
+      },
+      "usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision": {
+        "ineligibleOffenses": []
+      },
+      "usMiSupervisionLevelIsNotSai": {
+        "supervisionLevelRawText": "MINIMUM"
+      },
+      "usMiNoActivePpo": {
+        "activePpo": false
+      },
+      "usMiNoOwiViolationOnParoleDualSupervision": {
+        "latestIneligibleConvictions": []
+      },
+      "usMiNotServingIneligibleOffensesFromEarlyDischargeFromProbationSupervision": {
+        "currentOffenses": []
+      }
+    }
+  }
+]

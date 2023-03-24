@@ -36,6 +36,7 @@ const OPPORTUNITIES_WITH_FIXTURES: (keyof typeof collectionNames)[] = [
   "supervisionLevelDowngradeReferrals",
   "usIdSupervisionLevelDowngradeReferrals",
   "usMiClassificationReviewReferrals",
+  "usMiEarlyDischargeReferrals",
   "usMeSCCPReferrals",
   "usTnExpirationReferrals",
   "usMoRestrictiveHousingStatusHearingReferrals",

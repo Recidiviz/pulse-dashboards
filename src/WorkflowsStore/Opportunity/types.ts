@@ -34,6 +34,7 @@ const SUPERVISION_OPPORTUNITY_TYPES = [
   "supervisionLevelDowngrade",
   "usIdSupervisionLevelDowngrade",
   "usMiClassificationReview",
+  "usMiEarlyDischarge",
   "usTnExpiration",
   "usMeEarlyTermination",
 ] as const;
@@ -64,6 +65,7 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   supervisionLevelDowngrade: "Supervision Level Downgrade",
   usIdSupervisionLevelDowngrade: "Supervision Level Mismatch",
   usMiClassificationReview: "Classification Review",
+  usMiEarlyDischarge: "Early Discharge",
   usMeSCCP: "Supervised Community Confinement Program",
   usTnExpiration: "Expiration",
   usMoRestrictiveHousingStatusHearing: "Restrictive Housing Status Hearing",
@@ -94,6 +96,7 @@ export const OPPORTUNITY_TYPE_URLS_BY_STATE: PartialRecord<
   },
   US_MI: {
     usMiClassificationReview: "classificationReview",
+    usMiEarlyDischarge: "earlyDischarge",
   },
   US_MO: {
     usMoRestrictiveHousingStatusHearing: "restrictiveHousingStatusHearing",

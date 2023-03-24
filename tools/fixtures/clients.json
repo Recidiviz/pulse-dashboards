@@ -652,6 +652,24 @@
     "personType": "CLIENT"
   },
   {
+    "recordId": "us_mi_ed-eligible-1",
+    "personName": {
+      "givenNames": "SQUIDWARD",
+      "surname": "TENTACLES"
+    },
+    "personExternalId": "ed-eligible-1",
+    "pseudonymizedId": "pseudo-ed-eligible-1",
+    "stateCode": "US_MI",
+    "officerId": "OFFICER8",
+    "supervisionType": "PROBATIONER",
+    "supervisionLevel": "HIGH",
+    "supervisionLevelStart": "2019-12-20",
+    "currentBalance": 221.88,
+    "specialConditions": [],
+    "allEligibleOpportunities": ["usMiEarlyDischarge"],
+    "personType": "CLIENT"
+  },
+  {
     "personName": {
       "givenNames": "LAURA",
       "surname": "PALMER"

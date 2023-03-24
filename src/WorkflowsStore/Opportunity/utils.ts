@@ -139,7 +139,14 @@ export const generateOpportunityHydratedHeader = (
       eligibilityText: simplur`${count} client[|s] may be `,
       opportunityText: "eligible for a supervision level downgrade",
       // TODO(#2969): Update copy once finalized
-      callToAction: "Change their supervision level in MIDOC",
+      callToAction:
+        "Review clients who meet the time threshold for classification review and downgrade supervision levels in OMNI.",
+    },
+    usMiEarlyDischarge: {
+      eligibilityText: simplur`${count} client[|s] may be `,
+      opportunityText: "eligible for early discharge",
+      callToAction:
+        "Review clients who may be eligible for early discharge and complete discharge paperwork in OMNI.",
     },
     usMeSCCP: {
       eligibilityText: simplur`${count} resident[|s] may be eligible for `,
@@ -216,6 +223,7 @@ export const opportunityToSortFunctionMapping: Record<
   supervisionLevelDowngrade: sortByReviewStatus,
   usIdSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
   usMiClassificationReview: sortByReviewStatusAndEligibilityDate,
+  usMiEarlyDischarge: sortByReviewStatusAndEligibilityDate,
   usMeSCCP: sortByReviewStatus,
   usTnExpiration: sortByReviewStatusAndEligibilityDate,
   usMoRestrictiveHousingStatusHearing: sortByReviewStatusAndEligibilityDate,

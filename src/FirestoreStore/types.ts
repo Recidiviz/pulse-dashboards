@@ -44,6 +44,7 @@ export const collectionNames = {
   usMeSCCPReferrals: "US_ME-SCCPReferrals",
   usIdSupervisionLevelDowngradeReferrals: "US_ID-supervisionLevelDowngrade",
   usMiClassificationReviewReferrals: "US_MI-classificationReviewReferrals",
+  usMiEarlyDischargeReferrals: "US_MI-earlyDischargeReferrals",
   usTnExpirationReferrals: "US_TN-expirationReferrals",
   usMoRestrictiveHousingStatusHearingReferrals:
     "US_MO-restrictiveHousingStatusHearingReferrals",
