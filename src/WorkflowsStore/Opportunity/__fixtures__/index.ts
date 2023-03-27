@@ -839,6 +839,9 @@ export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRec
         sentenceType: "PROBATION",
         eligibleDate: parseISO("2024-04-03"),
       },
+      onMediumSupervisionLevelOrLower: {
+        supervisionLevel: "MEDIUM",
+      },
     },
     metadata: {
       supervisionHalfTimeDate: parseISO("2024-05-03"),

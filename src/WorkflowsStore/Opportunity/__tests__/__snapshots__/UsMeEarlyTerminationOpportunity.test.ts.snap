@@ -7,6 +7,10 @@ Array [
     "tooltip": "TBD",
   },
   Object {
+    "text": "Currently on medium",
+    "tooltip": "Currently on Limited, Minimum, or Medium Custody",
+  },
+  Object {
     "text": "Currently on probation sentence",
     "tooltip": "TBD",
   },

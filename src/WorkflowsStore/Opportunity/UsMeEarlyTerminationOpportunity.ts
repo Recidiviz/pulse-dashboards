@@ -42,7 +42,10 @@ const CRITERIA: Record<
     tooltip: `TBD`,
   },
   supervisionPastHalfFullTermReleaseDate: {
-    tooltip: "TBD",
+    tooltip: `TBD`,
+  },
+  onMediumSupervisionLevelOrLower: {
+    tooltip: `Currently on Limited, Minimum, or Medium Custody`,
   },
 };
 
@@ -106,6 +109,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
       criteria: {
         supervisionPastHalfFullTermReleaseDate,
         noConvictionWithin6Months,
+        onMediumSupervisionLevelOrLower,
       },
     } = this.record;
 
@@ -115,6 +119,13 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
           supervisionPastHalfFullTermReleaseDate?.eligibleDate
         )}`,
         tooltip: CRITERIA.supervisionPastHalfFullTermReleaseDate.tooltip,
+      });
+    }
+
+    if (onMediumSupervisionLevelOrLower?.supervisionLevel) {
+      requirements.push({
+        text: `Currently on ${onMediumSupervisionLevelOrLower?.supervisionLevel.toLowerCase()}`,
+        tooltip: CRITERIA.onMediumSupervisionLevelOrLower.tooltip,
       });
     }
 

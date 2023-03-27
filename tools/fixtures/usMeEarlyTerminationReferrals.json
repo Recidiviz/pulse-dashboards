@@ -9,6 +9,9 @@
       "supervisionPastHalfFullTermReleaseDate": {
         "sentenceType": "PROBATION",
         "eligibleDate": "2024-04-03"
+      },
+      "onMediumSupervisionLevelOrLower": {
+        "supervisionLevel": "MEDIUM"
       }
     },
     "metadata": {

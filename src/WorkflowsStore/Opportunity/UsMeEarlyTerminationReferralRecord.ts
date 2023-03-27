@@ -35,6 +35,9 @@ export type UsMeEarlyTerminationReferralRecord = {
       sentenceType: string;
       eligibleDate: Date;
     };
+    onMediumSupervisionLevelOrLower: {
+      supervisionLevel: string;
+    };
   };
 } & WithCaseNotes;
 
