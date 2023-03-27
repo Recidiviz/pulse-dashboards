@@ -23,7 +23,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { toTitleCase } from "../../utils";
+import { pluralizeWord, toTitleCase } from "../../utils";
 import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { SectionLabelText } from "../OpportunityCaseloadView/styles";
 import { ProfileCapsule } from "../PersonCapsules";
@@ -72,7 +72,9 @@ export const AllCaseloads = observer(function AllCaseloads() {
     return (
       <WorkflowsNoResults
         headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s`}
-        callToActionText={`Search for ${workflowsSearchFieldTitle}s above to view their entire caseload.`}
+        callToActionText={`Search for ${pluralizeWord(
+          workflowsSearchFieldTitle
+        )} above to view their entire caseload.`}
       />
     );
 

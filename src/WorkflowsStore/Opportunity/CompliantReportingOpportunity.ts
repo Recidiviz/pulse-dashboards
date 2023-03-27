@@ -555,16 +555,16 @@ export class CompliantReportingOpportunity extends OpportunityBase<
           case "currentLevelEligibilityDate": {
             return currentLevelEligibilityDaysRemaining !== undefined
               ? `Needs ${currentLevelEligibilityDaysRemaining} more ${pluralizeWord(
-                  currentLevelEligibilityDaysRemaining,
-                  "day"
+                  "day",
+                  currentLevelEligibilityDaysRemaining
                 )} on ${this.person.supervisionLevel.toLowerCase()}`
               : undefined;
           }
           case "seriousSanctionsEligibilityDate": {
             return seriousSanctionsEligibilityDaysRemaining !== undefined
               ? `Needs ${seriousSanctionsEligibilityDaysRemaining} more ${pluralizeWord(
-                  seriousSanctionsEligibilityDaysRemaining,
-                  "day"
+                  "day",
+                  seriousSanctionsEligibilityDaysRemaining
                 )} without sanction higher than level 1`
               : undefined;
           }

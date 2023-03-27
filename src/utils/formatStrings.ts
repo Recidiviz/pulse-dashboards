@@ -24,6 +24,8 @@ import pipe from "lodash/fp/pipe";
 import startCase from "lodash/fp/startCase";
 import moment from "moment";
 import numeral from "numeral";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Pluralize from "pluralize";
 
 import { Dimension } from "../core/types/dimensions";
 import { translate } from "./i18nSettings";
@@ -127,25 +129,19 @@ const violationCountLabel = (count: string): string =>
   count === "8" ? "8+" : count;
 
 /**
- * @returns appropriately singular or plural (+s) form of `term`
+ * @returns appropriately singular or plural form of `term` including irregular terms
  */
-const pluralizeWord = (
-  count: number,
-  term: string,
-  irregularTerm?: string
-): string => {
-  if (irregularTerm) {
-    return count !== 1 ? irregularTerm : term;
-  }
+const pluralizeWord = (term: string, count?: number): string => {
+  if (count) return Pluralize(term, count);
 
-  return count !== 1 ? `${term}s` : term;
+  return Pluralize(term);
 };
 
 /**
- * @returns `count` with appropriately singular or plural (+s) form of `term
+ * @returns `count` with appropriately singular or plural form of `term`
  */
 const pluralize = (count: number, term: string): string => {
-  return `${count} ${pluralizeWord(count, term)}`;
+  return `${count} ${pluralizeWord(term, count)}`;
 };
 
 function getPeriodLabelFromMetricPeriodMonthsFilter(

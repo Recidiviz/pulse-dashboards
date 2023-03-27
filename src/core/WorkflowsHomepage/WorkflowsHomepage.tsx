@@ -19,6 +19,7 @@ import React from "react";
 import simplur from "simplur";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { pluralizeWord } from "../../utils";
 import { OPPORTUNITY_LABELS, OpportunityType } from "../../WorkflowsStore";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
@@ -60,7 +61,9 @@ const WorkflowsHomepage = observer(
     const initial = (
       <WorkflowsNoResults
         headerText={getWelcomeText(user?.info.givenNames)}
-        callToActionText={`Search for ${workflowsSearchFieldTitle}s above to review and refer eligible ${justiceInvolvedPersonTitle}s for
+        callToActionText={`Search for ${pluralizeWord(
+          workflowsSearchFieldTitle
+        )} above to review and refer eligible ${justiceInvolvedPersonTitle}s for
           opportunities like ${getSelectOpportunitiesText(opportunityTypes)}.`}
       />
     );
@@ -69,7 +72,10 @@ const WorkflowsHomepage = observer(
       <WorkflowsNoResults
         callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
           selectedSearchIds.length,
-        ]} ${workflowsSearchFieldTitle}['s|s'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`}
+        ]} ${pluralizeWord(
+          workflowsSearchFieldTitle,
+          selectedSearchIds.length
+        )}['s|'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`}
       />
     );
 

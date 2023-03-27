@@ -21,6 +21,7 @@ import simplur from "simplur";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { pluralizeWord } from "../../utils";
 import {
   generateOpportunityDeniedSectionTitle,
   generateOpportunityHydratedHeader,
@@ -89,7 +90,10 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
     <WorkflowsNoResults
       callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
         selectedSearchIds.length,
-      ]} ${workflowsSearchFieldTitle}['s|s'] caseloads are eligible for ${opportunityLabel.toLowerCase()}. Search for another ${workflowsSearchFieldTitle}.`}
+      ]} ${pluralizeWord(
+        workflowsSearchFieldTitle,
+        selectedSearchIds.length
+      )}['s|'] caseloads are eligible for ${opportunityLabel.toLowerCase()}. Search for another ${workflowsSearchFieldTitle}.`}
     />
   );
 

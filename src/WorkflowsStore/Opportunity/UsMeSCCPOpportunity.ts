@@ -124,7 +124,7 @@ function hydrateServedXPortionOfSentence(
 
   const isDays = monthsRemaining === 0;
   const timeRemaining = isDays ? daysRemaining : monthsRemaining;
-  const timeUnit = pluralizeWord(timeRemaining, isDays ? "day" : "month");
+  const timeUnit = pluralizeWord(isDays ? "day" : "month", timeRemaining);
 
   const servedCondition =
     monthsRemaining >= -3 && monthsRemaining < 0

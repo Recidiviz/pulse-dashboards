@@ -38,6 +38,7 @@ import { MultiValueRemoveProps } from "react-select/src/components/MultiValue";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { pluralizeWord } from "../../utils";
 import { Searchable } from "../models/types";
 
 // This is a query limitation imposed by Firestore
@@ -64,7 +65,8 @@ const Disabled = (searchFieldTitle: string) =>
     return (
       <components.MenuList {...props}>
         <DisabledMessage>
-          Cannot select more than {SELECTED_SEARCH_LIMIT} {searchFieldTitle}s.
+          Cannot select more than {SELECTED_SEARCH_LIMIT}{" "}
+          {pluralizeWord(searchFieldTitle)}.
         </DisabledMessage>
         {children}
       </components.MenuList>
@@ -132,7 +134,7 @@ const ClearAll = (searchFieldTitle: string) =>
   function ClearAllButton(props: IndicatorProps<SelectOption, true>) {
     return (
       <components.ClearIndicator {...props}>
-        <>Clear {searchFieldTitle}s</>
+        <>Clear {pluralizeWord(searchFieldTitle)}</>
       </components.ClearIndicator>
     );
   };
@@ -192,7 +194,9 @@ export const CaseloadSelect = observer(function CaseloadSelect({
           });
         }}
         options={availableSearchables.map(buildSelectOption)}
-        placeholder={`Search for one or more ${workflowsSearchFieldTitle}s …`}
+        placeholder={`Search for one or more ${pluralizeWord(
+          workflowsSearchFieldTitle
+        )} …`}
         styles={{
           clearIndicator: (base) => ({
             ...base,

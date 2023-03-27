@@ -31,6 +31,7 @@ import simplur from "simplur";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { pluralizeWord } from "../../utils";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import {
   SupervisionNeedType,
@@ -345,7 +346,10 @@ const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
     <WorkflowsNoResults
       callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
         selectedSearchIds.length,
-      ]} ${workflowsSearchFieldTitle}['s|s'] caseloads have any tasks. Search for another ${workflowsSearchFieldTitle}.`}
+      ]} ${pluralizeWord(
+        workflowsSearchFieldTitle,
+        selectedSearchIds.length
+      )}['s|'] caseloads have any tasks. Search for another ${workflowsSearchFieldTitle}.`}
     />
   );
 
