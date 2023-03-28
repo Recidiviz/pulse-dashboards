@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fully eligible requirements met 1`] = `
+Array [
+  Object {
+    "text": "Currently on high assessment level",
+  },
+  Object {
+    "text": "Initial compass score date is Apr 10, 2023",
+  },
+]
+`;

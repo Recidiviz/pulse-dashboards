@@ -50,6 +50,7 @@ export const collectionNames = {
     "US_MO-restrictiveHousingStatusHearingReferrals",
   usIdSupervisionTasks: "US_ID-supervisionTasks",
   usMeEarlyTerminationReferrals: "US_ME-earlyTerminationReferrals",
+  usMiMinimumTelephoneReportingReferrals: "US_MI-minimumTelephoneReporting",
 };
 
 export type CollectionName = keyof typeof collectionNames;
@@ -116,7 +117,8 @@ export type FeatureVariant =
   | "usMiClassificationReview"
   | "usIdIncomeVerificationAlmostEligible"
   | "usMoRestrictiveHousingStatusHearing"
-  | "usMeEarlyTermination";
+  | "usMeEarlyTermination"
+  | "usMiMinimumTelephoneReporting";
 /**
  * For each feature, an optional activeDate can control when the user gets access.
  * If this is missing, access will be granted immediately.
@@ -138,6 +140,7 @@ export const defaultFeatureVariantsActive: FeatureVariantMapping = {
   usMiClassificationReview: {},
   usMoRestrictiveHousingStatusHearing: {},
   usMeEarlyTermination: {},
+  usMiMinimumTelephoneReporting: {},
 };
 
 /**

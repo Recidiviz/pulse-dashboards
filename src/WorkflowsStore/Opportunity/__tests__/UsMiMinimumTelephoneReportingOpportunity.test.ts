@@ -22,12 +22,12 @@ import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
 import { DocumentSubscription } from "../../subscriptions";
 import {
-  usMeEarlyTerminationEligibleClientRecord,
-  usMeEarlyTerminationReferralRecord,
+  usMiMinimumTelephoneReportingEligibleClientRecord,
+  usMiMinimumTelephoneReportingReferralRecord,
 } from "../__fixtures__";
-import { UsMeEarlyTerminationOpportunity } from "../UsMeEarlyTerminationOpportunity";
+import { UsMiMinimumTelephoneReportingOpportunity } from "../UsMiMinimumTelephoneReportingOpportunity";
 
-let opp: UsMeEarlyTerminationOpportunity;
+let opp: UsMiMinimumTelephoneReportingOpportunity;
 let client: Client;
 let root: RootStore;
 let referralSub: DocumentSubscription<any>;
@@ -36,15 +36,16 @@ let updatesSub: DocumentSubscription<any>;
 jest.mock("../../subscriptions");
 
 function createTestUnit(
-  clientRecord: typeof usMeEarlyTerminationEligibleClientRecord
+  clientRecord: typeof usMiMinimumTelephoneReportingEligibleClientRecord
 ) {
   root = new RootStore();
   jest
     .spyOn(root.workflowsStore, "opportunityTypes", "get")
-    .mockReturnValue(["usMeEarlyTermination"]);
+    .mockReturnValue(["usMiMinimumTelephoneReporting"]);
   client = new Client(clientRecord, root);
 
-  const maybeOpportunity = client.potentialOpportunities.usMeEarlyTermination;
+  const maybeOpportunity =
+    client.potentialOpportunities.usMiMinimumTelephoneReporting;
 
   if (maybeOpportunity === undefined) {
     throw new Error("Unable to create opportunity instance");
@@ -67,11 +68,11 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
-    createTestUnit(usMeEarlyTerminationEligibleClientRecord);
+    createTestUnit(usMiMinimumTelephoneReportingEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
     referralSub.isLoading = false;
-    referralSub.data = usMeEarlyTerminationReferralRecord;
+    referralSub.data = usMiMinimumTelephoneReportingReferralRecord;
 
     updatesSub = opp.updatesSubscription;
     updatesSub.isLoading = false;

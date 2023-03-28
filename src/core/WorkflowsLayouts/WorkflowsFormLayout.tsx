@@ -67,9 +67,8 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   usMoRestrictiveHousingStatusHearing: {
     formContents: <div />,
   },
-  usMeEarlyTermination: {
-    formContents: <div />,
-  },
+  usMeEarlyTermination: {},
+  usMiMinimumTelephoneReporting: {},
 };
 
 const Wrapper = styled.div`

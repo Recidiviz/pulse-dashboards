@@ -27,6 +27,7 @@ import { LSUReferralRecord } from "../LSUReferralRecord";
 import { PastFTRDReferralRecord } from "../PastFTRDReferralRecord";
 import { UsMeEarlyTerminationReferralRecord } from "../UsMeEarlyTerminationReferralRecord";
 import { UsMeSCCPReferralRecord } from "../UsMeSCCPReferralRecord";
+import { UsMiMinimumTelephoneReportingReferralRecord } from "../UsMiMinimumTelephoneReportingReferralRecord";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { UsTnExpirationReferralRecord } from "../UsTnExpirationReferralRecord";
 
@@ -945,3 +946,55 @@ export const usMiClassificationReviewEligibleClientRecord: ClientRecord = {
   ] as SupervisionOpportunityType[],
   personType: "CLIENT",
 };
+
+export const usMiMinimumTelephoneReportingEligibleClientRecord: ClientRecord = {
+  recordId: "us_mi_010",
+  personName: {
+    givenNames: "GORAN",
+    surname: "IVANISEVIC",
+  },
+  personExternalId: "010",
+  pseudonymizedId: "p010",
+  stateCode: "US_MI",
+  officerId: "OFFICER8",
+  supervisionType: "PROBATION",
+  supervisionLevel: "HIGH",
+  supervisionLevelStart: "2019-12-20",
+  currentBalance: 221.88,
+  specialConditions: [],
+  allEligibleOpportunities: ["usMiMinimumTelephoneReporting"],
+  personType: "CLIENT",
+};
+
+export const usMiMinimumTelephoneReportingReferralRecord: UsMiMinimumTelephoneReportingReferralRecord =
+  {
+    stateCode: "US_MI",
+    externalId: "010",
+    criteria: {
+      sixMonthsPastSuperivionStart: {
+        eligibleDate: parseISO("2022-12-12"),
+      },
+      usMiNotServingAnOuilOrOwi: {
+        ineligibleOffenses: [],
+      },
+      initialCompassScoreMinimumOrMedium: {
+        assessmentLevel: "HIGH",
+        eligibleDate: parseISO("2023-04-10"),
+      },
+      usMiNotServingIneligibleOffensesOnSupervision: {
+        ineligibleOffenses: [],
+      },
+      supervisionNotWithin90DaysOfFullTermDischarge: {
+        eligibleDate: parseISO("2021-10-10"),
+      },
+    },
+    caseNotes: {
+      foo: [
+        {
+          noteTitle: "A title",
+          noteBody: "A body",
+          eventDate: parseISO("2022-06-28"),
+        },
+      ],
+    },
+  };

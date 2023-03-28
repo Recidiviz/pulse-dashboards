@@ -38,6 +38,7 @@ import {
   PastFTRDOpportunity,
   SupervisionOpportunityType,
   UsMeEarlyTerminationOpportunity,
+  UsMiMinimumTelephoneReportingOpportunity,
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
@@ -81,6 +82,7 @@ const supervisionOpportunityConstructors: Record<
   usMiEarlyDischarge: UsMiEarlyDischargeOpportunity,
   usTnExpiration: UsTnExpirationOpportunity,
   usMeEarlyTermination: UsMeEarlyTerminationOpportunity,
+  usMiMinimumTelephoneReporting: UsMiMinimumTelephoneReportingOpportunity,
 };
 
 export const createClientOpportunity: OpportunityFactory<

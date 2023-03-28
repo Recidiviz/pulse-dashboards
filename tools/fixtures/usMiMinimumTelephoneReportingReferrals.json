@@ -1,0 +1,24 @@
+[
+  {
+    "stateCode": "US_MI",
+    "externalId": "010",
+    "criteria": {
+      "sixMonthsPastSuperivionStart": {
+        "eligibleDate": "2022-12-12"
+      },
+      "usMiNotServingAnOuilOrOwi": {
+        "ineligibleOffenses": []
+      },
+      "initialCompassScoreMinimumOrMedium": {
+        "assessmentLevel": "HIGH",
+        "eligibleDate": "2023-04-10"
+      },
+      "usMiNotServingIneligibleOffensesOnSupervision": {
+        "ineligibleOffenses": []
+      },
+      "supervisionNotWithin90DaysOfFullTermDischarge": {
+        "eligibleDate": "2021-10-10"
+      }
+    }
+  }
+]

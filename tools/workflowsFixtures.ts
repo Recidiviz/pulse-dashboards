@@ -41,6 +41,7 @@ const OPPORTUNITIES_WITH_FIXTURES: (keyof typeof collectionNames)[] = [
   "usTnExpirationReferrals",
   "usMoRestrictiveHousingStatusHearingReferrals",
   "usMeEarlyTerminationReferrals",
+  "usMiMinimumTelephoneReportingReferrals",
 ];
 
 export type FixtureData<T> = {

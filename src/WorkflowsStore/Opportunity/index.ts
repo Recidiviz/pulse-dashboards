@@ -25,6 +25,7 @@ export * from "./PastFTRDOpportunity";
 export * from "./types";
 export * from "./UsMeEarlyTerminationOpportunity";
 export * from "./UsMeSCCPOpportunity";
+export * from "./UsMiMinimumTelephoneReportingOpportunity";
 export * from "./UsMoRestrictiveHousingStatusHearingOpportunity";
 export * from "./UsTnExpirationOpportunity";
 export * from "./UsTnSupervisionLevelDowngradeOpportunity";

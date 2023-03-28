@@ -179,6 +179,12 @@ export const generateOpportunityHydratedHeader = (
       callToAction:
         "Review clients eligible for early termination from probation",
     },
+    // TODO: Update copy
+    usMiMinimumTelephoneReporting: {
+      eligibilityText: simplur`${count} client[|s] may be eligible for `,
+      opportunityText: "minimum telephone reporting",
+      callToAction: "TBD",
+    },
   };
 
   return headers[opportunityType];
@@ -228,6 +234,7 @@ export const opportunityToSortFunctionMapping: Record<
   usTnExpiration: sortByReviewStatusAndEligibilityDate,
   usMoRestrictiveHousingStatusHearing: sortByReviewStatusAndEligibilityDate,
   usMeEarlyTermination: sortByReviewStatus,
+  usMiMinimumTelephoneReporting: sortByReviewStatus,
 };
 
 export const transformCaseNotes = (
