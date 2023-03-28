@@ -153,28 +153,18 @@ test("inject record in offline mode", () => {
   `);
 });
 
-test("inject record for staff user without caseload", () => {
+test("supplement record for staff user without caseload", () => {
   jest.spyOn(sub, "dataSource", "get").mockReturnValue(jest.fn() as any);
   const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
 
   sub.subscribe();
 
-  // data should be available immediately
-  expect(sub.data).toMatchInlineSnapshot(`
-    Array [
-      Object {
-        "email": "test@example.com",
-        "givenNames": "Geri",
-        "hasCaseload": false,
-        "id": "us_xx_test@example.com",
-        "stateCode": "US_XX",
-        "surname": "Halliwell",
-      },
-    ]
-  `);
-
-  // Firestore listener should not clobber our injected data
   mockReceive([]);
+
+  // Override should not be set
+  expect(sub.dataOverride).toBeUndefined();
+
+  // data should be available immediately
   expect(sub.data).toMatchInlineSnapshot(`
     Array [
       Object {

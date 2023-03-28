@@ -88,8 +88,32 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
   }
 
   /**
-   * For internal users and users without caseloads, we will construct a local override
-   * instead of expecting any data from Firestore
+   * For external users who do not have a caseload, we supplement the user record with additional properties.
+   */
+  get userWithoutCaseload(): StaffRecord | undefined {
+    const {
+      user,
+      userStore: { stateCode },
+    } = this.rootStore;
+
+    if (!user) return;
+
+    let formattedUserName;
+
+    if (user.name) formattedUserName = splitAuth0UserName(user.name);
+
+    return {
+      id: `${stateCode.toLowerCase()}_${user?.email}`,
+      email: user.email ?? null,
+      stateCode,
+      hasCaseload: false,
+      givenNames: (user.given_name || formattedUserName?.firstName) ?? "",
+      surname: (user.family_name || formattedUserName?.lastName) ?? "",
+    };
+  }
+
+  /**
+   * For internal users, we will construct a local override instead of expecting any data from Firestore
    */
   get dataOverride(): StaffRecord | undefined {
     const {
@@ -98,14 +122,12 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
       userStore: { stateCode },
     } = this.rootStore;
 
-    const userId = `${stateCode.toLowerCase()}_${user?.email}`;
-
     let injectedUserData: StaffRecord | undefined;
 
     // inject dynamic fixture data in offline mode
     if (isOfflineMode()) {
       injectedUserData = {
-        id: userId,
+        id: `${stateCode.toLowerCase()}_${user?.email}`,
         email: user?.email ?? null,
         stateCode,
         hasCaseload: false,
@@ -124,20 +146,6 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
         hasCaseload: false,
         givenNames: "Recidiviz",
         surname: "Staff",
-      };
-      // If the user does not have a caseload, they might not have a record in the
-      // staff collection. Use the user info from auth0.
-    } else if (user) {
-      let splitName;
-      if (user.name) splitName = splitAuth0UserName(user.name);
-
-      injectedUserData = {
-        id: userId,
-        email: user.email ?? null,
-        stateCode,
-        hasCaseload: false,
-        givenNames: (user.given_name || splitName?.firstName) ?? "",
-        surname: (user.family_name || splitName?.lastName) ?? "",
       };
     }
     return injectedUserData;
@@ -159,16 +167,20 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
   protected updateData(
     snapshot: QuerySnapshot<DocumentData> | undefined
   ): void {
-    // When an override is set and we do not have results from firestore, use the override.
-    if (this.dataOverride && (!snapshot || snapshot?.size === 0)) {
-      super.updateData(mockOverrideSnapshot(this.dataOverride));
-    } else if (snapshot?.size) {
-      super.updateData(snapshot);
-    } else {
-      this.isLoading = false;
-      this.isHydrated = false;
-      this.error = new Error("No user record found");
-      this.data = [];
+    const { user } = this.rootStore;
+    // Prioritize overrides
+    if (this.dataOverride) {
+      return super.updateData(mockOverrideSnapshot(this.dataOverride));
     }
+    if (snapshot?.size) {
+      return super.updateData(snapshot);
+    }
+    if (user && this.userWithoutCaseload) {
+      return super.updateData(mockOverrideSnapshot(this.userWithoutCaseload));
+    }
+    this.isLoading = false;
+    this.isHydrated = false;
+    this.error = new Error("No user record found");
+    this.data = [];
   }
 }
