@@ -30,10 +30,8 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
-import {
-  SupervisionTask,
-  SupervisionTaskType,
-} from "../../WorkflowsStore/Task/types";
+import { SupervisionTask } from "../../WorkflowsStore/Task/types";
+import { TASK_DISPLAY_NAME } from "./fixtures";
 
 const TooltipContainer = styled.div`
   min-width: 13rem;
@@ -99,12 +97,6 @@ const TooltipTaskRow = styled.div`
   justify-content: space-between;
 `;
 
-const TASK_TEXT: Record<SupervisionTaskType, string> = {
-  assessment: "Assessment",
-  contact: "Contact",
-  homeVisit: "Home visit",
-};
-
 const TasksSection: React.FC<{
   tasks: SupervisionTask[];
 }> = ({ tasks }) => {
@@ -115,7 +107,7 @@ const TasksSection: React.FC<{
       <SectionHeader>Tasks</SectionHeader>
       {tasks.map((t) => (
         <TooltipTaskRow key={t.type}>
-          <SectionDetails>{TASK_TEXT[t.type]}</SectionDetails>
+          <SectionDetails>{TASK_DISPLAY_NAME[t.type]}</SectionDetails>
           <SectionDetails overdue={t.isOverdue}>
             Due {t.dueDateFromToday}
           </SectionDetails>

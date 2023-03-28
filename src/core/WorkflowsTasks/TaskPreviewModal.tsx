@@ -24,7 +24,6 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import {
   SupervisionNeed,
-  SupervisionNeedType,
   SupervisionTask,
   SupervisionTaskType,
 } from "../../WorkflowsStore/Task/types";
@@ -32,6 +31,7 @@ import { Milestones, Supervision } from "../WorkflowsClientProfile/Details";
 import { Heading } from "../WorkflowsClientProfile/Heading";
 import { OpportunitiesAccordion } from "../WorkflowsClientProfile/OpportunitiesAccordion";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
+import { NEED_DISPLAY_NAME, TASK_DISPLAY_NAME } from "./fixtures";
 import { TaskDueDate } from "./WorkflowsTasks";
 
 const TasksWrapper = styled.div`
@@ -72,16 +72,6 @@ const TaskDivider = styled(Sans16)`
   margin: 0 0.5rem;
 `;
 
-const TASK_TO_DISPLAY_NAME: Record<
-  SupervisionTaskType | SupervisionNeedType,
-  string
-> = {
-  homeVisit: "Home Visit",
-  assessment: "Risk Assessments",
-  contact: "Contact",
-  employment: "Unemployed",
-};
-
 const PreviewTasks = function PreviewTasks({
   tasks,
   needs,
@@ -96,7 +86,7 @@ const PreviewTasks = function PreviewTasks({
         {tasks.map((task) => {
           return (
             <TaskItem>
-              <TaskName>{TASK_TO_DISPLAY_NAME[task.type]}</TaskName>
+              <TaskName>{TASK_DISPLAY_NAME[task.type]}</TaskName>
               <TaskDivider> &bull; </TaskDivider>
               <TaskDueDate marginLeft="0" overdue={task.isOverdue}>
                 Due {task.dueDateFromToday}
@@ -107,7 +97,7 @@ const PreviewTasks = function PreviewTasks({
         {needs.map((need) => {
           return (
             <TaskItem>
-              <TaskName>{TASK_TO_DISPLAY_NAME[need.type]}</TaskName>
+              <TaskName>{NEED_DISPLAY_NAME[need.type]}</TaskName>
             </TaskItem>
           );
         })}
