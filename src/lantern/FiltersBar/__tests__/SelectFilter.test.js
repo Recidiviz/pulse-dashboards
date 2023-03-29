@@ -45,7 +45,7 @@ const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 
 describe("SelectFilter tests", () => {
   const metadataField = `${METADATA_NAMESPACE}app_metadata`;
-  const mockUser = { [metadataField]: { state_code: US_MO } };
+  const mockUser = { [metadataField]: { stateCode: US_MO } };
   const setFiltersMock = jest.fn();
   useLanternStore.mockReturnValue({
     userStore: { user: mockUser, isAuthorized: true },

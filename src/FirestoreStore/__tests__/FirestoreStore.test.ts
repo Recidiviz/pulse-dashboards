@@ -66,7 +66,7 @@ describe("FirestoreStore", () => {
     test("Should call /token if user can access workflows", async () => {
       const auth0Token = "token123";
       const appMetadata: UserAppMetadata = {
-        state_code: "us_nd",
+        stateCode: "us_nd",
         routes: {
           workflows: true,
         },
@@ -78,7 +78,7 @@ describe("FirestoreStore", () => {
     test("Should not call /token if user cannot access workflows", async () => {
       const auth0Token = "token123";
       const appMetadata: UserAppMetadata = {
-        state_code: "us_nd",
+        stateCode: "us_nd",
         routes: {
           workflows: false,
         },
@@ -89,7 +89,7 @@ describe("FirestoreStore", () => {
     test("Should call /token for recidiviz user", async () => {
       const auth0Token = "token123";
       const appMetadata: UserAppMetadata = {
-        state_code: "recidiviz",
+        stateCode: "recidiviz",
       };
       await store.authenticate(auth0Token, appMetadata);
       expect(mockFetchFirebaseToken).toBeCalled();
@@ -118,7 +118,7 @@ describe("FirestoreStore", () => {
 
     test("Should fetch impersonated token if recidiviz user", async () => {
       const appMetadata: UserAppMetadata = {
-        state_code: "recidiviz",
+        stateCode: "recidiviz",
         routes: {
           workflows: true,
         },
@@ -134,7 +134,7 @@ describe("FirestoreStore", () => {
 
     test("Should not fetch impersonated if user is not recidiviz", async () => {
       const appMetadata: UserAppMetadata = {
-        state_code: "us_nd",
+        stateCode: "us_nd",
         routes: {
           workflows: false,
         },

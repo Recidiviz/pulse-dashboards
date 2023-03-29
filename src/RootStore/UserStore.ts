@@ -35,7 +35,6 @@ import {
 } from "../core/types/navigation";
 import { PATHWAYS_SECTIONS, PathwaysPageIdList } from "../core/views";
 import tenants from "../tenants";
-import { transformImpersonatedUserAppMetadata } from "../utils/impersonation";
 import isIE11 from "../utils/isIE11";
 import { isOfflineMode } from "../utils/isOfflineMode";
 import { getAllowedMethodology } from "../utils/navigation";
@@ -210,15 +209,11 @@ export default class UserStore {
       );
 
       // Fetch dashboard userAppMetadata to build mocked auth0 user
-      const fetchedRestrictions = await fetchImpersonatedUserAppMetadata(
+      const userRestrictions = await fetchImpersonatedUserAppMetadata(
         impersonatedEmail,
         impersonatedStateCode,
         this.getTokenSilently
       );
-
-      // TODO #3160 remove this transform once we change the shape of UserAppMetadata
-      const userRestrictions =
-        transformImpersonatedUserAppMetadata(fetchedRestrictions);
 
       runInAction(() => {
         this.user = {
@@ -227,11 +222,11 @@ export default class UserStore {
           given_name: "Impersonated User",
           [`${METADATA_NAMESPACE}app_metadata`]: {
             ...userRestrictions,
-            state_code: impersonatedStateCode,
+            stateCode: impersonatedStateCode,
           },
           impersonator: true,
           name: "Impersonated User",
-          state_code: impersonatedStateCode,
+          stateCode: impersonatedStateCode,
         };
         this.rootStore?.tenantStore.setCurrentTenantId(
           impersonatedStateCode as TenantId
@@ -255,7 +250,7 @@ export default class UserStore {
 
   async trackIdentity(): Promise<void> {
     await when(() => this.userAppMetadata !== undefined);
-    const userId = this.userAppMetadata?.user_hash;
+    const userId = this.userAppMetadata?.userHash;
     if (userId) {
       this.rootStore?.analyticsStore.identify(userId);
       Sentry.setUser({ id: userId });
@@ -283,7 +278,7 @@ export default class UserStore {
    * For Recidiviz users or users in demo mode, this will be 'recidiviz'.
    */
   get stateCode(): TenantId {
-    const stateCode = this.userAppMetadata?.state_code;
+    const stateCode = this.userAppMetadata?.stateCode;
     if (!stateCode) {
       throw Error("No state code set for user");
     }
@@ -311,7 +306,7 @@ export default class UserStore {
    */
   get allowedSupervisionLocationIds(): string[] {
     const allowedSupervisionLocationIds =
-      this.userAppMetadata?.allowed_supervision_location_ids;
+      this.userAppMetadata?.allowedSupervisionLocationIds;
     return allowedSupervisionLocationIds || [];
   }
 
@@ -336,7 +331,7 @@ export default class UserStore {
    * Returns any blocked state codes for the authorized user.
    */
   get blockedStateCodes(): string[] {
-    const blockedStateCodes = this.userAppMetadata?.blocked_state_codes;
+    const blockedStateCodes = this.userAppMetadata?.blockedStateCodes;
     if (!blockedStateCodes) return [];
     return blockedStateCodes.map((sc) => sc.toUpperCase());
   }

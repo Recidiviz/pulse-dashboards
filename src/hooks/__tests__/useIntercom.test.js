@@ -37,8 +37,8 @@ describe("useIntercom hook tests", () => {
   const mockIntercomId =
     "1bf02f3b6639dd2a6bfdfbdda269db483eceab0184c634affe26d82a62706161";
   const mockUserAppMetadata = {
-    segment_id: mockUserId,
-    intercom_id: mockIntercomId,
+    segmentId: mockUserId,
+    intercomId: mockIntercomId,
   };
 
   useRootStore.mockReturnValue({

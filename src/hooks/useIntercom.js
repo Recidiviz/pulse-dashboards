@@ -29,9 +29,9 @@ const useIntercom = () => {
       name: user.name,
       nickname: user.nickname,
       email: user.email,
-      user_id: userAppMetadata.segment_id,
+      user_id: userAppMetadata.segmentId,
       hide_default_launcher: false,
-      user_hash: userAppMetadata.intercom_id,
+      user_hash: userAppMetadata.intercomId,
     });
   }, [
     tenantStore.currentTenantId,
@@ -39,8 +39,8 @@ const useIntercom = () => {
     user.nickname,
     user.email,
     user.sub,
-    userAppMetadata.segment_id,
-    userAppMetadata.intercom_id,
+    userAppMetadata.segmentId,
+    userAppMetadata.intercomId,
   ]);
 
   useEffect(() => {

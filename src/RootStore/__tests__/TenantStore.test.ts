@@ -29,7 +29,7 @@ jest.mock("../../components/StoreProvider");
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 
 const metadataField = `${METADATA_NAMESPACE}app_metadata`;
-const user = { [metadataField]: { state_code: US_MO }, email_verified: true };
+const user = { [metadataField]: { stateCode: US_MO }, email_verified: true };
 
 let tenantStore;
 describe("TenantStore", () => {
@@ -71,7 +71,7 @@ describe("TenantStore", () => {
         availableStateCodes: ["US_PA"],
         allowedSupervisionLocationIds: [],
         userHasAccess: () => true,
-        user: { [metadataField]: { state_code: US_PA }, email_verified: true },
+        user: { [metadataField]: { stateCode: US_PA }, email_verified: true },
       });
       tenantStore = new TenantStore({
         rootStore: mockRootStore,
@@ -86,7 +86,7 @@ describe("TenantStore", () => {
         allowedSupervisionLocationIds: ["25"],
         userHasAccess: () => true,
         user: {
-          [metadataField]: { state_code: "recidiviz" },
+          [metadataField]: { stateCode: "recidiviz" },
           email_verified: true,
         },
       });
@@ -102,7 +102,7 @@ describe("TenantStore", () => {
         allowedSupervisionLocationIds: [],
         userHasAccess: () => true,
         user: {
-          [metadataField]: { state_code: "recidiviz" },
+          [metadataField]: { stateCode: "recidiviz" },
           email_verified: true,
         },
       });
@@ -119,7 +119,7 @@ describe("TenantStore", () => {
         allowedSupervisionLocationIds: "some string",
         userHasAccess: () => true,
         user: {
-          [metadataField]: { state_code: "US_MO" },
+          [metadataField]: { stateCode: "US_MO" },
           email_verified: true,
         },
       });
@@ -148,7 +148,7 @@ describe("TenantStore", () => {
         availableStateCodes: ["US_ND"],
         userHasAccess: () => true,
         user: {
-          [metadataField]: { state_code: US_ND },
+          [metadataField]: { stateCode: US_ND },
           email_verified: true,
         },
       });
@@ -165,7 +165,7 @@ describe("TenantStore", () => {
         availableStateCodes: ["US_TN"],
         userHasAccess: () => true,
         user: {
-          [metadataField]: { state_code: US_TN },
+          [metadataField]: { stateCode: US_TN },
           email_verified: true,
         },
       });

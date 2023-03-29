@@ -109,7 +109,7 @@ describe("App tests", () => {
   describe("LanternLayout", () => {
     it("should render MO Layout with Revocations page", () => {
       window.history.pushState({}, "", "/community/revocations");
-      const user = { [metadataField]: { state_code: US_MO } };
+      const user = { [metadataField]: { stateCode: US_MO } };
 
       useRootStore.mockReturnValue({
         userStore: { ...userStore, ...user, stateCode: US_MO },
@@ -125,7 +125,7 @@ describe("App tests", () => {
 
     it("should render PA Layout with Revocations page", () => {
       window.history.pushState({}, "", "/community/revocations");
-      const user = { [metadataField]: { state_code: US_PA } };
+      const user = { [metadataField]: { stateCode: US_PA } };
       useRootStore.mockReturnValue({
         userStore: { ...userStore, ...user },
         currentTenantId: US_PA,
@@ -142,7 +142,7 @@ describe("App tests", () => {
   describe("Pathways layout", () => {
     it("should render Pathways Layout for a ID user with system prison page", () => {
       window.history.pushState({}, "", "/system/prison");
-      const user = { [metadataField]: { state_code: US_ID } };
+      const user = { [metadataField]: { stateCode: US_ID } };
 
       useRootStore.mockReturnValue({
         userStore: { ...userStore, ...user, stateCode: US_ID },
@@ -185,7 +185,7 @@ describe("App tests", () => {
 
     it("should be rendered when the path and the layout views do not match", () => {
       window.history.pushState({}, "", "/some-other-view");
-      const user = { [metadataField]: { state_code: US_ID } };
+      const user = { [metadataField]: { stateCode: US_ID } };
 
       useRootStore.mockReturnValue({
         userStore: { ...userStore, ...user },
@@ -203,7 +203,7 @@ describe("App tests", () => {
   describe("id-methodology page", () => {
     it("should render the system methodology page for System", () => {
       window.history.pushState({}, "", "/id-methodology/system");
-      const user = { [metadataField]: { state_code: US_ID } };
+      const user = { [metadataField]: { stateCode: US_ID } };
 
       useRootStore.mockReturnValue({
         userStore: { ...userStore, ...user, stateCode: US_ID },
@@ -219,7 +219,7 @@ describe("App tests", () => {
 
     it("should render the system methodology page for Operations", () => {
       window.history.pushState({}, "", "/id-methodology/operations");
-      const user = { [metadataField]: { state_code: US_ID } };
+      const user = { [metadataField]: { stateCode: US_ID } };
 
       useRootStore.mockReturnValue({
         userStore: { ...userStore, ...user, stateCode: US_ID },

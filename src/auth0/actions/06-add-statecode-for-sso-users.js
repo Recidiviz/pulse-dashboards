@@ -42,6 +42,8 @@ exports.onExecutePostLogin = async (event, api) => {
 
     const connection = event.connection.id;
     if (connection in connectionToStateCode) {
+      api.user.setAppMetadata("stateCode", connectionToStateCode[connection]);
+      // TODO #3170 Remove this once UserAppMetadata has been transitioned
       api.user.setAppMetadata("state_code", connectionToStateCode[connection]);
     } else {
       api.access.deny(DENY_MESSAGE);
@@ -49,4 +51,3 @@ exports.onExecutePostLogin = async (event, api) => {
     }
   }
 };
-

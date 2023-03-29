@@ -37,21 +37,14 @@ const TenantIds = [
 export type TenantId = typeof TenantIds[number];
 
 export type UserAppMetadata = {
-  state_code: Lowercase<TenantId>;
-  blocked_state_codes?: Lowercase<TenantId>[];
-  allowed_supervision_location_ids?: string[];
-  allowed_supervision_location_level?: string;
-  routes?: Record<string, boolean>;
-  user_hash?: string;
-};
-
-// TODO #3160 remove this type once we change the shape of UserAppMetadata
-export type RawUserAppMetadata = {
   stateCode: Lowercase<TenantId>;
+  blockedStateCodes?: Lowercase<TenantId>[];
   allowedSupervisionLocationIds?: string[];
   allowedSupervisionLocationLevel?: string;
   routes?: Record<string, boolean>;
   userHash?: string;
+  segmentId?: string;
+  intercomId?: string;
 };
 
 export type LanternMethodologyByTenant = {

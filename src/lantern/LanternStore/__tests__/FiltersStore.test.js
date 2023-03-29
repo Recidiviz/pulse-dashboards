@@ -101,7 +101,7 @@ describe("FiltersStore", () => {
         rootStore.districtsStore.isLoading = false;
         rootStore.userStore.user = {
           "test-metadata-namespace/app_metadata": {
-            allowed_supervision_location_ids: [userDistrict],
+            allowedSupervisionLocationIds: [userDistrict],
           },
         };
       });
@@ -123,7 +123,7 @@ describe("FiltersStore", () => {
         rootStore.tenantStore.currentTenantId = "US_MO";
         rootStore.userStore.user = {
           "test-metadata-namespace/app_metadata": {
-            allowed_supervision_location_ids: [],
+            allowedSupervisionLocationIds: [],
           },
         };
       });
@@ -299,7 +299,7 @@ describe("FiltersStore", () => {
             rootStore.tenantStore.currentTenantId = tenantId;
             rootStore.userStore.user = {
               [`test-metadata-namespace/app_metadata`]: {
-                allowed_supervision_location_ids: [
+                allowedSupervisionLocationIds: [
                   "03 - HARRISBURG",
                   "CO - CENTRAL OFFICE",
                 ],

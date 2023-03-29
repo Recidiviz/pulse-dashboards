@@ -58,7 +58,7 @@ describe("RootStore", () => {
   it("contains user", async () => {
     const metadataField = `${METADATA_NAMESPACE}app_metadata`;
     const user = {
-      [metadataField]: { state_code: "US_MO" },
+      [metadataField]: { stateCode: "US_MO" },
       email_verified: true,
     };
     (createAuth0Client as jest.Mock).mockResolvedValue({

@@ -103,7 +103,7 @@ function mockAuthedUser() {
     rootStore.userStore.user = {
       email: mockOfficer.info.email,
       [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-        state_code: mockOfficer.info.stateCode,
+        stateCode: mockOfficer.info.stateCode,
       },
     };
     rootStore.tenantStore.setCurrentTenantId(mockOfficer.info.stateCode as any);
@@ -369,7 +369,7 @@ test("feature variants active by default for Recidiviz users", async () => {
     rootStore.userStore.user = {
       email: "foo@example.com",
       [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-        state_code: "RECIDIVIZ",
+        stateCode: "RECIDIVIZ",
       },
     };
   });

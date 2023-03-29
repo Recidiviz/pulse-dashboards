@@ -21,9 +21,9 @@ export const defaultOfflineUser = {
   name: "Demo Jones",
   email: "notarealemail@recidiviz.org",
   [`${process.env.METADATA_NAMESPACE}app_metadata`]: {
-    state_code: "recidiviz",
-    allowed_supervision_location_ids: [],
-    allowed_supervision_location_level: null,
+    stateCode: "recidiviz",
+    allowedSupervisionLocationIds: [],
+    allowedSupervisionLocationLevel: null,
     routes: {
       system_prison: true,
       system_supervision: true,
@@ -33,6 +33,6 @@ export const defaultOfflineUser = {
       community_practices: true,
       worfklows: true,
     },
-    user_hash: "hash123abc",
+    userHash: "hash123abc",
   },
 };

@@ -30,7 +30,7 @@ let baseStore;
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 const mockTenantId = "US_MO";
 const metadataField = `${METADATA_NAMESPACE}app_metadata`;
-const mockUser = { [metadataField]: { state_code: mockTenantId } };
+const mockUser = { [metadataField]: { stateCode: mockTenantId } };
 const mockFilterOptimizedDataFormat = sharedFilters.filterOptimizedDataFormat;
 const mockGetTokenSilently = jest.fn();
 

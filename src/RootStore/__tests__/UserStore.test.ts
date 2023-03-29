@@ -58,7 +58,7 @@ const mockRootStore = {
 
 const tenantId = "US_MO";
 const metadataField = `${METADATA_NAMESPACE}app_metadata`;
-const metadata = { [metadataField]: { state_code: tenantId } };
+const metadata = { [metadataField]: { stateCode: tenantId } };
 const testAuthSettings = {
   domain: "example.com",
   client_id: "abc123",
@@ -248,7 +248,7 @@ test("redirect to targetUrl after callback", async () => {
 test.each(Object.keys(tenants))(
   "gets metadata for the user %s",
   async (currentTenantId) => {
-    const tenantMetadata = { [metadataField]: { state_code: currentTenantId } };
+    const tenantMetadata = { [metadataField]: { stateCode: currentTenantId } };
     mockIsAuthenticated.mockResolvedValue(true);
     mockGetUser.mockResolvedValue({
       email_verified: true,
@@ -287,7 +287,7 @@ describe("getRoutePermission", () => {
     mockIsAuthenticated.mockResolvedValue(true);
     const tenantMetadata = {
       [metadataField]: {
-        state_code: "US_MO",
+        stateCode: "US_MO",
         routes: {
           operations: false,
         },
@@ -305,7 +305,7 @@ describe("getRoutePermission", () => {
     mockIsAuthenticated.mockResolvedValue(true);
     const tenantMetadata = {
       [metadataField]: {
-        state_code: "US_MO",
+        stateCode: "US_MO",
         routes: {
           system_prison: true,
         },
@@ -323,7 +323,7 @@ describe("getRoutePermission", () => {
     mockIsAuthenticated.mockResolvedValue(true);
     const tenantMetadata = {
       [metadataField]: {
-        state_code: "US_MO",
+        stateCode: "US_MO",
         routes: {},
       },
     };
@@ -341,7 +341,7 @@ describe("canAccessRestrictedPage", () => {
     mockIsAuthenticated.mockResolvedValue(true);
     const tenantMetadata = {
       [metadataField]: {
-        state_code: tenantId,
+        stateCode: tenantId,
       },
     };
     mockGetUser.mockResolvedValue({ email_verified: true, ...tenantMetadata });
@@ -362,7 +362,7 @@ describe("canAccessRestrictedPage", () => {
     mockIsAuthenticated.mockResolvedValue(true);
     const tenantMetadata = {
       [metadataField]: {
-        state_code: tenantId,
+        stateCode: tenantId,
         routes: {
           operations: false,
         },
@@ -385,7 +385,7 @@ describe("canAccessRestrictedPage", () => {
     mockIsAuthenticated.mockResolvedValue(true);
     const tenantMetadata = {
       [metadataField]: {
-        state_code: tenantId,
+        stateCode: tenantId,
         routes: {
           operations: true,
         },
@@ -443,7 +443,7 @@ describe("userAllowedNavigation", () => {
     mockIsAuthenticated.mockResolvedValue(true);
     const tenantMetadata = {
       [metadataField]: {
-        state_code: stateCode,
+        stateCode,
         routes: {},
       },
     };
@@ -461,7 +461,7 @@ describe("userAllowedNavigation", () => {
     mockIsAuthenticated.mockResolvedValue(true);
     const tenantMetadata = {
       [metadataField]: {
-        state_code: stateCode,
+        stateCode,
         routes: {
           system_prison: true,
         },
@@ -482,7 +482,7 @@ describe("userAllowedNavigation", () => {
     mockIsAuthenticated.mockResolvedValue(true);
     const tenantMetadata = {
       [metadataField]: {
-        state_code: stateCode,
+        stateCode,
         routes: {
           system_prison: false,
         },
@@ -504,7 +504,7 @@ describe("userAllowedNavigation", () => {
     mockIsAuthenticated.mockResolvedValue(true);
     const tenantMetadata = {
       [metadataField]: {
-        state_code: stateCode,
+        stateCode,
         routes: {
           system_prison: false,
         },
@@ -522,7 +522,7 @@ describe("userAllowedNavigation", () => {
       mockIsAuthenticated.mockResolvedValue(true);
       tenantMetadata = {
         [metadataField]: {
-          state_code: stateCode,
+          stateCode,
           routes: {
             system_prison: false,
           },
@@ -608,7 +608,7 @@ test("identifies authorized user if an ID hash is present", async () => {
   const userHash = "hash123abc";
   mockGetUser.mockResolvedValue({
     email_verified: true,
-    [metadataField]: { state_code: tenantId, user_hash: userHash },
+    [metadataField]: { stateCode: tenantId, userHash },
   });
 
   const store = new UserStore({

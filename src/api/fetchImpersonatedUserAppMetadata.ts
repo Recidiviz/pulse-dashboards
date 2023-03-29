@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RawUserAppMetadata } from "../RootStore/types";
+import { UserAppMetadata } from "../RootStore/types";
 import UserStore from "../RootStore/UserStore";
 
 // Fetch dashboard user restrictions used for building the mocked auth0 user
@@ -23,7 +23,7 @@ export async function fetchImpersonatedUserAppMetadata(
   impersonatedEmail: string,
   impersonatedStateCode: string,
   getTokenSilently?: UserStore["getTokenSilently"]
-): Promise<RawUserAppMetadata> {
+): Promise<UserAppMetadata> {
   if (!getTokenSilently) {
     throw new Error(
       "Missing required auth0 authentication to request Firebase token for impersonation."

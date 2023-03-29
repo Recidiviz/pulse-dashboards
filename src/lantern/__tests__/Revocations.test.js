@@ -57,7 +57,7 @@ jest.mock("../LanternStoreProvider");
 describe("Revocations component tests", () => {
   const metadataField = `${METADATA_NAMESPACE}app_metadata`;
   const mockTenantId = "TEST_TENANT";
-  const mockUser = { [metadataField]: { state_code: mockTenantId } };
+  const mockUser = { [metadataField]: { stateCode: mockTenantId } };
   const filtersBarIdPrefix = "filters-bar-";
   const DistrictFilterId = "district-filter";
   const admissionTypeFilterId = "admission-type-filter";

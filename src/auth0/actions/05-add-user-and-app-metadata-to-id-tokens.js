@@ -43,6 +43,9 @@ exports.onExecutePostLogin = async (event, api) => {
   );
   api.idToken.setCustomClaim(`${namespace}/app_metadata`, {
     ...event.user.app_metadata,
+    segmentId: generateSegmentId(event),
+    intercomId: generateIntercomId(event),
+    // TODO #3170 Remove these once UserAppMetadata has been transitioned
     segment_id: generateSegmentId(event),
     intercom_id: generateIntercomId(event),
   });

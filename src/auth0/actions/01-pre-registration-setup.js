@@ -68,6 +68,8 @@ exports.onExecutePreUserRegistration = async (event, api) => {
 
     // Set state_code for CSG users
     if (userDomain === "csg.org") {
+      api.user.setAppMetadata("stateCode", "lantern");
+      // TODO #3170 Remove this once UserAppMetadata has been transitioned
       api.user.setAppMetadata("state_code", "lantern");
       return;
     }
@@ -77,6 +79,8 @@ exports.onExecutePreUserRegistration = async (event, api) => {
       userDomain === "recidiviz.org" &&
       !event.user?.app_metadata?.recidiviz_tester
     ) {
+      api.user.setAppMetadata("stateCode", "recidiviz");
+      // TODO #3170 Remove this once UserAppMetadata has been transitioned
       api.user.setAppMetadata("state_code", "recidiviz");
       return;
     }
@@ -106,6 +110,8 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     const stateCode = `us_${state}`;
 
     if (acceptedStateCodes.includes(state)) {
+      api.user.setAppMetadata("stateCode", stateCode);
+      // TODO #3170 Remove this once UserAppMetadata has been transitioned
       api.user.setAppMetadata("state_code", stateCode);
     }
 
@@ -137,20 +143,30 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         const apiResponse = await client.request({ url, retry: true });
         const restrictions = apiResponse.data;
 
+
+        api.user.setAppMetadata(
+          "allowedSupervisionLocationIds",
+          restrictions.allowedSupervisionLocationIds === "" ? [] : restrictions.allowedSupervisionLocationIds.split(",")
+        );
+        api.user.setAppMetadata(
+          "allowedSupervisionLocationLevel",
+          restrictions.allowedSupervisionLocationLevel
+        );
+        api.user.setAppMetadata("routes", restrictions.routes || null);
+        api.user.setAppMetadata("userHash", restrictions.userHash)
         api.user.setAppMetadata("role", restrictions.role || null);
+
+        // TODO #3170 Remove these once UserAppMetadata has been transitioned
+        api.user.setAppMetadata("user_hash", restrictions.userHash)
         api.user.setAppMetadata(
           "allowed_supervision_location_ids",
-          // restrictions.allowed_supervision_location_ids || []
-          restrictions.allowedSupervisionLocationIds || []
+          restrictions.allowedSupervisionLocationIds === "" ? [] : restrictions.allowedSupervisionLocationIds.split(",")
         );
         api.user.setAppMetadata(
           "allowed_supervision_location_level",
-          // restrictions.allowed_supervision_location_level
           restrictions.allowedSupervisionLocationLevel
         );
-        // api.user.setAppMetadata("user_hash", restrictions.user_hash)
-        api.user.setAppMetadata("user_hash", restrictions.userHash)
-        api.user.setAppMetadata("routes", restrictions.routes || null);
+
         return;
       } catch (apiError) {
         Sentry.captureMessage(

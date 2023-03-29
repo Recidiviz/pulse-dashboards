@@ -41,6 +41,7 @@ exports.onExecutePostLogin = async (event, api) => {
   if (
     app_metadata.skip_sync_permissions ||
     authorizedDomains.some(function (authorizedDomain) {
+      api.user.setAppMetadata("stateCode", stateCode);
       return userDomain === authorizedDomain;
     })
   ) {
@@ -50,6 +51,7 @@ exports.onExecutePostLogin = async (event, api) => {
   // Specific state code restrictions for Recividiz users
   if (event.user.email === "justine@recidiviz.org") {
     api.user.setAppMetadata("blocked_state_codes", ["us_pa"]);
+    api.user.setAppMetadata("blockedStateCodes", ["us_pa"]);
   }
 
   if (statesWithRestrictions.includes(stateCode)) {
@@ -79,18 +81,31 @@ exports.onExecutePostLogin = async (event, api) => {
 
       const apiResponse = await client.request({ url, retry: true });
       const restrictions = apiResponse.data;
-      api.user.setAppMetadata("role", restrictions.role || null);
+
       api.user.setAppMetadata(
-        "allowed_supervision_location_ids",
-        // restrictions.allowed_supervision_location_ids || []
-        restrictions.allowedSupervisionLocationIds || []
+        "allowedSupervisionLocationIds",
+        restrictions.allowedSupervisionLocationIds === "" ? [] : restrictions.allowedSupervisionLocationIds.split(",")
       );
       api.user.setAppMetadata(
-        "allowed_supervision_location_level",
-        // restrictions.allowed_supervision_location_level
+        "allowedSupervisionLocationLevel",
         restrictions.allowedSupervisionLocationLevel
       );
       api.user.setAppMetadata("routes", restrictions.routes || null);
+      api.user.setAppMetadata("stateCode", stateCode);
+      api.user.setAppMetadata("userHash", restrictions.userHash)
+      api.user.setAppMetadata("role", restrictions.role || null);
+
+      // TODO #3170 Remove these once UserAppMetadata has been transitioned
+      api.user.setAppMetadata(
+        "allowed_supervision_location_ids",
+        restrictions.allowedSupervisionLocationIds === "" ? [] : restrictions.allowedSupervisionLocationIds.split(",")
+      );
+      api.user.setAppMetadata(
+        "allowed_supervision_location_level",
+        restrictions.allowedSupervisionLocationLevel
+      );
+      api.user.setAppMetadata("user_hash", restrictions.userHash)
+
     } catch (apiError) {
       Sentry.captureMessage(
         `Error while updating user permissions on login for user: ${event.user.email}`

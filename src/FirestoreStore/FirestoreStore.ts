@@ -118,7 +118,7 @@ export default class FirestoreStore {
     appMetadata?: UserAppMetadata
   ): Promise<ReturnType<typeof signInWithCustomToken> | undefined> {
     const shouldGenerateToken =
-      appMetadata?.state_code === "recidiviz" ||
+      appMetadata?.stateCode === "recidiviz" ||
       isOfflineMode() ||
       appMetadata?.routes?.workflows;
 
@@ -139,7 +139,7 @@ export default class FirestoreStore {
     getTokenSilently: UserStore["getTokenSilently"],
     appMetadata?: UserAppMetadata
   ): Promise<ReturnType<typeof signInWithCustomToken> | undefined> {
-    const shouldGenerateToken = appMetadata?.state_code === "recidiviz";
+    const shouldGenerateToken = appMetadata?.stateCode === "recidiviz";
     if (shouldGenerateToken) {
       const firebaseToken = await fetchImpersonatedFirebaseToken(
         impersonatedEmail,

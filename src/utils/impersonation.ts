@@ -15,24 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RawUserAppMetadata, UserAppMetadata } from "../RootStore/types";
-
 export function stopImpersonating() {
   window.location.reload();
-}
-
-// TODO #3160 remove this transform once we change the shape of UserAppMetadata
-export function transformImpersonatedUserAppMetadata(
-  rawData: RawUserAppMetadata
-): UserAppMetadata {
-  return {
-    state_code: rawData?.stateCode,
-    allowed_supervision_location_ids: rawData?.allowedSupervisionLocationIds,
-    allowed_supervision_location_level:
-      rawData?.allowedSupervisionLocationLevel,
-    routes: rawData?.routes,
-    user_hash: rawData?.userHash,
-  };
 }
 
 export function getEmailDomain(email: string) {
