@@ -79,8 +79,9 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
   Client,
   UsMeEarlyTerminationReferralRecord
 > {
-  readonly sidebarModules: OpportunityProfileModuleName[] = [
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "ClientProfileDetails",
+    "CaseNotes",
   ];
 
   readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ME;

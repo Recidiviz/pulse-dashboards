@@ -2,6 +2,7 @@
 
 exports[`transform record 1`] = `
 Object {
+  "caseNotes": Object {},
   "criteria": Object {
     "noConvictionWithin6Months": Object {
       "latestConvictions": Array [

@@ -20,6 +20,7 @@ import { cloneDeep } from "lodash";
 import { TransformFunction } from "../subscriptions";
 import { fieldToDate } from "../utils";
 import { WithCaseNotes } from "./types";
+import { transformCaseNotes } from "./utils";
 
 export type UsMeEarlyTerminationReferralRecord = {
   stateCode: string;
@@ -62,6 +63,8 @@ export const transformReferral: TransformFunction<
       criteria.supervisionPastHalfFullTermReleaseDate.eligibleDate
     ),
   };
+
+  transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
 
   return transformedRecord as UsMeEarlyTerminationReferralRecord;
 };
