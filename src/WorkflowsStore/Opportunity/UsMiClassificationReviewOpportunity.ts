@@ -78,7 +78,7 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
   Client,
   UsMiClassificationReviewReferralRecord
 > {
-  readonly sidebarModules: OpportunityProfileModuleName[] = [
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "ClientProfileDetails",
   ];
 

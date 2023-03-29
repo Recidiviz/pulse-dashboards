@@ -37,7 +37,7 @@ export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
   Client,
   UsMiMinimumTelephoneReportingReferralRecord
 > {
-  readonly sidebarModules: OpportunityProfileModuleName[] = [
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "ClientProfileDetails",
   ];
 

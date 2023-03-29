@@ -152,7 +152,7 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
   Client,
   UsMiEarlyDischargeReferralRecord
 > {
-  readonly sidebarModules: OpportunityProfileModuleName[] = [
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "ClientProfileDetails",
   ];
 
