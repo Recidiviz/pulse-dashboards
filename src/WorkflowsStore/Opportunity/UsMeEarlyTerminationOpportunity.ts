@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import dedent from "dedent";
 import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable } from "mobx";
 
@@ -31,22 +32,27 @@ import {
 } from "./UsMeEarlyTerminationReferralRecord";
 
 const DENIAL_REASONS_MAP = {
+  BENEFIT:
+    "Continuation on probation would benefit the community or the client.",
+  COMPLETION: "Has not completed conditions of probation.",
+  CONDUCT: "Has engaged in prohibited conduct.",
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
 const CRITERIA: Record<
-  keyof UsMeEarlyTerminationReferralRecord["criteria"],
+  keyof UsMeEarlyTerminationReferralRecord["eligibleCriteria"],
   Partial<OpportunityRequirement>
 > = {
   noConvictionWithin6Months: {
-    tooltip: `TBD`,
+    tooltip: dedent`In addition, whenever a person on probation is convicted of a new crime 
+      during the period of probation, the probation is not revoked, and the person
+      is sentenced to an unsuspended term of imprisonment which is concurrent with the
+      period of probation and the term of imprisonment will not expire until the
+      period of probation is completed, the Probation Officer may file a motion
+      with the court for early termination of probation.`,
   },
-  supervisionPastHalfFullTermReleaseDate: {
-    tooltip: `TBD`,
-  },
-  onMediumSupervisionLevelOrLower: {
-    tooltip: `Currently on Limited, Minimum, or Medium Custody`,
-  },
+  supervisionPastHalfFullTermReleaseDate: {},
+  onMediumSupervisionLevelOrLower: {},
 };
 
 function validateRecord(
@@ -55,7 +61,7 @@ function validateRecord(
   if (!record) return;
 
   const {
-    criteria: {
+    eligibleCriteria: {
       supervisionPastHalfFullTermReleaseDate: pastHalfFullTermRelease,
     },
   } = record;
@@ -107,7 +113,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
     if (!this.record) return [];
     const requirements: OpportunityRequirement[] = [];
     const {
-      criteria: {
+      eligibleCriteria: {
         supervisionPastHalfFullTermReleaseDate,
         noConvictionWithin6Months,
         onMediumSupervisionLevelOrLower,
@@ -136,17 +142,13 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
         tooltip: CRITERIA.supervisionPastHalfFullTermReleaseDate.tooltip,
       });
     }
-    if (noConvictionWithin6Months?.latestConvictions.length === 0) {
+    if (Object.keys(noConvictionWithin6Months).length === 0) {
       requirements.push({
-        text: `No convictions in past 6 months`,
+        text: `No new convictions in the past 6 months`,
         tooltip: CRITERIA.noConvictionWithin6Months.tooltip,
       });
     }
 
     return requirements;
-  }
-
-  get metadata(): UsMeEarlyTerminationReferralRecord["metadata"] | undefined {
-    return this.record?.metadata;
   }
 }

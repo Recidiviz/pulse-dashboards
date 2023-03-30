@@ -21,16 +21,12 @@ test("transform record", () => {
   const rawRecord = {
     stateCode: "US_ME",
     externalId: "abc123",
-
-    criteria: {
-      noConvictionWithin6Months: { latestConvictions: ["2022-01-03"] },
+    eligibleCriteria: {
+      noConvictionWithin6Months: null,
       supervisionPastHalfFullTermReleaseDate: {
         sentenceType: "MEDIUM",
         eligibleDate: "2022-01-03",
       },
-    },
-    metadata: {
-      supervisionHalfTimeDate: "2022-01-03",
     },
   };
 

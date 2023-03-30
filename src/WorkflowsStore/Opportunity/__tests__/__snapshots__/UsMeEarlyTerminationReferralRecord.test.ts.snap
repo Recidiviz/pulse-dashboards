@@ -3,21 +3,14 @@
 exports[`transform record 1`] = `
 Object {
   "caseNotes": Object {},
-  "criteria": Object {
-    "noConvictionWithin6Months": Object {
-      "latestConvictions": Array [
-        "2022-01-03",
-      ],
-    },
+  "eligibleCriteria": Object {
+    "noConvictionWithin6Months": Object {},
     "supervisionPastHalfFullTermReleaseDate": Object {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
       "sentenceType": "MEDIUM",
     },
   },
   "externalId": "abc123",
-  "metadata": Object {
-    "supervisionHalfTimeDate": 2022-01-03T00:00:00.000Z,
-  },
   "stateCode": "US_ME",
 }
 `;

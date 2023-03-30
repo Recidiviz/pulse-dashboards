@@ -2,10 +2,8 @@
   {
     "stateCode": "US_ME",
     "externalId": "009",
-    "criteria": {
-      "noConvictionWithin6Months": {
-        "latestConvictions": []
-      },
+    "eligibleCriteria": {
+      "noConvictionWithin6Months": null,
       "supervisionPastHalfFullTermReleaseDate": {
         "sentenceType": "PROBATION",
         "eligibleDate": "2024-04-03"
@@ -13,9 +11,6 @@
       "onMediumSupervisionLevelOrLower": {
         "supervisionLevel": "MEDIUM"
       }
-    },
-    "metadata": {
-      "supervisionHalfTimeDate": "2024-05-03"
     },
     "caseNotes": {
       "Treatment": [

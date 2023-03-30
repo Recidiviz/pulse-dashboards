@@ -832,10 +832,8 @@ export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRec
   {
     stateCode: "US_ME",
     externalId: "009",
-    criteria: {
-      noConvictionWithin6Months: {
-        latestConvictions: [],
-      },
+    eligibleCriteria: {
+      noConvictionWithin6Months: {},
       supervisionPastHalfFullTermReleaseDate: {
         sentenceType: "PROBATION",
         eligibleDate: parseISO("2024-04-03"),
@@ -843,9 +841,6 @@ export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRec
       onMediumSupervisionLevelOrLower: {
         supervisionLevel: "MEDIUM",
       },
-    },
-    metadata: {
-      supervisionHalfTimeDate: parseISO("2024-05-03"),
     },
     caseNotes: {
       foo: [

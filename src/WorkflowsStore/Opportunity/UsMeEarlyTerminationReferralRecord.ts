@@ -25,12 +25,9 @@ import { transformCaseNotes } from "./utils";
 export type UsMeEarlyTerminationReferralRecord = {
   stateCode: string;
   externalId: string;
-  metadata: {
-    supervisionHalfTimeDate: Date;
-  };
-  criteria: {
+  eligibleCriteria: {
     noConvictionWithin6Months: {
-      latestConvictions: string[];
+      latestConvictions?: string[];
     };
     supervisionPastHalfFullTermReleaseDate: {
       sentenceType: string;
@@ -51,18 +48,19 @@ export const transformReferral: TransformFunction<
 
   const { reasons, ...transformedRecord } = cloneDeep(record);
 
-  const { metadata, criteria } = record;
+  const { eligibleCriteria } = record;
 
-  transformedRecord.metadata.supervisionHalfTimeDate = fieldToDate(
-    metadata.supervisionHalfTimeDate
-  );
-
-  transformedRecord.criteria.supervisionPastHalfFullTermReleaseDate = {
-    ...transformedRecord.criteria.supervisionPastHalfFullTermReleaseDate,
+  transformedRecord.eligibleCriteria.supervisionPastHalfFullTermReleaseDate = {
+    ...transformedRecord.eligibleCriteria
+      .supervisionPastHalfFullTermReleaseDate,
     eligibleDate: fieldToDate(
-      criteria.supervisionPastHalfFullTermReleaseDate.eligibleDate
+      eligibleCriteria.supervisionPastHalfFullTermReleaseDate.eligibleDate
     ),
   };
+
+  if (eligibleCriteria.noConvictionWithin6Months === null) {
+    transformedRecord.eligibleCriteria.noConvictionWithin6Months = {};
+  }
 
   transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
 

@@ -74,7 +74,6 @@ export const generateOpportunityInitialHeader = (
   opportunityType: OpportunityType
 ): string => {
   const opportunityLabel = OPPORTUNITY_LABELS[opportunityType];
-
   switch (opportunityType) {
     case "pastFTRD":
       return "Search for officers above to review clients whose full-term release date has passed.";
@@ -84,6 +83,11 @@ export const generateOpportunityInitialHeader = (
       return (
         "Search for case managers above to review residents in their unit who are approaching SCCP " +
         "eligibility and complete application paperwork."
+      );
+    case "usMeEarlyTermination":
+      return (
+        "Search for probation officers above to review clients on their caseload who may be good " +
+        "candidates for early termination from probation."
       );
     default:
       return `Search for officers above to review and refer eligible clients for ${opportunityLabel.toLowerCase()}.`;
@@ -174,10 +178,11 @@ export const generateOpportunityHydratedHeader = (
       callToAction: "N/A",
     },
     usMeEarlyTermination: {
-      eligibilityText: simplur`${count} client[|s] may be eligible for `,
-      opportunityText: "early termination from probation",
+      eligibilityText: simplur`${count} client[|s] may be good [a|] candidate[|s] for `,
+      opportunityText: "Early Termination",
       callToAction:
-        "Review clients eligible for early termination from probation",
+        "Search for probation officers above to review clients on their caseload who may be good " +
+        "candidates for early termination from probation.",
     },
     // TODO: Update copy
     usMiMinimumTelephoneReporting: {

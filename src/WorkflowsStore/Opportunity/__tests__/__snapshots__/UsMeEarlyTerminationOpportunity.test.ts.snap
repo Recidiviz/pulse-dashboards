@@ -4,19 +4,24 @@ exports[`fully eligible requirements met 1`] = `
 Array [
   Object {
     "text": "Early termination past half full term release date is Apr 3, 2024",
-    "tooltip": "TBD",
+    "tooltip": undefined,
   },
   Object {
     "text": "Currently on medium",
-    "tooltip": "Currently on Limited, Minimum, or Medium Custody",
+    "tooltip": undefined,
   },
   Object {
     "text": "Currently on probation sentence",
-    "tooltip": "TBD",
+    "tooltip": undefined,
   },
   Object {
-    "text": "No convictions in past 6 months",
-    "tooltip": "TBD",
+    "text": "No new convictions in the past 6 months",
+    "tooltip": "In addition, whenever a person on probation is convicted of a new crime 
+during the period of probation, the probation is not revoked, and the person
+is sentenced to an unsuspended term of imprisonment which is concurrent with the
+period of probation and the term of imprisonment will not expire until the
+period of probation is completed, the Probation Officer may file a motion
+with the court for early termination of probation.",
   },
 ]
 `;
