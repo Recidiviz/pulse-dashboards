@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Searchable } from "../core/models/types";
+import { Searchable, SystemId } from "../core/models/types";
 import { StaffRecord } from "../FirestoreStore";
 
 export class Officer implements Searchable {
@@ -23,6 +23,11 @@ export class Officer implements Searchable {
 
   constructor(record: StaffRecord) {
     this.record = record;
+  }
+
+  get systemId(): SystemId | undefined {
+    if (this.record.hasCaseload) return "SUPERVISION";
+    if (this.record.hasFacilityCaseload) return "INCARCERATION";
   }
 
   get searchLabel(): string {

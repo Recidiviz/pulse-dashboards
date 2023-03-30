@@ -77,7 +77,7 @@ jest.mock("../../tenants", () => ({
     },
     US_ME: {
       opportunityTypes: [],
-      workflowsSupportedSystems: ["INCARCERATION"],
+      workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
     },
     US_MO: {
       opportunityTypes: ["usMoRestrictiveHousingStatusHearing"],
@@ -104,6 +104,7 @@ function mockAuthedUser() {
       email: mockOfficer.info.email,
       [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
         stateCode: mockOfficer.info.stateCode,
+        role: "leadership_role",
       },
     };
     rootStore.tenantStore.setCurrentTenantId(mockOfficer.info.stateCode as any);
@@ -147,9 +148,13 @@ beforeEach(() => {
   // this lets us spy on observables, e.g. the tenant ID getter
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
-  workflowsStore = rootStore.workflowsStore;
   jest.spyOn(AnalyticsStore.prototype, "trackCaseloadSearch");
   mockAuthedUser();
+  workflowsStore = rootStore.workflowsStore;
+
+  runInAction(() => {
+    workflowsStore.updateActiveSystem("SUPERVISION");
+  });
 });
 
 afterEach(() => {
@@ -263,6 +268,9 @@ test("user data reflects subscriptions", async () => {
 
 test("caseload defaults to self", async () => {
   await waitForHydration();
+  runInAction(() => {
+    workflowsStore.updateActiveSystem("SUPERVISION");
+  });
   expect(workflowsStore.selectedSearchIds).toEqual([mockOfficer.info.id]);
   expect(rootStore.analyticsStore.trackCaseloadSearch).toHaveBeenCalledWith({
     searchCount: 1,
@@ -274,6 +282,7 @@ test("caseload defaults to self", async () => {
 test("caseload defaults to no selected search if the user has no saved search and the state is not search-by-officer", async () => {
   runInAction(() => {
     rootStore.tenantStore.currentTenantId = "US_MO";
+    workflowsStore.updateActiveSystem("INCARCERATION");
   });
 
   await waitForHydration();
@@ -414,6 +423,7 @@ test("locations from subscription", async () => {
 test("available searchables for search by officer", async () => {
   await waitForHydration();
   runInAction(() => {
+    workflowsStore.updateActiveSystem("SUPERVISION");
     workflowsStore.officersSubscription.data = mockOfficers;
     workflowsStore.locationsSubscription.data = mockLocations;
   });
@@ -441,6 +451,7 @@ test("available searchables for search by officer", async () => {
 test("available searchables for search by location", async () => {
   await waitForHydration();
   runInAction(() => {
+    workflowsStore.updateActiveSystem("INCARCERATION");
     rootStore.tenantStore.currentTenantId = "US_MO";
     workflowsStore.officersSubscription.data = mockOfficers;
     workflowsStore.locationsSubscription.data = mockLocations;
@@ -742,13 +753,11 @@ describe("residents for US_ME", () => {
       },
     ];
 
-    runInAction(() => {
-      rootStore.tenantStore.currentTenantId = "US_ME";
-    });
-
     await waitForHydration();
 
     runInAction(() => {
+      rootStore.tenantStore.currentTenantId = "US_ME";
+      workflowsStore.updateActiveSystem("INCARCERATION");
       workflowsStore.residentsSubscription.data = mockResidents;
       workflowsStore.residentsSubscription.isHydrated = true;
       workflowsStore.residentsSubscription.isLoading = false;

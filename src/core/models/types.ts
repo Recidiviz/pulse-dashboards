@@ -83,8 +83,8 @@ export type Searchable = {
   searchId: string;
 };
 
-export type SystemId = "INCARCERATION" | "SUPERVISION";
-export type SearchType = "OFFICER" | "LOCATION";
+export type SystemId = "INCARCERATION" | "SUPERVISION" | "ALL";
+export type SearchType = "OFFICER" | "LOCATION" | "ALL";
 
 export type Gender = "ALL" | "FEMALE" | "MALE";
 export type AgeGroup =

@@ -61,8 +61,10 @@ function createTestUnit() {
       email: "test@email.gov",
       givenNames: "",
       hasCaseload: false,
+      hasFacilityCaseload: false,
       id: "abc123",
       surname: "",
+      role: "supervision_staff",
     },
   };
   root = new RootStore();

@@ -54,30 +54,37 @@ const WorkflowsHomepage = observer(
         allOpportunitiesByType,
         user,
         workflowsSearchFieldTitle,
+        supportsMultipleSystems,
         justiceInvolvedPersonTitle,
       },
     } = useRootStore();
 
-    const initial = (
-      <WorkflowsNoResults
-        headerText={getWelcomeText(user?.info.givenNames)}
-        callToActionText={`Search for ${pluralizeWord(
+    const initialCallToAction = supportsMultipleSystems
+      ? `Search above to review and refer people eligible for opportunities like  ${getSelectOpportunitiesText(
+          opportunityTypes
+        )}.`
+      : `Search for ${pluralizeWord(
           workflowsSearchFieldTitle
         )} above to review and refer eligible ${justiceInvolvedPersonTitle}s for
-          opportunities like ${getSelectOpportunitiesText(opportunityTypes)}.`}
-      />
-    );
+      opportunities like ${getSelectOpportunitiesText(opportunityTypes)}.`;
 
-    const empty = (
-      <WorkflowsNoResults
-        callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
+    const emptyCallToAction = supportsMultipleSystems
+      ? `None of the selected caseloads are eligible for opportunities. Search for another caseload.`
+      : simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
           selectedSearchIds.length,
         ]} ${pluralizeWord(
           workflowsSearchFieldTitle,
           selectedSearchIds.length
-        )}['s|'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`}
+        )}['s|'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`;
+
+    const initial = (
+      <WorkflowsNoResults
+        headerText={getWelcomeText(user?.info.givenNames)}
+        callToActionText={initialCallToAction}
       />
     );
+
+    const empty = <WorkflowsNoResults callToActionText={emptyCallToAction} />;
 
     const hydrated = opportunityTypes.map((opportunityType) => {
       if (allOpportunitiesByType[opportunityType].length) {

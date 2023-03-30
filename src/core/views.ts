@@ -19,7 +19,7 @@ import {
   OPPORTUNITY_URL_BY_TYPE,
   OpportunityType,
 } from "../WorkflowsStore/Opportunity/types";
-import { MetricId, TenantId } from "./models/types";
+import { MetricId, SystemId, TenantId } from "./models/types";
 
 export type PathwaysView = keyof typeof PATHWAYS_VIEWS;
 /**
@@ -213,6 +213,14 @@ export const WORKFLOWS_PATHS = {
   caseloadResidents: `/${PATHWAYS_VIEWS.workflows}/residents`,
   clientProfile: `/${PATHWAYS_VIEWS.workflows}/clients/:justiceInvolvedPersonId`,
   residentProfile: `/${PATHWAYS_VIEWS.workflows}/residents/:justiceInvolvedPersonId`,
+};
+
+// Routes not associated with an opportunity or task that should have an
+// active system selected.
+export const WORKFLOWS_SYSTEM_ID_TO_PAGE: Record<SystemId, string[]> = {
+  INCARCERATION: ["residents"],
+  SUPERVISION: ["clients", "tasks"],
+  ALL: ["home"],
 };
 
 export const WorkflowsPageIdList = [

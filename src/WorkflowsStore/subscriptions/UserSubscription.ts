@@ -96,7 +96,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
       userStore: { stateCode },
     } = this.rootStore;
 
-    if (!user) return;
+    if (!user || !user.email) return;
 
     let formattedUserName;
 
@@ -104,9 +104,10 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
 
     return {
       id: `${stateCode.toLowerCase()}_${user?.email}`,
-      email: user.email ?? null,
+      email: user.email,
       stateCode,
       hasCaseload: false,
+      hasFacilityCaseload: false,
       givenNames: (user.given_name || formattedUserName?.firstName) ?? "",
       surname: (user.family_name || formattedUserName?.lastName) ?? "",
     };
@@ -128,9 +129,10 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
     if (isOfflineMode()) {
       injectedUserData = {
         id: `${stateCode.toLowerCase()}_${user?.email}`,
-        email: user?.email ?? null,
+        email: user?.email || "",
         stateCode,
         hasCaseload: false,
+        hasFacilityCaseload: false,
         givenNames: user?.name || "Demo",
         surname: "",
       };
@@ -140,10 +142,11 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
     else if (stateCode === "RECIDIVIZ") {
       injectedUserData = {
         id: "RECIDIVIZ",
-        email: user?.email ?? null,
+        email: user?.email ?? "",
         // should not be undefined if we've gotten this far
         stateCode: currentTenantId as string,
         hasCaseload: false,
+        hasFacilityCaseload: false,
         givenNames: "Recidiviz",
         surname: "Staff",
       };

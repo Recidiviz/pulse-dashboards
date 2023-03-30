@@ -92,6 +92,7 @@ test("inject record for Recidiviz users", () => {
         "email": "test@example.com",
         "givenNames": "Recidiviz",
         "hasCaseload": false,
+        "hasFacilityCaseload": false,
         "id": "RECIDIVIZ",
         "stateCode": "US_XX",
         "surname": "Staff",
@@ -102,16 +103,17 @@ test("inject record for Recidiviz users", () => {
   // Firestore listener should not clobber our injected data
   mockReceive([]);
   expect(sub.data).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "email": "test@example.com",
-          "givenNames": "Recidiviz",
-          "hasCaseload": false,
-          "id": "RECIDIVIZ",
-          "stateCode": "US_XX",
-          "surname": "Staff",
-        },
-      ]
+    Array [
+      Object {
+        "email": "test@example.com",
+        "givenNames": "Recidiviz",
+        "hasCaseload": false,
+        "hasFacilityCaseload": false,
+        "id": "RECIDIVIZ",
+        "stateCode": "US_XX",
+        "surname": "Staff",
+      },
+    ]
   `);
 });
 
@@ -130,6 +132,7 @@ test("inject record in offline mode", () => {
         "email": "test@example.com",
         "givenNames": "Demo",
         "hasCaseload": false,
+        "hasFacilityCaseload": false,
         "id": "us_xx_test@example.com",
         "stateCode": "US_XX",
         "surname": "",
@@ -140,16 +143,17 @@ test("inject record in offline mode", () => {
   // Firestore listener should not clobber our injected data
   mockReceive([]);
   expect(sub.data).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "email": "test@example.com",
-          "givenNames": "Demo",
-          "hasCaseload": false,
-          "id": "us_xx_test@example.com",
-          "stateCode": "US_XX",
-          "surname": "",
-        },
-      ]
+    Array [
+      Object {
+        "email": "test@example.com",
+        "givenNames": "Demo",
+        "hasCaseload": false,
+        "hasFacilityCaseload": false,
+        "id": "us_xx_test@example.com",
+        "stateCode": "US_XX",
+        "surname": "",
+      },
+    ]
   `);
 });
 
@@ -171,6 +175,7 @@ test("supplement record for staff user without caseload", () => {
         "email": "test@example.com",
         "givenNames": "Geri",
         "hasCaseload": false,
+        "hasFacilityCaseload": false,
         "id": "us_xx_test@example.com",
         "stateCode": "US_XX",
         "surname": "Halliwell",

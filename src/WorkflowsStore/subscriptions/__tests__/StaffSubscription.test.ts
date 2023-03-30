@@ -36,7 +36,11 @@ describe("StaffSubscription tests", () => {
 
     rootStoreMock = observable({
       currentTenantId: "US_ND",
-      workflowsStore: { caseloadDistrict: "TEST", activeSystem: "SUPERVISION" },
+      workflowsStore: {
+        caseloadDistrict: "TEST",
+        activeSystem: "SUPERVISION",
+        workflowsSupportedSystems: ["SUPERVISION"],
+      },
       firestoreStore: {
         db: jest.fn(),
       },
@@ -97,6 +101,29 @@ describe("StaffSubscription tests", () => {
     sub.subscribe();
 
     expect(whereMock).toHaveBeenCalledWith("hasFacilityCaseload", "==", true);
+    expect(whereMock).not.toHaveBeenCalledWith(
+      "hasCaseload",
+      "==",
+      expect.anything()
+    );
+  });
+
+  test("dataSource does not filter officer for multiple supported systems", () => {
+    runInAction(() => {
+      // @ts-ignore
+      rootStoreMock.workflowsStore.workflowsSupportedSystems = [
+        "SUPERVISION",
+        "INCARCERATION",
+      ];
+    });
+
+    sub.subscribe();
+
+    expect(whereMock).not.toHaveBeenCalledWith(
+      "hasFacilityCaseload",
+      "==",
+      expect.anything()
+    );
     expect(whereMock).not.toHaveBeenCalledWith(
       "hasCaseload",
       "==",

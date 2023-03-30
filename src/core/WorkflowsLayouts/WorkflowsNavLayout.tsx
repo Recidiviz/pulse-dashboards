@@ -25,8 +25,13 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { toTitleCase } from "../../utils";
 import { OPPORTUNITY_LABELS } from "../../WorkflowsStore/Opportunity/types";
+import {
+  getJusticeInvolvedPersonTitle,
+  getSystemIdFromOpportunityType,
+} from "../../WorkflowsStore/utils";
+import { SystemId } from "../models/types";
 import RecidivizLogo from "../RecidivizLogo";
-import { workflowsUrl } from "../views";
+import { WorkflowsPage, workflowsUrl } from "../views";
 
 const Wrapper = styled.div`
   background-color: ${palette.marble1};
@@ -91,21 +96,30 @@ const BrandedNavLink = styled(NavLink).attrs({ exact: true })`
   }
 `;
 
+const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPage> = {
+  SUPERVISION: "caseloadClients",
+  INCARCERATION: "caseloadResidents",
+  ALL: "home",
+} as const;
+
 export const WorkflowsNavLayout: React.FC = observer(
   function WorkflowsNavLayout({ children }) {
     const {
+      workflowsStore,
       workflowsStore: {
         opportunityTypes,
-        justiceInvolvedPersonTitle,
-        activeSystem,
         allowSupervisionTasks,
+        workflowsSupportedSystems,
       },
     } = useRootStore();
 
     return (
       <Wrapper>
         <Sidebar>
-          <Link to={workflowsUrl("home")}>
+          <Link
+            to={workflowsUrl("home")}
+            onClick={() => workflowsStore.updateActiveSystem("ALL")}
+          >
             <RecidivizLogo />
           </Link>
           <NavLinks>
@@ -114,22 +128,30 @@ export const WorkflowsNavLayout: React.FC = observer(
             </li>
             {allowSupervisionTasks && (
               <li>
-                <BrandedNavLink to={workflowsUrl("tasks")}>
+                <BrandedNavLink
+                  to={workflowsUrl("tasks")}
+                  onClick={() =>
+                    workflowsStore.updateActiveSystem("SUPERVISION")
+                  }
+                >
                   Tasks
                 </BrandedNavLink>
               </li>
             )}
-            <li>
-              <BrandedNavLink
-                to={workflowsUrl(
-                  activeSystem === "SUPERVISION"
-                    ? "caseloadClients"
-                    : "caseloadResidents"
-                )}
-              >
-                All {toTitleCase(justiceInvolvedPersonTitle)}s
-              </BrandedNavLink>
-            </li>
+
+            {workflowsSupportedSystems?.map((systemId: SystemId) => {
+              return (
+                <li key={systemId}>
+                  <BrandedNavLink
+                    to={workflowsUrl(SYSTEM_ID_TO_PATH[systemId])}
+                    onClick={() => workflowsStore.updateActiveSystem(systemId)}
+                  >
+                    All {toTitleCase(getJusticeInvolvedPersonTitle(systemId))}s
+                  </BrandedNavLink>
+                </li>
+              );
+            })}
+
             <li>
               <NavSection>
                 <li>
@@ -143,6 +165,11 @@ export const WorkflowsNavLayout: React.FC = observer(
                         to={workflowsUrl("opportunityClients", {
                           opportunityType,
                         })}
+                        onClick={() =>
+                          workflowsStore.updateActiveSystem(
+                            getSystemIdFromOpportunityType(opportunityType)
+                          )
+                        }
                       >
                         {OPPORTUNITY_LABELS[opportunityType]}
                       </BrandedNavLink>

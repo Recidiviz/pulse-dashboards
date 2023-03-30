@@ -15,11 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import assertNever from "assert-never";
 import { addDays, differenceInDays, parseISO } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 
+import { SystemId } from "../core/models/types";
+import { WORKFLOWS_SYSTEM_ID_TO_PAGE, WorkflowsPage } from "../core/views";
 import { StaffRecord } from "../FirestoreStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
+import {
+  INCARCERATION_OPPORTUNITY_TYPES,
+  IncarcerationOpportunityType,
+  OpportunityType,
+  SUPERVISION_OPPORTUNITY_TYPES,
+  SupervisionOpportunityType,
+} from "./Opportunity/types";
 
 export function dateToTimestamp(isodate: string): Timestamp {
   return new Timestamp(new Date(isodate).getTime() / 1000, 0);
@@ -107,3 +117,53 @@ type Entries<T> = {
 }[keyof T][];
 export const getEntries = <T extends object>(obj: T) =>
   Object.entries(obj) as Entries<T>;
+
+export function getJusticeInvolvedPersonTitle(
+  systemId: SystemId | undefined
+): string {
+  switch (systemId) {
+    case "INCARCERATION":
+      return "resident";
+    case "SUPERVISION":
+      return "client";
+    case "ALL":
+    case undefined:
+      return "person";
+    default:
+      assertNever(systemId);
+  }
+}
+
+export function getSystemIdFromOpportunityType(
+  opportunityType: OpportunityType
+): SystemId {
+  if (
+    SUPERVISION_OPPORTUNITY_TYPES.includes(
+      opportunityType as SupervisionOpportunityType
+    )
+  ) {
+    return "SUPERVISION";
+  }
+
+  if (
+    INCARCERATION_OPPORTUNITY_TYPES.includes(
+      opportunityType as IncarcerationOpportunityType
+    )
+  ) {
+    return "INCARCERATION";
+  }
+
+  throw new Error(`Unexpected OpportunityType: ${opportunityType}.`);
+}
+
+export function getSystemIdFromPage(page: WorkflowsPage): SystemId | undefined {
+  if (WORKFLOWS_SYSTEM_ID_TO_PAGE.INCARCERATION.includes(page)) {
+    return "INCARCERATION";
+  }
+  if (WORKFLOWS_SYSTEM_ID_TO_PAGE.SUPERVISION.includes(page)) {
+    return "SUPERVISION";
+  }
+  if (WORKFLOWS_SYSTEM_ID_TO_PAGE.ALL.includes(page)) {
+    return "ALL";
+  }
+}

@@ -18,7 +18,8 @@ import { Hydratable } from "../../core/models/types";
 import { Expect, Extends } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../types";
 
-const SUPERVISION_TASKS_TYPES = ["usIdSupervisionTasks"] as const;
+export const SUPERVISION_TASKS_TYPES = ["usIdSupervisionTasks"] as const;
+
 export type SupervisionTasksType = typeof SUPERVISION_TASKS_TYPES[number];
 
 type HomeVisitDetails = {

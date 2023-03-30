@@ -106,6 +106,8 @@ export class WorkflowsStore implements Hydratable {
 
   workflowsTasksStore: WorkflowsTasksStore;
 
+  activeSystem?: SystemId;
+
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
     makeAutoObservable(this, {
@@ -127,7 +129,6 @@ export class WorkflowsStore implements Hydratable {
     );
     this.userSubscription = new UserSubscription(rootStore);
     this.locationsSubscription = new LocationSubscription(rootStore);
-
     // persistent storage for justice-involved persons across subscription changes
     reaction(
       () => [this.caseloadSubscription?.data],
@@ -153,6 +154,7 @@ export class WorkflowsStore implements Hydratable {
           this.user?.updates ?? {};
         const { isDefaultOfficerSelection } = this.user?.metadata ?? {};
         const selectedSearch = selectedSearchIds ?? selectedOfficerIds;
+
         if (selectedSearch && isDefaultOfficerSelection) {
           this.rootStore.analyticsStore.trackCaseloadSearch({
             searchCount: selectedSearch.length,
@@ -264,6 +266,10 @@ export class WorkflowsStore implements Hydratable {
 
     const [info] = this.userSubscription.data;
 
+    if (this.rootStore.userStore.userRole) {
+      set(info, { role: this.rootStore.userStore.userRole });
+    }
+
     const updates = this.userUpdatesSubscription?.data ?? {
       stateCode: info.stateCode,
     };
@@ -371,21 +377,45 @@ export class WorkflowsStore implements Hydratable {
     );
   }
 
-  get activeSystem(): SystemId | undefined {
-    const { currentTenantId } = this.rootStore;
-    const { workflowsSupportedSystems } = currentTenantId
-      ? tenants[currentTenantId]
-      : { workflowsSupportedSystems: undefined };
+  /** List of supported systems based on the user's permissions. */
+  get workflowsSupportedSystems(): SystemId[] | undefined {
+    const {
+      currentTenantId,
+      userStore: { isRecidivizUser },
+    } = this.rootStore;
 
-    if (!workflowsSupportedSystems?.length) {
-      return;
+    if (isRecidivizUser) {
+      return (
+        currentTenantId && tenants[currentTenantId]?.workflowsSupportedSystems
+      );
     }
-    // for now only one system per tenant is supported.
-    // If there are more beyond the first one they will be ignored
-    return workflowsSupportedSystems[0];
+
+    const role = this.user?.info.role;
+
+    if (!role || !currentTenantId) return;
+
+    switch (role) {
+      case "supervision_staff":
+        return (
+          tenants[currentTenantId].workflowsSupportedSystems ?? []
+        ).filter((systemId) => systemId === "SUPERVISION");
+      case "facilities_staff":
+        return (
+          tenants[currentTenantId].workflowsSupportedSystems ?? []
+        ).filter((systemId) => systemId === "INCARCERATION");
+      case "leadership_role":
+        return tenants[currentTenantId]?.workflowsSupportedSystems;
+      default:
+        assertNever(role);
+    }
+  }
+
+  updateActiveSystem(systemId: SystemId): void {
+    this.activeSystem = systemId;
   }
 
   get searchType(): SearchType | undefined {
+    if (this.activeSystem === "ALL") return "ALL";
     return this.activeSystemConfig?.searchType;
   }
 
@@ -410,6 +440,7 @@ export class WorkflowsStore implements Hydratable {
         return this.residentsSubscription;
       case "SUPERVISION":
         return this.clientsSubscription;
+      case "ALL":
       case undefined:
         return;
       default:
@@ -543,7 +574,18 @@ export class WorkflowsStore implements Hydratable {
         );
       }
       case "OFFICER": {
-        return this.availableOfficers.map((officer) => new Officer(officer));
+        return this.availableOfficers
+          .map((officer) => new Officer(officer))
+          .filter((officer) => officer.systemId === this.activeSystem);
+      }
+      case "ALL": {
+        const locations = this.availableLocations.map(
+          (location) => new Location(location)
+        );
+        const officers = this.availableOfficers.map(
+          (officer) => new Officer(officer)
+        );
+        return [...officers, ...locations];
       }
       case undefined:
         return [];
@@ -682,6 +724,14 @@ export class WorkflowsStore implements Hydratable {
     return this.activeSystemConfig?.searchTitleOverride ?? "officer";
   }
 
+  get supportsMultipleSystems(): boolean {
+    return (
+      (this.workflowsSupportedSystems &&
+        this.workflowsSupportedSystems.length > 1) ||
+      false
+    );
+  }
+
   /**
    * Generic to use for justice-involved persons in workflows
    */
@@ -691,6 +741,7 @@ export class WorkflowsStore implements Hydratable {
         return "resident";
       case "SUPERVISION":
         return "client";
+      case "ALL":
       case undefined:
         return "person";
       default:
@@ -703,7 +754,7 @@ export class WorkflowsStore implements Hydratable {
     | WorkflowsSystemConfig<ResidentRecord>
     | undefined {
     const { currentTenantId } = this.rootStore;
-    if (!currentTenantId || !this.activeSystem) {
+    if (!currentTenantId || !this.activeSystem || this.activeSystem === "ALL") {
       return undefined;
     }
 

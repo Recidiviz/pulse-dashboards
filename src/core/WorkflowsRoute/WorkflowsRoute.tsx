@@ -25,8 +25,12 @@ import {
   isOpportunityTypeUrlForState,
   OPPORTUNITY_TYPE_FOR_URL_BY_STATE,
 } from "../../WorkflowsStore/Opportunity/types";
-import { TenantId } from "../models/types";
-import { WORKFLOWS_PATHS, workflowsUrl } from "../views";
+import {
+  getSystemIdFromOpportunityType,
+  getSystemIdFromPage,
+} from "../../WorkflowsStore/utils";
+import { SystemId, TenantId } from "../models/types";
+import { WORKFLOWS_PATHS, WorkflowsPage, workflowsUrl } from "../views";
 
 // react-router does not seem to export this type directly
 type RouterLocation = ReturnType<typeof useLocation>;
@@ -57,11 +61,21 @@ const RouteSync = observer(function RouteSync({ children }) {
       setNotFound(true);
     });
     if (page && isOpportunityTypeUrlForState(currentTenantId, page)) {
-      workflowsStore.updateSelectedOpportunityType(
+      const opportunityType =
         // @ts-expect-error Existence is checked by function above
-        OPPORTUNITY_TYPE_FOR_URL_BY_STATE[currentTenantId as TenantId][page]
+        OPPORTUNITY_TYPE_FOR_URL_BY_STATE[currentTenantId as TenantId][page];
+      // Update active system based on opportunity route
+      workflowsStore.updateActiveSystem(
+        getSystemIdFromOpportunityType(opportunityType)
       );
+      workflowsStore.updateSelectedOpportunityType(opportunityType);
     } else {
+      // Select active system from the page type or take the first supported system available
+      const activeSystem: SystemId | undefined =
+        getSystemIdFromPage(page as WorkflowsPage) ??
+        workflowsStore.workflowsSupportedSystems?.[0];
+
+      if (activeSystem) workflowsStore.updateActiveSystem(activeSystem);
       workflowsStore.updateSelectedOpportunityType(undefined);
     }
 

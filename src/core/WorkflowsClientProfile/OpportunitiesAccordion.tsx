@@ -177,7 +177,12 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
       <AccordionWrapper allowZeroExpanded preExpanded={[0]}>
         {opportunities.map((opportunity) => {
           if (!opportunity) return undefined;
-          return <AccordionSection opportunity={opportunity} />;
+          return (
+            <AccordionSection
+              key={opportunity.type}
+              opportunity={opportunity}
+            />
+          );
         })}
       </AccordionWrapper>
     );

@@ -31,8 +31,10 @@ export const mockOfficer: CombinedUserRecord = {
     stateCode: "US_XX",
     email: "test-officer@example.com",
     hasCaseload: true,
+    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Officer",
+    role: "leadership_role",
   },
 };
 
@@ -42,9 +44,11 @@ export const mockOfficer2: CombinedUserRecord = {
     stateCode: mockOfficer.info.stateCode,
     district: "1",
     hasCaseload: true,
+    hasFacilityCaseload: false,
     email: "test-officer2@example.com",
     givenNames: "Foo",
     surname: "Fakename",
+    role: "supervision_staff",
   },
 };
 
@@ -55,8 +59,10 @@ export const mockSupervisor: CombinedUserRecord = {
     stateCode: "US_XX",
     email: "test-supervisor@example.com",
     hasCaseload: false,
+    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Supervisor",
+    role: "leadership_role",
   },
 };
 
@@ -230,6 +236,7 @@ export const mockOfficers: StaffRecord[] = [
     stateCode: mockOfficer.info.stateCode,
     district: "1",
     hasCaseload: true,
+    hasFacilityCaseload: false,
     email: null,
     givenNames: "Foo",
     surname: "Fakename",
@@ -239,6 +246,7 @@ export const mockOfficers: StaffRecord[] = [
     stateCode: mockOfficer.info.stateCode,
     district: "1",
     hasCaseload: true,
+    hasFacilityCaseload: false,
     email: null,
     givenNames: "Bar",
     surname: "Realname",

@@ -156,11 +156,18 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     availableSearchables,
     selectedSearchables,
     workflowsSearchFieldTitle,
+    supportsMultipleSystems,
     searchType,
+    activeSystem,
   } = workflowsStore;
 
+  const searchTitle =
+    supportsMultipleSystems && activeSystem === "ALL"
+      ? "caseload"
+      : workflowsSearchFieldTitle;
+
   const customComponents: SelectComponentsConfig<SelectOption, true> = {
-    ClearIndicator: ClearAll(workflowsSearchFieldTitle),
+    ClearIndicator: ClearAll(searchTitle),
     DropdownIndicator: null,
     IndicatorsContainer,
     MultiValueRemove: ValueRemover,
@@ -172,7 +179,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     selectedSearchables.length >= SELECTED_SEARCH_LIMIT;
 
   if (disableAdditionalSelections) {
-    customComponents.MenuList = Disabled(workflowsSearchFieldTitle);
+    customComponents.MenuList = Disabled(searchTitle);
   }
 
   return (
@@ -194,9 +201,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
           });
         }}
         options={availableSearchables.map(buildSelectOption)}
-        placeholder={`Search for one or more ${pluralizeWord(
-          workflowsSearchFieldTitle
-        )} …`}
+        placeholder={`Search for one or more ${pluralizeWord(searchTitle)} …`}
         styles={{
           clearIndicator: (base) => ({
             ...base,

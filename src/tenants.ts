@@ -47,6 +47,19 @@ const TENANTS: Tenants = {
     name: "Recidiviz",
     domain: "recidiviz.org",
     stateCode: "Recidiviz",
+    workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
+    workflowsSystemConfigs: {
+      INCARCERATION: {
+        searchType: "OFFICER",
+        searchField: "officerId",
+        searchTitleOverride: "case manager",
+      },
+      SUPERVISION: {
+        searchType: "OFFICER",
+        searchField: "officerId",
+        searchTitleOverride: "officer",
+      },
+    },
     // US_PA is the last non-Pathways tenant
     availableStateCodes: pathways.PATHWAYS_TENANTS,
     enableUserRestrictions: true,

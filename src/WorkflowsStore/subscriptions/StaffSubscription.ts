@@ -17,9 +17,18 @@
 
 import { collection, Query, query, where } from "firebase/firestore";
 
+import { SystemId } from "../../core/models/types";
 import { collectionNames, StaffRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
+
+const SYSTEM_ID_TO_CASELOAD_FIELD: Record<
+  Exclude<SystemId, "ALL">,
+  keyof StaffRecord
+> = {
+  SUPERVISION: "hasCaseload",
+  INCARCERATION: "hasFacilityCaseload",
+};
 
 export class StaffSubscription extends FirestoreQuerySubscription<StaffRecord> {
   private rootStore: RootStore;
@@ -30,16 +39,23 @@ export class StaffSubscription extends FirestoreQuerySubscription<StaffRecord> {
   }
 
   get dataSource(): Query {
-    const { caseloadDistrict, activeSystem } = this.rootStore.workflowsStore;
+    const { caseloadDistrict, workflowsSupportedSystems, activeSystem } =
+      this.rootStore.workflowsStore;
 
     const stateCode = this.rootStore.currentTenantId;
-    const caseloadField =
-      activeSystem === "INCARCERATION" ? "hasFacilityCaseload" : "hasCaseload";
+    const constraints = [where("stateCode", "==", stateCode)];
 
-    const constraints = [
-      where("stateCode", "==", stateCode),
-      where(caseloadField, "==", true),
-    ];
+    // If there's more than 1 supported system, then we query for all staff within the state.
+    if (
+      workflowsSupportedSystems &&
+      activeSystem &&
+      activeSystem !== "ALL" &&
+      workflowsSupportedSystems.length === 1
+    ) {
+      constraints.push(
+        where(SYSTEM_ID_TO_CASELOAD_FIELD[activeSystem], "==", true)
+      );
+    }
 
     if (caseloadDistrict) {
       constraints.push(where("district", "==", caseloadDistrict));

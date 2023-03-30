@@ -34,6 +34,7 @@ import {
   RoutePermission,
 } from "../core/types/navigation";
 import { PATHWAYS_SECTIONS, PathwaysPageIdList } from "../core/views";
+import { UserRole } from "../FirestoreStore";
 import tenants from "../tenants";
 import isIE11 from "../utils/isIE11";
 import { isOfflineMode } from "../utils/isOfflineMode";
@@ -271,6 +272,10 @@ export default class UserStore {
       throw Error("No app_metadata available for user");
     }
     return appMetadata;
+  }
+
+  get userRole(): UserRole | undefined {
+    return this.userAppMetadata?.role;
   }
 
   /**

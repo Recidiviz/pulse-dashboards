@@ -85,7 +85,7 @@ const PreviewTasks = function PreviewTasks({
       <TaskItems>
         {tasks.map((task) => {
           return (
-            <TaskItem>
+            <TaskItem key={`${task.type}-${task.person.externalId}`}>
               <TaskName>{TASK_DISPLAY_NAME[task.type]}</TaskName>
               <TaskDivider> &bull; </TaskDivider>
               <TaskDueDate marginLeft="0" overdue={task.isOverdue}>
@@ -96,7 +96,7 @@ const PreviewTasks = function PreviewTasks({
         })}
         {needs.map((need) => {
           return (
-            <TaskItem>
+            <TaskItem key={need.type}>
               <TaskName>{NEED_DISPLAY_NAME[need.type]}</TaskName>
             </TaskItem>
           );

@@ -72,12 +72,18 @@ export type StaffRecord = {
    * Only staff with caseloads need to be included in filters
    */
   hasCaseload: boolean;
+  hasFacilityCaseload: boolean;
   // TODO(#2458): Move towards using the fullName type like for ClientRecord to standardize name formatting. May require BE changes.
   givenNames: string;
   surname: string;
 };
 
-export type UserRecord = StaffRecord & { email: string };
+export type UserRole =
+  | "supervision_staff"
+  | "facilities_staff"
+  | "leadership_role";
+
+export type UserRecord = StaffRecord & { email: string; role: UserRole };
 export function isUserRecord(
   staffRecord: StaffRecord
 ): staffRecord is UserRecord {

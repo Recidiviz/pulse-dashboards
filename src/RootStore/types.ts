@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 /* eslint camelcase: 0 */
+import { UserRole } from "../FirestoreStore";
 import { LANTERN, RECIDIVIZ_TENANT } from "../tenants";
 import * as lantern from "./TenantStore/lanternTenants";
 import * as pathways from "./TenantStore/pathwaysTenants";
@@ -45,6 +46,7 @@ export type UserAppMetadata = {
   userHash?: string;
   segmentId?: string;
   intercomId?: string;
+  role?: UserRole;
 };
 
 export type LanternMethodologyByTenant = {

@@ -25,7 +25,7 @@ import { PartialRecord } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
 
-const SUPERVISION_OPPORTUNITY_TYPES = [
+export const SUPERVISION_OPPORTUNITY_TYPES = [
   "compliantReporting",
   "earlyTermination",
   "earnedDischarge",
@@ -42,7 +42,7 @@ const SUPERVISION_OPPORTUNITY_TYPES = [
 export type SupervisionOpportunityType =
   typeof SUPERVISION_OPPORTUNITY_TYPES[number];
 
-const INCARCERATION_OPPORTUNITY_TYPES = [
+export const INCARCERATION_OPPORTUNITY_TYPES = [
   "usMeSCCP",
   "usMoRestrictiveHousingStatusHearing",
 ] as const;
