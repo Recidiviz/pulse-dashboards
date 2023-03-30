@@ -72,8 +72,10 @@ const RouteSync = observer(function RouteSync({ children }) {
     } else {
       // Select active system from the page type or take the first supported system available
       const activeSystem: SystemId | undefined =
-        getSystemIdFromPage(page as WorkflowsPage) ??
-        workflowsStore.workflowsSupportedSystems?.[0];
+        !!workflowsStore.workflowsSupportedSystems &&
+        workflowsStore.workflowsSupportedSystems?.length > 1
+          ? getSystemIdFromPage(page as WorkflowsPage)
+          : workflowsStore.workflowsSupportedSystems?.[0];
 
       if (activeSystem) workflowsStore.updateActiveSystem(activeSystem);
       workflowsStore.updateSelectedOpportunityType(undefined);

@@ -19,6 +19,7 @@ import {
   ClientRecord,
   CombinedUserRecord,
   LocationRecord,
+  ResidentRecord,
   StaffRecord,
 } from "../../FirestoreStore";
 import { SupervisionOpportunityType } from "../Opportunity";
@@ -228,6 +229,27 @@ export const mockClients = [
   ineligibleClient,
   eligibleClient,
   lsuEligibleClient,
+];
+
+export const mockResidents: ResidentRecord[] = [
+  {
+    recordId: "999",
+    personType: "RESIDENT",
+    admissionDate: "2023-03-23",
+    allEligibleOpportunities: ["usMeSCCP"],
+    custodyLevel: "MINIMUM",
+    facilityId: "MOUNTAIN VIEW CORRECTIONAL FACILITY",
+    officerId: "1",
+    stateCode: "US_ME",
+    personName: {
+      givenNames: "Bernie",
+      surname: "Sanders",
+    },
+    pseudonymizedId: "p999",
+    releaseDate: "2023-09-22",
+    unitId: "UNIT E",
+    personExternalId: "999",
+  },
 ];
 
 export const mockOfficers: StaffRecord[] = [

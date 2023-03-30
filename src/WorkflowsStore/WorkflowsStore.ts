@@ -131,7 +131,7 @@ export class WorkflowsStore implements Hydratable {
     this.locationsSubscription = new LocationSubscription(rootStore);
     // persistent storage for justice-involved persons across subscription changes
     reaction(
-      () => [this.caseloadSubscription?.data],
+      () => [this.caseloadSubscription?.map((s) => s.data).flat()],
       ([newRecords]) => {
         this.updateCaseload(newRecords);
       }
@@ -432,15 +432,20 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get caseloadSubscription():
-    | CaseloadSubscription<ClientRecord>
-    | CaseloadSubscription<ResidentRecord>
+    | CaseloadSubscription<ClientRecord>[]
+    | CaseloadSubscription<ResidentRecord>[]
+    | (
+        | CaseloadSubscription<ClientRecord>
+        | CaseloadSubscription<ResidentRecord>
+      )[]
     | undefined {
     switch (this.activeSystem) {
       case "INCARCERATION":
-        return this.residentsSubscription;
+        return [this.residentsSubscription];
       case "SUPERVISION":
-        return this.clientsSubscription;
+        return [this.clientsSubscription];
       case "ALL":
+        return [this.residentsSubscription, this.clientsSubscription];
       case undefined:
         return;
       default:
@@ -516,8 +521,8 @@ export class WorkflowsStore implements Hydratable {
   caseloadLoaded(): boolean {
     return (
       this.caseloadPersons.length > 0 ||
-      (this.caseloadSubscription?.isHydrated &&
-        !this.caseloadSubscription.isLoading) ||
+      (this.caseloadSubscription?.every((s) => s.isHydrated) &&
+        !this.caseloadSubscription.some((s) => s.isLoading)) ||
       false
     );
   }

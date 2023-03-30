@@ -35,6 +35,7 @@ import {
   mockOfficer,
   mockOfficer2,
   mockOfficers,
+  mockResidents,
   mockSupervisor,
 } from "../__fixtures__";
 import { Client } from "../Client";
@@ -140,6 +141,14 @@ function populateClients(clients: ClientRecord[]): void {
     workflowsStore.clientsSubscription.data = clients;
     workflowsStore.clientsSubscription.isHydrated = true;
     workflowsStore.clientsSubscription.isLoading = false;
+  });
+}
+
+function populateResidents(residents: ResidentRecord[]): void {
+  runInAction(() => {
+    workflowsStore.residentsSubscription.data = residents;
+    workflowsStore.residentsSubscription.isHydrated = true;
+    workflowsStore.residentsSubscription.isLoading = false;
   });
 }
 
@@ -493,6 +502,75 @@ test("update clients from subscription", async () => {
   });
 });
 
+describe("caseloadSubscription", () => {
+  describe("when activeSystem is 'ALL'", () => {
+    beforeEach(() => {
+      workflowsStore.updateActiveSystem("ALL");
+    });
+    it("updates justiceInvolvedPersons from both resident and client subscriptions", async () => {
+      await waitForHydration();
+
+      populateClients(mockClients);
+      populateResidents(mockResidents);
+
+      expect(workflowsStore.justiceInvolvedPersons).toEqual({
+        [mockClients[0].pseudonymizedId]: expect.any(Client),
+        [mockClients[1].pseudonymizedId]: expect.any(Client),
+        [mockClients[2].pseudonymizedId]: expect.any(Client),
+        [mockResidents[0].pseudonymizedId]: expect.any(Resident),
+      });
+      [...mockClients, ...mockResidents].forEach(({ pseudonymizedId }) => {
+        expect(
+          workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId
+        ).toBe(pseudonymizedId);
+      });
+    });
+  });
+  describe("when activeSystem is 'INCARCERATION'", () => {
+    beforeEach(() => {
+      workflowsStore.updateActiveSystem("INCARCERATION");
+    });
+    it("updates justiceInvolvedPersons to residents", async () => {
+      await waitForHydration();
+
+      populateClients(mockClients);
+      populateResidents(mockResidents);
+
+      expect(workflowsStore.justiceInvolvedPersons).toEqual({
+        [mockResidents[0].pseudonymizedId]: expect.any(Resident),
+      });
+
+      mockResidents.forEach(({ pseudonymizedId }) => {
+        expect(
+          workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId
+        ).toBe(pseudonymizedId);
+      });
+    });
+  });
+  describe("when activeSystem is 'SUPERVISION'", () => {
+    beforeEach(() => {
+      workflowsStore.updateActiveSystem("SUPERVISION");
+    });
+    it("updates justiceInvolvedPersons to clients", async () => {
+      await waitForHydration();
+
+      populateClients(mockClients);
+      populateResidents(mockResidents);
+
+      expect(workflowsStore.justiceInvolvedPersons).toEqual({
+        [mockClients[0].pseudonymizedId]: expect.any(Client),
+        [mockClients[1].pseudonymizedId]: expect.any(Client),
+        [mockClients[2].pseudonymizedId]: expect.any(Client),
+      });
+      mockClients.forEach(({ pseudonymizedId }) => {
+        expect(
+          workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId
+        ).toBe(pseudonymizedId);
+      });
+    });
+  });
+});
+
 test("caseloadDistrict reflects user data", async () => {
   await waitForHydration();
   expect(workflowsStore.caseloadDistrict).toBe(mockOfficer.info.district);
@@ -740,18 +818,7 @@ describe("opportunityTypes for US_TN", () => {
 
 describe("residents for US_ME", () => {
   test("populate residents", async () => {
-    const mockResidents: ResidentRecord[] = [
-      {
-        allEligibleOpportunities: [],
-        officerId: "TEST1",
-        personExternalId: "res1",
-        personName: {},
-        personType: "RESIDENT",
-        pseudonymizedId: "pres1",
-        recordId: "abc123",
-        stateCode: "US_ME",
-      },
-    ];
+    populateResidents(mockResidents);
 
     await waitForHydration();
 
