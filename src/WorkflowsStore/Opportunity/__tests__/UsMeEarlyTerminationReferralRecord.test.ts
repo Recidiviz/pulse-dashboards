@@ -17,11 +17,31 @@
 
 import { transformReferral } from "../UsMeEarlyTerminationReferralRecord";
 
-test("transform record", () => {
+test("transform record with restitution case", () => {
   const rawRecord = {
     stateCode: "US_ME",
     externalId: "abc123",
     eligibleCriteria: {
+      usMePaidAllOwedRestitution: {
+        amountOwed: 0,
+      },
+      noConvictionWithin6Months: null,
+      supervisionPastHalfFullTermReleaseDate: {
+        sentenceType: "MEDIUM",
+        eligibleDate: "2022-01-03",
+      },
+    },
+  };
+
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});
+
+test("transform record without restitution case", () => {
+  const rawRecord = {
+    stateCode: "US_ME",
+    externalId: "abc123",
+    eligibleCriteria: {
+      usMePaidAllOwedRestitution: null,
       noConvictionWithin6Months: null,
       supervisionPastHalfFullTermReleaseDate: {
         sentenceType: "MEDIUM",

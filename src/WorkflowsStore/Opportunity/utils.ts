@@ -85,10 +85,7 @@ export const generateOpportunityInitialHeader = (
         "eligibility and complete application paperwork."
       );
     case "usMeEarlyTermination":
-      return (
-        "Search for probation officers above to review clients on their caseload who may be good " +
-        "candidates for early termination from probation."
-      );
+      return "Search for officers above to review clients who may be good candidates for early termination from probation.";
     default:
       return `Search for officers above to review and refer eligible clients for ${opportunityLabel.toLowerCase()}.`;
   }
@@ -181,8 +178,7 @@ export const generateOpportunityHydratedHeader = (
       eligibilityText: simplur`${count} client[|s] may be good [a|] candidate[|s] for `,
       opportunityText: "Early Termination",
       callToAction:
-        "Search for probation officers above to review clients on their caseload who may be good " +
-        "candidates for early termination from probation.",
+        "Search for officers above to review clients who may be good candidates for early termination from probation.",
     },
     // TODO: Update copy
     usMiMinimumTelephoneReporting: {

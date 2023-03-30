@@ -833,6 +833,9 @@ export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRec
     stateCode: "US_ME",
     externalId: "009",
     eligibleCriteria: {
+      usMePaidAllOwedRestitution: {
+        amountOwed: 0,
+      },
       noConvictionWithin6Months: {},
       supervisionPastHalfFullTermReleaseDate: {
         sentenceType: "PROBATION",

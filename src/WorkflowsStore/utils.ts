@@ -31,6 +31,10 @@ import {
   SupervisionOpportunityType,
 } from "./Opportunity/types";
 
+export function formatSupervisionType(supervisionType: string): string {
+  return supervisionType.replace("_", " ");
+}
+
 export function dateToTimestamp(isodate: string): Timestamp {
   return new Timestamp(new Date(isodate).getTime() / 1000, 0);
 }

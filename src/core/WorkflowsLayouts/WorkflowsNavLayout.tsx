@@ -158,23 +158,28 @@ export const WorkflowsNavLayout: React.FC = observer(
                   <NavSectionLabel>Shortcuts</NavSectionLabel>
                 </li>
                 {opportunityTypes.map((opportunityType) => {
-                  return (
-                    <li key={opportunityType}>
-                      <BrandedNavLink
-                        className={`BrandedNavLink__${opportunityType}`}
-                        to={workflowsUrl("opportunityClients", {
-                          opportunityType,
-                        })}
-                        onClick={() =>
-                          workflowsStore.updateActiveSystem(
-                            getSystemIdFromOpportunityType(opportunityType)
-                          )
-                        }
-                      >
-                        {OPPORTUNITY_LABELS[opportunityType]}
-                      </BrandedNavLink>
-                    </li>
-                  );
+                  const systemId =
+                    getSystemIdFromOpportunityType(opportunityType);
+                  if (workflowsSupportedSystems?.includes(systemId)) {
+                    return (
+                      <li key={opportunityType}>
+                        <BrandedNavLink
+                          className={`BrandedNavLink__${opportunityType}`}
+                          to={workflowsUrl("opportunityClients", {
+                            opportunityType,
+                          })}
+                          onClick={() =>
+                            workflowsStore.updateActiveSystem(
+                              getSystemIdFromOpportunityType(opportunityType)
+                            )
+                          }
+                        >
+                          {OPPORTUNITY_LABELS[opportunityType]}
+                        </BrandedNavLink>
+                      </li>
+                    );
+                  }
+                  return null;
                 })}
               </NavSection>
             </li>

@@ -33,9 +33,9 @@ import {
 
 const DENIAL_REASONS_MAP = {
   BENEFIT:
-    "Continuation on probation would benefit the community or the client.",
-  COMPLETION: "Has not completed conditions of probation.",
-  CONDUCT: "Has engaged in prohibited conduct.",
+    "Continuation on probation would benefit the community or the client",
+  COMPLETION: "Has not completed conditions of probation",
+  CONDUCT: "Has engaged in prohibited conduct",
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
@@ -43,6 +43,11 @@ const CRITERIA: Record<
   keyof UsMeEarlyTerminationReferralRecord["eligibleCriteria"],
   Partial<OpportunityRequirement>
 > = {
+  usMePaidAllOwedRestitution: {
+    tooltip: dedent`In compliance with Department Policy (ACC) 9.6, Restitution and Fees, 
+      under no circumstances may a Probation Officer make a motion for or agree to early 
+      termination of probation if the probationer has not paid the total amount of restitution owed.`,
+  },
   noConvictionWithin6Months: {
     tooltip: dedent`In addition, whenever a person on probation is convicted of a new crime 
       during the period of probation, the probation is not revoked, and the person
@@ -69,12 +74,6 @@ function validateRecord(
   if (!pastHalfFullTermRelease?.eligibleDate) {
     throw new OpportunityValidationError(
       "Missing early termination opportunity eligible date"
-    );
-  }
-
-  if (!pastHalfFullTermRelease?.sentenceType) {
-    throw new OpportunityValidationError(
-      "Missing early termination opportunity sentence type"
     );
   }
 
@@ -117,12 +116,13 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
         supervisionPastHalfFullTermReleaseDate,
         noConvictionWithin6Months,
         onMediumSupervisionLevelOrLower,
+        usMePaidAllOwedRestitution,
       },
     } = this.record;
 
     if (supervisionPastHalfFullTermReleaseDate?.eligibleDate) {
       requirements.push({
-        text: `Early termination past half full term release date is ${formatWorkflowsDate(
+        text: `Served 1/2 of probation term on ${formatWorkflowsDate(
           supervisionPastHalfFullTermReleaseDate?.eligibleDate
         )}`,
         tooltip: CRITERIA.supervisionPastHalfFullTermReleaseDate.tooltip,
@@ -136,12 +136,21 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
       });
     }
 
-    if (supervisionPastHalfFullTermReleaseDate?.sentenceType) {
+    if (usMePaidAllOwedRestitution?.amountOwed === 0) {
       requirements.push({
-        text: `Currently on ${supervisionPastHalfFullTermReleaseDate?.sentenceType.toLowerCase()} sentence`,
-        tooltip: CRITERIA.supervisionPastHalfFullTermReleaseDate.tooltip,
+        text: `Paid all owed restitution`,
+        tooltip: CRITERIA.usMePaidAllOwedRestitution.tooltip,
       });
     }
+
+    // If we don't have an amountOwed property, then there is no restitution case
+    if (Object.keys(usMePaidAllOwedRestitution).length === 0) {
+      requirements.push({
+        text: `No restitution owed`,
+        tooltip: CRITERIA.usMePaidAllOwedRestitution.tooltip,
+      });
+    }
+
     if (Object.keys(noConvictionWithin6Months).length === 0) {
       requirements.push({
         text: `No new convictions in the past 6 months`,

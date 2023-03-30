@@ -26,6 +26,9 @@ export type UsMeEarlyTerminationReferralRecord = {
   stateCode: string;
   externalId: string;
   eligibleCriteria: {
+    usMePaidAllOwedRestitution: {
+      amountOwed?: number;
+    };
     noConvictionWithin6Months: {
       latestConvictions?: string[];
     };
@@ -62,6 +65,10 @@ export const transformReferral: TransformFunction<
     transformedRecord.eligibleCriteria.noConvictionWithin6Months = {};
   }
 
+  // If usMePaidAllOwedRestitution is null, this means there is no restitution case
+  if (eligibleCriteria.usMePaidAllOwedRestitution === null) {
+    transformedRecord.eligibleCriteria.usMePaidAllOwedRestitution = {};
+  }
   transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
 
   return transformedRecord as UsMeEarlyTerminationReferralRecord;

@@ -70,7 +70,7 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   usMeSCCP: "Supervised Community Confinement Program",
   usTnExpiration: "Expiration",
   usMoRestrictiveHousingStatusHearing: "Restrictive Housing Status Hearing",
-  usMeEarlyTermination: "Early Termination from Probation",
+  usMeEarlyTermination: "Early Termination",
   usMiMinimumTelephoneReporting: "Minimum Telephone Reporting",
 };
 

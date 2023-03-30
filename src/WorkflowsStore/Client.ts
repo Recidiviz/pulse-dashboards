@@ -48,7 +48,7 @@ import { UsMiEarlyDischargeOpportunity } from "./Opportunity/UsMiEarlyDischargeO
 import { SupervisionTaskInterface } from "./Task/types";
 import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
 import { JusticeInvolvedPerson } from "./types";
-import { optionalFieldToDate } from "./utils";
+import { formatSupervisionType, optionalFieldToDate } from "./utils";
 
 export const UNKNOWN = "Unknown" as const;
 
@@ -189,7 +189,9 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   get supervisionType(): string {
     const { supervisionType } = this.record;
 
-    return supervisionType === "INTERNAL_UNKNOWN" ? "Unknown" : supervisionType;
+    return supervisionType === "INTERNAL_UNKNOWN"
+      ? "Unknown"
+      : formatSupervisionType(supervisionType);
   }
 
   get supervisionLevel(): string {
