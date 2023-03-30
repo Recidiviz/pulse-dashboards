@@ -27,12 +27,15 @@ import * as pathwaysTenants from "../../RootStore/TenantStore/pathwaysTenants";
 import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
 import { Client, WithCaseNotes } from "../../WorkflowsStore";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../../WorkflowsStore/Opportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
+import { Resident } from "../../WorkflowsStore/Resident";
+import { middleDateBetweenTwoDates } from "../../WorkflowsStore/utils";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { InfoButton, InfoTooltipWrapper } from "./common";
 import {
   ClientProfileProps,
   OpportunityProfileProps,
+  PersonProfileProps,
   ResidentProfileProps,
 } from "./types";
 
@@ -183,6 +186,7 @@ export function Supervision({
   client,
 }: ClientProfileProps): React.ReactElement {
   const tooltip = client.detailsCopy?.supervisionStartDate?.tooltip;
+  const halftime = client.stateCode === "US_ME";
 
   return (
     <DetailsSection>
@@ -200,7 +204,19 @@ export function Supervision({
               </InfoTooltipWrapper>
             )}
           </DetailsContent>
-
+          {halftime && (
+            <>
+              <DetailsSubheading>Half Time Date</DetailsSubheading>
+              <DetailsContent>
+                {formatWorkflowsDate(
+                  middleDateBetweenTwoDates(
+                    client.supervisionStartDate,
+                    client.expirationDate
+                  )
+                )}
+              </DetailsContent>
+            </>
+          )}
           <DetailsSubheading>Expiration</DetailsSubheading>
           <DetailsContent>
             {formatWorkflowsDate(client.expirationDate)}
@@ -219,6 +235,8 @@ export function Supervision({
 export function Incarceration({
   resident,
 }: ResidentProfileProps): React.ReactElement {
+  const halftime = resident.stateCode === "US_ME";
+
   return (
     <DetailsSection>
       <DetailsHeading>Incarceration</DetailsHeading>
@@ -228,6 +246,19 @@ export function Incarceration({
           <DetailsContent>
             {formatWorkflowsDate(resident.admissionDate)}
           </DetailsContent>
+          {halftime && (
+            <>
+              <DetailsSubheading>Half Time Date</DetailsSubheading>
+              <DetailsContent>
+                {formatWorkflowsDate(
+                  middleDateBetweenTwoDates(
+                    resident.admissionDate,
+                    resident.releaseDate
+                  )
+                )}
+              </DetailsContent>
+            </>
+          )}
           <DetailsSubheading>Release</DetailsSubheading>
           <DetailsContent>
             {formatWorkflowsDate(resident.releaseDate)}
@@ -436,6 +467,34 @@ export function Milestones({ client }: ClientProfileProps): React.ReactElement {
             );
           })}
         </DetailsContent>
+      </DetailsSection>
+    );
+  }
+
+  return <div />;
+}
+
+export function HalfTime({ person }: PersonProfileProps): React.ReactElement {
+  let halftimeDate;
+
+  if (person instanceof Client) {
+    const { supervisionStartDate, expirationDate } = person;
+    halftimeDate = middleDateBetweenTwoDates(
+      supervisionStartDate,
+      expirationDate
+    );
+  }
+
+  if (person instanceof Resident) {
+    const { admissionDate, releaseDate } = person;
+    halftimeDate = middleDateBetweenTwoDates(admissionDate, releaseDate);
+  }
+
+  if (halftimeDate) {
+    return (
+      <DetailsSection>
+        <DetailsHeading>Half Time Date</DetailsHeading>
+        <DetailsContent>{formatWorkflowsDate(halftimeDate)}</DetailsContent>
       </DetailsSection>
     );
   }

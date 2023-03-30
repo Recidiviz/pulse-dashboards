@@ -85,6 +85,14 @@ export function optionalFieldToDateArray(
   if (field) return fieldToDateArray(field);
 }
 
+export function middleDateBetweenTwoDates(
+  dateLeft: Date | undefined,
+  dateRight: Date | undefined
+): Date | undefined {
+  if (dateLeft && dateRight)
+    return new Date((dateLeft.getTime() + dateRight.getTime()) / 2);
+}
+
 export function staffNameComparator(a: StaffRecord, b: StaffRecord): number {
   const alphabetAndSpacesOnlyRegex = /[^a-zA-Z\s]+/g;
 

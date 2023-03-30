@@ -33,6 +33,7 @@ import {
   ClientEmployer,
   ClientHousing,
   FinesAndFees,
+  HalfTime,
   Milestones,
   ResidentHousing,
   SpecialConditions,
@@ -137,6 +138,14 @@ function ClientDetails({ client }: ClientProfileProps): React.ReactElement {
       <Divider />
       <SupervisionProgress client={client} />
       <Divider />
+      {client.stateCode === "US_ME" &&
+        client.supervisionStartDate &&
+        client.expirationDate && (
+          <>
+            <HalfTime person={client} />
+            <Divider />
+          </>
+        )}
       {client.milestones && client.milestones.length > 0 && (
         <>
           <Milestones client={client} />
@@ -178,6 +187,14 @@ function ResidentDetails({
           </>
         )
       }
+      {resident.stateCode === "US_ME" &&
+        resident.admissionDate &&
+        resident.releaseDate && (
+          <>
+            <HalfTime person={resident} />
+            <Divider />
+          </>
+        )}
       <ResidentHousing resident={resident} />
       <Divider />
     </>
