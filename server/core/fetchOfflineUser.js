@@ -32,9 +32,9 @@ function fetchOfflineUser({
     name,
     email,
     [`${process.env.METADATA_NAMESPACE}app_metadata`]: {
-      state_code: stateCode,
-      allowed_supervision_location_ids: allowedSupervisionLocationIds,
-      allowed_supervision_location_level: allowedSupervisionLocationLevel,
+      stateCode,
+      allowedSupervisionLocationIds,
+      allowedSupervisionLocationLevel,
       routes: {
         // system_prison: true,
         // system_supervision: true,
