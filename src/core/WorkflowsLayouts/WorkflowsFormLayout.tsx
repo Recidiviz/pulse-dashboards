@@ -124,8 +124,6 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
 
   const opportunity = selectedPerson.verifiedOpportunities[opportunityType];
 
-  if (!opportunity) return null;
-
   const hydrated = (
     <Wrapper>
       <SidebarWrapper>

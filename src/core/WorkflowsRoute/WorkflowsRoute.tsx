@@ -57,9 +57,6 @@ const RouteSync = observer(function RouteSync({ children }) {
     setRedirectPath(undefined);
 
     // sync location data into the store
-    workflowsStore.updateSelectedPerson(personId).catch(() => {
-      setNotFound(true);
-    });
     if (page && isOpportunityTypeUrlForState(currentTenantId, page)) {
       const opportunityType =
         // @ts-expect-error Existence is checked by function above
@@ -80,6 +77,10 @@ const RouteSync = observer(function RouteSync({ children }) {
       if (activeSystem) workflowsStore.updateActiveSystem(activeSystem);
       workflowsStore.updateSelectedOpportunityType(undefined);
     }
+    // updateSelectedPerson relies on the active system, so set it after the above
+    workflowsStore.updateSelectedPerson(personId).catch(() => {
+      setNotFound(true);
+    });
 
     if (!page) {
       // we aren't actually mutating any observables here,
