@@ -141,17 +141,15 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
         text: `Paid all owed restitution`,
         tooltip: CRITERIA.usMePaidAllOwedRestitution.tooltip,
       });
-    }
-
-    // If we don't have an amountOwed property, then there is no restitution case
-    if (Object.keys(usMePaidAllOwedRestitution).length === 0) {
+    } else if (!usMePaidAllOwedRestitution?.amountOwed) {
+      // If we don't have an amountOwed property, then there is no restitution case
       requirements.push({
         text: `No restitution owed`,
         tooltip: CRITERIA.usMePaidAllOwedRestitution.tooltip,
       });
     }
 
-    if (Object.keys(noConvictionWithin6Months).length === 0) {
+    if (!noConvictionWithin6Months.latestConvictions) {
       requirements.push({
         text: `No new convictions in the past 6 months`,
         tooltip: CRITERIA.noConvictionWithin6Months.tooltip,
