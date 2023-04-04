@@ -429,14 +429,15 @@ export function CaseNotes({
                         // eslint-disable-next-line react/no-array-index-key
                         <DetailsContent key={index}>
                           {note.noteTitle && (
-                            <>
-                              <CaseNoteTitle>{note.noteTitle}:</CaseNoteTitle>{" "}
-                            </>
+                            <CaseNoteTitle>{note.noteTitle}</CaseNoteTitle>
                           )}
-                          {note.noteBody}{" "}
-                          <CaseNoteDate>
-                            {formatWorkflowsDate(note.eventDate)}
-                          </CaseNoteDate>
+                          {note.noteBody && `: ${note.noteBody}`}{" "}
+                          {(note.eventDate ||
+                            !opportunity.hideUnknownCaseNoteDates) && (
+                            <CaseNoteDate>
+                              {formatWorkflowsDate(note.eventDate)}
+                            </CaseNoteDate>
+                          )}
                         </DetailsContent>
                       );
                     })}

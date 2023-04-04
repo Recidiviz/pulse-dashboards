@@ -13,16 +13,14 @@
       }
     },
     "caseNotes": {
-      "Treatment": [
+      "Supervision Conditions": [
         {
-          "noteTitle": "STARTED",
-          "noteBody": "Treatment started",
+          "noteTitle": "Other - Not completed",
+          "noteBody": "There are some other conditions",
           "eventDate": "2022-06-17"
         },
         {
-          "noteTitle": "COMPLETED",
-          "noteBody": "Treatment successfully completed",
-          "eventDate": "2022-09-22"
+          "noteTitle": "Report as directed - Not completed"
         }
       ]
     }

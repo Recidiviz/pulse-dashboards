@@ -209,6 +209,7 @@ export interface Opportunity<
   readonly deniedSectionTitle?: string;
   readonly opportunityProfileModules: OpportunityProfileModuleName[];
   readonly caseNotesTitle?: string;
+  readonly hideUnknownCaseNoteDates?: boolean;
 }
 
 export type OpportunityFactory<

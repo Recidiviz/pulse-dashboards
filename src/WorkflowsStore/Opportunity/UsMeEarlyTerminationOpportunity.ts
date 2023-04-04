@@ -91,6 +91,8 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
 
   readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ME;
 
+  readonly hideUnknownCaseNoteDates = true;
+
   constructor(client: Client) {
     super(
       client,
