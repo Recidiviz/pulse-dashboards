@@ -26,6 +26,9 @@ export class EarlyTerminationForm extends FormBase<EarlyTerminationDraftData> {
         crimeNames,
         probationExpirationDate,
         probationOfficerFullName,
+        statesAttorneyPhoneNumber,
+        statesAttorneyEmailAddress,
+        statesAttorneyMailingAddress,
       },
     } = this.opportunity.record;
 
@@ -43,6 +46,9 @@ export class EarlyTerminationForm extends FormBase<EarlyTerminationDraftData> {
       crimeNames: crimeNames?.join(", ") ?? "",
       probationOfficerFullName,
       criminalNumber,
+      statesAttorneyPhoneNumber,
+      statesAttorneyEmailAddress,
+      statesAttorneyMailingAddress,
     };
   }
 

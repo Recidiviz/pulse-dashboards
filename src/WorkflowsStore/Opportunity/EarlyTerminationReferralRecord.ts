@@ -34,6 +34,9 @@ export type EarlyTerminationReferralRecord = {
     crimeNames: string[];
     probationExpirationDate: Date;
     probationOfficerFullName: string;
+    statesAttorneyPhoneNumber?: string;
+    statesAttorneyEmailAddress?: string;
+    statesAttorneyMailingAddress?: string;
   };
   criteria: {
     supervisionPastEarlyDischargeDate?: { eligibleDate?: Date };

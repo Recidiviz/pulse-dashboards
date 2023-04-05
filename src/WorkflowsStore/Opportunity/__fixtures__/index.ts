@@ -264,6 +264,9 @@ export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {
     probationOfficerFullName: "Karl Fog",
     criminalNumber: "12345",
     judicialDistrictCode: "BISMARCK",
+    statesAttorneyEmailAddress: "state.attny.837@state.gov",
+    statesAttorneyMailingAddress: "9234 Maine St., Ohiotown, ND",
+    statesAttorneyPhoneNumber: "888-867-5309",
   },
   criteria: {
     supervisionPastEarlyDischargeDate: {
