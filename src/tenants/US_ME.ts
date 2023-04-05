@@ -25,6 +25,8 @@ import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { OpportunityType } from "../WorkflowsStore";
 
 const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
+  // The order of this list determines the order of the opportunites that are displayed in the
+  // Shortcuts navigation. Leadership users should see SCCP before ET (see #3233).
   "usMeSCCP",
   "usMeEarlyTermination",
 ];
