@@ -19,6 +19,7 @@ import { differenceInDays, differenceInMonths, format } from "date-fns";
 import moment from "moment";
 import simplur from "simplur";
 
+import { pluralizeWord } from "../../utils";
 import { optionalFieldToDate } from "../utils";
 import {
   COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED,
@@ -71,7 +72,9 @@ export const generateOpportunityDeniedSectionTitle = (
 };
 
 export const generateOpportunityInitialHeader = (
-  opportunityType: OpportunityType
+  opportunityType: OpportunityType,
+  justiceInvolvedPersonTitle: string,
+  workflowsSearchFieldTitle: string
 ): string => {
   const opportunityLabel = OPPORTUNITY_LABELS[opportunityType];
   switch (opportunityType) {
@@ -87,7 +90,11 @@ export const generateOpportunityInitialHeader = (
     case "usMeEarlyTermination":
       return "Search for officers above to review clients who may be good candidates for early termination from probation.";
     default:
-      return `Search for officers above to review and refer eligible clients for ${opportunityLabel.toLowerCase()}.`;
+      return `Search for ${pluralizeWord(
+        workflowsSearchFieldTitle
+      )} above to review and refer eligible ${pluralizeWord(
+        justiceInvolvedPersonTitle
+      )} for ${opportunityLabel.toLowerCase()}.`;
   }
 };
 

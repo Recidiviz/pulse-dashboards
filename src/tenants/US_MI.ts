@@ -38,6 +38,13 @@ const US_MI_CONFIG: TenantConfig = {
   enableUserRestrictions: false,
   workflowsEnableAllDistricts: false,
   workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsSystemConfigs: {
+    SUPERVISION: {
+      searchType: "OFFICER",
+      searchField: "officerId",
+      searchTitleOverride: "agent",
+    },
+  },
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   navigation: {
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],

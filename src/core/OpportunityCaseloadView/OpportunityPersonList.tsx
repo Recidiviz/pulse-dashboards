@@ -77,7 +77,11 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
     opportunityType,
     totalOpps
   );
-  const initialHeader = generateOpportunityInitialHeader(opportunityType);
+  const initialHeader = generateOpportunityInitialHeader(
+    opportunityType,
+    justiceInvolvedPersonTitle,
+    workflowsSearchFieldTitle
+  );
 
   const initial = (
     <WorkflowsNoResults
