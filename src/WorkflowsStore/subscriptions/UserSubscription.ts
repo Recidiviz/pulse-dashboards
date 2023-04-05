@@ -103,8 +103,8 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
     if (user.name) formattedUserName = splitAuth0UserName(user.name);
 
     return {
-      id: `${stateCode.toLowerCase()}_${user?.email}`,
-      email: user.email,
+      id: `${stateCode.toLowerCase()}_${user?.email.toLowerCase()}`,
+      email: user.email.toLowerCase(),
       stateCode,
       hasCaseload: false,
       hasFacilityCaseload: false,

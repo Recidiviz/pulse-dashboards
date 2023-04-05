@@ -81,7 +81,7 @@ export const ImpersonationForm: React.FC<{
       return;
     }
 
-    const formattedEmail = email.trim();
+    const formattedEmail = email.trim().toLowerCase();
     if (
       getEmailDomain(formattedEmail) !== TENANTS[stateCode as TenantId].domain
     ) {
