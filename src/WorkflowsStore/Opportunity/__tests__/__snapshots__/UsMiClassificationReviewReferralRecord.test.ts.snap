@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform record for initial CR 1`] = `
+Object {
+  "eligibleCriteria": Object {
+    "usMiClassificationReviewPastDueDate": Object {
+      "eligibleDate": 2022-12-12T00:00:00.000Z,
+    },
+    "usMiNotAlreadyOnLowestEligibleSupervisionLevel": Object {
+      "supervisionLevel": "MAXIMUM",
+    },
+  },
+  "externalId": "cr-eligible-1",
+  "stateCode": "US_MI",
+}
+`;
+
+exports[`transform record for six-month CR 1`] = `
+Object {
+  "eligibleCriteria": Object {
+    "usMiClassificationReviewPastDueDate": Object {
+      "eligibleDate": 2019-01-12T00:00:00.000Z,
+    },
+    "usMiNotAlreadyOnLowestEligibleSupervisionLevel": Object {
+      "supervisionLevel": "MAXIMUM",
+    },
+  },
+  "externalId": "cr-eligible-2",
+  "stateCode": "US_MI",
+}
+`;

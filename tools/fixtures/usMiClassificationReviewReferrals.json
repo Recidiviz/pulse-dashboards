@@ -2,12 +2,24 @@
   {
     "stateCode": "US_MI",
     "externalId": "cr-eligible-1",
-    "criteria": {
-      "notAlreadyOnLowestEligibleSupervisionLevel": {
+    "eligibleCriteria": {
+      "usMiNotAlreadyOnLowestEligibleSupervisionLevel": {
         "supervisionLevel": "MAXIMUM"
       },
-      "usMiClassificationReviewPastDueDate": {
+      "usMiPastInitialClassificationReviewDate": {
         "eligibleDate": "2022-12-12"
+      }
+    }
+  },
+  {
+    "stateCode": "US_MI",
+    "externalId": "cr-eligible-2",
+    "eligibleCriteria": {
+      "usMiNotAlreadyOnLowestEligibleSupervisionLevel": {
+        "supervisionLevel": "MEDIUM"
+      },
+      "usMiSixMonthsPastLastClassificationReviewDate": {
+        "eligibleDate": "2023-02-28"
       }
     }
   }

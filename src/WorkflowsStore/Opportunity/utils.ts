@@ -139,7 +139,6 @@ export const generateOpportunityHydratedHeader = (
     usMiClassificationReview: {
       eligibilityText: simplur`${count} client[|s] may be `,
       opportunityText: "eligible for a supervision level downgrade",
-      // TODO(#2969): Update copy once finalized
       callToAction:
         "Review clients who meet the time threshold for classification review and downgrade supervision levels in OMNI.",
     },

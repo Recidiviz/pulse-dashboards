@@ -28,8 +28,8 @@ import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 
 export type UsMiClassificationReviewReferralRecord = {
-  criteria: {
-    notAlreadyOnLowestEligibleSupervisionLevel: {
+  eligibleCriteria: {
+    usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
       supervisionLevel: string;
     };
     usMiClassificationReviewPastDueDate: {
@@ -49,17 +49,30 @@ export const getRecordTransformer = (client: Client) => {
     const {
       stateCode,
       externalId,
-      criteria: {
-        notAlreadyOnLowestEligibleSupervisionLevel: { supervisionLevel },
-        usMiClassificationReviewPastDueDate: { eligibleDate },
+      eligibleCriteria,
+      eligibleCriteria: {
+        usMiNotAlreadyOnLowestEligibleSupervisionLevel: { supervisionLevel },
       },
     } = record;
+
+    // The copy for these eligibility dates are the same. They are different
+    // in TES, but we can treat them as the same thing in the frontend
+    // since any client will only have one or the other
+    let eligibleDate;
+    if ("usMiPastInitialClassificationReviewDate" in eligibleCriteria) {
+      eligibleDate =
+        eligibleCriteria.usMiPastInitialClassificationReviewDate.eligibleDate;
+    } else {
+      eligibleDate =
+        eligibleCriteria.usMiSixMonthsPastLastClassificationReviewDate
+          .eligibleDate;
+    }
 
     return {
       stateCode,
       externalId,
-      criteria: {
-        notAlreadyOnLowestEligibleSupervisionLevel: {
+      eligibleCriteria: {
+        usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
           supervisionLevel:
             client.rootStore.workflowsStore.formatSupervisionLevel(
               supervisionLevel
@@ -97,9 +110,10 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
     if (!this.record) return [];
 
     const { supervisionLevel } =
-      this.record.criteria.notAlreadyOnLowestEligibleSupervisionLevel;
+      this.record.eligibleCriteria
+        .usMiNotAlreadyOnLowestEligibleSupervisionLevel;
     const { eligibleDate } =
-      this.record.criteria.usMiClassificationReviewPastDueDate;
+      this.record.eligibleCriteria.usMiClassificationReviewPastDueDate;
 
     return [
       {
@@ -117,8 +131,6 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
   // TODO(#2969): Update copy once finalized
   readonly policyOrMethodologyUrl = "";
 
-  readonly isAlert = true;
-
   denialReasonsMap = {
     VIOLATIONS: "Excessive violation behavior during current review period",
     EMPLOYMENT:
@@ -134,7 +146,7 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
 
   get eligibilityDate(): Date | undefined {
     if (!this.record) return;
-    return this.record.criteria.usMiClassificationReviewPastDueDate
+    return this.record.eligibleCriteria.usMiClassificationReviewPastDueDate
       .eligibleDate;
   }
 }
