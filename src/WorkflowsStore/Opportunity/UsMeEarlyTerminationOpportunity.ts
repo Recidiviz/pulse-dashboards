@@ -21,7 +21,6 @@ import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
-import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OpportunityValidationError, OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
@@ -124,9 +123,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
 
     if (supervisionPastHalfFullTermReleaseDate?.eligibleDate) {
       requirements.push({
-        text: `Served 1/2 of probation term on ${formatWorkflowsDate(
-          supervisionPastHalfFullTermReleaseDate?.eligibleDate
-        )}`,
+        text: `Served 1/2 of probation term`,
         tooltip: CRITERIA.supervisionPastHalfFullTermReleaseDate.tooltip,
       });
     }
