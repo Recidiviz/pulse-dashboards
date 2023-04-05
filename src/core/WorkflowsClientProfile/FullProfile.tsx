@@ -28,6 +28,7 @@ import { Resident } from "../../WorkflowsStore/Resident";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import { ProfileCapsule } from "../PersonCapsules";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
+import { PreviewTasks } from "../WorkflowsTasks/PreviewTasks";
 import ClientDetailsInput from "./ClientDetailsInput";
 import {
   ClientEmployer,
@@ -279,6 +280,7 @@ export const FullProfile = observer(
           <div>
             <SectionHeading>Opportunities</SectionHeading>
             <OpportunitiesAccordion person={person} />
+            <PreviewTasks person={person} />
           </div>
         </Wrapper>
       </WorkflowsNavLayout>
