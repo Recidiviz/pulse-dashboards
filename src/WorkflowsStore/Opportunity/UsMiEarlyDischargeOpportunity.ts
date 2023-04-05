@@ -16,16 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
-
-import { isPast } from "date-fns";
+import { cloneDeep } from "lodash";
 import { makeObservable } from "mobx";
 
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
+import { Nullable } from "../../utils/typeUtils";
 import { Client } from "../Client";
 import { TransformFunction } from "../subscriptions";
-import { fieldToDate, OTHER_KEY } from "../utils";
+import { fieldToDate, fieldToDateArray, OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
+
+type RawCriterion<C extends CriteriaKey> = {
+  [F in keyof AllCriteria[C]]: AllCriteria[C][F] extends Date[]
+    ? Parameters<typeof fieldToDateArray>[0]
+    : AllCriteria[C][F] extends Date
+    ? Parameters<typeof fieldToDate>[0]
+    : AllCriteria[C][F];
+};
+
+type RawCriteria = {
+  [C in CriteriaKey]: RawCriterion<C>;
+};
 
 type SharedCriteria = {
   supervisionPastHalfFullTermReleaseDate: { eligibleDate: Date };
@@ -56,17 +68,121 @@ type ParoleDualCriteria = {
 };
 
 type ProbationCriteria = {
-  usMiNotServingIneligibleOffensesFromEarlyDischargeFromProbationSupervision: {
+  usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision: {
     ineligibleOffenses: string[];
   };
 };
 
-export type UsMiEarlyDischargeReferralRecord = {
-  criteria: SharedCriteria & ParoleDualCriteria & ProbationCriteria;
+type UsMiParoleEarlyDischargeReferralRecord = {
+  eligibleCriteria: Nullable<SharedCriteria & ParoleDualCriteria>;
   metadata: {
-    supervisionType: "Probation" | "Parole";
+    supervisionType: "Parole";
   };
 };
+
+type UsMiProbationEarlyDischargeReferralRecord = {
+  eligibleCriteria: Nullable<SharedCriteria & ProbationCriteria>;
+  metadata: {
+    supervisionType: "Probation";
+  };
+};
+
+export type UsMiEarlyDischargeReferralRecord =
+  | UsMiParoleEarlyDischargeReferralRecord
+  | UsMiProbationEarlyDischargeReferralRecord;
+
+type SupervisionType =
+  UsMiEarlyDischargeReferralRecord["metadata"]["supervisionType"];
+type AllCriteria = SharedCriteria & ParoleDualCriteria & ProbationCriteria;
+type CriteriaKey = keyof AllCriteria;
+
+// Used in the transformer, this is a referral record type that is presumed
+// to have keys for every eligibleCriteria
+type UsMiGenericEarlyDischargeReferralRecord =
+  UsMiEarlyDischargeReferralRecord & {
+    eligibleCriteria: AllCriteria;
+  };
+
+export const ELIGIBLE_CRITERIA_COPY: Record<
+  CriteriaKey,
+  OpportunityRequirement | Record<SupervisionType, OpportunityRequirement>
+> = {
+  supervisionPastHalfFullTermReleaseDate: {
+    Parole: {
+      text: "Completed at least half of parole term",
+      tooltip:
+        "A parolee is eligible for early discharge consideration prior to the expiration of the original term of parole if they have completed at least one-half of an original parole term of 12 months or more",
+    },
+    Probation: {
+      text: "Completed at least half of probation term",
+      tooltip:
+        "An offender may be considered for discharge prior to the expiration of the original term of probation if they have completed at least one-half of the probation term",
+    },
+  },
+  supervisionNotPastFullTermCompletionDate: {
+    text: "",
+  },
+  servingAtLeastOneYearOnParoleSupervision: {
+    text: "Serving a parole term of 12 months or more",
+    tooltip:
+      "A parolee is eligible for early discharge consideration prior to the expiration of the original term of parole if they have completed at least one-half of an original parole term of 12 months or more",
+  },
+  usMiParoleDualSupervisionPastEarlyDischargeDate: {
+    text: "Served mandatory period of parole",
+    tooltip:
+      "The parolee has served any mandatory period of parole as set forth in Paragraph F. ",
+  },
+  usMiNoActivePpo: {
+    Parole: {
+      text: "No active PPO ordered during the parole term",
+      tooltip:
+        "The parolee does not have an active PPO […] that was ordered against him/her during the parole term.",
+    },
+    Probation: {
+      text: "No active PPO ordered during the probation term",
+      tooltip:
+        "The offender does not have an active PPO […] that was ordered against him/her during the probation term.",
+    },
+  },
+  usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+    Parole: {
+      text: "Not involved in a felony, assaultive misdemeanor, or offense requiring SORA registration while on parole",
+      tooltip:
+        "The parolee is not known to have been involved in […] felonious behavior, assaultive misdemeanor behavior (as set forth in Attachment A) […] or an offense that requires registration under the Sex Offender Registration Act while on parole.",
+    },
+    Probation: {
+      text: "Not involved in a felony, assaultive misdemeanor, or offense requiring SORA registration while on probation",
+      tooltip:
+        "The offender is not known to have been involved in […] felonious behavior or assaultive misdemeanor behavior as set forth in Attachment A “OP 06.01.145B Assaultive Misdemeanor List” which occurred while on probation or any offense that requires registration under the Sex Offender Registration Act (SORA), which occurred while on probation.",
+    },
+  },
+  usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision: {
+    text: "Not serving for an offense excluded from early discharge eligibility by policy.",
+    tooltip:
+      "The parolee is not serving for an offense […] required to be registered under the Sex Offender Registration Act.",
+  },
+  usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision: {
+    text: "Not serving for an offense excluded from early discharge eligibility by policy.",
+    tooltip:
+      "The offender is not currently serving for an offense that requires a mandatory term of probation as identified in Paragraph H. The offender is not currently serving for MCL 750.81 or MCL 750.84 (Assault with Intent to commit Great Bodily Harm Less than Murder).",
+  },
+  usMiSupervisionLevelIsNotSai: {
+    text: "Not paroled from SAI on current term",
+    tooltip:
+      "The parolee was not paroled from the Special Alternative Incarceration (SAI) program on the current term (see definition).",
+  },
+  supervisionLevelIsNotHigh: {
+    text: "Not on intensive supervision",
+  },
+  usMiNoOwiViolationOnParoleDualSupervision: {
+    text: "Not involved in an OWI offense while on parole.",
+    tooltip:
+      "The parolee is not known to have been involved in […] a violation of MCL 257.625 (OWI) […] while on parole.",
+  },
+  usMiNoPendingDetainer: {
+    text: "No pending detainers",
+  },
+} as const;
 
 export const getRecordTransformer = (client: Client) => {
   const transformer: TransformFunction<UsMiEarlyDischargeReferralRecord> = (
@@ -76,75 +192,62 @@ export const getRecordTransformer = (client: Client) => {
       throw new Error("No record found");
     }
 
-    const {
-      stateCode,
-      externalId,
-      metadata,
-      criteria: {
-        supervisionPastHalfFullTermReleaseDate,
-        supervisionNotPastFullTermCompletionDate,
-        supervisionLevelIsNotHigh: {
-          supervisionLevel: supervisionLevelIsNotHighSupervisionLevel,
-        } = { supervisionLevel: null },
-        servingAtLeastOneYearOnParoleSupervision,
-        usMiParoleDualSupervisionPastEarlyDischargeDate,
-        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision,
-        usMiNoOwiViolationOnParoleDualSupervision,
-      },
-    } = record;
+    const transformedRecord = cloneDeep(
+      record
+    ) as UsMiGenericEarlyDischargeReferralRecord;
 
-    return {
-      stateCode,
-      externalId,
-      metadata,
-      criteria: {
-        ...record.criteria,
-        supervisionLevelIsNotHigh: {
-          supervisionLevel:
-            client.rootStore.workflowsStore.formatSupervisionLevel(
-              supervisionLevelIsNotHighSupervisionLevel
-            ),
-        },
-        supervisionPastHalfFullTermReleaseDate: {
-          eligibleDate: supervisionPastHalfFullTermReleaseDate
-            ? fieldToDate(supervisionPastHalfFullTermReleaseDate.eligibleDate)
-            : null,
-        },
+    const { eligibleCriteria } = transformedRecord;
+    const rawCriteria = record.eligibleCriteria as RawCriteria;
 
-        supervisionNotPastFullTermCompletionDate: {
-          eligibleDate: supervisionNotPastFullTermCompletionDate
-            ? fieldToDate(supervisionNotPastFullTermCompletionDate.eligibleDate)
-            : null,
-        },
-        servingAtLeastOneYearOnParoleSupervision: {
-          projectedCompletionDateMax: servingAtLeastOneYearOnParoleSupervision
-            ? fieldToDate(
-                servingAtLeastOneYearOnParoleSupervision.projectedCompletionDateMax
-              )
-            : null,
-        },
-        usMiParoleDualSupervisionPastEarlyDischargeDate: {
-          eligibleDate: usMiParoleDualSupervisionPastEarlyDischargeDate
-            ? fieldToDate(
-                usMiParoleDualSupervisionPastEarlyDischargeDate.eligibleDate
-              )
-            : null,
-        },
+    function transformField<
+      C extends CriteriaKey,
+      F extends keyof AllCriteria[C]
+    >(
+      criterion: C,
+      field: F,
+      transform: (raw: RawCriteria[C][F]) => AllCriteria[C][F]
+    ) {
+      if (eligibleCriteria[criterion]) {
+        eligibleCriteria[criterion][field] = transform(
+          rawCriteria[criterion][field]
+        );
+      }
+    }
 
-        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
-          latestIneligibleConvictions: (
-            usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision?.latestIneligibleConvictions ??
-            []
-          ).map(fieldToDate),
-        },
-        usMiNoOwiViolationOnParoleDualSupervision: {
-          latestIneligibleConvictions: (
-            usMiNoOwiViolationOnParoleDualSupervision?.latestIneligibleConvictions ??
-            []
-          ).map(fieldToDate),
-        },
-      },
-    };
+    transformField("supervisionLevelIsNotHigh", "supervisionLevel", (s) =>
+      client.rootStore.workflowsStore.formatSupervisionLevel(s)
+    );
+    transformField(
+      "supervisionPastHalfFullTermReleaseDate",
+      "eligibleDate",
+      fieldToDate
+    );
+    transformField(
+      "supervisionNotPastFullTermCompletionDate",
+      "eligibleDate",
+      fieldToDate
+    );
+    transformField(
+      "servingAtLeastOneYearOnParoleSupervision",
+      "projectedCompletionDateMax",
+      fieldToDate
+    );
+    transformField(
+      "usMiParoleDualSupervisionPastEarlyDischargeDate",
+      "eligibleDate",
+      fieldToDate
+    );
+    transformField(
+      "usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision",
+      "latestIneligibleConvictions",
+      fieldToDateArray
+    );
+    transformField(
+      "usMiNoOwiViolationOnParoleDualSupervision",
+      "latestIneligibleConvictions",
+      fieldToDateArray
+    );
+    return transformedRecord;
   };
   return transformer;
 };
@@ -169,96 +272,36 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
 
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
-
-    const requirements = [];
-    const isParole = this.record.metadata.supervisionType === "Parole";
-    const supervisionWord = isParole ? "parole" : "probation";
-
     const {
-      criteria: {
-        supervisionPastHalfFullTermReleaseDate: {
-          eligibleDate: pastHalfFullTermReleaseDate,
-        },
-      },
+      metadata: { supervisionType },
+      eligibleCriteria,
     } = this.record;
 
-    if (isPast(pastHalfFullTermReleaseDate)) {
-      requirements.push({
-        text: `Completed at least half of ${supervisionWord} term`,
-        tooltip: isParole
-          ? "A parolee is eligible for early discharge consideration prior to the expiration of the original term of parole if they have completed at least one-half of an original parole term of 12 months or more..."
-          : "An offender may be considered for discharge prior to the expiration of the original term of probation if they have completed at least one-half of the probation term...",
-      });
-    }
+    const requirements: OpportunityRequirement[] = [];
 
-    if (isParole) {
-      requirements.push({
-        text: "Serving a parole term of 12 months or more",
-        tooltip:
-          "A parolee is eligible for early discharge consideration prior to the expiration of the original term of parole if they have completed at least one-half of an original parole term of 12 months or more...",
-      });
+    const criteriaKeys: CriteriaKey[] = [
+      "supervisionPastHalfFullTermReleaseDate",
+      "servingAtLeastOneYearOnParoleSupervision",
+      "usMiParoleDualSupervisionPastEarlyDischargeDate",
+      "usMiNoActivePpo",
+      "usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision",
+      "usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision",
+      "usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision",
+      "usMiSupervisionLevelIsNotSai",
+      "supervisionLevelIsNotHigh",
+      "usMiNoOwiViolationOnParoleDualSupervision",
+      "usMiNoPendingDetainer",
+    ];
 
-      requirements.push({
-        text: "Served mandatory period of parole",
-        tooltip:
-          "The parolee has served any mandatory period of parole as set forth in Paragraph F.",
-      });
-    }
-
-    requirements.push({
-      text: `No active PPO ordered during the ${supervisionWord} term`,
-    });
-
-    requirements.push({
-      text: `Not involved in a felony, assaultive misdemeanor, or offense requiring SORA registration while on ${supervisionWord}`,
-      tooltip: isParole
-        ? "The parolee is not known to have been involved in...felonious behavior, assaultive misdemeanor behavior (as set forth in Attachment A)...or an offense that requires registration under the Sex Offender Registration Act while on parole."
-        : "The offender is not known to have been involved in...felonious behavior or assaultive misdemeanor behavior as set forth in Attachment A “OP 06.01.145B Assaultive Misdemeanor List” which occurred while on probation or any offense that requires registration under the Sex Offender Registration Act (SORA), which occurred while on probation.",
-    });
-
-    requirements.push({
-      text: "Not serving for an offense excluded from early discharge eligibility by policy.",
-      tooltip: isParole
-        ? "The parolee is not serving for an offense...required to be registered under the Sex Offender Registration Act."
-        : "The offender is not currently serving for an offense that requires a mandatory term of probation as identified in Paragraph H. The offender is not currently serving for MCL 750.81 or MCL 750.84 (Assault with Intent to commit Great Bodily Harm Less than Murder).",
-    });
-
-    if (isParole) {
-      requirements.push({
-        text: "Not serving for an offense excluded from early discharge eligibility by policy.",
-        tooltip:
-          "The parolee is not serving for an offense...required to be registered under the Sex Offender Registration Act.",
-      });
-    }
-
-    if (!isParole) {
-      requirements.push({
-        text: "Not serving for an offense excluded from early discharge eligibility by policy.",
-        tooltip:
-          "The offender is not currently serving for an offense that requires a mandatory term of probation as identified in Paragraph H. The offender is not currently serving for MCL 750.81 or MCL 750.84 (Assault with Intent to commit Great Bodily Harm Less than Murder).",
-      });
-    }
-
-    if (isParole) {
-      requirements.push({
-        text: "Not paroled from SAI on current term",
-        tooltip:
-          "The parolee was not paroled from the Special Alternative Incarceration (SAI) program on the current term (see definition).",
-      });
-
-      requirements.push({
-        text: "Not on intensive supervision",
-      });
-
-      requirements.push({
-        text: "Not involved in an OWI offense while on parole.",
-        tooltip:
-          "The parolee is not known to have been involved in... a violation of MCL 257.625 (OWI)...while on parole.",
-      });
-    }
-
-    requirements.push({
-      text: "No pending detainers",
+    criteriaKeys.forEach((key) => {
+      if (key in eligibleCriteria) {
+        const copy = ELIGIBLE_CRITERIA_COPY[key];
+        if ("text" in copy) {
+          requirements.push(copy);
+        } else {
+          requirements.push(copy[supervisionType]);
+        }
+      }
     });
 
     return requirements;
@@ -298,7 +341,7 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
 
   get eligibilityDate(): Date | undefined {
     if (!this.record) return;
-    return this.record.criteria.supervisionPastHalfFullTermReleaseDate
-      .eligibleDate;
+    return this.record.eligibleCriteria.supervisionPastHalfFullTermReleaseDate
+      ?.eligibleDate;
   }
 }

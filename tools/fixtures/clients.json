@@ -679,7 +679,25 @@
     "pseudonymizedId": "pseudo-ed-eligible-1",
     "stateCode": "US_MI",
     "officerId": "OFFICER8",
-    "supervisionType": "PROBATIONER",
+    "supervisionType": "PAROLE",
+    "supervisionLevel": "HIGH",
+    "supervisionLevelStart": "2019-12-20",
+    "currentBalance": 221.88,
+    "specialConditions": [],
+    "allEligibleOpportunities": ["usMiEarlyDischarge"],
+    "personType": "CLIENT"
+  },
+  {
+    "recordId": "us_mi_ed-eligible-2",
+    "personName": {
+      "givenNames": "NOT",
+      "surname": "SQUIDWARD"
+    },
+    "personExternalId": "ed-eligible-2",
+    "pseudonymizedId": "pseudo-ed-eligible-2",
+    "stateCode": "US_MI",
+    "officerId": "OFFICER8",
+    "supervisionType": "PROBATION",
     "supervisionLevel": "HIGH",
     "supervisionLevelStart": "2019-12-20",
     "currentBalance": 221.88,

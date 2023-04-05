@@ -60,3 +60,7 @@ export type UnionToIntersection<U> = (
 export type PartialRecord<K extends string | number | symbol, V> = Partial<
   Record<K, V>
 >;
+
+export type Nullable<T> = {
+  [K in keyof T]: T[K] | null;
+};
