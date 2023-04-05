@@ -1,13 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`transform record with former half term criteria name 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "noConvictionWithin6Months": Object {},
+    "supervisionPastHalfFullTermReleaseDateFromSupervisionStart": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+    },
+    "usMePaidAllOwedRestitution": Object {},
+  },
+  "externalId": "abc123",
+  "stateCode": "US_ME",
+}
+`;
+
 exports[`transform record with restitution case 1`] = `
 Object {
   "caseNotes": Object {},
   "eligibleCriteria": Object {
     "noConvictionWithin6Months": Object {},
-    "supervisionPastHalfFullTermReleaseDate": Object {
+    "supervisionPastHalfFullTermReleaseDateFromSupervisionStart": Object {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
-      "sentenceType": "MEDIUM",
     },
     "usMePaidAllOwedRestitution": Object {
       "amountOwed": 0,
@@ -23,9 +37,8 @@ Object {
   "caseNotes": Object {},
   "eligibleCriteria": Object {
     "noConvictionWithin6Months": Object {},
-    "supervisionPastHalfFullTermReleaseDate": Object {
+    "supervisionPastHalfFullTermReleaseDateFromSupervisionStart": Object {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
-      "sentenceType": "MEDIUM",
     },
     "usMePaidAllOwedRestitution": Object {},
   },

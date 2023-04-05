@@ -4,8 +4,7 @@
     "externalId": "009",
     "eligibleCriteria": {
       "noConvictionWithin6Months": null,
-      "supervisionPastHalfFullTermReleaseDate": {
-        "sentenceType": "PROBATION",
+      "supervisionPastHalfFullTermReleaseDateFromSupervisionStart": {
         "eligibleDate": "2024-04-03"
       },
       "onMediumSupervisionLevelOrLower": {

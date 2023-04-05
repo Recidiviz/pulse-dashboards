@@ -840,8 +840,7 @@ export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRec
         amountOwed: 0,
       },
       noConvictionWithin6Months: {},
-      supervisionPastHalfFullTermReleaseDate: {
-        sentenceType: "PROBATION",
+      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
         eligibleDate: parseISO("2024-04-03"),
       },
       onMediumSupervisionLevelOrLower: {

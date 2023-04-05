@@ -55,7 +55,7 @@ const CRITERIA: Record<
       period of probation is completed, the Probation Officer may file a motion
       with the court for early termination of probation.`,
   },
-  supervisionPastHalfFullTermReleaseDate: {},
+  supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {},
   onMediumSupervisionLevelOrLower: {},
 };
 
@@ -66,7 +66,8 @@ function validateRecord(
 
   const {
     eligibleCriteria: {
-      supervisionPastHalfFullTermReleaseDate: pastHalfFullTermRelease,
+      supervisionPastHalfFullTermReleaseDateFromSupervisionStart:
+        pastHalfFullTermRelease,
     },
   } = record;
 
@@ -114,17 +115,21 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
     const requirements: OpportunityRequirement[] = [];
     const {
       eligibleCriteria: {
-        supervisionPastHalfFullTermReleaseDate,
+        supervisionPastHalfFullTermReleaseDateFromSupervisionStart,
         noConvictionWithin6Months,
         onMediumSupervisionLevelOrLower,
         usMePaidAllOwedRestitution,
       },
     } = this.record;
 
-    if (supervisionPastHalfFullTermReleaseDate?.eligibleDate) {
+    if (
+      supervisionPastHalfFullTermReleaseDateFromSupervisionStart?.eligibleDate
+    ) {
       requirements.push({
         text: `Served 1/2 of probation term`,
-        tooltip: CRITERIA.supervisionPastHalfFullTermReleaseDate.tooltip,
+        tooltip:
+          CRITERIA.supervisionPastHalfFullTermReleaseDateFromSupervisionStart
+            .tooltip,
       });
     }
 

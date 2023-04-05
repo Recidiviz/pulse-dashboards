@@ -26,8 +26,7 @@ test("transform record with restitution case", () => {
         amountOwed: 0,
       },
       noConvictionWithin6Months: null,
-      supervisionPastHalfFullTermReleaseDate: {
-        sentenceType: "MEDIUM",
+      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
         eligibleDate: "2022-01-03",
       },
     },
@@ -37,6 +36,22 @@ test("transform record with restitution case", () => {
 });
 
 test("transform record without restitution case", () => {
+  const rawRecord = {
+    stateCode: "US_ME",
+    externalId: "abc123",
+    eligibleCriteria: {
+      usMePaidAllOwedRestitution: null,
+      noConvictionWithin6Months: null,
+      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
+        eligibleDate: "2022-01-03",
+      },
+    },
+  };
+
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});
+
+test("transform record with former half term criteria name", () => {
   const rawRecord = {
     stateCode: "US_ME",
     externalId: "abc123",

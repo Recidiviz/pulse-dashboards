@@ -32,8 +32,7 @@ export type UsMeEarlyTerminationReferralRecord = {
     noConvictionWithin6Months: {
       latestConvictions?: string[];
     };
-    supervisionPastHalfFullTermReleaseDate: {
-      sentenceType: string;
+    supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
       eligibleDate: Date;
     };
     onMediumSupervisionLevelOrLower: {
@@ -53,13 +52,28 @@ export const transformReferral: TransformFunction<
 
   const { eligibleCriteria } = record;
 
-  transformedRecord.eligibleCriteria.supervisionPastHalfFullTermReleaseDate = {
-    ...transformedRecord.eligibleCriteria
-      .supervisionPastHalfFullTermReleaseDate,
-    eligibleDate: fieldToDate(
-      eligibleCriteria.supervisionPastHalfFullTermReleaseDate.eligibleDate
-    ),
-  };
+  // TODO(#3250): Remove the old criteria name
+  if (eligibleCriteria.supervisionPastHalfFullTermReleaseDate) {
+    transformedRecord.eligibleCriteria.supervisionPastHalfFullTermReleaseDateFromSupervisionStart =
+      {
+        eligibleDate: fieldToDate(
+          eligibleCriteria.supervisionPastHalfFullTermReleaseDate.eligibleDate
+        ),
+      };
+    delete transformedRecord.eligibleCriteria
+      .supervisionPastHalfFullTermReleaseDate;
+  } else if (
+    eligibleCriteria.supervisionPastHalfFullTermReleaseDateFromSupervisionStart
+  ) {
+    transformedRecord.eligibleCriteria.supervisionPastHalfFullTermReleaseDateFromSupervisionStart =
+      {
+        eligibleDate: fieldToDate(
+          eligibleCriteria
+            .supervisionPastHalfFullTermReleaseDateFromSupervisionStart
+            .eligibleDate
+        ),
+      };
+  }
 
   if (eligibleCriteria.noConvictionWithin6Months === null) {
     transformedRecord.eligibleCriteria.noConvictionWithin6Months = {};
