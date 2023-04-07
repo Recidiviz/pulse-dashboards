@@ -19,6 +19,7 @@
 import { cloneDeep } from "lodash";
 import { makeObservable } from "mobx";
 
+import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { Nullable } from "../../utils/typeUtils";
 import { Client } from "../Client";
@@ -307,8 +308,7 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
     return requirements;
   }
 
-  // TODO(#2969): Update copy once finalized
-  readonly policyOrMethodologyUrl = "";
+  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MI;
 
   readonly isAlert = false;
 

@@ -19,6 +19,7 @@
 
 import { makeObservable } from "mobx";
 
+import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
@@ -120,16 +121,29 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
         text: `Recommended classification review date, based on supervision start date and last classification review date, is ${formatWorkflowsDate(
           eligibleDate
         )}`,
+        tooltip:
+          "Classification reviews shall be completed after six months of active supervision […] " +
+          "Subsequent classification reviews shall be scheduled at six-month intervals.",
       },
 
       {
         text: `Currently supervised at ${supervisionLevel} and eligible based on offense type for a lower supervision level`,
+        tooltip:
+          "The supervising Agent shall ensure that a Correctional Offender " +
+          "Management Profiling for Alternative Sanctions (COMPAS) has been completed " +
+          "for each offender on their active caseload as outlined in OP 06.01.145 " +
+          "“Administration and Use of COMPAS and TAP.” Unless mandated by statute or " +
+          "other criteria as directed in this operating procedure, the COMPAS shall be " +
+          "used to determine the initial supervision level of each offender.\n" +
+          "Unless an offender’s supervision level is mandated by policy or statute, " +
+          "the supervising Agent shall reduce an offender’s supervision level if " +
+          "the offender has satisfactorily completed six continuous months at the " +
+          "current assigned supervision level.",
       },
     ];
   }
 
-  // TODO(#2969): Update copy once finalized
-  readonly policyOrMethodologyUrl = "";
+  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MI;
 
   denialReasonsMap = {
     VIOLATIONS: "Excessive violation behavior during current review period",
