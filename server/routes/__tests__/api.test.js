@@ -95,6 +95,7 @@ const {
   refreshCache,
   responder,
   getImpersonatedUserRestrictions,
+  sanitizeUserHash,
 } = require("../api");
 
 const { clearMemoryCache } = require("../../core/cacheManager");
@@ -386,6 +387,9 @@ describe("API GET tests", () => {
       expect(GoogleAuth).toHaveBeenCalledWith({
         credentials: { type: "service_account" },
       });
+    });
+    it("sanitizes bad hashes", () => {
+      expect(sanitizeUserHash("/someHash/=")).toBe("_someHash/=");
     });
   });
 });

@@ -76,7 +76,10 @@ exports.onExecutePostLogin = async (event, api) => {
         "idoc.idaho.gov"
       );
 
-      const userHash = Base64.stringify(SHA256(request_email?.toLowerCase()))
+      let userHash = Base64.stringify(SHA256(request_email?.toLowerCase()))
+      if (userHash.startsWith("/")) {
+        userHash = userHash.replace("/", "_");
+      }
       const url = `${event.secrets.RECIDIVIZ_APP_URL}auth/users/${userHash}`;
 
       const apiResponse = await client.request({ url, retry: true });

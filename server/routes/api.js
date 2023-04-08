@@ -311,6 +311,13 @@ function upload(req, res, next) {
   });
 }
 
+function sanitizeUserHash(userHash) {
+  if (userHash.startsWith("/")) {
+    return userHash.replace("/", "_");
+  }
+  return userHash;
+}
+
 async function getImpersonatedUserRestrictions(req, res) {
   if (isOfflineMode) {
     responder(res)(
@@ -320,7 +327,7 @@ async function getImpersonatedUserRestrictions(req, res) {
   }
 
   const { impersonatedEmail: email } = req.query;
-  const userHash = Base64.stringify(SHA256(email));
+  const userHash = sanitizeUserHash(Base64.stringify(SHA256(email)));
   const url = `${process.env.RECIDIVIZ_DATA_API_URL}/auth/users/${userHash}`;
   try {
     const auth = new GoogleAuth({ credentials: serviceAccount });
@@ -337,6 +344,7 @@ async function getImpersonatedUserRestrictions(req, res) {
 
 module.exports = {
   respondWithForbidden,
+  sanitizeUserHash,
   getImpersonatedUserRestrictions,
   offlineUser,
   newRevocations,

@@ -138,7 +138,11 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         const client = await auth.getIdTokenClient(
           event.secrets.TARGET_AUDIENCE
         );
-        const userHash = Base64.stringify(SHA256(event.user.email?.toLowerCase()))
+
+        let userHash = Base64.stringify(SHA256(event.user.email?.toLowerCase()))
+        if (userHash.startsWith("/")) {
+          userHash = userHash.replace("/", "_");
+        }
         const url = `${event.secrets.RECIDIVIZ_APP_URL}auth/users/${userHash}`;
         const apiResponse = await client.request({ url, retry: true });
         const restrictions = apiResponse.data;
