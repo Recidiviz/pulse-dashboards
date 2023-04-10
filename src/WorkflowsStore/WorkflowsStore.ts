@@ -669,6 +669,15 @@ export class WorkflowsStore implements Hydratable {
       );
     }
 
+    if (
+      currentTenantId === "US_MI" &&
+      !this.featureVariants.usMiMinimumTelephoneReporting
+    ) {
+      opportunityTypes = opportunityTypes.filter(
+        (oppType) => oppType !== "usMiMinimumTelephoneReporting"
+      );
+    }
+
     return opportunityTypes;
   }
 
