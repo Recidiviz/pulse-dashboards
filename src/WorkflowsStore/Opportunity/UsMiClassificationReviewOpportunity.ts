@@ -127,7 +127,7 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
       },
 
       {
-        text: `Currently supervised at ${supervisionLevel} and eligible based on offense type for a lower supervision level`,
+        text: "Currently eligible based on offense type and supervision level",
         tooltip:
           "The supervising Agent shall ensure that a Correctional Offender " +
           "Management Profiling for Alternative Sanctions (COMPAS) has been completed " +
