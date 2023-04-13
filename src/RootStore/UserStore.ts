@@ -307,6 +307,13 @@ export default class UserStore {
   }
 
   /**
+   * Returns the district this user is affiliated with, or undefined if not set.
+   */
+  get district(): string | undefined {
+    return this.userAppMetadata?.district;
+  }
+
+  /**
    * Returns the allowedSupervisionLocationIds for the given user.
    */
   get allowedSupervisionLocationIds(): string[] {

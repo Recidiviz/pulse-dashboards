@@ -47,6 +47,7 @@ beforeEach(() => {
     currentTenantId: "US_XX",
     userStore: {
       stateCode: "US_XX",
+      district: "D5",
     },
     user: {
       email: "test@example.com",
@@ -172,6 +173,7 @@ test("supplement record for staff user without caseload", () => {
   expect(sub.data).toMatchInlineSnapshot(`
     Array [
       Object {
+        "district": "D5",
         "email": "test@example.com",
         "givenNames": "Geri",
         "hasCaseload": false,

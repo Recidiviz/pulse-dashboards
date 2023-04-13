@@ -97,6 +97,7 @@ exports.onExecutePostLogin = async (event, api) => {
       api.user.setAppMetadata("stateCode", stateCode);
       api.user.setAppMetadata("userHash", restrictions.userHash)
       api.user.setAppMetadata("role", restrictions.role || null);
+      api.user.setAppMetadata("district", restrictions.district);
 
       // TODO #3170 Remove these once UserAppMetadata has been transitioned
       api.user.setAppMetadata(

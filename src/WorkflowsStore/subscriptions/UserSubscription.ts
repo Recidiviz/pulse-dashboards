@@ -93,7 +93,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
   get userWithoutCaseload(): StaffRecord | undefined {
     const {
       user,
-      userStore: { stateCode },
+      userStore: { stateCode, district },
     } = this.rootStore;
 
     if (!user || !user.email) return;
@@ -110,6 +110,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
       hasFacilityCaseload: false,
       givenNames: (user.given_name || formattedUserName?.firstName) ?? "",
       surname: (user.family_name || formattedUserName?.lastName) ?? "",
+      district,
     };
   }
 

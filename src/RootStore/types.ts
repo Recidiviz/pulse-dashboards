@@ -47,6 +47,7 @@ export type UserAppMetadata = {
   segmentId?: string;
   intercomId?: string;
   role?: UserRole;
+  district?: string;
 };
 
 export type LanternMethodologyByTenant = {
