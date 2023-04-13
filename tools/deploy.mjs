@@ -96,49 +96,109 @@ const nextVersion = `v${inc(
   releaseTypePrompt.releaseType
 )}`;
 
-// Build the application
-console.log("Building application...");
-await $`yarn build`.pipe(process.stdout);
+let publishReleaseNotes = false;
 
-// Run a preview
-// This deploys a preview application instead of doing `firebase serve`, because `firebase serve`
-// is exited with ctrl-c, and even though hypothetically we could catch the SIGINT or do something
-// clever with `screen` and piping output, this is much easier.
-console.log("Deploying preview application...");
-await $`firebase hosting:channel:deploy ${nextVersion} -P production  --expires 1h`.pipe(
-  process.stdout
-);
-
-// Ask if the preview is good. If not, exit.
-const continuePrompt = await inquirer.prompt({
+const deployBackendPrompt = await inquirer.prompt({
   type: "confirm",
-  name: "continueRelease",
-  message: `Would you like to deploy version ${nextVersion} to production?`,
-  default: false,
+  name: "deployBackend",
+  message: "Would you like to deploy the backend?",
 });
-if (!continuePrompt.continueRelease) {
-  process.exit();
+
+if (deployBackendPrompt.deployBackend) {
+  const gaeVersion = nextVersion.replaceAll(".", "-");
+  let retryBackend = false;
+  do {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      await $`gcloud app deploy gae-production.yaml --project recidiviz-dashboard-production --version ${gaeVersion}`;
+      retryBackend = false;
+      publishReleaseNotes = true;
+    } catch (e) {
+      // eslint-disable-next-line no-await-in-loop
+      const retryBackendPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryBackend",
+        message: `Backend deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryBackend = retryBackendPrompt.retryBackend;
+    }
+  } while (retryBackend);
 }
 
-// Create a tag for the new version
-await $`git tag -m "Version [${nextVersion}] release - $(date +'%Y-%m-%d %H:%M:%S %Z')" "${nextVersion}"`;
-await $`git push origin ${nextVersion}`;
-
-// Deploy the app with the tag name in a comment
-console.log("Deploying production application...");
-await $`firebase deploy -P production -m "${nextVersion}"`.pipe(process.stdout);
-
-// Update release notes to include correct end tag
-releaseNotes = releaseNotes.replace(`rc/${currentRevision}`, nextVersion);
-
-// Publish release notes
-console.log("Publishing release notes...");
-const release = await octokit.rest.repos.createRelease({
-  owner: "Recidiviz",
-  repo: "pulse-dashboards",
-  tag_name: nextVersion,
-  body: releaseNotes,
-  make_latest: "true", // yes, this is a string
+const deployFrontendPrompt = await inquirer.prompt({
+  type: "confirm",
+  name: "deployFrontend",
+  message:
+    "Would you like to deploy the frontend? You will have the opportunity to preview.",
 });
 
-console.log(`Release published at ${release.data.html_url}`);
+if (deployFrontendPrompt.deployFrontend) {
+  // Build the application
+  console.log("Building application...");
+  await $`yarn build`.pipe(process.stdout);
+
+  // Run a preview
+  // This deploys a preview application instead of doing `firebase serve`, because `firebase serve`
+  // is exited with ctrl-c, and even though hypothetically we could catch the SIGINT or do something
+  // clever with `screen` and piping output, this is much easier.
+  console.log("Deploying preview application...");
+  await $`firebase hosting:channel:deploy ${nextVersion} -P production  --expires 1h`.pipe(
+    process.stdout
+  );
+
+  // Ask if the preview is good. If not, exit.
+  const continuePrompt = await inquirer.prompt({
+    type: "confirm",
+    name: "continueRelease",
+    message: `Would you like to deploy version ${nextVersion} to production?`,
+    default: false,
+  });
+  if (continuePrompt.continueRelease) {
+    let retryFrontend = false;
+    do {
+      // Deploy the app with the tag name in a comment
+      console.log("Deploying production application...");
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        await $`firebase deploy -P production -m "${nextVersion}"`.pipe(
+          process.stdout
+        );
+        retryFrontend = false;
+        publishReleaseNotes = true;
+      } catch (e) {
+        // eslint-disable-next-line no-await-in-loop
+        const retryFrontendPrompt = await inquirer.prompt({
+          type: "confirm",
+          name: "retryFrontend",
+          message: `Frontend deploy failed with error: ${e}. Retry?`,
+          default: false,
+        });
+        retryFrontend = retryFrontendPrompt.retryFrontend;
+      }
+    } while (retryFrontend);
+  }
+}
+
+// If one deploy succeeded but the other deploy failed, we still want to publish release notes for
+// the one that succeeded, since any code change to fix the other will increment the release version.
+if (publishReleaseNotes) {
+  // Create a tag for the new version
+  await $`git tag -m "Version [${nextVersion}] release - $(date +'%Y-%m-%d %H:%M:%S %Z')" "${nextVersion}"`;
+  await $`git push origin ${nextVersion}`;
+
+  // Update release notes to include correct end tag
+  releaseNotes = releaseNotes.replace(`rc/${currentRevision}`, nextVersion);
+
+  // Publish release notes
+  console.log("Publishing release notes...");
+  const release = await octokit.rest.repos.createRelease({
+    owner: "Recidiviz",
+    repo: "pulse-dashboards",
+    tag_name: nextVersion,
+    body: releaseNotes,
+    make_latest: "true", // yes, this is a string
+  });
+
+  console.log(`Release published at ${release.data.html_url}`);
+}
