@@ -110,9 +110,6 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
 
-    const { supervisionLevel } =
-      this.record.eligibleCriteria
-        .usMiNotAlreadyOnLowestEligibleSupervisionLevel;
     const { eligibleDate } =
       this.record.eligibleCriteria.usMiClassificationReviewPastDueDate;
 
