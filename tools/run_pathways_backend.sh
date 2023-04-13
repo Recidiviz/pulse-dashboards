@@ -7,4 +7,4 @@ export OFFLINE_MODE_DIRECTORY="server/core/offline_config"
 # get just the file names, prepend the path the container is looking for them at, and join them with ':'.
 export FIXTURE_FILES=$(find server/core/demo_data/*.csv | xargs basename | xargs printf "recidiviz/local/fixtures/%s\n" | paste -s -d ":" -)
 
-docker compose pull case_triage_backend && docker compose up
+docker compose up

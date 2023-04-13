@@ -31,6 +31,9 @@
       "enabled": true,
       "host": "0.0.0.0",
       "port": 4000
+    },
+    "hosting": {
+      "port": 5001
     }
   }
 }

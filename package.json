@@ -38,6 +38,7 @@
     "demo": "npm-run-all --parallel spa:demo server:demo",
     "server:offline": "env-cmd -e offline npm-run-all --parallel server redis-server firebase-offline",
     "offline": "env-cmd -e offline npm-run-all --parallel spa:offline server redis-server firebase-offline",
+    "pull-pathways-backend": "docker compose pull case_triage_backend",
     "pathways-backend": "sh tools/run_pathways_backend.sh",
     "offline:be": "npm-run-all --parallel pathways-backend offline",
     "sync-content": "env-cmd -e sync-content ts-node tools/syncContentFromSheets.ts && prettier --write src/core/content/*",

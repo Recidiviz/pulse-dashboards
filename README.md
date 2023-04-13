@@ -134,7 +134,7 @@ To run Jest manually:
 
 `jest [optional-filepath]`
 
-Linting is done with a combination of [eslint](#eslint) and [Prettier](#Prettier). `react-scripts` runs some minimal linting by default as part of its build process; errors on those linting rules will cause our build scripts to fail, but errors in our broader [configuration](https://github.com/Recidiviz/pulse-dashboards/.eslintrc.json) will not.
+Linting is done with a combination of [eslint](#eslint) and [Prettier](#prettier). `react-scripts` runs some minimal linting by default as part of its build process; errors on those linting rules will cause our build scripts to fail, but errors in our broader [configuration](https://github.com/Recidiviz/pulse-dashboards/.eslintrc.json) will not.
 
 However, we have configured a pre-commit Git hook that prevents developers from committing code that fails our lint tests. It also auto-reformats that code as much as possible before executing the commit.
 
@@ -250,6 +250,8 @@ Before running this, first follow the same steps from the above section on offli
 - If you use a Mac, you may need to turn off AirPlay Receiver in System Preferences --> Sharing in order to make port 5000 available.
 - Configure docker authentication by running `gcloud auth configure-docker us-docker.pkg.dev`
 
+Run `yarn pull-pathways-backend` to pull the docker image from the registry. You should do this periodically to incorporate new changes.
+
 Run `yarn offline:be`, which runs the necessary containers for the new backend and its databases. The output from the backend docker container will be interspersed with the output from the other services that start up (redis, emulators, etc.) Once the server starts up, it will import fixture data from `server/core/demo_data` into a PostgreSQL database that the backend reads from. If fixture data changes during development, the server will restart and re-import the data. Because of the way Flask works, this import happens twice when you run `yarn offline:be`, but only once if fixture files change while it's running.
 
 It is possible that the frontend finishes loading before the backend has finished setting up. If that happens, you may see a "no data available" indicator in the frontend and/or failed requests in the console. To fix this, wait for the container output to display the message "finished initializing pathways database" and refresh the page (this should take no more than a minute).
@@ -282,7 +284,7 @@ Follow these steps to deploy a Firebase Preview App for QA:
 
 To generate a staging build of the frontend, invoke the following yarn script: `yarn build-staging`.
 
-Each time this is run, the `build` directory will be wiped clean. A [bundle analysis](#Bundle-analysis) report, found in `build/report.html`, will also be generated on each invocation of this script. This will include the appropriate environment variables from `.env.development`.
+Each time this is run, the `build` directory will be wiped clean. A [bundle analysis](#bundle-analysis) report, found in `build/report.html`, will also be generated on each invocation of this script. This will include the appropriate environment variables from `.env.development`.
 
 You should then test this locally by running `firebase serve`: it will run the staging build locally, pointed to the staging API backend--if you also have backend changes, deploy the backend as described in the next subsection. When you're satisfied, deploy the frontend to staging with `firebase deploy -P staging`. Test vigorously on staging before deploying to production.
 
