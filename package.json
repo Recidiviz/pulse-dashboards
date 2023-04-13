@@ -45,7 +45,8 @@
     "update-workflows-fixture": "firebase emulators:exec --project=demo-dev --only firestore --export-on-exit firestore-config/emulator-fixtures 'NODE_OPTIONS=\"--unhandled-rejections=strict\" ts-node tools/loadWorkflowsFixtures.ts'",
     "firebase-offline": "run-s update-workflows-fixture firebase-emulator",
     "update-rules-staging": "firebase --project=staging-backend deploy --only firestore:rules",
-    "update-rules-production": "firebase --project=production-backend deploy --only firestore:rules"
+    "update-rules-production": "firebase --project=production-backend deploy --only firestore:rules",
+    "deploy": "node ./tools/deploy.mjs"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.12.1",
@@ -178,6 +179,8 @@
     "@cucumber/cucumber": "^7.1.0",
     "@firebase/rules-unit-testing": "^2.0.2",
     "@google-cloud/firestore": "^5.0.2",
+    "@google-cloud/secret-manager": "^4.2.1",
+    "@octokit/rest": "^19.0.7",
     "@recidiviz/eslint-config": "^3.0.0",
     "@recidiviz/tsconfig": "^2.0.0",
     "@testing-library/dom": "^8.19.0",
@@ -212,18 +215,21 @@
     "google-auth-library": "^8.7.0",
     "google-spreadsheet": "^3.1.15",
     "husky": "^4.2.3",
+    "inquirer": "^9.1.5",
     "jest-canvas-mock": "^2.3.0",
     "jest-extended": "^3.2.0",
     "lint-staged": "^10.0.9",
     "nodemon": "^2.0.4",
     "react-scripts": "^5.0.1",
     "react-textarea-autosize": "^8.3.4",
+    "semver": "^7.4.0",
     "supertest": "^6.0.1",
     "timekeeper": "^2.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.3",
     "utility-types": "^3.10.0",
-    "yarn": "^1.22.10"
+    "yarn": "^1.22.10",
+    "zx": "^7.2.1"
   },
   "husky": {
     "hooks": {
