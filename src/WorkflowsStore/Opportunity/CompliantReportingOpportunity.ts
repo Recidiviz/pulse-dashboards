@@ -26,6 +26,7 @@ import { formatRelativeToNow } from "../../core/utils/timePeriod";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../FirestoreStore";
 import { formatWorkflowsDate, pluralizeWord } from "../../utils";
+import { FeatureGateError } from "../../utils/FeatureGateError";
 import { Client } from "../Client";
 import { OpportunityValidationError, OTHER_KEY } from "../utils";
 import {
@@ -186,9 +187,7 @@ const getRecordValidator =
         !client.rootStore.workflowsStore.featureVariants
           .CompliantReportingAlmostEligible
       ) {
-        throw new OpportunityValidationError(
-          "Missing drug screen feature disabled"
-        );
+        throw new FeatureGateError("Missing drug screen feature disabled");
       }
     }
   };

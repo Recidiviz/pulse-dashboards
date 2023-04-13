@@ -25,6 +25,7 @@ import {
 import { computed } from "mobx";
 import { keepAlive } from "mobx-utils";
 
+import { FeatureGateError } from "../../../utils/FeatureGateError";
 import { FirestoreDocumentSubscription } from "../FirestoreDocumentSubscription";
 import {
   getMockDocumentSnapshotHandler,
@@ -190,6 +191,62 @@ test("raw data fails validation", () => {
   expect(sub.isLoading).toEqual(false);
 });
 
+test("transform errors logged to Sentry", () => {
+  const mockData = {
+    question: "answer",
+  };
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+  const transformError = new Error("Test doc fails transform");
+  const testTransformFail = (d?: DocumentData) => {
+    throw transformError;
+  };
+
+  sub = new TestSubscription(testTransformFail);
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+
+  expect(Sentry.captureException).toHaveBeenCalledOnceWith(transformError);
+});
+
+test("validation errors logged to Sentry", () => {
+  const mockData = {
+    question: "answer",
+  };
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+  const validationError = new Error("Test doc fails validation");
+  const testValidateFail = (d?: DocumentData) => {
+    throw validationError;
+  };
+
+  sub = new TestSubscription(undefined, testValidateFail);
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+
+  expect(Sentry.captureException).toHaveBeenCalledOnceWith(validationError);
+});
+
+test("feature gate errors not logged to Sentry", () => {
+  const mockData = {
+    question: "answer",
+  };
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+  const testValidateFail = (d?: DocumentData) => {
+    throw new FeatureGateError("Feature flag disabled");
+  };
+
+  sub = new TestSubscription(undefined, testValidateFail);
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+
+  expect(Sentry.captureException).not.toHaveBeenCalled();
+});
+
 test("raw data passes validation", () => {
   const mockData = {
     question: "answer",
@@ -256,7 +313,7 @@ test("handles Firestore error", () => {
   sub.subscribe();
 
   mockReceiveError(testError);
-  expect(Sentry.captureException).toHaveBeenCalledWith(testError);
+  expect(Sentry.captureException).toHaveBeenCalledOnceWith(testError);
   expect(sub.error).toEqual(testError);
   expect(sub.isHydrated).toBe(false);
   expect(sub.isLoading).toBeFalse();

@@ -20,9 +20,10 @@ import { computed, makeObservable } from "mobx";
 
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../FirestoreStore";
+import { FeatureGateError } from "../../utils/FeatureGateError";
 import { Client } from "../Client";
 import { ValidateFunction } from "../subscriptions";
-import { OpportunityValidationError, OTHER_KEY } from "../utils";
+import { OTHER_KEY } from "../utils";
 import {
   EarnedDischargeDraftData,
   EarnedDischargeReferralRecord,
@@ -106,7 +107,7 @@ const getRecordValidator =
       !featureFlags.usIdLengthOfStayAlmostEligible &&
       ineligibleCriteriaKeys.includes("pastEarnedDischargeEligibleDate")
     ) {
-      throw new OpportunityValidationError(
+      throw new FeatureGateError(
         "usIdLengthOfStayAlmostEligible opportunity is not enabled for this user."
       );
     }
@@ -115,7 +116,7 @@ const getRecordValidator =
       !featureFlags.usIdIncomeVerificationAlmostEligible &&
       ineligibleCriteriaKeys.includes("usIdIncomeVerifiedWithin3Months")
     ) {
-      throw new OpportunityValidationError(
+      throw new FeatureGateError(
         "usIdIncomeVerificationAlmostEligible opportunity is not enabled for this user."
       );
     }

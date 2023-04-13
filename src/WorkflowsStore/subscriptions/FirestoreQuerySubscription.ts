@@ -35,6 +35,7 @@ import {
 } from "mobx";
 import { IDisposer } from "mobx-utils";
 
+import { FeatureGateError } from "../../utils/FeatureGateError";
 import {
   QuerySubscription,
   TransformFunction,
@@ -100,7 +101,10 @@ export abstract class FirestoreQuerySubscription<
       } catch (e) {
         // Move on to allow for partial success
         errors.push(e);
-        Sentry.captureException(e);
+        // don't log routine feature flag checks, but do log everything else
+        if (!(e instanceof FeatureGateError)) {
+          Sentry.captureException(e);
+        }
       }
     });
 

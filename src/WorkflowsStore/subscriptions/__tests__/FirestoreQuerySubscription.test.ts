@@ -25,6 +25,7 @@ import {
 import { computed, IObservableValue, observable } from "mobx";
 import { keepAlive } from "mobx-utils";
 
+import { FeatureGateError } from "../../../utils/FeatureGateError";
 import { FirestoreQuerySubscription } from "../FirestoreQuerySubscription";
 import {
   getMockQuerySnapshotHandler,
@@ -252,6 +253,65 @@ test("raw data fails validation", () => {
   expect(sub.isHydrated).toBe(true);
   expect(sub.error).toEqual(expect.any(AggregateError));
   expect(sub.isLoading).toBe(false);
+});
+
+test("transform errors logged to Sentry", () => {
+  const mockData = [
+    {
+      question: "answer",
+    },
+  ];
+  const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
+  const testError = new Error("foo");
+  const testTransform = (d?: DocumentData) => {
+    throw testError;
+  };
+
+  sub = getTestUnit(testTransform);
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(Sentry.captureException).toHaveBeenCalledOnceWith(testError);
+});
+
+test("validation errors logged to Sentry", () => {
+  const mockData = [
+    {
+      question: "answer",
+    },
+  ];
+  const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
+  const testError = new Error("foo");
+  const testValidate = (d?: DocumentData) => {
+    throw testError;
+  };
+
+  sub = getTestUnit(undefined, testValidate);
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(Sentry.captureException).toHaveBeenCalledOnceWith(testError);
+});
+
+test("feature gate errors not logged to Sentry", () => {
+  const mockData = [
+    {
+      question: "answer",
+    },
+  ];
+  const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
+  const testValidate = (d?: DocumentData) => {
+    throw new FeatureGateError("feature flag disabled");
+  };
+
+  sub = getTestUnit(undefined, testValidate);
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(Sentry.captureException).not.toHaveBeenCalled();
 });
 
 test("raw data passes validation", () => {

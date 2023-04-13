@@ -31,6 +31,7 @@ import {
   onBecomeUnobserved,
 } from "mobx";
 
+import { FeatureGateError } from "../../utils/FeatureGateError";
 import {
   DocumentSubscription,
   TransformFunction,
@@ -106,6 +107,10 @@ export abstract class FirestoreDocumentSubscription<
       this.error = undefined;
     } catch (e) {
       this.setError(e instanceof Error ? e : new Error(`${e}`));
+      // don't log routine feature flag checks, but do log everything else
+      if (!(e instanceof FeatureGateError)) {
+        Sentry.captureException(e);
+      }
     }
 
     if (this.isLoading) {
