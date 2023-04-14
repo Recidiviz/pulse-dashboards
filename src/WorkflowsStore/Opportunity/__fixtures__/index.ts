@@ -769,11 +769,7 @@ export const usMeSCCPAlmostEligibleXPortionOfSentenceRecordFixture: UsMeSCCPRefe
       },
       usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
       usMeNoDetainersWarrantsOrOther: null,
-      usMeNoClassAOrBViolationFor90Days: {
-        eligibleDate: parseISO("2022-10-15"),
-        highestClassViol: "highestClassViol",
-        violType: "violType",
-      },
+      usMeNoClassAOrBViolationFor90Days: null,
     },
     caseNotes: {
       foo: [

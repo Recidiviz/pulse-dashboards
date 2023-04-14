@@ -100,7 +100,7 @@ const INELIGIBLE_CRITERIA_COPY = {
 };
 
 function hydrateXMonthsRemainingRequirement(
-  criterion: UsMeSCCPCriteria["usMeXMonthsRemainingOnSentence"],
+  criterion: NonNullable<UsMeSCCPCriteria["usMeXMonthsRemainingOnSentence"]>,
   copy: OpportunityRequirement
 ) {
   const monthsRemaining =
@@ -113,7 +113,7 @@ function hydrateXMonthsRemainingRequirement(
 }
 
 function hydrateServedXPortionOfSentence(
-  criterion: UsMeSCCPCriteria["usMeServedXPortionOfSentence"],
+  criterion: NonNullable<UsMeSCCPCriteria["usMeServedXPortionOfSentence"]>,
   copy: Required<OpportunityRequirement>
 ): OpportunityRequirement {
   const { xPortionServed, eligibleDate } = criterion;

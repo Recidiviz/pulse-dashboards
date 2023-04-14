@@ -17,34 +17,57 @@
  * =============================================================================
  */
 
-import { cloneDeep } from "lodash";
+import { z } from "zod";
 
 import { TransformFunction } from "../subscriptions";
-import { fieldToDate, optionalFieldToDate } from "../utils";
-import { WithCaseNotes } from "./types";
-import { transformCaseNotes } from "./utils";
+import {
+  caseNotesSchema,
+  dateStringSchema,
+  MergedCriteria,
+  opportunitySchemaBase,
+} from "./schemaHelpers";
 
-export type UsMeSCCPCriteria = {
-  usMeMinimumOrCommunityCustody: { custodyLevel: string };
-  usMeServedXPortionOfSentence: {
-    eligibleDate: Date;
-    xPortionServed: "1/2" | "2/3";
-  };
-  usMeXMonthsRemainingOnSentence: { eligibleDate: Date };
-  usMeNoDetainersWarrantsOrOther: null;
-  usMeNoClassAOrBViolationFor90Days: null | {
-    eligibleDate?: Date;
-    highestClassViol: string;
-    violType: string;
-  };
-};
+// these have the same shape whether they are eligible or not
+const possiblyIneligibleCriteria = z
+  .object({
+    usMeXMonthsRemainingOnSentence: z.object({
+      eligibleDate: dateStringSchema,
+    }),
+    usMeServedXPortionOfSentence: z.object({
+      eligibleDate: dateStringSchema,
+      xPortionServed: z.enum(["1/2", "2/3"]),
+    }),
+  })
+  .partial();
 
-export type UsMeSCCPReferralRecord = {
-  stateCode: string;
-  externalId: string;
-  eligibleCriteria: Partial<UsMeSCCPCriteria>;
-  ineligibleCriteria: Partial<UsMeSCCPCriteria>;
-} & WithCaseNotes;
+export const usMeSCCPSchema = opportunitySchemaBase
+  .extend({
+    eligibleCriteria: possiblyIneligibleCriteria.extend({
+      // optional because it can also be ineligible, with a different shape
+      usMeNoClassAOrBViolationFor90Days: z.null().optional(),
+      usMeMinimumOrCommunityCustody: z.object({ custodyLevel: z.string() }),
+      usMeNoDetainersWarrantsOrOther: z.null(),
+    }),
+    ineligibleCriteria: possiblyIneligibleCriteria.extend({
+      usMeNoClassAOrBViolationFor90Days: z
+        .object({
+          eligibleDate: dateStringSchema.nullable(),
+          highestClassViol: z.string(),
+          violType: z.string(),
+        })
+        .optional(),
+    }),
+  })
+  .merge(caseNotesSchema);
+
+export type UsMeSCCPReferralRecord = z.infer<typeof usMeSCCPSchema>;
+
+export type UsMeSCCPCriteria = MergedCriteria<
+  UsMeSCCPReferralRecord["eligibleCriteria"],
+  UsMeSCCPReferralRecord["ineligibleCriteria"]
+>;
+
+export type UsMeSCCPReferralRecordRaw = z.input<typeof usMeSCCPSchema>;
 
 export type UsMeSCCPDraftData = {
   residentName: string;
@@ -53,54 +76,8 @@ export type UsMeSCCPDraftData = {
   caseManager: string;
 };
 
-const transformCriteria = (
-  criteria: Partial<Record<keyof UsMeSCCPCriteria, Record<string, string>>>
-): Partial<UsMeSCCPCriteria> => {
-  const transformedCriteria = cloneDeep(criteria) as Partial<UsMeSCCPCriteria>;
-
-  if (transformedCriteria.usMeServedXPortionOfSentence) {
-    transformedCriteria.usMeServedXPortionOfSentence.eligibleDate = fieldToDate(
-      // @ts-expect-error: We know this field exists since the one we checked above is a clone of it
-      criteria.usMeServedXPortionOfSentence.eligibleDate
-    );
-  }
-
-  if (transformedCriteria.usMeXMonthsRemainingOnSentence) {
-    transformedCriteria.usMeXMonthsRemainingOnSentence.eligibleDate =
-      fieldToDate(
-        // @ts-expect-error: We know this field exists since the one we checked above is a clone of it
-        criteria.usMeXMonthsRemainingOnSentence.eligibleDate
-      );
-  }
-
-  if (transformedCriteria.usMeNoClassAOrBViolationFor90Days) {
-    transformedCriteria.usMeNoClassAOrBViolationFor90Days.eligibleDate =
-      optionalFieldToDate(
-        // @ts-expect-error: We know this field exists since the one we checked above is a clone of it
-        criteria.usMeNoClassAOrBViolationFor90Days.eligibleDate
-      );
-  }
-
-  return transformedCriteria;
-};
-
 export const transformReferral: TransformFunction<UsMeSCCPReferralRecord> = (
   record
 ) => {
-  if (!record) {
-    throw new Error("No record found");
-  }
-
-  const transformedRecord = cloneDeep(record) as UsMeSCCPReferralRecord;
-
-  transformedRecord.eligibleCriteria = transformCriteria(
-    record.eligibleCriteria
-  );
-  transformedRecord.ineligibleCriteria = transformCriteria(
-    record.ineligibleCriteria
-  );
-
-  transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
-
-  return transformedRecord;
+  return usMeSCCPSchema.parse(record);
 };

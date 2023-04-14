@@ -22,7 +22,7 @@
     "test-server": "TZ=UTC jest ./server --setupFilesAfterEnv ./server/setupTests.js --resetMocks=false --runInBand",
     "test-filters": "TZ=UTC jest ./shared-filters --resetMocks=false",
     "test-firestore": "TZ=UTC firebase emulators:exec --only firestore 'yarn jest ./firestore-config --env=node'",
-    "test-zod": "env-cmd -e server ts-node tools/testZodSchema.ts",
+    "test-zod": "source ./load_environment.sh env_dev_server && ts-node tools/testZodSchema.ts",
     "test": "yarn test-server && yarn test-filters && yarn test-react",
     "lint": "tsc && eslint '**/*.{js,ts,tsx}'",
     "redis-server": "redis-server --port 6380",

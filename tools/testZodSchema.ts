@@ -23,6 +23,7 @@ import { z } from "zod";
 import { collectionNames } from "../src/FirestoreStore";
 import { usNdEarlyTerminationSchema } from "../src/WorkflowsStore";
 import { usIdPastFtrdSchema } from "../src/WorkflowsStore/Opportunity/UsIdPastFTRDReferralRecord";
+import { usMeSCCPSchema } from "../src/WorkflowsStore/Opportunity/UsMeSCCPReferralRecord";
 
 type CollectionName = keyof typeof collectionNames;
 
@@ -49,6 +50,7 @@ function getDb() {
 const SCHEMAS = {
   earlyTerminationReferrals: usNdEarlyTerminationSchema,
   pastFTRDReferrals: usIdPastFtrdSchema,
+  usMeSCCPReferrals: usMeSCCPSchema,
 } satisfies Partial<Record<CollectionName, z.AnyZodObject>>;
 
 (async () => {

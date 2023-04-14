@@ -26,3 +26,26 @@ export const opportunitySchemaBase = z.object({
   stateCode: z.string(),
   externalId: z.string(),
 });
+
+const caseNoteSchema = z
+  .object({
+    noteTitle: z.string().nullable(),
+    noteBody: z.string().nullable(),
+    eventDate: dateStringSchema.nullable(),
+  })
+  .partial();
+
+export const caseNotesSchema = z.object({
+  caseNotes: z.record(z.array(caseNoteSchema)).default({}),
+});
+
+/**
+ * Criteria are overlapping objects; keyof Ineligible is presumed to be a subset of
+ * keyof Eligible, but the value of overlapping keys may differ, in which case
+ * they will be unioned.
+ */
+export type MergedCriteria<Eligible, Ineligible> = {
+  [EK in keyof Eligible]:
+    | Eligible[EK]
+    | (EK extends keyof Ineligible ? Ineligible[EK] : never);
+};

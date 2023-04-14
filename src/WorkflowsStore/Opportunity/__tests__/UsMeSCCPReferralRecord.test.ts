@@ -28,6 +28,7 @@ test("transform record", () => {
       usMeMinimumOrCommunityCustody: { custodyLevel: "MINIMUM" },
       usMeServedXPortionOfSentence: {
         eligibleDate: "2022-11-03",
+        xPortionServed: "1/2",
       },
       usMeXMonthsRemainingOnSentence: {
         eligibleDate: "2022-08-07",
@@ -56,16 +57,20 @@ test("transform almost-eligible record", () => {
     externalId: "002",
     eligibleCriteria: {
       usMeMinimumOrCommunityCustody: { custodyLevel: "MINIMUM" },
+      usMeNoDetainersWarrantsOrOther: null,
     },
     ineligibleCriteria: {
       usMeServedXPortionOfSentence: {
         eligibleDate: "2023-01-03",
+        xPortionServed: "2/3",
       },
       usMeXMonthsRemainingOnSentence: {
         eligibleDate: "2022-12-07",
       },
       usMeNoClassAOrBViolationFor90Days: {
         eligibleDate: "2022-11-15",
+        highestClassViol: "A",
+        violType: "foo",
       },
     },
     caseNotes: {

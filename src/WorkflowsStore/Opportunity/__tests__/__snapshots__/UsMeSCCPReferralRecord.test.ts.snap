@@ -15,14 +15,18 @@ Object {
     "usMeMinimumOrCommunityCustody": Object {
       "custodyLevel": "MINIMUM",
     },
+    "usMeNoDetainersWarrantsOrOther": null,
   },
   "externalId": "002",
   "ineligibleCriteria": Object {
     "usMeNoClassAOrBViolationFor90Days": Object {
       "eligibleDate": 2022-11-15T00:00:00.000Z,
+      "highestClassViol": "A",
+      "violType": "foo",
     },
     "usMeServedXPortionOfSentence": Object {
       "eligibleDate": 2023-01-03T00:00:00.000Z,
+      "xPortionServed": "2/3",
     },
     "usMeXMonthsRemainingOnSentence": Object {
       "eligibleDate": 2022-12-07T00:00:00.000Z,
@@ -51,6 +55,7 @@ Object {
     "usMeNoDetainersWarrantsOrOther": null,
     "usMeServedXPortionOfSentence": Object {
       "eligibleDate": 2022-11-03T00:00:00.000Z,
+      "xPortionServed": "1/2",
     },
     "usMeXMonthsRemainingOnSentence": Object {
       "eligibleDate": 2022-08-07T00:00:00.000Z,
