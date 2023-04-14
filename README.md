@@ -75,6 +75,13 @@ That's it! We suggest installing a linting package for your preferred code edito
 
 Environment variables, auth configs, and service accounts are stored in Google Secrets Manager and loaded into the environment prior to launching or deploying the app.
 
+To update a secret:
+
+1. Go to the [recidiviz-dashboard-staging GSM](https://console.cloud.google.com/security/secret-manager?project=recidiviz-dashboard-staging)
+1. Find the secret where the env/var or config that needs to be updated is stored. All of the secrets that contain environment variables or environment config start with `env_`
+1. Copy the existing value (to be edited or added to when creating the new version). Since there are usually multiple env vars that live in a single secret, this step is necessary before moving on to the next step.
+1. Create a new version of the secret with an updated value
+
 For anyone trying to set this up independently, construct environment variables by hand based on the explanations below.
 
 Expected frontend environment variables include:
@@ -104,7 +111,6 @@ Expected backend environment variables include:
 - `METADATA_NAMESPACE` - String used to access the user app metadata from the token
 - `FIREBASE_PROJECT` - Name of the TCP project where Firebase is hosted
 - `FIREBASE_CREDENTIAL` - Service account used to authenticate/authorize access to Firebase
-
 
 The build process, as described below, ensures that the proper values are compiled and included in the static bundle at build time, for the right environment.
 
