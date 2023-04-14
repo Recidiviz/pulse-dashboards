@@ -21,7 +21,6 @@ import { ClientRecord, ResidentRecord } from "../../../FirestoreStore";
 import { dateToTimestamp } from "../../utils";
 import { SupervisionOpportunityType } from "..";
 import { CompliantReportingReferralRecord } from "../CompliantReportingReferralRecord";
-import { EarlyTerminationReferralRecord } from "../EarlyTerminationReferralRecord";
 import { EarnedDischargeReferralRecord } from "../EarnedDischargeReferralRecord";
 import { LSUReferralRecord } from "../LSUReferralRecord";
 import { PastFTRDReferralRecord } from "../PastFTRDReferralRecord";
@@ -29,6 +28,7 @@ import { UsMeEarlyTerminationReferralRecord } from "../UsMeEarlyTerminationRefer
 import { UsMeSCCPReferralRecord } from "../UsMeSCCPReferralRecord";
 import { UsMiMinimumTelephoneReportingReferralRecord } from "../UsMiMinimumTelephoneReportingReferralRecord";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../UsMoRestrictiveHousingStatusHearingReferralRecord";
+import { UsNdEarlyTerminationReferralRecord } from "../UsNdEarlyTerminationReferralRecord";
 import { UsTnExpirationReferralRecord } from "../UsTnExpirationReferralRecord";
 
 //
@@ -207,87 +207,89 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord =
 // North Dakota
 //
 
-export const earlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> = {
-  personType: "CLIENT",
-  recordId: "us_nd_110",
-  personName: {
-    givenNames: "JAMIE",
-    surname: "JONES",
-  },
-  personExternalId: "110",
-  pseudonymizedId: "p110",
-  stateCode: "US_ND",
-  officerId: "OFFICER3",
-  supervisionType: "PROBATION",
-  supervisionLevel: "MEDIUM",
-  supervisionLevelStart: dateToTimestamp("2019-12-20"),
-  address: "123 Bedrock Lane",
-  phoneNumber: "5555555678",
-  expirationDate: dateToTimestamp("2024-12-31"),
-  allEligibleOpportunities: ["earlyTermination"],
-  supervisionStartDate: "2020-02-22",
-  currentBalance: 0,
-  lastPaymentAmount: 125.75,
-  lastPaymentDate: dateToTimestamp("2022-01-03"),
-  specialConditions: [],
-  boardConditions: [],
-  currentEmployers: [
-    {
-      name: "Tire store",
-      address: "456 Bedrock Lane",
+export const usNdEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> =
+  {
+    personType: "CLIENT",
+    recordId: "us_nd_110",
+    personName: {
+      givenNames: "JAMIE",
+      surname: "JONES",
     },
-  ],
-  milestones: [
-    {
-      text: "8 months without a violation",
-      type: "MONTHS_WITHOUT_VIOLATION",
-    },
-    {
-      text: "15 months on supervision",
-      type: "MONTHS_ON_SUPERVISION",
-    },
-  ],
-  emailAddress: "jamie@example.com",
-};
+    personExternalId: "110",
+    pseudonymizedId: "p110",
+    stateCode: "US_ND",
+    officerId: "OFFICER3",
+    supervisionType: "PROBATION",
+    supervisionLevel: "MEDIUM",
+    supervisionLevelStart: dateToTimestamp("2019-12-20"),
+    address: "123 Bedrock Lane",
+    phoneNumber: "5555555678",
+    expirationDate: dateToTimestamp("2024-12-31"),
+    allEligibleOpportunities: ["earlyTermination"],
+    supervisionStartDate: "2020-02-22",
+    currentBalance: 0,
+    lastPaymentAmount: 125.75,
+    lastPaymentDate: dateToTimestamp("2022-01-03"),
+    specialConditions: [],
+    boardConditions: [],
+    currentEmployers: [
+      {
+        name: "Tire store",
+        address: "456 Bedrock Lane",
+      },
+    ],
+    milestones: [
+      {
+        text: "8 months without a violation",
+        type: "MONTHS_WITHOUT_VIOLATION",
+      },
+      {
+        text: "15 months on supervision",
+        type: "MONTHS_ON_SUPERVISION",
+      },
+    ],
+    emailAddress: "jamie@example.com",
+  };
 
-export const earlyTerminationReferralRecord: EarlyTerminationReferralRecord = {
-  stateCode: "US_ND",
-  externalId: "110",
-  formInformation: {
-    clientName: "Jamie Jones",
-    convictionCounty: "NORTH_CENTRAL",
-    judgeName: "JUDGE 1",
-    priorCourtDate: parseISO("2020-01-03"),
-    sentenceLengthMonths: 36,
-    crimeNames: ["CHARGE 1", "CHARGE 2"],
-    probationExpirationDate: parseISO("2022-12-02"),
-    probationOfficerFullName: "Karl Fog",
-    criminalNumber: "12345",
-    judicialDistrictCode: "BISMARCK",
-    statesAttorneyEmailAddress: "state.attny.837@state.gov",
-    statesAttorneyMailingAddress: "9234 Maine St., Ohiotown, ND",
-    statesAttorneyPhoneNumber: "888-867-5309",
-  },
-  criteria: {
-    supervisionPastEarlyDischargeDate: {
-      eligibleDate: parseISO("2022-01-03"),
+export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRecord =
+  {
+    stateCode: "US_ND",
+    externalId: "110",
+    formInformation: {
+      clientName: "Jamie Jones",
+      convictionCounty: "NORTH_CENTRAL",
+      judgeName: "JUDGE 1",
+      priorCourtDate: parseISO("2020-01-03"),
+      sentenceLengthMonths: 36,
+      crimeNames: ["CHARGE 1", "CHARGE 2"],
+      probationExpirationDate: parseISO("2022-12-02"),
+      probationOfficerFullName: "Karl Fog",
+      criminalNumber: "12345",
+      judicialDistrictCode: "BISMARCK",
+      statesAttorneyEmailAddress: "state.attny.837@state.gov",
+      statesAttorneyMailingAddress: "9234 Maine St., Ohiotown, ND",
+      statesAttorneyPhoneNumber: "888-867-5309",
     },
-    usNdNotInActiveRevocationStatus: {
-      revocationDate: undefined,
+    criteria: {
+      supervisionPastEarlyDischargeDate: {
+        eligibleDate: parseISO("2022-01-03"),
+      },
+      usNdNotInActiveRevocationStatus: {
+        revocationDate: null,
+      },
+      usNdImpliedValidEarlyTerminationSupervisionLevel: {
+        supervisionLevel: "MEDIUM",
+      },
+      usNdImpliedValidEarlyTerminationSentenceType: {
+        supervisionType: "PROBATION",
+      },
     },
-    usNdImpliedValidEarlyTerminationSupervisionLevel: {
-      supervisionLevel: "MEDIUM",
+    metadata: {
+      multipleSentences: true,
+      outOfState: false,
+      ICOut: false,
     },
-    usNdImpliedValidEarlyTerminationSentenceType: {
-      supervisionType: "PROBATION",
-    },
-  },
-  metadata: {
-    multipleSentences: true,
-    outOfState: false,
-    ICOut: false,
-  },
-};
+  };
 
 //
 // Idaho

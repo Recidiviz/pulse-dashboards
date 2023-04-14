@@ -30,7 +30,6 @@ import tenants from "../tenants";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import {
   CompliantReportingOpportunity,
-  EarlyTerminationOpportunity,
   EarnedDischargeOpportunity,
   LSUOpportunity,
   Opportunity,
@@ -39,6 +38,7 @@ import {
   SupervisionOpportunityType,
   UsMeEarlyTerminationOpportunity,
   UsMiMinimumTelephoneReportingOpportunity,
+  UsNdEarlyTerminationOpportunity,
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
@@ -72,7 +72,7 @@ const supervisionOpportunityConstructors: Record<
   new (c: Client) => Opportunity<Client>
 > = {
   compliantReporting: CompliantReportingOpportunity,
-  earlyTermination: EarlyTerminationOpportunity,
+  earlyTermination: UsNdEarlyTerminationOpportunity,
   earnedDischarge: EarnedDischargeOpportunity,
   LSU: LSUOpportunity,
   pastFTRD: PastFTRDOpportunity,

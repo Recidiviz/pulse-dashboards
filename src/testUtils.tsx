@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { autorun } from "mobx";
+import { SafeParseReturnType, ZodError, ZodFormattedError } from "zod";
 
 /**
  * Convenience method to run an immediate, one-time reactive effect
@@ -27,3 +28,21 @@ export function reactImmediately(effect: () => void): void {
 }
 
 export * from "@testing-library/react";
+
+export function getParseError<Input, Output>(
+  result: SafeParseReturnType<Input, Output>
+): ZodError<Input> {
+  if (result.success) {
+    throw new Error(
+      "expected Zod parse failure, but received successful parse result"
+    );
+  }
+
+  return result.error;
+}
+
+export function getParseErrorFormatted<Input, Output>(
+  result: SafeParseReturnType<Input, Output>
+): ZodFormattedError<Input> {
+  return getParseError(result).format();
+}

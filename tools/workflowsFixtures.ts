@@ -21,15 +21,18 @@ import { Timestamp } from "@google-cloud/firestore";
 import fs from "fs";
 
 import { collectionNames } from "../src/FirestoreStore";
-import { defaultFeatureVariantsActive } from "../src/FirestoreStore/types";
+import {
+  CollectionName,
+  defaultFeatureVariantsActive,
+} from "../src/FirestoreStore/types";
 import { deleteCollection, getDb } from "./firestoreUtils";
 import { locationsData } from "./fixtures/locations";
 import { residentsData } from "./fixtures/residents";
 import { usIdSupervisionTasksData } from "./fixtures/usIdSupervisionTasks";
+import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
 
-const OPPORTUNITIES_WITH_FIXTURES: (keyof typeof collectionNames)[] = [
+const OPPORTUNITIES_WITH_JSON_FIXTURES: CollectionName[] = [
   "compliantReportingReferrals",
-  "earlyTerminationReferrals",
   "LSUReferrals",
   "earnedDischargeReferrals",
   "pastFTRDReferrals",
@@ -49,12 +52,11 @@ export type FixtureData<T> = {
   idFunc: (arg0: T) => string;
 };
 
-const FIXTURES_TO_LOAD: Partial<
-  Record<keyof typeof collectionNames, FixtureData<any>>
-> = {
+const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   residents: residentsData,
   locations: locationsData,
   usIdSupervisionTasks: usIdSupervisionTasksData,
+  earlyTerminationReferrals: usNdEarlyTerminationFixture,
 };
 
 const db = getDb();
@@ -163,7 +165,7 @@ export async function loadUserFixture(): Promise<void> {
 }
 
 export async function loadOpportunityReferralFixtures(): Promise<void> {
-  for await (const opportunity of OPPORTUNITIES_WITH_FIXTURES) {
+  for await (const opportunity of OPPORTUNITIES_WITH_JSON_FIXTURES) {
     console.log(
       `wiping existing ${collectionNames[opportunity]} referral data ...`
     );

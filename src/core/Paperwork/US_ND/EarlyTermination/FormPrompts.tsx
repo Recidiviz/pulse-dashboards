@@ -4,13 +4,13 @@ import * as React from "react";
 import { useRootStore } from "../../../../components/StoreProvider";
 import {
   Client,
-  EarlyTerminationReferralRecord,
+  UsNdEarlyTerminationReferralRecord,
 } from "../../../../WorkflowsStore";
 import { Prompt } from "../../FormPrompt";
 
 const getMetadataPrompts = (
   client?: Client,
-  metadata: Partial<EarlyTerminationReferralRecord["metadata"]> = {}
+  metadata: Partial<UsNdEarlyTerminationReferralRecord["metadata"]> = {}
 ): React.ReactChild[] => {
   const prompts = [];
   if (metadata.outOfState) {

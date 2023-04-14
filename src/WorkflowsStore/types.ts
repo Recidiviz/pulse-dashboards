@@ -26,7 +26,6 @@ import { Expect, Extends } from "../utils/typeUtils";
 import { Client } from "./Client";
 import {
   CompliantReportingOpportunity,
-  EarlyTerminationOpportunity,
   EarnedDischargeOpportunity,
   IncarcerationOpportunityType,
   LSUOpportunity,
@@ -36,6 +35,7 @@ import {
   UsMeSCCPOpportunity,
   UsMiMinimumTelephoneReportingOpportunity,
   UsMoRestrictiveHousingStatusHearingOpportunity,
+  UsNdEarlyTerminationOpportunity,
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
@@ -48,7 +48,7 @@ import { CollectionDocumentSubscription } from "./subscriptions";
 import { SupervisionTaskInterface } from "./Task/types";
 
 export type SupervisionOpportunityMapping = {
-  earlyTermination?: EarlyTerminationOpportunity;
+  earlyTermination?: UsNdEarlyTerminationOpportunity;
   compliantReporting?: CompliantReportingOpportunity;
   earnedDischarge?: EarnedDischargeOpportunity;
   LSU?: LSUOpportunity;

@@ -23,6 +23,7 @@
     "test-server": "TZ=UTC jest ./server --setupFilesAfterEnv ./server/setupTests.js --resetMocks=false --runInBand",
     "test-filters": "TZ=UTC jest ./shared-filters --resetMocks=false",
     "test-firestore": "TZ=UTC firebase emulators:exec --only firestore 'yarn jest ./firestore-config --env=node'",
+    "test-zod": "env-cmd -e server ts-node tools/testZodSchema.ts",
     "test": "yarn test-server && yarn test-filters && yarn test-react",
     "lint": "tsc && eslint '**/*.{js,ts,tsx}'",
     "redis-server": "redis-server --port 6380",
@@ -172,7 +173,8 @@
     "use-onclickoutside": "^0.4.0",
     "use-query-params": "^1.2.3",
     "uuid": "^8.3.2",
-    "word-wrap": "^1.2.3"
+    "word-wrap": "^1.2.3",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.11.5",
@@ -198,6 +200,7 @@
     "@types/node": "^14.14.21",
     "@types/pizzip": "^3.0.2",
     "@types/pluralize": "^0.0.29",
+    "@types/prompts": "^2.4.4",
     "@types/react-input-autosize": "^2.2.1",
     "@types/react-router-dom": "^5.1.7",
     "@types/react-scrollable-anchor": "^0.6.0",
@@ -221,6 +224,7 @@
     "jest-extended": "^3.2.0",
     "lint-staged": "^10.0.9",
     "nodemon": "^2.0.4",
+    "prompts": "^2.4.2",
     "react-scripts": "^5.0.1",
     "react-textarea-autosize": "^8.3.4",
     "semver": "^7.4.0",

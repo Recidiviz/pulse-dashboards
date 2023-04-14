@@ -1,9 +1,6 @@
 {
   "extends": "@recidiviz/tsconfig/react",
-  "include": [
-    "src",
-    "wdio.conf.js"
-  ],
+  "include": ["src", "wdio.conf.js"],
   "ts-node": {
     // these options are overrides used only by ts-node
     "compilerOptions": {
@@ -12,7 +9,7 @@
   },
   "compilerOptions": {
     "jsx": "react-jsx",
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
   "target": "es6"
 }

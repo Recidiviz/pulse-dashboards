@@ -23,7 +23,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import type { TextareaAutosizeProps } from "react-textarea-autosize/dist/declarations/src";
 import styled from "styled-components/macro";
 
-import { EarlyTerminationDraftData } from "../../../../WorkflowsStore";
+import { UsNdEarlyTerminationDraftData } from "../../../../WorkflowsStore";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { useAnimatedValue, useReactiveInput } from "../../utils";
 
@@ -52,7 +52,7 @@ export const Textarea = styled(TextareaAutosize)`
 `;
 
 interface FormTextareaProps extends TextareaAutosizeProps {
-  name: Extract<keyof EarlyTerminationDraftData, string>;
+  name: Extract<keyof UsNdEarlyTerminationDraftData, string>;
 }
 
 const FormTextarea: React.FC<FormTextareaProps> = observer(

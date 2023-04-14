@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
@@ -23,15 +22,15 @@ import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/
 import { OpportunityUpdateWithForm } from "../../FirestoreStore";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
-import { OpportunityValidationError, OTHER_KEY } from "../utils";
-import {
-  EarlyTerminationDraftData,
-  EarlyTerminationReferralRecord,
-  transformReferral,
-} from "./EarlyTerminationReferralRecord";
+import { OTHER_KEY } from "../utils";
 import { EarlyTerminationForm } from "./Forms/EarlyTerminationForm";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
+import {
+  UsNdEarlyTerminationDraftData,
+  UsNdEarlyTerminationReferralRecord,
+  usNdEarlyTerminationSchema,
+} from "./UsNdEarlyTerminationReferralRecord";
 
 const DENIAL_REASONS_MAP = {
   "INT MEASURE":
@@ -48,7 +47,7 @@ const DENIAL_REASONS_MAP = {
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
 const CRITERIA: Record<
-  keyof EarlyTerminationReferralRecord["criteria"],
+  keyof UsNdEarlyTerminationReferralRecord["criteria"],
   Partial<OpportunityRequirement>
 > = {
   supervisionPastEarlyDischargeDate: {
@@ -66,54 +65,10 @@ const CRITERIA: Record<
   },
 };
 
-function validateRecord(
-  record: DocumentData | undefined
-): DocumentData | undefined {
-  if (!record) return;
-
-  const {
-    criteria: {
-      supervisionPastEarlyDischargeDate: pastEarlyDischarge,
-      usNdImpliedValidEarlyTerminationSupervisionLevel:
-        eligibleSupervisionLevel,
-      usNdImpliedValidEarlyTerminationSentenceType: eligibleSupervisionType,
-      usNdNotInActiveRevocationStatus: notActiveRevocationStatus,
-    },
-  } = record;
-
-  if (!pastEarlyDischarge?.eligibleDate) {
-    throw new OpportunityValidationError(
-      "Missing early termination opportunity eligible date"
-    );
-  }
-
-  if (!eligibleSupervisionLevel?.supervisionLevel) {
-    throw new OpportunityValidationError(
-      "Missing early termination opportunity supervision level"
-    );
-  }
-
-  if (!eligibleSupervisionType?.supervisionType) {
-    throw new OpportunityValidationError(
-      "Missing early termination opportunity supervision type"
-    );
-  }
-
-  if (
-    !notActiveRevocationStatus ||
-    (notActiveRevocationStatus && notActiveRevocationStatus.revocationDate)
-  ) {
-    throw new OpportunityValidationError(
-      "Early termination opportunity has revocation date"
-    );
-  }
-  return record;
-}
-
-export class EarlyTerminationOpportunity extends OpportunityBase<
+export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
   Client,
-  EarlyTerminationReferralRecord,
-  OpportunityUpdateWithForm<EarlyTerminationDraftData>
+  UsNdEarlyTerminationReferralRecord,
+  OpportunityUpdateWithForm<UsNdEarlyTerminationDraftData>
 > {
   form: EarlyTerminationForm;
 
@@ -128,8 +83,7 @@ export class EarlyTerminationOpportunity extends OpportunityBase<
       client,
       "earlyTermination",
       client.rootStore,
-      transformReferral,
-      validateRecord
+      usNdEarlyTerminationSchema.parse
     );
 
     makeObservable(this, {
@@ -143,7 +97,6 @@ export class EarlyTerminationOpportunity extends OpportunityBase<
 
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
-    const requirements: OpportunityRequirement[] = [];
     const {
       criteria: {
         supervisionPastEarlyDischargeDate,
@@ -152,37 +105,31 @@ export class EarlyTerminationOpportunity extends OpportunityBase<
       },
     } = this.record;
 
-    if (supervisionPastEarlyDischargeDate?.eligibleDate) {
-      requirements.push({
+    return [
+      {
         text: `Early termination date is ${formatWorkflowsDate(
-          supervisionPastEarlyDischargeDate?.eligibleDate
+          supervisionPastEarlyDischargeDate.eligibleDate
         )}`,
         tooltip: CRITERIA.supervisionPastEarlyDischargeDate.tooltip,
-      });
-    }
-
-    if (usNdImpliedValidEarlyTerminationSupervisionLevel?.supervisionLevel) {
-      requirements.push({
-        text: `Currently on ${usNdImpliedValidEarlyTerminationSupervisionLevel?.supervisionLevel.toLowerCase()} supervision`,
+      },
+      {
+        text: `Currently on ${usNdImpliedValidEarlyTerminationSupervisionLevel.supervisionLevel.toLowerCase()} supervision`,
         tooltip:
           CRITERIA.usNdImpliedValidEarlyTerminationSupervisionLevel.tooltip,
-      });
-    }
-    if (usNdImpliedValidEarlyTerminationSentenceType?.supervisionType) {
-      requirements.push({
-        text: `Serving ${usNdImpliedValidEarlyTerminationSentenceType?.supervisionType?.toLowerCase()} sentence`,
+      },
+      {
+        text: `Serving ${usNdImpliedValidEarlyTerminationSentenceType.supervisionType.toLowerCase()} sentence`,
         tooltip: CRITERIA.usNdImpliedValidEarlyTerminationSentenceType.tooltip,
-      });
-    }
-    requirements.push({
-      text: `Not on active revocation status`,
-      tooltip: CRITERIA.usNdNotInActiveRevocationStatus.tooltip,
-    });
+      },
 
-    return requirements;
+      {
+        text: `Not on active revocation status`,
+        tooltip: CRITERIA.usNdNotInActiveRevocationStatus.tooltip,
+      },
+    ];
   }
 
-  get metadata(): EarlyTerminationReferralRecord["metadata"] | undefined {
+  get metadata(): UsNdEarlyTerminationReferralRecord["metadata"] | undefined {
     return this.record?.metadata;
   }
 }

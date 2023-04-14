@@ -3,16 +3,16 @@ import { sortBy } from "lodash";
 import moment from "moment";
 
 import { pluralize } from "../../../utils";
-import { EarlyTerminationDraftData } from "../EarlyTerminationReferralRecord";
+import { UsNdEarlyTerminationDraftData } from "../UsNdEarlyTerminationReferralRecord";
 import { FormBase } from "./FormBase";
 
 const ADDITIONAL_DEPOSITION_LINES_PREFIX = "additionalDepositionLines";
 const FORM_DATE_FORMAT = "MMMM Do, YYYY";
 
-export class EarlyTerminationForm extends FormBase<EarlyTerminationDraftData> {
+export class EarlyTerminationForm extends FormBase<UsNdEarlyTerminationDraftData> {
   navigateToFormText = "Auto-fill paperwork";
 
-  prefilledDataTransformer(): Partial<EarlyTerminationDraftData> {
+  prefilledDataTransformer(): Partial<UsNdEarlyTerminationDraftData> {
     if (!this.opportunity.record || !this.person) return {};
 
     const {

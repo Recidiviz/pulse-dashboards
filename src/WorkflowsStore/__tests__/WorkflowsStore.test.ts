@@ -41,8 +41,8 @@ import {
 import { Client } from "../Client";
 import {
   CompliantReportingOpportunity,
-  EarlyTerminationOpportunity,
   LSUOpportunity,
+  UsNdEarlyTerminationOpportunity,
 } from "../Opportunity";
 import { Resident } from "../Resident";
 import { dateToTimestamp } from "../utils";
@@ -730,10 +730,10 @@ describe("hasOpportunities", () => {
       .spyOn(CompliantReportingOpportunity.prototype, "isLoading", "get")
       .mockReturnValue(false);
     jest
-      .spyOn(EarlyTerminationOpportunity.prototype, "isHydrated", "get")
+      .spyOn(UsNdEarlyTerminationOpportunity.prototype, "isHydrated", "get")
       .mockReturnValue(true);
     jest
-      .spyOn(EarlyTerminationOpportunity.prototype, "isLoading", "get")
+      .spyOn(UsNdEarlyTerminationOpportunity.prototype, "isLoading", "get")
       .mockReturnValue(false);
 
     await waitForHydration();

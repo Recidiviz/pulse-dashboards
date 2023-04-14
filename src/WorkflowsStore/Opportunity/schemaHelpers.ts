@@ -14,19 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-export * from "./CompliantReportingOpportunity";
-export * from "./EarnedDischargeOpportunity";
-export { CompliantReportingForm } from "./Forms/CompliantReportingForm";
-export { EarlyTerminationForm } from "./Forms/EarlyTerminationForm";
-export { LSUForm } from "./Forms/LSUForm";
-export * from "./LSUOpportunity";
-export * from "./PastFTRDOpportunity";
-export * from "./types";
-export * from "./UsMeEarlyTerminationOpportunity";
-export * from "./UsMeSCCPOpportunity";
-export * from "./UsMiMinimumTelephoneReportingOpportunity";
-export * from "./UsMoRestrictiveHousingStatusHearingOpportunity";
-export * from "./UsNdEarlyTerminationOpportunity";
-export * from "./UsTnExpirationOpportunity";
-export * from "./UsTnSupervisionLevelDowngradeOpportunity";
-export * from "./utils";
+import { z } from "zod";
+
+import { fieldToDate } from "../utils";
+
+export const dateStringSchema = z.string().transform(fieldToDate);
+
+export const stringToIntSchema = z.string().transform((s) => parseInt(s));

@@ -18,6 +18,6 @@
 export * from "./Client";
 export * from "./Opportunity";
 export * from "./Opportunity/CompliantReportingReferralRecord";
-export * from "./Opportunity/EarlyTerminationReferralRecord";
+export * from "./Opportunity/UsNdEarlyTerminationReferralRecord";
 export * from "./types";
 export * from "./WorkflowsStore";

@@ -22,12 +22,12 @@ import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
 import { DocumentSubscription } from "../../subscriptions";
 import {
-  earlyTerminationEligibleClientRecord,
-  earlyTerminationReferralRecord,
+  usNdEarlyTerminationEligibleClientRecord,
+  usNdEarlyTerminationReferralRecord,
 } from "../__fixtures__";
-import { EarlyTerminationOpportunity } from "../EarlyTerminationOpportunity";
+import { UsNdEarlyTerminationOpportunity } from "../UsNdEarlyTerminationOpportunity";
 
-let opp: EarlyTerminationOpportunity;
+let opp: UsNdEarlyTerminationOpportunity;
 let client: Client;
 let root: RootStore;
 let referralSub: DocumentSubscription<any>;
@@ -36,7 +36,7 @@ let updatesSub: DocumentSubscription<any>;
 jest.mock("../../subscriptions");
 
 function createTestUnit(
-  clientRecord: typeof earlyTerminationEligibleClientRecord
+  clientRecord: typeof usNdEarlyTerminationEligibleClientRecord
 ) {
   root = new RootStore();
   jest
@@ -67,11 +67,11 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
-    createTestUnit(earlyTerminationEligibleClientRecord);
+    createTestUnit(usNdEarlyTerminationEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
     referralSub.isLoading = false;
-    referralSub.data = earlyTerminationReferralRecord;
+    referralSub.data = usNdEarlyTerminationReferralRecord;
 
     updatesSub = opp.updatesSubscription;
     updatesSub.isLoading = false;
