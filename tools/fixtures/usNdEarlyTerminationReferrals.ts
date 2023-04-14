@@ -17,6 +17,7 @@
 
 import { UsNdEarlyTerminationReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsNdEarlyTerminationReferralRecord";
 import { FixtureData } from "../workflowsFixtures";
+import { externalIdFunc } from "./utils";
 
 const data: UsNdEarlyTerminationReferralRecordRaw[] = [
   {
@@ -62,5 +63,5 @@ const data: UsNdEarlyTerminationReferralRecordRaw[] = [
 export const usNdEarlyTerminationFixture: FixtureData<UsNdEarlyTerminationReferralRecordRaw> =
   {
     data,
-    idFunc: (r) => r.externalId,
+    idFunc: externalIdFunc,
   };

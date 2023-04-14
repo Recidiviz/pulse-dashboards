@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { z } from "zod";
 
-import { fieldToDate } from "../utils";
+import { FixtureData } from "../workflowsFixtures";
 
-export const dateStringSchema = z.string().transform(fieldToDate);
-
-export const stringToIntSchema = z.string().transform((s) => parseInt(s));
-
-export const opportunitySchemaBase = z.object({
-  stateCode: z.string(),
-  externalId: z.string(),
-});
+export const externalIdFunc: FixtureData<{ externalId: string }>["idFunc"] = (
+  doc
+) => doc.externalId;

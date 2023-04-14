@@ -23,7 +23,7 @@ import { SupervisionOpportunityType } from "..";
 import { CompliantReportingReferralRecord } from "../CompliantReportingReferralRecord";
 import { EarnedDischargeReferralRecord } from "../EarnedDischargeReferralRecord";
 import { LSUReferralRecord } from "../LSUReferralRecord";
-import { PastFTRDReferralRecord } from "../PastFTRDReferralRecord";
+import { UsIdPastFTRDReferralRecord } from "../UsIdPastFTRDReferralRecord";
 import { UsMeEarlyTerminationReferralRecord } from "../UsMeEarlyTerminationReferralRecord";
 import { UsMeSCCPReferralRecord } from "../UsMeSCCPReferralRecord";
 import { UsMiMinimumTelephoneReportingReferralRecord } from "../UsMiMinimumTelephoneReportingReferralRecord";
@@ -583,13 +583,10 @@ export const EarnedDischargeEligibleClientRecord: ClientRecord = {
   allEligibleOpportunities: ["earnedDischarge"],
 };
 
-export const pastFTRDRecordFixture: PastFTRDReferralRecord = {
+export const pastFTRDRecordFixture: UsIdPastFTRDReferralRecord = {
   stateCode: "US_ID",
   externalId: "001",
-  formInformation: {
-    clientName: "Betty Rubble",
-  },
-  criteria: {
+  eligibleCriteria: {
     supervisionPastFullTermCompletionDate: {
       eligibleDate: parseISO("2022-01-03"),
     },

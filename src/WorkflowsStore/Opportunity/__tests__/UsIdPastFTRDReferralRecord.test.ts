@@ -15,36 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { cloneDeep } from "lodash";
+import { transformReferral } from "../UsIdPastFTRDReferralRecord";
 
-import { TransformFunction } from "../subscriptions";
-import { optionalFieldToDate } from "../utils";
-
-export interface PastFTRDReferralRecord {
-  stateCode: string;
-  externalId: string;
-  formInformation: {
-    clientName: string;
-  };
-  criteria: {
-    supervisionPastFullTermCompletionDate?: { eligibleDate?: Date };
-  };
-}
-
-export const transformReferral: TransformFunction<PastFTRDReferralRecord> = (
-  record
-) => {
-  if (!record) {
-    throw new Error("No record found");
-  }
-
-  const transformedRecord = cloneDeep(record) as PastFTRDReferralRecord;
-
-  transformedRecord.criteria.supervisionPastFullTermCompletionDate = {
-    eligibleDate: optionalFieldToDate(
-      record.criteria.supervisionPastFullTermCompletionDate?.eligibleDate
-    ),
+test("transform record", () => {
+  const rawRecord = {
+    stateCode: "US_ID",
+    externalId: "001",
+    formInformation: {},
+    eligibleCriteria: {
+      supervisionPastFullTermCompletionDate: {
+        eligibleDate: "2022-01-03",
+      },
+    },
   };
 
-  return transformedRecord;
-};
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});

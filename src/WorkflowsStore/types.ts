@@ -29,8 +29,8 @@ import {
   EarnedDischargeOpportunity,
   IncarcerationOpportunityType,
   LSUOpportunity,
-  PastFTRDOpportunity,
   SupervisionOpportunityType,
+  UsIdPastFTRDOpportunity,
   UsMeEarlyTerminationOpportunity,
   UsMeSCCPOpportunity,
   UsMiMinimumTelephoneReportingOpportunity,
@@ -52,7 +52,7 @@ export type SupervisionOpportunityMapping = {
   compliantReporting?: CompliantReportingOpportunity;
   earnedDischarge?: EarnedDischargeOpportunity;
   LSU?: LSUOpportunity;
-  pastFTRD?: PastFTRDOpportunity;
+  pastFTRD?: UsIdPastFTRDOpportunity;
   supervisionLevelDowngrade?: UsTnSupervisionLevelDowngradeOpportunity;
   usIdSupervisionLevelDowngrade?: UsIdSupervisionLevelDowngradeOpportunity;
   usMiClassificationReview?: UsMiClassificationReviewOpportunity;

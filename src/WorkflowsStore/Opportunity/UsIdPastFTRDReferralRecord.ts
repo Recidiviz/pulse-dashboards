@@ -15,38 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { transformReferral } from "../PastFTRDReferralRecord";
+import { z } from "zod";
 
-test("transform record", () => {
-  const rawRecord = {
-    stateCode: "US_ID",
-    externalId: "001",
-    formInformation: {
-      clientName: "Betty Rubble",
-    },
-    criteria: {
-      supervisionPastFullTermCompletionDate: {
-        eligibleDate: "2022-01-03",
-      },
-    },
-  };
+import { TransformFunction } from "../subscriptions";
+import { dateStringSchema, opportunitySchemaBase } from "./schemaHelpers";
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+export const usIdPastFtrdSchema = opportunitySchemaBase.extend({
+  eligibleCriteria: z.object({
+    supervisionPastFullTermCompletionDate: z.object({
+      eligibleDate: dateStringSchema,
+    }),
+  }),
 });
 
-test("all criteria are optional", () => {
-  const rawRecord = {
-    stateCode: "US_ID",
-    externalId: "001",
-    formInformation: {
-      clientName: "Betty Rubble",
-    },
-    criteria: {
-      supervisionPastFullTermCompletionDate: {
-        eligibleDate: "2022-01-03",
-      },
-    },
-  };
+export type UsIdPastFTRDReferralRecord = z.infer<typeof usIdPastFtrdSchema>;
+export type UsIdPastFTRDReferralRecordRaw = z.input<typeof usIdPastFtrdSchema>;
 
-  expect(() => transformReferral(rawRecord)).not.toThrow();
-});
+export const transformReferral: TransformFunction<
+  UsIdPastFTRDReferralRecord
+> = (record) => {
+  return usIdPastFtrdSchema.parse(record);
+};

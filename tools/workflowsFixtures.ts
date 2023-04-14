@@ -28,6 +28,7 @@ import {
 import { deleteCollection, getDb } from "./firestoreUtils";
 import { locationsData } from "./fixtures/locations";
 import { residentsData } from "./fixtures/residents";
+import { usIdPastFtrdFixture } from "./fixtures/UsIdPastFtrdReferrals";
 import { usIdSupervisionTasksData } from "./fixtures/usIdSupervisionTasks";
 import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
 
@@ -35,7 +36,6 @@ const OPPORTUNITIES_WITH_JSON_FIXTURES: CollectionName[] = [
   "compliantReportingReferrals",
   "LSUReferrals",
   "earnedDischargeReferrals",
-  "pastFTRDReferrals",
   "supervisionLevelDowngradeReferrals",
   "usIdSupervisionLevelDowngradeReferrals",
   "usMiClassificationReviewReferrals",
@@ -57,6 +57,7 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   locations: locationsData,
   usIdSupervisionTasks: usIdSupervisionTasksData,
   earlyTerminationReferrals: usNdEarlyTerminationFixture,
+  pastFTRDReferrals: usIdPastFtrdFixture,
 };
 
 const db = getDb();

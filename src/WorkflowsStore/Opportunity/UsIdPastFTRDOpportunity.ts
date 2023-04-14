@@ -23,15 +23,15 @@ import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OpportunityBase } from "./OpportunityBase";
-import {
-  PastFTRDReferralRecord,
-  transformReferral,
-} from "./PastFTRDReferralRecord";
 import { OpportunityRequirement } from "./types";
+import {
+  transformReferral,
+  UsIdPastFTRDReferralRecord,
+} from "./UsIdPastFTRDReferralRecord";
 
-export class PastFTRDOpportunity extends OpportunityBase<
+export class UsIdPastFTRDOpportunity extends OpportunityBase<
   Client,
-  PastFTRDReferralRecord
+  UsIdPastFTRDReferralRecord
 > {
   readonly isAlert = true;
 
@@ -49,31 +49,25 @@ export class PastFTRDOpportunity extends OpportunityBase<
   }
 
   get requirementsMet(): OpportunityRequirement[] {
-    if (!this.record) return [];
-    const requirements: OpportunityRequirement[] = [];
-    const {
-      criteria: { supervisionPastFullTermCompletionDate },
-    } = this.record;
+    const { eligibilityDate } = this;
+    if (!eligibilityDate) return [];
 
-    if (supervisionPastFullTermCompletionDate?.eligibleDate) {
-      const daysPastEligibleDate = differenceInDays(
-        new Date(),
-        supervisionPastFullTermCompletionDate.eligibleDate
-      );
-      const text = `${daysPastEligibleDate} days past FTRD (${formatWorkflowsDate(
-        supervisionPastFullTermCompletionDate.eligibleDate
-      )})`;
-      // There is no policy to refer to so the tooltip is undefined
-      requirements.push({
-        text,
-      });
-    }
+    const requirements: OpportunityRequirement[] = [];
+
+    const daysPastEligibleDate = differenceInDays(new Date(), eligibilityDate);
+    const text = `${daysPastEligibleDate} days past FTRD (${formatWorkflowsDate(
+      eligibilityDate
+    )})`;
+    // There is no policy to refer to so the tooltip is undefined
+    requirements.push({
+      text,
+    });
 
     return requirements;
   }
 
   get eligibilityDate(): Date | undefined {
-    return this.record?.criteria.supervisionPastFullTermCompletionDate
-      ?.eligibleDate;
+    return this.record?.eligibleCriteria.supervisionPastFullTermCompletionDate
+      .eligibleDate;
   }
 }

@@ -21,7 +21,8 @@ import prompts from "prompts";
 import { z } from "zod";
 
 import { collectionNames } from "../src/FirestoreStore";
-import { UsNdEarlyTerminationSchema } from "../src/WorkflowsStore";
+import { usNdEarlyTerminationSchema } from "../src/WorkflowsStore";
+import { usIdPastFtrdSchema } from "../src/WorkflowsStore/Opportunity/UsIdPastFTRDReferralRecord";
 
 type CollectionName = keyof typeof collectionNames;
 
@@ -46,7 +47,8 @@ function getDb() {
 }
 
 const SCHEMAS = {
-  earlyTerminationReferrals: UsNdEarlyTerminationSchema,
+  earlyTerminationReferrals: usNdEarlyTerminationSchema,
+  pastFTRDReferrals: usIdPastFtrdSchema,
 } satisfies Partial<Record<CollectionName, z.AnyZodObject>>;
 
 (async () => {
@@ -68,10 +70,11 @@ const SCHEMAS = {
     },
   ]);
 
-  const schema = SCHEMAS[selection.collection as keyof typeof SCHEMAS];
+  const collectionName = selection.collection as keyof typeof SCHEMAS;
+  const schema = SCHEMAS[collectionName];
 
   const db = getDb();
-  const coll = db.collection(selection.collection);
+  const coll = db.collection(collectionNames[collectionName]);
   const query = selection.limit ? coll.limit(selection.limit) : coll;
 
   let succeeded = 0;

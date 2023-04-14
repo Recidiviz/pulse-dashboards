@@ -25,9 +25,9 @@ import {
   pastFTRDEligibleClientRecord,
   pastFTRDRecordFixture,
 } from "../__fixtures__";
-import { PastFTRDOpportunity } from "../PastFTRDOpportunity";
+import { UsIdPastFTRDOpportunity } from "../UsIdPastFTRDOpportunity";
 
-let opp: PastFTRDOpportunity;
+let opp: UsIdPastFTRDOpportunity;
 let client: Client;
 let root: RootStore;
 let referralSub: DocumentSubscription<any>;
