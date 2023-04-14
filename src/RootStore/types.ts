@@ -30,6 +30,7 @@ const TenantIds = [
   pathways.US_TN,
   pathways.US_ME,
   pathways.US_MI,
+  pathways.US_NC,
   pathways.US_ND,
   RECIDIVIZ_TENANT,
   LANTERN,

@@ -24,6 +24,7 @@ import { usIdMethodology } from "./methodology/usIdMethodology";
 import { usMeMethodology } from "./methodology/usMeMethodology";
 import { usMiMethodology } from "./methodology/usMiMethodology";
 import { usMoMethodology } from "./methodology/usMoMethodology";
+import { usNcMethodology } from "./methodology/usNcMethodology";
 import { usNdMethodology } from "./methodology/usNdMethodology";
 import { usTnMethodology } from "./methodology/usTnMethodology";
 import defaultMetricContent from "./metric/default";
@@ -32,6 +33,7 @@ import IdMetricContent from "./metric/us_id";
 import MeMetricContent from "./metric/us_me";
 import MiMetricContent from "./metric/us_mi";
 import MoMetricContent from "./metric/us_mo";
+import NcMetricContent from "./metric/us_nc";
 import NdMetricContent from "./metric/us_nd";
 import TnMetricContent from "./metric/us_tn";
 import defaultPageContent from "./page/default";
@@ -40,6 +42,7 @@ import IdPageContent from "./page/us_id";
 import MePageContent from "./page/us_me";
 import MiPageContent from "./page/us_mi";
 import MoPageContent from "./page/us_mo";
+import NcPageContent from "./page/us_nc";
 import NdPageContent from "./page/us_nd";
 import TnPageContent from "./page/us_tn";
 import {
@@ -56,6 +59,7 @@ export const pageContentOverrides: {
   US_ID: IdPageContent,
   US_TN: TnPageContent,
   US_ME: MePageContent,
+  US_NC: NcPageContent,
   US_ND: NdPageContent,
   US_MI: MiPageContent,
   US_MO: MoPageContent,
@@ -68,6 +72,7 @@ export const metricContentOverrides: {
   US_ID: IdMetricContent,
   US_TN: TnMetricContent,
   US_ME: MeMetricContent,
+  US_NC: NcMetricContent,
   US_ND: NdMetricContent,
   US_MI: MiMetricContent,
   US_MO: MoMetricContent,
@@ -96,6 +101,8 @@ export const getMethodologyCopy = (
       return usCoMethodology;
     case pathwaysTenants.US_ID:
       return usIdMethodology;
+    case pathwaysTenants.US_NC:
+      return usNcMethodology;
     case pathwaysTenants.US_ND:
       return usNdMethodology;
     case pathwaysTenants.US_ME:

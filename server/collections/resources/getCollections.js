@@ -204,6 +204,7 @@ function getCollections(stateCode = null) {
     case stateCodes.US_CO:
     case stateCodes.US_ME:
     case stateCodes.US_MI:
+    case stateCodes.US_NC:
     case stateCodes.US_TN:
       return PATHWAYS_COLLECTIONS;
     default:

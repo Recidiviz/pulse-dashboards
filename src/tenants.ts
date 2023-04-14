@@ -23,6 +23,7 @@ import US_ID_CONFIG from "./tenants/US_ID";
 import US_ME_CONFIG from "./tenants/US_ME";
 import US_MI_CONFIG from "./tenants/US_MI";
 import US_MO_CONFIG from "./tenants/US_MO";
+import US_NC_CONFIG from "./tenants/US_NC";
 import US_ND_CONFIG from "./tenants/US_ND";
 import US_PA_CONFIG from "./tenants/US_PA";
 import US_TN_CONFIG from "./tenants/US_TN";
@@ -40,6 +41,7 @@ const TENANTS: Tenants = {
   [pathways.US_ME]: US_ME_CONFIG,
   [pathways.US_MI]: US_MI_CONFIG,
   [lantern.US_MO]: US_MO_CONFIG,
+  [pathways.US_NC]: US_NC_CONFIG,
   [pathways.US_ND]: US_ND_CONFIG,
   [lantern.US_PA]: US_PA_CONFIG,
   [pathways.US_TN]: US_TN_CONFIG,

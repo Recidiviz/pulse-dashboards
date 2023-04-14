@@ -4,6 +4,7 @@ const stateCodes = {
   US_ME: "US_ME",
   US_MI: "US_MI",
   US_MO: "US_MO",
+  US_NC: "US_NC",
   US_ND: "US_ND",
   US_PA: "US_PA",
   US_TN: "US_TN",

@@ -20,6 +20,7 @@ export const US_ID = "US_ID";
 export const US_ME = "US_ME";
 export const US_MI = "US_MI";
 export const US_MO = "US_MO";
+export const US_NC = "US_NC";
 export const US_ND = "US_ND";
 export const US_TN = "US_TN";
 // Hack alert - US_PA is not yet a Pathways tenant - but adding it here to enable US_MO (the other LANTERN tenant) access to Pathways.
@@ -36,6 +37,7 @@ export const PATHWAYS_TENANTS = [
   US_ME,
   US_MI,
   US_MO,
+  US_NC,
   US_ND,
   US_PA,
 ];

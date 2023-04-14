@@ -21,6 +21,7 @@ import {
   US_ID,
   US_ME,
   US_MI,
+  US_NC,
   US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
@@ -42,7 +43,15 @@ export type ApiData = {
 export type RawApiData = Record<string, ApiData>;
 export type RawMetricData = Record<string, string>[];
 
-export const TenantIdList = [US_CO, US_ND, US_ID, US_TN, US_ME, US_MI] as const;
+export const TenantIdList = [
+  US_CO,
+  US_ND,
+  US_ID,
+  US_TN,
+  US_ME,
+  US_MI,
+  US_NC,
+] as const;
 
 export type TenantId = typeof TenantIdList[number];
 export type TenantConfig = {
