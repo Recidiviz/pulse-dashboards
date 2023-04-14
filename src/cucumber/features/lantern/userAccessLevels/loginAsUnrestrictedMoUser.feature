@@ -13,7 +13,7 @@ Feature: Login as a user with access to all districts
         Then I should see "04" selected in the district filter
         And I should see district "04" highlighted on the chart
         And I should only see cases from district "04"
-        When I select district "04B" from the District Filter
+        When I select district "04C" from the District Filter
         Then I should see "2 Items" selected in the district filter
-        And I should see district "04,04B" highlighted on the chart
-        And I should only see cases from district "04,04B"
+        And I should see district "04,04C" highlighted on the chart
+        And I should only see cases from district "04,04C"

@@ -73,23 +73,9 @@ That's it! We suggest installing a linting package for your preferred code edito
 
 #### Environment variables
 
-Second and last, set up your environment variables.
-
-For Recidiviz staff, download and unzip the `pulse_dashboard_env_vars.zip` from the shared 1Password vault and copy the files into the project directory.
-
-IMPORTANT: Be sure to use `Shift+Command+.` in your Finder window to show the hidden files, and copy all of the files, including the hidden `.env-cmdrc` file. Follow the directory structure in the zip file, so if the file is nested in the `/src` directory in the zip, copy it into the `/src` directory in the repo.
+Environment variables, auth configs, and service accounts are stored in Google Secrets Manager and loaded into the environment prior to launching or deploying the app.
 
 For anyone trying to set this up independently, construct environment variables by hand based on the explanations below.
-
-Explanation of frontend env files:
-
-- `.env-cmdrc.example` - example file for frontend variables that are required
-- `.env-cmdrc` - JSON files describing all of the env variables needed in each build
-  - Should have several keys: `offline`, `server`, `server-demo`, `development`, `development-demo`, `e2e`, `staging`, `sync-content`, `staging-demo`, and `production`
-
-Explanation of backend env files:
-
-- `.env` - variables used for the backend API
 
 Expected frontend environment variables include:
 
@@ -102,6 +88,9 @@ Expected frontend environment variables include:
 - `REACT_APP_SENTRY_DSN` - The public DSN URL to use for sending Sentry errors, can be found on the Sentry project page.
 - `REACT_APP_DEPLOY_ENV` - The current deploy environment: `production`, `staging`, or `dev`
 - `REACT_APP_NEW_BACKEND_API_URL` - URL of the new Pathways backend
+- `REACT_APP_CRYPTO_PASSPHRASE` - Used to encrypt/decrypt salted hash ids
+- `REACT_APP_FIREBASE_BACKEND_PROJECT` - Name of the GCP project where Firebase is hosted
+- `REACT_APP_FIREBASE_API_KEY` - API Key to access Firebase
 
 Expected backend environment variables include:
 
@@ -109,6 +98,13 @@ Expected backend environment variables include:
 - `GOOGLE_APPLICATION_CREDENTIALS` - a relative path pointing to the JSON file containing the credentials of the service account used to communicate with Google Cloud Storage, for metric retrieval.
 - `METRIC_BUCKET` - the name of the Google Cloud Storage bucket where the metrics reside.
 - `IS_OFFLINE` (OPTIONAL) - whether or not to run the backend in offline mode, which will retrieve static fixture data from the `server/core/demo_data` directory instead of pulling data from dynamic, live sources. This should only be set when running locally and should be provided through the command line, along with the frontend sibling above. To run the app in offline mode, use the following command: `yarn offline`
+- `RECIDIVIZ_DATA_API_URL` - App Engine backend, used for impersonating a user.
+- `SENTRY_ENV` - Name of environment in Sentry ("staging" or "production")
+- `SENTRY_DSN` - Key to interact with Sentry
+- `METADATA_NAMESPACE` - String used to access the user app metadata from the token
+- `FIREBASE_PROJECT` - Name of the TCP project where Firebase is hosted
+- `FIREBASE_CREDENTIAL` - Service account used to authenticate/authorize access to Firebase
+
 
 The build process, as described below, ensures that the proper values are compiled and included in the static bundle at build time, for the right environment.
 
@@ -156,7 +152,11 @@ To run eslint manually:
 
 ### Syncing content
 
-Content found in the folder `src/core/content` can be synced with an external google sheet by running `yarn sync-content`. The ID of the sheet as well as the credentials of a service account with access to it should be stored in the `.env-cmdrc` file.
+Content found in the folder `src/core/content` can be synced with an external google sheet by running `yarn sync-content`. The ID of the sheet as well as the credentials of a service account with access credentials should be loaded into the environment using the vars specified below as part of the `yarn sync-content` command.
+
+- `CONTENT_SHEET_ID` - Id of the Google Sheet where the content is stored
+- `SHEET_API_SERVICE_ACCOUNT` - Service account used to authenticate/aurhotize access to the sheet
+- `SHEET_API_SERVICE_ACCOUNT_KEY` - API key used to access the Google Sheet
 
 ### Running the application locally
 
@@ -322,7 +322,7 @@ Test vigorously! Don't be afraid to rollback the deploy of frontend or backend t
 
 E2E feature specs are found in the `src/cucumber` directory. The tests are run using [WebDriverIO and Cucumber](https://webdriver.io/docs/frameworks#using-cucumber) and can be configured to run in a headless browser mode.
 
-Configure HEADLESS mode by setting this variable in your `.env.development.local`: `RUN_TESTS_HEADLESS=true`.
+Configure HEADLESS mode by setting this variable in your shell environment before running the tests: `RUN_TESTS_HEADLESS=true`.
 
 The E2E tests run on the dev server, with the "e2e" environment set, and can be used to test the auth0 login flow and require additional environment variables set:
 
