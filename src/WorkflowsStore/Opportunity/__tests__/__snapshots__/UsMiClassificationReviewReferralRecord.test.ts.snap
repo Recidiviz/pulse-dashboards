@@ -15,6 +15,21 @@ Object {
 }
 `;
 
+exports[`transform record for null usMiNotAlreadyOnLowestEligibleSupervisionLevel 1`] = `
+Object {
+  "eligibleCriteria": Object {
+    "usMiClassificationReviewPastDueDate": Object {
+      "eligibleDate": 2023-03-14T00:00:00.000Z,
+    },
+    "usMiNotAlreadyOnLowestEligibleSupervisionLevel": Object {
+      "supervisionLevel": undefined,
+    },
+  },
+  "externalId": "cr-eligible-3",
+  "stateCode": "US_MI",
+}
+`;
+
 exports[`transform record for six-month CR 1`] = `
 Object {
   "eligibleCriteria": Object {

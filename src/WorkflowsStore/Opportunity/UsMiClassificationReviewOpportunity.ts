@@ -47,14 +47,7 @@ export const getRecordTransformer = (client: Client) => {
       throw new Error("No record found");
     }
 
-    const {
-      stateCode,
-      externalId,
-      eligibleCriteria,
-      eligibleCriteria: {
-        usMiNotAlreadyOnLowestEligibleSupervisionLevel: { supervisionLevel },
-      },
-    } = record;
+    const { stateCode, externalId, eligibleCriteria } = record;
 
     // The copy for these eligibility dates are the same. They are different
     // in TES, but we can treat them as the same thing in the frontend
@@ -76,7 +69,8 @@ export const getRecordTransformer = (client: Client) => {
         usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
           supervisionLevel:
             client.rootStore.workflowsStore.formatSupervisionLevel(
-              supervisionLevel
+              eligibleCriteria.usMiNotAlreadyOnLowestEligibleSupervisionLevel
+                ?.supervisionLevel
             ),
         },
         usMiClassificationReviewPastDueDate: {

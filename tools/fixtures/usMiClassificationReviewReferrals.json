@@ -15,9 +15,7 @@
     "stateCode": "US_MI",
     "externalId": "cr-eligible-2",
     "eligibleCriteria": {
-      "usMiNotAlreadyOnLowestEligibleSupervisionLevel": {
-        "supervisionLevel": "MEDIUM"
-      },
+      "usMiNotAlreadyOnLowestEligibleSupervisionLevel": null,
       "usMiSixMonthsPastLastClassificationReviewDate": {
         "eligibleDate": "2023-02-28"
       }

@@ -65,3 +65,20 @@ test("transform record for six-month CR", () => {
     getRecordTransformer(mockClient as unknown as Client)(rawRecord)
   ).toMatchSnapshot();
 });
+
+test("transform record for null usMiNotAlreadyOnLowestEligibleSupervisionLevel", () => {
+  const rawRecord: Record<string, any> = {
+    stateCode: "US_MI",
+    externalId: "cr-eligible-3",
+    eligibleCriteria: {
+      usMiNotAlreadyOnLowestEligibleSupervisionLevel: null,
+      usMiSixMonthsPastLastClassificationReviewDate: {
+        eligibleDate: "2023-03-14",
+      },
+    },
+  };
+
+  expect(
+    getRecordTransformer(mockClient as unknown as Client)(rawRecord)
+  ).toMatchSnapshot();
+});
