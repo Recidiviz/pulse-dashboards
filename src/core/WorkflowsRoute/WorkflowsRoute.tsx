@@ -56,8 +56,11 @@ const RouteSync = observer(function RouteSync({ children }) {
     const { page, personId } = parseLocation(loc);
     setRedirectPath(undefined);
 
+    const isOpportunityPage =
+      page && isOpportunityTypeUrlForState(currentTenantId, page);
+
     // sync location data into the store
-    if (page && isOpportunityTypeUrlForState(currentTenantId, page)) {
+    if (isOpportunityPage) {
       const opportunityType =
         // @ts-expect-error Existence is checked by function above
         OPPORTUNITY_TYPE_FOR_URL_BY_STATE[currentTenantId as TenantId][page];
@@ -79,7 +82,12 @@ const RouteSync = observer(function RouteSync({ children }) {
     }
     // updateSelectedPerson relies on the active system, so set it after the above
     workflowsStore.updateSelectedPerson(personId).catch(() => {
-      setNotFound(true);
+      if (isOpportunityPage) {
+        // Redirect home if person is no long eligible for opportunity
+        setRedirectPath(workflowsUrl("home"));
+      } else {
+        setNotFound(true);
+      }
     });
 
     if (!page) {
