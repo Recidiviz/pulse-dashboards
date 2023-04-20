@@ -162,12 +162,12 @@ export const transformReferral: TransformFunction<
       eligibleDate: fieldToDate(
         ineligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
           ?.eligibleDate ??
-          eligibleCriteria.onProbationAtLeastOneYear?.eligibleDate
+          ineligibleCriteria.onProbationAtLeastOneYear?.eligibleDate
       ),
       sentenceType:
         ineligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
           ?.sentenceType ??
-        eligibleCriteria.onProbationAtLeastOneYear?.sentenceType,
+        ineligibleCriteria.onProbationAtLeastOneYear?.sentenceType,
     };
   }
 
