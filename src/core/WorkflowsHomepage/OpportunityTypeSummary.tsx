@@ -29,6 +29,7 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import {
   generateOpportunityHydratedHeader,
   Opportunity,
@@ -89,16 +90,19 @@ const ClientsWrapper = styled.div`
   flex-flow: row nowrap;
 `;
 
-const ClientAvatarWrapper = styled.div`
-  margin-left: -10px;
+const ClientAvatarWrapper = styled.div<{
+  hasBorder?: boolean;
+}>`
+  margin-left: ${(props) => (props.hasBorder ? "-10" : "-20")}px;
 
-  & > div {
+  ${(props) =>
+    props.hasBorder &&
+    `& > div {
     border: 2px solid transparent;
   }
-
   &:not(:only-child) > div {
     border: 2px solid ${palette.white};
-  }
+  }`}
 
   &:nth-child(1) {
     z-index: 0;
@@ -121,7 +125,15 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   opportunities: Opportunity[];
   opportunityType: OpportunityType;
 }): React.ReactElement | null {
-  const sliceIndex = opportunities.length > 3 ? 2 : 3;
+  const {
+    workflowsStore: { featureVariants },
+  } = useRootStore();
+
+  const defaultAvatarsShown = featureVariants.responsiveRevamp ? 4 : 3;
+  const sliceIndex =
+    opportunities.length > defaultAvatarsShown
+      ? defaultAvatarsShown - 1
+      : defaultAvatarsShown;
   const previewOpportunities = opportunities.slice(0, sliceIndex);
   const numOpportunitiesToDisplay = opportunities.length - sliceIndex;
 
@@ -158,7 +170,10 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
       </OpportunityHeaderWrapper>
       <ClientsWrapper className="OpportunityClientsWrapper">
         {previewOpportunities.map((opportunity) => (
-          <ClientAvatarWrapper key={opportunity.person.recordId}>
+          <ClientAvatarWrapper
+            key={opportunity.person.recordId}
+            hasBorder={!featureVariants.responsiveRevamp}
+          >
             <JusticeInvolvedPersonAvatar
               size={56}
               name={opportunity.person.displayPreferredName}
@@ -166,7 +181,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
           </ClientAvatarWrapper>
         ))}
         {numOpportunitiesToDisplay > 0 && (
-          <ClientAvatarWrapper>
+          <ClientAvatarWrapper hasBorder={!featureVariants.responsiveRevamp}>
             <JusticeInvolvedPersonAvatar
               size={56}
               name={`+ ${numOpportunitiesToDisplay}`}

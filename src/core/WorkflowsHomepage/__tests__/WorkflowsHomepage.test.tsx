@@ -185,6 +185,9 @@ describe("WorkflowsHomepage", () => {
           pastFTRD: [mockOpportunity],
         },
         hasOpportunities: () => true,
+        featureVariants: {
+          responsiveRevamp: {},
+        },
       },
     });
 

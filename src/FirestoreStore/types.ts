@@ -124,7 +124,8 @@ export type FeatureVariant =
   | "usIdIncomeVerificationAlmostEligible"
   | "usMoRestrictiveHousingStatusHearing"
   | "usMeEarlyTermination"
-  | "usMiMinimumTelephoneReporting";
+  | "usMiMinimumTelephoneReporting"
+  | "responsiveRevamp";
 /**
  * For each feature, an optional activeDate can control when the user gets access.
  * If this is missing, access will be granted immediately.
@@ -147,6 +148,7 @@ export const defaultFeatureVariantsActive: FeatureVariantMapping = {
   usMoRestrictiveHousingStatusHearing: {},
   usMeEarlyTermination: {},
   usMiMinimumTelephoneReporting: {},
+  responsiveRevamp: {},
 };
 
 /**
