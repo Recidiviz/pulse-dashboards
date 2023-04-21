@@ -30,7 +30,7 @@ import {
 } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
-import WorkflowsNoResults from "../WorkflowsNoResults";
+import WorkflowsResults from "../WorkflowsResults";
 import { PersonListItem } from "./PersonListItem";
 import { Heading, SectionLabelText, SubHeading } from "./styles";
 
@@ -84,14 +84,14 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
   );
 
   const initial = (
-    <WorkflowsNoResults
+    <WorkflowsResults
       headerText={opportunityLabel}
       callToActionText={initialHeader}
     />
   );
 
   const empty = (
-    <WorkflowsNoResults
+    <WorkflowsResults
       callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
         selectedSearchIds.length,
       ]} ${pluralizeWord(

@@ -44,7 +44,7 @@ import { JusticeInvolvedPersonAvatar } from "../Avatar";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import WorkflowsNoResults from "../WorkflowsNoResults";
+import WorkflowsResults from "../WorkflowsResults";
 import {
   SupervisionTaskCategory,
   TASK_DISPLAY_NAME,
@@ -343,7 +343,7 @@ const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
   } = useRootStore();
 
   const empty = (
-    <WorkflowsNoResults
+    <WorkflowsResults
       callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
         selectedSearchIds.length,
       ]} ${pluralizeWord(
@@ -354,7 +354,7 @@ const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
   );
 
   const initial = (
-    <WorkflowsNoResults
+    <WorkflowsResults
       headerText="Tasks"
       callToActionText="Search for officers above to review clients who have upcoming or overdue tasks."
     />

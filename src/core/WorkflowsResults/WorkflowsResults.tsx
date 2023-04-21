@@ -19,36 +19,63 @@ import { palette, Sans18, Serif34 } from "@recidiviz/design-system";
 import React from "react";
 import styled from "styled-components/macro";
 
-const WorkflowsNoResultsWrapper = styled.div`
-  margin: 0 20%;
-  text-align: center;
+import { useRootStore } from "../../components/StoreProvider";
+
+const WorkflowsResultsWrapper = styled.div<{
+  centered?: boolean;
+}>`
+  ${({ centered }) =>
+    centered
+      ? `margin: 0 20%;
+          text-align: center;`
+      : `margin: 0;`}
 `;
 
-const HeaderText = styled(Serif34)`
+const HeaderText = styled(Serif34)<{
+  centered?: boolean;
+}>`
   color: ${palette.pine2};
-  text-align: center;
   margin-bottom: 1rem;
+
+  ${({ centered }) =>
+    centered ? `text-align: center;` : `  margin-right: 30%;`}
 `;
 
 const CallToActionText = styled(Sans18)`
   color: ${palette.slate70};
 `;
 
-type WorkflowsNoResultsProps = {
+type WorkflowsResultsProps = {
   headerText?: string;
-  callToActionText: string;
+  callToActionText?: string;
+  children?: React.ReactNode;
 };
 
-function WorkflowsNoResults({
+function WorkflowsResults({
   headerText,
   callToActionText,
-}: WorkflowsNoResultsProps): React.ReactElement | null {
+  children,
+}: WorkflowsResultsProps): React.ReactElement | null {
+  const {
+    workflowsStore: { featureVariants },
+  } = useRootStore();
+
   return (
-    <WorkflowsNoResultsWrapper className="WorkflowsHomepageText">
-      {headerText && <HeaderText>{headerText}</HeaderText>}
-      <CallToActionText>{callToActionText}</CallToActionText>
-    </WorkflowsNoResultsWrapper>
+    <WorkflowsResultsWrapper
+      centered={!featureVariants.responsiveRevamp}
+      className="WorkflowsHomepageText"
+    >
+      {headerText && (
+        <HeaderText centered={!featureVariants.responsiveRevamp}>
+          {headerText}
+        </HeaderText>
+      )}
+      {callToActionText && (
+        <CallToActionText>{callToActionText}</CallToActionText>
+      )}
+      {children}
+    </WorkflowsResultsWrapper>
   );
 }
 
-export default WorkflowsNoResults;
+export default WorkflowsResults;

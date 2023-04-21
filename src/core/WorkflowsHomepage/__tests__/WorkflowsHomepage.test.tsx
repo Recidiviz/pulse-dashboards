@@ -41,6 +41,9 @@ const baseWorkflowsStoreMock = {
   user: { info: { givenNames: "Recidiviz" } },
   workflowsSearchFieldTitle: "officer",
   justiceInvolvedPersonTitle: "client",
+  featureVariants: {
+    responsiveRevamp: {},
+  },
 };
 
 describe("WorkflowsHomepage", () => {
@@ -185,9 +188,6 @@ describe("WorkflowsHomepage", () => {
           pastFTRD: [mockOpportunity],
         },
         hasOpportunities: () => true,
-        featureVariants: {
-          responsiveRevamp: {},
-        },
       },
     });
 
@@ -198,9 +198,7 @@ describe("WorkflowsHomepage", () => {
     );
 
     expect(
-      screen.getByText(
-        "Review clients who are past their full-term release date and email clerical to move them to history."
-      )
+      screen.getByText("1 client has passed their full-term release date")
     ).toBeInTheDocument();
   });
 });

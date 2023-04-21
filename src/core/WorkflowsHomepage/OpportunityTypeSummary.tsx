@@ -38,20 +38,31 @@ import {
 import { JusticeInvolvedPersonAvatar } from "../Avatar";
 import { workflowsUrl } from "../views";
 
-const OpportunityTypeSummaryWrapper = styled.div`
-  margin: ${rem(spacing.xxl)} 6rem 4rem 6rem;
+const OpportunityTypeSummaryWrapper = styled.div<{
+  hasBorder?: boolean;
+}>`
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
+
+  ${({ hasBorder }) =>
+    hasBorder
+      ? `margin-top: ${rem(spacing.xxl)};
+          padding-top: ${rem(spacing.md)};   
+          border-top: 1px solid ${palette.slate20};`
+      : `margin: ${rem(spacing.xxl)} 6rem 4rem 6rem;`}
 `;
 
-const OpportunityHeaderWrapper = styled.div`
+const OpportunityHeaderWrapper = styled.div<{
+  squished?: boolean;
+}>`
   padding-right: ${rem(spacing.xxl)};
+  ${({ squished }) => squished && `max-width: ${rem(550)};`}
 `;
 
 const OpportunityHeader = styled(Serif24)`
   color: ${palette.pine2};
-  padding-bottom: ${rem(spacing.sm)};
+  padding-bottom: ${rem(spacing.md)};
 `;
 
 const OpportunityTypeSummaryCTA = styled(Sans18)`
@@ -93,10 +104,10 @@ const ClientsWrapper = styled.div`
 const ClientAvatarWrapper = styled.div<{
   hasBorder?: boolean;
 }>`
-  margin-left: ${(props) => (props.hasBorder ? "-10" : "-20")}px;
+  margin-left: ${({ hasBorder }) => (hasBorder ? "-10" : "-20")}px;
 
-  ${(props) =>
-    props.hasBorder &&
+  ${({ hasBorder }) =>
+    hasBorder &&
     `& > div {
     border: 2px solid transparent;
   }
@@ -143,15 +154,26 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   );
 
   return (
-    <OpportunityTypeSummaryWrapper className="OpportunityTypeSummaryWrapper">
-      <OpportunityHeaderWrapper>
+    <OpportunityTypeSummaryWrapper
+      hasBorder={!!featureVariants.responsiveRevamp}
+      className="OpportunityTypeSummaryWrapper"
+    >
+      <OpportunityHeaderWrapper squished={!!featureVariants.responsiveRevamp}>
         <OpportunityHeader>
-          {header.eligibilityText}
-          <OpportunityHighlight>{header.opportunityText}</OpportunityHighlight>
+          {header.eligibilityText}{" "}
+          {featureVariants.responsiveRevamp ? (
+            header.opportunityText
+          ) : (
+            <OpportunityHighlight>
+              {header.opportunityText}
+            </OpportunityHighlight>
+          )}
         </OpportunityHeader>
-        <OpportunityTypeSummaryCTA>
-          {header.callToAction}
-        </OpportunityTypeSummaryCTA>
+        {!featureVariants.responsiveRevamp && (
+          <OpportunityTypeSummaryCTA>
+            {header.callToAction}
+          </OpportunityTypeSummaryCTA>
+        )}
         <ViewAllLink
           className={`ViewAllLink__${opportunityType}`}
           to={workflowsUrl("opportunityClients", { opportunityType })}

@@ -28,7 +28,7 @@ import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { SectionLabelText } from "../OpportunityCaseloadView/styles";
 import { ProfileCapsule } from "../PersonCapsules";
 import { workflowsUrl } from "../views";
-import WorkflowsNoResults from "../WorkflowsNoResults";
+import WorkflowsResults from "../WorkflowsResults";
 
 const CaseloadWrapper = styled.ul`
   column-gap: ${rem(spacing.md)};
@@ -70,7 +70,7 @@ export const AllCaseloads = observer(function AllCaseloads() {
 
   if (!selectedSearchables.length)
     return (
-      <WorkflowsNoResults
+      <WorkflowsResults
         headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s`}
         callToActionText={`Search for ${pluralizeWord(
           workflowsSearchFieldTitle

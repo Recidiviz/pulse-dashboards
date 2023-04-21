@@ -24,7 +24,7 @@ import { OPPORTUNITY_LABELS, OpportunityType } from "../../WorkflowsStore";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import WorkflowsNoResults from "../WorkflowsNoResults";
+import WorkflowsResults from "../WorkflowsResults";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";
 
 function getWelcomeText(userName: string | undefined): string {
@@ -56,6 +56,7 @@ const WorkflowsHomepage = observer(
         workflowsSearchFieldTitle,
         supportsMultipleSystems,
         justiceInvolvedPersonTitle,
+        featureVariants,
       },
     } = useRootStore();
 
@@ -77,16 +78,22 @@ const WorkflowsHomepage = observer(
           selectedSearchIds.length
         )}['s|'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`;
 
+    const hydratedCallToAction = `Hi, ${
+      user?.info.givenNames
+    }, we’ve found some outstanding items across ${
+      selectedSearchIds.length
+    } ${pluralizeWord("caseload", selectedSearchIds.length)}`;
+
     const initial = (
-      <WorkflowsNoResults
+      <WorkflowsResults
         headerText={getWelcomeText(user?.info.givenNames)}
         callToActionText={initialCallToAction}
       />
     );
 
-    const empty = <WorkflowsNoResults callToActionText={emptyCallToAction} />;
+    const empty = <WorkflowsResults callToActionText={emptyCallToAction} />;
 
-    const hydrated = opportunityTypes.map((opportunityType) => {
+    const opportunitySummaries = opportunityTypes.map((opportunityType) => {
       if (allOpportunitiesByType[opportunityType].length) {
         return (
           <OpportunityTypeSummary
@@ -98,6 +105,14 @@ const WorkflowsHomepage = observer(
       }
       return null;
     });
+
+    const hydrated = featureVariants.responsiveRevamp ? (
+      <WorkflowsResults headerText={hydratedCallToAction}>
+        {opportunitySummaries}
+      </WorkflowsResults>
+    ) : (
+      opportunitySummaries
+    );
 
     return (
       <WorkflowsNavLayout>
