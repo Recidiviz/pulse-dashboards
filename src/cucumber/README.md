@@ -4,7 +4,7 @@
 
 ## WebDriverIO (wdio)
 
-[WebDriverIO](https://webdriver.io/) is the automation framework that uses Puppeteer under the hood to run tests in a browser. It can be run headless by changing the environment variable e2e.RUN_TESTS_HEADLESS in the .env-cmdrc file.
+[WebDriverIO](https://webdriver.io/) is the automation framework that uses Puppeteer under the hood to run tests in a browser. It can be run headless by changing the environment variable RUN_TESTS_HEADLESS in the .env.offline file.
 
 The [configuration for WDIO](https://webdriver.io/docs/configuration) can be found in the root of the project in the wdio.conf.js file. For example, we specify that we want to use Puppeteer (instead of Selenium or Chromedriver) by setting the automationProtocol config file to use the [devtools](https://webdriver.io/docs/automationProtocols#devtools-protocol) protocol.
 
@@ -70,11 +70,11 @@ When you run tests locally, you can choose to run them within a browser or headl
 
 **Run a single test locally**
 
-`npx env-cmd -e e2e,offline wdio ./wdio.conf.js --spec src/cucumber/features/path/to/feature/test`
+`npx env-cmd -f .env.offline wdio ./wdio.conf.js --spec src/cucumber/features/path/to/feature/test`
 
 Example:
 
-`npx env-cmd -e e2e,offline wdio ./wdio.conf.js --spec src/cucumber/features/workflows/caseloadSearch.feature`
+`npx env-cmd -f .env.offline wdio ./wdio.conf.js --spec src/cucumber/features/workflows/caseloadSearch.feature`
 
 ## On CI
 

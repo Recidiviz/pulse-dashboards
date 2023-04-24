@@ -68,7 +68,9 @@ When("I select {string} from the dropdown", async (searchValue) => {
   const container = await $(".CaseloadSelect");
   await container.click();
   const option = await $(`div.CaseloadSelect__option=${searchValue}`);
+  await browser.pause(1000);
   await option.waitForExist();
+
   // Wait for data to load
   await Promise.all([option.click(), waitForNetworkIdle()]);
 });
