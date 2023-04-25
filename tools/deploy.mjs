@@ -27,7 +27,9 @@ import { Octokit } from "@octokit/rest";
 import inquirer from "inquirer";
 import { inc } from "semver";
 
-$.verbose = false; // don't print out every command we're running
+// The default is true, but we explicitely set it here because it needs to be set to true
+// in order for the gcloud stderr to display (used for the backend deploy)
+$.verbose = true;
 
 // Get the most recent release
 console.log("Reading GitHub access token from Secret Manager...");
@@ -38,65 +40,86 @@ const [deployScriptPat] = await secretClient.accessSecretVersion({
   name: "projects/recidiviz-123/secrets/github_deploy_script_pat/versions/latest",
 });
 
-console.log("Generating release notes...");
-const octokit = new Octokit({
-  auth: deployScriptPat.payload.data.toString(),
-});
+// Load environment files (auth config, service accounts, GAE config)
+console.log("Loading environment files from Secret Manager...");
+await $`./load_config_files.sh`.pipe(process.stdout);
 
-const latestRelease = await octokit.rest.repos.getLatestRelease({
-  owner: "Recidiviz",
-  repo: "pulse-dashboards",
-});
-const latestReleaseVersion = latestRelease.data.tag_name;
-
-// Generate release notes (for review by the person doing the release)
-const currentRevision = (await $`git rev-parse --short HEAD`).stdout.trim();
-const generatedReleaseNotes = await octokit.rest.repos.generateReleaseNotes({
-  owner: "Recidiviz",
-  repo: "pulse-dashboards",
-  tag_name: `rc/${currentRevision}`, // This tag is just a placeholder and won't actually be created
-  target_commitish: currentRevision,
-  previous_tag_name: latestReleaseVersion,
-});
-let releaseNotes = generatedReleaseNotes.data.body;
-console.log(releaseNotes);
-
-const editNotesPrompt = await inquirer.prompt({
-  type: "confirm",
-  name: "editNotes",
-  message:
-    "Would you like to edit these notes? (The '**Full Changelog**' end tag will be overwritten when publishing)",
-  default: false,
-});
-
-if (editNotesPrompt.editNotes) {
-  const noteEditorPrompt = await inquirer.prompt({
-    type: "editor",
-    name: "noteEditor",
-    message: "Open in editor",
-    default: releaseNotes,
-  });
-  releaseNotes = noteEditorPrompt.noteEditor;
-  // eslint-disable-next-line no-undef -- chalk is part of the zx global import
-  console.log(`${chalk.bold("New release notes:")}\n${releaseNotes}`);
-}
-
-// Determine what to increase the version by
-const releaseTypePrompt = await inquirer.prompt({
+// Determine which environment to deploy
+const { deployEnv } = await inquirer.prompt({
   type: "list",
-  name: "releaseType",
-  message: "What type of release is this?",
-  choices: ["major", "minor", "patch"],
-  default: "minor",
+  choices: ["staging", "demo", "production"],
+  name: "deployEnv",
+  message: "Which environment are you deploying?",
+  default: "staging",
 });
 
-// Increment the version
-const nextVersion = `v${inc(
-  latestReleaseVersion,
-  releaseTypePrompt.releaseType
-)}`;
+let octokit;
+let latestRelease;
+let latestReleaseVersion;
+let currentRevision;
+let generatedReleaseNotes;
+let nextVersion = "deploy-candidate";
+let publishReleaseNotes;
+let releaseNotes;
 
-let publishReleaseNotes = false;
+if (deployEnv === "production") {
+  console.log("Generating release notes...");
+  octokit = new Octokit({
+    auth: deployScriptPat.payload.data.toString(),
+  });
+
+  latestRelease = await octokit.rest.repos.getLatestRelease({
+    owner: "Recidiviz",
+    repo: "pulse-dashboards",
+  });
+  latestReleaseVersion = latestRelease.data.tag_name;
+
+  // Generate release notes (for review by the person doing the release)
+  currentRevision = (await $`git rev-parse --short HEAD`).stdout.trim();
+  generatedReleaseNotes = await octokit.rest.repos.generateReleaseNotes({
+    owner: "Recidiviz",
+    repo: "pulse-dashboards",
+    tag_name: `rc/${currentRevision}`, // This tag is just a placeholder and won't actually be created
+    target_commitish: currentRevision,
+    previous_tag_name: latestReleaseVersion,
+  });
+  releaseNotes = generatedReleaseNotes.data.body;
+  console.log(releaseNotes);
+
+  const editNotesPrompt = await inquirer.prompt({
+    type: "confirm",
+    name: "editNotes",
+    message:
+      "Would you like to edit these notes? (The '**Full Changelog**' end tag will be overwritten when publishing)",
+    default: false,
+  });
+
+  if (editNotesPrompt.editNotes) {
+    const noteEditorPrompt = await inquirer.prompt({
+      type: "editor",
+      name: "noteEditor",
+      message: "Open in editor",
+      default: releaseNotes,
+    });
+    releaseNotes = noteEditorPrompt.noteEditor;
+    // eslint-disable-next-line no-undef -- chalk is part of the zx global import
+    console.log(`${chalk.bold("New release notes:")}\n${releaseNotes}`);
+  }
+
+  // Determine what to increase the version by
+  const releaseTypePrompt = await inquirer.prompt({
+    type: "list",
+    name: "releaseType",
+    message: "What type of release is this?",
+    choices: ["major", "minor", "patch"],
+    default: "minor",
+  });
+
+  // Increment the version
+  nextVersion = `v${inc(latestReleaseVersion, releaseTypePrompt.releaseType)}`;
+
+  publishReleaseNotes = false;
+}
 
 const deployBackendPrompt = await inquirer.prompt({
   type: "confirm",
@@ -109,10 +132,28 @@ if (deployBackendPrompt.deployBackend) {
   let retryBackend = false;
   do {
     try {
-      // eslint-disable-next-line no-await-in-loop
-      await $`gcloud app deploy gae-production.yaml --project recidiviz-dashboard-production --version ${gaeVersion}`;
+      switch (deployEnv) {
+        case "production":
+          // eslint-disable-next-line no-await-in-loop
+          await $`gcloud app deploy gae-production.yaml --project recidiviz-dashboard-production --version ${gaeVersion}`.pipe(
+            process.stdout
+          );
+          publishReleaseNotes = true;
+          break;
+        case "demo":
+          // eslint-disable-next-line no-await-in-loop
+          await $`gcloud app deploy gae-staging-demo.yaml --project recidiviz-dashboard-staging`.pipe(
+            process.stdout
+          );
+          break;
+        default:
+          // eslint-disable-next-line no-await-in-loop
+          await $`gcloud app deploy gae-staging.yaml --project recidiviz-dashboard-staging`.pipe(
+            process.stdout
+          );
+          break;
+      }
       retryBackend = false;
-      publishReleaseNotes = true;
     } catch (e) {
       // eslint-disable-next-line no-await-in-loop
       const retryBackendPrompt = await inquirer.prompt({
@@ -136,14 +177,23 @@ const deployFrontendPrompt = await inquirer.prompt({
 if (deployFrontendPrompt.deployFrontend) {
   // Build the application
   console.log("Building application...");
-  await $`yarn build`.pipe(process.stdout);
+  switch (deployEnv) {
+    case "production":
+      await $`yarn build`.pipe(process.stdout);
+      break;
+    case "demo":
+      await $`yarn build-demo`.pipe(process.stdout);
+      break;
+    default:
+      await $`yarn build-staging`.pipe(process.stdout);
+  }
 
   // Run a preview
   // This deploys a preview application instead of doing `firebase serve`, because `firebase serve`
   // is exited with ctrl-c, and even though hypothetically we could catch the SIGINT or do something
   // clever with `screen` and piping output, this is much easier.
   console.log("Deploying preview application...");
-  await $`firebase hosting:channel:deploy ${nextVersion} -P production  --expires 1h`.pipe(
+  await $`firebase hosting:channel:deploy ${nextVersion} -P ${deployEnv}  --expires 1h`.pipe(
     process.stdout
   );
 
@@ -151,21 +201,30 @@ if (deployFrontendPrompt.deployFrontend) {
   const continuePrompt = await inquirer.prompt({
     type: "confirm",
     name: "continueRelease",
-    message: `Would you like to deploy version ${nextVersion} to production?`,
+    message: `Would you like to deploy to ${deployEnv}?`,
     default: false,
   });
   if (continuePrompt.continueRelease) {
     let retryFrontend = false;
     do {
       // Deploy the app with the tag name in a comment
-      console.log("Deploying production application...");
+      console.log("Deploying application to Firebase...");
       try {
-        // eslint-disable-next-line no-await-in-loop
-        await $`firebase deploy -P production -m "${nextVersion}"`.pipe(
-          process.stdout
-        );
+        switch (deployEnv) {
+          case "production":
+            // eslint-disable-next-line no-await-in-loop
+            await $`firebase deploy -P production -m "${nextVersion}"`.pipe(
+              process.stdout
+            );
+            publishReleaseNotes = true;
+            break;
+          default:
+            // eslint-disable-next-line no-await-in-loop
+            await $`firebase deploy -P ${deployEnv} -m "${currentRevision}"`.pipe(
+              process.stdout
+            );
+        }
         retryFrontend = false;
-        publishReleaseNotes = true;
       } catch (e) {
         // eslint-disable-next-line no-await-in-loop
         const retryFrontendPrompt = await inquirer.prompt({
@@ -202,3 +261,5 @@ if (publishReleaseNotes) {
 
   console.log(`Release published at ${release.data.html_url}`);
 }
+
+console.log(`Finished with the ${deployEnv} deploy!`);
