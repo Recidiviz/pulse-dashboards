@@ -123,7 +123,7 @@ export type FeatureVariant =
   | "usMiClassificationReview"
   | "usMoRestrictiveHousingStatusHearing"
   | "usMeEarlyTermination"
-  | "usMiMinimumTelephoneReporting"
+  | "usMiPrereleaseOpportunities"
   | "responsiveRevamp";
 /**
  * For each feature, an optional activeDate can control when the user gets access.
@@ -144,7 +144,7 @@ export const defaultFeatureVariantsActive: FeatureVariantMapping = {
   usMiClassificationReview: {},
   usMoRestrictiveHousingStatusHearing: {},
   usMeEarlyTermination: {},
-  usMiMinimumTelephoneReporting: {},
+  usMiPrereleaseOpportunities: {},
   responsiveRevamp: {},
 };
 

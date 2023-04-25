@@ -671,10 +671,14 @@ export class WorkflowsStore implements Hydratable {
 
     if (
       currentTenantId === "US_MI" &&
-      !this.featureVariants.usMiMinimumTelephoneReporting
+      !this.featureVariants.usMiPrereleaseOpportunities
     ) {
       opportunityTypes = opportunityTypes.filter(
-        (oppType) => oppType !== "usMiMinimumTelephoneReporting"
+        (oppType) =>
+          ![
+            "usMiMinimumTelephoneReporting",
+            "usMiSupervisionLevelDowngrade",
+          ].includes(oppType)
       );
     }
 

@@ -21,7 +21,9 @@ import { makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
+import { FeatureGateError } from "../../utils/FeatureGateError";
 import { Client } from "../Client";
+import { ValidateFunction } from "../subscriptions";
 import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import {
@@ -49,6 +51,21 @@ const CRITERIA_COPY: CriteriaCopy<UsMiSupervisionLevelDowngradeReferralRecord> =
     ],
     ineligibleCriteria: [],
   };
+
+const getRecordValidator =
+  (
+    client: Client
+  ): ValidateFunction<UsMiSupervisionLevelDowngradeReferralRecord> =>
+  (record: UsMiSupervisionLevelDowngradeReferralRecord): void => {
+    const featureFlags = client.rootStore.workflowsStore.featureVariants;
+    if (!featureFlags.usMiPrereleaseOpportunities) {
+      throw new FeatureGateError(
+        "usMiSupervisionLevelDowngrade opportunity is not enabled for this user."
+      );
+    }
+    getBaseSLDValidator(client)(record);
+  };
+
 export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
   UsMiSupervisionLevelDowngradeReferralRecord
@@ -62,7 +79,7 @@ export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
         (raw: string) =>
           client.rootStore.workflowsStore.formatSupervisionLevel(raw)
       ).parse,
-      getBaseSLDValidator(client)
+      getRecordValidator(client) // When removing the feature flag, don't forget to put back the base validator
     );
 
     makeObservable(this, { requirementsMet: true });

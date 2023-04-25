@@ -19,7 +19,9 @@ import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
+import { FeatureGateError } from "../../utils/FeatureGateError";
 import { Client } from "../Client";
+import { ValidateFunction } from "../subscriptions";
 import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
@@ -88,6 +90,19 @@ const DENIAL_REASONS_MAP = {
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
+const getFeatureFlagValidator =
+  (
+    client: Client
+  ): ValidateFunction<UsMiMinimumTelephoneReportingReferralRecord> =>
+  (record: UsMiMinimumTelephoneReportingReferralRecord): void => {
+    const featureFlags = client.rootStore.workflowsStore.featureVariants;
+    if (!featureFlags.usMiPrereleaseOpportunities) {
+      throw new FeatureGateError(
+        "usMiMinimumTelephoneReporting opportunity is not enabled for this user."
+      );
+    }
+  };
+
 export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
   Client,
   UsMiMinimumTelephoneReportingReferralRecord
@@ -103,7 +118,8 @@ export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
       client,
       "usMiMinimumTelephoneReporting",
       client.rootStore,
-      usMiMinimumTelephoneReportingSchema.parse
+      usMiMinimumTelephoneReportingSchema.parse,
+      getFeatureFlagValidator(client)
     );
 
     makeObservable(this, {
