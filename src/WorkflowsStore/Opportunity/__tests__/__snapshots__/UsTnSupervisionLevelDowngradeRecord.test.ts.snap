@@ -14,7 +14,7 @@ Object {
       },
     ],
   },
-  "criteria": Object {
+  "eligibleCriteria": Object {
     "supervisionLevelHigherThanAssessmentLevel": Object {
       "assessmentLevel": "High",
       "latestAssessmentDate": 2021-08-20T00:00:00.000Z,
@@ -22,32 +22,7 @@ Object {
     },
   },
   "externalId": "abc123",
-  "stateCode": "US_XX",
-}
-`;
-
-exports[`transform function processes old key 1`] = `
-Object {
-  "caseNotes": Object {
-    "Violations": Array [
-      Object {
-        "eventDate": 2021-05-03T00:00:00.000Z,
-        "noteBody": "VRPT",
-      },
-      Object {
-        "eventDate": 2020-01-10T00:00:00.000Z,
-        "noteBody": "ARRP",
-      },
-    ],
-  },
-  "criteria": Object {
-    "supervisionLevelHigherThanAssessmentLevel": Object {
-      "assessmentLevel": "High",
-      "latestAssessmentDate": 2021-08-20T00:00:00.000Z,
-      "supervisionLevel": "MAXIMUM",
-    },
-  },
-  "externalId": "abc123",
+  "ineligibleCriteria": Object {},
   "stateCode": "US_XX",
 }
 `;

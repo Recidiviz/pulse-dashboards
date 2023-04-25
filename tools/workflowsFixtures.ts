@@ -32,6 +32,7 @@ import { usIdPastFtrdFixture } from "./fixtures/UsIdPastFtrdReferrals";
 import { usIdSupervisionTasksData } from "./fixtures/usIdSupervisionTasks";
 import { usMeSCCPFixture } from "./fixtures/usMeSCCPReferrals";
 import { usMiMinimumTelephoneReportingReferralsFixture } from "./fixtures/usMiMinimumTelephoneReportingReferrals";
+import { usMiSupervisionLevelDowngradeReferrals } from "./fixtures/usMiSupervisionLevelDowngradeReferrals";
 import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
 
 const OPPORTUNITIES_WITH_JSON_FIXTURES: CollectionName[] = [
@@ -61,6 +62,7 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   usMeSCCPReferrals: usMeSCCPFixture,
   usMiMinimumTelephoneReportingReferrals:
     usMiMinimumTelephoneReportingReferralsFixture,
+  usMiSupervisionLevelDowngradeReferrals,
 };
 
 const db = getDb();

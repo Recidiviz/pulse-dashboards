@@ -22,8 +22,10 @@ import { z } from "zod";
 
 import { collectionNames } from "../src/FirestoreStore";
 import { usNdEarlyTerminationSchema } from "../src/WorkflowsStore";
+import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
 import { usIdPastFtrdSchema } from "../src/WorkflowsStore/Opportunity/UsIdPastFTRDReferralRecord";
 import { usMeSCCPSchema } from "../src/WorkflowsStore/Opportunity/UsMeSCCPReferralRecord";
+import { UsTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTnSupervisionLevelDowngradeReferralRecord";
 
 type CollectionName = keyof typeof collectionNames;
 
@@ -51,7 +53,11 @@ const SCHEMAS = {
   earlyTerminationReferrals: usNdEarlyTerminationSchema,
   pastFTRDReferrals: usIdPastFtrdSchema,
   usMeSCCPReferrals: usMeSCCPSchema,
-} satisfies Partial<Record<CollectionName, z.AnyZodObject>>;
+  usIdSupervisionLevelDowngradeReferrals:
+    supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
+  supervisionLevelDowngradeReferrals:
+    UsTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
+} satisfies Partial<Record<CollectionName, z.ZodTypeAny>>;
 
 (async () => {
   const selection = await prompts([

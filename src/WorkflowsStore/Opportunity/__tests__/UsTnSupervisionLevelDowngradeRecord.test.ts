@@ -15,32 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { cloneDeep, identity } from "lodash";
+import { identity } from "lodash";
 
 import { OpportunityValidationError } from "../../utils";
 import {
-  getTransformer,
   getValidator,
-  UsTnSupervisionLevelDowngradeReferralRecord,
+  UsTnSupervisionLevelDowngradeReferralRecordRaw,
+  usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
 } from "../UsTnSupervisionLevelDowngradeReferralRecord";
 
-const usTnSupervisionLevelDowngradeRecordRaw = {
-  stateCode: "US_XX",
-  externalId: "abc123",
-  criteria: {
-    supervisionLevelHigherThanAssessmentLevel: {
-      assessmentLevel: "HIGH",
-      latestAssessmentDate: "2021-08-20",
-      supervisionLevel: "MAXIMUM",
+const usTnSupervisionLevelDowngradeRecordRaw: UsTnSupervisionLevelDowngradeReferralRecordRaw =
+  {
+    stateCode: "US_XX",
+    externalId: "abc123",
+    eligibleCriteria: {
+      supervisionLevelHigherThanAssessmentLevel: {
+        assessmentLevel: "HIGH",
+        latestAssessmentDate: "2021-08-20",
+        supervisionLevel: "MAXIMUM",
+      },
     },
-  },
-  metadata: {
-    violations: [
-      { violationDate: "2021-05-03", violationCode: "VRPT" },
-      { violationDate: "2020-01-10", violationCode: "ARRP" },
-    ],
-  },
-};
+    ineligibleCriteria: {},
+    metadata: {
+      violations: [
+        { violationDate: "2021-05-03", violationCode: "VRPT" },
+        { violationDate: "2020-01-10", violationCode: "ARRP" },
+      ],
+    },
+  };
 
 const mockClient = {
   supervisionLevel: "MAXIMUM",
@@ -52,40 +54,12 @@ const mockClient = {
 };
 
 const getTransformedRecord = () =>
-  getTransformer(identity)(
-    usTnSupervisionLevelDowngradeRecordRaw
-  ) as UsTnSupervisionLevelDowngradeReferralRecord;
+  usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
+    identity
+  ).parse(usTnSupervisionLevelDowngradeRecordRaw);
 
 test("transform function", () => {
   expect(getTransformedRecord()).toMatchSnapshot();
-});
-
-test("transform function processes old key", () => {
-  const record = cloneDeep(usTnSupervisionLevelDowngradeRecordRaw) as Record<
-    string,
-    any
-  >;
-  record.criteria = {
-    usTnSupervisionLevelHigherThanAssessmentLevel: {
-      assessmentLevel: "HIGH",
-      latestAssessmentDate: "2021-08-20",
-      supervisionLevel: "MAXIMUM",
-    },
-  };
-  const transformedRecord = getTransformer(identity)(record);
-  if (!transformedRecord) {
-    throw new Error(
-      "unable to transform usTnSupervisionLevelDowngradeRecordRaw"
-    );
-  }
-  expect(
-    "usTnSupervisionLevelHigherThanAssessmentLevel" in
-      transformedRecord.criteria
-  ).toBeFalse();
-  expect(
-    "supervisionLevelHigherThanAssessmentLevel" in transformedRecord.criteria
-  ).toBeTrue();
-  expect(transformedRecord).toMatchSnapshot();
 });
 
 test("record validates", () => {

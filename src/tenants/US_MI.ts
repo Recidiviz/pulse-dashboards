@@ -28,6 +28,7 @@ const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   "usMiClassificationReview",
   "usMiMinimumTelephoneReporting",
   "usMiEarlyDischarge",
+  "usMiSupervisionLevelDowngrade",
 ];
 
 const US_MI_CONFIG: TenantConfig = {

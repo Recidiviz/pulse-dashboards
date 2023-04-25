@@ -56,6 +56,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   },
   supervisionLevelDowngrade: {},
   usIdSupervisionLevelDowngrade: {},
+  usMiSupervisionLevelDowngrade: {},
   usMiClassificationReview: {},
   usMiEarlyDischarge: {},
   usMeSCCP: {

@@ -15,64 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { z } from "zod";
+
 import { formatWorkflowsDate, toTitleCase } from "../../utils";
 import { Client } from "../Client";
-import { TransformFunction, ValidateFunction } from "../subscriptions";
-import { fieldToDate, OpportunityValidationError } from "../utils";
+import { ValidateFunction } from "../subscriptions";
+import { OpportunityValidationError } from "../utils";
+import { dateStringSchema } from "./schemaHelpers";
 import { OpportunityRequirement } from "./types";
 
-export type SupervisionLevelDowngradeReferralRecord = {
-  stateCode: string;
-  externalId: string;
-  criteria: {
-    supervisionLevelHigherThanAssessmentLevel: {
-      assessmentLevel: string;
-      latestAssessmentDate: Date;
-      supervisionLevel: string;
-    };
-  };
-};
+export const supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter =
+  (fmt: (raw: string) => string = (s) => s) =>
+    z.object({
+      stateCode: z.string(),
+      externalId: z.string(),
+      eligibleCriteria: z.object({
+        supervisionLevelHigherThanAssessmentLevel: z.object({
+          latestAssessmentDate: dateStringSchema,
+          assessmentLevel: z.string().transform(toTitleCase),
+          supervisionLevel: z.string().transform(fmt),
+        }),
+      }),
+      ineligibleCriteria: z.object({}),
+    });
 
-export function getBaseSLDTransformer(
-  supervisionLevelFormatter: (raw: string) => string | undefined
-): TransformFunction<SupervisionLevelDowngradeReferralRecord> {
-  const transformer: TransformFunction<
-    SupervisionLevelDowngradeReferralRecord
-  > = (record): SupervisionLevelDowngradeReferralRecord => {
-    if (!record) {
-      throw new Error("No record found");
-    }
+export type SupervisionLevelDowngradeReferralRecordRaw = z.input<
+  ReturnType<
+    typeof supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter
+  >
+>;
 
-    const {
-      stateCode,
-      externalId,
-      criteria: {
-        supervisionLevelHigherThanAssessmentLevel: {
-          latestAssessmentDate,
-          assessmentLevel,
-          supervisionLevel,
-        },
-      },
-    } = record;
-
-    const reasons = {
-      latestAssessmentDate: fieldToDate(latestAssessmentDate),
-      assessmentLevel: toTitleCase(assessmentLevel),
-      supervisionLevel:
-        supervisionLevelFormatter(supervisionLevel) ?? supervisionLevel,
-    };
-
-    return {
-      stateCode,
-      externalId,
-      criteria: {
-        supervisionLevelHigherThanAssessmentLevel: reasons,
-      },
-    };
-  };
-
-  return transformer;
-}
+export type SupervisionLevelDowngradeReferralRecord = z.infer<
+  ReturnType<
+    typeof supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter
+  >
+>;
 
 export function getBaseSLDValidator(
   client: Client
@@ -81,7 +58,8 @@ export function getBaseSLDValidator(
     transformedRecord
   ) => {
     const { supervisionLevel } =
-      transformedRecord.criteria.supervisionLevelHigherThanAssessmentLevel;
+      transformedRecord.eligibleCriteria
+        .supervisionLevelHigherThanAssessmentLevel;
 
     if (supervisionLevel !== client.supervisionLevel)
       throw new OpportunityValidationError(
@@ -96,7 +74,8 @@ export function formatBaseSLDRequirements(
   transformedRecord: SupervisionLevelDowngradeReferralRecord
 ): OpportunityRequirement[] {
   const { assessmentLevel, latestAssessmentDate, supervisionLevel } =
-    transformedRecord.criteria.supervisionLevelHigherThanAssessmentLevel;
+    transformedRecord.eligibleCriteria
+      .supervisionLevelHigherThanAssessmentLevel;
 
   return [
     {

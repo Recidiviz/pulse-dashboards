@@ -24,9 +24,9 @@ import { OpportunityBase } from "./OpportunityBase";
 import { formatBaseSLDRequirements } from "./SupervisionLevelDowngradeReferralRecord";
 import { OpportunityRequirement } from "./types";
 import {
-  getTransformer,
   getValidator,
   UsTnSupervisionLevelDowngradeReferralRecord,
+  usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
 } from "./UsTnSupervisionLevelDowngradeReferralRecord";
 
 export class UsTnSupervisionLevelDowngradeOpportunity extends OpportunityBase<
@@ -48,9 +48,9 @@ export class UsTnSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       client,
       "supervisionLevelDowngrade",
       client.rootStore,
-      getTransformer((raw: string) =>
-        client.rootStore.workflowsStore.formatSupervisionLevel(raw)
-      ),
+      usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
+        (raw) => client.rootStore.workflowsStore.formatSupervisionLevel(raw)
+      ).parse,
       getValidator(client)
     );
 

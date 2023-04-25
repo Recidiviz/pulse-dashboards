@@ -45,6 +45,7 @@ import {
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
 import { UsMiClassificationReviewOpportunity } from "./Opportunity/UsMiClassificationReviewOpportunity";
 import { UsMiEarlyDischargeOpportunity } from "./Opportunity/UsMiEarlyDischargeOpportunity";
+import { UsMiSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsMiSupervisionLevelDowngradeOpportunity";
 import { SupervisionTaskInterface } from "./Task/types";
 import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
 import { JusticeInvolvedPerson } from "./types";
@@ -78,6 +79,7 @@ const supervisionOpportunityConstructors: Record<
   pastFTRD: UsIdPastFTRDOpportunity,
   supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
   usIdSupervisionLevelDowngrade: UsIdSupervisionLevelDowngradeOpportunity,
+  usMiSupervisionLevelDowngrade: UsMiSupervisionLevelDowngradeOpportunity,
   usMiClassificationReview: UsMiClassificationReviewOpportunity,
   usMiEarlyDischarge: UsMiEarlyDischargeOpportunity,
   usTnExpiration: UsTnExpirationOpportunity,

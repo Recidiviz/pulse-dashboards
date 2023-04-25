@@ -17,64 +17,58 @@
  * =============================================================================
  */
 
-import { cloneDeep, Dictionary } from "lodash";
+import { z } from "zod";
 
-import { TransformFunction } from "../subscriptions";
-import { fieldToDate } from "../utils";
+import { caseNotesSchema } from "./schemaHelpers";
 import {
-  getBaseSLDTransformer,
   getBaseSLDValidator,
-  SupervisionLevelDowngradeReferralRecord,
+  SupervisionLevelDowngradeReferralRecordRaw,
+  supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
 } from "./SupervisionLevelDowngradeReferralRecord";
-import { WithCaseNotes } from "./types";
 
-export type UsTnSupervisionLevelDowngradeReferralRecord =
-  SupervisionLevelDowngradeReferralRecord & WithCaseNotes;
+type Schema = ReturnType<
+  typeof usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter
+>;
 
-export function getTransformer(
-  supervisionLevelFormatter: (raw: string) => string | undefined
-): TransformFunction<UsTnSupervisionLevelDowngradeReferralRecord> {
-  const transformer: TransformFunction<
-    UsTnSupervisionLevelDowngradeReferralRecord
-  > = (record) => {
-    if (!record) {
-      throw new Error("No record found");
-    }
+// TODO: this raw shape is not perfect: it still has index signatures etc.
+// It would be nice to figure out how to construct these automatically
+export type UsTnSupervisionLevelDowngradeReferralRecordRaw = z.input<Schema> &
+  SupervisionLevelDowngradeReferralRecordRaw;
+export type UsTnSupervisionLevelDowngradeReferralRecord = z.infer<Schema>;
 
-    const localRecord = cloneDeep(record);
+export const usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter =
+  (fmt?: (raw: string) => string) => {
+    const base =
+      supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
+        fmt
+      );
 
-    const { usTnSupervisionLevelHigherThanAssessmentLevel } = record.criteria;
-    if (usTnSupervisionLevelHigherThanAssessmentLevel) {
-      localRecord.criteria.supervisionLevelHigherThanAssessmentLevel =
-        usTnSupervisionLevelHigherThanAssessmentLevel;
-      delete localRecord.criteria.usTnSupervisionLevelHigherThanAssessmentLevel;
-    }
-
-    const baseTransformer = getBaseSLDTransformer(supervisionLevelFormatter);
-
-    const baseTransformedRecord = baseTransformer(localRecord);
-    if (!baseTransformedRecord) {
-      throw new Error("Unable to transform base SLD record");
-    }
-
-    const {
-      metadata: { violations },
-    } = localRecord;
-
-    const caseNotes = {
-      Violations: violations.map(
-        ({ violationCode, violationDate }: Dictionary<string>) => {
-          return {
-            noteBody: violationCode,
-            eventDate: fieldToDate(violationDate),
-          };
-        }
-      ),
-    };
-
-    return { ...baseTransformedRecord, caseNotes };
+    return z
+      .object({
+        metadata: z
+          .object({
+            violations: z
+              .object({
+                violationCode: z.string(),
+                violationDate: z.string(),
+              })
+              .array(),
+          })
+          .passthrough(),
+      })
+      .passthrough()
+      .transform((r) => ({
+        ...r,
+        caseNotes: {
+          Violations: r.metadata.violations.map(
+            ({ violationCode, violationDate }) => ({
+              noteBody: violationCode,
+              eventDate: violationDate,
+            })
+          ),
+        },
+      }))
+      .pipe(base.and(caseNotesSchema));
   };
-  return transformer;
-}
 
 export const getValidator = getBaseSLDValidator;

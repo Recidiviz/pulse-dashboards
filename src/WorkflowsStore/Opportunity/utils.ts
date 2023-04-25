@@ -16,6 +16,7 @@
 // =============================================================================
 import { ascending } from "d3-array";
 import { differenceInDays, differenceInMonths, format } from "date-fns";
+import { snakeCase } from "lodash";
 import moment from "moment";
 import simplur from "simplur";
 
@@ -145,6 +146,13 @@ export const generateOpportunityHydratedHeader = (
         "supervised at a level that does not match their latest risk score",
       callToAction: "Change their supervision level in Atlas",
     },
+    usMiSupervisionLevelDowngrade: {
+      eligibilityText: simplur`${count} client[|s] within their first 6 months of supervision [is|are] being `,
+      opportunityText:
+        "supervised at a level that does not match their latest risk score",
+      callToAction:
+        "Review clients whose supervision level does not match their risk level and change supervision levels in OMNI.",
+    },
     usMiClassificationReview: {
       eligibilityText: simplur`${count} client[|s] may be `,
       opportunityText: "eligible for a supervision level downgrade",
@@ -238,6 +246,7 @@ export const opportunityToSortFunctionMapping: Record<
   pastFTRD: sortByReviewStatusAndEligibilityDate,
   supervisionLevelDowngrade: sortByReviewStatus,
   usIdSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
+  usMiSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
   usMiClassificationReview: sortByReviewStatusAndEligibilityDate,
   usMiEarlyDischarge: sortByReviewStatusAndEligibilityDate,
   usMeSCCP: sortByReviewStatus,
@@ -325,7 +334,7 @@ export function hydrateCriteria<R extends WithCriteria, C extends CriteriaKey>(
   record: R | undefined,
   criteriaKey: C,
   criteriaCopy: CriteriaCopy<R>,
-  criteriaFormatters: CriteriaFormatters<R>
+  criteriaFormatters: CriteriaFormatters<R> = {}
 ): OpportunityRequirement[] {
   if (!record) return [];
 
@@ -334,17 +343,26 @@ export function hydrateCriteria<R extends WithCriteria, C extends CriteriaKey>(
     .map(([criterionKey, copy]) => {
       const out: OpportunityRequirement = { ...copy };
       const criterion = record[criteriaKey][criterionKey];
-      const formatters = criteriaFormatters[criterionKey];
-      if (criterion && formatters) {
-        Object.entries(formatters).forEach(([name, fmt]) => {
-          const placeholder = `$${name}`;
-          const formatted = fmt(criterion, record);
-          out.text = out.text.replaceAll(placeholder, formatted);
-          if (out.tooltip) {
-            out.tooltip = out.tooltip.replaceAll(placeholder, formatted);
-          }
-        });
-      }
+      const formatters = [
+        ...Object.entries(criteriaFormatters[criterionKey] ?? {}),
+        // Auto-generate fallback formatters
+        ...Object.entries(criterion ?? {}).map(
+          ([k, v]): [string, () => string] => [
+            snakeCase(k).toUpperCase(),
+            () => String(v),
+          ]
+        ),
+      ];
+      formatters.forEach(([name, fmt]) => {
+        const placeholder = `$${name}`;
+        const formatted = fmt(criterion, record);
+        out.text = out.text.replaceAll(placeholder, formatted);
+        if (out.tooltip) {
+          out.tooltip = out.tooltip.replaceAll(placeholder, formatted);
+        }
+      });
+      // TODO: Should we catch unreplaced placeholders? Might be false positives
+      // since the syntax is so minimal
       return out;
     });
 }

@@ -625,12 +625,12 @@
     "stateCode": "US_MI",
     "officerId": "OFFICER8",
     "supervisionType": "PROBATION",
-    "supervisionLevel": "MEDIUM",
+    "supervisionLevel": "MAXIMUM",
     "supervisionLevelStart": "2019-12-20",
     "address": "123 Bedrock Lane",
     "phoneNumber": "5555555678",
     "expirationDate": "2024-12-31",
-    "allEligibleOpportunities": [],
+    "allEligibleOpportunities": ["usMiSupervisionLevelDowngrade"],
     "personType": "CLIENT"
   },
   {

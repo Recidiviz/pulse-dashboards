@@ -43,6 +43,7 @@ export const collectionNames = {
   supervisionLevelDowngradeReferrals: "US_TN-supervisionLevelDowngrade",
   usMeSCCPReferrals: "US_ME-SCCPReferrals",
   usIdSupervisionLevelDowngradeReferrals: "US_ID-supervisionLevelDowngrade",
+  usMiSupervisionLevelDowngradeReferrals: "US_MI-supervisionLevelDowngrade",
   usMiClassificationReviewReferrals: "US_MI-classificationReviewReferrals",
   usMiEarlyDischargeReferrals: "US_MI-earlyDischargeReferrals",
   usTnExpirationReferrals: "US_TN-expirationReferrals",

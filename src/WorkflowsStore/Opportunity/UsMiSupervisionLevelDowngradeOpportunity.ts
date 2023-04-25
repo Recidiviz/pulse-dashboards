@@ -19,29 +19,44 @@
 
 import { makeObservable } from "mobx";
 
+import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import {
-  formatBaseSLDRequirements,
   getBaseSLDValidator,
   SupervisionLevelDowngradeReferralRecord,
   supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
 } from "./SupervisionLevelDowngradeReferralRecord";
 import { OpportunityRequirement } from "./types";
+import { CriteriaCopy, hydrateCriteria } from "./utils";
 
-export type UsIdSupervisionLevelDowngradeReferralRecord =
+export type UsMiSupervisionLevelDowngradeReferralRecord =
   SupervisionLevelDowngradeReferralRecord;
 
-export class UsIdSupervisionLevelDowngradeOpportunity extends OpportunityBase<
+const CRITERIA_COPY: CriteriaCopy<UsMiSupervisionLevelDowngradeReferralRecord> =
+  {
+    eligibleCriteria: [
+      [
+        "supervisionLevelHigherThanAssessmentLevel",
+        {
+          text: "Currently supervised at $SUPERVISION_LEVEL; Latest COMPAS score is $ASSESSMENT_LEVEL",
+          tooltip:
+            "The supervising Agent shall ensure that a Correctional Offender Management Profiling for Alternative Sanctions (COMPAS) has been completed for each offender on their active caseload as outlined in OP 06.01.145 “Administration and Use of COMPAS and TAP.”  Unless mandated by statute or other criteria as directed in this operating procedure, the COMPAS shall be used to determine the initial supervision level of each offender.  Any offender placed on active supervision without a completed COMPAS shall be supervised at a Medium level of supervision until a COMPAS can be completed (unless a higher level of supervision is mandated as outlined in this operating procedure).",
+        },
+      ],
+    ],
+    ineligibleCriteria: [],
+  };
+export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
-  UsIdSupervisionLevelDowngradeReferralRecord
+  UsMiSupervisionLevelDowngradeReferralRecord
 > {
   constructor(client: Client) {
     super(
       client,
-      "usIdSupervisionLevelDowngrade",
+      "usMiSupervisionLevelDowngrade",
       client.rootStore,
       supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
         (raw: string) =>
@@ -54,24 +69,22 @@ export class UsIdSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   }
 
   get requirementsMet(): OpportunityRequirement[] {
-    if (!this.record) return [];
-
-    return formatBaseSLDRequirements(this.record);
+    return hydrateCriteria(this.record, "eligibleCriteria", CRITERIA_COPY);
   }
 
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "ClientProfileDetails",
   ];
 
-  readonly policyOrMethodologyUrl =
-    "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=share_link";
+  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MI;
 
   readonly isAlert = true;
 
   denialReasonsMap = {
-    INCORRECT: "INCORRECT: Risk score listed here is incorrect",
     OVERRIDE:
-      "OVERRIDE: Client is being overridden to a different supervision level",
+      "Agent supervision level override due to noncompliance with supervision",
+    "EXCLUDED CHARGE":
+      "Client is required to be supervised at a higher level of supervision by policy",
     [OTHER_KEY]: "Other: please specify a reason",
   };
 
