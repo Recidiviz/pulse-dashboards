@@ -25,11 +25,13 @@ import {
   COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED,
   CompliantReportingOpportunity,
 } from "./CompliantReportingOpportunity";
+import { MergedCriteria } from "./schemaHelpers";
 import {
   Opportunity,
   OPPORTUNITY_LABELS,
   OPPORTUNITY_STATUS_RANKED,
   OpportunityCaseNote,
+  OpportunityRequirement,
   OpportunityType,
 } from "./types";
 
@@ -188,9 +190,10 @@ export const generateOpportunityHydratedHeader = (
     },
     // TODO: Update copy
     usMiMinimumTelephoneReporting: {
-      eligibilityText: simplur`${count} client[|s] may be eligible for `,
+      eligibilityText: simplur`${count} client[|s] may be eligible for a downgrade to `,
       opportunityText: "minimum telephone reporting",
-      callToAction: "TBD",
+      callToAction:
+        "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in OMNI.",
     },
   };
 
@@ -295,3 +298,53 @@ export const monthsOrDaysRemainingFromToday = (eligibleDate: Date): string => {
   }
   return simplur`${months} more month[|s]`;
 };
+
+type CriteriaKey = "eligibleCriteria" | "ineligibleCriteria";
+
+type WithCriteria = Record<CriteriaKey, object>;
+
+type AllCriteria<R extends WithCriteria> = MergedCriteria<
+  R["eligibleCriteria"],
+  R["ineligibleCriteria"]
+>;
+
+// Copy is defined as an array rather than a record so it can have a well-defined order
+export type CriteriaCopy<R extends WithCriteria> = {
+  [K in CriteriaKey]: Array<[keyof R[K], OpportunityRequirement]>;
+};
+
+// Formatters are defined in a separate dict so the function type can depend on the criterion
+export type CriteriaFormatters<R extends WithCriteria> = {
+  [K in keyof AllCriteria<R>]?: Record<
+    string,
+    (criterion: AllCriteria<R>[K], record: R) => string
+  >;
+};
+
+export function hydrateCriteria<R extends WithCriteria, C extends CriteriaKey>(
+  record: R | undefined,
+  criteriaKey: C,
+  criteriaCopy: CriteriaCopy<R>,
+  criteriaFormatters: CriteriaFormatters<R>
+): OpportunityRequirement[] {
+  if (!record) return [];
+
+  return criteriaCopy[criteriaKey]
+    .filter(([criterionKey]) => criterionKey in record[criteriaKey])
+    .map(([criterionKey, copy]) => {
+      const out: OpportunityRequirement = { ...copy };
+      const criterion = record[criteriaKey][criterionKey];
+      const formatters = criteriaFormatters[criterionKey];
+      if (criterion && formatters) {
+        Object.entries(formatters).forEach(([name, fmt]) => {
+          const placeholder = `$${name}`;
+          const formatted = fmt(criterion, record);
+          out.text = out.text.replaceAll(placeholder, formatted);
+          if (out.tooltip) {
+            out.tooltip = out.tooltip.replaceAll(placeholder, formatted);
+          }
+        });
+      }
+      return out;
+    });
+}

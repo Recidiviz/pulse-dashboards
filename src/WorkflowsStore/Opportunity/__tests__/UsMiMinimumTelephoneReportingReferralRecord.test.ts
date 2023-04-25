@@ -15,32 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { transformReferral } from "../UsMiMinimumTelephoneReportingReferralRecord";
+import {
+  UsMiMinimumTelephoneReportingReferralRecordRaw,
+  usMiMinimumTelephoneReportingSchema,
+} from "../UsMiMinimumTelephoneReportingReferralRecord";
 
 test("transform record", () => {
-  const rawRecord = {
+  const rawRecord: UsMiMinimumTelephoneReportingReferralRecordRaw = {
     stateCode: "US_MI",
-    externalId: "abc123",
-
-    criteria: {
-      sixMonthsPastSuperivionStart: {
-        eligibleDate: "2022-12-12",
+    externalId: "010",
+    eligibleCriteria: {
+      onMinimumSupervisionAtLeastSixMonths: null,
+      usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
+        initialAssessmentLevelRawText: "MEDIUM",
+        supervisionLevelRawText: "MEDIUM",
       },
-      usMiNotServingAnOuilOrOwi: {
-        ineligibleOffenses: [],
-      },
-      initialCompassScoreMinimumOrMedium: {
-        assessmentLevel: "HIGH",
-        eligibleDate: "2023-04-10",
-      },
-      usMiNotServingIneligibleOffensesOnSupervision: {
-        ineligibleOffenses: [],
-      },
-      supervisionNotWithin90DaysOfFullTermDischarge: {
-        eligibleDate: "2021-10-10",
-      },
+      usMiNotServingIneligibleOffensesForTelephoneReporting: null,
+      usMiNotRequiredToRegisterUnderSora: null,
+      supervisionNotPastFullTermCompletionDateOrUpcoming90Days: null,
+      usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
     },
+    ineligibleCriteria: {},
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(
+    usMiMinimumTelephoneReportingSchema.parse(rawRecord)
+  ).toMatchSnapshot();
 });

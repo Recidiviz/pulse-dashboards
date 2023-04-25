@@ -31,6 +31,7 @@ import { residentsData } from "./fixtures/residents";
 import { usIdPastFtrdFixture } from "./fixtures/UsIdPastFtrdReferrals";
 import { usIdSupervisionTasksData } from "./fixtures/usIdSupervisionTasks";
 import { usMeSCCPFixture } from "./fixtures/usMeSCCPReferrals";
+import { usMiMinimumTelephoneReportingReferralsFixture } from "./fixtures/usMiMinimumTelephoneReportingReferrals";
 import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
 
 const OPPORTUNITIES_WITH_JSON_FIXTURES: CollectionName[] = [
@@ -44,7 +45,6 @@ const OPPORTUNITIES_WITH_JSON_FIXTURES: CollectionName[] = [
   "usTnExpirationReferrals",
   "usMoRestrictiveHousingStatusHearingReferrals",
   "usMeEarlyTerminationReferrals",
-  "usMiMinimumTelephoneReportingReferrals",
 ];
 
 export type FixtureData<T> = {
@@ -59,6 +59,8 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   earlyTerminationReferrals: usNdEarlyTerminationFixture,
   pastFTRDReferrals: usIdPastFtrdFixture,
   usMeSCCPReferrals: usMeSCCPFixture,
+  usMiMinimumTelephoneReportingReferrals:
+    usMiMinimumTelephoneReportingReferralsFixture,
 };
 
 const db = getDb();

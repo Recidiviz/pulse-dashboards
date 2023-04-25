@@ -15,66 +15,61 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { cloneDeep } from "lodash";
+import { z } from "zod";
 
-import { TransformFunction } from "../subscriptions";
-import { fieldToDate } from "../utils";
-import { WithCaseNotes } from "./types";
+import {
+  caseNotesSchema,
+  dateStringSchema,
+  opportunitySchemaBase,
+} from "./schemaHelpers";
 
-export type UsMiMinimumTelephoneReportingReferralRecord = {
-  stateCode: string;
-  externalId: string;
-  criteria: {
-    sixMonthsPastSuperivionStart: {
-      eligibleDate: Date;
-    };
-    usMiNotServingAnOuilOrOwi: {
-      ineligibleOffenses: string[];
-    };
-    initialCompassScoreMinimumOrMedium: {
-      assessmentLevel: string;
-      eligibleDate: Date;
-    };
-    usMiNotServingIneligibleOffensesOnSupervision: {
-      ineligibleOffenses: string[];
-    };
-    supervisionNotWithin90DaysOfFullTermDischarge: {
-      eligibleDate: Date;
-    };
-  };
-} & WithCaseNotes;
+// TODO: tighten this up once we see some real records (i.e. what's actually nullable?)
+const criteria = z.object({
+  onMinimumSupervisionAtLeastSixMonths: z
+    .object({
+      eligibleDate: dateStringSchema,
+    })
+    .nullable(),
+  usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: z.object({
+    supervisionLevelRawText: z.string(),
+    initialAssessmentLevelRawText: z.string(),
+  }),
+  usMiNotServingIneligibleOffensesForTelephoneReporting: z
+    .object({
+      ineligibleOffenses: z.array(z.string()),
+      sentenceStatus: z.array(z.string()),
+      isLifeSentence: z.array(z.string()),
+      sentenceStatusRawText: z.array(z.string()),
+    })
+    .nullable(),
+  supervisionNotPastFullTermCompletionDateOrUpcoming90Days: z
+    .object({
+      eligibleDate: dateStringSchema,
+    })
+    .nullable(),
+  usMiNotRequiredToRegisterUnderSora: z
+    .object({
+      ineligibleDate: dateStringSchema,
+    })
+    .nullable(),
+  usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: z
+    .object({
+      eligibleDate: dateStringSchema,
+    })
+    .nullable(),
+});
 
-export const transformReferral: TransformFunction<
-  UsMiMinimumTelephoneReportingReferralRecord
-> = (record) => {
-  if (!record) {
-    throw new Error("No record found");
-  }
+export const usMiMinimumTelephoneReportingSchema = opportunitySchemaBase
+  .extend({
+    eligibleCriteria: criteria,
+    ineligibleCriteria: z.strictObject({}),
+  })
+  .merge(caseNotesSchema);
 
-  const transformedRecord = cloneDeep(
-    record
-  ) as UsMiMinimumTelephoneReportingReferralRecord;
+export type UsMiMinimumTelephoneReportingReferralRecord = z.infer<
+  typeof usMiMinimumTelephoneReportingSchema
+>;
 
-  const { criteria } = record;
-
-  transformedRecord.criteria.sixMonthsPastSuperivionStart = {
-    eligibleDate: fieldToDate(
-      criteria.sixMonthsPastSuperivionStart.eligibleDate
-    ),
-  };
-
-  transformedRecord.criteria.initialCompassScoreMinimumOrMedium = {
-    ...transformedRecord.criteria.initialCompassScoreMinimumOrMedium,
-    eligibleDate: fieldToDate(
-      criteria.initialCompassScoreMinimumOrMedium.eligibleDate
-    ),
-  };
-
-  transformedRecord.criteria.supervisionNotWithin90DaysOfFullTermDischarge = {
-    eligibleDate: fieldToDate(
-      criteria.supervisionNotWithin90DaysOfFullTermDischarge.eligibleDate
-    ),
-  };
-
-  return transformedRecord as UsMiMinimumTelephoneReportingReferralRecord;
-};
+export type UsMiMinimumTelephoneReportingReferralRecordRaw = z.input<
+  typeof usMiMinimumTelephoneReportingSchema
+>;

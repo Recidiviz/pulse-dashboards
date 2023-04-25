@@ -2,25 +2,20 @@
 
 exports[`transform record 1`] = `
 Object {
-  "criteria": Object {
-    "initialCompassScoreMinimumOrMedium": Object {
-      "assessmentLevel": "HIGH",
-      "eligibleDate": 2023-04-10T00:00:00.000Z,
-    },
-    "sixMonthsPastSuperivionStart": Object {
-      "eligibleDate": 2022-12-12T00:00:00.000Z,
-    },
-    "supervisionNotWithin90DaysOfFullTermDischarge": Object {
-      "eligibleDate": 2021-10-10T00:00:00.000Z,
-    },
-    "usMiNotServingAnOuilOrOwi": Object {
-      "ineligibleOffenses": Array [],
-    },
-    "usMiNotServingIneligibleOffensesOnSupervision": Object {
-      "ineligibleOffenses": Array [],
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "onMinimumSupervisionAtLeastSixMonths": null,
+    "supervisionNotPastFullTermCompletionDateOrUpcoming90Days": null,
+    "usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision": null,
+    "usMiNotRequiredToRegisterUnderSora": null,
+    "usMiNotServingIneligibleOffensesForTelephoneReporting": null,
+    "usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting": Object {
+      "initialAssessmentLevelRawText": "MEDIUM",
+      "supervisionLevelRawText": "MEDIUM",
     },
   },
-  "externalId": "abc123",
+  "externalId": "010",
+  "ineligibleCriteria": Object {},
   "stateCode": "US_MI",
 }
 `;

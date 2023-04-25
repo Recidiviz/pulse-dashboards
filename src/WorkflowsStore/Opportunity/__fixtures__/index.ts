@@ -965,24 +965,18 @@ export const usMiMinimumTelephoneReportingReferralRecord: UsMiMinimumTelephoneRe
   {
     stateCode: "US_MI",
     externalId: "010",
-    criteria: {
-      sixMonthsPastSuperivionStart: {
-        eligibleDate: parseISO("2022-12-12"),
+    eligibleCriteria: {
+      onMinimumSupervisionAtLeastSixMonths: null,
+      usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
+        initialAssessmentLevelRawText: "MEDIUM",
+        supervisionLevelRawText: "MEDIUM",
       },
-      usMiNotServingAnOuilOrOwi: {
-        ineligibleOffenses: [],
-      },
-      initialCompassScoreMinimumOrMedium: {
-        assessmentLevel: "HIGH",
-        eligibleDate: parseISO("2023-04-10"),
-      },
-      usMiNotServingIneligibleOffensesOnSupervision: {
-        ineligibleOffenses: [],
-      },
-      supervisionNotWithin90DaysOfFullTermDischarge: {
-        eligibleDate: parseISO("2021-10-10"),
-      },
+      usMiNotRequiredToRegisterUnderSora: null,
+      usMiNotServingIneligibleOffensesForTelephoneReporting: null,
+      supervisionNotPastFullTermCompletionDateOrUpcoming90Days: null,
+      usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
     },
+    ineligibleCriteria: {},
     caseNotes: {
       foo: [
         {

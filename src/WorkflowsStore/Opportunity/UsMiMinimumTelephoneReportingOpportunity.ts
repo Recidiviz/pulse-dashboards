@@ -19,17 +19,72 @@ import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
-import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import {
-  transformReferral,
   UsMiMinimumTelephoneReportingReferralRecord,
+  usMiMinimumTelephoneReportingSchema,
 } from "./UsMiMinimumTelephoneReportingReferralRecord";
+import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "./utils";
+
+const CRITERIA_FORMATTERS: CriteriaFormatters<UsMiMinimumTelephoneReportingReferralRecord> =
+  {
+    usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
+      COMPAS_SCORE: ({ initialAssessmentLevelRawText }) =>
+        initialAssessmentLevelRawText.toLowerCase(),
+    },
+  } as const;
+
+const CRITERIA_COPY: CriteriaCopy<UsMiMinimumTelephoneReportingReferralRecord> =
+  {
+    eligibleCriteria: [
+      [
+        "onMinimumSupervisionAtLeastSixMonths",
+        {
+          text: "Served at least six months on Minimum In-Person or Minimum Low Risk supervision",
+          tooltip:
+            "Offenders assigned to minimum in person or minimum low-risk supervision shall be evaluated for assignment to minimum TRS after they have completed six months of active supervision.",
+        },
+      ],
+      [
+        "usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting",
+        {
+          text: "Original COMPAS score was $COMPAS_SCORE",
+          tooltip:
+            "Original COMPAS score was minimum or medium and current supervision level is minimum in person or current supervision level is minimum low risk.",
+        },
+      ],
+      [
+        "usMiNotRequiredToRegisterUnderSora",
+        {
+          text: "Not required to register per SORA",
+          tooltip:
+            "Not currently required to register pursuant to to the Sex Offender Registration Act.",
+        },
+      ],
+      [
+        "usMiNotServingIneligibleOffensesForTelephoneReporting",
+        {
+          text: "Not on supervision for an offense excluded from eligibility for telephone reporting",
+          tooltip:
+            "Not currently serving for an offense listed in WS 01.06.115 Attachment A “Michigan Sex Offender Registry Offenses” or any any similar offense from another state. Not currently serving for an offense included in OP 06.04.130K Attachment A “TRS Exclusion List” including Attempts, Solicitation and Conspiracy. Agents should reference the PACC code on the list when determining eligibility. Not serving for Operating Under the Influence of Liquor (OUIL) or Operating While Impaired (OWI) (any level), unless the offender has successfully completed twelve months of active supervision. A probationer currently serving for OUIL/OWI may only be placed on TRS if authorized by the sentencing court and documented by a court order. Not serving a life or commuted sentence. Not serving a probation term with a delay of sentence.",
+        },
+      ],
+      [
+        "supervisionNotPastFullTermCompletionDateOrUpcoming90Days",
+        {
+          text: "More than 90 days remaining until full-term discharge.",
+        },
+      ],
+    ],
+    ineligibleCriteria: [],
+  };
 
 const DENIAL_REASONS_MAP = {
+  FIREARM:
+    "Serving on a felony offense involving possession or use of a firearm",
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
@@ -48,7 +103,7 @@ export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
       client,
       "usMiMinimumTelephoneReporting",
       client.rootStore,
-      transformReferral
+      usMiMinimumTelephoneReportingSchema.parse
     );
 
     makeObservable(this, {
@@ -60,26 +115,11 @@ export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
   }
 
   get requirementsMet(): OpportunityRequirement[] {
-    if (!this.record) return [];
-    const requirements: OpportunityRequirement[] = [];
-    const {
-      criteria: { initialCompassScoreMinimumOrMedium },
-    } = this.record;
-
-    if (initialCompassScoreMinimumOrMedium?.assessmentLevel) {
-      requirements.push({
-        text: `Currently on ${initialCompassScoreMinimumOrMedium?.assessmentLevel.toLowerCase()} assessment level`,
-      });
-    }
-
-    if (initialCompassScoreMinimumOrMedium?.eligibleDate) {
-      requirements.push({
-        text: `Initial compass score date is ${formatWorkflowsDate(
-          initialCompassScoreMinimumOrMedium?.eligibleDate
-        )}`,
-      });
-    }
-
-    return requirements;
+    return hydrateCriteria(
+      this.record,
+      "eligibleCriteria",
+      CRITERIA_COPY,
+      CRITERIA_FORMATTERS
+    );
   }
 }

@@ -20,3 +20,16 @@ import { FixtureData } from "../workflowsFixtures";
 export const externalIdFunc: FixtureData<{ externalId: string }>["idFunc"] = (
   doc
 ) => doc.externalId;
+
+export function fixtureWithIdKey<T extends object>(
+  key: keyof {
+    [P in keyof T as T[P] extends string ? P : never]: any;
+  },
+  data: T[]
+): FixtureData<T> {
+  return {
+    data,
+    // this narrowing should be enforced by the parameter types, but ts can't figure it out
+    idFunc: (r) => r[key] as string,
+  };
+}
