@@ -20,9 +20,7 @@ import { computed, makeObservable } from "mobx";
 
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../FirestoreStore";
-import { FeatureGateError } from "../../utils/FeatureGateError";
 import { Client } from "../Client";
-import { ValidateFunction } from "../subscriptions";
 import { OTHER_KEY } from "../utils";
 import { INELIGIBLE_CRITERIA_COPY } from "./EarnedDischargeOpportunity";
 import { LSUForm } from "./Forms/LSUForm";
@@ -122,33 +120,6 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
   return requirements;
 };
 
-const getRecordValidator =
-  (client: Client): ValidateFunction<LSUReferralRecord> =>
-  (record: LSUReferralRecord): void => {
-    const featureFlags = client.rootStore.workflowsStore.featureVariants;
-    const ineligibleCriteriaKeys =
-      (record?.ineligibleCriteria && Object.keys(record?.ineligibleCriteria)) ??
-      [];
-
-    if (
-      !featureFlags.usIdLengthOfStayAlmostEligible &&
-      ineligibleCriteriaKeys.includes("onSupervisionAtLeastOneYear")
-    ) {
-      throw new FeatureGateError(
-        "usIdLengthOfStayAlmostEligible opportunity is not enabled for this user."
-      );
-    }
-
-    if (
-      !featureFlags.usIdIncomeVerificationAlmostEligible &&
-      ineligibleCriteriaKeys.includes("usIdIncomeVerifiedWithin3Months")
-    ) {
-      throw new FeatureGateError(
-        "usIdIncomeVerificationAlmostEligible opportunity is not enabled for this user."
-      );
-    }
-  };
-
 export class LSUOpportunity extends OpportunityBase<
   Client,
   LSUReferralRecord,
@@ -165,13 +136,7 @@ export class LSUOpportunity extends OpportunityBase<
     "http://forms.idoc.idaho.gov/WebLink/0/edoc/273717/Limited%20Supervision%20Unit.pdf";
 
   constructor(client: Client) {
-    super(
-      client,
-      "LSU",
-      client.rootStore,
-      transformReferral,
-      getRecordValidator(client)
-    );
+    super(client, "LSU", client.rootStore, transformReferral);
     makeObservable(this, {
       requirementsMet: computed,
       almostEligible: computed,

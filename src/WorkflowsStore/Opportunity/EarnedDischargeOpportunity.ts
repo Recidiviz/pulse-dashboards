@@ -20,9 +20,7 @@ import { computed, makeObservable } from "mobx";
 
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../FirestoreStore";
-import { FeatureGateError } from "../../utils/FeatureGateError";
 import { Client } from "../Client";
-import { ValidateFunction } from "../subscriptions";
 import { OTHER_KEY } from "../utils";
 import {
   EarnedDischargeDraftData,
@@ -95,33 +93,6 @@ export const INELIGIBLE_CRITERIA_COPY: Record<
   },
 };
 
-const getRecordValidator =
-  (client: Client): ValidateFunction<EarnedDischargeReferralRecord> =>
-  (record: EarnedDischargeReferralRecord): void => {
-    const featureFlags = client.rootStore.workflowsStore.featureVariants;
-    const ineligibleCriteriaKeys =
-      (record?.ineligibleCriteria && Object.keys(record?.ineligibleCriteria)) ??
-      [];
-
-    if (
-      !featureFlags.usIdLengthOfStayAlmostEligible &&
-      ineligibleCriteriaKeys.includes("pastEarnedDischargeEligibleDate")
-    ) {
-      throw new FeatureGateError(
-        "usIdLengthOfStayAlmostEligible opportunity is not enabled for this user."
-      );
-    }
-
-    if (
-      !featureFlags.usIdIncomeVerificationAlmostEligible &&
-      ineligibleCriteriaKeys.includes("usIdIncomeVerifiedWithin3Months")
-    ) {
-      throw new FeatureGateError(
-        "usIdIncomeVerificationAlmostEligible opportunity is not enabled for this user."
-      );
-    }
-  };
-
 export class EarnedDischargeOpportunity extends OpportunityBase<
   Client,
   EarnedDischargeReferralRecord,
@@ -138,13 +109,7 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
   ];
 
   constructor(client: Client) {
-    super(
-      client,
-      "earnedDischarge",
-      client.rootStore,
-      transformReferral,
-      getRecordValidator(client)
-    );
+    super(client, "earnedDischarge", client.rootStore, transformReferral);
 
     makeObservable(this, {
       almostEligible: computed,
