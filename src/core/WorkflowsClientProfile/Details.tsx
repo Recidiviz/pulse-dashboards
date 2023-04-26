@@ -525,7 +525,7 @@ export function UsMoIncarceration({
   );
 }
 
-export function UsMoRestrictiveHousingPlacement({
+export function UsMoRestrictiveHousing({
   opportunity,
 }: OpportunityProfileProps): React.ReactElement | null {
   const opportunityRecord =
@@ -533,62 +533,117 @@ export function UsMoRestrictiveHousingPlacement({
   if (!opportunityRecord) return null;
 
   return (
-    <DetailsSection>
-      <DetailsHeading>Current Restrictive Housing Placement</DetailsHeading>
-      <DetailsContent>
-        <DetailsList>
-          <DetailsSubheading>Type</DetailsSubheading>
-          <DetailsContent className="fs-exclude">
-            {opportunityRecord?.metadata.housingUseCode}
-          </DetailsContent>
+    <>
+      <DetailsSection>
+        <DetailsHeading>Current Restrictive Housing Placement</DetailsHeading>
+        <DetailsContent>
+          <DetailsList>
+            <DetailsSubheading>Type</DetailsSubheading>
+            <DetailsContent className="fs-exclude">
+              {opportunityRecord?.metadata.housingUseCode}
+            </DetailsContent>
 
-          <DetailsSubheading>Length of Stay</DetailsSubheading>
-          <DetailsContent className="fs-exclude">
-            {formatWorkflowsDate(
-              opportunityRecord.metadata.restrictiveHousingStartDate
-            )}{" "}
-            to {formatWorkflowsDate(new Date())}
-            <CaseNoteDate>
-              {" "}
-              –{" "}
-              {differenceInDays(
-                new Date(),
+            <DetailsSubheading>Length of Stay</DetailsSubheading>
+            <DetailsContent className="fs-exclude">
+              {formatWorkflowsDate(
                 opportunityRecord.metadata.restrictiveHousingStartDate
               )}{" "}
-              days
-            </CaseNoteDate>
-          </DetailsContent>
+              to {formatWorkflowsDate(new Date())}
+              <CaseNoteDate>
+                {" "}
+                –{" "}
+                {differenceInDays(
+                  new Date(),
+                  opportunityRecord.metadata.restrictiveHousingStartDate
+                )}{" "}
+                days
+              </CaseNoteDate>
+            </DetailsContent>
 
-          <DetailsSubheading>Current Location</DetailsSubheading>
-          <DetailsContent className="fs-exclude">
-            Building {opportunityRecord.metadata.buildingNumber}, Complex{" "}
-            {opportunityRecord.metadata.complexNumber}, Room{" "}
-            {opportunityRecord.metadata.roomNumber}, Bed{" "}
-            {opportunityRecord.metadata.bedNumber}
-          </DetailsContent>
+            <DetailsSubheading>Current Location</DetailsSubheading>
+            <DetailsContent className="fs-exclude">
+              Building {opportunityRecord.metadata.buildingNumber}, Complex{" "}
+              {opportunityRecord.metadata.complexNumber}, Room{" "}
+              {opportunityRecord.metadata.roomNumber}, Bed{" "}
+              {opportunityRecord.metadata.bedNumber}
+            </DetailsContent>
 
-          <DetailsSubheading>
-            Last Restrictive Housing Status Hearing
-          </DetailsSubheading>
-          <DetailsContent className="fs-exclude">
-            {formatWorkflowsDate(
-              opportunityRecord.metadata.mostRecentHearingDate
-            )}{" "}
-            (
-            {differenceInDays(
-              new Date(),
-              opportunityRecord.metadata.mostRecentHearingDate
-            )}{" "}
-            days ago)
-          </DetailsContent>
+            <DetailsSubheading>
+              Last Restrictive Housing Status Hearing
+            </DetailsSubheading>
+            <DetailsContent className="fs-exclude">
+              {formatWorkflowsDate(
+                opportunityRecord.metadata.mostRecentHearingDate
+              )}{" "}
+              (
+              {differenceInDays(
+                new Date(),
+                opportunityRecord.metadata.mostRecentHearingDate
+              )}{" "}
+              days ago)
+            </DetailsContent>
 
-          <DetailsSubheading>Last Hearing Facility</DetailsSubheading>
-          <DetailsContent className="fs-exclude">
-            {opportunityRecord?.metadata.mostRecentHearingFacility}
-          </DetailsContent>
-        </DetailsList>
-      </DetailsContent>
-    </DetailsSection>
+            <DetailsSubheading>Last Hearing Facility</DetailsSubheading>
+            <DetailsContent className="fs-exclude">
+              {opportunityRecord?.metadata.mostRecentHearingFacility}
+            </DetailsContent>
+          </DetailsList>
+        </DetailsContent>
+      </DetailsSection>
+
+      <DetailsSection>
+        <DetailsHeading>CDVs</DetailsHeading>
+        <DetailsContent>
+          <DetailsList>
+            <DetailsSubheading>Major CDVs, past 12 months</DetailsSubheading>
+            <DetailsList>
+              {opportunityRecord.metadata.majorCdvs.length > 0
+                ? opportunityRecord.metadata.majorCdvs.map((cdv) => {
+                    return (
+                      <DetailsContent>
+                        <CaseNoteTitle>{cdv.cdvRule}:</CaseNoteTitle>{" "}
+                        {formatWorkflowsDate(cdv.cdvDate)}
+                      </DetailsContent>
+                    );
+                  })
+                : "None"}
+            </DetailsList>
+            <DetailsSubheading>Other CDVs since last hearing</DetailsSubheading>
+            <DetailsList>
+              {opportunityRecord.metadata.cdvsSinceLastHearing.length > 0
+                ? opportunityRecord.metadata.cdvsSinceLastHearing.map((cdv) => {
+                    return (
+                      <DetailsContent>
+                        <CaseNoteTitle>{cdv.cdvRule}:</CaseNoteTitle>{" "}
+                        {formatWorkflowsDate(cdv.cdvDate)}
+                      </DetailsContent>
+                    );
+                  })
+                : "None"}
+            </DetailsList>
+            <DetailsSubheading>
+              Other Minor CDVs, past 6 months
+            </DetailsSubheading>
+            <DetailsContent>
+              {opportunityRecord.metadata.numMinorCdvsBeforeLastHearing
+                ? opportunityRecord.metadata.numMinorCdvsBeforeLastHearing
+                : "None"}
+            </DetailsContent>
+          </DetailsList>
+        </DetailsContent>
+      </DetailsSection>
+
+      <DetailsSection>
+        <DetailsHeading>Previous Hearing Comments</DetailsHeading>
+        <DetailsContent>
+          <DetailsList>
+            <DetailsContent className="fs-exclude">
+              {opportunityRecord?.metadata.mostRecentHearingComments}
+            </DetailsContent>
+          </DetailsList>
+        </DetailsContent>
+      </DetailsSection>
+    </>
   );
 }
 

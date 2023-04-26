@@ -25,7 +25,8 @@ import { usNdEarlyTerminationSchema } from "../src/WorkflowsStore";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
 import { usIdPastFtrdSchema } from "../src/WorkflowsStore/Opportunity/UsIdPastFTRDReferralRecord";
 import { usMeSCCPSchema } from "../src/WorkflowsStore/Opportunity/UsMeSCCPReferralRecord";
-import { UsTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTnSupervisionLevelDowngradeReferralRecord";
+import { usMoRestrictiveHousingStatusHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
+import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTnSupervisionLevelDowngradeReferralRecord";
 
 type CollectionName = keyof typeof collectionNames;
 
@@ -56,7 +57,9 @@ const SCHEMAS = {
   usIdSupervisionLevelDowngradeReferrals:
     supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
   supervisionLevelDowngradeReferrals:
-    UsTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
+    usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
+  usMoRestrictiveHousingStatusHearingReferrals:
+    usMoRestrictiveHousingStatusHearingSchema,
 } satisfies Partial<Record<CollectionName, z.ZodTypeAny>>;
 
 (async () => {

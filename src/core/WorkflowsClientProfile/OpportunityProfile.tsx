@@ -35,7 +35,7 @@ import {
   SpecialConditions,
   Supervision,
   UsMoIncarceration,
-  UsMoRestrictiveHousingPlacement,
+  UsMoRestrictiveHousing,
 } from "./Details";
 import { Heading } from "./Heading";
 import { OpportunityModule } from "./OpportunityModule";
@@ -69,7 +69,7 @@ type ResidentDetailComponentName = keyof typeof ResidentDetailSidebarComponents;
 
 const OpportunityDetailSidebarComponents = {
   CaseNotes,
-  UsMoRestrictiveHousingPlacement,
+  UsMoRestrictiveHousing,
 };
 
 type OpportunityDetailComponentName =

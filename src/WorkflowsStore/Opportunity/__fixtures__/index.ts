@@ -878,7 +878,7 @@ export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHo
   {
     stateCode: "US_MO",
     externalId: "004",
-    criteria: {
+    eligibleCriteria: {
       usMoHasUpcomingHearing: {
         nextReviewDate: parseISO("2023-11-03"),
       },
@@ -890,6 +890,7 @@ export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHo
       mostRecentHearingDate: parseISO("2022-09-03"),
       mostRecentHearingType: "hearing type",
       mostRecentHearingFacility: "FACILITY NAME",
+      mostRecentHearingComments: "Reason for Hearing: 30 day review",
       currentFacility: "FACILITY 01",
       restrictiveHousingStartDate: parseISO("2022-10-01"),
       bedNumber: "03",
@@ -897,6 +898,14 @@ export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHo
       complexNumber: "2",
       buildingNumber: "13",
       housingUseCode: "123456",
+      majorCdvs: [
+        {
+          cdvDate: parseISO("2022-02-20"),
+          cdvRule: "Rule 7.2",
+        },
+      ],
+      cdvsSinceLastHearing: [],
+      numMinorCdvsBeforeLastHearing: 5,
     },
   };
 

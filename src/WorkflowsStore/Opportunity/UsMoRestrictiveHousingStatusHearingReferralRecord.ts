@@ -16,66 +16,61 @@
 // =============================================================================
 
 import { isBefore, startOfToday } from "date-fns";
-import { cloneDeep } from "lodash";
+import { z } from "zod";
 
-import { TransformFunction, ValidateFunction } from "../subscriptions";
-import { fieldToDate, OpportunityValidationError } from "../utils";
+import { ValidateFunction } from "../subscriptions";
+import { OpportunityValidationError } from "../utils";
+import {
+  dateStringSchema,
+  opportunitySchemaBase,
+  stringToIntSchema,
+} from "./schemaHelpers";
 
-export type UsMoRestrictiveHousingStatusHearingReferralRecord = {
-  stateCode: string;
-  externalId: string;
-  metadata: {
-    mostRecentHearingDate: Date;
-    mostRecentHearingType: string;
-    mostRecentHearingFacility: string;
-    currentFacility: string;
-    restrictiveHousingStartDate: Date;
-    bedNumber: string;
-    roomNumber: string;
-    complexNumber: string;
-    buildingNumber: string;
-    housingUseCode: string;
-  };
-  criteria: {
-    usMoHasUpcomingHearing: {
-      nextReviewDate: Date;
-    };
-    usMoInRestrictiveHousing: {
-      confinementType: string;
-    };
-  };
-};
+const cdvSchema = z.object({
+  cdvDate: dateStringSchema,
+  cdvRule: z.string(),
+});
 
-export const transformReferral: TransformFunction<
-  UsMoRestrictiveHousingStatusHearingReferralRecord
-> = (record) => {
-  if (!record) {
-    throw new Error("No record found");
-  }
+export const usMoRestrictiveHousingStatusHearingSchema =
+  opportunitySchemaBase.extend({
+    metadata: z.object({
+      mostRecentHearingDate: dateStringSchema,
+      mostRecentHearingType: z.string(),
+      mostRecentHearingFacility: z.string(),
+      mostRecentHearingComments: z.string(),
+      currentFacility: z.string(),
+      restrictiveHousingStartDate: dateStringSchema,
+      bedNumber: z.string(),
+      roomNumber: z.string(),
+      complexNumber: z.string(),
+      buildingNumber: z.string(),
+      housingUseCode: z.string(),
+      majorCdvs: z.array(cdvSchema),
+      cdvsSinceLastHearing: z.array(cdvSchema),
+      numMinorCdvsBeforeLastHearing: stringToIntSchema,
+    }),
+    eligibleCriteria: z.object({
+      usMoHasUpcomingHearing: z.object({
+        nextReviewDate: dateStringSchema,
+      }),
+      usMoInRestrictiveHousing: z.object({
+        confinementType: z.string(),
+      }),
+    }),
+  });
 
-  const transformedRecord = cloneDeep(
-    record
-  ) as UsMoRestrictiveHousingStatusHearingReferralRecord;
-  const { criteria, metadata } = record;
+export type UsMoRestrictiveHousingStatusHearingReferralRecord = z.infer<
+  typeof usMoRestrictiveHousingStatusHearingSchema
+>;
 
-  transformedRecord.criteria.usMoHasUpcomingHearing = {
-    nextReviewDate: fieldToDate(criteria.usMoHasUpcomingHearing.nextReviewDate),
-  };
-
-  transformedRecord.metadata.mostRecentHearingDate = fieldToDate(
-    metadata.mostRecentHearingDate
-  );
-  transformedRecord.metadata.restrictiveHousingStartDate = fieldToDate(
-    metadata.restrictiveHousingStartDate
-  );
-
-  return transformedRecord;
-};
+export type UsMoRestrictiveHousingStatusHearingReferralRecordRaw = z.input<
+  typeof usMoRestrictiveHousingStatusHearingSchema
+>;
 
 export const validateReferral: ValidateFunction<
   UsMoRestrictiveHousingStatusHearingReferralRecord
 > = (record) => {
-  const { nextReviewDate } = record.criteria.usMoHasUpcomingHearing;
+  const { nextReviewDate } = record.eligibleCriteria.usMoHasUpcomingHearing;
 
   if (
     isBefore(

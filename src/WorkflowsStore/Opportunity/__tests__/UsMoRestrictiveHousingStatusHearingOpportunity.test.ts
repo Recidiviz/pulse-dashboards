@@ -83,7 +83,7 @@ describe("fully eligible", () => {
     const fixtureEligibleToday: UsMoRestrictiveHousingStatusHearingReferralRecord =
       {
         ...UsMoRestrictiveHousingStatusHearingRecordFixture,
-        criteria: {
+        eligibleCriteria: {
           usMoHasUpcomingHearing: {
             nextReviewDate: today,
           },
@@ -100,7 +100,7 @@ describe("fully eligible", () => {
     const fixtureEligibleTomorrow: UsMoRestrictiveHousingStatusHearingReferralRecord =
       {
         ...UsMoRestrictiveHousingStatusHearingRecordFixture,
-        criteria: {
+        eligibleCriteria: {
           usMoHasUpcomingHearing: {
             nextReviewDate: addDays(today, 1),
           },

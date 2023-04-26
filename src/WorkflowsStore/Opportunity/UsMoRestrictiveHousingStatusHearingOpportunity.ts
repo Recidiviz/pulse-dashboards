@@ -26,8 +26,8 @@ import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import {
-  transformReferral,
   UsMoRestrictiveHousingStatusHearingReferralRecord,
+  usMoRestrictiveHousingStatusHearingSchema,
   validateReferral,
 } from "./UsMoRestrictiveHousingStatusHearingReferralRecord";
 
@@ -42,7 +42,7 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
 > {
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "UsMoIncarceration",
-    "UsMoRestrictiveHousingPlacement",
+    "UsMoRestrictiveHousing",
   ];
 
   resident: Resident;
@@ -56,7 +56,7 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
       resident,
       "usMoRestrictiveHousingStatusHearing",
       resident.rootStore,
-      transformReferral,
+      usMoRestrictiveHousingStatusHearingSchema.parse,
       validateReferral
     );
     this.resident = resident;
@@ -71,7 +71,7 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
     if (!this.record) return [];
     const requirements: OpportunityRequirement[] = [];
     const {
-      criteria: { usMoHasUpcomingHearing },
+      eligibleCriteria: { usMoHasUpcomingHearing },
     } = this.record;
 
     if (usMoHasUpcomingHearing.nextReviewDate) {
@@ -103,6 +103,6 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
   }
 
   get eligibilityDate(): Date | undefined {
-    return this.record?.criteria.usMoHasUpcomingHearing.nextReviewDate;
+    return this.record?.eligibleCriteria.usMoHasUpcomingHearing.nextReviewDate;
   }
 }

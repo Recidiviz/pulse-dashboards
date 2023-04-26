@@ -19,25 +19,42 @@ import tk from "timekeeper";
 
 import { OpportunityValidationError } from "../../utils";
 import {
-  transformReferral,
-  UsMoRestrictiveHousingStatusHearingReferralRecord,
+  UsMoRestrictiveHousingStatusHearingReferralRecordRaw,
+  usMoRestrictiveHousingStatusHearingSchema,
   validateReferral,
 } from "../UsMoRestrictiveHousingStatusHearingReferralRecord";
 
-const rawRecord: Record<
-  keyof UsMoRestrictiveHousingStatusHearingReferralRecord,
-  any
-> = {
+const rawRecord: UsMoRestrictiveHousingStatusHearingReferralRecordRaw = {
   stateCode: "US_MO",
   externalId: "004",
-  criteria: {
+  eligibleCriteria: {
     usMoHasUpcomingHearing: {
       nextReviewDate: "2023-11-03",
+    },
+    usMoInRestrictiveHousing: {
+      confinementType: "confinement type",
     },
   },
   metadata: {
     mostRecentHearingDate: "2022-09-03",
+    mostRecentHearingType: "hearing type",
+    mostRecentHearingFacility: "FACILITY NAME",
+    mostRecentHearingComments: "Reason for Hearing: 30 day review",
+    currentFacility: "FACILITY 01",
     restrictiveHousingStartDate: "2022-10-01",
+    bedNumber: "03",
+    roomNumber: "05",
+    complexNumber: "2",
+    buildingNumber: "13",
+    housingUseCode: "HOS",
+    majorCdvs: [
+      {
+        cdvDate: "2022-02-20",
+        cdvRule: "Rule 7.2",
+      },
+    ],
+    cdvsSinceLastHearing: [],
+    numMinorCdvsBeforeLastHearing: "3",
   },
 };
 const today = new Date(2023, 10, 3);
@@ -51,23 +68,21 @@ afterEach(() => {
 });
 
 test("transform record", () => {
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(
+    usMoRestrictiveHousingStatusHearingSchema.parse(rawRecord)
+  ).toMatchSnapshot();
 });
 
 test("record validates: next review date today", () => {
   expect(() =>
-    validateReferral(
-      transformReferral(
-        rawRecord
-      ) as UsMoRestrictiveHousingStatusHearingReferralRecord
-    )
+    validateReferral(usMoRestrictiveHousingStatusHearingSchema.parse(rawRecord))
   ).not.toThrow(OpportunityValidationError);
 });
 
 test("record does not validate: next review date yesterday", () => {
   const recordYesterday = {
     ...rawRecord,
-    criteria: {
+    eligibleCriteria: {
       usMoHasUpcomingHearing: {
         nextReviewDate: "2023-11-02",
       },
@@ -78,9 +93,7 @@ test("record does not validate: next review date yesterday", () => {
   };
   expect(() =>
     validateReferral(
-      transformReferral(
-        recordYesterday
-      ) as UsMoRestrictiveHousingStatusHearingReferralRecord
+      usMoRestrictiveHousingStatusHearingSchema.parse(recordYesterday)
     )
   ).toThrow(OpportunityValidationError);
 });
