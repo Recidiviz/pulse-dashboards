@@ -30,10 +30,18 @@ import { ProfileCapsule } from "../PersonCapsules";
 import { workflowsUrl } from "../views";
 import WorkflowsResults from "../WorkflowsResults";
 
-const CaseloadWrapper = styled.ul`
+const CaseloadWrapper = styled.ul<{
+  isTwoColumns?: boolean;
+}>`
   column-gap: ${rem(spacing.md)};
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(${rem(320)}, 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(
+      max(${rem(320)}, ${({ isTwoColumns }) => (isTwoColumns ? 3 : 2)}0vw),
+      1fr
+    )
+  );
   list-style-type: none;
   margin: 0;
   margin-top: ${rem(spacing.md)};
@@ -41,7 +49,13 @@ const CaseloadWrapper = styled.ul`
   row-gap: ${rem(spacing.sm)};
 `;
 
-function Caseload({ persons }: { persons: JusticeInvolvedPerson[] }) {
+function Caseload({
+  persons,
+  isResponsiveRevamp,
+}: {
+  persons: JusticeInvolvedPerson[];
+  isResponsiveRevamp?: boolean;
+}) {
   const items = persons.map((person) => (
     <li key={person.externalId}>
       <Link
@@ -55,7 +69,9 @@ function Caseload({ persons }: { persons: JusticeInvolvedPerson[] }) {
     </li>
   ));
 
-  return <CaseloadWrapper>{items}</CaseloadWrapper>;
+  return (
+    <CaseloadWrapper isTwoColumns={isResponsiveRevamp}>{items}</CaseloadWrapper>
+  );
 }
 
 export const AllCaseloads = observer(function AllCaseloads() {
@@ -65,6 +81,7 @@ export const AllCaseloads = observer(function AllCaseloads() {
       selectedSearchables,
       workflowsSearchFieldTitle,
       justiceInvolvedPersonTitle,
+      featureVariants,
     },
   } = useRootStore();
 
@@ -80,7 +97,7 @@ export const AllCaseloads = observer(function AllCaseloads() {
 
   const caseloads = groupBy(caseloadPersons, "searchIdValue");
 
-  return (
+  const allCaseloadsViz = (
     <>
       {selectedSearchables.map((searchable) => (
         <React.Fragment key={searchable.searchId}>
@@ -90,10 +107,25 @@ export const AllCaseloads = observer(function AllCaseloads() {
             </SectionLabelText>
           )}
           {/* in practice there should never be a missing caseload,
-              but fall back to an empty array for type safety */}
-          <Caseload persons={caseloads[searchable.searchId] ?? []} />
+          but fall back to an empty array for type safety */}
+          <Caseload
+            persons={caseloads[searchable.searchId] ?? []}
+            isResponsiveRevamp={!!featureVariants.responsiveRevamp}
+          />
         </React.Fragment>
       ))}
     </>
+  );
+
+  return !featureVariants.responsiveRevamp ? (
+    allCaseloadsViz
+  ) : (
+    <WorkflowsResults
+      headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s (${
+        caseloadPersons.length
+      })`}
+    >
+      {allCaseloadsViz}
+    </WorkflowsResults>
   );
 });

@@ -37,8 +37,7 @@ export const SubHeading = styled(Sans18)`
 
 export const SectionLabelText = styled(Sans14)`
   color: ${palette.slate60};
-  margin-top: ${rem(spacing.md)};
+  margin-top: ${rem(spacing.xl)};
   border-bottom: 1px solid ${palette.slate20};
   padding-bottom: ${rem(spacing.sm)};
-  padding-top: ${rem(spacing.md)};
 `;

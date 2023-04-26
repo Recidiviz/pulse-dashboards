@@ -33,9 +33,10 @@ const WorkflowsResultsWrapper = styled.div<{
 
 const HeaderText = styled(Serif34)<{
   centered?: boolean;
+  largeMargin?: boolean;
 }>`
   color: ${palette.pine2};
-  margin-bottom: 1rem;
+  margin-bottom: ${({ largeMargin }) => (largeMargin ? 3 : 1)}rem;
 
   ${({ centered }) =>
     centered ? `text-align: center;` : `  margin-right: 30%;`}
@@ -66,7 +67,10 @@ function WorkflowsResults({
       className="WorkflowsHomepageText"
     >
       {headerText && (
-        <HeaderText centered={!featureVariants.responsiveRevamp}>
+        <HeaderText
+          centered={!featureVariants.responsiveRevamp}
+          largeMargin={!callToActionText && !!featureVariants.responsiveRevamp}
+        >
           {headerText}
         </HeaderText>
       )}
