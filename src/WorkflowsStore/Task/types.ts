@@ -22,9 +22,11 @@ export const SUPERVISION_TASKS_TYPES = ["usIdSupervisionTasks"] as const;
 
 export type SupervisionTasksType = typeof SUPERVISION_TASKS_TYPES[number];
 
+// TODO: Remove optional lastHomeVisit and lastContacted once it's available in the data
 type HomeVisitDetails = {
   supervisionLevel: string;
   currentAddress: string;
+  lastHomeVisit?: string;
 };
 
 type AssessmentDetails = {
@@ -34,6 +36,7 @@ type AssessmentDetails = {
 
 type ContactDetails = {
   supervisionLevel: string;
+  lastContacted?: string;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

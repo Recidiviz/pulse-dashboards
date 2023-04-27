@@ -18,7 +18,8 @@
  */
 import simplur from "simplur";
 
-import { formatCurrentAddress } from "../../utils";
+import { formatCurrentAddress, formatDate } from "../../utils";
+import { fieldToDate } from "../utils";
 import { Task } from "./Task";
 import { US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE } from "./utils";
 
@@ -37,6 +38,11 @@ class UsIdHomeVisitTask extends Task<"homeVisit"> {
     return this.details.supervisionLevel;
   }
 
+  get lastHomeVisit(): string | undefined {
+    if (!this.details.lastHomeVisit) return;
+    return formatDate(fieldToDate(this.details.lastHomeVisit));
+  }
+
   get additionalDetails(): string | undefined {
     let details;
     if (this.currentAddress) {
@@ -44,6 +50,9 @@ class UsIdHomeVisitTask extends Task<"homeVisit"> {
         this.currentAddress,
         this.person.stateCode
       )}\r\n`;
+    }
+    if (this.lastHomeVisit) {
+      details += `Last home contact on: ${this.lastHomeVisit}; `;
     }
     if (this.supervisionLevel) {
       // TODO: Add the last contact date when available in data: Last home contact on MM/DD/YYYY

@@ -29,7 +29,7 @@ class UsIdRiskAssessmentTask extends Task<"assessment"> {
 
   get additionalDetails(): string | undefined {
     if (!this.lastAssessedOn) return;
-    return `Last assessed on ${this.lastAssessedOn}\n Score: ${this.riskLevel}`;
+    return `Last assessed on ${this.lastAssessedOn}; Score: ${this.riskLevel}`;
   }
 
   get lastAssessedOn(): string | undefined {

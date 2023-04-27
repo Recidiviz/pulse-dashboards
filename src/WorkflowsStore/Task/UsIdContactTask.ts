@@ -18,6 +18,8 @@
  */
 import simplur from "simplur";
 
+import { formatDate } from "../../utils";
+import { fieldToDate } from "../utils";
 import { Task } from "./Task";
 import { US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE } from "./utils";
 
@@ -28,18 +30,28 @@ class UsIdContactTask extends Task<"contact"> {
 
   dueDateDisplayShort = `Recommended ${this.dueDateFromToday}`;
 
+  get lastContacted(): string | undefined {
+    if (!this.details.lastContacted) return;
+    return formatDate(fieldToDate(this.details.lastContacted));
+  }
+
   get supervisionLevel(): string | undefined {
     return this.details.supervisionLevel;
   }
 
   get additionalDetails(): string | undefined {
-    // TODO: Add the last contact date when available in data: Last home contact on MM/DD/YYYY
     if (!this.supervisionLevel) return;
-    return simplur`${
+    let details = "";
+    if (this.lastContacted) {
+      details += `Last contact was on: ${this.lastContacted}; `;
+    }
+    details += simplur`${
       US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE[this.supervisionLevel].contacts
     } contact[|s] needed every ${
       US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE[this.supervisionLevel].days
     } days, for current supervision level`;
+
+    return details;
   }
 }
 

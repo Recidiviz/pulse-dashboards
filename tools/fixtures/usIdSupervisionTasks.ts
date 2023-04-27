@@ -30,7 +30,8 @@ const data: SupervisionTasksRecord[] = [
         // overdue
         dueDate: formatISO(subDays(endOfToday(), 2)),
         details: {
-          supervisionLevel: "LOW",
+          lastHomeVisit: "2023-01-20",
+          supervisionLevel: "MINIMUM",
           currentAddress: "100 Proplantination Drive",
         },
       },
@@ -39,7 +40,16 @@ const data: SupervisionTasksRecord[] = [
         // upcoming
         dueDate: formatISO(addDays(endOfToday(), 15)),
         details: {
-          supervisionLevel: "LOW",
+          lastContacted: "2023-03-23",
+          supervisionLevel: "MINIMUM",
+        },
+      },
+      {
+        type: "assessment",
+        dueDate: formatISO(subDays(endOfToday(), 2)),
+        details: {
+          lastAssessedOn: "2023-03-23",
+          riskLevel: "MEDIUM",
         },
       },
     ],

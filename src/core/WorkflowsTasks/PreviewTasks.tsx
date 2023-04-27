@@ -43,11 +43,11 @@ const TaskTitle = styled.div`
 
 const TaskItem = styled(Sans16)`
   min-height: ${rem(75)};
+  padding: 0.25rem 0 0.25rem 1.5rem;
   display: flex;
   flex-flow: column;
   justify-content: center;
   align-items: center;
-  padding-left: 1.5rem;
 
   &:nth-child(n + 1) {
     border-color: ${palette.slate10};
@@ -68,7 +68,7 @@ const TaskDivider = styled(Sans16)`
 const TaskDetails = styled(Sans14)`
   color: rgba(53, 83, 98, 0.9);
   align-self: flex-start;
-  padding-top: 0.25rem;
+  padding: 0.25rem 0;
   white-space: pre-line;
 `;
 
