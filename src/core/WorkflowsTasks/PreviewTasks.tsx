@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans16 } from "@recidiviz/design-system";
+import { palette, Sans14, Sans16 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
@@ -30,13 +30,22 @@ const TasksWrapper = styled.div`
 const TaskItems = styled.div`
   display: flex;
   flex-flow: column nowrap;
+  align-items: flex-start;
+`;
+
+const TaskTitle = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  align-self: flex-start;
 `;
 
 const TaskItem = styled(Sans16)`
   min-height: ${rem(75)};
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-start;
+  flex-flow: column;
+  justify-content: center;
   align-items: center;
   padding-left: 1.5rem;
 
@@ -56,6 +65,13 @@ const TaskDivider = styled(Sans16)`
   margin: 0 0.5rem;
 `;
 
+const TaskDetails = styled(Sans14)`
+  color: rgba(53, 83, 98, 0.9);
+  align-self: flex-start;
+  padding-top: 0.25rem;
+  white-space: pre-line;
+`;
+
 export const PreviewTasks = observer(function PreviewTasks({
   person,
 }: PersonProfileProps) {
@@ -68,11 +84,14 @@ export const PreviewTasks = observer(function PreviewTasks({
         {tasks.map((task) => {
           return (
             <TaskItem key={`${task.type}-${task.person.externalId}`}>
-              <TaskName>{task.displayName}</TaskName>
-              <TaskDivider> &bull; </TaskDivider>
-              <TaskDueDate marginLeft="0" overdue={task.isOverdue}>
-                Due {task.dueDateFromToday}
-              </TaskDueDate>
+              <TaskTitle>
+                <TaskName>{task.displayName}</TaskName>
+                <TaskDivider> &bull; </TaskDivider>
+                <TaskDueDate marginLeft="0" overdue={task.isOverdue}>
+                  {task.dueDateDisplayShort}
+                </TaskDueDate>
+              </TaskTitle>
+              <TaskDetails>{task.additionalDetails}</TaskDetails>
             </TaskItem>
           );
         })}

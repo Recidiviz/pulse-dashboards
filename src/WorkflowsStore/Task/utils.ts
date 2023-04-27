@@ -16,30 +16,42 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
-import { formatDate } from "../../utils";
-import { fieldToDate } from "../utils";
-import { Task } from "./Task";
+// Contact compliance rules taken from:
+// https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/pipeline/utils/state_utils/us_id/us_id_supervision_compliance.py
+export const US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE: Record<
+  string,
+  { contacts: number; days: number }
+> = {
+  MINIMUM: {
+    contacts: 1,
+    days: 180,
+  },
+  MEDIUM: {
+    contacts: 2,
+    days: 90,
+  },
+  HIGH: {
+    contacts: 2,
+    days: 30,
+  },
+};
 
-class UsIdRiskAssessmentTask extends Task<"assessment"> {
-  displayName = "Risk assessment";
-
-  dueDateDisplayLong = `${this.displayName} due ${this.dueDateFromToday}`;
-
-  dueDateDisplayShort = `Due ${this.dueDateFromToday}`;
-
-  get additionalDetails(): string | undefined {
-    if (!this.lastAssessedOn) return;
-    return `Last assessed on ${this.lastAssessedOn}\n Score: ${this.riskLevel}`;
-  }
-
-  get lastAssessedOn(): string | undefined {
-    const lastAssessedOnDate = fieldToDate(this.details.lastAssessedOn);
-    return formatDate(lastAssessedOnDate);
-  }
-
-  get riskLevel(): string | undefined {
-    return this.details.riskLevel;
-  }
-}
-
-export default UsIdRiskAssessmentTask;
+// Home visit compliance rules taken from:
+// https://drive.google.com/file/d/1qx1S0Z8zfNe53YBImW4As-LoeKH0-YEl/view
+export const US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE: Record<
+  string,
+  { contacts: number; days: number }
+> = {
+  MINIMUM: {
+    contacts: 1,
+    days: 365,
+  },
+  MEDIUM: {
+    contacts: 1,
+    days: 180,
+  },
+  HIGH: {
+    contacts: 1,
+    days: 90,
+  },
+};

@@ -16,10 +16,47 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
-import { Task } from "./Task";
+import simplur from "simplur";
 
-class UsIdHomeVisitTask extends Task {
+import { formatCurrentAddress } from "../../utils";
+import { Task } from "./Task";
+import { US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE } from "./utils";
+
+class UsIdHomeVisitTask extends Task<"homeVisit"> {
   displayName = "Home contact";
+
+  dueDateDisplayLong = `${this.displayName} recommended ${this.dueDateFromToday}`;
+
+  dueDateDisplayShort = `Recommended ${this.dueDateFromToday}`;
+
+  get currentAddress(): string | undefined {
+    return this.details.currentAddress;
+  }
+
+  get supervisionLevel(): string {
+    return this.details.supervisionLevel;
+  }
+
+  get additionalDetails(): string | undefined {
+    let details;
+    if (this.currentAddress) {
+      details = `${formatCurrentAddress(
+        this.currentAddress,
+        this.person.stateCode
+      )}\r\n`;
+    }
+    if (this.supervisionLevel) {
+      // TODO: Add the last contact date when available in data: Last home contact on MM/DD/YYYY
+      details += simplur`${
+        US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE[this.supervisionLevel]
+          .contacts
+      } home contact[|s] needed every ${
+        US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE[this.supervisionLevel]
+          .days
+      } days, for current supervision level`;
+    }
+    return details;
+  }
 }
 
 export default UsIdHomeVisitTask;

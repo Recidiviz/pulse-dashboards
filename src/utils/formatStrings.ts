@@ -115,6 +115,15 @@ function toTitleCase(str: string): string {
   );
 }
 
+function formatCurrentAddress(address: string, stateCode: string): string {
+  const titleCaseAddress = toTitleCase(address);
+  const titleStateCode = toTitleCase(stateCode.replace("US_", ""));
+  return titleCaseAddress.replace(
+    ` ${titleStateCode} `,
+    ` ${titleStateCode.toUpperCase()} `
+  );
+}
+
 const humanReadableTitleCase = pipe(lowerCase, startCase);
 
 /*
@@ -354,6 +363,7 @@ export {
   convertCurlyQuotesToStraight,
   decrypt,
   encrypt,
+  formatCurrentAddress,
   formatDate,
   formatDistrictLabel,
   formatDueDateFromToday,

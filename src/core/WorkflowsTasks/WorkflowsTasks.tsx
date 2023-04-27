@@ -146,7 +146,7 @@ const TaskListItem: React.FC<TaskListItemProps> = observer(
             </TaskClientTasksCount>
           </TaskClientItem>
           <TaskDueDate overdue={taskToDisplay.isOverdue}>
-            {taskToDisplay.displayName} due {taskToDisplay.dueDateFromToday}
+            {taskToDisplay.dueDateDisplayLong}
           </TaskDueDate>
         </TaskClient>
       </TaskListTooltip>

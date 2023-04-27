@@ -100,7 +100,7 @@ export abstract class TasksBase<
         );
       }
 
-      return new TaskConstructor(task, this.person);
+      return new TaskConstructor(task, task.type, this.person);
     });
   }
 

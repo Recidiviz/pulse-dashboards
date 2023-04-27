@@ -29,7 +29,7 @@ type HomeVisitDetails = {
 
 type AssessmentDetails = {
   riskLevel: string;
-  lastAssessedOn: Date;
+  lastAssessedOn: string;
 };
 
 type ContactDetails = {
@@ -59,7 +59,7 @@ export type SupervisionDetails =
   | AssessmentDetails
   | ContactDetails;
 
-type SupervisionDetailsForTask = {
+export type SupervisionDetailsForTask = {
   homeVisit: HomeVisitDetails;
   assessment: AssessmentDetails;
   contact: ContactDetails;
@@ -75,6 +75,9 @@ export type SupervisionTask<
   dueDateFromToday: string;
   person: JusticeInvolvedPerson;
   displayName: string;
+  dueDateDisplayLong: string;
+  dueDateDisplayShort: string;
+  additionalDetails?: string;
 };
 
 export type SupervisionTaskRecord = Pick<

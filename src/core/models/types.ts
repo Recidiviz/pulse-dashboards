@@ -79,8 +79,9 @@ export type TenantConfig = {
   tasks?: {
     [k in SupervisionTaskType]: new (
       task: SupervisionTaskRecord,
+      type: SupervisionTaskType,
       person: JusticeInvolvedPerson
-    ) => Task;
+    ) => Task<SupervisionTaskType>;
   };
 };
 

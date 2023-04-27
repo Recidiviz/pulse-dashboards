@@ -33,13 +33,13 @@ import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { SupervisionTask } from "../../WorkflowsStore/Task/types";
 
 const TooltipContainer = styled.div`
-  min-width: 13rem;
+  min-width: 100%;
   margin: ${rem(spacing.sm)};
 `;
 
 const TooltipSection = styled.div`
   &:not(:first-child) {
-    padding-top: 1rem;
+    padding: 1rem 1rem 0 0;
   }
 `;
 
@@ -108,7 +108,7 @@ const TasksSection: React.FC<{
         <TooltipTaskRow key={t.type}>
           <SectionDetails>{t.displayName}</SectionDetails>
           <SectionDetails overdue={t.isOverdue}>
-            Due {t.dueDateFromToday}
+            {t.dueDateDisplayShort}
           </SectionDetails>
         </TooltipTaskRow>
       ))}

@@ -16,10 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
-import { Task } from "./Task";
+import simplur from "simplur";
 
-class UsIdContactTask extends Task {
+import { Task } from "./Task";
+import { US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE } from "./utils";
+
+class UsIdContactTask extends Task<"contact"> {
   displayName = "Contact";
+
+  dueDateDisplayLong = `${this.displayName} recommended ${this.dueDateFromToday}`;
+
+  dueDateDisplayShort = `Recommended ${this.dueDateFromToday}`;
+
+  get supervisionLevel(): string | undefined {
+    return this.details.supervisionLevel;
+  }
+
+  get additionalDetails(): string | undefined {
+    // TODO: Add the last contact date when available in data: Last home contact on MM/DD/YYYY
+    if (!this.supervisionLevel) return;
+    return simplur`${
+      US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE[this.supervisionLevel].contacts
+    } contact[|s] needed every ${
+      US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE[this.supervisionLevel].days
+    } days, for current supervision level`;
+  }
 }
 
 export default UsIdContactTask;
