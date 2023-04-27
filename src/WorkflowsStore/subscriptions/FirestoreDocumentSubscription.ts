@@ -31,7 +31,7 @@ import {
   onBecomeUnobserved,
 } from "mobx";
 
-import { FeatureGateError } from "../../utils/FeatureGateError";
+import { FeatureGateError } from "../../errors";
 import {
   DocumentSubscription,
   TransformFunction,

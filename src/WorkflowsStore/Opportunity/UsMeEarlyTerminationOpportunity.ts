@@ -21,8 +21,9 @@ import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
+import { OpportunityValidationError } from "../../errors";
 import { Client } from "../Client";
-import { OpportunityValidationError, OTHER_KEY } from "../utils";
+import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import {

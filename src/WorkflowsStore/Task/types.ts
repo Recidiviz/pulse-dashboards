@@ -54,7 +54,10 @@ export const SUPERVISION_TASK_TYPES = [
   "contact",
 ] as const;
 export type SupervisionTaskType = typeof SUPERVISION_TASK_TYPES[number];
-type SupervisionDetails = HomeVisitDetails | AssessmentDetails | ContactDetails;
+export type SupervisionDetails =
+  | HomeVisitDetails
+  | AssessmentDetails
+  | ContactDetails;
 
 type SupervisionDetailsForTask = {
   homeVisit: HomeVisitDetails;
@@ -71,6 +74,7 @@ export type SupervisionTask<
   isOverdue: boolean;
   dueDateFromToday: string;
   person: JusticeInvolvedPerson;
+  displayName: string;
 };
 
 export type SupervisionTaskRecord = Pick<

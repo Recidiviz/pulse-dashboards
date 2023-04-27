@@ -94,7 +94,7 @@ export default class FirestoreStore {
   db: Firestore;
 
   constructor({ rootStore }: { rootStore: typeof RootStore }) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, { useOfflineFirestore: false });
 
     this.rootStore = rootStore;
 

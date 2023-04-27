@@ -25,7 +25,12 @@ import {
   US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
-import { OpportunityType } from "../../WorkflowsStore";
+import { JusticeInvolvedPerson, OpportunityType } from "../../WorkflowsStore";
+import { Task } from "../../WorkflowsStore/Task/Task";
+import {
+  SupervisionTaskRecord,
+  SupervisionTaskType,
+} from "../../WorkflowsStore/Task/types";
 import { MetricCopy, PageCopy } from "../content/types";
 import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
@@ -66,11 +71,16 @@ export type TenantConfig = {
   pagesWithRestrictions?: string[];
   tableColumns?: TableColumns;
   opportunityTypes?: OpportunityType[];
-  allowSupervisionTasks?: boolean;
   workflowsSupportedSystems?: SystemId[];
   workflowsSystemConfigs?: {
     INCARCERATION?: WorkflowsSystemConfig<ResidentSearchFields>;
     SUPERVISION?: WorkflowsSystemConfig<ClientSearchFields>;
+  };
+  tasks?: {
+    [k in SupervisionTaskType]: new (
+      task: SupervisionTaskRecord,
+      person: JusticeInvolvedPerson
+    ) => Task;
   };
 };
 

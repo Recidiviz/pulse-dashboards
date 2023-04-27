@@ -25,7 +25,7 @@ import {
 import { computed, IObservableValue, observable } from "mobx";
 import { keepAlive } from "mobx-utils";
 
-import { FeatureGateError } from "../../../utils/FeatureGateError";
+import { FeatureGateError } from "../../../errors";
 import { FirestoreQuerySubscription } from "../FirestoreQuerySubscription";
 import {
   getMockQuerySnapshotHandler,

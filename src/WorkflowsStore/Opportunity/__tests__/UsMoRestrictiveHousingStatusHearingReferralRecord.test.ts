@@ -17,7 +17,7 @@
 
 import tk from "timekeeper";
 
-import { OpportunityValidationError } from "../../utils";
+import { OpportunityValidationError } from "../../../errors";
 import {
   UsMoRestrictiveHousingStatusHearingReferralRecordRaw,
   usMoRestrictiveHousingStatusHearingSchema,

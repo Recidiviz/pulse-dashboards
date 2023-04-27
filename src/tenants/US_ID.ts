@@ -24,6 +24,9 @@ import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { OpportunityType } from "../WorkflowsStore";
+import UsIdContactTask from "../WorkflowsStore/Task/UsIdContactTask";
+import UsIdHomeVisitTask from "../WorkflowsStore/Task/UsIdHomeVisitTask";
+import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/UsIdRiskAssessmentTask";
 
 const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   "pastFTRD",
@@ -39,8 +42,12 @@ const US_ID_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_ID],
   enableUserRestrictions: false,
   workflowsEnableAllDistricts: false,
-  allowSupervisionTasks: true,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
+  tasks: {
+    homeVisit: UsIdHomeVisitTask,
+    contact: UsIdContactTask,
+    assessment: UsIdRiskAssessmentTask,
+  },
   workflowsSupportedSystems: ["SUPERVISION"],
   navigation: {
     // The order of pages here determines where the user will land first when navigating from `/`

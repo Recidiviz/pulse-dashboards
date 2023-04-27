@@ -16,24 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
-import { isPast } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable } from "mobx";
 
+import { TaskValidationError } from "../../errors";
 import { CollectionName } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
-import { formatDueDateFromToday } from "../../utils";
+import tenants from "../../tenants";
 import {
   CollectionDocumentSubscription,
   DocumentSubscription,
   ValidateFunction,
 } from "../subscriptions";
 import { JusticeInvolvedPerson } from "../types";
-import { fieldToDate } from "../utils";
 import {
   SupervisionNeed,
   SupervisionTask,
   SupervisionTaskInterface,
+  SupervisionTaskRecord,
   SupervisionTaskType,
 } from "./types";
 
@@ -85,16 +85,22 @@ export abstract class TasksBase<
   }
 
   get tasks(): SupervisionTask<SupervisionTaskType>[] {
-    return (this.record?.tasks || []).map((task: any) => {
-      const dueDate = fieldToDate(task.dueDate);
+    return (this.record?.tasks || []).map((task: SupervisionTaskRecord) => {
+      if (
+        !this.rootStore.currentTenantId ||
+        !tenants[this.rootStore.currentTenantId].tasks
+      )
+        return;
+      const TaskConstructor =
+        tenants[this.rootStore.currentTenantId].tasks?.[task.type];
 
-      return {
-        ...task,
-        dueDate,
-        isOverdue: isPast(dueDate),
-        dueDateFromToday: formatDueDateFromToday(dueDate),
-        person: this.person,
-      };
+      if (!TaskConstructor) {
+        throw new TaskValidationError(
+          `Missing a class constructor for task with type: ${task.type}`
+        );
+      }
+
+      return new TaskConstructor(task, this.person);
     });
   }
 

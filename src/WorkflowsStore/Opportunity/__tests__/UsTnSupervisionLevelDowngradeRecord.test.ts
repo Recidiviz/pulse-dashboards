@@ -17,7 +17,7 @@
 
 import { identity } from "lodash";
 
-import { OpportunityValidationError } from "../../utils";
+import { OpportunityValidationError } from "../../../errors";
 import {
   getValidator,
   UsTnSupervisionLevelDowngradeReferralRecordRaw,

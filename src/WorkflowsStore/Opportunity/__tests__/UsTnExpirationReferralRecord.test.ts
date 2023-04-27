@@ -17,7 +17,8 @@
 
 import { identity } from "lodash";
 
-import { fieldToDate, OpportunityValidationError } from "../../utils";
+import { OpportunityValidationError } from "../../../errors";
+import { fieldToDate } from "../../utils";
 import {
   getValidator,
   transformReferral,

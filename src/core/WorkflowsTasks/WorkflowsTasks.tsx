@@ -45,11 +45,7 @@ import { CaseloadSelect } from "../CaseloadSelect";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
-import {
-  SupervisionTaskCategory,
-  TASK_DISPLAY_NAME,
-  TASK_SELECTOR_LABELS,
-} from "./fixtures";
+import { SupervisionTaskCategory, TASK_SELECTOR_LABELS } from "./fixtures";
 import { TaskPreviewModal } from "./TaskPreviewModal";
 import { TaskListTooltip } from "./WorkflowsTasksTooltip";
 
@@ -150,8 +146,7 @@ const TaskListItem: React.FC<TaskListItemProps> = observer(
             </TaskClientTasksCount>
           </TaskClientItem>
           <TaskDueDate overdue={taskToDisplay.isOverdue}>
-            {TASK_DISPLAY_NAME[taskToDisplay.type]} due{" "}
-            {taskToDisplay.dueDateFromToday}
+            {taskToDisplay.displayName} due {taskToDisplay.dueDateFromToday}
           </TaskDueDate>
         </TaskClient>
       </TaskListTooltip>
@@ -227,10 +222,10 @@ const TasksCalendarView: React.FC<TasksCalendarViewProps> = observer(
 
       if (task.isOverdue && !previous) {
         calendar.push(
-          <>
+          <div key="overdue-divider">
             <Divider />
             <Sans14>Overdue</Sans14>
-          </>
+          </div>
         );
       } else if (
         !previous ||
@@ -321,17 +316,6 @@ const LIST_VIEWS_BY_CATEGORY = {
   employment: <AllNeedsView type="employment" />,
 } as Record<SupervisionTaskCategory, JSX.Element>;
 
-const COUNTS_BY_CATEGORY = {
-  DUE_THIS_MONTH: (store) => {
-    const [overdue, upcoming] = store.clientsPartitionedByStatus;
-    return overdue.length + upcoming.length;
-  },
-  assessment: (store) => store.orderedTasksByCategory.assessment.length,
-  contact: (store) => store.orderedTasksByCategory.contact.length,
-  homeVisit: (store) => store.orderedTasksByCategory.homeVisit.length,
-  employment: (store) => store.orderedPersonsByNeed.employment.length,
-} as Record<SupervisionTaskCategory, (store: WorkflowsTasksStore) => number>;
-
 const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
   const {
     workflowsStore: {
@@ -341,6 +325,17 @@ const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
       workflowsSearchFieldTitle,
     },
   } = useRootStore();
+
+  const COUNTS_BY_CATEGORY = {
+    DUE_THIS_MONTH: (s) => {
+      const [overdue, upcoming] = s.clientsPartitionedByStatus;
+      return overdue.length + upcoming.length;
+    },
+    assessment: (s) => s.orderedTasksByCategory.assessment.length,
+    contact: (s) => s.orderedTasksByCategory.contact.length,
+    homeVisit: (s) => s.orderedTasksByCategory.homeVisit.length,
+    employment: (s) => s.orderedPersonsByNeed.employment.length,
+  } as Record<SupervisionTaskCategory, (s: WorkflowsTasksStore) => number>;
 
   const empty = (
     <WorkflowsResults

@@ -25,7 +25,7 @@ import {
 import { computed } from "mobx";
 import { keepAlive } from "mobx-utils";
 
-import { FeatureGateError } from "../../../utils/FeatureGateError";
+import { FeatureGateError } from "../../../errors";
 import { FirestoreDocumentSubscription } from "../FirestoreDocumentSubscription";
 import {
   getMockDocumentSnapshotHandler,

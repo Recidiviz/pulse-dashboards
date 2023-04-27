@@ -2,7 +2,6 @@ import {
   SUPERVISION_NEED_TYPES,
   SUPERVISION_TASK_TYPES,
   SupervisionNeedType,
-  SupervisionTaskType,
 } from "../../WorkflowsStore/Task/types";
 
 export const SUPERVISION_TASK_CATEGORIES = [
@@ -20,12 +19,6 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   homeVisit: "Home Contacts",
   employment: "Unemployed",
 };
-
-export const TASK_DISPLAY_NAME: Record<SupervisionTaskType, string> = {
-  assessment: "Risk assessment",
-  contact: "Contact",
-  homeVisit: "Home contact",
-} as const;
 
 export const NEED_DISPLAY_NAME: Record<SupervisionNeedType, string> = {
   employment: "Unemployed",

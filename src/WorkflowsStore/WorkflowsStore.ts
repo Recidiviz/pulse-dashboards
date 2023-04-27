@@ -705,7 +705,7 @@ export class WorkflowsStore implements Hydratable {
       rootStore: { currentTenantId },
     } = this;
     if (!currentTenantId) return false;
-    return tenants[currentTenantId]?.allowSupervisionTasks ?? false;
+    return !!tenants[currentTenantId]?.tasks;
   }
 
   /**

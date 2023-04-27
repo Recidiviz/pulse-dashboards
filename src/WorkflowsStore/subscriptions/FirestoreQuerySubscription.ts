@@ -35,7 +35,7 @@ import {
 } from "mobx";
 import { IDisposer } from "mobx-utils";
 
-import { FeatureGateError } from "../../utils/FeatureGateError";
+import { FeatureGateError } from "../../errors";
 import {
   QuerySubscription,
   TransformFunction,

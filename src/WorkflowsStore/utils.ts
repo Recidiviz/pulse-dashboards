@@ -52,8 +52,6 @@ export function shiftDemoDate(storedDate: Date): Date {
   return addDays(storedDate, offsetDays);
 }
 
-export class OpportunityValidationError extends Error {}
-
 /**
  * Given a raw field from Firestore, converts it to a Date.
  * When Demo Mode is active, it also applies a time shift so that

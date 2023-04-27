@@ -105,7 +105,11 @@ const createClientSupervisionTasks: TaskFactory<Client> = (
   person
 ): SupervisionTaskInterface | undefined => {
   const { allowSupervisionTasks } = person.rootStore.workflowsStore;
-  if (person instanceof Client && allowSupervisionTasks) {
+  if (
+    person instanceof Client &&
+    allowSupervisionTasks &&
+    person.rootStore.currentTenantId === "US_ID"
+  ) {
     return new UsIdSupervisionTasks(person);
   }
 };

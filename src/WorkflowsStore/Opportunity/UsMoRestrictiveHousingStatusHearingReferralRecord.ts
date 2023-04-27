@@ -18,8 +18,8 @@
 import { isBefore, startOfToday } from "date-fns";
 import { z } from "zod";
 
+import { OpportunityValidationError } from "../../errors";
 import { ValidateFunction } from "../subscriptions";
-import { OpportunityValidationError } from "../utils";
 import {
   dateStringSchema,
   opportunitySchemaBase,

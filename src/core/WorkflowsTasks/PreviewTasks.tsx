@@ -16,11 +16,12 @@
 // =============================================================================
 
 import { palette, Sans16 } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { PersonProfileProps } from "../WorkflowsClientProfile/types";
-import { NEED_DISPLAY_NAME, TASK_DISPLAY_NAME } from "./fixtures";
+import { NEED_DISPLAY_NAME } from "./fixtures";
 import { TaskDueDate } from "./WorkflowsTasks";
 
 const TasksWrapper = styled.div`
@@ -55,7 +56,7 @@ const TaskDivider = styled(Sans16)`
   margin: 0 0.5rem;
 `;
 
-export const PreviewTasks = function PreviewTasks({
+export const PreviewTasks = observer(function PreviewTasks({
   person,
 }: PersonProfileProps) {
   const tasks = person.supervisionTasks?.orderedTasks ?? [];
@@ -67,7 +68,7 @@ export const PreviewTasks = function PreviewTasks({
         {tasks.map((task) => {
           return (
             <TaskItem key={`${task.type}-${task.person.externalId}`}>
-              <TaskName>{TASK_DISPLAY_NAME[task.type]}</TaskName>
+              <TaskName>{task.displayName}</TaskName>
               <TaskDivider> &bull; </TaskDivider>
               <TaskDueDate marginLeft="0" overdue={task.isOverdue}>
                 Due {task.dueDateFromToday}
@@ -85,4 +86,4 @@ export const PreviewTasks = function PreviewTasks({
       </TaskItems>
     </TasksWrapper>
   );
-};
+});

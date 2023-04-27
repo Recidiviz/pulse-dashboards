@@ -31,7 +31,6 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { SupervisionTask } from "../../WorkflowsStore/Task/types";
-import { TASK_DISPLAY_NAME } from "./fixtures";
 
 const TooltipContainer = styled.div`
   min-width: 13rem;
@@ -107,7 +106,7 @@ const TasksSection: React.FC<{
       <SectionHeader>Tasks</SectionHeader>
       {tasks.map((t) => (
         <TooltipTaskRow key={t.type}>
-          <SectionDetails>{TASK_DISPLAY_NAME[t.type]}</SectionDetails>
+          <SectionDetails>{t.displayName}</SectionDetails>
           <SectionDetails overdue={t.isOverdue}>
             Due {t.dueDateFromToday}
           </SectionDetails>
@@ -139,15 +138,15 @@ const NeedsSection: React.FC<{ person: JusticeInvolvedPerson }> = observer(
   }
 );
 
-const PersonSection: React.FC<{ person: JusticeInvolvedPerson }> = observer(
-  function PersonSection({ person }) {
-    return (
-      <TooltipSection>
-        <SectionHeader>{person.displayName}</SectionHeader>
-      </TooltipSection>
-    );
-  }
-);
+const PersonSection: React.FC<{ person: JusticeInvolvedPerson }> = ({
+  person,
+}) => {
+  return (
+    <TooltipSection>
+      <SectionHeader>{person.displayName}</SectionHeader>
+    </TooltipSection>
+  );
+};
 
 const TooltipDetails: React.FC<TooltipDetailsProps> = ({ person, tasks }) => {
   return (

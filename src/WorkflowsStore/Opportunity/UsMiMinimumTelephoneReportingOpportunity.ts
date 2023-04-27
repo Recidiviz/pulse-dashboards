@@ -19,7 +19,7 @@ import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
-import { FeatureGateError } from "../../utils/FeatureGateError";
+import { FeatureGateError } from "../../errors";
 import { Client } from "../Client";
 import { ValidateFunction } from "../subscriptions";
 import { OTHER_KEY } from "../utils";

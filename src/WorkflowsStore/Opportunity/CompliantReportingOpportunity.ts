@@ -24,11 +24,11 @@ import { makeObservable, toJS } from "mobx";
 
 import { formatRelativeToNow } from "../../core/utils/timePeriod";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
+import { FeatureGateError, OpportunityValidationError } from "../../errors";
 import { OpportunityUpdateWithForm } from "../../FirestoreStore";
 import { formatWorkflowsDate, pluralizeWord } from "../../utils";
-import { FeatureGateError } from "../../utils/FeatureGateError";
 import { Client } from "../Client";
-import { OpportunityValidationError, OTHER_KEY } from "../utils";
+import { OTHER_KEY } from "../utils";
 import {
   AlmostEligibleCriteria,
   CompliantReportingDraftData,

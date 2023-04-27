@@ -17,10 +17,10 @@
 
 import { z } from "zod";
 
+import { OpportunityValidationError } from "../../errors";
 import { formatWorkflowsDate, toTitleCase } from "../../utils";
 import { Client } from "../Client";
 import { ValidateFunction } from "../subscriptions";
-import { OpportunityValidationError } from "../utils";
 import { dateStringSchema } from "./schemaHelpers";
 import { OpportunityRequirement } from "./types";
 

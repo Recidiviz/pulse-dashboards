@@ -17,13 +17,10 @@
 
 import { cloneDeep } from "lodash";
 
+import { OpportunityValidationError } from "../../errors";
 import { Client } from "..";
 import { TransformFunction, ValidateFunction } from "../subscriptions";
-import {
-  fieldToDate,
-  OpportunityValidationError,
-  optionalFieldToDateArray,
-} from "../utils";
+import { fieldToDate, optionalFieldToDateArray } from "../utils";
 import { transformCaseNotes, WithCaseNotes } from ".";
 
 export type Contact = {
