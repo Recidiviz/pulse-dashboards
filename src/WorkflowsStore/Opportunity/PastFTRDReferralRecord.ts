@@ -17,22 +17,15 @@
 
 import { z } from "zod";
 
-import { TransformFunction } from "../subscriptions";
 import { dateStringSchema, opportunitySchemaBase } from "./schemaHelpers";
 
-export const usIdPastFtrdSchema = opportunitySchemaBase.extend({
+export const basePastFTRDSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z.object({
     supervisionPastFullTermCompletionDate: z.object({
       eligibleDate: dateStringSchema,
     }),
   }),
+  ineligibleCriteria: z.object({}),
 });
 
-export type UsIdPastFTRDReferralRecord = z.infer<typeof usIdPastFtrdSchema>;
-export type UsIdPastFTRDReferralRecordRaw = z.input<typeof usIdPastFtrdSchema>;
-
-export const transformReferral: TransformFunction<
-  UsIdPastFTRDReferralRecord
-> = (record) => {
-  return usIdPastFtrdSchema.parse(record);
-};
+export type BasePastFTRDReferralRecord = z.infer<typeof basePastFTRDSchema>;

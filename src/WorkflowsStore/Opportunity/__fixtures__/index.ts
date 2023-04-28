@@ -19,14 +19,14 @@ import { Required as RequireKeys } from "utility-types";
 
 import { ClientRecord, ResidentRecord } from "../../../FirestoreStore";
 import { dateToTimestamp } from "../../utils";
-import { SupervisionOpportunityType } from "..";
+import { SupervisionOpportunityType, UsIdPastFTRDReferralRecord } from "..";
 import { CompliantReportingReferralRecord } from "../CompliantReportingReferralRecord";
 import { EarnedDischargeReferralRecord } from "../EarnedDischargeReferralRecord";
 import { LSUReferralRecord } from "../LSUReferralRecord";
-import { UsIdPastFTRDReferralRecord } from "../UsIdPastFTRDReferralRecord";
 import { UsMeEarlyTerminationReferralRecord } from "../UsMeEarlyTerminationReferralRecord";
 import { UsMeSCCPReferralRecord } from "../UsMeSCCPReferralRecord";
 import { UsMiMinimumTelephoneReportingReferralRecord } from "../UsMiMinimumTelephoneReportingReferralRecord";
+import { UsMiPastFTRDReferralRecord } from "../UsMiPastFTRDOpportunity";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { UsNdEarlyTerminationReferralRecord } from "../UsNdEarlyTerminationReferralRecord";
 import { UsTnExpirationReferralRecord } from "../UsTnExpirationReferralRecord";
@@ -591,6 +591,7 @@ export const pastFTRDRecordFixture: UsIdPastFTRDReferralRecord = {
       eligibleDate: parseISO("2022-01-03"),
     },
   },
+  ineligibleCriteria: {},
 };
 
 export const pastFTRDEligibleClientRecord: ClientRecord = {
@@ -996,3 +997,19 @@ export const usMiMinimumTelephoneReportingReferralRecord: UsMiMinimumTelephoneRe
       ],
     },
   };
+
+export const usMiPastFTRDRecordFixture: UsMiPastFTRDReferralRecord = {
+  stateCode: "US_MI",
+  externalId: "001",
+  eligibleCriteria: {
+    supervisionPastFullTermCompletionDate: {
+      eligibleDate: parseISO("2022-01-03"),
+    },
+  },
+  ineligibleCriteria: {},
+};
+
+export const usMiPastFTRDEligibleClientRecord: ClientRecord = {
+  ...ineligibleClientRecord,
+  allEligibleOpportunities: ["usMiPastFTRD"],
+};

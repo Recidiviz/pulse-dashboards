@@ -22,8 +22,8 @@ import { z } from "zod";
 
 import { collectionNames } from "../src/FirestoreStore";
 import { usNdEarlyTerminationSchema } from "../src/WorkflowsStore";
+import { usIdPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/PastFTRDReferralRecord";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
-import { usIdPastFtrdSchema } from "../src/WorkflowsStore/Opportunity/UsIdPastFTRDReferralRecord";
 import { usMeSCCPSchema } from "../src/WorkflowsStore/Opportunity/UsMeSCCPReferralRecord";
 import { usMoRestrictiveHousingStatusHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTnSupervisionLevelDowngradeReferralRecord";
@@ -52,7 +52,7 @@ function getDb() {
 
 const SCHEMAS = {
   earlyTerminationReferrals: usNdEarlyTerminationSchema,
-  pastFTRDReferrals: usIdPastFtrdSchema,
+  pastFTRDReferrals: usIdPastFTRDSchema,
   usMeSCCPReferrals: usMeSCCPSchema,
   usIdSupervisionLevelDowngradeReferrals:
     supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),

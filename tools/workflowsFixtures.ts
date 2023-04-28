@@ -32,6 +32,7 @@ import { usIdPastFtrdFixture } from "./fixtures/UsIdPastFtrdReferrals";
 import { usIdSupervisionTasksData } from "./fixtures/usIdSupervisionTasks";
 import { usMeSCCPFixture } from "./fixtures/usMeSCCPReferrals";
 import { usMiMinimumTelephoneReportingReferralsFixture } from "./fixtures/usMiMinimumTelephoneReportingReferrals";
+import { usMiPastFTRDReferralsFixture } from "./fixtures/usMiPastFTRDReferrals";
 import { usMiSupervisionLevelDowngradeReferrals } from "./fixtures/usMiSupervisionLevelDowngradeReferrals";
 import { usMoRestrictiveHousingStatusHearingFixture } from "./fixtures/usMoRestrictiveHousingStatusHearingReferrals";
 import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
@@ -63,6 +64,7 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   usMiMinimumTelephoneReportingReferrals:
     usMiMinimumTelephoneReportingReferralsFixture,
   usMiSupervisionLevelDowngradeReferrals,
+  usMiPastFTRDReferrals: usMiPastFTRDReferralsFixture,
   usMoRestrictiveHousingStatusHearingReferrals:
     usMoRestrictiveHousingStatusHearingFixture,
 };

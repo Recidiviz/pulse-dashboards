@@ -39,6 +39,7 @@ export const SUPERVISION_OPPORTUNITY_TYPES = [
   "usTnExpiration",
   "usMeEarlyTermination",
   "usMiMinimumTelephoneReporting",
+  "usMiPastFTRD",
 ] as const;
 export type SupervisionOpportunityType =
   typeof SUPERVISION_OPPORTUNITY_TYPES[number];
@@ -74,6 +75,7 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   usMoRestrictiveHousingStatusHearing: "Restrictive Housing Status Hearing",
   usMeEarlyTermination: "Early Termination",
   usMiMinimumTelephoneReporting: "Minimum Telephone Reporting",
+  usMiPastFTRD: "Overdue for Discharge",
 };
 
 export const OPPORTUNITY_TYPE_URLS_BY_STATE: PartialRecord<
@@ -103,6 +105,7 @@ export const OPPORTUNITY_TYPE_URLS_BY_STATE: PartialRecord<
     usMiMinimumTelephoneReporting: "minimumTelephoneReporting",
     usMiEarlyDischarge: "earlyDischarge",
     usMiSupervisionLevelDowngrade: "supervisionLevelMismatch",
+    usMiPastFTRD: "pastFTRD",
   },
   US_MO: {
     usMoRestrictiveHousingStatusHearing: "restrictiveHousingStatusHearing",

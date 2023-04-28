@@ -70,6 +70,7 @@ const PAGE_CONTENT: Record<OpportunityType, any> = {
   },
   usMeEarlyTermination: {},
   usMiMinimumTelephoneReporting: {},
+  usMiPastFTRD: {},
 };
 
 const Wrapper = styled.div`

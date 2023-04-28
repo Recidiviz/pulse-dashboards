@@ -15,59 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInDays } from "date-fns";
-import { computed, makeObservable } from "mobx";
+import { z } from "zod";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
-import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
-import { OpportunityBase } from "./OpportunityBase";
-import { OpportunityRequirement } from "./types";
-import {
-  transformReferral,
-  UsIdPastFTRDReferralRecord,
-} from "./UsIdPastFTRDReferralRecord";
+import { PastFTRDOpportunityBase } from "./PastFTRDOpportunityBase";
+import { basePastFTRDSchema } from "./PastFTRDReferralRecord";
 
-export class UsIdPastFTRDOpportunity extends OpportunityBase<
-  Client,
-  UsIdPastFTRDReferralRecord
-> {
-  readonly isAlert = true;
+export const usIdPastFTRDSchema = basePastFTRDSchema;
+export type UsIdPastFTRDReferralRecord = z.infer<typeof usIdPastFTRDSchema>;
+export type UsIdPastFTRDReferralRecordRaw = z.input<typeof usIdPastFTRDSchema>;
 
+export class UsIdPastFTRDOpportunity extends PastFTRDOpportunityBase<UsIdPastFTRDReferralRecord> {
   readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ID;
 
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-  ];
-
   constructor(client: Client) {
-    super(client, "pastFTRD", client.rootStore, transformReferral);
-    makeObservable(this, {
-      requirementsMet: computed,
-    });
-  }
-
-  get requirementsMet(): OpportunityRequirement[] {
-    const { eligibilityDate } = this;
-    if (!eligibilityDate) return [];
-
-    const requirements: OpportunityRequirement[] = [];
-
-    const daysPastEligibleDate = differenceInDays(new Date(), eligibilityDate);
-    const text = `${daysPastEligibleDate} days past FTRD (${formatWorkflowsDate(
-      eligibilityDate
-    )})`;
-    // There is no policy to refer to so the tooltip is undefined
-    requirements.push({
-      text,
-    });
-
-    return requirements;
-  }
-
-  get eligibilityDate(): Date | undefined {
-    return this.record?.eligibleCriteria.supervisionPastFullTermCompletionDate
-      .eligibleDate;
+    super(client, "pastFTRD", usIdPastFTRDSchema.parse);
   }
 }

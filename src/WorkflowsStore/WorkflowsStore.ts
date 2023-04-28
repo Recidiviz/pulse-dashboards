@@ -678,6 +678,7 @@ export class WorkflowsStore implements Hydratable {
           ![
             "usMiMinimumTelephoneReporting",
             "usMiSupervisionLevelDowngrade",
+            "usMiPastFTRD",
           ].includes(oppType)
       );
     }

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsIdPastFTRDReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsIdPastFTRDReferralRecord";
+import { UsIdPastFTRDReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsIdPastFTRDOpportunity";
 import { FixtureData } from "../workflowsFixtures";
 import { externalIdFunc } from "./utils";
 
@@ -29,6 +29,7 @@ export const usIdPastFtrdFixture: FixtureData<UsIdPastFTRDReferralRecordRaw> = {
           eligibleDate: "2022-07-10",
         },
       },
+      ineligibleCriteria: {},
     },
   ],
   idFunc: externalIdFunc,

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,19 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { transformReferral } from "../UsIdPastFTRDReferralRecord";
+import { UsMiPastFTRDReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMiPastFTRDOpportunity";
+import { fixtureWithIdKey } from "./utils";
 
-test("transform record", () => {
-  const rawRecord = {
-    stateCode: "US_ID",
-    externalId: "001",
-    formInformation: {},
-    eligibleCriteria: {
-      supervisionPastFullTermCompletionDate: {
-        eligibleDate: "2022-01-03",
+export const usMiPastFTRDReferralsFixture =
+  fixtureWithIdKey<UsMiPastFTRDReferralRecordRaw>("externalId", [
+    {
+      stateCode: "US_MI",
+      externalId: "010",
+      eligibleCriteria: {
+        supervisionPastFullTermCompletionDate: {
+          eligibleDate: "2022-02-02",
+        },
       },
+      ineligibleCriteria: {},
     },
-  };
-
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
-});
+  ]);

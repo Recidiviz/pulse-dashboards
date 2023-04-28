@@ -45,6 +45,7 @@ import {
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
 import { UsMiClassificationReviewOpportunity } from "./Opportunity/UsMiClassificationReviewOpportunity";
 import { UsMiEarlyDischargeOpportunity } from "./Opportunity/UsMiEarlyDischargeOpportunity";
+import { UsMiPastFTRDOpportunity } from "./Opportunity/UsMiPastFTRDOpportunity";
 import { UsMiSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsMiSupervisionLevelDowngradeOpportunity";
 import { SupervisionTaskInterface } from "./Task/types";
 import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
@@ -85,6 +86,7 @@ const supervisionOpportunityConstructors: Record<
   usTnExpiration: UsTnExpirationOpportunity,
   usMeEarlyTermination: UsMeEarlyTerminationOpportunity,
   usMiMinimumTelephoneReporting: UsMiMinimumTelephoneReportingOpportunity,
+  usMiPastFTRD: UsMiPastFTRDOpportunity,
 };
 
 export const createClientOpportunity: OpportunityFactory<

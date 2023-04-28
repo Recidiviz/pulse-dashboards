@@ -203,6 +203,12 @@ export const generateOpportunityHydratedHeader = (
       callToAction:
         "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in OMNI.",
     },
+    usMiPastFTRD: {
+      eligibilityText: simplur`${count} client[|s] ha[s|ve] `,
+      opportunityText: "passed their full-term release date",
+      callToAction:
+        "Review clients who are past their full-term release date and complete discharges in Omni.",
+    },
   };
 
   return headers[opportunityType];
@@ -254,6 +260,7 @@ export const opportunityToSortFunctionMapping: Record<
   usMoRestrictiveHousingStatusHearing: sortByReviewStatusAndEligibilityDate,
   usMeEarlyTermination: sortByReviewStatus,
   usMiMinimumTelephoneReporting: sortByReviewStatus,
+  usMiPastFTRD: sortByReviewStatusAndEligibilityDate,
 };
 
 export const transformCaseNotes = (

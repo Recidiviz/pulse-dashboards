@@ -43,6 +43,7 @@ import { OpportunityBase } from "./Opportunity/OpportunityBase";
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
 import { UsMiClassificationReviewOpportunity } from "./Opportunity/UsMiClassificationReviewOpportunity";
 import { UsMiEarlyDischargeOpportunity } from "./Opportunity/UsMiEarlyDischargeOpportunity";
+import { UsMiPastFTRDOpportunity } from "./Opportunity/UsMiPastFTRDOpportunity";
 import { UsMiSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsMiSupervisionLevelDowngradeOpportunity";
 import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
@@ -62,6 +63,7 @@ export type SupervisionOpportunityMapping = {
   usTnExpiration?: UsTnExpirationOpportunity;
   usMeEarlyTermination?: UsMeEarlyTerminationOpportunity;
   usMiMinimumTelephoneReporting?: UsMiMinimumTelephoneReportingOpportunity;
+  usMiPastFTRD?: UsMiPastFTRDOpportunity;
 };
 // The following line will typecheck only if the keys of
 // SupervisionOpportunityMapping are exhaustive
