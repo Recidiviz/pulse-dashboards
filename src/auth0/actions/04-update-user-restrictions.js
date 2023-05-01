@@ -23,6 +23,8 @@
 exports.onExecutePostLogin = async (event, api) => {
   const Base64 = require("crypto-js/enc-base64");
   const SHA256 = require("crypto-js/sha256");
+  const Analytics = require('analytics-node');
+  const analytics = new Analytics(event.secrets.SEGMENT_WRITE_KEY, { flushAt: 1  });
 
   const { app_metadata, email } = event.user;
   const stateCode = app_metadata.state_code?.toLowerCase();
@@ -120,6 +122,27 @@ exports.onExecutePostLogin = async (event, api) => {
           clientId: event.client.client_id,
         },
       });
+      const { user } = event;
+
+      analytics.track({
+        userId: user.user_id,
+        event: 'Failed Login',
+        properties: {
+          ...user.app_metadata,
+          email: user.email,
+          email_verified: user.email_verified,
+          identities: user.identities,
+          last_ip: event.request.ip,
+          logins_count: event.stats.logins_count,
+          name: user.name,
+          nickname: user.nickname,
+          picture: user.picture,
+          updated_at: user.updated_at,
+          user_id: user.user_id,
+        }
+      });
+
+      await analytics.flush();
       api.access.deny(DENY_MESSAGE);
     }
   }

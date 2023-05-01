@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,12 +21,36 @@
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
+  const Analytics = require('analytics-node');
+  const analytics = new Analytics(event.secrets.SEGMENT_WRITE_KEY, { flushAt: 1  });
+
   // Skip email verification on OpenID and SAML connections
   if (event.connection.name.includes("OpenID") || event.connection.name.includes("SAML")) {
     return;
   }
 
   if (!event.user.email_verified) {
+    const { user } = event;
+
+    analytics.track({
+      userId: user.user_id,
+      event: 'Failed Login',
+      properties: {
+        ...user.app_metadata,
+        email: user.email,
+        email_verified: user.email_verified,
+        identities: user.identities,
+        last_ip: event.request.ip,
+        logins_count: event.stats.logins_count,
+        name: user.name,
+        nickname: user.nickname,
+        picture: user.picture,
+        updated_at: user.updated_at,
+        user_id: user.user_id,
+      }
+    });
+
+    await analytics.flush();
     api.redirect.sendUserTo("https://dashboard.recidiviz.org/verify");
   }
 };
