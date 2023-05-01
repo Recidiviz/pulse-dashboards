@@ -23,6 +23,7 @@ import {
   has,
   makeAutoObservable,
   reaction,
+  runInAction,
   set,
   toJS,
   values,
@@ -361,14 +362,19 @@ export class WorkflowsStore implements Hydratable {
   }
 
   async updateSelectedPerson(personId?: string): Promise<void> {
-    this.selectedPersonPseudoId = personId;
     if (personId && !has(this.justiceInvolvedPersons, personId)) {
       await this.fetchPerson(personId);
     }
+
+    runInAction(() => {
+      this.selectedPersonPseudoId = personId;
+    });
   }
 
   updateSelectedOpportunityType(opportunityType?: OpportunityType): void {
-    this.selectedOpportunityType = opportunityType;
+    runInAction(() => {
+      this.selectedOpportunityType = opportunityType;
+    });
   }
 
   get selectedSearchables(): Searchable[] {
@@ -411,7 +417,9 @@ export class WorkflowsStore implements Hydratable {
   }
 
   updateActiveSystem(systemId: SystemId): void {
-    this.activeSystem = systemId;
+    runInAction(() => {
+      this.activeSystem = systemId;
+    });
   }
 
   get searchType(): SearchType | undefined {

@@ -25,7 +25,6 @@ import {
 
 import FirestoreStore, {
   ClientUpdateRecord,
-  CollectionName,
   collectionNames,
   OpportunityUpdate,
   OpportunityUpdateWithForm,
@@ -106,12 +105,12 @@ export class OpportunityUpdateSubscription<
     clientId: string,
     opportunityType: OpportunityType
   ) {
-    const collectionName = collectionNames.clientUpdatesV2 as CollectionName;
+    const collectionName = "clientUpdatesV2";
     super(firestoreStore, collectionName, clientRecordId);
 
     this.dataSource = doc(
       firestoreStore.db,
-      collectionName,
+      collectionNames[collectionName],
       clientRecordId,
       collectionNames.clientOpportunityUpdates,
       opportunityType
