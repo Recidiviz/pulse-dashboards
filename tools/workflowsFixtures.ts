@@ -28,7 +28,9 @@ import {
 import { deleteCollection, getDb } from "./firestoreUtils";
 import { locationsData } from "./fixtures/locations";
 import { residentsData } from "./fixtures/residents";
+import { usTnSupervisionLevelDowngradeReferrals } from "./fixtures/supervisionLevelDowngradeReferrals";
 import { usIdPastFtrdFixture } from "./fixtures/UsIdPastFtrdReferrals";
+import { usIdSupervisionLevelDowngradeReferrals } from "./fixtures/usIdSupervisionLevelDowngradeReferrals";
 import { usIdSupervisionTasksData } from "./fixtures/usIdSupervisionTasks";
 import { usMeSCCPFixture } from "./fixtures/usMeSCCPReferrals";
 import { usMiMinimumTelephoneReportingReferralsFixture } from "./fixtures/usMiMinimumTelephoneReportingReferrals";
@@ -41,8 +43,6 @@ const OPPORTUNITIES_WITH_JSON_FIXTURES: CollectionName[] = [
   "compliantReportingReferrals",
   "LSUReferrals",
   "earnedDischargeReferrals",
-  "supervisionLevelDowngradeReferrals",
-  "usIdSupervisionLevelDowngradeReferrals",
   "usMiClassificationReviewReferrals",
   "usMiEarlyDischargeReferrals",
   "usTnExpirationReferrals",
@@ -60,6 +60,8 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   usIdSupervisionTasks: usIdSupervisionTasksData,
   earlyTerminationReferrals: usNdEarlyTerminationFixture,
   pastFTRDReferrals: usIdPastFtrdFixture,
+  supervisionLevelDowngradeReferrals: usTnSupervisionLevelDowngradeReferrals,
+  usIdSupervisionLevelDowngradeReferrals,
   usMeSCCPReferrals: usMeSCCPFixture,
   usMiMinimumTelephoneReportingReferrals:
     usMiMinimumTelephoneReportingReferralsFixture,
