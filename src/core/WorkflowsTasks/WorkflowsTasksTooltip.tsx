@@ -30,7 +30,10 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
-import { SupervisionTask } from "../../WorkflowsStore/Task/types";
+import {
+  SupervisionTask,
+  SupervisionTaskType,
+} from "../../WorkflowsStore/Task/types";
 
 const TooltipContainer = styled.div`
   min-width: 100%;
@@ -59,7 +62,7 @@ const SectionDetails = styled(Sans12)<SectionDetailsProps>`
 
 type TooltipDetailsProps = {
   person: JusticeInvolvedPerson;
-  tasks: SupervisionTask[];
+  tasks: SupervisionTask<SupervisionTaskType>[];
 };
 
 // TODO: Put these directly on the opportunity classes
@@ -97,7 +100,7 @@ const TooltipTaskRow = styled.div`
 `;
 
 const TasksSection: React.FC<{
-  tasks: SupervisionTask[];
+  tasks: SupervisionTask<SupervisionTaskType>[];
 }> = ({ tasks }) => {
   if (tasks.length === 0) return null;
 
@@ -161,7 +164,7 @@ const TooltipDetails: React.FC<TooltipDetailsProps> = ({ person, tasks }) => {
 
 type TaskClientTooltipProps = {
   person: JusticeInvolvedPerson;
-  tasks: SupervisionTask[];
+  tasks: SupervisionTask<SupervisionTaskType>[];
   children: React.ReactElement;
 };
 

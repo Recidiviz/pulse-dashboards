@@ -18,7 +18,6 @@
  */
 import { isPast } from "date-fns";
 
-import { TaskValidationError } from "../../errors";
 import { formatDueDateFromToday } from "../../utils";
 import { JusticeInvolvedPerson } from "../types";
 import { fieldToDate } from "../utils";
@@ -33,13 +32,11 @@ import {
  * Implements functionality shared by a single task.
  */
 export abstract class Task<TaskType extends SupervisionTaskType>
-  implements SupervisionTask
+  implements SupervisionTask<TaskType>
 {
-  task: SupervisionTaskRecord;
+  task: SupervisionTaskRecord<TaskType>;
 
   person: JusticeInvolvedPerson;
-
-  type: SupervisionTaskType;
 
   /* ex: Risk assessment */
   abstract displayName: string;
@@ -51,19 +48,15 @@ export abstract class Task<TaskType extends SupervisionTaskType>
   abstract dueDateDisplayShort: string;
 
   constructor(
-    task: SupervisionTaskRecord,
-    type: SupervisionTaskType,
+    task: SupervisionTaskRecord<TaskType>,
     person: JusticeInvolvedPerson
   ) {
     this.task = task;
     this.person = person;
+  }
 
-    if (this.task.type !== type) {
-      throw new TaskValidationError(
-        "Cannot instantiate Task with different supervision task type."
-      );
-    }
-    this.type = type;
+  get type(): TaskType {
+    return this.task.type;
   }
 
   abstract get additionalDetails(): string | undefined;
@@ -81,7 +74,6 @@ export abstract class Task<TaskType extends SupervisionTaskType>
   }
 
   get details(): SupervisionDetailsForTask[TaskType] {
-    // TODO: Figure out how to define this without an assertion
-    return this.task.details as SupervisionDetailsForTask[TaskType];
+    return this.task.details;
   }
 }

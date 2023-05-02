@@ -68,9 +68,7 @@ export type SupervisionDetailsForTask = {
   contact: ContactDetails;
 };
 
-export type SupervisionTask<
-  T extends SupervisionTaskType = SupervisionTaskType
-> = {
+export type SupervisionTask<T extends SupervisionTaskType> = {
   type: T;
   dueDate: Date;
   details: SupervisionDetailsForTask[T];
@@ -83,10 +81,9 @@ export type SupervisionTask<
   additionalDetails?: string;
 };
 
-export type SupervisionTaskRecord = Pick<
-  SupervisionTask,
-  "type" | "details"
-> & {
+export type SupervisionTaskRecord<T extends SupervisionTaskType> = {
+  type: T;
+  details: SupervisionDetailsForTask[T];
   dueDate: string;
 };
 
@@ -98,7 +95,7 @@ export interface SupervisionTasksRecord {
   externalId: string;
   officerId: string;
   stateCode: string;
-  tasks: SupervisionTaskRecord[];
+  tasks: SupervisionTaskRecord<SupervisionTaskType>[];
   needs?: SupervisionNeed[];
 }
 
@@ -106,10 +103,10 @@ export interface SupervisionTasksRecord {
  * A SupervisionTask is associated with a single client and it has a list of tasks.
  */
 export interface SupervisionTaskInterface extends Hydratable {
-  readonly tasks: SupervisionTask[];
+  readonly tasks: SupervisionTask<SupervisionTaskType>[];
   readonly needs: SupervisionNeed[];
-  overdueTasks: SupervisionTask[];
-  upcomingTasks: SupervisionTask[];
-  orderedTasks: SupervisionTask[];
+  overdueTasks: SupervisionTask<SupervisionTaskType>[];
+  upcomingTasks: SupervisionTask<SupervisionTaskType>[];
+  orderedTasks: SupervisionTask<SupervisionTaskType>[];
   trackPreviewed: () => void;
 }

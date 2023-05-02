@@ -20,7 +20,7 @@
 import tk from "timekeeper";
 
 import { taskDueDateComparator } from "../TasksBase";
-import { SupervisionTask } from "../types";
+import { SupervisionTask, SupervisionTaskType } from "../types";
 
 describe("taskDueDateComparator", () => {
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe("taskDueDateComparator", () => {
       { dueDate: new Date(2020, 1, 1), type: "assessment" },
       { dueDate: new Date(2018, 1, 1), type: "contact" },
       { dueDate: new Date(2019, 1, 1), type: "homeVisit" },
-    ] as SupervisionTask[];
+    ] as SupervisionTask<SupervisionTaskType>[];
 
     expect(tasks.sort(taskDueDateComparator).map((t) => t.type)).toEqual([
       "contact",
@@ -46,7 +46,7 @@ describe("taskDueDateComparator", () => {
       { dueDate: new Date(2025, 1, 4), type: "homeVisit" },
       { dueDate: new Date(2025, 1, 2), type: "assessment" },
       { dueDate: new Date(2025, 1, 3), type: "contact" },
-    ] as SupervisionTask[];
+    ] as SupervisionTask<SupervisionTaskType>[];
 
     expect(tasks.sort(taskDueDateComparator).map((t) => t.type)).toEqual([
       "assessment",

@@ -85,23 +85,26 @@ export abstract class TasksBase<
   }
 
   get tasks(): SupervisionTask<SupervisionTaskType>[] {
-    return (this.record?.tasks || []).map((task: SupervisionTaskRecord) => {
-      if (
-        !this.rootStore.currentTenantId ||
-        !tenants[this.rootStore.currentTenantId].tasks
-      )
-        return;
-      const TaskConstructor =
-        tenants[this.rootStore.currentTenantId].tasks?.[task.type];
+    return (this.record?.tasks || []).map(
+      <T extends SupervisionTaskType>(task: SupervisionTaskRecord<T>) => {
+        if (
+          !this.rootStore.currentTenantId ||
+          !tenants[this.rootStore.currentTenantId].tasks
+        )
+          return;
 
-      if (!TaskConstructor) {
-        throw new TaskValidationError(
-          `Missing a class constructor for task with type: ${task.type}`
-        );
+        const TaskConstructor =
+          tenants[this.rootStore.currentTenantId].tasks?.[task.type];
+
+        if (TaskConstructor === undefined) {
+          throw new TaskValidationError(
+            `Missing a class constructor for task with type: ${task.type}`
+          );
+        }
+
+        return new TaskConstructor(task, this.person);
       }
-
-      return new TaskConstructor(task, task.type, this.person);
-    });
+    );
   }
 
   get needs(): SupervisionNeed[] {
