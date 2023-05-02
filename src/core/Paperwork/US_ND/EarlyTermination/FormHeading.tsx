@@ -53,7 +53,17 @@ const LineItemLeft = styled(LineItem).attrs({
   separator: ")",
 })``;
 
-const FormHeading: React.FC = () => {
+type FormHeadingProps = {
+  title: string;
+  saNumberTitle: string;
+  sfnNumber: number;
+};
+
+const FormHeading: React.FC<FormHeadingProps> = ({
+  title,
+  saNumberTitle,
+  sfnNumber,
+}) => {
   return (
     <FormHeadingContainer>
       <FormHeadingSection>
@@ -104,7 +114,7 @@ const FormHeading: React.FC = () => {
           />
         </LineItem>
         <LineItem>
-          SA No.{" "}
+          {saNumberTitle}{" "}
           <DOCXFormInput
             name="statesAttorneyNumber"
             placeholder="States Attorney Number"
@@ -113,9 +123,8 @@ const FormHeading: React.FC = () => {
         </LineItem>
         <LineItem>&nbsp;</LineItem>
         <FormHeadingMotionSection>
-          <LineItem>MOTION TO</LineItem>
-          <LineItem>TERMINATE PROBATION</LineItem>
-          <LineItem>SFN 9281</LineItem>
+          <LineItem>{title.toUpperCase()}</LineItem>
+          <LineItem>SFN {sfnNumber}</LineItem>
         </FormHeadingMotionSection>
       </FormHeadingSection>
     </FormHeadingContainer>

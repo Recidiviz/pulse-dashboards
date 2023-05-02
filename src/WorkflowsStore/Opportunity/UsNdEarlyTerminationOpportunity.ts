@@ -25,7 +25,7 @@ import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import { EarlyTerminationForm } from "./Forms/EarlyTerminationForm";
 import { OpportunityBase } from "./OpportunityBase";
-import { OpportunityRequirement } from "./types";
+import { FormVariant, OpportunityRequirement } from "./types";
 import {
   UsNdEarlyTerminationDraftData,
   UsNdEarlyTerminationReferralRecord,
@@ -127,6 +127,21 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
         tooltip: CRITERIA.usNdNotInActiveRevocationStatus.tooltip,
       },
     ];
+  }
+
+  get formVariant(): FormVariant | undefined {
+    if (!this.record) return undefined;
+
+    const {
+      criteria: { usNdImpliedValidEarlyTerminationSentenceType },
+    } = this.record;
+
+    if (
+      usNdImpliedValidEarlyTerminationSentenceType?.supervisionType ===
+      "DEFERRED"
+    ) {
+      return "deferred";
+    }
   }
 
   get metadata(): UsNdEarlyTerminationReferralRecord["metadata"] | undefined {

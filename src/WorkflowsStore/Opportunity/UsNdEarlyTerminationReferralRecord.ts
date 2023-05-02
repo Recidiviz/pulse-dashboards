@@ -85,6 +85,9 @@ export type UsNdEarlyTerminationDraftData = {
   statesAttorneyPhoneNumber: string;
   statesAttorneyEmailAddress: string;
   statesAttorneyMailingAddress: string;
+  priorCourtDay: string;
+  priorCourtMonth: string;
+  priorCourtYear: string;
   // Extendable to facilitate `additionalDepositionLines` dynamic keys
   [k: string]: string;
 };

@@ -39,6 +39,7 @@ import { FormBase } from "./Forms/FormBase";
 import {
   DefaultEligibility,
   DenialReasonsMap,
+  FormVariant,
   Opportunity,
   OpportunityRequirement,
   OpportunityStatus,
@@ -360,6 +361,11 @@ export abstract class OpportunityBase<
 
   // eslint-disable-next-line class-methods-use-this
   get eligibilityDate(): Date | undefined {
+    return undefined;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get formVariant(): FormVariant | undefined {
     return undefined;
   }
 }

@@ -172,6 +172,8 @@ export type WithCaseNotes = {
   caseNotes: Record<string, OpportunityCaseNote[]>;
 };
 
+export type FormVariant = "deferred";
+
 /**
  * An Opportunity is associated with a single client.
  * The client is assumed to be eligible for the Opportunity unless the

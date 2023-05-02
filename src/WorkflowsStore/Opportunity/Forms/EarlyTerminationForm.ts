@@ -49,6 +49,9 @@ export class EarlyTerminationForm extends FormBase<UsNdEarlyTerminationDraftData
       statesAttorneyPhoneNumber,
       statesAttorneyEmailAddress,
       statesAttorneyMailingAddress,
+      priorCourtDay: moment(priorCourtDate).format("Do"),
+      priorCourtMonth: moment(priorCourtDate).format("MMMM"),
+      priorCourtYear: moment(priorCourtDate).format("YYYY"),
     };
   }
 

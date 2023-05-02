@@ -23,7 +23,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { OpportunityType } from "../../WorkflowsStore";
+import { FormVariant, OpportunityType } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
@@ -32,18 +32,24 @@ import RecidivizLogo from "../RecidivizLogo";
 import { PATHWAYS_VIEWS } from "../views";
 import { OpportunityProfile } from "../WorkflowsClientProfile/OpportunityProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
+import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 import WorkflowsLSUForm from "../WorkflowsLSUForm";
 import WorkflowsUsTnExpirationForm from "../WorkflowsUsTnExpirationForm";
 
 export const FORM_SIDEBAR_WIDTH = 400;
 
-const PAGE_CONTENT: Record<OpportunityType, any> = {
+type FormContentsType = `${FormVariant}FormContents` | "formContents";
+const PAGE_CONTENT: Record<
+  OpportunityType,
+  Partial<Record<FormContentsType, any>>
+> = {
   compliantReporting: {
     formContents: <WorkflowsCompliantReportingForm />,
   },
   earlyTermination: {
     formContents: <WorkflowsEarlyTerminationForm />,
+    deferredFormContents: <WorkflowsEarlyTerminationDeferredForm />,
   },
   earnedDischarge: {
     formContents: <FormEarnedDischarge />,
@@ -126,12 +132,17 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
 
   const opportunity = selectedPerson.verifiedOpportunities[opportunityType];
 
+  const formVariant = opportunity?.formVariant;
+  const formContents: FormContentsType = formVariant
+    ? `${formVariant}FormContents`
+    : "formContents";
+
   const hydrated = (
     <Wrapper>
       <SidebarWrapper>
         <OpportunityProfile opportunity={opportunity} />
       </SidebarWrapper>
-      <FormWrapper>{PAGE_CONTENT[opportunityType].formContents}</FormWrapper>
+      <FormWrapper>{PAGE_CONTENT[opportunityType][formContents]}</FormWrapper>
     </Wrapper>
   );
 

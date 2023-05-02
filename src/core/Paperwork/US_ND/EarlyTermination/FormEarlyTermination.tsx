@@ -30,7 +30,7 @@ import FormTextarea from "./FormTextarea";
 const FORM_FONT_FAMILY = `"Times New Roman", serif`;
 const FORM_LINE_HEIGHT = 1.3;
 
-const FormPage = styled.div`
+export const FormPage = styled.div`
   font-family: ${FORM_FONT_FAMILY};
   line-height: ${FORM_LINE_HEIGHT};
   letter-spacing: 0;
@@ -45,24 +45,28 @@ const FormPage = styled.div`
   ol li {
     margin-bottom: ${rem(spacing.xs)};
   }
+
+  :not(first-child) {
+    margin-top: ${rem(18)};
+  }
 `;
 
 // Needed for specificity
-const FormParagraph = styled.p`
+export const FormParagraph = styled.p`
   p& {
     font-family: ${FORM_FONT_FAMILY};
     line-height: ${FORM_LINE_HEIGHT};
   }
 `;
 
-const SectionHeading = styled.strong`
+export const SectionHeading = styled.strong`
   display: block;
   text-align: center;
   font-size: ${rem(11)};
   margin: 1em 0;
 `;
 
-const SectionDefendantDate = styled.section`
+export const SectionDefendantDate = styled.section`
   display: flex;
   justify-content: flex-end;
   margin-bottom: 15px;
@@ -72,7 +76,7 @@ const SectionDefendantDate = styled.section`
   }
 `;
 
-const SectionOfficerDate = styled.section`
+export const SectionOfficerDate = styled.section`
   display: flex;
   justify-content: flex-start;
 
@@ -84,7 +88,7 @@ const SectionOfficerDate = styled.section`
 interface FormManualEntryProps {
   size: number;
 }
-const FormManualEntry: React.FC<FormManualEntryProps> = ({
+export const FormManualEntry: React.FC<FormManualEntryProps> = ({
   size,
 }: FormManualEntryProps) => {
   return <>{"_".repeat(size)}</>;
@@ -96,7 +100,7 @@ const FormTransformContainer = styled.section`
   max-width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
 `;
 
-export const FormEarlyTermination: React.FC = () => {
+export const FormSkeleton: React.FC = ({ children }) => {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
 
   const {
@@ -112,167 +116,176 @@ export const FormEarlyTermination: React.FC = () => {
       onChangeCapture={() => resize()}
     >
       <FormPrompts style={{ marginLeft: margin, marginRight: margin }} />
+      <FormTransformContainer>{children}</FormTransformContainer>
+    </div>
+  );
+};
 
-      <FormTransformContainer>
-        <FormPage>
-          <FormHeading />
-          <br />
-          <section>
-            [1]{" "}
-            <strong>
-              The Defendant, being first duly sworn, deposes and states:
-            </strong>
-          </section>
-          <br />
-          <ol type="a">
-            <li>
-              That the Defendant appeared before Judge{" "}
-              <DOCXFormInput name="judgeName" placeholder="Judge name" /> on{" "}
-              <DOCXFormInput name="priorCourtDate" placeholder="Court date" />,
-              and was sentenced to{" "}
-              <DOCXFormInput
-                name="sentenceLengthMonths"
-                placeholder="Sentence length"
-              />{" "}
-              supervised probation for the crime(s) of: <br />
-              <FormTextarea name="crimeNames" style={{ width: "100%" }} />
-            </li>
-            <li>
-              That the Defendant owes{" "}
-              <DOCXFormInput name="finesAndFees" placeholder="Dollar amount" />{" "}
-              in fines, costs, and fees to the District Court.
-            </li>
-            <li>
-              That the Defendant has satisfactorily met all other conditions of
-              the Defendant’s probation.
-            </li>
-            <li>
-              That the Defendant&apos;s probation will expire{" "}
-              <DOCXFormInput name="probationExpirationDate" />.
-            </li>
+export const FormEarlyTermination: React.FC = () => {
+  return (
+    <FormSkeleton>
+      <FormPage>
+        <FormHeading
+          title="Motion to terminate probation"
+          saNumberTitle="SA No."
+          sfnNumber={9281}
+        />
+        <br />
+        <section>
+          [1]{" "}
+          <strong>
+            The Defendant, being first duly sworn, deposes and states:
+          </strong>
+        </section>
+        <br />
+        <ol type="a">
+          <li>
+            That the Defendant appeared before Judge{" "}
+            <DOCXFormInput name="judgeName" placeholder="Judge name" /> on{" "}
+            <DOCXFormInput name="priorCourtDate" placeholder="Court date" />,
+            and was sentenced to{" "}
+            <DOCXFormInput
+              name="sentenceLengthMonths"
+              placeholder="Sentence length"
+            />{" "}
+            supervised probation for the crime(s) of: <br />
+            <FormTextarea name="crimeNames" style={{ width: "100%" }} />
+          </li>
+          <li>
+            That the Defendant owes{" "}
+            <DOCXFormInput name="finesAndFees" placeholder="Dollar amount" /> in
+            fines, costs, and fees to the District Court.
+          </li>
+          <li>
+            That the Defendant has satisfactorily met all other conditions of
+            the Defendant’s probation.
+          </li>
+          <li>
+            That the Defendant&apos;s probation will expire{" "}
+            <DOCXFormInput name="probationExpirationDate" />.
+          </li>
 
-            <AdditionalDepositionLines />
-          </ol>
+          <AdditionalDepositionLines />
+        </ol>
+        <section>
+          [2] Therefore, the Defendant requests the Court to terminate the
+          probation pursuant to N.D.C.C. § 12.1-32-06.1(7).
+        </section>
+        <br />
+        <SectionDefendantDate>
           <section>
-            [2] Therefore, the Defendant requests the Court to terminate the
-            probation pursuant to N.D.C.C. § 12.1-32-06.1(7).
+            <FormManualEntry size={30} />
+            <br />
+            Defendant
           </section>
-          <br />
-          <SectionDefendantDate>
-            <section>
-              <FormManualEntry size={30} />
-              <br />
-              Defendant
-            </section>
-            <section>
-              <FormManualEntry size={18} />
-              <br />
-              Date
-            </section>
-          </SectionDefendantDate>
           <section>
-            Subscribed and sworn to before me, a notary public, this{" "}
-            <FormManualEntry size={5} /> day of <FormManualEntry size={16} />,
-            20 <FormManualEntry size={2} />.
+            <FormManualEntry size={18} />
+            <br />
+            Date
           </section>
-          <br />
-          <br />
+        </SectionDefendantDate>
+        <section>
+          Subscribed and sworn to before me, a notary public, this{" "}
+          <FormManualEntry size={5} /> day of <FormManualEntry size={16} />, 20{" "}
+          <FormManualEntry size={2} />.
+        </section>
+        <br />
+        <br />
+        <FormManualEntry size={38} />
+        <br />
+        Notary Public
+        <SectionHeading>Approval of Termination of Probation</SectionHeading>
+        <section>
+          [3]{" "}
+          <DOCXFormInput
+            name="probationOfficerFullName"
+            placeholder="Probation officer name"
+          />{" "}
+          states:
+        </section>
+        <br />
+        <ol type="a">
+          <li>
+            That I am a Probation Officer employed with the North Dakota
+            Department of Corrections and Rehabilitation.
+          </li>
+          <li>
+            That, to the best of my information and belief, the Defendant has
+            fines, costs, and fees owing to the District Court but has otherwise
+            satisfactorily met all other conditions of the Defendant&apos;s
+            probation.
+          </li>
+          <li>
+            That I approve the termination of the Defendant&apos;s probation.
+          </li>
+          <li>
+            That a copy of the Defendant’s motion has been sent to the
+            prosecuting attorney.
+          </li>
+        </ol>
+        <SectionOfficerDate>
+          <section>
+            <FormManualEntry size={30} />
+            <br />
+            Probation Officer
+          </section>
+          <section>
+            <FormManualEntry size={26} />
+            <br />
+            Date
+          </section>
+        </SectionOfficerDate>
+        <FormParagraph>I concur,</FormParagraph>
+        <SectionOfficerDate>
+          <section>
+            <FormManualEntry size={39} />
+            <br />
+            States Attorney
+          </section>
+          <section>
+            <FormManualEntry size={26} />
+            <br />
+            Date
+          </section>
+        </SectionOfficerDate>
+        <FormTextarea
+          name="statesAttorneyMailingAddress"
+          placeholder="SA mailing address"
+          minRows={3}
+          style={{ boxSizing: "content-box", width: "210px" }}
+        />
+        <br />
+        <DOCXFormInput
+          name="statesAttorneyPhoneNumber"
+          placeholder="SA phone number"
+          style={{ minWidth: "210px" }}
+        />
+        <br />
+        <DOCXFormInput
+          name="statesAttorneyEmailAddress"
+          placeholder="SA e-mail service address"
+          style={{ minWidth: "210px" }}
+        />
+        <hr />
+        <SectionHeading>ORDER</SectionHeading>
+        <FormParagraph>
+          [1] The Court, finding that the Defendant has satisfactorily met the
+          conditions of the Defendant&apos;s probation and that termination of
+          probation is warranted by the conduct of the Defendant and the ends of
+          justice, <strong>ORDERS</strong> that the probation imposed upon the
+          Defendant is terminated pursuant to N.D.C.C. 12.1-32-06.1(7).
+        </FormParagraph>
+        <FormParagraph>
+          [2] The Court orders the remaining fines, fees, and costs shall be
+          docketed to a civil judgment pursuant to N.D.C.C. § 29-26-22.1.
+        </FormParagraph>
+        <section>
           <FormManualEntry size={38} />
           <br />
-          Notary Public
-          <SectionHeading>Approval of Termination of Probation</SectionHeading>
-          <section>
-            [3]{" "}
-            <DOCXFormInput
-              name="probationOfficerFullName"
-              placeholder="Probation officer name"
-            />{" "}
-            states:
-          </section>
-          <br />
-          <ol type="a">
-            <li>
-              That I am a Probation Officer employed with the North Dakota
-              Department of Corrections and Rehabilitation.
-            </li>
-            <li>
-              That, to the best of my information and belief, the Defendant has
-              fines, costs, and fees owing to the District Court but has
-              otherwise satisfactorily met all other conditions of the
-              Defendant&apos;s probation.
-            </li>
-            <li>
-              That I approve the termination of the Defendant&apos;s probation.
-            </li>
-            <li>
-              That a copy of the Defendant’s motion has been sent to the
-              prosecuting attorney.
-            </li>
-          </ol>
-          <SectionOfficerDate>
-            <section>
-              <FormManualEntry size={30} />
-              <br />
-              Probation Officer
-            </section>
-            <section>
-              <FormManualEntry size={26} />
-              <br />
-              Date
-            </section>
-          </SectionOfficerDate>
-          <FormParagraph>I concur,</FormParagraph>
-          <SectionOfficerDate>
-            <section>
-              <FormManualEntry size={39} />
-              <br />
-              States Attorney
-            </section>
-            <section>
-              <FormManualEntry size={26} />
-              <br />
-              Date
-            </section>
-          </SectionOfficerDate>
-          <FormTextarea
-            name="statesAttorneyMailingAddress"
-            placeholder="SA mailing address"
-            minRows={3}
-            style={{ boxSizing: "content-box", width: "210px" }}
-          />
-          <br />
-          <DOCXFormInput
-            name="statesAttorneyPhoneNumber"
-            placeholder="SA phone number"
-            style={{ minWidth: "210px" }}
-          />
-          <br />
-          <DOCXFormInput
-            name="statesAttorneyEmailAddress"
-            placeholder="SA e-mail service address"
-            style={{ minWidth: "210px" }}
-          />
-          <hr />
-          <SectionHeading>ORDER</SectionHeading>
-          <FormParagraph>
-            [1] The Court, finding that the Defendant has satisfactorily met the
-            conditions of the Defendant&apos;s probation and that termination of
-            probation is warranted by the conduct of the Defendant and the ends
-            of justice, <strong>ORDERS</strong> that the probation imposed upon
-            the Defendant is terminated pursuant to N.D.C.C. 12.1-32-06.1(7).
-          </FormParagraph>
-          <FormParagraph>
-            [2] The Court orders the remaining fines, fees, and costs shall be
-            docketed to a civil judgment pursuant to N.D.C.C. § 29-26-22.1.
-          </FormParagraph>
-          <section>
-            <FormManualEntry size={38} />
-            <br />
-            District Court Judge
-          </section>
-        </FormPage>
-      </FormTransformContainer>
-    </div>
+          District Court Judge
+        </section>
+      </FormPage>
+    </FormSkeleton>
   );
 };
 
