@@ -20,6 +20,7 @@ import { computed, makeObservable } from "mobx";
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { FeatureGateError } from "../../errors";
+import { toTitleCase } from "../../utils";
 import { Client } from "../Client";
 import { ValidateFunction } from "../subscriptions";
 import { OTHER_KEY } from "../utils";
@@ -35,7 +36,7 @@ const CRITERIA_FORMATTERS: CriteriaFormatters<UsMiMinimumTelephoneReportingRefer
   {
     usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
       COMPAS_SCORE: ({ initialAssessmentLevelRawText }) =>
-        initialAssessmentLevelRawText.toLowerCase(),
+        toTitleCase(initialAssessmentLevelRawText),
     },
   } as const;
 

@@ -82,6 +82,10 @@ describe("formatStrings", () => {
     expect(utils.toTitleCase("barney rub-ble")).toEqual("Barney Rub-Ble");
   });
 
+  it("to title case with slash", () => {
+    expect(utils.toTitleCase("EITHER/or")).toEqual("Either/Or");
+  });
+
   it("human readable title case with underscores", () => {
     const dataForTesting = "SAN_FRANCISCO_CALIFORNIA";
     const dataAfterTest = utils.humanReadableTitleCase(dataForTesting);

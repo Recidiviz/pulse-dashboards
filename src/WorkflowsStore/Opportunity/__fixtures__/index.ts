@@ -978,7 +978,7 @@ export const usMiMinimumTelephoneReportingReferralRecord: UsMiMinimumTelephoneRe
     eligibleCriteria: {
       onMinimumSupervisionAtLeastSixMonths: null,
       usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
-        initialAssessmentLevelRawText: "MEDIUM",
+        initialAssessmentLevelRawText: "MEDIUM/MEDIUM",
         supervisionLevelRawText: "MEDIUM",
       },
       usMiNotRequiredToRegisterUnderSora: null,

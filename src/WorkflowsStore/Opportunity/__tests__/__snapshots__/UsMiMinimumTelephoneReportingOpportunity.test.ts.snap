@@ -7,7 +7,7 @@ Array [
     "tooltip": "Offenders assigned to minimum in person or minimum low-risk supervision shall be evaluated for assignment to minimum TRS after they have completed six months of active supervision.",
   },
   Object {
-    "text": "Original COMPAS score was medium",
+    "text": "Original COMPAS score was Medium/Medium",
     "tooltip": "Original COMPAS score was minimum or medium and current supervision level is minimum in person or current supervision level is minimum low risk.",
   },
   Object {
