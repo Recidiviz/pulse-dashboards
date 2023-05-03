@@ -200,8 +200,8 @@ export interface Opportunity<
   readonly type: OpportunityType;
   denialReasonsMap: DenialReasonsMap;
   denial: Denial | undefined;
-  firstViewed: UpdateLog | undefined;
-  setFirstViewedIfNeeded: () => void;
+  lastViewed: UpdateLog | undefined;
+  setLastViewed: () => void;
   setCompletedIfEligible: () => void;
   eligibilityDate: Date | undefined;
   readonly isAlert: boolean;

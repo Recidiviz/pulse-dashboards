@@ -23,7 +23,7 @@ const UPDATE_RECORD = {
 };
 
 export const VIEWED_UPDATE = {
-  firstViewed: UPDATE_RECORD,
+  lastViewed: UPDATE_RECORD,
 };
 
 export const INCOMPLETE_FORM_UPDATE = {

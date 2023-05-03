@@ -143,22 +143,22 @@ export abstract class OpportunityBase<
     }
   }
 
-  get firstViewed(): UpdateLog | undefined {
-    return this.updates?.firstViewed;
+  get lastViewed(): UpdateLog | undefined {
+    // TODO(#3354): Migrate to lastViewed and remove the firstViewed property
+    if (!this.updates?.lastViewed && this.updates?.firstViewed) {
+      return this.updates?.firstViewed;
+    }
+    return this.updates?.lastViewed;
   }
 
   get currentUserEmail(): string | null | undefined {
     return this.rootStore.workflowsStore.user?.info.email;
   }
 
-  /**
-   * If this.firstViewed is not yet set, this sets it by writing to Firestore.
-   */
-  setFirstViewedIfNeeded(): void {
+  setLastViewed(): void {
     when(
       () => this.isHydrated,
       () => {
-        if (this.firstViewed) return;
         const { currentUserEmail } = this;
         // should not happen in practice
         if (!currentUserEmail) return;
@@ -170,7 +170,7 @@ export abstract class OpportunityBase<
         )
           return;
 
-        this.rootStore.firestoreStore.updateOpportunityFirstViewed(
+        this.rootStore.firestoreStore.updateOpportunityLastViewed(
           currentUserEmail,
           this.person.recordId,
           this.type
@@ -189,7 +189,7 @@ export abstract class OpportunityBase<
       return "COMPLETED";
     }
 
-    if (updates?.firstViewed || updates?.referralForm) {
+    if (this.lastViewed || updates?.referralForm) {
       return "IN_PROGRESS";
     }
     return "PENDING";

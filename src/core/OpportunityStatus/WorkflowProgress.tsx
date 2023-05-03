@@ -29,7 +29,7 @@ type OpportunityWorkflowStatusProps = {
 export const WorkflowProgress: React.FC<OpportunityWorkflowStatusProps> =
   observer(function WorkflowProgress({ opportunity }) {
     const {
-      firstViewed,
+      lastViewed,
       isHydrated,
       supportsExternalRequest,
       externalRequestData,
@@ -50,11 +50,11 @@ export const WorkflowProgress: React.FC<OpportunityWorkflowStatusProps> =
       );
     }
 
-    if (firstViewed) {
+    if (lastViewed) {
       return (
         <>
-          Viewed on {formatDate(firstViewed.date.toDate())} by{" "}
-          <WorkflowsOfficerName officerEmail={firstViewed.by} />
+          Viewed on {formatDate(lastViewed.date.toDate())} by{" "}
+          <WorkflowsOfficerName officerEmail={lastViewed.by} />
         </>
       );
     }

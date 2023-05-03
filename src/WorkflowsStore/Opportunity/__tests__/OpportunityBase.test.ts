@@ -197,28 +197,28 @@ test("review status", () => {
   expect(opp.reviewStatus).toBe("COMPLETED");
 });
 
-describe("setFirstViewedIfNeeded", () => {
+describe("setLastViewed", () => {
   beforeEach(() => {
-    jest.spyOn(root.firestoreStore, "updateOpportunityFirstViewed");
+    jest.spyOn(root.firestoreStore, "updateOpportunityLastViewed");
   });
   test("waits for hydration", () => {
-    opp.setFirstViewedIfNeeded();
+    opp.setLastViewed();
     expect(
-      root.firestoreStore.updateOpportunityFirstViewed
+      root.firestoreStore.updateOpportunityLastViewed
     ).not.toHaveBeenCalled();
 
     mockHydration();
 
-    expect(root.firestoreStore.updateOpportunityFirstViewed).toHaveBeenCalled();
+    expect(root.firestoreStore.updateOpportunityLastViewed).toHaveBeenCalled();
   });
 
   test("updates Firestore when there are no updates", () => {
     mockHydration();
 
-    opp.setFirstViewedIfNeeded();
+    opp.setLastViewed();
 
     expect(
-      root.firestoreStore.updateOpportunityFirstViewed
+      root.firestoreStore.updateOpportunityLastViewed
     ).toHaveBeenCalledWith(
       "test@email.gov",
       ineligibleClientRecord.recordId,
@@ -226,16 +226,14 @@ describe("setFirstViewedIfNeeded", () => {
     );
   });
 
-  test("does not update Firestore", () => {
+  test("updates Firestore with latest viewed", () => {
     mockHydration({
-      updateData: { firstViewed: { by: "foo", date: jest.fn() as any } },
+      updateData: { lastViewed: { by: "foo", date: jest.fn() as any } },
     });
 
-    opp.setFirstViewedIfNeeded();
+    opp.setLastViewed();
 
-    expect(
-      root.firestoreStore.updateOpportunityFirstViewed
-    ).not.toHaveBeenCalled();
+    expect(root.firestoreStore.updateOpportunityLastViewed).toHaveBeenCalled();
   });
 
   test("does not ignore Recidiviz users", () => {
@@ -243,9 +241,9 @@ describe("setFirstViewedIfNeeded", () => {
 
     mockUserStateCode.mockReturnValue("RECIDIVIZ");
 
-    opp.setFirstViewedIfNeeded();
+    opp.setLastViewed();
 
-    expect(root.firestoreStore.updateOpportunityFirstViewed).toHaveBeenCalled();
+    expect(root.firestoreStore.updateOpportunityLastViewed).toHaveBeenCalled();
   });
 
   test("ignores Recidiviz users in prod", () => {
@@ -255,11 +253,27 @@ describe("setFirstViewedIfNeeded", () => {
 
     mockUserStateCode.mockReturnValue("RECIDIVIZ");
 
-    opp.setFirstViewedIfNeeded();
+    opp.setLastViewed();
 
     expect(
-      root.firestoreStore.updateOpportunityFirstViewed
+      root.firestoreStore.updateOpportunityLastViewed
     ).not.toHaveBeenCalled();
+  });
+
+  test("Returns firstViewed if set and lastViewed is not set yet", () => {
+    mockHydration({
+      updateData: {
+        firstViewed: { by: "foo", date: jest.fn() as any },
+      },
+    });
+    expect(opp.lastViewed).not.toBeUndefined();
+  });
+
+  test("Returns undefined if firstViewed and lastViewed is not set yet", () => {
+    mockHydration({
+      updateData: {},
+    });
+    expect(opp.lastViewed).toBeUndefined();
   });
 });
 

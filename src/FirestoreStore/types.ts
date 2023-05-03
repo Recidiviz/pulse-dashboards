@@ -306,6 +306,8 @@ export type OpportunityUpdate = {
   completed?: {
     update: UpdateLog;
   };
+  lastViewed?: UpdateLog;
+  // TODO(#3354): Migrate to lastViewed and remove the firstViewed property
   firstViewed?: UpdateLog;
 };
 

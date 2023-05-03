@@ -306,13 +306,13 @@ export default class FirestoreStore {
     });
   }
 
-  async updateOpportunityFirstViewed(
+  async updateOpportunityLastViewed(
     userEmail: string,
     recordId: string,
     opportunityType: OpportunityType
   ): Promise<void> {
     return this.updateOpportunity(opportunityType, recordId, {
-      firstViewed: { by: userEmail, date: serverTimestamp() },
+      lastViewed: { by: userEmail, date: serverTimestamp() },
     });
   }
 

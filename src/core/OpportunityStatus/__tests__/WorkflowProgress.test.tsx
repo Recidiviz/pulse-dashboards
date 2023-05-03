@@ -50,7 +50,7 @@ test("viewed", () => {
     <WorkflowProgress
       opportunity={{
         ...mockOpportunity,
-        firstViewed: {
+        lastViewed: {
           by: "test@example.gov",
           date: dateToTimestamp("2022-08-15"),
         },

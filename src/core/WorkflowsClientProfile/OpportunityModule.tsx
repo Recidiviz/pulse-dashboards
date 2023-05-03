@@ -76,7 +76,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     hideHeader = false,
   }) {
     useEffect(() => {
-      opportunity.setFirstViewedIfNeeded();
+      opportunity.setLastViewed();
     }, [opportunity]);
 
     const colors = useStatusColors(opportunity);
