@@ -121,9 +121,6 @@ export type FeatureVariant =
   | "CompliantReportingAlmostEligible"
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
-  | "usMiClassificationReview"
-  | "usMoRestrictiveHousingStatusHearing"
-  | "usMeEarlyTermination"
   | "usMiPrereleaseOpportunities"
   | "responsiveRevamp";
 /**
@@ -142,9 +139,6 @@ export const defaultFeatureVariantsActive: FeatureVariantMapping = {
   CompliantReportingAlmostEligible: {},
   usTnExpiration: {},
   usTnExpirationSubmitToTomis: {},
-  usMiClassificationReview: {},
-  usMoRestrictiveHousingStatusHearing: {},
-  usMeEarlyTermination: {},
   usMiPrereleaseOpportunities: {},
   responsiveRevamp: {},
 };

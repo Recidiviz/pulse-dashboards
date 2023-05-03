@@ -402,10 +402,7 @@ test("feature variants active by default for Recidiviz users", async () => {
       "CompliantReportingAlmostEligible": Object {},
       "TEST": Object {},
       "responsiveRevamp": Object {},
-      "usMeEarlyTermination": Object {},
-      "usMiClassificationReview": Object {},
       "usMiPrereleaseOpportunities": Object {},
-      "usMoRestrictiveHousingStatusHearing": Object {},
       "usTnExpiration": Object {},
       "usTnExpirationSubmitToTomis": Object {},
     }
