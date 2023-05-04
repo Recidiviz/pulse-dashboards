@@ -18,27 +18,15 @@
 import { z } from "zod";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
-import { FeatureGateError } from "../../errors/FeatureGateError";
 import { Client } from "../Client";
-import { ValidateFunction } from "../subscriptions";
 import { OTHER_KEY } from "../utils";
 import { PastFTRDOpportunityBase } from "./PastFTRDOpportunityBase";
 import { basePastFTRDSchema } from "./PastFTRDReferralRecord";
+import { getFeatureVariantValidator } from "./utils";
 
 export const usMiPastFTRDSchema = basePastFTRDSchema;
 export type UsMiPastFTRDReferralRecord = z.infer<typeof usMiPastFTRDSchema>;
 export type UsMiPastFTRDReferralRecordRaw = z.input<typeof usMiPastFTRDSchema>;
-
-const getFeatureFlagValidator =
-  (client: Client): ValidateFunction<UsMiPastFTRDReferralRecord> =>
-  (record: UsMiPastFTRDReferralRecord): void => {
-    const featureFlags = client.rootStore.workflowsStore.featureVariants;
-    if (!featureFlags.usMiPrereleaseOpportunities) {
-      throw new FeatureGateError(
-        "usMiPastFTRD opportunity is not enabled for this user."
-      );
-    }
-  };
 
 export class UsMiPastFTRDOpportunity extends PastFTRDOpportunityBase<UsMiPastFTRDReferralRecord> {
   readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MI;
@@ -48,7 +36,7 @@ export class UsMiPastFTRDOpportunity extends PastFTRDOpportunityBase<UsMiPastFTR
       client,
       "usMiPastFTRD",
       usMiPastFTRDSchema.parse,
-      getFeatureFlagValidator(client)
+      getFeatureVariantValidator(client, "usMiPrereleaseOpportunities")
     );
   }
 

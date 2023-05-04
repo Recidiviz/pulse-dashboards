@@ -20,7 +20,11 @@ import { snakeCase } from "lodash";
 import moment from "moment";
 import simplur from "simplur";
 
+import { FeatureGateError } from "../../errors";
+import { FeatureVariant } from "../../FirestoreStore";
 import { pluralizeWord } from "../../utils";
+import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
+import { ValidateFunction } from "../subscriptions";
 import { optionalFieldToDate } from "../utils";
 import {
   COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED,
@@ -372,4 +376,19 @@ export function hydrateCriteria<R extends WithCriteria, C extends CriteriaKey>(
       // since the syntax is so minimal
       return out;
     });
+}
+
+export function getFeatureVariantValidator<R>(
+  person: JusticeInvolvedPersonBase,
+  featureVariant: FeatureVariant,
+  actualValidator?: ValidateFunction<R>
+): ValidateFunction<R> {
+  return (record: R): void => {
+    if (!person.rootStore.workflowsStore.featureVariants[featureVariant]) {
+      throw new FeatureGateError(
+        `Opportunity is not enabled for this user without the ${featureVariant} flag.`
+      );
+    }
+    if (actualValidator) actualValidator(record);
+  };
 }
