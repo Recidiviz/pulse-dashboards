@@ -33,6 +33,11 @@ jest.mock("react-router-dom", () => {
   return {
     Link: ({ children }) => children,
     useHistory: jest.fn(),
+    useLocation: jest.fn().mockImplementation(() => {
+      return {
+        pathname: "/community/revocations",
+      };
+    }),
   };
 });
 jest.mock("../hooks/usePageLayout");

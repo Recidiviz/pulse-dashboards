@@ -20,6 +20,7 @@ import "./LanternLayout.scss";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Helmet } from "react-helmet";
+import { useLocation } from "react-router-dom";
 
 import Footer from "../components/Footer";
 import IE11Banner from "../components/IE11Banner";
@@ -35,10 +36,19 @@ interface Props {
   children: React.ReactElement;
 }
 
-const LanternLayout: React.FC<Props> = ({ children }): React.ReactElement => {
+const LANTERN_PATHS = ["/community/revocations", "/revocations"];
+
+const LanternLayout: React.FC<Props> | undefined = ({
+  children,
+}): React.ReactElement | null => {
   const { currentTenantId, pageStore } = useRootStore();
+  const { pathname } = useLocation();
+
   useIntercom();
   usePageLayout(pageStore.hideTopBar);
+
+  if (!LANTERN_PATHS.includes(pathname)) return null;
+
   setTranslateLocale(currentTenantId);
 
   return (
