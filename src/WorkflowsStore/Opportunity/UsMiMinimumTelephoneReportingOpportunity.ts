@@ -91,6 +91,12 @@ const CRITERIA_COPY: CriteriaCopy<UsMiMinimumTelephoneReportingReferralRecord> =
 const DENIAL_REASONS_MAP = {
   FIREARM:
     "Serving on a felony offense involving possession or use of a firearm",
+  "SPEC COURT":
+    "Enrolled in a special issue court (e.g. Drug Treatment Court, Recovery Court, MH Court, Veterans Court)",
+  RPOSN:
+    "Designated as Reentry Project for Offenders with Special Needs (RPOSN - D-47)",
+  "HIGH PROFILE":
+    "Currently serving for an offense that resulted in the death of a person or a high-profile case with adverse community reaction (requires Max or higher based on risk score)",
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
