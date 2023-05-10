@@ -32,6 +32,7 @@ import { usTnSupervisionLevelDowngradeReferrals } from "./fixtures/supervisionLe
 import { usIdPastFtrdFixture } from "./fixtures/UsIdPastFtrdReferrals";
 import { usIdSupervisionLevelDowngradeReferrals } from "./fixtures/usIdSupervisionLevelDowngradeReferrals";
 import { usIdSupervisionTasksData } from "./fixtures/usIdSupervisionTasks";
+import { usMeEarlyTerminationReferralsFixture } from "./fixtures/usMeEarlyTerminationReferrals";
 import { usMeSCCPFixture } from "./fixtures/usMeSCCPReferrals";
 import { usMiMinimumTelephoneReportingReferralsFixture } from "./fixtures/usMiMinimumTelephoneReportingReferrals";
 import { usMiPastFTRDReferralsFixture } from "./fixtures/usMiPastFTRDReferrals";
@@ -46,7 +47,6 @@ const OPPORTUNITIES_WITH_JSON_FIXTURES: CollectionName[] = [
   "usMiClassificationReviewReferrals",
   "usMiEarlyDischargeReferrals",
   "usTnExpirationReferrals",
-  "usMeEarlyTerminationReferrals",
 ];
 
 export type FixtureData<T> = {
@@ -69,6 +69,7 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   usMiPastFTRDReferrals: usMiPastFTRDReferralsFixture,
   usMoRestrictiveHousingStatusHearingReferrals:
     usMoRestrictiveHousingStatusHearingFixture,
+  usMeEarlyTerminationReferrals: usMeEarlyTerminationReferralsFixture,
 };
 
 const db = getDb();

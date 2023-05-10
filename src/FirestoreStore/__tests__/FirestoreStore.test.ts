@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+/* eslint-disable import/first */
+// Delete test env var to test firestore emulator connection
+delete process.env.REACT_APP_TEST_ENV;
 import { connectAuthEmulator } from "firebase/auth";
 import { DocumentReference, setDoc } from "firebase/firestore";
 
@@ -54,11 +57,10 @@ jest.mock("../../api/fetchFirebaseToken", () => {
 
 describe("FirestoreStore", () => {
   let store: FirestoreStore;
-  let mockRootStore: RootStore;
+  let mockRootStore = {} as RootStore;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockRootStore = new RootStore();
     store = new FirestoreStore({ rootStore: mockRootStore });
   });
 

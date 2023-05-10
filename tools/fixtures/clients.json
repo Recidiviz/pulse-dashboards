@@ -764,5 +764,85 @@
       }
     ],
     "emailAddress": "laura@example.com"
+  },
+  {
+    "personName": {
+      "givenNames": "JENNIFER",
+      "surname": "LOPEZ"
+    },
+    "personExternalId": "010",
+    "pseudonymizedId": "p010",
+    "stateCode": "US_ME",
+    "officerId": "OFFICER8",
+    "supervisionType": "PROBATION",
+    "supervisionLevel": "MEDIUM",
+    "supervisionLevelStart": "2019-12-20",
+    "address": "123 Bedrock Lane",
+    "phoneNumber": "5555555678",
+    "expirationDate": "2024-12-31",
+    "allEligibleOpportunities": ["usMeEarlyTermination"],
+    "supervisionStartDate": "2020-02-22",
+    "currentBalance": 0,
+    "lastPaymentAmount": 125.75,
+    "lastPaymentDate": "2022-01-03",
+    "specialConditions": [],
+    "boardConditions": [],
+    "currentEmployers": [
+      {
+        "name": "Tire store",
+        "address": "456 Bedrock Lane"
+      }
+    ],
+    "milestones": [
+      {
+        "text": "8 months without a violation",
+        "type": "MONTHS_WITHOUT_VIOLATION"
+      },
+      {
+        "text": "15 months on supervision",
+        "type": "MONTHS_ON_SUPERVISION"
+      }
+    ],
+    "emailAddress": "jlo@example.com"
+  },
+  {
+    "personName": {
+      "givenNames": "MARIAH",
+      "surname": "CAREY"
+    },
+    "personExternalId": "011",
+    "pseudonymizedId": "p011",
+    "stateCode": "US_ME",
+    "officerId": "OFFICER8",
+    "supervisionType": "PROBATION",
+    "supervisionLevel": "MEDIUM",
+    "supervisionLevelStart": "2019-12-20",
+    "address": "123 Bedrock Lane",
+    "phoneNumber": "5555555678",
+    "expirationDate": "2024-12-31",
+    "allEligibleOpportunities": ["usMeEarlyTermination"],
+    "supervisionStartDate": "2020-02-22",
+    "currentBalance": 0,
+    "lastPaymentAmount": 125.75,
+    "lastPaymentDate": "2022-01-03",
+    "specialConditions": [],
+    "boardConditions": [],
+    "currentEmployers": [
+      {
+        "name": "Tire store",
+        "address": "456 Bedrock Lane"
+      }
+    ],
+    "milestones": [
+      {
+        "text": "8 months without a violation",
+        "type": "MONTHS_WITHOUT_VIOLATION"
+      },
+      {
+        "text": "15 months on supervision",
+        "type": "MONTHS_ON_SUPERVISION"
+      }
+    ],
+    "emailAddress": "mc@example.com"
   }
 ]

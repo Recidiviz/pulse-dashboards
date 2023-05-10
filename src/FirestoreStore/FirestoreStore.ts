@@ -66,6 +66,9 @@ import {
 
 function getFirestoreProjectId() {
   const projectId = process.env.REACT_APP_FIREBASE_BACKEND_PROJECT;
+  const testEnv = process.env.REACT_APP_TEST_ENV;
+  // Avoid connection attempts to firestore emulator in tests
+  if (testEnv) return "test";
 
   // default to offline mode when missing configuration (e.g. in unit tests)
   if (isOfflineMode() || !projectId) {

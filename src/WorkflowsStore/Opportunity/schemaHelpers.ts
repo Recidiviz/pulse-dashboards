@@ -22,6 +22,17 @@ export const dateStringSchema = z.string().transform(fieldToDate);
 
 export const stringToIntSchema = z.string().transform((s) => parseInt(s));
 
+export function NullCoalesce<T extends z.ZodTypeAny>(
+  fallback: z.input<T>,
+  schema: T
+) {
+  return z.preprocess((val) => val ?? fallback, schema) as z.ZodEffects<
+    T,
+    z.output<T>,
+    z.input<T> | null
+  >;
+}
+
 export const opportunitySchemaBase = z.object({
   stateCode: z.string(),
   externalId: z.string(),

@@ -22,6 +22,7 @@ import { computed, makeObservable } from "mobx";
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { OpportunityValidationError } from "../../errors";
+import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
@@ -58,6 +59,7 @@ const CRITERIA: Record<
   },
   supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {},
   onMediumSupervisionLevelOrLower: {},
+  usMeNoPendingViolationsWhileSupervised: {},
 };
 
 function validateRecord(
@@ -104,11 +106,35 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
     );
 
     makeObservable(this, {
+      almostEligible: computed,
       requirementsMet: computed,
       requirementsAlmostMet: computed,
+      almostEligibleStatusMessage: computed,
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
+  }
+
+  get almostEligible(): boolean {
+    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
+  }
+
+  get almostEligibleStatusMessage(): string | undefined {
+    if (!this.almostEligible || !this.record) return;
+    const { ineligibleCriteria } = this.record;
+
+    if (ineligibleCriteria.usMePaidAllOwedRestitution?.amountOwed) {
+      return `Remaining Restitution Balance ${formatAsCurrency(
+        ineligibleCriteria.usMePaidAllOwedRestitution.amountOwed
+      )}`;
+    }
+    if (
+      ineligibleCriteria.usMeNoPendingViolationsWhileSupervised?.violationDate
+    ) {
+      return `Violation Pending since ${formatWorkflowsDate(
+        ineligibleCriteria.usMeNoPendingViolationsWhileSupervised.violationDate
+      )}`;
+    }
   }
 
   get requirementsMet(): OpportunityRequirement[] {
@@ -120,6 +146,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
         noConvictionWithin6Months,
         onMediumSupervisionLevelOrLower,
         usMePaidAllOwedRestitution,
+        usMeNoPendingViolationsWhileSupervised,
       },
     } = this.record;
 
@@ -141,12 +168,18 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
       });
     }
 
-    if (usMePaidAllOwedRestitution?.amountOwed === 0) {
+    if (
+      usMePaidAllOwedRestitution &&
+      usMePaidAllOwedRestitution?.amountOwed === 0
+    ) {
       requirements.push({
         text: `Paid all owed restitution`,
         tooltip: CRITERIA.usMePaidAllOwedRestitution.tooltip,
       });
-    } else if (!usMePaidAllOwedRestitution?.amountOwed) {
+    } else if (
+      usMePaidAllOwedRestitution &&
+      !usMePaidAllOwedRestitution?.amountOwed
+    ) {
       // If we don't have an amountOwed property, then there is no restitution case
       requirements.push({
         text: `No restitution owed`,
@@ -154,13 +187,51 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
       });
     }
 
-    if (!noConvictionWithin6Months.latestConvictions) {
+    if (!noConvictionWithin6Months?.latestConvictions) {
       requirements.push({
         text: `No new convictions in the past 6 months`,
         tooltip: CRITERIA.noConvictionWithin6Months.tooltip,
       });
     }
 
+    if (
+      usMeNoPendingViolationsWhileSupervised &&
+      !usMeNoPendingViolationsWhileSupervised?.currentStatus
+    ) {
+      requirements.push({
+        text: `No Pending Violations`,
+        tooltip: CRITERIA.usMeNoPendingViolationsWhileSupervised.tooltip,
+      });
+    }
+
     return requirements;
+  }
+
+  get requirementsAlmostMet(): OpportunityRequirement[] {
+    if (!this.record) return [];
+    const requirementsAlmostMet: OpportunityRequirement[] = [];
+
+    const { ineligibleCriteria } = this.record;
+
+    if (
+      ineligibleCriteria.usMeNoPendingViolationsWhileSupervised?.violationDate
+    ) {
+      requirementsAlmostMet.push({
+        text: `Violation Pending since ${formatWorkflowsDate(
+          ineligibleCriteria.usMeNoPendingViolationsWhileSupervised
+            ?.violationDate
+        )}`,
+        tooltip: CRITERIA.usMeNoPendingViolationsWhileSupervised.tooltip,
+      });
+    }
+    if (ineligibleCriteria.usMePaidAllOwedRestitution?.amountOwed) {
+      requirementsAlmostMet.push({
+        text: `Remaining Restitution Balance ${formatAsCurrency(
+          ineligibleCriteria.usMePaidAllOwedRestitution?.amountOwed
+        )}`,
+        tooltip: CRITERIA.usMePaidAllOwedRestitution.tooltip,
+      });
+    }
+    return requirementsAlmostMet;
   }
 }

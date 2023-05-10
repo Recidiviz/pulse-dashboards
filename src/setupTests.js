@@ -37,6 +37,7 @@ configure({ adapter: new Adapter() });
 
 process.env = {
   ...process.env,
+  REACT_APP_TEST_ENV: true,
   REACT_APP_METADATA_NAMESPACE: "test-metadata-namespace/",
 };
 

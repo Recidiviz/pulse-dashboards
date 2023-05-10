@@ -22,14 +22,16 @@ test("transform record with restitution case", () => {
     stateCode: "US_ME",
     externalId: "abc123",
     eligibleCriteria: {
-      usMePaidAllOwedRestitution: {
-        amountOwed: 0,
-      },
+      usMePaidAllOwedRestitution: { amountOwed: 0 },
       noConvictionWithin6Months: null,
+      onMediumSupervisionLevelOrLower: {
+        supervisionLevel: "MEDIUM",
+      },
       supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
         eligibleDate: "2022-01-03",
       },
     },
+    ineligibleCriteria: {},
   };
 
   expect(transformReferral(rawRecord)).toMatchSnapshot();
@@ -42,8 +44,35 @@ test("transform record without restitution case", () => {
     eligibleCriteria: {
       usMePaidAllOwedRestitution: null,
       noConvictionWithin6Months: null,
+      onMediumSupervisionLevelOrLower: {
+        supervisionLevel: "MEDIUM",
+      },
       supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
         eligibleDate: "2022-01-03",
+      },
+    },
+    ineligibleCriteria: {},
+  };
+
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});
+
+test("transform record with restitution ineligibleCriteria", () => {
+  const rawRecord = {
+    stateCode: "US_ME",
+    externalId: "abc123",
+    eligibleCriteria: {
+      noConvictionWithin6Months: null,
+      onMediumSupervisionLevelOrLower: {
+        supervisionLevel: "MEDIUM",
+      },
+      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
+        eligibleDate: "2022-01-03",
+      },
+    },
+    ineligibleCriteria: {
+      usMePaidAllOwedRestitution: {
+        amountOwed: 500,
       },
     },
   };
@@ -51,18 +80,45 @@ test("transform record without restitution case", () => {
   expect(transformReferral(rawRecord)).toMatchSnapshot();
 });
 
-test("transform record with former half term criteria name", () => {
+test("transform record with pending violation ineligibleCriteria", () => {
   const rawRecord = {
     stateCode: "US_ME",
     externalId: "abc123",
     eligibleCriteria: {
-      usMePaidAllOwedRestitution: null,
       noConvictionWithin6Months: null,
-      supervisionPastHalfFullTermReleaseDate: {
-        sentenceType: "MEDIUM",
+      onMediumSupervisionLevelOrLower: {
+        supervisionLevel: "MEDIUM",
+      },
+      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
         eligibleDate: "2022-01-03",
       },
     },
+    ineligibleCriteria: {
+      usMeNoPendingViolationsWhileSupervised: {
+        currentStatus: "Pending Violation",
+        violationDate: "2022-07-13",
+      },
+    },
+  };
+
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});
+
+test("transform record with null pending violation criteria", () => {
+  const rawRecord = {
+    stateCode: "US_ME",
+    externalId: "abc123",
+    eligibleCriteria: {
+      noConvictionWithin6Months: null,
+      onMediumSupervisionLevelOrLower: {
+        supervisionLevel: "MEDIUM",
+      },
+      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
+        eligibleDate: "2022-01-03",
+      },
+      usMeNoPendingViolationsWhileSupervised: null,
+    },
+    ineligibleCriteria: {},
   };
 
   expect(transformReferral(rawRecord)).toMatchSnapshot();

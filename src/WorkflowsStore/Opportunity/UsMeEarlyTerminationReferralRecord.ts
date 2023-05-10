@@ -15,75 +15,75 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { cloneDeep } from "lodash";
+import { z } from "zod";
 
 import { TransformFunction } from "../subscriptions";
-import { fieldToDate } from "../utils";
-import { WithCaseNotes } from "./types";
-import { transformCaseNotes } from "./utils";
+import {
+  caseNotesSchema,
+  dateStringSchema,
+  NullCoalesce,
+  opportunitySchemaBase,
+} from "./schemaHelpers";
 
-export type UsMeEarlyTerminationReferralRecord = {
-  stateCode: string;
-  externalId: string;
-  eligibleCriteria: {
-    usMePaidAllOwedRestitution: {
-      amountOwed?: number;
-    };
-    noConvictionWithin6Months: {
-      latestConvictions?: string[];
-    };
-    supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
-      eligibleDate: Date;
-    };
-    onMediumSupervisionLevelOrLower: {
-      supervisionLevel: string;
-    };
-  };
-} & WithCaseNotes;
+const criteria = z.object({
+  usMePaidAllOwedRestitution: NullCoalesce(
+    {},
+    z.object({ amountOwed: z.number().optional() })
+  ).optional(),
+  noConvictionWithin6Months: NullCoalesce(
+    {},
+    z
+      .object({
+        latestConvictions: z.array(z.string()).optional(),
+      })
+      .optional()
+  ).optional(),
+  supervisionPastHalfFullTermReleaseDateFromSupervisionStart: z.object({
+    eligibleDate: dateStringSchema,
+  }),
+  onMediumSupervisionLevelOrLower: z.object({ supervisionLevel: z.string() }),
+  usMeNoPendingViolationsWhileSupervised: NullCoalesce(
+    {},
+    z
+      .object({
+        currentStatus: z.string().optional(),
+        violationDate: dateStringSchema.optional(),
+      })
+      .optional()
+  ).optional(),
+});
+
+const ineligibleCriteria = z.object({
+  usMeNoPendingViolationsWhileSupervised: z
+    .object({
+      currentStatus: z.string(),
+      violationDate: dateStringSchema,
+    })
+    .nullable()
+    .optional(),
+});
+
+export const usMeEarlyTerminationSchema = opportunitySchemaBase
+  .extend({
+    eligibleCriteria: criteria,
+    ineligibleCriteria: criteria
+      .pick({
+        usMePaidAllOwedRestitution: true,
+      })
+      .merge(ineligibleCriteria),
+  })
+  .merge(caseNotesSchema);
+
+export type UsMeEarlyTerminationReferralRecord = z.infer<
+  typeof usMeEarlyTerminationSchema
+>;
+
+export type UsMeEarlyTerminationReferralRecordRaw = z.input<
+  typeof usMeEarlyTerminationSchema
+>;
 
 export const transformReferral: TransformFunction<
   UsMeEarlyTerminationReferralRecord
 > = (record) => {
-  if (!record) {
-    throw new Error("No record found");
-  }
-
-  const { reasons, ...transformedRecord } = cloneDeep(record);
-
-  const { eligibleCriteria } = record;
-
-  // TODO(#3250): Remove the old criteria name
-  if (eligibleCriteria.supervisionPastHalfFullTermReleaseDate) {
-    transformedRecord.eligibleCriteria.supervisionPastHalfFullTermReleaseDateFromSupervisionStart =
-      {
-        eligibleDate: fieldToDate(
-          eligibleCriteria.supervisionPastHalfFullTermReleaseDate.eligibleDate
-        ),
-      };
-    delete transformedRecord.eligibleCriteria
-      .supervisionPastHalfFullTermReleaseDate;
-  } else if (
-    eligibleCriteria.supervisionPastHalfFullTermReleaseDateFromSupervisionStart
-  ) {
-    transformedRecord.eligibleCriteria.supervisionPastHalfFullTermReleaseDateFromSupervisionStart =
-      {
-        eligibleDate: fieldToDate(
-          eligibleCriteria
-            .supervisionPastHalfFullTermReleaseDateFromSupervisionStart
-            .eligibleDate
-        ),
-      };
-  }
-
-  if (eligibleCriteria.noConvictionWithin6Months === null) {
-    transformedRecord.eligibleCriteria.noConvictionWithin6Months = {};
-  }
-
-  // If usMePaidAllOwedRestitution is null, this means there is no restitution case
-  if (eligibleCriteria.usMePaidAllOwedRestitution === null) {
-    transformedRecord.eligibleCriteria.usMePaidAllOwedRestitution = {};
-  }
-  transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
-
-  return transformedRecord as UsMeEarlyTerminationReferralRecord;
+  return usMeEarlyTerminationSchema.parse(record);
 };

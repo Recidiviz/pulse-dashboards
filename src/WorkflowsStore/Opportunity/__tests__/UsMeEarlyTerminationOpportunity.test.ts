@@ -22,8 +22,12 @@ import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
 import { DocumentSubscription } from "../../subscriptions";
 import {
+  usMeEarlyTerminationAlmostEligiblePendingViolationClientRecord,
+  usMeEarlyTerminationAlmostEligibleRestitutionClientRecord,
   usMeEarlyTerminationEligibleClientRecord,
   usMeEarlyTerminationReferralRecord,
+  usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord,
+  usMeEarlyTerminationViolationAlmostEligibleReferralRecord,
 } from "../__fixtures__";
 import { UsMeEarlyTerminationOpportunity } from "../UsMeEarlyTerminationOpportunity";
 
@@ -83,5 +87,71 @@ describe("fully eligible", () => {
 
   test("requirements met", () => {
     expect(opp.requirementsMet).toMatchSnapshot();
+  });
+});
+
+describe("almost eligible restitution owed", () => {
+  beforeEach(() => {
+    createTestUnit(usMeEarlyTerminationAlmostEligibleRestitutionClientRecord);
+
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.data =
+      usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord;
+
+    updatesSub = opp.updatesSubscription;
+    updatesSub.isLoading = false;
+  });
+
+  test("requirements almost met", () => {
+    expect(opp.requirementsAlmostMet).toMatchSnapshot();
+  });
+
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+  });
+
+  test("almost eligible status message", () => {
+    expect(opp.almostEligibleStatusMessage).toEqual(
+      "Remaining Restitution Balance $500.00"
+    );
+  });
+
+  test("almost eligible", () => {
+    expect(opp.almostEligible).toBeTrue();
+  });
+});
+
+describe("almost eligible pending violation", () => {
+  beforeEach(() => {
+    createTestUnit(
+      usMeEarlyTerminationAlmostEligiblePendingViolationClientRecord
+    );
+
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.data =
+      usMeEarlyTerminationViolationAlmostEligibleReferralRecord;
+
+    updatesSub = opp.updatesSubscription;
+    updatesSub.isLoading = false;
+  });
+
+  test("requirements almost met", () => {
+    expect(opp.requirementsAlmostMet).toMatchSnapshot();
+  });
+
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+  });
+
+  test("almost eligible status message", () => {
+    expect(opp.almostEligibleStatusMessage).toEqual(
+      "Violation Pending since Jan 1, 2023"
+    );
+  });
+
+  test("almost eligible", () => {
+    expect(opp.almostEligible).toBeTrue();
   });
 });
