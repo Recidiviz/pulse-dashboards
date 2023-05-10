@@ -46,7 +46,6 @@ test("dataSource", () => {
   sub = new OpportunityUpdateSubscription(
     firestoreStoreMock,
     "record123",
-    "client123",
     "compliantReporting"
   );
 
@@ -60,18 +59,4 @@ test("dataSource", () => {
   );
 
   expect(sub.dataSource).toBe(mockRef);
-});
-
-test("attempts to migrate legacy data", () => {
-  // simulates the migration already being complete
-  getDocMock.mockResolvedValue({ exists: jest.fn().mockReturnValue(true) });
-
-  sub = new OpportunityUpdateSubscription(
-    firestoreStoreMock,
-    "record123",
-    "client123",
-    "compliantReporting"
-  );
-
-  expect(getDocMock).toHaveBeenCalledTimes(1);
 });

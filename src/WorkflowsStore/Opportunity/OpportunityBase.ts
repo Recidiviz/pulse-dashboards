@@ -120,7 +120,6 @@ export abstract class OpportunityBase<
     this.updatesSubscription = new OpportunityUpdateSubscription<UpdateRecord>(
       this.rootStore.firestoreStore,
       person.recordId,
-      person.externalId,
       type
     );
   }
