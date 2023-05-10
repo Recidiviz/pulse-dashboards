@@ -97,8 +97,11 @@ const Sidebar = styled.div`
   background: ${palette.marble1};
 `;
 
-const SidebarSection = styled.section`
-  padding: ${rem(spacing.lg)};
+const SidebarSection = styled.section<{
+  responsiveRevamp: boolean;
+}>`
+  padding: ${({ responsiveRevamp }) =>
+    responsiveRevamp ? rem(spacing.md) : rem(spacing.lg)};
 
   &:first-child {
     border-bottom: 1px solid ${palette.slate20};
@@ -106,14 +109,20 @@ const SidebarSection = styled.section`
 `;
 
 const SidebarWrapper: React.FC = ({ children }) => {
+  const {
+    workflowsStore: { featureVariants },
+  } = useRootStore();
+
   return (
     <Sidebar>
-      <SidebarSection>
+      <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
         <Link to={`/${PATHWAYS_VIEWS.workflows}`}>
           <RecidivizLogo />
         </Link>
       </SidebarSection>
-      <SidebarSection>{children}</SidebarSection>
+      <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
+        {children}
+      </SidebarSection>
     </Sidebar>
   );
 };

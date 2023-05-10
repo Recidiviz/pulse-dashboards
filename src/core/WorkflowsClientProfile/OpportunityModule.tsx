@@ -22,6 +22,7 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityDenial } from "../OpportunityDenial";
 import { useStatusColors } from "../utils/workflowsUtils";
@@ -29,14 +30,23 @@ import { workflowsUrl } from "../views";
 import { CriteriaList } from "./CriteriaList";
 import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
 
-const Wrapper = styled.div<{ background: string; border: string }>`
+const Wrapper = styled.div<{
+  background: string;
+  border: string;
+  responsiveRevamp: boolean;
+}>`
   background-color: ${({ background: backgroundColor }) => backgroundColor};
   border-color: ${({ border: borderColor }) => borderColor};
   border-style: solid;
   border-width: 1px 0;
   color: ${palette.pine1};
-  margin: 0 -${rem(spacing.lg)};
-  padding: ${rem(spacing.md)} ${rem(spacing.lg)};
+
+  margin: ${({ responsiveRevamp }) =>
+    responsiveRevamp ? 0 : `0 -${rem(spacing.lg)}`};
+  padding: ${({ responsiveRevamp }) =>
+    responsiveRevamp
+      ? rem(spacing.md)
+      : `${rem(spacing.md)} ${rem(spacing.lg)}`};
 `;
 
 const ActionButtons = styled.div`
@@ -75,6 +85,10 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     opportunity,
     hideHeader = false,
   }) {
+    const {
+      workflowsStore: { featureVariants },
+    } = useRootStore();
+
     useEffect(() => {
       opportunity.setLastViewed();
     }, [opportunity]);
@@ -82,7 +96,10 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     const colors = useStatusColors(opportunity);
     const showDenialButton = opportunity.supportsDenial;
     return (
-      <Wrapper {...colors}>
+      <Wrapper
+        responsiveRevamp={!!featureVariants.responsiveRevamp}
+        {...colors}
+      >
         {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}
         <CriteriaList opportunity={opportunity} />
         {(formDownloadButton || showDenialButton || formLinkButton) && (

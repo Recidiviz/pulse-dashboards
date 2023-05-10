@@ -30,6 +30,7 @@ import { ProfileCapsule } from "../PersonCapsules";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { PreviewTasks } from "../WorkflowsTasks/PreviewTasks";
 import ClientDetailsInput from "./ClientDetailsInput";
+import { Divider } from "./common";
 import {
   ClientEmployer,
   ClientHousing,
@@ -52,7 +53,9 @@ const COLUMNS = "1fr 1.2fr";
 
 const GUTTER = rem(spacing.sm * 15);
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{
+  responsiveRevamp: boolean;
+}>`
   display: grid;
   column-gap: ${GUTTER};
   grid-template-areas:
@@ -62,6 +65,12 @@ const Wrapper = styled.div`
   grid-template-rows: minmax(${rem(96)}, auto) auto;
   padding-bottom: ${rem(spacing.lg)};
   row-gap: ${rem(spacing.lg)};
+
+  ${({ responsiveRevamp }) =>
+    responsiveRevamp &&
+    `div[class*="AccordionWrapper"] {
+      margin: 0;
+    }`}
 `;
 
 const Header = styled.div`
@@ -111,11 +120,6 @@ const ContactValue = styled.dd<{ alignRight?: boolean }>`
 const SectionHeading = styled(Sans16)`
   color: ${palette.pine2};
   margin-bottom: ${rem(spacing.md)};
-`;
-
-const Divider = styled.hr`
-  border-top: 1px solid ${palette.slate20};
-  margin: ${rem(spacing.md)} 0;
 `;
 
 export const DETAILS_NOT_AVAILABLE_STRING = "currently not available";
@@ -252,7 +256,7 @@ function ContactDetails({
 export const FullProfile = observer(
   function FullProfile(): React.ReactElement | null {
     const {
-      workflowsStore: { selectedPerson: person },
+      workflowsStore: { selectedPerson: person, featureVariants },
     } = useRootStore();
 
     usePersonTracking(person, () => {
@@ -263,7 +267,7 @@ export const FullProfile = observer(
 
     return (
       <WorkflowsNavLayout>
-        <Wrapper>
+        <Wrapper responsiveRevamp={!!featureVariants.responsiveRevamp}>
           <Header>
             <ProfileCapsule
               avatarSize="lg"

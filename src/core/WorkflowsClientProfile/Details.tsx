@@ -23,6 +23,7 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { ReactComponent as GoldStar } from "../../assets/static/images/goldStar.svg";
+import { useRootStore } from "../../components/StoreProvider";
 import * as pathwaysTenants from "../../RootStore/TenantStore/pathwaysTenants";
 import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
 import { Client, WithCaseNotes } from "../../WorkflowsStore";
@@ -31,7 +32,7 @@ import { Resident } from "../../WorkflowsStore/Resident";
 import { middleDateBetweenTwoDates } from "../../WorkflowsStore/utils";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
-import { InfoButton, InfoTooltipWrapper } from "./common";
+import { Divider, InfoButton, InfoTooltipWrapper } from "./common";
 import {
   ClientProfileProps,
   OpportunityProfileProps,
@@ -141,6 +142,10 @@ function getProbationSpecialConditionsMarkup(
 export function SpecialConditions({
   client,
 }: ClientProfileProps): React.ReactElement | null {
+  const {
+    workflowsStore: { featureVariants },
+  } = useRootStore();
+
   const emptySpecialConditionStrings =
     STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_STRINGS[client.stateCode];
   if (!emptySpecialConditionStrings) return null;
@@ -154,7 +159,7 @@ export function SpecialConditions({
           emptySpecialConditionStrings.probation
         )}
       </DetailsContent>
-
+      {featureVariants.responsiveRevamp && <Divider />}
       <DetailsHeading>Parole Special Conditions</DetailsHeading>
       <DetailsContent className="fs-exclude">
         <>
@@ -650,10 +655,20 @@ export function UsMoRestrictiveHousing({
 export function ClientProfileDetails({
   client,
 }: ClientProfileProps): React.ReactElement {
+  const {
+    workflowsStore: { featureVariants },
+  } = useRootStore();
+
   return (
     <>
       <Supervision client={client} />
-      <Milestones client={client} />
+      {featureVariants.responsiveRevamp && <Divider />}
+      {client.milestones && client.milestones.length > 0 && (
+        <>
+          <Milestones client={client} />
+          {featureVariants.responsiveRevamp && <Divider />}
+        </>
+      )}
       <Contact client={client} />
     </>
   );

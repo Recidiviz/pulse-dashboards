@@ -30,6 +30,7 @@ import {
 } from "react-accessible-accordion";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import {
   JusticeInvolvedPerson,
   Opportunity,
@@ -52,8 +53,13 @@ const OpportunityWrapper = styled.div<{ background: string; border: string }>`
   }
 `;
 
-const AccordionButton = styled(AccordionItemButton)`
-  padding: ${rem(spacing.lg)};
+const AccordionButton = styled(AccordionItemButton)<{
+  responsiveRevamp: boolean;
+}>`
+  padding: ${({ responsiveRevamp }) =>
+    responsiveRevamp
+      ? `${rem(spacing.lg)} ${rem(spacing.md)}`
+      : rem(spacing.lg)};
   position: relative;
   cursor: pointer;
 
@@ -64,14 +70,15 @@ const AccordionButton = styled(AccordionItemButton)`
   &:after {
     display: inline-block;
     content: "";
-    height: 10px;
-    width: 10px;
+    height: ${({ responsiveRevamp }) => (responsiveRevamp ? "8" : "10")}px;
+    width: ${({ responsiveRevamp }) => (responsiveRevamp ? "8" : "10")}px;
     margin-right: 12px;
-    border-bottom: 2px solid ${palette.slate70};
-    border-right: 2px solid ${palette.slate70};
+    border-bottom: 1px solid ${palette.slate70};
+    border-right: 1px solid ${palette.slate70};
     transform: rotate(-45deg);
     position: absolute;
-    right: ${rem(spacing.lg)};
+    right: ${({ responsiveRevamp }) =>
+      responsiveRevamp ? rem(spacing.sm) : rem(spacing.lg)};
     top: calc(${rem(spacing.lg)} + 5px);
   }
 
@@ -80,15 +87,18 @@ const AccordionButton = styled(AccordionItemButton)`
     transform: rotate(45deg);
   }
 
-  &:focus {
+  &[aria-expanded="true"] {
     span[class*="OpportunityLabel"] {
-      text-decoration: underline;
+      border-bottom: 1px solid;
     }
   }
 `;
 
-const AccordionBody = styled(AccordionItemPanel)`
-  padding: 0 ${rem(spacing.lg)};
+const AccordionBody = styled(AccordionItemPanel)<{
+  responsiveRevamp: boolean;
+}>`
+  padding: ${({ responsiveRevamp }) =>
+    responsiveRevamp ? 0 : `0 ${rem(spacing.lg)}`};
   margin-top: -${rem(spacing.lg)};
 
   & > *:first-child {
@@ -97,8 +107,10 @@ const AccordionBody = styled(AccordionItemPanel)`
   }
 `;
 
-const AccordionWrapper = styled(Accordion)`
-  margin: 0 -1.5rem;
+export const AccordionWrapper = styled(Accordion)<{
+  responsiveRevamp: boolean;
+}>`
+  margin: 0 -${({ responsiveRevamp }) => (responsiveRevamp ? rem(spacing.md) : rem(spacing.lg))};
 `;
 
 const NoOpportunities = styled.div`
@@ -118,17 +130,27 @@ const NoOpportunities = styled.div`
   }
 `;
 
-function AccordionSection({ opportunity }: { opportunity: Opportunity }) {
+export function AccordionSection({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}) {
+  const {
+    workflowsStore: { featureVariants },
+  } = useRootStore();
   const colors = useStatusColors(opportunity);
+
   return (
     <OpportunityWrapper className="ProfileOpportunityItem" {...colors}>
       <AccordionItem uuid={opportunity.type}>
         <AccordionItemHeading>
-          <AccordionButton>
+          <AccordionButton
+            responsiveRevamp={!!featureVariants.responsiveRevamp}
+          >
             <OpportunityModuleHeader opportunity={opportunity} />
           </AccordionButton>
         </AccordionItemHeading>
-        <AccordionBody>
+        <AccordionBody responsiveRevamp={!!featureVariants.responsiveRevamp}>
           <OpportunityModule
             opportunity={opportunity}
             formLinkButton={!!opportunity.form}
@@ -147,6 +169,10 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
   person: JusticeInvolvedPerson;
   hideEmpty?: boolean;
 }) {
+  const {
+    workflowsStore: { featureVariants },
+  } = useRootStore();
+
   const opportunityTypes = keys(
     person.potentialOpportunities
   ) as OpportunityType[];
@@ -166,7 +192,7 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
   );
 
   const hydrated =
-    opportunities.length === 1 ? (
+    opportunities.length === 1 && !featureVariants.responsiveRevamp ? (
       <div className="ProfileOpportunityItem">
         <OpportunityModule
           opportunity={opportunities[0]}
@@ -174,7 +200,11 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
         />
       </div>
     ) : (
-      <AccordionWrapper allowZeroExpanded preExpanded={[0]}>
+      <AccordionWrapper
+        responsiveRevamp={!!featureVariants.responsiveRevamp}
+        allowZeroExpanded
+        preExpanded={opportunities.length ? [opportunities[0].type] : [0]}
+      >
         {opportunities.map((opportunity) => {
           if (!opportunity) return undefined;
           return (

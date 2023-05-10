@@ -22,6 +22,7 @@ import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
+import { Divider } from "./common";
 import {
   CaseNotes,
   ClientEmployer,
@@ -38,6 +39,7 @@ import {
   UsMoRestrictiveHousing,
 } from "./Details";
 import { Heading } from "./Heading";
+import { AccordionSection, AccordionWrapper } from "./OpportunitiesAccordion";
 import { OpportunityModule } from "./OpportunityModule";
 
 type OpportunitySidebarProfileProps = {
@@ -72,6 +74,21 @@ const OpportunityDetailSidebarComponents = {
   UsMoRestrictiveHousing,
 };
 
+export function DetailsSection({
+  hasDivider,
+  children,
+}: {
+  hasDivider: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      {children}
+      {hasDivider && <Divider />}
+    </>
+  );
+}
+
 type OpportunityDetailComponentName =
   keyof typeof OpportunityDetailSidebarComponents;
 
@@ -87,7 +104,12 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
     opportunity,
   }) {
     const {
-      workflowsStore: { selectedPerson, selectedClient, selectedResident },
+      workflowsStore: {
+        selectedPerson,
+        selectedClient,
+        selectedResident,
+        featureVariants,
+      },
     } = useRootStore();
 
     if (!opportunity || !selectedPerson) {
@@ -97,11 +119,21 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
     return (
       <article>
         <Heading person={selectedPerson} />
-        <OpportunityModule
-          opportunity={opportunity}
-          formLinkButton={formLinkButton}
-          formDownloadButton={formPrintButton}
-        />
+        {featureVariants.responsiveRevamp ? (
+          <AccordionWrapper
+            responsiveRevamp={!!featureVariants.responsiveRevamp}
+            allowZeroExpanded
+            preExpanded={[opportunity.type]}
+          >
+            <AccordionSection opportunity={opportunity} />
+          </AccordionWrapper>
+        ) : (
+          <OpportunityModule
+            opportunity={opportunity}
+            formLinkButton={formLinkButton}
+            formDownloadButton={formPrintButton}
+          />
+        )}
         {opportunity.opportunityProfileModules.map((componentName) => {
           if (componentName in ClientDetailSidebarComponents) {
             if (!selectedClient) return null;
@@ -109,7 +141,11 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
               ClientDetailSidebarComponents[
                 componentName as ClientDetailComponentName
               ];
-            return <Component key={componentName} client={selectedClient} />;
+            return (
+              <DetailsSection hasDivider={!!featureVariants.responsiveRevamp}>
+                <Component key={componentName} client={selectedClient} />
+              </DetailsSection>
+            );
           }
 
           if (componentName in ResidentDetailSidebarComponents) {
@@ -119,7 +155,9 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
                 componentName as ResidentDetailComponentName
               ];
             return (
-              <Component key={componentName} resident={selectedResident} />
+              <DetailsSection hasDivider={!!featureVariants.responsiveRevamp}>
+                <Component key={componentName} resident={selectedResident} />
+              </DetailsSection>
             );
           }
 
@@ -128,7 +166,11 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
               OpportunityDetailSidebarComponents[
                 componentName as OpportunityDetailComponentName
               ];
-            return <Component key={componentName} opportunity={opportunity} />;
+            return (
+              <DetailsSection hasDivider={!!featureVariants.responsiveRevamp}>
+                <Component key={componentName} opportunity={opportunity} />
+              </DetailsSection>
+            );
           }
 
           return null;

@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, palette, TooltipTrigger } from "@recidiviz/design-system";
+import {
+  Icon,
+  palette,
+  spacing,
+  TooltipTrigger,
+} from "@recidiviz/design-system";
+import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
@@ -25,6 +31,15 @@ export const InfoTooltipWrapper = styled(TooltipTrigger)`
 
 export const Separator = styled.span`
   color: ${palette.slate30};
+`;
+
+export const Divider = styled.hr`
+  border-top: 1px solid ${palette.slate20};
+  margin: ${rem(spacing.md)} 0;
+
+  :last-child {
+    display: none;
+  }
 `;
 
 const InfoLink = styled.a`

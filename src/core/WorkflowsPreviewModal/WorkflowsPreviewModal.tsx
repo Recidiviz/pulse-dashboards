@@ -27,15 +27,28 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 
-const ModalControls = styled.div`
-  padding: 0 ${rem(spacing.md)};
-  margin-bottom: -1.3rem;
-  text-align: right;
+const ModalControls = styled.div<{
+  responsiveRevamp: boolean;
+}>`
+  ${({ responsiveRevamp }) =>
+    responsiveRevamp
+      ? `position: relative;
+          float: right;
+          top: 0.5rem;`
+      : `padding: 0 ${rem(spacing.md)};
+          margin-bottom: -1.3rem;
+          text-align: right;`}
+
   z-index: 10;
 `;
 
-const Wrapper = styled.div`
-  padding: ${rem(spacing.lg)};
+const Wrapper = styled.div<{
+  responsiveRevamp: boolean;
+}>`
+  padding: ${({ responsiveRevamp }) =>
+    responsiveRevamp
+      ? `${rem(spacing.xl)} ${rem(spacing.md)} ${rem(spacing.md)}`
+      : rem(spacing.lg)};
 `;
 
 type PreviewModalProps = {
@@ -49,7 +62,9 @@ export function WorkflowsPreviewModal({
   pageContent,
   onAfterOpen,
 }: PreviewModalProps): JSX.Element {
-  const { workflowsStore } = useRootStore();
+  const {
+    workflowsStore: { updateSelectedPerson, featureVariants },
+  } = useRootStore();
 
   // Managing the modal isOpen state here instead of tying it directly to
   // props helps to smooth out the open/close transition
@@ -64,12 +79,15 @@ export function WorkflowsPreviewModal({
       onAfterOpen={onAfterOpen}
       onRequestClose={() => setModalIsOpen(false)}
       onAfterClose={() => {
-        workflowsStore.updateSelectedPerson(undefined);
+        updateSelectedPerson(undefined);
       }}
       closeTimeoutMS={1000}
     >
-      <Wrapper className="WorkflowsPreviewModal">
-        <ModalControls>
+      <Wrapper
+        className="WorkflowsPreviewModal"
+        responsiveRevamp={!!featureVariants.responsiveRevamp}
+      >
+        <ModalControls responsiveRevamp={!!featureVariants.responsiveRevamp}>
           <Button
             className="WorkflowsPreviewModal__close"
             kind="link"

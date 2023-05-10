@@ -19,6 +19,7 @@ import { palette, Sans16 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity, OPPORTUNITY_LABELS } from "../../WorkflowsStore";
 import { EligibilityStatus } from "../OpportunityStatus";
 import {
@@ -40,6 +41,9 @@ type OpportunityModuleHeaderProps = {
 
 export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
   observer(function OpportunityModuleHeader({ opportunity }) {
+    const {
+      workflowsStore: { featureVariants },
+    } = useRootStore();
     const colors = useStatusColors(opportunity);
     const showEligibilityStatus = useShowEligibilityStatus(opportunity);
 
@@ -51,7 +55,14 @@ export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
         {showEligibilityStatus && (
           <>
             <Separator> • </Separator>
-            <span className="EligibilityStatus" style={{ color: colors.link }}>
+            <span
+              className="EligibilityStatus"
+              style={{
+                color: featureVariants.responsiveRevamp
+                  ? palette.pine1
+                  : colors.link,
+              }}
+            >
               <EligibilityStatus opportunity={opportunity} />
             </span>
           </>

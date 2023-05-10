@@ -28,6 +28,8 @@ import { rem } from "polished";
 import React from "react";
 import styled, { css } from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
+import { humanReadableTitleCase } from "../../utils";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonAvatar } from "../Avatar";
 import { Separator } from "../WorkflowsClientProfile/common";
@@ -69,7 +71,7 @@ const Wrapper = styled.div<{ nameHoverState: boolean }>`
 const PersonInfo = styled.div``;
 
 const personStatusStyles = css`
-  color: ${palette.slate60};
+  color: ${palette.slate70};
 `;
 
 const PersonStatusSm = styled(Sans14)`
@@ -110,8 +112,18 @@ export const JusticeInvolvedPersonCapsule = observer(
     hideTooltip = false,
     nameHoverState = true,
   }: JusticeInvolvedPersonCapsuleProps): JSX.Element {
+    const {
+      workflowsStore: {
+        featureVariants: { responsiveRevamp },
+      },
+    } = useRootStore();
+
     const IdentityEl = SIZES.identity[textSize];
     const StatusEl = SIZES.status[textSize];
+
+    const personName = responsiveRevamp
+      ? humanReadableTitleCase(person.displayPreferredName)
+      : person.displayPreferredName;
 
     return (
       <Wrapper nameHoverState={nameHoverState}>
@@ -123,12 +135,12 @@ export const JusticeInvolvedPersonCapsule = observer(
           <IdentityEl>
             <TooltipTrigger contents={!hideTooltip && "Go to profile"}>
               <PersonName className="PersonName fs-exclude">
-                {person.displayPreferredName}
+                {personName}
               </PersonName>
             </TooltipTrigger>
             {!hideId && (
               <React.Fragment key="personExternalId">
-                <Separator> • </Separator>
+                <Separator>{responsiveRevamp ? " " : " • "}</Separator>
                 <PersonId className="fs-exclude">{person.externalId}</PersonId>
               </React.Fragment>
             )}
