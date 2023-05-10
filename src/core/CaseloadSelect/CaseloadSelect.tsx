@@ -25,13 +25,16 @@ import {
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
+import { useInView } from "react-intersection-observer";
 import ReactSelect, {
   components,
+  GroupTypeBase,
   IndicatorContainerProps,
   MenuListComponentProps,
   MultiValueProps,
   OptionProps,
   SelectComponentsConfig,
+  Styles,
 } from "react-select";
 import { IndicatorProps } from "react-select/src/components/indicators";
 import { MultiValueRemoveProps } from "react-select/src/components/MultiValue";
@@ -139,6 +142,49 @@ const ClearAll = (searchFieldTitle: string) =>
     );
   };
 
+const ScrollShadow = styled.div<{ show: boolean; side: "top" | "bottom" }>`
+  background: linear-gradient(
+    ${({ side }) => (side === "top" ? 180 : 360)}deg,
+    #ffffff 3.13%,
+    rgba(255, 255, 255, 0) 109.62%
+  );
+  pointer-events: none;
+  position: absolute;
+  opacity: ${({ show }) => (show ? 1 : 0)};
+  transition: all 200ms ease;
+  ${({ side }) => side}: 0;
+  width: 100%;
+  height: 3em;
+  z-index: ${zindex.tooltip - 1};
+`;
+
+const MenuListWithShadow = (entriesNumber: number) =>
+  function MenuList({
+    children,
+    ...props
+  }: MenuListComponentProps<SelectOption, true>) {
+    const topShadow = useInView();
+    const bottomShadow = useInView();
+
+    return (
+      <>
+        <ScrollShadow
+          show={!!topShadow.entry && !topShadow.inView && entriesNumber > 9}
+          side="top"
+        />
+        <components.MenuList {...props}>
+          <div ref={topShadow.ref} />
+          {children}
+          <div ref={bottomShadow.ref} />
+        </components.MenuList>
+        <ScrollShadow
+          show={!bottomShadow.inView && entriesNumber > 9}
+          side="bottom"
+        />
+      </>
+    );
+  };
+
 const CaseloadSelectContainer = styled(Sans14)`
   margin-bottom: ${rem(spacing.xxl)};
 `;
@@ -159,6 +205,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     supportsMultipleSystems,
     searchType,
     activeSystem,
+    featureVariants,
   } = workflowsStore;
 
   const searchTitle =
@@ -182,6 +229,116 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     customComponents.MenuList = Disabled(searchTitle);
   }
 
+  if (featureVariants.responsiveRevamp) {
+    customComponents.MenuList = MenuListWithShadow(availableSearchables.length);
+  }
+
+  const oldStyles: Partial<
+    Styles<SelectOption, true, GroupTypeBase<SelectOption>>
+  > = {
+    control: (base) => ({
+      ...base,
+      borderColor: palette.slate20,
+      borderRadius: rem(8),
+      minHeight: rem(48),
+      padding: rem(spacing.sm),
+    }),
+    menu: (base) => ({ ...base, zIndex: zindex.tooltip - 1 }),
+  };
+
+  const newStyles: Partial<
+    Styles<SelectOption, true, GroupTypeBase<SelectOption>>
+  > = {
+    control: (base, state) => ({
+      ...base,
+      borderWidth: state.menuIsOpen ? "0" : `1px`,
+      borderStyle: "solid",
+      borderColor: `${palette.slate10} !important`,
+      borderRadius: state.menuIsOpen ? "8px 8px 0 0" : rem(8),
+      minHeight: rem(48),
+      padding: `${rem(spacing.sm)} ${rem(spacing.md)}`,
+      margin: 0,
+      boxShadow: state.menuIsOpen
+        ? "0px 10px 40px rgba(53, 83, 98, 0.3)"
+        : "none",
+    }),
+    menu: (base) => ({
+      ...base,
+      zIndex: zindex.tooltip - 1,
+      margin: 0,
+      border: "none",
+      borderTop: `1px solid ${palette.slate20}`,
+      borderRadius: "0 0 8px 8px",
+      boxShadow: "0px 15px 20px rgba(53, 83, 98, 0.2)",
+    }),
+    option: (base) => ({
+      ...base,
+      backgroundColor: "none",
+      color: palette.pine3,
+      padding: `${rem(spacing.sm)} ${rem(spacing.md)}`,
+      "&:hover": {
+        backgroundColor: palette.slate10,
+      },
+    }),
+  };
+
+  const baseStyles: Partial<
+    Styles<SelectOption, true, GroupTypeBase<SelectOption>>
+  > = {
+    clearIndicator: (base) => ({
+      ...base,
+      color: palette.slate85,
+      cursor: "pointer",
+      fontSize: rem(14),
+      margin: `0 ${rem(spacing.sm)}`,
+      padding: 0,
+      textTransform: "capitalize",
+      "&:hover": {
+        color: palette.slate,
+      },
+    }),
+    indicatorsContainer: (base) => ({
+      ...base,
+      display: hideIndicators ? "none" : "inherit",
+    }),
+    multiValue: (base) => ({
+      ...base,
+      alignItems: "center",
+      background: "transparent",
+      border: `1px solid ${palette.slate20}`,
+      borderRadius: rem(8),
+      height: rem(30),
+      margin: 0,
+      padding: rem(spacing.sm),
+    }),
+    multiValueLabel: (base) => ({
+      ...base,
+      color: palette.slate85,
+      fontSize: rem(14),
+      lineHeight: rem(16),
+      padding: 0,
+    }),
+    multiValueRemove: (base, state) => ({
+      ...base,
+      color: rgba(palette.slate, 0.4),
+      cursor: "pointer",
+      "&:hover": {
+        backgroundColor: "transparent",
+        color: palette.slate60,
+      },
+    }),
+    valueContainer: (base) => ({
+      ...base,
+      padding: 0,
+      gap: rem(spacing.sm),
+    }),
+  };
+
+  const styles = Object.assign(
+    baseStyles,
+    featureVariants.responsiveRevamp ? newStyles : oldStyles
+  );
+
   return (
     <CaseloadSelectContainer>
       <ReactSelect
@@ -202,65 +359,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
         }}
         options={availableSearchables.map(buildSelectOption)}
         placeholder={`Search for one or more ${pluralizeWord(searchTitle)} …`}
-        styles={{
-          clearIndicator: (base) => ({
-            ...base,
-            color: palette.slate85,
-            cursor: "pointer",
-            fontSize: rem(14),
-            margin: `0 ${rem(spacing.md)}`,
-            padding: 0,
-            textTransform: "capitalize",
-            "&:hover": {
-              color: palette.slate,
-            },
-          }),
-          control: (base) => ({
-            ...base,
-            borderColor: palette.slate20,
-            borderRadius: rem(8),
-            minHeight: rem(48),
-            padding: rem(spacing.sm),
-          }),
-          indicatorsContainer: (base) => ({
-            ...base,
-            alignSelf: "flex-start",
-            display: hideIndicators ? "none" : "inherit",
-            height: rem(30),
-          }),
-          menu: (base) => ({ ...base, zIndex: zindex.tooltip - 1 }),
-          multiValue: (base) => ({
-            ...base,
-            alignItems: "center",
-            background: "transparent",
-            border: `1px solid ${palette.slate20}`,
-            borderRadius: rem(8),
-            height: rem(30),
-            margin: 0,
-            padding: rem(spacing.sm),
-          }),
-          multiValueLabel: (base) => ({
-            ...base,
-            color: palette.slate85,
-            fontSize: rem(14),
-            lineHeight: rem(16),
-            padding: 0,
-          }),
-          multiValueRemove: (base, state) => ({
-            ...base,
-            color: rgba(palette.slate, 0.4),
-            cursor: "pointer",
-            "&:hover": {
-              backgroundColor: "transparent",
-              color: palette.slate60,
-            },
-          }),
-          valueContainer: (base) => ({
-            ...base,
-            padding: 0,
-            gap: rem(spacing.sm),
-          }),
-        }}
+        styles={styles}
         value={selectedSearchables.map(buildSelectOption)}
       />
     </CaseloadSelectContainer>
