@@ -53,6 +53,7 @@ const TaskItem = styled(Sans16)`
     border-color: ${palette.slate10};
     border-bottom-style: solid;
     border-width: 1px 0;
+    width: 100%;
   }
 `;
 
