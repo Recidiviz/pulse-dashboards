@@ -54,10 +54,10 @@ const OpportunityWrapper = styled.div<{ background: string; border: string }>`
 `;
 
 const AccordionButton = styled(AccordionItemButton)<{
-  responsiveRevamp: boolean;
+  $responsiveRevamp: boolean;
 }>`
-  padding: ${({ responsiveRevamp }) =>
-    responsiveRevamp
+  padding: ${({ $responsiveRevamp }) =>
+    $responsiveRevamp
       ? `${rem(spacing.lg)} ${rem(spacing.md)}`
       : rem(spacing.lg)};
   position: relative;
@@ -70,15 +70,15 @@ const AccordionButton = styled(AccordionItemButton)<{
   &:after {
     display: inline-block;
     content: "";
-    height: ${({ responsiveRevamp }) => (responsiveRevamp ? "8" : "10")}px;
-    width: ${({ responsiveRevamp }) => (responsiveRevamp ? "8" : "10")}px;
+    height: ${({ $responsiveRevamp }) => ($responsiveRevamp ? "8" : "10")}px;
+    width: ${({ $responsiveRevamp }) => ($responsiveRevamp ? "8" : "10")}px;
     margin-right: 12px;
     border-bottom: 1px solid ${palette.slate70};
     border-right: 1px solid ${palette.slate70};
     transform: rotate(-45deg);
     position: absolute;
-    right: ${({ responsiveRevamp }) =>
-      responsiveRevamp ? rem(spacing.sm) : rem(spacing.lg)};
+    right: ${({ $responsiveRevamp }) =>
+      $responsiveRevamp ? rem(spacing.sm) : rem(spacing.lg)};
     top: calc(${rem(spacing.lg)} + 5px);
   }
 
@@ -95,10 +95,10 @@ const AccordionButton = styled(AccordionItemButton)<{
 `;
 
 const AccordionBody = styled(AccordionItemPanel)<{
-  responsiveRevamp: boolean;
+  $responsiveRevamp: boolean;
 }>`
-  padding: ${({ responsiveRevamp }) =>
-    responsiveRevamp ? 0 : `0 ${rem(spacing.lg)}`};
+  padding: ${({ $responsiveRevamp }) =>
+    $responsiveRevamp ? 0 : `0 ${rem(spacing.lg)}`};
   margin-top: -${rem(spacing.lg)};
 
   & > *:first-child {
@@ -108,9 +108,9 @@ const AccordionBody = styled(AccordionItemPanel)<{
 `;
 
 export const AccordionWrapper = styled(Accordion)<{
-  responsiveRevamp: boolean;
+  $responsiveRevamp: boolean;
 }>`
-  margin: 0 -${({ responsiveRevamp }) => (responsiveRevamp ? rem(spacing.md) : rem(spacing.lg))};
+  margin: 0 -${({ $responsiveRevamp }) => ($responsiveRevamp ? rem(spacing.md) : rem(spacing.lg))};
 `;
 
 const NoOpportunities = styled.div`
@@ -145,12 +145,12 @@ export function AccordionSection({
       <AccordionItem uuid={opportunity.type}>
         <AccordionItemHeading>
           <AccordionButton
-            responsiveRevamp={!!featureVariants.responsiveRevamp}
+            $responsiveRevamp={!!featureVariants.responsiveRevamp}
           >
             <OpportunityModuleHeader opportunity={opportunity} />
           </AccordionButton>
         </AccordionItemHeading>
-        <AccordionBody responsiveRevamp={!!featureVariants.responsiveRevamp}>
+        <AccordionBody $responsiveRevamp={!!featureVariants.responsiveRevamp}>
           <OpportunityModule
             opportunity={opportunity}
             formLinkButton={!!opportunity.form}
@@ -201,7 +201,7 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
       </div>
     ) : (
       <AccordionWrapper
-        responsiveRevamp={!!featureVariants.responsiveRevamp}
+        $responsiveRevamp={!!featureVariants.responsiveRevamp}
         allowZeroExpanded
         preExpanded={opportunities.length ? [opportunities[0].type] : [0]}
       >

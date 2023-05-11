@@ -121,7 +121,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
         <Heading person={selectedPerson} />
         {featureVariants.responsiveRevamp ? (
           <AccordionWrapper
-            responsiveRevamp={!!featureVariants.responsiveRevamp}
+            $responsiveRevamp={!!featureVariants.responsiveRevamp}
             allowZeroExpanded
             preExpanded={[opportunity.type]}
           >
@@ -142,7 +142,10 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
                 componentName as ClientDetailComponentName
               ];
             return (
-              <DetailsSection hasDivider={!!featureVariants.responsiveRevamp}>
+              <DetailsSection
+                key={componentName}
+                hasDivider={!!featureVariants.responsiveRevamp}
+              >
                 <Component key={componentName} client={selectedClient} />
               </DetailsSection>
             );

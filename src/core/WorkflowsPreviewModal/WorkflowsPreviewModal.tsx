@@ -63,7 +63,8 @@ export function WorkflowsPreviewModal({
   onAfterOpen,
 }: PreviewModalProps): JSX.Element {
   const {
-    workflowsStore: { updateSelectedPerson, featureVariants },
+    workflowsStore,
+    workflowsStore: { featureVariants },
   } = useRootStore();
 
   // Managing the modal isOpen state here instead of tying it directly to
@@ -78,9 +79,7 @@ export function WorkflowsPreviewModal({
       isOpen={modalIsOpen}
       onAfterOpen={onAfterOpen}
       onRequestClose={() => setModalIsOpen(false)}
-      onAfterClose={() => {
-        updateSelectedPerson(undefined);
-      }}
+      onAfterClose={() => workflowsStore.updateSelectedPerson(undefined)}
       closeTimeoutMS={1000}
     >
       <Wrapper
