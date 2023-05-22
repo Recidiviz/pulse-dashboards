@@ -35,8 +35,9 @@ const REDISHOST = process.env.REDISHOST || "localhost";
 const REDISPORT = process.env.REDISPORT || 6380;
 const REDISAUTH = process.env.REDISAUTH || "";
 
-// Expire items in the redis cache after 2 days
-const REDIS_CACHE_TTL_SECONDS = 60 * 60 * 24 * 2;
+// TODO(#3382): Restore TTL to 2 days once refresh jobs are fixed
+// Expire items in the redis cache after 12 hours
+const REDIS_CACHE_TTL_SECONDS = 60 * 60 * 12;
 const REDIS_CACHE_REFRESH_THRESHOLD = 60 * 60;
 
 // Expire items in the memory cache after 1 hour
