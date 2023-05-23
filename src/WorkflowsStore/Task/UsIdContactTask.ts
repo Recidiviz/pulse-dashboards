@@ -41,15 +41,15 @@ class UsIdContactTask extends Task<"contact"> {
 
   get additionalDetails(): string | undefined {
     if (!this.supervisionLevel) return;
+    const complianceLevel =
+      US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE[this.supervisionLevel];
     let details = "";
     if (this.lastContacted) {
       details += `Last contact was on: ${this.lastContacted}; `;
     }
-    details += simplur`${
-      US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE[this.supervisionLevel].contacts
-    } contact[|s] needed every ${
-      US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE[this.supervisionLevel].days
-    } days, for current supervision level`;
+    if (complianceLevel) {
+      details += simplur`${complianceLevel.contacts} contact[|s] needed every ${complianceLevel.days} days, for current supervision level`;
+    }
 
     return details;
   }

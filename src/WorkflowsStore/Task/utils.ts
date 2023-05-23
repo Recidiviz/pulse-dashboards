@@ -34,6 +34,10 @@ export const US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE: Record<
     contacts: 2,
     days: 30,
   },
+  MAXIMUM: {
+    contacts: 2,
+    days: 30,
+  },
 };
 
 // Home visit compliance rules taken from:

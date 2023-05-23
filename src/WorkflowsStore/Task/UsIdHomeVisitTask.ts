@@ -45,6 +45,9 @@ class UsIdHomeVisitTask extends Task<"homeVisit"> {
 
   get additionalDetails(): string | undefined {
     let details;
+    const complianceLevel =
+      US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE[this.supervisionLevel];
+
     if (this.currentAddress) {
       details = `${formatCurrentAddress(
         this.currentAddress,
@@ -54,15 +57,8 @@ class UsIdHomeVisitTask extends Task<"homeVisit"> {
     if (this.lastHomeVisit) {
       details += `Last home contact on: ${this.lastHomeVisit}; `;
     }
-    if (this.supervisionLevel) {
-      // TODO: Add the last contact date when available in data: Last home contact on MM/DD/YYYY
-      details += simplur`${
-        US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE[this.supervisionLevel]
-          .contacts
-      } home contact[|s] needed every ${
-        US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE[this.supervisionLevel]
-          .days
-      } days, for current supervision level`;
+    if (complianceLevel) {
+      details += simplur`${complianceLevel.contacts} home contact[|s] needed every ${complianceLevel.days} days, for current supervision level`;
     }
     return details;
   }
