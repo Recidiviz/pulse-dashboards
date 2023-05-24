@@ -28,16 +28,25 @@ class UsIdRiskAssessmentTask extends Task<"assessment"> {
   dueDateDisplayShort = `Due ${this.dueDateFromToday}`;
 
   get additionalDetails(): string | undefined {
-    if (!this.lastAssessedOn) return;
-    return `Last assessed on ${this.lastAssessedOn}; Score: ${this.riskLevel}`;
+    let details = "";
+
+    if (this.lastAssessedOn) {
+      details += `Last assessed on ${this.lastAssessedOn}; `;
+    }
+
+    if (this.riskLevel) {
+      details += `Score: ${this.riskLevel}`;
+    }
+
+    return details;
   }
 
   get lastAssessedOn(): string | undefined {
-    const lastAssessedOnDate = fieldToDate(this.details.lastAssessedOn);
-    return formatDate(lastAssessedOnDate);
+    if (!this.details.lastAssessedOn) return;
+    return formatDate(fieldToDate(this.details.lastAssessedOn));
   }
 
-  get riskLevel(): string | undefined {
+  get riskLevel(): string | null {
     return this.details.riskLevel;
   }
 }

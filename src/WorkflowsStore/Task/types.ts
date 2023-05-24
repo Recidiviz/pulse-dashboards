@@ -30,8 +30,8 @@ type HomeVisitDetails = {
 };
 
 type AssessmentDetails = {
-  riskLevel: string;
-  lastAssessedOn: string;
+  riskLevel: string | null;
+  lastAssessedOn: string | null;
 };
 
 type ContactDetails = {
