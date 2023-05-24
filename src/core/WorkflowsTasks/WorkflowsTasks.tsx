@@ -27,6 +27,7 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { rem } from "polished";
 import React, { ReactNode } from "react";
+import { Toaster } from "react-hot-toast";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
@@ -127,7 +128,8 @@ const TaskListItem: React.FC<TaskListItemProps> = observer(
   function TaskListItem({ person, task }: TaskListItemProps) {
     const { workflowsStore } = useRootStore();
     const orderedTasks = person.supervisionTasks?.orderedTasks ?? [];
-    const taskToDisplay = task || orderedTasks[0];
+    const readyOrderedTasks = person.supervisionTasks?.readyOrderedTasks ?? [];
+    const taskToDisplay = task || readyOrderedTasks[0];
     if (!taskToDisplay) {
       return null;
     }
@@ -390,6 +392,7 @@ const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
           </>
         }
       />
+      <Toaster containerStyle={{ right: "5rem" }} />
     </WorkflowsNavLayout>
   );
 });

@@ -18,7 +18,7 @@
 // Delete test env var to test firestore emulator connection
 delete process.env.REACT_APP_TEST_ENV;
 import { connectAuthEmulator } from "firebase/auth";
-import { DocumentReference, setDoc } from "firebase/firestore";
+import { doc, DocumentReference, setDoc } from "firebase/firestore";
 
 import {
   fetchFirebaseToken,
@@ -28,6 +28,7 @@ import { RootStore } from "../../RootStore";
 import { UserAppMetadata } from "../../RootStore/types";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import FirestoreStore from "../FirestoreStore";
+import { SupervisionTaskUpdate } from "../types";
 
 jest.mock("firebase/auth");
 jest.mock("firebase/firestore");
@@ -38,6 +39,7 @@ const mockFetchImpersonatedFirebaseToken =
   fetchImpersonatedFirebaseToken as jest.Mock;
 const mockConnectAuthEmulator = connectAuthEmulator as jest.Mock;
 const mockSetDoc = setDoc as jest.Mock;
+const mockDoc = doc as jest.Mock;
 const mockGetTokenSilently = jest.fn();
 
 jest.mock("../../api/fetchFirebaseToken", () => {
@@ -187,6 +189,26 @@ describe("FirestoreStore", () => {
         {}
       );
       expect(mockSetDoc).toBeCalled();
+    });
+  });
+
+  test("updateSupervisionTask", () => {
+    mockRootStore = {
+      isImpersonating: false,
+    } as unknown as RootStore;
+    mockDoc.mockReturnValue("test-doc-ref");
+    store = new FirestoreStore({ rootStore: mockRootStore });
+    const taskUpdate: SupervisionTaskUpdate = {
+      homeVisit: {
+        snoozedBy: "test@test.org",
+        snoozeForDays: 7,
+        snoozedOn: "2023-01-01",
+      },
+    };
+    store.updateSupervisionTask("homeVisit", "123-test", taskUpdate);
+
+    expect(mockSetDoc).toBeCalledWith("test-doc-ref", taskUpdate, {
+      merge: true,
     });
   });
 });

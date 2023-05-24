@@ -78,7 +78,7 @@ export class WorkflowsTasksStore {
 
       if (!supervisionTasks) return;
 
-      supervisionTasks.tasks.forEach((task) => {
+      supervisionTasks.readyOrderedTasks.forEach((task) => {
         tasksByType[task.type].push(task);
       });
     });

@@ -284,7 +284,7 @@ export const FullProfile = observer(
           <div>
             <SectionHeading>Opportunities</SectionHeading>
             <OpportunitiesAccordion person={person} />
-            <PreviewTasks person={person} />
+            <PreviewTasks person={person} showSnoozeDropdown={false} />
           </div>
         </Wrapper>
       </WorkflowsNavLayout>

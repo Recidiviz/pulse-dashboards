@@ -53,6 +53,7 @@ import { isDemoMode } from "../utils/isDemoMode";
 import { isOfflineMode } from "../utils/isOfflineMode";
 import { OpportunityType, UsTnExpirationOpportunity } from "../WorkflowsStore";
 import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
+import { SupervisionTaskType } from "../WorkflowsStore/Task/types";
 import {
   ClientRecord,
   collectionNames,
@@ -61,6 +62,7 @@ import {
   OpportunityUpdateWithForm,
   PersonUpdateType,
   ResidentRecord,
+  SupervisionTaskUpdate,
   UsTnExpirationOpportunityUpdate,
 } from "./types";
 
@@ -240,6 +242,22 @@ export default class FirestoreStore {
       docRef,
       { ...update }
     );
+  }
+
+  async updateSupervisionTask(
+    taskType: SupervisionTaskType,
+    recordId: string,
+    update: SupervisionTaskUpdate
+  ) {
+    const taskDocRef = doc(
+      this.db,
+      collectionNames.clientUpdatesV2,
+      `${recordId}/${collectionNames.taskUpdates}/supervision`
+    );
+
+    return this.updateDocument(taskType, recordId, taskDocRef, {
+      ...update,
+    });
   }
 
   async updateOpportunity(

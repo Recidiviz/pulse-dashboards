@@ -19,13 +19,15 @@
 
 import { makeObservable } from "mobx";
 
+import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { Client } from "../Client";
 import { TasksBase } from "./TasksBase";
 import { SupervisionTasksRecord } from "./types";
 
 export class UsIdSupervisionTasks extends TasksBase<
   Client,
-  SupervisionTasksRecord
+  SupervisionTasksRecord,
+  SupervisionTaskUpdate
 > {
   constructor(client: Client) {
     super(client.rootStore, client, "usIdSupervisionTasks");

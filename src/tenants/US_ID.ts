@@ -43,6 +43,20 @@ const US_ID_CONFIG: TenantConfig = {
   enableUserRestrictions: false,
   workflowsEnableAllDistricts: false,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
+  workflowsTasksConfig: {
+    homeVisit: {
+      enabled: true,
+      snoozeForOptionsInDays: [7, 30, 90],
+    },
+    contact: {
+      enabled: true,
+      snoozeForOptionsInDays: [7, 30, 90],
+    },
+    assessment: {
+      enabled: true,
+      snoozeForOptionsInDays: [7, 30, 90],
+    },
+  },
   tasks: {
     homeVisit: UsIdHomeVisitTask,
     contact: UsIdContactTask,

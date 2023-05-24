@@ -16,12 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
+import { RootStore } from "../../../RootStore";
 import { JusticeInvolvedPerson } from "../../types";
 import { SupervisionTaskRecord } from "../types";
 import UsIdRiskAssessmentTask from "../UsIdRiskAssessmentTask";
 
 const mockPerson = {} as JusticeInvolvedPerson;
 describe("UsIdRiskAssessmentTask", () => {
+  const mockRootStore = {} as RootStore;
   let mockTaskRecord: SupervisionTaskRecord<"assessment">;
   let task;
 
@@ -35,7 +37,11 @@ describe("UsIdRiskAssessmentTask", () => {
         },
         dueDate: "2023-04-01",
       } as SupervisionTaskRecord<"assessment">;
-      task = new UsIdRiskAssessmentTask(mockTaskRecord, mockPerson);
+      task = new UsIdRiskAssessmentTask(
+        mockRootStore,
+        mockTaskRecord,
+        mockPerson
+      );
       expect(task.additionalDetails).toEqual(
         "Last assessed on 3/1/23; Score: LOW"
       );
@@ -50,7 +56,11 @@ describe("UsIdRiskAssessmentTask", () => {
         },
         dueDate: "2023-04-01",
       } as SupervisionTaskRecord<"assessment">;
-      task = new UsIdRiskAssessmentTask(mockTaskRecord, mockPerson);
+      task = new UsIdRiskAssessmentTask(
+        mockRootStore,
+        mockTaskRecord,
+        mockPerson
+      );
       expect(task.additionalDetails).toEqual("Score: LOW");
     });
 
@@ -63,7 +73,11 @@ describe("UsIdRiskAssessmentTask", () => {
         },
         dueDate: "2023-04-01",
       } as SupervisionTaskRecord<"assessment">;
-      task = new UsIdRiskAssessmentTask(mockTaskRecord, mockPerson);
+      task = new UsIdRiskAssessmentTask(
+        mockRootStore,
+        mockTaskRecord,
+        mockPerson
+      );
       expect(task.additionalDetails).toEqual("Last assessed on 3/1/23; ");
     });
 
@@ -76,7 +90,11 @@ describe("UsIdRiskAssessmentTask", () => {
         },
         dueDate: "2023-04-01",
       } as SupervisionTaskRecord<"assessment">;
-      task = new UsIdRiskAssessmentTask(mockTaskRecord, mockPerson);
+      task = new UsIdRiskAssessmentTask(
+        mockRootStore,
+        mockTaskRecord,
+        mockPerson
+      );
       expect(task.additionalDetails).toEqual("");
     });
   });

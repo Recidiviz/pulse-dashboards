@@ -16,9 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
-import { isPast } from "date-fns";
+import { addDays, isPast, parseISO, startOfToday } from "date-fns";
+import { deleteField } from "firebase/firestore";
+import { action, computed, makeObservable } from "mobx";
 
-import { formatDueDateFromToday } from "../../utils";
+import { SupervisionTaskUpdate } from "../../FirestoreStore";
+import { RootStore } from "../../RootStore";
+import { formatDate, formatDueDateFromToday } from "../../utils";
 import { JusticeInvolvedPerson } from "../types";
 import { fieldToDate } from "../utils";
 import {
@@ -38,6 +42,10 @@ export abstract class Task<TaskType extends SupervisionTaskType>
 
   person: JusticeInvolvedPerson;
 
+  rootStore: RootStore;
+
+  updates?: SupervisionTaskUpdate[TaskType];
+
   /* ex: Risk assessment */
   abstract displayName: string;
 
@@ -48,11 +56,21 @@ export abstract class Task<TaskType extends SupervisionTaskType>
   abstract dueDateDisplayShort: string;
 
   constructor(
+    rootStore: RootStore,
     task: SupervisionTaskRecord<TaskType>,
-    person: JusticeInvolvedPerson
+    person: JusticeInvolvedPerson,
+    updates?: SupervisionTaskUpdate[TaskType]
   ) {
+    makeObservable(this, {
+      updates: true,
+      snoozedUntil: computed,
+      isSnoozed: computed,
+      updateSupervisionTask: action,
+    });
+    this.rootStore = rootStore;
     this.task = task;
     this.person = person;
+    this.updates = updates;
   }
 
   get type(): TaskType {
@@ -75,5 +93,46 @@ export abstract class Task<TaskType extends SupervisionTaskType>
 
   get details(): SupervisionDetailsForTask[TaskType] {
     return this.task.details;
+  }
+
+  get snoozedUntil(): Date | undefined {
+    if (!this.updates?.snoozedOn) return;
+
+    return addDays(
+      parseISO(this.updates.snoozedOn),
+      this.updates.snoozeForDays
+    );
+  }
+
+  get isSnoozed(): boolean {
+    if (!this.snoozedUntil) return false;
+    return this.snoozedUntil >= startOfToday();
+  }
+
+  updateSupervisionTask(snoozeForDays?: number): void {
+    const { userStore, firestoreStore } = this.rootStore;
+    const { user } = userStore;
+    const currentUserEmail = user?.info?.email || user?.email;
+    if (!currentUserEmail) return;
+
+    if (snoozeForDays === undefined) {
+      firestoreStore.updateSupervisionTask(this.type, this.person.recordId, {
+        [this.type]: deleteField(),
+      });
+      return;
+    }
+
+    const update = {
+      [this.type]: {
+        snoozeForDays,
+        snoozedBy: currentUserEmail,
+        snoozedOn: formatDate(new Date(), "yyyy-MM-dd"),
+      },
+    };
+    firestoreStore.updateSupervisionTask(
+      this.type,
+      this.person.recordId,
+      update
+    );
   }
 }

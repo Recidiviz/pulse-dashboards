@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Hydratable } from "../../core/models/types";
+import { Hydratable, SnoozeTaskConfig } from "../../core/models/types";
+import { RootStore } from "../../RootStore";
 import { Expect, Extends } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../types";
 
@@ -73,12 +74,16 @@ export type SupervisionTask<T extends SupervisionTaskType> = {
   dueDate: Date;
   details: SupervisionDetailsForTask[T];
   isOverdue: boolean;
+  isSnoozed: boolean;
+  snoozedUntil?: Date;
   dueDateFromToday: string;
+  rootStore: RootStore;
   person: JusticeInvolvedPerson;
   displayName: string;
   dueDateDisplayLong: string;
   dueDateDisplayShort: string;
   additionalDetails?: string;
+  updateSupervisionTask: (snoozeForDays?: number) => void;
 };
 
 export type SupervisionTaskRecord<T extends SupervisionTaskType> = {
@@ -108,5 +113,7 @@ export interface SupervisionTaskInterface extends Hydratable {
   overdueTasks: SupervisionTask<SupervisionTaskType>[];
   upcomingTasks: SupervisionTask<SupervisionTaskType>[];
   orderedTasks: SupervisionTask<SupervisionTaskType>[];
+  readyOrderedTasks: SupervisionTask<SupervisionTaskType>[];
+  snoozeTasksConfig?: SnoozeTaskConfig;
   trackPreviewed: () => void;
 }

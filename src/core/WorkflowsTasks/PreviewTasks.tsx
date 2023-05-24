@@ -22,15 +22,15 @@ import styled from "styled-components/macro";
 
 import { PersonProfileProps } from "../WorkflowsClientProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
+import { SnoozeTaskDropdown } from "./SnoozeTaskDropdown";
+import { Divider } from "./TaskPreviewModal";
 import { TaskDueDate } from "./WorkflowsTasks";
 
-const TasksWrapper = styled.div`
-  margin: 0 -1.5rem;
-`;
+const TasksWrapper = styled.div``;
 const TaskItems = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  align-items: flex-start;
+  width: 100%;
 `;
 
 const TaskTitle = styled.div`
@@ -43,18 +43,9 @@ const TaskTitle = styled.div`
 
 const TaskItem = styled(Sans16)`
   min-height: ${rem(75)};
-  padding: 0.25rem 0 0.25rem 1.5rem;
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  align-items: center;
-
-  &:nth-child(n + 1) {
-    border-color: ${palette.slate10};
-    border-bottom-style: solid;
-    border-width: 1px 0;
-    width: 100%;
-  }
+  padding: 0.25rem 0;
+  display: grid;
+  grid-template-columns: 5fr 1fr;
 `;
 
 const TaskName = styled(Sans16)`
@@ -73,27 +64,50 @@ const TaskDetails = styled(Sans14)`
   white-space: pre-line;
 `;
 
+const TaskContent = styled.div`
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: left;
+  grid-column-start: 1;
+`;
+
 export const PreviewTasks = observer(function PreviewTasks({
   person,
-}: PersonProfileProps) {
+  showSnoozeDropdown,
+}: PersonProfileProps & { showSnoozeDropdown: boolean }) {
   const tasks = person.supervisionTasks?.orderedTasks ?? [];
   const needs = person.supervisionTasks?.needs ?? [];
+  const snoozeTasksConfig = person.supervisionTasks?.snoozeTasksConfig;
+
   if (!tasks.length && !needs.length) return null;
+
   return (
     <TasksWrapper>
       <TaskItems>
         {tasks.map((task) => {
           return (
-            <TaskItem key={`${task.type}-${task.person.externalId}`}>
-              <TaskTitle>
-                <TaskName>{task.displayName}</TaskName>
-                <TaskDivider> &bull; </TaskDivider>
-                <TaskDueDate marginLeft="0" overdue={task.isOverdue}>
-                  {task.dueDateDisplayShort}
-                </TaskDueDate>
-              </TaskTitle>
-              <TaskDetails>{task.additionalDetails}</TaskDetails>
-            </TaskItem>
+            <div key={`${task.type}-${task.person.externalId}`}>
+              <TaskItem>
+                <TaskContent>
+                  <TaskTitle>
+                    <TaskName>{task.displayName}</TaskName>
+                    <TaskDivider> &bull; </TaskDivider>
+                    <TaskDueDate marginLeft="0" overdue={task.isOverdue}>
+                      {task.dueDateDisplayShort}
+                    </TaskDueDate>
+                  </TaskTitle>
+                  <TaskDetails>{task.additionalDetails}</TaskDetails>
+                </TaskContent>
+                {showSnoozeDropdown && (
+                  <SnoozeTaskDropdown
+                    task={task}
+                    snoozeTasksConfig={snoozeTasksConfig?.[task.type]}
+                  />
+                )}
+              </TaskItem>
+              <Divider />
+            </div>
           );
         })}
         {needs.map((need) => {

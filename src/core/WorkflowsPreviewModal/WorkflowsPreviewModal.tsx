@@ -34,7 +34,8 @@ const ModalControls = styled.div<{
     responsiveRevamp
       ? `position: relative;
           float: right;
-          top: 0.5rem;`
+          top: 0.5rem;
+          padding: 0 0.5rem 0 0;`
       : `padding: 0 ${rem(spacing.md)};
           margin-bottom: -1.3rem;
           text-align: right;`}

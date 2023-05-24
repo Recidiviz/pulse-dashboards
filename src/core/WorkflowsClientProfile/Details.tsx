@@ -346,14 +346,14 @@ export function ClientEmployer({
         <DetailsList>
           {employers.map((employer) => {
             return (
-              <>
+              <div key={employer.name}>
                 <DetailsSubheading>Employer</DetailsSubheading>
                 <DetailsContent className="fs-exclude">
                   {employer.name}
                   <br />
                   {employer.address}
                 </DetailsContent>
-              </>
+              </div>
             );
           })}
         </DetailsList>

@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
+import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
@@ -27,10 +28,10 @@ import { OpportunitiesAccordion } from "../WorkflowsClientProfile/OpportunitiesA
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import { PreviewTasks } from "./PreviewTasks";
 
-const Divider = styled.hr`
-  border-color: ${palette.slate10};
-  border-style: solid;
-  margin: 0 -1.5rem;
+export const Divider = styled.hr`
+  border: 0.5px solid ${palette.slate10};
+  margin: 0 -${rem(spacing.md)};
+  min-width: 100%;
 `;
 
 export const TaskPreviewModal = observer(function TaskPreviewModal() {
@@ -51,7 +52,7 @@ export const TaskPreviewModal = observer(function TaskPreviewModal() {
           {Object.values(selectedClient.verifiedOpportunities).length ? null : (
             <Divider />
           )}
-          <PreviewTasks person={selectedClient} />
+          <PreviewTasks person={selectedClient} showSnoozeDropdown />
           <Supervision client={selectedClient} />
           <Milestones client={selectedClient} />
         </article>

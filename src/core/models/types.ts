@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord, ResidentRecord } from "../../FirestoreStore";
+import {
+  ClientRecord,
+  ResidentRecord,
+  SupervisionTaskUpdate,
+} from "../../FirestoreStore";
+import { RootStore } from "../../RootStore";
 import {
   US_CO,
   US_ID,
@@ -76,11 +81,23 @@ export type TenantConfig = {
     INCARCERATION?: WorkflowsSystemConfig<ResidentSearchFields>;
     SUPERVISION?: WorkflowsSystemConfig<ClientSearchFields>;
   };
+  workflowsTasksConfig?: SnoozeTaskConfig;
   tasks?: {
     [k in SupervisionTaskType]: new (
+      rootStore: RootStore,
       task: SupervisionTaskRecord<k>,
-      person: JusticeInvolvedPerson
+      person: JusticeInvolvedPerson,
+      updates?: SupervisionTaskUpdate[k]
     ) => Task<k>;
+  };
+};
+
+type ValidSnoozeForDays = 7 | 30 | 90;
+
+export type SnoozeTaskConfig = {
+  [k in SupervisionTaskType]?: {
+    enabled: boolean;
+    snoozeForOptionsInDays: Array<ValidSnoozeForDays>;
   };
 };
 

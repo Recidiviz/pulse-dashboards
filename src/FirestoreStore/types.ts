@@ -22,6 +22,7 @@ import {
   IncarcerationOpportunityType,
   OpportunityType,
   SupervisionOpportunityType,
+  SupervisionTaskType,
 } from "../WorkflowsStore";
 import { UsTnExpirationDraftData } from "../WorkflowsStore/Opportunity/UsTnExpirationReferralRecord";
 
@@ -41,6 +42,7 @@ export const collectionNames = {
   pastFTRDReferrals: "US_ID-pastFTRDReferrals",
   featureVariants: "featureVariants",
   supervisionLevelDowngradeReferrals: "US_TN-supervisionLevelDowngrade",
+  taskUpdates: "taskUpdates",
   usMeSCCPReferrals: "US_ME-SCCPReferrals",
   usIdSupervisionLevelDowngradeReferrals: "US_ID-supervisionLevelDowngrade",
   usMiSupervisionLevelDowngradeReferrals: "US_MI-supervisionLevelDowngrade",
@@ -313,6 +315,14 @@ export type OpportunityUpdate = {
 
 export type OpportunityUpdateWithForm<FormType> = OpportunityUpdate & {
   referralForm?: { updated: UpdateLog; data?: Partial<FormType> };
+};
+
+export type SupervisionTaskUpdate = {
+  [key in SupervisionTaskType]?: {
+    snoozedBy: string;
+    snoozeForDays: number;
+    snoozedOn: string;
+  };
 };
 
 export type ExternalSystemRequestStatus =

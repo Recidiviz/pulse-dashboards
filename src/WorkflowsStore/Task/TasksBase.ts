@@ -19,8 +19,9 @@
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable } from "mobx";
 
+import { SnoozeTaskConfig } from "../../core/models/types";
 import { TaskValidationError } from "../../errors";
-import { CollectionName } from "../../FirestoreStore";
+import { CollectionName, SupervisionTaskUpdate } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import tenants from "../../tenants";
 import {
@@ -28,6 +29,7 @@ import {
   DocumentSubscription,
   ValidateFunction,
 } from "../subscriptions";
+import { SupervisionTaskUpdateSubscription } from "../subscriptions/SupervisionTaskUpdateSubscription";
 import { JusticeInvolvedPerson } from "../types";
 import {
   SupervisionNeed,
@@ -44,7 +46,8 @@ import {
  */
 export abstract class TasksBase<
   PersonType extends JusticeInvolvedPerson,
-  TaskRecord extends DocumentData
+  TaskRecord extends DocumentData,
+  UpdateRecord extends SupervisionTaskUpdate
 > implements SupervisionTaskInterface
 {
   rootStore: RootStore;
@@ -52,6 +55,8 @@ export abstract class TasksBase<
   person: PersonType;
 
   taskSubscription: DocumentSubscription<TaskRecord>;
+
+  updatesSubscription: DocumentSubscription<UpdateRecord>;
 
   constructor(
     rootStore: RootStore,
@@ -64,6 +69,7 @@ export abstract class TasksBase<
       hydrate: action,
       isLoading: computed,
       record: computed,
+      updates: computed,
       isHydrated: computed,
       tasks: true,
       needs: true,
@@ -78,13 +84,24 @@ export abstract class TasksBase<
       undefined,
       validateRecord
     );
+
+    this.updatesSubscription =
+      new SupervisionTaskUpdateSubscription<UpdateRecord>(
+        this.rootStore.firestoreStore,
+        person.recordId
+      );
   }
 
   get record(): TaskRecord | undefined {
     return this.taskSubscription.data;
   }
 
+  get updates(): UpdateRecord | undefined {
+    return this.updatesSubscription.data;
+  }
+
   get tasks(): SupervisionTask<SupervisionTaskType>[] {
+    if (!this.isHydrated) return [];
     return (this.record?.tasks || []).map(
       <T extends SupervisionTaskType>(task: SupervisionTaskRecord<T>) => {
         if (
@@ -102,7 +119,12 @@ export abstract class TasksBase<
           );
         }
 
-        return new TaskConstructor(task, this.person);
+        return new TaskConstructor(
+          this.rootStore,
+          task,
+          this.person,
+          this.updates?.[task.type]
+        );
       }
     );
   }
@@ -119,24 +141,50 @@ export abstract class TasksBase<
     return this.tasks.filter((task) => !task.isOverdue);
   }
 
+  /**
+   * All tasks ordered by due date
+   */
   get orderedTasks(): SupervisionTask<SupervisionTaskType>[] {
     return this.tasks.sort(taskDueDateComparator);
   }
 
+  /** Ordered tasks that filter out snoozed tasks for the list of tasks
+   *  displayed on the Task page.
+   */
+  get readyOrderedTasks(): SupervisionTask<SupervisionTaskType>[] {
+    return this.orderedTasks.filter((task) => !task.isSnoozed);
+  }
+
   get isHydrated(): boolean {
-    return this.taskSubscription.isHydrated;
+    return (
+      this.taskSubscription.isHydrated && this.updatesSubscription.isHydrated
+    );
+  }
+
+  get snoozeTasksConfig(): SnoozeTaskConfig | undefined {
+    if (!this.rootStore.currentTenantId) return;
+    return tenants[this.rootStore.currentTenantId].workflowsTasksConfig;
   }
 
   hydrate(): void {
     this.taskSubscription.hydrate();
+    this.updatesSubscription.hydrate();
   }
 
   get isLoading(): boolean | undefined {
-    return this.taskSubscription.isLoading;
+    if (
+      this.taskSubscription.isLoading === undefined ||
+      this.updatesSubscription.isLoading === undefined
+    ) {
+      return undefined;
+    }
+    return (
+      this.taskSubscription.isLoading || this.updatesSubscription.isLoading
+    );
   }
 
   get error(): Error | undefined {
-    return this.taskSubscription.error;
+    return this.taskSubscription.error || this.updatesSubscription.error;
   }
 
   trackPreviewed(): void {
