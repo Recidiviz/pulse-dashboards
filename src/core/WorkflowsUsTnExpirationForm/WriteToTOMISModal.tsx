@@ -35,7 +35,7 @@ import { useState } from "react";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
 
-import { UsTnExpirationOpportunity } from "../../WorkflowsStore";
+import { Client, UsTnExpirationOpportunity } from "../../WorkflowsStore";
 import {
   PagePreview,
   SmallPagePreviewWithHover,
@@ -131,6 +131,29 @@ type writeToTOMISModalProps = {
   showSubmitPage: boolean;
 };
 
+export function createContactNoteRequestBody(
+  opportunity: UsTnExpirationOpportunity,
+  person: Client,
+  contactNoteObj: Record<number, string[]>,
+  contactNoteDateTime: Date
+) {
+  const staffId = opportunity.rootStore.workflowsStore.user?.info.id;
+  const votersRightsCode = opportunity.form.formData.contactTypes
+    ?.split(", ")
+    .filter((code) => code !== "TEPE");
+
+  // In non-production environments and requests by recidiviz users, the personExternalId and staffId will be overriden in the backend.
+  return {
+    personExternalId: person.externalId,
+    staffId,
+    contactNote: contactNoteObj,
+    contactNoteDateTime,
+    ...(votersRightsCode?.length && {
+      votersRightsCode: votersRightsCode[0],
+    }),
+  };
+}
+
 export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   showModal,
   onCloseFn,
@@ -171,23 +194,14 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     const contactNoteObj: Record<number, string[]> = Object.fromEntries(
       paginatedNote.map((page, index) => [Number(index + 1), page])
     );
-
     const contactNoteDateTime = new Date();
-    const staffId = opportunity.rootStore.workflowsStore.user?.info.id;
-    const votersRightsCode = opportunity.form.formData.contactTypes
-      ?.split(", ")
-      .filter((code) => code !== "TEPE");
 
-    // In non-production environments and requests by recidiviz users, the personExternalId and staffId will be overriden in the backend.
-    const contactNoteRequestBody = {
-      personExternalId: person.externalId,
-      staffId,
-      contactNote: contactNoteObj,
-      contactNoteDateTime,
-      ...(votersRightsCode?.length && {
-        votersRightsCode: votersRightsCode[0],
-      }),
-    };
+    const contactNoteRequestBody = createContactNoteRequestBody(
+      opportunity,
+      person,
+      contactNoteObj,
+      contactNoteDateTime
+    );
 
     firestoreStore.updateUsTnExpirationContactNoteStatus(
       opportunity,

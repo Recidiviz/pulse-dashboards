@@ -17,7 +17,11 @@
 import { parseISO } from "date-fns";
 import { Required as RequireKeys } from "utility-types";
 
-import { ClientRecord, ResidentRecord } from "../../../FirestoreStore";
+import {
+  ClientRecord,
+  CombinedUserRecord,
+  ResidentRecord,
+} from "../../../FirestoreStore";
 import { dateToTimestamp } from "../../utils";
 import { SupervisionOpportunityType, UsIdPastFTRDReferralRecord } from "..";
 import { CompliantReportingReferralRecord } from "../CompliantReportingReferralRecord";
@@ -71,6 +75,20 @@ export const compliantReportingEligibleClientRecord: ClientRecord = {
     "compliantReporting",
   ] as SupervisionOpportunityType[],
   personType: "CLIENT",
+};
+
+export const usTnUserRecord: CombinedUserRecord = {
+  info: {
+    email: "test-officer@example.com",
+    district: "DISTRICT 50",
+    id: "OFFICER1",
+    stateCode: "US_TN",
+    hasCaseload: true,
+    hasFacilityCaseload: false,
+    givenNames: "Test",
+    surname: "Officer1",
+    role: "supervision_staff",
+  },
 };
 
 export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecord> =

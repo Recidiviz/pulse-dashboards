@@ -186,6 +186,39 @@ test("supplement record for staff user without caseload", () => {
   `);
 });
 
+test("supplement record for staff user without caseload but with id", () => {
+  Object.defineProperty(rootStoreMock.userStore, "externalId", {
+    get() {
+      return "12345";
+    },
+  });
+  jest.spyOn(sub, "dataSource", "get").mockReturnValue(jest.fn() as any);
+  const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
+
+  sub.subscribe();
+
+  mockReceive([]);
+
+  // Override should not be set
+  expect(sub.dataOverride).toBeUndefined();
+
+  // data should be available immediately
+  expect(sub.data).toMatchInlineSnapshot(`
+    Array [
+      Object {
+        "district": "D5",
+        "email": "test@example.com",
+        "givenNames": "Geri",
+        "hasCaseload": false,
+        "hasFacilityCaseload": false,
+        "id": "12345",
+        "stateCode": "US_XX",
+        "surname": "Halliwell",
+      },
+    ]
+  `);
+});
+
 test("reject empty result", () => {
   // @ts-ignore
   rootStoreMock.user = undefined;

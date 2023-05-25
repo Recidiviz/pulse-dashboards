@@ -314,6 +314,13 @@ export default class UserStore {
   }
 
   /**
+   * Returns the user's external ID, or undefined if not set.
+   */
+  get externalId(): string | undefined {
+    return this.userAppMetadata?.externalId;
+  }
+
+  /**
    * Returns the allowedSupervisionLocationIds for the given user.
    */
   get allowedSupervisionLocationIds(): string[] {

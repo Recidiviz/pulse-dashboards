@@ -93,7 +93,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
   get userWithoutCaseload(): StaffRecord | undefined {
     const {
       user,
-      userStore: { stateCode, district },
+      userStore: { stateCode, district, externalId },
     } = this.rootStore;
 
     if (!user || !user.email) return;
@@ -103,7 +103,8 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
     if (user.name) formattedUserName = splitAuth0UserName(user.name);
 
     return {
-      id: `${stateCode.toLowerCase()}_${user?.email.toLowerCase()}`,
+      id:
+        externalId ?? `${stateCode.toLowerCase()}_${user?.email.toLowerCase()}`,
       email: user.email.toLowerCase(),
       stateCode,
       hasCaseload: false,

@@ -20,14 +20,19 @@ import { Timestamp } from "firebase/firestore";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
+import { CombinedUserRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { Client, UsTnExpirationOpportunity } from "../../../WorkflowsStore";
 import {
   UsTnExpirationEligibleClientRecord,
   UsTnExpirationReferralRecordFixture,
+  usTnUserRecord,
 } from "../../../WorkflowsStore/Opportunity/__fixtures__";
 import { DocumentSubscription } from "../../../WorkflowsStore/subscriptions";
-import { WriteToTOMISModal } from "../WriteToTOMISModal";
+import {
+  createContactNoteRequestBody,
+  WriteToTOMISModal,
+} from "../WriteToTOMISModal";
 
 jest.mock("firebase/firestore");
 jest.mock("../../../WorkflowsStore/subscriptions");
@@ -39,12 +44,14 @@ let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(
-  clientRecord: typeof UsTnExpirationEligibleClientRecord
+  clientRecord: typeof UsTnExpirationEligibleClientRecord,
+  userRecord: CombinedUserRecord
 ) {
   root = new RootStore();
   jest
     .spyOn(root.workflowsStore, "opportunityTypes", "get")
     .mockReturnValue(["usTnExpiration"]);
+  jest.spyOn(root.workflowsStore, "user", "get").mockReturnValue(userRecord);
   jest.spyOn(root.userStore, "stateCode", "get").mockReturnValue("US_TN");
   client = new Client(clientRecord, root);
 
@@ -65,7 +72,7 @@ beforeEach(() => {
 describe("WriteToTOMISModal", () => {
   let submitButton: HTMLElement;
   beforeEach(() => {
-    createTestUnit(UsTnExpirationEligibleClientRecord);
+    createTestUnit(UsTnExpirationEligibleClientRecord, usTnUserRecord);
     referralSub = opp.referralSubscription;
     referralSub.isLoading = false;
     referralSub.data = UsTnExpirationReferralRecordFixture;
@@ -194,7 +201,7 @@ describe("WriteToTOMISModal", () => {
           contactNote: {
             status: "FAILURE",
             submitted: {
-              by: "user",
+              by: "test-officer@example.com",
               date: Timestamp.fromDate(now),
             },
             note: {
@@ -207,5 +214,35 @@ describe("WriteToTOMISModal", () => {
         }
       )
     );
+  });
+
+  test("createContactNoteRequestBody", () => {
+    const contactNoteRequestBody = createContactNoteRequestBody(
+      opp,
+      client,
+      {
+        1: ["page 1, line 1", "page 1, line 2"],
+        2: ["page 2, line 1"],
+      },
+      new Date(2023, 2, 10)
+    );
+
+    expect(contactNoteRequestBody).toMatchInlineSnapshot(`
+      Object {
+        "contactNote": Object {
+          "1": Array [
+            "page 1, line 1",
+            "page 1, line 2",
+          ],
+          "2": Array [
+            "page 2, line 1",
+          ],
+        },
+        "contactNoteDateTime": 2023-03-10T00:00:00.000Z,
+        "personExternalId": "001",
+        "staffId": "OFFICER1",
+        "votersRightsCode": "VRRE",
+      }
+    `);
   });
 });
