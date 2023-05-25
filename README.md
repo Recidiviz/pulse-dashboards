@@ -378,6 +378,17 @@ Here are a few helpful commands for inspecting the local redis cache:
 [localhost:6380]> GET key_name
 ```
 
+Here's how you can access the staging and production instances on gcloud:
+```
+// Log into the VM
+:> gcloud compute ssh --zone "us-central1-a" "pulse-dashboard-vm-1" --tunnel-through-iap --project "recidiviz-dashboard-production"
+
+// Connect to redis instance - variables are found on the instance page
+:> redis-cli -h <host> -p <port> -a <password>
+```
+
+a
+
 ### Webpack
 
 [Webpack](https://webpack.js.org/) is a highly-configurable tool for compiling JavaScript modules. We use it to bundle all of our JavaScript, CSS, and static assets for efficient distribution in production.
