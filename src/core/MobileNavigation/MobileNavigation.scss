@@ -56,4 +56,8 @@
   @media screen and (max-width: $core-breakpoint-sm) {
     display: flex;
   }
+
+  @media screen and (max-width: $core-breakpoint-xs) {
+    padding: 0 1rem;
+  }
 }

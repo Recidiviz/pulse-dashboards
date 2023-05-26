@@ -67,6 +67,13 @@
     }
   }
 
+  @media screen and (max-width: $core-breakpoint-xs) {
+    &__body {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
+
   #mainContent {
     align-self: center;
     max-width: $core-max-view-width;

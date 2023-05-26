@@ -27,6 +27,7 @@ type Props = {
   hide: () => void;
   title?: string;
   footer?: React.ReactElement;
+  backgroundColor?: string;
 };
 
 const Modal: React.FC<Props> = ({
@@ -34,6 +35,7 @@ const Modal: React.FC<Props> = ({
   hide,
   title,
   footer,
+  backgroundColor,
   children,
 }) => {
   const ref: any = useRef();
@@ -62,7 +64,11 @@ const Modal: React.FC<Props> = ({
         tabIndex={-1}
         role="dialog"
       >
-        <div className="Modal__body" ref={ref}>
+        <div
+          className="Modal__body"
+          style={{ background: backgroundColor }}
+          ref={ref}
+        >
           <div className="Modal__header">
             {title}
             <Icon

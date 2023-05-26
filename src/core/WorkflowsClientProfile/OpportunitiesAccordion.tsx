@@ -130,7 +130,7 @@ const NoOpportunities = styled.div`
   }
 `;
 
-export function AccordionSection({
+export const AccordionSection = observer(function AccordionSection({
   opportunity,
 }: {
   opportunity: Opportunity;
@@ -160,7 +160,7 @@ export function AccordionSection({
       </AccordionItem>
     </OpportunityWrapper>
   );
-}
+});
 
 export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
   person,

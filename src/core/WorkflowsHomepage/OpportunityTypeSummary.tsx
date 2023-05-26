@@ -29,6 +29,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import {
   generateOpportunityHydratedHeader,
   Opportunity,
@@ -39,9 +40,10 @@ import { workflowsUrl } from "../views";
 
 const OpportunityTypeSummaryWrapper = styled.div<{
   hasBorder?: boolean;
+  isMobile: boolean;
 }>`
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row ${({ isMobile }) => !isMobile && "no"}wrap;
   justify-content: space-between;
 
   ${({ hasBorder }) =>
@@ -54,14 +56,22 @@ const OpportunityTypeSummaryWrapper = styled.div<{
 
 const OpportunityHeaderWrapper = styled.div<{
   squished?: boolean;
+  isMobile: boolean;
 }>`
-  padding-right: ${rem(spacing.xxl)};
-  ${({ squished }) => squished && `max-width: ${rem(550)};`}
+  padding-right: ${({ isMobile }) => (isMobile ? 0 : rem(spacing.xxl))};
+  width: ${({ squished, isMobile }) =>
+    squished && !isMobile ? rem(550) : "100%"};
+
+  ${({ isMobile }) => isMobile && "order: 2;"}
 `;
 
-const OpportunityHeader = styled.div<{ responsiveRevamp: boolean }>`
+const OpportunityHeader = styled.div<{
+  responsiveRevamp: boolean;
+  isMobile: boolean;
+}>`
   ${({ responsiveRevamp }) =>
     responsiveRevamp ? typography.Sans24 : typography.Serif24};
+  ${({ isMobile }) => isMobile && typography.Sans18};
   color: ${palette.pine2};
   padding-bottom: ${rem(spacing.md)};
 `;
@@ -76,8 +86,8 @@ const ViewAllArrow = styled.div`
   padding-bottom: 1px;
 `;
 
-const ViewAllLink = styled(Link)`
-  ${typography.Sans18}
+const ViewAllLink = styled(Link)<{ $isMobile: boolean }>`
+  ${({ $isMobile }) => ($isMobile ? typography.Sans16 : typography.Sans18)}
   color: ${palette.signal.links};
   display: flex;
   align-items: center;
@@ -97,9 +107,11 @@ const OpportunityHighlight = styled.span`
   border-color: ${palette.data.gold1};
 `;
 
-const ClientsWrapper = styled.div`
+const ClientsWrapper = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex-flow: row nowrap;
+
+  ${({ isMobile }) => isMobile && "margin: 0 1rem 1rem;"}
 `;
 
 const ClientAvatarWrapper = styled.div<{
@@ -138,10 +150,13 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   opportunityType: OpportunityType;
 }): React.ReactElement | null {
   const {
-    workflowsStore: { featureVariants },
+    workflowsStore: {
+      featureVariants: { responsiveRevamp },
+    },
   } = useRootStore();
+  const { isMobile } = useIsMobile(true);
 
-  const defaultAvatarsShown = featureVariants.responsiveRevamp ? 4 : 3;
+  const defaultAvatarsShown = responsiveRevamp ? 4 : 3;
   const sliceIndex =
     opportunities.length > defaultAvatarsShown
       ? defaultAvatarsShown - 1
@@ -156,15 +171,20 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
 
   return (
     <OpportunityTypeSummaryWrapper
-      hasBorder={!!featureVariants.responsiveRevamp}
+      isMobile={isMobile && responsiveRevamp}
+      hasBorder={!!responsiveRevamp}
       className="OpportunityTypeSummaryWrapper"
     >
-      <OpportunityHeaderWrapper squished={!!featureVariants.responsiveRevamp}>
+      <OpportunityHeaderWrapper
+        isMobile={isMobile && responsiveRevamp}
+        squished={!!responsiveRevamp}
+      >
         <OpportunityHeader
-          responsiveRevamp={!!featureVariants.responsiveRevamp}
+          responsiveRevamp={!!responsiveRevamp}
+          isMobile={isMobile && responsiveRevamp}
         >
           {header.eligibilityText}{" "}
-          {featureVariants.responsiveRevamp ? (
+          {responsiveRevamp ? (
             header.opportunityText
           ) : (
             <OpportunityHighlight>
@@ -172,12 +192,13 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
             </OpportunityHighlight>
           )}
         </OpportunityHeader>
-        {!featureVariants.responsiveRevamp && (
+        {!responsiveRevamp && (
           <OpportunityTypeSummaryCTA>
             {header.callToAction}
           </OpportunityTypeSummaryCTA>
         )}
         <ViewAllLink
+          $isMobile={isMobile && responsiveRevamp}
           className={`ViewAllLink__${opportunityType}`}
           to={workflowsUrl("opportunityClients", { opportunityType })}
         >
@@ -193,11 +214,14 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
           </ViewAllArrow>
         </ViewAllLink>
       </OpportunityHeaderWrapper>
-      <ClientsWrapper className="OpportunityClientsWrapper">
+      <ClientsWrapper
+        isMobile={isMobile && responsiveRevamp}
+        className="OpportunityClientsWrapper"
+      >
         {previewOpportunities.map((opportunity) => (
           <ClientAvatarWrapper
             key={opportunity.person.recordId}
-            hasBorder={!featureVariants.responsiveRevamp}
+            hasBorder={!responsiveRevamp}
           >
             <JusticeInvolvedPersonAvatar
               size={56}
@@ -206,7 +230,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
           </ClientAvatarWrapper>
         ))}
         {numOpportunitiesToDisplay > 0 && (
-          <ClientAvatarWrapper hasBorder={!featureVariants.responsiveRevamp}>
+          <ClientAvatarWrapper hasBorder={!responsiveRevamp}>
             <JusticeInvolvedPersonAvatar
               size={56}
               name={`+ ${numOpportunitiesToDisplay}`}

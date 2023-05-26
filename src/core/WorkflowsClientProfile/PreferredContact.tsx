@@ -107,7 +107,10 @@ export const PreferredContact: React.FC<ClientProfileProps> = observer(
           <DropdownContainer>
             {contactMethods.map((option) => {
               return (
-                <DropdownMenuItem onClick={() => handleClick(option)}>
+                <DropdownMenuItem
+                  key={option}
+                  onClick={() => handleClick(option)}
+                >
                   <ContactOption>{option}</ContactOption>
                 </DropdownMenuItem>
               );

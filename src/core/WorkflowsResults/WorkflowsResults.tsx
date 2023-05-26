@@ -15,31 +15,46 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans18, Serif34 } from "@recidiviz/design-system";
+import { palette, Sans18, typography } from "@recidiviz/design-system";
+import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 
 const WorkflowsResultsWrapper = styled.div<{
   centered?: boolean;
+  largeMargin?: boolean;
+  verticallyCentered?: boolean;
 }>`
+  margin-top: ${({ largeMargin }) => (largeMargin ? rem(108) : 0)} !important;
+
+  ${({ verticallyCentered }) =>
+    verticallyCentered &&
+    `height: 70vh;
+      display: grid;
+      align-content: center;`}
+
   ${({ centered }) =>
     centered
-      ? `margin: 0 20%;
+      ? `margin: 0 auto;
+          max-width: ${rem(520)};
           text-align: center;`
       : `margin: 0;`}
 `;
 
-const HeaderText = styled(Serif34)<{
+const HeaderText = styled.div<{
   centered?: boolean;
   largeMargin?: boolean;
+  isMobile: boolean;
 }>`
+  ${({ isMobile }) => (isMobile ? typography.Serif24 : typography.Serif34)}
   color: ${palette.pine2};
   margin-bottom: ${({ largeMargin }) => (largeMargin ? 3 : 1)}rem;
 
-  ${({ centered }) =>
-    centered ? `text-align: center;` : `  margin-right: 20%;`}
+  ${({ centered, isMobile }) =>
+    centered ? `text-align: center;` : `margin-right: ${isMobile ? 0 : 20}%;`}
 `;
 
 const CallToActionText = styled(Sans18)`
@@ -58,18 +73,24 @@ function WorkflowsResults({
   children,
 }: WorkflowsResultsProps): React.ReactElement | null {
   const {
-    workflowsStore: { featureVariants },
+    workflowsStore: {
+      featureVariants: { responsiveRevamp },
+    },
   } = useRootStore();
+  const { isMobile } = useIsMobile(true);
 
   return (
     <WorkflowsResultsWrapper
-      centered={!featureVariants.responsiveRevamp}
+      verticallyCentered={!!callToActionText && isMobile && !!responsiveRevamp}
+      largeMargin={!!callToActionText && !!responsiveRevamp && !isMobile}
+      centered={!!callToActionText || !responsiveRevamp}
       className="WorkflowsHomepageText"
     >
       {headerText && (
         <HeaderText
-          centered={!featureVariants.responsiveRevamp}
-          largeMargin={!callToActionText && !!featureVariants.responsiveRevamp}
+          isMobile={isMobile && !!responsiveRevamp}
+          centered={!!callToActionText || !responsiveRevamp}
+          largeMargin={!callToActionText && !!responsiveRevamp}
         >
           {headerText}
         </HeaderText>

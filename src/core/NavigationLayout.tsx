@@ -45,12 +45,14 @@ import RecidivizLogo from "./RecidivizLogo/RecidivizLogo";
 import { WORKFLOWS_METHODOLOGY_URL } from "./utils/constants";
 import { PATHWAYS_VIEWS, workflowsUrl } from "./views";
 
+const Wrapper = styled.div``;
+
 const Banner = styled.div`
   height: 4rem;
 `;
 
-const BackButton = styled(Link)<{ notFixed?: boolean }>`
-  position: ${({ notFixed }) => (notFixed ? "initial" : "fixed")};
+const BackButton = styled(Link)<{ $notFixed?: boolean }>`
+  position: ${({ $notFixed }) => ($notFixed ? "initial" : "fixed")};
   ${typography.Sans14};
   display: block;
   min-width: 0;
@@ -372,7 +374,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     );
 
     return (
-      <>
+      <Wrapper>
         <NavContainer
           alignBottom={isMobile && isFixed}
           isFixed={isFixed}
@@ -415,12 +417,15 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         </NavContainer>
         {!isMobile && isFixed && <Banner />}
         {displayBackButton && (
-          <BackButton notFixed={isLaptop || !isFixed} to={workflowsUrl("home")}>
+          <BackButton
+            $notFixed={isLaptop || !isFixed}
+            to={workflowsUrl("home")}
+          >
             <i className="fa fa-angle-left" />
             Back
           </BackButton>
         )}
-      </>
+      </Wrapper>
     );
   }
 );

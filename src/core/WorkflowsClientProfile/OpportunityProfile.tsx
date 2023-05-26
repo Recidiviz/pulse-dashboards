@@ -146,7 +146,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
                 key={componentName}
                 hasDivider={!!featureVariants.responsiveRevamp}
               >
-                <Component key={componentName} client={selectedClient} />
+                <Component client={selectedClient} />
               </DetailsSection>
             );
           }
@@ -158,8 +158,11 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
                 componentName as ResidentDetailComponentName
               ];
             return (
-              <DetailsSection hasDivider={!!featureVariants.responsiveRevamp}>
-                <Component key={componentName} resident={selectedResident} />
+              <DetailsSection
+                key={componentName}
+                hasDivider={!!featureVariants.responsiveRevamp}
+              >
+                <Component resident={selectedResident} />
               </DetailsSection>
             );
           }
@@ -170,8 +173,11 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
                 componentName as OpportunityDetailComponentName
               ];
             return (
-              <DetailsSection hasDivider={!!featureVariants.responsiveRevamp}>
-                <Component key={componentName} opportunity={opportunity} />
+              <DetailsSection
+                key={componentName}
+                hasDivider={!!featureVariants.responsiveRevamp}
+              >
+                <Component opportunity={opportunity} />
               </DetailsSection>
             );
           }

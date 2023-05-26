@@ -19,15 +19,16 @@ import {
   palette,
   Sans14,
   Sans18,
-  Serif34,
   spacing,
+  typography,
 } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-export const Heading = styled(Serif34)`
+export const Heading = styled.div<{ isMobile?: boolean }>`
+  ${({ isMobile }) => (isMobile ? typography.Serif24 : typography.Serif34)}
   color: ${palette.pine2};
-  padding-bottom: ${rem(spacing.sm)};
+  padding-bottom: ${rem(spacing.md)};
 `;
 
 export const SubHeading = styled(Sans18)`

@@ -71,7 +71,7 @@ const Main = styled.main<{
           ? `${rem(spacing.lg)} ${rem(spacing.md)}`
           : `${rem(spacing.xl)} ${rem(spacing.lg)}`
       };
-      padding-bottom: ${rem(spacing.md * 6)};
+      padding-bottom: ${rem(spacing.md * 5)};
       
       @media screen and (max-width: ${cssVars.breakpointSxs}) {
         max-width: 90vw;

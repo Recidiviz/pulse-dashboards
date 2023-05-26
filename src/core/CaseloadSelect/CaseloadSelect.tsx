@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import {
+  Button,
   Icon,
+  IconSVG,
   palette,
   Pill,
   Sans14,
@@ -40,7 +42,9 @@ import { IndicatorProps } from "react-select/src/components/indicators";
 import { MultiValueRemoveProps } from "react-select/src/components/MultiValue";
 import styled from "styled-components/macro";
 
+import Modal from "../../components/Modal/Modal";
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import { Searchable } from "../models/types";
 
@@ -185,8 +189,15 @@ const MenuListWithShadow = (entriesNumber: number) =>
     );
   };
 
-const CaseloadSelectContainer = styled(Sans14)`
-  margin-bottom: ${rem(spacing.xxl)};
+const CaseloadSelectContainer = styled(Sans14)<{ marginBottom?: number }>`
+  color: ${palette.slate85};
+  margin-bottom: ${({ marginBottom }) =>
+    marginBottom ? rem(marginBottom) : rem(spacing.xxl)};
+`;
+
+const CaseloadSelectMobileButton = styled(Button).attrs({ kind: "link" })`
+  color: ${palette.signal.links};
+  padding: 0 0.5rem;
 `;
 
 type CaseloadSelectProps = {
@@ -197,6 +208,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   hideIndicators = false,
 }: CaseloadSelectProps) {
   const { workflowsStore, analyticsStore } = useRootStore();
+  const { isMobile } = useIsMobile(true);
 
   const {
     availableSearchables,
@@ -205,7 +217,8 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     supportsMultipleSystems,
     searchType,
     activeSystem,
-    featureVariants,
+    featureVariants: { responsiveRevamp },
+    selectedSearchIds,
   } = workflowsStore;
 
   const searchTitle =
@@ -229,7 +242,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     customComponents.MenuList = Disabled(searchTitle);
   }
 
-  if (featureVariants.responsiveRevamp) {
+  if (responsiveRevamp) {
     customComponents.MenuList = MenuListWithShadow(availableSearchables.length);
   }
 
@@ -249,6 +262,14 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   const newStyles: Partial<
     Styles<SelectOption, true, GroupTypeBase<SelectOption>>
   > = {
+    container: (base) => ({
+      ...base,
+      margin: isMobile && "0 -1rem",
+    }),
+    menuList: (base) => ({
+      ...base,
+      maxHeight: isMobile ? `calc(100vh - ${rem(135)})` : rem(300),
+    }),
     control: (base, state) => ({
       ...base,
       borderWidth: state.menuIsOpen ? "0" : `1px`,
@@ -258,9 +279,10 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       minHeight: rem(48),
       padding: `${rem(spacing.sm)} ${rem(spacing.md)}`,
       margin: 0,
-      boxShadow: state.menuIsOpen
-        ? "0px 10px 40px rgba(53, 83, 98, 0.3)"
-        : "none",
+      boxShadow:
+        state.menuIsOpen && !isMobile
+          ? "0px 10px 40px rgba(53, 83, 98, 0.3)"
+          : "none",
     }),
     menu: (base) => ({
       ...base,
@@ -269,13 +291,16 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       border: "none",
       borderTop: `1px solid ${palette.slate20}`,
       borderRadius: "0 0 8px 8px",
-      boxShadow: "0px 15px 20px rgba(53, 83, 98, 0.2)",
+      boxShadow: !isMobile ? "0px 15px 20px rgba(53, 83, 98, 0.2)" : "none",
     }),
     option: (base) => ({
       ...base,
       backgroundColor: "none",
       color: palette.pine3,
-      padding: `${rem(spacing.sm)} ${rem(spacing.md)}`,
+      padding: isMobile
+        ? `${rem(10)} ${rem(spacing.xl)}`
+        : `${rem(spacing.sm)} ${rem(spacing.md)}`,
+
       "&:hover": {
         backgroundColor: palette.slate10,
       },
@@ -314,11 +339,11 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     multiValueLabel: (base) => ({
       ...base,
       color: palette.slate85,
-      fontSize: rem(14),
+      fontSize: isMobile ? rem(12) : rem(14),
       lineHeight: rem(16),
       padding: 0,
     }),
-    multiValueRemove: (base, state) => ({
+    multiValueRemove: (base) => ({
       ...base,
       color: rgba(palette.slate, 0.4),
       cursor: "pointer",
@@ -331,37 +356,69 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       ...base,
       padding: 0,
       gap: rem(spacing.sm),
+      color: palette.slate60,
     }),
   };
 
   const styles = Object.assign(
     baseStyles,
-    featureVariants.responsiveRevamp ? newStyles : oldStyles
+    responsiveRevamp ? newStyles : oldStyles
   );
 
+  const defaultOptions = {
+    classNamePrefix: "CaseloadSelect",
+    className: "CaseloadSelect",
+    components: customComponents,
+    isMulti: true,
+    isOptionDisabled: () => disableAdditionalSelections,
+    onChange: (newValue: any) => {
+      workflowsStore.updateSelectedSearch(
+        newValue.map((item: SelectOption) => item.value)
+      );
+      analyticsStore.trackCaseloadSearch({
+        officerCount: newValue.length,
+        isDefault: false,
+        searchType,
+      });
+    },
+    options: availableSearchables.map(buildSelectOption),
+    placeholder: `Search for one or more ${pluralizeWord(searchTitle)} …`,
+    styles,
+    value: selectedSearchables.map(buildSelectOption),
+  };
+
+  const [modalIsOpen, setModalIsOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!isMobile) setModalIsOpen(false);
+  }, [isMobile]);
+
+  if (isMobile && responsiveRevamp) {
+    return (
+      <CaseloadSelectContainer marginBottom={responsiveRevamp && spacing.lg}>
+        Caseloads:
+        <CaseloadSelectMobileButton onClick={() => setModalIsOpen(true)}>
+          {selectedSearchIds.length > 0
+            ? `${selectedSearchIds.length} selected`
+            : `None selected`}
+          &nbsp;
+          <Icon kind={IconSVG.DownChevron} width={8} />
+        </CaseloadSelectMobileButton>
+        <Modal
+          isShowing={modalIsOpen}
+          hide={() => setModalIsOpen(false)}
+          title="Search"
+          backgroundColor={palette.marble1}
+        >
+          <ReactSelect menuIsOpen isClearable={false} {...defaultOptions} />
+        </Modal>
+      </CaseloadSelectContainer>
+    );
+  }
+
   return (
-    <CaseloadSelectContainer>
-      <ReactSelect
-        classNamePrefix="CaseloadSelect"
-        className="CaseloadSelect"
-        components={customComponents}
-        isMulti
-        isOptionDisabled={() => disableAdditionalSelections}
-        onChange={(newValue) => {
-          workflowsStore.updateSelectedSearch(
-            newValue.map((item) => item.value)
-          );
-          analyticsStore.trackCaseloadSearch({
-            officerCount: newValue.length,
-            isDefault: false,
-            searchType,
-          });
-        }}
-        options={availableSearchables.map(buildSelectOption)}
-        placeholder={`Search for one or more ${pluralizeWord(searchTitle)} …`}
-        styles={styles}
-        value={selectedSearchables.map(buildSelectOption)}
-      />
+    <CaseloadSelectContainer marginBottom={responsiveRevamp && spacing.lg}>
+      <ReactSelect {...defaultOptions} />
     </CaseloadSelectContainer>
   );
 });

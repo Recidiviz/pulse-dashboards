@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { runInAction } from "mobx";
+import { autorun, runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { Redirect, Route, RouteProps, useLocation } from "react-router-dom";
@@ -52,64 +52,71 @@ const RouteSync = observer(function RouteSync({ children }) {
   const [notFound, setNotFound] = useState(false);
   const [redirectPath, setRedirectPath] = useState<string | undefined>();
 
-  useEffect(() => {
-    const { page, personId } = parseLocation(loc);
-    setRedirectPath(undefined);
+  useEffect(
+    () =>
+      autorun(() => {
+        const { page, personId } = parseLocation(loc);
+        const { workflowsSupportedSystems } = workflowsStore;
+        setRedirectPath(undefined);
 
-    const isOpportunityPage =
-      page && isOpportunityTypeUrlForState(currentTenantId, page);
+        const isOpportunityPage =
+          page && isOpportunityTypeUrlForState(currentTenantId, page);
 
-    // sync location data into the store
-    if (isOpportunityPage) {
-      const opportunityType =
-        // @ts-expect-error Existence is checked by function above
-        OPPORTUNITY_TYPE_FOR_URL_BY_STATE[currentTenantId as TenantId][page];
-      // Update active system based on opportunity route
-      workflowsStore.updateActiveSystem(
-        getSystemIdFromOpportunityType(opportunityType)
-      );
-      workflowsStore.updateSelectedOpportunityType(opportunityType);
-    } else {
-      // Select active system from the page type or take the first supported system available
-      const activeSystem: SystemId | undefined =
-        !!workflowsStore.workflowsSupportedSystems &&
-        workflowsStore.workflowsSupportedSystems?.length > 1
-          ? getSystemIdFromPage(page as WorkflowsPage)
-          : workflowsStore.workflowsSupportedSystems?.[0];
-
-      if (activeSystem) workflowsStore.updateActiveSystem(activeSystem);
-      workflowsStore.updateSelectedOpportunityType(undefined);
-    }
-    // updateSelectedPerson relies on the active system, so set it after the above
-    workflowsStore.updateSelectedPerson(personId).catch(() => {
-      if (isOpportunityPage) {
-        // Redirect home if person is no long eligible for opportunity
-        setRedirectPath(workflowsUrl("home"));
-      } else {
-        setNotFound(true);
-      }
-    });
-
-    if (!page) {
-      // we aren't actually mutating any observables here,
-      // but we just don't want the access tracked in this effect
-      // (it is mixing observable and unobservable dependencies, which could lead
-      // to unpredictable or undesirable re-renders)
-      runInAction(() => {
-        const { hasMultipleOpportunities, opportunityTypes } = workflowsStore;
-
-        if (hasMultipleOpportunities) {
-          setRedirectPath(workflowsUrl("home"));
-        } else {
-          setRedirectPath(
-            workflowsUrl("opportunityClients", {
-              opportunityType: opportunityTypes[0],
-            })
+        // sync location data into the store
+        if (isOpportunityPage) {
+          const opportunityType =
+            // @ts-expect-error Existence is checked by function above
+            OPPORTUNITY_TYPE_FOR_URL_BY_STATE[currentTenantId as TenantId][
+              page
+            ];
+          // Update active system based on opportunity route
+          workflowsStore.updateActiveSystem(
+            getSystemIdFromOpportunityType(opportunityType)
           );
+          workflowsStore.updateSelectedOpportunityType(opportunityType);
+        } else {
+          // Select active system from the page type or take the first supported system available
+          const activeSystem: SystemId | undefined =
+            !!workflowsSupportedSystems && workflowsSupportedSystems?.length > 1
+              ? getSystemIdFromPage(page as WorkflowsPage)
+              : workflowsSupportedSystems?.[0];
+
+          if (activeSystem) workflowsStore.updateActiveSystem(activeSystem);
+          workflowsStore.updateSelectedOpportunityType(undefined);
         }
-      });
-    }
-  }, [loc, workflowsStore, currentTenantId]);
+        // updateSelectedPerson relies on the active system, so set it after the above
+        workflowsStore.updateSelectedPerson(personId).catch(() => {
+          if (isOpportunityPage) {
+            // Redirect home if person is no long eligible for opportunity
+            setRedirectPath(workflowsUrl("home"));
+          } else {
+            setNotFound(true);
+          }
+        });
+
+        if (!page) {
+          // we aren't actually mutating any observables here,
+          // but we just don't want the access tracked in this effect
+          // (it is mixing observable and unobservable dependencies, which could lead
+          // to unpredictable or undesirable re-renders)
+          runInAction(() => {
+            const { hasMultipleOpportunities, opportunityTypes } =
+              workflowsStore;
+
+            if (hasMultipleOpportunities) {
+              setRedirectPath(workflowsUrl("home"));
+            } else {
+              setRedirectPath(
+                workflowsUrl("opportunityClients", {
+                  opportunityType: opportunityTypes[0],
+                })
+              );
+            }
+          });
+        }
+      }),
+    [loc, workflowsStore, currentTenantId]
+  );
 
   if (notFound) {
     return <Redirect to={WORKFLOWS_PATHS.workflows404} />;

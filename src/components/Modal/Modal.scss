@@ -36,7 +36,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 101;
+    z-index: 500;
     width: 100%;
     height: 100%;
     overflow-x: hidden;
@@ -72,10 +72,9 @@
     align-items: center;
     @include serif-24;
     color: $pine-2;
-    margin-left: 0.5rem;
     padding: 3rem 2.5rem 0;
     @media screen and (max-width: $core-breakpoint-xs) {
-      padding: 3rem 2rem 0;
+      padding: 2rem 1rem 0;
     }
   }
 
@@ -89,8 +88,10 @@
     overflow-y: overlay !important;
     overflow-y: auto;
     padding: 1.5rem 2.5rem;
+    height: 100%;
+    @include sans-14;
     @media screen and (max-width: $core-breakpoint-xs) {
-      padding: 1.5rem 2rem;
+      padding: 1.5rem 1rem;
     }
   }
 
@@ -106,7 +107,7 @@
       display: block;
     }
     @media screen and (max-width: $core-breakpoint-xs) {
-      padding: 1.5rem 2rem;
+      padding: 1.5rem 1rem;
     }
   }
 }

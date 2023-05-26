@@ -21,6 +21,7 @@ import simplur from "simplur";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import {
   generateOpportunityDeniedSectionTitle,
@@ -58,8 +59,10 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
       selectedOpportunityType: opportunityType,
       justiceInvolvedPersonTitle,
       workflowsSearchFieldTitle,
+      featureVariants: { responsiveRevamp },
     },
   } = useRootStore();
+  const { isMobile } = useIsMobile(true);
 
   if (!opportunityType) return null;
 
@@ -103,7 +106,10 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
 
   const hydrated = (
     <>
-      <Heading className="PersonList__Heading">
+      <Heading
+        isMobile={isMobile && responsiveRevamp}
+        className="PersonList__Heading"
+      >
         {hydratedHeader.eligibilityText} {hydratedHeader.opportunityText}
       </Heading>
       <SubHeading className="PersonList__Subheading">
