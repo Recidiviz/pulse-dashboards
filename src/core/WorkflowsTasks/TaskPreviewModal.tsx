@@ -33,7 +33,7 @@ import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import { PreviewTasks } from "./PreviewTasks";
 
 export const Divider = styled.hr`
-  border: 0.5px solid ${palette.slate10};
+  border-top: 1px solid ${palette.slate10};
   margin: 0 -${rem(spacing.md)};
   min-width: 100%;
 `;
