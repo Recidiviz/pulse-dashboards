@@ -19,11 +19,12 @@ import "./Profile.scss";
 
 import { Button } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import React, { useCallback } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 import StateSelection from "../../components/StateSelection";
 import { useRootStore } from "../../components/StoreProvider";
+import useLogout from "../../hooks/useLogout";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
@@ -31,15 +32,9 @@ import { ImpersonationForm } from "./ImpersonationForm";
 
 function Profile() {
   const { userStore, tenantStore } = useRootStore();
-  const { user, logout } = userStore;
+  const { user } = userStore;
+  const logout = useLogout();
 
-  const onLogout = useCallback(
-    (e) => {
-      e.preventDefault();
-      logout({ returnTo: window.location.origin });
-    },
-    [logout]
-  );
   const showImpersonationForm =
     userStore.user.impersonator || userStore.isRecidivizUser;
 
@@ -77,7 +72,7 @@ function Profile() {
           </Link>
           <Button
             className="Profile__button"
-            onClick={onLogout}
+            onClick={logout}
             disabled={isOfflineMode()}
           >
             Log out

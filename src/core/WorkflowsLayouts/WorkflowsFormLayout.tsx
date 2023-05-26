@@ -25,6 +25,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { FormVariant, OpportunityType } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
+import { NavigationLayout } from "../NavigationLayout";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
@@ -101,31 +102,14 @@ const SidebarSection = styled.section<{
   responsiveRevamp: boolean;
 }>`
   padding: ${({ responsiveRevamp }) =>
-    responsiveRevamp ? rem(spacing.md) : rem(spacing.lg)};
+    responsiveRevamp
+      ? `${rem(spacing.lg)} ${rem(spacing.md)}`
+      : rem(spacing.lg)};
 
   &:first-child {
     border-bottom: 1px solid ${palette.slate20};
   }
 `;
-
-const SidebarWrapper: React.FC = ({ children }) => {
-  const {
-    workflowsStore: { featureVariants },
-  } = useRootStore();
-
-  return (
-    <Sidebar>
-      <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
-        <Link to={`/${PATHWAYS_VIEWS.workflows}`}>
-          <RecidivizLogo />
-        </Link>
-      </SidebarSection>
-      <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
-        {children}
-      </SidebarSection>
-    </Sidebar>
-  );
-};
 
 const FormWrapper = styled.div``;
 
@@ -134,6 +118,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
     workflowsStore: {
       selectedOpportunityType: opportunityType,
       selectedPerson,
+      featureVariants,
     },
   } = useRootStore();
 
@@ -148,9 +133,21 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
 
   const hydrated = (
     <Wrapper>
-      <SidebarWrapper>
-        <OpportunityProfile opportunity={opportunity} />
-      </SidebarWrapper>
+      <Sidebar>
+        {featureVariants.responsiveRevamp ? (
+          <NavigationLayout isMethodologyExternal isFixed={false} />
+        ) : (
+          <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
+            <Link to={`/${PATHWAYS_VIEWS.workflows}`}>
+              <RecidivizLogo />
+            </Link>
+          </SidebarSection>
+        )}
+        <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
+          <OpportunityProfile opportunity={opportunity} />
+        </SidebarSection>
+      </Sidebar>
+
       <FormWrapper>{PAGE_CONTENT[opportunityType][formContents]}</FormWrapper>
     </Wrapper>
   );

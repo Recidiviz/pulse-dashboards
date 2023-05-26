@@ -25,11 +25,22 @@ import useOnClickOutside from "use-onclickoutside";
 
 type Props = {
   isShowing: boolean;
-  rtl?: boolean;
   hide: () => void;
+  overlayStyles?: any;
+  bodyStyles?: any;
+  closeButton?: boolean;
+  position?: "left" | "right" | "top" | "bottom";
 };
 
-const Drawer: React.FC<Props> = ({ isShowing, hide, rtl, children }) => {
+const Drawer: React.FC<Props> = ({
+  isShowing,
+  overlayStyles,
+  bodyStyles,
+  hide,
+  position = "left",
+  closeButton = true,
+  children,
+}) => {
   const ref: any = useRef();
   useOnClickOutside(ref, hide);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -55,34 +66,37 @@ const Drawer: React.FC<Props> = ({ isShowing, hide, rtl, children }) => {
   return createPortal(
     <div
       className={cn("Drawer", {
-        "Drawer--rtl": rtl,
+        Drawer__left: position === "left",
+        Drawer__right: position === "right",
+        Drawer__bottom: position === "bottom",
+        Drawer__top: position === "top",
       })}
     >
       <div
         className={cn("Drawer__overlay", {
           "Drawer__overlay--open": isTransitioning && isShowing,
         })}
+        style={overlayStyles}
       />
       <div
-        className="Drawer__wrapper"
+        className={cn("Drawer__wrapper", {
+          "Drawer__wrapper--open": isTransitioning && isShowing,
+        })}
         aria-hidden={isShowing ? "false" : "true"}
-        aria-label="Drawer"
+        aria-label="drawer"
         tabIndex={-1}
         role="dialog"
       >
-        <div
-          className={cn("Drawer__body", {
-            "Drawer__body--open": isTransitioning && isShowing,
-          })}
-          ref={ref}
-        >
-          <Icon
-            className="Drawer__close-icon"
-            kind={rtl ? IconSVG.Close : IconSVG.Arrow}
-            width={rtl ? 17 : 24}
-            height={rtl ? 17 : 24}
-            onClick={hide}
-          />
+        <div className="Drawer__body" style={bodyStyles} ref={ref}>
+          {closeButton && (
+            <Icon
+              className="Drawer__close-icon"
+              kind={position === "left" ? IconSVG.Arrow : IconSVG.Close}
+              width={position === "left" ? 24 : 17}
+              height={position === "left" ? 24 : 17}
+              onClick={hide}
+            />
+          )}
           {children}
         </div>
       </div>

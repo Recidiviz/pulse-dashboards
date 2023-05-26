@@ -17,16 +17,19 @@
 
 import "./PageNavigation.scss";
 
+import { palette } from "@recidiviz/design-system";
 import cx from "classnames";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
+import flags from "../../flags";
 import useIsMobile from "../../hooks/useIsMobile";
 import { PATHWAYS_TENANTS } from "../../RootStore/TenantStore/pathwaysTenants";
 import { getMethodologyCopy, getPageCopy } from "../content";
 import { useCoreStore } from "../CoreStoreProvider";
+import { NavigationLayout } from "../NavigationLayout";
 import { NavigationSection } from "../types/navigation";
 import { isValidPathwaysRootPath } from "../views";
 
@@ -50,6 +53,28 @@ const PageNavigation: React.FC = () => {
     // no methodology exists for state
   }
 
+  const options = pageOptions.map((pageOption: NavigationSection) => (
+    <li key={pageOption}>
+      <NavLink
+        to={{ pathname: `/${currentView}/${pageOption}`, hash: "" }}
+        className={cx("PageNavigation__option", {
+          "PageNavigation__option--selected":
+            page?.toLowerCase() === pageOption.toLowerCase(),
+        })}
+      >
+        {/* @ts-ignore */}
+        {mergePageAndMethodologyCopy?.[pageOption]?.title}
+      </NavLink>
+    </li>
+  ));
+
+  if (flags.responsiveRevamp && !isMobile)
+    return (
+      <NavigationLayout backgroundColor={palette.marble3}>
+        {options}
+      </NavigationLayout>
+    );
+
   return (
     <ul
       className={cx("PageNavigation", {
@@ -58,20 +83,7 @@ const PageNavigation: React.FC = () => {
         "PageNavigation--mobile": isMobile && isPathwaysView,
       })}
     >
-      {pageOptions.map((pageOption: NavigationSection) => (
-        <li key={pageOption}>
-          <Link
-            to={{ pathname: `/${currentView}/${pageOption}`, hash: "" }}
-            className={cx("PageNavigation__option", {
-              "PageNavigation__option--selected":
-                page?.toLowerCase() === pageOption.toLowerCase(),
-            })}
-          >
-            {/* @ts-ignore */}
-            {mergePageAndMethodologyCopy?.[pageOption]?.title}
-          </Link>
-        </li>
-      ))}
+      {options}
     </ul>
   );
 };

@@ -15,26 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useCallback } from "react";
+import React from "react";
 
 import { ReactComponent as ErrorLogo } from "../../assets/static/images/error_logo.svg";
-import { useUserStore } from "../StoreProvider";
+import useLogout from "../../hooks/useLogout";
 import HydrationStatus from "./HydrationStatus";
 
 const Error: React.FC = () => {
-  const { logout } = useUserStore();
+  const logout = useLogout();
 
   const onReload = () => {
     window.location.reload();
   };
-
-  const onLogout = useCallback(
-    (e) => {
-      e.preventDefault();
-      if (logout) logout({ returnTo: window.location.origin });
-    },
-    [logout]
-  );
 
   return (
     <HydrationStatus
@@ -53,7 +45,7 @@ const Error: React.FC = () => {
       <button type="button" onClick={onReload}>
         Reload
       </button>
-      <button type="button" onClick={onLogout}>
+      <button type="button" onClick={logout}>
         Log out
       </button>
     </HydrationStatus>

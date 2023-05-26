@@ -16,10 +16,10 @@
 // =============================================================================
 
 import { mount } from "enzyme";
-import { Link, StaticRouter } from "react-router-dom";
+import { StaticRouter } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import { useRootStore, useUserStore } from "../../../components/StoreProvider";
 import RootStore from "../../../RootStore";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
@@ -65,6 +65,11 @@ describe("CoreLayout tests", () => {
       },
       currentTenantId: "US_ID",
     });
+    (useUserStore as jest.Mock).mockReturnValue({
+      user: {
+        name: "Test",
+      },
+    });
     (useQueryParams as jest.Mock).mockReturnValue(["query", jest.fn()]);
   });
 
@@ -84,7 +89,7 @@ describe("CoreLayout tests", () => {
     });
 
     const selector = renderPageNavigation();
-    expect(selector.find(Link)).toHaveLength(3);
+    expect(selector.find("Link.PageNavigation__option")).toHaveLength(3);
   });
 
   it("Add bar above current page", () => {

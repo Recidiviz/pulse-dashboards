@@ -17,16 +17,19 @@
 
 import "./PathwaysLayout.scss";
 
+import { palette } from "@recidiviz/design-system";
 import cn from "classnames";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { useLocation } from "react-router-dom";
 
 import IE11Banner from "../components/IE11Banner";
+import flags from "../flags";
 import useIntercom from "../hooks/useIntercom";
 import useIsMobile from "../hooks/useIsMobile";
 import CoreStoreProvider from "./CoreStoreProvider";
 import ErrorBoundary from "./ErrorBoundary";
+import { NavigationLayout } from "./NavigationLayout";
 import PathwaysNavigation from "./PathwaysNavigation";
 import ViewNavigation from "./ViewNavigation";
 import { PATHWAYS_VIEWS } from "./views";
@@ -47,12 +50,20 @@ const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
         <div
           id="app"
           className={cn("PathwaysLayout", {
-            Operations: currentView === PATHWAYS_VIEWS.operations && !isMobile,
+            Operations:
+              currentView === PATHWAYS_VIEWS.operations &&
+              !isMobile &&
+              !flags.responsiveRevamp,
             Workflows: currentView === PATHWAYS_VIEWS.workflows,
           })}
         >
           {currentView === PATHWAYS_VIEWS.workflows || !isMobile ? (
             <ViewNavigation />
+          ) : null}
+          {currentView === PATHWAYS_VIEWS.operations &&
+          flags.responsiveRevamp &&
+          !isMobile ? (
+            <NavigationLayout backgroundColor={palette.marble3} />
           ) : null}
           <div className="PathwaysLayout__main">
             <PathwaysNavigation />

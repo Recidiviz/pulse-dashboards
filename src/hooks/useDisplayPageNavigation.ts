@@ -18,6 +18,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import { useRootStore } from "../components/StoreProvider";
+import flags from "../flags";
 
 const useDisplayPageNavigation = (): boolean => {
   const { userStore } = useRootStore();
@@ -37,7 +38,7 @@ const useDisplayPageNavigation = (): boolean => {
     setIsDisplayPageNavigation(pageOptions.length > 1);
   }, [pageOptions]);
 
-  return isDisplayPageNavigation;
+  return isDisplayPageNavigation || flags.responsiveRevamp;
 };
 
 export default useDisplayPageNavigation;

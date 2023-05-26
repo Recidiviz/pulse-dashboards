@@ -20,7 +20,6 @@ import {
   IconSVG,
   palette,
   Sans18,
-  Serif24,
   spacing,
   typography,
 } from "@recidiviz/design-system";
@@ -60,7 +59,9 @@ const OpportunityHeaderWrapper = styled.div<{
   ${({ squished }) => squished && `max-width: ${rem(550)};`}
 `;
 
-const OpportunityHeader = styled(Serif24)`
+const OpportunityHeader = styled.div<{ responsiveRevamp: boolean }>`
+  ${({ responsiveRevamp }) =>
+    responsiveRevamp ? typography.Sans24 : typography.Serif24};
   color: ${palette.pine2};
   padding-bottom: ${rem(spacing.md)};
 `;
@@ -159,7 +160,9 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
       className="OpportunityTypeSummaryWrapper"
     >
       <OpportunityHeaderWrapper squished={!!featureVariants.responsiveRevamp}>
-        <OpportunityHeader>
+        <OpportunityHeader
+          responsiveRevamp={!!featureVariants.responsiveRevamp}
+        >
           {header.eligibilityText}{" "}
           {featureVariants.responsiveRevamp ? (
             header.opportunityText

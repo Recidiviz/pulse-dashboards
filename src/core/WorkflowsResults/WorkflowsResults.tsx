@@ -39,7 +39,7 @@ const HeaderText = styled(Serif34)<{
   margin-bottom: ${({ largeMargin }) => (largeMargin ? 3 : 1)}rem;
 
   ${({ centered }) =>
-    centered ? `text-align: center;` : `  margin-right: 30%;`}
+    centered ? `text-align: center;` : `  margin-right: 20%;`}
 `;
 
 const CallToActionText = styled(Sans18)`

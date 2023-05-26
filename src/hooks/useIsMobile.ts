@@ -16,24 +16,46 @@
 // =============================================================================
 import { useEffect, useState } from "react";
 
-import styles from "../core/CoreConstants.module.scss";
+import cssVars from "../core/CoreConstants.module.scss";
 
-const useIsMobile = (): boolean => {
-  const breakpoint =
-    styles.breakpointSm && styles.breakpointSm.replace(/\D/g, "");
+const breakpoints = {
+  desktop: Number(cssVars.breakpointSm.replace(/\D/g, "")),
+  laptop: Number(cssVars.breakpointSxs.replace(/\D/g, "")),
+  tablet: Number(cssVars.breakpointXs.replace(/\D/g, "")),
+  mobile: Number(cssVars.breakpointXxs.replace(/\D/g, "")),
+};
+
+const useIsMobile = (moreBreakpoints?: boolean): any => {
+  const breakpointLaptop = breakpoints.laptop;
+  const breakpointTablet = breakpoints.tablet;
+  const breakpointMobile = moreBreakpoints
+    ? breakpoints.mobile
+    : breakpoints.desktop;
+
+  const [isLaptop, setIsLaptop] = useState(
+    window.innerWidth <= breakpointLaptop
+  );
+  const [isTablet, setIsTablet] = useState(
+    window.innerWidth <= breakpointTablet
+  );
   const [isMobile, setIsMobile] = useState(
-    window.innerWidth <= Number(breakpoint)
+    window.innerWidth <= breakpointMobile
   );
 
   useEffect(() => {
-    const handleResize = () =>
-      setIsMobile(window.innerWidth <= Number(breakpoint));
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= breakpointMobile);
+      setIsTablet(window.innerWidth <= breakpointTablet);
+      setIsLaptop(window.innerWidth <= breakpointLaptop);
+    };
 
     window.addEventListener("resize", handleResize);
     handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
-  }, [breakpoint]);
+  }, [breakpointMobile, breakpointTablet, breakpointLaptop]);
+
+  if (moreBreakpoints) return { isMobile, isTablet, isLaptop };
 
   return isMobile;
 };

@@ -62,7 +62,6 @@ const Wrapper = styled.div<{
     "header header"
     ". .";
   grid-template-columns: ${COLUMNS};
-  grid-template-rows: minmax(${rem(96)}, auto) auto;
   padding-bottom: ${rem(spacing.lg)};
   row-gap: ${rem(spacing.lg)};
 
@@ -73,13 +72,15 @@ const Wrapper = styled.div<{
     }`}
 `;
 
-const Header = styled.div`
+const Header = styled.div<{ responsiveRevamp?: boolean }>`
   border-bottom: 1px solid ${rgba(palette.slate, 0.15)};
   column-gap: ${GUTTER};
   display: grid;
   grid-area: header;
   grid-template-columns: ${COLUMNS};
-  padding: ${rem(spacing.lg)} 0 ${rem(spacing.md)};
+  padding-top: ${({ responsiveRevamp }) =>
+    responsiveRevamp ? 0 : rem(spacing.lg)};
+  padding-bottom: ${rem(spacing.md)};
   cursor: default;
 `;
 
@@ -268,7 +269,7 @@ export const FullProfile = observer(
     return (
       <WorkflowsNavLayout>
         <Wrapper responsiveRevamp={!!featureVariants.responsiveRevamp}>
-          <Header>
+          <Header responsiveRevamp={!!featureVariants.responsiveRevamp}>
             <ProfileCapsule
               avatarSize="lg"
               person={person}

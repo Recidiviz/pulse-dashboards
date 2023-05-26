@@ -25,6 +25,7 @@ import { ReactComponent as MethodologyLogo } from "../../assets/static/images/me
 import { ReactComponent as OperationsLogo } from "../../assets/static/images/operations.svg";
 import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathways.svg";
 import { ReactComponent as WorkflowsLogo } from "../../assets/static/images/workflows.svg";
+import flags from "../../flags";
 import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
 import { TenantId } from "../models/types";
@@ -176,6 +177,8 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
   const enabledPathwaysPages = (navigationLayout.system || []).length > 0;
   const enableOperations = !!navigationLayout.operations;
   const enableWorkflows = !!navigationLayout.workflows;
+
+  if (flags.responsiveRevamp && !drawer) return null;
 
   if (drawer) {
     return (
