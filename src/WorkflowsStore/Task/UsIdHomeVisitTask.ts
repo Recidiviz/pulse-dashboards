@@ -18,7 +18,7 @@
  */
 import simplur from "simplur";
 
-import { formatCurrentAddress, formatDate } from "../../utils";
+import { formatDate } from "../../utils";
 import { fieldToDate } from "../utils";
 import { Task } from "./Task";
 import { US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE } from "./utils";
@@ -43,17 +43,11 @@ class UsIdHomeVisitTask extends Task<"homeVisit"> {
     return formatDate(fieldToDate(this.details.lastHomeVisit));
   }
 
-  get additionalDetails(): string | undefined {
-    let details;
+  get additionalDetails(): string {
+    let details = "";
     const complianceLevel =
       US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE[this.supervisionLevel];
 
-    if (this.currentAddress) {
-      details = `${formatCurrentAddress(
-        this.currentAddress,
-        this.person.stateCode
-      )}\r\n`;
-    }
     if (this.lastHomeVisit) {
       details += `Last home contact on: ${this.lastHomeVisit}; `;
     }

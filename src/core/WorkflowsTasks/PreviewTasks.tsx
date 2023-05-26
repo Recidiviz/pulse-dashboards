@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans14, Sans16 } from "@recidiviz/design-system";
+import { palette, Sans14, Sans16, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
@@ -43,9 +43,11 @@ const TaskTitle = styled.div`
 
 const TaskItem = styled(Sans16)`
   min-height: ${rem(75)};
-  padding: 0.25rem 0;
+  padding: 1.5rem 0;
   display: grid;
   grid-template-columns: 5fr 1fr;
+  align-content: center;
+  position: relative;
 `;
 
 const TaskName = styled(Sans16)`
@@ -60,7 +62,7 @@ const TaskDivider = styled(Sans16)`
 const TaskDetails = styled(Sans14)`
   color: rgba(53, 83, 98, 0.9);
   align-self: flex-start;
-  padding: 0.25rem 0;
+  padding: 0.5rem 0 0 0;
   white-space: pre-line;
 `;
 
@@ -93,7 +95,11 @@ export const PreviewTasks = observer(function PreviewTasks({
                   <TaskTitle>
                     <TaskName>{task.displayName}</TaskName>
                     <TaskDivider> &bull; </TaskDivider>
-                    <TaskDueDate marginLeft="0" overdue={task.isOverdue}>
+                    <TaskDueDate
+                      font={typography.Sans16}
+                      marginLeft="0"
+                      overdue={task.isOverdue}
+                    >
                       {task.dueDateDisplayShort}
                     </TaskDueDate>
                   </TaskTitle>
@@ -112,9 +118,12 @@ export const PreviewTasks = observer(function PreviewTasks({
         })}
         {needs.map((need) => {
           return (
-            <TaskItem key={need.type}>
-              <TaskName>{NEED_DISPLAY_NAME[need.type]}</TaskName>
-            </TaskItem>
+            <div key={`${need.type}`}>
+              <TaskItem key={need.type}>
+                <TaskName>{NEED_DISPLAY_NAME[need.type]}</TaskName>
+              </TaskItem>
+              <Divider />
+            </div>
           );
         })}
       </TaskItems>

@@ -133,26 +133,39 @@ export abstract class TasksBase<
     return this.record?.needs || [];
   }
 
+  /**
+   * Tasks that are not snoozed and are overdue
+   */
   get overdueTasks(): SupervisionTask<SupervisionTaskType>[] {
-    return this.tasks.filter((task) => task.isOverdue);
-  }
-
-  get upcomingTasks(): SupervisionTask<SupervisionTaskType>[] {
-    return this.tasks.filter((task) => !task.isOverdue);
+    return this.readyTasks.filter((task) => task.isOverdue);
   }
 
   /**
-   * All tasks ordered by due date
+   * Tasks that are not snoozed and are not overdue
+   */
+  get upcomingTasks(): SupervisionTask<SupervisionTaskType>[] {
+    return this.readyTasks.filter((task) => !task.isOverdue);
+  }
+
+  /**
+   * All tasks ordered by due date for the list of tasks on the preview panel and client profile
    */
   get orderedTasks(): SupervisionTask<SupervisionTaskType>[] {
     return this.tasks.sort(taskDueDateComparator);
   }
 
-  /** Ordered tasks that filter out snoozed tasks for the list of tasks
-   *  displayed on the Task page.
+  /**
+   * Ready tasks ordered by due date for the list of tasks displayed on the Task page.
    */
   get readyOrderedTasks(): SupervisionTask<SupervisionTaskType>[] {
-    return this.orderedTasks.filter((task) => !task.isSnoozed);
+    return this.readyTasks.sort(taskDueDateComparator);
+  }
+
+  /**
+   * Tasks that are not snoozed
+   */
+  get readyTasks(): SupervisionTask<SupervisionTaskType>[] {
+    return this.tasks.filter((task) => !task.isSnoozed);
   }
 
   get isHydrated(): boolean {

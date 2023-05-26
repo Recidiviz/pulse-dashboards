@@ -22,7 +22,11 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Milestones, Supervision } from "../WorkflowsClientProfile/Details";
+import {
+  Contact,
+  Milestones,
+  Supervision,
+} from "../WorkflowsClientProfile/Details";
 import { Heading } from "../WorkflowsClientProfile/Heading";
 import { OpportunitiesAccordion } from "../WorkflowsClientProfile/OpportunitiesAccordion";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
@@ -55,6 +59,7 @@ export const TaskPreviewModal = observer(function TaskPreviewModal() {
           <PreviewTasks person={selectedClient} showSnoozeDropdown />
           <Supervision client={selectedClient} />
           <Milestones client={selectedClient} />
+          <Contact client={selectedClient} />
         </article>
       }
     />

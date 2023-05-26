@@ -22,6 +22,7 @@ import {
   Sans16,
   Serif34,
   spacing,
+  typography,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
@@ -29,7 +30,7 @@ import { rem } from "polished";
 import React, { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
 import simplur from "simplur";
-import styled from "styled-components/macro";
+import styled, { FlattenSimpleInterpolation } from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord } from "../../utils";
@@ -101,15 +102,15 @@ const TaskClientTasksCount = styled(Sans12)`
   margin-left: 0.5rem;
 `;
 
-export const TaskDueDate = styled(Sans12)<{
+export const TaskDueDate = styled.div<{
   overdue: boolean;
+  font: FlattenSimpleInterpolation;
   marginLeft?: string;
-}>(
-  ({ overdue, marginLeft = "auto" }) => `
-  color: ${overdue ? palette.signal.error : palette.slate70};
-  margin-left: ${marginLeft};
-`
-);
+}>`
+  ${({ font }) => font}
+  color: ${({ overdue }) => (overdue ? palette.signal.error : palette.slate70)};
+  margin-left: ${({ marginLeft = "auto" }) => marginLeft};
+`;
 
 const TaskClientName = styled(Sans16).attrs({ as: "span" })`
   color: ${palette.pine4};
@@ -147,7 +148,10 @@ const TaskListItem: React.FC<TaskListItemProps> = observer(
               {task ? null : simplur`${orderedTasks.length} task[|s]`}
             </TaskClientTasksCount>
           </TaskClientItem>
-          <TaskDueDate overdue={taskToDisplay.isOverdue}>
+          <TaskDueDate
+            font={typography.Sans14}
+            overdue={taskToDisplay.isOverdue}
+          >
             {taskToDisplay.dueDateDisplayLong}
           </TaskDueDate>
         </TaskClient>

@@ -36,12 +36,26 @@ const Wrapper = styled.div`
   grid-column-start: 2;
   justify-self: end;
   cursor: pointer;
+  position: absolute;
+  top: 1.25rem;
 `;
 
 const SnoozeTaskDropdownButton = styled(DropdownToggle)`
   border: none;
   align-self: center;
   justify-self: end;
+  align-items: baseline;
+
+  &:hover,
+  &:focus {
+    background-color: transparent;
+  }
+
+  &:hover {
+    > span {
+      background-color: ${palette.slate85};
+    }
+  }
 `;
 const SnoozeTaskDropdownDot = styled.span`
   height: 4px;

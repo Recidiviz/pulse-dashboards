@@ -25,7 +25,11 @@ import styled from "styled-components/macro";
 import { ReactComponent as GoldStar } from "../../assets/static/images/goldStar.svg";
 import { useRootStore } from "../../components/StoreProvider";
 import * as pathwaysTenants from "../../RootStore/TenantStore/pathwaysTenants";
-import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
+import {
+  formatAsCurrency,
+  formatCurrentAddress,
+  formatWorkflowsDate,
+} from "../../utils";
 import { Client, WithCaseNotes } from "../../WorkflowsStore";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../../WorkflowsStore/Opportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { Resident } from "../../WorkflowsStore/Resident";
@@ -292,6 +296,22 @@ export function Contact({ client }: ClientProfileProps): React.ReactElement {
           <DetailsContent className="fs-exclude">
             {client.phoneNumber}
           </DetailsContent>
+          {client.emailAddress && (
+            <>
+              <DetailsSubheading>Email</DetailsSubheading>
+              <DetailsContent className="fs-exclude">
+                {client.emailAddress}
+              </DetailsContent>
+            </>
+          )}
+          {client.address && (
+            <>
+              <DetailsSubheading>Address</DetailsSubheading>
+              <DetailsContent className="fs-exclude">
+                {formatCurrentAddress(client.address, client.stateCode)}
+              </DetailsContent>
+            </>
+          )}
         </DetailsList>
       </DetailsContent>
     </DetailsSection>
