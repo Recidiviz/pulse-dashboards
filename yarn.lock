@@ -17118,6 +17118,11 @@ react-hot-toast@^2.4.1:
   dependencies:
     goober "^2.1.10"
 
+react-idle-timer@^5.6.2:
+  version "5.6.2"
+  resolved "https://registry.yarnpkg.com/react-idle-timer/-/react-idle-timer-5.6.2.tgz#0342b381ca26ea46e8232dbdc7f2b948bc4ddb0d"
+  integrity sha512-X7zjDv7duCopQ4v3X2Gun8QunvYplPWkvW2y7suDSREu1vQRQ0mr1ESv325QoJuvSIE5QCSbLaJlrbbooNaUNg==
+
 react-input-autosize@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/react-input-autosize/-/react-input-autosize-3.0.0.tgz"

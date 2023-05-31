@@ -21,6 +21,7 @@ import { Loading } from "@recidiviz/design-system";
 import { when } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
+import { useIdleTimer } from "react-idle-timer";
 import { useHistory, useLocation } from "react-router-dom";
 
 import NotFound from "../components/NotFound";
@@ -53,6 +54,16 @@ const AuthWall: React.FC = ({ children }) => {
     // calling the effect on mount and cleaning it up on unmount
     [history, userStore]
   );
+
+  useIdleTimer({
+    onIdle: () => userStore.logout?.(),
+    // 900 seconds = 15 minutes. Certain state policies require that users reauthenticate after 15
+    // minutes of inactivity. More details at:
+    // https://github.com/Recidiviz/pulse-dashboards/issues/3403#issuecomment-1569096723
+    timeout: 900_000,
+    crossTab: true,
+    syncTimers: 200,
+  });
 
   if (userStore.authError) {
     throw userStore.authError;

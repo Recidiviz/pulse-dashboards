@@ -18,12 +18,23 @@ import "@testing-library/jest-dom/extend-expect";
 import "@testing-library/react-hooks/dont-cleanup-after-each";
 import "jest-canvas-mock";
 
+import { cleanup } from "@testing-library/react";
 import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
 import { configure } from "enzyme";
 import * as matchers from "jest-extended";
 import { configure as configureMobx } from "mobx";
+import { createMocks } from "react-idle-timer";
+import { MessageChannel } from "worker_threads";
 
 import { initI18n } from "./utils/i18nSettings";
+
+beforeAll(() => {
+  createMocks();
+  // prevents `ReferenceError: MessageChannel is not defined`
+  global.MessageChannel = MessageChannel;
+});
+
+afterAll(cleanup);
 
 expect.extend(matchers);
 
