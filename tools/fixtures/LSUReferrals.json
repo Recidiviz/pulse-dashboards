@@ -11,6 +11,7 @@
         "BURGLARY",
         "POSSESSION OF A CONTROLLED SUBSTANCE"
       ],
+      "caseNumbers": ["12AB", "45BF", "89RE"],
       "currentAddress": "123 FAKE ST, TWIN FALLS, ID, 99999-9876",
       "assessmentDate": "2022-03-03",
       "assessmentScore": "25",
@@ -57,6 +58,7 @@
         "BURGLARY",
         "POSSESSION OF A CONTROLLED SUBSTANCE"
       ],
+      "caseNumbers": ["12AB", "45BF", "89RE"],
       "currentAddress": "123 FAKE ST, TWIN FALLS, ID, 99999-9876",
       "assessmentDate": "2022-03-03",
       "assessmentScore": "25",

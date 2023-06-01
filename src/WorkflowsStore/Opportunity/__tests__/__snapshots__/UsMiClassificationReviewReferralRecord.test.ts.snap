@@ -2,6 +2,15 @@
 
 exports[`transform record for initial CR 1`] = `
 Object {
+  "caseNotes": Object {
+    "Recommended supervision level": Array [
+      Object {
+        "eventDate": null,
+        "noteBody": "MEDIUM",
+        "noteTitle": null,
+      },
+    ],
+  },
   "eligibleCriteria": Object {
     "usMiClassificationReviewPastDueDate": Object {
       "eligibleDate": 2022-12-12T00:00:00.000Z,
@@ -17,6 +26,7 @@ Object {
 
 exports[`transform record for null usMiNotAlreadyOnLowestEligibleSupervisionLevel 1`] = `
 Object {
+  "caseNotes": undefined,
   "eligibleCriteria": Object {
     "usMiClassificationReviewPastDueDate": Object {
       "eligibleDate": 2023-03-14T00:00:00.000Z,
@@ -32,6 +42,15 @@ Object {
 
 exports[`transform record for six-month CR 1`] = `
 Object {
+  "caseNotes": Object {
+    "Recommended supervision level": Array [
+      Object {
+        "eventDate": null,
+        "noteBody": "MEDIUM",
+        "noteTitle": null,
+      },
+    ],
+  },
   "eligibleCriteria": Object {
     "usMiClassificationReviewPastDueDate": Object {
       "eligibleDate": 2019-01-12T00:00:00.000Z,

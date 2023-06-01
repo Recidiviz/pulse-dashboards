@@ -40,6 +40,15 @@ test("transform record for initial CR", () => {
         eligibleDate: "2022-12-12",
       },
     },
+    caseNotes: {
+      "Recommended supervision level": [
+        {
+          eventDate: null,
+          noteBody: "MEDIUM",
+          noteTitle: null,
+        },
+      ],
+    },
   };
 
   expect(
@@ -58,6 +67,15 @@ test("transform record for six-month CR", () => {
       usMiSixMonthsPastLastClassificationReviewDate: {
         eligibleDate: "2019-01-12",
       },
+    },
+    caseNotes: {
+      "Recommended supervision level": [
+        {
+          eventDate: null,
+          noteBody: "MEDIUM",
+          noteTitle: null,
+        },
+      ],
     },
   };
 

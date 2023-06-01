@@ -13,7 +13,11 @@ export class LSUForm extends FormBase<LSUDraftData> {
 
     const { formInformation: form } = this.opportunity.record;
     return {
-      chargeDescriptions: form.chargeDescriptions?.join(",") ?? "",
+      chargeDescriptions:
+        `${form.chargeDescriptions?.join(",")} ${
+          form.caseNumbers ? `(${form.caseNumbers?.join(", ")})` : ""
+        }` ?? "",
+
       contactInformation: defaultFormValueJoiner(
         form.currentAddress,
         form.currentPhoneNumber

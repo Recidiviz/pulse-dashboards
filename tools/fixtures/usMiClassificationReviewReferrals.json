@@ -9,6 +9,15 @@
       "usMiPastInitialClassificationReviewDate": {
         "eligibleDate": "2022-12-12"
       }
+    },
+    "caseNotes": {
+      "Recommended supervision level": [
+        {
+          "eventDate": null,
+          "noteBody": "MEDIUM",
+          "noteTitle": null
+        }
+      ]
     }
   },
   {
@@ -19,6 +28,15 @@
       "usMiSixMonthsPastLastClassificationReviewDate": {
         "eligibleDate": "2023-02-28"
       }
+    },
+    "caseNotes": {
+      "Recommended supervision level": [
+        {
+          "eventDate": null,
+          "noteBody": "MEDIUM",
+          "noteTitle": null
+        }
+      ]
     }
   }
 ]

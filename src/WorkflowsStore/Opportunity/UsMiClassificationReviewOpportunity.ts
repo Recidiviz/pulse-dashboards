@@ -26,7 +26,7 @@ import { Client } from "../Client";
 import { TransformFunction } from "../subscriptions";
 import { fieldToDate, OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
-import { OpportunityRequirement } from "./types";
+import { OpportunityRequirement, WithCaseNotes } from "./types";
 
 export type UsMiClassificationReviewReferralRecord = {
   eligibleCriteria: {
@@ -37,7 +37,7 @@ export type UsMiClassificationReviewReferralRecord = {
       eligibleDate: Date;
     };
   };
-};
+} & WithCaseNotes;
 
 export const getRecordTransformer = (client: Client) => {
   const transformer: TransformFunction<
@@ -47,7 +47,7 @@ export const getRecordTransformer = (client: Client) => {
       throw new Error("No record found");
     }
 
-    const { stateCode, externalId, eligibleCriteria } = record;
+    const { stateCode, externalId, eligibleCriteria, caseNotes } = record;
 
     // The copy for these eligibility dates are the same. They are different
     // in TES, but we can treat them as the same thing in the frontend
@@ -77,6 +77,7 @@ export const getRecordTransformer = (client: Client) => {
           eligibleDate: fieldToDate(eligibleDate),
         },
       },
+      caseNotes,
     };
   };
   return transformer;
@@ -88,6 +89,7 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
 > {
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "ClientProfileDetails",
+    "CaseNotes",
   ];
 
   constructor(client: Client) {

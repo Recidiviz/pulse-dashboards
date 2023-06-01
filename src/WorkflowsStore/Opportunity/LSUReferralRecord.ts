@@ -75,6 +75,7 @@ export type LSUReferralRecord = {
     txDischargeDate?: string;
     txNoteTitle?: string;
     txNoteBody?: string;
+    caseNumbers?: string[];
   };
   eligibleCriteria: LSUEarnedDischargeEligibleCriteria & {
     usIdNoActiveNco: {
