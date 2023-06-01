@@ -47,6 +47,7 @@ const Input = styled.input`
   background-repeat: no-repeat;
   background-position: left 4px center;
   background-size: 0.75em;
+  text-overflow: ellipsis;
 
   &:focus {
     border: 1px solid ${rgba(palette.slate, 0.15)};

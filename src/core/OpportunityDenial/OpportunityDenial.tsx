@@ -18,6 +18,8 @@
 import { Dropdown, DropdownMenu, palette } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
 import { DenialMenuOptions } from "./DenialMenuOptions";
 import { EligibleMenuOption } from "./EligibleMenuOption";
@@ -31,9 +33,8 @@ export const IconPad = styled.span`
   display: inline-block;
   margin-right: 8px;
 `;
-
-const DropdownContainer = styled.div`
-  min-width: 21rem;
+const DropdownContainer = styled.div<{ isMobile: boolean }>`
+  min-width: ${({ isMobile }) => (isMobile ? 16 : 21)}rem;
   max-width: 26rem;
 
   > button {
@@ -58,13 +59,23 @@ export function OpportunityDenial({
   opportunity,
 }: {
   opportunity: Opportunity;
-}): JSX.Element {
+}): JSX.Element | null {
+  const {
+    workflowsStore: { featureVariants: responsiveRevamp },
+  } = useRootStore();
+  const { isLaptop, isTablet } = useIsMobile(true);
+
   return (
     <Wrapper>
       <Dropdown>
         <MenuButton opportunity={opportunity} />
-        <DropdownMenu>
-          <DropdownContainer className="OpportunityDenialDropdown">
+        <DropdownMenu
+          alignment={!!responsiveRevamp && isLaptop ? "right" : "left"}
+        >
+          <DropdownContainer
+            isMobile={!!responsiveRevamp && isTablet}
+            className="OpportunityDenialDropdown"
+          >
             {!opportunity.isAlert && (
               <EligibleMenuOption opportunity={opportunity} />
             )}

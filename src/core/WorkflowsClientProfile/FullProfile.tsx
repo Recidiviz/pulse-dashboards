@@ -23,6 +23,8 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
+import { toTitleCase } from "../../utils";
 import { Client } from "../../WorkflowsStore";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { usePersonTracking } from "../hooks/usePersonTracking";
@@ -47,23 +49,22 @@ import {
   ClientProfileProps,
   PersonProfileProps,
   ResidentProfileProps,
+  ResponsiveRevamp,
 } from "./types";
 
 const COLUMNS = "1fr 1.2fr";
 
 const GUTTER = rem(spacing.sm * 15);
+const SMALL_GUTTER = rem(spacing.md);
 
 const Wrapper = styled.div<{
   responsiveRevamp: boolean;
 }>`
   display: grid;
   column-gap: ${GUTTER};
-  grid-template-areas:
-    "header header"
-    ". .";
-  grid-template-columns: ${COLUMNS};
   padding-bottom: ${rem(spacing.lg)};
-  row-gap: ${rem(spacing.lg)};
+  row-gap: ${({ responsiveRevamp }) =>
+    responsiveRevamp ? SMALL_GUTTER : rem(spacing.lg)};
 
   ${({ responsiveRevamp }) =>
     responsiveRevamp &&
@@ -72,33 +73,61 @@ const Wrapper = styled.div<{
     }`}
 `;
 
-const Header = styled.div<{ responsiveRevamp?: boolean }>`
+const Header = styled.div<{ responsiveRevamp: boolean; isMobile: boolean }>`
   border-bottom: 1px solid ${rgba(palette.slate, 0.15)};
-  column-gap: ${GUTTER};
+  gap: ${({ isMobile }) => (isMobile ? rem(spacing.xl) : SMALL_GUTTER)};
   display: grid;
-  grid-area: header;
-  grid-template-columns: ${COLUMNS};
+  grid-template-columns: ${({ isMobile }) => (isMobile ? `100%` : COLUMNS)};
   padding-top: ${({ responsiveRevamp }) =>
     responsiveRevamp ? 0 : rem(spacing.lg)};
   padding-bottom: ${rem(spacing.md)};
   cursor: default;
+  min-width: ${rem(280)};
 `;
 
-const ContactDetailsContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
+const Content = styled.div<{
+  responsiveRevamp: boolean;
+  isMobile: boolean;
+}>`
+  display: grid;
+  gap: ${({ responsiveRevamp }) => (responsiveRevamp ? SMALL_GUTTER : GUTTER)};
+  grid-template-columns: ${({ isMobile }) => (isMobile ? `100%` : COLUMNS)};
+
+  & > div {
+    :last-child {
+      ${({ isMobile }) => isMobile && `order: -1`}
+    }
+  }
 `;
 
-const ContactCell = styled.dl<{ flexBasis?: string }>`
+const ContactDetailsContainer = styled.div<{
+  responsiveRevamp: boolean;
+  isMobile: boolean;
+}>`
+  display: grid;
+  gap: ${({ responsiveRevamp }) => (responsiveRevamp ? rem(spacing.md) : 0)};
+  grid-template-columns: ${({ responsiveRevamp, isMobile }) =>
+    isMobile
+      ? `repeat(auto-fill, minmax(${rem(176)}, 1fr));`
+      : `${responsiveRevamp ? "1fr" : "2fr"} 1fr 1fr;`};
+
+  ${({ responsiveRevamp, isMobile }) =>
+    responsiveRevamp &&
+    `max-width: ${isMobile ? "unset" : rem(500)}; justify-self: ${
+      isMobile ? "unset" : "end"
+    };`}
+`;
+
+const ContactCell = styled.dl<{ responsiveRevamp: boolean }>`
   ${typography.Sans14}
   color: ${palette.slate70};
   margin: 0;
-  flex-basis: ${(props) => props.flexBasis || "auto"};
-  padding: 0 ${rem(spacing.md)};
+  padding: ${({ responsiveRevamp }) =>
+    responsiveRevamp ? 0 : `0 ${rem(spacing.md)}`};
 
   :not(:last-child) {
-    border-right: 1px solid ${palette.slate20};
+    ${({ responsiveRevamp }) =>
+      !responsiveRevamp && `border-right: 1px solid ${palette.slate20};`}
   }
 `;
 
@@ -118,29 +147,42 @@ const ContactValue = styled.dd<{ alignRight?: boolean }>`
   }
 `;
 
-const SectionHeading = styled(Sans16)`
-  color: ${palette.pine2};
+const SectionHeading = styled(Sans16)<{ responsiveRevamp: boolean }>`
+  color: ${({ responsiveRevamp }) =>
+    responsiveRevamp ? palette.slate80 : palette.pine2};
   margin-bottom: ${rem(spacing.md)};
 `;
 
 export const DETAILS_NOT_AVAILABLE_STRING = "currently not available";
 
-function AdditionalDetails({ person }: PersonProfileProps): React.ReactElement {
+function AdditionalDetails({
+  person,
+  responsiveRevamp,
+}: PersonProfileProps & ResponsiveRevamp): React.ReactElement {
   if (person instanceof Client) {
-    return <ClientDetails client={person} />;
+    return (
+      <ClientDetails responsiveRevamp={responsiveRevamp} client={person} />
+    );
   }
 
   if (person instanceof Resident) {
-    return <ResidentDetails resident={person} />;
+    return (
+      <ResidentDetails responsiveRevamp={responsiveRevamp} resident={person} />
+    );
   }
 
   return <div />;
 }
 
-function ClientDetails({ client }: ClientProfileProps): React.ReactElement {
+function ClientDetails({
+  client,
+  responsiveRevamp,
+}: ClientProfileProps & ResponsiveRevamp): React.ReactElement {
   return (
     <>
-      <SectionHeading>Progress toward success</SectionHeading>
+      <SectionHeading responsiveRevamp={responsiveRevamp}>
+        Progress toward success
+      </SectionHeading>
       <Divider />
       <SupervisionProgress client={client} />
       <Divider />
@@ -179,10 +221,13 @@ function ClientDetails({ client }: ClientProfileProps): React.ReactElement {
 
 function ResidentDetails({
   resident,
-}: ResidentProfileProps): React.ReactElement {
+  responsiveRevamp,
+}: ResidentProfileProps & ResponsiveRevamp): React.ReactElement {
   return (
     <>
-      <SectionHeading>Progress toward success</SectionHeading>
+      <SectionHeading responsiveRevamp={responsiveRevamp}>
+        Progress toward success
+      </SectionHeading>
       <Divider />
       {
         // MO residents don't have start/end dates or officer IDs in their resident record
@@ -207,13 +252,13 @@ function ResidentDetails({
   );
 }
 
-const PreferredName: React.FC<ClientProfileProps> = observer(
-  function PreferredName({ client }): React.ReactElement {
+const PreferredName: React.FC<ClientProfileProps & ResponsiveRevamp> = observer(
+  function PreferredName({ client, responsiveRevamp }): React.ReactElement {
     const name =
       client.preferredName || toJS(client.fullName).givenNames || "Unknown";
     return (
       <ClientDetailsInput
-        text={name}
+        text={responsiveRevamp ? toTitleCase(name) : name}
         client={client}
         updateType="preferredName"
       />
@@ -221,30 +266,37 @@ const PreferredName: React.FC<ClientProfileProps> = observer(
   }
 );
 
+type ContactDetailsType = { isMobile: boolean } & PersonProfileProps &
+  ResponsiveRevamp;
+
 function ContactDetails({
   person,
-}: PersonProfileProps): React.ReactElement | null {
+  responsiveRevamp,
+  isMobile,
+}: ContactDetailsType): React.ReactElement | null {
   if (!(person instanceof Client)) return null;
 
   return (
-    <ContactDetailsContainer>
-      <ContactCell flexBasis="50%">
-        <div>
-          <ContactValue className="fs-exclude" alignRight>
-            {person.formattedPhoneNumber || "Phone number unavailable"}
-          </ContactValue>
-          <ContactValue className="fs-exclude" alignRight>
-            {person.emailAddress || "Email unavailable"}
-          </ContactValue>
-        </div>
-      </ContactCell>
-      <ContactCell flexBasis="25%">
-        <ContactLabel>Preferred Name</ContactLabel>
-        <ContactValue>
-          <PreferredName client={person} />
+    <ContactDetailsContainer
+      responsiveRevamp={responsiveRevamp}
+      isMobile={responsiveRevamp && isMobile}
+    >
+      <ContactCell responsiveRevamp={responsiveRevamp}>
+        {responsiveRevamp && <ContactLabel>Contacts</ContactLabel>}
+        <ContactValue className="fs-exclude" alignRight={!responsiveRevamp}>
+          {person.formattedPhoneNumber || "Phone number unavailable"}
+        </ContactValue>
+        <ContactValue className="fs-exclude" alignRight={!responsiveRevamp}>
+          {person.emailAddress || "Email unavailable"}
         </ContactValue>
       </ContactCell>
-      <ContactCell flexBasis="25%">
+      <ContactCell responsiveRevamp={responsiveRevamp}>
+        <ContactLabel>Preferred Name</ContactLabel>
+        <ContactValue>
+          <PreferredName responsiveRevamp={responsiveRevamp} client={person} />
+        </ContactValue>
+      </ContactCell>
+      <ContactCell responsiveRevamp={responsiveRevamp}>
         <ContactLabel>Preferred Contact</ContactLabel>
         <ContactValue>
           <PreferredContact client={person} />
@@ -259,6 +311,7 @@ export const FullProfile = observer(
     const {
       workflowsStore: { selectedPerson: person, featureVariants },
     } = useRootStore();
+    const { isTablet } = useIsMobile(true);
 
     usePersonTracking(person, () => {
       person?.trackProfileViewed();
@@ -269,24 +322,43 @@ export const FullProfile = observer(
     return (
       <WorkflowsNavLayout>
         <Wrapper responsiveRevamp={!!featureVariants.responsiveRevamp}>
-          <Header responsiveRevamp={!!featureVariants.responsiveRevamp}>
+          <Header
+            isMobile={!!featureVariants.responsiveRevamp && isTablet}
+            responsiveRevamp={!!featureVariants.responsiveRevamp}
+          >
             <ProfileCapsule
               avatarSize="lg"
               person={person}
-              textSize="lg"
+              textSize={featureVariants.responsiveRevamp ? "sm" : "lg"}
               hideTooltip
               nameHoverState={false}
             />
-            <ContactDetails person={person} />
+            <ContactDetails
+              person={person}
+              responsiveRevamp={!!featureVariants.responsiveRevamp}
+              isMobile={!!featureVariants.responsiveRevamp && isTablet}
+            />
           </Header>
-          <div className="ProfileDetails">
-            <AdditionalDetails person={person} />
-          </div>
-          <div>
-            <SectionHeading>Opportunities</SectionHeading>
-            <OpportunitiesAccordion person={person} />
-            <PreviewTasks person={person} showSnoozeDropdown={false} />
-          </div>
+          <Content
+            isMobile={!!featureVariants.responsiveRevamp && isTablet}
+            responsiveRevamp={!!featureVariants.responsiveRevamp}
+          >
+            <div className="ProfileDetails">
+              <AdditionalDetails
+                responsiveRevamp={!!featureVariants.responsiveRevamp}
+                person={person}
+              />
+            </div>
+            <div>
+              <SectionHeading
+                responsiveRevamp={!!featureVariants.responsiveRevamp}
+              >
+                Opportunities
+              </SectionHeading>
+              <OpportunitiesAccordion person={person} />
+              <PreviewTasks person={person} showSnoozeDropdown={false} />
+            </div>
+          </Content>
         </Wrapper>
       </WorkflowsNavLayout>
     );
