@@ -15,21 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { omit } from "lodash";
+
 import { transformReferral } from "../UsMeEarlyTerminationReferralRecord";
+
+const defaultEligibleCriteria = {
+  usMeSupervisionIsNotIcIn: null,
+  usMePaidAllOwedRestitution: null,
+  noConvictionWithin6Months: null,
+  onMediumSupervisionLevelOrLower: {
+    supervisionLevel: "MEDIUM",
+  },
+  supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
+    eligibleDate: "2022-01-03",
+  },
+};
 
 test("transform record with restitution case", () => {
   const rawRecord = {
     stateCode: "US_ME",
     externalId: "abc123",
     eligibleCriteria: {
+      ...defaultEligibleCriteria,
       usMePaidAllOwedRestitution: { amountOwed: 0 },
-      noConvictionWithin6Months: null,
-      onMediumSupervisionLevelOrLower: {
-        supervisionLevel: "MEDIUM",
-      },
-      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
-        eligibleDate: "2022-01-03",
-      },
     },
     ineligibleCriteria: {},
   };
@@ -41,16 +49,7 @@ test("transform record without restitution case", () => {
   const rawRecord = {
     stateCode: "US_ME",
     externalId: "abc123",
-    eligibleCriteria: {
-      usMePaidAllOwedRestitution: null,
-      noConvictionWithin6Months: null,
-      onMediumSupervisionLevelOrLower: {
-        supervisionLevel: "MEDIUM",
-      },
-      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
-        eligibleDate: "2022-01-03",
-      },
-    },
+    eligibleCriteria: defaultEligibleCriteria,
     ineligibleCriteria: {},
   };
 
@@ -61,15 +60,10 @@ test("transform record with restitution ineligibleCriteria", () => {
   const rawRecord = {
     stateCode: "US_ME",
     externalId: "abc123",
-    eligibleCriteria: {
-      noConvictionWithin6Months: null,
-      onMediumSupervisionLevelOrLower: {
-        supervisionLevel: "MEDIUM",
-      },
-      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
-        eligibleDate: "2022-01-03",
-      },
-    },
+    eligibleCriteria: omit(
+      defaultEligibleCriteria,
+      "usMePaidAllOwedRestitution"
+    ),
     ineligibleCriteria: {
       usMePaidAllOwedRestitution: {
         amountOwed: 500,
@@ -84,15 +78,10 @@ test("transform record with pending violation ineligibleCriteria", () => {
   const rawRecord = {
     stateCode: "US_ME",
     externalId: "abc123",
-    eligibleCriteria: {
-      noConvictionWithin6Months: null,
-      onMediumSupervisionLevelOrLower: {
-        supervisionLevel: "MEDIUM",
-      },
-      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
-        eligibleDate: "2022-01-03",
-      },
-    },
+    eligibleCriteria: omit(
+      defaultEligibleCriteria,
+      "usMeNoPendingViolationsWhileSupervised"
+    ),
     ineligibleCriteria: {
       usMeNoPendingViolationsWhileSupervised: {
         currentStatus: "Pending Violation",
@@ -109,16 +98,28 @@ test("transform record with null pending violation criteria", () => {
     stateCode: "US_ME",
     externalId: "abc123",
     eligibleCriteria: {
-      noConvictionWithin6Months: null,
-      onMediumSupervisionLevelOrLower: {
-        supervisionLevel: "MEDIUM",
-      },
-      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
-        eligibleDate: "2022-01-03",
-      },
+      ...defaultEligibleCriteria,
       usMeNoPendingViolationsWhileSupervised: null,
     },
     ineligibleCriteria: {},
+  };
+
+  expect(transformReferral(rawRecord)).toMatchSnapshot();
+});
+
+test("transform record with supervision past ineligibleCriteria", () => {
+  const rawRecord = {
+    stateCode: "US_ME",
+    externalId: "abc123",
+    eligibleCriteria: omit(
+      defaultEligibleCriteria,
+      "supervisionPastHalfFullTermReleaseDateFromSupervisionStart"
+    ),
+    ineligibleCriteria: {
+      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
+        eligibleDate: "2024-01-03",
+      },
+    },
   };
 
   expect(transformReferral(rawRecord)).toMatchSnapshot();

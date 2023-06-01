@@ -871,6 +871,19 @@ export const usMeEarlyTerminationAlmostEligiblePendingViolationClientRecord: Req
     emailAddress: "mc@example.com",
   };
 
+export const usMeEarlyTerminationAlmostEligibleSupervisionStartClientRecord: RequireKeys<ClientRecord> =
+  {
+    ...usMeEarlyTerminationEligibleClientRecord,
+    recordId: "us_nd_012",
+    personName: {
+      givenNames: "TINA",
+      surname: "TURNER",
+    },
+    personExternalId: "012",
+    pseudonymizedId: "p012",
+    emailAddress: "tt@example.com",
+  };
+
 export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRecord =
   {
     stateCode: "US_ME",
@@ -948,6 +961,33 @@ export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarl
       usMeNoPendingViolationsWhileSupervised: {
         currentStatus: "PENDING VIOLATION",
         violationDate: parseISO("2023-01-01"),
+      },
+    },
+    caseNotes: {
+      foo: [
+        {
+          noteTitle: "A title",
+          noteBody: "A body",
+          eventDate: parseISO("2022-06-28"),
+        },
+      ],
+    },
+  };
+export const usMeEarlyTerminationSupervisionStartAlmostEligibleReferralRecord: UsMeEarlyTerminationReferralRecord =
+  {
+    stateCode: "US_ME",
+    externalId: "012",
+    eligibleCriteria: {
+      usMePaidAllOwedRestitution: {},
+      noConvictionWithin6Months: {},
+      onMediumSupervisionLevelOrLower: {
+        supervisionLevel: "MEDIUM",
+      },
+      usMeNoPendingViolationsWhileSupervised: {},
+    },
+    ineligibleCriteria: {
+      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
+        eligibleDate: parseISO("2024-04-03"),
       },
     },
     caseNotes: {

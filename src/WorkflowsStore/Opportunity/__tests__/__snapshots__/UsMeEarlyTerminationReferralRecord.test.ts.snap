@@ -12,6 +12,7 @@ Object {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
     "usMeNoPendingViolationsWhileSupervised": Object {},
+    "usMePaidAllOwedRestitution": Object {},
   },
   "externalId": "abc123",
   "ineligibleCriteria": Object {},
@@ -30,6 +31,7 @@ Object {
     "supervisionPastHalfFullTermReleaseDateFromSupervisionStart": Object {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
+    "usMePaidAllOwedRestitution": Object {},
   },
   "externalId": "abc123",
   "ineligibleCriteria": Object {
@@ -79,6 +81,26 @@ Object {
   "ineligibleCriteria": Object {
     "usMePaidAllOwedRestitution": Object {
       "amountOwed": 500,
+    },
+  },
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`transform record with supervision past ineligibleCriteria 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "noConvictionWithin6Months": Object {},
+    "onMediumSupervisionLevelOrLower": Object {
+      "supervisionLevel": "MEDIUM",
+    },
+    "usMePaidAllOwedRestitution": Object {},
+  },
+  "externalId": "abc123",
+  "ineligibleCriteria": Object {
+    "supervisionPastHalfFullTermReleaseDateFromSupervisionStart": Object {
+      "eligibleDate": 2024-01-03T00:00:00.000Z,
     },
   },
   "stateCode": "US_ME",
