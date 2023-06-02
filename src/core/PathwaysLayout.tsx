@@ -24,7 +24,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 
 import IE11Banner from "../components/IE11Banner";
-import flags from "../flags";
+import { useRootStore } from "../components/StoreProvider";
 import useIntercom from "../hooks/useIntercom";
 import useIsMobile from "../hooks/useIsMobile";
 import CoreStoreProvider from "./CoreStoreProvider";
@@ -43,6 +43,11 @@ const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   const currentView = pathname.split("/")[1];
+  const {
+    workflowsStore: {
+      featureVariants: { responsiveRevamp },
+    },
+  } = useRootStore();
 
   return (
     <CoreStoreProvider>
@@ -53,7 +58,7 @@ const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
             Operations:
               currentView === PATHWAYS_VIEWS.operations &&
               !isMobile &&
-              !flags.responsiveRevamp,
+              !responsiveRevamp,
             Workflows: currentView === PATHWAYS_VIEWS.workflows,
           })}
         >
@@ -61,7 +66,7 @@ const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
             <ViewNavigation />
           ) : null}
           {currentView === PATHWAYS_VIEWS.operations &&
-          flags.responsiveRevamp &&
+          responsiveRevamp &&
           !isMobile ? (
             <NavigationLayout backgroundColor={palette.marble3} />
           ) : null}

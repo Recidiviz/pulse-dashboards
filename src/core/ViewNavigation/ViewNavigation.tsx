@@ -25,7 +25,7 @@ import { ReactComponent as MethodologyLogo } from "../../assets/static/images/me
 import { ReactComponent as OperationsLogo } from "../../assets/static/images/operations.svg";
 import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathways.svg";
 import { ReactComponent as WorkflowsLogo } from "../../assets/static/images/workflows.svg";
-import flags from "../../flags";
+import { useRootStore } from "../../components/StoreProvider";
 import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
 import { TenantId } from "../models/types";
@@ -170,6 +170,11 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
   const { pathname } = useLocation();
   const view = pathname.split("/")[1];
   const { currentTenantId, userStore } = useCoreStore();
+  const {
+    workflowsStore: {
+      featureVariants: { responsiveRevamp },
+    },
+  } = useRootStore();
 
   const navigationLayout = userStore.userAllowedNavigation;
   if (!navigationLayout || !currentTenantId) return <div />;
@@ -178,7 +183,7 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
   const enableOperations = !!navigationLayout.operations;
   const enableWorkflows = !!navigationLayout.workflows;
 
-  if (flags.responsiveRevamp && !drawer) return null;
+  if (responsiveRevamp && !drawer) return null;
 
   if (drawer) {
     return (

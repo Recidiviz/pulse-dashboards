@@ -136,14 +136,22 @@ type FeatureVariantMapping = Record<
   { activeDate?: Timestamp; variant?: string }
 >;
 export type FeatureVariantRecord = Partial<FeatureVariantMapping>;
-export const defaultFeatureVariantsActive: FeatureVariantMapping = {
-  TEST: {},
-  CompliantReportingAlmostEligible: {},
-  usTnExpiration: {},
-  usTnExpirationSubmitToTomis: {},
-  usMiPrereleaseOpportunities: {},
-  responsiveRevamp: {},
-};
+export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
+  process.env.REACT_APP_DEPLOY_ENV === "production"
+    ? {
+        CompliantReportingAlmostEligible: {},
+        usTnExpiration: {},
+        usTnExpirationSubmitToTomis: {},
+        usMiPrereleaseOpportunities: {},
+      }
+    : {
+        TEST: {},
+        CompliantReportingAlmostEligible: {},
+        usTnExpiration: {},
+        usTnExpirationSubmitToTomis: {},
+        usMiPrereleaseOpportunities: {},
+        responsiveRevamp: {},
+      };
 
 /**
  * Properties that may be derived from user data but are not directly persisted in Firestore

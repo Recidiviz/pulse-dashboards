@@ -40,6 +40,7 @@ beforeEach(() => {
   });
   (useRootStore as jest.Mock).mockReturnValue({
     userStore: { userAllowedNavigation: {} },
+    workflowsStore: { featureVariants: {} },
   });
   filtersStore.setFilters = mockSetFilters;
 });

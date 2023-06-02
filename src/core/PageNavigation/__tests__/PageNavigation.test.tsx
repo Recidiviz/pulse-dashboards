@@ -64,6 +64,9 @@ describe("CoreLayout tests", () => {
         },
       },
       currentTenantId: "US_ID",
+      workflowsStore: {
+        featureVariants: {},
+      },
     });
     (useUserStore as jest.Mock).mockReturnValue({
       user: {

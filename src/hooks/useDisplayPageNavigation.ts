@@ -18,10 +18,14 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import { useRootStore } from "../components/StoreProvider";
-import flags from "../flags";
 
 const useDisplayPageNavigation = (): boolean => {
-  const { userStore } = useRootStore();
+  const {
+    userStore,
+    workflowsStore: {
+      featureVariants: { responsiveRevamp },
+    },
+  } = useRootStore();
   const { pathname } = useLocation();
   const view = pathname.split("/")[1];
   const navigationLayout = userStore.userAllowedNavigation;
@@ -38,7 +42,7 @@ const useDisplayPageNavigation = (): boolean => {
     setIsDisplayPageNavigation(pageOptions.length > 1);
   }, [pageOptions]);
 
-  return isDisplayPageNavigation || flags.responsiveRevamp;
+  return isDisplayPageNavigation || !!responsiveRevamp;
 };
 
 export default useDisplayPageNavigation;
