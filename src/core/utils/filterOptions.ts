@@ -25,6 +25,7 @@ import {
   US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
+import { PathwaysTenants } from "../../RootStore/types";
 import { AgeGroup, Gender } from "../models/types";
 import {
   FilterOption,
@@ -2098,7 +2099,7 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
 };
 
-export default {
+const FilterOptions: Record<PathwaysTenants | "US_DEMO", PopulationFilters> = {
   [US_CO]: CoPopulationFilterOptions,
   [US_ID]: IdPopulationFilterOptions,
   [US_TN]: TnPopulationFilterOptions,
@@ -2109,3 +2110,5 @@ export default {
   [US_ND]: NdPopulationFilterOptions,
   [US_DEMO]: DemoPopulationFilterOptions,
 } as const;
+
+export default FilterOptions;

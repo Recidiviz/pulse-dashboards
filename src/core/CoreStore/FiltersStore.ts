@@ -28,6 +28,7 @@ import {
 import { QueryParamConfigMap } from "use-query-params";
 
 import { US_DEMO } from "../../RootStore/TenantStore/pathwaysTenants";
+import { isPathwaysTenantId, PathwaysTenants } from "../../RootStore/types";
 import { isDemoMode } from "../../utils/isDemoMode";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import { MonthOptions } from "../PopulationTimeSeriesChart/helpers";
@@ -113,6 +114,12 @@ export default class FiltersStore {
     this.setFilters(defaultPopulationFilterValues);
   }
 
+  get pathwaysTenantId(): PathwaysTenants | undefined {
+    if (isPathwaysTenantId(this.rootStore.currentTenantId)) {
+      return this.rootStore.currentTenantId;
+    }
+  }
+
   get enabledFiltersDefaultQueryString(): QueryParamConfigMap {
     const { current: metric } = this.rootStore.metricsStore;
     const query = {} as QueryParamConfigMap;
@@ -181,8 +188,8 @@ export default class FiltersStore {
 
   get enabledFilters(): EnabledFiltersByMetric {
     // @ts-ignore
-    return this.rootStore.currentTenantId
-      ? enabledFilters[this.rootStore.currentTenantId]
+    return this.pathwaysTenantId
+      ? enabledFilters[this.pathwaysTenantId]
       : undefined;
   }
 
@@ -195,11 +202,9 @@ export default class FiltersStore {
   }
 
   get filterOptions(): PopulationFilters {
-    return this.rootStore.currentTenantId
+    return this.pathwaysTenantId
       ? filterOptions[
-          isDemoMode() || isOfflineMode()
-            ? US_DEMO
-            : this.rootStore.currentTenantId
+          isDemoMode() || isOfflineMode() ? US_DEMO : this.pathwaysTenantId
         ]
       : DefaultPopulationFilterOptions;
   }

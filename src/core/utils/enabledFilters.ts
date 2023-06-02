@@ -25,6 +25,7 @@ import {
   US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
+import { PathwaysTenants } from "../../RootStore/types";
 import { EnabledFiltersByMetric } from "../types/filters";
 import { FILTER_TYPES } from "./constants";
 
@@ -565,7 +566,10 @@ export const NdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
 };
 
-export default {
+const AllEnabledFilterOptions: Record<
+  PathwaysTenants,
+  Partial<EnabledFiltersByMetric>
+> = {
   [US_CO]: CoEnabledFilterOptions,
   [US_ID]: IdEnabledFilterOptions,
   [US_TN]: TnEnabledFilterOptions,
@@ -575,3 +579,5 @@ export default {
   [US_NC]: NcEnabledFilterOptions,
   [US_ND]: NdEnabledFilterOptions,
 } as const;
+
+export default AllEnabledFilterOptions;

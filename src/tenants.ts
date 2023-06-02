@@ -36,8 +36,8 @@ type Tenants = {
 };
 
 const TENANTS: Tenants = {
-  [pathways.US_ID]: US_ID_CONFIG,
   [pathways.US_CO]: US_CO_CONFIG,
+  [pathways.US_ID]: US_ID_CONFIG,
   [pathways.US_ME]: US_ME_CONFIG,
   [pathways.US_MI]: US_MI_CONFIG,
   [lantern.US_MO]: US_MO_CONFIG,
@@ -62,14 +62,13 @@ const TENANTS: Tenants = {
         searchTitleOverride: "officer",
       },
     },
-    // US_PA is the last non-Pathways tenant
-    availableStateCodes: pathways.PATHWAYS_TENANTS,
+    availableStateCodes: [...pathways.PATHWAYS_TENANTS],
     enableUserRestrictions: true,
   },
   LANTERN: {
     name: "Lantern",
     stateCode: "Lantern",
-    availableStateCodes: lantern.LANTERN_TENANTS,
+    availableStateCodes: [...lantern.LANTERN_TENANTS],
     enableUserRestrictions: false,
   },
 };

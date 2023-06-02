@@ -23,10 +23,6 @@ export const US_MO = "US_MO";
 export const US_NC = "US_NC";
 export const US_ND = "US_ND";
 export const US_TN = "US_TN";
-// Hack alert - US_PA is not yet a Pathways tenant - but adding it here to enable US_MO (the other LANTERN tenant) access to Pathways.
-// The navigation set up in tenants.ts only allows US_PA access to /revocations,
-// but adding it as a Pathways tenant allows LANTERN tenants to use the Pathways allowed navigation logic, thus enabling Pathways for US_MO.
-export const US_PA = "US_PA";
 export const US_DEMO = "US_DEMO";
 
 export const PATHWAYS_TENANTS = [
@@ -39,5 +35,4 @@ export const PATHWAYS_TENANTS = [
   US_MO,
   US_NC,
   US_ND,
-  US_PA,
-];
+] as const;

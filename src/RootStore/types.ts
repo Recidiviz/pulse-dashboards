@@ -21,6 +21,13 @@ import * as lantern from "./TenantStore/lanternTenants";
 import * as pathways from "./TenantStore/pathwaysTenants";
 
 export type LanternTenants = typeof lantern.LANTERN_TENANTS[number];
+export type PathwaysTenants = typeof pathways.PATHWAYS_TENANTS[number];
+
+export function isPathwaysTenantId(
+  tenantId: PathwaysTenants | undefined
+): tenantId is PathwaysTenants {
+  return pathways.PATHWAYS_TENANTS.includes(tenantId as PathwaysTenants);
+}
 
 const TenantIds = [
   lantern.US_MO,

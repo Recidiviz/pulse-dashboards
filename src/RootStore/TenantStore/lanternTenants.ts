@@ -23,7 +23,7 @@ export const US_MO = "US_MO";
 export const US_PA = "US_PA";
 export const US_DEMO = "US_DEMO";
 
-export const LANTERN_TENANTS = [US_MO, US_PA];
+export const LANTERN_TENANTS = [US_MO, US_PA] as const;
 
 export const TRANSLATIONS = {
   US_MO: US_MO_TRANSLATIONS,
