@@ -22,7 +22,6 @@ import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import { PastFTRDOpportunityBase } from "./PastFTRDOpportunityBase";
 import { basePastFTRDSchema } from "./PastFTRDReferralRecord";
-import { getFeatureVariantValidator } from "./utils";
 
 export const usMiPastFTRDSchema = basePastFTRDSchema;
 export type UsMiPastFTRDReferralRecord = z.infer<typeof usMiPastFTRDSchema>;
@@ -32,12 +31,7 @@ export class UsMiPastFTRDOpportunity extends PastFTRDOpportunityBase<UsMiPastFTR
   readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MI;
 
   constructor(client: Client) {
-    super(
-      client,
-      "usMiPastFTRD",
-      usMiPastFTRDSchema.parse,
-      getFeatureVariantValidator(client, "usMiPrereleaseOpportunities")
-    );
+    super(client, "usMiPastFTRD", usMiPastFTRDSchema.parse);
   }
 
   denialReasonsMap = {

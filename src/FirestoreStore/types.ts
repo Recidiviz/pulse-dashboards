@@ -123,7 +123,6 @@ export type FeatureVariant =
   | "CompliantReportingAlmostEligible"
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
-  | "usMiPrereleaseOpportunities"
   | "responsiveRevamp";
 /**
  * For each feature, an optional activeDate can control when the user gets access.
@@ -142,14 +141,12 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         CompliantReportingAlmostEligible: {},
         usTnExpiration: {},
         usTnExpirationSubmitToTomis: {},
-        usMiPrereleaseOpportunities: {},
       }
     : {
         TEST: {},
         CompliantReportingAlmostEligible: {},
         usTnExpiration: {},
         usTnExpirationSubmitToTomis: {},
-        usMiPrereleaseOpportunities: {},
         responsiveRevamp: {},
       };
 

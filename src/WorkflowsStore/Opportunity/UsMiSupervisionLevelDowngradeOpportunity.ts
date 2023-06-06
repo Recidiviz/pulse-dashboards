@@ -30,11 +30,7 @@ import {
   UsMiSupervisionLevelDowngradeReferralRecord,
   usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
 } from "./UsMiSupervisionLevelDowngradeReferralRecord";
-import {
-  CriteriaCopy,
-  getFeatureVariantValidator,
-  hydrateCriteria,
-} from "./utils";
+import { CriteriaCopy, hydrateCriteria } from "./utils";
 
 const CRITERIA_COPY: CriteriaCopy<UsMiSupervisionLevelDowngradeReferralRecord> =
   {
@@ -78,11 +74,7 @@ export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
         (raw: string) =>
           client.rootStore.workflowsStore.formatSupervisionLevel(raw)
       ).parse,
-      getFeatureVariantValidator(
-        client,
-        "usMiPrereleaseOpportunities",
-        getValidator(client)
-      )
+      getValidator(client)
     );
 
     makeObservable(this, { requirementsMet: true });

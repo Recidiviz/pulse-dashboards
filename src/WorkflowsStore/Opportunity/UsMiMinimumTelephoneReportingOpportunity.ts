@@ -28,12 +28,7 @@ import {
   UsMiMinimumTelephoneReportingReferralRecord,
   usMiMinimumTelephoneReportingSchema,
 } from "./UsMiMinimumTelephoneReportingReferralRecord";
-import {
-  CriteriaCopy,
-  CriteriaFormatters,
-  getFeatureVariantValidator,
-  hydrateCriteria,
-} from "./utils";
+import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "./utils";
 
 const CRITERIA_FORMATTERS: CriteriaFormatters<UsMiMinimumTelephoneReportingReferralRecord> =
   {
@@ -115,8 +110,7 @@ export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
       client,
       "usMiMinimumTelephoneReporting",
       client.rootStore,
-      usMiMinimumTelephoneReportingSchema.parse,
-      getFeatureVariantValidator(client, "usMiPrereleaseOpportunities")
+      usMiMinimumTelephoneReportingSchema.parse
     );
 
     makeObservable(this, {
