@@ -268,6 +268,13 @@ export const usNdEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord>
     ],
     emailAddress: "jamie@example.com",
   };
+export const usNdEarlyTerminationAlmostEligibleClientRecord: RequireKeys<ClientRecord> =
+  {
+    ...usNdEarlyTerminationEligibleClientRecord,
+    recordId: "us_nd_111",
+    personExternalId: "111",
+    pseudonymizedId: "p111",
+  };
 
 export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRecord =
   {
@@ -288,7 +295,7 @@ export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRec
       statesAttorneyMailingAddress: "9234 Maine St., Ohiotown, ND",
       statesAttorneyPhoneNumber: "888-867-5309",
     },
-    criteria: {
+    eligibleCriteria: {
       supervisionPastEarlyDischargeDate: {
         eligibleDate: parseISO("2022-01-03"),
       },
@@ -302,10 +309,22 @@ export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRec
         supervisionType: "PROBATION",
       },
     },
+    ineligibleCriteria: {},
     metadata: {
       multipleSentences: true,
       outOfState: false,
       ICOut: false,
+    },
+  };
+
+export const usNdEarlyTerminationAlmostEligibleReferralRecord: UsNdEarlyTerminationReferralRecord =
+  {
+    ...usNdEarlyTerminationReferralRecord,
+    externalId: "111",
+    ineligibleCriteria: {
+      supervisionPastEarlyDischargeDate: {
+        eligibleDate: parseISO("2024-01-03"),
+      },
     },
   };
 

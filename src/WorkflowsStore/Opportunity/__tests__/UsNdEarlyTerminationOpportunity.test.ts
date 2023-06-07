@@ -22,6 +22,8 @@ import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
 import { DocumentSubscription } from "../../subscriptions";
 import {
+  usNdEarlyTerminationAlmostEligibleClientRecord,
+  usNdEarlyTerminationAlmostEligibleReferralRecord,
   usNdEarlyTerminationEligibleClientRecord,
   usNdEarlyTerminationReferralRecord,
 } from "../__fixtures__";
@@ -83,5 +85,36 @@ describe("fully eligible", () => {
 
   test("requirements met", () => {
     expect(opp.requirementsMet).toMatchSnapshot();
+  });
+});
+
+describe("almost eligible past discharge date coming up", () => {
+  beforeEach(() => {
+    createTestUnit(usNdEarlyTerminationAlmostEligibleClientRecord);
+
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.data = usNdEarlyTerminationAlmostEligibleReferralRecord;
+
+    updatesSub = opp.updatesSubscription;
+    updatesSub.isLoading = false;
+  });
+
+  test("requirements almost met", () => {
+    expect(opp.requirementsAlmostMet).toMatchSnapshot();
+  });
+
+  test("requirements met", () => {
+    expect(opp.requirementsMet).toMatchSnapshot();
+  });
+
+  test("almost eligible status message", () => {
+    expect(opp.almostEligibleStatusMessage).toEqual(
+      "Early termination date (as calculated by DOCSTARS) is within 60 days"
+    );
+  });
+
+  test("almost eligible", () => {
+    expect(opp.almostEligible).toBeTrue();
   });
 });

@@ -33,7 +33,7 @@ const rawRecord = {
     probationExpirationDate: "2024-05-01",
     probationOfficerFullName: "Fakename Officername",
   },
-  criteria: {
+  eligibleCriteria: {
     supervisionPastEarlyDischargeDate: { eligibleDate: "2022-01-03" },
     usNdImpliedValidEarlyTerminationSupervisionLevel: {
       supervisionLevel: "MEDIUM",
@@ -43,6 +43,7 @@ const rawRecord = {
     },
     usNdNotInActiveRevocationStatus: { revocationDate: null },
   },
+  ineligibleCriteria: {},
   metadata: {
     multipleSentences: false,
     outOfState: false,
@@ -53,10 +54,10 @@ test("transform record", () => {
   expect(usNdEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
 });
 
-test("criteria must not be empty", () => {
+test("eligibleCriteria must not be empty", () => {
   const testRecord = {
     ...rawRecord,
-    criteria: {
+    eligibleCriteria: {
       supervisionPastEarlyDischargeDate: {},
       usNdImpliedValidEarlyTerminationSupervisionLevel: {},
       usNdImpliedValidEarlyTerminationSentenceType: {},
@@ -72,7 +73,7 @@ test("criteria must not be empty", () => {
 test("criteria are required", () => {
   const testRecord = {
     ...rawRecord,
-    criteria: {},
+    eligibleCriteria: {},
   };
 
   expect(
@@ -83,8 +84,8 @@ test("criteria are required", () => {
 test("must not have revocation date", () => {
   const testRecord = {
     ...rawRecord,
-    criteria: {
-      ...rawRecord.criteria,
+    eligibleCriteria: {
+      ...rawRecord.eligibleCriteria,
       usNdNotInActiveRevocationStatus: { revocationDate: "2021-11-13" },
     },
   };
@@ -92,4 +93,17 @@ test("must not have revocation date", () => {
   expect(
     getParseErrorFormatted(usNdEarlyTerminationSchema.safeParse(testRecord))
   ).toMatchSnapshot();
+});
+
+test("ineligiibleCriteria", () => {
+  const testRecord = {
+    ...rawRecord,
+    ineligibleCriteria: {
+      supervisionPastEarlyDischargeDate: {
+        eligibleDate: "2024-01-03",
+      },
+    },
+  };
+
+  expect(usNdEarlyTerminationSchema.safeParse(testRecord)).toMatchSnapshot();
 });

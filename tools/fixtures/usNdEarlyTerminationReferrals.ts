@@ -38,7 +38,7 @@ const data: UsNdEarlyTerminationReferralRecordRaw[] = [
       statesAttorneyMailingAddress: "9234 Maine St., Ohiotown, ND",
       statesAttorneyPhoneNumber: "888-867-5309",
     },
-    criteria: {
+    eligibleCriteria: {
       supervisionPastEarlyDischargeDate: {
         eligibleDate: "2023-04-03",
       },
@@ -50,6 +50,47 @@ const data: UsNdEarlyTerminationReferralRecordRaw[] = [
       },
       usNdNotInActiveRevocationStatus: {
         revocationDate: null,
+      },
+    },
+    ineligibleCriteria: {},
+    metadata: {
+      multipleSentences: true,
+      outOfState: false,
+      ICOut: false,
+    },
+  },
+  {
+    stateCode: "US_ND",
+    externalId: "111",
+    formInformation: {
+      clientName: "Justin Timberlake",
+      convictionCounty: "NORTH_CENTRAL",
+      judgeName: "JUDGE 1",
+      priorCourtDate: "2020-01-03",
+      sentenceLengthMonths: "36",
+      crimeNames: ["CHARGE 1", "CHARGE 2"],
+      probationExpirationDate: "2022-12-02",
+      probationOfficerFullName: "Karl Fog",
+      criminalNumber: "12345",
+      judicialDistrictCode: "BISMARCK",
+      statesAttorneyEmailAddress: "state.attny.837@state.gov",
+      statesAttorneyMailingAddress: "9234 Maine St., Ohiotown, ND",
+      statesAttorneyPhoneNumber: "888-867-5309",
+    },
+    eligibleCriteria: {
+      usNdImpliedValidEarlyTerminationSentenceType: {
+        supervisionType: "SUSPENDED",
+      },
+      usNdImpliedValidEarlyTerminationSupervisionLevel: {
+        supervisionLevel: "MINIMUM",
+      },
+      usNdNotInActiveRevocationStatus: {
+        revocationDate: null,
+      },
+    },
+    ineligibleCriteria: {
+      supervisionPastEarlyDischargeDate: {
+        eligibleDate: "2045-04-03",
       },
     },
     metadata: {

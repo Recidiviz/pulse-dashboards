@@ -47,7 +47,7 @@ const DENIAL_REASONS_MAP = {
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
 const CRITERIA: Record<
-  keyof UsNdEarlyTerminationReferralRecord["criteria"],
+  keyof UsNdEarlyTerminationReferralRecord["eligibleCriteria"],
   Partial<OpportunityRequirement>
 > = {
   supervisionPastEarlyDischargeDate: {
@@ -87,31 +87,64 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
     );
 
     makeObservable(this, {
+      almostEligible: computed,
       requirementsMet: computed,
       requirementsAlmostMet: computed,
+      almostEligibleStatusMessage: computed,
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
     this.form = new EarlyTerminationForm(this.type, this, client.rootStore);
   }
 
+  get almostEligible(): boolean {
+    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
+  }
+
+  get almostEligibleStatusMessage(): string | undefined {
+    if (!this.almostEligible || !this.record) return;
+    const { ineligibleCriteria } = this.record;
+
+    if (ineligibleCriteria.supervisionPastEarlyDischargeDate?.eligibleDate) {
+      return `Early termination date (as calculated by DOCSTARS) is within 60 days`;
+    }
+  }
+
+  get requirementsAlmostMet(): OpportunityRequirement[] {
+    if (!this.record) return [];
+    const requirementsAlmostMet: OpportunityRequirement[] = [];
+
+    const { ineligibleCriteria } = this.record;
+
+    if (ineligibleCriteria.supervisionPastEarlyDischargeDate?.eligibleDate) {
+      requirementsAlmostMet.push({
+        text: `Early termination date (as calculated by DOCSTARS) is within 60 days`,
+        tooltip: CRITERIA.supervisionPastEarlyDischargeDate.tooltip,
+      });
+    }
+    return requirementsAlmostMet;
+  }
+
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
     const {
-      criteria: {
+      eligibleCriteria: {
         supervisionPastEarlyDischargeDate,
         usNdImpliedValidEarlyTerminationSupervisionLevel,
         usNdImpliedValidEarlyTerminationSentenceType,
       },
     } = this.record;
-
-    return [
-      {
+    const requirements = [];
+    if (supervisionPastEarlyDischargeDate?.eligibleDate) {
+      requirements.push({
         text: `Early termination date is ${formatWorkflowsDate(
           supervisionPastEarlyDischargeDate.eligibleDate
         )}`,
         tooltip: CRITERIA.supervisionPastEarlyDischargeDate.tooltip,
-      },
+      });
+    }
+    return [
+      ...requirements,
       {
         text: `Currently on ${usNdImpliedValidEarlyTerminationSupervisionLevel.supervisionLevel.toLowerCase()} supervision`,
         tooltip:
@@ -133,7 +166,7 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
     if (!this.record) return undefined;
 
     const {
-      criteria: { usNdImpliedValidEarlyTerminationSentenceType },
+      eligibleCriteria: { usNdImpliedValidEarlyTerminationSentenceType },
     } = this.record;
 
     if (

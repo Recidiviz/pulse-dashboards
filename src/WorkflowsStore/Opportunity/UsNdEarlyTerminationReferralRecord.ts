@@ -39,10 +39,12 @@ export const usNdEarlyTerminationSchema = z.object({
       statesAttorneyMailingAddress: z.string(),
     })
     .partial(),
-  criteria: z.object({
-    supervisionPastEarlyDischargeDate: z.object({
-      eligibleDate: dateStringSchema,
-    }),
+  eligibleCriteria: z.object({
+    supervisionPastEarlyDischargeDate: z
+      .object({
+        eligibleDate: dateStringSchema.optional(),
+      })
+      .optional(),
     usNdImpliedValidEarlyTerminationSupervisionLevel: z.object({
       supervisionLevel: z.string(),
     }),
@@ -52,6 +54,13 @@ export const usNdEarlyTerminationSchema = z.object({
     usNdNotInActiveRevocationStatus: z.object({
       revocationDate: z.null(),
     }),
+  }),
+  ineligibleCriteria: z.object({
+    supervisionPastEarlyDischargeDate: z
+      .object({
+        eligibleDate: dateStringSchema.optional(),
+      })
+      .optional(),
   }),
   metadata: z.object({
     multipleSentences: z.boolean(),

@@ -3,13 +3,8 @@
 exports[`criteria are required 1`] = `
 Object {
   "_errors": Array [],
-  "criteria": Object {
+  "eligibleCriteria": Object {
     "_errors": Array [],
-    "supervisionPastEarlyDischargeDate": Object {
-      "_errors": Array [
-        "Required",
-      ],
-    },
     "usNdImpliedValidEarlyTerminationSentenceType": Object {
       "_errors": Array [
         "Required",
@@ -29,19 +24,11 @@ Object {
 }
 `;
 
-exports[`criteria must not be empty 1`] = `
+exports[`eligibleCriteria must not be empty 1`] = `
 Object {
   "_errors": Array [],
-  "criteria": Object {
+  "eligibleCriteria": Object {
     "_errors": Array [],
-    "supervisionPastEarlyDischargeDate": Object {
-      "_errors": Array [],
-      "eligibleDate": Object {
-        "_errors": Array [
-          "Required",
-        ],
-      },
-    },
     "usNdImpliedValidEarlyTerminationSentenceType": Object {
       "_errors": Array [],
       "supervisionType": Object {
@@ -70,10 +57,59 @@ Object {
 }
 `;
 
+exports[`ineligiibleCriteria 1`] = `
+Object {
+  "data": Object {
+    "eligibleCriteria": Object {
+      "supervisionPastEarlyDischargeDate": Object {
+        "eligibleDate": 2022-01-03T00:00:00.000Z,
+      },
+      "usNdImpliedValidEarlyTerminationSentenceType": Object {
+        "supervisionType": "PROBATION",
+      },
+      "usNdImpliedValidEarlyTerminationSupervisionLevel": Object {
+        "supervisionLevel": "MEDIUM",
+      },
+      "usNdNotInActiveRevocationStatus": Object {
+        "revocationDate": null,
+      },
+    },
+    "externalId": "abc123",
+    "formInformation": Object {
+      "clientName": "Firstname Lastname",
+      "convictionCounty": "Bloom",
+      "crimeNames": Array [
+        "Crime1",
+        "crime2",
+      ],
+      "criminalNumber": "123456",
+      "judgeName": "Judgename",
+      "judicialDistrictCode": "XX",
+      "priorCourtDate": 2022-01-01T00:00:00.000Z,
+      "probationExpirationDate": 2024-05-01T00:00:00.000Z,
+      "probationOfficerFullName": "Fakename Officername",
+      "sentenceLengthMonths": 24,
+    },
+    "ineligibleCriteria": Object {
+      "supervisionPastEarlyDischargeDate": Object {
+        "eligibleDate": 2024-01-03T00:00:00.000Z,
+      },
+    },
+    "metadata": Object {
+      "ICOut": false,
+      "multipleSentences": false,
+      "outOfState": false,
+    },
+    "stateCode": "US_OZ",
+  },
+  "success": true,
+}
+`;
+
 exports[`must not have revocation date 1`] = `
 Object {
   "_errors": Array [],
-  "criteria": Object {
+  "eligibleCriteria": Object {
     "_errors": Array [],
     "usNdNotInActiveRevocationStatus": Object {
       "_errors": Array [],
@@ -89,7 +125,7 @@ Object {
 
 exports[`transform record 1`] = `
 Object {
-  "criteria": Object {
+  "eligibleCriteria": Object {
     "supervisionPastEarlyDischargeDate": Object {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
@@ -119,6 +155,7 @@ Object {
     "probationOfficerFullName": "Fakename Officername",
     "sentenceLengthMonths": 24,
   },
+  "ineligibleCriteria": Object {},
   "metadata": Object {
     "ICOut": false,
     "multipleSentences": false,

@@ -294,6 +294,45 @@
   },
   {
     "personName": {
+      "givenNames": "JUSTIN",
+      "surname": "TIMBERLAKE",
+      "middleNames": "JANE"
+    },
+    "personExternalId": "111",
+    "pseudonymizedId": "p111",
+    "stateCode": "US_ND",
+    "officerId": "OFFICER3",
+    "district": "DISTRICT 1",
+    "supervisionType": "PROBATION",
+    "supervisionLevel": "MEDIUM",
+    "supervisionLevelStart": "2019-12-20",
+    "address": "123 Bedrock Lane",
+    "phoneNumber": "5555555678",
+    "expirationDate": "2024-12-31",
+    "currentBalance": 1221.88,
+    "lastPaymentAmount": 125.75,
+    "lastPaymentDate": "2022-01-03",
+    "specialConditions": [
+      "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS"
+    ],
+    "nextSpecialConditionsCheck": "2022-12-31",
+    "lastSpecialConditionsNote": "2021-12-31",
+    "specialConditionsFlag": "current",
+    "earlyTerminationEligible": true,
+    "allEligibleOpportunities": ["earlyTermination"],
+    "currentEmployers": [
+      {
+        "name": "Film Production South",
+        "address": "456 Skywalker Lane"
+      },
+      {
+        "name": "Film Production East",
+        "address": "456 Solo Drive"
+      }
+    ]
+  },
+  {
+    "personName": {
       "givenNames": "BETTY",
       "surname": "RUBBLE",
       "middleNames": "JANE"
