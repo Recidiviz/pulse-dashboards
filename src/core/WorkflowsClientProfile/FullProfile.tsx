@@ -98,6 +98,12 @@ const Content = styled.div<{
       ${({ isMobile }) => isMobile && `order: -1`}
     }
   }
+
+  ${({ responsiveRevamp }) =>
+    responsiveRevamp &&
+    `hr[class*="TaskItemDivider"] {
+      margin: 0;
+    }`}
 `;
 
 const ContactDetailsContainer = styled.div<{

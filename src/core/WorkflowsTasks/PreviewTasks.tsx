@@ -20,10 +20,12 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { PersonProfileProps } from "../WorkflowsClientProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
 import { SnoozeTaskDropdown } from "./SnoozeTaskDropdown";
-import { Divider } from "./TaskPreviewModal";
+import { TaskItemDivider } from "./TaskPreviewModal";
 import { TaskDueDate } from "./WorkflowsTasks";
 
 const TasksWrapper = styled.div``;
@@ -33,25 +35,31 @@ const TaskItems = styled.div`
   width: 100%;
 `;
 
-const TaskTitle = styled.div`
+const TaskTitle = styled.div<{ isMobile: boolean }>`
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row ${({ isMobile }) => (isMobile ? "wrap" : "nowrap")};
   justify-content: flex-start;
   align-items: center;
   align-self: flex-start;
+
+  & > div {
+    font-size: ${rem(14)};
+  }
 `;
 
-const TaskItem = styled(Sans16)`
+const TaskItem = styled(Sans16)<{ showSnoozeDropdown?: boolean }>`
   min-height: ${rem(75)};
   padding: 1.5rem 0;
   display: grid;
-  grid-template-columns: 5fr 1fr;
+  grid-template-columns: 5fr ${({ showSnoozeDropdown }) =>
+      showSnoozeDropdown ? "1fr" : "auto"};
   align-content: center;
   position: relative;
 `;
 
 const TaskName = styled(Sans16)`
   color: ${palette.pine1};
+  min-width: fit-content;
 `;
 
 const TaskDivider = styled(Sans16)`
@@ -78,6 +86,13 @@ export const PreviewTasks = observer(function PreviewTasks({
   person,
   showSnoozeDropdown,
 }: PersonProfileProps & { showSnoozeDropdown: boolean }) {
+  const {
+    workflowsStore: {
+      featureVariants: { responsiveRevamp },
+    },
+  } = useRootStore();
+  const { isMobile } = useIsMobile(true);
+
   const tasks = person.supervisionTasks?.orderedTasks ?? [];
   const needs = person.supervisionTasks?.needs ?? [];
   const snoozeTasksConfig = person.supervisionTasks?.snoozeTasksConfig;
@@ -90,15 +105,17 @@ export const PreviewTasks = observer(function PreviewTasks({
         {tasks.map((task) => {
           return (
             <div key={`${task.type}-${task.person.externalId}`}>
-              <TaskItem>
+              <TaskItem showSnoozeDropdown={showSnoozeDropdown}>
                 <TaskContent>
-                  <TaskTitle>
+                  <TaskTitle isMobile={!!responsiveRevamp && isMobile}>
                     <TaskName>{task.displayName}</TaskName>
                     <TaskDivider> &bull; </TaskDivider>
                     <TaskDueDate
                       font={typography.Sans16}
                       marginLeft="0"
                       overdue={task.isOverdue}
+                      title={task.dueDateDisplayShort}
+                      isMobile={!!responsiveRevamp && isMobile}
                     >
                       {task.dueDateDisplayShort}
                     </TaskDueDate>
@@ -112,7 +129,7 @@ export const PreviewTasks = observer(function PreviewTasks({
                   />
                 )}
               </TaskItem>
-              <Divider />
+              <TaskItemDivider />
             </div>
           );
         })}
@@ -122,7 +139,7 @@ export const PreviewTasks = observer(function PreviewTasks({
               <TaskItem key={need.type}>
                 <TaskName>{NEED_DISPLAY_NAME[need.type]}</TaskName>
               </TaskItem>
-              <Divider />
+              <TaskItemDivider />
             </div>
           );
         })}

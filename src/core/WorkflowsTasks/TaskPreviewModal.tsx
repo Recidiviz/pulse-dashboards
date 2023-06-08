@@ -32,7 +32,7 @@ import { OpportunitiesAccordion } from "../WorkflowsClientProfile/OpportunitiesA
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import { PreviewTasks } from "./PreviewTasks";
 
-export const Divider = styled.hr`
+export const TaskItemDivider = styled.hr`
   border-top: 1px solid ${palette.slate10};
   margin: 0 -${rem(spacing.md)};
   min-width: 100%;
@@ -54,7 +54,7 @@ export const TaskPreviewModal = observer(function TaskPreviewModal() {
           <Heading person={selectedClient} />
           <OpportunitiesAccordion hideEmpty person={selectedClient} />
           {Object.values(selectedClient.verifiedOpportunities).length ? null : (
-            <Divider />
+            <TaskItemDivider />
           )}
           <PreviewTasks person={selectedClient} showSnoozeDropdown />
           <Supervision client={selectedClient} />

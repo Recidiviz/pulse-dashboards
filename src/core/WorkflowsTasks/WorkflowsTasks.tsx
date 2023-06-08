@@ -33,6 +33,7 @@ import simplur from "simplur";
 import styled, { FlattenSimpleInterpolation } from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import {
@@ -73,6 +74,8 @@ const TaskCategoryPill = styled(Pill).attrs({
 
 const TaskCategories = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  row-gap: ${rem(spacing.sm)};
 `;
 
 const TaskAggregateCount = styled.span`
@@ -94,22 +97,31 @@ const TaskClient = styled.div`
 `;
 
 const TaskClientItem = styled.div`
-  margin-left: ${rem(spacing.md)};
+  display: flex;
+  align-items: center;
+  gap: ${rem(spacing.sm)};
+  margin-right: ${rem(spacing.md)};
+  min-width: fit-content;
 `;
 
-const TaskClientTasksCount = styled(Sans12)`
-  display: inline-block;
-  margin-left: 0.5rem;
+const TaskClientTasksCount = styled(Sans12)<{ responsiveRevamp: boolean }>`
+  ${({ responsiveRevamp }) =>
+    !responsiveRevamp &&
+    `display: inline-block;
+      margin-left: 0.5rem;`}
 `;
 
 export const TaskDueDate = styled.div<{
   overdue: boolean;
   font: FlattenSimpleInterpolation;
   marginLeft?: string;
+  isMobile?: boolean;
 }>`
   ${({ font }) => font}
   color: ${({ overdue }) => (overdue ? palette.signal.error : palette.slate70)};
   margin-left: ${({ marginLeft = "auto" }) => marginLeft};
+  text-align: right;
+  ${({ isMobile }) => isMobile && `font-size: ${rem(12)} !important;`}
 `;
 
 const TaskClientName = styled(Sans16).attrs({ as: "span" })`
@@ -127,7 +139,13 @@ type TaskListItemProps = {
 
 const TaskListItem: React.FC<TaskListItemProps> = observer(
   function TaskListItem({ person, task }: TaskListItemProps) {
-    const { workflowsStore } = useRootStore();
+    const {
+      workflowsStore,
+      workflowsStore: {
+        featureVariants: { responsiveRevamp },
+      },
+    } = useRootStore();
+    const { isMobile } = useIsMobile(true);
     const orderedTasks = person.supervisionTasks?.orderedTasks ?? [];
     const readyOrderedTasks = person.supervisionTasks?.readyOrderedTasks ?? [];
     const taskToDisplay = task || readyOrderedTasks[0];
@@ -141,16 +159,19 @@ const TaskListItem: React.FC<TaskListItemProps> = observer(
             workflowsStore.updateSelectedPerson(person.pseudonymizedId)
           }
         >
-          <JusticeInvolvedPersonAvatar name={person.displayName} size={24} />
           <TaskClientItem>
-            <TaskClientName>{person.displayName}</TaskClientName>
-            <TaskClientTasksCount>
-              {task ? null : simplur`${orderedTasks.length} task[|s]`}
-            </TaskClientTasksCount>
+            <JusticeInvolvedPersonAvatar name={person.displayName} size={24} />
+            <div>
+              <TaskClientName>{person.displayName}</TaskClientName>
+              <TaskClientTasksCount responsiveRevamp={!!responsiveRevamp}>
+                {task ? null : simplur`${orderedTasks.length} task[|s]`}
+              </TaskClientTasksCount>
+            </div>
           </TaskClientItem>
           <TaskDueDate
             font={typography.Sans14}
             overdue={taskToDisplay.isOverdue}
+            isMobile={!!responsiveRevamp && isMobile}
           >
             {taskToDisplay.dueDateDisplayLong}
           </TaskDueDate>
@@ -162,7 +183,12 @@ const TaskListItem: React.FC<TaskListItemProps> = observer(
 
 const NeedListItem: React.FC<TaskListItemProps> = observer(
   function NeedListItem({ person, task }: TaskListItemProps) {
-    const { workflowsStore } = useRootStore();
+    const {
+      workflowsStore,
+      workflowsStore: {
+        featureVariants: { responsiveRevamp },
+      },
+    } = useRootStore();
     const orderedTasks = person.supervisionTasks?.orderedTasks ?? [];
 
     return (
@@ -175,7 +201,7 @@ const NeedListItem: React.FC<TaskListItemProps> = observer(
           <JusticeInvolvedPersonAvatar name={person.displayName} size={32} />
           <TaskClientItem>
             <TaskClientName>{person.displayName}</TaskClientName>
-            <TaskClientTasksCount>
+            <TaskClientTasksCount responsiveRevamp={!!responsiveRevamp}>
               {orderedTasks.length > 0 &&
                 simplur` ${orderedTasks.length} task[|s]`}
             </TaskClientTasksCount>
