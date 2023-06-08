@@ -49,6 +49,7 @@ export const collectionNames = {
   usMiClassificationReviewReferrals: "US_MI-classificationReviewReferrals",
   usMiEarlyDischargeReferrals: "US_MI-earlyDischargeReferrals",
   usTnExpirationReferrals: "US_TN-expirationReferrals",
+  usTnCustodyLevelDowngradeReferrals: "US_TN-custodyLevelDowngradeReferrals",
   usMoRestrictiveHousingStatusHearingReferrals:
     "US_MO-restrictiveHousingStatusHearingReferrals",
   usIdSupervisionTasks: "US_ID-supervisionTasks",
@@ -121,6 +122,7 @@ export type PersonUpdateRecord = {
 export type FeatureVariant =
   | "TEST"
   | "CompliantReportingAlmostEligible"
+  | "usTnCustodyLevelDowngrade"
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
   | "responsiveRevamp";
@@ -145,6 +147,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
     : {
         TEST: {},
         CompliantReportingAlmostEligible: {},
+        usTnCustodyLevelDowngrade: {},
         usTnExpiration: {},
         usTnExpirationSubmitToTomis: {},
         responsiveRevamp: {},

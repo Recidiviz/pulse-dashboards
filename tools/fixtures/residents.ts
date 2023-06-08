@@ -113,6 +113,38 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
   },
+  {
+    allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
+    officerId: "OFFICER5",
+    stateCode: "US_TN",
+    personExternalId: "RES001",
+    personName: {
+      givenNames: "First",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres001",
+    facilityId: "FACILITY NAME",
+    unitId: "UNIT A",
+    custodyLevel: "MINIMUM",
+    admissionDate: "2019-08-12",
+    releaseDate: "2025-10-22",
+  },
+  {
+    allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
+    officerId: "OFFICER5",
+    stateCode: "US_TN",
+    personExternalId: "RES002",
+    personName: {
+      givenNames: "Second",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres002",
+    facilityId: "FACILITY NAME",
+    unitId: "UNIT B",
+    custodyLevel: "MINIMUM",
+    admissionDate: "2020-08-12",
+    releaseDate: "2024-11-27",
+  },
 ];
 
 export const residentsData: FixtureData<

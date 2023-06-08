@@ -24,7 +24,7 @@ import { darken, rem } from "polished";
 import * as React from "react";
 import styled, { css } from "styled-components/macro";
 
-import type { FormViewerContextData } from "../FormViewer";
+import type { FormViewerContextData } from "../../FormViewer";
 import FormInput from "./FormInput";
 
 const EDIT_BACKGROUND = iconToDataURI(

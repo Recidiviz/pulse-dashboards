@@ -16,9 +16,9 @@
 import { DocumentData } from "firebase/firestore";
 import moment from "moment";
 
-import { formatAsCurrency, formatWorkflowsDate } from "../../../utils";
-import type { Client } from "../../../WorkflowsStore";
-import { CompliantReportingDraftData } from "../../../WorkflowsStore";
+import { formatAsCurrency, formatWorkflowsDate } from "../../../../utils";
+import type { Client } from "../../../../WorkflowsStore";
+import { CompliantReportingDraftData } from "../../../../WorkflowsStore";
 
 function formatSentenceLength(
   startDate: string,

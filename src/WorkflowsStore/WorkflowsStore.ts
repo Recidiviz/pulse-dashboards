@@ -17,7 +17,7 @@
 
 import assertNever from "assert-never";
 import { ascending } from "d3-array";
-import { identity, pick, sortBy } from "lodash";
+import { identity, intersection, pick, sortBy } from "lodash";
 import {
   action,
   has,
@@ -52,6 +52,7 @@ import {
   ResidentRecord,
   StaffRecord,
   UserMetadata,
+  UserRole,
   UserUpdateRecord,
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
@@ -390,30 +391,32 @@ export class WorkflowsStore implements Hydratable {
       userStore: { isRecidivizUser },
     } = this.rootStore;
 
-    if (isRecidivizUser) {
-      return (
-        currentTenantId && tenants[currentTenantId]?.workflowsSupportedSystems
-      );
+    if (!currentTenantId) return;
+    let workflowsSupportedSystems =
+      tenants[currentTenantId].workflowsSupportedSystems ?? [];
+
+    if (
+      currentTenantId === "US_TN" &&
+      !this.featureVariants.usTnCustodyLevelDowngrade
+    ) {
+      workflowsSupportedSystems = ["SUPERVISION"];
     }
+
+    if (isRecidivizUser) {
+      return workflowsSupportedSystems;
+    }
+
+    const roleAllowedSystems: Record<UserRole, SystemId[]> = {
+      supervision_staff: ["SUPERVISION"],
+      facilities_staff: ["INCARCERATION"],
+      leadership_role: ["SUPERVISION", "INCARCERATION"],
+    };
 
     const role = this.user?.info.role;
 
-    if (!role || !currentTenantId) return;
-
-    switch (role) {
-      case "supervision_staff":
-        return (
-          tenants[currentTenantId].workflowsSupportedSystems ?? []
-        ).filter((systemId) => systemId === "SUPERVISION");
-      case "facilities_staff":
-        return (
-          tenants[currentTenantId].workflowsSupportedSystems ?? []
-        ).filter((systemId) => systemId === "INCARCERATION");
-      case "leadership_role":
-        return tenants[currentTenantId]?.workflowsSupportedSystems;
-      default:
-        assertNever(role);
-    }
+    return role
+      ? intersection(workflowsSupportedSystems, roleAllowedSystems[role])
+      : undefined;
   }
 
   updateActiveSystem(systemId: SystemId): void {
@@ -674,6 +677,15 @@ export class WorkflowsStore implements Hydratable {
     if (currentTenantId === "US_TN" && !this.featureVariants.usTnExpiration) {
       opportunityTypes = opportunityTypes.filter(
         (oppType) => oppType !== "usTnExpiration"
+      );
+    }
+
+    if (
+      currentTenantId === "US_TN" &&
+      !this.featureVariants.usTnCustodyLevelDowngrade
+    ) {
+      opportunityTypes = opportunityTypes.filter(
+        (oppType) => oppType !== "usTnCustodyLevelDowngrade"
       );
     }
 

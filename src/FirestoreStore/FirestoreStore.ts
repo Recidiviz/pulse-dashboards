@@ -85,7 +85,7 @@ const apiKey = process.env.REACT_APP_FIREBASE_API_KEY;
 
 if (isDemoMode()) {
   Object.entries(collectionNames).forEach(([key, value]) => {
-    collectionNames[key as keyof typeof collectionNames] = `DEMO_${value}`;
+    collectionNames[key as keyof typeof collectionNames] = `DEMO2_${value}`;
   });
 }
 

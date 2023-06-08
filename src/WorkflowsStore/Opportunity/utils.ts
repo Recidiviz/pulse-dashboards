@@ -182,6 +182,11 @@ export const generateOpportunityHydratedHeader = (
       callToAction:
         "Review these clients and complete their auto-generated TEPE Note.",
     },
+    usTnCustodyLevelDowngrade: {
+      eligibilityText: simplur`${count} resident[|s] may be eligible for `,
+      opportunityText: "Custody Level Downgrade",
+      callToAction: "Review residents and complete a pre-filled assessment.",
+    },
     usMoRestrictiveHousingStatusHearing: {
       // This is slightly awkward phrasing, but we concatenate the eligibility text + opportunity
       // text together, so this is the way to get the opportunity text at the end of the sentence.
@@ -261,6 +266,7 @@ export const opportunityToSortFunctionMapping: Record<
   usMiEarlyDischarge: sortByReviewStatusAndEligibilityDate,
   usMeSCCP: sortByReviewStatus,
   usTnExpiration: sortByReviewStatusAndEligibilityDate,
+  usTnCustodyLevelDowngrade: sortByReviewStatus,
   usMoRestrictiveHousingStatusHearing: sortByReviewStatusAndEligibilityDate,
   usMeEarlyTermination: sortByReviewStatus,
   usMiMinimumTelephoneReporting: sortByReviewStatus,

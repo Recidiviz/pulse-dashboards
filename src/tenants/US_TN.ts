@@ -32,6 +32,7 @@ const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   "compliantReporting",
   "supervisionLevelDowngrade",
   "usTnExpiration",
+  "usTnCustodyLevelDowngrade",
 ];
 
 const US_TN_CONFIG: TenantConfig = {
@@ -42,7 +43,14 @@ const US_TN_CONFIG: TenantConfig = {
   enableUserRestrictions: false,
   workflowsEnableAllDistricts: false,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
-  workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
+  workflowsSystemConfigs: {
+    INCARCERATION: {
+      searchType: "LOCATION",
+      searchField: "facilityId",
+      searchTitleOverride: "facility",
+    },
+  },
   navigation: {
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],
     system: [

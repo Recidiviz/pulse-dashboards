@@ -18,8 +18,8 @@
 import React, { useContext } from "react";
 import styled from "styled-components/macro";
 
-import { FormViewerContext } from "../FormViewer";
-import { PrintablePage, PrintablePageMargin } from "../styles";
+import { FormViewerContext } from "../../FormViewer";
+import { PrintablePage, PrintablePageMargin } from "../../styles";
 import FormCheckbox from "./FormCheckbox";
 import FormFooter from "./FormFooter";
 import FormHeader from "./FormHeader";

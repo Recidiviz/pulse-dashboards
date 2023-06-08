@@ -26,6 +26,7 @@ import {
   UsMeSCCPOpportunity,
   UsMoRestrictiveHousingStatusHearingOpportunity,
 } from "./Opportunity";
+import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTnCustodyLevelDowngradeOpportunity";
 import { optionalFieldToDate } from "./utils";
 
 const residentialOpportunityConstructors: Record<
@@ -35,6 +36,7 @@ const residentialOpportunityConstructors: Record<
   usMeSCCP: UsMeSCCPOpportunity,
   usMoRestrictiveHousingStatusHearing:
     UsMoRestrictiveHousingStatusHearingOpportunity,
+  usTnCustodyLevelDowngrade: UsTnCustodyLevelDowngradeOpportunity,
 };
 
 const createResidentOpportunity: OpportunityFactory<

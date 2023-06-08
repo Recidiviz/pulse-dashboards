@@ -36,6 +36,7 @@ import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 import WorkflowsLSUForm from "../WorkflowsLSUForm";
+import WorkflowsUsTnCustodyLevelDowngradeForm from "../WorkflowsUsTnCustodyLevelDowngradeForm";
 import WorkflowsUsTnExpirationForm from "../WorkflowsUsTnExpirationForm";
 
 export const FORM_SIDEBAR_WIDTH = 400;
@@ -71,6 +72,9 @@ const PAGE_CONTENT: Record<
   },
   usTnExpiration: {
     formContents: <WorkflowsUsTnExpirationForm />,
+  },
+  usTnCustodyLevelDowngrade: {
+    formContents: <WorkflowsUsTnCustodyLevelDowngradeForm />,
   },
   usMoRestrictiveHousingStatusHearing: {
     formContents: <div />,

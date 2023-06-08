@@ -77,8 +77,26 @@ service cloud.firestore {
     match /DEMO_clientUpdates/{document=**} {
       allow read: if isRecidiviz() || request.auth.token.stateCode.lower() == "us_tn";
     }
-    
+
     match /DEMO_clientUpdatesV2/{clientId}/{document=**} {
+      allow read: if isRecidiviz() || stateCodeMatchesClientId(clientId);
+      allow write: if allowPersonUpdates(clientId);
+    }
+
+    match /DEMO2_featureVariants/{record} {
+      allow read: if usernameMatches(record);
+    }
+
+    match /DEMO2_userUpdates/{path=**}/{document} {
+      allow read: if usernameMatches(document);
+      allow write: if allowUserUpdates(document);
+    }
+
+    match /DEMO2_clientUpdates/{document=**} {
+      allow read: if isRecidiviz() || request.auth.token.stateCode.lower() == "us_tn";
+    }
+
+    match /DEMO2_clientUpdatesV2/{clientId}/{document=**} {
       allow read: if isRecidiviz() || stateCodeMatchesClientId(clientId);
       allow write: if allowPersonUpdates(clientId);
     }

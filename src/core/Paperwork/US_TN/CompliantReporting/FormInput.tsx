@@ -18,8 +18,8 @@ import { observer } from "mobx-react-lite";
 import React, { MutableRefObject, useRef } from "react";
 import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
-import { useOpportunityFormContext } from "../OpportunityFormContext";
-import { useAnimatedValue, useReactiveInput } from "../utils";
+import { useOpportunityFormContext } from "../../OpportunityFormContext";
+import { useAnimatedValue, useReactiveInput } from "../../utils";
 import { Input } from "./styles";
 import { FormDataType } from "./types";
 

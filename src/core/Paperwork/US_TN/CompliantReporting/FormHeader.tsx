@@ -17,7 +17,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import Seal from "./Seal.png";
+import Seal from "../common/Seal.png";
 
 interface FormHeaderProps {
   title: string;

@@ -27,11 +27,11 @@ import {
 } from "../Paperwork/OpportunityFormContext";
 import { generate } from "../Paperwork/PDFFormGenerator";
 import { PrintablePage } from "../Paperwork/styles";
-import FormCR3947Rev0518 from "../Paperwork/US_TN/CompliantReporting";
+import ClassificationCustodyAssessment from "../Paperwork/US_TN/CustodyLevelDowngrade/ClassificationCustodyAssessment";
 
-const WorkflowsCompliantReportingForm: React.FC = () => {
+const WorkflowsUsTnCustodyLevelDowngradeForm: React.FC = () => {
   const {
-    workflowsStore: { selectedClient: client },
+    workflowsStore: { selectedPerson: person },
   } = useRootStore();
 
   const form = useOpportunityFormContext();
@@ -40,26 +40,28 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
 
   const onClickDownload = async () => {
     return generate(formRef.current, `${PrintablePage}`).then((pdf: jsPDF) => {
-      pdf.save(`${client?.displayName} - Form CR3947 Rev05-18.pdf`);
+      pdf.save(
+        `${person?.displayName} - Classification Custody Assessment.pdf`
+      );
     });
   };
 
   return (
     <FormContainer
-      heading="Compliant Reporting"
+      heading="Custody Level Downgrade"
       agencyName="TDOC"
       downloadButtonLabel={form.downloadText}
       onClickDownload={async () => onClickDownload()}
       opportunity={form.opportunity}
     >
       <FormViewer formRef={formRef}>
-        <FormCR3947Rev0518 />
+        <ClassificationCustodyAssessment />
       </FormViewer>
     </FormContainer>
   );
 };
 
 export default connectComponentToOpportunityForm(
-  observer(WorkflowsCompliantReportingForm),
-  "compliantReporting"
+  observer(WorkflowsUsTnCustodyLevelDowngradeForm),
+  "usTnCustodyLevelDowngrade"
 );

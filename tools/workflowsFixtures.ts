@@ -17,7 +17,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Timestamp } from "@google-cloud/firestore";
+import { Firestore, Timestamp } from "@google-cloud/firestore";
 import fs from "fs";
 
 import { collectionNames } from "../src/FirestoreStore";
@@ -25,7 +25,7 @@ import {
   CollectionName,
   defaultFeatureVariantsActive,
 } from "../src/FirestoreStore/types";
-import { deleteCollection, getDb } from "./firestoreUtils";
+import { deleteCollection } from "./firestoreUtils";
 import { locationsData } from "./fixtures/locations";
 import { residentsData } from "./fixtures/residents";
 import { usTnSupervisionLevelDowngradeReferrals } from "./fixtures/supervisionLevelDowngradeReferrals";
@@ -39,6 +39,27 @@ import { usMiPastFTRDReferralsFixture } from "./fixtures/usMiPastFTRDReferrals";
 import { usMiSupervisionLevelDowngradeReferrals } from "./fixtures/usMiSupervisionLevelDowngradeReferrals";
 import { usMoRestrictiveHousingStatusHearingFixture } from "./fixtures/usMoRestrictiveHousingStatusHearingReferrals";
 import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
+import { usTnCustodyLevelDowngradeFixture } from "./fixtures/usTnCustodyLevelDowngradeReferrals";
+
+const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
+
+const fsSettings: FirebaseFirestore.Settings = FIREBASE_CREDENTIAL
+  ? {
+      projectId: FIREBASE_PROJECT,
+      keyFilename: FIREBASE_CREDENTIAL,
+    }
+  : {
+      projectId: "demo-dev",
+      host: "localhost:8080",
+      credentials: {},
+      ssl: false,
+      keyFilename: "",
+      ignoreUndefinedProperties: true,
+    };
+
+console.log(fsSettings);
+
+const db = new Firestore(fsSettings);
 
 const OPPORTUNITIES_WITH_JSON_FIXTURES: CollectionName[] = [
   "compliantReportingReferrals",
@@ -70,13 +91,21 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   usMoRestrictiveHousingStatusHearingReferrals:
     usMoRestrictiveHousingStatusHearingFixture,
   usMeEarlyTerminationReferrals: usMeEarlyTerminationReferralsFixture,
-};
+  usTnCustodyLevelDowngradeReferrals: usTnCustodyLevelDowngradeFixture,
+} as const;
 
-const db = getDb();
+// If we're writing to the real firestore, don't clobber the real data
+const collectionPrefix = FIREBASE_CREDENTIAL ? "DEMO" : null;
+
+function collectionName(c: keyof typeof collectionNames) {
+  return collectionPrefix
+    ? `${collectionPrefix}_${collectionNames[c]}`
+    : collectionNames[c];
+}
 
 export async function loadClientsFixture(): Promise<void> {
   console.log("wiping existing client data ...");
-  await deleteCollection(db, collectionNames.clients);
+  await deleteCollection(db, collectionName("clients"));
 
   console.log("loading new client data...");
   const bulkWriter = db.bulkWriter();
@@ -88,11 +117,9 @@ export async function loadClientsFixture(): Promise<void> {
   // Iterate through each record
   rawCases.forEach((record: Record<string, any>) => {
     bulkWriter.create(
-      db.doc(
-        `${collectionNames.clients}/${record.stateCode.toLowerCase()}_${
-          record.personExternalId
-        }`
-      ),
+      db
+        .collection(collectionName("clients"))
+        .doc(`${record.stateCode.toLowerCase()}_${record.personExternalId}`),
       record
     );
   });
@@ -104,7 +131,7 @@ export async function loadClientsFixture(): Promise<void> {
 
 export async function loadFeatureVariantsFixture(): Promise<void> {
   console.log("wiping existing featureVariants data ...");
-  await deleteCollection(db, collectionNames.featureVariants);
+  await deleteCollection(db, collectionName("featureVariants"));
 
   console.log("loading new featureVariants data...");
   const bulkWriter = db.bulkWriter();
@@ -118,7 +145,9 @@ export async function loadFeatureVariantsFixture(): Promise<void> {
 
   // Iterate through each record
   bulkWriter.create(
-    db.doc(`${collectionNames.featureVariants}/notarealemail@recidiviz.org`),
+    db
+      .collection(collectionName("featureVariants"))
+      .doc("notarealemail@recidiviz.org"),
     featureVariant
   );
   bulkWriter
@@ -127,38 +156,34 @@ export async function loadFeatureVariantsFixture(): Promise<void> {
 }
 
 export async function loadFixtures(): Promise<void> {
-  for await (const [collectionName, fixtureData] of Object.entries(
-    FIXTURES_TO_LOAD
-  )) {
-    console.log(`wiping existing ${collectionName} data ...`);
-    const collectionKey = collectionName as keyof typeof collectionNames;
-    await deleteCollection(db, collectionNames[collectionKey]);
+  for await (const [collStr, fixtureData] of Object.entries(FIXTURES_TO_LOAD)) {
+    const coll = collStr as CollectionName;
+    console.log(`wiping existing ${coll} data ...`);
+    await deleteCollection(db, collectionName(coll));
 
-    console.log(`loading new ${collectionKey} data...`);
+    console.log(`loading new ${coll} data...`);
     const bulkWriter = db.bulkWriter();
 
     // Iterate through each record
     fixtureData.data.forEach((record: any) => {
       const externalId = fixtureData.idFunc(record);
       bulkWriter.create(
-        db.doc(
-          `${
-            collectionNames[collectionKey]
-          }/${record.stateCode.toLowerCase()}_${externalId}`
-        ),
+        db
+          .collection(collectionName(coll))
+          .doc(`${record.stateCode.toLowerCase()}_${externalId}`),
         record
       );
     });
 
     bulkWriter
       .close()
-      .then(() => console.log(`new ${collectionKey} data loaded successfully`));
+      .then(() => console.log(`new ${coll} data loaded successfully`));
   }
 }
 
 export async function loadUserFixture(): Promise<void> {
   console.log("wiping existing staff data ...");
-  await deleteCollection(db, collectionNames.staff);
+  await deleteCollection(db, collectionName("staff"));
 
   console.log("loading new staff data...");
   const bulkWriter = db.bulkWriter();
@@ -168,7 +193,12 @@ export async function loadUserFixture(): Promise<void> {
   );
 
   rawUsers.forEach((rawUser: any) => {
-    bulkWriter.create(db.collection(collectionNames.staff).doc(), rawUser);
+    bulkWriter.create(
+      db
+        .collection(collectionName("staff"))
+        .doc(`${rawUser.stateCode.toLowerCase()}_${rawUser.id}`),
+      rawUser
+    );
   });
 
   await bulkWriter.flush();
@@ -179,12 +209,10 @@ export async function loadUserFixture(): Promise<void> {
 
 export async function loadOpportunityReferralFixtures(): Promise<void> {
   for await (const opportunity of OPPORTUNITIES_WITH_JSON_FIXTURES) {
-    console.log(
-      `wiping existing ${collectionNames[opportunity]} referral data ...`
-    );
-    await deleteCollection(db, collectionNames[opportunity]);
+    console.log(`wiping existing ${opportunity} referral data ...`);
+    await deleteCollection(db, collectionName(opportunity));
 
-    console.log(`loading new ${collectionNames[opportunity]} referral data...`);
+    console.log(`loading new ${opportunity} referral data...`);
     const bulkWriter = db.bulkWriter();
 
     const rawRecords = JSON.parse(
@@ -195,11 +223,9 @@ export async function loadOpportunityReferralFixtures(): Promise<void> {
       // TN data still in a legacy format, so fall back to alternate field
       const externalId = rawReferral.externalId ?? rawReferral.tdocId;
       bulkWriter.create(
-        db.doc(
-          `${
-            collectionNames[opportunity]
-          }/${rawReferral.stateCode.toLowerCase()}_${externalId}`
-        ),
+        db
+          .collection(collectionName(opportunity))
+          .doc(`${rawReferral.stateCode.toLowerCase()}_${externalId}`),
         rawReferral
       );
     });
@@ -207,9 +233,7 @@ export async function loadOpportunityReferralFixtures(): Promise<void> {
     await bulkWriter.flush();
     await bulkWriter.close();
 
-    console.log(
-      `new ${collectionNames[opportunity]} referral data loaded successfully`
-    );
+    console.log(`new ${opportunity} referral data loaded successfully`);
   }
 }
 

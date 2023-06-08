@@ -108,29 +108,44 @@ export const useResizeForm = (
   useEffect(() => {
     const resize = throttle(() => {
       const container = formRef.current;
-      const page = formRef.current?.querySelector(
+      if (!container) return;
+      const pages = container.querySelectorAll(
         pageSelector
-      ) as HTMLDivElement;
+      ) as NodeListOf<HTMLDivElement>;
 
-      if (!page || !container) return;
+      if (pages.length === 0) {
+        return;
+      }
 
       const margin = 0;
-      const scale = (container.offsetWidth - margin * 2) / page.offsetWidth;
+      const scale = (container.offsetWidth - margin * 2) / pages[0].offsetWidth;
       const scaledMargin = margin / scale;
-      const scaledHeight = page.offsetHeight * scale;
+      const scaledHeight = pages[0].offsetHeight * scale;
 
-      const transform = `scale(${scale})
+      const gutter = 10;
+
+      container.style.minHeight = rem(
+        pages.length * (gutter + scaledHeight + scaledMargin * 2)
+      );
+
+      pages.forEach((page, i) => {
+        const transform = `scale(${scale})
          translateX(${rem(scaledMargin)})
-         translateY(${rem(10 / scale)})`;
+         translateY(${rem(
+           (gutter + i * (gutter + (scale - 1) * page.offsetHeight)) / scale
+         )})`;
 
-      page.style.transform = transform;
-      container.style.minHeight = rem(scaledHeight + scaledMargin * 2);
+        // eslint-disable-next-line no-param-reassign
+        page.style.transform = transform;
 
-      setLayout({
-        margin,
-        transform,
-        scale,
-        scaledHeight,
+        if (i === 0) {
+          setLayout({
+            margin,
+            transform,
+            scale,
+            scaledHeight,
+          });
+        }
       });
     }, 1000 / 60);
 

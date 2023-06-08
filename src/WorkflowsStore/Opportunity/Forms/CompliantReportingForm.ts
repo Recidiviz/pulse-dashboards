@@ -1,4 +1,4 @@
-import { transform } from "../../../core/Paperwork/US_TN/Transformer";
+import { transform } from "../../../core/Paperwork/US_TN/CompliantReporting/Transformer";
 import { CompliantReportingOpportunity } from "../CompliantReportingOpportunity";
 import { CompliantReportingDraftData } from "../CompliantReportingReferralRecord";
 import { FormBase } from "./FormBase";

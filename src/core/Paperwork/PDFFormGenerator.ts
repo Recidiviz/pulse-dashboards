@@ -30,17 +30,11 @@ export const DIMENSIONS_PX = {
   MARGIN: DIMENSIONS_IN.MARGIN * PDF_DPI,
 };
 
-export const generate = (
+export const generate = async (
   element: HTMLElement,
   selector: string
 ): Promise<jsPDF> => {
   const pages = Array.from(element.querySelectorAll(selector)) as HTMLElement[];
-
-  if (pages.length > 1) {
-    throw Error("More than one page is unsupported");
-  }
-
-  const [page] = pages;
 
   // eslint-disable-next-line new-cap
   const pdf = new jsPDF({
@@ -48,36 +42,34 @@ export const generate = (
     format: [DIMENSIONS_IN.WIDTH, DIMENSIONS_IN.HEIGHT],
   });
 
-  // Some Chrome extensions will inject a background image, which breaks html2canvas
-  // Remove the background image when downloading
-  Array.from(page.querySelectorAll("input")).forEach((input) => {
-    // eslint-disable-next-line no-param-reassign
-    input.style.backgroundImage = "";
-  });
-
-  const pdfContentAreaWidth = DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN;
-  const currentPageWidth = page.offsetWidth;
-
-  // The `page` element is assumed to be rendered at 8.5in x 11in. Pinch to zoom alters these inherent dimensions.
-  // This causes the PDF contents to overflow the page boundaries, as a result, we scale the canvas proportionally
-  const currentViewportScale = pdfContentAreaWidth / currentPageWidth;
-
-  return pdf
-    .html(page, {
+  let pageIndex = 0;
+  for (const page of pages) {
+    Array.from(page.querySelectorAll("input")).forEach((input) => {
+      // eslint-disable-next-line no-param-reassign
+      input.style.backgroundImage = "";
+    });
+    const pdfContentAreaWidth = DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN;
+    const currentPageWidth = page.offsetWidth;
+    // The `page` element is assumed to be rendered at 8.5in x 11in. Pinch to zoom alters these inherent dimensions.
+    // This causes the PDF contents to overflow the page boundaries, as a result, we scale the canvas proportionally
+    const currentViewportScale = pdfContentAreaWidth / currentPageWidth;
+    // eslint-disable-next-line no-await-in-loop
+    await pdf.html(page, {
       margin: DIMENSIONS_IN.MARGIN / 2,
+      y: pageIndex * (DIMENSIONS_IN.HEIGHT - DIMENSIONS_IN.MARGIN),
       autoPaging: "text",
       html2canvas: {
         scale: currentViewportScale / PDF_DPI,
       },
-    })
-    .then(() => {
-      const pagesInPdf = pdf.getNumberOfPages();
-      // HACK: An additional page may exist due to adding content via html, despite the html fitting within page bounds
-      // Remove it to avoid a blank page at the end of the PDF
-      if (pagesInPdf > 1) {
-        pdf.deletePage(pagesInPdf);
-      }
-
-      return pdf;
     });
+    pageIndex += 1;
+  }
+  const pagesInPdf = pdf.getNumberOfPages();
+  // HACK: An additional page may exist due to adding content via html, despite the html fitting within page bounds
+  // Remove it to avoid a blank page at the end of the PDF
+  if (pagesInPdf > pages.length) {
+    pdf.deletePage(pagesInPdf);
+  }
+
+  return pdf;
 };

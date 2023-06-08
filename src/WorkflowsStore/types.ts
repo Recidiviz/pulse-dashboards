@@ -45,6 +45,7 @@ import { UsMiClassificationReviewOpportunity } from "./Opportunity/UsMiClassific
 import { UsMiEarlyDischargeOpportunity } from "./Opportunity/UsMiEarlyDischargeOpportunity";
 import { UsMiPastFTRDOpportunity } from "./Opportunity/UsMiPastFTRDOpportunity";
 import { UsMiSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsMiSupervisionLevelDowngradeOpportunity";
+import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTnCustodyLevelDowngradeOpportunity";
 import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { SupervisionTaskInterface } from "./Task/types";
@@ -78,6 +79,7 @@ type CheckSupervisionOpportunityMappingType = Expect<
 export type IncarcerationOpportunityMapping = {
   usMeSCCP?: UsMeSCCPOpportunity;
   usMoRestrictiveHousingStatusHearing?: UsMoRestrictiveHousingStatusHearingOpportunity;
+  usTnCustodyLevelDowngrade?: UsTnCustodyLevelDowngradeOpportunity;
 };
 // The following line will typecheck only if the keys of
 // IncarcerationOpportunityMapping are exhaustive
