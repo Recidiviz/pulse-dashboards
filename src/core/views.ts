@@ -19,33 +19,33 @@ import {
   OPPORTUNITY_URL_BY_TYPE,
   OpportunityType,
 } from "../WorkflowsStore/Opportunity/types";
-import { MetricId, SystemId, TenantId } from "./models/types";
+import { MetricId, SystemId } from "./models/types";
 
-export type PathwaysView = keyof typeof PATHWAYS_VIEWS;
+export type DashboardView = keyof typeof DASHBOARD_VIEWS;
 /**
  * Maps from view names to root paths
  */
-export const PATHWAYS_VIEWS = {
+export const DASHBOARD_VIEWS = {
   system: "system",
   operations: "operations",
   methodology: "id-methodology",
   profile: "profile",
   workflows: "workflows",
 } as const;
-type PathwaysViewRootPath = typeof PATHWAYS_VIEWS[PathwaysView];
+type DashboardViewRootPath = typeof DASHBOARD_VIEWS[DashboardView];
 
 export const isValidPathwaysRootPath = (str: string): boolean => {
-  return Object.values(PATHWAYS_VIEWS).includes(str as PathwaysViewRootPath);
+  return Object.values(DASHBOARD_VIEWS).includes(str as DashboardViewRootPath);
 };
 
-export type ViewRootPath = PathwaysViewRootPath;
+export type ViewRootPath = DashboardViewRootPath;
 
 export const PATHWAYS_PATHS: Record<string, string> = {
-  system: `/${PATHWAYS_VIEWS.system}/:pageId/:sectionId?`,
-  operations: `/${PATHWAYS_VIEWS.operations}/:entityId?`,
-  methodology: `/${PATHWAYS_VIEWS.methodology}/:dashboard`,
-  methodologySystem: `/${PATHWAYS_VIEWS.methodology}/system`,
-  methodologyOperations: `/${PATHWAYS_VIEWS.methodology}/operations`,
+  system: `/${DASHBOARD_VIEWS.system}/:pageId/:sectionId?`,
+  operations: `/${DASHBOARD_VIEWS.operations}/:entityId?`,
+  methodology: `/${DASHBOARD_VIEWS.methodology}/:dashboard`,
+  methodologySystem: `/${DASHBOARD_VIEWS.methodology}/system`,
+  methodologyOperations: `/${DASHBOARD_VIEWS.methodology}/operations`,
 };
 
 export type PathwaysPage = keyof typeof PATHWAYS_PAGES;
@@ -87,10 +87,7 @@ export const DEFAULT_PATHWAYS_SECTION_BY_PAGE: Record<string, string> = {
   [PATHWAYS_PAGES.supervisionToLiberty]: PATHWAYS_SECTIONS.countOverTime,
 };
 
-export function getDefaultPathwaysSectionByPage(
-  pageId: string,
-  currentTenantId?: TenantId
-): string {
+export function getDefaultPathwaysSectionByPage(pageId: string): string {
   return DEFAULT_PATHWAYS_SECTION_BY_PAGE[pageId];
 }
 
@@ -203,16 +200,16 @@ export function getSectionIdForMetric(metric: MetricId): PathwaysSection {
 }
 
 export const WORKFLOWS_PATHS = {
-  opportunityClients: `/${PATHWAYS_VIEWS.workflows}/:opportunityTypeUrl`,
-  opportunityAction: `/${PATHWAYS_VIEWS.workflows}/:opportunityTypeUrl/:justiceInvolvedPersonId`,
-  workflows: `/${PATHWAYS_VIEWS.workflows}`,
-  workflows404: `/${PATHWAYS_VIEWS.workflows}/not-found`,
-  home: `/${PATHWAYS_VIEWS.workflows}/home`,
-  tasks: `/${PATHWAYS_VIEWS.workflows}/tasks`,
-  caseloadClients: `/${PATHWAYS_VIEWS.workflows}/clients`,
-  caseloadResidents: `/${PATHWAYS_VIEWS.workflows}/residents`,
-  clientProfile: `/${PATHWAYS_VIEWS.workflows}/clients/:justiceInvolvedPersonId`,
-  residentProfile: `/${PATHWAYS_VIEWS.workflows}/residents/:justiceInvolvedPersonId`,
+  opportunityClients: `/${DASHBOARD_VIEWS.workflows}/:opportunityTypeUrl`,
+  opportunityAction: `/${DASHBOARD_VIEWS.workflows}/:opportunityTypeUrl/:justiceInvolvedPersonId`,
+  workflows: `/${DASHBOARD_VIEWS.workflows}`,
+  workflows404: `/${DASHBOARD_VIEWS.workflows}/not-found`,
+  home: `/${DASHBOARD_VIEWS.workflows}/home`,
+  tasks: `/${DASHBOARD_VIEWS.workflows}/tasks`,
+  caseloadClients: `/${DASHBOARD_VIEWS.workflows}/clients`,
+  caseloadResidents: `/${DASHBOARD_VIEWS.workflows}/residents`,
+  clientProfile: `/${DASHBOARD_VIEWS.workflows}/clients/:justiceInvolvedPersonId`,
+  residentProfile: `/${DASHBOARD_VIEWS.workflows}/residents/:justiceInvolvedPersonId`,
 };
 
 // Routes not associated with an opportunity or task that should have an

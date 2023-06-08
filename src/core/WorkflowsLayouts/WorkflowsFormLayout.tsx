@@ -30,7 +30,7 @@ import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import RecidivizLogo from "../RecidivizLogo";
-import { PATHWAYS_VIEWS } from "../views";
+import { DASHBOARD_VIEWS } from "../views";
 import { OpportunityProfile } from "../WorkflowsClientProfile/OpportunityProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
@@ -142,7 +142,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
           <NavigationLayout isMethodologyExternal isFixed={false} />
         ) : (
           <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
-            <Link to={`/${PATHWAYS_VIEWS.workflows}`}>
+            <Link to={`/${DASHBOARD_VIEWS.workflows}`}>
               <RecidivizLogo />
             </Link>
           </SidebarSection>

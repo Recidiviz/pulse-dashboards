@@ -21,13 +21,13 @@ import type UserStore from "../../RootStore/UserStore";
 import { TenantId } from "../models/types";
 import { PopulationFilterValues } from "../types/filters";
 import {
+  DASHBOARD_VIEWS,
+  DashboardView,
   DEFAULT_PATHWAYS_PAGE,
   DEFAULT_PATHWAYS_SECTION_BY_PAGE,
   PATHWAYS_PAGES,
-  PATHWAYS_VIEWS,
   PathwaysPage,
   PathwaysSection,
-  PathwaysView,
 } from "../views";
 import FiltersStore from "./FiltersStore";
 import MetricsStore from "./MetricsStore";
@@ -49,7 +49,7 @@ export default class CoreStore {
 
   vitalsStore: VitalsStore;
 
-  view: PathwaysView = PATHWAYS_VIEWS.operations;
+  view: DashboardView = DASHBOARD_VIEWS.operations;
 
   page: PathwaysPage = PATHWAYS_PAGES.prison;
 
@@ -74,7 +74,7 @@ export default class CoreStore {
     this.setSection = this.setSection.bind(this);
   }
 
-  setView(view: PathwaysView): void {
+  setView(view: DashboardView): void {
     this.view = view;
   }
 

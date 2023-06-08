@@ -21,9 +21,9 @@
 import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import {
+  DASHBOARD_VIEWS,
   PATHWAYS_PAGES,
   PATHWAYS_SECTIONS,
-  PATHWAYS_VIEWS,
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { OpportunityType } from "../WorkflowsStore";
@@ -103,7 +103,7 @@ const US_TN_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countByAgeGroup,
       PATHWAYS_SECTIONS.countByRace,
     ],
-    "id-methodology": [PATHWAYS_VIEWS.system],
+    "id-methodology": [DASHBOARD_VIEWS.system],
   },
   pagesWithRestrictions: [
     "libertyToPrison",

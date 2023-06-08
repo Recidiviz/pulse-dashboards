@@ -18,7 +18,11 @@ import { QueryParamConfigMap, StringParam } from "use-query-params";
 
 import { Navigation } from "../core/types/navigation";
 import { FILTER_TYPES } from "../core/utils/constants";
-import { PATHWAYS_PAGES, PATHWAYS_VIEWS, WORKFLOWS_PAGES } from "../core/views";
+import {
+  DASHBOARD_VIEWS,
+  PATHWAYS_PAGES,
+  WORKFLOWS_PAGES,
+} from "../core/views";
 import { TenantId } from "../RootStore/types";
 import TENANTS from "../tenants";
 
@@ -51,7 +55,7 @@ export function getAllowedMethodology(
 
 export function getPathWithoutParams(pathname: string): string {
   const viewsAndPages: string[] = [
-    ...Object.values(PATHWAYS_VIEWS),
+    ...Object.values(DASHBOARD_VIEWS),
     ...Object.values(PATHWAYS_PAGES),
     ...Object.values(WORKFLOWS_PAGES),
   ];

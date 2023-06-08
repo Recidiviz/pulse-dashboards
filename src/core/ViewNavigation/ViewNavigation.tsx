@@ -30,7 +30,7 @@ import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
 import { TenantId } from "../models/types";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
-import { PATHWAYS_VIEWS } from "../views";
+import { DASHBOARD_VIEWS } from "../views";
 
 const ViewTooltip: React.FC<{ title: string; body?: string }> = ({
   children,
@@ -65,7 +65,7 @@ function PathwaysLink({ enabled }: OptionalLinkProps) {
     <NavLink
       activeClassName="ViewNavigation__navlink--active"
       className="ViewNavigation__navlink"
-      to={`/${PATHWAYS_VIEWS.system}`}
+      to={`/${DASHBOARD_VIEWS.system}`}
       onClick={() => filtersStore.resetFilters()}
     >
       <PathwaysLogo className="ViewNavigation__icon" />
@@ -79,7 +79,7 @@ function ProfileNavLink() {
     <NavLink
       activeClassName="ViewNavigation__navlink--active"
       className="ViewNavigation__navlink"
-      to={`/${PATHWAYS_VIEWS.profile}`}
+      to={`/${DASHBOARD_VIEWS.profile}`}
     >
       <UserAvatar />
       <div className="ViewNavigation__navlink-heading">Profile</div>
@@ -101,7 +101,7 @@ function MethodologyLink({
     </>
   );
 
-  if (view === PATHWAYS_VIEWS.workflows) {
+  if (view === DASHBOARD_VIEWS.workflows) {
     return (
       <a
         className="ViewNavigation__navlink"
@@ -115,14 +115,14 @@ function MethodologyLink({
   }
 
   const methodologyView =
-    view === PATHWAYS_VIEWS.profile || view === PATHWAYS_VIEWS.methodology
-      ? PATHWAYS_VIEWS.system
+    view === DASHBOARD_VIEWS.profile || view === DASHBOARD_VIEWS.methodology
+      ? DASHBOARD_VIEWS.system
       : view;
   return (
     <NavLink
       className="ViewNavigation__navlink"
       to={{
-        pathname: `/${PATHWAYS_VIEWS.methodology}/${methodologyView}`,
+        pathname: `/${DASHBOARD_VIEWS.methodology}/${methodologyView}`,
         search: `?stateCode=${currentTenantId}`,
       }}
     >
@@ -138,7 +138,7 @@ function WorkflowsLink({ enabled }: OptionalLinkProps) {
     <NavLink
       activeClassName="ViewNavigation__navlink--active"
       className="ViewNavigation__navlink"
-      to={`/${PATHWAYS_VIEWS.workflows}`}
+      to={`/${DASHBOARD_VIEWS.workflows}`}
     >
       <WorkflowsLogo className="ViewNavigation__icon" />
       <div className="ViewNavigation__navlink-heading">Workflows</div>
@@ -154,7 +154,7 @@ function OperationsLink({ enabled }: OptionalLinkProps) {
     <NavLink
       activeClassName="ViewNavigation__navlink--active"
       className="ViewNavigation__navlink"
-      to={`/${PATHWAYS_VIEWS.operations}`}
+      to={`/${DASHBOARD_VIEWS.operations}`}
       onClick={() => vitalsStore.resetCurrentEntityId()}
     >
       <OperationsLogo className="ViewNavigation__icon" />

@@ -17,6 +17,7 @@
 /* eslint camelcase: 0 */
 import { UserRole } from "../FirestoreStore";
 import { LANTERN, RECIDIVIZ_TENANT } from "../tenants";
+import * as workflows from "./TenantStore/dashboardTenants";
 import * as lantern from "./TenantStore/lanternTenants";
 import * as pathways from "./TenantStore/pathwaysTenants";
 
@@ -32,6 +33,7 @@ export function isPathwaysTenantId(
 const TenantIds = [
   lantern.US_MO,
   lantern.US_PA,
+  workflows.US_CA,
   pathways.US_CO,
   pathways.US_ID,
   pathways.US_TN,

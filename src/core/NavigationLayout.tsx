@@ -43,7 +43,7 @@ import { useCoreStore } from "./CoreStoreProvider";
 import { TenantId } from "./models/types";
 import RecidivizLogo from "./RecidivizLogo/RecidivizLogo";
 import { WORKFLOWS_METHODOLOGY_URL } from "./utils/constants";
-import { PATHWAYS_VIEWS, workflowsUrl } from "./views";
+import { DASHBOARD_VIEWS, workflowsUrl } from "./views";
 
 const Wrapper = styled.div``;
 
@@ -222,7 +222,7 @@ function MethodologyLink({
     </>
   );
 
-  if (view === PATHWAYS_VIEWS.workflows) {
+  if (view === DASHBOARD_VIEWS.workflows) {
     return (
       <a
         href={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
@@ -235,14 +235,14 @@ function MethodologyLink({
   }
 
   const methodologyView =
-    view === PATHWAYS_VIEWS.profile || view === PATHWAYS_VIEWS.methodology
-      ? PATHWAYS_VIEWS.system
+    view === DASHBOARD_VIEWS.profile || view === DASHBOARD_VIEWS.methodology
+      ? DASHBOARD_VIEWS.system
       : view;
 
   return (
     <NavLink
       to={{
-        pathname: `/${PATHWAYS_VIEWS.methodology}/${methodologyView}`,
+        pathname: `/${DASHBOARD_VIEWS.methodology}/${methodologyView}`,
         search: `?stateCode=${currentTenantId}`,
       }}
     >
@@ -257,7 +257,7 @@ function WorkflowsLink({ enabled }: OptionalLinkProps) {
   if (!enabled) return null;
 
   return (
-    <NavLink to={`/${PATHWAYS_VIEWS.workflows}`}>
+    <NavLink to={`/${DASHBOARD_VIEWS.workflows}`}>
       {isMobile && <Icon kind={IconSVG.NeedsContact} width={20} />}
       Go to Workflows
     </NavLink>
@@ -272,7 +272,7 @@ function OperationsLink({ enabled }: OptionalLinkProps) {
 
   return (
     <NavLink
-      to={`/${PATHWAYS_VIEWS.operations}`}
+      to={`/${DASHBOARD_VIEWS.operations}`}
       onClick={() => vitalsStore.resetCurrentEntityId()}
     >
       {isMobile && <Icon kind={IconSVG.StarCircled} width={20} />}
@@ -289,7 +289,7 @@ function PathwaysLink({ enabled }: OptionalLinkProps) {
 
   return (
     <NavLink
-      to={`/${PATHWAYS_VIEWS.system}`}
+      to={`/${DASHBOARD_VIEWS.system}`}
       onClick={() => filtersStore.resetFilters()}
     >
       {isMobile && <Icon kind={IconSVG.Journey} width={20} />}
@@ -318,7 +318,7 @@ function AccountLink({ enabled }: OptionalLinkProps) {
   if (!enabled) return null;
 
   return (
-    <NavLink to={`/${PATHWAYS_VIEWS.profile}`}>
+    <NavLink to={`/${DASHBOARD_VIEWS.profile}`}>
       {isMobile && <UserAvatar />}
       Account
     </NavLink>
@@ -356,7 +356,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const enableOperations = !!userAllowedNavigation.operations;
 
     const displayBackButton =
-      view === PATHWAYS_VIEWS.workflows && page !== "home";
+      view === DASHBOARD_VIEWS.workflows && page !== "home";
 
     const quickLinks = (
       <>

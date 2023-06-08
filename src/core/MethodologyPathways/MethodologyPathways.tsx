@@ -27,9 +27,9 @@ import { getMethodologyCopy } from "../content";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 import {
+  DASHBOARD_VIEWS,
   getMetricIdsForPage,
   getSectionIdForMetric,
-  PATHWAYS_VIEWS,
   PathwaysPage,
   PathwaysPageIdList,
 } from "../views";
@@ -63,7 +63,7 @@ const MethodologyPathways: React.FC = () => {
   // manually override enabled Pages for Vitals Practices since it is a
   // static/custom methodology layout
   const enabledPages =
-    view === PATHWAYS_VIEWS.system
+    view === DASHBOARD_VIEWS.system
       ? navigationLayout.system
       : ["vitalsPercentMethodology", "vitalsOverTimeMethodology"];
 

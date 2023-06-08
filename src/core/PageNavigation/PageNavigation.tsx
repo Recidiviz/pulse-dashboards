@@ -46,7 +46,7 @@ const PageNavigation: React.FC = () => {
   const currentView = pathname.split("/")[1];
   const navigationLayout = userStore.userAllowedNavigation;
   const pageOptions = navigationLayout[currentView] ?? [];
-  const isPathwaysView = PATHWAYS_TENANTS.includes(currentTenantId);
+  const isDashboardView = PATHWAYS_TENANTS.includes(currentTenantId);
   // TODO(#2016): Remove try-catch once getMethodologyCopy() always returns copy
   let mergePageAndMethodologyCopy = getPageCopy(currentTenantId);
   try {
@@ -84,8 +84,8 @@ const PageNavigation: React.FC = () => {
     <ul
       className={cx("PageNavigation", {
         "PageNavigation--pathways":
-          isPathwaysView && !isMobile && isValidPathwaysRootPath(currentView),
-        "PageNavigation--mobile": isMobile && isPathwaysView,
+          isDashboardView && !isMobile && isValidPathwaysRootPath(currentView),
+        "PageNavigation--mobile": isMobile && isDashboardView,
       })}
     >
       {options}

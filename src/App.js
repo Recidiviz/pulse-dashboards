@@ -38,14 +38,14 @@ import PageVitals from "./core/PageVitals";
 import PageWorkflows from "./core/PageWorkflows";
 import PathwaysLayout from "./core/PathwaysLayout";
 import Profile from "./core/Profile";
-import { PATHWAYS_PATHS, PATHWAYS_VIEWS, WORKFLOWS_PATHS } from "./core/views";
+import { DASHBOARD_VIEWS, PATHWAYS_PATHS, WORKFLOWS_PATHS } from "./core/views";
 import LanternLayout from "./lantern/LanternLayout";
 import Revocations from "./lantern/Revocations";
 import { LANTERN_VIEWS } from "./lantern/views";
 import ProtectedRoute from "./ProtectedRoute";
 import RedirectHome from "./RedirectHome";
+import { DASHBOARD_TENANTS } from "./RootStore/TenantStore/dashboardTenants";
 import { LANTERN_TENANTS } from "./RootStore/TenantStore/lanternTenants";
-import { PATHWAYS_TENANTS } from "./RootStore/TenantStore/pathwaysTenants";
 import { initI18n } from "./utils/i18nSettings";
 import initIntercomSettings from "./utils/initIntercomSettings";
 import { isDemoMode } from "./utils/isDemoMode";
@@ -66,7 +66,7 @@ function App() {
             <Switch>
               <Route path="/verify" component={VerificationNeeded} />
               <AuthWall>
-                <PathwaysLayout tenantIds={PATHWAYS_TENANTS} views={Object.values(PATHWAYS_VIEWS).concat(SHARED_VIEWS)}>
+                <PathwaysLayout tenantIds={DASHBOARD_TENANTS} views={Object.values(DASHBOARD_VIEWS).concat(SHARED_VIEWS)}>
                   <Switch>
                     <ProtectedRoute path={PATHWAYS_PATHS.system} component={PageSystem} />
                     <ProtectedRoute path={PATHWAYS_PATHS.operations} component={PageVitals} />

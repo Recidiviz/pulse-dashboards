@@ -24,7 +24,7 @@ import { useLocation } from "react-router-dom";
 import { useRootStore } from "../../components/StoreProvider";
 import useDisplayPageNavigation from "../../hooks/useDisplayPageNavigation";
 import PageNavigation from "../PageNavigation";
-import { PATHWAYS_VIEWS } from "../views";
+import { DASHBOARD_VIEWS } from "../views";
 
 const PathwaysNavigation: React.FC = () => {
   const { currentTenantId } = useRootStore();
@@ -33,7 +33,7 @@ const PathwaysNavigation: React.FC = () => {
   const view = pathname.split("/")[1];
   if (
     !currentTenantId ||
-    ![PATHWAYS_VIEWS.system, PATHWAYS_VIEWS.methodology].includes(
+    ![DASHBOARD_VIEWS.system, DASHBOARD_VIEWS.methodology].includes(
       view as any
     ) ||
     !isDisplayNav

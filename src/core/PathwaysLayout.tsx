@@ -32,7 +32,7 @@ import ErrorBoundary from "./ErrorBoundary";
 import { NavigationLayout } from "./NavigationLayout";
 import PathwaysNavigation from "./PathwaysNavigation";
 import ViewNavigation from "./ViewNavigation";
-import { PATHWAYS_VIEWS } from "./views";
+import { DASHBOARD_VIEWS } from "./views";
 
 interface Props {
   children: React.ReactElement;
@@ -56,16 +56,16 @@ const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
           id="app"
           className={cn("PathwaysLayout", {
             Operations:
-              currentView === PATHWAYS_VIEWS.operations &&
+              currentView === DASHBOARD_VIEWS.operations &&
               !isMobile &&
               !responsiveRevamp,
-            Workflows: currentView === PATHWAYS_VIEWS.workflows,
+            Workflows: currentView === DASHBOARD_VIEWS.workflows,
           })}
         >
-          {currentView === PATHWAYS_VIEWS.workflows || !isMobile ? (
+          {currentView === DASHBOARD_VIEWS.workflows || !isMobile ? (
             <ViewNavigation />
           ) : null}
-          {currentView === PATHWAYS_VIEWS.operations &&
+          {currentView === DASHBOARD_VIEWS.operations &&
           responsiveRevamp &&
           !isMobile ? (
             <NavigationLayout backgroundColor={palette.marble3} />

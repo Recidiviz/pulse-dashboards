@@ -15,9 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { TenantConfig } from "./core/models/types";
+import {
+  DASHBOARD_TENANTS,
+  US_CA,
+} from "./RootStore/TenantStore/dashboardTenants";
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
 import * as pathways from "./RootStore/TenantStore/pathwaysTenants";
 import { TenantId } from "./RootStore/types";
+import US_CA_CONFIG from "./tenants/US_CA";
 import US_CO_CONFIG from "./tenants/US_CO";
 import US_ID_CONFIG from "./tenants/US_ID";
 import US_ME_CONFIG from "./tenants/US_ME";
@@ -36,6 +41,7 @@ type Tenants = {
 };
 
 const TENANTS: Tenants = {
+  [US_CA]: US_CA_CONFIG,
   [pathways.US_CO]: US_CO_CONFIG,
   [pathways.US_ID]: US_ID_CONFIG,
   [pathways.US_ME]: US_ME_CONFIG,
@@ -62,7 +68,7 @@ const TENANTS: Tenants = {
         searchTitleOverride: "officer",
       },
     },
-    availableStateCodes: [...pathways.PATHWAYS_TENANTS],
+    availableStateCodes: DASHBOARD_TENANTS,
     enableUserRestrictions: true,
   },
   LANTERN: {

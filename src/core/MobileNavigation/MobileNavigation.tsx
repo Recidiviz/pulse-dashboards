@@ -26,7 +26,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import PageNavigation from "../PageNavigation";
 import SectionNavigation from "../SectionNavigation";
 import ViewNavigation from "../ViewNavigation";
-import { PATHWAYS_VIEWS } from "../views";
+import { DASHBOARD_VIEWS } from "../views";
 import VitalsSummaryBreadcrumbs from "../VitalsSummaryBreadcrumbs";
 
 interface Props {
@@ -45,7 +45,7 @@ const MobileNavigation: React.FC<Props> = ({ title }) => {
     <>
       <Drawer isShowing={open} hide={() => setOpen(false)}>
         <ViewNavigation drawer>
-          {currentView === PATHWAYS_VIEWS.system && <PageNavigation />}
+          {currentView === DASHBOARD_VIEWS.system && <PageNavigation />}
         </ViewNavigation>
       </Drawer>
       <div className="MobileNavigation">
@@ -54,12 +54,12 @@ const MobileNavigation: React.FC<Props> = ({ title }) => {
           onClick={() => setOpen(!open)}
         />
         <div className="MobileNavigation__title">{title}</div>
-        {currentView === PATHWAYS_VIEWS.system && (
+        {currentView === DASHBOARD_VIEWS.system && (
           <div className="MobileNavigation__system">
             <SectionNavigation />
           </div>
         )}
-        {currentView === PATHWAYS_VIEWS.operations && (
+        {currentView === DASHBOARD_VIEWS.operations && (
           <div className="MobileNavigation__operations">
             <VitalsSummaryBreadcrumbs />
           </div>

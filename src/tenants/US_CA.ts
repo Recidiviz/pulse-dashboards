@@ -1,6 +1,6 @@
 /*
  * Recidiviz - a data platform for criminal justice reform
- * Copyright (C) 2021 Recidiviz, Inc.
+ * Copyright (C) 2022 Recidiviz, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +18,18 @@
  *
  */
 
-import React from "react";
-import { Link } from "react-router-dom";
+import { TenantConfig } from "../core/models/types";
+import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-import { UserAvatar } from "../core/Avatar";
-import { DASHBOARD_VIEWS } from "../core/views";
-
-const ProfileLink: React.FC = () => {
-  return (
-    <Link to={`/${DASHBOARD_VIEWS.profile}`} className="ProfileLink">
-      <UserAvatar />
-    </Link>
-  );
+const US_CA_CONFIG: TenantConfig = {
+  name: "California",
+  stateCode: "CA",
+  domain: "cdcr.ca.gov",
+  availableStateCodes: [dashboard.US_CA],
+  enableUserRestrictions: false,
+  navigation: {
+    workflows: ["clients"],
+  },
 };
 
-export default ProfileLink;
+export default US_CA_CONFIG;

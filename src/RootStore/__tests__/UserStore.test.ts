@@ -19,9 +19,9 @@ import * as Sentry from "@sentry/react";
 
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import {
+  DASHBOARD_VIEWS,
   PATHWAYS_PAGES,
   PATHWAYS_SECTIONS,
-  PATHWAYS_VIEWS,
 } from "../../core/views";
 import tenants from "../../tenants";
 import isIE11 from "../../utils/isIE11";
@@ -426,7 +426,7 @@ describe("userAllowedNavigation", () => {
       libertyToPrison: [PATHWAYS_SECTIONS.countOverTime],
       prison: [PATHWAYS_SECTIONS.countOverTime],
       supervision: [PATHWAYS_SECTIONS.countOverTime],
-      "id-methodology": [PATHWAYS_VIEWS.system],
+      "id-methodology": [DASHBOARD_VIEWS.system],
     };
     store = new UserStore({
       authSettings: testAuthSettings,
@@ -549,7 +549,7 @@ describe("userAllowedNavigation", () => {
         prison: [PATHWAYS_SECTIONS.countOverTime],
         supervision: [PATHWAYS_SECTIONS.countOverTime],
         supervisionToPrison: [PATHWAYS_SECTIONS.countByOfficer],
-        "id-methodology": [PATHWAYS_VIEWS.system],
+        "id-methodology": [DASHBOARD_VIEWS.system],
       };
 
       await store.authorize(mockHandleUrl);
@@ -572,7 +572,7 @@ describe("userAllowedNavigation", () => {
         libertyToPrison: [PATHWAYS_SECTIONS.countOverTime],
         prison: [PATHWAYS_SECTIONS.countOverTime],
         supervision: [PATHWAYS_SECTIONS.countOverTime],
-        "id-methodology": [PATHWAYS_VIEWS.system],
+        "id-methodology": [DASHBOARD_VIEWS.system],
       };
 
       await store.authorize(mockHandleUrl);
