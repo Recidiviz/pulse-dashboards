@@ -283,43 +283,29 @@ Follow these steps to deploy a Firebase Preview App for QA:
 
 [How to manage preview apps on Firebase](https://firebase.google.com/docs/hosting/manage-hosting-resources?authuser=0)
 
-### Deploying to staging and demo
+### Deploying to staging, demo, and production
 
-#### Frontend
+To deploy the frontend or backend to any of these environments, run `yarn deploy` and follow the prompts. This automatically downloads the appropriate environment files from Secret Manager, bundles the application (for frontend), lets you preview (for frontend), and generates release notes (for production).
 
-To generate a staging build of the frontend, invoke the following yarn script: `yarn build-staging`.
+Things to note:
 
-Each time this is run, the `build` directory will be wiped clean. A [bundle analysis](#bundle-analysis) report, found in `build/report.html`, will also be generated on each invocation of this script. This will include the appropriate environment variables from `.env.development`.
-
-You should then test this locally by running `firebase serve`: it will run the staging build locally, pointed to the staging API backend--if you also have backend changes, deploy the backend as described in the next subsection. When you're satisfied, deploy the frontend to staging with `firebase deploy -P staging`. Test vigorously on staging before deploying to production.
-
-Similarly, to generate the demo build of the frontend, run `yarn build-demo` and deploy with `firebase deploy -P demo`
-
-#### Backend
-
-We deploy the backend to Google App Engine with configured yaml files. Copy the `gae.yaml.example` file into files named `gae-staging.yaml`, `gae-staging-demo.yaml`, and `gae-production.yaml`, and set environment variables accordingly.
-
-Deploy the backend to staging Google App Engine with `gcloud app deploy gae-staging.yaml --project [project_id]`. This will upload any updated backend code/configuration to GAE and start the server (GAE runs `npm start` only once the deploy succeeds and is stable). Test vigorously on staging before continuing to production.
-
-Similarly, deploy the backend to the demo service on staging Google App Engine with `gcloud app deploy gae-staging-demo.yaml --project [project_id]`
-
-The new Pathways backend is deployed to the Case Triage Cloud Run service during the `recidiviz-data` deploy. New versions can be deployed manually in the Cloud Console, but this should only be done sparingly.
+- Each time the frontend is bundled, the `build` directory will be wiped clean. A [bundle analysis](#bundle-analysis) report, found in `build/report.html`, will also be generated. This will include the appropriate environment variables that were downloaded from Secret Manager.
+- The new Pathways backend is deployed to the Case Triage Cloud Run service during the `recidiviz-data` deploy. New versions can be deployed manually in the Cloud Console, but this should only be done sparingly.
+- Test vigorously on staging before deploying to production, and don't be afraid to rollback the deploy of frontend or backend through the Firebase and GAE consoles.
 
 #### Firestore rules
 
-Firestore security rules and their tests are found in `./firestore-config`. Changes can be deployed with `yarn update-rules-staging`.
+Firestore security rules and their tests are found in `./firestore-config`. Changes can be deployed with `yarn update-rules-staging` or `yarn update-rules-production`.
 
-### Deploying to production
+#### Deploy cadence
 
-Follow the instructions described above, but with different commands for both frontend and backend deploys.
+Deploys to all environments are done ad-hoc, as an engineer sees fit. The team should merge code to main with the knowledge that a deploy could happen at any time, and put breaking changes / new functionality that is expected to launch on a specific date behind feature variants so they can be turned on and off separately from the code deploy.
 
-Generate a production build of the frontend with `yarn build`. Test locally with `firebase serve`. Deploy the frontend with `firebase deploy -P production`.
+Except in emergency situations, code should always be deployed to staging before it has been deployed to production. Deploys to production do not need to happen from HEAD, and engineers may opt to deploy to production from a commit that has "baked" in staging for some time.
 
-Deploy the backend to production GAE with `gcloud app deploy gae-production.yaml --project [project_id]`.
+Deploys to production should not occur within a week of a major event that would cause a majority of team members to have unreliable availability, such as a company-wide retreat or Christmas holiday, except in emergency circumstances.
 
-Deploy Firestore rules to production with `yarn update-rules-production`.
-
-Test vigorously! Don't be afraid to rollback the deploy of frontend or backend through the Firebase and GAE consoles.
+Frontend production deploys should occur at least every 2 weeks, and backend production deploys should occur at least every month (except as noted above, where circumstances may cause much of the team to be unavailable). This minimum deploy cadence ensures that each deploy only changes the overall code by a small amount, making it easier to roll back and pinpoint root causes if we find issues.
 
 ## Tests
 
@@ -379,6 +365,7 @@ Here are a few helpful commands for inspecting the local redis cache:
 ```
 
 Here's how you can access the staging and production instances on gcloud:
+
 ```
 // Log into the VM
 :> gcloud compute ssh --zone "us-central1-a" "pulse-dashboard-vm-1" --tunnel-through-iap --project "recidiviz-dashboard-production"
