@@ -30,7 +30,7 @@ import { LSUReferralRecord } from "../LSUReferralRecord";
 import { UsMeEarlyTerminationReferralRecord } from "../UsMeEarlyTerminationReferralRecord";
 import { UsMeSCCPReferralRecord } from "../UsMeSCCPReferralRecord";
 import { UsMiMinimumTelephoneReportingReferralRecord } from "../UsMiMinimumTelephoneReportingReferralRecord";
-import { UsMiPastFTRDReferralRecord } from "../UsMiPastFTRDOpportunity";
+import { UsMiPastFTRDReferralRecord } from "../UsMiPastFTRDReferralRecord";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { UsNdEarlyTerminationReferralRecord } from "../UsNdEarlyTerminationReferralRecord";
 import { UsTnExpirationReferralRecord } from "../UsTnExpirationReferralRecord";

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMiPastFTRDReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMiPastFTRDOpportunity";
+import { UsMiPastFTRDReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMiPastFTRDReferralRecord";
 import { fixtureWithIdKey } from "./utils";
 
 export const usMiPastFTRDReferralsFixture =
@@ -24,7 +24,7 @@ export const usMiPastFTRDReferralsFixture =
       stateCode: "US_MI",
       externalId: "010",
       eligibleCriteria: {
-        supervisionPastFullTermCompletionDate: {
+        supervisionOneDayPastFullTermCompletionDate: {
           eligibleDate: "2022-02-02",
         },
       },

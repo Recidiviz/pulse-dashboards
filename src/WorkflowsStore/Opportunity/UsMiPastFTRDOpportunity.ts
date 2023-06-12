@@ -15,17 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import { PastFTRDOpportunityBase } from "./PastFTRDOpportunityBase";
-import { basePastFTRDSchema } from "./PastFTRDReferralRecord";
-
-export const usMiPastFTRDSchema = basePastFTRDSchema;
-export type UsMiPastFTRDReferralRecord = z.infer<typeof usMiPastFTRDSchema>;
-export type UsMiPastFTRDReferralRecordRaw = z.input<typeof usMiPastFTRDSchema>;
+import {
+  UsMiPastFTRDReferralRecord,
+  usMiPastFTRDSchema,
+} from "./UsMiPastFTRDReferralRecord";
 
 export class UsMiPastFTRDOpportunity extends PastFTRDOpportunityBase<UsMiPastFTRDReferralRecord> {
   readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MI;
