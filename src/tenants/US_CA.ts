@@ -25,10 +25,19 @@ const US_CA_CONFIG: TenantConfig = {
   name: "California",
   stateCode: "CA",
   domain: "cdcr.ca.gov",
+  workflowsHomepage: "milestones",
   availableStateCodes: [dashboard.US_CA],
   enableUserRestrictions: false,
+  workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsSystemConfigs: {
+    SUPERVISION: {
+      searchType: "OFFICER",
+      searchField: "officerId",
+      searchTitleOverride: "officer",
+    },
+  },
   navigation: {
-    workflows: ["clients"],
+    workflows: ["milestones", "clients"],
   },
 };
 

@@ -40,6 +40,7 @@ import { MetricCopy, PageCopy } from "../content/types";
 import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
 import { Navigation } from "../types/navigation";
+import { WorkflowsPage } from "../views";
 
 /**
  * All data comes back from the server as string values;
@@ -81,6 +82,7 @@ export type TenantConfig = {
     INCARCERATION?: WorkflowsSystemConfig<ResidentSearchFields>;
     SUPERVISION?: WorkflowsSystemConfig<ClientSearchFields>;
   };
+  workflowsHomepage?: WorkflowsPage;
   workflowsTasksConfig?: SnoozeTaskConfig;
   tasks?: {
     [k in SupervisionTaskType]: new (

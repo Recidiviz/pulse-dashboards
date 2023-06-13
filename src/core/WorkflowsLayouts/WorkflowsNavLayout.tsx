@@ -139,6 +139,7 @@ export const WorkflowsNavLayout: React.FC = observer(
         allowSupervisionTasks,
         workflowsSupportedSystems,
         featureVariants,
+        homepage: workflowsHomepage,
       },
     } = useRootStore();
     const { isMobile } = useIsMobile(true);
@@ -148,7 +149,9 @@ export const WorkflowsNavLayout: React.FC = observer(
         {featureVariants.responsiveRevamp ? (
           <NavigationLayout isMethodologyExternal>
             <li>
-              <BrandedNavLink to={workflowsUrl("home")}>Home</BrandedNavLink>
+              <BrandedNavLink to={workflowsUrl(workflowsHomepage)}>
+                Home
+              </BrandedNavLink>
             </li>
             {allowSupervisionTasks && (
               <li>
@@ -179,14 +182,16 @@ export const WorkflowsNavLayout: React.FC = observer(
         ) : (
           <Sidebar>
             <Link
-              to={workflowsUrl("home")}
+              to={workflowsUrl(workflowsHomepage)}
               onClick={() => workflowsStore.updateActiveSystem("ALL")}
             >
               <RecidivizLogo />
             </Link>
             <NavLinks>
               <li>
-                <BrandedNavLink to={workflowsUrl("home")}>Home</BrandedNavLink>
+                <BrandedNavLink to={workflowsUrl(workflowsHomepage)}>
+                  Home
+                </BrandedNavLink>
               </li>
               {allowSupervisionTasks && (
                 <li>

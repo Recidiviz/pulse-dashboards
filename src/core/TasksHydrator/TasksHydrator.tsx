@@ -22,7 +22,7 @@ import React, { useEffect } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 
-type OpportunitiesHydratorProps = {
+type TasksHydrator = {
   initial: React.ReactNode;
   empty: React.ReactNode;
   hydrated: React.ReactNode;
@@ -32,7 +32,7 @@ export const CaseloadTasksHydrator = observer(function CaseloadTasksHydrator({
   initial,
   empty,
   hydrated,
-}: OpportunitiesHydratorProps) {
+}: TasksHydrator) {
   const { workflowsStore } = useRootStore();
   const { selectedSearchIds } = workflowsStore;
 

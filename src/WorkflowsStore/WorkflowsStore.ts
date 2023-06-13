@@ -42,6 +42,7 @@ import { FilterOption } from "../core/types/filters";
 import filterOptions, {
   DefaultPopulationFilterOptions,
 } from "../core/utils/filterOptions";
+import { WorkflowsPage } from "../core/views";
 import {
   ClientRecord,
   CombinedUserRecord,
@@ -789,5 +790,11 @@ export class WorkflowsStore implements Hydratable {
         searchType: "OFFICER",
       }
     );
+  }
+
+  get homepage(): WorkflowsPage {
+    const { currentTenantId } = this.rootStore;
+    if (!currentTenantId) return "home";
+    return tenants[currentTenantId].workflowsHomepage ?? "home";
   }
 }

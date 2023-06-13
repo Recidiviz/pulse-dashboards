@@ -345,7 +345,11 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
 
     const view = pathname.split("/")[1];
     const page = pathname.split("/")[2];
-    const { currentTenantId, userStore } = useRootStore();
+    const {
+      currentTenantId,
+      userStore,
+      workflowsStore: { homepage: workflowsHomepage },
+    } = useRootStore();
     const userAllowedNavigation = userStore?.userAllowedNavigation;
 
     if (!userAllowedNavigation || !currentTenantId) return null;
@@ -356,7 +360,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const enableOperations = !!userAllowedNavigation.operations;
 
     const displayBackButton =
-      view === DASHBOARD_VIEWS.workflows && page !== "home";
+      view === DASHBOARD_VIEWS.workflows && page !== workflowsHomepage;
 
     const quickLinks = (
       <>
@@ -419,7 +423,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         {displayBackButton && (
           <BackButton
             $notFixed={isLaptop || !isFixed}
-            to={workflowsUrl("home")}
+            to={workflowsUrl(workflowsHomepage)}
           >
             <i className="fa fa-angle-left" />
             Back

@@ -29,6 +29,7 @@ import { WORKFLOWS_PATHS, workflowsRoute } from "../views";
 import { FullProfile } from "../WorkflowsClientProfile";
 import WorkflowsHomepage from "../WorkflowsHomepage";
 import { WorkflowsFormLayout } from "../WorkflowsLayouts";
+import WorkflowsMilestones from "../WorkflowsMilestones/WorkflowsMilestones";
 import WorkflowsRoute from "../WorkflowsRoute";
 import { WorkflowsTasks } from "../WorkflowsTasks";
 
@@ -68,6 +69,12 @@ const PageWorkflows: React.FC = () => {
       <Switch>
         <WorkflowsRoute exact path={workflowsRoute({ routeName: "home" })}>
           <WorkflowsHomepage />
+        </WorkflowsRoute>
+        <WorkflowsRoute
+          exact
+          path={workflowsRoute({ routeName: "milestones" })}
+        >
+          <WorkflowsMilestones />
         </WorkflowsRoute>
         <WorkflowsRoute
           exact

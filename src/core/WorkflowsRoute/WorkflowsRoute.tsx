@@ -56,7 +56,7 @@ const RouteSync = observer(function RouteSync({ children }) {
     () =>
       autorun(() => {
         const { page, personId } = parseLocation(loc);
-        const { workflowsSupportedSystems } = workflowsStore;
+        const { workflowsSupportedSystems, homepage } = workflowsStore;
         setRedirectPath(undefined);
 
         const isOpportunityPage =
@@ -88,7 +88,7 @@ const RouteSync = observer(function RouteSync({ children }) {
         workflowsStore.updateSelectedPerson(personId).catch(() => {
           if (isOpportunityPage) {
             // Redirect home if person is no long eligible for opportunity
-            setRedirectPath(workflowsUrl("home"));
+            setRedirectPath(workflowsUrl(homepage));
           } else {
             setNotFound(true);
           }
@@ -104,7 +104,7 @@ const RouteSync = observer(function RouteSync({ children }) {
               workflowsStore;
 
             if (hasMultipleOpportunities) {
-              setRedirectPath(workflowsUrl("home"));
+              setRedirectPath(workflowsUrl(homepage));
             } else {
               setRedirectPath(
                 workflowsUrl("opportunityClients", {
