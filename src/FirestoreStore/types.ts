@@ -172,7 +172,7 @@ export type CombinedUserRecord = {
 
 export type FullName = {
   givenNames?: string;
-  middleName?: string;
+  middleNames?: string;
   surname?: string;
 };
 
@@ -213,6 +213,7 @@ export type ClientEmployer = {
  */
 export type ClientRecord = JusticeInvolvedPersonRecord & {
   personType: "CLIENT";
+  district?: string;
   supervisionType: string;
   supervisionLevel?: string;
   supervisionLevelStart?: Timestamp | string;

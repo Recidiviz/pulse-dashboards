@@ -71,7 +71,7 @@ export const ineligibleClient: ClientRecord = {
   recordId: "us_xx_100",
   personName: {
     givenNames: "TONYE",
-    middleName: "BARBY",
+    middleNames: "BARBY",
     surname: "THOMPSON",
   },
   personExternalId: "100",

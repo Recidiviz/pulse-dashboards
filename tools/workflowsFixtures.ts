@@ -26,8 +26,10 @@ import {
   defaultFeatureVariantsActive,
 } from "../src/FirestoreStore/types";
 import { deleteCollection } from "./firestoreUtils";
+import { clientsData } from "./fixtures/clients";
 import { locationsData } from "./fixtures/locations";
 import { residentsData } from "./fixtures/residents";
+import { staffData } from "./fixtures/staff";
 import { usTnSupervisionLevelDowngradeReferrals } from "./fixtures/supervisionLevelDowngradeReferrals";
 import { usIdPastFtrdFixture } from "./fixtures/UsIdPastFtrdReferrals";
 import { usIdSupervisionLevelDowngradeReferrals } from "./fixtures/usIdSupervisionLevelDowngradeReferrals";
@@ -76,7 +78,9 @@ export type FixtureData<T> = {
 };
 
 const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
+  clients: clientsData,
   residents: residentsData,
+  staff: staffData,
   locations: locationsData,
   usIdSupervisionTasks: usIdSupervisionTasksData,
   earlyTerminationReferrals: usNdEarlyTerminationFixture,
@@ -101,32 +105,6 @@ function collectionName(c: keyof typeof collectionNames) {
   return collectionPrefix
     ? `${collectionPrefix}_${collectionNames[c]}`
     : collectionNames[c];
-}
-
-export async function loadClientsFixture(): Promise<void> {
-  console.log("wiping existing client data ...");
-  await deleteCollection(db, collectionName("clients"));
-
-  console.log("loading new client data...");
-  const bulkWriter = db.bulkWriter();
-
-  const rawCases = JSON.parse(
-    fs.readFileSync("tools/fixtures/clients.json").toString()
-  );
-
-  // Iterate through each record
-  rawCases.forEach((record: Record<string, any>) => {
-    bulkWriter.create(
-      db
-        .collection(collectionName("clients"))
-        .doc(`${record.stateCode.toLowerCase()}_${record.personExternalId}`),
-      record
-    );
-  });
-
-  bulkWriter
-    .close()
-    .then(() => console.log("new client data loaded successfully"));
 }
 
 export async function loadFeatureVariantsFixture(): Promise<void> {
@@ -181,32 +159,6 @@ export async function loadFixtures(): Promise<void> {
   }
 }
 
-export async function loadUserFixture(): Promise<void> {
-  console.log("wiping existing staff data ...");
-  await deleteCollection(db, collectionName("staff"));
-
-  console.log("loading new staff data...");
-  const bulkWriter = db.bulkWriter();
-
-  const rawUsers = JSON.parse(
-    fs.readFileSync("tools/fixtures/users.json").toString()
-  );
-
-  rawUsers.forEach((rawUser: any) => {
-    bulkWriter.create(
-      db
-        .collection(collectionName("staff"))
-        .doc(`${rawUser.stateCode.toLowerCase()}_${rawUser.id}`),
-      rawUser
-    );
-  });
-
-  await bulkWriter.flush();
-  await bulkWriter.close();
-
-  console.log("new staff data loaded successfully");
-}
-
 export async function loadOpportunityReferralFixtures(): Promise<void> {
   for await (const opportunity of OPPORTUNITIES_WITH_JSON_FIXTURES) {
     console.log(`wiping existing ${opportunity} referral data ...`);
@@ -239,8 +191,6 @@ export async function loadOpportunityReferralFixtures(): Promise<void> {
 
 export async function loadWorkflowsFixtures(): Promise<void> {
   await Promise.all([
-    loadUserFixture(),
-    loadClientsFixture(),
     loadFixtures(),
     loadOpportunityReferralFixtures(),
     loadFeatureVariantsFixture(),
