@@ -319,21 +319,18 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
       "SUSPECTED OFFENSE: Suspected of a felony, assaultive misdemeanor, OWI, or offense requiring SORA registration",
     "FELONY/STATE PROBATION":
       "FELONY/STATE PROBATION: On parole and also on other state or federal probation supervision for an offense committed during the current period",
-    "PUBLIC ACT 223":
-      "PUBLIC ACT 223: On parole and serving pursuant to Public Act 223 of 2010",
     NEEDS:
       "NEEDS: On parole and all criminogenic needs have not been addressed",
     NONCOMPLIANT: "NONCOMPLIANT: Not compliant with the order of supervision",
-    PROGRAMMING:
-      "PROGRAMMING: On probation and has not completed all required programming",
+    PROGRAMMING: "PROGRAMMING: Has not completed all required programming",
     "PRO-SOCIAL": "PRO-SOCIAL: Has not demonstrated pro-social behavior",
     RESTITUTION:
-      "RESTITUTION: On parole and has not completed court-ordered restitution payments",
+      "RESTITUTION: Has not completed court-ordered restitution payments",
     "FINES & FEES":
       "FINES & FEES: Willful nonpayment of restitution, fees, court costs, fines, and other monetary obligations despite clear ability to pay",
     "PENDING CHARGES": "PENDING CHARGES: Pending felony charges/warrant",
-    "COURT ORDERED TREATMENT":
-      "COURT ORDERED TREATMENT: On probation and has not completed court ordered drug, veterans, or mental health treatment",
+    "ORDERED TREATMENT":
+      "ORDERED TREATMENT: Has not completed all required treatment",
     "EXCLUDED OFFENSE":
       "EXCLUDED OFFENSE: On parole for an offense resulting in death or serious bodily injury or an offense involving the discharge of a firearm",
     [OTHER_KEY]: "Other: please specify a reason",
