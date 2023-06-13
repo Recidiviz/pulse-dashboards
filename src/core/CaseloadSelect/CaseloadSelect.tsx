@@ -18,9 +18,11 @@ import {
   Button,
   Icon,
   IconSVG,
+  Modal,
   palette,
   Pill,
   Sans14,
+  Serif24,
   spacing,
   zindex,
 } from "@recidiviz/design-system";
@@ -42,7 +44,6 @@ import { IndicatorProps } from "react-select/src/components/indicators";
 import { MultiValueRemoveProps } from "react-select/src/components/MultiValue";
 import styled from "styled-components/macro";
 
-import Modal from "../../components/Modal/Modal";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
@@ -200,6 +201,27 @@ const CaseloadSelectMobileButton = styled(Button).attrs({ kind: "link" })`
   padding: 0 0.5rem;
 `;
 
+const StyledModal = styled(Modal)`
+  .ReactModal__Content {
+    max-width: unset;
+    max-height: unset;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    overflow: hidden;
+  }
+`;
+
+const ModalCloseButton = styled(Button).attrs({ kind: "link" })`
+  color: ${palette.signal.links};
+  text-decoration: none !important;
+`;
+
+const ModalHeader = styled(Serif24)`
+  color: ${palette.pine2};
+  padding-top: ${rem(spacing.md)};
+`;
+
 type CaseloadSelectProps = {
   hideIndicators?: boolean;
 };
@@ -268,7 +290,8 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     }),
     menuList: (base) => ({
       ...base,
-      maxHeight: isMobile ? `calc(100vh - ${rem(135)})` : rem(300),
+      maxHeight: isMobile ? `calc(100vh - ${rem(146)})` : rem(300),
+      padding: `${rem(spacing.sm)} 0`,
     }),
     control: (base, state) => ({
       ...base,
@@ -277,7 +300,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       borderColor: `${palette.slate10} !important`,
       borderRadius: state.menuIsOpen ? "8px 8px 0 0" : rem(8),
       minHeight: rem(48),
-      padding: `${rem(spacing.sm)} ${rem(spacing.md)}`,
+      padding: `${rem(isMobile ? spacing.md : spacing.sm)} ${rem(spacing.md)}`,
       margin: 0,
       boxShadow:
         state.menuIsOpen && !isMobile
@@ -404,14 +427,16 @@ export const CaseloadSelect = observer(function CaseloadSelect({
           &nbsp;
           <Icon kind={IconSVG.DownChevron} width={8} />
         </CaseloadSelectMobileButton>
-        <Modal
-          isShowing={modalIsOpen}
-          hide={() => setModalIsOpen(false)}
-          title="Search"
-          backgroundColor={palette.marble1}
+        <StyledModal
+          isOpen={modalIsOpen}
+          onRequestClose={() => setModalIsOpen(false)}
         >
+          <ModalCloseButton onClick={() => setModalIsOpen(false)}>
+            Cancel
+          </ModalCloseButton>
+          <ModalHeader>Search</ModalHeader>
           <ReactSelect menuIsOpen isClearable={false} {...defaultOptions} />
-        </Modal>
+        </StyledModal>
       </CaseloadSelectContainer>
     );
   }

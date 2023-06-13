@@ -26,6 +26,22 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
+
+export const StyledDrawerModal = styled(DrawerModal)<{
+  isMobile: boolean;
+}>`
+  .ReactModal__Content {
+    ${({ isMobile }) =>
+      isMobile &&
+      `max-width: unset !important;
+    max-height: unset !important;
+    width: 100% !important;
+    height: 100% !important;
+    right: 0 !important;
+    border-radius: 0 !important;`}
+  }
+`;
 
 const ModalControls = styled.div<{
   responsiveRevamp: boolean;
@@ -67,6 +83,7 @@ export function WorkflowsPreviewModal({
     workflowsStore,
     workflowsStore: { featureVariants },
   } = useRootStore();
+  const { isMobile } = useIsMobile(true);
 
   // Managing the modal isOpen state here instead of tying it directly to
   // props helps to smooth out the open/close transition
@@ -76,12 +93,14 @@ export function WorkflowsPreviewModal({
   }, [isOpen]);
 
   return (
-    <DrawerModal
+    <StyledDrawerModal
       isOpen={modalIsOpen}
       onAfterOpen={onAfterOpen}
       onRequestClose={() => setModalIsOpen(false)}
       onAfterClose={() => workflowsStore.updateSelectedPerson(undefined)}
       closeTimeoutMS={1000}
+      width={featureVariants.responsiveRevamp && !isMobile ? 480 : 555}
+      isMobile={isMobile && !!featureVariants.responsiveRevamp}
     >
       <Wrapper
         className="WorkflowsPreviewModal"
@@ -100,6 +119,6 @@ export function WorkflowsPreviewModal({
         </ModalControls>
         {pageContent}
       </Wrapper>
-    </DrawerModal>
+    </StyledDrawerModal>
   );
 }

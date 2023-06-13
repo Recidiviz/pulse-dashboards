@@ -34,7 +34,7 @@ export const IconPad = styled.span`
   margin-right: 8px;
 `;
 const DropdownContainer = styled.div<{ isMobile: boolean }>`
-  min-width: ${({ isMobile }) => (isMobile ? 16 : 21)}rem;
+  min-width: ${({ isMobile }) => (isMobile ? 16 : 19)}rem;
   max-width: 26rem;
 
   > button {
@@ -63,17 +63,15 @@ export function OpportunityDenial({
   const {
     workflowsStore: { featureVariants: responsiveRevamp },
   } = useRootStore();
-  const { isLaptop, isTablet } = useIsMobile(true);
+  const { isMobile } = useIsMobile(true);
 
   return (
     <Wrapper>
       <Dropdown>
         <MenuButton opportunity={opportunity} />
-        <DropdownMenu
-          alignment={!!responsiveRevamp && isLaptop ? "right" : "left"}
-        >
+        <DropdownMenu>
           <DropdownContainer
-            isMobile={!!responsiveRevamp && isTablet}
+            isMobile={!!responsiveRevamp && isMobile}
             className="OpportunityDenialDropdown"
           >
             {!opportunity.isAlert && (

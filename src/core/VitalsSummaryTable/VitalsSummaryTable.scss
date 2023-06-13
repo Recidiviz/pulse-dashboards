@@ -19,22 +19,6 @@
 
 $border-styles: 1px solid $slate-20;
 
-/* Enable scrollbar on chrome for tables in tablet sizes */
-::-webkit-scrollbar {
-  @media screen and (max-width: $core-breakpoint-sm) {
-    -webkit-appearance: none;
-    height: 5px;
-    border-radius: 8px;
-  }
-}
-::-webkit-scrollbar-thumb {
-  @media screen and (max-width: $core-breakpoint-sm) {
-    border-radius: 8px;
-    background-color: $slate-20;
-    -webkit-box-shadow: 0 0 0.1rem $box-shadow-color-30;
-  }
-}
-
 @mixin sticky-scroll-column {
   @media screen and (max-width: $core-breakpoint-sm) {
     position: sticky !important;
@@ -52,6 +36,22 @@ $border-styles: 1px solid $slate-20;
   overflow-x: auto;
   overflow-y: hidden;
   width: 100%;
+
+  /* Enable scrollbar on chrome for tables in tablet sizes */
+  &::-webkit-scrollbar {
+    @media screen and (max-width: $core-breakpoint-sm) {
+      -webkit-appearance: none;
+      height: 5px;
+      border-radius: 8px;
+    }
+  }
+  &::-webkit-scrollbar-thumb {
+    @media screen and (max-width: $core-breakpoint-sm) {
+      border-radius: 8px;
+      background-color: $slate-20;
+      -webkit-box-shadow: 0 0 0.1rem $box-shadow-color-30;
+    }
+  }
 
   &__table {
     background: $white;

@@ -59,6 +59,7 @@ const SMALL_GUTTER = rem(spacing.md);
 
 const Wrapper = styled.div<{
   responsiveRevamp: boolean;
+  isMobile: boolean;
 }>`
   display: grid;
   column-gap: ${GUTTER};
@@ -66,8 +67,9 @@ const Wrapper = styled.div<{
   row-gap: ${({ responsiveRevamp }) =>
     responsiveRevamp ? SMALL_GUTTER : rem(spacing.lg)};
 
-  ${({ responsiveRevamp }) =>
+  ${({ responsiveRevamp, isMobile }) =>
     responsiveRevamp &&
+    !isMobile &&
     `div[class*="AccordionWrapper"] {
       margin: 0;
     }`}
@@ -317,7 +319,7 @@ export const FullProfile = observer(
     const {
       workflowsStore: { selectedPerson: person, featureVariants },
     } = useRootStore();
-    const { isTablet } = useIsMobile(true);
+    const { isTablet, isMobile } = useIsMobile(true);
 
     usePersonTracking(person, () => {
       person?.trackProfileViewed();
@@ -327,7 +329,10 @@ export const FullProfile = observer(
 
     return (
       <WorkflowsNavLayout>
-        <Wrapper responsiveRevamp={!!featureVariants.responsiveRevamp}>
+        <Wrapper
+          isMobile={isMobile}
+          responsiveRevamp={!!featureVariants.responsiveRevamp}
+        >
           <Header
             isMobile={!!featureVariants.responsiveRevamp && isTablet}
             responsiveRevamp={!!featureVariants.responsiveRevamp}

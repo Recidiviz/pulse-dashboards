@@ -22,6 +22,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityCapsule } from "../PersonCapsules";
 import { OPPORTUNITY_STATUS_COLORS } from "../utils/workflowsUtils";
@@ -79,6 +80,7 @@ export const PersonListItem = observer(function PersonListItem({
   const [showButton, setShowButton] = useState(false);
   const { person } = opportunity;
   const { workflowsStore } = useRootStore();
+  const { isTablet } = useIsMobile(true);
 
   return (
     <ListItem key={person.externalId}>
@@ -100,7 +102,7 @@ export const PersonListItem = observer(function PersonListItem({
           />
         </PersonLink>
         <ButtonSpacer />
-        {showButton && opportunity.form?.navigateToFormText && (
+        {showButton && !isTablet && opportunity.form?.navigateToFormText && (
           <Link
             to={workflowsUrl("opportunityAction", {
               opportunityType: opportunity.type,

@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityDenial } from "../OpportunityDenial";
 import { useStatusColors } from "../utils/workflowsUtils";
@@ -49,9 +50,11 @@ const Wrapper = styled.div<{
       : `${rem(spacing.md)} ${rem(spacing.lg)}`};
 `;
 
-const ActionButtons = styled.div`
+const ActionButtons = styled.div<{ isMobile: boolean }>`
   margin-top: ${rem(spacing.md)};
   display: flex;
+  gap: ${({ isMobile }) => (isMobile ? rem(spacing.sm) : 0)};
+  flex-direction: ${({ isMobile }) => (isMobile ? "column" : "row")};
 `;
 
 const FormActionButton = styled(Button).attrs({
@@ -88,6 +91,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     const {
       workflowsStore: { featureVariants },
     } = useRootStore();
+    const { isLaptop } = useIsMobile(true);
 
     useEffect(() => {
       opportunity.setLastViewed();
@@ -103,7 +107,9 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}
         <CriteriaList opportunity={opportunity} />
         {(formDownloadButton || showDenialButton || formLinkButton) && (
-          <ActionButtons>
+          <ActionButtons
+            isMobile={!!featureVariants.responsiveRevamp && isLaptop}
+          >
             {formLinkButton && opportunity.form && (
               <Link
                 to={workflowsUrl("opportunityAction", {
