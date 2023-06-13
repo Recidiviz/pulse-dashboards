@@ -31,7 +31,7 @@ export const supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFor
       externalId: z.string(),
       eligibleCriteria: z.object({
         supervisionLevelHigherThanAssessmentLevel: z.object({
-          latestAssessmentDate: dateStringSchema,
+          latestAssessmentDate: dateStringSchema.nullable(),
           assessmentLevel: z.string().transform(toTitleCase),
           supervisionLevel: z.string().transform(fmt),
         }),
@@ -77,11 +77,14 @@ export function formatBaseSLDRequirements(
     transformedRecord.eligibleCriteria
       .supervisionLevelHigherThanAssessmentLevel;
 
+  let text = `Current supervision level: ${supervisionLevel}; Last risk score: ${assessmentLevel}`;
+  text += latestAssessmentDate
+    ? ` (as of ${formatWorkflowsDate(latestAssessmentDate)})`
+    : " (assessment date unknown)";
+
   return [
     {
-      text: `Current supervision level: ${supervisionLevel}; Last risk score: ${assessmentLevel} (as of ${formatWorkflowsDate(
-        latestAssessmentDate
-      )})`,
+      text,
     },
   ];
 }

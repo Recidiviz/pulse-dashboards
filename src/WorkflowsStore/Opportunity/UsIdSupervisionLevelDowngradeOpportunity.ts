@@ -77,7 +77,9 @@ export class UsIdSupervisionLevelDowngradeOpportunity extends OpportunityBase<
 
   get eligibilityDate(): Date | undefined {
     if (!this.record) return;
-    return this.record.eligibleCriteria
-      .supervisionLevelHigherThanAssessmentLevel.latestAssessmentDate;
+    return (
+      this.record.eligibleCriteria.supervisionLevelHigherThanAssessmentLevel
+        .latestAssessmentDate ?? undefined
+    );
   }
 }
