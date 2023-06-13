@@ -31,6 +31,7 @@ import AuthWall from "./AuthWall";
 import NotFound from "./components/NotFound";
 import SentryErrorBoundary from "./components/SentryErrorBoundary";
 import StoreProvider from "./components/StoreProvider";
+import StyledToaster from "./components/StyledToaster";
 import VerificationNeeded from "./components/VerificationNeeded";
 import PageMethodology from "./core/PageMethodology";
 import PageSystem from "./core/PageSystem";
@@ -90,6 +91,7 @@ function App() {
                 </LanternLayout>
               </AuthWall>
             </Switch>
+            <StyledToaster />
           </QueryParamProvider>
         </SentryErrorBoundary>
       </Router>

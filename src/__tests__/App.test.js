@@ -166,7 +166,7 @@ describe("App tests", () => {
 
       const { container, getByTestId } = render(<App />);
 
-      expect(container.children.length).toBe(1);
+      expect(container.children.length).toBe(2);
       expect(getByTestId(mockNotFoundId)).toBeInTheDocument();
     });
 
@@ -179,7 +179,7 @@ describe("App tests", () => {
 
       const { container, getByTestId } = render(<App />);
 
-      expect(container.children.length).toBe(1);
+      expect(container.children.length).toBe(2);
       expect(getByTestId(mockNotFoundId)).toBeInTheDocument();
     });
 
@@ -193,7 +193,7 @@ describe("App tests", () => {
       });
 
       const { getByTestId, container } = render(<App />);
-      expect(container.children.length).toBe(1);
+      expect(container.children.length).toBe(2);
       expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
       expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
       expect(getByTestId(mockNotFoundId)).toBeInTheDocument();
@@ -213,7 +213,7 @@ describe("App tests", () => {
       const { container, getByTestId } = render(<App />);
 
       expect(PathwaysLayoutMock).toHaveBeenCalledTimes(1);
-      expect(container.children.length).toBe(1);
+      expect(container.children.length).toBe(2);
       expect(getByTestId(mockMethodologyPathwaysId)).toBeInTheDocument();
     });
 
@@ -229,7 +229,7 @@ describe("App tests", () => {
       const { container, getByTestId } = render(<App />);
 
       expect(PathwaysLayoutMock).toHaveBeenCalledTimes(1);
-      expect(container.children.length).toBe(1);
+      expect(container.children.length).toBe(2);
       expect(getByTestId(mockMethodologyPathwaysId)).toBeInTheDocument();
     });
   });
@@ -241,7 +241,7 @@ describe("App tests", () => {
 
     const { container } = render(<App />);
 
-    expect(container.children.length).toBe(1);
+    expect(container.children.length).toBe(2);
     expect(container.firstChild.className).toBe("Loading__container");
   });
 
@@ -267,7 +267,7 @@ describe("App tests", () => {
 
     const { container, getByTestId } = render(<App />);
 
-    expect(container.children.length).toBe(1);
+    expect(container.children.length).toBe(2);
     expect(getByTestId(mockVerificationNeededId)).toBeInTheDocument();
   });
 });

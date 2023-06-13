@@ -28,7 +28,6 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { rem } from "polished";
 import React, { ReactNode } from "react";
-import { Toaster } from "react-hot-toast";
 import simplur from "simplur";
 import styled, { FlattenSimpleInterpolation } from "styled-components/macro";
 
@@ -422,7 +421,6 @@ const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
           </>
         }
       />
-      <Toaster containerStyle={{ right: "5rem" }} />
     </WorkflowsNavLayout>
   );
 });

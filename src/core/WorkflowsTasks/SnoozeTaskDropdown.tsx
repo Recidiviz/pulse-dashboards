@@ -87,11 +87,7 @@ const ToastWrapper = styled(Sans14)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem;
-  background: ${palette.pine1};
   backdrop-filter: blur(40px);
-  border-radius: 4px;
-  color: ${palette.marble1};
 `;
 
 const UndoButton = styled.button`
@@ -132,12 +128,6 @@ const snoozeTaskToast = (
     {
       className: "SnoozeTaskToast",
       duration: 3000,
-      position: "bottom-right",
-      style: {
-        background: "none",
-        maxWidth: "unset",
-        boxShadow: "unset",
-      },
     }
   );
 };

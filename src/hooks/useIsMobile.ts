@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 
 import cssVars from "../core/CoreConstants.module.scss";
 
-const breakpoints = {
+export const breakpoints = {
   desktop: Number(cssVars.breakpointSm.replace(/\D/g, "")),
   laptop: Number(cssVars.breakpointSxs.replace(/\D/g, "")),
   tablet: Number(cssVars.breakpointXs.replace(/\D/g, "")),

@@ -24,6 +24,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
+import { desktopLinkGate } from "../desktopLinkGate";
 import { OpportunityCapsule } from "../PersonCapsules";
 import { OPPORTUNITY_STATUS_COLORS } from "../utils/workflowsUtils";
 import { workflowsUrl } from "../views";
@@ -109,7 +110,16 @@ export const PersonListItem = observer(function PersonListItem({
               justiceInvolvedPersonId: person.pseudonymizedId,
             })}
           >
-            <NavigateToFormButton className="NavigateToFormButton">
+            <NavigateToFormButton
+              className="NavigateToFormButton"
+              onClick={
+                workflowsStore.featureVariants.responsiveRevamp
+                  ? desktopLinkGate({
+                      headline: "Referral Unavailable in Mobile View",
+                    })
+                  : undefined
+              }
+            >
               {opportunity.form.navigateToFormText}
             </NavigateToFormButton>
           </Link>

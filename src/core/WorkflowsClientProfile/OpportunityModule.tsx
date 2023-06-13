@@ -25,6 +25,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
+import { desktopLinkGate } from "../desktopLinkGate";
 import { OpportunityDenial } from "../OpportunityDenial";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { workflowsUrl } from "../views";
@@ -120,6 +121,13 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                 <FormActionButton
                   className="NavigateToFormButton"
                   buttonFill={colors.buttonFill}
+                  onClick={
+                    featureVariants.responsiveRevamp
+                      ? desktopLinkGate({
+                          headline: "Referral Unavailable in Mobile View",
+                        })
+                      : undefined
+                  }
                 >
                   {opportunity.form.navigateToFormText}
                 </FormActionButton>
