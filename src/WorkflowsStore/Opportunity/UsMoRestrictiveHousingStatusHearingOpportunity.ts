@@ -74,6 +74,10 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
       eligibleCriteria: { usMoHasUpcomingHearing },
     } = this.record;
 
+    if (!usMoHasUpcomingHearing) {
+      return [];
+    }
+
     if (usMoHasUpcomingHearing.nextReviewDate) {
       const daysUntilNextReviewDate = differenceInDays(
         usMoHasUpcomingHearing.nextReviewDate,
@@ -103,6 +107,6 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
   }
 
   get eligibilityDate(): Date | undefined {
-    return this.record?.eligibleCriteria.usMoHasUpcomingHearing.nextReviewDate;
+    return this.record?.eligibleCriteria.usMoHasUpcomingHearing?.nextReviewDate;
   }
 }

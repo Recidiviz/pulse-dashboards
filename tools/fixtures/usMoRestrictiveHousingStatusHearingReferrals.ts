@@ -21,17 +21,19 @@ import { externalIdFunc } from "./utils";
 export const usMoRestrictiveHousingStatusHearingFixture: FixtureData<UsMoRestrictiveHousingStatusHearingReferralRecordRaw> =
   {
     data: [
+      // Overdue
       {
         stateCode: "US_MO",
         externalId: "RES004",
         eligibleCriteria: {
-          usMoHasUpcomingHearing: {
-            nextReviewDate: "2023-11-03",
+          usMoOverdueForHearing: {
+            nextReviewDate: "2023-06-01",
           },
           usMoInRestrictiveHousing: {
             confinementType: "confinement type",
           },
         },
+        ineligibleCriteria: {},
         metadata: {
           mostRecentHearingDate: "2022-09-03",
           mostRecentHearingType: "hearing type",
@@ -54,15 +56,68 @@ export const usMoRestrictiveHousingStatusHearingFixture: FixtureData<UsMoRestric
           numMinorCdvsBeforeLastHearing: "3",
         },
       },
+      // Missing date
+      {
+        stateCode: "US_MO",
+        externalId: "RES005",
+        eligibleCriteria: {
+          usMoInRestrictiveHousing: {
+            confinementType: "confinement type",
+          },
+        },
+        ineligibleCriteria: {
+          usMoOverdueForHearing: {
+            nextReviewDate: null,
+          },
+        },
+        metadata: {
+          mostRecentHearingDate: "2022-12-04",
+          mostRecentHearingType: "hearing type 2",
+          mostRecentHearingFacility: "FACILITY NAME",
+          mostRecentHearingComments:
+            "Reason for Hearing: Protective custody investigation",
+          currentFacility: "FACILITY 02",
+          restrictiveHousingStartDate: "2022-10-15",
+          bedNumber: "04",
+          roomNumber: "06",
+          complexNumber: "3",
+          buildingNumber: "10",
+          housingUseCode: "HOS",
+          majorCdvs: [
+            {
+              cdvDate: "2022-02-20",
+              cdvRule: "Rule 7.2",
+            },
+            {
+              cdvDate: "2022-03-30",
+              cdvRule: "Rule 8.1",
+            },
+          ],
+          cdvsSinceLastHearing: [
+            {
+              cdvDate: "2022-03-15",
+              cdvRule: "Rule 10.3",
+            },
+            {
+              cdvDate: "2022-04-10",
+              cdvRule: "Rule 11.4",
+            },
+          ],
+          numMinorCdvsBeforeLastHearing: "0",
+        },
+      },
+      // Upcoming hearing
       {
         stateCode: "US_MO",
         externalId: "RES006",
         eligibleCriteria: {
-          usMoHasUpcomingHearing: {
-            nextReviewDate: "2023-12-01",
-          },
           usMoInRestrictiveHousing: {
             confinementType: "confinement type",
+          },
+        },
+        ineligibleCriteria: {
+          usMoOverdueForHearing: {
+            nextReviewDate: "2023-06-21",
           },
         },
         metadata: {
