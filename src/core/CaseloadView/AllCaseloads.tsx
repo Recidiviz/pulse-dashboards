@@ -57,7 +57,7 @@ function Caseload({
   isResponsiveRevamp?: boolean;
 }) {
   const items = persons.map((person) => (
-    <li key={person.externalId}>
+    <li key={`externalId-${person.externalId}`}>
       <Link
         to={workflowsUrl(
           person instanceof Client ? "clientProfile" : "residentProfile",

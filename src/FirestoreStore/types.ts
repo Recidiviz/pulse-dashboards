@@ -214,7 +214,7 @@ export type ClientEmployer = {
 export type ClientRecord = JusticeInvolvedPersonRecord & {
   personType: "CLIENT";
   district?: string;
-  supervisionType: string;
+  supervisionType?: string;
   supervisionLevel?: string;
   supervisionLevelStart?: Timestamp | string;
   address?: string;

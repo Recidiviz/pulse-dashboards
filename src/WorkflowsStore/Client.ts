@@ -197,7 +197,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   get supervisionType(): string {
     const { supervisionType } = this.record;
 
-    return supervisionType === "INTERNAL_UNKNOWN"
+    return !supervisionType || supervisionType === "INTERNAL_UNKNOWN"
       ? "Unknown"
       : formatSupervisionType(supervisionType);
   }
