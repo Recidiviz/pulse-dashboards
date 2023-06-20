@@ -23,11 +23,12 @@ import styled from "styled-components/macro";
 
 import { ReactComponent as TealStar } from "../../assets/static/images/tealStar.svg";
 import { useRootStore } from "../../components/StoreProvider";
-import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
+import { Client } from "../../WorkflowsStore";
 import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
 import { MilestonesCapsule } from "../PersonCapsules/MilestonesCapsule";
 import { workflowsUrl } from "../views";
 import WorkflowsResults from "../WorkflowsResults";
+import { MilestonesTooltip } from "./MilestonesTooltip";
 
 type MilestonesTab = "NEW_MILESTONES" | "CONGRATULATED" | "DECLINED" | "ERRORS";
 
@@ -106,22 +107,20 @@ function ClientMilestones({ client }: { client: Client }): JSX.Element {
   );
 }
 
-function MilestonesCaseload({
-  persons,
-}: {
-  persons: JusticeInvolvedPerson[];
-}): JSX.Element {
+function MilestonesCaseload({ persons }: { persons: Client[] }): JSX.Element {
   const items = persons.map((person) => (
-    <MilestonesClientRow key={person.externalId}>
-      <Link
-        to={workflowsUrl("clientProfile", {
-          justiceInvolvedPersonId: person.pseudonymizedId,
-        })}
-      >
-        <MilestonesCapsule person={person} />
-      </Link>
-      <ClientMilestones client={person as Client} />
-    </MilestonesClientRow>
+    <MilestonesTooltip key={person.externalId} person={person}>
+      <MilestonesClientRow>
+        <Link
+          to={workflowsUrl("clientProfile", {
+            justiceInvolvedPersonId: person.pseudonymizedId,
+          })}
+        >
+          <MilestonesCapsule person={person} />
+        </Link>
+        <ClientMilestones client={person} />
+      </MilestonesClientRow>
+    </MilestonesTooltip>
   ));
 
   return <MilestonesClientWrapper>{items}</MilestonesClientWrapper>;

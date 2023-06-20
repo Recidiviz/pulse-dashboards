@@ -68,6 +68,8 @@ export class UsIdSupervisionLevelDowngradeOpportunity extends OpportunityBase<
 
   readonly isAlert = true;
 
+  readonly tooltipEligibilityText = "Eligible for supervision downgrade";
+
   denialReasonsMap = {
     INCORRECT: "INCORRECT: Risk score listed here is incorrect",
     OVERRIDE:

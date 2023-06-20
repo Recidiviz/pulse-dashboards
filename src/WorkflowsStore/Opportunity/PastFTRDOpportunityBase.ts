@@ -56,6 +56,8 @@ export abstract class PastFTRDOpportunityBase<
     "ClientProfileDetails",
   ];
 
+  readonly tooltipEligibilityText = "Eligible for discharge";
+
   constructor(
     client: Client,
     type: OpportunityType,

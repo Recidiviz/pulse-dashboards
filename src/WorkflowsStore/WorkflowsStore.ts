@@ -491,10 +491,10 @@ export class WorkflowsStore implements Hydratable {
       });
   }
 
-  get milestonesClients(): JusticeInvolvedPerson[] {
+  get milestonesClients(): Client[] {
     return this.caseloadPersons.filter((person) => {
       return isClient(person) && (person.milestones ?? []).length > 0;
-    });
+    }) as Client[];
   }
 
   opportunitiesByEligibilityStatus(

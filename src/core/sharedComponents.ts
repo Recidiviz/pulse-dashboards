@@ -17,6 +17,7 @@
 
 import {
   palette,
+  Sans12,
   Sans14,
   Sans18,
   spacing,
@@ -41,4 +42,35 @@ export const SectionLabelText = styled(Sans14)`
   margin-top: ${rem(spacing.xl)};
   border-bottom: 1px solid ${palette.slate20};
   padding-bottom: ${rem(spacing.sm)};
+`;
+
+export const TooltipContainer = styled.div`
+  min-width: 100%;
+  margin: ${rem(spacing.sm)};
+`;
+
+export const TooltipSection = styled.div`
+  &:not(:first-child) {
+    padding: 1rem 1rem 0 0;
+  }
+`;
+
+export const TooltipSectionHeader = styled(Sans14)`
+  color: white;
+  padding-bottom: 0.25rem;
+`;
+
+type TooltipSectionDetailsProps = {
+  overdue?: boolean;
+};
+
+export const TooltipSectionDetails = styled(Sans12)<TooltipSectionDetailsProps>`
+  padding-top: 0.25rem;
+  color: ${(p) => (p.overdue ? "rgb(224, 14, 0)" : "rgba(255, 255, 255, 0.7)")};
+`;
+
+export const TooltipRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `;

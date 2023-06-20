@@ -16,64 +16,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
-import {
-  Sans12,
-  Sans14,
-  spacing,
-  TooltipTrigger,
-} from "@recidiviz/design-system";
-import { autorun } from "mobx";
+import { TooltipTrigger } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import React, { useEffect } from "react";
-import styled from "styled-components/macro";
+import React from "react";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { JusticeInvolvedPerson } from "../../WorkflowsStore";
+import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
+import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import {
   SupervisionTask,
   SupervisionTaskType,
 } from "../../WorkflowsStore/Task/types";
-
-const TooltipContainer = styled.div`
-  min-width: 100%;
-  margin: ${rem(spacing.sm)};
-`;
-
-const TooltipSection = styled.div`
-  &:not(:first-child) {
-    padding: 1rem 1rem 0 0;
-  }
-`;
-
-const SectionHeader = styled(Sans14)`
-  color: white;
-  padding-bottom: 0.25rem;
-`;
-
-type SectionDetailsProps = {
-  overdue?: boolean;
-};
-
-const SectionDetails = styled(Sans12)<SectionDetailsProps>`
-  padding-top: 0.25rem;
-  color: ${(p) => (p.overdue ? "rgb(224, 14, 0)" : "rgba(255, 255, 255, 0.7)")};
-`;
+import {
+  TooltipContainer,
+  TooltipRow,
+  TooltipSection,
+  TooltipSectionDetails,
+  TooltipSectionHeader,
+} from "../sharedComponents";
 
 type TooltipDetailsProps = {
   person: JusticeInvolvedPerson;
   tasks: SupervisionTask<SupervisionTaskType>[];
 };
 
-// TODO: Put these directly on the opportunity classes
-const OPPORTUNITY_TEXT = {
-  LSU: "transfer to LSU",
-  usIdSupervisionLevelDowngrade: "supervision downgrade",
-  earnedDischarge: "Earned Discharge",
-  pastFTRD: "discharge",
-};
-
-const OpportunitiesSection: React.FC<{ person: JusticeInvolvedPerson }> =
+export const OpportunitiesSection: React.FC<{ person: JusticeInvolvedPerson }> =
   observer(function OpportunitiesSection({ person }) {
     const opportunities = Object.values(person.verifiedOpportunities);
     if (opportunities.length === 0) {
@@ -82,22 +48,18 @@ const OpportunitiesSection: React.FC<{ person: JusticeInvolvedPerson }> =
 
     return (
       <TooltipSection>
-        <SectionHeader>Opportunities</SectionHeader>
-        {opportunities.map((o) => (
-          <SectionDetails key={o.type}>{`Eligible for ${
-            // @ts-expect-error Only launched in ID, so we only expect those four opps
-            OPPORTUNITY_TEXT[o.type]
-          }`}</SectionDetails>
-        ))}
+        <TooltipSectionHeader>Opportunities</TooltipSectionHeader>
+        {opportunities.map(
+          (o: Opportunity) =>
+            o.tooltipEligibilityText && (
+              <TooltipSectionDetails key={o.type}>
+                {o.tooltipEligibilityText}
+              </TooltipSectionDetails>
+            )
+        )}
       </TooltipSection>
     );
   });
-
-const TooltipTaskRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`;
 
 const TasksSection: React.FC<{
   tasks: SupervisionTask<SupervisionTaskType>[];
@@ -106,14 +68,14 @@ const TasksSection: React.FC<{
 
   return (
     <TooltipSection>
-      <SectionHeader>Tasks</SectionHeader>
+      <TooltipSectionHeader>Tasks</TooltipSectionHeader>
       {tasks.map((t) => (
-        <TooltipTaskRow key={t.type}>
-          <SectionDetails>{t.displayName}</SectionDetails>
-          <SectionDetails overdue={t.isOverdue}>
+        <TooltipRow key={t.type}>
+          <TooltipSectionDetails>{t.displayName}</TooltipSectionDetails>
+          <TooltipSectionDetails overdue={t.isOverdue}>
             {t.dueDateDisplayShort}
-          </SectionDetails>
-        </TooltipTaskRow>
+          </TooltipSectionDetails>
+        </TooltipRow>
       ))}
     </TooltipSection>
   );
@@ -132,9 +94,11 @@ const NeedsSection: React.FC<{ person: JusticeInvolvedPerson }> = observer(
 
     return (
       <TooltipSection>
-        <SectionHeader>Needs</SectionHeader>
+        <TooltipSectionHeader>Needs</TooltipSectionHeader>
         {needs.map((n) => (
-          <SectionDetails key={n.type}>{NEED_TEXT[n.type]}</SectionDetails>
+          <TooltipSectionDetails key={n.type}>
+            {NEED_TEXT[n.type]}
+          </TooltipSectionDetails>
         ))}
       </TooltipSection>
     );
@@ -146,7 +110,7 @@ const PersonSection: React.FC<{ person: JusticeInvolvedPerson }> = ({
 }) => {
   return (
     <TooltipSection>
-      <SectionHeader>{person.displayName}</SectionHeader>
+      <TooltipSectionHeader>{person.displayName}</TooltipSectionHeader>
     </TooltipSection>
   );
 };
@@ -173,25 +137,7 @@ export const TaskListTooltip: React.FC<TaskClientTooltipProps> = ({
   tasks,
   children,
 }) => {
-  const {
-    workflowsStore: { opportunityTypes },
-  } = useRootStore();
-
-  // We don't use a full hydrator with an intermediate loading state since we
-  // do not want to prevent the rendering of the children components while we
-  // fetch opportunity information for use in part of the tooltip. The user
-  // will not see any jitter unless they are currently displaying the tooltip
-  // for a person with opportunities to load.
-  useEffect(
-    () =>
-      autorun(() => {
-        const { potentialOpportunities } = person;
-        opportunityTypes.forEach((opportunityType) => {
-          potentialOpportunities[opportunityType]?.hydrate();
-        });
-      }),
-    [person, opportunityTypes]
-  );
+  useHydrateOpportunities(person);
 
   return (
     <TooltipTrigger contents={<TooltipDetails person={person} tasks={tasks} />}>

@@ -108,6 +108,8 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
     "CaseNotes",
   ];
 
+  readonly tooltipEligibilityText = "Eligible for Earned Discharge";
+
   constructor(client: Client) {
     super(client, "earnedDischarge", client.rootStore, transformReferral);
 

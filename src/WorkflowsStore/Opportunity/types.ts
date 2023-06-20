@@ -221,6 +221,7 @@ export interface Opportunity<
   readonly opportunityProfileModules: OpportunityProfileModuleName[];
   readonly caseNotesTitle?: string;
   readonly hideUnknownCaseNoteDates?: boolean;
+  readonly tooltipEligibilityText?: string;
 }
 
 export type OpportunityFactory<
