@@ -29,6 +29,16 @@ const data: StaffRecord[] = [
     givenNames: "Test",
     surname: "Officer1",
   },
+  {
+    email: "test-officer-1@example.com",
+    district: "DISTRICT 1",
+    id: "OFFICER2",
+    stateCode: "US_CA",
+    hasCaseload: true,
+    hasFacilityCaseload: false,
+    givenNames: "Test",
+    surname: "Officer2",
+  },
   // US_ID - IDAHO
   {
     email: "test-officer-4@example.com",

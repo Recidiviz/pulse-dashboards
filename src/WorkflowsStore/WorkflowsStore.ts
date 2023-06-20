@@ -58,7 +58,7 @@ import {
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
-import { Client, UNKNOWN } from "./Client";
+import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
 import {
@@ -489,6 +489,12 @@ export class WorkflowsStore implements Hydratable {
           ascending(a.fullName.givenNames, b.fullName.givenNames)
         );
       });
+  }
+
+  get milestonesClients(): JusticeInvolvedPerson[] {
+    return this.caseloadPersons.filter((person) => {
+      return isClient(person) && (person.milestones ?? []).length > 0;
+    });
   }
 
   opportunitiesByEligibilityStatus(

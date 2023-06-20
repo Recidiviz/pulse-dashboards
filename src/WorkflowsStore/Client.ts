@@ -116,6 +116,12 @@ const createClientSupervisionTasks: TaskFactory<Client> = (
   }
 };
 
+export function isClient(
+  person: Client | JusticeInvolvedPerson
+): person is Client {
+  return person instanceof Client;
+}
+
 // TODO(#1735): the real type should be cleaner than this
 export type ParsedSpecialCondition = {
   // eslint-disable-next-line camelcase

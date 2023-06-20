@@ -25,8 +25,8 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord, toTitleCase } from "../../utils";
 import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
-import { SectionLabelText } from "../OpportunityCaseloadView/styles";
 import { ProfileCapsule } from "../PersonCapsules";
+import { SectionLabelText } from "../sharedComponents";
 import { workflowsUrl } from "../views";
 import WorkflowsResults from "../WorkflowsResults";
 

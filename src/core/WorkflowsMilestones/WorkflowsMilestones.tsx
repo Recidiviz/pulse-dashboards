@@ -20,8 +20,9 @@ import React from "react";
 import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord } from "../../utils";
 import { CaseloadSelect } from "../CaseloadSelect";
+import { Heading, SubHeading } from "../sharedComponents";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import WorkflowsResults from "../WorkflowsResults";
+import MilestonesCaseloadView from "./MilestonesCaseloadView";
 
 const WorkflowsMilestones = observer(
   function WorkflowsMilestones(): React.ReactElement | null {
@@ -29,15 +30,19 @@ const WorkflowsMilestones = observer(
       workflowsStore: { justiceInvolvedPersonTitle },
     } = useRootStore();
 
+    const title = pluralizeWord(justiceInvolvedPersonTitle);
+
     return (
       <WorkflowsNavLayout>
         <CaseloadSelect />
-        <WorkflowsResults
-          headerText={`Congratulate your ${justiceInvolvedPersonTitle}s on their progress`}
-          callToActionText={`Send a text message to celebrate your ${pluralizeWord(
-            justiceInvolvedPersonTitle
-          )}' milestones. This list will refresh every month.`}
-        />
+        <>
+          <Heading>Congratulate your {title} on their progress</Heading>
+          <SubHeading>
+            Send a text message to celebrate your {title}&apos; milestones. This
+            list will refresh every month.
+          </SubHeading>
+        </>
+        <MilestonesCaseloadView />
       </WorkflowsNavLayout>
     );
   }

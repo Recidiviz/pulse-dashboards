@@ -19,8 +19,20 @@ import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 
 import { useRootStore } from "../../../components/StoreProvider";
+import { RootStore } from "../../../RootStore";
+import {
+  eligibleClient,
+  ineligibleClient,
+} from "../../../WorkflowsStore/__fixtures__";
+import { Client } from "../../../WorkflowsStore/Client";
 import WorkflowsMilestones from "..";
 
+jest.mock("firebase/firestore");
+jest.mock("../../../assets/static/images/tealStar.svg", () => ({
+  ReactComponent: () => {
+    return <div />;
+  },
+}));
 jest.mock("../../../components/StoreProvider");
 jest.mock("../../CaseloadSelect", () => ({
   CaseloadSelect: () => {
@@ -31,6 +43,13 @@ jest.mock("../../CaseloadSelect", () => ({
 const useRootStoreMock = useRootStore as jest.Mock;
 
 const baseWorkflowsStoreMock = {
+  caseloadLoaded: () => false,
+  justiceInvolvedPersonTitle: "client",
+  milestonesClients: [],
+  workflowsStore: { allowSupervisionTasks: false },
+  firestoreStore: {
+    db: jest.fn(),
+  },
   featureVariants: {
     responsiveRevamp: {},
   },
@@ -52,7 +71,6 @@ describe("WorkflowsMilestones", () => {
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         selectedSearchIds: [],
-        justiceInvolvedPersonTitle: "client",
       },
     });
 
@@ -71,5 +89,70 @@ describe("WorkflowsMilestones", () => {
         "Send a text message to celebrate your clients' milestones. This list will refresh every month."
       )
     ).toBeInTheDocument();
+  });
+
+  test("renders loading state", () => {
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        selectedSearchIds: ["OFFICER1"],
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsMilestones />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText("Loading data...")).toBeInTheDocument();
+  });
+
+  test("render no results", () => {
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        selectedSearchIds: ["OFFICER1"],
+        caseloadLoaded: () => true,
+        caseloadPersons: [],
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsMilestones />
+      </BrowserRouter>
+    );
+
+    expect(
+      screen.getByText(
+        "None of the selected caseloads have milestones to display. Search for another caseload."
+      )
+    ).toBeInTheDocument();
+  });
+
+  test("render results with milestones", () => {
+    const clients = [eligibleClient, ineligibleClient].map(
+      (client) =>
+        new Client(client, baseWorkflowsStoreMock as unknown as RootStore)
+    );
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        selectedSearchIds: ["OFFICER1"],
+        caseloadLoaded: () => true,
+        caseloadPersons: clients,
+        milestonesClients: clients,
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsMilestones />
+      </BrowserRouter>
+    );
+    // Clients with milestones
+    expect(screen.getByText("TONYE THOMPSON")).toBeInTheDocument();
+    expect(screen.getByText("LINET HANSEN")).toBeInTheDocument();
   });
 });

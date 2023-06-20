@@ -31,9 +31,9 @@ import {
 } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
+import { Heading, SectionLabelText, SubHeading } from "../sharedComponents";
 import WorkflowsResults from "../WorkflowsResults";
 import { PersonListItem } from "./PersonListItem";
-import { Heading, SectionLabelText, SubHeading } from "./styles";
 
 const PersonList = styled.ul`
   column-gap: ${rem(spacing.md)};
