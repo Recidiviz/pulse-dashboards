@@ -104,4 +104,33 @@ export const usMeEarlyTerminationReferralsFixture =
         ],
       },
     },
+    {
+      stateCode: "US_ME",
+      externalId: "012",
+      eligibleCriteria: {
+        usMePaidAllOwedRestitution: null,
+        noConvictionWithin6Months: null,
+        onMediumSupervisionLevelOrLower: {
+          supervisionLevel: "MEDIUM",
+        },
+      },
+      ineligibleCriteria: {
+        supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
+          eligibleDate: "2023-07-28",
+        },
+        usMeNoPendingViolationsWhileSupervised: {
+          currentStatus: "PENDING VIOLATION",
+          violationDate: "2023-01-01",
+        },
+      },
+      caseNotes: {
+        foo: [
+          {
+            noteTitle: "A title",
+            noteBody: "A body",
+            eventDate: "2022-06-28",
+          },
+        ],
+      },
+    },
   ]);

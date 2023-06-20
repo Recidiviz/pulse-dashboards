@@ -15,13 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { differenceInDays, startOfToday } from "date-fns";
 import dedent from "dedent";
 import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
-import { OpportunityValidationError } from "../../errors";
+import { FeatureGateError, OpportunityValidationError } from "../../errors";
 import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
@@ -62,26 +63,42 @@ const CRITERIA: Record<
   usMeNoPendingViolationsWhileSupervised: {},
 };
 
-function validateRecord(
-  record: DocumentData | undefined
-): DocumentData | undefined {
-  if (!record) return;
+const validateRecord =
+  (client: Client) =>
+  (record: DocumentData | undefined): DocumentData | undefined => {
+    if (!record) return;
 
-  const {
-    eligibleCriteria: {
-      supervisionPastHalfFullTermReleaseDateFromSupervisionStart:
-        pastHalfFullTermRelease,
-    },
-  } = record;
+    const {
+      eligibleCriteria: {
+        supervisionPastHalfFullTermReleaseDateFromSupervisionStart:
+          pastHalfFullTermRelease,
+      },
+      ineligibleCriteria: {
+        supervisionPastHalfFullTermReleaseDateFromSupervisionStart:
+          ineligiblePastHalfFullTermRelease,
+      },
+    } = record;
 
-  if (!pastHalfFullTermRelease?.eligibleDate) {
-    throw new OpportunityValidationError(
-      "Missing early termination opportunity eligible date"
-    );
-  }
+    if (
+      !pastHalfFullTermRelease?.eligibleDate &&
+      !ineligiblePastHalfFullTermRelease?.eligibleDate
+    ) {
+      throw new OpportunityValidationError(
+        "Missing early termination opportunity eligible date"
+      );
+    }
 
-  return record;
-}
+    if (
+      !client.rootStore.workflowsStore.featureVariants.usMeAlmostPastHalfTerm &&
+      Object.keys(record.ineligibleCriteria ?? {}).length > 0
+    ) {
+      throw new FeatureGateError(
+        "Missing almost past half term feature is disabled."
+      );
+    }
+
+    return record;
+  };
 
 export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
   Client,
@@ -102,7 +119,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
       "usMeEarlyTermination",
       client.rootStore,
       transformReferral,
-      validateRecord
+      validateRecord(client)
     );
 
     makeObservable(this, {
@@ -211,27 +228,47 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
     if (!this.record) return [];
     const requirementsAlmostMet: OpportunityRequirement[] = [];
 
-    const { ineligibleCriteria } = this.record;
+    const {
+      ineligibleCriteria: {
+        supervisionPastHalfFullTermReleaseDateFromSupervisionStart,
+        usMeNoPendingViolationsWhileSupervised,
+        usMePaidAllOwedRestitution,
+      },
+    } = this.record;
 
     if (
-      ineligibleCriteria.usMeNoPendingViolationsWhileSupervised?.violationDate
+      supervisionPastHalfFullTermReleaseDateFromSupervisionStart?.eligibleDate
     ) {
+      const daysUntilHalfFullTermReleaseDate = differenceInDays(
+        supervisionPastHalfFullTermReleaseDateFromSupervisionStart?.eligibleDate,
+        startOfToday()
+      );
+      requirementsAlmostMet.push({
+        text: `Will have served 1/2 of probation term in ${daysUntilHalfFullTermReleaseDate} days`,
+        tooltip:
+          CRITERIA.supervisionPastHalfFullTermReleaseDateFromSupervisionStart
+            .tooltip,
+      });
+    }
+
+    if (usMeNoPendingViolationsWhileSupervised?.violationDate) {
       requirementsAlmostMet.push({
         text: `Violation Pending since ${formatWorkflowsDate(
-          ineligibleCriteria.usMeNoPendingViolationsWhileSupervised
-            ?.violationDate
+          usMeNoPendingViolationsWhileSupervised?.violationDate
         )}`,
         tooltip: CRITERIA.usMeNoPendingViolationsWhileSupervised.tooltip,
       });
     }
-    if (ineligibleCriteria.usMePaidAllOwedRestitution?.amountOwed) {
+
+    if (usMePaidAllOwedRestitution?.amountOwed) {
       requirementsAlmostMet.push({
         text: `Remaining Restitution Balance ${formatAsCurrency(
-          ineligibleCriteria.usMePaidAllOwedRestitution?.amountOwed
+          usMePaidAllOwedRestitution?.amountOwed
         )}`,
         tooltip: CRITERIA.usMePaidAllOwedRestitution.tooltip,
       });
     }
+
     return requirementsAlmostMet;
   }
 }

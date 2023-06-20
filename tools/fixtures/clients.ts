@@ -457,7 +457,7 @@ const US_ME_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     phoneNumber: "5555555678",
     expirationDate: "2024-12-31",
     allEligibleOpportunities: ["usMeEarlyTermination"],
-    supervisionStartDate: "2020-02-22",
+    supervisionStartDate: "2022-02-22",
     currentBalance: 0,
     lastPaymentAmount: 125.75,
     lastPaymentDate: "2022-01-03",
@@ -560,6 +560,46 @@ const US_ME_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
       },
     ],
     emailAddress: "mc@example.com",
+  },
+  {
+    personName: {
+      givenNames: "DALE",
+      surname: "COOPER",
+    },
+    personExternalId: "012",
+    pseudonymizedId: "p012",
+    stateCode: "US_ME",
+    officerId: "OFFICER8",
+    supervisionType: "PROBATION",
+    supervisionLevel: "MEDIUM",
+    supervisionLevelStart: "2019-12-20",
+    address: "123 Bedrock Lane",
+    phoneNumber: "5555555678",
+    expirationDate: "2024-12-31",
+    allEligibleOpportunities: ["usMeEarlyTermination"],
+    supervisionStartDate: "2022-02-22",
+    currentBalance: 0,
+    lastPaymentAmount: 125.75,
+    lastPaymentDate: "2023-01-03",
+    specialConditions: [],
+    boardConditions: [],
+    currentEmployers: [
+      {
+        name: "Tire store",
+        address: "456 Bedrock Lane",
+      },
+    ],
+    milestones: [
+      {
+        text: "8 months without a violation",
+        type: "MONTHS_WITHOUT_VIOLATION",
+      },
+      {
+        text: "15 months on supervision",
+        type: "MONTHS_ON_SUPERVISION",
+      },
+    ],
+    emailAddress: "cooper@example.com",
   },
 ];
 

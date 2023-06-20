@@ -122,6 +122,7 @@ export type PersonUpdateRecord = {
 export type FeatureVariant =
   | "TEST"
   | "CompliantReportingAlmostEligible"
+  | "usMeAlmostPastHalfTerm"
   | "usTnCustodyLevelDowngrade"
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
@@ -147,6 +148,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
     : {
         TEST: {},
         CompliantReportingAlmostEligible: {},
+        usMeAlmostPastHalfTerm: {},
         usTnCustodyLevelDowngrade: {},
         usTnExpiration: {},
         usTnExpirationSubmitToTomis: {},
