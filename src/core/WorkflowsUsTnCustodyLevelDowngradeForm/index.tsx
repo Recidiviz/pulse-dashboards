@@ -40,15 +40,13 @@ const WorkflowsUsTnCustodyLevelDowngradeForm: React.FC = () => {
 
   const onClickDownload = async () => {
     return generate(formRef.current, `${PrintablePage}`).then((pdf: jsPDF) => {
-      pdf.save(
-        `${person?.displayName} - Classification Custody Assessment.pdf`
-      );
+      pdf.save(`${person?.displayName} - Classification Assessment Form.pdf`);
     });
   };
 
   return (
     <FormContainer
-      heading="Custody Level Downgrade"
+      heading="Classification Assessment Form"
       agencyName="TDOC"
       downloadButtonLabel={form.downloadText}
       onClickDownload={async () => onClickDownload()}

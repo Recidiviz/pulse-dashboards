@@ -26,7 +26,10 @@ export class Location implements Searchable {
   }
 
   get searchLabel(): string {
-    return this.record.name;
+    // TODO: Make this change upstream (recidiviz-data #21656)
+    return this.record.stateCode === "US_TN"
+      ? this.record.name.toUpperCase()
+      : this.record.name;
   }
 
   get searchId(): string {

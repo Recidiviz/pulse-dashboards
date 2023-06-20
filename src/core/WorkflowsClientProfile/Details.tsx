@@ -445,27 +445,31 @@ export function CaseNotes({
               <React.Fragment key={section}>
                 <DetailsSubheading>{section}</DetailsSubheading>
                 <DetailsList className="fs-exclude">
-                  {notes
-                    .sort((noteA, noteB) =>
-                      descending(noteA.eventDate, noteB.eventDate)
-                    )
-                    .map((note, index) => {
-                      return (
-                        // eslint-disable-next-line react/no-array-index-key
-                        <DetailsContent key={index}>
-                          {note.noteTitle && (
-                            <CaseNoteTitle>{note.noteTitle}: </CaseNoteTitle>
-                          )}
-                          {note.noteBody && note.noteBody}{" "}
-                          {(note.eventDate ||
-                            !opportunity.hideUnknownCaseNoteDates) && (
-                            <CaseNoteDate>
-                              {formatWorkflowsDate(note.eventDate)}
-                            </CaseNoteDate>
-                          )}
-                        </DetailsContent>
-                      );
-                    })}
+                  {notes.length > 0 ? (
+                    notes
+                      .sort((noteA, noteB) =>
+                        descending(noteA.eventDate, noteB.eventDate)
+                      )
+                      .map((note, index) => {
+                        return (
+                          // eslint-disable-next-line react/no-array-index-key
+                          <DetailsContent key={index}>
+                            {note.noteTitle && (
+                              <CaseNoteTitle>{note.noteTitle}: </CaseNoteTitle>
+                            )}
+                            {note.noteBody && note.noteBody}{" "}
+                            {(note.eventDate ||
+                              !opportunity.hideUnknownCaseNoteDates) && (
+                              <CaseNoteDate>
+                                {formatWorkflowsDate(note.eventDate)}
+                              </CaseNoteDate>
+                            )}
+                          </DetailsContent>
+                        );
+                      })
+                  ) : (
+                    <DetailsContent>None</DetailsContent>
+                  )}
                 </DetailsList>
               </React.Fragment>
             );

@@ -17,64 +17,106 @@
  * =============================================================================
  */
 
+import { cloneDeep } from "lodash";
 import { z } from "zod";
 
 import type { AssessmentQuestionNumber } from "../../core/Paperwork/US_TN/CustodyLevelDowngrade/assessmentQuestions";
-import { dateStringSchema, opportunitySchemaBase } from "./schemaHelpers";
+import {
+  caseNotesSchema,
+  dateStringSchema,
+  opportunitySchemaBase,
+} from "./schemaHelpers";
 
-export const usTnCustodyLevelDowngradeSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: z.object({
-    custodyLevelHigherThanRecommended: z.object({
-      custodyLevel: z.string(),
-      recommendedCustodyLevel: z.string(),
+const realUsTnCustodyLevelDowngradeSchema = opportunitySchemaBase
+  .extend({
+    eligibleCriteria: z.object({
+      custodyLevelHigherThanRecommended: z.object({
+        custodyLevel: z.string(),
+        recommendedCustodyLevel: z.string(),
+      }),
+      custodyLevelIsNotMax: z.null(),
+      usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident: z.null(),
+      usTnHasHadAtLeast1IncarcerationIncidentPastYear: z.object({
+        latestIncarcerationIncidentDate: dateStringSchema,
+      }),
     }),
-    custodyLevelIsNotMax: z.null(),
-    usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident: z.null(),
-    usTnHasHadAtLeast1IncarcerationIncidentPastYear: z.object({
-      latestIncarcerationIncidentDate: dateStringSchema,
+    ineligibleCriteria: z.object({}),
+    formInformation: z.object({
+      currentOffenses: z.string().array().optional(),
+      lastCafDate: dateStringSchema.optional(),
+      lastCafTotal: z.string().optional(),
+      latestClassificationDecisionDate: dateStringSchema.optional(),
+      levelOfCare: z.string().optional(),
+      q1Score: z.coerce.number(),
+      q2Score: z.coerce.number(),
+      q3Score: z.coerce.number(),
+      q4Score: z.coerce.number(),
+      q5Score: z.coerce.number(),
+      q6Score: z.coerce.number(),
+      q7Score: z.coerce.number(),
+      q8Score: z.coerce.number(),
+      q9Score: z.coerce.number(),
+      q6Notes: z.optional(
+        z.array(
+          z.object({
+            eventDate: dateStringSchema,
+            noteBody: z.string(),
+          })
+        )
+      ),
+      q7Notes: z.optional(
+        z.array(
+          z.object({
+            eventDate: dateStringSchema,
+            noteBody: z.string(),
+          })
+        )
+      ),
+      q8Notes: z.optional(
+        z.array(
+          z.object({
+            detainerReceivedDate: dateStringSchema,
+            detainerFelonyFlag: z.string().transform((raw) => raw === "X"),
+            detainerMisdemeanorFlag: z.string().transform((raw) => raw === "X"),
+          })
+        )
+      ),
     }),
-  }),
-  ineligibleCriteria: z.object({}),
-  formInformation: z.object({
-    q1Score: z.coerce.number(),
-    q2Score: z.coerce.number(),
-    q3Score: z.coerce.number(),
-    q4Score: z.coerce.number(),
-    q5Score: z.coerce.number(),
-    q6Score: z.coerce.number(),
-    q7Score: z.coerce.number(),
-    q8Score: z.coerce.number(),
-    q9Score: z.coerce.number(),
-    q6Notes: z.optional(
-      z.array(
-        z.object({
-          eventDate: dateStringSchema,
-          noteBody: z.string(),
-        })
-      )
-    ),
-    q7Notes: z.optional(
-      z.array(
-        z.object({
-          eventDate: dateStringSchema,
-          noteBody: z.string(),
-        })
-      )
-    ),
-    q8Notes: z.optional(
-      z.array(
-        z.object({
-          detainerReceivedDate: dateStringSchema,
-          detainerFelonyFlag: z.string().transform((raw) => raw === "X"),
-          detainerMisdemeanorFlag: z.string().transform((raw) => raw === "X"),
-        })
-      )
-    ),
-  }),
-});
+  })
+  .merge(caseNotesSchema)
+  .transform((r) => {
+    const out = cloneDeep(r);
+    if (!out.caseNotes["ASSAULTIVE DISCIPLINARIES"])
+      out.caseNotes["ASSAULTIVE DISCIPLINARIES"] = [];
+    return out;
+  });
+
+export const usTnCustodyLevelDowngradeSchema = z.preprocess(
+  // TODO: I will move these fields around upstream (recidiviz-data #21658)
+  // and then delete this ugly preprocess step.
+  (obj) => {
+    const out: any = cloneDeep(obj);
+    if (out.caseNotesAssaultiveDisciplinaries) {
+      out.caseNotes["ASSAULTIVE DISCIPLINARIES"] =
+        out.caseNotesAssaultiveDisciplinaries;
+    }
+    [
+      "currentOffenses",
+      "lastCafDate",
+      "lastCafTotal",
+      "latestClassificationDecisionDate",
+      "levelOfCare",
+    ].forEach((k) => {
+      if (out[k]) out.formInformation[k] = out[k];
+    });
+
+    return out;
+  },
+  realUsTnCustodyLevelDowngradeSchema
+);
 
 export type UsTnCustodyLevelDowngradeReferralRecordRaw = z.input<
-  typeof usTnCustodyLevelDowngradeSchema
+  typeof realUsTnCustodyLevelDowngradeSchema
 >;
 
 export type UsTnCustodyLevelDowngradeReferralRecord = z.infer<
@@ -93,5 +135,10 @@ export type UsTnCustodyLevelDowngradeDraftData = {
   institutionName: string;
   residentFullName: string;
   omsId: string;
+  date: string;
+  lastCafDate: string;
+  lastCafTotal: string;
+  latestClassificationDecisionDate: string;
+  levelOfCare: string;
 } & DraftDataSelections &
   DraftDataNotes;

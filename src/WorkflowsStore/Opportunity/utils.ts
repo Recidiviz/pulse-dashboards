@@ -183,9 +183,9 @@ export const generateOpportunityHydratedHeader = (
         "Review these clients and complete their auto-generated TEPE Note.",
     },
     usTnCustodyLevelDowngrade: {
-      eligibilityText: simplur`${count} resident[|s] may be eligible for `,
-      opportunityText: "Custody Level Downgrade",
-      callToAction: "Review residents and complete a pre-filled assessment.",
+      eligibilityText: simplur`${count} resident[|s] may be eligible for a`,
+      opportunityText: "custody level downgrade",
+      callToAction: "Review and update custody levels.",
     },
     usMoRestrictiveHousingStatusHearing: {
       // This is slightly awkward phrasing, but we concatenate the eligibility text + opportunity

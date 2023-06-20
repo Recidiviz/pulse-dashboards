@@ -20,6 +20,7 @@ import { computed, makeObservable } from "mobx";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../FirestoreStore";
 import { Resident } from "../Resident";
+import { OTHER_KEY } from "../utils";
 import { UsTnCustodyLevelDowngradeForm } from "./Forms/usTnCustodyLevelDowngradeForm";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
@@ -43,17 +44,17 @@ const CRITERIA_COPY: CriteriaCopy<UsTnCustodyLevelDowngradeReferralRecord> = {
     [
       "custodyLevelHigherThanRecommended",
       {
-        text: "custodyLevelHigherThanRecommended",
+        text: "Custody level is higher than latest CAF score suggests",
       },
     ],
-    ["custodyLevelIsNotMax", { text: "custodyLevelIsNotMax" }],
+    ["custodyLevelIsNotMax", { text: "Custody level is not maximum" }],
     [
       "usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident",
-      { text: "usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident" },
+      { text: "At least 6 months since last violation" },
     ],
     [
       "usTnHasHadAtLeast1IncarcerationIncidentPastYear",
-      { text: "usTnHasHadAtLeast1IncarcerationIncidentPastYear" },
+      { text: "Had a violation in the past year" },
     ],
   ],
   ineligibleCriteria: [],
@@ -74,7 +75,10 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
 
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "Incarceration",
+    "CaseNotes",
   ];
+
+  readonly caseNotesTitle = "Disciplinaries";
 
   constructor(resident: Resident) {
     super(
@@ -90,7 +94,9 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
       requirementsMet: computed,
     });
 
-    this.denialReasonsMap = {};
+    this.denialReasonsMap = {
+      [OTHER_KEY]: "Please specify a reason",
+    };
 
     this.form = new UsTnCustodyLevelDowngradeForm(
       "usTnCustodyLevelDowngrade",

@@ -15,11 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { zip } from "lodash";
+import { sum, zip } from "lodash";
+import { observer } from "mobx-react-lite";
 import React, { useContext } from "react";
 import styled from "styled-components/macro";
 
+import { UsTnCustodyLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsTnCustodyLevelDowngradeReferralRecord";
 import { FormViewerContext } from "../../FormViewer";
+import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
 import SealPng from "../common/Seal.png";
 import AssessmentQuestion from "./AssessmentQuestion";
@@ -31,7 +34,8 @@ import {
 } from "./assessmentQuestions";
 import AssessmentScore from "./AssessmentScore";
 import FormInput from "./FormInput";
-import { FormContainer } from "./styles";
+import HeaderFields from "./HeaderFields";
+import { FormContainer, Label } from "./styles";
 
 const Header = styled.div`
   display: flex;
@@ -48,13 +52,21 @@ const Seal = styled.img.attrs({ src: SealPng, alt: "TN Seal" })`
   margin-right: 1rem;
 `;
 
-const Label = styled.label`
-  display: flex;
-  align-items: baseline;
-`;
+const totalScoreForQuestions = (
+  numberedQuestions: [AssessmentQuestionSpec, AssessmentQuestionNumber][],
+  formData: UsTnCustodyLevelDowngradeDraftData
+) =>
+  sum(
+    numberedQuestions.map(([{ options }, n]) => {
+      const selection = formData[`q${n}Selection`];
+      return selection === -1 ? 0 : options[selection].score;
+    })
+  );
 
 const ClassificationCustodyAssessment: React.FC = () => {
   const formViewerContext = useContext(FormViewerContext);
+  const formData = useOpportunityFormContext()
+    .formData as UsTnCustodyLevelDowngradeDraftData;
 
   const numberedQuestions = zip(
     assessmentQuestions,
@@ -64,49 +76,74 @@ const ClassificationCustodyAssessment: React.FC = () => {
   const scheduleA = numberedQuestions.slice(0, 4);
   const scheduleB = numberedQuestions.slice(4);
 
+  const scheduleAScore = totalScoreForQuestions(scheduleA, formData);
+  const totalScore = totalScoreForQuestions(numberedQuestions, formData);
+  const scheduleBDisabled = scheduleAScore > 9;
+
   return (
     <>
       <PrintablePageMargin>
         <PrintablePage>
-          <FormContainer {...formViewerContext} style={{ fontSize: "0.9em" }}>
+          <FormContainer {...formViewerContext}>
             <Header>
               <Seal />
               <div>
                 TENNESSEE DEPARTMENT OF CORRECTION <br />
                 CLASSIFICATION CUSTODY ASSESSMENT <br />
                 <Label>
-                  INSTITUTION: <FormInput name="institutionName" />
+                  INSTITUTION:{" "}
+                  <FormInput
+                    style={{ borderBottom: "0.5px solid black" }}
+                    name="institutionName"
+                  />
                 </Label>
               </div>
             </Header>
-            <Header>
-              <Label>
-                Name:
-                <FormInput name="residentFullName" />
-              </Label>
-              <Label>
-                OMS ID:
-                <FormInput name="omsId" />
-              </Label>
-            </Header>
-            <ol>
+            <HeaderFields />
+            <div>
               {scheduleA.map(([q, i]) => (
-                <AssessmentQuestion q={q} i={i} key={i} />
+                <AssessmentQuestion
+                  questionSpec={q}
+                  questionNumber={i}
+                  key={i}
+                />
               ))}
-            </ol>
-            <AssessmentScore />
+            </div>
+            <AssessmentScore
+              score={scheduleAScore}
+              title="SCHEDULE A SCALE (SUM OF ITEMS 1 THROUGH 4)"
+              levels={[
+                { text: "Close", min: 10, max: 14 },
+                { text: "Maximum", min: 15 },
+                { text: "Complete Schedule B", max: 9 },
+              ]}
+            />
           </FormContainer>
         </PrintablePage>
       </PrintablePageMargin>
       <PrintablePageMargin>
         <PrintablePage>
-          <FormContainer {...formViewerContext} style={{ fontSize: "0.9em" }}>
-            <ol>
+          <FormContainer {...formViewerContext}>
+            <div>
               {scheduleB.map(([q, i]) => (
-                <AssessmentQuestion q={q} i={i} key={i} />
+                <AssessmentQuestion
+                  questionSpec={q}
+                  questionNumber={i}
+                  key={i}
+                  disabled={scheduleBDisabled}
+                />
               ))}
-            </ol>
-            <AssessmentScore />
+            </div>
+            <AssessmentScore
+              title="CUSTODY LEVEL SCALE FOR TOTAL A+B (CAF SCORE)"
+              score={scheduleBDisabled ? undefined : totalScore}
+              scoreText={scheduleBDisabled ? "See Schedule A" : undefined}
+              levels={[
+                { text: "Close", min: 17 },
+                { text: "Medium", min: 7, max: 16 },
+                { text: "Minimum", max: 6 },
+              ]}
+            />
           </FormContainer>
         </PrintablePage>
       </PrintablePageMargin>
@@ -114,4 +151,4 @@ const ClassificationCustodyAssessment: React.FC = () => {
   );
 };
 
-export default ClassificationCustodyAssessment;
+export default observer(ClassificationCustodyAssessment);

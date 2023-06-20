@@ -359,6 +359,12 @@ function splitAuth0UserName(
   return { lastName: splitName[0], firstName: splitName[1] };
 }
 
+function rangeString({ min, max }: { min?: number; max?: number }) {
+  if (min === undefined) return `${max} or Less`;
+  if (max === undefined) return `${min} or More`;
+  return `${min} - ${max}`;
+}
+
 export {
   convertCurlyQuotesToStraight,
   decrypt,
@@ -392,6 +398,7 @@ export {
   pluralizeWord,
   raceValueToHumanReadable,
   raceValueToLabel,
+  rangeString,
   safeToInt,
   splitAuth0UserName,
   toHtmlFriendly,
