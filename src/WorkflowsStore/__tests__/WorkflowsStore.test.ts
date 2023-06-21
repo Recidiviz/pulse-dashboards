@@ -403,7 +403,6 @@ test("feature variants active by default for Recidiviz users", async () => {
       "TEST": Object {},
       "responsiveRevamp": Object {},
       "usMeAlmostPastHalfTerm": Object {},
-      "usTnCustodyLevelDowngrade": Object {},
       "usTnExpiration": Object {},
       "usTnExpirationSubmitToTomis": Object {},
     }

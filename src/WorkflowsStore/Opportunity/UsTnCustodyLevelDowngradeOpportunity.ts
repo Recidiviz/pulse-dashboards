@@ -29,12 +29,7 @@ import {
   UsTnCustodyLevelDowngradeReferralRecord,
   usTnCustodyLevelDowngradeSchema,
 } from "./UsTnCustodyLevelDowngradeReferralRecord";
-import {
-  CriteriaCopy,
-  CriteriaFormatters,
-  getFeatureVariantValidator,
-  hydrateCriteria,
-} from "./utils";
+import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "./utils";
 
 const CRITERIA_FORMATTERS: CriteriaFormatters<UsTnCustodyLevelDowngradeReferralRecord> =
   {} as const;
@@ -85,8 +80,7 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
       resident,
       "usTnCustodyLevelDowngrade",
       resident.rootStore,
-      usTnCustodyLevelDowngradeSchema.parse,
-      getFeatureVariantValidator(resident, "usTnCustodyLevelDowngrade")
+      usTnCustodyLevelDowngradeSchema.parse
     );
     this.resident = resident;
 

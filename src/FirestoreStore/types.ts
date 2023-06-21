@@ -123,7 +123,6 @@ export type FeatureVariant =
   | "TEST"
   | "CompliantReportingAlmostEligible"
   | "usMeAlmostPastHalfTerm"
-  | "usTnCustodyLevelDowngrade"
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
   | "responsiveRevamp";
@@ -149,7 +148,6 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         TEST: {},
         CompliantReportingAlmostEligible: {},
         usMeAlmostPastHalfTerm: {},
-        usTnCustodyLevelDowngrade: {},
         usTnExpiration: {},
         usTnExpirationSubmitToTomis: {},
         responsiveRevamp: {},

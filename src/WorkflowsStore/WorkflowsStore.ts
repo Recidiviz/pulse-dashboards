@@ -393,15 +393,8 @@ export class WorkflowsStore implements Hydratable {
     } = this.rootStore;
 
     if (!currentTenantId) return;
-    let workflowsSupportedSystems =
+    const workflowsSupportedSystems =
       tenants[currentTenantId].workflowsSupportedSystems ?? [];
-
-    if (
-      currentTenantId === "US_TN" &&
-      !this.featureVariants.usTnCustodyLevelDowngrade
-    ) {
-      workflowsSupportedSystems = ["SUPERVISION"];
-    }
 
     if (isRecidivizUser) {
       return workflowsSupportedSystems;
@@ -684,15 +677,6 @@ export class WorkflowsStore implements Hydratable {
     if (currentTenantId === "US_TN" && !this.featureVariants.usTnExpiration) {
       opportunityTypes = opportunityTypes.filter(
         (oppType) => oppType !== "usTnExpiration"
-      );
-    }
-
-    if (
-      currentTenantId === "US_TN" &&
-      !this.featureVariants.usTnCustodyLevelDowngrade
-    ) {
-      opportunityTypes = opportunityTypes.filter(
-        (oppType) => oppType !== "usTnCustodyLevelDowngrade"
       );
     }
 
