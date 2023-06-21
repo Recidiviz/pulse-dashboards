@@ -39,6 +39,21 @@ export function dateToTimestamp(isodate: string): Timestamp {
   return new Timestamp(new Date(isodate).getTime() / 1000, 0);
 }
 
+export function validatePhoneNumber(phoneNumber: string): boolean {
+  const phoneNumberRegex = /^\d{10}$/;
+  return phoneNumberRegex.test(phoneNumber);
+}
+
+export function formatPhoneNumber(phoneNumber: string): string {
+  const digitsOnly = phoneNumber.replace(/\D/g, "");
+  const formattedPhoneNumber = digitsOnly.replace(
+    /(\d{3})(\d{3})(\d{4})/,
+    "($1) $2-$3"
+  );
+
+  return formattedPhoneNumber;
+}
+
 // dates in demo fixtures will be shifted relative to this date
 const DEMO_TIMESTAMP = parseISO("2021-12-16");
 

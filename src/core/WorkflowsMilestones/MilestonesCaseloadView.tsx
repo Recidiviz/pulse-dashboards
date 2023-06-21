@@ -18,7 +18,6 @@
 import { palette, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { ReactComponent as TealStar } from "../../assets/static/images/tealStar.svg";
@@ -26,8 +25,8 @@ import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
 import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
 import { MilestonesCapsule } from "../PersonCapsules/MilestonesCapsule";
-import { workflowsUrl } from "../views";
 import WorkflowsResults from "../WorkflowsResults";
+import { MilestonesSidePanel } from "./MilestonesSidePanel";
 import { MilestonesTooltip } from "./MilestonesTooltip";
 
 type MilestonesTab = "NEW_MILESTONES" | "CONGRATULATED" | "DECLINED" | "ERRORS";
@@ -79,19 +78,27 @@ const MilestonesClientRow = styled.div`
   cursor: pointer;
 `;
 
+const PersonCapsuleWrapper = styled.div``;
+
 const SeeMoreText = styled.span`
   ${typography.Sans12}
   padding: 4px 0;
   color: ${palette.slate60};
 `;
 
-function ClientMilestones({ client }: { client: Client }): JSX.Element {
+export function ClientMilestones({
+  client,
+  showAll = false,
+}: {
+  client: Client;
+  showAll?: boolean;
+}): JSX.Element {
   const numMilestonesLeft = (client.milestones?.length || 0) - 2;
 
   return (
     <MilestonesList>
       {client.milestones?.map((milestone, index) => {
-        if (index < 2) {
+        if (index < 2 || showAll) {
           return (
             <MilestonesItem key={`${client.pseudonymizedId}-${milestone.type}`}>
               <TealStar height="16" width="16" />
@@ -107,17 +114,22 @@ function ClientMilestones({ client }: { client: Client }): JSX.Element {
   );
 }
 
-function MilestonesCaseload({ persons }: { persons: Client[] }): JSX.Element {
+function MilestonesCaseload({
+  persons,
+  handleRowOnClick,
+}: {
+  persons: Client[];
+  handleRowOnClick: (p: Client) => void;
+}): JSX.Element {
   const items = persons.map((person) => (
-    <MilestonesTooltip key={person.externalId} person={person}>
-      <MilestonesClientRow>
-        <Link
-          to={workflowsUrl("clientProfile", {
-            justiceInvolvedPersonId: person.pseudonymizedId,
-          })}
-        >
+    <MilestonesTooltip key={`tooltip-${person.externalId}`} person={person}>
+      <MilestonesClientRow
+        onClick={() => handleRowOnClick(person)}
+        key={person.externalId}
+      >
+        <PersonCapsuleWrapper>
           <MilestonesCapsule person={person} />
-        </Link>
+        </PersonCapsuleWrapper>
         <ClientMilestones client={person} />
       </MilestonesClientRow>
     </MilestonesTooltip>
@@ -129,6 +141,7 @@ function MilestonesCaseload({ persons }: { persons: Client[] }): JSX.Element {
 const MilestonesCaseloadView: React.FC = observer(
   function MilestonesCaseloadView() {
     const {
+      workflowsStore,
       workflowsStore: { milestonesClients },
     } = useRootStore();
     const [activeTab, setActiveTab] = useState<MilestonesTab>("NEW_MILESTONES");
@@ -136,6 +149,9 @@ const MilestonesCaseloadView: React.FC = observer(
     const handleTabClick = (tab: MilestonesTab) => {
       setActiveTab(tab);
     };
+
+    const handleRowOnClick = (person: Client) =>
+      workflowsStore.updateSelectedPerson(person.pseudonymizedId);
 
     const hasErrors = false;
 
@@ -166,6 +182,7 @@ const MilestonesCaseloadView: React.FC = observer(
               ))}
               {hasErrors && (
                 <MilestonesTabButton
+                  key="ERRORS"
                   $active={activeTab === "ERRORS"}
                   onClick={() => handleTabClick("ERRORS")}
                 >
@@ -174,13 +191,30 @@ const MilestonesCaseloadView: React.FC = observer(
               )}
             </MilestonesTabs>
             {activeTab === "NEW_MILESTONES" && (
-              <MilestonesCaseload persons={milestonesClients} />
+              <MilestonesCaseload
+                persons={milestonesClients}
+                handleRowOnClick={handleRowOnClick}
+              />
             )}
             {activeTab === "CONGRATULATED" && (
-              <MilestonesCaseload persons={[]} />
+              <MilestonesCaseload
+                persons={[]}
+                handleRowOnClick={handleRowOnClick}
+              />
             )}
-            {activeTab === "DECLINED" && <MilestonesCaseload persons={[]} />}
-            {activeTab === "ERRORS" && <MilestonesCaseload persons={[]} />}
+            {activeTab === "DECLINED" && (
+              <MilestonesCaseload
+                persons={[]}
+                handleRowOnClick={handleRowOnClick}
+              />
+            )}
+            {activeTab === "ERRORS" && (
+              <MilestonesCaseload
+                persons={[]}
+                handleRowOnClick={handleRowOnClick}
+              />
+            )}
+            <MilestonesSidePanel />
           </>
         }
         empty={empty}
