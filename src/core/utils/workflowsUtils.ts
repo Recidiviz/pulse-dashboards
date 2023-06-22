@@ -90,6 +90,9 @@ export function useStatusColors(opportunity: Opportunity): StatusPalette {
     if (opportunity?.reviewStatus === "DENIED") {
       return OPPORTUNITY_STATUS_COLORS.alertOverride;
     }
+    if (opportunity?.almostEligible) {
+      return OPPORTUNITY_STATUS_COLORS.almostEligible;
+    }
     return OPPORTUNITY_STATUS_COLORS.alert;
   }
 
@@ -100,14 +103,8 @@ export function useStatusColors(opportunity: Opportunity): StatusPalette {
   if (opportunity?.almostEligible) {
     return OPPORTUNITY_STATUS_COLORS.almostEligible;
   }
+
   return featureVariants.responsiveRevamp
     ? OPPORTUNITY_STATUS_COLORS.responsiveRevamp
     : OPPORTUNITY_STATUS_COLORS.eligible;
-}
-
-/**
- * Alert-type opportunities only have a visible status if they're denied; others are always visible
- */
-export function useShowEligibilityStatus(opportunity: Opportunity): boolean {
-  return !opportunity.isAlert || opportunity.reviewStatus === "DENIED";
 }

@@ -28,6 +28,7 @@ export const EligibilityStatus: React.FC<EligibilityStatusProps> = observer(
     const {
       almostEligible,
       almostEligibleStatusMessage,
+      eligibleStatusMessage,
       defaultEligibility,
       denial,
       isHydrated,
@@ -57,6 +58,6 @@ export const EligibilityStatus: React.FC<EligibilityStatusProps> = observer(
 
     if (defaultEligibility === "MAYBE") return <>May be eligible</>;
 
-    return <>Eligible</>;
+    return eligibleStatusMessage ? <>{eligibleStatusMessage}</> : <>Eligible</>;
   }
 );

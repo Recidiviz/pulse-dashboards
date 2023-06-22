@@ -194,6 +194,7 @@ export interface Opportunity<
   // TODO: move this to status component once almost-eligible is standardized on TES
   almostEligibleStatusMessage?: string;
   almostEligibleRecommendedNote?: { title: string; text: string };
+  eligibleStatusMessage?: string;
   person: PersonType;
   readonly defaultEligibility: DefaultEligibility;
   form?: FormBase<any>;
@@ -224,7 +225,10 @@ export interface Opportunity<
   readonly tooltipEligibilityText?: string;
   sectionTitle: string;
   sectionOrder: string[];
+  showEligibilityStatus: (component: Component) => boolean;
 }
+
+export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";
 
 export type OpportunityFactory<
   OpportunitySubtype extends OpportunityType,

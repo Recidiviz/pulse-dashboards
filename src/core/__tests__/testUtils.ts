@@ -46,4 +46,5 @@ export const mockOpportunity: Opportunity<Client> = {
   sectionOrder: ["Eligible"],
   deniedSectionTitle: "Marked Ineligible",
   sectionTitle: "Eligible",
+  showEligibilityStatus: () => true,
 };

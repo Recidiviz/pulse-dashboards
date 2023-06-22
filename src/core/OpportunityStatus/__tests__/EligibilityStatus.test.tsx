@@ -18,6 +18,7 @@
 import { render, screen } from "@testing-library/react";
 import { observable, runInAction } from "mobx";
 
+import { Opportunity } from "../../../WorkflowsStore";
 import { dateToTimestamp } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { EligibilityStatus } from "../EligibilityStatus";
@@ -42,6 +43,15 @@ test("render nothing until hydrated", () => {
 test("inferred eligible", () => {
   render(<EligibilityStatus opportunity={mockOpportunity} />);
   expect(screen.getByText(/^Eligible$/)).toBeInTheDocument();
+});
+
+test("eligible with custom eligibility test", () => {
+  const opportunity: Opportunity = {
+    ...mockOpportunity,
+    eligibleStatusMessage: "custom status",
+  };
+  render(<EligibilityStatus opportunity={opportunity} />);
+  expect(screen.getByText(/^custom status$/)).toBeInTheDocument();
 });
 
 test("inferred maybe eligible", () => {

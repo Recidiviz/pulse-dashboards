@@ -37,6 +37,7 @@ import { JusticeInvolvedPerson, SectionTitle } from "../types";
 import { OTHER_KEY } from "../utils";
 import { FormBase } from "./Forms/FormBase";
 import {
+  Component,
   DefaultEligibility,
   DenialReasonsMap,
   FormVariant,
@@ -340,6 +341,13 @@ export abstract class OpportunityBase<
     this.deniedSectionTitle,
   ];
 
+  /*
+   * Alert-type opportunities only have a visible status if they're denied; others are always visible
+   */
+  showEligibilityStatus(component: Component): boolean {
+    return !this.isAlert || this.reviewStatus === "DENIED";
+  }
+
   // ===============================
   // properties below this line are stubs and in most cases should be overridden
   // in a subclass. Given their triviality they are not annotated by MobX either,
@@ -376,6 +384,16 @@ export abstract class OpportunityBase<
 
   // eslint-disable-next-line class-methods-use-this
   get formVariant(): FormVariant | undefined {
+    return undefined;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get eligibleStatusMessage(): string | undefined {
+    return undefined;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get almostEligibleStatusMessage(): string | undefined {
     return undefined;
   }
 }

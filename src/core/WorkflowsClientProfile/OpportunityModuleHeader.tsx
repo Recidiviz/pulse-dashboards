@@ -22,10 +22,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity, OPPORTUNITY_LABELS } from "../../WorkflowsStore";
 import { EligibilityStatus } from "../OpportunityStatus";
-import {
-  useShowEligibilityStatus,
-  useStatusColors,
-} from "../utils/workflowsUtils";
+import { useStatusColors } from "../utils/workflowsUtils";
 import { Separator } from "./common";
 
 const TitleText = styled(Sans16)`
@@ -45,14 +42,13 @@ export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
       workflowsStore: { featureVariants },
     } = useRootStore();
     const colors = useStatusColors(opportunity);
-    const showEligibilityStatus = useShowEligibilityStatus(opportunity);
 
     return (
       <TitleText>
         <OpportunityLabel>
           {OPPORTUNITY_LABELS[opportunity.type]}
         </OpportunityLabel>
-        {showEligibilityStatus && (
+        {opportunity.showEligibilityStatus("OpportunityModuleHeader") && (
           <>
             <Separator> • </Separator>
             <span
