@@ -45,8 +45,8 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
       client,
       "usMiClassificationReview",
       client.rootStore,
-      usMiClassificationReviewSchemaForSupervisionLevelFormatter(
-        client.rootStore.workflowsStore.formatSupervisionLevel
+      usMiClassificationReviewSchemaForSupervisionLevelFormatter((raw) =>
+        client.rootStore.workflowsStore.formatSupervisionLevel(raw)
       ).parse
     );
 
