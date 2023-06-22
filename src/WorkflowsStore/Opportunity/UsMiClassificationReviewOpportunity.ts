@@ -23,65 +23,13 @@ import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
-import { TransformFunction } from "../subscriptions";
-import { fieldToDate, OTHER_KEY } from "../utils";
+import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
-import { OpportunityRequirement, WithCaseNotes } from "./types";
-
-export type UsMiClassificationReviewReferralRecord = {
-  eligibleCriteria: {
-    usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
-      supervisionLevel: string;
-    };
-    usMiClassificationReviewPastDueDate: {
-      eligibleDate: Date;
-    };
-  };
-} & WithCaseNotes;
-
-export const getRecordTransformer = (client: Client) => {
-  const transformer: TransformFunction<
-    UsMiClassificationReviewReferralRecord
-  > = (record) => {
-    if (!record) {
-      throw new Error("No record found");
-    }
-
-    const { stateCode, externalId, eligibleCriteria, caseNotes } = record;
-
-    // The copy for these eligibility dates are the same. They are different
-    // in TES, but we can treat them as the same thing in the frontend
-    // since any client will only have one or the other
-    let eligibleDate;
-    if ("usMiPastInitialClassificationReviewDate" in eligibleCriteria) {
-      eligibleDate =
-        eligibleCriteria.usMiPastInitialClassificationReviewDate.eligibleDate;
-    } else {
-      eligibleDate =
-        eligibleCriteria.usMiSixMonthsPastLastClassificationReviewDate
-          .eligibleDate;
-    }
-
-    return {
-      stateCode,
-      externalId,
-      eligibleCriteria: {
-        usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
-          supervisionLevel:
-            client.rootStore.workflowsStore.formatSupervisionLevel(
-              eligibleCriteria.usMiNotAlreadyOnLowestEligibleSupervisionLevel
-                ?.supervisionLevel
-            ),
-        },
-        usMiClassificationReviewPastDueDate: {
-          eligibleDate: fieldToDate(eligibleDate),
-        },
-      },
-      caseNotes,
-    };
-  };
-  return transformer;
-};
+import { OpportunityRequirement } from "./types";
+import {
+  UsMiClassificationReviewReferralRecord,
+  usMiClassificationReviewSchemaForSupervisionLevelFormatter,
+} from "./UsMiClassificationReviewReferralRecord";
 
 export class UsMiClassificationReviewOpportunity extends OpportunityBase<
   Client,
@@ -97,7 +45,9 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
       client,
       "usMiClassificationReview",
       client.rootStore,
-      getRecordTransformer(client)
+      usMiClassificationReviewSchemaForSupervisionLevelFormatter(
+        client.rootStore.workflowsStore.formatSupervisionLevel
+      ).parse
     );
 
     makeObservable(this, { requirementsMet: true });

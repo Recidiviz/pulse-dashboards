@@ -17,8 +17,7 @@
 
 import { identity } from "lodash";
 
-import { Client } from "../../Client";
-import { getRecordTransformer } from "../UsMiClassificationReviewOpportunity";
+import { usMiClassificationReviewSchemaForSupervisionLevelFormatter } from "../UsMiClassificationReviewReferralRecord";
 
 const mockClient = {
   rootStore: {
@@ -28,6 +27,10 @@ const mockClient = {
   },
 };
 
+const transformer = usMiClassificationReviewSchemaForSupervisionLevelFormatter(
+  mockClient.rootStore.workflowsStore.formatSupervisionLevel
+).parse;
+
 test("transform record for initial CR", () => {
   const rawRecord: Record<string, any> = {
     stateCode: "US_MI",
@@ -35,6 +38,7 @@ test("transform record for initial CR", () => {
     eligibleCriteria: {
       usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
         supervisionLevel: "MAXIMUM",
+        requiresSoRegistration: null,
       },
       usMiPastInitialClassificationReviewDate: {
         eligibleDate: "2022-12-12",
@@ -48,12 +52,17 @@ test("transform record for initial CR", () => {
           noteTitle: null,
         },
       ],
+      "Recent employment (last 6 months)": [
+        {
+          eventDate: "2022-10-23",
+          noteBody: "Got a new job",
+          noteTitle: "Employed at Big Bob's Burger Joint",
+        },
+      ],
     },
   };
 
-  expect(
-    getRecordTransformer(mockClient as unknown as Client)(rawRecord)
-  ).toMatchSnapshot();
+  expect(transformer(rawRecord)).toMatchSnapshot();
 });
 
 test("transform record for six-month CR", () => {
@@ -63,6 +72,7 @@ test("transform record for six-month CR", () => {
     eligibleCriteria: {
       usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
         supervisionLevel: "MAXIMUM",
+        requiresSoRegistration: null,
       },
       usMiSixMonthsPastLastClassificationReviewDate: {
         eligibleDate: "2019-01-12",
@@ -79,9 +89,37 @@ test("transform record for six-month CR", () => {
     },
   };
 
-  expect(
-    getRecordTransformer(mockClient as unknown as Client)(rawRecord)
-  ).toMatchSnapshot();
+  expect(transformer(rawRecord)).toMatchSnapshot();
+});
+
+test("expect to fail if both date reasons are set", () => {
+  const rawRecord: Record<string, any> = {
+    stateCode: "US_MI",
+    externalId: "cr-eligible-2",
+    eligibleCriteria: {
+      usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
+        supervisionLevel: "MAXIMUM",
+        requiresSoRegistration: null,
+      },
+      usMiPastInitialClassificationReviewDate: {
+        eligibleDate: "2022-12-12",
+      },
+      usMiSixMonthsPastLastClassificationReviewDate: {
+        eligibleDate: "2019-01-12",
+      },
+    },
+    caseNotes: {
+      "Recommended supervision level": [
+        {
+          eventDate: null,
+          noteBody: "MEDIUM",
+          noteTitle: null,
+        },
+      ],
+    },
+  };
+
+  expect(() => transformer(rawRecord)).toThrow();
 });
 
 test("transform record for null usMiNotAlreadyOnLowestEligibleSupervisionLevel", () => {
@@ -96,7 +134,5 @@ test("transform record for null usMiNotAlreadyOnLowestEligibleSupervisionLevel",
     },
   };
 
-  expect(
-    getRecordTransformer(mockClient as unknown as Client)(rawRecord)
-  ).toMatchSnapshot();
+  expect(transformer(rawRecord)).toMatchSnapshot();
 });

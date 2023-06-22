@@ -20,6 +20,8 @@ import { fieldToDate } from "../utils";
 
 export const dateStringSchema = z.string().transform(fieldToDate);
 
+export const eligibleDateSchema = z.object({ eligibleDate: dateStringSchema });
+
 export const stringToIntSchema = z.string().transform((s) => parseInt(s));
 
 export function NullCoalesce<T extends z.ZodTypeAny>(
