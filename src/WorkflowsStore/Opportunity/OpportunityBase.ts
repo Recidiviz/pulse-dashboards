@@ -33,7 +33,7 @@ import {
   TransformFunction,
   ValidateFunction,
 } from "../subscriptions";
-import { JusticeInvolvedPerson } from "../types";
+import { JusticeInvolvedPerson, SectionTitle } from "../types";
 import { OTHER_KEY } from "../utils";
 import { FormBase } from "./Forms/FormBase";
 import {
@@ -75,11 +75,6 @@ export abstract class OpportunityBase<
    * The "alert" flavor of opportunity receives a different UI treatment
    */
   readonly isAlert: boolean = false;
-
-  /**
-   * The title of denied section on the opportunity page
-   */
-  readonly deniedSectionTitle?: string;
 
   /**
    * If the opportunity allows external system requests
@@ -328,6 +323,22 @@ export abstract class OpportunityBase<
       opportunityType: this.type,
     });
   }
+
+  get deniedSectionTitle(): SectionTitle {
+    return this.isAlert ? "Overridden" : "Marked ineligible";
+  }
+
+  get sectionTitle(): SectionTitle {
+    if (this.almostEligible) return "Almost Eligible";
+    if (this.denied) return this.deniedSectionTitle;
+    return "Eligible Now";
+  }
+
+  sectionOrder: SectionTitle[] = [
+    "Eligible Now",
+    "Almost Eligible",
+    this.deniedSectionTitle,
+  ];
 
   // ===============================
   // properties below this line are stubs and in most cases should be overridden

@@ -24,7 +24,6 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import {
-  generateOpportunityDeniedSectionTitle,
   generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,
   OPPORTUNITY_LABELS,
@@ -53,13 +52,12 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
   const {
     workflowsStore: {
       selectedSearchIds,
-      almostEligibleOpportunities,
-      eligibleOpportunities,
-      deniedOpportunities,
       selectedOpportunityType: opportunityType,
       justiceInvolvedPersonTitle,
       workflowsSearchFieldTitle,
       featureVariants: { responsiveRevamp },
+      opportunitiesBySection,
+      allOpportunitiesByType,
     },
   } = useRootStore();
   const { isMobile } = useIsMobile(true);
@@ -67,14 +65,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
   if (!opportunityType) return null;
 
   const opportunityLabel = OPPORTUNITY_LABELS[opportunityType];
-  const eligibleOpps = eligibleOpportunities[opportunityType];
-  const almostEligibleOpps = almostEligibleOpportunities[opportunityType];
-  const deniedOpps = deniedOpportunities[opportunityType];
-  // TODO(#2710): Revisit this once we tighten up the typing on these properties
-  const totalOpps =
-    (eligibleOpps?.length ?? 0) +
-    (almostEligibleOpps?.length ?? 0) +
-    (deniedOpps?.length ?? 0);
+  const totalOpps = allOpportunitiesByType[opportunityType]?.length ?? 0;
 
   const hydratedHeader = generateOpportunityHydratedHeader(
     opportunityType,
@@ -104,6 +95,13 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
     />
   );
 
+  const opportunityTypeSections = opportunitiesBySection[opportunityType];
+  const sectionOrder: string[] | undefined = Object.values(
+    opportunityTypeSections
+  )
+    .filter((opp) => !!opp)
+    .flat()[0]?.sectionOrder;
+
   const hydrated = (
     <>
       <Heading
@@ -115,49 +113,31 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
       <SubHeading className="PersonList__Subheading">
         {hydratedHeader.callToAction}
       </SubHeading>
-      <>
-        {eligibleOpps?.length > 0 &&
-          !eligibleOpps[0].isAlert &&
-          (almostEligibleOpps?.length > 0 || deniedOpps?.length > 0) && (
-            <SectionLabelText>Eligible now</SectionLabelText>
-          )}
-        <PersonList className="PersonList">
-          {eligibleOpps?.map((opportunity) => (
-            <PersonListItem
-              key={opportunity.person.recordId}
-              opportunity={opportunity}
-            />
-          ))}
-        </PersonList>
-      </>
-      {almostEligibleOpps?.length > 0 && (
-        <>
-          <SectionLabelText>Almost Eligible</SectionLabelText>
-          <PersonList className="PersonList__AlmostEligible">
-            {almostEligibleOpps.map((opportunity) => (
-              <PersonListItem
-                key={opportunity.person.recordId}
-                opportunity={opportunity}
-              />
-            ))}
-          </PersonList>
-        </>
-      )}
-      {deniedOpps?.length > 0 && (
-        <>
-          <SectionLabelText>
-            {generateOpportunityDeniedSectionTitle(deniedOpps[0])}
-          </SectionLabelText>
-          <PersonList className="PersonList__Denied">
-            {deniedOpps.map((opportunity) => (
-              <PersonListItem
-                key={opportunity.person.recordId}
-                opportunity={opportunity}
-              />
-            ))}
-          </PersonList>
-        </>
-      )}
+      {sectionOrder?.map((sectionTitle) => {
+        return (
+          opportunityTypeSections[sectionTitle]?.length > 0 && (
+            <>
+              {/* Only display the section title if there are multiple sections or the one we're
+              displaying isn't the first in the section order (such as "Almost Eligible") */}
+              {(Object.keys(opportunityTypeSections).length > 1 ||
+                sectionTitle !== sectionOrder[0]) && (
+                <SectionLabelText>{sectionTitle}</SectionLabelText>
+              )}
+              <PersonList
+                key={sectionTitle}
+                className={`PersonList_${sectionTitle}`}
+              >
+                {opportunityTypeSections[sectionTitle]?.map((opportunity) => (
+                  <PersonListItem
+                    key={opportunity.person.recordId}
+                    opportunity={opportunity}
+                  />
+                ))}
+              </PersonList>
+            </>
+          )
+        );
+      })}
     </>
   );
 

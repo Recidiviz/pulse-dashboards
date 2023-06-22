@@ -217,11 +217,13 @@ export interface Opportunity<
   trackListViewed: () => void;
   trackPreviewed: () => void;
   readonly policyOrMethodologyUrl: string;
-  readonly deniedSectionTitle?: string;
+  readonly deniedSectionTitle: string;
   readonly opportunityProfileModules: OpportunityProfileModuleName[];
   readonly caseNotesTitle?: string;
   readonly hideUnknownCaseNoteDates?: boolean;
   readonly tooltipEligibilityText?: string;
+  sectionTitle: string;
+  sectionOrder: string[];
 }
 
 export type OpportunityFactory<

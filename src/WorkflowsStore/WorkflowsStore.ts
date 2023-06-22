@@ -17,7 +17,14 @@
 
 import assertNever from "assert-never";
 import { ascending } from "d3-array";
-import { identity, intersection, pick, sortBy } from "lodash";
+import {
+  groupBy,
+  identity,
+  intersection,
+  mapValues,
+  pick,
+  sortBy,
+} from "lodash";
 import {
   action,
   has,
@@ -516,6 +523,15 @@ export class WorkflowsStore implements Hydratable {
 
   get deniedOpportunities(): Record<OpportunityType, Opportunity[]> {
     return this.opportunitiesByEligibilityStatus("opportunitiesDenied");
+  }
+
+  get opportunitiesBySection(): Record<
+    OpportunityType,
+    Record<string, Opportunity[]>
+  > {
+    return mapValues(this.allOpportunitiesByType, (opps) => {
+      return groupBy(opps, "sectionTitle");
+    });
   }
 
   opportunitiesLoaded(opportunityTypes: OpportunityType[]): boolean {
