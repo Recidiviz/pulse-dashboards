@@ -76,8 +76,14 @@ const realUsTnCustodyLevelDowngradeSchema = opportunitySchemaBase
         z.array(
           z.object({
             detainerReceivedDate: dateStringSchema,
-            detainerFelonyFlag: z.string().transform((raw) => raw === "X"),
-            detainerMisdemeanorFlag: z.string().transform((raw) => raw === "X"),
+            detainerFelonyFlag: z
+              .string()
+              .nullable()
+              .transform((raw) => raw === "X"),
+            detainerMisdemeanorFlag: z
+              .string()
+              .nullable()
+              .transform((raw) => raw === "X"),
           })
         )
       ),
