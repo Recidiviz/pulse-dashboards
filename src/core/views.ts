@@ -34,7 +34,7 @@ export const DASHBOARD_VIEWS = {
 } as const;
 type DashboardViewRootPath = typeof DASHBOARD_VIEWS[DashboardView];
 
-export const isValidPathwaysRootPath = (str: string): boolean => {
+export const isValidDashboardRootPath = (str: string): boolean => {
   return Object.values(DASHBOARD_VIEWS).includes(str as DashboardViewRootPath);
 };
 

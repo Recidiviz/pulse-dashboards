@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./PathwaysLayout.scss";
+import "./DashboardLayout.scss";
 
 import { palette } from "@recidiviz/design-system";
 import cn from "classnames";
@@ -38,7 +38,7 @@ interface Props {
   children: React.ReactElement;
 }
 
-const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
+const DashboardLayout: React.FC<Props> = ({ children }): React.ReactElement => {
   useIntercom();
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
@@ -54,7 +54,7 @@ const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
       <ErrorBoundary>
         <div
           id="app"
-          className={cn("PathwaysLayout", {
+          className={cn("DashboardLayout", {
             Operations:
               currentView === DASHBOARD_VIEWS.operations &&
               !isMobile &&
@@ -70,7 +70,7 @@ const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
           !isMobile ? (
             <NavigationLayout backgroundColor={palette.marble3} />
           ) : null}
-          <div className="PathwaysLayout__main">
+          <div className="DashboardLayout__main">
             <PathwaysNavigation />
             <IE11Banner />
             {children}
@@ -81,4 +81,4 @@ const PathwaysLayout: React.FC<Props> = ({ children }): React.ReactElement => {
   );
 };
 
-export default observer(PathwaysLayout);
+export default observer(DashboardLayout);

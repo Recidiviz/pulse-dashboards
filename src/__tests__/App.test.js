@@ -24,11 +24,11 @@ import ErrorMessage from "../components/ErrorMessage";
 import NotFound from "../components/NotFound";
 import StoreProvider, { useRootStore } from "../components/StoreProvider";
 import VerificationNeeded from "../components/VerificationNeeded";
+import DashboardLayout from "../core/DashboardLayout";
 import MethodologyPathways from "../core/MethodologyPathways";
 import MethodologyProjections from "../core/MethodologyProjections/Methodology";
 import PageSystem from "../core/PageSystem";
 import PageVitals from "../core/PageVitals";
-import PathwaysLayout from "../core/PathwaysLayout";
 import LanternLayout from "../lantern/LanternLayout";
 import Revocations from "../lantern/Revocations";
 import { US_MO, US_PA } from "../RootStore/TenantStore/lanternTenants";
@@ -40,7 +40,7 @@ jest.mock("../utils/initIntercomSettings");
 jest.mock("../utils/i18nSettings");
 jest.mock("../lantern/LanternLayout");
 jest.mock("../lantern/Revocations");
-jest.mock("../core/PathwaysLayout");
+jest.mock("../core/DashboardLayout");
 jest.mock("../components/NotFound");
 jest.mock("@recidiviz/design-system");
 jest.mock("../components/StoreProvider");
@@ -66,14 +66,14 @@ describe("App tests", () => {
 
   const RevocationsMock = Revocations.type;
   const LanternLayoutMock = LanternLayout.type;
-  const PathwaysLayoutMock = PathwaysLayout.type;
+  const DashboardLayoutMock = DashboardLayout.type;
   const MethodologyPathwaysMock = MethodologyPathways.type;
   const PageSystemMock = PageSystem.type;
   const PageVitalsMock = PageVitals.type;
   let userStore = {};
 
   LanternLayoutMock.mockImplementation(({ children }) => children);
-  PathwaysLayoutMock.mockImplementation(({ children }) => children);
+  DashboardLayoutMock.mockImplementation(({ children }) => children);
   StoreProvider.mockImplementation(({ children }) => children);
   RevocationsMock.mockReturnValue(mockWithTestId(mockRevocationsId));
   PageSystemMock.mockReturnValue(mockWithTestId(mockPathwaysPrisonId));
@@ -119,7 +119,7 @@ describe("App tests", () => {
       const { getByTestId } = render(<App />);
 
       expect(LanternLayoutMock).toHaveBeenCalledTimes(1);
-      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
+      expect(DashboardLayoutMock).toHaveBeenCalledTimes(0);
       expect(getByTestId(mockRevocationsId)).toBeInTheDocument();
     });
 
@@ -134,7 +134,7 @@ describe("App tests", () => {
       const { getByTestId } = render(<App />);
 
       expect(LanternLayoutMock).toHaveBeenCalledTimes(1);
-      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
+      expect(DashboardLayoutMock).toHaveBeenCalledTimes(0);
       expect(getByTestId(mockRevocationsId)).toBeInTheDocument();
     });
   });
@@ -150,7 +150,7 @@ describe("App tests", () => {
       });
 
       const { getByTestId } = render(<App />);
-      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(1);
+      expect(DashboardLayoutMock).toHaveBeenCalledTimes(1);
       expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
       expect(getByTestId(mockPathwaysPrisonId)).toBeInTheDocument();
     });
@@ -194,7 +194,7 @@ describe("App tests", () => {
 
       const { getByTestId, container } = render(<App />);
       expect(container.children.length).toBe(2);
-      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(0);
+      expect(DashboardLayoutMock).toHaveBeenCalledTimes(0);
       expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
       expect(getByTestId(mockNotFoundId)).toBeInTheDocument();
     });
@@ -212,7 +212,7 @@ describe("App tests", () => {
 
       const { container, getByTestId } = render(<App />);
 
-      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(1);
+      expect(DashboardLayoutMock).toHaveBeenCalledTimes(1);
       expect(container.children.length).toBe(2);
       expect(getByTestId(mockMethodologyPathwaysId)).toBeInTheDocument();
     });
@@ -228,7 +228,7 @@ describe("App tests", () => {
 
       const { container, getByTestId } = render(<App />);
 
-      expect(PathwaysLayoutMock).toHaveBeenCalledTimes(1);
+      expect(DashboardLayoutMock).toHaveBeenCalledTimes(1);
       expect(container.children.length).toBe(2);
       expect(getByTestId(mockMethodologyPathwaysId)).toBeInTheDocument();
     });

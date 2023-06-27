@@ -33,11 +33,11 @@ import SentryErrorBoundary from "./components/SentryErrorBoundary";
 import StoreProvider from "./components/StoreProvider";
 import StyledToaster from "./components/StyledToaster";
 import VerificationNeeded from "./components/VerificationNeeded";
+import DashboardLayout from "./core/DashboardLayout";
 import PageMethodology from "./core/PageMethodology";
 import PageSystem from "./core/PageSystem";
 import PageVitals from "./core/PageVitals";
 import PageWorkflows from "./core/PageWorkflows";
-import PathwaysLayout from "./core/PathwaysLayout";
 import Profile from "./core/Profile";
 import { DASHBOARD_VIEWS, PATHWAYS_PATHS, WORKFLOWS_PATHS } from "./core/views";
 import LanternLayout from "./lantern/LanternLayout";
@@ -67,7 +67,7 @@ function App() {
             <Switch>
               <Route path="/verify" component={VerificationNeeded} />
               <AuthWall>
-                <PathwaysLayout tenantIds={DASHBOARD_TENANTS} views={Object.values(DASHBOARD_VIEWS).concat(SHARED_VIEWS)}>
+                <DashboardLayout tenantIds={DASHBOARD_TENANTS} views={Object.values(DASHBOARD_VIEWS).concat(SHARED_VIEWS)}>
                   <Switch>
                     <ProtectedRoute path={PATHWAYS_PATHS.system} component={PageSystem} />
                     <ProtectedRoute path={PATHWAYS_PATHS.operations} component={PageVitals} />
@@ -79,7 +79,7 @@ function App() {
                     <RedirectHome />
                     <NotFound />
                   </Switch>
-                </PathwaysLayout>
+                </DashboardLayout>
 
                 <LanternLayout tenantIds={LANTERN_TENANTS} views={Object.values(LANTERN_VIEWS).concat(SHARED_VIEWS)}>
                   <Switch>

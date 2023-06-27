@@ -30,7 +30,7 @@ import { getMethodologyCopy, getPageCopy } from "../content";
 import { useCoreStore } from "../CoreStoreProvider";
 import { NavigationLayout } from "../NavigationLayout";
 import { NavigationSection } from "../types/navigation";
-import { isValidPathwaysRootPath } from "../views";
+import { isValidDashboardRootPath } from "../views";
 
 const PageNavigation: React.FC = () => {
   const isMobile = useIsMobile();
@@ -84,7 +84,7 @@ const PageNavigation: React.FC = () => {
     <ul
       className={cx("PageNavigation", {
         "PageNavigation--pathways":
-          isDashboardView && !isMobile && isValidPathwaysRootPath(currentView),
+          isDashboardView && !isMobile && isValidDashboardRootPath(currentView),
         "PageNavigation--mobile": isMobile && isDashboardView,
       })}
     >
