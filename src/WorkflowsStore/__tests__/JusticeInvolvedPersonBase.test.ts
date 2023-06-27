@@ -29,6 +29,7 @@ import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
 import { OpportunityFactory, OpportunityType } from "../Opportunity";
 import { OpportunityBase } from "../Opportunity/OpportunityBase";
 
+jest.mock("firebase/firestore");
 jest.mock("../subscriptions");
 
 let rootStoreMock: RootStore;
@@ -56,7 +57,10 @@ beforeEach(() => {
         return computed(() => mockOpportunityTypes.get()).get();
       },
     },
-  } as RootStore;
+    firestoreStore: {
+      db: jest.fn(),
+    },
+  } as unknown as RootStore;
   record = {
     allEligibleOpportunities: [],
     officerId: "OFFICER1",

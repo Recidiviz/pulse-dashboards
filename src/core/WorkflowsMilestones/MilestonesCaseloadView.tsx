@@ -115,22 +115,22 @@ export function ClientMilestones({
 }
 
 function MilestonesCaseload({
-  persons,
+  clients,
   handleRowOnClick,
 }: {
-  persons: Client[];
+  clients: Client[];
   handleRowOnClick: (p: Client) => void;
 }): JSX.Element {
-  const items = persons.map((person) => (
-    <MilestonesTooltip key={`tooltip-${person.externalId}`} person={person}>
+  const items = clients.map((client) => (
+    <MilestonesTooltip key={`tooltip-${client.externalId}`} client={client}>
       <MilestonesClientRow
-        onClick={() => handleRowOnClick(person)}
-        key={person.externalId}
+        onClick={() => handleRowOnClick(client)}
+        key={client.externalId}
       >
         <PersonCapsuleWrapper>
-          <MilestonesCapsule person={person} />
+          <MilestonesCapsule person={client} />
         </PersonCapsuleWrapper>
-        <ClientMilestones client={person} />
+        <ClientMilestones client={client} />
       </MilestonesClientRow>
     </MilestonesTooltip>
   ));
@@ -140,20 +140,15 @@ function MilestonesCaseload({
 
 const MilestonesCaseloadView: React.FC = observer(
   function MilestonesCaseloadView() {
-    const {
-      workflowsStore,
-      workflowsStore: { milestonesClients },
-    } = useRootStore();
+    const { workflowsStore } = useRootStore();
     const [activeTab, setActiveTab] = useState<MilestonesTab>("NEW_MILESTONES");
 
     const handleTabClick = (tab: MilestonesTab) => {
       setActiveTab(tab);
     };
 
-    const handleRowOnClick = (person: Client) =>
-      workflowsStore.updateSelectedPerson(person.pseudonymizedId);
-
-    const hasErrors = false;
+    const handleRowOnClick = (client: Client) =>
+      workflowsStore.updateSelectedPerson(client.pseudonymizedId);
 
     const tabs: Partial<Record<MilestonesTab, string>> = {
       NEW_MILESTONES: "New Milestones",
@@ -164,6 +159,28 @@ const MilestonesCaseloadView: React.FC = observer(
     const empty = (
       <WorkflowsResults callToActionText="None of the selected caseloads have milestones to display. Search for another caseload." />
     );
+
+    const erroredMilestonesClients =
+      workflowsStore.getMilestonesClientsByStatus(["FAILURE"]);
+    const hasErrors = erroredMilestonesClients.length > 0;
+
+    const clients = (tab: MilestonesTab): Client[] => {
+      switch (tab) {
+        case "NEW_MILESTONES":
+          return workflowsStore.getMilestonesClientsByStatus();
+        case "CONGRATULATED":
+          return workflowsStore.getMilestonesClientsByStatus([
+            "IN_PROGRESS",
+            "SUCCESS",
+          ]);
+        case "DECLINED":
+          return workflowsStore.getMilestonesClientsByStatus(["DECLINED"]);
+        case "ERRORS":
+          return erroredMilestonesClients;
+        default:
+          return [];
+      }
+    };
 
     return (
       <CaseloadHydrator
@@ -190,30 +207,10 @@ const MilestonesCaseloadView: React.FC = observer(
                 </MilestonesTabButton>
               )}
             </MilestonesTabs>
-            {activeTab === "NEW_MILESTONES" && (
-              <MilestonesCaseload
-                persons={milestonesClients}
-                handleRowOnClick={handleRowOnClick}
-              />
-            )}
-            {activeTab === "CONGRATULATED" && (
-              <MilestonesCaseload
-                persons={[]}
-                handleRowOnClick={handleRowOnClick}
-              />
-            )}
-            {activeTab === "DECLINED" && (
-              <MilestonesCaseload
-                persons={[]}
-                handleRowOnClick={handleRowOnClick}
-              />
-            )}
-            {activeTab === "ERRORS" && (
-              <MilestonesCaseload
-                persons={[]}
-                handleRowOnClick={handleRowOnClick}
-              />
-            )}
+            <MilestonesCaseload
+              clients={clients(activeTab)}
+              handleRowOnClick={handleRowOnClick}
+            />
             <MilestonesSidePanel />
           </>
         }

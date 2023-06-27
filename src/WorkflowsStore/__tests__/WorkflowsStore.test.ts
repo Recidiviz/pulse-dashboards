@@ -22,7 +22,9 @@ import { IDisposer, keepAlive } from "mobx-utils";
 import FirestoreStore, {
   ClientRecord,
   CombinedUserRecord,
+  MilestonesMessage,
   ResidentRecord,
+  TextMessageStatus,
   UserUpdateRecord,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
@@ -30,6 +32,8 @@ import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import type { WorkflowsStore } from "..";
 import {
   ineligibleClient,
+  lsuAlmostEligibleClient,
+  milestonesClient,
   mockClients,
   mockLocations,
   mockOfficer,
@@ -45,6 +49,7 @@ import {
   UsNdEarlyTerminationOpportunity,
 } from "../Opportunity";
 import { Resident } from "../Resident";
+import { MilestonesMessageUpdateSubscription } from "../subscriptions/MilestonesMessageUpdateSubscription";
 import { dateToTimestamp } from "../utils";
 
 jest.mock("firebase/firestore", () => {
@@ -809,6 +814,77 @@ describe("opportunityTypes for US_TN", () => {
     });
 
     expect(workflowsStore.opportunityTypes).toContain("usTnExpiration");
+  });
+});
+
+describe("getMilestonesClientsByStatus", () => {
+  beforeEach(async () => {
+    // Populate clients with the same number of statuses to test
+    populateClients([
+      ...mockClients,
+      lsuAlmostEligibleClient,
+      milestonesClient,
+    ]);
+    await waitForHydration();
+
+    runInAction(() => {
+      const messageStatuses: Partial<TextMessageStatus>[] = [
+        "IN_PROGRESS",
+        "SUCCESS",
+        "FAILURE",
+        "DECLINED",
+      ];
+      // Assign each client one of the possible message statuses
+      workflowsStore.milestonesClients.forEach((client, index) => {
+        if (index === 0) {
+          // eslint-disable-next-line no-param-reassign
+          client.milestonesMessageUpdatesSubscription = undefined;
+        }
+        // eslint-disable-next-line no-param-reassign
+        client.milestonesMessageUpdatesSubscription = {
+          data: {
+            status: messageStatuses[index],
+          } as MilestonesMessage,
+        } as MilestonesMessageUpdateSubscription<MilestonesMessage>;
+      });
+    });
+  });
+
+  test("Clients who have not had a message sent yet", () => {
+    const newMilestonesClients = workflowsStore.getMilestonesClientsByStatus();
+    expect(newMilestonesClients.length).toEqual(1);
+    expect(
+      newMilestonesClients[0].milestoneMessagesUpdates?.status
+    ).toBeUndefined();
+  });
+
+  test("Clients whose messages are in progress or have been sent", () => {
+    const congratulatedMilestonesClients =
+      workflowsStore.getMilestonesClientsByStatus(["IN_PROGRESS", "SUCCESS"]);
+    expect(congratulatedMilestonesClients.length).toEqual(2);
+    expect(
+      congratulatedMilestonesClients.map(
+        (c) => c.milestoneMessagesUpdates?.status
+      )
+    ).toIncludeAllMembers(["IN_PROGRESS", "SUCCESS"]);
+  });
+
+  test("Clients whose officers declined to send a message", () => {
+    const declinedMilestonesClients =
+      workflowsStore.getMilestonesClientsByStatus(["DECLINED"]);
+    expect(declinedMilestonesClients.length).toEqual(1);
+    expect(
+      declinedMilestonesClients.map((c) => c.milestoneMessagesUpdates?.status)
+    ).toIncludeAllMembers(["DECLINED"]);
+  });
+  test("Clients who had an error sending the message", () => {
+    const errorMilestonesClients = workflowsStore.getMilestonesClientsByStatus([
+      "FAILURE",
+    ]);
+    expect(errorMilestonesClients.length).toEqual(1);
+    expect(
+      errorMilestonesClients.map((c) => c.milestoneMessagesUpdates?.status)
+    ).toIncludeAllMembers(["FAILURE"]);
   });
 });
 

@@ -24,9 +24,12 @@ import { collectionNames } from "../src/FirestoreStore";
 import {
   CollectionName,
   defaultFeatureVariantsActive,
+  MilestonesMessage,
 } from "../src/FirestoreStore/types";
+import { getMonthYearFromDate } from "../src/WorkflowsStore/utils";
 import { deleteCollection } from "./firestoreUtils";
 import { clientsData } from "./fixtures/clients";
+import { clientUpdatesV2Data } from "./fixtures/clientUpdatesV2";
 import { locationsData } from "./fixtures/locations";
 import { residentsData } from "./fixtures/residents";
 import { staffData } from "./fixtures/staff";
@@ -190,10 +193,36 @@ export async function loadOpportunityReferralFixtures(): Promise<void> {
   }
 }
 
+async function loadClientUpdatesV2(): Promise<void> {
+  console.log(`wiping existing clientUpdatesV2 data ...`);
+  await deleteCollection(db, collectionName("clientUpdatesV2"));
+
+  const { milestonesMessages } = clientUpdatesV2Data;
+
+  console.log(`loading new milestonesMessages update data...`);
+  const bulkWriter = db.bulkWriter();
+
+  milestonesMessages.forEach(
+    (record: MilestonesMessage & { externalId: string }) => {
+      const { externalId } = record;
+      bulkWriter.create(
+        db
+          .collection(collectionName("clientUpdatesV2"))
+          .doc(externalId)
+          .collection(collectionName("milestonesMessages"))
+          .doc(getMonthYearFromDate(new Date())),
+        record
+      );
+    }
+  );
+  bulkWriter.close().then(() => console.log(`new  data loaded successfully`));
+}
+
 export async function loadWorkflowsFixtures(): Promise<void> {
   await Promise.all([
     loadFixtures(),
     loadOpportunityReferralFixtures(),
     loadFeatureVariantsFixture(),
+    loadClientUpdatesV2(),
   ]);
 }

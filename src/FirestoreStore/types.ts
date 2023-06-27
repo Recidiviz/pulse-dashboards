@@ -20,7 +20,6 @@ import type { Timestamp } from "firebase/firestore";
 import { SystemId } from "../core/models/types";
 import {
   IncarcerationOpportunityType,
-  OpportunityType,
   SupervisionOpportunityType,
   SupervisionTaskType,
 } from "../WorkflowsStore";
@@ -38,9 +37,10 @@ export const collectionNames = {
   compliantReportingReferrals: "compliantReportingReferrals",
   earnedDischargeReferrals: "US_ID-earnedDischargeReferrals",
   earlyTerminationReferrals: "earlyTerminationReferrals",
+  featureVariants: "featureVariants",
+  milestonesMessages: "milestonesMessages",
   LSUReferrals: "US_ID-LSUReferrals",
   pastFTRDReferrals: "US_ID-pastFTRDReferrals",
-  featureVariants: "featureVariants",
   supervisionLevelDowngradeReferrals: "US_TN-supervisionLevelDowngrade",
   taskUpdates: "taskUpdates",
   usMeSCCPReferrals: "US_ME-SCCPReferrals",
@@ -287,15 +287,6 @@ export type CompliantReportingEligibleRecord = {
   };
 };
 
-/**
- * A nested object of all client-level data generated within this application.
- * This is a legacy format and only used within a migration context.
- * TODO(#2108): Remove this type after migration is complete
- */
-export type ClientUpdateRecord = {
-  [key in OpportunityType]?: Record<string, any>;
-};
-
 export type UpdateLog = {
   date: Timestamp;
   by: string;
@@ -331,6 +322,29 @@ export type SupervisionTaskUpdate = {
     snoozedBy: string;
     snoozeForDays: number;
     snoozedOn: string;
+  };
+};
+
+/**
+ * IN_PROGRESS: Request sent to backend and backend has sent it to Twilio
+ * SUCCESS: Twilio confirms that message has been sent to the carrier
+ * FAILURE: Twilio returns an error that the message could not be sent, or
+ *        our backend has an error.
+ * DECLINED: Officer declined to send a message
+ */
+export type TextMessageStatus = ExternalSystemRequestStatus | "DECLINED";
+
+export type MilestonesMessage = {
+  lastUpdated: Timestamp;
+  status?: TextMessageStatus;
+  errors?: string[];
+  declinedReasons?: Denial;
+  messageDetails?: {
+    message: string;
+    recipient: number;
+    mid: string;
+    stateCode: string;
+    timestamp: Timestamp;
   };
 };
 

@@ -116,7 +116,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
       {sectionOrder?.map((sectionTitle) => {
         return (
           opportunityTypeSections[sectionTitle]?.length > 0 && (
-            <>
+            <div key={sectionTitle}>
               {/* Only display the section title if there are multiple sections or the one we're
               displaying isn't the first in the section order (such as "Almost Eligible") */}
               {(Object.keys(opportunityTypeSections).length > 1 ||
@@ -134,7 +134,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
                   />
                 ))}
               </PersonList>
-            </>
+            </div>
           )
         );
       })}

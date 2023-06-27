@@ -67,7 +67,8 @@ const AlreadyCongratulatedButton = styled(Button)`
   width: 100%;
   margin-bottom: 0.75rem;
 
-  :hover {
+  :hover,
+  :focus {
     color: ${palette.marble1};
   }
 `;

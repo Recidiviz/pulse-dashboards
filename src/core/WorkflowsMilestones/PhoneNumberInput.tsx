@@ -75,6 +75,8 @@ const PhoneNumberInput = ({
       <SidePanelInput
         type="text"
         name="phoneNumber"
+        maxLength={14}
+        inputMode="numeric"
         placeholder="Enter a 10-digit phone number"
         value={phoneNumber}
         onBlur={handleInputBlur}

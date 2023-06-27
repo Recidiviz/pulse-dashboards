@@ -16,7 +16,13 @@
 // =============================================================================
 
 import assertNever from "assert-never";
-import { addDays, differenceInDays, parseISO } from "date-fns";
+import {
+  addDays,
+  differenceInDays,
+  getMonth,
+  getYear,
+  parseISO,
+} from "date-fns";
 import { Timestamp } from "firebase/firestore";
 
 import { SystemId } from "../core/models/types";
@@ -30,6 +36,16 @@ import {
   SUPERVISION_OPPORTUNITY_TYPES,
   SupervisionOpportunityType,
 } from "./Opportunity/types";
+
+/**
+ * Returns a string of the month and year formatted as "MM_YYYY"
+ */
+export function getMonthYearFromDate(date: Date): string {
+  const month = getMonth(date) + 1;
+  return month < 10
+    ? `0${month}_${getYear(date)}`
+    : `${month}_${getYear(date)}`;
+}
 
 export function formatSupervisionType(supervisionType: string): string {
   return supervisionType.replace("_", " ");

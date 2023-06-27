@@ -23,6 +23,7 @@ import {
   ClientEmployer,
   ClientRecord,
   Milestone,
+  MilestonesMessage,
   SpecialConditionCode,
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
@@ -280,5 +281,13 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         ?.searchField;
 
     return searchField ? this.record[searchField] : this.assignedStaffId;
+  }
+
+  get milestoneMessagesUpdates(): MilestonesMessage | undefined {
+    return this.milestonesMessageUpdatesSubscription?.data;
+  }
+
+  get hasMilestones(): boolean {
+    return (this.milestones ?? []).length > 0;
   }
 }

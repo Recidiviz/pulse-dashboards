@@ -57,6 +57,7 @@ import {
   FeatureVariant,
   FeatureVariantRecord,
   LocationRecord,
+  MilestonesMessage,
   ResidentRecord,
   StaffRecord,
   UserMetadata,
@@ -493,8 +494,20 @@ export class WorkflowsStore implements Hydratable {
 
   get milestonesClients(): Client[] {
     return this.caseloadPersons.filter((person) => {
-      return isClient(person) && (person.milestones ?? []).length > 0;
+      return isClient(person) && person.hasMilestones;
     }) as Client[];
+  }
+
+  getMilestonesClientsByStatus(
+    statuses?: MilestonesMessage["status"][]
+  ): Client[] {
+    return this.milestonesClients.filter((client) => {
+      if (statuses === undefined)
+        return client.milestoneMessagesUpdates?.status === undefined;
+
+      const status = client.milestoneMessagesUpdates?.status;
+      return status && statuses.includes(status);
+    });
   }
 
   opportunitiesByEligibilityStatus(

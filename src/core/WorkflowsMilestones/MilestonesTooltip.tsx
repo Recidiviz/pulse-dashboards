@@ -59,28 +59,28 @@ const MilestonesSection: React.FC<{
   );
 };
 
-const TooltipDetails: React.FC<{ person: Client }> = ({ person }) => {
+const TooltipDetails: React.FC<{ client: Client }> = ({ client }) => {
   return (
     <TooltipContainer>
-      <MilestonesSection milestones={person.milestones} />
-      <OpportunitiesSection person={person} />
+      <MilestonesSection milestones={client.milestones} />
+      <OpportunitiesSection person={client} />
     </TooltipContainer>
   );
 };
 
 type MilestonesTooltipProps = {
-  person: Client;
+  client: Client;
   children: React.ReactElement;
 };
 
 export const MilestonesTooltip: React.FC<MilestonesTooltipProps> = ({
-  person,
+  client,
   children,
 }) => {
-  useHydrateOpportunities(person);
+  useHydrateOpportunities(client);
 
   return (
-    <TooltipTrigger contents={<TooltipDetails person={person} />}>
+    <TooltipTrigger contents={<TooltipDetails client={client} />}>
       {children}
     </TooltipTrigger>
   );

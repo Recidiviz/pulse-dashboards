@@ -223,6 +223,24 @@ export const lsuAlmostEligibleClient: ClientRecord = {
       address: "595 MLK Blvd",
     },
   ],
+  milestones: [
+    {
+      text: "8 months without a violation",
+      type: "MONTHS_WITHOUT_VIOLATION",
+    },
+    {
+      text: "15 months on supervision",
+      type: "MONTHS_ON_SUPERVISION",
+    },
+  ],
+};
+
+export const milestonesClient: ClientRecord = {
+  ...eligibleClient,
+  recordId: "us_xx_104",
+  personName: { givenNames: "MICKEY", surname: "MOUSE" },
+  personExternalId: "104",
+  pseudonymizedId: "p104",
 };
 
 export const mockClients = [

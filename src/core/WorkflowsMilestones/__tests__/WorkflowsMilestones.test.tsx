@@ -42,14 +42,23 @@ jest.mock("../../CaseloadSelect", () => ({
 
 const useRootStoreMock = useRootStore as jest.Mock;
 
+const mockGetMilestonesClientsByStatus = (mockClients: Client[]) => {
+  return () => mockClients;
+};
+
+const baseRootStoreMock = {
+  firestoreStore: {
+    db: jest.fn(),
+  },
+};
 const baseWorkflowsStoreMock = {
   caseloadLoaded: () => false,
   justiceInvolvedPersonTitle: "client",
   milestonesClients: [],
-  workflowsStore: { allowSupervisionTasks: false },
-  firestoreStore: {
-    db: jest.fn(),
+  workflowsStore: {
+    allowSupervisionTasks: false,
   },
+  getMilestonesClientsByStatus: () => [],
   featureVariants: {
     responsiveRevamp: {},
   },
@@ -68,6 +77,7 @@ describe("WorkflowsMilestones", () => {
 
   test("renders initial state", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         selectedSearchIds: [],
@@ -93,6 +103,7 @@ describe("WorkflowsMilestones", () => {
 
   test("renders loading state", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         selectedSearchIds: ["OFFICER1"],
@@ -110,6 +121,7 @@ describe("WorkflowsMilestones", () => {
 
   test("render no results", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         selectedSearchIds: ["OFFICER1"],
@@ -134,14 +146,19 @@ describe("WorkflowsMilestones", () => {
   test("render results with milestones", () => {
     const clients = [eligibleClient, ineligibleClient].map(
       (client) =>
-        new Client(client, baseWorkflowsStoreMock as unknown as RootStore)
+        new Client(client, {
+          ...baseRootStoreMock,
+          workflowsStore: baseWorkflowsStoreMock,
+        } as unknown as RootStore)
     );
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         selectedSearchIds: ["OFFICER1"],
         caseloadLoaded: () => true,
         caseloadPersons: clients,
+        getMilestonesClientsByStatus: mockGetMilestonesClientsByStatus(clients),
         milestonesClients: clients,
       },
     });

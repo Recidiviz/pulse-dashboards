@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { FieldValue } from "@google-cloud/firestore";
+import { startOfToday } from "date-fns";
 import { FirebaseApp, initializeApp } from "firebase/app";
 import {
   connectAuthEmulator,
@@ -54,11 +55,13 @@ import { isOfflineMode } from "../utils/isOfflineMode";
 import { OpportunityType, UsTnExpirationOpportunity } from "../WorkflowsStore";
 import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
 import { SupervisionTaskType } from "../WorkflowsStore/Task/types";
+import { getMonthYearFromDate } from "../WorkflowsStore/utils";
 import {
   ClientRecord,
   collectionNames,
   ContactMethodType,
   ExternalSystemRequestStatus,
+  MilestonesMessage,
   OpportunityUpdateWithForm,
   PersonUpdateType,
   ResidentRecord,
@@ -258,6 +261,22 @@ export default class FirestoreStore {
     return this.updateDocument(taskType, recordId, taskDocRef, {
       ...update,
     });
+  }
+
+  async updateMilestonesMessages(recordId: string, update: MilestonesMessage) {
+    const dateKey = getMonthYearFromDate(startOfToday());
+    const taskDocRef = doc(
+      this.db,
+      collectionNames.clientUpdatesV2,
+      `${recordId}/${collectionNames.milestonesMessages}/${dateKey}`
+    );
+
+    return this.updateDocument(
+      collectionNames.milestonesMessages,
+      recordId,
+      taskDocRef,
+      update
+    );
   }
 
   async updateOpportunity(
