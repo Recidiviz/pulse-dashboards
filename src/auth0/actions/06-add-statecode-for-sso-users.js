@@ -1,6 +1,6 @@
 /*
  * Recidiviz - a data platform for criminal justice reform
- * Copyright (C) 2021 Recidiviz, Inc.
+ * Copyright (C) 2023 Recidiviz, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,9 @@ exports.onExecutePostLogin = async (event, api) => {
     const connectionToStateCode = {
       [event.secrets.RECIDIVIZ_CONNECTION_ID]: "recidiviz",
       // NOTE: delete the following lines for staging
-      [event.secrets.US_CO_CONNECTION_ID]: "us_co",
       [event.secrets.US_ID_CONNECTION_ID]: "us_id",
       [event.secrets.US_MI_CONNECTION_ID]: "us_mi",
+      [event.secrets.US_ME_CONNECTION_ID]: "us_me",
       [event.secrets.US_ND_CONNECTION_ID]: "us_nd",
       [event.secrets.US_TN_CONNECTION_ID]: "us_tn",
     };
@@ -70,7 +70,6 @@ exports.onExecutePostLogin = async (event, api) => {
 
       await analytics.flush();
       api.access.deny(DENY_MESSAGE);
-      return;
     }
   }
 };
