@@ -34,8 +34,8 @@ import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import {
   getValidator,
-  transformReferral,
   UsTnExpirationReferralRecord,
+  usTnExpirationSchema,
 } from "./UsTnExpirationReferralRecord";
 
 const DENIAL_REASONS_MAP = {
@@ -98,7 +98,7 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
       client,
       "usTnExpiration",
       client.rootStore,
-      transformReferral,
+      usTnExpirationSchema.parse,
       getValidator(client)
     );
 

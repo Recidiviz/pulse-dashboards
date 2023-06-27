@@ -33,6 +33,7 @@ import { usMiPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsMiPastFT
 import { usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsMiSupervisionLevelDowngradeReferralRecord";
 import { usMoRestrictiveHousingStatusHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { usTnCustodyLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsTnCustodyLevelDowngradeReferralRecord";
+import { usTnExpirationSchema } from "../src/WorkflowsStore/Opportunity/UsTnExpirationReferralRecord";
 import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTnSupervisionLevelDowngradeReferralRecord";
 
 type CollectionName = keyof typeof collectionNames;
@@ -76,6 +77,7 @@ const SCHEMAS = {
   usMiClassificationReviewReferrals:
     usMiClassificationReviewSchemaForSupervisionLevelFormatter(),
   usTnCustodyLevelDowngradeReferrals: usTnCustodyLevelDowngradeSchema,
+  usTnExpirationReferrals: usTnExpirationSchema,
 } satisfies Partial<Record<CollectionName, z.ZodTypeAny>>;
 
 (async () => {

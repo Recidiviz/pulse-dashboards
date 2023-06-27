@@ -21,13 +21,41 @@ import { OpportunityValidationError } from "../../../errors";
 import { fieldToDate } from "../../utils";
 import {
   getValidator,
-  transformReferral,
-  UsTnExpirationReferralRecord,
+  usTnExpirationSchema,
 } from "../UsTnExpirationReferralRecord";
 
 const usTnExpirationRecordRaw = {
   stateCode: "US_XX",
   externalId: "abc123",
+  formInformation: {
+    offenses: ["FAILURE1", "FAILURE2"],
+    convictionCounties: ["010"],
+    docketNumbers: ["123", "456"],
+    latestPse: {
+      contactDate: "2022-06-01",
+      contactType: "PSET",
+    },
+    sexOffenses: ["sex offense"],
+    gangAffiliation: "Gang A",
+    latestEmp: {
+      contactDate: "2022-05-05",
+      contactType: "EMPV",
+      contactComment: "Comment about employment",
+    },
+    latestFee: {
+      contactDate: "2022-04-04",
+      contactType: "FEEP",
+    },
+    latestSpe: {
+      contactDate: "2022-05-05",
+      contactType: "SPEC",
+      contactComment: "Special conditions check",
+    },
+    latestVrr: {
+      contactDate: "2022-03-03",
+      contactType: "VRRE",
+    },
+  },
   criteria: {
     supervisionPastFullTermCompletionDateOrUpcoming1Day: {
       eligibleDate: "2022-03-03",
@@ -49,15 +77,13 @@ const mockClient = {
 };
 
 test("transform function", () => {
-  expect(transformReferral(usTnExpirationRecordRaw)).toMatchSnapshot();
+  expect(usTnExpirationSchema.parse(usTnExpirationRecordRaw)).toMatchSnapshot();
 });
 
 test("record validates", () => {
   const validator = getValidator(mockClient as any);
   expect(() =>
-    validator(
-      transformReferral(usTnExpirationRecordRaw) as UsTnExpirationReferralRecord
-    )
+    validator(usTnExpirationSchema.parse(usTnExpirationRecordRaw))
   ).not.toThrow(OpportunityValidationError);
 });
 
@@ -67,8 +93,6 @@ test("record does not validate", () => {
     expirationDate: fieldToDate("2022-04-04"),
   } as any);
   expect(() =>
-    validator(
-      transformReferral(usTnExpirationRecordRaw) as UsTnExpirationReferralRecord
-    )
+    validator(usTnExpirationSchema.parse(usTnExpirationRecordRaw))
   ).toThrow(OpportunityValidationError);
 });

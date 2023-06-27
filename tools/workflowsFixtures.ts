@@ -42,6 +42,7 @@ import { usMiSupervisionLevelDowngradeReferrals } from "./fixtures/usMiSupervisi
 import { usMoRestrictiveHousingStatusHearingFixture } from "./fixtures/usMoRestrictiveHousingStatusHearingReferrals";
 import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
 import { usTnCustodyLevelDowngradeFixture } from "./fixtures/usTnCustodyLevelDowngradeReferrals";
+import { usTnExpirationFixture } from "./fixtures/usTnExpirationReferrals";
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
 
@@ -69,7 +70,6 @@ const OPPORTUNITIES_WITH_JSON_FIXTURES: CollectionName[] = [
   "earnedDischargeReferrals",
   "usMiClassificationReviewReferrals",
   "usMiEarlyDischargeReferrals",
-  "usTnExpirationReferrals",
 ];
 
 export type FixtureData<T> = {
@@ -96,6 +96,7 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
     usMoRestrictiveHousingStatusHearingFixture,
   usMeEarlyTerminationReferrals: usMeEarlyTerminationReferralsFixture,
   usTnCustodyLevelDowngradeReferrals: usTnCustodyLevelDowngradeFixture,
+  usTnExpirationReferrals: usTnExpirationFixture,
 } as const;
 
 // If we're writing to the real firestore, don't clobber the real data

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,74 +15,68 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { cloneDeep } from "lodash";
+import { z } from "zod";
 
 import { OpportunityValidationError } from "../../errors";
 import { Client } from "..";
-import { TransformFunction, ValidateFunction } from "../subscriptions";
-import { fieldToDate, optionalFieldToDateArray } from "../utils";
-import { transformCaseNotes, WithCaseNotes } from ".";
+import { ValidateFunction } from "../subscriptions";
+import {
+  caseNotesSchema,
+  dateStringSchema,
+  NullCoalesce,
+  opportunitySchemaBase,
+} from "./schemaHelpers";
+
+const contactSchema = z
+  .object({
+    contactDate: dateStringSchema,
+    contactType: z.string(),
+    contactComment: z.string().optional(),
+  })
+  .optional();
+
+export const usTnExpirationSchema = opportunitySchemaBase
+  .extend({
+    formInformation: z.object({
+      latestPse: contactSchema,
+      latestEmp: contactSchema,
+      latestSpe: contactSchema,
+      latestVrr: contactSchema,
+      latestFee: contactSchema,
+      sexOffenses: z.array(z.string()),
+      offenses: z.array(z.string()),
+      docketNumbers: z.array(z.string()),
+      convictionCounties: z.array(z.string()),
+      gangAffiliationId: z.string().optional(),
+    }),
+    criteria: z.object({
+      supervisionPastFullTermCompletionDateOrUpcoming1Day: z.object({
+        eligibleDate: dateStringSchema,
+      }),
+      usTnNoZeroToleranceCodesSpans: NullCoalesce(
+        { zeroToleranceCodeDates: undefined },
+        z
+          .object({
+            zeroToleranceCodeDates: z.array(dateStringSchema).optional(),
+          })
+          .optional()
+      ),
+      usTnNotOnLifeSentenceOrLifetimeSupervision: z.object({
+        lifetimeFlag: z.boolean(),
+      }),
+    }),
+  })
+  .merge(caseNotesSchema);
+
+export type UsTnExpirationReferralRecord = z.infer<typeof usTnExpirationSchema>;
+export type UsTnExpirationReferralRecordRaw = z.input<
+  typeof usTnExpirationSchema
+>;
 
 export type Contact = {
   contactDate: Date;
   contactType: string;
   contactComment?: string;
-};
-
-export type UsTnExpirationReferralRecord = {
-  stateCode: string;
-  externalId: string;
-  formInformation: {
-    latestPse?: Contact;
-    latestEmp?: Contact;
-    latestSpe?: Contact;
-    latestVrr?: Contact;
-    latestFee?: Contact;
-    sexOffenses: string[];
-    offenses: string[];
-    docketNumbers: string[];
-    convictionCounties: string[];
-    gangAffiliationId?: string;
-  };
-
-  criteria: {
-    supervisionPastFullTermCompletionDateOrUpcoming1Day: {
-      eligibleDate: Date;
-    };
-    usTnNoZeroToleranceCodesSpans?: {
-      zeroToleranceCodeDates?: Date[];
-    };
-    usTnNotOnLifeSentenceOrLifetimeSupervision: {
-      lifetimeFlag: boolean;
-    };
-  };
-} & WithCaseNotes;
-
-export const transformReferral: TransformFunction<
-  UsTnExpirationReferralRecord
-> = (record) => {
-  if (!record) {
-    throw new Error("Record not found");
-  }
-
-  const transformedRecord = cloneDeep(record) as UsTnExpirationReferralRecord;
-  const { criteria } = record;
-
-  transformedRecord.criteria.supervisionPastFullTermCompletionDateOrUpcoming1Day =
-    {
-      eligibleDate: fieldToDate(
-        criteria.supervisionPastFullTermCompletionDateOrUpcoming1Day
-          .eligibleDate
-      ),
-    };
-  transformedRecord.criteria.usTnNoZeroToleranceCodesSpans = {
-    zeroToleranceCodeDates: optionalFieldToDateArray(
-      criteria.usTnNoZeroToleranceCodesSpans?.zeroToleranceCodeDates
-    ),
-  };
-
-  transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
-  return transformedRecord;
 };
 
 export type UsTnExpirationDraftData = {
