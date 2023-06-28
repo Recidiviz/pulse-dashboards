@@ -83,6 +83,13 @@ export type StaffRecord = {
   surname: string;
 };
 
+export const SYSTEM_ID_TO_CASELOAD_FIELD = {
+  SUPERVISION: "hasCaseload",
+  INCARCERATION: "hasFacilityCaseload",
+} as const;
+// This should be `satisfies Record<Exclude<SystemId, "ALL">, keyof StaffRecord>;`
+// but we can't use that yet: TODO(#3499)
+
 export type UserRole =
   | "supervision_staff"
   | "facilities_staff"

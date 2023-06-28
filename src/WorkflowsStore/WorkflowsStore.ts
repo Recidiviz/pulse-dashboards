@@ -482,8 +482,17 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get caseloadPersons(): JusticeInvolvedPerson[] {
+    const personTypeMatchesActiveSystem = (p: JusticeInvolvedPerson) =>
+      this.activeSystem === "ALL" ||
+      (this.activeSystem === "INCARCERATION" && p instanceof Resident) ||
+      (this.activeSystem === "SUPERVISION" && p instanceof Client);
+
     return values(this.justiceInvolvedPersons)
-      .filter((p) => this.selectedSearchIds.includes(p.searchIdValue))
+      .filter(
+        (p) =>
+          this.selectedSearchIds.includes(p.searchIdValue) &&
+          personTypeMatchesActiveSystem(p)
+      )
       .sort((a, b) => {
         return (
           ascending(a.fullName.surname, b.fullName.surname) ||
@@ -621,7 +630,9 @@ export class WorkflowsStore implements Hydratable {
       case "OFFICER": {
         return this.availableOfficers
           .map((officer) => new Officer(officer))
-          .filter((officer) => officer.systemId === this.activeSystem);
+          .filter((officer) =>
+            officer.hasCaseloadForSystemId(this.activeSystem)
+          );
       }
       case "ALL": {
         const locations = this.availableLocations.map(

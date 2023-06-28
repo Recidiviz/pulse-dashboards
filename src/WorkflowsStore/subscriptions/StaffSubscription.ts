@@ -17,18 +17,13 @@
 
 import { collection, Query, query, where } from "firebase/firestore";
 
-import { SystemId } from "../../core/models/types";
-import { collectionNames, StaffRecord } from "../../FirestoreStore";
+import {
+  collectionNames,
+  StaffRecord,
+  SYSTEM_ID_TO_CASELOAD_FIELD,
+} from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
-
-const SYSTEM_ID_TO_CASELOAD_FIELD: Record<
-  Exclude<SystemId, "ALL">,
-  keyof StaffRecord
-> = {
-  SUPERVISION: "hasCaseload",
-  INCARCERATION: "hasFacilityCaseload",
-};
 
 export class StaffSubscription extends FirestoreQuerySubscription<StaffRecord> {
   private rootStore: RootStore;

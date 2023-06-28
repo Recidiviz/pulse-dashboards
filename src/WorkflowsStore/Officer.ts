@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Searchable, SystemId } from "../core/models/types";
-import { StaffRecord } from "../FirestoreStore";
+import { StaffRecord, SYSTEM_ID_TO_CASELOAD_FIELD } from "../FirestoreStore";
 
 export class Officer implements Searchable {
   record: StaffRecord;
@@ -25,9 +25,10 @@ export class Officer implements Searchable {
     this.record = record;
   }
 
-  get systemId(): SystemId | undefined {
-    if (this.record.hasCaseload) return "SUPERVISION";
-    if (this.record.hasFacilityCaseload) return "INCARCERATION";
+  hasCaseloadForSystemId(system: SystemId | undefined): boolean {
+    if (!system) return false;
+    if (system === "ALL") return true;
+    return this.record[SYSTEM_ID_TO_CASELOAD_FIELD[system]];
   }
 
   get searchLabel(): string {
