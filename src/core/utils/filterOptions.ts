@@ -1561,6 +1561,26 @@ export const MiPopulationFilterOptions: PopulationFilters = {
       return this.defaultOption.value;
     },
   },
+  [FILTER_TYPES.SUPERVISION_LEVEL]: {
+    type: FILTER_TYPES.SUPERVISION_LEVEL,
+    title: "Supervision Level",
+    setFilters: setFilters(FILTER_TYPES.SUPERVISION_LEVEL),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Minimum Telephone Reporting", value: "LIMITED" },
+      { label: "Minimum", value: "MINIMUM" },
+      { label: "Medium", value: "MEDIUM" },
+      { label: "Intensive", value: "HIGH" },
+      { label: "Maximum", value: "MAXIMUM" },
+      { label: "Absconsion", value: "ABSCONSION" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
 };
 
 export const MoPopulationFilterOptions: PopulationFilters = {
