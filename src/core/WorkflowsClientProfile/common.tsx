@@ -35,7 +35,7 @@ export const Separator = styled.span`
 
 export const Divider = styled.hr`
   border-top: 1px solid ${palette.slate20};
-  margin: ${rem(spacing.md)} 0;
+  margin: ${rem(spacing.md)} -${rem(spacing.md)};
 
   :last-child {
     display: none;

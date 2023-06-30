@@ -27,7 +27,6 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import useIsMobile from "../../hooks/useIsMobile";
 import { Heading } from "../WorkflowsClientProfile/Heading";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import { ClientMilestones } from "./MilestonesCaseloadView";
@@ -44,11 +43,13 @@ const Warning = styled(Sans12)`
   margin: 0.75rem 0;
 `;
 
-const ButtonsContainer = styled.div<{ isMobile?: boolean }>`
+const ButtonsContainer = styled.div`
   ${typography.Sans14}
 
-  position: ${({ isMobile }) => (isMobile ? "relative" : "absolute")};
-  bottom: ${({ isMobile }) => (isMobile ? "unset" : "0")};
+  flex: 1;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-end;
   width: 100%;
 `;
 
@@ -73,25 +74,23 @@ const AlreadyCongratulatedButton = styled(Button)`
   }
 `;
 
-const OptOutText = styled.div`
-  padding-bottom: 1.5rem;
-`;
+const OptOutText = styled.div``;
+
 const OptOutLink = styled.span`
   text-decoration: underline;
   cursor: pointer;
 `;
 
 const SidePanelContents = styled.div`
-  height: 90vh;
-  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  height: 85vh;
 `;
 
 export const MilestonesSidePanel = observer(function TaskPreviewModal() {
   const {
     workflowsStore: { selectedClient },
   } = useRootStore();
-
-  const { isMobile } = useIsMobile(true);
 
   if (!selectedClient) return null;
 
@@ -123,7 +122,7 @@ export const MilestonesSidePanel = observer(function TaskPreviewModal() {
             Do not send critical information tied to deadlines. We cannot
             guarantee delivery of this text message.
           </Warning>
-          <ButtonsContainer isMobile={isMobile}>
+          <ButtonsContainer>
             <ReviewButton>Review</ReviewButton>
             <AlreadyCongratulatedButton>
               I congratulated them in-person or another way

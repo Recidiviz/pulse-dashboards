@@ -28,7 +28,6 @@ import { PersonProfileProps } from "./types";
 
 const HeadingWrapper = styled.div`
   margin-bottom: ${rem(spacing.md)};
-  max-width: 90%;
 `;
 
 export const Heading = observer(function Heading({

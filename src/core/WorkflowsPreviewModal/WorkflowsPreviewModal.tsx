@@ -48,12 +48,18 @@ const ModalControls = styled.div<{
 }>`
   ${({ responsiveRevamp }) =>
     responsiveRevamp
-      ? `position: relative;
-          float: right;
-          top: 0.5rem;
-          padding: 0 0.5rem 0 0;`
-      : `padding: 0 ${rem(spacing.md)};
-          margin-bottom: -1.3rem;
+      ? `
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: space-between;
+        border-bottom: 1px solid ${palette.slate10};
+        padding: 1rem;
+
+        .WorkflowsPreviewModal__close {
+          align-self: flex-end;
+        };
+      `
+      : `padding: ${rem(spacing.md)};
           text-align: right;`}
 
   z-index: 10;
@@ -64,8 +70,8 @@ const Wrapper = styled.div<{
 }>`
   padding: ${({ responsiveRevamp }) =>
     responsiveRevamp
-      ? `${rem(spacing.xl)} ${rem(spacing.md)} ${rem(spacing.md)}`
-      : rem(spacing.lg)};
+      ? `${rem(spacing.lg)} ${rem(spacing.md)}`
+      : `0 ${rem(spacing.lg)} ${rem(spacing.lg)}`};
 `;
 
 type PreviewModalProps = {
@@ -102,21 +108,21 @@ export function WorkflowsPreviewModal({
       width={featureVariants.responsiveRevamp && !isMobile ? 480 : 555}
       isMobile={isMobile && !!featureVariants.responsiveRevamp}
     >
+      <ModalControls responsiveRevamp={!!featureVariants.responsiveRevamp}>
+        <Button
+          className="WorkflowsPreviewModal__close"
+          kind="link"
+          onClick={() => {
+            setModalIsOpen(false);
+          }}
+        >
+          <Icon kind="Close" size="14" color={palette.pine2} />
+        </Button>
+      </ModalControls>
       <Wrapper
         className="WorkflowsPreviewModal"
         responsiveRevamp={!!featureVariants.responsiveRevamp}
       >
-        <ModalControls responsiveRevamp={!!featureVariants.responsiveRevamp}>
-          <Button
-            className="WorkflowsPreviewModal__close"
-            kind="link"
-            onClick={() => {
-              setModalIsOpen(false);
-            }}
-          >
-            <Icon kind="Close" size="14" color={palette.pine2} />
-          </Button>
-        </ModalControls>
         {pageContent}
       </Wrapper>
     </StyledDrawerModal>
