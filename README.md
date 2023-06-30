@@ -30,17 +30,17 @@ Bringing criminal justice analysis to decision makers to help reduce incarcerati
 
    For alternative Yarn installation options, see [Yarn Installation](https://yarnpkg.com/en/docs/install).
 
-1. [Install Redis Version 4](https://redis.io/download#installation) (matches Memorystore for Redis version):
+1. [Install Redis Version 7](https://redis.io/download#installation) (matches Memorystore for Redis version):
 
    Via Homebrew:
-   `brew install redis@4.0`
+   `brew install redis@7.0`
 
    Using wget:
 
    ```sh
-   :> wget https://download.redis.io/releases/redis-4.0.14.tar.gz
-   :> tar xzf redis-4.0.14.tar.gz
-   :> cd redis-4.0.14
+   :> wget https://download.redis.io/releases/redis-7.0.11.tar.gz
+   :> tar xzf redis-7.0.11.tar.gz
+   :> cd redis-7.0.11
    :> make
 
    <!-- Run redis with: -->
@@ -50,7 +50,7 @@ Bringing criminal justice analysis to decision makers to help reduce incarcerati
    :> src/redis-cli
    ```
 
-   [Instructions for installing Redis 4.0.14 on Windows](https://github.com/tporadowski/redis#redis-4014-for-windows)
+   [Instructions for installing Redis 5.0.14 on Windows](https://github.com/tporadowski/redis#redis-5014-for-windows)
 
 1. Install Firebase Tools (version >=10 required) and ensure you are logged in:
 
