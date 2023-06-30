@@ -47,11 +47,34 @@ await $`./load_config_files.sh`.pipe(process.stdout);
 // Determine which environment to deploy
 const { deployEnv } = await inquirer.prompt({
   type: "list",
-  choices: ["staging", "demo", "production"],
+  choices: ["staging", "preview", "demo", "production"],
   name: "deployEnv",
   message: "Which environment are you deploying?",
   default: "staging",
 });
+
+if (deployEnv === "preview") {
+  const { previewAppName, expiration } = await inquirer.prompt([
+    {
+      name: "previewAppName",
+      message:
+        "Enter a name for your preview app (letters, digits, and hypens only):",
+      validate: (name) => /^[a-zA-Z0-9-]+$/.test(name),
+    },
+    {
+      name: "expiration",
+      message: "How long should it last?",
+      choices: ["7d", "1d", "1h"],
+      default: "7d",
+      type: "list",
+    },
+  ]);
+  await $`yarn build-staging`.pipe(process.stdout);
+  await $`firebase hosting:channel:deploy ${previewAppName} -P staging --expires ${expiration}`.pipe(
+    process.stdout
+  );
+  process.exit();
+}
 
 let octokit;
 let latestRelease;
