@@ -1,19 +1,21 @@
-// Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// =============================================================================
+/*
+ * Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2023 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * =============================================================================
+ */
 
 import { add } from "date-fns";
 import { computed, configure, runInAction, when } from "mobx";
@@ -574,7 +576,9 @@ describe("caseloadSubscription", () => {
 
 test("caseloadDistrict reflects user data", async () => {
   await waitForHydration();
-  expect(workflowsStore.caseloadDistrict).toBe(mockOfficer.info.district);
+  expect(workflowsStore.caseloadDistricts).toStrictEqual([
+    mockOfficer.info.district,
+  ]);
 });
 
 test("workflowsEnableAllDistricts overrides caseloadDistrict", async () => {
@@ -584,7 +588,33 @@ test("workflowsEnableAllDistricts overrides caseloadDistrict", async () => {
 
   await waitForHydration();
 
-  expect(workflowsStore.caseloadDistrict).toBeUndefined();
+  expect(workflowsStore.caseloadDistricts).toBeUndefined();
+});
+
+test("setting overrideDistrictIds in UserUpdates overrides caseloadDistrict", async () => {
+  const myOfficer = { ...mockOfficer };
+  myOfficer.updates = {
+    stateCode: "US_XX",
+    overrideDistrictIds: ["D1", "D77"],
+  };
+  await waitForHydration(myOfficer);
+
+  expect(workflowsStore.caseloadDistricts).toStrictEqual(["D1", "D77"]);
+});
+
+test("setting overrideDistrictIds in UserUpdates overrides workflowsEnableAllDistricts", async () => {
+  runInAction(() => {
+    rootStore.tenantStore.currentTenantId = "US_YY" as any;
+  });
+
+  const myOfficer = { ...mockOfficer };
+  myOfficer.updates = {
+    stateCode: "US_XX",
+    overrideDistrictIds: ["D1", "D77"],
+  };
+  await waitForHydration(myOfficer);
+
+  expect(workflowsStore.caseloadDistricts).toStrictEqual(["D1", "D77"]);
 });
 
 test("no client selected", async () => {

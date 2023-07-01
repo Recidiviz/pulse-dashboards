@@ -1,19 +1,21 @@
-// Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// =============================================================================
+/*
+ * Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2023 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * =============================================================================
+ */
 
 import { collection, query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
@@ -37,7 +39,7 @@ describe("StaffSubscription tests", () => {
     rootStoreMock = observable({
       currentTenantId: "US_ND",
       workflowsStore: {
-        caseloadDistrict: "TEST",
+        caseloadDistricts: ["TEST"],
         activeSystem: "SUPERVISION",
         workflowsSupportedSystems: ["SUPERVISION"],
       },
@@ -59,14 +61,14 @@ describe("StaffSubscription tests", () => {
     );
     expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
     expect(whereMock).toHaveBeenCalledWith("hasCaseload", "==", true);
-    expect(whereMock).toHaveBeenCalledWith("district", "==", "TEST");
+    expect(whereMock).toHaveBeenCalledWith("district", "in", ["TEST"]);
     expect(queryMock).toHaveBeenCalled();
   });
 
   test("dataSource omits district filter", () => {
     runInAction(() => {
       // @ts-ignore
-      rootStoreMock.workflowsStore.caseloadDistrict = undefined;
+      rootStoreMock.workflowsStore.caseloadDistricts = undefined;
     });
 
     sub.subscribe();
@@ -85,11 +87,14 @@ describe("StaffSubscription tests", () => {
       // @ts-ignore
       rootStoreMock.currentTenantId = "US_TN";
       // @ts-ignore
-      rootStoreMock.workflowsStore.caseloadDistrict = "TEST2";
+      rootStoreMock.workflowsStore.caseloadDistricts = ["TEST2", "TEST3"];
     });
 
     expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
-    expect(whereMock).toHaveBeenCalledWith("district", "==", "TEST2");
+    expect(whereMock).toHaveBeenCalledWith("district", "in", [
+      "TEST2",
+      "TEST3",
+    ]);
   });
 
   test("dataSource officer filter respects activeSystem", () => {

@@ -1,19 +1,21 @@
-// Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// =============================================================================
+/*
+ * Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2023 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * =============================================================================
+ */
 
 import assertNever from "assert-never";
 import { ascending } from "d3-array";
@@ -467,13 +469,18 @@ export class WorkflowsStore implements Hydratable {
   }
 
   /**
-   * This provides the district to use for caseload filtering. It returns undefined if the user is enabled to see all
-   * districts, or if the user does not have a district to filter by.
+   * This provides the districts to use for caseload filtering. It returns undefined if the
+   * user is enabled to see all districts, or if the user does not have a district to filter by.
    */
-  get caseloadDistrict(): string | undefined {
+  get caseloadDistricts(): string[] | undefined {
+    const districtOverrides = this.user?.updates?.overrideDistrictIds;
+    if (districtOverrides) return districtOverrides;
+
+    if (this.rootStore.tenantStore.workflowsEnableAllDistricts)
+      return undefined;
+
     const district = this.user?.info.district;
-    const { workflowsEnableAllDistricts } = this.rootStore.tenantStore;
-    return workflowsEnableAllDistricts ? undefined : district;
+    return district ? [district] : undefined;
   }
 
   get hasMultipleOpportunities(): boolean {
