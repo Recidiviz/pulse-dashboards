@@ -68,6 +68,8 @@ type ParoleDualCriteria = {
   };
 };
 
+type InterstateFlag = "IC-OUT" | "IC-IN";
+
 type ProbationCriteria = {
   usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision: {
     ineligibleOffenses: string[];
@@ -77,6 +79,7 @@ type ProbationCriteria = {
 type UsMiParoleEarlyDischargeReferralRecord = {
   eligibleCriteria: Nullable<SharedCriteria & ParoleDualCriteria>;
   metadata: {
+    interstateFlag?: InterstateFlag;
     supervisionType: "Parole";
   };
 };
@@ -84,6 +87,7 @@ type UsMiParoleEarlyDischargeReferralRecord = {
 type UsMiProbationEarlyDischargeReferralRecord = {
   eligibleCriteria: Nullable<SharedCriteria & ProbationCriteria>;
   metadata: {
+    interstateFlag?: InterstateFlag;
     supervisionType: "Probation";
   };
 };
@@ -103,6 +107,20 @@ type UsMiGenericEarlyDischargeReferralRecord =
   UsMiEarlyDischargeReferralRecord & {
     eligibleCriteria: AllCriteria;
   };
+
+export const INTERSTATE_COPY: any = {
+  "IC-IN": {
+    text: "This client appears to be eligible for early discharge. Please review the client's eligibility status and send an early discharge request to the sending state via ICOTS.",
+  },
+  "IC-OUT": {
+    Parole: {
+      text: "This client appears to be eligible for early discharge. Request a progress report from state in which this client is being supervised and provide to the parole board.",
+    },
+    Probation: {
+      text: "This client appears to be eligible for early discharge. Request a progress report from state in which this client is being supervised and submit to the judge.",
+    },
+  },
+} as const;
 
 export const ELIGIBLE_CRITERIA_COPY: Record<
   CriteriaKey,
@@ -257,6 +275,7 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
   UsMiEarlyDischargeReferralRecord
 > {
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
+    "UsMiEarlyDischargeIcDetails",
     "ClientProfileDetails",
   ];
 
@@ -340,5 +359,9 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
     if (!this.record) return;
     return this.record.eligibleCriteria.supervisionPastHalfFullTermReleaseDate
       ?.eligibleDate;
+  }
+
+  get metadata(): UsMiEarlyDischargeReferralRecord["metadata"] | undefined {
+    return this.record?.metadata;
   }
 }

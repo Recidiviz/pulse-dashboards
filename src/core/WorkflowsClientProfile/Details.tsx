@@ -31,6 +31,10 @@ import {
   formatWorkflowsDate,
 } from "../../utils";
 import { Client, WithCaseNotes } from "../../WorkflowsStore";
+import {
+  INTERSTATE_COPY,
+  UsMiEarlyDischargeReferralRecord,
+} from "../../WorkflowsStore/Opportunity/UsMiEarlyDischargeOpportunity";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../../WorkflowsStore/Opportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { middleDateBetweenTwoDates } from "../../WorkflowsStore/utils";
@@ -45,6 +49,18 @@ import {
 } from "./types";
 
 const DetailsSection = styled.dl``;
+
+const DetailsBorderedSection = styled(DetailsSection)`
+  border-top: 1px solid ${palette.slate10};
+  border-bottom: 1px solid ${palette.slate10};
+  margin: 0 -${rem(spacing.md)};
+  padding: 0 ${rem(spacing.md)};
+  background: ${palette.marble2};
+
+  & + hr {
+    display: none;
+  }
+`;
 
 const DetailsHeading = styled.dt`
   ${typography.Sans14}
@@ -317,6 +333,7 @@ export function Contact({ client }: ClientProfileProps): React.ReactElement {
     </DetailsSection>
   );
 }
+
 export function ClientHousing({
   client,
 }: ClientProfileProps): React.ReactElement {
@@ -673,6 +690,33 @@ export function UsMoRestrictiveHousing({
         </DetailsContent>
       </DetailsSection>
     </>
+  );
+}
+
+export function UsMiEarlyDischargeIcDetails({
+  opportunity,
+}: OpportunityProfileProps): React.ReactElement | null {
+  const opportunityRecord =
+    opportunity.record as UsMiEarlyDischargeReferralRecord;
+  if (!opportunityRecord) return null;
+
+  const {
+    metadata: { interstateFlag, supervisionType },
+  } = opportunityRecord;
+
+  if (!interstateFlag) return null;
+
+  return (
+    <DetailsBorderedSection>
+      <DetailsHeading>{interstateFlag}</DetailsHeading>
+      <DetailsList>
+        <DetailsContent>
+          {interstateFlag === "IC-IN"
+            ? INTERSTATE_COPY[interstateFlag].text
+            : INTERSTATE_COPY[interstateFlag][supervisionType].text}
+        </DetailsContent>
+      </DetailsList>
+    </DetailsBorderedSection>
   );
 }
 

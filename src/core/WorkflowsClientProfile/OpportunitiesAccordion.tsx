@@ -110,6 +110,10 @@ export const AccordionWrapper = styled(Accordion)<{
   $responsiveRevamp: boolean;
 }>`
   margin: 0 -${({ $responsiveRevamp }) => ($responsiveRevamp ? rem(spacing.md) : rem(spacing.lg))};
+
+  & + hr {
+    display: none;
+  }
 `;
 
 const NoOpportunities = styled.div`

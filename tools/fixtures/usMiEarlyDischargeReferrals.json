@@ -3,7 +3,8 @@
     "stateCode": "US_MI",
     "externalId": "ed-eligible-1",
     "metadata": {
-      "supervisionType": "Parole"
+      "supervisionType": "Parole",
+      "interstateFlag": "IC-OUT"
     },
     "eligibleCriteria": {
       "supervisionPastHalfFullTermReleaseDate": {

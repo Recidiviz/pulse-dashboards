@@ -37,6 +37,10 @@ export const Divider = styled.hr`
   border-top: 1px solid ${palette.slate20};
   margin: ${rem(spacing.md)} -${rem(spacing.md)};
 
+  &:has(+ [class*="DetailsBorderedSection"]) {
+    display: none;
+  }
+
   :last-child {
     display: none;
   }

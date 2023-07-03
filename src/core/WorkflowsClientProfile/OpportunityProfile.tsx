@@ -35,6 +35,7 @@ import {
   ResidentHousing,
   SpecialConditions,
   Supervision,
+  UsMiEarlyDischargeIcDetails,
   UsMoIncarceration,
   UsMoRestrictiveHousing,
 } from "./Details";
@@ -70,6 +71,7 @@ const ResidentDetailSidebarComponents = {
 type ResidentDetailComponentName = keyof typeof ResidentDetailSidebarComponents;
 
 const OpportunityDetailSidebarComponents = {
+  UsMiEarlyDischargeIcDetails,
   CaseNotes,
   UsMoRestrictiveHousing,
 };
