@@ -18,13 +18,14 @@
 import "./assets/scripts/index";
 import "./assets/styles/index.scss";
 
-import React from "react";
+import { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Redirect,
   Route,
   Switch,
 } from "react-router-dom";
+import tk from "timekeeper";
 import { QueryParamProvider } from "use-query-params";
 
 import AuthWall from "./AuthWall";
@@ -60,6 +61,19 @@ const SHARED_VIEWS = ["", "profile"];
 
 // prettier-ignore
 function App() {
+  useEffect(() => {
+    if (isDemoMode()) {
+
+      const demoDate = new Date("2022-03-22T10:30:00");
+      tk.travel(demoDate); // Freeze time to the desired date and time
+    }
+
+    return () => {
+      if (isDemoMode()) {
+        tk.reset(); // Reset the time to the actual system time when the component is unmounted
+      }
+    };
+  }, []);
   return (<StoreProvider>
       <Router>
         <SentryErrorBoundary>
