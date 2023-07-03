@@ -366,7 +366,7 @@ export const FullProfile = observer(
               >
                 Opportunities
               </SectionHeading>
-              <OpportunitiesAccordion person={person} />
+              <OpportunitiesAccordion person={person} formLinkButton />
               <PreviewTasks person={person} showSnoozeDropdown={false} />
             </div>
           </Content>

@@ -115,7 +115,6 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
     if (!opportunity || !selectedPerson) {
       return null;
     }
-
     return (
       <article>
         <Heading person={selectedPerson} />
@@ -125,7 +124,10 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
             allowZeroExpanded
             preExpanded={[opportunity.type]}
           >
-            <AccordionSection opportunity={opportunity} />
+            <AccordionSection
+              opportunity={opportunity}
+              formLinkButton={formLinkButton}
+            />
           </AccordionWrapper>
         ) : (
           <OpportunityModule

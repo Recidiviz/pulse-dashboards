@@ -20,7 +20,6 @@ import { sortBy } from "lodash";
 import { keys } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
-import React from "react";
 import {
   Accordion,
   AccordionItem,
@@ -132,8 +131,10 @@ const NoOpportunities = styled.div`
 
 export const AccordionSection = observer(function AccordionSection({
   opportunity,
+  formLinkButton = false,
 }: {
   opportunity: Opportunity;
+  formLinkButton?: boolean;
 }) {
   const {
     workflowsStore: { featureVariants },
@@ -152,9 +153,9 @@ export const AccordionSection = observer(function AccordionSection({
         </AccordionItemHeading>
         <AccordionBody $responsiveRevamp={!!featureVariants.responsiveRevamp}>
           <OpportunityModule
-            opportunity={opportunity}
-            formLinkButton={!!opportunity.form}
             hideHeader
+            opportunity={opportunity}
+            formLinkButton={formLinkButton && !!opportunity.form}
           />
         </AccordionBody>
       </AccordionItem>
@@ -165,9 +166,11 @@ export const AccordionSection = observer(function AccordionSection({
 export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
   person,
   hideEmpty = false,
+  formLinkButton,
 }: {
   person: JusticeInvolvedPerson;
   hideEmpty?: boolean;
+  formLinkButton?: boolean;
 }) {
   const {
     workflowsStore: { featureVariants },
@@ -211,6 +214,7 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
             <AccordionSection
               key={opportunity.type}
               opportunity={opportunity}
+              formLinkButton={formLinkButton}
             />
           );
         })}

@@ -148,7 +148,10 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
           </SidebarSection>
         )}
         <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
-          <OpportunityProfile opportunity={opportunity} />
+          <OpportunityProfile
+            opportunity={opportunity}
+            formLinkButton={false}
+          />
         </SidebarSection>
       </Sidebar>
 

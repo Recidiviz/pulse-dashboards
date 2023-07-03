@@ -111,7 +111,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
           <ActionButtons
             isMobile={!!featureVariants.responsiveRevamp && isLaptop}
           >
-            {formLinkButton && opportunity.form && (
+            {formLinkButton && opportunity?.form && (
               <Link
                 to={workflowsUrl("opportunityAction", {
                   opportunityType: opportunity.type,
