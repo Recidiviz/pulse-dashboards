@@ -54,7 +54,11 @@ import { UsMiSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsMiSupe
 import { SupervisionTaskInterface } from "./Task/types";
 import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
 import { JusticeInvolvedPerson } from "./types";
-import { formatSupervisionType, optionalFieldToDate } from "./utils";
+import {
+  clearPhoneNumberFormatting,
+  formatSupervisionType,
+  optionalFieldToDate,
+} from "./utils";
 
 export const UNKNOWN = "Unknown" as const;
 
@@ -311,6 +315,13 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return userEnteredPhoneNumber?.length
       ? userEnteredPhoneNumber
       : this.rawPhoneNumber;
+  }
+
+  milestonesPhoneNumberDoesNotMatchClient(enteredPhoneNumber: string): boolean {
+    if (!enteredPhoneNumber || !this.rawPhoneNumber) return false;
+    return (
+      clearPhoneNumberFormatting(enteredPhoneNumber) !== this.rawPhoneNumber
+    );
   }
 
   get hasMilestones(): boolean {

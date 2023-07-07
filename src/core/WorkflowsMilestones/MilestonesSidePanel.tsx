@@ -124,7 +124,7 @@ interface SidePanelContentProps {
   setCurrentView: Dispatch<SetStateAction<MILESTONES_SIDE_PANEL_VIEW>>;
 }
 
-const ComposeMessageView = observer(function ComposeMessageView({
+const ComposeMessageView = function ComposeMessageView({
   client,
   setCurrentView,
 }: SidePanelContentProps): JSX.Element {
@@ -157,7 +157,7 @@ const ComposeMessageView = observer(function ComposeMessageView({
       <SidePanelHeader>Milestones</SidePanelHeader>
       <ClientMilestones client={client} showAll />
       <PhoneNumberInput
-        clientPhoneNumber={client.milestonesPhoneNumber}
+        client={client}
         onUpdatePhoneNumber={handleUpdatePhoneNumber}
       />
       <TextMessageInput
@@ -185,7 +185,7 @@ const ComposeMessageView = observer(function ComposeMessageView({
       </ButtonsContainer>
     </SidePanelContents>
   );
-});
+};
 
 const ReviewMessageView = observer(function ReviewMessageView({
   client,

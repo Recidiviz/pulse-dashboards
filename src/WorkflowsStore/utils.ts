@@ -58,11 +58,15 @@ export function dateToTimestamp(isodate: string): Timestamp {
 export function validatePhoneNumber(phoneNumber: string | undefined): boolean {
   if (!phoneNumber) return false;
   const phoneNumberRegex = /^\d{10}$/;
-  return phoneNumberRegex.test(phoneNumber);
+  return phoneNumberRegex.test(clearPhoneNumberFormatting(phoneNumber));
+}
+
+export function clearPhoneNumberFormatting(phoneNumber: string) {
+  return phoneNumber.replace(/\D/g, "");
 }
 
 export function formatPhoneNumber(phoneNumber: string): string {
-  const digitsOnly = phoneNumber.replace(/\D/g, "");
+  const digitsOnly = clearPhoneNumberFormatting(phoneNumber);
   const formattedPhoneNumber = digitsOnly.replace(
     /(\d{3})(\d{3})(\d{4})/,
     "($1) $2-$3"

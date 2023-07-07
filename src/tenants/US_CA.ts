@@ -26,6 +26,7 @@ const US_CA_CONFIG: TenantConfig = {
   stateCode: "CA",
   domain: "cdcr.ca.gov",
   DOCName: "CDCR",
+  internalSystemName: "OMS",
   workflowsHomepage: "milestones",
   availableStateCodes: [dashboard.US_CA],
   enableUserRestrictions: false,

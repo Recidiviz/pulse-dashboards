@@ -203,6 +203,42 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
       },
     ],
   },
+  {
+    personName: {
+      givenNames: "Olive",
+      surname: "Oyle",
+    },
+    personExternalId: "007",
+    pseudonymizedId: "p007",
+    stateCode: "US_CA",
+    officerId: "OFFICER1",
+    supervisionType: "PROBATION",
+    supervisionLevel: "MEDIUM",
+    supervisionLevelStart: "2019-12-20",
+    address: "123 Bedrock Lane",
+    supervisionStartDate: "2022-01-01",
+    expirationDate: "2024-12-31",
+    currentBalance: 1221.88,
+    lastPaymentAmount: 125.75,
+    lastPaymentDate: "2022-01-04",
+    allEligibleOpportunities: [],
+    currentEmployers: [
+      {
+        name: "Tire store",
+      },
+    ],
+    // TODO: Update milestone type/text when CA types are confirmed
+    milestones: [
+      {
+        text: "Violation-free for 6+ months",
+        type: "MONTHS_WITHOUT_VIOLATION",
+      },
+      {
+        text: "4 months with current employer",
+        type: "MONTHS_WITH_CURRENT_EMPLOYER",
+      },
+    ],
+  },
 ];
 
 const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [

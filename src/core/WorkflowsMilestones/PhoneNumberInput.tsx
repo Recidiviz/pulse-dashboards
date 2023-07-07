@@ -15,11 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, typography } from "@recidiviz/design-system";
+import {
+  Icon,
+  palette,
+  TooltipTrigger,
+  typography,
+} from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 import styled from "styled-components/macro";
 
-import { formatPhoneNumber } from "../../WorkflowsStore/utils";
+import { useRootStore } from "../../components/StoreProvider";
+import TENANTS from "../../tenants";
+import { Client } from "../../WorkflowsStore";
+import {
+  formatPhoneNumber,
+  validatePhoneNumber,
+} from "../../WorkflowsStore/utils";
+import { TooltipContainer } from "../sharedComponents";
 
 const PhoneNumber = styled.div`
   ${typography.Sans12}
@@ -44,16 +57,48 @@ const SidePanelInput = styled.input`
   }
 `;
 
+const PhoneNumberLabel = styled.label`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+`;
+
+const TooltipContent = styled.div`
+  max-width: 15rem;
+`;
+
+const TooltipDetails: React.FC<{
+  internalSystemName: string;
+  phoneNumber?: string;
+}> = ({ internalSystemName, phoneNumber }) => {
+  return (
+    <TooltipContainer>
+      <TooltipContent>
+        This number does not match the one provided by {internalSystemName}
+        {validatePhoneNumber(phoneNumber) ? `: ${phoneNumber}` : `.`}
+      </TooltipContent>
+    </TooltipContainer>
+  );
+};
+
 interface PhoneNumberInputProps {
-  clientPhoneNumber?: string;
+  client: Client;
   onUpdatePhoneNumber: (phoneNumber: string) => void;
 }
 
 const PhoneNumberInput = ({
-  clientPhoneNumber,
+  client,
   onUpdatePhoneNumber,
 }: PhoneNumberInputProps) => {
-  const [phoneNumber, setPhoneNumber] = useState(clientPhoneNumber ?? "");
+  const {
+    workflowsStore: { internalSystemName },
+  } = useRootStore();
+  const [phoneNumber, setPhoneNumber] = useState(
+    client?.milestonesPhoneNumber ?? ""
+  );
+
+  const showTooltip =
+    client.milestonesPhoneNumberDoesNotMatchClient(phoneNumber);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const formattedNumber = formatPhoneNumber(event.target.value);
     setPhoneNumber(formattedNumber);
@@ -66,7 +111,21 @@ const PhoneNumberInput = ({
 
   return (
     <PhoneNumber>
-      <label htmlFor="phoneNumber">Phone Number</label>
+      <PhoneNumberLabel htmlFor="phoneNumber">
+        Phone Number
+        {showTooltip && (
+          <TooltipTrigger
+            contents={
+              <TooltipDetails
+                phoneNumber={client.phoneNumber}
+                internalSystemName={internalSystemName}
+              />
+            }
+          >
+            <Icon kind="Error" size={12} color={palette.slate85} />
+          </TooltipTrigger>
+        )}
+      </PhoneNumberLabel>
       <SidePanelInput
         type="text"
         name="phoneNumber"
@@ -80,4 +139,4 @@ const PhoneNumberInput = ({
     </PhoneNumber>
   );
 };
-export default PhoneNumberInput;
+export default observer(PhoneNumberInput);

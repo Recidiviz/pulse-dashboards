@@ -78,6 +78,7 @@ describe("Client", () => {
       recordId: "us_xx_PERSON1",
       stateCode: "US_XX",
       personType: "CLIENT",
+      phoneNumber: "1112223333",
       milestones: [
         { type: "MONTHS_WITHOUT_VIOLATION", text: "6 months violation-free" },
       ],
@@ -177,6 +178,22 @@ describe("Client", () => {
         },
         status: "PENDING",
       });
+    });
+  });
+
+  describe("milestonesPhoneNumberDoesNotMatchClient", () => {
+    test("phoneNumber matches", () => {
+      createTestUnit();
+      expect(
+        testClient.milestonesPhoneNumberDoesNotMatchClient("1112223333")
+      ).toEqual(false);
+    });
+
+    test("phoneNumber does not match", () => {
+      createTestUnit();
+      expect(
+        testClient.milestonesPhoneNumberDoesNotMatchClient("7778889999")
+      ).toEqual(true);
     });
   });
 });

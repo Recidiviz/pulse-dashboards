@@ -836,4 +836,11 @@ export class WorkflowsStore implements Hydratable {
     if (!currentTenantId) return "home";
     return tenants[currentTenantId].workflowsHomepage ?? "home";
   }
+
+  get internalSystemName(): string {
+    const defaultName = "OMS";
+    const { currentTenantId } = this.rootStore;
+    if (!currentTenantId) return defaultName;
+    return tenants[currentTenantId].internalSystemName ?? defaultName;
+  }
 }
