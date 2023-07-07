@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInDays, isBefore, startOfToday } from "date-fns";
+import { isAfter, startOfToday } from "date-fns";
 import { z } from "zod";
 
-import { FeatureGateError, OpportunityValidationError } from "../../errors";
+import { OpportunityValidationError } from "../../errors";
 import { ValidateFunction } from "../subscriptions";
 import {
   dateStringSchema,
@@ -50,12 +50,6 @@ export const usMoRestrictiveHousingStatusHearingSchema = opportunitySchemaBase
       numMinorCdvsBeforeLastHearing: stringToIntSchema,
     }),
     eligibleCriteria: z.object({
-      // TODO(#3454): remove usMoHasUpcomingHearing
-      usMoHasUpcomingHearing: z
-        .object({
-          nextReviewDate: dateStringSchema,
-        })
-        .optional(), // will be replaced with overdueForHearing
       usMoOverdueForHearing: z
         .object({
           nextReviewDate: dateStringSchema,
@@ -68,32 +62,38 @@ export const usMoRestrictiveHousingStatusHearingSchema = opportunitySchemaBase
     ineligibleCriteria: z.object({
       usMoOverdueForHearing: z
         .object({
-          nextReviewDate: dateStringSchema.nullable(),
+          nextReviewDate: dateStringSchema
+            .nullable()
+            .transform((nullableDate) =>
+              // Transform nulls into undefineds just to make typing a bit more convenient elsewhere
+              nullableDate === null ? undefined : nullableDate
+            ),
         })
         .optional(),
     }),
   })
   .transform((record) => {
-    // remove ineligibleCriteria from the type for now so we don't get confused when it's there.
-    const { ineligibleCriteria, ...recordCopy } = record;
-
-    const nextReviewDate =
-      record.ineligibleCriteria.usMoOverdueForHearing?.nextReviewDate;
-    if (nextReviewDate) {
-      const daysUntilNextReviewDate = differenceInDays(
-        nextReviewDate,
-        // startOfToday is important here because eligibility dates don't have times, so they're
-        // parsed as midnight. differenceInDays rounds down, so we need to compare with today's
-        // midnight so we don't end up off by one.
+    // If someone is almost eligible and our exports are stale,
+    // we could end up in a situation where someone goes from upcoming
+    // to overdue without their raw data actually being updated.
+    // Here, we check to make sure all ineligible dates are in the future
+    // and move the reason to the eliglble blob if it's in the past
+    if (
+      !record.ineligibleCriteria.usMoOverdueForHearing?.nextReviewDate ||
+      record.ineligibleCriteria.usMoOverdueForHearing.nextReviewDate >=
         startOfToday()
-      );
-      if (daysUntilNextReviewDate <= 7) {
-        // The previous version of this opportunity looked for upcoming hearings within a week, so
-        // transform the new version to match.
-        recordCopy.eligibleCriteria.usMoHasUpcomingHearing = { nextReviewDate };
-      }
+    ) {
+      return record;
     }
-    return recordCopy;
+    const { eligibleCriteria, ineligibleCriteria, ...rest } = record;
+    // @ts-expect-error The if-clause above guarantees nextReviewDate is defined
+    eligibleCriteria.usMoOverdueForHearing =
+      ineligibleCriteria.usMoOverdueForHearing;
+    return {
+      ...rest,
+      eligibleCriteria,
+      ineligibleCriteria: {},
+    };
   });
 
 export type UsMoRestrictiveHousingStatusHearingReferralRecord = z.infer<
@@ -107,27 +107,17 @@ export type UsMoRestrictiveHousingStatusHearingReferralRecordRaw = z.input<
 export const validateReferral: ValidateFunction<
   UsMoRestrictiveHousingStatusHearingReferralRecord
 > = (record) => {
-  // If the opportunity doesn't have `usMoHasUpcomingHearing`, it's because the resident is overdue
-  // or has no hearing date. We don't handle that in the UI yet, but will eventually, so ignore
-  // these records for the time being.
-  // TODO(#3454): remove this validation.
-  if (!record.eligibleCriteria.usMoHasUpcomingHearing) {
-    throw new FeatureGateError(
-      "Ignoring criteria that are not handled in the UI yet"
-    );
-  }
-  const nextReviewDate =
-    record.eligibleCriteria.usMoHasUpcomingHearing?.nextReviewDate;
-
   if (
-    nextReviewDate &&
-    isBefore(
-      nextReviewDate,
+    record.eligibleCriteria.usMoOverdueForHearing &&
+    isAfter(
+      record.eligibleCriteria.usMoOverdueForHearing?.nextReviewDate,
       // startOfToday is important here because eligibility dates don't have times, so they're
       // parsed as midnight. If we used new Date(), we would exclude today.
       startOfToday()
     )
   ) {
-    throw new OpportunityValidationError("Next review date is in the past");
+    throw new OpportunityValidationError(
+      "Overdue review date is not in the past"
+    );
   }
 };

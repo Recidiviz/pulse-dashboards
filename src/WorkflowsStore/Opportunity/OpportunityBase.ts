@@ -33,7 +33,7 @@ import {
   TransformFunction,
   ValidateFunction,
 } from "../subscriptions";
-import { JusticeInvolvedPerson, SectionTitle } from "../types";
+import { JusticeInvolvedPerson } from "../types";
 import { OTHER_KEY } from "../utils";
 import { FormBase } from "./Forms/FormBase";
 import {
@@ -45,6 +45,7 @@ import {
   OpportunityRequirement,
   OpportunityStatus,
   OpportunityType,
+  SectionTitle,
 } from "./types";
 
 /**
@@ -329,13 +330,13 @@ export abstract class OpportunityBase<
     return this.isAlert ? "Overridden" : "Marked ineligible";
   }
 
-  get sectionTitle(): SectionTitle {
+  get sectionTitle(): SectionTitle | undefined {
     if (this.almostEligible) return "Almost Eligible";
     if (this.denied) return this.deniedSectionTitle;
     return "Eligible Now";
   }
 
-  sectionOrder: SectionTitle[] = [
+  sectionOrder: Readonly<SectionTitle[]> = [
     "Eligible Now",
     "Almost Eligible",
     this.deniedSectionTitle,

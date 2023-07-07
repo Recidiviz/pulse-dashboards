@@ -183,13 +183,17 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
           responsiveRevamp={!!responsiveRevamp}
           isMobile={isMobile && responsiveRevamp}
         >
-          {header.eligibilityText}{" "}
-          {responsiveRevamp ? (
-            header.opportunityText
-          ) : (
-            <OpportunityHighlight>
-              {header.opportunityText}
-            </OpportunityHighlight>
+          {header.fullText ?? (
+            <>
+              {header.eligibilityText}{" "}
+              {responsiveRevamp ? (
+                header.opportunityText
+              ) : (
+                <OpportunityHighlight>
+                  {header.opportunityText}
+                </OpportunityHighlight>
+              )}
+            </>
           )}
         </OpportunityHeader>
         {!responsiveRevamp && (

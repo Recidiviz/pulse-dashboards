@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { addDays } from "date-fns";
+import { addDays, subDays } from "date-fns";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
@@ -79,12 +79,12 @@ describe("fully eligible", () => {
     expect(opp.requirementsMet).toMatchSnapshot();
   });
 
-  test("requirements met, eligible today", () => {
+  test("requirements met, overdue today", () => {
     const fixtureEligibleToday: UsMoRestrictiveHousingStatusHearingReferralRecord =
       {
         ...UsMoRestrictiveHousingStatusHearingRecordFixture,
         eligibleCriteria: {
-          usMoHasUpcomingHearing: {
+          usMoOverdueForHearing: {
             nextReviewDate: today,
           },
           usMoInRestrictiveHousing: {
@@ -96,20 +96,75 @@ describe("fully eligible", () => {
     expect(opp.requirementsMet).toMatchSnapshot();
   });
 
-  test("requirements met, eligible tomorrow", () => {
-    const fixtureEligibleTomorrow: UsMoRestrictiveHousingStatusHearingReferralRecord =
+  test("requirements met, overdue yesterday", () => {
+    const fixtureEligibleYesterday: UsMoRestrictiveHousingStatusHearingReferralRecord =
       {
         ...UsMoRestrictiveHousingStatusHearingRecordFixture,
         eligibleCriteria: {
-          usMoHasUpcomingHearing: {
-            nextReviewDate: addDays(today, 1),
+          usMoOverdueForHearing: {
+            nextReviewDate: subDays(today, 1),
           },
           usMoInRestrictiveHousing: {
             confinementType: "confinement type",
           },
         },
       };
-    referralSub.data = fixtureEligibleTomorrow;
+    referralSub.data = fixtureEligibleYesterday;
     expect(opp.requirementsMet).toMatchSnapshot();
+  });
+
+  test("requirements almost met, hearing tomorrow", () => {
+    const fixtureEligibleTomorrow: UsMoRestrictiveHousingStatusHearingReferralRecord =
+      {
+        ...UsMoRestrictiveHousingStatusHearingRecordFixture,
+        eligibleCriteria: {
+          usMoInRestrictiveHousing: {
+            confinementType: "confinement type",
+          },
+        },
+        ineligibleCriteria: {
+          usMoOverdueForHearing: {
+            nextReviewDate: addDays(today, 1),
+          },
+        },
+      };
+    referralSub.data = fixtureEligibleTomorrow;
+    expect(opp.requirementsAlmostMet).toMatchSnapshot();
+  });
+
+  test("requirements almost met, hearing in future", () => {
+    const fixtureEligibleFuture: UsMoRestrictiveHousingStatusHearingReferralRecord =
+      {
+        ...UsMoRestrictiveHousingStatusHearingRecordFixture,
+        eligibleCriteria: {
+          usMoInRestrictiveHousing: {
+            confinementType: "confinement type",
+          },
+        },
+        ineligibleCriteria: {
+          usMoOverdueForHearing: {
+            nextReviewDate: addDays(today, 7),
+          },
+        },
+      };
+    referralSub.data = fixtureEligibleFuture;
+    expect(opp.requirementsAlmostMet).toMatchSnapshot();
+  });
+
+  test("requirements almost met, missing date", () => {
+    const fixtureMissingDate: UsMoRestrictiveHousingStatusHearingReferralRecord =
+      {
+        ...UsMoRestrictiveHousingStatusHearingRecordFixture,
+        eligibleCriteria: {
+          usMoInRestrictiveHousing: {
+            confinementType: "confinement type",
+          },
+        },
+        ineligibleCriteria: {
+          usMoOverdueForHearing: {},
+        },
+      };
+    referralSub.data = fixtureMissingDate;
+    expect(opp.requirementsAlmostMet).toMatchSnapshot();
   });
 });

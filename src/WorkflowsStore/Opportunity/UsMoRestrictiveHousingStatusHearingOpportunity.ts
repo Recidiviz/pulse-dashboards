@@ -24,17 +24,92 @@ import { formatWorkflowsDate } from "../../utils";
 import { Resident } from "../Resident";
 import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
-import { OpportunityRequirement } from "./types";
+import {
+  Component,
+  CustomSectionOrders,
+  OpportunityRequirement,
+  SectionTitle,
+} from "./types";
 import {
   UsMoRestrictiveHousingStatusHearingReferralRecord,
   usMoRestrictiveHousingStatusHearingSchema,
   validateReferral,
 } from "./UsMoRestrictiveHousingStatusHearingReferralRecord";
+import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "./utils";
 
 const DENIAL_REASONS_MAP = {
-  DATA: "Record of hearing in another file or table",
+  COMP: "Hearing Completed",
   [OTHER_KEY]: "Other, please specify a reason",
 };
+
+const daysUntilNextReviewDateString = (nextReviewDate: Date) => {
+  const daysUntilNextReviewDate = differenceInDays(
+    nextReviewDate,
+    // startOfToday is important here because eligibility dates don't have times, so they're
+    // parsed as midnight. differenceInDays rounds down, so we need to compare with today's
+    // midnight so we don't end up off by one.
+    startOfToday()
+  );
+  let daysString;
+  if (daysUntilNextReviewDate === 0) {
+    daysString = "today";
+  } else if (daysUntilNextReviewDate === 1) {
+    daysString = "tomorrow";
+  } else {
+    daysString = `in ${daysUntilNextReviewDate} days`;
+  }
+
+  return daysString;
+};
+
+const CRITERIA_FORMATTERS: CriteriaFormatters<UsMoRestrictiveHousingStatusHearingReferralRecord> =
+  {
+    usMoOverdueForHearing: {
+      REVIEW_DATE: (criteria) => formatWorkflowsDate(criteria?.nextReviewDate),
+      DAYS_PAST_REVIEW_DATE: (criteria) => {
+        return criteria?.nextReviewDate
+          ? differenceInDays(startOfToday(), criteria.nextReviewDate).toString()
+          : "Unknown";
+      },
+      UPCOMING_OR_EMPTY_TEXT: (criteria) => {
+        if (!criteria?.nextReviewDate) {
+          return "Missing review date";
+        }
+        const reviewDate = formatWorkflowsDate(criteria.nextReviewDate);
+        const daysUntilNextReviewDate = daysUntilNextReviewDateString(
+          criteria.nextReviewDate
+        );
+        return `Next review date (${reviewDate}) is ${daysUntilNextReviewDate}`;
+      },
+      UPCOMING_OR_EMPTY_SHORT_TEXT: (criteria) => {
+        if (!criteria?.nextReviewDate) {
+          return "Missing review date";
+        }
+        const reviewDate = formatWorkflowsDate(criteria.nextReviewDate);
+        return `Upcoming review date (${reviewDate})`;
+      },
+    },
+  };
+
+const CRITERIA_COPY: CriteriaCopy<UsMoRestrictiveHousingStatusHearingReferralRecord> =
+  {
+    eligibleCriteria: [
+      [
+        "usMoOverdueForHearing",
+        {
+          text: "$DAYS_PAST_REVIEW_DATE day(s) overdue for hearing ($REVIEW_DATE)",
+        },
+      ],
+    ],
+    ineligibleCriteria: [
+      [
+        "usMoOverdueForHearing",
+        {
+          text: "$UPCOMING_OR_EMPTY_TEXT",
+        },
+      ],
+    ],
+  };
 
 export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityBase<
   Resident,
@@ -68,45 +143,65 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
   }
 
   get requirementsMet(): OpportunityRequirement[] {
-    if (!this.record) return [];
-    const requirements: OpportunityRequirement[] = [];
-    const {
-      eligibleCriteria: { usMoHasUpcomingHearing },
-    } = this.record;
+    return hydrateCriteria(
+      this.record,
+      "eligibleCriteria",
+      CRITERIA_COPY,
+      CRITERIA_FORMATTERS
+    );
+  }
 
-    if (!usMoHasUpcomingHearing) {
-      return [];
-    }
+  get requirementsAlmostMet(): OpportunityRequirement[] {
+    return hydrateCriteria(
+      this.record,
+      "ineligibleCriteria",
+      CRITERIA_COPY,
+      CRITERIA_FORMATTERS
+    );
+  }
 
-    if (usMoHasUpcomingHearing.nextReviewDate) {
-      const daysUntilNextReviewDate = differenceInDays(
-        usMoHasUpcomingHearing.nextReviewDate,
-        // startOfToday is important here because eligibility dates don't have times, so they're
-        // parsed as midnight. differenceInDays rounds down, so we need to compare with today's
-        // midnight so we don't end up off by one.
-        startOfToday()
-      );
-      let daysString;
-      if (daysUntilNextReviewDate === 0) {
-        daysString = "today";
-      } else if (daysUntilNextReviewDate === 1) {
-        daysString = "tomorrow";
-      } else {
-        daysString = `in ${daysUntilNextReviewDate} days`;
-      }
+  get almostEligible(): boolean {
+    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
+  }
 
-      const text = `Next review date (${formatWorkflowsDate(
-        usMoHasUpcomingHearing.nextReviewDate
-      )}) is ${daysString}`;
-      requirements.push({
-        text,
-      });
-    }
+  get eligibleStatusMessage(): string | undefined {
+    return this.record
+      ? CRITERIA_FORMATTERS.usMoOverdueForHearing?.REVIEW_DATE(
+          this.record.eligibleCriteria.usMoOverdueForHearing,
+          this.record
+        )
+      : undefined;
+  }
 
-    return requirements;
+  get almostEligibleStatusMessage(): string | undefined {
+    return this.record && this.almostEligible
+      ? CRITERIA_FORMATTERS.usMoOverdueForHearing?.UPCOMING_OR_EMPTY_SHORT_TEXT(
+          this.record.ineligibleCriteria.usMoOverdueForHearing,
+          this.record
+        )
+      : undefined;
   }
 
   get eligibilityDate(): Date | undefined {
-    return this.record?.eligibleCriteria.usMoHasUpcomingHearing?.nextReviewDate;
+    return (
+      this.record?.eligibleCriteria.usMoOverdueForHearing?.nextReviewDate ??
+      this.record?.ineligibleCriteria.usMoOverdueForHearing?.nextReviewDate
+    );
+  }
+
+  get sectionTitle(): SectionTitle | undefined {
+    if (!this.record) return undefined;
+    if (this.record.eligibleCriteria.usMoOverdueForHearing)
+      return "Overdue For Hearing";
+    if (!this.record.ineligibleCriteria.usMoOverdueForHearing?.nextReviewDate)
+      return "Missing Review Date";
+    return "Upcoming Hearings";
+  }
+
+  sectionOrder: Readonly<SectionTitle[]> =
+    CustomSectionOrders.UsMoRestrictiveHousingStatusHearingOpportunity;
+
+  showEligibilityStatus(component: Component): boolean {
+    return this.reviewStatus === "DENIED" || component === "OpportunityCapsule";
   }
 }

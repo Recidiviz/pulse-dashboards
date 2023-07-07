@@ -117,7 +117,7 @@ export const usMoRestrictiveHousingStatusHearingFixture: FixtureData<UsMoRestric
         },
         ineligibleCriteria: {
           usMoOverdueForHearing: {
-            nextReviewDate: "2023-06-21",
+            nextReviewDate: "3000-01-01", // very far in the future so it doesn't accidentally become in the past
           },
         },
         metadata: {

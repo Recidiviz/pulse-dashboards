@@ -223,8 +223,8 @@ export interface Opportunity<
   readonly caseNotesTitle?: string;
   readonly hideUnknownCaseNoteDates?: boolean;
   readonly tooltipEligibilityText?: string;
-  sectionTitle: string;
-  sectionOrder: string[];
+  sectionTitle?: SectionTitle;
+  sectionOrder: Readonly<SectionTitle[]>;
   showEligibilityStatus: (component: Component) => boolean;
 }
 
@@ -234,3 +234,18 @@ export type OpportunityFactory<
   OpportunitySubtype extends OpportunityType,
   PersonType extends JusticeInvolvedPerson
 > = (type: OpportunitySubtype, person: PersonType) => Opportunity;
+
+export const CustomSectionOrders = {
+  UsMoRestrictiveHousingStatusHearingOpportunity: [
+    "Overdue For Hearing",
+    "Missing Review Date",
+    "Upcoming Hearings",
+  ],
+} as const;
+
+export type SectionTitle =
+  | "Eligible Now"
+  | "Almost Eligible"
+  | "Overridden"
+  | "Marked ineligible"
+  | typeof CustomSectionOrders[keyof typeof CustomSectionOrders][number];
