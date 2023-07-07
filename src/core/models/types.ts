@@ -69,6 +69,7 @@ export type TenantConfig = {
   name: string;
   stateCode: string;
   domain?: string;
+  DOCName?: string;
   availableStateCodes: string[];
   enableUserRestrictions: boolean;
   workflowsEnableAllDistricts?: boolean;

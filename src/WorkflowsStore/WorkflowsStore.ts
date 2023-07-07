@@ -519,10 +519,12 @@ export class WorkflowsStore implements Hydratable {
   ): Client[] {
     return this.milestonesClients.filter((client) => {
       if (statuses === undefined)
-        return client.milestoneMessagesUpdates?.status === undefined;
+        return client.milestonesMessageStatus === undefined;
 
-      const status = client.milestoneMessagesUpdates?.status;
-      return status && statuses.includes(status);
+      return (
+        client.milestonesMessageStatus &&
+        statuses.includes(client.milestonesMessageStatus)
+      );
     });
   }
 

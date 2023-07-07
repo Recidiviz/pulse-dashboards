@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import dedent from "dedent";
+import { deleteField, FieldValue, Timestamp } from "firebase/firestore";
 import { mapValues, toUpper } from "lodash";
-import { makeObservable, override } from "mobx";
+import { action, makeObservable, override } from "mobx";
 import { format as formatPhone } from "phone-fns";
 
 import {
@@ -25,6 +27,7 @@ import {
   Milestone,
   MilestonesMessage,
   SpecialConditionCode,
+  TextMessageStatus,
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
@@ -175,8 +178,11 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     makeObservable(this, {
       supervisionLevel: true,
       updateRecord: override,
+      milestoneMessagesUpdates: true,
+      milestonesPhoneNumber: true,
+      updateMilestonesPhoneNumber: action,
+      updateMilestonesTextMessage: action,
     });
-
     this.updateRecord(record);
   }
 
@@ -287,7 +293,105 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return this.milestonesMessageUpdatesSubscription?.data;
   }
 
+  get milestonesMessageStatus(): TextMessageStatus | undefined {
+    return this.milestoneMessagesUpdates?.status;
+  }
+
+  get milestonesPendingMessage(): string | undefined {
+    return this.milestoneMessagesUpdates?.pendingMessage;
+  }
+
+  get milestonesFullTextMessage(): string | undefined {
+    return this.milestoneMessagesUpdates?.messageDetails?.message;
+  }
+
+  get milestonesPhoneNumber(): string | undefined {
+    const userEnteredPhoneNumber =
+      this.milestoneMessagesUpdates?.messageDetails?.recipient;
+    return userEnteredPhoneNumber?.length
+      ? userEnteredPhoneNumber
+      : this.rawPhoneNumber;
+  }
+
   get hasMilestones(): boolean {
     return (this.milestones ?? []).length > 0;
+  }
+
+  async updateMilestonesPhoneNumber(
+    phoneNumber: string,
+    deletePhoneNumber = false
+  ): Promise<void> {
+    await this.rootStore.firestoreStore.updateMilestonesMessages(
+      this.recordId,
+      {
+        lastUpdated: Timestamp.now(),
+        status: "PENDING",
+        messageDetails: {
+          stateCode: this.stateCode,
+          recipient: deletePhoneNumber ? deleteField() : phoneNumber,
+          timestamp: Timestamp.now(),
+        },
+      }
+    );
+  }
+
+  async updateMilestonesTextMessage(
+    additionalMessage?: string,
+    deleteAdditionalMessage = false
+  ): Promise<void> {
+    let pendingMessage: Partial<Record<"pendingMessage", string | FieldValue>>;
+    if (deleteAdditionalMessage) {
+      pendingMessage = { pendingMessage: deleteField() };
+    } else if (additionalMessage && additionalMessage !== "") {
+      pendingMessage = {
+        pendingMessage: additionalMessage,
+      };
+    } else {
+      pendingMessage = {};
+    }
+
+    await this.rootStore.firestoreStore.updateMilestonesMessages(
+      this.recordId,
+      {
+        lastUpdated: Timestamp.now(),
+        status: "PENDING",
+        ...pendingMessage,
+        messageDetails: {
+          stateCode: this.stateCode,
+          message: dedent`
+            ${this.defaultMilestonesMessage}
+
+            ${additionalMessage || ""}
+          `,
+          timestamp: Timestamp.now(),
+        },
+      }
+    );
+  }
+
+  async sendMilestonesMessage(): Promise<void> {
+    if (!this.milestonesFullTextMessage || !this.milestonesPhoneNumber) return;
+    await this.rootStore.apiStore.postExternalSMSMessage({
+      message: this.milestonesFullTextMessage,
+      recipientExternalId: this.externalId,
+      recipientPhoneNumber: this.milestonesPhoneNumber,
+      senderId: this.rootStore.userStore.externalId ?? "Unknown",
+    });
+  }
+
+  get defaultMilestonesMessage(): string {
+    return dedent`
+    Message from ${this.assignedStaffFullName} at ${
+      !this.rootStore.currentTenantId
+        ? "DOC"
+        : tenants[this.rootStore.currentTenantId].DOCName
+    }:
+
+    Hey ${
+      this.displayPreferredName ?? this.fullName.givenNames ?? ""
+    }! Congratulations on reaching these milestones:
+
+    ${this.milestones?.map((m) => `- ${m.text}`).join("\n")}
+  `;
   }
 }

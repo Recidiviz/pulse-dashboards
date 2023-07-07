@@ -263,7 +263,10 @@ export default class FirestoreStore {
     });
   }
 
-  async updateMilestonesMessages(recordId: string, update: MilestonesMessage) {
+  async updateMilestonesMessages(
+    recordId: string,
+    update: PartialWithFieldValue<MilestonesMessage>
+  ) {
     const dateKey = getMonthYearFromDate(startOfToday());
     const taskDocRef = doc(
       this.db,

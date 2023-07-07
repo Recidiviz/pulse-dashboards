@@ -112,6 +112,7 @@ export type JusticeInvolvedPerson = {
   displayName: string;
   displayPreferredName: string;
   assignedStaffId: string;
+  assignedStaffFullName: string;
   supervisionTasks?: SupervisionTaskInterface;
   /**
    * Contains all expected opportunity objects. Mainly useful for inspecting or interacting with

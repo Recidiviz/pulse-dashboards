@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { palette, typography } from "@recidiviz/design-system";
+import { uniq } from "lodash/fp";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import styled from "styled-components/macro";
@@ -167,9 +168,13 @@ const MilestonesCaseloadView: React.FC = observer(
     const clients = (tab: MilestonesTab): Client[] => {
       switch (tab) {
         case "NEW_MILESTONES":
-          return workflowsStore.getMilestonesClientsByStatus();
+          return uniq([
+            ...workflowsStore.getMilestonesClientsByStatus(["PENDING"]),
+            ...workflowsStore.getMilestonesClientsByStatus(),
+          ]);
         case "CONGRATULATED":
           return workflowsStore.getMilestonesClientsByStatus([
+            "CONGRATULATED_IN_PERSON",
             "IN_PROGRESS",
             "SUCCESS",
           ]);

@@ -23,10 +23,16 @@ import {
   typography,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
+import { Client } from "../../WorkflowsStore";
+import {
+  formatPhoneNumber,
+  validatePhoneNumber,
+} from "../../WorkflowsStore/utils";
 import { Heading } from "../WorkflowsClientProfile/Heading";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import { ClientMilestones } from "./MilestonesCaseloadView";
@@ -43,6 +49,24 @@ const Warning = styled(Sans12)`
   margin: 0.75rem 0;
 `;
 
+const ReviewInfo = styled(Sans16)`
+  color: ${palette.slate85};
+  margin: 2rem 0;
+`;
+
+const ReviewMessage = styled(Sans16)`
+  color: ${palette.slate85};
+  border: 1px solid ${palette.slate20};
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 8px;
+  white-space: pre-line;
+`;
+
+const PhoneNumber = styled.span`
+  color: ${palette.pine1};
+`;
+
 const ButtonsContainer = styled.div`
   ${typography.Sans14}
 
@@ -53,7 +77,7 @@ const ButtonsContainer = styled.div`
   width: 100%;
 `;
 
-const ReviewButton = styled(Button)`
+const ActionButton = styled(Button)`
   border-radius: 4px;
   color: ${palette.marble1};
   width: 100%;
@@ -87,53 +111,161 @@ const SidePanelContents = styled.div`
   height: 85vh;
 `;
 
+type MILESTONES_SIDE_PANEL_VIEW =
+  | "COMPOSING"
+  | "REVIEWING"
+  | "DECLINING"
+  | "CONGRATULATED_IN_PERSON"
+  | "OPPORTUNITY_AVAILABLE"
+  | "MESSAGE_SENT";
+
+interface SidePanelContentProps {
+  client: Client;
+  setCurrentView: Dispatch<SetStateAction<MILESTONES_SIDE_PANEL_VIEW>>;
+}
+
+const ComposeMessageView = observer(function ComposeMessageView({
+  client,
+  setCurrentView,
+}: SidePanelContentProps): JSX.Element {
+  const [disableReviewButton, setDisableReviewButton] = useState(false);
+  const handleUpdatePhoneNumber = async (updatedPhoneNumber: string) => {
+    const invalidPhoneNumber = !validatePhoneNumber(updatedPhoneNumber);
+    setDisableReviewButton(invalidPhoneNumber);
+    await client.updateMilestonesPhoneNumber(
+      updatedPhoneNumber,
+      invalidPhoneNumber
+    );
+  };
+
+  const handleUpdateTextMessage = async (additionalMessage: string) => {
+    const deletePendingMessage = additionalMessage === "";
+    await client.updateMilestonesTextMessage(
+      additionalMessage,
+      deletePendingMessage
+    );
+  };
+
+  const handleOnReviewClick = async () => {
+    await client.updateMilestonesTextMessage(client.milestonesPendingMessage);
+    setCurrentView("REVIEWING");
+  };
+
+  return (
+    <SidePanelContents>
+      <Heading person={client} />
+      <SidePanelHeader>Milestones</SidePanelHeader>
+      <ClientMilestones client={client} showAll />
+      <PhoneNumberInput
+        clientPhoneNumber={client.milestonesPhoneNumber}
+        onUpdatePhoneNumber={handleUpdatePhoneNumber}
+      />
+      <TextMessageInput
+        client={client}
+        onUpdateTextMessage={handleUpdateTextMessage}
+      />
+      <Warning>
+        Do not send critical information tied to deadlines. We cannot guarantee
+        delivery of this text message.
+      </Warning>
+      <ButtonsContainer>
+        <ActionButton
+          onClick={handleOnReviewClick}
+          disabled={disableReviewButton}
+        >
+          Review
+        </ActionButton>
+        <AlreadyCongratulatedButton>
+          I congratulated them in-person or another way
+        </AlreadyCongratulatedButton>
+        <OptOutText>
+          Opt out of sending a congratulations text?{" "}
+          <OptOutLink>Tell us why</OptOutLink>
+        </OptOutText>
+      </ButtonsContainer>
+    </SidePanelContents>
+  );
+});
+
+const ReviewMessageView = observer(function ReviewMessageView({
+  client,
+  setCurrentView,
+}: SidePanelContentProps): JSX.Element {
+  useHydrateOpportunities(client);
+
+  const handleOnSend = async () => {
+    await client.sendMilestonesMessage();
+    if (client.hasVerifiedOpportunities) {
+      setCurrentView("OPPORTUNITY_AVAILABLE");
+    } else {
+      setCurrentView("MESSAGE_SENT");
+    }
+  };
+
+  const { milestonesPhoneNumber, milestonesFullTextMessage } = client;
+
+  return (
+    <SidePanelContents>
+      <Heading person={client} />
+      <ReviewInfo>
+        Here&apos;s a preview of the full text message we&apos;ll send to{" "}
+        {client.displayPreferredName} at{" "}
+        {milestonesPhoneNumber && (
+          <PhoneNumber>{formatPhoneNumber(milestonesPhoneNumber)}</PhoneNumber>
+        )}
+      </ReviewInfo>
+      {milestonesFullTextMessage && (
+        <ReviewMessage>{milestonesFullTextMessage}</ReviewMessage>
+      )}
+      <ButtonsContainer>
+        <ActionButton onClick={handleOnSend}>Send congratulations</ActionButton>
+      </ButtonsContainer>
+    </SidePanelContents>
+  );
+});
+
+const MilestonesSidePanelContent = observer(
+  function MilestonesSidePanelContent(): JSX.Element {
+    const {
+      workflowsStore: { selectedClient },
+    } = useRootStore();
+    const [currentView, setCurrentView] =
+      useState<MILESTONES_SIDE_PANEL_VIEW>("COMPOSING");
+
+    if (!selectedClient) return <div />;
+
+    switch (currentView) {
+      case "COMPOSING":
+        return (
+          <ComposeMessageView
+            client={selectedClient}
+            setCurrentView={setCurrentView}
+          />
+        );
+      case "REVIEWING":
+        return (
+          <ReviewMessageView
+            client={selectedClient}
+            setCurrentView={setCurrentView}
+          />
+        );
+      case "OPPORTUNITY_AVAILABLE":
+        return <div>Opportunity available view</div>;
+      default:
+        return <div>Default page</div>;
+    }
+  }
+);
+
 export const MilestonesSidePanel = observer(function TaskPreviewModal() {
   const {
     workflowsStore: { selectedClient },
   } = useRootStore();
 
-  if (!selectedClient) return null;
-
-  const handleUpdatePhoneNumber = (phoneNumber: string) => {
-    return phoneNumber;
-  };
-
-  const handleUpdateTextMessage = (textMessage: string) => {
-    return textMessage;
-  };
-
   return (
     <WorkflowsPreviewModal
       isOpen={!!selectedClient}
-      pageContent={
-        <SidePanelContents>
-          <Heading person={selectedClient} />
-          <SidePanelHeader>Milestones</SidePanelHeader>
-          <ClientMilestones client={selectedClient} showAll />
-          <PhoneNumberInput
-            client={selectedClient}
-            onUpdatePhoneNumber={handleUpdatePhoneNumber}
-          />
-          <TextMessageInput
-            client={selectedClient}
-            onUpdateTextMessage={handleUpdateTextMessage}
-          />
-          <Warning>
-            Do not send critical information tied to deadlines. We cannot
-            guarantee delivery of this text message.
-          </Warning>
-          <ButtonsContainer>
-            <ReviewButton>Review</ReviewButton>
-            <AlreadyCongratulatedButton>
-              I congratulated them in-person or another way
-            </AlreadyCongratulatedButton>
-            <OptOutText>
-              Opt out of sending a congratulations text?{" "}
-              <OptOutLink>Tell us why</OptOutLink>
-            </OptOutText>
-          </ButtonsContainer>
-        </SidePanelContents>
-      }
+      pageContent={<MilestonesSidePanelContent />}
     />
   );
 });

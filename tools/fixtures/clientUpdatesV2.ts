@@ -27,7 +27,7 @@ const milestonesMessages: (MilestonesMessage & { externalId: string })[] = [
     status: "SUCCESS",
     messageDetails: {
       message: "testing offline message!",
-      recipient: 1112223333,
+      recipient: "1112223333",
       mid: "992b2e4c-9jkd98",
       stateCode: "US_CA",
       timestamp: Timestamp.now() as FirebaseTimestamp,
@@ -52,7 +52,7 @@ const milestonesMessages: (MilestonesMessage & { externalId: string })[] = [
     errors: ["Phone number does not exist."],
     messageDetails: {
       message: "failed testing offline message!",
-      recipient: 1112223333,
+      recipient: "1112223333",
       mid: "992b2e4c-9jkd98",
       stateCode: "US_CA",
       timestamp: Timestamp.now() as FirebaseTimestamp,

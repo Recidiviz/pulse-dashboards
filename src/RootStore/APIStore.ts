@@ -23,6 +23,13 @@ interface RequestProps {
   retrying?: boolean;
 }
 
+type ExternalSMSMessageRequest = {
+  recipientExternalId: string;
+  recipientPhoneNumber: string;
+  senderId: string;
+  message: string;
+};
+
 class API {
   userStore: UserStore;
 
@@ -78,6 +85,18 @@ class API {
     body: Record<string, unknown> = {}
   ): Promise<Body | Response | string> {
     return this.request({ path, body, method: "POST" });
+  }
+
+  async postExternalSMSMessage(
+    body: ExternalSMSMessageRequest
+  ): Promise<Body | Response | string> {
+    const stateCode = this.userStore.isRecidivizUser
+      ? this.userStore.rootStore?.currentTenantId
+      : this.userStore.stateCode;
+    return this.post(
+      `${process.env.REACT_APP_NEW_BACKEND_API_URL}/workflows/external_request/${stateCode}/enqueue_sms_request`,
+      body
+    );
   }
 }
 

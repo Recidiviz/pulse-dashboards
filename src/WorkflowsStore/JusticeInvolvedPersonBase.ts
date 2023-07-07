@@ -176,6 +176,15 @@ export class JusticeInvolvedPersonBase<
     return this.assignedStaff?.district;
   }
 
+  get assignedStaffFullName(): string {
+    return [
+      this.assignedStaff?.givenNames ?? "",
+      this.assignedStaff?.surname ?? "",
+    ]
+      .join(" ")
+      .trim();
+  }
+
   get displayName(): string {
     return [this.fullName.givenNames, this.fullName.surname]
       .filter((n) => Boolean(n))
@@ -247,6 +256,13 @@ export class JusticeInvolvedPersonBase<
       values(this.potentialOpportunities).filter(
         (opp) => opp !== undefined && !(opp.isLoading === false)
       ).length === 0
+    );
+  }
+
+  get hasVerifiedOpportunities(): boolean {
+    return (
+      Object.values(this.verifiedOpportunities).filter((o) => o !== undefined)
+        .length > 0
     );
   }
 

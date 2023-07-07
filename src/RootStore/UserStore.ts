@@ -317,8 +317,10 @@ export default class UserStore {
 
   /**
    * Returns the user's external ID, or undefined if not set.
+   * Returns "RECIDIVIZ" if it is a recidiviz user.
    */
   get externalId(): string | undefined {
+    if (this.isRecidivizUser) return "RECIDIVIZ";
     return this.userAppMetadata?.externalId;
   }
 

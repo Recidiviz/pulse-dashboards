@@ -55,7 +55,8 @@ export function dateToTimestamp(isodate: string): Timestamp {
   return new Timestamp(new Date(isodate).getTime() / 1000, 0);
 }
 
-export function validatePhoneNumber(phoneNumber: string): boolean {
+export function validatePhoneNumber(phoneNumber: string | undefined): boolean {
+  if (!phoneNumber) return false;
   const phoneNumberRegex = /^\d{10}$/;
   return phoneNumberRegex.test(phoneNumber);
 }

@@ -23,7 +23,7 @@ import {
   runInAction,
 } from "mobx";
 
-import { JusticeInvolvedPersonRecord } from "../../FirestoreStore";
+import { JusticeInvolvedPersonRecord, StaffRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
 import { OpportunityFactory, OpportunityType } from "../Opportunity";
@@ -55,6 +55,16 @@ beforeEach(() => {
     workflowsStore: {
       get opportunityTypes() {
         return computed(() => mockOpportunityTypes.get()).get();
+      },
+
+      get availableOfficers() {
+        return [
+          {
+            id: "OFFICER1",
+            givenNames: "FirstName",
+            surname: "LastName",
+          },
+        ];
       },
     },
     firestoreStore: {
@@ -134,6 +144,51 @@ describe("opportunities", () => {
     expect(testPerson.verifiedOpportunities).toStrictEqual({});
     expect(testPerson.opportunitiesEligible).toStrictEqual({});
     expect(testPerson.opportunitiesAlmostEligible).toStrictEqual({});
+  });
+
+  describe("assignedStaffFullName", () => {
+    test("with both names", () => {
+      createTestUnit();
+      expect(testPerson.assignedStaffFullName).toEqual("FirstName LastName");
+    });
+
+    test("with only first name", () => {
+      rootStoreMock = {
+        ...rootStoreMock,
+        workflowsStore: {
+          ...rootStoreMock.workflowsStore,
+          get availableOfficers() {
+            return [
+              {
+                id: "OFFICER1",
+                givenNames: "FirstName",
+              } as StaffRecord,
+            ];
+          },
+        },
+      } as unknown as RootStore;
+      createTestUnit();
+      expect(testPerson.assignedStaffFullName).toEqual("FirstName");
+    });
+
+    test("with only last name", () => {
+      rootStoreMock = {
+        ...rootStoreMock,
+        workflowsStore: {
+          ...rootStoreMock.workflowsStore,
+          get availableOfficers() {
+            return [
+              {
+                id: "OFFICER1",
+                surname: "LastName",
+              } as StaffRecord,
+            ];
+          },
+        },
+      } as unknown as RootStore;
+      createTestUnit();
+      expect(testPerson.assignedStaffFullName).toEqual("LastName");
+    });
   });
 
   describe("successfully", () => {

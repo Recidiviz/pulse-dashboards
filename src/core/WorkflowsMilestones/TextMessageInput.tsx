@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { palette, typography } from "@recidiviz/design-system";
-import dedent from "dedent";
+import { observer } from "mobx-react-lite";
 import React, { ChangeEvent, useState } from "react";
 import styled from "styled-components/macro";
 
@@ -23,7 +23,7 @@ import { Client } from "../../WorkflowsStore";
 
 interface TextMessageInputProps {
   client: Client;
-  onUpdateTextMessage: (textMessage: string) => void;
+  onUpdateTextMessage: (additionalMessage: string) => void;
 }
 
 const TextMessageContainer = styled.div`
@@ -63,20 +63,19 @@ const TextMessageInput: React.FC<TextMessageInputProps> = ({
   client,
   onUpdateTextMessage,
 }) => {
-  const defaultMessage = dedent`
-    Hey ${
-      client.displayPreferredName ?? client.fullName.givenNames ?? ""
-    }! Congratulations on reaching these milestones:
-
-    ${client.milestones?.map((m) => `- ${m.text}`).join("\n")}
-  `;
   const characterLimit = 1600;
   const placeholder = "Add your own message (Optional)";
+  const [additionalMessage, setAdditionalMessage] = useState(
+    client.milestonesPendingMessage ?? ""
+  );
+  const defaultMessage = client.defaultMilestonesMessage;
 
-  const [additionalMessage, setAdditionalMessage] = useState("");
-
-  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = async (event: ChangeEvent<HTMLTextAreaElement>) => {
     setAdditionalMessage(event.target.value);
+  };
+
+  const handleInputBlur = () => {
+    onUpdateTextMessage(additionalMessage);
   };
 
   const remainingCharacters =
@@ -97,6 +96,7 @@ const TextMessageInput: React.FC<TextMessageInputProps> = ({
         id="textMessage"
         value={additionalMessage}
         onChange={handleChange}
+        onBlur={handleInputBlur}
         maxLength={characterLimit - defaultMessage.length}
         placeholder={placeholder}
       />
@@ -104,4 +104,4 @@ const TextMessageInput: React.FC<TextMessageInputProps> = ({
   );
 };
 
-export default TextMessageInput;
+export default observer(TextMessageInput);

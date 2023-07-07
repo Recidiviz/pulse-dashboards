@@ -19,11 +19,7 @@ import { palette, typography } from "@recidiviz/design-system";
 import React, { useState } from "react";
 import styled from "styled-components/macro";
 
-import { Client } from "../../WorkflowsStore";
-import {
-  formatPhoneNumber,
-  validatePhoneNumber,
-} from "../../WorkflowsStore/utils";
+import { formatPhoneNumber } from "../../WorkflowsStore/utils";
 
 const PhoneNumber = styled.div`
   ${typography.Sans12}
@@ -49,26 +45,25 @@ const SidePanelInput = styled.input`
 `;
 
 interface PhoneNumberInputProps {
-  client: Client;
+  clientPhoneNumber?: string;
   onUpdatePhoneNumber: (phoneNumber: string) => void;
 }
 
 const PhoneNumberInput = ({
-  client,
+  clientPhoneNumber,
   onUpdatePhoneNumber,
 }: PhoneNumberInputProps) => {
-  const [phoneNumber, setPhoneNumber] = useState(client.phoneNumber);
+  const [phoneNumber, setPhoneNumber] = useState(clientPhoneNumber ?? "");
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const formattedNumber = formatPhoneNumber(event.target.value);
     setPhoneNumber(formattedNumber);
   };
 
   const handleInputBlur = () => {
-    const digitsOnly = phoneNumber.replace(/\D/g, "");
-    if (validatePhoneNumber(digitsOnly)) {
-      onUpdatePhoneNumber(digitsOnly);
-    }
+    const digitsOnly = (phoneNumber ?? "").replace(/\D/g, "");
+    onUpdatePhoneNumber(digitsOnly);
   };
+
   return (
     <PhoneNumber>
       <label htmlFor="phoneNumber">Phone Number</label>
@@ -78,7 +73,7 @@ const PhoneNumberInput = ({
         maxLength={14}
         inputMode="numeric"
         placeholder="Enter a 10-digit phone number"
-        value={phoneNumber}
+        value={formatPhoneNumber(phoneNumber)}
         onBlur={handleInputBlur}
         onChange={handleInputChange}
       />
