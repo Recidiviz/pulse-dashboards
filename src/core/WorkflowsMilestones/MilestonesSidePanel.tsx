@@ -36,27 +36,57 @@ export type NEW_MILESTONES_SIDE_PANEL_VIEW =
 
 interface NewMilestonesSidePanelProps {
   client: Client;
-  closeModal: () => void;
 }
 
 const NewMilestonesSidePanel = function NewMilestonesSidePanel({
   client,
-  closeModal,
 }: NewMilestonesSidePanelProps): JSX.Element {
+  const { workflowsStore } = useRootStore();
   const [currentView, setCurrentView] =
     useState<NEW_MILESTONES_SIDE_PANEL_VIEW>("COMPOSING");
 
   switch (currentView) {
     case "COMPOSING":
-      return <ComposeMessage client={client} setCurrentView={setCurrentView} />;
+      return (
+        <WorkflowsPreviewModal
+          isOpen={!!client}
+          pageContent={
+            <ComposeMessage client={client} setCurrentView={setCurrentView} />
+          }
+        />
+      );
     case "REVIEWING":
       return (
-        <ReviewMessageView client={client} setCurrentView={setCurrentView} />
+        <WorkflowsPreviewModal
+          isOpen={!!client}
+          onBackClick={() => {
+            setCurrentView("COMPOSING");
+          }}
+          pageContent={
+            <ReviewMessageView
+              client={client}
+              setCurrentView={setCurrentView}
+            />
+          }
+        />
+      );
+    case "DECLINING":
+      return (
+        <WorkflowsPreviewModal
+          isOpen={!!client}
+          onBackClick={() => {
+            setCurrentView("COMPOSING");
+          }}
+          pageContent={
+            <DeclineMessageView
+              client={client}
+              closeModal={() => workflowsStore.updateSelectedPerson(undefined)}
+            />
+          }
+        />
       );
     case "CONGRATULATED_ANOTHER_WAY":
       return <div>TODO CONGRATULATED_ANOTHER_WAY</div>;
-    case "DECLINING":
-      return <DeclineMessageView client={client} closeModal={closeModal} />;
     case "OPPORTUNITY_AVAILABLE":
       return <div>TODO Opportunity Available</div>;
     case "MESSAGE_SENT":
@@ -66,59 +96,26 @@ const NewMilestonesSidePanel = function NewMilestonesSidePanel({
   }
 };
 
-const MilestonesSidePanelContent = observer(
-  function MilestonesSidePanelContent({
-    activeTab,
-    closeModal,
-  }: {
-    activeTab: MilestonesTab;
-    closeModal: () => void;
-  }): JSX.Element {
-    const {
-      workflowsStore: { selectedClient },
-    } = useRootStore();
-
-    if (!selectedClient) return <div />;
-
-    switch (activeTab) {
-      case "NEW_MILESTONES":
-        return (
-          <NewMilestonesSidePanel
-            client={selectedClient}
-            closeModal={closeModal}
-          />
-        );
-      case "CONGRATULATED":
-        return <div>TODO CONGRATULATED</div>;
-      case "DECLINED":
-        return <div>TODO DECLINED</div>;
-      case "ERRORS":
-        return <div>TODO ERRORS</div>;
-      default:
-        return <div>Default page</div>;
-    }
-  }
-);
-
 export const MilestonesSidePanel = observer(function MilestonesSidePanel({
   activeTab,
 }: {
   activeTab: MilestonesTab;
 }) {
   const {
-    workflowsStore,
     workflowsStore: { selectedClient },
   } = useRootStore();
+  if (!selectedClient) return null;
 
-  return (
-    <WorkflowsPreviewModal
-      isOpen={!!selectedClient}
-      pageContent={
-        <MilestonesSidePanelContent
-          activeTab={activeTab}
-          closeModal={() => workflowsStore.updateSelectedPerson(undefined)}
-        />
-      }
-    />
-  );
+  switch (activeTab) {
+    case "NEW_MILESTONES":
+      return <NewMilestonesSidePanel client={selectedClient} />;
+    case "CONGRATULATED":
+      return <div>TODO CONGRATULATED</div>;
+    case "DECLINED":
+      return <div>TODO DECLINED</div>;
+    case "ERRORS":
+      return <div>TODO ERRORS</div>;
+    default:
+      return <div>Default page</div>;
+  }
 });

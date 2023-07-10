@@ -49,15 +49,21 @@ const ModalControls = styled.div<{
   ${({ responsiveRevamp }) =>
     responsiveRevamp
       ? `
-        display: flex;
-        flex-flow: column nowrap;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         justify-content: space-between;
         border-bottom: 1px solid ${palette.slate10};
         padding: 1rem;
 
         .WorkflowsPreviewModal__close {
-          align-self: flex-end;
+          grid-column: 2;
+          justify-self: flex-end;
         };
+
+        .WorkflowsPreviewModal__back {
+          grid-column 1;
+          justify-self: flex-start;
+        }
       `
       : `padding: ${rem(spacing.md)};
           text-align: right;`}
@@ -78,12 +84,14 @@ type PreviewModalProps = {
   isOpen: boolean;
   pageContent: JSX.Element;
   onAfterOpen?: () => void;
+  onBackClick?: () => void;
 };
 
 export function WorkflowsPreviewModal({
   isOpen,
   pageContent,
   onAfterOpen,
+  onBackClick,
 }: PreviewModalProps): JSX.Element {
   const {
     workflowsStore,
@@ -109,6 +117,15 @@ export function WorkflowsPreviewModal({
       isMobile={isMobile && !!featureVariants.responsiveRevamp}
     >
       <ModalControls responsiveRevamp={!!featureVariants.responsiveRevamp}>
+        {onBackClick && (
+          <Button
+            className="WorkflowsPreviewModal__back"
+            kind="link"
+            onClick={onBackClick}
+          >
+            Back
+          </Button>
+        )}
         <Button
           className="WorkflowsPreviewModal__close"
           kind="link"
