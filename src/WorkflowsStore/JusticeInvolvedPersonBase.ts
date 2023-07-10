@@ -315,4 +315,8 @@ export class JusticeInvolvedPersonBase<
   get searchIdValue(): any {
     return this.assignedStaffId;
   }
+
+  get currentUserEmail(): string | undefined {
+    return this.rootStore.workflowsStore.user?.info.email;
+  }
 }

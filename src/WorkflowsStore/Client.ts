@@ -59,6 +59,7 @@ import {
   clearPhoneNumberFormatting,
   formatSupervisionType,
   optionalFieldToDate,
+  OTHER_KEY,
 } from "./utils";
 
 export const UNKNOWN = "Unknown" as const;
@@ -312,6 +313,10 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return this.milestoneMessagesUpdates?.messageDetails?.message;
   }
 
+  get milestonesDeclinedReasons(): MilestonesMessage["declinedReasons"] {
+    return this.milestoneMessagesUpdates?.declinedReasons;
+  }
+
   get milestonesPhoneNumber(): string | undefined {
     const userEnteredPhoneNumber =
       this.milestoneMessagesUpdates?.messageDetails?.recipient;
@@ -329,6 +334,31 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   get hasMilestones(): boolean {
     return (this.milestones ?? []).length > 0;
+  }
+
+  async updateMilestonesDeclineReasons(
+    reasons: string[],
+    otherReason?: string
+  ): Promise<void> {
+    const otherReasonField = reasons.includes(OTHER_KEY)
+      ? { otherReason }
+      : { otherReason: deleteField() };
+
+    await this.rootStore.firestoreStore.updateMilestonesMessages(
+      this.recordId,
+      {
+        lastUpdated: serverTimestamp(),
+        status: TextMessageStatuses.DECLINED,
+        declinedReasons: {
+          ...(reasons.length ? { reasons } : {}),
+          ...otherReasonField,
+          updated: {
+            by: this.currentUserEmail || "user",
+            date: serverTimestamp(),
+          },
+        },
+      }
+    );
   }
 
   async updateMilestonesPhoneNumber(

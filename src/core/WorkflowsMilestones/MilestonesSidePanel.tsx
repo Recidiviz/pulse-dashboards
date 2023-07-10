@@ -22,6 +22,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import ComposeMessage from "./ComposeMessage";
+import DeclineMessageView from "./DeclineMessageView";
 import { MilestonesTab } from "./MilestonesCaseloadView";
 import ReviewMessageView from "./ReviewMessage";
 
@@ -55,7 +56,7 @@ const NewMilestonesSidePanel = function NewMilestonesSidePanel({
     case "CONGRATULATED_ANOTHER_WAY":
       return <div>TODO CONGRATULATED_ANOTHER_WAY</div>;
     case "DECLINING":
-      return <div>TODO Declining</div>;
+      return <DeclineMessageView client={client} closeModal={closeModal} />;
     case "OPPORTUNITY_AVAILABLE":
       return <div>TODO Opportunity Available</div>;
     case "MESSAGE_SENT":

@@ -23,7 +23,7 @@ import {
   spacing,
   typography,
 } from "@recidiviz/design-system";
-import { rem } from "polished";
+import { rem, rgba } from "polished";
 import styled from "styled-components/macro";
 
 export const Heading = styled.div<{ isMobile?: boolean }>`
@@ -73,4 +73,23 @@ export const TooltipRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+`;
+
+export const OtherReasonInputWrapper = styled.div`
+  display: block;
+  margin: ${rem(spacing.sm)} 2.5rem 1rem;
+`;
+
+export const OtherReasonInput = styled.textarea.attrs({ type: "text" })`
+  background: ${palette.marble3};
+  border-radius: ${rem(4)};
+  border: 2px solid transparent;
+  display: block;
+  margin-top: ${rem(spacing.xs)};
+  width: 100%;
+  min-height: 2rem;
+
+  &:focus {
+    border-color: ${rgba(palette.slate, 0.1)};
+  }
 `;

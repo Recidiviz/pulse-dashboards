@@ -15,36 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DropdownMenuItem, palette, spacing } from "@recidiviz/design-system";
+import { DropdownMenuItem } from "@recidiviz/design-system";
 import { debounce, xor } from "lodash";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import styled from "styled-components/macro";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
 import { Opportunity } from "../../WorkflowsStore";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
-import { OPPORTUNITY_STATUS_COLORS } from "../utils/workflowsUtils";
+import { OtherReasonInput, OtherReasonInputWrapper } from "../sharedComponents";
 import { DropdownItem } from "./DropdownItem";
 
-const OtherInputWrapper = styled.div`
-  display: block;
-  margin: ${rem(spacing.sm)} 2.5rem 1rem;
-`;
-
-const OtherInput = styled.textarea.attrs({ type: "text" })`
-  background: ${palette.marble3};
-  border-radius: ${rem(4)};
-  border: 2px solid transparent;
-  display: block;
-  margin-top: ${rem(spacing.xs)};
-  width: 100%;
-  min-height: 2rem;
-
-  &:focus {
-    border-color: ${OPPORTUNITY_STATUS_COLORS.ineligible.border};
-  }
-`;
 export const DenialMenuOptions = observer(function DenialMenuOptions({
   opportunity,
 }: {
@@ -75,8 +55,8 @@ export const DenialMenuOptions = observer(function DenialMenuOptions({
       ))}
 
       {reasons?.includes(OTHER_KEY) && (
-        <OtherInputWrapper>
-          <OtherInput
+        <OtherReasonInputWrapper>
+          <OtherReasonInput
             defaultValue={opportunity.denial?.otherReason}
             placeholder="Please specify a reason…"
             onChange={debounce(
@@ -84,7 +64,7 @@ export const DenialMenuOptions = observer(function DenialMenuOptions({
               500
             )}
           />
-        </OtherInputWrapper>
+        </OtherReasonInputWrapper>
       )}
     </>
   );
