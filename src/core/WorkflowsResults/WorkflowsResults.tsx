@@ -39,7 +39,7 @@ const WorkflowsResultsWrapper = styled.div<{
   ${({ centered }) =>
     centered
       ? `margin: 0 auto;
-          max-width: ${rem(520)};
+          max-width: 40rem;
           text-align: center;`
       : `margin: 0;`}
 `;
@@ -59,6 +59,7 @@ const HeaderText = styled.div<{
 
 const CallToActionText = styled(Sans18)`
   color: ${palette.slate70};
+  text-wrap: balance;
 `;
 
 type WorkflowsResultsProps = {

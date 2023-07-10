@@ -72,6 +72,7 @@ const PersonInfo = styled.div``;
 
 const personStatusStyles = css`
   color: ${palette.slate70};
+  text-wrap: balance;
 `;
 
 const PersonStatusSm = styled(Sans14)`

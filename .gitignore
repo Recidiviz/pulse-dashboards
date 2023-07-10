@@ -55,3 +55,6 @@ dump.rdb
 
 # fixtures for offline mode
 firestore-config/emulator-fixtures
+
+# ignore vim swap files
+*.sw[a-z]
