@@ -80,4 +80,8 @@ export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
 
     return searchField ? this.record[searchField] : this.assignedStaffId;
   }
+
+  get portionServedNeeded(): string | undefined {
+    return this.record.portionServedNeeded;
+  }
 }

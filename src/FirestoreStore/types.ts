@@ -254,6 +254,7 @@ export type ResidentRecord = JusticeInvolvedPersonRecord & {
   admissionDate?: Timestamp | string;
   releaseDate?: Timestamp | string;
   allEligibleOpportunities: IncarcerationOpportunityType[];
+  portionServedNeeded?: "1/2" | "2/3";
 };
 
 export type LocationRecord = {

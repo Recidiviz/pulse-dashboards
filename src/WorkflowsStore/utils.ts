@@ -131,6 +131,17 @@ export function middleDateBetweenTwoDates(
     return new Date((dateLeft.getTime() + dateRight.getTime()) / 2);
 }
 
+export function twoThirdsDateBetweenTwoDates(
+  dateLeft: Date | undefined,
+  dateRight: Date | undefined
+): Date | undefined {
+  if (dateLeft && dateRight) {
+    const timeDifference = dateRight.getTime() - dateLeft.getTime();
+    const twoThirdsTime = dateLeft.getTime() + (2 / 3) * timeDifference;
+    return new Date(twoThirdsTime);
+  }
+}
+
 export function staffNameComparator(a: StaffRecord, b: StaffRecord): number {
   const alphabetAndSpacesOnlyRegex = /[^a-zA-Z\s]+/g;
 

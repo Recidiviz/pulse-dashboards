@@ -34,6 +34,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2019-08-12",
     releaseDate: "2025-10-22",
+    portionServedNeeded: "2/3",
   },
   {
     allEligibleOpportunities: ["usMeSCCP"],
@@ -50,6 +51,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2020-08-12",
     releaseDate: "2024-11-27",
+    portionServedNeeded: "1/2",
   },
   {
     allEligibleOpportunities: ["usMeSCCP"],
@@ -66,6 +68,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2020-09-12",
     releaseDate: "2024-10-27",
+    portionServedNeeded: "2/3",
   },
 
   {
