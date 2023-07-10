@@ -26,7 +26,6 @@ import React, { useState } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import TENANTS from "../../tenants";
 import { Client } from "../../WorkflowsStore";
 import {
   formatPhoneNumber,

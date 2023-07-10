@@ -30,7 +30,11 @@ import WorkflowsResults from "../WorkflowsResults";
 import { MilestonesSidePanel } from "./MilestonesSidePanel";
 import { MilestonesTooltip } from "./MilestonesTooltip";
 
-type MilestonesTab = "NEW_MILESTONES" | "CONGRATULATED" | "DECLINED" | "ERRORS";
+export type MilestonesTab =
+  | "NEW_MILESTONES"
+  | "CONGRATULATED"
+  | "DECLINED"
+  | "ERRORS";
 
 const MilestonesTabs = styled.div`
   display: flex;
@@ -174,7 +178,7 @@ const MilestonesCaseloadView: React.FC = observer(
           ]);
         case "CONGRATULATED":
           return workflowsStore.getMilestonesClientsByStatus([
-            "CONGRATULATED_IN_PERSON",
+            "CONGRATULATED_ANOTHER_WAY",
             "IN_PROGRESS",
             "SUCCESS",
           ]);
@@ -216,7 +220,7 @@ const MilestonesCaseloadView: React.FC = observer(
               clients={clients(activeTab)}
               handleRowOnClick={handleRowOnClick}
             />
-            <MilestonesSidePanel />
+            <MilestonesSidePanel activeTab={activeTab} />
           </>
         }
         empty={empty}

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import dedent from "dedent";
-import { deleteField, FieldValue, Timestamp } from "firebase/firestore";
+import { deleteField, FieldValue, serverTimestamp } from "firebase/firestore";
 import { mapValues, toUpper } from "lodash";
 import { action, makeObservable, override } from "mobx";
 import { format as formatPhone } from "phone-fns";
@@ -28,6 +28,7 @@ import {
   MilestonesMessage,
   SpecialConditionCode,
   TextMessageStatus,
+  TextMessageStatuses,
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
@@ -335,12 +336,12 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     await this.rootStore.firestoreStore.updateMilestonesMessages(
       this.recordId,
       {
-        lastUpdated: Timestamp.now(),
-        status: "PENDING",
+        lastUpdated: serverTimestamp(),
+        status: TextMessageStatuses.PENDING,
         messageDetails: {
           stateCode: this.stateCode,
           recipient: deletePhoneNumber ? deleteField() : phoneNumber,
-          timestamp: Timestamp.now(),
+          timestamp: serverTimestamp(),
         },
       }
     );
@@ -364,8 +365,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     await this.rootStore.firestoreStore.updateMilestonesMessages(
       this.recordId,
       {
-        lastUpdated: Timestamp.now(),
-        status: "PENDING",
+        lastUpdated: serverTimestamp(),
+        status: TextMessageStatuses.PENDING,
         ...pendingMessage,
         messageDetails: {
           stateCode: this.stateCode,
@@ -374,7 +375,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
             ${additionalMessage || ""}
           `,
-          timestamp: Timestamp.now(),
+          timestamp: serverTimestamp(),
         },
       }
     );

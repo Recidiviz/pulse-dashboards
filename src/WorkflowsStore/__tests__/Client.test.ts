@@ -28,10 +28,8 @@ jest.mock("../subscriptions");
 jest.mock("firebase/firestore", () => ({
   deleteField: jest.fn(),
   doc: jest.fn(),
-  Timestamp: {
-    now: function now() {
-      return "2023-06-12";
-    },
+  serverTimestamp: function serverTimestamp() {
+    return "2023-06-12";
   },
 }));
 jest.mock("../../FirestoreStore");

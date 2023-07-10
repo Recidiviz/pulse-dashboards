@@ -15,16 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Button,
-  palette,
-  Sans12,
-  Sans16,
-  typography,
-} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React, { Dispatch, SetStateAction, useState } from "react";
-import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
@@ -35,100 +27,49 @@ import {
 } from "../../WorkflowsStore/utils";
 import { Heading } from "../WorkflowsClientProfile/Heading";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
-import { ClientMilestones } from "./MilestonesCaseloadView";
+import { ClientMilestones, MilestonesTab } from "./MilestonesCaseloadView";
 import PhoneNumberInput from "./PhoneNumberInput";
+import {
+  ActionButton,
+  AlreadyCongratulatedButton,
+  ButtonsContainer,
+  OptOutLink,
+  OptOutText,
+  PhoneNumber,
+  ReviewInfo,
+  ReviewMessage,
+  SidePanelContents,
+  SidePanelHeader,
+  Warning,
+} from "./styles";
 import TextMessageInput from "./TextMessageInput";
 
-const SidePanelHeader = styled(Sans16)`
-  color: ${palette.pine1};
-  padding: 1rem 0;
-`;
-
-const Warning = styled(Sans12)`
-  color: ${palette.slate85};
-  margin: 0.75rem 0;
-`;
-
-const ReviewInfo = styled(Sans16)`
-  color: ${palette.slate85};
-  margin: 2rem 0;
-`;
-
-const ReviewMessage = styled(Sans16)`
-  color: ${palette.slate85};
-  border: 1px solid ${palette.slate20};
-  margin: 1rem 0;
-  padding: 1rem;
-  border-radius: 8px;
-  white-space: pre-line;
-`;
-
-const PhoneNumber = styled.span`
-  color: ${palette.pine1};
-`;
-
-const ButtonsContainer = styled.div`
-  ${typography.Sans14}
-
-  flex: 1;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: flex-end;
-  width: 100%;
-`;
-
-const ActionButton = styled(Button)`
-  border-radius: 4px;
-  color: ${palette.marble1};
-  width: 100%;
-  margin-bottom: 0.75rem;
-`;
-
-const AlreadyCongratulatedButton = styled(Button)`
-  border-radius: 4px;
-  background-color: ${palette.marble1};
-  border: 1px solid ${palette.slate30};
-  color: ${palette.slate85};
-  width: 100%;
-  margin-bottom: 0.75rem;
-
-  :hover,
-  :focus {
-    color: ${palette.marble1};
-  }
-`;
-
-const OptOutText = styled.div``;
-
-const OptOutLink = styled.span`
-  text-decoration: underline;
-  cursor: pointer;
-`;
-
-const SidePanelContents = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
-  height: 85vh;
-`;
-
-type MILESTONES_SIDE_PANEL_VIEW =
+export type MILESTONES_SIDE_PANEL_VIEW =
   | "COMPOSING"
   | "REVIEWING"
   | "DECLINING"
-  | "CONGRATULATED_IN_PERSON"
+  | "CONGRATULATED_ANOTHER_WAY"
   | "OPPORTUNITY_AVAILABLE"
   | "MESSAGE_SENT";
 
-interface SidePanelContentProps {
+interface ComposeMessageViewProps {
+  client: Client;
+  closeModal: () => void;
+}
+
+interface ReviewMessageViewProps {
   client: Client;
   setCurrentView: Dispatch<SetStateAction<MILESTONES_SIDE_PANEL_VIEW>>;
 }
 
 const ComposeMessageView = function ComposeMessageView({
   client,
-  setCurrentView,
-}: SidePanelContentProps): JSX.Element {
+  closeModal,
+}: ComposeMessageViewProps): JSX.Element {
   const [disableReviewButton, setDisableReviewButton] = useState(false);
+  const [currentView, setCurrentView] =
+    useState<MILESTONES_SIDE_PANEL_VIEW>("COMPOSING");
+
   const handleUpdatePhoneNumber = async (updatedPhoneNumber: string) => {
     const invalidPhoneNumber = !validatePhoneNumber(updatedPhoneNumber);
     setDisableReviewButton(invalidPhoneNumber);
@@ -151,46 +92,67 @@ const ComposeMessageView = function ComposeMessageView({
     setCurrentView("REVIEWING");
   };
 
-  return (
-    <SidePanelContents>
-      <Heading person={client} />
-      <SidePanelHeader>Milestones</SidePanelHeader>
-      <ClientMilestones client={client} showAll />
-      <PhoneNumberInput
-        client={client}
-        onUpdatePhoneNumber={handleUpdatePhoneNumber}
-      />
-      <TextMessageInput
-        client={client}
-        onUpdateTextMessage={handleUpdateTextMessage}
-      />
-      <Warning>
-        Do not send critical information tied to deadlines. We cannot guarantee
-        delivery of this text message.
-      </Warning>
-      <ButtonsContainer>
-        <ActionButton
-          onClick={handleOnReviewClick}
-          disabled={disableReviewButton}
-        >
-          Review
-        </ActionButton>
-        <AlreadyCongratulatedButton>
-          I congratulated them in-person or another way
-        </AlreadyCongratulatedButton>
-        <OptOutText>
-          Opt out of sending a congratulations text?{" "}
-          <OptOutLink>Tell us why</OptOutLink>
-        </OptOutText>
-      </ButtonsContainer>
-    </SidePanelContents>
-  );
+  switch (currentView) {
+    case "COMPOSING":
+      return (
+        <SidePanelContents>
+          <Heading person={client} />
+          <SidePanelHeader>Milestones</SidePanelHeader>
+          <ClientMilestones client={client} showAll />
+          <PhoneNumberInput
+            client={client}
+            onUpdatePhoneNumber={handleUpdatePhoneNumber}
+          />
+          <TextMessageInput
+            client={client}
+            onUpdateTextMessage={handleUpdateTextMessage}
+          />
+          <Warning>
+            Do not send critical information tied to deadlines. We cannot
+            guarantee delivery of this text message.
+          </Warning>
+          <ButtonsContainer>
+            <ActionButton
+              onClick={handleOnReviewClick}
+              disabled={disableReviewButton}
+            >
+              Review
+            </ActionButton>
+            <AlreadyCongratulatedButton
+              onClick={() => setCurrentView("CONGRATULATED_ANOTHER_WAY")}
+            >
+              I congratulated them in-person or another way
+            </AlreadyCongratulatedButton>
+            <OptOutText>
+              Opt out of sending a congratulations text?{" "}
+              <OptOutLink onClick={() => setCurrentView("DECLINING")}>
+                Tell us why
+              </OptOutLink>
+            </OptOutText>
+          </ButtonsContainer>
+        </SidePanelContents>
+      );
+    case "REVIEWING":
+      return (
+        <ReviewMessageView client={client} setCurrentView={setCurrentView} />
+      );
+    case "CONGRATULATED_ANOTHER_WAY":
+      return <div>TODO CONGRATULATED_ANOTHER_WAY</div>;
+    case "DECLINING":
+      return <div>TODO Declining</div>;
+    case "OPPORTUNITY_AVAILABLE":
+      return <div>TODO Opportunity Available</div>;
+    case "MESSAGE_SENT":
+      return <div>TODO Message Sent</div>;
+    default:
+      return <div>Default page</div>;
+  }
 };
 
 const ReviewMessageView = observer(function ReviewMessageView({
   client,
   setCurrentView,
-}: SidePanelContentProps): JSX.Element {
+}: ReviewMessageViewProps): JSX.Element {
   useHydrateOpportunities(client);
 
   const handleOnSend = async () => {
@@ -225,47 +187,55 @@ const ReviewMessageView = observer(function ReviewMessageView({
 });
 
 const MilestonesSidePanelContent = observer(
-  function MilestonesSidePanelContent(): JSX.Element {
+  function MilestonesSidePanelContent({
+    activeTab,
+    closeModal,
+  }: {
+    activeTab: MilestonesTab;
+    closeModal: () => void;
+  }): JSX.Element {
     const {
       workflowsStore: { selectedClient },
     } = useRootStore();
-    const [currentView, setCurrentView] =
-      useState<MILESTONES_SIDE_PANEL_VIEW>("COMPOSING");
 
     if (!selectedClient) return <div />;
 
-    switch (currentView) {
-      case "COMPOSING":
+    switch (activeTab) {
+      case "NEW_MILESTONES":
         return (
-          <ComposeMessageView
-            client={selectedClient}
-            setCurrentView={setCurrentView}
-          />
+          <ComposeMessageView client={selectedClient} closeModal={closeModal} />
         );
-      case "REVIEWING":
-        return (
-          <ReviewMessageView
-            client={selectedClient}
-            setCurrentView={setCurrentView}
-          />
-        );
-      case "OPPORTUNITY_AVAILABLE":
-        return <div>Opportunity available view</div>;
+      case "CONGRATULATED":
+        return <div>TODO CONGRATULATED</div>;
+      case "DECLINED":
+        return <div>TODO DECLINED</div>;
+      case "ERRORS":
+        return <div>TODO ERRORS</div>;
       default:
         return <div>Default page</div>;
     }
   }
 );
 
-export const MilestonesSidePanel = observer(function TaskPreviewModal() {
+export const MilestonesSidePanel = observer(function MilestonesSidePanel({
+  activeTab,
+}: {
+  activeTab: MilestonesTab;
+}) {
   const {
+    workflowsStore,
     workflowsStore: { selectedClient },
   } = useRootStore();
 
   return (
     <WorkflowsPreviewModal
       isOpen={!!selectedClient}
-      pageContent={<MilestonesSidePanelContent />}
+      pageContent={
+        <MilestonesSidePanelContent
+          activeTab={activeTab}
+          closeModal={() => workflowsStore.updateSelectedPerson(undefined)}
+        />
+      }
     />
   );
 });

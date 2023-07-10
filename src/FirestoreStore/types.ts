@@ -338,7 +338,7 @@ export type SupervisionTaskUpdate = {
 };
 
 /**
- * CONGRATULATED_IN_PERSON: User has already sent congratulations in another way.
+ * CONGRATULATED_ANOTHER_WAY: User has already sent congratulations in another way.
  * PENDING: User has started to compose a message but has not sent anything yet.
  * IN_PROGRESS: Request sent to backend and backend has sent it to Twilio
  * SUCCESS: Twilio confirms that message has been sent to the carrier
@@ -349,9 +349,19 @@ export type SupervisionTaskUpdate = {
  * NOTE: SUCCESS and FAILURE statuses will be updated in Firestore by the backend API.
  */
 export type TextMessageStatus =
-  | "CONGRATULATED_IN_PERSON"
+  | "CONGRATULATED_ANOTHER_WAY"
   | "DECLINED"
   | ExternalSystemRequestStatus;
+
+export const TextMessageStatuses: Record<TextMessageStatus, TextMessageStatus> =
+  {
+    CONGRATULATED_ANOTHER_WAY: "CONGRATULATED_ANOTHER_WAY",
+    DECLINED: "DECLINED",
+    PENDING: "PENDING",
+    IN_PROGRESS: "IN_PROGRESS",
+    SUCCESS: "SUCCESS",
+    FAILURE: "FAILURE",
+  } as const;
 
 export type MilestonesMessage = {
   lastUpdated: Timestamp;
