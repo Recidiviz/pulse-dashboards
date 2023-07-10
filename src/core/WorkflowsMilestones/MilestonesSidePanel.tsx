@@ -16,35 +16,16 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
 import { Client } from "../../WorkflowsStore";
-import {
-  formatPhoneNumber,
-  validatePhoneNumber,
-} from "../../WorkflowsStore/utils";
-import { Heading } from "../WorkflowsClientProfile/Heading";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
-import { ClientMilestones, MilestonesTab } from "./MilestonesCaseloadView";
-import PhoneNumberInput from "./PhoneNumberInput";
-import {
-  ActionButton,
-  AlreadyCongratulatedButton,
-  ButtonsContainer,
-  OptOutLink,
-  OptOutText,
-  PhoneNumber,
-  ReviewInfo,
-  ReviewMessage,
-  SidePanelContents,
-  SidePanelHeader,
-  Warning,
-} from "./styles";
-import TextMessageInput from "./TextMessageInput";
+import ComposeMessage from "./ComposeMessage";
+import { MilestonesTab } from "./MilestonesCaseloadView";
+import ReviewMessageView from "./ReviewMessage";
 
-export type MILESTONES_SIDE_PANEL_VIEW =
+export type NEW_MILESTONES_SIDE_PANEL_VIEW =
   | "COMPOSING"
   | "REVIEWING"
   | "DECLINING"
@@ -52,86 +33,21 @@ export type MILESTONES_SIDE_PANEL_VIEW =
   | "OPPORTUNITY_AVAILABLE"
   | "MESSAGE_SENT";
 
-interface ComposeMessageViewProps {
+interface NewMilestonesSidePanelProps {
   client: Client;
   closeModal: () => void;
 }
 
-interface ReviewMessageViewProps {
-  client: Client;
-  setCurrentView: Dispatch<SetStateAction<MILESTONES_SIDE_PANEL_VIEW>>;
-}
-
-const ComposeMessageView = function ComposeMessageView({
+const NewMilestonesSidePanel = function NewMilestonesSidePanel({
   client,
   closeModal,
-}: ComposeMessageViewProps): JSX.Element {
-  const [disableReviewButton, setDisableReviewButton] = useState(false);
+}: NewMilestonesSidePanelProps): JSX.Element {
   const [currentView, setCurrentView] =
-    useState<MILESTONES_SIDE_PANEL_VIEW>("COMPOSING");
-
-  const handleUpdatePhoneNumber = async (updatedPhoneNumber: string) => {
-    const invalidPhoneNumber = !validatePhoneNumber(updatedPhoneNumber);
-    setDisableReviewButton(invalidPhoneNumber);
-    await client.updateMilestonesPhoneNumber(
-      updatedPhoneNumber,
-      invalidPhoneNumber
-    );
-  };
-
-  const handleUpdateTextMessage = async (additionalMessage: string) => {
-    const deletePendingMessage = additionalMessage === "";
-    await client.updateMilestonesTextMessage(
-      additionalMessage,
-      deletePendingMessage
-    );
-  };
-
-  const handleOnReviewClick = async () => {
-    await client.updateMilestonesTextMessage(client.milestonesPendingMessage);
-    setCurrentView("REVIEWING");
-  };
+    useState<NEW_MILESTONES_SIDE_PANEL_VIEW>("COMPOSING");
 
   switch (currentView) {
     case "COMPOSING":
-      return (
-        <SidePanelContents>
-          <Heading person={client} />
-          <SidePanelHeader>Milestones</SidePanelHeader>
-          <ClientMilestones client={client} showAll />
-          <PhoneNumberInput
-            client={client}
-            onUpdatePhoneNumber={handleUpdatePhoneNumber}
-          />
-          <TextMessageInput
-            client={client}
-            onUpdateTextMessage={handleUpdateTextMessage}
-          />
-          <Warning>
-            Do not send critical information tied to deadlines. We cannot
-            guarantee delivery of this text message.
-          </Warning>
-          <ButtonsContainer>
-            <ActionButton
-              onClick={handleOnReviewClick}
-              disabled={disableReviewButton}
-            >
-              Review
-            </ActionButton>
-            <AlreadyCongratulatedButton
-              onClick={() => setCurrentView("CONGRATULATED_ANOTHER_WAY")}
-            >
-              I congratulated them in-person or another way
-            </AlreadyCongratulatedButton>
-            <OptOutText>
-              Opt out of sending a congratulations text?{" "}
-              <OptOutLink onClick={() => setCurrentView("DECLINING")}>
-                Tell us why
-              </OptOutLink>
-            </OptOutText>
-          </ButtonsContainer>
-        </SidePanelContents>
-      );
+      return <ComposeMessage client={client} setCurrentView={setCurrentView} />;
     case "REVIEWING":
       return (
         <ReviewMessageView client={client} setCurrentView={setCurrentView} />
@@ -148,43 +64,6 @@ const ComposeMessageView = function ComposeMessageView({
       return <div>Default page</div>;
   }
 };
-
-const ReviewMessageView = observer(function ReviewMessageView({
-  client,
-  setCurrentView,
-}: ReviewMessageViewProps): JSX.Element {
-  useHydrateOpportunities(client);
-
-  const handleOnSend = async () => {
-    await client.sendMilestonesMessage();
-    if (client.hasVerifiedOpportunities) {
-      setCurrentView("OPPORTUNITY_AVAILABLE");
-    } else {
-      setCurrentView("MESSAGE_SENT");
-    }
-  };
-
-  const { milestonesPhoneNumber, milestonesFullTextMessage } = client;
-
-  return (
-    <SidePanelContents>
-      <Heading person={client} />
-      <ReviewInfo>
-        Here&apos;s a preview of the full text message we&apos;ll send to{" "}
-        {client.displayPreferredName} at{" "}
-        {milestonesPhoneNumber && (
-          <PhoneNumber>{formatPhoneNumber(milestonesPhoneNumber)}</PhoneNumber>
-        )}
-      </ReviewInfo>
-      {milestonesFullTextMessage && (
-        <ReviewMessage>{milestonesFullTextMessage}</ReviewMessage>
-      )}
-      <ButtonsContainer>
-        <ActionButton onClick={handleOnSend}>Send congratulations</ActionButton>
-      </ButtonsContainer>
-    </SidePanelContents>
-  );
-});
 
 const MilestonesSidePanelContent = observer(
   function MilestonesSidePanelContent({
@@ -203,7 +82,10 @@ const MilestonesSidePanelContent = observer(
     switch (activeTab) {
       case "NEW_MILESTONES":
         return (
-          <ComposeMessageView client={selectedClient} closeModal={closeModal} />
+          <NewMilestonesSidePanel
+            client={selectedClient}
+            closeModal={closeModal}
+          />
         );
       case "CONGRATULATED":
         return <div>TODO CONGRATULATED</div>;

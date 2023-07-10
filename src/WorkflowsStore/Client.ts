@@ -185,6 +185,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       updateRecord: override,
       milestoneMessagesUpdates: true,
       milestonesPhoneNumber: true,
+      milestonesPendingMessage: true,
+      milestonesMessageStatus: true,
       updateMilestonesPhoneNumber: action,
       updateMilestonesTextMessage: action,
     });
