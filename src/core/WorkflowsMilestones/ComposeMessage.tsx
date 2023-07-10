@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { Dispatch, SetStateAction, useState } from "react";
 
+import { TextMessageStatuses } from "../../FirestoreStore";
 import { Client } from "../../WorkflowsStore";
 import { validatePhoneNumber } from "../../WorkflowsStore/utils";
 import { Heading } from "../WorkflowsClientProfile/Heading";
@@ -45,7 +46,9 @@ const ComposeMessage = observer(function ComposeMessage({
   client,
   setCurrentView,
 }: ComposeMessageProps): JSX.Element {
-  const [disableReviewButton, setDisableReviewButton] = useState(false);
+  const [disableReviewButton, setDisableReviewButton] = useState(
+    !validatePhoneNumber(client.milestonesPhoneNumber)
+  );
 
   const handleUpdatePhoneNumber = async (updatedPhoneNumber: string) => {
     const invalidPhoneNumber = !validatePhoneNumber(updatedPhoneNumber);
@@ -66,7 +69,14 @@ const ComposeMessage = observer(function ComposeMessage({
 
   const handleOnReviewClick = async () => {
     await client.updateMilestonesTextMessage(client.milestonesPendingMessage);
-    setCurrentView("REVIEWING");
+    setCurrentView("COMPOSING");
+  };
+
+  const handleOnCongratulatedClick = async () => {
+    await client.updateMilestonesStatus(
+      TextMessageStatuses.CONGRATULATED_ANOTHER_WAY
+    );
+    setCurrentView("CONGRATULATED_ANOTHER_WAY");
   };
 
   return (
@@ -93,9 +103,7 @@ const ComposeMessage = observer(function ComposeMessage({
         >
           Review
         </ActionButton>
-        <AlreadyCongratulatedButton
-          onClick={() => setCurrentView("CONGRATULATED_ANOTHER_WAY")}
-        >
+        <AlreadyCongratulatedButton onClick={handleOnCongratulatedClick}>
           I congratulated them in-person or another way
         </AlreadyCongratulatedButton>
         <OptOutText>

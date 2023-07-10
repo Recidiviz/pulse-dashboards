@@ -413,6 +413,16 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     );
   }
 
+  async updateMilestonesStatus(status: TextMessageStatus) {
+    await this.rootStore.firestoreStore.updateMilestonesMessages(
+      this.recordId,
+      {
+        lastUpdated: serverTimestamp(),
+        status,
+      }
+    );
+  }
+
   async sendMilestonesMessage(): Promise<void> {
     if (!this.milestonesFullTextMessage || !this.milestonesPhoneNumber) return;
     await this.rootStore.apiStore.postExternalSMSMessage({

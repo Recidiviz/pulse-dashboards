@@ -22,6 +22,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import ComposeMessage from "./ComposeMessage";
+import CongratulatedAnotherWay from "./CongratulatedAnotherWay";
 import DeclineMessageView from "./DeclineMessageView";
 import { MilestonesTab } from "./MilestonesCaseloadView";
 import ReviewMessageView from "./ReviewMessage";
@@ -86,7 +87,12 @@ const NewMilestonesSidePanel = function NewMilestonesSidePanel({
         />
       );
     case "CONGRATULATED_ANOTHER_WAY":
-      return <div>TODO CONGRATULATED_ANOTHER_WAY</div>;
+      return (
+        <WorkflowsPreviewModal
+          isOpen={!!client}
+          pageContent={<CongratulatedAnotherWay client={client} />}
+        />
+      );
     case "OPPORTUNITY_AVAILABLE":
       return <div>TODO Opportunity Available</div>;
     case "MESSAGE_SENT":
