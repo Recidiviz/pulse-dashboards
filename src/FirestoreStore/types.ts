@@ -196,7 +196,9 @@ export type MilestoneType =
   | "BIRTHDAY_THIS_MONTH"
   | "MONTHS_WITHOUT_VIOLATION"
   | "MONTHS_ON_SUPERVISION"
-  | "MONTHS_WITH_CURRENT_EMPLOYER";
+  | "MONTHS_WITH_CURRENT_EMPLOYER"
+  | "HOUSING_TYPE_IS_NOT_TRANSIENT"
+  | "NO_VIOLATION_WITHIN_6_MONTHS";
 export type Milestone = {
   type: MilestoneType;
   text: string;
