@@ -198,7 +198,7 @@ Object {
                 </a>
               </div>
               <div
-                class="sc-cCjUiG styles__ReviewInfo-sc-b21pq-4 fgWjb hqcMlK"
+                class="sc-cCjUiG styles__ReviewInfo-sc-b21pq-4 fgWjb cHlXPF"
               >
                 
                  sent the following text messages to
@@ -216,9 +216,14 @@ Object {
                 .
               </div>
               <div
-                class="sc-cCjUiG styles__ReviewMessage-sc-b21pq-5 fgWjb kbiMOQ"
+                class="sc-cCjUiG styles__ReviewMessage-sc-b21pq-5 fgWjb bccRrw"
               >
                 This is the full text message
+              </div>
+              <div
+                class="sc-cCjUiG styles__ReviewMessage-sc-b21pq-5 fgWjb bccRrw"
+              >
+                To stop receiving these texts, reply: STOP
               </div>
             </div>
           </div>
@@ -834,7 +839,7 @@ Object {
                 </a>
               </div>
               <div
-                class="sc-cCjUiG styles__ReviewInfo-sc-b21pq-4 fgWjb hqcMlK"
+                class="sc-cCjUiG styles__ReviewInfo-sc-b21pq-4 fgWjb cHlXPF"
               >
                  indicated that they congratulated
                  

@@ -51,13 +51,13 @@ export const Warning = styled(Sans12)`
 
 export const ReviewInfo = styled(Sans16)`
   color: ${palette.slate85};
-  margin: 2rem 0;
+  margin: 1rem 0;
 `;
 
 export const ReviewMessage = styled(Sans16)`
   color: ${palette.slate85};
   border: 1px solid ${palette.slate20};
-  margin: 1rem 0;
+  margin: 1rem 0 0;
   padding: 1rem;
   border-radius: 8px;
   white-space: pre-line;

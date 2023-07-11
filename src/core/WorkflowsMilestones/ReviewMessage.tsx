@@ -65,7 +65,12 @@ const ReviewMessageView = observer(function ReviewMessageView({
         )}
       </ReviewInfo>
       {milestonesFullTextMessage && (
-        <ReviewMessage>{milestonesFullTextMessage}</ReviewMessage>
+        <>
+          <ReviewMessage>{milestonesFullTextMessage}</ReviewMessage>
+          <ReviewMessage>
+            To stop receiving these texts, reply: STOP
+          </ReviewMessage>
+        </>
       )}
       <ButtonsContainer>
         <ActionButton onClick={handleOnSend}>Send congratulations</ActionButton>

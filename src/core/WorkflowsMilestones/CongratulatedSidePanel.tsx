@@ -63,6 +63,7 @@ const MessageSentView = function MessageSentView({
         {messageSentOn && `on ${messageSentOn}`}.
       </ReviewInfo>
       <ReviewMessage>{milestonesFullTextMessage}</ReviewMessage>
+      <ReviewMessage>To stop receiving these texts, reply: STOP</ReviewMessage>
     </SidePanelContents>
   );
 };
