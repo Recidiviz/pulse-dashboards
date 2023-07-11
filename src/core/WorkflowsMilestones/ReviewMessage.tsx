@@ -22,7 +22,7 @@ import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
 import { Client } from "../../WorkflowsStore";
 import { formatPhoneNumber } from "../../WorkflowsStore/utils";
 import { Heading } from "../WorkflowsClientProfile/Heading";
-import { NEW_MILESTONES_SIDE_PANEL_VIEW } from "./MilestonesSidePanel";
+import { NEW_MILESTONES_SIDE_PANEL_VIEW } from "./NewMilestonesSidePanel";
 import {
   ActionButton,
   ButtonsContainer,

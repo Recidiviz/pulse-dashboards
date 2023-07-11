@@ -23,7 +23,7 @@ import { Client } from "../../WorkflowsStore";
 import { validatePhoneNumber } from "../../WorkflowsStore/utils";
 import { Heading } from "../WorkflowsClientProfile/Heading";
 import { ClientMilestones } from "./MilestonesCaseloadView";
-import { NEW_MILESTONES_SIDE_PANEL_VIEW } from "./MilestonesSidePanel";
+import { NEW_MILESTONES_SIDE_PANEL_VIEW } from "./NewMilestonesSidePanel";
 import PhoneNumberInput from "./PhoneNumberInput";
 import {
   ActionButton,
