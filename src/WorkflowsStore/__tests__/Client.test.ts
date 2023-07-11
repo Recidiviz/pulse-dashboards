@@ -17,12 +17,17 @@
 
 import dedent from "dedent";
 import { deleteField } from "firebase/firestore";
-import { runInAction } from "mobx";
+import { configure, runInAction } from "mobx";
 
-import { ClientRecord, StaffRecord } from "../../FirestoreStore";
+import {
+  ClientRecord,
+  CombinedUserRecord,
+  StaffRecord,
+} from "../../FirestoreStore";
 import FirestoreStore from "../../FirestoreStore/FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { Client } from "../Client";
+import { OTHER_KEY } from "../utils";
 
 jest.mock("../subscriptions");
 jest.mock("firebase/firestore", () => ({
@@ -46,8 +51,12 @@ function createTestUnit() {
 
 describe("Client", () => {
   beforeEach(() => {
+    configure({ safeDescriptors: false });
     jest.resetAllMocks();
     rootStore = new RootStore();
+    jest.spyOn(rootStore.workflowsStore, "user", "get").mockReturnValue({
+      info: { email: "staff@email.com" },
+    } as CombinedUserRecord);
     mockDeleteField.mockReturnValue("delete field");
     runInAction(() => {
       rootStore.workflowsStore.officersSubscription.data = [
@@ -55,6 +64,7 @@ describe("Client", () => {
           id: "OFFICER1",
           givenNames: "Officer",
           surname: "Name",
+          email: "staff@email.com",
         } as StaffRecord,
       ];
       rootStore.workflowsStore.officersSubscription.isHydrated = true;
@@ -83,14 +93,22 @@ describe("Client", () => {
     };
   });
 
+  afterEach(() => {
+    jest.resetAllMocks();
+    configure({ safeDescriptors: true });
+  });
+
   describe("updateMilestonesTextMessage", () => {
-    test("additionalMessage is updated", () => {
+    test("pendingMessage is updated", () => {
       createTestUnit();
       testClient.updateMilestonesTextMessage("This is a message");
       expect(
         mockRootStore.firestoreStore.updateMilestonesMessages
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
-        lastUpdated: "2023-06-12",
+        updated: {
+          by: "staff@email.com",
+          date: "2023-06-12",
+        },
         messageDetails: {
           message: dedent`Message from Officer Name at CDCR:
 
@@ -100,7 +118,10 @@ describe("Client", () => {
 
           This is a message`,
           stateCode: "US_XX",
-          timestamp: "2023-06-12",
+          updated: {
+            by: "staff@email.com",
+            date: "2023-06-12",
+          },
         },
         pendingMessage: "This is a message",
         status: "PENDING",
@@ -112,7 +133,10 @@ describe("Client", () => {
       expect(
         mockRootStore.firestoreStore.updateMilestonesMessages
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
-        lastUpdated: "2023-06-12",
+        updated: {
+          by: "staff@email.com",
+          date: "2023-06-12",
+        },
         messageDetails: {
           message: dedent`Message from Officer Name at CDCR:
 
@@ -120,7 +144,10 @@ describe("Client", () => {
 
           - 6 months violation-free`,
           stateCode: "US_XX",
-          timestamp: "2023-06-12",
+          updated: {
+            by: "staff@email.com",
+            date: "2023-06-12",
+          },
         },
         pendingMessage: mockDeleteField(),
         status: "PENDING",
@@ -132,7 +159,10 @@ describe("Client", () => {
       expect(
         mockRootStore.firestoreStore.updateMilestonesMessages
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
-        lastUpdated: "2023-06-12",
+        updated: {
+          by: "staff@email.com",
+          date: "2023-06-12",
+        },
         messageDetails: {
           message: dedent`Message from Officer Name at CDCR:
 
@@ -140,7 +170,10 @@ describe("Client", () => {
 
           - 6 months violation-free`,
           stateCode: "US_XX",
-          timestamp: "2023-06-12",
+          updated: {
+            by: "staff@email.com",
+            date: "2023-06-12",
+          },
         },
         status: "PENDING",
       });
@@ -153,29 +186,104 @@ describe("Client", () => {
       expect(
         mockRootStore.firestoreStore.updateMilestonesMessages
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
-        lastUpdated: "2023-06-12",
+        updated: {
+          by: "staff@email.com",
+          date: "2023-06-12",
+        },
         messageDetails: {
           recipient: "1112223333",
           stateCode: "US_XX",
-          timestamp: "2023-06-12",
+          updated: {
+            by: "staff@email.com",
+            date: "2023-06-12",
+          },
         },
         status: "PENDING",
       });
     });
+
     test("phoneNumber is deleted", () => {
       createTestUnit();
       testClient.updateMilestonesPhoneNumber("", true);
       expect(
         mockRootStore.firestoreStore.updateMilestonesMessages
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
-        lastUpdated: "2023-06-12",
+        updated: {
+          by: "staff@email.com",
+          date: "2023-06-12",
+        },
         messageDetails: {
           recipient: mockDeleteField(),
           stateCode: "US_XX",
-          timestamp: "2023-06-12",
+          updated: {
+            by: "staff@email.com",
+            date: "2023-06-12",
+          },
         },
         status: "PENDING",
       });
+    });
+  });
+
+  describe("updateMilestonesDeclineReasons", () => {
+    test("reasons include other key", () => {
+      createTestUnit();
+      testClient.updateMilestonesDeclineReasons(
+        ["SOME_KEY", OTHER_KEY],
+        "Other reason here"
+      );
+      expect(
+        mockRootStore.firestoreStore.updateMilestonesMessages
+      ).toHaveBeenCalledWith("us_xx_PERSON1", {
+        updated: {
+          by: "staff@email.com",
+          date: "2023-06-12",
+        },
+        status: "DECLINED",
+        declinedReasons: {
+          reasons: ["SOME_KEY", OTHER_KEY],
+          otherReason: "Other reason here",
+          updated: {
+            by: "staff@email.com",
+            date: "2023-06-12",
+          },
+        },
+      });
+    });
+    test("reasons do not include other key", () => {
+      createTestUnit();
+      testClient.updateMilestonesDeclineReasons(["SOME_KEY"]);
+      expect(
+        mockRootStore.firestoreStore.updateMilestonesMessages
+      ).toHaveBeenCalledWith("us_xx_PERSON1", {
+        updated: {
+          by: "staff@email.com",
+          date: "2023-06-12",
+        },
+        status: "DECLINED",
+        declinedReasons: {
+          reasons: ["SOME_KEY"],
+          otherReason: "delete field",
+          updated: {
+            by: "staff@email.com",
+            date: "2023-06-12",
+          },
+        },
+      });
+    });
+  });
+
+  test("updateMilestonesStatus", () => {
+    createTestUnit();
+    testClient.updateMilestonesStatus("PENDING");
+    expect(
+      mockRootStore.firestoreStore.updateMilestonesMessages
+    ).toHaveBeenCalledWith("us_xx_PERSON1", {
+      updated: {
+        by: "staff@email.com",
+        date: "2023-06-12",
+      },
+      status: "PENDING",
     });
   });
 

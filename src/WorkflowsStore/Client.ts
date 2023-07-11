@@ -310,11 +310,15 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   }
 
   get milestonesFullTextMessage(): string | undefined {
-    return this.milestoneMessagesUpdates?.messageDetails?.message;
+    return this.milestonesMessageDetails?.message;
   }
 
   get milestonesDeclinedReasons(): MilestonesMessage["declinedReasons"] {
     return this.milestoneMessagesUpdates?.declinedReasons;
+  }
+
+  get milestonesMessageDetails(): MilestonesMessage["messageDetails"] {
+    return this.milestoneMessagesUpdates?.messageDetails;
   }
 
   get milestonesPhoneNumber(): string | undefined {
@@ -344,18 +348,19 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       ? { otherReason }
       : { otherReason: deleteField() };
 
+    const updated = {
+      by: this.currentUserEmail || "user",
+      date: serverTimestamp(),
+    };
     await this.rootStore.firestoreStore.updateMilestonesMessages(
       this.recordId,
       {
-        lastUpdated: serverTimestamp(),
+        updated,
         status: TextMessageStatuses.DECLINED,
         declinedReasons: {
           ...(reasons.length ? { reasons } : {}),
           ...otherReasonField,
-          updated: {
-            by: this.currentUserEmail || "user",
-            date: serverTimestamp(),
-          },
+          updated,
         },
       }
     );
@@ -365,15 +370,19 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     phoneNumber: string,
     deletePhoneNumber = false
   ): Promise<void> {
+    const updated = {
+      by: this.currentUserEmail || "user",
+      date: serverTimestamp(),
+    };
     await this.rootStore.firestoreStore.updateMilestonesMessages(
       this.recordId,
       {
-        lastUpdated: serverTimestamp(),
+        updated,
         status: TextMessageStatuses.PENDING,
         messageDetails: {
+          updated,
           stateCode: this.stateCode,
           recipient: deletePhoneNumber ? deleteField() : phoneNumber,
-          timestamp: serverTimestamp(),
         },
       }
     );
@@ -394,20 +403,24 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       pendingMessage = {};
     }
 
+    const updated = {
+      by: this.currentUserEmail || "user",
+      date: serverTimestamp(),
+    };
     await this.rootStore.firestoreStore.updateMilestonesMessages(
       this.recordId,
       {
-        lastUpdated: serverTimestamp(),
+        updated,
         status: TextMessageStatuses.PENDING,
         ...pendingMessage,
         messageDetails: {
+          updated,
           stateCode: this.stateCode,
           message: dedent`
             ${this.defaultMilestonesMessage}
 
             ${additionalMessage || ""}
           `,
-          timestamp: serverTimestamp(),
         },
       }
     );
@@ -417,7 +430,10 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     await this.rootStore.firestoreStore.updateMilestonesMessages(
       this.recordId,
       {
-        lastUpdated: serverTimestamp(),
+        updated: {
+          by: this.currentUserEmail || "user",
+          date: serverTimestamp(),
+        },
         status,
       }
     );

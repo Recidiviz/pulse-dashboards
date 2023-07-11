@@ -23,6 +23,22 @@ import {
 } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
+export const BannerText = styled(Sans16)`
+  margin-left: 0.5rem;
+  color: ${palette.slate85};
+`;
+
+export const SidePanelBanner = styled.div`
+  background-color: ${palette.marble4};
+  border-radius: 8px;
+  display: flex;
+  flex-flow: row nowrap;
+  height: 4rem;
+  margin: 1rem 0 2rem 0;
+  padding: 1rem;
+  align-items: center;
+`;
+
 export const SidePanelHeader = styled(Sans16)`
   color: ${palette.pine1};
   padding: 1rem 0;
@@ -84,7 +100,7 @@ export const AlreadyCongratulatedButton = styled(Button)`
 
 export const OptOutText = styled.div``;
 
-export const OptOutLink = styled.span`
+export const TextLink = styled.span`
   text-decoration: underline;
   cursor: pointer;
 `;

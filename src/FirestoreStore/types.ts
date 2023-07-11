@@ -364,17 +364,17 @@ export const TextMessageStatuses: Record<TextMessageStatus, TextMessageStatus> =
   } as const;
 
 export type MilestonesMessage = {
-  lastUpdated: Timestamp;
+  updated: UpdateLog;
   status: TextMessageStatus;
   errors?: string[];
   declinedReasons?: Denial;
   pendingMessage?: string;
   messageDetails?: {
+    updated?: UpdateLog;
     message?: string;
     recipient?: string;
     mid?: string;
     stateCode?: string;
-    timestamp: Timestamp;
   };
 };
 

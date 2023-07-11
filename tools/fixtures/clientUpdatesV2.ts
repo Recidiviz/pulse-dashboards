@@ -20,34 +20,35 @@ import { Timestamp as FirebaseTimestamp } from "firebase/firestore";
 
 import { MilestonesMessage } from "../../src/FirestoreStore";
 
+const updated = {
+  by: "officer1@test.com",
+  date: Timestamp.now() as FirebaseTimestamp,
+};
 const milestonesMessages: (MilestonesMessage & { externalId: string })[] = [
   {
     externalId: "us_ca_001",
-    lastUpdated: Timestamp.now() as FirebaseTimestamp,
+    updated,
     status: "SUCCESS",
     messageDetails: {
       message: "testing offline message!",
       recipient: "1112223333",
       mid: "992b2e4c-9jkd98",
       stateCode: "US_CA",
-      timestamp: Timestamp.now() as FirebaseTimestamp,
+      updated,
     },
   },
   {
     externalId: "us_ca_002",
-    lastUpdated: Timestamp.now() as FirebaseTimestamp,
+    updated,
     status: "DECLINED",
     declinedReasons: {
       reasons: ["MILESTONE_NOT_MET"],
-      updated: {
-        by: "officer1@test.com",
-        date: Timestamp.now() as FirebaseTimestamp,
-      },
+      updated,
     },
   },
   {
     externalId: "us_ca_006",
-    lastUpdated: Timestamp.now() as FirebaseTimestamp,
+    updated,
     status: "FAILURE",
     errors: ["Phone number does not exist."],
     messageDetails: {
@@ -55,7 +56,7 @@ const milestonesMessages: (MilestonesMessage & { externalId: string })[] = [
       recipient: "1112223333",
       mid: "992b2e4c-9jkd98",
       stateCode: "US_CA",
-      timestamp: Timestamp.now() as FirebaseTimestamp,
+      updated,
     },
   },
 ];

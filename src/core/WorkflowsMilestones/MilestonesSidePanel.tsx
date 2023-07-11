@@ -18,14 +18,28 @@
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
+import { ReactComponent as GreenCheckmark } from "../../assets/static/images/greenCheckmark.svg";
 import { useRootStore } from "../../components/StoreProvider";
+import { formatWorkflowsDate } from "../../utils/formatStrings";
 import { Client } from "../../WorkflowsStore";
+import {
+  formatPhoneNumber,
+  optionalFieldToDate,
+} from "../../WorkflowsStore/utils";
+import { Heading } from "../WorkflowsClientProfile/Heading";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
-import ComposeMessage from "./ComposeMessage";
-import CongratulatedAnotherWay from "./CongratulatedAnotherWay";
-import DeclineMessageView from "./DeclineMessageView";
+import Banner from "./Banner";
+import ComposeMessageView from "./ComposeMessage";
+import CongratulatedAnotherWayView from "./CongratulatedAnotherWay";
+import DeclineMessageView from "./DeclineMessage";
 import { MilestonesTab } from "./MilestonesCaseloadView";
 import ReviewMessageView from "./ReviewMessage";
+import {
+  PhoneNumber,
+  ReviewInfo,
+  ReviewMessage,
+  SidePanelContents,
+} from "./styles";
 
 export type NEW_MILESTONES_SIDE_PANEL_VIEW =
   | "COMPOSING"
@@ -52,7 +66,10 @@ const NewMilestonesSidePanel = function NewMilestonesSidePanel({
         <WorkflowsPreviewModal
           isOpen={!!client}
           pageContent={
-            <ComposeMessage client={client} setCurrentView={setCurrentView} />
+            <ComposeMessageView
+              client={client}
+              setCurrentView={setCurrentView}
+            />
           }
         />
       );
@@ -90,7 +107,7 @@ const NewMilestonesSidePanel = function NewMilestonesSidePanel({
       return (
         <WorkflowsPreviewModal
           isOpen={!!client}
-          pageContent={<CongratulatedAnotherWay client={client} />}
+          pageContent={<CongratulatedAnotherWayView client={client} />}
         />
       );
     case "OPPORTUNITY_AVAILABLE":
@@ -102,6 +119,60 @@ const NewMilestonesSidePanel = function NewMilestonesSidePanel({
   }
 };
 
+const CongratulatedSidePanel = observer(function CongratulatedSidePanel({
+  client,
+}: {
+  client: Client;
+}): JSX.Element | null {
+  const {
+    milestonesMessageStatus,
+    milestonesFullTextMessage,
+    milestonesMessageDetails,
+    milestonesPhoneNumber,
+  } = client;
+  if (!milestonesMessageStatus) return null;
+  let pageContent = <div />;
+
+  const statusUpdatedBy = client.milestoneMessagesUpdates?.updated?.by;
+  const messageSentBy =
+    milestonesMessageDetails?.updated?.by ?? client.assignedStaffFullName;
+  const messageSentOn = formatWorkflowsDate(
+    optionalFieldToDate(milestonesMessageDetails?.updated?.date)
+  );
+
+  if (
+    ["IN_PROGRESS", "SUCCESS"].includes(milestonesMessageStatus) &&
+    milestonesFullTextMessage &&
+    milestonesPhoneNumber
+  ) {
+    pageContent = (
+      <SidePanelContents data-testid="CongratulatedSidePanel">
+        <Banner icon={GreenCheckmark} text="Message Sent" />
+        <Heading person={client} />
+        <ReviewInfo>
+          {messageSentBy} sent the following text messages to{" "}
+          {client.displayPreferredName} at{" "}
+          <PhoneNumber>{formatPhoneNumber(milestonesPhoneNumber)}</PhoneNumber>{" "}
+          {messageSentOn && `on ${messageSentOn}`}.
+        </ReviewInfo>
+        <ReviewMessage>{milestonesFullTextMessage}</ReviewMessage>
+      </SidePanelContents>
+    );
+  } else {
+    pageContent = (
+      <SidePanelContents data-testid="CongratulatedSidePanel">
+        <Heading person={client} />
+        <ReviewInfo>
+          {statusUpdatedBy} indicated that they congratulated{" "}
+          {client.displayPreferredName} in-person or using another method. Great
+          job!{" "}
+        </ReviewInfo>
+      </SidePanelContents>
+    );
+  }
+
+  return <WorkflowsPreviewModal isOpen={!!client} pageContent={pageContent} />;
+});
 export const MilestonesSidePanel = observer(function MilestonesSidePanel({
   activeTab,
 }: {
@@ -116,7 +187,7 @@ export const MilestonesSidePanel = observer(function MilestonesSidePanel({
     case "NEW_MILESTONES":
       return <NewMilestonesSidePanel client={selectedClient} />;
     case "CONGRATULATED":
-      return <div>TODO CONGRATULATED</div>;
+      return <CongratulatedSidePanel client={selectedClient} />;
     case "DECLINED":
       return <div>TODO DECLINED</div>;
     case "ERRORS":

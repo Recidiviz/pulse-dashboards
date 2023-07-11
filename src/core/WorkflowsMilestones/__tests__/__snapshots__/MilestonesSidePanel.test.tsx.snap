@@ -1,0 +1,904 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MilestonesSidePanel renders the CONGRATULATED side panel renders with text message preview 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body
+    class="ReactModal__Body--open"
+  >
+    <div
+      data-react-modal-body-trap=""
+      style="position: absolute; opacity: 0;"
+      tabindex="0"
+    />
+    <div
+      class="sc-dIfARi sc-hHTYSt sc-dmctIk WorkflowsPreviewModal__StyledDrawerModal-sc-e3xhhy-0 hYoiye gfVHFr kveBdO ingDOP"
+    />
+    <div />
+    <div
+      data-react-modal-body-trap=""
+      style="position: absolute; opacity: 0;"
+      tabindex="0"
+    />
+    <div
+      class="sc-dIfARi sc-hHTYSt sc-dmctIk WorkflowsPreviewModal__StyledDrawerModal-sc-e3xhhy-0 hYoiye gfVHFr kveBdO ingDOP"
+    >
+      <div
+        class="ReactModal__Overlay"
+      >
+        <div
+          aria-modal="true"
+          class="ReactModal__Content"
+          role="dialog"
+          tabindex="-1"
+        >
+          <div
+            class="WorkflowsPreviewModal__ModalControls-sc-e3xhhy-1 LtrhR"
+          >
+            <button
+              class="sc-gswNZR cVeGQX WorkflowsPreviewModal__close"
+              kind="link"
+              shape="pill"
+              type="button"
+            >
+              <svg
+                fill="#003331"
+                height="14"
+                viewBox="0 0 14 14"
+                width="14"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.7 0.3C13.3 -0.1 12.7 -0.1 12.3 0.3L7 5.6L1.7 0.3C1.3 -0.1 0.7 -0.1 0.3 0.3C-0.1 0.7 -0.1 1.3 0.3 1.7L5.6 7L0.3 12.3C-0.1 12.7 -0.1 13.3 0.3 13.7C0.5 13.9 0.7 14 1 14C1.3 14 1.5 13.9 1.7 13.7L7 8.4L12.3 13.7C12.5 13.9 12.8 14 13 14C13.2 14 13.5 13.9 13.7 13.7C14.1 13.3 14.1 12.7 13.7 12.3L8.4 7L13.7 1.7C14.1 1.3 14.1 0.7 13.7 0.3Z"
+                />
+              </svg>
+            </button>
+          </div>
+          <div
+            class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 djZaPZ WorkflowsPreviewModal"
+          >
+            <div
+              class="styles__SidePanelContents-sc-b21pq-12 ldwYzp"
+              data-testid="CongratulatedSidePanel"
+            >
+              <div
+                class="styles__SidePanelBanner-sc-b21pq-1 ciRIOb"
+              >
+                <div />
+                <div
+                  class="sc-cCjUiG styles__BannerText-sc-b21pq-0 fgWjb fxhuxA"
+                >
+                  Message Sent
+                </div>
+              </div>
+              <div
+                class="Heading__HeadingWrapper-sc-aj8r1c-0 jVcXiT"
+              >
+                <a
+                  class="PersonProfileLink"
+                  href="/workflows/clients/p101"
+                >
+                  <div
+                    class="JusticeInvolvedPersonCapsule__Wrapper-sc-a88uu7-2 iuucxw"
+                  >
+                    <div
+                      class="JusticeInvolvedPersonAvatar__AvatarElement-sc-1tpr4ma-0 gimmNP"
+                      size="40"
+                    >
+                      <svg
+                        fill="none"
+                        height="40"
+                        role="img"
+                        viewBox="0 0 80 80"
+                        width="40"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <title>
+                          LH
+                        </title>
+                        <mask
+                          height="80"
+                          id="mask__marble"
+                          maskUnits="userSpaceOnUse"
+                          width="80"
+                          x="0"
+                          y="0"
+                        >
+                          <rect
+                            fill="#FFFFFF"
+                            height="80"
+                            rx="160"
+                            width="80"
+                          />
+                        </mask>
+                        <g
+                          mask="url(#mask__marble)"
+                        >
+                          <rect
+                            fill="#90aeb5"
+                            height="80"
+                            width="80"
+                          />
+                          <path
+                            d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+                            fill="#cc989c"
+                            filter="url(#prefix__filter0_f)"
+                            transform="translate(0 0) rotate(176 40 40) scale(1.2)"
+                          />
+                          <path
+                            d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+                            fill="#25636f"
+                            filter="url(#prefix__filter0_f)"
+                            style="mix-blend-mode: overlay;"
+                            transform="translate(-4 -4) rotate(-84 40 40) scale(1.2)"
+                          />
+                        </g>
+                        <defs>
+                          <filter
+                            color-interpolation-filters="sRGB"
+                            filterUnits="userSpaceOnUse"
+                            id="prefix__filter0_f"
+                          >
+                            <feflood
+                              flood-opacity="0"
+                              result="BackgroundImageFix"
+                            />
+                            <feblend
+                              in="SourceGraphic"
+                              in2="BackgroundImageFix"
+                              result="shape"
+                            />
+                            <fegaussianblur
+                              result="effect1_foregroundBlur"
+                              stdDeviation="7"
+                            />
+                          </filter>
+                        </defs>
+                      </svg>
+                      <div
+                        class="sc-gYbzsP JusticeInvolvedPersonAvatar__AvatarInitials-sc-1tpr4ma-1 bGrOBy eCFfhr fs-exclude"
+                        size="40"
+                      >
+                        LH
+                      </div>
+                    </div>
+                    <div
+                      class="JusticeInvolvedPersonCapsule__PersonInfo-sc-a88uu7-3"
+                    >
+                      <div
+                        class="sc-cjibBx iQqIPt"
+                      >
+                        <span
+                          class="sc-jSUZER iljzDu"
+                        >
+                          <span
+                            class="JusticeInvolvedPersonCapsule__PersonName-sc-a88uu7-0 oiwyO PersonName fs-exclude"
+                          >
+                            Linet Hansen
+                          </span>
+                        </span>
+                        <span
+                          class="common__Separator-sc-1006pjp-1 bUCSQP"
+                        >
+                           
+                        </span>
+                        <span
+                          class="JusticeInvolvedPersonCapsule__PersonId-sc-a88uu7-1 hCsxBp fs-exclude"
+                        >
+                          101
+                        </span>
+                      </div>
+                      <div
+                        class="sc-gYbzsP JusticeInvolvedPersonCapsule__PersonStatusSm-sc-a88uu7-4 bGrOBy GJXWq WorkflowsStatus fs-exclude"
+                      >
+                        TN PROBATIONER
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <div
+                class="sc-cCjUiG styles__ReviewInfo-sc-b21pq-4 fgWjb hqcMlK"
+              >
+                
+                 sent the following text messages to
+                 
+                LINET HANSEN
+                 at
+                 
+                <span
+                  class="styles__PhoneNumber-sc-b21pq-6 cyZqUr"
+                >
+                  (555) 555-5678
+                </span>
+                 
+                on Unknown
+                .
+              </div>
+              <div
+                class="sc-cCjUiG styles__ReviewMessage-sc-b21pq-5 fgWjb kbiMOQ"
+              >
+                This is the full text message
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div />,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`MilestonesSidePanel renders the NEW_MILESTONES side panel 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body
+    class="ReactModal__Body--open"
+  >
+    <div
+      data-react-modal-body-trap=""
+      style="position: absolute; opacity: 0;"
+      tabindex="0"
+    />
+    <div />
+    <div
+      data-react-modal-body-trap=""
+      style="position: absolute; opacity: 0;"
+      tabindex="0"
+    />
+    <div
+      class="sc-dIfARi sc-hHTYSt sc-dmctIk WorkflowsPreviewModal__StyledDrawerModal-sc-e3xhhy-0 hYoiye gfVHFr kveBdO ingDOP"
+    >
+      <div
+        class="ReactModal__Overlay"
+      >
+        <div
+          aria-modal="true"
+          class="ReactModal__Content"
+          role="dialog"
+          tabindex="-1"
+        >
+          <div
+            class="WorkflowsPreviewModal__ModalControls-sc-e3xhhy-1 LtrhR"
+          >
+            <button
+              class="sc-gswNZR cVeGQX WorkflowsPreviewModal__close"
+              kind="link"
+              shape="pill"
+              type="button"
+            >
+              <svg
+                fill="#003331"
+                height="14"
+                viewBox="0 0 14 14"
+                width="14"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.7 0.3C13.3 -0.1 12.7 -0.1 12.3 0.3L7 5.6L1.7 0.3C1.3 -0.1 0.7 -0.1 0.3 0.3C-0.1 0.7 -0.1 1.3 0.3 1.7L5.6 7L0.3 12.3C-0.1 12.7 -0.1 13.3 0.3 13.7C0.5 13.9 0.7 14 1 14C1.3 14 1.5 13.9 1.7 13.7L7 8.4L12.3 13.7C12.5 13.9 12.8 14 13 14C13.2 14 13.5 13.9 13.7 13.7C14.1 13.3 14.1 12.7 13.7 12.3L8.4 7L13.7 1.7C14.1 1.3 14.1 0.7 13.7 0.3Z"
+                />
+              </svg>
+            </button>
+          </div>
+          <div
+            class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 djZaPZ WorkflowsPreviewModal"
+          >
+            <div
+              class="styles__SidePanelContents-sc-b21pq-12 ldwYzp"
+              data-testid="ComposeMessageView"
+            >
+              <div
+                class="Heading__HeadingWrapper-sc-aj8r1c-0 jVcXiT"
+              >
+                <a
+                  class="PersonProfileLink"
+                  href="/workflows/clients/p101"
+                >
+                  <div
+                    class="JusticeInvolvedPersonCapsule__Wrapper-sc-a88uu7-2 iuucxw"
+                  >
+                    <div
+                      class="JusticeInvolvedPersonAvatar__AvatarElement-sc-1tpr4ma-0 gimmNP"
+                      size="40"
+                    >
+                      <svg
+                        fill="none"
+                        height="40"
+                        role="img"
+                        viewBox="0 0 80 80"
+                        width="40"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <title>
+                          LH
+                        </title>
+                        <mask
+                          height="80"
+                          id="mask__marble"
+                          maskUnits="userSpaceOnUse"
+                          width="80"
+                          x="0"
+                          y="0"
+                        >
+                          <rect
+                            fill="#FFFFFF"
+                            height="80"
+                            rx="160"
+                            width="80"
+                          />
+                        </mask>
+                        <g
+                          mask="url(#mask__marble)"
+                        >
+                          <rect
+                            fill="#90aeb5"
+                            height="80"
+                            width="80"
+                          />
+                          <path
+                            d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+                            fill="#cc989c"
+                            filter="url(#prefix__filter0_f)"
+                            transform="translate(0 0) rotate(176 40 40) scale(1.2)"
+                          />
+                          <path
+                            d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+                            fill="#25636f"
+                            filter="url(#prefix__filter0_f)"
+                            style="mix-blend-mode: overlay;"
+                            transform="translate(-4 -4) rotate(-84 40 40) scale(1.2)"
+                          />
+                        </g>
+                        <defs>
+                          <filter
+                            color-interpolation-filters="sRGB"
+                            filterUnits="userSpaceOnUse"
+                            id="prefix__filter0_f"
+                          >
+                            <feflood
+                              flood-opacity="0"
+                              result="BackgroundImageFix"
+                            />
+                            <feblend
+                              in="SourceGraphic"
+                              in2="BackgroundImageFix"
+                              result="shape"
+                            />
+                            <fegaussianblur
+                              result="effect1_foregroundBlur"
+                              stdDeviation="7"
+                            />
+                          </filter>
+                        </defs>
+                      </svg>
+                      <div
+                        class="sc-gYbzsP JusticeInvolvedPersonAvatar__AvatarInitials-sc-1tpr4ma-1 bGrOBy eCFfhr fs-exclude"
+                        size="40"
+                      >
+                        LH
+                      </div>
+                    </div>
+                    <div
+                      class="JusticeInvolvedPersonCapsule__PersonInfo-sc-a88uu7-3"
+                    >
+                      <div
+                        class="sc-cjibBx iQqIPt"
+                      >
+                        <span
+                          class="sc-jSUZER iljzDu"
+                        >
+                          <span
+                            class="JusticeInvolvedPersonCapsule__PersonName-sc-a88uu7-0 oiwyO PersonName fs-exclude"
+                          >
+                            Linet Hansen
+                          </span>
+                        </span>
+                        <span
+                          class="common__Separator-sc-1006pjp-1 bUCSQP"
+                        >
+                           
+                        </span>
+                        <span
+                          class="JusticeInvolvedPersonCapsule__PersonId-sc-a88uu7-1 hCsxBp fs-exclude"
+                        >
+                          101
+                        </span>
+                      </div>
+                      <div
+                        class="sc-gYbzsP JusticeInvolvedPersonCapsule__PersonStatusSm-sc-a88uu7-4 bGrOBy GJXWq WorkflowsStatus fs-exclude"
+                      >
+                        TN PROBATIONER
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <div
+                class="sc-cCjUiG styles__SidePanelHeader-sc-b21pq-2 fgWjb cObsqR"
+              >
+                Milestones
+              </div>
+              <div
+                class="MilestonesCaseloadView__MilestonesList-sc-179h2hg-4 bcGvLj"
+              >
+                <div
+                  class="MilestonesCaseloadView__MilestonesItem-sc-179h2hg-3 jTvIiT"
+                >
+                  <div />
+                  <span
+                    class="MilestonesCaseloadView__MilestonesText-sc-179h2hg-5 iptWyM"
+                  >
+                    Birthday this month (February 14)
+                  </span>
+                </div>
+                <div
+                  class="MilestonesCaseloadView__MilestonesItem-sc-179h2hg-3 jTvIiT"
+                >
+                  <div />
+                  <span
+                    class="MilestonesCaseloadView__MilestonesText-sc-179h2hg-5 iptWyM"
+                  >
+                    15 months on supervision
+                  </span>
+                </div>
+              </div>
+              <div
+                class="PhoneNumberInput__PhoneNumber-sc-cb73mi-0 hCfzMT"
+              >
+                <label
+                  class="PhoneNumberInput__PhoneNumberLabel-sc-cb73mi-2 kbueIH"
+                  for="phoneNumber"
+                >
+                  Phone Number
+                </label>
+                <input
+                  class="PhoneNumberInput__SidePanelInput-sc-cb73mi-1 bquiqx"
+                  inputmode="numeric"
+                  maxlength="14"
+                  name="phoneNumber"
+                  placeholder="Enter a 10-digit phone number"
+                  type="text"
+                  value="(555) 555-5678"
+                />
+              </div>
+              <div
+                class="TextMessageInput__TextMessageContainer-sc-14y91c5-0 gxSzMY"
+              >
+                <label
+                  class="TextMessageInput__Label-sc-14y91c5-2 fnJrOk"
+                  for="textMessage"
+                >
+                  Text Message
+                   
+                  <span>
+                     
+                    1450
+                    /
+                    1600
+                  </span>
+                </label>
+                <div
+                  class="TextMessageInput__DefaultMessage-sc-14y91c5-1 ijgROP"
+                >
+                  Message from  at DOC:
+
+Hey LINET HANSEN! Congratulations on reaching these milestones:
+
+- Birthday this month (February 14)
+- 15 months on supervision
+                </div>
+                <textarea
+                  class="TextMessageInput__TextArea-sc-14y91c5-3 dDfSjC"
+                  id="textMessage"
+                  maxlength="1450"
+                  placeholder="Add your own message (Optional)"
+                />
+              </div>
+              <div
+                class="sc-hhOBVt styles__Warning-sc-b21pq-3 fDofSM kdVbaN"
+              >
+                Do not send critical information tied to deadlines. We cannot guarantee delivery of this text message.
+              </div>
+              <div
+                class="styles__ButtonsContainer-sc-b21pq-7 kMzBZp"
+              >
+                <button
+                  class="sc-bcXHqe dqGNaB styles__ActionButton-sc-b21pq-8 eAoqpr"
+                  kind="primary"
+                  shape="pill"
+                  type="button"
+                >
+                  Review
+                </button>
+                <button
+                  class="sc-bcXHqe dqGNaB styles__AlreadyCongratulatedButton-sc-b21pq-9 ktbWKg"
+                  kind="primary"
+                  shape="pill"
+                  type="button"
+                >
+                  I congratulated them in-person or another way
+                </button>
+                <div
+                  class="styles__OptOutText-sc-b21pq-10"
+                >
+                  Opt out of sending a congratulations text?
+                   
+                  <span
+                    class="styles__TextLink-sc-b21pq-11 GkMcC"
+                  >
+                    Tell us why
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div />,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`MilestonesSidePanel renders without text message preview 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body
+    class="ReactModal__Body--open"
+  >
+    <div
+      data-react-modal-body-trap=""
+      style="position: absolute; opacity: 0;"
+      tabindex="0"
+    />
+    <div
+      class="sc-dIfARi sc-hHTYSt sc-dmctIk WorkflowsPreviewModal__StyledDrawerModal-sc-e3xhhy-0 hYoiye gfVHFr kveBdO ingDOP"
+    />
+    <div
+      class="sc-dIfARi sc-hHTYSt sc-dmctIk WorkflowsPreviewModal__StyledDrawerModal-sc-e3xhhy-0 hYoiye gfVHFr kveBdO ingDOP"
+    />
+    <div />
+    <div
+      data-react-modal-body-trap=""
+      style="position: absolute; opacity: 0;"
+      tabindex="0"
+    />
+    <div
+      class="sc-dIfARi sc-hHTYSt sc-dmctIk WorkflowsPreviewModal__StyledDrawerModal-sc-e3xhhy-0 hYoiye gfVHFr kveBdO ingDOP"
+    >
+      <div
+        class="ReactModal__Overlay"
+      >
+        <div
+          aria-modal="true"
+          class="ReactModal__Content"
+          role="dialog"
+          tabindex="-1"
+        >
+          <div
+            class="WorkflowsPreviewModal__ModalControls-sc-e3xhhy-1 LtrhR"
+          >
+            <button
+              class="sc-gswNZR cVeGQX WorkflowsPreviewModal__close"
+              kind="link"
+              shape="pill"
+              type="button"
+            >
+              <svg
+                fill="#003331"
+                height="14"
+                viewBox="0 0 14 14"
+                width="14"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.7 0.3C13.3 -0.1 12.7 -0.1 12.3 0.3L7 5.6L1.7 0.3C1.3 -0.1 0.7 -0.1 0.3 0.3C-0.1 0.7 -0.1 1.3 0.3 1.7L5.6 7L0.3 12.3C-0.1 12.7 -0.1 13.3 0.3 13.7C0.5 13.9 0.7 14 1 14C1.3 14 1.5 13.9 1.7 13.7L7 8.4L12.3 13.7C12.5 13.9 12.8 14 13 14C13.2 14 13.5 13.9 13.7 13.7C14.1 13.3 14.1 12.7 13.7 12.3L8.4 7L13.7 1.7C14.1 1.3 14.1 0.7 13.7 0.3Z"
+                />
+              </svg>
+            </button>
+          </div>
+          <div
+            class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 djZaPZ WorkflowsPreviewModal"
+          >
+            <div
+              class="styles__SidePanelContents-sc-b21pq-12 ldwYzp"
+              data-testid="CongratulatedSidePanel"
+            >
+              <div
+                class="Heading__HeadingWrapper-sc-aj8r1c-0 jVcXiT"
+              >
+                <a
+                  class="PersonProfileLink"
+                  href="/workflows/clients/p101"
+                >
+                  <div
+                    class="JusticeInvolvedPersonCapsule__Wrapper-sc-a88uu7-2 iuucxw"
+                  >
+                    <div
+                      class="JusticeInvolvedPersonAvatar__AvatarElement-sc-1tpr4ma-0 gimmNP"
+                      size="40"
+                    >
+                      <svg
+                        fill="none"
+                        height="40"
+                        role="img"
+                        viewBox="0 0 80 80"
+                        width="40"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <title>
+                          LH
+                        </title>
+                        <mask
+                          height="80"
+                          id="mask__marble"
+                          maskUnits="userSpaceOnUse"
+                          width="80"
+                          x="0"
+                          y="0"
+                        >
+                          <rect
+                            fill="#FFFFFF"
+                            height="80"
+                            rx="160"
+                            width="80"
+                          />
+                        </mask>
+                        <g
+                          mask="url(#mask__marble)"
+                        >
+                          <rect
+                            fill="#90aeb5"
+                            height="80"
+                            width="80"
+                          />
+                          <path
+                            d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+                            fill="#cc989c"
+                            filter="url(#prefix__filter0_f)"
+                            transform="translate(0 0) rotate(176 40 40) scale(1.2)"
+                          />
+                          <path
+                            d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+                            fill="#25636f"
+                            filter="url(#prefix__filter0_f)"
+                            style="mix-blend-mode: overlay;"
+                            transform="translate(-4 -4) rotate(-84 40 40) scale(1.2)"
+                          />
+                        </g>
+                        <defs>
+                          <filter
+                            color-interpolation-filters="sRGB"
+                            filterUnits="userSpaceOnUse"
+                            id="prefix__filter0_f"
+                          >
+                            <feflood
+                              flood-opacity="0"
+                              result="BackgroundImageFix"
+                            />
+                            <feblend
+                              in="SourceGraphic"
+                              in2="BackgroundImageFix"
+                              result="shape"
+                            />
+                            <fegaussianblur
+                              result="effect1_foregroundBlur"
+                              stdDeviation="7"
+                            />
+                          </filter>
+                        </defs>
+                      </svg>
+                      <div
+                        class="sc-gYbzsP JusticeInvolvedPersonAvatar__AvatarInitials-sc-1tpr4ma-1 bGrOBy eCFfhr fs-exclude"
+                        size="40"
+                      >
+                        LH
+                      </div>
+                    </div>
+                    <div
+                      class="JusticeInvolvedPersonCapsule__PersonInfo-sc-a88uu7-3"
+                    >
+                      <div
+                        class="sc-cjibBx iQqIPt"
+                      >
+                        <span
+                          class="sc-jSUZER iljzDu"
+                        >
+                          <span
+                            class="JusticeInvolvedPersonCapsule__PersonName-sc-a88uu7-0 oiwyO PersonName fs-exclude"
+                          >
+                            Linet Hansen
+                          </span>
+                        </span>
+                        <span
+                          class="common__Separator-sc-1006pjp-1 bUCSQP"
+                        >
+                           
+                        </span>
+                        <span
+                          class="JusticeInvolvedPersonCapsule__PersonId-sc-a88uu7-1 hCsxBp fs-exclude"
+                        >
+                          101
+                        </span>
+                      </div>
+                      <div
+                        class="sc-gYbzsP JusticeInvolvedPersonCapsule__PersonStatusSm-sc-a88uu7-4 bGrOBy GJXWq WorkflowsStatus fs-exclude"
+                      >
+                        TN PROBATIONER
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <div
+                class="sc-cCjUiG styles__ReviewInfo-sc-b21pq-4 fgWjb hqcMlK"
+              >
+                 indicated that they congratulated
+                 
+                LINET HANSEN
+                 in-person or using another method. Great job!
+                 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div />,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

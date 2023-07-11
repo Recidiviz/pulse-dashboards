@@ -29,10 +29,10 @@ import {
   ActionButton,
   AlreadyCongratulatedButton,
   ButtonsContainer,
-  OptOutLink,
   OptOutText,
   SidePanelContents,
   SidePanelHeader,
+  TextLink,
   Warning,
 } from "./styles";
 import TextMessageInput from "./TextMessageInput";
@@ -42,7 +42,7 @@ interface ComposeMessageProps {
   setCurrentView: Dispatch<SetStateAction<NEW_MILESTONES_SIDE_PANEL_VIEW>>;
 }
 
-const ComposeMessage = observer(function ComposeMessage({
+const ComposeMessageView = observer(function ComposeMessageView({
   client,
   setCurrentView,
 }: ComposeMessageProps): JSX.Element {
@@ -69,7 +69,7 @@ const ComposeMessage = observer(function ComposeMessage({
 
   const handleOnReviewClick = async () => {
     await client.updateMilestonesTextMessage(client.milestonesPendingMessage);
-    setCurrentView("COMPOSING");
+    setCurrentView("REVIEWING");
   };
 
   const handleOnCongratulatedClick = async () => {
@@ -80,7 +80,7 @@ const ComposeMessage = observer(function ComposeMessage({
   };
 
   return (
-    <SidePanelContents>
+    <SidePanelContents data-testid="ComposeMessageView">
       <Heading person={client} />
       <SidePanelHeader>Milestones</SidePanelHeader>
       <ClientMilestones client={client} showAll />
@@ -108,13 +108,13 @@ const ComposeMessage = observer(function ComposeMessage({
         </AlreadyCongratulatedButton>
         <OptOutText>
           Opt out of sending a congratulations text?{" "}
-          <OptOutLink onClick={() => setCurrentView("DECLINING")}>
+          <TextLink onClick={() => setCurrentView("DECLINING")}>
             Tell us why
-          </OptOutLink>
+          </TextLink>
         </OptOutText>
       </ButtonsContainer>
     </SidePanelContents>
   );
 });
 
-export default ComposeMessage;
+export default ComposeMessageView;

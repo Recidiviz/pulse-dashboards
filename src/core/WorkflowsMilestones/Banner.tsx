@@ -16,27 +16,23 @@
 // =============================================================================
 import { observer } from "mobx-react-lite";
 
-import { ReactComponent as GreenCheckmark } from "../../assets/static/images/greenCheckmark.svg";
-import { Client } from "../../WorkflowsStore";
-import { Heading } from "../WorkflowsClientProfile/Heading";
-import Banner from "./Banner";
-import { SidePanelContents } from "./styles";
+import { BannerText, SidePanelBanner } from "./styles";
 
-interface CongratulatedAnotherWayProps {
-  client: Client;
+interface BannerProps {
+  text: string;
+  icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
 }
 
-const CongratulatedAnotherWayView = observer(
-  function CongratulatedAnotherWayView({
-    client,
-  }: CongratulatedAnotherWayProps): JSX.Element {
-    return (
-      <SidePanelContents>
-        <Banner icon={GreenCheckmark} text="Congratulated" />
-        <Heading person={client} />{" "}
-      </SidePanelContents>
-    );
-  }
-);
+const Banner = observer(function Banner({
+  text,
+  icon: Icon,
+}: BannerProps): JSX.Element {
+  return (
+    <SidePanelBanner>
+      <Icon height={24} width={24} />
+      <BannerText>{text}</BannerText>
+    </SidePanelBanner>
+  );
+});
 
-export default CongratulatedAnotherWayView;
+export default Banner;
