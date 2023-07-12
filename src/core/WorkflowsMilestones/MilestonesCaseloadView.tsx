@@ -23,7 +23,9 @@ import styled from "styled-components/macro";
 
 import { ReactComponent as TealStar } from "../../assets/static/images/tealStar.svg";
 import { useRootStore } from "../../components/StoreProvider";
+import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../../WorkflowsStore";
+import { optionalFieldToDate } from "../../WorkflowsStore/utils";
 import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
 import { MilestonesCapsule } from "../PersonCapsules/MilestonesCapsule";
 import WorkflowsResults from "../WorkflowsResults";
@@ -75,6 +77,11 @@ const SeeMoreText = styled.span`
   color: ${palette.slate60};
 `;
 
+const StatusText = styled.span<{ failure?: boolean }>`
+  ${typography.Sans14}
+  color: ${({ failure }) => (failure ? palette.signal.error : palette.slate60)};
+`;
+
 export function ClientMilestones({
   client,
   showAll = false,
@@ -103,6 +110,27 @@ export function ClientMilestones({
   );
 }
 
+function CongratulationStatus({ client }: { client: Client }): JSX.Element {
+  const updated = client.milestoneMessagesUpdates?.updated;
+  const date = formatWorkflowsDate(optionalFieldToDate(updated?.date));
+
+  switch (client.milestonesMessageStatus) {
+    case "SUCCESS":
+    case "CONGRATULATED_ANOTHER_WAY":
+      return <StatusText>Congratulated on {date}.</StatusText>;
+    case "DECLINED":
+      return (
+        <StatusText>
+          {updated?.by} declined to congratulate on {date}.
+        </StatusText>
+      );
+    case "FAILURE":
+      return <StatusText failure>Could not send text message.</StatusText>;
+    default:
+      return <StatusText />;
+  }
+}
+
 function MilestonesCaseload({
   clients,
   handleRowOnClick,
@@ -120,6 +148,7 @@ function MilestonesCaseload({
           <MilestonesCapsule person={client} />
         </PersonCapsuleWrapper>
         <ClientMilestones client={client} />
+        <CongratulationStatus client={client} />
       </MilestonesClientRow>
     </MilestonesTooltip>
   ));
