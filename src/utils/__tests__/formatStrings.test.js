@@ -310,4 +310,38 @@ describe("formatStrings", () => {
       expect(utils.formatName("Barney Rubbbbbbble")).toBe("B. Rubbbbbbbl...");
     });
   });
+
+  describe("formatNameLastFirst", () => {
+    const fullName = {
+      givenNames: "Barney",
+      middleNames: "Xavier",
+      surname: "Rubble",
+    };
+    it("formats a full name correctly", () => {
+      expect(utils.formatNameLastFirst(fullName)).toBe("Rubble, Barney X.");
+    });
+
+    it("formats a name without a middle name correctly", () => {
+      const name = { ...fullName };
+      delete name.middleNames;
+      expect(utils.formatNameLastFirst(name)).toBe("Rubble, Barney");
+    });
+
+    it("formats a name without a middle or first name correctly", () => {
+      const name = { ...fullName };
+      delete name.middleNames;
+      delete name.givenNames;
+      expect(utils.formatNameLastFirst(name)).toBe("Rubble, N/A");
+    });
+
+    it("formats a name without a surname correctly", () => {
+      const name = { ...fullName };
+      delete name.surname;
+      expect(utils.formatNameLastFirst(name)).toBe("Unknown, Barney X.");
+    });
+
+    it("formats an empty name correctly", () => {
+      expect(utils.formatNameLastFirst({})).toBe("Unknown, N/A");
+    });
+  });
 });

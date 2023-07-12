@@ -28,6 +28,7 @@ import numeral from "numeral";
 import Pluralize from "pluralize";
 
 import { Dimension } from "../core/types/dimensions";
+import { FullName } from "../FirestoreStore";
 import { translate } from "./i18nSettings";
 
 const CRYPTO_PASSPHRASE = process.env.REACT_APP_CRYPTO_PASSPHRASE || "";
@@ -365,6 +366,16 @@ function rangeString({ min, max }: { min?: number; max?: number }) {
   return `${min} - ${max}`;
 }
 
+function formatNameLastFirst(fullName: FullName): string {
+  const { givenNames = "N/A", middleNames, surname = "Unknown" } = fullName;
+
+  const formattedName = `${surname}, ${givenNames}`;
+
+  if (middleNames?.length) return `${formattedName} ${middleNames[0]}.`;
+
+  return formattedName;
+}
+
 export {
   convertCurlyQuotesToStraight,
   decrypt,
@@ -377,6 +388,7 @@ export {
   formatISODateString,
   formatLargeNumber,
   formatName,
+  formatNameLastFirst,
   formatOfficerLabel,
   formatPercent,
   formatWorkflowsDate,

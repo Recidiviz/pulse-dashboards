@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 import WorkflowsLSUForm from "../WorkflowsLSUForm";
+import WorkflowsUsCaSupervisionLevelDowngradeForm from "../WorkflowsUsCaSupervisionLevelDowngradeForm";
 import WorkflowsUsTnCustodyLevelDowngradeForm from "../WorkflowsUsTnCustodyLevelDowngradeForm";
 import WorkflowsUsTnExpirationForm from "../WorkflowsUsTnExpirationForm";
 
@@ -82,7 +83,9 @@ const PAGE_CONTENT: Record<
   usMeEarlyTermination: {},
   usMiMinimumTelephoneReporting: {},
   usMiPastFTRD: {},
-  usCaSupervisionLevelDowngrade: {},
+  usCaSupervisionLevelDowngrade: {
+    formContents: <WorkflowsUsCaSupervisionLevelDowngradeForm />,
+  },
 };
 
 const Wrapper = styled.div`

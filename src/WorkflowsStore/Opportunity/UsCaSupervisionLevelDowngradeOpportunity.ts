@@ -22,23 +22,39 @@ import { makeObservable } from "mobx";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
+import { UsCaSupervisionLevelDowngradeForm } from "./Forms/UsCaSupervisionLevelDowngradeForm";
 import { OpportunityBase } from "./OpportunityBase";
-import { OpportunityRequirement } from "./types";
+import { OpportunityRequirement, SupervisionOpportunityType } from "./types";
 import {
   UsCaSupervisionLevelDowngradeReferralRecord,
   usCaSupervisionLevelDowngradeSchema,
 } from "./UsCaSupervisionLevelDowngradeReferralRecord";
 
+const OPPORTUNITY_TYPE: SupervisionOpportunityType =
+  "usCaSupervisionLevelDowngrade";
+
 export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
   UsCaSupervisionLevelDowngradeReferralRecord
 > {
+  client: Client;
+
+  form: UsCaSupervisionLevelDowngradeForm;
+
   constructor(client: Client) {
     super(
       client,
-      "usCaSupervisionLevelDowngrade",
+      OPPORTUNITY_TYPE,
       client.rootStore,
       usCaSupervisionLevelDowngradeSchema.parse
+    );
+
+    this.client = client;
+
+    this.form = new UsCaSupervisionLevelDowngradeForm(
+      OPPORTUNITY_TYPE,
+      this,
+      client.rootStore
     );
 
     makeObservable(this, { requirementsMet: true });

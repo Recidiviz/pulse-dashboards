@@ -40,3 +40,13 @@ export type UsSupervisionLevelDowngradeReferralRecordRaw = z.input<
 export type UsCaSupervisionLevelDowngradeReferralRecord = z.infer<
   typeof usCaSupervisionLevelDowngradeSchema
 >;
+
+export type UsCaSupervisionLevelDowngradeDraftData = {
+  cdcNumber: string;
+  fullName: string;
+  lastReleaseDate: string;
+  unit: string;
+  offense: string;
+  csraScore: string;
+  supervisionLevel: string;
+};
