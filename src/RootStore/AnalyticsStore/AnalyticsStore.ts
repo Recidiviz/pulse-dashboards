@@ -23,7 +23,9 @@ import { makeAutoObservable } from "mobx";
 import { v4 as uuidv4 } from "uuid";
 
 import { SearchType } from "../../core/models/types";
+import { MilestonesTab } from "../../core/WorkflowsMilestones/MilestonesCaseloadView";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
+import { DeclineReason } from "../../FirestoreStore";
 import { OpportunityStatus, OpportunityType } from "../../WorkflowsStore";
 import {
   SupervisionNeedType,
@@ -164,5 +166,35 @@ export default class AnalyticsStore {
     selectedSearchIds: string[];
   }): void {
     this.track("frontend.task_filter_selected", metadata);
+  }
+
+  trackMilestonesTabClick(metadata: { tab: MilestonesTab }) {
+    this.track("frontend.milestones_tab_clicked", metadata);
+  }
+
+  trackMilestonesSidePanel(metadata: {
+    tab: MilestonesTab;
+    justiceInvolvedPersonId: string;
+  }) {
+    this.track("frontend.milestones_side_panel_opened", metadata);
+  }
+
+  trackMilestonesMessageDeclined(metadata: {
+    justiceInvolvedPersonId: string;
+    declineReasons: DeclineReason[];
+  }) {
+    this.track("frontend.milestones_message_declined", metadata);
+  }
+
+  trackMilestonesCongratulatedAnotherWay(metadata: {
+    justiceInvolvedPersonId: string;
+  }) {
+    this.track("frontend.milestones_congratulated_another_way", metadata);
+  }
+
+  trackMilestonesCongratulationsSent(metadata: {
+    justiceInvolvedPersonId: string;
+  }) {
+    this.track("frontend.milestones_congratulations_sent", metadata);
   }
 }

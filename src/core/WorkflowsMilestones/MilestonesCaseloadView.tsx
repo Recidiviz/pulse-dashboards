@@ -158,15 +158,21 @@ function MilestonesCaseload({
 
 const MilestonesCaseloadView: React.FC = observer(
   function MilestonesCaseloadView() {
-    const { workflowsStore } = useRootStore();
+    const { workflowsStore, analyticsStore } = useRootStore();
     const [activeTab, setActiveTab] = useState<MilestonesTab>("NEW_MILESTONES");
 
     const handleTabClick = (tab: MilestonesTab) => {
+      analyticsStore.trackMilestonesTabClick({ tab });
       setActiveTab(tab);
     };
 
-    const handleRowOnClick = (client: Client) =>
+    const handleRowOnClick = (client: Client) => {
       workflowsStore.updateSelectedPerson(client.pseudonymizedId);
+      analyticsStore.trackMilestonesSidePanel({
+        tab: activeTab,
+        justiceInvolvedPersonId: client.pseudonymizedId,
+      });
+    };
 
     const tabs: Partial<Record<MilestonesTab, string>> = {
       NEW_MILESTONES: "New Milestones",

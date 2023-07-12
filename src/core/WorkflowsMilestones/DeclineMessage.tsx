@@ -22,6 +22,7 @@ import { useState } from "react";
 import styled from "styled-components/macro";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
+import { useRootStore } from "../../components/StoreProvider";
 import { DeclineReason } from "../../FirestoreStore";
 import { Client } from "../../WorkflowsStore";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
@@ -65,11 +66,16 @@ const DeclineMessageView = observer(function DeclineMessageView({
   client,
   closeModal,
 }: SidePanelViewProps): JSX.Element {
+  const { analyticsStore } = useRootStore();
   const [reasons, setReasons] = useState<DeclineReason[]>([]);
   const [otherReason, setOtherReason] = useState<DeclineReason>();
 
   const handleSubmit = async () => {
     await client.updateMilestonesDeclineReasons(reasons, otherReason);
+    analyticsStore.trackMilestonesMessageDeclined({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      declineReasons: [...reasons, ...(otherReason ? [otherReason] : [])],
+    });
     if (closeModal) closeModal();
   };
 

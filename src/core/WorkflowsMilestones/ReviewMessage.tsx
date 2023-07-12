@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { Dispatch, SetStateAction } from "react";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
 import { Client } from "../../WorkflowsStore";
 import { formatPhoneNumber } from "../../WorkflowsStore/utils";
@@ -41,10 +42,14 @@ const ReviewMessageView = observer(function ReviewMessageView({
   client,
   setCurrentView,
 }: ReviewMessageProps): JSX.Element {
+  const { analyticsStore } = useRootStore();
   useHydrateOpportunities(client);
 
   const handleOnSend = async () => {
     await client.sendMilestonesMessage();
+    analyticsStore.trackMilestonesCongratulationsSent({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+    });
     if (client.hasVerifiedOpportunities) {
       setCurrentView("OPPORTUNITY_AVAILABLE");
     } else {
