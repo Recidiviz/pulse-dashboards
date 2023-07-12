@@ -20,6 +20,7 @@ import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../components/StoreProvider";
 import CongratulatedSidePanel from "./CongratulatedSidePanel";
 import DeclinedSidePanel from "./DeclinedSidePanel";
+import ErrorSidePanel from "./ErrorSidePanel";
 import { MilestonesTab } from "./MilestonesCaseloadView";
 import NewMilestonesSidePanel from "./NewMilestonesSidePanel";
 
@@ -47,7 +48,7 @@ export const MilestonesSidePanel = observer(function MilestonesSidePanel({
         />
       );
     case "ERRORS":
-      return <div>TODO ERRORS</div>;
+      return <ErrorSidePanel client={selectedClient} />;
     default:
       return <div>Default page</div>;
   }

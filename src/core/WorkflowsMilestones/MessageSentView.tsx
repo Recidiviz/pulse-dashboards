@@ -14,61 +14,56 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-import { observer } from "mobx-react-lite";
 import { Dispatch, SetStateAction } from "react";
 
+import { ReactComponent as GreenCheckmark } from "../../assets/static/images/greenCheckmark.svg";
+import { ReactComponent as RedExcalamationPoint } from "../../assets/static/images/redExcalamation.svg";
+import { formatWorkflowsDate } from "../../utils/formatStrings";
 import { Client } from "../../WorkflowsStore";
-import { formatPhoneNumber } from "../../WorkflowsStore/utils";
-import { Heading } from "../WorkflowsClientProfile/Heading";
-import { NEW_MILESTONES_SIDE_PANEL_VIEW } from "./NewMilestonesSidePanel";
 import {
-  ActionButton,
-  ButtonsContainer,
+  formatPhoneNumber,
+  optionalFieldToDate,
+} from "../../WorkflowsStore/utils";
+import { Heading } from "../WorkflowsClientProfile/Heading";
+import Banner from "./Banner";
+import {
   PhoneNumber,
   ReviewInfo,
   ReviewMessage,
   SidePanelContents,
 } from "./styles";
 
-interface ReviewMessageProps {
+interface MessageSentViewProps {
   client: Client;
-  setCurrentView: Dispatch<SetStateAction<NEW_MILESTONES_SIDE_PANEL_VIEW>>;
 }
 
-const ReviewMessageView = observer(function ReviewMessageView({
+export const MessageSentView = function MessageSentView({
   client,
-  setCurrentView,
-}: ReviewMessageProps): JSX.Element {
-  const handleOnSend = async () => {
-    await client.sendMilestonesMessage();
-    setCurrentView("MESSAGE_SENT");
-  };
-
-  const { milestonesPhoneNumber, milestonesFullTextMessage } = client;
+}: MessageSentViewProps) {
+  const {
+    milestonesFullTextMessage,
+    milestonesMessageDetails,
+    milestonesPhoneNumber,
+  } = client;
+  const messageSentBy =
+    milestonesMessageDetails?.updated?.by ?? client.assignedStaffFullName;
+  const messageSentOn = formatWorkflowsDate(
+    optionalFieldToDate(milestonesMessageDetails?.updated?.date)
+  );
 
   return (
     <SidePanelContents>
+      <Banner icon={GreenCheckmark} text="Message Sent!" />
       <Heading person={client} />
       <ReviewInfo>
-        Here&apos;s a preview of the full text message we&apos;ll send to{" "}
+        {messageSentBy} sent the following text messages to{" "}
         {client.displayPreferredName} at{" "}
         {milestonesPhoneNumber && (
           <PhoneNumber>{formatPhoneNumber(milestonesPhoneNumber)}</PhoneNumber>
-        )}
+        )}{" "}
+        {messageSentOn && `on ${messageSentOn}`}.
       </ReviewInfo>
-      {milestonesFullTextMessage && (
-        <>
-          <ReviewMessage>{milestonesFullTextMessage}</ReviewMessage>
-          <ReviewMessage>
-            To stop receiving these texts, reply: STOP
-          </ReviewMessage>
-        </>
-      )}
-      <ButtonsContainer>
-        <ActionButton onClick={handleOnSend}>Send congratulations</ActionButton>
-      </ButtonsContainer>
+      <ReviewMessage>{milestonesFullTextMessage}</ReviewMessage>
     </SidePanelContents>
   );
-});
-export default ReviewMessageView;
+};

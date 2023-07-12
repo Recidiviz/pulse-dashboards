@@ -22,6 +22,7 @@ import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import ComposeMessageView from "./ComposeMessage";
 import CongratulatedAnotherWayView from "./CongratulatedAnotherWay";
 import DeclineMessageView from "./DeclineMessage";
+import { MessageSentView } from "./MessageSentView";
 import ReviewMessageView from "./ReviewMessage";
 
 export type NEW_MILESTONES_SIDE_PANEL_VIEW =
@@ -29,7 +30,6 @@ export type NEW_MILESTONES_SIDE_PANEL_VIEW =
   | "REVIEWING"
   | "DECLINING"
   | "CONGRATULATED_ANOTHER_WAY"
-  | "OPPORTUNITY_AVAILABLE"
   | "MESSAGE_SENT";
 
 interface NewMilestonesSidePanelProps {
@@ -93,10 +93,13 @@ const NewMilestonesSidePanel = function NewMilestonesSidePanel({
           pageContent={<CongratulatedAnotherWayView client={client} />}
         />
       );
-    case "OPPORTUNITY_AVAILABLE":
-      return <div>TODO Opportunity Available</div>;
     case "MESSAGE_SENT":
-      return <div>TODO Message Sent</div>;
+      return (
+        <WorkflowsPreviewModal
+          isOpen={!!client}
+          pageContent={<MessageSentView client={client} />}
+        />
+      );
     default:
       return <div>Default page</div>;
   }

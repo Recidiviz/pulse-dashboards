@@ -14,61 +14,71 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
 import { observer } from "mobx-react-lite";
-import { Dispatch, SetStateAction } from "react";
 
+import { ReactComponent as RedExcalamationPoint } from "../../assets/static/images/redExcalamation.svg";
+import { formatWorkflowsDate } from "../../utils/formatStrings";
 import { Client } from "../../WorkflowsStore";
-import { formatPhoneNumber } from "../../WorkflowsStore/utils";
-import { Heading } from "../WorkflowsClientProfile/Heading";
-import { NEW_MILESTONES_SIDE_PANEL_VIEW } from "./NewMilestonesSidePanel";
 import {
-  ActionButton,
-  ButtonsContainer,
+  formatPhoneNumber,
+  optionalFieldToDate,
+} from "../../WorkflowsStore/utils";
+import { Heading } from "../WorkflowsClientProfile/Heading";
+import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
+import Banner from "./Banner";
+import {
   PhoneNumber,
   ReviewInfo,
   ReviewMessage,
   SidePanelContents,
 } from "./styles";
 
-interface ReviewMessageProps {
+interface ErrorViewProps {
   client: Client;
-  setCurrentView: Dispatch<SetStateAction<NEW_MILESTONES_SIDE_PANEL_VIEW>>;
 }
 
-const ReviewMessageView = observer(function ReviewMessageView({
-  client,
-  setCurrentView,
-}: ReviewMessageProps): JSX.Element {
-  const handleOnSend = async () => {
-    await client.sendMilestonesMessage();
-    setCurrentView("MESSAGE_SENT");
-  };
-
-  const { milestonesPhoneNumber, milestonesFullTextMessage } = client;
+export const ErrorView = function ErrorView({ client }: ErrorViewProps) {
+  const {
+    milestonesFullTextMessage,
+    milestonesMessageDetails,
+    milestonesPhoneNumber,
+  } = client;
+  const messageSentBy =
+    milestonesMessageDetails?.updated?.by ?? client.assignedStaffFullName;
+  const messageSentOn = formatWorkflowsDate(
+    optionalFieldToDate(milestonesMessageDetails?.updated?.date)
+  );
 
   return (
     <SidePanelContents>
+      <Banner icon={RedExcalamationPoint} text="Message Failed." />
       <Heading person={client} />
       <ReviewInfo>
-        Here&apos;s a preview of the full text message we&apos;ll send to{" "}
+        {messageSentBy} attempted to send the following text messages to{" "}
         {client.displayPreferredName} at{" "}
         {milestonesPhoneNumber && (
           <PhoneNumber>{formatPhoneNumber(milestonesPhoneNumber)}</PhoneNumber>
-        )}
+        )}{" "}
+        {messageSentOn && `on ${messageSentOn}`}.
       </ReviewInfo>
-      {milestonesFullTextMessage && (
-        <>
-          <ReviewMessage>{milestonesFullTextMessage}</ReviewMessage>
-          <ReviewMessage>
-            To stop receiving these texts, reply: STOP
-          </ReviewMessage>
-        </>
-      )}
-      <ButtonsContainer>
-        <ActionButton onClick={handleOnSend}>Send congratulations</ActionButton>
-      </ButtonsContainer>
+      <ReviewMessage>{milestonesFullTextMessage}</ReviewMessage>
     </SidePanelContents>
   );
+};
+
+interface ErrorSidePanelProps {
+  client: Client;
+}
+
+const ErrorSidePanel = observer(function ErrorSidePanel({
+  client,
+}: ErrorSidePanelProps): JSX.Element | null {
+  return (
+    <WorkflowsPreviewModal
+      isOpen={!!client}
+      pageContent={<ErrorView client={client} />}
+    />
+  );
 });
-export default ReviewMessageView;
+
+export default ErrorSidePanel;

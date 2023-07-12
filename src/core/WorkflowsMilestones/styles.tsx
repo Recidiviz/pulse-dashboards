@@ -83,6 +83,7 @@ export const ButtonsContainer = styled.div`
   flex-flow: column nowrap;
   justify-content: flex-end;
   width: 100%;
+  align-items: center;
 `;
 
 export const ActionButton = styled(Button)<{ width?: string }>`
