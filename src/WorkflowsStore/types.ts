@@ -40,6 +40,7 @@ import {
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
+import { UsCaSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsCaSupervisionLevelDowngradeOpportunity";
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
 import { UsMiClassificationReviewOpportunity } from "./Opportunity/UsMiClassificationReviewOpportunity";
 import { UsMiEarlyDischargeOpportunity } from "./Opportunity/UsMiEarlyDischargeOpportunity";
@@ -65,6 +66,7 @@ export type SupervisionOpportunityMapping = {
   usMeEarlyTermination?: UsMeEarlyTerminationOpportunity;
   usMiMinimumTelephoneReporting?: UsMiMinimumTelephoneReportingOpportunity;
   usMiPastFTRD?: UsMiPastFTRDOpportunity;
+  usCaSupervisionLevelDowngrade?: UsCaSupervisionLevelDowngradeOpportunity;
 };
 // The following line will typecheck only if the keys of
 // SupervisionOpportunityMapping are exhaustive

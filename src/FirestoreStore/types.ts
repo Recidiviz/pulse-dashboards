@@ -58,6 +58,7 @@ export const collectionNames = {
   usMeEarlyTerminationReferrals: "US_ME-earlyTerminationReferrals",
   usMiMinimumTelephoneReportingReferrals: "US_MI-minimumTelephoneReporting",
   usMiPastFTRDReferrals: "US_MI-pastFTRDReferrals",
+  usCaSupervisionLevelDowngradeReferrals: "US_CA-supervisionLevelDowngrade",
 };
 
 export type CollectionName = keyof typeof collectionNames;

@@ -218,6 +218,11 @@ export const generateOpportunityHydratedHeader = (
       callToAction:
         "Review clients who are past their full-term release date and complete discharges in Omni.",
     },
+    usCaSupervisionLevelDowngrade: {
+      eligibilityText: simplur`${count} client[|s] may be `,
+      opportunityText: "eligible for a supervision level downgrade",
+      callToAction: "usCaSupervisionLevelDowngrade CTA",
+    },
   };
 
   return headers[opportunityType];
@@ -271,6 +276,7 @@ export const opportunityToSortFunctionMapping: Record<
   usMeEarlyTermination: sortByReviewStatus,
   usMiMinimumTelephoneReporting: sortByReviewStatus,
   usMiPastFTRD: sortByReviewStatusAndEligibilityDate,
+  usCaSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
 };
 
 export const transformCaseNotes = (

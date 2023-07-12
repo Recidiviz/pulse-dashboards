@@ -26,6 +26,7 @@ import {
   usNdEarlyTerminationSchema,
 } from "../src/WorkflowsStore";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
+import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCaSupervisionLevelDowngradeReferralRecord";
 import { usMeEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsMeEarlyTerminationReferralRecord";
 import { usMeSCCPSchema } from "../src/WorkflowsStore/Opportunity/UsMeSCCPReferralRecord";
 import { usMiClassificationReviewSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsMiClassificationReviewReferralRecord";
@@ -78,6 +79,7 @@ const SCHEMAS = {
     usMiClassificationReviewSchemaForSupervisionLevelFormatter(),
   usTnCustodyLevelDowngradeReferrals: usTnCustodyLevelDowngradeSchema,
   usTnExpirationReferrals: usTnExpirationSchema,
+  usCaSupervisionLevelDowngradeReferrals: usCaSupervisionLevelDowngradeSchema,
 } satisfies Partial<Record<CollectionName, z.ZodTypeAny>>;
 
 (async () => {

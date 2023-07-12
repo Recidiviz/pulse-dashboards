@@ -31,6 +31,7 @@ const US_CA_CONFIG: TenantConfig = {
   availableStateCodes: [dashboard.US_CA],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION"],
+  opportunityTypes: ["usCaSupervisionLevelDowngrade"],
   workflowsSystemConfigs: {
     SUPERVISION: {
       searchType: "OFFICER",

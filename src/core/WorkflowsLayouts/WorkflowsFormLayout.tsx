@@ -82,6 +82,7 @@ const PAGE_CONTENT: Record<
   usMeEarlyTermination: {},
   usMiMinimumTelephoneReporting: {},
   usMiPastFTRD: {},
+  usCaSupervisionLevelDowngrade: {},
 };
 
 const Wrapper = styled.div`
