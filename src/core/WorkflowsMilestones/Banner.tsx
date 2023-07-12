@@ -14,25 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { observer } from "mobx-react-lite";
-
-import { BannerText, SidePanelBanner } from "./styles";
+import { BannerText, BannerTextWrapper, SidePanelBanner } from "./styles";
 
 interface BannerProps {
   text: string;
   icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
+  actionLink?: JSX.Element;
 }
 
-const Banner = observer(function Banner({
+const Banner = function Banner({
   text,
   icon: Icon,
+  actionLink,
 }: BannerProps): JSX.Element {
   return (
     <SidePanelBanner>
-      <Icon height={24} width={24} />
-      <BannerText>{text}</BannerText>
+      <BannerTextWrapper>
+        <Icon height={24} width={24} />
+        <BannerText>{text}</BannerText>
+      </BannerTextWrapper>
+      {actionLink && actionLink}
     </SidePanelBanner>
   );
-});
+};
 
 export default Banner;

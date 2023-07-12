@@ -229,7 +229,7 @@ describe("Client", () => {
     test("reasons include other key", () => {
       createTestUnit();
       testClient.updateMilestonesDeclineReasons(
-        ["SOME_KEY", OTHER_KEY],
+        ["MILESTONE_NOT_MET", OTHER_KEY],
         "Other reason here"
       );
       expect(
@@ -241,7 +241,7 @@ describe("Client", () => {
         },
         status: "DECLINED",
         declinedReasons: {
-          reasons: ["SOME_KEY", OTHER_KEY],
+          reasons: ["MILESTONE_NOT_MET", OTHER_KEY],
           otherReason: "Other reason here",
           updated: {
             by: "staff@email.com",
@@ -252,7 +252,7 @@ describe("Client", () => {
     });
     test("reasons do not include other key", () => {
       createTestUnit();
-      testClient.updateMilestonesDeclineReasons(["SOME_KEY"]);
+      testClient.updateMilestonesDeclineReasons(["MILESTONE_NOT_MET"]);
       expect(
         mockRootStore.firestoreStore.updateMilestonesMessages
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
@@ -262,7 +262,7 @@ describe("Client", () => {
         },
         status: "DECLINED",
         declinedReasons: {
-          reasons: ["SOME_KEY"],
+          reasons: ["MILESTONE_NOT_MET"],
           otherReason: "delete field",
           updated: {
             by: "staff@email.com",
@@ -284,6 +284,21 @@ describe("Client", () => {
         date: "2023-06-12",
       },
       status: "PENDING",
+    });
+  });
+
+  test("undoMilestonesDeclined", () => {
+    createTestUnit();
+    testClient.undoMilestonesDeclined();
+    expect(
+      mockRootStore.firestoreStore.updateMilestonesMessages
+    ).toHaveBeenCalledWith("us_xx_PERSON1", {
+      updated: {
+        by: "staff@email.com",
+        date: "2023-06-12",
+      },
+      status: "PENDING",
+      declinedReasons: "delete field",
     });
   });
 

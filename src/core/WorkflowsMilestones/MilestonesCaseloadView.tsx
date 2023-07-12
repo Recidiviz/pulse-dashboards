@@ -29,6 +29,7 @@ import { MilestonesCapsule } from "../PersonCapsules/MilestonesCapsule";
 import WorkflowsResults from "../WorkflowsResults";
 import { MilestonesSidePanel } from "./MilestonesSidePanel";
 import { MilestonesTooltip } from "./MilestonesTooltip";
+import { MilestonesItem, MilestonesList, MilestonesText } from "./styles";
 
 export type MilestonesTab =
   | "NEW_MILESTONES"
@@ -57,23 +58,6 @@ const MilestonesTabButton = styled.div<{ $active: boolean }>`
 const MilestonesClientWrapper = styled.div`
   display: flex;
   flex-flow: column nowrap;
-`;
-
-const MilestonesItem = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  padding: 4px 0;
-`;
-
-const MilestonesList = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
-`;
-
-const MilestonesText = styled.span`
-  ${typography.Sans14}
-  color: ${palette.pine4};
-  margin-left: 6px;
 `;
 
 const MilestonesClientRow = styled.div`

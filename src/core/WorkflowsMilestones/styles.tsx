@@ -23,12 +23,19 @@ import {
 } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
-export const BannerText = styled(Sans16)`
+export const BannerTextWrapper = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+`;
+
+export const BannerText = styled.span`
   margin-left: 0.5rem;
-  color: ${palette.slate85};
 `;
 
 export const SidePanelBanner = styled.div`
+  ${typography.Sans16}
+  color: ${palette.slate85};
   background-color: ${palette.marble4};
   border-radius: 8px;
   display: flex;
@@ -37,6 +44,7 @@ export const SidePanelBanner = styled.div`
   margin: 1rem 0 2rem 0;
   padding: 1rem;
   align-items: center;
+  justify-content: space-between;
 `;
 
 export const SidePanelHeader = styled(Sans16)`
@@ -109,4 +117,22 @@ export const SidePanelContents = styled.div`
   display: flex;
   flex-flow: column nowrap;
   height: 85vh;
+`;
+
+export const MilestonesText = styled.span`
+  ${typography.Sans14}
+  color: ${palette.pine4};
+  margin-left: 6px;
+  align-self: center;
+`;
+
+export const MilestonesItem = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  padding: 4px 0;
+`;
+
+export const MilestonesList = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
 `;

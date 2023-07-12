@@ -24,6 +24,7 @@ import { format as formatPhone } from "phone-fns";
 import {
   ClientEmployer,
   ClientRecord,
+  DeclineReason,
   Milestone,
   MilestonesMessage,
   SpecialConditionCode,
@@ -341,7 +342,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   }
 
   async updateMilestonesDeclineReasons(
-    reasons: string[],
+    reasons: DeclineReason[],
     otherReason?: string
   ): Promise<void> {
     const otherReasonField = reasons.includes(OTHER_KEY)
@@ -362,6 +363,21 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
           ...otherReasonField,
           updated,
         },
+      }
+    );
+  }
+
+  async undoMilestonesDeclined(): Promise<void> {
+    const updated = {
+      by: this.currentUserEmail || "user",
+      date: serverTimestamp(),
+    };
+    await this.rootStore.firestoreStore.updateMilestonesMessages(
+      this.recordId,
+      {
+        updated,
+        status: TextMessageStatuses.PENDING,
+        declinedReasons: deleteField(),
       }
     );
   }

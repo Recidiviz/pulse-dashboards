@@ -22,17 +22,19 @@ import { useState } from "react";
 import styled from "styled-components/macro";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
+import { DeclineReason } from "../../FirestoreStore";
 import { Client } from "../../WorkflowsStore";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
 import { OtherReasonInput } from "../sharedComponents";
 import { ActionButton, SidePanelContents } from "./styles";
 
-const DECLINED_REASONS_MAP = {
+export const DECLINED_REASONS_MAP: Record<DeclineReason, string> = {
   MILESTONE_NOT_MET: "Client has not met these milestones.",
   CLIENT_DECLINED_TEXTS: "Client asked me not to text them.",
   MISSING_CONTACT_INFO: "Client contact information is missing.",
   [OTHER_KEY]: "Other reason",
 };
+
 const MenuItem = styled.div`
   > .Checkbox__container {
     width: 100%;
@@ -63,8 +65,8 @@ const DeclineMessageView = observer(function DeclineMessageView({
   client,
   closeModal,
 }: SidePanelViewProps): JSX.Element {
-  const [reasons, setReasons] = useState<string[]>([]);
-  const [otherReason, setOtherReason] = useState<string>();
+  const [reasons, setReasons] = useState<DeclineReason[]>([]);
+  const [otherReason, setOtherReason] = useState<DeclineReason>();
 
   const handleSubmit = async () => {
     await client.updateMilestonesDeclineReasons(reasons, otherReason);
@@ -82,10 +84,13 @@ const DeclineMessageView = observer(function DeclineMessageView({
       </DeclineMessageHeading>
       <>
         {Object.entries(DECLINED_REASONS_MAP).map(([code, description]) => (
-          <MenuItem key={code} onClick={() => setReasons(xor(reasons, [code]))}>
+          <MenuItem
+            key={code}
+            onClick={() => setReasons(xor(reasons, [code]) as DeclineReason[])}
+          >
             <Checkbox
               value={code}
-              checked={reasons.includes(code)}
+              checked={reasons.includes(code as DeclineReason)}
               name="denial reason"
               disabled
             >

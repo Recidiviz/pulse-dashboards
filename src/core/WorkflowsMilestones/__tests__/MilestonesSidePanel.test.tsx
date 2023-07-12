@@ -86,6 +86,16 @@ describe("MilestonesSidePanel", () => {
     expect(screen.getByTestId("ComposeMessageView")).toBeInTheDocument();
   });
 
+  test("renders the DECLINED side panel", () => {
+    const container = render(
+      <BrowserRouter>
+        <MilestonesSidePanel activeTab="DECLINED" />
+      </BrowserRouter>
+    );
+    expect(container).toMatchSnapshot();
+    expect(screen.getByTestId("DeclinedSidePanel")).toBeInTheDocument();
+  });
+
   describe("renders the CONGRATULATED side panel", () => {
     test("renders with text message preview", () => {
       runInAction(() => {

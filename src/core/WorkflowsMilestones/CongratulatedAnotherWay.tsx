@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { observer } from "mobx-react-lite";
-
 import { ReactComponent as GreenCheckmark } from "../../assets/static/images/greenCheckmark.svg";
 import { Client } from "../../WorkflowsStore";
 import { Heading } from "../WorkflowsClientProfile/Heading";
@@ -26,17 +24,15 @@ interface CongratulatedAnotherWayProps {
   client: Client;
 }
 
-const CongratulatedAnotherWayView = observer(
-  function CongratulatedAnotherWayView({
-    client,
-  }: CongratulatedAnotherWayProps): JSX.Element {
-    return (
-      <SidePanelContents>
-        <Banner icon={GreenCheckmark} text="Congratulated" />
-        <Heading person={client} />{" "}
-      </SidePanelContents>
-    );
-  }
-);
+const CongratulatedAnotherWayView = function CongratulatedAnotherWayView({
+  client,
+}: CongratulatedAnotherWayProps): JSX.Element {
+  return (
+    <SidePanelContents>
+      <Banner icon={GreenCheckmark} text="Congratulated" />
+      <Heading person={client} />{" "}
+    </SidePanelContents>
+  );
+};
 
 export default CongratulatedAnotherWayView;

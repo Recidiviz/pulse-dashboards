@@ -306,8 +306,8 @@ export type UpdateLog = {
   by: string;
 };
 
-export type Denial = {
-  reasons: string[];
+export type Denial<DenialReason = string> = {
+  reasons: DenialReason[];
   otherReason?: string;
   updated: UpdateLog;
 };
@@ -355,6 +355,12 @@ export type TextMessageStatus =
   | "DECLINED"
   | ExternalSystemRequestStatus;
 
+export type DeclineReason =
+  | "MILESTONE_NOT_MET"
+  | "CLIENT_DECLINED_TEXTS"
+  | "MISSING_CONTACT_INFO"
+  | "Other";
+
 export const TextMessageStatuses: Record<TextMessageStatus, TextMessageStatus> =
   {
     CONGRATULATED_ANOTHER_WAY: "CONGRATULATED_ANOTHER_WAY",
@@ -369,7 +375,7 @@ export type MilestonesMessage = {
   updated: UpdateLog;
   status: TextMessageStatus;
   errors?: string[];
-  declinedReasons?: Denial;
+  declinedReasons?: Denial<DeclineReason>;
   pendingMessage?: string;
   messageDetails?: {
     updated?: UpdateLog;

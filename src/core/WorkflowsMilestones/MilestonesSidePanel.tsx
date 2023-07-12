@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 
 import { useRootStore } from "../../components/StoreProvider";
 import CongratulatedSidePanel from "./CongratulatedSidePanel";
+import DeclinedSidePanel from "./DeclinedSidePanel";
 import { MilestonesTab } from "./MilestonesCaseloadView";
 import NewMilestonesSidePanel from "./NewMilestonesSidePanel";
 
@@ -28,6 +29,7 @@ export const MilestonesSidePanel = observer(function MilestonesSidePanel({
   activeTab: MilestonesTab;
 }) {
   const {
+    workflowsStore,
     workflowsStore: { selectedClient },
   } = useRootStore();
   if (!selectedClient) return null;
@@ -38,7 +40,12 @@ export const MilestonesSidePanel = observer(function MilestonesSidePanel({
     case "CONGRATULATED":
       return <CongratulatedSidePanel client={selectedClient} />;
     case "DECLINED":
-      return <div>TODO DECLINED</div>;
+      return (
+        <DeclinedSidePanel
+          client={selectedClient}
+          closeModal={() => workflowsStore.updateSelectedPerson(undefined)}
+        />
+      );
     case "ERRORS":
       return <div>TODO ERRORS</div>;
     default:
