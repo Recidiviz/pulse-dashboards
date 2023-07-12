@@ -21,7 +21,6 @@ import { mockOpportunity } from "../../../core/__tests__/testUtils";
 import { Opportunity } from "../types";
 import {
   monthsOrDaysRemainingFromToday,
-  sortByEligibilityDateUndefinedFirst,
   sortByReviewStatus,
   sortByReviewStatusAndEligibilityDate,
 } from "../utils";
@@ -102,25 +101,6 @@ describe("sort", () => {
       new Date(2022, 10, 8),
       new Date(2022, 10, 6),
       new Date(2022, 10, 7),
-    ]);
-  });
-
-  test("sort by eligibility date unknowns first", () => {
-    const opp4: Opportunity = {
-      ...mockOpportunity,
-      reviewStatus: "IN_PROGRESS",
-      eligibilityDate: undefined,
-    };
-    const opps = [opp2, opp4, opp3, opp1];
-    expect(
-      opps
-        .sort(sortByEligibilityDateUndefinedFirst)
-        .map((o) => o.eligibilityDate)
-    ).toEqual([
-      undefined,
-      new Date(2022, 10, 5),
-      new Date(2022, 10, 7),
-      new Date(2022, 10, 8),
     ]);
   });
 });

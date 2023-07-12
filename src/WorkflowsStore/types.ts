@@ -172,3 +172,9 @@ export type EligibilityStatus =
   | "opportunitiesEligible"
   | "opportunitiesAlmostEligible"
   | "opportunitiesDenied";
+
+export type SectionTitle =
+  | "Eligible Now"
+  | "Almost Eligible"
+  | "Overridden"
+  | "Marked ineligible";

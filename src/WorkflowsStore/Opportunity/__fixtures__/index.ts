@@ -1048,14 +1048,13 @@ export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHo
     stateCode: "US_MO",
     externalId: "004",
     eligibleCriteria: {
-      usMoOverdueForHearing: {
-        nextReviewDate: parseISO("2022-11-03"),
+      usMoHasUpcomingHearing: {
+        nextReviewDate: parseISO("2023-11-03"),
       },
       usMoInRestrictiveHousing: {
         confinementType: "confinement type",
       },
     },
-    ineligibleCriteria: {},
     metadata: {
       mostRecentHearingDate: parseISO("2022-09-03"),
       mostRecentHearingType: "hearing type",
