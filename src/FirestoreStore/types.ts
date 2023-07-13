@@ -46,6 +46,7 @@ export const collectionNames = {
   supervisionLevelDowngradeReferrals: "US_TN-supervisionLevelDowngrade",
   taskUpdates: "taskUpdates",
   usMeSCCPReferrals: "US_ME-SCCPReferrals",
+  usMeWorkReleaseReferrals: "US_ME-workReleaseReferrals",
   usIdSupervisionLevelDowngradeReferrals: "US_ID-supervisionLevelDowngrade",
   usMiSupervisionLevelDowngradeReferrals: "US_MI-supervisionLevelDowngrade",
   usMiClassificationReviewReferrals: "US_MI-classificationReviewReferrals",
@@ -135,6 +136,7 @@ export type FeatureVariant =
   | "TEST"
   | "CompliantReportingAlmostEligible"
   | "usMeAlmostPastHalfTerm"
+  | "usMeWorkRelease"
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
   | "responsiveRevamp";
@@ -160,6 +162,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         TEST: {},
         CompliantReportingAlmostEligible: {},
         usMeAlmostPastHalfTerm: {},
+        usMeWorkRelease: {},
         usTnExpiration: {},
         usTnExpirationSubmitToTomis: {},
         responsiveRevamp: {},

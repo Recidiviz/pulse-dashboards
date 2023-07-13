@@ -690,6 +690,7 @@ export class WorkflowsStore implements Hydratable {
       // need a plain object without mobx annotations for iteration
       featureVariantsRecord ? toJS(featureVariantsRecord) : {}
     );
+
     // for internal users, all flags default to on rather than off
     if (
       !configuredFlags.length &&
@@ -726,6 +727,12 @@ export class WorkflowsStore implements Hydratable {
     if (currentTenantId === "US_TN" && !this.featureVariants.usTnExpiration) {
       opportunityTypes = opportunityTypes.filter(
         (oppType) => oppType !== "usTnExpiration"
+      );
+    }
+
+    if (currentTenantId === "US_ME" && !this.featureVariants.usMeWorkRelease) {
+      opportunityTypes = opportunityTypes.filter(
+        (oppType) => oppType !== "usMeWorkRelease"
       );
     }
 

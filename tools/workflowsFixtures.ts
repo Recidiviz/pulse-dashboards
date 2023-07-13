@@ -39,6 +39,7 @@ import { usIdSupervisionLevelDowngradeReferrals } from "./fixtures/usIdSupervisi
 import { usIdSupervisionTasksData } from "./fixtures/usIdSupervisionTasks";
 import { usMeEarlyTerminationReferralsFixture } from "./fixtures/usMeEarlyTerminationReferrals";
 import { usMeSCCPFixture } from "./fixtures/usMeSCCPReferrals";
+import { usMeWorkReleaseFixture } from "./fixtures/usMeWorkReleaseReferrals";
 import { usMiMinimumTelephoneReportingReferralsFixture } from "./fixtures/usMiMinimumTelephoneReportingReferrals";
 import { usMiPastFTRDReferralsFixture } from "./fixtures/usMiPastFTRDReferrals";
 import { usMiSupervisionLevelDowngradeReferrals } from "./fixtures/usMiSupervisionLevelDowngradeReferrals";
@@ -91,6 +92,7 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   supervisionLevelDowngradeReferrals: usTnSupervisionLevelDowngradeReferrals,
   usIdSupervisionLevelDowngradeReferrals,
   usMeSCCPReferrals: usMeSCCPFixture,
+  usMeWorkReleaseReferrals: usMeWorkReleaseFixture,
   usMiMinimumTelephoneReportingReferrals:
     usMiMinimumTelephoneReportingReferralsFixture,
   usMiSupervisionLevelDowngradeReferrals,

@@ -42,6 +42,7 @@ import {
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
 import { UsCaSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsCaSupervisionLevelDowngradeOpportunity";
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
+import { UsMeWorkReleaseOpportunity } from "./Opportunity/UsMeWorkReleaseOpportunity";
 import { UsMiClassificationReviewOpportunity } from "./Opportunity/UsMiClassificationReviewOpportunity";
 import { UsMiEarlyDischargeOpportunity } from "./Opportunity/UsMiEarlyDischargeOpportunity";
 import { UsMiPastFTRDOpportunity } from "./Opportunity/UsMiPastFTRDOpportunity";
@@ -79,6 +80,7 @@ type CheckSupervisionOpportunityMappingType = Expect<
 >;
 
 export type IncarcerationOpportunityMapping = {
+  usMeWorkRelease?: UsMeWorkReleaseOpportunity;
   usMeSCCP?: UsMeSCCPOpportunity;
   usMoRestrictiveHousingStatusHearing?: UsMoRestrictiveHousingStatusHearingOpportunity;
   usTnCustodyLevelDowngrade?: UsTnCustodyLevelDowngradeOpportunity;

@@ -18,7 +18,6 @@
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -71,6 +70,7 @@ const PAGE_CONTENT: Record<
   usMeSCCP: {
     formContents: <FormSCCP />,
   },
+  usMeWorkRelease: {},
   usTnExpiration: {
     formContents: <WorkflowsUsTnExpirationForm />,
   },

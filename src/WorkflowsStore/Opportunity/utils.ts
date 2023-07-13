@@ -168,6 +168,14 @@ export const generateOpportunityHydratedHeader = (
       callToAction:
         "Review clients who may be eligible for early discharge and complete discharge paperwork in OMNI.",
     },
+    usMeWorkRelease: {
+      eligibilityText: simplur`${count} client[|s] may be `,
+      opportunityText:
+        "eligible for the Community Transition Program (Work Release)",
+      callToAction:
+        "Search for case manager(s) below to review residents on their caseload who are approaching " +
+        "Work Release eligibility and complete application paperwork.",
+    },
     usMeSCCP: {
       eligibilityText: simplur`${count} resident[|s] may be eligible for `,
       opportunityText: "Supervised Community Confinement Program",
@@ -269,6 +277,7 @@ export const opportunityToSortFunctionMapping: Record<
   usMiClassificationReview: sortByReviewStatusAndEligibilityDate,
   usMiEarlyDischarge: sortByReviewStatusAndEligibilityDate,
   usMeSCCP: sortByReviewStatus,
+  usMeWorkRelease: sortByReviewStatus,
   usTnExpiration: sortByReviewStatusAndEligibilityDate,
   usTnCustodyLevelDowngrade: sortByReviewStatus,
   usMoRestrictiveHousingStatusHearing: sortByReviewStatusAndEligibilityDate,
