@@ -114,7 +114,7 @@ const SCHEMAS = {
     const result = schema.safeParse(d.data());
     if (!result.success) {
       failed += 1;
-      console.error(d.id, result.error.issues);
+      console.error(d.id, JSON.stringify(result.error.issues, null, 2));
     } else {
       succeeded += 1;
     }
