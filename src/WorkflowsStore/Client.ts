@@ -465,7 +465,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         message: this.milestonesFullTextMessage,
         recipientExternalId: this.externalId,
         recipientPhoneNumber: this.milestonesPhoneNumber,
-        senderId: this.rootStore.userStore.externalId ?? "Unknown",
+        senderId: this.currentUserEmail ?? "Unknown",
       });
     } catch (e) {
       toast.error(
