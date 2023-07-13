@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import dedent from "dedent";
+
 import UserStore from "./UserStore";
 
 interface RequestProps {
@@ -65,9 +67,9 @@ class API {
 
     if (!response.ok) {
       throw new Error(
-        `API request failed.\n
-            Status: ${json.status} - ${json.statusText}\n
-            Errors: ${JSON.stringify(json.errors)}`
+        dedent`API request failed.
+            Status: ${response.status} - ${response.statusText}
+            Errors: ${JSON.stringify(json.errors ?? json)}`
       );
     }
     return response;

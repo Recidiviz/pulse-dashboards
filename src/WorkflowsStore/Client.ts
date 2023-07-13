@@ -20,6 +20,7 @@ import { deleteField, FieldValue, serverTimestamp } from "firebase/firestore";
 import { mapValues, toUpper } from "lodash";
 import { action, makeObservable, override } from "mobx";
 import { format as formatPhone } from "phone-fns";
+import { toast } from "react-hot-toast";
 
 import {
   ClientEmployer,
@@ -459,12 +460,19 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   async sendMilestonesMessage(): Promise<void> {
     if (!this.milestonesFullTextMessage || !this.milestonesPhoneNumber) return;
-    await this.rootStore.apiStore.postExternalSMSMessage({
-      message: this.milestonesFullTextMessage,
-      recipientExternalId: this.externalId,
-      recipientPhoneNumber: this.milestonesPhoneNumber,
-      senderId: this.rootStore.userStore.externalId ?? "Unknown",
-    });
+    try {
+      await this.rootStore.apiStore.postExternalSMSMessage({
+        message: this.milestonesFullTextMessage,
+        recipientExternalId: this.externalId,
+        recipientPhoneNumber: this.milestonesPhoneNumber,
+        senderId: this.rootStore.userStore.externalId ?? "Unknown",
+      });
+    } catch (e) {
+      toast.error(
+        "We couldn't send your message. Please wait a moment and try again."
+      );
+      throw e;
+    }
   }
 
   get defaultMilestonesMessage(): string {
