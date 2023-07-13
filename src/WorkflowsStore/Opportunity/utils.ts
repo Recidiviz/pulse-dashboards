@@ -30,7 +30,6 @@ import {
   COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED,
   CompliantReportingOpportunity,
 } from "./CompliantReportingOpportunity";
-import { MergedCriteria } from "./schemaHelpers";
 import {
   Opportunity,
   OPPORTUNITY_LABELS,
@@ -331,43 +330,46 @@ export const monthsOrDaysRemainingFromToday = (eligibleDate: Date): string => {
   return simplur`${months} more month[|s]`;
 };
 
-type CriteriaKey = "eligibleCriteria" | "ineligibleCriteria";
+type CriteriaGroupKey = "eligibleCriteria" | "ineligibleCriteria";
 
-type WithCriteria = Record<CriteriaKey, object>;
-
-type AllCriteria<R extends WithCriteria> = MergedCriteria<
-  R["eligibleCriteria"],
-  R["ineligibleCriteria"]
->;
+type WithCriteria = Record<CriteriaGroupKey, object>;
 
 // Copy is defined as an array rather than a record so it can have a well-defined order
 export type CriteriaCopy<R extends WithCriteria> = {
-  [K in CriteriaKey]: Array<[keyof R[K], OpportunityRequirement]>;
+  [K in CriteriaGroupKey]: Array<[keyof R[K], OpportunityRequirement]>;
 };
 
 // Formatters are defined in a separate dict so the function type can depend on the criterion
 export type CriteriaFormatters<R extends WithCriteria> = {
-  [K in keyof AllCriteria<R>]?: Record<
-    string,
-    (criterion: AllCriteria<R>[K], record: R) => string
-  >;
+  [K in CriteriaGroupKey]?: {
+    [C in keyof R[K]]?: Record<
+      string,
+      (criterion: Required<R[K]>[C], record: R) => string
+    >;
+  };
 };
 
-export function hydrateCriteria<R extends WithCriteria, C extends CriteriaKey>(
+export function hydrateCriteria<
+  R extends WithCriteria,
+  C extends CriteriaGroupKey
+>(
   record: R | undefined,
-  criteriaKey: C,
+  criteriaGroupKey: C,
   criteriaCopy: CriteriaCopy<R>,
   criteriaFormatters: CriteriaFormatters<R> = {}
 ): OpportunityRequirement[] {
   if (!record) return [];
 
-  return criteriaCopy[criteriaKey]
-    .filter(([criterionKey]) => criterionKey in record[criteriaKey])
+  return criteriaCopy[criteriaGroupKey]
+    .filter(([criterionKey]) => criterionKey in record[criteriaGroupKey])
     .map(([criterionKey, copy]) => {
       const out: OpportunityRequirement = { ...copy };
-      const criterion = record[criteriaKey][criterionKey];
+      const criterion = record[criteriaGroupKey][criterionKey];
+
       const formatters = [
-        ...Object.entries(criteriaFormatters[criterionKey] ?? {}),
+        ...Object.entries(
+          criteriaFormatters[criteriaGroupKey]?.[criterionKey] ?? {}
+        ),
         // Auto-generate fallback formatters
         ...Object.entries(criterion ?? {}).map(
           ([k, v]): [string, () => string] => [

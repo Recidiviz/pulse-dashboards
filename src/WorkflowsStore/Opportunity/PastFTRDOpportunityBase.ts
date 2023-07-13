@@ -28,10 +28,12 @@ import { OpportunityRequirement, OpportunityType } from "./types";
 import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "./utils";
 
 const CRITERIA_FORMATTERS: CriteriaFormatters<BasePastFTRDReferralRecord> = {
-  supervisionPastFullTermCompletionDate: {
-    DAYS_PAST_ELIGIBLE_DATE: ({ eligibleDate }) =>
-      differenceInDays(new Date(), eligibleDate).toString(),
-    ELIGIBILITY_DATE: ({ eligibleDate }) => formatWorkflowsDate(eligibleDate),
+  eligibleCriteria: {
+    supervisionPastFullTermCompletionDate: {
+      DAYS_PAST_ELIGIBLE_DATE: ({ eligibleDate }) =>
+        differenceInDays(new Date(), eligibleDate).toString(),
+      ELIGIBILITY_DATE: ({ eligibleDate }) => formatWorkflowsDate(eligibleDate),
+    },
   },
 };
 

@@ -32,9 +32,11 @@ import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "./utils";
 
 const CRITERIA_FORMATTERS: CriteriaFormatters<UsMiMinimumTelephoneReportingReferralRecord> =
   {
-    usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
-      COMPAS_SCORE: ({ initialAssessmentLevelRawText }) =>
-        toTitleCase(initialAssessmentLevelRawText),
+    eligibleCriteria: {
+      usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
+        COMPAS_SCORE: ({ initialAssessmentLevelRawText }) =>
+          toTitleCase(initialAssessmentLevelRawText),
+      },
     },
   } as const;
 
