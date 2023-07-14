@@ -61,7 +61,7 @@ Object {
             class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 djZaPZ WorkflowsPreviewModal"
           >
             <div
-              class="styles__SidePanelContents-sc-b21pq-13 loTFCI"
+              class="styles__SidePanelContents-sc-b21pq-14 funxLr"
               data-testid="CongratulatedSidePanel"
             >
               <div
@@ -351,7 +351,7 @@ Object {
             class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 djZaPZ WorkflowsPreviewModal"
           >
             <div
-              class="styles__SidePanelContents-sc-b21pq-13 loTFCI"
+              class="styles__SidePanelContents-sc-b21pq-14 funxLr"
               data-testid="DeclinedSidePanel"
             >
               <div
@@ -494,7 +494,7 @@ Object {
                   </span>
                 </div>
                 <span
-                  class="styles__TextLink-sc-b21pq-12 gQmsnd"
+                  class="styles__TextLink-sc-b21pq-13 hZoEvc"
                 >
                   Undo
                 </span>
@@ -505,7 +505,7 @@ Object {
                 Reasons
               </div>
               <div
-                class="styles__MilestonesList-sc-b21pq-16 eWLMqc"
+                class="styles__MilestonesList-sc-b21pq-17 eKdPJx"
               />
               <div
                 class="sc-cCjUiG styles__SidePanelHeader-sc-b21pq-3 fgWjb eeCsc"
@@ -513,24 +513,24 @@ Object {
                 Milestones
               </div>
               <div
-                class="styles__MilestonesList-sc-b21pq-16 eWLMqc"
+                class="styles__MilestonesList-sc-b21pq-17 eKdPJx"
               >
                 <div
-                  class="styles__MilestonesItem-sc-b21pq-15 gMxlOg"
+                  class="styles__MilestonesItem-sc-b21pq-16 cTglTb"
                 >
                   <div />
                   <span
-                    class="styles__MilestonesText-sc-b21pq-14 hgkKJq"
+                    class="styles__MilestonesText-sc-b21pq-15 jueBoL"
                   >
                     Birthday this month (February 14)
                   </span>
                 </div>
                 <div
-                  class="styles__MilestonesItem-sc-b21pq-15 gMxlOg"
+                  class="styles__MilestonesItem-sc-b21pq-16 cTglTb"
                 >
                   <div />
                   <span
-                    class="styles__MilestonesText-sc-b21pq-14 hgkKJq"
+                    class="styles__MilestonesText-sc-b21pq-15 jueBoL"
                   >
                     15 months on supervision
                   </span>
@@ -652,7 +652,7 @@ Object {
             class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 djZaPZ WorkflowsPreviewModal"
           >
             <div
-              class="styles__SidePanelContents-sc-b21pq-13 loTFCI"
+              class="styles__SidePanelContents-sc-b21pq-14 funxLr"
               data-testid="ComposeMessageView"
             >
               <div
@@ -787,24 +787,24 @@ Object {
                 Milestones
               </div>
               <div
-                class="styles__MilestonesList-sc-b21pq-16 eWLMqc"
+                class="styles__MilestonesList-sc-b21pq-17 eKdPJx"
               >
                 <div
-                  class="styles__MilestonesItem-sc-b21pq-15 gMxlOg"
+                  class="styles__MilestonesItem-sc-b21pq-16 cTglTb"
                 >
                   <div />
                   <span
-                    class="styles__MilestonesText-sc-b21pq-14 hgkKJq"
+                    class="styles__MilestonesText-sc-b21pq-15 jueBoL"
                   >
                     Birthday this month (February 14)
                   </span>
                 </div>
                 <div
-                  class="styles__MilestonesItem-sc-b21pq-15 gMxlOg"
+                  class="styles__MilestonesItem-sc-b21pq-16 cTglTb"
                 >
                   <div />
                   <span
-                    class="styles__MilestonesText-sc-b21pq-14 hgkKJq"
+                    class="styles__MilestonesText-sc-b21pq-15 jueBoL"
                   >
                     15 months on supervision
                   </span>
@@ -887,12 +887,12 @@ Hey LINET HANSEN! Congratulations on reaching these milestones:
                   I congratulated them in-person or another way
                 </button>
                 <div
-                  class="styles__OptOutText-sc-b21pq-11"
+                  class="styles__OptOutText-sc-b21pq-12"
                 >
                   Opt out of sending a congratulations text?
                    
                   <span
-                    class="styles__TextLink-sc-b21pq-12 gQmsnd"
+                    class="styles__TextLink-sc-b21pq-13 hZoEvc"
                   >
                     Tell us why
                   </span>
@@ -1023,7 +1023,7 @@ Object {
             class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 djZaPZ WorkflowsPreviewModal"
           >
             <div
-              class="styles__SidePanelContents-sc-b21pq-13 loTFCI"
+              class="styles__SidePanelContents-sc-b21pq-14 funxLr"
               data-testid="CongratulatedSidePanel"
             >
               <div

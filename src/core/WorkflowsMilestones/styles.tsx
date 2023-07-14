@@ -21,7 +21,7 @@ import {
   Sans16,
   typography,
 } from "@recidiviz/design-system";
-import styled from "styled-components/macro";
+import styled, { css, keyframes } from "styled-components/macro";
 
 export const BannerTextWrapper = styled.div`
   display: flex;
@@ -104,6 +104,43 @@ export const AlreadyCongratulatedButton = styled(Button)`
   :hover,
   :focus {
     color: ${palette.marble1};
+  }
+`;
+
+export const loading = keyframes`
+  0% { width: 0%; }
+  100% { width: 100%; }
+`;
+
+export const ButtonWithLoader = styled(Button)<{ loadingTimeMS: number }>`
+  border-radius: 4px;
+  background-color: ${palette.marble1};
+  border: 1px solid ${palette.slate30};
+  color: ${palette.slate85};
+  width: 100%;
+  margin-bottom: 0.75rem;
+  position: relative;
+
+  :hover,
+  :focus {
+    color: ${palette.marble1};
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 222px;
+    height: 4px;
+    flex-shrink: 0;
+    background-color: ${palette.slate20};
+    width: 100%;
+    ${({ loadingTimeMS }) =>
+      loadingTimeMS &&
+      css`
+        animation: ${loading} ${loadingTimeMS / 1000}s linear forwards;
+      `}
   }
 `;
 

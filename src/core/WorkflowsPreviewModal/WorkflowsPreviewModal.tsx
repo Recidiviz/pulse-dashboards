@@ -86,6 +86,12 @@ type PreviewModalProps = {
   onAfterOpen?: () => void;
   onBackClick?: () => void;
 };
+// Create a new context
+export const ModalContext = React.createContext<(isOpen: boolean) => void>(
+  () => {
+    console.warn("ModalContext is not available");
+  }
+);
 
 export function WorkflowsPreviewModal({
   isOpen,
@@ -136,12 +142,14 @@ export function WorkflowsPreviewModal({
           <Icon kind="Close" size="14" color={palette.pine2} />
         </Button>
       </ModalControls>
-      <Wrapper
-        className="WorkflowsPreviewModal"
-        responsiveRevamp={!!featureVariants.responsiveRevamp}
-      >
-        {pageContent}
-      </Wrapper>
+      <ModalContext.Provider value={setModalIsOpen}>
+        <Wrapper
+          className="WorkflowsPreviewModal"
+          responsiveRevamp={!!featureVariants.responsiveRevamp}
+        >
+          {pageContent}
+        </Wrapper>
+      </ModalContext.Provider>
     </StyledDrawerModal>
   );
 }

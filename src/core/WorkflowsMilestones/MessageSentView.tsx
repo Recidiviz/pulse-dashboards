@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Dispatch, SetStateAction } from "react";
+
+import { useContext, useEffect } from "react";
 
 import { ReactComponent as GreenCheckmark } from "../../assets/static/images/greenCheckmark.svg";
-import { ReactComponent as RedExcalamationPoint } from "../../assets/static/images/redExcalamation.svg";
 import { formatWorkflowsDate } from "../../utils/formatStrings";
 import { Client } from "../../WorkflowsStore";
 import {
@@ -25,8 +25,11 @@ import {
   optionalFieldToDate,
 } from "../../WorkflowsStore/utils";
 import { Heading } from "../WorkflowsClientProfile/Heading";
+import { ModalContext } from "../WorkflowsPreviewModal";
 import Banner from "./Banner";
 import {
+  ButtonsContainer,
+  ButtonWithLoader,
   PhoneNumber,
   ReviewInfo,
   ReviewMessage,
@@ -51,6 +54,25 @@ export const MessageSentView = function MessageSentView({
     optionalFieldToDate(milestonesMessageDetails?.updated?.date)
   );
 
+  const setModalIsOpen = useContext(ModalContext);
+  const closeModalTimeoutMS = 4000;
+
+  // Auto dismiss for the modal if the modal is open and hasAutoDismiss is true,
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (closeModalTimeoutMS) {
+      timer = setTimeout(() => {
+        setModalIsOpen(false);
+      }, closeModalTimeoutMS);
+    }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [setModalIsOpen, closeModalTimeoutMS]);
+
   return (
     <SidePanelContents>
       <Banner icon={GreenCheckmark} text="Message Sent!" />
@@ -64,6 +86,16 @@ export const MessageSentView = function MessageSentView({
         {messageSentOn && `on ${messageSentOn}`}.
       </ReviewInfo>
       <ReviewMessage>{milestonesFullTextMessage}</ReviewMessage>
+      {closeModalTimeoutMS && (
+        <ButtonsContainer>
+          <ButtonWithLoader
+            onClick={() => setModalIsOpen(false)}
+            loadingTimeMS={closeModalTimeoutMS}
+          >
+            Close
+          </ButtonWithLoader>
+        </ButtonsContainer>
+      )}
     </SidePanelContents>
   );
 };
