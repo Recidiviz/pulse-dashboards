@@ -106,7 +106,7 @@ const ComposeMessageView = observer(function ComposeMessageView({
           onClick={handleOnReviewClick}
           disabled={disableReviewButton}
         >
-          Review
+          Review and Send
         </ActionButton>
         <AlreadyCongratulatedButton onClick={handleOnCongratulatedClick}>
           I congratulated them in-person or another way

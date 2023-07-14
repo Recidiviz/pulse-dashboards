@@ -29,6 +29,7 @@ import {
   ReviewInfo,
   ReviewMessage,
   SidePanelContents,
+  SidePanelHeader,
 } from "./styles";
 
 interface ReviewMessageProps {
@@ -50,6 +51,7 @@ const ReviewMessageView = observer(function ReviewMessageView({
   return (
     <SidePanelContents>
       <Heading person={client} />
+      <SidePanelHeader>Review Message</SidePanelHeader>
       <ReviewInfo>
         Here&apos;s a preview of the full text message we&apos;ll send to{" "}
         {client.displayPreferredName} at{" "}
