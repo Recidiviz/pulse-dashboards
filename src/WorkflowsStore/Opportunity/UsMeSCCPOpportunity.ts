@@ -44,7 +44,7 @@ const ELIGIBLE_CRITERIA_COPY: Record<
   keyof UsMeSCCPCriteria,
   Required<OpportunityRequirement>
 > = {
-  usMeMinimumOrCommunityCustody: {
+  usMeCustodyLevelIsMinimumOrCommunity: {
     text: "Currently on $CUSTODY_LEVEL",
     tooltip: "Currently on minimum or community custody",
   },
@@ -163,20 +163,20 @@ const requirementsForEligibleCriteria = (
   const requirements: OpportunityRequirement[] = [];
 
   const {
-    usMeMinimumOrCommunityCustody,
+    usMeCustodyLevelIsMinimumOrCommunity,
     usMeServedXPortionOfSentence,
     usMeXMonthsRemainingOnSentence,
     usMeNoDetainersWarrantsOrOther,
     usMeNoClassAOrBViolationFor90Days,
   } = cloneDeep(ELIGIBLE_CRITERIA_COPY);
 
-  if (criteria.usMeMinimumOrCommunityCustody) {
-    usMeMinimumOrCommunityCustody.text =
-      usMeMinimumOrCommunityCustody.text.replace(
+  if (criteria.usMeCustodyLevelIsMinimumOrCommunity) {
+    usMeCustodyLevelIsMinimumOrCommunity.text =
+      usMeCustodyLevelIsMinimumOrCommunity.text.replace(
         "$CUSTODY_LEVEL",
-        criteria.usMeMinimumOrCommunityCustody.custodyLevel.toLowerCase()
+        criteria.usMeCustodyLevelIsMinimumOrCommunity.custodyLevel.toLowerCase()
       );
-    requirements.push(usMeMinimumOrCommunityCustody);
+    requirements.push(usMeCustodyLevelIsMinimumOrCommunity);
   }
 
   if (criteria.usMeServedXPortionOfSentence) {

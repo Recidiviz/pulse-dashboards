@@ -25,7 +25,7 @@ export const usMeSCCPFixture: FixtureData<UsMeSCCPReferralRecordRaw> = {
       stateCode: "US_ME",
       externalId: "RES001",
       eligibleCriteria: {
-        usMeMinimumOrCommunityCustody: {
+        usMeCustodyLevelIsMinimumOrCommunity: {
           custodyLevel: "COMMUNITY",
         },
         usMeNoClassAOrBViolationFor90Days: null,
@@ -54,7 +54,7 @@ export const usMeSCCPFixture: FixtureData<UsMeSCCPReferralRecordRaw> = {
       stateCode: "US_ME",
       externalId: "RES002",
       eligibleCriteria: {
-        usMeMinimumOrCommunityCustody: {
+        usMeCustodyLevelIsMinimumOrCommunity: {
           custodyLevel: "MINIMUM",
         },
         usMeNoClassAOrBViolationFor90Days: null,
@@ -82,7 +82,7 @@ export const usMeSCCPFixture: FixtureData<UsMeSCCPReferralRecordRaw> = {
       stateCode: "US_ME",
       externalId: "RES003",
       eligibleCriteria: {
-        usMeMinimumOrCommunityCustody: {
+        usMeCustodyLevelIsMinimumOrCommunity: {
           custodyLevel: "MINIMUM",
         },
         usMeNoDetainersWarrantsOrOther: null,

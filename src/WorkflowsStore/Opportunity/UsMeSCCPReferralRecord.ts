@@ -42,12 +42,36 @@ const possiblyIneligibleCriteria = z
 
 export const usMeSCCPSchema = opportunitySchemaBase
   .extend({
-    eligibleCriteria: possiblyIneligibleCriteria.extend({
-      // optional because it can also be ineligible, with a different shape
-      usMeNoClassAOrBViolationFor90Days: z.null().optional(),
-      usMeMinimumOrCommunityCustody: z.object({ custodyLevel: z.string() }),
-      usMeNoDetainersWarrantsOrOther: z.null(),
-    }),
+    eligibleCriteria: possiblyIneligibleCriteria
+      .extend({
+        // optional because it can also be ineligible, with a different shape
+        usMeNoClassAOrBViolationFor90Days: z.null().optional(),
+        usMeNoDetainersWarrantsOrOther: z.null(),
+      })
+      .and(
+        z.union([
+          z.object({
+            usMeMinimumOrCommunityCustody: z.object({
+              custodyLevel: z.string(),
+            }),
+            usMeCustodyLevelIsMinimumOrCommunity: z.undefined(),
+          }),
+          z.object({
+            usMeMinimumOrCommunityCustody: z.undefined(),
+            usMeCustodyLevelIsMinimumOrCommunity: z.object({
+              custodyLevel: z.string(),
+            }),
+          }),
+        ])
+      )
+      .transform(({ usMeMinimumOrCommunityCustody, ...rest }) => {
+        if (usMeMinimumOrCommunityCustody)
+          return {
+            ...rest,
+            usMeCustodyLevelIsMinimumOrCommunity: usMeMinimumOrCommunityCustody,
+          };
+        return rest;
+      }),
     ineligibleCriteria: possiblyIneligibleCriteria.extend({
       usMeNoClassAOrBViolationFor90Days: z
         .object({

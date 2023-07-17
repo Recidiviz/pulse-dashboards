@@ -680,7 +680,7 @@ export const usMeSCCPEligibleRecordFixture: UsMeSCCPReferralRecord = {
   externalId: "111",
   ineligibleCriteria: {},
   eligibleCriteria: {
-    usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+    usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
     usMeServedXPortionOfSentence: {
       eligibleDate: parseISO("2022-10-12"),
       xPortionServed: "2/3",
@@ -708,7 +708,7 @@ export const usMeSCCPEligibleRecordHalfPortionFixture: UsMeSCCPReferralRecord =
     externalId: "112",
     ineligibleCriteria: {},
     eligibleCriteria: {
-      usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
       usMeServedXPortionOfSentence: {
         eligibleDate: parseISO("2022-04-15"),
         xPortionServed: "1/2",
@@ -740,7 +740,7 @@ export const usMeSCCPAlmostEligibleXMonthsRecordFixture: UsMeSCCPReferralRecord 
       },
     },
     eligibleCriteria: {
-      usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
       usMeServedXPortionOfSentence: {
         eligibleDate: parseISO("2022-10-12"),
         xPortionServed: "2/3",
@@ -774,7 +774,7 @@ export const usMeSCCPAlmostEligibleViolationRecordFixture: UsMeSCCPReferralRecor
       usMeXMonthsRemainingOnSentence: {
         eligibleDate: parseISO("2022-06-14"),
       },
-      usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
       usMeServedXPortionOfSentence: {
         eligibleDate: parseISO("2022-10-12"),
         xPortionServed: "2/3",
@@ -806,7 +806,7 @@ export const usMeSCCPAlmostEligibleXPortionOfSentenceRecordFixture: UsMeSCCPRefe
       usMeXMonthsRemainingOnSentence: {
         eligibleDate: parseISO("2022-06-14"),
       },
-      usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
       usMeNoDetainersWarrantsOrOther: null,
       usMeNoClassAOrBViolationFor90Days: null,
     },
