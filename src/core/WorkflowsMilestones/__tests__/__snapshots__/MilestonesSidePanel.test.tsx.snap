@@ -1027,6 +1027,25 @@ Object {
               data-testid="CongratulatedSidePanel"
             >
               <div
+                class="styles__SidePanelBanner-sc-b21pq-2 iZNfHj"
+              >
+                <div
+                  class="styles__BannerTextWrapper-sc-b21pq-0 hinRFK"
+                >
+                  <div />
+                  <span
+                    class="styles__BannerText-sc-b21pq-1 jrEYVW"
+                  >
+                    Congratulated
+                  </span>
+                </div>
+                <span
+                  class="styles__TextLink-sc-b21pq-13 hZoEvc"
+                >
+                  Undo
+                </span>
+              </div>
+              <div
                 class="Heading__HeadingWrapper-sc-aj8r1c-0 jVcXiT"
               >
                 <a

@@ -39,7 +39,12 @@ export const MilestonesSidePanel = observer(function MilestonesSidePanel({
     case "NEW_MILESTONES":
       return <NewMilestonesSidePanel client={selectedClient} />;
     case "CONGRATULATED":
-      return <CongratulatedSidePanel client={selectedClient} />;
+      return (
+        <CongratulatedSidePanel
+          client={selectedClient}
+          closeModal={() => workflowsStore.updateSelectedPerson(undefined)}
+        />
+      );
     case "DECLINED":
       return (
         <DeclinedSidePanel

@@ -17,6 +17,7 @@
 import { observer } from "mobx-react-lite";
 
 import { ReactComponent as GreenCheckmark } from "../../assets/static/images/greenCheckmark.svg";
+import { TextMessageStatuses } from "../../FirestoreStore";
 import { formatWorkflowsDate } from "../../utils/formatStrings";
 import { Client } from "../../WorkflowsStore";
 import {
@@ -31,14 +32,17 @@ import {
   ReviewInfo,
   ReviewMessage,
   SidePanelContents,
+  TextLink,
 } from "./styles";
 
 interface CongratulatedSidePanelProps {
   client: Client;
+  closeModal?: () => void;
 }
 
 const MessageSentView = function MessageSentView({
   client,
+  closeModal,
 }: CongratulatedSidePanelProps) {
   const {
     milestonesFullTextMessage,
@@ -70,11 +74,21 @@ const MessageSentView = function MessageSentView({
 
 const CongratulatedAnotherWayView = function CongratulatedAnotherWayView({
   client,
+  closeModal,
 }: CongratulatedSidePanelProps) {
   const statusUpdatedBy = client.milestoneMessagesUpdates?.updated?.by;
+  const handleUndoCongratuled = async () => {
+    await client.updateMilestonesStatus(TextMessageStatuses.PENDING);
+    if (closeModal) closeModal();
+  };
 
   return (
     <SidePanelContents data-testid="CongratulatedSidePanel">
+      <Banner
+        icon={GreenCheckmark}
+        text="Congratulated"
+        actionLink={<TextLink onClick={handleUndoCongratuled}>Undo</TextLink>}
+      />
       <Heading person={client} />
       <ReviewInfo>
         {statusUpdatedBy} indicated that they congratulated{" "}
@@ -87,6 +101,7 @@ const CongratulatedAnotherWayView = function CongratulatedAnotherWayView({
 
 const CongratulatedSidePanel = observer(function CongratulatedSidePanel({
   client,
+  closeModal,
 }: CongratulatedSidePanelProps): JSX.Element | null {
   const {
     milestonesMessageStatus,
@@ -111,7 +126,9 @@ const CongratulatedSidePanel = observer(function CongratulatedSidePanel({
   return (
     <WorkflowsPreviewModal
       isOpen={!!client}
-      pageContent={<CongratulatedAnotherWayView client={client} />}
+      pageContent={
+        <CongratulatedAnotherWayView client={client} closeModal={closeModal} />
+      }
     />
   );
 });
