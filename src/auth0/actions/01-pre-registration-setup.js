@@ -70,9 +70,9 @@ exports.onExecutePreUserRegistration = async (event, api) => {
 
     // Set state_code for CSG users
     if (userDomain === "csg.org") {
-      api.user.setAppMetadata("stateCode", "lantern");
+      api.user.setAppMetadata("stateCode", "CSG");
       // TODO #3170 Remove this once UserAppMetadata has been transitioned
-      api.user.setAppMetadata("state_code", "lantern");
+      api.user.setAppMetadata("state_code", "CSG");
       return;
     }
 

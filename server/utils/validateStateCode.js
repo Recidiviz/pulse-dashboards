@@ -32,7 +32,8 @@ const validateStateCode = () => {
     if (
       userStateCode === "recidiviz" ||
       userStateCode === reqStateCode ||
-      (userStateCode === "lantern" &&
+      // TODO(#3622): [Dashboard][Auth] Remove lantern state code from frontend
+      ((userStateCode === "lantern" || userStateCode === "csg") &&
         lanternStateCodes.map((c) => c.toLowerCase()).includes(reqStateCode))
     ) {
       next();
