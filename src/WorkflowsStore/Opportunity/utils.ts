@@ -225,6 +225,12 @@ export const generateOpportunityHydratedHeader = (
       callToAction:
         "Review clients who are past their full-term release date and complete discharges in Omni.",
     },
+    usMeFurloughRelease: {
+      eligibilityText: simplur`${count} resident[|s] may be eligible for the `,
+      opportunityText: "Furlough Program",
+      callToAction:
+        "Search for case managers below to review residents on their caseload who are approaching standard furlough release eligibility and complete application paperwork.",
+    },
     usCaSupervisionLevelDowngrade: {
       eligibilityText: simplur`${count} client[|s] may be `,
       opportunityText: "eligible for a supervision level downgrade",
@@ -284,6 +290,7 @@ export const opportunityToSortFunctionMapping: Record<
   usMeEarlyTermination: sortByReviewStatus,
   usMiMinimumTelephoneReporting: sortByReviewStatus,
   usMiPastFTRD: sortByReviewStatusAndEligibilityDate,
+  usMeFurloughRelease: sortByReviewStatus,
   usCaSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
 };
 

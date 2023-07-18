@@ -83,6 +83,7 @@ const PAGE_CONTENT: Record<
   usMeEarlyTermination: {},
   usMiMinimumTelephoneReporting: {},
   usMiPastFTRD: {},
+  usMeFurloughRelease: {},
   usCaSupervisionLevelDowngrade: {
     formContents: <WorkflowsUsCaSupervisionLevelDowngradeForm />,
   },

@@ -59,6 +59,7 @@ export const collectionNames = {
   usMeEarlyTerminationReferrals: "US_ME-earlyTerminationReferrals",
   usMiMinimumTelephoneReportingReferrals: "US_MI-minimumTelephoneReporting",
   usMiPastFTRDReferrals: "US_MI-pastFTRDReferrals",
+  usMeFurloughReleaseReferrals: "US_ME-furloughReleaseReferrals",
   usCaSupervisionLevelDowngradeReferrals: "US_CA-supervisionLevelDowngrade",
 };
 

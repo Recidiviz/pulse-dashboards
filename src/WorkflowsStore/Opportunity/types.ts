@@ -50,6 +50,7 @@ export const INCARCERATION_OPPORTUNITY_TYPES = [
   "usMeSCCP",
   "usMoRestrictiveHousingStatusHearing",
   "usTnCustodyLevelDowngrade",
+  "usMeFurloughRelease",
 ] as const;
 export type IncarcerationOpportunityType =
   typeof INCARCERATION_OPPORTUNITY_TYPES[number];
@@ -81,6 +82,7 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   usMeEarlyTermination: "Early Termination",
   usMiMinimumTelephoneReporting: "Minimum Telephone Reporting",
   usMiPastFTRD: "Overdue for Discharge",
+  usMeFurloughRelease: "Furlough Program",
   usCaSupervisionLevelDowngrade: "Supervision Level Downgrade",
 };
 
@@ -106,6 +108,7 @@ export const OPPORTUNITY_TYPE_URLS_BY_STATE: PartialRecord<
   US_ME: {
     usMeSCCP: "SCCP",
     usMeEarlyTermination: "earlyTermination",
+    usMeFurloughRelease: "furloughRelease",
     usMeWorkRelease: "workRelease",
   },
   US_MI: {

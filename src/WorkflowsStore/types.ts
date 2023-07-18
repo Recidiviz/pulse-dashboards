@@ -42,6 +42,7 @@ import {
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
 import { UsCaSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsCaSupervisionLevelDowngradeOpportunity";
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
+import { UsMeFurloughReleaseOpportunity } from "./Opportunity/UsMeFurloughReleaseOpportunity";
 import { UsMeWorkReleaseOpportunity } from "./Opportunity/UsMeWorkReleaseOpportunity";
 import { UsMiClassificationReviewOpportunity } from "./Opportunity/UsMiClassificationReviewOpportunity";
 import { UsMiEarlyDischargeOpportunity } from "./Opportunity/UsMiEarlyDischargeOpportunity";
@@ -84,6 +85,7 @@ export type IncarcerationOpportunityMapping = {
   usMeSCCP?: UsMeSCCPOpportunity;
   usMoRestrictiveHousingStatusHearing?: UsMoRestrictiveHousingStatusHearingOpportunity;
   usTnCustodyLevelDowngrade?: UsTnCustodyLevelDowngradeOpportunity;
+  usMeFurloughRelease?: UsMeFurloughReleaseOpportunity;
 };
 // The following line will typecheck only if the keys of
 // IncarcerationOpportunityMapping are exhaustive

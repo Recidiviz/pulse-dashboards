@@ -99,7 +99,7 @@ const INELIGIBLE_CRITERIA_COPY = {
   },
 };
 
-function hydrateXMonthsRemainingRequirement(
+export function hydrateXMonthsRemainingRequirement(
   criterion: NonNullable<UsMeSCCPCriteria["usMeXMonthsRemainingOnSentence"]>,
   copy: OpportunityRequirement
 ) {

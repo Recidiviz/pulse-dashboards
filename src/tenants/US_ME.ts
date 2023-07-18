@@ -29,6 +29,7 @@ const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   // Shortcuts navigation. Leadership users should see SCCP before ET (see #3233).
   "usMeSCCP",
   "usMeEarlyTermination",
+  "usMeFurloughRelease",
   "usMeWorkRelease",
 ];
 

@@ -26,6 +26,7 @@ import {
   UsMeSCCPOpportunity,
   UsMoRestrictiveHousingStatusHearingOpportunity,
 } from "./Opportunity";
+import { UsMeFurloughReleaseOpportunity } from "./Opportunity/UsMeFurloughReleaseOpportunity";
 import { UsMeWorkReleaseOpportunity } from "./Opportunity/UsMeWorkReleaseOpportunity";
 import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTnCustodyLevelDowngradeOpportunity";
 import { optionalFieldToDate } from "./utils";
@@ -34,6 +35,7 @@ const residentialOpportunityConstructors: Record<
   IncarcerationOpportunityType,
   new (c: Resident) => Opportunity<Resident>
 > = {
+  usMeFurloughRelease: UsMeFurloughReleaseOpportunity,
   usMeSCCP: UsMeSCCPOpportunity,
   usMeWorkRelease: UsMeWorkReleaseOpportunity,
   usMoRestrictiveHousingStatusHearing:

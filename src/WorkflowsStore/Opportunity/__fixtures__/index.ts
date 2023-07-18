@@ -28,6 +28,7 @@ import { CompliantReportingReferralRecord } from "../CompliantReportingReferralR
 import { EarnedDischargeReferralRecord } from "../EarnedDischargeReferralRecord";
 import { LSUReferralRecord } from "../LSUReferralRecord";
 import { UsMeEarlyTerminationReferralRecord } from "../UsMeEarlyTerminationReferralRecord";
+import { UsMeFurloughReleaseReferralRecord } from "../UsMeFurloughReleaseReferralRecord";
 import { UsMeSCCPReferralRecord } from "../UsMeSCCPReferralRecord";
 import { UsMiMinimumTelephoneReportingReferralRecord } from "../UsMiMinimumTelephoneReportingReferralRecord";
 import { UsMiPastFTRDReferralRecord } from "../UsMiPastFTRDReferralRecord";
@@ -655,7 +656,7 @@ export const usMePersonRecord: ResidentRecord = {
   officerId: "CASE_MANAGER_1",
   admissionDate: "2020-03-10",
   releaseDate: "2025-05-20",
-  allEligibleOpportunities: ["usMeSCCP"],
+  allEligibleOpportunities: ["usMeSCCP", "usMeFurloughRelease"],
 };
 
 export const usMePersonRecordShorterSentence: ResidentRecord = {
@@ -674,6 +675,33 @@ export const usMePersonRecordShorterSentence: ResidentRecord = {
   releaseDate: "2024-05-20",
   allEligibleOpportunities: ["usMeSCCP"],
 };
+
+export const usMeFurloughReleaseEligibleRecordFixture: UsMeFurloughReleaseReferralRecord =
+  {
+    stateCode: "US_ME",
+    externalId: "111",
+    eligibleCriteria: {
+      usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+      usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
+        eligibleDate: parseISO("2022-08-10"),
+      },
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: parseISO("2022-08-14"),
+      },
+      usMeNoClassAOrBViolationFor90Days: null,
+      usMeNoDetainersWarrantsOrOther: null,
+    },
+    ineligibleCriteria: {},
+    caseNotes: {
+      foo: [
+        {
+          noteTitle: "A title",
+          noteBody: "A body",
+          eventDate: parseISO("2022-06-28"),
+        },
+      ],
+    },
+  };
 
 export const usMeSCCPEligibleRecordFixture: UsMeSCCPReferralRecord = {
   stateCode: "US_ME",

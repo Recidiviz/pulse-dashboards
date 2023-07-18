@@ -20,7 +20,11 @@ import { FixtureData } from "../workflowsFixtures";
 
 const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
   {
-    allEligibleOpportunities: ["usMeSCCP", "usMeWorkRelease"],
+    allEligibleOpportunities: [
+      "usMeSCCP",
+      "usMeWorkRelease",
+      "usMeFurloughRelease",
+    ],
     officerId: "OFFICER5",
     stateCode: "US_ME",
     personExternalId: "RES001",
@@ -37,7 +41,12 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     portionServedNeeded: "2/3",
   },
   {
-    allEligibleOpportunities: ["usMeSCCP", "usMeWorkRelease"],
+    allEligibleOpportunities: [
+      "usMeSCCP",
+      "usMeWorkRelease",
+      "usMeFurloughRelease",
+    ],
+
     officerId: "OFFICER5",
     stateCode: "US_ME",
     personExternalId: "RES002",
@@ -54,7 +63,11 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     portionServedNeeded: "1/2",
   },
   {
-    allEligibleOpportunities: ["usMeSCCP", "usMeWorkRelease"],
+    allEligibleOpportunities: [
+      "usMeSCCP",
+      "usMeWorkRelease",
+      "usMeFurloughRelease",
+    ],
     officerId: "OFFICER5",
     stateCode: "US_ME",
     personExternalId: "RES003",
