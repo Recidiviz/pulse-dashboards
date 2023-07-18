@@ -25,13 +25,16 @@ import { toast } from "react-hot-toast";
 import {
   ClientEmployer,
   ClientRecord,
+  congratulationsMilestoneTypes,
   DeclineReason,
   Milestone,
   MilestonesMessage,
+  MilestoneType,
+  profileMilestoneTypes,
   SpecialConditionCode,
   TextMessageStatus,
   TextMessageStatuses,
-} from "../FirestoreStore";
+} from "../FirestoreStore/types";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
@@ -174,7 +177,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   currentEmployers?: ClientEmployer[];
 
-  milestones?: Milestone[];
+  allMilestones?: Milestone[];
 
   emailAddress?: string;
 
@@ -215,7 +218,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       record.supervisionStartDate
     );
     this.currentEmployers = record.currentEmployers;
-    this.milestones = record.milestones;
+    this.allMilestones = record.milestones;
     this.emailAddress = record.emailAddress;
   }
 
@@ -301,6 +304,20 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return searchField ? this.record[searchField] : this.assignedStaffId;
   }
 
+  getFilteredMilestones(types: readonly MilestoneType[]): Milestone[] {
+    return (this.allMilestones ?? []).filter(({ type }) =>
+      types.includes(type)
+    );
+  }
+
+  get profileMilestones(): Milestone[] {
+    return this.getFilteredMilestones(profileMilestoneTypes);
+  }
+
+  get congratulationsMilestones(): Milestone[] {
+    return this.getFilteredMilestones(congratulationsMilestoneTypes);
+  }
+
   get milestoneMessagesUpdates(): MilestonesMessage | undefined {
     return this.milestonesMessageUpdatesSubscription?.data;
   }
@@ -342,10 +359,6 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return (
       clearPhoneNumberFormatting(enteredPhoneNumber) !== this.rawPhoneNumber
     );
-  }
-
-  get hasMilestones(): boolean {
-    return (this.milestones ?? []).length > 0;
   }
 
   async updateMilestonesDeclineReasons(
@@ -508,7 +521,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       this.displayPreferredName ?? this.fullName.givenNames ?? ""
     }! Congratulations on reaching these milestones:
 
-    ${this.milestones?.map((m) => `- ${m.text}`).join("\n")}
+    ${this.congratulationsMilestones.map((m) => `- ${m.text}`).join("\n")}
   `;
   }
 }

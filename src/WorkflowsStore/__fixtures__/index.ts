@@ -105,6 +105,10 @@ export const ineligibleClient: ClientRecord = {
       text: "15 months on supervision",
       type: "MONTHS_ON_SUPERVISION",
     },
+    {
+      text: "6 months violation-free",
+      type: "NO_VIOLATION_WITHIN_6_MONTHS",
+    },
   ],
 };
 
@@ -158,6 +162,10 @@ export const eligibleClient: ClientRecord = {
       text: "15 months on supervision",
       type: "MONTHS_ON_SUPERVISION",
     },
+    {
+      text: "6 months violation-free",
+      type: "NO_VIOLATION_WITHIN_6_MONTHS",
+    },
   ],
 };
 
@@ -192,6 +200,10 @@ export const lsuEligibleClient: ClientRecord = {
     {
       text: "15 months on supervision",
       type: "MONTHS_ON_SUPERVISION",
+    },
+    {
+      text: "6 months violation-free",
+      type: "NO_VIOLATION_WITHIN_6_MONTHS",
     },
   ],
 };
@@ -231,6 +243,10 @@ export const lsuAlmostEligibleClient: ClientRecord = {
     {
       text: "15 months on supervision",
       type: "MONTHS_ON_SUPERVISION",
+    },
+    {
+      text: "6 months violation-free",
+      type: "NO_VIOLATION_WITHIN_6_MONTHS",
     },
   ],
 };

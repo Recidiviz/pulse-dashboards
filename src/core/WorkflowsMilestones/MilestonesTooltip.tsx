@@ -43,7 +43,7 @@ const SectionDetails = styled(TooltipSectionDetails)`
 `;
 
 const MilestonesSection: React.FC<{
-  milestones: Client["milestones"];
+  milestones: Client["congratulationsMilestones"];
 }> = ({ milestones }) => {
   if (!milestones) return null;
   return (
@@ -62,7 +62,7 @@ const MilestonesSection: React.FC<{
 const TooltipDetails: React.FC<{ client: Client }> = ({ client }) => {
   return (
     <TooltipContainer>
-      <MilestonesSection milestones={client.milestones} />
+      <MilestonesSection milestones={client.congratulationsMilestones} />
       <OpportunitiesSection person={client} />
     </TooltipContainer>
   );

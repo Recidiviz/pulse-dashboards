@@ -202,7 +202,7 @@ function ClientDetails({
             <Divider />
           </>
         )}
-      {client.milestones && client.milestones.length > 0 && (
+      {client.profileMilestones.length > 0 && (
         <>
           <Milestones client={client} />
           <Divider />

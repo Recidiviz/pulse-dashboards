@@ -513,12 +513,12 @@ export function CaseNotes({
 }
 
 export function Milestones({ client }: ClientProfileProps): React.ReactElement {
-  if (client.milestones && client.milestones.length > 0) {
+  if (client.profileMilestones.length > 0) {
     return (
       <DetailsSection>
         <DetailsHeading>Milestones</DetailsHeading>
         <DetailsContent>
-          {client.milestones?.map((milestone) => {
+          {client.profileMilestones?.map((milestone) => {
             return (
               <MilestonesList
                 key={`${client.pseudonymizedId}-${milestone.type}`}
@@ -752,7 +752,7 @@ export function ClientProfileDetails({
     <>
       <Supervision client={client} />
       {featureVariants.responsiveRevamp && <Divider />}
-      {client.milestones && client.milestones.length > 0 && (
+      {client.profileMilestones.length > 0 && (
         <>
           <Milestones client={client} />
           {featureVariants.responsiveRevamp && <Divider />}

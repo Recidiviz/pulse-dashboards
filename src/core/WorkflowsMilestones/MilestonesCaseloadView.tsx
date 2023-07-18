@@ -89,11 +89,11 @@ export function ClientMilestones({
   client: Client;
   showAll?: boolean;
 }): JSX.Element {
-  const numMilestonesLeft = (client.milestones?.length || 0) - 2;
+  const numMilestonesLeft = (client.congratulationsMilestones?.length || 0) - 2;
 
   return (
     <MilestonesList>
-      {client.milestones?.map((milestone, index) => {
+      {client.congratulationsMilestones?.map((milestone, index) => {
         if (index < 2 || showAll) {
           return (
             <MilestonesItem key={`${client.pseudonymizedId}-${milestone.type}`}>

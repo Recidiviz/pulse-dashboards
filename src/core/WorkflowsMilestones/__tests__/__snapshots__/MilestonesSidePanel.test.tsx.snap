@@ -522,17 +522,7 @@ Object {
                   <span
                     class="styles__MilestonesText-sc-b21pq-15 jueBoL"
                   >
-                    Birthday this month (February 14)
-                  </span>
-                </div>
-                <div
-                  class="styles__MilestonesItem-sc-b21pq-16 cTglTb"
-                >
-                  <div />
-                  <span
-                    class="styles__MilestonesText-sc-b21pq-15 jueBoL"
-                  >
-                    15 months on supervision
+                    6 months violation-free
                   </span>
                 </div>
               </div>
@@ -796,17 +786,7 @@ Object {
                   <span
                     class="styles__MilestonesText-sc-b21pq-15 jueBoL"
                   >
-                    Birthday this month (February 14)
-                  </span>
-                </div>
-                <div
-                  class="styles__MilestonesItem-sc-b21pq-16 cTglTb"
-                >
-                  <div />
-                  <span
-                    class="styles__MilestonesText-sc-b21pq-15 jueBoL"
-                  >
-                    15 months on supervision
+                    6 months violation-free
                   </span>
                 </div>
               </div>
@@ -840,7 +820,7 @@ Object {
                    
                   <span>
                      
-                    1450
+                    1487
                     /
                     1600
                   </span>
@@ -852,13 +832,12 @@ Object {
 
 Hey LINET HANSEN! Congratulations on reaching these milestones:
 
-- Birthday this month (February 14)
-- 15 months on supervision
+- 6 months violation-free
                 </div>
                 <textarea
                   class="TextMessageInput__TextArea-sc-14y91c5-3 dDfSjC"
                   id="textMessage"
-                  maxlength="1450"
+                  maxlength="1487"
                   placeholder="Add your own message (Optional)"
                 />
               </div>

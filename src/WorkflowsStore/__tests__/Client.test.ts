@@ -94,7 +94,10 @@ describe("Client", () => {
       personType: "CLIENT",
       phoneNumber: "1112223333",
       milestones: [
-        { type: "MONTHS_WITHOUT_VIOLATION", text: "6 months violation-free" },
+        {
+          type: "NO_VIOLATION_WITHIN_6_MONTHS",
+          text: "6 months violation-free",
+        },
       ],
     };
   });

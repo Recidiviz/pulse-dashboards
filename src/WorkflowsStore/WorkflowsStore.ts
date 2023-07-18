@@ -510,7 +510,7 @@ export class WorkflowsStore implements Hydratable {
 
   get milestonesClients(): Client[] {
     return this.caseloadPersons.filter((person) => {
-      return isClient(person) && person.hasMilestones;
+      return isClient(person) && person.congratulationsMilestones.length > 0;
     }) as Client[];
   }
 
