@@ -132,7 +132,7 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     stateCode: "US_CA",
     officerId: "OFFICER1",
     supervisionType: "PROBATION",
-    supervisionLevel: "MEDIUM",
+    supervisionLevel: "HIGH",
     supervisionLevelStart: "2019-12-20",
     address: "123 Bedrock Lane",
     phoneNumber: "5555555678",
@@ -141,7 +141,7 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     currentBalance: 1221.88,
     lastPaymentAmount: 125.75,
     lastPaymentDate: "2022-01-04",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: ["usCaSupervisionLevelDowngrade"],
     currentEmployers: [
       {
         name: "Tire store",
@@ -170,7 +170,7 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     stateCode: "US_CA",
     officerId: "OFFICER1",
     supervisionType: "PROBATION",
-    supervisionLevel: "MEDIUM",
+    supervisionLevel: "HIGH",
     supervisionLevelStart: "2019-12-20",
     address: "123 Bedrock Lane",
     phoneNumber: "5555555678",
@@ -179,7 +179,7 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     currentBalance: 1221.88,
     lastPaymentAmount: 125.75,
     lastPaymentDate: "2022-01-04",
-    allEligibleOpportunities: [],
+    allEligibleOpportunities: ["usCaSupervisionLevelDowngrade"],
     currentEmployers: [
       {
         name: "Tire store",

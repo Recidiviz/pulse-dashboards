@@ -33,7 +33,7 @@ export const usCaSupervisionLevelDowngradeSchema = z.object({
   ineligibleCriteria: z.object({}),
 });
 
-export type UsSupervisionLevelDowngradeReferralRecordRaw = z.input<
+export type UsCaSupervisionLevelDowngradeReferralRecordRaw = z.input<
   typeof usCaSupervisionLevelDowngradeSchema
 >;
 
