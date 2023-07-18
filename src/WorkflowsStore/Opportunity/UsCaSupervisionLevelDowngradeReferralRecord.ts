@@ -49,4 +49,5 @@ export type UsCaSupervisionLevelDowngradeDraftData = {
   offense: string;
   csraScore: string;
   supervisionLevel: string;
+  reviewType: string;
 };

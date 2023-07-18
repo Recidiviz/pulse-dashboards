@@ -15,9 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
+import React from "react";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../../../components/StoreProvider";
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCaSupervisionLevelDowngradeReferralRecord";
+import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import FormInput from "./FormInput";
 import {
   FormSection,
@@ -47,6 +51,99 @@ const InputHeader = styled.div`
   ${SmallTextStyle};
   ${NarrowFont};
 `;
+
+const ReviewTypeCheckboxContainer = styled.div`
+  ${SmallTextStyle};
+  ${NarrowFont};
+  width: 28%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+
+  & label {
+    margin-bottom: 0;
+    display: flex;
+  }
+
+  // The below replaces the standard radio button with black squares
+  & input[type="radio"] {
+    appearance: none;
+    background-color: #fff;
+    margin: 0 3px;
+    font: inherit;
+    color: black;
+    width: 1em;
+    height: 1em;
+    border: 0.15em solid black;
+    transform: translateY(0.175em);
+    display: grid;
+    place-content: center;
+
+    &::before {
+      content: "";
+      width: 0.7em;
+      height: 0.7em;
+      transform: scale(0);
+      transition: 120ms transform ease-in-out;
+      box-shadow: inset 1em 1em black;
+    }
+
+    &:checked::before {
+      transform: scale(1);
+    }
+  }
+`;
+
+const ReviewTypeCheckbox = observer(function ReviewTypeCheckbox() {
+  const { firestoreStore } = useRootStore();
+  const opportunityForm = useOpportunityFormContext();
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    firestoreStore.updateFormDraftData(
+      opportunityForm,
+      "reviewType",
+      event.target.value
+    );
+  };
+
+  const formData =
+    opportunityForm.formData as UsCaSupervisionLevelDowngradeDraftData;
+
+  return (
+    <ReviewTypeCheckboxContainer>
+      <label>
+        <input
+          type="radio"
+          name="reviewType"
+          value="ABBREVIATED"
+          onChange={onChange}
+          checked={formData.reviewType === "ABBREVIATED"}
+        />
+        ABBREVIATED CASE CONFERENCE REVIEW
+      </label>
+      <label>
+        <input
+          type="radio"
+          name="reviewType"
+          value="STANDARD"
+          onChange={onChange}
+          checked={formData.reviewType === "STANDARD"}
+        />
+        CASE CONFERENCE REVIEW
+      </label>
+      <label>
+        <input
+          type="radio"
+          name="reviewType"
+          value="DISCHARGE"
+          onChange={onChange}
+          checked={formData.reviewType === "DISCHARGE"}
+        />
+        DISCHARGE CONSIDERATION COMMITTEE
+      </label>
+    </ReviewTypeCheckboxContainer>
+  );
+});
 
 const RowInput = ({
   header,
@@ -94,7 +191,7 @@ const FormSectionOne = () => {
           width={13}
           name="supervisionLevel"
         />
-        <div />
+        <ReviewTypeCheckbox />
       </SummaryRow>
     </FormSection>
   );
