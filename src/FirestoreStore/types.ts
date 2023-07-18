@@ -313,7 +313,7 @@ export type UpdateLog = {
 export type Denial<DenialReason = string> = {
   reasons: DenialReason[];
   otherReason?: string;
-  updated: UpdateLog;
+  updated?: UpdateLog;
 };
 
 export type FormFieldData = Record<
@@ -382,9 +382,9 @@ export type MilestonesMessage = {
   declinedReasons?: Denial<DeclineReason>;
   pendingMessage?: string;
   messageDetails?: {
-    updated?: UpdateLog;
     message?: string;
     recipient?: string;
+    sentBy?: string;
     mid?: string;
     stateCode?: string;
   };

@@ -111,7 +111,7 @@ export function ClientMilestones({
 }
 
 function CongratulationStatus({ client }: { client: Client }): JSX.Element {
-  const updated = client.milestoneMessagesUpdates?.updated;
+  const updated = client.milestonesMessageUpdateLog;
   const date = formatWorkflowsDate(optionalFieldToDate(updated?.date));
 
   switch (client.milestonesMessageStatus) {

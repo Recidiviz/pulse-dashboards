@@ -46,13 +46,13 @@ const MessageSentView = function MessageSentView({
 }: CongratulatedSidePanelProps) {
   const {
     milestonesFullTextMessage,
-    milestonesMessageDetails,
+    milestonesMessageUpdateLog,
     milestonesPhoneNumber,
   } = client;
   const messageSentBy =
-    milestonesMessageDetails?.updated?.by ?? client.assignedStaffFullName;
+    milestonesMessageUpdateLog?.by ?? client.assignedStaffFullName;
   const messageSentOn = formatWorkflowsDate(
-    optionalFieldToDate(milestonesMessageDetails?.updated?.date)
+    optionalFieldToDate(milestonesMessageUpdateLog?.date)
   );
   return (
     <SidePanelContents data-testid="CongratulatedSidePanel">

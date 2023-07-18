@@ -34,7 +34,7 @@ const milestonesMessages: (MilestonesMessage & { externalId: string })[] = [
       recipient: "1112223333",
       mid: "992b2e4c-9jkd98",
       stateCode: "US_CA",
-      updated,
+      sentBy: "fake-email",
     },
   },
   {
@@ -43,7 +43,6 @@ const milestonesMessages: (MilestonesMessage & { externalId: string })[] = [
     status: "DECLINED",
     declinedReasons: {
       reasons: ["MILESTONE_NOT_MET"],
-      updated,
     },
   },
   {
@@ -56,7 +55,7 @@ const milestonesMessages: (MilestonesMessage & { externalId: string })[] = [
       recipient: "1112223333",
       mid: "992b2e4c-9jkd98",
       stateCode: "US_CA",
-      updated,
+      sentBy: "fake-email",
     },
   },
 ];

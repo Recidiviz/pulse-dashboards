@@ -325,6 +325,10 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return this.milestoneMessagesUpdates?.messageDetails;
   }
 
+  get milestonesMessageUpdateLog(): MilestonesMessage["updated"] | undefined {
+    return this.milestoneMessagesUpdates?.updated;
+  }
+
   get milestonesPhoneNumber(): string | undefined {
     const userEnteredPhoneNumber =
       this.milestoneMessagesUpdates?.messageDetails?.recipient;
@@ -364,7 +368,6 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         declinedReasons: {
           ...(reasons.length ? { reasons } : {}),
           ...otherReasonField,
-          updated,
         },
       }
     );
@@ -399,7 +402,6 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         updated,
         status: TextMessageStatuses.PENDING,
         messageDetails: {
-          updated,
           stateCode: this.stateCode,
           recipient: deletePhoneNumber ? deleteField() : phoneNumber,
         },
@@ -433,7 +435,6 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         status: TextMessageStatuses.PENDING,
         ...pendingMessage,
         messageDetails: {
-          updated,
           stateCode: this.stateCode,
           message: dedent`
             ${this.defaultMilestonesMessage}
@@ -461,6 +462,16 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   async sendMilestonesMessage(): Promise<void> {
     if (!this.milestonesFullTextMessage || !this.milestonesPhoneNumber) return;
     try {
+      await this.rootStore.firestoreStore.updateMilestonesMessages(
+        this.recordId,
+        {
+          updated: {
+            by: this.currentUserEmail || "user",
+            date: serverTimestamp(),
+          },
+          status: TextMessageStatuses.IN_PROGRESS,
+        }
+      );
       await this.rootStore.apiStore.postExternalSMSMessage({
         message: this.milestonesFullTextMessage,
         recipientExternalId: this.externalId,
@@ -468,6 +479,16 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         senderId: this.currentUserEmail ?? "Unknown",
       });
     } catch (e) {
+      await this.rootStore.firestoreStore.updateMilestonesMessages(
+        this.recordId,
+        {
+          updated: {
+            by: this.currentUserEmail || "user",
+            date: serverTimestamp(),
+          },
+          status: TextMessageStatuses.PENDING,
+        }
+      );
       toast.error(
         "We couldn't send your message. Please wait a moment and try again."
       );

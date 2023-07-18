@@ -22,11 +22,14 @@ import { configure, runInAction } from "mobx";
 import {
   ClientRecord,
   CombinedUserRecord,
+  MilestonesMessage,
   StaffRecord,
 } from "../../FirestoreStore";
 import FirestoreStore from "../../FirestoreStore/FirestoreStore";
 import { RootStore } from "../../RootStore";
+import APIStore from "../../RootStore/APIStore";
 import { Client } from "../Client";
+import { MilestonesMessageUpdateSubscription } from "../subscriptions/MilestonesMessageUpdateSubscription";
 import { OTHER_KEY } from "../utils";
 
 jest.mock("../subscriptions");
@@ -76,6 +79,9 @@ describe("Client", () => {
         updateMilestonesMessages: jest.fn(),
         db: jest.fn(),
       } as unknown as FirestoreStore,
+      apiStore: {
+        postExternalSMSMessage: jest.fn(),
+      } as unknown as APIStore,
     } as unknown as RootStore;
     record = {
       allEligibleOpportunities: [],
@@ -118,10 +124,6 @@ describe("Client", () => {
 
           This is a message`,
           stateCode: "US_XX",
-          updated: {
-            by: "staff@email.com",
-            date: "2023-06-12",
-          },
         },
         pendingMessage: "This is a message",
         status: "PENDING",
@@ -144,10 +146,6 @@ describe("Client", () => {
 
           - 6 months violation-free`,
           stateCode: "US_XX",
-          updated: {
-            by: "staff@email.com",
-            date: "2023-06-12",
-          },
         },
         pendingMessage: mockDeleteField(),
         status: "PENDING",
@@ -170,15 +168,12 @@ describe("Client", () => {
 
           - 6 months violation-free`,
           stateCode: "US_XX",
-          updated: {
-            by: "staff@email.com",
-            date: "2023-06-12",
-          },
         },
         status: "PENDING",
       });
     });
   });
+
   describe("updateMilestonesPhoneNumber", () => {
     test("phoneNumber is updated", () => {
       createTestUnit();
@@ -193,10 +188,6 @@ describe("Client", () => {
         messageDetails: {
           recipient: "1112223333",
           stateCode: "US_XX",
-          updated: {
-            by: "staff@email.com",
-            date: "2023-06-12",
-          },
         },
         status: "PENDING",
       });
@@ -215,10 +206,6 @@ describe("Client", () => {
         messageDetails: {
           recipient: mockDeleteField(),
           stateCode: "US_XX",
-          updated: {
-            by: "staff@email.com",
-            date: "2023-06-12",
-          },
         },
         status: "PENDING",
       });
@@ -243,10 +230,6 @@ describe("Client", () => {
         declinedReasons: {
           reasons: ["MILESTONE_NOT_MET", OTHER_KEY],
           otherReason: "Other reason here",
-          updated: {
-            by: "staff@email.com",
-            date: "2023-06-12",
-          },
         },
       });
     });
@@ -264,10 +247,6 @@ describe("Client", () => {
         declinedReasons: {
           reasons: ["MILESTONE_NOT_MET"],
           otherReason: "delete field",
-          updated: {
-            by: "staff@email.com",
-            date: "2023-06-12",
-          },
         },
       });
     });
@@ -315,6 +294,92 @@ describe("Client", () => {
       expect(
         testClient.milestonesPhoneNumberDoesNotMatchClient("7778889999")
       ).toEqual(true);
+    });
+  });
+
+  describe("sendMilestonesMessage", () => {
+    test("message is sent to backend successfully", async () => {
+      createTestUnit();
+      runInAction(() => {
+        testClient.milestonesMessageUpdatesSubscription = {
+          data: {
+            status: "PENDING",
+            updated: {
+              by: "staff@email.com",
+              date: "2023-06-12",
+            } as unknown as MilestonesMessage["updated"],
+            messageDetails: {
+              message: "Test message",
+              recipient: record.phoneNumber,
+            },
+          },
+        } as MilestonesMessageUpdateSubscription<MilestonesMessage>;
+      });
+      await testClient.sendMilestonesMessage();
+      expect(
+        mockRootStore.firestoreStore.updateMilestonesMessages
+      ).toHaveBeenCalledWith("us_xx_PERSON1", {
+        updated: {
+          by: "staff@email.com",
+          date: "2023-06-12",
+        },
+        status: "IN_PROGRESS",
+      });
+
+      expect(
+        mockRootStore.apiStore.postExternalSMSMessage
+      ).toHaveBeenCalledWith({
+        message: "Test message",
+        recipientExternalId: record.personExternalId,
+        recipientPhoneNumber: record.phoneNumber,
+        senderId: "staff@email.com",
+      });
+    });
+
+    test("there's an error sending the message", async () => {
+      mockRootStore = {
+        ...mockRootStore,
+        apiStore: {
+          postExternalSMSMessage: jest
+            .fn()
+            .mockRejectedValueOnce(new Error("backend error")),
+        } as unknown as APIStore,
+      } as unknown as RootStore;
+      createTestUnit();
+      runInAction(() => {
+        testClient.milestonesMessageUpdatesSubscription = {
+          data: {
+            status: "PENDING",
+            updated: {
+              by: "staff@email.com",
+              date: "2023-06-12",
+            } as unknown as MilestonesMessage["updated"],
+            messageDetails: {
+              message: "Test message",
+              recipient: record.phoneNumber,
+            },
+          },
+        } as MilestonesMessageUpdateSubscription<MilestonesMessage>;
+      });
+      try {
+        expect(await testClient.sendMilestonesMessage()).toThrow();
+
+        expect(
+          mockRootStore.firestoreStore.updateMilestonesMessages
+        ).toHaveBeenCalledWith("us_xx_PERSON1", {
+          updated: {
+            by: "staff@email.com",
+            date: "2023-06-12",
+          },
+          status: "PENDING",
+        });
+
+        expect(
+          mockRootStore.apiStore.postExternalSMSMessage
+        ).not.toHaveBeenCalled();
+      } catch (e: any) {
+        expect(e.message).toEqual("backend error");
+      }
     });
   });
 });
