@@ -151,6 +151,13 @@ export type ParsedSpecialConditionOrString =
   | NonNullable<ParsedSpecialCondition>
   | string;
 
+function filteredMilestoneTypes(
+  milestones: Milestone[] | undefined,
+  types: readonly MilestoneType[]
+) {
+  return (milestones ?? []).filter(({ type }) => types.includes(type));
+}
+
 /**
  * Represents a person on supervision
  */
@@ -177,7 +184,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   currentEmployers?: ClientEmployer[];
 
-  allMilestones?: Milestone[];
+  tenantMilestones?: Milestone[];
 
   emailAddress?: string;
 
@@ -218,8 +225,14 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       record.supervisionStartDate
     );
     this.currentEmployers = record.currentEmployers;
-    this.allMilestones = record.milestones;
     this.emailAddress = record.emailAddress;
+
+    const tenantMilestoneTypes =
+      this.rootStore.currentTenantId &&
+      tenants[this.rootStore.currentTenantId]?.milestoneTypes;
+    this.tenantMilestones = tenantMilestoneTypes
+      ? filteredMilestoneTypes(record.milestones, tenantMilestoneTypes)
+      : record.milestones;
   }
 
   get supervisionType(): string {
@@ -304,18 +317,15 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return searchField ? this.record[searchField] : this.assignedStaffId;
   }
 
-  getFilteredMilestones(types: readonly MilestoneType[]): Milestone[] {
-    return (this.allMilestones ?? []).filter(({ type }) =>
-      types.includes(type)
-    );
-  }
-
   get profileMilestones(): Milestone[] {
-    return this.getFilteredMilestones(profileMilestoneTypes);
+    return filteredMilestoneTypes(this.tenantMilestones, profileMilestoneTypes);
   }
 
   get congratulationsMilestones(): Milestone[] {
-    return this.getFilteredMilestones(congratulationsMilestoneTypes);
+    return filteredMilestoneTypes(
+      this.tenantMilestones,
+      congratulationsMilestoneTypes
+    );
   }
 
   get milestoneMessagesUpdates(): MilestonesMessage | undefined {

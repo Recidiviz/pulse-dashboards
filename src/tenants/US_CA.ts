@@ -42,6 +42,13 @@ const US_CA_CONFIG: TenantConfig = {
   navigation: {
     workflows: ["milestones", "clients"],
   },
+  milestoneTypes: [
+    "HOUSING_TYPE_IS_NOT_TRANSIENT",
+    "SUSTAINABLE_HOUSING_6_MONTHS",
+    "SUSTAINABLE_HOUSING_12_MONTHS",
+    "NO_VIOLATION_WITHIN_6_MONTHS",
+    "NO_VIOLATION_WITHIN_12_MONTHS",
+  ],
 };
 
 export default US_CA_CONFIG;

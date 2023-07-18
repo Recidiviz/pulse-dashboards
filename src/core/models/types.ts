@@ -17,6 +17,7 @@
 
 import {
   ClientRecord,
+  MilestoneType,
   ResidentRecord,
   SupervisionTaskUpdate,
 } from "../../FirestoreStore";
@@ -94,6 +95,7 @@ export type TenantConfig = {
       updates?: SupervisionTaskUpdate[k]
     ) => Task<k>;
   };
+  milestoneTypes?: MilestoneType[];
 };
 
 type ValidSnoozeForDays = 7 | 30 | 90;

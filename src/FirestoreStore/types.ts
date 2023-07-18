@@ -205,6 +205,8 @@ export const profileMilestoneTypes = [
 
 export const congratulationsMilestoneTypes = [
   "HOUSING_TYPE_IS_NOT_TRANSIENT",
+  "SUSTAINABLE_HOUSING_6_MONTHS",
+  "SUSTAINABLE_HOUSING_12_MONTHS",
   "NO_VIOLATION_WITHIN_6_MONTHS",
   "NO_VIOLATION_WITHIN_12_MONTHS",
 ] as const;
