@@ -45,25 +45,27 @@ export const LargeTextStyle = css`
   font-size: 7.8pt;
 `;
 
-const Border = css`
+export const Border = css`
   border-color: black;
   border-style: solid;
 `;
 
 export const FormSection = styled.div`
   ${Border};
-  border-width: 1px 1px 0 1px;
+  border-width: 1px;
 
   display: flex;
   flex-direction: column;
 
   width: 100%;
+
+  & > *:not(:last-child) {
+    ${Border};
+    border-width: 0 0 1px 0;
+  }
 `;
 
 export const SectionRow = styled.div`
-  ${Border};
-  border-width: 0 0 1px 0;
-
   width: 100%;
 `;
 
@@ -71,6 +73,41 @@ export const SectionHeader = styled(SectionRow)`
   ${NarrowFont}
   ${LargeTextStyle}
   padding: 1px 0;
+`;
+
+export const SquareInputSelector = css`
+  & label {
+    margin-bottom: 0;
+    display: flex;
+  }
+
+  & input[type="radio"],
+  & input[type="checkbox"] {
+    appearance: none;
+    background-color: #fff;
+    margin: 0 3px;
+    font: inherit;
+    color: black;
+    width: 1em;
+    height: 1em;
+    border: 0.15em solid black;
+    transform: translateY(0.175em);
+    display: grid;
+    place-content: center;
+
+    &::before {
+      content: "";
+      width: 0.7em;
+      height: 0.7em;
+      transform: scale(0);
+      transition: 120ms transform ease-in-out;
+      box-shadow: inset 1em 1em black;
+    }
+
+    &:checked::before {
+      transform: scale(1);
+    }
+  }
 `;
 
 export const Input = TnInput;

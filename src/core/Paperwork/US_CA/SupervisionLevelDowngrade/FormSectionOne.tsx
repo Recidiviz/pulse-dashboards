@@ -20,15 +20,18 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../../../components/StoreProvider";
+import { UsCaSupervisionLevelDowngradeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCaSupervisionLevelDowngradeReferralRecord";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import FormInput from "./FormInput";
+import FormObjectivesSection from "./FormObjectivesSection";
 import {
   FormSection,
   NarrowFont,
   SectionHeader,
   SectionRow,
   SmallTextStyle,
+  SquareInputSelector,
 } from "./styles";
 
 const SummaryRow = styled(SectionRow)`
@@ -61,43 +64,13 @@ const ReviewTypeCheckboxContainer = styled.div`
   flex-direction: column;
   justify-content: space-around;
 
-  & label {
-    margin-bottom: 0;
-    display: flex;
-  }
-
-  // The below replaces the standard radio button with black squares
-  & input[type="radio"] {
-    appearance: none;
-    background-color: #fff;
-    margin: 0 3px;
-    font: inherit;
-    color: black;
-    width: 1em;
-    height: 1em;
-    border: 0.15em solid black;
-    transform: translateY(0.175em);
-    display: grid;
-    place-content: center;
-
-    &::before {
-      content: "";
-      width: 0.7em;
-      height: 0.7em;
-      transform: scale(0);
-      transition: 120ms transform ease-in-out;
-      box-shadow: inset 1em 1em black;
-    }
-
-    &:checked::before {
-      transform: scale(1);
-    }
-  }
+  ${SquareInputSelector};
 `;
 
 const ReviewTypeCheckbox = observer(function ReviewTypeCheckbox() {
   const { firestoreStore } = useRootStore();
-  const opportunityForm = useOpportunityFormContext();
+  const opportunityForm =
+    useOpportunityFormContext() as UsCaSupervisionLevelDowngradeForm;
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     firestoreStore.updateFormDraftData(
       opportunityForm,
@@ -106,8 +79,7 @@ const ReviewTypeCheckbox = observer(function ReviewTypeCheckbox() {
     );
   };
 
-  const formData =
-    opportunityForm.formData as UsCaSupervisionLevelDowngradeDraftData;
+  const { formData } = opportunityForm;
 
   return (
     <ReviewTypeCheckboxContainer>
@@ -193,6 +165,7 @@ const FormSectionOne = () => {
         />
         <ReviewTypeCheckbox />
       </SummaryRow>
+      <FormObjectivesSection />
     </FormSection>
   );
 };

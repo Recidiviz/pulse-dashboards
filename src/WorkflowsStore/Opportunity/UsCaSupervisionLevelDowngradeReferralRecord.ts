@@ -50,4 +50,11 @@ export type UsCaSupervisionLevelDowngradeDraftData = {
   csraScore: string;
   supervisionLevel: string;
   reviewType: string;
+  seeDischargeReport: boolean;
+  dischargeReportDate: string;
+  objectiveScore1: number;
+  objectiveScore2: number;
+  objectiveScore3: number;
+  objectiveScore4: number;
+  objectiveScore5: number;
 };
