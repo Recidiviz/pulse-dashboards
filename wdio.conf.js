@@ -308,10 +308,11 @@ exports.config = {
   // eslint-disable-next-line
   afterScenario: async function (world) {
     const { tags } = world.pickle;
+    const { status } = world.result;
     const tagNames = tags.map((t) => t.name);
 
     // Remove test files after each scenario
-    if (tagNames.includes("@remove-temp-directory")) {
+    if (tagNames.includes("@remove-temp-directory") && status === "PASSED") {
       fs.rmSync(global.downloadDir, { force: true, recursive: true });
     }
 

@@ -17,8 +17,6 @@
 import fs from "fs";
 import path from "path";
 
-const TEMP_DOWNLOAD_PATH = path.join("/tmp", "tempDownloads");
-
 async function switchUserStateCode(stateCode) {
   const profileLink = await $(".UserAvatar");
   await profileLink.isExisting();
@@ -37,7 +35,7 @@ async function allowHeadlessDownloads() {
   /* Allow downloads for headless mode */
   await browser.cdp("Page", "setDownloadBehavior", {
     behavior: "allow",
-    downloadPath: TEMP_DOWNLOAD_PATH,
+    downloadPath: global.downloadDir,
   });
 }
 
@@ -147,7 +145,6 @@ export {
   allowHeadlessDownloads,
   clickOutsideElement,
   switchUserStateCode,
-  TEMP_DOWNLOAD_PATH,
   waitForElementsToExist,
   waitForFileToExist,
   waitForNavigation,

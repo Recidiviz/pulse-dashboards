@@ -16,6 +16,7 @@
 // =============================================================================
 import { Given, Then, When } from "@cucumber/cucumber";
 import fs from "fs";
+import fsPromise from "fs/promises";
 import path from "path";
 
 import { WorkflowsFormPage, WorkflowsHomepage } from "../../pages";
@@ -23,7 +24,6 @@ import {
   allowHeadlessDownloads,
   clickOutsideElement,
   switchUserStateCode,
-  TEMP_DOWNLOAD_PATH,
   waitForElementsToExist,
   waitForFileToExist,
   waitForNetworkIdle,
@@ -64,6 +64,11 @@ When(
 When("I click on the export form button", async () => {
   const button = await WorkflowsFormPage.formActionButton();
   await button.waitForExist();
+  // make sure download directory exists
+  if (!fs.existsSync(global.downloadDir)) {
+    // if it doesn't exist, create it
+    fs.mkdirSync(global.downloadDir);
+  }
   await allowHeadlessDownloads();
 
   // Wait for file to download
@@ -126,11 +131,12 @@ Then("the form should export for filename {string}", async (filename) => {
   // we need to wait for the file to fully download
   // so we use the 'browser.call' function since this is an async operation
   // @see http://webdriver.io/api/utility/call.html
-  const filepath = path.join(TEMP_DOWNLOAD_PATH, filename);
+  const filepath = path.join(global.downloadDir, filename);
   await browser.call(async function () {
     await waitForFileToExist(filepath, 60000);
   });
-  const fileContents = fs.readFileSync(filepath, "utf-8");
+  const fileHandle = await fsPromise.open(filepath);
+  const fileContents = await fileHandle.readFile("utf-8");
   expect(fileContents.length).toBeGreaterThan(0);
 });
 
