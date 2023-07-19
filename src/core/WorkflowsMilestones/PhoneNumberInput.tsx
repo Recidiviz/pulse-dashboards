@@ -101,6 +101,7 @@ const PhoneNumberInput = ({
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const formattedNumber = formatPhoneNumber(event.target.value);
     setPhoneNumber(formattedNumber);
+    onUpdatePhoneNumber(formattedNumber);
   };
 
   const handleInputBlur = () => {
