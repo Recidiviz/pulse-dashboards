@@ -850,4 +850,12 @@ export class WorkflowsStore implements Hydratable {
     if (!currentTenantId) return defaultName;
     return tenants[currentTenantId].internalSystemName ?? defaultName;
   }
+
+  get currentUserEmail(): string {
+    const {
+      userStore: { userEmail },
+    } = this.rootStore;
+
+    return userEmail || "user";
+  }
 }

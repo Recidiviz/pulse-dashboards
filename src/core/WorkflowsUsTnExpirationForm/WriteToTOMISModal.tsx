@@ -164,7 +164,11 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   const [pageNumberSelected, setPageNumberSelected] = useState(0);
   const {
     person,
-    rootStore: { firestoreStore, analyticsStore },
+    rootStore: {
+      firestoreStore,
+      analyticsStore,
+      workflowsStore: { currentUserEmail },
+    },
   } = opportunity;
 
   const [isCopied, copyToClipboard] = useClipboard(
@@ -205,6 +209,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
 
     firestoreStore.updateUsTnExpirationContactNoteStatus(
       opportunity,
+      currentUserEmail,
       person.recordId,
       contactNoteObj,
       Timestamp.fromDate(contactNoteDateTime),
@@ -222,6 +227,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
       .catch((e: Error) => {
         firestoreStore.updateUsTnExpirationContactNoteStatus(
           opportunity,
+          currentUserEmail,
           person.recordId,
           contactNoteObj,
           Timestamp.fromDate(contactNoteDateTime),

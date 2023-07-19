@@ -207,7 +207,7 @@ Object {
               <div
                 class="sc-cCjUiG styles__ReviewInfo-sc-b21pq-5 fgWjb dbBRpM"
               >
-                
+                Officer name
                  sent the following text messages to
                  
                 LINET HANSEN
@@ -820,7 +820,7 @@ Object {
                    
                   <span>
                      
-                    1487
+                    1475
                     /
                     1600
                   </span>
@@ -828,7 +828,7 @@ Object {
                 <div
                   class="TextMessageInput__DefaultMessage-sc-14y91c5-1 ijgROP"
                 >
-                  Message from  at DOC:
+                  Message from Officer name at DOC:
 
 Hey LINET HANSEN! Congratulations on reaching these milestones:
 
@@ -837,7 +837,7 @@ Hey LINET HANSEN! Congratulations on reaching these milestones:
                 <textarea
                   class="TextMessageInput__TextArea-sc-14y91c5-3 dDfSjC"
                   id="textMessage"
-                  maxlength="1487"
+                  maxlength="1475"
                   placeholder="Add your own message (Optional)"
                 />
               </div>

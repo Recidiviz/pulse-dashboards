@@ -50,7 +50,7 @@ const MessageSentView = function MessageSentView({
     milestonesPhoneNumber,
   } = client;
   const messageSentBy =
-    milestonesMessageUpdateLog?.by ?? client.assignedStaffFullName;
+    milestonesMessageUpdateLog?.by ?? client.rootStore.userStore.userFullName;
   const messageSentOn = formatWorkflowsDate(
     optionalFieldToDate(milestonesMessageUpdateLog?.date)
   );

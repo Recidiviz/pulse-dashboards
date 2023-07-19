@@ -44,7 +44,7 @@ export const ErrorView = function ErrorView({ client }: ErrorViewProps) {
     milestonesPhoneNumber,
   } = client;
   const messageSentBy =
-    milestonesMessageUpdateLog?.by ?? client.assignedStaffFullName;
+    milestonesMessageUpdateLog?.by ?? client.rootStore.userStore.userFullName;
   const messageSentOn = formatWorkflowsDate(
     optionalFieldToDate(milestonesMessageUpdateLog?.date)
   );

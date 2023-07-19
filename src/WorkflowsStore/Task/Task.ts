@@ -110,9 +110,10 @@ export abstract class Task<TaskType extends SupervisionTaskType>
   }
 
   updateSupervisionTask(snoozeForDays?: number): void {
-    const { userStore, firestoreStore } = this.rootStore;
-    const { user } = userStore;
-    const currentUserEmail = user?.info?.email || user?.email;
+    const {
+      workflowsStore: { currentUserEmail },
+      firestoreStore,
+    } = this.rootStore;
     if (!currentUserEmail) return;
 
     if (snoozeForDays === undefined) {

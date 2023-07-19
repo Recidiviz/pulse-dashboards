@@ -146,15 +146,11 @@ export abstract class OpportunityBase<
     return this.updates?.lastViewed;
   }
 
-  get currentUserEmail(): string | null | undefined {
-    return this.rootStore.workflowsStore.user?.info.email;
-  }
-
   setLastViewed(): void {
     when(
       () => this.isHydrated,
       () => {
-        const { currentUserEmail } = this;
+        const { currentUserEmail } = this.rootStore.workflowsStore;
         // should not happen in practice
         if (!currentUserEmail) return;
 
@@ -196,7 +192,7 @@ export abstract class OpportunityBase<
     when(
       () => this.isHydrated,
       () => {
-        const { currentUserEmail } = this;
+        const { currentUserEmail } = this.rootStore.workflowsStore;
         if (!currentUserEmail) return;
         const { recordId, pseudonymizedId } = this.person;
         const { reviewStatus } = this;
@@ -252,7 +248,7 @@ export abstract class OpportunityBase<
   }
 
   async setDenialReasons(reasons: string[]): Promise<void> {
-    const { currentUserEmail } = this;
+    const { currentUserEmail } = this.rootStore.workflowsStore;
     if (!currentUserEmail) return;
     const { recordId, pseudonymizedId } = this.person;
 
@@ -299,9 +295,10 @@ export abstract class OpportunityBase<
   }
 
   async setOtherReasonText(otherReason?: string): Promise<void> {
-    if (this.currentUserEmail) {
+    const { currentUserEmail } = this.rootStore.workflowsStore;
+    if (currentUserEmail) {
       await this.rootStore.firestoreStore.updateOpportunityDenial(
-        this.currentUserEmail,
+        currentUserEmail,
         this.person.recordId,
         {
           otherReason,

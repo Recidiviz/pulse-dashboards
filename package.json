@@ -207,6 +207,7 @@
     "@types/pluralize": "^0.0.29",
     "@types/prompts": "^2.4.4",
     "@types/react-input-autosize": "^2.2.1",
+    "@types/react-modal": "^3.16.0",
     "@types/react-router-dom": "^5.1.7",
     "@types/react-scrollable-anchor": "^0.6.0",
     "@types/react-select": "^4.0.13",

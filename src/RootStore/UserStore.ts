@@ -451,4 +451,14 @@ export default class UserStore {
     }
     return token;
   }
+
+  get userEmail(): string | undefined {
+    return this.user?.info?.email ?? this.user?.email;
+  }
+
+  get userFullName(): string | undefined {
+    const givenName = this.user?.info?.givenNames || this.user?.given_name;
+    const surname = this.user?.info?.surname || this.user?.surname;
+    return [givenName ?? "", surname ?? ""].join(" ").trim();
+  }
 }

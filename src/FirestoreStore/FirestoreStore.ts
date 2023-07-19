@@ -383,7 +383,7 @@ export default class FirestoreStore {
     name: string,
     value: FieldValue | string | number | boolean
   ): Promise<void> {
-    const { opportunity, formLastUpdated, type } = form;
+    const { opportunity, currentUserEmail, formLastUpdated, type } = form;
     const { person } = opportunity;
 
     await when(() => opportunity.isHydrated);
@@ -391,7 +391,7 @@ export default class FirestoreStore {
     const update = {
       referralForm: {
         updated: {
-          by: opportunity.currentUserEmail || "user",
+          by: currentUserEmail,
           date: serverTimestamp(),
         },
         data: { [name]: value },
@@ -424,6 +424,7 @@ export default class FirestoreStore {
 
   async updateUsTnExpirationContactNoteStatus(
     opportunity: UsTnExpirationOpportunity,
+    currentUserEmail: string,
     recordId: string,
     contactNote: Record<number, string[]>,
     submittedTimestamp: Timestamp,
@@ -441,7 +442,7 @@ export default class FirestoreStore {
       contactNote: {
         status,
         submitted: {
-          by: opportunity.currentUserEmail || "user",
+          by: currentUserEmail,
           date: submittedTimestamp,
         },
         note: contactNote,

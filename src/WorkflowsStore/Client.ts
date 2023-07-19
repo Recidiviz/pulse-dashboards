@@ -380,7 +380,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       : { otherReason: deleteField() };
 
     const updated = {
-      by: this.currentUserEmail || "user",
+      by: this.rootStore.workflowsStore.currentUserEmail,
       date: serverTimestamp(),
     };
     await this.rootStore.firestoreStore.updateMilestonesMessages(
@@ -398,7 +398,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   async undoMilestonesDeclined(): Promise<void> {
     const updated = {
-      by: this.currentUserEmail || "user",
+      by: this.rootStore.workflowsStore.currentUserEmail,
       date: serverTimestamp(),
     };
     await this.rootStore.firestoreStore.updateMilestonesMessages(
@@ -416,7 +416,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     deletePhoneNumber = false
   ): Promise<void> {
     const updated = {
-      by: this.currentUserEmail || "user",
+      by: this.rootStore.workflowsStore.currentUserEmail,
       date: serverTimestamp(),
     };
     await this.rootStore.firestoreStore.updateMilestonesMessages(
@@ -448,7 +448,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     }
 
     const updated = {
-      by: this.currentUserEmail || "user",
+      by: this.rootStore.workflowsStore.currentUserEmail,
       date: serverTimestamp(),
     };
     await this.rootStore.firestoreStore.updateMilestonesMessages(
@@ -474,7 +474,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       this.recordId,
       {
         updated: {
-          by: this.currentUserEmail || "user",
+          by: this.rootStore.workflowsStore.currentUserEmail,
           date: serverTimestamp(),
         },
         status,
@@ -489,7 +489,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         this.recordId,
         {
           updated: {
-            by: this.currentUserEmail || "user",
+            by: this.rootStore.workflowsStore.currentUserEmail,
             date: serverTimestamp(),
           },
           status: TextMessageStatuses.IN_PROGRESS,
@@ -499,14 +499,14 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         message: this.milestonesFullTextMessage,
         recipientExternalId: this.externalId,
         recipientPhoneNumber: this.milestonesPhoneNumber,
-        senderId: this.currentUserEmail ?? "Unknown",
+        senderId: this.rootStore.workflowsStore.currentUserEmail ?? "Unknown",
       });
     } catch (e) {
       await this.rootStore.firestoreStore.updateMilestonesMessages(
         this.recordId,
         {
           updated: {
-            by: this.currentUserEmail || "user",
+            by: this.rootStore.workflowsStore.currentUserEmail,
             date: serverTimestamp(),
           },
           status: TextMessageStatuses.PENDING,
@@ -520,8 +520,12 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   }
 
   get defaultMilestonesMessage(): string {
+    const {
+      userStore: { userFullName },
+    } = this.rootStore;
+
     return dedent`
-    Message from ${this.assignedStaffFullName} at ${
+    Message from ${userFullName} at ${
       !this.rootStore.currentTenantId
         ? "DOC"
         : tenants[this.rootStore.currentTenantId].DOCName

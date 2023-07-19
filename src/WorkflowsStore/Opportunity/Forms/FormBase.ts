@@ -62,9 +62,14 @@ export class FormBase<
       formData: computed,
       formLastUpdated: computed,
       prefilledData: computed,
+      currentUserEmail: computed,
       formIsDownloading: computed,
       markDownloading: action,
     });
+  }
+
+  get currentUserEmail(): string | undefined {
+    return this.rootStore.workflowsStore.currentUserEmail;
   }
 
   get formLastUpdated(): UpdateLog | undefined {

@@ -102,9 +102,14 @@ export function ClientMilestones({
             </MilestonesItem>
           );
         }
-        return (
-          <SeeMoreText key="See more">+{numMilestonesLeft} more</SeeMoreText>
-        );
+        if (index === 2 && !showAll) {
+          return (
+            <SeeMoreText key={`${client.pseudonymizedId}-See more`}>
+              +{numMilestonesLeft} more
+            </SeeMoreText>
+          );
+        }
+        return null;
       })}
     </MilestonesList>
   );

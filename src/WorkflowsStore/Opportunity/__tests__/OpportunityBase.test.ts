@@ -44,6 +44,7 @@ let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 let mockUser: CombinedUserRecord;
 let mockUserStateCode: jest.SpyInstance;
+let mockUserEmail: jest.SpyInstance;
 
 class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {
   form: FormBase<any>;
@@ -69,6 +70,10 @@ function createTestUnit() {
   };
   root = new RootStore();
   mockUserStateCode = jest.spyOn(root.userStore, "stateCode", "get");
+  jest
+    .spyOn(root.workflowsStore, "currentUserEmail", "get")
+    .mockReturnValue(mockUser.info.email);
+
   // using an ineligible to avoid wasted work creating opportunities we don't need
   client = new Client(ineligibleClientRecord, root);
   opp = new TestOpportunity(client, "TEST" as OpportunityType);

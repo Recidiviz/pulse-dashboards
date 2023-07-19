@@ -19,12 +19,7 @@ import dedent from "dedent";
 import { deleteField } from "firebase/firestore";
 import { configure, runInAction } from "mobx";
 
-import {
-  ClientRecord,
-  CombinedUserRecord,
-  MilestonesMessage,
-  StaffRecord,
-} from "../../FirestoreStore";
+import { ClientRecord, MilestonesMessage } from "../../FirestoreStore";
 import FirestoreStore from "../../FirestoreStore/FirestoreStore";
 import { RootStore } from "../../RootStore";
 import APIStore from "../../RootStore/APIStore";
@@ -57,21 +52,13 @@ describe("Client", () => {
     configure({ safeDescriptors: false });
     jest.resetAllMocks();
     rootStore = new RootStore();
-    jest.spyOn(rootStore.workflowsStore, "user", "get").mockReturnValue({
-      info: { email: "staff@email.com" },
-    } as CombinedUserRecord);
+    jest
+      .spyOn(rootStore.workflowsStore, "currentUserEmail", "get")
+      .mockReturnValue("staff@email.com");
+    jest
+      .spyOn(rootStore.userStore, "userFullName", "get")
+      .mockReturnValue("Officer Name");
     mockDeleteField.mockReturnValue("delete field");
-    runInAction(() => {
-      rootStore.workflowsStore.officersSubscription.data = [
-        {
-          id: "OFFICER1",
-          givenNames: "Officer",
-          surname: "Name",
-          email: "staff@email.com",
-        } as StaffRecord,
-      ];
-      rootStore.workflowsStore.officersSubscription.isHydrated = true;
-    });
     mockRootStore = {
       ...rootStore,
       currentTenantId: "US_CA",

@@ -58,3 +58,5 @@ window.analytics = {
 };
 
 window.scrollTo = () => {};
+
+window.prompt = () => {};

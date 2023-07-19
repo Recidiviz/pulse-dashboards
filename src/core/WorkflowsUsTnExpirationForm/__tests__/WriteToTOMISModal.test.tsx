@@ -18,6 +18,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Timestamp } from "firebase/firestore";
 import { configure } from "mobx";
+import ReactModal from "react-modal";
 import tk from "timekeeper";
 
 import { CombinedUserRecord } from "../../../FirestoreStore";
@@ -51,6 +52,9 @@ function createTestUnit(
   jest
     .spyOn(root.workflowsStore, "opportunityTypes", "get")
     .mockReturnValue(["usTnExpiration"]);
+  jest
+    .spyOn(root.workflowsStore, "currentUserEmail", "get")
+    .mockReturnValue("test-officer@example.com");
   jest.spyOn(root.workflowsStore, "user", "get").mockReturnValue(userRecord);
   jest.spyOn(root.userStore, "stateCode", "get").mockReturnValue("US_TN");
   client = new Client(clientRecord, root);
@@ -65,6 +69,7 @@ function createTestUnit(
 }
 
 beforeEach(() => {
+  ReactModal.setAppElement(document.createElement("div"));
   // this lets us spy on observables, e.g. computed getters
   configure({ safeDescriptors: false });
 });
