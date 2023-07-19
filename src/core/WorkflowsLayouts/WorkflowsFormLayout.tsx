@@ -28,6 +28,7 @@ import { NavigationLayout } from "../NavigationLayout";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
+import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
 import RecidivizLogo from "../RecidivizLogo";
 import { DASHBOARD_VIEWS } from "../views";
 import { OpportunityProfile } from "../WorkflowsClientProfile/OpportunityProfile";
@@ -70,7 +71,7 @@ const PAGE_CONTENT: Record<
   usMeSCCP: {
     formContents: <FormSCCP />,
   },
-  usMeWorkRelease: {},
+  usMeWorkRelease: { formContents: <FormWorkRelease /> },
   usTnExpiration: {
     formContents: <WorkflowsUsTnExpirationForm />,
   },

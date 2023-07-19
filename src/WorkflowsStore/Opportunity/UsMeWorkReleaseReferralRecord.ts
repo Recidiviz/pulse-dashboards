@@ -66,6 +66,11 @@ export type UsMeWorkReleaseReferralRecordRaw = z.input<
   typeof usMeWorkReleaseSchema
 >;
 
-export type UsMeWorkReleaseDraftData = null;
+export type UsMeWorkReleaseDraftData = {
+  residentName: string;
+  mdocNo: string;
+  facilityHousingUnit: string;
+  caseManager: string;
+};
 
 export const transformReferral = usMeWorkReleaseSchema.parse;

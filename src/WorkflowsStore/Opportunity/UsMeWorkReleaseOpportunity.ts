@@ -21,6 +21,7 @@ import { computed, makeObservable } from "mobx";
 
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { Resident } from "../Resident";
+import { UsMeWorkReleaseForm } from "./Forms/UsMeWorkReleaseForm";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import {
@@ -149,6 +150,8 @@ export class UsMeWorkReleaseOpportunity extends OpportunityBase<
 > {
   resident: Resident;
 
+  form: UsMeWorkReleaseForm;
+
   // replace with methodology url
   policyOrMethodologyUrl = "";
 
@@ -166,6 +169,12 @@ export class UsMeWorkReleaseOpportunity extends OpportunityBase<
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
+
+    this.form = new UsMeWorkReleaseForm(
+      "usMeWorkRelease",
+      this,
+      resident.rootStore
+    );
   }
 
   get requirementsMet(): OpportunityRequirement[] {
