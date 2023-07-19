@@ -138,6 +138,7 @@ export type FeatureVariant =
   | "CompliantReportingAlmostEligible"
   | "usMeAlmostPastHalfTerm"
   | "usMeWorkRelease"
+  | "usMeFurloughRelease"
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
   | "responsiveRevamp";
@@ -164,6 +165,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         CompliantReportingAlmostEligible: {},
         usMeAlmostPastHalfTerm: {},
         usMeWorkRelease: {},
+        usMeFurloughRelease: {},
         usTnExpiration: {},
         usTnExpirationSubmitToTomis: {},
         responsiveRevamp: {},

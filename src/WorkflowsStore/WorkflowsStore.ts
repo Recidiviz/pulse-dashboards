@@ -736,6 +736,15 @@ export class WorkflowsStore implements Hydratable {
       );
     }
 
+    if (
+      currentTenantId === "US_ME" &&
+      !this.featureVariants.usMeFurloughRelease
+    ) {
+      opportunityTypes = opportunityTypes.filter(
+        (oppType) => oppType !== "usMeFurloughRelease"
+      );
+    }
+
     return opportunityTypes;
   }
 
