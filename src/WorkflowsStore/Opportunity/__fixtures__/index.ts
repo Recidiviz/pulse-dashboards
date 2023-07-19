@@ -942,7 +942,7 @@ export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRec
         amountOwed: 0,
       },
       noConvictionWithin6Months: {},
-      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
+      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
         eligibleDate: parseISO("2024-04-03"),
       },
       onMediumSupervisionLevelOrLower: {
@@ -968,7 +968,7 @@ export const usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord: UsMeEa
     externalId: "010",
     eligibleCriteria: {
       noConvictionWithin6Months: {},
-      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
+      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
         eligibleDate: parseISO("2024-04-03"),
       },
       onMediumSupervisionLevelOrLower: {
@@ -999,7 +999,7 @@ export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarl
     eligibleCriteria: {
       usMePaidAllOwedRestitution: {},
       noConvictionWithin6Months: {},
-      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
+      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
         eligibleDate: parseISO("2024-04-03"),
       },
       onMediumSupervisionLevelOrLower: {
@@ -1035,7 +1035,7 @@ export const usMeEarlyTerminationSupervisionStartAlmostEligibleReferralRecord: U
       usMeNoPendingViolationsWhileSupervised: {},
     },
     ineligibleCriteria: {
-      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
+      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
         eligibleDate: parseISO("2024-04-03"),
       },
     },

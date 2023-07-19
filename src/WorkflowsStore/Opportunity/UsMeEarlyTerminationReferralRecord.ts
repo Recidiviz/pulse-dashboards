@@ -38,7 +38,7 @@ const criteria = z.object({
       })
       .optional()
   ).optional(),
-  supervisionPastHalfFullTermReleaseDateFromSupervisionStart: NullCoalesce(
+  usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: NullCoalesce(
     {},
     z.object({
       eligibleDate: dateStringSchema.optional(),
@@ -72,7 +72,7 @@ export const usMeEarlyTerminationSchema = opportunitySchemaBase
     ineligibleCriteria: criteria
       .pick({
         usMePaidAllOwedRestitution: true,
-        supervisionPastHalfFullTermReleaseDateFromSupervisionStart: true,
+        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: true,
       })
       .merge(ineligibleCriteria),
   })

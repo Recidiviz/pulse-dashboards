@@ -58,7 +58,7 @@ const CRITERIA: Record<
       period of probation is completed, the Probation Officer may file a motion
       with the court for early termination of probation.`,
   },
-  supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {},
+  usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {},
   onMediumSupervisionLevelOrLower: {},
   usMeNoPendingViolationsWhileSupervised: {},
 };
@@ -70,11 +70,11 @@ const validateRecord =
 
     const {
       eligibleCriteria: {
-        supervisionPastHalfFullTermReleaseDateFromSupervisionStart:
+        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart:
           pastHalfFullTermRelease,
       },
       ineligibleCriteria: {
-        supervisionPastHalfFullTermReleaseDateFromSupervisionStart:
+        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart:
           ineligiblePastHalfFullTermRelease,
       },
     } = record;
@@ -159,7 +159,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
     const requirements: OpportunityRequirement[] = [];
     const {
       eligibleCriteria: {
-        supervisionPastHalfFullTermReleaseDateFromSupervisionStart,
+        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart,
         noConvictionWithin6Months,
         onMediumSupervisionLevelOrLower,
         usMePaidAllOwedRestitution,
@@ -168,12 +168,12 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
     } = this.record;
 
     if (
-      supervisionPastHalfFullTermReleaseDateFromSupervisionStart?.eligibleDate
+      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart?.eligibleDate
     ) {
       requirements.push({
         text: `Served 1/2 of probation term`,
         tooltip:
-          CRITERIA.supervisionPastHalfFullTermReleaseDateFromSupervisionStart
+          CRITERIA.usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart
             .tooltip,
       });
     }
@@ -230,23 +230,23 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
 
     const {
       ineligibleCriteria: {
-        supervisionPastHalfFullTermReleaseDateFromSupervisionStart,
+        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart,
         usMeNoPendingViolationsWhileSupervised,
         usMePaidAllOwedRestitution,
       },
     } = this.record;
 
     if (
-      supervisionPastHalfFullTermReleaseDateFromSupervisionStart?.eligibleDate
+      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart?.eligibleDate
     ) {
       const daysUntilHalfFullTermReleaseDate = differenceInDays(
-        supervisionPastHalfFullTermReleaseDateFromSupervisionStart?.eligibleDate,
+        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart?.eligibleDate,
         startOfToday()
       );
       requirementsAlmostMet.push({
         text: `Will have served 1/2 of probation term in ${daysUntilHalfFullTermReleaseDate} days`,
         tooltip:
-          CRITERIA.supervisionPastHalfFullTermReleaseDateFromSupervisionStart
+          CRITERIA.usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart
             .tooltip,
       });
     }

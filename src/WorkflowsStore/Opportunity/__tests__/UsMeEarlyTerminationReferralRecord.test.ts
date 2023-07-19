@@ -26,7 +26,7 @@ const defaultEligibleCriteria = {
   onMediumSupervisionLevelOrLower: {
     supervisionLevel: "MEDIUM",
   },
-  supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
+  usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
     eligibleDate: "2022-01-03",
   },
 };
@@ -113,10 +113,10 @@ test("transform record with supervision past ineligibleCriteria", () => {
     externalId: "abc123",
     eligibleCriteria: omit(
       defaultEligibleCriteria,
-      "supervisionPastHalfFullTermReleaseDateFromSupervisionStart"
+      "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart"
     ),
     ineligibleCriteria: {
-      supervisionPastHalfFullTermReleaseDateFromSupervisionStart: {
+      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
         eligibleDate: "2024-01-03",
       },
     },
