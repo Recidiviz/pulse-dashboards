@@ -25,6 +25,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord, toTitleCase } from "../../utils";
 import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
+import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
 import { ProfileCapsule } from "../PersonCapsules";
 import { SectionLabelText } from "../sharedComponents";
 import { workflowsUrl } from "../views";
@@ -56,6 +57,7 @@ function Caseload({
   persons: JusticeInvolvedPerson[];
   isResponsiveRevamp?: boolean;
 }) {
+  if (!persons.length) return null;
   const items = persons.map((person) => (
     <li key={`externalId-${person.externalId}`}>
       <Link
@@ -85,29 +87,19 @@ export const AllCaseloads = observer(function AllCaseloads() {
     },
   } = useRootStore();
 
-  if (!selectedSearchables.length)
-    return (
-      <WorkflowsResults
-        headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s`}
-        callToActionText={`Search for ${pluralizeWord(
-          workflowsSearchFieldTitle
-        )} above to view their entire caseload.`}
-      />
-    );
-
   const caseloads = groupBy(caseloadPersons, "searchIdValue");
 
   const allCaseloadsViz = (
     <>
       {selectedSearchables.map((searchable) => (
         <React.Fragment key={searchable.searchId}>
-          {selectedSearchables.length > 1 && (
+          {caseloads[searchable.searchId] && (
             <SectionLabelText>
               <span className="fs-exclude">{searchable.searchLabel}</span>
             </SectionLabelText>
           )}
           {/* in practice there should never be a missing caseload,
-          but fall back to an empty array for type safety */}
+            but fall back to an empty array for type safety */}
           <Caseload
             persons={caseloads[searchable.searchId] ?? []}
             isResponsiveRevamp={!!featureVariants.responsiveRevamp}
@@ -117,15 +109,30 @@ export const AllCaseloads = observer(function AllCaseloads() {
     </>
   );
 
-  return !featureVariants.responsiveRevamp ? (
-    allCaseloadsViz
-  ) : (
-    <WorkflowsResults
-      headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s (${
-        caseloadPersons.length
-      })`}
-    >
-      {allCaseloadsViz}
-    </WorkflowsResults>
+  return (
+    <CaseloadHydrator
+      initial={
+        <WorkflowsResults
+          headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s`}
+          callToActionText={`Search for ${pluralizeWord(
+            workflowsSearchFieldTitle
+          )} above to view their entire caseload.`}
+        />
+      }
+      hydrated={
+        !featureVariants.responsiveRevamp ? (
+          allCaseloadsViz
+        ) : (
+          <WorkflowsResults
+            headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s (${
+              caseloadPersons.length
+            })`}
+          >
+            {allCaseloadsViz}
+          </WorkflowsResults>
+        )
+      }
+      empty={null}
+    />
   );
 });
