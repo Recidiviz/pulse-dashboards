@@ -26,6 +26,7 @@ import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import FormInput from "./FormInput";
 import {
   Border,
+  MainLabelTextStyle,
   NarrowFont,
   SectionHeader,
   SectionRow,
@@ -172,9 +173,7 @@ const ObjectiveRow = styled.div`
 `;
 
 const ObjectiveSelectionRow = styled(ObjectiveRow)`
-  ${TextStyle};
-  ${NarrowFont};
-  font-size: 7.2pt;
+  ${MainLabelTextStyle};
   line-height: 1.2;
   display: flex;
   flex-direction: row;
@@ -182,6 +181,36 @@ const ObjectiveSelectionRow = styled(ObjectiveRow)`
 
 const ObjectiveDescription = styled.div`
   text-align: justify;
+`;
+
+const ScoreTotalRow = styled(SectionRow)`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const ScoreTotalSection = styled.div`
+  ${MainLabelTextStyle};
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  ${SquareInputSelector};
+
+  > label {
+    font-size: 6.4pt;
+  }
+`;
+
+const ScoreTotal = styled.div`
+  ${Border};
+  border-width: 0;
+  border-bottom-width: 1px;
+  width: 30px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3px;
 `;
 
 const DischargeReviewBox = observer(function DischargeReviewBox() {
@@ -267,6 +296,62 @@ const ObjectiveOutcome = observer(function ObjectiveOutcome({
   );
 });
 
+const ObjectivesTotal = observer(function ObjectivesTotal() {
+  const opportunityForm =
+    useOpportunityFormContext() as UsCaSupervisionLevelDowngradeForm;
+
+  const { formData } = opportunityForm;
+
+  let scoreTotal: number | null = 0;
+
+  for (let i = 1; i <= OBJECTIVES.length; i += 1) {
+    const scoreKey =
+      `objectiveScore${i}` as keyof UsCaSupervisionLevelDowngradeDraftData;
+    const objectiveScore = formData[scoreKey];
+
+    // if any objective hasn't been score yet, don't display a total
+    if (!(typeof objectiveScore === "number")) {
+      scoreTotal = null;
+      break;
+    }
+    scoreTotal += objectiveScore;
+  }
+
+  return (
+    <ScoreTotalRow>
+      <ScoreTotalSection>
+        TOTAL OBJECTIVES SCORE: <ScoreTotal>{scoreTotal}</ScoreTotal>
+      </ScoreTotalSection>
+      <ScoreTotalSection>
+        <label>
+          <input
+            type="radio"
+            name="scoreTotal"
+            checked={scoreTotal === 5 || scoreTotal === 6}
+          />
+          5–6 REDUCTION MAY BE WARRANTED
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="scoreTotal"
+            checked={!!scoreTotal && scoreTotal >= 7 && scoreTotal <= 10}
+          />
+          7–10 NO CHANGE WARRANTED
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="scoreTotal"
+            checked={!!scoreTotal && scoreTotal > 10}
+          />
+          11–15 INCREASE MAY BE WARRANTED
+        </label>
+      </ScoreTotalSection>
+    </ScoreTotalRow>
+  );
+});
+
 const FormObjectivesSection = () => {
   return (
     <ObjectivesWrapper>
@@ -286,6 +371,7 @@ const FormObjectivesSection = () => {
           outcomeDescriptions={outcomes}
         />
       ))}
+      <ObjectivesTotal />
     </ObjectivesWrapper>
   );
 };

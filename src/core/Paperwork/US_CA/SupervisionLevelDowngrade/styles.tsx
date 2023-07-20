@@ -40,6 +40,12 @@ export const SmallTextStyle = css`
   font-size: 5.6pt;
 `;
 
+export const MainLabelTextStyle = css`
+  ${TextStyle};
+  ${NarrowFont};
+  font-size: 7.2pt;
+`;
+
 export const LargeTextStyle = css`
   ${TextStyle};
   font-size: 7.8pt;
