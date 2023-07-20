@@ -20,12 +20,13 @@ import "./LanternLayout.scss";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Helmet } from "react-helmet";
-import { useLocation } from "react-router-dom";
+import { Redirect, useLocation } from "react-router-dom";
 
 import Footer from "../components/Footer";
 import IE11Banner from "../components/IE11Banner";
 import { useRootStore } from "../components/StoreProvider";
 import useIntercom from "../hooks/useIntercom";
+import * as lantern from "../RootStore/TenantStore/lanternTenants";
 import { setTranslateLocale } from "../utils/i18nSettings";
 import LanternErrorBoundary from "./ErrorBoundary";
 import usePageLayout from "./hooks/usePageLayout";
@@ -47,6 +48,8 @@ const LanternLayout: React.FC<Props> | undefined = ({
   useIntercom();
   usePageLayout(pageStore.hideTopBar);
 
+  if (currentTenantId === lantern.US_PA && pathname === "/")
+    return <Redirect to="/community/revocations" />;
   if (!LANTERN_PATHS.includes(pathname)) return null;
 
   setTranslateLocale(currentTenantId);
