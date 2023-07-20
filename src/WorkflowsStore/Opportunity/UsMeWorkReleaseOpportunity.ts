@@ -41,7 +41,7 @@ const ELIGIBLE_CRITERIA_COPY: Record<
   keyof UsMeWorkReleaseCriteria,
   Required<OpportunityRequirement>
 > = {
-  usMeMinimumOrCommunityCustody: {
+  usMeCustodyLevelIsMinimumOrCommunity: {
     text: "Currently on $CUSTODY_LEVEL",
     tooltip:
       "The Resident must be classified community custody (May apply " +
@@ -102,20 +102,20 @@ const requirementsForEligibleCriteria = (
   const requirements: OpportunityRequirement[] = [];
 
   const {
-    usMeMinimumOrCommunityCustody,
+    usMeCustodyLevelIsMinimumOrCommunity,
     usMeThreeYearsRemainingOnSentence,
     usMeNoDetainersWarrantsOrOther,
     usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease,
     usMeNoClassAOrBViolationFor90Days,
   } = cloneDeep(ELIGIBLE_CRITERIA_COPY);
 
-  if (criteria.usMeMinimumOrCommunityCustody) {
-    usMeMinimumOrCommunityCustody.text =
-      usMeMinimumOrCommunityCustody.text.replace(
+  if (criteria.usMeCustodyLevelIsMinimumOrCommunity) {
+    usMeCustodyLevelIsMinimumOrCommunity.text =
+      usMeCustodyLevelIsMinimumOrCommunity.text.replace(
         "$CUSTODY_LEVEL",
-        criteria.usMeMinimumOrCommunityCustody.custodyLevel.toLowerCase()
+        criteria.usMeCustodyLevelIsMinimumOrCommunity.custodyLevel.toLowerCase()
       );
-    requirements.push(usMeMinimumOrCommunityCustody);
+    requirements.push(usMeCustodyLevelIsMinimumOrCommunity);
   }
 
   if (criteria.usMeThreeYearsRemainingOnSentence) {

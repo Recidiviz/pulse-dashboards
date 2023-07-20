@@ -30,7 +30,9 @@ const possiblyIneligibleCriteria = z.object({});
 export const usMeWorkReleaseSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: possiblyIneligibleCriteria.extend({
-      usMeMinimumOrCommunityCustody: z.object({ custodyLevel: z.string() }),
+      usMeCustodyLevelIsMinimumOrCommunity: z.object({
+        custodyLevel: z.string(),
+      }),
       usMeThreeYearsRemainingOnSentence: z.object({
         eligibleDate: dateStringSchema,
       }),

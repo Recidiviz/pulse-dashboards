@@ -26,7 +26,7 @@ export const usMeWorkReleaseFixture: FixtureData<UsMeWorkReleaseReferralRecordRa
         stateCode: "US_ME",
         externalId: "RES001",
         eligibleCriteria: {
-          usMeMinimumOrCommunityCustody: {
+          usMeCustodyLevelIsMinimumOrCommunity: {
             custodyLevel: "COMMUNITY",
           },
           usMeThreeYearsRemainingOnSentence: {
@@ -53,7 +53,7 @@ export const usMeWorkReleaseFixture: FixtureData<UsMeWorkReleaseReferralRecordRa
         stateCode: "US_ME",
         externalId: "RES002",
         eligibleCriteria: {
-          usMeMinimumOrCommunityCustody: {
+          usMeCustodyLevelIsMinimumOrCommunity: {
             custodyLevel: "MINIMUM",
           },
           usMeThreeYearsRemainingOnSentence: {
@@ -80,7 +80,7 @@ export const usMeWorkReleaseFixture: FixtureData<UsMeWorkReleaseReferralRecordRa
         stateCode: "US_ME",
         externalId: "RES003",
         eligibleCriteria: {
-          usMeMinimumOrCommunityCustody: {
+          usMeCustodyLevelIsMinimumOrCommunity: {
             custodyLevel: "MINIMUM",
           },
           usMeThreeYearsRemainingOnSentence: {
