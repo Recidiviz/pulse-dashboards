@@ -14,12 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { uniq } from "lodash";
+
 import { TenantConfig } from "./core/models/types";
 import {
   DASHBOARD_TENANTS,
   US_CA,
 } from "./RootStore/TenantStore/dashboardTenants";
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
+import { LANTERN_TENANTS } from "./RootStore/TenantStore/lanternTenants";
 import * as pathways from "./RootStore/TenantStore/pathwaysTenants";
 import { TenantId } from "./RootStore/types";
 import US_CA_CONFIG from "./tenants/US_CA";
@@ -41,6 +44,8 @@ export const CSG = "CSG";
 type Tenants = {
   [key in TenantId]: TenantConfig;
 };
+
+const ALL_TENANTS = uniq([...DASHBOARD_TENANTS, ...LANTERN_TENANTS]);
 
 const TENANTS: Tenants = {
   [US_CA]: US_CA_CONFIG,
@@ -70,7 +75,7 @@ const TENANTS: Tenants = {
         searchTitleOverride: "officer",
       },
     },
-    availableStateCodes: DASHBOARD_TENANTS,
+    availableStateCodes: ALL_TENANTS,
     enableUserRestrictions: true,
   },
   // TODO(#3622): [Dashboard][Auth] Remove lantern state code from frontend
