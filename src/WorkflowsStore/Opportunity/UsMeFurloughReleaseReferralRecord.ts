@@ -21,6 +21,7 @@ import { z } from "zod";
 
 import {
   caseNotesSchema,
+  dateStringSchema,
   eligibleDateSchema,
   opportunitySchemaBase,
 } from "./schemaHelpers";
@@ -28,13 +29,24 @@ import {
 export const usMeFurloughReleaseSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: z.object({
-      usMeXMonthsRemainingOnSentence: eligibleDateSchema,
+      usMeThreeYearsRemainingOnSentence: eligibleDateSchema,
       usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease:
         eligibleDateSchema,
-      usMeNoClassAOrBViolationFor90Days: z.null(),
+      usMeNoClassAOrBViolationFor90Days: z
+        .object({
+          eligibleDate: dateStringSchema.nullable(),
+          highestClassViol: z.string(),
+          violType: z.string(),
+        })
+        .nullable(),
       usMeMinimumOrCommunityCustody: z.object({ custodyLevel: z.string() }),
-      usMeNoDetainersWarrantsOrOther: z.null(),
-      usMeServedHalfOfSentence: eligibleDateSchema.optional(),
+      usMeNoDetainersWarrantsOrOther: z
+        .object({
+          detainer: z.string(),
+          detainerStartDate: dateStringSchema.nullable(),
+        })
+        .nullable(),
+      usMeServedHalfOfSentence: eligibleDateSchema,
     }),
     ineligibleCriteria: z.strictObject({}),
   })

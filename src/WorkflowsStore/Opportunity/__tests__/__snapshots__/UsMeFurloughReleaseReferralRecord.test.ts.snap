@@ -20,7 +20,10 @@ Object {
     "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": Object {
       "eligibleDate": 2022-11-03T00:00:00.000Z,
     },
-    "usMeXMonthsRemainingOnSentence": Object {
+    "usMeServedHalfOfSentence": Object {
+      "eligibleDate": 2022-08-07T00:00:00.000Z,
+    },
+    "usMeThreeYearsRemainingOnSentence": Object {
       "eligibleDate": 2022-08-07T00:00:00.000Z,
     },
   },

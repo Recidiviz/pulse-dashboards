@@ -34,9 +34,9 @@ export const usMeFurloughReleaseFixture: FixtureData<UsMeFurloughReleaseReferral
             eligibleDate: "2022-08-10",
           },
           usMeServedHalfOfSentence: {
-            eligibleDate: "2022-09-11",
+            eligibleDate: "2022-08-10",
           },
-          usMeXMonthsRemainingOnSentence: {
+          usMeThreeYearsRemainingOnSentence: {
             eligibleDate: "2022-05-27",
           },
         },
@@ -60,10 +60,13 @@ export const usMeFurloughReleaseFixture: FixtureData<UsMeFurloughReleaseReferral
           },
           usMeNoClassAOrBViolationFor90Days: null,
           usMeNoDetainersWarrantsOrOther: null,
-          usMeXMonthsRemainingOnSentence: {
+          usMeThreeYearsRemainingOnSentence: {
             eligibleDate: "2022-05-27",
           },
           usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
+            eligibleDate: "2022-08-10",
+          },
+          usMeServedHalfOfSentence: {
             eligibleDate: "2022-08-10",
           },
         },
@@ -86,13 +89,16 @@ export const usMeFurloughReleaseFixture: FixtureData<UsMeFurloughReleaseReferral
             custodyLevel: "MINIMUM",
           },
           usMeNoDetainersWarrantsOrOther: null,
-          usMeXMonthsRemainingOnSentence: {
+          usMeThreeYearsRemainingOnSentence: {
             eligibleDate: "2022-04-27",
           },
           usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
             eligibleDate: "2022-08-10",
           },
           usMeNoClassAOrBViolationFor90Days: null,
+          usMeServedHalfOfSentence: {
+            eligibleDate: "2022-08-10",
+          },
         },
         ineligibleCriteria: {},
         caseNotes: {

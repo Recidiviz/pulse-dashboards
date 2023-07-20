@@ -11,8 +11,8 @@ Array [
     "tooltip": "Currently on minimum or community custody",
   },
   Object {
-    "text": "26 months remaining on sentence",
-    "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
+    "text": "32 months remaining on sentence",
+    "tooltip": "No more than three (3) years remaining on the term(s) of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 2307 to 2311 (i.e., first day on a furlough must be no more than three (3) years prior to the resident’s current custody release date).",
   },
   Object {
     "text": "No Class A or B disciplines pending or occurring in the past 90 days",
@@ -21,6 +21,14 @@ Array [
   Object {
     "text": "No detainers, warrants, or other pending holds",
     "tooltip": "Must have no detainers, warrants, or other pending holds preventing participation in a community program as set out in Department Policy (AF) 23.1",
+  },
+  Object {
+    "text": "Served at least 1/2 of sentence",
+    "tooltip": "The resident must have served at least 1/2 of the term of imprisonment imposed or, in the  case of a split sentence, at least 1/2 of the unsuspended portion, after consideration of  any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 2307 to 2311.
+ 
+A resident who is serving concurrent sentences must have served 1/2 of the term of imprisonment imposed or, in the case of a split sentence, of the unsuspended portion, on the controlling sentence, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 2307 to 2311.
+
+A resident who is serving consecutive or nonconcurrent sentences must have served 1/2 of the imprisonment time to be served on the combined sentences, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 2307 to 2311. Depending on the length of the sentences and the deductions received and retained, a resident may become eligible for a furlough to visit with family during any of the sentences.",
   },
 ]
 `;

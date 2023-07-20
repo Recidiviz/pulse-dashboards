@@ -685,11 +685,14 @@ export const usMeFurloughReleaseEligibleRecordFixture: UsMeFurloughReleaseReferr
       usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
         eligibleDate: parseISO("2022-08-10"),
       },
-      usMeXMonthsRemainingOnSentence: {
+      usMeThreeYearsRemainingOnSentence: {
         eligibleDate: parseISO("2022-08-14"),
       },
       usMeNoClassAOrBViolationFor90Days: null,
       usMeNoDetainersWarrantsOrOther: null,
+      usMeServedHalfOfSentence: {
+        eligibleDate: parseISO("2022-08-14"),
+      },
     },
     ineligibleCriteria: {},
     caseNotes: {

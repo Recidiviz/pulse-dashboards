@@ -29,11 +29,14 @@ test("transform record", () => {
       usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
         eligibleDate: "2022-11-03",
       },
-      usMeXMonthsRemainingOnSentence: {
+      usMeThreeYearsRemainingOnSentence: {
         eligibleDate: "2022-08-07",
       },
       usMeNoDetainersWarrantsOrOther: null,
       usMeNoClassAOrBViolationFor90Days: null,
+      usMeServedHalfOfSentence: {
+        eligibleDate: "2022-08-07",
+      },
     },
     ineligibleCriteria: {},
     caseNotes: {
