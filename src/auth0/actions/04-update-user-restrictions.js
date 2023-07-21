@@ -109,6 +109,7 @@ exports.onExecutePostLogin = async (event, api) => {
       api.user.setAppMetadata("role", restrictions.role || null);
       api.user.setAppMetadata("district", restrictions.district);
       api.user.setAppMetadata("externalId", restrictions.externalId);
+      api.user.setAppMetadata("featureVariants", restrictions.featureVariants);
 
       // TODO #3170 Remove these once UserAppMetadata has been transitioned
       api.user.setAppMetadata(
