@@ -25,28 +25,39 @@
 exports.onExecutePostLogin = async (event, api) => {
   const Base64 = require("crypto-js/enc-base64");
   const SHA256 = require("crypto-js/sha256");
-  const Analytics = require('analytics-node');
-  const analytics = new Analytics(event.secrets.SEGMENT_WRITE_KEY, { flushAt: 1  });
+  const Analytics = require("analytics-node");
+  const analytics = new Analytics(event.secrets.SEGMENT_WRITE_KEY, {
+    flushAt: 1,
+  });
 
   const { app_metadata, email } = event.user;
-  const stateCode = app_metadata.state_code?.toLowerCase();
+  let stateCode = app_metadata.state_code?.toLowerCase();
+  if (stateCode === "lantern") {
+    stateCode = "csg";
+  }
   const authorizedDomains = ["recidiviz.org", "csg.org", "recidiviz-test.org"]; // add authorized domains here
-  const statesWithRestrictions = ["us_co", "us_id", "us_me", "us_mi", "us_mo", "us_nd", "us_tn"];
+  const statesWithRestrictions = [
+    "us_co",
+    "us_id",
+    "us_me",
+    "us_mi",
+    "us_mo",
+    "us_nd",
+    "us_tn",
+  ];
   const emailSplit = email?.split("@") || [];
-  const userDomain = (email?.length ?? 0) > 1 && emailSplit[emailSplit.length - 1].toLowerCase();
+  const userDomain =
+    (email?.length ?? 0) > 1 && emailSplit[emailSplit.length - 1].toLowerCase();
 
-  const DENY_MESSAGE = "There was a problem authorizing your account. Please contact your organization administrator. " +
-      "If you don’t know your administrator, contact feedback@recidiviz.org.";
+  const DENY_MESSAGE =
+    "There was a problem authorizing your account. Please contact your organization administrator. " +
+    "If you don’t know your administrator, contact feedback@recidiviz.org.";
 
-  if (
-    app_metadata.skip_sync_permissions ||
-    authorizedDomains.some(function (authorizedDomain) {
-      api.user.setAppMetadata("stateCode", stateCode);
-      return userDomain === authorizedDomain;
-    })
-  ) {
+  if (app_metadata.skip_sync_permissions) {
     return;
   }
+
+  api.user.setAppMetadata("stateCode", stateCode);
 
   // Specific state code restrictions for Recividiz users
   if (event.user.email === "justine@recidiviz.org") {
@@ -57,6 +68,21 @@ exports.onExecutePostLogin = async (event, api) => {
   if (event.user.email === "monica.hicks@recidiviz.org") {
     api.user.setAppMetadata("blocked_state_codes", ["us_mi"]);
     api.user.setAppMetadata("blockedStateCodes", ["us_mi"]);
+  }
+
+  if (stateCode === "csg") {
+    api.user.setAppMetadata("routes", {
+      system_libertyToPrison: true,
+      system_prison: true,
+      system_prisonToSupervision: true,
+      system_supervision: true,
+      system_supervisionToLiberty: true,
+      system_supervisionToPrison: true,
+    });
+  }
+
+  if (authorizedDomains.includes(userDomain)) {
+    return;
   }
 
   if (statesWithRestrictions.includes(stateCode)) {
@@ -81,7 +107,7 @@ exports.onExecutePostLogin = async (event, api) => {
         "idoc.idaho.gov"
       );
 
-      let userHash = Base64.stringify(SHA256(request_email?.toLowerCase()))
+      let userHash = Base64.stringify(SHA256(request_email?.toLowerCase()));
       if (userHash.startsWith("/")) {
         userHash = userHash.replace("/", "_");
       }
@@ -91,13 +117,13 @@ exports.onExecutePostLogin = async (event, api) => {
       const restrictions = apiResponse.data;
 
       const arrayOfLocations =
-        (restrictions.allowedSupervisionLocationIds ?? "" ) === ""
+        (restrictions.allowedSupervisionLocationIds ?? "") === ""
           ? []
           : restrictions.allowedSupervisionLocationIds.split(",");
 
       api.user.setAppMetadata(
         "allowedSupervisionLocationIds",
-        arrayOfLocations,
+        arrayOfLocations
       );
       api.user.setAppMetadata(
         "allowedSupervisionLocationLevel",
@@ -105,7 +131,7 @@ exports.onExecutePostLogin = async (event, api) => {
       );
       api.user.setAppMetadata("routes", restrictions.routes || null);
       api.user.setAppMetadata("stateCode", stateCode);
-      api.user.setAppMetadata("userHash", restrictions.userHash)
+      api.user.setAppMetadata("userHash", restrictions.userHash);
       api.user.setAppMetadata("role", restrictions.role || null);
       api.user.setAppMetadata("district", restrictions.district);
       api.user.setAppMetadata("externalId", restrictions.externalId);
@@ -114,14 +140,13 @@ exports.onExecutePostLogin = async (event, api) => {
       // TODO #3170 Remove these once UserAppMetadata has been transitioned
       api.user.setAppMetadata(
         "allowed_supervision_location_ids",
-        arrayOfLocations,
+        arrayOfLocations
       );
       api.user.setAppMetadata(
         "allowed_supervision_location_level",
         restrictions.allowedSupervisionLocationLevel
       );
       api.user.setAppMetadata("user_hash", restrictions.userHash);
-
     } catch (apiError) {
       Sentry.captureMessage(
         `Error while updating user permissions on login for user: ${event.user.email}`
@@ -136,7 +161,7 @@ exports.onExecutePostLogin = async (event, api) => {
 
       analytics.track({
         userId: user.user_id,
-        event: 'Failed Login',
+        event: "Failed Login",
         properties: {
           ...user.app_metadata,
           email: user.email,
@@ -149,7 +174,7 @@ exports.onExecutePostLogin = async (event, api) => {
           picture: user.picture,
           updated_at: user.updated_at,
           user_id: user.user_id,
-        }
+        },
       });
 
       await analytics.flush();

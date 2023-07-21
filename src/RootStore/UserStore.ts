@@ -379,6 +379,10 @@ export default class UserStore {
 
     if (this.isRecidivizUser) return allowed;
 
+    if (this.stateCode === "CSG") {
+      delete allowed.workflows;
+    }
+
     if (pagesWithRestrictions) {
       pagesWithRestrictions.forEach((page) => {
         if (!this.canAccessRestrictedPage(page)) {
