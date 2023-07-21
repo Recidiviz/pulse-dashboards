@@ -34,6 +34,7 @@ exports.onExecutePostLogin = async (event, api) => {
   let stateCode = app_metadata.state_code?.toLowerCase();
   if (stateCode === "lantern") {
     stateCode = "csg";
+    api.user.setAppMetadata("state_code", stateCode);
   }
   const authorizedDomains = ["recidiviz.org", "csg.org", "recidiviz-test.org"]; // add authorized domains here
   const statesWithRestrictions = [
