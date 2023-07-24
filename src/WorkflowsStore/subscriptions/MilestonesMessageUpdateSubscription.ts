@@ -34,7 +34,7 @@ export class MilestonesMessageUpdateSubscription<
   constructor(firestoreStore: FirestoreStore, recordId: string) {
     const collectionName = "clientUpdatesV2";
     super(firestoreStore, collectionName, recordId);
-    const dateKey = getMonthYearFromDate(startOfToday());
+    const dateKey = `milestones_${getMonthYearFromDate(startOfToday())}`;
 
     this.dataSource = doc(
       firestoreStore.db,

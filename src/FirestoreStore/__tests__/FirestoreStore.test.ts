@@ -18,7 +18,13 @@
 // Delete test env var to test firestore emulator connection
 delete process.env.REACT_APP_TEST_ENV;
 import { connectAuthEmulator } from "firebase/auth";
-import { doc, DocumentReference, setDoc } from "firebase/firestore";
+import {
+  doc,
+  DocumentReference,
+  PartialWithFieldValue,
+  setDoc,
+} from "firebase/firestore";
+import tk from "timekeeper";
 
 import {
   fetchFirebaseToken,
@@ -28,7 +34,7 @@ import { RootStore } from "../../RootStore";
 import { UserAppMetadata } from "../../RootStore/types";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import FirestoreStore from "../FirestoreStore";
-import { SupervisionTaskUpdate } from "../types";
+import { MilestonesMessage, SupervisionTaskUpdate } from "../types";
 
 jest.mock("firebase/auth");
 jest.mock("firebase/firestore");
@@ -63,7 +69,12 @@ describe("FirestoreStore", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    tk.freeze(new Date("2022-01-01"));
     store = new FirestoreStore({ rootStore: mockRootStore });
+  });
+
+  afterEach(() => {
+    tk.reset();
   });
 
   describe("authenticate", () => {
@@ -210,5 +221,29 @@ describe("FirestoreStore", () => {
     expect(mockSetDoc).toBeCalledWith("test-doc-ref", taskUpdate, {
       merge: true,
     });
+  });
+
+  test("updateMilestonesMessages", () => {
+    mockRootStore = {
+      isImpersonating: false,
+    } as unknown as RootStore;
+    mockDoc.mockReturnValue("test-doc-ref");
+    store = new FirestoreStore({ rootStore: mockRootStore });
+    const milestonesMessagesUpdate: PartialWithFieldValue<MilestonesMessage> = {
+      status: "IN_PROGRESS",
+    };
+    store.updateMilestonesMessages("123-test", milestonesMessagesUpdate);
+    expect(mockDoc).toBeCalledWith(
+      undefined,
+      "clientUpdatesV2",
+      "123-test/milestonesMessages/milestones_01_2022"
+    );
+    expect(mockSetDoc).toBeCalledWith(
+      "test-doc-ref",
+      milestonesMessagesUpdate,
+      {
+        merge: true,
+      }
+    );
   });
 });

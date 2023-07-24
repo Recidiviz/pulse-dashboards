@@ -395,13 +395,11 @@ export type MilestonesMessage = {
   errors?: string[];
   declinedReasons?: Denial<DeclineReason>;
   pendingMessage?: string;
-  messageDetails?: {
-    message?: string;
-    recipient?: string;
-    sentBy?: string;
-    mid?: string;
-    stateCode?: string;
-  };
+  message?: string;
+  recipient?: string;
+  sentBy?: string;
+  mid?: string;
+  stateCode?: string;
 };
 
 export type ExternalSystemRequestStatus =

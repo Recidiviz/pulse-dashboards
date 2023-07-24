@@ -105,16 +105,14 @@ describe("Client", () => {
           by: "staff@email.com",
           date: "2023-06-12",
         },
-        messageDetails: {
-          message: dedent`Message from Officer Name at CDCR:
+        message: dedent`Message from Officer Name at CDCR:
 
           Hey Real Person! Congratulations on reaching these milestones:
 
           - 6 months violation-free
 
           This is a message`,
-          stateCode: "US_XX",
-        },
+        stateCode: "US_XX",
         pendingMessage: "This is a message",
         status: "PENDING",
       });
@@ -129,14 +127,12 @@ describe("Client", () => {
           by: "staff@email.com",
           date: "2023-06-12",
         },
-        messageDetails: {
-          message: dedent`Message from Officer Name at CDCR:
+        message: dedent`Message from Officer Name at CDCR:
 
           Hey Real Person! Congratulations on reaching these milestones:
 
           - 6 months violation-free`,
-          stateCode: "US_XX",
-        },
+        stateCode: "US_XX",
         pendingMessage: mockDeleteField(),
         status: "PENDING",
       });
@@ -151,14 +147,12 @@ describe("Client", () => {
           by: "staff@email.com",
           date: "2023-06-12",
         },
-        messageDetails: {
-          message: dedent`Message from Officer Name at CDCR:
+        message: dedent`Message from Officer Name at CDCR:
 
           Hey Real Person! Congratulations on reaching these milestones:
 
           - 6 months violation-free`,
-          stateCode: "US_XX",
-        },
+        stateCode: "US_XX",
         status: "PENDING",
       });
     });
@@ -175,10 +169,8 @@ describe("Client", () => {
           by: "staff@email.com",
           date: "2023-06-12",
         },
-        messageDetails: {
-          recipient: "1112223333",
-          stateCode: "US_XX",
-        },
+        recipient: "1112223333",
+        stateCode: "US_XX",
         status: "PENDING",
       });
     });
@@ -193,10 +185,8 @@ describe("Client", () => {
           by: "staff@email.com",
           date: "2023-06-12",
         },
-        messageDetails: {
-          recipient: mockDeleteField(),
-          stateCode: "US_XX",
-        },
+        recipient: mockDeleteField(),
+        stateCode: "US_XX",
         status: "PENDING",
       });
     });
@@ -298,10 +288,8 @@ describe("Client", () => {
               by: "staff@email.com",
               date: "2023-06-12",
             } as unknown as MilestonesMessage["updated"],
-            messageDetails: {
-              message: "Test message",
-              recipient: record.phoneNumber,
-            },
+            message: "Test message",
+            recipient: record.phoneNumber,
           },
         } as MilestonesMessageUpdateSubscription<MilestonesMessage>;
       });
@@ -344,10 +332,9 @@ describe("Client", () => {
               by: "staff@email.com",
               date: "2023-06-12",
             } as unknown as MilestonesMessage["updated"],
-            messageDetails: {
-              message: "Test message",
-              recipient: record.phoneNumber,
-            },
+
+            message: "Test message",
+            recipient: record.phoneNumber,
           },
         } as MilestonesMessageUpdateSubscription<MilestonesMessage>;
       });

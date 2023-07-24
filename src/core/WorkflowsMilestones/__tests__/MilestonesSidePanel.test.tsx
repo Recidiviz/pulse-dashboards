@@ -104,9 +104,7 @@ describe("MilestonesSidePanel", () => {
           {
             data: {
               status: "IN_PROGRESS",
-              messageDetails: {
-                message: "This is the full text message",
-              },
+              message: "This is the full text message",
             },
             hydrated: true,
           };

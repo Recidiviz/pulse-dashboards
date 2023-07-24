@@ -341,15 +341,11 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   }
 
   get milestonesFullTextMessage(): string | undefined {
-    return this.milestonesMessageDetails?.message;
+    return this.milestoneMessagesUpdates?.message;
   }
 
   get milestonesDeclinedReasons(): MilestonesMessage["declinedReasons"] {
     return this.milestoneMessagesUpdates?.declinedReasons;
-  }
-
-  get milestonesMessageDetails(): MilestonesMessage["messageDetails"] {
-    return this.milestoneMessagesUpdates?.messageDetails;
   }
 
   get milestonesMessageUpdateLog(): MilestonesMessage["updated"] | undefined {
@@ -357,8 +353,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   }
 
   get milestonesPhoneNumber(): string | undefined {
-    const userEnteredPhoneNumber =
-      this.milestoneMessagesUpdates?.messageDetails?.recipient;
+    const userEnteredPhoneNumber = this.milestoneMessagesUpdates?.recipient;
     return userEnteredPhoneNumber?.length
       ? userEnteredPhoneNumber
       : this.rawPhoneNumber;
@@ -424,10 +419,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       {
         updated,
         status: TextMessageStatuses.PENDING,
-        messageDetails: {
-          stateCode: this.stateCode,
-          recipient: deletePhoneNumber ? deleteField() : phoneNumber,
-        },
+        stateCode: this.stateCode,
+        recipient: deletePhoneNumber ? deleteField() : phoneNumber,
       }
     );
   }
@@ -457,14 +450,12 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         updated,
         status: TextMessageStatuses.PENDING,
         ...pendingMessage,
-        messageDetails: {
-          stateCode: this.stateCode,
-          message: dedent`
+        stateCode: this.stateCode,
+        message: dedent`
             ${this.defaultMilestonesMessage}
 
             ${additionalMessage || ""}
           `,
-        },
       }
     );
   }

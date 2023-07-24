@@ -267,7 +267,7 @@ export default class FirestoreStore {
     recordId: string,
     update: PartialWithFieldValue<MilestonesMessage>
   ) {
-    const dateKey = getMonthYearFromDate(startOfToday());
+    const dateKey = `milestones_${getMonthYearFromDate(startOfToday())}`;
     const taskDocRef = doc(
       this.db,
       collectionNames.clientUpdatesV2,

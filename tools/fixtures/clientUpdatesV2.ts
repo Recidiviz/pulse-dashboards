@@ -29,13 +29,11 @@ const milestonesMessages: (MilestonesMessage & { externalId: string })[] = [
     externalId: "us_ca_001",
     updated,
     status: "SUCCESS",
-    messageDetails: {
-      message: "testing offline message!",
-      recipient: "1112223333",
-      mid: "992b2e4c-9jkd98",
-      stateCode: "US_CA",
-      sentBy: "fake-email",
-    },
+    message: "testing offline message!",
+    recipient: "1112223333",
+    mid: "992b2e4c-9jkd98",
+    stateCode: "US_CA",
+    sentBy: "fake-email",
   },
   {
     externalId: "us_ca_002",
@@ -50,13 +48,11 @@ const milestonesMessages: (MilestonesMessage & { externalId: string })[] = [
     updated,
     status: "FAILURE",
     errors: ["Phone number does not exist."],
-    messageDetails: {
-      message: "failed testing offline message!",
-      recipient: "1112223333",
-      mid: "992b2e4c-9jkd98",
-      stateCode: "US_CA",
-      sentBy: "fake-email",
-    },
+    message: "failed testing offline message!",
+    recipient: "1112223333",
+    mid: "992b2e4c-9jkd98",
+    stateCode: "US_CA",
+    sentBy: "fake-email",
   },
 ];
 
