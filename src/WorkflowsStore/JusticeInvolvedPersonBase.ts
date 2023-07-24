@@ -40,6 +40,7 @@ import {
   StaffRecord,
 } from "../FirestoreStore";
 import { RootStore } from "../RootStore";
+import { humanReadableTitleCase } from "../utils";
 import { TaskFactory } from "./Client";
 import { OpportunityFactory, OpportunityType } from "./Opportunity";
 import { CollectionDocumentSubscription } from "./subscriptions";
@@ -186,21 +187,26 @@ export class JusticeInvolvedPersonBase<
   }
 
   get displayName(): string {
-    return [this.fullName.givenNames, this.fullName.surname]
-      .filter((n) => Boolean(n))
-      .join(" ");
+    return humanReadableTitleCase(
+      [this.fullName.givenNames, this.fullName.surname]
+        .filter((n) => Boolean(n))
+        .join(" ")
+    );
   }
 
   get displayPreferredName(): string {
-    return [
-      this.fullName.givenNames,
-      this.preferredName && this.preferredName !== this.fullName.givenNames
-        ? `(${this.preferredName})`
-        : undefined,
-      this.fullName.surname,
-    ]
-      .filter((n) => Boolean(n))
-      .join(" ");
+    if (this.preferredName) {
+      return [
+        this.fullName.givenNames,
+        this.preferredName && this.preferredName !== this.fullName.givenNames
+          ? `(${humanReadableTitleCase(this.preferredName)})`
+          : undefined,
+        this.fullName.surname,
+      ]
+        .filter((n) => Boolean(n))
+        .join(" ");
+    }
+    return this.displayName;
   }
 
   get updates(): PersonUpdateRecord | undefined {

@@ -107,7 +107,7 @@ describe("WriteToTOMISModal", () => {
   });
 
   function expectPreviewContents() {
-    expect(screen.getByText("BETTY RUBBLE")).toBeInTheDocument();
+    expect(screen.getByText("Betty Rubble")).toBeInTheDocument();
     expect(screen.getByText("001")).toBeInTheDocument();
     expect(screen.getByText("Contact Types: TEPE, VRRE")).toBeInTheDocument();
     const previewBoxes = screen.getAllByRole("article");
@@ -132,7 +132,7 @@ describe("WriteToTOMISModal", () => {
       screen.getByText("Submitting notes to TOMIS...")
     ).toBeInTheDocument();
 
-    expect(screen.queryByText("BETTY RUBBLE")).not.toBeInTheDocument();
+    expect(screen.queryByText("Betty Rubble")).not.toBeInTheDocument();
   });
 
   test("renders success", () => {

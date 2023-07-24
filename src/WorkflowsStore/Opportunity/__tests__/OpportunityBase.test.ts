@@ -44,7 +44,6 @@ let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 let mockUser: CombinedUserRecord;
 let mockUserStateCode: jest.SpyInstance;
-let mockUserEmail: jest.SpyInstance;
 
 class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {
   form: FormBase<any>;

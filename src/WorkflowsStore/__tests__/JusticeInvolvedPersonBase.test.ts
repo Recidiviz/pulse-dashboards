@@ -23,11 +23,16 @@ import {
   runInAction,
 } from "mobx";
 
-import { JusticeInvolvedPersonRecord, StaffRecord } from "../../FirestoreStore";
+import {
+  JusticeInvolvedPersonRecord,
+  PersonUpdateRecord,
+  StaffRecord,
+} from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
 import { OpportunityFactory, OpportunityType } from "../Opportunity";
 import { OpportunityBase } from "../Opportunity/OpportunityBase";
+import { CollectionDocumentSubscription } from "../subscriptions";
 
 jest.mock("firebase/firestore");
 jest.mock("../subscriptions");
@@ -188,6 +193,43 @@ describe("opportunities", () => {
       } as unknown as RootStore;
       createTestUnit();
       expect(testPerson.assignedStaffFullName).toEqual("LastName");
+    });
+  });
+
+  describe("displayPreferredName", () => {
+    beforeEach(() => {
+      createTestUnit(mockFactory);
+    });
+
+    test("with preferred name", () => {
+      runInAction(() => {
+        testPerson.personUpdatesSubscription = {
+          data: { preferredName: "two names" },
+        } as unknown as CollectionDocumentSubscription<PersonUpdateRecord>;
+        testPerson.personUpdatesSubscription.isHydrated = true;
+      });
+
+      expect(testPerson.displayPreferredName).toEqual(
+        "Real (Two Names) Person"
+      );
+    });
+    test("without preferred name", () => {
+      runInAction(() => {
+        testPerson.personUpdatesSubscription = {
+          data: { preferredName: null },
+        } as unknown as CollectionDocumentSubscription<PersonUpdateRecord>;
+        testPerson.personUpdatesSubscription.isHydrated = true;
+      });
+      expect(testPerson.displayPreferredName).toEqual("Real Person");
+    });
+    test("when preferred name matches given name", () => {
+      runInAction(() => {
+        testPerson.personUpdatesSubscription = {
+          data: { preferredName: "Real" },
+        } as unknown as CollectionDocumentSubscription<PersonUpdateRecord>;
+        testPerson.personUpdatesSubscription.isHydrated = true;
+      });
+      expect(testPerson.displayPreferredName).toEqual("Real Person");
     });
   });
 

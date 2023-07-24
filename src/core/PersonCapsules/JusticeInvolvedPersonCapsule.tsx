@@ -29,7 +29,6 @@ import React from "react";
 import styled, { css } from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { humanReadableTitleCase } from "../../utils";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonAvatar } from "../Avatar";
 import { Separator } from "../WorkflowsClientProfile/common";
@@ -122,10 +121,6 @@ export const JusticeInvolvedPersonCapsule = observer(
     const IdentityEl = SIZES.identity[textSize];
     const StatusEl = SIZES.status[textSize];
 
-    const personName = responsiveRevamp
-      ? humanReadableTitleCase(person.displayPreferredName)
-      : person.displayPreferredName;
-
     return (
       <Wrapper nameHoverState={nameHoverState}>
         <JusticeInvolvedPersonAvatar
@@ -136,7 +131,7 @@ export const JusticeInvolvedPersonCapsule = observer(
           <IdentityEl>
             <TooltipTrigger contents={!hideTooltip && "Go to profile"}>
               <PersonName className="PersonName fs-exclude">
-                {personName}
+                {person.displayPreferredName}
               </PersonName>
             </TooltipTrigger>
             {!hideId && (

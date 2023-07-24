@@ -169,7 +169,7 @@ describe("WorkflowsMilestones", () => {
       </BrowserRouter>
     );
     // Clients with milestones
-    expect(screen.getByText("TONYE THOMPSON")).toBeInTheDocument();
-    expect(screen.getByText("LINET HANSEN")).toBeInTheDocument();
+    expect(screen.getByText("Tonye Thompson")).toBeInTheDocument();
+    expect(screen.getByText("Linet Hansen")).toBeInTheDocument();
   });
 });
