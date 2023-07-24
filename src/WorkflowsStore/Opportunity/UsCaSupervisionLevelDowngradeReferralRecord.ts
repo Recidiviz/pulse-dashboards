@@ -57,4 +57,14 @@ export type UsCaSupervisionLevelDowngradeDraftData = {
   objectiveScore3: number;
   objectiveScore4: number;
   objectiveScore5: number;
+  form1650Attached: boolean;
+  additionalReportAttached: boolean;
+  moveToNewCategory: boolean;
+  newCategory: string;
+  dateNotified: string;
+  notifiedInPerson: boolean;
+  notifiedByMail: boolean;
+  notifiedByPhone: boolean;
+  notifiedByEmail: boolean;
+  notifiedByLetter: boolean;
 };

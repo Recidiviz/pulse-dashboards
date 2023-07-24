@@ -25,6 +25,7 @@ import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsSto
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import FormInput from "./FormInput";
 import FormObjectivesSection from "./FormObjectivesSection";
+import FormRecommendations from "./FormRecommendations";
 import {
   FormSection,
   NarrowFont,
@@ -166,6 +167,7 @@ const FormSectionOne = () => {
         <ReviewTypeCheckbox />
       </SummaryRow>
       <FormObjectivesSection />
+      <FormRecommendations />
     </FormSection>
   );
 };
