@@ -14,11 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { useContext } from "react";
+
 import { ReactComponent as GreenCheckmark } from "../../assets/static/images/greenCheckmark.svg";
+import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
 import { Client } from "../../WorkflowsStore";
 import { Heading } from "../WorkflowsClientProfile/Heading";
+import WorkflowsPreviewModalContext from "../WorkflowsPreviewModal/WorkflowsPreviewModalContext";
 import Banner from "./Banner";
-import { SidePanelContents } from "./styles";
+import OpportunityAvailableCTA from "./OpportunityAvailableCTA";
+import {
+  ButtonsContainer,
+  ButtonWithLoader,
+  SidePanelContents,
+} from "./styles";
 
 interface CongratulatedAnotherWayProps {
   client: Client;
@@ -27,10 +36,33 @@ interface CongratulatedAnotherWayProps {
 const CongratulatedAnotherWayView = function CongratulatedAnotherWayView({
   client,
 }: CongratulatedAnotherWayProps): JSX.Element {
+  useHydrateOpportunities(client);
+  const opportunity = client.hasVerifiedOpportunities
+    ? client.verifiedOpportunities.usCaSupervisionLevelDowngrade
+    : undefined;
+  const { setDismissAfterMs, setModalIsOpen } = useContext(
+    WorkflowsPreviewModalContext
+  );
+  const closeModalTimeoutMS = opportunity ? 10000 : 4000;
+  setDismissAfterMs(closeModalTimeoutMS);
+
   return (
     <SidePanelContents>
       <Banner icon={GreenCheckmark} text="Congratulated" />
       <Heading person={client} />{" "}
+      <ButtonsContainer>
+        {opportunity && (
+          <OpportunityAvailableCTA client={client} opportunity={opportunity} />
+        )}
+        {closeModalTimeoutMS && (
+          <ButtonWithLoader
+            onClick={() => setModalIsOpen(false)}
+            loadingTimeMS={closeModalTimeoutMS}
+          >
+            Close
+          </ButtonWithLoader>
+        )}
+      </ButtonsContainer>
     </SidePanelContents>
   );
 };

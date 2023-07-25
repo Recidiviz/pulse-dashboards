@@ -234,6 +234,7 @@ export interface Opportunity<
   readonly caseNotesTitle?: string;
   readonly hideUnknownCaseNoteDates?: boolean;
   readonly tooltipEligibilityText?: string;
+  readonly eligibilityCallToActionText?: string;
   sectionTitle: string;
   sectionOrder: string[];
   showEligibilityStatus: (component: Component) => boolean;

@@ -14,20 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Button, spacing } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { darken, rem } from "polished";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { rem } from "polished";
+import { useState } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
-import { desktopLinkGate } from "../desktopLinkGate";
+import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { OpportunityCapsule } from "../PersonCapsules";
-import { OPPORTUNITY_STATUS_COLORS } from "../utils/workflowsUtils";
-import { workflowsUrl } from "../views";
 
 const ListItem = styled.li`
   padding: ${rem(spacing.md)} ${rem(spacing.md)} 0 0;
@@ -49,22 +46,6 @@ const PersonItemWrapper = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
-`;
-
-const NavigateToFormButton = styled(Button)`
-  background: ${OPPORTUNITY_STATUS_COLORS.eligible.buttonFill};
-  border-radius: 4px;
-  border: 1px solid ${OPPORTUNITY_STATUS_COLORS.eligible.buttonFill};
-  max-height: 32px;
-  min-height: 32px;
-  max-width: ${rem(175)};
-
-  &:hover,
-  &:focus {
-    background: ${darken(0.1, OPPORTUNITY_STATUS_COLORS.eligible.buttonFill)};
-    border: 1px solid
-      ${darken(0.1, OPPORTUNITY_STATUS_COLORS.eligible.buttonFill)};
-  }
 `;
 
 type PersonListItemProps = {
@@ -104,25 +85,13 @@ export const PersonListItem = observer(function PersonListItem({
         </PersonLink>
         <ButtonSpacer />
         {showButton && !isTablet && opportunity.form?.navigateToFormText && (
-          <Link
-            to={workflowsUrl("opportunityAction", {
-              opportunityType: opportunity.type,
-              justiceInvolvedPersonId: person.pseudonymizedId,
-            })}
+          <NavigateToFormButton
+            className="NavigateToFormButton"
+            opportunityType={opportunity.type}
+            pseudonymizedId={person.pseudonymizedId}
           >
-            <NavigateToFormButton
-              className="NavigateToFormButton"
-              onClick={
-                workflowsStore.featureVariants.responsiveRevamp
-                  ? desktopLinkGate({
-                      headline: "Referral Unavailable in Mobile View",
-                    })
-                  : undefined
-              }
-            >
-              {opportunity.form.navigateToFormText}
-            </NavigateToFormButton>
-          </Link>
+            {opportunity.form.navigateToFormText}
+          </NavigateToFormButton>
         )}
       </PersonItemWrapper>
     </ListItem>

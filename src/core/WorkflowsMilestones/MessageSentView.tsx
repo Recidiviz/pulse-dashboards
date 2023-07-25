@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 
 import { ReactComponent as GreenCheckmark } from "../../assets/static/images/greenCheckmark.svg";
+import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
 import { formatWorkflowsDate } from "../../utils/formatStrings";
 import { Client } from "../../WorkflowsStore";
 import {
@@ -25,8 +26,9 @@ import {
   optionalFieldToDate,
 } from "../../WorkflowsStore/utils";
 import { Heading } from "../WorkflowsClientProfile/Heading";
-import { ModalContext } from "../WorkflowsPreviewModal";
+import WorkflowsPreviewModalContext from "../WorkflowsPreviewModal/WorkflowsPreviewModalContext";
 import Banner from "./Banner";
+import OpportunityAvailableCTA from "./OpportunityAvailableCTA";
 import {
   ButtonsContainer,
   ButtonWithLoader,
@@ -54,24 +56,17 @@ export const MessageSentView = function MessageSentView({
     optionalFieldToDate(milestonesMessageUpdateLog?.date)
   );
 
-  const setModalIsOpen = useContext(ModalContext);
-  const closeModalTimeoutMS = 4000;
-
+  // Hydrate opportunities for the client
+  useHydrateOpportunities(client);
+  const opportunity = client.hasVerifiedOpportunities
+    ? client.verifiedOpportunities.usCaSupervisionLevelDowngrade
+    : undefined;
   // Auto dismiss for the modal if the modal is open and hasAutoDismiss is true,
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (closeModalTimeoutMS) {
-      timer = setTimeout(() => {
-        setModalIsOpen(false);
-      }, closeModalTimeoutMS);
-    }
+  const modalContext = useContext(WorkflowsPreviewModalContext);
+  const { setDismissAfterMs, setModalIsOpen } = modalContext;
 
-    return () => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-    };
-  }, [setModalIsOpen, closeModalTimeoutMS]);
+  const closeModalTimeoutMs = opportunity ? 10000 : 4000;
+  setDismissAfterMs(closeModalTimeoutMs);
 
   return (
     <SidePanelContents>
@@ -86,16 +81,19 @@ export const MessageSentView = function MessageSentView({
         {messageSentOn && `on ${messageSentOn}`}.
       </ReviewInfo>
       <ReviewMessage>{milestonesFullTextMessage}</ReviewMessage>
-      {closeModalTimeoutMS && (
-        <ButtonsContainer>
+      <ButtonsContainer>
+        {opportunity && (
+          <OpportunityAvailableCTA client={client} opportunity={opportunity} />
+        )}
+        {closeModalTimeoutMs && (
           <ButtonWithLoader
             onClick={() => setModalIsOpen(false)}
-            loadingTimeMS={closeModalTimeoutMS}
+            loadingTimeMS={closeModalTimeoutMs}
           >
             Close
           </ButtonWithLoader>
-        </ButtonsContainer>
-      )}
+        )}
+      </ButtonsContainer>
     </SidePanelContents>
   );
 };

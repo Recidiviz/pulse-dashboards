@@ -24,7 +24,7 @@ export class UsCaSupervisionLevelDowngradeForm extends FormBase<
   UsCaSupervisionLevelDowngradeDraftData,
   UsCaSupervisionLevelDowngradeOpportunity
 > {
-  navigateToFormText = "Generate paperwork";
+  navigateToFormText = "Reduce level";
 
   prefilledDataTransformer: PrefilledDataTransformer<UsCaSupervisionLevelDowngradeDraftData> =
     () => {

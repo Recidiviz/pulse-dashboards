@@ -22,11 +22,13 @@ import {
   spacing,
 } from "@recidiviz/design-system";
 import { rem } from "polished";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import useModalTimeoutDismissal from "./hooks/useModalTimeoutDismissal";
+import WorkflowsPreviewModalContext from "./WorkflowsPreviewModalContext";
 
 export const StyledDrawerModal = styled(DrawerModal)<{
   isMobile: boolean;
@@ -86,12 +88,6 @@ type PreviewModalProps = {
   onAfterOpen?: () => void;
   onBackClick?: () => void;
 };
-// Create a new context
-export const ModalContext = React.createContext<(isOpen: boolean) => void>(
-  () => {
-    console.warn("ModalContext is not available");
-  }
-);
 
 export function WorkflowsPreviewModal({
   isOpen,
@@ -104,13 +100,24 @@ export function WorkflowsPreviewModal({
     workflowsStore: { featureVariants },
   } = useRootStore();
   const { isMobile } = useIsMobile(true);
+  const CLOSE_TIMEOUT_MS = 1000;
+  const WIDTH_REVAMP = 480;
+  const WIDTH_DEFAULT = 555;
 
   // Managing the modal isOpen state here instead of tying it directly to
   // props helps to smooth out the open/close transition
   const [modalIsOpen, setModalIsOpen] = useState(isOpen);
+  const { setDismissAfterMs } = useModalTimeoutDismissal({ setModalIsOpen });
+
   useEffect(() => {
     setModalIsOpen(isOpen);
   }, [isOpen]);
+
+  // useMemo here to prevent creating a new object on every render
+  const contextValue = useMemo(
+    () => ({ setDismissAfterMs, setModalIsOpen }),
+    [setDismissAfterMs, setModalIsOpen]
+  );
 
   return (
     <StyledDrawerModal
@@ -118,8 +125,12 @@ export function WorkflowsPreviewModal({
       onAfterOpen={onAfterOpen}
       onRequestClose={() => setModalIsOpen(false)}
       onAfterClose={() => workflowsStore.updateSelectedPerson(undefined)}
-      closeTimeoutMS={1000}
-      width={featureVariants.responsiveRevamp && !isMobile ? 480 : 555}
+      closeTimeoutMS={CLOSE_TIMEOUT_MS}
+      width={
+        featureVariants.responsiveRevamp && !isMobile
+          ? WIDTH_REVAMP
+          : WIDTH_DEFAULT
+      }
       isMobile={isMobile && !!featureVariants.responsiveRevamp}
     >
       <ModalControls responsiveRevamp={!!featureVariants.responsiveRevamp}>
@@ -142,14 +153,14 @@ export function WorkflowsPreviewModal({
           <Icon kind="Close" size="14" color={palette.pine2} />
         </Button>
       </ModalControls>
-      <ModalContext.Provider value={setModalIsOpen}>
+      <WorkflowsPreviewModalContext.Provider value={contextValue}>
         <Wrapper
           className="WorkflowsPreviewModal"
           responsiveRevamp={!!featureVariants.responsiveRevamp}
         >
           {pageContent}
         </Wrapper>
-      </ModalContext.Provider>
+      </WorkflowsPreviewModalContext.Provider>
     </StyledDrawerModal>
   );
 }

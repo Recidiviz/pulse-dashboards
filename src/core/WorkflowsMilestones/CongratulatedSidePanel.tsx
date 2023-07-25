@@ -18,6 +18,7 @@ import { observer } from "mobx-react-lite";
 
 import { ReactComponent as GreenCheckmark } from "../../assets/static/images/greenCheckmark.svg";
 import { TextMessageStatuses } from "../../FirestoreStore";
+import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
 import { formatWorkflowsDate } from "../../utils/formatStrings";
 import { Client } from "../../WorkflowsStore";
 import {
@@ -27,7 +28,9 @@ import {
 import { Heading } from "../WorkflowsClientProfile/Heading";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import Banner from "./Banner";
+import OpportunityAvailableCTA from "./OpportunityAvailableCTA";
 import {
+  ButtonsContainer,
   PhoneNumber,
   ReviewInfo,
   ReviewMessage,
@@ -54,6 +57,12 @@ const MessageSentView = function MessageSentView({
   const messageSentOn = formatWorkflowsDate(
     optionalFieldToDate(milestonesMessageUpdateLog?.date)
   );
+
+  useHydrateOpportunities(client);
+  const opportunity = client.hasVerifiedOpportunities
+    ? client.verifiedOpportunities.usCaSupervisionLevelDowngrade
+    : undefined;
+
   return (
     <SidePanelContents data-testid="CongratulatedSidePanel">
       <Banner icon={GreenCheckmark} text="Message Sent" />
@@ -68,6 +77,11 @@ const MessageSentView = function MessageSentView({
       </ReviewInfo>
       <ReviewMessage>{milestonesFullTextMessage}</ReviewMessage>
       <ReviewMessage>To stop receiving these texts, reply: STOP</ReviewMessage>
+      <ButtonsContainer>
+        {opportunity && (
+          <OpportunityAvailableCTA client={client} opportunity={opportunity} />
+        )}
+      </ButtonsContainer>
     </SidePanelContents>
   );
 };
@@ -82,6 +96,11 @@ const CongratulatedAnotherWayView = function CongratulatedAnotherWayView({
     if (closeModal) closeModal();
   };
 
+  useHydrateOpportunities(client);
+  const opportunity = client.hasVerifiedOpportunities
+    ? client.verifiedOpportunities.usCaSupervisionLevelDowngrade
+    : undefined;
+
   return (
     <SidePanelContents data-testid="CongratulatedSidePanel">
       <Banner
@@ -95,6 +114,11 @@ const CongratulatedAnotherWayView = function CongratulatedAnotherWayView({
         {client.displayPreferredName} in-person or using another method. Great
         job!{" "}
       </ReviewInfo>
+      <ButtonsContainer>
+        {opportunity && (
+          <OpportunityAvailableCTA client={client} opportunity={opportunity} />
+        )}
+      </ButtonsContainer>
     </SidePanelContents>
   );
 };

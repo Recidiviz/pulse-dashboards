@@ -157,6 +157,64 @@ export const SidePanelContents = styled.div`
   height: 85vh;
 `;
 
+// Define the pulse animation
+const pulse = keyframes`
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.025);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+`;
+
+export const OpportunityAvailableContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1 0 0;
+  align-self: stretch;
+  margin-bottom: 0.75rem;
+  animation: ${pulse} 1.5s ease-in-out;
+`;
+
+export const OpportunityAvailableContents = styled.div`
+  border-radius: 8px;
+  background: ${palette.marble2};
+  display: flex;
+  padding: 24px;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  align-self: stretch;
+`;
+
+export const OpportunityAvailableHeaderText = styled.div.attrs({
+  role: "heading",
+  "aria-level": 1,
+})`
+  ${typography.Sans18};
+  align-self: stretch;
+  text-align: center;
+  color: ${palette.slate85};
+`;
+
+export const OpportunityAvailableText = styled.div.attrs({
+  role: "article",
+})`
+  ${typography.Sans16};
+  text-align: center;
+  align-self: stretch;
+  color: ${palette.slate70};
+`;
+
 export const MilestonesText = styled.span`
   ${typography.Sans14}
   color: ${palette.pine4};

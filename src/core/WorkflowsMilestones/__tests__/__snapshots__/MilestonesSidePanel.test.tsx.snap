@@ -232,6 +232,9 @@ Object {
               >
                 To stop receiving these texts, reply: STOP
               </div>
+              <div
+                class="styles__ButtonsContainer-sc-b21pq-8 GRsOy"
+              />
             </div>
           </div>
         </div>
@@ -505,7 +508,7 @@ Object {
                 Reasons
               </div>
               <div
-                class="styles__MilestonesList-sc-b21pq-17 eKdPJx"
+                class="styles__MilestonesList-sc-b21pq-21 jPAmBk"
               />
               <div
                 class="sc-cCjUiG styles__SidePanelHeader-sc-b21pq-3 fgWjb eeCsc"
@@ -513,14 +516,14 @@ Object {
                 Milestones
               </div>
               <div
-                class="styles__MilestonesList-sc-b21pq-17 eKdPJx"
+                class="styles__MilestonesList-sc-b21pq-21 jPAmBk"
               >
                 <div
-                  class="styles__MilestonesItem-sc-b21pq-16 cTglTb"
+                  class="styles__MilestonesItem-sc-b21pq-20 jsGUcO"
                 >
                   <div />
                   <span
-                    class="styles__MilestonesText-sc-b21pq-15 jueBoL"
+                    class="styles__MilestonesText-sc-b21pq-19 cdsTgz"
                   >
                     6 months violation-free
                   </span>
@@ -777,14 +780,14 @@ Object {
                 Milestones
               </div>
               <div
-                class="styles__MilestonesList-sc-b21pq-17 eKdPJx"
+                class="styles__MilestonesList-sc-b21pq-21 jPAmBk"
               >
                 <div
-                  class="styles__MilestonesItem-sc-b21pq-16 cTglTb"
+                  class="styles__MilestonesItem-sc-b21pq-20 jsGUcO"
                 >
                   <div />
                   <span
-                    class="styles__MilestonesText-sc-b21pq-15 jueBoL"
+                    class="styles__MilestonesText-sc-b21pq-19 cdsTgz"
                   >
                     6 months violation-free
                   </span>
@@ -1159,6 +1162,9 @@ Object {
                  in-person or using another method. Great job!
                  
               </div>
+              <div
+                class="styles__ButtonsContainer-sc-b21pq-8 GRsOy"
+              />
             </div>
           </div>
         </div>
