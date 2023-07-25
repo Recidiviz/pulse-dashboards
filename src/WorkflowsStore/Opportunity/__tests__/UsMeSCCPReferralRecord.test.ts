@@ -51,37 +51,6 @@ test("transform record", () => {
   expect(transformReferral(rawRecord)).toMatchSnapshot();
 });
 
-test("transform record", () => {
-  const rawRecord: Record<keyof UsMeSCCPReferralRecord, any> = {
-    stateCode: "US_ME",
-    externalId: "001",
-    eligibleCriteria: {
-      usMeMinimumOrCommunityCustody: { custodyLevel: "MINIMUM" },
-      usMeServedXPortionOfSentence: {
-        eligibleDate: "2022-11-03",
-        xPortionServed: "1/2",
-      },
-      usMeXMonthsRemainingOnSentence: {
-        eligibleDate: "2022-08-07",
-      },
-      usMeNoDetainersWarrantsOrOther: null,
-      usMeNoClassAOrBViolationFor90Days: null,
-    },
-    ineligibleCriteria: {},
-    caseNotes: {
-      foo: [
-        {
-          noteTitle: "A title",
-          noteBody: "A body",
-          eventDate: "2022-06-28",
-        },
-      ],
-    },
-  };
-
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
-});
-
 test("transform almost-eligible record", () => {
   const rawRecord: Record<keyof UsMeSCCPReferralRecord, any> = {
     stateCode: "US_ME",

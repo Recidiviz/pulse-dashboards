@@ -681,7 +681,7 @@ export const usMeFurloughReleaseEligibleRecordFixture: UsMeFurloughReleaseReferr
     stateCode: "US_ME",
     externalId: "111",
     eligibleCriteria: {
-      usMeMinimumOrCommunityCustody: { custodyLevel: "COMMUNITY" },
+      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
       usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
         eligibleDate: parseISO("2022-08-10"),
       },

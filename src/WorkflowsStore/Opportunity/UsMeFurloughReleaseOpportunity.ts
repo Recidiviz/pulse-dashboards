@@ -49,7 +49,7 @@ const CRITERIA_COPY: CriteriaCopy<UsMeFurloughReleaseReferralRecord> = {
       },
     ],
     [
-      "usMeMinimumOrCommunityCustody",
+      "usMeCustodyLevelIsMinimumOrCommunity",
       {
         text: "Currently on $CUSTODY_LEVEL",
         tooltip: "Currently on minimum or community custody",
@@ -113,7 +113,7 @@ const CRITERIA_COPY: CriteriaCopy<UsMeFurloughReleaseReferralRecord> = {
 const CRITERIA_FORMATTERS: CriteriaFormatters<UsMeFurloughReleaseReferralRecord> =
   {
     eligibleCriteria: {
-      usMeMinimumOrCommunityCustody: {
+      usMeCustodyLevelIsMinimumOrCommunity: {
         CUSTODY_LEVEL: ({ custodyLevel }) => custodyLevel.toLowerCase(),
       },
       usMeThreeYearsRemainingOnSentence: {

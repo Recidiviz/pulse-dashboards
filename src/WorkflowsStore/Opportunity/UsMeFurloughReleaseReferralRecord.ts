@@ -39,7 +39,9 @@ export const usMeFurloughReleaseSchema = opportunitySchemaBase
           violType: z.string(),
         })
         .nullable(),
-      usMeMinimumOrCommunityCustody: z.object({ custodyLevel: z.string() }),
+      usMeCustodyLevelIsMinimumOrCommunity: z.object({
+        custodyLevel: z.string(),
+      }),
       usMeNoDetainersWarrantsOrOther: z
         .object({
           detainer: z.string(),

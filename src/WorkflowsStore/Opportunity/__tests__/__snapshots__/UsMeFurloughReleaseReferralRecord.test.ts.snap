@@ -12,7 +12,7 @@ Object {
     ],
   },
   "eligibleCriteria": Object {
-    "usMeMinimumOrCommunityCustody": Object {
+    "usMeCustodyLevelIsMinimumOrCommunity": Object {
       "custodyLevel": "MINIMUM",
     },
     "usMeNoClassAOrBViolationFor90Days": null,

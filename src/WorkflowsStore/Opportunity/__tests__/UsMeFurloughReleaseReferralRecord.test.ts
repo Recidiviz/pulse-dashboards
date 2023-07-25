@@ -25,7 +25,7 @@ test("transform record", () => {
     stateCode: "US_ME",
     externalId: "001",
     eligibleCriteria: {
-      usMeMinimumOrCommunityCustody: { custodyLevel: "MINIMUM" },
+      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "MINIMUM" },
       usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
         eligibleDate: "2022-11-03",
       },
