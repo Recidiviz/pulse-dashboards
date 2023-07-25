@@ -30,6 +30,7 @@ type ExternalSMSMessageRequest = {
   recipientPhoneNumber: string;
   senderId: string;
   message: string;
+  userHash: string;
 };
 
 class API {

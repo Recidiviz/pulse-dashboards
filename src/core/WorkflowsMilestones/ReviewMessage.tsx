@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { Dispatch, SetStateAction } from "react";
 
+import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
 import { formatPhoneNumber } from "../../WorkflowsStore/utils";
 import { Heading } from "../WorkflowsClientProfile/Heading";
@@ -41,8 +42,12 @@ const ReviewMessageView = observer(function ReviewMessageView({
   client,
   setCurrentView,
 }: ReviewMessageProps): JSX.Element {
+  const { analyticsStore } = useRootStore();
   const handleOnSend = async () => {
     await client.sendMilestonesMessage();
+    analyticsStore.trackMilestonesCongratulationsSent({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+    });
     setCurrentView("MESSAGE_SENT");
   };
 

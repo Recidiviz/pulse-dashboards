@@ -276,6 +276,10 @@ export default class UserStore {
     return appMetadata;
   }
 
+  get userHash(): string {
+    return this.userAppMetadata?.userHash ?? "";
+  }
+
   get userRole(): UserRole | undefined {
     return this.userAppMetadata?.role;
   }

@@ -867,4 +867,11 @@ export class WorkflowsStore implements Hydratable {
 
     return userEmail || "user";
   }
+
+  get currentUserHash(): string {
+    const {
+      userStore: { userHash },
+    } = this.rootStore;
+    return userHash;
+  }
 }

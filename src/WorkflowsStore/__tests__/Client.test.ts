@@ -58,6 +58,9 @@ describe("Client", () => {
     jest
       .spyOn(rootStore.userStore, "userFullName", "get")
       .mockReturnValue("Officer Name");
+    jest
+      .spyOn(rootStore.userStore, "userHash", "get")
+      .mockReturnValue("123-hash");
     mockDeleteField.mockReturnValue("delete field");
     mockRootStore = {
       ...rootStore,
@@ -115,6 +118,7 @@ describe("Client", () => {
         stateCode: "US_XX",
         pendingMessage: "This is a message",
         status: "PENDING",
+        userHash: "123-hash",
       });
     });
     test("additionalMessage is deleted", () => {
@@ -135,6 +139,7 @@ describe("Client", () => {
         stateCode: "US_XX",
         pendingMessage: mockDeleteField(),
         status: "PENDING",
+        userHash: "123-hash",
       });
     });
     test("additionalMessage is not updated", () => {
@@ -154,6 +159,7 @@ describe("Client", () => {
           - 6 months violation-free`,
         stateCode: "US_XX",
         status: "PENDING",
+        userHash: "123-hash",
       });
     });
   });
@@ -172,6 +178,7 @@ describe("Client", () => {
         recipient: "1112223333",
         stateCode: "US_XX",
         status: "PENDING",
+        userHash: "123-hash",
       });
     });
 
@@ -188,6 +195,7 @@ describe("Client", () => {
         recipient: mockDeleteField(),
         stateCode: "US_XX",
         status: "PENDING",
+        userHash: "123-hash",
       });
     });
   });
@@ -243,6 +251,7 @@ describe("Client", () => {
         date: "2023-06-12",
       },
       status: "PENDING",
+      userHash: "123-hash",
     });
   });
 
@@ -302,6 +311,7 @@ describe("Client", () => {
           date: "2023-06-12",
         },
         status: "IN_PROGRESS",
+        userHash: "123-hash",
       });
 
       expect(
@@ -311,6 +321,7 @@ describe("Client", () => {
         recipientExternalId: record.personExternalId,
         recipientPhoneNumber: record.phoneNumber,
         senderId: "staff@email.com",
+        userHash: "123-hash",
       });
     });
 
@@ -349,6 +360,7 @@ describe("Client", () => {
             date: "2023-06-12",
           },
           status: "PENDING",
+          userHash: "123-hash",
         });
 
         expect(

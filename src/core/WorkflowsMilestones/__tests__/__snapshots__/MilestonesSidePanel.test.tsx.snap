@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`MilestonesSidePanel renders the CONGRATULATED side panel renders with text message preview 1`] = `
+exports[`MilestonesSidePanel CONGRATULATED renders with text message preview 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body
@@ -296,7 +296,7 @@ Object {
 }
 `;
 
-exports[`MilestonesSidePanel renders the DECLINED side panel 1`] = `
+exports[`MilestonesSidePanel DECLINED 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body
@@ -590,7 +590,7 @@ Object {
 }
 `;
 
-exports[`MilestonesSidePanel renders the NEW_MILESTONES side panel 1`] = `
+exports[`MilestonesSidePanel NEW_MILESTONES renders with ComposeMessageView 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body

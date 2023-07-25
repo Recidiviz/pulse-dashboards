@@ -400,6 +400,7 @@ export type MilestonesMessage = {
   sentBy?: string;
   mid?: string;
   stateCode?: string;
+  userHash?: string;
 };
 
 export type ExternalSystemRequestStatus =

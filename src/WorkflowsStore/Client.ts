@@ -421,6 +421,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         status: TextMessageStatuses.PENDING,
         stateCode: this.stateCode,
         recipient: deletePhoneNumber ? deleteField() : phoneNumber,
+        userHash: this.rootStore.workflowsStore.currentUserHash,
       }
     );
   }
@@ -448,6 +449,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       this.recordId,
       {
         updated,
+        userHash: this.rootStore.workflowsStore.currentUserHash,
         status: TextMessageStatuses.PENDING,
         ...pendingMessage,
         stateCode: this.stateCode,
@@ -469,6 +471,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
           date: serverTimestamp(),
         },
         status,
+        userHash: this.rootStore.workflowsStore.currentUserHash,
       }
     );
   }
@@ -484,6 +487,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
             date: serverTimestamp(),
           },
           status: TextMessageStatuses.IN_PROGRESS,
+          userHash: this.rootStore.workflowsStore.currentUserHash,
         }
       );
       await this.rootStore.apiStore.postExternalSMSMessage({
@@ -491,6 +495,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         recipientExternalId: this.externalId,
         recipientPhoneNumber: this.milestonesPhoneNumber,
         senderId: this.rootStore.workflowsStore.currentUserEmail ?? "Unknown",
+        userHash: this.rootStore.workflowsStore.currentUserHash,
       });
     } catch (e) {
       await this.rootStore.firestoreStore.updateMilestonesMessages(
@@ -501,6 +506,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
             date: serverTimestamp(),
           },
           status: TextMessageStatuses.PENDING,
+          userHash: this.rootStore.workflowsStore.currentUserHash,
         }
       );
       toast.error(
