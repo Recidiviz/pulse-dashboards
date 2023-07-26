@@ -69,6 +69,8 @@ export const FormSection = styled.div`
     ${Border};
     border-width: 0 0 1px 0;
   }
+
+  margin-bottom: 0.5em;
 `;
 
 export const SectionRow = styled.div`

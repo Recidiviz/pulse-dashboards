@@ -15,37 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
-import { useContext } from "react";
 import styled from "styled-components/macro";
 
-import { FormViewerContext } from "../../FormViewer";
-import { PrintablePage, PrintablePageMargin } from "../../styles";
-import FormFooter from "./FormFooter";
-import FormHeader from "./FormHeader";
-import FormSectionOne from "./FormSectionOne";
-import FormSectionTwo from "./FormSectionTwo";
-import { FormContainer } from "./styles";
+import { TinyTextStyle } from "./styles";
 
-const PageMargin = styled(PrintablePageMargin)`
-  padding: ${rem(30)};
+const Footer = styled.div`
+  ${TinyTextStyle};
+  border-top: 1px solid #ccc;
+  padding-top: 0.25em;
 `;
 
-const FormCDCR1657 = () => {
-  const formViewerContext = useContext(FormViewerContext);
-
+const FormFooter = () => {
   return (
-    <PageMargin>
-      <PrintablePage>
-        <FormContainer {...formViewerContext}>
-          <FormHeader />
-          <FormSectionOne />
-          <FormSectionTwo />
-          <FormFooter />
-        </FormContainer>
-      </PrintablePage>
-    </PageMargin>
+    <Footer>
+      DISTRIBUTION: &emsp; ORIGINAL &mdash; CENTRAL FILE &emsp; CANARY &mdash;
+      AGENT OF RECORD &emsp; PINK &mdash; PAROLEE
+    </Footer>
   );
 };
 
-export default FormCDCR1657;
+export default FormFooter;

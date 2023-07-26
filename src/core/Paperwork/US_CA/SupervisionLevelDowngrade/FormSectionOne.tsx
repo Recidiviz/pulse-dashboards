@@ -25,6 +25,8 @@ import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsSto
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import FormInput from "./FormInput";
 import FormObjectivesSection from "./FormObjectivesSection";
+import FormOtherParticipants from "./FormOtherParticipants";
+import FormPresenceSection from "./FormPresenceSection";
 import FormRecommendations from "./FormRecommendations";
 import {
   FormSection,
@@ -125,12 +127,12 @@ const RowInput = ({
 }: {
   header: string;
   width: number;
-  name: keyof UsCaSupervisionLevelDowngradeDraftData;
+  name?: keyof UsCaSupervisionLevelDowngradeDraftData;
 }) => {
   return (
     <InputCell style={{ width: `${width}%` }}>
       <InputHeader>{header}:</InputHeader>
-      <FormInput name={name} />
+      {name && <FormInput name={name} />}
     </InputCell>
   );
 };
@@ -168,6 +170,13 @@ const FormSectionOne = () => {
       </SummaryRow>
       <FormObjectivesSection />
       <FormRecommendations />
+      <FormPresenceSection />
+      <FormOtherParticipants />
+      <SummaryRow>
+        <RowInput header="PAROLE AGENT (SIGNATURE)" width={70} />
+        <RowInput header="BADGE NUMBER" width={15} name="agentSignatureBadge" />
+        <RowInput header="DATE" width={15} name="agentSignatureDate" />
+      </SummaryRow>
     </FormSection>
   );
 };

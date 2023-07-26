@@ -22,10 +22,22 @@ import { useRootStore } from "../../components/StoreProvider";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
+import { generate } from "../Paperwork/PDFFormGenerator";
+import { PrintablePage } from "../Paperwork/styles";
 import FormCDCR1657 from "../Paperwork/US_CA/SupervisionLevelDowngrade/FormCDCR1657";
 
 const Form = observer(function FormUsCaSupervisionLeveDowngrade() {
+  const {
+    workflowsStore: { selectedPerson: person },
+  } = useRootStore();
+
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+
+  const onClickDownload = async () => {
+    return generate(formRef.current, `${PrintablePage}`).then((pdf) => {
+      pdf.save(`${person?.displayName} - CDCR 1657.pdf`);
+    });
+  };
 
   const {
     workflowsStore: { selectedClient: client },
@@ -41,7 +53,7 @@ const Form = observer(function FormUsCaSupervisionLeveDowngrade() {
       agencyName="CDCR"
       heading="Supervision Level Downgrade"
       /* eslint-disable-next-line @typescript-eslint/no-empty-function */
-      onClickDownload={async () => {}}
+      onClickDownload={onClickDownload}
       downloadButtonLabel="Download PDF"
       opportunity={opportunity}
     >
