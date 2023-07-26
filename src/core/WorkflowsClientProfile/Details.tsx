@@ -35,7 +35,11 @@ import {
   INTERSTATE_COPY,
   UsMiEarlyDischargeReferralRecord,
 } from "../../WorkflowsStore/Opportunity/UsMiEarlyDischargeOpportunity";
-import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../../WorkflowsStore/Opportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
+import {
+  UsMoClassInfo,
+  UsMoConductViolationInfo,
+  UsMoRestrictiveHousingStatusHearingReferralRecord,
+} from "../../WorkflowsStore/Opportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { Resident } from "../../WorkflowsStore/Resident";
 import {
   middleDateBetweenTwoDates,
@@ -590,12 +594,96 @@ export function UsMoIncarceration({
   );
 }
 
+export function UsMoClassesList({
+  classes,
+}: {
+  classes: UsMoClassInfo[];
+}): React.ReactElement {
+  return (
+    <>
+      {classes && classes.length > 0 ? (
+        <DetailsList>
+          {classes.map(
+            ({
+              startDate,
+              endDate,
+              classTitle,
+              classExitReason,
+            }: UsMoClassInfo) => {
+              return (
+                <DetailsContent key={classTitle} className="fs-exclude">
+                  <CaseNoteTitle>
+                    {classTitle || "CLASS TITLE UNAVAILABLE"}
+                  </CaseNoteTitle>
+                  <br />
+                  <CaseNoteDate>
+                    {formatWorkflowsDate(startDate)} -{" "}
+                    {endDate ? formatWorkflowsDate(endDate) : "current"}
+                  </CaseNoteDate>
+                  <br />
+                  Exit Reason: {classExitReason || "N/A"}
+                </DetailsContent>
+              );
+            }
+          )}
+        </DetailsList>
+      ) : (
+        "None"
+      )}
+    </>
+  );
+}
+
+export function UsMoConductViolationsList({
+  cdvs,
+}: {
+  cdvs: UsMoConductViolationInfo[];
+}): React.ReactElement {
+  return (
+    <>
+      {cdvs.length > 0 && cdvs ? (
+        <DetailsList>
+          {cdvs.map(({ cdvDate, cdvRule }: UsMoConductViolationInfo) => {
+            return (
+              <DetailsContent key={cdvRule}>
+                <CaseNoteTitle>{cdvRule}:</CaseNoteTitle>{" "}
+                {formatWorkflowsDate(cdvDate)}
+              </DetailsContent>
+            );
+          })}
+        </DetailsList>
+      ) : (
+        "None"
+      )}
+    </>
+  );
+}
+
 export function UsMoRestrictiveHousing({
   opportunity,
 }: OpportunityProfileProps): React.ReactElement | null {
   const opportunityRecord =
     opportunity.record as UsMoRestrictiveHousingStatusHearingReferralRecord;
   if (!opportunityRecord) return null;
+
+  const {
+    housingUseCode,
+    restrictiveHousingStartDate,
+    buildingNumber,
+    complexNumber,
+    roomNumber,
+    bedNumber,
+    mostRecentHearingDate,
+    mostRecentHearingFacility,
+    aicScore,
+    unwaivedEnemies,
+    majorCdvs,
+    cdvsSinceLastHearing,
+    numMinorCdvsBeforeLastHearing,
+    classesRecent,
+    mentalHealthAssessmentScore,
+    mostRecentHearingComments,
+  } = opportunityRecord.metadata;
 
   return (
     <>
@@ -605,21 +693,18 @@ export function UsMoRestrictiveHousing({
           <DetailsList>
             <DetailsSubheading>Type</DetailsSubheading>
             <DetailsContent className="fs-exclude">
-              {opportunityRecord?.metadata.housingUseCode}
+              {housingUseCode}
             </DetailsContent>
 
             <DetailsSubheading>Length of Stay</DetailsSubheading>
             <DetailsContent className="fs-exclude">
-              {formatWorkflowsDate(
-                opportunityRecord.metadata.restrictiveHousingStartDate
-              )}{" "}
-              to {formatWorkflowsDate(new Date())}
+              {formatWorkflowsDate(restrictiveHousingStartDate)} to{" "}
+              {formatWorkflowsDate(new Date())}
               <CaseNoteDate>
                 {" "}
-                –{" "}
-                {differenceInDays(
+                – {differenceInDays(
                   new Date(),
-                  opportunityRecord.metadata.restrictiveHousingStartDate
+                  restrictiveHousingStartDate
                 )}{" "}
                 days
               </CaseNoteDate>
@@ -627,74 +712,92 @@ export function UsMoRestrictiveHousing({
 
             <DetailsSubheading>Current Location</DetailsSubheading>
             <DetailsContent className="fs-exclude">
-              Building {opportunityRecord.metadata.buildingNumber}, Complex{" "}
-              {opportunityRecord.metadata.complexNumber}, Room{" "}
-              {opportunityRecord.metadata.roomNumber}, Bed{" "}
-              {opportunityRecord.metadata.bedNumber}
+              Building {buildingNumber}, Complex {complexNumber}, Room{" "}
+              {roomNumber}, Bed {bedNumber}
             </DetailsContent>
 
             <DetailsSubheading>
               Last Restrictive Housing Status Hearing
             </DetailsSubheading>
-            <DetailsContent className="fs-exclude">
-              {formatWorkflowsDate(
-                opportunityRecord.metadata.mostRecentHearingDate
-              )}{" "}
-              (
-              {differenceInDays(
-                new Date(),
-                opportunityRecord.metadata.mostRecentHearingDate
-              )}{" "}
-              days ago)
-            </DetailsContent>
+            {mostRecentHearingDate ? (
+              <DetailsContent className="fs-exclude">
+                {formatWorkflowsDate(mostRecentHearingDate)} (
+                {differenceInDays(new Date(), mostRecentHearingDate)} days ago)
+              </DetailsContent>
+            ) : (
+              "None"
+            )}
 
             <DetailsSubheading>Last Hearing Facility</DetailsSubheading>
             <DetailsContent className="fs-exclude">
-              {opportunityRecord?.metadata.mostRecentHearingFacility}
+              {mostRecentHearingFacility}
+            </DetailsContent>
+            <DetailsSubheading>Adult in Custody (AIC) Score</DetailsSubheading>
+            <DetailsContent className="fs-exclude">{aicScore}</DetailsContent>
+            <DetailsSubheading>
+              Mental Health Assessment Score
+            </DetailsSubheading>
+            <DetailsContent className="fs-exclude">
+              {mentalHealthAssessmentScore}
+            </DetailsContent>
+            <DetailsSubheading>Unwaived Enemies</DetailsSubheading>
+            <DetailsContent className="fs-exclude">
+              {unwaivedEnemies && unwaivedEnemies.length > 0
+                ? unwaivedEnemies.map(
+                    ({
+                      enemyExternalId,
+                      enemyHousingUseCode,
+                      enemyBuildingNumber,
+                      enemyComplexNumber,
+                      enemyRoomNumber,
+                      enemyBedNumber,
+                    }) => (
+                      <DetailsContent>
+                        <CaseNoteTitle>[ID# {enemyExternalId}] </CaseNoteTitle>
+                        Housing Use Code: <b>{enemyHousingUseCode}</b>
+                        <br />
+                        Building {enemyBuildingNumber}, Complex{" "}
+                        {enemyComplexNumber}, Room {enemyRoomNumber}, Bed{" "}
+                        {enemyBedNumber}
+                      </DetailsContent>
+                    )
+                  )
+                : "None"}
             </DetailsContent>
           </DetailsList>
         </DetailsContent>
       </DetailsSection>
 
       <DetailsSection>
-        <DetailsHeading>CDVs</DetailsHeading>
+        <DetailsHeading>Conduct Violations (CDVs)</DetailsHeading>
         <DetailsContent>
-          <DetailsList>
-            <DetailsSubheading>Major CDVs, past 12 months</DetailsSubheading>
-            <DetailsList>
-              {opportunityRecord.metadata.majorCdvs.length > 0
-                ? opportunityRecord.metadata.majorCdvs.map((cdv) => {
-                    return (
-                      <DetailsContent>
-                        <CaseNoteTitle>{cdv.cdvRule}:</CaseNoteTitle>{" "}
-                        {formatWorkflowsDate(cdv.cdvDate)}
-                      </DetailsContent>
-                    );
-                  })
-                : "None"}
-            </DetailsList>
-            <DetailsSubheading>Other CDVs since last hearing</DetailsSubheading>
-            <DetailsList>
-              {opportunityRecord.metadata.cdvsSinceLastHearing.length > 0
-                ? opportunityRecord.metadata.cdvsSinceLastHearing.map((cdv) => {
-                    return (
-                      <DetailsContent>
-                        <CaseNoteTitle>{cdv.cdvRule}:</CaseNoteTitle>{" "}
-                        {formatWorkflowsDate(cdv.cdvDate)}
-                      </DetailsContent>
-                    );
-                  })
-                : "None"}
-            </DetailsList>
-            <DetailsSubheading>
-              Other Minor CDVs, past 6 months
-            </DetailsSubheading>
-            <DetailsContent>
-              {opportunityRecord.metadata.numMinorCdvsBeforeLastHearing
-                ? opportunityRecord.metadata.numMinorCdvsBeforeLastHearing
-                : "None"}
-            </DetailsContent>
-          </DetailsList>
+          <DetailsSubheading>
+            Major Conduct Violations, Past 12 Months
+          </DetailsSubheading>
+          <UsMoConductViolationsList cdvs={majorCdvs} />
+          <DetailsSubheading>
+            Conduct Violations, Since Last Hearing
+          </DetailsSubheading>
+          <UsMoConductViolationsList cdvs={cdvsSinceLastHearing} />
+          <DetailsSubheading>
+            Minor Conduct Violations, Past 6 Months
+          </DetailsSubheading>
+          {numMinorCdvsBeforeLastHearing || "None"}
+        </DetailsContent>
+      </DetailsSection>
+
+      <DetailsSection>
+        <DetailsHeading>Most Recent 10 Classes</DetailsHeading>
+        <DetailsContent>
+          <UsMoClassesList
+            classes={(classesRecent || [])
+              .sort(
+                (a, b) =>
+                  new Date(b.startDate).getTime() -
+                  new Date(a.startDate).getTime()
+              )
+              .slice(0, 10)}
+          />
         </DetailsContent>
       </DetailsSection>
 
@@ -703,7 +806,7 @@ export function UsMoRestrictiveHousing({
         <DetailsContent>
           <DetailsList>
             <DetailsContent className="fs-exclude">
-              {opportunityRecord?.metadata.mostRecentHearingComments}
+              {mostRecentHearingComments}
             </DetailsContent>
           </DetailsList>
         </DetailsContent>
