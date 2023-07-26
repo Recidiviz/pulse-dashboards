@@ -22,6 +22,7 @@ import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { Resident } from "../Resident";
 import { OTHER_KEY } from "../utils";
+import { UsMeFurloughReleaseForm } from "./Forms/UsMeFurloughReleaseForm";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import {
@@ -134,6 +135,8 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
 
   policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ME;
 
+  form: UsMeFurloughReleaseForm;
+
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "Incarceration",
     "CaseNotes",
@@ -153,6 +156,12 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
+
+    this.form = new UsMeFurloughReleaseForm(
+      "usMeFurloughRelease",
+      this,
+      resident.rootStore
+    );
   }
 
   get requirementsMet(): OpportunityRequirement[] {

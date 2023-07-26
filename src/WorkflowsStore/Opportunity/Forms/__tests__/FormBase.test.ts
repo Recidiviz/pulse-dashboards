@@ -90,3 +90,35 @@ describe("form downloading", () => {
     });
   });
 });
+
+describe("Test Furlough form", () => {
+  test("Facility/Housing unit renders correctly", () => {
+    function formatFacilityHousingUnit(person: {
+      facilityId: string | undefined;
+      unitId: string | undefined;
+    }) {
+      return `${person.facilityId ?? ""}${
+        person.facilityId && person.unitId ? "/" : ""
+      }${person.unitId ?? ""}`;
+    }
+
+    const residentA = {
+      facilityId: "FAKE FACILITY",
+      unitId: "UNIT A",
+    };
+
+    const residentB = {
+      facilityId: undefined,
+      unitId: "UNIT A",
+    };
+
+    const residentC = {
+      facilityId: undefined,
+      unitId: undefined,
+    };
+
+    expect(formatFacilityHousingUnit(residentA)).toBe("FAKE FACILITY/UNIT A");
+    expect(formatFacilityHousingUnit(residentB)).toBe("UNIT A");
+    expect(formatFacilityHousingUnit(residentC)).toBe("");
+  });
+});

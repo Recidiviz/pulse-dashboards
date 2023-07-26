@@ -57,6 +57,14 @@ export const usMeFurloughReleaseSchema = opportunitySchemaBase
 export type UsMeFurloughReleaseReferralRecord = z.infer<
   typeof usMeFurloughReleaseSchema
 >;
+
 export type UsMeFurloughReleaseReferralRecordRaw = z.input<
   typeof usMeFurloughReleaseSchema
 >;
+
+export type UsMeFurloughReleaseDraftData = {
+  residentName: string;
+  mdocNo: string;
+  facilityHousingUnit: string;
+  caseManager: string;
+};
