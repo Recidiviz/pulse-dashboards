@@ -65,6 +65,8 @@ export const filtersOrder = [
 ];
 
 export const WORKFLOWS_METHODOLOGY_URL: Record<string, string> = {
+  US_CA:
+    "https://drive.google.com/file/d/1qIXF7G6CY_pVbNTNTyHvYJF1lAIgiy1n/view?usp=sharing",
   US_TN:
     "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view?usp=sharing",
   US_ND:
