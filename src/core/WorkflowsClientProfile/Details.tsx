@@ -47,7 +47,6 @@ import { Divider, InfoButton, InfoTooltipWrapper } from "./common";
 import {
   ClientProfileProps,
   OpportunityProfileProps,
-  PersonProfileProps,
   ResidentProfileProps,
 } from "./types";
 
@@ -210,35 +209,73 @@ export function SpecialConditions({
   );
 }
 
-function PartialTimeDate({
+interface HalfTimeProps {
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+  stateCode: string;
+}
+
+export function HalfTime({
+  startDate,
+  endDate,
+  stateCode,
+}: HalfTimeProps): React.ReactElement {
+  const halfTimeDate = middleDateBetweenTwoDates(startDate, endDate);
+
+  if (stateCode === "US_ME") {
+    return (
+      <>
+        <DetailsSubheading>Half Time Date</DetailsSubheading>
+        <DetailsContent>{formatWorkflowsDate(halfTimeDate)}</DetailsContent>
+      </>
+    );
+  }
+  return <div />;
+}
+
+export function TwoThirdsTime({
   resident,
 }: {
   resident: Resident;
 }): React.ReactElement {
-  const { portionServedNeeded } = resident;
-  const fractionString = portionServedNeeded === "2/3" ? "Two-Thirds" : "Half";
-  const getThresholdDate =
-    portionServedNeeded === "2/3"
-      ? twoThirdsDateBetweenTwoDates
-      : middleDateBetweenTwoDates;
+  const {
+    stateCode,
+    portionServedNeeded,
+    opportunitiesAlmostEligible,
+    opportunitiesEligible,
+  } = resident;
 
-  return (
-    <>
-      <DetailsSubheading>{fractionString} Time Date</DetailsSubheading>
-      <DetailsContent>
-        {formatWorkflowsDate(
-          getThresholdDate(resident.admissionDate, resident.releaseDate)
-        )}
-      </DetailsContent>
-    </>
-  );
+  const SCCPEligibleOrAlmostEligible =
+    "usMeSCCP" in opportunitiesEligible ||
+    "usMeSCCP" in opportunitiesAlmostEligible;
+
+  if (
+    stateCode === "US_ME" &&
+    portionServedNeeded === "2/3" &&
+    SCCPEligibleOrAlmostEligible
+  ) {
+    return (
+      <>
+        <DetailsSubheading>Two-Thirds Time Date</DetailsSubheading>
+        <DetailsContent>
+          {formatWorkflowsDate(
+            twoThirdsDateBetweenTwoDates(
+              resident.admissionDate,
+              resident.releaseDate
+            )
+          )}
+        </DetailsContent>
+      </>
+    );
+  }
+
+  return <div />;
 }
 
 export function Supervision({
   client,
 }: ClientProfileProps): React.ReactElement {
   const tooltip = client.detailsCopy?.supervisionStartDate?.tooltip;
-  const halftime = client.stateCode === "US_ME";
 
   return (
     <DetailsSection>
@@ -256,19 +293,11 @@ export function Supervision({
               </InfoTooltipWrapper>
             )}
           </DetailsContent>
-          {halftime && (
-            <>
-              <DetailsSubheading>Half Time Date</DetailsSubheading>
-              <DetailsContent>
-                {formatWorkflowsDate(
-                  middleDateBetweenTwoDates(
-                    client.supervisionStartDate,
-                    client.expirationDate
-                  )
-                )}
-              </DetailsContent>
-            </>
-          )}
+          <HalfTime
+            startDate={client.supervisionStartDate}
+            endDate={client.expirationDate}
+            stateCode={client.stateCode}
+          />
           <DetailsSubheading>Expiration</DetailsSubheading>
           <DetailsContent>
             {formatWorkflowsDate(client.expirationDate)}
@@ -287,8 +316,6 @@ export function Supervision({
 export function Incarceration({
   resident,
 }: ResidentProfileProps): React.ReactElement {
-  const partialTime = resident.stateCode === "US_ME";
-
   return (
     <DetailsSection>
       <DetailsHeading>Incarceration</DetailsHeading>
@@ -298,7 +325,12 @@ export function Incarceration({
           <DetailsContent>
             {formatWorkflowsDate(resident.admissionDate)}
           </DetailsContent>
-          {partialTime && PartialTimeDate({ resident })}
+          <HalfTime
+            startDate={resident.admissionDate}
+            endDate={resident.releaseDate}
+            stateCode={resident.stateCode}
+          />
+          <TwoThirdsTime resident={resident} />
           <DetailsSubheading>Release</DetailsSubheading>
           <DetailsContent>
             {formatWorkflowsDate(resident.releaseDate)}
@@ -529,40 +561,6 @@ export function Milestones({ client }: ClientProfileProps): React.ReactElement {
             );
           })}
         </DetailsContent>
-      </DetailsSection>
-    );
-  }
-
-  return <div />;
-}
-
-export function HalfTime({ person }: PersonProfileProps): React.ReactElement {
-  let partialTime;
-  let partialTimeString = "Half";
-
-  if (person instanceof Client) {
-    const { supervisionStartDate, expirationDate } = person;
-    partialTime = middleDateBetweenTwoDates(
-      supervisionStartDate,
-      expirationDate
-    );
-  }
-
-  if (person instanceof Resident) {
-    const { admissionDate, releaseDate, portionServedNeeded } = person;
-    if (portionServedNeeded === "2/3") {
-      partialTime = twoThirdsDateBetweenTwoDates(admissionDate, releaseDate);
-      partialTimeString = "Two-Thirds";
-    } else {
-      partialTime = middleDateBetweenTwoDates(admissionDate, releaseDate);
-    }
-  }
-
-  if (partialTime) {
-    return (
-      <DetailsSection>
-        <DetailsHeading>{partialTimeString} Time Date</DetailsHeading>
-        <DetailsContent>{formatWorkflowsDate(partialTime)}</DetailsContent>
       </DetailsSection>
     );
   }
