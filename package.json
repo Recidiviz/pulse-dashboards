@@ -49,7 +49,8 @@
     "firebase-offline": "run-s update-workflows-fixture firebase-emulator",
     "update-rules-staging": "firebase --project=staging-backend deploy --only firestore:rules",
     "update-rules-production": "firebase --project=production-backend deploy --only firestore:rules",
-    "deploy": "node ./tools/deploy.mjs"
+    "deploy": "node ./tools/deploy.mjs",
+    "load-prod-fixtures": "ts-node tools/loadProdTestFixtures.mjs"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.12.1",
