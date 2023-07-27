@@ -60,22 +60,26 @@ export function formatNoteDate(date: Date): string {
   return format(date, "MMMM do");
 }
 
-export type OpportunityHeadersType = {
-  eligibilityText: string;
+// The next three types are internal to this file in order to have a type where either
+// eligibilityText or fullText must be set
+type OpportunityHeadersBaseType = {
   opportunityText: string;
   callToAction: string;
 };
 
-export const generateOpportunityDeniedSectionTitle = (
-  opportunity: Opportunity
-): string => {
-  const { deniedSectionTitle, isAlert } = opportunity;
-  const deniedSectionDefaultTitle = isAlert
-    ? "Overridden"
-    : "Marked ineligible";
-
-  return deniedSectionTitle || deniedSectionDefaultTitle;
+type OpportunityHeadersWithEligibilityTextType = OpportunityHeadersBaseType & {
+  eligibilityText: string;
+  fullText?: never;
 };
+
+type OpportunityHeadersWithFullTextType = OpportunityHeadersBaseType & {
+  fullText: string;
+  eligibilityText?: never;
+};
+
+export type OpportunityHeadersType =
+  | OpportunityHeadersWithEligibilityTextType
+  | OpportunityHeadersWithFullTextType;
 
 export const generateOpportunityInitialHeader = (
   opportunityType: OpportunityType,
@@ -108,7 +112,7 @@ export const generateOpportunityHydratedHeader = (
   opportunityType: OpportunityType,
   count: number
 ): OpportunityHeadersType => {
-  const headers = {
+  const headers: Record<OpportunityType, OpportunityHeadersType> = {
     compliantReporting: {
       eligibilityText: simplur`${count} client[|s] may be eligible for `,
       opportunityText: "Compliant Reporting",
@@ -195,16 +199,9 @@ export const generateOpportunityHydratedHeader = (
       callToAction: "Review and update custody levels.",
     },
     usMoRestrictiveHousingStatusHearing: {
-      // This is slightly awkward phrasing, but we concatenate the eligibility text + opportunity
-      // text together, so this is the way to get the opportunity text at the end of the sentence.
-      eligibilityText: simplur`${count} resident[|s] [is|are] within 7 days of being due for a `,
+      fullText: simplur`${count} resident[|s] are currently in Restrictive Housing`,
       opportunityText: "Restrictive Housing Status Hearing",
       callToAction: "Conduct a Restrictive Housing Status Hearing",
-    },
-    usMiClassificationReviewReferrals: {
-      eligibilityText: simplur`${count} client[|s] may be eligible for a supervision level downgrade`,
-      opportunityText: "Classification Review",
-      callToAction: "N/A",
     },
     usMeEarlyTermination: {
       eligibilityText: simplur`${count} client[|s] may be good [a|] candidate[|s] for `,
@@ -268,6 +265,15 @@ export function sortByReviewStatusAndEligibilityDate(
   return rankSort;
 }
 
+export function sortByEligibilityDateUndefinedFirst(
+  opp1: Opportunity,
+  opp2: Opportunity
+): number {
+  if (!opp1.eligibilityDate) return -1;
+  if (!opp2.eligibilityDate) return 1;
+  return ascending(opp1.eligibilityDate, opp2.eligibilityDate);
+}
+
 export const opportunityToSortFunctionMapping: Record<
   OpportunityType,
   (a: Opportunity, b: Opportunity) => number
@@ -286,7 +292,7 @@ export const opportunityToSortFunctionMapping: Record<
   usMeWorkRelease: sortByReviewStatus,
   usTnExpiration: sortByReviewStatusAndEligibilityDate,
   usTnCustodyLevelDowngrade: sortByReviewStatus,
-  usMoRestrictiveHousingStatusHearing: sortByReviewStatusAndEligibilityDate,
+  usMoRestrictiveHousingStatusHearing: sortByEligibilityDateUndefinedFirst,
   usMeEarlyTermination: sortByReviewStatus,
   usMiMinimumTelephoneReporting: sortByReviewStatus,
   usMiPastFTRD: sortByReviewStatusAndEligibilityDate,

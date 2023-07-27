@@ -43,8 +43,8 @@ export const mockOpportunity: Opportunity<Client> = {
   trackPreviewed: () => undefined,
   opportunityProfileModules: [],
   supportsExternalRequest: false,
-  sectionOrder: ["Eligible"],
+  sectionOrder: ["Eligible Now"],
   deniedSectionTitle: "Marked Ineligible",
-  sectionTitle: "Eligible",
+  sectionTitle: "Eligible Now",
   showEligibilityStatus: () => true,
 };

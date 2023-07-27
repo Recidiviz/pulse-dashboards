@@ -27,6 +27,7 @@ import {
   generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,
   OPPORTUNITY_LABELS,
+  SectionTitle,
 } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
@@ -96,7 +97,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
   );
 
   const opportunityTypeSections = opportunitiesBySection[opportunityType];
-  const sectionOrder: string[] | undefined = Object.values(
+  const sectionOrder: Readonly<SectionTitle[]> | undefined = Object.values(
     opportunityTypeSections
   )
     .filter((opp) => !!opp)
@@ -108,7 +109,11 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
         isMobile={isMobile && responsiveRevamp}
         className="PersonList__Heading"
       >
-        {hydratedHeader.eligibilityText} {hydratedHeader.opportunityText}
+        {hydratedHeader.fullText ?? (
+          <>
+            {hydratedHeader.eligibilityText} {hydratedHeader.opportunityText}
+          </>
+        )}
       </Heading>
       <SubHeading className="PersonList__Subheading">
         {hydratedHeader.callToAction}

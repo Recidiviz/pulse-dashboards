@@ -17,7 +17,7 @@
 
 import tk from "timekeeper";
 
-import { FeatureGateError, OpportunityValidationError } from "../../../errors";
+import { OpportunityValidationError } from "../../../errors";
 import {
   UsMoRestrictiveHousingStatusHearingReferralRecordRaw,
   usMoRestrictiveHousingStatusHearingSchema,
@@ -53,21 +53,7 @@ const rawRecordBase: Omit<
   },
 };
 
-const rawRecordPreviousFormat: UsMoRestrictiveHousingStatusHearingReferralRecordRaw =
-  {
-    ...rawRecordBase,
-    eligibleCriteria: {
-      usMoHasUpcomingHearing: {
-        nextReviewDate: "2023-11-03",
-      },
-      usMoInRestrictiveHousing: {
-        confinementType: "confinement type",
-      },
-    },
-    ineligibleCriteria: {},
-  };
-
-const rawRecordNewFormatUpcomingHearing: UsMoRestrictiveHousingStatusHearingReferralRecordRaw =
+const rawRecordUpcomingHearingToday: UsMoRestrictiveHousingStatusHearingReferralRecordRaw =
   {
     ...rawRecordBase,
     eligibleCriteria: {
@@ -77,26 +63,25 @@ const rawRecordNewFormatUpcomingHearing: UsMoRestrictiveHousingStatusHearingRefe
     },
     ineligibleCriteria: {
       usMoOverdueForHearing: {
-        nextReviewDate: "2023-11-03",
+        nextReviewDate: "2023-11-03", // This should match "today" defined below
       },
     },
   };
 
-const rawRecordNewFormatOverdue: UsMoRestrictiveHousingStatusHearingReferralRecordRaw =
-  {
-    ...rawRecordBase,
-    eligibleCriteria: {
-      usMoOverdueForHearing: {
-        nextReviewDate: "2023-10-03",
-      },
-      usMoInRestrictiveHousing: {
-        confinementType: "confinement type",
-      },
+const rawRecordOverdue: UsMoRestrictiveHousingStatusHearingReferralRecordRaw = {
+  ...rawRecordBase,
+  eligibleCriteria: {
+    usMoOverdueForHearing: {
+      nextReviewDate: "2023-10-03",
     },
-    ineligibleCriteria: {},
-  };
+    usMoInRestrictiveHousing: {
+      confinementType: "confinement type",
+    },
+  },
+  ineligibleCriteria: {},
+};
 
-const rawRecordNewFormatMissingHearingDate: UsMoRestrictiveHousingStatusHearingReferralRecordRaw =
+const rawRecordMissingHearingDate: UsMoRestrictiveHousingStatusHearingReferralRecordRaw =
   {
     ...rawRecordBase,
     eligibleCriteria: {
@@ -111,7 +96,7 @@ const rawRecordNewFormatMissingHearingDate: UsMoRestrictiveHousingStatusHearingR
     },
   };
 
-const rawRecordNewFormatHearingDateFarInFuture: UsMoRestrictiveHousingStatusHearingReferralRecordRaw =
+const rawRecordHearingDateFarInFuture: UsMoRestrictiveHousingStatusHearingReferralRecordRaw =
   {
     ...rawRecordBase,
     eligibleCriteria: {
@@ -126,6 +111,21 @@ const rawRecordNewFormatHearingDateFarInFuture: UsMoRestrictiveHousingStatusHear
     },
   };
 
+const rawRecordIneligibleButDateInPast: UsMoRestrictiveHousingStatusHearingReferralRecordRaw =
+  {
+    ...rawRecordBase,
+    eligibleCriteria: {
+      usMoInRestrictiveHousing: {
+        confinementType: "confinement type",
+      },
+    },
+    ineligibleCriteria: {
+      usMoOverdueForHearing: {
+        nextReviewDate: "2023-10-02",
+      },
+    },
+  };
+
 const today = new Date(2023, 10, 3);
 
 beforeEach(() => {
@@ -136,24 +136,35 @@ afterEach(() => {
   tk.reset();
 });
 
-test("transform record: previous format", () => {
-  expect(
-    usMoRestrictiveHousingStatusHearingSchema.parse(rawRecordPreviousFormat)
-  ).toMatchSnapshot();
-});
-
-test("transform record: new format", () => {
+test("transform record", () => {
   expect(
     usMoRestrictiveHousingStatusHearingSchema.parse(
-      rawRecordNewFormatUpcomingHearing
+      rawRecordUpcomingHearingToday
     )
+  ).toMatchSnapshot();
+  expect(
+    usMoRestrictiveHousingStatusHearingSchema.parse(rawRecordOverdue)
+  ).toMatchSnapshot();
+  expect(
+    usMoRestrictiveHousingStatusHearingSchema.parse(rawRecordMissingHearingDate)
   ).toMatchSnapshot();
 });
 
-test("record validates: next review date today", () => {
+test("transform ineligible record with hearing date in past into eligible criteria", () => {
+  const parsedRecord = usMoRestrictiveHousingStatusHearingSchema.parse(
+    rawRecordIneligibleButDateInPast
+  );
+  expect(parsedRecord).toMatchSnapshot();
+  expect(parsedRecord.ineligibleCriteria).toBeEmpty();
+  expect(
+    parsedRecord.eligibleCriteria.usMoOverdueForHearing?.nextReviewDate
+  ).toBeDefined();
+});
+
+test("record validates: overdue for hearing in the past", () => {
   expect(() =>
     validateReferral(
-      usMoRestrictiveHousingStatusHearingSchema.parse(rawRecordPreviousFormat)
+      usMoRestrictiveHousingStatusHearingSchema.parse(rawRecordOverdue)
     )
   ).not.toThrow(OpportunityValidationError);
 });
@@ -162,55 +173,48 @@ test("record validates: next review date today", () => {
   expect(() =>
     validateReferral(
       usMoRestrictiveHousingStatusHearingSchema.parse(
-        rawRecordNewFormatUpcomingHearing
+        rawRecordUpcomingHearingToday
       )
     )
   ).not.toThrow(OpportunityValidationError);
 });
 
-test("record does not validate: next review date yesterday", () => {
-  const recordYesterday = {
-    ...rawRecordPreviousFormat,
-    eligibleCriteria: {
-      usMoHasUpcomingHearing: {
-        nextReviewDate: "2023-11-02",
-      },
-      usMoInRestrictiveHousing: {
-        confinementType: "confinement type",
-      },
-    },
-  };
+test("record validates: missing hearing date", () => {
   expect(() =>
     validateReferral(
-      usMoRestrictiveHousingStatusHearingSchema.parse(recordYesterday)
+      usMoRestrictiveHousingStatusHearingSchema.parse(
+        rawRecordMissingHearingDate
+      )
+    )
+  ).not.toThrow(OpportunityValidationError);
+});
+
+test("record validates: hearing date far in future", () => {
+  expect(() =>
+    validateReferral(
+      usMoRestrictiveHousingStatusHearingSchema.parse(
+        rawRecordHearingDateFarInFuture
+      )
+    )
+  ).not.toThrow(OpportunityValidationError);
+});
+
+test("record does not validate: overdue in the future", () => {
+  const overdueInFuture: UsMoRestrictiveHousingStatusHearingReferralRecordRaw =
+    {
+      ...rawRecordOverdue,
+      eligibleCriteria: {
+        usMoOverdueForHearing: {
+          nextReviewDate: "3000-01-01",
+        },
+        usMoInRestrictiveHousing: {
+          confinementType: "confinement type",
+        },
+      },
+    };
+  expect(() =>
+    validateReferral(
+      usMoRestrictiveHousingStatusHearingSchema.parse(overdueInFuture)
     )
   ).toThrow(OpportunityValidationError);
-});
-
-test("record does not validate: overdue", () => {
-  expect(() =>
-    validateReferral(
-      usMoRestrictiveHousingStatusHearingSchema.parse(rawRecordNewFormatOverdue)
-    )
-  ).toThrow(FeatureGateError);
-});
-
-test("record does not validate: missing hearing date", () => {
-  expect(() =>
-    validateReferral(
-      usMoRestrictiveHousingStatusHearingSchema.parse(
-        rawRecordNewFormatMissingHearingDate
-      )
-    )
-  ).toThrow(FeatureGateError);
-});
-
-test("record does not validate: hearing date far in future", () => {
-  expect(() =>
-    validateReferral(
-      usMoRestrictiveHousingStatusHearingSchema.parse(
-        rawRecordNewFormatHearingDateFarInFuture
-      )
-    )
-  ).toThrow(FeatureGateError);
 });
