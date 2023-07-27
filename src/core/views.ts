@@ -31,6 +31,7 @@ export const DASHBOARD_VIEWS = {
   methodology: "id-methodology",
   profile: "profile",
   workflows: "workflows",
+  impact: "impact",
 } as const;
 type DashboardViewRootPath = typeof DASHBOARD_VIEWS[DashboardView];
 
@@ -288,3 +289,7 @@ export function workflowsUrl(
   }
   return WORKFLOWS_PATHS[routeName];
 }
+
+export const IMPACT_PATHS: Record<string, string> = {
+  impact: `/${DASHBOARD_VIEWS.impact}`,
+};

@@ -104,6 +104,7 @@ const US_TN_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countByRace,
     ],
     "id-methodology": [DASHBOARD_VIEWS.system],
+    impact: [DASHBOARD_VIEWS.impact],
   },
   pagesWithRestrictions: [
     "libertyToPrison",

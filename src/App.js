@@ -35,12 +35,18 @@ import StoreProvider from "./components/StoreProvider";
 import StyledToaster from "./components/StyledToaster";
 import VerificationNeeded from "./components/VerificationNeeded";
 import DashboardLayout from "./core/DashboardLayout";
+import PageImpact from "./core/PageImpact";
 import PageMethodology from "./core/PageMethodology";
 import PageSystem from "./core/PageSystem";
 import PageVitals from "./core/PageVitals";
 import PageWorkflows from "./core/PageWorkflows";
 import Profile from "./core/Profile";
-import { DASHBOARD_VIEWS, PATHWAYS_PATHS, WORKFLOWS_PATHS } from "./core/views";
+import {
+  DASHBOARD_VIEWS,
+  IMPACT_PATHS,
+  PATHWAYS_PATHS,
+  WORKFLOWS_PATHS,
+} from "./core/views";
 import LanternLayout from "./lantern/LanternLayout";
 import Revocations from "./lantern/Revocations";
 import { LANTERN_VIEWS } from "./lantern/views";
@@ -88,6 +94,7 @@ function App() {
                     <ProtectedRoute path={PATHWAYS_PATHS.methodology} component={PageMethodology} />
                     <Redirect from={`${WORKFLOWS_PATHS.workflows}/:opportunityType/:clientId/preview`} to={WORKFLOWS_PATHS.clientProfile} />
                     <ProtectedRoute path={WORKFLOWS_PATHS.workflows} component={PageWorkflows} />
+                    <ProtectedRoute path={IMPACT_PATHS.impact} component={PageImpact} />
                     <Route path="/profile" component={Profile} />
                     <Redirect from="/system" to="/system/prison" />
                     <RedirectHome />
