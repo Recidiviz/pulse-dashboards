@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { formatFacilityHousingUnit } from "../../utils";
 import { UsMeSCCPOpportunity } from "../UsMeSCCPOpportunity";
 import { UsMeSCCPDraftData } from "../UsMeSCCPReferralRecord";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
@@ -31,9 +32,10 @@ export class UsMeSCCPForm extends FormBase<
 
       const residentName = this.person.displayName;
       const mdocNo = this.person.externalId;
-      const facilityHousingUnit = `${this.person.facilityId ?? ""}/${
-        this.person.unitId ?? ""
-      }`;
+      const facilityHousingUnit = formatFacilityHousingUnit(
+        this.person.facilityId,
+        this.person.unitId
+      );
       const caseManagerRecord =
         this.rootStore.workflowsStore.availableOfficers.find(
           (r) => r.id === this.person.assignedStaffId

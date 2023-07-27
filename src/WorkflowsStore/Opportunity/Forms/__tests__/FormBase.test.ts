@@ -20,6 +20,7 @@ import { configure } from "mobx";
 import { RootStore } from "../../../../RootStore";
 import AnalyticsStore from "../../../../RootStore/AnalyticsStore";
 import { Client } from "../../../Client";
+import { formatFacilityHousingUnit } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
 import { FormBase } from "../FormBase";
 
@@ -92,33 +93,24 @@ describe("form downloading", () => {
 });
 
 describe("Test Furlough form", () => {
-  test("Facility/Housing unit renders correctly", () => {
-    function formatFacilityHousingUnit(person: {
-      facilityId: string | undefined;
-      unitId: string | undefined;
-    }) {
-      return `${person.facilityId ?? ""}${
-        person.facilityId && person.unitId ? "/" : ""
-      }${person.unitId ?? ""}`;
-    }
+  test("facility/housing unit are defined", () => {
+    const facilityId = "FAKE FACILITY";
+    const unitId = "UNIT A";
+    const result = formatFacilityHousingUnit(facilityId, unitId);
 
-    const residentA = {
-      facilityId: "FAKE FACILITY",
-      unitId: "UNIT A",
-    };
+    expect(result).toBe("FAKE FACILITY/UNIT A");
+  });
 
-    const residentB = {
-      facilityId: undefined,
-      unitId: "UNIT A",
-    };
+  test("Facility defined, housing unit undefined", () => {
+    const facilityId = "FAKE FACILITY";
+    const result = formatFacilityHousingUnit(facilityId, undefined);
 
-    const residentC = {
-      facilityId: undefined,
-      unitId: undefined,
-    };
+    expect(result).toBe("FAKE FACILITY");
+  });
 
-    expect(formatFacilityHousingUnit(residentA)).toBe("FAKE FACILITY/UNIT A");
-    expect(formatFacilityHousingUnit(residentB)).toBe("UNIT A");
-    expect(formatFacilityHousingUnit(residentC)).toBe("");
+  test("Facility/housing unit are undefined", () => {
+    const result = formatFacilityHousingUnit(undefined, undefined);
+
+    expect(result).toBe("");
   });
 });

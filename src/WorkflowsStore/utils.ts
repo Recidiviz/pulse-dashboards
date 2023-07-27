@@ -75,6 +75,16 @@ export function formatPhoneNumber(phoneNumber: string): string {
   return formattedPhoneNumber;
 }
 
+export function formatFacilityHousingUnit(
+  facilityId: string | undefined,
+  unitId: string | undefined
+): string {
+  const formattedFacilityHousingUnit = `${facilityId ?? ""}${
+    facilityId && unitId ? "/" : ""
+  }${unitId ?? ""}`;
+  return formattedFacilityHousingUnit;
+}
+
 // dates in demo fixtures will be shifted relative to this date
 const DEMO_TIMESTAMP = parseISO("2021-12-16");
 
