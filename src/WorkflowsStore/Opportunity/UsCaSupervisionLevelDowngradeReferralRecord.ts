@@ -22,6 +22,9 @@ import { dateStringSchema } from "./schemaHelpers";
 export const usCaSupervisionLevelDowngradeSchema = z.object({
   stateCode: z.string(),
   externalId: z.string(),
+  formInformation: z.object({
+    cdcno: z.string(),
+  }),
   eligibleCriteria: z.object({
     noSupervisionViolationWithin6Months: z.object({}).nullable(),
     supervisionLevelIsHighFor6Months: z.object({

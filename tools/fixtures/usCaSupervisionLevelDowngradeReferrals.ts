@@ -25,6 +25,9 @@ export const usCaSupervisionLevelDowngradeReferrals =
       {
         stateCode: "US_CA",
         externalId: "005",
+        formInformation: {
+          cdcno: "WF1234",
+        },
         eligibleCriteria: {
           noSupervisionViolationWithin6Months: null,
           supervisionLevelIsHighFor6Months: {
@@ -38,6 +41,9 @@ export const usCaSupervisionLevelDowngradeReferrals =
       {
         stateCode: "US_CA",
         externalId: "006",
+        formInformation: {
+          cdcno: "AB1234",
+        },
         eligibleCriteria: {
           noSupervisionViolationWithin6Months: null,
           supervisionLevelIsHighFor6Months: {
