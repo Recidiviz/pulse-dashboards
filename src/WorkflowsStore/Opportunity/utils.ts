@@ -21,7 +21,7 @@ import moment from "moment";
 import simplur from "simplur";
 
 import { FeatureGateError } from "../../errors";
-import { FeatureVariant } from "../../FirestoreStore";
+import { FeatureVariant } from "../../RootStore/types";
 import { pluralizeWord } from "../../utils";
 import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
 import { ValidateFunction } from "../subscriptions";

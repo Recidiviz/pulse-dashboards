@@ -19,7 +19,6 @@ import { assertFails, assertSucceeds } from "@firebase/rules-unit-testing";
 import { doc, setDoc } from "firebase/firestore";
 
 import {
-  ADMIN_COLLECTION_NAMES,
   ETL_COLLECTION_NAMES,
   getAnonUser,
   getImpersonatedUser,
@@ -86,7 +85,7 @@ test.each([
   "ETL and admin data is read-only for %s",
   async (userType, getUserContext) => {
     await testWriteToCollectionsWithoutStateCodePrefix(
-      [...ETL_COLLECTION_NAMES, ...ADMIN_COLLECTION_NAMES],
+      [...ETL_COLLECTION_NAMES],
       getUserContext(testEnv).firestore(),
       assertFails
     );

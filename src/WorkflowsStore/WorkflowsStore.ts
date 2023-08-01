@@ -34,7 +34,6 @@ import {
   reaction,
   runInAction,
   set,
-  toJS,
   values,
   when,
 } from "mobx";
@@ -55,9 +54,6 @@ import { WorkflowsPage } from "../core/views";
 import {
   ClientRecord,
   CombinedUserRecord,
-  defaultFeatureVariantsActive,
-  FeatureVariant,
-  FeatureVariantRecord,
   LocationRecord,
   MilestonesMessage,
   ResidentRecord,
@@ -67,6 +63,10 @@ import {
   UserUpdateRecord,
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
+import {
+  defaultFeatureVariantsActive,
+  FeatureVariant,
+} from "../RootStore/types";
 import tenants from "../tenants";
 import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
@@ -98,8 +98,6 @@ export class WorkflowsStore implements Hydratable {
   userSubscription: UserSubscription;
 
   userUpdatesSubscription?: CollectionDocumentSubscription<UserUpdateRecord>;
-
-  featureVariantsSubscription?: CollectionDocumentSubscription<FeatureVariantRecord>;
 
   private selectedPersonPseudoId?: string;
 
@@ -219,15 +217,6 @@ export class WorkflowsStore implements Hydratable {
         );
       }
       this.userUpdatesSubscription.hydrate();
-
-      if (!this.featureVariantsSubscription) {
-        this.featureVariantsSubscription = new CollectionDocumentSubscription(
-          firestoreStore,
-          "featureVariants",
-          email.toLowerCase()
-        );
-      }
-      this.featureVariantsSubscription.hydrate();
     } catch (e) {
       this.hydrationError = e;
     }
@@ -237,7 +226,6 @@ export class WorkflowsStore implements Hydratable {
     return !!(
       this.userSubscription.isHydrated &&
       this.userUpdatesSubscription?.isHydrated &&
-      this.featureVariantsSubscription?.isHydrated &&
       // error and hydration are mutually exclusive for this class
       !this.error
     );
@@ -245,17 +233,14 @@ export class WorkflowsStore implements Hydratable {
 
   disposeUserProfileSubscriptions(): void {
     this.userUpdatesSubscription?.unsubscribe();
-    this.featureVariantsSubscription?.unsubscribe();
 
     this.userUpdatesSubscription = undefined;
-    this.featureVariantsSubscription = undefined;
   }
 
   get isLoading(): boolean | undefined {
     const subsLoading = [
       this.userSubscription.isLoading,
       this.userUpdatesSubscription?.isLoading,
-      this.featureVariantsSubscription?.isLoading,
     ];
 
     if (subsLoading.some((status) => status === undefined)) return undefined;
@@ -268,7 +253,6 @@ export class WorkflowsStore implements Hydratable {
       this.hydrationError,
       this.userSubscription.error,
       this.userUpdatesSubscription?.error,
-      this.featureVariantsSubscription?.error,
     ].filter(identity);
 
     if (errorSources.length) return new AggregateError(errorSources);
@@ -682,16 +666,15 @@ export class WorkflowsStore implements Hydratable {
    * the activeDate for each feature and observing the current Date for reactivity
    */
   get featureVariants(): Partial<Record<FeatureVariant, { variant?: string }>> {
-    if (!this.featureVariantsSubscription?.isHydrated) return {};
-
-    const featureVariantsRecord = this.featureVariantsSubscription?.data;
+    if (this.rootStore.userStore.userIsLoading) {
+      return {};
+    }
 
     const configuredFlags = Object.entries(
-      // need a plain object without mobx annotations for iteration
-      featureVariantsRecord ? toJS(featureVariantsRecord) : {}
+      this.rootStore.userStore.featureVariants
     );
 
-    // for internal users, all flags default to on rather than off
+    // for internal users, if no feature are variants are set, use the configured defaults
     if (
       !configuredFlags.length &&
       this.rootStore.userStore.stateCode === "RECIDIVIZ"
@@ -704,7 +687,7 @@ export class WorkflowsStore implements Hydratable {
 
         const { variant, activeDate } = variantInfo;
         // check date once a minute so there isn't too much lag when we cross the threshold
-        if (activeDate && activeDate.toMillis() > now(1000 * 60))
+        if (activeDate && activeDate.getTime() > now(1000 * 60))
           return activeVariants;
         return { ...activeVariants, [variantName]: { variant } };
       },

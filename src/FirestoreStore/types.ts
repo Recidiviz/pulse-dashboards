@@ -39,7 +39,6 @@ export const collectionNames = {
   compliantReportingReferrals: "compliantReportingReferrals",
   earnedDischargeReferrals: "US_ID-earnedDischargeReferrals",
   earlyTerminationReferrals: "earlyTerminationReferrals",
-  featureVariants: "featureVariants",
   milestonesMessages: "milestonesMessages",
   LSUReferrals: "US_ID-LSUReferrals",
   pastFTRDReferrals: "US_ID-pastFTRDReferrals",
@@ -131,46 +130,6 @@ export type PersonUpdateRecord = {
   preferredContactMethod?: ContactMethodType;
 };
 
-// TEST is useful for testing, as the name suggests,
-// but also so that we don't have an empty union when there are no feature variants in use
-export type FeatureVariant =
-  | "TEST"
-  | "CompliantReportingAlmostEligible"
-  | "usMeAlmostPastHalfTerm"
-  | "usMeWorkRelease"
-  | "usMeFurloughRelease"
-  | "usTnExpiration"
-  | "usTnExpirationSubmitToTomis"
-  | "responsiveRevamp";
-/**
- * For each feature, an optional activeDate can control when the user gets access.
- * If this is missing, access will be granted immediately.
- * The `variant` property can be used to segment users to different variants of the feature,
- * e.g. for A/B testing.
- */
-type FeatureVariantMapping = Record<
-  FeatureVariant,
-  { activeDate?: Timestamp; variant?: string }
->;
-export type FeatureVariantRecord = Partial<FeatureVariantMapping>;
-export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
-  process.env.REACT_APP_DEPLOY_ENV === "production"
-    ? {
-        CompliantReportingAlmostEligible: {},
-        usTnExpiration: {},
-        usTnExpirationSubmitToTomis: {},
-      }
-    : {
-        TEST: {},
-        CompliantReportingAlmostEligible: {},
-        usMeAlmostPastHalfTerm: {},
-        usMeWorkRelease: {},
-        usMeFurloughRelease: {},
-        usTnExpiration: {},
-        usTnExpirationSubmitToTomis: {},
-        responsiveRevamp: {},
-      };
-
 /**
  * Properties that may be derived from user data but are not directly persisted in Firestore
  */
@@ -184,7 +143,6 @@ export type UserMetadata = {
 export type CombinedUserRecord = {
   info: UserRecord;
   updates?: UserUpdateRecord;
-  featureVariants?: FeatureVariantRecord;
   metadata?: UserMetadata;
 };
 

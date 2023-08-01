@@ -31,6 +31,7 @@ import FirestoreStore, {
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
+import { isDemoMode } from "../../utils/isDemoMode";
 import type { WorkflowsStore } from "..";
 import {
   ineligibleClient,
@@ -52,7 +53,6 @@ import {
 } from "../Opportunity";
 import { Resident } from "../Resident";
 import { MilestonesMessageUpdateSubscription } from "../subscriptions/MilestonesMessageUpdateSubscription";
-import { dateToTimestamp } from "../utils";
 
 jest.mock("firebase/firestore", () => {
   const originalModule = jest.requireActual("firebase/firestore");
@@ -82,6 +82,7 @@ jest.mock("../../tenants", () => ({
         "usTnExpiration",
       ],
       workflowsSupportedSystems: ["SUPERVISION"],
+      availableStateCodes: ["US_TN"],
     },
     US_ME: {
       opportunityTypes: [],
@@ -98,8 +99,12 @@ jest.mock("../../tenants", () => ({
         },
       },
     },
+    RECIDIVIZ: {
+      availableStateCodes: ["US_ME", "US_MO", "US_TN", "US_XX", "US_YY"],
+    },
   },
 }));
+jest.mock("../../utils/isDemoMode");
 
 let rootStore: RootStore;
 let workflowsStore: WorkflowsStore;
@@ -122,7 +127,6 @@ function mockAuthedUser() {
 async function waitForHydration({
   info,
   updates,
-  featureVariants,
 }: CombinedUserRecord = mockOfficer): Promise<void> {
   workflowsStore.hydrate();
 
@@ -135,8 +139,6 @@ async function waitForHydration({
     // these subs will not be null because we called hydrate() above!
     workflowsStore.userUpdatesSubscription!.data = updates;
     workflowsStore.userUpdatesSubscription!.isHydrated = true;
-    workflowsStore.featureVariantsSubscription!.data = featureVariants;
-    workflowsStore.featureVariantsSubscription!.isHydrated = true;
     /* eslint-enable @typescript-eslint/no-non-null-assertion */
   });
 
@@ -193,12 +195,10 @@ test("hydration fails without authentication", () => {
 
 test("hydration creates subscriptions", () => {
   expect(workflowsStore.userUpdatesSubscription).toBeUndefined();
-  expect(workflowsStore.featureVariantsSubscription).toBeUndefined();
 
   workflowsStore.hydrate();
 
   expect(workflowsStore.userUpdatesSubscription).toBeDefined();
-  expect(workflowsStore.featureVariantsSubscription).toBeDefined();
 });
 
 test("hydration triggers subscriptions", () => {
@@ -206,9 +206,6 @@ test("hydration triggers subscriptions", () => {
 
   expect(workflowsStore.userSubscription.hydrate).toHaveBeenCalled();
   expect(workflowsStore.userUpdatesSubscription?.hydrate).toHaveBeenCalled();
-  expect(
-    workflowsStore.featureVariantsSubscription?.hydrate
-  ).toHaveBeenCalled();
 });
 
 test("hydration reflects subscriptions", async () => {
@@ -226,8 +223,6 @@ test("hydration reflects subscriptions", async () => {
     workflowsStore.userSubscription.data = [{ stateCode: "US_XX" }];
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     workflowsStore.userUpdatesSubscription!.isHydrated = true;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    workflowsStore.featureVariantsSubscription!.isHydrated = true;
   });
 
   expect(workflowsStore.isHydrated).toBe(true);
@@ -249,8 +244,6 @@ describe("hydration loading reflects subscriptions", () => {
       workflowsStore.userSubscription.isLoading = statusA;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       workflowsStore.userUpdatesSubscription!.isLoading = statusB;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      workflowsStore.featureVariantsSubscription!.isLoading = statusC;
     });
 
     expect(workflowsStore.isLoading).toBe(result);
@@ -367,55 +360,6 @@ test("caseload syncs with stored value changes", async () => {
   });
 
   expect(workflowsStore.selectedSearchIds).toEqual(mockStoredOfficers);
-});
-
-test("receive feature variants at startup", async () => {
-  await waitForHydration({
-    ...mockOfficer,
-    featureVariants: { TEST: {} },
-  });
-
-  expect(workflowsStore.featureVariants).toEqual({
-    TEST: {},
-  });
-});
-
-test("feature variants inactive by default", async () => {
-  await waitForHydration({
-    ...mockOfficer,
-    featureVariants: undefined,
-  });
-
-  expect(workflowsStore.featureVariants).toEqual({});
-});
-
-test("feature variants active by default for Recidiviz users", async () => {
-  runInAction(() => {
-    rootStore.userStore.user = {
-      email: "foo@example.com",
-      [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-        stateCode: "RECIDIVIZ",
-      },
-    };
-  });
-
-  await waitForHydration({
-    ...mockOfficer,
-    featureVariants: undefined,
-  });
-
-  expect(workflowsStore.featureVariants).toMatchInlineSnapshot(`
-    Object {
-      "CompliantReportingAlmostEligible": Object {},
-      "TEST": Object {},
-      "responsiveRevamp": Object {},
-      "usMeAlmostPastHalfTerm": Object {},
-      "usMeFurloughRelease": Object {},
-      "usMeWorkRelease": Object {},
-      "usTnExpiration": Object {},
-      "usTnExpirationSubmitToTomis": Object {},
-    }
-  `);
 });
 
 test("officers from subscription", async () => {
@@ -781,47 +725,188 @@ describe("hasOpportunities", () => {
   });
 });
 
-test("variant with no active date", async () => {
-  await waitForHydration({
-    ...mockOfficer,
-    featureVariants: { TEST: { variant: "a" } },
+describe("feature variants", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
   });
 
-  expect(workflowsStore.featureVariants).toEqual({
-    TEST: { variant: "a" },
-  });
-});
-
-test("variant with past active date", async () => {
-  await waitForHydration({
-    ...mockOfficer,
-    featureVariants: {
-      TEST: {
-        activeDate: dateToTimestamp(
-          add(new Date(), { seconds: -1 }).toISOString()
-        ),
-      },
-    },
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
-  expect(workflowsStore.featureVariants).toEqual({
-    TEST: {},
-  });
-});
+  test("feature variants active by default for Recidiviz users", async () => {
+    runInAction(() => {
+      rootStore.userStore.user = {
+        email: "foo@example.com",
+        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+          stateCode: "RECIDIVIZ",
+          featureVariants: undefined,
+        },
+      };
+      rootStore.userStore.userIsLoading = false;
+    });
 
-test("variant with future active date", async () => {
-  await waitForHydration({
-    ...mockOfficer,
-    featureVariants: {
-      TEST: {
-        activeDate: dateToTimestamp(
-          add(new Date(), { seconds: 1 }).toISOString()
-        ),
-      },
-    },
+    expect(workflowsStore.featureVariants).toMatchInlineSnapshot(`
+      Object {
+        "CompliantReportingAlmostEligible": Object {},
+        "TEST": Object {},
+        "responsiveRevamp": Object {},
+        "usMeAlmostPastHalfTerm": Object {},
+        "usMeFurloughRelease": Object {},
+        "usMeWorkRelease": Object {},
+        "usTnExpiration": Object {},
+        "usTnExpirationSubmitToTomis": Object {},
+      }
+    `);
   });
 
-  expect(workflowsStore.featureVariants).toEqual({});
+  test("recidiviz user with feature variant defined", async () => {
+    runInAction(() => {
+      rootStore.userStore.user = {
+        email: "foo@example.com",
+        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+          stateCode: "RECIDIVIZ",
+          featureVariants: { TEST: {} },
+        },
+      };
+      rootStore.userStore.userIsLoading = false;
+    });
+
+    expect(workflowsStore.featureVariants).toEqual({ TEST: {} });
+  });
+
+  test("no feature variants", async () => {
+    runInAction(() => {
+      rootStore.userStore.user = {
+        email: mockOfficer.info.email,
+        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+          stateCode: mockOfficer.info.stateCode,
+        },
+      };
+      rootStore.userStore.userIsLoading = false;
+    });
+
+    expect(workflowsStore.featureVariants).toEqual({});
+  });
+
+  test("variant with no active date", async () => {
+    runInAction(() => {
+      rootStore.userStore.user = {
+        email: mockOfficer.info.email,
+        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+          stateCode: mockOfficer.info.stateCode,
+          featureVariants: { TEST: { variant: "a" } },
+        },
+      };
+      rootStore.userStore.userIsLoading = false;
+    });
+
+    expect(workflowsStore.featureVariants).toEqual({
+      TEST: { variant: "a" },
+    });
+  });
+
+  test("variant with past active date", async () => {
+    runInAction(() => {
+      rootStore.userStore.user = {
+        email: mockOfficer.info.email,
+        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+          stateCode: mockOfficer.info.stateCode,
+          featureVariants: {
+            TEST: {
+              activeDate: add(new Date(), { seconds: -1 }).toISOString(),
+            },
+          },
+        },
+      };
+      rootStore.userStore.userIsLoading = false;
+    });
+
+    expect(workflowsStore.featureVariants).toEqual({
+      TEST: {},
+    });
+  });
+
+  test("variant with future active date", async () => {
+    runInAction(() => {
+      rootStore.userStore.user = {
+        email: mockOfficer.info.email,
+        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+          stateCode: mockOfficer.info.stateCode,
+          featureVariants: {
+            TEST: {
+              activeDate: add(new Date(), { seconds: 1 }).toISOString(),
+            },
+          },
+        },
+      };
+      rootStore.userStore.userIsLoading = false;
+    });
+    expect(workflowsStore.featureVariants).toEqual({});
+
+    // We check once a second to see if the feature variant is active now, and since we set it to be
+    // active 1 second in the future, the feature variant should become active if we advance time by 1
+    // second.
+    jest.advanceTimersByTime(1000);
+
+    expect(workflowsStore.featureVariants).toEqual({
+      TEST: {},
+    });
+  });
+
+  test("demo mode with demo variant defined", () => {
+    const isDemoModeMock = isDemoMode as jest.Mock;
+    isDemoModeMock.mockReturnValue(true);
+    runInAction(() => {
+      rootStore.userStore.user = {
+        email: mockOfficer.info.email,
+        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+          stateCode: mockOfficer.info.stateCode,
+          featureVariants: { TEST: { variant: "a" } },
+          demoModeFeatureVariants: { usMeWorkRelease: {} },
+        },
+      };
+      rootStore.userStore.userIsLoading = false;
+    });
+
+    expect(workflowsStore.featureVariants).toEqual({
+      usMeWorkRelease: {},
+    });
+  });
+
+  test("demo mode with demo variant not defined", () => {
+    const isDemoModeMock = isDemoMode as jest.Mock;
+    isDemoModeMock.mockReturnValue(true);
+    runInAction(() => {
+      rootStore.userStore.user = {
+        email: mockOfficer.info.email,
+        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+          stateCode: mockOfficer.info.stateCode,
+          featureVariants: { TEST: {} },
+        },
+      };
+      rootStore.userStore.userIsLoading = false;
+    });
+
+    expect(workflowsStore.featureVariants).toEqual({
+      TEST: {},
+    });
+  });
+
+  test("non-demo mode with demo variant defined", () => {
+    runInAction(() => {
+      rootStore.userStore.user = {
+        email: mockOfficer.info.email,
+        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+          stateCode: mockOfficer.info.stateCode,
+          demoModeFeatureVariants: { TEST: {} },
+        },
+      };
+      rootStore.userStore.userIsLoading = false;
+    });
+
+    expect(workflowsStore.featureVariants).toEqual({});
+  });
 });
 
 describe("opportunityTypes for US_TN", () => {
@@ -842,7 +927,16 @@ describe("opportunityTypes for US_TN", () => {
   test("includes usTnExpiration", async () => {
     await waitForHydration({
       ...mockOfficer,
-      featureVariants: { usTnExpiration: {} },
+    });
+    runInAction(() => {
+      rootStore.userStore.user = {
+        email: "foo@example.com",
+        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+          stateCode: "US_TN",
+          featureVariants: { usTnExpiration: {} },
+        },
+      };
+      rootStore.userStore.userIsLoading = false;
     });
 
     expect(workflowsStore.opportunityTypes).toContain("usTnExpiration");

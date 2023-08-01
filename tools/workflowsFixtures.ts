@@ -21,11 +21,7 @@ import { Firestore, Timestamp } from "@google-cloud/firestore";
 import fs from "fs";
 
 import { collectionNames } from "../src/FirestoreStore";
-import {
-  CollectionName,
-  defaultFeatureVariantsActive,
-  MilestonesMessage,
-} from "../src/FirestoreStore/types";
+import { CollectionName, MilestonesMessage } from "../src/FirestoreStore/types";
 import { getMonthYearFromDate } from "../src/WorkflowsStore/utils";
 import { deleteCollection } from "./firestoreUtils";
 import { clientsData } from "./fixtures/clients";
@@ -118,32 +114,6 @@ function collectionName(c: keyof typeof collectionNames) {
     : collectionNames[c];
 }
 
-export async function loadFeatureVariantsFixture(): Promise<void> {
-  console.log("wiping existing featureVariants data ...");
-  await deleteCollection(db, collectionName("featureVariants"));
-
-  console.log("loading new featureVariants data...");
-  const bulkWriter = db.bulkWriter();
-
-  const featureVariant = {
-    ...defaultFeatureVariantsActive,
-    usTnExpiration: {
-      activeDate: new Timestamp(0, 0),
-    },
-  };
-
-  // Iterate through each record
-  bulkWriter.create(
-    db
-      .collection(collectionName("featureVariants"))
-      .doc("notarealemail@recidiviz.org"),
-    featureVariant
-  );
-  bulkWriter
-    .close()
-    .then(() => console.log("new client featureVariants loaded successfully"));
-}
-
 export async function loadFixtures(): Promise<void> {
   for await (const [collStr, fixtureData] of Object.entries(FIXTURES_TO_LOAD)) {
     const coll = collStr as CollectionName;
@@ -229,7 +199,6 @@ export async function loadWorkflowsFixtures(): Promise<void> {
   await Promise.all([
     loadFixtures(),
     loadOpportunityReferralFixtures(),
-    loadFeatureVariantsFixture(),
     loadClientUpdatesV2(),
   ]);
 }

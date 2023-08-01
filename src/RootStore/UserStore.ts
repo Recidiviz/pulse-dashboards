@@ -24,7 +24,14 @@ import createAuth0Client, {
   User,
 } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
-import { action, entries, makeAutoObservable, runInAction, when } from "mobx";
+import {
+  action,
+  entries,
+  makeAutoObservable,
+  runInAction,
+  toJS,
+  when,
+} from "mobx";
 import qs from "qs";
 
 import { fetchImpersonatedUserAppMetadata } from "../api/fetchImpersonatedUserAppMetadata";
@@ -38,11 +45,18 @@ import {
 import { PATHWAYS_SECTIONS, PathwaysPageIdList } from "../core/views";
 import { UserRole } from "../FirestoreStore";
 import tenants from "../tenants";
+import { isDemoMode } from "../utils/isDemoMode";
 import isIE11 from "../utils/isIE11";
 import { isOfflineMode } from "../utils/isOfflineMode";
 import { getAllowedMethodology } from "../utils/navigation";
 import type RootStore from ".";
-import { TenantId, UserAppMetadata } from "./types";
+import {
+  FeatureVariant,
+  FeatureVariantRecord,
+  FeatureVariantValue,
+  TenantId,
+  UserAppMetadata,
+} from "./types";
 
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 
@@ -361,6 +375,25 @@ export default class UserStore {
     const blockedStateCodes = this.userAppMetadata?.blockedStateCodes;
     if (!blockedStateCodes) return [];
     return blockedStateCodes.map((sc) => sc.toUpperCase());
+  }
+
+  /**
+   * Returns which feature variants the user has access to, or when in the future they will have
+   * access.
+   */
+  get featureVariants(): FeatureVariantRecord {
+    const fvs = isDemoMode()
+      ? this.userAppMetadata?.demoModeFeatureVariants ??
+        this.userAppMetadata?.featureVariants
+      : this.userAppMetadata?.featureVariants;
+    return Object.entries(toJS(fvs) ?? {}).reduce((acc, [key, value]) => {
+      const { activeDate, variant } = value;
+      acc[key as FeatureVariant] = {
+        ...(activeDate && { activeDate: new Date(activeDate) }),
+        variant,
+      } as FeatureVariantValue;
+      return acc as FeatureVariantRecord;
+    }, {} as FeatureVariantRecord);
   }
 
   /**

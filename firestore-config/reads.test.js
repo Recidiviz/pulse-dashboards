@@ -26,7 +26,6 @@ import {
 } from "firebase/firestore";
 
 import {
-  ADMIN_COLLECTION_NAMES,
   ETL_COLLECTION_NAMES,
   getAnonUser,
   getNDUser,
@@ -59,9 +58,6 @@ async function testAllReadsUnrestricted(db, assertFn) {
     ...ETL_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(getDocs(db.collection(collectionName)));
     }),
-    ...ADMIN_COLLECTION_NAMES.map(async (collectionName) => {
-      await assertFn(getDocs(db.collection(collectionName)));
-    }),
     ...SHARED_UPDATE_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(getDocs(db.collection(collectionName)));
     }),
@@ -71,16 +67,6 @@ async function testAllReadsUnrestricted(db, assertFn) {
 async function testAllReadsForState(db, assertFn, stateCode) {
   return Promise.all([
     ...ETL_COLLECTION_NAMES.map(async (collectionName) => {
-      await assertFn(
-        getDocs(
-          query(
-            collection(db, collectionName),
-            where("stateCode", "==", stateCode)
-          )
-        )
-      );
-    }),
-    ...ADMIN_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(
         getDocs(
           query(

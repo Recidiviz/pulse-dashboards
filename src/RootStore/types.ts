@@ -55,6 +55,8 @@ export type UserAppMetadata = {
   allowedSupervisionLocationIds?: string[];
   allowedSupervisionLocationLevel?: string;
   routes?: Record<string, boolean>;
+  featureVariants?: Record<string, Record<string, string>>;
+  demoModeFeatureVariants?: Record<string, Record<string, string>>;
   userHash?: string;
   segmentId?: string;
   intercomId?: string;
@@ -62,6 +64,44 @@ export type UserAppMetadata = {
   district?: string;
   externalId?: string;
 };
+
+// TEST is useful for testing, as the name suggests,
+// but also so that we don't have an empty union when there are no feature variants in use
+export type FeatureVariant =
+  | "TEST"
+  | "CompliantReportingAlmostEligible"
+  | "usMeAlmostPastHalfTerm"
+  | "usMeWorkRelease"
+  | "usMeFurloughRelease"
+  | "usTnExpiration"
+  | "usTnExpirationSubmitToTomis"
+  | "responsiveRevamp";
+export type FeatureVariantValue = { activeDate?: Date; variant?: string };
+/**
+ * For each feature, an optional activeDate can control when the user gets access.
+ * If this is missing, access will be granted immediately.
+ * The `variant` property can be used to segment users to different variants of the feature,
+ * e.g. for A/B testing.
+ */
+export type FeatureVariantMapping = Record<FeatureVariant, FeatureVariantValue>;
+export type FeatureVariantRecord = Partial<FeatureVariantMapping>;
+export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
+  process.env.REACT_APP_DEPLOY_ENV === "production"
+    ? {
+        CompliantReportingAlmostEligible: {},
+        usTnExpiration: {},
+        usTnExpirationSubmitToTomis: {},
+      }
+    : {
+        TEST: {},
+        CompliantReportingAlmostEligible: {},
+        usMeAlmostPastHalfTerm: {},
+        usMeWorkRelease: {},
+        usMeFurloughRelease: {},
+        usTnExpiration: {},
+        usTnExpirationSubmitToTomis: {},
+        responsiveRevamp: {},
+      };
 
 export type LanternMethodologyByTenant = {
   [key in LanternTenants]: LanternMethodology;
