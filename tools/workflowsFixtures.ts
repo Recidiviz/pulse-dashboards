@@ -42,6 +42,7 @@ import { usMeEarlyTerminationReferralsFixture } from "./fixtures/usMeEarlyTermin
 import { usMeFurloughReleaseFixture } from "./fixtures/UsMeFurloughReleaseReferrals";
 import { usMeSCCPFixture } from "./fixtures/usMeSCCPReferrals";
 import { usMeWorkReleaseFixture } from "./fixtures/usMeWorkReleaseReferrals";
+import { usMiEarlyDischargeReferralsFixture } from "./fixtures/usMiEarlyDischargeReferrals";
 import { usMiMinimumTelephoneReportingReferralsFixture } from "./fixtures/usMiMinimumTelephoneReportingReferrals";
 import { usMiPastFTRDReferralsFixture } from "./fixtures/usMiPastFTRDReferrals";
 import { usMiSupervisionLevelDowngradeReferrals } from "./fixtures/usMiSupervisionLevelDowngradeReferrals";
@@ -75,7 +76,6 @@ const OPPORTUNITIES_WITH_JSON_FIXTURES: CollectionName[] = [
   "LSUReferrals",
   "earnedDischargeReferrals",
   "usMiClassificationReviewReferrals",
-  "usMiEarlyDischargeReferrals",
 ];
 
 export type FixtureData<T> = {
@@ -96,6 +96,7 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   usIdSupervisionLevelDowngradeReferrals,
   usMeSCCPReferrals: usMeSCCPFixture,
   usMeWorkReleaseReferrals: usMeWorkReleaseFixture,
+  usMiEarlyDischargeReferrals: usMiEarlyDischargeReferralsFixture,
   usMiMinimumTelephoneReportingReferrals:
     usMiMinimumTelephoneReportingReferralsFixture,
   usMiSupervisionLevelDowngradeReferrals,

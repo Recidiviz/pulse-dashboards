@@ -16,99 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
-import { cloneDeep } from "lodash";
 import { makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
-import { Nullable } from "../../utils/typeUtils";
 import { Client } from "../Client";
-import { TransformFunction } from "../subscriptions";
-import { fieldToDate, fieldToDateArray, OTHER_KEY } from "../utils";
+import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
-
-type RawCriterion<C extends CriteriaKey> = {
-  [F in keyof AllCriteria[C]]: AllCriteria[C][F] extends Date[]
-    ? Parameters<typeof fieldToDateArray>[0]
-    : AllCriteria[C][F] extends Date
-    ? Parameters<typeof fieldToDate>[0]
-    : AllCriteria[C][F];
-};
-
-type RawCriteria = {
-  [C in CriteriaKey]: RawCriterion<C>;
-};
-
-type SharedCriteria = {
-  supervisionPastHalfFullTermReleaseDate: { eligibleDate: Date };
-  supervisionNotPastFullTermCompletionDate: { eligibleDate: Date };
-  usMiNoActivePpo: { activePpo: boolean };
-  usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
-    latestIneligibleConvictions: Date[];
-  };
-};
-
-type ParoleDualCriteria = {
-  supervisionLevelIsNotHigh: { supervisionLevel: string };
-  servingAtLeastOneYearOnParoleSupervision: {
-    projectedCompletionDateMax: Date;
-  };
-  usMiParoleDualSupervisionPastEarlyDischargeDate: {
-    sentenceType: string;
-    eligibleDate: Date;
-  };
-  usMiNoPendingDetainer: { pendingDetainer: boolean };
-  usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision: {
-    ineligibleOffenses: string[];
-  };
-  usMiSupervisionLevelIsNotSai: { supervisionLevelIsSai: boolean };
-  usMiNoOwiViolationOnParoleDualSupervision: {
-    latestIneligibleConvictions: Date[];
-  };
-};
-
-type InterstateFlag = "IC-OUT" | "IC-IN";
-
-type ProbationCriteria = {
-  usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision: {
-    ineligibleOffenses: string[];
-  };
-};
-
-type UsMiParoleEarlyDischargeReferralRecord = {
-  eligibleCriteria: Nullable<SharedCriteria & ParoleDualCriteria>;
-  metadata: {
-    interstateFlag?: InterstateFlag;
-    supervisionType: "Parole";
-  };
-};
-
-type UsMiProbationEarlyDischargeReferralRecord = {
-  eligibleCriteria: Nullable<SharedCriteria & ProbationCriteria>;
-  metadata: {
-    interstateFlag?: InterstateFlag;
-    supervisionType: "Probation";
-  };
-};
-
-export type UsMiEarlyDischargeReferralRecord =
-  | UsMiParoleEarlyDischargeReferralRecord
-  | UsMiProbationEarlyDischargeReferralRecord;
+import {
+  UsMiEarlyDischargeAllCriteria,
+  UsMiEarlyDischargeReferralRecord,
+  usMiEarlyDischargeSchema,
+} from "./UsMiEarlyDischargeReferralRecord";
 
 type SupervisionType =
   UsMiEarlyDischargeReferralRecord["metadata"]["supervisionType"];
-type AllCriteria = SharedCriteria & ParoleDualCriteria & ProbationCriteria;
-type CriteriaKey = keyof AllCriteria;
 
-// Used in the transformer, this is a referral record type that is presumed
-// to have keys for every eligibleCriteria
-type UsMiGenericEarlyDischargeReferralRecord =
-  UsMiEarlyDischargeReferralRecord & {
-    eligibleCriteria: AllCriteria;
-  };
-
-export const INTERSTATE_COPY: any = {
+export const INTERSTATE_COPY = {
   "IC-IN": {
     text: "This client appears to be eligible for early discharge. Please review the client's eligibility status and send an early discharge request to the sending state via ICOTS.",
   },
@@ -123,10 +48,10 @@ export const INTERSTATE_COPY: any = {
 } as const;
 
 export const ELIGIBLE_CRITERIA_COPY: Record<
-  CriteriaKey,
+  UsMiEarlyDischargeAllCriteria,
   OpportunityRequirement | Record<SupervisionType, OpportunityRequirement>
 > = {
-  supervisionPastHalfFullTermReleaseDate: {
+  supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
     Parole: {
       text: "Completed at least half of parole term",
       tooltip:
@@ -141,7 +66,7 @@ export const ELIGIBLE_CRITERIA_COPY: Record<
   supervisionNotPastFullTermCompletionDate: {
     text: "",
   },
-  servingAtLeastOneYearOnParoleSupervision: {
+  servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState: {
     text: "Serving a parole term of 12 months or more",
     tooltip:
       "A parolee is eligible for early discharge consideration prior to the expiration of the original term of parole if they have completed at least one-half of an original parole term of 12 months or more",
@@ -185,12 +110,12 @@ export const ELIGIBLE_CRITERIA_COPY: Record<
     tooltip:
       "The offender is not currently serving for an offense that requires a mandatory term of probation as identified in Paragraph H. The offender is not currently serving for MCL 750.81 or MCL 750.84 (Assault with Intent to commit Great Bodily Harm Less than Murder).",
   },
-  usMiSupervisionLevelIsNotSai: {
+  usMiSupervisionOrSupervisionOutOfStateLevelIsNotSai: {
     text: "Not paroled from SAI on current term",
     tooltip:
       "The parolee was not paroled from the Special Alternative Incarceration (SAI) program on the current term (see definition).",
   },
-  supervisionLevelIsNotHigh: {
+  supervisionOrSupervisionOutOfStateLevelIsNotHigh: {
     text: "Not on intensive supervision",
   },
   usMiNoOwiViolationOnParoleDualSupervision: {
@@ -203,73 +128,6 @@ export const ELIGIBLE_CRITERIA_COPY: Record<
   },
 } as const;
 
-export const getRecordTransformer = (client: Client) => {
-  const transformer: TransformFunction<UsMiEarlyDischargeReferralRecord> = (
-    record
-  ) => {
-    if (!record) {
-      throw new Error("No record found");
-    }
-
-    const transformedRecord = cloneDeep(
-      record
-    ) as UsMiGenericEarlyDischargeReferralRecord;
-
-    const { eligibleCriteria } = transformedRecord;
-    const rawCriteria = record.eligibleCriteria as RawCriteria;
-
-    function transformField<
-      C extends CriteriaKey,
-      F extends keyof AllCriteria[C]
-    >(
-      criterion: C,
-      field: F,
-      transform: (raw: RawCriteria[C][F]) => AllCriteria[C][F]
-    ) {
-      if (eligibleCriteria[criterion]) {
-        eligibleCriteria[criterion][field] = transform(
-          rawCriteria[criterion][field]
-        );
-      }
-    }
-
-    transformField("supervisionLevelIsNotHigh", "supervisionLevel", (s) =>
-      client.rootStore.workflowsStore.formatSupervisionLevel(s)
-    );
-    transformField(
-      "supervisionPastHalfFullTermReleaseDate",
-      "eligibleDate",
-      fieldToDate
-    );
-    transformField(
-      "supervisionNotPastFullTermCompletionDate",
-      "eligibleDate",
-      fieldToDate
-    );
-    transformField(
-      "servingAtLeastOneYearOnParoleSupervision",
-      "projectedCompletionDateMax",
-      fieldToDate
-    );
-    transformField(
-      "usMiParoleDualSupervisionPastEarlyDischargeDate",
-      "eligibleDate",
-      fieldToDate
-    );
-    transformField(
-      "usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision",
-      "latestIneligibleConvictions",
-      fieldToDateArray
-    );
-    transformField(
-      "usMiNoOwiViolationOnParoleDualSupervision",
-      "latestIneligibleConvictions",
-      fieldToDateArray
-    );
-    return transformedRecord;
-  };
-  return transformer;
-};
 export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
   Client,
   UsMiEarlyDischargeReferralRecord
@@ -280,11 +138,8 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
   ];
 
   constructor(client: Client) {
-    super(
-      client,
-      "usMiEarlyDischarge",
-      client.rootStore,
-      getRecordTransformer(client)
+    super(client, "usMiEarlyDischarge", client.rootStore, (r) =>
+      usMiEarlyDischargeSchema.parse(r)
     );
 
     makeObservable(this, { requirementsMet: true });
@@ -299,16 +154,16 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
 
     const requirements: OpportunityRequirement[] = [];
 
-    const criteriaKeys: CriteriaKey[] = [
-      "supervisionPastHalfFullTermReleaseDate",
-      "servingAtLeastOneYearOnParoleSupervision",
+    const criteriaKeys: UsMiEarlyDischargeAllCriteria[] = [
+      "supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
+      "servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState",
       "usMiParoleDualSupervisionPastEarlyDischargeDate",
       "usMiNoActivePpo",
       "usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision",
       "usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision",
       "usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision",
-      "usMiSupervisionLevelIsNotSai",
-      "supervisionLevelIsNotHigh",
+      "usMiSupervisionOrSupervisionOutOfStateLevelIsNotSai",
+      "supervisionOrSupervisionOutOfStateLevelIsNotHigh",
       "usMiNoOwiViolationOnParoleDualSupervision",
       "usMiNoPendingDetainer",
     ];
@@ -357,7 +212,8 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
 
   get eligibilityDate(): Date | undefined {
     if (!this.record) return;
-    return this.record.eligibleCriteria.supervisionPastHalfFullTermReleaseDate
+    return this.record.eligibleCriteria
+      .supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate
       ?.eligibleDate;
   }
 

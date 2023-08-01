@@ -31,10 +31,8 @@ import {
   formatWorkflowsDate,
 } from "../../utils";
 import { Client, WithCaseNotes } from "../../WorkflowsStore";
-import {
-  INTERSTATE_COPY,
-  UsMiEarlyDischargeReferralRecord,
-} from "../../WorkflowsStore/Opportunity/UsMiEarlyDischargeOpportunity";
+import { INTERSTATE_COPY } from "../../WorkflowsStore/Opportunity/UsMiEarlyDischargeOpportunity";
+import { UsMiEarlyDischargeReferralRecord } from "../../WorkflowsStore/Opportunity/UsMiEarlyDischargeReferralRecord";
 import {
   UsMoClassInfo,
   UsMoConductViolationInfo,
