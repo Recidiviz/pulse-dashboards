@@ -36,10 +36,22 @@ exports.onExecutePreUserRegistration = async (event, api) => {
    * 3. Fetch any user restrictions and add them to the user's app_metadata
    *
    */
+
+  /** Set up external clients and dependencies */
   const Sentry = require("@sentry/node");
   const { GoogleAuth } = require("google-auth-library");
   const Base64 = require("crypto-js/enc-base64");
   const SHA256 = require("crypto-js/sha256");
+
+  const privateKey = event.secrets.PRIVATE_KEY.replace(/\\n/gm, "\n");
+  let credentials = JSON.parse(event.secrets.GOOGLE_APPLICATION_CREDENTIALS);
+  credentials = { ...credentials, private_key: privateKey };
+
+  const { Storage } = require("@google-cloud/storage");
+  const storage = new Storage({
+    projectId: event.secrets.PROJECT_ID,
+    credentials,
+  });
 
   Sentry.init({
     dsn: event.secrets.SENTRY_DSN,
@@ -49,8 +61,9 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     "There was a problem registering your account. Please contact your organization administrator, if you don’t know your administrator, contact feedback@recidiviz.org.";
 
   /** 1. Domain allow list for registration */
+  const email = event.user.email;
   const authorizedDomains = ["recidiviz.org", "csg.org"]; // add authorized domains here
-  const emailSplit = (event.user.email && event.user.email.split("@")) ?? [''];
+  const emailSplit = (event.user.email && event.user.email.split("@")) ?? [""];
   const userDomain = emailSplit[emailSplit.length - 1].toLowerCase();
 
   // Add any additional email authorization overrides
@@ -60,10 +73,10 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     authorizedDomains.some(function (authorizedDomain) {
       return userDomain === authorizedDomain;
     }) ||
-    (event.user.email && authorizedEmails.includes(event.user.email));
+    (email && authorizedEmails.includes(email));
 
   if (userHasAccess) {
-    if (event.user.email && testerEmails.includes(event.user.email)) {
+    if (email && testerEmails.includes(email)) {
       // Do not check permissions for test users
       return;
     }
@@ -75,12 +88,20 @@ exports.onExecutePreUserRegistration = async (event, api) => {
       api.user.setAppMetadata("state_code", "CSG");
       return;
     }
-
     // Set state_code for Recidiviz users
     if (
       userDomain === "recidiviz.org" &&
       !event.user?.app_metadata?.recidiviz_tester
     ) {
+      /** Get Recidiviz user's allowed states */
+      const recidivizAuthBucketName = event.secrets.RECIDIVIZ_AUTH_BUCKET_NAME;
+      const jsonFile = await storage
+        .bucket(recidivizAuthBucketName)
+        .file(`${email}.json`)
+        .download();
+
+      const contents = JSON.parse(jsonFile);
+      api.user.setAppMetadata("allowedStates", contents.allowedStates ?? []);
       api.user.setAppMetadata("stateCode", "recidiviz");
       // TODO #3170 Remove this once UserAppMetadata has been transitioned
       api.user.setAppMetadata("state_code", "recidiviz");
@@ -104,7 +125,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
 
     if (
       state in stateCodeMapping ||
-      (event.user.email && authorizedEmails.includes(event.user.email))
+      (email && authorizedEmails.includes(email))
     ) {
       state = stateCodeMapping[state];
     }
@@ -131,17 +152,12 @@ exports.onExecutePreUserRegistration = async (event, api) => {
 
     if (stateCodesWithRestrictions.includes(stateCode.toLowerCase())) {
       try {
-        const privateKey = event.secrets.PRIVATE_KEY.replace(/\\n/gm, "\n");
-        let credentials = JSON.parse(
-          event.secrets.GOOGLE_APPLICATION_CREDENTIALS
-        );
-        credentials = { ...credentials, private_key: privateKey };
         const auth = new GoogleAuth({ credentials });
         const client = await auth.getIdTokenClient(
           event.secrets.TARGET_AUDIENCE
         );
 
-        let userHash = Base64.stringify(SHA256(event.user.email?.toLowerCase()))
+        let userHash = Base64.stringify(SHA256(email?.toLowerCase()));
         if (userHash.startsWith("/")) {
           userHash = userHash.replace("/", "_");
         }
@@ -149,27 +165,33 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         const apiResponse = await client.request({ url, retry: true });
         const restrictions = apiResponse.data;
 
-
         api.user.setAppMetadata(
           "allowedSupervisionLocationIds",
-          restrictions.allowedSupervisionLocationIds === "" ? [] : restrictions.allowedSupervisionLocationIds.split(",")
+          restrictions.allowedSupervisionLocationIds === ""
+            ? []
+            : restrictions.allowedSupervisionLocationIds.split(",")
         );
         api.user.setAppMetadata(
           "allowedSupervisionLocationLevel",
           restrictions.allowedSupervisionLocationLevel
         );
         api.user.setAppMetadata("routes", restrictions.routes || null);
-        api.user.setAppMetadata("userHash", restrictions.userHash)
+        api.user.setAppMetadata("userHash", restrictions.userHash);
         api.user.setAppMetadata("role", restrictions.role || null);
         api.user.setAppMetadata("district", restrictions.district);
         api.user.setAppMetadata("externalId", restrictions.externalId);
-        api.user.setAppMetadata("featureVariants", restrictions.featureVariants);
+        api.user.setAppMetadata(
+          "featureVariants",
+          restrictions.featureVariants
+        );
 
         // TODO #3170 Remove these once UserAppMetadata has been transitioned
-        api.user.setAppMetadata("user_hash", restrictions.userHash)
+        api.user.setAppMetadata("user_hash", restrictions.userHash);
         api.user.setAppMetadata(
           "allowed_supervision_location_ids",
-          restrictions.allowedSupervisionLocationIds === "" ? [] : restrictions.allowedSupervisionLocationIds.split(",")
+          restrictions.allowedSupervisionLocationIds === ""
+            ? []
+            : restrictions.allowedSupervisionLocationIds.split(",")
         );
         api.user.setAppMetadata(
           "allowed_supervision_location_level",
@@ -179,7 +201,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         return;
       } catch (apiError) {
         Sentry.captureMessage(
-          `Error while registering new user for state code ${stateCode} and email ${event.user.email}.`
+          `Error while registering new user for state code ${stateCode} and email ${email}.`
         );
         Sentry.captureException(apiError, {
           tags: {
@@ -192,7 +214,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
       }
     }
   } else {
-    const errorMessage = `Error user with email ${event.user.email} is not authorized to register.`;
+    const errorMessage = `Error user with email ${email} is not authorized to register.`;
     Sentry.captureException(new Error(errorMessage), {
       tags: {
         clientName: event.client && event.client.name,
@@ -201,7 +223,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     });
 
     api.access.deny(
-      `User ${event.user.email} does not have access to register.`,
+      `User ${email} does not have access to register.`,
       clientMessage
     );
     return;

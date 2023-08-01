@@ -23,6 +23,7 @@
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
+  /** Set up external clients and dependencies */
   const Base64 = require("crypto-js/enc-base64");
   const SHA256 = require("crypto-js/sha256");
   const Analytics = require("analytics-node");
@@ -30,8 +31,28 @@ exports.onExecutePostLogin = async (event, api) => {
     flushAt: 1,
   });
 
+  const Sentry = require("@sentry/node");
+  const { GoogleAuth } = require("google-auth-library");
+
+  Sentry.init({
+    dsn: event.secrets.SENTRY_DSN,
+    environment: event.secrets.SENTRY_ENV,
+  });
+
+  let credentials = JSON.parse(event.secrets.GOOGLE_APPLICATION_CREDENTIALS);
+  const privateKey = event.secrets.PRIVATE_KEY.replace(/\\n/gm, "\n");
+  credentials = { ...credentials, private_key: privateKey };
+
+  const { Storage } = require("@google-cloud/storage");
+  const storage = new Storage({
+    projectId: event.secrets.PROJECT_ID,
+    credentials,
+  });
+
   const { app_metadata, email } = event.user;
   let stateCode = app_metadata.state_code?.toLowerCase();
+
+  /** Set LANTERN state code to CSG */
   if (stateCode === "lantern") {
     stateCode = "csg";
     api.user.setAppMetadata("state_code", stateCode);
@@ -58,9 +79,11 @@ exports.onExecutePostLogin = async (event, api) => {
     return;
   }
 
+  /** Set stateCode in appMetadata for everyone. */
   api.user.setAppMetadata("stateCode", stateCode);
 
-  // Specific state code restrictions for Recividiz users
+  // TODO(#3699): Remove user specific blocked_state_codes once allowedStates is in production
+  /** Specific state code restrictions for Recividiz users */
   if (event.user.email === "justine@recidiviz.org") {
     api.user.setAppMetadata("blocked_state_codes", ["us_pa"]);
     api.user.setAppMetadata("blockedStateCodes", ["us_pa"]);
@@ -71,6 +94,7 @@ exports.onExecutePostLogin = async (event, api) => {
     api.user.setAppMetadata("blockedStateCodes", ["us_mi"]);
   }
 
+  /** Set route permissions for CSG users. */
   if (stateCode === "csg") {
     api.user.setAppMetadata("routes", {
       system_libertyToPrison: true,
@@ -82,23 +106,30 @@ exports.onExecutePostLogin = async (event, api) => {
     });
   }
 
+  /**
+   * Set allowedStateCodes from Recidiviz users and skip adding
+   * restrictions for Recidiviz and CSG users
+   */
   if (authorizedDomains.includes(userDomain)) {
+    if (userDomain === "recidiviz") {
+      const recidivizAuthBucketName = event.secrets.RECIDIVIZ_AUTH_BUCKET_NAME;
+      const jsonFile = await storage
+        .bucket(recidivizAuthBucketName)
+        .file(`${email}.json`)
+        .download();
+
+      const contents = JSON.parse(jsonFile);
+      api.user.setAppMetadata("allowedStates", contents.allowedStates ?? []);
+    }
     return;
   }
 
+  /**
+   * Set user restrictions from Admin Panel backend for all users other than Recidiviz and CSG.
+   */
   if (statesWithRestrictions.includes(stateCode)) {
-    const Sentry = require("@sentry/node");
-    const { GoogleAuth } = require("google-auth-library");
-    Sentry.init({
-      dsn: event.secrets.SENTRY_DSN,
-      environment: event.secrets.SENTRY_ENV,
-    });
     try {
-      let credentials = JSON.parse(
-        event.secrets.GOOGLE_APPLICATION_CREDENTIALS
-      );
-      const privateKey = event.secrets.PRIVATE_KEY.replace(/\\n/gm, "\n");
-      credentials = { ...credentials, private_key: privateKey };
+      /** Get user restrictions from Admin Panel backend */
       const auth = new GoogleAuth({ credentials });
       const client = await auth.getIdTokenClient(event.secrets.TARGET_AUDIENCE);
 
@@ -122,6 +153,7 @@ exports.onExecutePostLogin = async (event, api) => {
           ? []
           : restrictions.allowedSupervisionLocationIds.split(",");
 
+      /** Add restrictions to app_metadata */
       api.user.setAppMetadata(
         "allowedSupervisionLocationIds",
         arrayOfLocations
