@@ -112,6 +112,10 @@ type EmptySpecialConditionCopy = {
   probation: string;
 };
 
+const SecureDetailsContent = styled(DetailsContent).attrs({
+  className: "fs-exclude",
+})``;
+
 // Special condition strings to display when a client does not have a special condition set
 // If the state opportunity does not support special conditions, it should not have an entry here
 const STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_STRINGS: Record<
@@ -142,7 +146,9 @@ function getProbationSpecialConditionsMarkup(
           const key = i;
 
           if (typeof condition === "string") {
-            return <DetailsContent key={key}>{condition}</DetailsContent>;
+            return (
+              <SecureDetailsContent key={key}>{condition}</SecureDetailsContent>
+            );
           }
 
           return (
@@ -150,11 +156,11 @@ function getProbationSpecialConditionsMarkup(
               <DetailsSubheading>
                 {formatWorkflowsDate(parseJSON(condition.note_update_date))}
               </DetailsSubheading>
-              <DetailsContent>
+              <SecureDetailsContent>
                 <SpecialConditionsCopy>
                   {condition.conditions_on_date}
                 </SpecialConditionsCopy>
-              </DetailsContent>
+              </SecureDetailsContent>
             </React.Fragment>
           );
         })}
@@ -177,15 +183,15 @@ export function SpecialConditions({
   return (
     <DetailsSection className="DetailsSection">
       <DetailsHeading>Probation Special Conditions</DetailsHeading>
-      <DetailsContent className="fs-exclude">
+      <SecureDetailsContent>
         {getProbationSpecialConditionsMarkup(
           client,
           emptySpecialConditionStrings.probation
         )}
-      </DetailsContent>
+      </SecureDetailsContent>
       {featureVariants.responsiveRevamp && <Divider />}
       <DetailsHeading>Parole Special Conditions</DetailsHeading>
-      <DetailsContent className="fs-exclude">
+      <SecureDetailsContent>
         <>
           {!client.paroleSpecialConditions?.length &&
             emptySpecialConditionStrings.parole}
@@ -196,17 +202,17 @@ export function SpecialConditions({
                   // can't guarantee uniqueness of anything in the condition,
                   // there are lots of duplicates in fact
                   // eslint-disable-next-line react/no-array-index-key
-                  <DetailsContent key={i}>
+                  <SecureDetailsContent key={i}>
                     <SpecialConditionsCopy>
                       {condition} ({conditionDescription})
                     </SpecialConditionsCopy>
-                  </DetailsContent>
+                  </SecureDetailsContent>
                 );
               }
             )}
           </DetailsList>
         </>
-      </DetailsContent>
+      </SecureDetailsContent>
     </DetailsSection>
   );
 }
@@ -228,7 +234,9 @@ export function HalfTime({
     return (
       <>
         <DetailsSubheading>Half Time Date</DetailsSubheading>
-        <DetailsContent>{formatWorkflowsDate(halfTimeDate)}</DetailsContent>
+        <SecureDetailsContent>
+          {formatWorkflowsDate(halfTimeDate)}
+        </SecureDetailsContent>
       </>
     );
   }
@@ -259,14 +267,14 @@ export function TwoThirdsTime({
     return (
       <>
         <DetailsSubheading>Two-Thirds Time Date</DetailsSubheading>
-        <DetailsContent>
+        <SecureDetailsContent>
           {formatWorkflowsDate(
             twoThirdsDateBetweenTwoDates(
               resident.admissionDate,
               resident.releaseDate
             )
           )}
-        </DetailsContent>
+        </SecureDetailsContent>
       </>
     );
   }
@@ -282,10 +290,10 @@ export function Supervision({
   return (
     <DetailsSection>
       <DetailsHeading>Supervision</DetailsHeading>
-      <DetailsContent>
+      <SecureDetailsContent>
         <DetailsList>
           <DetailsSubheading>Start</DetailsSubheading>
-          <DetailsContent>
+          <SecureDetailsContent>
             {formatWorkflowsDate(client.supervisionStartDate)}{" "}
             {tooltip && (
               <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
@@ -294,23 +302,23 @@ export function Supervision({
                 />
               </InfoTooltipWrapper>
             )}
-          </DetailsContent>
+          </SecureDetailsContent>
           <HalfTime
             startDate={client.supervisionStartDate}
             endDate={client.expirationDate}
             stateCode={client.stateCode}
           />
           <DetailsSubheading>Expiration</DetailsSubheading>
-          <DetailsContent>
+          <SecureDetailsContent>
             {formatWorkflowsDate(client.expirationDate)}
-          </DetailsContent>
+          </SecureDetailsContent>
 
           <DetailsSubheading>Assigned to</DetailsSubheading>
-          <DetailsContent>
+          <SecureDetailsContent>
             <WorkflowsOfficerName officerId={client.assignedStaffId} />
-          </DetailsContent>
+          </SecureDetailsContent>
         </DetailsList>
-      </DetailsContent>
+      </SecureDetailsContent>
     </DetailsSection>
   );
 }
@@ -321,12 +329,12 @@ export function Incarceration({
   return (
     <DetailsSection>
       <DetailsHeading>Incarceration</DetailsHeading>
-      <DetailsContent>
+      <SecureDetailsContent>
         <DetailsList>
           <DetailsSubheading>Start</DetailsSubheading>
-          <DetailsContent>
+          <SecureDetailsContent>
             {formatWorkflowsDate(resident.admissionDate)}
-          </DetailsContent>
+          </SecureDetailsContent>
           <HalfTime
             startDate={resident.admissionDate}
             endDate={resident.releaseDate}
@@ -334,19 +342,19 @@ export function Incarceration({
           />
           <TwoThirdsTime resident={resident} />
           <DetailsSubheading>Release</DetailsSubheading>
-          <DetailsContent>
+          <SecureDetailsContent>
             {formatWorkflowsDate(resident.releaseDate)}
-          </DetailsContent>
+          </SecureDetailsContent>
           <DetailsSubheading>Case Manager</DetailsSubheading>
-          <DetailsContent>
+          <SecureDetailsContent>
             <WorkflowsOfficerName officerId={resident.assignedStaffId} />
-          </DetailsContent>
+          </SecureDetailsContent>
           <DetailsSubheading>Facility</DetailsSubheading>
-          <DetailsContent>{resident.facilityId}</DetailsContent>
+          <SecureDetailsContent>{resident.facilityId}</SecureDetailsContent>
           <DetailsSubheading>Unit</DetailsSubheading>
-          <DetailsContent>{resident.unitId}</DetailsContent>
+          <SecureDetailsContent>{resident.unitId}</SecureDetailsContent>
         </DetailsList>
-      </DetailsContent>
+      </SecureDetailsContent>
     </DetailsSection>
   );
 }
@@ -355,30 +363,26 @@ export function Contact({ client }: ClientProfileProps): React.ReactElement {
   return (
     <DetailsSection>
       <DetailsHeading>Contact</DetailsHeading>
-      <DetailsContent>
+      <SecureDetailsContent>
         <DetailsList>
           <DetailsSubheading>Telephone</DetailsSubheading>
-          <DetailsContent className="fs-exclude">
-            {client.phoneNumber}
-          </DetailsContent>
+          <SecureDetailsContent>{client.phoneNumber}</SecureDetailsContent>
           {client.emailAddress && (
             <>
               <DetailsSubheading>Email</DetailsSubheading>
-              <DetailsContent className="fs-exclude">
-                {client.emailAddress}
-              </DetailsContent>
+              <SecureDetailsContent>{client.emailAddress}</SecureDetailsContent>
             </>
           )}
           {client.address && (
             <>
               <DetailsSubheading>Address</DetailsSubheading>
-              <DetailsContent className="fs-exclude">
+              <SecureDetailsContent>
                 {formatCurrentAddress(client.address, client.stateCode)}
-              </DetailsContent>
+              </SecureDetailsContent>
             </>
           )}
         </DetailsList>
-      </DetailsContent>
+      </SecureDetailsContent>
     </DetailsSection>
   );
 }
@@ -389,14 +393,12 @@ export function ClientHousing({
   return (
     <DetailsSection>
       <DetailsHeading>Housing</DetailsHeading>
-      <DetailsContent>
+      <SecureDetailsContent>
         <DetailsList>
           <DetailsSubheading>Address</DetailsSubheading>
-          <DetailsContent className="fs-exclude">
-            {client.address}
-          </DetailsContent>
+          <SecureDetailsContent>{client.address}</SecureDetailsContent>
         </DetailsList>
-      </DetailsContent>
+      </SecureDetailsContent>
     </DetailsSection>
   );
 }
@@ -407,14 +409,14 @@ export function ResidentHousing({
   return (
     <DetailsSection>
       <DetailsHeading>Housing</DetailsHeading>
-      <DetailsContent>
+      <SecureDetailsContent>
         <DetailsList>
           <DetailsSubheading>Facility</DetailsSubheading>
-          <DetailsContent>{resident.facilityId}</DetailsContent>
+          <SecureDetailsContent>{resident.facilityId}</SecureDetailsContent>
           <DetailsSubheading>Unit</DetailsSubheading>
-          <DetailsContent>{resident.unitId}</DetailsContent>
+          <SecureDetailsContent>{resident.unitId}</SecureDetailsContent>
         </DetailsList>
-      </DetailsContent>
+      </SecureDetailsContent>
     </DetailsSection>
   );
 }
@@ -428,22 +430,22 @@ export function ClientEmployer({
   return (
     <DetailsSection>
       <DetailsHeading>Employment</DetailsHeading>
-      <DetailsContent>
+      <SecureDetailsContent>
         <DetailsList>
           {employers.map((employer) => {
             return (
               <div key={employer.name}>
                 <DetailsSubheading>Employer</DetailsSubheading>
-                <DetailsContent className="fs-exclude">
+                <SecureDetailsContent>
                   {employer.name}
                   <br />
                   {employer.address}
-                </DetailsContent>
+                </SecureDetailsContent>
               </div>
             );
           })}
         </DetailsList>
-      </DetailsContent>
+      </SecureDetailsContent>
     </DetailsSection>
   );
 }
@@ -454,25 +456,25 @@ export function FinesAndFees({
   return (
     <DetailsSection>
       <DetailsHeading>Fines and Fees</DetailsHeading>
-      <DetailsContent>
+      <SecureDetailsContent>
         <DetailsList>
           <DetailsSubheading>Remaining for current sentence</DetailsSubheading>
-          <DetailsContent>
+          <SecureDetailsContent>
             {client.currentBalance !== undefined &&
               formatAsCurrency(client.currentBalance)}
-          </DetailsContent>
+          </SecureDetailsContent>
 
           {client.lastPaymentAmount && client.lastPaymentDate ? (
             <>
               <DetailsSubheading>Last Payment</DetailsSubheading>
-              <DetailsContent>
+              <SecureDetailsContent>
                 {formatAsCurrency(client.lastPaymentAmount)},{" "}
                 {formatWorkflowsDate(client.lastPaymentDate)}
-              </DetailsContent>
+              </SecureDetailsContent>
             </>
           ) : null}
         </DetailsList>
-      </DetailsContent>
+      </SecureDetailsContent>
     </DetailsSection>
   );
 }
@@ -495,7 +497,7 @@ export function CaseNotes({
     return (
       <DetailsSection>
         <DetailsHeading>{caseNotesTitle}</DetailsHeading>
-        <DetailsContent>None</DetailsContent>
+        <SecureDetailsContent>None</SecureDetailsContent>
       </DetailsSection>
     );
   }
@@ -503,7 +505,7 @@ export function CaseNotes({
   return (
     <DetailsSection className="DetailsSection">
       <DetailsHeading>{caseNotesTitle}</DetailsHeading>
-      <DetailsContent>
+      <SecureDetailsContent>
         <DetailsList>
           {Object.keys(caseNotes).map((section: string) => {
             const notes = caseNotes[section];
@@ -519,7 +521,7 @@ export function CaseNotes({
                       .map((note, index) => {
                         return (
                           // eslint-disable-next-line react/no-array-index-key
-                          <DetailsContent key={index}>
+                          <SecureDetailsContent key={index}>
                             {note.noteTitle && (
                               <CaseNoteTitle>{note.noteTitle}: </CaseNoteTitle>
                             )}
@@ -530,18 +532,18 @@ export function CaseNotes({
                                 {formatWorkflowsDate(note.eventDate)}
                               </CaseNoteDate>
                             )}
-                          </DetailsContent>
+                          </SecureDetailsContent>
                         );
                       })
                   ) : (
-                    <DetailsContent>None</DetailsContent>
+                    <SecureDetailsContent>None</SecureDetailsContent>
                   )}
                 </DetailsList>
               </React.Fragment>
             );
           })}
         </DetailsList>
-      </DetailsContent>
+      </SecureDetailsContent>
     </DetailsSection>
   );
 }
@@ -551,7 +553,7 @@ export function Milestones({ client }: ClientProfileProps): React.ReactElement {
     return (
       <DetailsSection>
         <DetailsHeading>Milestones</DetailsHeading>
-        <DetailsContent>
+        <SecureDetailsContent>
           {client.profileMilestones?.map((milestone) => {
             return (
               <MilestonesList
@@ -562,7 +564,7 @@ export function Milestones({ client }: ClientProfileProps): React.ReactElement {
               </MilestonesList>
             );
           })}
-        </DetailsContent>
+        </SecureDetailsContent>
       </DetailsSection>
     );
   }
@@ -582,12 +584,12 @@ export function UsMoIncarceration({
   return (
     <DetailsSection>
       <DetailsHeading>Incarceration</DetailsHeading>
-      <DetailsContent>
+      <SecureDetailsContent>
         <DetailsList>
           <DetailsSubheading>Facility</DetailsSubheading>
-          <DetailsContent>{resident.facilityId}</DetailsContent>
+          <SecureDetailsContent>{resident.facilityId}</SecureDetailsContent>
         </DetailsList>
-      </DetailsContent>
+      </SecureDetailsContent>
     </DetailsSection>
   );
 }
@@ -609,7 +611,7 @@ export function UsMoClassesList({
               classExitReason,
             }: UsMoClassInfo) => {
               return (
-                <DetailsContent key={classTitle} className="fs-exclude">
+                <SecureDetailsContent key={classTitle}>
                   <CaseNoteTitle>
                     {classTitle || "CLASS TITLE UNAVAILABLE"}
                   </CaseNoteTitle>
@@ -620,7 +622,7 @@ export function UsMoClassesList({
                   </CaseNoteDate>
                   <br />
                   Exit Reason: {classExitReason || "N/A"}
-                </DetailsContent>
+                </SecureDetailsContent>
               );
             }
           )}
@@ -643,10 +645,10 @@ export function UsMoConductViolationsList({
         <DetailsList>
           {cdvs.map(({ cdvDate, cdvRule }: UsMoConductViolationInfo) => {
             return (
-              <DetailsContent key={cdvRule}>
+              <SecureDetailsContent key={cdvRule}>
                 <CaseNoteTitle>{cdvRule}:</CaseNoteTitle>{" "}
                 {formatWorkflowsDate(cdvDate)}
-              </DetailsContent>
+              </SecureDetailsContent>
             );
           })}
         </DetailsList>
@@ -687,15 +689,13 @@ export function UsMoRestrictiveHousing({
     <>
       <DetailsSection>
         <DetailsHeading>Current Restrictive Housing Placement</DetailsHeading>
-        <DetailsContent>
+        <SecureDetailsContent>
           <DetailsList>
             <DetailsSubheading>Type</DetailsSubheading>
-            <DetailsContent className="fs-exclude">
-              {housingUseCode}
-            </DetailsContent>
+            <SecureDetailsContent>{housingUseCode}</SecureDetailsContent>
 
             <DetailsSubheading>Length of Stay</DetailsSubheading>
-            <DetailsContent className="fs-exclude">
+            <SecureDetailsContent>
               {formatWorkflowsDate(restrictiveHousingStartDate)} to{" "}
               {formatWorkflowsDate(new Date())}
               <CaseNoteDate>
@@ -706,40 +706,40 @@ export function UsMoRestrictiveHousing({
                 )}{" "}
                 days
               </CaseNoteDate>
-            </DetailsContent>
+            </SecureDetailsContent>
 
             <DetailsSubheading>Current Location</DetailsSubheading>
-            <DetailsContent className="fs-exclude">
+            <SecureDetailsContent>
               Building {buildingNumber}, Complex {complexNumber}, Room{" "}
               {roomNumber}, Bed {bedNumber}
-            </DetailsContent>
+            </SecureDetailsContent>
 
             <DetailsSubheading>
               Last Restrictive Housing Status Hearing
             </DetailsSubheading>
             {mostRecentHearingDate ? (
-              <DetailsContent className="fs-exclude">
+              <SecureDetailsContent>
                 {formatWorkflowsDate(mostRecentHearingDate)} (
                 {differenceInDays(new Date(), mostRecentHearingDate)} days ago)
-              </DetailsContent>
+              </SecureDetailsContent>
             ) : (
               "None"
             )}
 
             <DetailsSubheading>Last Hearing Facility</DetailsSubheading>
-            <DetailsContent className="fs-exclude">
+            <SecureDetailsContent>
               {mostRecentHearingFacility}
-            </DetailsContent>
+            </SecureDetailsContent>
             <DetailsSubheading>Adult in Custody (AIC) Score</DetailsSubheading>
-            <DetailsContent className="fs-exclude">{aicScore}</DetailsContent>
+            <SecureDetailsContent>{aicScore}</SecureDetailsContent>
             <DetailsSubheading>
               Mental Health Assessment Score
             </DetailsSubheading>
-            <DetailsContent className="fs-exclude">
+            <SecureDetailsContent>
               {mentalHealthAssessmentScore}
-            </DetailsContent>
+            </SecureDetailsContent>
             <DetailsSubheading>Unwaived Enemies</DetailsSubheading>
-            <DetailsContent className="fs-exclude">
+            <SecureDetailsContent>
               {unwaivedEnemies && unwaivedEnemies.length > 0
                 ? unwaivedEnemies.map(
                     ({
@@ -750,25 +750,25 @@ export function UsMoRestrictiveHousing({
                       enemyRoomNumber,
                       enemyBedNumber,
                     }) => (
-                      <DetailsContent>
+                      <SecureDetailsContent>
                         <CaseNoteTitle>[ID# {enemyExternalId}] </CaseNoteTitle>
                         Housing Use Code: <b>{enemyHousingUseCode}</b>
                         <br />
                         Building {enemyBuildingNumber}, Complex{" "}
                         {enemyComplexNumber}, Room {enemyRoomNumber}, Bed{" "}
                         {enemyBedNumber}
-                      </DetailsContent>
+                      </SecureDetailsContent>
                     )
                   )
                 : "None"}
-            </DetailsContent>
+            </SecureDetailsContent>
           </DetailsList>
-        </DetailsContent>
+        </SecureDetailsContent>
       </DetailsSection>
 
       <DetailsSection>
         <DetailsHeading>Conduct Violations (CDVs)</DetailsHeading>
-        <DetailsContent>
+        <SecureDetailsContent>
           <DetailsSubheading>
             Major Conduct Violations, Past 12 Months
           </DetailsSubheading>
@@ -781,12 +781,12 @@ export function UsMoRestrictiveHousing({
             Minor Conduct Violations, Past 6 Months
           </DetailsSubheading>
           {numMinorCdvsBeforeLastHearing || "None"}
-        </DetailsContent>
+        </SecureDetailsContent>
       </DetailsSection>
 
       <DetailsSection>
         <DetailsHeading>Most Recent 10 Classes</DetailsHeading>
-        <DetailsContent>
+        <SecureDetailsContent>
           <UsMoClassesList
             classes={(classesRecent || [])
               .sort(
@@ -796,18 +796,18 @@ export function UsMoRestrictiveHousing({
               )
               .slice(0, 10)}
           />
-        </DetailsContent>
+        </SecureDetailsContent>
       </DetailsSection>
 
       <DetailsSection>
         <DetailsHeading>Previous Hearing Comments</DetailsHeading>
-        <DetailsContent>
+        <SecureDetailsContent>
           <DetailsList>
-            <DetailsContent className="fs-exclude">
+            <SecureDetailsContent>
               {mostRecentHearingComments}
-            </DetailsContent>
+            </SecureDetailsContent>
           </DetailsList>
-        </DetailsContent>
+        </SecureDetailsContent>
       </DetailsSection>
     </>
   );
@@ -830,11 +830,11 @@ export function UsMiEarlyDischargeIcDetails({
     <DetailsBorderedSection>
       <DetailsHeading>{interstateFlag}</DetailsHeading>
       <DetailsList>
-        <DetailsContent>
+        <SecureDetailsContent>
           {interstateFlag === "IC-IN"
             ? INTERSTATE_COPY[interstateFlag].text
             : INTERSTATE_COPY[interstateFlag][supervisionType].text}
-        </DetailsContent>
+        </SecureDetailsContent>
       </DetailsList>
     </DetailsBorderedSection>
   );
