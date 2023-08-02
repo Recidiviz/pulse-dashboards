@@ -45,6 +45,7 @@ type Tenants = {
   [key in TenantId]: TenantConfig;
 };
 
+// Add any new tenant IDs to the list in `fetchOfflineUser.js` to enable in offline mode.
 const ALL_TENANTS = uniq([...DASHBOARD_TENANTS, ...LANTERN_TENANTS]);
 
 const TENANTS: Tenants = {

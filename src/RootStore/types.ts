@@ -51,7 +51,7 @@ export type TenantId = typeof TenantIds[number];
 
 export type UserAppMetadata = {
   stateCode: Lowercase<TenantId>;
-  blockedStateCodes?: Lowercase<TenantId>[];
+  allowedStates?: TenantId[];
   allowedSupervisionLocationIds?: string[];
   allowedSupervisionLocationLevel?: string;
   routes?: Record<string, boolean>;

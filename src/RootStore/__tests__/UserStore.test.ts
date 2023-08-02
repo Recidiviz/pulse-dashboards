@@ -248,17 +248,27 @@ test("redirect to targetUrl after callback", async () => {
 test.each(Object.keys(tenants))(
   "gets metadata for the user %s",
   async (currentTenantId) => {
-    const tenantMetadata = { [metadataField]: { stateCode: currentTenantId } };
+    const allowedStates = ["US_MO", "US_CA"];
+    const tenantMetadata = {
+      [metadataField]: {
+        stateCode: currentTenantId,
+        allowedStates,
+      },
+    };
     mockIsAuthenticated.mockResolvedValue(true);
     mockGetUser.mockResolvedValue({
       email_verified: true,
       ...tenantMetadata,
     });
-
     const store = new UserStore({
       authSettings: testAuthSettings,
     });
     await store.authorize(mockHandleUrl);
+    if (currentTenantId === "RECIDIVIZ") {
+      expect(store.availableStateCodes).toEqual(allowedStates);
+      return;
+    }
+
     expect(store.availableStateCodes).toBe(
       tenants[currentTenantId as TenantId].availableStateCodes
     );
@@ -619,4 +629,53 @@ test("identifies authorized user if an ID hash is present", async () => {
 
   expect(mockRootStore.analyticsStore.identify).toHaveBeenCalledWith(userHash);
   expect(Sentry.setUser).toHaveBeenCalledWith({ id: userHash });
+});
+
+describe("recidivizAllowedStates", () => {
+  test("returns an empty array if user does not have allowedStates metadata", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      [metadataField]: {
+        stateCode: tenantId,
+      },
+    });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: mockRootStore,
+    });
+    await store.authorize(mockHandleUrl);
+    expect(store.recidivizAllowedStates).toEqual([]);
+  });
+
+  test("returns an array of allowed state codes", async () => {
+    const allowedStates = ["US_CA", "US_TN"];
+    mockIsAuthenticated.mockResolvedValue(true);
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      [metadataField]: { stateCode: "RECIDIVIZ", allowedStates },
+    });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: mockRootStore,
+    });
+    await store.authorize(mockHandleUrl);
+    expect(store.recidivizAllowedStates).toEqual(allowedStates);
+  });
+
+  test("only includes states from allowedStates that are also in availableStateCodes", async () => {
+    const allowedStates = ["US_CA", "US_TN"];
+    mockIsAuthenticated.mockResolvedValue(true);
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      stateCode: "US_CA",
+      [metadataField]: { stateCode: "US_CA", allowedStates },
+    });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: mockRootStore,
+    });
+    await store.authorize(mockHandleUrl);
+    expect(store.recidivizAllowedStates).toEqual(["US_CA"]);
+  });
 });

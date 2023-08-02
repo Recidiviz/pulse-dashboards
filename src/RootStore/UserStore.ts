@@ -24,6 +24,7 @@ import createAuth0Client, {
   User,
 } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
+import { intersection } from "lodash";
 import {
   action,
   entries,
@@ -204,7 +205,7 @@ export default class UserStore {
         this.auth0.logout();
         this.auth0.loginWithRedirect();
       } else {
-        this.authError = error;
+        this.setAuthError(error);
       }
     }
   }
@@ -239,6 +240,7 @@ export default class UserStore {
           given_name: "Impersonated User",
           [`${METADATA_NAMESPACE}app_metadata`]: {
             ...userRestrictions,
+            allowedStates: [impersonatedStateCode],
             stateCode: impersonatedStateCode,
           },
           impersonator: true,
@@ -288,6 +290,17 @@ export default class UserStore {
       throw Error("No app_metadata available for user");
     }
     return appMetadata;
+  }
+
+  /**
+   * Returns a list of tenant IDs that Recidiviz users can access.
+   */
+  get recidivizAllowedStates(): TenantId[] {
+    const { availableStateCodes } = tenants[this.stateCode];
+    return intersection(
+      this.userAppMetadata?.allowedStates ?? [],
+      availableStateCodes
+    ) as TenantId[];
   }
 
   get userHash(): string {
@@ -355,9 +368,10 @@ export default class UserStore {
    * Returns the list of states which are accessible to users to view data for.
    */
   get availableStateCodes(): string[] {
-    const stateCodes = tenants[this.stateCode].availableStateCodes;
-    if (this.blockedStateCodes.length === 0) return stateCodes;
-    return stateCodes.filter((sc) => !this.blockedStateCodes.includes(sc));
+    if (this.isRecidivizUser) {
+      return this.recidivizAllowedStates;
+    }
+    return tenants[this.stateCode].availableStateCodes;
   }
 
   /**
@@ -366,15 +380,6 @@ export default class UserStore {
    */
   get stateName(): string {
     return tenants[this.stateCode].name;
-  }
-
-  /**
-   * Returns any blocked state codes for the authorized user.
-   */
-  get blockedStateCodes(): string[] {
-    const blockedStateCodes = this.userAppMetadata?.blockedStateCodes;
-    if (!blockedStateCodes) return [];
-    return blockedStateCodes.map((sc) => sc.toUpperCase());
   }
 
   /**
@@ -463,7 +468,11 @@ export default class UserStore {
   }
 
   setAuthError(error: Error): void {
-    this.authError = error;
+    runInAction(() => {
+      this.userIsLoading = false;
+      this.isAuthorized = false;
+      this.authError = error;
+    });
   }
 
   setImpersonationError(error: Error): void {
