@@ -945,9 +945,6 @@ export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRec
         amountOwed: 0,
       },
       noConvictionWithin6Months: {},
-      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
-        eligibleDate: parseISO("2024-04-03"),
-      },
       onMediumSupervisionLevelOrLower: {
         supervisionLevel: "MEDIUM",
       },
@@ -971,9 +968,6 @@ export const usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord: UsMeEa
     externalId: "010",
     eligibleCriteria: {
       noConvictionWithin6Months: {},
-      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
-        eligibleDate: parseISO("2024-04-03"),
-      },
       onMediumSupervisionLevelOrLower: {
         supervisionLevel: "MEDIUM",
       },
@@ -1002,9 +996,6 @@ export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarl
     eligibleCriteria: {
       usMePaidAllOwedRestitution: {},
       noConvictionWithin6Months: {},
-      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
-        eligibleDate: parseISO("2024-04-03"),
-      },
       onMediumSupervisionLevelOrLower: {
         supervisionLevel: "MEDIUM",
       },
@@ -1037,11 +1028,7 @@ export const usMeEarlyTerminationSupervisionStartAlmostEligibleReferralRecord: U
       },
       usMeNoPendingViolationsWhileSupervised: {},
     },
-    ineligibleCriteria: {
-      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
-        eligibleDate: parseISO("2024-04-03"),
-      },
-    },
+    ineligibleCriteria: {},
     caseNotes: {
       foo: [
         {

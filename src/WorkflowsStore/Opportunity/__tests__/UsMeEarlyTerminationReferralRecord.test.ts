@@ -26,9 +26,6 @@ const defaultEligibleCriteria = {
   onMediumSupervisionLevelOrLower: {
     supervisionLevel: "MEDIUM",
   },
-  usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
-    eligibleDate: "2022-01-03",
-  },
 };
 
 test("transform record with restitution case", () => {
@@ -111,15 +108,8 @@ test("transform record with supervision past ineligibleCriteria", () => {
   const rawRecord = {
     stateCode: "US_ME",
     externalId: "abc123",
-    eligibleCriteria: omit(
-      defaultEligibleCriteria,
-      "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart"
-    ),
-    ineligibleCriteria: {
-      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
-        eligibleDate: "2024-01-03",
-      },
-    },
+    eligibleCriteria: omit(defaultEligibleCriteria),
+    ineligibleCriteria: {},
   };
 
   expect(transformReferral(rawRecord)).toMatchSnapshot();

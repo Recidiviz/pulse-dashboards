@@ -25,9 +25,6 @@ export const usMeEarlyTerminationReferralsFixture =
       externalId: "009",
       eligibleCriteria: {
         noConvictionWithin6Months: null,
-        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
-          eligibleDate: "2024-04-03",
-        },
         onMediumSupervisionLevelOrLower: {
           supervisionLevel: "MEDIUM",
         },
@@ -52,9 +49,6 @@ export const usMeEarlyTerminationReferralsFixture =
       externalId: "010",
       eligibleCriteria: {
         noConvictionWithin6Months: null,
-        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
-          eligibleDate: "2024-04-03",
-        },
         onMediumSupervisionLevelOrLower: {
           supervisionLevel: "MEDIUM",
         },
@@ -81,9 +75,6 @@ export const usMeEarlyTerminationReferralsFixture =
       eligibleCriteria: {
         usMePaidAllOwedRestitution: null,
         noConvictionWithin6Months: null,
-        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
-          eligibleDate: "2024-04-03",
-        },
         onMediumSupervisionLevelOrLower: {
           supervisionLevel: "MEDIUM",
         },
@@ -115,9 +106,6 @@ export const usMeEarlyTerminationReferralsFixture =
         },
       },
       ineligibleCriteria: {
-        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
-          eligibleDate: "2023-07-28",
-        },
         usMeNoPendingViolationsWhileSupervised: {
           currentStatus: "PENDING VIOLATION",
           violationDate: "2023-01-01",

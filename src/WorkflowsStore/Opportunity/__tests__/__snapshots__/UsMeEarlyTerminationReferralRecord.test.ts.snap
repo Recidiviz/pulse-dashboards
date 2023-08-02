@@ -10,9 +10,6 @@ Object {
     },
     "usMeNoPendingViolationsWhileSupervised": Object {},
     "usMePaidAllOwedRestitution": Object {},
-    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
-      "eligibleDate": 2022-01-03T00:00:00.000Z,
-    },
   },
   "externalId": "abc123",
   "ineligibleCriteria": Object {},
@@ -29,9 +26,6 @@ Object {
       "supervisionLevel": "MEDIUM",
     },
     "usMePaidAllOwedRestitution": Object {},
-    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
-      "eligibleDate": 2022-01-03T00:00:00.000Z,
-    },
   },
   "externalId": "abc123",
   "ineligibleCriteria": Object {
@@ -55,9 +49,6 @@ Object {
     "usMePaidAllOwedRestitution": Object {
       "amountOwed": 0,
     },
-    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
-      "eligibleDate": 2022-01-03T00:00:00.000Z,
-    },
   },
   "externalId": "abc123",
   "ineligibleCriteria": Object {},
@@ -72,9 +63,6 @@ Object {
     "noConvictionWithin6Months": Object {},
     "onMediumSupervisionLevelOrLower": Object {
       "supervisionLevel": "MEDIUM",
-    },
-    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
-      "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
   },
   "externalId": "abc123",
@@ -98,11 +86,7 @@ Object {
     "usMePaidAllOwedRestitution": Object {},
   },
   "externalId": "abc123",
-  "ineligibleCriteria": Object {
-    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
-      "eligibleDate": 2024-01-03T00:00:00.000Z,
-    },
-  },
+  "ineligibleCriteria": Object {},
   "stateCode": "US_ME",
 }
 `;
@@ -116,9 +100,6 @@ Object {
       "supervisionLevel": "MEDIUM",
     },
     "usMePaidAllOwedRestitution": Object {},
-    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
-      "eligibleDate": 2022-01-03T00:00:00.000Z,
-    },
   },
   "externalId": "abc123",
   "ineligibleCriteria": Object {},

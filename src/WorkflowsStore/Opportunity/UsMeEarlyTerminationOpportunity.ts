@@ -58,7 +58,6 @@ const CRITERIA: Record<
       period of probation is completed, the Probation Officer may file a motion
       with the court for early termination of probation.`,
   },
-  usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {},
   onMediumSupervisionLevelOrLower: {},
   usMeNoPendingViolationsWhileSupervised: {},
 };
@@ -69,14 +68,8 @@ const validateRecord =
     if (!record) return;
 
     const {
-      eligibleCriteria: {
-        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart:
-          pastHalfFullTermRelease,
-      },
-      ineligibleCriteria: {
-        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart:
-          ineligiblePastHalfFullTermRelease,
-      },
+      eligibleCriteria: { pastHalfFullTermRelease },
+      ineligibleCriteria: { ineligiblePastHalfFullTermRelease },
     } = record;
 
     if (
@@ -85,15 +78,6 @@ const validateRecord =
     ) {
       throw new OpportunityValidationError(
         "Missing early termination opportunity eligible date"
-      );
-    }
-
-    if (
-      !client.rootStore.workflowsStore.featureVariants.usMeAlmostPastHalfTerm &&
-      Object.keys(record.ineligibleCriteria ?? {}).length > 0
-    ) {
-      throw new FeatureGateError(
-        "Missing almost past half term feature is disabled."
       );
     }
 
@@ -159,24 +143,12 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
     const requirements: OpportunityRequirement[] = [];
     const {
       eligibleCriteria: {
-        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart,
         noConvictionWithin6Months,
         onMediumSupervisionLevelOrLower,
         usMePaidAllOwedRestitution,
         usMeNoPendingViolationsWhileSupervised,
       },
     } = this.record;
-
-    if (
-      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart?.eligibleDate
-    ) {
-      requirements.push({
-        text: `Served 1/2 of probation term`,
-        tooltip:
-          CRITERIA.usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart
-            .tooltip,
-      });
-    }
 
     if (onMediumSupervisionLevelOrLower?.supervisionLevel) {
       requirements.push({
@@ -230,26 +202,10 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
 
     const {
       ineligibleCriteria: {
-        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart,
         usMeNoPendingViolationsWhileSupervised,
         usMePaidAllOwedRestitution,
       },
     } = this.record;
-
-    if (
-      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart?.eligibleDate
-    ) {
-      const daysUntilHalfFullTermReleaseDate = differenceInDays(
-        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart?.eligibleDate,
-        startOfToday()
-      );
-      requirementsAlmostMet.push({
-        text: `Will have served 1/2 of probation term in ${daysUntilHalfFullTermReleaseDate} days`,
-        tooltip:
-          CRITERIA.usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart
-            .tooltip,
-      });
-    }
 
     if (usMeNoPendingViolationsWhileSupervised?.violationDate) {
       requirementsAlmostMet.push({

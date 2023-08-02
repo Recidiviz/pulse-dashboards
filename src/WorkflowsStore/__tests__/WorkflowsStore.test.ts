@@ -751,7 +751,6 @@ describe("feature variants", () => {
         "CompliantReportingAlmostEligible": Object {},
         "TEST": Object {},
         "responsiveRevamp": Object {},
-        "usMeAlmostPastHalfTerm": Object {},
         "usMeFurloughRelease": Object {},
         "usMeWorkRelease": Object {},
         "usTnExpiration": Object {},

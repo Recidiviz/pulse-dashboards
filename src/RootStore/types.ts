@@ -70,7 +70,6 @@ export type UserAppMetadata = {
 export type FeatureVariant =
   | "TEST"
   | "CompliantReportingAlmostEligible"
-  | "usMeAlmostPastHalfTerm"
   | "usMeWorkRelease"
   | "usMeFurloughRelease"
   | "usTnExpiration"
@@ -95,7 +94,6 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
     : {
         TEST: {},
         CompliantReportingAlmostEligible: {},
-        usMeAlmostPastHalfTerm: {},
         usMeWorkRelease: {},
         usMeFurloughRelease: {},
         usTnExpiration: {},
