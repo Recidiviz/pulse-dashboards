@@ -17,7 +17,6 @@
 
 import { palette, Sans14, Sans16, spacing } from "@recidiviz/design-system";
 import { sortBy } from "lodash";
-import { keys } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import {
@@ -30,11 +29,7 @@ import {
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import {
-  JusticeInvolvedPerson,
-  Opportunity,
-  OpportunityType,
-} from "../../WorkflowsStore";
+import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { OpportunityModule } from "./OpportunityModule";
@@ -177,12 +172,8 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
   formLinkButton?: boolean;
 }) {
   const {
-    workflowsStore: { featureVariants },
+    workflowsStore: { featureVariants, opportunityTypes },
   } = useRootStore();
-
-  const opportunityTypes = keys(
-    person.potentialOpportunities
-  ) as OpportunityType[];
 
   const opportunities = sortBy(
     Object.values(person.verifiedOpportunities).filter(
