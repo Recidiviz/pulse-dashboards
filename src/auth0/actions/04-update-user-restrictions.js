@@ -111,7 +111,7 @@ exports.onExecutePostLogin = async (event, api) => {
    * restrictions for Recidiviz and CSG users
    */
   if (authorizedDomains.includes(userDomain)) {
-    if (userDomain === "recidiviz") {
+    if (userDomain === "recidiviz.org") {
       const recidivizAuthBucketName = event.secrets.RECIDIVIZ_AUTH_BUCKET_NAME;
       const jsonFile = await storage
         .bucket(recidivizAuthBucketName)

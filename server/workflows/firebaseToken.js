@@ -40,11 +40,12 @@ function getFirebaseToken(impersonateUser = false) {
   return async function (req, res) {
     let uid;
     let stateCode;
+    let recidivizAllowedStates = [];
     const appMetadata = getAppMetadata(req);
 
     if (isOfflineMode) {
       const user = fetchOfflineUser({});
-      stateCode = getAppMetadata({ user }).stateCode;
+      stateCode = appMetadata.stateCode;
       uid = user.email;
     } else if (impersonateUser) {
       if (appMetadata.state_code.toLowerCase() !== "recidiviz") {
@@ -57,6 +58,7 @@ function getFirebaseToken(impersonateUser = false) {
     } else {
       uid = req.user[`${METADATA_NAMESPACE}email_address`];
       stateCode = appMetadata.state_code;
+      recidivizAllowedStates = appMetadata.allowedStates ?? [];
     }
 
     if (!uid) {
@@ -68,9 +70,11 @@ function getFirebaseToken(impersonateUser = false) {
     }
 
     stateCode = stateCode.toUpperCase();
-    const firebaseToken = await firebaseAdmin
-      .auth()
-      .createCustomToken(uid, { stateCode, impersonator: impersonateUser });
+    const firebaseToken = await firebaseAdmin.auth().createCustomToken(uid, {
+      stateCode,
+      recidivizAllowedStates,
+      impersonator: impersonateUser,
+    });
 
     res.json({ firebaseToken });
   };

@@ -68,6 +68,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
 
   // Add any additional email authorization overrides
   const authorizedEmails = [];
+  const testerEmails = [];
 
   const userHasAccess =
     authorizedDomains.some(function (authorizedDomain) {

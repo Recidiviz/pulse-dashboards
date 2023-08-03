@@ -51,6 +51,39 @@ test("requests Firebase auth token", async () => {
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
     stateCode: stateCode.toUpperCase(),
     impersonator: false,
+    recidivizAllowedStates: [],
+  });
+  expect(mockRes.json).toHaveBeenCalledWith({
+    firebaseToken: mockFirebaseToken,
+  });
+});
+
+test("Firebase token with allowedStates", async () => {
+  const userId = "TEST123@somewhere.com";
+  const stateCode = "recidiviz";
+  const mockFirebaseToken = "tokenabc123";
+
+  createCustomTokenMock.mockResolvedValue(mockFirebaseToken);
+  const mockReq = {
+    user: {
+      undefinedemail_address: userId,
+      // this key includes an env variable that is not set in this test environment
+      undefinedapp_metadata: {
+        state_code: stateCode,
+        allowedStates: ["us_xx"],
+      },
+    },
+  };
+  const mockRes = {
+    json: jest.fn(),
+  };
+
+  await getFirebaseToken()(mockReq, mockRes);
+
+  expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
+    stateCode: stateCode.toUpperCase(),
+    impersonator: false,
+    recidivizAllowedStates: ["us_xx"],
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -82,6 +115,7 @@ test("requests Firebase auth token for impersonated user", async () => {
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
     stateCode: stateCode.toUpperCase(),
     impersonator: true,
+    recidivizAllowedStates: [],
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
