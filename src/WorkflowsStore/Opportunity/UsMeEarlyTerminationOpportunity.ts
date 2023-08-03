@@ -15,13 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { differenceInDays, startOfToday } from "date-fns";
 import dedent from "dedent";
 import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
-import { OpportunityValidationError } from "../../errors";
+import { FeatureGateError, OpportunityValidationError } from "../../errors";
 import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";

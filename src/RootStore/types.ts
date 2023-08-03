@@ -56,6 +56,7 @@ export type TenantId = Exclude<
 export type UserAppMetadata = {
   stateCode: Lowercase<TenantId> | Lowercase<InternalTenantId>;
   allowedStates?: TenantId[];
+  blockedStateCodes?: Lowercase<TenantId>[];
   allowedSupervisionLocationIds?: string[];
   allowedSupervisionLocationLevel?: string;
   routes?: Record<string, boolean>;

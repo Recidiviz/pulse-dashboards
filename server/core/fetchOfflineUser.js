@@ -15,20 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const ALL_TENANTS = [
-  "US_CA",
-  "US_CO",
-  "US_DEMO",
-  "US_ID",
-  "US_ME",
-  "US_MI",
-  "US_MO",
-  "US_NC",
-  "US_ND",
-  "US_PA",
-  "US_TN",
-];
-
 /**
  * Returns an artificial Auth0 id token for a fake/demo user.
  * You can pass in other attributes to override the defaults.
@@ -39,7 +25,6 @@ function fetchOfflineUser({
   stateCode = "recidiviz",
   allowedSupervisionLocationIds,
   allowedSupervisionLocationLevel,
-  allowedStates = ALL_TENANTS,
 }) {
   return {
     picture:
@@ -50,7 +35,6 @@ function fetchOfflineUser({
       stateCode,
       allowedSupervisionLocationIds,
       allowedSupervisionLocationLevel,
-      allowedStates,
       routes: {
         // system_prison: true,
         // system_supervision: true,

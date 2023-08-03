@@ -205,7 +205,7 @@ export default class UserStore {
         this.auth0.logout();
         this.auth0.loginWithRedirect();
       } else {
-        this.setAuthError(error);
+        this.authError = error;
       }
     }
   }
@@ -240,7 +240,6 @@ export default class UserStore {
           given_name: "Impersonated User",
           [`${METADATA_NAMESPACE}app_metadata`]: {
             ...userRestrictions,
-            allowedStates: [impersonatedStateCode],
             stateCode: impersonatedStateCode,
           },
           impersonator: true,
@@ -290,16 +289,6 @@ export default class UserStore {
       throw Error("No app_metadata available for user");
     }
     return appMetadata;
-  }
-
-  /**
-   * Returns a list of tenant IDs that Recidiviz users can access.
-   */
-  get recidivizAllowedStates(): TenantId[] {
-    const { availableStateCodes } = tenants[this.stateCode];
-    return availableStateCodes.filter((stateCode) => {
-      return (this.userAppMetadata?.allowedStates ?? []).includes(stateCode);
-    });
   }
 
   get userHash(): string {
@@ -368,10 +357,9 @@ export default class UserStore {
    * Returns the list of states which are accessible to users to view data for.
    */
   get availableStateCodes(): string[] {
-    if (this.isRecidivizUser) {
-      return this.recidivizAllowedStates;
-    }
-    return tenants[this.stateCode].availableStateCodes;
+    const stateCodes = tenants[this.stateCode].availableStateCodes;
+    if (this.blockedStateCodes.length === 0) return stateCodes;
+    return stateCodes.filter((sc) => !this.blockedStateCodes.includes(sc));
   }
 
   /**
@@ -380,6 +368,15 @@ export default class UserStore {
    */
   get stateName(): string {
     return tenants[this.stateCode].name;
+  }
+
+  /**
+   * Returns any blocked state codes for the authorized user.
+   */
+  get blockedStateCodes(): string[] {
+    const blockedStateCodes = this.userAppMetadata?.blockedStateCodes;
+    if (!blockedStateCodes) return [];
+    return blockedStateCodes.map((sc) => sc.toUpperCase());
   }
 
   /**
@@ -468,11 +465,7 @@ export default class UserStore {
   }
 
   setAuthError(error: Error): void {
-    runInAction(() => {
-      this.userIsLoading = false;
-      this.isAuthorized = false;
-      this.authError = error;
-    });
+    this.authError = error;
   }
 
   setImpersonationError(error: Error): void {

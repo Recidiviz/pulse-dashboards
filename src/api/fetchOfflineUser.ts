@@ -25,7 +25,6 @@ type OfflineUserOptions = {
   stateCode?: string;
   allowedSupervisionLocationIds?: string[];
   allowedSupervisionLocationLevel?: string;
-  allowedStates?: string[];
 };
 
 export async function fetchOfflineUser(
