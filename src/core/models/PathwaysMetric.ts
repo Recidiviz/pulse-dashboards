@@ -29,6 +29,7 @@ import { callMetricsApi } from "../../api/metrics/metricsClient";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import flags from "../../flags";
 import RootStore from "../../RootStore";
+import { TenantId } from "../../RootStore/types";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
@@ -46,7 +47,6 @@ import {
   PathwaysMetricRecords,
   RawMetricData,
   SimulationCompartment,
-  TenantId,
 } from "./types";
 
 export type BaseMetricConstructorOptions<RecordFormat extends MetricRecord> = {

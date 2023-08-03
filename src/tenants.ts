@@ -24,7 +24,7 @@ import {
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
 import { LANTERN_TENANTS } from "./RootStore/TenantStore/lanternTenants";
 import * as pathways from "./RootStore/TenantStore/pathwaysTenants";
-import { TenantId } from "./RootStore/types";
+import { TenantConfigId } from "./RootStore/types";
 import US_CA_CONFIG from "./tenants/US_CA";
 import US_CO_CONFIG from "./tenants/US_CO";
 import US_ID_CONFIG from "./tenants/US_ID";
@@ -42,7 +42,7 @@ export const LANTERN = "LANTERN";
 export const CSG = "CSG";
 
 type Tenants = {
-  [key in TenantId]: TenantConfig;
+  [key in TenantConfigId]: TenantConfig;
 };
 
 // Add any new tenant IDs to the list in `fetchOfflineUser.js` to enable in offline mode.

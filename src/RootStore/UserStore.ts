@@ -55,6 +55,7 @@ import {
   FeatureVariant,
   FeatureVariantRecord,
   FeatureVariantValue,
+  InternalTenantId,
   TenantId,
   UserAppMetadata,
 } from "./types";
@@ -314,13 +315,14 @@ export default class UserStore {
   /**
    * Returns the state code of the authorized state for the given user.
    * For Recidiviz users or users in demo mode, this will be 'recidiviz'.
+   * For CSG users this will be 'csg'.
    */
-  get stateCode(): TenantId {
+  get stateCode(): TenantId | InternalTenantId {
     const stateCode = this.userAppMetadata?.stateCode;
     if (!stateCode) {
       throw Error("No state code set for user");
     }
-    return stateCode.toUpperCase() as TenantId;
+    return stateCode.toUpperCase() as TenantId | InternalTenantId;
   }
 
   /**

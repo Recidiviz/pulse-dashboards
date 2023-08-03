@@ -21,6 +21,7 @@ import React, { useEffect, useState } from "react";
 import { Redirect, Route, RouteProps, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { TenantId } from "../../RootStore/types";
 import {
   isOpportunityTypeUrlForState,
   OPPORTUNITY_TYPE_FOR_URL_BY_STATE,
@@ -29,7 +30,7 @@ import {
   getSystemIdFromOpportunityType,
   getSystemIdFromPage,
 } from "../../WorkflowsStore/utils";
-import { SystemId, TenantId } from "../models/types";
+import { SystemId } from "../models/types";
 import { WORKFLOWS_PATHS, WorkflowsPage, workflowsUrl } from "../views";
 
 // react-router does not seem to export this type directly

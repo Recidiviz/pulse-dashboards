@@ -26,9 +26,9 @@ import { ReactComponent as OperationsLogo } from "../../assets/static/images/ope
 import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathways.svg";
 import { ReactComponent as WorkflowsLogo } from "../../assets/static/images/workflows.svg";
 import { useRootStore } from "../../components/StoreProvider";
+import { TenantId } from "../../RootStore/types";
 import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
-import { TenantId } from "../models/types";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { DASHBOARD_VIEWS } from "../views";
 

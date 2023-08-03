@@ -22,15 +22,7 @@ import {
   SupervisionTaskUpdate,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
-import {
-  US_CO,
-  US_ID,
-  US_ME,
-  US_MI,
-  US_NC,
-  US_ND,
-  US_TN,
-} from "../../RootStore/TenantStore/pathwaysTenants";
+import { TenantId } from "../../RootStore/types";
 import { JusticeInvolvedPerson, OpportunityType } from "../../WorkflowsStore";
 import { Task } from "../../WorkflowsStore/Task/Task";
 import {
@@ -55,24 +47,13 @@ export type ApiData = {
 export type RawApiData = Record<string, ApiData>;
 export type RawMetricData = Record<string, string>[];
 
-export const TenantIdList = [
-  US_CO,
-  US_ND,
-  US_ID,
-  US_TN,
-  US_ME,
-  US_MI,
-  US_NC,
-] as const;
-
-export type TenantId = typeof TenantIdList[number];
 export type TenantConfig = {
   name: string;
   stateCode: string;
   domain?: string;
   DOCName?: string;
   internalSystemName?: string;
-  availableStateCodes: string[];
+  availableStateCodes: TenantId[];
   enableUserRestrictions: boolean;
   workflowsEnableAllDistricts?: boolean;
   navigation?: Navigation;

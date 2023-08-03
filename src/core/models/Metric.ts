@@ -19,8 +19,9 @@ import { autorun, makeObservable, observable, runInAction } from "mobx";
 
 import { callMetricsApi } from "../../api/metrics/metricsClient";
 import RootStore from "../../RootStore";
+import { TenantId } from "../../RootStore/types";
 import CoreStore from "../CoreStore";
-import { MetricRecord, RawMetricData, TenantId } from "./types";
+import { MetricRecord, RawMetricData } from "./types";
 
 export type BaseMetricProps = {
   tenantId?: TenantId;

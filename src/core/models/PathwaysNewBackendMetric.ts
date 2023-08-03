@@ -28,6 +28,7 @@ import {
 
 import { callNewMetricsApi } from "../../api/metrics/metricsClient";
 import RootStore from "../../RootStore";
+import { TenantId } from "../../RootStore/types";
 import { isDemoMode } from "../../utils/isDemoMode";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import { getMethodologyCopy, getMetricCopy } from "../content";
@@ -49,7 +50,6 @@ import {
   NewBackendRecord,
   PathwaysMetricRecords,
   SimulationCompartment,
-  TenantId,
 } from "./types";
 import { formatDateString, getTimePeriodRawValue } from "./utils";
 

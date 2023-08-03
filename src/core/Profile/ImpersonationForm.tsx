@@ -21,10 +21,10 @@ import React, { MutableRefObject, useRef, useState } from "react";
 import styled from "styled-components/macro";
 
 import StateSelector from "../../components/StateSelector";
+import { TenantId } from "../../RootStore/types";
 import TENANTS from "../../tenants";
 import { getEmailDomain, stopImpersonating } from "../../utils/impersonation";
 import { isOfflineMode } from "../../utils/isOfflineMode";
-import { TenantId } from "../models/types";
 import ImpersonationErrorModal from "./ImpersonationErrorModal";
 
 const EmailInput = styled.input`

@@ -25,10 +25,12 @@ export type LanternTenants = typeof lantern.LANTERN_TENANTS[number];
 export type PathwaysTenants = typeof pathways.PATHWAYS_TENANTS[number];
 
 export function isPathwaysTenantId(
-  tenantId: PathwaysTenants | undefined
+  tenantId: TenantId | undefined
 ): tenantId is PathwaysTenants {
   return pathways.PATHWAYS_TENANTS.includes(tenantId as PathwaysTenants);
 }
+// TODO(#3622): [Dashboard][Auth] Remove lantern state code from frontend
+const InternalTenantIds = [RECIDIVIZ_TENANT, CSG, LANTERN] as const;
 
 const TenantIds = [
   lantern.US_MO,
@@ -41,16 +43,18 @@ const TenantIds = [
   pathways.US_MI,
   pathways.US_NC,
   pathways.US_ND,
-  RECIDIVIZ_TENANT,
-  // TODO(#3622): [Dashboard][Auth] Remove lantern state code from frontend
-  LANTERN,
-  CSG,
+  ...InternalTenantIds,
 ] as const;
 
-export type TenantId = typeof TenantIds[number];
+export type TenantConfigId = typeof TenantIds[number];
+export type InternalTenantId = typeof InternalTenantIds[number];
+export type TenantId = Exclude<
+  TenantConfigId,
+  typeof InternalTenantIds[number]
+>;
 
 export type UserAppMetadata = {
-  stateCode: Lowercase<TenantId>;
+  stateCode: Lowercase<TenantId> | Lowercase<InternalTenantId>;
   allowedStates?: TenantId[];
   allowedSupervisionLocationIds?: string[];
   allowedSupervisionLocationLevel?: string;

@@ -17,8 +17,8 @@
 import { makeAutoObservable } from "mobx";
 
 import type TenantStore from "../../RootStore/TenantStore";
+import { TenantId } from "../../RootStore/types";
 import type UserStore from "../../RootStore/UserStore";
-import { TenantId } from "../models/types";
 import { PopulationFilterValues } from "../types/filters";
 import {
   DASHBOARD_VIEWS,
