@@ -37,7 +37,7 @@ interface Props {
   children: React.ReactElement;
 }
 
-const LANTERN_PATHS = ["/community/revocations", "/revocations"];
+const LANTERN_PATHS = ["/community/revocations", "/revocations", "/profile"];
 
 const LanternLayout: React.FC<Props> | undefined = ({
   children,
