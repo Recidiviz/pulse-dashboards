@@ -96,6 +96,19 @@ const rawRecordMissingHearingDate: UsMoRestrictiveHousingStatusHearingReferralRe
     },
   };
 
+const rawRecordMissingHearingDateCriteria: UsMoRestrictiveHousingStatusHearingReferralRecordRaw =
+  {
+    ...rawRecordBase,
+    eligibleCriteria: {
+      usMoInRestrictiveHousing: {
+        confinementType: "confinement type",
+      },
+    },
+    ineligibleCriteria: {
+      usMoOverdueForHearing: null,
+    },
+  };
+
 const rawRecordHearingDateFarInFuture: UsMoRestrictiveHousingStatusHearingReferralRecordRaw =
   {
     ...rawRecordBase,
@@ -147,6 +160,11 @@ test("transform record", () => {
   ).toMatchSnapshot();
   expect(
     usMoRestrictiveHousingStatusHearingSchema.parse(rawRecordMissingHearingDate)
+  ).toMatchSnapshot();
+  expect(
+    usMoRestrictiveHousingStatusHearingSchema.parse(
+      rawRecordMissingHearingDateCriteria
+    )
   ).toMatchSnapshot();
 });
 

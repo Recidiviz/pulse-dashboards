@@ -91,14 +91,15 @@ export const usMoRestrictiveHousingStatusHearingSchema = opportunitySchemaBase
     ineligibleCriteria: z.object({
       usMoOverdueForHearing: z
         .object({
-          nextReviewDate: dateStringSchema
-            .nullable()
-            .transform((nullableDate) =>
-              // Transform nulls into undefineds just to make typing a bit more convenient elsewhere
-              nullableDate === null ? undefined : nullableDate
-            ),
+          nextReviewDate: dateStringSchema.nullish().transform((nullableDate) =>
+            // Transform nulls into undefineds just to make typing a bit more convenient elsewhere
+            nullableDate === null ? undefined : nullableDate
+          ),
         })
-        .nullish(),
+        .nullish()
+        .transform((nullableObject) =>
+          nullableObject === null ? {} : nullableObject
+        ),
     }),
   })
   .transform((record) => {

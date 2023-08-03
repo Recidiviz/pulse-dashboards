@@ -166,5 +166,6 @@ describe("fully eligible", () => {
       };
     referralSub.data = fixtureMissingDate;
     expect(opp.requirementsAlmostMet).toMatchSnapshot();
+    expect(opp.almostEligibleStatusMessage).toMatchSnapshot();
   });
 });
