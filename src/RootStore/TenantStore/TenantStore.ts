@@ -109,6 +109,14 @@ export default class TenantStore {
     );
   }
 
+  get pathwaysName(): string {
+    if (!this.currentTenantId) return "";
+    return (
+      tenants[this.currentTenantId].pathwaysNameOverride ??
+      "System-Level Trends"
+    );
+  }
+
   get workflowsEnableAllDistricts(): boolean {
     if (!this.currentTenantId) return false;
     return !!tenants[this.currentTenantId]?.workflowsEnableAllDistricts;

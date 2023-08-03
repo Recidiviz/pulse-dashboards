@@ -150,6 +150,7 @@ const DropdownProfileMenu = styled(DropdownMenu)`
     0px 4px 8px rgba(43, 84, 105, 0.06), 0px 8px 56px rgba(43, 84, 105, 0.12);
   border-radius: 8px;
   padding: 12px 0;
+  width: max-content;
 
   & a {
     ${typography.Sans14}
@@ -283,7 +284,7 @@ function OperationsLink({ enabled }: OptionalLinkProps) {
 }
 
 function PathwaysLink({ enabled }: OptionalLinkProps) {
-  const { filtersStore } = useCoreStore();
+  const { filtersStore, tenantStore } = useCoreStore();
   const { isMobile } = useIsMobile(true);
 
   if (!enabled) return null;
@@ -294,7 +295,7 @@ function PathwaysLink({ enabled }: OptionalLinkProps) {
       onClick={() => filtersStore.resetFilters()}
     >
       {isMobile && <Icon kind={IconSVG.Journey} width={20} />}
-      Go to Pathways
+      Go to {tenantStore.pathwaysName}
     </NavLink>
   );
 }
@@ -333,7 +334,7 @@ function AccountLink({ enabled }: OptionalLinkProps) {
   return (
     <NavLink to={`/${DASHBOARD_VIEWS.profile}`}>
       {isMobile && <UserAvatar />}
-      Account
+      Profile
     </NavLink>
   );
 }

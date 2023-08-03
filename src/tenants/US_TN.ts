@@ -39,6 +39,7 @@ const US_TN_CONFIG: TenantConfig = {
   name: "Tennessee",
   stateCode: "TN",
   domain: "tn.gov",
+  pathwaysNameOverride: "Pathways",
   availableStateCodes: [pathways.US_TN],
   enableUserRestrictions: false,
   workflowsEnableAllDistricts: false,

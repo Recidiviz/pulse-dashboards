@@ -96,6 +96,7 @@ export type TenantConfig = {
     ) => Task<k>;
   };
   milestoneTypes?: MilestoneType[];
+  pathwaysNameOverride?: "Pathways" | "System-Level Trends";
 };
 
 type ValidSnoozeForDays = 7 | 30 | 90;

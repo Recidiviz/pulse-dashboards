@@ -169,7 +169,7 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
 }) => {
   const { pathname } = useLocation();
   const view = pathname.split("/")[1];
-  const { currentTenantId, userStore } = useCoreStore();
+  const { currentTenantId, userStore, tenantStore } = useCoreStore();
   const {
     workflowsStore: {
       featureVariants: { responsiveRevamp },
@@ -201,11 +201,7 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
   return (
     <aside className="ViewNavigation">
       <ViewTooltip
-        title={
-          currentTenantId && ["US_TN", "US_ME"].includes(currentTenantId)
-            ? "Pathways"
-            : "System-Level Trends"
-        }
+        title={tenantStore.pathwaysName}
         body="A real-time map of the corrections system and how people are moving through it"
       >
         <PathwaysLink enabled={enabledPathwaysPages} />

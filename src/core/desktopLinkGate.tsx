@@ -43,6 +43,7 @@ export const desktopLinkGate =
       {
         duration: 5000,
         id: "link-gate", // prevents duplicate toasts
+        style: { paddingRight: "2.5rem" },
       }
     );
   };
