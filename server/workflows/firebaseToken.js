@@ -45,7 +45,7 @@ function getFirebaseToken(impersonateUser = false) {
 
     if (isOfflineMode) {
       const user = fetchOfflineUser({});
-      stateCode = appMetadata.stateCode;
+      stateCode = getAppMetadata({ user }).stateCode;
       uid = user.email;
     } else if (impersonateUser) {
       if (appMetadata.state_code.toLowerCase() !== "recidiviz") {
