@@ -28,6 +28,7 @@ export const TextStyle = css`
 
 export const NarrowFont = css`
   font-family: "Arial Narrow", Arial, sans-serif;
+  line-height: 1.15;
 `;
 
 export const TinyTextStyle = css`
@@ -70,7 +71,7 @@ export const FormSection = styled.div`
     border-width: 0 0 1px 0;
   }
 
-  margin-bottom: 0.5em;
+  margin-bottom: 0.25em;
 `;
 
 export const SectionRow = styled.div`
@@ -132,7 +133,7 @@ export const FormContainer = styled.form<FormViewerContextData>`
             color: transparent;
           }
           // MS EDGE renders borders despite there being none. Override to transparent/0 width
-          ${Input} {
+          ${Input}, textarea {
             border-width: 0;
             border-color: transparent;
             padding-left: 1px;
@@ -140,7 +141,7 @@ export const FormContainer = styled.form<FormViewerContextData>`
           }
         `
       : css`
-          ${Input} {
+          ${Input}, textarea {
             background-color: aliceblue;
             transition-duration: ${animation.defaultDurationMs}ms;
             transition-property: background-color;

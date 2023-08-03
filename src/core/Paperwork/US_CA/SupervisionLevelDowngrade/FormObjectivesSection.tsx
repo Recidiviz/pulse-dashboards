@@ -174,7 +174,6 @@ const ObjectiveRow = styled.div`
 
 const ObjectiveSelectionRow = styled(ObjectiveRow)`
   ${MainLabelTextStyle};
-  line-height: 1.2;
   display: flex;
   flex-direction: row;
 `;
@@ -328,6 +327,7 @@ const ObjectivesTotal = observer(function ObjectivesTotal() {
             type="radio"
             name="scoreTotal"
             checked={scoreTotal === 5 || scoreTotal === 6}
+            readOnly
           />
           5–6 REDUCTION MAY BE WARRANTED
         </label>
@@ -336,6 +336,7 @@ const ObjectivesTotal = observer(function ObjectivesTotal() {
             type="radio"
             name="scoreTotal"
             checked={!!scoreTotal && scoreTotal >= 7 && scoreTotal <= 10}
+            readOnly
           />
           7–10 NO CHANGE WARRANTED
         </label>
@@ -344,6 +345,7 @@ const ObjectivesTotal = observer(function ObjectivesTotal() {
             type="radio"
             name="scoreTotal"
             checked={!!scoreTotal && scoreTotal > 10}
+            readOnly
           />
           11–15 INCREASE MAY BE WARRANTED
         </label>

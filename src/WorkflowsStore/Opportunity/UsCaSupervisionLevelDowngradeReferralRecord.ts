@@ -87,7 +87,7 @@ export type UsCaSupervisionLevelDowngradeDraftData = {
   agentSignatureBadge: string;
   agentSignatureDate: string;
   supervisorComments: string;
-  supervisorMoveToNewCategory: boolean;
+  supervisorDecision: "REMAIN" | "MOVE" | "SCHEDULE";
   supervisorNewCategory: string;
   supervisorEffectiveDate: string;
   supervisorScheduleForCCR: boolean;

@@ -18,7 +18,9 @@
 import styled from "styled-components/macro";
 
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCaSupervisionLevelDowngradeReferralRecord";
+import FormCommitteeSection from "./FormCommitteeSection";
 import FormInput from "./FormInput";
+import FormSupervisorSection from "./FormSupervisorSection";
 import {
   FormSection,
   NarrowFont,
@@ -72,6 +74,8 @@ const FormSectionTwo = () => {
         SECTION II &emsp; SUMMARY/CERTIFICATION - TO BE COMPLETED BY UNIT
         SUPERVISOR
       </SectionHeader>
+      <FormSupervisorSection />
+      <FormCommitteeSection />
       <SummaryRow>
         <RowInput header="UNIT SUPERVISOR SIGNATURE" width={70} />
         <RowInput

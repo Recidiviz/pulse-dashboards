@@ -142,7 +142,7 @@ const FormRecommendations = observer(function FormRecommendations() {
         <SmallerCheckboxRow>
           <div>METHOD OF NOTIFICATION:</div>
           {NOTIFICATION_METHODS.map(([dataKey, label]) => (
-            <label>
+            <label key={dataKey}>
               <input
                 type="checkbox"
                 key={dataKey}
