@@ -39,6 +39,7 @@ function fetchOfflineUser({
   stateCode = "recidiviz",
   allowedSupervisionLocationIds,
   allowedSupervisionLocationLevel,
+  allowedStates = ALL_TENANTS,
 }) {
   return {
     picture:
@@ -49,7 +50,7 @@ function fetchOfflineUser({
       stateCode,
       allowedSupervisionLocationIds,
       allowedSupervisionLocationLevel,
-      allowedStates: ALL_TENANTS,
+      allowedStates,
       routes: {
         // system_prison: true,
         // system_supervision: true,

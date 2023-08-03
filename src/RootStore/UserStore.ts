@@ -24,7 +24,6 @@ import createAuth0Client, {
   User,
 } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
-import { intersection } from "lodash";
 import {
   action,
   entries,
@@ -298,10 +297,9 @@ export default class UserStore {
    */
   get recidivizAllowedStates(): TenantId[] {
     const { availableStateCodes } = tenants[this.stateCode];
-    return intersection(
-      this.userAppMetadata?.allowedStates ?? [],
-      availableStateCodes
-    ) as TenantId[];
+    return availableStateCodes.filter((stateCode) => {
+      return (this.userAppMetadata?.allowedStates ?? []).includes(stateCode);
+    });
   }
 
   get userHash(): string {

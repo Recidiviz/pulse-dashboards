@@ -248,7 +248,7 @@ test("redirect to targetUrl after callback", async () => {
 test.each(Object.keys(tenants))(
   "gets metadata for the user %s",
   async (currentTenantId) => {
-    const allowedStates = ["US_MO", "US_CA"];
+    const allowedStates = ["US_CA", "US_MO"];
     const tenantMetadata = {
       [metadataField]: {
         stateCode: currentTenantId,
@@ -677,5 +677,20 @@ describe("recidivizAllowedStates", () => {
     });
     await store.authorize(mockHandleUrl);
     expect(store.recidivizAllowedStates).toEqual(["US_CA"]);
+  });
+
+  test("keeps the order of state codes the same as the tenant config", async () => {
+    const allowedStates = ["US_PA", "US_CA"];
+    mockIsAuthenticated.mockResolvedValue(true);
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      [metadataField]: { stateCode: "RECIDIVIZ", allowedStates },
+    });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: mockRootStore,
+    });
+    await store.authorize(mockHandleUrl);
+    expect(store.recidivizAllowedStates).toEqual(["US_CA", "US_PA"]);
   });
 });
