@@ -90,7 +90,6 @@ export type UsCaSupervisionLevelDowngradeDraftData = {
   supervisorDecision: "REMAIN" | "MOVE" | "SCHEDULE";
   supervisorNewCategory: string;
   supervisorEffectiveDate: string;
-  supervisorScheduleForCCR: boolean;
   dischargeCommitteeAction: "DISCHARGE" | "RETAIN" | "DEFER";
   presidingAuthorityName: string;
   dischargeCommitteeComments: string;

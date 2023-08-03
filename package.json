@@ -50,7 +50,8 @@
     "update-rules-staging": "firebase --project=staging-backend deploy --only firestore:rules",
     "update-rules-production": "firebase --project=production-backend deploy --only firestore:rules",
     "deploy": "node ./tools/deploy.mjs",
-    "load-prod-fixtures": "ts-node tools/loadProdTestFixtures.mjs"
+    "load-prod-fixtures": "ts-node tools/loadProdTestFixtures.mjs",
+    "pdfformfiller-boilerplate": "ts-node tools/pdfFormFillerBoilerplate.mjs"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.12.1",
@@ -132,6 +133,7 @@
     "numeral": "^2.0.6",
     "path-to-regexp": "^6.2.0",
     "patternomaly": "^1.3.2",
+    "pdf-lib": "^1.17.1",
     "phone-fns": "^3.2.3",
     "pizzip": "^3.1.1",
     "pluralize": "^8.0.0",

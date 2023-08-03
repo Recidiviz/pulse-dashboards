@@ -19,24 +19,138 @@ import { observer } from "mobx-react-lite";
 import * as React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { UsCaSupervisionLevelDowngradeDraftData } from "../../WorkflowsStore/Opportunity/UsCaSupervisionLevelDowngradeReferralRecord";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
-import { generate } from "../Paperwork/PDFFormGenerator";
-import { PrintablePage } from "../Paperwork/styles";
+import { fillPDF, PDFFillerFunc } from "../Paperwork/PDFFormFiller";
 import FormCDCR1657 from "../Paperwork/US_CA/SupervisionLevelDowngrade/FormCDCR1657";
+
+const fillerFunc: (
+  formData: Partial<UsCaSupervisionLevelDowngradeDraftData>
+) => PDFFillerFunc = (formData) => (set, form) => {
+  const totalObjectiveScore =
+    formData.objectiveScore1 &&
+    formData.objectiveScore2 &&
+    formData.objectiveScore3 &&
+    formData.objectiveScore4 &&
+    formData.objectiveScore5 &&
+    formData.objectiveScore1 +
+      formData.objectiveScore2 +
+      formData.objectiveScore3 +
+      formData.objectiveScore4 +
+      formData.objectiveScore5;
+  let objectiveScoreRange;
+  if (totalObjectiveScore === undefined) {
+    objectiveScoreRange = undefined;
+  } else if (totalObjectiveScore <= 6) {
+    objectiveScoreRange = "5-6";
+  } else if (totalObjectiveScore <= 10) {
+    objectiveScoreRange = "7-10";
+  } else {
+    objectiveScoreRange = "11-15";
+  }
+
+  set("CDC NUMBER", formData.cdcNumber);
+  set("PRINT NAME LAST FIRST MI", formData.fullName);
+  set("LAST RELEASE DATE", formData.lastReleaseDate);
+  set("REGIONPAROLE UNIT", formData.unit);
+  set("COMMITMENT OFFENSE", formData.offense);
+  set("CSRA SCORE", formData.csraScore);
+  set("SUPERVISION LEVEL", formData.supervisionLevel);
+  set(
+    "ABBREVIATED CASE CONFERENCE REVIEW",
+    formData.reviewType === "ABBREVIATED"
+  );
+  set("CASE CONFERENCE REVIEW", formData.reviewType === "STANDARD");
+  set("DISCHARGE CONSIDERATION COMMITTEE", formData.reviewType === "DISCHARGE");
+  set(
+    "OBJECTIVES RATING SCORES ONE SCORE PER OBJECTIVE",
+    formData.seeDischargeReport
+  );
+  set("SEE DISCHARGE REVIEW REPORT DATED", formData.dischargeReportDate);
+  set("OBJ 1", formData.objectiveScore1);
+  set("OBJ 2", formData.objectiveScore2);
+  set("OBJ 3", formData.objectiveScore3);
+  set("OBJ 4", formData.objectiveScore4);
+  set("OBJ 5", formData.objectiveScore5);
+  set("TOTAL OBJECTIVES SCORE", totalObjectiveScore);
+  set("TOTAL", objectiveScoreRange);
+  set("CDCR FORM 1650D ATTACHED", formData.form1650Attached);
+  set("ADDITIONAL REPORT ATTACHED", formData.additionalReportAttached);
+  set("REMAIN IN CURRENT CATEGORY", !formData.moveToNewCategory);
+  set("undefined_17", formData.moveToNewCategory);
+  set("MOVE TO CATEGORY", formData.newCategory);
+  set("DATE PAROLEE NOTIFIED", formData.dateNotified);
+  set("INPERSON", formData.notifiedInPerson);
+  set("MAIL", formData.notifiedByMail);
+  set("BY TELEPHONE", formData.notifiedByPhone);
+  set("EMAIL", formData.notifiedByEmail);
+  set("LETTER LEFT AT RESIDENCE", formData.notifiedByLetter);
+  set("YES", formData.paroleePresent === "YES");
+  set("NO If no cite reason below", formData.paroleePresent === "NO");
+  set("Not required to attend", formData.paroleePresent === "NOT_REQUIRED");
+  set(
+    "Parolee participated telephonically",
+    formData.paroleeParticipatedTelephonically
+  );
+  set(
+    "Parolee did not respond to participation request",
+    formData.paroleeDidNotRespond
+  );
+  set(
+    "Reasonable accommodation provided Describe",
+    formData.reasonableAccommodationProvided
+  );
+  set("Parolee failed to appear", formData.paroleeFailedToAppear);
+  set("Copy of CDCR 1502DR provided to parolee", formData.cdcr1502DRProvided);
+  set("Parolee declined to participate", formData.paroleeDeclinedToParticipate);
+  set("Name", formData.otherParticipant1Name);
+  set("Relation To Parolee", formData.otherParticipant1Relation);
+  set("Comments", formData.otherParticipant1Comments);
+  set("Name_2", formData.otherParticipant2Name);
+  set("Relation To Parolee_2", formData.otherParticipant2Relation);
+  set("Comments_2", formData.otherParticipant2Comments);
+  set("BADGE NUMBER", formData.agentSignatureBadge);
+  set("DATE", formData.agentSignatureDate);
+  set("SUPERVISORS COMMENTS AND INSTRUCTIONS", formData.supervisorComments);
+  set("MOVE TO CATEGORY_2", formData.supervisorDecision === "MOVE");
+  set("EFFECTIVE DATE", formData.supervisorEffectiveDate);
+  set("REMAIN IN CURRENT CATEGORY_2", formData.supervisorDecision === "REMAIN");
+  set("undefined_18", formData.supervisorNewCategory);
+  set("SCHEDULE FOR CCR", formData.supervisorDecision === "SCHEDULE");
+  set("DISCHARGE", formData.dischargeCommitteeAction === "DISCHARGE");
+  set("RETAIN ON PAROLE", formData.dischargeCommitteeAction === "RETAIN");
+  set("DEFER", formData.dischargeCommitteeAction === "DEFER");
+  set("PRESIDING AUTHORITY NAMES", formData.presidingAuthorityName);
+  set("COMMENTS", formData.dischargeCommitteeComments);
+  set("BADGE NUMBER_2", formData.supervisorSignatureBadge);
+  set("DATE_2", formData.supervisorSignatureDate);
+
+  form.removeField(form.getField("RESET"));
+};
 
 const Form = observer(function FormUsCaSupervisionLeveDowngrade() {
   const {
     workflowsStore: { selectedPerson: person },
+    getTokenSilently,
   } = useRootStore();
 
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
 
   const onClickDownload = async () => {
-    return generate(formRef.current, `${PrintablePage}`).then((pdf) => {
-      pdf.save(`${person?.displayName} - CDCR 1657.pdf`);
-    });
+    const formData =
+      person?.verifiedOpportunities?.usCaSupervisionLevelDowngrade?.form
+        ?.formData;
+    if (!formData) return;
+
+    await fillPDF(
+      `${person?.displayName} - CDCR 1657.pdf`,
+      "US_CA",
+      "CDCR1657.pdf",
+      fillerFunc(formData),
+      getTokenSilently
+    );
   };
 
   const {
