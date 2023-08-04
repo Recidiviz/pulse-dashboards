@@ -58,7 +58,7 @@
     "@google-cloud/storage": "^5.0.0",
     "@material/select": "^14.0.0",
     "@material/textfield": "^14.0.0",
-    "@recidiviz/design-system": "^4.3.1",
+    "@recidiviz/design-system": "^5.1.0",
     "@rmwc/select": "^8.0.4",
     "@rmwc/textfield": "^8.0.1",
     "@sentry/node": "^6.19.7",

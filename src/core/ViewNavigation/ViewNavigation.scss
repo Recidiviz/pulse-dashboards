@@ -43,6 +43,8 @@
       flex-direction: row;
       align-items: center;
       margin-bottom: 0;
+      color: $white;
+      opacity: 0.6;
 
       &:not(:first-child) {
         margin-top: 3.5rem;
@@ -53,20 +55,17 @@
       &-heading {
         display: block;
         @include sans-24;
-        color: $white;
-        opacity: 0.6;
         margin-left: 1.5rem;
       }
       &--active {
-        .ViewNavigation__navlink-heading {
+        opacity: 1;
+        & svg g {
           opacity: 1;
         }
       }
       &:hover {
+        opacity: 1;
         & svg g {
-          opacity: 1;
-        }
-        .ViewNavigation__navlink-heading {
           opacity: 1;
         }
       }
@@ -94,9 +93,6 @@
   &__icon {
     width: 1.5rem;
     height: 1.5rem;
-    & g {
-      opacity: 0.5;
-    }
     &:hover g {
       opacity: 1;
     }

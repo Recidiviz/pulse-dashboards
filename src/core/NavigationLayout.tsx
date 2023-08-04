@@ -260,7 +260,7 @@ function WorkflowsLink({ enabled }: OptionalLinkProps) {
 
   return (
     <NavLink to={`/${DASHBOARD_VIEWS.workflows}`}>
-      {isMobile && <Icon kind={IconSVG.NeedsContact} width={20} />}
+      {isMobile && <Icon kind={IconSVG.Workflows} width={20} />}
       Go to Workflows
     </NavLink>
   );
@@ -277,7 +277,7 @@ function OperationsLink({ enabled }: OptionalLinkProps) {
       to={`/${DASHBOARD_VIEWS.operations}`}
       onClick={() => vitalsStore.resetCurrentEntityId()}
     >
-      {isMobile && <Icon kind={IconSVG.StarCircled} width={20} />}
+      {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
       Go to Operations
     </NavLink>
   );
@@ -294,7 +294,7 @@ function PathwaysLink({ enabled }: OptionalLinkProps) {
       to={`/${DASHBOARD_VIEWS.system}`}
       onClick={() => filtersStore.resetFilters()}
     >
-      {isMobile && <Icon kind={IconSVG.Journey} width={20} />}
+      {isMobile && <Icon kind={IconSVG.Pathways} width={20} />}
       Go to {tenantStore.pathwaysName}
     </NavLink>
   );

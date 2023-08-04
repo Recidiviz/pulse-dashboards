@@ -17,14 +17,12 @@
 
 import "./ViewNavigation.scss";
 
+import { Icon, IconSVG } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import { ReactComponent as MethodologyLogo } from "../../assets/static/images/methodology.svg";
-import { ReactComponent as OperationsLogo } from "../../assets/static/images/operations.svg";
-import { ReactComponent as PathwaysLogo } from "../../assets/static/images/pathways.svg";
-import { ReactComponent as WorkflowsLogo } from "../../assets/static/images/workflows.svg";
 import { useRootStore } from "../../components/StoreProvider";
 import { TenantId } from "../../RootStore/types";
 import { UserAvatar } from "../Avatar";
@@ -68,7 +66,7 @@ function PathwaysLink({ enabled }: OptionalLinkProps) {
       to={`/${DASHBOARD_VIEWS.system}`}
       onClick={() => filtersStore.resetFilters()}
     >
-      <PathwaysLogo className="ViewNavigation__icon" />
+      <Icon kind={IconSVG.Pathways} width={24} />
       <div className="ViewNavigation__navlink-heading">System-Level Trends</div>
     </NavLink>
   );
@@ -140,7 +138,7 @@ function WorkflowsLink({ enabled }: OptionalLinkProps) {
       className="ViewNavigation__navlink"
       to={`/${DASHBOARD_VIEWS.workflows}`}
     >
-      <WorkflowsLogo className="ViewNavigation__icon" />
+      <Icon kind={IconSVG.Workflows} width={24} />
       <div className="ViewNavigation__navlink-heading">Workflows</div>
     </NavLink>
   );
@@ -157,7 +155,7 @@ function OperationsLink({ enabled }: OptionalLinkProps) {
       to={`/${DASHBOARD_VIEWS.operations}`}
       onClick={() => vitalsStore.resetCurrentEntityId()}
     >
-      <OperationsLogo className="ViewNavigation__icon" />
+      <Icon kind={IconSVG.Operations} width={24} />
       <div className="ViewNavigation__navlink-heading">Operational Metrics</div>
     </NavLink>
   );
