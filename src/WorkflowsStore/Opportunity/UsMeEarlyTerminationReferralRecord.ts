@@ -17,7 +17,6 @@
 
 import { z } from "zod";
 
-import { TransformFunction } from "../subscriptions";
 import {
   caseNotesSchema,
   dateStringSchema,
@@ -38,6 +37,9 @@ const criteria = z.object({
       })
       .optional()
   ).optional(),
+  usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: z.object({
+    eligibleDate: dateStringSchema,
+  }),
   onMediumSupervisionLevelOrLower: z.object({ supervisionLevel: z.string() }),
   usMeNoPendingViolationsWhileSupervised: NullCoalesce(
     {},
@@ -78,9 +80,3 @@ export type UsMeEarlyTerminationReferralRecord = z.infer<
 export type UsMeEarlyTerminationReferralRecordRaw = z.input<
   typeof usMeEarlyTerminationSchema
 >;
-
-export const transformReferral: TransformFunction<
-  UsMeEarlyTerminationReferralRecord
-> = (record) => {
-  return usMeEarlyTerminationSchema.parse(record);
-};

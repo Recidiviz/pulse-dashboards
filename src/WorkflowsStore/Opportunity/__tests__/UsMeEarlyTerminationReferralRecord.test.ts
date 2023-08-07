@@ -17,7 +17,10 @@
 
 import { omit } from "lodash";
 
-import { transformReferral } from "../UsMeEarlyTerminationReferralRecord";
+import {
+  UsMeEarlyTerminationReferralRecordRaw,
+  usMeEarlyTerminationSchema,
+} from "../UsMeEarlyTerminationReferralRecord";
 
 const defaultEligibleCriteria = {
   usMeSupervisionIsNotIcIn: null,
@@ -26,10 +29,13 @@ const defaultEligibleCriteria = {
   onMediumSupervisionLevelOrLower: {
     supervisionLevel: "MEDIUM",
   },
+  usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
+    eligibleDate: "2022-01-03",
+  },
 };
 
 test("transform record with restitution case", () => {
-  const rawRecord = {
+  const rawRecord: UsMeEarlyTerminationReferralRecordRaw = {
     stateCode: "US_ME",
     externalId: "abc123",
     eligibleCriteria: {
@@ -39,22 +45,22 @@ test("transform record with restitution case", () => {
     ineligibleCriteria: {},
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
 });
 
 test("transform record without restitution case", () => {
-  const rawRecord = {
+  const rawRecord: UsMeEarlyTerminationReferralRecordRaw = {
     stateCode: "US_ME",
     externalId: "abc123",
     eligibleCriteria: defaultEligibleCriteria,
     ineligibleCriteria: {},
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
 });
 
 test("transform record with restitution ineligibleCriteria", () => {
-  const rawRecord = {
+  const rawRecord: UsMeEarlyTerminationReferralRecordRaw = {
     stateCode: "US_ME",
     externalId: "abc123",
     eligibleCriteria: omit(
@@ -68,11 +74,11 @@ test("transform record with restitution ineligibleCriteria", () => {
     },
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
 });
 
 test("transform record with pending violation ineligibleCriteria", () => {
-  const rawRecord = {
+  const rawRecord: UsMeEarlyTerminationReferralRecordRaw = {
     stateCode: "US_ME",
     externalId: "abc123",
     eligibleCriteria: omit(
@@ -87,11 +93,11 @@ test("transform record with pending violation ineligibleCriteria", () => {
     },
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
 });
 
 test("transform record with null pending violation criteria", () => {
-  const rawRecord = {
+  const rawRecord: UsMeEarlyTerminationReferralRecordRaw = {
     stateCode: "US_ME",
     externalId: "abc123",
     eligibleCriteria: {
@@ -101,16 +107,5 @@ test("transform record with null pending violation criteria", () => {
     ineligibleCriteria: {},
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
-});
-
-test("transform record with supervision past ineligibleCriteria", () => {
-  const rawRecord = {
-    stateCode: "US_ME",
-    externalId: "abc123",
-    eligibleCriteria: omit(defaultEligibleCriteria),
-    ineligibleCriteria: {},
-  };
-
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
 });

@@ -15,22 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInDays, startOfToday } from "date-fns";
 import dedent from "dedent";
-import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
-import { FeatureGateError, OpportunityValidationError } from "../../errors";
 import { formatAsCurrency, formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { OTHER_KEY } from "../utils";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
 import {
-  transformReferral,
   UsMeEarlyTerminationReferralRecord,
+  usMeEarlyTerminationSchema,
 } from "./UsMeEarlyTerminationReferralRecord";
 
 const DENIAL_REASONS_MAP = {
@@ -58,31 +55,10 @@ const CRITERIA: Record<
       period of probation is completed, the Probation Officer may file a motion
       with the court for early termination of probation.`,
   },
+  usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {},
   onMediumSupervisionLevelOrLower: {},
   usMeNoPendingViolationsWhileSupervised: {},
 };
-
-const validateRecord =
-  (client: Client) =>
-  (record: DocumentData | undefined): DocumentData | undefined => {
-    if (!record) return;
-
-    const {
-      eligibleCriteria: { pastHalfFullTermRelease },
-      ineligibleCriteria: { ineligiblePastHalfFullTermRelease },
-    } = record;
-
-    if (
-      !pastHalfFullTermRelease?.eligibleDate &&
-      !ineligiblePastHalfFullTermRelease?.eligibleDate
-    ) {
-      throw new OpportunityValidationError(
-        "Missing early termination opportunity eligible date"
-      );
-    }
-
-    return record;
-  };
 
 export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
   Client,
@@ -102,8 +78,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
       client,
       "usMeEarlyTermination",
       client.rootStore,
-      transformReferral,
-      validateRecord(client)
+      usMeEarlyTerminationSchema.parse
     );
 
     makeObservable(this, {
@@ -143,12 +118,24 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
     const requirements: OpportunityRequirement[] = [];
     const {
       eligibleCriteria: {
+        usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart,
         noConvictionWithin6Months,
         onMediumSupervisionLevelOrLower,
         usMePaidAllOwedRestitution,
         usMeNoPendingViolationsWhileSupervised,
       },
     } = this.record;
+
+    if (
+      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart.eligibleDate
+    ) {
+      requirements.push({
+        text: `Served 1/2 of probation term`,
+        tooltip:
+          CRITERIA.usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart
+            .tooltip,
+      });
+    }
 
     if (onMediumSupervisionLevelOrLower?.supervisionLevel) {
       requirements.push({

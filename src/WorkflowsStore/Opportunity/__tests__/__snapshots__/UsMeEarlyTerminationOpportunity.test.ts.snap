@@ -12,6 +12,10 @@ Array [
 exports[`almost eligible pending violation requirements met 1`] = `
 Array [
   Object {
+    "text": "Served 1/2 of probation term",
+    "tooltip": undefined,
+  },
+  Object {
     "text": "Currently on medium",
     "tooltip": undefined,
   },
@@ -47,6 +51,10 @@ termination of probation if the probationer has not paid the total amount of res
 exports[`almost eligible restitution owed requirements met 1`] = `
 Array [
   Object {
+    "text": "Served 1/2 of probation term",
+    "tooltip": undefined,
+  },
+  Object {
     "text": "Currently on medium",
     "tooltip": undefined,
   },
@@ -68,6 +76,10 @@ with the court for early termination of probation.",
 
 exports[`fully eligible requirements met 1`] = `
 Array [
+  Object {
+    "text": "Served 1/2 of probation term",
+    "tooltip": undefined,
+  },
   Object {
     "text": "Currently on medium",
     "tooltip": undefined,
