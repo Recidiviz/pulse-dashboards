@@ -19,27 +19,27 @@
  */
 
 const unless = require("express-unless");
-
 const { getAppMetadata } = require("./getAppMetadata");
-const { lanternStateCodes } = require("../constants/stateCodes");
+const { csgStateCodes } = require("../constants/stateCodes");
+
+const lowerCaseStateCodes = csgStateCodes.map((c) => c.toLowerCase());
+
+const hasAccess = (userStateCode, reqStateCode) => {
+  return (
+    userStateCode === "recidiviz" ||
+    userStateCode === reqStateCode ||
+    (userStateCode === "csg" && lowerCaseStateCodes.includes(reqStateCode))
+  );
+};
 
 const validateStateCode = () => {
   const validator = (req, res, next) => {
     const reqStateCode = req.params.stateCode.toLowerCase();
     const metadata = getAppMetadata(req);
-    let userStateCode = metadata.state_code || "";
-    userStateCode = userStateCode.toLowerCase();
-    if (
-      userStateCode === "recidiviz" ||
-      userStateCode === reqStateCode ||
-      // TODO(#3622): [Dashboard][Auth] Remove lantern state code from frontend
-      ((userStateCode === "lantern" || userStateCode === "csg") &&
-        lanternStateCodes.map((c) => c.toLowerCase()).includes(reqStateCode))
-    ) {
+    const userStateCode = (metadata.state_code || "").toLowerCase();
+    if (hasAccess(userStateCode, reqStateCode)) {
       next();
     } else {
-      // User is requesting data from a different state
-      // Return 401 - Unauthorized
       res
         .status(401)
         .send(
@@ -47,8 +47,8 @@ const validateStateCode = () => {
         );
     }
   };
-  validator.unless = unless;
 
+  validator.unless = unless;
   return validator;
 };
 

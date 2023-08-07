@@ -14,9 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { animation, palette } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { transparentize } from "polished";
 import * as React from "react";
 import { MutableRefObject, useRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";

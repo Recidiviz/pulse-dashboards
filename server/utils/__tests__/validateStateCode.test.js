@@ -19,8 +19,12 @@
  */
 
 const { validateStateCode } = require("../validateStateCode");
+const { csgStateCodes } = require("../../constants/stateCodes");
 
 const { METADATA_NAMESPACE } = process.env;
+
+// Set default number of assertions to 2
+expect.defaultAssertions = 2;
 
 const makeReq = (url, pathStateCode, userStateCode) => ({
   originalUrl: url,
@@ -87,26 +91,30 @@ describe("validateStateCode", () => {
   it("should return 401 if user data not set in request", () => {
     const req = makeReq("/api/us_xx/foo", "us_xx", "");
     delete req.user;
-
     expectStatus(req, 401);
   });
 
   it("should call next() if stateCode is recidiviz", () => {
     const req = makeReq("/api/us_xx/foo", "us_xx", "recidiviz");
-
     expectSuccess(req);
   });
+});
 
-  it("should call next() if stateCode is lantern and stateCode in request is US_MO or US_PA", () => {
-    ["us_mo", "US_PA"].forEach((reqStateCode) => {
-      const req = makeReq("/api/us_xx/foo", reqStateCode, "lantern");
-      expectSuccess(req);
-    });
-    expect.assertions(4);
+describe("validateStateCode with csgStateCodes", () => {
+  beforeEach(() => {
+    jest.resetModules();
   });
 
-  it("should return 401 if stateCode is lantern and stateCode in request is not US_MO or US_PA", () => {
-    const req = makeReq("/api/us_xx/foo", "us_xx", "lantern");
+  test.each(csgStateCodes)(
+    `to ensure it calls next() if stateCode is csg and stateCode in request is a csgStateCode %s`,
+    (reqStateCode) => {
+      const req = makeReq("/api/us_xx/foo", reqStateCode, "csg");
+      expectSuccess(req);
+    }
+  );
+
+  it(`should return 401 if stateCode is csg and stateCode in request is not a csgStateCode: ${csgStateCodes}`, () => {
+    const req = makeReq("/api/us_xx/foo", "us_xx", "csg");
     expectStatus(req, 401);
   });
 });

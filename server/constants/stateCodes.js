@@ -10,9 +10,14 @@ const stateCodes = {
   US_TN: "US_TN",
 };
 
-const lanternStateCodes = [stateCodes.US_MO, stateCodes.US_PA];
+const csgStateCodes = [
+  stateCodes.US_MO,
+  stateCodes.US_PA,
+  stateCodes.US_MI,
+  stateCodes.US_TN,
+];
 
 module.exports = {
   ...stateCodes,
-  lanternStateCodes,
+  csgStateCodes,
 };

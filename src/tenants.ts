@@ -37,8 +37,6 @@ import US_PA_CONFIG from "./tenants/US_PA";
 import US_TN_CONFIG from "./tenants/US_TN";
 
 export const RECIDIVIZ_TENANT = "RECIDIVIZ";
-// TODO(#3622): [Dashboard][Auth] Remove lantern state code from frontend
-export const LANTERN = "LANTERN";
 export const CSG = "CSG";
 
 type Tenants = {
@@ -77,17 +75,6 @@ const TENANTS: Tenants = {
     },
     availableStateCodes: ALL_TENANTS,
     enableUserRestrictions: true,
-  },
-  // TODO(#3622): [Dashboard][Auth] Remove lantern state code from frontend
-  LANTERN: {
-    name: "Lantern",
-    stateCode: "Lantern",
-    availableStateCodes: [
-      ...lantern.LANTERN_TENANTS,
-      pathways.US_MI,
-      pathways.US_TN,
-    ],
-    enableUserRestrictions: false,
   },
   CSG: {
     name: "CSG",

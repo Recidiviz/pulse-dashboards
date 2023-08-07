@@ -16,7 +16,7 @@
 // =============================================================================
 /* eslint camelcase: 0 */
 import { UserRole } from "../FirestoreStore";
-import { CSG, LANTERN, RECIDIVIZ_TENANT } from "../tenants";
+import { CSG, RECIDIVIZ_TENANT } from "../tenants";
 import * as workflows from "./TenantStore/dashboardTenants";
 import * as lantern from "./TenantStore/lanternTenants";
 import * as pathways from "./TenantStore/pathwaysTenants";
@@ -29,8 +29,8 @@ export function isPathwaysTenantId(
 ): tenantId is PathwaysTenants {
   return pathways.PATHWAYS_TENANTS.includes(tenantId as PathwaysTenants);
 }
-// TODO(#3622): [Dashboard][Auth] Remove lantern state code from frontend
-const InternalTenantIds = [RECIDIVIZ_TENANT, CSG, LANTERN] as const;
+
+const InternalTenantIds = [RECIDIVIZ_TENANT, CSG] as const;
 
 const TenantIds = [
   lantern.US_MO,
@@ -43,6 +43,8 @@ const TenantIds = [
   pathways.US_MI,
   pathways.US_NC,
   pathways.US_ND,
+  RECIDIVIZ_TENANT,
+  CSG,
   ...InternalTenantIds,
 ] as const;
 

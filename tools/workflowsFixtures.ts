@@ -17,7 +17,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Firestore, Timestamp } from "@google-cloud/firestore";
+import { Firestore } from "@google-cloud/firestore";
 import fs from "fs";
 
 import { collectionNames } from "../src/FirestoreStore";
