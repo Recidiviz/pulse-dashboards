@@ -23,12 +23,16 @@ import { UsCaSupervisionLevelDowngradeDraftData } from "../../WorkflowsStore/Opp
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
-import { fillPDF, PDFFillerFunc } from "../Paperwork/PDFFormFiller";
+import {
+  fillPDF,
+  fixRadioGroups,
+  PDFFillerFunc,
+} from "../Paperwork/PDFFormFiller";
 import FormCDCR1657 from "../Paperwork/US_CA/SupervisionLevelDowngrade/FormCDCR1657";
 
 const fillerFunc: (
   formData: Partial<UsCaSupervisionLevelDowngradeDraftData>
-) => PDFFillerFunc = (formData) => (set, form) => {
+) => PDFFillerFunc = (formData) => async (set, form, doc) => {
   const totalObjectiveScore =
     formData.objectiveScore1 &&
     formData.objectiveScore2 &&
@@ -114,10 +118,10 @@ const fillerFunc: (
   set("BADGE NUMBER", formData.agentSignatureBadge);
   set("DATE", formData.agentSignatureDate);
   set("SUPERVISORS COMMENTS AND INSTRUCTIONS", formData.supervisorComments);
-  set("MOVE TO CATEGORY_2", formData.supervisorDecision === "MOVE");
+  set("MOVE TO CATEGORY_2", formData.supervisorNewCategory);
   set("EFFECTIVE DATE", formData.supervisorEffectiveDate);
   set("REMAIN IN CURRENT CATEGORY_2", formData.supervisorDecision === "REMAIN");
-  set("undefined_18", formData.supervisorNewCategory);
+  set("undefined_18", formData.supervisorDecision === "MOVE");
   set("SCHEDULE FOR CCR", formData.supervisorDecision === "SCHEDULE");
   set("DISCHARGE", formData.dischargeCommitteeAction === "DISCHARGE");
   set("RETAIN ON PAROLE", formData.dischargeCommitteeAction === "RETAIN");
@@ -127,7 +131,18 @@ const fillerFunc: (
   set("BADGE NUMBER_2", formData.supervisorSignatureBadge);
   set("DATE_2", formData.supervisorSignatureDate);
 
+  // Field does not exist in the raw form
+  doc.getPage(0).drawText(formData.accommodationDescription ?? "", {
+    x: 215,
+    y: 295,
+    size: 8,
+  });
+
   form.removeField(form.getField("RESET"));
+
+  await fixRadioGroups(form);
+
+  form.flatten();
 };
 
 const Form = observer(function FormUsCaSupervisionLeveDowngrade() {
