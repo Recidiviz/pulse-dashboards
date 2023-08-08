@@ -75,11 +75,21 @@
   &__navlink {
     margin-bottom: 1.5rem;
     cursor: pointer;
+    color: white;
+    & svg {
+      opacity: 0.5;
+    }
     &-heading {
       display: none;
     }
     &--active {
-      & svg g {
+      & svg {
+        opacity: 1;
+      }
+    }
+    &:hover {
+      & svg {
+        color: white;
         opacity: 1;
       }
     }
