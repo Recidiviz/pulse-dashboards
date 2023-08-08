@@ -329,16 +329,18 @@ export abstract class OpportunityBase<
 
   get sectionTitle(): SectionTitle {
     if (!this.record) return "Other";
-    if (this.almostEligible) return "Almost Eligible";
     if (this.denied) return this.deniedSectionTitle;
+    if (this.almostEligible) return "Almost Eligible";
     return "Eligible Now";
   }
 
-  sectionOrder: Readonly<SectionTitle[]> = [
-    "Eligible Now",
-    "Almost Eligible",
-    this.deniedSectionTitle,
-  ];
+  // Note that this needs to be a getter instead of a base property, otherwise it gets initialized
+  // before any subclasses are initialized. At that point in time, this.isAlert will always be
+  // false (see https://www.typescriptlang.org/docs/handbook/2/classes.html#initialization-order)
+  // so deniedSectionTitle will always be "Marked ineligible".
+  get sectionOrder(): Readonly<SectionTitle[]> {
+    return ["Eligible Now", "Almost Eligible", this.deniedSectionTitle];
+  }
 
   /*
    * Alert-type opportunities only have a visible status if they're denied; others are always visible

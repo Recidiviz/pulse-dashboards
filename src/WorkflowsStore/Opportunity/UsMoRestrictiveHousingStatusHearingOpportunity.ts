@@ -209,8 +209,10 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
     return "Upcoming Hearings";
   }
 
-  sectionOrder: Readonly<SectionTitle[]> =
-    CustomSectionOrders.UsMoRestrictiveHousingStatusHearingOpportunity;
+  // eslint-disable-next-line class-methods-use-this
+  get sectionOrder(): Readonly<SectionTitle[]> {
+    return CustomSectionOrders.UsMoRestrictiveHousingStatusHearingOpportunity;
+  }
 
   showEligibilityStatus(component: Component): boolean {
     return this.reviewStatus === "DENIED" || component === "OpportunityCapsule";
