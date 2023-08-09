@@ -22,7 +22,6 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { FormVariant, OpportunityType } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { NavigationLayout } from "../NavigationLayout";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
@@ -42,56 +41,6 @@ import WorkflowsUsTnCustodyLevelDowngradeForm from "../WorkflowsUsTnCustodyLevel
 import WorkflowsUsTnExpirationForm from "../WorkflowsUsTnExpirationForm";
 
 export const FORM_SIDEBAR_WIDTH = 400;
-
-type FormContentsType = `${FormVariant}FormContents` | "formContents";
-const PAGE_CONTENT: Record<
-  OpportunityType,
-  Partial<Record<FormContentsType, any>>
-> = {
-  compliantReporting: {
-    formContents: <WorkflowsCompliantReportingForm />,
-  },
-  earlyTermination: {
-    formContents: <WorkflowsEarlyTerminationForm />,
-    deferredFormContents: <WorkflowsEarlyTerminationDeferredForm />,
-  },
-  earnedDischarge: {
-    formContents: <FormEarnedDischarge />,
-  },
-  LSU: {
-    formContents: <WorkflowsLSUForm />,
-  },
-  pastFTRD: {
-    formContents: <div />,
-  },
-  supervisionLevelDowngrade: {},
-  usIdSupervisionLevelDowngrade: {},
-  usMiSupervisionLevelDowngrade: {},
-  usMiClassificationReview: {},
-  usMiEarlyDischarge: {},
-  usMeSCCP: {
-    formContents: <FormSCCP />,
-  },
-  usMeWorkRelease: { formContents: <FormWorkRelease /> },
-  usTnExpiration: {
-    formContents: <WorkflowsUsTnExpirationForm />,
-  },
-  usTnCustodyLevelDowngrade: {
-    formContents: <WorkflowsUsTnCustodyLevelDowngradeForm />,
-  },
-  usMoRestrictiveHousingStatusHearing: {
-    formContents: <div />,
-  },
-  usMeEarlyTermination: {},
-  usMiMinimumTelephoneReporting: {},
-  usMiPastFTRD: {},
-  usMeFurloughRelease: {
-    formContents: <FormFurloughRelease />,
-  },
-  usCaSupervisionLevelDowngrade: {
-    formContents: <WorkflowsUsCaSupervisionLevelDowngradeForm />,
-  },
-};
 
 const Wrapper = styled.div`
   ${typography.Sans16}
@@ -126,6 +75,22 @@ const SidebarSection = styled.section<{
 
 const FormWrapper = styled.div``;
 
+const FormComponents = {
+  WorkflowsCompliantReportingForm,
+  WorkflowsEarlyTerminationForm,
+  WorkflowsEarlyTerminationDeferredForm,
+  FormEarnedDischarge,
+  WorkflowsLSUForm,
+  FormSCCP,
+  FormWorkRelease,
+  WorkflowsUsTnExpirationForm,
+  WorkflowsUsTnCustodyLevelDowngradeForm,
+  WorkflowsUsCaSupervisionLevelDowngradeForm,
+  FormFurloughRelease,
+};
+
+export type OpportunityFormComponentName = keyof typeof FormComponents;
+
 export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
   const {
     workflowsStore: {
@@ -139,10 +104,9 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
 
   const opportunity = selectedPerson.verifiedOpportunities[opportunityType];
 
-  const formVariant = opportunity?.formVariant;
-  const formContents: FormContentsType = formVariant
-    ? `${formVariant}FormContents`
-    : "formContents";
+  const formContents = opportunity?.form?.formContents;
+  const FormComponent =
+    FormComponents[formContents as OpportunityFormComponentName];
 
   const hydrated = (
     <Wrapper>
@@ -164,7 +128,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
         </SidebarSection>
       </Sidebar>
 
-      <FormWrapper>{PAGE_CONTENT[opportunityType][formContents]}</FormWrapper>
+      <FormWrapper>{FormComponent ? <FormComponent /> : <div />}</FormWrapper>
     </Wrapper>
   );
 

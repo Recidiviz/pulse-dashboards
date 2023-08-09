@@ -2,15 +2,28 @@ import { deleteField } from "firebase/firestore";
 import { sortBy } from "lodash";
 import moment from "moment";
 
+import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { pluralize } from "../../../utils";
+import { UNKNOWN } from "../../Client";
+import { UsNdEarlyTerminationOpportunity } from "../UsNdEarlyTerminationOpportunity";
 import { UsNdEarlyTerminationDraftData } from "../UsNdEarlyTerminationReferralRecord";
 import { FormBase } from "./FormBase";
 
 const ADDITIONAL_DEPOSITION_LINES_PREFIX = "additionalDepositionLines";
 const FORM_DATE_FORMAT = "MMMM Do, YYYY";
 
-export class EarlyTerminationForm extends FormBase<UsNdEarlyTerminationDraftData> {
+export class EarlyTerminationForm extends FormBase<
+  UsNdEarlyTerminationDraftData,
+  UsNdEarlyTerminationOpportunity
+> {
   navigateToFormText = "Auto-fill paperwork";
+
+  get formContents(): OpportunityFormComponentName {
+    if (this.opportunity.formVariant === "deferred") {
+      return "WorkflowsEarlyTerminationDeferredForm";
+    }
+    return "WorkflowsEarlyTerminationForm";
+  }
 
   prefilledDataTransformer(): Partial<UsNdEarlyTerminationDraftData> {
     if (!this.opportunity.record || !this.person) return {};
@@ -41,7 +54,9 @@ export class EarlyTerminationForm extends FormBase<UsNdEarlyTerminationDraftData
       probationExpirationDate: moment(probationExpirationDate).format(
         FORM_DATE_FORMAT
       ),
-      sentenceLengthMonths: pluralize(sentenceLengthMonths, "month"),
+      sentenceLengthMonths: sentenceLengthMonths
+        ? pluralize(sentenceLengthMonths, "month")
+        : UNKNOWN,
       plaintiff: "State of North Dakota",
       crimeNames: crimeNames?.join(", ") ?? "",
       probationOfficerFullName,

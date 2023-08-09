@@ -16,6 +16,7 @@
 // =============================================================================
 import { compact } from "lodash";
 
+import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { SpecialConditionCode } from "../../../FirestoreStore";
 import { ParsedSpecialConditionOrString } from "../../Client";
 import { UsTnExpirationOpportunity } from "../UsTnExpirationOpportunity";
@@ -94,6 +95,11 @@ export class UsTnExpirationForm extends FormBase<
   UsTnExpirationOpportunity
 > {
   navigateToFormText = "Generate TEPE note";
+
+  // eslint-disable-next-line class-methods-use-this
+  get formContents(): OpportunityFormComponentName {
+    return "WorkflowsUsTnExpirationForm";
+  }
 
   prefilledDataTransformer: PrefilledDataTransformer<UsTnExpirationDraftData> =
     () => {

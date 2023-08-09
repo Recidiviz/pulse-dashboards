@@ -1,12 +1,19 @@
 import dedent from "dedent";
 import { format as formatPhone } from "phone-fns";
 
+import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
+import { LSUOpportunity } from "../LSUOpportunity";
 import { LSUDraftData } from "../LSUReferralRecord";
 import { defaultFormValueJoiner, formatFormValueDateMMDDYYYYY } from "../utils";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
-export class LSUForm extends FormBase<LSUDraftData> {
+export class LSUForm extends FormBase<LSUDraftData, LSUOpportunity> {
   navigateToFormText = "Generate Chrono";
+
+  // eslint-disable-next-line class-methods-use-this
+  get formContents(): OpportunityFormComponentName {
+    return "WorkflowsLSUForm";
+  }
 
   prefilledDataTransformer: PrefilledDataTransformer<LSUDraftData> = () => {
     if (!this.opportunity.record) return {};

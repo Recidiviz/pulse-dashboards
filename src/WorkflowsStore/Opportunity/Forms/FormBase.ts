@@ -17,6 +17,7 @@
 
 import { action, computed, makeObservable, toJS } from "mobx";
 
+import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { OpportunityUpdateWithForm, UpdateLog } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { OpportunityBase } from "../OpportunityBase";
@@ -129,6 +130,12 @@ export class FormBase<
   // eslint-disable-next-line class-methods-use-this
   get downloadText(): string {
     return "";
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get formContents(): OpportunityFormComponentName {
+    // @ts-ignore
+    return undefined;
   }
 
   prefilledDataTransformer(): Partial<FormDisplayType> {

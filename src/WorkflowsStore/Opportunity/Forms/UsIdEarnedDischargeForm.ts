@@ -18,6 +18,7 @@
  */
 
 import { DocxTemplateFormContents } from "../../../core/Paperwork/DOCXFormGenerator";
+import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import {
   formatDurationFromDays,
   formatWorkflowsDate,
@@ -36,6 +37,11 @@ export class UsIdEarnedDischargeForm extends FormBase<
   EarnedDischargeOpportunity
 > {
   navigateToFormText = "Generate paperwork";
+
+  // eslint-disable-next-line class-methods-use-this
+  get formContents(): OpportunityFormComponentName {
+    return "FormEarnedDischarge";
+  }
 
   prefilledDataTransformer(): Partial<EarnedDischargeDraftData> {
     if (!this.opportunity.record || !this.person) return {};
