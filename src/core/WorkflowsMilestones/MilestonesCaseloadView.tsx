@@ -80,6 +80,10 @@ const SeeMoreText = styled.span`
 const StatusText = styled.span<{ failure?: boolean }>`
   ${typography.Sans14}
   color: ${({ failure }) => (failure ? palette.signal.error : palette.slate60)};
+
+  & div {
+    padding-bottom: 0.5rem;
+  }
 `;
 
 export function ClientMilestones({
@@ -118,6 +122,7 @@ export function ClientMilestones({
 function CongratulationStatus({ client }: { client: Client }): JSX.Element {
   const updated = client.milestonesMessageUpdateLog;
   const date = formatWorkflowsDate(optionalFieldToDate(updated?.date));
+  const errors = client.milestonesMessageErrors;
 
   switch (client.milestonesMessageStatus) {
     case "SUCCESS":
@@ -130,7 +135,13 @@ function CongratulationStatus({ client }: { client: Client }): JSX.Element {
         </StatusText>
       );
     case "FAILURE":
-      return <StatusText failure>Could not send text message.</StatusText>;
+      return (
+        <StatusText failure>
+          {errors?.map((error) => {
+            return <div>{error}</div>;
+          })}
+        </StatusText>
+      );
     default:
       return <StatusText />;
   }

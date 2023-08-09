@@ -340,6 +340,10 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return this.milestoneMessagesUpdates?.pendingMessage;
   }
 
+  get milestonesMessageErrors(): string[] | undefined {
+    return this.milestoneMessagesUpdates?.errors;
+  }
+
   get milestonesFullTextMessage(): string | undefined {
     return this.milestoneMessagesUpdates?.message;
   }
