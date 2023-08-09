@@ -70,10 +70,12 @@ jest.mock("../../tenants", () => ({
     US_XX: {
       opportunityTypes: ["compliantReporting", "LSU"],
       workflowsSupportedSystems: ["SUPERVISION"],
+      availableStateCodes: ["US_XX"],
     },
     US_YY: {
       workflowsEnableAllDistricts: true,
       workflowsSupportedSystems: ["SUPERVISION"],
+      availableStateCodes: ["US_YY"],
     },
     US_TN: {
       opportunityTypes: [
@@ -87,6 +89,7 @@ jest.mock("../../tenants", () => ({
     US_ME: {
       opportunityTypes: [],
       workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
+      availableStateCodes: ["US_ME"],
     },
     US_MO: {
       opportunityTypes: ["usMoRestrictiveHousingStatusHearing"],
@@ -98,6 +101,7 @@ jest.mock("../../tenants", () => ({
           searchTitleOverride: "location",
         },
       },
+      availableStateCodes: ["US_MO"],
     },
     RECIDIVIZ: {
       availableStateCodes: ["US_ME", "US_MO", "US_TN", "US_XX", "US_YY"],

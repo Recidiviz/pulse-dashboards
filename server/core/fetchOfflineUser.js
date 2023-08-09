@@ -20,6 +20,7 @@
  * You can pass in other attributes to override the defaults.
  */
 function fetchOfflineUser({
+  allowedStates,
   email = "notarealemail@recidiviz.org",
   name = "Demo Jones",
   stateCode = "recidiviz",
@@ -35,6 +36,7 @@ function fetchOfflineUser({
       stateCode,
       allowedSupervisionLocationIds,
       allowedSupervisionLocationLevel,
+      allowedStates,
       routes: {
         // system_prison: true,
         // system_supervision: true,
