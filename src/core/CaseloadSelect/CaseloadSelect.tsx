@@ -61,10 +61,11 @@ const ValuePill = styled(Pill).attrs({ color: palette.slate20, filled: false })`
   height: ${rem(32)};
 `;
 
-const DisabledMessage = styled.div`
+const DisabledMessage = styled.div<{ responsiveRevamp?: boolean }>`
   color: ${palette.signal.notification};
   /* non-standard padding value to match library styles */
-  padding: 12px;
+  padding: ${({ responsiveRevamp }) =>
+    responsiveRevamp ? `${rem(spacing.sm)} ${rem(spacing.md)}` : "12px"};
 `;
 
 const Disabled = (searchFieldTitle: string) =>
@@ -169,7 +170,11 @@ const ScrollShadow = styled.div<{ show: boolean; side: "top" | "bottom" }>`
   z-index: ${zindex.tooltip - 1};
 `;
 
-const MenuListWithShadow = (entriesNumber: number) =>
+const MenuListWithShadow = (
+  entriesNumber: number,
+  isDisabled: boolean,
+  searchFieldTitle: string
+) =>
   function MenuList({
     children,
     ...props
@@ -185,6 +190,12 @@ const MenuListWithShadow = (entriesNumber: number) =>
         />
         <components.MenuList {...props}>
           <div ref={topShadow.ref} />
+          {isDisabled && (
+            <DisabledMessage responsiveRevamp>
+              Cannot select more than {SELECTED_SEARCH_LIMIT}{" "}
+              {pluralizeWord(searchFieldTitle)}.
+            </DisabledMessage>
+          )}
           {children}
           <div ref={bottomShadow.ref} />
         </components.MenuList>
@@ -271,7 +282,11 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   }
 
   if (responsiveRevamp) {
-    customComponents.MenuList = MenuListWithShadow(availableSearchables.length);
+    customComponents.MenuList = MenuListWithShadow(
+      availableSearchables.length,
+      disableAdditionalSelections,
+      searchTitle
+    );
   }
 
   const oldStyles: Partial<
@@ -296,7 +311,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     }),
     menuList: (base) => ({
       ...base,
-      maxHeight: isMobile ? `calc(100vh - ${rem(146)})` : rem(300),
+      maxHeight: rem(300),
       padding: `${rem(spacing.sm)} 0`,
     }),
     control: (base, state) => ({
@@ -325,7 +340,8 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     option: (base) => ({
       ...base,
       backgroundColor: "none",
-      color: palette.pine3,
+      color: disableAdditionalSelections ? palette.slate20 : palette.pine3,
+      pointerEvents: disableAdditionalSelections ? "none" : "initial",
       padding: isMobile
         ? `${rem(10)} ${rem(spacing.xl)}`
         : `${rem(spacing.sm)} ${rem(spacing.md)}`,
