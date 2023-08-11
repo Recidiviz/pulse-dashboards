@@ -50,7 +50,7 @@ class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {
 
   constructor(oppClient: Client, type: OpportunityType) {
     super(oppClient, type, root);
-    this.form = new FormBase<any>("LSU", this, root);
+    this.form = new FormBase<any>(this, root);
   }
 }
 

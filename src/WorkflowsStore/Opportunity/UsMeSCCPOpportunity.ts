@@ -280,7 +280,7 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
 
-    this.form = new UsMeSCCPForm("usMeSCCP", this, resident.rootStore);
+    this.form = new UsMeSCCPForm(this, resident.rootStore);
   }
 
   get almostEligible(): boolean {

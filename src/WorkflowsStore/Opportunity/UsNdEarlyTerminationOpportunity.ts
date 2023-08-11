@@ -94,7 +94,7 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.form = new EarlyTerminationForm(this.type, this, client.rootStore);
+    this.form = new EarlyTerminationForm(this, client.rootStore);
   }
 
   get almostEligible(): boolean {

@@ -51,11 +51,7 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
 
     this.client = client;
 
-    this.form = new UsCaSupervisionLevelDowngradeForm(
-      OPPORTUNITY_TYPE,
-      this,
-      client.rootStore
-    );
+    this.form = new UsCaSupervisionLevelDowngradeForm(this, client.rootStore);
 
     makeObservable(this, { requirementsMet: true });
   }

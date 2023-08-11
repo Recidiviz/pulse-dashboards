@@ -147,7 +147,7 @@ export class LSUOpportunity extends OpportunityBase<
     });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.form = new LSUForm(this.type, this, client.rootStore);
+    this.form = new LSUForm(this, client.rootStore);
   }
 
   get almostEligible(): boolean {

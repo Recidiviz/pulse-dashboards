@@ -104,7 +104,7 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
 
     makeObservable(this, { requirementsMet: true });
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.form = new UsTnExpirationForm(this.type, this, client.rootStore);
+    this.form = new UsTnExpirationForm(this, client.rootStore);
   }
 
   get requirementsMet(): OpportunityRequirement[] {

@@ -38,7 +38,7 @@ function createTestUnit() {
   client = { pseudonymizedId: "TEST123", rootStore } as Client;
   opp = new TestOpportunity(client, "LSU", rootStore);
   jest.spyOn(opp, "isHydrated", "get").mockReturnValue(true);
-  form = new FormBase<any>("LSU", opp, rootStore);
+  form = new FormBase<any>(opp, rootStore);
   opp.form = form;
 }
 

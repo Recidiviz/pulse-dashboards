@@ -122,11 +122,7 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
 
-    this.form = new UsIdEarnedDischargeForm(
-      "earnedDischarge",
-      this,
-      client.rootStore
-    );
+    this.form = new UsIdEarnedDischargeForm(this, client.rootStore);
   }
 
   get almostEligible(): boolean {

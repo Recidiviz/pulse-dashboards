@@ -46,14 +46,7 @@ export class FormBase<
 
   opportunity: OpportunityModel;
 
-  type: OpportunityType;
-
-  constructor(
-    type: OpportunityType,
-    opportunity: OpportunityModel,
-    rootStore: RootStore
-  ) {
-    this.type = type;
+  constructor(opportunity: OpportunityModel, rootStore: RootStore) {
     this.opportunity = opportunity;
     this.person = opportunity.person;
     this.rootStore = rootStore;
@@ -71,6 +64,10 @@ export class FormBase<
 
   get currentUserEmail(): string | undefined {
     return this.rootStore.workflowsStore.currentUserEmail;
+  }
+
+  get type(): OpportunityType {
+    return this.opportunity.type;
   }
 
   get formLastUpdated(): UpdateLog | undefined {

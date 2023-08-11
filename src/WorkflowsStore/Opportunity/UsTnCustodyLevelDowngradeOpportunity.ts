@@ -92,11 +92,7 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
       [OTHER_KEY]: "Please specify a reason",
     };
 
-    this.form = new UsTnCustodyLevelDowngradeForm(
-      "usTnCustodyLevelDowngrade",
-      this,
-      resident.rootStore
-    );
+    this.form = new UsTnCustodyLevelDowngradeForm(this, resident.rootStore);
   }
 
   get requirementsMet(): OpportunityRequirement[] {

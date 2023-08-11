@@ -238,7 +238,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     );
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
-    this.form = new CompliantReportingForm(this.type, this, client.rootStore);
+    this.form = new CompliantReportingForm(this, client.rootStore);
   }
 
   get almostEligible(): boolean {

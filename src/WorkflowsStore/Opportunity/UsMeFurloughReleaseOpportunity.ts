@@ -157,11 +157,7 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
 
-    this.form = new UsMeFurloughReleaseForm(
-      "usMeFurloughRelease",
-      this,
-      resident.rootStore
-    );
+    this.form = new UsMeFurloughReleaseForm(this, resident.rootStore);
   }
 
   get requirementsMet(): OpportunityRequirement[] {
