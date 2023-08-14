@@ -119,7 +119,10 @@ exports.onExecutePostLogin = async (event, api) => {
         .download();
 
       const contents = JSON.parse(jsonFile);
-      api.user.setAppMetadata("allowedStates", contents.allowedStates ?? []);
+      const allowedStates = (contents.allowedStates ?? []).map((sc) =>
+        sc.toUpperCase()
+      );
+      api.user.setAppMetadata("allowedStates", allowedStates);
     }
     return;
   }

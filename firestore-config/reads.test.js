@@ -107,22 +107,23 @@ test.each([
   );
 });
 
-test.each([["Recidiviz", getRecidivizUser]])(
-  "%s user can read unrestricted",
-  async (userType, getUserContext) => {
-    await testAllReadsUnrestricted(
-      getUserContext(testEnv).firestore(),
-      assertSucceeds
-    );
-  }
-);
-
 test.each([["TN"], ["ND"]])(
-  "Recidiviz user can read %s state data",
+  "Recidiviz user can read %s state data from recidivizAllowedStates",
   async (userState) => {
     await testAllReadsForState(
       getRecidivizUser(testEnv).firestore(),
       assertSucceeds,
+      `US_${userState}`
+    );
+  }
+);
+
+test.each([["CA"], ["PA"]])(
+  "Recidiviz user cannot read %s state data if it is not in recidivizAllowedStates",
+  async (userState) => {
+    await testAllReadsForState(
+      getRecidivizUser(testEnv).firestore(),
+      assertFails,
       `US_${userState}`
     );
   }

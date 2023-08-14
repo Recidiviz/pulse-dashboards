@@ -48,7 +48,7 @@ function getFirebaseToken(impersonateUser = false) {
       stateCode = getAppMetadata({ user }).stateCode;
       uid = user.email;
     } else if (impersonateUser) {
-      if (appMetadata.state_code.toLowerCase() !== "recidiviz") {
+      if (appMetadata.stateCode.toLowerCase() !== "recidiviz") {
         respondWithForbidden(res);
         return;
       }
@@ -57,8 +57,10 @@ function getFirebaseToken(impersonateUser = false) {
       stateCode = impersonatedStateCode;
     } else {
       uid = req.user[`${METADATA_NAMESPACE}email_address`];
-      stateCode = appMetadata.state_code;
-      recidivizAllowedStates = appMetadata.allowedStates ?? [];
+      stateCode = appMetadata.stateCode;
+      recidivizAllowedStates = (appMetadata.allowedStates ?? []).map((sc) =>
+        sc.toUpperCase()
+      );
     }
 
     if (!uid) {

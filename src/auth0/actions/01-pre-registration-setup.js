@@ -102,7 +102,10 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         .download();
 
       const contents = JSON.parse(jsonFile);
-      api.user.setAppMetadata("allowedStates", contents.allowedStates ?? []);
+      const allowedStates = (contents.allowedStates ?? []).map((sc) =>
+        sc.toUpperCase()
+      );
+      api.user.setAppMetadata("allowedStates", allowedStates);
       api.user.setAppMetadata("stateCode", "recidiviz");
       // TODO #3170 Remove this once UserAppMetadata has been transitioned
       api.user.setAppMetadata("state_code", "recidiviz");

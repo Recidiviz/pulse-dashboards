@@ -39,7 +39,7 @@ test("requests Firebase auth token", async () => {
     user: {
       undefinedemail_address: userId,
       // this key includes an env variable that is not set in this test environment
-      undefinedapp_metadata: { state_code: stateCode },
+      undefinedapp_metadata: { stateCode },
     },
   };
   const mockRes = {
@@ -69,7 +69,7 @@ test("Firebase token with allowedStates", async () => {
       undefinedemail_address: userId,
       // this key includes an env variable that is not set in this test environment
       undefinedapp_metadata: {
-        state_code: stateCode,
+        stateCode,
         allowedStates: ["us_xx"],
       },
     },
@@ -83,7 +83,7 @@ test("Firebase token with allowedStates", async () => {
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
     stateCode: stateCode.toUpperCase(),
     impersonator: false,
-    recidivizAllowedStates: ["us_xx"],
+    recidivizAllowedStates: ["US_XX"],
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,
@@ -99,7 +99,7 @@ test("requests Firebase auth token for impersonated user", async () => {
   createCustomTokenMock.mockResolvedValue(mockFirebaseToken);
   const mockReq = {
     user: {
-      undefinedapp_metadata: { state_code: "recidiviz" },
+      undefinedapp_metadata: { stateCode: "recidiviz" },
     },
     query: {
       impersonatedEmail: userId,
@@ -129,7 +129,7 @@ test("responds with 403 forbidden when requested by a non-recidiviz user", async
 
   const mockReq = {
     user: {
-      undefinedapp_metadata: { state_code: stateCode },
+      undefinedapp_metadata: { stateCode },
     },
     query: {
       impersonatedEmail: userId,

@@ -201,6 +201,18 @@ test.each([
   }
 );
 
+test.each([["PA"], ["CA"]])(
+  "Recidiviz user cannot write to %s data if it is not in recidivizAllowedStates",
+  async (userState) => {
+    await testWriteToCollectionsForStateWithStateCodePrefix(
+      SHARED_UPDATE_COLLECTION_NAMES,
+      getRecidivizUser(testEnv).firestore(),
+      assertFails,
+      `US_${userState}`
+    );
+  }
+);
+
 test.each([
   ["TN", getTNUser],
   ["ND", getNDUser],

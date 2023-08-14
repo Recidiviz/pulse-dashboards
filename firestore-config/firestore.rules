@@ -7,7 +7,14 @@ service cloud.firestore {
   function stateCodeMatchesTarget() {
     // check if resource exists before checking the state code
     // if the resource does not yet exist, allow the operation
-    return resource == null || request.auth.token.stateCode == resource.data.stateCode;
+    return resource == null || (request.auth.token.stateCode.upper() == resource.data.stateCode.upper());
+  }
+
+  function recidivizAllowedStatesIncludesTarget() {
+    // check if resource exists before checking the state code
+    // if the resource does not yet exist, allow the operation
+    return resource == null || 
+      isRecidiviz() && (resource.data.stateCode.upper() in request.auth.token.recidivizAllowedStates);
   }
 
   function usernameMatches(id) {
@@ -26,15 +33,24 @@ service cloud.firestore {
 
   function stateCodeMatchesClientId(clientId) {
     // check to see if the first 5 characters match the state code of the requester
-    return clientId.lower()[0:5] == request.auth.token.stateCode.lower();
+    return clientId.upper()[0:5] == request.auth.token.stateCode.upper();
   }
 
   function allowPersonUpdates(clientId) {
-    return (hasProperStateCodePrefix(clientId) && (isRecidiviz() || stateCodeMatchesClientId(clientId)) && !request.auth.get(["token", "impersonator"], false));
+    return (hasProperStateCodePrefix(clientId) && (recidivizUserHasAccess(clientId) || 
+      stateCodeMatchesClientId(clientId)) && !request.auth.get(["token", "impersonator"], false));
   }
 
   function allowUserUpdates(document) {
     return (usernameMatches(document) && !request.auth.get(["token", "impersonator"], false));
+  }
+
+  function stateCodeIncludedInRecidivizAllowedStates(clientId) {
+    return (clientId.upper()[0:5] in request.auth.token.recidivizAllowedStates);
+  }
+
+  function recidivizUserHasAccess(clientId) {
+    return isRecidiviz() && stateCodeIncludedInRecidivizAllowedStates(clientId);
   }
 
   match /databases/{database}/documents {
@@ -48,7 +64,7 @@ service cloud.firestore {
       // firestore will allow an operation if ANY rules match it,
       // so we specifically filter out update collections here
       allow read: if notAnUpdateCollection(collection)
-        && (isRecidiviz() || stateCodeMatchesTarget());
+        && (recidivizAllowedStatesIncludesTarget() || stateCodeMatchesTarget());
     }
 
     match /userUpdates/{path=**}/{document} {
@@ -59,13 +75,14 @@ service cloud.firestore {
     match /clientUpdates/{document=**} {
       // We are migrating away from this old collection
       // It should be read-only and only accessible by Recidiviz and TN users
-      allow read: if isRecidiviz() || request.auth.token.stateCode.lower() == "us_tn";
+      allow read: if (isRecidiviz() && "US_TN" in request.auth.token.recidivizAllowedStates) 
+        || !isRecidiviz() && request.auth.token.stateCode.upper() == "US_TN";
     }
 
     match /clientUpdatesV2/{clientId}/{document=**} {
       // documentIDs for the client updates are of the form us_xx_${client_id}
       // check to make sure the user's state code matches the prefix on the record
-      allow read: if isRecidiviz() || stateCodeMatchesClientId(clientId);
+      allow read: if recidivizUserHasAccess(clientId) || stateCodeMatchesClientId(clientId);
       allow write: if allowPersonUpdates(clientId);
     }
 
@@ -75,7 +92,7 @@ service cloud.firestore {
     }
     
     match /DEMO_clientUpdates/{document=**} {
-      allow read: if isRecidiviz() || request.auth.token.stateCode.lower() == "us_tn";
+      allow read: if isRecidiviz() || request.auth.token.stateCode.upper() == "US_TN";
     }
 
     match /DEMO_clientUpdatesV2/{clientId}/{document=**} {
@@ -93,7 +110,7 @@ service cloud.firestore {
     }
 
     match /DEMO2_clientUpdates/{document=**} {
-      allow read: if isRecidiviz() || request.auth.token.stateCode.lower() == "us_tn";
+      allow read: if isRecidiviz() || request.auth.token.stateCode.upper() == "US_TN";
     }
 
     match /DEMO2_clientUpdatesV2/{clientId}/{document=**} {

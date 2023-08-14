@@ -63,6 +63,7 @@ export function getTNUser(testEnv) {
   return testEnv.authenticatedContext("user@us_tn.gov", {
     stateCode: "US_TN",
     impersonator: false,
+    recidivizAllowedStates: [],
   });
 }
 
@@ -70,6 +71,7 @@ export function getNDUser(testEnv) {
   return testEnv.authenticatedContext("user@us_nd.gov", {
     stateCode: "US_ND",
     impersonator: false,
+    recidivizAllowedStates: [],
   });
 }
 
@@ -77,6 +79,7 @@ export function getRecidivizUser(testEnv) {
   return testEnv.authenticatedContext("admin", {
     stateCode: "RECIDIVIZ",
     impersonator: false,
+    recidivizAllowedStates: ["US_TN", "US_ND"],
   });
 }
 
@@ -84,5 +87,6 @@ export function getImpersonatedUser(testEnv) {
   return testEnv.authenticatedContext("user@us_tn.gov", {
     stateCode: "US_TN",
     impersonator: true,
+    recidivizAllowedStates: [],
   });
 }
