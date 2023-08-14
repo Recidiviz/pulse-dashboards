@@ -177,11 +177,11 @@ export const generateOpportunityHydratedHeader = (
       opportunityText:
         "eligible for the Community Transition Program (Work Release)",
       callToAction:
-        "Search for case manager(s) below to review residents on their caseload who are approaching " +
+        "Search for case managers above to review residents on their caseload who are approaching " +
         "Work Release eligibility and complete application paperwork.",
     },
     usMeSCCP: {
-      eligibilityText: simplur`${count} resident[|s] may be eligible for `,
+      eligibilityText: simplur`${count} resident[|s] may be eligible for the `,
       opportunityText: "Supervised Community Confinement Program",
       callToAction:
         "Search for case managers above to review residents in their unit who are approaching " +
@@ -226,7 +226,7 @@ export const generateOpportunityHydratedHeader = (
       eligibilityText: simplur`${count} resident[|s] may be eligible for the `,
       opportunityText: "Furlough Program",
       callToAction:
-        "Search for case managers below to review residents on their caseload who are approaching standard furlough release eligibility and complete application paperwork.",
+        "Search for case managers above to review residents on their caseload who are approaching standard furlough release eligibility and complete application paperwork.",
     },
     usCaSupervisionLevelDowngrade: {
       eligibilityText: simplur`${count} client[|s] may be `,
