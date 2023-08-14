@@ -16,7 +16,7 @@
 // =============================================================================
 import { Given, Then, When } from "@cucumber/cucumber";
 
-import { waitForElementsToExist } from "../utils";
+import { waitForElementsToExist, waitForNetworkIdle } from "../utils";
 
 /**
  * Given
@@ -25,9 +25,7 @@ import { waitForElementsToExist } from "../utils";
 Given("There are no officers pre-selected in the dropdown", async () => {
   const container = await $(".CaseloadSelect");
   const promptText = await container.getText();
-  expect(promptText).toEqual(
-    expect.stringContaining("Search for one or more officers")
-  );
+  expect(promptText).toEqual(expect.stringContaining("Search for one or more"));
 });
 
 /**
@@ -59,6 +57,7 @@ When("I click on the Clear Officers link", async () => {
 Then(
   "I should see the officer {string} selected in the search bar",
   async (officerName) => {
+    await waitForNetworkIdle();
     const selectedOption = await $(
       `div.CaseloadSelect__multi-value__label=${officerName}`
     );

@@ -109,7 +109,7 @@ exports.config = {
   // Define all options that are relevant for the WebdriverIO instance here
   //
   // Level of logging verbosity: trace | debug | info | warn | error | silent
-  logLevel: "info",
+  logLevel: "warn",
   //
   // Set specific log levels per logger
   // loggers:
@@ -290,7 +290,7 @@ exports.config = {
       `curl -v -X DELETE 'http://localhost:${firebase.emulators.firestore.port}/emulator/v1/projects/${process.env.FIREBASE_PROJECT}/databases/(default)/documents'`
     );
     /* Load fixtures to firestore database */
-    await loadWorkflowsFixtures();
+    await loadWorkflowsFixtures({ quietLogs: true });
   },
   /**
    * Runs before a Cucumber step

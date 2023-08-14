@@ -130,7 +130,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
               )}
               <PersonList
                 key={`PersonList_${sectionTitle}`}
-                className={`PersonList_${sectionTitle}`}
+                className={`PersonList_${sectionTitle} PersonList`}
               >
                 {opportunityTypeSections[sectionTitle]?.map((opportunity) => (
                   <PersonListItem

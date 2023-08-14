@@ -78,7 +78,7 @@ export const JusticeInvolvedPersonAvatar: React.FC<AvatarProps> = ({
   const initials = formatAvatarText(name, splitName);
 
   return (
-    <AvatarElement size={size}>
+    <AvatarElement className="UserAvatar" size={size}>
       <Avatar
         variant="marble"
         size={size}

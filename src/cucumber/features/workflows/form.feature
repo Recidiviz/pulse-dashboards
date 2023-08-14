@@ -35,7 +35,7 @@ Feature: Fill and export the Workflows form
 
         Examples:
             | stateCode | pseudonymizedId | opportunityType    | exportButtonText | filename                                |
-            | US_TN     | p101            | compliantReporting | Download PDF     | LINET HANSEN - Form CR3947 Rev05-18.pdf |
+            | US_TN     | p101            | compliantReporting | Download PDF     | Linet Hansen - Form CR3947 Rev05-18.pdf |
 
     Scenario Outline: Update eligibility for eligible clients
         Given I am a "<stateCode>" user on the "<opportunityType>" form page for "<pseudonymizedId>"
@@ -43,11 +43,11 @@ Feature: Fill and export the Workflows form
         Then I should see the eligibility dropdown that has a reason listed like "<checkboxValue>"
         When I click on the checkbox for "<checkboxValue>"
         Then I should see the value "<checkboxValue>" selected
-        And I should see the client labeled as "Currently ineligible"
+        And I should see the person labeled as "Currently ineligible"
         When I click on the "<checkboxValue>" dropdown
         And I click on the checkbox for "Eligible"
         Then I should see the "Update eligibility" dropdown
-        And I should see the client labeled as "Eligible"
+        And I should see the person labeled as "Eligible"
 
         Examples:
             | stateCode | pseudonymizedId | opportunityType    | checkboxValue |

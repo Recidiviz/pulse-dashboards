@@ -199,7 +199,7 @@ export const generateOpportunityHydratedHeader = (
       callToAction: "Review and update custody levels.",
     },
     usMoRestrictiveHousingStatusHearing: {
-      fullText: simplur`${count} resident[|s] are currently in Restrictive Housing`,
+      fullText: simplur`${count} resident[|s] [is|are] currently in Restrictive Housing`,
       opportunityText: "Restrictive Housing Status Hearing",
       callToAction: "Conduct a Restrictive Housing Status Hearing",
     },

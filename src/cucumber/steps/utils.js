@@ -17,17 +17,8 @@
 import fs from "fs";
 import path from "path";
 
-async function switchUserStateCode(stateCode) {
-  const profileLink = await $(".UserAvatar");
-  await profileLink.isExisting();
-  await profileLink.click();
-  const stateSelection = await $(`.StateSelection__${stateCode}`);
-  await stateSelection.isExisting();
-  await stateSelection.click();
-}
-
-async function clickOutsideElement() {
-  const body = await $("body");
+async function clickOutsideElement(element = "body") {
+  const body = await $(element);
   await body.click();
 }
 
@@ -139,6 +130,18 @@ async function waitForFileToExist(filePath, timeout) {
       }
     });
   });
+}
+
+async function switchUserStateCode(stateCode) {
+  const avatarDropdown = await $(".UserAvatar");
+  await avatarDropdown.isExisting();
+  await avatarDropdown.click();
+  const profileLink = await $(".AccountLink");
+  await profileLink.isExisting();
+  await waitForNavigation(profileLink.click());
+  const stateSelection = await $(`.StateSelection__${stateCode}`);
+  await stateSelection.isExisting();
+  await stateSelection.click();
 }
 
 export {

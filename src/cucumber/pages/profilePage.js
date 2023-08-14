@@ -26,14 +26,6 @@ class ProfilePage extends Page {
     return $(".StateSelection__heading");
   }
 
-  async stateSelector() {
-    return $(".StateSelector");
-  }
-
-  async viewDashboardBtn() {
-    return $(".Profile__submit");
-  }
-
   async selectStateOption(stateName) {
     const option = await $(`button=${stateName}`);
     await option.click();

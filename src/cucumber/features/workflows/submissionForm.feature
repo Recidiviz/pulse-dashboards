@@ -23,7 +23,7 @@ Feature: Fill and submit the Workflows form back to the state's system
             | stateCode | pseudonymizedId | opportunityType | value                                         |
             | US_TN     | p101            | usTnExpiration  | expired his/her probation on                  |
             | US_TN     | p101            | usTnExpiration  | Review 3 pages and submit TEPE note to eTomis |
-            | US_TN     | p101            | usTnExpiration  | LINET HANSEN                                  |
+            | US_TN     | p101            | usTnExpiration  | Linet Hansen                                  |
             | US_TN     | p101            | usTnExpiration  | Contact Types: TEPE                           |
 
     Scenario Outline: Preview the form submission

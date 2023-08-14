@@ -83,10 +83,14 @@ When("I click on the {string} dropdown", async (dropdownButtonText) => {
 
 When("I click on the checkbox for {string}", async (checkboxValue) => {
   const eligibilityCheckbox = await $(`span.Checkbox__label*=${checkboxValue}`);
-  await eligibilityCheckbox.scrollIntoView();
   await eligibilityCheckbox.waitForExist();
+  await eligibilityCheckbox.scrollIntoView({
+    block: "center",
+    inline: "center",
+  });
   await eligibilityCheckbox.click();
-  await clickOutsideElement();
+  await clickOutsideElement(".CriteraList");
+  await waitForNetworkIdle();
 });
 
 When("I click on preview page {int}", async (pageNumber) => {
@@ -154,12 +158,16 @@ Then(
 Then("I should see the value {string} selected", async (checkboxValue) => {
   const selectedDropdownButton = await $(`button=${checkboxValue}`);
   await selectedDropdownButton.waitForExist();
+  await selectedDropdownButton.scrollIntoView({
+    block: "center",
+    inline: "center",
+  });
   const selectedText = await selectedDropdownButton.getText();
   expect(selectedText).toEqual(checkboxValue);
 });
 
 Then(
-  "I should see the client labeled as {string}",
+  "I should see the person labeled as {string}",
   async (eligibilityStatus) => {
     const eligibilityStatusEl = await $("span.EligibilityStatus");
     expect(await eligibilityStatusEl.getText()).toEqual(eligibilityStatus);

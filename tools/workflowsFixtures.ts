@@ -79,6 +79,10 @@ export type FixtureData<T> = {
   idFunc: (arg0: T) => string;
 };
 
+type Logger = {
+  (...data: any[]): void;
+};
+
 const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   clients: clientsData,
   residents: residentsData,
@@ -114,13 +118,13 @@ function collectionName(c: keyof typeof collectionNames) {
     : collectionNames[c];
 }
 
-export async function loadFixtures(): Promise<void> {
+export async function loadFixtures(logger: Logger): Promise<void> {
   for await (const [collStr, fixtureData] of Object.entries(FIXTURES_TO_LOAD)) {
     const coll = collStr as CollectionName;
-    console.log(`wiping existing ${coll} data ...`);
+    logger(`wiping existing ${coll} data ...`);
     await deleteCollection(db, collectionName(coll));
 
-    console.log(`loading new ${coll} data...`);
+    logger(`loading new ${coll} data...`);
     const bulkWriter = db.bulkWriter();
 
     // Iterate through each record
@@ -136,16 +140,18 @@ export async function loadFixtures(): Promise<void> {
 
     bulkWriter
       .close()
-      .then(() => console.log(`new ${coll} data loaded successfully`));
+      .then(() => logger(`new ${coll} data loaded successfully`));
   }
 }
 
-export async function loadOpportunityReferralFixtures(): Promise<void> {
+export async function loadOpportunityReferralFixtures(
+  logger: Logger
+): Promise<void> {
   for await (const opportunity of OPPORTUNITIES_WITH_JSON_FIXTURES) {
-    console.log(`wiping existing ${opportunity} referral data ...`);
+    logger(`wiping existing ${opportunity} referral data ...`);
     await deleteCollection(db, collectionName(opportunity));
 
-    console.log(`loading new ${opportunity} referral data...`);
+    logger(`loading new ${opportunity} referral data...`);
     const bulkWriter = db.bulkWriter();
 
     const rawRecords = JSON.parse(
@@ -166,17 +172,17 @@ export async function loadOpportunityReferralFixtures(): Promise<void> {
     await bulkWriter.flush();
     await bulkWriter.close();
 
-    console.log(`new ${opportunity} referral data loaded successfully`);
+    logger(`new ${opportunity} referral data loaded successfully`);
   }
 }
 
-async function loadClientUpdatesV2(): Promise<void> {
-  console.log(`wiping existing clientUpdatesV2 data ...`);
+async function loadClientUpdatesV2(logger: Logger): Promise<void> {
+  logger(`wiping existing clientUpdatesV2 data ...`);
   await deleteCollection(db, collectionName("clientUpdatesV2"));
 
   const { milestonesMessages } = clientUpdatesV2Data;
 
-  console.log(`loading new milestonesMessages update data...`);
+  logger(`loading new milestonesMessages update data...`);
   const bulkWriter = db.bulkWriter();
 
   milestonesMessages.forEach(
@@ -192,13 +198,21 @@ async function loadClientUpdatesV2(): Promise<void> {
       );
     }
   );
-  bulkWriter.close().then(() => console.log(`new  data loaded successfully`));
+  bulkWriter.close().then(() => logger(`new  data loaded successfully`));
 }
 
-export async function loadWorkflowsFixtures(): Promise<void> {
+export async function loadWorkflowsFixtures({
+  quietLogs = false,
+} = {}): Promise<void> {
+  let logger = console.log;
+  if (quietLogs) {
+    logger = function () {
+      return null;
+    };
+  }
   await Promise.all([
-    loadFixtures(),
-    loadOpportunityReferralFixtures(),
-    loadClientUpdatesV2(),
+    loadFixtures(logger),
+    loadOpportunityReferralFixtures(logger),
+    loadClientUpdatesV2(logger),
   ]);
 }

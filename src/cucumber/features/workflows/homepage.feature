@@ -8,7 +8,7 @@ Feature: Login as a Workflows user and see the homepage
         Then I should see the homepage welcome message
         When I select "<searchValue>" from the dropdown
         Then I should see <numOpportunities> opportunities listed
-        And I should see <numOpportunities> set of client avatars
+        And I should see <numOpportunities> set of avatars
         When I click on View all for "<opportunityType>"
         Then I should navigate to the "<opportunityUrlFragment>" opportunity page
 

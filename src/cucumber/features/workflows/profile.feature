@@ -4,7 +4,7 @@ Feature: View a justice-involved individual's profile
     And navigate to different opportunity form pages
     And update a person's eligibility
 
-    Scenario Outline: View client profile with two opportunities
+    Scenario Outline: View a profile with two opportunities
         Given I am a "<stateCode>" user on the profile page for person ID "<personID>"
         Then I should see the following details "<listOfDetailHeaders>"
         And I should see an accordion with <numOpps> opportunities
@@ -14,7 +14,7 @@ Feature: View a justice-involved individual's profile
         | stateCode | monthsLeft | personID | numOpps | listOfDetailHeaders                                                                                       |
         | US_TN     | 10 months  | p101     | 2       | Supervision, Milestones, Housing, Fines and Fees, Probation Special Conditions, Parole Special Conditions |
 
-    Scenario Outline: View client profile with one opportunity
+    Scenario Outline: View a profile with one opportunity
         Given I am a "<stateCode>" user on the profile page for person ID "<personID>"
         Then I should see the following details "<listOfDetailHeaders>"
         And I should see an accordion with <numOpps> opportunities

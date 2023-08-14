@@ -44,8 +44,8 @@ Then("I should see {int} opportunities listed", async (numOpportunities) => {
   expect(opportunities.length).toEqual(numOpportunities);
 });
 
-Then("I should see {int} set of client avatars", async (numOpportunities) => {
-  const avatarWrappers = await WorkflowsHomepage.clientAvatars();
+Then("I should see {int} set of avatars", async (numOpportunities) => {
+  const avatarWrappers = await WorkflowsHomepage.avatars();
   await waitForElementsToExist(avatarWrappers);
   expect(avatarWrappers.length).toEqual(numOpportunities);
 });

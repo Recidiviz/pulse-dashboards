@@ -65,14 +65,17 @@ Given(
  * When
  * */
 When("I select {string} from the dropdown", async (searchValue) => {
+  await waitForNetworkIdle();
   const container = await $(".CaseloadSelect");
   await container.click();
+  await waitForNetworkIdle();
+  // Wait for options to load
+  await browser.pause(2000);
   const option = await $(`div.CaseloadSelect__option=${searchValue}`);
-  await browser.pause(1000);
   await option.waitForExist();
-
   // Wait for data to load
   await Promise.all([option.click(), waitForNetworkIdle()]);
+  await browser.pause(1000);
 });
 
 When("I click on the {string} button", async (buttonClassName) => {
@@ -148,10 +151,10 @@ Then(
 
 Then(
   "I should see a preview of the opportunity for {string}",
-  async (clientName) => {
+  async (personName) => {
     const previewWrapper = await $(".WorkflowsPreviewModal");
     await previewWrapper.waitForExist();
     const text = await previewWrapper.getText();
-    expect(text).toEqual(expect.stringContaining(clientName));
+    expect(text).toEqual(expect.stringContaining(personName));
   }
 );

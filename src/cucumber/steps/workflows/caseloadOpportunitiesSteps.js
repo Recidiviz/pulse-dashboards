@@ -14,33 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Given, Then, When } from "@cucumber/cucumber";
+import { Then, When } from "@cucumber/cucumber";
 
 import { WorkflowsOpportunityPage } from "../../pages";
-import { waitForElementsToExist } from "../utils";
-
-/**
- * Given
- * */
-Given(
-  "I navigate to the {string} opportunity page",
-  async (opportunityType) => {
-    const opportunityLink = await $(`.BrandedNavLink__${opportunityType}`);
-    await opportunityLink.click();
-  }
-);
+import {
+  waitForElementsToExist,
+  waitForNavigation,
+  waitForNetworkIdle,
+} from "../utils";
 
 /**
  * When
  * */
-When("I hover over a client's name", async () => {
+When("I hover over a person's name", async () => {
   const personName = await $(".PersonName");
   await personName.waitForExist();
   await personName.moveTo();
 });
 
-When("I click on the client {string}", async (personName) => {
+When("I click on the person {string}", async (personName) => {
   const personNameLink = await $(`.PersonName=${personName}`);
+  await personNameLink.waitForExist();
   await personNameLink.click();
   // Wait for Preview Modal to open
   await browser.pause(1000);
@@ -52,14 +46,23 @@ When("I exit the preview modal", async () => {
   await closeButton.click();
 });
 
+When("I click on the View all link for {string}", async (opportunityType) => {
+  const viewAllLink = await $(`.ViewAllLink__${opportunityType}`);
+  await viewAllLink.waitForExist();
+  await waitForNavigation(viewAllLink.click());
+});
+
 /**
  * Then
  * */
 Then(
   "I should see the {string} heading and subheading",
   async (opportunityName) => {
+    await waitForNetworkIdle();
     const headingEl = await WorkflowsOpportunityPage.pageHeading();
     const subheadingEl = await WorkflowsOpportunityPage.pageSubheading();
+
+    await waitForElementsToExist([headingEl, subheadingEl]);
 
     const heading = await headingEl.getText();
     const subheading = await subheadingEl.getText();
@@ -69,14 +72,14 @@ Then(
   }
 );
 
-Then("I should see {int} clients listed", async (numClients) => {
-  const clientList = await WorkflowsOpportunityPage.eligibleClientList();
-  const clients = await clientList.$$("li");
-  await waitForElementsToExist(clients);
-  expect(clients.length).toEqual(numClients);
+Then("I should see {int} people listed", async (numPeople) => {
+  await waitForNetworkIdle();
+  const items = await $$(".PersonListItem__Link");
+  await waitForElementsToExist(items);
+  expect(items.length).toEqual(numPeople);
 });
 
-Then("I should see the client status update", async () => {
+Then("I should see the person status update", async () => {
   const status = await $(".WorkflowsStatus");
   await status.waitForExist();
   const text = await status.getText();

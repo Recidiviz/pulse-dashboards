@@ -332,7 +332,7 @@ function AccountLink({ enabled }: OptionalLinkProps) {
   if (!enabled) return null;
 
   return (
-    <NavLink to={`/${DASHBOARD_VIEWS.profile}`}>
+    <NavLink className="AccountLink" to={`/${DASHBOARD_VIEWS.profile}`}>
       {isMobile && <UserAvatar />}
       Profile
     </NavLink>
