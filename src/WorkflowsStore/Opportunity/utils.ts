@@ -158,19 +158,19 @@ export const generateOpportunityHydratedHeader = (
       opportunityText:
         "supervised at a level that does not match their latest risk score",
       callToAction:
-        "Review clients whose supervision level does not match their risk level and change supervision levels in OMNI.",
+        "Review clients whose supervision level does not match their risk level and change supervision levels in COMS.",
     },
     usMiClassificationReview: {
       eligibilityText: simplur`${count} client[|s] may be `,
       opportunityText: "eligible for a supervision level downgrade",
       callToAction:
-        "Review clients who meet the time threshold for classification review and downgrade supervision levels in OMNI.",
+        "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",
     },
     usMiEarlyDischarge: {
       eligibilityText: simplur`${count} client[|s] may be `,
       opportunityText: "eligible for early discharge",
       callToAction:
-        "Review clients who may be eligible for early discharge and complete discharge paperwork in OMNI.",
+        "Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",
     },
     usMeWorkRelease: {
       eligibilityText: simplur`${count} client[|s] may be `,
@@ -214,13 +214,13 @@ export const generateOpportunityHydratedHeader = (
       eligibilityText: simplur`${count} client[|s] may be eligible for a downgrade to `,
       opportunityText: "minimum telephone reporting",
       callToAction:
-        "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in OMNI.",
+        "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",
     },
     usMiPastFTRD: {
       eligibilityText: simplur`${count} client[|s] ha[s|ve] `,
       opportunityText: "passed their full-term release date",
       callToAction:
-        "Review clients who are past their full-term release date and complete discharges in Omni.",
+        "Review clients who are past their full-term release date and complete discharges in COMS.",
     },
     usMeFurloughRelease: {
       eligibilityText: simplur`${count} resident[|s] may be eligible for the `,
