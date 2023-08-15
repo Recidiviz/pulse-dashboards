@@ -22,5 +22,5 @@ function getIsOfflineMode() {
 }
 
 module.exports = {
-  isOfflineMode: getIsOfflineMode(),
+  isOfflineMode: getIsOfflineMode,
 };

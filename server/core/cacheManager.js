@@ -54,7 +54,7 @@ const redisInstance = new Redis({
 });
 
 const memoryCache = cacheManager.caching({
-  store: isOfflineMode ? "none" : "memory",
+  store: isOfflineMode() ? "none" : "memory",
   ttl: MEMORY_CACHE_TTL_SECONDS,
   refreshThreshold: MEMORY_REFRESH_SECONDS,
 });
@@ -73,7 +73,7 @@ if (!testEnv) {
 }
 
 function getCache() {
-  if (testEnv || isOfflineMode) {
+  if (testEnv || isOfflineMode()) {
     return memoryCache;
   }
   return redisCache;

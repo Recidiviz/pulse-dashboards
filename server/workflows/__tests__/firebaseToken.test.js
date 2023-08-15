@@ -17,9 +17,12 @@
 
 import mockFirebaseAdmin from "firebase-admin";
 
+import { stateCodes } from "../../constants/stateCodes";
+import { isOfflineMode } from "../../utils/isOfflineMode";
 import { getFirebaseToken } from "../firebaseToken";
 
 jest.mock("firebase-admin");
+jest.mock("../../utils/isOfflineMode");
 
 const createCustomTokenMock = jest.fn();
 const authMock = jest.fn(() => ({ createCustomToken: createCustomTokenMock }));
@@ -84,6 +87,39 @@ test("Firebase token with allowedStates", async () => {
     stateCode: stateCode.toUpperCase(),
     impersonator: false,
     recidivizAllowedStates: ["US_XX"],
+  });
+  expect(mockRes.json).toHaveBeenCalledWith({
+    firebaseToken: mockFirebaseToken,
+  });
+});
+
+test("Firebase token for offline mode allows all states", async () => {
+  const userId = "notarealemail@recidiviz.org";
+  const stateCode = "recidiviz";
+  const mockFirebaseToken = "tokenabc123";
+
+  isOfflineMode.mockReturnValueOnce(true);
+
+  createCustomTokenMock.mockResolvedValue(mockFirebaseToken);
+  const mockReq = {
+    user: {
+      undefinedemail_address: userId,
+      // this key includes an env variable that is not set in this test environment
+      undefinedapp_metadata: {
+        stateCode,
+      },
+    },
+  };
+  const mockRes = {
+    json: jest.fn(),
+  };
+
+  await getFirebaseToken()(mockReq, mockRes);
+
+  expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
+    stateCode: stateCode.toUpperCase(),
+    impersonator: false,
+    recidivizAllowedStates: Object.values(stateCodes),
   });
   expect(mockRes.json).toHaveBeenCalledWith({
     firebaseToken: mockFirebaseToken,

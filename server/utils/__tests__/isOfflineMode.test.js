@@ -24,13 +24,13 @@ describe("isOfflineMode", () => {
     process.env.IS_OFFLINE = "true";
     const { isOfflineMode } = require("../isOfflineMode");
 
-    expect(isOfflineMode).toBe(true);
+    expect(isOfflineMode()).toBe(true);
   });
 
   it("should return false if env is falsy", () => {
     process.env.IS_OFFLINE = "false";
     const { isOfflineMode } = require("../isOfflineMode");
 
-    expect(isOfflineMode).toBe(false);
+    expect(isOfflineMode()).toBe(false);
   });
 });

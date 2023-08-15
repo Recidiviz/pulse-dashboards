@@ -49,7 +49,7 @@ const { formatKeysToSnakeCase } = require("../utils");
 
 let serviceAccount;
 
-if (!isOfflineMode) {
+if (!isOfflineMode()) {
   /* eslint-disable global-require */
   // eslint-disable-next-line import/no-dynamic-require
   serviceAccount = require(path.join(
@@ -93,7 +93,7 @@ function offlineUser(req, res) {
 function refreshCache(req, res) {
   const { stateCode, metricType } = req.params;
   refreshRedisCache(
-    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
+    () => fetchMetrics(stateCode, metricType, null, isOfflineMode()),
     stateCode,
     metricType,
     responder(res)
@@ -134,7 +134,7 @@ function newRevocations(req, res) {
   const cacheKey = getCacheKey({ stateCode, metricType });
   cacheResponse(
     cacheKey,
-    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
+    () => fetchMetrics(stateCode, metricType, null, isOfflineMode()),
     responder(res)
   );
 }
@@ -178,7 +178,7 @@ function newRevocationFile(req, res) {
           metricType,
           metricName,
           filters,
-          isOfflineMode,
+          isOfflineMode: isOfflineMode(),
         }),
       responder(res)
     );
@@ -197,7 +197,7 @@ function vitals(req, res) {
   const appMetadata = getAppMetadata(req);
   const allowed =
     appMetadata.state_code === "recidiviz" ||
-    isOfflineMode ||
+    isOfflineMode() ||
     appMetadata.routes?.operations ||
     appMetadata.routes?.community_practices;
   if (!allowed) {
@@ -210,7 +210,7 @@ function vitals(req, res) {
   const cacheKey = getCacheKey({ stateCode, metricType });
   cacheResponse(
     cacheKey,
-    () => fetchMetrics(stateCode, metricType, null, isOfflineMode),
+    () => fetchMetrics(stateCode, metricType, null, isOfflineMode()),
     responder(res)
   );
 }
@@ -222,7 +222,7 @@ function pathways(req, res) {
 
   const allowed =
     appMetadata.state_code === "recidiviz" ||
-    isOfflineMode ||
+    isOfflineMode() ||
     Object.entries(appMetadata.routes).some(([route, status]) => {
       // routes have the format `system_prisonToSupervision: true`
       // metric names have the format `prison_to_supervision_count_by_month`
@@ -249,7 +249,7 @@ function pathways(req, res) {
   const cacheKey = getCacheKey({ stateCode, metricType, metricName });
   cacheResponse(
     cacheKey,
-    () => fetchMetrics(stateCode, metricType, metricName, isOfflineMode),
+    () => fetchMetrics(stateCode, metricType, metricName, isOfflineMode()),
     responder(res)
   );
 }
@@ -319,7 +319,7 @@ function sanitizeUserHash(userHash) {
 }
 
 async function getImpersonatedUserRestrictions(req, res) {
-  if (isOfflineMode) {
+  if (isOfflineMode()) {
     responder(res)(
       new Error("Impersonate user is not available in offline mode")
     );

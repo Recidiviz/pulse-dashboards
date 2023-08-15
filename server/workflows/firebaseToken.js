@@ -20,6 +20,7 @@ const fs = require("fs");
 const { fetchOfflineUser } = require("../core");
 const { getAppMetadata } = require("../utils/getAppMetadata");
 const { isOfflineMode } = require("../utils/isOfflineMode");
+const { stateCodes } = require("../constants/stateCodes");
 const { respondWithForbidden } = require("../routes/api");
 
 const { METADATA_NAMESPACE } = process.env;
@@ -28,7 +29,7 @@ const projectId = process.env.FIREBASE_PROJECT || "demo-dev";
 const credentialFile = process.env.FIREBASE_CREDENTIAL;
 
 const appOptions = { projectId };
-if (!isOfflineMode && credentialFile) {
+if (!isOfflineMode() && credentialFile) {
   appOptions.credential = firebaseAdmin.credential.cert(
     JSON.parse(fs.readFileSync(credentialFile).toString())
   );
@@ -43,10 +44,11 @@ function getFirebaseToken(impersonateUser = false) {
     let recidivizAllowedStates = [];
     const appMetadata = getAppMetadata(req);
 
-    if (isOfflineMode) {
+    if (isOfflineMode()) {
       const user = fetchOfflineUser({});
       stateCode = getAppMetadata({ user }).stateCode;
       uid = user.email;
+      recidivizAllowedStates = Object.values(stateCodes);
     } else if (impersonateUser) {
       if (appMetadata.stateCode.toLowerCase() !== "recidiviz") {
         respondWithForbidden(res);

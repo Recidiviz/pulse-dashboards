@@ -1,4 +1,5 @@
 const stateCodes = {
+  US_CA: "US_CA",
   US_CO: "US_CO",
   US_ID: "US_ID",
   US_ME: "US_ME",
@@ -18,6 +19,6 @@ const csgStateCodes = [
 ];
 
 module.exports = {
-  ...stateCodes,
+  stateCodes,
   csgStateCodes,
 };

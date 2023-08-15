@@ -17,7 +17,7 @@
 const { COLLECTIONS } = require("../../constants/collections");
 const { removeAllValue } = require("./dimensionValues/shared");
 const dimensionsByStateCode = require("./dimensionValues");
-const stateCodes = require("../../constants/stateCodes");
+const { stateCodes } = require("../../constants/stateCodes");
 
 function newRevocations(dimensions) {
   return {
