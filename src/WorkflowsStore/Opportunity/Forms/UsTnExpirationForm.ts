@@ -90,6 +90,23 @@ function formatSpecialConditions(
   return specialConditionsText;
 }
 
+function formatOffenseList(offenses?: Contact[]): string | undefined {
+  if (!offenses) return;
+
+  return defaultFormValueJoiner(
+    offenses
+      .map((offense) =>
+        defaultFormValueJoiner(
+          `Contact code: ${
+            offense.contactType
+          } on ${formatFormValueDateMMDDYYYYY(offense.contactDate)}`,
+          displayString(offense?.contactComment)
+        )
+      )
+      .join("\n\n")
+  );
+}
+
 export class UsTnExpirationForm extends FormBase<
   UsTnExpirationDraftData,
   UsTnExpirationOpportunity
@@ -164,6 +181,8 @@ export class UsTnExpirationForm extends FormBase<
           ? voterRightsText(form.latestVrr.contactType.toUpperCase())
           : "",
         gangAffiliation: displayString(form.gangAffiliationId),
+        newOffenses: formatOffenseList(form.newOffenses),
+        alcoholDrugInformation: formatOffenseList(form.alcoholHistory),
       };
     };
 }

@@ -201,6 +201,30 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord =
         contactDate: parseISO("2022-02-02"),
         contactType: "VRRE",
       },
+      newOffenses: [
+        {
+          contactDate: parseISO("2022-02-09"),
+          contactType: "NCAF",
+          contactComment: "ARRESTED",
+        },
+        {
+          contactDate: parseISO("2022-02-17"),
+          contactType: "NCAC",
+          contactComment: "INTERROGATED",
+        },
+      ],
+      alcoholHistory: [
+        {
+          contactDate: parseISO("2022-02-12"),
+          contactType: "FSWR",
+          contactComment: "HAD APPOINTMENT",
+        },
+        {
+          contactDate: parseISO("2022-02-07"),
+          contactType: "FSWR",
+          contactComment: "HAD ANOTHER APPOINTMENT",
+        },
+      ],
     },
     criteria: {
       supervisionPastFullTermCompletionDateOrUpcoming1Day: {

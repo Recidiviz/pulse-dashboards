@@ -27,22 +27,22 @@ import {
   opportunitySchemaBase,
 } from "./schemaHelpers";
 
-const contactSchema = z
-  .object({
-    contactDate: dateStringSchema,
-    contactType: z.string(),
-    contactComment: z.string().optional(),
-  })
-  .optional();
+const contactSchema = z.object({
+  contactDate: dateStringSchema,
+  contactType: z.string(),
+  contactComment: z.string().optional(),
+});
 
 export const usTnExpirationSchema = opportunitySchemaBase
   .extend({
     formInformation: z.object({
-      latestPse: contactSchema,
-      latestEmp: contactSchema,
-      latestSpe: contactSchema,
-      latestVrr: contactSchema,
-      latestFee: contactSchema,
+      latestPse: contactSchema.optional(),
+      latestEmp: contactSchema.optional(),
+      latestSpe: contactSchema.optional(),
+      latestVrr: contactSchema.optional(),
+      latestFee: contactSchema.optional(),
+      newOffenses: z.array(contactSchema),
+      alcoholHistory: z.array(contactSchema),
       sexOffenses: z.array(z.string()),
       offenses: z.array(z.string()),
       docketNumbers: z.array(z.string()),

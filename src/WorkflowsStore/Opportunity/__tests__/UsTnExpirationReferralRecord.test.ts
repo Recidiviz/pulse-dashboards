@@ -55,6 +55,30 @@ const usTnExpirationRecordRaw = {
       contactDate: "2022-03-03",
       contactType: "VRRE",
     },
+    newOffenses: [
+      {
+        contactDate: "2022-02-09",
+        contactType: "NCAF",
+        contactComment: "ARRESTED",
+      },
+      {
+        contactDate: "2022-02-17",
+        contactType: "NCAC",
+        contactComment: "INTERROGATED",
+      },
+    ],
+    alcoholHistory: [
+      {
+        contactDate: "2022-02-12",
+        contactType: "FSWR",
+        contactComment: "HAD APPOINTMENT",
+      },
+      {
+        contactDate: "2022-02-07",
+        contactType: "FSWR",
+        contactComment: "HAD ANOTHER APPOINTMENT",
+      },
+    ],
   },
   criteria: {
     supervisionPastFullTermCompletionDateOrUpcoming1Day: {

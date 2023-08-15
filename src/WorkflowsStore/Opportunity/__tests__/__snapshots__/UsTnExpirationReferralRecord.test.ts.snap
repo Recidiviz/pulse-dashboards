@@ -14,6 +14,18 @@ Object {
   },
   "externalId": "abc123",
   "formInformation": Object {
+    "alcoholHistory": Array [
+      Object {
+        "contactComment": "HAD APPOINTMENT",
+        "contactDate": 2022-02-12T00:00:00.000Z,
+        "contactType": "FSWR",
+      },
+      Object {
+        "contactComment": "HAD ANOTHER APPOINTMENT",
+        "contactDate": 2022-02-07T00:00:00.000Z,
+        "contactType": "FSWR",
+      },
+    ],
     "convictionCounties": Array [
       "010",
     ],
@@ -43,6 +55,18 @@ Object {
       "contactDate": 2022-03-03T00:00:00.000Z,
       "contactType": "VRRE",
     },
+    "newOffenses": Array [
+      Object {
+        "contactComment": "ARRESTED",
+        "contactDate": 2022-02-09T00:00:00.000Z,
+        "contactType": "NCAF",
+      },
+      Object {
+        "contactComment": "INTERROGATED",
+        "contactDate": 2022-02-17T00:00:00.000Z,
+        "contactType": "NCAC",
+      },
+    ],
     "offenses": Array [
       "FAILURE1",
       "FAILURE2",
