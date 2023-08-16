@@ -36,7 +36,7 @@ const US_CA_CONFIG: TenantConfig = {
     SUPERVISION: {
       searchType: "OFFICER",
       searchField: "officerId",
-      searchTitleOverride: "officer",
+      searchTitleOverride: "agent",
     },
   },
   navigation: {

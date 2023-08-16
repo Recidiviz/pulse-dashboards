@@ -27,7 +27,7 @@ const data: StaffRecord[] = [
     hasCaseload: true,
     hasFacilityCaseload: false,
     givenNames: "Test",
-    surname: "Officer1",
+    surname: "Agent1",
   },
   {
     email: "test-officer-1@example.com",
@@ -37,7 +37,7 @@ const data: StaffRecord[] = [
     hasCaseload: true,
     hasFacilityCaseload: false,
     givenNames: "Test",
-    surname: "Officer2",
+    surname: "Agent2",
   },
   // US_ID - IDAHO
   {
