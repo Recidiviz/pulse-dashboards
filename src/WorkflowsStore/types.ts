@@ -113,6 +113,10 @@ export type JusticeInvolvedPerson = {
    * Unique, reversible identifier for PII-restricted contexts
    */
   pseudonymizedId: string;
+  /**
+   * person identifier for human use: may not be unique/consistent
+   */
+  displayId: string;
   stateCode: string;
   fullName: FullName;
   displayName: string;

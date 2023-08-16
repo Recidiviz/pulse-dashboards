@@ -61,7 +61,7 @@ export const MilestonesCapsule = observer(function MilestonesCapsule({
         <PersonName className="PersonName fs-exclude">
           {person.displayName}
         </PersonName>
-        <PersonId className="fs-exclude">{person.externalId}</PersonId>
+        <PersonId className="fs-exclude">{person.displayId}</PersonId>
       </PersonInfo>
     </Wrapper>
   );

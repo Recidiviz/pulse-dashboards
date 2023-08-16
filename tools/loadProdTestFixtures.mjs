@@ -37,6 +37,7 @@ const testClient = {
   ],
   officerId: "RECIDIVIZ_STAFF_ID",
   personExternalId: "RECIDIVIZ",
+  displayId: "dRECIDIVIZ",
   personName: {
     givenNames: "Recidiviz",
     surname: "Test Client",

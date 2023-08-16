@@ -80,6 +80,7 @@ describe("Client", () => {
       allEligibleOpportunities: [],
       officerId: "OFFICER1",
       personExternalId: "PERSON1",
+      displayId: "dPERSON1",
       personName: { givenNames: "Real", surname: "Person" },
       pseudonymizedId: "anon1",
       recordId: "us_xx_PERSON1",

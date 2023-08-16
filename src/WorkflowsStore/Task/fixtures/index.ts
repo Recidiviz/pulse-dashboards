@@ -23,6 +23,7 @@ export const supervisionTaskClientRecord: ClientRecord = {
   recordId: "us_xx_102",
   personName: { givenNames: "REBEKAH", surname: "CORTES" },
   personExternalId: "102",
+  displayId: "d102",
   pseudonymizedId: "p102",
   stateCode: "US_XX",
   officerId: "OFFICER1",

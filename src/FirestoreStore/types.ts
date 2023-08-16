@@ -184,6 +184,7 @@ export type JusticeInvolvedPersonRecord = {
   recordId: string;
   personExternalId: string;
   pseudonymizedId: string;
+  displayId: string;
   stateCode: string;
   personName: FullName;
   allEligibleOpportunities:

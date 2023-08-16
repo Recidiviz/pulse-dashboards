@@ -135,10 +135,10 @@ export const JusticeInvolvedPersonCapsule = observer(
               </PersonName>
             </TooltipTrigger>
             {!hideId && (
-              <React.Fragment key="personExternalId">
+              <>
                 <Separator>{responsiveRevamp ? " " : " • "}</Separator>
-                <PersonId className="fs-exclude">{person.externalId}</PersonId>
-              </React.Fragment>
+                <PersonId className="fs-exclude">{person.displayId}</PersonId>
+              </>
             )}
           </IdentityEl>
           <StatusEl className="WorkflowsStatus fs-exclude">{status}</StatusEl>

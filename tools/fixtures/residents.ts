@@ -28,6 +28,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     officerId: "OFFICER5",
     stateCode: "US_ME",
     personExternalId: "RES001",
+    displayId: "dRES001",
     personName: {
       givenNames: "First",
       surname: "Resident",
@@ -50,6 +51,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     officerId: "OFFICER5",
     stateCode: "US_ME",
     personExternalId: "RES002",
+    displayId: "dRES002",
     personName: {
       givenNames: "Second",
       surname: "Resident",
@@ -71,6 +73,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     officerId: "OFFICER5",
     stateCode: "US_ME",
     personExternalId: "RES003",
+    displayId: "dRES003",
     personName: {
       givenNames: "Third",
       surname: "Resident",
@@ -89,6 +92,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES004",
+    displayId: "dRES004",
     personName: {
       givenNames: "Fourth",
       surname: "Resident",
@@ -104,6 +108,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES005",
+    displayId: "dRES005",
     personName: {
       givenNames: "Fifth",
       surname: "Resident",
@@ -119,6 +124,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES006",
+    displayId: "dRES006",
     personName: {
       givenNames: "Sixth",
       surname: "Resident",
@@ -134,6 +140,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     officerId: "OFFICER5",
     stateCode: "US_TN",
     personExternalId: "RES001",
+    displayId: "dRES001",
     personName: {
       givenNames: "First",
       surname: "Resident",
@@ -150,6 +157,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     officerId: "OFFICER5",
     stateCode: "US_TN",
     personExternalId: "RES002",
+    displayId: "dRES002",
     personName: {
       givenNames: "Second",
       surname: "Resident",

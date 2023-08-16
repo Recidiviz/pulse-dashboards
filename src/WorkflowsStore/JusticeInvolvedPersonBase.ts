@@ -155,6 +155,10 @@ export class JusticeInvolvedPersonBase<
     return this.record.pseudonymizedId;
   }
 
+  get displayId(): string {
+    return this.record.displayId;
+  }
+
   get stateCode(): string {
     return this.record.stateCode.toUpperCase();
   }

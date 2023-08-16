@@ -75,6 +75,7 @@ export const ineligibleClient: ClientRecord = {
     surname: "THOMPSON",
   },
   personExternalId: "100",
+  displayId: "d100",
   pseudonymizedId: "p100",
   stateCode: "US_XX",
   officerId: "OFFICER1",
@@ -133,6 +134,7 @@ export const eligibleClient: ClientRecord = {
   recordId: "us_xx_101",
   personName: { givenNames: "LINET", surname: "HANSEN" },
   personExternalId: "101",
+  displayId: "d101",
   pseudonymizedId: "p101",
   stateCode: "US_XX",
   officerId: "OFFICER1",
@@ -174,6 +176,7 @@ export const lsuEligibleClient: ClientRecord = {
   recordId: "us_xx_102",
   personName: { givenNames: "REBEKAH", surname: "CORTES" },
   personExternalId: "102",
+  displayId: "d102",
   pseudonymizedId: "p102",
   stateCode: "US_XX",
   officerId: "OFFICER1",
@@ -213,6 +216,7 @@ export const lsuAlmostEligibleClient: ClientRecord = {
   recordId: "us_xx_103",
   personName: { givenNames: "CHAD", surname: "KROGER" },
   personExternalId: "103",
+  displayId: "d103",
   pseudonymizedId: "p103",
   stateCode: "US_XX",
   officerId: "OFFICER1",
@@ -256,6 +260,7 @@ export const milestonesClient: ClientRecord = {
   recordId: "us_xx_104",
   personName: { givenNames: "MICKEY", surname: "MOUSE" },
   personExternalId: "104",
+  displayId: "d104",
   pseudonymizedId: "p104",
 };
 
@@ -283,6 +288,7 @@ export const mockResidents: ResidentRecord[] = [
     releaseDate: "2023-09-22",
     unitId: "UNIT E",
     personExternalId: "999",
+    displayId: "d999",
   },
 ];
 
