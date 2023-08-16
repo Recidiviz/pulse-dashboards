@@ -18,6 +18,7 @@ import { compact } from "lodash";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { SpecialConditionCode } from "../../../FirestoreStore";
+import flags from "../../../flags";
 import { ParsedSpecialConditionOrString } from "../../Client";
 import { UsTnExpirationOpportunity } from "../UsTnExpirationOpportunity";
 import {
@@ -127,7 +128,7 @@ export class UsTnExpirationForm extends FormBase<
 
       const { person } = this.opportunity;
 
-      return {
+      const prefilledFields: Partial<UsTnExpirationDraftData> = {
         contactTypes: contactTypes(form.latestVrr?.contactType.toUpperCase()),
         expirationDate: formatFormValueDateMMDDYYYYY(
           criterion.supervisionPastFullTermCompletionDateOrUpcoming1Day
@@ -181,8 +182,15 @@ export class UsTnExpirationForm extends FormBase<
           ? voterRightsText(form.latestVrr.contactType.toUpperCase())
           : "",
         gangAffiliation: displayString(form.gangAffiliationId),
-        newOffenses: formatOffenseList(form.newOffenses),
-        alcoholDrugInformation: formatOffenseList(form.alcoholHistory),
       };
+
+      if (flags.enableTepeAdditionalFields) {
+        prefilledFields.newOffenses = formatOffenseList(form.newOffenses);
+        prefilledFields.alcoholDrugInformation = formatOffenseList(
+          form.alcoholHistory
+        );
+      }
+
+      return prefilledFields;
     };
 }

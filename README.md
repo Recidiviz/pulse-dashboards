@@ -265,7 +265,7 @@ To generate new fixture data, run `./tools/generate_pathways_fixtures.sh`.
 
 To load fixture data from a GCS bucket, run `gsutil -m cp "gs://$BUCKET_NAME/US_OZ/*.csv" ./server/core/demo_data/`.
 
-To swap out the backend for a specific metric, set its id to "OLD" or "NEW in the development `metricBackendOverrides` section in [flags.js](https://github.com/Recidiviz/pulse-dashboards/blob/main/src/flags.js). To swap out the backend for all supported metrics, change the `defaultMetricBackend` to "OLD" or "NEW".
+To swap out the backend for a specific metric, set its id to "OLD" or "NEW in the development `metricBackendOverrides` section in [flags.ts](https://github.com/Recidiviz/pulse-dashboards/blob/main/src/flags.ts). To swap out the backend for all supported metrics, change the `defaultMetricBackend` to "OLD" or "NEW".
 
 ## Deploys
 
