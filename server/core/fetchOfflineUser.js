@@ -31,6 +31,8 @@ function fetchOfflineUser({
     picture:
       "https://ui-avatars.com/api/?name=Demo+Jones&background=0D8ABC&color=fff&rounded=false",
     name,
+    given_name: "Demo",
+    family_name: "Jones",
     email,
     [`${process.env.METADATA_NAMESPACE}app_metadata`]: {
       stateCode,

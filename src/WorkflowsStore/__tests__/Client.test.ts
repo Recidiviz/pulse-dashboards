@@ -56,8 +56,11 @@ describe("Client", () => {
       .spyOn(rootStore.workflowsStore, "currentUserEmail", "get")
       .mockReturnValue("staff@email.com");
     jest
+      .spyOn(rootStore.userStore, "userSurname", "get")
+      .mockReturnValue("Smith");
+    jest
       .spyOn(rootStore.userStore, "userFullName", "get")
-      .mockReturnValue("Officer Name");
+      .mockReturnValue("Firstname Smith");
     jest
       .spyOn(rootStore.userStore, "userHash", "get")
       .mockReturnValue("123-hash");
@@ -108,9 +111,9 @@ describe("Client", () => {
           by: "staff@email.com",
           date: "2023-06-12",
         },
-        message: dedent`Message from Officer Name at CDCR:
+        message: dedent`Message from Agent Smith at CDCR:
 
-          Hey Real Person! Congratulations on reaching these milestones:
+          Hey Real! Congratulations on reaching these milestones:
 
           - 6 months violation-free
 
@@ -131,9 +134,9 @@ describe("Client", () => {
           by: "staff@email.com",
           date: "2023-06-12",
         },
-        message: dedent`Message from Officer Name at CDCR:
+        message: dedent`Message from Agent Smith at CDCR:
 
-          Hey Real Person! Congratulations on reaching these milestones:
+          Hey Real! Congratulations on reaching these milestones:
 
           - 6 months violation-free`,
         stateCode: "US_XX",
@@ -152,9 +155,9 @@ describe("Client", () => {
           by: "staff@email.com",
           date: "2023-06-12",
         },
-        message: dedent`Message from Officer Name at CDCR:
+        message: dedent`Message from Agent Smith at CDCR:
 
-          Hey Real Person! Congratulations on reaching these milestones:
+          Hey Real! Congratulations on reaching these milestones:
 
           - 6 months violation-free`,
         stateCode: "US_XX",

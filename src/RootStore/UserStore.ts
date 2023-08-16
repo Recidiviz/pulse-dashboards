@@ -510,7 +510,11 @@ export default class UserStore {
 
   get userFullName(): string | undefined {
     const givenName = this.user?.info?.givenNames || this.user?.given_name;
-    const surname = this.user?.info?.surname || this.user?.surname;
+    const surname = this.user?.info?.family_name || this.user?.family_name;
     return [givenName ?? "", surname ?? ""].join(" ").trim();
+  }
+
+  get userSurname(): string | undefined {
+    return this.user?.info?.family_name || this.user?.family_name;
   }
 }

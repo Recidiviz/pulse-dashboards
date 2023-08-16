@@ -37,7 +37,7 @@ jest.mock("../../../components/StoreProvider");
 const useRootStoreMock = useRootStore as jest.Mock;
 
 const baseRootStoreMock = {
-  userStore: { userFullName: "Officer name" },
+  userStore: { userSurname: "Smith", userFullName: "Firstname Smith" },
   workflowsStore: {
     availableOfficers: [],
     updateSelectedPerson: () => null,

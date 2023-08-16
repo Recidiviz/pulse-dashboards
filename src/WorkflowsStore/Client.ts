@@ -37,6 +37,7 @@ import {
 } from "../FirestoreStore/types";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
+import { humanReadableTitleCase } from "../utils";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import {
   CompliantReportingOpportunity,
@@ -522,19 +523,22 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   get defaultMilestonesMessage(): string {
     const {
-      userStore: { userFullName },
+      userStore: { userSurname },
     } = this.rootStore;
 
+    const clientName = this.preferredName ?? this.fullName.givenNames;
+    const salutation = clientName
+      ? `Hey ${humanReadableTitleCase(clientName)}!`
+      : `Hey!`;
+
     return dedent`
-    Message from ${userFullName} at ${
+    Message from Agent ${userSurname} at ${
       !this.rootStore.currentTenantId
         ? "DOC"
         : tenants[this.rootStore.currentTenantId].DOCName
     }:
 
-    Hey ${
-      this.displayPreferredName ?? this.fullName.givenNames ?? ""
-    }! Congratulations on reaching these milestones:
+    ${salutation} Congratulations on reaching these milestones:
 
     ${this.congratulationsMilestones.map((m) => `- ${m.text}`).join("\n")}
   `;
