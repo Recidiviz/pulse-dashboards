@@ -34,8 +34,8 @@ const CRITERIA_FORMATTERS: CriteriaFormatters<UsMiMinimumTelephoneReportingRefer
   {
     eligibleCriteria: {
       usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
-        COMPAS_SCORE: ({ initialAssessmentLevelRawText }) =>
-          toTitleCase(initialAssessmentLevelRawText),
+        COMPAS_SCORE: ({ initialAssessmentLevel }) =>
+          toTitleCase(initialAssessmentLevel),
       },
     },
   } as const;

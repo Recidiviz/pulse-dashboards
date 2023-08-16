@@ -10,7 +10,7 @@ Object {
     "usMiNotRequiredToRegisterUnderSora": null,
     "usMiNotServingIneligibleOffensesForTelephoneReporting": null,
     "usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting": Object {
-      "initialAssessmentLevelRawText": "MEDIUM",
+      "initialAssessmentLevel": "MEDIUM",
       "supervisionLevelRawText": "MEDIUM",
     },
   },

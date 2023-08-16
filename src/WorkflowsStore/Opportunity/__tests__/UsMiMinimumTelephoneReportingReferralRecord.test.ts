@@ -27,7 +27,7 @@ test("transform record", () => {
     eligibleCriteria: {
       onMinimumSupervisionAtLeastSixMonths: null,
       usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
-        initialAssessmentLevelRawText: "MEDIUM",
+        initialAssessmentLevel: "MEDIUM",
         supervisionLevelRawText: "MEDIUM",
       },
       usMiNotServingIneligibleOffensesForTelephoneReporting: null,

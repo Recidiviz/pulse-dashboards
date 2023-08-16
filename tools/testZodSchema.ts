@@ -32,6 +32,7 @@ import { usMeFurloughReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsM
 import { usMeSCCPSchema } from "../src/WorkflowsStore/Opportunity/UsMeSCCPReferralRecord";
 import { usMiClassificationReviewSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsMiClassificationReviewReferralRecord";
 import { usMiEarlyDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsMiEarlyDischargeReferralRecord";
+import { usMiMinimumTelephoneReportingSchema } from "../src/WorkflowsStore/Opportunity/UsMiMinimumTelephoneReportingReferralRecord";
 import { usMiPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsMiPastFTRDReferralRecord";
 import { usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsMiSupervisionLevelDowngradeReferralRecord";
 import { usMoRestrictiveHousingStatusHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
@@ -84,6 +85,7 @@ const SCHEMAS = {
   usMeFurloughReleaseReferrals: usMeFurloughReleaseSchema,
   usCaSupervisionLevelDowngradeReferrals: usCaSupervisionLevelDowngradeSchema,
   usMiEarlyDischargeReferrals: usMiEarlyDischargeSchema,
+  usMiMinimumTelephoneReportingReferrals: usMiMinimumTelephoneReportingSchema,
 } satisfies Partial<Record<CollectionName, z.ZodTypeAny>>;
 
 (async () => {

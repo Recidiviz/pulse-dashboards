@@ -32,7 +32,7 @@ const criteria = z.object({
     .nullable(),
   usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: z.object({
     supervisionLevelRawText: z.string(),
-    initialAssessmentLevelRawText: z.string(),
+    initialAssessmentLevel: z.string(),
   }),
   usMiNotServingIneligibleOffensesForTelephoneReporting: z
     .object({
@@ -44,7 +44,7 @@ const criteria = z.object({
     .nullable(),
   supervisionNotPastFullTermCompletionDateOrUpcoming90Days: z
     .object({
-      eligibleDate: dateStringSchema,
+      eligibleDate: dateStringSchema.nullable(),
     })
     .nullable(),
   usMiNotRequiredToRegisterUnderSora: z
