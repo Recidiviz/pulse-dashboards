@@ -96,6 +96,8 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         CompliantReportingAlmostEligible: {},
         usTnExpiration: {},
         usTnExpirationSubmitToTomis: {},
+        usMeFurloughRelease: {},
+        usMeWorkRelease: {},
       }
     : {
         TEST: {},
