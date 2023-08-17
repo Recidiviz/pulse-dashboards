@@ -35,7 +35,7 @@ const DENIAL_REASONS_MAP = {
   "CASE PLAN": "Not compliant with case plan goals",
   PROGRAM: "Has not completed required core programming",
   DISCIPLINE: "Has a Class A or B disciplinary violation pending",
-  DECLINE: "Resident declined opportunity to apply for SCCP",
+  DECLINE: "Resident declined opportunity to apply for Furlough",
   [OTHER_KEY]: "Other, please specify a reason",
 };
 

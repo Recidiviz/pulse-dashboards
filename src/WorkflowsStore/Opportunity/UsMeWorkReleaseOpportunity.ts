@@ -21,6 +21,7 @@ import { computed, makeObservable } from "mobx";
 
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { Resident } from "../Resident";
+import { OTHER_KEY } from "../utils";
 import { UsMeWorkReleaseForm } from "./Forms/UsMeWorkReleaseForm";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityRequirement } from "./types";
@@ -32,9 +33,10 @@ import {
 
 const DENIAL_REASONS_MAP = {
   "CASE PLAN": "Not compliant with case plan goals",
-  PROGRAM:
-    "Has not completed, or is not currently participating in, required core programming",
+  PROGRAM: "Has not completed required core programming",
+  DISCIPLINE: "Has a Class A or B disciplinary violation pending",
   DECLINE: "Resident declined opportunity to apply for Work Release",
+  [OTHER_KEY]: "Other, please specify a reason",
 };
 
 const ELIGIBLE_CRITERIA_COPY: Record<
