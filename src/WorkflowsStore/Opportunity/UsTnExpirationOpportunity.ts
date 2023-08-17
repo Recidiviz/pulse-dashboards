@@ -44,7 +44,7 @@ const DENIAL_REASONS_MAP = {
 };
 
 const CRITERIA: Record<
-  keyof Required<UsTnExpirationReferralRecord>["criteria"],
+  keyof Required<UsTnExpirationReferralRecord>["eligibleCriteria"],
   OpportunityRequirement
 > = {
   supervisionPastFullTermCompletionDateOrUpcoming1Day: {
@@ -59,7 +59,7 @@ const CRITERIA: Record<
 };
 
 export function hydrateExpirationDateRequirementText(
-  criterion: Required<UsTnExpirationReferralRecord>["criteria"]["supervisionPastFullTermCompletionDateOrUpcoming1Day"]
+  criterion: Required<UsTnExpirationReferralRecord>["eligibleCriteria"]["supervisionPastFullTermCompletionDateOrUpcoming1Day"]
 ) {
   const eligibleDate = criterion?.eligibleDate;
   const today = new Date();
@@ -110,22 +110,22 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
 
-    const { criteria } = this.record;
+    const { eligibleCriteria } = this.record;
     const requirements: OpportunityRequirement[] = [];
 
-    if (criteria?.supervisionPastFullTermCompletionDateOrUpcoming1Day) {
+    if (eligibleCriteria?.supervisionPastFullTermCompletionDateOrUpcoming1Day) {
       requirements.push({
         text: hydrateExpirationDateRequirementText(
-          criteria.supervisionPastFullTermCompletionDateOrUpcoming1Day
+          eligibleCriteria.supervisionPastFullTermCompletionDateOrUpcoming1Day
         ),
         tooltip:
           CRITERIA.supervisionPastFullTermCompletionDateOrUpcoming1Day.tooltip,
       });
     }
-    if (criteria?.usTnNoZeroToleranceCodesSpans) {
+    if (eligibleCriteria?.usTnNoZeroToleranceCodesSpans) {
       requirements.push(CRITERIA.usTnNoZeroToleranceCodesSpans);
     }
-    if (criteria?.usTnNotOnLifeSentenceOrLifetimeSupervision) {
+    if (eligibleCriteria?.usTnNotOnLifeSentenceOrLifetimeSupervision) {
       requirements.push(CRITERIA.usTnNotOnLifeSentenceOrLifetimeSupervision);
     }
 
@@ -133,7 +133,7 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
   }
 
   get eligibilityDate(): Date | undefined {
-    return this.record?.criteria
+    return this.record?.eligibleCriteria
       ?.supervisionPastFullTermCompletionDateOrUpcoming1Day?.eligibleDate;
   }
 

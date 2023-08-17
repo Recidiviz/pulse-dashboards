@@ -49,7 +49,7 @@ export const usTnExpirationSchema = opportunitySchemaBase
       convictionCounties: z.array(z.string()),
       gangAffiliationId: z.string().optional(),
     }),
-    criteria: z.object({
+    eligibleCriteria: z.object({
       supervisionPastFullTermCompletionDateOrUpcoming1Day: z.object({
         eligibleDate: dateStringSchema,
       }),
@@ -57,13 +57,16 @@ export const usTnExpirationSchema = opportunitySchemaBase
         { zeroToleranceCodeDates: undefined },
         z
           .object({
-            zeroToleranceCodeDates: z.array(dateStringSchema).optional(),
+            zeroToleranceCodeDates: z.array(dateStringSchema).nullish(),
           })
           .optional()
       ),
-      usTnNotOnLifeSentenceOrLifetimeSupervision: z.object({
-        lifetimeFlag: z.boolean(),
-      }),
+      usTnNotOnLifeSentenceOrLifetimeSupervision: NullCoalesce(
+        {},
+        z.object({
+          lifetimeFlag: z.boolean().optional(),
+        })
+      ),
     }),
   })
   .merge(caseNotesSchema);
@@ -107,7 +110,7 @@ export function getValidator(
 ): ValidateFunction<UsTnExpirationReferralRecord> {
   return (transformedRecord) => {
     const { eligibleDate } =
-      transformedRecord.criteria
+      transformedRecord.eligibleCriteria
         .supervisionPastFullTermCompletionDateOrUpcoming1Day;
 
     if (eligibleDate.getTime() !== client.expirationDate?.getTime())

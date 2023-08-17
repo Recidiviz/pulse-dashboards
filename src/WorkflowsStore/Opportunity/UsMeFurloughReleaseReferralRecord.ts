@@ -48,9 +48,9 @@ export const usMeFurloughReleaseSchema = opportunitySchemaBase
           detainerStartDate: dateStringSchema.nullable(),
         })
         .nullable(),
-      usMeServedHalfOfSentence: eligibleDateSchema,
+      usMeServedHalfOfSentence: eligibleDateSchema.optional(),
     }),
-    ineligibleCriteria: z.strictObject({}),
+    ineligibleCriteria: z.object({}),
   })
   .merge(caseNotesSchema);
 

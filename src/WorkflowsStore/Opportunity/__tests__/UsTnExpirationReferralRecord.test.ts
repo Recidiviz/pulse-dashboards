@@ -80,7 +80,7 @@ const usTnExpirationRecordRaw = {
       },
     ],
   },
-  criteria: {
+  eligibleCriteria: {
     supervisionPastFullTermCompletionDateOrUpcoming1Day: {
       eligibleDate: "2022-03-03",
     },

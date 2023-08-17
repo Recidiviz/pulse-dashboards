@@ -17,6 +17,7 @@
 // =============================================================================
 
 import { Firestore } from "@google-cloud/firestore";
+import { ArgumentParser } from "argparse";
 import prompts from "prompts";
 import { z } from "zod";
 
@@ -62,6 +63,8 @@ function getDb() {
   return new Firestore(fsSettings);
 }
 
+const db = getDb();
+
 const SCHEMAS = {
   earlyTerminationReferrals: usNdEarlyTerminationSchema,
   pastFTRDReferrals: usIdPastFTRDSchema,
@@ -88,42 +91,110 @@ const SCHEMAS = {
   usMiMinimumTelephoneReportingReferrals: usMiMinimumTelephoneReportingSchema,
 } satisfies Partial<Record<CollectionName, z.ZodTypeAny>>;
 
-(async () => {
-  const selection = await prompts([
-    {
-      type: "select",
-      name: "collection",
-      message: `schema you want to test against ${FIREBASE_PROJECT}`,
-      choices: Object.keys(SCHEMAS).map((k) => ({
-        title: k,
-        value: k,
-      })),
-    },
-    {
-      type: "number",
-      name: "limit",
-      message: "Sample size limit? (enter 0 to test entire collection)",
-      initial: 0,
-    },
-  ]);
-
-  const collectionName = selection.collection as keyof typeof SCHEMAS;
+async function testCollection(
+  collectionName: keyof typeof SCHEMAS,
+  limit?: number
+) {
   const schema = SCHEMAS[collectionName];
-
-  const db = getDb();
   const coll = db.collection(collectionNames[collectionName]);
-  const query = selection.limit ? coll.limit(selection.limit) : coll;
+  const query = limit ? coll.limit(limit) : coll;
 
   let succeeded = 0;
   let failed = 0;
+  const failures: Record<string, z.ZodIssue[]> = {};
   (await query.get()).docs.forEach((d) => {
     const result = schema.safeParse(d.data());
     if (!result.success) {
       failed += 1;
-      console.error(d.id, JSON.stringify(result.error.issues, null, 2));
+      failures[d.id] = result.error.issues;
     } else {
       succeeded += 1;
     }
   });
-  console.log({ succeeded, failed });
-})();
+  return { succeeded, failed, failures };
+}
+
+async function automatic() {
+  Object.keys(SCHEMAS).forEach(async (collection) => {
+    const collectionName = collection as keyof typeof SCHEMAS;
+    const { failures, ...result } = await testCollection(collectionName);
+    // don't print failures so we don't leave PII in the github logs
+    console.log(collectionName, result);
+    if (result.failed > 0) process.exit(1);
+  });
+}
+
+async function manual(args: Args) {
+  let collection;
+  let limit;
+  if (args.collection) {
+    ({ collection, limit } = args);
+  } else {
+    ({ collection, limit } = await prompts([
+      {
+        type: "select",
+        name: "collection",
+        message: `schema you want to test against ${FIREBASE_PROJECT}`,
+        choices: Object.keys(SCHEMAS).map((k) => ({
+          title: k,
+          value: k,
+        })),
+      },
+      {
+        type: "number",
+        name: "limit",
+        message: "Sample size limit? (enter 0 to test entire collection)",
+        initial: 0,
+      },
+    ]));
+  }
+
+  if (!(collection in SCHEMAS)) {
+    console.error("Unrecognized collection name");
+  }
+
+  const { failures, ...result } = await testCollection(
+    collection as keyof typeof SCHEMAS,
+    limit
+  );
+
+  if (result.failed) console.log(JSON.stringify(failures, null, 2));
+  console.log(result);
+}
+
+const parser = new ArgumentParser({
+  description: "Test schemas against real firestore data",
+});
+
+parser.add_argument("-a", "--all", {
+  dest: "all",
+  action: "store_true",
+  help: "Test all collections",
+});
+
+parser.add_argument("-c", "--collection", {
+  dest: "collection",
+  default: null,
+  help: "Test COLLECTION",
+});
+
+parser.add_argument("-l", "--limit", {
+  dest: "limit",
+  type: "int",
+  default: null,
+  help: "Test only this many records (ignored by --all)",
+});
+
+type Args = {
+  all: boolean;
+  collection?: string;
+  limit?: number;
+};
+
+const args = parser.parse_args() as Args;
+
+if (args.all) {
+  automatic();
+} else {
+  manual(args);
+}

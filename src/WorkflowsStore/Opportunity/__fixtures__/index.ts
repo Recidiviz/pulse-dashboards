@@ -229,7 +229,7 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord =
         },
       ],
     },
-    criteria: {
+    eligibleCriteria: {
       supervisionPastFullTermCompletionDateOrUpcoming1Day: {
         eligibleDate: parseISO("2022-02-02"),
       },

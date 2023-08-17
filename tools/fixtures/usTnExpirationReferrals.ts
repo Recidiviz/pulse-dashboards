@@ -85,7 +85,7 @@ const data: UsTnExpirationReferralRecordRaw[] = [
         },
       ],
     },
-    criteria: {
+    eligibleCriteria: {
       supervisionPastFullTermCompletionDateOrUpcoming1Day: {
         eligibleDate: "2022-02-11",
       },

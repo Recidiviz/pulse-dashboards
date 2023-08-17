@@ -123,7 +123,7 @@ export class UsTnExpirationForm extends FormBase<
     () => {
       if (!this.opportunity.record) return {};
 
-      const { formInformation: form, criteria: criterion } =
+      const { formInformation: form, eligibleCriteria: criterion } =
         this.opportunity.record;
 
       const { person } = this.opportunity;

@@ -93,7 +93,7 @@ describe("fully eligible", () => {
     tk.freeze(new Date(2022, 1, 2, 16, 30));
 
     const actual = hydrateExpirationDateRequirementText(
-      UsTnExpirationReferralRecordFixture.criteria
+      UsTnExpirationReferralRecordFixture.eligibleCriteria
         .supervisionPastFullTermCompletionDateOrUpcoming1Day
     );
 
@@ -105,7 +105,7 @@ describe("fully eligible", () => {
     tk.freeze(new Date(2022, 1, 3, 16, 30));
 
     const actual = hydrateExpirationDateRequirementText(
-      UsTnExpirationReferralRecordFixture.criteria
+      UsTnExpirationReferralRecordFixture.eligibleCriteria
         .supervisionPastFullTermCompletionDateOrUpcoming1Day
     );
 

@@ -20,6 +20,7 @@ import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
+import { FeatureGateError } from "../../errors";
 import { Resident } from "../Resident";
 import { OTHER_KEY } from "../utils";
 import { UsMeFurloughReleaseForm } from "./Forms/UsMeFurloughReleaseForm";
@@ -149,7 +150,14 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
       resident,
       "usMeFurloughRelease",
       resident.rootStore,
-      usMeFurloughReleaseSchema.parse
+      usMeFurloughReleaseSchema.parse,
+      ({ eligibleCriteria: { usMeServedHalfOfSentence } }) => {
+        if (!usMeServedHalfOfSentence) {
+          throw new FeatureGateError(
+            "UsMeFurloughReleaseOpportunity doesn't yet support Almost Eligible"
+          );
+        }
+      }
     );
     this.resident = resident;
 
