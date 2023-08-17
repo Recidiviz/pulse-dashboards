@@ -44,6 +44,9 @@ const baseWorkflowsStoreMock = {
   featureVariants: {
     responsiveRevamp: {},
   },
+  rootStore: {
+    currentTenantId: "US_XX",
+  },
 };
 
 describe("WorkflowsHomepage", () => {

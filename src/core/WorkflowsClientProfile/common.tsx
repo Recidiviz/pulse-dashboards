@@ -16,6 +16,7 @@
 // =============================================================================
 
 import {
+  Button,
   Icon,
   palette,
   spacing,
@@ -24,6 +25,28 @@ import {
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
+
+export const PillButton = styled(Button).attrs({ kind: "secondary" })<{
+  active?: boolean;
+}>`
+  color: ${palette.slate85};
+  min-width: unset;
+  min-height: unset;
+  padding: ${rem(spacing.sm)} ${rem(spacing.md)};
+  margin: 0 ${rem(spacing.sm)} ${rem(spacing.sm)} 0;
+  display: inline-block;
+  ${({ active }) =>
+    active &&
+    `background-color: ${palette.slate10}; border-color: transparent;`}
+
+  &:hover {
+    background-color: ${palette.slate10};
+  }
+
+  &:focus:not(:hover) {
+    ${({ active }) => !active && `background-color: unset;`}
+  }
+`;
 
 export const InfoTooltipWrapper = styled(TooltipTrigger)`
   vertical-align: text-bottom;

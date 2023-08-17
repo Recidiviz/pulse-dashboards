@@ -22,6 +22,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord } from "../../utils";
 import { OPPORTUNITY_LABELS, OpportunityType } from "../../WorkflowsStore";
 import { CaseloadSelect } from "../CaseloadSelect";
+import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
@@ -47,18 +48,18 @@ function getSelectOpportunitiesText(
 
 const WorkflowsHomepage = observer(
   function WorkflowsHomepage(): React.ReactElement | null {
+    const { workflowsStore } = useRootStore();
+
     const {
-      workflowsStore: {
-        selectedSearchIds,
-        opportunityTypes,
-        allOpportunitiesByType,
-        user,
-        workflowsSearchFieldTitle,
-        supportsMultipleSystems,
-        justiceInvolvedPersonTitle,
-        featureVariants,
-      },
-    } = useRootStore();
+      selectedSearchIds,
+      opportunityTypes,
+      allOpportunitiesByType,
+      user,
+      workflowsSearchFieldTitle,
+      supportsMultipleSystems,
+      justiceInvolvedPersonTitle,
+      featureVariants,
+    } = workflowsStore;
 
     const initialCallToAction = supportsMultipleSystems
       ? `Search above to review and refer people eligible for opportunities like  ${getSelectOpportunitiesText(
@@ -116,6 +117,7 @@ const WorkflowsHomepage = observer(
 
     return (
       <WorkflowsNavLayout>
+        <CaseloadTypeSelect />
         <CaseloadSelect />
         <CaseloadOpportunitiesHydrator
           {...{ initial, empty, hydrated, opportunityTypes }}
