@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette, spacing } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemButton,
-  AccordionItemPanel,
-} from "react-accessible-accordion";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
@@ -52,24 +46,6 @@ const PersonList = styled.ul`
 
   @media screen and (min-width: ${cssVars.breakpointSm}) {
     grid-template-columns: 50% 50%;
-  }
-`;
-
-const AccordionButton = styled(AccordionItemButton)`
-  &:after {
-    display: inline-block;
-    content: "";
-    height: 8px;
-    width: 8px;
-    margin-left: ${rem(spacing.sm)};
-    border-bottom: 1px solid ${palette.slate70};
-    border-right: 1px solid ${palette.slate70};
-    transform: rotate(-45deg);
-  }
-
-  &[aria-expanded="true"]::after,
-  &[aria-selected="true"]::after {
-    transform: rotate(45deg);
   }
 `;
 
@@ -127,10 +103,6 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
     .filter((opp) => !!opp)
     .flat()[0]?.sectionOrder;
 
-  const deniedSectionTitle = Object.values(opportunityTypeSections)
-    .filter((opp) => !!opp)
-    .flat()[0]?.deniedSectionTitle;
-
   const hydrated = (
     <>
       <Heading
@@ -146,52 +118,29 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
       <SubHeading className="PersonList__Subheading">
         {hydratedHeader.callToAction}
       </SubHeading>
-
       {sectionOrder?.map((sectionTitle) => {
-        if (!opportunityTypeSections[sectionTitle]?.length) {
-          return null;
-        }
-
-        const personList = (
-          <PersonList
-            key={`PersonList_${sectionTitle}`}
-            className={`PersonList_${sectionTitle} PersonList`}
-          >
-            {opportunityTypeSections[sectionTitle]?.map((opportunity) => (
-              <PersonListItem
-                key={opportunity.person.recordId}
-                opportunity={opportunity}
-              />
-            ))}
-          </PersonList>
-        );
-
-        if (
-          sectionTitle === deniedSectionTitle &&
-          Object.keys(opportunityTypeSections).length > 1
-        ) {
-          return (
-            <Accordion allowZeroExpanded>
-              <AccordionItem uuid={sectionTitle}>
-                <SectionLabelText>
-                  <AccordionButton>{sectionTitle}</AccordionButton>
-                </SectionLabelText>
-                <AccordionItemPanel>{personList}</AccordionItemPanel>
-              </AccordionItem>
-            </Accordion>
-          );
-        }
-
         return (
-          <div key={sectionTitle}>
-            {/* Only display the section title if there are multiple sections or the one we're
+          opportunityTypeSections[sectionTitle]?.length > 0 && (
+            <div key={sectionTitle}>
+              {/* Only display the section title if there are multiple sections or the one we're
               displaying isn't the first in the section order (such as "Almost Eligible") */}
-            {(Object.keys(opportunityTypeSections).length > 1 ||
-              sectionTitle !== sectionOrder[0]) && (
-              <SectionLabelText>{sectionTitle}</SectionLabelText>
-            )}
-            {personList}
-          </div>
+              {(Object.keys(opportunityTypeSections).length > 1 ||
+                sectionTitle !== sectionOrder[0]) && (
+                <SectionLabelText>{sectionTitle}</SectionLabelText>
+              )}
+              <PersonList
+                key={`PersonList_${sectionTitle}`}
+                className={`PersonList_${sectionTitle} PersonList`}
+              >
+                {opportunityTypeSections[sectionTitle]?.map((opportunity) => (
+                  <PersonListItem
+                    key={opportunity.person.recordId}
+                    opportunity={opportunity}
+                  />
+                ))}
+              </PersonList>
+            </div>
+          )
         );
       })}
     </>
