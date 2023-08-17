@@ -238,6 +238,7 @@ export interface Opportunity<
   sectionTitle?: SectionTitle;
   sectionOrder: Readonly<SectionTitle[]>;
   showEligibilityStatus: (component: Component) => boolean;
+  readonly portionServedRequirement?: string[];
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";

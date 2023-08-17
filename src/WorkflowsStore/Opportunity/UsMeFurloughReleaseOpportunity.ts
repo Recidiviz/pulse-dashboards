@@ -137,6 +137,8 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
 
   form: UsMeFurloughReleaseForm;
 
+  readonly portionServedRequirement = ["1/2"];
+
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "Incarceration",
     "CaseNotes",

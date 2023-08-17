@@ -87,6 +87,7 @@ export type IncarcerationOpportunityMapping = {
   usTnCustodyLevelDowngrade?: UsTnCustodyLevelDowngradeOpportunity;
   usMeFurloughRelease?: UsMeFurloughReleaseOpportunity;
 };
+
 // The following line will typecheck only if the keys of
 // IncarcerationOpportunityMapping are exhaustive
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

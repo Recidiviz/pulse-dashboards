@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { StaffRecord } from "../../FirestoreStore/types";
-import { staffNameComparator } from "../utils";
+import { fractionalDateBetweenTwoDates, staffNameComparator } from "../utils";
 
 test("staffNameComparator", () => {
   const sortableStaff: StaffRecord[] = [
@@ -76,4 +76,36 @@ test("staffNameComparator", () => {
       "Chad Doe-Adams",
     ]
   );
+});
+
+describe("fractionalDateBetweenTwoDates", () => {
+  it("should return the date 1/2 between the two dates", () => {
+    const dateLeft = new Date("2023-01-01");
+    const dateRight = new Date("2023-12-31");
+
+    const middleDate = new Date((dateLeft.getTime() + dateRight.getTime()) / 2);
+    const fractionalDate = fractionalDateBetweenTwoDates(
+      dateLeft,
+      dateRight,
+      0.5
+    ); // 0.5 for half
+
+    expect(fractionalDate).toEqual(middleDate);
+  });
+
+  it("should return the date 2/3 between the two dates", () => {
+    const dateLeft = new Date("2023-01-01");
+    const dateRight = new Date("2023-12-31");
+
+    const timeDifference = dateRight.getTime() - dateLeft.getTime();
+    const twoThirdsTime = dateLeft.getTime() + (2 / 3) * timeDifference;
+    const twoThirdsDate = new Date(twoThirdsTime);
+    const fractionalDate = fractionalDateBetweenTwoDates(
+      dateLeft,
+      dateRight,
+      2 / 3
+    );
+
+    expect(fractionalDate).toEqual(twoThirdsDate);
+  });
 });

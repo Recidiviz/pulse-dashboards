@@ -257,6 +257,8 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
 
   form: UsMeSCCPForm;
 
+  readonly portionServedRequirement = ["1/2", "2/3"];
+
   policyOrMethodologyUrl =
     "https://www.maine.gov/sos/cec/rules/03/201/c10s272.docx";
 

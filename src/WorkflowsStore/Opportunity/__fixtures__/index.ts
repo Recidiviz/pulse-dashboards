@@ -1061,6 +1061,40 @@ export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarl
     },
   };
 
+export const usMeVerifiedOpportunities = {
+  usMeSCCP: {
+    type: "usMeSCCP",
+    isLoading: false,
+    isHydrated: true,
+    portionServedRequirement: ["1/2", "2/3"],
+  },
+  usMeFurloughRelease: {
+    type: "usMeFurloughRelease",
+    isLoading: false,
+    isHydrated: true,
+    portionServedRequirement: ["1/2"],
+  },
+  usMeWorkRelease: {
+    type: "usMeWorkRelease",
+    isLoading: false,
+    isHydrated: true,
+  },
+  usMeEarlyTermination: {
+    type: "usMeEarlyTermination",
+    isLoading: false,
+    isHydrated: true,
+    portionServedRequirement: ["1/2"],
+  },
+};
+
+export const usTnVerifiedOpportunities = {
+  usTnExpirationOpportunity: {
+    type: "usTnExpiration",
+    isLoading: false,
+    isHydrated: true,
+  },
+};
+
 //
 // Missouri
 //

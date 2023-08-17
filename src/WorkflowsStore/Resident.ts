@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentRecord } from "../FirestoreStore";
+import { uniqBy } from "lodash";
+
+import { PortionServedDates, ResidentRecord } from "../FirestoreStore";
 import { RootStore } from "../RootStore";
 import tenants from "../tenants";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
@@ -29,7 +31,7 @@ import {
 import { UsMeFurloughReleaseOpportunity } from "./Opportunity/UsMeFurloughReleaseOpportunity";
 import { UsMeWorkReleaseOpportunity } from "./Opportunity/UsMeWorkReleaseOpportunity";
 import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTnCustodyLevelDowngradeOpportunity";
-import { optionalFieldToDate } from "./utils";
+import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";
 
 const residentialOpportunityConstructors: Record<
   IncarcerationOpportunityType,
@@ -87,5 +89,58 @@ export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
 
   get portionServedNeeded(): string | undefined {
     return this.record.portionServedNeeded;
+  }
+
+  get portionServedDates(): PortionServedDates {
+    const startDate = optionalFieldToDate(this.record.admissionDate);
+    const endDate = optionalFieldToDate(this.record.releaseDate);
+    const halfTimeDate = fractionalDateBetweenTwoDates(startDate, endDate, 0.5);
+    const twoThirdsTimeDate = fractionalDateBetweenTwoDates(
+      startDate,
+      endDate,
+      2 / 3
+    );
+
+    const opportunityDates: PortionServedDates = [];
+
+    const opportunities = Object.values(
+      this.rootStore.workflowsStore.selectedPerson?.verifiedOpportunities || {}
+    );
+
+    opportunities.forEach((opp) => {
+      if ("portionServedRequirement" in opp) {
+        const onProfilePageOrOppIsSelected =
+          this.rootStore.workflowsStore.selectedOpportunityType === undefined ||
+          this.rootStore.workflowsStore.selectedOpportunityType === opp.type;
+        if (onProfilePageOrOppIsSelected) {
+          if (opp.type === "usMeSCCP") {
+            if (
+              this.rootStore.workflowsStore.selectedResident
+                ?.portionServedNeeded === "1/2"
+            )
+              opportunityDates.push({
+                heading: "Half Time",
+                date: halfTimeDate,
+              });
+            if (
+              this.rootStore.workflowsStore.selectedResident
+                ?.portionServedNeeded === "2/3"
+            )
+              opportunityDates.push({
+                heading: "Two Thirds Time",
+                date: twoThirdsTimeDate,
+              });
+          } else if (
+            opp.portionServedRequirement &&
+            opp.portionServedRequirement.includes("1/2")
+          )
+            opportunityDates.push({
+              heading: "Half Time",
+              date: halfTimeDate,
+            });
+        }
+      }
+    });
+    return uniqBy(opportunityDates, "heading");
   }
 }

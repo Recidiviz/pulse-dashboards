@@ -37,11 +37,10 @@ import {
   ClientEmployer,
   ClientHousing,
   FinesAndFees,
-  HalfTime,
   Milestones,
+  PartialTime,
   ResidentHousing,
   SpecialConditions,
-  TwoThirdsTime,
 } from "./Details";
 import { OpportunitiesAccordion } from "./OpportunitiesAccordion";
 import { PreferredContact } from "./PreferredContact";
@@ -195,12 +194,8 @@ function ClientDetails({
       <Divider />
       <SupervisionProgress client={client} />
       <Divider />
-      <HalfTime
-        startDate={client.supervisionStartDate}
-        endDate={client.expirationDate}
-        stateCode={client.stateCode}
-      />
-      {client.stateCode === "US_ME" && <Divider />}
+      <PartialTime person={client} />
+      {client.portionServedDates.length > 0 && <Divider />}
       {client.profileMilestones.length > 0 && (
         <>
           <Milestones client={client} />
@@ -245,14 +240,8 @@ function ResidentDetails({
           </>
         )
       }
-      <HalfTime
-        startDate={resident.admissionDate}
-        endDate={resident.releaseDate}
-        stateCode={resident.stateCode}
-      />
-      {resident.stateCode === "US_ME" && <Divider />}
-      <TwoThirdsTime resident={resident} />
-      {resident.portionServedNeeded === "2/3" && <Divider />}
+      <PartialTime person={resident} />
+      {resident.portionServedDates.length > 0 && <Divider />}
       <ResidentHousing resident={resident} />
       <Divider />
     </>

@@ -73,6 +73,8 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
 
   readonly hideUnknownCaseNoteDates = true;
 
+  readonly portionServedRequirement = ["1/2"];
+
   constructor(client: Client) {
     super(
       client,

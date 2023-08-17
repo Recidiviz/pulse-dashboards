@@ -18,6 +18,7 @@
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { descending } from "d3-array";
 import { differenceInDays, parseJSON } from "date-fns";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
@@ -39,10 +40,6 @@ import {
   UsMoRestrictiveHousingStatusHearingReferralRecord,
 } from "../../WorkflowsStore/Opportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { Resident } from "../../WorkflowsStore/Resident";
-import {
-  middleDateBetweenTwoDates,
-  twoThirdsDateBetweenTwoDates,
-} from "../../WorkflowsStore/utils";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { Divider, InfoButton, InfoTooltipWrapper } from "./common";
@@ -217,70 +214,23 @@ export function SpecialConditions({
   );
 }
 
-interface HalfTimeProps {
-  startDate: Date | undefined;
-  endDate: Date | undefined;
-  stateCode: string;
-}
-
-export function HalfTime({
-  startDate,
-  endDate,
-  stateCode,
-}: HalfTimeProps): React.ReactElement {
-  const halfTimeDate = middleDateBetweenTwoDates(startDate, endDate);
-
-  if (stateCode === "US_ME") {
-    return (
-      <>
-        <DetailsSubheading>Half Time Date</DetailsSubheading>
-        <SecureDetailsContent>
-          {formatWorkflowsDate(halfTimeDate)}
-        </SecureDetailsContent>
-      </>
-    );
-  }
-  return <div />;
-}
-
-export function TwoThirdsTime({
-  resident,
+export const PartialTime = observer(function PartialTime({
+  person,
 }: {
-  resident: Resident;
-}): React.ReactElement {
-  const {
-    stateCode,
-    portionServedNeeded,
-    opportunitiesAlmostEligible,
-    opportunitiesEligible,
-  } = resident;
+  person: Resident | Client;
+}) {
+  const dates = person.portionServedDates;
+  const partialDates = dates.map((requirement) => (
+    <React.Fragment key={requirement.heading}>
+      <DetailsSubheading>{requirement.heading}</DetailsSubheading>
+      <SecureDetailsContent>
+        {formatWorkflowsDate(requirement.date)}
+      </SecureDetailsContent>
+    </React.Fragment>
+  ));
 
-  const SCCPEligibleOrAlmostEligible =
-    "usMeSCCP" in opportunitiesEligible ||
-    "usMeSCCP" in opportunitiesAlmostEligible;
-
-  if (
-    stateCode === "US_ME" &&
-    portionServedNeeded === "2/3" &&
-    SCCPEligibleOrAlmostEligible
-  ) {
-    return (
-      <>
-        <DetailsSubheading>Two-Thirds Time Date</DetailsSubheading>
-        <SecureDetailsContent>
-          {formatWorkflowsDate(
-            twoThirdsDateBetweenTwoDates(
-              resident.admissionDate,
-              resident.releaseDate
-            )
-          )}
-        </SecureDetailsContent>
-      </>
-    );
-  }
-
-  return <div />;
-}
+  return <>{partialDates}</>;
+});
 
 export function Supervision({
   client,
@@ -303,11 +253,7 @@ export function Supervision({
               </InfoTooltipWrapper>
             )}
           </SecureDetailsContent>
-          <HalfTime
-            startDate={client.supervisionStartDate}
-            endDate={client.expirationDate}
-            stateCode={client.stateCode}
-          />
+          <PartialTime person={client} />
           <DetailsSubheading>Expiration</DetailsSubheading>
           <SecureDetailsContent>
             {formatWorkflowsDate(client.expirationDate)}
@@ -335,12 +281,7 @@ export function Incarceration({
           <SecureDetailsContent>
             {formatWorkflowsDate(resident.admissionDate)}
           </SecureDetailsContent>
-          <HalfTime
-            startDate={resident.admissionDate}
-            endDate={resident.releaseDate}
-            stateCode={resident.stateCode}
-          />
-          <TwoThirdsTime resident={resident} />
+          <PartialTime person={resident} />
           <DetailsSubheading>Release</DetailsSubheading>
           <SecureDetailsContent>
             {formatWorkflowsDate(resident.releaseDate)}

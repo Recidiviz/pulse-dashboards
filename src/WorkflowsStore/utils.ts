@@ -133,22 +133,15 @@ export function optionalFieldToDateArray(
   if (field) return fieldToDateArray(field);
 }
 
-export function middleDateBetweenTwoDates(
+export function fractionalDateBetweenTwoDates(
   dateLeft: Date | undefined,
-  dateRight: Date | undefined
-): Date | undefined {
-  if (dateLeft && dateRight)
-    return new Date((dateLeft.getTime() + dateRight.getTime()) / 2);
-}
-
-export function twoThirdsDateBetweenTwoDates(
-  dateLeft: Date | undefined,
-  dateRight: Date | undefined
+  dateRight: Date | undefined,
+  fractionalPortion: number
 ): Date | undefined {
   if (dateLeft && dateRight) {
-    const timeDifference = dateRight.getTime() - dateLeft.getTime();
-    const twoThirdsTime = dateLeft.getTime() + (2 / 3) * timeDifference;
-    return new Date(twoThirdsTime);
+    const differenceInTime = dateRight.getTime() - dateLeft.getTime();
+    const fractionalTime = differenceInTime * fractionalPortion;
+    return new Date(dateLeft.getTime() + fractionalTime);
   }
 }
 

@@ -30,6 +30,7 @@ import {
   Milestone,
   MilestonesMessage,
   MilestoneType,
+  PortionServedDates,
   profileMilestoneTypes,
   SpecialConditionCode,
   TextMessageStatus,
@@ -65,6 +66,7 @@ import { JusticeInvolvedPerson } from "./types";
 import {
   clearPhoneNumberFormatting,
   formatSupervisionType,
+  fractionalDateBetweenTwoDates,
   optionalFieldToDate,
   OTHER_KEY,
 } from "./utils";
@@ -262,6 +264,33 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   get detailsCopy(): ClientDetailsCopy {
     return CLIENT_DETAILS_COPY[this.stateCode];
+  }
+
+  get portionServedDates(): PortionServedDates {
+    const startDate = optionalFieldToDate(this.record.supervisionStartDate);
+    const endDate = optionalFieldToDate(this.record.expirationDate);
+
+    const opportunityDates: PortionServedDates = [];
+
+    const opportunities = Object.values(
+      this.rootStore.workflowsStore.selectedPerson?.verifiedOpportunities || {}
+    );
+
+    opportunities.forEach((opp) => {
+      if ("portionServedRequirement" in opp) {
+        if (
+          opp.portionServedRequirement &&
+          opp.portionServedRequirement.includes("1/2")
+        ) {
+          opportunityDates.push({
+            heading: "Half Time",
+            date: fractionalDateBetweenTwoDates(startDate, endDate, 0.5),
+          });
+        }
+      }
+    });
+
+    return opportunityDates;
   }
 
   get formattedProbationSpecialConditions(): ParsedSpecialConditionOrString[] {
