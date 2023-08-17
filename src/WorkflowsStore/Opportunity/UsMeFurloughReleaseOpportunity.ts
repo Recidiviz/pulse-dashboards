@@ -136,6 +136,8 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
 
   policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ME;
 
+  readonly hideUnknownCaseNoteDates = true;
+
   form: UsMeFurloughReleaseForm;
 
   readonly portionServedRequirement = ["1/2"];

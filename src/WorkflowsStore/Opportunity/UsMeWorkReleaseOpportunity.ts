@@ -19,6 +19,7 @@ import { differenceInMonths } from "date-fns";
 import { cloneDeep } from "lodash";
 import { computed, makeObservable } from "mobx";
 
+import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { Resident } from "../Resident";
 import { OTHER_KEY } from "../utils";
@@ -154,8 +155,9 @@ export class UsMeWorkReleaseOpportunity extends OpportunityBase<
 
   form: UsMeWorkReleaseForm;
 
-  // replace with methodology url
-  policyOrMethodologyUrl = "";
+  policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ME;
+
+  readonly hideUnknownCaseNoteDates = true;
 
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "Incarceration",
