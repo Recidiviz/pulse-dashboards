@@ -73,9 +73,10 @@ const WebFormField: React.FC<WebFormFieldProps> = ({
     HTMLInputElement | HTMLTextAreaElement
   >(name, opportunityForm);
 
-  const duration = !value
-    ? DEFAULT_ANIMATION_DURATION
-    : DEFAULT_ANIMATION_DURATION * (value.length / 100);
+  // Type at standard speed if the value is less than 100 chars. Otherwise
+  // speed up so no field takes longer than DEFAULT_ANIMATION_DURATION.
+  const duration =
+    DEFAULT_ANIMATION_DURATION * Math.min(1, (value?.length ?? 0) / 100);
 
   useAnimatedValue(inputRef, value, duration);
 
