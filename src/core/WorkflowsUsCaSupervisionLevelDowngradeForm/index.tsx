@@ -94,21 +94,26 @@ const fillerFunc: (
   set("YES", formData.paroleePresent === "YES");
   set("NO If no cite reason below", formData.paroleePresent === "NO");
   set("Not required to attend", formData.paroleePresent === "NOT_REQUIRED");
-  set(
-    "Parolee participated telephonically",
-    formData.paroleeParticipatedTelephonically
-  );
-  set(
-    "Parolee did not respond to participation request",
-    formData.paroleeDidNotRespond
-  );
+  if (formData.paroleePresent === "NO") {
+    set(
+      "Parolee participated telephonically",
+      formData.paroleeNotPresent === "TELEPHONED"
+    );
+    set("Parolee failed to appear", formData.paroleeNotPresent === "FAILED");
+    set(
+      "Parolee declined to participate",
+      formData.paroleeNotPresent === "DECLINED"
+    );
+    set(
+      "Parolee did not respond to participation request",
+      formData.paroleeNotPresent === "NOT_RESPOND"
+    );
+  }
   set(
     "Reasonable accommodation provided Describe",
     formData.reasonableAccommodationProvided
   );
-  set("Parolee failed to appear", formData.paroleeFailedToAppear);
   set("Copy of CDCR 1502DR provided to parolee", formData.cdcr1502DRProvided);
-  set("Parolee declined to participate", formData.paroleeDeclinedToParticipate);
   set("Name", formData.otherParticipant1Name);
   set("Relation To Parolee", formData.otherParticipant1Relation);
   set("Comments", formData.otherParticipant1Comments);

@@ -15,13 +15,17 @@ type FormCheckboxProps = StyledComponentProps<
 > & {
   name: keyof UsCaSupervisionLevelDowngradeDraftData;
   invert?: boolean;
+  disabled?: boolean;
+  value?: string;
   label: string;
 };
 
 const FormCheckbox: React.FC<FormCheckboxProps> = ({
   name,
   label,
+  value,
   invert,
+  disabled,
   ...props
 }) => {
   const { firestoreStore } = useRootStore();
@@ -34,17 +38,30 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({
     firestoreStore.updateFormDraftData(
       opportunityForm,
       name,
-      event.target.checked !== !!invert
+      value || event.target.checked !== !!invert
     );
   };
 
-  return (
+  return value ? (
+    <label>
+      <input
+        {...props}
+        value={value}
+        type="radio"
+        onChange={onCheckField}
+        disabled={disabled}
+        checked={disabled ? false : formData[name] === value}
+      />
+      {label}
+    </label>
+  ) : (
     <label>
       <input
         {...props}
         type="checkbox"
         onChange={onCheckField}
-        checked={!!formData[name] !== !!invert}
+        disabled={disabled}
+        checked={disabled ? false : !!formData[name] !== !!invert}
       />
       {label}
     </label>

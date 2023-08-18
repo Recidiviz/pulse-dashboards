@@ -18,9 +18,7 @@
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
 import { UsCaSupervisionLevelDowngradeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
-import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCaSupervisionLevelDowngradeReferralRecord";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import FormCheckbox from "./FormCheckbox";
 import FormInput from "./FormInput";
@@ -53,77 +51,60 @@ const PresenceRow = styled.div`
 `;
 
 const FormPresenceSection = observer(function FormPresenceSection() {
-  const { firestoreStore } = useRootStore();
   const opportunityForm =
     useOpportunityFormContext() as UsCaSupervisionLevelDowngradeForm;
 
   const { formData } = opportunityForm;
 
-  const onChange =
-    (field: keyof UsCaSupervisionLevelDowngradeDraftData) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      firestoreStore.updateFormDraftData(
-        opportunityForm,
-        field,
-        event.target.value
-      );
-    };
+  const isCheckboxDisabled = formData.paroleePresent !== "NO";
 
   return (
     <PresenceSection>
       <PresenceRow>
         <div>PAROLEE PRESENT FOR REVIEW:</div>
         <CheckboxRow>
-          <label>
-            <input
-              type="radio"
-              value="YES"
-              onChange={onChange("paroleePresent")}
-              checked={formData.paroleePresent === "YES"}
-            />
-            YES
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="NO"
-              onChange={onChange("paroleePresent")}
-              checked={formData.paroleePresent === "NO"}
-            />
-            NO (If no, cite reason below)
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="NOT_REQUIRED"
-              onChange={onChange("paroleePresent")}
-              checked={formData.paroleePresent === "NOT_REQUIRED"}
-            />
-            Not required to attend
-          </label>
+          <FormCheckbox name="paroleePresent" value="YES" label="YES" />
+          <FormCheckbox
+            name="paroleePresent"
+            value="NO"
+            label="NO (If no, cite reason below)"
+          />
+          <FormCheckbox
+            name="paroleePresent"
+            value="NOT_REQUIRED"
+            label="Not required to attend"
+          />
         </CheckboxRow>
       </PresenceRow>
       <PresenceRow>
         <CheckboxRow>
           <FormCheckbox
-            name="paroleeParticipatedTelephonically"
+            name="paroleeNotPresent"
             label="Parolee participated telephonically"
+            disabled={isCheckboxDisabled}
+            value="TELEPHONED"
           />
           <FormCheckbox
-            name="paroleeFailedToAppear"
+            name="paroleeNotPresent"
             label="Parolee failed to appear"
+            disabled={isCheckboxDisabled}
+            value="FAILED"
           />
           <FormCheckbox
-            name="paroleeDeclinedToParticipate"
+            name="paroleeNotPresent"
             label="Parolee declined to participate"
+            disabled={isCheckboxDisabled}
+            value="DECLINED"
           />
         </CheckboxRow>
       </PresenceRow>
       <PresenceRow>
         <CheckboxRow>
           <FormCheckbox
-            name="paroleeDidNotRespond"
+            name="paroleeNotPresent"
             label="Parolee did not respond to participation request"
+            disabled={isCheckboxDisabled}
+            value="NOT_RESPOND"
           />
           <FormCheckbox
             name="cdcr1502DRProvided"

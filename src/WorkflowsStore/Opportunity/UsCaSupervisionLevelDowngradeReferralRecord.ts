@@ -71,10 +71,7 @@ export type UsCaSupervisionLevelDowngradeDraftData = {
   notifiedByEmail: boolean;
   notifiedByLetter: boolean;
   paroleePresent: "YES" | "NO" | "NOT_REQUIRED";
-  paroleeParticipatedTelephonically: boolean;
-  paroleeFailedToAppear: boolean;
-  paroleeDeclinedToParticipate: boolean;
-  paroleeDidNotRespond: boolean;
+  paroleeNotPresent: "TELEPHONED" | "FAILED" | "DECLINED" | "NOT_RESPOND";
   cdcr1502DRProvided: boolean;
   reasonableAccommodationProvided: boolean;
   accommodationDescription: string;

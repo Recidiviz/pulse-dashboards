@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { animation } from "@recidiviz/design-system";
+import { animation, palette } from "@recidiviz/design-system";
 import { darken } from "polished";
 import styled, { css } from "styled-components/macro";
 
@@ -88,6 +88,7 @@ export const SquareInputSelector = css`
   & label {
     margin-bottom: 0;
     display: flex;
+    height: 100%;
   }
 
   & input[type="radio"],
@@ -115,6 +116,12 @@ export const SquareInputSelector = css`
 
     &:checked::before {
       transform: scale(1);
+    }
+
+    &:disabled {
+      border-color: ${palette.slate20};
+      background-color: ${palette.slate10};
+      cursor: not-allowed;
     }
   }
 `;
