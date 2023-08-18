@@ -171,7 +171,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
 
         api.user.setAppMetadata(
           "allowedSupervisionLocationIds",
-          restrictions.allowedSupervisionLocationIds === ""
+          !restrictions.allowedSupervisionLocationIds
             ? []
             : restrictions.allowedSupervisionLocationIds.split(",")
         );
@@ -193,7 +193,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         api.user.setAppMetadata("user_hash", restrictions.userHash);
         api.user.setAppMetadata(
           "allowed_supervision_location_ids",
-          restrictions.allowedSupervisionLocationIds === ""
+          !restrictions.allowedSupervisionLocationIds
             ? []
             : restrictions.allowedSupervisionLocationIds.split(",")
         );
