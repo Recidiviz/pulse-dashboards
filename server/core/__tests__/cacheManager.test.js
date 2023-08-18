@@ -25,7 +25,6 @@ describe("cacheManager", () => {
 
   describe("getCache", () => {
     let getCacheTest;
-    let redis;
     describe("in demo mode", () => {
       beforeEach(() => {
         process.env = Object.assign(process.env, {
@@ -33,13 +32,8 @@ describe("cacheManager", () => {
           NODE_ENV: "development",
         });
         jest.resetModules();
-        const { getCache, redisInstance } = require("../cacheManager");
-        redis = redisInstance;
+        const { getCache } = require("../cacheManager");
         getCacheTest = getCache;
-      });
-
-      afterEach(async () => {
-        await redis.quit();
       });
 
       it("returns a memory cache with 'none' store", () => {
@@ -55,13 +49,8 @@ describe("cacheManager", () => {
           NODE_ENV: "test",
         });
         jest.resetModules();
-        const { getCache, redisInstance } = require("../cacheManager");
-        redis = redisInstance;
+        const { getCache } = require("../cacheManager");
         getCacheTest = getCache;
-      });
-
-      afterEach(async () => {
-        await redis.quit();
       });
 
       it("returns a memory cache", () => {
@@ -77,14 +66,13 @@ describe("cacheManager", () => {
           NODE_ENV: "development",
         });
         jest.resetModules();
-        const { getCache, redisInstance } = require("../cacheManager");
+        const { getCache } = require("../cacheManager");
 
-        redis = redisInstance;
         getCacheTest = getCache;
       });
 
       afterEach(async () => {
-        await redis.quit();
+        await getCacheTest().store.getClient().quit();
       });
 
       it("returns a redis cache", () => {

@@ -17,7 +17,7 @@
 const Sentry = require("@sentry/node");
 const request = require("supertest");
 const { server } = require("../../../server");
-const { clearMemoryCache } = require("../../core/cacheManager");
+const { clearCache } = require("../../core/cacheManager");
 
 const OLD_ENV = process.env;
 
@@ -74,7 +74,7 @@ describe("Server tests", () => {
   });
 
   afterAll(async () => {
-    await clearMemoryCache();
+    clearCache();
     jest.resetModules();
     jest.restoreAllMocks();
     server.close();

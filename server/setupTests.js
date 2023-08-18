@@ -15,12 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const { redisInstance } = require("./core/cacheManager");
-
-afterAll(async () => {
-  await redisInstance.quit();
-});
-
 process.env = {
   ...process.env,
   GOOGLE_APPLICATION_CREDENTIALS: "test-service-account.json",

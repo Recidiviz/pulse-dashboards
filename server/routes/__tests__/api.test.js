@@ -98,7 +98,7 @@ const {
   sanitizeUserHash,
 } = require("../api");
 
-const { clearMemoryCache } = require("../../core/cacheManager");
+const { clearCache } = require("../../core/cacheManager");
 const {
   createUserRestrictionsFilters,
   createSubsetFilters,
@@ -119,7 +119,7 @@ describe("API GET tests", () => {
   afterAll(() => {
     jest.resetModules();
     jest.restoreAllMocks();
-    clearMemoryCache();
+    clearCache();
   });
 
   function fakeRequest(
@@ -154,7 +154,7 @@ describe("API GET tests", () => {
     const metricControllers = [[newRevocations]];
 
     afterEach(async () => {
-      await clearMemoryCache();
+      clearCache();
       fetchMetrics.mockClear();
       jest.resetModules();
     });
@@ -165,7 +165,7 @@ describe("API GET tests", () => {
         await requestAndExpectFetchMetricsCalled(controllerFn, 1);
         await requestAndExpectFetchMetricsCalled(controllerFn, 0);
 
-        await clearMemoryCache();
+        clearCache();
 
         await requestAndExpectFetchMetricsCalled(controllerFn, 1);
         await requestAndExpectFetchMetricsCalled(controllerFn, 0);
@@ -287,7 +287,7 @@ describe("API GET tests", () => {
         fetchAndFilterNewRevocationFile
       );
 
-      await clearMemoryCache();
+      clearCache();
 
       await requestAndExpectFetchMetricsCalled(
         newRevocationFile,

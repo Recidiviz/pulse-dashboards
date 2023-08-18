@@ -45,46 +45,42 @@ const MEMORY_CACHE_TTL_SECONDS = 60 * 60;
 const MEMORY_REFRESH_SECONDS = 60 * 10;
 
 const testEnv = process.env.NODE_ENV === "test";
-const redisInstance = new Redis({
-  host: REDISHOST,
-  port: REDISPORT,
-  password: REDISAUTH,
-  ttl: REDIS_CACHE_TTL_SECONDS,
-  db: 0,
-});
 
-const memoryCache = cacheManager.caching({
-  store: isOfflineMode() ? "none" : "memory",
-  ttl: MEMORY_CACHE_TTL_SECONDS,
-  refreshThreshold: MEMORY_REFRESH_SECONDS,
-});
+const cache =
+  testEnv || isOfflineMode()
+    ? cacheManager.caching({
+        store: isOfflineMode() ? "none" : "memory",
+        ttl: MEMORY_CACHE_TTL_SECONDS,
+        refreshThreshold: MEMORY_REFRESH_SECONDS,
+      })
+    : cacheManager.caching({
+        store: redisStore,
+        refreshThreshold: REDIS_CACHE_REFRESH_THRESHOLD,
+        redisInstance: new Redis({
+          host: REDISHOST,
+          port: REDISPORT,
+          password: REDISAUTH,
+          ttl: REDIS_CACHE_TTL_SECONDS,
+          db: 0,
+        }),
+      });
 
-const redisCache = cacheManager.caching({
-  store: redisStore,
-  refreshThreshold: REDIS_CACHE_REFRESH_THRESHOLD,
-  redisInstance,
-});
-
-if (!testEnv) {
-  const redisClient = redisCache.store.getClient();
+if (!testEnv && !isOfflineMode()) {
+  const redisClient = cache.store.getClient();
   redisClient.on("error", (error) => {
     console.error("ERR:REDIS:", error);
   });
 }
 
 function getCache() {
-  if (testEnv || isOfflineMode()) {
-    return memoryCache;
-  }
-  return redisCache;
+  return cache;
 }
 
-function clearMemoryCache() {
-  memoryCache.reset();
+function clearCache() {
+  cache.reset();
 }
 
 function cacheResponse(cacheKey, fetchValue, callback) {
-  const cache = getCache();
   return cache
     .wrap(cacheKey, fetchValue)
     .then(
@@ -105,6 +101,5 @@ function cacheResponse(cacheKey, fetchValue, callback) {
 module.exports = {
   cacheResponse,
   getCache,
-  redisInstance,
-  clearMemoryCache,
+  clearCache,
 };
