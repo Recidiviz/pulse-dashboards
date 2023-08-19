@@ -62,7 +62,10 @@ const US_ID_CONFIG: TenantConfig = {
     contact: UsIdContactTask,
     assessment: UsIdRiskAssessmentTask,
   },
-  workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
+  workflowsGatedSystemsByFeatureVariant: {
+    INCARCERATION: ["usIdCRC", "usIdExtendedCRC"],
+  },
   navigation: {
     // The order of pages here determines where the user will land first when navigating from `/`
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients", "tasks"],

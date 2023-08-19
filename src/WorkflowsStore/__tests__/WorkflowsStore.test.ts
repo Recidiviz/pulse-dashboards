@@ -18,6 +18,7 @@
  */
 
 import { add } from "date-fns";
+import { difference } from "lodash";
 import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
@@ -63,50 +64,69 @@ jest.mock("firebase/firestore", () => {
     connectFirestoreEmulator: jest.fn(),
   };
 });
+const testStateCodes = [
+  "US_ME",
+  "US_BB",
+  "US_MO",
+  "US_TN",
+  "US_XX",
+  "US_YY",
+] as const;
+
+type testStateCode = typeof testStateCodes[number];
+const stateConfigs: Record<testStateCode | "RECIDIVIZ", any> = {
+  US_XX: {
+    opportunityTypes: ["compliantReporting", "LSU"],
+    workflowsSupportedSystems: ["SUPERVISION"],
+    availableStateCodes: ["US_XX"],
+  },
+  US_YY: {
+    workflowsEnableAllDistricts: true,
+    workflowsSupportedSystems: ["SUPERVISION"],
+    availableStateCodes: ["US_YY"],
+  },
+  US_TN: {
+    opportunityTypes: [
+      "compliantReporting",
+      "supervisionLevelDowngrade",
+      "usTnExpiration",
+    ],
+    workflowsSupportedSystems: ["SUPERVISION"],
+    availableStateCodes: ["US_TN"],
+  },
+  US_BB: {
+    workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
+    workflowsGatedSystemsByFeatureVariant: {
+      INCARCERATION: ["usIdCRC", "usIdExtendedCRC"],
+    },
+    availableStateCodes: ["US_BB"],
+  },
+  US_ME: {
+    opportunityTypes: [],
+    workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
+    availableStateCodes: ["US_ME"],
+  },
+  US_MO: {
+    opportunityTypes: ["usMoRestrictiveHousingStatusHearing"],
+    workflowsSupportedSystems: ["INCARCERATION"],
+    workflowsSystemConfigs: {
+      INCARCERATION: {
+        searchType: "LOCATION",
+        searchField: "facilityId",
+        searchTitleOverride: "location",
+      },
+    },
+    availableStateCodes: ["US_MO"],
+  },
+  RECIDIVIZ: {
+    availableStateCodes: ["US_ME", "US_BB", "US_MO", "US_TN", "US_XX", "US_YY"],
+  },
+};
+
 jest.mock("../subscriptions");
 jest.mock("../../tenants", () => ({
   __esModule: true,
-  default: {
-    US_XX: {
-      opportunityTypes: ["compliantReporting", "LSU"],
-      workflowsSupportedSystems: ["SUPERVISION"],
-      availableStateCodes: ["US_XX"],
-    },
-    US_YY: {
-      workflowsEnableAllDistricts: true,
-      workflowsSupportedSystems: ["SUPERVISION"],
-      availableStateCodes: ["US_YY"],
-    },
-    US_TN: {
-      opportunityTypes: [
-        "compliantReporting",
-        "supervisionLevelDowngrade",
-        "usTnExpiration",
-      ],
-      workflowsSupportedSystems: ["SUPERVISION"],
-      availableStateCodes: ["US_TN"],
-    },
-    US_ME: {
-      opportunityTypes: [],
-      workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
-      availableStateCodes: ["US_ME"],
-    },
-    US_MO: {
-      opportunityTypes: ["usMoRestrictiveHousingStatusHearing"],
-      workflowsSupportedSystems: ["INCARCERATION"],
-      workflowsSystemConfigs: {
-        INCARCERATION: {
-          searchType: "LOCATION",
-          searchField: "facilityId",
-          searchTitleOverride: "location",
-        },
-      },
-      availableStateCodes: ["US_MO"],
-    },
-    RECIDIVIZ: {
-      availableStateCodes: ["US_ME", "US_MO", "US_TN", "US_XX", "US_YY"],
-    },
-  },
+  default: stateConfigs,
 }));
 jest.mock("../../utils/isDemoMode");
 
@@ -755,6 +775,8 @@ describe("feature variants", () => {
         "CompliantReportingAlmostEligible": Object {},
         "TEST": Object {},
         "responsiveRevamp": Object {},
+        "usIdCRC": Object {},
+        "usIdExtendedCRC": Object {},
         "usMeFurloughRelease": Object {},
         "usMeWorkRelease": Object {},
         "usTnExpiration": Object {},
@@ -910,6 +932,123 @@ describe("feature variants", () => {
 
     expect(workflowsStore.featureVariants).toEqual({});
   });
+});
+
+describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByFeatureVariants testing", () => {
+  const SESSION_STATE_CODE = "US_BB" as any;
+  const TEST_GATED_SYSTEM = "INCARCERATION";
+  const SESSION_SUPPORTED_SYSTEMS =
+    stateConfigs[SESSION_STATE_CODE as testStateCode].workflowsSupportedSystems;
+  const SESSION_SYSTEMS_WITH_GATES = Object.keys(
+    (stateConfigs[SESSION_STATE_CODE as testStateCode]
+      .workflowsGatedSystemsByFeatureVariant as Record<any, any[]>) || {}
+  );
+  const SESSION_SYSTEMS_WITHOUT_GATES = difference(
+    SESSION_SUPPORTED_SYSTEMS,
+    SESSION_SYSTEMS_WITH_GATES
+  );
+  const setUser = (featureVariants: any, stateCode = SESSION_STATE_CODE) => {
+    rootStore.userStore.user = {
+      email: "foo@example.com",
+      [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+        stateCode,
+        featureVariants,
+      },
+    };
+    rootStore.userStore.userIsLoading = false;
+  };
+
+  beforeEach(async () => {
+    runInAction(() => {
+      rootStore.tenantStore.currentTenantId = SESSION_STATE_CODE;
+    });
+    await waitForHydration({ ...mockOfficer });
+  });
+
+  test("includes associated system when user has every featureVariant in list", () => {
+    setUser({ usIdCRC: {}, usIdExtendedCRC: {} });
+    expect(workflowsStore.workflowsSupportedSystems).toEqual(
+      expect.arrayContaining([
+        TEST_GATED_SYSTEM,
+        ...SESSION_SYSTEMS_WITHOUT_GATES,
+      ])
+    );
+  });
+
+  test("includes the supported systems when having only one featureVariant from the approved list", () => {
+    setUser({ usIdCRC: {} });
+    expect(workflowsStore.workflowsSupportedSystems).toEqual(
+      expect.arrayContaining([
+        TEST_GATED_SYSTEM,
+        ...SESSION_SYSTEMS_WITHOUT_GATES,
+      ])
+    );
+  });
+
+  test("does not include supported system if the user does not have featureVariant", () => {
+    setUser({});
+    expect(workflowsStore.workflowsSupportedSystems).not.toContain(
+      TEST_GATED_SYSTEM
+    );
+    expect(workflowsStore.workflowsSupportedSystems).not.toEqual(
+      expect.arrayContaining([
+        TEST_GATED_SYSTEM,
+        ...SESSION_SYSTEMS_WITHOUT_GATES,
+      ])
+    );
+  });
+
+  test(`unsupportedWorkflowsSystems contains ${TEST_GATED_SYSTEM} if user does not have associated featureVariant for gated system`, () => {
+    setUser({});
+    expect(workflowsStore.unsupportedWorkflowSystemsByFeatureVariants).toEqual(
+      expect.arrayContaining([TEST_GATED_SYSTEM])
+    );
+    expect(
+      workflowsStore.unsupportedWorkflowSystemsByFeatureVariants
+    ).not.toEqual(expect.arrayContaining([...SESSION_SYSTEMS_WITHOUT_GATES]));
+  });
+
+  test.each(
+    // test only state codes that also have TEST_GATED_SYSTEM enabled and not gated
+    testStateCodes.filter(
+      (code) =>
+        code !== SESSION_STATE_CODE &&
+        (
+          (stateConfigs[code].workflowsSupportedSystems as any[]) || []
+        ).includes(TEST_GATED_SYSTEM) &&
+        !Object.keys(
+          (stateConfigs[code].workflowsGatedSystemsByFeatureVariant as Record<
+            any,
+            any[]
+          >) || {}
+        ).includes(TEST_GATED_SYSTEM)
+    )
+  )(
+    `given gated system(s), ${TEST_GATED_SYSTEM}, in ${SESSION_STATE_CODE}, %p systems remain unaffected when the same system is gated in another stateCode`,
+    (stateCode) => {
+      setUser({}, stateCode);
+      expect(workflowsStore.workflowsSupportedSystems).toContain(
+        TEST_GATED_SYSTEM
+      );
+      expect(
+        workflowsStore.unsupportedWorkflowSystemsByFeatureVariants
+      ).not.toContain(TEST_GATED_SYSTEM);
+
+      const SYSTEMS_WITHOUT_GATING_IN_OTHER_STATES = difference(
+        stateConfigs[stateCode].workflowsSupportedSystems as any[],
+        Object.keys(
+          (stateConfigs[stateCode]
+            .workflowsGatedSystemsByFeatureVariant as Record<any, any[]>) || {}
+        )
+      );
+      expect(workflowsStore.workflowsSupportedSystems).toEqual(
+        expect.arrayContaining([
+          TEST_GATED_SYSTEM,
+          ...SYSTEMS_WITHOUT_GATING_IN_OTHER_STATES,
+        ])
+      );
+    }
+  );
 });
 
 describe("opportunityTypes for US_TN", () => {

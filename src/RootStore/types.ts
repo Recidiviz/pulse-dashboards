@@ -80,7 +80,9 @@ export type FeatureVariant =
   | "usMeFurloughRelease"
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
-  | "responsiveRevamp";
+  | "responsiveRevamp"
+  | "usIdCRC"
+  | "usIdExtendedCRC";
 export type FeatureVariantValue = { activeDate?: Date; variant?: string };
 /**
  * For each feature, an optional activeDate can control when the user gets access.
@@ -90,6 +92,17 @@ export type FeatureVariantValue = { activeDate?: Date; variant?: string };
  */
 export type FeatureVariantMapping = Record<FeatureVariant, FeatureVariantValue>;
 export type FeatureVariantRecord = Partial<FeatureVariantMapping>;
+const allFeatureVariants: FeatureVariantMapping = {
+  TEST: {},
+  CompliantReportingAlmostEligible: {},
+  usMeWorkRelease: {},
+  usMeFurloughRelease: {},
+  usTnExpiration: {},
+  usTnExpirationSubmitToTomis: {},
+  responsiveRevamp: {},
+  usIdCRC: {},
+  usIdExtendedCRC: {},
+};
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   process.env.REACT_APP_DEPLOY_ENV === "production"
     ? {
@@ -99,15 +112,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         usMeFurloughRelease: {},
         usMeWorkRelease: {},
       }
-    : {
-        TEST: {},
-        CompliantReportingAlmostEligible: {},
-        usMeWorkRelease: {},
-        usMeFurloughRelease: {},
-        usTnExpiration: {},
-        usTnExpirationSubmitToTomis: {},
-        responsiveRevamp: {},
-      };
+    : allFeatureVariants;
 
 export type LanternMethodologyByTenant = {
   [key in LanternTenants]: LanternMethodology;

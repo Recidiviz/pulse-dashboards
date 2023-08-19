@@ -20,6 +20,7 @@
 import assertNever from "assert-never";
 import { ascending } from "d3-array";
 import {
+  difference,
   groupBy,
   identity,
   intersection,
@@ -379,6 +380,34 @@ export class WorkflowsStore implements Hydratable {
     );
   }
 
+  get unsupportedWorkflowSystemsByFeatureVariants(): SystemId[] {
+    const {
+      featureVariants,
+      rootStore: { currentTenantId },
+    } = this;
+
+    if (!featureVariants || !currentTenantId) return [];
+
+    const workflowsGatedSystems =
+      tenants[currentTenantId]?.workflowsGatedSystemsByFeatureVariant;
+    if (!workflowsGatedSystems) return [];
+
+    const featureVariantKeys = new Set(Object.keys(featureVariants));
+
+    // For each `SystemId` that is gated by one or more `FeatureVariant`'s,
+    // if `every` of its `systemAllowedFeatureVariant`'s does not
+    // appear in the `featureVariantKeys`, acquired from `this` user's `workflowsStore`,
+    // then the user does not have a `FeatureVariant` that allows this `SystemId` and
+    // therefore the `SystemId` is unsupported.
+    return Object.entries(workflowsGatedSystems)
+      .filter(([_, systemAllowedFeatureVariants]) =>
+        systemAllowedFeatureVariants.every(
+          (feature) => !featureVariantKeys.has(feature)
+        )
+      )
+      .map(([system]) => system as SystemId);
+  }
+
   /** List of supported systems based on the user's permissions. */
   get workflowsSupportedSystems(): SystemId[] | undefined {
     const {
@@ -387,12 +416,13 @@ export class WorkflowsStore implements Hydratable {
     } = this.rootStore;
 
     if (!currentTenantId) return;
-    const workflowsSupportedSystems =
-      tenants[currentTenantId].workflowsSupportedSystems ?? [];
+    const { workflowsSupportedSystems } = tenants[currentTenantId] ?? [];
 
     if (isRecidivizUser) {
       return workflowsSupportedSystems;
     }
+
+    const role = this.user?.info.role;
 
     const roleAllowedSystems: Record<UserRole, SystemId[]> = {
       supervision_staff: ["SUPERVISION"],
@@ -400,10 +430,11 @@ export class WorkflowsStore implements Hydratable {
       leadership_role: ["SUPERVISION", "INCARCERATION"],
     };
 
-    const role = this.user?.info.role;
-
     return role
-      ? intersection(workflowsSupportedSystems, roleAllowedSystems[role])
+      ? difference(
+          intersection(workflowsSupportedSystems, roleAllowedSystems[role]),
+          this.unsupportedWorkflowSystemsByFeatureVariants
+        )
       : undefined;
   }
 

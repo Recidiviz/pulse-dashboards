@@ -22,7 +22,7 @@ import {
   SupervisionTaskUpdate,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
-import { TenantId } from "../../RootStore/types";
+import { FeatureVariant, TenantId } from "../../RootStore/types";
 import { JusticeInvolvedPerson, OpportunityType } from "../../WorkflowsStore";
 import { Task } from "../../WorkflowsStore/Task/Task";
 import {
@@ -62,6 +62,9 @@ export type TenantConfig = {
   tableColumns?: TableColumns;
   opportunityTypes?: OpportunityType[];
   workflowsSupportedSystems?: SystemId[];
+  workflowsGatedSystemsByFeatureVariant?: Partial<
+    Record<SystemId, FeatureVariant[]>
+  >;
   workflowsSystemConfigs?: {
     INCARCERATION?: WorkflowsSystemConfig<ResidentSearchFields>;
     SUPERVISION?: WorkflowsSystemConfig<ClientSearchFields>;
