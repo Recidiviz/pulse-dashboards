@@ -82,18 +82,6 @@ exports.onExecutePostLogin = async (event, api) => {
   /** Set stateCode in appMetadata for everyone. */
   api.user.setAppMetadata("stateCode", stateCode);
 
-  // TODO(#3699): Remove user specific blocked_state_codes once allowedStates is in production
-  /** Specific state code restrictions for Recividiz users */
-  if (event.user.email === "justine@recidiviz.org") {
-    api.user.setAppMetadata("blocked_state_codes", ["us_pa"]);
-    api.user.setAppMetadata("blockedStateCodes", ["us_pa"]);
-  }
-
-  if (event.user.email === "monica.hicks@recidiviz.org") {
-    api.user.setAppMetadata("blocked_state_codes", ["us_mi"]);
-    api.user.setAppMetadata("blockedStateCodes", ["us_mi"]);
-  }
-
   /** Set route permissions for CSG users. */
   if (stateCode === "csg") {
     api.user.setAppMetadata("routes", {
