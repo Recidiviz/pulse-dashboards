@@ -16,8 +16,8 @@
 // =============================================================================
 
 import { action, computed, makeObservable, toJS } from "mobx";
+import { ComponentType } from "react";
 
-import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { OpportunityUpdateWithForm, UpdateLog } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { OpportunityBase } from "../OpportunityBase";
@@ -129,10 +129,15 @@ export class FormBase<
     return "";
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  get formContents(): OpportunityFormComponentName {
-    // @ts-ignore
-    return undefined;
+  // Set this if the form component is always the same
+  formComponent?: ComponentType;
+
+  // Override this if the form component is picked dynamically
+  get formContents() {
+    if (!this.formComponent) {
+      throw new Error("Form subclasses must specify a formComponent");
+    }
+    return this.formComponent;
   }
 
   prefilledDataTransformer(): Partial<FormDisplayType> {

@@ -2,7 +2,8 @@ import { deleteField } from "firebase/firestore";
 import { sortBy } from "lodash";
 import moment from "moment";
 
-import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
+import WorkflowsEarlyTerminationDeferredForm from "../../../core/WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
+import WorkflowsEarlyTerminationForm from "../../../core/WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 import { pluralize } from "../../../utils";
 import { UNKNOWN } from "../../Client";
 import { UsNdEarlyTerminationOpportunity } from "../UsNdEarlyTerminationOpportunity";
@@ -18,11 +19,11 @@ export class EarlyTerminationForm extends FormBase<
 > {
   navigateToFormText = "Auto-fill paperwork";
 
-  get formContents(): OpportunityFormComponentName {
+  get formContents() {
     if (this.opportunity.formVariant === "deferred") {
-      return "WorkflowsEarlyTerminationDeferredForm";
+      return WorkflowsEarlyTerminationDeferredForm;
     }
-    return "WorkflowsEarlyTerminationForm";
+    return WorkflowsEarlyTerminationForm;
   }
 
   prefilledDataTransformer(): Partial<UsNdEarlyTerminationDraftData> {

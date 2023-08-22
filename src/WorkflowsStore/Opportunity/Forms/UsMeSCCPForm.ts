@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
+import { FormSCCP } from "../../../core/Paperwork/US_ME/SCCP/FormSCCP";
 import { formatFacilityHousingUnit } from "../../utils";
 import { UsMeSCCPOpportunity } from "../UsMeSCCPOpportunity";
 import { UsMeSCCPDraftData } from "../UsMeSCCPReferralRecord";
@@ -27,10 +27,7 @@ export class UsMeSCCPForm extends FormBase<
 > {
   navigateToFormText = "Generate paperwork";
 
-  // eslint-disable-next-line class-methods-use-this
-  get formContents(): OpportunityFormComponentName {
-    return "FormSCCP";
-  }
+  formComponent = FormSCCP;
 
   prefilledDataTransformer: PrefilledDataTransformer<UsMeSCCPDraftData> =
     () => {
