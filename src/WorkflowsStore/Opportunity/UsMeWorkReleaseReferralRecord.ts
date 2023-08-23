@@ -29,30 +29,53 @@ const possiblyIneligibleCriteria = z.object({});
 
 export const usMeWorkReleaseSchema = opportunitySchemaBase
   .extend({
-    eligibleCriteria: possiblyIneligibleCriteria.extend({
-      usMeCustodyLevelIsMinimumOrCommunity: z.object({
-        custodyLevel: z.string(),
-      }),
-      usMeThreeYearsRemainingOnSentence: z.object({
-        eligibleDate: dateStringSchema,
-      }),
-      usMeNoDetainersWarrantsOrOther: z
-        .object({
-          detainer: z.string(),
-          detainerStartDate: dateStringSchema.nullable(),
-        })
-        .nullable(),
-      usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: z.object({
-        eligibleDate: dateStringSchema.nullable(),
-      }),
-      usMeNoClassAOrBViolationFor90Days: z
-        .object({
+    eligibleCriteria: possiblyIneligibleCriteria
+      .extend({
+        usMeThreeYearsRemainingOnSentence: z.object({
+          eligibleDate: dateStringSchema,
+        }),
+        usMeNoDetainersWarrantsOrOther: z
+          .object({
+            detainer: z.string(),
+            detainerStartDate: dateStringSchema.nullable(),
+          })
+          .nullable(),
+        usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: z.object({
           eligibleDate: dateStringSchema.nullable(),
-          highestClassViol: z.string(),
-          violType: z.string(),
-        })
-        .nullable(),
-    }),
+        }),
+        usMeNoClassAOrBViolationFor90Days: z
+          .object({
+            eligibleDate: dateStringSchema.nullable(),
+            highestClassViol: z.string(),
+            violType: z.string(),
+          })
+          .nullable(),
+      })
+      // TODO: remove usMeCustodyLevelIsMinimumOrCommunity from code
+      .and(
+        z.union([
+          z.object({
+            usMeCustodyLevelIsMinimum: z.object({
+              custodyLevel: z.string(),
+            }),
+            usMeCustodyLevelIsMinimumOrCommunity: z.undefined(),
+          }),
+          z.object({
+            usMeCustodyLevelIsMinimum: z.undefined(),
+            usMeCustodyLevelIsMinimumOrCommunity: z.object({
+              custodyLevel: z.string(),
+            }),
+          }),
+        ])
+      )
+      .transform(({ usMeCustodyLevelIsMinimumOrCommunity, ...rest }) => {
+        if (usMeCustodyLevelIsMinimumOrCommunity)
+          return {
+            ...rest,
+            usMeCustodyLevelIsMinimum: usMeCustodyLevelIsMinimumOrCommunity,
+          };
+        return rest;
+      }),
     ineligibleCriteria: z.object({}),
   })
   .merge(caseNotesSchema);
