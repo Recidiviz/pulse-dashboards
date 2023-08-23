@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform record for SLD 1`] = `
+Object {
+  "caseNotes": Object {
+    "Recommended supervision level": Array [
+      Object {
+        "eventDate": null,
+        "noteBody": "MEDIUM",
+        "noteTitle": null,
+      },
+    ],
+  },
+  "eligibleCriteria": Object {
+    "supervisionLevelHigherThanAssessmentLevel": Object {
+      "assessmentLevel": "Medium",
+      "latestAssessmentDate": 2022-10-12T00:00:00.000Z,
+      "supervisionLevel": "HIGH",
+    },
+    "usMiNotPastInitialClassificationReviewDate": Object {
+      "eligibleDate": 2022-12-12T00:00:00.000Z,
+    },
+    "usMiNotServingIneligibleOffensesForDowngradeFromSupervisionLevel": null,
+  },
+  "externalId": "sld-eligible-1",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_MI",
+}
+`;

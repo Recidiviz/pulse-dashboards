@@ -19,7 +19,7 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "./schemaHelpers";
+import { caseNotesSchema, dateStringSchema } from "./schemaHelpers";
 import {
   getBaseSLDValidator,
   supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
@@ -39,16 +39,18 @@ export const usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLeve
         fmt
       );
 
-    return base.extend({
-      eligibleCriteria: base.shape.eligibleCriteria.extend({
-        usMiNotPastInitialClassificationReviewDate: z.object({
-          eligibleDate: dateStringSchema,
+    return base
+      .extend({
+        eligibleCriteria: base.shape.eligibleCriteria.extend({
+          usMiNotPastInitialClassificationReviewDate: z.object({
+            eligibleDate: dateStringSchema,
+          }),
+          usMiNotServingIneligibleOffensesForDowngradeFromSupervisionLevel: z
+            .object({})
+            .nullable(),
         }),
-        usMiNotServingIneligibleOffensesForDowngradeFromSupervisionLevel: z
-          .object({})
-          .nullable(),
-      }),
-    });
+      })
+      .merge(caseNotesSchema);
   };
 
 export const getValidator = getBaseSLDValidator;

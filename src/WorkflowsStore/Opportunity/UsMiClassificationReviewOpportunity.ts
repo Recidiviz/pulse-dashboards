@@ -35,6 +35,8 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
   Client,
   UsMiClassificationReviewReferralRecord
 > {
+  readonly hideUnknownCaseNoteDates = true;
+
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "ClientProfileDetails",
     "CaseNotes",

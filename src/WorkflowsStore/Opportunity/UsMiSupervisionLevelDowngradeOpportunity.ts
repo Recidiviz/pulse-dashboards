@@ -86,11 +86,14 @@ export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
 
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "ClientProfileDetails",
+    "CaseNotes",
   ];
 
   readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MI;
 
   readonly isAlert = false;
+
+  readonly hideUnknownCaseNoteDates = true;
 
   denialReasonsMap = {
     OVERRIDE:
