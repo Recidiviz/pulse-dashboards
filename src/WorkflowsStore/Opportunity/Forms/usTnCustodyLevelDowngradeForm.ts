@@ -59,7 +59,7 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
               noteTitle &&
               eventDate &&
               ["AOW", "ASW", "ASV"].includes(noteTitle.slice(0, 3)) &&
-              differenceInMonths(eventDate, new Date()) < 18
+              differenceInMonths(new Date(), eventDate) < 18
           );
           out.q1Selection = recentWeapon ? 1 : 3;
           return;
