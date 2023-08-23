@@ -24,7 +24,10 @@ import {
 } from "../../../FirestoreStore";
 import { dateToTimestamp } from "../../utils";
 import { SupervisionOpportunityType, UsIdPastFTRDReferralRecord } from "..";
-import { CompliantReportingReferralRecord } from "../CompliantReportingReferralRecord";
+import {
+  CompliantReportingReferralRecord,
+  CompliantReportingReferralRecordFull,
+} from "../CompliantReportingReferralRecord";
 import { EarnedDischargeReferralRecord } from "../EarnedDischargeReferralRecord";
 import { LSUReferralRecord } from "../LSUReferralRecord";
 import { UsMeEarlyTerminationReferralRecord } from "../UsMeEarlyTerminationReferralRecord";
@@ -94,14 +97,13 @@ export const usTnUserRecord: CombinedUserRecord = {
   },
 };
 
-export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecord> =
+export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecordFull> =
   {
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 0,
     mostRecentArrestCheck: parseISO("2022-05-28"),
     eligibleLevelStart: parseISO("2019-12-20"),
     judicialDistrict: "A",
-    finesFeesEligible: "regular_payments",
     drugScreensPastYear: [{ result: "DRUN", date: parseISO("2022-01-04") }],
     sanctionsPastYear: [],
     currentOffenses: ["EXAMPLE CURRENT"],
@@ -109,9 +111,24 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
     specialConditionsFlag: "current",
     lastSpecialConditionsNote: parseISO("2022-03-15"),
+    eligibleCriteria: {
+      usTnFinesFeesEligible: {
+        hasFinesFeesBalanceBelow500: {
+          amountOwed: 750,
+        },
+        hasPayments3ConsecutiveMonths: {
+          amountOwed: 750,
+          consecutiveMonthlyPayments: 3,
+        },
+      },
+    },
+    ineligibleCriteria: {},
+    formInformation: {
+      sentenceStartDate: parseISO("2019-12-20"),
+    },
   };
 
-export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<CompliantReportingReferralRecord> =
+export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<CompliantReportingReferralRecordFull> =
   {
     // Required fields
     eligibleLevelStart: parseISO("2019-12-20"),
@@ -132,27 +149,55 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
 
     // Eligible with discretion: Missing sentence information
     currentOffenses: [],
+
+    // TODO(#3587): Make this actually be eligible with discretion
+    eligibleCriteria: {
+      usTnFinesFeesEligible: {
+        hasFinesFeesBalanceBelow500: {
+          amountOwed: 600,
+        },
+        hasPayments3ConsecutiveMonths: {
+          amountOwed: 600,
+          consecutiveMonthlyPayments: 3,
+        },
+      },
+    },
+    ineligibleCriteria: {},
+    formInformation: {
+      sentenceStartDate: parseISO("2019-12-20"),
+    },
   };
 
 export const compliantReportingAlmostEligibleCriteria: Required<
   NonNullable<CompliantReportingReferralRecord["almostEligibleCriteria"]>
 > = {
   passedDrugScreenNeeded: true,
-  paymentNeeded: true,
   currentLevelEligibilityDate: parseISO("2022-08-15"),
   seriousSanctionsEligibilityDate: parseISO("2022-08-15"),
   recentRejectionCodes: ["TEST1"],
 };
 
-export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantReportingReferralRecord> =
+export const compliantReportingIneligibleCriteria: Required<
+  NonNullable<CompliantReportingReferralRecordFull["ineligibleCriteria"]>
+> = {
+  usTnFinesFeesEligible: {
+    hasFinesFeesBalanceBelow500: {
+      amountOwed: 600,
+    },
+    hasPayments3ConsecutiveMonths: {
+      amountOwed: 600,
+      consecutiveMonthlyPayments: 0,
+    },
+  },
+};
+
+export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantReportingReferralRecordFull> =
   {
-    almostEligibleCriteria: compliantReportingAlmostEligibleCriteria,
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 1,
     mostRecentArrestCheck: parseISO("2022-05-28"),
     eligibleLevelStart: parseISO("2019-12-20"),
     judicialDistrict: "A",
-    finesFeesEligible: "regular_payments",
     drugScreensPastYear: [],
     sanctionsPastYear: [],
     currentOffenses: ["EXAMPLE CURRENT"],
@@ -160,6 +205,12 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
     specialConditionsFlag: "current",
     lastSpecialConditionsNote: parseISO("2022-03-15"),
+
+    eligibleCriteria: {},
+    ineligibleCriteria: {},
+    formInformation: {
+      sentenceStartDate: parseISO("2019-12-20"),
+    },
   };
 
 export const compliantReportingAlmostEligibleClientRecord: ClientRecord = {

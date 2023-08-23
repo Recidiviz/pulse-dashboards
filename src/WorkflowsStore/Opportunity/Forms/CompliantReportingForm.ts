@@ -1,5 +1,6 @@
 import { transform } from "../../../core/Paperwork/US_TN/CompliantReporting/Transformer";
 import WorkflowsCompliantReportingForm from "../../../core/WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
+import { formatDate } from "../../../utils";
 import { CompliantReportingOpportunity } from "../CompliantReportingOpportunity";
 import { CompliantReportingDraftData } from "../CompliantReportingReferralRecord";
 import { FormBase } from "./FormBase";
@@ -25,6 +26,19 @@ export class CompliantReportingForm extends FormBase<
   }
 
   prefilledDataTransformer(): Partial<CompliantReportingDraftData> {
-    return transform(this.person, this.opportunity.record ?? {});
+    return transform(
+      this.person,
+      {
+        sentenceStartDate: formatDate(
+          this.opportunity.record?.formInformation.sentenceStartDate,
+          "yyyy-MM-dd"
+        ),
+        supervisionFeeExemptionType: (
+          this.opportunity.record?.eligibleCriteria.usTnFinesFeesEligible
+            ?.hasPermanentFinesFeesExemption?.currentExemptions ?? []
+        ).join(", "),
+        ...this.opportunity.record,
+      } ?? {}
+    );
   }
 }

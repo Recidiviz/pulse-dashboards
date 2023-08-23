@@ -46,8 +46,18 @@ export function rankByReviewStatus(opp: Opportunity): number {
       if (opp.reviewStatus === "DENIED") {
         return COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED.length;
       }
+
+      const ineligibleCriteriaKeys = opp.record?.ineligibleCriteria
+        ? (Object.keys(opp.record.ineligibleCriteria) as Array<
+            keyof typeof opp.record.ineligibleCriteria
+          >)
+        : [];
+
       return Math.min(
         ...opp.validAlmostEligibleKeys.map((key) =>
+          COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED.indexOf(key)
+        ),
+        ...ineligibleCriteriaKeys.map((key) =>
           COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED.indexOf(key)
         )
       );

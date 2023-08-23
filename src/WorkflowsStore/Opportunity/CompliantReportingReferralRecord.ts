@@ -16,17 +16,70 @@
 // =============================================================================
 
 import { DocumentData, Timestamp } from "firebase/firestore";
+import { z } from "zod";
 
 import { UNKNOWN } from "../Client";
 import { TransformFunction } from "../subscriptions";
 import { fieldToDate, optionalFieldToDate } from "../utils";
+import { dateStringSchema, opportunitySchemaBase } from "./schemaHelpers";
+
+export const compliantReportingSchema = opportunitySchemaBase.extend({
+  eligibleCriteria: z.object({
+    usTnFinesFeesEligible: z
+      .object({
+        hasFinesFeesBalanceBelow500: z.object({
+          amountOwed: z.number(),
+        }),
+        hasPayments3ConsecutiveMonths: z.object({
+          amountOwed: z.number(),
+          consecutiveMonthlyPayments: z.number().nullable(),
+        }),
+        hasPermanentFinesFeesExemption: z
+          .object({
+            currentExemptions: z.array(z.string()),
+          })
+          .optional(),
+      })
+      .optional(),
+  }),
+  ineligibleCriteria: z.object({
+    usTnFinesFeesEligible: z
+      .object({
+        hasFinesFeesBalanceBelow500: z.object({
+          amountOwed: z.number(),
+        }),
+        hasPayments3ConsecutiveMonths: z.object({
+          amountOwed: z.number(),
+          consecutiveMonthlyPayments: z.number().nullable(),
+        }),
+      })
+      .optional(),
+  }),
+  formInformation: z
+    .object({
+      sentenceStartDate: dateStringSchema,
+    })
+    .partial(), // If a user is only eligible in the older schema, no values will be set
+});
+
+export type CompliantReportingReferralRecordFull = Omit<
+  z.infer<typeof compliantReportingSchema> & CompliantReportingReferralRecord,
+  "sentenceStartDate" | "finesFeesEligible" | "supervisionFeeExemption"
+>;
 
 export type AlmostEligibleCriteria = {
   currentLevelEligibilityDate?: Date;
   passedDrugScreenNeeded?: boolean;
-  paymentNeeded?: boolean;
   recentRejectionCodes?: string[];
   seriousSanctionsEligibilityDate?: Date;
+};
+
+export type AlmostEligibleCriteriaRaw = {
+  currentLevelEligibilityDate?: string;
+  passedDrugScreenNeeded?: boolean;
+  paymentNeeded?: boolean;
+  recentRejectionCodes?: string[];
+  seriousSanctionsEligibilityDate?: string;
 };
 
 export type CompliantReportingReferralRecord = {
@@ -35,7 +88,6 @@ export type CompliantReportingReferralRecord = {
   eligibilityCategory: string;
   eligibleLevelStart?: Date;
   drugScreensPastYear: { result: string; date: Date }[];
-  finesFeesEligible: CompliantReportingFinesFeesEligible;
   judicialDistrict: string;
   lastSpecialConditionsNote?: Date | undefined;
   lifetimeOffensesExpired: string[];
@@ -47,7 +99,6 @@ export type CompliantReportingReferralRecord = {
   sanctionsPastYear: { type: string }[];
   specialConditionsFlag?: SpecialConditionsStatus;
   specialConditionsTerminatedDate?: Date | undefined;
-  supervisionFeeExemption?: string;
   zeroToleranceCodes: { contactNoteType: string; contactNoteDate: Date }[];
   offenseTypeEligibility: string;
 };
@@ -134,7 +185,6 @@ export interface CompliantReportingDraftData {
   specialConditionsProgrammingVictimImpactCompletionDate: string;
   specialConditionsProgrammingVictimImpactCurrent: boolean;
   supervisionFeeArrearaged: boolean;
-  supervisionFeeExemption: string;
   supervisionFeeExemptionExpirDate: string;
   supervisionFeeExemptionType: string;
   supervisionFeeWaived: string;
@@ -179,22 +229,26 @@ type RawCompliantReportingReferralRecord = DocumentData & {
   }[];
   sanctionsPastYear?: { ProposedSanction: string }[];
   zeroToleranceCodes?: { contactNoteType: string; contactNoteDate: string }[];
+  almostEligibleCriteria?: AlmostEligibleCriteriaRaw;
 };
 
+export type CompliantReportingReferralRecordFullRaw = z.input<
+  typeof compliantReportingSchema
+> &
+  RawCompliantReportingReferralRecord;
+
 export const transformCompliantReportingReferral: TransformFunction<
-  CompliantReportingReferralRecord
+  CompliantReportingReferralRecordFull
 > = (record) => {
   if (!record) {
     throw new Error("No record found");
   }
 
   const {
-    almostEligibleCriteria,
     currentOffenses,
     drugScreensPastYear,
     eligibilityCategory,
     eligibleLevelStart,
-    finesFeesEligible,
     judicialDistrict,
     lastSpecialConditionsNote,
     lifetimeOffensesExpired,
@@ -205,14 +259,99 @@ export const transformCompliantReportingReferral: TransformFunction<
     sanctionsPastYear,
     specialConditionsFlag,
     specialConditionsTerminatedDate,
-    supervisionFeeExemption,
     zeroToleranceCodes,
     offenseTypeEligibility,
-    ...data
-  } = record as RawCompliantReportingReferralRecord;
+    tdocId,
+    eligibleCriteria,
+    ineligibleCriteria,
+    formInformation,
+  } = record as CompliantReportingReferralRecordFullRaw;
 
-  const transformedRecord: CompliantReportingReferralRecord = {
-    ...data,
+  // Make sure legacy fields aren't getting copied into the new record- we want to rely on their
+  // new counterparts instead.
+  const {
+    sentenceStartDate,
+    finesFeesEligible,
+    supervisionFeeExemptionType,
+    almostEligibleCriteria,
+    ...recordWithoutLegacyFields
+  } = record;
+  const { paymentNeeded, ...newAlmostEligibleCriteria } =
+    almostEligibleCriteria ?? {};
+
+  const newFormInformation: z.input<
+    typeof compliantReportingSchema.shape.formInformation
+  > = {
+    sentenceStartDate: sentenceStartDate ?? formInformation?.sentenceStartDate,
+  };
+  const newEligibleCriteria: z.input<
+    typeof compliantReportingSchema.shape.eligibleCriteria
+  > = {};
+  const newIneligibleCriteria: z.input<
+    typeof compliantReportingSchema.shape.ineligibleCriteria
+  > = {};
+
+  if (
+    finesFeesEligible !== "ineligible" &&
+    !eligibleCriteria.usTnFinesFeesEligible
+  ) {
+    // If the legacy-style data tells us they're eligible but the new style doesn't, set the new
+    // fields to match what the legacy data is telling us.
+    newEligibleCriteria.usTnFinesFeesEligible = {
+      hasFinesFeesBalanceBelow500: {
+        amountOwed: 0, // Nothing in the copy or form looks at the actual value so it can be anything
+      },
+      hasPayments3ConsecutiveMonths: {
+        amountOwed: 0, // same
+        consecutiveMonthlyPayments: 0, // same
+      },
+      ...(supervisionFeeExemptionType && {
+        hasPermanentFinesFeesExemption: {
+          currentExemptions: supervisionFeeExemptionType,
+        },
+      }),
+    };
+  } else if (paymentNeeded && !ineligibleCriteria.usTnFinesFeesEligible) {
+    // If the legacy-style data tells us they're almost eligible but the new style doesn't, set the
+    // new fields to match what the legacy data is telling us.
+    newIneligibleCriteria.usTnFinesFeesEligible = {
+      hasFinesFeesBalanceBelow500: {
+        amountOwed: 0, // Nothing in the copy or form looks at the actual value so it can be anything
+      },
+      hasPayments3ConsecutiveMonths: {
+        amountOwed: 0, // same
+        consecutiveMonthlyPayments: 0, // same
+      },
+    };
+  } else {
+    // if the old and new eligibility match each other, keep both
+    if (eligibleCriteria.usTnFinesFeesEligible) {
+      newEligibleCriteria.usTnFinesFeesEligible =
+        eligibleCriteria.usTnFinesFeesEligible;
+    }
+    if (ineligibleCriteria.usTnFinesFeesEligible) {
+      newIneligibleCriteria.usTnFinesFeesEligible =
+        ineligibleCriteria.usTnFinesFeesEligible;
+    }
+  }
+
+  const recordForParsing = {
+    ...recordWithoutLegacyFields,
+    ...(Object.keys(newAlmostEligibleCriteria).length && {
+      almostEligibleCriteria: newAlmostEligibleCriteria,
+    }),
+    externalId: tdocId,
+    eligibleCriteria: newEligibleCriteria,
+    ineligibleCriteria: newIneligibleCriteria,
+    formInformation: newFormInformation,
+  };
+
+  const zodRecord = compliantReportingSchema
+    .passthrough()
+    .parse(recordForParsing);
+
+  const transformedRecord: CompliantReportingReferralRecordFull = {
+    ...zodRecord,
     currentOffenses,
     eligibilityCategory,
     eligibleLevelStart: optionalFieldToDate(eligibleLevelStart),
@@ -220,7 +359,6 @@ export const transformCompliantReportingReferral: TransformFunction<
       result,
       date: fieldToDate(date),
     })),
-    finesFeesEligible,
     judicialDistrict: judicialDistrict ?? UNKNOWN,
     lastSpecialConditionsNote: optionalFieldToDate(lastSpecialConditionsNote),
     lifetimeOffensesExpired,
@@ -236,7 +374,6 @@ export const transformCompliantReportingReferral: TransformFunction<
       specialConditionsTerminatedDate
     ),
     specialConditionsFlag,
-    supervisionFeeExemption,
     zeroToleranceCodes:
       zeroToleranceCodes?.map(({ contactNoteDate, contactNoteType }) => ({
         contactNoteType,
@@ -249,7 +386,6 @@ export const transformCompliantReportingReferral: TransformFunction<
     const {
       currentLevelEligibilityDate,
       passedDrugScreenNeeded,
-      paymentNeeded,
       recentRejectionCodes,
       seriousSanctionsEligibilityDate,
     } = almostEligibleCriteria;
@@ -262,7 +398,6 @@ export const transformCompliantReportingReferral: TransformFunction<
         seriousSanctionsEligibilityDate
       ),
       passedDrugScreenNeeded,
-      paymentNeeded,
       recentRejectionCodes,
     };
   }

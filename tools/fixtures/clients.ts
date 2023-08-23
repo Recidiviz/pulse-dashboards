@@ -1082,7 +1082,7 @@ const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     specialConditions: [
       "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
     ],
-    allEligibleOpportunities: ["compliantReporting"],
+    allEligibleOpportunities: [],
     emailAddress: "claribel@velazquez.net",
   },
   {
@@ -1107,7 +1107,7 @@ const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     lastPaymentAmount: 125.75,
     lastPaymentDate: "2022-01-03",
     specialConditions: [],
-    allEligibleOpportunities: ["compliantReporting"],
+    allEligibleOpportunities: [],
     currentEmployers: [
       {
         name: "Tire store",
@@ -1139,13 +1139,54 @@ const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     specialConditions: [
       "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
     ],
-    allEligibleOpportunities: ["compliantReporting"],
+    allEligibleOpportunities: [],
     currentEmployers: [
       {
         name: "Tire store",
         address: "492 White Lotus St",
       },
     ],
+  },
+  {
+    personExternalId: "201",
+    displayId: "d201",
+    pseudonymizedId: "p201",
+    stateCode: "US_TN",
+    personName: {
+      givenNames: "Harry",
+      middleNames: "Henry",
+      surname: "Houdini IV",
+    },
+    officerId: "OFFICER1",
+    currentBalance: 282,
+    district: "DISTRICT X",
+    supervisionType: "ISC",
+    boardConditions: [],
+    emailAddress: "harry@fake.net",
+    currentEmployers: [
+      {
+        name: "The Camera Store",
+        address: "496 Fakers Ave",
+      },
+    ],
+    allEligibleOpportunities: ["compliantReporting"],
+  },
+  {
+    personExternalId: "202",
+    displayId: "d202",
+    pseudonymizedId: "p202",
+    stateCode: "US_TN",
+    personName: {
+      givenNames: "Linda",
+      surname: "Smith",
+    },
+    officerId: "OFFICER1",
+    currentBalance: 700,
+    district: "DISTRICT X",
+    supervisionType: "ISC",
+    boardConditions: [],
+    emailAddress: "linda@fake.net",
+    allEligibleOpportunities: ["compliantReporting"],
   },
 ];
 

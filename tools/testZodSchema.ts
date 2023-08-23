@@ -23,6 +23,7 @@ import { z } from "zod";
 
 import { collectionNames } from "../src/FirestoreStore";
 import {
+  compliantReportingSchema,
   usIdPastFTRDSchema,
   usNdEarlyTerminationSchema,
 } from "../src/WorkflowsStore";
@@ -66,6 +67,7 @@ function getDb() {
 const db = getDb();
 
 const SCHEMAS = {
+  compliantReportingReferrals: compliantReportingSchema,
   earlyTerminationReferrals: usNdEarlyTerminationSchema,
   pastFTRDReferrals: usIdPastFTRDSchema,
   usMiPastFTRDReferrals: usMiPastFTRDSchema,

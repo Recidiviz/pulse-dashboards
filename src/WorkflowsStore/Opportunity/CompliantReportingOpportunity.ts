@@ -15,10 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as Sentry from "@sentry/react";
 import assertNever from "assert-never";
 import { differenceInCalendarDays, isEqual } from "date-fns";
-import { DocumentData } from "firebase/firestore";
 import { mapValues } from "lodash";
 import { makeObservable, toJS } from "mobx";
 
@@ -32,7 +30,7 @@ import { OTHER_KEY } from "../utils";
 import {
   AlmostEligibleCriteria,
   CompliantReportingDraftData,
-  CompliantReportingReferralRecord,
+  CompliantReportingReferralRecordFull,
   transformCompliantReportingReferral,
 } from "./CompliantReportingReferralRecord";
 import { CompliantReportingForm } from "./Forms/CompliantReportingForm";
@@ -46,14 +44,16 @@ import {
 import { formatNoteDate } from "./utils";
 
 // ranked roughly by actionability
-export const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (keyof AlmostEligibleCriteria)[] =
-  [
-    "paymentNeeded",
-    "passedDrugScreenNeeded",
-    "recentRejectionCodes",
-    "seriousSanctionsEligibilityDate",
-    "currentLevelEligibilityDate",
-  ];
+export const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (
+  | keyof AlmostEligibleCriteria
+  | keyof CompliantReportingReferralRecordFull["ineligibleCriteria"]
+)[] = [
+  "usTnFinesFeesEligible",
+  "passedDrugScreenNeeded",
+  "recentRejectionCodes",
+  "seriousSanctionsEligibilityDate",
+  "currentLevelEligibilityDate",
+];
 
 /**
  * Clients with values other than these should not appear as eligible in the UI.
@@ -131,7 +131,7 @@ type CompliantReportingUpdateRecord =
 
 const getRecordValidator =
   (client: Client) =>
-  (record: DocumentData | undefined): void => {
+  (record?: CompliantReportingReferralRecordFull): void => {
     if (!record) {
       throw new OpportunityValidationError("No opportunity record found");
     }
@@ -156,26 +156,6 @@ const getRecordValidator =
           ).filter((key) => almostEligibleCriteria[key] !== undefined)
         : [];
 
-      // this is a critical error if we expect an almost-eligible client
-      // but don't have any valid criteria to report, because it could result in the
-      // client being erroneously marked eligible
-      if (definedAlmostEligibleKeys.length === 0) {
-        throw new OpportunityValidationError(
-          "Missing required valid almost-eligible criteria"
-        );
-      }
-
-      if (definedAlmostEligibleKeys.length !== remainingCriteriaNeeded) {
-        // we can recover from this by displaying the valid criteria that remain,
-        // but it should be logged for investigation
-        Sentry.captureException(
-          new OpportunityValidationError(
-            `Expected ${remainingCriteriaNeeded} valid almost-criteria for client ${client.pseudonymizedId}
-          but only produced ${definedAlmostEligibleKeys.length}`
-          )
-        );
-      }
-
       // almost eligible is currently defined as missing exactly one criterion
       if (remainingCriteriaNeeded > 1) {
         throw new OpportunityValidationError(`Too many remaining criteria`);
@@ -194,7 +174,7 @@ const getRecordValidator =
 
 export class CompliantReportingOpportunity extends OpportunityBase<
   Client,
-  CompliantReportingReferralRecord,
+  CompliantReportingReferralRecordFull,
   CompliantReportingUpdateRecord
 > {
   readonly type: OpportunityType = "compliantReporting";
@@ -242,7 +222,10 @@ export class CompliantReportingOpportunity extends OpportunityBase<
   }
 
   get almostEligible(): boolean {
-    return this.validAlmostEligibleKeys.length > 0;
+    return (
+      this.validAlmostEligibleKeys.length > 0 ||
+      Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0
+    );
   }
 
   get reviewStatus(): OpportunityStatus {
@@ -252,7 +235,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       return "DENIED";
     }
 
-    if (this.validAlmostEligibleKeys.length) {
+    if (this.almostEligible) {
       return "ALMOST";
     }
 
@@ -268,13 +251,21 @@ export class CompliantReportingOpportunity extends OpportunityBase<
   }
 
   get almostEligibleStatusMessage(): string | undefined {
+    if (!this.record) return undefined;
+
     const { validAlmostEligibleKeys, almostEligible, requirementAlmostMetMap } =
       this;
 
     if (!almostEligible) return;
 
+    const { ineligibleCriteria } = this.record;
+
     if (validAlmostEligibleKeys.length > 1) {
       return `Needs ${validAlmostEligibleKeys.length} updates`;
+    }
+
+    if (ineligibleCriteria?.usTnFinesFeesEligible) {
+      return "Needs balance <$500 or a payment three months in a row";
     }
 
     // from here on we expect there is only one valid criterion
@@ -296,8 +287,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       drugScreensPastYear,
       eligibilityCategory,
       eligibleLevelStart,
-      supervisionFeeExemption,
-      finesFeesEligible,
       sanctionsPastYear,
       lastSpecialConditionsNote,
       lifetimeOffensesExpired,
@@ -307,6 +296,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       specialConditionsTerminatedDate,
       zeroToleranceCodes,
       offenseTypeEligibility,
+      eligibleCriteria,
     } = this.record;
     const { requirementAlmostMetMap } = this;
 
@@ -372,12 +362,19 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     }
 
     // required fee payment status
-    if (!requirementAlmostMetMap.paymentNeeded) {
+    if (eligibleCriteria.usTnFinesFeesEligible) {
       let feeText =
         "Fee balance for current sentence less than $2,000 and has made payments on three consecutive months";
-      if (finesFeesEligible === "exempt") {
-        feeText = `Exemption: ${supervisionFeeExemption}`;
-      } else if (finesFeesEligible === "low_balance") {
+      const exemption =
+        eligibleCriteria.usTnFinesFeesEligible.hasPermanentFinesFeesExemption?.currentExemptions.join(
+          ", "
+        );
+      if (exemption) {
+        feeText = `Exemption: ${exemption}`;
+      } else if (
+        eligibleCriteria.usTnFinesFeesEligible.hasFinesFeesBalanceBelow500
+          .amountOwed <= 500
+      ) {
         feeText = "Fee balance less than $500";
       }
       requirements.push({ text: feeText, tooltip: CRITERIA.payments.tooltip });
@@ -485,8 +482,17 @@ export class CompliantReportingOpportunity extends OpportunityBase<
   }
 
   get requirementsAlmostMet(): OpportunityRequirement[] {
-    const { validAlmostEligibleKeys } = this;
-    if (!validAlmostEligibleKeys.length) return [];
+    if (!this.record) {
+      return [];
+    }
+
+    const { ineligibleCriteria } = this.record;
+
+    const requirements: OpportunityRequirement[] = [];
+    if (ineligibleCriteria?.usTnFinesFeesEligible) {
+      const text = "Needs balance <$500 or a payment three months in a row";
+      requirements.push({ text, tooltip: CRITERIA.payments.tooltip });
+    }
 
     const configMap: Record<
       keyof AlmostEligibleCriteria,
@@ -494,12 +500,11 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     > = {
       passedDrugScreenNeeded: CRITERIA.drug,
       currentLevelEligibilityDate: CRITERIA.timeOnSupervision,
-      paymentNeeded: CRITERIA.payments,
       recentRejectionCodes: CRITERIA.compliance,
       seriousSanctionsEligibilityDate: CRITERIA.sanctions,
     };
 
-    const requirements: OpportunityRequirement[] = [];
+    const { validAlmostEligibleKeys } = this;
     validAlmostEligibleKeys.forEach((criterionKey) => {
       const text = this.requirementAlmostMetMap[criterionKey];
       // in practice this should always be true so this is mostly type safety
@@ -526,7 +531,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       currentLevelEligibilityDate,
       recentRejectionCodes,
       passedDrugScreenNeeded,
-      paymentNeeded,
       seriousSanctionsEligibilityDate,
     } = this.record?.almostEligibleCriteria ?? {};
 
@@ -541,15 +545,11 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 
     return mapValues(
       toJS(this.record?.almostEligibleCriteria),
-      (_value, key: keyof AlmostEligibleCriteria) => {
+      (_value: unknown, key: keyof AlmostEligibleCriteria) => {
         switch (key) {
           case "passedDrugScreenNeeded":
             return passedDrugScreenNeeded
               ? "Needs one more passed drug screen"
-              : undefined;
-          case "paymentNeeded":
-            return paymentNeeded
-              ? "Needs balance <$500 or a payment three months in a row"
               : undefined;
           case "currentLevelEligibilityDate": {
             return currentLevelEligibilityDaysRemaining !== undefined
@@ -581,50 +581,58 @@ export class CompliantReportingOpportunity extends OpportunityBase<
   get almostEligibleRecommendedNote():
     | { title: string; text: string }
     | undefined {
+    if (!this.record) return undefined;
+
+    const { ineligibleCriteria } = this.record;
+
     // note functionality only supports a single missing criterion
     if (
-      this.validAlmostEligibleKeys.length !== 1 ||
-      !this.record?.almostEligibleCriteria
+      this.validAlmostEligibleKeys.length +
+        Object.keys(ineligibleCriteria).length !==
+      1
     )
       return undefined;
 
-    const missingCriterionKey = this.validAlmostEligibleKeys[0];
-
-    const title = this.requirementAlmostMetMap[missingCriterionKey];
-    // not expected to happen in practice but Typescript doesn't know that
-    if (!title) return undefined;
-
-    const { currentLevelEligibilityDate, seriousSanctionsEligibilityDate } =
-      this.record?.almostEligibleCriteria ?? {};
-
     let criterionSpecificCopy: string | undefined;
-    switch (missingCriterionKey) {
-      case "currentLevelEligibilityDate":
-        criterionSpecificCopy =
-          currentLevelEligibilityDate &&
-          `stay on your current supervision level until ${formatNoteDate(
-            currentLevelEligibilityDate
-          )}`;
-        break;
-      case "passedDrugScreenNeeded":
-        criterionSpecificCopy = "pass one drug screen";
-        break;
-      case "paymentNeeded":
-        criterionSpecificCopy =
-          "have a balance of less than $500 or make a payment three months in a row";
-        break;
-      case "recentRejectionCodes":
-        // intentionally left blank; no note required in this case
-        break;
-      case "seriousSanctionsEligibilityDate":
-        criterionSpecificCopy =
-          seriousSanctionsEligibilityDate &&
-          `don’t get any sanctions higher than level 1 until ${formatNoteDate(
-            seriousSanctionsEligibilityDate
-          )}`;
-        break;
-      default:
-        break;
+    let title: string | undefined;
+    if (ineligibleCriteria.usTnFinesFeesEligible) {
+      title = "Needs balance <$500 or a payment three months in a row";
+      criterionSpecificCopy =
+        "have a balance of less than $500 or make a payment three months in a row";
+    } else {
+      const missingCriterionKey = this.validAlmostEligibleKeys[0];
+
+      title = this.requirementAlmostMetMap[missingCriterionKey];
+      // not expected to happen in practice but Typescript doesn't know that
+      if (!title) return undefined;
+
+      const { currentLevelEligibilityDate, seriousSanctionsEligibilityDate } =
+        this.record?.almostEligibleCriteria ?? {};
+
+      switch (missingCriterionKey) {
+        case "currentLevelEligibilityDate":
+          criterionSpecificCopy =
+            currentLevelEligibilityDate &&
+            `stay on your current supervision level until ${formatNoteDate(
+              currentLevelEligibilityDate
+            )}`;
+          break;
+        case "passedDrugScreenNeeded":
+          criterionSpecificCopy = "pass one drug screen";
+          break;
+        case "recentRejectionCodes":
+          // intentionally left blank; no note required in this case
+          break;
+        case "seriousSanctionsEligibilityDate":
+          criterionSpecificCopy =
+            seriousSanctionsEligibilityDate &&
+            `don’t get any sanctions higher than level 1 until ${formatNoteDate(
+              seriousSanctionsEligibilityDate
+            )}`;
+          break;
+        default:
+          break;
+      }
     }
 
     if (!criterionSpecificCopy) return undefined;

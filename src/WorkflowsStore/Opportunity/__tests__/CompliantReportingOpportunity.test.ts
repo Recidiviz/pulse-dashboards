@@ -30,10 +30,14 @@ import {
   compliantReportingAlmostEligibleReferralRecord,
   compliantReportingEligibleClientRecord,
   compliantReportingEligibleWithDiscretionReferralRecord,
+  compliantReportingIneligibleCriteria,
   compliantReportingReferralRecord,
 } from "../__fixtures__";
 import type { CompliantReportingOpportunity } from "../CompliantReportingOpportunity";
-import { transformCompliantReportingReferral } from "../CompliantReportingReferralRecord";
+import {
+  CompliantReportingReferralRecordFull,
+  transformCompliantReportingReferral,
+} from "../CompliantReportingReferralRecord";
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,
@@ -125,7 +129,7 @@ describe("fully eligible", () => {
 
 describe.each([
   [
-    "paymentNeeded",
+    "usTnFinesFeesEligible",
     0,
     "Needs balance <$500 or a payment three months in a row",
     undefined,
@@ -163,7 +167,7 @@ describe.each([
     /on medium supervision for /,
     /stay on your current supervision level/,
   ],
-] as [criterionKey: keyof typeof compliantReportingAlmostEligibleCriteria, expectedRank: number, expectedListText: string, expectedToolip: RegExp | undefined, expectedMissingText: RegExp, expectedNote?: RegExp][])(
+] as [criterionKey: keyof typeof compliantReportingAlmostEligibleCriteria | keyof CompliantReportingReferralRecordFull["ineligibleCriteria"], expectedRank: number, expectedListText: string, expectedToolip: RegExp | undefined, expectedMissingText: RegExp, expectedNote?: RegExp][])(
   "almost eligible but for %s",
   (
     criterionKey,
@@ -178,14 +182,24 @@ describe.each([
         .spyOn(WorkflowsStore.prototype, "featureVariants", "get")
         .mockReturnValue({ CompliantReportingAlmostEligible: {} });
 
-      const almostEligibleCriteria = {
-        [criterionKey]: compliantReportingAlmostEligibleCriteria[criterionKey],
-      };
-
       const testRecord = cloneDeep(
         compliantReportingAlmostEligibleReferralRecord
       );
-      testRecord.almostEligibleCriteria = almostEligibleCriteria;
+      if (criterionKey in compliantReportingAlmostEligibleCriteria) {
+        testRecord.almostEligibleCriteria = {
+          [criterionKey]:
+            compliantReportingAlmostEligibleCriteria[
+              criterionKey as keyof typeof compliantReportingAlmostEligibleCriteria
+            ],
+        };
+      } else {
+        testRecord.ineligibleCriteria = {
+          [criterionKey]:
+            compliantReportingIneligibleCriteria[
+              criterionKey as keyof typeof compliantReportingIneligibleCriteria
+            ],
+        };
+      }
 
       createTestUnit(compliantReportingAlmostEligibleClientRecord);
 
