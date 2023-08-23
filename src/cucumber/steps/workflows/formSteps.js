@@ -35,7 +35,7 @@ import {
 Given(
   "I am a {string} user on the {string} form page for {string}",
   async (stateCode, opportunityType, pseudonymizedId) => {
-    WorkflowsHomepage.open();
+    await WorkflowsHomepage.open();
     await switchUserStateCode(stateCode);
     await WorkflowsFormPage.open(opportunityType, pseudonymizedId);
   }
@@ -96,7 +96,10 @@ When("I click on the checkbox for {string}", async (checkboxValue) => {
 When("I click on preview page {int}", async (pageNumber) => {
   const pages = await $$(".TEPESmallPagePreview");
   await waitForElementsToExist(pages);
-  await pages[pageNumber - 1].click();
+  const page = pages[pageNumber - 1];
+  await page.isExisting();
+  await page.click();
+  await browser.pause(500);
 });
 
 /**

@@ -134,13 +134,14 @@ async function waitForFileToExist(filePath, timeout) {
 
 async function switchUserStateCode(stateCode) {
   const avatarDropdown = await $(".UserAvatar");
-  await avatarDropdown.isExisting();
+  await avatarDropdown.waitForExist();
   await avatarDropdown.click();
   const profileLink = await $(".AccountLink");
-  await profileLink.isExisting();
+  await profileLink.waitForExist();
+  await browser.pause(500);
   await waitForNavigation(profileLink.click());
   const stateSelection = await $(`.StateSelection__${stateCode}`);
-  await stateSelection.isExisting();
+  await stateSelection.waitForExist();
   await stateSelection.click();
 }
 

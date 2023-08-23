@@ -18,8 +18,8 @@
 import Page from "./basePage";
 
 class WorkflowsHomepage extends Page {
-  open() {
-    super.open(`${browser.config.baseUrl}/workflows`);
+  async open() {
+    await super.open(`${browser.config.baseUrl}/workflows`);
   }
 
   async promptText() {
