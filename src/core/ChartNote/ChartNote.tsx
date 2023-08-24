@@ -19,8 +19,8 @@ import "./ChartNote.scss";
 import React from "react";
 import { Link } from "react-router-dom";
 
+import { useRootStore } from "../../components/StoreProvider";
 import { convertToSlug } from "../../utils/navigation";
-import { useCoreStore } from "../CoreStoreProvider";
 import { PATHWAYS_PATHS } from "../views";
 
 type Props = {
@@ -34,7 +34,9 @@ const ChartNote: React.FC<Props> = ({
   chartTitle,
   isLoading = false,
 }) => {
-  const { currentTenantId } = useCoreStore();
+  const {
+    tenantStore: { currentTenantId },
+  } = useRootStore();
 
   if (isLoading || !note) {
     return (

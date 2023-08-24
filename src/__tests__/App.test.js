@@ -27,12 +27,13 @@ import VerificationNeeded from "../components/VerificationNeeded";
 import DashboardLayout from "../core/DashboardLayout";
 import MethodologyPathways from "../core/MethodologyPathways";
 import MethodologyProjections from "../core/MethodologyProjections/Methodology";
+import PageImpact from "../core/PageImpact";
 import PageSystem from "../core/PageSystem";
 import PageVitals from "../core/PageVitals";
 import LanternLayout from "../lantern/LanternLayout";
 import Revocations from "../lantern/Revocations";
 import { US_MO, US_PA } from "../RootStore/TenantStore/lanternTenants";
-import { US_ID } from "../RootStore/TenantStore/pathwaysTenants";
+import { US_ID, US_TN } from "../RootStore/TenantStore/pathwaysTenants";
 
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 
@@ -50,6 +51,7 @@ jest.mock("../core/MethodologyProjections/Methodology");
 jest.mock("../core/MethodologyPathways");
 jest.mock("../core/PageVitals");
 jest.mock("../core/PageSystem");
+jest.mock("../core/PageImpact");
 
 describe("App tests", () => {
   const metadataField = `${METADATA_NAMESPACE}app_metadata`;
@@ -63,6 +65,7 @@ describe("App tests", () => {
   const mockMethodologyPathwaysId = "pathways-methodology-id";
   const mockPathwaysPrisonId = "pathways-prison-id";
   const mockOperationsId = "operations-id";
+  const mockImpactId = "impact-id";
 
   const RevocationsMock = Revocations.type;
   const LanternLayoutMock = LanternLayout.type;
@@ -70,6 +73,7 @@ describe("App tests", () => {
   const MethodologyPathwaysMock = MethodologyPathways.type;
   const PageSystemMock = PageSystem.type;
   const PageVitalsMock = PageVitals.type;
+  const PageImpactMock = PageImpact.type;
   let userStore = {};
 
   LanternLayoutMock.mockImplementation(({ children }) => children);
@@ -78,6 +82,7 @@ describe("App tests", () => {
   RevocationsMock.mockReturnValue(mockWithTestId(mockRevocationsId));
   PageSystemMock.mockReturnValue(mockWithTestId(mockPathwaysPrisonId));
   PageVitalsMock.mockReturnValue(mockWithTestId(mockOperationsId));
+  PageImpactMock.mockReturnValue(mockWithTestId(mockImpactId));
   NotFound.mockReturnValue(mockWithTestId(mockNotFoundId));
   Loading.mockReturnValue(mockWithTestId(mockLoadingTestId));
   ErrorMessage.mockReturnValue(mockWithTestId(mockErrorId));
@@ -98,6 +103,7 @@ describe("App tests", () => {
         methodology: ["projections"],
         system: ["prison"],
         "id-methodology": ["operations", "system"],
+        impact: ["compliantReportingWorkflows"],
       },
     };
   });
@@ -153,6 +159,35 @@ describe("App tests", () => {
       expect(DashboardLayoutMock).toHaveBeenCalledTimes(1);
       expect(LanternLayoutMock).toHaveBeenCalledTimes(0);
       expect(getByTestId(mockPathwaysPrisonId)).toBeInTheDocument();
+    });
+  });
+
+  describe("Impact layout", () => {
+    it("should render Impact page when currentTenantId is authorized", () => {
+      window.history.pushState({}, "", "/impact");
+      const user = { [metadataField]: { stateCode: US_TN } };
+
+      useRootStore.mockReturnValue({
+        userStore: { ...userStore, ...user, stateCode: US_TN },
+        currentTenantId: US_TN,
+      });
+
+      const { getByTestId } = render(<App />);
+      expect(DashboardLayoutMock).toHaveBeenCalledTimes(1);
+      expect(getByTestId(mockImpactId)).toBeInTheDocument();
+    });
+
+    it("should not render Impact when currentTenantId is not authorized", () => {
+      window.history.pushState({}, "", "/impact");
+      useRootStore.mockReturnValue({
+        userStore: { ...userStore, user: {} },
+        currentTenantId: "US_XX",
+      });
+
+      const { container, getByTestId } = render(<App />);
+
+      expect(container.children.length).toBe(2);
+      expect(getByTestId(mockNotFoundId)).toBeInTheDocument();
     });
   });
 

@@ -22,6 +22,7 @@ import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import {
   DASHBOARD_VIEWS,
+  IMPACT_PAGES,
   PATHWAYS_PAGES,
   PATHWAYS_SECTIONS,
 } from "../core/views";
@@ -105,7 +106,7 @@ const US_TN_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countByRace,
     ],
     "id-methodology": [DASHBOARD_VIEWS.system],
-    impact: [DASHBOARD_VIEWS.impact],
+    impact: [IMPACT_PAGES.compliantReportingWorkflows],
   },
   pagesWithRestrictions: [
     "libertyToPrison",

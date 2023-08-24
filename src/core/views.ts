@@ -293,3 +293,19 @@ export function workflowsUrl(
 export const IMPACT_PATHS: Record<string, string> = {
   impact: `/${DASHBOARD_VIEWS.impact}`,
 };
+
+export type ImpactPage = keyof typeof IMPACT_PAGES;
+
+export const IMPACT_PAGES = {
+  compliantReportingWorkflows: "compliantReportingWorkflows",
+} as const;
+
+export type ImpactSection = keyof typeof IMPACT_SECTIONS;
+export const IMPACT_SECTIONS: Record<string, string> = {
+  avgDailyPopulation: "avgDailyPopulation",
+};
+export const DEFAULT_IMPACT_PAGE = IMPACT_PAGES.compliantReportingWorkflows;
+export const DEFAULT_IMPACT_SECTION_BY_PAGE: Record<string, string> = {
+  [IMPACT_PAGES.compliantReportingWorkflows]:
+    IMPACT_SECTIONS.avgDailyPopulation,
+};

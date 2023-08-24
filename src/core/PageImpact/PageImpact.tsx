@@ -15,16 +15,38 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // ===================== ========================================================
 
+import dedent from "dedent";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import withRouteSync from "../withRouteSync";
+import { useRootStore } from "../../components/StoreProvider";
+import ImpactLeftPanel from "../ImpactLeftPanel/ImpactLeftPanel";
+import ModelHydrator from "../ModelHydrator";
+import PageTemplate from "../PageTemplate";
 
 const PageImpact: React.FC = () => {
   window.scrollTo({
     top: 0,
   });
-  return <div />;
+  const { impactStore } = useRootStore();
+
+  return (
+    <ModelHydrator model={impactStore}>
+      <PageTemplate
+        leftPanel={
+          <ImpactLeftPanel
+            title="Compliant Reporting Workflows"
+            description={dedent`In April 2022, Recidiviz launched a Workflows tool
+                              in Tennessee designed to increase timely transfers
+                              to Compliant Reporting, TN's version of limited
+                              supervision.`}
+          />
+        }
+      >
+        <div>Here is a test output</div>
+      </PageTemplate>
+    </ModelHydrator>
+  );
 };
 
-export default withRouteSync(observer(PageImpact));
+export default observer(PageImpact);

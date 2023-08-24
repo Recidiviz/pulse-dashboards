@@ -21,6 +21,7 @@ import { computed, configure, makeObservable, onReactionError } from "mobx";
 import demoAuthConfig from "../auth_config_demo.json";
 import devAuthConfig from "../auth_config_dev.json";
 import productionAuthConfig from "../auth_config_production.json";
+import ImpactStore from "../core/ImpactStore";
 import FirestoreStore from "../FirestoreStore";
 import { WorkflowsStore } from "../WorkflowsStore";
 import AnalyticsStore from "./AnalyticsStore";
@@ -94,6 +95,8 @@ export class RootStore {
 
   firestoreStore: FirestoreStore;
 
+  impactStore: ImpactStore;
+
   constructor() {
     makeObservable(this, {
       currentTenantId: computed,
@@ -117,6 +120,8 @@ export class RootStore {
     this.analyticsStore = new AnalyticsStore({ rootStore: this });
 
     this.firestoreStore = new FirestoreStore({ rootStore: this });
+
+    this.impactStore = new ImpactStore({ rootStore: this });
   }
 
   get currentTenantId(): TenantId | undefined {

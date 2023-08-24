@@ -174,13 +174,27 @@ export type MetricRecord =
   | LibertyPopulationSnapshotRecord
   | TimeSeriesDataRecord
   | SnapshotDataRecord
-  | PersonLevelDataRecord;
+  | PersonLevelDataRecord
+  | UsTnCompliantReportingWorkflowsImpactRecord;
 
 export type NewBackendRecord<RecordType extends MetricRecord> = {
   data: RecordType[];
   metadata: {
     lastUpdated: string;
   };
+};
+
+export type UsTnCompliantReportingWorkflowsImpactRecord = {
+  stateCode: string;
+  supervisionDistrict: string;
+  districtName: string;
+  variantId: string;
+  variantDate: Date;
+  startDate: Date;
+  endDate: Date;
+  monthsSinceTreatment: number;
+  avgDailyPopulation: number;
+  avgPopulationLimitedSupervisionLevel: number;
 };
 
 export type PopulationProjectionTimeSeriesRecord = {
