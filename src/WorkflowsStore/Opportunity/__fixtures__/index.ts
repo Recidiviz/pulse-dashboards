@@ -33,6 +33,7 @@ import { LSUReferralRecord } from "../LSUReferralRecord";
 import { UsMeEarlyTerminationReferralRecord } from "../UsMeEarlyTerminationReferralRecord";
 import { UsMeFurloughReleaseReferralRecord } from "../UsMeFurloughReleaseReferralRecord";
 import { UsMeSCCPReferralRecord } from "../UsMeSCCPReferralRecord";
+import { UsMeWorkReleaseReferralRecord } from "../UsMeWorkReleaseReferralRecord";
 import { UsMiMinimumTelephoneReportingReferralRecord } from "../UsMiMinimumTelephoneReportingReferralRecord";
 import { UsMiPastFTRDReferralRecord } from "../UsMiPastFTRDReferralRecord";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../UsMoRestrictiveHousingStatusHearingReferralRecord";
@@ -737,7 +738,11 @@ export const usMePersonRecord: ResidentRecord = {
   officerId: "CASE_MANAGER_1",
   admissionDate: "2020-03-10",
   releaseDate: "2025-05-20",
-  allEligibleOpportunities: ["usMeSCCP", "usMeFurloughRelease"],
+  allEligibleOpportunities: [
+    "usMeSCCP",
+    "usMeFurloughRelease",
+    "usMeWorkRelease",
+  ],
 };
 
 export const usMePersonRecordShorterSentence: ResidentRecord = {
@@ -775,6 +780,33 @@ export const usMeFurloughReleaseEligibleRecordFixture: UsMeFurloughReleaseReferr
       usMeServedHalfOfSentence: {
         eligibleDate: parseISO("2022-08-14"),
       },
+    },
+    ineligibleCriteria: {},
+    caseNotes: {
+      foo: [
+        {
+          noteTitle: "A title",
+          noteBody: "A body",
+          eventDate: parseISO("2022-06-28"),
+        },
+      ],
+    },
+  };
+
+export const usMeWorkReleaseEligibleRecordFixture: UsMeWorkReleaseReferralRecord =
+  {
+    stateCode: "US_ME",
+    externalId: "111",
+    eligibleCriteria: {
+      usMeCustodyLevelIsMinimum: { custodyLevel: "MINIMUM" },
+      usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
+        eligibleDate: parseISO("2022-08-10"),
+      },
+      usMeThreeYearsRemainingOnSentence: {
+        eligibleDate: parseISO("2022-08-14"),
+      },
+      usMeNoClassAOrBViolationFor90Days: null,
+      usMeNoDetainersWarrantsOrOther: null,
     },
     ineligibleCriteria: {},
     caseNotes: {

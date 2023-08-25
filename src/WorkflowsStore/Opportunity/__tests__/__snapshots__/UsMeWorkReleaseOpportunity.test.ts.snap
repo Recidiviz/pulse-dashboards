@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fully eligible requirements met 1`] = `
+Array [
+  Object {
+    "text": "Currently on minimum",
+    "tooltip": "Currently on minimum custody",
+  },
+  Object {
+    "text": "32 months remaining on sentence",
+    "tooltip": "No more than three (3) years remaining on the term(s) of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 2307 to 2311 (i.e., first day at the community transition site must be no more than three (3) years prior to the resident’s current custody release date).",
+  },
+  Object {
+    "text": "No detainers, warrants, or other pending holds",
+    "tooltip": "Must have no detainers, warrants, or other pending holds preventing participation in a community program as set out in Department Policy (AF) 23.1, Classification System.",
+  },
+  Object {
+    "text": "Served at least 30 days at current facility",
+    "tooltip": "Served at least thirty (30) days of the term of imprisonment in the facility providing the community transition program",
+  },
+  Object {
+    "text": "No Class A or B disciplines pending or occurring in the past 90 days",
+    "tooltip": "The resident must not have been found guilty of a Class A or B disciplinary violation within ninety (90) days of submitting the application to participate in the community transition program or anytime thereafter prior to the scheduled first day at the site and must not have a Class A or B disciplinary report pending at the time of submitting the application or scheduled first day at the site.",
+  },
+]
+`;
