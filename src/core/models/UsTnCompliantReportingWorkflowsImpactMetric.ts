@@ -34,9 +34,12 @@ export default class UsTnCompliantReportingWorkflowsImpactMetric extends ImpactM
     super(props);
     makeObservable<UsTnCompliantReportingWorkflowsImpactMetric>(this, {
       dataSeries: computed,
-      avgPopulationLineData: computed,
       startDate: computed,
+      avgPopulationLineData: computed,
+      avgPopulationCompliantReportingLineData: computed,
       useAvgDailyPopulationData: computed,
+      useValidTreatmentEffect: computed,
+      useValidYExtent: computed,
     });
   }
 
@@ -64,21 +67,76 @@ export default class UsTnCompliantReportingWorkflowsImpactMetric extends ImpactM
   }
 
   get avgPopulationLineData(): DataItem[] {
-    const data = this.dataSeries.map((d: any) => ({
-      months: d.monthsSinceTreatment,
-      value: d.avgDailyPopulation,
-    }));
+    const data = this.dataSeries.map(
+      (d: UsTnCompliantReportingWorkflowsImpactRecord) => ({
+        months: d.monthsSinceTreatment,
+        value: d.avgDailyPopulation,
+      })
+    );
+
+    return this.aggregatedChartData(data);
+  }
+
+  get avgPopulationCompliantReportingLineData(): DataItem[] {
+    const data = this.dataSeries.map(
+      (d: UsTnCompliantReportingWorkflowsImpactRecord) => ({
+        months: d.monthsSinceTreatment,
+        value: d.avgPopulationLimitedSupervisionLevel,
+      })
+    );
 
     return this.aggregatedChartData(data);
   }
 
   get useAvgDailyPopulationData(): DataItem[] {
     const currentSection = this.rootStore.section;
+
     if (currentSection === "avgDailyPopulation") {
       return this.avgPopulationLineData;
     }
+    if (currentSection === "avgPopulationCompliantReporting") {
+      return this.avgPopulationCompliantReportingLineData;
+    }
 
     return [{ months: 0, value: 0 }];
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  yAxisBounds(chartData: DataItem[], roundToNearest: number): number[] {
+    const maxDataValue = Math.max(...chartData.map((item) => item.value));
+
+    const minDataValue = Math.min(...chartData.map((item) => item.value));
+
+    const minRoundedValue =
+      Math.round(minDataValue / roundToNearest) * roundToNearest;
+
+    const maxRoundedValue =
+      Math.round(maxDataValue / roundToNearest) * roundToNearest;
+
+    return [minRoundedValue, maxRoundedValue];
+  }
+
+  get avgDailyPopulationYAxisBounds(): number[] {
+    // TODO: replace these with getChartTop / getChartBottom in src/core/PopulationTimeSeriesChart/helpers.ts
+    // set to round to the nearest two-thousand to display data at a closer level of granularity
+    return this.yAxisBounds(this.avgPopulationLineData, 2000);
+  }
+
+  get avgPopulationCompliantReportingYAxisBounds(): number[] {
+    // set to round to the nearest multiple of 800 to avoid the y axis points bleeding to the top/bottom of chart
+    return this.yAxisBounds(this.avgPopulationCompliantReportingLineData, 800);
+  }
+
+  get useValidYExtent(): number[] {
+    const currentSection = this.rootStore.section;
+
+    if (currentSection === "avgDailyPopulation") {
+      return this.avgDailyPopulationYAxisBounds;
+    }
+    if (currentSection === "avgPopulationCompliantReporting") {
+      return this.avgPopulationCompliantReportingYAxisBounds;
+    }
+    return [];
   }
 
   get avgDailyPopulationTreatment(): number {
@@ -87,6 +145,27 @@ export default class UsTnCompliantReportingWorkflowsImpactMetric extends ImpactM
       "avgDailyPopulation",
       "supervisionDistrict"
     );
+  }
+
+  get avgPopulationCompliantReportingTreatment(): number {
+    return this.calculateTreatmentEffect(
+      "monthsSinceTreatment",
+      "avgPopulationLimitedSupervisionLevel",
+      "supervisionDistrict"
+    );
+  }
+
+  get useValidTreatmentEffect(): number {
+    const currentSection = this.rootStore.section;
+
+    if (currentSection === "avgDailyPopulation") {
+      return this.avgDailyPopulationTreatment;
+    }
+    if (currentSection === "avgPopulationCompliantReporting") {
+      return this.avgPopulationCompliantReportingTreatment;
+    }
+
+    return 0;
   }
 
   get startDate(): string {

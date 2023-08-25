@@ -302,11 +302,12 @@ export const IMPACT_PAGES = {
 
 export type ImpactSection = keyof typeof IMPACT_SECTIONS;
 export const IMPACT_SECTIONS: Record<string, string> = {
+  avgPopulationCompliantReporting: "avgPopulationCompliantReporting",
   avgDailyPopulation: "avgDailyPopulation",
 };
 export const DEFAULT_IMPACT_PAGE = IMPACT_PAGES.compliantReportingWorkflows;
 export const DEFAULT_IMPACT_SECTION_BY_PAGE: Record<string, string> = {
   [IMPACT_PAGES.compliantReportingWorkflows]:
-    IMPACT_SECTIONS.avgDailyPopulation,
+    IMPACT_SECTIONS.avgPopulationCompliantReporting,
 };
 export type ImpactPageRootPath = typeof IMPACT_PAGES[ImpactPage];

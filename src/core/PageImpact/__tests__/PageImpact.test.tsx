@@ -67,6 +67,7 @@ describe("Impact Page", () => {
           avgDailyPopulation: 3927.9999999999995,
           avgPopulationLimitedSupervisionLevel: 106.69999999999999,
           useAvgDailyPopulationData: [{ months: 0, value: 3927.9999999999995 }],
+          useValidYExtent: [0, 4000],
         },
         isHydrated: true,
         page: "compliantReportingWorkflows",

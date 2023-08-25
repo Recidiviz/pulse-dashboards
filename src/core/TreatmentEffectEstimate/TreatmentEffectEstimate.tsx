@@ -34,13 +34,13 @@ const TreatmentEffectEstimate: React.FC = () => {
 
   const metric = impactStore.usTnCompliantReportingWorkflowsImpact;
 
-  const { avgDailyPopulationTreatment } = metric;
+  const { useValidTreatmentEffect } = metric;
 
-  const symbol = avgDailyPopulationTreatment > 0 ? "+" : "";
-  const avgDailyPopulationTreatmentNum = `${symbol}${avgDailyPopulationTreatment}`;
+  const symbol = useValidTreatmentEffect > 0 ? "+" : "";
+  const avgPopulationTreatmentNum = `${symbol}${useValidTreatmentEffect}`;
 
-  const shift = avgDailyPopulationTreatment >= 0 ? "Increase" : "Decrease";
-  const avgDailyPopulationTreatmentText = `${shift} in Average Daily Population.`;
+  const shift = useValidTreatmentEffect >= 0 ? "Increase" : "Decrease";
+  const avgPopulationTreatmentText = `${shift} in Average Daily Population.`;
 
   // TODO: confidence intervals remain static until values are available from the backend
 
@@ -59,8 +59,8 @@ const TreatmentEffectEstimate: React.FC = () => {
   return (
     <Container>
       <TreatmentEffectSection>
-        <LargeText>{avgDailyPopulationTreatmentNum}</LargeText>
-        <XSmallText>{avgDailyPopulationTreatmentText}</XSmallText>
+        <LargeText>{avgPopulationTreatmentNum}</LargeText>
+        <XSmallText>{avgPopulationTreatmentText}</XSmallText>
       </TreatmentEffectSection>
       <TreatmentEffectSection>
         <XSmallText>{confindenceIntervalText}</XSmallText>

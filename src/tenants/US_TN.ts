@@ -108,7 +108,10 @@ const US_TN_CONFIG: TenantConfig = {
     ],
     "id-methodology": [DASHBOARD_VIEWS.system],
     impact: [IMPACT_PAGES.compliantReportingWorkflows],
-    compliantReportingWorkflows: [IMPACT_SECTIONS.avgDailyPopulation],
+    compliantReportingWorkflows: [
+      IMPACT_SECTIONS.avgPopulationCompliantReporting,
+      IMPACT_SECTIONS.avgDailyPopulation,
+    ],
   },
   pagesWithRestrictions: [
     "libertyToPrison",

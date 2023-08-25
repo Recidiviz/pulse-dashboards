@@ -52,6 +52,8 @@ const ImpactSectionNavigation: React.FC = () => {
 
   const sectionTitles: ImpactSectionToTitle = {
     avgDailyPopulation: "Average Daily Population",
+    avgPopulationCompliantReporting:
+      "Average Daily Population on Compliant Reporting",
   };
 
   useEffect(() => {

@@ -36,14 +36,11 @@ export interface VizAvgDailyPopulationProps {
 const VizAvgDailyPopulation: React.FC<VizAvgDailyPopulationProps> = ({
   metric,
 }) => {
-  const { useAvgDailyPopulationData } = metric;
+  const { useAvgDailyPopulationData, useValidYExtent } = metric;
 
   const chartTitle = "Average Daily Population";
 
-  interface DataItem {
-    months: number;
-    value: number;
-  }
+  const [minValue, maxValue] = useValidYExtent;
 
   const data = useAvgDailyPopulationData;
 
@@ -53,18 +50,6 @@ const VizAvgDailyPopulation: React.FC<VizAvgDailyPopulationProps> = ({
   };
 
   const chartXAxisTitle = "Months from Workflows launch date";
-
-  const maxObject: DataItem = data.find(
-    (obj) => obj.value === Math.max(...data.map((item) => item.value))
-  ) ?? { months: 0, value: 0 };
-
-  const maxValue = Math.round(maxObject.value / 2000) * 2000;
-
-  const minObject: DataItem = data.find(
-    (obj) => obj.value === Math.min(...data.map((item) => item.value))
-  ) ?? { months: 0, value: 0 };
-
-  const minValue = Math.round(minObject.value / 2000) * 2000;
 
   return (
     <VizPathways className="VizAvgDailyPopulation" title={chartTitle}>
