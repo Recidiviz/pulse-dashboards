@@ -44,6 +44,7 @@ import { usMiPastFTRDReferralsFixture } from "./fixtures/usMiPastFTRDReferrals";
 import { usMiSupervisionLevelDowngradeReferrals } from "./fixtures/usMiSupervisionLevelDowngradeReferrals";
 import { usMoRestrictiveHousingStatusHearingFixture } from "./fixtures/usMoRestrictiveHousingStatusHearingReferrals";
 import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
+import { usTnCompliantReportingReferrals } from "./fixtures/usTnCompliantReportingReferrals";
 import { usTnCustodyLevelDowngradeFixture } from "./fixtures/usTnCustodyLevelDowngradeReferrals";
 import { usTnExpirationFixture } from "./fixtures/usTnExpirationReferrals";
 
@@ -68,7 +69,6 @@ console.log(fsSettings);
 const db = new Firestore(fsSettings);
 
 const OPPORTUNITIES_WITH_JSON_FIXTURES: CollectionName[] = [
-  "compliantReportingReferrals",
   "LSUReferrals",
   "earnedDischargeReferrals",
   "usMiClassificationReviewReferrals",
@@ -104,9 +104,10 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   usMoRestrictiveHousingStatusHearingReferrals:
     usMoRestrictiveHousingStatusHearingFixture,
   usMeEarlyTerminationReferrals: usMeEarlyTerminationReferralsFixture,
+  usMeFurloughReleaseReferrals: usMeFurloughReleaseFixture,
+  compliantReportingReferrals: usTnCompliantReportingReferrals,
   usTnCustodyLevelDowngradeReferrals: usTnCustodyLevelDowngradeFixture,
   usTnExpirationReferrals: usTnExpirationFixture,
-  usMeFurloughReleaseReferrals: usMeFurloughReleaseFixture,
 } as const;
 
 // If we're writing to the real firestore, don't clobber the real data

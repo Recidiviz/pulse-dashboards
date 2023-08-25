@@ -12,7 +12,7 @@ Feature: View a list of people on the opportunity page
 
         Examples:
             | stateCode | searchValue   | numPeople | opportunityType                     | opportunityName     |
-            | US_TN     | Test Officer1 | 2         | compliantReporting                  | Compliant Reporting |
+            | US_TN     | Test Officer1 | 4         | compliantReporting                  | Compliant Reporting |
             | US_MO     | Facility #1   | 1         | usMoRestrictiveHousingStatusHearing | Restrictive Housing |
 
     Scenario Outline: Searching for multiple caseloads
@@ -24,7 +24,7 @@ Feature: View a list of people on the opportunity page
 
         Examples:
             | stateCode | searchValue   | secondSearchValue | numPeople | opportunityType                     |
-            | US_TN     | Test Officer1 | Test Officer2     | 3         | compliantReporting                  |
+            | US_TN     | Test Officer1 | Test Officer2     | 5         | compliantReporting                  |
             | US_MO     | Facility #1   | Facility #2       | 3         | usMoRestrictiveHousingStatusHearing |
 
     Scenario Outline: Navigating to a form for an opportunity
