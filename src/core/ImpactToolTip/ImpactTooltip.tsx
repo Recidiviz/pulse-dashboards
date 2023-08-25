@@ -15,20 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  ImpactPageRootPath,
-  ImpactSection,
-  PathwaysPageRootPath,
-  PathwaysSection,
-  ViewRootPath,
-} from "../views";
+import "./ImpactTooltip.scss";
 
-export type RoutePermission = (string | any)[];
+import React from "react";
 
-export type NavigationSection = keyof Navigation;
+type PropTypes = {
+  d: {
+    months: number;
+    value: number;
+  };
+};
 
-export type Navigation = Partial<
-  Record<ViewRootPath, string[]> &
-    Record<PathwaysPageRootPath, PathwaysSection[]> &
-    Record<ImpactPageRootPath, ImpactSection[]>
->;
+const ImpactToolTip: React.FC<PropTypes> = ({ d }) => {
+  const { months, value } = d;
+
+  const monthsTooltip = `${months.toLocaleString()} month`;
+
+  return (
+    <div className="ImpactToolTip">
+      <div className="ImpactToolTip__months">{monthsTooltip}</div>
+      <div className="ImpactToolTip__value">{value.toLocaleString()}</div>
+    </div>
+  );
+};
+
+export default ImpactToolTip;

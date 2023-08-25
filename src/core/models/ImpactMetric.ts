@@ -159,4 +159,49 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
   get records(): RecordFormat[] {
     return this.allRecords ?? [];
   }
+
+  calculateTreatmentEffect(
+    months: string,
+    avgValue: string,
+    supervisionDistrict: string
+  ): number {
+    const dataSeries = this.records;
+    const data = dataSeries.map((d: any) => ({
+      months: d[months],
+      value: d[avgValue],
+      district: d[supervisionDistrict],
+    }));
+
+    const beforeExperiment = data.reduce(
+      (acc, d) => {
+        if (d.months < 0) {
+          acc.totalSum += d.value;
+          acc.totalDistricts += 1;
+        }
+        return acc;
+      },
+      { totalSum: 0, totalDistricts: 0 }
+    );
+
+    const afterExperiment = data.reduce(
+      (acc, d) => {
+        if (d.months >= 0) {
+          acc.totalSum += d.value;
+          acc.totalDistricts += 1;
+        }
+        return acc;
+      },
+      { totalSum: 0, totalDistricts: 0 }
+    );
+
+    const averageBeforeExperiment =
+      beforeExperiment.totalSum / beforeExperiment.totalDistricts;
+
+    const averageAfterExperiment =
+      afterExperiment.totalSum / afterExperiment.totalDistricts;
+
+    const result = Math.round(averageAfterExperiment - averageBeforeExperiment);
+
+    return result;
+  }
 }

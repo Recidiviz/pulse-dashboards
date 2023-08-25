@@ -309,3 +309,4 @@ export const DEFAULT_IMPACT_SECTION_BY_PAGE: Record<string, string> = {
   [IMPACT_PAGES.compliantReportingWorkflows]:
     IMPACT_SECTIONS.avgDailyPopulation,
 };
+export type ImpactPageRootPath = typeof IMPACT_PAGES[ImpactPage];

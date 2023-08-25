@@ -21,41 +21,42 @@ import { Icon, IconSVG } from "@recidiviz/design-system";
 import cn from "classnames";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import Drawer from "../../components/Drawer";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import { IMPACT_SECTIONS, ImpactSection } from "../views";
 
-type ImpactSectionNavigationProps = {
-  currentView: string;
-  currentPage: string;
-  currentSection: string;
-  onSectionClick: (sectionId: string) => void;
-  sections?: Record<string, string>;
-};
-
-const ImpactSectionNavigation: React.FC<ImpactSectionNavigationProps> = ({
-  currentView,
-  currentPage,
-  currentSection,
-  onSectionClick,
-  sections,
-}) => {
+const ImpactSectionNavigation: React.FC = () => {
   const [open, setOpen] = useState(false);
 
   const isMobile = useIsMobile();
   const { userStore } = useRootStore();
-  const navigationLayout = userStore.userAllowedNavigation;
-  const enabledSections = navigationLayout[currentPage] ?? [];
+  const { impactStore } = useRootStore();
+  const { setSection } = impactStore;
 
+  const { pathname } = useLocation();
+  const navigationLayout = userStore.userAllowedNavigation;
+  const currentView = pathname.split("/")[1];
+  const currentPage = pathname.split("/")[2] ?? impactStore.page;
+  const enabledSections = navigationLayout[currentPage];
+
+  const [currentSection = enabledSections[0]] = pathname.split("/").slice(3, 4);
   const isMultipleSections = enabledSections.length > 1;
+  const sections = IMPACT_SECTIONS;
+
+  type ImpactSectionToTitle = {
+    [key in ImpactSection]: string;
+  };
+
+  const sectionTitles: ImpactSectionToTitle = {
+    avgDailyPopulation: "Average Daily Population",
+  };
 
   useEffect(() => {
     setOpen(false);
   }, [currentSection]);
-
-  // console.log(enabledSections);
 
   const sectionLinks = (
     <nav className="ImpactSectionNavigation">
@@ -69,10 +70,10 @@ const ImpactSectionNavigation: React.FC<ImpactSectionNavigationProps> = ({
               "ImpactSectionNavigation__navlink--multiple": isMultipleSections,
             })}
             to={`/${currentView}/${currentPage}/${sectionId}`}
-            onClick={() => onSectionClick(sectionId)}
+            onClick={() => setSection(sectionId)}
           >
             <div className="ImpactSectionNavigation__section-name">
-              {sections && sections[sectionId]}
+              {sections && sectionTitles[sectionId]}
             </div>
             <div className="ImpactSectionNavigation__arrow">
               {currentSection === sectionId && (
@@ -96,7 +97,7 @@ const ImpactSectionNavigation: React.FC<ImpactSectionNavigationProps> = ({
           className="ImpactSectionNavigation__drawer-button"
           onClick={() => setOpen(!open)}
         >
-          <span>{sections && sections[currentSection]}</span>
+          <span>{sections && sectionTitles[currentSection]}</span>
           <Icon kind={IconSVG.DownChevron} width={10} height={6} />
         </button>
       </>

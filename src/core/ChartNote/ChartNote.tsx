@@ -17,11 +17,11 @@
 import "./ChartNote.scss";
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { convertToSlug } from "../../utils/navigation";
-import { PATHWAYS_PATHS } from "../views";
+import { DASHBOARD_VIEWS, PATHWAYS_PATHS } from "../views";
 
 type Props = {
   note: string;
@@ -29,14 +29,28 @@ type Props = {
   isLoading?: boolean;
 };
 
+type LinkProps = {
+  pathname: string;
+  hash: string;
+  search: string;
+};
+
 const ChartNote: React.FC<Props> = ({
   note,
   chartTitle,
   isLoading = false,
 }) => {
+  const { pathname } = useLocation();
+  const view = pathname.split("/")[1];
   const {
     tenantStore: { currentTenantId },
   } = useRootStore();
+
+  const pathwaysLinkProps: LinkProps = {
+    pathname: `${PATHWAYS_PATHS.methodologySystem}`,
+    hash: convertToSlug(chartTitle || ""),
+    search: `?stateCode=${currentTenantId}`,
+  };
 
   if (isLoading || !note) {
     return (
@@ -50,17 +64,15 @@ const ChartNote: React.FC<Props> = ({
       <strong>Note: </strong>
       {/* TODO add link when methodology is ready */}
       {note}
-      <Link
-        className="ChartNote__link"
-        to={{
-          pathname: `${PATHWAYS_PATHS.methodologySystem}`,
-          hash: convertToSlug(chartTitle || ""),
-          search: `?stateCode=${currentTenantId}`,
-        }}
-        target="_blank"
-      >
-        See full methodology →
-      </Link>
+      {view === DASHBOARD_VIEWS.system && (
+        <Link
+          className="ChartNote__link"
+          to={pathwaysLinkProps}
+          target="_blank"
+        >
+          See full methodology →
+        </Link>
+      )}
     </div>
   );
 };

@@ -14,13 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // ===================== ========================================================
-import "../PathwaysLeftPanel/PathwaysLeftPanel.scss";
 
 import cn from "classnames";
 import React from "react";
 
 import useDisplayPageNavigation from "../../hooks/useDisplayPageNavigation";
 import useIsMobile from "../../hooks/useIsMobile";
+import ImpactSectionNavigation from "../ImpactSectionNavigation";
+import TreatmentEffectEstimate from "../TreatmentEffectEstimate";
 import {
   ImpactLeftPanelContainer,
   ImpactLeftPanelDescription,
@@ -43,6 +44,8 @@ const ImpactLeftPanel: React.FC<{
       <ImpactLeftPanelContainer>
         <ImpactLeftPanelTitle>{title}</ImpactLeftPanelTitle>
         <ImpactLeftPanelDescription>{description}</ImpactLeftPanelDescription>
+        <ImpactSectionNavigation />
+        <TreatmentEffectEstimate />
       </ImpactLeftPanelContainer>
     </div>
   );

@@ -18,15 +18,85 @@
  *
  */
 
-import { makeObservable } from "mobx";
+import { computed, makeObservable } from "mobx";
 
 import ImpactMetric, { ImpactMetricConstructorOptions } from "./ImpactMetric";
 import { UsTnCompliantReportingWorkflowsImpactRecord } from "./types";
 
+interface DataItem {
+  months: number;
+  value: number;
+  district?: string;
+}
+
 export default class UsTnCompliantReportingWorkflowsImpactMetric extends ImpactMetric<UsTnCompliantReportingWorkflowsImpactRecord> {
   constructor(props: ImpactMetricConstructorOptions) {
     super(props);
+    makeObservable<UsTnCompliantReportingWorkflowsImpactMetric>(this, {
+      dataSeries: computed,
+      avgPopulationLineData: computed,
+      startDate: computed,
+      useAvgDailyPopulationData: computed,
+    });
+  }
 
-    makeObservable<UsTnCompliantReportingWorkflowsImpactMetric>(this, {});
+  get dataSeries(): UsTnCompliantReportingWorkflowsImpactRecord[] {
+    return this.allRecords ?? [];
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  aggregatedChartData(data: DataItem[]): DataItem[] {
+    const aggregatedData: DataItem[] = Object.entries(
+      data.reduce((total, d) => {
+        const updatedTotal = { ...total };
+        if (!updatedTotal[d.months]) {
+          updatedTotal[d.months] = d.value;
+        } else {
+          updatedTotal[d.months] += d.value;
+        }
+        return updatedTotal;
+      }, {} as { [months: number]: number })
+    )
+      .map(([months, value]) => ({ months: Number(months), value }))
+      .sort((a, b) => a.months - b.months);
+
+    return aggregatedData;
+  }
+
+  get avgPopulationLineData(): DataItem[] {
+    const data = this.dataSeries.map((d: any) => ({
+      months: d.monthsSinceTreatment,
+      value: d.avgDailyPopulation,
+    }));
+
+    return this.aggregatedChartData(data);
+  }
+
+  get useAvgDailyPopulationData(): DataItem[] {
+    const currentSection = this.rootStore.section;
+    if (currentSection === "avgDailyPopulation") {
+      return this.avgPopulationLineData;
+    }
+
+    return [{ months: 0, value: 0 }];
+  }
+
+  get avgDailyPopulationTreatment(): number {
+    return this.calculateTreatmentEffect(
+      "monthsSinceTreatment",
+      "avgDailyPopulation",
+      "supervisionDistrict"
+    );
+  }
+
+  get startDate(): string {
+    const data = this.dataSeries
+      .map((d: any) => ({
+        months: d.monthsSinceTreatment,
+        startDate: d.startDate,
+      }))
+      .find((d) => d.months === 0);
+
+    return data?.startDate ?? "";
   }
 }

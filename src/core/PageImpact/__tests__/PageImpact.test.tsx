@@ -66,8 +66,10 @@ describe("Impact Page", () => {
           monthsSinceTreatment: 0,
           avgDailyPopulation: 3927.9999999999995,
           avgPopulationLimitedSupervisionLevel: 106.69999999999999,
+          useAvgDailyPopulationData: [{ months: 0, value: 3927.9999999999995 }],
         },
         isHydrated: true,
+        page: "compliantReportingWorkflows",
       },
       workflowsStore: {
         featureVariants: {
@@ -75,10 +77,14 @@ describe("Impact Page", () => {
         },
       },
       userStore: {
-        userAllowedNavigation: { impact: ["compliantReportingWorkflows"] },
+        userAllowedNavigation: {
+          compliantReportingWorkflows: ["avgDailyPopulation"],
+        },
+      },
+      tenantStore: {
+        currentTenantId: "US_TN",
       },
     });
-
     render(
       <BrowserRouter>
         <PageImpact />

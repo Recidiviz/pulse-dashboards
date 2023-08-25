@@ -20,15 +20,19 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
+import ChartNote from "../ChartNote";
 import ImpactLeftPanel from "../ImpactLeftPanel/ImpactLeftPanel";
 import ModelHydrator from "../ModelHydrator";
 import PageTemplate from "../PageTemplate";
+import VizAvgDailyPopulation from "../VizAvgDailyPopulation/VizAvgDailyPopulation";
 
 const PageImpact: React.FC = () => {
   window.scrollTo({
     top: 0,
   });
   const { impactStore } = useRootStore();
+
+  const metric = impactStore.usTnCompliantReportingWorkflowsImpact;
 
   return (
     <ModelHydrator model={impactStore}>
@@ -43,7 +47,14 @@ const PageImpact: React.FC = () => {
           />
         }
       >
-        <div>Here is a test output</div>
+        <VizAvgDailyPopulation metric={metric} />
+        <ChartNote
+          note='Compliant Reporting Workflows was launched to the entire 
+          state in April of 2022. "Average daily population on Compliant Reporting" 
+          is defined as the average number of individuals with "LIMITED" supervision 
+          level in Tennessee.'
+          chartTitle="Average Daily Population on Compliant Reporting"
+        />
       </PageTemplate>
     </ModelHydrator>
   );

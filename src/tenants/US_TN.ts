@@ -23,6 +23,7 @@ import enabledTableColumns from "../core/utils/enabledTableColumns";
 import {
   DASHBOARD_VIEWS,
   IMPACT_PAGES,
+  IMPACT_SECTIONS,
   PATHWAYS_PAGES,
   PATHWAYS_SECTIONS,
 } from "../core/views";
@@ -107,6 +108,7 @@ const US_TN_CONFIG: TenantConfig = {
     ],
     "id-methodology": [DASHBOARD_VIEWS.system],
     impact: [IMPACT_PAGES.compliantReportingWorkflows],
+    compliantReportingWorkflows: [IMPACT_SECTIONS.avgDailyPopulation],
   },
   pagesWithRestrictions: [
     "libertyToPrison",
