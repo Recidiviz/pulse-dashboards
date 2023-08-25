@@ -29,10 +29,14 @@ import UsIdHomeVisitTask from "../WorkflowsStore/Task/UsIdHomeVisitTask";
 import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/UsIdRiskAssessmentTask";
 
 const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
+  // Supervision opportunities
   "pastFTRD",
   "earnedDischarge",
   "LSU",
   "usIdSupervisionLevelDowngrade",
+
+  // Facility opportunities
+  "usIdExpandedCRC",
 ];
 
 const US_ID_CONFIG: TenantConfig = {
@@ -64,7 +68,14 @@ const US_ID_CONFIG: TenantConfig = {
   },
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsGatedSystemsByFeatureVariant: {
-    INCARCERATION: ["usIdCRC", "usIdExtendedCRC"],
+    INCARCERATION: ["usIdCRC", "usIdExpandedCRC"],
+  },
+  workflowsSystemConfigs: {
+    INCARCERATION: {
+      searchType: "LOCATION",
+      searchField: "facilityId",
+      searchTitleOverride: "facility",
+    },
   },
   navigation: {
     // The order of pages here determines where the user will land first when navigating from `/`

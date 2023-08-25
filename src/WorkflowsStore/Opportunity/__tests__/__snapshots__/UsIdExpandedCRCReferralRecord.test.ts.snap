@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transforms record with FTCD and PED set 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "custodyLevelIsMinimum": Object {
+      "custodyLevel": "MINIMUM",
+    },
+    "noAbsconsionWithin10Years": null,
+    "notServingForSexualOffense": null,
+    "usIdInCrcFacility": Object {
+      "crcStartDate": 2022-02-06T00:00:00.000Z,
+      "facilityName": "Facility 73",
+    },
+    "usIdInCrcFacilityFor60Days": Object {
+      "sixtyDaysInCrcFacilityDate": 2022-04-07T00:00:00.000Z,
+    },
+    "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd": Object {
+      "fullTermCompletionDate": 2022-08-12T00:00:00.000Z,
+      "paroleEligibilityDate": 2022-03-19T00:00:00.000Z,
+      "tentativeParoleDate": null,
+    },
+    "usIdNoDetainersForXcrc": null,
+    "usIdNoEludingPoliceOffenseWithin10Years": null,
+    "usIdNoEscapeOffenseWithin10Years": null,
+  },
+  "externalId": "xcrc-eligible-01",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_MI",
+}
+`;
+
+exports[`transforms record with TPD set 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "custodyLevelIsMinimum": Object {
+      "custodyLevel": "MINIMUM",
+    },
+    "noAbsconsionWithin10Years": null,
+    "notServingForSexualOffense": null,
+    "usIdInCrcFacility": Object {
+      "crcStartDate": 2022-02-06T00:00:00.000Z,
+      "facilityName": "Vault 6",
+    },
+    "usIdInCrcFacilityFor60Days": Object {
+      "sixtyDaysInCrcFacilityDate": 2022-04-07T00:00:00.000Z,
+    },
+    "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd": Object {
+      "fullTermCompletionDate": null,
+      "paroleEligibilityDate": null,
+      "tentativeParoleDate": 2022-07-11T00:00:00.000Z,
+    },
+    "usIdNoDetainersForXcrc": null,
+    "usIdNoEludingPoliceOffenseWithin10Years": null,
+    "usIdNoEscapeOffenseWithin10Years": null,
+  },
+  "externalId": "xcrc-eligible-02",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_MI",
+}
+`;
+
+exports[`transforms record with caseNotes set 1`] = `
+Object {
+  "caseNotes": Object {
+    "SomeSection": Array [
+      Object {
+        "noteBody": "Some pig!",
+      },
+    ],
+  },
+  "eligibleCriteria": Object {
+    "custodyLevelIsMinimum": Object {
+      "custodyLevel": "MINIMUM",
+    },
+    "noAbsconsionWithin10Years": null,
+    "notServingForSexualOffense": null,
+    "usIdInCrcFacility": Object {
+      "crcStartDate": 2022-02-06T00:00:00.000Z,
+      "facilityName": "Vault 6",
+    },
+    "usIdInCrcFacilityFor60Days": Object {
+      "sixtyDaysInCrcFacilityDate": 2022-04-07T00:00:00.000Z,
+    },
+    "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd": Object {
+      "fullTermCompletionDate": null,
+      "paroleEligibilityDate": null,
+      "tentativeParoleDate": 2022-07-11T00:00:00.000Z,
+    },
+    "usIdNoDetainersForXcrc": null,
+    "usIdNoEludingPoliceOffenseWithin10Years": null,
+    "usIdNoEscapeOffenseWithin10Years": null,
+  },
+  "externalId": "xcrc-eligible-02",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_MI",
+}
+`;

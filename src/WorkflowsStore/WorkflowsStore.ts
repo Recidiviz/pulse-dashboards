@@ -69,6 +69,7 @@ import {
   FeatureVariant,
 } from "../RootStore/types";
 import tenants from "../tenants";
+import { PartialRecord } from "../utils/typeUtils";
 import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
@@ -726,6 +727,13 @@ export class WorkflowsStore implements Hydratable {
     );
   }
 
+  gatedOpportunities: PartialRecord<OpportunityType, FeatureVariant> = {
+    usIdExpandedCRC: "usIdExpandedCRC",
+    usTnExpiration: "usTnExpiration",
+    usMeWorkRelease: "usMeWorkRelease",
+    usMeFurloughRelease: "usMeFurloughRelease",
+  };
+
   /**
    * Opportunity types are ranked in order of how they should display on the Homepage
    */
@@ -736,30 +744,14 @@ export class WorkflowsStore implements Hydratable {
     } = this;
     if (!isHydrated || !currentTenantId) return [];
 
-    let opportunityTypes = tenants[currentTenantId]?.opportunityTypes ?? [];
+    const opportunityTypes = tenants[currentTenantId]?.opportunityTypes ?? [];
 
-    if (currentTenantId === "US_TN" && !this.featureVariants.usTnExpiration) {
-      opportunityTypes = opportunityTypes.filter(
-        (oppType) => oppType !== "usTnExpiration"
-      );
-    }
+    return opportunityTypes.filter((oppType) => {
+      const gatingVariant = this.gatedOpportunities[oppType];
+      if (!gatingVariant) return true;
 
-    if (currentTenantId === "US_ME" && !this.featureVariants.usMeWorkRelease) {
-      opportunityTypes = opportunityTypes.filter(
-        (oppType) => oppType !== "usMeWorkRelease"
-      );
-    }
-
-    if (
-      currentTenantId === "US_ME" &&
-      !this.featureVariants.usMeFurloughRelease
-    ) {
-      opportunityTypes = opportunityTypes.filter(
-        (oppType) => oppType !== "usMeFurloughRelease"
-      );
-    }
-
-    return opportunityTypes;
+      return this.featureVariants[gatingVariant];
+    });
   }
 
   /**

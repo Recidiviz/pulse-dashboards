@@ -28,6 +28,7 @@ import {
   UsMeSCCPOpportunity,
   UsMoRestrictiveHousingStatusHearingOpportunity,
 } from "./Opportunity";
+import { UsIdExpandedCRCOpportunity } from "./Opportunity/UsIdExpandedCRCOpportunity";
 import { UsMeFurloughReleaseOpportunity } from "./Opportunity/UsMeFurloughReleaseOpportunity";
 import { UsMeWorkReleaseOpportunity } from "./Opportunity/UsMeWorkReleaseOpportunity";
 import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTnCustodyLevelDowngradeOpportunity";
@@ -37,6 +38,7 @@ const residentialOpportunityConstructors: Record<
   IncarcerationOpportunityType,
   new (c: Resident) => Opportunity<Resident>
 > = {
+  usIdExpandedCRC: UsIdExpandedCRCOpportunity,
   usMeFurloughRelease: UsMeFurloughReleaseOpportunity,
   usMeSCCP: UsMeSCCPOpportunity,
   usMeWorkRelease: UsMeWorkReleaseOpportunity,

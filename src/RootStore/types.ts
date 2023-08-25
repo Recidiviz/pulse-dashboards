@@ -82,7 +82,7 @@ export type FeatureVariant =
   | "usTnExpirationSubmitToTomis"
   | "responsiveRevamp"
   | "usIdCRC"
-  | "usIdExtendedCRC";
+  | "usIdExpandedCRC";
 export type FeatureVariantValue = { activeDate?: Date; variant?: string };
 /**
  * For each feature, an optional activeDate can control when the user gets access.
@@ -101,7 +101,7 @@ const allFeatureVariants: FeatureVariantMapping = {
   usTnExpirationSubmitToTomis: {},
   responsiveRevamp: {},
   usIdCRC: {},
-  usIdExtendedCRC: {},
+  usIdExpandedCRC: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   process.env.REACT_APP_DEPLOY_ENV === "production"

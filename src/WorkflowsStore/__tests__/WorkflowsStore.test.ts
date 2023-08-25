@@ -776,7 +776,7 @@ describe("feature variants", () => {
         "TEST": Object {},
         "responsiveRevamp": Object {},
         "usIdCRC": Object {},
-        "usIdExtendedCRC": Object {},
+        "usIdExpandedCRC": Object {},
         "usMeFurloughRelease": Object {},
         "usMeWorkRelease": Object {},
         "usTnExpiration": Object {},
@@ -966,7 +966,7 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
   });
 
   test("includes associated system when user has every featureVariant in list", () => {
-    setUser({ usIdCRC: {}, usIdExtendedCRC: {} });
+    setUser({ usIdCRC: {}, usIdExpandedCRC: {} });
     expect(workflowsStore.workflowsSupportedSystems).toEqual(
       expect.arrayContaining([
         TEST_GATED_SYSTEM,
@@ -1082,6 +1082,41 @@ describe("opportunityTypes for US_TN", () => {
     });
 
     expect(workflowsStore.opportunityTypes).toContain("usTnExpiration");
+  });
+});
+
+describe("opportunityTypes are gated by gatedOpportunities when set", () => {
+  beforeEach(() => {
+    runInAction(() => {
+      // @ts-expect-error
+      rootStore.tenantStore.currentTenantId = "US_XX";
+      workflowsStore.gatedOpportunities = {
+        LSU: "TEST",
+      };
+    });
+  });
+
+  test("gated opportunity is not enabled when feature variant is not set for current user", async () => {
+    await waitForHydration({ ...mockOfficer });
+    expect(workflowsStore.opportunityTypes).toEqual(["compliantReporting"]);
+  });
+
+  test("gated opportunity is enabled when feature variant is set for current user", async () => {
+    await waitForHydration({ ...mockOfficer });
+    runInAction(() => {
+      rootStore.userStore.user = {
+        email: "foo@example.com",
+        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+          stateCode: "US_XX",
+          featureVariants: { TEST: {} },
+        },
+      };
+      rootStore.userStore.userIsLoading = false;
+    });
+    expect(workflowsStore.opportunityTypes.sort()).toEqual([
+      "LSU",
+      "compliantReporting",
+    ]);
   });
 });
 

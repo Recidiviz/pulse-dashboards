@@ -46,6 +46,7 @@ export const collectionNames = {
   taskUpdates: "taskUpdates",
   usMeSCCPReferrals: "US_ME-SCCPReferrals",
   usMeWorkReleaseReferrals: "US_ME-workReleaseReferrals",
+  usIdExpandedCRCReferrals: "US_ID-expandedCRCReferrals",
   usIdSupervisionLevelDowngradeReferrals: "US_ID-supervisionLevelDowngrade",
   usMiSupervisionLevelDowngradeReferrals: "US_MI-supervisionLevelDowngrade",
   usMiClassificationReviewReferrals: "US_MI-classificationReviewReferrals",

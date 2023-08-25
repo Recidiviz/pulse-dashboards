@@ -20,6 +20,24 @@ import { FixtureData } from "../workflowsFixtures";
 
 const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
   {
+    allEligibleOpportunities: ["usIdExpandedCRC"],
+    officerId: "ID_CASE_MANAGER_1",
+    stateCode: "US_ID",
+    personExternalId: "ID_RES001",
+    displayId: "RES001",
+    personName: {
+      givenNames: "Bender",
+      middleNames: "Bending",
+      surname: "Rodriguez",
+    },
+    pseudonymizedId: "anonres001",
+    facilityId: "FACILITY1",
+    unitId: "UNIT A",
+    custodyLevel: "MINIMUM",
+    admissionDate: "2019-08-12",
+    releaseDate: "2025-10-22",
+  },
+  {
     allEligibleOpportunities: [
       "usMeSCCP",
       "usMeWorkRelease",

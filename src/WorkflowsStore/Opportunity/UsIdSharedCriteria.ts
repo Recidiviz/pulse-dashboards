@@ -15,42 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { LocationRecord } from "../../src/FirestoreStore/types";
-import { FixtureData } from "../workflowsFixtures";
+import { z } from "zod";
 
-const data: LocationRecord[] = [
-  //
-  // Idaho
-  //
-  {
-    stateCode: "US_ID",
-    system: "INCARCERATION",
-    idType: "facilityId",
-    id: "FACILITY1",
-    name: "Lunar Penal Colony",
-  },
+export const custodyLevelIsMinimum = z.object({
+  custodyLevel: z.string(),
+});
 
-  //
-  // Missouri
-  //
+export const notServingForSexualOffense = z.object({}).nullable();
 
-  {
-    stateCode: "US_MO",
-    system: "INCARCERATION",
-    idType: "facilityId",
-    id: "FACILITY1",
-    name: "Facility #1",
-  },
-  {
-    stateCode: "US_MO",
-    system: "INCARCERATION",
-    idType: "facilityId",
-    id: "FACILITY2",
-    name: "Facility #2",
-  },
-];
+export const noAbsconsionWithin10Years = z.object({}).nullable();
 
-export const locationsData: FixtureData<LocationRecord> = {
-  data,
-  idFunc: (r) => r.id,
-};
+export const usIdNoEludingPoliceOffenseWithin10Years = z.object({}).nullable();
+
+export const usIdNoEscapeOffenseWithin10Years = z.object({}).nullable();

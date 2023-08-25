@@ -46,6 +46,7 @@ export type SupervisionOpportunityType =
   typeof SUPERVISION_OPPORTUNITY_TYPES[number];
 
 export const INCARCERATION_OPPORTUNITY_TYPES = [
+  "usIdExpandedCRC",
   "usMeWorkRelease",
   "usMeSCCP",
   "usMoRestrictiveHousingStatusHearing",
@@ -70,6 +71,7 @@ export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
   LSU: "Limited Supervision Unit",
   pastFTRD: "Past FTRD",
   supervisionLevelDowngrade: "Supervision Level Downgrade",
+  usIdExpandedCRC: "Expanded Community Reentry Center",
   usIdSupervisionLevelDowngrade: "Supervision Level Mismatch",
   usMiSupervisionLevelDowngrade: "Supervision Level Mismatch",
   usMiClassificationReview: "Classification Review",
@@ -104,6 +106,7 @@ export const OPPORTUNITY_TYPE_URLS_BY_STATE: PartialRecord<
     LSU: "LSU",
     pastFTRD: "pastFTRD",
     usIdSupervisionLevelDowngrade: "supervisionLevelMismatch",
+    usIdExpandedCRC: "expandedCRC",
   },
   US_ME: {
     usMeSCCP: "SCCP",
