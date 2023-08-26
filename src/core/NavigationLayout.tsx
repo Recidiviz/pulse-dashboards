@@ -283,7 +283,9 @@ function OperationsLink({ enabled }: OptionalLinkProps) {
   );
 }
 
-function PathwaysLink({ enabled }: OptionalLinkProps) {
+const PathwaysLink = observer(function PathwaysLink({
+  enabled,
+}: OptionalLinkProps) {
   const { filtersStore, tenantStore } = useCoreStore();
   const { isMobile } = useIsMobile(true);
 
@@ -298,7 +300,7 @@ function PathwaysLink({ enabled }: OptionalLinkProps) {
       Go to {tenantStore.pathwaysName}
     </NavLink>
   );
-}
+});
 
 function ImpactLink({ enabled }: OptionalLinkProps) {
   const { isMobile } = useIsMobile(true);
