@@ -37,14 +37,15 @@ import VerificationNeeded from "./components/VerificationNeeded";
 import DashboardLayout from "./core/DashboardLayout";
 import PageImpact from "./core/PageImpact";
 import PageMethodology from "./core/PageMethodology";
+import PageOutliers from "./core/PageOutliers";
 import PageSystem from "./core/PageSystem";
 import PageVitals from "./core/PageVitals";
 import PageWorkflows from "./core/PageWorkflows";
 import Profile from "./core/Profile";
 import {
+  DASHBOARD_PATHS,
   DASHBOARD_VIEWS,
   IMPACT_PATHS,
-  PATHWAYS_PATHS,
   WORKFLOWS_PATHS,
 } from "./core/views";
 import LanternLayout from "./lantern/LanternLayout";
@@ -89,9 +90,10 @@ function App() {
               <AuthWall>
                 <DashboardLayout tenantIds={DASHBOARD_TENANTS} views={Object.values(DASHBOARD_VIEWS).concat(SHARED_VIEWS)}>
                   <Switch>
-                    <ProtectedRoute path={PATHWAYS_PATHS.system} component={PageSystem} />
-                    <ProtectedRoute path={PATHWAYS_PATHS.operations} component={PageVitals} />
-                    <ProtectedRoute path={PATHWAYS_PATHS.methodology} component={PageMethodology} />
+                    <ProtectedRoute path={DASHBOARD_PATHS.system} component={PageSystem} />
+                    <ProtectedRoute path={DASHBOARD_PATHS.operations} component={PageVitals} />
+                    <ProtectedRoute path={DASHBOARD_PATHS.methodology} component={PageMethodology} />
+                    <ProtectedRoute path={DASHBOARD_PATHS.outliers} component={PageOutliers} />
                     <Redirect from={`${WORKFLOWS_PATHS.workflows}/:opportunityType/:clientId/preview`} to={WORKFLOWS_PATHS.clientProfile} />
                     <ProtectedRoute path={WORKFLOWS_PATHS.workflows} component={PageWorkflows} />
                     <ProtectedRoute path={IMPACT_PATHS.impact} component={PageImpact} />

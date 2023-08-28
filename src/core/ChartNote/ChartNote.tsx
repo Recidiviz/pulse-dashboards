@@ -21,7 +21,7 @@ import { Link, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { convertToSlug } from "../../utils/navigation";
-import { DASHBOARD_VIEWS, PATHWAYS_PATHS } from "../views";
+import { DASHBOARD_PATHS, DASHBOARD_VIEWS } from "../views";
 
 type Props = {
   note: string;
@@ -47,7 +47,7 @@ const ChartNote: React.FC<Props> = ({
   } = useRootStore();
 
   const pathwaysLinkProps: LinkProps = {
-    pathname: `${PATHWAYS_PATHS.methodologySystem}`,
+    pathname: `${DASHBOARD_PATHS.methodologySystem}`,
     hash: convertToSlug(chartTitle || ""),
     search: `?stateCode=${currentTenantId}`,
   };

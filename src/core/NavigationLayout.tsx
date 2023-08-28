@@ -314,6 +314,18 @@ function ImpactLink({ enabled }: OptionalLinkProps) {
   );
 }
 
+function OutliersLink({ enabled }: OptionalLinkProps) {
+  const { isMobile } = useIsMobile(true);
+
+  if (!enabled) return null;
+  return (
+    <NavLink to={`/${DASHBOARD_VIEWS.outliers}`}>
+      {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
+      Go to Outliers
+    </NavLink>
+  );
+}
+
 function LogoutLink({ enabled }: OptionalLinkProps) {
   const logout = useLogout();
   const { isMobile } = useIsMobile(true);
@@ -375,6 +387,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const enableWorkflows = (userAllowedNavigation.workflows || []).length > 0;
     const enableOperations = !!userAllowedNavigation.operations;
     const enabledImpact = !!userAllowedNavigation.impact;
+    const enabledOutliers = !!userAllowedNavigation.outliers;
 
     const displayBackButton =
       view === DASHBOARD_VIEWS.workflows && page !== workflowsHomepage;
@@ -391,6 +404,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <OperationsLink enabled={enableOperations} />
         <WorkflowsLink enabled={enableWorkflows} />
         <ImpactLink enabled={enabledImpact} />
+        <OutliersLink enabled={enabledOutliers} />
         <LogoutLink enabled={!isOfflineMode()} />
       </>
     );

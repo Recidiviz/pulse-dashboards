@@ -30,7 +30,7 @@ import MethodologyLink from "../MethodologyLink";
 import MobileNavigation from "../MobileNavigation";
 import { ENTITY_TYPES } from "../models/types";
 import PageTemplate from "../PageTemplate";
-import { PATHWAYS_PATHS } from "../views";
+import { DASHBOARD_PATHS } from "../views";
 import VitalsMonthlyChange from "../VitalsMonthlyChange";
 import VitalsSummaryBreadcrumbs from "../VitalsSummaryBreadcrumbs";
 import VitalsSummaryCards from "../VitalsSummaryCards";
@@ -74,7 +74,7 @@ const PageVitals: React.FC = () => {
           <VitalsSummaryBreadcrumbs />
           <DetailsGroup expand>
             <DownloadDataButton handleOnClick={downloadData} />
-            <MethodologyLink path={PATHWAYS_PATHS.methodologyOperations} />
+            <MethodologyLink path={DASHBOARD_PATHS.methodologyOperations} />
           </DetailsGroup>
         </div>
       )}
@@ -85,7 +85,7 @@ const PageVitals: React.FC = () => {
       {isMobile && (
         <DetailsGroup expand>
           <DownloadDataButton handleOnClick={downloadData} />
-          <MethodologyLink path={PATHWAYS_PATHS.methodologyOperations} />
+          <MethodologyLink path={DASHBOARD_PATHS.methodologyOperations} />
         </DetailsGroup>
       )}
       <div className="PageVitals__SummarySection">

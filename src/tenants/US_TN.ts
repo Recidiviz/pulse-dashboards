@@ -112,6 +112,7 @@ const US_TN_CONFIG: TenantConfig = {
       IMPACT_SECTIONS.avgPopulationCompliantReporting,
       IMPACT_SECTIONS.avgDailyPopulation,
     ],
+    outliers: [],
   },
   pagesWithRestrictions: [
     "libertyToPrison",

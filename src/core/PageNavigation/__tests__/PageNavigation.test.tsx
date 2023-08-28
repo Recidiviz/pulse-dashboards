@@ -21,6 +21,7 @@ import { useQueryParams } from "use-query-params";
 
 import { useRootStore, useUserStore } from "../../../components/StoreProvider";
 import RootStore from "../../../RootStore";
+import TenantStore from "../../../RootStore/TenantStore/TenantStore";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
 import VitalsStore from "../../CoreStore/VitalsStore";
@@ -41,10 +42,11 @@ jest.mock("react-router-dom", () => ({
 let coreStore: CoreStore;
 let vitalsStore: VitalsStore;
 let filtersStore: FiltersStore;
+let tenantStore: TenantStore;
+let rootStoreMock: any;
+let coreStoreMock: any;
 
 describe("CoreLayout tests", () => {
-  let page;
-
   const renderPageNavigation = () => {
     return mount(
       <StaticRouter>
@@ -57,7 +59,8 @@ describe("CoreLayout tests", () => {
     coreStore = new CoreStore(RootStore);
     vitalsStore = coreStore.vitalsStore;
     filtersStore = coreStore.filtersStore;
-    (useRootStore as jest.Mock).mockReturnValue({
+    tenantStore = coreStore.tenantStore;
+    rootStoreMock = {
       userStore: {
         userAllowedNavigation: {
           system: ["page1", "page2", "page3"],
@@ -65,9 +68,21 @@ describe("CoreLayout tests", () => {
       },
       currentTenantId: "US_ID",
       workflowsStore: {
-        featureVariants: {},
+        featureVariants: {
+          responsiveRevamp: {},
+        },
       },
-    });
+    };
+    (useRootStore as jest.Mock).mockImplementation(() => rootStoreMock);
+    coreStoreMock = {
+      page: "page1",
+      vitalsStore,
+      setSection: jest.fn(),
+      setPage: jest.fn(),
+      filtersStore,
+      tenantStore,
+    };
+    (useCoreStore as jest.Mock).mockImplementation(() => coreStoreMock);
     (useUserStore as jest.Mock).mockReturnValue({
       user: {
         name: "Test",
@@ -82,28 +97,12 @@ describe("CoreLayout tests", () => {
   });
 
   it("Should render a link for each page option", () => {
-    page = "page1";
-    (useCoreStore as jest.Mock).mockReturnValue({
-      page,
-      vitalsStore,
-      setSection: jest.fn(),
-      setPage: jest.fn(),
-      filtersStore,
-    });
-
     const selector = renderPageNavigation();
     expect(selector.find("Link.PageNavigation__option")).toHaveLength(3);
   });
 
   it("Add bar above current page", () => {
-    page = "page1";
-    (useCoreStore as jest.Mock).mockReturnValue({
-      page,
-      vitalsStore,
-      setSection: jest.fn(),
-      setPage: jest.fn(),
-      filtersStore,
-    });
+    coreStoreMock.page = "page1";
 
     const selector = renderPageNavigation();
     expect(selector.find("Link.PageNavigation__option--selected")).toHaveLength(
@@ -112,18 +111,24 @@ describe("CoreLayout tests", () => {
   });
 
   it("Don't add bars above any page selectors if not in one", () => {
-    page = "disabledPage";
-    (useCoreStore as jest.Mock).mockReturnValue({
-      page,
-      vitalsStore,
-      setSection: jest.fn(),
-      setPage: jest.fn(),
-      filtersStore,
-    });
+    coreStoreMock.page = "disabledPage";
 
     const selector = renderPageNavigation();
     expect(selector.find("Link.PageNavigation__option--selected")).toHaveLength(
       0
     );
+  });
+
+  describe("Outliers link", () => {
+    it("Hides if not enabled", () => {
+      const selector = renderPageNavigation();
+      expect(selector.find("OutliersLink>NavLink")).toHaveLength(0);
+    });
+
+    it("Shows if enabled", () => {
+      rootStoreMock.userStore.userAllowedNavigation.outliers = [];
+      const selector = renderPageNavigation();
+      expect(selector.find("OutliersLink>NavLink")).toHaveLength(1);
+    });
   });
 });

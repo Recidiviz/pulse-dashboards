@@ -32,6 +32,7 @@ export const DASHBOARD_VIEWS = {
   profile: "profile",
   workflows: "workflows",
   impact: "impact",
+  outliers: "outliers",
 } as const;
 type DashboardViewRootPath = typeof DASHBOARD_VIEWS[DashboardView];
 
@@ -41,12 +42,13 @@ export const isValidDashboardRootPath = (str: string): boolean => {
 
 export type ViewRootPath = DashboardViewRootPath;
 
-export const PATHWAYS_PATHS: Record<string, string> = {
+export const DASHBOARD_PATHS: Record<string, string> = {
   system: `/${DASHBOARD_VIEWS.system}/:pageId/:sectionId?`,
   operations: `/${DASHBOARD_VIEWS.operations}/:entityId?`,
   methodology: `/${DASHBOARD_VIEWS.methodology}/:dashboard`,
   methodologySystem: `/${DASHBOARD_VIEWS.methodology}/system`,
   methodologyOperations: `/${DASHBOARD_VIEWS.methodology}/operations`,
+  outliers: `/${DASHBOARD_VIEWS.outliers}/`,
 };
 
 export type PathwaysPage = keyof typeof PATHWAYS_PAGES;

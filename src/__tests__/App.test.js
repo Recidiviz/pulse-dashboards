@@ -28,12 +28,13 @@ import DashboardLayout from "../core/DashboardLayout";
 import MethodologyPathways from "../core/MethodologyPathways";
 import MethodologyProjections from "../core/MethodologyProjections/Methodology";
 import PageImpact from "../core/PageImpact";
+import PageOutliers from "../core/PageOutliers";
 import PageSystem from "../core/PageSystem";
 import PageVitals from "../core/PageVitals";
 import LanternLayout from "../lantern/LanternLayout";
 import Revocations from "../lantern/Revocations";
 import { US_MO, US_PA } from "../RootStore/TenantStore/lanternTenants";
-import { US_ID, US_TN } from "../RootStore/TenantStore/pathwaysTenants";
+import { US_ID, US_NC, US_TN } from "../RootStore/TenantStore/pathwaysTenants";
 
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 
@@ -52,6 +53,7 @@ jest.mock("../core/MethodologyPathways");
 jest.mock("../core/PageVitals");
 jest.mock("../core/PageSystem");
 jest.mock("../core/PageImpact");
+jest.mock("../core/PageOutliers");
 
 describe("App tests", () => {
   const metadataField = `${METADATA_NAMESPACE}app_metadata`;
@@ -66,6 +68,7 @@ describe("App tests", () => {
   const mockPathwaysPrisonId = "pathways-prison-id";
   const mockOperationsId = "operations-id";
   const mockImpactId = "impact-id";
+  const mockOutliersId = "outliers-test-id";
 
   const RevocationsMock = Revocations.type;
   const LanternLayoutMock = LanternLayout.type;
@@ -93,6 +96,7 @@ describe("App tests", () => {
   MethodologyPathwaysMock.mockReturnValue(
     mockWithTestId(mockMethodologyPathwaysId)
   );
+  PageOutliers.mockReturnValue(mockWithTestId(mockOutliersId));
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -304,5 +308,57 @@ describe("App tests", () => {
 
     expect(container.children.length).toBe(2);
     expect(getByTestId(mockVerificationNeededId)).toBeInTheDocument();
+  });
+
+  describe("Outliers route", () => {
+    it("renders if the tenant and user allow it", () => {
+      window.history.pushState({}, "", "/outliers/");
+      const user = { [metadataField]: { stateCode: US_TN } };
+      useRootStore.mockReturnValue({
+        userStore: {
+          ...userStore,
+          ...user,
+          userAllowedNavigation: { outliers: [] },
+        },
+        currentTenantId: US_TN,
+      });
+
+      const outliersRoute = render(<App />).queryByTestId(mockOutliersId);
+
+      expect(outliersRoute).toBeInTheDocument();
+    });
+
+    it("doesn't render if the tenant doesn't allow it but the user does", () => {
+      window.history.pushState({}, "", "/outliers/");
+      const user = { [metadataField]: { stateCode: US_NC } };
+      useRootStore.mockReturnValue({
+        userStore: {
+          ...userStore,
+          ...user,
+          userAllowedNavigation: { outliers: [] },
+        },
+        currentTenantId: US_NC,
+      });
+
+      const outliersRoute = render(<App />).queryByTestId(mockOutliersId);
+
+      expect(outliersRoute).toBeInTheDocument();
+    });
+
+    it("doesn't render if the user doesn't allow it but the tenant does", () => {
+      window.history.pushState({}, "", "/outliers/");
+      const user = { [metadataField]: { stateCode: US_TN } };
+      useRootStore.mockReturnValue({
+        userStore: {
+          ...userStore,
+          ...user,
+        },
+        currentTenantId: US_TN,
+      });
+
+      const outliersRoute = render(<App />).queryByTestId(mockOutliersId);
+
+      expect(outliersRoute).not.toBeInTheDocument();
+    });
   });
 });

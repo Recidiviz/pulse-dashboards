@@ -39,7 +39,7 @@ import MoreFilters from "../MoreFilters";
 import { EnabledFilters, PopulationFilters } from "../types/filters";
 import { FILTER_TYPES } from "../utils/constants";
 import { getFilterOptions, metricModeOptions } from "../utils/filterOptions";
-import { PATHWAYS_PATHS } from "../views";
+import { DASHBOARD_PATHS } from "../views";
 
 const PathwaysFilterBar: React.FC<{
   filterOptions: PopulationFilters;
@@ -93,7 +93,7 @@ const PathwaysFilterBar: React.FC<{
               />
               <DownloadDataButton handleOnClick={handleDownload} />
               <MethodologyLink
-                path={PATHWAYS_PATHS.methodologySystem}
+                path={DASHBOARD_PATHS.methodologySystem}
                 chartTitle={chartTitle}
               />
             </DetailsGroup>
@@ -111,7 +111,7 @@ const PathwaysFilterBar: React.FC<{
               <DetailsGroup>
                 <DownloadDataButton handleOnClick={handleDownload} />
                 <MethodologyLink
-                  path={PATHWAYS_PATHS.methodologySystem}
+                  path={DASHBOARD_PATHS.methodologySystem}
                   chartTitle={chartTitle}
                 />
               </DetailsGroup>
