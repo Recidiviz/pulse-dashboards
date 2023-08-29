@@ -34,11 +34,11 @@ export const CURRENT_TENANT_IN_SESSION = "adminUserCurrentTenantInSession";
  * state in alphabetical order.
  */
 function getTenantIdFromUser(userStore: UserStore): TenantId {
-  const { availableStateCodes, userHasAccess } = userStore;
   const storageStateCode = sessionStorage.getItem(
     CURRENT_TENANT_IN_SESSION
   ) as TenantId;
   if (userStore.user) {
+    const { availableStateCodes, userHasAccess } = userStore;
     if (storageStateCode && userHasAccess(storageStateCode)) {
       return storageStateCode;
     }
