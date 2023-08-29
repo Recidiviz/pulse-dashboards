@@ -23,13 +23,14 @@ import {
   ResidentRecord,
 } from "../../../FirestoreStore";
 import { dateToTimestamp } from "../../utils";
-import { SupervisionOpportunityType, UsIdPastFTRDReferralRecord } from "..";
+import { SupervisionOpportunityType } from "..";
 import {
   CompliantReportingReferralRecord,
   CompliantReportingReferralRecordFull,
 } from "../CompliantReportingReferralRecord";
 import { EarnedDischargeReferralRecord } from "../EarnedDischargeReferralRecord";
 import { LSUReferralRecord } from "../LSUReferralRecord";
+import { UsIdPastFTRDReferralRecord } from "../UsIdPastFTRDReferralRecord";
 import { UsMeEarlyTerminationReferralRecord } from "../UsMeEarlyTerminationReferralRecord";
 import { UsMeFurloughReleaseReferralRecord } from "../UsMeFurloughReleaseReferralRecord";
 import { UsMeSCCPReferralRecord } from "../UsMeSCCPReferralRecord";

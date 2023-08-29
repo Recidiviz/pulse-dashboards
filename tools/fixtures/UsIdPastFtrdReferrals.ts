@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsIdPastFTRDReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsIdPastFTRDOpportunity";
+import { UsIdPastFTRDReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsIdPastFTRDReferralRecord";
 import { FixtureData } from "../workflowsFixtures";
 import { externalIdFunc } from "./utils";
 

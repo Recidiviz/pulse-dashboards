@@ -15,25 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../core/utils/constants";
-import { Client } from "../Client";
-import { OTHER_KEY } from "../utils";
-import { PastFTRDOpportunityBase } from "./PastFTRDOpportunityBase";
-import {
-  UsIdPastFTRDReferralRecord,
-  usIdPastFTRDSchema,
-} from "./UsIdPastFTRDReferralRecord";
+import { z } from "zod";
 
-export class UsIdPastFTRDOpportunity extends PastFTRDOpportunityBase<UsIdPastFTRDReferralRecord> {
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ID;
+import { basePastFTRDSchema } from "./PastFTRDReferralRecord";
 
-  constructor(client: Client) {
-    super(client, "pastFTRD", usIdPastFTRDSchema.parse);
-  }
-
-  denialReasonsMap = {
-    ABSCONDING: "Client is in absconder status",
-    VIOLATION: "Client is in violation status",
-    [OTHER_KEY]: "Other: please specify a reason",
-  };
-}
+export const usIdPastFTRDSchema = basePastFTRDSchema;
+export type UsIdPastFTRDReferralRecord = z.infer<typeof usIdPastFTRDSchema>;
+export type UsIdPastFTRDReferralRecordRaw = z.input<typeof usIdPastFTRDSchema>;

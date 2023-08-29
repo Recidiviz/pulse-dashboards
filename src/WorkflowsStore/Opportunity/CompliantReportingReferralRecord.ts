@@ -18,7 +18,6 @@
 import { DocumentData, Timestamp } from "firebase/firestore";
 import { z } from "zod";
 
-import { UNKNOWN } from "../Client";
 import { TransformFunction } from "../subscriptions";
 import { fieldToDate, optionalFieldToDate } from "../utils";
 import { dateStringSchema, opportunitySchemaBase } from "./schemaHelpers";
@@ -359,7 +358,7 @@ export const transformCompliantReportingReferral: TransformFunction<
       result,
       date: fieldToDate(date),
     })),
-    judicialDistrict: judicialDistrict ?? UNKNOWN,
+    judicialDistrict: judicialDistrict ?? "Unknown",
     lastSpecialConditionsNote: optionalFieldToDate(lastSpecialConditionsNote),
     lifetimeOffensesExpired,
     mostRecentArrestCheck: fieldToDate(mostRecentArrestCheck),

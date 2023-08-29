@@ -15,20 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
 import { Firestore } from "@google-cloud/firestore";
 import { ArgumentParser } from "argparse";
 import prompts from "prompts";
 import { z } from "zod";
 
 import { collectionNames } from "../src/FirestoreStore";
-import {
-  compliantReportingSchema,
-  usIdPastFTRDSchema,
-  usNdEarlyTerminationSchema,
-} from "../src/WorkflowsStore";
+import { compliantReportingSchema } from "../src/WorkflowsStore/Opportunity/CompliantReportingReferralRecord";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
 import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCaSupervisionLevelDowngradeReferralRecord";
+import { usIdPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsIdPastFTRDReferralRecord";
 import { usMeEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsMeEarlyTerminationReferralRecord";
 import { usMeFurloughReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsMeFurloughReleaseReferralRecord";
 import { usMeSCCPSchema } from "../src/WorkflowsStore/Opportunity/UsMeSCCPReferralRecord";
@@ -38,6 +34,7 @@ import { usMiMinimumTelephoneReportingSchema } from "../src/WorkflowsStore/Oppor
 import { usMiPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsMiPastFTRDReferralRecord";
 import { usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsMiSupervisionLevelDowngradeReferralRecord";
 import { usMoRestrictiveHousingStatusHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
+import { usNdEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsNdEarlyTerminationReferralRecord";
 import { usTnCustodyLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsTnCustodyLevelDowngradeReferralRecord";
 import { usTnExpirationSchema } from "../src/WorkflowsStore/Opportunity/UsTnExpirationReferralRecord";
 import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTnSupervisionLevelDowngradeReferralRecord";
