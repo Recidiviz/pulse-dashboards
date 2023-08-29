@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMeEarlyTerminationReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMeEarlyTerminationReferralRecord";
+import { UsMeEarlyTerminationReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMe";
 import { fixtureWithIdKey } from "./utils";
 
 export const usMeEarlyTerminationReferralsFixture =

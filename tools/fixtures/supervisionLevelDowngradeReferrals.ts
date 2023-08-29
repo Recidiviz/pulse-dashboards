@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsTnSupervisionLevelDowngradeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTnSupervisionLevelDowngradeReferralRecord";
+import { UsTnSupervisionLevelDowngradeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTn";
 import { fixtureWithIdKey } from "./utils";
 
 export const usTnSupervisionLevelDowngradeReferrals =

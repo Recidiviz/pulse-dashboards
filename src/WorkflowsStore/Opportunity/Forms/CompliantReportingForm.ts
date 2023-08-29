@@ -1,8 +1,10 @@
 import { transform } from "../../../core/Paperwork/US_TN/CompliantReporting/Transformer";
 import WorkflowsCompliantReportingForm from "../../../core/WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import { formatDate } from "../../../utils";
-import { CompliantReportingOpportunity } from "../CompliantReportingOpportunity";
-import { CompliantReportingDraftData } from "../CompliantReportingReferralRecord";
+import {
+  CompliantReportingDraftData,
+  CompliantReportingOpportunity,
+} from "../UsTn";
 import { FormBase } from "./FormBase";
 
 export class CompliantReportingForm extends FormBase<

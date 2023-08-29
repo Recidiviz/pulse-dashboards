@@ -16,7 +16,7 @@
 // =============================================================================
 import dedent from "dedent";
 
-import { LSUDraftData } from "../../../../WorkflowsStore/Opportunity/LSUReferralRecord";
+import { LSUDraftData } from "../../../../WorkflowsStore/Opportunity/UsId";
 
 const template = (form?: Partial<LSUDraftData>): string => {
   return dedent`

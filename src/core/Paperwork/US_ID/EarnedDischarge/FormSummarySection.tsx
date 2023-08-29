@@ -19,7 +19,7 @@
 
 import styled from "styled-components/macro";
 
-import { EarnedDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/EarnedDischargeReferralRecord";
+import { EarnedDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/UsId";
 import {
   FORM_US_ID_EARLY_DISCHARGE_LETTER_SPACING,
   FormEDInput,

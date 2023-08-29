@@ -17,8 +17,10 @@
 
 import { FormFurloughRelease } from "../../../core/Paperwork/US_ME/Furlough/FormFurloughRelease";
 import { formatFacilityHousingUnit } from "../../utils";
-import { UsMeFurloughReleaseOpportunity } from "../UsMeFurloughReleaseOpportunity";
-import { UsMeFurloughReleaseDraftData } from "../UsMeFurloughReleaseReferralRecord";
+import {
+  UsMeFurloughReleaseDraftData,
+  UsMeFurloughReleaseOpportunity,
+} from "../UsMe";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
 export class UsMeFurloughReleaseForm extends FormBase<

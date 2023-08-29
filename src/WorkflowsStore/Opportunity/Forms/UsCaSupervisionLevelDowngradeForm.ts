@@ -17,8 +17,10 @@
 
 import WorkflowsUsCaSupervisionLevelDowngradeForm from "../../../core/WorkflowsUsCaSupervisionLevelDowngradeForm";
 import { formatNameLastFirst } from "../../../utils";
-import { UsCaSupervisionLevelDowngradeOpportunity } from "../UsCaSupervisionLevelDowngradeOpportunity";
-import { UsCaSupervisionLevelDowngradeDraftData } from "../UsCaSupervisionLevelDowngradeReferralRecord";
+import {
+  UsCaSupervisionLevelDowngradeDraftData,
+  UsCaSupervisionLevelDowngradeOpportunity,
+} from "../UsCa";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
 export class UsCaSupervisionLevelDowngradeForm extends FormBase<

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsNdEarlyTerminationReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsNdEarlyTerminationReferralRecord";
+import { UsNdEarlyTerminationReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsNd";
 import { FixtureData } from "../workflowsFixtures";
 import { externalIdFunc } from "./utils";
 

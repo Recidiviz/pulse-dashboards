@@ -16,7 +16,7 @@
 // =============================================================================
 import wrap from "word-wrap";
 
-import { UsTnExpirationDraftData } from "../../../../WorkflowsStore/Opportunity/UsTnExpirationReferralRecord";
+import { UsTnExpirationDraftData } from "../../../../WorkflowsStore/Opportunity/UsTn";
 
 function orNA(contents: string | undefined): string {
   return contents === "" || contents === undefined ? "N/A" : contents;

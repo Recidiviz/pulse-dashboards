@@ -19,7 +19,7 @@ import { configure } from "mobx";
 
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
-import { UsCaSupervisionLevelDowngradeOpportunity } from "../../UsCaSupervisionLevelDowngradeOpportunity";
+import { UsCaSupervisionLevelDowngradeOpportunity } from "../../UsCa";
 import { UsCaSupervisionLevelDowngradeForm } from "../UsCaSupervisionLevelDowngradeForm";
 
 // To adapt this to a new form/opportunity, change the type of `form` and update the opp and

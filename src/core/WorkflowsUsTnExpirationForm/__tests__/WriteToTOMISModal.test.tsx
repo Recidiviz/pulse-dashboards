@@ -28,7 +28,7 @@ import {
   UsTnExpirationEligibleClientRecord,
   UsTnExpirationReferralRecordFixture,
   usTnUserRecord,
-} from "../../../WorkflowsStore/Opportunity/__fixtures__";
+} from "../../../WorkflowsStore/Opportunity/UsTn/__fixtures__";
 import { DocumentSubscription } from "../../../WorkflowsStore/subscriptions";
 import {
   createContactNoteRequestBody,

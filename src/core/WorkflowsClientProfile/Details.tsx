@@ -32,13 +32,15 @@ import {
   formatWorkflowsDate,
 } from "../../utils";
 import { Client, WithCaseNotes } from "../../WorkflowsStore";
-import { INTERSTATE_COPY } from "../../WorkflowsStore/Opportunity/UsMiEarlyDischargeOpportunity";
-import { UsMiEarlyDischargeReferralRecord } from "../../WorkflowsStore/Opportunity/UsMiEarlyDischargeReferralRecord";
+import {
+  INTERSTATE_COPY,
+  UsMiEarlyDischargeReferralRecord,
+} from "../../WorkflowsStore/Opportunity/UsMi";
 import {
   UsMoClassInfo,
   UsMoConductViolationInfo,
   UsMoRestrictiveHousingStatusHearingReferralRecord,
-} from "../../WorkflowsStore/Opportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
+} from "../../WorkflowsStore/Opportunity/UsMo";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";

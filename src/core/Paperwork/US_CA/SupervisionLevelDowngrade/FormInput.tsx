@@ -18,7 +18,7 @@ import { observer } from "mobx-react-lite";
 import React, { MutableRefObject, useRef } from "react";
 import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
-import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCaSupervisionLevelDowngradeReferralRecord";
+import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { useAnimatedValue, useReactiveInput } from "../../utils";
 import { Input } from "./styles";

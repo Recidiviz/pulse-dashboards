@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMiPastFTRDReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMiPastFTRDReferralRecord";
+import { UsMiPastFTRDReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMi";
 import { fixtureWithIdKey } from "./utils";
 
 export const usMiPastFTRDReferralsFixture =

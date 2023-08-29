@@ -20,11 +20,11 @@ import WorkflowsUsTnExpirationForm from "../../../core/WorkflowsUsTnExpirationFo
 import { SpecialConditionCode } from "../../../FirestoreStore";
 import flags from "../../../flags";
 import { ParsedSpecialConditionOrString } from "../../Client";
-import { UsTnExpirationOpportunity } from "../UsTnExpirationOpportunity";
 import {
   Contact,
   UsTnExpirationDraftData,
-} from "../UsTnExpirationReferralRecord";
+  UsTnExpirationOpportunity,
+} from "../UsTn";
 import {
   defaultFormValueJoiner,
   displayList,

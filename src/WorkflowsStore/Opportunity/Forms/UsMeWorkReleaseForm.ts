@@ -17,8 +17,7 @@
 
 import { FormWorkRelease } from "../../../core/Paperwork/US_ME/WorkRelease/FormWorkRelease";
 import { formatFacilityHousingUnit } from "../../utils";
-import { UsMeWorkReleaseOpportunity } from "../UsMeWorkReleaseOpportunity";
-import { UsMeWorkReleaseDraftData } from "../UsMeWorkReleaseReferralRecord";
+import { UsMeWorkReleaseDraftData, UsMeWorkReleaseOpportunity } from "../UsMe";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
 export class UsMeWorkReleaseForm extends FormBase<

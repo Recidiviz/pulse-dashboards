@@ -17,8 +17,6 @@
 
 export * from "./Client";
 export * from "./Opportunity";
-export * from "./Opportunity/CompliantReportingReferralRecord";
-export * from "./Opportunity/UsNdEarlyTerminationReferralRecord";
 export * from "./Task/types";
 export * from "./types";
 export * from "./WorkflowsStore";

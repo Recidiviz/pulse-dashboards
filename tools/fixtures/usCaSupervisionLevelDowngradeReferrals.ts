@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsCaSupervisionLevelDowngradeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsCaSupervisionLevelDowngradeReferralRecord";
+import { UsCaSupervisionLevelDowngradeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsCa";
 import { fixtureWithIdKey } from "./utils";
 
 export const usCaSupervisionLevelDowngradeReferrals =

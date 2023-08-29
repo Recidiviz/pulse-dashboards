@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import * as React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { UsCaSupervisionLevelDowngradeDraftData } from "../../WorkflowsStore/Opportunity/UsCaSupervisionLevelDowngradeReferralRecord";
+import { UsCaSupervisionLevelDowngradeDraftData } from "../../WorkflowsStore/Opportunity/UsCa";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";

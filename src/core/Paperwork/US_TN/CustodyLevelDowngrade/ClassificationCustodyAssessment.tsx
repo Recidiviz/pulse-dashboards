@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import React, { useContext } from "react";
 import styled from "styled-components/macro";
 
-import { UsTnCustodyLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsTnCustodyLevelDowngradeReferralRecord";
+import { UsTnCustodyLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsTn/UsTnCustodyLevelDowngradeOpportunity/UsTnCustodyLevelDowngradeReferralRecord";
 import { FormViewerContext } from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage, PrintablePageMargin } from "../../styles";

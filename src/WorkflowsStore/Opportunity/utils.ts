@@ -27,10 +27,6 @@ import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
 import { ValidateFunction } from "../subscriptions";
 import { optionalFieldToDate } from "../utils";
 import {
-  COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED,
-  CompliantReportingOpportunity,
-} from "./CompliantReportingOpportunity";
-import {
   Opportunity,
   OPPORTUNITY_LABELS,
   OPPORTUNITY_STATUS_RANKED,
@@ -38,6 +34,10 @@ import {
   OpportunityRequirement,
   OpportunityType,
 } from "./types";
+import {
+  COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED,
+  CompliantReportingOpportunity,
+} from "./UsTn";
 
 export function rankByReviewStatus(opp: Opportunity): number {
   if (opp instanceof CompliantReportingOpportunity) {

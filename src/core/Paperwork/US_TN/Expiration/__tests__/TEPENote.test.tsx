@@ -17,7 +17,7 @@
 
 import dedent from "dedent";
 
-import { UsTnExpirationDraftData } from "../../../../../WorkflowsStore/Opportunity/UsTnExpirationReferralRecord";
+import { UsTnExpirationDraftData } from "../../../../../WorkflowsStore/Opportunity/UsTn";
 import tepeTemplate, { charLimitedNote } from "../TEPENote";
 
 test("TEPE with invalid characters", () => {

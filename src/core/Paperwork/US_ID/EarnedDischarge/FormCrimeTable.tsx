@@ -24,7 +24,7 @@ import styled from "styled-components/macro";
 import {
   EarnedDischargeCrimeTableKeys,
   EarnedDischargeDraftData,
-} from "../../../../WorkflowsStore/Opportunity/EarnedDischargeReferralRecord";
+} from "../../../../WorkflowsStore/Opportunity/UsId";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import {
   FORM_US_ID_EARLY_DISCHARGE_BACKGROUND_COLOR,

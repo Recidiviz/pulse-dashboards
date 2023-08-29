@@ -6,8 +6,10 @@ import WorkflowsEarlyTerminationDeferredForm from "../../../core/WorkflowsEarlyT
 import WorkflowsEarlyTerminationForm from "../../../core/WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 import { pluralize } from "../../../utils";
 import { UNKNOWN } from "../../Client";
-import { UsNdEarlyTerminationOpportunity } from "../UsNdEarlyTerminationOpportunity";
-import { UsNdEarlyTerminationDraftData } from "../UsNdEarlyTerminationReferralRecord";
+import {
+  UsNdEarlyTerminationDraftData,
+  UsNdEarlyTerminationOpportunity,
+} from "../UsNd";
 import { FormBase } from "./FormBase";
 
 const ADDITIONAL_DEPOSITION_LINES_PREFIX = "additionalDepositionLines";

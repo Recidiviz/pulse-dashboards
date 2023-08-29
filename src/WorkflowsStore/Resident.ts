@@ -28,10 +28,12 @@ import {
   UsMeSCCPOpportunity,
   UsMoRestrictiveHousingStatusHearingOpportunity,
 } from "./Opportunity";
-import { UsIdExpandedCRCOpportunity } from "./Opportunity/UsIdExpandedCRCOpportunity";
-import { UsMeFurloughReleaseOpportunity } from "./Opportunity/UsMeFurloughReleaseOpportunity";
-import { UsMeWorkReleaseOpportunity } from "./Opportunity/UsMeWorkReleaseOpportunity";
-import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTnCustodyLevelDowngradeOpportunity";
+import { UsIdExpandedCRCOpportunity } from "./Opportunity/UsId";
+import {
+  UsMeFurloughReleaseOpportunity,
+  UsMeWorkReleaseOpportunity,
+} from "./Opportunity/UsMe";
+import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTn/UsTnCustodyLevelDowngradeOpportunity/UsTnCustodyLevelDowngradeOpportunity";
 import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";
 
 const residentialOpportunityConstructors: Record<

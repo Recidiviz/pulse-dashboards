@@ -47,19 +47,19 @@ import {
   Opportunity,
   OpportunityFactory,
   SupervisionOpportunityType,
+  UsCaSupervisionLevelDowngradeOpportunity,
   UsIdPastFTRDOpportunity,
+  UsIdSupervisionLevelDowngradeOpportunity,
   UsMeEarlyTerminationOpportunity,
+  UsMiClassificationReviewOpportunity,
+  UsMiEarlyDischargeOpportunity,
   UsMiMinimumTelephoneReportingOpportunity,
+  UsMiPastFTRDOpportunity,
+  UsMiSupervisionLevelDowngradeOpportunity,
   UsNdEarlyTerminationOpportunity,
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
-import { UsCaSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsCaSupervisionLevelDowngradeOpportunity";
-import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
-import { UsMiClassificationReviewOpportunity } from "./Opportunity/UsMiClassificationReviewOpportunity";
-import { UsMiEarlyDischargeOpportunity } from "./Opportunity/UsMiEarlyDischargeOpportunity";
-import { UsMiPastFTRDOpportunity } from "./Opportunity/UsMiPastFTRDOpportunity";
-import { UsMiSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsMiSupervisionLevelDowngradeOpportunity";
 import { SupervisionTaskInterface } from "./Task/types";
 import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
 import { JusticeInvolvedPerson } from "./types";

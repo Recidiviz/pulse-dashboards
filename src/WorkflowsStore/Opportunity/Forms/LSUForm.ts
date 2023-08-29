@@ -2,8 +2,7 @@ import dedent from "dedent";
 import { format as formatPhone } from "phone-fns";
 
 import WorkflowsLSUForm from "../../../core/WorkflowsLSUForm";
-import { LSUOpportunity } from "../LSUOpportunity";
-import { LSUDraftData } from "../LSUReferralRecord";
+import { LSUDraftData, LSUOpportunity } from "../UsId";
 import { defaultFormValueJoiner, formatFormValueDateMMDDYYYYY } from "../utils";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 

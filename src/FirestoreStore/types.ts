@@ -25,7 +25,7 @@ import {
   SupervisionOpportunityType,
   SupervisionTaskType,
 } from "../WorkflowsStore";
-import { UsTnExpirationDraftData } from "../WorkflowsStore/Opportunity/UsTnExpirationReferralRecord";
+import { UsTnExpirationDraftData } from "../WorkflowsStore/Opportunity/UsTn";
 
 export const collectionNames = {
   staff: "staff",

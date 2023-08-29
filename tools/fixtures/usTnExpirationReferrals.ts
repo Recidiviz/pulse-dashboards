@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsTnExpirationReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTnExpirationReferralRecord";
+import { UsTnExpirationReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTn";
 import { FixtureData } from "../workflowsFixtures";
 import { externalIdFunc } from "./utils";
 

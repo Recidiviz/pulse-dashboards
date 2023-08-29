@@ -17,8 +17,7 @@
 
 import { FormSCCP } from "../../../core/Paperwork/US_ME/SCCP/FormSCCP";
 import { formatFacilityHousingUnit } from "../../utils";
-import { UsMeSCCPOpportunity } from "../UsMeSCCPOpportunity";
-import { UsMeSCCPDraftData } from "../UsMeSCCPReferralRecord";
+import { UsMeSCCPDraftData, UsMeSCCPOpportunity } from "../UsMe";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
 export class UsMeSCCPForm extends FormBase<

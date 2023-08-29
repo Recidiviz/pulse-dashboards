@@ -7,8 +7,10 @@ import {
 } from "../../../core/Paperwork/US_TN/CustodyLevelDowngrade/assessmentQuestions";
 import WorkflowsUsTnCustodyLevelDowngradeForm from "../../../core/WorkflowsUsTnCustodyLevelDowngradeForm";
 import { formatDate } from "../../../utils";
-import { UsTnCustodyLevelDowngradeOpportunity } from "../UsTnCustodyLevelDowngradeOpportunity";
-import { UsTnCustodyLevelDowngradeDraftData } from "../UsTnCustodyLevelDowngradeReferralRecord";
+import {
+  UsTnCustodyLevelDowngradeDraftData,
+  UsTnCustodyLevelDowngradeOpportunity,
+} from "../UsTn/UsTnCustodyLevelDowngradeOpportunity";
 import { FormBase } from "./FormBase";
 
 export class UsTnCustodyLevelDowngradeForm extends FormBase<

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMiMinimumTelephoneReportingReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMiMinimumTelephoneReportingReferralRecord";
+import { UsMiMinimumTelephoneReportingReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMi";
 import { fixtureWithIdKey } from "./utils";
 
 export const usMiMinimumTelephoneReportingReferralsFixture =

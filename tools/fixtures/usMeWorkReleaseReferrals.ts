@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMeWorkReleaseReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMeWorkReleaseReferralRecord";
+import { UsMeWorkReleaseReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMe";
 import { FixtureData } from "../workflowsFixtures";
 import { externalIdFunc } from "./utils";
 

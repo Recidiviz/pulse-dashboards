@@ -30,26 +30,26 @@ import {
   IncarcerationOpportunityType,
   LSUOpportunity,
   SupervisionOpportunityType,
+  UsCaSupervisionLevelDowngradeOpportunity,
+  UsIdExpandedCRCOpportunity,
   UsIdPastFTRDOpportunity,
+  UsIdSupervisionLevelDowngradeOpportunity,
   UsMeEarlyTerminationOpportunity,
+  UsMeFurloughReleaseOpportunity,
   UsMeSCCPOpportunity,
+  UsMeWorkReleaseOpportunity,
+  UsMiClassificationReviewOpportunity,
+  UsMiEarlyDischargeOpportunity,
   UsMiMinimumTelephoneReportingOpportunity,
+  UsMiPastFTRDOpportunity,
+  UsMiSupervisionLevelDowngradeOpportunity,
   UsMoRestrictiveHousingStatusHearingOpportunity,
   UsNdEarlyTerminationOpportunity,
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
-import { UsCaSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsCaSupervisionLevelDowngradeOpportunity";
-import { UsIdExpandedCRCOpportunity } from "./Opportunity/UsIdExpandedCRCOpportunity";
-import { UsIdSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsIdSupervisionLevelDowngradeOpportunity";
-import { UsMeFurloughReleaseOpportunity } from "./Opportunity/UsMeFurloughReleaseOpportunity";
-import { UsMeWorkReleaseOpportunity } from "./Opportunity/UsMeWorkReleaseOpportunity";
-import { UsMiClassificationReviewOpportunity } from "./Opportunity/UsMiClassificationReviewOpportunity";
-import { UsMiEarlyDischargeOpportunity } from "./Opportunity/UsMiEarlyDischargeOpportunity";
-import { UsMiPastFTRDOpportunity } from "./Opportunity/UsMiPastFTRDOpportunity";
-import { UsMiSupervisionLevelDowngradeOpportunity } from "./Opportunity/UsMiSupervisionLevelDowngradeOpportunity";
-import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTnCustodyLevelDowngradeOpportunity";
+import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTn/UsTnCustodyLevelDowngradeOpportunity/UsTnCustodyLevelDowngradeOpportunity";
 import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { SupervisionTaskInterface } from "./Task/types";

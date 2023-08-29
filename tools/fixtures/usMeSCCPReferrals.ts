@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMeSCCPReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMeSCCPReferralRecord";
+import { UsMeSCCPReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMe";
 import { FixtureData } from "../workflowsFixtures";
 import { externalIdFunc } from "./utils";
 

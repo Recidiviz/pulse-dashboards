@@ -24,8 +24,7 @@ import {
   formatWorkflowsDate,
   toTitleCase,
 } from "../../../utils";
-import { EarnedDischargeOpportunity } from "../EarnedDischargeOpportunity";
-import { EarnedDischargeDraftData } from "../EarnedDischargeReferralRecord";
+import { EarnedDischargeDraftData, EarnedDischargeOpportunity } from "../UsId";
 import { FormBase } from "./FormBase";
 import {
   transformPossibleDateFields,

@@ -19,7 +19,7 @@
 
 import styled from "styled-components/macro";
 
-import { EarnedDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/EarnedDischargeReferralRecord";
+import { EarnedDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/UsId";
 import DOCXFormInput, { DOCXFormInputProps } from "../../DOCXFormInput";
 
 export const FORM_US_ID_EARLY_DISCHARGE_BACKGROUND_COLOR = "rgb(227, 227, 226)";
