@@ -31,6 +31,16 @@ export const usIdPastFtrdFixture: FixtureData<UsIdPastFTRDReferralRecordRaw> = {
       },
       ineligibleCriteria: {},
     },
+    {
+      stateCode: "US_ID",
+      externalId: "010",
+      eligibleCriteria: {},
+      ineligibleCriteria: {
+        supervisionPastFullTermCompletionDate: {
+          eligibleDate: "2025-06-09",
+        },
+      },
+    },
   ],
   idFunc: externalIdFunc,
 };

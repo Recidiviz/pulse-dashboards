@@ -17,15 +17,17 @@
 
 import { z } from "zod";
 
-import { dateStringSchema, opportunitySchemaBase } from "./schemaHelpers";
+import { eligibleDateSchema, opportunitySchemaBase } from "./schemaHelpers";
+
+const supervisionPastFullTermCompletionDate = eligibleDateSchema.optional();
+
+const ineligibleAndEligibleCriteria = z.object({
+  supervisionPastFullTermCompletionDate,
+});
 
 export const basePastFTRDSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: z.object({
-    supervisionPastFullTermCompletionDate: z.object({
-      eligibleDate: dateStringSchema,
-    }),
-  }),
-  ineligibleCriteria: z.object({}),
+  eligibleCriteria: ineligibleAndEligibleCriteria,
+  ineligibleCriteria: ineligibleAndEligibleCriteria,
 });
 
 export type BasePastFTRDReferralRecord = z.infer<typeof basePastFTRDSchema>;

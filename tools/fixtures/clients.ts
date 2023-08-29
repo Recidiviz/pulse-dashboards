@@ -558,6 +558,47 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     ],
     emailAddress: "larry@david.net",
   },
+  {
+    personName: {
+      givenNames: "ALFRED",
+      surname: "PENNYWORTH",
+      middleNames: "THADDEUS CRANE",
+    },
+    personExternalId: "010",
+    displayId: "d010",
+    pseudonymizedId: "p010",
+    stateCode: "US_ID",
+    officerId: "OFFICER4",
+    district: "DISTRICT 1",
+    supervisionType: "PROBATION",
+    supervisionLevel: "MINIMUM",
+    supervisionLevelStart: "2019-12-20",
+    address: "123 Bedrock Lane",
+    phoneNumber: "5555555678",
+    supervisionStartDate: "2020-01-11",
+    expirationDate: "2025-06-09",
+    currentBalance: 0,
+    lastPaymentAmount: 1939,
+    lastPaymentDate: "2022-01-04",
+    allEligibleOpportunities: ["pastFTRD"],
+    currentEmployers: [
+      {
+        name: "Bruce Wayne",
+        address: "1007 Mountain Drive, Gotham",
+      },
+    ],
+    milestones: [
+      {
+        text: "42 months since last violation",
+        type: "MONTHS_WITHOUT_VIOLATION",
+      },
+      {
+        text: "43 months on supervision",
+        type: "MONTHS_ON_SUPERVISION",
+      },
+    ],
+    emailAddress: "alfred@wayne.net",
+  },
 ];
 
 const US_ME_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [

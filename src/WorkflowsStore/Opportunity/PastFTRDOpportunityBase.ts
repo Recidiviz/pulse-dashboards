@@ -31,7 +31,14 @@ const CRITERIA_FORMATTERS: CriteriaFormatters<BasePastFTRDReferralRecord> = {
   eligibleCriteria: {
     supervisionPastFullTermCompletionDate: {
       DAYS_PAST_ELIGIBLE_DATE: ({ eligibleDate }) =>
-        differenceInDays(new Date(), eligibleDate).toString(),
+        Math.abs(differenceInDays(new Date(), eligibleDate)).toString(),
+      ELIGIBILITY_DATE: ({ eligibleDate }) => formatWorkflowsDate(eligibleDate),
+    },
+  },
+  ineligibleCriteria: {
+    supervisionPastFullTermCompletionDate: {
+      DAYS_UNTIL_ELIGIBLE_DATE: ({ eligibleDate }) =>
+        differenceInDays(eligibleDate, new Date()).toString(),
       ELIGIBILITY_DATE: ({ eligibleDate }) => formatWorkflowsDate(eligibleDate),
     },
   },
@@ -46,7 +53,14 @@ const CRITERIA_COPY: CriteriaCopy<BasePastFTRDReferralRecord> = {
       },
     ],
   ],
-  ineligibleCriteria: [],
+  ineligibleCriteria: [
+    [
+      "supervisionPastFullTermCompletionDate",
+      {
+        text: "$DAYS_UNTIL_ELIGIBLE_DATE days until FTRD ($ELIGIBILITY_DATE)",
+      },
+    ],
+  ],
 };
 
 export abstract class PastFTRDOpportunityBase<
@@ -81,8 +95,25 @@ export abstract class PastFTRDOpportunityBase<
     );
   }
 
+  get requirementsAlmostMet(): OpportunityRequirement[] {
+    return hydrateCriteria(
+      this.record,
+      "ineligibleCriteria",
+      CRITERIA_COPY,
+      CRITERIA_FORMATTERS
+    );
+  }
+
   get eligibilityDate(): Date | undefined {
-    return this.record?.eligibleCriteria.supervisionPastFullTermCompletionDate
-      .eligibleDate;
+    return (
+      this.record?.eligibleCriteria.supervisionPastFullTermCompletionDate
+        ?.eligibleDate ??
+      this.record?.ineligibleCriteria.supervisionPastFullTermCompletionDate
+        ?.eligibleDate
+    );
+  }
+
+  get almostEligible(): boolean {
+    return !!Object.keys(this.record?.ineligibleCriteria || {}).length;
   }
 }

@@ -22,8 +22,9 @@ import { RootStore } from "../../../RootStore";
 import { Client } from "../../Client";
 import { DocumentSubscription } from "../../subscriptions";
 import {
+  pastFTRDAlmostEligibleFixture,
   pastFTRDEligibleClientRecord,
-  pastFTRDRecordFixture,
+  pastFTRDRecordEligibleFixture,
 } from "../__fixtures__";
 import { UsIdPastFTRDOpportunity } from "../UsIdPastFTRDOpportunity";
 
@@ -67,10 +68,26 @@ describe("fully eligible", () => {
 
     referralSub = opp.referralSubscription;
     referralSub.isLoading = false;
-    referralSub.data = pastFTRDRecordFixture;
+    referralSub.isHydrated = true;
+    referralSub.data = pastFTRDRecordEligibleFixture;
   });
 
   test("requirements met", () => {
     expect(opp.requirementsMet).toMatchSnapshot();
+  });
+});
+
+describe("almost eligible", () => {
+  beforeEach(() => {
+    createTestUnit(pastFTRDEligibleClientRecord);
+
+    referralSub = opp.referralSubscription;
+    referralSub.isLoading = false;
+    referralSub.isHydrated = true;
+    referralSub.data = pastFTRDAlmostEligibleFixture;
+  });
+
+  test("requirements almost met", () => {
+    expect(opp.requirementsAlmostMet).toMatchSnapshot();
   });
 });

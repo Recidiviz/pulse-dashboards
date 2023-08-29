@@ -14,25 +14,37 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
 import { z } from "zod";
 
 import { Equal, Expect } from "../../utils/typeUtils";
-import { BasePastFTRDReferralRecord } from "./PastFTRDReferralRecord";
-import { dateStringSchema, opportunitySchemaBase } from "./schemaHelpers";
+import {
+  BasePastFTRDReferralRecord,
+  basePastFTRDSchema,
+} from "./PastFTRDReferralRecord";
+import { eligibleDateSchema } from "./schemaHelpers";
 
-export const usMiPastFTRDSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: z
-    .object({
-      supervisionOneDayPastFullTermCompletionDate: z.object({
-        eligibleDate: dateStringSchema,
-      }),
-    })
-    .transform(({ supervisionOneDayPastFullTermCompletionDate }) => ({
+const eligibleCriteria = z
+  .object({
+    supervisionOneDayPastFullTermCompletionDate: eligibleDateSchema,
+  })
+  .transform((data) => {
+    const {
+      supervisionOneDayPastFullTermCompletionDate,
+      ...restEligibleCriteria
+    } = data;
+
+    return {
+      ...restEligibleCriteria,
       supervisionPastFullTermCompletionDate:
         supervisionOneDayPastFullTermCompletionDate,
-    })),
-  ineligibleCriteria: z.object({}),
+    };
+  });
+
+const ineligibleCriteria = z.object({});
+
+export const usMiPastFTRDSchema = basePastFTRDSchema.extend({
+  eligibleCriteria,
+  ineligibleCriteria,
 });
 
 export type UsMiPastFTRDReferralRecord = z.infer<typeof usMiPastFTRDSchema>;
@@ -40,5 +52,8 @@ export type UsMiPastFTRDReferralRecordRaw = z.input<typeof usMiPastFTRDSchema>;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type VerifyEquivalenceToBase = Expect<
-  Equal<UsMiPastFTRDReferralRecord, BasePastFTRDReferralRecord>
+  Equal<
+    UsMiPastFTRDReferralRecord["eligibleCriteria"],
+    Required<BasePastFTRDReferralRecord["eligibleCriteria"]>
+  >
 >;

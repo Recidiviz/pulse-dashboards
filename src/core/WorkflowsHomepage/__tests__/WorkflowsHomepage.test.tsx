@@ -201,7 +201,9 @@ describe("WorkflowsHomepage", () => {
     );
 
     expect(
-      screen.getByText("1 client has passed their full-term release date")
+      screen.getByText(
+        "1 client is nearing or past their full-term release date"
+      )
     ).toBeInTheDocument();
   });
 });

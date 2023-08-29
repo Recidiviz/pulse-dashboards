@@ -99,7 +99,7 @@ export const generateOpportunityInitialHeader = (
   const opportunityLabel = OPPORTUNITY_LABELS[opportunityType];
   switch (opportunityType) {
     case "pastFTRD":
-      return "Search for officers above to review clients whose full-term release date has passed.";
+      return "Search for officers above to review clients whose full-term release date is near or has passed.";
     case "usTnExpiration":
       return "Search for officers above to review clients who may be on or past their supervision expiration date.";
     case "usMeSCCP":
@@ -146,10 +146,10 @@ export const generateOpportunityHydratedHeader = (
       callToAction: `Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.`,
     },
     pastFTRD: {
-      eligibilityText: simplur`${count} client[|s] ha[s|ve] `,
-      opportunityText: "passed their full-term release date",
+      eligibilityText: simplur`${count} client[|s] [is|are] nearing or `,
+      opportunityText: "past their full-term release date",
       callToAction:
-        "Review clients who are past their full-term release date and email clerical to move them to history.",
+        "Review clients who are nearing or past their full-term release date and email clerical to move them to history.",
     },
     supervisionLevelDowngrade: {
       eligibilityText: simplur`${count} client[|s] may be `,
@@ -233,10 +233,10 @@ export const generateOpportunityHydratedHeader = (
         "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",
     },
     usMiPastFTRD: {
-      eligibilityText: simplur`${count} client[|s] ha[s|ve] `,
-      opportunityText: "passed their full-term release date",
+      eligibilityText: simplur`${count} client[|s] [is|are] nearing or `,
+      opportunityText: "past their full-term release date",
       callToAction:
-        "Review clients who are past their full-term release date and complete discharges in COMS.",
+        "Review clients who are nearing or past their full-term release date and complete discharges in COMS.",
     },
     usMeFurloughRelease: {
       eligibilityText: simplur`${count} resident[|s] may be eligible for the `,

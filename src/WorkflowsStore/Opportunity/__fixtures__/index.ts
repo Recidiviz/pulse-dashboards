@@ -703,7 +703,7 @@ export const EarnedDischargeEligibleClientRecord: ClientRecord = {
   allEligibleOpportunities: ["earnedDischarge"],
 };
 
-export const pastFTRDRecordFixture: UsIdPastFTRDReferralRecord = {
+export const pastFTRDRecordEligibleFixture: UsIdPastFTRDReferralRecord = {
   stateCode: "US_ID",
   externalId: "001",
   eligibleCriteria: {
@@ -712,6 +712,17 @@ export const pastFTRDRecordFixture: UsIdPastFTRDReferralRecord = {
     },
   },
   ineligibleCriteria: {},
+};
+
+export const pastFTRDAlmostEligibleFixture: UsIdPastFTRDReferralRecord = {
+  stateCode: "US_ID",
+  externalId: "002",
+  eligibleCriteria: {},
+  ineligibleCriteria: {
+    supervisionPastFullTermCompletionDate: {
+      eligibleDate: parseISO("2022-09-01"),
+    },
+  },
 };
 
 export const pastFTRDEligibleClientRecord: ClientRecord = {
