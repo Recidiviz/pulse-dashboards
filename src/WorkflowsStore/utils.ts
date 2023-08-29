@@ -25,9 +25,9 @@ import {
 } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 
-import { SystemId } from "../core/models/types";
+import { StaffFilter, SystemId } from "../core/models/types";
 import { WORKFLOWS_SYSTEM_ID_TO_PAGE, WorkflowsPage } from "../core/views";
-import { StaffRecord } from "../FirestoreStore/types";
+import { CombinedUserRecord, StaffRecord } from "../FirestoreStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
 import {
   INCARCERATION_OPPORTUNITY_TYPES,
@@ -226,4 +226,23 @@ export function getSystemIdFromPage(page: WorkflowsPage): SystemId | undefined {
   if (WORKFLOWS_SYSTEM_ID_TO_PAGE.ALL.includes(page)) {
     return "ALL";
   }
+}
+
+export function filterByUserDistrict(
+  user: CombinedUserRecord
+): StaffFilter | undefined {
+  let filterValues = user.updates?.overrideDistrictIds;
+
+  if (!filterValues?.length) {
+    if (user.info.district) {
+      filterValues = [user.info.district];
+    } else {
+      return undefined;
+    }
+  }
+
+  return {
+    filterField: "district",
+    filterValues,
+  };
 }

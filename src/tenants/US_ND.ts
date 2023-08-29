@@ -33,7 +33,6 @@ const US_ND_CONFIG: TenantConfig = {
   domain: "nd.gov",
   availableStateCodes: [pathways.US_ND],
   enableUserRestrictions: false,
-  workflowsEnableAllDistricts: true,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["SUPERVISION"],
   navigation: {

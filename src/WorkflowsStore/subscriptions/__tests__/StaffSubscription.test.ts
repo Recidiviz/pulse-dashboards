@@ -20,7 +20,9 @@
 import { collection, query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
 
+import { CombinedUserRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
+import { filterByUserDistrict } from "../../utils";
 import { StaffSubscription } from "../StaffSubscription";
 
 jest.mock("firebase/firestore");
@@ -42,6 +44,17 @@ describe("StaffSubscription tests", () => {
         caseloadDistricts: ["TEST"],
         activeSystem: "SUPERVISION",
         workflowsSupportedSystems: ["SUPERVISION"],
+        user: {
+          info: {
+            district: "TEST_USER_DISTRICT",
+          },
+        },
+      },
+      tenantStore: {
+        workflowsStaffFilterFn: (user: CombinedUserRecord) => ({
+          filterField: "district",
+          filterValues: ["TEST_DISTRICT"],
+        }),
       },
       firestoreStore: {
         db: jest.fn(),
@@ -61,14 +74,29 @@ describe("StaffSubscription tests", () => {
     );
     expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
     expect(whereMock).toHaveBeenCalledWith("hasCaseload", "==", true);
-    expect(whereMock).toHaveBeenCalledWith("district", "in", ["TEST"]);
+    expect(whereMock).toHaveBeenCalledWith("district", "in", ["TEST_DISTRICT"]);
     expect(queryMock).toHaveBeenCalled();
+  });
+
+  test("datasource filters by district", () => {
+    runInAction(() => {
+      // @ts-ignore
+      rootStoreMock.tenantStore.workflowsStaffFilterFn = filterByUserDistrict;
+    });
+
+    sub.subscribe();
+
+    expect(whereMock).toHaveBeenCalledWith("district", "in", [
+      "TEST_USER_DISTRICT",
+    ]);
   });
 
   test("dataSource omits district filter", () => {
     runInAction(() => {
       // @ts-ignore
-      rootStoreMock.workflowsStore.caseloadDistricts = undefined;
+      rootStoreMock.tenantStore.workflowsStaffFilterFn = (
+        user: CombinedUserRecord
+      ) => undefined;
     });
 
     sub.subscribe();
@@ -87,7 +115,12 @@ describe("StaffSubscription tests", () => {
       // @ts-ignore
       rootStoreMock.currentTenantId = "US_TN";
       // @ts-ignore
-      rootStoreMock.workflowsStore.caseloadDistricts = ["TEST2", "TEST3"];
+      rootStoreMock.tenantStore.workflowsStaffFilterFn = (
+        user: CombinedUserRecord
+      ) => ({
+        filterField: "district",
+        filterValues: ["TEST2", "TEST3"],
+      });
     });
 
     expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");

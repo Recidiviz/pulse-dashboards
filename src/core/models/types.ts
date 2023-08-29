@@ -17,8 +17,10 @@
 
 import {
   ClientRecord,
+  CombinedUserRecord,
   MilestoneType,
   ResidentRecord,
+  StaffRecord,
   SupervisionTaskUpdate,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
@@ -55,7 +57,6 @@ export type TenantConfig = {
   internalSystemName?: string;
   availableStateCodes: TenantId[];
   enableUserRestrictions: boolean;
-  workflowsEnableAllDistricts?: boolean;
   navigation?: Navigation;
   vitalsMetrics?: VitalsMetric[];
   pagesWithRestrictions?: string[];
@@ -81,6 +82,18 @@ export type TenantConfig = {
   };
   milestoneTypes?: MilestoneType[];
   pathwaysNameOverride?: "Pathways" | "System-Level Trends";
+  workflowsStaffFilterFn?: (
+    user: CombinedUserRecord
+  ) => StaffFilter | undefined;
+};
+
+/**
+ * Describes the filtering we do when reading staff from firestore.
+ * The user may only see caseloads where the value of the filterField is one of the filterValues.
+ */
+export type StaffFilter = {
+  filterField: keyof StaffRecord;
+  filterValues: string[];
 };
 
 type ValidSnoozeForDays = 7 | 30 | 90;

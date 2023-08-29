@@ -14,8 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { StaffRecord } from "../../FirestoreStore/types";
-import { fractionalDateBetweenTwoDates, staffNameComparator } from "../utils";
+import { StaffFilter } from "../../core/models/types";
+import { CombinedUserRecord, StaffRecord } from "../../FirestoreStore/types";
+import {
+  filterByUserDistrict,
+  fractionalDateBetweenTwoDates,
+  staffNameComparator,
+} from "../utils";
 
 test("staffNameComparator", () => {
   const sortableStaff: StaffRecord[] = [
@@ -107,5 +112,60 @@ describe("fractionalDateBetweenTwoDates", () => {
     );
 
     expect(fractionalDate).toEqual(twoThirdsDate);
+  });
+});
+
+describe("filterByUserDistrict", () => {
+  const userWithoutDistrict: CombinedUserRecord = {
+    info: {
+      email: "test",
+      givenNames: "test",
+      hasCaseload: true,
+      hasFacilityCaseload: false,
+      id: "test",
+      role: "supervision_staff",
+      stateCode: "US_XX",
+      surname: "test",
+    },
+  };
+
+  it("should return district overrides if set", () => {
+    const user: CombinedUserRecord = {
+      info: {
+        ...userWithoutDistrict.info,
+        district: "district 1",
+      },
+      updates: {
+        stateCode: "US_XX",
+        overrideDistrictIds: ["override 1", "override 2"],
+      },
+    };
+
+    const expected: StaffFilter = {
+      filterField: "district",
+      filterValues: ["override 1", "override 2"],
+    };
+
+    expect(filterByUserDistrict(user)).toEqual(expected);
+  });
+
+  it("should return district if set and no overrides", () => {
+    const user: CombinedUserRecord = {
+      info: {
+        ...userWithoutDistrict.info,
+        district: "district 1",
+      },
+    };
+
+    const expected: StaffFilter = {
+      filterField: "district",
+      filterValues: ["district 1"],
+    };
+
+    expect(filterByUserDistrict(user)).toEqual(expected);
+  });
+
+  it("should be undefined if no district and no overrides", () => {
+    expect(filterByUserDistrict(userWithoutDistrict)).toBeUndefined();
   });
 });

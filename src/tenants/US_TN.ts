@@ -29,6 +29,7 @@ import {
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { OpportunityType } from "../WorkflowsStore";
+import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
 const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   "compliantReporting",
@@ -44,7 +45,7 @@ const US_TN_CONFIG: TenantConfig = {
   pathwaysNameOverride: "Pathways",
   availableStateCodes: [pathways.US_TN],
   enableUserRestrictions: false,
-  workflowsEnableAllDistricts: false,
+  workflowsStaffFilterFn: filterByUserDistrict,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsSystemConfigs: {

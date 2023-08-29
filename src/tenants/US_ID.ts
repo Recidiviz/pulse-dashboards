@@ -27,6 +27,7 @@ import { OpportunityType } from "../WorkflowsStore";
 import UsIdContactTask from "../WorkflowsStore/Task/UsIdContactTask";
 import UsIdHomeVisitTask from "../WorkflowsStore/Task/UsIdHomeVisitTask";
 import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/UsIdRiskAssessmentTask";
+import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
 const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   // Supervision opportunities
@@ -45,7 +46,7 @@ const US_ID_CONFIG: TenantConfig = {
   domain: "idoc.idaho.gov",
   availableStateCodes: [pathways.US_ID],
   enableUserRestrictions: false,
-  workflowsEnableAllDistricts: false,
+  workflowsStaffFilterFn: filterByUserDistrict,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsTasksConfig: {
     homeVisit: {

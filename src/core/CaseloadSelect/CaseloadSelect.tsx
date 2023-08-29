@@ -92,14 +92,14 @@ const buildSelectOption = (record: Searchable): SelectOption => {
 
 const DistrictIndicator = observer(function DistrictIndicator() {
   const {
-    workflowsStore: { caseloadDistricts },
+    workflowsStore: { districtsFilteredBy },
   } = useRootStore();
 
-  if (!caseloadDistricts) return null;
+  if (!districtsFilteredBy) return null;
 
   return (
     <>
-      {caseloadDistricts.map((district) => (
+      {districtsFilteredBy.map((district) => (
         <ValuePill key={district}>
           D{district}&nbsp;
           <Icon kind="Place" size={12} color={palette.slate60} />

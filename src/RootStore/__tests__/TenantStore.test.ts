@@ -16,7 +16,6 @@
 // =============================================================================
 import RootStore from "..";
 import { US_MO, US_PA } from "../TenantStore/lanternTenants";
-import { US_ND, US_TN } from "../TenantStore/pathwaysTenants";
 import TenantStore, {
   CURRENT_TENANT_IN_SESSION,
 } from "../TenantStore/TenantStore";
@@ -127,52 +126,6 @@ describe("TenantStore", () => {
         rootStore: mockRootStore,
       });
       expect(tenantStore.enableUserRestrictions).toEqual(false);
-    });
-  });
-
-  describe("workflowsEnableAllDistricts", () => {
-    beforeEach(() => {
-      sessionStorage.clear();
-      jest.clearAllMocks();
-      jest.resetAllMocks();
-    });
-
-    afterEach(() => {
-      jest.clearAllMocks();
-      jest.resetAllMocks();
-    });
-
-    it("returns true when a current tenant enables viewing all districts", () => {
-      const mockRootStore = createMockRootStore({
-        userIsLoading: false,
-        availableStateCodes: ["US_ND"],
-        userHasAccess: () => true,
-        user: {
-          [metadataField]: { stateCode: US_ND },
-          email_verified: true,
-        },
-      });
-
-      const tstore = new TenantStore({
-        rootStore: mockRootStore,
-      });
-      expect(tstore.workflowsEnableAllDistricts).toEqual(true);
-    });
-
-    it("returns false when a current tenant does not support viewing all districts", () => {
-      const mockRootStore = createMockRootStore({
-        userIsLoading: false,
-        availableStateCodes: ["US_TN"],
-        userHasAccess: () => true,
-        user: {
-          [metadataField]: { stateCode: US_TN },
-          email_verified: true,
-        },
-      });
-      tenantStore = new TenantStore({
-        rootStore: mockRootStore,
-      });
-      expect(tenantStore.workflowsEnableAllDistricts).toEqual(false);
     });
   });
 

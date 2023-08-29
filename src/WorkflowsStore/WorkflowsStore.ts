@@ -488,15 +488,15 @@ export class WorkflowsStore implements Hydratable {
    * This provides the districts to use for caseload filtering. It returns undefined if the
    * user is enabled to see all districts, or if the user does not have a district to filter by.
    */
-  get caseloadDistricts(): string[] | undefined {
-    const districtOverrides = this.user?.updates?.overrideDistrictIds;
-    if (districtOverrides) return districtOverrides;
+  get districtsFilteredBy(): string[] | undefined {
+    if (!this.user) return undefined;
 
-    if (this.rootStore.tenantStore.workflowsEnableAllDistricts)
-      return undefined;
-
-    const district = this.user?.info.district;
-    return district ? [district] : undefined;
+    const { filterField, filterValues } =
+      this.rootStore.tenantStore.workflowsStaffFilterFn(this.user) ?? {};
+    if (filterField === "district") {
+      return filterValues;
+    }
+    return undefined;
   }
 
   get hasMultipleOpportunities(): boolean {

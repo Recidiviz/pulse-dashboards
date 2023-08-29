@@ -54,6 +54,7 @@ import {
 } from "../Opportunity";
 import { Resident } from "../Resident";
 import { MilestonesMessageUpdateSubscription } from "../subscriptions/MilestonesMessageUpdateSubscription";
+import { filterByUserDistrict } from "../utils";
 
 jest.mock("firebase/firestore", () => {
   const originalModule = jest.requireActual("firebase/firestore");
@@ -81,7 +82,6 @@ const stateConfigs: Record<testStateCode | "RECIDIVIZ", any> = {
     availableStateCodes: ["US_XX"],
   },
   US_YY: {
-    workflowsEnableAllDistricts: true,
     workflowsSupportedSystems: ["SUPERVISION"],
     availableStateCodes: ["US_YY"],
   },
@@ -193,6 +193,7 @@ beforeEach(() => {
   jest.spyOn(AnalyticsStore.prototype, "trackCaseloadSearch");
   mockAuthedUser();
   workflowsStore = rootStore.workflowsStore;
+  stateConfigs.US_XX.workflowsStaffFilterFn = filterByUserDistrict;
 
   runInAction(() => {
     workflowsStore.updateActiveSystem("SUPERVISION");
@@ -544,24 +545,24 @@ describe("caseloadSubscription", () => {
   });
 });
 
-test("caseloadDistrict reflects user data", async () => {
+test("districtsFilteredBy reflects user data", async () => {
   await waitForHydration();
-  expect(workflowsStore.caseloadDistricts).toStrictEqual([
+  expect(workflowsStore.districtsFilteredBy).toStrictEqual([
     mockOfficer.info.district,
   ]);
 });
 
-test("workflowsEnableAllDistricts overrides caseloadDistrict", async () => {
+test("tenants without workflowsStaffFilterFn search all districts", async () => {
   runInAction(() => {
     rootStore.tenantStore.currentTenantId = "US_YY" as any;
   });
 
   await waitForHydration();
 
-  expect(workflowsStore.caseloadDistricts).toBeUndefined();
+  expect(workflowsStore.districtsFilteredBy).toBeUndefined();
 });
 
-test("setting overrideDistrictIds in UserUpdates overrides caseloadDistrict", async () => {
+test("setting overrideDistrictIds in UserUpdates overrides user district", async () => {
   const myOfficer = { ...mockOfficer };
   myOfficer.updates = {
     stateCode: "US_XX",
@@ -569,10 +570,10 @@ test("setting overrideDistrictIds in UserUpdates overrides caseloadDistrict", as
   };
   await waitForHydration(myOfficer);
 
-  expect(workflowsStore.caseloadDistricts).toStrictEqual(["D1", "D77"]);
+  expect(workflowsStore.districtsFilteredBy).toStrictEqual(["D1", "D77"]);
 });
 
-test("setting overrideDistrictIds in UserUpdates overrides workflowsEnableAllDistricts", async () => {
+test("setting overrideDistrictIds in UserUpdates overrides undefined workflowsStaffFilterFn", async () => {
   runInAction(() => {
     rootStore.tenantStore.currentTenantId = "US_YY" as any;
   });
@@ -584,7 +585,7 @@ test("setting overrideDistrictIds in UserUpdates overrides workflowsEnableAllDis
   };
   await waitForHydration(myOfficer);
 
-  expect(workflowsStore.caseloadDistricts).toStrictEqual(["D1", "D77"]);
+  expect(workflowsStore.districtsFilteredBy).toStrictEqual(["D1", "D77"]);
 });
 
 test("no client selected", async () => {

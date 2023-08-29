@@ -36,7 +36,7 @@ export class StaffSubscription extends FirestoreQuerySubscription<StaffRecord> {
   }
 
   get dataSource(): Query {
-    const { caseloadDistricts, workflowsSupportedSystems, activeSystem } =
+    const { user, workflowsSupportedSystems, activeSystem } =
       this.rootStore.workflowsStore;
 
     const stateCode = this.rootStore.currentTenantId;
@@ -54,8 +54,14 @@ export class StaffSubscription extends FirestoreQuerySubscription<StaffRecord> {
       );
     }
 
-    if (caseloadDistricts) {
-      constraints.push(where("district", "in", caseloadDistricts));
+    if (user) {
+      const staffFilter =
+        this.rootStore.tenantStore.workflowsStaffFilterFn(user);
+      if (staffFilter) {
+        constraints.push(
+          where(staffFilter.filterField, "in", staffFilter.filterValues)
+        );
+      }
     }
 
     return query(

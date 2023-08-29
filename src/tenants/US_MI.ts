@@ -23,6 +23,7 @@ import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { OpportunityType } from "../WorkflowsStore";
+import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
 const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   "usMiClassificationReview",
@@ -38,7 +39,7 @@ const US_MI_CONFIG: TenantConfig = {
   domain: "michigan.gov",
   availableStateCodes: [pathways.US_MI],
   enableUserRestrictions: false,
-  workflowsEnableAllDistricts: false,
+  workflowsStaffFilterFn: filterByUserDistrict,
   workflowsSupportedSystems: ["SUPERVISION"],
   workflowsSystemConfigs: {
     SUPERVISION: {

@@ -23,6 +23,7 @@ import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { OpportunityType } from "../WorkflowsStore";
+import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
 const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   // The order of this list determines the order of the opportunites that are displayed in the
@@ -41,6 +42,7 @@ const US_ME_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_ME],
   enableUserRestrictions: false,
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
+  workflowsStaffFilterFn: filterByUserDistrict,
   workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
   workflowsSystemConfigs: {
     INCARCERATION: {

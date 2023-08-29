@@ -16,6 +16,8 @@
 // =============================================================================
 import { makeAutoObservable, when } from "mobx";
 
+import { StaffFilter } from "../../core/models/types";
+import { CombinedUserRecord } from "../../FirestoreStore";
 import tenants from "../../tenants";
 import type RootStore from "..";
 import { LanternMethodology, LanternTenants, TenantId } from "../types";
@@ -44,6 +46,15 @@ function getTenantIdFromUser(userStore: UserStore): TenantId {
   }
 
   return storageStateCode;
+}
+
+function defaultStaffFilterFunction(user: CombinedUserRecord) {
+  return user.updates?.overrideDistrictIds
+    ? ({
+        filterField: "district",
+        filterValues: user.updates.overrideDistrictIds,
+      } as StaffFilter)
+    : undefined;
 }
 
 export default class TenantStore {
@@ -117,8 +128,20 @@ export default class TenantStore {
     );
   }
 
-  get workflowsEnableAllDistricts(): boolean {
-    if (!this.currentTenantId) return false;
-    return !!tenants[this.currentTenantId]?.workflowsEnableAllDistricts;
+  /**
+   * Returns the function used to filter which staff members a user can search for. If the tenant
+   * config does not specify one, returns a function which allows all staff to search for anyone
+   * unless they have override districts set, in which case they can only search within the
+   * override districts.
+   */
+  get workflowsStaffFilterFn(): (
+    user: CombinedUserRecord
+  ) => StaffFilter | undefined {
+    if (!this.currentTenantId) return defaultStaffFilterFunction;
+
+    return (
+      tenants[this.currentTenantId]?.workflowsStaffFilterFn ??
+      defaultStaffFilterFunction
+    );
   }
 }
