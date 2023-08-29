@@ -25,7 +25,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { toTitleCase } from "../../utils";
-import { OPPORTUNITY_LABELS } from "../../WorkflowsStore/Opportunity/types";
+import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import {
   getJusticeInvolvedPersonTitle,
   getSystemIdFromOpportunityType,
@@ -244,7 +244,7 @@ export const WorkflowsNavLayout: React.FC = observer(
                               )
                             }
                           >
-                            {OPPORTUNITY_LABELS[opportunityType]}
+                            {OPPORTUNITY_CONFIGS[opportunityType].label}
                           </BrandedNavLink>
                         </li>
                       );

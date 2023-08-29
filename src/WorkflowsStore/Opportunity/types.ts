@@ -21,9 +21,9 @@ import { Hydratable } from "../../core/models/types";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import { Denial, ExternalRequestUpdate, UpdateLog } from "../../FirestoreStore";
 import { TenantId } from "../../RootStore/types";
-import { PartialRecord } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
+import { OPPORTUNITY_CONFIGS } from "./OpportunityConfigs";
 
 export const SUPERVISION_OPPORTUNITY_TYPES = [
   "compliantReporting",
@@ -60,99 +60,27 @@ const OPPORTUNITY_TYPES = [
   ...SUPERVISION_OPPORTUNITY_TYPES,
   ...INCARCERATION_OPPORTUNITY_TYPES,
 ] as const;
+
 /**
  * Values of this union map to key prefixes in client records
  */
 export type OpportunityType = typeof OPPORTUNITY_TYPES[number];
-export const OPPORTUNITY_LABELS: Record<OpportunityType, string> = {
-  compliantReporting: "Compliant Reporting",
-  earlyTermination: "Early Termination",
-  earnedDischarge: "Earned Discharge",
-  LSU: "Limited Supervision Unit",
-  pastFTRD: "Past FTRD",
-  supervisionLevelDowngrade: "Supervision Level Downgrade",
-  usIdExpandedCRC: "Expanded Community Reentry Center",
-  usIdSupervisionLevelDowngrade: "Supervision Level Mismatch",
-  usMiSupervisionLevelDowngrade: "Supervision Level Mismatch",
-  usMiClassificationReview: "Classification Review",
-  usMiEarlyDischarge: "Early Discharge",
-  usMeSCCP: "Supervised Community Confinement Program",
-  usMeWorkRelease: "Work Release",
-  usTnExpiration: "Expiration",
-  usTnCustodyLevelDowngrade: "Custody Level Downgrade",
-  usMoRestrictiveHousingStatusHearing: "Restrictive Housing Status Hearing",
-  usMeEarlyTermination: "Early Termination",
-  usMiMinimumTelephoneReporting: "Minimum Telephone Reporting",
-  usMiPastFTRD: "Overdue for Discharge",
-  usMeFurloughRelease: "Furlough Program",
-  usCaSupervisionLevelDowngrade: "Supervision Level Downgrade",
-};
 
-export const OPPORTUNITY_TYPE_URLS_BY_STATE: PartialRecord<
-  TenantId,
-  PartialRecord<OpportunityType, string>
-> = {
-  US_TN: {
-    supervisionLevelDowngrade: "supervisionLevelDowngrade",
-    usTnExpiration: "expiration",
-    compliantReporting: "compliantReporting",
-    usTnCustodyLevelDowngrade: "custodyLevelDowngrade",
-  },
-  US_ND: {
-    earlyTermination: "earlyTermination",
-  },
-  US_ID: {
-    earnedDischarge: "earnedDischarge",
-    LSU: "LSU",
-    pastFTRD: "pastFTRD",
-    usIdSupervisionLevelDowngrade: "supervisionLevelMismatch",
-    usIdExpandedCRC: "expandedCRC",
-  },
-  US_ME: {
-    usMeSCCP: "SCCP",
-    usMeEarlyTermination: "earlyTermination",
-    usMeFurloughRelease: "furloughRelease",
-    usMeWorkRelease: "workRelease",
-  },
-  US_MI: {
-    usMiClassificationReview: "classificationReview",
-    usMiMinimumTelephoneReporting: "minimumTelephoneReporting",
-    usMiEarlyDischarge: "earlyDischarge",
-    usMiSupervisionLevelDowngrade: "supervisionLevelMismatch",
-    usMiPastFTRD: "pastFTRD",
-  },
-  US_MO: {
-    usMoRestrictiveHousingStatusHearing: "restrictiveHousingStatusHearing",
-  },
-  US_CA: {
-    usCaSupervisionLevelDowngrade: "supervisionLevelDowngrade",
-  },
-};
-
-// This is safe to do since all types are unique so the keys won't clash
-export const OPPORTUNITY_URL_BY_TYPE = Object.entries(
-  OPPORTUNITY_TYPE_URLS_BY_STATE
-).reduce(
-  (acc: PartialRecord<OpportunityType, string>, [_, opportunityToUrl]) => {
-    return { ...acc, ...opportunityToUrl };
-  },
-  {}
-) as Record<OpportunityType, string>;
-
-// When inverting, we need to keep the state code since urls are not unique
-export const OPPORTUNITY_TYPE_FOR_URL_BY_STATE: PartialRecord<
+// We need to keep the state code since urls are not unique
+export const OPPORTUNITY_TYPE_FOR_URL_BY_STATE: Record<
   TenantId,
   Record<string, OpportunityType>
-> = Object.fromEntries(
-  Object.entries(OPPORTUNITY_TYPE_URLS_BY_STATE).map(
-    ([stateCode, urlByType]) => [
-      stateCode,
-      Object.fromEntries(
-        Object.entries(urlByType).map(([oppType, url]) => [url, oppType])
-      ),
-    ]
-  )
+> = Object.entries(OPPORTUNITY_CONFIGS).reduce(
+  (acc: any, [oppType, config]) => ({
+    ...acc,
+    [config.stateCode]: {
+      ...acc[config.stateCode],
+      [config.urlSection]: oppType,
+    },
+  }),
+  {}
 );
+
 export function isOpportunityTypeUrlForState(
   stateCode: TenantId,
   s: string

@@ -19,9 +19,9 @@
 import { Firestore } from "@google-cloud/firestore";
 import dedent from "dedent";
 
-import { OPPORTUNITY_LABELS } from "../src/WorkflowsStore/Opportunity/types";
+import { OPPORTUNITY_CONFIGS } from "../src/WorkflowsStore/Opportunity/OpportunityConfigs";
 
-const OPPORTUNITY_KEYS = Object.keys(OPPORTUNITY_LABELS);
+const OPPORTUNITY_KEYS = Object.keys(OPPORTUNITY_CONFIGS);
 
 type MigrateOptions = {
   shouldUpdate: boolean;

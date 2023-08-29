@@ -26,9 +26,9 @@ import { pluralizeWord } from "../../utils";
 import {
   generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,
-  OPPORTUNITY_LABELS,
   SectionTitle,
 } from "../../WorkflowsStore";
+import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { Heading, SectionLabelText, SubHeading } from "../sharedComponents";
@@ -65,7 +65,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
 
   if (!opportunityType) return null;
 
-  const opportunityLabel = OPPORTUNITY_LABELS[opportunityType];
+  const opportunityLabel = OPPORTUNITY_CONFIGS[opportunityType].label;
   const totalOpps = allOpportunitiesByType[opportunityType]?.length ?? 0;
 
   const hydratedHeader = generateOpportunityHydratedHeader(

@@ -20,7 +20,8 @@ import simplur from "simplur";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord } from "../../utils";
-import { OPPORTUNITY_LABELS, OpportunityType } from "../../WorkflowsStore";
+import { OpportunityType } from "../../WorkflowsStore";
+import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { CaseloadSelect } from "../CaseloadSelect";
 import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
@@ -37,10 +38,13 @@ function getSelectOpportunitiesText(
   opportunityTypes: OpportunityType[]
 ): string {
   const topTwoOpportunities = opportunityTypes.slice(0, 2);
-  let selectOpportunityText = `${OPPORTUNITY_LABELS[topTwoOpportunities[0]]}`;
+  let selectOpportunityText = `${
+    OPPORTUNITY_CONFIGS[topTwoOpportunities[0]].label
+  }`;
+
   if (topTwoOpportunities.length > 1) {
     selectOpportunityText += ` and ${
-      OPPORTUNITY_LABELS[topTwoOpportunities[1]]
+      OPPORTUNITY_CONFIGS[topTwoOpportunities[1]].label
     }`;
   }
   return selectOpportunityText;

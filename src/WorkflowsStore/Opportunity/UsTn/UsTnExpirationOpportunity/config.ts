@@ -14,7 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-export * from "./CompliantReportingOpportunity";
-export * from "./UsTnCustodyLevelDowngradeOpportunity";
-export * from "./UsTnExpirationOpportunity";
-export * from "./UsTnSupervisionLevelDowngradeOpportunity";
+import { OpportunityConfig } from "../../OpportunityConfigs";
+
+export const usTnExpirationConfig: OpportunityConfig = {
+  stateCode: "US_TN",
+  urlSection: "expiration",
+  label: "Expiration",
+  featureVariant: "usTnExpiration",
+};

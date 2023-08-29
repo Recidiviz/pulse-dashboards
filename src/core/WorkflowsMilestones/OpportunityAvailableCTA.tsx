@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 
 import { Client, Opportunity } from "../../WorkflowsStore";
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
-import { OPPORTUNITY_LABELS } from "../../WorkflowsStore/Opportunity/types";
+import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import {
   ButtonsContainer,
   OpportunityAvailableContainer,
@@ -51,7 +51,7 @@ const OpportunityAvailableCTA = observer(function OpportunityAvailableCTA({
         <OpportunityAvailableText id="opportunity-description">
           Would you like us to{" "}
           <strong>
-            auto-fill the {OPPORTUNITY_LABELS[opportunity.type]} form?
+            auto-fill the {OPPORTUNITY_CONFIGS[opportunity.type].label} form?
           </strong>{" "}
           It will take seconds!
         </OpportunityAvailableText>

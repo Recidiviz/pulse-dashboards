@@ -26,9 +26,9 @@ import { pluralizeWord } from "../../utils";
 import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
 import { ValidateFunction } from "../subscriptions";
 import { optionalFieldToDate } from "../utils";
+import { OPPORTUNITY_CONFIGS } from "./OpportunityConfigs";
 import {
   Opportunity,
-  OPPORTUNITY_LABELS,
   OPPORTUNITY_STATUS_RANKED,
   OpportunityCaseNote,
   OpportunityRequirement,
@@ -96,7 +96,7 @@ export const generateOpportunityInitialHeader = (
   justiceInvolvedPersonTitle: string,
   workflowsSearchFieldTitle: string
 ): string => {
-  const opportunityLabel = OPPORTUNITY_LABELS[opportunityType];
+  const opportunityLabel = OPPORTUNITY_CONFIGS[opportunityType].label;
   switch (opportunityType) {
     case "pastFTRD":
       return "Search for officers above to review clients whose full-term release date is near or has passed.";

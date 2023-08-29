@@ -21,7 +21,7 @@ import tk from "timekeeper";
 import { assessmentQuestionNumbers } from "../../../../core/Paperwork/US_TN/CustodyLevelDowngrade/assessmentQuestions";
 import { RootStore } from "../../../../RootStore";
 import { Resident } from "../../../Resident";
-import { UsTnCustodyLevelDowngradeOpportunity } from "../../UsTn/UsTnCustodyLevelDowngradeOpportunity";
+import { UsTnCustodyLevelDowngradeOpportunity } from "../../UsTn";
 import { UsTnCustodyLevelDowngradeForm } from "../usTnCustodyLevelDowngradeForm";
 
 // To adapt this to a new form/opportunity, change the type of `form` and update the opp and

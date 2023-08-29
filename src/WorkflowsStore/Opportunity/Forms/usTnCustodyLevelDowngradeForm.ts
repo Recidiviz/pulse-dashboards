@@ -10,7 +10,7 @@ import { formatDate } from "../../../utils";
 import {
   UsTnCustodyLevelDowngradeDraftData,
   UsTnCustodyLevelDowngradeOpportunity,
-} from "../UsTn/UsTnCustodyLevelDowngradeOpportunity";
+} from "../UsTn";
 import { FormBase } from "./FormBase";
 
 export class UsTnCustodyLevelDowngradeForm extends FormBase<

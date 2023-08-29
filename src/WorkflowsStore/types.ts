@@ -45,11 +45,11 @@ import {
   UsMiSupervisionLevelDowngradeOpportunity,
   UsMoRestrictiveHousingStatusHearingOpportunity,
   UsNdEarlyTerminationOpportunity,
+  UsTnCustodyLevelDowngradeOpportunity,
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
-import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTn/UsTnCustodyLevelDowngradeOpportunity/UsTnCustodyLevelDowngradeOpportunity";
 import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { SupervisionTaskInterface } from "./Task/types";

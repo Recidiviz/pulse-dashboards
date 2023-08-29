@@ -1,3 +1,3 @@
-import { UsTnCustodyLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsTn/UsTnCustodyLevelDowngradeOpportunity/UsTnCustodyLevelDowngradeReferralRecord";
+import { UsTnCustodyLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsTn";
 
 export type FormDataType = Partial<UsTnCustodyLevelDowngradeDraftData>;

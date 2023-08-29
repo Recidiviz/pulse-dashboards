@@ -66,7 +66,6 @@ const RouteSync = observer(function RouteSync({ children }) {
         // sync location data into the store
         if (isOpportunityPage) {
           const opportunityType =
-            // @ts-expect-error Existence is checked by function above
             OPPORTUNITY_TYPE_FOR_URL_BY_STATE[currentTenantId as TenantId][
               page
             ];

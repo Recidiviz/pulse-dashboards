@@ -15,10 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  OPPORTUNITY_URL_BY_TYPE,
-  OpportunityType,
-} from "../WorkflowsStore/Opportunity/types";
+import { OPPORTUNITY_CONFIGS } from "../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { OpportunityType } from "../WorkflowsStore/Opportunity/types";
 import { MetricId, SystemId } from "./models/types";
 
 export type DashboardView = keyof typeof DASHBOARD_VIEWS;
@@ -281,7 +279,8 @@ export function workflowsUrl(
     const transformedParams = {
       ...params,
       ...(params.opportunityType && {
-        opportunityTypeUrl: OPPORTUNITY_URL_BY_TYPE[params.opportunityType],
+        opportunityTypeUrl:
+          OPPORTUNITY_CONFIGS[params.opportunityType].urlSection,
       }),
     };
     return Object.keys(transformedParams).reduce((path, param) => {

@@ -20,7 +20,8 @@ import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Opportunity, OPPORTUNITY_LABELS } from "../../WorkflowsStore";
+import { Opportunity } from "../../WorkflowsStore";
+import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { EligibilityStatus } from "../OpportunityStatus";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { Separator } from "./common";
@@ -42,12 +43,11 @@ export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
       workflowsStore: { featureVariants },
     } = useRootStore();
     const colors = useStatusColors(opportunity);
+    const opportunityLabel = OPPORTUNITY_CONFIGS[opportunity.type].label;
 
     return (
       <TitleText>
-        <OpportunityLabel>
-          {OPPORTUNITY_LABELS[opportunity.type]}
-        </OpportunityLabel>
+        <OpportunityLabel>{opportunityLabel}</OpportunityLabel>
         {opportunity.showEligibilityStatus("OpportunityModuleHeader") && (
           <>
             <Separator> • </Separator>

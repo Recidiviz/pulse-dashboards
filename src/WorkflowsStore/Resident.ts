@@ -33,7 +33,7 @@ import {
   UsMeFurloughReleaseOpportunity,
   UsMeWorkReleaseOpportunity,
 } from "./Opportunity/UsMe";
-import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTn/UsTnCustodyLevelDowngradeOpportunity/UsTnCustodyLevelDowngradeOpportunity";
+import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTn";
 import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";
 
 const residentialOpportunityConstructors: Record<

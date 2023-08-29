@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CompliantReportingReferralRecordFullRaw } from "../../src/WorkflowsStore/Opportunity/UsTn/CompliantReportingOpportunity";
+import { CompliantReportingReferralRecordFullRaw } from "../../src/WorkflowsStore/Opportunity/UsTn";
 import { fixtureWithIdKey } from "./utils";
 
 export const usTnCompliantReportingReferrals =
