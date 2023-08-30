@@ -386,7 +386,8 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
       (userAllowedNavigation.system || []).length > 0;
     const enableWorkflows = (userAllowedNavigation.workflows || []).length > 0;
     const enableOperations = !!userAllowedNavigation.operations;
-    const enabledImpact = !!userAllowedNavigation.impact;
+    const enabledImpact =
+      !!userAllowedNavigation.impact && userStore.isRecidivizUser;
     const enabledOutliers = !!userAllowedNavigation.outliers;
 
     const displayBackButton =
