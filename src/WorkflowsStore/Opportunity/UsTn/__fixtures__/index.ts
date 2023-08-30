@@ -91,11 +91,9 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
   {
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 0,
-    mostRecentArrestCheck: parseISO("2022-05-28"),
     eligibleLevelStart: parseISO("2019-12-20"),
     judicialDistrict: "A",
     drugScreensPastYear: [{ result: "DRUN", date: parseISO("2022-01-04") }],
-    sanctionsPastYear: [],
     currentOffenses: ["EXAMPLE CURRENT"],
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
@@ -111,10 +109,18 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
           consecutiveMonthlyPayments: 3,
         },
       },
+      usTnNoArrestsInPastYear: {},
+      usTnNoHighSanctionsInPastYear: {},
     },
     ineligibleCriteria: {},
     formInformation: {
       sentenceStartDate: parseISO("2019-12-20"),
+    },
+    metadata: {
+      mostRecentArrestCheck: {
+        contactDate: parseISO("2022-05-28"),
+        contactType: "ARRN",
+      },
     },
   };
 
@@ -122,9 +128,7 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
   {
     // Required fields
     eligibleLevelStart: parseISO("2019-12-20"),
-    mostRecentArrestCheck: parseISO("2022-05-28"),
     drugScreensPastYear: [{ result: "DRUN", date: parseISO("2022-01-04") }],
-    sanctionsPastYear: [],
     lifetimeOffensesExpired: [],
 
     // Eligible with discretion: Prior offenses and lifetime offenses expired less than 10 years ago
@@ -151,10 +155,18 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
           consecutiveMonthlyPayments: 3,
         },
       },
+      usTnNoArrestsInPastYear: {},
+      usTnNoHighSanctionsInPastYear: {},
     },
     ineligibleCriteria: {},
     formInformation: {
       sentenceStartDate: parseISO("2019-12-20"),
+    },
+    metadata: {
+      mostRecentArrestCheck: {
+        contactDate: parseISO("2022-05-28"),
+        contactType: "ARRN",
+      },
     },
   };
 
@@ -163,7 +175,6 @@ export const compliantReportingAlmostEligibleCriteria: Required<
 > = {
   passedDrugScreenNeeded: true,
   currentLevelEligibilityDate: parseISO("2022-08-15"),
-  seriousSanctionsEligibilityDate: parseISO("2022-08-15"),
   recentRejectionCodes: ["TEST1"],
 };
 
@@ -179,27 +190,36 @@ export const compliantReportingIneligibleCriteria: Required<
       consecutiveMonthlyPayments: 0,
     },
   },
+  usTnNoHighSanctionsInPastYear: {
+    latestHighSanctionDate: parseISO("2021-08-15"),
+  },
 };
 
 export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantReportingReferralRecordFull> =
   {
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 1,
-    mostRecentArrestCheck: parseISO("2022-05-28"),
     eligibleLevelStart: parseISO("2019-12-20"),
     judicialDistrict: "A",
     drugScreensPastYear: [],
-    sanctionsPastYear: [],
     currentOffenses: ["EXAMPLE CURRENT"],
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
     specialConditionsFlag: "current",
     lastSpecialConditionsNote: parseISO("2022-03-15"),
 
-    eligibleCriteria: {},
+    eligibleCriteria: {
+      usTnNoArrestsInPastYear: {},
+    },
     ineligibleCriteria: {},
     formInformation: {
       sentenceStartDate: parseISO("2019-12-20"),
+    },
+    metadata: {
+      mostRecentArrestCheck: {
+        contactDate: parseISO("2022-05-28"),
+        contactType: "ARRN",
+      },
     },
   };
 

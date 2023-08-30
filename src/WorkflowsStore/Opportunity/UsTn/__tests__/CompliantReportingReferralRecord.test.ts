@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { parseISO } from "date-fns";
+
 import { transformCompliantReportingReferral } from "../CompliantReportingOpportunity";
 
 // TODO(#3587): Make this a CompliantReportingReferralRecordFullRaw once the
@@ -111,7 +113,7 @@ const metadata = {
   specialConditionsTerminatedDate: "2019-08-15",
 };
 
-const eligibleCriteriaExceptFinesFees = {
+const eligibleCriteria = {
   hasActiveSentence: { hasActiveSentence: true },
   supervisionLevelIsNotInternalUnknown: null,
   supervisionLevelIsNotInterstateCompact: null,
@@ -154,7 +156,17 @@ const eligibleCriteriaExceptFinesFees = {
     },
   },
   usTnSpecialConditionsAreCurrent: { speNoteDue: null },
+  usTnFinesFeesEligible: {
+    hasFinesFeesBalanceBelow500: { amountOwed: 400 },
+    hasPayments3ConsecutiveMonths: {
+      amountOwed: 400,
+      consecutiveMonthlyPayments: null,
+    },
+  },
 };
+
+const { usTnFinesFeesEligible, ...eligibleCriteriaExceptFinesFees } =
+  eligibleCriteria;
 
 test("transform record, old format", () => {
   expect(
@@ -241,6 +253,33 @@ test("transform record, old + new format, almost eligible in old only", () => {
       amountOwed: 0,
       consecutiveMonthlyPayments: 0,
     },
+  });
+});
+
+test("transform record, old + new format, almost eligible but for sanctions in old only", () => {
+  const rawRecord = {
+    ...rawRecordOldSchema,
+    almostEligibleCriteria: {
+      seriousSanctionsEligibilityDate: "2023-10-01",
+    },
+    remainingCriteriaNeeded: 1,
+
+    formInformation,
+    metadata,
+    caseNotes: {},
+    eligibleCriteria,
+    ineligibleCriteria: {},
+  };
+
+  const transformedRecord = transformCompliantReportingReferral(rawRecord);
+  expect(
+    transformedRecord?.eligibleCriteria.usTnNoHighSanctionsInPastYear
+  ).toBeUndefined();
+  expect(
+    transformedRecord?.ineligibleCriteria.usTnNoHighSanctionsInPastYear
+  ).toEqual({
+    // sanction eligibility date is 1 year after latest high sanction date
+    latestHighSanctionDate: parseISO("2022-10-01"),
   });
 });
 

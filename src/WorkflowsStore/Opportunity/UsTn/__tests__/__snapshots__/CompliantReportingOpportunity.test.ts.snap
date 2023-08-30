@@ -15,7 +15,7 @@ Array [
     "tooltip": "Policy requirement: No arrests in the last 1 year.",
   },
   Object {
-    "text": "No sanctions in the past year",
+    "text": "No sanctions higher than Level 1 in the last year",
     "tooltip": "Policy requirement: No sanctions higher than Level 1 in the last 1 year.",
   },
   Object {
@@ -73,7 +73,7 @@ Array [
     "tooltip": "Policy requirement: No arrests in the last 1 year.",
   },
   Object {
-    "text": "No sanctions in the past year",
+    "text": "No sanctions higher than Level 1 in the last year",
     "tooltip": "Policy requirement: No sanctions higher than Level 1 in the last 1 year.",
   },
   Object {

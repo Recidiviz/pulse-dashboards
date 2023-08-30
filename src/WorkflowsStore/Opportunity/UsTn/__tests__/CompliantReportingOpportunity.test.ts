@@ -152,7 +152,7 @@ describe.each([
     /DECF, DEDF, DEDU,/,
   ],
   [
-    "seriousSanctionsEligibilityDate",
+    "usTnNoHighSanctionsInPastYear",
     3,
     "Needs 14 more days without sanction higher than level 1",
     /sanctions/,

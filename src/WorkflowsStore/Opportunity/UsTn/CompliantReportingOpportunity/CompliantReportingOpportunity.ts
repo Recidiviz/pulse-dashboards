@@ -16,7 +16,7 @@
 // =============================================================================
 
 import assertNever from "assert-never";
-import { differenceInCalendarDays, isEqual } from "date-fns";
+import { add, differenceInCalendarDays, isEqual } from "date-fns";
 import { mapValues } from "lodash";
 import { makeObservable, toJS } from "mobx";
 
@@ -54,7 +54,7 @@ export const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (
   "usTnFinesFeesEligible",
   "passedDrugScreenNeeded",
   "recentRejectionCodes",
-  "seriousSanctionsEligibilityDate",
+  "usTnNoHighSanctionsInPastYear",
   "currentLevelEligibilityDate",
 ];
 
@@ -175,6 +175,23 @@ const getRecordValidator =
     }
   };
 
+const sanctionsAlmostEligibleText = (latestHighSanctionDate: Date) => {
+  const seriousSanctionsEligibilityDate = add(latestHighSanctionDate, {
+    years: 1,
+  });
+  const seriousSanctionsEligibilityDaysRemaining = differenceInCalendarDays(
+    seriousSanctionsEligibilityDate,
+    new Date()
+  );
+  return {
+    text: `Needs ${seriousSanctionsEligibilityDaysRemaining} more ${pluralizeWord(
+      "day",
+      seriousSanctionsEligibilityDaysRemaining
+    )} without sanction higher than level 1`,
+    seriousSanctionsEligibilityDate,
+  };
+};
+
 export class CompliantReportingOpportunity extends OpportunityBase<
   Client,
   CompliantReportingReferralRecordFull,
@@ -271,6 +288,12 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       return "Needs balance <$500 or a payment three months in a row";
     }
 
+    if (ineligibleCriteria?.usTnNoHighSanctionsInPastYear) {
+      return sanctionsAlmostEligibleText(
+        ineligibleCriteria.usTnNoHighSanctionsInPastYear.latestHighSanctionDate
+      ).text;
+    }
+
     // from here on we expect there is only one valid criterion
     // so we can stop as soon as we find it
     const criterion = validAlmostEligibleKeys[0];
@@ -290,16 +313,15 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       drugScreensPastYear,
       eligibilityCategory,
       eligibleLevelStart,
-      sanctionsPastYear,
       lastSpecialConditionsNote,
       lifetimeOffensesExpired,
-      mostRecentArrestCheck,
       pastOffenses,
       specialConditionsFlag,
       specialConditionsTerminatedDate,
       zeroToleranceCodes,
       offenseTypeEligibility,
       eligibleCriteria,
+      metadata,
     } = this.record;
     const { requirementAlmostMetMap } = this;
 
@@ -343,23 +365,15 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     // required arrest history
     requirements.push({
       text: `Negative arrest check on ${formatWorkflowsDate(
-        mostRecentArrestCheck
+        metadata.mostRecentArrestCheck.contactDate
       )}`,
       tooltip: CRITERIA.arrests.tooltip,
     });
 
     // required sanction history
-    if (!requirementAlmostMetMap.seriousSanctionsEligibilityDate) {
-      let sanctionsText: string;
-      if (sanctionsPastYear.length) {
-        sanctionsText = `Sanctions in the past year: ${sanctionsPastYear
-          .map((s) => s.type)
-          .join(", ")}`;
-      } else {
-        sanctionsText = "No sanctions in the past year";
-      }
+    if (eligibleCriteria.usTnNoHighSanctionsInPastYear) {
       requirements.push({
-        text: sanctionsText,
+        text: "No sanctions higher than Level 1 in the last year",
         tooltip: CRITERIA.sanctions.tooltip,
       });
     }
@@ -504,7 +518,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       passedDrugScreenNeeded: CRITERIA.drug,
       currentLevelEligibilityDate: CRITERIA.timeOnSupervision,
       recentRejectionCodes: CRITERIA.compliance,
-      seriousSanctionsEligibilityDate: CRITERIA.sanctions,
     };
 
     const { validAlmostEligibleKeys } = this;
@@ -515,6 +528,16 @@ export class CompliantReportingOpportunity extends OpportunityBase<
         requirements.push({ text, tooltip: configMap[criterionKey].tooltip });
       }
     });
+
+    if (ineligibleCriteria?.usTnNoHighSanctionsInPastYear) {
+      requirements.push({
+        text: sanctionsAlmostEligibleText(
+          ineligibleCriteria.usTnNoHighSanctionsInPastYear
+            .latestHighSanctionDate
+        ).text,
+        tooltip: CRITERIA.sanctions.tooltip,
+      });
+    }
 
     return requirements;
   }
@@ -534,17 +557,11 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       currentLevelEligibilityDate,
       recentRejectionCodes,
       passedDrugScreenNeeded,
-      seriousSanctionsEligibilityDate,
     } = this.record?.almostEligibleCriteria ?? {};
 
     const currentLevelEligibilityDaysRemaining = currentLevelEligibilityDate
       ? differenceInCalendarDays(currentLevelEligibilityDate, new Date())
       : undefined;
-
-    const seriousSanctionsEligibilityDaysRemaining =
-      seriousSanctionsEligibilityDate
-        ? differenceInCalendarDays(seriousSanctionsEligibilityDate, new Date())
-        : undefined;
 
     return mapValues(
       toJS(this.record?.almostEligibleCriteria),
@@ -560,14 +577,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
                   "day",
                   currentLevelEligibilityDaysRemaining
                 )} on ${this.person.supervisionLevel.toLowerCase()}`
-              : undefined;
-          }
-          case "seriousSanctionsEligibilityDate": {
-            return seriousSanctionsEligibilityDaysRemaining !== undefined
-              ? `Needs ${seriousSanctionsEligibilityDaysRemaining} more ${pluralizeWord(
-                  "day",
-                  seriousSanctionsEligibilityDaysRemaining
-                )} without sanction higher than level 1`
               : undefined;
           }
           case "recentRejectionCodes":
@@ -602,6 +611,16 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       title = "Needs balance <$500 or a payment three months in a row";
       criterionSpecificCopy =
         "have a balance of less than $500 or make a payment three months in a row";
+    } else if (ineligibleCriteria.usTnNoHighSanctionsInPastYear) {
+      const { text: sanctionsText, seriousSanctionsEligibilityDate } =
+        sanctionsAlmostEligibleText(
+          ineligibleCriteria.usTnNoHighSanctionsInPastYear
+            .latestHighSanctionDate
+        );
+      title = sanctionsText;
+      criterionSpecificCopy = `don’t get any sanctions higher than level 1 until ${formatNoteDate(
+        seriousSanctionsEligibilityDate
+      )}`;
     } else {
       const missingCriterionKey = this.validAlmostEligibleKeys[0];
 
@@ -609,7 +628,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       // not expected to happen in practice but Typescript doesn't know that
       if (!title) return undefined;
 
-      const { currentLevelEligibilityDate, seriousSanctionsEligibilityDate } =
+      const { currentLevelEligibilityDate } =
         this.record?.almostEligibleCriteria ?? {};
 
       switch (missingCriterionKey) {
@@ -625,13 +644,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
           break;
         case "recentRejectionCodes":
           // intentionally left blank; no note required in this case
-          break;
-        case "seriousSanctionsEligibilityDate":
-          criterionSpecificCopy =
-            seriousSanctionsEligibilityDate &&
-            `don’t get any sanctions higher than level 1 until ${formatNoteDate(
-              seriousSanctionsEligibilityDate
-            )}`;
           break;
         default:
           break;

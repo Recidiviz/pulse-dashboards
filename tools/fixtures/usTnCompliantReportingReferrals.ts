@@ -20,6 +20,7 @@ import { fixtureWithIdKey } from "./utils";
 
 export const usTnCompliantReportingReferrals =
   fixtureWithIdKey<CompliantReportingReferralRecordFullRaw>("externalId", [
+    // Eligible in old schema
     {
       stateCode: "US_TN",
       eligibilityCategory: "c1",
@@ -63,6 +64,7 @@ export const usTnCompliantReportingReferrals =
       metadata: {},
       caseNotes: {},
     },
+    // Eligible in old schema
     {
       stateCode: "US_TN",
       poFirstName: "TEST",
@@ -135,6 +137,7 @@ export const usTnCompliantReportingReferrals =
       metadata: {},
       caseNotes: {},
     },
+    // Eligible in old schema
     {
       stateCode: "US_TN",
       poFirstName: "TEST",
@@ -170,6 +173,7 @@ export const usTnCompliantReportingReferrals =
       metadata: {},
       caseNotes: {},
     },
+    // Eligible in old schema
     {
       stateCode: "US_TN",
       poFirstName: "TEST",
@@ -213,6 +217,7 @@ export const usTnCompliantReportingReferrals =
       metadata: {},
       caseNotes: {},
     },
+    // Eligible in old and new schemas
     {
       stateCode: "US_TN",
       poFirstName: "Sally",
@@ -269,6 +274,8 @@ export const usTnCompliantReportingReferrals =
             currentExemptions: ["SSDB", "SSDB"],
           },
         },
+        usTnNoArrestsInPastYear: null,
+        usTnNoHighSanctionsInPastYear: null,
       },
       ineligibleCriteria: {},
       formInformation: {
@@ -290,6 +297,7 @@ export const usTnCompliantReportingReferrals =
       },
       caseNotes: {},
     },
+    // Almost eligible in old and new schemas
     {
       stateCode: "US_TN",
       poFirstName: "TEST",
@@ -301,7 +309,7 @@ export const usTnCompliantReportingReferrals =
       externalId: "202",
       drugScreensPastYear: [],
       eligibilityCategory: "c3",
-      finesFeesEligible: "low_balance",
+      finesFeesEligible: "ineligible",
       remainingCriteriaNeeded: 1,
       currentOffenses: ["FAILURE TO APPEAR (FELONY)"],
       supervisionType: "TN PROBATIONER",
@@ -330,7 +338,10 @@ export const usTnCompliantReportingReferrals =
       specialConditionsProgrammingVictimImpactCurrent: false,
       specialConditionsProgrammingFsw: false,
       specialConditionsProgrammingFswCurrent: false,
-      eligibleCriteria: {},
+      eligibleCriteria: {
+        usTnNoArrestsInPastYear: null,
+        usTnNoHighSanctionsInPastYear: null,
+      },
       ineligibleCriteria: {
         usTnFinesFeesEligible: {
           hasFinesFeesBalanceBelow500: { amountOwed: 700 },

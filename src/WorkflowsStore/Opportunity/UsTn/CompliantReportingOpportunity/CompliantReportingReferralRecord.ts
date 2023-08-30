@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { sub } from "date-fns";
 import { DocumentData, Timestamp } from "firebase/firestore";
 import { z } from "zod";
 
@@ -40,6 +41,12 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
           .optional(),
       })
       .optional(),
+    // Transform null fields to empty object to make them easier to use in conditionals later
+    usTnNoArrestsInPastYear: z.null().transform((_val) => ({})),
+    usTnNoHighSanctionsInPastYear: z
+      .null()
+      .transform((_val) => ({}))
+      .optional(),
   }),
   ineligibleCriteria: z.object({
     usTnFinesFeesEligible: z
@@ -53,24 +60,34 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
         }),
       })
       .optional(),
+    usTnNoHighSanctionsInPastYear: z
+      .object({
+        latestHighSanctionDate: dateStringSchema,
+      })
+      .optional(),
   }),
-  formInformation: z
+  formInformation: z.object({
+    sentenceStartDate: dateStringSchema,
+  }),
+  metadata: z
     .object({
-      sentenceStartDate: dateStringSchema,
+      mostRecentArrestCheck: z.object({
+        contactDate: dateStringSchema,
+        contactType: z.literal("ARRN"),
+      }),
     })
-    .partial(), // If a user is only eligible in the older schema, no values will be set
+    .passthrough(), // temporary passthrough to allow fixture data with metadata fields we haven't accounted for yet
 });
 
-export type CompliantReportingReferralRecordFull = Omit<
-  z.infer<typeof compliantReportingSchema> & CompliantReportingReferralRecord,
-  "sentenceStartDate" | "finesFeesEligible" | "supervisionFeeExemption"
->;
+export type CompliantReportingReferralRecordFull = z.infer<
+  typeof compliantReportingSchema
+> &
+  CompliantReportingReferralRecord;
 
 export type AlmostEligibleCriteria = {
   currentLevelEligibilityDate?: Date;
   passedDrugScreenNeeded?: boolean;
   recentRejectionCodes?: string[];
-  seriousSanctionsEligibilityDate?: Date;
 };
 
 export type AlmostEligibleCriteriaRaw = {
@@ -90,12 +107,10 @@ export type CompliantReportingReferralRecord = {
   judicialDistrict: string;
   lastSpecialConditionsNote?: Date | undefined;
   lifetimeOffensesExpired: string[];
-  mostRecentArrestCheck: Date;
   nextSpecialConditionsCheck?: Date | undefined;
   pastOffenses: string[];
   /** Any number greater than zero indicates the client is _almost_ eligible. */
   remainingCriteriaNeeded: number;
-  sanctionsPastYear: { type: string }[];
   specialConditionsFlag?: SpecialConditionsStatus;
   specialConditionsTerminatedDate?: Date | undefined;
   zeroToleranceCodes: { contactNoteType: string; contactNoteDate: Date }[];
@@ -226,15 +241,20 @@ type RawCompliantReportingReferralRecord = DocumentData & {
     result: string;
     date: Timestamp | string;
   }[];
-  sanctionsPastYear?: { ProposedSanction: string }[];
   zeroToleranceCodes?: { contactNoteType: string; contactNoteDate: string }[];
   almostEligibleCriteria?: AlmostEligibleCriteriaRaw;
 };
 
-export type CompliantReportingReferralRecordFullRaw = z.input<
-  typeof compliantReportingSchema
-> &
-  RawCompliantReportingReferralRecord;
+type compliantReportingInputSchema = z.input<typeof compliantReportingSchema>;
+
+// Represents the actual schema we get from firestore, where if we have the zod fields they
+// may be empty. Don't define them as partials above because the actual input to zod will have them,
+// since we pre-transform them.
+export type CompliantReportingReferralRecordFullRaw = {
+  [k in keyof compliantReportingInputSchema]:
+    | compliantReportingInputSchema[k]
+    | Record<string, never>;
+} & RawCompliantReportingReferralRecord;
 
 export const transformCompliantReportingReferral: TransformFunction<
   CompliantReportingReferralRecordFull
@@ -251,11 +271,9 @@ export const transformCompliantReportingReferral: TransformFunction<
     judicialDistrict,
     lastSpecialConditionsNote,
     lifetimeOffensesExpired,
-    mostRecentArrestCheck,
     nextSpecialConditionsCheck,
     pastOffenses,
     remainingCriteriaNeeded,
-    sanctionsPastYear,
     specialConditionsFlag,
     specialConditionsTerminatedDate,
     zeroToleranceCodes,
@@ -264,6 +282,7 @@ export const transformCompliantReportingReferral: TransformFunction<
     eligibleCriteria,
     ineligibleCriteria,
     formInformation,
+    metadata,
   } = record as CompliantReportingReferralRecordFullRaw;
 
   // Make sure legacy fields aren't getting copied into the new record- we want to rely on their
@@ -272,20 +291,33 @@ export const transformCompliantReportingReferral: TransformFunction<
     sentenceStartDate,
     finesFeesEligible,
     supervisionFeeExemptionType,
+    mostRecentArrestCheck,
     almostEligibleCriteria,
     ...recordWithoutLegacyFields
   } = record;
-  const { paymentNeeded, ...newAlmostEligibleCriteria } =
-    almostEligibleCriteria ?? {};
+  const {
+    paymentNeeded,
+    seriousSanctionsEligibilityDate,
+    ...newAlmostEligibleCriteria
+  } = almostEligibleCriteria ?? {};
 
   const newFormInformation: z.input<
     typeof compliantReportingSchema.shape.formInformation
   > = {
     sentenceStartDate: sentenceStartDate ?? formInformation?.sentenceStartDate,
   };
+  const newMetadata: z.input<typeof compliantReportingSchema.shape.metadata> = {
+    mostRecentArrestCheck: {
+      contactDate:
+        mostRecentArrestCheck ?? metadata?.mostRecentArrestCheck?.contactDate,
+      contactType: metadata?.mostRecentArrestCheck?.contactType ?? "ARRN",
+    },
+  };
   const newEligibleCriteria: z.input<
     typeof compliantReportingSchema.shape.eligibleCriteria
-  > = {};
+  > = {
+    usTnNoArrestsInPastYear: null, // This will always be null for eligible clients, and arrests aren't an almost eligible criteria
+  };
   const newIneligibleCriteria: z.input<
     typeof compliantReportingSchema.shape.ineligibleCriteria
   > = {};
@@ -334,6 +366,29 @@ export const transformCompliantReportingReferral: TransformFunction<
     }
   }
 
+  if (!seriousSanctionsEligibilityDate) {
+    // If the legacy-style data tells us they're eligible but the new style doesn't, set the new
+    // fields to match what the legacy data is telling us.
+    newEligibleCriteria.usTnNoHighSanctionsInPastYear = null;
+  } else if (!ineligibleCriteria.usTnNoHighSanctionsInPastYear) {
+    // If the legacy-style data tells us they're almost eligible but the new style doesn't, set the
+    // new fields to match what the legacy data is telling us.
+    newIneligibleCriteria.usTnNoHighSanctionsInPastYear = {
+      latestHighSanctionDate: sub(
+        fieldToDate(seriousSanctionsEligibilityDate),
+        {
+          years: 1,
+        }
+      ).toISOString(),
+    };
+  } else {
+    // if the old and new eligibility match each other, keep both
+    newEligibleCriteria.usTnNoHighSanctionsInPastYear =
+      eligibleCriteria.usTnNoHighSanctionsInPastYear;
+    newIneligibleCriteria.usTnNoHighSanctionsInPastYear =
+      ineligibleCriteria.usTnNoHighSanctionsInPastYear;
+  }
+
   const recordForParsing = {
     ...recordWithoutLegacyFields,
     ...(Object.keys(newAlmostEligibleCriteria).length && {
@@ -343,6 +398,7 @@ export const transformCompliantReportingReferral: TransformFunction<
     eligibleCriteria: newEligibleCriteria,
     ineligibleCriteria: newIneligibleCriteria,
     formInformation: newFormInformation,
+    metadata: newMetadata,
   };
 
   const zodRecord = compliantReportingSchema
@@ -361,14 +417,9 @@ export const transformCompliantReportingReferral: TransformFunction<
     judicialDistrict: judicialDistrict ?? "Unknown",
     lastSpecialConditionsNote: optionalFieldToDate(lastSpecialConditionsNote),
     lifetimeOffensesExpired,
-    mostRecentArrestCheck: fieldToDate(mostRecentArrestCheck),
     nextSpecialConditionsCheck: optionalFieldToDate(nextSpecialConditionsCheck),
     pastOffenses,
     remainingCriteriaNeeded: remainingCriteriaNeeded ?? 0,
-    sanctionsPastYear:
-      sanctionsPastYear?.map(({ ProposedSanction }) => ({
-        type: ProposedSanction,
-      })) ?? [],
     specialConditionsTerminatedDate: optionalFieldToDate(
       specialConditionsTerminatedDate
     ),
@@ -386,15 +437,11 @@ export const transformCompliantReportingReferral: TransformFunction<
       currentLevelEligibilityDate,
       passedDrugScreenNeeded,
       recentRejectionCodes,
-      seriousSanctionsEligibilityDate,
     } = almostEligibleCriteria;
 
     transformedRecord.almostEligibleCriteria = {
       currentLevelEligibilityDate: optionalFieldToDate(
         currentLevelEligibilityDate
-      ),
-      seriousSanctionsEligibilityDate: optionalFieldToDate(
-        seriousSanctionsEligibilityDate
       ),
       passedDrugScreenNeeded,
       recentRejectionCodes,
