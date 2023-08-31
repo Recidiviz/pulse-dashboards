@@ -14,8 +14,8 @@ Feature: Interact with the preview modal on the opportunity page
         And I should see the button "<buttonText>" to navigate to the form
 
         Examples:
-            | stateCode | searchValue   | personName   | opportunityType    | criteriaText                | detailsText               | buttonText         |
-            | US_TN     | Test Officer1 | Linet Hansen | compliantReporting | Sanctions in the past year: | Parole Special Conditions | Auto-fill referral |
+            | stateCode | searchValue   | personName   | opportunityType    | criteriaText                                      | detailsText               | buttonText         |
+            | US_TN     | Test Officer1 | Linet Hansen | compliantReporting | No sanctions higher than Level 1 in the last year | Parole Special Conditions | Auto-fill referral |
 
     Scenario Outline: Update eligibility from preview modal
         Given I am a "<stateCode>" user on the "<opportunityType>" page
