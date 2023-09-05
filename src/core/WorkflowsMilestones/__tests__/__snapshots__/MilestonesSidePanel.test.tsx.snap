@@ -852,14 +852,19 @@ Hey Linet! Congratulations on reaching these milestones:
               <div
                 class="styles__ButtonsContainer-sc-b21pq-8 GRsOy"
               >
-                <button
-                  class="sc-bcXHqe dqGNaB styles__ActionButton-sc-b21pq-9 bsdvNa"
-                  kind="primary"
-                  shape="pill"
-                  type="button"
+                <span
+                  class="sc-jSUZER iljzDu styles__WideTooltipTrigger-sc-b21pq-22 jqJUuT"
                 >
-                  Review and Send
-                </button>
+                  <button
+                    class="sc-bcXHqe dqGNaB styles__ActionButton-sc-b21pq-9 bsdvNa"
+                    disabled=""
+                    kind="primary"
+                    shape="pill"
+                    type="button"
+                  >
+                    Review and Send
+                  </button>
+                </span>
                 <button
                   class="sc-bcXHqe dqGNaB styles__AlreadyCongratulatedButton-sc-b21pq-10 hJFuDQ"
                   kind="primary"

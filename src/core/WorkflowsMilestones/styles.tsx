@@ -19,6 +19,7 @@ import {
   palette,
   Sans12,
   Sans16,
+  TooltipTrigger,
   typography,
 } from "@recidiviz/design-system";
 import styled, { css, keyframes } from "styled-components/macro";
@@ -231,4 +232,8 @@ export const MilestonesItem = styled.div`
 export const MilestonesList = styled.div`
   display: flex;
   flex-flow: column nowrap;
+`;
+
+export const WideTooltipTrigger = styled(TooltipTrigger)`
+  width: 100%;
 `;

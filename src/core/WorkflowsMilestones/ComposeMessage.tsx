@@ -35,6 +35,7 @@ import {
   SidePanelHeader,
   TextLink,
   Warning,
+  WideTooltipTrigger,
 } from "./styles";
 import TextMessageInput from "./TextMessageInput";
 
@@ -47,7 +48,12 @@ const ComposeMessageView = observer(function ComposeMessageView({
   client,
   setCurrentView,
 }: ComposeMessageProps): JSX.Element {
-  const { analyticsStore } = useRootStore();
+  const {
+    analyticsStore,
+    workflowsStore: {
+      featureVariants: { usCaEnableSMS },
+    },
+  } = useRootStore();
   const [disableReviewButton, setDisableReviewButton] = useState(
     !validatePhoneNumber(client.milestonesPhoneNumber)
   );
@@ -102,12 +108,25 @@ const ComposeMessageView = observer(function ComposeMessageView({
         delivery of this text message.
       </Warning>
       <ButtonsContainer>
-        <ActionButton
-          onClick={handleOnReviewClick}
-          disabled={disableReviewButton}
-        >
-          Review and Send
-        </ActionButton>
+        {usCaEnableSMS ? (
+          <ActionButton
+            onClick={handleOnReviewClick}
+            disabled={disableReviewButton}
+          >
+            Review and Send
+          </ActionButton>
+        ) : (
+          <WideTooltipTrigger
+            contents={
+              <>
+                Text messaging is temporarily unavailable
+                <br /> while we make some configuration changes.
+              </>
+            }
+          >
+            <ActionButton disabled>Review and Send</ActionButton>
+          </WideTooltipTrigger>
+        )}
         <AlreadyCongratulatedButton onClick={handleOnCongratulatedClick}>
           I congratulated them in-person or another way
         </AlreadyCongratulatedButton>
