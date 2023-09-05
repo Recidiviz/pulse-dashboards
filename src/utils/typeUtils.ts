@@ -64,3 +64,16 @@ export type PartialRecord<K extends string | number | symbol, V> = Partial<
 export type Nullable<T> = {
   [K in keyof T]: T[K] | null;
 };
+
+// This is a useful utility for Zod types using unions.
+// Given the schema
+// z.object({'foo': z.number()}).union([
+//    z.object({'bar': z.number()}),
+//    z.object({'zap': z.number()}),
+// ]),
+// we generate the type `SchemaType = {foo: number, bar: number} | {fop: number, zap: number}
+// the standard `keyof SchemaType` will return `"foo"`
+// AllPossibleKeys<SchemaType> will return `"foo" | "bar" | "zap"`
+// This is due to "Distributive Conditional Types"
+// https://www.typescriptlang.org/docs/handbook/2/conditional-types.html#distributive-conditional-types
+export type AllPossibleKeys<T> = T extends any ? keyof T : never;

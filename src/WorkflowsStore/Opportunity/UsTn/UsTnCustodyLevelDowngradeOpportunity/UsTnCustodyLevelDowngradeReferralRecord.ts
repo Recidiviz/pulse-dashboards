@@ -1,6 +1,6 @@
 /*
  * Recidiviz - a data platform for criminal justice reform
- * Copyright (C) 2022 Recidiviz, Inc.
+ * Copyright (C) 2023 Recidiviz, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,17 +29,31 @@ import {
 
 const realUsTnCustodyLevelDowngradeSchema = opportunitySchemaBase
   .extend({
-    eligibleCriteria: z.object({
-      custodyLevelHigherThanRecommended: z.object({
-        custodyLevel: z.string(),
-        recommendedCustodyLevel: z.string(),
-      }),
-      custodyLevelIsNotMax: z.null(),
-      usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident: z.null(),
-      usTnHasHadAtLeast1IncarcerationIncidentPastYear: z.object({
-        latestIncarcerationIncidentDate: dateStringSchema,
-      }),
-    }),
+    eligibleCriteria: z
+      .object({
+        custodyLevelHigherThanRecommended: z.object({
+          custodyLevel: z.string(),
+          recommendedCustodyLevel: z.string(),
+        }),
+        custodyLevelIsNotMax: z.null(),
+      })
+      .and(
+        z.union([
+          z.object({
+            usTnLatestAssessmentNotOverride: z.null(),
+            usTnIneligibleForAnnualReclassification: z.object({
+              mostRecentAssessmentDate: dateStringSchema,
+            }),
+          }),
+          z.object({
+            // TODO(#3969): [Workflows][US_TN] Remove old SLD criteria after deprecation
+            usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident: z.null(),
+            usTnHasHadAtLeast1IncarcerationIncidentPastYear: z.object({
+              latestIncarcerationIncidentDate: dateStringSchema,
+            }),
+          }),
+        ])
+      ),
     ineligibleCriteria: z.object({}),
     formInformation: z.object({
       currentOffenses: z.string().array().optional(),

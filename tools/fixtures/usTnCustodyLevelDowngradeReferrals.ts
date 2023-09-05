@@ -29,9 +29,9 @@ export const usTnCustodyLevelDowngradeFixture =
           recommendedCustodyLevel: "MEDIUM",
         },
         custodyLevelIsNotMax: null,
-        usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident: null,
-        usTnHasHadAtLeast1IncarcerationIncidentPastYear: {
-          latestIncarcerationIncidentDate: "2022-12-31",
+        usTnLatestAssessmentNotOverride: null,
+        usTnIneligibleForAnnualReclassification: {
+          mostRecentAssessmentDate: "2022-12-31",
         },
       },
       ineligibleCriteria: {},
@@ -58,6 +58,7 @@ export const usTnCustodyLevelDowngradeFixture =
           recommendedCustodyLevel: "MINIMUM",
         },
         custodyLevelIsNotMax: null,
+        // TODO(#3969): [Workflows][US_TN] Remove old SLD criteria after deprecation
         usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident: null,
         usTnHasHadAtLeast1IncarcerationIncidentPastYear: {
           latestIncarcerationIncidentDate: "2023-02-01",

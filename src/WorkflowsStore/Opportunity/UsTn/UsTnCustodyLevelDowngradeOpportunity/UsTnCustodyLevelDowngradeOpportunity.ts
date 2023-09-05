@@ -44,12 +44,22 @@ const CRITERIA_COPY: CriteriaCopy<UsTnCustodyLevelDowngradeReferralRecord> = {
     ],
     ["custodyLevelIsNotMax", { text: "Custody level is not maximum" }],
     [
+      // TODO(#3969): [Workflows][US_TN] Remove old SLD criteria after deprecation
       "usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident",
       { text: "At least 6 months since last violation" },
     ],
     [
+      // TODO(#3969): [Workflows][US_TN] Remove old SLD criteria after deprecation
       "usTnHasHadAtLeast1IncarcerationIncidentPastYear",
       { text: "Had a violation in the past year" },
+    ],
+    [
+      "usTnIneligibleForAnnualReclassification",
+      { text: "Not eligible for annual reclassification" },
+    ],
+    [
+      "usTnLatestAssessmentNotOverride",
+      { text: "Last assessment did not include an override" },
     ],
   ],
   ineligibleCriteria: [],

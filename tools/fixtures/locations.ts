@@ -48,6 +48,18 @@ const data: LocationRecord[] = [
     id: "FACILITY2",
     name: "Facility #2",
   },
+
+  //
+  // Tennessee
+  //
+
+  {
+    stateCode: "US_TN",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "AG_ANNEX",
+    name: "Agricultural Learning Annex",
+  },
 ];
 
 export const locationsData: FixtureData<LocationRecord> = {

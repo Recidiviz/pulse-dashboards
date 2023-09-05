@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transforms the combined opportunity format while preferring new keys 1`] = `
+Object {
+  "caseNotes": Object {
+    "ASSAULTIVE DISCIPLINARIES": Array [],
+  },
+  "eligibleCriteria": Object {
+    "custodyLevelHigherThanRecommended": Object {
+      "custodyLevel": "MAXIMUM",
+      "recommendedCustodyLevel": "HIGH",
+    },
+    "custodyLevelIsNotMax": null,
+    "usTnIneligibleForAnnualReclassification": Object {
+      "mostRecentAssessmentDate": 2022-02-22T00:00:00.000Z,
+    },
+    "usTnLatestAssessmentNotOverride": null,
+  },
+  "externalId": "abc123",
+  "formInformation": Object {
+    "q1Score": 1,
+    "q2Score": 1,
+    "q3Score": 1,
+    "q4Score": 1,
+    "q5Score": 1,
+    "q6Score": 1,
+    "q7Score": 1,
+    "q8Score": 1,
+    "q9Score": 1,
+  },
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_XX",
+}
+`;
+
+exports[`transforms the new opportunity format 1`] = `
+Object {
+  "caseNotes": Object {
+    "ASSAULTIVE DISCIPLINARIES": Array [],
+  },
+  "eligibleCriteria": Object {
+    "custodyLevelHigherThanRecommended": Object {
+      "custodyLevel": "MAXIMUM",
+      "recommendedCustodyLevel": "HIGH",
+    },
+    "custodyLevelIsNotMax": null,
+    "usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident": null,
+    "usTnHasHadAtLeast1IncarcerationIncidentPastYear": Object {
+      "latestIncarcerationIncidentDate": 2022-04-12T00:00:00.000Z,
+    },
+  },
+  "externalId": "abc123",
+  "formInformation": Object {
+    "q1Score": 1,
+    "q2Score": 1,
+    "q3Score": 1,
+    "q4Score": 1,
+    "q5Score": 1,
+    "q6Score": 1,
+    "q7Score": 1,
+    "q8Score": 1,
+    "q9Score": 1,
+  },
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_XX",
+}
+`;
+
+exports[`transforms the old opportunity format 1`] = `
+Object {
+  "caseNotes": Object {
+    "ASSAULTIVE DISCIPLINARIES": Array [],
+  },
+  "eligibleCriteria": Object {
+    "custodyLevelHigherThanRecommended": Object {
+      "custodyLevel": "MAXIMUM",
+      "recommendedCustodyLevel": "HIGH",
+    },
+    "custodyLevelIsNotMax": null,
+    "usTnIneligibleForAnnualReclassification": Object {
+      "mostRecentAssessmentDate": 2022-02-22T00:00:00.000Z,
+    },
+    "usTnLatestAssessmentNotOverride": null,
+  },
+  "externalId": "abc123",
+  "formInformation": Object {
+    "q1Score": 1,
+    "q2Score": 1,
+    "q3Score": 1,
+    "q4Score": 1,
+    "q5Score": 1,
+    "q6Score": 1,
+    "q7Score": 1,
+    "q8Score": 1,
+    "q9Score": 1,
+  },
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_XX",
+}
+`;

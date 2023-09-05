@@ -23,6 +23,7 @@ import simplur from "simplur";
 import { FeatureGateError } from "../../errors";
 import { FeatureVariant } from "../../RootStore/types";
 import { pluralizeWord } from "../../utils";
+import { AllPossibleKeys } from "../../utils/typeUtils";
 import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
 import { ValidateFunction } from "../subscriptions";
 import { optionalFieldToDate } from "../utils";
@@ -375,7 +376,9 @@ type WithCriteria = Record<CriteriaGroupKey, object>;
 
 // Copy is defined as an array rather than a record so it can have a well-defined order
 export type CriteriaCopy<R extends WithCriteria> = {
-  [K in CriteriaGroupKey]: Array<[keyof R[K], OpportunityRequirement]>;
+  [K in CriteriaGroupKey]: Array<
+    [AllPossibleKeys<R[K]>, OpportunityRequirement]
+  >;
 };
 
 // Formatters are defined in a separate dict so the function type can depend on the criterion
