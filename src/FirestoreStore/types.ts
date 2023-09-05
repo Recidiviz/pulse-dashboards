@@ -299,11 +299,21 @@ export type FormFieldData = Record<
   boolean | string | string[] | FieldValue
 >;
 
+export type IsoDate =
+  `${number}${number}${number}${number}-${number}${number}-${number}${number}`;
+
 export type OpportunityUpdate = {
   denial?: Denial;
   completed?: {
     update: UpdateLog;
   };
+  snoozedBy?: string; // current user email
+  snoozedOn?: IsoDate;
+  // Some opportunities may have a snoozeUntil date that is not set by the user's
+  // selection for the `snoozeForDays` field. For example, an opportunity may be
+  // snoozed for 7 days, but because of the opportunity type, it will be resurfaced
+  // by default every following Sunday.
+  snoozeUntil?: Date;
   lastViewed?: UpdateLog;
   // TODO(#3354): Migrate to lastViewed and remove the firstViewed property
   firstViewed?: UpdateLog;
@@ -317,7 +327,7 @@ export type SupervisionTaskUpdate = {
   [key in SupervisionTaskType]?: {
     snoozedBy: string;
     snoozeForDays: number;
-    snoozedOn: string;
+    snoozedOn: IsoDate;
   };
 };
 

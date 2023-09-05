@@ -38,6 +38,7 @@ export const mockOpportunity: Opportunity<Client> = {
   type: "pastFTRD",
   eligibilityDate: undefined,
   isAlert: false,
+  isSnoozed: false,
   supportsDenial: false,
   trackListViewed: () => undefined,
   trackPreviewed: () => undefined,

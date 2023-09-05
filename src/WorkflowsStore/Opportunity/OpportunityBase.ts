@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { endOfToday } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable, when } from "mobx";
 
@@ -100,6 +101,7 @@ export abstract class OpportunityBase<
       reviewStatus: computed,
       isHydrated: computed,
       setCompletedIfEligible: action,
+      isSnoozed: computed,
     });
 
     this.person = person;
@@ -137,6 +139,13 @@ export abstract class OpportunityBase<
     if (this.updates?.denial?.reasons.length) {
       return this.updates?.denial;
     }
+  }
+
+  get isSnoozed(): boolean {
+    if (this.updates?.snoozeUntil) {
+      return this.updates?.snoozeUntil > endOfToday();
+    }
+    return false;
   }
 
   get lastViewed(): UpdateLog | undefined {

@@ -146,6 +146,7 @@ export interface Opportunity<
   readonly type: OpportunityType;
   denialReasonsMap: DenialReasonsMap;
   denial: Denial | undefined;
+  isSnoozed: boolean;
   lastViewed: UpdateLog | undefined;
   setLastViewed: () => void;
   setCompletedIfEligible: () => void;

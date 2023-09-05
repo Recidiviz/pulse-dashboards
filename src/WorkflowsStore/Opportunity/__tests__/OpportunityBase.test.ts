@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { add } from "date-fns";
 import { configure, runInAction } from "mobx";
 
 import { CombinedUserRecord, OpportunityUpdate } from "../../../FirestoreStore";
@@ -199,6 +200,23 @@ test("review status", () => {
 
   updatesSub.data = COMPLETED_UPDATE;
   expect(opp.reviewStatus).toBe("COMPLETED");
+});
+
+describe("isSnoozed", () => {
+  test("isSnoozed is false if there is no snooze", () => {
+    expect(opp.isSnoozed).toBe(false);
+  });
+
+  test("isSnoozed is true if there is a snooze", () => {
+    mockHydration({
+      updateData: {
+        snoozeUntil: add(new Date(), { days: 1 }),
+        snoozedBy: "foo",
+        snoozedOn: "2023-01-01",
+      },
+    });
+    expect(opp.isSnoozed).toBe(true);
+  });
 });
 
 describe("setLastViewed", () => {
