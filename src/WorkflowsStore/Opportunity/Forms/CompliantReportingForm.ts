@@ -1,5 +1,5 @@
 import { transform } from "../../../core/Paperwork/US_TN/CompliantReporting/Transformer";
-import WorkflowsCompliantReportingForm from "../../../core/WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
+import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatDate } from "../../../utils";
 import {
   CompliantReportingDraftData,
@@ -13,7 +13,10 @@ export class CompliantReportingForm extends FormBase<
 > {
   navigateToFormText = "Auto-fill referral";
 
-  formComponent = WorkflowsCompliantReportingForm;
+  // eslint-disable-next-line class-methods-use-this
+  get formContents(): OpportunityFormComponentName {
+    return "WorkflowsCompliantReportingForm";
+  }
 
   get downloadText(): string {
     if (this.formIsDownloading) {

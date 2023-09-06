@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import WorkflowsUsCaSupervisionLevelDowngradeForm from "../../../core/WorkflowsUsCaSupervisionLevelDowngradeForm";
+import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatNameLastFirst } from "../../../utils";
 import {
   UsCaSupervisionLevelDowngradeDraftData,
@@ -29,7 +29,10 @@ export class UsCaSupervisionLevelDowngradeForm extends FormBase<
 > {
   navigateToFormText = "Reduce level";
 
-  formComponent = WorkflowsUsCaSupervisionLevelDowngradeForm;
+  // eslint-disable-next-line class-methods-use-this
+  get formContents(): OpportunityFormComponentName {
+    return "WorkflowsUsCaSupervisionLevelDowngradeForm";
+  }
 
   prefilledDataTransformer: PrefilledDataTransformer<UsCaSupervisionLevelDowngradeDraftData> =
     () => {

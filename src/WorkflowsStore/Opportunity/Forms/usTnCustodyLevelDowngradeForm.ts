@@ -5,7 +5,7 @@ import {
   assessmentQuestionNumbers,
   assessmentQuestions,
 } from "../../../core/Paperwork/US_TN/CustodyLevelDowngrade/assessmentQuestions";
-import WorkflowsUsTnCustodyLevelDowngradeForm from "../../../core/WorkflowsUsTnCustodyLevelDowngradeForm";
+import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatDate } from "../../../utils";
 import {
   UsTnCustodyLevelDowngradeDraftData,
@@ -19,7 +19,10 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
 > {
   navigateToFormText = "Auto-fill CAF Form";
 
-  formComponent = WorkflowsUsTnCustodyLevelDowngradeForm;
+  // eslint-disable-next-line class-methods-use-this
+  get formContents(): OpportunityFormComponentName {
+    return "WorkflowsUsTnCustodyLevelDowngradeForm";
+  }
 
   get downloadText(): string {
     if (this.formIsDownloading) {

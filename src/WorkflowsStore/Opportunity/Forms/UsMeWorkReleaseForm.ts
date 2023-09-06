@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FormWorkRelease } from "../../../core/Paperwork/US_ME/WorkRelease/FormWorkRelease";
+import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatFacilityHousingUnit } from "../../utils";
 import { UsMeWorkReleaseDraftData, UsMeWorkReleaseOpportunity } from "../UsMe";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
@@ -26,7 +26,10 @@ export class UsMeWorkReleaseForm extends FormBase<
 > {
   navigateToFormText = "Generate paperwork";
 
-  formComponent = FormWorkRelease;
+  // eslint-disable-next-line class-methods-use-this
+  get formContents(): OpportunityFormComponentName {
+    return "FormWorkRelease";
+  }
 
   prefilledDataTransformer: PrefilledDataTransformer<UsMeWorkReleaseDraftData> =
     () => {

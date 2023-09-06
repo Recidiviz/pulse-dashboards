@@ -25,9 +25,20 @@ import { useRootStore } from "../../components/StoreProvider";
 import cssVars from "../CoreConstants.module.scss";
 import { NavigationLayout } from "../NavigationLayout";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
+import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
+import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRelease";
+import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
+import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
 import RecidivizLogo from "../RecidivizLogo";
 import { DASHBOARD_VIEWS } from "../views";
 import { OpportunityProfile } from "../WorkflowsClientProfile/OpportunityProfile";
+import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
+import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
+import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
+import WorkflowsLSUForm from "../WorkflowsLSUForm";
+import WorkflowsUsCaSupervisionLevelDowngradeForm from "../WorkflowsUsCaSupervisionLevelDowngradeForm";
+import WorkflowsUsTnCustodyLevelDowngradeForm from "../WorkflowsUsTnCustodyLevelDowngradeForm";
+import WorkflowsUsTnExpirationForm from "../WorkflowsUsTnExpirationForm";
 
 export const FORM_SIDEBAR_WIDTH = 400;
 
@@ -64,6 +75,22 @@ const SidebarSection = styled.section<{
 
 const FormWrapper = styled.div``;
 
+const FormComponents = {
+  WorkflowsCompliantReportingForm,
+  WorkflowsEarlyTerminationForm,
+  WorkflowsEarlyTerminationDeferredForm,
+  FormEarnedDischarge,
+  WorkflowsLSUForm,
+  FormSCCP,
+  FormWorkRelease,
+  WorkflowsUsTnExpirationForm,
+  WorkflowsUsTnCustodyLevelDowngradeForm,
+  WorkflowsUsCaSupervisionLevelDowngradeForm,
+  FormFurloughRelease,
+};
+
+export type OpportunityFormComponentName = keyof typeof FormComponents;
+
 export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
   const {
     workflowsStore: {
@@ -77,7 +104,9 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
 
   const opportunity = selectedPerson.verifiedOpportunities[opportunityType];
 
-  const FormComponent = opportunity?.form?.formContents;
+  const formContents = opportunity?.form?.formContents;
+  const FormComponent =
+    FormComponents[formContents as OpportunityFormComponentName];
 
   const hydrated = (
     <Wrapper>
