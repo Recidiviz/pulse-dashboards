@@ -24,10 +24,8 @@ import {
 } from "../../schemaHelpers";
 import {
   custodyLevelIsMinimum,
-  noAbsconsionWithin10Years,
   notServingForSexualOffense,
-  usIdNoEludingPoliceOffenseWithin10Years,
-  usIdNoEscapeOffenseWithin10Years,
+  usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
 } from "../UsIdSharedCriteria";
 
 export const usIdExpandedCRCSchema = opportunitySchemaBase
@@ -35,9 +33,7 @@ export const usIdExpandedCRCSchema = opportunitySchemaBase
     eligibleCriteria: z.object({
       custodyLevelIsMinimum,
       notServingForSexualOffense,
-      noAbsconsionWithin10Years,
-      usIdNoEludingPoliceOffenseWithin10Years,
-      usIdNoEscapeOffenseWithin10Years,
+      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
       usIdNoDetainersForXcrc: z.object({}).nullable(),
       usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: z.object({
         fullTermCompletionDate: dateStringSchema.nullable(),

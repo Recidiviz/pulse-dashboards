@@ -46,6 +46,7 @@ export type SupervisionOpportunityType =
   typeof SUPERVISION_OPPORTUNITY_TYPES[number];
 
 export const INCARCERATION_OPPORTUNITY_TYPES = [
+  "usIdCRCWorkRelease",
   "usIdExpandedCRC",
   "usMeWorkRelease",
   "usMeSCCP",

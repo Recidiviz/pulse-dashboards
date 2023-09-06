@@ -50,6 +50,7 @@ import {
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
+import { UsIdCRCWorkReleaseOpportunity } from "./Opportunity/UsId/UsIdCRCWorkReleaseOpportunity";
 import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { SupervisionTaskInterface } from "./Task/types";
@@ -82,6 +83,7 @@ type CheckSupervisionOpportunityMappingType = Expect<
 >;
 
 export type IncarcerationOpportunityMapping = {
+  usIdCRCWorkRelease?: UsIdCRCWorkReleaseOpportunity;
   usIdExpandedCRC?: UsIdExpandedCRCOpportunity;
   usMeWorkRelease?: UsMeWorkReleaseOpportunity;
   usMeSCCP?: UsMeSCCPOpportunity;

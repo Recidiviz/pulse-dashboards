@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transforms eligible record 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "custodyLevelIsMinimum": Object {
+      "custodyLevel": "MINIMUM",
+    },
+    "notServingForSexualOffense": null,
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNoDetainersForCrc": null,
+  },
+  "externalId": "xcrc-eligible-01",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_MI",
+}
+`;

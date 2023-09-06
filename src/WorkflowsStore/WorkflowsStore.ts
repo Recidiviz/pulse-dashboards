@@ -729,6 +729,7 @@ export class WorkflowsStore implements Hydratable {
 
   gatedOpportunities: PartialRecord<OpportunityType, FeatureVariant> = {
     usIdExpandedCRC: "usIdExpandedCRC",
+    usIdCRCWorkRelease: "usIdCRC",
     usTnExpiration: "usTnExpiration",
     usMeWorkRelease: "usMeWorkRelease",
     usMeFurloughRelease: "usMeFurloughRelease",

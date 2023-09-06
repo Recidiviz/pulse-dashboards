@@ -20,6 +20,7 @@ import { OpportunityType } from "./types";
 import { usCaSupervisionLevelDowngradeConfig as usCaSupervisionLevelDowngrade } from "./UsCa/UsCaSupervisionLevelDowngradeOpportunity/config";
 import { usIdEarnedDischargeConfig as earnedDischarge } from "./UsId/EarnedDischargeOpportunity/config";
 import { usIdLSUConfig as LSU } from "./UsId/LSUOpportunity/config";
+import { usIdCRCWorkReleaseConfig as usIdCRCWorkRelease } from "./UsId/UsIdCRCWorkReleaseOpportunity/config";
 import { usIdExpandedCRCConfig as usIdExpandedCRC } from "./UsId/UsIdExpandedCRCOpportunity/config";
 import { usIdPastFTRDConfig as pastFTRD } from "./UsId/UsIdPastFTRDOpportunity/config";
 import { usIdSupervisionLevelDowngradeConfig as usIdSupervisionLevelDowngrade } from "./UsId/UsIdSupervisionLevelDowngradeOpportunity/config";
@@ -57,6 +58,7 @@ export const OPPORTUNITY_CONFIGS: OpportunityConfigMap = {
   LSU,
   pastFTRD,
   usIdExpandedCRC,
+  usIdCRCWorkRelease,
   usIdSupervisionLevelDowngrade,
 
   /* US_ME */

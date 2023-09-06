@@ -158,6 +158,13 @@ export const generateOpportunityHydratedHeader = (
         "supervised at a higher level than their latest risk score",
       callToAction: "Change their supervision level in TOMIS.",
     },
+    usIdCRCWorkRelease: {
+      eligibilityText: simplur`${count} resident[|s] may be `,
+      opportunityText:
+        "eligible for work-release at a Community Reentry Center",
+      callToAction:
+        "Review residents who may be eligible for work-release to a CRC and start their paperwork in ATLAS.",
+    },
     usIdExpandedCRC: {
       eligibilityText: simplur`${count} resident[|s] [is|are] `,
       opportunityText:
@@ -301,6 +308,7 @@ export const opportunityToSortFunctionMapping: Record<
   LSU: sortByReviewStatusAndEligibilityDate,
   pastFTRD: sortByReviewStatusAndEligibilityDate,
   supervisionLevelDowngrade: sortByReviewStatus,
+  usIdCRCWorkRelease: sortByReviewStatus,
   usIdExpandedCRC: sortByReviewStatus,
   usIdSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
   usMiSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
@@ -372,13 +380,16 @@ export const monthsOrDaysRemainingFromToday = (eligibleDate: Date): string => {
 
 type CriteriaGroupKey = "eligibleCriteria" | "ineligibleCriteria";
 
-type WithCriteria = Record<CriteriaGroupKey, object>;
+type WithCriteria = Record<
+  CriteriaGroupKey,
+  Record<string, object | null | undefined>
+>;
+
+export type CopyTuple<K extends string> = [K, OpportunityRequirement];
 
 // Copy is defined as an array rather than a record so it can have a well-defined order
 export type CriteriaCopy<R extends WithCriteria> = {
-  [K in CriteriaGroupKey]: Array<
-    [AllPossibleKeys<R[K]>, OpportunityRequirement]
-  >;
+  [K in CriteriaGroupKey]: Array<CopyTuple<AllPossibleKeys<R[K]>>>;
 };
 
 // Formatters are defined in a separate dict so the function type can depend on the criterion

@@ -38,6 +38,23 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     releaseDate: "2025-10-22",
   },
   {
+    allEligibleOpportunities: ["usIdCRCWorkRelease"],
+    officerId: "ID_CASE_MANAGER_1",
+    stateCode: "US_ID",
+    personExternalId: "ID_RES002",
+    displayId: "RES002",
+    personName: {
+      givenNames: "Antonio",
+      surname: "Calculon",
+    },
+    pseudonymizedId: "anonres002",
+    facilityId: "FACILITY1",
+    unitId: "UNIT A",
+    custodyLevel: "MINIMUM",
+    admissionDate: "2020-01-12",
+    releaseDate: "2026-07-06",
+  },
+  {
     allEligibleOpportunities: [
       "usMeSCCP",
       "usMeWorkRelease",

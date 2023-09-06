@@ -14,11 +14,33 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { OpportunityConfig } from "../../OpportunityConfigs";
 
-export const usIdExpandedCRCConfig: OpportunityConfig = {
-  stateCode: "US_ID",
-  urlSection: "expandedCRC",
-  label: "Expanded CRC Program",
-  featureVariant: "usIdExpandedCRC",
-};
+import { z } from "zod";
+
+import { caseNotesSchema, opportunitySchemaBase } from "../../schemaHelpers";
+import {
+  custodyLevelIsMinimum,
+  notServingForSexualOffense,
+  usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
+  usIdNoDetainersForCrc,
+} from "../UsIdSharedCriteria";
+
+export const usIdCRCWorkReleaseSchema = opportunitySchemaBase
+  .extend({
+    eligibleCriteria: z.object({
+      custodyLevelIsMinimum,
+      notServingForSexualOffense,
+      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
+      usIdNoDetainersForCrc,
+    }),
+    ineligibleCriteria: z.object({}),
+  })
+  .merge(caseNotesSchema);
+
+export type UsIdCRCWorkReleaseReferralRecord = z.infer<
+  typeof usIdCRCWorkReleaseSchema
+>;
+
+export type UsIdCRCWorkReleaseReferralRecordRaw = z.input<
+  typeof usIdCRCWorkReleaseSchema
+>;

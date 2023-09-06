@@ -14,11 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { OpportunityConfig } from "../../OpportunityConfigs";
 
-export const usIdExpandedCRCConfig: OpportunityConfig = {
-  stateCode: "US_ID",
-  urlSection: "expandedCRC",
-  label: "Expanded CRC Program",
-  featureVariant: "usIdExpandedCRC",
-};
+import {
+  UsIdCRCWorkReleaseReferralRecordRaw,
+  usIdCRCWorkReleaseSchema,
+} from "../UsIdCRCWorkReleaseReferralRecord";
+
+test("transforms eligible record", () => {
+  const rawRecord: UsIdCRCWorkReleaseReferralRecordRaw = {
+    stateCode: "US_MI",
+    externalId: "xcrc-eligible-01",
+    eligibleCriteria: {
+      custodyLevelIsMinimum: {
+        custodyLevel: "MINIMUM",
+      },
+      notServingForSexualOffense: null,
+      usIdNoDetainersForCrc: null,
+      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
+    },
+    ineligibleCriteria: {},
+  };
+
+  expect(usIdCRCWorkReleaseSchema.parse(rawRecord)).toMatchSnapshot();
+});

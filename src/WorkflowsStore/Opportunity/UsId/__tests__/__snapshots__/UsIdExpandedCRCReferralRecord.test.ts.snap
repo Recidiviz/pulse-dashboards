@@ -7,7 +7,6 @@ Object {
     "custodyLevelIsMinimum": Object {
       "custodyLevel": "MINIMUM",
     },
-    "noAbsconsionWithin10Years": null,
     "notServingForSexualOffense": null,
     "usIdInCrcFacility": Object {
       "crcStartDate": 2022-02-06T00:00:00.000Z,
@@ -21,9 +20,8 @@ Object {
       "paroleEligibilityDate": 2022-03-19T00:00:00.000Z,
       "tentativeParoleDate": null,
     },
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
     "usIdNoDetainersForXcrc": null,
-    "usIdNoEludingPoliceOffenseWithin10Years": null,
-    "usIdNoEscapeOffenseWithin10Years": null,
   },
   "externalId": "xcrc-eligible-01",
   "ineligibleCriteria": Object {},
@@ -38,7 +36,6 @@ Object {
     "custodyLevelIsMinimum": Object {
       "custodyLevel": "MINIMUM",
     },
-    "noAbsconsionWithin10Years": null,
     "notServingForSexualOffense": null,
     "usIdInCrcFacility": Object {
       "crcStartDate": 2022-02-06T00:00:00.000Z,
@@ -52,9 +49,8 @@ Object {
       "paroleEligibilityDate": null,
       "tentativeParoleDate": 2022-07-11T00:00:00.000Z,
     },
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
     "usIdNoDetainersForXcrc": null,
-    "usIdNoEludingPoliceOffenseWithin10Years": null,
-    "usIdNoEscapeOffenseWithin10Years": null,
   },
   "externalId": "xcrc-eligible-02",
   "ineligibleCriteria": Object {},
@@ -75,7 +71,6 @@ Object {
     "custodyLevelIsMinimum": Object {
       "custodyLevel": "MINIMUM",
     },
-    "noAbsconsionWithin10Years": null,
     "notServingForSexualOffense": null,
     "usIdInCrcFacility": Object {
       "crcStartDate": 2022-02-06T00:00:00.000Z,
@@ -89,9 +84,8 @@ Object {
       "paroleEligibilityDate": null,
       "tentativeParoleDate": 2022-07-11T00:00:00.000Z,
     },
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
     "usIdNoDetainersForXcrc": null,
-    "usIdNoEludingPoliceOffenseWithin10Years": null,
-    "usIdNoEscapeOffenseWithin10Years": null,
   },
   "externalId": "xcrc-eligible-02",
   "ineligibleCriteria": Object {},

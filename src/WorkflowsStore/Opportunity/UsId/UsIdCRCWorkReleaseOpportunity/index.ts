@@ -14,11 +14,5 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { OpportunityConfig } from "../../OpportunityConfigs";
-
-export const usIdExpandedCRCConfig: OpportunityConfig = {
-  stateCode: "US_ID",
-  urlSection: "expandedCRC",
-  label: "Expanded CRC Program",
-  featureVariant: "usIdExpandedCRC",
-};
+export * from "./UsIdCRCWorkReleaseOpportunity";
+export * from "./UsIdCRCWorkReleaseReferralRecord";

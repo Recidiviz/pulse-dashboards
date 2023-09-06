@@ -37,6 +37,7 @@ const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   "usIdSupervisionLevelDowngrade",
 
   // Facility opportunities
+  "usIdCRCWorkRelease",
   "usIdExpandedCRC",
 ];
 

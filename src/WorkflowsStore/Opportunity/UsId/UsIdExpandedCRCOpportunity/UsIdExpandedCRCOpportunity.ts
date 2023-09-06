@@ -26,6 +26,10 @@ import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "../../utils";
 import {
+  notServingForSexualOffenseCopy,
+  usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy,
+} from "../UsIdSharedCriteria";
+import {
   UsIdExpandedCRCReferralRecord,
   usIdExpandedCRCSchema,
 } from "./UsIdExpandedCRCReferralRecord";
@@ -33,7 +37,6 @@ import {
 const CRITERIA_FORMATTERS: CriteriaFormatters<UsIdExpandedCRCReferralRecord> = {
   eligibleCriteria: {
     usIdInCrcFacility: {
-      FACILITY_NAME: ({ facilityName }) => facilityName,
       START_DATE: ({ crcStartDate }) => formatWorkflowsDate(crcStartDate),
     },
   },
@@ -44,66 +47,43 @@ const CRITERIA_COPY: CriteriaCopy<UsIdExpandedCRCReferralRecord> = {
     [
       "custodyLevelIsMinimum",
       {
-        text: "Placeholder text for custodyLevelIsMinimum",
-        tooltip: "Placeholder tooltip for custodyLevelIsMinimum",
-      },
-    ],
-    [
-      "notServingForSexualOffense",
-      {
-        text: "Placeholder text for notServingForSexualOffense",
-        tooltip: "Placeholder tooltip for notServingForSexualOffense",
-      },
-    ],
-    [
-      "noAbsconsionWithin10Years",
-      {
-        text: "Placeholder text for noAbsconsionWithin10Years",
-        tooltip: "Placeholder tooltip for noAbsconsionWithin10Years",
-      },
-    ],
-    [
-      "usIdNoEludingPoliceOffenseWithin10Years",
-      {
-        text: "Placeholder text for usIdNoEludingPoliceOffenseWithin10Years",
+        text: "Currently on Minimum custody",
         tooltip:
-          "Placeholder tooltip for usIdNoEludingPoliceOffenseWithin10Years",
+          "Shall be institutionally classified as minimum custody and cannot receive a classification override",
       },
     ],
-    [
-      "usIdNoEscapeOffenseWithin10Years",
-      {
-        text: "Placeholder text for usIdNoEscapeOffenseWithin10Years",
-        tooltip: "Placeholder tooltip for custodyLevelIsMinimum",
-      },
-    ],
+    notServingForSexualOffenseCopy,
     [
       "usIdNoDetainersForXcrc",
       {
-        text: "Placeholder text for usIdNoDetainersForXcrc",
-        tooltip: "Placeholder tooltip for usIdNoDetainersForXcrc",
+        text: "No active detainers or holds",
+        tooltip: "Cannot have any detainers or holds;",
       },
     ],
+    usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy,
     [
       "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd",
       {
-        text: "Placeholder text for usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd",
+        text: "Is within 6 months of release",
         tooltip:
-          "Placeholder tooltip for usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd",
+          "Shall be within six months of release (generally calculated from the parole eligibility date, " +
+          "full-term release, or tentative parole date). Those who are past their parole eligibility date " +
+          "or within six months of a tentative parole date may also be considered, on a case by case basis",
+      },
+    ],
+    [
+      "usIdInCrcFacilityFor60Days",
+      {
+        text: "Served at least 60 days at current facility",
+        tooltip:
+          "Shall have resided in a CRC or minimum custody employment release program " +
+          "(such as PWCC’s Unit 1) for a minimum of 60 days",
       },
     ],
     [
       "usIdInCrcFacility",
       {
         text: "Resident in $FACILITY_NAME since $START_DATE",
-        tooltip: "Placeholder tooltip for usIdInCrcFacility",
-      },
-    ],
-    [
-      "usIdInCrcFacilityFor60Days",
-      {
-        text: "Placeholder text for usIdInCrcFacilityFor60Days",
-        tooltip: "Placeholder tooltip for usIdInCrcFacilityFor60Days",
       },
     ],
   ],
@@ -111,9 +91,17 @@ const CRITERIA_COPY: CriteriaCopy<UsIdExpandedCRCReferralRecord> = {
 };
 
 const DENIAL_REASONS_MAP = {
-  PLACEHOLDER: "Placeholder denial reason",
-  ANOTHER: "Another placeholder reason",
-  [OTHER_KEY]: "Other, please specipy a reason",
+  "MEDICAL CLEARANCE": "Was not approved by an IDOC medical provider",
+  "PENDING CHARGES":
+    "There are pending felony charges or felony investigations in which the resident is a suspect",
+  BEHAVIOR: "Resident has had poor institutional behavior",
+  PROGRAMMING: "Missing required facility programming",
+  "TRUST ACCOUNT":
+    "Resident does not have $500.00 in their resident trust account",
+  EMPLOYMENT:
+    "Resident is not currently employed full-time or engaged in or accepted to a full-time " +
+    "Idaho educational program approved by the IDOC",
+  [OTHER_KEY]: "Other, please specify a reason",
 };
 
 export class UsIdExpandedCRCOpportunity extends OpportunityBase<

@@ -16,9 +16,9 @@
 // =============================================================================
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
-export const usIdExpandedCRCConfig: OpportunityConfig = {
+export const usIdCRCWorkReleaseConfig: OpportunityConfig = {
   stateCode: "US_ID",
-  urlSection: "expandedCRC",
-  label: "Expanded CRC Program",
-  featureVariant: "usIdExpandedCRC",
+  urlSection: "CRCWorkRelease",
+  label: "Work-release at Community Reentry Centers",
+  featureVariant: "usIdCRC",
 };

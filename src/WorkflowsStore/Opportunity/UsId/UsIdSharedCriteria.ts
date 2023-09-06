@@ -17,14 +17,49 @@
 
 import { z } from "zod";
 
+import { CopyTuple } from "../utils";
+
 export const custodyLevelIsMinimum = z.object({
   custodyLevel: z.string(),
 });
 
+export const custodyLevelIsMinimumCopy: CopyTuple<"custodyLevelIsMinimum"> = [
+  "custodyLevelIsMinimum",
+  {
+    text: "Currently on Minimum custody",
+  },
+];
+
 export const notServingForSexualOffense = z.object({}).nullable();
 
-export const noAbsconsionWithin10Years = z.object({}).nullable();
+export const notServingForSexualOffenseCopy: CopyTuple<"notServingForSexualOffense"> =
+  [
+    "notServingForSexualOffense",
+    {
+      text: "Not serving for a sexual offense",
+    },
+  ];
 
-export const usIdNoEludingPoliceOffenseWithin10Years = z.object({}).nullable();
+export const usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years = z
+  .object({})
+  .nullable();
 
-export const usIdNoEscapeOffenseWithin10Years = z.object({}).nullable();
+export const usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy: CopyTuple<"usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years"> =
+  [
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years",
+    {
+      text: "No escape attempts in the last 10 years",
+      tooltip:
+        "Instant offense cannot be escape. If escape history, charge must be at least ten (10) years old for override",
+    },
+  ];
+
+export const usIdNoDetainersForCrc = z.object({}).nullable();
+
+export const usIdNoDetainersForCrcCopy: CopyTuple<"usIdNoDetainersForCrc"> = [
+  "usIdNoDetainersForCrc",
+  {
+    text: "No active detainers",
+    tooltip: "No active felony detainer (except notification-only)",
+  },
+];

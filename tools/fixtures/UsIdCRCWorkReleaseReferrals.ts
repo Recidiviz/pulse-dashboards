@@ -15,35 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsIdExpandedCRCReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsId";
+import { UsIdCRCWorkReleaseReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsId/UsIdCRCWorkReleaseOpportunity";
 import { FixtureData } from "../workflowsFixtures";
 import { externalIdFunc } from "./utils";
 
-export const usIdExpandedCRCReferrals: FixtureData<UsIdExpandedCRCReferralRecordRaw> =
+export const usIdCRCWorkReleaseReferrals: FixtureData<UsIdCRCWorkReleaseReferralRecordRaw> =
   {
     data: [
       {
         stateCode: "US_ID",
-        externalId: "ID_RES001",
+        externalId: "ID_RES002",
         eligibleCriteria: {
           custodyLevelIsMinimum: {
             custodyLevel: "MINIMUM",
           },
           notServingForSexualOffense: null,
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-          usIdNoDetainersForXcrc: null,
-          usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
-            fullTermCompletionDate: "2024-03-12",
-            paroleEligibilityDate: "2023-11-03",
-            tentativeParoleDate: null,
-          },
-          usIdInCrcFacility: {
-            crcStartDate: "2023-02-15",
-            facilityName: "Mom Corp.",
-          },
-          usIdInCrcFacilityFor60Days: {
-            sixtyDaysInCrcFacilityDate: "2023-04-16",
-          },
+          usIdNoDetainersForCrc: null,
         },
         ineligibleCriteria: {},
       },
