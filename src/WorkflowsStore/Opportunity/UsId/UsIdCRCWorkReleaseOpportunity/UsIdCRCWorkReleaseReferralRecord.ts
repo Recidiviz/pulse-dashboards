@@ -17,7 +17,11 @@
 
 import { z } from "zod";
 
-import { caseNotesSchema, opportunitySchemaBase } from "../../schemaHelpers";
+import {
+  caseNotesSchema,
+  dateStringSchema,
+  opportunitySchemaBase,
+} from "../../schemaHelpers";
 import {
   custodyLevelIsMinimum,
   notServingForSexualOffense,
@@ -25,14 +29,95 @@ import {
   usIdNoDetainersForCrc,
 } from "../UsIdSharedCriteria";
 
+const usIdCrcWorkReleaseTimeBasedCriteria = z.object({
+  reasons: z.array(
+    z.discriminatedUnion("criteriaName", [
+      z.object({
+        criteriaName: z.literal(
+          "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD"
+        ),
+        fullTermCompletionDate: dateStringSchema.nullable(),
+        tentativeParoleDate: dateStringSchema.nullable(),
+      }),
+      z.object({
+        criteriaName: z.literal(
+          "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD"
+        ),
+        fullTermCompletionDate: dateStringSchema,
+        nextParoleHearingDate: dateStringSchema,
+      }),
+      z.object({
+        criteriaName: z.literal(
+          "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE"
+        ),
+        tentativeParoleDate: dateStringSchema,
+      }),
+    ])
+  ),
+});
+
 export const usIdCRCWorkReleaseSchema = opportunitySchemaBase
   .extend({
-    eligibleCriteria: z.object({
-      custodyLevelIsMinimum,
-      notServingForSexualOffense,
-      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
-      usIdNoDetainersForCrc,
-    }),
+    eligibleCriteria: z
+      .object({
+        custodyLevelIsMinimum,
+        notServingForSexualOffense,
+        usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
+        usIdNoDetainersForCrc,
+        usIdCrcWorkReleaseTimeBasedCriteria,
+        // The three criteria below do not come directly from firestore
+        // but are instead derived from usIdCrcWorkReleaseTimeBasedCriteria
+        usIdIncarcerationWithin18MonthsOfFtcdOrTpd: z
+          .object({
+            fullTermCompletionDate: dateStringSchema.nullable(),
+            tentativeParoleDate: dateStringSchema.nullable(),
+          })
+          .optional(),
+        usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd: z
+          .object({
+            fullTermCompletionDate: dateStringSchema,
+            nextParoleHearingDate: dateStringSchema,
+          })
+          .optional(),
+        usIdIncarcerationWithin1YearOfTpdAndLifeSentence: z
+          .object({
+            tentativeParoleDate: dateStringSchema,
+          })
+          .optional(),
+      })
+      .transform(
+        ({ usIdCrcWorkReleaseTimeBasedCriteria: timeCriteria, ...rest }) => {
+          const transformedCriteria = { ...rest };
+          for (const {
+            criteriaName,
+            ...otherReasons
+          } of timeCriteria.reasons) {
+            switch (criteriaName) {
+              case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD":
+                // @ts-expect-error
+                transformedCriteria.usIdIncarcerationWithin18MonthsOfFtcdOrTpd =
+                  otherReasons;
+                break;
+              case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD":
+                // @ts-expect-error
+                transformedCriteria.usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd =
+                  otherReasons;
+                break;
+              case "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE":
+                // @ts-expect-error
+                transformedCriteria.usIdIncarcerationWithin1YearOfTpdAndLifeSentence =
+                  otherReasons;
+                break;
+              default:
+                throw new Error(
+                  `Unexpected time-based criteria for CRC Work Release: ${criteriaName}`
+                );
+            }
+          }
+
+          return transformedCriteria;
+        }
+      ),
     ineligibleCriteria: z.object({}),
   })
   .merge(caseNotesSchema);

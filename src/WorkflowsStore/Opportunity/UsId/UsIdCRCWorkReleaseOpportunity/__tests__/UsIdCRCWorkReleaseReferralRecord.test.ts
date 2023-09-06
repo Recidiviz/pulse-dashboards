@@ -20,10 +20,10 @@ import {
   usIdCRCWorkReleaseSchema,
 } from "../UsIdCRCWorkReleaseReferralRecord";
 
-test("transforms eligible record", () => {
+test("transforms eligible record with two temporal criteria", () => {
   const rawRecord: UsIdCRCWorkReleaseReferralRecordRaw = {
-    stateCode: "US_MI",
-    externalId: "xcrc-eligible-01",
+    stateCode: "US_ID",
+    externalId: "crc-work-release-eligible-01",
     eligibleCriteria: {
       custodyLevelIsMinimum: {
         custodyLevel: "MINIMUM",
@@ -31,6 +31,47 @@ test("transforms eligible record", () => {
       notServingForSexualOffense: null,
       usIdNoDetainersForCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
+      usIdCrcWorkReleaseTimeBasedCriteria: {
+        reasons: [
+          {
+            criteriaName: "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD",
+            fullTermCompletionDate: "2023-10-10",
+            tentativeParoleDate: null,
+          },
+          {
+            criteriaName:
+              "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD",
+            fullTermCompletionDate: "2031-03-13",
+            nextParoleHearingDate: "2023-11-15",
+          },
+        ],
+      },
+    },
+    ineligibleCriteria: {},
+  };
+
+  expect(usIdCRCWorkReleaseSchema.parse(rawRecord)).toMatchSnapshot();
+});
+test("transforms eligible record with life temporal criteria", () => {
+  const rawRecord: UsIdCRCWorkReleaseReferralRecordRaw = {
+    stateCode: "US_ID",
+    externalId: "crc-work-release-eligible-02",
+    eligibleCriteria: {
+      custodyLevelIsMinimum: {
+        custodyLevel: "MINIMUM",
+      },
+      notServingForSexualOffense: null,
+      usIdNoDetainersForCrc: null,
+      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
+      usIdCrcWorkReleaseTimeBasedCriteria: {
+        reasons: [
+          {
+            criteriaName:
+              "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE",
+            tentativeParoleDate: "2024-08-14",
+          },
+        ],
+      },
     },
     ineligibleCriteria: {},
   };

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`transforms eligible record 1`] = `
+exports[`transforms eligible record with life temporal criteria 1`] = `
 Object {
   "caseNotes": Object {},
   "eligibleCriteria": Object {
@@ -8,11 +8,39 @@ Object {
       "custodyLevel": "MINIMUM",
     },
     "notServingForSexualOffense": null,
+    "usIdIncarcerationWithin1YearOfTpdAndLifeSentence": Object {
+      "tentativeParoleDate": 2024-08-14T00:00:00.000Z,
+    },
     "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
     "usIdNoDetainersForCrc": null,
   },
-  "externalId": "xcrc-eligible-01",
+  "externalId": "crc-work-release-eligible-02",
   "ineligibleCriteria": Object {},
-  "stateCode": "US_MI",
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`transforms eligible record with two temporal criteria 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "custodyLevelIsMinimum": Object {
+      "custodyLevel": "MINIMUM",
+    },
+    "notServingForSexualOffense": null,
+    "usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd": Object {
+      "fullTermCompletionDate": 2031-03-13T00:00:00.000Z,
+      "nextParoleHearingDate": 2023-11-15T00:00:00.000Z,
+    },
+    "usIdIncarcerationWithin18MonthsOfFtcdOrTpd": Object {
+      "fullTermCompletionDate": 2023-10-10T00:00:00.000Z,
+      "tentativeParoleDate": null,
+    },
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNoDetainersForCrc": null,
+  },
+  "externalId": "crc-work-release-eligible-01",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_ID",
 }
 `;

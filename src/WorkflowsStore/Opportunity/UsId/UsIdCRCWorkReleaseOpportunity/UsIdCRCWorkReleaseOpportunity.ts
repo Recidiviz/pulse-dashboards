@@ -35,12 +35,41 @@ import {
   usIdCRCWorkReleaseSchema,
 } from "./UsIdCRCWorkReleaseReferralRecord";
 
+const COMMON_TEMPORAL_TOOLTIP = `The resident must fulfill one of the following three conditions:
+    1. Tentative Parole Date (TPD) within seven (18) months OR
+        Full Term Release Date (FTRD) within seven (18) months
+    2. Early Release Date (EPRD) within 18 months AND
+        Full Term Release Date (FTRD) within 15 years
+    3. Life sentence AND
+        Tentative Parole Date (TPD) within 1 year`;
+
 const CRITERIA_COPY: CriteriaCopy<UsIdCRCWorkReleaseReferralRecord> = {
   eligibleCriteria: [
     custodyLevelIsMinimumCopy,
     notServingForSexualOffenseCopy,
     usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy,
     usIdNoDetainersForCrcCopy,
+    [
+      "usIdIncarcerationWithin18MonthsOfFtcdOrTpd",
+      {
+        text: "Tentative Parole Date (TPD) within eighteen (18) months OR Full Term Release Date (FTRD) within eighteen (18) months",
+        tooltip: COMMON_TEMPORAL_TOOLTIP,
+      },
+    ],
+    [
+      "usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd",
+      {
+        text: "Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years",
+        tooltip: COMMON_TEMPORAL_TOOLTIP,
+      },
+    ],
+    [
+      "usIdIncarcerationWithin1YearOfTpdAndLifeSentence",
+      {
+        text: "Life sentence AND Tentative Parole Date (TPD) within 1 year",
+        tooltip: COMMON_TEMPORAL_TOOLTIP,
+      },
+    ],
   ],
   ineligibleCriteria: [],
 };

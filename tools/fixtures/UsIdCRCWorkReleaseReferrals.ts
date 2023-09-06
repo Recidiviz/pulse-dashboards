@@ -32,6 +32,44 @@ export const usIdCRCWorkReleaseReferrals: FixtureData<UsIdCRCWorkReleaseReferral
           notServingForSexualOffense: null,
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
           usIdNoDetainersForCrc: null,
+          usIdCrcWorkReleaseTimeBasedCriteria: {
+            reasons: [
+              {
+                criteriaName:
+                  "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD",
+                fullTermCompletionDate: "2023-10-10",
+                tentativeParoleDate: null,
+              },
+              {
+                criteriaName:
+                  "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD",
+                fullTermCompletionDate: "2031-03-13",
+                nextParoleHearingDate: "2023-11-15",
+              },
+            ],
+          },
+        },
+        ineligibleCriteria: {},
+      },
+      {
+        stateCode: "US_ID",
+        externalId: "ID_RES003",
+        eligibleCriteria: {
+          custodyLevelIsMinimum: {
+            custodyLevel: "MINIMUM",
+          },
+          notServingForSexualOffense: null,
+          usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
+          usIdNoDetainersForCrc: null,
+          usIdCrcWorkReleaseTimeBasedCriteria: {
+            reasons: [
+              {
+                criteriaName:
+                  "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE",
+                tentativeParoleDate: "2024-08-14",
+              },
+            ],
+          },
         },
         ineligibleCriteria: {},
       },
