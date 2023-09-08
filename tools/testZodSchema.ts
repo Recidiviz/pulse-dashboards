@@ -24,6 +24,7 @@ import { collectionNames } from "../src/FirestoreStore";
 import { usIdExpandedCRCSchema } from "../src/WorkflowsStore";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
 import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCa/UsCaSupervisionLevelDowngradeOpportunity/UsCaSupervisionLevelDowngradeReferralRecord";
+import { usIdCRCResidentWorkerSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCResidentWorkerOpportunity";
 import { usIdCRCWorkReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCWorkReleaseOpportunity";
 import { usIdPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdPastFTRDOpportunity/UsIdPastFTRDReferralRecord";
 import { usMeEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeEarlyTerminationOpportunity/UsMeEarlyTerminationReferralRecord";
@@ -71,6 +72,7 @@ const SCHEMAS = {
   pastFTRDReferrals: usIdPastFTRDSchema,
   usMiPastFTRDReferrals: usMiPastFTRDSchema,
   usMeSCCPReferrals: usMeSCCPSchema,
+  usIdCRCResidentWorkerReferrals: usIdCRCResidentWorkerSchema,
   usIdCRCWorkReleaseReferrals: usIdCRCWorkReleaseSchema,
   usIdExpandedCRCReferrals: usIdExpandedCRCSchema,
   usIdSupervisionLevelDowngradeReferrals:

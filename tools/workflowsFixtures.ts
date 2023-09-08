@@ -31,6 +31,7 @@ import { residentsData } from "./fixtures/residents";
 import { staffData } from "./fixtures/staff";
 import { usTnSupervisionLevelDowngradeReferrals } from "./fixtures/supervisionLevelDowngradeReferrals";
 import { usCaSupervisionLevelDowngradeReferrals } from "./fixtures/usCaSupervisionLevelDowngradeReferrals";
+import { usIdCRCResidentWorkerReferrals } from "./fixtures/UsIdCRCResidentWorkerReferrals";
 import { usIdCRCWorkReleaseReferrals } from "./fixtures/UsIdCRCWorkReleaseReferrals";
 import { usIdExpandedCRCReferrals } from "./fixtures/UsIdExpandedCRCReferrals";
 import { usIdPastFtrdFixture } from "./fixtures/UsIdPastFtrdReferrals";
@@ -95,6 +96,7 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   pastFTRDReferrals: usIdPastFtrdFixture,
   supervisionLevelDowngradeReferrals: usTnSupervisionLevelDowngradeReferrals,
   usCaSupervisionLevelDowngradeReferrals,
+  usIdCRCResidentWorkerReferrals,
   usIdCRCWorkReleaseReferrals,
   usIdExpandedCRCReferrals,
   usIdSupervisionLevelDowngradeReferrals,
