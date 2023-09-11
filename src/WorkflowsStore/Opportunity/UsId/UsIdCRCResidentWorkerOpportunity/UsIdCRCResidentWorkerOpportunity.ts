@@ -85,7 +85,7 @@ const DENIAL_REASONS_MAP = {
     "There are pending felony charges or felony investigations in which the resident is a suspect",
   BEHAVIOR: "Resident has had poor institutional behavior",
   PROGRAM: "Missing required facility programming",
-  [OTHER_KEY]: "Other, please specipy a reason",
+  [OTHER_KEY]: "Other, please specify a reason",
 };
 
 export class UsIdCRCResidentWorkerOpportunity extends OpportunityBase<

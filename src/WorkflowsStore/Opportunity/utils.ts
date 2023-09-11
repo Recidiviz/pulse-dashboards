@@ -176,7 +176,8 @@ export const generateOpportunityHydratedHeader = (
       eligibilityText: simplur`${count} resident[|s] [is|are] `,
       opportunityText:
         "eligible for transfer to Expanded Community Reentry Centers.",
-      callToAction: "Submit them for transfer in SOME_SYSTEM.",
+      callToAction:
+        "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
     },
     usIdSupervisionLevelDowngrade: {
       eligibilityText: simplur`${count} client[|s] [is|are] being `,
