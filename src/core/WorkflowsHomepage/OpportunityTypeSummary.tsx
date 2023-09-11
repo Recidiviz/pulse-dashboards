@@ -73,7 +73,6 @@ const OpportunityHeader = styled.div<{
     responsiveRevamp ? typography.Sans24 : typography.Serif24};
   ${({ isMobile }) => isMobile && typography.Sans18};
   color: ${palette.pine2};
-  padding-bottom: ${rem(spacing.md)};
 `;
 
 const OpportunityTypeSummaryCTA = styled(Sans18)`
@@ -92,6 +91,7 @@ const ViewAllLink = styled(Link)<{ $isMobile: boolean }>`
   display: flex;
   align-items: center;
   width: 7rem;
+  padding-top: ${rem(spacing.md)};
 
   &:hover,
   &:focus {
@@ -142,6 +142,18 @@ const ClientAvatarWrapper = styled.div<{
   }
 `;
 
+const ReviewStatusWrapper = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  padding-top: ${rem(spacing.sm)};
+`;
+
+const ReviewStatusCount = styled.div`
+  ${typography.Sans14};
+  color: ${palette.slate70};
+  padding-right: ${rem(spacing.md)};
+`;
+
 const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   opportunities,
   opportunityType,
@@ -164,6 +176,10 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   const previewOpportunities = opportunities.slice(0, sliceIndex);
   const numOpportunitiesToDisplay = opportunities.length - sliceIndex;
 
+  const numIneligible = opportunities.filter(
+    (opp) => opp.reviewStatus === "DENIED"
+  ).length;
+
   const header = generateOpportunityHydratedHeader(
     opportunityType,
     opportunities.length
@@ -183,24 +199,31 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
           responsiveRevamp={!!responsiveRevamp}
           isMobile={isMobile && responsiveRevamp}
         >
-          {header.fullText ?? (
-            <>
-              {header.eligibilityText}{" "}
-              {responsiveRevamp ? (
-                header.opportunityText
-              ) : (
-                <OpportunityHighlight>
-                  {header.opportunityText}
-                </OpportunityHighlight>
+          {numIneligible === opportunities.length
+            ? header.callToAction
+            : header.fullText ?? (
+                <>
+                  {header.eligibilityText}{" "}
+                  {responsiveRevamp ? (
+                    header.opportunityText
+                  ) : (
+                    <OpportunityHighlight>
+                      {header.opportunityText}
+                    </OpportunityHighlight>
+                  )}
+                </>
               )}
-            </>
-          )}
         </OpportunityHeader>
         {!responsiveRevamp && (
           <OpportunityTypeSummaryCTA>
             {header.callToAction}
           </OpportunityTypeSummaryCTA>
         )}
+        <ReviewStatusWrapper>
+          {numIneligible > 0 && (
+            <ReviewStatusCount>Ineligible: {numIneligible}</ReviewStatusCount>
+          )}
+        </ReviewStatusWrapper>
         <ViewAllLink
           $isMobile={isMobile && responsiveRevamp}
           className={`ViewAllLink__${opportunityType}`}

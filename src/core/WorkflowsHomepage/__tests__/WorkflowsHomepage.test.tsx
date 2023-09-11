@@ -206,4 +206,35 @@ describe("WorkflowsHomepage", () => {
       )
     ).toBeInTheDocument();
   });
+
+  test("render opportunities where all clients are marked ineligible", () => {
+    // @ts-expect-error
+    mockOpportunity.person.assignedStaffId = "123";
+    mockOpportunity.reviewStatus = "DENIED";
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        opportunitiesLoaded: () => true,
+        opportunityTypes: ["pastFTRD"],
+        allOpportunitiesByType: {
+          pastFTRD: [mockOpportunity],
+        },
+        hasOpportunities: () => true,
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsHomepage />
+      </BrowserRouter>
+    );
+
+    expect(
+      screen.getByText(
+        "Review clients who are nearing or past their full-term release date and email clerical to move them to history."
+      )
+    ).toBeInTheDocument();
+
+    expect(screen.getByText("Ineligible: 1")).toBeInTheDocument();
+  });
 });
