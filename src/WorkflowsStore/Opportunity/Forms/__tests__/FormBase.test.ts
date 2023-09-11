@@ -35,7 +35,11 @@ class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {}
 
 function createTestUnit() {
   rootStore = new RootStore();
-  client = { pseudonymizedId: "TEST123", rootStore } as Client;
+  client = {
+    pseudonymizedId: "TEST123",
+    rootStore,
+    recordId: "us_id_001",
+  } as Client;
   opp = new TestOpportunity(client, "LSU", rootStore);
   jest.spyOn(opp, "isHydrated", "get").mockReturnValue(true);
   form = new FormBase<any>(opp, rootStore);

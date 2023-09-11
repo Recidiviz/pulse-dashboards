@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,11 @@ import { RootStore } from "../../RootStore";
 import { UserAppMetadata } from "../../RootStore/types";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import FirestoreStore from "../FirestoreStore";
-import { MilestonesMessage, SupervisionTaskUpdate } from "../types";
+import {
+  MilestonesMessage,
+  OpportunityUpdateWithForm,
+  SupervisionTaskUpdate,
+} from "../types";
 
 jest.mock("firebase/auth");
 jest.mock("firebase/firestore");
@@ -216,11 +220,24 @@ describe("FirestoreStore", () => {
         snoozedOn: "2023-01-01",
       },
     };
-    store.updateSupervisionTask("homeVisit", "123-test", taskUpdate);
+    store.updateSupervisionTask("homeVisit", "us_ca_123", taskUpdate);
 
-    expect(mockSetDoc).toBeCalledWith("test-doc-ref", taskUpdate, {
-      merge: true,
-    });
+    expect(mockSetDoc.mock.calls).toEqual([
+      [
+        "test-doc-ref",
+        { stateCode: "us_ca" },
+        {
+          merge: true,
+        },
+      ],
+      [
+        "test-doc-ref",
+        { ...taskUpdate },
+        {
+          merge: true,
+        },
+      ],
+    ]);
   });
 
   test("updateMilestonesMessages", () => {
@@ -232,18 +249,95 @@ describe("FirestoreStore", () => {
     const milestonesMessagesUpdate: PartialWithFieldValue<MilestonesMessage> = {
       status: "IN_PROGRESS",
     };
-    store.updateMilestonesMessages("123-test", milestonesMessagesUpdate);
-    expect(mockDoc).toBeCalledWith(
-      undefined,
-      "clientUpdatesV2",
-      "123-test/milestonesMessages/milestones_01_2022"
-    );
-    expect(mockSetDoc).toBeCalledWith(
-      "test-doc-ref",
-      milestonesMessagesUpdate,
-      {
-        merge: true,
-      }
-    );
+    store.updateMilestonesMessages("us_ca_123", milestonesMessagesUpdate);
+    expect(mockDoc.mock.calls).toEqual([
+      [
+        undefined,
+        "clientUpdatesV2",
+        "us_ca_123/milestonesMessages/milestones_01_2022",
+      ],
+      [undefined, "clientUpdatesV2", "us_ca_123"],
+    ]);
+
+    expect(mockSetDoc.mock.calls).toEqual([
+      [
+        "test-doc-ref",
+        { stateCode: "us_ca" },
+        {
+          merge: true,
+        },
+      ],
+      [
+        "test-doc-ref",
+        { ...milestonesMessagesUpdate },
+        {
+          merge: true,
+        },
+      ],
+    ]);
+  });
+
+  test("updateOpportunity", () => {
+    mockRootStore = {
+      isImpersonating: false,
+    } as unknown as RootStore;
+    mockDoc.mockReturnValue("test-doc-ref");
+    store = new FirestoreStore({ rootStore: mockRootStore });
+    const opportunityUpdate: PartialWithFieldValue<
+      OpportunityUpdateWithForm<Record<string, any>>
+    > = {
+      completed: {
+        update: {},
+      },
+    };
+    store.updateOpportunity("LSU", "us_id_123", opportunityUpdate);
+    expect(mockDoc.mock.calls).toEqual([
+      [undefined, "clientUpdatesV2", "us_id_123/clientOpportunityUpdates/LSU"],
+      [undefined, "clientUpdatesV2", "us_id_123"],
+    ]);
+
+    expect(mockSetDoc.mock.calls).toEqual([
+      [
+        "test-doc-ref",
+        { stateCode: "us_id" },
+        {
+          merge: true,
+        },
+      ],
+      [
+        "test-doc-ref",
+        { ...opportunityUpdate },
+        {
+          merge: true,
+        },
+      ],
+    ]);
+  });
+
+  test("updateSelectedSearchIds", () => {
+    mockRootStore = {
+      isImpersonating: false,
+    } as unknown as RootStore;
+    mockDoc.mockReturnValue("test-doc-ref");
+    store = new FirestoreStore({ rootStore: mockRootStore });
+    const selectedSearchIds = ["id1", "id2"];
+    const userEmail = "user@domain.gov";
+    const stateCode = "us_ca";
+    const update = {
+      stateCode: "us_ca",
+      selectedSearchIds,
+    };
+    store.updateSelectedSearchIds(userEmail, stateCode, selectedSearchIds);
+    expect(mockDoc.mock.calls).toEqual([[undefined, "userUpdates", userEmail]]);
+
+    expect(mockSetDoc.mock.calls).toEqual([
+      [
+        "test-doc-ref",
+        update,
+        {
+          merge: true,
+        },
+      ],
+    ]);
   });
 });

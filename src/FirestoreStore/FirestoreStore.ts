@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -227,18 +227,50 @@ export default class FirestoreStore {
       );
       return;
     }
+
     // eslint-disable-next-line no-restricted-syntax
     return setDoc(docRef, { ...update }, { merge: true });
+  }
+
+  /**
+   * All updates to the `clientUpdatesV2` collection should utilitize this method, which first adds the `stateCode` to the person document,
+   * then updates the update document.
+   */
+  updateClientUpdatesV2Document(
+    documentType: string,
+    recordId: string,
+    docRef: DocumentReference<DocumentData>,
+    update: any
+  ) {
+    if (this.rootStore.isImpersonating) {
+      // eslint-disable-next-line
+      console.log(
+        `[IMPERSONATOR] Skipping update for: ${documentType} for id ${recordId} with updates ${JSON.stringify(
+          update
+        )}`
+      );
+      return;
+    }
+
+    // First add the state code to the `clientUpdatesV2 document
+    this.updatePerson(recordId, { stateCode: recordId.slice(0, 5) });
+
+    // Then update the document with the actual update
+    this.updateDocument(documentType, recordId, docRef, update);
   }
 
   // Function to add an update in `clientUpdatesV2`. All JusticeInvolvedPerson updates (both Clients and Residents)
   // are being stored in `clientUpdatesv2`, so the name of the collection is misleading, all person updates are stored here.
   async updatePerson(
     recordId: string,
-    update: Record<PersonUpdateType, string | ContactMethodType>
+    update:
+      | Record<PersonUpdateType, string | ContactMethodType>
+      | Record<"stateCode", string>
   ) {
     const docRef = doc(this.db, collectionNames.clientUpdatesV2, `${recordId}`);
 
+    // This is the only place an update should be made to `clientUpdatesV2` without using
+    // the `updateClientUpdatesV2` method
     return this.updateDocument(
       collectionNames.clientUpdatesV2,
       recordId,
@@ -258,7 +290,7 @@ export default class FirestoreStore {
       `${recordId}/${collectionNames.taskUpdates}/supervision`
     );
 
-    return this.updateDocument(taskType, recordId, taskDocRef, {
+    return this.updateClientUpdatesV2Document(taskType, recordId, taskDocRef, {
       ...update,
     });
   }
@@ -274,7 +306,7 @@ export default class FirestoreStore {
       `${recordId}/${collectionNames.milestonesMessages}/${dateKey}`
     );
 
-    return this.updateDocument(
+    return this.updateClientUpdatesV2Document(
       collectionNames.milestonesMessages,
       recordId,
       taskDocRef,
@@ -295,9 +327,14 @@ export default class FirestoreStore {
       `${recordId}/${collectionNames.clientOpportunityUpdates}/${opportunityType}`
     );
 
-    return this.updateDocument(opportunityType, recordId, opportunityDocRef, {
-      ...update,
-    });
+    return this.updateClientUpdatesV2Document(
+      opportunityType,
+      recordId,
+      opportunityDocRef,
+      {
+        ...update,
+      }
+    );
   }
 
   async updateOpportunityDenial(
