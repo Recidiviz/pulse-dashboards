@@ -351,13 +351,15 @@ const formatDueDateFromToday = (dueDate: Date): string => {
 function splitAuth0UserName(
   name: string
 ): Record<"firstName" | "lastName", string> {
-  let splitName;
-  if (name.includes(",")) {
-    splitName = name.split(", ");
-  } else {
-    splitName = name.split(" ").reverse();
+  if (name.includes(", ")) {
+    const [lastName, firstName] = name.split(", ");
+    return { lastName, firstName };
   }
-  return { lastName: splitName[0], firstName: splitName[1] };
+  const splitName = name.split(" ");
+  const lastName = splitName[splitName.length - 1];
+  const firstName = splitName.slice(0, -1).join(" ");
+
+  return { lastName, firstName };
 }
 
 function rangeString({ min, max }: { min?: number; max?: number }) {

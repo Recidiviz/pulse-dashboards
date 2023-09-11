@@ -344,4 +344,34 @@ describe("formatStrings", () => {
       expect(utils.formatNameLastFirst({})).toBe("Unknown, N/A");
     });
   });
+
+  describe("splitAuth0UserName", () => {
+    it("Handles 'First Last'", () => {
+      expect(utils.splitAuth0UserName("First Last")).toStrictEqual({
+        firstName: "First",
+        lastName: "Last",
+      });
+    });
+
+    it("Handles 'Last, First'", () => {
+      expect(utils.splitAuth0UserName("Last, First")).toStrictEqual({
+        firstName: "First",
+        lastName: "Last",
+      });
+    });
+
+    it("Handles 'Last, First Middle'", () => {
+      expect(utils.splitAuth0UserName("Last, First Middle")).toStrictEqual({
+        firstName: "First Middle",
+        lastName: "Last",
+      });
+    });
+
+    it("Handles 'First Middle Last'", () => {
+      expect(utils.splitAuth0UserName("First Middle Last")).toStrictEqual({
+        firstName: "First Middle",
+        lastName: "Last",
+      });
+    });
+  });
 });
