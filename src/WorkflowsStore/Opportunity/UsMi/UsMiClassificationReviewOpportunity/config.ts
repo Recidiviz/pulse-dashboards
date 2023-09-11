@@ -14,10 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { add } from "date-fns";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usMiClassificationReviewConfig: OpportunityConfig = {
   stateCode: "US_MI",
   urlSection: "classificationReview",
   label: "Classification Review",
+  snooze: {
+    // Ideal behavior is to calculate snooze until based on the date of the last classification review
+    // or when they are marked ineligible, whichever is earliest.
+    defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { months: 6 }),
+  },
 };

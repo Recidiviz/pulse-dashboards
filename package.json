@@ -93,7 +93,7 @@
     "d3-array": "2.8.0",
     "d3-scale": "^3.2.3",
     "d3-shape": "^2.1.0",
-    "date-fns": "^2.19.0",
+    "date-fns": "^2.23.0",
     "debug": "~2.6.9",
     "dedent": "^0.7.0",
     "docxtemplater": "^3.31.5",

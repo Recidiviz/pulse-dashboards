@@ -14,10 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { nextSunday } from "date-fns";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig = {
   stateCode: "US_MO",
   urlSection: "restrictiveHousingStatusHearing",
   label: "Restrictive Housing Status Hearing",
+  snooze: {
+    defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
+  },
 };
