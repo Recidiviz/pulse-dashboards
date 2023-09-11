@@ -63,7 +63,7 @@ export type TenantConfig = {
   tableColumns?: TableColumns;
   opportunityTypes?: OpportunityType[];
   workflowsSupportedSystems?: SystemId[];
-  workflowsGatedSystemsByFeatureVariant?: Partial<
+  workflowsSystemsGatedByFeatureVariant?: Partial<
     Record<SystemId, FeatureVariant[]>
   >;
   workflowsSystemConfigs?: {

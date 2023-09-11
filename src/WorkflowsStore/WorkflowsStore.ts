@@ -69,7 +69,6 @@ import {
   FeatureVariant,
 } from "../RootStore/types";
 import tenants from "../tenants";
-import { PartialRecord } from "../utils/typeUtils";
 import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
@@ -78,6 +77,7 @@ import {
   opportunityToSortFunctionMapping,
   OpportunityType,
 } from "./Opportunity";
+import { OPPORTUNITY_CONFIGS } from "./Opportunity/OpportunityConfigs";
 import { Resident } from "./Resident";
 import {
   CaseloadSubscription,
@@ -390,7 +390,7 @@ export class WorkflowsStore implements Hydratable {
     if (!featureVariants || !currentTenantId) return [];
 
     const workflowsGatedSystems =
-      tenants[currentTenantId]?.workflowsGatedSystemsByFeatureVariant;
+      tenants[currentTenantId]?.workflowsSystemsGatedByFeatureVariant;
     if (!workflowsGatedSystems) return [];
 
     const featureVariantKeys = new Set(Object.keys(featureVariants));
@@ -727,14 +727,6 @@ export class WorkflowsStore implements Hydratable {
     );
   }
 
-  gatedOpportunities: PartialRecord<OpportunityType, FeatureVariant> = {
-    usIdExpandedCRC: "usIdExpandedCRC",
-    usIdCRCWorkRelease: "usIdCRC",
-    usTnExpiration: "usTnExpiration",
-    usMeWorkRelease: "usMeWorkRelease",
-    usMeFurloughRelease: "usMeFurloughRelease",
-  };
-
   /**
    * Opportunity types are ranked in order of how they should display on the Homepage
    */
@@ -748,7 +740,7 @@ export class WorkflowsStore implements Hydratable {
     const opportunityTypes = tenants[currentTenantId]?.opportunityTypes ?? [];
 
     return opportunityTypes.filter((oppType) => {
-      const gatingVariant = this.gatedOpportunities[oppType];
+      const gatingVariant = OPPORTUNITY_CONFIGS[oppType]?.featureVariant;
       if (!gatingVariant) return true;
 
       return this.featureVariants[gatingVariant];

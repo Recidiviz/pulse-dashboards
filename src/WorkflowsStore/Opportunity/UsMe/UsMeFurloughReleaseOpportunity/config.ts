@@ -20,4 +20,5 @@ export const usMeFurloughReleaseConfig: OpportunityConfig = {
   stateCode: "US_ME",
   urlSection: "furloughRelease",
   label: "Furlough Program",
+  featureVariant: "usMeFurloughRelease",
 };

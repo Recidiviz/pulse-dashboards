@@ -20,4 +20,5 @@ export const usMeWorkReleaseConfig: OpportunityConfig = {
   stateCode: "US_ME",
   urlSection: "workRelease",
   label: "Work Release",
+  featureVariant: "usMeWorkRelease",
 };

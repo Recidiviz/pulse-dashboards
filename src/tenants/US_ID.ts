@@ -70,7 +70,7 @@ const US_ID_CONFIG: TenantConfig = {
     assessment: UsIdRiskAssessmentTask,
   },
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
-  workflowsGatedSystemsByFeatureVariant: {
+  workflowsSystemsGatedByFeatureVariant: {
     INCARCERATION: ["usIdCRC", "usIdExpandedCRC"],
   },
   workflowsSystemConfigs: {

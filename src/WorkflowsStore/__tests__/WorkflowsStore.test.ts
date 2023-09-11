@@ -32,8 +32,9 @@ import FirestoreStore, {
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
+import { FeatureVariant } from "../../RootStore/types";
 import { isDemoMode } from "../../utils/isDemoMode";
-import type { WorkflowsStore } from "..";
+import type { OpportunityType, WorkflowsStore } from "..";
 import {
   ineligibleClient,
   lsuAlmostEligibleClient,
@@ -52,6 +53,7 @@ import {
   LSUOpportunity,
   UsNdEarlyTerminationOpportunity,
 } from "../Opportunity";
+import { OPPORTUNITY_CONFIGS } from "../Opportunity/OpportunityConfigs";
 import { Resident } from "../Resident";
 import { MilestonesMessageUpdateSubscription } from "../subscriptions/MilestonesMessageUpdateSubscription";
 import { filterByUserDistrict } from "../utils";
@@ -96,7 +98,7 @@ const stateConfigs: Record<testStateCode | "RECIDIVIZ", any> = {
   },
   US_BB: {
     workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
-    workflowsGatedSystemsByFeatureVariant: {
+    workflowsSystemsGatedByFeatureVariant: {
       INCARCERATION: ["usIdCRC", "usIdExtendedCRC"],
     },
     availableStateCodes: ["US_BB"],
@@ -943,7 +945,7 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
     stateConfigs[SESSION_STATE_CODE as testStateCode].workflowsSupportedSystems;
   const SESSION_SYSTEMS_WITH_GATES = Object.keys(
     (stateConfigs[SESSION_STATE_CODE as testStateCode]
-      .workflowsGatedSystemsByFeatureVariant as Record<any, any[]>) || {}
+      .workflowsSystemsGatedByFeatureVariant as Record<any, any[]>) || {}
   );
   const SESSION_SYSTEMS_WITHOUT_GATES = difference(
     SESSION_SUPPORTED_SYSTEMS,
@@ -1019,7 +1021,7 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
           (stateConfigs[code].workflowsSupportedSystems as any[]) || []
         ).includes(TEST_GATED_SYSTEM) &&
         !Object.keys(
-          (stateConfigs[code].workflowsGatedSystemsByFeatureVariant as Record<
+          (stateConfigs[code].workflowsSystemsGatedByFeatureVariant as Record<
             any,
             any[]
           >) || {}
@@ -1040,7 +1042,7 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
         stateConfigs[stateCode].workflowsSupportedSystems as any[],
         Object.keys(
           (stateConfigs[stateCode]
-            .workflowsGatedSystemsByFeatureVariant as Record<any, any[]>) || {}
+            .workflowsSystemsGatedByFeatureVariant as Record<any, any[]>) || {}
         )
       );
       expect(workflowsStore.workflowsSupportedSystems).toEqual(
@@ -1088,19 +1090,20 @@ describe("opportunityTypes for US_TN", () => {
 });
 
 describe("opportunityTypes are gated by gatedOpportunities when set", () => {
+  const NON_GATED_OPPS = ["compliantReporting"];
+  const TEST_GATED_OPP = "LSU" as OpportunityType;
+  const TEST_FEAT_VAR = "TEST" as FeatureVariant;
   beforeEach(() => {
     runInAction(() => {
       // @ts-expect-error
       rootStore.tenantStore.currentTenantId = "US_XX";
-      workflowsStore.gatedOpportunities = {
-        LSU: "TEST",
-      };
+      OPPORTUNITY_CONFIGS[TEST_GATED_OPP].featureVariant = TEST_FEAT_VAR;
     });
   });
 
   test("gated opportunity is not enabled when feature variant is not set for current user", async () => {
     await waitForHydration({ ...mockOfficer });
-    expect(workflowsStore.opportunityTypes).toEqual(["compliantReporting"]);
+    expect(workflowsStore.opportunityTypes).toEqual(NON_GATED_OPPS);
   });
 
   test("gated opportunity is enabled when feature variant is set for current user", async () => {
@@ -1116,8 +1119,8 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
       rootStore.userStore.userIsLoading = false;
     });
     expect(workflowsStore.opportunityTypes.sort()).toEqual([
-      "LSU",
-      "compliantReporting",
+      TEST_GATED_OPP,
+      ...NON_GATED_OPPS,
     ]);
   });
 });
