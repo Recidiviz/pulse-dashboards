@@ -18,6 +18,7 @@
 import { render, screen } from "@testing-library/react";
 
 import { useRootStore } from "../../../components/StoreProvider";
+import { Client } from "../../../WorkflowsStore/Client";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { OpportunityPersonList } from "../OpportunityPersonList";
 
@@ -102,10 +103,16 @@ test("hydrated", () => {
   ];
   const opp1 = {
     ...mockOpportunity,
+    person: {
+      recordId: "1",
+    } as Client,
     sectionOrder: oppSectionOrder,
   };
   const opp2 = {
     ...opp1,
+    person: {
+      recordId: "2",
+    } as Client,
   };
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
@@ -146,6 +153,9 @@ test("hydrated with one section", () => {
   const oppSectionOrder = [firstSectionText, "Overridden"];
   const opp = {
     ...mockOpportunity,
+    person: {
+      recordId: "4",
+    } as Client,
     sectionOrder: oppSectionOrder,
   };
   useRootStoreMock.mockReturnValue({
@@ -178,6 +188,9 @@ test("hydrated with second section", () => {
   const oppSectionOrder = [firstSectionText, overriddenSectionText];
   const opp = {
     ...mockOpportunity,
+    person: {
+      recordId: "3",
+    } as Client,
     sectionOrder: oppSectionOrder,
   };
   useRootStoreMock.mockReturnValue({
