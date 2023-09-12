@@ -50,7 +50,7 @@ export const usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy: Co
     {
       text: "No escape attempts in the last 10 years",
       tooltip:
-        "Instant offense cannot be escape. If escape history, charge must be at least ten (10) years old for override",
+        "No escape, eluding police, or absconsion offense(s) in the last 10 years",
     },
   ];
 

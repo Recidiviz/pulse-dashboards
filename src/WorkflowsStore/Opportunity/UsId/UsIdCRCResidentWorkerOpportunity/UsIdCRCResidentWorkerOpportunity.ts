@@ -80,7 +80,7 @@ const CRITERIA_COPY: CriteriaCopy<UsIdCRCResidentWorkerReferralRecord> = {
 };
 
 const DENIAL_REASONS_MAP = {
-  MED: "Was not approved by an IDOC medical provider",
+  MEDICAL: "Was not approved by an IDOC medical provider",
   PENDING:
     "There are pending felony charges or felony investigations in which the resident is a suspect",
   BEHAVIOR: "Resident has had poor institutional behavior",

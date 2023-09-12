@@ -91,16 +91,16 @@ const CRITERIA_COPY: CriteriaCopy<UsIdExpandedCRCReferralRecord> = {
 };
 
 const DENIAL_REASONS_MAP = {
-  "MEDICAL CLEARANCE": "Was not approved by an IDOC medical provider",
-  "PENDING CHARGES":
+  MEDICAL: "Was not approved by an IDOC medical provider",
+  PENDING:
     "There are pending felony charges or felony investigations in which the resident is a suspect",
   BEHAVIOR: "Resident has had poor institutional behavior",
-  PROGRAMMING: "Missing required facility programming",
-  "TRUST ACCOUNT":
-    "Resident does not have $500.00 in their resident trust account",
+  PROGRAM: "Missing required facility programming",
+  TRUST: "Resident does not have $500.00 in their resident trust account",
   EMPLOYMENT:
     "Resident is not currently employed full-time or engaged in or accepted to a full-time " +
     "Idaho educational program approved by the IDOC",
+  CLASS_A_OR_B: "Has class A or B disciplinary reports in the past six months",
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
