@@ -29,7 +29,7 @@ test("transforms eligible record with two temporal criteria", () => {
         custodyLevel: "MINIMUM",
       },
       notServingForSexualOffense: null,
-      usIdNoDetainersForCrc: null,
+      usIdNoDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
       usIdCrcResidentWorkerTimeBasedCriteria: {
         reasons: [
@@ -62,7 +62,7 @@ test("transforms eligible record with life temporal criteria", () => {
         custodyLevel: "MINIMUM",
       },
       notServingForSexualOffense: null,
-      usIdNoDetainersForCrc: null,
+      usIdNoDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
       usIdCrcResidentWorkerTimeBasedCriteria: {
         reasons: [

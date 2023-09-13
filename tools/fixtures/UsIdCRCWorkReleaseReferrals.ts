@@ -31,7 +31,7 @@ export const usIdCRCWorkReleaseReferrals: FixtureData<UsIdCRCWorkReleaseReferral
           },
           notServingForSexualOffense: null,
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-          usIdNoDetainersForCrc: null,
+          usIdNoDetainersForXcrcAndCrc: null,
           usIdCrcWorkReleaseTimeBasedCriteria: {
             reasons: [
               {
@@ -60,7 +60,7 @@ export const usIdCRCWorkReleaseReferrals: FixtureData<UsIdCRCWorkReleaseReferral
           },
           notServingForSexualOffense: null,
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-          usIdNoDetainersForCrc: null,
+          usIdNoDetainersForXcrcAndCrc: null,
           usIdCrcWorkReleaseTimeBasedCriteria: {
             reasons: [
               {

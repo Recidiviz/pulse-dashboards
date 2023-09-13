@@ -54,12 +54,13 @@ export const usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy: Co
     },
   ];
 
-export const usIdNoDetainersForCrc = z.object({}).nullable();
+export const usIdNoDetainersForXcrcAndCrc = z.object({}).nullable();
 
-export const usIdNoDetainersForCrcCopy: CopyTuple<"usIdNoDetainersForCrc"> = [
-  "usIdNoDetainersForCrc",
-  {
-    text: "No active detainers",
-    tooltip: "No active felony detainer (except notification-only)",
-  },
-];
+export const usIdNoDetainersForXcrcAndCrcCopy: CopyTuple<"usIdNoDetainersForXcrcAndCrc"> =
+  [
+    "usIdNoDetainersForXcrcAndCrc",
+    {
+      text: "No active detainers or holds",
+      tooltip: "Cannot have any detainers or holds",
+    },
+  ];

@@ -28,6 +28,7 @@ import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "../../utils";
 import {
   notServingForSexualOffenseCopy,
   usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy,
+  usIdNoDetainersForXcrcAndCrcCopy,
 } from "../UsIdSharedCriteria";
 import {
   UsIdExpandedCRCReferralRecord,
@@ -36,7 +37,7 @@ import {
 
 const CRITERIA_FORMATTERS: CriteriaFormatters<UsIdExpandedCRCReferralRecord> = {
   eligibleCriteria: {
-    usIdInCrcFacility: {
+    usIdInCrcFacilityOrPwccUnit1: {
       START_DATE: ({ crcStartDate }) => formatWorkflowsDate(crcStartDate),
     },
   },
@@ -53,14 +54,8 @@ const CRITERIA_COPY: CriteriaCopy<UsIdExpandedCRCReferralRecord> = {
       },
     ],
     notServingForSexualOffenseCopy,
-    [
-      "usIdNoDetainersForXcrc",
-      {
-        text: "No active detainers or holds",
-        tooltip: "Cannot have any detainers or holds;",
-      },
-    ],
     usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy,
+    usIdNoDetainersForXcrcAndCrcCopy,
     [
       "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd",
       {
@@ -72,7 +67,7 @@ const CRITERIA_COPY: CriteriaCopy<UsIdExpandedCRCReferralRecord> = {
       },
     ],
     [
-      "usIdInCrcFacilityFor60Days",
+      "usIdInCrcFacilityOrPwccUnit1For60Days",
       {
         text: "Served at least 60 days at current facility",
         tooltip:
@@ -81,7 +76,7 @@ const CRITERIA_COPY: CriteriaCopy<UsIdExpandedCRCReferralRecord> = {
       },
     ],
     [
-      "usIdInCrcFacility",
+      "usIdInCrcFacilityOrPwccUnit1",
       {
         text: "Resident in $FACILITY_NAME since $START_DATE",
       },

@@ -31,17 +31,17 @@ export const usIdExpandedCRCReferrals: FixtureData<UsIdExpandedCRCReferralRecord
           },
           notServingForSexualOffense: null,
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-          usIdNoDetainersForXcrc: null,
+          usIdNoDetainersForXcrcAndCrc: null,
           usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
             fullTermCompletionDate: "2024-03-12",
             paroleEligibilityDate: "2023-11-03",
             tentativeParoleDate: null,
           },
-          usIdInCrcFacility: {
+          usIdInCrcFacilityOrPwccUnit1: {
             crcStartDate: "2023-02-15",
             facilityName: "Mom Corp.",
           },
-          usIdInCrcFacilityFor60Days: {
+          usIdInCrcFacilityOrPwccUnit1For60Days: {
             sixtyDaysInCrcFacilityDate: "2023-04-16",
           },
         },

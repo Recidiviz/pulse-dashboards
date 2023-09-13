@@ -26,7 +26,7 @@ import {
   custodyLevelIsMinimum,
   notServingForSexualOffense,
   usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
-  usIdNoDetainersForCrc,
+  usIdNoDetainersForXcrcAndCrc,
 } from "../UsIdSharedCriteria";
 
 const usIdCrcResidentWorkerTimeBasedCriteria = z.object({
@@ -64,7 +64,7 @@ export const usIdCRCResidentWorkerSchema = opportunitySchemaBase
         custodyLevelIsMinimum,
         notServingForSexualOffense,
         usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
-        usIdNoDetainersForCrc,
+        usIdNoDetainersForXcrcAndCrc,
         usIdCrcResidentWorkerTimeBasedCriteria,
         // The three criteria below do not come directly from firestore
         // but are instead derived from usIdCrcResidentWorkerTimeBasedCriteria

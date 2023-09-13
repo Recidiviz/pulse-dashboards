@@ -28,7 +28,7 @@ import {
   custodyLevelIsMinimumCopy,
   notServingForSexualOffenseCopy,
   usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy,
-  usIdNoDetainersForCrcCopy,
+  usIdNoDetainersForXcrcAndCrcCopy,
 } from "../UsIdSharedCriteria";
 import {
   UsIdCRCWorkReleaseReferralRecord,
@@ -48,7 +48,7 @@ const CRITERIA_COPY: CriteriaCopy<UsIdCRCWorkReleaseReferralRecord> = {
     custodyLevelIsMinimumCopy,
     notServingForSexualOffenseCopy,
     usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy,
-    usIdNoDetainersForCrcCopy,
+    usIdNoDetainersForXcrcAndCrcCopy,
     [
       "usIdIncarcerationWithin18MonthsOfFtcdOrTpd",
       {

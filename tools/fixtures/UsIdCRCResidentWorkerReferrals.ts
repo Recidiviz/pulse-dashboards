@@ -31,7 +31,7 @@ export const usIdCRCResidentWorkerReferrals: FixtureData<UsIdCRCResidentWorkerRe
           },
           notServingForSexualOffense: null,
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-          usIdNoDetainersForCrc: null,
+          usIdNoDetainersForXcrcAndCrc: null,
           usIdCrcResidentWorkerTimeBasedCriteria: {
             reasons: [
               {
@@ -53,7 +53,7 @@ export const usIdCRCResidentWorkerReferrals: FixtureData<UsIdCRCResidentWorkerRe
           },
           notServingForSexualOffense: null,
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-          usIdNoDetainersForCrc: null,
+          usIdNoDetainersForXcrcAndCrc: null,
           usIdCrcResidentWorkerTimeBasedCriteria: {
             reasons: [
               {

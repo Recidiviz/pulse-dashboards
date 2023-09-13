@@ -8,11 +8,11 @@ Object {
       "custodyLevel": "MINIMUM",
     },
     "notServingForSexualOffense": null,
-    "usIdInCrcFacility": Object {
+    "usIdInCrcFacilityOrPwccUnit1": Object {
       "crcStartDate": 2022-02-06T00:00:00.000Z,
       "facilityName": "Facility 73",
     },
-    "usIdInCrcFacilityFor60Days": Object {
+    "usIdInCrcFacilityOrPwccUnit1For60Days": Object {
       "sixtyDaysInCrcFacilityDate": 2022-04-07T00:00:00.000Z,
     },
     "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd": Object {
@@ -21,7 +21,7 @@ Object {
       "tentativeParoleDate": null,
     },
     "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
-    "usIdNoDetainersForXcrc": null,
+    "usIdNoDetainersForXcrcAndCrc": null,
   },
   "externalId": "xcrc-eligible-01",
   "ineligibleCriteria": Object {},
@@ -37,11 +37,11 @@ Object {
       "custodyLevel": "MINIMUM",
     },
     "notServingForSexualOffense": null,
-    "usIdInCrcFacility": Object {
+    "usIdInCrcFacilityOrPwccUnit1": Object {
       "crcStartDate": 2022-02-06T00:00:00.000Z,
       "facilityName": "Vault 6",
     },
-    "usIdInCrcFacilityFor60Days": Object {
+    "usIdInCrcFacilityOrPwccUnit1For60Days": Object {
       "sixtyDaysInCrcFacilityDate": 2022-04-07T00:00:00.000Z,
     },
     "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd": Object {
@@ -50,7 +50,7 @@ Object {
       "tentativeParoleDate": 2022-07-11T00:00:00.000Z,
     },
     "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
-    "usIdNoDetainersForXcrc": null,
+    "usIdNoDetainersForXcrcAndCrc": null,
   },
   "externalId": "xcrc-eligible-02",
   "ineligibleCriteria": Object {},
@@ -72,11 +72,11 @@ Object {
       "custodyLevel": "MINIMUM",
     },
     "notServingForSexualOffense": null,
-    "usIdInCrcFacility": Object {
+    "usIdInCrcFacilityOrPwccUnit1": Object {
       "crcStartDate": 2022-02-06T00:00:00.000Z,
       "facilityName": "Vault 6",
     },
-    "usIdInCrcFacilityFor60Days": Object {
+    "usIdInCrcFacilityOrPwccUnit1For60Days": Object {
       "sixtyDaysInCrcFacilityDate": 2022-04-07T00:00:00.000Z,
     },
     "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd": Object {
@@ -85,7 +85,7 @@ Object {
       "tentativeParoleDate": 2022-07-11T00:00:00.000Z,
     },
     "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
-    "usIdNoDetainersForXcrc": null,
+    "usIdNoDetainersForXcrcAndCrc": null,
   },
   "externalId": "xcrc-eligible-02",
   "ineligibleCriteria": Object {},

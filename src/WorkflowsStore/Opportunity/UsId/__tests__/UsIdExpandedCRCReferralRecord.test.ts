@@ -29,18 +29,18 @@ test("transforms record with FTCD and PED set", () => {
         custodyLevel: "MINIMUM",
       },
       notServingForSexualOffense: null,
-      usIdNoDetainersForXcrc: null,
+      usIdNoDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
       usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
         fullTermCompletionDate: "2022-08-12",
         paroleEligibilityDate: "2022-03-19",
         tentativeParoleDate: null,
       },
-      usIdInCrcFacility: {
+      usIdInCrcFacilityOrPwccUnit1: {
         crcStartDate: "2022-02-06",
         facilityName: "Facility 73",
       },
-      usIdInCrcFacilityFor60Days: {
+      usIdInCrcFacilityOrPwccUnit1For60Days: {
         sixtyDaysInCrcFacilityDate: "2022-04-07",
       },
     },
@@ -59,18 +59,18 @@ test("transforms record with TPD set", () => {
         custodyLevel: "MINIMUM",
       },
       notServingForSexualOffense: null,
-      usIdNoDetainersForXcrc: null,
+      usIdNoDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
       usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
         fullTermCompletionDate: null,
         paroleEligibilityDate: null,
         tentativeParoleDate: "2022-07-11",
       },
-      usIdInCrcFacility: {
+      usIdInCrcFacilityOrPwccUnit1: {
         crcStartDate: "2022-02-06",
         facilityName: "Vault 6",
       },
-      usIdInCrcFacilityFor60Days: {
+      usIdInCrcFacilityOrPwccUnit1For60Days: {
         sixtyDaysInCrcFacilityDate: "2022-04-07",
       },
     },
@@ -89,18 +89,18 @@ test("transforms record with caseNotes set", () => {
         custodyLevel: "MINIMUM",
       },
       notServingForSexualOffense: null,
-      usIdNoDetainersForXcrc: null,
+      usIdNoDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
       usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
         fullTermCompletionDate: null,
         paroleEligibilityDate: null,
         tentativeParoleDate: "2022-07-11",
       },
-      usIdInCrcFacility: {
+      usIdInCrcFacilityOrPwccUnit1: {
         crcStartDate: "2022-02-06",
         facilityName: "Vault 6",
       },
-      usIdInCrcFacilityFor60Days: {
+      usIdInCrcFacilityOrPwccUnit1For60Days: {
         sixtyDaysInCrcFacilityDate: "2022-04-07",
       },
     },
