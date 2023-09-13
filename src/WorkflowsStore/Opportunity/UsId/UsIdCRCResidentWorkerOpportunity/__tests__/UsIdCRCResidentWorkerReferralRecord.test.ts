@@ -20,49 +20,127 @@ import {
   usIdCRCResidentWorkerSchema,
 } from "../UsIdCRCResidentWorkerReferralRecord";
 
-test("transforms eligible record with two temporal criteria", () => {
-  const rawRecord: UsIdCRCResidentWorkerReferralRecordRaw = {
-    stateCode: "US_ID",
-    externalId: "crc-work-release-eligible-01",
-    eligibleCriteria: {
-      custodyLevelIsMinimum: {
-        custodyLevel: "MINIMUM",
-      },
-      notServingForSexualOffense: null,
-      usIdNoDetainersForXcrcAndCrc: null,
-      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-      usIdCrcResidentWorkerTimeBasedCriteria: {
-        reasons: [
-          {
-            criteriaName: "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD",
-            fullTermCompletionDate: "2023-10-10",
-            tentativeParoleDate: null,
-          },
-          {
-            criteriaName:
-              "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD",
-            fullTermCompletionDate: "2031-03-13",
-            nextParoleHearingDate: "2025-11-15",
-            paroleEligibilityDate: "2025-11-12",
-          },
-        ],
-      },
-    },
-    ineligibleCriteria: {},
-  };
+describe("UsIdCRCResidentWorkerReferralRecord multiple criteria", () => {
+  let rawRecord: UsIdCRCResidentWorkerReferralRecordRaw;
 
-  expect(usIdCRCResidentWorkerSchema.parse(rawRecord)).toMatchSnapshot();
+  beforeEach(() => {
+    rawRecord = {
+      stateCode: "US_ID",
+      externalId: "crc-work-release-eligible-01",
+      eligibleCriteria: {
+        custodyLevelIsMinimum: {
+          custodyLevel: "MINIMUM",
+        },
+        notServingForSexualOffense: null,
+        usIdNoDetainersForXcrcAndCrc: null,
+        usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
+        usIdCrcResidentWorkerTimeBasedCriteria: {
+          reasons: [
+            {
+              criteriaName: "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD",
+              fullTermCompletionDate: "2023-10-10",
+              tentativeParoleDate: null,
+            },
+            {
+              criteriaName:
+                "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD",
+              fullTermCompletionDate: "2031-03-13",
+              nextParoleHearingDate: "2025-11-15",
+              paroleEligibilityDate: "2025-11-12",
+            },
+            {
+              criteriaName:
+                "US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE",
+              tentativeParoleDate: "2025-08-14",
+            },
+          ],
+        },
+      },
+      ineligibleCriteria: {},
+    };
+  });
+
+  test("transforms eligible record with multiple temporal criteria", () => {
+    expect(usIdCRCResidentWorkerSchema.parse(rawRecord)).toMatchSnapshot();
+  });
+
+  test("US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD should be `undefined`", () => {
+    expect(
+      usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
+        .usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd
+    ).toBeUndefined();
+  });
+
+  test("US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE should be `undefined`", () => {
+    expect(
+      usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
+        .usIdIncarcerationWithin3YearsOfTpdAndLifeSentence
+    ).toBeUndefined();
+  });
+
+  test("US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE and US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD should be `undefined`", () => {
+    rawRecord.eligibleCriteria.usIdCrcResidentWorkerTimeBasedCriteria.reasons.splice(
+      1,
+      1
+    );
+
+    expect(
+      usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
+        .usIdIncarcerationWithin3YearsOfTpdAndLifeSentence
+    ).toBeUndefined();
+  });
+
+  test("US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD and US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE should be `undefined`", () => {
+    rawRecord.eligibleCriteria.usIdCrcResidentWorkerTimeBasedCriteria.reasons.splice(
+      0,
+      1
+    );
+
+    expect(
+      usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
+        .usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd
+    ).not.toBeUndefined();
+
+    expect(
+      usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
+        .usIdIncarcerationWithin7YearsOfFtcdOrTpd
+    ).toBeUndefined();
+
+    expect(
+      usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
+        .usIdIncarcerationWithin3YearsOfTpdAndLifeSentence
+    ).toBeUndefined();
+  });
+
+  test("US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD and US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD should be `undefined`", () => {
+    rawRecord.eligibleCriteria.usIdCrcResidentWorkerTimeBasedCriteria.reasons.splice(
+      0,
+      2
+    );
+    expect(
+      usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
+        .usIdIncarcerationWithin3YearsOfTpdAndLifeSentence
+    ).not.toBeUndefined();
+    expect(
+      usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
+        .usIdIncarcerationWithin7YearsOfFtcdOrTpd
+    ).toBeUndefined();
+    expect(
+      usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
+        .usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd
+    ).toBeUndefined();
+  });
 });
 test("transforms eligible record with life temporal criteria", () => {
   const rawRecord: UsIdCRCResidentWorkerReferralRecordRaw = {
     stateCode: "US_ID",
     externalId: "crc-work-release-eligible-02",
     eligibleCriteria: {
+      usIdNoDetainersForXcrcAndCrc: null,
       custodyLevelIsMinimum: {
         custodyLevel: "MINIMUM",
       },
       notServingForSexualOffense: null,
-      usIdNoDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
       usIdCrcResidentWorkerTimeBasedCriteria: {
         reasons: [
