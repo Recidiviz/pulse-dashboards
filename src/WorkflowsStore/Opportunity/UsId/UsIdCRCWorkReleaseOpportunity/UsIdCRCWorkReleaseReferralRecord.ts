@@ -44,7 +44,7 @@ const usIdCrcWorkReleaseTimeBasedCriteria = z.object({
           "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD"
         ),
         fullTermCompletionDate: dateStringSchema,
-        nextParoleHearingDate: dateStringSchema,
+        minTermCompletionDate: dateStringSchema,
       }),
       z.object({
         criteriaName: z.literal(
@@ -76,7 +76,7 @@ export const usIdCRCWorkReleaseSchema = opportunitySchemaBase
         usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd: z
           .object({
             fullTermCompletionDate: dateStringSchema,
-            nextParoleHearingDate: dateStringSchema,
+            minTermCompletionDate: dateStringSchema,
           })
           .optional(),
         usIdIncarcerationWithin1YearOfTpdAndLifeSentence: z

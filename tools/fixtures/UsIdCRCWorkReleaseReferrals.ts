@@ -44,7 +44,7 @@ export const usIdCRCWorkReleaseReferrals: FixtureData<UsIdCRCWorkReleaseReferral
                 criteriaName:
                   "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD",
                 fullTermCompletionDate: "2031-03-13",
-                nextParoleHearingDate: "2023-11-15",
+                minTermCompletionDate: "2023-11-15",
               },
             ],
           },
