@@ -34,8 +34,8 @@ import {
 
 const DENIAL_REASONS_MAP = {
   "CASE PLAN": "Not compliant with case plan goals",
-  PROGRAM: "Has not completed required core programming",
-  DISCIPLINE: "Has a Class A or B disciplinary violation pending",
+  PROGRAM:
+    "Has not completed, or is not currently participating in, required core programming",
   DECLINE: "Resident declined opportunity to apply for Work Release",
   [OTHER_KEY]: "Other, please specify a reason",
 };
