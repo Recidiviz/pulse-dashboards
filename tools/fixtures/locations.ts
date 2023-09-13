@@ -57,8 +57,8 @@ const data: LocationRecord[] = [
     stateCode: "US_TN",
     system: "INCARCERATION",
     idType: "facilityId",
-    id: "AG_ANNEX",
-    name: "Agricultural Learning Annex",
+    id: "BLEDSOE_CC",
+    name: "Bledsoe County Correctional Complex",
   },
 ];
 
