@@ -21,10 +21,7 @@ import React from "react";
 import { useRootStore } from "../../components/StoreProvider";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
-import {
-  connectComponentToOpportunityForm,
-  useOpportunityFormContext,
-} from "../Paperwork/OpportunityFormContext";
+import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
 import { generate } from "../Paperwork/PDFFormGenerator";
 import { PrintablePage } from "../Paperwork/styles";
 import FormCR3947Rev0518 from "../Paperwork/US_TN/CompliantReporting";
@@ -59,7 +56,4 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
   );
 };
 
-export default connectComponentToOpportunityForm(
-  observer(WorkflowsCompliantReportingForm),
-  "compliantReporting"
-);
+export default observer(WorkflowsCompliantReportingForm);

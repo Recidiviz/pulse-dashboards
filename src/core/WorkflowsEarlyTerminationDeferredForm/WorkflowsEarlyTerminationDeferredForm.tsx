@@ -21,10 +21,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import { downloadSingle } from "../Paperwork/DOCXFormGenerator";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
-import {
-  connectComponentToOpportunityForm,
-  useOpportunityFormContext,
-} from "../Paperwork/OpportunityFormContext";
+import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
 import FormEarlyTerminationDeferred from "../Paperwork/US_ND/EarlyTermination/FormEarlyTerminationDeferred";
 
 function WorkflowsEarlyTerminationDeferredForm() {
@@ -67,7 +64,4 @@ function WorkflowsEarlyTerminationDeferredForm() {
   );
 }
 
-export default connectComponentToOpportunityForm(
-  observer(WorkflowsEarlyTerminationDeferredForm),
-  "earlyTermination"
-);
+export default observer(WorkflowsEarlyTerminationDeferredForm);

@@ -26,7 +26,6 @@ import {
   FileGeneratorArgs,
 } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
-import { connectComponentToOpportunityForm } from "../../OpportunityFormContext";
 import p1 from "./assets/p1.png";
 import p2 from "./assets/p2.png";
 import p3 from "./assets/p3.png";
@@ -73,7 +72,7 @@ const formDownloader = async (resident: Resident): Promise<void> => {
   );
 };
 
-const Form = observer(function FormWorkRelease() {
+export const FormFurloughRelease = observer(function FormWorkRelease() {
   const { workflowsStore } = useRootStore();
   const opportunity =
     workflowsStore?.selectedPerson?.verifiedOpportunities?.usMeFurloughRelease;
@@ -102,8 +101,3 @@ const Form = observer(function FormWorkRelease() {
     </FormContainer>
   );
 });
-
-export const FormFurloughRelease = connectComponentToOpportunityForm(
-  Form,
-  "usMeFurloughRelease"
-);

@@ -21,10 +21,7 @@ import React from "react";
 import { useRootStore } from "../../components/StoreProvider";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
-import {
-  connectComponentToOpportunityForm,
-  useOpportunityFormContext,
-} from "../Paperwork/OpportunityFormContext";
+import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
 import { generate } from "../Paperwork/PDFFormGenerator";
 import { PrintablePage } from "../Paperwork/styles";
 import ClassificationCustodyAssessment from "../Paperwork/US_TN/CustodyLevelDowngrade/ClassificationCustodyAssessment";
@@ -59,7 +56,4 @@ const WorkflowsUsTnCustodyLevelDowngradeForm: React.FC = () => {
   );
 };
 
-export default connectComponentToOpportunityForm(
-  observer(WorkflowsUsTnCustodyLevelDowngradeForm),
-  "usTnCustodyLevelDowngrade"
-);
+export default observer(WorkflowsUsTnCustodyLevelDowngradeForm);

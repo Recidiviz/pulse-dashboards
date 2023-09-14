@@ -31,7 +31,6 @@ import {
   PageFieldTitle,
 } from "../controls/WorkflowsNotePreview";
 import { FormLastEdited } from "../FormLastEdited";
-import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
 import { LSUFormFieldBaseProps, LSUFormFields } from "../Paperwork/US_ID/LSU";
 import template from "../Paperwork/US_ID/LSU/Chrono";
 import { WebForm } from "../Paperwork/WebForm";
@@ -101,4 +100,4 @@ const WorkflowsLSUForm = observer(function WorkflowsLSUForm() {
   );
 });
 
-export default connectComponentToOpportunityForm(WorkflowsLSUForm, "LSU");
+export default WorkflowsLSUForm;

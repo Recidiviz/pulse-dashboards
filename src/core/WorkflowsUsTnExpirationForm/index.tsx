@@ -41,7 +41,6 @@ import {
   PagePreviewWithHover,
 } from "../controls/WorkflowsNotePreview";
 import { FormLastEdited } from "../FormLastEdited";
-import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
 import {
   UsTnExpirationFormFieldBaseProps,
   UsTnExpirationFormFields,
@@ -215,7 +214,4 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
   }
 );
 
-export default connectComponentToOpportunityForm(
-  WorkflowsUsTnExpirationForm,
-  "usTnExpiration"
-);
+export default WorkflowsUsTnExpirationForm;

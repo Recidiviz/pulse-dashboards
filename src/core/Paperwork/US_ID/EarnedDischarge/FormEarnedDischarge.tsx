@@ -27,7 +27,6 @@ import { useRootStore } from "../../../../components/StoreProvider";
 import { Client } from "../../../../WorkflowsStore";
 import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
-import { connectComponentToOpportunityForm } from "../../OpportunityFormContext";
 import { DIMENSIONS_PX } from "../../PDFFormGenerator";
 import { useResizeForm } from "../../utils";
 import { FORM_US_ID_EARLY_DISCHARGE_FORM_FONT_FAMILY } from "./FormComponents";
@@ -81,7 +80,7 @@ const formDownloader = async (client: Client): Promise<void> => {
   );
 };
 
-const Form = observer(function FormEarnedDischarge() {
+export const FormEarnedDischarge = observer(function FormEarnedDischarge() {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
 
   const { resize } = useResizeForm(formRef, `${FormTransformContainer}`);
@@ -124,8 +123,3 @@ const Form = observer(function FormEarnedDischarge() {
     </FormContainer>
   );
 });
-
-export const FormEarnedDischarge = connectComponentToOpportunityForm(
-  Form,
-  "earnedDischarge"
-);

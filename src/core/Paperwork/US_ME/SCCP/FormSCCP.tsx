@@ -26,7 +26,6 @@ import {
   FileGeneratorArgs,
 } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
-import { connectComponentToOpportunityForm } from "../../OpportunityFormContext";
 import p1 from "./assets/p1.png";
 import p2 from "./assets/p2.png";
 import p3 from "./assets/p3.png";
@@ -71,7 +70,7 @@ const formDownloader = async (resident: Resident): Promise<void> => {
   );
 };
 
-const Form = observer(function FormSCCP() {
+export const FormSCCP = observer(function FormSCCP() {
   const { workflowsStore } = useRootStore();
   const opportunity =
     workflowsStore?.selectedPerson?.verifiedOpportunities?.usMeSCCP;
@@ -100,5 +99,3 @@ const Form = observer(function FormSCCP() {
     </FormContainer>
   );
 });
-
-export const FormSCCP = connectComponentToOpportunityForm(Form, "usMeSCCP");

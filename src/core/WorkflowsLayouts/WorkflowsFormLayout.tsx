@@ -25,6 +25,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import cssVars from "../CoreConstants.module.scss";
 import { NavigationLayout } from "../NavigationLayout";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
+import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
 import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
 import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRelease";
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
@@ -39,6 +40,7 @@ import WorkflowsLSUForm from "../WorkflowsLSUForm";
 import WorkflowsUsCaSupervisionLevelDowngradeForm from "../WorkflowsUsCaSupervisionLevelDowngradeForm";
 import WorkflowsUsTnCustodyLevelDowngradeForm from "../WorkflowsUsTnCustodyLevelDowngradeForm";
 import WorkflowsUsTnExpirationForm from "../WorkflowsUsTnExpirationForm";
+import WorkflowsUsTnReclassForm from "../WorkflowsUsTnReclassForm";
 
 export const FORM_SIDEBAR_WIDTH = 400;
 
@@ -85,6 +87,7 @@ const FormComponents = {
   FormWorkRelease,
   WorkflowsUsTnExpirationForm,
   WorkflowsUsTnCustodyLevelDowngradeForm,
+  WorkflowsUsTnReclassForm,
   WorkflowsUsCaSupervisionLevelDowngradeForm,
   FormFurloughRelease,
 };
@@ -105,8 +108,11 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
   const opportunity = selectedPerson.verifiedOpportunities[opportunityType];
 
   const formContents = opportunity?.form?.formContents;
-  const FormComponent =
-    FormComponents[formContents as OpportunityFormComponentName];
+  if (!formContents) return null;
+  const FormComponent = connectComponentToOpportunityForm(
+    FormComponents[formContents],
+    opportunityType
+  );
 
   const hydrated = (
     <Wrapper>
@@ -128,7 +134,9 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
         </SidebarSection>
       </Sidebar>
 
-      <FormWrapper>{FormComponent ? <FormComponent /> : <div />}</FormWrapper>
+      <FormWrapper>
+        <FormComponent />
+      </FormWrapper>
     </Wrapper>
   );
 

@@ -19,8 +19,9 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
 > {
   navigateToFormText = "Auto-fill CAF Form";
 
-  // eslint-disable-next-line class-methods-use-this
   get formContents(): OpportunityFormComponentName {
+    if (this.rootStore.workflowsStore.featureVariants.usTnAnnualReclass)
+      return "WorkflowsUsTnReclassForm";
     return "WorkflowsUsTnCustodyLevelDowngradeForm";
   }
 

@@ -22,7 +22,6 @@ import { useRootStore } from "../../components/StoreProvider";
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../WorkflowsStore/Opportunity/UsCa";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
-import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
 import {
   fillPDF,
   fixRadioGroups,
@@ -150,55 +149,54 @@ const fillerFunc: (
   form.flatten();
 };
 
-const Form = observer(function FormUsCaSupervisionLeveDowngrade() {
-  const {
-    workflowsStore: { selectedPerson: person },
-    getTokenSilently,
-  } = useRootStore();
+const FormUsCaSupervisionLeveDowngrade = observer(
+  function FormUsCaSupervisionLeveDowngrade() {
+    const {
+      workflowsStore: { selectedPerson: person },
+      getTokenSilently,
+    } = useRootStore();
 
-  const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+    const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
 
-  const onClickDownload = async () => {
-    const formData =
-      person?.verifiedOpportunities?.usCaSupervisionLevelDowngrade?.form
-        ?.formData;
-    if (!formData) return;
+    const onClickDownload = async () => {
+      const formData =
+        person?.verifiedOpportunities?.usCaSupervisionLevelDowngrade?.form
+          ?.formData;
+      if (!formData) return;
 
-    await fillPDF(
-      `${person?.displayName} - CDCR 1657.pdf`,
-      "US_CA",
-      "CDCR1657.pdf",
-      fillerFunc(formData),
-      getTokenSilently
+      await fillPDF(
+        `${person?.displayName} - CDCR 1657.pdf`,
+        "US_CA",
+        "CDCR1657.pdf",
+        fillerFunc(formData),
+        getTokenSilently
+      );
+    };
+
+    const {
+      workflowsStore: { selectedClient: client },
+    } = useRootStore();
+    const opportunity =
+      client?.verifiedOpportunities?.usCaSupervisionLevelDowngrade;
+
+    if (!opportunity) {
+      return null;
+    }
+    return (
+      <FormContainer
+        agencyName="CDCR"
+        heading="Supervision Level Downgrade"
+        /* eslint-disable-next-line @typescript-eslint/no-empty-function */
+        onClickDownload={onClickDownload}
+        downloadButtonLabel="Download PDF"
+        opportunity={opportunity}
+      >
+        <FormViewer formRef={formRef}>
+          <FormCDCR1657 />
+        </FormViewer>
+      </FormContainer>
     );
-  };
-
-  const {
-    workflowsStore: { selectedClient: client },
-  } = useRootStore();
-  const opportunity =
-    client?.verifiedOpportunities?.usCaSupervisionLevelDowngrade;
-
-  if (!opportunity) {
-    return null;
   }
-  return (
-    <FormContainer
-      agencyName="CDCR"
-      heading="Supervision Level Downgrade"
-      /* eslint-disable-next-line @typescript-eslint/no-empty-function */
-      onClickDownload={onClickDownload}
-      downloadButtonLabel="Download PDF"
-      opportunity={opportunity}
-    >
-      <FormViewer formRef={formRef}>
-        <FormCDCR1657 />
-      </FormViewer>
-    </FormContainer>
-  );
-});
-
-export default connectComponentToOpportunityForm(
-  Form,
-  "usCaSupervisionLevelDowngrade"
 );
+
+export default FormUsCaSupervisionLeveDowngrade;

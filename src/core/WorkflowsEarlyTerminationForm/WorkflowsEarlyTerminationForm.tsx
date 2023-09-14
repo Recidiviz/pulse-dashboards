@@ -22,10 +22,7 @@ import { Client } from "../../WorkflowsStore";
 import { downloadSingle } from "../Paperwork/DOCXFormGenerator";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
-import {
-  connectComponentToOpportunityForm,
-  useOpportunityFormContext,
-} from "../Paperwork/OpportunityFormContext";
+import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
 import FormEarlyTermination from "../Paperwork/US_ND/EarlyTermination/FormEarlyTermination";
 
 const collectAdditionalDepositionLinesToDownload = (client: Client) => {
@@ -77,7 +74,4 @@ function WorkflowsEarlyTerminationForm() {
   );
 }
 
-export default connectComponentToOpportunityForm(
-  observer(WorkflowsEarlyTerminationForm),
-  "earlyTermination"
-);
+export default observer(WorkflowsEarlyTerminationForm);
