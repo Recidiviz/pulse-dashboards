@@ -20,7 +20,7 @@
 
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
-import { filterByUserDistrict } from "../WorkflowsStore/utils";
+import { usCaFilterByRoleSubtype } from "../WorkflowsStore/utils";
 
 const US_CA_CONFIG: TenantConfig = {
   name: "California",
@@ -33,7 +33,7 @@ const US_CA_CONFIG: TenantConfig = {
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION"],
   opportunityTypes: ["usCaSupervisionLevelDowngrade"],
-  workflowsStaffFilterFn: filterByUserDistrict,
+  workflowsStaffFilterFn: usCaFilterByRoleSubtype,
   workflowsSystemConfigs: {
     SUPERVISION: {
       searchType: "OFFICER",

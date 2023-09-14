@@ -67,6 +67,13 @@ export const collectionNames = {
 
 export type CollectionName = keyof typeof collectionNames;
 
+export type RoleSubtype =
+  | "SUPERVISION_OFFICER"
+  | "SUPERVISION_OFFICER_SUPERVISOR"
+  | "SUPERVISION_DISTRICT_MANAGER"
+  | "SUPERVISION_REGIONAL_MANAGER"
+  | "SUPERVISION_STATE_LEADERSHIP";
+
 /**
  * Staff-level data exported from the Recidiviz data platform.
  * Staff may be identified independently as users and as officers with active caseloads
@@ -88,6 +95,7 @@ export type StaffRecord = {
   // TODO(#2458): Move towards using the fullName type like for ClientRecord to standardize name formatting. May require BE changes.
   givenNames: string;
   surname: string;
+  roleSubtype?: RoleSubtype;
 };
 
 export const SYSTEM_ID_TO_CASELOAD_FIELD = {
@@ -102,7 +110,7 @@ export type UserRole =
   | "facilities_staff"
   | "leadership_role";
 
-export type UserRecord = StaffRecord & { email: string; role: UserRole };
+export type UserRecord = StaffRecord & { email: string; role?: UserRole };
 export function isUserRecord(
   staffRecord: StaffRecord
 ): staffRecord is UserRecord {

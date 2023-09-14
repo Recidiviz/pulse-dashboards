@@ -246,3 +246,36 @@ export function filterByUserDistrict(
     filterValues,
   };
 }
+
+export function usCaFilterByRoleSubtype(
+  user: CombinedUserRecord
+): StaffFilter | undefined {
+  // If we don't have a staff record for the user and we've listed them as leadership or they have
+  // no role (for recidiviz + offline users), let them search for anyone.
+  if (
+    !user.info.roleSubtype &&
+    (!user.info.role || user.info.role === "leadership_role")
+  ) {
+    return undefined;
+  }
+
+  // At this point, assume they're a line staff or supervisor and we need to restrict to searching
+  // for themselves or their district.
+
+  // Regular Parole Agents only get access to their own caseload If we don't have a district for a
+  // user and we didn't list them as leadership, restrict them to their own caseload as well.
+  if (
+    user.info.roleSubtype === "SUPERVISION_OFFICER" ||
+    (!user.info.district && !user.updates?.overrideDistrictIds)
+  ) {
+    return {
+      // Use email instead of id because users might not have a staff record or an id set in the
+      // admin panel
+      filterField: "email",
+      filterValues: [user.info.email],
+    };
+  }
+
+  // Parole Agent supervisors only get access to their own unit (district in our schema)
+  return filterByUserDistrict(user);
+}
