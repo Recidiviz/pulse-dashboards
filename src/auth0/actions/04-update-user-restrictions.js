@@ -172,15 +172,6 @@ exports.onExecutePostLogin = async (event, api) => {
       );
       api.user.setAppMetadata("user_hash", restrictions.userHash);
     } catch (apiError) {
-      Sentry.captureMessage(
-        `Error while updating user permissions on login for user: ${event.user.email}`
-      );
-      Sentry.captureException(apiError, {
-        tags: {
-          clientName: event.client.name,
-          clientId: event.client.client_id,
-        },
-      });
       const { user } = event;
 
       analytics.track({
