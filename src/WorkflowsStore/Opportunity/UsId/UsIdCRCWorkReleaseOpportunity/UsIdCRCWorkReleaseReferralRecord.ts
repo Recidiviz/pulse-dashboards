@@ -88,30 +88,41 @@ export const usIdCRCWorkReleaseSchema = opportunitySchemaBase
       .transform(
         ({ usIdCrcWorkReleaseTimeBasedCriteria: timeCriteria, ...rest }) => {
           const transformedCriteria = { ...rest };
-          for (const {
-            criteriaName,
-            ...otherReasons
-          } of timeCriteria.reasons) {
-            switch (criteriaName) {
-              case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD":
-                // @ts-expect-error
-                transformedCriteria.usIdIncarcerationWithin18MonthsOfFtcdOrTpd =
-                  otherReasons;
-                break;
-              case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD":
-                // @ts-expect-error
-                transformedCriteria.usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd =
-                  otherReasons;
-                break;
-              case "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE":
-                // @ts-expect-error
-                transformedCriteria.usIdIncarcerationWithin1YearOfTpdAndLifeSentence =
-                  otherReasons;
-                break;
-              default:
-                throw new Error(
-                  `Unexpected time-based criteria for CRC Work Release: ${criteriaName}`
-                );
+          const criteriaPriority = [
+            "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD",
+            "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD",
+            "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE",
+          ];
+
+          const criteriaFound = timeCriteria.reasons.reduce(
+            (acc: any, { criteriaName, ...otherReasons }: any) => {
+              acc[criteriaName] = otherReasons;
+              return acc;
+            },
+            {}
+          );
+
+          for (const criteria of criteriaPriority) {
+            if (criteriaFound[criteria]) {
+              switch (criteria) {
+                case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD":
+                  transformedCriteria.usIdIncarcerationWithin18MonthsOfFtcdOrTpd =
+                    criteriaFound[criteria];
+                  break;
+                case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD":
+                  transformedCriteria.usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd =
+                    criteriaFound[criteria];
+                  break;
+                case "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE":
+                  transformedCriteria.usIdIncarcerationWithin1YearOfTpdAndLifeSentence =
+                    criteriaFound[criteria];
+                  break;
+                default:
+                  throw new Error(
+                    `Unexpected time-based criteria for CRC Work Release: ${criteria}`
+                  );
+              }
+              break;
             }
           }
 
