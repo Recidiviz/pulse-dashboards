@@ -101,7 +101,7 @@ const DistrictIndicator = observer(function DistrictIndicator() {
     <>
       {districtsFilteredBy.map((district) => (
         <ValuePill key={district}>
-          D{district}&nbsp;
+          {district.match(/^\d/) ? `D${district}` : district}&nbsp;
           <Icon kind="Place" size={12} color={palette.slate60} />
         </ValuePill>
       ))}
