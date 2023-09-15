@@ -111,6 +111,13 @@ export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
 
     const opportunityDates: PortionServedDates = [];
 
+    if (this.rootStore.currentTenantId === "US_ME") {
+      opportunityDates.push({
+        heading: "Half Time",
+        date: halfTimeDate,
+      });
+    }
+
     const opportunities = Object.values(
       this.rootStore.workflowsStore.selectedPerson?.verifiedOpportunities || {}
     );
@@ -124,31 +131,17 @@ export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
           if (opp.type === "usMeSCCP") {
             if (
               this.rootStore.workflowsStore.selectedResident
-                ?.portionServedNeeded === "1/2"
-            )
-              opportunityDates.push({
-                heading: "Half Time",
-                date: halfTimeDate,
-              });
-            if (
-              this.rootStore.workflowsStore.selectedResident
                 ?.portionServedNeeded === "2/3"
             )
               opportunityDates.push({
                 heading: "Two Thirds Time",
                 date: twoThirdsTimeDate,
               });
-          } else if (
-            opp.portionServedRequirement &&
-            opp.portionServedRequirement.includes("1/2")
-          )
-            opportunityDates.push({
-              heading: "Half Time",
-              date: halfTimeDate,
-            });
+          }
         }
       }
     });
+
     return uniqBy(opportunityDates, "heading");
   }
 }

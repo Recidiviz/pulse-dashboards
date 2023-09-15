@@ -19,6 +19,7 @@ import { configure } from "mobx";
 import tk from "timekeeper";
 
 import { RootStore } from "../../../../RootStore";
+import { TenantId } from "../../../../RootStore/types";
 import { Client } from "../../../Client";
 import { Resident } from "../../../Resident";
 import {
@@ -54,6 +55,10 @@ function createResidentTestUnit(
     portionServedNeeded,
   });
 
+  jest
+    .spyOn(root, "currentTenantId", "get")
+    .mockReturnValue(residentRecord.stateCode as TenantId);
+
   resident = new Resident(residentRecord, root);
 }
 
@@ -75,6 +80,10 @@ function createClientTestUnit(
   jest.spyOn(root.workflowsStore, "selectedClient", "get").mockReturnValue({
     ...usMeEarlyTerminationEligibleClientRecord,
   });
+
+  jest
+    .spyOn(root, "currentTenantId", "get")
+    .mockReturnValue(clientRecord.stateCode as TenantId);
 
   client = new Client(clientRecord, root);
 }
@@ -151,10 +160,10 @@ describe("resident has 2/3 date; eligible for SCCP", () => {
     createResidentTestUnit(usMePersonRecord, testOpportunities, "2/3");
   });
 
-  test("portionServedDates does not have half", () => {
+  test("portionServedDates does have half, which is the default.", () => {
     expect(
       resident.portionServedDates.some((entry) => entry.heading === "Half Time")
-    ).toBeFalsy();
+    ).toBeTruthy();
   });
 
   test("portionServedDates has two thirds", () => {
@@ -165,8 +174,8 @@ describe("resident has 2/3 date; eligible for SCCP", () => {
     ).toBeTruthy();
   });
 
-  test("portionServedDates has one entry", () => {
-    expect(resident.portionServedDates.length).toEqual(1);
+  test("portionServedDates has only two entries", () => {
+    expect(resident.portionServedDates.length).toEqual(2);
   });
 });
 
@@ -179,8 +188,8 @@ describe("resident has 2/3 date; eligible for Work Release", () => {
     createResidentTestUnit(usMePersonRecord, testOpportunities, "2/3");
   });
 
-  test("portionServedDates is empty", () => {
-    expect(resident.portionServedDates.length).toEqual(0);
+  test("portionServedDates has one entry", () => {
+    expect(resident.portionServedDates.length).toEqual(1);
   });
 });
 
@@ -197,8 +206,8 @@ describe("resident has 1/2 date; eligible for Work Release", () => {
     );
   });
 
-  test("portionServedDates is empty", () => {
-    expect(resident.portionServedDates.length).toEqual(0);
+  test("portionServedDates has one entry", () => {
+    expect(resident.portionServedDates.length).toEqual(1);
   });
 });
 
@@ -259,6 +268,25 @@ describe("resident has 2/3 date; eligible for all incarceration opp", () => {
 
   test("portionServedDates has two entries", () => {
     expect(resident.portionServedDates.length).toEqual(2);
+  });
+});
+
+describe("resident does not have any opps, and none are active. The resident should still have a half-time date", () => {
+  beforeEach(() => {
+    const testOpportunities = {};
+
+    createResidentTestUnit(
+      { ...usMePersonRecordShorterSentence, allEligibleOpportunities: [] },
+      testOpportunities,
+      "2/3"
+    );
+  });
+
+  test("portionServedDates has half-time date if user tenantId is US_ME", () => {
+    expect(resident.portionServedDates.length).toEqual(1);
+    expect(
+      resident.portionServedDates.some((entry) => entry.heading === "Half Time")
+    ).toBeTruthy();
   });
 });
 
