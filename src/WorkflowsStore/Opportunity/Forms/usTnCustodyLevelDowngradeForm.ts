@@ -13,6 +13,20 @@ import {
 } from "../UsTn";
 import { FormBase } from "./FormBase";
 
+function formatViolationNotes(
+  notes: { eventDate: Date; noteBody: string }[]
+): string {
+  return notes
+    .map(({ eventDate, noteBody }) => {
+      // TODO(#4041): Remove q6 and q7 note fallback
+      if (["A", "B", "C"].includes(noteBody)) {
+        return `${formatDate(eventDate)} - Class ${noteBody}`;
+      }
+      return `${formatDate(eventDate)} - ${noteBody}`;
+    })
+    .join(", ");
+}
+
 export class UsTnCustodyLevelDowngradeForm extends FormBase<
   UsTnCustodyLevelDowngradeDraftData,
   UsTnCustodyLevelDowngradeOpportunity
@@ -84,20 +98,10 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
         out.q3Note = uniq(currentOffenses).join(", ");
       }
       if (q6Notes) {
-        out.q6Note = q6Notes
-          .map(
-            ({ eventDate, noteBody }) =>
-              `${formatDate(eventDate)} - Class ${noteBody}`
-          )
-          .join(", ");
+        out.q6Note = formatViolationNotes(q6Notes);
       }
       if (q7Notes) {
-        out.q7Note = q7Notes
-          .map(
-            ({ eventDate, noteBody }) =>
-              `${formatDate(eventDate)} - Class ${noteBody}`
-          )
-          .join(", ");
+        out.q7Note = formatViolationNotes(q7Notes);
       }
       if (q8Notes) {
         out.q8Note = q8Notes

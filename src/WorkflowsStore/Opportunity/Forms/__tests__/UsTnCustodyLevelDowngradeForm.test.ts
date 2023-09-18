@@ -206,7 +206,8 @@ describe("prefilledDataTransformer", () => {
     });
   });
 
-  test("formats q6Notes", () => {
+  // TODO(#4041): Remove q6 and q7 note fallback
+  test("formats q6Notes - old format", () => {
     oppRecord.formInformation.q6Notes = [
       {
         noteBody: "C",
@@ -224,7 +225,27 @@ describe("prefilledDataTransformer", () => {
     });
   });
 
-  test("formats q7Notes", () => {
+  test("formats q6Notes - new format", () => {
+    oppRecord.formInformation.q6Notes = [
+      {
+        noteBody: "Class C Incident Details: Some details",
+        eventDate: new Date("2019-02-01"),
+      },
+      {
+        noteBody: "Class A Incident Details: Some other details",
+        eventDate: new Date("2020-02-01"),
+      },
+    ];
+
+    expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
+      ...baseResult,
+      q6Note:
+        "2/1/19 - Class C Incident Details: Some details, 2/1/20 - Class A Incident Details: Some other details",
+    });
+  });
+
+  // TODO(#4041): Remove q6 and q7 note fallback
+  test("formats q7Notes - old format", () => {
     // Identical to q6
     oppRecord.formInformation.q7Notes = [
       {
@@ -240,6 +261,25 @@ describe("prefilledDataTransformer", () => {
     expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
       ...baseResult,
       q7Note: "2/1/19 - Class C, 2/1/20 - Class A",
+    });
+  });
+
+  test("formats q7Notes - new format", () => {
+    oppRecord.formInformation.q7Notes = [
+      {
+        noteBody: "Class C Incident Details: Some details",
+        eventDate: new Date("2019-02-01"),
+      },
+      {
+        noteBody: "Class A Incident Details: Some other details",
+        eventDate: new Date("2020-02-01"),
+      },
+    ];
+
+    expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
+      ...baseResult,
+      q7Note:
+        "2/1/19 - Class C Incident Details: Some details, 2/1/20 - Class A Incident Details: Some other details",
     });
   });
 

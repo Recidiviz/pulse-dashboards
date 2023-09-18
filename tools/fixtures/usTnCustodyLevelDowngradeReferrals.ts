@@ -44,7 +44,16 @@ export const usTnCustodyLevelDowngradeFixture =
         q5Score: -2,
         q6Score: -2,
         q7Score: 5,
-        // q7Note: "Class B",
+        q7Notes: [
+          {
+            noteBody: "Class C Incident Details: Some details",
+            eventDate: "2019-02-01",
+          },
+          {
+            noteBody: "Class A Incident Details: Some other details",
+            eventDate: "2020-02-01",
+          },
+        ],
         q8Score: 0,
         q9Score: 0,
       },
