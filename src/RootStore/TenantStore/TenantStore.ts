@@ -33,10 +33,10 @@ export const CURRENT_TENANT_IN_SESSION = "adminUserCurrentTenantInSession";
  * the sessionStorage cache if already set. Otherwise, picks the first available
  * state in alphabetical order.
  */
-function getTenantIdFromUser(userStore: UserStore): TenantId {
-  const storageStateCode = sessionStorage.getItem(
-    CURRENT_TENANT_IN_SESSION
-  ) as TenantId;
+function getTenantIdFromUser(userStore: UserStore): TenantId | undefined {
+  const storageStateCode = sessionStorage.getItem(CURRENT_TENANT_IN_SESSION) as
+    | TenantId
+    | undefined;
   if (userStore.user) {
     const { availableStateCodes, userHasAccess } = userStore;
     if (storageStateCode && userHasAccess(storageStateCode)) {
@@ -74,9 +74,11 @@ export default class TenantStore {
     );
   }
 
-  setCurrentTenantId(tenantId: TenantId): void {
+  setCurrentTenantId(tenantId: TenantId | undefined): void {
     this.currentTenantId = tenantId;
-    sessionStorage.setItem(CURRENT_TENANT_IN_SESSION, tenantId);
+    if (tenantId) {
+      sessionStorage.setItem(CURRENT_TENANT_IN_SESSION, tenantId);
+    }
   }
 
   get isLanternTenant(): boolean {
