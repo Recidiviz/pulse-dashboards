@@ -21,15 +21,15 @@ Feature: Interact with the preview modal on the opportunity page
         Given I am a "<stateCode>" user on the "<opportunityType>" page
         When I select "<searchValue>" from the dropdown
         And I click on the person "<personName>"
-        And I click on the "Update eligibility" dropdown
-        Then I should see the eligibility dropdown that has a reason listed like "<checkboxValue>"
+        And I click on the button with the text "Update eligibility"
+        Then I should see the update eligibility view that has a reason listed like "<checkboxValue>"
         When I click on the checkbox for "<checkboxLabel>"
-        Then I should see the value "<checkboxValue>" selected
-        And I should see the person labeled as "Currently ineligible"
-        When I click on the "<checkboxValue>" dropdown
-        And I click on the checkbox for "Eligible"
-        Then I should see the "Update eligibility" dropdown
-        And I should see the person labeled as "Eligible"
+        And I click on the button with the text "Confirm"
+        Then I should see the person labeled as "Currently ineligible"
+        When I click on the button with the text "Update eligibility"
+        And I click on the checkbox for "<checkboxLabel>"
+        And I click on the button with the text "Confirm"
+        Then I should see the person labeled as "Eligible"
 
         Examples:
             | stateCode | opportunityType    | checkboxLabel                         | checkboxValue | personName   | searchValue   |

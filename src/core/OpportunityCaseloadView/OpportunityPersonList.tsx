@@ -35,6 +35,7 @@ import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { Heading, SectionLabelText, SubHeading } from "../sharedComponents";
 import WorkflowsResults from "../WorkflowsResults";
 import WorkflowsTabbedPersonList from "../WorkflowsTabbedPersonList";
+import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 import { PersonListItem } from "./PersonListItem";
 
 const PersonList = styled.ul`
@@ -61,6 +62,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
       featureVariants: { responsiveRevamp },
       opportunitiesByTab,
       allOpportunitiesByType,
+      selectedPerson,
     },
     analyticsStore,
   } = useRootStore();
@@ -169,6 +171,9 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
           );
         })
       )}
+      <OpportunityPreviewModal
+        opportunity={selectedPerson?.verifiedOpportunities[opportunityType]}
+      />
     </>
   );
 

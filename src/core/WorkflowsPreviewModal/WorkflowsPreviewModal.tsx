@@ -86,7 +86,9 @@ type PreviewModalProps = {
   isOpen: boolean;
   pageContent: JSX.Element;
   onAfterOpen?: () => void;
+  onClose?: () => void;
   onBackClick?: () => void;
+  clearSelectedPersonOnClose?: boolean;
 };
 
 export function WorkflowsPreviewModal({
@@ -94,6 +96,8 @@ export function WorkflowsPreviewModal({
   pageContent,
   onAfterOpen,
   onBackClick,
+  onClose = () => null,
+  clearSelectedPersonOnClose = true,
 }: PreviewModalProps): JSX.Element {
   const {
     workflowsStore,
@@ -119,12 +123,20 @@ export function WorkflowsPreviewModal({
     [setDismissAfterMs, setModalIsOpen]
   );
 
+  function handleCloseModal() {
+    onClose();
+    setModalIsOpen(false);
+  }
+
   return (
     <StyledDrawerModal
       isOpen={modalIsOpen}
       onAfterOpen={onAfterOpen}
-      onRequestClose={() => setModalIsOpen(false)}
-      onAfterClose={() => workflowsStore.updateSelectedPerson(undefined)}
+      onRequestClose={() => handleCloseModal()}
+      onAfterClose={() =>
+        clearSelectedPersonOnClose &&
+        workflowsStore.updateSelectedPerson(undefined)
+      }
       closeTimeoutMS={CLOSE_TIMEOUT_MS}
       width={
         featureVariants.responsiveRevamp && !isMobile
@@ -146,9 +158,7 @@ export function WorkflowsPreviewModal({
         <Button
           className="WorkflowsPreviewModal__close"
           kind="link"
-          onClick={() => {
-            setModalIsOpen(false);
-          }}
+          onClick={() => handleCloseModal()}
         >
           <Icon kind="Close" size="14" color={palette.pine2} />
         </Button>

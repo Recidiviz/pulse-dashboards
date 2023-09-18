@@ -19,10 +19,28 @@ import {
   palette,
   Sans12,
   Sans16,
+  spacing,
   TooltipTrigger,
   typography,
 } from "@recidiviz/design-system";
+import { rem } from "polished";
 import styled, { css, keyframes } from "styled-components/macro";
+
+export const OtherReasonWrapper = styled.div`
+  ${typography.Sans16}
+  display: block;
+  margin: ${rem(spacing.sm)} 0;
+  > textarea {
+    padding: 1rem;
+    max-height: 10rem;
+  }
+`;
+export const MenuItem = styled.div`
+  > .Checkbox__container {
+    width: 100%;
+    height: 100%;
+  }
+`;
 
 export const BannerTextWrapper = styled.div`
   display: flex;

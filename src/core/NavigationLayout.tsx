@@ -357,6 +357,8 @@ type NavigationLayoutProps = {
   backgroundColor?: string;
   isFixed?: boolean;
   isMethodologyExternal?: boolean;
+  backButtonText?: string;
+  onBackButtonClick?: () => void;
   children?: React.ReactNode;
 };
 
@@ -364,6 +366,8 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
   function NavigationLayout({
     backgroundColor,
     isMethodologyExternal,
+    onBackButtonClick,
+    backButtonText = "Back",
     children,
     isFixed = true,
   }) {
@@ -457,9 +461,15 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
           <BackButton
             $notFixed={isLaptop || !isFixed}
             to={workflowsUrl(workflowsHomepage)}
+            onClick={(event) => {
+              if (onBackButtonClick) {
+                event?.preventDefault();
+                onBackButtonClick();
+              }
+            }}
           >
             <i className="fa fa-angle-left" />
-            Back
+            {backButtonText}
           </BackButton>
         )}
       </Wrapper>

@@ -220,7 +220,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
           </OpportunityTypeSummaryCTA>
         )}
         <ReviewStatusWrapper>
-          {numIneligible > 0 && (
+          {!!responsiveRevamp && numIneligible > 0 && (
             <ReviewStatusCount>Ineligible: {numIneligible}</ReviewStatusCount>
           )}
         </ReviewStatusWrapper>

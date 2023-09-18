@@ -47,6 +47,7 @@ type OpportunitySidebarProfileProps = {
   opportunity?: Opportunity;
   formLinkButton?: boolean;
   formPrintButton?: boolean;
+  onDenialButtonClick?: () => void;
 };
 
 const ClientDetailSidebarComponents = {
@@ -103,6 +104,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
   observer(function OpportunitySidebarProfile({
     formLinkButton = false,
     formPrintButton = false,
+    onDenialButtonClick = () => null,
     opportunity,
   }) {
     const {
@@ -129,6 +131,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
             <AccordionSection
               opportunity={opportunity}
               formLinkButton={formLinkButton}
+              onDenialButtonClick={onDenialButtonClick}
             />
           </AccordionWrapper>
         ) : (

@@ -14,10 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette, Sans18, spacing, typography } from "@recidiviz/design-system";
+import { palette, Sans18 } from "@recidiviz/design-system";
 import { debounce, xor } from "lodash";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components/macro";
 
@@ -27,7 +26,12 @@ import { DeclineReason } from "../../FirestoreStore";
 import { Client } from "../../WorkflowsStore";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
 import { OtherReasonInput } from "../sharedComponents";
-import { ActionButton, SidePanelContents } from "./styles";
+import {
+  ActionButton,
+  MenuItem,
+  OtherReasonWrapper,
+  SidePanelContents,
+} from "./styles";
 
 export const DECLINED_REASONS_MAP: Record<DeclineReason, string> = {
   MILESTONE_NOT_MET: "Client has not met these milestones.",
@@ -35,22 +39,6 @@ export const DECLINED_REASONS_MAP: Record<DeclineReason, string> = {
   MISSING_CONTACT_INFO: "Client contact information is missing.",
   [OTHER_KEY]: "Other reason",
 };
-
-const MenuItem = styled.div`
-  > .Checkbox__container {
-    width: 100%;
-  }
-`;
-
-const OtherReasonWrapper = styled.div`
-  ${typography.Sans16}
-  display: block;
-  margin: ${rem(spacing.sm)} 0;
-  > textarea {
-    padding: 1rem;
-    max-height: 10rem;
-  }
-`;
 
 const DeclineMessageHeading = styled(Sans18)`
   color: ${palette.pine1};

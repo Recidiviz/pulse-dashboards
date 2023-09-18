@@ -106,6 +106,8 @@ export class WorkflowsStore implements Hydratable {
 
   selectedOpportunityType?: OpportunityType;
 
+  selectedOpportunityOnFullProfile?: Opportunity;
+
   justiceInvolvedPersons: Record<string, JusticeInvolvedPerson> = {};
 
   officersSubscription: StaffSubscription;
@@ -373,6 +375,12 @@ export class WorkflowsStore implements Hydratable {
   updateSelectedOpportunityType(opportunityType?: OpportunityType): void {
     runInAction(() => {
       this.selectedOpportunityType = opportunityType;
+    });
+  }
+
+  updateSelectedOpportunityOnFullProfile(opportunity?: Opportunity): void {
+    runInAction(() => {
+      this.selectedOpportunityOnFullProfile = opportunity;
     });
   }
 

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DropdownToggle } from "@recidiviz/design-system";
+import { Button, DropdownToggle } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { darken } from "polished";
 import styled from "styled-components/macro";
@@ -23,7 +23,7 @@ import styled from "styled-components/macro";
 import { Opportunity } from "../../WorkflowsStore";
 import { useStatusColors } from "../utils/workflowsUtils";
 
-const StatusAwareButton = styled(DropdownToggle).attrs({
+const StatusAwareDropdownToggle = styled(DropdownToggle).attrs({
   kind: "secondary",
   shape: "block",
   showCaret: true,
@@ -43,10 +43,21 @@ const StatusAwareButton = styled(DropdownToggle).attrs({
   }
 `;
 
+const StatusAwareButton = styled(Button).attrs({
+  kind: "secondary",
+  shape: "block",
+})`
+  max-width: 10rem;
+`;
+
 export const MenuButton = observer(function MenuButton({
   opportunity,
+  onDenialButtonClick = () => null,
+  responsiveRevamp = false,
 }: {
   opportunity: Opportunity;
+  onDenialButtonClick?: () => void;
+  responsiveRevamp?: boolean;
 }) {
   const colors = useStatusColors(opportunity);
 
@@ -59,11 +70,22 @@ export const MenuButton = observer(function MenuButton({
   };
 
   let buttonText = opportunity.isAlert ? "Override?" : "Update eligibility";
-  if (reasons?.length) {
+  if (reasons?.length && !responsiveRevamp) {
     buttonText = `${reasons[0]}${
       reasons.length > 1 ? ` + ${reasons.length - 1} more` : ""
     }`;
   }
 
-  return <StatusAwareButton {...buttonProps}>{buttonText}</StatusAwareButton>;
+  if (!responsiveRevamp) {
+    return (
+      <StatusAwareDropdownToggle {...buttonProps}>
+        {buttonText}
+      </StatusAwareDropdownToggle>
+    );
+  }
+  return (
+    <StatusAwareButton onClick={onDenialButtonClick}>
+      {buttonText}
+    </StatusAwareButton>
+  );
 });

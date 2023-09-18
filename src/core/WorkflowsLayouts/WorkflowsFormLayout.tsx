@@ -18,6 +18,7 @@
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -25,6 +26,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import cssVars from "../CoreConstants.module.scss";
 import { NavigationLayout } from "../NavigationLayout";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
+import { OpportunityDenialView } from "../OpportunityDenial";
 import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
 import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
 import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRelease";
@@ -94,6 +96,8 @@ const FormComponents = {
 
 export type OpportunityFormComponentName = keyof typeof FormComponents;
 
+type FormSidebarView = "OPPORTUNITY" | "DENIAL";
+
 export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
   const {
     workflowsStore: {
@@ -102,23 +106,53 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
       featureVariants,
     },
   } = useRootStore();
+  const [currentView, setCurrentView] =
+    useState<FormSidebarView>("OPPORTUNITY");
 
   if (!opportunityType || !selectedPerson) return null;
 
   const opportunity = selectedPerson.verifiedOpportunities[opportunityType];
 
   const formContents = opportunity?.form?.formContents;
+
   if (!formContents) return null;
   const FormComponent = connectComponentToOpportunityForm(
     FormComponents[formContents],
     opportunityType
   );
 
+  const sidebarContents =
+    currentView === "DENIAL" && !!featureVariants.responsiveRevamp ? (
+      <OpportunityDenialView
+        opportunity={opportunity}
+        onSubmit={() => setCurrentView("OPPORTUNITY")}
+      />
+    ) : (
+      <OpportunityProfile
+        opportunity={opportunity}
+        formLinkButton={false}
+        onDenialButtonClick={() => setCurrentView("DENIAL")}
+      />
+    );
+
+  const backButtonProps =
+    currentView === "OPPORTUNITY" && !!featureVariants.responsiveRevamp
+      ? { backButtonText: "Exit" }
+      : {
+          onBackButtonClick: featureVariants.responsiveRevamp
+            ? () => setCurrentView("OPPORTUNITY")
+            : undefined,
+        };
+
   const hydrated = (
     <Wrapper>
       <Sidebar>
         {featureVariants.responsiveRevamp ? (
-          <NavigationLayout isMethodologyExternal isFixed={false} />
+          <NavigationLayout
+            isMethodologyExternal
+            isFixed={false}
+            {...backButtonProps}
+          />
         ) : (
           <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
             <Link to={`/${DASHBOARD_VIEWS.workflows}`}>
@@ -127,10 +161,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
           </SidebarSection>
         )}
         <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
-          <OpportunityProfile
-            opportunity={opportunity}
-            formLinkButton={false}
-          />
+          {sidebarContents}
         </SidebarSection>
       </Sidebar>
 

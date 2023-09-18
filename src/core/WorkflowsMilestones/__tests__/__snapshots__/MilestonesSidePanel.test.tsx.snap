@@ -61,18 +61,18 @@ Object {
             class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 djZaPZ WorkflowsPreviewModal"
           >
             <div
-              class="styles__SidePanelContents-sc-b21pq-14 funxLr"
+              class="styles__SidePanelContents-sc-b21pq-16 hGlsjt"
               data-testid="CongratulatedSidePanel"
             >
               <div
-                class="styles__SidePanelBanner-sc-b21pq-2 iZNfHj"
+                class="styles__SidePanelBanner-sc-b21pq-4 ituugt"
               >
                 <div
-                  class="styles__BannerTextWrapper-sc-b21pq-0 hinRFK"
+                  class="styles__BannerTextWrapper-sc-b21pq-2 eJmyic"
                 >
                   <div />
                   <span
-                    class="styles__BannerText-sc-b21pq-1 jrEYVW"
+                    class="styles__BannerText-sc-b21pq-3 haVCog"
                   >
                     Message Sent
                   </span>
@@ -205,7 +205,7 @@ Object {
                 </a>
               </div>
               <div
-                class="sc-cCjUiG styles__ReviewInfo-sc-b21pq-5 fgWjb dbBRpM"
+                class="sc-cCjUiG styles__ReviewInfo-sc-b21pq-7 fgWjb jCBNxe"
               >
                 Firstname Smith
                  sent the following text messages to
@@ -214,7 +214,7 @@ Object {
                  at
                  
                 <span
-                  class="styles__PhoneNumber-sc-b21pq-7 jiBtcq"
+                  class="styles__PhoneNumber-sc-b21pq-9 huvANA"
                 >
                   (555) 555-5678
                 </span>
@@ -223,17 +223,17 @@ Object {
                 .
               </div>
               <div
-                class="sc-cCjUiG styles__ReviewMessage-sc-b21pq-6 fgWjb CrxDL"
+                class="sc-cCjUiG styles__ReviewMessage-sc-b21pq-8 fgWjb bIrDfJ"
               >
                 This is the full text message
               </div>
               <div
-                class="sc-cCjUiG styles__ReviewMessage-sc-b21pq-6 fgWjb CrxDL"
+                class="sc-cCjUiG styles__ReviewMessage-sc-b21pq-8 fgWjb bIrDfJ"
               >
                 To stop receiving these texts, reply: STOP
               </div>
               <div
-                class="styles__ButtonsContainer-sc-b21pq-8 GRsOy"
+                class="styles__ButtonsContainer-sc-b21pq-10 Orhwz"
               />
             </div>
           </div>
@@ -354,7 +354,7 @@ Object {
             class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 djZaPZ WorkflowsPreviewModal"
           >
             <div
-              class="styles__SidePanelContents-sc-b21pq-14 funxLr"
+              class="styles__SidePanelContents-sc-b21pq-16 hGlsjt"
               data-testid="DeclinedSidePanel"
             >
               <div
@@ -484,46 +484,46 @@ Object {
                 </a>
               </div>
               <div
-                class="styles__SidePanelBanner-sc-b21pq-2 iZNfHj"
+                class="styles__SidePanelBanner-sc-b21pq-4 ituugt"
               >
                 <div
-                  class="styles__BannerTextWrapper-sc-b21pq-0 hinRFK"
+                  class="styles__BannerTextWrapper-sc-b21pq-2 eJmyic"
                 >
                   <div />
                   <span
-                    class="styles__BannerText-sc-b21pq-1 jrEYVW"
+                    class="styles__BannerText-sc-b21pq-3 haVCog"
                   >
                     Declined
                   </span>
                 </div>
                 <span
-                  class="styles__TextLink-sc-b21pq-13 hZoEvc"
+                  class="styles__TextLink-sc-b21pq-15 dbJapu"
                 >
                   Undo
                 </span>
               </div>
               <div
-                class="sc-cCjUiG styles__SidePanelHeader-sc-b21pq-3 fgWjb eeCsc"
+                class="sc-cCjUiG styles__SidePanelHeader-sc-b21pq-5 fgWjb eRUdFW"
               >
                 Reasons
               </div>
               <div
-                class="styles__MilestonesList-sc-b21pq-21 jPAmBk"
+                class="styles__MilestonesList-sc-b21pq-23 dOASzW"
               />
               <div
-                class="sc-cCjUiG styles__SidePanelHeader-sc-b21pq-3 fgWjb eeCsc"
+                class="sc-cCjUiG styles__SidePanelHeader-sc-b21pq-5 fgWjb eRUdFW"
               >
                 Milestones
               </div>
               <div
-                class="styles__MilestonesList-sc-b21pq-21 jPAmBk"
+                class="styles__MilestonesList-sc-b21pq-23 dOASzW"
               >
                 <div
-                  class="styles__MilestonesItem-sc-b21pq-20 jsGUcO"
+                  class="styles__MilestonesItem-sc-b21pq-22 GVmmc"
                 >
                   <div />
                   <span
-                    class="styles__MilestonesText-sc-b21pq-19 cdsTgz"
+                    class="styles__MilestonesText-sc-b21pq-21 xGRo"
                   >
                     6 months violation-free
                   </span>
@@ -645,7 +645,7 @@ Object {
             class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 djZaPZ WorkflowsPreviewModal"
           >
             <div
-              class="styles__SidePanelContents-sc-b21pq-14 funxLr"
+              class="styles__SidePanelContents-sc-b21pq-16 hGlsjt"
               data-testid="ComposeMessageView"
             >
               <div
@@ -775,19 +775,19 @@ Object {
                 </a>
               </div>
               <div
-                class="sc-cCjUiG styles__SidePanelHeader-sc-b21pq-3 fgWjb eeCsc"
+                class="sc-cCjUiG styles__SidePanelHeader-sc-b21pq-5 fgWjb eRUdFW"
               >
                 Milestones
               </div>
               <div
-                class="styles__MilestonesList-sc-b21pq-21 jPAmBk"
+                class="styles__MilestonesList-sc-b21pq-23 dOASzW"
               >
                 <div
-                  class="styles__MilestonesItem-sc-b21pq-20 jsGUcO"
+                  class="styles__MilestonesItem-sc-b21pq-22 GVmmc"
                 >
                   <div />
                   <span
-                    class="styles__MilestonesText-sc-b21pq-19 cdsTgz"
+                    class="styles__MilestonesText-sc-b21pq-21 xGRo"
                   >
                     6 months violation-free
                   </span>
@@ -845,18 +845,18 @@ Hey Linet! Congratulations on reaching these milestones:
                 />
               </div>
               <div
-                class="sc-hhOBVt styles__Warning-sc-b21pq-4 fDofSM SeJQy"
+                class="sc-hhOBVt styles__Warning-sc-b21pq-6 fDofSM cOmKRw"
               >
                 Do not send critical information tied to deadlines. We cannot guarantee delivery of this text message.
               </div>
               <div
-                class="styles__ButtonsContainer-sc-b21pq-8 GRsOy"
+                class="styles__ButtonsContainer-sc-b21pq-10 Orhwz"
               >
                 <span
-                  class="sc-jSUZER iljzDu styles__WideTooltipTrigger-sc-b21pq-22 jqJUuT"
+                  class="sc-jSUZER iljzDu styles__WideTooltipTrigger-sc-b21pq-24 fLioVV"
                 >
                   <button
-                    class="sc-bcXHqe dqGNaB styles__ActionButton-sc-b21pq-9 bsdvNa"
+                    class="sc-bcXHqe dqGNaB styles__ActionButton-sc-b21pq-11 fnWGDb"
                     disabled=""
                     kind="primary"
                     shape="pill"
@@ -866,7 +866,7 @@ Hey Linet! Congratulations on reaching these milestones:
                   </button>
                 </span>
                 <button
-                  class="sc-bcXHqe dqGNaB styles__AlreadyCongratulatedButton-sc-b21pq-10 hJFuDQ"
+                  class="sc-bcXHqe dqGNaB styles__AlreadyCongratulatedButton-sc-b21pq-12 bzthwK"
                   kind="primary"
                   shape="pill"
                   type="button"
@@ -874,12 +874,12 @@ Hey Linet! Congratulations on reaching these milestones:
                   I congratulated them in-person or another way
                 </button>
                 <div
-                  class="styles__OptOutText-sc-b21pq-12"
+                  class="styles__OptOutText-sc-b21pq-14"
                 >
                   Opt out of sending a congratulations text?
                    
                   <span
-                    class="styles__TextLink-sc-b21pq-13 hZoEvc"
+                    class="styles__TextLink-sc-b21pq-15 dbJapu"
                   >
                     Tell us why
                   </span>
@@ -1010,24 +1010,24 @@ Object {
             class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 djZaPZ WorkflowsPreviewModal"
           >
             <div
-              class="styles__SidePanelContents-sc-b21pq-14 funxLr"
+              class="styles__SidePanelContents-sc-b21pq-16 hGlsjt"
               data-testid="CongratulatedSidePanel"
             >
               <div
-                class="styles__SidePanelBanner-sc-b21pq-2 iZNfHj"
+                class="styles__SidePanelBanner-sc-b21pq-4 ituugt"
               >
                 <div
-                  class="styles__BannerTextWrapper-sc-b21pq-0 hinRFK"
+                  class="styles__BannerTextWrapper-sc-b21pq-2 eJmyic"
                 >
                   <div />
                   <span
-                    class="styles__BannerText-sc-b21pq-1 jrEYVW"
+                    class="styles__BannerText-sc-b21pq-3 haVCog"
                   >
                     Congratulated
                   </span>
                 </div>
                 <span
-                  class="styles__TextLink-sc-b21pq-13 hZoEvc"
+                  class="styles__TextLink-sc-b21pq-15 dbJapu"
                 >
                   Undo
                 </span>
@@ -1159,7 +1159,7 @@ Object {
                 </a>
               </div>
               <div
-                class="sc-cCjUiG styles__ReviewInfo-sc-b21pq-5 fgWjb dbBRpM"
+                class="sc-cCjUiG styles__ReviewInfo-sc-b21pq-7 fgWjb jCBNxe"
               >
                  indicated that they congratulated
                  
@@ -1168,7 +1168,7 @@ Object {
                  
               </div>
               <div
-                class="styles__ButtonsContainer-sc-b21pq-8 GRsOy"
+                class="styles__ButtonsContainer-sc-b21pq-10 Orhwz"
               />
             </div>
           </div>

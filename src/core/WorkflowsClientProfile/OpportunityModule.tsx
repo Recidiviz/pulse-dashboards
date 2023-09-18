@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, palette, spacing } from "@recidiviz/design-system";
+import { Button, palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { darken, rem } from "polished";
 import { useEffect } from "react";
@@ -25,8 +25,10 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
+import { OTHER_KEY } from "../../WorkflowsStore/utils";
 import { desktopLinkGate } from "../desktopLinkGate";
-import { OpportunityDenial } from "../OpportunityDenial";
+import { OpportunityDenialDropdown } from "../OpportunityDenial";
+import { MenuButton } from "../OpportunityDenial/MenuButton";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { workflowsUrl } from "../views";
 import { CriteriaList } from "./CriteriaList";
@@ -73,6 +75,39 @@ const FormActionButton = styled(Button).attrs({
   }
 `;
 
+const MarkedIneligibleReasonsText = styled.div`
+  ${typography.Sans14}
+  color: ${palette.pine1};
+  background-color: ${palette.slate10};
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+`;
+
+const MarkedIneligibleReasons: React.FC<{ opportunity: Opportunity }> =
+  observer(function MarkedIneligibleReason({ opportunity }) {
+    const denialReasons = opportunity.denial?.reasons;
+    const otherReason = opportunity.denial?.otherReason;
+    if (!denialReasons) return null;
+
+    function buildOtherText() {
+      if (!(denialReasons ?? []).includes(OTHER_KEY)) return null;
+      if (!otherReason) return ["Other"];
+      return [`Other: ${otherReason}`];
+    }
+
+    return (
+      <MarkedIneligibleReasonsText className="MarkedIneligibleReasonsText">
+        Not eligible reasons:{" "}
+        {denialReasons
+          .filter((r) => r !== OTHER_KEY)
+          .map((r) => opportunity.denialReasonsMap[r])
+          .concat(buildOtherText() ?? [])
+          .join(", ")}
+      </MarkedIneligibleReasonsText>
+    );
+  });
+
 type OpportunityModuleProps = {
   formLinkButton?: boolean;
   formDownloadButton?: boolean;
@@ -80,6 +115,7 @@ type OpportunityModuleProps = {
   // do need to be hydrated if you are trying to use any of them
   opportunity: Opportunity;
   hideHeader?: boolean;
+  onDenialButtonClick?: () => void;
 };
 
 export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
@@ -88,6 +124,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     formDownloadButton,
     opportunity,
     hideHeader = false,
+    onDenialButtonClick = () => null,
   }) {
     const {
       workflowsStore: { featureVariants },
@@ -107,6 +144,9 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
       >
         {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}
         <CriteriaList opportunity={opportunity} />
+        {!!featureVariants.responsiveRevamp && showDenialButton && (
+          <MarkedIneligibleReasons opportunity={opportunity} />
+        )}
         {(formDownloadButton || showDenialButton || formLinkButton) && (
           <ActionButtons
             isMobile={!!featureVariants.responsiveRevamp && isLaptop}
@@ -144,10 +184,18 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                 </FormActionButton>
               </div>
             )}
-
-            {showDenialButton && (
-              <OpportunityDenial opportunity={opportunity} />
-            )}
+            {featureVariants.responsiveRevamp
+              ? showDenialButton &&
+                onDenialButtonClick && (
+                  <MenuButton
+                    responsiveRevamp={!!featureVariants.responsiveRevamp}
+                    opportunity={opportunity}
+                    onDenialButtonClick={onDenialButtonClick}
+                  />
+                )
+              : showDenialButton && (
+                  <OpportunityDenialDropdown opportunity={opportunity} />
+                )}
           </ActionButtons>
         )}
       </Wrapper>

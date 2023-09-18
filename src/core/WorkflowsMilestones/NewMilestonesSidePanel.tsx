@@ -101,7 +101,7 @@ const NewMilestonesSidePanel = function NewMilestonesSidePanel({
         />
       );
     default:
-      return <div>Default page</div>;
+      return <div />;
   }
 };
 

@@ -22,3 +22,16 @@ Feature: View a justice-involved individual's profile
      Examples:
         | stateCode | personID | numOpps | listOfDetailHeaders                                                                                       |
         | US_TN     | p100     | 1       | Supervision, Milestones, Housing, Fines and Fees, Probation Special Conditions, Parole Special Conditions |
+
+    Scenario Outline: Update eligibility from profile
+        Given I am a "<stateCode>" user on the profile page for person ID "<personID>"
+        When I click on the button with the text "Update eligibility"
+        Then I should see the update eligibility view that has a reason listed like "<checkboxValue>"
+        When I click on the checkbox for "<checkboxValue>"
+        And I click on the button with the text "Confirm"
+        Then I should see the person labeled as "Currently ineligible"
+        And I should see the ineligible reason "SCNC" listed
+
+     Examples:
+        | stateCode | personID  | checkboxValue |
+        | US_ID     | p005      | SCNC          |

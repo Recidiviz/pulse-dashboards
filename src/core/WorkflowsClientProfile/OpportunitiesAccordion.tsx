@@ -31,7 +31,9 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
+import { OpportunityDenialView } from "../OpportunityDenial";
 import { useStatusColors } from "../utils/workflowsUtils";
+import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import { OpportunityModule } from "./OpportunityModule";
 import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
 
@@ -131,9 +133,11 @@ const NoOpportunities = styled.div`
 export const AccordionSection = observer(function AccordionSection({
   opportunity,
   formLinkButton = false,
+  onDenialButtonClick = () => null,
 }: {
   opportunity: Opportunity;
   formLinkButton?: boolean;
+  onDenialButtonClick?: () => void;
 }) {
   const {
     workflowsStore: { featureVariants },
@@ -155,6 +159,7 @@ export const AccordionSection = observer(function AccordionSection({
             hideHeader
             opportunity={opportunity}
             formLinkButton={formLinkButton && !!opportunity.form}
+            onDenialButtonClick={onDenialButtonClick}
           />
         </AccordionBody>
       </AccordionItem>
@@ -172,7 +177,12 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
   formLinkButton?: boolean;
 }) {
   const {
-    workflowsStore: { featureVariants, opportunityTypes },
+    workflowsStore,
+    workflowsStore: {
+      featureVariants,
+      opportunityTypes,
+      selectedOpportunityOnFullProfile,
+    },
   } = useRootStore();
 
   const opportunities = sortBy(
@@ -210,9 +220,29 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
               key={opportunity.type}
               opportunity={opportunity}
               formLinkButton={formLinkButton}
+              onDenialButtonClick={() => {
+                workflowsStore.updateSelectedOpportunityOnFullProfile(
+                  opportunity
+                );
+              }}
             />
           );
         })}
+        <WorkflowsPreviewModal
+          isOpen={!!selectedOpportunityOnFullProfile}
+          clearSelectedPersonOnClose={false}
+          onClose={() =>
+            workflowsStore.updateSelectedOpportunityOnFullProfile(undefined)
+          }
+          pageContent={
+            <OpportunityDenialView
+              onSubmit={() =>
+                workflowsStore.updateSelectedOpportunityOnFullProfile(undefined)
+              }
+              opportunity={selectedOpportunityOnFullProfile}
+            />
+          }
+        />
       </AccordionWrapper>
     );
 

@@ -22,7 +22,6 @@ import path from "path";
 import { WorkflowsFormPage, WorkflowsHomepage } from "../../pages";
 import {
   allowHeadlessDownloads,
-  clickOutsideElement,
   switchUserStateCode,
   waitForElementsToExist,
   waitForFileToExist,
@@ -75,10 +74,15 @@ When("I click on the export form button", async () => {
   await Promise.all([button.click(), waitForNetworkIdle()]);
 });
 
-When("I click on the {string} dropdown", async (dropdownButtonText) => {
-  const dropdownButton = await $(`button=${dropdownButtonText}`);
-  await dropdownButton.waitForExist();
-  await dropdownButton.click();
+When("I click on the button with the text {string}", async (buttonText) => {
+  const button = await $(`button=${buttonText}`);
+  await button.waitForExist();
+  await button.scrollIntoView({
+    block: "center",
+    inline: "center",
+  });
+  await button.click();
+  await waitForNetworkIdle();
 });
 
 When("I click on the checkbox for {string}", async (checkboxValue) => {
@@ -89,7 +93,6 @@ When("I click on the checkbox for {string}", async (checkboxValue) => {
     inline: "center",
   });
   await eligibilityCheckbox.click();
-  await clickOutsideElement(".CriteraList");
   await waitForNetworkIdle();
 });
 
@@ -148,26 +151,16 @@ Then("the form should export for filename {string}", async (filename) => {
 });
 
 Then(
-  "I should see the eligibility dropdown that has a reason listed like {string}",
+  "I should see the update eligibility view that has a reason listed like {string}",
   async (ineligibleReason) => {
-    const dropdownContainer = await $(".OpportunityDenialDropdown");
-    await dropdownContainer.waitForExist();
-    const dropdownText = await dropdownContainer.getText();
-    expect(dropdownText).toEqual(expect.stringContaining("Eligible"));
-    expect(dropdownText).toEqual(expect.stringContaining(ineligibleReason));
+    const denialForm = await $(".OpportunityDenial");
+    await denialForm.waitForExist();
+    const menuItem = await $(`span.Checkbox__label*=${ineligibleReason}`);
+    expect(await menuItem.getText()).toEqual(
+      expect.stringContaining(ineligibleReason)
+    );
   }
 );
-
-Then("I should see the value {string} selected", async (checkboxValue) => {
-  const selectedDropdownButton = await $(`button=${checkboxValue}`);
-  await selectedDropdownButton.waitForExist();
-  await selectedDropdownButton.scrollIntoView({
-    block: "center",
-    inline: "center",
-  });
-  const selectedText = await selectedDropdownButton.getText();
-  expect(selectedText).toEqual(checkboxValue);
-});
 
 Then(
   "I should see the person labeled as {string}",

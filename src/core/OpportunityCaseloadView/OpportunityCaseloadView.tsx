@@ -15,43 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { spacing } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { OpportunityPersonList } from "./OpportunityPersonList";
-import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 
 const Wrapper = styled.div`
   /* leaving extra space for the Intercom button */
   padding-bottom: ${rem(spacing.md * 4)};
 `;
 
-export const OpportunityCaseloadView = observer(
-  function OpportunityCaseloadView() {
-    const {
-      workflowsStore: {
-        selectedOpportunityType: opportunityType,
-        selectedPerson,
-      },
-    } = useRootStore();
-
-    if (!opportunityType) return null;
-
-    return (
-      <WorkflowsNavLayout>
-        <Wrapper>
-          <CaseloadSelect />
-          <OpportunityPersonList />
-          <OpportunityPreviewModal
-            opportunity={selectedPerson?.verifiedOpportunities[opportunityType]}
-          />
-        </Wrapper>
-      </WorkflowsNavLayout>
-    );
-  }
-);
+export const OpportunityCaseloadView = function OpportunityCaseloadView() {
+  return (
+    <WorkflowsNavLayout>
+      <Wrapper>
+        <CaseloadSelect />
+        <OpportunityPersonList />
+      </Wrapper>
+    </WorkflowsNavLayout>
+  );
+};

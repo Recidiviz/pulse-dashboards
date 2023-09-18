@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { When } from "@cucumber/cucumber";
+import { Then, When } from "@cucumber/cucumber";
 
 import { waitForNavigation } from "../utils";
 /**
@@ -26,3 +26,15 @@ When("I click on the person link on the preview modal", async () => {
   await link.waitForExist();
   await waitForNavigation(link.click());
 });
+
+/**
+ * Then
+ * */
+Then(
+  "I should see the ineligible reason {string} listed",
+  async (ineligibleReason) => {
+    const ineligibleReasonText = await $(`.MarkedIneligibleReasonsText`);
+    const text = await ineligibleReasonText.getText();
+    expect(text).toContain(ineligibleReason);
+  }
+);

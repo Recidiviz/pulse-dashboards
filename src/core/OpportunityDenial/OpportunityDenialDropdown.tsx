@@ -29,10 +29,6 @@ const Wrapper = styled.div`
   flex: 1 1 auto;
 `;
 
-export const IconPad = styled.span`
-  display: inline-block;
-  margin-right: 8px;
-`;
 const DropdownContainer = styled.div<{ isMobile: boolean }>`
   min-width: ${({ isMobile }) => (isMobile ? 16 : 19)}rem;
   max-width: 26rem;
@@ -55,7 +51,7 @@ const DropdownContainer = styled.div<{ isMobile: boolean }>`
   }
 `;
 
-export function OpportunityDenial({
+export function OpportunityDenialDropdown({
   opportunity,
 }: {
   opportunity: Opportunity;
