@@ -163,14 +163,14 @@ export interface Opportunity<
   trackListViewed: () => void;
   trackPreviewed: () => void;
   readonly policyOrMethodologyUrl: string;
-  readonly deniedSectionTitle: string;
+  readonly deniedTabTitle: string;
   readonly opportunityProfileModules: OpportunityProfileModuleName[];
   readonly caseNotesTitle?: string;
   readonly hideUnknownCaseNoteDates?: boolean;
   readonly tooltipEligibilityText?: string;
   readonly eligibilityCallToActionText?: string;
-  sectionTitle?: SectionTitle;
-  sectionOrder: Readonly<SectionTitle[]>;
+  tabTitle?: OpportunityTab;
+  tabOrder: Readonly<OpportunityTab[]>;
   showEligibilityStatus: (component: Component) => boolean;
   readonly portionServedRequirement?: string[];
 }
@@ -182,15 +182,7 @@ export type OpportunityFactory<
   PersonType extends JusticeInvolvedPerson
 > = (type: OpportunitySubtype, person: PersonType) => Opportunity;
 
-export const CustomSectionOrders = {
-  UsMoRestrictiveHousingStatusHearingOpportunity: [
-    "Overdue For Hearing",
-    "Missing Review Date",
-    "Upcoming Hearings",
-  ],
-} as const;
-
-export type SectionTitle =
+export type OpportunityTab =
   | "Eligible Now"
   | "Almost Eligible"
   | "Overridden"
@@ -198,4 +190,6 @@ export type SectionTitle =
   // "Other" should never appear in the actual frontend, but exists to provide a default value
   // for when the record is undefined on the Opportunity class
   | "Other"
-  | typeof CustomSectionOrders[keyof typeof CustomSectionOrders][number];
+  | "Overdue For Hearing"
+  | "Missing Review Date"
+  | "Upcoming Hearings";

@@ -29,33 +29,10 @@ import { optionalFieldToDate } from "../../WorkflowsStore/utils";
 import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
 import { MilestonesCapsule } from "../PersonCapsules/MilestonesCapsule";
 import WorkflowsResults from "../WorkflowsResults";
+import WorkflowsTabbedPersonList from "../WorkflowsTabbedPersonList/WorkflowsTabbedPersonList";
 import { MilestonesSidePanel } from "./MilestonesSidePanel";
 import { MilestonesTooltip } from "./MilestonesTooltip";
 import { MilestonesItem, MilestonesList, MilestonesText } from "./styles";
-
-export type MilestonesTab =
-  | "NEW_MILESTONES"
-  | "CONGRATULATED"
-  | "DECLINED"
-  | "ERRORS";
-
-const MilestonesTabs = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  border-bottom: 1px solid ${palette.slate60};
-  margin: 2rem 0;
-  align-items: end;
-`;
-
-const MilestonesTabButton = styled.div<{ $active: boolean }>`
-  ${typography.Sans16}
-  color: ${(props) => (props.$active ? palette.pine4 : palette.slate60)};
-  padding: 0.5rem 0;
-  border-bottom: ${(props) =>
-    props.$active ? `1px solid ${palette.pine4}` : "none"};
-  margin-right: 2rem;
-  cursor: pointer;
-`;
 
 const MilestonesClientWrapper = styled.div`
   display: flex;
@@ -172,10 +149,21 @@ function MilestonesCaseload({
   return <MilestonesClientWrapper>{items}</MilestonesClientWrapper>;
 }
 
+const MILESTONES_TABS = [
+  "New Milestones",
+  "Congratulated",
+  "Declined to Send",
+  "Errors",
+] as const;
+
+export type MilestonesTab = typeof MILESTONES_TABS[number];
+
 const MilestonesCaseloadView: React.FC = observer(
   function MilestonesCaseloadView() {
     const { workflowsStore, analyticsStore } = useRootStore();
-    const [activeTab, setActiveTab] = useState<MilestonesTab>("NEW_MILESTONES");
+    const [activeTab, setActiveTab] = useState<MilestonesTab>(
+      MILESTONES_TABS[0]
+    );
 
     const handleTabClick = (tab: MilestonesTab) => {
       analyticsStore.trackMilestonesTabClick({ tab });
@@ -190,12 +178,6 @@ const MilestonesCaseloadView: React.FC = observer(
       });
     };
 
-    const tabs: Partial<Record<MilestonesTab, string>> = {
-      NEW_MILESTONES: "New Milestones",
-      CONGRATULATED: "Congratulated",
-      DECLINED: "Declined to Send",
-    };
-
     const empty = (
       <WorkflowsResults callToActionText="None of the selected caseloads have milestones to display. Search for another caseload." />
     );
@@ -206,20 +188,20 @@ const MilestonesCaseloadView: React.FC = observer(
 
     const clients = (tab: MilestonesTab): Client[] => {
       switch (tab) {
-        case "NEW_MILESTONES":
+        case "New Milestones":
           return uniq([
             ...workflowsStore.getMilestonesClientsByStatus(["PENDING"]),
             ...workflowsStore.getMilestonesClientsByStatus(),
           ]);
-        case "CONGRATULATED":
+        case "Congratulated":
           return workflowsStore.getMilestonesClientsByStatus([
             "CONGRATULATED_ANOTHER_WAY",
             "IN_PROGRESS",
             "SUCCESS",
           ]);
-        case "DECLINED":
+        case "Declined to Send":
           return workflowsStore.getMilestonesClientsByStatus(["DECLINED"]);
-        case "ERRORS":
+        case "Errors":
           return erroredMilestonesClients;
         default:
           return [];
@@ -230,33 +212,21 @@ const MilestonesCaseloadView: React.FC = observer(
       <CaseloadHydrator
         initial={null}
         hydrated={
-          <>
-            <MilestonesTabs>
-              {(Object.keys(tabs) as Array<MilestonesTab>).map((tab) => (
-                <MilestonesTabButton
-                  key={tab}
-                  $active={activeTab === tab}
-                  onClick={() => handleTabClick(tab)}
-                >
-                  {tabs[tab]}
-                </MilestonesTabButton>
-              ))}
-              {hasErrors && (
-                <MilestonesTabButton
-                  key="ERRORS"
-                  $active={activeTab === "ERRORS"}
-                  onClick={() => handleTabClick("ERRORS")}
-                >
-                  Errors
-                </MilestonesTabButton>
-              )}
-            </MilestonesTabs>
+          <WorkflowsTabbedPersonList<MilestonesTab>
+            tabs={
+              hasErrors
+                ? [...MILESTONES_TABS]
+                : MILESTONES_TABS.filter((t) => t !== "Errors")
+            }
+            activeTab={activeTab}
+            onClick={handleTabClick}
+          >
             <MilestonesCaseload
               clients={clients(activeTab)}
               handleRowOnClick={handleRowOnClick}
             />
             <MilestonesSidePanel activeTab={activeTab} />
-          </>
+          </WorkflowsTabbedPersonList>
         }
         empty={empty}
       />

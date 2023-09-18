@@ -24,12 +24,7 @@ import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
-import {
-  Component,
-  CustomSectionOrders,
-  OpportunityRequirement,
-  SectionTitle,
-} from "../../types";
+import { Component, OpportunityRequirement, OpportunityTab } from "../../types";
 import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "../../utils";
 import {
   UsMoRestrictiveHousingStatusHearingReferralRecord,
@@ -200,18 +195,13 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
     );
   }
 
-  get sectionTitle(): SectionTitle {
+  get tabTitle(): OpportunityTab {
     if (!this.record) return "Other";
     if (this.record.eligibleCriteria.usMoOverdueForHearing)
       return "Overdue For Hearing";
     if (!this.record.ineligibleCriteria.usMoOverdueForHearing?.nextReviewDate)
       return "Missing Review Date";
     return "Upcoming Hearings";
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get sectionOrder(): Readonly<SectionTitle[]> {
-    return CustomSectionOrders.UsMoRestrictiveHousingStatusHearingOpportunity;
   }
 
   showEligibilityStatus(component: Component): boolean {

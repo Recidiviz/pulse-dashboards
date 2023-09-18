@@ -26,7 +26,11 @@ import { SearchType } from "../../core/models/types";
 import { MilestonesTab } from "../../core/WorkflowsMilestones/MilestonesCaseloadView";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { DeclineReason } from "../../FirestoreStore";
-import { OpportunityStatus, OpportunityType } from "../../WorkflowsStore";
+import {
+  OpportunityStatus,
+  OpportunityTab,
+  OpportunityType,
+} from "../../WorkflowsStore";
 import {
   SupervisionNeedType,
   SupervisionTaskType,
@@ -117,6 +121,10 @@ export default class AnalyticsStore {
 
   trackSurfacedInList(metadata: OpportunityTrackingMetadata): void {
     this.track("frontend.surfaced_in_list", metadata);
+  }
+
+  trackOpportunityTabClicked(metadata: { tab: OpportunityTab }): void {
+    this.track("frontend.opportunity_tab_clicked", metadata);
   }
 
   trackSetOpportunityStatus<

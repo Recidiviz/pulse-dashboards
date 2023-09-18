@@ -37,6 +37,7 @@ import {
 import { JusticeInvolvedPerson } from "../types";
 import { OTHER_KEY } from "../utils";
 import { FormBase } from "./Forms/FormBase";
+import { OPPORTUNITY_CONFIGS } from "./OpportunityConfigs";
 import {
   Component,
   DefaultEligibility,
@@ -45,8 +46,8 @@ import {
   Opportunity,
   OpportunityRequirement,
   OpportunityStatus,
+  OpportunityTab,
   OpportunityType,
-  SectionTitle,
 } from "./types";
 
 /**
@@ -332,13 +333,12 @@ export abstract class OpportunityBase<
     });
   }
 
-  get deniedSectionTitle(): SectionTitle {
+  get deniedTabTitle(): OpportunityTab {
     return this.isAlert ? "Overridden" : "Marked ineligible";
   }
 
-  get sectionTitle(): SectionTitle {
-    if (!this.record) return "Other";
-    if (this.denied) return this.deniedSectionTitle;
+  get tabTitle(): OpportunityTab {
+    if (this.denied) return this.deniedTabTitle;
     if (this.almostEligible) return "Almost Eligible";
     return "Eligible Now";
   }
@@ -346,9 +346,15 @@ export abstract class OpportunityBase<
   // Note that this needs to be a getter instead of a base property, otherwise it gets initialized
   // before any subclasses are initialized. At that point in time, this.isAlert will always be
   // false (see https://www.typescriptlang.org/docs/handbook/2/classes.html#initialization-order)
-  // so deniedSectionTitle will always be "Marked ineligible".
-  get sectionOrder(): Readonly<SectionTitle[]> {
-    return ["Eligible Now", "Almost Eligible", this.deniedSectionTitle];
+  // so deniedTabTitle will always be "Marked ineligible".
+  get tabOrder(): Readonly<OpportunityTab[]> {
+    return (
+      OPPORTUNITY_CONFIGS[this.type].customTabOrder ?? [
+        "Eligible Now",
+        "Almost Eligible",
+        this.deniedTabTitle,
+      ]
+    );
   }
 
   /*

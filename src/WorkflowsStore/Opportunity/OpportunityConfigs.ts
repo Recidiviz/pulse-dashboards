@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { FeatureVariant, TenantId } from "../../RootStore/types";
-import { Opportunity, OpportunityType } from "./types";
+import { Opportunity, OpportunityTab, OpportunityType } from "./types";
 import { usCaSupervisionLevelDowngradeConfig as usCaSupervisionLevelDowngrade } from "./UsCa/UsCaSupervisionLevelDowngradeOpportunity/config";
 import { usIdEarnedDischargeConfig as earnedDischarge } from "./UsId/EarnedDischargeOpportunity/config";
 import { usIdLSUConfig as LSU } from "./UsId/LSUOpportunity/config";
@@ -49,6 +49,7 @@ export type OpportunityConfig = {
   snooze?: {
     defaultSnoozeUntilFn: (snoozedOn: Date, opportunity?: Opportunity) => Date;
   };
+  customTabOrder?: OpportunityTab[];
 };
 
 type OpportunityConfigMap = Record<OpportunityType, OpportunityConfig>;

@@ -74,6 +74,7 @@ import { Location } from "./Location";
 import { Officer } from "./Officer";
 import {
   Opportunity,
+  OpportunityTab,
   opportunityToSortFunctionMapping,
   OpportunityType,
 } from "./Opportunity";
@@ -572,12 +573,12 @@ export class WorkflowsStore implements Hydratable {
     return this.opportunitiesByEligibilityStatus("opportunitiesDenied");
   }
 
-  get opportunitiesBySection(): Record<
+  get opportunitiesByTab(): Record<
     OpportunityType,
-    Record<string, Opportunity[]>
+    Record<OpportunityTab, Opportunity[]>
   > {
     return mapValues(this.allOpportunitiesByType, (opps) => {
-      return groupBy(opps, "sectionTitle");
+      return groupBy(opps, "tabTitle") as Record<OpportunityTab, Opportunity[]>;
     });
   }
 

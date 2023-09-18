@@ -22,17 +22,19 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import { useOrderedActiveTab } from "../../hooks/useOrderedActiveTab";
 import { pluralizeWord } from "../../utils";
 import {
   generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,
-  SectionTitle,
+  OpportunityTab,
 } from "../../WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { Heading, SectionLabelText, SubHeading } from "../sharedComponents";
 import WorkflowsResults from "../WorkflowsResults";
+import WorkflowsTabbedPersonList from "../WorkflowsTabbedPersonList";
 import { PersonListItem } from "./PersonListItem";
 
 const PersonList = styled.ul`
@@ -57,16 +59,23 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
       justiceInvolvedPersonTitle,
       workflowsSearchFieldTitle,
       featureVariants: { responsiveRevamp },
-      opportunitiesBySection,
+      opportunitiesByTab,
       allOpportunitiesByType,
     },
+    analyticsStore,
   } = useRootStore();
   const { isMobile } = useIsMobile(true);
+  const { displayTabs, activeTab, setActiveTab } = useOrderedActiveTab();
 
   if (!opportunityType) return null;
 
   const opportunityLabel = OPPORTUNITY_CONFIGS[opportunityType].label;
   const totalOpps = allOpportunitiesByType[opportunityType]?.length ?? 0;
+
+  const handleTabClick = (tab: OpportunityTab) => {
+    analyticsStore.trackOpportunityTabClicked({ tab });
+    setActiveTab(tab);
+  };
 
   const hydratedHeader = generateOpportunityHydratedHeader(
     opportunityType,
@@ -96,13 +105,6 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
     />
   );
 
-  const opportunityTypeSections = opportunitiesBySection[opportunityType];
-  const sectionOrder: Readonly<SectionTitle[]> | undefined = Object.values(
-    opportunityTypeSections
-  )
-    .filter((opp) => !!opp)
-    .flat()[0]?.sectionOrder;
-
   const hydrated = (
     <>
       <Heading
@@ -118,31 +120,55 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
       <SubHeading className="PersonList__Subheading">
         {hydratedHeader.callToAction}
       </SubHeading>
-      {sectionOrder?.map((sectionTitle) => {
-        return (
-          opportunityTypeSections[sectionTitle]?.length > 0 && (
-            <div key={sectionTitle}>
-              {/* Only display the section title if there are multiple sections or the one we're
-              displaying isn't the first in the section order (such as "Almost Eligible") */}
-              {(Object.keys(opportunityTypeSections).length > 1 ||
-                sectionTitle !== sectionOrder[0]) && (
-                <SectionLabelText>{sectionTitle}</SectionLabelText>
-              )}
-              <PersonList
-                key={`PersonList_${sectionTitle}`}
-                className={`PersonList_${sectionTitle} PersonList`}
-              >
-                {opportunityTypeSections[sectionTitle]?.map((opportunity) => (
-                  <PersonListItem
-                    key={opportunity.person.recordId}
-                    opportunity={opportunity}
-                  />
-                ))}
-              </PersonList>
-            </div>
-          )
-        );
-      })}
+      {responsiveRevamp ? (
+        <WorkflowsTabbedPersonList<OpportunityTab>
+          tabs={[...displayTabs]}
+          activeTab={activeTab}
+          onClick={handleTabClick}
+        >
+          <PersonList
+            key={`PersonList_${activeTab}`}
+            className={`PersonList_${activeTab} PersonList`}
+          >
+            {opportunitiesByTab[opportunityType][activeTab]?.map(
+              (opportunity) => (
+                <PersonListItem
+                  key={opportunity.person.recordId}
+                  opportunity={opportunity}
+                />
+              )
+            )}
+          </PersonList>
+        </WorkflowsTabbedPersonList>
+      ) : (
+        displayTabs.map((sectionTitle) => {
+          return (
+            opportunitiesByTab[opportunityType][sectionTitle]?.length > 0 && (
+              <div key={sectionTitle}>
+                {/* Only display the section title if there are multiple sections or the one we're
+                displaying isn't the first in the section order (such as "Almost Eligible") */}
+                {(Object.keys(opportunitiesByTab[opportunityType]).length > 1 ||
+                  sectionTitle !== displayTabs[0]) && (
+                  <SectionLabelText>{sectionTitle}</SectionLabelText>
+                )}
+                <PersonList
+                  key={`PersonList_${sectionTitle}`}
+                  className={`PersonList_${sectionTitle} PersonList`}
+                >
+                  {opportunitiesByTab[opportunityType][sectionTitle]?.map(
+                    (opportunity) => (
+                      <PersonListItem
+                        key={opportunity.person.recordId}
+                        opportunity={opportunity}
+                      />
+                    )
+                  )}
+                </PersonList>
+              </div>
+            )
+          );
+        })
+      )}
     </>
   );
 

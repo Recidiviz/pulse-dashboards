@@ -36,23 +36,23 @@ export const MilestonesSidePanel = observer(function MilestonesSidePanel({
   if (!selectedClient) return null;
 
   switch (activeTab) {
-    case "NEW_MILESTONES":
+    case "New Milestones":
       return <NewMilestonesSidePanel client={selectedClient} />;
-    case "CONGRATULATED":
+    case "Congratulated":
       return (
         <CongratulatedSidePanel
           client={selectedClient}
           closeModal={() => workflowsStore.updateSelectedPerson(undefined)}
         />
       );
-    case "DECLINED":
+    case "Declined to Send":
       return (
         <DeclinedSidePanel
           client={selectedClient}
           closeModal={() => workflowsStore.updateSelectedPerson(undefined)}
         />
       );
-    case "ERRORS":
+    case "Errors":
       return <ErrorSidePanel client={selectedClient} />;
     default:
       return <div>Default page</div>;

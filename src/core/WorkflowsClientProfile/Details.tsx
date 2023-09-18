@@ -115,6 +115,10 @@ const SecureDetailsContent = styled(DetailsContent).attrs({
   className: "fs-exclude",
 })``;
 
+const SecureDetailsList = styled(DetailsList).attrs({
+  className: "fs-exclude",
+})``;
+
 // Special condition strings to display when a client does not have a special condition set
 // If the state opportunity does not support special conditions, it should not have an entry here
 const STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_STRINGS: Record<
@@ -554,7 +558,7 @@ export function UsMoClassesList({
               classExitReason,
             }: UsMoClassInfo) => {
               return (
-                <SecureDetailsContent key={classTitle}>
+                <SecureDetailsContent key={`${classTitle}-${startDate}`}>
                   <CaseNoteTitle>
                     {classTitle || "CLASS TITLE UNAVAILABLE"}
                   </CaseNoteTitle>
@@ -633,7 +637,7 @@ export function UsMoRestrictiveHousing({
       <DetailsSection>
         <DetailsHeading>Current Restrictive Housing Placement</DetailsHeading>
         <SecureDetailsContent>
-          <DetailsList>
+          <SecureDetailsList>
             <DetailsSubheading>Type</DetailsSubheading>
             <SecureDetailsContent>{housingUseCode}</SecureDetailsContent>
 
@@ -693,25 +697,25 @@ export function UsMoRestrictiveHousing({
                       enemyRoomNumber,
                       enemyBedNumber,
                     }) => (
-                      <SecureDetailsContent>
+                      <span className="fs-exclude" key={`${enemyExternalId}`}>
                         <CaseNoteTitle>[ID# {enemyExternalId}] </CaseNoteTitle>
                         Housing Use Code: <b>{enemyHousingUseCode}</b>
                         <br />
                         Building {enemyBuildingNumber}, Complex{" "}
                         {enemyComplexNumber}, Room {enemyRoomNumber}, Bed{" "}
                         {enemyBedNumber}
-                      </SecureDetailsContent>
+                      </span>
                     )
                   )
                 : "None"}
             </SecureDetailsContent>
-          </DetailsList>
+          </SecureDetailsList>
         </SecureDetailsContent>
       </DetailsSection>
 
       <DetailsSection>
         <DetailsHeading>Conduct Violations (CDVs)</DetailsHeading>
-        <SecureDetailsContent>
+        <SecureDetailsList>
           <DetailsSubheading>
             Major Conduct Violations, Past 12 Months
           </DetailsSubheading>
@@ -724,7 +728,7 @@ export function UsMoRestrictiveHousing({
             Minor Conduct Violations, Past 6 Months
           </DetailsSubheading>
           {numMinorCdvsBeforeLastHearing || "None"}
-        </SecureDetailsContent>
+        </SecureDetailsList>
       </DetailsSection>
 
       <DetailsSection>

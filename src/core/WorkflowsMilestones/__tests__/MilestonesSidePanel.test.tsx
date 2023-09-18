@@ -77,11 +77,11 @@ describe("MilestonesSidePanel", () => {
     jest.resetAllMocks();
   });
 
-  describe("NEW_MILESTONES", () => {
+  describe("New Milestones", () => {
     test("renders with ComposeMessageView", () => {
       const container = render(
         <BrowserRouter>
-          <MilestonesSidePanel activeTab="NEW_MILESTONES" />
+          <MilestonesSidePanel activeTab="New Milestones" />
         </BrowserRouter>
       );
       expect(container).toMatchSnapshot();
@@ -89,17 +89,17 @@ describe("MilestonesSidePanel", () => {
     });
   });
 
-  test("DECLINED", () => {
+  test("Declined to Send", () => {
     const container = render(
       <BrowserRouter>
-        <MilestonesSidePanel activeTab="DECLINED" />
+        <MilestonesSidePanel activeTab="Declined to Send" />
       </BrowserRouter>
     );
     expect(container).toMatchSnapshot();
     expect(screen.getByTestId("DeclinedSidePanel")).toBeInTheDocument();
   });
 
-  describe("CONGRATULATED", () => {
+  describe("Congratulated", () => {
     test("renders with text message preview", () => {
       runInAction(() => {
         useRootStoreMock().workflowsStore.selectedClient.milestonesMessageUpdatesSubscription =
@@ -113,7 +113,7 @@ describe("MilestonesSidePanel", () => {
       });
       const container = render(
         <BrowserRouter>
-          <MilestonesSidePanel activeTab="CONGRATULATED" />
+          <MilestonesSidePanel activeTab="Congratulated" />
         </BrowserRouter>
       );
       expect(container).toMatchSnapshot();
@@ -136,7 +136,7 @@ describe("MilestonesSidePanel", () => {
     });
     const container = render(
       <BrowserRouter>
-        <MilestonesSidePanel activeTab="CONGRATULATED" />
+        <MilestonesSidePanel activeTab="Congratulated" />
       </BrowserRouter>
     );
     expect(container).toMatchSnapshot();

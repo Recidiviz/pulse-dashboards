@@ -35,7 +35,7 @@ const baseWorkflowsStoreMock = {
   featureVariants: {
     responsiveRevamp: {},
   },
-  opportunitiesBySection: {
+  opportunitiesByTab: {
     earlyTermination: [],
   },
   allOpportunitiesByType: { earlyTermination: [] },
@@ -93,20 +93,16 @@ test("empty", () => {
 });
 
 test("hydrated", () => {
-  const firstSectionText = "Displays first";
-  const emptySectionText = "Empty Section";
-  const otherSectionText = "Displays after";
-  const oppSectionOrder = [
-    firstSectionText,
-    emptySectionText,
-    otherSectionText,
-  ];
+  const firstTabText = "Displays first";
+  const emptyTabText = "Empty Tab";
+  const otherTabText = "Displays after";
+  const oppTabOrder = [firstTabText, emptyTabText, otherTabText];
   const opp1 = {
     ...mockOpportunity,
+    tabOrder: oppTabOrder,
     person: {
       recordId: "1",
     } as Client,
-    sectionOrder: oppSectionOrder,
   };
   const opp2 = {
     ...opp1,
@@ -121,10 +117,10 @@ test("hydrated", () => {
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp1, opp2] },
-      opportunitiesBySection: {
+      opportunitiesByTab: {
         earlyTermination: {
-          [otherSectionText]: [opp1],
-          [firstSectionText]: [opp2],
+          [otherTabText]: [opp1],
+          [firstTabText]: [opp2],
         },
       },
     },
@@ -136,27 +132,27 @@ test("hydrated", () => {
     screen.getByText("2 clients may be eligible for early termination")
   ).toBeInTheDocument();
 
-  expect(screen.queryByText(emptySectionText)).not.toBeInTheDocument();
+  expect(screen.queryByText(emptyTabText)).not.toBeInTheDocument();
 
-  const firstSection = screen.getByText(firstSectionText);
-  const otherSection = screen.getByText(otherSectionText);
+  const firstTab = screen.getByText(firstTabText);
+  const otherTab = screen.getByText(otherTabText);
 
-  expect(firstSection).toBeInTheDocument();
-  expect(otherSection).toBeInTheDocument();
-  expect(firstSection.compareDocumentPosition(otherSection)).toBe(
+  expect(firstTab).toBeInTheDocument();
+  expect(otherTab).toBeInTheDocument();
+  expect(firstTab.compareDocumentPosition(otherTab)).toBe(
     Node.DOCUMENT_POSITION_FOLLOWING
   );
 });
 
-test("hydrated with one section", () => {
-  const firstSectionText = "Eligible Now";
-  const oppSectionOrder = [firstSectionText, "Overridden"];
+test("hydrated with one tab", () => {
+  const firstTabText = "Eligible Now";
+  const oppTabOrder = [firstTabText, "Overridden"];
   const opp = {
     ...mockOpportunity,
+    tabOrder: oppTabOrder,
     person: {
       recordId: "4",
     } as Client,
-    sectionOrder: oppSectionOrder,
   };
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
@@ -165,9 +161,9 @@ test("hydrated with one section", () => {
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp] },
-      opportunitiesBySection: {
+      opportunitiesByTab: {
         earlyTermination: {
-          [firstSectionText]: [opp],
+          [firstTabText]: [opp],
         },
       },
     },
@@ -179,19 +175,19 @@ test("hydrated with one section", () => {
     screen.getByText("1 client may be eligible for early termination")
   ).toBeInTheDocument();
 
-  expect(screen.queryByText(firstSectionText)).not.toBeInTheDocument();
+  expect(screen.queryByText(firstTabText)).toBeInTheDocument();
 });
 
-test("hydrated with second section", () => {
-  const firstSectionText = "Eligible Now";
-  const overriddenSectionText = "Overridden";
-  const oppSectionOrder = [firstSectionText, overriddenSectionText];
+test("hydrated with a tab that is not listed as the first tab in the order", () => {
+  const firstTabText = "Eligible Now";
+  const overriddenTabText = "Overridden";
+  const oppTabOrder = [firstTabText, overriddenTabText];
   const opp = {
     ...mockOpportunity,
+    tabOrder: oppTabOrder,
     person: {
       recordId: "3",
     } as Client,
-    sectionOrder: oppSectionOrder,
   };
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
@@ -200,9 +196,9 @@ test("hydrated with second section", () => {
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp] },
-      opportunitiesBySection: {
+      opportunitiesByTab: {
         earlyTermination: {
-          [overriddenSectionText]: [opp],
+          [overriddenTabText]: [opp],
         },
       },
     },
@@ -214,6 +210,6 @@ test("hydrated with second section", () => {
     screen.getByText("1 client may be eligible for early termination")
   ).toBeInTheDocument();
 
-  expect(screen.queryByText(firstSectionText)).not.toBeInTheDocument();
-  expect(screen.getByText(overriddenSectionText)).toBeInTheDocument();
+  expect(screen.queryByText(firstTabText)).not.toBeInTheDocument();
+  expect(screen.getByText(overriddenTabText)).toBeInTheDocument();
 });
