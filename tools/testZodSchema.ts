@@ -38,6 +38,7 @@ import { usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFor
 import { usMoRestrictiveHousingStatusHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoRestrictiveHousingStatusHearingOpportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { usNdEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsNd/UsNdEarlyTerminationOpportunity/UsNdEarlyTerminationReferralRecord";
 import { compliantReportingSchema } from "../src/WorkflowsStore/Opportunity/UsTn/CompliantReportingOpportunity/CompliantReportingReferralRecord";
+import { usTnAnnualReclassificationReviewSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewReferralRecord";
 import { usTnCustodyLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnCustodyLevelDowngradeOpportunity/UsTnCustodyLevelDowngradeReferralRecord";
 import { usTnExpirationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnExpirationOpportunity/UsTnExpirationReferralRecord";
 import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSupervisionLevelDowngradeOpportunity/UsTnSupervisionLevelDowngradeReferralRecord";
@@ -94,6 +95,7 @@ const SCHEMAS = {
   usCaSupervisionLevelDowngradeReferrals: usCaSupervisionLevelDowngradeSchema,
   usMiEarlyDischargeReferrals: usMiEarlyDischargeSchema,
   usMiMinimumTelephoneReportingReferrals: usMiMinimumTelephoneReportingSchema,
+  usTnAnnualReclassificationReferrals: usTnAnnualReclassificationReviewSchema,
 } satisfies Partial<Record<CollectionName, z.ZodTypeAny>>;
 
 async function testCollection(

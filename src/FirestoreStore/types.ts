@@ -63,6 +63,7 @@ export const collectionNames = {
   usMiPastFTRDReferrals: "US_MI-pastFTRDReferrals",
   usMeFurloughReleaseReferrals: "US_ME-furloughReleaseReferrals",
   usCaSupervisionLevelDowngradeReferrals: "US_CA-supervisionLevelDowngrade",
+  usTnAnnualReclassificationReferrals: "US_TN-annualReclassificationReferrals",
 };
 
 export type CollectionName = keyof typeof collectionNames;

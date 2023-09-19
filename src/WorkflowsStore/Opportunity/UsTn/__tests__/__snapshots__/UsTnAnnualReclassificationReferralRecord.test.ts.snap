@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UsTnAnnualReclassificationReviewReferralRecordRaw matches the snapshot 1`] = `
+Object {
+  "caseNotes": Object {
+    "ba bar": Array [
+      Object {
+        "eventDate": 2022-09-06T00:00:00.000Z,
+        "noteBody": "Body3",
+        "noteTitle": "Title3",
+      },
+    ],
+    "foo": Array [
+      Object {
+        "eventDate": 2022-04-06T00:00:00.000Z,
+        "noteBody": "Body1",
+        "noteTitle": "Title1",
+      },
+      Object {
+        "eventDate": 2022-06-06T00:00:00.000Z,
+        "noteBody": "Body2",
+        "noteTitle": "Title2",
+      },
+    ],
+  },
+  "eligibleCriteria": Object {
+    "custodyLevelComparedToRecommended": Object {
+      "custodyLevel": "MINIMUM",
+      "recommendedCustodyLevel": "MINIMUM",
+    },
+    "custodyLevelIsNotMax": null,
+    "usTnAtLeast12MonthsSinceLatestAssessment": Object {
+      "mostRecentAssessmentDate": 2020-01-01T00:00:00.000Z,
+    },
+  },
+  "externalId": "reclass-01",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_TN",
+}
+`;
+
+exports[`UsTnAnnualReclassificationReviewReferralRecordRaw matches the snapshot without caseNotes 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "custodyLevelComparedToRecommended": Object {
+      "custodyLevel": "MINIMUM",
+      "recommendedCustodyLevel": "MINIMUM",
+    },
+    "custodyLevelIsNotMax": null,
+    "usTnAtLeast12MonthsSinceLatestAssessment": Object {
+      "mostRecentAssessmentDate": 2020-01-01T00:00:00.000Z,
+    },
+  },
+  "externalId": "reclass-01",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_TN",
+}
+`;
