@@ -28,6 +28,9 @@ Object {
     },
   },
   "externalId": "cr-eligible-1",
+  "metadata": Object {
+    "recommendedSupervisonLevel": "MEDIUM",
+  },
   "stateCode": "US_MI",
 }
 `;
@@ -42,6 +45,9 @@ Object {
     "usMiNotAlreadyOnLowestEligibleSupervisionLevel": null,
   },
   "externalId": "cr-eligible-3",
+  "metadata": Object {
+    "recommendedSupervisonLevel": null,
+  },
   "stateCode": "US_MI",
 }
 `;
@@ -67,6 +73,9 @@ Object {
     },
   },
   "externalId": "cr-eligible-2",
+  "metadata": Object {
+    "recommendedSupervisonLevel": "MEDIUM",
+  },
   "stateCode": "US_MI",
 }
 `;

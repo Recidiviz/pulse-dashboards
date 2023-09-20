@@ -64,6 +64,7 @@ export const usMiClassificationReviewSchemaForSupervisionLevelFormatter = (
             ...rest,
           })
         ),
+      metadata: z.object({ recommendedSupervisonLevel: z.string().nullable() }),
     })
     .merge(caseNotesSchema);
 

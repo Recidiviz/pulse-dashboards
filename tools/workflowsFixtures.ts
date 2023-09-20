@@ -41,6 +41,7 @@ import { usMeEarlyTerminationReferralsFixture } from "./fixtures/usMeEarlyTermin
 import { usMeFurloughReleaseFixture } from "./fixtures/UsMeFurloughReleaseReferrals";
 import { usMeSCCPFixture } from "./fixtures/usMeSCCPReferrals";
 import { usMeWorkReleaseFixture } from "./fixtures/usMeWorkReleaseReferrals";
+import { UsMiClassificationReviewReferralsFixture } from "./fixtures/usMiClassificationReviewReferrals";
 import { usMiEarlyDischargeReferralsFixture } from "./fixtures/usMiEarlyDischargeReferrals";
 import { usMiMinimumTelephoneReportingReferralsFixture } from "./fixtures/usMiMinimumTelephoneReportingReferrals";
 import { usMiPastFTRDReferralsFixture } from "./fixtures/usMiPastFTRDReferrals";
@@ -74,7 +75,6 @@ const db = new Firestore(fsSettings);
 const OPPORTUNITIES_WITH_JSON_FIXTURES: CollectionName[] = [
   "LSUReferrals",
   "earnedDischargeReferrals",
-  "usMiClassificationReviewReferrals",
 ];
 
 export type FixtureData<T> = {
@@ -103,6 +103,7 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   usMeSCCPReferrals: usMeSCCPFixture,
   usMeWorkReleaseReferrals: usMeWorkReleaseFixture,
   usMiEarlyDischargeReferrals: usMiEarlyDischargeReferralsFixture,
+  usMiClassificationReviewReferrals: UsMiClassificationReviewReferralsFixture,
   usMiMinimumTelephoneReportingReferrals:
     usMiMinimumTelephoneReportingReferralsFixture,
   usMiSupervisionLevelDowngradeReferrals,

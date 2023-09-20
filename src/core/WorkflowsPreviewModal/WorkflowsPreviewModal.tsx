@@ -80,6 +80,10 @@ const Wrapper = styled.div<{
     responsiveRevamp
       ? `${rem(spacing.lg)} ${rem(spacing.md)}`
       : `0 ${rem(spacing.lg)} ${rem(spacing.lg)}`};
+
+  hr + hr {
+    display: none;
+  }
 `;
 
 type PreviewModalProps = {

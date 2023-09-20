@@ -34,6 +34,7 @@ import {
 import { Client, WithCaseNotes } from "../../WorkflowsStore";
 import {
   INTERSTATE_COPY,
+  UsMiClassificationReviewReferralRecord,
   UsMiEarlyDischargeReferralRecord,
 } from "../../WorkflowsStore/Opportunity/UsMi";
 import {
@@ -784,6 +785,31 @@ export function UsMiEarlyDischargeIcDetails({
         </SecureDetailsContent>
       </DetailsList>
     </DetailsBorderedSection>
+  );
+}
+
+export function RecommendedSupervisionLevel({
+  opportunity,
+}: OpportunityProfileProps): React.ReactElement | null {
+  const opportunityRecord =
+    opportunity.record as UsMiClassificationReviewReferralRecord;
+  if (!opportunityRecord) return null;
+
+  const {
+    metadata: { recommendedSupervisonLevel },
+  } = opportunityRecord;
+
+  if (!recommendedSupervisonLevel) return null;
+
+  return (
+    <DetailsSection>
+      <DetailsHeading>Recommended Supervision Level</DetailsHeading>
+      <DetailsList>
+        <SecureDetailsContent>
+          {recommendedSupervisonLevel}
+        </SecureDetailsContent>
+      </DetailsList>
+    </DetailsSection>
   );
 }
 

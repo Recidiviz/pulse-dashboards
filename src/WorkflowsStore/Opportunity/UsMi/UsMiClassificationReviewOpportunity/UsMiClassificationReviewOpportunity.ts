@@ -39,6 +39,7 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
 
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "ClientProfileDetails",
+    "RecommendedSupervisionLevel",
     "CaseNotes",
   ];
 
