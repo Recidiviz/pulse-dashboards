@@ -70,7 +70,7 @@ Styling and changing the text in the footer is done through the Auth0 CLI. The A
 can be found in this directory under `/auth0/branding/login_template.html`. If you make any updates to the template, please remember to check those changes into version control.
 
 ```
-:> auth0 branding templates update
+:> auth0 universal-login templates update
 ```
 
 ### Connections
