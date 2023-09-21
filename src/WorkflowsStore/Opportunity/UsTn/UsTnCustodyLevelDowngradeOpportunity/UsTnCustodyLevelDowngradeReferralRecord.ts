@@ -29,31 +29,19 @@ import {
 
 const realUsTnCustodyLevelDowngradeSchema = opportunitySchemaBase
   .extend({
-    eligibleCriteria: z
-      .object({
-        custodyLevelHigherThanRecommended: z.object({
-          custodyLevel: z.string(),
-          recommendedCustodyLevel: z.string(),
-        }),
-        custodyLevelIsNotMax: z.null(),
-      })
-      .and(
-        z.union([
-          z.object({
-            usTnLatestAssessmentNotOverride: z.null(),
-            usTnIneligibleForAnnualReclassification: z.object({
-              mostRecentAssessmentDate: dateStringSchema,
-            }),
-          }),
-          z.object({
-            // TODO(#3969): [Workflows][US_TN] Remove old SLD criteria after deprecation
-            usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident: z.null(),
-            usTnHasHadAtLeast1IncarcerationIncidentPastYear: z.object({
-              latestIncarcerationIncidentDate: dateStringSchema,
-            }),
-          }),
-        ])
-      ),
+    eligibleCriteria: z.object({
+      custodyLevelHigherThanRecommended: z.object({
+        custodyLevel: z.string(),
+        recommendedCustodyLevel: z.string(),
+      }),
+      custodyLevelIsNotMax: z.null(),
+      usTnLatestCafAssessmentNotOverride: z.object({
+        overrideReason: z.string().nullable(),
+      }),
+      usTnIneligibleForAnnualReclassification: z.object({
+        ineligibleCriteria: z.array(z.string()),
+      }),
+    }),
     ineligibleCriteria: z.object({}),
     formInformation: z.object({
       currentOffenses: z.string().array().optional(),

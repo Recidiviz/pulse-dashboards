@@ -350,39 +350,11 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
         recommendedCustodyLevel: "LOW",
       },
       usTnIneligibleForAnnualReclassification: {
-        mostRecentAssessmentDate: parseISO("2023-12-18"),
+        ineligibleCriteria: ["Some reason"],
       },
-      usTnLatestAssessmentNotOverride: null,
-    },
-    ineligibleCriteria: {},
-    formInformation: {
-      q1Score: -3,
-      q2Score: -2,
-      q3Score: -1,
-      q4Score: 0,
-      q5Score: 1,
-      q6Score: 2,
-      q7Score: 3,
-      q8Score: 4,
-      q9Score: 5,
-    },
-    caseNotes: {},
-  };
-
-export const UsTnCustodyLevelDowngradeReferralRecordFixtureOld: UsTnCustodyLevelDowngradeReferralRecord =
-  {
-    stateCode: "US_TN",
-    externalId: UsTnCustodyLevelDowngradeEligibleResidentRecord.recordId,
-    eligibleCriteria: {
-      custodyLevelIsNotMax: null,
-      custodyLevelHigherThanRecommended: {
-        custodyLevel: "MEDIUM",
-        recommendedCustodyLevel: "LOW",
+      usTnLatestCafAssessmentNotOverride: {
+        overrideReason: "Some reason",
       },
-      usTnHasHadAtLeast1IncarcerationIncidentPastYear: {
-        latestIncarcerationIncidentDate: parseISO("2023-12-18"),
-      },
-      usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident: null,
     },
     ineligibleCriteria: {},
     formInformation: {

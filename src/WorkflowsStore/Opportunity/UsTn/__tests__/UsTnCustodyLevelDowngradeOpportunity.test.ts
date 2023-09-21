@@ -24,7 +24,6 @@ import { DocumentSubscription } from "../../../subscriptions";
 import {
   UsTnCustodyLevelDowngradeEligibleResidentRecord,
   UsTnCustodyLevelDowngradeReferralRecordFixture,
-  UsTnCustodyLevelDowngradeReferralRecordFixtureOld,
 } from "../__fixtures__";
 import { UsTnCustodyLevelDowngradeOpportunity } from "../UsTnCustodyLevelDowngradeOpportunity";
 
@@ -74,28 +73,6 @@ describe("fully eligible resident", () => {
     referralSub = opp.referralSubscription;
     referralSub.isLoading = false;
     referralSub.data = UsTnCustodyLevelDowngradeReferralRecordFixture;
-
-    updatesSub = opp.updatesSubscription;
-    updatesSub.isLoading = false;
-  });
-
-  test("requirements almost met", () => {
-    expect(opp.requirementsAlmostMet).toEqual([]);
-  });
-
-  test("requirements met", () => {
-    expect(opp.requirementsMet).toMatchSnapshot();
-  });
-});
-
-// TODO(#3969): [Workflows][US_TN] Remove old SLD criteria after deprecation
-describe("fully eligible resident with old criteria", () => {
-  beforeEach(() => {
-    createTestUnit(UsTnCustodyLevelDowngradeEligibleResidentRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.isLoading = false;
-    referralSub.data = UsTnCustodyLevelDowngradeReferralRecordFixtureOld;
 
     updatesSub = opp.updatesSubscription;
     updatesSub.isLoading = false;

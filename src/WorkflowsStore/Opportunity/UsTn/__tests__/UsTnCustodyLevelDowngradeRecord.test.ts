@@ -30,10 +30,11 @@ const usTnCustodyLevelDowngradeRecordRaw: UsTnCustodyLevelDowngradeReferralRecor
         custodyLevel: "MAXIMUM",
       },
       custodyLevelIsNotMax: null,
-      // TODO(#3969): [Workflows][US_TN] Remove old SLD criteria after deprecation
-      usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident: null,
-      usTnHasHadAtLeast1IncarcerationIncidentPastYear: {
-        latestIncarcerationIncidentDate: "2022-04-12",
+      usTnLatestCafAssessmentNotOverride: {
+        overrideReason: "Some reason",
+      },
+      usTnIneligibleForAnnualReclassification: {
+        ineligibleCriteria: ["Some reason"],
       },
     },
     ineligibleCriteria: {},
@@ -50,62 +51,8 @@ const usTnCustodyLevelDowngradeRecordRaw: UsTnCustodyLevelDowngradeReferralRecor
     },
   };
 
-const usTnCustodyLevelDowngradeRecordRawNew: UsTnCustodyLevelDowngradeReferralRecordRaw =
-  {
-    ...usTnCustodyLevelDowngradeRecordRaw,
-    eligibleCriteria: {
-      custodyLevelHigherThanRecommended:
-        usTnCustodyLevelDowngradeRecordRaw.eligibleCriteria
-          .custodyLevelHigherThanRecommended,
-      custodyLevelIsNotMax:
-        usTnCustodyLevelDowngradeRecordRaw.eligibleCriteria
-          .custodyLevelIsNotMax,
-      usTnLatestAssessmentNotOverride: null,
-      usTnIneligibleForAnnualReclassification: {
-        mostRecentAssessmentDate: "2022-02-22",
-      },
-    },
-  };
-
-const usTnCustodyLevelDowngradeRecordRawCombined: UsTnCustodyLevelDowngradeReferralRecordRaw =
-  {
-    ...usTnCustodyLevelDowngradeRecordRaw,
-    eligibleCriteria: {
-      ...usTnCustodyLevelDowngradeRecordRaw.eligibleCriteria,
-      usTnLatestAssessmentNotOverride: null,
-      usTnIneligibleForAnnualReclassification: {
-        mostRecentAssessmentDate: "2022-02-22",
-      },
-    },
-  };
-
-test("transforms the old opportunity format", () => {
-  expect(
-    usTnCustodyLevelDowngradeSchema.parse(usTnCustodyLevelDowngradeRecordRawNew)
-  ).toMatchSnapshot();
-});
-
-test("transforms the new opportunity format", () => {
+test("record is properly parsed for opportunity", () => {
   expect(
     usTnCustodyLevelDowngradeSchema.parse(usTnCustodyLevelDowngradeRecordRaw)
   ).toMatchSnapshot();
-});
-
-test("transforms the combined opportunity format while preferring new keys", () => {
-  const parsedRecord = usTnCustodyLevelDowngradeSchema.parse(
-    usTnCustodyLevelDowngradeRecordRawCombined
-  );
-  expect(parsedRecord).toMatchSnapshot();
-
-  expect(parsedRecord.eligibleCriteria).toContainAllKeys([
-    "usTnIneligibleForAnnualReclassification",
-    "custodyLevelHigherThanRecommended",
-    "custodyLevelIsNotMax",
-    "usTnLatestAssessmentNotOverride",
-  ]);
-
-  expect(parsedRecord.eligibleCriteria).not.toContainAnyKeys([
-    "usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident",
-    "usTnHasHadAtLeast1IncarcerationIncidentPastYear",
-  ]);
 });

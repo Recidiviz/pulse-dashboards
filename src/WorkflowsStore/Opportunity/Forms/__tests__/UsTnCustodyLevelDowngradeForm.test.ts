@@ -75,9 +75,11 @@ function createTestUnit() {
         recommendedCustodyLevel: "LOW",
       },
       custodyLevelIsNotMax: null,
-      usTnAtLeast6MonthsSinceMostRecentIncarcerationIncident: null,
-      usTnHasHadAtLeast1IncarcerationIncidentPastYear: {
-        latestIncarcerationIncidentDate: new Date("2019-04-01T12:00"),
+      usTnLatestCafAssessmentNotOverride: {
+        overrideReason: "Some reason",
+      },
+      usTnIneligibleForAnnualReclassification: {
+        ineligibleCriteria: ["Some reason"],
       },
     },
     ineligibleCriteria: {},
