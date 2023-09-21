@@ -23,6 +23,7 @@ import devAuthConfig from "../auth_config_dev.json";
 import productionAuthConfig from "../auth_config_production.json";
 import ImpactStore from "../core/ImpactStore";
 import FirestoreStore from "../FirestoreStore";
+import { OutliersStore } from "../OutliersStore/OutliersStore";
 import { WorkflowsStore } from "../WorkflowsStore";
 import AnalyticsStore from "./AnalyticsStore";
 import APIStore from "./APIStore";
@@ -97,6 +98,8 @@ export class RootStore {
 
   impactStore: ImpactStore;
 
+  outliersStore: OutliersStore;
+
   constructor() {
     makeObservable(this, {
       currentTenantId: computed,
@@ -122,6 +125,8 @@ export class RootStore {
     this.firestoreStore = new FirestoreStore({ rootStore: this });
 
     this.impactStore = new ImpactStore({ rootStore: this });
+
+    this.outliersStore = new OutliersStore(this);
   }
 
   get currentTenantId(): TenantId | undefined {
