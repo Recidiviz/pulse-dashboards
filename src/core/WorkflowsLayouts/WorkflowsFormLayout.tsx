@@ -115,11 +115,12 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
 
   const formContents = opportunity?.form?.formContents;
 
-  if (!formContents) return null;
-  const FormComponent = connectComponentToOpportunityForm(
-    FormComponents[formContents],
-    opportunityType
-  );
+  const FormComponent = formContents
+    ? connectComponentToOpportunityForm(
+        FormComponents[formContents],
+        opportunityType
+      )
+    : null;
 
   const sidebarContents =
     currentView === "DENIAL" && !!featureVariants.responsiveRevamp ? (
@@ -165,13 +166,10 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
         </SidebarSection>
       </Sidebar>
 
-      <FormWrapper>
-        <FormComponent />
-      </FormWrapper>
+      <FormWrapper>{FormComponent && <FormComponent />}</FormWrapper>
     </Wrapper>
   );
 
-  // TODO(#2684): Replace this with a graceful fallback page
   const empty = <div />;
 
   return (
