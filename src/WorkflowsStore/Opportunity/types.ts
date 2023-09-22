@@ -54,6 +54,7 @@ export const INCARCERATION_OPPORTUNITY_TYPES = [
   "usMoRestrictiveHousingStatusHearing",
   "usTnCustodyLevelDowngrade",
   "usMeFurloughRelease",
+  "usTnAnnualReclassification",
 ] as const;
 export type IncarcerationOpportunityType =
   typeof INCARCERATION_OPPORTUNITY_TYPES[number];

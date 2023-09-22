@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Annual Reclassification Opportunity for fully eligible resident requirements met 1`] = `
+Array [
+  Object {
+    "text": "At least 12 months since last reclassification date",
+  },
+  Object {
+    "text": "Custody level is not maximum",
+  },
+]
+`;

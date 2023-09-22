@@ -28,13 +28,16 @@ export const usTnAnnualReclassificationReviewSchema = opportunitySchemaBase
     eligibleCriteria: z.object({
       usTnAtLeast12MonthsSinceLatestAssessment: z
         .object({
+          // TODO(#4091) test property for congruency with database after schema change.
           mostRecentAssessmentDate: dateStringSchema,
         })
         .nullable(),
       custodyLevelIsNotMax: z.null(),
       custodyLevelComparedToRecommended: z.object({
-        custodyLevel: z.string(),
-        recommendedCustodyLevel: z.string(),
+        // TODO (#4091) remove nullable once missing property is fixed.
+        custodyLevel: z.string().nullable(),
+        // TODO(#4091) remove nullable once missing property is fixed.
+        recommendedCustodyLevel: z.string().nullable(),
       }),
     }),
     ineligibleCriteria: z.object({}),

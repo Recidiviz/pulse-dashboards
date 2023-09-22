@@ -254,6 +254,13 @@ export const generateOpportunityHydratedHeader = (
       opportunityText: "eligible for a supervision level downgrade",
       callToAction: "usCaSupervisionLevelDowngrade CTA",
     },
+    usTnAnnualReclassification: {
+      eligibilityText: simplur`${count} resident[|s] are eligible `,
+      opportunityText: "for their annual reclassification",
+      callToAction:
+        "Review residents due for their annual reclassification " +
+        "and update their custody level in TOMIS.",
+    },
   };
 
   return headers[opportunityType];
@@ -322,6 +329,7 @@ export const opportunityToSortFunctionMapping: Record<
   usMiPastFTRD: sortByReviewStatusAndEligibilityDate,
   usMeFurloughRelease: sortByReviewStatus,
   usCaSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
+  usTnAnnualReclassification: sortByReviewStatus,
 };
 
 export const transformCaseNotes = (

@@ -21,4 +21,5 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig = {
   stateCode: "US_TN",
   urlSection: "annualReclassification",
   label: "Annual Reclassification",
+  featureVariant: "usTnAnnualReclassification",
 };

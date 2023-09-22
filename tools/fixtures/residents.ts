@@ -238,6 +238,40 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     admissionDate: "2020-08-12",
     releaseDate: "2024-11-27",
   },
+  {
+    allEligibleOpportunities: ["usTnAnnualReclassification"],
+    officerId: "OFFICER5",
+    stateCode: "US_TN",
+    personExternalId: "RES003",
+    displayId: "dRES003",
+    personName: {
+      givenNames: "Nanny",
+      surname: "Bot",
+    },
+    pseudonymizedId: "anonres003",
+    facilityId: "BLEDSOE_CC",
+    unitId: "UNIT C",
+    custodyLevel: "MINIMUM",
+    admissionDate: "2020-08-12",
+    releaseDate: "2025-01-01",
+  },
+  {
+    allEligibleOpportunities: ["usTnAnnualReclassification"],
+    officerId: "OFFICER5",
+    stateCode: "US_TN",
+    personExternalId: "RES004",
+    displayId: "dRES004",
+    personName: {
+      givenNames: "Bending",
+      surname: "Bot",
+    },
+    pseudonymizedId: "anonres004",
+    facilityId: "BLEDSOE_CC",
+    unitId: "UNIT D",
+    custodyLevel: "MINIMUM",
+    admissionDate: "2021-08-12",
+    releaseDate: "2025-12-01",
+  },
 ];
 
 export const residentsData: FixtureData<

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 export * from "./CompliantReportingOpportunity";
+export * from "./UsTnAnnualReclassificationReviewOpportunity";
 export * from "./UsTnCustodyLevelDowngradeOpportunity";
 export * from "./UsTnExpirationOpportunity";
 export * from "./UsTnSupervisionLevelDowngradeOpportunity";

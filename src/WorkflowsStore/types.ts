@@ -52,6 +52,7 @@ import {
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
 import { UsIdCRCResidentWorkerOpportunity } from "./Opportunity/UsId/UsIdCRCResidentWorkerOpportunity/UsIdCRCResidentWorkerOpportunity";
 import { UsIdCRCWorkReleaseOpportunity } from "./Opportunity/UsId/UsIdCRCWorkReleaseOpportunity";
+import { UsTnAnnualReclassificationReviewOpportunity } from "./Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
 import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { SupervisionTaskInterface } from "./Task/types";
@@ -92,6 +93,7 @@ export type IncarcerationOpportunityMapping = {
   usMoRestrictiveHousingStatusHearing?: UsMoRestrictiveHousingStatusHearingOpportunity;
   usTnCustodyLevelDowngrade?: UsTnCustodyLevelDowngradeOpportunity;
   usMeFurloughRelease?: UsMeFurloughReleaseOpportunity;
+  usTnAnnualReclassification?: UsTnAnnualReclassificationReviewOpportunity;
 };
 
 // The following line will typecheck only if the keys of

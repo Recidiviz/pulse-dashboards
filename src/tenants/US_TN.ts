@@ -36,6 +36,7 @@ const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
   "supervisionLevelDowngrade",
   "usTnExpiration",
   "usTnCustodyLevelDowngrade",
+  "usTnAnnualReclassification",
 ];
 
 const US_TN_CONFIG: TenantConfig = {

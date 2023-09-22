@@ -30,6 +30,7 @@ import {
   CompliantReportingReferralRecord,
   CompliantReportingReferralRecordFull,
 } from "../CompliantReportingOpportunity";
+import { UsTnAnnualReclassificationReviewReferralRecord } from "../UsTnAnnualReclassificationReviewOpportunity";
 import { UsTnExpirationReferralRecord } from "../UsTnExpirationOpportunity";
 
 export const usTnVerifiedOpportunities = {
@@ -369,4 +370,88 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
       q9Score: 5,
     },
     caseNotes: {},
+  };
+
+export const UsTnAnnualReclassificationEligibleResidentRecord: ResidentRecord =
+  {
+    ...residentRecordBase,
+    allEligibleOpportunities: ["usTnAnnualReclassification"],
+  };
+
+export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclassificationReviewReferralRecord =
+  {
+    stateCode: "US_TN",
+    externalId:
+      UsTnAnnualReclassificationEligibleResidentRecord.personExternalId,
+    eligibleCriteria: {
+      usTnAtLeast12MonthsSinceLatestAssessment: {
+        mostRecentAssessmentDate: parseISO("2020-01-01"),
+      },
+      custodyLevelIsNotMax: null,
+      custodyLevelComparedToRecommended: {
+        custodyLevel: "MINIMUM",
+        recommendedCustodyLevel: "MINIMUM",
+      },
+    },
+    ineligibleCriteria: {},
+    caseNotes: {
+      foo: [
+        {
+          eventDate: parseISO("2022-04-06"),
+          noteBody: "Body1",
+          noteTitle: "Title1",
+        },
+        {
+          eventDate: parseISO("2022-06-06"),
+          noteBody: "Body2",
+          noteTitle: "Title2",
+        },
+      ],
+      "ba bar": [
+        {
+          eventDate: parseISO("2022-09-06"),
+          noteBody: "Body3",
+          noteTitle: "Title3",
+        },
+      ],
+    },
+  };
+
+export const UsTnAnnualReclassificationReferralRecordFixture02: UsTnAnnualReclassificationReviewReferralRecord =
+  {
+    stateCode: "US_TN",
+    externalId:
+      UsTnAnnualReclassificationEligibleResidentRecord.personExternalId,
+    eligibleCriteria: {
+      usTnAtLeast12MonthsSinceLatestAssessment: {
+        mostRecentAssessmentDate: parseISO("2021-01-01"),
+      },
+      custodyLevelIsNotMax: null,
+      custodyLevelComparedToRecommended: {
+        custodyLevel: "MEDIUM",
+        recommendedCustodyLevel: "MINIMUM",
+      },
+    },
+    ineligibleCriteria: {},
+    caseNotes: {
+      foo: [
+        {
+          eventDate: parseISO("2022-04-06"),
+          noteBody: "Body1",
+          noteTitle: "Title1",
+        },
+        {
+          eventDate: parseISO("2022-06-06"),
+          noteBody: "Body2",
+          noteTitle: "Title2",
+        },
+      ],
+      "ba bar": [
+        {
+          eventDate: parseISO("2022-09-06"),
+          noteBody: "Body3",
+          noteTitle: "Title3",
+        },
+      ],
+    },
   };

@@ -34,7 +34,9 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
   navigateToFormText = "Auto-fill CAF Form";
 
   get formContents(): OpportunityFormComponentName {
-    if (this.rootStore.workflowsStore.featureVariants.usTnAnnualReclass)
+    if (
+      this.rootStore.workflowsStore.featureVariants.usTnAnnualReclassification
+    )
       return "WorkflowsUsTnReclassForm";
     return "WorkflowsUsTnCustodyLevelDowngradeForm";
   }

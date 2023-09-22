@@ -783,7 +783,7 @@ describe("feature variants", () => {
         "usIdExpandedCRC": Object {},
         "usMeFurloughRelease": Object {},
         "usMeWorkRelease": Object {},
-        "usTnAnnualReclass": Object {},
+        "usTnAnnualReclassification": Object {},
         "usTnExpiration": Object {},
         "usTnExpirationSubmitToTomis": Object {},
       }

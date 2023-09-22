@@ -14,85 +14,70 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
 import { computed, makeObservable } from "mobx";
 
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsClientProfile/OpportunityProfile";
-import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
-import { UsTnCustodyLevelDowngradeForm } from "../../Forms/usTnCustodyLevelDowngradeForm";
+import { OpportunityRequirement } from "../..";
 import { OpportunityBase } from "../../OpportunityBase";
-import { OpportunityRequirement } from "../../types";
 import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "../../utils";
 import {
-  UsTnCustodyLevelDowngradeDraftData,
-  UsTnCustodyLevelDowngradeReferralRecord,
-  usTnCustodyLevelDowngradeSchema,
-} from "./UsTnCustodyLevelDowngradeReferralRecord";
+  UsTnAnnualReclassificationReviewReferralRecord,
+  usTnAnnualReclassificationReviewSchema,
+} from "./UsTnAnnualReclassificationReviewReferralRecord";
 
-const CRITERIA_FORMATTERS: CriteriaFormatters<UsTnCustodyLevelDowngradeReferralRecord> =
+const CRITERIA_FORMATTERS: CriteriaFormatters<UsTnAnnualReclassificationReviewReferralRecord> =
   {} as const;
 
-const CRITERIA_COPY: CriteriaCopy<UsTnCustodyLevelDowngradeReferralRecord> = {
-  eligibleCriteria: [
-    [
-      "custodyLevelHigherThanRecommended",
-      {
-        text: "Custody level is higher than latest CAF score suggests",
-      },
+const CRITERIA_COPY: CriteriaCopy<UsTnAnnualReclassificationReviewReferralRecord> =
+  {
+    eligibleCriteria: [
+      [
+        "usTnAtLeast12MonthsSinceLatestAssessment",
+        {
+          text: "At least 12 months since last reclassification date",
+        },
+      ],
+      ["custodyLevelIsNotMax", { text: "Custody level is not maximum" }],
     ],
-    ["custodyLevelIsNotMax", { text: "Custody level is not maximum" }],
-    [
-      "usTnIneligibleForAnnualReclassification",
-      { text: "Not eligible for annual reclassification" },
-    ],
-    [
-      "usTnLatestCafAssessmentNotOverride",
-      { text: "Last assessment did not include an override" },
-    ],
-  ],
-  ineligibleCriteria: [],
+    ineligibleCriteria: [],
+  };
+
+const DENIAL_REASONS_MAP = {
+  // TODO(#4032): Add denial reasons once they've been finalized.
+  OVERRIDE: "Reclassification date override",
+  [OTHER_KEY]: "Please specify a reason",
 };
 
-export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
+export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase<
   Resident,
-  UsTnCustodyLevelDowngradeReferralRecord,
-  OpportunityUpdateWithForm<UsTnCustodyLevelDowngradeDraftData>
+  UsTnAnnualReclassificationReviewReferralRecord
 > {
   resident: Resident;
-
-  form: UsTnCustodyLevelDowngradeForm;
-
-  // TODO(#4087): Set policyOrMethodologyUrl once we know what to set it to.
-
-  almostEligibleRecommendedNote = undefined;
 
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "Incarceration",
     "CaseNotes",
   ];
 
-  readonly caseNotesTitle = "Disciplinaries";
+  // TODO(#4087): Set policyOrMethodologyUrl once we know what to set it to.
+
+  denialReasonsMap = DENIAL_REASONS_MAP;
 
   constructor(resident: Resident) {
     super(
       resident,
-      "usTnCustodyLevelDowngrade",
+      "usTnAnnualReclassification",
       resident.rootStore,
-      usTnCustodyLevelDowngradeSchema.parse
+      usTnAnnualReclassificationReviewSchema.parse
     );
+
     this.resident = resident;
 
     makeObservable(this, {
       requirementsMet: computed,
     });
-
-    this.denialReasonsMap = {
-      [OTHER_KEY]: "Please specify a reason",
-    };
-
-    this.form = new UsTnCustodyLevelDowngradeForm(this, resident.rootStore);
   }
 
   get requirementsMet(): OpportunityRequirement[] {

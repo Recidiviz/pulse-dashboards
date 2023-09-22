@@ -36,6 +36,7 @@ import {
   UsMeWorkReleaseOpportunity,
 } from "./Opportunity/UsMe";
 import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTn";
+import { UsTnAnnualReclassificationReviewOpportunity } from "./Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
 import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";
 
 const residentialOpportunityConstructors: Record<
@@ -51,6 +52,7 @@ const residentialOpportunityConstructors: Record<
   usMoRestrictiveHousingStatusHearing:
     UsMoRestrictiveHousingStatusHearingOpportunity,
   usTnCustodyLevelDowngrade: UsTnCustodyLevelDowngradeOpportunity,
+  usTnAnnualReclassification: UsTnAnnualReclassificationReviewOpportunity,
 };
 
 const createResidentOpportunity: OpportunityFactory<
