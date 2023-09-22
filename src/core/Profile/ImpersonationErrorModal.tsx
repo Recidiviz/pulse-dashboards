@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { Button, Icon, Modal, palette } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -69,4 +68,4 @@ function ImpersonationErrorModal({ error }: { error?: Error }): JSX.Element {
   );
 }
 
-export default observer(ImpersonationErrorModal);
+export default ImpersonationErrorModal;

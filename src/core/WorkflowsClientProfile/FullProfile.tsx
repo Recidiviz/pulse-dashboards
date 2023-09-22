@@ -182,7 +182,7 @@ function AdditionalDetails({
   return <div />;
 }
 
-function ClientDetails({
+const ClientDetails = observer(function ClientDetails({
   client,
   responsiveRevamp,
 }: ClientProfileProps & ResponsiveRevamp): React.ReactElement {
@@ -219,9 +219,9 @@ function ClientDetails({
       <SpecialConditions client={client} />
     </>
   );
-}
+});
 
-function ResidentDetails({
+const ResidentDetails = observer(function ResidentDetails({
   resident,
   responsiveRevamp,
 }: ResidentProfileProps & ResponsiveRevamp): React.ReactElement {
@@ -246,7 +246,7 @@ function ResidentDetails({
       <Divider />
     </>
   );
-}
+});
 
 const PreferredName: React.FC<ClientProfileProps & ResponsiveRevamp> = observer(
   function PreferredName({ client, responsiveRevamp }): React.ReactElement {
