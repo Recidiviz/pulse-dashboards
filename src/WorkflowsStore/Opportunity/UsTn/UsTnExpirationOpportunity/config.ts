@@ -21,4 +21,6 @@ export const usTnExpirationConfig: OpportunityConfig = {
   urlSection: "expiration",
   label: "Expiration",
   featureVariant: "usTnExpiration",
+  initialHeader:
+    "Search for officers above to review clients who may be on or past their supervision expiration date.",
 };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 // Recidiviz - a data platform for criminal justice reform
 // Copyright (C) 2022 Recidiviz, Inc.
 //
@@ -14,12 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
 import tk from "timekeeper";
 
 import { mockOpportunity } from "../../../core/__tests__/testUtils";
+import { mockUsXxOpp, mockUsXxOppConfig } from "../__fixtures__";
+import { OPPORTUNITY_CONFIGS } from "../OpportunityConfigs";
 import { Opportunity } from "../types";
 import {
+  generateOpportunityInitialHeader,
   monthsOrDaysRemainingFromToday,
   sortByEligibilityDateUndefinedFirst,
   sortByReviewStatus,
@@ -122,5 +125,39 @@ describe("sort", () => {
       new Date(2022, 10, 7),
       new Date(2022, 10, 8),
     ]);
+  });
+});
+
+describe("Generate header", () => {
+  const TEST_FIELD = "TEST_FIELD";
+  const TEST_TITLE = "TEST_PERSON";
+
+  beforeAll(() => {
+    // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
+    OPPORTUNITY_CONFIGS[mockUsXxOpp] = mockUsXxOppConfig;
+  });
+
+  afterAll(() => {
+    // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
+    OPPORTUNITY_CONFIGS[mockUsXxOpp] = undefined as any;
+  });
+
+  test("when initialHeader is provided in config", () => {
+    const header = generateOpportunityInitialHeader(
+      mockUsXxOpp,
+      TEST_TITLE,
+      TEST_FIELD
+    );
+    expect(header).toMatchSnapshot();
+  });
+
+  test("when initialHeader is not provided in config", () => {
+    OPPORTUNITY_CONFIGS[mockUsXxOpp].initialHeader = undefined;
+    const header = generateOpportunityInitialHeader(
+      mockUsXxOpp,
+      TEST_TITLE,
+      TEST_FIELD
+    );
+    expect(header).toMatchSnapshot();
   });
 });

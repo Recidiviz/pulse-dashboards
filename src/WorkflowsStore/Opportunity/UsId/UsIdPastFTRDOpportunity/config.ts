@@ -20,4 +20,6 @@ export const usIdPastFTRDConfig: OpportunityConfig = {
   stateCode: "US_ID",
   urlSection: "pastFTRD",
   label: "Past FTRD",
+  initialHeader:
+    "Search for officers above to review clients whose full-term release date is near or has passed.",
 };

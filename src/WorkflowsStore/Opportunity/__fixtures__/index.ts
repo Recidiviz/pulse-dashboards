@@ -14,8 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import nextSunday from "date-fns/nextSunday";
+
 import { ClientRecord } from "../../../FirestoreStore";
+import { FeatureVariant, TenantId } from "../../../RootStore/types";
 import { dateToTimestamp } from "../../utils";
+import {
+  OPPORTUNITY_CONFIGS,
+  OpportunityConfig,
+  OpportunityConfigMap,
+} from "../OpportunityConfigs";
+import { OpportunityType } from "../types";
 
 export const ineligibleClientRecord: ClientRecord = {
   recordId: "us_xx_001",
@@ -36,4 +45,23 @@ export const ineligibleClientRecord: ClientRecord = {
   expirationDate: dateToTimestamp("2024-12-31"),
   allEligibleOpportunities: [],
   personType: "CLIENT",
+};
+
+export const mockUsXxOppConfig: OpportunityConfig = {
+  stateCode: "US_XX" as TenantId,
+  urlSection: "mockOpportunity",
+  label: "Mock Opportunity",
+  featureVariant: "usXxMockOpportunity" as FeatureVariant,
+  initialHeader: "Mock initial header to search for something",
+  customTabOrder: ["Eligible Now", "Missing Review Date", "Overridden"],
+  snooze: {
+    defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
+  },
+};
+
+export const mockUsXxOpp: OpportunityType = "mockUsXxOpp" as OpportunityType;
+
+export const MOCK_OPPORTUNITY_CONFIGS: OpportunityConfigMap = {
+  ...OPPORTUNITY_CONFIGS,
+  [mockUsXxOpp]: mockUsXxOppConfig,
 };

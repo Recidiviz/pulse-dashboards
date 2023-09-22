@@ -20,4 +20,6 @@ export const usMeEarlyTerminationConfig: OpportunityConfig = {
   stateCode: "US_ME",
   urlSection: "earlyTermination",
   label: "Early Termination",
+  initialHeader:
+    "Search for officers above to review clients who may be good candidates for early termination from probation.",
 };

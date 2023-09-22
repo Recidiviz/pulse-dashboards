@@ -50,9 +50,10 @@ export type OpportunityConfig = {
     defaultSnoozeUntilFn: (snoozedOn: Date, opportunity?: Opportunity) => Date;
   };
   customTabOrder?: OpportunityTab[];
+  initialHeader?: string;
 };
 
-type OpportunityConfigMap = Record<OpportunityType, OpportunityConfig>;
+export type OpportunityConfigMap = Record<OpportunityType, OpportunityConfig>;
 
 export const OPPORTUNITY_CONFIGS: OpportunityConfigMap = {
   /* US_CA */

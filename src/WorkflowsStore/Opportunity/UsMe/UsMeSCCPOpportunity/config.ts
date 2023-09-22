@@ -20,4 +20,7 @@ export const usMeSCCPConfig: OpportunityConfig = {
   stateCode: "US_ME",
   urlSection: "SCCP",
   label: "Supervised Community Confinement Program",
+  initialHeader:
+    "Search for case managers above to review residents in their unit who are approaching SCCP " +
+    "eligibility and complete application paperwork.",
 };

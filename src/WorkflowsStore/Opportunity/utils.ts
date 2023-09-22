@@ -97,26 +97,15 @@ export const generateOpportunityInitialHeader = (
   justiceInvolvedPersonTitle: string,
   workflowsSearchFieldTitle: string
 ): string => {
-  const opportunityLabel = OPPORTUNITY_CONFIGS[opportunityType].label;
-  switch (opportunityType) {
-    case "pastFTRD":
-      return "Search for officers above to review clients whose full-term release date is near or has passed.";
-    case "usTnExpiration":
-      return "Search for officers above to review clients who may be on or past their supervision expiration date.";
-    case "usMeSCCP":
-      return (
-        "Search for case managers above to review residents in their unit who are approaching SCCP " +
-        "eligibility and complete application paperwork."
-      );
-    case "usMeEarlyTermination":
-      return "Search for officers above to review clients who may be good candidates for early termination from probation.";
-    default:
-      return `Search for ${pluralizeWord(
-        workflowsSearchFieldTitle
-      )} above to review and refer eligible ${pluralizeWord(
-        justiceInvolvedPersonTitle
-      )} for ${opportunityLabel.toLowerCase()}.`;
-  }
+  const { label, initialHeader } = OPPORTUNITY_CONFIGS[opportunityType];
+  return (
+    initialHeader ||
+    `Search for ${pluralizeWord(
+      workflowsSearchFieldTitle
+    )} above to review and refer eligible ${pluralizeWord(
+      justiceInvolvedPersonTitle
+    )} for ${label.toLowerCase()}.`
+  );
 };
 
 export const generateOpportunityHydratedHeader = (
