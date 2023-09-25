@@ -60,6 +60,7 @@ const DashboardLayout: React.FC<Props> = ({ children }): React.ReactElement => {
               !isMobile &&
               !responsiveRevamp,
             Workflows: currentView === DASHBOARD_VIEWS.workflows,
+            Outliers: currentView === DASHBOARD_VIEWS.outliers,
           })}
         >
           {currentView === DASHBOARD_VIEWS.workflows || !isMobile ? (

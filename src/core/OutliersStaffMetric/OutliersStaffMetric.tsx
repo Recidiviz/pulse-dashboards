@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,40 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-@import "./CoreConstants.module.scss";
+import OutliersNavLayout from "../OutliersNavLayout";
 
-.DashboardLayout {
-  display: flex;
-  min-height: 100vh;
-  background: $marble-3;
+const OutliersStaffMetric = () => {
+  return <OutliersNavLayout>Metric page</OutliersNavLayout>;
+};
 
-  &__main {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-
-    .ViewNavigation + & {
-      margin-left: 4rem;
-    }
-  }
-
-  .IE11Banner {
-    padding-top: 4rem;
-    padding-bottom: 0;
-    background-color: $marble-3;
-  }
-
-  .Footer {
-    background-color: $marble-3;
-  }
-}
-
-.DashboardLayout {
-  &.Workflows,
-  &.Operations,
-  &.Outliers {
-    .IE11Banner {
-      padding-top: 0;
-    }
-  }
-}
+export default OutliersStaffMetric;

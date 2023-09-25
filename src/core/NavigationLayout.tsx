@@ -115,8 +115,8 @@ const NavLinks = styled.ul`
   display: inherit;
   height: 4rem;
 
-  a[class*="BrandedNavLink"],
-  a[class*="PageNavigation"] {
+  a {
+    ${typography.Sans14}
     color: ${palette.slate85};
     text-decoration: none !important;
     margin-right: 20px;

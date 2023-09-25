@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,40 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-@import "./CoreConstants.module.scss";
+import { Link, useParams } from "react-router-dom";
 
-.DashboardLayout {
-  display: flex;
-  min-height: 100vh;
-  background: $marble-3;
+import OutliersNavLayout from "../OutliersNavLayout";
+import { OUTLIERS_PATHS } from "../views";
 
-  &__main {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+const OutliersStaff = () => {
+  const { officerId }: { officerId: string } = useParams();
 
-    .ViewNavigation + & {
-      margin-left: 4rem;
-    }
-  }
+  return (
+    <OutliersNavLayout>
+      Hello, officer {officerId}
+      <br />
+      <Link
+        to={{
+          pathname: `${OUTLIERS_PATHS.supervision}/staff/${officerId}/adverse-outcome/m001`,
+        }}
+      >
+        Metric 1
+      </Link>
+      <br />
+      <Link
+        to={{
+          pathname: `${OUTLIERS_PATHS.supervision}/staff/${officerId}/adverse-outcome/m002`,
+        }}
+      >
+        Metric 2
+      </Link>
+    </OutliersNavLayout>
+  );
+};
 
-  .IE11Banner {
-    padding-top: 4rem;
-    padding-bottom: 0;
-    background-color: $marble-3;
-  }
-
-  .Footer {
-    background-color: $marble-3;
-  }
-}
-
-.DashboardLayout {
-  &.Workflows,
-  &.Operations,
-  &.Outliers {
-    .IE11Banner {
-      padding-top: 0;
-    }
-  }
-}
+export default OutliersStaff;

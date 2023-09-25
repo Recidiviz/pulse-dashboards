@@ -46,7 +46,7 @@ export const DASHBOARD_PATHS: Record<string, string> = {
   methodology: `/${DASHBOARD_VIEWS.methodology}/:dashboard`,
   methodologySystem: `/${DASHBOARD_VIEWS.methodology}/system`,
   methodologyOperations: `/${DASHBOARD_VIEWS.methodology}/operations`,
-  outliers: `/${DASHBOARD_VIEWS.outliers}/`,
+  outliers: `/${DASHBOARD_VIEWS.outliers}`,
 };
 
 export type PathwaysPage = keyof typeof PATHWAYS_PAGES;
@@ -290,6 +290,22 @@ export function workflowsUrl(
   }
   return WORKFLOWS_PATHS[routeName];
 }
+
+export const OUTLIERS_PATHS: Record<string, string> = {
+  supervision: `/${DASHBOARD_VIEWS.outliers}/supervision`,
+  supervisionSupervisorSearch: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisor-search`,
+  supervisionSupervisor: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisor/:supervisorId`,
+  supervisionStaff: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerId`,
+  supervisionStaffMetric: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerId/adverse-outcome/:metricId`,
+};
+
+export const OUTLIERS_PAGES = {
+  supervision: "supervision",
+  supervisionSupervisor: "supervisionSupervisor",
+  supervisionSupervisorSearch: "supervisionSupervisorSearch",
+  supervisionStaff: "supervisionStaff",
+  supervisionStaffMetric: "supervisionStaffMetric",
+} as const;
 
 export const IMPACT_PATHS: Record<string, string> = {
   impact: `/${DASHBOARD_VIEWS.impact}`,

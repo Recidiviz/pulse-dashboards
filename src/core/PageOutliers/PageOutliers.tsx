@@ -15,6 +15,51 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const OutliersStub = () => <div>Hello, Outliers</div>;
+import React from "react";
+import { Redirect, Route, Switch } from "react-router-dom";
 
-export default OutliersStub;
+import OutliersHomepage from "../OutliersHomepage/OutliersHomepage";
+import OutliersStaff from "../OutliersStaff/OutliersStaff";
+import OutliersStaffMetric from "../OutliersStaffMetric/OutliersStaffMetric";
+import OutliersSupervisor from "../OutliersSupervisor/OutliersSupervisor";
+import OutliersSupervisorSearch from "../OutliersSupervisorSearch/OutliersSupervisorSearch";
+import { DASHBOARD_PATHS, OUTLIERS_PATHS } from "../views";
+
+const PageOutliers: React.FC = () => {
+  return (
+    <Switch>
+      <Redirect
+        exact
+        from={DASHBOARD_PATHS.outliers}
+        to={OUTLIERS_PATHS.supervision}
+      />
+      <Route
+        exact
+        path={OUTLIERS_PATHS.supervision}
+        component={OutliersHomepage}
+      />
+      <Route
+        exact
+        path={OUTLIERS_PATHS.supervisionSupervisorSearch}
+        component={OutliersSupervisorSearch}
+      />
+      <Route
+        exact
+        path={OUTLIERS_PATHS.supervisionSupervisor}
+        component={OutliersSupervisor}
+      />
+      <Route
+        exact
+        path={OUTLIERS_PATHS.supervisionStaff}
+        component={OutliersStaff}
+      />
+      <Route
+        exact
+        path={OUTLIERS_PATHS.supervisionStaffMetric}
+        component={OutliersStaffMetric}
+      />
+    </Switch>
+  );
+};
+
+export default PageOutliers;

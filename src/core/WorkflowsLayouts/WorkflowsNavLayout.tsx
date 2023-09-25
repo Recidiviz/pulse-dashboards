@@ -114,13 +114,11 @@ const BrandedNavLink = styled(NavLink).attrs({ exact: true })`
   &:hover,
   &:focus {
     color: ${palette.pine4};
-    font-weight: 600;
     text-decoration: underline;
   }
 
   &.active {
     color: ${palette.pine4};
-    font-weight: 600;
   }
 `;
 

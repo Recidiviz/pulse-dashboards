@@ -24,6 +24,7 @@ import {
   DASHBOARD_VIEWS,
   IMPACT_PAGES,
   IMPACT_SECTIONS,
+  OUTLIERS_PAGES,
   PATHWAYS_PAGES,
   PATHWAYS_SECTIONS,
 } from "../core/views";
@@ -114,7 +115,7 @@ const US_TN_CONFIG: TenantConfig = {
       IMPACT_SECTIONS.avgPopulationCompliantReporting,
       IMPACT_SECTIONS.avgDailyPopulation,
     ],
-    outliers: [],
+    outliers: [OUTLIERS_PAGES.supervision],
   },
   pagesWithRestrictions: [
     "libertyToPrison",
