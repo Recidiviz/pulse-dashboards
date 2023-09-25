@@ -15,10 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { add } from "date-fns";
+import { add, format } from "date-fns";
 import { configure, runInAction } from "mobx";
 
-import { CombinedUserRecord, OpportunityUpdate } from "../../../FirestoreStore";
+import {
+  CombinedUserRecord,
+  IsoDate,
+  OpportunityUpdate,
+} from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import { Client } from "../../Client";
@@ -207,12 +211,30 @@ describe("isSnoozed", () => {
     expect(opp.isSnoozed).toBe(false);
   });
 
-  test("isSnoozed is true if there is a snooze", () => {
+  test("isSnoozed is true if there is a snoozeUntil value", () => {
     mockHydration({
       updateData: {
-        snoozeUntil: add(new Date(), { days: 1 }),
-        snoozedBy: "foo",
-        snoozedOn: "2023-01-01",
+        autoSnooze: {
+          snoozeUntil: format(
+            add(new Date(), { days: 1 }),
+            "yyyy-MM-dd"
+          ) as IsoDate,
+          snoozedBy: "foo",
+          snoozedOn: "2023-01-01",
+        },
+      },
+    });
+    expect(opp.isSnoozed).toBe(true);
+  });
+
+  test("isSnoozed is true if there is a snoozeForDays value", () => {
+    mockHydration({
+      updateData: {
+        manualSnooze: {
+          snoozeForDays: 20,
+          snoozedBy: "foo",
+          snoozedOn: format(new Date(), "yyyy-MM-dd") as IsoDate,
+        },
       },
     });
     expect(opp.isSnoozed).toBe(true);

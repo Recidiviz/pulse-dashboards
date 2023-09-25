@@ -15,13 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { endOfToday } from "date-fns";
+import {
+  add,
+  differenceInDays,
+  endOfToday,
+  format,
+  parseISO,
+  startOfToday,
+} from "date-fns";
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable, when } from "mobx";
 
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
 import {
+  AutoSnoozeUpdate,
   Denial,
+  IsoDate,
+  ManualSnoozeUpdate,
   OpportunityUpdate,
   OpportunityUpdateWithForm,
   UpdateLog,
@@ -94,6 +104,11 @@ export abstract class OpportunityBase<
   ) {
     makeObservable(this, {
       denial: computed,
+      autoSnooze: computed,
+      manualSnooze: computed,
+      isSnoozed: computed,
+      snoozeForDays: computed,
+      manualSnoozeUntilDate: computed,
       error: computed,
       hydrate: action,
       isLoading: computed,
@@ -102,7 +117,6 @@ export abstract class OpportunityBase<
       reviewStatus: computed,
       isHydrated: computed,
       setCompletedIfEligible: action,
-      isSnoozed: computed,
     });
 
     this.person = person;
@@ -142,10 +156,40 @@ export abstract class OpportunityBase<
     }
   }
 
-  get isSnoozed(): boolean {
-    if (this.updates?.snoozeUntil) {
-      return this.updates?.snoozeUntil > endOfToday();
+  get manualSnooze(): ManualSnoozeUpdate | undefined {
+    if (this.updates?.manualSnooze?.snoozedBy) {
+      return this.updates?.manualSnooze;
     }
+  }
+
+  get autoSnooze(): AutoSnoozeUpdate | undefined {
+    if (this.updates?.autoSnooze?.snoozedBy) {
+      return this.updates?.autoSnooze;
+    }
+  }
+
+  get manualSnoozeUntilDate(): Date | undefined {
+    if (!this.manualSnooze) return;
+    return add(parseISO(this.manualSnooze.snoozedOn), {
+      days: this.manualSnooze.snoozeForDays,
+    });
+  }
+
+  /* Returns the current number of days an opportunity will be snoozed for, taking into account the current date */
+  get snoozeForDays(): number | undefined {
+    if (!this.manualSnoozeUntilDate) return;
+    return differenceInDays(this.manualSnoozeUntilDate, startOfToday());
+  }
+
+  get isSnoozed(): boolean {
+    if (this.autoSnooze?.snoozeUntil) {
+      return parseISO(this.autoSnooze?.snoozeUntil) > endOfToday();
+    }
+
+    if (this.manualSnoozeUntilDate) {
+      return this.manualSnoozeUntilDate > endOfToday();
+    }
+
     return false;
   }
 
@@ -256,6 +300,26 @@ export abstract class OpportunityBase<
 
   get error(): Error | undefined {
     return this.referralSubscription.error || this.updatesSubscription.error;
+  }
+
+  async setSnoozeForDays(days: number, reasons: string[]): Promise<void> {
+    const { currentUserEmail } = this.rootStore.workflowsStore;
+    const { recordId } = this.person;
+    if (!currentUserEmail) return;
+
+    // If there are no denial reasons selected, clear the snooze values
+    const deleteSnoozeField = reasons.length === 0;
+
+    await this.rootStore.firestoreStore.updateOpportunityManualSnooze(
+      this.type,
+      recordId,
+      {
+        snoozedBy: currentUserEmail,
+        snoozedOn: format(new Date(), "yyyy-MM-dd") as IsoDate,
+        snoozeForDays: days,
+      },
+      deleteSnoozeField
+    );
   }
 
   async setDenialReasons(reasons: string[]): Promise<void> {

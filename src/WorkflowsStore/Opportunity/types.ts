@@ -150,6 +150,7 @@ export interface Opportunity<
   denialReasonsMap: DenialReasonsMap;
   denial: Denial | undefined;
   isSnoozed: boolean;
+  snoozeForDays?: number;
   lastViewed: UpdateLog | undefined;
   setLastViewed: () => void;
   setCompletedIfEligible: () => void;
@@ -159,6 +160,7 @@ export interface Opportunity<
   readonly supportsExternalRequest: boolean;
   externalRequestData?: ExternalRequestUpdate<any>;
   readonly externalRequestStatusMessage?: string;
+  setSnoozeForDays: (days: number, reasons: string[]) => Promise<void>;
   setDenialReasons: (reasons: string[]) => Promise<void>;
   setOtherReasonText: (otherReason?: string) => Promise<void>;
   trackListViewed: () => void;

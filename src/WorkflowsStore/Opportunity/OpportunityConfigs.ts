@@ -42,14 +42,32 @@ import { usTnCustodyLevelDowngradeConfig as usTnCustodyLevelDowngrade } from "./
 import { usTnExpirationConfig as usTnExpiration } from "./UsTn/UsTnExpirationOpportunity/config";
 import { usTnSupervisionLevelDowngradeConfig as supervisionLevelDowngrade } from "./UsTn/UsTnSupervisionLevelDowngradeOpportunity/config";
 
+/** Auto refers to users who have a default snooze until set.
+ * defaultSnoozeUntilFn is used to calculate the default snooze until,
+ * e.g. weekly on Mondays or 90 days.
+ * */
+type AutoSnoozeUntil = {
+  defaultSnoozeUntilFn: (snoozedOn: Date, opportunity?: Opportunity) => Date;
+  maxSnoozeDays?: never;
+};
+
+/** Manual refers to users who are able to set the number of days to snooze until.
+ * maxSnoozeDays sets the max number of days on the slider.
+ */
+type ManualSnoozeUntil = {
+  maxSnoozeDays: number;
+  defaultSnoozeUntilFn?: never;
+};
+
+/* An opportunity will either have auto or manual set, but not both */
+type SnoozeConfig = AutoSnoozeUntil | ManualSnoozeUntil;
+
 export type OpportunityConfig = {
   stateCode: TenantId;
   urlSection: string;
   featureVariant?: FeatureVariant;
   label: string;
-  snooze?: {
-    defaultSnoozeUntilFn: (snoozedOn: Date, opportunity?: Opportunity) => Date;
-  };
+  snooze?: SnoozeConfig;
   customTabOrder?: OpportunityTab[];
   initialHeader?: string;
 };

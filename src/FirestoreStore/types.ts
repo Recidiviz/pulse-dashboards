@@ -313,18 +313,28 @@ export type FormFieldData = Record<
 export type IsoDate =
   `${number}${number}${number}${number}-${number}${number}-${number}${number}`;
 
+type SharedSnoozeUpdate = {
+  snoozedBy: string;
+  snoozedOn: IsoDate;
+};
+
+export type ManualSnoozeUpdate = {
+  snoozeForDays?: number;
+  snoozeUntil?: never;
+} & SharedSnoozeUpdate;
+
+export type AutoSnoozeUpdate = {
+  snoozeUntil?: IsoDate;
+  snoozeForDays?: never;
+} & SharedSnoozeUpdate;
+
 export type OpportunityUpdate = {
   denial?: Denial;
+  manualSnooze?: ManualSnoozeUpdate;
+  autoSnooze?: AutoSnoozeUpdate;
   completed?: {
     update: UpdateLog;
   };
-  snoozedBy?: string; // current user email
-  snoozedOn?: IsoDate;
-  // Some opportunities may have a snoozeUntil date that is not set by the user's
-  // selection for the `snoozeForDays` field. For example, an opportunity may be
-  // snoozed for 7 days, but because of the opportunity type, it will be resurfaced
-  // by default every following Sunday.
-  snoozeUntil?: Date;
   lastViewed?: UpdateLog;
   // TODO(#3354): Migrate to lastViewed and remove the firstViewed property
   firstViewed?: UpdateLog;
@@ -336,10 +346,8 @@ export type OpportunityUpdateWithForm<FormType> = OpportunityUpdate & {
 
 export type SupervisionTaskUpdate = {
   [key in SupervisionTaskType]?: {
-    snoozedBy: string;
     snoozeForDays: number;
-    snoozedOn: IsoDate;
-  };
+  } & SharedSnoozeUpdate;
 };
 
 /**

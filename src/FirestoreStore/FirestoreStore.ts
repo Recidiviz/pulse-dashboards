@@ -57,10 +57,12 @@ import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
 import { SupervisionTaskType } from "../WorkflowsStore/Task/types";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
 import {
+  AutoSnoozeUpdate,
   ClientRecord,
   collectionNames,
   ContactMethodType,
   ExternalSystemRequestStatus,
+  ManualSnoozeUpdate,
   MilestonesMessage,
   OpportunityUpdateWithForm,
   PersonUpdateType,
@@ -335,6 +337,36 @@ export default class FirestoreStore {
         ...update,
       }
     );
+  }
+
+  async updateOpportunityAutoSnooze(
+    opportunityType: OpportunityType,
+    recordId: string,
+    snoozeUpdate: AutoSnoozeUpdate,
+    deleteSnoozeField: boolean
+  ): Promise<void> {
+    const changes = deleteSnoozeField
+      ? { autoSnooze: deleteField() }
+      : {
+          autoSnooze: { ...snoozeUpdate },
+        };
+
+    return this.updateOpportunity(opportunityType, recordId, changes);
+  }
+
+  async updateOpportunityManualSnooze(
+    opportunityType: OpportunityType,
+    recordId: string,
+    snoozeUpdate: ManualSnoozeUpdate,
+    deleteSnoozeField: boolean
+  ): Promise<void> {
+    const changes = deleteSnoozeField
+      ? { manualSnooze: deleteField() }
+      : {
+          manualSnooze: { ...snoozeUpdate },
+        };
+
+    return this.updateOpportunity(opportunityType, recordId, changes);
   }
 
   async updateOpportunityDenial(

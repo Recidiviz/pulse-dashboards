@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { ascending } from "d3-array";
-import { differenceInDays, differenceInMonths, format } from "date-fns";
+import { add, differenceInDays, differenceInMonths, format } from "date-fns";
 import { snakeCase } from "lodash";
 import moment from "moment";
 import simplur from "simplur";
@@ -464,4 +464,12 @@ export function getFeatureVariantValidator<R>(
     }
     if (actualValidator) actualValidator(record);
   };
+}
+
+/* Calculates the snoozeUntil date for the manual snooze configuration */
+export function getSnoozeUntilDate(
+  snoozeForDays: number,
+  snoozedOn: Date
+): Date {
+  return add(snoozedOn, { days: snoozeForDays });
 }
