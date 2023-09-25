@@ -31,6 +31,7 @@
  */
 /* eslint-disable no-console */
 
+const Sentry = require("@sentry/node");
 const { default: processMetricFile } = require("./processMetricFile");
 const { default: fetchMetricsFromLocal } = require("./fetchMetricsFromLocal");
 const { default: fetchMetricsFromGCS } = require("./fetchMetricsFromGCS");
@@ -54,6 +55,8 @@ function fetchMetrics(stateCode, metricType, metricName, isOffline) {
           contents.value.metadata,
           contents.value.extension
         );
+      } else if (contents.status === "rejected") {
+        Sentry.captureException(contents.reason);
       }
     });
     console.log(`Fetched all ${metricType} metrics from ${source}`);

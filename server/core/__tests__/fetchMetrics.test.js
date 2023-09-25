@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+const Sentry = require("@sentry/node");
 const { fetchMetrics } = require("..");
 const { default: processMetricFile } = require("../processMetricFile");
 const { default: fetchMetricsFromLocal } = require("../fetchMetricsFromLocal");
 const { default: fetchMetricsFromGCS } = require("../fetchMetricsFromGCS");
 
+jest.mock("@sentry/node");
 jest.mock("../processMetricFile");
 jest.mock("../fetchMetricsFromLocal");
 jest.mock("../fetchMetricsFromGCS");
@@ -102,8 +104,9 @@ describe("fetchMetrics tests", () => {
   it("should process any metric files with a fulfilled promise, even if it followed a rejected promise", () => {
     const metricType = "metric_type_2";
     const isDemo = false;
+    const error = new Error("Error");
     fetchMetricsFromGCS.mockReturnValue([
-      Promise.reject(new Error("Error")),
+      Promise.reject(error),
       Promise.resolve(promiseData),
     ]);
     processMetricFile.mockReturnValue(deserializedFile);
@@ -123,6 +126,7 @@ describe("fetchMetrics tests", () => {
         extension
       );
       expect(results).toStrictEqual({ [fileKey]: deserializedFile });
+      expect(Sentry.captureException).toHaveBeenCalledWith(error);
     });
   });
 });
