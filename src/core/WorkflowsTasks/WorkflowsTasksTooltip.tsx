@@ -21,7 +21,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
-import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
+import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import {
   SupervisionTask,
   SupervisionTaskType,
@@ -33,33 +33,12 @@ import {
   TooltipSectionDetails,
   TooltipSectionHeader,
 } from "../sharedComponents";
+import { OpportunitiesSection } from "../WorkflowsTooltip/OpportunitiesSection";
 
 type TooltipDetailsProps = {
   person: JusticeInvolvedPerson;
   tasks: SupervisionTask<SupervisionTaskType>[];
 };
-
-export const OpportunitiesSection: React.FC<{ person: JusticeInvolvedPerson }> =
-  observer(function OpportunitiesSection({ person }) {
-    const opportunities = Object.values(person.verifiedOpportunities);
-    if (opportunities.length === 0) {
-      return null;
-    }
-
-    return (
-      <TooltipSection>
-        <TooltipSectionHeader>Opportunities</TooltipSectionHeader>
-        {opportunities.map(
-          (o: Opportunity) =>
-            o.tooltipEligibilityText && (
-              <TooltipSectionDetails key={o.type}>
-                {o.tooltipEligibilityText}
-              </TooltipSectionDetails>
-            )
-        )}
-      </TooltipSection>
-    );
-  });
 
 const TasksSection: React.FC<{
   tasks: SupervisionTask<SupervisionTaskType>[];

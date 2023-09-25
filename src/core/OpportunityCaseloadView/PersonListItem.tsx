@@ -25,6 +25,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { OpportunityCapsule } from "../PersonCapsules";
+import { WorkflowsTooltip } from "../WorkflowsTooltip";
 
 const ListItem = styled.li`
   padding: ${rem(spacing.md)} ${rem(spacing.md)} 0 0;
@@ -66,34 +67,39 @@ export const PersonListItem = observer(function PersonListItem({
 
   return (
     <ListItem key={person.externalId}>
-      <PersonItemWrapper
-        onMouseEnter={() => setShowButton(true)}
-        onMouseLeave={() => setShowButton(false)}
+      <WorkflowsTooltip
+        key={`tooltip-${opportunity.person.recordId}`}
+        person={opportunity.person}
       >
-        <PersonLink
-          className="PersonListItem__Link"
-          onClick={() =>
-            workflowsStore.updateSelectedPerson(person.pseudonymizedId)
-          }
+        <PersonItemWrapper
+          onMouseEnter={() => setShowButton(true)}
+          onMouseLeave={() => setShowButton(false)}
         >
-          <OpportunityCapsule
-            avatarSize="lg"
-            opportunity={opportunity}
-            textSize="sm"
-            hideId
-          />
-        </PersonLink>
-        <ButtonSpacer />
-        {showButton && !isTablet && opportunity.form?.navigateToFormText && (
-          <NavigateToFormButton
-            className="NavigateToFormButton"
-            opportunityType={opportunity.type}
-            pseudonymizedId={person.pseudonymizedId}
+          <PersonLink
+            className="PersonListItem__Link"
+            onClick={() =>
+              workflowsStore.updateSelectedPerson(person.pseudonymizedId)
+            }
           >
-            {opportunity.form.navigateToFormText}
-          </NavigateToFormButton>
-        )}
-      </PersonItemWrapper>
+            <OpportunityCapsule
+              avatarSize="lg"
+              opportunity={opportunity}
+              textSize="sm"
+              hideId
+            />
+          </PersonLink>
+          <ButtonSpacer />
+          {showButton && !isTablet && opportunity.form?.navigateToFormText && (
+            <NavigateToFormButton
+              className="NavigateToFormButton"
+              opportunityType={opportunity.type}
+              pseudonymizedId={person.pseudonymizedId}
+            >
+              {opportunity.form.navigateToFormText}
+            </NavigateToFormButton>
+          )}
+        </PersonItemWrapper>
+      </WorkflowsTooltip>
     </ListItem>
   );
 });

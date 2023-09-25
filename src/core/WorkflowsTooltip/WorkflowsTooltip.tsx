@@ -18,69 +18,61 @@
  */
 import { TooltipTrigger } from "@recidiviz/design-system";
 import React from "react";
-import styled from "styled-components/macro";
 
 import { ReactComponent as TealStar } from "../../assets/static/images/tealStar.svg";
 import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
-import { Client } from "../../WorkflowsStore";
+import { Client, isClient, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import {
   TooltipContainer,
-  TooltipRow,
   TooltipSection,
-  TooltipSectionDetails,
   TooltipSectionHeader,
 } from "../sharedComponents";
-import { OpportunitiesSection } from "../WorkflowsTasks/WorkflowsTasksTooltip";
-
-const MilestonesTooltipRow = styled(TooltipRow)`
-  justify-content: flex-start;
-  padding: 0.25rem 0;
-  align-items: center;
-`;
-
-const SectionDetails = styled(TooltipSectionDetails)`
-  padding: 0 0 0 0.5rem;
-`;
+import { OpportunitiesSection } from "./OpportunitiesSection";
+import { SectionDetails, WorkflowsTooltipRow } from "./styles";
 
 const MilestonesSection: React.FC<{
   milestones: Client["congratulationsMilestones"];
 }> = ({ milestones }) => {
-  if (!milestones) return null;
+  if (!milestones.length) return null;
   return (
     <TooltipSection>
       <TooltipSectionHeader>Milestones</TooltipSectionHeader>
       {milestones.map((m) => (
-        <MilestonesTooltipRow key={m.type}>
+        <WorkflowsTooltipRow key={m.type}>
           <TealStar height="16" width="16" />
           <SectionDetails>{m.text}</SectionDetails>
-        </MilestonesTooltipRow>
+        </WorkflowsTooltipRow>
       ))}
     </TooltipSection>
   );
 };
 
-const TooltipDetails: React.FC<{ client: Client }> = ({ client }) => {
+const TooltipDetails: React.FC<{ person: JusticeInvolvedPerson }> = ({
+  person,
+}) => {
   return (
     <TooltipContainer>
-      <MilestonesSection milestones={client.congratulationsMilestones} />
-      <OpportunitiesSection person={client} />
+      {isClient(person) && (
+        <MilestonesSection milestones={person.congratulationsMilestones} />
+      )}
+      <OpportunitiesSection person={person} includeStarIcon />
     </TooltipContainer>
   );
 };
 
-type MilestonesTooltipProps = {
-  client: Client;
+type WorkflowsTooltipProps = {
+  person: JusticeInvolvedPerson;
   children: React.ReactElement;
 };
 
-export const MilestonesTooltip: React.FC<MilestonesTooltipProps> = ({
-  client,
+export const WorkflowsTooltip: React.FC<WorkflowsTooltipProps> = ({
+  person,
   children,
 }) => {
-  useHydrateOpportunities(client);
+  useHydrateOpportunities(person);
 
   return (
-    <TooltipTrigger contents={<TooltipDetails client={client} />}>
+    <TooltipTrigger contents={<TooltipDetails person={person} />}>
       {children}
     </TooltipTrigger>
   );
