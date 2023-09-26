@@ -21,13 +21,10 @@ import { cloneDeep } from "lodash";
 import { z } from "zod";
 
 import type { AssessmentQuestionNumber } from "../../../../core/Paperwork/US_TN/CustodyLevelDowngrade/assessmentQuestions";
-import {
-  caseNotesSchema,
-  dateStringSchema,
-  opportunitySchemaBase,
-} from "../../schemaHelpers";
+import { caseNotesSchema, opportunitySchemaBase } from "../../schemaHelpers";
+import { formInformationSchema as formInformation } from "../UsTnSharedCriteria";
 
-const realUsTnCustodyLevelDowngradeSchema = opportunitySchemaBase
+export const usTnCustodyLevelDowngradeSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: z.object({
       custodyLevelHigherThanRecommended: z.object({
@@ -43,53 +40,7 @@ const realUsTnCustodyLevelDowngradeSchema = opportunitySchemaBase
       }),
     }),
     ineligibleCriteria: z.object({}),
-    formInformation: z.object({
-      currentOffenses: z.string().array().optional(),
-      lastCafDate: dateStringSchema.optional(),
-      lastCafTotal: z.string().optional(),
-      latestClassificationDecisionDate: dateStringSchema.optional(),
-      levelOfCare: z.string().optional(),
-      q1Score: z.coerce.number(),
-      q2Score: z.coerce.number(),
-      q3Score: z.coerce.number(),
-      q4Score: z.coerce.number(),
-      q5Score: z.coerce.number(),
-      q6Score: z.coerce.number(),
-      q7Score: z.coerce.number(),
-      q8Score: z.coerce.number(),
-      q9Score: z.coerce.number(),
-      q6Notes: z.optional(
-        z.array(
-          z.object({
-            eventDate: dateStringSchema,
-            noteBody: z.string(),
-          })
-        )
-      ),
-      q7Notes: z.optional(
-        z.array(
-          z.object({
-            eventDate: dateStringSchema,
-            noteBody: z.string(),
-          })
-        )
-      ),
-      q8Notes: z.optional(
-        z.array(
-          z.object({
-            detainerReceivedDate: dateStringSchema,
-            detainerFelonyFlag: z
-              .string()
-              .nullable()
-              .transform((raw) => raw === "X"),
-            detainerMisdemeanorFlag: z
-              .string()
-              .nullable()
-              .transform((raw) => raw === "X"),
-          })
-        )
-      ),
-    }),
+    formInformation,
   })
   .merge(caseNotesSchema)
   .transform((r) => {
@@ -99,32 +50,8 @@ const realUsTnCustodyLevelDowngradeSchema = opportunitySchemaBase
     return out;
   });
 
-export const usTnCustodyLevelDowngradeSchema = z.preprocess(
-  // TODO: I will move these fields around upstream (recidiviz-data #21658)
-  // and then delete this ugly preprocess step.
-  (obj) => {
-    const out: any = cloneDeep(obj);
-    if (out.caseNotesAssaultiveDisciplinaries) {
-      out.caseNotes["ASSAULTIVE DISCIPLINARIES"] =
-        out.caseNotesAssaultiveDisciplinaries;
-    }
-    [
-      "currentOffenses",
-      "lastCafDate",
-      "lastCafTotal",
-      "latestClassificationDecisionDate",
-      "levelOfCare",
-    ].forEach((k) => {
-      if (out[k]) out.formInformation[k] = out[k];
-    });
-
-    return out;
-  },
-  realUsTnCustodyLevelDowngradeSchema
-);
-
 export type UsTnCustodyLevelDowngradeReferralRecordRaw = z.input<
-  typeof realUsTnCustodyLevelDowngradeSchema
+  typeof usTnCustodyLevelDowngradeSchema
 >;
 
 export type UsTnCustodyLevelDowngradeReferralRecord = z.infer<
@@ -146,7 +73,7 @@ export type UsTnCustodyLevelDowngradeDraftData = {
   date: string;
   lastCafDate: string;
   lastCafTotal: string;
-  latestClassificationDecisionDate: string;
+  latestClassificationDate: string;
   levelOfCare: string;
 } & DraftDataSelections &
   DraftDataNotes;

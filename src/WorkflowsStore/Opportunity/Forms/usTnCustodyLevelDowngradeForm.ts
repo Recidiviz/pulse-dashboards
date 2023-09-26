@@ -67,8 +67,8 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
       const { formInformation } = record;
       out.lastCafDate = formatDate(formInformation.lastCafDate);
       out.lastCafTotal = formInformation.lastCafTotal;
-      out.latestClassificationDecisionDate = formatDate(
-        formInformation.latestClassificationDecisionDate
+      out.latestClassificationDate = formatDate(
+        formInformation.latestClassificationDate
       );
       out.levelOfCare = formInformation.levelOfCare;
       assessmentQuestionNumbers.forEach((q) => {

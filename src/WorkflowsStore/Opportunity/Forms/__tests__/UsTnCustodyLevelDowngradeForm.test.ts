@@ -66,7 +66,7 @@ function createTestUnit() {
       q9Score: 2,
       lastCafDate: new Date("2019-04-02T12:00"),
       lastCafTotal: "20",
-      latestClassificationDecisionDate: new Date("2019-04-03T12:00"),
+      latestClassificationDate: new Date("2019-04-03T12:00"),
       levelOfCare: "LOC",
     },
     eligibleCriteria: {
@@ -97,7 +97,7 @@ const baseResult: PartialFormData = {
   institutionName: "facility1",
   lastCafDate: "4/2/19",
   lastCafTotal: "20",
-  latestClassificationDecisionDate: "4/3/19",
+  latestClassificationDate: "4/3/19",
   levelOfCare: "LOC",
   omsId: "pei1",
   q1Selection: 0,

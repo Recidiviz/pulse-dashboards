@@ -39,6 +39,9 @@ const usTnCustodyLevelDowngradeRecordRaw: UsTnCustodyLevelDowngradeReferralRecor
     },
     ineligibleCriteria: {},
     formInformation: {
+      currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
+      lastCafDate: "2022-08-22",
+      lastCafTotal: "8",
       q1Score: 1,
       q2Score: 1,
       q3Score: 1,
@@ -48,6 +51,15 @@ const usTnCustodyLevelDowngradeRecordRaw: UsTnCustodyLevelDowngradeReferralRecor
       q7Score: 1,
       q8Score: 1,
       q9Score: 1,
+      q6Notes: [{ eventDate: "2022-08-22", noteBody: "Some note" }],
+      q7Notes: [{ eventDate: "2022-08-22", noteBody: "Some note" }],
+      q8Notes: [
+        {
+          detainerReceivedDate: "2022-08-22",
+          detainerFelonyFlag: "X",
+          detainerMisdemeanorFlag: "X",
+        },
+      ],
     },
   };
 

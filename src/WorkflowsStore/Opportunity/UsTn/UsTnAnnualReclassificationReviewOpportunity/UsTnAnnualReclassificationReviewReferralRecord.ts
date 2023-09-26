@@ -22,6 +22,7 @@ import {
   dateStringSchema,
   opportunitySchemaBase,
 } from "../../schemaHelpers";
+import { formInformationSchema as formInformation } from "../UsTnSharedCriteria";
 
 export const usTnAnnualReclassificationReviewSchema = opportunitySchemaBase
   .extend({
@@ -41,6 +42,8 @@ export const usTnAnnualReclassificationReviewSchema = opportunitySchemaBase
       }),
     }),
     ineligibleCriteria: z.object({}),
+    // TODO(#4091) remove `partial()` once undefined qScores (i.e. q1Score, q2Score, ..., q9Score) are fixed on the data side.
+    formInformation: formInformation.partial(),
   })
   .merge(caseNotesSchema);
 

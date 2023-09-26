@@ -78,6 +78,9 @@ export const usTnCustodyLevelDowngradeFixture =
       },
       ineligibleCriteria: {},
       formInformation: {
+        currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
+        lastCafDate: "2022-08-22",
+        lastCafTotal: "8",
         q1Score: 5,
         q2Score: 3,
         q3Score: 4,

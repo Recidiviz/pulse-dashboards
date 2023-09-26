@@ -359,6 +359,9 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
     },
     ineligibleCriteria: {},
     formInformation: {
+      currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
+      lastCafDate: new Date("2022-08-22"),
+      lastCafTotal: "8",
       q1Score: -3,
       q2Score: -2,
       q3Score: -1,
@@ -368,6 +371,15 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
       q7Score: 3,
       q8Score: 4,
       q9Score: 5,
+      q6Notes: [{ eventDate: new Date("2022-08-22"), noteBody: "Some note" }],
+      q7Notes: [{ eventDate: new Date("2022-08-22"), noteBody: "Some note" }],
+      q8Notes: [
+        {
+          detainerReceivedDate: new Date("2022-08-22"),
+          detainerFelonyFlag: true,
+          detainerMisdemeanorFlag: false,
+        },
+      ],
     },
     caseNotes: {},
   };
@@ -415,6 +427,29 @@ export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclas
         },
       ],
     },
+    formInformation: {
+      currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
+      lastCafDate: new Date("2022-08-22"),
+      lastCafTotal: "8",
+      q1Score: -3,
+      q2Score: -2,
+      q3Score: -1,
+      q4Score: 0,
+      q5Score: 1,
+      q6Score: 2,
+      q7Score: 3,
+      q8Score: 4,
+      q9Score: 5,
+      q6Notes: [{ eventDate: new Date("2022-08-22"), noteBody: "Some note" }],
+      q7Notes: [{ eventDate: new Date("2022-08-22"), noteBody: "Some note" }],
+      q8Notes: [
+        {
+          detainerReceivedDate: new Date("2022-08-22"),
+          detainerFelonyFlag: true,
+          detainerMisdemeanorFlag: false,
+        },
+      ],
+    },
   };
 
 export const UsTnAnnualReclassificationReferralRecordFixture02: UsTnAnnualReclassificationReviewReferralRecord =
@@ -453,5 +488,16 @@ export const UsTnAnnualReclassificationReferralRecordFixture02: UsTnAnnualReclas
           noteTitle: "Title3",
         },
       ],
+    },
+    formInformation: {
+      q1Score: -3,
+      q2Score: -2,
+      q3Score: -1,
+      q4Score: 0,
+      q5Score: 1,
+      q6Score: 2,
+      q7Score: 3,
+      q8Score: 4,
+      q9Score: 5,
     },
   };

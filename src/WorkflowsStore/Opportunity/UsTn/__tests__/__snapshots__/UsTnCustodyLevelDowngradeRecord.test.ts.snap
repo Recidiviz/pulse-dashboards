@@ -22,13 +22,37 @@ Object {
   },
   "externalId": "abc123",
   "formInformation": Object {
+    "currentOffenses": Array [
+      "ROBBERY-ARMED WITH DEADLY WEAPON",
+    ],
+    "lastCafDate": 2022-08-22T00:00:00.000Z,
+    "lastCafTotal": "8",
     "q1Score": 1,
     "q2Score": 1,
     "q3Score": 1,
     "q4Score": 1,
     "q5Score": 1,
+    "q6Notes": Array [
+      Object {
+        "eventDate": 2022-08-22T00:00:00.000Z,
+        "noteBody": "Some note",
+      },
+    ],
     "q6Score": 1,
+    "q7Notes": Array [
+      Object {
+        "eventDate": 2022-08-22T00:00:00.000Z,
+        "noteBody": "Some note",
+      },
+    ],
     "q7Score": 1,
+    "q8Notes": Array [
+      Object {
+        "detainerFelonyFlag": true,
+        "detainerMisdemeanorFlag": true,
+        "detainerReceivedDate": 2022-08-22T00:00:00.000Z,
+      },
+    ],
     "q8Score": 1,
     "q9Score": 1,
   },
