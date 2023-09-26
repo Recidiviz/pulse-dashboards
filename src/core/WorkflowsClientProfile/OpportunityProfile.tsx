@@ -39,6 +39,7 @@ import {
   UsMiEarlyDischargeIcDetails,
   UsMoIncarceration,
   UsMoRestrictiveHousing,
+  UsTnCommonlyUsedOverrideCodes,
 } from "./Details";
 import { Heading } from "./Heading";
 import { AccordionSection, AccordionWrapper } from "./OpportunitiesAccordion";
@@ -77,6 +78,7 @@ const OpportunityDetailSidebarComponents = {
   RecommendedSupervisionLevel,
   CaseNotes,
   UsMoRestrictiveHousing,
+  UsTnCommonlyUsedOverrideCodes,
 };
 
 export function DetailsSection({

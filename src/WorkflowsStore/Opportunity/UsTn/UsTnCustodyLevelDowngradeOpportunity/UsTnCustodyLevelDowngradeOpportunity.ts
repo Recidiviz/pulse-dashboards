@@ -71,6 +71,7 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "Incarceration",
     "CaseNotes",
+    "UsTnCommonlyUsedOverrideCodes",
   ];
 
   readonly caseNotesTitle = "Disciplinaries";

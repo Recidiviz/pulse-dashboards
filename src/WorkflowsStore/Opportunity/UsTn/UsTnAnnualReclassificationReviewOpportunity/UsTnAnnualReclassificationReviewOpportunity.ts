@@ -59,6 +59,7 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "Incarceration",
     "CaseNotes",
+    "UsTnCommonlyUsedOverrideCodes",
   ];
 
   // TODO(#4087): Set policyOrMethodologyUrl once we know what to set it to.

@@ -813,6 +813,34 @@ export function RecommendedSupervisionLevel({
   );
 }
 
+export function UsTnCommonlyUsedOverrideCodes(): React.ReactElement | null {
+  const overrideCodes = {
+    C1DEC: "Maximum to Close decrease",
+    C2DEC: "Non-assaultive disciplinary",
+    C3DEC: "Parole grant / SAIU / TCWC",
+    C4DEC: "Medium to Minimum-R w/ detainer",
+    C5DEC: "Revise sev. of offense scale",
+    C6DEC: "Close to medium decrease",
+    C7DEC: "Close to medium decrease",
+  };
+
+  const overrideCodesList = Object.entries(overrideCodes).map(
+    ([key, value]) => (
+      <SecureDetailsContent key={key}>
+        <CaseNoteTitle>{key}: </CaseNoteTitle>
+        {value}
+      </SecureDetailsContent>
+    )
+  );
+
+  return (
+    <DetailsSection>
+      <DetailsHeading>Commonly Used Override Codes</DetailsHeading>
+      <SecureDetailsList>{overrideCodesList}</SecureDetailsList>
+    </DetailsSection>
+  );
+}
+
 export function ClientProfileDetails({
   client,
 }: ClientProfileProps): React.ReactElement {
