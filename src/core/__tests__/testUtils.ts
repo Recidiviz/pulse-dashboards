@@ -31,6 +31,7 @@ export const mockOpportunity: Opportunity<Client> = {
   requirementsAlmostMet: [],
   requirementsMet: [],
   reviewStatus: "PENDING",
+  setAutoSnoozeUntil: async () => undefined,
   setSnoozeForDays: async () => undefined,
   setLastViewed: () => undefined,
   setDenialReasons: async () => undefined,

@@ -18,7 +18,6 @@
 import {
   add,
   differenceInDays,
-  endOfToday,
   format,
   parseISO,
   startOfToday,
@@ -30,13 +29,13 @@ import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/
 import {
   AutoSnoozeUpdate,
   Denial,
-  IsoDate,
   ManualSnoozeUpdate,
   OpportunityUpdate,
   OpportunityUpdateWithForm,
   UpdateLog,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
+import { formatDateToISO } from "../../utils";
 import {
   CollectionDocumentSubscription,
   DocumentSubscription,
@@ -45,9 +44,9 @@ import {
   ValidateFunction,
 } from "../subscriptions";
 import { JusticeInvolvedPerson } from "../types";
-import { OTHER_KEY } from "../utils";
+import { OTHER_KEY, snoozeUntilDateInTheFuture } from "../utils";
 import { FormBase } from "./Forms/FormBase";
-import { OPPORTUNITY_CONFIGS } from "./OpportunityConfigs";
+import { AutoSnoozeUntil, OPPORTUNITY_CONFIGS } from "./OpportunityConfigs";
 import {
   Component,
   DefaultEligibility,
@@ -182,15 +181,12 @@ export abstract class OpportunityBase<
   }
 
   get isSnoozed(): boolean {
-    if (this.autoSnooze?.snoozeUntil) {
-      return parseISO(this.autoSnooze?.snoozeUntil) > endOfToday();
-    }
+    const snoozeUntil =
+      (this.autoSnooze?.snoozeUntil &&
+        parseISO(this.autoSnooze?.snoozeUntil)) ??
+      this.manualSnoozeUntilDate;
 
-    if (this.manualSnoozeUntilDate) {
-      return this.manualSnoozeUntilDate > endOfToday();
-    }
-
-    return false;
+    return !!snoozeUntil && snoozeUntilDateInTheFuture(snoozeUntil);
   }
 
   get lastViewed(): UpdateLog | undefined {
@@ -315,8 +311,32 @@ export abstract class OpportunityBase<
       recordId,
       {
         snoozedBy: currentUserEmail,
-        snoozedOn: format(new Date(), "yyyy-MM-dd") as IsoDate,
+        snoozedOn: format(new Date(), "yyyy-MM-dd"),
         snoozeForDays: days,
+      },
+      deleteSnoozeField
+    );
+  }
+
+  async setAutoSnoozeUntil(
+    defaultSnoozeUntilFn: AutoSnoozeUntil["defaultSnoozeUntilFn"],
+    reasons: string[]
+  ): Promise<void> {
+    const { currentUserEmail } = this.rootStore.workflowsStore;
+    const { recordId } = this.person;
+    if (!currentUserEmail) return;
+
+    // If there are no denial reasons selected, clear the snooze values
+    const deleteSnoozeField = reasons.length === 0;
+
+    const snoozeUntil = defaultSnoozeUntilFn(startOfToday(), this);
+    await this.rootStore.firestoreStore.updateOpportunityAutoSnooze(
+      this.type,
+      recordId,
+      {
+        snoozedBy: currentUserEmail,
+        snoozedOn: format(new Date(), "yyyy-MM-dd"),
+        snoozeUntil: formatDateToISO(snoozeUntil),
       },
       deleteSnoozeField
     );

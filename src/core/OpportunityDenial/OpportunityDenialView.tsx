@@ -24,9 +24,10 @@ import styled from "styled-components/macro";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Slider from "../../components/Slider";
-import { getSnoozeUntilDate, Opportunity } from "../../WorkflowsStore";
+import { formatDateToISO } from "../../utils";
+import { Opportunity } from "../../WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
-import { OTHER_KEY } from "../../WorkflowsStore/utils";
+import { getSnoozeUntilDate, OTHER_KEY } from "../../WorkflowsStore/utils";
 import { OtherReasonInput } from "../sharedComponents";
 import { Heading } from "../WorkflowsClientProfile/Heading";
 import {
@@ -82,10 +83,15 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const maxManualSnoozeDays =
     OPPORTUNITY_CONFIGS[opportunity.type].snooze?.maxSnoozeDays;
 
+  const defaultAutoSnoozeFn =
+    OPPORTUNITY_CONFIGS[opportunity.type].snooze?.defaultSnoozeUntilFn;
+
   const handleSubmit = async () => {
     await opportunity.setDenialReasons(reasons);
     if (maxManualSnoozeDays) {
       await opportunity.setSnoozeForDays(snoozeForDays, reasons);
+    } else if (defaultAutoSnoozeFn) {
+      await opportunity.setAutoSnoozeUntil(defaultAutoSnoozeFn, reasons);
     }
     onSubmit();
   };
@@ -98,7 +104,10 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const disableSaveButton = maxManualSnoozeDays
     ? reasons.length > 0 && !snoozeForDays
     : false;
-  const snoozeUntilDate = getSnoozeUntilDate(snoozeForDays, startOfToday());
+  const snoozeUntilDate = getSnoozeUntilDate({
+    snoozeForDays,
+    snoozedOn: formatDateToISO(startOfToday()),
+  });
 
   return (
     <SidePanelContents

@@ -17,8 +17,10 @@
 
 import assertNever from "assert-never";
 import {
+  add,
   addDays,
   differenceInDays,
+  endOfToday,
   getMonth,
   getYear,
   parseISO,
@@ -27,7 +29,12 @@ import { Timestamp } from "firebase/firestore";
 
 import { StaffFilter, SystemId } from "../core/models/types";
 import { WORKFLOWS_SYSTEM_ID_TO_PAGE, WorkflowsPage } from "../core/views";
-import { CombinedUserRecord, StaffRecord } from "../FirestoreStore/types";
+import {
+  AutoSnoozeUpdate,
+  CombinedUserRecord,
+  ManualSnoozeUpdate,
+  StaffRecord,
+} from "../FirestoreStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
 import {
   INCARCERATION_OPPORTUNITY_TYPES,
@@ -278,4 +285,19 @@ export function usCaFilterByRoleSubtype(
 
   // Parole Agent supervisors only get access to their own unit (district in our schema)
   return filterByUserDistrict(user);
+}
+
+/* Returns the snooze until date from either the auto or manual snooze updates. */
+export function getSnoozeUntilDate({
+  snoozeUntil,
+  snoozeForDays,
+  snoozedOn,
+}: Partial<AutoSnoozeUpdate | ManualSnoozeUpdate>): Date | undefined {
+  if (snoozeUntil) return parseISO(snoozeUntil);
+  if (snoozedOn && snoozeForDays)
+    return add(parseISO(snoozedOn), { days: snoozeForDays });
+}
+
+export function snoozeUntilDateInTheFuture(snoozeUntilDate: Date) {
+  return snoozeUntilDate > endOfToday();
 }

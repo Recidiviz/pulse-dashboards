@@ -46,7 +46,7 @@ import { usTnSupervisionLevelDowngradeConfig as supervisionLevelDowngrade } from
  * defaultSnoozeUntilFn is used to calculate the default snooze until,
  * e.g. weekly on Mondays or 90 days.
  * */
-type AutoSnoozeUntil = {
+export type AutoSnoozeUntil = {
   defaultSnoozeUntilFn: (snoozedOn: Date, opportunity?: Opportunity) => Date;
   maxSnoozeDays?: never;
 };

@@ -222,6 +222,10 @@ function formatDate(date?: Date, pattern = "M/d/yy"): string {
   return format(date, pattern);
 }
 
+function formatDateToISO(date: Date, pattern = "yyyy-MM-dd"): string {
+  return format(date, pattern);
+}
+
 function formatWorkflowsDate(date?: Date): string {
   return formatDate(date, "MMM d, yyyy");
 }
@@ -384,6 +388,7 @@ export {
   encrypt,
   formatCurrentAddress,
   formatDate,
+  formatDateToISO,
   formatDistrictLabel,
   formatDueDateFromToday,
   formatDurationFromDays,

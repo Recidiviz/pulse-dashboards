@@ -310,12 +310,9 @@ export type FormFieldData = Record<
   boolean | string | string[] | FieldValue
 >;
 
-export type IsoDate =
-  `${number}${number}${number}${number}-${number}${number}-${number}${number}`;
-
 type SharedSnoozeUpdate = {
   snoozedBy: string;
-  snoozedOn: IsoDate;
+  snoozedOn: string;
 };
 
 export type ManualSnoozeUpdate = {
@@ -324,7 +321,7 @@ export type ManualSnoozeUpdate = {
 } & SharedSnoozeUpdate;
 
 export type AutoSnoozeUpdate = {
-  snoozeUntil?: IsoDate;
+  snoozeUntil?: string;
   snoozeForDays?: never;
 } & SharedSnoozeUpdate;
 

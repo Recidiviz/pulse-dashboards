@@ -14,11 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { add, parseISO, sub } from "date-fns";
+
 import { StaffFilter } from "../../core/models/types";
 import { CombinedUserRecord, StaffRecord } from "../../FirestoreStore/types";
 import {
   filterByUserDistrict,
   fractionalDateBetweenTwoDates,
+  getSnoozeUntilDate,
+  snoozeUntilDateInTheFuture,
   staffNameComparator,
   usCaFilterByRoleSubtype,
 } from "../utils";
@@ -264,5 +268,32 @@ describe("usCaFilterByRoleSubtype", () => {
     };
 
     expect(usCaFilterByRoleSubtype(user)).toEqual(expected);
+  });
+});
+
+describe("getSnoozeUntilDate", () => {
+  test("when auto snoozeUntil value exists", () => {
+    const snoozeUntilDate = "2024-10-25";
+    expect(getSnoozeUntilDate({ snoozeUntil: snoozeUntilDate })).toEqual(
+      parseISO(snoozeUntilDate)
+    );
+  });
+
+  test("when manual snoozeForDays and snoozedOn values exist", () => {
+    expect(
+      getSnoozeUntilDate({ snoozeForDays: 5, snoozedOn: "2023-09-25" })
+    ).toEqual(parseISO("2023-09-30"));
+  });
+});
+
+describe("snoozeUntilDateInTheFuture", () => {
+  test("snoozed", () => {
+    expect(snoozeUntilDateInTheFuture(add(new Date(), { days: 5 }))).toBeTrue();
+  });
+
+  test("not snoozed", () => {
+    expect(
+      snoozeUntilDateInTheFuture(sub(new Date(), { days: 5 }))
+    ).toBeFalse();
   });
 });

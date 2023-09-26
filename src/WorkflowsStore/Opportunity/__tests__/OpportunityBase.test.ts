@@ -17,12 +17,9 @@
 
 import { add, format } from "date-fns";
 import { configure, runInAction } from "mobx";
+import timekeeper from "timekeeper";
 
-import {
-  CombinedUserRecord,
-  IsoDate,
-  OpportunityUpdate,
-} from "../../../FirestoreStore";
+import { CombinedUserRecord, OpportunityUpdate } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import { Client } from "../../Client";
@@ -37,7 +34,7 @@ import {
   INCOMPLETE_FORM_UPDATE,
   VIEWED_UPDATE,
 } from "../testUtils";
-import { OpportunityType } from "../types";
+import { Opportunity, OpportunityType } from "../types";
 
 jest.mock("../../subscriptions");
 jest.mock("firebase/firestore");
@@ -215,10 +212,7 @@ describe("isSnoozed", () => {
     mockHydration({
       updateData: {
         autoSnooze: {
-          snoozeUntil: format(
-            add(new Date(), { days: 1 }),
-            "yyyy-MM-dd"
-          ) as IsoDate,
+          snoozeUntil: format(add(new Date(), { days: 1 }), "yyyy-MM-dd"),
           snoozedBy: "foo",
           snoozedOn: "2023-01-01",
         },
@@ -233,7 +227,7 @@ describe("isSnoozed", () => {
         manualSnooze: {
           snoozeForDays: 20,
           snoozedBy: "foo",
-          snoozedOn: format(new Date(), "yyyy-MM-dd") as IsoDate,
+          snoozedOn: format(new Date(), "yyyy-MM-dd"),
         },
       },
     });
@@ -530,5 +524,47 @@ describe("tracking", () => {
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
     });
+  });
+});
+
+describe("setAutoSnoozeUntil", () => {
+  const defaultSnoozeUntilFn = (date: Date, o?: Opportunity) =>
+    add(date, { days: 5 });
+
+  beforeEach(() => {
+    timekeeper.freeze(new Date(2023, 9, 25));
+    jest.spyOn(root.firestoreStore, "updateOpportunityAutoSnooze");
+  });
+
+  test("when denial reasons are deleted", async () => {
+    await opp.setAutoSnoozeUntil(defaultSnoozeUntilFn, []);
+    expect(
+      root.firestoreStore.updateOpportunityAutoSnooze
+    ).toHaveBeenCalledWith(
+      "TEST",
+      "us_xx_001",
+      {
+        snoozeUntil: "2023-10-30",
+        snoozedBy: "test@email.gov",
+        snoozedOn: "2023-10-25",
+      },
+      true // deleteSnoozeField
+    );
+  });
+
+  test("when there are denial reasons", async () => {
+    await opp.setAutoSnoozeUntil(defaultSnoozeUntilFn, ["REASON"]);
+    expect(
+      root.firestoreStore.updateOpportunityAutoSnooze
+    ).toHaveBeenCalledWith(
+      "TEST",
+      "us_xx_001",
+      {
+        snoozeUntil: "2023-10-30",
+        snoozedBy: "test@email.gov",
+        snoozedOn: "2023-10-25",
+      },
+      false // deleteSnoozeField
+    );
   });
 });
