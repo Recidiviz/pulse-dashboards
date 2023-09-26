@@ -16,6 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { MetricBenchmark } from "../models/MetricBenchmark";
 import type { OutliersStore } from "../OutliersStore";
 import { OutliersAPI } from "./interface";
 
@@ -24,9 +25,17 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
   constructor(public readonly outliersStore: OutliersStore) {}
 
   async init() {
-    const config = (await import("../models/offlineFixtures/OutliersConfig"))
-      .OutliersConfigFixture;
+    const config = (
+      await import("../models/offlineFixtures/OutliersConfigFixture")
+    ).OutliersConfigFixture;
 
     return { config };
+  }
+
+  async metricBenchmarks(): Promise<MetricBenchmark[]> {
+    const { metricBenchmarksFixture } = await import(
+      "../models/offlineFixtures/MetricBenchmarkFixture"
+    );
+    return metricBenchmarksFixture;
   }
 }

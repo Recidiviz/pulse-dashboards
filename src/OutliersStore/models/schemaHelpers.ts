@@ -15,10 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MetricBenchmark } from "../models/MetricBenchmark";
-import { OutliersConfig } from "../models/OutliersConfig";
+import { isValid, parseISO } from "date-fns";
+import { z } from "zod";
 
-export interface OutliersAPI {
-  init(): Promise<{ config: OutliersConfig }>;
-  metricBenchmarks(): Promise<Array<MetricBenchmark>>;
-}
+export const targetStatusSchema = z.enum(["FAR", "NEAR", "MET"]);
+
+// zod has a built-in datetime validator but it does not yet support date-only strings
+// (see https://github.com/colinhacks/zod/issues/1676)
+export const dateStringSchema = z.string().transform((value, ctx) => {
+  const transformedDate = parseISO(value);
+  if (isValid(transformedDate)) {
+    return transformedDate;
+  }
+
+  ctx.addIssue({
+    code: z.ZodIssueCode.invalid_string,
+    message: "Invalid ISO date string",
+    validation: "datetime",
+  });
+
+  return z.NEVER;
+});

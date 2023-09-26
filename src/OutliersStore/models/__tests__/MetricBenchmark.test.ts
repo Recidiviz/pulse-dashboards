@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MetricBenchmark } from "../models/MetricBenchmark";
-import { OutliersConfig } from "../models/OutliersConfig";
+import { metricBenchmarkSchema } from "../MetricBenchmark";
+import { rawMetricBenchmarksFixture } from "../offlineFixtures/MetricBenchmarkFixture";
 
-export interface OutliersAPI {
-  init(): Promise<{ config: OutliersConfig }>;
-  metricBenchmarks(): Promise<Array<MetricBenchmark>>;
-}
+test("transformations", () => {
+  rawMetricBenchmarksFixture.forEach((b) =>
+    expect(metricBenchmarkSchema.parse(b)).toMatchSnapshot()
+  );
+});

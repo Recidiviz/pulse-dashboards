@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MetricBenchmark } from "../models/MetricBenchmark";
-import { OutliersConfig } from "../models/OutliersConfig";
+import { ValuesType } from "utility-types";
 
-export interface OutliersAPI {
-  init(): Promise<{ config: OutliersConfig }>;
-  metricBenchmarks(): Promise<Array<MetricBenchmark>>;
-}
+import { MetricBenchmark } from "./MetricBenchmark";
+import { OutliersConfig } from "./OutliersConfig";
+
+export type MetricConfig = ValuesType<OutliersConfig["metrics"]> & {
+  metricBenchmarksByCaseloadType: Map<string, MetricBenchmark>;
+};
