@@ -20,4 +20,7 @@ export const usMiSupervisionLevelDowngradeConfig: OpportunityConfig = {
   stateCode: "US_MI",
   urlSection: "supervisionLevelMismatch",
   label: "Supervision Level Mismatch",
+  snooze: {
+    maxSnoozeDays: 90,
+  },
 };

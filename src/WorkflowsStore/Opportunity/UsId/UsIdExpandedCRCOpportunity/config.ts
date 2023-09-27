@@ -21,4 +21,7 @@ export const usIdExpandedCRCConfig: OpportunityConfig = {
   urlSection: "expandedCRC",
   label: "Expanded CRC Program",
   featureVariant: "usIdExpandedCRC",
+  snooze: {
+    maxSnoozeDays: 30,
+  },
 };

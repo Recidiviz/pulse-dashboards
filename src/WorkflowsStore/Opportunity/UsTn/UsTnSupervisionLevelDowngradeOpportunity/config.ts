@@ -20,4 +20,7 @@ export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig = {
   stateCode: "US_TN",
   urlSection: "supervisionLevelDowngrade",
   label: "Supervision Level Downgrade",
+  snooze: {
+    maxSnoozeDays: 90,
+  },
 };

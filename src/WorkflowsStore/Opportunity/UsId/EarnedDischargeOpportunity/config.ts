@@ -20,4 +20,7 @@ export const usIdEarnedDischargeConfig: OpportunityConfig = {
   stateCode: "US_ID",
   urlSection: "earnedDischarge",
   label: "Earned Discharge",
+  snooze: {
+    maxSnoozeDays: 90,
+  },
 };

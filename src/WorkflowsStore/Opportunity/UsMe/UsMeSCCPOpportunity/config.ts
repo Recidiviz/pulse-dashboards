@@ -23,4 +23,7 @@ export const usMeSCCPConfig: OpportunityConfig = {
   initialHeader:
     "Search for case managers above to review residents in their unit who are approaching SCCP " +
     "eligibility and complete application paperwork.",
+  snooze: {
+    maxSnoozeDays: 180,
+  },
 };

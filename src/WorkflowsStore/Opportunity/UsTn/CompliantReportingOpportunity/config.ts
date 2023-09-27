@@ -20,4 +20,7 @@ export const usTnCompliantReportingConfig: OpportunityConfig = {
   stateCode: "US_TN",
   urlSection: "compliantReporting",
   label: "Compliant Reporting",
+  snooze: {
+    maxSnoozeDays: 90,
+  },
 };

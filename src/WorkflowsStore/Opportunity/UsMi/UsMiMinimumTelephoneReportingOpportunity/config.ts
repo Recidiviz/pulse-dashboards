@@ -20,4 +20,7 @@ export const usMiMinimumTelephoneReportingConfig: OpportunityConfig = {
   stateCode: "US_MI",
   urlSection: "minimumTelephoneReporting",
   label: "Minimum Telephone Reporting",
+  snooze: {
+    maxSnoozeDays: 90,
+  },
 };

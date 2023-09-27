@@ -14,10 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { add } from "date-fns";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usMiPastFTRDConfig: OpportunityConfig = {
   stateCode: "US_MI",
   urlSection: "pastFTRD",
   label: "Overdue for Discharge",
+  snooze: {
+    defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+  },
 };

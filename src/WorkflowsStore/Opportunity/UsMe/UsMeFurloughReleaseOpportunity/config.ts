@@ -21,4 +21,7 @@ export const usMeFurloughReleaseConfig: OpportunityConfig = {
   urlSection: "furloughRelease",
   label: "Furlough Program",
   featureVariant: "usMeFurloughRelease",
+  snooze: {
+    maxSnoozeDays: 180,
+  },
 };

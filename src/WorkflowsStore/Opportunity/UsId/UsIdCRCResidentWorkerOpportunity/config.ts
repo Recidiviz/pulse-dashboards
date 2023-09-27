@@ -21,4 +21,7 @@ export const usIdCRCResidentWorkerConfig: OpportunityConfig = {
   urlSection: "CRCResidentWorker",
   label: "Resident worker at Community Reentry Centers",
   featureVariant: "usIdCRC",
+  snooze: {
+    maxSnoozeDays: 90,
+  },
 };

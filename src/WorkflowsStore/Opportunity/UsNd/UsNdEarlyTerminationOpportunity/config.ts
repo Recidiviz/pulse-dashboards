@@ -20,4 +20,7 @@ export const usNdEarlyTerminationConfig: OpportunityConfig = {
   stateCode: "US_ND",
   urlSection: "earlyTermination",
   label: "Early Termination",
+  snooze: {
+    maxSnoozeDays: 90,
+  },
 };

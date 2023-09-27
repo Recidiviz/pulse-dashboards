@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { add } from "date-fns";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usIdPastFTRDConfig: OpportunityConfig = {
@@ -22,4 +24,7 @@ export const usIdPastFTRDConfig: OpportunityConfig = {
   label: "Past FTRD",
   initialHeader:
     "Search for officers above to review clients whose full-term release date is near or has passed.",
+  snooze: {
+    defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+  },
 };

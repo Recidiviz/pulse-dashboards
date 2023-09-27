@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { add } from "date-fns";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usTnExpirationConfig: OpportunityConfig = {
@@ -23,4 +25,7 @@ export const usTnExpirationConfig: OpportunityConfig = {
   featureVariant: "usTnExpiration",
   initialHeader:
     "Search for officers above to review clients who may be on or past their supervision expiration date.",
+  snooze: {
+    defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+  },
 };

@@ -21,4 +21,7 @@ export const usMeWorkReleaseConfig: OpportunityConfig = {
   urlSection: "workRelease",
   label: "Work Release",
   featureVariant: "usMeWorkRelease",
+  snooze: {
+    maxSnoozeDays: 180,
+  },
 };

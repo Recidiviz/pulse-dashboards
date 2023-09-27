@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { add } from "date-fns";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig = {
@@ -22,4 +24,7 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig = {
   urlSection: "annualReclassification",
   label: "Annual Reclassification",
   featureVariant: "usTnAnnualReclassification",
+  snooze: {
+    defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+  },
 };

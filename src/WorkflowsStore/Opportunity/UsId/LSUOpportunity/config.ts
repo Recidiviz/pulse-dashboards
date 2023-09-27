@@ -20,4 +20,7 @@ export const usIdLSUConfig: OpportunityConfig = {
   stateCode: "US_ID",
   urlSection: "LSU",
   label: "Limited Supervision Unit",
+  snooze: {
+    maxSnoozeDays: 90,
+  },
 };

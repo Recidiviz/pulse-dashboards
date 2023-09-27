@@ -25,6 +25,6 @@ export const usMiClassificationReviewConfig: OpportunityConfig = {
   snooze: {
     // Ideal behavior is to calculate snooze until based on the date of the last classification review
     // or when they are marked ineligible, whichever is earliest.
-    defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { months: 6 }),
+    defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 180 }),
   },
 };

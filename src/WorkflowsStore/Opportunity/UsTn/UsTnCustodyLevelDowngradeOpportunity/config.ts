@@ -14,10 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { add } from "date-fns";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usTnCustodyLevelDowngradeConfig: OpportunityConfig = {
   stateCode: "US_TN",
   urlSection: "custodyLevelDowngrade",
   label: "Custody Level Downgrade",
+  snooze: {
+    defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+  },
 };

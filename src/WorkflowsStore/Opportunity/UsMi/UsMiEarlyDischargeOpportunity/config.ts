@@ -20,4 +20,7 @@ export const usMiEarlyDischargeConfig: OpportunityConfig = {
   stateCode: "US_MI",
   urlSection: "earlyDischarge",
   label: "Early Discharge",
+  snooze: {
+    maxSnoozeDays: 90,
+  },
 };
