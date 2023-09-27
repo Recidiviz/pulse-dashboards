@@ -44,7 +44,7 @@ test("transform record for initial CR", () => {
         eligibleDate: "2022-12-12",
       },
     },
-    metadata: { recommendedSupervisonLevel: "MEDIUM" },
+    metadata: { recommendedSupervisionLevel: "MEDIUM" },
     caseNotes: {
       "Recommended supervision level": [
         {
@@ -79,7 +79,7 @@ test("transform record for six-month CR", () => {
         eligibleDate: "2019-01-12",
       },
     },
-    metadata: { recommendedSupervisonLevel: "MEDIUM" },
+    metadata: { recommendedSupervisionLevel: "MEDIUM" },
     caseNotes: {
       "Recommended supervision level": [
         {
@@ -110,7 +110,7 @@ test("expect to fail if both date reasons are set", () => {
         eligibleDate: "2019-01-12",
       },
     },
-    metadata: { recommendedSupervisonLevel: "MEDIUM" },
+    metadata: { recommendedSupervisionLevel: "MEDIUM" },
     caseNotes: {
       "Recommended supervision level": [
         {
@@ -125,7 +125,7 @@ test("expect to fail if both date reasons are set", () => {
   expect(() => transformer(rawRecord)).toThrow();
 });
 
-test("transform record for null usMiNotAlreadyOnLowestEligibleSupervisionLevel", () => {
+test("transform record for missing usMiNotAlreadyOnLowestEligibleSupervisionLevel", () => {
   const rawRecord: Record<string, any> = {
     stateCode: "US_MI",
     externalId: "cr-eligible-3",
@@ -135,7 +135,7 @@ test("transform record for null usMiNotAlreadyOnLowestEligibleSupervisionLevel",
         eligibleDate: "2023-03-14",
       },
     },
-    metadata: { recommendedSupervisonLevel: null },
+    metadata: {},
   };
 
   expect(transformer(rawRecord)).toMatchSnapshot();

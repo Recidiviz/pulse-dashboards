@@ -796,17 +796,17 @@ export function RecommendedSupervisionLevel({
   if (!opportunityRecord) return null;
 
   const {
-    metadata: { recommendedSupervisonLevel },
+    metadata: { recommendedSupervisionLevel },
   } = opportunityRecord;
 
-  if (!recommendedSupervisonLevel) return null;
+  if (!recommendedSupervisionLevel) return null;
 
   return (
     <DetailsSection>
       <DetailsHeading>Recommended Supervision Level</DetailsHeading>
       <DetailsList>
         <SecureDetailsContent>
-          {recommendedSupervisonLevel}
+          {recommendedSupervisionLevel}
         </SecureDetailsContent>
       </DetailsList>
     </DetailsSection>

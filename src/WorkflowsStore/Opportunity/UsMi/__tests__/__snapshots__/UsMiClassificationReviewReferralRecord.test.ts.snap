@@ -29,13 +29,13 @@ Object {
   },
   "externalId": "cr-eligible-1",
   "metadata": Object {
-    "recommendedSupervisonLevel": "MEDIUM",
+    "recommendedSupervisionLevel": "MEDIUM",
   },
   "stateCode": "US_MI",
 }
 `;
 
-exports[`transform record for null usMiNotAlreadyOnLowestEligibleSupervisionLevel 1`] = `
+exports[`transform record for missing usMiNotAlreadyOnLowestEligibleSupervisionLevel 1`] = `
 Object {
   "caseNotes": Object {},
   "eligibleCriteria": Object {
@@ -45,9 +45,7 @@ Object {
     "usMiNotAlreadyOnLowestEligibleSupervisionLevel": null,
   },
   "externalId": "cr-eligible-3",
-  "metadata": Object {
-    "recommendedSupervisonLevel": null,
-  },
+  "metadata": Object {},
   "stateCode": "US_MI",
 }
 `;
@@ -74,7 +72,7 @@ Object {
   },
   "externalId": "cr-eligible-2",
   "metadata": Object {
-    "recommendedSupervisonLevel": "MEDIUM",
+    "recommendedSupervisionLevel": "MEDIUM",
   },
   "stateCode": "US_MI",
 }
