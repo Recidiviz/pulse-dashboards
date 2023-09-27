@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { palette, Sans14, typography } from "@recidiviz/design-system";
-import { format, startOfToday } from "date-fns";
+import { format, parseISO, startOfToday } from "date-fns";
 import { debounce, xor } from "lodash";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
@@ -75,7 +75,11 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   );
 
   const [snoozeForDays, setSnoozeForDays] = useState<number>(
-    opportunity?.snoozeForDays ?? 0
+    opportunity?.manualSnooze?.snoozeForDays ?? 0
+  );
+
+  const [autoSnoozeUntil, setAutoSnoozeUntil] = useState<string | undefined>(
+    opportunity?.autoSnooze?.snoozeUntil
   );
 
   if (!opportunity) return null;
@@ -104,10 +108,13 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const disableSaveButton = maxManualSnoozeDays
     ? reasons.length > 0 && !snoozeForDays
     : false;
-  const snoozeUntilDate = getSnoozeUntilDate({
-    snoozeForDays,
-    snoozedOn: formatDateToISO(startOfToday()),
-  });
+
+  const snoozeUntilDate = autoSnoozeUntil
+    ? parseISO(autoSnoozeUntil)
+    : getSnoozeUntilDate({
+        snoozeForDays,
+        snoozedOn: formatDateToISO(startOfToday()),
+      });
 
   return (
     <SidePanelContents
@@ -125,7 +132,18 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
             <MenuItem
               key={code}
               onClick={() => {
-                setReasons(xor(reasons, [code]).sort());
+                const updatedReasons = xor(reasons, [code]).sort();
+                setReasons(updatedReasons);
+
+                if (defaultAutoSnoozeFn && updatedReasons.length) {
+                  setAutoSnoozeUntil(
+                    formatDateToISO(
+                      defaultAutoSnoozeFn(startOfToday(), opportunity)
+                    )
+                  );
+                } else {
+                  setAutoSnoozeUntil(undefined);
+                }
               }}
             >
               <Checkbox
@@ -162,13 +180,13 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
             onChange={handleSliderChange}
             tooltipLabelFormatter={(currentValue) => `${currentValue} days`}
           />
-          {snoozeUntilDate !== undefined && (
-            <SnoozeUntilReminderText>
-              You will be reminded about this opportunity on{" "}
-              {format(snoozeUntilDate, "LLLL d, yyyy")}
-            </SnoozeUntilReminderText>
-          )}
         </SliderWrapper>
+      )}
+      {snoozeUntilDate !== undefined && (
+        <SnoozeUntilReminderText>
+          You will be reminded about this opportunity on{" "}
+          {format(snoozeUntilDate, "LLLL d, yyyy")}
+        </SnoozeUntilReminderText>
       )}
       <ActionButton
         disabled={disableSaveButton}

@@ -91,7 +91,7 @@ const CongratulatedAnotherWayView = function CongratulatedAnotherWayView({
   closeModal,
 }: CongratulatedSidePanelProps) {
   const statusUpdatedBy = client.milestoneMessagesUpdates?.updated?.by;
-  const handleUndoCongratuled = async () => {
+  const handleUndoCongratulated = async () => {
     await client.updateMilestonesStatus(TextMessageStatuses.PENDING);
     if (closeModal) closeModal();
   };
@@ -106,7 +106,7 @@ const CongratulatedAnotherWayView = function CongratulatedAnotherWayView({
       <Banner
         icon={GreenCheckmark}
         text="Congratulated"
-        actionLink={<TextLink onClick={handleUndoCongratuled}>Undo</TextLink>}
+        actionLink={<TextLink onClick={handleUndoCongratulated}>Undo</TextLink>}
       />
       <Heading person={client} />
       <ReviewInfo>

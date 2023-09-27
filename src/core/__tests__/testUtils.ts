@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { AutoSnoozeUpdate, ManualSnoozeUpdate } from "../../FirestoreStore";
 import { Client, Opportunity } from "../../WorkflowsStore";
 
 export const mockOpportunity: Opportunity<Client> = {
@@ -31,6 +32,10 @@ export const mockOpportunity: Opportunity<Client> = {
   requirementsAlmostMet: [],
   requirementsMet: [],
   reviewStatus: "PENDING",
+  manualSnooze: {} as ManualSnoozeUpdate,
+  autoSnooze: {} as AutoSnoozeUpdate,
+  manualSnoozeUntilDate: undefined,
+  deleteOpportunityDenialAndSnooze: async () => undefined,
   setAutoSnoozeUntil: async () => undefined,
   setSnoozeForDays: async () => undefined,
   setLastViewed: () => undefined,

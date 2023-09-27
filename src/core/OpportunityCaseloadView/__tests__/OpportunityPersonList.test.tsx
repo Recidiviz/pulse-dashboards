@@ -23,10 +23,12 @@ import { mockOpportunity } from "../../__tests__/testUtils";
 import { OpportunityPersonList } from "../OpportunityPersonList";
 
 jest.mock("../../../components/StoreProvider");
+jest.mock("../../../hooks/useHydrateOpportunities");
 
 const useRootStoreMock = useRootStore as jest.Mock;
 
 const baseWorkflowsStoreMock = {
+  opportunityTypes: ["earlyTermination"],
   opportunitiesLoaded: () => false,
   selectedSearchIds: [],
   selectedOpportunityType: "earlyTermination",

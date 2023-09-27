@@ -19,7 +19,13 @@ import { DocumentData } from "firebase/firestore";
 
 import { Hydratable } from "../../core/models/types";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
-import { Denial, ExternalRequestUpdate, UpdateLog } from "../../FirestoreStore";
+import {
+  AutoSnoozeUpdate,
+  Denial,
+  ExternalRequestUpdate,
+  ManualSnoozeUpdate,
+  UpdateLog,
+} from "../../FirestoreStore";
 import { TenantId } from "../../RootStore/types";
 import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
@@ -149,8 +155,12 @@ export interface Opportunity<
   readonly type: OpportunityType;
   denialReasonsMap: DenialReasonsMap;
   denial: Denial | undefined;
+  manualSnooze: ManualSnoozeUpdate | undefined;
+  autoSnooze: AutoSnoozeUpdate | undefined;
+  manualSnoozeUntilDate: Date | undefined;
   isSnoozed: boolean;
   snoozeForDays?: number;
+  deleteOpportunityDenialAndSnooze: () => Promise<void>;
   lastViewed: UpdateLog | undefined;
   setLastViewed: () => void;
   setCompletedIfEligible: () => void;

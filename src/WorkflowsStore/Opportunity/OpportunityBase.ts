@@ -351,6 +351,13 @@ export abstract class OpportunityBase<
     return this.referralSubscription.error || this.updatesSubscription.error;
   }
 
+  async deleteOpportunityDenialAndSnooze(): Promise<void> {
+    await this.rootStore.firestoreStore.deleteOpportunityDenialAndSnooze(
+      this.type,
+      this.person.recordId
+    );
+  }
+
   async setSnoozeForDays(days: number, reasons: string[]): Promise<void> {
     const { currentUserEmail } = this.rootStore.workflowsStore;
     const { recordId } = this.person;

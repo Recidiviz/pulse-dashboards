@@ -339,17 +339,6 @@ export default class FirestoreStore {
     );
   }
 
-  async deleteOpportunitySnooze(
-    opportunityType: OpportunityType,
-    recordId: string
-  ): Promise<void> {
-    const changes = {
-      autoSnooze: deleteField(),
-      manualSnooze: deleteField(),
-    };
-    return this.updateOpportunity(opportunityType, recordId, changes);
-  }
-
   async updateOpportunityAutoSnooze(
     opportunityType: OpportunityType,
     recordId: string,
