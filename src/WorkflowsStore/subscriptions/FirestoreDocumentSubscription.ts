@@ -35,9 +35,14 @@ import { FeatureGateError } from "../../errors";
 import {
   DocumentSubscription,
   TransformFunction,
+  UpdateFunction,
   ValidateFunction,
 } from "./types";
-import { defaultTransformFunction, defaultValidateFunction } from "./utils";
+import {
+  defaultTransformFunction,
+  defaultUpdateFunction,
+  defaultValidateFunction,
+} from "./utils";
 
 export abstract class FirestoreDocumentSubscription<
   DataFormat extends DocumentData = DocumentData
@@ -57,14 +62,19 @@ export abstract class FirestoreDocumentSubscription<
 
   validateRecord: ValidateFunction<DataFormat>;
 
+  updateRecord: UpdateFunction<DocumentData>;
+
   constructor(
     transformFunction: TransformFunction<DataFormat> = defaultTransformFunction,
-    validateFunction: ValidateFunction<DataFormat> = defaultValidateFunction
+    validateFunction: ValidateFunction<DataFormat> = defaultValidateFunction,
+    updateFunction: UpdateFunction<DocumentData> = defaultUpdateFunction
   ) {
     // default passes through raw record, assuming it already conforms to the desired format
     this.transformRecord = transformFunction;
 
     this.validateRecord = validateFunction;
+
+    this.updateRecord = updateFunction;
 
     // note that dataSource is not observable by default.
     // in the base case there is really no need for it
@@ -96,6 +106,8 @@ export abstract class FirestoreDocumentSubscription<
    */
   updateData(snapshot: DocumentSnapshot): void {
     try {
+      this.updateRecord(snapshot.data({ serverTimestamps: "estimate" }));
+
       const record = this.transformRecord(
         snapshot.data({ serverTimestamps: "estimate" })
       );

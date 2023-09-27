@@ -22,7 +22,7 @@ import FirestoreStore, {
   collectionNames,
 } from "../../FirestoreStore";
 import { FirestoreDocumentSubscription } from "./FirestoreDocumentSubscription";
-import { TransformFunction, ValidateFunction } from "./types";
+import { TransformFunction, UpdateFunction, ValidateFunction } from "./types";
 
 /**
  * Subscribes to the specified document in the specified collection.
@@ -39,9 +39,10 @@ export class CollectionDocumentSubscription<
     collectionName: CollectionName,
     recordId: string,
     transformFn?: TransformFunction<RecordType>,
-    validateFn?: ValidateFunction<RecordType>
+    validateFn?: ValidateFunction<RecordType>,
+    updateFn?: UpdateFunction<DocumentData>
   ) {
-    super(transformFn, validateFn);
+    super(transformFn, validateFn, updateFn);
 
     this.dataSource = doc(
       firestoreStore.db,

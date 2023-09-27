@@ -19,7 +19,7 @@
 
 import { DocumentData } from "firebase/firestore";
 
-import { TransformFunction, ValidateFunction } from "./types";
+import { TransformFunction, UpdateFunction, ValidateFunction } from "./types";
 
 // by default, we pass through undefined
 // and retype the raw record as the formatted record
@@ -36,4 +36,10 @@ export const defaultValidateFunction: ValidateFunction<any> = <DataFormat>(
   transformedRecord: DataFormat
 ): void => {
   /* do no validation by default */
+};
+
+export const defaultUpdateFunction: UpdateFunction<DocumentData> = async (
+  rawRecord: DocumentData | undefined
+): Promise<void> => {
+  /* do no updates by default */
 };

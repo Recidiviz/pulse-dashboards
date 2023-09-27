@@ -15,19 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { add, format } from "date-fns";
+import { add, format, sub } from "date-fns";
+import { DocumentData } from "firebase/firestore";
 import { configure, runInAction } from "mobx";
 import timekeeper from "timekeeper";
 
 import { CombinedUserRecord, OpportunityUpdate } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
+import { formatDateToISO } from "../../../utils";
 import { Client } from "../../Client";
-import { DocumentSubscription } from "../../subscriptions";
+import { DocumentSubscription, UpdateFunction } from "../../subscriptions";
 import { OTHER_KEY } from "../../utils";
 import { ineligibleClientRecord } from "../__fixtures__";
 import { FormBase } from "../Forms/FormBase";
-import { OpportunityBase } from "../OpportunityBase";
+import {
+  OpportunityBase,
+  updateOpportunityEligibility,
+} from "../OpportunityBase";
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,
@@ -566,5 +571,102 @@ describe("setAutoSnoozeUntil", () => {
       },
       false // deleteSnoozeField
     );
+  });
+});
+
+describe("updateOpportunityEligibility", () => {
+  let record: DocumentData;
+  const opportunityType = "LSU";
+  const mockRecordId = "us_id_123";
+  const snoozedOnDate = new Date(2023, 9, 25);
+  let testUpdateFn: UpdateFunction<DocumentData>;
+
+  beforeEach(() => {
+    timekeeper.freeze(snoozedOnDate);
+    jest.spyOn(root.firestoreStore, "deleteOpportunityDenialAndSnooze");
+    testUpdateFn = updateOpportunityEligibility(
+      opportunityType,
+      mockRecordId,
+      root
+    );
+  });
+
+  test("when there's no record", async () => {
+    await testUpdateFn(record);
+    expect(
+      root.firestoreStore.deleteOpportunityDenialAndSnooze
+    ).not.toHaveBeenCalled();
+  });
+
+  test("when there's no denial reasons", async () => {
+    record = { recordId: mockRecordId };
+    await testUpdateFn(record);
+    expect(
+      root.firestoreStore.deleteOpportunityDenialAndSnooze
+    ).not.toHaveBeenCalled();
+  });
+
+  test("when there's no snooze config", async () => {
+    record = { denial: { reasons: ["test"] } };
+    await testUpdateFn(record);
+    expect(
+      root.firestoreStore.deleteOpportunityDenialAndSnooze
+    ).not.toHaveBeenCalled();
+  });
+
+  test("when there's manual snooze config and it is still valid", async () => {
+    record = {
+      denial: { reasons: ["test"] },
+      manualSnooze: {
+        snoozeForDays: 9,
+        snoozedOn: formatDateToISO(snoozedOnDate),
+      },
+    };
+    await testUpdateFn(record);
+    expect(
+      root.firestoreStore.deleteOpportunityDenialAndSnooze
+    ).not.toHaveBeenCalled();
+  });
+
+  test("when there's auto snooze config and it is still valid", async () => {
+    record = {
+      denial: { reasons: ["test"] },
+      autoSnooze: {
+        snoozeUntil: formatDateToISO(add(snoozedOnDate, { days: 5 })),
+        snoozedOn: snoozedOnDate,
+      },
+    };
+    await testUpdateFn(record);
+    expect(
+      root.firestoreStore.deleteOpportunityDenialAndSnooze
+    ).not.toHaveBeenCalled();
+  });
+
+  test("when there's auto snooze config and it is expired", async () => {
+    record = {
+      denial: { reasons: ["test"] },
+      autoSnooze: {
+        snoozeUntil: formatDateToISO(sub(snoozedOnDate, { days: 5 })),
+        snoozedOn: snoozedOnDate,
+      },
+    };
+    await testUpdateFn(record);
+    expect(
+      root.firestoreStore.deleteOpportunityDenialAndSnooze
+    ).toHaveBeenCalledWith("LSU", "us_id_123");
+  });
+
+  test("when there's manual snooze config and it is expired", async () => {
+    record = {
+      denial: { reasons: ["test"] },
+      autoSnooze: {
+        snoozeForDays: 5,
+        snoozedOn: snoozedOnDate,
+      },
+    };
+    await testUpdateFn(record);
+    expect(
+      root.firestoreStore.deleteOpportunityDenialAndSnooze
+    ).toHaveBeenCalledWith("LSU", "us_id_123");
   });
 });

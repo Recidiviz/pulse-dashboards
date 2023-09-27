@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { doc, DocumentReference } from "firebase/firestore";
+import { doc, DocumentData, DocumentReference } from "firebase/firestore";
 
 import FirestoreStore, {
   collectionNames,
@@ -23,6 +23,7 @@ import FirestoreStore, {
 } from "../../FirestoreStore";
 import { OpportunityType } from "../Opportunity";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
+import { UpdateFunction } from "./types";
 
 export class OpportunityUpdateSubscription<
   RecordType extends OpportunityUpdate
@@ -35,10 +36,19 @@ export class OpportunityUpdateSubscription<
   constructor(
     firestoreStore: FirestoreStore,
     clientRecordId: string,
-    opportunityType: OpportunityType
+    opportunityType: OpportunityType,
+    updateOpportunityEligibility: UpdateFunction<DocumentData>
   ) {
     const collectionName = "clientUpdatesV2";
-    super(firestoreStore, collectionName, clientRecordId);
+
+    super(
+      firestoreStore,
+      collectionName,
+      clientRecordId,
+      undefined, // transformFn
+      undefined, // validateFn
+      updateOpportunityEligibility
+    );
 
     this.dataSource = doc(
       firestoreStore.db,

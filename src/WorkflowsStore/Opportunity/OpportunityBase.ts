@@ -41,10 +41,15 @@ import {
   DocumentSubscription,
   OpportunityUpdateSubscription,
   TransformFunction,
+  UpdateFunction,
   ValidateFunction,
 } from "../subscriptions";
 import { JusticeInvolvedPerson } from "../types";
-import { OTHER_KEY, snoozeUntilDateInTheFuture } from "../utils";
+import {
+  getSnoozeUntilDate,
+  OTHER_KEY,
+  snoozeUntilDateInTheFuture,
+} from "../utils";
 import { FormBase } from "./Forms/FormBase";
 import { AutoSnoozeUntil, OPPORTUNITY_CONFIGS } from "./OpportunityConfigs";
 import {
@@ -58,6 +63,41 @@ import {
   OpportunityTab,
   OpportunityType,
 } from "./types";
+
+export function updateOpportunityEligibility(
+  opportunityType: OpportunityType,
+  recordId: string,
+  rootStore: RootStore
+) {
+  return async (record: DocumentData | undefined) => {
+    // If the record is eligible, then no update is needed.
+    const denialReasons = record?.denial?.reasons ?? [];
+    if (
+      !record ||
+      !denialReasons.length ||
+      (!record.autoSnooze && !record.manualSnooze)
+    ) {
+      return;
+    }
+
+    const snoozeUntilDate = getSnoozeUntilDate({
+      ...(record.manualSnooze ?? {}),
+      ...(record.autoSnooze ?? {}),
+    });
+
+    if (!snoozeUntilDate) return;
+
+    if (denialReasons.length > 0 && snoozeUntilDateInTheFuture(snoozeUntilDate))
+      return;
+
+    // If there are denial reasons and the opp should be resurfaced, reset the
+    // denial reasons and the manual and auto snooze configs.
+    await rootStore.firestoreStore.deleteOpportunityDenialAndSnooze(
+      opportunityType,
+      recordId
+    );
+  };
+}
 
 /**
  * Implements functionality shared by all Opportunities, most notably the `Hydratable` interface.
@@ -94,6 +134,12 @@ export abstract class OpportunityBase<
    */
   readonly supportsExternalRequest: boolean = false;
 
+  /**
+   * Updates an ineligible opportunity to be eligible when
+   * the overridden/denied time period has expired.
+   */
+  updateOpportunityEligibility: UpdateFunction<DocumentData>;
+
   constructor(
     person: PersonType,
     type: OpportunityType,
@@ -122,6 +168,12 @@ export abstract class OpportunityBase<
     this.type = type;
     this.rootStore = rootStore;
 
+    this.updateOpportunityEligibility = updateOpportunityEligibility(
+      this.type,
+      this.person.recordId,
+      this.rootStore
+    );
+
     this.referralSubscription =
       new CollectionDocumentSubscription<ReferralRecord>(
         this.rootStore.firestoreStore,
@@ -133,7 +185,8 @@ export abstract class OpportunityBase<
     this.updatesSubscription = new OpportunityUpdateSubscription<UpdateRecord>(
       this.rootStore.firestoreStore,
       person.recordId,
-      type
+      type,
+      this.updateOpportunityEligibility
     );
   }
 

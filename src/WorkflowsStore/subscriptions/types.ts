@@ -40,3 +40,7 @@ export type TransformFunction<DataFormat> = (
 export type ValidateFunction<DataFormat> = (
   transformedRecord: DataFormat
 ) => void;
+
+export type UpdateFunction<DocumentData> = (
+  rawRecord: DocumentData | undefined
+) => Promise<void> | undefined;

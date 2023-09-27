@@ -247,6 +247,68 @@ describe("FirestoreStore", () => {
       ]);
     });
 
+    test("deleteOpportunityDenialAndSnooze", () => {
+      store.deleteOpportunityDenialAndSnooze("LSU", "us_id_123");
+      expect(mockDoc.mock.calls).toEqual([
+        [
+          undefined,
+          "clientUpdatesV2",
+          "us_id_123/clientOpportunityUpdates/LSU",
+        ],
+        [undefined, "clientUpdatesV2", "us_id_123"],
+      ]);
+
+      expect(mockSetDoc.mock.calls).toEqual([
+        [
+          "test-doc-ref",
+          { stateCode: "us_id" },
+          {
+            merge: true,
+          },
+        ],
+        [
+          "test-doc-ref",
+          {
+            denial: "mock-delete-fn",
+            autoSnooze: "mock-delete-fn",
+            manualSnooze: "mock-delete-fn",
+          },
+          {
+            merge: true,
+          },
+        ],
+      ]);
+    });
+
+    test("deleteOpportunitySnooze", () => {
+      store.deleteOpportunitySnooze("LSU", "us_id_123");
+      expect(mockDoc.mock.calls).toEqual([
+        [
+          undefined,
+          "clientUpdatesV2",
+          "us_id_123/clientOpportunityUpdates/LSU",
+        ],
+        [undefined, "clientUpdatesV2", "us_id_123"],
+      ]);
+
+      expect(mockSetDoc.mock.calls).toEqual([
+        [
+          "test-doc-ref",
+          { stateCode: "us_id" },
+          {
+            merge: true,
+          },
+        ],
+        [
+          "test-doc-ref",
+          { autoSnooze: "mock-delete-fn", manualSnooze: "mock-delete-fn" },
+          {
+            merge: true,
+          },
+        ],
+      ]);
+    });
+
     test("updateOpportunityAutoSnooze", () => {
       const update = {
         snoozeUntil: "2024-01-01",

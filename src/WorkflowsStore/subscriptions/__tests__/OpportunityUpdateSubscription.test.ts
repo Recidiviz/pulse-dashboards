@@ -20,6 +20,7 @@ import { doc, DocumentReference, getDoc } from "firebase/firestore";
 import FirestoreStore from "../../../FirestoreStore";
 import RootStore from "../../../RootStore";
 import { OpportunityUpdateSubscription } from "../OpportunityUpdateSubscription";
+import { UpdateFunction } from "../types";
 
 jest.mock("firebase/firestore");
 
@@ -31,6 +32,12 @@ const firestoreStoreMock = new FirestoreStore({
   } as unknown as typeof RootStore,
 });
 const getDocMock = getDoc as jest.Mock;
+
+const testUpdateRecord: UpdateFunction<DocumentData> = async (
+  rawRecord?: DocumentData
+) => {
+  await Promise.resolve();
+};
 
 let sub: OpportunityUpdateSubscription<DocumentData>;
 
@@ -46,7 +53,8 @@ test("dataSource", () => {
   sub = new OpportunityUpdateSubscription(
     firestoreStoreMock,
     "record123",
-    "compliantReporting"
+    "compliantReporting",
+    testUpdateRecord
   );
 
   expect(docMock).toHaveBeenLastCalledWith(

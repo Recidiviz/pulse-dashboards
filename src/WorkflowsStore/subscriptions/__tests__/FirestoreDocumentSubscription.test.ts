@@ -319,3 +319,24 @@ test("handles Firestore error", () => {
   expect(sub.isLoading).toBeFalse();
   expect(sub.data).toBeUndefined();
 });
+
+test("update function is called with record", () => {
+  const mockData = { recordId: "us_id_123" };
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+  const testUpdateFn = jest
+    .fn()
+    .mockImplementation(async (d?: DocumentData) => {
+      await Promise.resolve();
+    });
+
+  sub = new TestSubscription(undefined, undefined, testUpdateFn);
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(testUpdateFn).toHaveBeenCalledWith(mockData);
+  expect(sub.data).toEqual(mockData);
+  expect(sub.isHydrated).toEqual(true);
+  expect(sub.error).toEqual(undefined);
+  expect(sub.isLoading).toEqual(false);
+});
