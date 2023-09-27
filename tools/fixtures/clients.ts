@@ -151,7 +151,6 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
         name: "Tire store",
       },
     ],
-    // TODO: Update milestone type/text when CA types are confirmed
     milestones: [
       {
         text: "6-months violation free",
@@ -190,7 +189,6 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
         name: "Tire store",
       },
     ],
-    // TODO: Update milestone type/text when CA types are confirmed
     milestones: [
       {
         text: "6-months violation free",
@@ -199,6 +197,10 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
       {
         text: "Sustainable housing for 1-year",
         type: "HOUSING_TYPE_IS_NOT_TRANSIENT",
+      },
+      {
+        text: "Employed for 6+ months",
+        type: "EMPLOYED_6_MONTHS",
       },
     ],
   },
@@ -227,7 +229,6 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
         name: "Tire store",
       },
     ],
-    // TODO: Update milestone type/text when CA types are confirmed
     milestones: [
       {
         text: "6-months violation free",

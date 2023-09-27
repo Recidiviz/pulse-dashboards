@@ -186,6 +186,9 @@ export const congratulationsMilestoneTypes = [
   "SUSTAINABLE_HOUSING_12_MONTHS",
   "NO_VIOLATION_WITHIN_6_MONTHS",
   "NO_VIOLATION_WITHIN_12_MONTHS",
+  "GAINED_EMPLOYMENT",
+  "EMPLOYED_6_MONTHS",
+  "EMPLOYED_12_MONTHS",
 ] as const;
 
 export type MilestoneType =
