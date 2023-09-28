@@ -14,12 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig = {
   stateCode: "US_TN",
   urlSection: "supervisionLevelDowngrade",
   label: "Supervision Level Downgrade",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} client[|s] may be `,
+    opportunityText:
+      "supervised at a higher level than their latest risk score",
+    callToAction: "Change their supervision level in TOMIS.",
+  }),
   snooze: {
     maxSnoozeDays: 90,
   },

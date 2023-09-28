@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usMeSCCPConfig: OpportunityConfig = {
@@ -23,6 +25,13 @@ export const usMeSCCPConfig: OpportunityConfig = {
   initialHeader:
     "Search for case managers above to review residents in their unit who are approaching SCCP " +
     "eligibility and complete application paperwork.",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} resident[|s] may be eligible for the `,
+    opportunityText: "Supervised Community Confinement Program",
+    callToAction:
+      "Search for case managers above to review residents in their unit who are approaching " +
+      "SCCP eligibility and complete application paperwork.",
+  }),
   snooze: {
     maxSnoozeDays: 180,
   },

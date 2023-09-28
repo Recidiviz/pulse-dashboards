@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { add } from "date-fns";
+import simplur from "simplur";
 
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
@@ -22,6 +23,11 @@ export const usTnCustodyLevelDowngradeConfig: OpportunityConfig = {
   stateCode: "US_TN",
   urlSection: "custodyLevelDowngrade",
   label: "Custody Level Downgrade",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} resident[|s] may be eligible for a`,
+    opportunityText: "custody level downgrade",
+    callToAction: "Review and update custody levels.",
+  }),
   snooze: {
     defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
   },

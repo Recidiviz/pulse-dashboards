@@ -14,12 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usIdEarnedDischargeConfig: OpportunityConfig = {
   stateCode: "US_ID",
   urlSection: "earnedDischarge",
   label: "Earned Discharge",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} client[|s] may be eligible for `,
+    opportunityText: `earned discharge`,
+    callToAction: `Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.`,
+  }),
   snooze: {
     maxSnoozeDays: 90,
   },

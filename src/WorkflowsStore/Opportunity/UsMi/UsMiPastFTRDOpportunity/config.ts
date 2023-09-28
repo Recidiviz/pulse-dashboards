@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { add } from "date-fns";
+import simplur from "simplur";
 
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
@@ -22,6 +23,12 @@ export const usMiPastFTRDConfig: OpportunityConfig = {
   stateCode: "US_MI",
   urlSection: "pastFTRD",
   label: "Overdue for Discharge",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} client[|s] [is|are] nearing or `,
+    opportunityText: "past their full-term release date",
+    callToAction:
+      "Review clients who are nearing or past their full-term release date and complete discharges in COMS.",
+  }),
   snooze: {
     defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
   },

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { add } from "date-fns";
+import simplur from "simplur";
 
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
@@ -27,4 +28,10 @@ export const usMiClassificationReviewConfig: OpportunityConfig = {
     // or when they are marked ineligible, whichever is earliest.
     defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 180 }),
   },
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} client[|s] may be `,
+    opportunityText: "eligible for a supervision level downgrade",
+    callToAction:
+      "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",
+  }),
 };

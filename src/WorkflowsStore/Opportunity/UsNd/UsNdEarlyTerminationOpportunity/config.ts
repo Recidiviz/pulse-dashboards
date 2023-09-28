@@ -14,12 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usNdEarlyTerminationConfig: OpportunityConfig = {
   stateCode: "US_ND",
   urlSection: "earlyTermination",
   label: "Early Termination",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} client[|s] may be eligible for `,
+    opportunityText: "early termination",
+    callToAction:
+      "Review clients eligible for early termination and download the paperwork to file with the Court.",
+  }),
   snooze: {
     maxSnoozeDays: 90,
   },

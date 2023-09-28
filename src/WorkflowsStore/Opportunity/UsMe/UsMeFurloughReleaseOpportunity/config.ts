@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usMeFurloughReleaseConfig: OpportunityConfig = {
@@ -21,6 +23,12 @@ export const usMeFurloughReleaseConfig: OpportunityConfig = {
   urlSection: "furloughRelease",
   label: "Furlough Program",
   featureVariant: "usMeFurloughRelease",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} resident[|s] may be eligible for the `,
+    opportunityText: "Furlough Program",
+    callToAction:
+      "Search for case managers above to review residents on their caseload who are approaching standard furlough release eligibility and complete application paperwork.",
+  }),
   snooze: {
     maxSnoozeDays: 180,
   },

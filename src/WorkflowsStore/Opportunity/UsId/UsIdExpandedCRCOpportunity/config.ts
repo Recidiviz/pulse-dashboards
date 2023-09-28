@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usIdExpandedCRCConfig: OpportunityConfig = {
@@ -21,6 +23,13 @@ export const usIdExpandedCRCConfig: OpportunityConfig = {
   urlSection: "expandedCRC",
   label: "Expanded CRC Program",
   featureVariant: "usIdExpandedCRC",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} resident[|s] [is|are] `,
+    opportunityText:
+      "eligible for transfer to Expanded Community Reentry Centers.",
+    callToAction:
+      "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
+  }),
   snooze: {
     maxSnoozeDays: 30,
   },

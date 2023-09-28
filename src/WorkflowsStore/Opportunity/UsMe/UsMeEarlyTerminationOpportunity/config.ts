@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usMeEarlyTerminationConfig: OpportunityConfig = {
@@ -22,6 +24,12 @@ export const usMeEarlyTerminationConfig: OpportunityConfig = {
   label: "Early Termination",
   initialHeader:
     "Search for officers above to review clients who may be good candidates for early termination from probation.",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} client[|s] may be good [a|] candidate[|s] for `,
+    opportunityText: "Early Termination",
+    callToAction:
+      "Search for officers above to review clients who may be good candidates for early termination from probation.",
+  }),
   snooze: {
     maxSnoozeDays: 180,
   },

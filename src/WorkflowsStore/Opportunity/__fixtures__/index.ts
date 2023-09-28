@@ -15,15 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import nextSunday from "date-fns/nextSunday";
+import simplur from "simplur";
 
 import { ClientRecord } from "../../../FirestoreStore";
 import { FeatureVariant, TenantId } from "../../../RootStore/types";
 import { dateToTimestamp } from "../../utils";
-import {
-  OPPORTUNITY_CONFIGS,
-  OpportunityConfig,
-  OpportunityConfigMap,
-} from "../OpportunityConfigs";
+import { OpportunityConfig, OpportunityConfigMap } from "../OpportunityConfigs";
 import { OpportunityType } from "../types";
 
 export const ineligibleClientRecord: ClientRecord = {
@@ -57,11 +54,29 @@ export const mockUsXxOppConfig: OpportunityConfig = {
   snooze: {
     defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
   },
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} client[|s] may be `,
+    opportunityText: "on or past their expiration date",
+    callToAction:
+      "Review these clients and complete their auto-generated TEPE Note.",
+  }),
+};
+
+export const mockUsXxTwoOppConfig: OpportunityConfig = {
+  ...mockUsXxOppConfig,
+  hydratedHeader: (count: number) => ({
+    fullText: simplur`${count} client[|s] may be `,
+    opportunityText: "on or past their expiration date",
+    callToAction:
+      "Review these clients and complete their auto-generated TEPE Note.",
+  }),
 };
 
 export const mockUsXxOpp: OpportunityType = "mockUsXxOpp" as OpportunityType;
+export const mockUsXxTwoOpp: OpportunityType =
+  "mockUsXxTwoOpp" as OpportunityType;
 
-export const MOCK_OPPORTUNITY_CONFIGS: OpportunityConfigMap = {
-  ...OPPORTUNITY_CONFIGS,
+export const MOCK_OPPORTUNITY_CONFIGS = {
   [mockUsXxOpp]: mockUsXxOppConfig,
-};
+  [mockUsXxTwoOpp]: mockUsXxTwoOppConfig,
+} as OpportunityConfigMap;

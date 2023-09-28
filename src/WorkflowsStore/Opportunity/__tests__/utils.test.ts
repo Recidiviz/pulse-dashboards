@@ -18,10 +18,18 @@
 import tk from "timekeeper";
 
 import { mockOpportunity } from "../../../core/__tests__/testUtils";
-import { mockUsXxOpp, mockUsXxOppConfig } from "../__fixtures__";
-import { OPPORTUNITY_CONFIGS } from "../OpportunityConfigs";
-import { Opportunity } from "../types";
 import {
+  MOCK_OPPORTUNITY_CONFIGS,
+  mockUsXxOpp,
+  mockUsXxOppConfig,
+} from "../__fixtures__";
+import {
+  OPPORTUNITY_CONFIGS,
+  OpportunityHydratedHeader,
+} from "../OpportunityConfigs";
+import { Opportunity, OpportunityType } from "../types";
+import {
+  generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,
   monthsOrDaysRemainingFromToday,
   sortByEligibilityDateUndefinedFirst,
@@ -159,5 +167,44 @@ describe("Generate header", () => {
       TEST_FIELD
     );
     expect(header).toMatchSnapshot();
+  });
+});
+
+const hydratedHeaders: OpportunityHydratedHeader[] = [];
+describe("Generate hydrated header", () => {
+  beforeAll(() => {
+    // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
+    Object.entries(MOCK_OPPORTUNITY_CONFIGS).forEach(([key, value], index) => {
+      OPPORTUNITY_CONFIGS[key as OpportunityType] = value;
+      hydratedHeaders.push(
+        generateOpportunityHydratedHeader(key as OpportunityType, index)
+      );
+    });
+  });
+
+  afterAll(() => {
+    // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
+    Object.keys(MOCK_OPPORTUNITY_CONFIGS).forEach((key) => {
+      OPPORTUNITY_CONFIGS[key as OpportunityType] = undefined as any;
+    });
+  });
+
+  test("to generate correctly", () => {
+    expect(hydratedHeaders).toBeDefined();
+    expect(hydratedHeaders.length).toEqual(
+      Object.keys(MOCK_OPPORTUNITY_CONFIGS).length
+    );
+  });
+
+  test("to match snapshot", () => {
+    expect(hydratedHeaders).toMatchSnapshot();
+  });
+
+  test("to match snapshot", () => {
+    hydratedHeaders.forEach((hydratedHeader, index) => {
+      const eligibilityOrFullText =
+        hydratedHeader.eligibilityText || hydratedHeader.fullText;
+      expect(eligibilityOrFullText?.startsWith(index.toString())).toBeTrue();
+    });
   });
 });

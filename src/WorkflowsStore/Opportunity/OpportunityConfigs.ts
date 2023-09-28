@@ -62,6 +62,25 @@ type ManualSnoozeUntil = {
 /* An opportunity will either have auto or manual set, but not both */
 type SnoozeConfig = AutoSnoozeUntil | ManualSnoozeUntil;
 
+export type OpportunityHeadersBaseType = {
+  opportunityText: string;
+  callToAction: string;
+};
+
+type OpportunityHeadersWithEligibilityTextType = OpportunityHeadersBaseType & {
+  eligibilityText: string;
+  fullText?: never;
+};
+
+type OpportunityHeadersWithFullTextType = OpportunityHeadersBaseType & {
+  fullText: string;
+  eligibilityText?: never;
+};
+
+export type OpportunityHydratedHeader =
+  | OpportunityHeadersWithEligibilityTextType
+  | OpportunityHeadersWithFullTextType;
+
 export type OpportunityConfig = {
   stateCode: TenantId;
   urlSection: string;
@@ -70,6 +89,7 @@ export type OpportunityConfig = {
   snooze?: SnoozeConfig;
   customTabOrder?: OpportunityTab[];
   initialHeader?: string;
+  hydratedHeader: (count: number) => OpportunityHydratedHeader;
 };
 
 export type OpportunityConfigMap = Record<OpportunityType, OpportunityConfig>;

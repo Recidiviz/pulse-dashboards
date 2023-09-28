@@ -14,10 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usCaSupervisionLevelDowngradeConfig: OpportunityConfig = {
   stateCode: "US_CA",
   urlSection: "supervisionLevelDowngrade",
   label: "Supervision Level Downgrade",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} client[|s] may be `,
+    opportunityText: "eligible for a supervision level downgrade",
+    callToAction: "usCaSupervisionLevelDowngrade CTA",
+  }),
 };

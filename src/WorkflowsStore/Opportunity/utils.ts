@@ -27,7 +27,10 @@ import { AllPossibleKeys } from "../../utils/typeUtils";
 import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
 import { ValidateFunction } from "../subscriptions";
 import { optionalFieldToDate } from "../utils";
-import { OPPORTUNITY_CONFIGS } from "./OpportunityConfigs";
+import {
+  OPPORTUNITY_CONFIGS,
+  OpportunityHydratedHeader,
+} from "./OpportunityConfigs";
 import {
   Opportunity,
   OPPORTUNITY_STATUS_RANKED,
@@ -71,27 +74,6 @@ export function formatNoteDate(date: Date): string {
   return format(date, "MMMM do");
 }
 
-// The next three types are internal to this file in order to have a type where either
-// eligibilityText or fullText must be set
-type OpportunityHeadersBaseType = {
-  opportunityText: string;
-  callToAction: string;
-};
-
-type OpportunityHeadersWithEligibilityTextType = OpportunityHeadersBaseType & {
-  eligibilityText: string;
-  fullText?: never;
-};
-
-type OpportunityHeadersWithFullTextType = OpportunityHeadersBaseType & {
-  fullText: string;
-  eligibilityText?: never;
-};
-
-export type OpportunityHeadersType =
-  | OpportunityHeadersWithEligibilityTextType
-  | OpportunityHeadersWithFullTextType;
-
 export const generateOpportunityInitialHeader = (
   opportunityType: OpportunityType,
   justiceInvolvedPersonTitle: string,
@@ -111,159 +93,8 @@ export const generateOpportunityInitialHeader = (
 export const generateOpportunityHydratedHeader = (
   opportunityType: OpportunityType,
   count: number
-): OpportunityHeadersType => {
-  const headers: Record<OpportunityType, OpportunityHeadersType> = {
-    compliantReporting: {
-      eligibilityText: simplur`${count} client[|s] may be eligible for `,
-      opportunityText: "Compliant Reporting",
-      callToAction:
-        "Review and refer eligible clients for Compliant Reporting.",
-    },
-    earlyTermination: {
-      eligibilityText: simplur`${count} client[|s] may be eligible for `,
-      opportunityText: "early termination",
-      callToAction:
-        "Review clients eligible for early termination and download the paperwork to file with the Court.",
-    },
-    earnedDischarge: {
-      eligibilityText: simplur`${count} client[|s] may be eligible for `,
-      opportunityText: `earned discharge`,
-      callToAction: `Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.`,
-    },
-    LSU: {
-      eligibilityText: simplur`${count} client[|s] may be eligible for the `,
-      opportunityText: `Limited Supervision Unit`,
-      callToAction: `Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.`,
-    },
-    pastFTRD: {
-      eligibilityText: simplur`${count} client[|s] [is|are] nearing or `,
-      opportunityText: "past their full-term release date",
-      callToAction:
-        "Review clients who are nearing or past their full-term release date and email clerical to move them to history.",
-    },
-    supervisionLevelDowngrade: {
-      eligibilityText: simplur`${count} client[|s] may be `,
-      opportunityText:
-        "supervised at a higher level than their latest risk score",
-      callToAction: "Change their supervision level in TOMIS.",
-    },
-    usIdCRCResidentWorker: {
-      eligibilityText: simplur`${count} resident[|s] may be `,
-      opportunityText:
-        "eligible to be a resident worker at a Community Reentry Center",
-      callToAction:
-        "Review residents who may be eligbile for transfer to a CRC and start their paperwork in ATLAS.",
-    },
-    usIdCRCWorkRelease: {
-      eligibilityText: simplur`${count} resident[|s] may be `,
-      opportunityText:
-        "eligible for work-release at a Community Reentry Center",
-      callToAction:
-        "Review residents who may be eligible for work-release to a CRC and start their paperwork in ATLAS.",
-    },
-    usIdExpandedCRC: {
-      eligibilityText: simplur`${count} resident[|s] [is|are] `,
-      opportunityText:
-        "eligible for transfer to Expanded Community Reentry Centers.",
-      callToAction:
-        "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
-    },
-    usIdSupervisionLevelDowngrade: {
-      eligibilityText: simplur`${count} client[|s] [is|are] being `,
-      opportunityText:
-        "supervised at a level that does not match their latest risk score",
-      callToAction: "Change their supervision level in Atlas",
-    },
-    usMiSupervisionLevelDowngrade: {
-      eligibilityText: simplur`${count} client[|s] within their first 6 months of supervision [is|are] being `,
-      opportunityText:
-        "supervised at a level that does not match their latest risk score",
-      callToAction:
-        "Review clients whose supervision level does not match their risk level and change supervision levels in COMS.",
-    },
-    usMiClassificationReview: {
-      eligibilityText: simplur`${count} client[|s] may be `,
-      opportunityText: "eligible for a supervision level downgrade",
-      callToAction:
-        "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",
-    },
-    usMiEarlyDischarge: {
-      eligibilityText: simplur`${count} client[|s] may be `,
-      opportunityText: "eligible for early discharge",
-      callToAction:
-        "Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",
-    },
-    usMeWorkRelease: {
-      eligibilityText: simplur`${count} client[|s] may be `,
-      opportunityText:
-        "eligible for the Community Transition Program (Work Release)",
-      callToAction:
-        "Search for case managers above to review residents on their caseload who are approaching " +
-        "Work Release eligibility and complete application paperwork.",
-    },
-    usMeSCCP: {
-      eligibilityText: simplur`${count} resident[|s] may be eligible for the `,
-      opportunityText: "Supervised Community Confinement Program",
-      callToAction:
-        "Search for case managers above to review residents in their unit who are approaching " +
-        "SCCP eligibility and complete application paperwork.",
-    },
-    usTnExpiration: {
-      eligibilityText: simplur`${count} client[|s] may be `,
-      opportunityText: "on or past their expiration date",
-      callToAction:
-        "Review these clients and complete their auto-generated TEPE Note.",
-    },
-    usTnCustodyLevelDowngrade: {
-      eligibilityText: simplur`${count} resident[|s] may be eligible for a`,
-      opportunityText: "custody level downgrade",
-      callToAction: "Review and update custody levels.",
-    },
-    usMoRestrictiveHousingStatusHearing: {
-      fullText: simplur`${count} resident[|s] [is|are] currently in Restrictive Housing`,
-      opportunityText: "Restrictive Housing Status Hearing",
-      callToAction: "Conduct a Restrictive Housing Status Hearing",
-    },
-    usMeEarlyTermination: {
-      eligibilityText: simplur`${count} client[|s] may be good [a|] candidate[|s] for `,
-      opportunityText: "Early Termination",
-      callToAction:
-        "Search for officers above to review clients who may be good candidates for early termination from probation.",
-    },
-    // TODO: Update copy
-    usMiMinimumTelephoneReporting: {
-      eligibilityText: simplur`${count} client[|s] may be eligible for a downgrade to `,
-      opportunityText: "minimum telephone reporting",
-      callToAction:
-        "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",
-    },
-    usMiPastFTRD: {
-      eligibilityText: simplur`${count} client[|s] [is|are] nearing or `,
-      opportunityText: "past their full-term release date",
-      callToAction:
-        "Review clients who are nearing or past their full-term release date and complete discharges in COMS.",
-    },
-    usMeFurloughRelease: {
-      eligibilityText: simplur`${count} resident[|s] may be eligible for the `,
-      opportunityText: "Furlough Program",
-      callToAction:
-        "Search for case managers above to review residents on their caseload who are approaching standard furlough release eligibility and complete application paperwork.",
-    },
-    usCaSupervisionLevelDowngrade: {
-      eligibilityText: simplur`${count} client[|s] may be `,
-      opportunityText: "eligible for a supervision level downgrade",
-      callToAction: "usCaSupervisionLevelDowngrade CTA",
-    },
-    usTnAnnualReclassification: {
-      eligibilityText: simplur`${count} resident[|s] are eligible `,
-      opportunityText: "for their annual reclassification",
-      callToAction:
-        "Review residents due for their annual reclassification " +
-        "and update their custody level in TOMIS.",
-    },
-  };
-
-  return headers[opportunityType];
+): OpportunityHydratedHeader => {
+  return OPPORTUNITY_CONFIGS[opportunityType].hydratedHeader(count);
 };
 
 export function sortByReviewStatus(

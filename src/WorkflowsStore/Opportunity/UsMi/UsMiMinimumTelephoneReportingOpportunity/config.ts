@@ -14,12 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usMiMinimumTelephoneReportingConfig: OpportunityConfig = {
   stateCode: "US_MI",
   urlSection: "minimumTelephoneReporting",
   label: "Minimum Telephone Reporting",
+  hydratedHeader: (count: number) => ({
+    // TODO: Update the copy.
+    eligibilityText: simplur`${count} client[|s] may be eligible for a downgrade to `,
+    opportunityText: "minimum telephone reporting",
+    callToAction:
+      "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",
+  }),
   snooze: {
     maxSnoozeDays: 90,
   },

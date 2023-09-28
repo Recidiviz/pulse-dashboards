@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usMeWorkReleaseConfig: OpportunityConfig = {
@@ -21,6 +23,14 @@ export const usMeWorkReleaseConfig: OpportunityConfig = {
   urlSection: "workRelease",
   label: "Work Release",
   featureVariant: "usMeWorkRelease",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} client[|s] may be `,
+    opportunityText:
+      "eligible for the Community Transition Program (Work Release)",
+    callToAction:
+      "Search for case managers above to review residents on their caseload who are approaching " +
+      "Work Release eligibility and complete application paperwork.",
+  }),
   snooze: {
     maxSnoozeDays: 180,
   },

@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usIdCRCWorkReleaseConfig: OpportunityConfig = {
@@ -21,6 +23,12 @@ export const usIdCRCWorkReleaseConfig: OpportunityConfig = {
   urlSection: "CRCWorkRelease",
   label: "Work-release at Community Reentry Centers",
   featureVariant: "usIdCRC",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} resident[|s] may be `,
+    opportunityText: "eligible for work-release at a Community Reentry Center",
+    callToAction:
+      "Review residents who may be eligible for work-release to a CRC and start their paperwork in ATLAS.",
+  }),
   snooze: {
     maxSnoozeDays: 90,
   },

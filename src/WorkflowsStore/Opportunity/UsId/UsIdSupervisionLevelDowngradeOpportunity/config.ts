@@ -14,12 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usIdSupervisionLevelDowngradeConfig: OpportunityConfig = {
   stateCode: "US_ID",
   urlSection: "supervisionLevelMismatch",
   label: "Supervision Level Mismatch",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} client[|s] [is|are] being `,
+    opportunityText:
+      "supervised at a level that does not match their latest risk score",
+    callToAction: "Change their supervision level in Atlas",
+  }),
   snooze: {
     maxSnoozeDays: 90,
   },

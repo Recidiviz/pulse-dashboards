@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { add } from "date-fns";
+import simplur from "simplur";
 
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
@@ -24,6 +25,13 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig = {
   urlSection: "annualReclassification",
   label: "Annual Reclassification",
   featureVariant: "usTnAnnualReclassification",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} resident[|s] are eligible `,
+    opportunityText: "for their annual reclassification",
+    callToAction:
+      "Review residents due for their annual reclassification " +
+      "and update their custody level in TOMIS.",
+  }),
   snooze: {
     defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
   },

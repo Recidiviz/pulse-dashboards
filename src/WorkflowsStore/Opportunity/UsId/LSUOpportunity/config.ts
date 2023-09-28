@@ -14,12 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usIdLSUConfig: OpportunityConfig = {
   stateCode: "US_ID",
   urlSection: "LSU",
   label: "Limited Supervision Unit",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} client[|s] may be eligible for the `,
+    opportunityText: `Limited Supervision Unit`,
+    callToAction: `Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.`,
+  }),
   snooze: {
     maxSnoozeDays: 90,
   },

@@ -14,12 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import simplur from "simplur";
+
 import { OpportunityConfig } from "../../OpportunityConfigs";
 
 export const usTnCompliantReportingConfig: OpportunityConfig = {
   stateCode: "US_TN",
   urlSection: "compliantReporting",
   label: "Compliant Reporting",
+  hydratedHeader: (count: number) => ({
+    eligibilityText: simplur`${count} client[|s] may be eligible for `,
+    opportunityText: "Compliant Reporting",
+    callToAction: "Review and refer eligible clients for Compliant Reporting.",
+  }),
   snooze: {
     maxSnoozeDays: 90,
   },
