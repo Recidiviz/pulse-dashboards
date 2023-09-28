@@ -8,11 +8,12 @@ import {
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatDate } from "../../../utils";
 import {
-  UsTnCustodyLevelDowngradeDraftData,
+  UsTnAnnualReclassificationReviewOpportunity,
   UsTnCustodyLevelDowngradeOpportunity,
+  UsTnSharedReclassificationDraftData,
 } from "../UsTn";
 import { FormBase } from "./FormBase";
-
+// TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
 function formatViolationNotes(
   notes: { eventDate: Date; noteBody: string }[]
 ): string {
@@ -28,8 +29,9 @@ function formatViolationNotes(
 }
 
 export class UsTnCustodyLevelDowngradeForm extends FormBase<
-  UsTnCustodyLevelDowngradeDraftData,
-  UsTnCustodyLevelDowngradeOpportunity
+  UsTnSharedReclassificationDraftData,
+  | UsTnCustodyLevelDowngradeOpportunity
+  | UsTnAnnualReclassificationReviewOpportunity
 > {
   navigateToFormText = "Auto-fill CAF Form";
 
@@ -53,11 +55,11 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
     return "Download PDF";
   }
 
-  prefilledDataTransformer(): Partial<UsTnCustodyLevelDowngradeDraftData> {
+  prefilledDataTransformer(): Partial<UsTnSharedReclassificationDraftData> {
     const {
       opportunity: { record },
     } = this;
-    const out: Partial<UsTnCustodyLevelDowngradeDraftData> = {
+    const out: Partial<UsTnSharedReclassificationDraftData> = {
       residentFullName: this.person.displayName,
       omsId: this.person.externalId,
       institutionName: this.person.facilityId,

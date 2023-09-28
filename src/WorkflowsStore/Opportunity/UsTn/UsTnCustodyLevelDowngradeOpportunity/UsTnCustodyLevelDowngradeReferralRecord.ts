@@ -20,7 +20,6 @@
 import { cloneDeep } from "lodash";
 import { z } from "zod";
 
-import type { AssessmentQuestionNumber } from "../../../../core/Paperwork/US_TN/CustodyLevelDowngrade/assessmentQuestions";
 import { caseNotesSchema, opportunitySchemaBase } from "../../schemaHelpers";
 import { formInformationSchema as formInformation } from "../UsTnSharedCriteria";
 
@@ -57,23 +56,3 @@ export type UsTnCustodyLevelDowngradeReferralRecordRaw = z.input<
 export type UsTnCustodyLevelDowngradeReferralRecord = z.infer<
   typeof usTnCustodyLevelDowngradeSchema
 >;
-
-type DraftDataSelections = {
-  [I in AssessmentQuestionNumber as `q${I}Selection`]: number;
-};
-
-type DraftDataNotes = {
-  [I in AssessmentQuestionNumber as `q${I}Note`]: string;
-};
-
-export type UsTnCustodyLevelDowngradeDraftData = {
-  institutionName: string;
-  residentFullName: string;
-  omsId: string;
-  date: string;
-  lastCafDate: string;
-  lastCafTotal: string;
-  latestClassificationDate: string;
-  levelOfCare: string;
-} & DraftDataSelections &
-  DraftDataNotes;

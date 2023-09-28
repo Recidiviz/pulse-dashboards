@@ -18,18 +18,18 @@
 import { configure } from "mobx";
 import tk from "timekeeper";
 
-import { assessmentQuestionNumbers } from "../../../../core/Paperwork/US_TN/CustodyLevelDowngrade/assessmentQuestions";
+import { assessmentQuestionNumbers } from "../../../../core/Paperwork/US_TN/CustodyReclassification/assessmentQuestions";
 import { RootStore } from "../../../../RootStore";
 import { Resident } from "../../../Resident";
-import { UsTnCustodyLevelDowngradeOpportunity } from "../../UsTn";
-import { UsTnCustodyLevelDowngradeForm } from "../usTnCustodyLevelDowngradeForm";
+import { UsTnAnnualReclassificationReviewOpportunity } from "../../UsTn";
+import { UsTnAnnualReclassificationReviewForm } from "../UsTnAnnualReclassificationReviewForm";
 
 // To adapt this to a new form/opportunity, change the type of `form` and update the opp and
 // person constructors if needed. Individual tests can modify personRecord and oppRecord, but
 // for supervision opportunities be sure to call `opp.person.updateRecord(personRecord)` after
 // changing the personRecord.
 
-let form: UsTnCustodyLevelDowngradeForm;
+let form: UsTnAnnualReclassificationReviewForm;
 let opp: typeof form["opportunity"];
 let personRecord: typeof opp["person"]["record"];
 let oppRecord: typeof opp["record"] & object;
@@ -66,22 +66,27 @@ function createTestUnit() {
       q9Score: 2,
       q6Notes: [{ eventDate: new Date("2022-08-22"), noteBody: "Some note" }],
       q7Notes: [{ eventDate: new Date("2022-08-22"), noteBody: "Some note" }],
+      q8Notes: [
+        {
+          detainerReceivedDate: new Date("2022-08-22"),
+          detainerFelonyFlag: true,
+          detainerMisdemeanorFlag: false,
+        },
+      ],
       lastCafDate: new Date("2019-04-02T12:00"),
       lastCafTotal: "20",
+      currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
       latestClassificationDate: new Date("2019-04-03T12:00"),
       levelOfCare: "LOC",
     },
     eligibleCriteria: {
-      custodyLevelHigherThanRecommended: {
-        custodyLevel: "HIGH",
-        recommendedCustodyLevel: "LOW",
+      usTnAtLeast12MonthsSinceLatestAssessment: {
+        mostRecentAssessmentDate: new Date("2020-01-01"),
       },
       custodyLevelIsNotMax: null,
-      usTnLatestCafAssessmentNotOverride: {
-        overrideReason: "Some reason",
-      },
-      usTnIneligibleForAnnualReclassification: {
-        ineligibleCriteria: ["Some reason"],
+      custodyLevelComparedToRecommended: {
+        custodyLevel: "MINIMUM",
+        recommendedCustodyLevel: "MINIMUM",
       },
     },
     ineligibleCriteria: {},
@@ -89,7 +94,7 @@ function createTestUnit() {
   };
 
   const person = new Resident(personRecord, rootStore);
-  opp = new UsTnCustodyLevelDowngradeOpportunity(person);
+  opp = new UsTnAnnualReclassificationReviewOpportunity(person);
   jest.spyOn(opp, "record", "get").mockImplementation(() => oppRecord as any);
   form = opp.form;
 }
@@ -113,6 +118,8 @@ const baseResult: PartialFormData = {
   q9Selection: 0,
   q6Note: "8/22/22 - Some note",
   q7Note: "8/22/22 - Some note",
+  q3Note: "ROBBERY-ARMED WITH DEADLY WEAPON",
+  q8Note: "8/22/22 - Felony",
   residentFullName: "Joe Test",
 };
 

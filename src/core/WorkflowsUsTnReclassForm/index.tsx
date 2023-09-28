@@ -18,7 +18,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { UsTnCustodyLevelDowngradeDraftData } from "../../WorkflowsStore";
+import { UsTnSharedReclassificationDraftData } from "../../WorkflowsStore";
 import { UsTnCustodyLevelDowngradeForm } from "../../WorkflowsStore/Opportunity/Forms/usTnCustodyLevelDowngradeForm";
 import { downloadSingle } from "../Paperwork/DOCXFormGenerator";
 import { FormContainer } from "../Paperwork/FormContainer";
@@ -31,7 +31,7 @@ import {
 import ClassificationCustodyAssessment from "../Paperwork/US_TN/CustodyReclassification/ClassificationCustodyAssessment";
 
 function templateValuesForFormData(
-  formData: Partial<UsTnCustodyLevelDowngradeDraftData>
+  formData: Partial<UsTnSharedReclassificationDraftData>
 ) {
   const out: Record<string, any> = { ...formData };
   assessmentQuestions.forEach((question, i) => {
@@ -66,7 +66,7 @@ const WorkflowsUsTnReclassForm: React.FC = () => {
     if (!formData || !resident) return;
 
     return downloadSingle(
-      `${resident.displayName} - Reclassification.docx`,
+      `${resident.displayName} - Reclassification Packet.docx`,
       resident.stateCode,
       "custody_reclassification_template.docx",
       templateValuesForFormData(formData),
@@ -76,7 +76,7 @@ const WorkflowsUsTnReclassForm: React.FC = () => {
 
   return (
     <FormContainer
-      heading="Classification Assessment Form"
+      heading="Reclassification Packet"
       agencyName="TDOC"
       downloadButtonLabel={form.downloadText}
       onClickDownload={async () => onClickDownload()}

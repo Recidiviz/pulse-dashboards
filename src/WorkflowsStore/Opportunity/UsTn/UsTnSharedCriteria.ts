@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { AssessmentQuestionNumber } from "../../../core/Paperwork/US_TN/CustodyLevelDowngrade/assessmentQuestions";
 import { dateStringSchema } from "../schemaHelpers";
 
 export const formInformationSchema = z.object({
@@ -66,3 +67,23 @@ export const formInformationSchema = z.object({
     )
   ),
 });
+
+type DraftDataSelections = {
+  [I in AssessmentQuestionNumber as `q${I}Selection`]: number;
+};
+
+type DraftDataNotes = {
+  [I in AssessmentQuestionNumber as `q${I}Note`]: string;
+};
+
+export type UsTnSharedReclassificationDraftData = {
+  institutionName: string;
+  residentFullName: string;
+  omsId: string;
+  date: string;
+  lastCafDate: string;
+  lastCafTotal: string;
+  latestClassificationDate: string;
+  levelOfCare: string;
+} & DraftDataSelections &
+  DraftDataNotes;

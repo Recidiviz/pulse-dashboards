@@ -14,9 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-export * from "./CompliantReportingOpportunity";
-export * from "./UsTnAnnualReclassificationReviewOpportunity";
-export * from "./UsTnCustodyLevelDowngradeOpportunity";
-export * from "./UsTnExpirationOpportunity";
-export * from "./UsTnSharedCriteria";
-export * from "./UsTnSupervisionLevelDowngradeOpportunity";
+
+import { UsTnCustodyLevelDowngradeForm } from "./usTnCustodyLevelDowngradeForm";
+// TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
+export class UsTnAnnualReclassificationReviewForm extends UsTnCustodyLevelDowngradeForm {
+  navigateToFormText = "Auto-fill Paperwork";
+
+  get downloadText(): string {
+    if (this.formIsDownloading) {
+      return "Downloading DOCX...";
+    }
+
+    if (this.opportunity.updates?.completed) {
+      return "Re-download DOCX";
+    }
+
+    return "Download DOCX";
+  }
+}

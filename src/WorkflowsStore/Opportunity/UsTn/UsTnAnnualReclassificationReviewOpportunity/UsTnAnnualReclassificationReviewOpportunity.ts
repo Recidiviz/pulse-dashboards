@@ -17,11 +17,14 @@
 import { computed, makeObservable } from "mobx";
 
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsClientProfile/OpportunityProfile";
+import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
 import { OpportunityRequirement } from "../..";
+import { UsTnAnnualReclassificationReviewForm } from "../../Forms/UsTnAnnualReclassificationReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "../../utils";
+import { UsTnSharedReclassificationDraftData } from "../UsTnSharedCriteria";
 import {
   UsTnAnnualReclassificationReviewReferralRecord,
   usTnAnnualReclassificationReviewSchema,
@@ -52,9 +55,16 @@ const DENIAL_REASONS_MAP = {
 
 export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase<
   Resident,
-  UsTnAnnualReclassificationReviewReferralRecord
+  UsTnAnnualReclassificationReviewReferralRecord,
+  OpportunityUpdateWithForm<UsTnSharedReclassificationDraftData>
 > {
   resident: Resident;
+
+  almostEligibleRecommendedNote = undefined;
+
+  readonly caseNotesTitle = "Disciplinaries";
+
+  form: UsTnAnnualReclassificationReviewForm;
 
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "Incarceration",
@@ -79,6 +89,11 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
     makeObservable(this, {
       requirementsMet: computed,
     });
+
+    this.form = new UsTnAnnualReclassificationReviewForm(
+      this,
+      resident.rootStore
+    );
   }
 
   get requirementsMet(): OpportunityRequirement[] {

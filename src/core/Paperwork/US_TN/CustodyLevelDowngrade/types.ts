@@ -1,3 +1,3 @@
-import { UsTnCustodyLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsTn";
+import { UsTnSharedReclassificationDraftData } from "../../../../WorkflowsStore/Opportunity/UsTn";
 
-export type FormDataType = Partial<UsTnCustodyLevelDowngradeDraftData>;
+export type FormDataType = Partial<UsTnSharedReclassificationDraftData>;

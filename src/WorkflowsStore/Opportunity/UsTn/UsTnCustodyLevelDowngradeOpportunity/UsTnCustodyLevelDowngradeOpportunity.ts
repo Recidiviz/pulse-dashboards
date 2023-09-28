@@ -25,8 +25,8 @@ import { UsTnCustodyLevelDowngradeForm } from "../../Forms/usTnCustodyLevelDowng
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "../../utils";
+import { UsTnSharedReclassificationDraftData } from "../UsTnSharedCriteria";
 import {
-  UsTnCustodyLevelDowngradeDraftData,
   UsTnCustodyLevelDowngradeReferralRecord,
   usTnCustodyLevelDowngradeSchema,
 } from "./UsTnCustodyLevelDowngradeReferralRecord";
@@ -58,7 +58,7 @@ const CRITERIA_COPY: CriteriaCopy<UsTnCustodyLevelDowngradeReferralRecord> = {
 export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
   Resident,
   UsTnCustodyLevelDowngradeReferralRecord,
-  OpportunityUpdateWithForm<UsTnCustodyLevelDowngradeDraftData>
+  OpportunityUpdateWithForm<UsTnSharedReclassificationDraftData>
 > {
   resident: Resident;
 
