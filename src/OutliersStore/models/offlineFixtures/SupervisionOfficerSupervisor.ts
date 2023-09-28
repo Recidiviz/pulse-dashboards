@@ -15,12 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MetricBenchmark } from "../models/MetricBenchmark";
-import { OutliersConfig } from "../models/OutliersConfig";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
+import {
+  RawSupervisionOfficerSupervisor,
+  supervisionOfficerSupervisorSchema,
+} from "../SupervisionOfficerSupervisor";
 
-export interface OutliersAPI {
-  init(): Promise<{ config: OutliersConfig }>;
-  metricBenchmarks(): Promise<Array<MetricBenchmark>>;
-  supervisionOfficerSupervisors(): Promise<Array<SupervisionOfficerSupervisor>>;
-}
+export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSupervisor[] =
+  [
+    {
+      fullName: { given_names: "Miles", middle_names: "D", surname: "Davis" },
+      externalId: "mdavis123",
+      district: "D1",
+    },
+    {
+      fullName: { given_names: "Billie", surname: "Holiday" },
+      externalId: "bholiday456",
+      district: null,
+    },
+    {
+      fullName: { given_names: "Ella", surname: "Fitzgerald" },
+      externalId: "efitzgerals789",
+      district: "D1",
+    },
+  ];
+export const supervisionOfficerSupervisorsFixture =
+  rawSupervisionOfficerSupervisorFixture.map((b) =>
+    supervisionOfficerSupervisorSchema.parse(b)
+  );

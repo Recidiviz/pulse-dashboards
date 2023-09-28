@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FullName } from "../core/types/personMetadata";
 import {
   ClientRecord,
-  FullName,
   JusticeInvolvedPersonRecord,
   PersonUpdateRecord,
   ResidentRecord,

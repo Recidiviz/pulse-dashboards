@@ -15,12 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MetricBenchmark } from "../models/MetricBenchmark";
-import { OutliersConfig } from "../models/OutliersConfig";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
+import { rawSupervisionOfficerSupervisorFixture } from "../offlineFixtures/SupervisionOfficerSupervisor";
+import { supervisionOfficerSupervisorSchema } from "../SupervisionOfficerSupervisor";
 
-export interface OutliersAPI {
-  init(): Promise<{ config: OutliersConfig }>;
-  metricBenchmarks(): Promise<Array<MetricBenchmark>>;
-  supervisionOfficerSupervisors(): Promise<Array<SupervisionOfficerSupervisor>>;
-}
+test("transformations", () => {
+  rawSupervisionOfficerSupervisorFixture.forEach((b) =>
+    expect(supervisionOfficerSupervisorSchema.parse(b)).toMatchSnapshot()
+  );
+});

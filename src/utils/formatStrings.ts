@@ -28,7 +28,7 @@ import numeral from "numeral";
 import Pluralize from "pluralize";
 
 import { Dimension } from "../core/types/dimensions";
-import { FullName } from "../FirestoreStore";
+import { FullName } from "../core/types/personMetadata";
 import { translate } from "./i18nSettings";
 
 const CRYPTO_PASSPHRASE = process.env.REACT_APP_CRYPTO_PASSPHRASE || "";

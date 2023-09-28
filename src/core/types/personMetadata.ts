@@ -15,12 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MetricBenchmark } from "../models/MetricBenchmark";
-import { OutliersConfig } from "../models/OutliersConfig";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
-
-export interface OutliersAPI {
-  init(): Promise<{ config: OutliersConfig }>;
-  metricBenchmarks(): Promise<Array<MetricBenchmark>>;
-  supervisionOfficerSupervisors(): Promise<Array<SupervisionOfficerSupervisor>>;
-}
+export type FullName = {
+  givenNames?: string;
+  middleNames?: string;
+  surname?: string;
+};

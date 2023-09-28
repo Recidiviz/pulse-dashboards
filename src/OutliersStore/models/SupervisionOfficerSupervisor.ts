@@ -15,12 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MetricBenchmark } from "../models/MetricBenchmark";
-import { OutliersConfig } from "../models/OutliersConfig";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
+import { z } from "zod";
 
-export interface OutliersAPI {
-  init(): Promise<{ config: OutliersConfig }>;
-  metricBenchmarks(): Promise<Array<MetricBenchmark>>;
-  supervisionOfficerSupervisors(): Promise<Array<SupervisionOfficerSupervisor>>;
-}
+import { fullNameSchema } from "./schemaHelpers";
+
+export const supervisionOfficerSupervisorSchema = z.object({
+  fullName: fullNameSchema,
+  externalId: z.string(),
+  district: z.string().nullable(),
+});
+
+export type SupervisionOfficerSupervisor = z.infer<
+  typeof supervisionOfficerSupervisorSchema
+>;
+export type RawSupervisionOfficerSupervisor = z.input<
+  typeof supervisionOfficerSupervisorSchema
+>;

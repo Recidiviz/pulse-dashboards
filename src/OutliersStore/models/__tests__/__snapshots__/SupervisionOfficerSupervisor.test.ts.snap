@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transformations 1`] = `
+Object {
+  "district": "D1",
+  "externalId": "mdavis123",
+  "fullName": Object {
+    "givenNames": "Miles",
+    "middleNames": "D",
+    "surname": "Davis",
+  },
+}
+`;
+
+exports[`transformations 2`] = `
+Object {
+  "district": null,
+  "externalId": "bholiday456",
+  "fullName": Object {
+    "givenNames": "Billie",
+    "middleNames": undefined,
+    "surname": "Holiday",
+  },
+}
+`;
+
+exports[`transformations 3`] = `
+Object {
+  "district": "D1",
+  "externalId": "efitzgerals789",
+  "fullName": Object {
+    "givenNames": "Ella",
+    "middleNames": undefined,
+    "surname": "Fitzgerald",
+  },
+}
+`;

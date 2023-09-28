@@ -20,6 +20,7 @@ import { FieldValue } from "@google-cloud/firestore";
 import type { Timestamp } from "firebase/firestore";
 
 import { SystemId } from "../core/models/types";
+import { FullName } from "../core/types/personMetadata";
 import {
   IncarcerationOpportunityType,
   SupervisionOpportunityType,
@@ -160,12 +161,6 @@ export type CombinedUserRecord = {
   info: UserRecord;
   updates?: UserUpdateRecord;
   metadata?: UserMetadata;
-};
-
-export type FullName = {
-  givenNames?: string;
-  middleNames?: string;
-  surname?: string;
 };
 
 export type SpecialConditionCode = {

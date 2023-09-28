@@ -18,6 +18,8 @@
 import { isValid, parseISO } from "date-fns";
 import { z } from "zod";
 
+import { FullName } from "../../core/types/personMetadata";
+
 export const targetStatusSchema = z.enum(["FAR", "NEAR", "MET"]);
 
 // zod has a built-in datetime validator but it does not yet support date-only strings
@@ -36,3 +38,20 @@ export const dateStringSchema = z.string().transform((value, ctx) => {
 
   return z.NEVER;
 });
+
+export const fullNameSchema = z
+  .object({
+    given_names: z.string().optional(),
+    middle_names: z.string().optional(),
+    surname: z.string().optional(),
+  })
+  // eslint-disable-next-line camelcase
+  .transform(({ given_names, middle_names, surname }): FullName => {
+    return {
+      // eslint-disable-next-line camelcase
+      givenNames: given_names,
+      // eslint-disable-next-line camelcase
+      middleNames: middle_names,
+      surname,
+    };
+  });

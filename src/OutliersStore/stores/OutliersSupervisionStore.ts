@@ -22,6 +22,7 @@ import { OutliersAPI } from "../api/interface";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
 import { OutliersConfig } from "../models/OutliersConfig";
+import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import type { OutliersStore } from "../OutliersStore";
 import { FlowMethod } from "../types";
 
@@ -30,6 +31,8 @@ export class OutliersSupervisionStore {
     string,
     Map<string, MetricBenchmark>
   >;
+
+  supervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
 
   constructor(
     public readonly outliersStore: OutliersStore,
@@ -113,5 +116,18 @@ export class OutliersSupervisionStore {
         ([id, m]) => m.outcomeType === "ADVERSE"
       )
     );
+  }
+
+  /*
+   * Fetches supervision officer supervisor data for the current tenant.
+   */
+  *hydrateSupervisionOfficerSupervisors(): FlowMethod<
+    OutliersAPI["supervisionOfficerSupervisors"],
+    void
+  > {
+    if (this.supervisionOfficerSupervisors) return;
+
+    this.supervisionOfficerSupervisors =
+      yield this.outliersStore.apiClient.supervisionOfficerSupervisors();
   }
 }

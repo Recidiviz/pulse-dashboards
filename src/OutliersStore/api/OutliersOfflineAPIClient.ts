@@ -17,6 +17,7 @@
 // =============================================================================
 
 import { MetricBenchmark } from "../models/MetricBenchmark";
+import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import type { OutliersStore } from "../OutliersStore";
 import { OutliersAPI } from "./interface";
 
@@ -37,5 +38,14 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
       "../models/offlineFixtures/MetricBenchmarkFixture"
     );
     return metricBenchmarksFixture;
+  }
+
+  async supervisionOfficerSupervisors(): Promise<
+    SupervisionOfficerSupervisor[]
+  > {
+    const { supervisionOfficerSupervisorsFixture } = await import(
+      "../models/offlineFixtures/SupervisionOfficerSupervisor"
+    );
+    return supervisionOfficerSupervisorsFixture;
   }
 }

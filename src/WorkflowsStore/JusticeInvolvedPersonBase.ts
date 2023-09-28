@@ -30,9 +30,9 @@ import {
   values,
 } from "mobx";
 
+import { FullName } from "../core/types/personMetadata";
 import {
   ContactMethodType,
-  FullName,
   JusticeInvolvedPersonRecord,
   MilestonesMessage,
   PersonUpdateRecord,

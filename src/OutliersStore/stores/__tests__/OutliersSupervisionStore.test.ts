@@ -24,6 +24,7 @@ import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
 import { CASELOAD_TYPE_IDS } from "../../models/offlineFixtures/constants";
 import { metricBenchmarksFixture } from "../../models/offlineFixtures/MetricBenchmarkFixture";
 import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConfigFixture";
+import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
 import { OutliersConfig } from "../../models/OutliersConfig";
 import { OutliersStore } from "../../OutliersStore";
 import { OutliersSupervisionStore } from "../OutliersSupervisionStore";
@@ -144,4 +145,15 @@ test("adverse metric configs", async () => {
   expect(
     store.adverseMetricConfigsById?.get(favorableMetricConfig.name)
   ).toBeUndefined();
+});
+
+test("hydrate supervisionOfficerSupervisors", async () => {
+  expect(store.supervisionOfficerSupervisors).toBeFalsy();
+
+  await expect(
+    flowResult(store.hydrateSupervisionOfficerSupervisors())
+  ).resolves.not.toThrow();
+  expect(store.supervisionOfficerSupervisors?.length).toBe(
+    supervisionOfficerSupervisorsFixture.length
+  );
 });
