@@ -42,7 +42,7 @@ Feature: Fill and export the Workflows form
         When I click on the button with the text "Update eligibility"
         Then I should see the update eligibility view that has a reason listed like "<checkboxValue>"
         When I click on the checkbox for "<checkboxValue>"
-        And I click on the button with the text "Confirm"
+        And I click on the button with the text "Save"
         Then I should see the person labeled as "Currently ineligible"
 
         Examples:
@@ -53,11 +53,11 @@ Feature: Fill and export the Workflows form
         Given I am a "<stateCode>" user on the "<opportunityType>" form page for "<pseudonymizedId>"
         When I click on the button with the text "Update eligibility"
         And I click on the checkbox for "<checkboxValue>"
-        And I click on the button with the text "Confirm"
+        And I click on the button with the text "Save"
         Then I should see the person labeled as "Currently ineligible"
         When I click on the button with the text "Update eligibility"
         And I click on the checkbox for "<checkboxValue>"
-        And I click on the button with the text "Confirm"
+        And I click on the button with the text "Save"
         Then I should see the person labeled as "Eligible"
 
         Examples:

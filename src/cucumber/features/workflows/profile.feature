@@ -28,7 +28,7 @@ Feature: View a justice-involved individual's profile
         When I click on the button with the text "Update eligibility"
         Then I should see the update eligibility view that has a reason listed like "<checkboxValue>"
         When I click on the checkbox for "<checkboxValue>"
-        And I click on the button with the text "Confirm"
+        And I click on the button with the text "Save"
         Then I should see the person labeled as "Currently ineligible"
         And I should see the ineligible reason "SCNC" listed
 
