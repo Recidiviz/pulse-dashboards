@@ -15,22 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatISO } from "date-fns";
-
 import { metricBenchmarkSchema, RawMetricBenchmark } from "../MetricBenchmark";
 import {
   ADVERSE_METRIC_IDS,
   CASELOAD_TYPE_IDS,
-  LOOKBACK_END_DATES,
+  LOOKBACK_END_DATE_STRINGS,
 } from "./constants";
 
 export const rawMetricBenchmarksFixture: RawMetricBenchmark[] = [
   {
     metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
-    benchmarks: LOOKBACK_END_DATES.map((endDate) => ({
+    benchmarks: LOOKBACK_END_DATE_STRINGS.map((endDate) => ({
       target: 0.17139496103300086,
-      endDate: formatISO(endDate, { representation: "date" }),
+      endDate,
     })),
     latestPeriodValues: {
       far: [
@@ -157,9 +155,9 @@ export const rawMetricBenchmarksFixture: RawMetricBenchmark[] = [
     },
   },
   {
-    benchmarks: LOOKBACK_END_DATES.map((endDate) => ({
+    benchmarks: LOOKBACK_END_DATE_STRINGS.map((endDate) => ({
       target: 0.06030045665489481,
-      endDate: formatISO(endDate, { representation: "date" }),
+      endDate,
     })),
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
@@ -267,9 +265,9 @@ export const rawMetricBenchmarksFixture: RawMetricBenchmark[] = [
     },
   },
   {
-    benchmarks: LOOKBACK_END_DATES.map((endDate) => ({
+    benchmarks: LOOKBACK_END_DATE_STRINGS.map((endDate) => ({
       target: 0.04833977875065241,
-      endDate: formatISO(endDate, { representation: "date" }),
+      endDate,
     })),
     metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
@@ -375,9 +373,9 @@ export const rawMetricBenchmarksFixture: RawMetricBenchmark[] = [
     },
   },
   {
-    benchmarks: LOOKBACK_END_DATES.map((endDate) => ({
+    benchmarks: LOOKBACK_END_DATE_STRINGS.map((endDate) => ({
       target: 0.028739974981108838,
-      endDate: formatISO(endDate, { representation: "date" }),
+      endDate,
     })),
     caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
     metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
@@ -400,9 +398,9 @@ export const rawMetricBenchmarksFixture: RawMetricBenchmark[] = [
     },
   },
   {
-    benchmarks: LOOKBACK_END_DATES.map((endDate) => ({
+    benchmarks: LOOKBACK_END_DATE_STRINGS.map((endDate) => ({
       target: 0.21415916840761745,
-      endDate: formatISO(endDate, { representation: "date" }),
+      endDate,
     })),
 
     caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
@@ -429,9 +427,9 @@ export const rawMetricBenchmarksFixture: RawMetricBenchmark[] = [
     },
   },
   {
-    benchmarks: LOOKBACK_END_DATES.map((endDate) => ({
+    benchmarks: LOOKBACK_END_DATE_STRINGS.map((endDate) => ({
       target: 0.10847022815450755,
-      endDate: formatISO(endDate, { representation: "date" }),
+      endDate,
     })),
 
     caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,

@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transformations 1`] = `
+Object {
+  "currentPeriodStatuses": Object {
+    "FAR": Array [
+      Object {
+        "caseloadType": "GENERAL_OR_OTHER",
+        "metricId": "absconsions_bench_warrants",
+        "previousPeriodValues": Array [
+          Object {
+            "endDate": 2023-04-01T00:00:00.000Z,
+            "rate": 0.06283,
+            "status": "NEAR",
+          },
+          Object {
+            "endDate": 2023-05-01T00:00:00.000Z,
+            "rate": 0.088881,
+            "status": "NEAR",
+          },
+          Object {
+            "endDate": 2023-06-01T00:00:00.000Z,
+            "rate": 0.109407,
+            "status": "FAR",
+          },
+          Object {
+            "endDate": 2023-07-01T00:00:00.000Z,
+            "rate": 0.110487,
+            "status": "FAR",
+          },
+          Object {
+            "endDate": 2023-08-01T00:00:00.000Z,
+            "rate": 0.154553,
+            "status": "FAR",
+          },
+        ],
+        "rate": 0.1604677745537677,
+        "status": "FAR",
+      },
+    ],
+    "MET": Array [],
+    "NEAR": Array [
+      "incarceration_starts",
+      "incarceration_starts_technical_violation",
+    ],
+  },
+  "district": "D1",
+  "externalId": "so1",
+  "name": Object {
+    "givenNames": "Duke",
+    "middleNames": undefined,
+    "surname": "Ellington",
+  },
+  "supervisorId": "mdavis123",
+}
+`;
+
+exports[`transformations 2`] = `
+Object {
+  "currentPeriodStatuses": Object {
+    "FAR": Array [],
+    "MET": Array [
+      "absconsions_bench_warrants",
+    ],
+    "NEAR": Array [
+      "incarceration_starts",
+      "incarceration_starts_technical_violation",
+    ],
+  },
+  "district": "D1",
+  "externalId": "so2",
+  "name": Object {
+    "givenNames": "Chet",
+    "middleNames": undefined,
+    "surname": "Baker",
+  },
+  "supervisorId": "mdavis123",
+}
+`;

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { isValid, parseISO } from "date-fns";
+import { Dictionary, mapKeys, toUpper } from "lodash";
 import { z } from "zod";
 
 import { FullName } from "../../core/types/personMetadata";
@@ -55,3 +56,14 @@ export const fullNameSchema = z
       surname,
     };
   });
+
+export function uppercaseSchemaKeys<Schema extends z.ZodTypeAny>(
+  schema: Schema
+) {
+  return z.preprocess(
+    // we expect the backend to have transformed all keys into camel case;
+    // uppercasing them should make them conform to the status enum
+    (input) => mapKeys(input as Dictionary<unknown>, (v, k) => toUpper(k)),
+    schema
+  );
+}

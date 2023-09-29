@@ -15,10 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Dictionary, mapKeys, toUpper } from "lodash";
 import { z } from "zod";
 
-import { dateStringSchema, targetStatusSchema } from "./schemaHelpers";
+import {
+  dateStringSchema,
+  targetStatusSchema,
+  uppercaseSchemaKeys,
+} from "./schemaHelpers";
 
 export const metricBenchmarkSchema = z.object({
   metricId: z.string(),
@@ -29,10 +32,7 @@ export const metricBenchmarkSchema = z.object({
       endDate: dateStringSchema,
     })
   ),
-  latestPeriodValues: z.preprocess(
-    // we expect the backend to have transformed all keys into camel case;
-    // uppercasing them should make them conform to the status enum
-    (input) => mapKeys(input as Dictionary<unknown>, (v, k) => toUpper(k)),
+  latestPeriodValues: uppercaseSchemaKeys(
     // can't just pass the key enum to z.record because it does not enforce key exhaustiveness
     z.object({
       [targetStatusSchema.enum.FAR]: z.array(z.number()),

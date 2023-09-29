@@ -24,6 +24,7 @@ import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
 import { CASELOAD_TYPE_IDS } from "../../models/offlineFixtures/constants";
 import { metricBenchmarksFixture } from "../../models/offlineFixtures/MetricBenchmarkFixture";
 import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConfigFixture";
+import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
 import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
 import { OutliersConfig } from "../../models/OutliersConfig";
 import { OutliersStore } from "../../OutliersStore";
@@ -155,5 +156,18 @@ test("hydrate supervisionOfficerSupervisors", async () => {
   ).resolves.not.toThrow();
   expect(store.supervisionOfficerSupervisors?.length).toBe(
     supervisionOfficerSupervisorsFixture.length
+  );
+});
+
+test("hydrate supervisionOfficers for supervisor", async () => {
+  const testSupervisorId = supervisionOfficerSupervisorsFixture[0].externalId;
+  expect(store.officersBySupervisor.has(testSupervisorId)).toBeFalse();
+
+  await expect(
+    flowResult(store.hydrateOfficersForSupervisor(testSupervisorId))
+  ).resolves.not.toThrow();
+
+  expect(store.officersBySupervisor.get(testSupervisorId)).toEqual(
+    expect.arrayContaining(supervisionOfficerFixture.slice(0, 2))
   );
 });

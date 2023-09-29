@@ -15,24 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ascending, range } from "d3-array";
-import { formatISO, subMonths } from "date-fns";
 import { z } from "zod";
 
-export const ADVERSE_METRIC_IDS = z.enum([
-  "incarceration_starts",
-  "absconsions_bench_warrants",
-  "incarceration_starts_technical_violation",
-]);
+import {
+  fullNameSchema,
+  targetStatusSchema,
+  uppercaseSchemaKeys,
+} from "./schemaHelpers";
+import { supervisionOfficerMetricOutlierSchema } from "./SupervisionOfficerMetricOutlier";
 
-export const CASELOAD_TYPE_IDS = z.enum(["GENERAL_OR_OTHER", "SEX_OFFENSE"]);
+export const supervisionOfficerSchema = z.object({
+  name: fullNameSchema,
+  externalId: z.string(),
+  supervisorId: z.string(),
+  district: z.string().nullable(),
+  currentPeriodStatuses: uppercaseSchemaKeys(
+    z.object({
+      [targetStatusSchema.enum.FAR]: z.array(
+        supervisionOfficerMetricOutlierSchema
+      ),
+      [targetStatusSchema.enum.NEAR]: z.array(z.string()),
+      [targetStatusSchema.enum.MET]: z.array(z.string()),
+    })
+  ),
+});
 
-export const LATEST_END_DATE = new Date(2023, 8, 1);
-
-export const LOOKBACK_END_DATES = range(6)
-  .map((offset) => subMonths(LATEST_END_DATE, offset))
-  .sort(ascending);
-
-export const LOOKBACK_END_DATE_STRINGS = LOOKBACK_END_DATES.map((endDate) =>
-  formatISO(endDate, { representation: "date" })
-);
+export type SupervisionOfficer = z.infer<typeof supervisionOfficerSchema>;
+export type RawSupervisionOfficer = z.input<typeof supervisionOfficerSchema>;

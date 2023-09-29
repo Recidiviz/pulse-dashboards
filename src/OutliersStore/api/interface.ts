@@ -17,10 +17,14 @@
 
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { OutliersConfig } from "../models/OutliersConfig";
+import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 
 export interface OutliersAPI {
   init(): Promise<{ config: OutliersConfig }>;
   metricBenchmarks(): Promise<Array<MetricBenchmark>>;
   supervisionOfficerSupervisors(): Promise<Array<SupervisionOfficerSupervisor>>;
+  officersForSupervisor(
+    supervisorId: string
+  ): Promise<Array<SupervisionOfficer>>;
 }

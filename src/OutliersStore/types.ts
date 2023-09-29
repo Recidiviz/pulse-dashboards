@@ -24,7 +24,7 @@ import { PromiseType } from "utility-types";
  * multiple yielded types in order at the type level.
  */
 export type FlowMethod<
-  FunctionToYield extends (...args: unknown[]) => Promise<unknown>,
+  FunctionToYield extends (...args: any[]) => Promise<unknown>,
   FlowReturn
 > = Generator<
   ReturnType<FunctionToYield>,

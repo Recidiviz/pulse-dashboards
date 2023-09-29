@@ -22,6 +22,7 @@ import { OutliersAPI } from "../api/interface";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
 import { OutliersConfig } from "../models/OutliersConfig";
+import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import type { OutliersStore } from "../OutliersStore";
 import { FlowMethod } from "../types";
@@ -33,6 +34,8 @@ export class OutliersSupervisionStore {
   >;
 
   supervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
+
+  officersBySupervisor: Map<string, SupervisionOfficer[]> = new Map();
 
   constructor(
     public readonly outliersStore: OutliersStore,
@@ -118,7 +121,7 @@ export class OutliersSupervisionStore {
     );
   }
 
-  /*
+  /**
    * Fetches supervision officer supervisor data for the current tenant.
    */
   *hydrateSupervisionOfficerSupervisors(): FlowMethod<
@@ -129,5 +132,19 @@ export class OutliersSupervisionStore {
 
     this.supervisionOfficerSupervisors =
       yield this.outliersStore.apiClient.supervisionOfficerSupervisors();
+  }
+
+  /**
+   * Fetches officer and metric data for the specified supervisor
+   */
+  *hydrateOfficersForSupervisor(
+    supervisorId: string
+  ): FlowMethod<OutliersAPI["officersForSupervisor"], void> {
+    if (this.officersBySupervisor.has(supervisorId)) return;
+
+    const officersData =
+      yield this.outliersStore.apiClient.officersForSupervisor(supervisorId);
+
+    this.officersBySupervisor.set(supervisorId, officersData);
   }
 }
