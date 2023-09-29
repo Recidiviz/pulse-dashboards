@@ -20,8 +20,12 @@ import simplur from "simplur";
 import { ClientRecord } from "../../../FirestoreStore";
 import { FeatureVariant, TenantId } from "../../../RootStore/types";
 import { dateToTimestamp } from "../../utils";
-import { OpportunityConfig, OpportunityConfigMap } from "../OpportunityConfigs";
-import { OpportunityType } from "../types";
+import {
+  OpportunityConfig,
+  OpportunityConfigMap,
+  OpportunityType,
+} from "../OpportunityConfigs";
+import {} from "../types";
 
 export const ineligibleClientRecord: ClientRecord = {
   recordId: "us_xx_001",

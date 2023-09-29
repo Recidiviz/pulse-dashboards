@@ -32,11 +32,11 @@ import { Client } from "../../../Client";
 import { OTHER_KEY } from "../../../utils";
 import { CompliantReportingForm } from "../../Forms/CompliantReportingForm";
 import { OpportunityBase } from "../../OpportunityBase";
+import { OpportunityType } from "../../OpportunityConfigs";
 import {
   DenialReasonsMap,
   OpportunityRequirement,
   OpportunityStatus,
-  OpportunityType,
 } from "../../types";
 import { formatNoteDate } from "../../utils";
 import {

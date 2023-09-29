@@ -23,8 +23,9 @@ import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { TransformFunction, ValidateFunction } from "../subscriptions";
 import { OpportunityBase } from "./OpportunityBase";
+import { OpportunityType } from "./OpportunityConfigs";
 import { BasePastFTRDReferralRecord } from "./PastFTRDReferralRecord";
-import { OpportunityRequirement, OpportunityType } from "./types";
+import { OpportunityRequirement } from "./types";
 import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "./utils";
 
 const CRITERIA_FORMATTERS: CriteriaFormatters<BasePastFTRDReferralRecord> = {

@@ -29,7 +29,11 @@ import {
 import { TenantId } from "../../RootStore/types";
 import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
-import { AutoSnoozeUntil, OPPORTUNITY_CONFIGS } from "./OpportunityConfigs";
+import {
+  AutoSnoozeUntil,
+  OPPORTUNITY_CONFIGS,
+  OpportunityType,
+} from "./OpportunityConfigs";
 
 export const SUPERVISION_OPPORTUNITY_TYPES = [
   "compliantReporting",
@@ -64,16 +68,6 @@ export const INCARCERATION_OPPORTUNITY_TYPES = [
 ] as const;
 export type IncarcerationOpportunityType =
   typeof INCARCERATION_OPPORTUNITY_TYPES[number];
-
-const OPPORTUNITY_TYPES = [
-  ...SUPERVISION_OPPORTUNITY_TYPES,
-  ...INCARCERATION_OPPORTUNITY_TYPES,
-] as const;
-
-/**
- * Values of this union map to key prefixes in client records
- */
-export type OpportunityType = typeof OPPORTUNITY_TYPES[number];
 
 // We need to keep the state code since urls are not unique
 export const OPPORTUNITY_TYPE_FOR_URL_BY_STATE: Record<

@@ -51,7 +51,11 @@ import {
   snoozeUntilDateInTheFuture,
 } from "../utils";
 import { FormBase } from "./Forms/FormBase";
-import { AutoSnoozeUntil, OPPORTUNITY_CONFIGS } from "./OpportunityConfigs";
+import {
+  AutoSnoozeUntil,
+  OPPORTUNITY_CONFIGS,
+  OpportunityType,
+} from "./OpportunityConfigs";
 import {
   Component,
   DefaultEligibility,
@@ -61,7 +65,6 @@ import {
   OpportunityRequirement,
   OpportunityStatus,
   OpportunityTab,
-  OpportunityType,
 } from "./types";
 
 export function updateOpportunityEligibility(

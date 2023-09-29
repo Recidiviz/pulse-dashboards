@@ -21,7 +21,7 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { OpportunityType } from "../../WorkflowsStore/Opportunity/types";
+import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 
 type OpportunitiesHydratorProps = {
   initial: React.ReactNode;

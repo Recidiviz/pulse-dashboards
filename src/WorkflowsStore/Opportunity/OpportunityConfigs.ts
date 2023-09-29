@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { FeatureVariant, TenantId } from "../../RootStore/types";
-import { Opportunity, OpportunityTab, OpportunityType } from "./types";
+import { Opportunity, OpportunityTab } from "./types";
 import { usCaSupervisionLevelDowngradeConfig as usCaSupervisionLevelDowngrade } from "./UsCa/UsCaSupervisionLevelDowngradeOpportunity/config";
 import { usIdEarnedDischargeConfig as earnedDischarge } from "./UsId/EarnedDischargeOpportunity/config";
 import { usIdLSUConfig as LSU } from "./UsId/LSUOpportunity/config";
@@ -92,9 +92,7 @@ export type OpportunityConfig = {
   hydratedHeader: (count: number) => OpportunityHydratedHeader;
 };
 
-export type OpportunityConfigMap = Record<OpportunityType, OpportunityConfig>;
-
-export const OPPORTUNITY_CONFIGS: OpportunityConfigMap = {
+export const OPPORTUNITY_CONFIGS = {
   /* US_CA */
   usCaSupervisionLevelDowngrade,
 
@@ -133,3 +131,7 @@ export const OPPORTUNITY_CONFIGS: OpportunityConfigMap = {
   supervisionLevelDowngrade,
   usTnAnnualReclassification,
 };
+
+export type OpportunityConfigMap = typeof OPPORTUNITY_CONFIGS;
+
+export type OpportunityType = keyof typeof OPPORTUNITY_CONFIGS;

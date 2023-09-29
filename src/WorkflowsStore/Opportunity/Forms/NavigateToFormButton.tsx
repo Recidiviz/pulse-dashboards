@@ -23,7 +23,7 @@ import { desktopLinkGate } from "../../../core/desktopLinkGate";
 import { OPPORTUNITY_STATUS_COLORS } from "../../../core/utils/workflowsUtils";
 import { workflowsUrl } from "../../../core/views";
 import { JusticeInvolvedPerson } from "../../types";
-import { OpportunityType } from "../types";
+import { OpportunityType } from "../OpportunityConfigs";
 
 const NavigateToFormButtonStyle = styled(Button)`
   display: inline-flex;

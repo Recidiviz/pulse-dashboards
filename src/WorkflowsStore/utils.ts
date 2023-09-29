@@ -36,10 +36,10 @@ import {
   StaffRecord,
 } from "../FirestoreStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
+import { OpportunityType } from "./Opportunity/OpportunityConfigs";
 import {
   INCARCERATION_OPPORTUNITY_TYPES,
   IncarcerationOpportunityType,
-  OpportunityType,
   SUPERVISION_OPPORTUNITY_TYPES,
   SupervisionOpportunityType,
 } from "./Opportunity/types";

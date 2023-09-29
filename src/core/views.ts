@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OPPORTUNITY_CONFIGS } from "../WorkflowsStore/Opportunity/OpportunityConfigs";
-import { OpportunityType } from "../WorkflowsStore/Opportunity/types";
+import {
+  OPPORTUNITY_CONFIGS,
+  OpportunityType,
+} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { MetricId, SystemId } from "./models/types";
 
 export type DashboardView = keyof typeof DASHBOARD_VIEWS;

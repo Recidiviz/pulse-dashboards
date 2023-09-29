@@ -33,13 +33,14 @@ import {
   OpportunityBase,
   updateOpportunityEligibility,
 } from "../OpportunityBase";
+import { OpportunityType } from "../OpportunityConfigs";
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,
   INCOMPLETE_FORM_UPDATE,
   VIEWED_UPDATE,
 } from "../testUtils";
-import { Opportunity, OpportunityType } from "../types";
+import { Opportunity } from "../types";
 
 jest.mock("../../subscriptions");
 jest.mock("firebase/firestore");

@@ -26,8 +26,9 @@ import {
 import {
   OPPORTUNITY_CONFIGS,
   OpportunityHydratedHeader,
+  OpportunityType,
 } from "../OpportunityConfigs";
-import { Opportunity, OpportunityType } from "../types";
+import { Opportunity } from "../types";
 import {
   generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,

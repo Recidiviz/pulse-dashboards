@@ -21,7 +21,7 @@ import FirestoreStore, {
   collectionNames,
   OpportunityUpdate,
 } from "../../FirestoreStore";
-import { OpportunityType } from "../Opportunity";
+import { OpportunityType } from "..";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
 import { UpdateFunction } from "./types";
 

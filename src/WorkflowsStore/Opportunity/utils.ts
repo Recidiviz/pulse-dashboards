@@ -30,13 +30,13 @@ import { optionalFieldToDate } from "../utils";
 import {
   OPPORTUNITY_CONFIGS,
   OpportunityHydratedHeader,
+  OpportunityType,
 } from "./OpportunityConfigs";
 import {
   Opportunity,
   OPPORTUNITY_STATUS_RANKED,
   OpportunityCaseNote,
   OpportunityRequirement,
-  OpportunityType,
 } from "./types";
 import {
   COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED,

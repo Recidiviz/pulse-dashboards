@@ -76,9 +76,11 @@ import {
   Opportunity,
   OpportunityTab,
   opportunityToSortFunctionMapping,
-  OpportunityType,
 } from "./Opportunity";
-import { OPPORTUNITY_CONFIGS } from "./Opportunity/OpportunityConfigs";
+import {
+  OPPORTUNITY_CONFIGS,
+  OpportunityType,
+} from "./Opportunity/OpportunityConfigs";
 import { Resident } from "./Resident";
 import {
   CaseloadSubscription,
@@ -748,7 +750,7 @@ export class WorkflowsStore implements Hydratable {
 
     const opportunityTypes = tenants[currentTenantId]?.opportunityTypes ?? [];
 
-    return opportunityTypes.filter((oppType) => {
+    return opportunityTypes.filter((oppType: OpportunityType) => {
       const gatingVariant = OPPORTUNITY_CONFIGS[oppType]?.featureVariant;
       if (!gatingVariant) return true;
 
