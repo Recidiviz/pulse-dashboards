@@ -32,7 +32,6 @@ import {
   FinesAndFees,
   Incarceration,
   Milestones,
-  RecommendedSupervisionLevel,
   ResidentHousing,
   SpecialConditions,
   Supervision,
@@ -75,7 +74,6 @@ type ResidentDetailComponentName = keyof typeof ResidentDetailSidebarComponents;
 
 const OpportunityDetailSidebarComponents = {
   UsMiEarlyDischargeIcDetails,
-  RecommendedSupervisionLevel,
   CaseNotes,
   UsMoRestrictiveHousing,
   UsTnCommonlyUsedOverrideCodes,
