@@ -56,7 +56,7 @@ const AuthWall: React.FC = ({ children }) => {
   );
 
   useIdleTimer({
-    onIdle: () => userStore.logout?.(),
+    onIdle: () => userStore.logout?.({ returnTo: window.location.origin }),
     // 900 seconds = 15 minutes. Certain state policies require that users reauthenticate after 15
     // minutes of inactivity. More details at:
     // https://github.com/Recidiviz/pulse-dashboards/issues/3403#issuecomment-1569096723
