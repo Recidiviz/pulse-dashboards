@@ -145,7 +145,7 @@ describe.each([
     /pass one drug screen/,
   ],
   [
-    "recentRejectionCodes",
+    "usTnNoRecentCompliantReportingRejections",
     2,
     "Double check TEST1 contact note",
     /Has reported as instructed/,

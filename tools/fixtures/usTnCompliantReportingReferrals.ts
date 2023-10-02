@@ -173,7 +173,7 @@ export const usTnCompliantReportingReferrals =
       metadata: {},
       caseNotes: {},
     },
-    // Eligible in old schema
+    // Almost Eligible in old schema
     {
       stateCode: "US_TN",
       poFirstName: "TEST",
@@ -211,6 +211,10 @@ export const usTnCompliantReportingReferrals =
       specialConditionsFlag: "current",
       supervisionFeeAssessed: null,
       supervisionFeeArrearaged: "0",
+      remainingCriteriaNeeded: 1,
+      almostEligibleCriteria: {
+        recentRejectionCodes: ["DECF", "DEDU"],
+      },
       eligibleCriteria: {},
       ineligibleCriteria: {},
       formInformation: {},
@@ -276,6 +280,7 @@ export const usTnCompliantReportingReferrals =
         },
         usTnNoArrestsInPastYear: null,
         usTnNoHighSanctionsInPastYear: null,
+        usTnNoRecentCompliantReportingRejections: null,
       },
       ineligibleCriteria: {},
       formInformation: {

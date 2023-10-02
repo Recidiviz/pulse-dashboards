@@ -283,6 +283,90 @@ test("transform record, old + new format, almost eligible but for sanctions in o
   });
 });
 
+test("transform record, old format, almost eligible but for recent rejections in old only", () => {
+  const rawRecord = {
+    ...rawRecordOldSchema,
+    almostEligibleCriteria: {
+      recentRejectionCodes: ["DEDU", "DECF"],
+    },
+    remainingCriteriaNeeded: 1,
+  };
+
+  const transformedRecord = transformCompliantReportingReferral(rawRecord);
+
+  // old says almost, new says nothing, use data from old
+  expect(
+    transformedRecord?.eligibleCriteria.usTnNoRecentCompliantReportingRejections
+  ).toBeUndefined();
+  expect(
+    transformedRecord?.ineligibleCriteria
+      .usTnNoRecentCompliantReportingRejections
+  ).toEqual({
+    contactCode: ["DEDU", "DECF"],
+  });
+});
+
+test("transform record, old + new format, almost eligible but for recent rejections in old only", () => {
+  const rawRecord = {
+    ...rawRecordOldSchema,
+    almostEligibleCriteria: {
+      recentRejectionCodes: ["DEDU", "DECF"],
+    },
+    remainingCriteriaNeeded: 1,
+
+    formInformation,
+    metadata,
+    caseNotes: {},
+    eligibleCriteria,
+    ineligibleCriteria: {},
+  };
+
+  const transformedRecord = transformCompliantReportingReferral(rawRecord);
+
+  // old says almost, new says eligible, use data from new
+  expect(
+    transformedRecord?.eligibleCriteria.usTnNoRecentCompliantReportingRejections
+  ).toEqual({});
+  expect(
+    transformedRecord?.ineligibleCriteria
+      .usTnNoRecentCompliantReportingRejections
+  ).toBeUndefined();
+});
+
+test("transform record, old + new format, almost eligible but for recent rejections in new only", () => {
+  const {
+    usTnNoRecentCompliantReportingRejections,
+    ...eligibleCriteriaExceptRecentRejections
+  } = eligibleCriteria;
+
+  const rawRecord = {
+    ...rawRecordOldSchema,
+
+    formInformation,
+    metadata,
+    caseNotes: {},
+    eligibleCriteria: eligibleCriteriaExceptRecentRejections,
+    ineligibleCriteria: {
+      usTnNoRecentCompliantReportingRejections: {
+        contactCode: ["DEDU", "DECF"],
+      },
+    },
+  };
+
+  const transformedRecord = transformCompliantReportingReferral(rawRecord);
+
+  // old says eligible, new says almost, use data from new
+  expect(
+    transformedRecord?.eligibleCriteria.usTnNoRecentCompliantReportingRejections
+  ).toBeUndefined();
+  expect(
+    transformedRecord?.ineligibleCriteria
+      .usTnNoRecentCompliantReportingRejections
+  ).toEqual({
+    contactCode: ["DEDU", "DECF"],
+  });
+});
+
 test("transform record, old + new format, almost eligible in new only", () => {
   const rawRecord = {
     ...rawRecordOldSchema,

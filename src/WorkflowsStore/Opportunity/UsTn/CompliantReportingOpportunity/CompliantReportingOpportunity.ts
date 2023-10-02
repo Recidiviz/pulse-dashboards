@@ -53,7 +53,7 @@ export const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (
 )[] = [
   "usTnFinesFeesEligible",
   "passedDrugScreenNeeded",
-  "recentRejectionCodes",
+  "usTnNoRecentCompliantReportingRejections",
   "usTnNoHighSanctionsInPastYear",
   "currentLevelEligibilityDate",
 ];
@@ -273,36 +273,15 @@ export class CompliantReportingOpportunity extends OpportunityBase<
   get almostEligibleStatusMessage(): string | undefined {
     if (!this.record) return undefined;
 
-    const { validAlmostEligibleKeys, almostEligible, requirementAlmostMetMap } =
-      this;
+    const { validAlmostEligibleKeys, almostEligible } = this;
 
     if (!almostEligible) return;
-
-    const { ineligibleCriteria } = this.record;
 
     if (validAlmostEligibleKeys.length > 1) {
       return `Needs ${validAlmostEligibleKeys.length} updates`;
     }
 
-    if (ineligibleCriteria?.usTnFinesFeesEligible) {
-      return "Needs balance <$500 or a payment three months in a row";
-    }
-
-    if (ineligibleCriteria?.usTnNoHighSanctionsInPastYear) {
-      return sanctionsAlmostEligibleText(
-        ineligibleCriteria.usTnNoHighSanctionsInPastYear.latestHighSanctionDate
-      ).text;
-    }
-
-    // from here on we expect there is only one valid criterion
-    // so we can stop as soon as we find it
-    const criterion = validAlmostEligibleKeys[0];
-    return (
-      requirementAlmostMetMap[criterion] ??
-      // in practice we do not expect this to ever happen
-      // because we will catch these cases upstream
-      "Status unknown"
-    );
+    return this.requirementsAlmostMet[0]?.text ?? "Status unknown";
   }
 
   get requirementsMet(): OpportunityRequirement[] {
@@ -441,7 +420,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     });
 
     // required compliance history
-    if (!requirementAlmostMetMap.recentRejectionCodes) {
+    if (eligibleCriteria.usTnNoRecentCompliantReportingRejections) {
       requirements.push({
         text: "No DECF, DEDF, DEDU, DEIO, DEIR codes in the last 3 months",
         tooltip: CRITERIA.compliance.tooltip,
@@ -517,7 +496,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     > = {
       passedDrugScreenNeeded: CRITERIA.drug,
       currentLevelEligibilityDate: CRITERIA.timeOnSupervision,
-      recentRejectionCodes: CRITERIA.compliance,
     };
 
     const { validAlmostEligibleKeys } = this;
@@ -528,6 +506,15 @@ export class CompliantReportingOpportunity extends OpportunityBase<
         requirements.push({ text, tooltip: configMap[criterionKey].tooltip });
       }
     });
+
+    if (ineligibleCriteria?.usTnNoRecentCompliantReportingRejections) {
+      requirements.push({
+        text: `Double check ${ineligibleCriteria?.usTnNoRecentCompliantReportingRejections.contactCode.join(
+          "/"
+        )} contact note`,
+        tooltip: CRITERIA.compliance.tooltip,
+      });
+    }
 
     if (ineligibleCriteria?.usTnNoHighSanctionsInPastYear) {
       requirements.push({
@@ -553,11 +540,8 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       return {};
     }
 
-    const {
-      currentLevelEligibilityDate,
-      recentRejectionCodes,
-      passedDrugScreenNeeded,
-    } = this.record?.almostEligibleCriteria ?? {};
+    const { currentLevelEligibilityDate, passedDrugScreenNeeded } =
+      this.record?.almostEligibleCriteria ?? {};
 
     const currentLevelEligibilityDaysRemaining = currentLevelEligibilityDate
       ? differenceInCalendarDays(currentLevelEligibilityDate, new Date())
@@ -579,10 +563,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
                 )} on ${this.person.supervisionLevel.toLowerCase()}`
               : undefined;
           }
-          case "recentRejectionCodes":
-            return recentRejectionCodes?.length
-              ? `Double check ${recentRejectionCodes.join("/")} contact note`
-              : undefined;
           default:
             return assertNever(key);
         }
@@ -641,9 +621,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
           break;
         case "passedDrugScreenNeeded":
           criterionSpecificCopy = "pass one drug screen";
-          break;
-        case "recentRejectionCodes":
-          // intentionally left blank; no note required in this case
           break;
         default:
           break;

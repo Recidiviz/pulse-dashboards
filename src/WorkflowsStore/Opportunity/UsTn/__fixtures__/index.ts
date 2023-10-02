@@ -136,6 +136,7 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
       },
       usTnNoArrestsInPastYear: {},
       usTnNoHighSanctionsInPastYear: {},
+      usTnNoRecentCompliantReportingRejections: {},
     },
     ineligibleCriteria: {},
     formInformation: {
@@ -182,6 +183,7 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
       },
       usTnNoArrestsInPastYear: {},
       usTnNoHighSanctionsInPastYear: {},
+      usTnNoRecentCompliantReportingRejections: {},
     },
     ineligibleCriteria: {},
     formInformation: {
@@ -200,7 +202,6 @@ export const compliantReportingAlmostEligibleCriteria: Required<
 > = {
   passedDrugScreenNeeded: true,
   currentLevelEligibilityDate: parseISO("2022-08-15"),
-  recentRejectionCodes: ["TEST1"],
 };
 
 export const compliantReportingIneligibleCriteria: Required<
@@ -217,6 +218,9 @@ export const compliantReportingIneligibleCriteria: Required<
   },
   usTnNoHighSanctionsInPastYear: {
     latestHighSanctionDate: parseISO("2021-08-15"),
+  },
+  usTnNoRecentCompliantReportingRejections: {
+    contactCode: ["TEST1"],
   },
 };
 

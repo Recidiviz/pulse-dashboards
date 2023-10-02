@@ -47,6 +47,10 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
       .null()
       .transform((_val) => ({}))
       .optional(),
+    usTnNoRecentCompliantReportingRejections: z
+      .null()
+      .transform((_val) => ({}))
+      .optional(),
   }),
   ineligibleCriteria: z.object({
     usTnFinesFeesEligible: z
@@ -63,6 +67,11 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
     usTnNoHighSanctionsInPastYear: z
       .object({
         latestHighSanctionDate: dateStringSchema,
+      })
+      .optional(),
+    usTnNoRecentCompliantReportingRejections: z
+      .object({
+        contactCode: z.array(z.string()),
       })
       .optional(),
   }),
@@ -87,7 +96,6 @@ export type CompliantReportingReferralRecordFull = z.infer<
 export type AlmostEligibleCriteria = {
   currentLevelEligibilityDate?: Date;
   passedDrugScreenNeeded?: boolean;
-  recentRejectionCodes?: string[];
 };
 
 export type AlmostEligibleCriteriaRaw = {
@@ -298,6 +306,7 @@ export const transformCompliantReportingReferral: TransformFunction<
   const {
     paymentNeeded,
     seriousSanctionsEligibilityDate,
+    recentRejectionCodes,
     ...newAlmostEligibleCriteria
   } = almostEligibleCriteria ?? {};
 
@@ -389,6 +398,24 @@ export const transformCompliantReportingReferral: TransformFunction<
       ineligibleCriteria.usTnNoHighSanctionsInPastYear;
   }
 
+  if (eligibleCriteria.usTnNoRecentCompliantReportingRejections !== undefined) {
+    newEligibleCriteria.usTnNoRecentCompliantReportingRejections =
+      eligibleCriteria.usTnNoRecentCompliantReportingRejections;
+  } else if (
+    ineligibleCriteria.usTnNoRecentCompliantReportingRejections !== undefined
+  ) {
+    newIneligibleCriteria.usTnNoRecentCompliantReportingRejections =
+      ineligibleCriteria.usTnNoRecentCompliantReportingRejections;
+  }
+  // If they don't have new-style data, fill it in from the old style
+  else if (recentRejectionCodes) {
+    newIneligibleCriteria.usTnNoRecentCompliantReportingRejections = {
+      contactCode: recentRejectionCodes,
+    };
+  } else {
+    newEligibleCriteria.usTnNoRecentCompliantReportingRejections = null;
+  }
+
   const recordForParsing = {
     ...recordWithoutLegacyFields,
     ...(Object.keys(newAlmostEligibleCriteria).length && {
@@ -433,18 +460,14 @@ export const transformCompliantReportingReferral: TransformFunction<
   };
 
   if (almostEligibleCriteria) {
-    const {
-      currentLevelEligibilityDate,
-      passedDrugScreenNeeded,
-      recentRejectionCodes,
-    } = almostEligibleCriteria;
+    const { currentLevelEligibilityDate, passedDrugScreenNeeded } =
+      almostEligibleCriteria;
 
     transformedRecord.almostEligibleCriteria = {
       currentLevelEligibilityDate: optionalFieldToDate(
         currentLevelEligibilityDate
       ),
       passedDrugScreenNeeded,
-      recentRejectionCodes,
     };
   }
 
