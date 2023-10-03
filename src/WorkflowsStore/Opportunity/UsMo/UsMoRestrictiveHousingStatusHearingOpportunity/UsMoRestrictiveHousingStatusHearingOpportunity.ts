@@ -197,6 +197,7 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
 
   get tabTitle(): OpportunityTab {
     if (!this.record) return "Other";
+    if (this.denied) return this.deniedTabTitle;
     if (this.record.eligibleCriteria.usMoOverdueForHearing)
       return "Overdue For Hearing";
     if (!this.record.ineligibleCriteria.usMoOverdueForHearing?.nextReviewDate)

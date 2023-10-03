@@ -35,6 +35,7 @@ let opp: UsMoRestrictiveHousingStatusHearingOpportunity;
 let resident: Resident;
 let root: RootStore;
 let referralSub: DocumentSubscription<any>;
+let updatesSub: DocumentSubscription<any>;
 
 jest.mock("../../../subscriptions");
 
@@ -75,6 +76,9 @@ describe("fully eligible", () => {
     referralSub = opp.referralSubscription;
     referralSub.isLoading = false;
     referralSub.data = UsMoRestrictiveHousingStatusHearingRecordFixture;
+
+    updatesSub = opp.updatesSubscription;
+    updatesSub.isLoading = false;
   });
 
   test("requirements met", () => {
@@ -169,5 +173,46 @@ describe("fully eligible", () => {
     referralSub.data = fixtureMissingDate;
     expect(opp.requirementsAlmostMet).toMatchSnapshot();
     expect(opp.almostEligibleStatusMessage).toMatchSnapshot();
+  });
+
+  describe("tabs", () => {
+    test("overridden", () => {
+      updatesSub.data = { denial: { reasons: ["test-reason"] } };
+      expect(opp.tabTitle).toEqual("Overridden");
+    });
+
+    test("Overdue for hearing", () => {
+      referralSub.data = {
+        ...UsMoRestrictiveHousingStatusHearingRecordFixture,
+        eligibleCriteria: { usMoOverdueForHearing: true },
+      };
+      expect(opp.tabTitle).toEqual("Overdue For Hearing");
+    });
+
+    test("Missing Review Date", () => {
+      referralSub.data = {
+        ...UsMoRestrictiveHousingStatusHearingRecordFixture,
+        eligibleCriteria: {},
+        ineligibleCriteria: {
+          usMoOverdueForHearing: { nextReviewDate: null },
+        },
+      };
+      expect(opp.tabTitle).toEqual("Missing Review Date");
+    });
+
+    test("Upcoming hearing", () => {
+      referralSub.data = {
+        ...UsMoRestrictiveHousingStatusHearingRecordFixture,
+        eligibleCriteria: {
+          usMoInRestrictiveHousing: {
+            confinementType: "confinement type",
+          },
+        },
+        ineligibleCriteria: {
+          usMoOverdueForHearing: { nextReviewDate: new Date() },
+        },
+      };
+      expect(opp.tabTitle).toEqual("Upcoming Hearings");
+    });
   });
 });

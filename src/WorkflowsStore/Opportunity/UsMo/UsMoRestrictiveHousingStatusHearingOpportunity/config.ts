@@ -35,5 +35,6 @@ export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig = {
     "Overdue For Hearing",
     "Missing Review Date",
     "Upcoming Hearings",
+    "Overridden",
   ],
 };
