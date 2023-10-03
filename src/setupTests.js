@@ -28,6 +28,12 @@ import { MessageChannel } from "worker_threads";
 
 import { initI18n } from "./utils/i18nSettings";
 
+jest.mock("./assets/static/images/tealStar.svg", () => ({
+  ReactComponent: () => {
+    return <div />;
+  },
+}));
+
 beforeAll(() => {
   createMocks();
   // prevents `ReferenceError: MessageChannel is not defined`

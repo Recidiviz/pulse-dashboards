@@ -30,7 +30,8 @@ import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
 import { MilestonesCapsule } from "../PersonCapsules/MilestonesCapsule";
 import WorkflowsResults from "../WorkflowsResults";
 import WorkflowsTabbedPersonList from "../WorkflowsTabbedPersonList/WorkflowsTabbedPersonList";
-import { WorkflowsTooltip } from "../WorkflowsTooltip";
+import { TasksOpportunitiesSection } from "../WorkflowsTasks/TasksOpportunitiesSection";
+import { TooltipDetails, WorkflowsTooltip } from "../WorkflowsTooltip";
 import { MilestonesSidePanel } from "./MilestonesSidePanel";
 import { MilestonesItem, MilestonesList, MilestonesText } from "./styles";
 
@@ -132,7 +133,16 @@ function MilestonesCaseload({
   handleRowOnClick: (p: Client) => void;
 }): JSX.Element {
   const items = clients.map((client) => (
-    <WorkflowsTooltip key={`tooltip-${client.externalId}`} person={client}>
+    <WorkflowsTooltip
+      contents={
+        <TooltipDetails
+          person={client}
+          OpportunitiesSection={TasksOpportunitiesSection}
+        />
+      }
+      key={`tooltip-${client.externalId}`}
+      person={client}
+    >
       <MilestonesClientRow
         onClick={() => handleRowOnClick(client)}
         key={client.externalId}

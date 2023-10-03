@@ -28,11 +28,6 @@ import { Client } from "../../../WorkflowsStore/Client";
 import WorkflowsMilestones from "..";
 
 jest.mock("firebase/firestore");
-jest.mock("../../../assets/static/images/tealStar.svg", () => ({
-  ReactComponent: () => {
-    return <div />;
-  },
-}));
 jest.mock("../../../components/StoreProvider");
 jest.mock("../../CaseloadSelect", () => ({
   CaseloadSelect: () => {

@@ -19,61 +19,38 @@
 import { TooltipTrigger } from "@recidiviz/design-system";
 import React from "react";
 
-import { ReactComponent as TealStar } from "../../assets/static/images/tealStar.svg";
 import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
-import { Client, isClient, JusticeInvolvedPerson } from "../../WorkflowsStore";
-import {
-  TooltipContainer,
-  TooltipSection,
-  TooltipSectionHeader,
-} from "../sharedComponents";
-import { OpportunitiesSection } from "./OpportunitiesSection";
-import { SectionDetails, WorkflowsTooltipRow } from "./styles";
+import { isClient, JusticeInvolvedPerson } from "../../WorkflowsStore";
+import { TooltipContainer } from "../sharedComponents";
+import { MilestonesSection } from "./MilestonesSection";
+import { OpportunitiesSection as WorkflowsOpportunitiesSection } from "./OpportunitiesSection";
 
-const MilestonesSection: React.FC<{
-  milestones: Client["congratulationsMilestones"];
-}> = ({ milestones }) => {
-  if (!milestones.length) return null;
-  return (
-    <TooltipSection>
-      <TooltipSectionHeader>Milestones</TooltipSectionHeader>
-      {milestones.map((m) => (
-        <WorkflowsTooltipRow key={m.type}>
-          <TealStar height="16" width="16" />
-          <SectionDetails>{m.text}</SectionDetails>
-        </WorkflowsTooltipRow>
-      ))}
-    </TooltipSection>
-  );
-};
-
-const TooltipDetails: React.FC<{ person: JusticeInvolvedPerson }> = ({
-  person,
-}) => {
+export const TooltipDetails: React.FC<{
+  person: JusticeInvolvedPerson;
+  OpportunitiesSection?: React.FC<{ person: JusticeInvolvedPerson }>;
+}> = ({ person, OpportunitiesSection = WorkflowsOpportunitiesSection }) => {
   return (
     <TooltipContainer>
       {isClient(person) && (
         <MilestonesSection milestones={person.congratulationsMilestones} />
       )}
-      <OpportunitiesSection person={person} includeStarIcon />
+      <OpportunitiesSection person={person} />
     </TooltipContainer>
   );
 };
 
 type WorkflowsTooltipProps = {
   person: JusticeInvolvedPerson;
+  contents?: React.ReactNode;
   children: React.ReactElement;
 };
 
 export const WorkflowsTooltip: React.FC<WorkflowsTooltipProps> = ({
   person,
+  contents = <TooltipDetails person={person} />,
   children,
 }) => {
   useHydrateOpportunities(person);
 
-  return (
-    <TooltipTrigger contents={<TooltipDetails person={person} />}>
-      {children}
-    </TooltipTrigger>
-  );
+  return <TooltipTrigger contents={contents}>{children}</TooltipTrigger>;
 };

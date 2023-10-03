@@ -19,19 +19,19 @@
 import { observer } from "mobx-react-lite";
 
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
-import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import {
   TooltipRow,
   TooltipSection,
   TooltipSectionDetails,
   TooltipSectionHeader,
-  TooltipTealStar,
 } from "../sharedComponents";
 
-export const OpportunitiesSection: React.FC<{
+export const TasksOpportunitiesSection: React.FC<{
   person: JusticeInvolvedPerson;
 }> = observer(function OpportunitiesSection({ person }) {
-  const opportunities = Object.values(person.verifiedOpportunities);
+  const opportunities = Object.values(person.verifiedOpportunities).filter(
+    (o: Opportunity) => !!o?.tooltipEligibilityText
+  );
   if (opportunities.length === 0) {
     return null;
   }
@@ -41,9 +41,8 @@ export const OpportunitiesSection: React.FC<{
       <TooltipSectionHeader>Opportunities</TooltipSectionHeader>
       {opportunities.map((o: Opportunity) => (
         <TooltipRow key={`{${o.type}-${o.person.recordId}`}>
-          <TooltipTealStar />
           <TooltipSectionDetails>
-            {OPPORTUNITY_CONFIGS[o.type].label}
+            {o.tooltipEligibilityText}
           </TooltipSectionDetails>
         </TooltipRow>
       ))}

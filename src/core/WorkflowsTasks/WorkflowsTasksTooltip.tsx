@@ -33,7 +33,7 @@ import {
   TooltipSectionDetails,
   TooltipSectionHeader,
 } from "../sharedComponents";
-import { OpportunitiesSection } from "../WorkflowsTooltip/OpportunitiesSection";
+import { TasksOpportunitiesSection } from "./TasksOpportunitiesSection";
 
 type TooltipDetailsProps = {
   person: JusticeInvolvedPerson;
@@ -49,7 +49,7 @@ const TasksSection: React.FC<{
     <TooltipSection>
       <TooltipSectionHeader>Tasks</TooltipSectionHeader>
       {tasks.map((t) => (
-        <TooltipRow key={t.type}>
+        <TooltipRow justifyContent="space-between" key={t.type}>
           <TooltipSectionDetails>{t.displayName}</TooltipSectionDetails>
           <TooltipSectionDetails overdue={t.isOverdue}>
             {t.dueDateDisplayShort}
@@ -98,7 +98,7 @@ const TooltipDetails: React.FC<TooltipDetailsProps> = ({ person, tasks }) => {
   return (
     <TooltipContainer>
       <PersonSection person={person} />
-      <OpportunitiesSection person={person} />
+      <TasksOpportunitiesSection person={person} />
       <TasksSection tasks={tasks} />
       <NeedsSection person={person} />
     </TooltipContainer>

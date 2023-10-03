@@ -27,11 +27,6 @@ import { MilestonesSidePanel } from "../MilestonesSidePanel";
 
 jest.mock("../../../WorkflowsStore/subscriptions");
 jest.mock("firebase/firestore");
-jest.mock("../../../assets/static/images/tealStar.svg", () => ({
-  ReactComponent: () => {
-    return <div />;
-  },
-}));
 jest.mock("../../../components/StoreProvider");
 
 const useRootStoreMock = useRootStore as jest.Mock;

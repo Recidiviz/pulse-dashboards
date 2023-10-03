@@ -26,6 +26,8 @@ import {
 import { rem, rgba } from "polished";
 import styled from "styled-components/macro";
 
+import { ReactComponent as TealStar } from "../assets/static/images/tealStar.svg";
+
 export const Heading = styled.div<{ isMobile?: boolean }>`
   ${({ isMobile }) => (isMobile ? typography.Serif24 : typography.Serif34)}
   color: ${palette.pine2};
@@ -57,7 +59,6 @@ export const TooltipSection = styled.div`
 
 export const TooltipSectionHeader = styled(Sans14)`
   color: white;
-  padding-bottom: 0.25rem;
 `;
 
 type TooltipSectionDetailsProps = {
@@ -65,14 +66,17 @@ type TooltipSectionDetailsProps = {
 };
 
 export const TooltipSectionDetails = styled(Sans12)<TooltipSectionDetailsProps>`
-  padding-top: 0.25rem;
   color: ${(p) => (p.overdue ? "rgb(224, 14, 0)" : "rgba(255, 255, 255, 0.7)")};
 `;
 
-export const TooltipRow = styled.div`
+export const TooltipRow = styled.div<{
+  justifyContent?: string;
+}>`
   display: flex;
+  align-items: center;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: ${(props) => props.justifyContent ?? "flex-start"};
+  padding: 0.5rem 0 0 0;
 `;
 
 export const OtherReasonInputWrapper = styled.div`
@@ -92,4 +96,10 @@ export const OtherReasonInput = styled.textarea.attrs({ type: "text" })`
   &:focus {
     border-color: ${rgba(palette.slate, 0.1)};
   }
+`;
+
+export const TooltipTealStar = styled(TealStar)`
+  margin-right: 0.375rem;
+  height: 16px;
+  width: 16px;
 `;

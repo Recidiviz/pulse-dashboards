@@ -16,16 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
-import styled from "styled-components/macro";
 
-import { TooltipRow, TooltipSectionDetails } from "../sharedComponents";
+import { Client } from "../../WorkflowsStore";
+import {
+  TooltipRow,
+  TooltipSection,
+  TooltipSectionDetails,
+  TooltipSectionHeader,
+  TooltipTealStar,
+} from "../sharedComponents";
 
-export const WorkflowsTooltipRow = styled(TooltipRow)`
-  justify-content: flex-start;
-  padding: 0.25rem 0;
-  align-items: center;
-`;
-
-export const SectionDetails = styled(TooltipSectionDetails)`
-  padding: 0 0 0 0.5rem;
-`;
+export const MilestonesSection: React.FC<{
+  milestones: Client["congratulationsMilestones"];
+}> = ({ milestones }) => {
+  if (!milestones.length) return null;
+  return (
+    <TooltipSection>
+      <TooltipSectionHeader>Milestones</TooltipSectionHeader>
+      {milestones.map((m) => (
+        <TooltipRow key={m.type}>
+          <TooltipTealStar />
+          <TooltipSectionDetails>{m.text}</TooltipSectionDetails>
+        </TooltipRow>
+      ))}
+    </TooltipSection>
+  );
+};
