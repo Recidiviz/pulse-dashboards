@@ -17,7 +17,7 @@
 
 import { palette, Sans14, typography } from "@recidiviz/design-system";
 import { format, parseISO, startOfToday } from "date-fns";
-import { debounce, xor } from "lodash";
+import { xor } from "lodash";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import styled from "styled-components/macro";
@@ -92,6 +92,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const handleSubmit = async () => {
     await opportunity.setDenialReasons(reasons);
+    await opportunity.setOtherReasonText(otherReason);
     if (maxManualSnoozeDays) {
       await opportunity.setSnoozeForDays(snoozeForDays, reasons);
     } else if (defaultAutoSnoozeFn) {
@@ -163,9 +164,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
             <OtherReasonInput
               defaultValue={otherReason}
               placeholder="Please specify a reason…"
-              onChange={(event) => {
-                debounce(() => setOtherReason(event.target.value), 500);
-              }}
+              onChange={(event) => setOtherReason(event.target.value)}
             />
           </OtherReasonWrapper>
         )}
