@@ -15,32 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link } from "react-router-dom";
+import { rem } from "polished";
+import styled from "styled-components/macro";
 
-import OutliersNavLayout from "../OutliersNavLayout";
-import { supervisors } from "../OutliersSupervisor/OutliersSupervisor";
-import { outliersUrl } from "../views";
+import {
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardWrapper,
+} from "../OutliersSupervisor/OutliersStaffCard";
+import OutliersLegend, { defaultLegendItems } from "./OutliersLegend";
 
-const OutliersSupervisorSearch = () => {
+const LegendNote = styled.div`
+  max-width: ${rem(400)};
+`;
+
+type OutliersStaffLegendType = {
+  note?: string;
+};
+
+const OutliersStaffLegend: React.FC<OutliersStaffLegendType> = ({ note }) => {
   return (
-    <OutliersNavLayout>
-      <Link
-        to={outliersUrl("supervisionSupervisor", {
-          supervisorId: supervisors[0].id,
-        })}
-      >
-        Supervisor 1
-      </Link>
-      <br />
-      <Link
-        to={outliersUrl("supervisionSupervisor", {
-          supervisorId: supervisors[1].id,
-        })}
-      >
-        Supervisor 2
-      </Link>
-    </OutliersNavLayout>
+    <CardWrapper noFlex>
+      <CardHeader hasBorder={false}>
+        <CardTitle>Legend</CardTitle>
+        <CardContent noFlex={!note}>
+          <OutliersLegend items={defaultLegendItems} />
+          {note && <LegendNote>Note: {note}</LegendNote>}
+        </CardContent>
+      </CardHeader>
+    </CardWrapper>
   );
 };
 
-export default OutliersSupervisorSearch;
+export default OutliersStaffLegend;

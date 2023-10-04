@@ -15,32 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link } from "react-router-dom";
-
-import OutliersNavLayout from "../OutliersNavLayout";
-import { supervisors } from "../OutliersSupervisor/OutliersSupervisor";
-import { outliersUrl } from "../views";
-
-const OutliersSupervisorSearch = () => {
-  return (
-    <OutliersNavLayout>
-      <Link
-        to={outliersUrl("supervisionSupervisor", {
-          supervisorId: supervisors[0].id,
-        })}
-      >
-        Supervisor 1
-      </Link>
-      <br />
-      <Link
-        to={outliersUrl("supervisionSupervisor", {
-          supervisorId: supervisors[1].id,
-        })}
-      >
-        Supervisor 2
-      </Link>
-    </OutliersNavLayout>
-  );
-};
-
-export default OutliersSupervisorSearch;
+export { default as OutliersLegend } from "./OutliersLegend";
+export { defaultLegendItems } from "./OutliersLegend";
+export { default as OutliersStaffLegend } from "./OutliersStaffLegend";

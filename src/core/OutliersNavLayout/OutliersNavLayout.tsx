@@ -15,15 +15,40 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { palette, spacing, typography } from "@recidiviz/design-system";
+import { rem } from "polished";
 import React from "react";
 import { NavLink } from "react-router-dom";
+import styled from "styled-components/macro";
 
+import useIsMobile from "../../hooks/useIsMobile";
 import { NavigationLayout } from "../NavigationLayout";
 import { OUTLIERS_PATHS } from "../views";
 
+const Wrapper = styled.div`
+  ${typography.Sans14};
+  background-color: ${palette.marble1};
+  min-height: 100vh;
+  width: 100%;
+`;
+
+const Main = styled.main<{
+  isMobile: boolean;
+}>`
+  padding: ${({ isMobile }) =>
+    isMobile
+      ? `${rem(spacing.xl)} ${rem(spacing.md)}`
+      : `${rem(spacing.xxl)} ${rem(spacing.lg)}`};
+
+  /* leaving extra space for the Intercom button */
+  padding-bottom: ${rem(spacing.md * 4)};
+`;
+
 const OutliersNavLayout: React.FC = ({ children }) => {
+  const { isMobile } = useIsMobile(true);
+
   return (
-    <div>
+    <Wrapper>
       <NavigationLayout>
         <li>
           <NavLink to={OUTLIERS_PATHS.supervisionSupervisorSearch}>
@@ -31,8 +56,8 @@ const OutliersNavLayout: React.FC = ({ children }) => {
           </NavLink>
         </li>
       </NavigationLayout>
-      {children}
-    </div>
+      <Main isMobile={isMobile}>{children}</Main>
+    </Wrapper>
   );
 };
 
