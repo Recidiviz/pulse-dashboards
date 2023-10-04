@@ -15,14 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { spacing } from "@recidiviz/design-system";
+import { intersection } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { useEffect, useMemo, useState } from "react";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { useOrderedActiveTab } from "../../hooks/useOrderedActiveTab";
 import { pluralizeWord } from "../../utils";
 import {
   generateOpportunityHydratedHeader,
@@ -32,13 +33,14 @@ import {
 import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
-import { Heading, SectionLabelText, SubHeading } from "../sharedComponents";
+import { Heading, SubHeading } from "../sharedComponents";
 import WorkflowsResults from "../WorkflowsResults";
 import WorkflowsTabbedPersonList from "../WorkflowsTabbedPersonList";
+import { OpportunityPersonListWithSectionTitles } from "./OpportunityPersonListWithSectionTitles";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 import { PersonListItem } from "./PersonListItem";
 
-const PersonList = styled.ul`
+export const PersonList = styled.ul`
   column-gap: ${rem(spacing.md)};
   display: grid;
   grid-template-columns: 100%;
@@ -55,8 +57,8 @@ const PersonList = styled.ul`
 export const OpportunityPersonList = observer(function OpportunityPersonList() {
   const {
     workflowsStore: {
-      selectedSearchIds,
       selectedOpportunityType: opportunityType,
+      selectedSearchIds,
       justiceInvolvedPersonTitle,
       workflowsSearchFieldTitle,
       featureVariants: { responsiveRevamp },
@@ -67,9 +69,26 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
     analyticsStore,
   } = useRootStore();
   const { isMobile } = useIsMobile(true);
-  const { displayTabs, activeTab, setActiveTab } = useOrderedActiveTab();
 
-  if (!opportunityType) return null;
+  const displayTabs = useMemo(() => {
+    if (opportunityType) {
+      return intersection(
+        allOpportunitiesByType[opportunityType][0]?.tabOrder,
+        Object.keys(opportunitiesByTab[opportunityType]) as OpportunityTab[]
+      );
+    }
+    return [];
+  }, [allOpportunitiesByType, opportunitiesByTab, opportunityType]);
+
+  const [activeTab, setActiveTab] = useState<OpportunityTab>(displayTabs[0]);
+
+  useEffect(() => {
+    if (!activeTab && displayTabs) {
+      setActiveTab(displayTabs[0]);
+    }
+  }, [activeTab, displayTabs]);
+
+  if (!opportunityType || !displayTabs) return null;
 
   const opportunityLabel = OPPORTUNITY_CONFIGS[opportunityType].label;
   const totalOpps = allOpportunitiesByType[opportunityType]?.length ?? 0;
@@ -143,33 +162,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
           </PersonList>
         </WorkflowsTabbedPersonList>
       ) : (
-        displayTabs.map((sectionTitle) => {
-          return (
-            opportunitiesByTab[opportunityType][sectionTitle]?.length > 0 && (
-              <div key={sectionTitle}>
-                {/* Only display the section title if there are multiple sections or the one we're
-                displaying isn't the first in the section order (such as "Almost Eligible") */}
-                {(Object.keys(opportunitiesByTab[opportunityType]).length > 1 ||
-                  sectionTitle !== displayTabs[0]) && (
-                  <SectionLabelText>{sectionTitle}</SectionLabelText>
-                )}
-                <PersonList
-                  key={`PersonList_${sectionTitle}`}
-                  className={`PersonList_${sectionTitle} PersonList`}
-                >
-                  {opportunitiesByTab[opportunityType][sectionTitle]?.map(
-                    (opportunity) => (
-                      <PersonListItem
-                        key={opportunity.person.recordId}
-                        opportunity={opportunity}
-                      />
-                    )
-                  )}
-                </PersonList>
-              </div>
-            )
-          );
-        })
+        <OpportunityPersonListWithSectionTitles />
       )}
       <OpportunityPreviewModal
         opportunity={selectedPerson?.verifiedOpportunities[opportunityType]}
