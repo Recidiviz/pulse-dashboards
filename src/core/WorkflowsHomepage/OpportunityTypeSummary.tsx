@@ -182,7 +182,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
 
   const header = generateOpportunityHydratedHeader(
     opportunityType,
-    opportunities.length
+    opportunities.length - numIneligible
   );
 
   return (

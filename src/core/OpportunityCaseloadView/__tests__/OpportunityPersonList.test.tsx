@@ -215,3 +215,41 @@ test("hydrated with a tab that is not listed as the first tab in the order", () 
   expect(screen.queryByText(firstTabText)).not.toBeInTheDocument();
   expect(screen.getByText(overriddenTabText)).toBeInTheDocument();
 });
+
+test("hydrated with eligible and ineligible opps", () => {
+  const firstTabText = "Eligible Now";
+
+  const opp = {
+    ...mockOpportunity,
+    tabOrder: [firstTabText],
+    person: {
+      recordId: "4",
+    } as Client,
+  };
+
+  const almostOpp = { ...opp, reviewStatus: "ALMOST" };
+
+  const ineligibleOpp = { ...opp, denial: { reasons: ["test"] } };
+  useRootStoreMock.mockReturnValue({
+    workflowsStore: {
+      ...baseWorkflowsStoreMock,
+      selectedSearchIds: ["123"],
+      opportunitiesLoaded: () => true,
+      hasOpportunities: () => true,
+      allOpportunitiesByType: {
+        earlyTermination: [opp, almostOpp, ineligibleOpp],
+      },
+      opportunitiesByTab: {
+        earlyTermination: {
+          [firstTabText]: [opp],
+        },
+      },
+    },
+  });
+
+  render(<OpportunityPersonList />);
+
+  expect(
+    screen.getByText("2 clients may be eligible for early termination")
+  ).toBeInTheDocument();
+});

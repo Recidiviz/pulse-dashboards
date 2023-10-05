@@ -91,7 +91,11 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
   if (!opportunityType || !displayTabs) return null;
 
   const opportunityLabel = OPPORTUNITY_CONFIGS[opportunityType].label;
-  const totalOpps = allOpportunitiesByType[opportunityType]?.length ?? 0;
+  const eligibleOpps = allOpportunitiesByType[opportunityType].filter(
+    (opp) => !opp.denial
+  );
+
+  const totalOpps = eligibleOpps.length;
 
   const handleTabClick = (tab: OpportunityTab) => {
     analyticsStore.trackOpportunityTabClicked({ tab });

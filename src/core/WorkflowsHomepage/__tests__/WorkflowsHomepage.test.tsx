@@ -34,6 +34,7 @@ const useRootStoreMock = useRootStore as jest.Mock;
 
 const baseWorkflowsStoreMock = {
   opportunitiesLoaded: () => false,
+  potentialOpportunities: () => [],
   selectedSearchIds: ["123"],
   opportunityTypes: ["earlyTermination"],
   allOpportunitiesByType: { earlyTermination: [] },
@@ -51,9 +52,9 @@ const baseWorkflowsStoreMock = {
 
 describe("WorkflowsHomepage", () => {
   beforeEach(() => {
+    // @ts-expect-error
+    mockOpportunity.person.recordId = "1";
     jest.resetAllMocks();
-    // Quiet errors during test runs
-    jest.spyOn(console, "error").mockImplementation();
   });
 
   afterEach(() => {
@@ -180,8 +181,6 @@ describe("WorkflowsHomepage", () => {
   });
 
   test("render opportunities", () => {
-    // @ts-expect-error
-    mockOpportunity.person.assignedStaffId = "123";
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
         ...baseWorkflowsStoreMock,
@@ -208,16 +207,14 @@ describe("WorkflowsHomepage", () => {
   });
 
   test("render opportunities where all clients are marked ineligible", () => {
-    // @ts-expect-error
-    mockOpportunity.person.assignedStaffId = "123";
-    mockOpportunity.reviewStatus = "DENIED";
+    const opp = { ...mockOpportunity, reviewStatus: "DENIED" };
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
         opportunityTypes: ["pastFTRD"],
         allOpportunitiesByType: {
-          pastFTRD: [mockOpportunity],
+          pastFTRD: [opp],
         },
         hasOpportunities: () => true,
       },
@@ -232,6 +229,45 @@ describe("WorkflowsHomepage", () => {
     expect(
       screen.getByText(
         "Review clients who are nearing or past their full-term release date and email clerical to move them to history."
+      )
+    ).toBeInTheDocument();
+
+    expect(screen.getByText("Ineligible: 1")).toBeInTheDocument();
+  });
+
+  test("header does not include ineligible opps in count", () => {
+    const firstOpp = { ...mockOpportunity, reviewStatus: "DENIED" };
+    const secondOpp = {
+      ...mockOpportunity,
+      reviewStatus: "IN_PROGRESS",
+      person: { recordId: "2" },
+    };
+    const thirdOpp = {
+      ...mockOpportunity,
+      reviewStatus: "IN_PROGRESS",
+      person: { recordId: "3" },
+    };
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        opportunitiesLoaded: () => true,
+        opportunityTypes: ["pastFTRD"],
+        allOpportunitiesByType: {
+          pastFTRD: [firstOpp, secondOpp, thirdOpp],
+        },
+        hasOpportunities: () => true,
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsHomepage />
+      </BrowserRouter>
+    );
+
+    expect(
+      screen.getByText(
+        "2 clients are nearing or past their full-term release date"
       )
     ).toBeInTheDocument();
 
