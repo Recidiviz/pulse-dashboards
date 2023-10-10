@@ -27,6 +27,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
+import { SupervisionOfficer } from "../../OutliersStore/models/SupervisionOfficer";
 import { outliersUrl } from "../views";
 
 export const CardWrapper = styled.div<{ noFlex: boolean }>`
@@ -111,7 +112,7 @@ const MetricHint = styled.div`
 `;
 
 type OutliersStaffCardType = {
-  officer: any;
+  officer: SupervisionOfficer;
   title?: string;
   subtitle?: string;
 };
@@ -127,23 +128,23 @@ const OutliersStaffCard: React.FC<OutliersStaffCardType> = ({
   return (
     <CardWrapper noFlex={isTablet}>
       <CardHeader hasBorder={!isTablet}>
-        <CardTitle>{title || officer.name}</CardTitle>
+        <CardTitle>{title || officer.displayName}</CardTitle>
         <CardSubtitle>
           {subtitle || officer.caseloadTypes.join(", ")}
         </CardSubtitle>
       </CardHeader>
       <CardBody>
-        {officer.outliersMetrics.map((metric: any) => (
+        {officer.currentPeriodStatuses.FAR.map((metric) => (
           <MetricSection
             to={outliersUrl("supervisionStaffMetric", {
-              officerId: officer.id,
+              officerId: officer.externalId,
               metricId: metric.metricId,
             })}
             key={metric.metricId}
             hasBorder={isTablet}
           >
             <MetricHeader>
-              <MetricTitle>{metric.metricName}</MetricTitle>
+              <MetricTitle>{metric.metricId}</MetricTitle>
               <MetricHint>
                 See trends and cases
                 <Icon

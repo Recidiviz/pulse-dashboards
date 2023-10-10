@@ -17,30 +17,23 @@
 
 import { Link } from "react-router-dom";
 
+import { supervisionOfficerSupervisorsFixture } from "../../OutliersStore/models/offlineFixtures/SupervisionOfficerSupervisor";
 import OutliersNavLayout from "../OutliersNavLayout";
-import { supervisors } from "../OutliersSupervisor/OutliersSupervisor";
 import { outliersUrl } from "../views";
 
 const OutliersSupervisorSearch = () => {
-  return (
-    <OutliersNavLayout>
+  const links = supervisionOfficerSupervisorsFixture.map((supervisor) => (
+    <div key={supervisor.externalId}>
       <Link
         to={outliersUrl("supervisionSupervisor", {
-          supervisorId: supervisors[0].id,
+          supervisorId: supervisor.externalId,
         })}
       >
-        Supervisor 1
+        {supervisor.displayName}
       </Link>
-      <br />
-      <Link
-        to={outliersUrl("supervisionSupervisor", {
-          supervisorId: supervisors[1].id,
-        })}
-      >
-        Supervisor 2
-      </Link>
-    </OutliersNavLayout>
-  );
+    </div>
+  ));
+  return <OutliersNavLayout>{links}</OutliersNavLayout>;
 };
 
 export default OutliersSupervisorSearch;

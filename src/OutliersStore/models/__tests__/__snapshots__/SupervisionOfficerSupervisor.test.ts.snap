@@ -2,6 +2,7 @@
 
 exports[`transformations 1`] = `
 Object {
+  "displayName": "Miles D Davis",
   "district": "D1",
   "externalId": "mdavis123",
   "fullName": Object {
@@ -14,6 +15,7 @@ Object {
 
 exports[`transformations 2`] = `
 Object {
+  "displayName": "Billie Holiday",
   "district": null,
   "externalId": "bholiday456",
   "fullName": Object {
@@ -26,6 +28,7 @@ Object {
 
 exports[`transformations 3`] = `
 Object {
+  "displayName": "Ella Fitzgerald",
   "district": "D1",
   "externalId": "efitzgerals789",
   "fullName": Object {

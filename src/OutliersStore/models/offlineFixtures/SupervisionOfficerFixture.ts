@@ -19,39 +19,42 @@ import {
   RawSupervisionOfficer,
   supervisionOfficerSchema,
 } from "../SupervisionOfficer";
-import { ADVERSE_METRIC_IDS } from "./constants";
+import { ADVERSE_METRIC_IDS, CASELOAD_TYPE_IDS } from "./constants";
 import { rawSupervisionOfficerMetricOutlierFixtures } from "./SupervisionOfficerMetricOutlierFixture";
 import { supervisionOfficerSupervisorsFixture } from "./SupervisionOfficerSupervisor";
 
 export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
   {
     externalId: "so1",
-    name: {
+    fullName: {
       given_names: "Duke",
       surname: "Ellington",
     },
     district: supervisionOfficerSupervisorsFixture[0].district,
     supervisorId: supervisionOfficerSupervisorsFixture[0].externalId,
+    caseloadTypes: [
+      CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+      CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
+    ],
     currentPeriodStatuses: {
       far: [
-        rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
-          .GENERAL_OR_OTHER[0],
+        rawSupervisionOfficerMetricOutlierFixtures
+          .absconsions_bench_warrants[0],
+        rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts[0],
       ],
-      near: [
-        ADVERSE_METRIC_IDS.enum.incarceration_starts,
-        ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
-      ],
+      near: [ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation],
       met: [],
     },
   },
   {
     externalId: "so2",
-    name: {
+    fullName: {
       given_names: "Chet",
       surname: "Baker",
     },
     district: supervisionOfficerSupervisorsFixture[0].district,
     supervisorId: supervisionOfficerSupervisorsFixture[0].externalId,
+    caseloadTypes: [CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER],
     currentPeriodStatuses: {
       far: [],
       near: [
@@ -59,6 +62,43 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       ],
       met: [ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants],
+    },
+  },
+  {
+    externalId: "so3",
+    fullName: {
+      given_names: "Louis",
+      surname: "Armstrong",
+    },
+    district: supervisionOfficerSupervisorsFixture[0].district,
+    supervisorId: supervisionOfficerSupervisorsFixture[0].externalId,
+    caseloadTypes: [CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER],
+    currentPeriodStatuses: {
+      far: [
+        rawSupervisionOfficerMetricOutlierFixtures
+          .absconsions_bench_warrants[1],
+      ],
+      near: [ADVERSE_METRIC_IDS.enum.incarceration_starts],
+      met: [ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation],
+    },
+  },
+  {
+    externalId: "so4",
+    fullName: {
+      given_names: "William James",
+      middle_names: '"Count"',
+      surname: "Basie",
+    },
+    district: supervisionOfficerSupervisorsFixture[1].district,
+    supervisorId: supervisionOfficerSupervisorsFixture[1].externalId,
+    caseloadTypes: [CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER],
+    currentPeriodStatuses: {
+      far: [
+        rawSupervisionOfficerMetricOutlierFixtures
+          .absconsions_bench_warrants[2],
+      ],
+      near: [ADVERSE_METRIC_IDS.enum.incarceration_starts],
+      met: [ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation],
     },
   },
 ];

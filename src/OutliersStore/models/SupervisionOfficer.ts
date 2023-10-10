@@ -18,27 +18,31 @@
 import { z } from "zod";
 
 import {
+  addDisplayName,
   fullNameSchema,
   targetStatusSchema,
   uppercaseSchemaKeys,
 } from "./schemaHelpers";
 import { supervisionOfficerMetricOutlierSchema } from "./SupervisionOfficerMetricOutlier";
 
-export const supervisionOfficerSchema = z.object({
-  name: fullNameSchema,
-  externalId: z.string(),
-  supervisorId: z.string(),
-  district: z.string().nullable(),
-  currentPeriodStatuses: uppercaseSchemaKeys(
-    z.object({
-      [targetStatusSchema.enum.FAR]: z.array(
-        supervisionOfficerMetricOutlierSchema
-      ),
-      [targetStatusSchema.enum.NEAR]: z.array(z.string()),
-      [targetStatusSchema.enum.MET]: z.array(z.string()),
-    })
-  ),
-});
+export const supervisionOfficerSchema = z
+  .object({
+    fullName: fullNameSchema,
+    externalId: z.string(),
+    supervisorId: z.string(),
+    district: z.string().nullable(),
+    caseloadTypes: z.array(z.string()),
+    currentPeriodStatuses: uppercaseSchemaKeys(
+      z.object({
+        [targetStatusSchema.enum.FAR]: z.array(
+          supervisionOfficerMetricOutlierSchema
+        ),
+        [targetStatusSchema.enum.NEAR]: z.array(z.string()),
+        [targetStatusSchema.enum.MET]: z.array(z.string()),
+      })
+    ),
+  })
+  .transform(addDisplayName);
 
 export type SupervisionOfficer = z.infer<typeof supervisionOfficerSchema>;
 export type RawSupervisionOfficer = z.input<typeof supervisionOfficerSchema>;

@@ -17,13 +17,15 @@
 
 import { z } from "zod";
 
-import { fullNameSchema } from "./schemaHelpers";
+import { addDisplayName, fullNameSchema } from "./schemaHelpers";
 
-export const supervisionOfficerSupervisorSchema = z.object({
-  fullName: fullNameSchema,
-  externalId: z.string(),
-  district: z.string().nullable(),
-});
+export const supervisionOfficerSupervisorSchema = z
+  .object({
+    fullName: fullNameSchema,
+    externalId: z.string(),
+    district: z.string().nullable(),
+  })
+  .transform(addDisplayName);
 
 export type SupervisionOfficerSupervisor = z.infer<
   typeof supervisionOfficerSupervisorSchema

@@ -67,3 +67,20 @@ export function uppercaseSchemaKeys<Schema extends z.ZodTypeAny>(
     schema
   );
 }
+
+export function addDisplayName<T>(
+  obj: T & {
+    fullName: FullName;
+  }
+) {
+  return {
+    ...obj,
+    displayName: [
+      obj.fullName.givenNames,
+      obj.fullName.middleNames,
+      obj.fullName.surname,
+    ]
+      .filter((n) => Boolean(n))
+      .join(" "),
+  };
+}

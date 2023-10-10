@@ -22,6 +22,8 @@ import simplur from "simplur";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
+import { supervisionOfficerFixture } from "../../OutliersStore/models/offlineFixtures/SupervisionOfficerFixture";
+import { supervisionOfficerSupervisorsFixture } from "../../OutliersStore/models/offlineFixtures/SupervisionOfficerSupervisor";
 import { OutliersStaffLegend } from "../OutliersLegend";
 import OutliersNavLayout from "../OutliersNavLayout";
 import OutliersStaffCard from "./OutliersStaffCard";
@@ -80,93 +82,23 @@ const InfoItem = styled.div`
   }
 `;
 
-export const supervisors = [
-  {
-    id: "12345",
-    name: "Supervisor One",
-    locationId: "Harrisburg",
-    officers: [
-      {
-        id: "23456",
-        name: "Officer One",
-        locationId: "Harrisburg",
-        caseloadTypes: ["General Caseload", "Alcohol and Drug Caseload"],
-        outliersMetrics: [
-          {
-            metricId: "incarceration_starts",
-            metricName: "Incarcerations",
-            rate: 0.5,
-          },
-          {
-            metricId: "absconsions_starts",
-            metricName: "Absconsions",
-            rate: 0.4,
-          },
-        ],
-      },
-      {
-        id: "34567",
-        name: "Officer Two",
-        locationId: "Harrisburg",
-        caseloadTypes: ["General Caseload"],
-        outliersMetrics: [
-          {
-            metricId: "incarceration_starts",
-            metricName: "Incarcerations",
-            rate: 0.3,
-          },
-        ],
-      },
-      {
-        id: "45678",
-        name: "Officer Three",
-        locationId: "Harrisburg",
-        outliersMetrics: [],
-      },
-      {
-        id: "56789",
-        name: "Officer Four",
-        locationId: "Harrisburg",
-        outliersMetrics: [],
-      },
-    ],
-  },
-  {
-    id: "123456",
-    name: "Supervisor Two",
-    locationId: "Lebanon",
-    officers: [
-      {
-        id: "56789",
-        name: "Officer Four",
-        locationId: "Lebanon",
-        caseloadTypes: ["General Caseload"],
-        outliersMetrics: [
-          {
-            metricId: "incarceration_starts",
-            metricName: "Incarcerations",
-            rate: 0.5,
-          },
-        ],
-      },
-    ],
-  },
-];
-
 const OutliersSupervisor = () => {
   const { isMobile, isLaptop } = useIsMobile(true);
   const { supervisorId }: { supervisorId: string } = useParams();
 
-  const supervisor = supervisors.find((s) => s.id === supervisorId);
-
-  const officers =
-    supervisors.find((s) => s.id === supervisorId)?.officers || [];
-
-  const isOutliers = officers.filter(
-    (officer) => officer.outliersMetrics.length > 0
+  const supervisor = supervisionOfficerSupervisorsFixture.find(
+    (s) => s.externalId === supervisorId
   );
 
-  const pageTitle = simplur`${isOutliers.length} of the ${officers.length} officer[|s] in your unit [is an|are] outlier[|s] on one or more metrics`;
+  const allOfficers =
+    supervisionOfficerFixture.filter((s) => s.supervisorId === supervisorId) ||
+    [];
+
+  const outlierOfficers = allOfficers.filter(
+    (officer) => officer.currentPeriodStatuses.FAR.length > 0
+  );
+
+  const pageTitle = simplur`${outlierOfficers.length} of the ${allOfficers.length} officer[|s] in your unit [is an|are] outlier[|s] on one or more metrics`;
 
   if (!supervisor) return <div />;
 
@@ -177,14 +109,14 @@ const OutliersSupervisor = () => {
           <Title isMobile={isMobile}>{pageTitle}</Title>
           <InfoSection isMobile={isMobile}>
             <InfoItem>
-              <span>District: </span> {supervisor?.locationId}
+              <span>District: </span> {supervisor.district}
             </InfoItem>
             <InfoItem>
-              <span>Unit Supervisor: </span> {supervisor?.name}
+              <span>Unit Supervisor: </span> {supervisor.displayName}
             </InfoItem>
             <InfoItem>
               <span>Staff: </span>
-              {officers.map((officer) => officer.name).join(", ")}
+              {allOfficers.map((officer) => officer.displayName).join(", ")}
             </InfoItem>
           </InfoSection>
         </Header>
@@ -192,9 +124,9 @@ const OutliersSupervisor = () => {
           <OutliersStaffLegend note="Correctional officers are only compared with other officers with similar caseloads. An officer with a specialized caseload will not be compared to one with a general caseload." />
         </Sidebar>
         <Body isLaptop={isLaptop}>
-          {isOutliers.map((officer: any) => {
+          {outlierOfficers.map((officer) => {
             return (
-              <OutliersStaffCard key={officer.id} officer={officer}>
+              <OutliersStaffCard key={officer.externalId} officer={officer}>
                 <div style={{ height: 200, background: palette.slate10 }} />
               </OutliersStaffCard>
             );

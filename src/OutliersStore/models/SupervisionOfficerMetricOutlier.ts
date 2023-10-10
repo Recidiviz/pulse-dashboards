@@ -23,7 +23,6 @@ export const supervisionOfficerMetricOutlierSchema = z
   .object({
     metricId: z.string(),
     rate: z.number(),
-    caseloadType: z.string(),
     previousPeriodValues: z.array(
       z.object({
         endDate: dateStringSchema,
