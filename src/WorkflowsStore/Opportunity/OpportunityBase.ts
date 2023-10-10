@@ -361,13 +361,21 @@ export abstract class OpportunityBase<
     );
   }
 
-  async setSnoozeForDays(days: number, reasons: string[]): Promise<void> {
+  async setManualSnooze(days: number, reasons: string[]): Promise<void> {
     const { currentUserEmail } = this.rootStore.workflowsStore;
     const { recordId } = this.person;
     if (!currentUserEmail) return;
 
     // If there are no denial reasons selected, clear the snooze values
     const deleteSnoozeField = reasons.length === 0;
+
+    this.rootStore.analyticsStore.trackOpportunitySnoozed({
+      opportunityType: this.type,
+      opportunityStatus: this.reviewStatus,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      snoozeForDays: days,
+      reasons,
+    });
 
     await this.rootStore.firestoreStore.updateOpportunityManualSnooze(
       this.type,
@@ -381,7 +389,7 @@ export abstract class OpportunityBase<
     );
   }
 
-  async setAutoSnoozeUntil(
+  async setAutoSnooze(
     defaultSnoozeUntilFn: AutoSnoozeUntil["defaultSnoozeUntilFn"],
     reasons: string[]
   ): Promise<void> {
@@ -393,6 +401,15 @@ export abstract class OpportunityBase<
     const deleteSnoozeField = reasons.length === 0;
 
     const snoozeUntil = defaultSnoozeUntilFn(startOfToday(), this);
+
+    this.rootStore.analyticsStore.trackOpportunitySnoozed({
+      opportunityType: this.type,
+      opportunityStatus: this.reviewStatus,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      snoozeUntil: formatDateToISO(snoozeUntil),
+      reasons,
+    });
+
     await this.rootStore.firestoreStore.updateOpportunityAutoSnooze(
       this.type,
       recordId,

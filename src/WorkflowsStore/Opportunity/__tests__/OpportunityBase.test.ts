@@ -145,6 +145,7 @@ beforeEach(() => {
   jest.spyOn(AnalyticsStore.prototype, "trackSurfacedInList");
   jest.spyOn(AnalyticsStore.prototype, "trackOpportunityPreviewed");
   jest.spyOn(AnalyticsStore.prototype, "trackOpportunityMarkedEligible");
+  jest.spyOn(AnalyticsStore.prototype, "trackOpportunitySnoozed");
   mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
 });
 
@@ -533,7 +534,7 @@ describe("tracking", () => {
   });
 });
 
-describe("setAutoSnoozeUntil", () => {
+describe("setAutoSnooze", () => {
   const defaultSnoozeUntilFn = (date: Date, o?: Opportunity) =>
     add(date, { days: 5 });
 
@@ -543,7 +544,7 @@ describe("setAutoSnoozeUntil", () => {
   });
 
   test("when denial reasons are deleted", async () => {
-    await opp.setAutoSnoozeUntil(defaultSnoozeUntilFn, []);
+    await opp.setAutoSnooze(defaultSnoozeUntilFn, []);
     expect(
       root.firestoreStore.updateOpportunityAutoSnooze
     ).toHaveBeenCalledWith(
@@ -559,7 +560,7 @@ describe("setAutoSnoozeUntil", () => {
   });
 
   test("when there are denial reasons", async () => {
-    await opp.setAutoSnoozeUntil(defaultSnoozeUntilFn, ["REASON"]);
+    await opp.setAutoSnooze(defaultSnoozeUntilFn, ["REASON"]);
     expect(
       root.firestoreStore.updateOpportunityAutoSnooze
     ).toHaveBeenCalledWith(
@@ -572,6 +573,67 @@ describe("setAutoSnoozeUntil", () => {
       },
       false // deleteSnoozeField
     );
+  });
+
+  test("tracks event", async () => {
+    await opp.setAutoSnooze(defaultSnoozeUntilFn, ["REASON"]);
+    expect(root.analyticsStore.trackOpportunitySnoozed).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityStatus: "PENDING",
+      opportunityType: opp.type,
+      snoozeUntil: "2023-10-30",
+      reasons: ["REASON"],
+    });
+  });
+});
+
+describe("setManualSnooze", () => {
+  beforeEach(() => {
+    timekeeper.freeze(new Date(2023, 9, 25));
+    jest.spyOn(root.firestoreStore, "updateOpportunityManualSnooze");
+  });
+
+  test("when denial reasons are deleted", async () => {
+    await opp.setManualSnooze(5, []);
+    expect(
+      root.firestoreStore.updateOpportunityManualSnooze
+    ).toHaveBeenCalledWith(
+      "TEST",
+      "us_xx_001",
+      {
+        snoozeForDays: 5,
+        snoozedBy: "test@email.gov",
+        snoozedOn: "2023-10-25",
+      },
+      true // deleteSnoozeField
+    );
+  });
+
+  test("when there are denial reasons", async () => {
+    await opp.setManualSnooze(5, ["REASON"]);
+    expect(
+      root.firestoreStore.updateOpportunityManualSnooze
+    ).toHaveBeenCalledWith(
+      "TEST",
+      "us_xx_001",
+      {
+        snoozeForDays: 5,
+        snoozedBy: "test@email.gov",
+        snoozedOn: "2023-10-25",
+      },
+      false // deleteSnoozeField
+    );
+  });
+
+  test("tracks event", async () => {
+    await opp.setManualSnooze(5, ["REASON"]);
+    expect(root.analyticsStore.trackOpportunitySnoozed).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityStatus: "PENDING",
+      opportunityType: opp.type,
+      snoozeForDays: 5,
+      reasons: ["REASON"],
+    });
   });
 });
 

@@ -49,6 +49,15 @@ type TasksTrackingMetadata = {
   taskTypes: (SupervisionTaskType | SupervisionNeedType)[];
 };
 
+type SnoozeTrackingMetadata = {
+  opportunityType: OpportunityType;
+  opportunityStatus: OpportunityStatus;
+  justiceInvolvedPersonId: string;
+  snoozeForDays?: number;
+  snoozeUntil?: string;
+  reasons: string[];
+};
+
 export default class AnalyticsStore {
   rootStore;
 
@@ -204,5 +213,9 @@ export default class AnalyticsStore {
     justiceInvolvedPersonId: string;
   }) {
     this.track("frontend.milestones_congratulations_sent", metadata);
+  }
+
+  trackOpportunitySnoozed(metadata: SnoozeTrackingMetadata) {
+    this.track("frontend.opportunity_snoozed", metadata);
   }
 }

@@ -94,9 +94,9 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     await opportunity.setDenialReasons(reasons);
     await opportunity.setOtherReasonText(otherReason);
     if (maxManualSnoozeDays) {
-      await opportunity.setSnoozeForDays(snoozeForDays, reasons);
+      await opportunity.setManualSnooze(snoozeForDays, reasons);
     } else if (defaultAutoSnoozeFn) {
-      await opportunity.setAutoSnoozeUntil(defaultAutoSnoozeFn, reasons);
+      await opportunity.setAutoSnooze(defaultAutoSnoozeFn, reasons);
     }
     onSubmit();
   };
