@@ -30,6 +30,7 @@ export const usMiSupervisionLevelDowngradeConfig: OpportunityConfig = {
       "Review clients whose supervision level does not match their risk level and change supervision levels in COMS.",
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 90,
   },
 };

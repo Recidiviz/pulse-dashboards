@@ -32,6 +32,7 @@ export const usMeWorkReleaseConfig: OpportunityConfig = {
       "Work Release eligibility and complete application paperwork.",
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 180,
   },
 };

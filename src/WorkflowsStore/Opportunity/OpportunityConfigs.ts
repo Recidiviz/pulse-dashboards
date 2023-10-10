@@ -49,12 +49,14 @@ import { usTnSupervisionLevelDowngradeConfig as supervisionLevelDowngrade } from
 export type AutoSnoozeUntil = {
   defaultSnoozeUntilFn: (snoozedOn: Date, opportunity?: Opportunity) => Date;
   maxSnoozeDays?: never;
+  defaultSnoozeDays?: never;
 };
 
 /** Manual refers to users who are able to set the number of days to snooze until.
  * maxSnoozeDays sets the max number of days on the slider.
  */
 type ManualSnoozeUntil = {
+  defaultSnoozeDays: number;
   maxSnoozeDays: number;
   defaultSnoozeUntilFn?: never;
 };

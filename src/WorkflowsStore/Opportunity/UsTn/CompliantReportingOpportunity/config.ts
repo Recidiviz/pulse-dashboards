@@ -28,6 +28,7 @@ export const usTnCompliantReportingConfig: OpportunityConfig = {
     callToAction: "Review and refer eligible clients for Compliant Reporting.",
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 90,
   },
 };

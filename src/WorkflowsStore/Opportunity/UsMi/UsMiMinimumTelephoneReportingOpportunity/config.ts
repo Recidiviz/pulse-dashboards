@@ -30,6 +30,7 @@ export const usMiMinimumTelephoneReportingConfig: OpportunityConfig = {
       "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 90,
   },
 };

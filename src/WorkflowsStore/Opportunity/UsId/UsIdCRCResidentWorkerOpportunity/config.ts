@@ -31,6 +31,7 @@ export const usIdCRCResidentWorkerConfig: OpportunityConfig = {
       "Review residents who may be eligbile for transfer to a CRC and start their paperwork in ATLAS.",
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 90,
   },
 };

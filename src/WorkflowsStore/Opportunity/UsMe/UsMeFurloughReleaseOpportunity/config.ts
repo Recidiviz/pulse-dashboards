@@ -30,6 +30,7 @@ export const usMeFurloughReleaseConfig: OpportunityConfig = {
       "Search for case managers above to review residents on their caseload who are approaching standard furlough release eligibility and complete application paperwork.",
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 180,
   },
 };

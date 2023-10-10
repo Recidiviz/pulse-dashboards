@@ -29,6 +29,7 @@ export const usMiEarlyDischargeConfig: OpportunityConfig = {
       "Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 90,
   },
 };

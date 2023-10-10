@@ -31,6 +31,7 @@ export const usIdExpandedCRCConfig: OpportunityConfig = {
       "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 30,
   },
 };

@@ -29,6 +29,7 @@ export const usNdEarlyTerminationConfig: OpportunityConfig = {
       "Review clients eligible for early termination and download the paperwork to file with the Court.",
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 90,
   },
 };

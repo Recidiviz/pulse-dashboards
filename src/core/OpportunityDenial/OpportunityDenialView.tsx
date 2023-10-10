@@ -87,14 +87,19 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const maxManualSnoozeDays =
     OPPORTUNITY_CONFIGS[opportunity.type].snooze?.maxSnoozeDays;
 
+  const defaultManualSnoozeDays =
+    OPPORTUNITY_CONFIGS[opportunity.type].snooze?.defaultSnoozeDays;
+
   const defaultAutoSnoozeFn =
     OPPORTUNITY_CONFIGS[opportunity.type].snooze?.defaultSnoozeUntilFn;
+
+  const sliderDays = (snoozeForDays || defaultManualSnoozeDays) ?? 0;
 
   const handleSubmit = async () => {
     await opportunity.setDenialReasons(reasons);
     await opportunity.setOtherReasonText(otherReason);
     if (maxManualSnoozeDays) {
-      await opportunity.setManualSnooze(snoozeForDays, reasons);
+      await opportunity.setManualSnooze(sliderDays, reasons);
     } else if (defaultAutoSnoozeFn) {
       await opportunity.setAutoSnooze(defaultAutoSnoozeFn, reasons);
     }
@@ -106,14 +111,13 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   };
 
   const disableSlider = reasons.length === 0;
-  const disableSaveButton = maxManualSnoozeDays
-    ? reasons.length > 0 && !snoozeForDays
-    : false;
+  const disableSaveButton =
+    reasons.length === 0 || !!(maxManualSnoozeDays && !sliderDays);
 
   const snoozeUntilDate = autoSnoozeUntil
     ? parseISO(autoSnoozeUntil)
     : getSnoozeUntilDate({
-        snoozeForDays,
+        snoozeForDays: sliderDays,
         snoozedOn: formatDateToISO(startOfToday()),
       });
 
@@ -131,6 +135,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         {Object.entries(opportunity.denialReasonsMap).map(
           ([code, description]) => (
             <MenuItem
+              data-testid="OpportunityDenialView__checkbox"
               key={code}
               onClick={() => {
                 const updatedReasons = xor(reasons, [code]).sort();
@@ -173,9 +178,10 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         <SliderWrapper>
           <SliderLabel>Snooze for:</SliderLabel>
           <Slider
+            data-testid="OpportunityDenialView__slider"
             disabled={disableSlider}
             max={maxManualSnoozeDays}
-            value={snoozeForDays}
+            value={sliderDays}
             onChange={handleSliderChange}
             tooltipLabelFormatter={(currentValue) => `${currentValue} days`}
           />
@@ -188,6 +194,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         </SnoozeUntilReminderText>
       )}
       <ActionButton
+        data-testid="OpportunityDenialView__button"
         disabled={disableSaveButton}
         width="117px"
         onClick={handleSubmit}

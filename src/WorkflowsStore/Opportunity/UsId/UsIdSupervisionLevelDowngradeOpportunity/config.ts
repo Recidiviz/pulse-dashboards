@@ -29,6 +29,7 @@ export const usIdSupervisionLevelDowngradeConfig: OpportunityConfig = {
     callToAction: "Change their supervision level in Atlas",
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 90,
   },
 };

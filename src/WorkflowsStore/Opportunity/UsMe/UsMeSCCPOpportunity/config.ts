@@ -33,6 +33,7 @@ export const usMeSCCPConfig: OpportunityConfig = {
       "SCCP eligibility and complete application paperwork.",
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 180,
   },
 };

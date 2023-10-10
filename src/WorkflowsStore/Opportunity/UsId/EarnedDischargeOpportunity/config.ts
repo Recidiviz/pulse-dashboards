@@ -28,6 +28,7 @@ export const usIdEarnedDischargeConfig: OpportunityConfig = {
     callToAction: `Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.`,
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 90,
   },
 };

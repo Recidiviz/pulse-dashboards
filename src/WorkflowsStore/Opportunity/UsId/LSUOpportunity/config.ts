@@ -28,6 +28,7 @@ export const usIdLSUConfig: OpportunityConfig = {
     callToAction: `Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.`,
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 90,
   },
 };

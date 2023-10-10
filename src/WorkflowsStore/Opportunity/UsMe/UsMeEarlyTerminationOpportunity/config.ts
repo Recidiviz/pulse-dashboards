@@ -31,6 +31,7 @@ export const usMeEarlyTerminationConfig: OpportunityConfig = {
       "Search for officers above to review clients who may be good candidates for early termination from probation.",
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 180,
   },
 };

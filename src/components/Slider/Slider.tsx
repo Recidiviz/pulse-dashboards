@@ -37,6 +37,7 @@ const TooltipSlider = ({
   disabled = false,
   step = 1,
   value = 0,
+  ...props
 }: SliderProps) => {
   const min = 0;
   const range = max - min;
@@ -50,6 +51,7 @@ const TooltipSlider = ({
       ratio={ratio}
       range={range}
       value={value}
+      {...props}
     >
       <RangeSlider
         disabled={disabled}

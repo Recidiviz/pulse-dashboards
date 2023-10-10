@@ -29,6 +29,7 @@ export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig = {
     callToAction: "Change their supervision level in TOMIS.",
   }),
   snooze: {
+    defaultSnoozeDays: 30,
     maxSnoozeDays: 90,
   },
 };
