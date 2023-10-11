@@ -31,7 +31,7 @@ export const supervisionOfficerSchema = z
     externalId: z.string(),
     supervisorId: z.string(),
     district: z.string().nullable(),
-    caseloadTypes: z.array(z.string()),
+    caseloadType: z.string(),
     currentPeriodStatuses: uppercaseSchemaKeys(
       z.object({
         [targetStatusSchema.enum.FAR]: z.array(

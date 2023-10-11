@@ -129,9 +129,7 @@ const OutliersStaffCard: React.FC<OutliersStaffCardType> = ({
     <CardWrapper noFlex={isTablet}>
       <CardHeader hasBorder={!isTablet}>
         <CardTitle>{title || officer.displayName}</CardTitle>
-        <CardSubtitle>
-          {subtitle || officer.caseloadTypes.join(", ")}
-        </CardSubtitle>
+        <CardSubtitle>{subtitle || officer.caseloadType}</CardSubtitle>
       </CardHeader>
       <CardBody>
         {officer.currentPeriodStatuses.FAR.map((metric) => (

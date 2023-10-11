@@ -32,10 +32,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     },
     district: supervisionOfficerSupervisorsFixture[0].district,
     supervisorId: supervisionOfficerSupervisorsFixture[0].externalId,
-    caseloadTypes: [
-      CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
-      CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
-    ],
+    caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
     currentPeriodStatuses: {
       far: [
         rawSupervisionOfficerMetricOutlierFixtures
@@ -54,7 +51,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     },
     district: supervisionOfficerSupervisorsFixture[0].district,
     supervisorId: supervisionOfficerSupervisorsFixture[0].externalId,
-    caseloadTypes: [CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER],
+    caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     currentPeriodStatuses: {
       far: [],
       near: [
@@ -72,7 +69,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     },
     district: supervisionOfficerSupervisorsFixture[0].district,
     supervisorId: supervisionOfficerSupervisorsFixture[0].externalId,
-    caseloadTypes: [CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER],
+    caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     currentPeriodStatuses: {
       far: [
         rawSupervisionOfficerMetricOutlierFixtures
@@ -91,7 +88,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     },
     district: supervisionOfficerSupervisorsFixture[1].district,
     supervisorId: supervisionOfficerSupervisorsFixture[1].externalId,
-    caseloadTypes: [CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER],
+    caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     currentPeriodStatuses: {
       far: [
         rawSupervisionOfficerMetricOutlierFixtures

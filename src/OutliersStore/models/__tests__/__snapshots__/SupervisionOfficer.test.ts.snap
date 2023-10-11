@@ -2,10 +2,7 @@
 
 exports[`transformations 1`] = `
 Object {
-  "caseloadTypes": Array [
-    "GENERAL_OR_OTHER",
-    "SEX_OFFENSE",
-  ],
+  "caseloadType": "SEX_OFFENSE",
   "currentPeriodStatuses": Object {
     "FAR": Array [
       Object {
@@ -72,9 +69,7 @@ Object {
 
 exports[`transformations 2`] = `
 Object {
-  "caseloadTypes": Array [
-    "GENERAL_OR_OTHER",
-  ],
+  "caseloadType": "GENERAL_OR_OTHER",
   "currentPeriodStatuses": Object {
     "FAR": Array [],
     "MET": Array [
@@ -99,9 +94,7 @@ Object {
 
 exports[`transformations 3`] = `
 Object {
-  "caseloadTypes": Array [
-    "GENERAL_OR_OTHER",
-  ],
+  "caseloadType": "GENERAL_OR_OTHER",
   "currentPeriodStatuses": Object {
     "FAR": Array [
       Object {
@@ -158,9 +151,7 @@ Object {
 
 exports[`transformations 4`] = `
 Object {
-  "caseloadTypes": Array [
-    "GENERAL_OR_OTHER",
-  ],
+  "caseloadType": "GENERAL_OR_OTHER",
   "currentPeriodStatuses": Object {
     "FAR": Array [
       Object {
