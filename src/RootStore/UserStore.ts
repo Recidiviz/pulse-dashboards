@@ -45,6 +45,7 @@ import {
 import { PATHWAYS_SECTIONS, PathwaysPageIdList } from "../core/views";
 import { UserRole } from "../FirestoreStore";
 import tenants from "../tenants";
+import { castToError } from "../utils/castToError";
 import { isDemoMode } from "../utils/isDemoMode";
 import isIE11 from "../utils/isIE11";
 import { isOfflineMode } from "../utils/isOfflineMode";
@@ -202,7 +203,7 @@ export default class UserStore {
         });
       }
     } catch (caught) {
-      const error = caught instanceof Error ? caught : new Error(`${caught}`);
+      const error = castToError(caught);
       if (error.message === "Invalid state" && this.auth0) {
         this.auth0.logout();
         this.auth0.loginWithRedirect();

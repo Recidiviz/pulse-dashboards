@@ -30,6 +30,7 @@ import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import flags from "../../flags";
 import RootStore from "../../RootStore";
 import { TenantId } from "../../RootStore/types";
+import { castToError } from "../../utils/castToError";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
@@ -274,7 +275,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     } catch (e) {
       runInAction(() => {
         this.isLoading = false;
-        this.error = e instanceof Error ? e : new Error(`${e}`);
+        this.error = castToError(e);
         this.isHydrated = false;
       });
     }

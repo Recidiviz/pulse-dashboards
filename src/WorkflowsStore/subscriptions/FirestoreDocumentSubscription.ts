@@ -32,6 +32,7 @@ import {
 } from "mobx";
 
 import { FeatureGateError } from "../../errors";
+import { castToError } from "../../utils/castToError";
 import {
   DocumentSubscription,
   TransformFunction,
@@ -118,7 +119,7 @@ export abstract class FirestoreDocumentSubscription<
       this.isHydrated = true;
       this.error = undefined;
     } catch (e) {
-      this.setError(e instanceof Error ? e : new Error(`${e}`));
+      this.setError(castToError(e));
       // don't log routine feature flag checks, but do log everything else
       if (!(e instanceof FeatureGateError)) {
         Sentry.captureException(e);

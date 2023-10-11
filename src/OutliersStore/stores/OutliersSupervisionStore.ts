@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { difference, index } from "d3-array";
+import { index } from "d3-array";
 import { makeAutoObservable, observable } from "mobx";
 
 import { OutliersAPI } from "../api/interface";
@@ -25,6 +25,7 @@ import { OutliersConfig } from "../models/OutliersConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import type { OutliersStore } from "../OutliersStore";
+import { SupervisionOfficersPresenter } from "../presenters/SupervisionOfficersPresenter";
 import { FlowMethod } from "../types";
 
 export class OutliersSupervisionStore {
@@ -33,9 +34,11 @@ export class OutliersSupervisionStore {
     Map<string, MetricBenchmark>
   >;
 
-  supervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
-
   officersBySupervisor: Map<string, SupervisionOfficer[]> = new Map();
+
+  supervisorId?: string;
+
+  supervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
 
   constructor(
     public readonly outliersStore: OutliersStore,
@@ -62,19 +65,6 @@ export class OutliersSupervisionStore {
       (b) => b.caseloadType
     );
 
-    // since we already know what metrics to expect, we can verify that none are missing
-    const missingMetrics = difference(
-      this.config.metrics.map((m) => m.name),
-      benchmarksByMetricAndCaseloadType.keys()
-    );
-    if (missingMetrics.size) {
-      throw new Error(
-        `Missing benchmark data for ${Array.from(missingMetrics.values()).join(
-          ", "
-        )}`
-      );
-    }
-
     this.benchmarksByMetricAndCaseloadType = benchmarksByMetricAndCaseloadType;
   }
 
@@ -85,7 +75,7 @@ export class OutliersSupervisionStore {
     const { benchmarksByMetricAndCaseloadType } = this;
     if (!benchmarksByMetricAndCaseloadType) return;
 
-    // we expect all metrics to be present; in practice this should be handled upstream,
+    // we expect all metrics to be present; this is also handled downstream in the presenter,
     // but for type safety we will verify here
     try {
       return index(
@@ -145,6 +135,21 @@ export class OutliersSupervisionStore {
     const officersData =
       yield this.outliersStore.apiClient.officersForSupervisor(supervisorId);
 
-    this.officersBySupervisor.set(supervisorId, officersData);
+    if (officersData.length > 0)
+      this.officersBySupervisor.set(supervisorId, officersData);
+  }
+
+  /**
+   * Creates and returns the supervisionOfficersPresenter for the current supervisorId
+   */
+  get supervisionOfficersPresenter(): SupervisionOfficersPresenter | undefined {
+    if (this.supervisorId) {
+      return new SupervisionOfficersPresenter(this, this.supervisorId);
+    }
+    return undefined;
+  }
+
+  setSupervisorId(supervisorId: string | undefined): void {
+    this.supervisorId = supervisorId;
   }
 }

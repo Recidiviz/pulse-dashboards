@@ -16,10 +16,13 @@
 // =============================================================================
 
 import { palette } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import simplur from "simplur";
 
 import NotFound from "../../components/NotFound";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { supervisionOfficerFixture } from "../../OutliersStore/models/offlineFixtures/SupervisionOfficerFixture";
 import { supervisionOfficerSupervisorsFixture } from "../../OutliersStore/models/offlineFixtures/SupervisionOfficerSupervisor";
@@ -35,6 +38,14 @@ import OutliersStaffCard from "./OutliersStaffCard";
 const OutliersSupervisorPage = () => {
   const { isLaptop } = useIsMobile(true);
   const { supervisorId }: { supervisorId: string } = useParams();
+
+  const {
+    outliersStore: { supervisionStore },
+  } = useRootStore();
+
+  useEffect(() => {
+    if (supervisionStore) supervisionStore.setSupervisorId(supervisorId);
+  }, [supervisionStore, supervisorId]);
 
   const supervisor = supervisionOfficerSupervisorsFixture.find(
     (s) => s.externalId === supervisorId
@@ -85,4 +96,4 @@ const OutliersSupervisorPage = () => {
   );
 };
 
-export default OutliersSupervisorPage;
+export default observer(OutliersSupervisorPage);

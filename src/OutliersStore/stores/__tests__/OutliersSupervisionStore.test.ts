@@ -58,13 +58,15 @@ test("cannot hydrate benchmarks with API error", async () => {
   expect(store.metricConfigsById).toBeUndefined();
 });
 
-test("cannot hydrate benchmarks with missing metrics", async () => {
+// The verification for missing metrics happens in the presenter where we
+// have a more accurate idea of which metrics are necessary per supervisor/caseload type
+test("can hydrate benchmarks with missing metrics", async () => {
   jest
     .spyOn(OutliersOfflineAPIClient.prototype, "metricBenchmarks")
     // this should include only 2 of the 3 expected metric types
     .mockResolvedValue(metricBenchmarksFixture.slice(0, 2));
 
-  await expect(flowResult(store.hydrateMetricConfigs())).toReject();
+  await expect(flowResult(store.hydrateMetricConfigs())).toResolve();
 
   expect(store.metricConfigsById).toBeUndefined();
 });
@@ -170,4 +172,12 @@ test("hydrate supervisionOfficers for supervisor", async () => {
   expect(store.officersBySupervisor.get(testSupervisorId)).toEqual(
     expect.arrayContaining(supervisionOfficerFixture.slice(0, 2))
   );
+});
+
+test("supervisionOfficersPresenter", () => {
+  expect(store.supervisionOfficersPresenter).toBeUndefined();
+  store.setSupervisorId("madavis123");
+  expect(store.supervisionOfficersPresenter).toBeDefined();
+  store.setSupervisorId(undefined);
+  expect(store.supervisionOfficersPresenter).toBeUndefined();
 });

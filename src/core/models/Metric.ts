@@ -20,6 +20,7 @@ import { autorun, makeObservable, observable, runInAction } from "mobx";
 import { callMetricsApi } from "../../api/metrics/metricsClient";
 import RootStore from "../../RootStore";
 import { TenantId } from "../../RootStore/types";
+import { castToError } from "../../utils/castToError";
 import CoreStore from "../CoreStore";
 import { MetricRecord, RawMetricData } from "./types";
 
@@ -89,7 +90,7 @@ export default abstract class Metric<RecordFormat extends MetricRecord> {
     } catch (e) {
       runInAction(() => {
         this.isLoading = false;
-        this.isError = e instanceof Error ? e : new Error(`${e}`);
+        this.isError = castToError(e);
       });
     }
   }
