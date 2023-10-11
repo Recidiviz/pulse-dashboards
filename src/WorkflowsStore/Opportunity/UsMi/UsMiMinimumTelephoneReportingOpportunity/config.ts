@@ -16,7 +16,10 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const usMiMinimumTelephoneReportingConfig: OpportunityConfig = {
   stateCode: "US_MI",
@@ -24,7 +27,10 @@ export const usMiMinimumTelephoneReportingConfig: OpportunityConfig = {
   label: "Minimum Telephone Reporting",
   hydratedHeader: (count: number) => ({
     // TODO: Update the copy.
-    eligibilityText: simplur`${count} client[|s] may be eligible for a downgrade to `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} client[|s] may be eligible for a downgrade to `,
     opportunityText: "minimum telephone reporting",
     callToAction:
       "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",

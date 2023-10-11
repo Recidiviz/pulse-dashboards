@@ -8,7 +8,7 @@ exports[`Generate hydrated header to match snapshot 1`] = `
 Array [
   Object {
     "callToAction": "Review these clients and complete their auto-generated TEPE Note.",
-    "eligibilityText": "0 clients may be ",
+    "eligibilityText": "Some clients may be ",
     "opportunityText": "on or past their expiration date",
   },
   Object {

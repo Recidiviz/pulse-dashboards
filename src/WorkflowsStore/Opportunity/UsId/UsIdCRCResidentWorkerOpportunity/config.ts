@@ -16,7 +16,10 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const usIdCRCResidentWorkerConfig: OpportunityConfig = {
   stateCode: "US_ID",
@@ -24,7 +27,10 @@ export const usIdCRCResidentWorkerConfig: OpportunityConfig = {
   label: "Resident worker at Community Reentry Centers",
   featureVariant: "usIdCRC",
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} resident[|s] may be `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} resident[|s] may be `,
     opportunityText:
       "eligible to be a resident worker at a Community Reentry Center",
     callToAction:

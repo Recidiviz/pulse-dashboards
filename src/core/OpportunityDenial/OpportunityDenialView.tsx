@@ -121,16 +121,17 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         snoozedOn: formatDateToISO(startOfToday()),
       });
 
+  const prompt = opportunity.isAlert
+    ? `Please select the reason(s) ${opportunity.person?.displayPreferredName} should be overridden:`
+    : `Which of the following requirements has ${opportunity.person?.displayPreferredName} not met?`;
+
   return (
     <SidePanelContents
       className="OpportunityDenial"
       data-testid="OpportunityDenial"
     >
       <Heading person={opportunity.person} />
-      <SidePanelHeader>
-        Which of the following requirements has{" "}
-        {opportunity.person?.displayPreferredName} not met?
-      </SidePanelHeader>
+      <SidePanelHeader>{prompt}</SidePanelHeader>
       <>
         {Object.entries(opportunity.denialReasonsMap).map(
           ([code, description]) => (

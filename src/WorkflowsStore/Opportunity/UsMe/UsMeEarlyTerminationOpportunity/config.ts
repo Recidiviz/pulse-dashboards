@@ -16,7 +16,10 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const usMeEarlyTerminationConfig: OpportunityConfig = {
   stateCode: "US_ME",
@@ -25,7 +28,10 @@ export const usMeEarlyTerminationConfig: OpportunityConfig = {
   initialHeader:
     "Search for officers above to review clients who may be good candidates for early termination from probation.",
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} client[|s] may be good [a|] candidate[|s] for `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} client[|s] may be [a|] good candidate[|s] for `,
     opportunityText: "Early Termination",
     callToAction:
       "Search for officers above to review clients who may be good candidates for early termination from probation.",

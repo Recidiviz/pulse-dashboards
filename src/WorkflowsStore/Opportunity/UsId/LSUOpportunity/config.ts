@@ -16,14 +16,20 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const usIdLSUConfig: OpportunityConfig = {
   stateCode: "US_ID",
   urlSection: "LSU",
   label: "Limited Supervision Unit",
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} client[|s] may be eligible for the `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} client[|s] may be eligible for the `,
     opportunityText: `Limited Supervision Unit`,
     callToAction: `Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.`,
   }),

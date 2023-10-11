@@ -16,14 +16,20 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const usIdSupervisionLevelDowngradeConfig: OpportunityConfig = {
   stateCode: "US_ID",
   urlSection: "supervisionLevelMismatch",
   label: "Supervision Level Mismatch",
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} client[|s] [is|are] being `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} client[|s] [is|are] being `,
     opportunityText:
       "supervised at a level that does not match their latest risk score",
     callToAction: "Change their supervision level in Atlas",

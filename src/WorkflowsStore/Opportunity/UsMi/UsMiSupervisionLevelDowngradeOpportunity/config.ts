@@ -16,14 +16,20 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const usMiSupervisionLevelDowngradeConfig: OpportunityConfig = {
   stateCode: "US_MI",
   urlSection: "supervisionLevelMismatch",
   label: "Supervision Level Mismatch",
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} client[|s] within their first 6 months of supervision [is|are] being `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} client[|s] within their first 6 months of supervision [is|are] being `,
     opportunityText:
       "supervised at a level that does not match their latest risk score",
     callToAction:

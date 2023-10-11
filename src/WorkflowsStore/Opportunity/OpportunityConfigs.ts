@@ -42,6 +42,11 @@ import { usTnCustodyLevelDowngradeConfig as usTnCustodyLevelDowngrade } from "./
 import { usTnExpirationConfig as usTnExpiration } from "./UsTn/UsTnExpirationOpportunity/config";
 import { usTnSupervisionLevelDowngradeConfig as supervisionLevelDowngrade } from "./UsTn/UsTnSupervisionLevelDowngradeOpportunity/config";
 
+/** Formatter for opportunity headers */
+export const oppHeaderCountFormatter = (quantity: number): string | number => {
+  return quantity === 0 ? "Some" : quantity;
+};
+
 /** Auto refers to users who have a default snooze until set.
  * defaultSnoozeUntilFn is used to calculate the default snooze until,
  * e.g. weekly on Mondays or 90 days.

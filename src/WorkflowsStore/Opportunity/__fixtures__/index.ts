@@ -21,6 +21,7 @@ import { ClientRecord } from "../../../FirestoreStore";
 import { FeatureVariant, TenantId } from "../../../RootStore/types";
 import { dateToTimestamp } from "../../utils";
 import {
+  oppHeaderCountFormatter,
   OpportunityConfig,
   OpportunityConfigMap,
   OpportunityType,
@@ -59,7 +60,10 @@ export const mockUsXxOppConfig: OpportunityConfig = {
     defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
   },
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} client[|s] may be `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} client[|s] may be `,
     opportunityText: "on or past their expiration date",
     callToAction:
       "Review these clients and complete their auto-generated TEPE Note.",
@@ -69,7 +73,7 @@ export const mockUsXxOppConfig: OpportunityConfig = {
 export const mockUsXxTwoOppConfig: OpportunityConfig = {
   ...mockUsXxOppConfig,
   hydratedHeader: (count: number) => ({
-    fullText: simplur`${count} client[|s] may be `,
+    fullText: simplur`${[count, oppHeaderCountFormatter]} client[|s] may be `,
     opportunityText: "on or past their expiration date",
     callToAction:
       "Review these clients and complete their auto-generated TEPE Note.",

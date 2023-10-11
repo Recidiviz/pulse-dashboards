@@ -205,7 +205,11 @@ describe("Generate hydrated header", () => {
     hydratedHeaders.forEach((hydratedHeader, index) => {
       const eligibilityOrFullText =
         hydratedHeader.eligibilityText || hydratedHeader.fullText;
-      expect(eligibilityOrFullText?.startsWith(index.toString())).toBeTrue();
+      if (index === 0) {
+        expect(eligibilityOrFullText?.startsWith("Some")).toBeTrue();
+      } else {
+        expect(eligibilityOrFullText?.startsWith(index.toString())).toBeTrue();
+      }
     });
   });
 });

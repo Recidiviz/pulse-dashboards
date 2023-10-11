@@ -16,14 +16,20 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const usIdEarnedDischargeConfig: OpportunityConfig = {
   stateCode: "US_ID",
   urlSection: "earnedDischarge",
   label: "Earned Discharge",
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} client[|s] may be eligible for `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} client[|s] may be eligible for `,
     opportunityText: `earned discharge`,
     callToAction: `Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.`,
   }),

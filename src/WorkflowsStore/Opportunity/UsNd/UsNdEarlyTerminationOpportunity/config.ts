@@ -16,14 +16,20 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const usNdEarlyTerminationConfig: OpportunityConfig = {
   stateCode: "US_ND",
   urlSection: "earlyTermination",
   label: "Early Termination",
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} client[|s] may be eligible for `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} client[|s] may be eligible for `,
     opportunityText: "early termination",
     callToAction:
       "Review clients eligible for early termination and download the paperwork to file with the Court.",

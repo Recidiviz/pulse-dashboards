@@ -16,14 +16,20 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig = {
   stateCode: "US_TN",
   urlSection: "supervisionLevelDowngrade",
   label: "Supervision Level Downgrade",
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} client[|s] may be `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} client[|s] may be `,
     opportunityText:
       "supervised at a higher level than their latest risk score",
     callToAction: "Change their supervision level in TOMIS.",

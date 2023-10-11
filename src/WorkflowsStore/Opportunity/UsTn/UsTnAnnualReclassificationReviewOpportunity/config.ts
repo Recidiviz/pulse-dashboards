@@ -18,7 +18,10 @@
 import { add } from "date-fns";
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig = {
   stateCode: "US_TN",
@@ -26,7 +29,10 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig = {
   label: "Annual Reclassification",
   featureVariant: "usTnAnnualReclassification",
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} resident[|s] are eligible `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} resident[|s] are eligible `,
     opportunityText: "for their annual reclassification",
     callToAction:
       "Review residents due for their annual reclassification " +

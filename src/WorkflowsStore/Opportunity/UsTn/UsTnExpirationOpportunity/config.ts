@@ -17,7 +17,10 @@
 import { add } from "date-fns";
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const usTnExpirationConfig: OpportunityConfig = {
   stateCode: "US_TN",
@@ -27,7 +30,10 @@ export const usTnExpirationConfig: OpportunityConfig = {
   initialHeader:
     "Search for officers above to review clients who may be on or past their supervision expiration date.",
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} client[|s] may be `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} client[|s] may be `,
     opportunityText: "on or past their expiration date",
     callToAction:
       "Review these clients and complete their auto-generated TEPE Note.",

@@ -16,7 +16,10 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const usMeWorkReleaseConfig: OpportunityConfig = {
   stateCode: "US_ME",
@@ -24,7 +27,10 @@ export const usMeWorkReleaseConfig: OpportunityConfig = {
   label: "Work Release",
   featureVariant: "usMeWorkRelease",
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} client[|s] may be `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} client[|s] may be `,
     opportunityText:
       "eligible for the Community Transition Program (Work Release)",
     callToAction:

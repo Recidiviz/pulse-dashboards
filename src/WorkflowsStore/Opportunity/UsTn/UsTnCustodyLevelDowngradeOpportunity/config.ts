@@ -17,14 +17,20 @@
 import { add } from "date-fns";
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const usTnCustodyLevelDowngradeConfig: OpportunityConfig = {
   stateCode: "US_TN",
   urlSection: "custodyLevelDowngrade",
   label: "Custody Level Downgrade",
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} resident[|s] may be eligible for a`,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} resident[|s] may be eligible for a`,
     opportunityText: "custody level downgrade",
     callToAction: "Review and update custody levels.",
   }),

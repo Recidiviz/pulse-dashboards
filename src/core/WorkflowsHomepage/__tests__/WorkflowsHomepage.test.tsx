@@ -228,7 +228,7 @@ describe("WorkflowsHomepage", () => {
 
     expect(
       screen.getByText(
-        "Review clients who are nearing or past their full-term release date and email clerical to move them to history."
+        "Some clients are nearing or past their full-term release date"
       )
     ).toBeInTheDocument();
 

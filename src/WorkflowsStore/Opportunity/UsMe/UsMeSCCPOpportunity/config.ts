@@ -16,7 +16,10 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OpportunityConfig } from "../../OpportunityConfigs";
+import {
+  oppHeaderCountFormatter,
+  OpportunityConfig,
+} from "../../OpportunityConfigs";
 
 export const usMeSCCPConfig: OpportunityConfig = {
   stateCode: "US_ME",
@@ -26,7 +29,10 @@ export const usMeSCCPConfig: OpportunityConfig = {
     "Search for case managers above to review residents in their unit who are approaching SCCP " +
     "eligibility and complete application paperwork.",
   hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${count} resident[|s] may be eligible for the `,
+    eligibilityText: simplur`${[
+      count,
+      oppHeaderCountFormatter,
+    ]} resident[|s] may be eligible for the `,
     opportunityText: "Supervised Community Confinement Program",
     callToAction:
       "Search for case managers above to review residents in their unit who are approaching " +

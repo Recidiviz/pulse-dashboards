@@ -91,7 +91,7 @@ export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
 
   readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MI;
 
-  readonly isAlert = false;
+  readonly isAlert = true;
 
   readonly hideUnknownCaseNoteDates = true;
 
