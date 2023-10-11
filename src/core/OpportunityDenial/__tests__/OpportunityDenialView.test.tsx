@@ -21,6 +21,7 @@ import timekeeper from "timekeeper";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { Opportunity } from "../../../WorkflowsStore";
+import { OTHER_KEY } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { OpportunityDenialView } from "../OpportunityDenialView";
 
@@ -49,6 +50,51 @@ describe("OpportunityDenialView", () => {
 
   afterEach(() => {
     jest.resetAllMocks();
+  });
+
+  describe("Other reason input", () => {
+    beforeEach(() => {
+      renderElement({
+        ...mockOpportunity,
+        autoSnooze: {
+          snoozeUntil: "2024-10-10",
+          snoozedOn: "",
+          snoozedBy: "",
+        },
+        denialReasonsMap: {
+          [OTHER_KEY]: "Other, please specify a reason",
+        },
+      });
+    });
+
+    it("disables the save button if no characters are entered", () => {
+      const checkbox = screen.getByTestId("OpportunityDenialView__checkbox");
+      if (checkbox) fireEvent.click(checkbox);
+      expect(
+        screen.getByTestId("OpportunityDenialView__button")
+      ).toBeDisabled();
+    });
+
+    it("disables the save button if less than 3 characters are entered", () => {
+      const checkbox = screen.getByTestId("OpportunityDenialView__checkbox");
+      if (checkbox) fireEvent.click(checkbox);
+      const otherInput = screen.getByTestId("OtherReasonInput");
+      if (otherInput) fireEvent.change(otherInput, { target: { value: "12" } });
+
+      expect(
+        screen.getByTestId("OpportunityDenialView__button")
+      ).toBeDisabled();
+    });
+
+    it("enables the save button when 3+ characters are entered", () => {
+      const checkbox = screen.getByTestId("OpportunityDenialView__checkbox");
+      if (checkbox) fireEvent.click(checkbox);
+      const otherInput = screen.getByTestId("OtherReasonInput");
+      if (otherInput)
+        fireEvent.change(otherInput, { target: { value: "123" } });
+
+      expect(screen.getByTestId("OpportunityDenialView__button")).toBeEnabled();
+    });
   });
 
   describe("autoSnooze is enabled", () => {

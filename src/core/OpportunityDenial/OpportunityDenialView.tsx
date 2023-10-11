@@ -19,6 +19,7 @@ import { palette, Sans14, typography } from "@recidiviz/design-system";
 import { format, parseISO, startOfToday } from "date-fns";
 import { xor } from "lodash";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components/macro";
 
@@ -60,6 +61,29 @@ const SnoozeUntilReminderText = styled(Sans14)`
   color: ${palette.slate85};
 `;
 
+const OtherReasonLabel = styled.label`
+  ${typography.Sans12}
+  color: ${palette.slate85};
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  padding: 0.5rem 1.1rem 0;
+  margin-bottom: 0;
+`;
+
+const OtherReasonLength = styled.span<{ otherReasonInvalid: boolean }>`
+  color: ${(props) =>
+    props.otherReasonInvalid ? palette.data.crimson1 : palette.slate85};
+`;
+
+const OtherReasonSection = styled(OtherReasonWrapper)`
+  background: ${palette.marble3};
+  border-radius: ${rem(4)};
+  border: 2px solid transparent;
+`;
+
+const maxOtherReasonCharLength = 1600;
+const minOtherReasonCharLength = 3;
 export const OpportunityDenialView = observer(function OpportunityDenialView({
   opportunity,
   onSubmit = () => null,
@@ -111,9 +135,12 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   };
 
   const disableSlider = reasons.length === 0;
-  const disableSaveButton =
-    reasons.length === 0 || !!(maxManualSnoozeDays && !sliderDays);
 
+  const unsetSlider = maxManualSnoozeDays && !sliderDays;
+  const otherReasonInvalid =
+    reasons.includes(OTHER_KEY) &&
+    (otherReason ?? "").length < minOtherReasonCharLength;
+  const disableSaveButton = disableSlider || unsetSlider || otherReasonInvalid;
   const snoozeUntilDate = autoSnoozeUntil
     ? parseISO(autoSnoozeUntil)
     : getSnoozeUntilDate({
@@ -166,13 +193,26 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         )}
 
         {reasons.includes(OTHER_KEY) && (
-          <OtherReasonWrapper>
+          <OtherReasonSection>
+            <OtherReasonLabel htmlFor="OtherReasonInput">
+              Enter at least 3 characters
+              <span>
+                <OtherReasonLength otherReasonInvalid={otherReasonInvalid}>
+                  {(otherReason ?? "").length}
+                </OtherReasonLength>{" "}
+                / {maxOtherReasonCharLength}
+              </span>
+            </OtherReasonLabel>
             <OtherReasonInput
+              data-testid="OtherReasonInput"
+              id="OtherReasonInput"
+              maxLength={maxOtherReasonCharLength}
+              minLength={minOtherReasonCharLength}
               defaultValue={otherReason}
               placeholder="Please specify a reason…"
               onChange={(event) => setOtherReason(event.target.value)}
             />
-          </OtherReasonWrapper>
+          </OtherReasonSection>
         )}
       </>
       {maxManualSnoozeDays && (
