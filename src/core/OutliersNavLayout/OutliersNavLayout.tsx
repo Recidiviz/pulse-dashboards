@@ -25,11 +25,16 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { NavigationLayout } from "../NavigationLayout";
 import { OUTLIERS_PATHS } from "../views";
 
+export const INTERCOM_HEIGHT = 64;
+
 const Wrapper = styled.div`
   ${typography.Sans14};
   background-color: ${palette.marble1};
   min-height: 100vh;
   width: 100%;
+
+  display: flex;
+  flex-direction: column;
 `;
 
 const Main = styled.main<{
@@ -41,7 +46,11 @@ const Main = styled.main<{
       : `${rem(spacing.xxl)} ${rem(spacing.lg)}`};
 
   /* leaving extra space for the Intercom button */
-  padding-bottom: ${rem(spacing.md * 4)};
+  padding-bottom: ${rem(INTERCOM_HEIGHT)};
+
+  display: flex;
+  flex-direction: column;
+  flex: auto;
 `;
 
 const OutliersNavLayout: React.FC = ({ children }) => {

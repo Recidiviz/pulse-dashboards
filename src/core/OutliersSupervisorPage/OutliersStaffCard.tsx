@@ -30,11 +30,12 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficer } from "../../OutliersStore/models/SupervisionOfficer";
 import { outliersUrl } from "../views";
 
-export const CardWrapper = styled.div<{ noFlex: boolean }>`
+export const CardWrapper = styled.div<{ noFlex: boolean; isSticky?: boolean }>`
   border: 1px solid ${palette.slate30};
-  margin: ${rem(spacing.md)} 0;
   display: ${({ noFlex }) => (noFlex ? "block" : "flex")};
   color: ${palette.slate85};
+
+  ${({ isSticky }) => isSticky && `position: sticky; top: 5rem;`}
 `;
 
 export const CardHeader = styled.div<{ hasBorder: boolean }>`

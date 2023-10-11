@@ -18,12 +18,13 @@
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import useIsMobile from "../../hooks/useIsMobile";
 import {
   CardContent,
   CardHeader,
   CardTitle,
   CardWrapper,
-} from "../OutliersSupervisor/OutliersStaffCard";
+} from "../OutliersSupervisorPage/OutliersStaffCard";
 import OutliersLegend, { defaultLegendItems } from "./OutliersLegend";
 
 const LegendNote = styled.div`
@@ -35,8 +36,10 @@ type OutliersStaffLegendType = {
 };
 
 const OutliersStaffLegend: React.FC<OutliersStaffLegendType> = ({ note }) => {
+  const { isLaptop } = useIsMobile(true);
+
   return (
-    <CardWrapper noFlex>
+    <CardWrapper noFlex isSticky={!isLaptop}>
       <CardHeader hasBorder={false}>
         <CardTitle>Legend</CardTitle>
         <CardContent noFlex={!note}>

@@ -15,35 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Link, useParams } from "react-router-dom";
-
-import OutliersNavLayout from "../OutliersNavLayout";
-import { OUTLIERS_PATHS } from "../views";
-
-const OutliersStaff = () => {
-  const { officerId }: { officerId: string } = useParams();
-
-  return (
-    <OutliersNavLayout>
-      Hello, officer {officerId}
-      <br />
-      <Link
-        to={{
-          pathname: `${OUTLIERS_PATHS.supervision}/staff/${officerId}/adverse-outcome/m001`,
-        }}
-      >
-        Metric 1
-      </Link>
-      <br />
-      <Link
-        to={{
-          pathname: `${OUTLIERS_PATHS.supervision}/staff/${officerId}/adverse-outcome/m002`,
-        }}
-      >
-        Metric 2
-      </Link>
-    </OutliersNavLayout>
-  );
-};
-
-export default OutliersStaff;
+export { default } from "./OutliersSupervisorPage";

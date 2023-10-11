@@ -18,14 +18,18 @@
 import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 
-import OutliersHomepage from "../OutliersHomepage/OutliersHomepage";
-import OutliersStaff from "../OutliersStaff/OutliersStaff";
-import OutliersStaffMetric from "../OutliersStaffMetric/OutliersStaffMetric";
-import OutliersSupervisor from "../OutliersSupervisor/OutliersSupervisor";
-import OutliersSupervisorSearch from "../OutliersSupervisorSearch/OutliersSupervisorSearch";
+import NotFound from "../../components/NotFound";
+import OutliersHomepage from "../OutliersHomepage";
+import OutliersStaffPage from "../OutliersStaffPage";
+import OutliersSupervisorPage from "../OutliersSupervisorPage";
+import OutliersSupervisorSearchPage from "../OutliersSupervisorSearchPage";
 import { DASHBOARD_PATHS, OUTLIERS_PATHS } from "../views";
 
 const PageOutliers: React.FC = () => {
+  window.scrollTo({
+    top: 0,
+  });
+
   return (
     <Switch>
       <Redirect
@@ -41,23 +45,24 @@ const PageOutliers: React.FC = () => {
       <Route
         exact
         path={OUTLIERS_PATHS.supervisionSupervisorSearch}
-        component={OutliersSupervisorSearch}
+        component={OutliersSupervisorSearchPage}
       />
       <Route
         exact
         path={OUTLIERS_PATHS.supervisionSupervisor}
-        component={OutliersSupervisor}
+        component={OutliersSupervisorPage}
       />
       <Route
         exact
         path={OUTLIERS_PATHS.supervisionStaff}
-        component={OutliersStaff}
+        component={OutliersStaffPage}
       />
       <Route
         exact
         path={OUTLIERS_PATHS.supervisionStaffMetric}
-        component={OutliersStaffMetric}
+        component={OutliersStaffPage}
       />
+      <NotFound />
     </Switch>
   );
 };

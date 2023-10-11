@@ -15,4 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { default } from "./OutliersStaffMetric";
+import { Link } from "react-router-dom";
+
+import { supervisionOfficerSupervisorsFixture } from "../../OutliersStore/models/offlineFixtures/SupervisionOfficerSupervisor";
+import OutliersNavLayout from "../OutliersNavLayout";
+import { outliersUrl } from "../views";
+
+const OutliersSupervisorSearchPage = () => {
+  const links = supervisionOfficerSupervisorsFixture.map((supervisor) => (
+    <div key={supervisor.externalId}>
+      <Link
+        to={outliersUrl("supervisionSupervisor", {
+          supervisorId: supervisor.externalId,
+        })}
+      >
+        {supervisor.displayName}
+      </Link>
+    </div>
+  ));
+  return <OutliersNavLayout>{links}</OutliersNavLayout>;
+};
+
+export default OutliersSupervisorSearchPage;
