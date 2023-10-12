@@ -26,7 +26,7 @@ import {
   AssessmentQuestionNumber,
   AssessmentQuestionSpec,
 } from "./assessmentQuestions";
-import FormInput from "./FormInput";
+import FormTextarea from "./FormTextarea";
 import { RadioButton, TextWithLeader } from "./styles";
 
 const OptionScore = styled.div`
@@ -116,7 +116,7 @@ const AssessmentQuestion: React.FC<AssessmentQuestionProps> = ({
         {disabled ? (
           <br />
         ) : (
-          <FormInput
+          <FormTextarea
             name={`q${questionNumber}Note`}
             placeholder="Add Note"
             style={{ width: "100%", fontStyle: "italic" }}

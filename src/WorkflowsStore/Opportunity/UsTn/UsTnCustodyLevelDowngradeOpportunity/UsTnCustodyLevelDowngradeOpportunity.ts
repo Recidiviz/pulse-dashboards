@@ -21,6 +21,7 @@ import { OpportunityProfileModuleName } from "../../../../core/WorkflowsClientPr
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
+import { UsTnAnnualReclassificationReviewForm } from "../../Forms/UsTnAnnualReclassificationReviewForm";
 import { UsTnCustodyLevelDowngradeForm } from "../../Forms/usTnCustodyLevelDowngradeForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
@@ -95,7 +96,17 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
       [OTHER_KEY]: "Please specify a reason",
     };
 
-    this.form = new UsTnCustodyLevelDowngradeForm(this, resident.rootStore);
+    if (
+      this.resident.rootStore.workflowsStore.featureVariants
+        .usTnAnnualReclassification
+    ) {
+      this.form = new UsTnAnnualReclassificationReviewForm(
+        this,
+        resident.rootStore
+      );
+    } else {
+      this.form = new UsTnCustodyLevelDowngradeForm(this, resident.rootStore);
+    }
   }
 
   get requirementsMet(): OpportunityRequirement[] {

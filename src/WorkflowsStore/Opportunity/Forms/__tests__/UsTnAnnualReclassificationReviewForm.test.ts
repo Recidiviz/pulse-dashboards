@@ -78,6 +78,13 @@ function createTestUnit() {
       currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
       latestClassificationDate: new Date("2019-04-03T12:00"),
       levelOfCare: "LOC",
+      hasIncompatibles: true,
+      incompatibleArray: [
+        { incompatibleOffenderId: "1", incompatibleType: "O" },
+        { incompatibleOffenderId: "2", incompatibleType: "O" },
+        { incompatibleOffenderId: "3", incompatibleType: "O" },
+      ],
+      statusAtHearingSeg: "GEN",
     },
     eligibleCriteria: {
       usTnAtLeast12MonthsSinceLatestAssessment: {
@@ -121,6 +128,10 @@ const baseResult: PartialFormData = {
   q3Note: "ROBBERY-ARMED WITH DEADLY WEAPON",
   q8Note: "8/22/22 - Felony",
   residentFullName: "Joe Test",
+  currentCustodyLevel: "MINIMUM",
+  hasIncompatibles: true,
+  incompatiblesList: "1, 2, 3",
+  statusAtHearing: "GEN",
 };
 
 beforeEach(() => {

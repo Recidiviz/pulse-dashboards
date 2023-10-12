@@ -21,11 +21,33 @@ import { AssessmentQuestionNumber } from "../../../core/Paperwork/US_TN/CustodyL
 import { dateStringSchema } from "../schemaHelpers";
 
 export const formInformationSchema = z.object({
+  activeRecommendations: z.array(
+    z.object({
+      Pathway: z.string(),
+      PathwayName: z.string(),
+      Recommendation: z.string(),
+      TreatmentGoal: z.string(),
+      VantagePointTitle: z.string(),
+    })
+  ),
+  classificationType: z.string(),
+  hasIncompatibles: z.boolean(),
+  incompatibleArray: z.array(
+    z.object({
+      incompatibleOffenderId: z.string(),
+      incompatibleType: z.string(),
+    })
+  ),
   currentOffenses: z.string().array().optional(),
   lastCafDate: dateStringSchema.optional(),
   lastCafTotal: z.string().optional(),
   latestClassificationDate: dateStringSchema.optional(),
+  latestVantageCompletedDate: dateStringSchema.optional(),
+  latestVantageRiskLevel: z.string().optional(),
   levelOfCare: z.string().optional(),
+  sentenceEffectiveDate: dateStringSchema.optional(),
+  sentenceReleaseEligibilityDate: dateStringSchema.optional(),
+  statusAtHearingSeg: z.string(),
   q1Score: z.coerce.number(),
   q2Score: z.coerce.number(),
   q3Score: z.coerce.number(),
@@ -85,5 +107,19 @@ export type UsTnSharedReclassificationDraftData = {
   lastCafTotal: string;
   latestClassificationDate: string;
   levelOfCare: string;
+  statusAtHearing: string;
+  hasIncompatibles: boolean;
+  incompatiblesList: string;
+  inmateWaivesNotice: boolean;
+  currentCustodyLevel: string;
+  recommendationFacilityAssignment: string;
+  recommendationTransfer: boolean;
+  recommendationCustodyLevel: string;
+  recommendationOverrideType: string;
+  recommendationJustification: string;
+  updatedPhotoNeeded: boolean;
+  inmateAppeal: boolean;
+  disagreementReasons: string;
+  denialReasons: string;
 } & DraftDataSelections &
   DraftDataNotes;

@@ -30,12 +30,35 @@ import {
 } from "../Paperwork/US_TN/CustodyReclassification/assessmentQuestions";
 import ClassificationCustodyAssessment from "../Paperwork/US_TN/CustodyReclassification/ClassificationCustodyAssessment";
 
-function templateValuesForFormData(
+export function templateValuesForFormData(
   formData: Partial<UsTnSharedReclassificationDraftData>
 ) {
   const out: Record<string, any> = { ...formData };
+
+  function expandMultipleChoice<F extends keyof typeof formData>(
+    field: F,
+    options: typeof formData[F][]
+  ) {
+    const val = formData[field];
+    for (const o of options) {
+      if (val === o) {
+        out[`${field}Selected${o}`] = true;
+        return;
+      }
+    }
+    out[`$f{field}Other`] = val;
+  }
+  expandMultipleChoice("statusAtHearing", ["GEN", "AS", "PC"]);
+  expandMultipleChoice("hasIncompatibles", [true, false]);
+  expandMultipleChoice("recommendationTransfer", [true, false]);
+  expandMultipleChoice("inmateAppeal", [true, false]);
+
+  out.totalScore = 0;
   assessmentQuestions.forEach((question, i) => {
     const qNum = (i + 1) as AssessmentQuestionNumber;
+
+    if (qNum > 4 && out.scheduleAScore > 9) return;
+
     const selection = formData[`q${qNum}Selection`];
     if (selection !== undefined) {
       if (selection === -1) {
@@ -43,12 +66,35 @@ function templateValuesForFormData(
         out[`q${qNum}Score`] = 0;
       } else {
         out[`q${qNum}Selected${selection}`] = true;
-        out[`q${qNum}Score`] = question.options[selection].score;
+        const { score } = question.options[selection];
+        out[`q${qNum}Score`] = score;
+        out.totalScore += score;
+      }
+    }
+
+    if (qNum === 4) {
+      out.scheduleAScore = out.totalScore;
+      if (out.scheduleAScore >= 15) {
+        out.scheduleAText = "Maximum";
+        out.totalText = "Maximum";
+      } else if (out.scheduleAScore > 9) {
+        out.scheduleAText = "Close";
+        out.totalText = "Close";
+      } else {
+        out.scheduleAText = "Complete Schedule B";
       }
     }
   });
 
-  out.scheduleAScore = out.q1Score + out.q2Score + out.q3Score + out.q4Score;
+  if (out.totalText) {
+    // skipped schedule B, we're done
+  } else if (out.totalScore >= 17) {
+    out.totalText = "Close";
+  } else if (out.totalScore >= 7) {
+    out.totalText = "Medium";
+  } else {
+    out.totalText = "Minimum";
+  }
   return out;
 }
 
@@ -78,6 +124,7 @@ const WorkflowsUsTnReclassForm: React.FC = () => {
     <FormContainer
       heading="Reclassification Packet"
       agencyName="TDOC"
+      dataProviso="Please review any data pre-filled in lines 2, 4, 5 and 9 in the Classification Assessment Form."
       downloadButtonLabel={form.downloadText}
       onClickDownload={async () => onClickDownload()}
       opportunity={form.opportunity}

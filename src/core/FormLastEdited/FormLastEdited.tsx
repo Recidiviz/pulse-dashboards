@@ -24,10 +24,11 @@ import { FormBase } from "../../WorkflowsStore/Opportunity/Forms/FormBase";
 type FormLastEditedProps = {
   form?: FormBase<any>;
   agencyName: string;
+  dataProviso?: string;
 };
 
 export const FormLastEdited: React.FC<FormLastEditedProps> = observer(
-  function FormLastEdited({ agencyName, form }) {
+  function FormLastEdited({ agencyName, form, dataProviso }) {
     const { formLastUpdated } = form || {};
     if (formLastUpdated) {
       return (
@@ -40,6 +41,7 @@ export const FormLastEdited: React.FC<FormLastEditedProps> = observer(
     return (
       <>
         Prefilled with data from {agencyName} on {moment().format("MM-DD-YYYY")}
+        . {dataProviso}
       </>
     );
   }

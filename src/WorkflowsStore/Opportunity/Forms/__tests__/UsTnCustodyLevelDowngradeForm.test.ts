@@ -70,6 +70,15 @@ function createTestUnit() {
       lastCafTotal: "20",
       latestClassificationDate: new Date("2019-04-03T12:00"),
       levelOfCare: "LOC",
+      activeRecommendations: [],
+      classificationType: "SPECIAL",
+      hasIncompatibles: true,
+      incompatibleArray: [
+        { incompatibleOffenderId: "1", incompatibleType: "O" },
+        { incompatibleOffenderId: "2", incompatibleType: "O" },
+        { incompatibleOffenderId: "3", incompatibleType: "O" },
+      ],
+      statusAtHearingSeg: "GEN",
     },
     eligibleCriteria: {
       custodyLevelHigherThanRecommended: {
@@ -114,6 +123,10 @@ const baseResult: PartialFormData = {
   q6Note: "8/22/22 - Some note",
   q7Note: "8/22/22 - Some note",
   residentFullName: "Joe Test",
+  currentCustodyLevel: "HIGH",
+  hasIncompatibles: true,
+  incompatiblesList: "1, 2, 3",
+  statusAtHearing: "GEN",
 };
 
 beforeEach(() => {

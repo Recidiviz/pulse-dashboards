@@ -363,6 +363,11 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
     },
     ineligibleCriteria: {},
     formInformation: {
+      activeRecommendations: [],
+      classificationType: "SPECIAL",
+      hasIncompatibles: false,
+      incompatibleArray: [],
+      statusAtHearingSeg: "GEN",
       currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
       lastCafDate: new Date("2022-08-22"),
       lastCafTotal: "8",

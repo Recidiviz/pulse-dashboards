@@ -66,13 +66,28 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
       date: formatDate(new Date()),
     };
     if (record) {
-      const { formInformation } = record;
+      const { formInformation, eligibleCriteria } = record;
       out.lastCafDate = formatDate(formInformation.lastCafDate);
       out.lastCafTotal = formInformation.lastCafTotal;
       out.latestClassificationDate = formatDate(
         formInformation.latestClassificationDate
       );
       out.levelOfCare = formInformation.levelOfCare;
+
+      out.statusAtHearing = formInformation.statusAtHearingSeg;
+      out.hasIncompatibles = formInformation.hasIncompatibles;
+      out.incompatiblesList = formInformation.incompatibleArray
+        ?.map(({ incompatibleOffenderId }) => incompatibleOffenderId)
+        .join(", ");
+      if ("custodyLevelHigherThanRecommended" in eligibleCriteria) {
+        out.currentCustodyLevel =
+          eligibleCriteria.custodyLevelHigherThanRecommended.custodyLevel;
+      } else {
+        out.currentCustodyLevel =
+          eligibleCriteria.custodyLevelComparedToRecommended.custodyLevel ??
+          undefined;
+      }
+
       assessmentQuestionNumbers.forEach((q) => {
         const score = formInformation[`q${q}Score`];
         if (q === 1 && score === 5) {

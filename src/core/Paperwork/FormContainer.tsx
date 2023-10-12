@@ -59,6 +59,7 @@ const FormHeading = styled(Sans24)`
 const LastEditedMessage = styled(Sans12)`
   color: ${palette.marble1};
   margin-top: ${rem(spacing.sm)};
+  width: 70%;
 `;
 
 const DownloadButton = styled(Button).attrs({
@@ -89,6 +90,7 @@ const FormPreviewContainer = styled.div`
 
 type FormHeaderProps = {
   agencyName: string;
+  dataProviso?: string;
   heading: string;
   onClickDownload: () => Promise<void>;
   downloadButtonLabel: string;
@@ -101,6 +103,7 @@ export const FormContainer = observer(function FormContainer({
   heading,
   onClickDownload,
   agencyName,
+  dataProviso,
   opportunity,
   children,
 }: FormHeaderProps): React.ReactElement {
@@ -115,7 +118,11 @@ export const FormContainer = observer(function FormContainer({
           <div>
             <FormHeading>{heading}</FormHeading>
             <LastEditedMessage>
-              <FormLastEdited agencyName={agencyName} form={form} />
+              <FormLastEdited
+                agencyName={agencyName}
+                dataProviso={dataProviso}
+                form={form}
+              />
             </LastEditedMessage>
           </div>
         </FormHeaderSection>

@@ -39,6 +39,11 @@ const usTnCustodyLevelDowngradeRecordRaw: UsTnCustodyLevelDowngradeReferralRecor
     },
     ineligibleCriteria: {},
     formInformation: {
+      activeRecommendations: [],
+      classificationType: "SPECIAL",
+      hasIncompatibles: false,
+      incompatibleArray: [],
+      statusAtHearingSeg: "GEN",
       currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
       lastCafDate: "2022-08-22",
       lastCafTotal: "8",

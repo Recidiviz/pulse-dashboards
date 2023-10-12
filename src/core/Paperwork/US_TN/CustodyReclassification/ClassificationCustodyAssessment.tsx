@@ -33,6 +33,7 @@ import {
   AssessmentQuestionSpec,
 } from "./assessmentQuestions";
 import AssessmentScore from "./AssessmentScore";
+import CoverSheet from "./CoverSheet";
 import FormInput from "./FormInput";
 import HeaderFields from "./HeaderFields";
 import { FormContainer, Label } from "./styles";
@@ -82,6 +83,13 @@ const ClassificationCustodyAssessment: React.FC = () => {
 
   return (
     <>
+      <PrintablePageMargin>
+        <PrintablePage>
+          <FormContainer {...formViewerContext}>
+            <CoverSheet />
+          </FormContainer>
+        </PrintablePage>
+      </PrintablePageMargin>
       <PrintablePageMargin>
         <PrintablePage>
           <FormContainer {...formViewerContext}>

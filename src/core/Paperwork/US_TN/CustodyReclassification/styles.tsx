@@ -43,12 +43,6 @@ export const Input = styled.input`
   font-weight: normal;
   padding: 1px 3px;
   margin-bottom: 0;
-
-  background-image: ${EDIT_BACKGROUND};
-  background-repeat: no-repeat;
-  background-position: left 3px center;
-  background-size: 0.75em;
-  padding-left: 1.5em;
 `;
 
 export const RadioButton = styled.input.attrs({
@@ -105,7 +99,13 @@ export const FormContainer = styled.form<FormViewerContextData>`
           }
         `
       : css`
-          ${Input} {
+        ${Input}, textarea {
+            background-image: ${EDIT_BACKGROUND};
+            background-repeat: no-repeat;
+            background-position: top 4px left 3px;
+            background-size: 0.75em;
+            padding-left: 1.5em;
+
             background-color: aliceblue;
             transition-duration: ${animation.defaultDurationMs}ms;
             transition-property: background-color;

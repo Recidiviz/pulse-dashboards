@@ -36,21 +36,24 @@ type FormInputProps = StyledComponentProps<
   never
 > & {
   name: keyof FormDataType;
+  hideValue?: boolean;
 };
 
-const FormInput: React.FC<FormInputProps> = ({ name, ...props }) => {
+const FormInput: React.FC<FormInputProps> = ({ name, hideValue, ...props }) => {
   const form = useOpportunityFormContext();
   const [value, onChange] = useReactiveInput<HTMLInputElement>(name, form);
   const inputRef = useRef<HTMLInputElement>(
     null
   ) as MutableRefObject<HTMLInputElement>;
 
+  const valueForDisplay = hideValue ? "" : value;
+
   const hasAnimated = useAnimatedValue(inputRef, value);
 
   return (
     <Input
       {...props}
-      value={hasAnimated ? value : ""}
+      value={hasAnimated ? valueForDisplay : ""}
       ref={inputRef}
       id={name}
       name={name}

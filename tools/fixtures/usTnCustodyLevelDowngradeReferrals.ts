@@ -38,6 +38,11 @@ export const usTnCustodyLevelDowngradeFixture =
       },
       ineligibleCriteria: {},
       formInformation: {
+        activeRecommendations: [],
+        classificationType: "SPECIAL",
+        hasIncompatibles: false,
+        incompatibleArray: [],
+        statusAtHearingSeg: "GEN",
         q1Score: 0,
         q2Score: 0,
         q3Score: 4,
@@ -78,6 +83,11 @@ export const usTnCustodyLevelDowngradeFixture =
       },
       ineligibleCriteria: {},
       formInformation: {
+        activeRecommendations: [],
+        classificationType: "SPECIAL",
+        hasIncompatibles: false,
+        incompatibleArray: [],
+        statusAtHearingSeg: "GEN",
         currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
         lastCafDate: "2022-08-22",
         lastCafTotal: "8",
