@@ -32,7 +32,7 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig = {
     eligibilityText: simplur`${[
       count,
       oppHeaderCountFormatter,
-    ]} resident[|s] are eligible `,
+    ]} resident[|s] [is|are] eligible `,
     opportunityText: "for their annual reclassification",
     callToAction:
       "Review residents due for their annual reclassification " +

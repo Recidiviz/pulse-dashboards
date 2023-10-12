@@ -107,7 +107,7 @@ export type SnoozeTaskConfig = {
 
 export type ResidentSearchFields = Pick<
   ResidentRecord,
-  "officerId" | "facilityId" | "unitId"
+  "officerId" | "facilityId" | "facilityUnitId"
 >;
 
 export type ClientSearchFields = Pick<ClientRecord, "officerId">;

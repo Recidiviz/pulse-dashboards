@@ -243,6 +243,7 @@ export type ResidentRecord = JusticeInvolvedPersonRecord & {
   personType: "RESIDENT";
   facilityId?: string;
   unitId?: string;
+  facilityUnitId?: string;
   custodyLevel?: string;
   admissionDate?: Timestamp | string;
   releaseDate?: Timestamp | string;

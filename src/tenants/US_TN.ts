@@ -53,8 +53,8 @@ const US_TN_CONFIG: TenantConfig = {
   workflowsSystemConfigs: {
     INCARCERATION: {
       searchType: "LOCATION",
-      searchField: "facilityId",
-      searchTitleOverride: "facility",
+      searchField: "facilityUnitId",
+      searchTitleOverride: "unit",
     },
   },
   navigation: {

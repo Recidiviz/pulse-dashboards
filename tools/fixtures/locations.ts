@@ -60,6 +60,34 @@ const data: LocationRecord[] = [
     id: "BLEDSOE_CC",
     name: "Bledsoe County Correctional Complex",
   },
+  {
+    stateCode: "US_TN",
+    system: "INCARCERATION",
+    idType: "facilityUnitId",
+    id: "BLEDSOE_CC‡UNIT A",
+    name: "Bledsoe County Correctional Complex/UNIT A",
+  },
+  {
+    stateCode: "US_TN",
+    system: "INCARCERATION",
+    idType: "facilityUnitId",
+    id: "BLEDSOE_CC‡UNIT B",
+    name: "Bledsoe County Correctional Complex/UNIT B",
+  },
+  {
+    stateCode: "US_TN",
+    system: "INCARCERATION",
+    idType: "facilityUnitId",
+    id: "BLEDSOE_CC‡UNIT C",
+    name: "Bledsoe County Correctional Complex/UNIT C",
+  },
+  {
+    stateCode: "US_TN",
+    system: "INCARCERATION",
+    idType: "facilityUnitId",
+    id: "BLEDSOE_CC‡UNIT D",
+    name: "Bledsoe County Correctional Complex/UNIT D",
+  },
 ];
 
 export const locationsData: FixtureData<LocationRecord> = {
