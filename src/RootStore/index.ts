@@ -56,8 +56,6 @@ export function getAuthSettings(): Auth0ClientOptions {
 // mobx is configured.
 if (process.env.NODE_ENV !== "test") {
   configure({
-    // make proxies optional for IE 11 support
-    useProxies: "ifavailable",
     // activate runtime linting
     computedRequiresReaction: true,
     reactionRequiresObservable: true,
