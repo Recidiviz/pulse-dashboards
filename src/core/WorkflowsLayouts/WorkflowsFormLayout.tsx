@@ -133,6 +133,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
         opportunity={opportunity}
         formLinkButton={false}
         onDenialButtonClick={() => setCurrentView("DENIAL")}
+        formView
       />
     );
 

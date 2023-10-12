@@ -787,7 +787,9 @@ export function UsMiEarlyDischargeIcDetails({
   );
 }
 
-export function UsTnCommonlyUsedOverrideCodes(): React.ReactElement | null {
+export function UsTnCommonlyUsedOverrideCodes({
+  opportunity,
+}: OpportunityProfileProps): React.ReactElement | null {
   const overrideCodes = {
     C1DEC: "Maximum to Close decrease",
     C2DEC: "Non-assaultive disciplinary",

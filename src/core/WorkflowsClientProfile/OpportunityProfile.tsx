@@ -48,6 +48,7 @@ type OpportunitySidebarProfileProps = {
   opportunity?: Opportunity;
   formLinkButton?: boolean;
   formPrintButton?: boolean;
+  formView?: boolean;
   onDenialButtonClick?: () => void;
 };
 
@@ -94,6 +95,10 @@ export function DetailsSection({
   );
 }
 
+const FormViewOnlyComponent = {
+  UsTnCommonlyUsedOverrideCodes,
+};
+
 type OpportunityDetailComponentName =
   keyof typeof OpportunityDetailSidebarComponents;
 
@@ -106,6 +111,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
   observer(function OpportunitySidebarProfile({
     formLinkButton = false,
     formPrintButton = false,
+    formView = false,
     onDenialButtonClick = () => null,
     opportunity,
   }) {
@@ -144,6 +150,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
           />
         )}
         {opportunity.opportunityProfileModules.map((componentName) => {
+          if (componentName in FormViewOnlyComponent && !formView) return null;
           if (componentName in ClientDetailSidebarComponents) {
             if (!selectedClient) return null;
             const Component =
