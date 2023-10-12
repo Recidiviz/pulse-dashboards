@@ -293,7 +293,7 @@ export function workflowsUrl(
   return WORKFLOWS_PATHS[routeName];
 }
 
-export const OUTLIERS_PATHS: Record<string, string> = {
+export const OUTLIERS_PATHS: Record<OutliersPage, string> = {
   supervision: `/${DASHBOARD_VIEWS.outliers}/supervision`,
   supervisionSupervisorSearch: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisor-search`,
   supervisionSupervisor: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisor/:supervisorId`,

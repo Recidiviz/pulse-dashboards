@@ -16,10 +16,11 @@
 // =============================================================================
 
 import React from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Redirect, Switch } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
 import OutliersHomepage from "../OutliersHomepage";
+import { OutliersRoute } from "../OutliersRoute";
 import OutliersStaffPage from "../OutliersStaffPage";
 import OutliersSupervisorPage from "../OutliersSupervisorPage";
 import OutliersSupervisorSearchPage from "../OutliersSupervisorSearchPage";
@@ -37,31 +38,21 @@ const PageOutliers: React.FC = () => {
         from={DASHBOARD_PATHS.outliers}
         to={OUTLIERS_PATHS.supervision}
       />
-      <Route
-        exact
-        path={OUTLIERS_PATHS.supervision}
-        component={OutliersHomepage}
-      />
-      <Route
-        exact
-        path={OUTLIERS_PATHS.supervisionSupervisorSearch}
-        component={OutliersSupervisorSearchPage}
-      />
-      <Route
-        exact
-        path={OUTLIERS_PATHS.supervisionSupervisor}
-        component={OutliersSupervisorPage}
-      />
-      <Route
-        exact
-        path={OUTLIERS_PATHS.supervisionStaff}
-        component={OutliersStaffPage}
-      />
-      <Route
-        exact
-        path={OUTLIERS_PATHS.supervisionStaffMetric}
-        component={OutliersStaffPage}
-      />
+      <OutliersRoute exact path={OUTLIERS_PATHS.supervision}>
+        <OutliersHomepage />
+      </OutliersRoute>
+      <OutliersRoute exact path={OUTLIERS_PATHS.supervisionSupervisorSearch}>
+        <OutliersSupervisorSearchPage />
+      </OutliersRoute>
+      <OutliersRoute exact path={OUTLIERS_PATHS.supervisionSupervisor}>
+        <OutliersSupervisorPage />
+      </OutliersRoute>
+      <OutliersRoute exact path={OUTLIERS_PATHS.supervisionStaff}>
+        <OutliersStaffPage />
+      </OutliersRoute>
+      <OutliersRoute exact path={OUTLIERS_PATHS.supervisionStaffMetric}>
+        <OutliersStaffPage />
+      </OutliersRoute>
       <NotFound />
     </Switch>
   );

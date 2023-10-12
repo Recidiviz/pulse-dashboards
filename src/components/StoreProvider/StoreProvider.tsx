@@ -18,6 +18,7 @@
 import PropTypes from "prop-types";
 import React, { useContext } from "react";
 
+import { OutliersStore } from "../../OutliersStore/OutliersStore";
 import store, { RootStore } from "../../RootStore";
 import type UserStore from "../../RootStore/UserStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
@@ -40,6 +41,7 @@ export default StoreProvider;
  * incrementally starts to enforce typing in RootStore consumers
  */
 interface PartiallyTypedRootStore {
+  outliersStore: OutliersStore;
   workflowsStore: WorkflowsStore;
   [key: string]: any;
 }

@@ -38,6 +38,10 @@ export class OutliersSupervisionStore {
 
   supervisorId?: string;
 
+  officerId?: string;
+
+  metricId?: string;
+
   supervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
 
   constructor(
@@ -151,5 +155,13 @@ export class OutliersSupervisionStore {
 
   setSupervisorId(supervisorId: string | undefined): void {
     this.supervisorId = supervisorId;
+  }
+
+  setOfficerId(officerId: string | undefined): void {
+    this.officerId = officerId;
+  }
+
+  setMetricId(metricId: string | undefined): void {
+    this.metricId = metricId;
   }
 }

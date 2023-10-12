@@ -1,0 +1,68 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2023 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { Location } from "history";
+import { action } from "mobx";
+import { observer } from "mobx-react-lite";
+import React, { useEffect } from "react";
+import { Route, RouteProps, useLocation, useParams } from "react-router-dom";
+
+import { useRootStore } from "../../components/StoreProvider";
+import { OUTLIERS_PATHS } from "../views";
+
+const RouteSync = observer(function RouteSync({ children }) {
+  const routeParams: Record<string, string | undefined> = useParams();
+  const loc: Location = useLocation();
+
+  const {
+    outliersStore: { supervisionStore },
+  } = useRootStore();
+
+  useEffect(() => {
+    // entire function cannot be wrapped in action()
+    // because it interferes with useEffect dependency tracking
+    const syncParams = action("sync Outliers route params", () => {
+      if (
+        supervisionStore &&
+        loc.pathname.startsWith(OUTLIERS_PATHS.supervision)
+      ) {
+        const { supervisorId, officerId, metricId } = routeParams;
+
+        supervisionStore.setSupervisorId(supervisorId);
+        supervisionStore.setOfficerId(officerId);
+        supervisionStore.setMetricId(metricId);
+      }
+    });
+    syncParams();
+  }, [supervisionStore, loc, routeParams]);
+
+  return <>{children}</>;
+});
+
+/**
+ * Wraps a react-router Route to sync route data to the Outliers datastore.
+ */
+export const OutliersRoute: React.FC<Omit<RouteProps, "component">> = ({
+  children,
+  ...rest
+}) => {
+  return (
+    <Route {...rest}>
+      <RouteSync>{children}</RouteSync>
+    </Route>
+  );
+};

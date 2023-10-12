@@ -17,8 +17,6 @@
 
 import { palette } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
 import simplur from "simplur";
 
 import NotFound from "../../components/NotFound";
@@ -37,15 +35,13 @@ import OutliersStaffCard from "./OutliersStaffCard";
 
 const OutliersSupervisorPage = () => {
   const { isLaptop } = useIsMobile(true);
-  const { supervisorId }: { supervisorId: string } = useParams();
 
   const {
     outliersStore: { supervisionStore },
   } = useRootStore();
 
-  useEffect(() => {
-    if (supervisionStore) supervisionStore.setSupervisorId(supervisorId);
-  }, [supervisionStore, supervisorId]);
+  const supervisorId =
+    supervisionStore?.supervisionOfficersPresenter?.supervisorId;
 
   const supervisor = supervisionOfficerSupervisorsFixture.find(
     (s) => s.externalId === supervisorId

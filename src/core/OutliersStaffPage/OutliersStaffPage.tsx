@@ -24,13 +24,15 @@ import {
   Tabs,
   zindex,
 } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
-import { Link, Redirect, useParams } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import simplur from "simplur";
 import styled, { css } from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficer } from "../../OutliersStore/models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../../OutliersStore/models/SupervisionOfficerSupervisor";
@@ -63,7 +65,7 @@ const scrollShadowStyles = css`
 
 const StyledTabList = styled(TabList)<{ isMobile: boolean }>`
   display: block;
-  padding ${rem(spacing.md)} ${rem(spacing.sm)} 0;
+  padding: ${rem(spacing.md)} ${rem(spacing.sm)} 0;
   white-space: nowrap;
   overflow-x: auto;
   ${({ isMobile }) => isMobile && `border-bottom: none`};
@@ -93,11 +95,11 @@ const StyledTabList = styled(TabList)<{ isMobile: boolean }>`
 
 const StyledTab = styled(Tab)`
   font-size: ${rem(spacing.md)};
-  color ${palette.slate60};
+  color: ${palette.slate60};
   display: inline-block;
 
   &:hover {
-    color ${palette.pine2};
+    color: ${palette.pine2};
   }
 
   &.Tab--selected {
@@ -107,7 +109,7 @@ const StyledTab = styled(Tab)`
 
 const StyledTabPanel = styled(TabPanel)`
   background: #f4f5f6;
-  padding ${rem(spacing.lg)};
+  padding: ${rem(spacing.lg)};
   &.TabPanel--selected {
     display: flex;
     flex-direction: column;
@@ -115,11 +117,13 @@ const StyledTabPanel = styled(TabPanel)`
   }
 `;
 
-const OutliersStaffPage = () => {
+const OutliersStaffPage = observer(function OutliersStaffPage() {
   const { isMobile, isTablet } = useIsMobile(true);
-  // TODO #4174 Create wrapper component to sync url params
-  const { officerId, metricId }: { officerId: string; metricId: string } =
-    useParams();
+  const {
+    outliersStore: { supervisionStore },
+  } = useRootStore();
+  // TODO #4072: read these from the presenter instead
+  const { officerId, metricId } = supervisionStore ?? {};
 
   // TODO Remove local storage once data store is ready
   const supervisorData = localStorage.getItem("supervisor") || "";
@@ -143,7 +147,7 @@ const OutliersStaffPage = () => {
     }
   }, [currentOfficer, metricId]);
 
-  if (!currentOfficer || !currentSupervisor) return <NotFound />;
+  if (!currentOfficer || !currentSupervisor || !officerId) return <NotFound />;
 
   const currentMetricId =
     metricId || currentOfficer.currentPeriodStatuses.FAR[0].metricId;
@@ -161,7 +165,6 @@ const OutliersStaffPage = () => {
 
   return (
     <>
-      {/* TODO #4174 Move this redirect once url wrapper is ready */}
       <Redirect
         from={outliersUrl("supervisionStaff", {
           officerId,
@@ -202,6 +205,6 @@ const OutliersStaffPage = () => {
       </OutliersPageLayout>
     </>
   );
-};
+});
 
 export default OutliersStaffPage;
