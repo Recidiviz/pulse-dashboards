@@ -19,11 +19,9 @@ import { palette } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import simplur from "simplur";
 
-import NotFound from "../../components/NotFound";
-import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { supervisionOfficerFixture } from "../../OutliersStore/models/offlineFixtures/SupervisionOfficerFixture";
-import { supervisionOfficerSupervisorsFixture } from "../../OutliersStore/models/offlineFixtures/SupervisionOfficerSupervisor";
+import { SupervisionOfficersPresenter } from "../../OutliersStore/presenters/SupervisionOfficersPresenter";
+import ModelHydrator from "../ModelHydrator";
 import { OutliersStaffLegend } from "../OutliersLegend";
 import OutliersPageLayout from "../OutliersPageLayout";
 import {
@@ -33,44 +31,34 @@ import {
 } from "../OutliersPageLayout/OutliersPageLayout";
 import OutliersStaffCard from "./OutliersStaffCard";
 
-const OutliersSupervisorPage = () => {
+export const SupervisorPage = observer(function SupervisorPage({
+  presenter,
+}: {
+  presenter: SupervisionOfficersPresenter;
+}) {
   const { isLaptop } = useIsMobile(true);
 
-  const {
-    outliersStore: { supervisionStore },
-  } = useRootStore();
+  const { supervisorInfo, outlierOfficersData, allOfficers } = presenter;
+  // TODO 4077 Empty page
+  if (!outlierOfficersData) return null;
 
-  const supervisorId =
-    supervisionStore?.supervisionOfficersPresenter?.supervisorId;
-
-  const supervisor = supervisionOfficerSupervisorsFixture.find(
-    (s) => s.externalId === supervisorId
-  );
-  // TODO Remove local storage once data store is ready
-  localStorage.setItem("supervisor", JSON.stringify(supervisor));
-
-  const allOfficers =
-    supervisionOfficerFixture.filter((s) => s.supervisorId === supervisorId) ||
-    [];
-  // TODO Remove local storage once data store is ready
-  localStorage.setItem("officers", JSON.stringify(allOfficers));
-
-  const outlierOfficers = allOfficers.filter(
-    (officer) => officer.currentPeriodStatuses.FAR.length > 0
-  );
-
-  const pageTitle = simplur`${outlierOfficers.length} of the ${allOfficers.length} officer[|s] in your unit [is an|are] outlier[|s] on one or more metrics`;
-
-  if (!supervisor) return <NotFound />;
+  // TODO Remove local storage once staff page presenter is ready
+  localStorage.setItem("supervisor", JSON.stringify(supervisorInfo));
+  localStorage.setItem("officers", JSON.stringify(outlierOfficersData));
 
   const infoItems = [
-    { title: "district", info: supervisor.district },
-    { title: "unit supervisor", info: supervisor.displayName },
+    { title: "district", info: supervisorInfo?.district },
+    {
+      title: "unit supervisor",
+      info: supervisorInfo?.displayName,
+    },
     {
       title: "staff",
-      info: allOfficers.map((officer) => officer.displayName).join(", "),
+      info: allOfficers?.map((officer) => officer.displayName).join(", "),
     },
   ];
+
+  const pageTitle = simplur`${outlierOfficersData.length} of the ${allOfficers?.length} officer[|s] in your unit [is an|are] outlier[|s] on one or more metrics`;
 
   return (
     <OutliersPageLayout pageTitle={pageTitle} infoItems={infoItems}>
@@ -79,7 +67,7 @@ const OutliersSupervisorPage = () => {
           <OutliersStaffLegend note="Correctional officers are only compared with other officers with similar caseloads. An officer with a specialized caseload will not be compared to one with a general caseload." />
         </Sidebar>
         <Body>
-          {outlierOfficers.map((officer) => {
+          {outlierOfficersData.map((officer) => {
             return (
               <OutliersStaffCard key={officer.externalId} officer={officer}>
                 <div style={{ height: 200, background: palette.slate10 }} />
@@ -90,6 +78,19 @@ const OutliersSupervisorPage = () => {
       </Wrapper>
     </OutliersPageLayout>
   );
+});
+
+const OutliersSupervisorPage = ({
+  presenter,
+}: {
+  presenter?: SupervisionOfficersPresenter;
+}) => {
+  if (!presenter) return null;
+  return (
+    <ModelHydrator model={presenter}>
+      <SupervisorPage presenter={presenter} />
+    </ModelHydrator>
+  );
 };
 
-export default observer(OutliersSupervisorPage);
+export default OutliersSupervisorPage;

@@ -18,7 +18,6 @@
 import { Link } from "react-router-dom";
 
 import { supervisionOfficerSupervisorsFixture } from "../../OutliersStore/models/offlineFixtures/SupervisionOfficerSupervisor";
-import OutliersNavLayout from "../OutliersNavLayout";
 import { outliersUrl } from "../views";
 
 const OutliersSupervisorSearchPage = () => {
@@ -33,7 +32,7 @@ const OutliersSupervisorSearchPage = () => {
       </Link>
     </div>
   ));
-  return <OutliersNavLayout>{links}</OutliersNavLayout>;
+  return <div>{links}</div>;
 };
 
 export default OutliersSupervisorSearchPage;

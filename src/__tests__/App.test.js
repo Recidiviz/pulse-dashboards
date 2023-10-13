@@ -77,6 +77,7 @@ describe("App tests", () => {
   const PageSystemMock = PageSystem.type;
   const PageVitalsMock = PageVitals.type;
   const PageImpactMock = PageImpact.type;
+  const PageOutliersMock = PageOutliers.type;
   let userStore = {};
 
   LanternLayoutMock.mockImplementation(({ children }) => children);
@@ -96,7 +97,7 @@ describe("App tests", () => {
   MethodologyPathwaysMock.mockReturnValue(
     mockWithTestId(mockMethodologyPathwaysId)
   );
-  PageOutliers.mockReturnValue(mockWithTestId(mockOutliersId));
+  PageOutliersMock.mockReturnValue(mockWithTestId(mockOutliersId));
 
   beforeEach(() => {
     jest.clearAllMocks();

@@ -15,10 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import OutliersNavLayout from "../OutliersNavLayout";
-
 const OutliersHomepage = () => {
-  return <OutliersNavLayout>Hello, Outliers</OutliersNavLayout>;
+  return <div>Hello, Outliers</div>;
 };
 
 export default OutliersHomepage;

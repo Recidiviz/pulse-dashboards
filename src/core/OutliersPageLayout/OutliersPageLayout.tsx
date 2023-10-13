@@ -21,7 +21,6 @@ import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { humanReadableTitleCase } from "../../utils";
-import OutliersNavLayout from "../OutliersNavLayout";
 
 export const Wrapper = styled.div<{
   isLaptop: boolean;
@@ -80,7 +79,7 @@ export const Sidebar = styled.div<{
 
 type OutliersPageLayoutType = {
   pageTitle: string;
-  infoItems: { title: string; info: string | null }[];
+  infoItems: { title: string; info: string | undefined | null }[];
 };
 
 const OutliersPageLayout: React.FC<OutliersPageLayoutType> = ({
@@ -91,7 +90,7 @@ const OutliersPageLayout: React.FC<OutliersPageLayoutType> = ({
   const { isMobile, isLaptop } = useIsMobile(true);
 
   return (
-    <OutliersNavLayout>
+    <>
       <Wrapper isLaptop={isLaptop}>
         <Header>
           <Title isMobile={isMobile}>{pageTitle}</Title>
@@ -111,7 +110,7 @@ const OutliersPageLayout: React.FC<OutliersPageLayoutType> = ({
         </Header>
       </Wrapper>
       {children}
-    </OutliersNavLayout>
+    </>
   );
 };
 

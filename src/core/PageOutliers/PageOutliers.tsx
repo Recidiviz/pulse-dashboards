@@ -15,11 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { Redirect, Switch } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
+import { useRootStore } from "../../components/StoreProvider";
 import OutliersHomepage from "../OutliersHomepage";
+import OutliersNavLayout from "../OutliersNavLayout";
 import { OutliersRoute } from "../OutliersRoute";
 import OutliersStaffPage from "../OutliersStaffPage";
 import OutliersSupervisorPage from "../OutliersSupervisorPage";
@@ -31,31 +34,39 @@ const PageOutliers: React.FC = () => {
     top: 0,
   });
 
+  const {
+    outliersStore: { supervisionStore },
+  } = useRootStore();
+
   return (
-    <Switch>
-      <Redirect
-        exact
-        from={DASHBOARD_PATHS.outliers}
-        to={OUTLIERS_PATHS.supervision}
-      />
-      <OutliersRoute exact path={OUTLIERS_PATHS.supervision}>
-        <OutliersHomepage />
-      </OutliersRoute>
-      <OutliersRoute exact path={OUTLIERS_PATHS.supervisionSupervisorSearch}>
-        <OutliersSupervisorSearchPage />
-      </OutliersRoute>
-      <OutliersRoute exact path={OUTLIERS_PATHS.supervisionSupervisor}>
-        <OutliersSupervisorPage />
-      </OutliersRoute>
-      <OutliersRoute exact path={OUTLIERS_PATHS.supervisionStaff}>
-        <OutliersStaffPage />
-      </OutliersRoute>
-      <OutliersRoute exact path={OUTLIERS_PATHS.supervisionStaffMetric}>
-        <OutliersStaffPage />
-      </OutliersRoute>
-      <NotFound />
-    </Switch>
+    <OutliersNavLayout>
+      <Switch>
+        <Redirect
+          exact
+          from={DASHBOARD_PATHS.outliers}
+          to={OUTLIERS_PATHS.supervision}
+        />
+        <OutliersRoute exact path={OUTLIERS_PATHS.supervision}>
+          <OutliersHomepage />
+        </OutliersRoute>
+        <OutliersRoute exact path={OUTLIERS_PATHS.supervisionSupervisorSearch}>
+          <OutliersSupervisorSearchPage />
+        </OutliersRoute>
+        <OutliersRoute exact path={OUTLIERS_PATHS.supervisionSupervisor}>
+          <OutliersSupervisorPage
+            presenter={supervisionStore?.supervisionOfficersPresenter}
+          />
+        </OutliersRoute>
+        <OutliersRoute exact path={OUTLIERS_PATHS.supervisionStaff}>
+          <OutliersStaffPage />
+        </OutliersRoute>
+        <OutliersRoute exact path={OUTLIERS_PATHS.supervisionStaffMetric}>
+          <OutliersStaffPage />
+        </OutliersRoute>
+        <NotFound />
+      </Switch>
+    </OutliersNavLayout>
   );
 };
 
-export default PageOutliers;
+export default observer(PageOutliers);

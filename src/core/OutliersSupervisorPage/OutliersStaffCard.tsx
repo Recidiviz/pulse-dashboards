@@ -27,7 +27,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
-import { SupervisionOfficer } from "../../OutliersStore/models/SupervisionOfficer";
+import { OutlierOfficerData } from "../../OutliersStore/presenters/SupervisionOfficersPresenter";
 import { outliersUrl } from "../views";
 
 export const CardWrapper = styled.div<{ noFlex: boolean; isSticky?: boolean }>`
@@ -113,7 +113,7 @@ const MetricHint = styled.div`
 `;
 
 type OutliersStaffCardType = {
-  officer: SupervisionOfficer;
+  officer: OutlierOfficerData;
   title?: string;
   subtitle?: string;
 };
@@ -133,7 +133,7 @@ const OutliersStaffCard: React.FC<OutliersStaffCardType> = ({
         <CardSubtitle>{subtitle || officer.caseloadType}</CardSubtitle>
       </CardHeader>
       <CardBody>
-        {officer.currentPeriodStatuses.FAR.map((metric) => (
+        {officer.outlierMetrics.map((metric) => (
           <MetricSection
             to={outliersUrl("supervisionStaffMetric", {
               officerId: officer.externalId,

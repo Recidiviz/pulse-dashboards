@@ -27,7 +27,7 @@ import {
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import simplur from "simplur";
 import styled, { css } from "styled-components/macro";
 
@@ -147,10 +147,7 @@ const OutliersStaffPage = observer(function OutliersStaffPage() {
     }
   }, [currentOfficer, metricId]);
 
-  if (!currentOfficer || !currentSupervisor || !officerId) return <NotFound />;
-
-  const currentMetricId =
-    metricId || currentOfficer.currentPeriodStatuses.FAR[0].metricId;
+  if (!currentOfficer) return <NotFound />;
 
   const pageTitle = simplur`${currentOfficer.displayName} is an outlier on ${currentOfficer.currentPeriodStatuses.FAR.length} metric[|s]`;
 
@@ -160,50 +157,39 @@ const OutliersStaffPage = observer(function OutliersStaffPage() {
       info: currentOfficer.caseloadType,
     },
     { title: "district", info: currentOfficer.district },
-    { title: "unit supervisor", info: currentSupervisor.displayName },
+    { title: "unit supervisor", info: currentSupervisor?.displayName },
   ];
 
   return (
-    <>
-      <Redirect
-        from={outliersUrl("supervisionStaff", {
-          officerId,
-        })}
-        to={outliersUrl("supervisionStaffMetric", {
-          officerId,
-          metricId: currentMetricId,
-        })}
-      />
-      <OutliersPageLayout pageTitle={pageTitle} infoItems={infoItems}>
-        <StyledTabs
-          isMobile={isMobile}
-          selectedIndex={selectedTabIndex}
-          onSelect={(index) => setTabIndex(index)}
-        >
-          <StyledTabList isMobile={isMobile}>
-            {currentOfficer.currentPeriodStatuses.FAR.map((metric) => (
-              <Link
-                key={metric.metricId}
-                to={outliersUrl("supervisionStaffMetric", {
-                  officerId: currentOfficer.externalId,
-                  metricId: metric.metricId,
-                })}
-              >
-                <StyledTab key={metric.metricId}>{metric.metricId}</StyledTab>
-              </Link>
-            ))}
-          </StyledTabList>
+    <OutliersPageLayout pageTitle={pageTitle} infoItems={infoItems}>
+      <StyledTabs
+        isMobile={isMobile}
+        selectedIndex={selectedTabIndex}
+        onSelect={(index) => setTabIndex(index)}
+      >
+        <StyledTabList isMobile={isMobile}>
           {currentOfficer.currentPeriodStatuses.FAR.map((metric) => (
-            <StyledTabPanel key={metric.metricId}>
-              <Wrapper isLaptop={isTablet}>
-                <Sidebar isLaptop={isTablet}>{metric.metricId}</Sidebar>
-                <Body>{metric.metricId}</Body>
-              </Wrapper>
-            </StyledTabPanel>
+            <Link
+              key={metric.metricId}
+              to={outliersUrl("supervisionStaffMetric", {
+                officerId: currentOfficer.externalId,
+                metricId: metric.metricId,
+              })}
+            >
+              <StyledTab key={metric.metricId}>{metric.metricId}</StyledTab>
+            </Link>
           ))}
-        </StyledTabs>
-      </OutliersPageLayout>
-    </>
+        </StyledTabList>
+        {currentOfficer.currentPeriodStatuses.FAR.map((metric) => (
+          <StyledTabPanel key={metric.metricId}>
+            <Wrapper isLaptop={isTablet}>
+              <Sidebar isLaptop={isTablet}>{metric.metricId}</Sidebar>
+              <Body>{metric.metricId}</Body>
+            </Wrapper>
+          </StyledTabPanel>
+        ))}
+      </StyledTabs>
+    </OutliersPageLayout>
   );
 });
 

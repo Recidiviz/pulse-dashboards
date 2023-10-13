@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { when } from "mobx";
-
 import { RootStore } from "../../../RootStore";
 import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
 import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConfigFixture";
@@ -37,36 +35,24 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-test("outlierOfficersData", () => {
+test("outlierOfficersData", async () => {
   store.setSupervisorId("mdavis123");
   const presenter = store.supervisionOfficersPresenter;
   expect(presenter).toBeDefined();
+  await presenter?.hydrate();
 
-  when(
-    () => !!presenter && presenter.isHydrated,
-    () => {
-      const outlierOfficersData = presenter?.outlierOfficersData;
-      expect(outlierOfficersData).toMatchSnapshot();
-    }
-  );
-
-  expect.assertions(2);
+  const outlierOfficersData = presenter?.outlierOfficersData;
+  expect(outlierOfficersData).toMatchSnapshot();
 });
 
-test("supervisorInfo", () => {
+test("supervisorInfo", async () => {
   store.setSupervisorId("mdavis123");
   const presenter = store.supervisionOfficersPresenter;
   expect(presenter).toBeDefined();
+  await presenter?.hydrate();
 
-  when(
-    () => !!presenter && presenter.isHydrated,
-    () => {
-      const outlierOfficersData = presenter?.supervisorInfo;
-      expect(outlierOfficersData).toMatchSnapshot();
-    }
-  );
-
-  expect.assertions(2);
+  const outlierOfficersData = presenter?.supervisorInfo;
+  expect(outlierOfficersData).toMatchSnapshot();
 });
 
 test("hydration error in dependency", async () => {

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { autorun, flowResult, makeAutoObservable } from "mobx";
+import { action, flowResult, makeAutoObservable } from "mobx";
 
 import { Hydratable } from "../../core/models/types";
 import { castToError } from "../../utils/castToError";
@@ -28,7 +28,10 @@ import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
 
 // This type represents the state of fully hydrated data
 // where all necessary related objects are guaranteed to exist
-type OutlierOfficerData = Omit<SupervisionOfficer, "currentPeriodStatuses"> & {
+export type OutlierOfficerData = Omit<
+  SupervisionOfficer,
+  "currentPeriodStatuses"
+> & {
   outlierMetrics: MetricWithConfig[];
 };
 type MetricWithConfig = SupervisionOfficerMetricOutlier & {
@@ -39,16 +42,14 @@ type MetricWithConfig = SupervisionOfficerMetricOutlier & {
 export class SupervisionOfficersPresenter implements Hydratable {
   error?: Error | undefined;
 
+  isLoading = false;
+
   constructor(
     private supervisionStore: OutliersSupervisionStore,
     public supervisorId: string
   ) {
-    makeAutoObservable(this);
-
-    autorun(async () => {
-      if (!this.isHydrated) {
-        await this.hydrate();
-      }
+    makeAutoObservable(this, {
+      setError: action,
     });
   }
 
@@ -58,6 +59,10 @@ export class SupervisionOfficersPresenter implements Hydratable {
       this.areOfficersHydrated &&
       this.isSupervisorHydrated
     );
+  }
+
+  get isEmpty(): boolean {
+    return !this.outlierOfficersData || !this.supervisorInfo;
   }
 
   private get areMetricsHydrated() {
@@ -82,6 +87,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
   async hydrate(): Promise<void> {
     if (this.isHydrated) return;
 
+    this.setIsLoading(true);
     this.setError(undefined);
 
     try {
@@ -117,13 +123,19 @@ export class SupervisionOfficersPresenter implements Hydratable {
           `Supervisor ${this.supervisorId} does not have any assigned officers`
         );
       }
+      this.setIsLoading(false);
     } catch (e) {
       this.setError(castToError(e));
+      this.setIsLoading(false);
     }
   }
 
   setError(error: Error | undefined) {
     this.error = error;
+  }
+
+  setIsLoading(loadingValue: boolean) {
+    this.isLoading = loadingValue;
   }
 
   /**
@@ -181,5 +193,12 @@ export class SupervisionOfficersPresenter implements Hydratable {
     return this.supervisionStore.supervisionOfficerSupervisors?.find(
       (s) => s.externalId === this.supervisorId
     );
+  }
+
+  /**
+   * Provides a list of all officers that are in this supervisor's unit
+   */
+  get allOfficers(): SupervisionOfficer[] | undefined {
+    return this.supervisionStore?.officersBySupervisor.get(this.supervisorId);
   }
 }
