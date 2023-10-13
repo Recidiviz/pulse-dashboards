@@ -72,11 +72,7 @@ import tenants from "../tenants";
 import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
-import {
-  Opportunity,
-  OpportunityTab,
-  opportunityToSortFunctionMapping,
-} from "./Opportunity";
+import { Opportunity, OpportunityTab } from "./Opportunity";
 import {
   OPPORTUNITY_CONFIGS,
   OpportunityType,
@@ -564,7 +560,7 @@ export class WorkflowsStore implements Hydratable {
         .map((c) => c[opportunityStatus][opportunityType])
         .filter((opp) => opp !== undefined)
         .map((opp) => opp as Opportunity)
-        .sort(opportunityToSortFunctionMapping[opportunityType]);
+        .sort((a: Opportunity, b: Opportunity) => a.compare(b));
 
       mapping[opportunityType] = opportunities as Opportunity[];
     });
@@ -638,7 +634,7 @@ export class WorkflowsStore implements Hydratable {
         .map((c) => c.verifiedOpportunities[opportunityType])
         .filter((opp) => !!opp)
         .map((opp) => opp as Opportunity)
-        .sort(opportunityToSortFunctionMapping[opportunityType]);
+        .sort((a: Opportunity, b: Opportunity) => a.compare(b));
 
       mapping[opportunityType] = opportunities as Opportunity[];
     });

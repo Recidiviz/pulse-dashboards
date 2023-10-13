@@ -182,6 +182,7 @@ export interface Opportunity<
   readonly eligibilityCallToActionText?: string;
   tabTitle?: OpportunityTab;
   tabOrder: Readonly<OpportunityTab[]>;
+  compare: (other: Opportunity) => number;
   showEligibilityStatus: (component: Component) => boolean;
   readonly portionServedRequirement?: string[];
 }

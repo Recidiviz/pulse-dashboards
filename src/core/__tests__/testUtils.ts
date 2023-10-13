@@ -54,5 +54,6 @@ export const mockOpportunity: Opportunity<Client> = {
   tabOrder: ["Eligible Now"],
   deniedTabTitle: "Marked Ineligible",
   tabTitle: "Eligible Now",
+  compare: () => 1,
   showEligibilityStatus: () => true,
 };

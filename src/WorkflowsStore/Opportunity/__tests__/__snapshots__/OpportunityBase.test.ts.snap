@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sorting functions should work when list is shuffled and sorting by review status and eligibility date 1`] = `
+Array [
+  Array [
+    "PENDING",
+    2016-02-01T00:00:00.000Z,
+  ],
+  Array [
+    "IN_PROGRESS",
+    2016-03-01T00:00:00.000Z,
+  ],
+  Array [
+    "DENIED",
+    2016-04-01T00:00:00.000Z,
+  ],
+  Array [
+    "DENIED",
+    2016-05-01T00:00:00.000Z,
+  ],
+  Array [
+    "COMPLETED",
+    2016-05-01T00:00:00.000Z,
+  ],
+  Array [
+    "ALMOST",
+    2019-02-01T00:00:00.000Z,
+  ],
+  Array [
+    "ALMOST",
+    2019-02-02T00:00:00.000Z,
+  ],
+  Array [
+    "ALMOST",
+    2020-02-02T00:00:00.000Z,
+  ],
+]
+`;

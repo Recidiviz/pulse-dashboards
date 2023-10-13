@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { ascending } from "d3-array";
 import { differenceInDays, differenceInMonths, format } from "date-fns";
 import { snakeCase } from "lodash";
 import moment from "moment";
@@ -95,72 +94,6 @@ export const generateOpportunityHydratedHeader = (
   count: number
 ): OpportunityHydratedHeader => {
   return OPPORTUNITY_CONFIGS[opportunityType].hydratedHeader(count);
-};
-
-export function sortByReviewStatus(
-  opp1: Opportunity,
-  opp2: Opportunity
-): number {
-  // Use the review status on the opportunity to sort.
-  // Compliant Reporting has additional conditions to determine the value of the rank.
-  const opp1ReviewStatus = rankByReviewStatus(opp1);
-  const opp2ReviewStatus = rankByReviewStatus(opp2);
-
-  return ascending(opp1ReviewStatus, opp2ReviewStatus);
-}
-
-export function sortByReviewStatusAndEligibilityDate(
-  opp1: Opportunity,
-  opp2: Opportunity
-): number {
-  // First, sort by review status
-  const rankSort = sortByReviewStatus(opp1, opp2);
-  if (rankSort === 0) {
-    // If the ranks are equivalent, sort by eligibilityDate
-    if (opp1.eligibilityDate && opp2.eligibilityDate) {
-      return ascending(opp1.eligibilityDate, opp2.eligibilityDate);
-    }
-  }
-  return rankSort;
-}
-
-export function sortByEligibilityDateUndefinedFirst(
-  opp1: Opportunity,
-  opp2: Opportunity
-): number {
-  if (!opp1.eligibilityDate) return -1;
-  if (!opp2.eligibilityDate) return 1;
-  return ascending(opp1.eligibilityDate, opp2.eligibilityDate);
-}
-
-export const opportunityToSortFunctionMapping: Record<
-  OpportunityType,
-  (a: Opportunity, b: Opportunity) => number
-> = {
-  earlyTermination: sortByReviewStatus,
-  compliantReporting: sortByReviewStatus,
-  earnedDischarge: sortByReviewStatusAndEligibilityDate,
-  LSU: sortByReviewStatusAndEligibilityDate,
-  pastFTRD: sortByReviewStatusAndEligibilityDate,
-  supervisionLevelDowngrade: sortByReviewStatus,
-  usIdCRCResidentWorker: sortByReviewStatus,
-  usIdCRCWorkRelease: sortByReviewStatus,
-  usIdExpandedCRC: sortByReviewStatus,
-  usIdSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
-  usMiSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
-  usMiClassificationReview: sortByReviewStatusAndEligibilityDate,
-  usMiEarlyDischarge: sortByReviewStatusAndEligibilityDate,
-  usMeSCCP: sortByReviewStatus,
-  usMeWorkRelease: sortByReviewStatus,
-  usTnExpiration: sortByReviewStatusAndEligibilityDate,
-  usTnCustodyLevelDowngrade: sortByReviewStatus,
-  usMoRestrictiveHousingStatusHearing: sortByEligibilityDateUndefinedFirst,
-  usMeEarlyTermination: sortByReviewStatus,
-  usMiMinimumTelephoneReporting: sortByReviewStatus,
-  usMiPastFTRD: sortByReviewStatusAndEligibilityDate,
-  usMeFurloughRelease: sortByReviewStatus,
-  usCaSupervisionLevelDowngrade: sortByReviewStatusAndEligibilityDate,
-  usTnAnnualReclassification: sortByReviewStatus,
 };
 
 export const transformCaseNotes = (

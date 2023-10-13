@@ -24,7 +24,12 @@ import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
-import { Component, OpportunityRequirement, OpportunityTab } from "../../types";
+import {
+  Component,
+  Opportunity,
+  OpportunityRequirement,
+  OpportunityTab,
+} from "../../types";
 import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "../../utils";
 import {
   UsMoRestrictiveHousingStatusHearingReferralRecord,
@@ -203,6 +208,12 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
     if (!this.record.ineligibleCriteria.usMoOverdueForHearing?.nextReviewDate)
       return "Missing Review Date";
     return "Upcoming Hearings";
+  }
+
+  compare(other: Opportunity): number {
+    if (!this.eligibilityDate) return -1;
+    if (!other.eligibilityDate) return 1;
+    return this.sortByEligibilityDate(other);
   }
 
   showEligibilityStatus(component: Component): boolean {

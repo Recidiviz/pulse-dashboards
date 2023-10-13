@@ -17,7 +17,6 @@
 // =============================================================================
 import tk from "timekeeper";
 
-import { mockOpportunity } from "../../../core/__tests__/testUtils";
 import {
   MOCK_OPPORTUNITY_CONFIGS,
   mockUsXxOpp,
@@ -28,23 +27,15 @@ import {
   OpportunityHydratedHeader,
   OpportunityType,
 } from "../OpportunityConfigs";
-import { Opportunity } from "../types";
 import {
   generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,
   monthsOrDaysRemainingFromToday,
-  sortByEligibilityDateUndefinedFirst,
-  sortByReviewStatus,
-  sortByReviewStatusAndEligibilityDate,
 } from "../utils";
 
 jest.mock("../../subscriptions");
 jest.mock("firebase/firestore");
 jest.mock("../Forms/FormBase");
-
-let opp1: Opportunity;
-let opp2: Opportunity;
-let opp3: Opportunity;
 
 describe("monthsOrDaysRemainingFromToday", () => {
   beforeEach(() => {
@@ -65,75 +56,6 @@ describe("monthsOrDaysRemainingFromToday", () => {
     expect(monthsOrDaysRemainingFromToday(new Date(2023, 1, 30))).toEqual(
       "7 more days"
     );
-  });
-});
-
-describe("sort", () => {
-  beforeEach(() => {
-    opp1 = {
-      ...mockOpportunity,
-      reviewStatus: "PENDING",
-      eligibilityDate: new Date(2022, 10, 5),
-    };
-
-    opp2 = {
-      ...mockOpportunity,
-      reviewStatus: "IN_PROGRESS",
-      eligibilityDate: new Date(2022, 10, 8),
-    };
-
-    opp3 = {
-      ...mockOpportunity,
-      reviewStatus: "DENIED",
-      eligibilityDate: new Date(2022, 10, 7),
-    };
-  });
-
-  test("sort by rank", () => {
-    const opps = [opp2, opp3, opp1];
-    expect(opps.sort(sortByReviewStatus).map((o) => o.reviewStatus)).toEqual([
-      "PENDING",
-      "IN_PROGRESS",
-      "DENIED",
-    ]);
-  });
-
-  test("sort by rank and eligibility date", () => {
-    const opp4: Opportunity = {
-      ...mockOpportunity,
-      reviewStatus: "DENIED",
-      eligibilityDate: new Date(2022, 10, 6),
-    };
-    const opps = [opp2, opp4, opp3, opp1];
-    expect(
-      opps
-        .sort(sortByReviewStatusAndEligibilityDate)
-        .map((o) => o.eligibilityDate)
-    ).toEqual([
-      new Date(2022, 10, 5),
-      new Date(2022, 10, 8),
-      new Date(2022, 10, 6),
-      new Date(2022, 10, 7),
-    ]);
-  });
-
-  test("sort by eligibility date unknowns first", () => {
-    const opp4: Opportunity = {
-      ...mockOpportunity,
-      reviewStatus: "IN_PROGRESS",
-      eligibilityDate: undefined,
-    };
-    const opps = [opp2, opp4, opp3, opp1];
-    expect(
-      opps
-        .sort(sortByEligibilityDateUndefinedFirst)
-        .map((o) => o.eligibilityDate)
-    ).toEqual([
-      undefined,
-      new Date(2022, 10, 5),
-      new Date(2022, 10, 7),
-      new Date(2022, 10, 8),
-    ]);
   });
 });
 
