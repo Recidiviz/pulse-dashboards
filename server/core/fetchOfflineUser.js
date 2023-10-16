@@ -35,6 +35,8 @@ function fetchOfflineUser({
     family_name: "Jones",
     email,
     [`${process.env.METADATA_NAMESPACE}app_metadata`]: {
+      role: "supervision_staff",
+      externalId: "mdavis123",
       stateCode,
       allowedSupervisionLocationIds,
       allowedSupervisionLocationLevel,
@@ -45,7 +47,11 @@ function fetchOfflineUser({
         // operations: true,
         // system_supervisionToLiberty: true,
         // system_supervisionToPrison: true,
-        community_practices: true,
+        community_practices: false,
+        insights: true,
+      },
+      featureVariants: {
+        responsiveRevamp: {},
       },
     },
   };

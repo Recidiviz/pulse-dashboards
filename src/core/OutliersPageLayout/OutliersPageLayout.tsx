@@ -86,6 +86,7 @@ const OutliersPageLayout: React.FC<OutliersPageLayoutType> = ({
   pageTitle,
   infoItems,
   children,
+  ...props
 }) => {
   const { isMobile, isLaptop } = useIsMobile(true);
 

@@ -313,13 +313,13 @@ describe("App tests", () => {
 
   describe("Outliers route", () => {
     it("renders if the tenant and user allow it", () => {
-      window.history.pushState({}, "", "/outliers/");
+      window.history.pushState({}, "", `/insights/`);
       const user = { [metadataField]: { stateCode: US_TN } };
       useRootStore.mockReturnValue({
         userStore: {
           ...userStore,
           ...user,
-          userAllowedNavigation: { outliers: [] },
+          userAllowedNavigation: { insights: [] },
         },
         currentTenantId: US_TN,
       });
@@ -330,13 +330,13 @@ describe("App tests", () => {
     });
 
     it("doesn't render if the tenant doesn't allow it but the user does", () => {
-      window.history.pushState({}, "", "/outliers/");
+      window.history.pushState({}, "", "/insights/");
       const user = { [metadataField]: { stateCode: US_NC } };
       useRootStore.mockReturnValue({
         userStore: {
           ...userStore,
           ...user,
-          userAllowedNavigation: { outliers: [] },
+          userAllowedNavigation: { insights: [] },
         },
         currentTenantId: US_NC,
       });
@@ -347,7 +347,7 @@ describe("App tests", () => {
     });
 
     it("doesn't render if the user doesn't allow it but the tenant does", () => {
-      window.history.pushState({}, "", "/outliers/");
+      window.history.pushState({}, "", "/insights/");
       const user = { [metadataField]: { stateCode: US_TN } };
       useRootStore.mockReturnValue({
         userStore: {

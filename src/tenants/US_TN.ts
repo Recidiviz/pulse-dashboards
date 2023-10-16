@@ -115,7 +115,7 @@ const US_TN_CONFIG: TenantConfig = {
       IMPACT_SECTIONS.avgPopulationCompliantReporting,
       IMPACT_SECTIONS.avgDailyPopulation,
     ],
-    outliers: [OUTLIERS_PAGES.supervision],
+    insights: [OUTLIERS_PAGES.supervision],
   },
   pagesWithRestrictions: [
     "libertyToPrison",
@@ -124,6 +124,7 @@ const US_TN_CONFIG: TenantConfig = {
     "supervision",
     "supervisionToPrison",
     "supervisionToLiberty",
+    "insights",
   ],
   tableColumns: enabledTableColumns[pathways.US_TN],
 };

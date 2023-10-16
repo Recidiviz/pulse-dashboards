@@ -126,7 +126,7 @@ describe("CoreLayout tests", () => {
     });
 
     it("Shows if enabled", () => {
-      rootStoreMock.userStore.userAllowedNavigation.outliers = [];
+      rootStoreMock.userStore.userAllowedNavigation.insights = [];
       const selector = renderPageNavigation();
       expect(selector.find("OutliersLink>NavLink")).toHaveLength(1);
     });

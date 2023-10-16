@@ -44,7 +44,7 @@ import { UserAvatar } from "./Avatar";
 import { useCoreStore } from "./CoreStoreProvider";
 import RecidivizLogo from "./RecidivizLogo/RecidivizLogo";
 import { WORKFLOWS_METHODOLOGY_URL } from "./utils/constants";
-import { DASHBOARD_VIEWS, workflowsUrl } from "./views";
+import { DASHBOARD_VIEWS, OUTLIERS_PATHS, workflowsUrl } from "./views";
 
 const Wrapper = styled.div``;
 
@@ -321,7 +321,7 @@ function OutliersLink({ enabled }: OptionalLinkProps) {
   return (
     <NavLink to={`/${DASHBOARD_VIEWS.outliers}`}>
       {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
-      Go to Outliers
+      Go to Insights
     </NavLink>
   );
 }
@@ -353,23 +353,32 @@ function AccountLink({ enabled }: OptionalLinkProps) {
   );
 }
 
+export type BackButtonProps = {
+  isBackButtonFixed?: boolean;
+  isBackButtonEnabled?: boolean;
+  backButtonLink?: string;
+  backButtonText?: string;
+  onBackButtonClick?: () => void;
+};
+
 type NavigationLayoutProps = {
   backgroundColor?: string;
   isFixed?: boolean;
   isMethodologyExternal?: boolean;
-  backButtonText?: string;
-  onBackButtonClick?: () => void;
   children?: React.ReactNode;
-};
+} & BackButtonProps;
 
 export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
   function NavigationLayout({
     backgroundColor,
     isMethodologyExternal,
+    isBackButtonEnabled,
+    backButtonLink,
     onBackButtonClick,
-    backButtonText = "Back",
     children,
+    backButtonText = "Back",
     isFixed = true,
+    isBackButtonFixed = false,
   }) {
     const { pathname } = useLocation();
     const { isLaptop, isMobile } = useIsMobile(true);
@@ -392,10 +401,13 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const enableOperations = !!userAllowedNavigation.operations;
     const enabledImpact =
       !!userAllowedNavigation.impact && userStore.isRecidivizUser;
-    const enabledOutliers = !!userAllowedNavigation.outliers;
+    const enabledOutliers = !!userAllowedNavigation.insights;
 
     const displayBackButton =
-      view === DASHBOARD_VIEWS.workflows && page !== workflowsHomepage;
+      ((view === DASHBOARD_VIEWS.workflows && page !== workflowsHomepage) ||
+        (view === DASHBOARD_VIEWS.outliers &&
+          pathname !== OUTLIERS_PATHS.supervisionSupervisorSearch)) &&
+      isBackButtonEnabled;
 
     const quickLinks = (
       <>
@@ -459,10 +471,10 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         {!isMobile && isFixed && <Banner />}
         {displayBackButton && (
           <BackButton
-            $notFixed={isLaptop || !isFixed}
-            to={workflowsUrl(workflowsHomepage)}
+            $notFixed={isLaptop || !isFixed || isBackButtonFixed}
+            to={backButtonLink ?? workflowsUrl(workflowsHomepage)}
             onClick={(event) => {
-              if (onBackButtonClick) {
+              if (onBackButtonClick && !backButtonLink) {
                 event?.preventDefault();
                 onBackButtonClick();
               }

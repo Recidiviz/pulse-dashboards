@@ -18,12 +18,11 @@
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
-import { NavigationLayout } from "../NavigationLayout";
-import { OUTLIERS_PATHS } from "../views";
+import { BackButtonProps, NavigationLayout } from "../NavigationLayout";
 
 export const INTERCOM_HEIGHT = 64;
 
@@ -42,8 +41,8 @@ const Main = styled.main<{
 }>`
   padding: ${({ isMobile }) =>
     isMobile
-      ? `${rem(spacing.xl)} ${rem(spacing.md)}`
-      : `${rem(spacing.xxl)} ${rem(spacing.lg)}`};
+      ? `${rem(spacing.lg)} ${rem(spacing.md)}`
+      : `${rem(spacing.md)} ${rem(spacing.lg)}`};
 
   /* leaving extra space for the Intercom button */
   padding-bottom: ${rem(INTERCOM_HEIGHT)};
@@ -53,18 +52,19 @@ const Main = styled.main<{
   flex: auto;
 `;
 
-const OutliersNavLayout: React.FC = ({ children }) => {
+export type OutliersNavLayoutProps = Partial<BackButtonProps>;
+
+const OutliersNavLayout: React.FC<OutliersNavLayoutProps> = ({ children }) => {
+  const history = useHistory();
   const { isMobile } = useIsMobile(true);
 
   return (
     <Wrapper>
-      <NavigationLayout>
-        <li>
-          <NavLink to={OUTLIERS_PATHS.supervisionSupervisorSearch}>
-            Search
-          </NavLink>
-        </li>
-      </NavigationLayout>
+      <NavigationLayout
+        isBackButtonFixed
+        isBackButtonEnabled
+        onBackButtonClick={history.goBack}
+      />
       <Main isMobile={isMobile}>{children}</Main>
     </Wrapper>
   );

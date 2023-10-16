@@ -32,7 +32,7 @@ export const DASHBOARD_VIEWS = {
   profile: "profile",
   workflows: "workflows",
   impact: "impact",
-  outliers: "outliers",
+  outliers: "insights",
 } as const;
 type DashboardViewRootPath = typeof DASHBOARD_VIEWS[DashboardView];
 
