@@ -60,7 +60,8 @@ const AuthWall: React.FC = ({ children }) => {
     // 900 seconds = 15 minutes. Certain state policies require that users reauthenticate after 15
     // minutes of inactivity. More details at:
     // https://github.com/Recidiviz/pulse-dashboards/issues/3403#issuecomment-1569096723
-    timeout: 900_000,
+    // TODO(#4205): Change back to 900_000
+    timeout: 10_800_000,
     crossTab: true,
     syncTimers: 200,
   });
