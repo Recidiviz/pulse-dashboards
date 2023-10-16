@@ -88,6 +88,15 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
     }
   }, [activeTab, displayTabs]);
 
+  useEffect(() => {
+    if (
+      !!opportunityType &&
+      (opportunitiesByTab[opportunityType][activeTab] ?? []).length === 0
+    ) {
+      setActiveTab(displayTabs[0]);
+    }
+  }, [opportunitiesByTab, opportunityType, activeTab, displayTabs]);
+
   if (!opportunityType || !displayTabs) return null;
 
   const opportunityLabel = OPPORTUNITY_CONFIGS[opportunityType].label;
