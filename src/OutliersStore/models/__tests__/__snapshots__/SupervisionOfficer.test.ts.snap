@@ -205,3 +205,27 @@ Object {
   "supervisorId": "bholiday456",
 }
 `;
+
+exports[`transformations 5`] = `
+Object {
+  "caseloadType": "GENERAL_OR_OTHER",
+  "currentPeriodStatuses": Object {
+    "FAR": Array [],
+    "MET": Array [
+      "incarceration_starts_technical_violation",
+    ],
+    "NEAR": Array [
+      "incarceration_starts",
+    ],
+  },
+  "displayName": "Mary Lou Williams",
+  "district": null,
+  "externalId": "so5",
+  "fullName": Object {
+    "givenNames": "Mary Lou",
+    "middleNames": undefined,
+    "surname": "Williams",
+  },
+  "supervisorId": "efitzgerald789",
+}
+`;

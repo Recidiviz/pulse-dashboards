@@ -34,8 +34,13 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
     },
     {
       fullName: { given_names: "Ella", surname: "Fitzgerald" },
-      externalId: "efitzgerals789",
+      externalId: "efitzgerald789",
       district: "D1",
+    },
+    {
+      fullName: { given_names: "John", surname: "Coltrane" },
+      externalId: "jColtrane321",
+      district: null,
     },
   ];
 export const supervisionOfficerSupervisorsFixture =

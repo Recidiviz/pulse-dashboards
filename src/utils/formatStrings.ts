@@ -382,6 +382,14 @@ function formatNameLastFirst(fullName: FullName): string {
   return formattedName;
 }
 
+function getWelcomeText(
+  userName: string | undefined,
+  welcomeText: string | undefined = "Welcome"
+): string {
+  if (!userName) return welcomeText;
+  return `${welcomeText}, ${userName}`;
+}
+
 export {
   convertCurlyQuotesToStraight,
   decrypt,
@@ -409,6 +417,7 @@ export {
   getStatePopulationsLabels,
   getTicks,
   getTrailingLabelFromMetricPeriodMonthsFilter,
+  getWelcomeText,
   hashEmailAddress,
   humanReadableTitleCase,
   matrixViolationTypeToLabel,

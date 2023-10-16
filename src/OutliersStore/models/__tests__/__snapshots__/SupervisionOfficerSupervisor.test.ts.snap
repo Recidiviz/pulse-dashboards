@@ -30,11 +30,24 @@ exports[`transformations 3`] = `
 Object {
   "displayName": "Ella Fitzgerald",
   "district": "D1",
-  "externalId": "efitzgerals789",
+  "externalId": "efitzgerald789",
   "fullName": Object {
     "givenNames": "Ella",
     "middleNames": undefined,
     "surname": "Fitzgerald",
+  },
+}
+`;
+
+exports[`transformations 4`] = `
+Object {
+  "displayName": "John Coltrane",
+  "district": null,
+  "externalId": "jColtrane321",
+  "fullName": Object {
+    "givenNames": "John",
+    "middleNames": undefined,
+    "surname": "Coltrane",
   },
 }
 `;

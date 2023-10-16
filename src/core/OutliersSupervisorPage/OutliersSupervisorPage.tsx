@@ -21,7 +21,9 @@ import simplur from "simplur";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficersPresenter } from "../../OutliersStore/presenters/SupervisionOfficersPresenter";
+import { getWelcomeText } from "../../utils";
 import ModelHydrator from "../ModelHydrator";
+import OutliersEmptyPage from "../OutliersEmptyPage";
 import { OutliersStaffLegend } from "../OutliersLegend";
 import OutliersPageLayout from "../OutliersPageLayout";
 import {
@@ -39,8 +41,21 @@ export const SupervisorPage = observer(function SupervisorPage({
   const { isLaptop } = useIsMobile(true);
 
   const { supervisorInfo, outlierOfficersData, allOfficers } = presenter;
-  // TODO 4077 Empty page
-  if (!outlierOfficersData) return null;
+
+  const emptyPageHeaderText = `${getWelcomeText(
+    supervisorInfo?.fullName.givenNames,
+    "Nice work"
+  )}! None of the officers in your unit are currently
+outliers on any metrics.`;
+
+  if (!outlierOfficersData || outlierOfficersData.length === 0)
+    return (
+      <OutliersEmptyPage
+        headerText={emptyPageHeaderText}
+        callToActionText="Keep checking back – this page will update regularly to surface
+outlier officers in your unit."
+      />
+    );
 
   // TODO Remove local storage once staff page presenter is ready
   localStorage.setItem("supervisor", JSON.stringify(supervisorInfo));

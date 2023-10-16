@@ -19,7 +19,7 @@ import React from "react";
 import simplur from "simplur";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { pluralizeWord } from "../../utils";
+import { getWelcomeText, pluralizeWord } from "../../utils";
 import { OpportunityType } from "../../WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { CaseloadSelect } from "../CaseloadSelect";
@@ -28,11 +28,6 @@ import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";
-
-function getWelcomeText(userName: string | undefined): string {
-  if (!userName) return "Welcome";
-  return `Welcome, ${userName}`;
-}
 
 function getSelectOpportunitiesText(
   opportunityTypes: OpportunityType[]

@@ -98,6 +98,21 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       met: [ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation],
     },
   },
+  {
+    externalId: "so5",
+    fullName: {
+      given_names: "Mary Lou",
+      surname: "Williams",
+    },
+    district: null,
+    supervisorId: supervisionOfficerSupervisorsFixture[2].externalId,
+    caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+    currentPeriodStatuses: {
+      far: [],
+      near: [ADVERSE_METRIC_IDS.enum.incarceration_starts],
+      met: [ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation],
+    },
+  },
 ];
 
 export const supervisionOfficerFixture = rawSupervisionOfficerFixture.map(
