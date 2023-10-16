@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { action, flowResult, makeAutoObservable } from "mobx";
+import { Optional } from "utility-types";
 
 import { Hydratable } from "../../core/models/types";
 import { castToError } from "../../utils/castToError";
@@ -34,9 +35,9 @@ export type OutlierOfficerData = Omit<
 > & {
   outlierMetrics: MetricWithConfig[];
 };
-type MetricWithConfig = SupervisionOfficerMetricOutlier & {
+export type MetricWithConfig = SupervisionOfficerMetricOutlier & {
   config: Omit<MetricConfig, "metricBenchmarksByCaseloadType">;
-  benchmark: MetricBenchmark;
+  benchmark: MetricBenchmark & { currentPeriodTarget: number };
 };
 
 export class SupervisionOfficersPresenter implements Hydratable {
@@ -82,7 +83,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
   }
 
   /**
-   * Iniitates hydration for all data needed within this presenter class
+   * Initiates hydration for all data needed within this presenter class
    */
   async hydrate(): Promise<void> {
     if (this.isHydrated) return;
@@ -170,13 +171,44 @@ export class SupervisionOfficersPresenter implements Hydratable {
               const benchmark = metricConfig.metricBenchmarksByCaseloadType.get(
                 o.caseloadType
               );
-              if (!benchmark) {
+              const currentPeriodTarget = benchmark?.benchmarks.at(-1)?.target;
+              if (
+                !benchmark ||
+                // in practice we don't expect this to be missing, but for type safety we verify
+                currentPeriodTarget === undefined
+              ) {
                 throw new Error(
                   `Missing metric benchmark data for caseload type ${o.caseloadType} for ${metric.metricId}`
                 );
               }
 
-              return { ...metric, config: metricConfig, benchmark };
+              // current officer's rate is duplicated in the benchmark values, so we need to remove it
+              const filteredBenchmark = { ...benchmark, currentPeriodTarget };
+              filteredBenchmark.latestPeriodValues = [
+                ...filteredBenchmark.latestPeriodValues,
+              ];
+              const matchingIndex =
+                filteredBenchmark.latestPeriodValues.findIndex(
+                  (v) => v.value === metric.rate
+                );
+              // in practice we always expect a match,
+              // but if we miss we don't want to arbitrarily delete the last element
+              if (matchingIndex > -1) {
+                filteredBenchmark.latestPeriodValues.splice(
+                  filteredBenchmark.latestPeriodValues.findIndex(
+                    (v) => v.value === metric.rate
+                  ),
+                  1
+                );
+              }
+
+              const config: Optional<
+                MetricConfig,
+                "metricBenchmarksByCaseloadType"
+              > = { ...metricConfig };
+              delete config.metricBenchmarksByCaseloadType;
+
+              return { ...metric, config, benchmark: filteredBenchmark };
             }),
           };
         });

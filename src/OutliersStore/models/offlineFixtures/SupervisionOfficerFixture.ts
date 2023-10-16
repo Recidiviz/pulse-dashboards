@@ -35,9 +35,10 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
     currentPeriodStatuses: {
       far: [
-        rawSupervisionOfficerMetricOutlierFixtures
-          .absconsions_bench_warrants[0],
-        rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts[0],
+        rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
+          .SEX_OFFENSE[0],
+        rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts
+          .SEX_OFFENSE[0],
       ],
       near: [ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation],
       met: [],
@@ -72,8 +73,8 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     currentPeriodStatuses: {
       far: [
-        rawSupervisionOfficerMetricOutlierFixtures
-          .absconsions_bench_warrants[1],
+        rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
+          .GENERAL_OR_OTHER[1],
       ],
       near: [ADVERSE_METRIC_IDS.enum.incarceration_starts],
       met: [ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation],
@@ -91,8 +92,8 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     currentPeriodStatuses: {
       far: [
-        rawSupervisionOfficerMetricOutlierFixtures
-          .absconsions_bench_warrants[2],
+        rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
+          .GENERAL_OR_OTHER[0],
       ],
       near: [ADVERSE_METRIC_IDS.enum.incarceration_starts],
       met: [ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation],

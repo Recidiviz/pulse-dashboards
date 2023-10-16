@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import simplur from "simplur";
 
@@ -84,9 +83,7 @@ outlier officers in your unit."
         <Body>
           {outlierOfficersData.map((officer) => {
             return (
-              <OutliersStaffCard key={officer.externalId} officer={officer}>
-                <div style={{ height: 200, background: palette.slate10 }} />
-              </OutliersStaffCard>
+              <OutliersStaffCard key={officer.externalId} officer={officer} />
             );
           })}
         </Body>

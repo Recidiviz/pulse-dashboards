@@ -28,6 +28,7 @@ import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { OutlierOfficerData } from "../../OutliersStore/presenters/SupervisionOfficersPresenter";
+import { OutliersSwarmPlot } from "../OutliersSwarmPlot";
 import { outliersUrl } from "../views";
 
 export const CardWrapper = styled.div<{ noFlex: boolean; isSticky?: boolean }>`
@@ -122,7 +123,6 @@ const OutliersStaffCard: React.FC<OutliersStaffCardType> = ({
   officer,
   title,
   subtitle,
-  children,
 }) => {
   const { isTablet } = useIsMobile(true);
 
@@ -154,7 +154,9 @@ const OutliersStaffCard: React.FC<OutliersStaffCardType> = ({
                 />
               </MetricHint>
             </MetricHeader>
-            <CardContent noFlex>{children}</CardContent>
+            <CardContent noFlex>
+              <OutliersSwarmPlot metric={metric} />
+            </CardContent>
           </MetricSection>
         ))}
       </CardBody>

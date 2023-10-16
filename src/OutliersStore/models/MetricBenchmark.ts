@@ -39,7 +39,11 @@ export const metricBenchmarkSchema = z.object({
       [targetStatusSchema.enum.MET]: z.array(z.number()),
       [targetStatusSchema.enum.NEAR]: z.array(z.number()),
     })
-  ),
+  ).transform((mapping) => {
+    return targetStatusSchema.options.flatMap((key) => {
+      return mapping[key].map((value) => ({ value, targetStatus: key }));
+    });
+  }),
 });
 
 export type MetricBenchmark = z.infer<typeof metricBenchmarkSchema>;

@@ -22,7 +22,7 @@ import {
   LOOKBACK_END_DATE_STRINGS,
 } from "./constants";
 
-export const rawMetricBenchmarksFixture: RawMetricBenchmark[] = [
+export const rawMetricBenchmarksFixture = [
   {
     metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
@@ -423,7 +423,7 @@ export const rawMetricBenchmarksFixture: RawMetricBenchmark[] = [
         0.19266297176035893, 0.19395979098396954, 0.1942350332594235,
         0.19682613049842076, 0.20551801801801803,
       ],
-      far: [0.4331242583488727],
+      far: [0.383876345, 0.4331242583488727],
     },
   },
   {
@@ -454,7 +454,7 @@ export const rawMetricBenchmarksFixture: RawMetricBenchmark[] = [
       far: [],
     },
   },
-];
+] satisfies RawMetricBenchmark[];
 
 export const metricBenchmarksFixture = rawMetricBenchmarksFixture.map((b) =>
   metricBenchmarkSchema.parse(b)

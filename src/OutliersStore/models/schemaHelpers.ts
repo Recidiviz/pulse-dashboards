@@ -22,6 +22,7 @@ import { z } from "zod";
 import { FullName } from "../../core/types/personMetadata";
 
 export const targetStatusSchema = z.enum(["FAR", "NEAR", "MET"]);
+export type TargetStatus = z.infer<typeof targetStatusSchema>;
 
 // zod has a built-in datetime validator but it does not yet support date-only strings
 // (see https://github.com/colinhacks/zod/issues/1676)
