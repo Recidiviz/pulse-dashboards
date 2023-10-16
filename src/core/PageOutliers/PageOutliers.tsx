@@ -21,10 +21,10 @@ import { Redirect, Switch } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
-import OutliersHomepage from "../OutliersHomepage";
 import OutliersNavLayout from "../OutliersNavLayout";
 import { OutliersRoute } from "../OutliersRoute";
 import OutliersStaffPage from "../OutliersStaffPage";
+import { OutliersSupervisionHome } from "../OutliersSupervisionHome";
 import OutliersSupervisorPage from "../OutliersSupervisorPage";
 import OutliersSupervisorSearchPage from "../OutliersSupervisorSearchPage";
 import { DASHBOARD_PATHS, OUTLIERS_PATHS } from "../views";
@@ -47,7 +47,7 @@ const PageOutliers: React.FC = () => {
           to={OUTLIERS_PATHS.supervision}
         />
         <OutliersRoute exact path={OUTLIERS_PATHS.supervision}>
-          <OutliersHomepage />
+          <OutliersSupervisionHome />
         </OutliersRoute>
         <OutliersRoute exact path={OUTLIERS_PATHS.supervisionSupervisorSearch}>
           <OutliersSupervisorSearchPage />

@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import { configure } from "mobx";
 import { StaticRouter } from "react-router-dom";
 
 import { useRootStore } from "../../../components/StoreProvider";
@@ -34,6 +35,7 @@ const useRootStoreMock = useRootStore as jest.Mock;
 let supervisionStore: OutliersSupervisionStore;
 
 beforeEach(() => {
+  configure({ safeDescriptors: false });
   const outliersStore = new OutliersStore(new RootStore());
 
   supervisionStore = new OutliersSupervisionStore(
@@ -45,7 +47,12 @@ beforeEach(() => {
   useRootStoreMock.mockReturnValue({ outliersStore });
 });
 
-test("handles params for supervision home page", async () => {
+afterEach(() => {
+  jest.restoreAllMocks();
+  configure({ safeDescriptors: true });
+});
+
+test("handles params for supervision home page", () => {
   render(
     <StaticRouter location={outliersUrl("supervision", {})}>
       <OutliersRoute path={OUTLIERS_PATHS.supervision}>null</OutliersRoute>
@@ -60,7 +67,7 @@ test("handles params for supervision home page", async () => {
   /* eslint-enable @typescript-eslint/no-non-null-assertion */
 });
 
-test("handles params for supervision supervisor page", async () => {
+test("handles params for supervision supervisor page", () => {
   const mockSupervisorId = "123abc";
 
   render(
@@ -76,6 +83,31 @@ test("handles params for supervision supervisor page", async () => {
   );
 
   expect(supervisionStore?.supervisorId).toBe(mockSupervisorId);
+});
+
+test("supervisor restricted from another supervisor's page", () => {
+  jest.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
+    displayName: "",
+    fullName: {},
+    externalId: "abc123",
+    district: null,
+  });
+
+  render(
+    <StaticRouter
+      location={outliersUrl("supervisionSupervisor", {
+        supervisorId: "456xyz",
+      })}
+    >
+      <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisor}>
+        null
+      </OutliersRoute>
+    </StaticRouter>
+  );
+
+  expect(
+    screen.getByText("Page Not Found", { exact: false })
+  ).toBeInTheDocument();
 });
 
 test("handles params for supervision officer page", () => {
@@ -117,7 +149,7 @@ test("handles params for supervision officer metric page", () => {
   expect(supervisionStore?.metricId).toBe(mockMetricId);
 });
 
-test("handles params for supervision supervisor search page", async () => {
+test("handles params for supervision supervisor search page", () => {
   render(
     <StaticRouter location={outliersUrl("supervisionSupervisorSearch", {})}>
       <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisorSearch}>
@@ -132,4 +164,25 @@ test("handles params for supervision supervisor search page", async () => {
   expect(supervisionStore!.officerId).toBeUndefined();
   expect(supervisionStore!.metricId).toBeUndefined();
   /* eslint-enable @typescript-eslint/no-non-null-assertion */
+});
+
+test("supervisors restricted from search page", () => {
+  jest.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
+    displayName: "",
+    fullName: {},
+    externalId: "abc123",
+    district: null,
+  });
+
+  render(
+    <StaticRouter location={outliersUrl("supervisionSupervisorSearch", {})}>
+      <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisorSearch}>
+        null
+      </OutliersRoute>
+    </StaticRouter>
+  );
+
+  expect(
+    screen.getByText("Page Not Found", { exact: false })
+  ).toBeInTheDocument();
 });

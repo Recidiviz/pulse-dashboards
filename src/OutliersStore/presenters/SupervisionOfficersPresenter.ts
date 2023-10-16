@@ -104,9 +104,6 @@ export class SupervisionOfficersPresenter implements Hydratable {
 
       const { supervisionOfficerSupervisors, officersBySupervisor } =
         this.supervisionStore;
-      // TODO: depending on how we ultimately hydrate supervisor data, this approach may not work ...
-      // i.e. will we still call the "hydrate all supervisors" endpoint for users who can only
-      // view their own units?
       if (
         supervisionOfficerSupervisors &&
         !supervisionOfficerSupervisors.find(
@@ -232,5 +229,13 @@ export class SupervisionOfficersPresenter implements Hydratable {
    */
   get allOfficers(): SupervisionOfficer[] | undefined {
     return this.supervisionStore?.officersBySupervisor.get(this.supervisorId);
+  }
+
+  get supervisorIsCurrentUser() {
+    return (
+      !!this.supervisorId &&
+      this.supervisorId ===
+        this.supervisionStore.currentSupervisorUser?.externalId
+    );
   }
 }

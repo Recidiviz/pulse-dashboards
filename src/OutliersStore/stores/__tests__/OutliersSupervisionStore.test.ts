@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { cloneDeep } from "lodash";
-import { flowResult } from "mobx";
+import { configure, flowResult } from "mobx";
 import { ValuesType } from "utility-types";
 
 import { RootStore } from "../../../RootStore";
@@ -34,6 +34,7 @@ let store: OutliersSupervisionStore;
 
 beforeEach(() => {
   jest.resetModules();
+  configure({ safeDescriptors: false });
   store = new OutliersSupervisionStore(
     new OutliersStore(new RootStore()),
     OutliersConfigFixture
@@ -42,6 +43,7 @@ beforeEach(() => {
 
 afterEach(() => {
   jest.restoreAllMocks();
+  configure({ safeDescriptors: true });
 });
 
 test("hydrate benchmarks", async () => {
@@ -180,4 +182,92 @@ test("supervisionOfficersPresenter", () => {
   expect(store.supervisionOfficersPresenter).toBeDefined();
   store.setSupervisorId(undefined);
   expect(store.supervisionOfficersPresenter).toBeUndefined();
+});
+
+test("current user record for supervisor", () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      role: "supervision_staff",
+      externalId: "abc123",
+      district: "District One",
+      stateCode: "us_mi",
+    });
+
+  expect(store.currentSupervisorUser).toBeDefined();
+  expect(store.currentSupervisorUser).toMatchInlineSnapshot(`
+    Object {
+      "displayName": "",
+      "district": "District One",
+      "externalId": "abc123",
+      "fullName": Object {},
+    }
+  `);
+});
+
+test("current user record requires external ID", () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      role: "supervision_staff",
+      district: "District One",
+      stateCode: "us_mi",
+    });
+
+  expect(store.currentSupervisorUser).toBeUndefined();
+});
+
+test("no current user record for non-supervisor", () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      role: "leadership_role",
+      externalId: "abc123",
+      stateCode: "us_mi",
+    });
+
+  expect(store.currentSupervisorUser).toBeUndefined();
+});
+
+test("hydrate supervisors list with current user", () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      role: "supervision_staff",
+      externalId: "abc123",
+      district: "District One",
+      stateCode: "us_mi",
+    });
+
+  expect(store.supervisionOfficerSupervisors).toBeDefined();
+  expect(store.supervisionOfficerSupervisors).toMatchInlineSnapshot(`
+    Array [
+      Object {
+        "displayName": "",
+        "district": "District One",
+        "externalId": "abc123",
+        "fullName": Object {},
+      },
+    ]
+  `);
+});
+
+test("current supervisor user does not hydrate via API", async () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      role: "supervision_staff",
+      externalId: "abc123",
+      district: "District One",
+      stateCode: "us_mi",
+    });
+
+  jest.spyOn(store.outliersStore.apiClient, "supervisionOfficerSupervisors");
+
+  await expect(
+    flowResult(store.hydrateSupervisionOfficerSupervisors())
+  ).toResolve();
+  expect(
+    store.outliersStore.apiClient.supervisionOfficerSupervisors
+  ).not.toHaveBeenCalled();
 });

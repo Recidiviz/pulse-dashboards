@@ -42,7 +42,7 @@ export class OutliersSupervisionStore {
 
   metricId?: string;
 
-  supervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
+  private allSupervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
 
   constructor(
     public readonly outliersStore: OutliersStore,
@@ -115,6 +115,37 @@ export class OutliersSupervisionStore {
     );
   }
 
+  get currentSupervisorUser(): SupervisionOfficerSupervisor | undefined {
+    const { userAppMetadata } = this.outliersStore.rootStore.userStore;
+    if (userAppMetadata) {
+      const { role, externalId, district } = userAppMetadata;
+      if (
+        // until metadata is extended with role subtypes,
+        // this should be a safe proxy for distinguishing supervisors from leadership
+        // (as long as no other line staff are granted access)
+        role === "supervision_staff" &&
+        externalId
+      ) {
+        return {
+          externalId,
+          district: district ?? null,
+          // unfortunately we don't reliably get anyone's name from auth0
+          fullName: {},
+          displayName: "",
+        };
+      }
+    }
+  }
+
+  get supervisionOfficerSupervisors():
+    | SupervisionOfficerSupervisor[]
+    | undefined {
+    // if the user is a supervisor, the only record they need is their own
+    if (this.currentSupervisorUser) return [this.currentSupervisorUser];
+
+    return this.allSupervisionOfficerSupervisors;
+  }
+
   /**
    * Fetches supervision officer supervisor data for the current tenant.
    */
@@ -122,9 +153,13 @@ export class OutliersSupervisionStore {
     OutliersAPI["supervisionOfficerSupervisors"],
     void
   > {
+    // note that this will bypass hydration if the current user is a supervisor
+    // (since we expect to have already populated this list with their Auth0 data).
+    // we expect the API request to fail for these users anyway so there is no reason
+    // to let the request proceed
     if (this.supervisionOfficerSupervisors) return;
 
-    this.supervisionOfficerSupervisors =
+    this.allSupervisionOfficerSupervisors =
       yield this.outliersStore.apiClient.supervisionOfficerSupervisors();
   }
 

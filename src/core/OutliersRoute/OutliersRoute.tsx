@@ -21,11 +21,13 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import { Route, RouteProps, useLocation, useParams } from "react-router-dom";
 
+import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
-import { OUTLIERS_PATHS } from "../views";
+import { OUTLIERS_PATHS, outliersUrl } from "../views";
 
 const RouteSync = observer(function RouteSync({ children }) {
   const routeParams: Record<string, string | undefined> = useParams();
+  const { supervisorId, officerId, metricId } = routeParams;
   const loc: Location = useLocation();
 
   const {
@@ -40,15 +42,28 @@ const RouteSync = observer(function RouteSync({ children }) {
         supervisionStore &&
         loc.pathname.startsWith(OUTLIERS_PATHS.supervision)
       ) {
-        const { supervisorId, officerId, metricId } = routeParams;
-
         supervisionStore.setSupervisorId(supervisorId);
         supervisionStore.setOfficerId(officerId);
         supervisionStore.setMetricId(metricId);
       }
     });
     syncParams();
-  }, [supervisionStore, loc, routeParams]);
+  }, [supervisionStore, loc, supervisorId, officerId, metricId]);
+
+  // access controls that may short-circuit rendering
+  if (supervisionStore?.currentSupervisorUser) {
+    if (
+      // not allowed to access search page
+      loc.pathname === outliersUrl("supervisionSupervisorSearch") ||
+      // not allowed to access someone else's supervisor report
+      (supervisorId &&
+        supervisorId !== supervisionStore.currentSupervisorUser.externalId)
+      // note that we can't do a similar check for the staff page because we may not know
+      // who supervises them yet; we rely on the backend access controls to catch this
+    ) {
+      return <NotFound />;
+    }
+  }
 
   return <>{children}</>;
 });

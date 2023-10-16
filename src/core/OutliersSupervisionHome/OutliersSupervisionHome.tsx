@@ -15,8 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const OutliersHomepage = () => {
-  return <div>Hello, Outliers</div>;
-};
+import { observer } from "mobx-react-lite";
+import { Redirect } from "react-router-dom";
 
-export default OutliersHomepage;
+import { useRootStore } from "../../components/StoreProvider";
+import { outliersUrl } from "../views";
+
+export const OutliersSupervisionHome = observer(
+  function OutliersSupervisionHome() {
+    const {
+      outliersStore: { supervisionStore },
+    } = useRootStore();
+
+    if (!supervisionStore) return null;
+
+    if (supervisionStore?.currentSupervisorUser) {
+      return (
+        <Redirect
+          to={outliersUrl("supervisionSupervisor", {
+            supervisorId: supervisionStore.currentSupervisorUser.externalId,
+          })}
+        />
+      );
+    }
+
+    return <Redirect to={outliersUrl("supervisionSupervisorSearch")} />;
+  }
+);
