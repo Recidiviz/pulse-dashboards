@@ -88,6 +88,46 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
           undefined;
       }
 
+      const justifications: string[] = [];
+      if (formInformation.sentenceExpirationDate) {
+        justifications.push(
+          `Release Date: ${formatDate(formInformation.sentenceExpirationDate)}`
+        );
+      }
+      if (formInformation.sentenceReleaseEligibilityDate) {
+        justifications.push(
+          `RED Date: ${formatDate(
+            formInformation.sentenceReleaseEligibilityDate
+          )}`
+        );
+      }
+      if (formInformation.healthClassification) {
+        justifications.push(
+          `Medical Classification: ${formInformation.healthClassification}`
+        );
+      }
+      if (formInformation.levelOfCare) {
+        justifications.push(`Level of Care: ${formInformation.levelOfCare}`);
+      }
+      if (formInformation.latestVantageRiskLevel) {
+        justifications.push(
+          `Latest Vantage Risk Level: ${formInformation.latestVantageRiskLevel}`
+        );
+      }
+      if (
+        formInformation.activeRecommendations &&
+        formInformation.activeRecommendations.length
+      ) {
+        justifications.push(
+          `Active Recommendations: ${uniq(
+            formInformation.activeRecommendations.map(
+              ({ Recommendation }) => Recommendation
+            )
+          ).join(", ")}`
+        );
+      }
+      out.recommendationJustification = justifications.join("\n");
+
       assessmentQuestionNumbers.forEach((q) => {
         const score = formInformation[`q${q}Score`];
         if (q === 1 && score === 5) {

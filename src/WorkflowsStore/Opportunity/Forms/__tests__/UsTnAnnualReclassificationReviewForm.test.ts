@@ -133,6 +133,7 @@ const baseResult: PartialFormData = {
   hasIncompatibles: true,
   incompatiblesList: "1, 2, 3",
   statusAtHearing: "GEN",
+  recommendationJustification: "Level of Care: LOC",
 };
 
 beforeEach(() => {
@@ -325,6 +326,38 @@ describe("prefilledDataTransformer", () => {
     expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
       ...baseResult,
       q8Note: "2/1/19 - Felony, 2/1/20 - Misdemeanor",
+    });
+  });
+
+  test("formats recommendationJustification", () => {
+    oppRecord.formInformation.activeRecommendations = [
+      {
+        Recommendation: "RECA",
+        Pathway: "P",
+        PathwayName: "PATHWAY",
+        TreatmentGoal: "T",
+        VantagePointTitle: "REC A",
+      },
+      {
+        Recommendation: "RECB",
+        Pathway: "P",
+        PathwayName: "PATHWAY",
+        TreatmentGoal: "T",
+        VantagePointTitle: "REC B",
+      },
+      {
+        Recommendation: "RECA",
+        Pathway: "P",
+        PathwayName: "PATHWAY",
+        TreatmentGoal: "T",
+        VantagePointTitle: "REC A",
+      },
+    ];
+
+    expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
+      ...baseResult,
+      recommendationJustification:
+        "Level of Care: LOC\nActive Recommendations: RECA, RECB",
     });
   });
 });

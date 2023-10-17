@@ -127,6 +127,7 @@ const baseResult: PartialFormData = {
   hasIncompatibles: true,
   incompatiblesList: "1, 2, 3",
   statusAtHearing: "GEN",
+  recommendationJustification: "Level of Care: LOC",
 };
 
 beforeEach(() => {
