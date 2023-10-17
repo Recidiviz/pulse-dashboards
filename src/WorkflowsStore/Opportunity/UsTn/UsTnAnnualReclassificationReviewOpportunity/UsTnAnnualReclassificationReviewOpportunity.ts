@@ -18,6 +18,7 @@ import { computed, makeObservable } from "mobx";
 
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsClientProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
+import { formatDate } from "../../../../utils/formatStrings";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
 import { OpportunityRequirement } from "../..";
@@ -105,5 +106,20 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
       CRITERIA_COPY,
       CRITERIA_FORMATTERS
     );
+  }
+
+  get eligibilityDate() {
+    return this.record?.formReclassificationDueDate;
+  }
+
+  compare = this.sortByEligibilityDate;
+
+  // eslint-disable-next-line class-methods-use-this
+  showEligibilityStatus(): boolean {
+    return true;
+  }
+
+  get eligibleStatusMessage() {
+    return `Due ${formatDate(this.eligibilityDate)}`;
   }
 }

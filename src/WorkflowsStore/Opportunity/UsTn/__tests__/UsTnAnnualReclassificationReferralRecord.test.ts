@@ -23,6 +23,7 @@ import {
 const baseRawRecord: UsTnAnnualReclassificationReviewReferralRecordRaw = {
   stateCode: "US_TN",
   externalId: "reclass-01",
+  formReclassificationDueDate: "2023-12-01",
   eligibleCriteria: {
     usTnAtLeast12MonthsSinceLatestAssessment: {
       mostRecentAssessmentDate: "2020-01-01",

@@ -402,6 +402,7 @@ export const UsTnAnnualReclassificationEligibleResidentRecord: ResidentRecord =
 export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclassificationReviewReferralRecord =
   {
     stateCode: "US_TN",
+    formReclassificationDueDate: parseISO("2024-01-01"),
     externalId:
       UsTnAnnualReclassificationEligibleResidentRecord.personExternalId,
     eligibleCriteria: {
@@ -464,6 +465,7 @@ export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclas
 export const UsTnAnnualReclassificationReferralRecordFixture02: UsTnAnnualReclassificationReviewReferralRecord =
   {
     stateCode: "US_TN",
+    formReclassificationDueDate: parseISO("2024-02-01"),
     externalId:
       UsTnAnnualReclassificationEligibleResidentRecord.personExternalId,
     eligibleCriteria: {

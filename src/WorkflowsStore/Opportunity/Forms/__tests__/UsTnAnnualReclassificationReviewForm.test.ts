@@ -54,6 +54,7 @@ function createTestUnit() {
   oppRecord = {
     stateCode: "US_OZ",
     externalId: "pei1",
+    formReclassificationDueDate: new Date("2024-01-01"),
     formInformation: {
       q1Score: 3,
       q2Score: 0,
