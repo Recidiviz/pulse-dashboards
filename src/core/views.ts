@@ -295,7 +295,7 @@ export function workflowsUrl(
 
 export const OUTLIERS_PATHS: Record<OutliersPage, string> = {
   supervision: `/${DASHBOARD_VIEWS.outliers}/supervision`,
-  supervisionSupervisorSearch: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisor-search`,
+  supervisionSupervisorsList: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisors-list`,
   supervisionSupervisor: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisor/:supervisorId`,
   supervisionStaff: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerId`,
   supervisionStaffMetric: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerId/adverse-outcome/:metricId`,
@@ -306,7 +306,7 @@ export type OutliersPage = keyof typeof OUTLIERS_PAGES;
 export const OUTLIERS_PAGES = {
   supervision: "supervision",
   supervisionSupervisor: "supervisionSupervisor",
-  supervisionSupervisorSearch: "supervisionSupervisorSearch",
+  supervisionSupervisorsList: "supervisionSupervisorsList",
   supervisionStaff: "supervisionStaff",
   supervisionStaffMetric: "supervisionStaffMetric",
 } as const;

@@ -26,7 +26,7 @@ import { OutliersRoute } from "../OutliersRoute";
 import OutliersStaffPage from "../OutliersStaffPage";
 import { OutliersSupervisionHome } from "../OutliersSupervisionHome";
 import OutliersSupervisorPage from "../OutliersSupervisorPage";
-import OutliersSupervisorSearchPage from "../OutliersSupervisorSearchPage";
+import OutliersSupervisorsListPage from "../OutliersSupervisorsListPage";
 import { DASHBOARD_PATHS, OUTLIERS_PATHS } from "../views";
 
 const PageOutliers: React.FC = () => {
@@ -49,8 +49,8 @@ const PageOutliers: React.FC = () => {
         <OutliersRoute exact path={OUTLIERS_PATHS.supervision}>
           <OutliersSupervisionHome />
         </OutliersRoute>
-        <OutliersRoute exact path={OUTLIERS_PATHS.supervisionSupervisorSearch}>
-          <OutliersSupervisorSearchPage />
+        <OutliersRoute exact path={OUTLIERS_PATHS.supervisionSupervisorsList}>
+          <OutliersSupervisorsListPage />
         </OutliersRoute>
         <OutliersRoute exact path={OUTLIERS_PATHS.supervisionSupervisor}>
           <OutliersSupervisorPage

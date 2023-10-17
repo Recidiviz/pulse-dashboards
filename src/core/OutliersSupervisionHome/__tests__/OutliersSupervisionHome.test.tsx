@@ -75,14 +75,14 @@ test("homepage redirects supervisors to their own report", () => {
   );
 });
 
-test("homepage redirects non-supervisors to the search page", () => {
+test("homepage redirects non-supervisors to the supervisors list page", () => {
   render(
     <StaticRouter location={outliersUrl("supervision")} context={routerContext}>
       <OutliersSupervisionHome>null</OutliersSupervisionHome>
     </StaticRouter>
   );
 
-  expect(routerContext.url).toBe(outliersUrl("supervisionSupervisorSearch"));
+  expect(routerContext.url).toBe(outliersUrl("supervisionSupervisorsList"));
 });
 
 test("redirect waits for supervision store to be hydrated", async () => {

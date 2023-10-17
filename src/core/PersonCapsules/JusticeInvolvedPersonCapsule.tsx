@@ -30,7 +30,7 @@ import styled, { css } from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
-import { JusticeInvolvedPersonAvatar } from "../Avatar";
+import { PersonInitialsAvatar } from "../Avatar";
 import { Separator } from "../WorkflowsClientProfile/common";
 
 export type JusticeInvolvedPersonCapsuleProps = {
@@ -123,7 +123,7 @@ export const JusticeInvolvedPersonCapsule = observer(
 
     return (
       <Wrapper nameHoverState={nameHoverState}>
-        <JusticeInvolvedPersonAvatar
+        <PersonInitialsAvatar
           name={person.displayPreferredName}
           size={SIZES.avatar[avatarSize]}
         />

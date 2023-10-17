@@ -54,7 +54,7 @@ const RouteSync = observer(function RouteSync({ children }) {
   if (supervisionStore?.currentSupervisorUser) {
     if (
       // not allowed to access search page
-      loc.pathname === outliersUrl("supervisionSupervisorSearch") ||
+      loc.pathname === outliersUrl("supervisionSupervisorsList") ||
       // not allowed to access someone else's supervisor report
       (supervisorId &&
         supervisorId !== supervisionStore.currentSupervisorUser.externalId)

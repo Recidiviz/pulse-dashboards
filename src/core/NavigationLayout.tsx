@@ -406,7 +406,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const displayBackButton =
       ((view === DASHBOARD_VIEWS.workflows && page !== workflowsHomepage) ||
         (view === DASHBOARD_VIEWS.outliers &&
-          pathname !== OUTLIERS_PATHS.supervisionSupervisorSearch)) &&
+          pathname !== OUTLIERS_PATHS.supervisionSupervisorsList)) &&
       isBackButtonEnabled;
 
     const quickLinks = (

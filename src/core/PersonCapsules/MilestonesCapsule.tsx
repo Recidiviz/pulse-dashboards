@@ -21,7 +21,7 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
-import { JusticeInvolvedPersonAvatar } from "../Avatar";
+import { PersonInitialsAvatar } from "../Avatar";
 
 export type MilestonesCapsuleProps = {
   person: JusticeInvolvedPerson;
@@ -53,10 +53,7 @@ export const MilestonesCapsule = observer(function MilestonesCapsule({
 }: MilestonesCapsuleProps): JSX.Element {
   return (
     <Wrapper>
-      <JusticeInvolvedPersonAvatar
-        name={person.displayPreferredName}
-        size={40}
-      />
+      <PersonInitialsAvatar name={person.displayPreferredName} size={40} />
       <PersonInfo>
         <PersonName className="PersonName fs-exclude">
           {person.displayName}

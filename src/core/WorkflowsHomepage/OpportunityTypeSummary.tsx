@@ -35,7 +35,7 @@ import {
   Opportunity,
   OpportunityType,
 } from "../../WorkflowsStore";
-import { JusticeInvolvedPersonAvatar } from "../Avatar";
+import { PersonInitialsAvatar } from "../Avatar";
 import { workflowsUrl } from "../views";
 
 const OpportunityTypeSummaryWrapper = styled.div<{
@@ -248,7 +248,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
             key={opportunity.person.recordId}
             hasBorder={!responsiveRevamp}
           >
-            <JusticeInvolvedPersonAvatar
+            <PersonInitialsAvatar
               size={56}
               name={opportunity.person.displayPreferredName}
             />
@@ -256,7 +256,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
         ))}
         {numOpportunitiesToDisplay > 0 && (
           <ClientAvatarWrapper hasBorder={!responsiveRevamp}>
-            <JusticeInvolvedPersonAvatar
+            <PersonInitialsAvatar
               size={56}
               name={`+ ${numOpportunitiesToDisplay}`}
               splitName={false}

@@ -18,6 +18,7 @@
 import { index } from "d3-array";
 import { makeAutoObservable, observable } from "mobx";
 
+import { isOfflineMode } from "../../utils/isOfflineMode";
 import { OutliersAPI } from "../api/interface";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
@@ -117,6 +118,8 @@ export class OutliersSupervisionStore {
 
   get currentSupervisorUser(): SupervisionOfficerSupervisor | undefined {
     const { userAppMetadata } = this.outliersStore.rootStore.userStore;
+    if (isOfflineMode()) return undefined;
+
     if (userAppMetadata) {
       const { role, externalId, district } = userAppMetadata;
       if (

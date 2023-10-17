@@ -24,6 +24,7 @@ interface AvatarProps {
   name: string;
   size?: number;
   splitName?: boolean;
+  square?: boolean;
 }
 
 interface AvatarElementProps {
@@ -33,7 +34,7 @@ interface AvatarElementProps {
 const AvatarElement = styled.div(
   ({ size }: AvatarElementProps) => css`
     align-items: center;
-    border-radius: ${rem(size / 2)};
+    border-radius: ${rem(8)};
     display: flex;
     height: ${rem(size)};
     line-height: ${rem(size)};
@@ -70,10 +71,11 @@ export const formatAvatarText = (text: string, splitName: boolean): string => {
     : text;
 };
 
-export const JusticeInvolvedPersonAvatar: React.FC<AvatarProps> = ({
+export const PersonInitialsAvatar: React.FC<AvatarProps> = ({
   name,
   size = 40,
   splitName = true,
+  square = false,
 }) => {
   const initials = formatAvatarText(name, splitName);
 
@@ -84,7 +86,7 @@ export const JusticeInvolvedPersonAvatar: React.FC<AvatarProps> = ({
         size={size}
         name={initials}
         colors={palette.data.defaultOrder}
-        square={false}
+        square={square}
       />
       <AvatarInitials className="fs-exclude" size={size}>
         {initials}

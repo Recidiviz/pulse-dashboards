@@ -39,6 +39,6 @@ export const OutliersSupervisionHome = observer(
       );
     }
 
-    return <Redirect to={outliersUrl("supervisionSupervisorSearch")} />;
+    return <Redirect to={outliersUrl("supervisionSupervisorsList")} />;
   }
 );

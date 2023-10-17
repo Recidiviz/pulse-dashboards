@@ -20,6 +20,7 @@ import { configure, flowResult } from "mobx";
 import { ValuesType } from "utility-types";
 
 import { RootStore } from "../../../RootStore";
+import { isOfflineMode } from "../../../utils/isOfflineMode";
 import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
 import { CASELOAD_TYPE_IDS } from "../../models/offlineFixtures/constants";
 import { metricBenchmarksFixture } from "../../models/offlineFixtures/MetricBenchmarkFixture";
@@ -184,7 +185,7 @@ test("supervisionOfficersPresenter", () => {
   expect(store.supervisionOfficersPresenter).toBeUndefined();
 });
 
-test("current user record for supervisor", () => {
+test("current user record for supervisor except offline mode", () => {
   jest
     .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
     .mockReturnValue({
@@ -193,6 +194,8 @@ test("current user record for supervisor", () => {
       district: "District One",
       stateCode: "us_mi",
     });
+
+  if (isOfflineMode()) expect(store.currentSupervisorUser).toBeUndefined();
 
   expect(store.currentSupervisorUser).toBeDefined();
   expect(store.currentSupervisorUser).toMatchInlineSnapshot(`

@@ -149,10 +149,10 @@ test("handles params for supervision officer metric page", () => {
   expect(supervisionStore?.metricId).toBe(mockMetricId);
 });
 
-test("handles params for supervision supervisor search page", () => {
+test("handles params for supervision supervisors list page", async () => {
   render(
-    <StaticRouter location={outliersUrl("supervisionSupervisorSearch", {})}>
-      <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisorSearch}>
+    <StaticRouter location={outliersUrl("supervisionSupervisorsList", {})}>
+      <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisorsList}>
         null
       </OutliersRoute>
     </StaticRouter>
@@ -166,7 +166,7 @@ test("handles params for supervision supervisor search page", () => {
   /* eslint-enable @typescript-eslint/no-non-null-assertion */
 });
 
-test("supervisors restricted from search page", () => {
+test("supervisors restricted from supervisors list page", () => {
   jest.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
     displayName: "",
     fullName: {},
@@ -175,8 +175,8 @@ test("supervisors restricted from search page", () => {
   });
 
   render(
-    <StaticRouter location={outliersUrl("supervisionSupervisorSearch", {})}>
-      <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisorSearch}>
+    <StaticRouter location={outliersUrl("supervisionSupervisorsList", {})}>
+      <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisorsList}>
         null
       </OutliersRoute>
     </StaticRouter>

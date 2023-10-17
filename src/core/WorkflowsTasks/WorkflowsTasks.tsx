@@ -42,7 +42,7 @@ import {
 } from "../../WorkflowsStore/Task/types";
 import { WorkflowsTasksStore } from "../../WorkflowsStore/Task/WorkflowsTasksStore";
 import { getEntries } from "../../WorkflowsStore/utils";
-import { JusticeInvolvedPersonAvatar } from "../Avatar";
+import { PersonInitialsAvatar } from "../Avatar";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
@@ -159,7 +159,7 @@ const TaskListItem: React.FC<TaskListItemProps> = observer(
           }
         >
           <TaskClientItem>
-            <JusticeInvolvedPersonAvatar name={person.displayName} size={24} />
+            <PersonInitialsAvatar name={person.displayName} size={24} />
             <div>
               <TaskClientName>{person.displayName}</TaskClientName>
               <TaskClientTasksCount responsiveRevamp={!!responsiveRevamp}>
@@ -197,7 +197,7 @@ const NeedListItem: React.FC<TaskListItemProps> = observer(
             workflowsStore.updateSelectedPerson(person.pseudonymizedId)
           }
         >
-          <JusticeInvolvedPersonAvatar name={person.displayName} size={32} />
+          <PersonInitialsAvatar name={person.displayName} size={32} />
           <TaskClientItem>
             <TaskClientName>{person.displayName}</TaskClientName>
             <TaskClientTasksCount responsiveRevamp={!!responsiveRevamp}>
