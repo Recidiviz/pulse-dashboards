@@ -63,24 +63,25 @@ const AccordionButton = styled(AccordionItemButton)<{
     border-top: none;
   }
 
-  &:after {
+  &::after {
     display: inline-block;
-    content: "";
-    height: ${({ $responsiveRevamp }) => ($responsiveRevamp ? "8" : "10")}px;
-    width: ${({ $responsiveRevamp }) => ($responsiveRevamp ? "8" : "10")}px;
-    margin-right: 12px;
-    border-bottom: 1px solid ${palette.slate70};
-    border-right: 1px solid ${palette.slate70};
-    transform: rotate(-45deg);
+    content: "+";
+    display: inline-block;
+    font-size: 1rem;
     position: absolute;
     right: ${({ $responsiveRevamp }) =>
       $responsiveRevamp ? rem(spacing.sm) : rem(spacing.lg)};
-    top: calc(${rem(spacing.lg)} + 5px);
+    top: calc(${rem(spacing.lg)} - 3px);
+    color: ${palette.pine1};
   }
 
   &[aria-expanded="true"]::after,
   &[aria-selected="true"]::after {
-    transform: rotate(45deg);
+    content: "";
+    width: 8px;
+    margin-right: 1px;
+    top: calc(${rem(spacing.lg)} + 9.5px);
+    border-bottom: 1.5px solid ${palette.pine1};
   }
 
   &[aria-expanded="true"] {
