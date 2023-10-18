@@ -274,3 +274,12 @@ test("current supervisor user does not hydrate via API", async () => {
     store.outliersStore.apiClient.supervisionOfficerSupervisors
   ).not.toHaveBeenCalled();
 });
+
+test("look up supervisor by ID", async () => {
+  await flowResult(store.hydrateSupervisionOfficerSupervisors());
+
+  const testSupervisor = supervisionOfficerSupervisorsFixture[0];
+  expect(store.supervisionOfficerSupervisor(testSupervisor.externalId)).toEqual(
+    testSupervisor
+  );
+});

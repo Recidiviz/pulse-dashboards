@@ -16,16 +16,19 @@
 // =============================================================================
 
 import { MetricBenchmark } from "../models/MetricBenchmark";
-import { OutliersConfig } from "../models/OutliersConfig";
+import { MetricConfig } from "../models/MetricConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
+import { SupervisionOfficerMetricOutlier } from "../models/SupervisionOfficerMetricOutlier";
 
-export interface OutliersAPI {
-  init(): Promise<{ config: OutliersConfig }>;
-  metricBenchmarks(): Promise<Array<MetricBenchmark>>;
-  supervisionOfficerSupervisors(): Promise<Array<SupervisionOfficerSupervisor>>;
-  officersForSupervisor(
-    supervisorId: string
-  ): Promise<Array<SupervisionOfficer>>;
-  supervisionOfficer(officerId: string): Promise<SupervisionOfficer>;
-}
+// This type represents the state of fully hydrated data
+// where all necessary related objects are guaranteed to exist
+export type OutlierOfficerData = Omit<
+  SupervisionOfficer,
+  "currentPeriodStatuses"
+> & {
+  outlierMetrics: MetricWithConfig[];
+};
+export type MetricWithConfig = SupervisionOfficerMetricOutlier & {
+  config: Omit<MetricConfig, "metricBenchmarksByCaseloadType">;
+  benchmark: MetricBenchmark & { currentPeriodTarget: number };
+};

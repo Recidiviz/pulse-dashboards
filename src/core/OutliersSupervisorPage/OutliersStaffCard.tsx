@@ -27,7 +27,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
-import { OutlierOfficerData } from "../../OutliersStore/presenters/SupervisionOfficersPresenter";
+import { OutlierOfficerData } from "../../OutliersStore/presenters/types";
 import { OutliersSwarmPlot } from "../OutliersSwarmPlot";
 import { outliersUrl } from "../views";
 

@@ -16,29 +16,14 @@
 // =============================================================================
 
 import { flowResult, makeAutoObservable } from "mobx";
-import { Optional } from "utility-types";
 
 import { Hydratable } from "../../core/models/types";
 import { castToError } from "../../utils/castToError";
-import { MetricBenchmark } from "../models/MetricBenchmark";
-import { MetricConfig } from "../models/MetricConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
-import { SupervisionOfficerMetricOutlier } from "../models/SupervisionOfficerMetricOutlier";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
-
-// This type represents the state of fully hydrated data
-// where all necessary related objects are guaranteed to exist
-export type OutlierOfficerData = Omit<
-  SupervisionOfficer,
-  "currentPeriodStatuses"
-> & {
-  outlierMetrics: MetricWithConfig[];
-};
-export type MetricWithConfig = SupervisionOfficerMetricOutlier & {
-  config: Omit<MetricConfig, "metricBenchmarksByCaseloadType">;
-  benchmark: MetricBenchmark & { currentPeriodTarget: number };
-};
+import { getOutlierOfficerData } from "./getOutlierOfficerData";
+import { OutlierOfficerData } from "./types";
 
 export class SupervisionOfficersPresenter implements Hydratable {
   error?: Error | undefined;
@@ -135,9 +120,8 @@ export class SupervisionOfficersPresenter implements Hydratable {
   }
 
   /**
-   * Collects all of the officer data, modeling relationships between them with nested objects,
-   * and verifies that all of the related objects actually exist.
-   * It triggers an error state rather than returning a partial result, so that  none of the UI
+   * Augments officer data with all necessary relationships fully hydrated.
+   * It triggers an error state rather than returning a partial result, so that none of the UI
    * components that consume this data have to worry about parts of it being missing
    */
   get outlierOfficersData(): OutlierOfficerData[] | undefined {
@@ -148,64 +132,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
         .get(this.supervisorId)
         ?.filter((o) => o.currentPeriodStatuses.FAR.length > 0)
         .map((o): OutlierOfficerData => {
-          return {
-            ...o,
-            outlierMetrics: o.currentPeriodStatuses.FAR.map((metric) => {
-              // verify that the related objects we need are actually present;
-              // specifically, the metric configs for this officer and the benchmarks
-              // for their caseload type
-              const metricConfig = this.supervisionStore.metricConfigsById?.get(
-                metric.metricId
-              );
-              if (!metricConfig) {
-                throw new Error(
-                  `Missing metric configuration and benchmark data for ${metric.metricId}`
-                );
-              }
-
-              const benchmark = metricConfig.metricBenchmarksByCaseloadType.get(
-                o.caseloadType
-              );
-              const currentPeriodTarget = benchmark?.benchmarks.at(-1)?.target;
-              if (
-                !benchmark ||
-                // in practice we don't expect this to be missing, but for type safety we verify
-                currentPeriodTarget === undefined
-              ) {
-                throw new Error(
-                  `Missing metric benchmark data for caseload type ${o.caseloadType} for ${metric.metricId}`
-                );
-              }
-
-              // current officer's rate is duplicated in the benchmark values, so we need to remove it
-              const filteredBenchmark = { ...benchmark, currentPeriodTarget };
-              filteredBenchmark.latestPeriodValues = [
-                ...filteredBenchmark.latestPeriodValues,
-              ];
-              const matchingIndex =
-                filteredBenchmark.latestPeriodValues.findIndex(
-                  (v) => v.value === metric.rate
-                );
-              // in practice we always expect a match,
-              // but if we miss we don't want to arbitrarily delete the last element
-              if (matchingIndex > -1) {
-                filteredBenchmark.latestPeriodValues.splice(
-                  filteredBenchmark.latestPeriodValues.findIndex(
-                    (v) => v.value === metric.rate
-                  ),
-                  1
-                );
-              }
-
-              const config: Optional<
-                MetricConfig,
-                "metricBenchmarksByCaseloadType"
-              > = { ...metricConfig };
-              delete config.metricBenchmarksByCaseloadType;
-
-              return { ...metric, config, benchmark: filteredBenchmark };
-            }),
-          };
+          return getOutlierOfficerData(o, this.supervisionStore);
         });
       return outlierOfficers;
     } catch (e) {
@@ -217,8 +144,8 @@ export class SupervisionOfficersPresenter implements Hydratable {
    * Provides information about the currently selected supervisor
    */
   get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
-    return this.supervisionStore.supervisionOfficerSupervisors?.find(
-      (s) => s.externalId === this.supervisorId
+    return this.supervisionStore.supervisionOfficerSupervisor(
+      this.supervisorId
     );
   }
 

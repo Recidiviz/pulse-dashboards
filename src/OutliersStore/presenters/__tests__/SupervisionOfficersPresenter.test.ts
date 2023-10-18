@@ -20,8 +20,22 @@ import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
 import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConfigFixture";
 import { OutliersStore } from "../../OutliersStore";
 import { OutliersSupervisionStore } from "../../stores/OutliersSupervisionStore";
+import { getOutlierOfficerData } from "../getOutlierOfficerData";
 
 let store: OutliersSupervisionStore;
+
+jest.mock("../getOutlierOfficerData", () => {
+  const original = jest.requireActual(
+    "../getOutlierOfficerData"
+  ).getOutlierOfficerData;
+  return {
+    getOutlierOfficerData: jest.fn().mockImplementation(original),
+  };
+});
+
+const getOutlierOfficerDataMock = getOutlierOfficerData as jest.MockedFunction<
+  typeof getOutlierOfficerData
+>;
 
 beforeEach(() => {
   jest.resetModules();
@@ -95,4 +109,21 @@ test("supervisorId not found in officersBySupervisor", async () => {
   expect(presenter?.error).toEqual(
     new Error("Supervisor mdavis123 does not have any assigned officers")
   );
+});
+
+test("error assembling metrics data", async () => {
+  const err = new Error("oops");
+  getOutlierOfficerDataMock.mockImplementation(() => {
+    throw err;
+  });
+
+  store.setSupervisorId("mdavis123");
+  const presenter = store.supervisionOfficersPresenter;
+  expect(presenter).toBeDefined();
+  await presenter?.hydrate();
+
+  expect(presenter?.error).toBeUndefined();
+
+  expect(presenter?.outlierOfficersData).toBeUndefined();
+  expect(presenter?.error).toEqual(err);
 });

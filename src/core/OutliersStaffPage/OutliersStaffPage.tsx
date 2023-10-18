@@ -24,18 +24,19 @@ import {
   Tabs,
   zindex,
 } from "@recidiviz/design-system";
+import { noop } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import simplur from "simplur";
 import styled, { css } from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { SupervisionOfficer } from "../../OutliersStore/models/SupervisionOfficer";
-import { SupervisionOfficerSupervisor } from "../../OutliersStore/models/SupervisionOfficerSupervisor";
+import { SupervisionOfficerDetailPresenter } from "../../OutliersStore/presenters/SupervisionOfficerDetailPresenter";
+import ModelHydrator from "../ModelHydrator";
 import { INTERCOM_HEIGHT } from "../OutliersNavLayout/OutliersNavLayout";
 import OutliersPageLayout from "../OutliersPageLayout";
 import {
@@ -95,15 +96,26 @@ const StyledTabList = styled(TabList)<{ isMobile: boolean }>`
 
 const StyledTab = styled(Tab)`
   font-size: ${rem(spacing.md)};
-  color: ${palette.slate60};
   display: inline-block;
+  padding: 0;
+  border: 0;
 
-  &:hover {
-    color: ${palette.pine2};
+  & a {
+    display: inline-block;
+    padding: ${rem(spacing.sm)} 0;
+    color: ${palette.slate60};
+    border-bottom: ${rem(4)} solid transparent;
+
+    &:hover {
+      color: ${palette.pine2};
+    }
   }
 
   &.Tab--selected {
-    border-bottom-color: ${palette.pine2};
+    & a {
+      border-bottom-color: ${palette.pine2};
+      color: ${palette.pine2};
+    }
   }
 `;
 
@@ -117,79 +129,97 @@ const StyledTabPanel = styled(TabPanel)`
   }
 `;
 
-const OutliersStaffPage = observer(function OutliersStaffPage() {
+const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
+  presenter,
+}: {
+  presenter: SupervisionOfficerDetailPresenter;
+}) {
   const { isMobile, isTablet } = useIsMobile(true);
-  const {
-    outliersStore: { supervisionStore },
-  } = useRootStore();
-  // TODO #4072: read these from the presenter instead
-  const { officerId, metricId } = supervisionStore ?? {};
 
-  // TODO Remove local storage once data store is ready
-  const supervisorData = localStorage.getItem("supervisor") || "";
-  const officersData = localStorage.getItem("officers") || "";
+  const { outlierOfficerData, defaultMetricId, officerId } = presenter;
 
-  const currentSupervisor: SupervisionOfficerSupervisor =
-    JSON.parse(supervisorData);
-  const currentOfficer: SupervisionOfficer = JSON.parse(officersData).find(
-    (officer: SupervisionOfficer) => officer.externalId === officerId
-  );
-  const [selectedTabIndex, setTabIndex] = React.useState(0);
+  // if the presenter is hydrated, this stuff should never be missing in practice
+  if (!outlierOfficerData || !defaultMetricId) return <NotFound />;
 
-  React.useEffect(() => {
-    if (currentOfficer) {
-      currentOfficer.currentPeriodStatuses.FAR.find((metric, index: number) => {
-        if (metric.metricId === metricId) {
-          return setTabIndex(index);
-        }
-        return undefined;
-      });
-    }
-  }, [currentOfficer, metricId]);
-
-  if (!currentOfficer) return <NotFound />;
-
-  const pageTitle = simplur`${currentOfficer.displayName} is an outlier on ${currentOfficer.currentPeriodStatuses.FAR.length} metric[|s]`;
+  const currentSupervisor = presenter.supervisorInfo;
+  const pageTitle = simplur`${outlierOfficerData.displayName} is an outlier on ${outlierOfficerData.outlierMetrics.length} metric[|s]`;
 
   const infoItems = [
     {
       title: "caseload types",
-      info: currentOfficer.caseloadType,
+      info: outlierOfficerData.caseloadType,
     },
-    { title: "district", info: currentOfficer.district },
+    { title: "district", info: outlierOfficerData.district },
     { title: "unit supervisor", info: currentSupervisor?.displayName },
   ];
 
   return (
-    <OutliersPageLayout pageTitle={pageTitle} infoItems={infoItems}>
-      <StyledTabs
-        isMobile={isMobile}
-        selectedIndex={selectedTabIndex}
-        onSelect={(index) => setTabIndex(index)}
-      >
-        <StyledTabList isMobile={isMobile}>
-          {currentOfficer.currentPeriodStatuses.FAR.map((metric) => (
-            <Link
-              key={metric.metricId}
-              to={outliersUrl("supervisionStaffMetric", {
-                officerId: currentOfficer.externalId,
-                metricId: metric.metricId,
-              })}
-            >
-              <StyledTab key={metric.metricId}>{metric.metricId}</StyledTab>
-            </Link>
+    <>
+      {/* if current metric is not set, we need to redirect to the default metric URL */}
+      <Redirect
+        from={outliersUrl("supervisionStaff", {
+          officerId,
+        })}
+        to={outliersUrl("supervisionStaffMetric", {
+          officerId,
+          metricId: defaultMetricId,
+        })}
+      />
+
+      <OutliersPageLayout pageTitle={pageTitle} infoItems={infoItems}>
+        <StyledTabs
+          isMobile={isMobile}
+          selectedIndex={presenter.currentMetricIndex}
+          // tab navigation is handled by router Link components,
+          // so we don't actually have to maintain any tab state here
+          onSelect={noop}
+        >
+          <StyledTabList isMobile={isMobile}>
+            {outlierOfficerData.outlierMetrics.map((metric) => (
+              <StyledTab key={metric.metricId}>
+                <Link
+                  to={outliersUrl("supervisionStaffMetric", {
+                    officerId: outlierOfficerData.externalId,
+                    metricId: metric.metricId,
+                  })}
+                >
+                  {metric.metricId}
+                </Link>
+              </StyledTab>
+            ))}
+          </StyledTabList>
+          {outlierOfficerData.outlierMetrics.map((metric) => (
+            <StyledTabPanel key={metric.metricId}>
+              <Wrapper isLaptop={isTablet}>
+                <Sidebar isLaptop={isTablet}>{metric.metricId}</Sidebar>
+                <Body>{metric.metricId}</Body>
+              </Wrapper>
+            </StyledTabPanel>
           ))}
-        </StyledTabList>
-        {currentOfficer.currentPeriodStatuses.FAR.map((metric) => (
-          <StyledTabPanel key={metric.metricId}>
-            <Wrapper isLaptop={isTablet}>
-              <Sidebar isLaptop={isTablet}>{metric.metricId}</Sidebar>
-              <Body>{metric.metricId}</Body>
-            </Wrapper>
-          </StyledTabPanel>
-        ))}
-      </StyledTabs>
-    </OutliersPageLayout>
+        </StyledTabs>
+      </OutliersPageLayout>
+    </>
+  );
+});
+
+const OutliersStaffPage = observer(function OutliersStaffPage() {
+  const {
+    outliersStore: { supervisionStore },
+  } = useRootStore();
+
+  const officerId = supervisionStore?.officerId;
+
+  if (!officerId) return null;
+
+  const presenter = new SupervisionOfficerDetailPresenter(
+    supervisionStore,
+    officerId
+  );
+
+  return (
+    <ModelHydrator model={presenter}>
+      <StaffPageWithPresenter presenter={presenter} />
+    </ModelHydrator>
   );
 });
 

@@ -61,4 +61,19 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
       (o) => o.supervisorId === supervisorId
     );
   }
+
+  async supervisionOfficer(officerId: string): Promise<SupervisionOfficer> {
+    const { supervisionOfficerFixture } = await import(
+      "../models/offlineFixtures/SupervisionOfficerFixture"
+    );
+
+    const officerFixture = supervisionOfficerFixture.find(
+      (o) => o.externalId === officerId
+    );
+
+    if (!officerFixture)
+      throw new Error(`Officer ${officerId} not present in fixture data`);
+
+    return officerFixture;
+  }
 }

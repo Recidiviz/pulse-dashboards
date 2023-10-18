@@ -24,7 +24,7 @@ import { observer } from "mobx-react-lite";
 import { Fragment } from "react";
 import { SizeMeProps, withSize } from "react-sizeme";
 
-import { MetricWithConfig } from "../../OutliersStore/presenters/SupervisionOfficersPresenter";
+import { MetricWithConfig } from "../../OutliersStore/presenters/types";
 import { calculateSwarm } from "./calculateSwarm";
 import {
   GOAL_COLORS,

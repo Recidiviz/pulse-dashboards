@@ -149,6 +149,14 @@ export class OutliersSupervisionStore {
     return this.allSupervisionOfficerSupervisors;
   }
 
+  supervisionOfficerSupervisor(
+    supervisorId: string
+  ): SupervisionOfficerSupervisor | undefined {
+    return this.supervisionOfficerSupervisors?.find(
+      (s) => s.externalId === supervisorId
+    );
+  }
+
   /**
    * Fetches supervision officer supervisor data for the current tenant.
    */
