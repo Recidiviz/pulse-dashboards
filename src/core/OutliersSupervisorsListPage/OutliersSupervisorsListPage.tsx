@@ -21,19 +21,17 @@ import {
   TooltipTrigger,
   typography,
 } from "@recidiviz/design-system";
-import groupBy from "lodash/fp/groupBy";
-import map from "lodash/fp/map";
-import pipe from "lodash/fp/pipe";
-import values from "lodash/fp/values";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { supervisionOfficerSupervisorsFixture } from "../../OutliersStore/models/offlineFixtures/SupervisionOfficerSupervisor";
-import { SupervisionOfficerSupervisor } from "../../OutliersStore/models/SupervisionOfficerSupervisor";
+import { SupervisionOfficerSupervisorsPresenter } from "../../OutliersStore/presenters/SupervisionOfficerSupervisorsPresenter";
 import { PersonInitialsAvatar } from "../Avatar";
+import ModelHydrator from "../ModelHydrator";
 import { SectionLabelText } from "../sharedComponents";
 import { outliersUrl } from "../views";
 
@@ -84,45 +82,42 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const OutliersSupervisorsListPage = () => {
+const SupervisorsList = observer(function SupervisorsList({
+  presenter,
+}: {
+  presenter: SupervisionOfficerSupervisorsPresenter;
+}) {
   const { isMobile, isLaptop } = useIsMobile(true);
 
-  // TODO #4146 Ensure we are filtering only to supervisors with outlying officers
-  const supervisorsByDistrict = pipe(
-    groupBy((d: SupervisionOfficerSupervisor) => d.district),
-    values,
-    map((dataset) => {
-      return {
-        district: dataset[0].district,
-        supervisors: dataset as SupervisionOfficerSupervisor[],
-      };
-    })
-  )(supervisionOfficerSupervisorsFixture);
+  const { supervisorsWithOutliersByDistrict, supervisorsWithOutliersCount } =
+    presenter;
 
-  const districtViz = supervisorsByDistrict.map(({ district, supervisors }) => (
-    <div key={district}>
-      <DistrictName>{district ?? "Unknown"}</DistrictName>
-      <SupervisorLinksWrapper isMobile={isMobile}>
-        {supervisors.map((supervisor) => (
-          <SupervisorWrapper>
-            <TooltipTrigger contents="See insights">
-              <StyledLink
-                key={supervisor.externalId}
-                to={outliersUrl("supervisionSupervisor", {
-                  supervisorId: supervisor.externalId,
-                })}
-              >
-                <PersonInitialsAvatar square name={supervisor.displayName} />
-                <SupervisorName>{supervisor.displayName}</SupervisorName>
-              </StyledLink>
-            </TooltipTrigger>
-          </SupervisorWrapper>
-        ))}
-      </SupervisorLinksWrapper>
-    </div>
-  ));
+  const districtViz = supervisorsWithOutliersByDistrict.map(
+    ({ district, supervisors }) => (
+      <div key={district}>
+        <DistrictName>{district ?? "Unknown"}</DistrictName>
+        <SupervisorLinksWrapper isMobile={isMobile}>
+          {supervisors.map((supervisor) => (
+            <SupervisorWrapper key={supervisor.externalId}>
+              <TooltipTrigger contents="See insights">
+                <StyledLink
+                  key={supervisor.externalId}
+                  to={outliersUrl("supervisionSupervisor", {
+                    supervisorId: supervisor.externalId,
+                  })}
+                >
+                  <PersonInitialsAvatar square name={supervisor.displayName} />
+                  <SupervisorName>{supervisor.displayName}</SupervisorName>
+                </StyledLink>
+              </TooltipTrigger>
+            </SupervisorWrapper>
+          ))}
+        </SupervisorLinksWrapper>
+      </div>
+    )
+  );
 
-  const pageTitle = simplur`${supervisionOfficerSupervisorsFixture.length} supervisor[|s] across the state have one or more outlier officers in their unit`;
+  const pageTitle = simplur`${supervisorsWithOutliersCount} supervisor[|s] across the state have one or more outlier officers in their unit`;
 
   return (
     <Wrapper isLaptop={isLaptop}>
@@ -130,6 +125,26 @@ const OutliersSupervisorsListPage = () => {
       {districtViz}
     </Wrapper>
   );
-};
+});
+
+const OutliersSupervisorsListPage = observer(
+  function OutliersSupervisorsListPage() {
+    const {
+      outliersStore: { supervisionStore },
+    } = useRootStore();
+
+    if (!supervisionStore) return null;
+
+    const presenter = new SupervisionOfficerSupervisorsPresenter(
+      supervisionStore
+    );
+
+    return (
+      <ModelHydrator model={presenter}>
+        <SupervisorsList presenter={presenter} />
+      </ModelHydrator>
+    );
+  }
+);
 
 export default OutliersSupervisorsListPage;

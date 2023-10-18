@@ -1989,5 +1989,6 @@ Object {
     "middleNames": "D",
     "surname": "Davis",
   },
+  "hasOutliers": true,
 }
 `;

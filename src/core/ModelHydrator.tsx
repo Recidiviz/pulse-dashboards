@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { Loading } from "@recidiviz/design-system";
-import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { useEffect } from "react";
@@ -84,15 +83,12 @@ function ModelHydrator({
   model,
   className,
 }: ModelHydratorProps): React.ReactElement {
-  // this is fine, mobx autoruns don't need dependencies
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(
-    autorun(() => {
-      if (!model.isHydrated && !model.isLoading && !model.error) {
-        model.hydrate();
-      }
-    })
-  );
+  const needsHydration = !model.isHydrated && !model.isLoading && !model.error;
+  useEffect(() => {
+    if (needsHydration) {
+      model.hydrate();
+    }
+  }, [model, needsHydration]);
 
   const transitions = useTransition(getHydrationStatus(model), null, crossFade);
 

@@ -24,6 +24,7 @@ export const supervisionOfficerSupervisorSchema = z
     fullName: fullNameSchema,
     externalId: z.string(),
     district: z.string().nullable(),
+    hasOutliers: z.boolean().optional(),
   })
   .transform(addDisplayName);
 

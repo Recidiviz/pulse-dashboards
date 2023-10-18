@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { action, flowResult, makeAutoObservable } from "mobx";
+import { flowResult, makeAutoObservable } from "mobx";
 import { Optional } from "utility-types";
 
 import { Hydratable } from "../../core/models/types";
@@ -49,9 +49,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
     private supervisionStore: OutliersSupervisionStore,
     public supervisorId: string
   ) {
-    makeAutoObservable(this, {
-      setError: action,
-    });
+    makeAutoObservable(this);
   }
 
   get isHydrated(): boolean {

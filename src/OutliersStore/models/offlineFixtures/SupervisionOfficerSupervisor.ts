@@ -26,21 +26,25 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
       fullName: { given_names: "Miles", middle_names: "D", surname: "Davis" },
       externalId: "mdavis123",
       district: "D1",
+      hasOutliers: true,
     },
     {
       fullName: { given_names: "Billie", surname: "Holiday" },
       externalId: "bholiday456",
       district: null,
+      hasOutliers: true,
     },
     {
       fullName: { given_names: "Ella", surname: "Fitzgerald" },
       externalId: "efitzgerald789",
       district: "D1",
+      hasOutliers: false,
     },
     {
       fullName: { given_names: "John", surname: "Coltrane" },
       externalId: "jColtrane321",
       district: null,
+      hasOutliers: false,
     },
   ];
 export const supervisionOfficerSupervisorsFixture =

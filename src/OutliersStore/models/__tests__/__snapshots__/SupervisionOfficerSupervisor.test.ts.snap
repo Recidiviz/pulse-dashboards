@@ -10,6 +10,7 @@ Object {
     "middleNames": "D",
     "surname": "Davis",
   },
+  "hasOutliers": true,
 }
 `;
 
@@ -23,6 +24,7 @@ Object {
     "middleNames": undefined,
     "surname": "Holiday",
   },
+  "hasOutliers": true,
 }
 `;
 
@@ -36,6 +38,7 @@ Object {
     "middleNames": undefined,
     "surname": "Fitzgerald",
   },
+  "hasOutliers": false,
 }
 `;
 
@@ -49,5 +52,6 @@ Object {
     "middleNames": undefined,
     "surname": "Coltrane",
   },
+  "hasOutliers": false,
 }
 `;
