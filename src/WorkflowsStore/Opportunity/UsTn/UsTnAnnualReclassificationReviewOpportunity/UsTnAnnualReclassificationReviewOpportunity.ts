@@ -77,8 +77,6 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
 
   denialReasonsMap = DENIAL_REASONS_MAP;
 
-  readonly isAlert = true;
-
   constructor(resident: Resident) {
     super(
       resident,

@@ -77,8 +77,6 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
 
   readonly caseNotesTitle = "Disciplinaries";
 
-  isAlert = true;
-
   constructor(resident: Resident) {
     super(
       resident,
