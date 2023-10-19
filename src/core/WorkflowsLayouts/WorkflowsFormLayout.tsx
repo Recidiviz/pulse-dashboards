@@ -137,14 +137,11 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
       />
     );
 
-  const backButtonProps =
-    currentView === "OPPORTUNITY" && !!featureVariants.responsiveRevamp
-      ? { backButtonText: "Exit" }
-      : {
-          onBackButtonClick: featureVariants.responsiveRevamp
-            ? () => setCurrentView("OPPORTUNITY")
-            : undefined,
-        };
+  const backButtonProps = {
+    onBackButtonClick: featureVariants.responsiveRevamp
+      ? () => setCurrentView("OPPORTUNITY")
+      : undefined,
+  };
 
   const hydrated = (
     <Wrapper>

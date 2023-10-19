@@ -22,7 +22,7 @@ import { useHistory } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
-import { BackButtonProps, NavigationLayout } from "../NavigationLayout";
+import { NavigationLayout } from "../NavigationLayout";
 
 export const INTERCOM_HEIGHT = 64;
 
@@ -52,17 +52,15 @@ const Main = styled.main<{
   flex: auto;
 `;
 
-export type OutliersNavLayoutProps = Partial<BackButtonProps>;
-
-const OutliersNavLayout: React.FC<OutliersNavLayoutProps> = ({ children }) => {
+const OutliersNavLayout: React.FC = ({ children }) => {
   const history = useHistory();
   const { isMobile } = useIsMobile(true);
 
   return (
     <Wrapper>
       <NavigationLayout
-        isBackButtonFixed
-        isBackButtonEnabled
+        backButtonText="Back"
+        isFixed={false}
         onBackButtonClick={history.goBack}
       />
       <Main isMobile={isMobile}>{children}</Main>
