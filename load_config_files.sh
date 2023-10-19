@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# -e Exit on error
+# -u Error on unset variables
+# -o pipefail Ensure entire pipeline returns non-zero status if part of it fails
+set -euo pipefail
+
 # update service account files
 echo "Updating service account files..."
 firebase_service_account=$(gcloud secrets versions access latest --secret=env_dev_firebase_service_account --project recidiviz-dashboard-staging)
