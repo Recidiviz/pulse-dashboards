@@ -35,6 +35,16 @@ export function templateValuesForFormData(
 ) {
   const out: Record<string, any> = { ...formData };
 
+  // Add tabs before newlines so the underlining looks right in these big blocks
+  [
+    "recommendationJustification",
+    "disagreementReasons",
+    "denialReasons",
+  ].forEach((multiLineField) => {
+    if (out[multiLineField])
+      out[multiLineField] = out[multiLineField].replace(/\n/g, "\t\n");
+  });
+
   function expandMultipleChoice<F extends keyof typeof formData>(
     field: F,
     options: typeof formData[F][]
@@ -52,6 +62,7 @@ export function templateValuesForFormData(
   expandMultipleChoice("statusAtHearing", ["GEN", "AS", "PC"]);
   expandMultipleChoice("hasIncompatibles", [true, false]);
   expandMultipleChoice("recommendationTransfer", [true, false]);
+  expandMultipleChoice("updatedPhotoNeeded", [true, false]);
   expandMultipleChoice("inmateAppeal", [true, false]);
 
   // This scoring logic is pretty convoluted. Here's what it should do:
