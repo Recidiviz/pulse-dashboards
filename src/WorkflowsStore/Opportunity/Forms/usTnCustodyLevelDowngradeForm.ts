@@ -129,6 +129,8 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
       out.recommendationJustification = justifications.join("\n");
 
       assessmentQuestionNumbers.forEach((q) => {
+        // If we haven't calculated a score, skip this one
+        if (!(`q${q}Score` in formInformation)) return;
         const score = formInformation[`q${q}Score`];
         if (q === 1 && score === 5) {
           // special logic because two options give the same score

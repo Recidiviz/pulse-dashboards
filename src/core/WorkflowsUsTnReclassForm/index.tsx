@@ -40,60 +40,84 @@ export function templateValuesForFormData(
     options: typeof formData[F][]
   ) {
     const val = formData[field];
+    if (val === undefined) return;
     for (const o of options) {
       if (val === o) {
         out[`${field}Selected${o}`] = true;
         return;
       }
     }
-    out[`$f{field}Other`] = val;
+    out[`${field}Other`] = val;
   }
   expandMultipleChoice("statusAtHearing", ["GEN", "AS", "PC"]);
   expandMultipleChoice("hasIncompatibles", [true, false]);
   expandMultipleChoice("recommendationTransfer", [true, false]);
   expandMultipleChoice("inmateAppeal", [true, false]);
 
-  out.totalScore = 0;
-  assessmentQuestions.forEach((question, i) => {
+  // This scoring logic is pretty convoluted. Here's what it should do:
+  // If qNSelection exists, then qNSelectedX and qNScore should be set
+  //   Except if N > 4 and scheduleAScore > 9
+  //
+  // If any 1-4 are blank: scheduleAScore, scheduleAText should be blank
+  //   Else scheduleAScore, scheduleAText based on score 1-4
+  // If scheduleAScore > 9 {
+  //     totalText = scheduleAText and totalScore = scheduleAScore
+  //     skip 5-9
+  //   }
+  //   Else if any 1-9 are blank: totalScore and totalText are blank
+  //   Else totalScore, totalText based on score 1-9
+
+  let runningScore = 0;
+  let seenABlank = false;
+  for (let i = 0; i < assessmentQuestions.length; i += 1) {
+    const question = assessmentQuestions[i];
     const qNum = (i + 1) as AssessmentQuestionNumber;
 
-    if (qNum > 4 && out.scheduleAScore > 9) return;
-
     const selection = formData[`q${qNum}Selection`];
-    if (selection !== undefined) {
-      if (selection === -1) {
-        out[`q${qNum}SelectedNone`] = true;
-        out[`q${qNum}Score`] = 0;
-      } else {
-        out[`q${qNum}Selected${selection}`] = true;
-        const { score } = question.options[selection];
-        out[`q${qNum}Score`] = score;
-        out.totalScore += score;
-      }
+    if (selection === undefined) {
+      seenABlank = true;
+    } else if (selection === -1) {
+      out[`q${qNum}SelectedNone`] = true;
+      out[`q${qNum}Score`] = 0;
+    } else {
+      out[`q${qNum}Selected${selection}`] = true;
+      const { score } = question.options[selection];
+      out[`q${qNum}Score`] = score;
+      runningScore += score;
     }
 
+    // End of Schedule A
     if (qNum === 4) {
-      out.scheduleAScore = out.totalScore;
-      if (out.scheduleAScore >= 15) {
-        out.scheduleAText = "Maximum";
-        out.totalText = "Maximum";
-      } else if (out.scheduleAScore > 9) {
-        out.scheduleAText = "Close";
-        out.totalText = "Close";
-      } else {
-        out.scheduleAText = "Complete Schedule B";
+      out.scheduleAScore = runningScore;
+      out.scheduleAText = "Complete Schedule B";
+      if (seenABlank) {
+        out.scheduleAScore = "";
+        out.scheduleAText = "";
+      } else if (runningScore > 9) {
+        if (runningScore > 15) {
+          out.scheduleAText = "Maximum";
+        } else {
+          out.scheduleAText = "Close";
+        }
+        out.totalText = out.scheduleAText;
+        out.totalScore = out.scheduleAScore;
+        break; // SKIP SCHEDULE B;
       }
     }
-  });
 
-  if (out.totalText) {
-    // skipped schedule B, we're done
-  } else if (out.totalScore >= 17) {
-    out.totalText = "Close";
-  } else if (out.totalScore >= 7) {
-    out.totalText = "Medium";
-  } else {
-    out.totalText = "Minimum";
+    // If we skipped Schedule B we'll never get here
+    if (qNum === 9) {
+      out.totalScore = seenABlank ? "" : runningScore;
+      if (seenABlank) {
+        out.totalText = "";
+      } else if (runningScore >= 17) {
+        out.totalText = "Close";
+      } else if (runningScore >= 7) {
+        out.totalText = "Medium";
+      } else {
+        out.totalText = "Minimum";
+      }
+    }
   }
   return out;
 }

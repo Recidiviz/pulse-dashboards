@@ -84,7 +84,10 @@ const AssessmentQuestion: React.FC<AssessmentQuestionProps> = ({
     );
   };
 
-  const score = selection === -1 ? 0 : questionSpec.options[selection].score;
+  let score;
+  if (selection !== undefined) {
+    score = selection === -1 ? 0 : questionSpec.options[selection].score;
+  }
 
   return (
     <AssessmentItem

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 // TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
-import { sum, zip } from "lodash";
+import { some, sum, zip } from "lodash";
 import { observer } from "mobx-react-lite";
 import React, { useContext } from "react";
 import styled from "styled-components/macro";
@@ -56,13 +56,17 @@ const Seal = styled.img.attrs({ src: SealPng, alt: "TN Seal" })`
 const totalScoreForQuestions = (
   numberedQuestions: [AssessmentQuestionSpec, AssessmentQuestionNumber][],
   formData: UsTnSharedReclassificationDraftData
-) =>
-  sum(
-    numberedQuestions.map(([{ options }, n]) => {
-      const selection = formData[`q${n}Selection`];
-      return selection === -1 ? 0 : options[selection].score;
-    })
-  );
+) => {
+  const scores = numberedQuestions.map(([{ options }, n]) => {
+    const selection = formData[`q${n}Selection`];
+    if (selection === undefined) return undefined;
+    return selection === -1 ? 0 : options[selection].score;
+  });
+  if (some(scores, (s) => s === undefined)) {
+    return undefined;
+  }
+  return sum(scores);
+};
 
 const ClassificationCustodyAssessment: React.FC = () => {
   const formViewerContext = useContext(FormViewerContext);
@@ -79,7 +83,7 @@ const ClassificationCustodyAssessment: React.FC = () => {
 
   const scheduleAScore = totalScoreForQuestions(scheduleA, formData);
   const totalScore = totalScoreForQuestions(numberedQuestions, formData);
-  const scheduleBDisabled = scheduleAScore > 9;
+  const scheduleBDisabled = scheduleAScore !== undefined && scheduleAScore > 9;
 
   return (
     <>

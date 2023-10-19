@@ -120,6 +120,9 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
   }
 
   get eligibleStatusMessage() {
-    return `Due ${formatDate(this.eligibilityDate)}`;
+    if (this.eligibilityDate) {
+      return `Due ${formatDate(this.eligibilityDate)}`;
+    }
+    return "Not Yet Classified";
   }
 }

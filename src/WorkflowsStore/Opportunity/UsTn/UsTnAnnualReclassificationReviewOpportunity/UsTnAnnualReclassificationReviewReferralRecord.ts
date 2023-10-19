@@ -44,7 +44,7 @@ export const usTnAnnualReclassificationReviewSchema = opportunitySchemaBase
     ineligibleCriteria: z.object({}),
     // TODO(#4091) remove `partial()` once undefined qScores (i.e. q1Score, q2Score, ..., q9Score) are fixed on the data side.
     formInformation: formInformation.partial(),
-    formReclassificationDueDate: dateStringSchema,
+    formReclassificationDueDate: dateStringSchema.optional(),
   })
   .merge(caseNotesSchema);
 
