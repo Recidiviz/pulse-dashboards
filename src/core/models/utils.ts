@@ -30,12 +30,9 @@ import {
   Gender,
   LengthOfStay,
   LengthOfStayRawValue,
-  LibertyPopulationSnapshotRecord,
   MetricRecord,
   NewBackendRecord,
   PopulationProjectionTimeSeriesRecord,
-  PrisonPopulationPersonLevelRecord,
-  PrisonPopulationSnapshotRecord,
   RawMetricData,
   SimulationCompartment,
   SnapshotDataRecord,
@@ -60,20 +57,6 @@ const supervisionDimensionDefaults = {
   district: "ALL",
   lengthOfStay: "ALL",
   officerName: "ALL",
-};
-
-const libertyDimensionDefaults = {
-  ...sharedDimensionDefaults,
-  priorLengthOfIncarceration: "ALL",
-  race: "ALL",
-  judicialDistrict: "ALL",
-};
-
-const prisonDimensionDefaults = {
-  ...sharedDimensionDefaults,
-  admissionReason: "ALL",
-  facility: "ALL",
-  lengthOfStay: "ALL",
 };
 
 const timePeriodMap = {
@@ -144,35 +127,6 @@ export function createProjectionTimeSeries(
   });
 }
 
-export function createPrisonPopulationSnapshot(
-  rawRecords: RawMetricData,
-  enabledFilters: EnabledFilters
-): PrisonPopulationSnapshotRecord[] {
-  return rawRecords.map((record) => {
-    return mergeDefaults(
-      {
-        count: parseInt(record.event_count) || parseInt(record.person_count),
-        lastUpdated: formatDateString(record.last_updated),
-        admissionReason: record.legal_status,
-        gender: record.gender as Gender,
-        ageGroup: record.age_group as AgeGroup,
-        facility: record.facility,
-        lengthOfStay:
-          record.length_of_stay &&
-          lengthOfStayMap[
-            record.length_of_stay.toLowerCase() as LengthOfStayRawValue
-          ],
-        timePeriod:
-          record.time_period &&
-          timePeriodMap[record.time_period.toLowerCase() as TimePeriodRawValue],
-        race: record.race,
-      },
-      prisonDimensionDefaults,
-      enabledFilters
-    );
-  });
-}
-
 export function createSupervisionPopulationSnapshot(
   rawRecords: RawMetricData,
   enabledFilters: EnabledFilters
@@ -206,59 +160,6 @@ export function createSupervisionPopulationSnapshot(
           timePeriodMap[record.time_period.toLowerCase() as TimePeriodRawValue],
       },
       supervisionDimensionDefaults,
-      enabledFilters
-    );
-  });
-}
-
-export function createPrisonPopulationPersonLevelList(
-  rawRecords: RawMetricData,
-  enabledFilters: EnabledFilters
-): PrisonPopulationPersonLevelRecord[] {
-  return rawRecords.map((record) => {
-    return mergeDefaults(
-      {
-        stateId: record.state_id || "Unknown",
-        fullName: record.full_name || "Unknown",
-        lastUpdated: formatDateString(record.last_updated),
-        age: record.age || "Unknown",
-        admissionReason: record.legal_status || "Unknown",
-        gender: (record.gender as Gender) || "Unknown",
-        ageGroup: (record.age_group as AgeGroup) || "Unknown",
-        facility: record.facility || "Unknown",
-        timePeriod:
-          timePeriodMap[
-            record.time_period?.toLowerCase() as TimePeriodRawValue
-          ],
-        race: record.race || "Unknown",
-      },
-      {},
-      enabledFilters
-    );
-  });
-}
-
-export function createLibertyPopulationSnapshot(
-  rawRecords: RawMetricData,
-  enabledFilters: EnabledFilters
-): LibertyPopulationSnapshotRecord[] {
-  return rawRecords.map((record) => {
-    return mergeDefaults(
-      {
-        count: parseInt(record.event_count),
-        lastUpdated: formatDateString(record.last_updated),
-        gender: record.gender as Gender,
-        ageGroup: record.age_group as AgeGroup,
-        judicialDistrict: record.judicial_district
-          ? record.judicial_district.toUpperCase()
-          : "Unknown",
-        race: record.race,
-        priorLengthOfIncarceration: record.prior_length_of_incarceration,
-        timePeriod:
-          record.time_period &&
-          timePeriodMap[record.time_period.toLowerCase() as TimePeriodRawValue],
-      },
-      libertyDimensionDefaults,
       enabledFilters
     );
   });

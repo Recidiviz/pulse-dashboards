@@ -19,55 +19,23 @@ import { Dimension } from "../types/dimensions";
 import { DIMENSION_TYPES } from "../utils/constants";
 
 export const dimensionsByMetricType = {
-  // LIBERTY TO PRISON
-  liberty_to_prison_population_snapshot_by_dimension: [
-    DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.AGE_GROUP,
-    DIMENSION_TYPES.JUDICIAL_DISTRICT,
-    DIMENSION_TYPES.RACE,
-    DIMENSION_TYPES.PRIOR_LENGTH_OF_INCARCERATION,
-  ],
   // PRISON
   prison_population_projection_time_series: [
     DIMENSION_TYPES.GENDER,
     DIMENSION_TYPES.LEGAL_STATUS,
   ],
-  prison_population_snapshot_by_dimension: [
-    DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.ADMISSION_REASON,
-    DIMENSION_TYPES.FACILITY,
-    DIMENSION_TYPES.AGE_GROUP,
-    DIMENSION_TYPES.LENGTH_OF_STAY,
-    DIMENSION_TYPES.RACE,
-  ],
-  prison_population_snapshot_person_level: [
-    DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.ADMISSION_REASON,
-    DIMENSION_TYPES.FACILITY,
-    DIMENSION_TYPES.AGE_GROUP,
-    DIMENSION_TYPES.RACE,
-  ],
-  // PRISON TO SUPERVISION
-  prison_to_supervision_population_snapshot_by_dimension: [
-    DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.FACILITY,
-    DIMENSION_TYPES.AGE_GROUP,
-    DIMENSION_TYPES.RACE,
-  ],
-  prison_to_supervision_population_snapshot_person_level: [
-    DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.FACILITY,
-    DIMENSION_TYPES.AGE_GROUP,
-    DIMENSION_TYPES.RACE,
-  ],
   // SUPERVISION
   supervision_population_projection_time_series: [DIMENSION_TYPES.GENDER],
-  supervision_population_snapshot_by_dimension: [
+  // SUPERVISION TO PRISON
+  supervision_to_prison_population_snapshot_by_officer: [
+    DIMENSION_TYPES.GENDER,
+    DIMENSION_TYPES.SUPERVISION_TYPE,
     DIMENSION_TYPES.DISTRICT,
+    DIMENSION_TYPES.AGE_GROUP,
     DIMENSION_TYPES.SUPERVISION_LEVEL,
     DIMENSION_TYPES.RACE,
+    DIMENSION_TYPES.OFFICER_NAME,
   ],
-  // SUPERVISION TO PRISON
   supervision_to_prison_population_snapshot_by_dimension: [
     DIMENSION_TYPES.GENDER,
     DIMENSION_TYPES.SUPERVISION_TYPE,
@@ -78,24 +46,5 @@ export const dimensionsByMetricType = {
     DIMENSION_TYPES.LENGTH_OF_STAY,
     DIMENSION_TYPES.SUPERVISION_LEVEL,
     DIMENSION_TYPES.RACE,
-  ],
-  supervision_to_prison_population_snapshot_by_officer: [
-    DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.SUPERVISION_TYPE,
-    DIMENSION_TYPES.DISTRICT,
-    DIMENSION_TYPES.AGE_GROUP,
-    DIMENSION_TYPES.SUPERVISION_LEVEL,
-    DIMENSION_TYPES.RACE,
-    DIMENSION_TYPES.OFFICER_NAME,
-  ],
-  // SUPERVISION TO LIBERTY
-  supervision_to_liberty_population_snapshot_by_dimension: [
-    DIMENSION_TYPES.GENDER,
-    DIMENSION_TYPES.SUPERVISION_TYPE,
-    DIMENSION_TYPES.DISTRICT,
-    DIMENSION_TYPES.AGE_GROUP,
-    DIMENSION_TYPES.RACE,
-    DIMENSION_TYPES.SUPERVISION_LEVEL,
-    DIMENSION_TYPES.LENGTH_OF_STAY,
   ],
 } as Record<string, Dimension[]>;

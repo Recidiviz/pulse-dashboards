@@ -33,8 +33,6 @@ import {
 import { sortByLabel } from "../../utils/datasets";
 import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
-import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshotMetric";
-import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
 import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import { SupervisionPopulationSnapshotRecord } from "../models/types";
@@ -46,11 +44,7 @@ import VizPathways from "../VizPathways";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizPopulationOverTimeProps = {
-  metric:
-    | PrisonPopulationSnapshotMetric
-    | SupervisionPopulationSnapshotMetric
-    | LibertyPopulationSnapshotMetric
-    | SnapshotMetric;
+  metric: SupervisionPopulationSnapshotMetric | SnapshotMetric;
 };
 
 const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
@@ -70,14 +64,10 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     accessor,
     chartXAxisTitle,
     enableMetricModeToggle,
+    supervisionLevelOrder,
+    accessorIsNotFilterType: isNotFilter,
   } = metric;
 
-  let supervisionLevelOrder;
-  if (!(metric instanceof PrisonPopulationSnapshotMetric)) {
-    supervisionLevelOrder = metric.supervisionLevelOrder;
-  }
-
-  const { accessorIsNotFilterType: isNotFilter } = metric;
   const isRate =
     currentMetricMode === METRIC_MODES.RATES && enableMetricModeToggle;
   const isSupervisionLevel = accessor === "supervisionLevel";

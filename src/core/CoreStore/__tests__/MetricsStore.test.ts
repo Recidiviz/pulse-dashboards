@@ -18,7 +18,6 @@ import { runInAction } from "mobx";
 
 import flags from "../../../flags";
 import RootStore from "../../../RootStore";
-import LibertyPopulationSnapshotMetric from "../../models/LibertyPopulationSnapshotMetric";
 import OverTimeMetric from "../../models/OverTimeMetric";
 import PathwaysMetric from "../../models/PathwaysMetric";
 import PopulationProjectionOverTimeMetric from "../../models/PopulationProjectionOverTimeMetric";
@@ -65,8 +64,8 @@ describe("MetricsStore", () => {
 
     it("defaults metrics to the old backend when no flags are configured", () => {
       expect(
-        coreStore.metricsStore.libertyToPrisonPopulationByAgeGroup
-      ).toBeInstanceOf(LibertyPopulationSnapshotMetric);
+        coreStore.metricsStore.supervisionToPrisonPopulationByOfficer
+      ).toBeInstanceOf(SupervisionPopulationSnapshotMetric);
     });
 
     it("defaults metrics to the specified backend", () => {
@@ -106,7 +105,7 @@ describe("MetricsStore", () => {
       });
 
     it("has metrics", () => {
-      expect(pathwaysMetrics.length).toBeGreaterThanOrEqual(10); // arbitrary number to ensure we found some
+      expect(pathwaysMetrics.length).toBeGreaterThanOrEqual(1); // ensure we found some
     });
 
     // create multiple tests of the format

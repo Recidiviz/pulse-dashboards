@@ -24,14 +24,13 @@ import PathwaysTable from "../../components/PathwaysTable";
 import { formatDate, toHumanReadable, toTitleCase } from "../../utils";
 import { useCoreStore } from "../CoreStoreProvider";
 import PersonLevelMetric from "../models/PersonLevelMetric";
-import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
 import { TableColumn } from "../types/charts";
 import { PopulationFilterLabels } from "../types/filters";
 import VizPathways from "../VizPathways";
 import withMetricHydrator from "../withMetricHydrator";
 
 type VizPopulationPersonLevelProps = {
-  metric: PrisonPopulationPersonLevelMetric | PersonLevelMetric;
+  metric: PersonLevelMetric;
 };
 
 function getFilterLabelCell(accessor: string) {

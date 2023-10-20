@@ -16,20 +16,14 @@
 // =============================================================================
 import { makeAutoObservable } from "mobx";
 
-import LibertyPopulationSnapshotMetric from "../models/LibertyPopulationSnapshotMetric";
 import OverTimeMetric from "../models/OverTimeMetric";
 import PathwaysMetric from "../models/PathwaysMetric";
 import PathwaysNewBackendMetric from "../models/PathwaysNewBackendMetric";
 import PersonLevelMetric from "../models/PersonLevelMetric";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
-import PrisonPopulationPersonLevelMetric from "../models/PrisonPopulationPersonLevelMetric";
-import PrisonPopulationSnapshotMetric from "../models/PrisonPopulationSnapshotMetric";
 import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import {
-  createLibertyPopulationSnapshot,
-  createPrisonPopulationPersonLevelList,
-  createPrisonPopulationSnapshot,
   createProjectionTimeSeries,
   createSupervisionPopulationSnapshot,
 } from "../models/utils";
@@ -155,12 +149,9 @@ export default class MetricsStore {
     });
   }
 
-  get libertyToPrisonPopulationByDistrict():
-    | LibertyPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "libertyToPrisonPopulationByDistrict";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get libertyToPrisonPopulationByDistrict(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "libertyToPrisonPopulationByDistrict",
       endpoint: "LibertyToPrisonTransitionsCount",
       rootStore: this.rootStore,
       accessor: "judicialDistrict",
@@ -168,146 +159,46 @@ export default class MetricsStore {
       rotateLabels: true,
       isGeographic: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new LibertyPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
-      rootStore: this.rootStore,
-      dataTransformer: createLibertyPopulationSnapshot,
-      accessor: "judicialDistrict",
-      enableMetricModeToggle: true,
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .libertyToPrisonPopulationByDistrict,
-      rotateLabels: true,
-      isGeographic: true,
-      newBackendMetric,
-    });
   }
 
-  get libertyToPrisonPopulationByRace():
-    | LibertyPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "libertyToPrisonPopulationByRace";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get libertyToPrisonPopulationByRace(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "libertyToPrisonPopulationByRace",
       endpoint: "LibertyToPrisonTransitionsCount",
       rootStore: this.rootStore,
       accessor: "race",
       enableMetricModeToggle: true,
       rotateLabels: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new LibertyPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
-      rootStore: this.rootStore,
-      dataTransformer: createLibertyPopulationSnapshot,
-      accessor: "race",
-      enableMetricModeToggle: true,
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .libertyToPrisonPopulationByRace,
-      rotateLabels: true,
-      newBackendMetric,
-    });
   }
 
-  get libertyToPrisonPopulationByAgeGroup():
-    | LibertyPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "libertyToPrisonPopulationByAgeGroup";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get libertyToPrisonPopulationByAgeGroup(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "libertyToPrisonPopulationByAgeGroup",
       endpoint: "LibertyToPrisonTransitionsCount",
       rootStore: this.rootStore,
       accessor: "ageGroup",
       enableMetricModeToggle: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new LibertyPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
-      rootStore: this.rootStore,
-      dataTransformer: createLibertyPopulationSnapshot,
-      accessor: "ageGroup",
-      enableMetricModeToggle: true,
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .libertyToPrisonPopulationByAgeGroup,
-      newBackendMetric,
-    });
   }
 
-  get libertyToPrisonPopulationByGender():
-    | LibertyPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "libertyToPrisonPopulationByGender";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get libertyToPrisonPopulationByGender(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "libertyToPrisonPopulationByGender",
       endpoint: "LibertyToPrisonTransitionsCount",
       rootStore: this.rootStore,
       accessor: "gender",
       enableMetricModeToggle: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new LibertyPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
-      rootStore: this.rootStore,
-      dataTransformer: createLibertyPopulationSnapshot,
-      accessor: "gender",
-      enableMetricModeToggle: true,
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .libertyToPrisonPopulationByGender,
-      newBackendMetric,
-    });
   }
 
-  get libertyToPrisonPopulationByPriorLengthOfIncarceration():
-    | LibertyPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "libertyToPrisonPopulationByPriorLengthOfIncarceration";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get libertyToPrisonPopulationByPriorLengthOfIncarceration(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "libertyToPrisonPopulationByPriorLengthOfIncarceration",
       endpoint: "LibertyToPrisonTransitionsCount",
       rootStore: this.rootStore,
       accessor: "priorLengthOfIncarceration",
       accessorIsNotFilterType: true,
-    });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new LibertyPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "liberty_to_prison_population_snapshot_by_dimension",
-      rootStore: this.rootStore,
-      dataTransformer: createLibertyPopulationSnapshot,
-      accessor: "priorLengthOfIncarceration",
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .libertyToPrisonPopulationByPriorLengthOfIncarceration,
-      accessorIsNotFilterType: true,
-      newBackendMetric,
     });
   }
 
@@ -335,12 +226,9 @@ export default class MetricsStore {
     });
   }
 
-  get prisonFacilityPopulation():
-    | PrisonPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "prisonFacilityPopulation";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get prisonFacilityPopulation(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonFacilityPopulation",
       endpoint: "PrisonPopulationByDimensionCount",
       rootStore: this.rootStore,
       accessor: "facility",
@@ -348,76 +236,24 @@ export default class MetricsStore {
       rotateLabels: true,
       isGeographic: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new PrisonPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      accessor: "facility",
-      sourceFilename: "prison_population_snapshot_by_dimension",
-      rootStore: this.rootStore,
-      enableMetricModeToggle: true,
-      dataTransformer: createPrisonPopulationSnapshot,
-      filters:
-        this.rootStore.filtersStore.enabledFilters.prisonFacilityPopulation,
-      rotateLabels: true,
-      isGeographic: true,
-      newBackendMetric,
-    });
   }
 
-  get prisonPopulationByRace():
-    | PrisonPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "prisonPopulationByRace";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get prisonPopulationByRace(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonPopulationByRace",
       endpoint: "PrisonPopulationByDimensionCount",
       rootStore: this.rootStore,
       accessor: "race",
       enableMetricModeToggle: true,
       rotateLabels: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new PrisonPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      accessor: "race",
-      sourceFilename: "prison_population_snapshot_by_dimension",
-      rootStore: this.rootStore,
-      enableMetricModeToggle: true,
-      dataTransformer: createPrisonPopulationSnapshot,
-      filters:
-        this.rootStore.filtersStore.enabledFilters.prisonPopulationByRace,
-      rotateLabels: true,
-      newBackendMetric,
-    });
   }
 
-  get prisonPopulationPersonLevel():
-    | PrisonPopulationPersonLevelMetric
-    | PersonLevelMetric {
-    const id = "prisonPopulationPersonLevel";
-    const newBackendMetric = new PersonLevelMetric({
-      id,
+  get prisonPopulationPersonLevel(): PersonLevelMetric {
+    return new PersonLevelMetric({
+      id: "prisonPopulationPersonLevel",
       endpoint: "PrisonPopulationPersonLevel",
       rootStore: this.rootStore,
-    });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new PrisonPopulationPersonLevelMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "prison_population_snapshot_person_level",
-      rootStore: this.rootStore,
-      dataTransformer: createPrisonPopulationPersonLevelList,
-      filters:
-        this.rootStore.filtersStore.enabledFilters.prisonPopulationPersonLevel,
-      newBackendMetric,
     });
   }
 
@@ -430,42 +266,19 @@ export default class MetricsStore {
     });
   }
 
-  get prisonToSupervisionPopulationByAge():
-    | PrisonPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "prisonToSupervisionPopulationByAge";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get prisonToSupervisionPopulationByAge(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonToSupervisionPopulationByAge",
       endpoint: "PrisonToSupervisionTransitionsCount",
       rootStore: this.rootStore,
       accessor: "ageGroup",
       enableMetricModeToggle: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new PrisonPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "prison_to_supervision_population_snapshot_by_dimension",
-      rootStore: this.rootStore,
-      enableMetricModeToggle: true,
-      dataTransformer: createPrisonPopulationSnapshot,
-      accessor: "ageGroup",
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .prisonToSupervisionPopulationByAge,
-      newBackendMetric,
-    });
   }
 
-  get prisonToSupervisionPopulationByFacility():
-    | PrisonPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "prisonToSupervisionPopulationByFacility";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get prisonToSupervisionPopulationByFacility(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonToSupervisionPopulationByFacility",
       endpoint: "PrisonToSupervisionTransitionsCount",
       rootStore: this.rootStore,
       accessor: "facility",
@@ -473,82 +286,24 @@ export default class MetricsStore {
       rotateLabels: true,
       isGeographic: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new PrisonPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "prison_to_supervision_population_snapshot_by_dimension",
-      rootStore: this.rootStore,
-      enableMetricModeToggle: true,
-      dataTransformer: createPrisonPopulationSnapshot,
-      accessor: "facility",
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .prisonToSupervisionPopulationByFacility,
-      rotateLabels: true,
-      isGeographic: true,
-      newBackendMetric,
-    });
   }
 
-  get prisonToSupervisionPopulationByRace():
-    | PrisonPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "prisonToSupervisionPopulationByRace";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get prisonToSupervisionPopulationByRace(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "prisonToSupervisionPopulationByRace",
       endpoint: "PrisonToSupervisionTransitionsCount",
       rootStore: this.rootStore,
       accessor: "race",
       enableMetricModeToggle: true,
       rotateLabels: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new PrisonPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "prison_to_supervision_population_snapshot_by_dimension",
-      rootStore: this.rootStore,
-      enableMetricModeToggle: true,
-      dataTransformer: createPrisonPopulationSnapshot,
-      accessor: "race",
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .prisonToSupervisionPopulationByRace,
-      rotateLabels: true,
-      newBackendMetric,
-    });
   }
 
-  get prisonToSupervisionPopulationPersonLevel():
-    | PrisonPopulationPersonLevelMetric
-    | PersonLevelMetric {
-    const id = "prisonToSupervisionPopulationPersonLevel";
-    const newBackendMetric = new PersonLevelMetric({
-      id,
+  get prisonToSupervisionPopulationPersonLevel(): PersonLevelMetric {
+    return new PersonLevelMetric({
+      id: "prisonToSupervisionPopulationPersonLevel",
       endpoint: "PrisonToSupervisionTransitionsPersonLevel",
       rootStore: this.rootStore,
-    });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new PrisonPopulationPersonLevelMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "prison_to_supervision_population_snapshot_person_level",
-      rootStore: this.rootStore,
-      hasTimePeriodDimension: true,
-      dataTransformer: createPrisonPopulationPersonLevelList,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .prisonToSupervisionPopulationPersonLevel,
-      newBackendMetric,
     });
   }
 
@@ -576,12 +331,9 @@ export default class MetricsStore {
     });
   }
 
-  get supervisionPopulationByDistrict():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionPopulationByDistrict";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionPopulationByDistrict(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionPopulationByDistrict",
       endpoint: "SupervisionPopulationByDimensionCount",
       rootStore: this.rootStore,
       accessor: "district",
@@ -589,85 +341,26 @@ export default class MetricsStore {
       rotateLabels: true,
       isGeographic: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      enableMetricModeToggle: true,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "district",
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionPopulationByDistrict,
-      rotateLabels: true,
-      isGeographic: true,
-      newBackendMetric,
-    });
   }
 
-  get supervisionPopulationByRace():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionPopulationByRace";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionPopulationByRace(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionPopulationByRace",
       endpoint: "SupervisionPopulationByDimensionCount",
       rootStore: this.rootStore,
       accessor: "race",
       enableMetricModeToggle: true,
       rotateLabels: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      enableMetricModeToggle: true,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "race",
-      filters:
-        this.rootStore.filtersStore.enabledFilters.supervisionPopulationByRace,
-      rotateLabels: true,
-      newBackendMetric,
-    });
   }
 
-  get supervisionPopulationBySupervisionLevel():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionPopulationBySupervisionLevel";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionPopulationBySupervisionLevel(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionPopulationBySupervisionLevel",
       endpoint: "SupervisionPopulationByDimensionCount",
       rootStore: this.rootStore,
       accessor: "supervisionLevel",
       rotateLabels: true,
-    });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "supervisionLevel",
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionPopulationBySupervisionLevel,
-      rotateLabels: true,
-      newBackendMetric,
     });
   }
 
@@ -680,12 +373,9 @@ export default class MetricsStore {
     });
   }
 
-  get supervisionToPrisonPopulationByDistrict():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionToPrisonPopulationByDistrict";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionToPrisonPopulationByDistrict(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionToPrisonPopulationByDistrict",
       endpoint: "SupervisionToPrisonTransitionsCount",
       rootStore: this.rootStore,
       accessor: "district",
@@ -693,211 +383,65 @@ export default class MetricsStore {
       rotateLabels: true,
       isGeographic: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      accessor: "district",
-      enableMetricModeToggle: true,
-      hasTimePeriodDimension: true,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionToPrisonPopulationByDistrict,
-      rotateLabels: true,
-      isGeographic: true,
-      newBackendMetric,
-    });
   }
 
-  get supervisionToPrisonPopulationByMostSevereViolation():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionToPrisonPopulationByMostSevereViolation";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionToPrisonPopulationByMostSevereViolation(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionToPrisonPopulationByMostSevereViolation",
       endpoint: "SupervisionToPrisonTransitionsCount",
       rootStore: this.rootStore,
       accessor: "mostSevereViolation",
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "mostSevereViolation",
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionToPrisonPopulationByMostSevereViolation,
-      newBackendMetric,
-    });
   }
 
-  get supervisionToPrisonPopulationByNumberOfViolations():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionToPrisonPopulationByNumberOfViolations";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionToPrisonPopulationByNumberOfViolations(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionToPrisonPopulationByNumberOfViolations",
       endpoint: "SupervisionToPrisonTransitionsCount",
       rootStore: this.rootStore,
       accessor: "numberOfViolations",
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "numberOfViolations",
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionToPrisonPopulationByNumberOfViolations,
-      newBackendMetric,
-    });
   }
 
-  get supervisionToPrisonPopulationByLengthOfStay():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionToPrisonPopulationByLengthOfStay";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionToPrisonPopulationByLengthOfStay(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionToPrisonPopulationByLengthOfStay",
       endpoint: "SupervisionToPrisonTransitionsCount",
       rootStore: this.rootStore,
       accessor: "lengthOfStay",
       accessorIsNotFilterType: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "lengthOfStay",
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionToPrisonPopulationByLengthOfStay,
-      accessorIsNotFilterType: true,
-      newBackendMetric,
-    });
   }
 
-  get supervisionToPrisonPopulationBySupervisionLevel():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionToPrisonPopulationBySupervisionLevel";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionToPrisonPopulationBySupervisionLevel(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionToPrisonPopulationBySupervisionLevel",
       endpoint: "SupervisionToPrisonTransitionsCount",
       rootStore: this.rootStore,
       accessor: "supervisionLevel",
       enableMetricModeToggle: true,
       rotateLabels: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "supervisionLevel",
-      enableMetricModeToggle: true,
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionToPrisonPopulationBySupervisionLevel,
-      rotateLabels: true,
-      newBackendMetric,
-    });
   }
 
-  get supervisionToPrisonPopulationByGender():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionToPrisonPopulationByGender";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionToPrisonPopulationByGender(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionToPrisonPopulationByGender",
       endpoint: "SupervisionToPrisonTransitionsCount",
       rootStore: this.rootStore,
       accessor: "gender",
       enableMetricModeToggle: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "gender",
-      enableMetricModeToggle: true,
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionToPrisonPopulationByGender,
-      newBackendMetric,
-    });
   }
 
-  get supervisionToPrisonPopulationByRace():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionToPrisonPopulationByRace";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionToPrisonPopulationByRace(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionToPrisonPopulationByRace",
       endpoint: "SupervisionToPrisonTransitionsCount",
       rootStore: this.rootStore,
       accessor: "race",
       enableMetricModeToggle: true,
       rotateLabels: true,
-    });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_prison_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "race",
-      enableMetricModeToggle: true,
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionToPrisonPopulationByRace,
-      rotateLabels: true,
-      newBackendMetric,
     });
   }
 
@@ -944,74 +488,29 @@ export default class MetricsStore {
     });
   }
 
-  get supervisionToLibertyPopulationByLengthOfStay():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionToLibertyPopulationByLengthOfStay";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionToLibertyPopulationByLengthOfStay(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionToLibertyPopulationByLengthOfStay",
       endpoint: "SupervisionToLibertyTransitionsCount",
       rootStore: this.rootStore,
       accessor: "lengthOfStay",
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_liberty_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "lengthOfStay",
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionToLibertyPopulationByLengthOfStay,
-      newBackendMetric,
-    });
   }
 
-  get supervisionToLibertyPopulationByRace():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionToLibertyPopulationByRace";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionToLibertyPopulationByRace(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionToLibertyPopulationByRace",
       endpoint: "SupervisionToLibertyTransitionsCount",
       rootStore: this.rootStore,
       accessor: "race",
       enableMetricModeToggle: true,
       rotateLabels: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_liberty_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "race",
-      hasTimePeriodDimension: true,
-      enableMetricModeToggle: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionToLibertyPopulationByRace,
-      rotateLabels: true,
-      newBackendMetric,
-    });
   }
 
-  get supervisionToLibertyPopulationByLocation():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionToLibertyPopulationByLocation";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionToLibertyPopulationByLocation(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionToLibertyPopulationByLocation",
       endpoint: "SupervisionToLibertyTransitionsCount",
       rootStore: this.rootStore,
       accessor: "district",
@@ -1019,87 +518,25 @@ export default class MetricsStore {
       rotateLabels: true,
       isGeographic: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_liberty_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "district",
-      enableMetricModeToggle: true,
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionToLibertyPopulationByLocation,
-      rotateLabels: true,
-      isGeographic: true,
-      newBackendMetric,
-    });
   }
 
-  get supervisionToLibertyPopulationByGender():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionToLibertyPopulationByGender";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionToLibertyPopulationByGender(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionToLibertyPopulationByGender",
       endpoint: "SupervisionToLibertyTransitionsCount",
       rootStore: this.rootStore,
       accessor: "gender",
       enableMetricModeToggle: true,
     });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_liberty_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "gender",
-      enableMetricModeToggle: true,
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionToLibertyPopulationByGender,
-      newBackendMetric,
-    });
   }
 
-  get supervisionToLibertyPopulationByAgeGroup():
-    | SupervisionPopulationSnapshotMetric
-    | SnapshotMetric {
-    const id = "supervisionToLibertyPopulationByAgeGroup";
-    const newBackendMetric = new SnapshotMetric({
-      id,
+  get supervisionToLibertyPopulationByAgeGroup(): SnapshotMetric {
+    return new SnapshotMetric({
+      id: "supervisionToLibertyPopulationByAgeGroup",
       endpoint: "SupervisionToLibertyTransitionsCount",
       rootStore: this.rootStore,
       accessor: "ageGroup",
       enableMetricModeToggle: true,
-    });
-    if (PathwaysMetric.backendForMetric(id) === "NEW") {
-      return newBackendMetric;
-    }
-    return new SupervisionPopulationSnapshotMetric({
-      id,
-      tenantId: this.rootStore.currentTenantId,
-      sourceFilename: "supervision_to_liberty_population_snapshot_by_dimension",
-      compartment: "SUPERVISION",
-      rootStore: this.rootStore,
-      dataTransformer: createSupervisionPopulationSnapshot,
-      accessor: "ageGroup",
-      enableMetricModeToggle: true,
-      hasTimePeriodDimension: true,
-      filters:
-        this.rootStore.filtersStore.enabledFilters
-          .supervisionToLibertyPopulationByAgeGroup,
-      newBackendMetric,
     });
   }
 }
