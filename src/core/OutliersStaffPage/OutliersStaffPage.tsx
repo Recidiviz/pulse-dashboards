@@ -35,7 +35,10 @@ import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerDetailPresenter } from "../../OutliersStore/presenters/SupervisionOfficerDetailPresenter";
+import { formatDate, toTitleCase } from "../../utils";
 import ModelHydrator from "../ModelHydrator";
+import OutliersChartCard from "../OutliersChartCard";
+import OutliersLinePlot from "../OutliersLinePlot";
 import { INTERCOM_HEIGHT } from "../OutliersNavLayout/OutliersNavLayout";
 import OutliersPageLayout from "../OutliersPageLayout";
 import {
@@ -43,6 +46,7 @@ import {
   Sidebar,
   Wrapper,
 } from "../OutliersPageLayout/OutliersPageLayout";
+import { OutliersSwarmPlot } from "../OutliersSwarmPlot";
 import { outliersUrl } from "../views";
 
 const StyledTabs = styled(Tabs)<{ isMobile: boolean }>`
@@ -183,19 +187,50 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                   metricId: metric.metricId,
                 })}
               >
-                {metric.metricId}
+                {toTitleCase(metric.config.eventName)}
               </Link>
             </StyledTab>
           ))}
         </StyledTabList>
-        {outlierOfficerData.outlierMetrics.map((metric) => (
-          <StyledTabPanel key={metric.metricId}>
-            <Wrapper isLaptop={isTablet}>
-              <Sidebar isLaptop={isTablet}>{metric.metricId}</Sidebar>
-              <Body>{metric.metricId}</Body>
-            </Wrapper>
-          </StyledTabPanel>
-        ))}
+        {outlierOfficerData.outlierMetrics.map((metric) => {
+          const firstDate = metric.benchmark.benchmarks[0]?.endDate;
+          const lastDate = metric.benchmark.benchmarks.slice(-1)[0]?.endDate;
+
+          return (
+            <StyledTabPanel key={metric.metricId}>
+              <Wrapper isLaptop={isTablet}>
+                <Sidebar isLaptop={isTablet}>
+                  <OutliersChartCard
+                    title={`List of ${toTitleCase(metric.config.eventName)}`}
+                    hasLegend={false}
+                  >
+                    {metric.metricId}
+                  </OutliersChartCard>
+                </Sidebar>
+                <Body>
+                  <OutliersChartCard
+                    title={`${toTitleCase(
+                      metric.config.bodyDisplayName
+                    )} Compared to State`}
+                  >
+                    <OutliersSwarmPlot metric={metric} />
+                  </OutliersChartCard>
+                  <OutliersChartCard
+                    title={`Historical ${toTitleCase(
+                      metric.config.bodyDisplayName
+                    )}`}
+                    subtitle={`${formatDate(
+                      firstDate,
+                      "MMMM yyyy"
+                    )} - ${formatDate(lastDate, "MMMM yyyy")}`}
+                  >
+                    <OutliersLinePlot metric={metric} />
+                  </OutliersChartCard>
+                </Body>
+              </Wrapper>
+            </StyledTabPanel>
+          );
+        })}
       </StyledTabs>
     </OutliersPageLayout>
   );

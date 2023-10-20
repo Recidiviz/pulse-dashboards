@@ -25,7 +25,7 @@ import {
   CardTitle,
   CardWrapper,
 } from "../OutliersSupervisorPage/OutliersStaffCard";
-import OutliersLegend, { defaultLegendItems } from "./OutliersLegend";
+import OutliersLegend from "./OutliersLegend";
 
 const LegendNote = styled.div`
   max-width: ${rem(400)};
@@ -43,7 +43,7 @@ const OutliersStaffLegend: React.FC<OutliersStaffLegendType> = ({ note }) => {
       <CardHeader hasBorder={false}>
         <CardTitle>Legend</CardTitle>
         <CardContent noFlex={!note}>
-          <OutliersLegend items={defaultLegendItems} />
+          <OutliersLegend />
           {note && <LegendNote>Note: {note}</LegendNote>}
         </CardContent>
       </CardHeader>

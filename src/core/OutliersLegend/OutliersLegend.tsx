@@ -19,6 +19,8 @@ import { palette, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { GOAL_COLORS } from "../OutliersSwarmPlot/constants";
+
 const LegendWrapper = styled.div<{ direction: "row" | "column" }>`
   display: flex;
   flex-direction: ${({ direction }) => direction};
@@ -39,8 +41,8 @@ const LegendText = styled.div`
 
 export const circleLegendIcon = (color: string) => {
   return (
-    <svg height="16" width="16" fill={`#${color}`}>
-      <circle cx="8" cy="8" r="4" />
+    <svg height="16" width="16" fill={color}>
+      <circle cx="8" cy="8" r="5" />
     </svg>
   );
 };
@@ -48,7 +50,7 @@ export const circleLegendIcon = (color: string) => {
 export const lineLegendIcon = (color: string) => {
   return (
     <svg height="2" width="16">
-      <line x2="16" stroke={`#${color}`} strokeDasharray="3" strokeWidth="4" />
+      <line x2="16" stroke={color} strokeDasharray="3" strokeWidth="4" />
     </svg>
   );
 };
@@ -56,29 +58,29 @@ export const lineLegendIcon = (color: string) => {
 export const defaultLegendItems = [
   {
     label: "Statewide rate",
-    icon: lineLegendIcon("8A97A1"),
+    icon: lineLegendIcon(palette.slate60),
   },
   {
     label: "At or below statewide rate",
-    icon: circleLegendIcon("EAEEF0"),
+    icon: circleLegendIcon(GOAL_COLORS.MET),
   },
   {
     label: "Slightly worse than statewide rate",
-    icon: circleLegendIcon("E79D00"),
+    icon: circleLegendIcon(GOAL_COLORS.NEAR),
   },
   {
     label: "Far worse than statewide rate",
-    icon: circleLegendIcon("C7232A"),
+    icon: circleLegendIcon(GOAL_COLORS.FAR),
   },
 ];
 
 type OutliersLegendType = {
-  items: { label: string; icon: JSX.Element }[];
+  items?: { label: string; icon: JSX.Element }[];
   direction?: "row" | "column";
 };
 
 const OutliersLegend: React.FC<OutliersLegendType> = ({
-  items,
+  items = defaultLegendItems,
   direction = "column",
 }) => {
   return (
