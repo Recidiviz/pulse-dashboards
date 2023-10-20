@@ -283,3 +283,24 @@ test("look up supervisor by ID", async () => {
     testSupervisor
   );
 });
+
+test("hydrate supervisionOfficerMetricEvents", async () => {
+  const testOfficer = supervisionOfficerFixture[1].externalId;
+  const testMetric =
+    supervisionOfficerFixture[2].currentPeriodStatuses.FAR[0].metricId;
+
+  function getTestEvents() {
+    return store.metricEventsByOfficerAndMetricId
+      .get(testOfficer)
+      ?.get(testMetric);
+  }
+
+  expect(getTestEvents()).toBeUndefined();
+
+  await flowResult(
+    store.hydrateMetricEventsForOfficer(testOfficer, testMetric)
+  );
+
+  expect(getTestEvents()).toBeDefined();
+  expect(getTestEvents()).toMatchSnapshot();
+});

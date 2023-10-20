@@ -18,6 +18,7 @@
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { OutliersConfig } from "../models/OutliersConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
+import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 
 export interface OutliersAPI {
@@ -28,4 +29,8 @@ export interface OutliersAPI {
     supervisorId: string
   ): Promise<Array<SupervisionOfficer>>;
   supervisionOfficer(officerId: string): Promise<SupervisionOfficer>;
+  supervisionOfficerMetricEvents(
+    officerId: string,
+    metricId: string
+  ): Promise<Array<SupervisionOfficerMetricEvent>>;
 }

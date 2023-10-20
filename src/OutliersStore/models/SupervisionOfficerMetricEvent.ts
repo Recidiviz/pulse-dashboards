@@ -15,21 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PromiseType } from "utility-types";
+import { z } from "zod";
 
-/**
- * Represents the internal state of a generator function annotated with `mobx.flow`.
- * Supports methods that only yield a single function call (or multiple that
- * all return the same type), since there is currently no way to represent
- * multiple yielded types in order at the type level.
- */
-export type FlowMethod<
-  FunctionToYield extends (...args: any[]) => Promise<unknown>,
-  FlowReturn
-> = Generator<
-  ReturnType<FunctionToYield>,
-  FlowReturn,
-  PromiseType<ReturnType<FunctionToYield>>
+import { dateStringSchema, fullNameSchema } from "./schemaHelpers";
+
+export const supervisionOfficerMetricEventSchema = z.object({
+  metricId: z.string(),
+  eventDate: dateStringSchema,
+  clientId: z.string(),
+  clientName: fullNameSchema,
+});
+
+export type SupervisionOfficerMetricEvent = z.infer<
+  typeof supervisionOfficerMetricEventSchema
 >;
-
-export type StringMap2D<Value> = Map<string, Map<string, Value>>;
+export type RawSupervisionOfficerMetricEvent = z.input<
+  typeof supervisionOfficerMetricEventSchema
+>;

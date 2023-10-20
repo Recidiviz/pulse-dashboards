@@ -1,0 +1,96 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`hydrate supervisionOfficerMetricEvents 1`] = `
+Array [
+  Object {
+    "clientId": "985771",
+    "clientName": Object {
+      "givenNames": "Nicholas",
+      "middleNames": undefined,
+      "surname": "Rhodes",
+    },
+    "eventDate": 2022-12-24T00:00:00.000Z,
+    "metricId": "absconsions_bench_warrants",
+  },
+  Object {
+    "clientId": "326160",
+    "clientName": Object {
+      "givenNames": "Ethel",
+      "middleNames": undefined,
+      "surname": "Leonard",
+    },
+    "eventDate": 2022-12-21T00:00:00.000Z,
+    "metricId": "absconsions_bench_warrants",
+  },
+  Object {
+    "clientId": "931890",
+    "clientName": Object {
+      "givenNames": "Ricardo",
+      "middleNames": undefined,
+      "surname": "Wood",
+    },
+    "eventDate": 2022-12-24T00:00:00.000Z,
+    "metricId": "absconsions_bench_warrants",
+  },
+  Object {
+    "clientId": "930441",
+    "clientName": Object {
+      "givenNames": "Stanley",
+      "middleNames": undefined,
+      "surname": "Maxwell",
+    },
+    "eventDate": 2022-10-24T00:00:00.000Z,
+    "metricId": "absconsions_bench_warrants",
+  },
+  Object {
+    "clientId": "564940",
+    "clientName": Object {
+      "givenNames": "Miguel",
+      "middleNames": undefined,
+      "surname": "Haynes",
+    },
+    "eventDate": 2022-09-05T00:00:00.000Z,
+    "metricId": "absconsions_bench_warrants",
+  },
+  Object {
+    "clientId": "235261",
+    "clientName": Object {
+      "givenNames": "Rosie",
+      "middleNames": undefined,
+      "surname": "Luna",
+    },
+    "eventDate": 2023-05-06T00:00:00.000Z,
+    "metricId": "absconsions_bench_warrants",
+  },
+  Object {
+    "clientId": "531407",
+    "clientName": Object {
+      "givenNames": "Glenn",
+      "middleNames": undefined,
+      "surname": "Francis",
+    },
+    "eventDate": 2023-04-07T00:00:00.000Z,
+    "metricId": "absconsions_bench_warrants",
+  },
+  Object {
+    "clientId": "436502",
+    "clientName": Object {
+      "givenNames": "Steve",
+      "middleNames": undefined,
+      "surname": "Schwartz",
+    },
+    "eventDate": 2023-02-15T00:00:00.000Z,
+    "metricId": "absconsions_bench_warrants",
+  },
+  Object {
+    "clientId": "339710",
+    "clientName": Object {
+      "givenNames": "Bertha",
+      "middleNames": undefined,
+      "surname": "Figueroa",
+    },
+    "eventDate": 2023-05-14T00:00:00.000Z,
+    "metricId": "absconsions_bench_warrants",
+  },
+]
+`;

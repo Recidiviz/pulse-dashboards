@@ -18,6 +18,7 @@
 
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
+import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import type { OutliersStore } from "../OutliersStore";
 import { OutliersAPI } from "./interface";
@@ -75,5 +76,17 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
       throw new Error(`Officer ${officerId} not present in fixture data`);
 
     return officerFixture;
+  }
+
+  async supervisionOfficerMetricEvents(
+    officerId: string,
+    metricId: string
+  ): Promise<SupervisionOfficerMetricEvent[]> {
+    const { supervisionOfficerMetricEventFixture } = await import(
+      "../models/offlineFixtures/SupervisionOfficerMetricEventFixture"
+    );
+    return supervisionOfficerMetricEventFixture.filter(
+      (e) => e.metricId === metricId
+    );
   }
 }
