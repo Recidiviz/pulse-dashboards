@@ -48,6 +48,7 @@ import {
 } from "../OutliersPageLayout/OutliersPageLayout";
 import { OutliersSwarmPlot } from "../OutliersSwarmPlot";
 import { outliersUrl } from "../views";
+import { MetricEventsTable } from "./MetricEventsTable";
 
 const StyledTabs = styled(Tabs)<{ isMobile: boolean }>`
   margin: 0 -1.5rem;
@@ -200,12 +201,10 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
             <StyledTabPanel key={metric.metricId}>
               <Wrapper isLaptop={isTablet}>
                 <Sidebar isLaptop={isTablet}>
-                  <OutliersChartCard
-                    title={`List of ${toTitleCase(metric.config.eventName)}`}
-                    hasLegend={false}
-                  >
-                    {metric.metricId}
-                  </OutliersChartCard>
+                  <MetricEventsTable
+                    officerId={presenter.officerId}
+                    metricId={metric.metricId}
+                  />
                 </Sidebar>
                 <Body>
                   <OutliersChartCard

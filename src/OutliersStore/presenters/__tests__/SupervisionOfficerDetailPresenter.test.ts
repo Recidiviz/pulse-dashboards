@@ -22,7 +22,6 @@ import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
 import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConfigFixture";
 import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
 import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
-import { OutliersStore } from "../../OutliersStore";
 import { OutliersSupervisionStore } from "../../stores/OutliersSupervisionStore";
 import { getOutlierOfficerData } from "../getOutlierOfficerData";
 import { SupervisionOfficerDetailPresenter } from "../SupervisionOfficerDetailPresenter";
@@ -44,9 +43,11 @@ const getOutlierOfficerDataMock = getOutlierOfficerData as jest.MockedFunction<
 
 beforeEach(() => {
   store = new OutliersSupervisionStore(
-    new OutliersStore(new RootStore()),
+    new RootStore().outliersStore,
     OutliersConfigFixture
   );
+  store.setOfficerId(testOfficer.externalId);
+  store.setMetricId(testMetric.metricId);
 });
 
 afterEach(() => {
@@ -54,6 +55,7 @@ afterEach(() => {
 });
 
 const testOfficer = supervisionOfficerFixture[0];
+const testMetric = testOfficer.currentPeriodStatuses.FAR[0];
 let presenter: SupervisionOfficerDetailPresenter;
 
 beforeEach(() => {
@@ -83,6 +85,10 @@ describe("with unit data already hydrated", () => {
       OutliersOfflineAPIClient.prototype,
       "supervisionOfficerSupervisors"
     );
+    jest.spyOn(
+      OutliersOfflineAPIClient.prototype,
+      "supervisionOfficerMetricEvents"
+    );
 
     await presenter.hydrate();
 
@@ -94,6 +100,9 @@ describe("with unit data already hydrated", () => {
     ).not.toHaveBeenCalled();
     expect(
       store.outliersStore.apiClient.supervisionOfficer
+    ).not.toHaveBeenCalled();
+    expect(
+      store.outliersStore.apiClient.supervisionOfficerMetricEvents
     ).not.toHaveBeenCalled();
   });
 
@@ -111,11 +120,32 @@ describe("with unit data already hydrated", () => {
 });
 
 test("hydration", async () => {
+  jest.spyOn(OutliersOfflineAPIClient.prototype, "metricBenchmarks");
+  jest.spyOn(OutliersOfflineAPIClient.prototype, "supervisionOfficer");
+  jest.spyOn(
+    OutliersOfflineAPIClient.prototype,
+    "supervisionOfficerSupervisors"
+  );
+  jest.spyOn(
+    OutliersOfflineAPIClient.prototype,
+    "supervisionOfficerMetricEvents"
+  );
+
   expect(presenter.isHydrated).toBeFalse();
 
   await presenter.hydrate();
 
   expect(presenter.isHydrated).toBeTrue();
+  expect(store.outliersStore.apiClient.metricBenchmarks).toHaveBeenCalled();
+  expect(store.outliersStore.apiClient.supervisionOfficer).toHaveBeenCalledWith(
+    testOfficer.externalId
+  );
+  expect(
+    store.outliersStore.apiClient.supervisionOfficerMetricEvents
+  ).toHaveBeenCalledWith(testOfficer.externalId, testMetric.metricId);
+  expect(
+    store.outliersStore.apiClient.supervisionOfficerSupervisors
+  ).toHaveBeenCalled();
 });
 
 test("has outlierOfficerData", async () => {

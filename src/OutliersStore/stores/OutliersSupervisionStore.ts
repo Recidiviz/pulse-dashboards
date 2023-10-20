@@ -49,9 +49,9 @@ export class OutliersSupervisionStore {
 
   constructor(
     public readonly outliersStore: OutliersStore,
-    public readonly config: OutliersConfig
+    private readonly config: OutliersConfig
   ) {
-    makeAutoObservable(this, {
+    makeAutoObservable<this, "config">(this, {
       // this object will be static so there's no need to deeply observe it
       config: observable.ref,
     });

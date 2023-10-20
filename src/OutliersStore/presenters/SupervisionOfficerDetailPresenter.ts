@@ -113,6 +113,15 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
   > {
     if (this.isOfficerHydrated) return;
 
+    if (this.metricId) {
+      // we can prefetch metric event data here also rather than waiting for the page to load,
+      // saving an additional loading spinner in the events table UI
+      this.supervisionStore.hydrateMetricEventsForOfficer(
+        this.officerId,
+        this.metricId
+      );
+    }
+
     this.fetchedOfficerRecord =
       yield this.supervisionStore.outliersStore.apiClient.supervisionOfficer(
         this.officerId
