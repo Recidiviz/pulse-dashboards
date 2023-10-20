@@ -99,11 +99,11 @@ export type OpportunityConfig = {
   hydratedHeader: (count: number) => OpportunityHydratedHeader;
 };
 
-export const OPPORTUNITY_CONFIGS = {
-  /* US_CA */
+export const US_CA_OPPORTUNITY_CONFIGS = {
   usCaSupervisionLevelDowngrade,
+} as const;
 
-  /* US_ID */
+export const US_ID_OPPORTUNITY_CONFIGS = {
   earnedDischarge,
   LSU,
   pastFTRD,
@@ -111,34 +111,66 @@ export const OPPORTUNITY_CONFIGS = {
   usIdCRCResidentWorker,
   usIdCRCWorkRelease,
   usIdSupervisionLevelDowngrade,
+} as const;
 
-  /* US_ME */
+export const US_ME_OPPORTUNITY_CONFIGS = {
   usMeEarlyTermination,
   usMeFurloughRelease,
   usMeSCCP,
   usMeWorkRelease,
+} as const;
 
-  /* US_MI */
+export const US_MI_OPPORTUNITY_CONFIGS = {
   usMiClassificationReview,
   usMiEarlyDischarge,
   usMiMinimumTelephoneReporting,
   usMiPastFTRD,
   usMiSupervisionLevelDowngrade,
+} as const;
 
-  /* US_MO */
+export const US_MO_OPPORTUNITY_CONFIGS = {
   usMoRestrictiveHousingStatusHearing,
+} as const;
 
-  /* US_ND */
+export const US_ND_OPPORTUNITY_CONFIGS = {
   earlyTermination,
+} as const;
 
-  /* US_TN */
+export const US_TN_OPPORTUNITY_CONFIGS = {
   compliantReporting,
   usTnCustodyLevelDowngrade,
   usTnExpiration,
   supervisionLevelDowngrade,
   usTnAnnualReclassification,
+} as const;
+
+export const OPPORTUNITY_CONFIGS_BY_STATE = {
+  US_CA: US_CA_OPPORTUNITY_CONFIGS,
+  US_ID: US_ID_OPPORTUNITY_CONFIGS,
+  US_ME: US_ME_OPPORTUNITY_CONFIGS,
+  US_MI: US_MI_OPPORTUNITY_CONFIGS,
+  US_MO: US_MO_OPPORTUNITY_CONFIGS,
+  US_ND: US_ND_OPPORTUNITY_CONFIGS,
+  US_TN: US_TN_OPPORTUNITY_CONFIGS,
+} as const;
+
+export const OPPORTUNITY_CONFIGS = {
+  ...US_CA_OPPORTUNITY_CONFIGS,
+  ...US_ID_OPPORTUNITY_CONFIGS,
+  ...US_ME_OPPORTUNITY_CONFIGS,
+  ...US_MI_OPPORTUNITY_CONFIGS,
+  ...US_MO_OPPORTUNITY_CONFIGS,
+  ...US_ND_OPPORTUNITY_CONFIGS,
+  ...US_TN_OPPORTUNITY_CONFIGS,
 };
 
 export type OpportunityConfigMap = typeof OPPORTUNITY_CONFIGS;
 
 export type OpportunityType = keyof typeof OPPORTUNITY_CONFIGS;
+
+export const getStateOpportunityTypes = (
+  stateCode: keyof typeof OPPORTUNITY_CONFIGS_BY_STATE
+): OpportunityType[] => {
+  const stateConfigs: any = OPPORTUNITY_CONFIGS_BY_STATE[stateCode];
+  return Object.keys(stateConfigs) as OpportunityType[];
+};

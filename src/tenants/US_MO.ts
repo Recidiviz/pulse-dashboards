@@ -22,12 +22,13 @@ import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import { OpportunityType } from "../WorkflowsStore";
+import {
+  getStateOpportunityTypes,
+  OpportunityType,
+} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
 
-const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
-  "usMoRestrictiveHousingStatusHearing",
-];
-
+const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
+  getStateOpportunityTypes("US_MO");
 const US_MO_CONFIG: TenantConfig = {
   name: "Missouri",
   stateCode: "MO",

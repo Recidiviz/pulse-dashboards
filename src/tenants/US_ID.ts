@@ -23,24 +23,17 @@ import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import { OpportunityType } from "../WorkflowsStore";
+import {
+  getStateOpportunityTypes,
+  OpportunityType,
+} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
 import UsIdContactTask from "../WorkflowsStore/Task/UsIdContactTask";
 import UsIdHomeVisitTask from "../WorkflowsStore/Task/UsIdHomeVisitTask";
 import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/UsIdRiskAssessmentTask";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
-const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
-  // Supervision opportunities
-  "pastFTRD",
-  "earnedDischarge",
-  "LSU",
-  "usIdSupervisionLevelDowngrade",
-
-  // Facility opportunities
-  "usIdCRCResidentWorker",
-  "usIdCRCWorkRelease",
-  "usIdExpandedCRC",
-];
+const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
+  getStateOpportunityTypes("US_ID");
 
 const US_ID_CONFIG: TenantConfig = {
   name: "Idaho",

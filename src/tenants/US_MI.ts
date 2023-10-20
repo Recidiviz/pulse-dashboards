@@ -22,16 +22,14 @@ import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import { OpportunityType } from "../WorkflowsStore";
+import {
+  getStateOpportunityTypes,
+  OpportunityType,
+} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
-const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
-  "usMiClassificationReview",
-  "usMiMinimumTelephoneReporting",
-  "usMiEarlyDischarge",
-  "usMiSupervisionLevelDowngrade",
-  "usMiPastFTRD",
-];
+const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
+  getStateOpportunityTypes("US_MI");
 
 const US_MI_CONFIG: TenantConfig = {
   name: "Michigan",

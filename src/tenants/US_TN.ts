@@ -29,16 +29,14 @@ import {
   PATHWAYS_SECTIONS,
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import { OpportunityType } from "../WorkflowsStore";
+import {
+  getStateOpportunityTypes,
+  OpportunityType,
+} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
-const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = [
-  "compliantReporting",
-  "supervisionLevelDowngrade",
-  "usTnExpiration",
-  "usTnCustodyLevelDowngrade",
-  "usTnAnnualReclassification",
-];
+const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
+  getStateOpportunityTypes("US_TN");
 
 const US_TN_CONFIG: TenantConfig = {
   name: "Tennessee",
