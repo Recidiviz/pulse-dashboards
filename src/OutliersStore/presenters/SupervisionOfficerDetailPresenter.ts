@@ -73,10 +73,14 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     return this.outlierOfficerData?.outlierMetrics[0].metricId;
   }
 
+  get metricId() {
+    return this.supervisionStore.metricId;
+  }
+
   get currentMetricIndex(): number {
     return (
       this.outlierOfficerData?.outlierMetrics.findIndex(
-        (m) => m.metricId === this.supervisionStore.metricId
+        (m) => m.metricId === this.metricId
       ) ?? 0
     );
   }

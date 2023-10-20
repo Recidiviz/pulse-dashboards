@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 import simplur from "simplur";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficersPresenter } from "../../OutliersStore/presenters/SupervisionOfficersPresenter";
 import { getWelcomeText } from "../../utils";
@@ -92,17 +93,23 @@ outlier officers in your unit."
   );
 });
 
-const OutliersSupervisorPage = ({
-  presenter,
-}: {
-  presenter?: SupervisionOfficersPresenter;
-}) => {
-  if (!presenter) return null;
+const OutliersSupervisorPage = observer(function OutliersSupervisorPage() {
+  const {
+    outliersStore: { supervisionStore },
+  } = useRootStore();
+
+  if (!supervisionStore?.supervisorId) return null;
+
+  const presenter = new SupervisionOfficersPresenter(
+    supervisionStore,
+    supervisionStore.supervisorId
+  );
+
   return (
     <ModelHydrator model={presenter}>
       <SupervisorPage presenter={presenter} />
     </ModelHydrator>
   );
-};
+});
 
 export default OutliersSupervisorPage;

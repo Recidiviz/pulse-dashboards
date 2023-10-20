@@ -27,7 +27,6 @@ import {
 import { noop } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import simplur from "simplur";
 import styled, { css } from "styled-components/macro";
@@ -136,10 +135,23 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
 }) {
   const { isMobile, isTablet } = useIsMobile(true);
 
-  const { outlierOfficerData, defaultMetricId, officerId } = presenter;
+  const { outlierOfficerData, defaultMetricId, officerId, metricId } =
+    presenter;
 
   // if the presenter is hydrated, this stuff should never be missing in practice
   if (!outlierOfficerData || !defaultMetricId) return <NotFound />;
+
+  // if current metric is not set, we need to redirect to the default metric URL
+  if (!metricId) {
+    return (
+      <Redirect
+        to={outliersUrl("supervisionStaffMetric", {
+          officerId,
+          metricId: defaultMetricId,
+        })}
+      />
+    );
+  }
 
   const currentSupervisor = presenter.supervisorInfo;
   const pageTitle = simplur`${outlierOfficerData.displayName} is an outlier on ${outlierOfficerData.outlierMetrics.length} metric[|s]`;
@@ -154,51 +166,38 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   ];
 
   return (
-    <>
-      {/* if current metric is not set, we need to redirect to the default metric URL */}
-      <Redirect
-        from={outliersUrl("supervisionStaff", {
-          officerId,
-        })}
-        to={outliersUrl("supervisionStaffMetric", {
-          officerId,
-          metricId: defaultMetricId,
-        })}
-      />
-
-      <OutliersPageLayout pageTitle={pageTitle} infoItems={infoItems}>
-        <StyledTabs
-          isMobile={isMobile}
-          selectedIndex={presenter.currentMetricIndex}
-          // tab navigation is handled by router Link components,
-          // so we don't actually have to maintain any tab state here
-          onSelect={noop}
-        >
-          <StyledTabList isMobile={isMobile}>
-            {outlierOfficerData.outlierMetrics.map((metric) => (
-              <StyledTab key={metric.metricId}>
-                <Link
-                  to={outliersUrl("supervisionStaffMetric", {
-                    officerId: outlierOfficerData.externalId,
-                    metricId: metric.metricId,
-                  })}
-                >
-                  {metric.metricId}
-                </Link>
-              </StyledTab>
-            ))}
-          </StyledTabList>
+    <OutliersPageLayout pageTitle={pageTitle} infoItems={infoItems}>
+      <StyledTabs
+        isMobile={isMobile}
+        selectedIndex={presenter.currentMetricIndex}
+        // tab navigation is handled by router Link components,
+        // so we don't actually have to maintain any tab state here
+        onSelect={noop}
+      >
+        <StyledTabList isMobile={isMobile}>
           {outlierOfficerData.outlierMetrics.map((metric) => (
-            <StyledTabPanel key={metric.metricId}>
-              <Wrapper isLaptop={isTablet}>
-                <Sidebar isLaptop={isTablet}>{metric.metricId}</Sidebar>
-                <Body>{metric.metricId}</Body>
-              </Wrapper>
-            </StyledTabPanel>
+            <StyledTab key={metric.metricId}>
+              <Link
+                to={outliersUrl("supervisionStaffMetric", {
+                  officerId: outlierOfficerData.externalId,
+                  metricId: metric.metricId,
+                })}
+              >
+                {metric.metricId}
+              </Link>
+            </StyledTab>
           ))}
-        </StyledTabs>
-      </OutliersPageLayout>
-    </>
+        </StyledTabList>
+        {outlierOfficerData.outlierMetrics.map((metric) => (
+          <StyledTabPanel key={metric.metricId}>
+            <Wrapper isLaptop={isTablet}>
+              <Sidebar isLaptop={isTablet}>{metric.metricId}</Sidebar>
+              <Body>{metric.metricId}</Body>
+            </Wrapper>
+          </StyledTabPanel>
+        ))}
+      </StyledTabs>
+    </OutliersPageLayout>
   );
 });
 

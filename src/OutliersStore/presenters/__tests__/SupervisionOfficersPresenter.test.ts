@@ -21,8 +21,10 @@ import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConf
 import { OutliersStore } from "../../OutliersStore";
 import { OutliersSupervisionStore } from "../../stores/OutliersSupervisionStore";
 import { getOutlierOfficerData } from "../getOutlierOfficerData";
+import { SupervisionOfficersPresenter } from "../SupervisionOfficersPresenter";
 
 let store: OutliersSupervisionStore;
+let presenter: SupervisionOfficersPresenter;
 
 jest.mock("../getOutlierOfficerData", () => {
   const original = jest.requireActual(
@@ -33,9 +35,7 @@ jest.mock("../getOutlierOfficerData", () => {
   };
 });
 
-const getOutlierOfficerDataMock = getOutlierOfficerData as jest.MockedFunction<
-  typeof getOutlierOfficerData
->;
+const getOutlierOfficerDataMock = jest.mocked(getOutlierOfficerData);
 
 beforeEach(() => {
   jest.resetModules();
@@ -43,6 +43,8 @@ beforeEach(() => {
     new OutliersStore(new RootStore()),
     OutliersConfigFixture
   );
+
+  presenter = new SupervisionOfficersPresenter(store, "mdavis123");
 });
 
 afterEach(() => {
@@ -50,23 +52,17 @@ afterEach(() => {
 });
 
 test("outlierOfficersData", async () => {
-  store.setSupervisorId("mdavis123");
-  const presenter = store.supervisionOfficersPresenter;
-  expect(presenter).toBeDefined();
-  await presenter?.hydrate();
+  await presenter.hydrate();
 
-  const outlierOfficersData = presenter?.outlierOfficersData;
+  const { outlierOfficersData } = presenter;
   expect(outlierOfficersData).toMatchSnapshot();
 });
 
 test("supervisorInfo", async () => {
-  store.setSupervisorId("mdavis123");
-  const presenter = store.supervisionOfficersPresenter;
-  expect(presenter).toBeDefined();
-  await presenter?.hydrate();
+  await presenter.hydrate();
 
-  const outlierOfficersData = presenter?.supervisorInfo;
-  expect(outlierOfficersData).toMatchSnapshot();
+  const { supervisorInfo } = presenter;
+  expect(supervisorInfo).toMatchSnapshot();
 });
 
 test("hydration error in dependency", async () => {
@@ -77,36 +73,28 @@ test("hydration error in dependency", async () => {
       throw err;
     });
 
-  store.setSupervisorId("mdavis123");
-  const presenter = store.supervisionOfficersPresenter;
-  expect(presenter).toBeDefined();
-  await presenter?.hydrate();
-  expect(presenter?.error).toEqual(err);
+  await presenter.hydrate();
+  expect(presenter.error).toEqual(err);
 });
 
 test("supervisorId not found in supervisionOfficerSupervisors", async () => {
-  store.setSupervisorId("nonExistentId");
-  const presenter = store.supervisionOfficersPresenter;
-  await presenter?.hydrate();
-  expect(presenter?.isHydrated).toBeFalse();
-  expect(presenter?.error).toEqual(
+  presenter = new SupervisionOfficersPresenter(store, "nonExistentId");
+  await presenter.hydrate();
+  expect(presenter.isHydrated).toBeFalse();
+  expect(presenter.error).toEqual(
     new Error("Data for supervisor nonExistentId is not available.")
   );
 });
 
 test("supervisorId not found in officersBySupervisor", async () => {
-  const supervisorId = "mdavis123";
-
   jest
     .spyOn(OutliersOfflineAPIClient.prototype, "officersForSupervisor")
     .mockResolvedValue([]);
 
-  store.setSupervisorId(supervisorId);
-  const presenter = store.supervisionOfficersPresenter;
-  await presenter?.hydrate();
+  await presenter.hydrate();
 
-  expect(presenter?.isHydrated).toBeFalse();
-  expect(presenter?.error).toEqual(
+  expect(presenter.isHydrated).toBeFalse();
+  expect(presenter.error).toEqual(
     new Error("Supervisor mdavis123 does not have any assigned officers")
   );
 });
@@ -117,13 +105,10 @@ test("error assembling metrics data", async () => {
     throw err;
   });
 
-  store.setSupervisorId("mdavis123");
-  const presenter = store.supervisionOfficersPresenter;
-  expect(presenter).toBeDefined();
-  await presenter?.hydrate();
+  await presenter.hydrate();
 
-  expect(presenter?.error).toBeUndefined();
+  expect(presenter.error).toBeUndefined();
 
-  expect(presenter?.outlierOfficersData).toBeUndefined();
-  expect(presenter?.error).toEqual(err);
+  expect(presenter.outlierOfficersData).toBeUndefined();
+  expect(presenter.error).toEqual(err);
 });

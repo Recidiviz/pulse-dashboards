@@ -29,6 +29,12 @@ import OutliersSupervisorPage, {
 
 jest.mock("../../../components/StoreProvider");
 
+const useRootStoreMock = jest.mocked(useRootStore);
+
+afterEach(() => {
+  jest.resetAllMocks();
+});
+
 describe("Hydrated Supervisor Page", () => {
   let presenter: SupervisionOfficersPresenter;
 
@@ -39,10 +45,6 @@ describe("Hydrated Supervisor Page", () => {
     );
     presenter = new SupervisionOfficersPresenter(store, "mdavis123");
     await presenter?.hydrate();
-  });
-
-  afterAll(() => {
-    jest.resetAllMocks();
   });
 
   test("Renders the correct title", () => {
@@ -96,11 +98,15 @@ describe("Outliers Supervisor Page", () => {
   let store: OutliersSupervisionStore;
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    const rootStore = new RootStore();
     store = new OutliersSupervisionStore(
-      new OutliersStore(new RootStore()),
+      rootStore.outliersStore,
       OutliersConfigFixture
     );
+    rootStore.outliersStore.supervisionStore = store;
+    useRootStoreMock.mockReturnValue(rootStore);
+
+    store.setSupervisorId("mdavis123");
   });
 
   afterEach(() => {
@@ -108,19 +114,17 @@ describe("Outliers Supervisor Page", () => {
   });
 
   test("renders loading indicator", () => {
-    const presenter = new SupervisionOfficersPresenter(store, "mdavis123");
-    presenter.setIsLoading(true);
-    render(<OutliersSupervisorPage presenter={presenter} />);
+    render(<OutliersSupervisorPage />);
 
     expect(screen.getByText("Loading data...")).toBeInTheDocument();
   });
 
   test("renders error page", () => {
-    (useRootStore as jest.Mock).mockReturnValue({ userStore: {} });
+    jest.spyOn(store, "hydrateMetricConfigs").mockImplementation(() => {
+      throw new Error("There was an error");
+    });
 
-    const presenter = new SupervisionOfficersPresenter(store, "mdavis123");
-    presenter.setError(new Error("There was an error"));
-    render(<OutliersSupervisorPage presenter={presenter} />);
+    render(<OutliersSupervisorPage />);
 
     expect(
       screen.getByText("Sorry, we’re having trouble loading this page")
@@ -128,14 +132,12 @@ describe("Outliers Supervisor Page", () => {
   });
 
   test("renders Supervisor Page when hydrated", async () => {
-    const presenter = new SupervisionOfficersPresenter(store, "mdavis123");
-    await presenter.hydrate();
     render(
       <BrowserRouter>
-        <OutliersSupervisorPage presenter={presenter} />
+        <OutliersSupervisorPage />
       </BrowserRouter>
     );
 
-    expect(screen.getByText("Miles D Davis")).toBeInTheDocument();
+    expect(await screen.findByText("Miles D Davis")).toBeInTheDocument();
   });
 });

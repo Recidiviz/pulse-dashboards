@@ -77,7 +77,7 @@ describe("App tests", () => {
   const PageSystemMock = PageSystem.type;
   const PageVitalsMock = PageVitals.type;
   const PageImpactMock = PageImpact.type;
-  const PageOutliersMock = PageOutliers.type;
+  const PageOutliersMock = jest.mocked(PageOutliers);
   let userStore = {};
 
   LanternLayoutMock.mockImplementation(({ children }) => children);

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { RootStore } from "../RootStore";
 import { OutliersAPI } from "./api/interface";
@@ -36,9 +36,8 @@ export class OutliersStore {
     // reset the store for each new tenant
     reaction(
       () => this.rootStore.currentTenantId,
-      async () => {
-        this.reset();
-        await flowResult(this.hydrateSupervisionStore());
+      () => {
+        runInAction(() => this.reset());
       }
     );
   }
