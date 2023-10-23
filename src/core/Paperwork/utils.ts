@@ -120,21 +120,20 @@ export const useResizeForm = (
       const margin = 0;
       const scale = (container.offsetWidth - margin * 2) / pages[0].offsetWidth;
       const scaledMargin = margin / scale;
-      const scaledHeight = pages[0].offsetHeight * scale;
 
       const gutter = 10;
 
-      container.style.minHeight = rem(
-        pages.length * (gutter + scaledHeight + scaledMargin * 2)
-      );
+      let yOffset = gutter;
+      let containerHeight = 0;
 
       pages.forEach((page, i) => {
         const transform = `scale(${scale})
          translateX(${rem(scaledMargin)})
-         translateY(${rem(
-           (gutter + i * (gutter + (scale - 1) * page.offsetHeight)) / scale
-         )})`;
+         translateY(${rem(yOffset / scale)})`;
 
+        yOffset += gutter + (scale - 1) * page.offsetHeight;
+        containerHeight +=
+          gutter + page.offsetHeight * scale + 2 * scaledMargin;
         // eslint-disable-next-line no-param-reassign
         page.style.transform = transform;
 
@@ -143,10 +142,12 @@ export const useResizeForm = (
             margin,
             transform,
             scale,
-            scaledHeight,
+            scaledHeight: page.offsetHeight * scale,
           });
         }
       });
+
+      container.style.minHeight = rem(containerHeight);
     }, 1000 / 60);
 
     resize();

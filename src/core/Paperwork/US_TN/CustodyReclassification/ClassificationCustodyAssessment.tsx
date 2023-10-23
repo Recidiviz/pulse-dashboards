@@ -94,8 +94,8 @@ const ClassificationCustodyAssessment: React.FC = () => {
           </FormContainer>
         </PrintablePage>
       </PrintablePageMargin>
-      <PrintablePageMargin>
-        <PrintablePage>
+      <PrintablePageMargin stretchable>
+        <PrintablePage stretchable>
           <FormContainer {...formViewerContext}>
             <Header>
               <Seal />
@@ -133,8 +133,8 @@ const ClassificationCustodyAssessment: React.FC = () => {
           </FormContainer>
         </PrintablePage>
       </PrintablePageMargin>
-      <PrintablePageMargin>
-        <PrintablePage>
+      <PrintablePageMargin stretchable>
+        <PrintablePage stretchable>
           <FormContainer {...formViewerContext}>
             <div>
               {scheduleB.map(([q, i]) => (
