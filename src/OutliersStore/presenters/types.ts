@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ValuesType } from "utility-types";
+
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
@@ -22,13 +24,13 @@ import { SupervisionOfficerMetricOutlier } from "../models/SupervisionOfficerMet
 
 // This type represents the state of fully hydrated data
 // where all necessary related objects are guaranteed to exist
-export type OutlierOfficerData = Omit<
-  SupervisionOfficer,
-  "currentPeriodStatuses"
-> & {
+export type OutlierOfficerData = Omit<SupervisionOfficer, "outlierMetrics"> & {
   outlierMetrics: MetricWithConfig[];
 };
 export type MetricWithConfig = SupervisionOfficerMetricOutlier & {
+  currentPeriodData: ValuesType<
+    SupervisionOfficerMetricOutlier["statusesOverTime"]
+  >;
   config: Omit<MetricConfig, "metricBenchmarksByCaseloadType">;
   benchmark: MetricBenchmark & { currentPeriodTarget: number };
 };

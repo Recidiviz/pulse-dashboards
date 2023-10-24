@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ascending } from "d3-array";
 import { z } from "zod";
 
 import {
@@ -26,12 +27,16 @@ import {
 export const metricBenchmarkSchema = z.object({
   metricId: z.string(),
   caseloadType: z.string(),
-  benchmarks: z.array(
-    z.object({
-      target: z.number(),
-      endDate: dateStringSchema,
-    })
-  ),
+  benchmarks: z
+    .array(
+      z.object({
+        target: z.number(),
+        endDate: dateStringSchema,
+      })
+    )
+    .transform((benchmarks) =>
+      benchmarks.sort((a, b) => ascending(a.endDate, b.endDate))
+    ),
   latestPeriodValues: uppercaseSchemaKeys(
     // can't just pass the key enum to z.record because it does not enforce key exhaustiveness
     z.object({

@@ -19,7 +19,7 @@ import {
   RawSupervisionOfficer,
   supervisionOfficerSchema,
 } from "../SupervisionOfficer";
-import { ADVERSE_METRIC_IDS, CASELOAD_TYPE_IDS } from "./constants";
+import { CASELOAD_TYPE_IDS } from "./constants";
 import { rawSupervisionOfficerMetricOutlierFixtures } from "./SupervisionOfficerMetricOutlierFixture";
 import { supervisionOfficerSupervisorsFixture } from "./SupervisionOfficerSupervisor";
 
@@ -31,18 +31,14 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Ellington",
     },
     district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
-    supervisorId: supervisionOfficerSupervisorsFixture[0].externalId,
+    supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
-    currentPeriodStatuses: {
-      far: [
-        rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
-          .SEX_OFFENSE[0],
-        rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts
-          .SEX_OFFENSE[0],
-      ],
-      near: [ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation],
-      met: [],
-    },
+    outlierMetrics: [
+      rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
+        .SEX_OFFENSE[0],
+      rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts
+        .SEX_OFFENSE[0],
+    ],
   },
   {
     externalId: "so2",
@@ -51,16 +47,9 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Baker",
     },
     district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
-    supervisorId: supervisionOfficerSupervisorsFixture[0].externalId,
+    supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
-    currentPeriodStatuses: {
-      far: [],
-      near: [
-        ADVERSE_METRIC_IDS.enum.incarceration_starts,
-        ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
-      ],
-      met: [ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants],
-    },
+    outlierMetrics: [],
   },
   {
     externalId: "so3",
@@ -69,16 +58,12 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Armstrong",
     },
     district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
-    supervisorId: supervisionOfficerSupervisorsFixture[0].externalId,
+    supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
-    currentPeriodStatuses: {
-      far: [
-        rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
-          .GENERAL_OR_OTHER[1],
-      ],
-      near: [ADVERSE_METRIC_IDS.enum.incarceration_starts],
-      met: [ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation],
-    },
+    outlierMetrics: [
+      rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
+        .GENERAL_OR_OTHER[1],
+    ],
   },
   {
     externalId: "so4",
@@ -88,16 +73,12 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Basie",
     },
     district: supervisionOfficerSupervisorsFixture[1].supervisionDistrict,
-    supervisorId: supervisionOfficerSupervisorsFixture[1].externalId,
+    supervisorExternalId: supervisionOfficerSupervisorsFixture[1].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
-    currentPeriodStatuses: {
-      far: [
-        rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
-          .GENERAL_OR_OTHER[0],
-      ],
-      near: [ADVERSE_METRIC_IDS.enum.incarceration_starts],
-      met: [ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation],
-    },
+    outlierMetrics: [
+      rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
+        .GENERAL_OR_OTHER[0],
+    ],
   },
   {
     externalId: "so5",
@@ -106,13 +87,9 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Williams",
     },
     district: null,
-    supervisorId: supervisionOfficerSupervisorsFixture[2].externalId,
+    supervisorExternalId: supervisionOfficerSupervisorsFixture[2].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
-    currentPeriodStatuses: {
-      far: [],
-      near: [ADVERSE_METRIC_IDS.enum.incarceration_starts],
-      met: [ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation],
-    },
+    outlierMetrics: [],
   },
 ];
 

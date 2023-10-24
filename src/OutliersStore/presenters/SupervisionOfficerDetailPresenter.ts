@@ -86,7 +86,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
   }
 
   get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
-    const id = this.officerRecord?.supervisorId;
+    const id = this.officerRecord?.supervisorExternalId;
     if (!id) return;
     return this.supervisionStore.supervisionOfficerSupervisor(id);
   }

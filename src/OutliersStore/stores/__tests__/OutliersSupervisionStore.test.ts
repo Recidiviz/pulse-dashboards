@@ -177,14 +177,6 @@ test("hydrate supervisionOfficers for supervisor", async () => {
   );
 });
 
-test("supervisionOfficersPresenter", () => {
-  expect(store.supervisionOfficersPresenter).toBeUndefined();
-  store.setSupervisorId("madavis123");
-  expect(store.supervisionOfficersPresenter).toBeDefined();
-  store.setSupervisorId(undefined);
-  expect(store.supervisionOfficersPresenter).toBeUndefined();
-});
-
 test("current user record for supervisor except offline mode", () => {
   jest
     .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
@@ -286,8 +278,7 @@ test("look up supervisor by ID", async () => {
 
 test("hydrate supervisionOfficerMetricEvents", async () => {
   const testOfficer = supervisionOfficerFixture[1].externalId;
-  const testMetric =
-    supervisionOfficerFixture[2].currentPeriodStatuses.FAR[0].metricId;
+  const testMetric = supervisionOfficerFixture[2].outlierMetrics[0].metricId;
 
   function getTestEvents() {
     return store.metricEventsByOfficerAndMetricId

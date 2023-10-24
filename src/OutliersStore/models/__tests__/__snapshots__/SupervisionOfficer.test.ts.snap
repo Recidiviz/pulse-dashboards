@@ -3,58 +3,6 @@
 exports[`transformations 1`] = `
 Object {
   "caseloadType": "SEX_OFFENSE",
-  "currentPeriodStatuses": Object {
-    "FAR": Array [
-      Object {
-        "metricId": "absconsions_bench_warrants",
-        "previousPeriodValues": Array [
-          Object {
-            "endDate": 2023-04-01T00:00:00.000Z,
-            "rate": 0.098509819,
-            "status": "FAR",
-          },
-          Object {
-            "endDate": 2023-05-01T00:00:00.000Z,
-            "rate": 0.094708509819,
-            "status": "FAR",
-          },
-          Object {
-            "endDate": 2023-06-01T00:00:00.000Z,
-            "rate": 0.0843280708509819,
-            "status": "FAR",
-          },
-          Object {
-            "endDate": 2023-07-01T00:00:00.000Z,
-            "rate": 0.1018842831,
-            "status": "FAR",
-          },
-          Object {
-            "endDate": 2023-08-01T00:00:00.000Z,
-            "rate": 0.11247207457052615,
-            "status": "FAR",
-          },
-        ],
-        "rate": 0.10630035918842831,
-        "status": "FAR",
-      },
-      Object {
-        "metricId": "incarceration_starts",
-        "previousPeriodValues": Array [
-          Object {
-            "endDate": 2023-04-01T00:00:00.000Z,
-            "rate": 0.023395936157938592,
-            "status": "MET",
-          },
-        ],
-        "rate": 0.4331242583488727,
-        "status": "FAR",
-      },
-    ],
-    "MET": Array [],
-    "NEAR": Array [
-      "incarceration_starts_technical_violation",
-    ],
-  },
   "displayName": "Duke Ellington",
   "district": "D1",
   "externalId": "so1",
@@ -62,23 +10,65 @@ Object {
     "givenNames": "Duke",
     "surname": "Ellington",
   },
-  "supervisorId": "mdavis123",
+  "outlierMetrics": Array [
+    Object {
+      "metricId": "absconsions_bench_warrants",
+      "statusesOverTime": Array [
+        Object {
+          "endDate": 2023-04-01T00:00:00.000Z,
+          "metricRate": 0.098509819,
+          "status": "FAR",
+        },
+        Object {
+          "endDate": 2023-05-01T00:00:00.000Z,
+          "metricRate": 0.094708509819,
+          "status": "FAR",
+        },
+        Object {
+          "endDate": 2023-06-01T00:00:00.000Z,
+          "metricRate": 0.0843280708509819,
+          "status": "FAR",
+        },
+        Object {
+          "endDate": 2023-07-01T00:00:00.000Z,
+          "metricRate": 0.1018842831,
+          "status": "FAR",
+        },
+        Object {
+          "endDate": 2023-08-01T00:00:00.000Z,
+          "metricRate": 0.11247207457052615,
+          "status": "FAR",
+        },
+        Object {
+          "endDate": 2023-09-01T00:00:00.000Z,
+          "metricRate": 0.10630035918842831,
+          "status": "FAR",
+        },
+      ],
+    },
+    Object {
+      "metricId": "incarceration_starts",
+      "statusesOverTime": Array [
+        Object {
+          "endDate": 2023-08-01T00:00:00.000Z,
+          "metricRate": 0.023395936157938592,
+          "status": "MET",
+        },
+        Object {
+          "endDate": 2023-09-01T00:00:00.000Z,
+          "metricRate": 0.4331242583488727,
+          "status": "FAR",
+        },
+      ],
+    },
+  ],
+  "supervisorExternalId": "mdavis123",
 }
 `;
 
 exports[`transformations 2`] = `
 Object {
   "caseloadType": "GENERAL_OR_OTHER",
-  "currentPeriodStatuses": Object {
-    "FAR": Array [],
-    "MET": Array [
-      "absconsions_bench_warrants",
-    ],
-    "NEAR": Array [
-      "incarceration_starts",
-      "incarceration_starts_technical_violation",
-    ],
-  },
   "displayName": "Chet Baker",
   "district": "D1",
   "externalId": "so2",
@@ -86,55 +76,14 @@ Object {
     "givenNames": "Chet",
     "surname": "Baker",
   },
-  "supervisorId": "mdavis123",
+  "outlierMetrics": Array [],
+  "supervisorExternalId": "mdavis123",
 }
 `;
 
 exports[`transformations 3`] = `
 Object {
   "caseloadType": "GENERAL_OR_OTHER",
-  "currentPeriodStatuses": Object {
-    "FAR": Array [
-      Object {
-        "metricId": "absconsions_bench_warrants",
-        "previousPeriodValues": Array [
-          Object {
-            "endDate": 2023-04-01T00:00:00.000Z,
-            "rate": 0.154553,
-            "status": "FAR",
-          },
-          Object {
-            "endDate": 2023-05-01T00:00:00.000Z,
-            "rate": 0.109407,
-            "status": "FAR",
-          },
-          Object {
-            "endDate": 2023-06-01T00:00:00.000Z,
-            "rate": 0.12125238767544223,
-            "status": "FAR",
-          },
-          Object {
-            "endDate": 2023-07-01T00:00:00.000Z,
-            "rate": 0.1466368227731864,
-            "status": "FAR",
-          },
-          Object {
-            "endDate": 2023-08-01T00:00:00.000Z,
-            "rate": 0.110487,
-            "status": "FAR",
-          },
-        ],
-        "rate": 0.11521464646464646,
-        "status": "FAR",
-      },
-    ],
-    "MET": Array [
-      "incarceration_starts_technical_violation",
-    ],
-    "NEAR": Array [
-      "incarceration_starts",
-    ],
-  },
   "displayName": "Louis Armstrong",
   "district": "D1",
   "externalId": "so3",
@@ -142,55 +91,50 @@ Object {
     "givenNames": "Louis",
     "surname": "Armstrong",
   },
-  "supervisorId": "mdavis123",
+  "outlierMetrics": Array [
+    Object {
+      "metricId": "absconsions_bench_warrants",
+      "statusesOverTime": Array [
+        Object {
+          "endDate": 2023-04-01T00:00:00.000Z,
+          "metricRate": 0.154553,
+          "status": "FAR",
+        },
+        Object {
+          "endDate": 2023-05-01T00:00:00.000Z,
+          "metricRate": 0.109407,
+          "status": "FAR",
+        },
+        Object {
+          "endDate": 2023-06-01T00:00:00.000Z,
+          "metricRate": 0.12125238767544223,
+          "status": "FAR",
+        },
+        Object {
+          "endDate": 2023-07-01T00:00:00.000Z,
+          "metricRate": 0.1466368227731864,
+          "status": "FAR",
+        },
+        Object {
+          "endDate": 2023-08-01T00:00:00.000Z,
+          "metricRate": 0.110487,
+          "status": "FAR",
+        },
+        Object {
+          "endDate": 2023-09-01T00:00:00.000Z,
+          "metricRate": 0.11521464646464646,
+          "status": "FAR",
+        },
+      ],
+    },
+  ],
+  "supervisorExternalId": "mdavis123",
 }
 `;
 
 exports[`transformations 4`] = `
 Object {
   "caseloadType": "GENERAL_OR_OTHER",
-  "currentPeriodStatuses": Object {
-    "FAR": Array [
-      Object {
-        "metricId": "absconsions_bench_warrants",
-        "previousPeriodValues": Array [
-          Object {
-            "endDate": 2023-04-01T00:00:00.000Z,
-            "rate": 0.06283,
-            "status": "NEAR",
-          },
-          Object {
-            "endDate": 2023-05-01T00:00:00.000Z,
-            "rate": 0.088881,
-            "status": "NEAR",
-          },
-          Object {
-            "endDate": 2023-06-01T00:00:00.000Z,
-            "rate": 0.109407,
-            "status": "FAR",
-          },
-          Object {
-            "endDate": 2023-07-01T00:00:00.000Z,
-            "rate": 0.110487,
-            "status": "FAR",
-          },
-          Object {
-            "endDate": 2023-08-01T00:00:00.000Z,
-            "rate": 0.154553,
-            "status": "FAR",
-          },
-        ],
-        "rate": 0.1604677745537677,
-        "status": "FAR",
-      },
-    ],
-    "MET": Array [
-      "incarceration_starts_technical_violation",
-    ],
-    "NEAR": Array [
-      "incarceration_starts",
-    ],
-  },
   "displayName": "William James \\"Count\\" Basie",
   "district": null,
   "externalId": "so4",
@@ -199,22 +143,50 @@ Object {
     "middleNames": "\\"Count\\"",
     "surname": "Basie",
   },
-  "supervisorId": "bholiday456",
+  "outlierMetrics": Array [
+    Object {
+      "metricId": "absconsions_bench_warrants",
+      "statusesOverTime": Array [
+        Object {
+          "endDate": 2023-04-01T00:00:00.000Z,
+          "metricRate": 0.06283,
+          "status": "NEAR",
+        },
+        Object {
+          "endDate": 2023-05-01T00:00:00.000Z,
+          "metricRate": 0.088881,
+          "status": "NEAR",
+        },
+        Object {
+          "endDate": 2023-06-01T00:00:00.000Z,
+          "metricRate": 0.109407,
+          "status": "FAR",
+        },
+        Object {
+          "endDate": 2023-07-01T00:00:00.000Z,
+          "metricRate": 0.110487,
+          "status": "FAR",
+        },
+        Object {
+          "endDate": 2023-08-01T00:00:00.000Z,
+          "metricRate": 0.154553,
+          "status": "FAR",
+        },
+        Object {
+          "endDate": 2023-09-01T00:00:00.000Z,
+          "metricRate": 0.1604677745537677,
+          "status": "FAR",
+        },
+      ],
+    },
+  ],
+  "supervisorExternalId": "bholiday456",
 }
 `;
 
 exports[`transformations 5`] = `
 Object {
   "caseloadType": "GENERAL_OR_OTHER",
-  "currentPeriodStatuses": Object {
-    "FAR": Array [],
-    "MET": Array [
-      "incarceration_starts_technical_violation",
-    ],
-    "NEAR": Array [
-      "incarceration_starts",
-    ],
-  },
   "displayName": "Mary Lou Williams",
   "district": null,
   "externalId": "so5",
@@ -222,6 +194,7 @@ Object {
     "givenNames": "Mary Lou",
     "surname": "Williams",
   },
-  "supervisorId": "efitzgerald789",
+  "outlierMetrics": Array [],
+  "supervisorExternalId": "efitzgerald789",
 }
 `;

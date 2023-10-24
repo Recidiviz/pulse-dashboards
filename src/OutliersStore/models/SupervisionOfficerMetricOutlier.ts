@@ -15,30 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ascending } from "d3-array";
 import { z } from "zod";
 
 import { dateStringSchema, targetStatusSchema } from "./schemaHelpers";
 
-export const supervisionOfficerMetricOutlierSchema = z
-  .object({
-    metricId: z.string(),
-    rate: z.number(),
-    previousPeriodValues: z.array(
+export const supervisionOfficerMetricOutlierSchema = z.object({
+  metricId: z.string(),
+  statusesOverTime: z
+    .array(
       z.object({
         endDate: dateStringSchema,
-        rate: z.number(),
+        metricRate: z.number(),
         status: targetStatusSchema,
       })
-    ),
-  })
-  .transform((officerMetric) => {
-    return {
-      ...officerMetric,
-      // this is implied upstream because the backend will only give us
-      // this data for officers in the "FAR" category, but this makes it more explicit
-      status: targetStatusSchema.enum.FAR,
-    };
-  });
+    )
+    .transform((v) => v.sort((a, b) => ascending(a.endDate, b.endDate))),
+});
 
 export type SupervisionOfficerMetricOutlier = z.infer<
   typeof supervisionOfficerMetricOutlierSchema

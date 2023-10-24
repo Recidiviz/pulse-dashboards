@@ -55,7 +55,7 @@ afterEach(() => {
 });
 
 const testOfficer = supervisionOfficerFixture[0];
-const testMetric = testOfficer.currentPeriodStatuses.FAR[0];
+const testMetric = testOfficer.outlierMetrics[0];
 let presenter: SupervisionOfficerDetailPresenter;
 
 beforeEach(() => {
@@ -68,7 +68,9 @@ beforeEach(() => {
 describe("with unit data already hydrated", () => {
   beforeEach(async () => {
     await Promise.all([
-      flowResult(store.hydrateOfficersForSupervisor(testOfficer.supervisorId)),
+      flowResult(
+        store.hydrateOfficersForSupervisor(testOfficer.supervisorExternalId)
+      ),
       flowResult(store.hydrateSupervisionOfficerSupervisors()),
       flowResult(store.hydrateMetricConfigs()),
     ]);

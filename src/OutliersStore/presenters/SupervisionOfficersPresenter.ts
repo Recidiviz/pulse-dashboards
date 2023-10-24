@@ -45,10 +45,6 @@ export class SupervisionOfficersPresenter implements Hydratable {
     );
   }
 
-  get isEmpty(): boolean {
-    return !this.outlierOfficersData || !this.supervisorInfo;
-  }
-
   private get areMetricsHydrated() {
     return this.supervisionStore.metricConfigsById !== undefined;
   }
@@ -130,7 +126,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
     try {
       const outlierOfficers = this.supervisionStore.officersBySupervisor
         .get(this.supervisorId)
-        ?.filter((o) => o.currentPeriodStatuses.FAR.length > 0)
+        ?.filter((o) => o.outlierMetrics.length > 0)
         .map((o): OutlierOfficerData => {
           return getOutlierOfficerData(o, this.supervisionStore);
         });

@@ -59,7 +59,7 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
     );
 
     return supervisionOfficerFixture.filter(
-      (o) => o.supervisorId === supervisorId
+      (o) => o.supervisorExternalId === supervisorId
     );
   }
 

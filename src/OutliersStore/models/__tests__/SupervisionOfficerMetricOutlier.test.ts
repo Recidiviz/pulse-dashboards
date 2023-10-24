@@ -16,11 +16,19 @@
 // =============================================================================
 
 import assertNever from "assert-never";
+import { shuffle } from "lodash";
 import { ValuesType } from "utility-types";
 
+import {
+  LOOKBACK_END_DATE_STRINGS,
+  LOOKBACK_END_DATES,
+} from "../offlineFixtures/constants";
 import { rawMetricBenchmarksFixture } from "../offlineFixtures/MetricBenchmarkFixture";
 import { rawSupervisionOfficerMetricOutlierFixtures } from "../offlineFixtures/SupervisionOfficerMetricOutlierFixture";
-import { RawSupervisionOfficerMetricOutlier } from "../SupervisionOfficerMetricOutlier";
+import {
+  RawSupervisionOfficerMetricOutlier,
+  supervisionOfficerMetricOutlierSchema,
+} from "../SupervisionOfficerMetricOutlier";
 
 function forEachOutlierFixture(
   cb: (
@@ -47,15 +55,34 @@ function forEachOutlierFixture(
   );
 }
 
+test("data should be sorted chronologically", () => {
+  forEachOutlierFixture((rawMetric) => {
+    const shuffledMetric = { ...rawMetric };
+    shuffledMetric.statusesOverTime = shuffle(shuffledMetric.statusesOverTime);
+    expect(
+      supervisionOfficerMetricOutlierSchema
+        .parse(shuffledMetric)
+        .statusesOverTime.map((s) => s.endDate)
+    ).toEqual(
+      // not all have to be complete, but all must be chronological up to the latest period
+      LOOKBACK_END_DATES.slice(-1 * shuffledMetric.statusesOverTime.length)
+    );
+  });
+});
+
 test("fixture rate values should also appear in benchmark data", () => {
   forEachOutlierFixture((metric, benchmarkData) => {
-    expect(benchmarkData.latestPeriodValues.far).toContain(metric.rate);
+    expect(benchmarkData.latestPeriodValues.far).toContain(
+      metric.statusesOverTime.find(
+        (s) => s.endDate === LOOKBACK_END_DATE_STRINGS.at(-1)
+      )?.metricRate
+    );
   });
 });
 
 test("fixture lookback values should correspond to benchmark ranges", () => {
   forEachOutlierFixture((metric, benchmarkData) => {
-    metric.previousPeriodValues.forEach((d) => {
+    metric.statusesOverTime.forEach((d) => {
       const targetValue = benchmarkData.benchmarks.find(
         (b) => b.endDate === d.endDate
       )?.target as number;
@@ -63,18 +90,18 @@ test("fixture lookback values should correspond to benchmark ranges", () => {
 
       switch (d.status) {
         case "FAR":
-          expect(d.rate).toBeGreaterThan(
+          expect(d.metricRate).toBeGreaterThan(
             Math.max(...benchmarkData.latestPeriodValues.near)
           );
           break;
         case "NEAR":
-          expect(d.rate).toBeGreaterThan(targetValue);
-          expect(d.rate).toBeLessThan(
+          expect(d.metricRate).toBeGreaterThan(targetValue);
+          expect(d.metricRate).toBeLessThan(
             Math.min(...benchmarkData.latestPeriodValues.far)
           );
           break;
         case "MET":
-          expect(d.rate).toBeLessThanOrEqual(targetValue);
+          expect(d.metricRate).toBeLessThanOrEqual(targetValue);
           break;
         default:
           assertNever(d.status);

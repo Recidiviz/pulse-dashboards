@@ -138,9 +138,9 @@ type Point = {
 };
 
 const OutliersLinePlot: React.FC<OutliersLinePlotType> = ({ metric }) => {
-  const usersPoints: Point[] = metric.previousPeriodValues.map((d) => ({
+  const usersPoints: Point[] = metric.statusesOverTime.map((d) => ({
     date: d.endDate,
-    value: d.rate * 100,
+    value: d.metricRate * 100,
     status: d.status,
   }));
   const statewidePoints: Point[] = metric.benchmark.benchmarks.map((d) => ({

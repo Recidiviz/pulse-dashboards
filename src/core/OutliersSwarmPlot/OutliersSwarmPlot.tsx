@@ -55,9 +55,11 @@ const formatTickLabel = format(".0%");
 const formatTargetAndHighlight = format(".1%");
 
 function prepareChartData(metric: MetricWithConfig, width: number) {
+  const currentMetricData = metric.currentPeriodData;
+
   const allValues = [
     ...metric.benchmark.latestPeriodValues.map((o) => o.value),
-    metric.rate,
+    currentMetricData.metricRate,
   ].sort(ascending);
 
   // round extrema to the nearest whole percentage point
@@ -85,11 +87,11 @@ function prepareChartData(metric: MetricWithConfig, width: number) {
         })
       ),
       {
-        position: xScale(metric.rate),
+        position: xScale(currentMetricData.metricRate),
         // when calculating the swarm positions, give this point some extra breathing room
         radius: HIGHLIGHT_DOT_RADIUS + HIGHLIGHT_MARK_STROKE.width,
         opacity: 1,
-        targetStatus: metric.status,
+        targetStatus: currentMetricData.status,
         highlight: true,
       },
     ],
@@ -110,7 +112,7 @@ function prepareChartData(metric: MetricWithConfig, width: number) {
   }s in the state for ${
     metric.benchmark.caseloadType
   } caseloads, highlighting a value of ${formatTargetAndHighlight(
-    metric.rate
+    currentMetricData.metricRate
   )}, which is far worse than the statewide rate of ${formatTargetAndHighlight(
     metric.benchmark.currentPeriodTarget
   )}. Other values in the chart range from ${formatTickLabel(
@@ -132,6 +134,7 @@ export const OutliersSwarmPlot = withSizeHOC(
     metric,
     size,
   }: OutliersSwarmPlotProps) {
+    const currentMetricData = metric.currentPeriodData;
     // extract some nested values from props, for convenience
     const targetRate = metric.benchmark.currentPeriodTarget;
     // should always be defined in practice because we have not disabled the sizeme placeholder
@@ -221,8 +224,8 @@ export const OutliersSwarmPlot = withSizeHOC(
               r={HIGHLIGHT_DOT_RADIUS}
               // swarm is calculated such that the highlighted officer will be on the center line,
               // so no Y offset is required here
-              cx={xScale(metric.rate)}
-              fill={GOAL_COLORS[metric.status]}
+              cx={xScale(currentMetricData.metricRate)}
+              fill={GOAL_COLORS[currentMetricData.status]}
               ref={highlightLabelProps.refs.setReference}
             />
           </g>
@@ -231,7 +234,7 @@ export const OutliersSwarmPlot = withSizeHOC(
           ref={highlightLabelProps.refs.setFloating}
           style={highlightLabelProps.floatingStyles}
         >
-          {formatTargetAndHighlight(metric.rate)}
+          {formatTargetAndHighlight(currentMetricData.metricRate)}
         </HighlightLabel>
       </PlotWrapper>
     );

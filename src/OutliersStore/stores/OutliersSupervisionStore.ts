@@ -27,7 +27,6 @@ import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import type { OutliersStore } from "../OutliersStore";
-import { SupervisionOfficersPresenter } from "../presenters/SupervisionOfficersPresenter";
 import { FlowMethod, StringMap2D } from "../types";
 
 export class OutliersSupervisionStore {
@@ -189,16 +188,6 @@ export class OutliersSupervisionStore {
 
     if (officersData.length > 0)
       this.officersBySupervisor.set(supervisorId, officersData);
-  }
-
-  /**
-   * Creates and returns the supervisionOfficersPresenter for the current supervisorId
-   */
-  get supervisionOfficersPresenter(): SupervisionOfficersPresenter | undefined {
-    if (this.supervisorId) {
-      return new SupervisionOfficersPresenter(this, this.supervisorId);
-    }
-    return undefined;
   }
 
   setSupervisorId(supervisorId: string | undefined): void {

@@ -17,30 +17,17 @@
 
 import { z } from "zod";
 
-import {
-  addDisplayName,
-  fullNameSchema,
-  targetStatusSchema,
-  uppercaseSchemaKeys,
-} from "./schemaHelpers";
+import { addDisplayName, fullNameSchema } from "./schemaHelpers";
 import { supervisionOfficerMetricOutlierSchema } from "./SupervisionOfficerMetricOutlier";
 
 export const supervisionOfficerSchema = z
   .object({
     fullName: fullNameSchema,
     externalId: z.string(),
-    supervisorId: z.string(),
+    supervisorExternalId: z.string(),
     district: z.string().nullable(),
     caseloadType: z.string(),
-    currentPeriodStatuses: uppercaseSchemaKeys(
-      z.object({
-        [targetStatusSchema.enum.FAR]: z.array(
-          supervisionOfficerMetricOutlierSchema
-        ),
-        [targetStatusSchema.enum.NEAR]: z.array(z.string()),
-        [targetStatusSchema.enum.MET]: z.array(z.string()),
-      })
-    ),
+    outlierMetrics: z.array(supervisionOfficerMetricOutlierSchema),
   })
   .transform(addDisplayName);
 

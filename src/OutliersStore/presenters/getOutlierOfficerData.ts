@@ -33,7 +33,7 @@ export function getOutlierOfficerData(
 ): OutlierOfficerData {
   return {
     ...officerData,
-    outlierMetrics: officerData.currentPeriodStatuses.FAR.map((metric) => {
+    outlierMetrics: officerData.outlierMetrics.map((metric) => {
       // verify that the related objects we need are actually present;
       // specifically, the metric configs for this officer and the benchmarks
       // for their caseload type
@@ -49,16 +49,16 @@ export function getOutlierOfficerData(
       const benchmark = metricConfig.metricBenchmarksByCaseloadType.get(
         officerData.caseloadType
       );
-      const currentPeriodTarget = benchmark?.benchmarks.at(-1)?.target;
-      if (
-        !benchmark ||
-        // in practice we don't expect this to be missing, but for type safety we verify
-        currentPeriodTarget === undefined
-      ) {
+      if (!benchmark) {
         throw new Error(
           `Missing metric benchmark data for caseload type ${officerData.caseloadType} for ${metric.metricId}`
         );
       }
+
+      const currentPeriodData =
+        metric.statusesOverTime[metric.statusesOverTime.length - 1];
+      const currentPeriodTarget =
+        benchmark.benchmarks[benchmark.benchmarks.length - 1].target;
 
       // current officer's rate is duplicated in the benchmark values, so we need to remove it
       const filteredBenchmark = { ...benchmark, currentPeriodTarget };
@@ -67,7 +67,7 @@ export function getOutlierOfficerData(
         ...filteredBenchmark.latestPeriodValues,
       ];
       const matchingIndex = filteredBenchmark.latestPeriodValues.findIndex(
-        (v) => v.value === metric.rate
+        (v) => v.value === currentPeriodData.metricRate
       );
       // in practice we always expect a match,
       // but if we miss we don't want to arbitrarily delete the last element
@@ -80,7 +80,12 @@ export function getOutlierOfficerData(
       };
       delete config.metricBenchmarksByCaseloadType;
 
-      return { ...metric, config, benchmark: filteredBenchmark };
+      return {
+        ...metric,
+        benchmark: filteredBenchmark,
+        config,
+        currentPeriodData,
+      };
     }),
   };
 }

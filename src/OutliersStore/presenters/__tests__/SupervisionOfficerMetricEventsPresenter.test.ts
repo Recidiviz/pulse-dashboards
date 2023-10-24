@@ -26,7 +26,7 @@ let store: OutliersSupervisionStore;
 let presenter: SupervisionOfficerMetricEventsPresenter;
 const testOfficer = supervisionOfficerFixture[2];
 const testOfficerId = testOfficer.externalId;
-const testMetricId = testOfficer.currentPeriodStatuses.FAR[0].metricId;
+const testMetricId = testOfficer.outlierMetrics[0].metricId;
 
 beforeEach(() => {
   store = new OutliersSupervisionStore(

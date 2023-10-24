@@ -59,7 +59,7 @@ test("excludes current officer from the benchmark data points", async () => {
   // this is really more relevant to the favorable metrics that tend to skew towards zero,
   // but it is equally valid for all metrics
   const benchmarks = cloneDeep(metricBenchmarksFixture);
-  const outlierMetric = officerData.currentPeriodStatuses.FAR[0];
+  const outlierMetric = officerData.outlierMetrics[0];
   const matchingBenchmarkForOfficer = benchmarks.find(
     (b) =>
       b.caseloadType === officerData.caseloadType &&
@@ -69,9 +69,12 @@ test("excludes current officer from the benchmark data points", async () => {
   if (!matchingBenchmarkForOfficer)
     throw new Error("unable to mock benchmark data");
 
+  const currentOutlierRate = outlierMetric.statusesOverTime.at(-1)
+    ?.metricRate as number;
+
   matchingBenchmarkForOfficer.latestPeriodValues.push({
     targetStatus: "FAR",
-    value: outlierMetric.rate,
+    value: currentOutlierRate,
   });
   jest
     .spyOn(OutliersOfflineAPIClient.prototype, "metricBenchmarks")
@@ -85,14 +88,14 @@ test("excludes current officer from the benchmark data points", async () => {
       ?.metricBenchmarksByCaseloadType.get(
         matchingBenchmarkForOfficer.caseloadType
       )
-      ?.latestPeriodValues.filter((d) => d.value === outlierMetric.rate)
+      ?.latestPeriodValues.filter((d) => d.value === currentOutlierRate)
   ).toHaveLength(2);
 
   const outlierData = getOutlierOfficerData(officerData, supervisionStore);
 
   expect(
     outlierData.outlierMetrics[0].benchmark.latestPeriodValues.filter(
-      (d) => d.value === outlierMetric.rate
+      (d) => d.value === currentOutlierRate
     )
   ).toHaveLength(1);
 });

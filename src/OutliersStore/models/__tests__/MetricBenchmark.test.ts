@@ -15,11 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { shuffle } from "lodash";
+
 import { metricBenchmarkSchema } from "../MetricBenchmark";
+import { LOOKBACK_END_DATES } from "../offlineFixtures/constants";
 import { rawMetricBenchmarksFixture } from "../offlineFixtures/MetricBenchmarkFixture";
 
 test("transformations", () => {
   rawMetricBenchmarksFixture.forEach((b) =>
     expect(metricBenchmarkSchema.parse(b)).toMatchSnapshot()
   );
+});
+
+test("benchmarks should be sorted chronologically", () => {
+  rawMetricBenchmarksFixture.forEach((rawBenchmark) => {
+    const shuffledBenchmark = { ...rawBenchmark };
+    shuffledBenchmark.benchmarks = shuffle(shuffledBenchmark.benchmarks);
+    expect(
+      metricBenchmarkSchema
+        .parse(shuffledBenchmark)
+        .benchmarks.map((b) => b.endDate)
+    ).toEqual(LOOKBACK_END_DATES);
+  });
 });
