@@ -71,6 +71,7 @@ function WorkflowsTabbedPersonList<T extends string>({
       <TabWrapper>
         {tabs.map((tab: T) => (
           <TabButton
+            className="WorkflowsTabbedPersonList__tab"
             key={tab}
             $active={activeTab === tab}
             onClick={() => onClick(tab)}

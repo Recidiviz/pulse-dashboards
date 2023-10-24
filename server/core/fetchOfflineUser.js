@@ -52,6 +52,7 @@ function fetchOfflineUser({
       },
       featureVariants: {
         responsiveRevamp: {},
+        usTnExpiration: {},
       },
     },
   };

@@ -40,8 +40,7 @@ Feature: Fill and export the Workflows form
     Scenario Outline: Mark client as ineligible
         Given I am a "<stateCode>" user on the "<opportunityType>" form page for "<pseudonymizedId>"
         When I click on the button with the text "Update eligibility"
-        Then I should see the update eligibility view that has a reason listed like "<checkboxValue>"
-        When I click on the checkbox for "<checkboxValue>"
+        And I click on the checkbox for "<checkboxValue>"
         And I click on the button with the text "Save"
         Then I should see the person labeled as "Currently ineligible"
 
@@ -55,9 +54,7 @@ Feature: Fill and export the Workflows form
         And I click on the checkbox for "<checkboxValue>"
         And I click on the button with the text "Save"
         Then I should see the person labeled as "Currently ineligible"
-        When I click on the button with the text "Update eligibility"
-        And I click on the checkbox for "<checkboxValue>"
-        And I click on the button with the text "Save"
+        When I click on the Undo link
         Then I should see the person labeled as "Eligible"
 
         Examples:

@@ -79,6 +79,13 @@ Then("I should see {int} people listed", async (numPeople) => {
   expect(items.length).toEqual(numPeople);
 });
 
+Then("I should see {int} tabs listed", async (numTabs) => {
+  await waitForNetworkIdle();
+  const items = await $$(".WorkflowsTabbedPersonList__tab");
+  await waitForElementsToExist(items);
+  expect(items.length).toEqual(numTabs);
+});
+
 Then("I should see the person status update", async () => {
   const status = await $(".WorkflowsStatus");
   await status.waitForExist();

@@ -12,7 +12,7 @@ Feature: View a list of people on the opportunity page
 
         Examples:
             | stateCode | searchValue   | numPeople | opportunityType                     | opportunityName     |
-            | US_TN     | Test Officer1 | 4         | compliantReporting                  | Compliant Reporting |
+            | US_TN     | Test Officer1 | 3         | compliantReporting                  | Compliant Reporting |
             | US_MO     | Facility #1   | 1         | usMoRestrictiveHousingStatusHearing | Restrictive Housing |
 
     Scenario Outline: Searching for multiple caseloads
@@ -21,11 +21,12 @@ Feature: View a list of people on the opportunity page
         And I click on the View all link for "<opportunityType>"
         And I select "<secondSearchValue>" from the dropdown
         Then I should see <numPeople> people listed
+        And I should see <numTabs> tabs listed
 
         Examples:
-            | stateCode | searchValue   | secondSearchValue | numPeople | opportunityType                     |
-            | US_TN     | Test Officer1 | Test Officer2     | 5         | compliantReporting                  |
-            | US_MO     | Facility #1   | Facility #2       | 3         | usMoRestrictiveHousingStatusHearing |
+            | stateCode | searchValue   | secondSearchValue | numPeople | numTabs | opportunityType                     |
+            | US_TN     | Test Officer1 | Test Officer2     | 3         | 2       | compliantReporting                  |
+            | US_MO     | Facility #1   | Facility #2       | 1         | 3       | usMoRestrictiveHousingStatusHearing |
 
     Scenario Outline: Navigating to a form for an opportunity
         Given I am logged in as a "<stateCode>" user

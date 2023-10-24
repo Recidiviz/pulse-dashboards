@@ -16,7 +16,7 @@
 // =============================================================================
 import { Then, When } from "@cucumber/cucumber";
 
-import { waitForNavigation } from "../utils";
+import { waitForNavigation, waitForNetworkIdle } from "../utils";
 /**
  * When
  * */
@@ -25,6 +25,13 @@ When("I click on the person link on the preview modal", async () => {
   const link = await $(`.PersonProfileLink`);
   await link.waitForExist();
   await waitForNavigation(link.click());
+});
+
+When("I click on the Undo link", async () => {
+  const undoLink = await $(`span=Undo`);
+  await undoLink.waitForExist();
+  await undoLink.click();
+  await waitForNetworkIdle();
 });
 
 /**
