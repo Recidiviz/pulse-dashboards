@@ -62,7 +62,7 @@ outlier officers in your unit."
   localStorage.setItem("officers", JSON.stringify(outlierOfficersData));
 
   const infoItems = [
-    { title: "district", info: supervisorInfo?.district },
+    { title: "district", info: supervisorInfo?.supervisionDistrict },
     {
       title: "unit supervisor",
       info: supervisorInfo?.displayName,

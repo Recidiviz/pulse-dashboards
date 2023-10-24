@@ -20,7 +20,11 @@
 
 import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
-import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
+import {
+  OUTLIERS_PAGES,
+  PATHWAYS_PAGES,
+  PATHWAYS_SECTIONS,
+} from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import {
   getStateOpportunityTypes,
@@ -94,6 +98,7 @@ const US_MI_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countByRace,
     ],
     "id-methodology": ["system"],
+    insights: [OUTLIERS_PAGES.supervision],
   },
   pagesWithRestrictions: ["prison"],
   tableColumns: enabledTableColumns[pathways.US_MI],

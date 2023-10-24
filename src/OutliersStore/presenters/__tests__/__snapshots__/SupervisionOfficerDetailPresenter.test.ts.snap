@@ -60,7 +60,6 @@ Object {
   "externalId": "so1",
   "fullName": Object {
     "givenNames": "Duke",
-    "middleNames": undefined,
     "surname": "Ellington",
   },
   "outlierMetrics": Array [
@@ -545,7 +544,6 @@ Object {
   "externalId": "so1",
   "fullName": Object {
     "givenNames": "Duke",
-    "middleNames": undefined,
     "surname": "Ellington",
   },
   "outlierMetrics": Array [

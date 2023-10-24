@@ -83,7 +83,7 @@ async function callMetricsApi(endpoint, getTokenSilently) {
  * function, which will be used to authenticate the client against the API.
  */
 async function callNewMetricsApi(endpoint, getTokenSilently, abortSignal) {
-  const url = `${process.env.REACT_APP_NEW_BACKEND_API_URL}/pathways/${endpoint}`;
+  const url = `${process.env.REACT_APP_NEW_BACKEND_API_URL}/${endpoint}`;
   return callApi(url, getTokenSilently, abortSignal);
 }
 

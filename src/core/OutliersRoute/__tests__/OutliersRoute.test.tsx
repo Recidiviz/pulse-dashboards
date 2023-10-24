@@ -90,7 +90,7 @@ test("supervisor restricted from another supervisor's page", () => {
     displayName: "",
     fullName: {},
     externalId: "abc123",
-    district: null,
+    supervisionDistrict: null,
   });
 
   render(
@@ -171,7 +171,7 @@ test("supervisors restricted from supervisors list page", () => {
     displayName: "",
     fullName: {},
     externalId: "abc123",
-    district: null,
+    supervisionDistrict: null,
   });
 
   render(

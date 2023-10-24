@@ -18,7 +18,11 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { RootStore } from "../RootStore";
+import { isDemoMode } from "../utils/isDemoMode";
+import { isOfflineMode } from "../utils/isOfflineMode";
+import { isTestEnv } from "../utils/isTestEnv";
 import { OutliersAPI } from "./api/interface";
+import { OutliersAPIClient } from "./api/OutliersAPIClient";
 import { OutliersOfflineAPIClient } from "./api/OutliersOfflineAPIClient";
 import { OutliersSupervisionStore } from "./stores/OutliersSupervisionStore";
 import { FlowMethod } from "./types";
@@ -29,7 +33,10 @@ export class OutliersStore {
   apiClient: OutliersAPI;
 
   constructor(public rootStore: RootStore) {
-    this.apiClient = new OutliersOfflineAPIClient(this);
+    this.apiClient =
+      isOfflineMode() || isTestEnv() || isDemoMode()
+        ? new OutliersOfflineAPIClient(this)
+        : new OutliersAPIClient(this);
 
     makeAutoObservable(this);
 
@@ -53,7 +60,7 @@ export class OutliersStore {
   *hydrateSupervisionStore(): FlowMethod<OutliersAPI["init"], void> {
     if (this.supervisionStore) return;
 
-    const { config } = yield this.apiClient.init();
+    const config = yield this.apiClient.init();
 
     this.supervisionStore = new OutliersSupervisionStore(this, config);
   }

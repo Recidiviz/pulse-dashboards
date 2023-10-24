@@ -201,9 +201,9 @@ test("current user record for supervisor except offline mode", () => {
   expect(store.currentSupervisorUser).toMatchInlineSnapshot(`
     Object {
       "displayName": "",
-      "district": "District One",
       "externalId": "abc123",
       "fullName": Object {},
+      "supervisionDistrict": "District One",
     }
   `);
 });
@@ -247,9 +247,9 @@ test("hydrate supervisors list with current user", () => {
     Array [
       Object {
         "displayName": "",
-        "district": "District One",
         "externalId": "abc123",
         "fullName": Object {},
+        "supervisionDistrict": "District One",
       },
     ]
   `);

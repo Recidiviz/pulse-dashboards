@@ -50,7 +50,6 @@ Object {
   "externalId": "so3",
   "fullName": Object {
     "givenNames": "Louis",
-    "middleNames": undefined,
     "surname": "Armstrong",
   },
   "outlierMetrics": Array [

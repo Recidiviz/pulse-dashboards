@@ -122,7 +122,7 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
     const stateCode = isOfflineMode() || isDemoMode() ? "US_OZ" : this.tenantId;
 
     return callNewMetricsApi(
-      `${stateCode}/${this.endpoint}?${params?.toString()}`,
+      `pathways/${stateCode}/${this.endpoint}?${params?.toString()}`,
       RootStore.getTokenSilently,
       this.abortController.signal
     );

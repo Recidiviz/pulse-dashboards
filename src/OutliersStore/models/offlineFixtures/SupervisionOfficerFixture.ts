@@ -27,10 +27,10 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
   {
     externalId: "so1",
     fullName: {
-      given_names: "Duke",
+      givenNames: "Duke",
       surname: "Ellington",
     },
-    district: supervisionOfficerSupervisorsFixture[0].district,
+    district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
     supervisorId: supervisionOfficerSupervisorsFixture[0].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
     currentPeriodStatuses: {
@@ -47,10 +47,10 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
   {
     externalId: "so2",
     fullName: {
-      given_names: "Chet",
+      givenNames: "Chet",
       surname: "Baker",
     },
-    district: supervisionOfficerSupervisorsFixture[0].district,
+    district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
     supervisorId: supervisionOfficerSupervisorsFixture[0].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     currentPeriodStatuses: {
@@ -65,10 +65,10 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
   {
     externalId: "so3",
     fullName: {
-      given_names: "Louis",
+      givenNames: "Louis",
       surname: "Armstrong",
     },
-    district: supervisionOfficerSupervisorsFixture[0].district,
+    district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
     supervisorId: supervisionOfficerSupervisorsFixture[0].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     currentPeriodStatuses: {
@@ -83,11 +83,11 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
   {
     externalId: "so4",
     fullName: {
-      given_names: "William James",
-      middle_names: '"Count"',
+      givenNames: "William James",
+      middleNames: '"Count"',
       surname: "Basie",
     },
-    district: supervisionOfficerSupervisorsFixture[1].district,
+    district: supervisionOfficerSupervisorsFixture[1].supervisionDistrict,
     supervisorId: supervisionOfficerSupervisorsFixture[1].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     currentPeriodStatuses: {
@@ -102,7 +102,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
   {
     externalId: "so5",
     fullName: {
-      given_names: "Mary Lou",
+      givenNames: "Mary Lou",
       surname: "Williams",
     },
     district: null,

@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OutliersAPIClient init parses the config data 1`] = `
+Object {
+  "learnMoreUrl": "https://recidiviz.org",
+  "metrics": Array [
+    Object {
+      "bodyDisplayName": "absconsion rate",
+      "eventName": "absconsions",
+      "name": "absconsions_bench_warrants",
+      "outcomeType": "ADVERSE",
+      "titleDisplayName": "Absconsion Rate",
+    },
+    Object {
+      "bodyDisplayName": "incarceration rate",
+      "eventName": "incarcerations",
+      "name": "incarceration_starts",
+      "outcomeType": "ADVERSE",
+      "titleDisplayName": "Incarceration Rate",
+    },
+    Object {
+      "bodyDisplayName": "technical incarceration rate",
+      "eventName": "technical incarcerations",
+      "name": "incarceration_starts_technical_violation",
+      "outcomeType": "ADVERSE",
+      "titleDisplayName": "Technical Incarceration Rate",
+    },
+  ],
+  "supervisionOfficerLabel": "officer",
+}
+`;
+
+exports[`OutliersAPIClient supervisionOfficerSupervisors parses the data 1`] = `
+Array [
+  Object {
+    "displayName": "Miles D Davis",
+    "externalId": "mdavis123",
+    "fullName": Object {
+      "givenNames": "Miles",
+      "middleNames": "D",
+      "surname": "Davis",
+    },
+    "hasOutliers": true,
+    "supervisionDistrict": "D1",
+  },
+  Object {
+    "displayName": "Billie Holiday",
+    "externalId": "bholiday456",
+    "fullName": Object {
+      "givenNames": "Billie",
+      "surname": "Holiday",
+    },
+    "hasOutliers": true,
+    "supervisionDistrict": null,
+  },
+  Object {
+    "displayName": "Ella Fitzgerald",
+    "externalId": "efitzgerald789",
+    "fullName": Object {
+      "givenNames": "Ella",
+      "surname": "Fitzgerald",
+    },
+    "hasOutliers": false,
+    "supervisionDistrict": "D1",
+  },
+  Object {
+    "displayName": "John Coltrane",
+    "externalId": "jColtrane321",
+    "fullName": Object {
+      "givenNames": "John",
+      "surname": "Coltrane",
+    },
+    "hasOutliers": false,
+    "supervisionDistrict": null,
+  },
+]
+`;

@@ -60,7 +60,6 @@ Object {
   "externalId": "so1",
   "fullName": Object {
     "givenNames": "Duke",
-    "middleNames": undefined,
     "surname": "Ellington",
   },
   "supervisorId": "mdavis123",
@@ -85,7 +84,6 @@ Object {
   "externalId": "so2",
   "fullName": Object {
     "givenNames": "Chet",
-    "middleNames": undefined,
     "surname": "Baker",
   },
   "supervisorId": "mdavis123",
@@ -142,7 +140,6 @@ Object {
   "externalId": "so3",
   "fullName": Object {
     "givenNames": "Louis",
-    "middleNames": undefined,
     "surname": "Armstrong",
   },
   "supervisorId": "mdavis123",
@@ -223,7 +220,6 @@ Object {
   "externalId": "so5",
   "fullName": Object {
     "givenNames": "Mary Lou",
-    "middleNames": undefined,
     "surname": "Williams",
   },
   "supervisorId": "efitzgerald789",

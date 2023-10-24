@@ -133,7 +133,7 @@ export class OutliersSupervisionStore {
       ) {
         return {
           externalId,
-          district: district ?? null,
+          supervisionDistrict: district ?? null,
           // unfortunately we don't reliably get anyone's name from auth0
           fullName: {},
           displayName: "",

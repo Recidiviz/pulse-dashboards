@@ -61,7 +61,7 @@ test("homepage redirects supervisors to their own report", () => {
     displayName: "",
     fullName: {},
     externalId: "abc123",
-    district: null,
+    supervisionDistrict: null,
   });
 
   render(
@@ -90,7 +90,7 @@ test("redirect waits for supervision store to be hydrated", async () => {
     displayName: "",
     fullName: {},
     externalId: "abc123",
-    district: null,
+    supervisionDistrict: null,
   });
 
   runInAction(() => {

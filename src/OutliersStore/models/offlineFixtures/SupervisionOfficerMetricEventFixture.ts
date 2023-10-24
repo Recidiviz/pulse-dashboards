@@ -28,7 +28,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-03-18",
       clientId: "707222",
       clientName: {
-        given_names: "Gary",
+        givenNames: "Gary",
         surname: "Alexander",
       },
     },
@@ -37,7 +37,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-04-21",
       clientId: "205752",
       clientName: {
-        given_names: "Beau",
+        givenNames: "Beau",
         surname: "Riley",
       },
     },
@@ -46,7 +46,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-06-07",
       clientId: "792381",
       clientName: {
-        given_names: "Deena",
+        givenNames: "Deena",
         surname: "Dunlap",
       },
     },
@@ -55,7 +55,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-06-08",
       clientId: "869516",
       clientName: {
-        given_names: "Angelo",
+        givenNames: "Angelo",
         surname: "Cohen",
       },
     },
@@ -64,7 +64,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-03-21",
       clientId: "170571",
       clientName: {
-        given_names: "Ward",
+        givenNames: "Ward",
         surname: "Bradley",
       },
     },
@@ -73,7 +73,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-06-05",
       clientId: "461718",
       clientName: {
-        given_names: "Janette",
+        givenNames: "Janette",
         surname: "Sosa",
       },
     },
@@ -82,7 +82,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-12-27",
       clientId: "837771",
       clientName: {
-        given_names: "Nora",
+        givenNames: "Nora",
         surname: "Robbins",
       },
     },
@@ -91,7 +91,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-11-24",
       clientId: "617754",
       clientName: {
-        given_names: "Jason",
+        givenNames: "Jason",
         surname: "Barton",
       },
     },
@@ -101,7 +101,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-12-24",
       clientId: "985771",
       clientName: {
-        given_names: "Nicholas",
+        givenNames: "Nicholas",
         surname: "Rhodes",
       },
     },
@@ -110,7 +110,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-12-21",
       clientId: "326160",
       clientName: {
-        given_names: "Ethel",
+        givenNames: "Ethel",
         surname: "Leonard",
       },
     },
@@ -119,7 +119,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-12-24",
       clientId: "931890",
       clientName: {
-        given_names: "Ricardo",
+        givenNames: "Ricardo",
         surname: "Wood",
       },
     },
@@ -128,7 +128,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-10-24",
       clientId: "930441",
       clientName: {
-        given_names: "Stanley",
+        givenNames: "Stanley",
         surname: "Maxwell",
       },
     },
@@ -137,7 +137,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-09-05",
       clientId: "564940",
       clientName: {
-        given_names: "Miguel",
+        givenNames: "Miguel",
         surname: "Haynes",
       },
     },
@@ -148,7 +148,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-12-07",
       clientId: "144925",
       clientName: {
-        given_names: "Inez",
+        givenNames: "Inez",
         surname: "Griffith",
       },
     },
@@ -158,7 +158,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-09-05",
       clientId: "283496",
       clientName: {
-        given_names: "Gerald",
+        givenNames: "Gerald",
         surname: "Barber",
       },
     },
@@ -168,7 +168,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-09-14",
       clientId: "334531",
       clientName: {
-        given_names: "Leroy",
+        givenNames: "Leroy",
         surname: "Stone",
       },
     },
@@ -178,7 +178,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-11-23",
       clientId: "840134",
       clientName: {
-        given_names: "Patrick",
+        givenNames: "Patrick",
         surname: "Schneider",
       },
     },
@@ -188,7 +188,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-10-17",
       clientId: "968048",
       clientName: {
-        given_names: "Violet",
+        givenNames: "Violet",
         surname: "Johnson",
       },
     },
@@ -198,7 +198,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-11-23",
       clientId: "413899",
       clientName: {
-        given_names: "Warren",
+        givenNames: "Warren",
         surname: "Franklin",
       },
     },
@@ -208,7 +208,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-12-11",
       clientId: "415630",
       clientName: {
-        given_names: "Alta",
+        givenNames: "Alta",
         surname: "Jackson",
       },
     },
@@ -218,7 +218,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-05-06",
       clientId: "235261",
       clientName: {
-        given_names: "Rosie",
+        givenNames: "Rosie",
         surname: "Luna",
       },
     },
@@ -227,7 +227,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-04-07",
       clientId: "531407",
       clientName: {
-        given_names: "Glenn",
+        givenNames: "Glenn",
         surname: "Francis",
       },
     },
@@ -236,7 +236,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-02-15",
       clientId: "436502",
       clientName: {
-        given_names: "Steve",
+        givenNames: "Steve",
         surname: "Schwartz",
       },
     },
@@ -245,7 +245,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-05-14",
       clientId: "339710",
       clientName: {
-        given_names: "Bertha",
+        givenNames: "Bertha",
         surname: "Figueroa",
       },
     },
@@ -256,7 +256,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-02-07",
       clientId: "803013",
       clientName: {
-        given_names: "Troy",
+        givenNames: "Troy",
         surname: "Rodgers",
       },
     },
@@ -266,7 +266,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-06-24",
       clientId: "470308",
       clientName: {
-        given_names: "Leo",
+        givenNames: "Leo",
         surname: "Marshall",
       },
     },
@@ -276,7 +276,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-01-18",
       clientId: "582059",
       clientName: {
-        given_names: "Shawn",
+        givenNames: "Shawn",
         surname: "Romero",
       },
     },
@@ -286,7 +286,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-01-06",
       clientId: "374673",
       clientName: {
-        given_names: "Jeremiah",
+        givenNames: "Jeremiah",
         surname: "Walsh",
       },
     },
@@ -296,7 +296,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-04-25",
       clientId: "128785",
       clientName: {
-        given_names: "Dorothy",
+        givenNames: "Dorothy",
         surname: "Luna",
       },
     },
@@ -306,7 +306,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-01-18",
       clientId: "914408",
       clientName: {
-        given_names: "Viola",
+        givenNames: "Viola",
         surname: "Schultz",
       },
     },
@@ -316,7 +316,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-03-20",
       clientId: "504894",
       clientName: {
-        given_names: "Marie",
+        givenNames: "Marie",
         surname: "Hudson",
       },
     },

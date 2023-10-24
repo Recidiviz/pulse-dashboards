@@ -30,7 +30,7 @@ describe("metricsClient", () => {
     "newRevocations/revocations_matrix_events_by_month?violationType=All";
   const getTokenSilently = jest.fn().mockResolvedValue(mockToken);
   const expectedUrl = `test-url/api/${endpoint}`;
-  const expectedNewBEUrl = `test-be-url/pathways/${endpoint}`;
+  const expectedNewBEUrl = `test-be-url/${endpoint}`;
 
   beforeAll(() => {
     // do not log the expected error - keep tests less verbose

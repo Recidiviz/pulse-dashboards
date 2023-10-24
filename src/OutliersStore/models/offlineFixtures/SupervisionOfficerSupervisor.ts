@@ -23,27 +23,27 @@ import {
 export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSupervisor[] =
   [
     {
-      fullName: { given_names: "Miles", middle_names: "D", surname: "Davis" },
+      fullName: { givenNames: "Miles", middleNames: "D", surname: "Davis" },
       externalId: "mdavis123",
-      district: "D1",
+      supervisionDistrict: "D1",
       hasOutliers: true,
     },
     {
-      fullName: { given_names: "Billie", surname: "Holiday" },
+      fullName: { givenNames: "Billie", surname: "Holiday" },
       externalId: "bholiday456",
-      district: null,
+      supervisionDistrict: null,
       hasOutliers: true,
     },
     {
-      fullName: { given_names: "Ella", surname: "Fitzgerald" },
+      fullName: { givenNames: "Ella", surname: "Fitzgerald" },
       externalId: "efitzgerald789",
-      district: "D1",
+      supervisionDistrict: "D1",
       hasOutliers: false,
     },
     {
-      fullName: { given_names: "John", surname: "Coltrane" },
+      fullName: { givenNames: "John", surname: "Coltrane" },
       externalId: "jColtrane321",
-      district: null,
+      supervisionDistrict: null,
       hasOutliers: false,
     },
   ];

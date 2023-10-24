@@ -76,11 +76,11 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
     supervisors: Array<SupervisionOfficerSupervisor>;
   }> {
     return pipe(
-      groupBy((d: SupervisionOfficerSupervisor) => d.district),
+      groupBy((d: SupervisionOfficerSupervisor) => d.supervisionDistrict),
       values,
       map((dataset) => {
         return {
-          district: dataset[0].district,
+          district: dataset[0].supervisionDistrict,
           supervisors: dataset as SupervisionOfficerSupervisor[],
         };
       })

@@ -268,7 +268,7 @@ export default abstract class PathwaysNewBackendMetric<
 
     const stateCode = isOfflineMode() || isDemoMode() ? "US_OZ" : this.tenantId;
     return callNewMetricsApi(
-      `${stateCode}/${this.endpoint}?${params.toString()}`,
+      `pathways/${stateCode}/${this.endpoint}?${params.toString()}`,
       RootStore.getTokenSilently,
       this.abortController.signal
     );

@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 // Recidiviz - a data platform for criminal justice reform
 // Copyright (C) 2023 Recidiviz, Inc.
 //
@@ -16,25 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { callNewMetricsApi } from "../../api/metrics/metricsClient";
 import { MetricBenchmark } from "../models/MetricBenchmark";
+import { outliersConfigSchema } from "../models/OutliersConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
+import {
+  SupervisionOfficerSupervisor,
+  supervisionOfficerSupervisorSchema,
+} from "../models/SupervisionOfficerSupervisor";
 import type { OutliersStore } from "../OutliersStore";
 import { OutliersAPI } from "./interface";
 
-export class OutliersOfflineAPIClient implements OutliersAPI {
+export class OutliersAPIClient implements OutliersAPI {
   // eslint-disable-next-line no-useless-constructor
   constructor(public readonly outliersStore: OutliersStore) {}
 
-  async init() {
-    const config = (
-      await import("../models/offlineFixtures/OutliersConfigFixture")
-    ).OutliersConfigFixture;
-
-    return config;
+  tenantId(): string {
+    const { currentTenantId } = this.outliersStore.rootStore;
+    if (!currentTenantId) {
+      throw new Error(`Attempted to fetch data with undefined tenantId`);
+    }
+    return currentTenantId;
   }
 
+  init() {
+    const endpoint = `outliers/${this.tenantId()}/configuration`.toLowerCase();
+    return callNewMetricsApi(
+      endpoint,
+      this.outliersStore.rootStore.getTokenSilently
+    ).then((fetchedData) => {
+      return outliersConfigSchema.parse(fetchedData.config);
+    });
+  }
+
+  /* eslint-disable class-methods-use-this */
   async metricBenchmarks(): Promise<MetricBenchmark[]> {
     const { metricBenchmarksFixture } = await import(
       "../models/offlineFixtures/MetricBenchmarkFixture"
@@ -42,15 +57,20 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
     return metricBenchmarksFixture;
   }
 
-  async supervisionOfficerSupervisors(): Promise<
-    SupervisionOfficerSupervisor[]
-  > {
-    const { supervisionOfficerSupervisorsFixture } = await import(
-      "../models/offlineFixtures/SupervisionOfficerSupervisor"
-    );
-    return supervisionOfficerSupervisorsFixture;
+  supervisionOfficerSupervisors(): Promise<SupervisionOfficerSupervisor[]> {
+    const endpoint = `outliers/${this.tenantId()}/supervisors`.toLowerCase();
+    return callNewMetricsApi(
+      endpoint,
+      this.outliersStore.rootStore.getTokenSilently
+    ).then((fetchedData) => {
+      const supervisorData = fetchedData.supervisors as Array<unknown>;
+      return supervisorData.map((b) =>
+        supervisionOfficerSupervisorSchema.parse(b)
+      );
+    });
   }
 
+  /* eslint-disable class-methods-use-this */
   async officersForSupervisor(
     supervisorId: string
   ): Promise<Array<SupervisionOfficer>> {

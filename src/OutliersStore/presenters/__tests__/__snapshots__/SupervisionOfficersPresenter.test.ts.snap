@@ -61,7 +61,6 @@ Array [
     "externalId": "so1",
     "fullName": Object {
       "givenNames": "Duke",
-      "middleNames": undefined,
       "surname": "Ellington",
     },
     "outlierMetrics": Array [
@@ -533,7 +532,6 @@ Array [
     "externalId": "so3",
     "fullName": Object {
       "givenNames": "Louis",
-      "middleNames": undefined,
       "surname": "Armstrong",
     },
     "outlierMetrics": Array [
@@ -1982,7 +1980,6 @@ Array [
 exports[`supervisorInfo 1`] = `
 Object {
   "displayName": "Miles D Davis",
-  "district": "D1",
   "externalId": "mdavis123",
   "fullName": Object {
     "givenNames": "Miles",
@@ -1990,5 +1987,6 @@ Object {
     "surname": "Davis",
   },
   "hasOutliers": true,
+  "supervisionDistrict": "D1",
 }
 `;

@@ -3,7 +3,6 @@
 exports[`transformations 1`] = `
 Object {
   "displayName": "Miles D Davis",
-  "district": "D1",
   "externalId": "mdavis123",
   "fullName": Object {
     "givenNames": "Miles",
@@ -11,47 +10,45 @@ Object {
     "surname": "Davis",
   },
   "hasOutliers": true,
+  "supervisionDistrict": "D1",
 }
 `;
 
 exports[`transformations 2`] = `
 Object {
   "displayName": "Billie Holiday",
-  "district": null,
   "externalId": "bholiday456",
   "fullName": Object {
     "givenNames": "Billie",
-    "middleNames": undefined,
     "surname": "Holiday",
   },
   "hasOutliers": true,
+  "supervisionDistrict": null,
 }
 `;
 
 exports[`transformations 3`] = `
 Object {
   "displayName": "Ella Fitzgerald",
-  "district": "D1",
   "externalId": "efitzgerald789",
   "fullName": Object {
     "givenNames": "Ella",
-    "middleNames": undefined,
     "surname": "Fitzgerald",
   },
   "hasOutliers": false,
+  "supervisionDistrict": "D1",
 }
 `;
 
 exports[`transformations 4`] = `
 Object {
   "displayName": "John Coltrane",
-  "district": null,
   "externalId": "jColtrane321",
   "fullName": Object {
     "givenNames": "John",
-    "middleNames": undefined,
     "surname": "Coltrane",
   },
   "hasOutliers": false,
+  "supervisionDistrict": null,
 }
 `;

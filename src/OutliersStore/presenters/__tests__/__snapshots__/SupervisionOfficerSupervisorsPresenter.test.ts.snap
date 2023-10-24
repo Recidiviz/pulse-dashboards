@@ -7,7 +7,6 @@ Array [
     "supervisors": Array [
       Object {
         "displayName": "Miles D Davis",
-        "district": "D1",
         "externalId": "mdavis123",
         "fullName": Object {
           "givenNames": "Miles",
@@ -15,6 +14,7 @@ Array [
           "surname": "Davis",
         },
         "hasOutliers": true,
+        "supervisionDistrict": "D1",
       },
     ],
   },
@@ -23,14 +23,13 @@ Array [
     "supervisors": Array [
       Object {
         "displayName": "Billie Holiday",
-        "district": null,
         "externalId": "bholiday456",
         "fullName": Object {
           "givenNames": "Billie",
-          "middleNames": undefined,
           "surname": "Holiday",
         },
         "hasOutliers": true,
+        "supervisionDistrict": null,
       },
     ],
   },

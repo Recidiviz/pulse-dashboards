@@ -115,7 +115,7 @@ describe("OverTimeMetric", () => {
   it("fetches metrics when initialized", () => {
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`
+        `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`
       ),
       RootStore.getTokenSilently,
       expect.any(AbortSignal)
@@ -182,7 +182,7 @@ describe("OverTimeMetric", () => {
 
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
+        `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
           `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
       ),
       RootStore.getTokenSilently,
@@ -198,7 +198,7 @@ describe("OverTimeMetric", () => {
 
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
-        `${newTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`
+        `pathways/${newTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`
       ),
       RootStore.getTokenSilently,
       expect.any(AbortSignal)
@@ -222,7 +222,7 @@ describe("OverTimeMetric", () => {
     // doesn't get called with the new filter values
     expect(callNewMetricsApi).not.toHaveBeenCalledWith(
       encodeURI(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
+        `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
           `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
       ),
       RootStore.getTokenSilently,
@@ -247,7 +247,7 @@ describe("OverTimeMetric", () => {
     // doesn't get called with the new filter values
     expect(callNewMetricsApi).not.toHaveBeenCalledWith(
       encodeURI(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
+        `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
           `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
       ),
       RootStore.getTokenSilently,
@@ -270,7 +270,7 @@ describe("OverTimeMetric", () => {
 
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
-        `${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
+        `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
           `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
       ),
       RootStore.getTokenSilently,
