@@ -84,8 +84,7 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
           eligibleCriteria.custodyLevelHigherThanRecommended.custodyLevel;
       } else {
         out.currentCustodyLevel =
-          eligibleCriteria.custodyLevelComparedToRecommended.custodyLevel ??
-          undefined;
+          eligibleCriteria.custodyLevelComparedToRecommended.custodyLevel;
       }
 
       const justifications: string[] = [];

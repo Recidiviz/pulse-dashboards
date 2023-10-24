@@ -36,7 +36,10 @@ export const usTnAnnualReclassificationReviewSchema = opportunitySchemaBase
       custodyLevelIsNotMax: z.null(),
       custodyLevelComparedToRecommended: z.object({
         // TODO (#4091) remove nullable once missing property is fixed.
-        custodyLevel: z.string().nullable(),
+        custodyLevel: z
+          .string()
+          .nullable()
+          .transform((custodyLevel) => custodyLevel ?? "NOT YET CLASSIFIED"),
         // TODO(#4091) remove nullable once missing property is fixed.
         recommendedCustodyLevel: z.string().nullable(),
       }),
