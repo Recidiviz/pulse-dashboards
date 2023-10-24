@@ -272,14 +272,14 @@ if (deployFrontendPrompt.deployFrontend) {
         switch (deployEnv) {
           case "production":
             // eslint-disable-next-line no-await-in-loop
-            await $`firebase deploy -P production -m "${nextVersion}"`.pipe(
+            await $`firebase deploy --except functions -P production -m "${nextVersion}"`.pipe(
               process.stdout
             );
             publishReleaseNotes = true;
             break;
           default:
             // eslint-disable-next-line no-await-in-loop
-            await $`firebase deploy -P ${deployEnv} -m "${currentRevision}"`.pipe(
+            await $`firebase deploy --except functions -P ${deployEnv} -m "${currentRevision}"`.pipe(
               process.stdout
             );
         }
