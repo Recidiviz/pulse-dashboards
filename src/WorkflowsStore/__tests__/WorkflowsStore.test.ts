@@ -777,6 +777,7 @@ describe("feature variants", () => {
       Object {
         "CompliantReportingAlmostEligible": Object {},
         "TEST": Object {},
+        "enableSnooze": Object {},
         "responsiveRevamp": Object {},
         "usCaEnableSMS": Object {},
         "usIdCRC": Object {},

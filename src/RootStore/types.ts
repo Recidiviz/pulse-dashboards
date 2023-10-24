@@ -75,6 +75,7 @@ export type UserAppMetadata = {
 // but also so that we don't have an empty union when there are no feature variants in use
 export type FeatureVariant =
   | "TEST"
+  | "enableSnooze"
   | "CompliantReportingAlmostEligible"
   | "usMeWorkRelease"
   | "usMeFurloughRelease"
@@ -106,6 +107,7 @@ const allFeatureVariants: FeatureVariantMapping = {
   usIdExpandedCRC: {},
   usCaEnableSMS: {},
   usTnAnnualReclassification: {},
+  enableSnooze: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   process.env.REACT_APP_DEPLOY_ENV === "production"

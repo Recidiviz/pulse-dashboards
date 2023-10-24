@@ -17,7 +17,7 @@
 
 import { palette, Sans14, typography } from "@recidiviz/design-system";
 import { format, parseISO, startOfToday } from "date-fns";
-import { xor } from "lodash";
+import { isEqual, xor } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
@@ -25,6 +25,7 @@ import styled from "styled-components/macro";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Slider from "../../components/Slider";
+import { useRootStore } from "../../components/StoreProvider";
 import { formatDateToISO } from "../../utils";
 import { Opportunity } from "../../WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
@@ -84,6 +85,7 @@ const OtherReasonSection = styled(OtherReasonWrapper)`
 
 const maxOtherReasonCharLength = 1600;
 const minOtherReasonCharLength = 3;
+
 export const OpportunityDenialView = observer(function OpportunityDenialView({
   opportunity,
   onSubmit = () => null,
@@ -106,26 +108,39 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     opportunity?.autoSnooze?.snoozeUntil
   );
 
+  const {
+    workflowsStore: { featureVariants },
+  } = useRootStore();
+
   if (!opportunity) return null;
 
-  const maxManualSnoozeDays =
-    OPPORTUNITY_CONFIGS[opportunity.type].snooze?.maxSnoozeDays;
+  const snoozeConfig = OPPORTUNITY_CONFIGS[opportunity.type].snooze;
 
-  const defaultManualSnoozeDays =
-    OPPORTUNITY_CONFIGS[opportunity.type].snooze?.defaultSnoozeDays;
+  const snoozeEnabled =
+    featureVariants.enableSnooze && snoozeConfig !== undefined;
 
-  const defaultAutoSnoozeFn =
-    OPPORTUNITY_CONFIGS[opportunity.type].snooze?.defaultSnoozeUntilFn;
+  const maxManualSnoozeDays = snoozeConfig?.maxSnoozeDays;
+
+  const defaultManualSnoozeDays = snoozeConfig?.defaultSnoozeDays;
+
+  const defaultAutoSnoozeFn = snoozeConfig?.defaultSnoozeUntilFn;
 
   const sliderDays = (snoozeForDays || defaultManualSnoozeDays) ?? 0;
 
   const handleSubmit = async () => {
+    if (reasons.length === 0) {
+      await opportunity.deleteOpportunityDenialAndSnooze();
+      return;
+    }
+
     await opportunity.setDenialReasons(reasons);
     await opportunity.setOtherReasonText(otherReason);
-    if (maxManualSnoozeDays) {
-      await opportunity.setManualSnooze(sliderDays, reasons);
-    } else if (defaultAutoSnoozeFn) {
-      await opportunity.setAutoSnooze(defaultAutoSnoozeFn, reasons);
+    if (snoozeEnabled) {
+      if (maxManualSnoozeDays) {
+        await opportunity.setManualSnooze(sliderDays, reasons);
+      } else if (defaultAutoSnoozeFn) {
+        await opportunity.setAutoSnooze(defaultAutoSnoozeFn, reasons);
+      }
     }
     onSubmit();
   };
@@ -140,7 +155,15 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const otherReasonInvalid =
     reasons.includes(OTHER_KEY) &&
     (otherReason ?? "").length < minOtherReasonCharLength;
-  const disableSaveButton = disableSlider || unsetSlider || otherReasonInvalid;
+
+  const reasonsUnchanged = isEqual(
+    new Set(reasons),
+    new Set(opportunity.denial?.reasons)
+  );
+
+  const disableSaveButton =
+    reasonsUnchanged || unsetSlider || otherReasonInvalid;
+
   const snoozeUntilDate = autoSnoozeUntil
     ? parseISO(autoSnoozeUntil)
     : getSnoozeUntilDate({
@@ -163,20 +186,22 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         {Object.entries(opportunity.denialReasonsMap).map(
           ([code, description]) => (
             <MenuItem
-              data-testid="OpportunityDenialView__checkbox"
+              data-testid={`OpportunityDenialView__checkbox-${code}`}
               key={code}
               onClick={() => {
                 const updatedReasons = xor(reasons, [code]).sort();
                 setReasons(updatedReasons);
 
-                if (defaultAutoSnoozeFn && updatedReasons.length) {
-                  setAutoSnoozeUntil(
-                    formatDateToISO(
-                      defaultAutoSnoozeFn(startOfToday(), opportunity)
-                    )
-                  );
-                } else {
-                  setAutoSnoozeUntil(undefined);
+                if (snoozeEnabled) {
+                  if (defaultAutoSnoozeFn && updatedReasons.length) {
+                    setAutoSnoozeUntil(
+                      formatDateToISO(
+                        defaultAutoSnoozeFn(startOfToday(), opportunity)
+                      )
+                    );
+                  } else {
+                    setAutoSnoozeUntil(undefined);
+                  }
                 }
               }}
             >
@@ -215,7 +240,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
           </OtherReasonSection>
         )}
       </>
-      {maxManualSnoozeDays && (
+      {snoozeEnabled && maxManualSnoozeDays && (
         <SliderWrapper>
           <SliderLabel>Snooze for:</SliderLabel>
           <Slider
@@ -228,7 +253,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
           />
         </SliderWrapper>
       )}
-      {snoozeUntilDate !== undefined && (
+      {snoozeEnabled && snoozeUntilDate !== undefined && (
         <SnoozeUntilReminderText>
           You will be reminded about this opportunity on{" "}
           {format(snoozeUntilDate, "LLLL d, yyyy")}

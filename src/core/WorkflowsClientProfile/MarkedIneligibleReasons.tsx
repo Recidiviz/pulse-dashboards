@@ -20,6 +20,7 @@ import { format, parseISO, startOfToday } from "date-fns";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
 import { TextLink } from "../WorkflowsMilestones/styles";
@@ -40,6 +41,12 @@ const MarkedIneligibleReasons: React.FC<{
   opportunity,
   currentUserEmail,
 }) {
+  const {
+    workflowsStore: {
+      featureVariants: { enableSnooze },
+    },
+  } = useRootStore();
+
   const denialReasons = opportunity.denial?.reasons;
   const otherReason = opportunity.denial?.otherReason;
   if (!denialReasons) return null;
@@ -61,6 +68,7 @@ const MarkedIneligibleReasons: React.FC<{
       : undefined);
 
   const resurfaceText =
+    enableSnooze &&
     snoozeUntil &&
     `${opportunity.deniedTabTitle} by ${currentUserEmail} on ${format(
       startOfToday(),
