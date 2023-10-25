@@ -38,7 +38,7 @@
       "port": 4000
     },
     "hosting": {
-      "port": 5001
+      "port": 5002
     }
   },
   "functions": [
