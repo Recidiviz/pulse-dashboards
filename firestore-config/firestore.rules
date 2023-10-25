@@ -71,13 +71,6 @@ service cloud.firestore {
       allow read: if usernameMatches(document)
       allow write: if allowUserUpdates(document);
     }
-    
-    match /clientUpdates/{document=**} {
-      // We are migrating away from this old collection
-      // It should be read-only and only accessible by Recidiviz and TN users
-      allow read: if (isRecidiviz() && "US_TN" in request.auth.token.recidivizAllowedStates) 
-        || !isRecidiviz() && request.auth.token.stateCode.upper() == "US_TN";
-    }
 
     match /clientUpdatesV2/{clientId}/{document=**} {
       // documentIDs for the client updates are of the form us_xx_${client_id}
@@ -91,10 +84,6 @@ service cloud.firestore {
       allow write: if allowUserUpdates(document);
     }
     
-    match /DEMO_clientUpdates/{document=**} {
-      allow read: if isRecidiviz() || request.auth.token.stateCode.upper() == "US_TN";
-    }
-
     match /DEMO_clientUpdatesV2/{clientId}/{document=**} {
       allow read: if isRecidiviz() || stateCodeMatchesClientId(clientId);
       allow write: if allowPersonUpdates(clientId);
@@ -107,10 +96,6 @@ service cloud.firestore {
     match /DEMO2_userUpdates/{path=**}/{document} {
       allow read: if usernameMatches(document);
       allow write: if allowUserUpdates(document);
-    }
-
-    match /DEMO2_clientUpdates/{document=**} {
-      allow read: if isRecidiviz() || request.auth.token.stateCode.upper() == "US_TN";
     }
 
     match /DEMO2_clientUpdatesV2/{clientId}/{document=**} {

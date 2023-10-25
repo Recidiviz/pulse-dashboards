@@ -33,7 +33,6 @@ export const collectionNames = {
   userUpdates: "userUpdates",
   clients: "clients",
   residents: "residents",
-  clientUpdates: "clientUpdates",
   clientUpdatesV2: "clientUpdatesV2",
   clientOpportunityUpdates: "clientOpportunityUpdates",
   locations: "locations",

@@ -31,10 +31,6 @@ export const ETL_COLLECTION_NAMES = [
  */
 export const SHARED_UPDATE_COLLECTION_NAMES = ["clientUpdatesV2"];
 /**
- * Update collections are readable and writeable only by TN or Recidiviz
- */
-export const US_TN_ONLY_UPDATE_COLLECTION_NAME = "clientUpdates";
-/**
  * User update collections are readable and writable only to the user
  */
 export const PERSONAL_UPDATE_COLLECTION_NAME = "userUpdates";

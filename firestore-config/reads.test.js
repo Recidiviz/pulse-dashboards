@@ -35,7 +35,6 @@ import {
   PERSONAL_UPDATE_COLLECTION_NAME,
   SHARED_UPDATE_COLLECTION_NAMES,
   startTestEnv,
-  US_TN_ONLY_UPDATE_COLLECTION_NAME,
 } from "./testUtils";
 
 let testEnv;
@@ -153,41 +152,6 @@ test.each([
       getUserContext(testEnv).firestore(),
       assertFails,
       `US_${otherState}`
-    );
-  }
-);
-
-test.each([
-  ["TN", getTNUser],
-  ["Recidiviz", getRecidivizUser],
-])(
-  "%s user can read old clientUpdates collection",
-  async (userState, getUserContext) => {
-    await assertSucceeds(
-      getDocs(
-        collection(
-          getUserContext(testEnv).firestore(),
-          US_TN_ONLY_UPDATE_COLLECTION_NAME
-        )
-      )
-    );
-  }
-);
-
-test.each([
-  ["ND", getNDUser],
-  ["anon", getAnonUser],
-  ["stateless", getStatelessUser],
-])(
-  "%s user cannot read old clientUpdates collection",
-  async (userState, getUserContext) => {
-    await assertFails(
-      getDocs(
-        collection(
-          getUserContext(testEnv).firestore(),
-          US_TN_ONLY_UPDATE_COLLECTION_NAME
-        )
-      )
     );
   }
 );

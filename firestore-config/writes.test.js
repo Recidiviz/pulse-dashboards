@@ -29,7 +29,6 @@ import {
   PERSONAL_UPDATE_COLLECTION_NAME,
   SHARED_UPDATE_COLLECTION_NAMES,
   startTestEnv,
-  US_TN_ONLY_UPDATE_COLLECTION_NAME,
 } from "./testUtils";
 
 let testEnv;
@@ -214,27 +213,6 @@ test.each([["PA"], ["CA"]])(
 );
 
 test.each([
-  ["TN", getTNUser],
-  ["ND", getNDUser],
-  ["Recidiviz", getRecidivizUser],
-])(
-  "%s user cannot write to the old update collection",
-  async (userType, getUserContext) => {
-    await assertFails(
-      // eslint-disable-next-line no-restricted-syntax
-      setDoc(
-        doc(
-          getUserContext(testEnv).firestore(),
-          US_TN_ONLY_UPDATE_COLLECTION_NAME,
-          "foo"
-        ),
-        {}
-      )
-    );
-  }
-);
-
-test.each([
   ["us_tn", getTNUser],
   ["us_nd", getNDUser],
 ])(
@@ -286,15 +264,6 @@ test("impersonating user cannot write to collections", async () => {
 test("impersonating user cannot write to personal update collection", async () => {
   await testWriteToCollectionsWithoutStateCodePrefix(
     [PERSONAL_UPDATE_COLLECTION_NAME],
-    getImpersonatedUser(testEnv).firestore(),
-    assertFails,
-    "US_TN"
-  );
-});
-
-test("impersonating user cannot write to old update collection", async () => {
-  await testWriteToCollectionsWithoutStateCodePrefix(
-    [US_TN_ONLY_UPDATE_COLLECTION_NAME],
     getImpersonatedUser(testEnv).firestore(),
     assertFails,
     "US_TN"
