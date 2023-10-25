@@ -1,6 +1,6 @@
 ## Description of the change
 
-> Description here
+Description here
 
 ## Type of change
 
@@ -17,7 +17,7 @@
 
 ## Related issues
 
-> Closes [#XXXX]
+Closes #XXXX
 
 ## Checklists
 
