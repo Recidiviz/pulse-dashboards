@@ -337,22 +337,6 @@ describe("setLastViewed", () => {
       root.firestoreStore.updateOpportunityLastViewed
     ).not.toHaveBeenCalled();
   });
-
-  test("Returns firstViewed if set and lastViewed is not set yet", () => {
-    mockHydration({
-      updateData: {
-        firstViewed: { by: "foo", date: jest.fn() as any },
-      },
-    });
-    expect(opp.lastViewed).not.toBeUndefined();
-  });
-
-  test("Returns undefined if firstViewed and lastViewed is not set yet", () => {
-    mockHydration({
-      updateData: {},
-    });
-    expect(opp.lastViewed).toBeUndefined();
-  });
 });
 
 describe("setCompletedIfEligible", () => {

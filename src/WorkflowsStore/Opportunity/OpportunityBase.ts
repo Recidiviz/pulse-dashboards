@@ -259,10 +259,6 @@ export abstract class OpportunityBase<
   }
 
   get lastViewed(): UpdateLog | undefined {
-    // TODO(#3354): Migrate to lastViewed and remove the firstViewed property
-    if (!this.updates?.lastViewed && this.updates?.firstViewed) {
-      return this.updates?.firstViewed;
-    }
     return this.updates?.lastViewed;
   }
 
