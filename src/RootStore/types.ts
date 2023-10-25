@@ -64,6 +64,7 @@ export type UserAppMetadata = {
   featureVariants?: Record<string, Record<string, string>>;
   demoModeFeatureVariants?: Record<string, Record<string, string>>;
   userHash?: string;
+  pseudonymizedId?: string;
   segmentId?: string;
   intercomId?: string;
   role?: UserRole;

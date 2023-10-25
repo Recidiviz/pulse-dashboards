@@ -156,6 +156,7 @@ exports.onExecutePostLogin = async (event, api) => {
       api.user.setAppMetadata("routes", restrictions.routes || null);
       api.user.setAppMetadata("stateCode", stateCode);
       api.user.setAppMetadata("userHash", restrictions.userHash);
+      api.user.setAppMetadata("pseudonymizedId", restrictions.pseudonymizedId);
       api.user.setAppMetadata("role", restrictions.role || null);
       api.user.setAppMetadata("district", restrictions.district);
       api.user.setAppMetadata("externalId", restrictions.externalId);

@@ -186,6 +186,7 @@ test("current user record for supervisor except offline mode", () => {
     .mockReturnValue({
       role: "supervision_staff",
       externalId: "abc123",
+      pseudonymizedId: "hashed-abc123",
       district: "District One",
       stateCode: "us_mi",
     });
@@ -198,7 +199,7 @@ test("current user record for supervisor except offline mode", () => {
       "displayName": "",
       "externalId": "abc123",
       "fullName": Object {},
-      "pseudonymizedId": "",
+      "pseudonymizedId": "hashed-abc123",
       "supervisionDistrict": "District One",
     }
   `);
@@ -234,6 +235,7 @@ test("hydrate supervisors list with current user", () => {
     .mockReturnValue({
       role: "supervision_staff",
       externalId: "abc123",
+      pseudonymizedId: "hashed-abc123",
       district: "District One",
       stateCode: "us_mi",
     });
@@ -245,7 +247,7 @@ test("hydrate supervisors list with current user", () => {
         "displayName": "",
         "externalId": "abc123",
         "fullName": Object {},
-        "pseudonymizedId": "",
+        "pseudonymizedId": "hashed-abc123",
         "supervisionDistrict": "District One",
       },
     ]
@@ -258,6 +260,7 @@ test("current supervisor user does not hydrate via API", async () => {
     .mockReturnValue({
       role: "supervision_staff",
       externalId: "abc123",
+      pseudonymizedId: "hashed-abc123",
       district: "District One",
       stateCode: "us_mi",
     });

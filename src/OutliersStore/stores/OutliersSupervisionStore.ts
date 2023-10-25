@@ -122,19 +122,21 @@ export class OutliersSupervisionStore {
     if (isOfflineMode()) return undefined;
 
     if (userAppMetadata) {
-      const { role, externalId, district } = userAppMetadata;
+      const { role, externalId, district, pseudonymizedId } = userAppMetadata;
       if (
         // until metadata is extended with role subtypes,
         // this should be a safe proxy for distinguishing supervisors from leadership
         // (as long as no other line staff are granted access)
         role === "supervision_staff" &&
-        externalId
+        // nothing will work without these ID values, so we can't construct a useful
+        // supervisor identity record if we didn't get them both from Auth0
+        externalId &&
+        pseudonymizedId
       ) {
         return {
           externalId,
           supervisionDistrict: district ?? null,
-          // TODO(#4235) add pseudoIds to admin panel & auth0
-          pseudonymizedId: "",
+          pseudonymizedId,
           // unfortunately we don't reliably get anyone's name from auth0
           fullName: {},
           displayName: "",
