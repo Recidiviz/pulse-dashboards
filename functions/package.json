@@ -7,7 +7,8 @@
     "serve": "yarn run build && firebase emulators:start --only functions",
     "shell": "yarn run build && firebase functions:shell",
     "start": "yarn run shell",
-    "deploy": "firebase deploy --only functions",
+    "deploy:staging": "firebase deploy -P recidiviz-dashboard-staging --only functions:scheduledFirestoreExport",
+    "deploy:production": "firebase deploy -P recidiviz-dashboard-production --only functions:scheduledFirestoreExport",
     "logs": "firebase functions:log"
   },
   "engines": {

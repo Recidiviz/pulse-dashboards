@@ -44,7 +44,6 @@
   "functions": [
     {
       "source": "functions",
-      "codebase": "staging-backend",
       "ignore": [
         "node_modules",
         ".git",

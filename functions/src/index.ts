@@ -24,6 +24,8 @@ import {v1} from "@google-cloud/firestore";
 import {pubsub} from "firebase-functions";
 import {info} from "firebase-functions/logger";
 import {throwErrorCustom} from "./utils";
+import {defineString} from "firebase-functions/params";
+
 const client = new v1.FirestoreAdminClient();
 
 // Leave collectionIds empty to export all collections
@@ -42,56 +44,58 @@ const collectionIds = [
 info("CONFIGURATION INITIATED");
 
 // Getting project ID from environment variables
-const projectId = process.env.GCLOUD_PROJECT;
-if (!projectId) throwErrorCustom("❌ PROJECT_ID is not defined");
+const projectIdParam = defineString("PROJECT_ID");
+if (!projectIdParam) {
+  throwErrorCustom("❌ PROJECT_ID is not defined");
+  process.exit();
+}
 
 // Getting the output bucket from environment variables
-const outputBucket = "recidiviz-dashboard-staging-firestore-backups";
-
-if (collectionIds.length === 0) {
-  throwErrorCustom(
-    `❌ No collections specified.
-     Specify the ${projectId} collections` +
-      `being exported to ${outputBucket}.`
-  );
+const outputBucketParam = defineString("OUTPUT_BUCKET");
+if (!outputBucketParam) {
+  throwErrorCustom("❌ OUTPUT_BUCKET is not defined");
+  process.exit();
 }
+
 
 // EXPORTING FUNCTION
 exports.scheduledFirestoreExport = pubsub
   .schedule("every friday 23:59") // Runs every friday at 11:59 PM PDT
   .onRun((context) => {
-    if (!outputBucket) {
-      throwErrorCustom("❌ OUTPUT_BUCKET is not defined");
+    const projectId = projectIdParam.value();
+    const outputBucket = outputBucketParam.value();
+    if (collectionIds.length === 0) {
+      throwErrorCustom(
+        `❌ No collections specified.
+         Specify the ${projectId} collections` +
+          `being exported to ${outputBucket}.`
+      );
     }
     // Logging the collections to be exported
     const configurationMessage =
       "⚙️ The following collections " +
       `will be exported from ${projectId} to ${outputBucket}:
-    ${
-  collectionIds.map((collectionId) => `📁 ${collectionId}`).join("\n") +
-      "\n"
-}`;
+    ${`${collectionIds
+    .map((collectionId) => `📁 ${collectionId}`)
+    .join("\n")}\n`}`;
 
     info(configurationMessage);
 
     // Defining the export function
-    const databaseName = client.databasePath(
-      projectId as unknown as string,
-      "(default)"
-    );
+    const databaseName = client.databasePath(projectId, "(default)");
 
     return client // Initiating the export operation
       .exportDocuments({
         name: databaseName,
         outputUriPrefix: `gs://${outputBucket}`, // output destination
-        collectionIds: collectionIds, // collections to be exported
+        collectionIds, // collections to be exported
       })
       .then((responses) => {
         const response = responses[0];
         const successInfo =
           "✅ SUCCESS: " +
           `Collections exported successfully to ${outputBucket}
-          Operation Name: ${response["name"]}
+          Operation Name: ${response.name}
           Event ID: ${context.eventId}`;
         info(successInfo);
       })
