@@ -103,7 +103,7 @@ const SupervisorsList = observer(function SupervisorsList({
                 <StyledLink
                   key={supervisor.externalId}
                   to={outliersUrl("supervisionSupervisor", {
-                    supervisorId: supervisor.externalId,
+                    supervisorPseudoId: supervisor.pseudonymizedId,
                   })}
                 >
                   <PersonInitialsAvatar square name={supervisor.displayName} />

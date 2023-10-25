@@ -26,24 +26,28 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
       fullName: { givenNames: "Miles", middleNames: "D", surname: "Davis" },
       externalId: "mdavis123",
       supervisionDistrict: "D1",
+      pseudonymizedId: "hashed-mdavis123",
       hasOutliers: true,
     },
     {
       fullName: { givenNames: "Billie", surname: "Holiday" },
       externalId: "bholiday456",
       supervisionDistrict: null,
+      pseudonymizedId: "hashed-bholiday456",
       hasOutliers: true,
     },
     {
       fullName: { givenNames: "Ella", surname: "Fitzgerald" },
       externalId: "efitzgerald789",
       supervisionDistrict: "D1",
+      pseudonymizedId: "hashed-efitzgerald789",
       hasOutliers: false,
     },
     {
       fullName: { givenNames: "John", surname: "Coltrane" },
       externalId: "jColtrane321",
       supervisionDistrict: null,
+      pseudonymizedId: "hashed-jColtrane321",
       hasOutliers: false,
     },
   ];

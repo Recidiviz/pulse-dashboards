@@ -22,7 +22,6 @@ import { StaticRouter } from "react-router-dom";
 import { useRootStore } from "../../../components/StoreProvider";
 import { ADVERSE_METRIC_IDS } from "../../../OutliersStore/models/offlineFixtures/constants";
 import { OutliersConfigFixture } from "../../../OutliersStore/models/offlineFixtures/OutliersConfigFixture";
-import { OutliersStore } from "../../../OutliersStore/OutliersStore";
 import { OutliersSupervisionStore } from "../../../OutliersStore/stores/OutliersSupervisionStore";
 import { RootStore } from "../../../RootStore";
 import { OUTLIERS_PATHS, outliersUrl } from "../../views";
@@ -36,7 +35,7 @@ let supervisionStore: OutliersSupervisionStore;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
-  const outliersStore = new OutliersStore(new RootStore());
+  const { outliersStore } = new RootStore();
 
   supervisionStore = new OutliersSupervisionStore(
     outliersStore,
@@ -54,26 +53,26 @@ afterEach(() => {
 
 test("handles params for supervision home page", () => {
   render(
-    <StaticRouter location={outliersUrl("supervision", {})}>
+    <StaticRouter location={outliersUrl("supervision")}>
       <OutliersRoute path={OUTLIERS_PATHS.supervision}>null</OutliersRoute>
     </StaticRouter>
   );
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   // making non-null assertions here because we don't want false positives if supervisionStore is undefined
-  expect(supervisionStore!.supervisorId).toBeUndefined();
-  expect(supervisionStore!.officerId).toBeUndefined();
+  expect(supervisionStore!.supervisorPseudoId).toBeUndefined();
+  expect(supervisionStore!.officerPseudoId).toBeUndefined();
   expect(supervisionStore!.metricId).toBeUndefined();
   /* eslint-enable @typescript-eslint/no-non-null-assertion */
 });
 
 test("handles params for supervision supervisor page", () => {
-  const mockSupervisorId = "123abc";
+  const mockSupervisorPseudoId = "123abc";
 
   render(
     <StaticRouter
       location={outliersUrl("supervisionSupervisor", {
-        supervisorId: mockSupervisorId,
+        supervisorPseudoId: mockSupervisorPseudoId,
       })}
     >
       <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisor}>
@@ -82,7 +81,7 @@ test("handles params for supervision supervisor page", () => {
     </StaticRouter>
   );
 
-  expect(supervisionStore?.supervisorId).toBe(mockSupervisorId);
+  expect(supervisionStore?.supervisorPseudoId).toBe(mockSupervisorPseudoId);
 });
 
 test("supervisor restricted from another supervisor's page", () => {
@@ -91,12 +90,13 @@ test("supervisor restricted from another supervisor's page", () => {
     fullName: {},
     externalId: "abc123",
     supervisionDistrict: null,
+    pseudonymizedId: "hashed-abc123",
   });
 
   render(
     <StaticRouter
       location={outliersUrl("supervisionSupervisor", {
-        supervisorId: "456xyz",
+        supervisorPseudoId: "456xyz",
       })}
     >
       <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisor}>
@@ -111,30 +111,30 @@ test("supervisor restricted from another supervisor's page", () => {
 });
 
 test("handles params for supervision officer page", () => {
-  const mockOfficerId = "123abc";
+  const mockOfficerPseudoId = "123abc";
 
   render(
     <StaticRouter
       location={outliersUrl("supervisionStaff", {
-        officerId: mockOfficerId,
+        officerPseudoId: mockOfficerPseudoId,
       })}
     >
       <OutliersRoute path={OUTLIERS_PATHS.supervisionStaff}>null</OutliersRoute>
     </StaticRouter>
   );
 
-  expect(supervisionStore?.supervisorId).toBeUndefined();
-  expect(supervisionStore?.officerId).toBe(mockOfficerId);
+  expect(supervisionStore?.supervisorPseudoId).toBeUndefined();
+  expect(supervisionStore?.officerPseudoId).toBe(mockOfficerPseudoId);
 });
 
 test("handles params for supervision officer metric page", () => {
-  const mockOfficerId = "123abc";
+  const mockOfficerPseudoId = "123abc";
   const mockMetricId = ADVERSE_METRIC_IDS.enum.incarceration_starts;
 
   render(
     <StaticRouter
       location={outliersUrl("supervisionStaffMetric", {
-        officerId: mockOfficerId,
+        officerPseudoId: mockOfficerPseudoId,
         metricId: mockMetricId,
       })}
     >
@@ -144,14 +144,14 @@ test("handles params for supervision officer metric page", () => {
     </StaticRouter>
   );
 
-  expect(supervisionStore?.supervisorId).toBeUndefined();
-  expect(supervisionStore?.officerId).toBe(mockOfficerId);
+  expect(supervisionStore?.supervisorPseudoId).toBeUndefined();
+  expect(supervisionStore?.officerPseudoId).toBe(mockOfficerPseudoId);
   expect(supervisionStore?.metricId).toBe(mockMetricId);
 });
 
 test("handles params for supervision supervisors list page", async () => {
   render(
-    <StaticRouter location={outliersUrl("supervisionSupervisorsList", {})}>
+    <StaticRouter location={outliersUrl("supervisionSupervisorsList")}>
       <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisorsList}>
         null
       </OutliersRoute>
@@ -160,8 +160,8 @@ test("handles params for supervision supervisors list page", async () => {
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   // making non-null assertions here because we don't want false positives if supervisionStore is undefined
-  expect(supervisionStore!.supervisorId).toBeUndefined();
-  expect(supervisionStore!.officerId).toBeUndefined();
+  expect(supervisionStore!.supervisorPseudoId).toBeUndefined();
+  expect(supervisionStore!.officerPseudoId).toBeUndefined();
   expect(supervisionStore!.metricId).toBeUndefined();
   /* eslint-enable @typescript-eslint/no-non-null-assertion */
 });
@@ -172,10 +172,11 @@ test("supervisors restricted from supervisors list page", () => {
     fullName: {},
     externalId: "abc123",
     supervisionDistrict: null,
+    pseudonymizedId: "hashed-abc123",
   });
 
   render(
-    <StaticRouter location={outliersUrl("supervisionSupervisorsList", {})}>
+    <StaticRouter location={outliersUrl("supervisionSupervisorsList")}>
       <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisorsList}>
         null
       </OutliersRoute>

@@ -140,7 +140,7 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
 }) {
   const { isMobile, isTablet } = useIsMobile(true);
 
-  const { outlierOfficerData, defaultMetricId, officerId, metricId } =
+  const { outlierOfficerData, defaultMetricId, officerPseudoId, metricId } =
     presenter;
 
   // if the presenter is hydrated, this stuff should never be missing in practice
@@ -151,7 +151,7 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     return (
       <Redirect
         to={outliersUrl("supervisionStaffMetric", {
-          officerId,
+          officerPseudoId,
           metricId: defaultMetricId,
         })}
       />
@@ -184,7 +184,7 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
             <StyledTab key={metric.metricId}>
               <Link
                 to={outliersUrl("supervisionStaffMetric", {
-                  officerId: outlierOfficerData.externalId,
+                  officerPseudoId: outlierOfficerData.pseudonymizedId,
                   metricId: metric.metricId,
                 })}
               >
@@ -202,7 +202,7 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
               <Wrapper isLaptop={isTablet}>
                 <Sidebar isLaptop={isTablet}>
                   <MetricEventsTable
-                    officerId={presenter.officerId}
+                    officerPseudoId={presenter.officerPseudoId}
                     metricId={metric.metricId}
                   />
                 </Sidebar>
@@ -240,13 +240,13 @@ const OutliersStaffPage = observer(function OutliersStaffPage() {
     outliersStore: { supervisionStore },
   } = useRootStore();
 
-  const officerId = supervisionStore?.officerId;
+  const officerPseudoId = supervisionStore?.officerPseudoId;
 
-  if (!officerId) return null;
+  if (!officerPseudoId) return null;
 
   const presenter = new SupervisionOfficerDetailPresenter(
     supervisionStore,
-    officerId
+    officerPseudoId
   );
 
   return (

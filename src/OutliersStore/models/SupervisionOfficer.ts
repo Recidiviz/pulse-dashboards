@@ -24,6 +24,7 @@ export const supervisionOfficerSchema = z
   .object({
     fullName: fullNameSchema,
     externalId: z.string(),
+    pseudonymizedId: z.string(),
     supervisorExternalId: z.string(),
     district: z.string().nullable(),
     caseloadType: z.string(),

@@ -32,7 +32,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
 
   constructor(
     private supervisionStore: OutliersSupervisionStore,
-    public supervisorId: string
+    public supervisorPseudoId: string
   ) {
     makeAutoObservable(this);
   }
@@ -50,15 +50,13 @@ export class SupervisionOfficersPresenter implements Hydratable {
   }
 
   private get areOfficersHydrated() {
-    return this.supervisionStore.officersBySupervisor.has(this.supervisorId);
+    return this.supervisionStore.officersBySupervisorPseudoId.has(
+      this.supervisorPseudoId
+    );
   }
 
   private get isSupervisorHydrated() {
-    return (
-      this.supervisionStore.supervisionOfficerSupervisors?.find(
-        (s) => s.externalId === this.supervisorId
-      ) !== undefined
-    );
+    return this.supervisorInfo !== undefined;
   }
 
   /**
@@ -74,30 +72,34 @@ export class SupervisionOfficersPresenter implements Hydratable {
       await Promise.all([
         flowResult(this.supervisionStore.hydrateMetricConfigs()),
         flowResult(
-          this.supervisionStore.hydrateOfficersForSupervisor(this.supervisorId)
+          this.supervisionStore.hydrateOfficersForSupervisor(
+            this.supervisorPseudoId
+          )
         ),
         flowResult(
           this.supervisionStore.hydrateSupervisionOfficerSupervisors()
         ),
       ]);
 
-      const { supervisionOfficerSupervisors, officersBySupervisor } =
+      const { supervisionOfficerSupervisors, officersBySupervisorPseudoId } =
         this.supervisionStore;
       if (
         supervisionOfficerSupervisors &&
         !supervisionOfficerSupervisors.find(
-          (s) => s.externalId === this.supervisorId
+          (s) => s.pseudonymizedId === this.supervisorPseudoId
         )
       ) {
         throw new Error(
-          `Data for supervisor ${this.supervisorId} is not available.`
+          `Data for supervisor ${this.supervisorPseudoId} is not available.`
         );
       }
 
-      const officers = officersBySupervisor.get(this.supervisorId);
+      const officers = officersBySupervisorPseudoId.get(
+        this.supervisorPseudoId
+      );
       if (!officers || officers.length === 0) {
         throw new Error(
-          `Supervisor ${this.supervisorId} does not have any assigned officers`
+          `Supervisor ${this.supervisorPseudoId} does not have any assigned officers`
         );
       }
       this.setIsLoading(false);
@@ -124,8 +126,8 @@ export class SupervisionOfficersPresenter implements Hydratable {
     if (!this.areMetricsHydrated || !this.areOfficersHydrated) return;
 
     try {
-      const outlierOfficers = this.supervisionStore.officersBySupervisor
-        .get(this.supervisorId)
+      const outlierOfficers = this.supervisionStore.officersBySupervisorPseudoId
+        .get(this.supervisorPseudoId)
         ?.filter((o) => o.outlierMetrics.length > 0)
         .map((o): OutlierOfficerData => {
           return getOutlierOfficerData(o, this.supervisionStore);
@@ -140,8 +142,8 @@ export class SupervisionOfficersPresenter implements Hydratable {
    * Provides information about the currently selected supervisor
    */
   get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
-    return this.supervisionStore.supervisionOfficerSupervisor(
-      this.supervisorId
+    return this.supervisionStore.supervisionOfficerSupervisorByPseudoId(
+      this.supervisorPseudoId
     );
   }
 
@@ -149,14 +151,16 @@ export class SupervisionOfficersPresenter implements Hydratable {
    * Provides a list of all officers that are in this supervisor's unit
    */
   get allOfficers(): SupervisionOfficer[] | undefined {
-    return this.supervisionStore?.officersBySupervisor.get(this.supervisorId);
+    return this.supervisionStore?.officersBySupervisorPseudoId.get(
+      this.supervisorPseudoId
+    );
   }
 
   get supervisorIsCurrentUser() {
     return (
-      !!this.supervisorId &&
-      this.supervisorId ===
-        this.supervisionStore.currentSupervisorUser?.externalId
+      !!this.supervisorPseudoId &&
+      this.supervisorPseudoId ===
+        this.supervisionStore.currentSupervisorUser?.pseudonymizedId
     );
   }
 }

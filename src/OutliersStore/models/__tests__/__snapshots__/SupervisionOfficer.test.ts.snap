@@ -62,6 +62,7 @@ Object {
       ],
     },
   ],
+  "pseudonymizedId": "hashed-so1",
   "supervisorExternalId": "mdavis123",
 }
 `;
@@ -77,6 +78,7 @@ Object {
     "surname": "Baker",
   },
   "outlierMetrics": Array [],
+  "pseudonymizedId": "hashed-so2",
   "supervisorExternalId": "mdavis123",
 }
 `;
@@ -128,6 +130,7 @@ Object {
       ],
     },
   ],
+  "pseudonymizedId": "hashed-so3",
   "supervisorExternalId": "mdavis123",
 }
 `;
@@ -180,6 +183,7 @@ Object {
       ],
     },
   ],
+  "pseudonymizedId": "hashed-so4",
   "supervisorExternalId": "bholiday456",
 }
 `;
@@ -195,6 +199,7 @@ Object {
     "surname": "Williams",
   },
   "outlierMetrics": Array [],
+  "pseudonymizedId": "hashed-so5",
   "supervisorExternalId": "efitzgerald789",
 }
 `;

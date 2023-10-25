@@ -24,14 +24,17 @@ import { toTitleCase } from "../../utils";
 import ModelHydrator from "../ModelHydrator";
 import OutliersChartCard from "../OutliersChartCard";
 
-type MetricEventsTableWrapperProps = { officerId: string; metricId: string };
+type MetricEventsTableWrapperProps = {
+  officerPseudoId: string;
+  metricId: string;
+};
 type MetricEventsTableProps = {
   presenter: SupervisionOfficerMetricEventsPresenter;
 };
 
 function withPresenter(Component: ComponentType<MetricEventsTableProps>) {
   return observer(function MetricEventsTableWrapper({
-    officerId,
+    officerPseudoId,
     metricId,
   }: MetricEventsTableWrapperProps) {
     const {
@@ -42,7 +45,7 @@ function withPresenter(Component: ComponentType<MetricEventsTableProps>) {
 
     const presenter = new SupervisionOfficerMetricEventsPresenter(
       supervisionStore,
-      officerId,
+      officerPseudoId,
       metricId
     );
 

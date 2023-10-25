@@ -10,6 +10,7 @@ Object {
     "surname": "Davis",
   },
   "hasOutliers": true,
+  "pseudonymizedId": "hashed-mdavis123",
   "supervisionDistrict": "D1",
 }
 `;
@@ -23,6 +24,7 @@ Object {
     "surname": "Holiday",
   },
   "hasOutliers": true,
+  "pseudonymizedId": "hashed-bholiday456",
   "supervisionDistrict": null,
 }
 `;
@@ -36,6 +38,7 @@ Object {
     "surname": "Fitzgerald",
   },
   "hasOutliers": false,
+  "pseudonymizedId": "hashed-efitzgerald789",
   "supervisionDistrict": "D1",
 }
 `;
@@ -49,6 +52,7 @@ Object {
     "surname": "Coltrane",
   },
   "hasOutliers": false,
+  "pseudonymizedId": "hashed-jColtrane321",
   "supervisionDistrict": null,
 }
 `;

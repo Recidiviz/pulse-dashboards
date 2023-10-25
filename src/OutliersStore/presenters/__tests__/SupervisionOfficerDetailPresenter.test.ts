@@ -46,7 +46,7 @@ beforeEach(() => {
     new RootStore().outliersStore,
     OutliersConfigFixture
   );
-  store.setOfficerId(testOfficer.externalId);
+  store.setOfficerPseudoId(testOfficer.pseudonymizedId);
   store.setMetricId(testMetric.metricId);
 });
 
@@ -56,12 +56,13 @@ afterEach(() => {
 
 const testOfficer = supervisionOfficerFixture[0];
 const testMetric = testOfficer.outlierMetrics[0];
+const testSupervisor = supervisionOfficerSupervisorsFixture[0];
 let presenter: SupervisionOfficerDetailPresenter;
 
 beforeEach(() => {
   presenter = new SupervisionOfficerDetailPresenter(
     store,
-    testOfficer.externalId
+    testOfficer.pseudonymizedId
   );
 });
 
@@ -69,7 +70,7 @@ describe("with unit data already hydrated", () => {
   beforeEach(async () => {
     await Promise.all([
       flowResult(
-        store.hydrateOfficersForSupervisor(testOfficer.supervisorExternalId)
+        store.hydrateOfficersForSupervisor(testSupervisor.pseudonymizedId)
       ),
       flowResult(store.hydrateSupervisionOfficerSupervisors()),
       flowResult(store.hydrateMetricConfigs()),
@@ -140,11 +141,11 @@ test("hydration", async () => {
   expect(presenter.isHydrated).toBeTrue();
   expect(store.outliersStore.apiClient.metricBenchmarks).toHaveBeenCalled();
   expect(store.outliersStore.apiClient.supervisionOfficer).toHaveBeenCalledWith(
-    testOfficer.externalId
+    testOfficer.pseudonymizedId
   );
   expect(
     store.outliersStore.apiClient.supervisionOfficerMetricEvents
-  ).toHaveBeenCalledWith(testOfficer.externalId, testMetric.metricId);
+  ).toHaveBeenCalledWith(testOfficer.pseudonymizedId, testMetric.metricId);
   expect(
     store.outliersStore.apiClient.supervisionOfficerSupervisors
   ).toHaveBeenCalled();

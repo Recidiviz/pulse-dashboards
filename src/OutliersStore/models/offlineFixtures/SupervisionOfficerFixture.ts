@@ -26,6 +26,7 @@ import { supervisionOfficerSupervisorsFixture } from "./SupervisionOfficerSuperv
 export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
   {
     externalId: "so1",
+    pseudonymizedId: "hashed-so1",
     fullName: {
       givenNames: "Duke",
       surname: "Ellington",
@@ -42,6 +43,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
   },
   {
     externalId: "so2",
+    pseudonymizedId: "hashed-so2",
     fullName: {
       givenNames: "Chet",
       surname: "Baker",
@@ -53,6 +55,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
   },
   {
     externalId: "so3",
+    pseudonymizedId: "hashed-so3",
     fullName: {
       givenNames: "Louis",
       surname: "Armstrong",
@@ -67,6 +70,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
   },
   {
     externalId: "so4",
+    pseudonymizedId: "hashed-so4",
     fullName: {
       givenNames: "William James",
       middleNames: '"Count"',
@@ -82,6 +86,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
   },
   {
     externalId: "so5",
+    pseudonymizedId: "hashed-so5",
     fullName: {
       givenNames: "Mary Lou",
       surname: "Williams",

@@ -296,9 +296,9 @@ export function workflowsUrl(
 export const OUTLIERS_PATHS: Record<OutliersPage, string> = {
   supervision: `/${DASHBOARD_VIEWS.outliers}/supervision`,
   supervisionSupervisorsList: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisors-list`,
-  supervisionSupervisor: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisor/:supervisorId`,
-  supervisionStaff: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerId`,
-  supervisionStaffMetric: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerId/adverse-outcome/:metricId`,
+  supervisionSupervisor: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisor/:supervisorPseudoId`,
+  supervisionStaff: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerPseudoId`,
+  supervisionStaffMetric: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerPseudoId/adverse-outcome/:metricId`,
 };
 
 export type OutliersPage = keyof typeof OUTLIERS_PAGES;
@@ -314,6 +314,21 @@ export const OUTLIERS_PAGES = {
 type OutliersRouteParams = {
   [k: string]: string;
 };
+
+export function outliersUrl(routeName: "supervision"): string;
+export function outliersUrl(routeName: "supervisionSupervisorsList"): string;
+export function outliersUrl(
+  routeName: "supervisionSupervisor",
+  params: { supervisorPseudoId: string }
+): string;
+export function outliersUrl(
+  routeName: "supervisionStaff",
+  params: { officerPseudoId: string }
+): string;
+export function outliersUrl(
+  routeName: "supervisionStaffMetric",
+  params: { officerPseudoId: string; metricId: string }
+): string;
 
 export function outliersUrl(
   routeName: OutliersPage,

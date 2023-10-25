@@ -30,7 +30,7 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
 
   constructor(
     private supervisionStore: OutliersSupervisionStore,
-    public officerId: string,
+    public officerPseudoId: string,
     public metricId: string
   ) {
     makeAutoObservable(this);
@@ -42,8 +42,8 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
 
   private get areEventsHydrated(): boolean {
     return (
-      this.supervisionStore.metricEventsByOfficerAndMetricId
-        .get(this.officerId)
+      this.supervisionStore.metricEventsByOfficerPseudoIdAndMetricId
+        .get(this.officerPseudoId)
         ?.has(this.metricId) ?? false
     );
   }
@@ -65,7 +65,7 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
       await Promise.all([
         flowResult(
           this.supervisionStore.hydrateMetricEventsForOfficer(
-            this.officerId,
+            this.officerPseudoId,
             this.metricId
           )
         ),
@@ -88,8 +88,8 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
 
   get officerMetricEvents(): Array<SupervisionOfficerMetricEvent> {
     return [
-      ...(this.supervisionStore.metricEventsByOfficerAndMetricId
-        .get(this.officerId)
+      ...(this.supervisionStore.metricEventsByOfficerPseudoIdAndMetricId
+        .get(this.officerPseudoId)
         ?.get(this.metricId) ?? []),
     ].sort((a, b) => descending(a.eventDate, b.eventDate));
   }

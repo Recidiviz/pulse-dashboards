@@ -165,16 +165,19 @@ test("hydrate supervisionOfficerSupervisors", async () => {
 });
 
 test("hydrate supervisionOfficers for supervisor", async () => {
-  const testSupervisorId = supervisionOfficerSupervisorsFixture[0].externalId;
-  expect(store.officersBySupervisor.has(testSupervisorId)).toBeFalse();
+  const testSupervisorPseudoId =
+    supervisionOfficerSupervisorsFixture[0].pseudonymizedId;
+  expect(
+    store.officersBySupervisorPseudoId.has(testSupervisorPseudoId)
+  ).toBeFalse();
 
   await expect(
-    flowResult(store.hydrateOfficersForSupervisor(testSupervisorId))
+    flowResult(store.hydrateOfficersForSupervisor(testSupervisorPseudoId))
   ).resolves.not.toThrow();
 
-  expect(store.officersBySupervisor.get(testSupervisorId)).toEqual(
-    expect.arrayContaining(supervisionOfficerFixture.slice(0, 2))
-  );
+  expect(
+    store.officersBySupervisorPseudoId.get(testSupervisorPseudoId)
+  ).toEqual(expect.arrayContaining(supervisionOfficerFixture.slice(0, 2)));
 });
 
 test("current user record for supervisor except offline mode", () => {
@@ -195,6 +198,7 @@ test("current user record for supervisor except offline mode", () => {
       "displayName": "",
       "externalId": "abc123",
       "fullName": Object {},
+      "pseudonymizedId": "",
       "supervisionDistrict": "District One",
     }
   `);
@@ -241,6 +245,7 @@ test("hydrate supervisors list with current user", () => {
         "displayName": "",
         "externalId": "abc123",
         "fullName": Object {},
+        "pseudonymizedId": "",
         "supervisionDistrict": "District One",
       },
     ]
@@ -271,25 +276,34 @@ test("look up supervisor by ID", async () => {
   await flowResult(store.hydrateSupervisionOfficerSupervisors());
 
   const testSupervisor = supervisionOfficerSupervisorsFixture[0];
-  expect(store.supervisionOfficerSupervisor(testSupervisor.externalId)).toEqual(
-    testSupervisor
-  );
+  expect(
+    store.supervisionOfficerSupervisorByExternalId(testSupervisor.externalId)
+  ).toEqual(testSupervisor);
+});
+
+test("look up supervisor by pseudonymized ID", async () => {
+  await flowResult(store.hydrateSupervisionOfficerSupervisors());
+
+  const testSupervisor = supervisionOfficerSupervisorsFixture[0];
+  expect(
+    store.supervisionOfficerSupervisorByPseudoId(testSupervisor.pseudonymizedId)
+  ).toEqual(testSupervisor);
 });
 
 test("hydrate supervisionOfficerMetricEvents", async () => {
-  const testOfficer = supervisionOfficerFixture[1].externalId;
-  const testMetric = supervisionOfficerFixture[2].outlierMetrics[0].metricId;
+  const testOfficerPseudoId = supervisionOfficerFixture[1].pseudonymizedId;
+  const testMetricId = supervisionOfficerFixture[2].outlierMetrics[0].metricId;
 
   function getTestEvents() {
-    return store.metricEventsByOfficerAndMetricId
-      .get(testOfficer)
-      ?.get(testMetric);
+    return store.metricEventsByOfficerPseudoIdAndMetricId
+      .get(testOfficerPseudoId)
+      ?.get(testMetricId);
   }
 
   expect(getTestEvents()).toBeUndefined();
 
   await flowResult(
-    store.hydrateMetricEventsForOfficer(testOfficer, testMetric)
+    store.hydrateMetricEventsForOfficer(testOfficerPseudoId, testMetricId)
   );
 
   expect(getTestEvents()).toBeDefined();

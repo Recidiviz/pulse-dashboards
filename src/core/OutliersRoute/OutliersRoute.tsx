@@ -27,7 +27,7 @@ import { OUTLIERS_PATHS, outliersUrl } from "../views";
 
 const RouteSync = observer(function RouteSync({ children }) {
   const routeParams: Record<string, string | undefined> = useParams();
-  const { supervisorId, officerId, metricId } = routeParams;
+  const { supervisorPseudoId, officerPseudoId, metricId } = routeParams;
   const loc: Location = useLocation();
 
   const {
@@ -42,13 +42,13 @@ const RouteSync = observer(function RouteSync({ children }) {
         supervisionStore &&
         loc.pathname.startsWith(OUTLIERS_PATHS.supervision)
       ) {
-        supervisionStore.setSupervisorId(supervisorId);
-        supervisionStore.setOfficerId(officerId);
+        supervisionStore.setSupervisorPseudoId(supervisorPseudoId);
+        supervisionStore.setOfficerPseudoId(officerPseudoId);
         supervisionStore.setMetricId(metricId);
       }
     });
     syncParams();
-  }, [supervisionStore, loc, supervisorId, officerId, metricId]);
+  }, [supervisionStore, loc, supervisorPseudoId, officerPseudoId, metricId]);
 
   // access controls that may short-circuit rendering
   if (supervisionStore?.currentSupervisorUser) {
@@ -56,8 +56,9 @@ const RouteSync = observer(function RouteSync({ children }) {
       // not allowed to access search page
       loc.pathname === outliersUrl("supervisionSupervisorsList") ||
       // not allowed to access someone else's supervisor report
-      (supervisorId &&
-        supervisorId !== supervisionStore.currentSupervisorUser.externalId)
+      (supervisorPseudoId &&
+        supervisorPseudoId !==
+          supervisionStore.currentSupervisorUser.pseudonymizedId)
       // note that we can't do a similar check for the staff page because we may not know
       // who supervises them yet; we rely on the backend access controls to catch this
     ) {

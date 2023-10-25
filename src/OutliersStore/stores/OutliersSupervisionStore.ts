@@ -32,17 +32,17 @@ import { FlowMethod, StringMap2D } from "../types";
 export class OutliersSupervisionStore {
   private benchmarksByMetricAndCaseloadType?: StringMap2D<MetricBenchmark>;
 
-  officersBySupervisor: Map<string, SupervisionOfficer[]> = new Map();
+  officersBySupervisorPseudoId: Map<string, SupervisionOfficer[]> = new Map();
 
-  supervisorId?: string;
+  supervisorPseudoId?: string;
 
-  officerId?: string;
+  officerPseudoId?: string;
 
   metricId?: string;
 
   private allSupervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
 
-  metricEventsByOfficerAndMetricId: StringMap2D<
+  metricEventsByOfficerPseudoIdAndMetricId: StringMap2D<
     Array<SupervisionOfficerMetricEvent>
   > = new Map();
 
@@ -133,6 +133,8 @@ export class OutliersSupervisionStore {
         return {
           externalId,
           supervisionDistrict: district ?? null,
+          // TODO(#4235) add pseudoIds to admin panel & auth0
+          pseudonymizedId: "",
           // unfortunately we don't reliably get anyone's name from auth0
           fullName: {},
           displayName: "",
@@ -150,11 +152,19 @@ export class OutliersSupervisionStore {
     return this.allSupervisionOfficerSupervisors;
   }
 
-  supervisionOfficerSupervisor(
+  supervisionOfficerSupervisorByExternalId(
     supervisorId: string
   ): SupervisionOfficerSupervisor | undefined {
     return this.supervisionOfficerSupervisors?.find(
       (s) => s.externalId === supervisorId
+    );
+  }
+
+  supervisionOfficerSupervisorByPseudoId(
+    supervisorPseudoId: string
+  ): SupervisionOfficerSupervisor | undefined {
+    return this.supervisionOfficerSupervisors?.find(
+      (s) => s.pseudonymizedId === supervisorPseudoId
     );
   }
 
@@ -179,23 +189,25 @@ export class OutliersSupervisionStore {
    * Fetches officer and metric data for the specified supervisor
    */
   *hydrateOfficersForSupervisor(
-    supervisorId: string
+    supervisorPseudoId: string
   ): FlowMethod<OutliersAPI["officersForSupervisor"], void> {
-    if (this.officersBySupervisor.has(supervisorId)) return;
+    if (this.officersBySupervisorPseudoId.has(supervisorPseudoId)) return;
 
     const officersData =
-      yield this.outliersStore.apiClient.officersForSupervisor(supervisorId);
+      yield this.outliersStore.apiClient.officersForSupervisor(
+        supervisorPseudoId
+      );
 
     if (officersData.length > 0)
-      this.officersBySupervisor.set(supervisorId, officersData);
+      this.officersBySupervisorPseudoId.set(supervisorPseudoId, officersData);
   }
 
-  setSupervisorId(supervisorId: string | undefined): void {
-    this.supervisorId = supervisorId;
+  setSupervisorPseudoId(supervisorPseudoId: string | undefined): void {
+    this.supervisorPseudoId = supervisorPseudoId;
   }
 
-  setOfficerId(officerId: string | undefined): void {
-    this.officerId = officerId;
+  setOfficerPseudoId(officerPseudoId: string | undefined): void {
+    this.officerPseudoId = officerPseudoId;
   }
 
   setMetricId(metricId: string | undefined): void {
@@ -206,23 +218,31 @@ export class OutliersSupervisionStore {
    * Fetches events data for the specified officer and metric.
    */
   *hydrateMetricEventsForOfficer(
-    officerId: string,
+    officerPseudoId: string,
     metricId: string
   ): FlowMethod<OutliersAPI["supervisionOfficerMetricEvents"], void> {
-    if (this.metricEventsByOfficerAndMetricId.get(officerId)?.has(metricId))
+    if (
+      this.metricEventsByOfficerPseudoIdAndMetricId
+        .get(officerPseudoId)
+        ?.has(metricId)
+    )
       return;
 
     const eventsData =
       yield this.outliersStore.apiClient.supervisionOfficerMetricEvents(
-        officerId,
+        officerPseudoId,
         metricId
       );
 
     const metricsMap =
-      this.metricEventsByOfficerAndMetricId.get(officerId) ?? new Map();
+      this.metricEventsByOfficerPseudoIdAndMetricId.get(officerPseudoId) ??
+      new Map();
     metricsMap.set(metricId, eventsData);
-    if (!this.metricEventsByOfficerAndMetricId.has(officerId)) {
-      this.metricEventsByOfficerAndMetricId.set(officerId, metricsMap);
+    if (!this.metricEventsByOfficerPseudoIdAndMetricId.has(officerPseudoId)) {
+      this.metricEventsByOfficerPseudoIdAndMetricId.set(
+        officerPseudoId,
+        metricsMap
+      );
     }
   }
 }

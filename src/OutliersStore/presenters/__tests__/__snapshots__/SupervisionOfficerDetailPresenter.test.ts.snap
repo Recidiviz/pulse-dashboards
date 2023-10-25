@@ -444,6 +444,7 @@ Object {
       ],
     },
   ],
+  "pseudonymizedId": "hashed-so1",
   "supervisorExternalId": "mdavis123",
 }
 `;
@@ -892,6 +893,7 @@ Object {
       ],
     },
   ],
+  "pseudonymizedId": "hashed-so1",
   "supervisorExternalId": "mdavis123",
 }
 `;

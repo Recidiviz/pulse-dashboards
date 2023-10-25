@@ -38,7 +38,7 @@ let routerContext: NonNullable<StaticRouterProps["context"]>;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
-  outliersStore = new OutliersStore(new RootStore());
+  outliersStore = new RootStore().outliersStore;
 
   supervisionStore = new OutliersSupervisionStore(
     outliersStore,
@@ -61,6 +61,7 @@ test("homepage redirects supervisors to their own report", () => {
     displayName: "",
     fullName: {},
     externalId: "abc123",
+    pseudonymizedId: "hashed-abc123",
     supervisionDistrict: null,
   });
 
@@ -71,7 +72,9 @@ test("homepage redirects supervisors to their own report", () => {
   );
 
   expect(routerContext.url).toBe(
-    outliersUrl("supervisionSupervisor", { supervisorId: "abc123" })
+    outliersUrl("supervisionSupervisor", {
+      supervisorPseudoId: "hashed-abc123",
+    })
   );
 });
 
@@ -91,6 +94,7 @@ test("redirect waits for supervision store to be hydrated", async () => {
     fullName: {},
     externalId: "abc123",
     supervisionDistrict: null,
+    pseudonymizedId: "hashed-abc123",
   });
 
   runInAction(() => {
@@ -109,6 +113,8 @@ test("redirect waits for supervision store to be hydrated", async () => {
     outliersStore.supervisionStore = supervisionStore;
   });
   expect(routerContext.url).toBe(
-    outliersUrl("supervisionSupervisor", { supervisorId: "abc123" })
+    outliersUrl("supervisionSupervisor", {
+      supervisorPseudoId: "hashed-abc123",
+    })
   );
 });

@@ -26,11 +26,11 @@ export interface OutliersAPI {
   metricBenchmarks(): Promise<Array<MetricBenchmark>>;
   supervisionOfficerSupervisors(): Promise<Array<SupervisionOfficerSupervisor>>;
   officersForSupervisor(
-    supervisorId: string
+    supervisorPseudoId: string
   ): Promise<Array<SupervisionOfficer>>;
-  supervisionOfficer(officerId: string): Promise<SupervisionOfficer>;
+  supervisionOfficer(officerPseudoId: string): Promise<SupervisionOfficer>;
   supervisionOfficerMetricEvents(
-    officerId: string,
+    officerPseudoId: string,
     metricId: string
   ): Promise<Array<SupervisionOfficerMetricEvent>>;
 }

@@ -52,34 +52,36 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
   }
 
   async officersForSupervisor(
-    supervisorId: string
+    supervisorPseudoId: string
   ): Promise<Array<SupervisionOfficer>> {
     const { supervisionOfficerFixture } = await import(
       "../models/offlineFixtures/SupervisionOfficerFixture"
     );
 
     return supervisionOfficerFixture.filter(
-      (o) => o.supervisorExternalId === supervisorId
+      (o) => `hashed-${o.supervisorExternalId}` === supervisorPseudoId
     );
   }
 
-  async supervisionOfficer(officerId: string): Promise<SupervisionOfficer> {
+  async supervisionOfficer(
+    officerPseudoId: string
+  ): Promise<SupervisionOfficer> {
     const { supervisionOfficerFixture } = await import(
       "../models/offlineFixtures/SupervisionOfficerFixture"
     );
 
     const officerFixture = supervisionOfficerFixture.find(
-      (o) => o.externalId === officerId
+      (o) => o.pseudonymizedId === officerPseudoId
     );
 
     if (!officerFixture)
-      throw new Error(`Officer ${officerId} not present in fixture data`);
+      throw new Error(`Officer ${officerPseudoId} not present in fixture data`);
 
     return officerFixture;
   }
 
   async supervisionOfficerMetricEvents(
-    officerId: string,
+    officerPseudoId: string,
     metricId: string
   ): Promise<SupervisionOfficerMetricEvent[]> {
     const { supervisionOfficerMetricEventFixture } = await import(

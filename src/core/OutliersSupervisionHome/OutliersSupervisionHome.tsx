@@ -33,7 +33,8 @@ export const OutliersSupervisionHome = observer(
       return (
         <Redirect
           to={outliersUrl("supervisionSupervisor", {
-            supervisorId: supervisionStore.currentSupervisorUser.externalId,
+            supervisorPseudoId:
+              supervisionStore.currentSupervisorUser.pseudonymizedId,
           })}
         />
       );

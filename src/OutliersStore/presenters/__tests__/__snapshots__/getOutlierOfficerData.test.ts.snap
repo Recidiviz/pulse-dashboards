@@ -1456,6 +1456,7 @@ Object {
       ],
     },
   ],
+  "pseudonymizedId": "hashed-so3",
   "supervisorExternalId": "mdavis123",
 }
 `;

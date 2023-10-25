@@ -136,7 +136,7 @@ const OutliersStaffCard: React.FC<OutliersStaffCardType> = ({
         {officer.outlierMetrics.map((metric) => (
           <MetricSection
             to={outliersUrl("supervisionStaffMetric", {
-              officerId: officer.externalId,
+              officerPseudoId: officer.pseudonymizedId,
               metricId: metric.metricId,
             })}
             key={metric.metricId}

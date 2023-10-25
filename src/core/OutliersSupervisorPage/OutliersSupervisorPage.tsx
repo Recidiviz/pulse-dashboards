@@ -98,11 +98,11 @@ const OutliersSupervisorPage = observer(function OutliersSupervisorPage() {
     outliersStore: { supervisionStore },
   } = useRootStore();
 
-  if (!supervisionStore?.supervisorId) return null;
+  if (!supervisionStore?.supervisorPseudoId) return null;
 
   const presenter = new SupervisionOfficersPresenter(
     supervisionStore,
-    supervisionStore.supervisorId
+    supervisionStore.supervisorPseudoId
   );
 
   return (

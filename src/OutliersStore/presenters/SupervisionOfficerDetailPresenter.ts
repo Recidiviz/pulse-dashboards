@@ -38,7 +38,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
 
   constructor(
     private supervisionStore: OutliersSupervisionStore,
-    public officerId: string
+    public officerPseudoId: string
   ) {
     makeAutoObservable(this);
   }
@@ -48,9 +48,11 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
   }
 
   private get officerRecordFromStore(): SupervisionOfficer | undefined {
-    return Array.from(this.supervisionStore.officersBySupervisor.values())
+    return Array.from(
+      this.supervisionStore.officersBySupervisorPseudoId.values()
+    )
       .flat()
-      .find((o) => o.externalId === this.officerId);
+      .find((o) => o.pseudonymizedId === this.officerPseudoId);
   }
 
   private get officerRecord() {
@@ -86,9 +88,11 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
   }
 
   get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
-    const id = this.officerRecord?.supervisorExternalId;
-    if (!id) return;
-    return this.supervisionStore.supervisionOfficerSupervisor(id);
+    const supervisorExternalId = this.officerRecord?.supervisorExternalId;
+    if (!supervisorExternalId) return;
+    return this.supervisionStore.supervisionOfficerSupervisorByExternalId(
+      supervisorExternalId
+    );
   }
 
   private get isOfficerHydrated() {
@@ -117,14 +121,14 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
       // we can prefetch metric event data here also rather than waiting for the page to load,
       // saving an additional loading spinner in the events table UI
       this.supervisionStore.hydrateMetricEventsForOfficer(
-        this.officerId,
+        this.officerPseudoId,
         this.metricId
       );
     }
 
     this.fetchedOfficerRecord =
       yield this.supervisionStore.outliersStore.apiClient.supervisionOfficer(
-        this.officerId
+        this.officerPseudoId
       );
   }
 

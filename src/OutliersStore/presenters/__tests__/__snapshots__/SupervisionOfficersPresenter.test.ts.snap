@@ -445,6 +445,7 @@ Array [
         ],
       },
     ],
+    "pseudonymizedId": "hashed-so1",
     "supervisorExternalId": "mdavis123",
   },
   Object {
@@ -1902,6 +1903,7 @@ Array [
         ],
       },
     ],
+    "pseudonymizedId": "hashed-so3",
     "supervisorExternalId": "mdavis123",
   },
 ]
@@ -1917,6 +1919,7 @@ Object {
     "surname": "Davis",
   },
   "hasOutliers": true,
+  "pseudonymizedId": "hashed-mdavis123",
   "supervisionDistrict": "D1",
 }
 `;

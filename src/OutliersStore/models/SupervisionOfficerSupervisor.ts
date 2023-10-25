@@ -24,6 +24,7 @@ export const supervisionOfficerSupervisorSchema = z
     email: z.string().optional(),
     externalId: z.string(),
     fullName: fullNameSchema,
+    pseudonymizedId: z.string(),
     hasOutliers: z.boolean().optional(),
     supervisionDistrict: z.string().nullable(),
   })

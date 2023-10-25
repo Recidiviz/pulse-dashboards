@@ -43,7 +43,7 @@ describe("Hydrated Supervisor Page", () => {
       new OutliersStore(new RootStore()),
       OutliersConfigFixture
     );
-    presenter = new SupervisionOfficersPresenter(store, "mdavis123");
+    presenter = new SupervisionOfficersPresenter(store, "hashed-mdavis123");
     await presenter?.hydrate();
   });
 
@@ -106,7 +106,7 @@ describe("Outliers Supervisor Page", () => {
     rootStore.outliersStore.supervisionStore = store;
     useRootStoreMock.mockReturnValue(rootStore);
 
-    store.setSupervisorId("mdavis123");
+    store.setSupervisorPseudoId("hashed-mdavis123");
   });
 
   afterEach(() => {

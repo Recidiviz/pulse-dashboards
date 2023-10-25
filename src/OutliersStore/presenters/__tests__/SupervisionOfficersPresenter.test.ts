@@ -44,7 +44,7 @@ beforeEach(() => {
     OutliersConfigFixture
   );
 
-  presenter = new SupervisionOfficersPresenter(store, "mdavis123");
+  presenter = new SupervisionOfficersPresenter(store, "hashed-mdavis123");
 });
 
 afterEach(() => {
@@ -95,7 +95,7 @@ test("supervisorId not found in officersBySupervisor", async () => {
 
   expect(presenter.isHydrated).toBeFalse();
   expect(presenter.error).toEqual(
-    new Error("Supervisor mdavis123 does not have any assigned officers")
+    new Error("Supervisor hashed-mdavis123 does not have any assigned officers")
   );
 });
 
