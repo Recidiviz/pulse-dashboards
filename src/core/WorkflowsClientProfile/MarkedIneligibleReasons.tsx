@@ -16,13 +16,12 @@
 // =============================================================================
 
 import { palette, typography } from "@recidiviz/design-system";
-import { format, parseISO, startOfToday } from "date-fns";
+import { format } from "date-fns";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
-import { OTHER_KEY } from "../../WorkflowsStore/utils";
 import { TextLink } from "../WorkflowsMilestones/styles";
 
 const MarkedIneligibleReasonsText = styled.div`
@@ -34,71 +33,86 @@ const MarkedIneligibleReasonsText = styled.div`
   margin: 1.5rem 0;
 `;
 
+export function buildSnoozedByText(
+  opportunity: Opportunity,
+  snoozedOnDate?: Date,
+  snoozedBy?: string
+): string | undefined {
+  if (!snoozedOnDate || !snoozedBy) return;
+  return `${opportunity.deniedTabTitle} by ${snoozedBy} on ${format(
+    snoozedOnDate,
+    "LLLL d, yyyy"
+  )}.`;
+}
+
+export function buildResurfaceText(
+  opportunity: Opportunity,
+  snoozeUntil?: Date
+): string | undefined {
+  if (!snoozeUntil) return;
+  return `${
+    opportunity.person.displayPreferredName
+  } may be surfaced again on or after ${format(snoozeUntil, "LLLL d, yyyy")}.`;
+}
+
+export function buildDenialReasonsListText(
+  opportunity: Opportunity,
+  denialReasons: string[]
+): string {
+  const denialReasonsList = denialReasons.join(", ");
+  const ineligibleReasonsListCopy = opportunity.isAlert
+    ? "Override reasons:"
+    : "Not eligible reasons:";
+
+  return `${ineligibleReasonsListCopy}${" "}${denialReasonsList}`;
+}
+
 const MarkedIneligibleReasons: React.FC<{
   opportunity: Opportunity;
-  currentUserEmail: string;
+  snoozeUntil?: Date;
+  denialReasons?: string[];
 }> = observer(function MarkedIneligibleReason({
   opportunity,
-  currentUserEmail,
+  snoozeUntil,
+  denialReasons,
 }) {
   const {
     workflowsStore: {
       featureVariants: { enableSnooze },
     },
   } = useRootStore();
-
-  const denialReasons = opportunity.denial?.reasons;
-  const otherReason = opportunity.denial?.otherReason;
-  if (!denialReasons) return null;
-
-  function buildOtherText() {
-    if (!(denialReasons ?? []).includes(OTHER_KEY)) return null;
-    if (!otherReason) return ["Other"];
-    return [`Other: ${otherReason}`];
-  }
+  if (!denialReasons || !enableSnooze) return null;
 
   const handleUndoClick = async () => {
     await opportunity.deleteOpportunityDenialAndSnooze();
   };
 
-  const snoozeUntil: Date | undefined =
-    opportunity.manualSnoozeUntilDate ??
-    (opportunity?.autoSnooze?.snoozeUntil
-      ? parseISO(opportunity?.autoSnooze?.snoozeUntil)
-      : undefined);
+  const snoozedByText = buildSnoozedByText(
+    opportunity,
+    opportunity.snoozedOnDate,
+    opportunity.snoozedBy
+  );
 
-  const resurfaceText =
-    enableSnooze &&
-    snoozeUntil &&
-    `${opportunity.deniedTabTitle} by ${currentUserEmail} on ${format(
-      startOfToday(),
-      "LLLL d, yyyy"
-    )}. ${
-      opportunity.person.displayPreferredName
-    } may be surfaced again on or after ${format(
-      snoozeUntil,
-      "LLLL d, yyyy"
-    )}.`;
+  const resurfaceText = buildResurfaceText(opportunity, snoozeUntil);
+
+  const ineligibleReasonsList = buildDenialReasonsListText(
+    opportunity,
+    denialReasons
+  );
 
   return (
     <MarkedIneligibleReasonsText className="MarkedIneligibleReasonsText">
-      {resurfaceText && (
+      {snoozedByText && resurfaceText && (
         <>
           {" "}
           <div>
-            {resurfaceText} <TextLink onClick={handleUndoClick}>Undo</TextLink>
+            {snoozedByText} {resurfaceText}{" "}
+            <TextLink onClick={handleUndoClick}>Undo</TextLink>
           </div>{" "}
           <br />
         </>
       )}
-      <div>
-        Not eligible reasons:{" "}
-        {denialReasons
-          .filter((r) => r !== OTHER_KEY)
-          .map((r) => opportunity.denialReasonsMap[r])
-          .concat(buildOtherText() ?? [])
-          .join(", ")}
-      </div>
+      <div>{ineligibleReasonsList}</div>
     </MarkedIneligibleReasonsText>
   );
 });

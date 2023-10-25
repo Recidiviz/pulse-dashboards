@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { palette, Sans14, typography } from "@recidiviz/design-system";
-import { format, parseISO, startOfToday } from "date-fns";
+import { parseISO, startOfToday } from "date-fns";
 import { isEqual, xor } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -32,6 +32,10 @@ import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/Opportunit
 import { getSnoozeUntilDate, OTHER_KEY } from "../../WorkflowsStore/utils";
 import { OtherReasonInput } from "../sharedComponents";
 import { Heading } from "../WorkflowsClientProfile/Heading";
+import {
+  buildDenialReasonsListText,
+  buildResurfaceText,
+} from "../WorkflowsClientProfile/MarkedIneligibleReasons";
 import {
   ActionButton,
   MenuItem,
@@ -255,8 +259,9 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       )}
       {snoozeEnabled && snoozeUntilDate !== undefined && (
         <SnoozeUntilReminderText>
-          You will be reminded about this opportunity on{" "}
-          {format(snoozeUntilDate, "LLLL d, yyyy")}
+          <div>{buildResurfaceText(opportunity, snoozeUntilDate)}</div>
+          <br />
+          <div>{buildDenialReasonsListText(opportunity, reasons)}</div>
         </SnoozeUntilReminderText>
       )}
       <ActionButton

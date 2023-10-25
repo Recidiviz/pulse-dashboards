@@ -24,6 +24,7 @@ import {
   Denial,
   ExternalRequestUpdate,
   ManualSnoozeUpdate,
+  SharedSnoozeUpdate,
   UpdateLog,
 } from "../../FirestoreStore";
 import { TenantId } from "../../RootStore/types";
@@ -152,6 +153,8 @@ export interface Opportunity<
   manualSnooze: ManualSnoozeUpdate | undefined;
   autoSnooze: AutoSnoozeUpdate | undefined;
   manualSnoozeUntilDate: Date | undefined;
+  snoozedBy: SharedSnoozeUpdate["snoozedBy"] | undefined;
+  snoozedOnDate: Date | undefined;
   isSnoozed: boolean;
   snoozeForDays?: number;
   deleteOpportunityDenialAndSnooze: () => Promise<void>;

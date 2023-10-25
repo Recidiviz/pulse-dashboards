@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { add, format, sub } from "date-fns";
+import { add, format, parseISO, sub } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 import { shuffle } from "lodash";
 import { configure, runInAction } from "mobx";
@@ -240,6 +240,38 @@ describe("isSnoozed", () => {
       },
     });
     expect(opp.isSnoozed).toBe(true);
+  });
+});
+
+describe("snoozedOnDate", () => {
+  test("with manual snooze set", () => {
+    mockHydration({
+      updateData: {
+        manualSnooze: {
+          snoozeForDays: 5,
+          snoozedBy: "foo",
+          snoozedOn: "2023-01-01",
+        },
+      },
+    });
+    expect(opp.snoozedOnDate).toEqual(parseISO("2023-01-01"));
+  });
+
+  test("with auto snooze set", () => {
+    mockHydration({
+      updateData: {
+        autoSnooze: {
+          snoozeUntil: "2023-01-10",
+          snoozedBy: "foo",
+          snoozedOn: "2023-01-10",
+        },
+      },
+    });
+    expect(opp.snoozedOnDate).toEqual(parseISO("2023-01-10"));
+  });
+
+  test("with no snooze set", () => {
+    expect(opp.snoozedOnDate).toBeUndefined();
   });
 });
 

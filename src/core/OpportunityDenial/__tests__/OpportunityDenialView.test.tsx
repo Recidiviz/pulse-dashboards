@@ -46,12 +46,13 @@ function getCheckbox(reason: string) {
 
 describe("OpportunityDenialView", () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    timekeeper.freeze("2023-10-5");
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
         featureVariants: {
           enableSnooze: {},
         },
+        currentUserEmail: "mock-email",
       },
     });
   });
@@ -201,9 +202,10 @@ describe("OpportunityDenialView", () => {
     beforeEach(() => {
       renderElement({
         ...mockOpportunity,
+        snoozedOnDate: new Date(2023, 9, 5),
         autoSnooze: {
           snoozeUntil: "2024-10-10",
-          snoozedOn: "",
+          snoozedOn: "2023-10-05",
           snoozedBy: "",
         },
         denialReasonsMap: {
@@ -228,20 +230,28 @@ describe("OpportunityDenialView", () => {
       expect(screen.getByTestId("OpportunityDenialView__button")).toBeEnabled();
     });
 
-    it("displays the auto snooze until date if available", () => {
+    it("displays the marked ineligible text", () => {
       expect(
         screen.getByText(
-          "You will be reminded about this opportunity on October 10, 2024"
+          "Client Name may be surfaced again on or after October 10, 2024."
         )
-      );
+      ).toBeInTheDocument();
+    });
+
+    it("displays the denial reasons codes in a list", () => {
+      const checkbox = getCheckbox("CODE");
+      if (checkbox) fireEvent.click(checkbox);
+      expect(
+        screen.getByText("Not eligible reasons: CODE")
+      ).toBeInTheDocument();
     });
   });
 
   describe("manualSnooze is enabled", () => {
     beforeEach(() => {
-      timekeeper.freeze("2023-10-5");
       renderElement({
         ...mockOpportunity,
+        snoozedOnDate: new Date(2023, 9, 5),
         type: "compliantReporting",
         denialReasonsMap: {
           CODE: "Denial reason",
@@ -268,12 +278,48 @@ describe("OpportunityDenialView", () => {
       expect(screen.getByTestId("OpportunityDenialView__button")).toBeEnabled();
     });
 
-    it("displays the manual snooze until date if available", () => {
+    it("displays resurface text and denial reason codes", () => {
       expect(
         screen.getByText(
-          "You will be reminded about this opportunity on November 4, 2023"
+          "Client Name may be surfaced again on or after November 4, 2023."
         )
-      );
+      ).toBeInTheDocument();
+    });
+
+    it("displays the denial reasons codes in a list", () => {
+      const checkbox = getCheckbox("CODE");
+      if (checkbox) fireEvent.click(checkbox);
+      expect(
+        screen.getByText("Not eligible reasons: CODE")
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe("Override opportunity", () => {
+    beforeEach(() => {
+      renderElement({
+        ...mockOpportunity,
+        isAlert: true,
+        snoozedOnDate: new Date(2023, 9, 5),
+        deniedTabTitle: "Overridden",
+        type: "compliantReporting",
+        denialReasonsMap: {
+          CODE: "Denial reason",
+        },
+      });
+    });
+    it("shows the resurface text", () => {
+      expect(
+        screen.getByText(
+          "Client Name may be surfaced again on or after November 4, 2023."
+        )
+      ).toBeInTheDocument();
+    });
+
+    it("shows the override language in the denial reasons text", () => {
+      const checkbox = getCheckbox("CODE");
+      if (checkbox) fireEvent.click(checkbox);
+      expect(screen.getByText("Override reasons: CODE")).toBeInTheDocument();
     });
   });
 

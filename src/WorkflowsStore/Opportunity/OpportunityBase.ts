@@ -33,6 +33,7 @@ import {
   ManualSnoozeUpdate,
   OpportunityUpdate,
   OpportunityUpdateWithForm,
+  SharedSnoozeUpdate,
   UpdateLog,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
@@ -225,9 +226,19 @@ export abstract class OpportunityBase<
     }
   }
 
+  get snoozedBy(): SharedSnoozeUpdate["snoozedBy"] | undefined {
+    if (this.manualSnooze) return this.manualSnooze.snoozedBy;
+    if (this.autoSnooze) return this.autoSnooze.snoozedBy;
+  }
+
+  get snoozedOnDate(): Date | undefined {
+    if (this.manualSnooze) return parseISO(this.manualSnooze.snoozedOn);
+    if (this.autoSnooze) return parseISO(this.autoSnooze.snoozedOn);
+  }
+
   get manualSnoozeUntilDate(): Date | undefined {
-    if (!this.manualSnooze) return;
-    return add(parseISO(this.manualSnooze.snoozedOn), {
+    if (!this.manualSnooze || !this.snoozedOnDate) return;
+    return add(this.snoozedOnDate, {
       days: this.manualSnooze.snoozeForDays,
     });
   }

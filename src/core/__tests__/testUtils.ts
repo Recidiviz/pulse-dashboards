@@ -21,7 +21,7 @@ import { Client, Opportunity } from "../../WorkflowsStore";
 export const mockOpportunity: Opportunity<Client> = {
   record: {},
   almostEligible: false,
-  person: {} as Client,
+  person: { displayPreferredName: "Client Name" } as Client,
   defaultEligibility: "ELIGIBLE",
   denial: undefined,
   denialReasonsMap: {},
@@ -32,6 +32,8 @@ export const mockOpportunity: Opportunity<Client> = {
   requirementsAlmostMet: [],
   requirementsMet: [],
   reviewStatus: "PENDING",
+  snoozedBy: undefined,
+  snoozedOnDate: new Date(),
   manualSnooze: {} as ManualSnoozeUpdate,
   autoSnooze: {} as AutoSnoozeUpdate,
   manualSnoozeUntilDate: undefined,

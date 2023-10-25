@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Button, palette, spacing } from "@recidiviz/design-system";
+import { parseISO } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { darken, rem } from "polished";
 import { useEffect } from "react";
@@ -94,7 +95,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     onDenialButtonClick = () => null,
   }) {
     const {
-      workflowsStore: { featureVariants, currentUserEmail },
+      workflowsStore: { featureVariants },
     } = useRootStore();
     const { isLaptop } = useIsMobile(true);
 
@@ -104,6 +105,13 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
 
     const colors = useStatusColors(opportunity);
     const showDenialButton = opportunity.supportsDenial;
+
+    const snoozeUntil: Date | undefined =
+      opportunity.manualSnoozeUntilDate ??
+      (opportunity?.autoSnooze?.snoozeUntil
+        ? parseISO(opportunity?.autoSnooze?.snoozeUntil)
+        : undefined);
+
     return (
       <Wrapper
         responsiveRevamp={!!featureVariants.responsiveRevamp}
@@ -114,7 +122,8 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         {!!featureVariants.responsiveRevamp && showDenialButton && (
           <MarkedIneligibleReasons
             opportunity={opportunity}
-            currentUserEmail={currentUserEmail}
+            snoozeUntil={snoozeUntil}
+            denialReasons={opportunity.denial?.reasons}
           />
         )}
         {(formDownloadButton || showDenialButton || formLinkButton) && (

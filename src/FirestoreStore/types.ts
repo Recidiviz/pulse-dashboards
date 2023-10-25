@@ -308,7 +308,7 @@ export type FormFieldData = Record<
   boolean | string | string[] | FieldValue
 >;
 
-type SharedSnoozeUpdate = {
+export type SharedSnoozeUpdate = {
   snoozedBy: string;
   snoozedOn: string;
 };

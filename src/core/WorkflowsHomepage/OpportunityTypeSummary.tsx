@@ -175,7 +175,9 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
       : defaultAvatarsShown;
   const previewOpportunities = opportunities.slice(0, sliceIndex);
   const numOpportunitiesToDisplay = opportunities.length - sliceIndex;
-
+  const reviewStatusText = opportunities[0].isAlert
+    ? "Overridden"
+    : "Ineligible";
   const numIneligible = opportunities.filter(
     (opp) => opp.reviewStatus === "DENIED"
   ).length;
@@ -219,7 +221,9 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
         )}
         <ReviewStatusWrapper>
           {!!responsiveRevamp && numIneligible > 0 && (
-            <ReviewStatusCount>Ineligible: {numIneligible}</ReviewStatusCount>
+            <ReviewStatusCount>
+              {reviewStatusText}: {numIneligible}
+            </ReviewStatusCount>
           )}
         </ReviewStatusWrapper>
         <ViewAllLink

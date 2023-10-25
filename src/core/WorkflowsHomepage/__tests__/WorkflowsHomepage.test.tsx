@@ -273,4 +273,43 @@ describe("WorkflowsHomepage", () => {
 
     expect(screen.getByText("Ineligible: 1")).toBeInTheDocument();
   });
+
+  test("review status uses overridden text for alert opps", () => {
+    const firstOpp = {
+      ...mockOpportunity,
+      isAlert: true,
+      reviewStatus: "DENIED",
+    };
+    const secondOpp = {
+      ...mockOpportunity,
+      isAlert: true,
+      reviewStatus: "IN_PROGRESS",
+      person: { recordId: "2" },
+    };
+    const thirdOpp = {
+      ...mockOpportunity,
+      isAlert: true,
+      reviewStatus: "IN_PROGRESS",
+      person: { recordId: "3" },
+    };
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        opportunitiesLoaded: () => true,
+        opportunityTypes: ["pastFTRD"],
+        allOpportunitiesByType: {
+          pastFTRD: [firstOpp, secondOpp, thirdOpp],
+        },
+        hasOpportunities: () => true,
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsHomepage />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText("Overridden: 1")).toBeInTheDocument();
+  });
 });
