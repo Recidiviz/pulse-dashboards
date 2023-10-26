@@ -17,11 +17,19 @@
 
 import { disableFetchMocks, enableFetchMocks } from "jest-fetch-mock";
 
-import { RootStore } from "../../RootStore";
-import { OutliersAPIClient } from "../api/OutliersAPIClient";
-import { OutliersConfigFixture } from "../models/offlineFixtures/OutliersConfigFixture";
-import { supervisionOfficerSupervisorsFixture } from "../models/offlineFixtures/SupervisionOfficerSupervisor";
-import { OutliersStore } from "../OutliersStore";
+import { RootStore } from "../../../RootStore";
+import {
+  metricBenchmarksFixture,
+  rawMetricBenchmarksFixture,
+} from "../../models/offlineFixtures/MetricBenchmarkFixture";
+import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConfigFixture";
+import {
+  rawSupervisionOfficerFixture,
+  supervisionOfficerFixture,
+} from "../../models/offlineFixtures/SupervisionOfficerFixture";
+import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
+import { OutliersStore } from "../../OutliersStore";
+import { OutliersAPIClient } from "../OutliersAPIClient";
 
 const mockTenantId = "us_tn";
 const BASE_URL = `http://localhost:5000/outliers/${mockTenantId}`;
@@ -64,7 +72,7 @@ describe("OutliersAPIClient", () => {
   it("init parses the config data", async () => {
     fetchMock.mockResponse(JSON.stringify({ config: OutliersConfigFixture }));
     const response = await client.init();
-    expect(response).toMatchSnapshot();
+    expect(response).toEqual(OutliersConfigFixture);
   });
 
   it("supervisionOfficerSupervisors calls the correct endpoint", async () => {
@@ -80,7 +88,7 @@ describe("OutliersAPIClient", () => {
       JSON.stringify({ supervisors: supervisionOfficerSupervisorsFixture })
     );
     const response = await client.supervisionOfficerSupervisors();
-    expect(response).toMatchSnapshot();
+    expect(response).toEqual(supervisionOfficerSupervisorsFixture);
   });
 
   it("supervisionOfficerSupervisors throws error if tenantId is undefined", async () => {
@@ -93,5 +101,40 @@ describe("OutliersAPIClient", () => {
     expect(() => badClient.supervisionOfficerSupervisors()).toThrow(
       "Attempted to fetch data with undefined tenantId"
     );
+  });
+
+  it("metricBenchmarks calls the correct endpoint", async () => {
+    fetchMock.mockResponse(JSON.stringify({ metrics: [] }));
+    await client.metricBenchmarks();
+    expect(fetchMock.mock.calls[0][0]).toEqual(
+      encodeURI(`${BASE_URL}/benchmarks`)
+    );
+  });
+
+  it("metricBenchmarks parses the data", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ metrics: rawMetricBenchmarksFixture })
+    );
+    const response = await client.metricBenchmarks();
+    expect(response).toEqual(metricBenchmarksFixture);
+  });
+
+  it("officersForSupervisor calls the correct endpoint", async () => {
+    fetchMock.mockResponse(JSON.stringify({ officers: [] }));
+    await client.officersForSupervisor("any-hashed-id");
+    expect(fetchMock.mock.calls[0][0]).toEqual(
+      encodeURI(`${BASE_URL}/supervisor/any-hashed-id/officers`)
+    );
+  });
+
+  it("officersForSupervisor parses the data", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ officers: rawSupervisionOfficerFixture })
+    );
+    const response = await client.officersForSupervisor(
+      supervisionOfficerSupervisorsFixture[0].externalId
+    );
+
+    expect(response).toEqual(supervisionOfficerFixture);
   });
 });

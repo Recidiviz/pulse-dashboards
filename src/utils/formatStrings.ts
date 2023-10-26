@@ -250,6 +250,19 @@ function hashEmailAddress(email: string | undefined): string {
   return email ? Base64.stringify(SHA256(email)) : "";
 }
 
+function generatePseudonymizedId({
+  externalId,
+  stateCode,
+}: {
+  externalId: string;
+  stateCode: string;
+}): string {
+  return Base64.stringify(SHA256(`${stateCode.toUpperCase()}${externalId}`))
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
+    .substring(0, 16);
+}
+
 function encrypt(plainText: string): string {
   const b64 = CryptoJS.AES.encrypt(plainText, CRYPTO_PASSPHRASE).toString();
   const e64 = CryptoJS.enc.Base64.parse(b64);
@@ -410,6 +423,7 @@ export {
   genderValueToHumanReadable,
   genderValueToLabel,
   generateEmailAddress,
+  generatePseudonymizedId,
   getDimensionLabel,
   getFirstName,
   getPeriodLabelFromMetricPeriodMonthsFilter,

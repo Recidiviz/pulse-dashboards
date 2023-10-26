@@ -57,10 +57,6 @@ outlier officers in your unit."
       />
     );
 
-  // TODO Remove local storage once staff page presenter is ready
-  localStorage.setItem("supervisor", JSON.stringify(supervisorInfo));
-  localStorage.setItem("officers", JSON.stringify(outlierOfficersData));
-
   const infoItems = [
     { title: "district", info: supervisorInfo?.supervisionDistrict },
     {

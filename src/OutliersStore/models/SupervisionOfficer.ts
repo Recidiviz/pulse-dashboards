@@ -24,10 +24,10 @@ export const supervisionOfficerSchema = z
   .object({
     fullName: fullNameSchema,
     externalId: z.string(),
+    district: z.string().nullable(),
+    caseloadType: z.string().nullable(),
     pseudonymizedId: z.string(),
     supervisorExternalId: z.string(),
-    district: z.string().nullable(),
-    caseloadType: z.string(),
     outlierMetrics: z.array(supervisionOfficerMetricOutlierSchema),
   })
   .transform(addDisplayName);

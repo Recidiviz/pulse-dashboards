@@ -32,8 +32,8 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Ellington",
     },
     district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
-    supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
+    supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
         .SEX_OFFENSE[0],
@@ -49,8 +49,8 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Baker",
     },
     district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
-    supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+    supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
     outlierMetrics: [],
   },
   {
@@ -61,8 +61,8 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Armstrong",
     },
     district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
-    supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+    supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
         .GENERAL_OR_OTHER[1],
@@ -77,8 +77,8 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Basie",
     },
     district: supervisionOfficerSupervisorsFixture[1].supervisionDistrict,
-    supervisorExternalId: supervisionOfficerSupervisorsFixture[1].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+    supervisorExternalId: supervisionOfficerSupervisorsFixture[1].externalId,
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
         .GENERAL_OR_OTHER[0],
@@ -92,8 +92,8 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Williams",
     },
     district: null,
-    supervisorExternalId: supervisionOfficerSupervisorsFixture[2].externalId,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+    supervisorExternalId: supervisionOfficerSupervisorsFixture[2].externalId,
     outlierMetrics: [],
   },
 ];

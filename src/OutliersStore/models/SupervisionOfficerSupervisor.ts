@@ -17,18 +17,24 @@
 
 import { z } from "zod";
 
-import { addDisplayName, fullNameSchema } from "./schemaHelpers";
+import {
+  addDisplayName,
+  addPseudonymizedId,
+  fullNameSchema,
+} from "./schemaHelpers";
 
 export const supervisionOfficerSupervisorSchema = z
   .object({
     email: z.string().optional(),
     externalId: z.string(),
     fullName: fullNameSchema,
-    pseudonymizedId: z.string(),
+    pseudonymizedId: z.string().optional(),
     hasOutliers: z.boolean().optional(),
     supervisionDistrict: z.string().nullable(),
   })
-  .transform(addDisplayName);
+  .transform(addDisplayName)
+  // TODO #4269 move back to primary zod object once real data includes the attr
+  .transform(addPseudonymizedId);
 
 export type SupervisionOfficerSupervisor = z.infer<
   typeof supervisionOfficerSupervisorSchema

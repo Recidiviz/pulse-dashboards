@@ -149,7 +149,6 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
         ),
         flowResult(this.hydrateSupervisionOfficer()),
       ]);
-
       this.setIsLoading(false);
     } catch (e) {
       this.setError(castToError(e));

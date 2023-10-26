@@ -16,9 +16,15 @@
 // =============================================================================
 
 import { callNewMetricsApi } from "../../api/metrics/metricsClient";
-import { MetricBenchmark } from "../models/MetricBenchmark";
+import {
+  MetricBenchmark,
+  metricBenchmarkSchema,
+} from "../models/MetricBenchmark";
 import { outliersConfigSchema } from "../models/OutliersConfig";
-import { SupervisionOfficer } from "../models/SupervisionOfficer";
+import {
+  SupervisionOfficer,
+  supervisionOfficerSchema,
+} from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import {
   SupervisionOfficerSupervisor,
@@ -49,12 +55,17 @@ export class OutliersAPIClient implements OutliersAPI {
     });
   }
 
-  /* eslint-disable class-methods-use-this */
-  async metricBenchmarks(): Promise<MetricBenchmark[]> {
-    const { metricBenchmarksFixture } = await import(
-      "../models/offlineFixtures/MetricBenchmarkFixture"
-    );
-    return metricBenchmarksFixture;
+  metricBenchmarks(): Promise<MetricBenchmark[]> {
+    const endpoint = `outliers/${this.tenantId()}/benchmarks`.toLowerCase();
+    return callNewMetricsApi(
+      endpoint,
+      this.outliersStore.rootStore.getTokenSilently
+    ).then((fetchedData) => {
+      const benchmarkData = fetchedData.metrics as Array<unknown>;
+      return benchmarkData.map((d) => {
+        return metricBenchmarkSchema.parse(d);
+      });
+    });
   }
 
   supervisionOfficerSupervisors(): Promise<SupervisionOfficerSupervisor[]> {
@@ -70,26 +81,27 @@ export class OutliersAPIClient implements OutliersAPI {
     });
   }
 
-  /* eslint-disable class-methods-use-this */
   async officersForSupervisor(
-    supervisorId: string
+    supervisorPseudoId: string
   ): Promise<Array<SupervisionOfficer>> {
-    const { supervisionOfficerFixture } = await import(
-      "../models/offlineFixtures/SupervisionOfficerFixture"
-    );
-
-    return supervisionOfficerFixture.filter(
-      (o) => o.supervisorExternalId === supervisorId
-    );
+    const endpoint = `outliers/${this.tenantId()}/supervisor/${supervisorPseudoId}/officers`;
+    return callNewMetricsApi(
+      endpoint,
+      this.outliersStore.rootStore.getTokenSilently
+    ).then((fetchedData) => {
+      const officerData = fetchedData.officers as Array<unknown>;
+      return officerData.map((b) => supervisionOfficerSchema.parse(b));
+    });
   }
 
+  /* eslint-disable class-methods-use-this */
   async supervisionOfficer(officerId: string): Promise<SupervisionOfficer> {
     const { supervisionOfficerFixture } = await import(
       "../models/offlineFixtures/SupervisionOfficerFixture"
     );
 
     const officerFixture = supervisionOfficerFixture.find(
-      (o) => o.externalId === officerId
+      (o) => o.pseudonymizedId === officerId
     );
 
     if (!officerFixture)
