@@ -36,7 +36,7 @@ export const CardWrapper = styled.div<{ noFlex: boolean; isSticky?: boolean }>`
   display: ${({ noFlex }) => (noFlex ? "block" : "flex")};
   color: ${palette.slate85};
 
-  ${({ isSticky }) => isSticky && `position: sticky; top: 5rem;`}
+  ${({ isSticky }) => isSticky && `position: sticky; top: 1rem;`}
 `;
 
 export const CardHeader = styled.div<{ hasBorder: boolean }>`

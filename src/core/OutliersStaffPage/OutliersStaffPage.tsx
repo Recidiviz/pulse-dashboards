@@ -200,7 +200,7 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
           return (
             <StyledTabPanel key={metric.metricId}>
               <Wrapper isLaptop={isTablet}>
-                <Sidebar isLaptop={isTablet}>
+                <Sidebar>
                   <MetricEventsTable
                     officerPseudoId={presenter.officerPseudoId}
                     metricId={metric.metricId}

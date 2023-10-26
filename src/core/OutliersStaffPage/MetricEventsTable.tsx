@@ -17,12 +17,16 @@
 
 import { observer } from "mobx-react-lite";
 import { ComponentType } from "react";
+import { Column } from "react-table";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { SupervisionOfficerMetricEvent } from "../../OutliersStore/models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerMetricEventsPresenter } from "../../OutliersStore/presenters/SupervisionOfficerMetricEventsPresenter";
-import { toTitleCase } from "../../utils";
+import { formatDate, toTitleCase } from "../../utils";
 import ModelHydrator from "../ModelHydrator";
 import OutliersChartCard from "../OutliersChartCard";
+import OutliersTable from "../OutliersTable";
+import { FullName } from "../types/personMetadata";
 
 type MetricEventsTableWrapperProps = {
   officerPseudoId: string;
@@ -57,6 +61,43 @@ function withPresenter(Component: ComponentType<MetricEventsTableProps>) {
   });
 }
 
+const columns = [
+  {
+    title: "Name",
+    accessor: "clientName",
+  },
+  {
+    title: "ID",
+    accessor: "clientId",
+    width: 60,
+  },
+  {
+    title: "Date",
+    accessor: "eventDate",
+    width: 60,
+  },
+];
+
+const createTableColumn = (column: Column) => {
+  const { accessor } = column;
+
+  switch (accessor) {
+    case "clientName":
+      return {
+        ...column,
+        Cell: ({ value }: { value: FullName }) =>
+          `${value.givenNames} ${value.surname}`,
+      };
+    case "eventDate":
+      return {
+        ...column,
+        Cell: ({ value }: { value: Date }) => formatDate(value),
+      };
+    default:
+      return column;
+  }
+};
+
 export const MetricEventsTable = withPresenter(
   observer(function MetricEventsTable({ presenter }: MetricEventsTableProps) {
     return (
@@ -64,7 +105,10 @@ export const MetricEventsTable = withPresenter(
         title={`List of ${toTitleCase(presenter.eventsLabel)}`}
         hasLegend={false}
       >
-        {presenter.metricId}
+        <OutliersTable<SupervisionOfficerMetricEvent>
+          data={presenter.officerMetricEvents}
+          columns={columns.map((c) => createTableColumn(c))}
+        />
       </OutliersChartCard>
     );
   })

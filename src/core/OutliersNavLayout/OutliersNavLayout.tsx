@@ -60,7 +60,7 @@ const OutliersNavLayout: React.FC = ({ children }) => {
     <Wrapper>
       <NavigationLayout
         backButtonText="Back"
-        isFixed={false}
+        isFixed={isMobile}
         onBackButtonClick={history.goBack}
       />
       <Main isMobile={isMobile}>{children}</Main>

@@ -68,7 +68,7 @@ export const Body = styled.div`
 `;
 
 export const Sidebar = styled.div<{
-  isLaptop: boolean;
+  isLaptop?: boolean;
 }>`
   display: flex;
   flex-direction: column;
@@ -86,7 +86,6 @@ const OutliersPageLayout: React.FC<OutliersPageLayoutType> = ({
   pageTitle,
   infoItems,
   children,
-  ...props
 }) => {
   const { isMobile, isLaptop } = useIsMobile(true);
 
