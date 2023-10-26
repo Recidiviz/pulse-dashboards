@@ -35,6 +35,7 @@ export const usMiMinimumTelephoneReportingConfig: OpportunityConfig = {
     callToAction:
       "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",
   }),
+  firestoreCollection: "US_MI-minimumTelephoneReporting",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 90,

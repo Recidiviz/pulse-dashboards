@@ -19,11 +19,8 @@
 
 import { collection, Query, query, where } from "firebase/firestore";
 
-import {
-  collectionNames,
-  StaffRecord,
-  SYSTEM_ID_TO_CASELOAD_FIELD,
-} from "../../FirestoreStore";
+import { StaffRecord, SYSTEM_ID_TO_CASELOAD_FIELD } from "../../FirestoreStore";
+import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
 import { RootStore } from "../../RootStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 
@@ -65,7 +62,10 @@ export class StaffSubscription extends FirestoreQuerySubscription<StaffRecord> {
     }
 
     return query(
-      collection(this.rootStore.firestoreStore.db, collectionNames.staff),
+      collection(
+        this.rootStore.firestoreStore.db,
+        FIRESTORE_COLLECTIONS_MAP.staff
+      ),
       ...constraints
     );
   }

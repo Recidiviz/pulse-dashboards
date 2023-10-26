@@ -38,6 +38,7 @@ export const usTnExpirationConfig: OpportunityConfig = {
     callToAction:
       "Review these clients and complete their auto-generated TEPE Note.",
   }),
+  firestoreCollection: "US_TN-expirationReferrals",
   snooze: {
     defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
   },

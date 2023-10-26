@@ -33,6 +33,7 @@ export const usTnCompliantReportingConfig: OpportunityConfig = {
     opportunityText: "Compliant Reporting",
     callToAction: "Review and refer eligible clients for Compliant Reporting.",
   }),
+  firestoreCollection: "compliantReportingReferrals",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 90,

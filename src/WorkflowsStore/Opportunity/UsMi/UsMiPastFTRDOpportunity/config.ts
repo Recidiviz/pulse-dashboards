@@ -35,6 +35,7 @@ export const usMiPastFTRDConfig: OpportunityConfig = {
     callToAction:
       "Review clients who are nearing or past their full-term release date and complete discharges in COMS.",
   }),
+  firestoreCollection: "US_MI-pastFTRDReferrals",
   snooze: {
     defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
   },

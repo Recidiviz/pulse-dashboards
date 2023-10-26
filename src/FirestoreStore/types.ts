@@ -26,47 +26,9 @@ import {
   SupervisionOpportunityType,
   SupervisionTaskType,
 } from "../WorkflowsStore";
+import { OPPORTUNITY_CONFIGS } from "../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { UsTnExpirationDraftData } from "../WorkflowsStore/Opportunity/UsTn";
-
-export const collectionNames = {
-  staff: "staff",
-  userUpdates: "userUpdates",
-  clients: "clients",
-  residents: "residents",
-  clientUpdatesV2: "clientUpdatesV2",
-  clientOpportunityUpdates: "clientOpportunityUpdates",
-  locations: "locations",
-  compliantReportingReferrals: "compliantReportingReferrals",
-  earnedDischargeReferrals: "US_ID-earnedDischargeReferrals",
-  earlyTerminationReferrals: "earlyTerminationReferrals",
-  milestonesMessages: "milestonesMessages",
-  LSUReferrals: "US_ID-LSUReferrals",
-  pastFTRDReferrals: "US_ID-pastFTRDReferrals",
-  supervisionLevelDowngradeReferrals: "US_TN-supervisionLevelDowngrade",
-  taskUpdates: "taskUpdates",
-  usMeSCCPReferrals: "US_ME-SCCPReferrals",
-  usMeWorkReleaseReferrals: "US_ME-workReleaseReferrals",
-  usIdCRCResidentWorkerReferrals: "US_ID-CRCResidentWorkerReferrals",
-  usIdCRCWorkReleaseReferrals: "US_ID-CRCWorkReleaseReferrals",
-  usIdExpandedCRCReferrals: "US_ID-expandedCRCReferrals",
-  usIdSupervisionLevelDowngradeReferrals: "US_ID-supervisionLevelDowngrade",
-  usMiSupervisionLevelDowngradeReferrals: "US_MI-supervisionLevelDowngrade",
-  usMiClassificationReviewReferrals: "US_MI-classificationReviewReferrals",
-  usMiEarlyDischargeReferrals: "US_MI-earlyDischargeReferrals",
-  usTnExpirationReferrals: "US_TN-expirationReferrals",
-  usTnCustodyLevelDowngradeReferrals: "US_TN-custodyLevelDowngradeReferrals",
-  usMoRestrictiveHousingStatusHearingReferrals:
-    "US_MO-restrictiveHousingStatusHearingReferrals",
-  usIdSupervisionTasks: "US_ID-supervisionTasks",
-  usMeEarlyTerminationReferrals: "US_ME-earlyTerminationReferrals",
-  usMiMinimumTelephoneReportingReferrals: "US_MI-minimumTelephoneReporting",
-  usMiPastFTRDReferrals: "US_MI-pastFTRDReferrals",
-  usMeFurloughReleaseReferrals: "US_ME-furloughReleaseReferrals",
-  usCaSupervisionLevelDowngradeReferrals: "US_CA-supervisionLevelDowngrade",
-  usTnAnnualReclassificationReferrals: "US_TN-annualReclassificationReferrals",
-};
-
-export type CollectionName = keyof typeof collectionNames;
+import { FIRESTORE_GENERAL_COLLECTION_MAP as FIRESTORE_GENERAL_COLLECTIONS_MAP } from "./constants";
 
 export type RoleSubtype =
   | "SUPERVISION_OFFICER"
@@ -410,3 +372,25 @@ export type UsTnExpirationOpportunityUpdate =
   OpportunityUpdateWithForm<UsTnExpirationDraftData> & {
     contactNote: ExternalRequestUpdate<UsTnContactNote>;
   };
+export type FirestoreGeneralCollectionKey =
+  keyof typeof FIRESTORE_GENERAL_COLLECTIONS_MAP;
+
+export type FirestoreGeneralCollection =
+  typeof FIRESTORE_GENERAL_COLLECTIONS_MAP[FirestoreGeneralCollectionKey];
+
+export type FirestoreOpportunityReferrals = {
+  [K in keyof typeof OPPORTUNITY_CONFIGS]: `${K}Referrals`;
+}[keyof typeof OPPORTUNITY_CONFIGS];
+
+export type FirestoreOpportunityCollection = {
+  [K in keyof typeof OPPORTUNITY_CONFIGS]: typeof OPPORTUNITY_CONFIGS[K]["firestoreCollection"];
+}[keyof typeof OPPORTUNITY_CONFIGS];
+
+export type FirestoreCollectionKey =
+  | FirestoreGeneralCollectionKey
+  | FirestoreOpportunityReferrals;
+
+export type FirestoreCollectionsMap = Record<
+  FirestoreCollectionKey,
+  FirestoreGeneralCollection | FirestoreOpportunityCollection
+>;

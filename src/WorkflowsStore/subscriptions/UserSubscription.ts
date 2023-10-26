@@ -26,12 +26,8 @@ import {
 } from "firebase/firestore";
 import { computed, makeObservable, override } from "mobx";
 
-import {
-  collectionNames,
-  isUserRecord,
-  StaffRecord,
-  UserRecord,
-} from "../../FirestoreStore";
+import { isUserRecord, StaffRecord, UserRecord } from "../../FirestoreStore";
+import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
 import { RootStore } from "../../RootStore";
 import { splitAuth0UserName } from "../../utils/formatStrings";
 import { isOfflineMode } from "../../utils/isOfflineMode";
@@ -80,7 +76,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
     if (stateCode !== currentTenantId && stateCode !== "RECIDIVIZ") return;
 
     return query(
-      collection(firestoreStore.db, collectionNames.staff),
+      collection(firestoreStore.db, FIRESTORE_COLLECTIONS_MAP.staff),
       where("email", "==", email.toLowerCase()),
       where("stateCode", "==", currentTenantId),
       limit(1)

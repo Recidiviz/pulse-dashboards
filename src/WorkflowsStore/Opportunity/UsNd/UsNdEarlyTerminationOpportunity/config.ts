@@ -34,6 +34,7 @@ export const usNdEarlyTerminationConfig: OpportunityConfig = {
     callToAction:
       "Review clients eligible for early termination and download the paperwork to file with the Court.",
   }),
+  firestoreCollection: "earlyTerminationReferrals",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 90,

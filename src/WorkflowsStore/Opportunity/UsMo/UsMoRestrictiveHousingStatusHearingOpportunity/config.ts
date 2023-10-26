@@ -37,6 +37,7 @@ export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig = {
     opportunityText: "Restrictive Housing Status Hearing",
     callToAction: "Conduct a Restrictive Housing Status Hearing",
   }),
+  firestoreCollection: "US_MO-restrictiveHousingStatusHearingReferrals",
   customTabOrder: [
     "Overdue For Hearing",
     "Missing Review Date",

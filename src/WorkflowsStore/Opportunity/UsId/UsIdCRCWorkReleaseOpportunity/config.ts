@@ -35,6 +35,7 @@ export const usIdCRCWorkReleaseConfig: OpportunityConfig = {
     callToAction:
       "Review residents who may be eligible for work-release to a CRC and start their paperwork in ATLAS.",
   }),
+  firestoreCollection: "US_ID-CRCWorkReleaseReferrals",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 90,

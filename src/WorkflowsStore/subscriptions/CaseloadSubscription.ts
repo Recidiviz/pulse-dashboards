@@ -23,7 +23,8 @@ import {
   where,
 } from "firebase/firestore";
 
-import { CollectionName, collectionNames } from "../../FirestoreStore";
+import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
+import type { FirestoreCollectionKey } from "../../FirestoreStore/types";
 import { WorkflowsStore } from "../WorkflowsStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 
@@ -38,12 +39,12 @@ export class CaseloadSubscription<
 
   constructor(
     workflowsStore: WorkflowsStore,
-    collectionKey: CollectionName,
+    firestoreCollectionKey: FirestoreCollectionKey,
     personType: RecordType["personType"]
   ) {
     super();
     this.workflowsStore = workflowsStore;
-    this.collectionId = collectionNames[collectionKey];
+    this.collectionId = FIRESTORE_COLLECTIONS_MAP[firestoreCollectionKey];
     this.personType = personType;
   }
 

@@ -40,4 +40,5 @@ export const usMiClassificationReviewConfig: OpportunityConfig = {
     callToAction:
       "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",
   }),
+  firestoreCollection: "US_MI-classificationReviewReferrals",
 };

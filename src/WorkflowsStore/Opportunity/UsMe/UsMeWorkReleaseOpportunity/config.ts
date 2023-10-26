@@ -37,6 +37,7 @@ export const usMeWorkReleaseConfig: OpportunityConfig = {
       "Search for case managers above to review residents on their caseload who are approaching " +
       "Work Release eligibility and complete application paperwork.",
   }),
+  firestoreCollection: "US_ME-workReleaseReferrals",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 180,

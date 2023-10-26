@@ -52,16 +52,18 @@ import { UserAppMetadata } from "../RootStore/types";
 import UserStore from "../RootStore/UserStore";
 import { isDemoMode } from "../utils/isDemoMode";
 import { isOfflineMode } from "../utils/isOfflineMode";
-import { OpportunityType, UsTnExpirationOpportunity } from "../WorkflowsStore";
+import { UsTnExpirationOpportunity } from "../WorkflowsStore";
 import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
+import { OpportunityType } from "../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { SupervisionTaskType } from "../WorkflowsStore/Task/types";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
+import { FIRESTORE_COLLECTIONS_MAP } from "./constants";
 import {
   AutoSnoozeUpdate,
   ClientRecord,
-  collectionNames,
   ContactMethodType,
   ExternalSystemRequestStatus,
+  FirestoreCollectionKey,
   ManualSnoozeUpdate,
   MilestonesMessage,
   OpportunityUpdateWithForm,
@@ -89,8 +91,8 @@ function getFirestoreProjectId() {
 const apiKey = process.env.REACT_APP_FIREBASE_API_KEY;
 
 if (isDemoMode()) {
-  Object.entries(collectionNames).forEach(([key, value]) => {
-    collectionNames[key as keyof typeof collectionNames] = `DEMO_${value}`;
+  Object.entries(FIRESTORE_COLLECTIONS_MAP).forEach(([key, value]) => {
+    FIRESTORE_COLLECTIONS_MAP[key as FirestoreCollectionKey] = `DEMO_${value}`;
   });
 }
 
@@ -171,7 +173,7 @@ export default class FirestoreStore {
     // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
     const results = await getDocs(
       query(
-        collection(this.db, collectionNames.clients),
+        collection(this.db, FIRESTORE_COLLECTIONS_MAP.clients),
         where("pseudonymizedId", "==", clientId),
         where("stateCode", "==", stateCode),
         limit(1)
@@ -194,7 +196,7 @@ export default class FirestoreStore {
     // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
     const results = await getDocs(
       query(
-        collection(this.db, collectionNames.residents),
+        collection(this.db, FIRESTORE_COLLECTIONS_MAP.residents),
         where("pseudonymizedId", "==", residentId),
         where("stateCode", "==", stateCode),
         limit(1)
@@ -269,12 +271,16 @@ export default class FirestoreStore {
       | Record<PersonUpdateType, string | ContactMethodType>
       | Record<"stateCode", string>
   ) {
-    const docRef = doc(this.db, collectionNames.clientUpdatesV2, `${recordId}`);
+    const docRef = doc(
+      this.db,
+      FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
+      `${recordId}`
+    );
 
     // This is the only place an update should be made to `clientUpdatesV2` without using
     // the `updateClientUpdatesV2` method
     return this.updateDocument(
-      collectionNames.clientUpdatesV2,
+      FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
       recordId,
       docRef,
       { ...update }
@@ -288,8 +294,8 @@ export default class FirestoreStore {
   ) {
     const taskDocRef = doc(
       this.db,
-      collectionNames.clientUpdatesV2,
-      `${recordId}/${collectionNames.taskUpdates}/supervision`
+      FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
+      `${recordId}/${FIRESTORE_COLLECTIONS_MAP.taskUpdates}/supervision`
     );
 
     return this.updateClientUpdatesV2Document(taskType, recordId, taskDocRef, {
@@ -304,12 +310,12 @@ export default class FirestoreStore {
     const dateKey = `milestones_${getMonthYearFromDate(startOfToday())}`;
     const taskDocRef = doc(
       this.db,
-      collectionNames.clientUpdatesV2,
-      `${recordId}/${collectionNames.milestonesMessages}/${dateKey}`
+      FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
+      `${recordId}/${FIRESTORE_COLLECTIONS_MAP.milestonesMessages}/${dateKey}`
     );
 
     return this.updateClientUpdatesV2Document(
-      collectionNames.milestonesMessages,
+      FIRESTORE_COLLECTIONS_MAP.milestonesMessages,
       recordId,
       taskDocRef,
       update
@@ -325,8 +331,8 @@ export default class FirestoreStore {
   ) {
     const opportunityDocRef = doc(
       this.db,
-      collectionNames.clientUpdatesV2,
-      `${recordId}/${collectionNames.clientOpportunityUpdates}/${opportunityType}`
+      FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
+      `${recordId}/${FIRESTORE_COLLECTIONS_MAP.clientOpportunityUpdates}/${opportunityType}`
     );
 
     return this.updateClientUpdatesV2Document(
@@ -434,9 +440,9 @@ export default class FirestoreStore {
     selectedSearchIds: string[]
   ): Promise<void> | undefined {
     return this.updateDocument(
-      collectionNames.userUpdates,
+      FIRESTORE_COLLECTIONS_MAP.userUpdates,
       userEmail,
-      doc(this.db, collectionNames.userUpdates, userEmail),
+      doc(this.db, FIRESTORE_COLLECTIONS_MAP.userUpdates, userEmail),
       {
         stateCode,
         selectedSearchIds,

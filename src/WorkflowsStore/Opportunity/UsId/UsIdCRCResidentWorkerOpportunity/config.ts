@@ -36,6 +36,7 @@ export const usIdCRCResidentWorkerConfig: OpportunityConfig = {
     callToAction:
       "Review residents who may be eligbile for transfer to a CRC and start their paperwork in ATLAS.",
   }),
+  firestoreCollection: "US_ID-CRCResidentWorkerReferrals",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 90,

@@ -26,7 +26,6 @@ import {
   OpportunityConfigMap,
   OpportunityType,
 } from "../OpportunityConfigs";
-import {} from "../types";
 
 export const ineligibleClientRecord: ClientRecord = {
   recordId: "us_xx_001",
@@ -68,6 +67,7 @@ export const mockUsXxOppConfig: OpportunityConfig = {
     callToAction:
       "Review these clients and complete their auto-generated TEPE Note.",
   }),
+  firestoreCollection: "US_XX_mockOpportunity",
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfig = {

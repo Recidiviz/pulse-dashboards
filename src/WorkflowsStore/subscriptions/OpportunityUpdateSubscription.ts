@@ -17,11 +17,9 @@
 
 import { doc, DocumentData, DocumentReference } from "firebase/firestore";
 
-import FirestoreStore, {
-  collectionNames,
-  OpportunityUpdate,
-} from "../../FirestoreStore";
-import { OpportunityType } from "..";
+import FirestoreStore, { OpportunityUpdate } from "../../FirestoreStore";
+import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
+import { OpportunityType } from "../Opportunity/OpportunityConfigs";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
 import { UpdateFunction } from "./types";
 
@@ -39,11 +37,11 @@ export class OpportunityUpdateSubscription<
     opportunityType: OpportunityType,
     updateOpportunityEligibility: UpdateFunction<DocumentData>
   ) {
-    const collectionName = "clientUpdatesV2";
+    const firestoreCollectionKey = "clientUpdatesV2";
 
     super(
       firestoreStore,
-      collectionName,
+      firestoreCollectionKey,
       clientRecordId,
       undefined, // transformFn
       undefined, // validateFn
@@ -52,9 +50,9 @@ export class OpportunityUpdateSubscription<
 
     this.dataSource = doc(
       firestoreStore.db,
-      collectionNames[collectionName],
+      FIRESTORE_COLLECTIONS_MAP[firestoreCollectionKey],
       clientRecordId,
-      collectionNames.clientOpportunityUpdates,
+      FIRESTORE_COLLECTIONS_MAP.clientOpportunityUpdates,
       opportunityType
     ) as DocumentReference<RecordType>;
 

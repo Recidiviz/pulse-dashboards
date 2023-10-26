@@ -17,10 +17,8 @@
 
 import { doc, DocumentReference } from "firebase/firestore";
 
-import FirestoreStore, {
-  collectionNames,
-  SupervisionTaskUpdate,
-} from "../../FirestoreStore";
+import FirestoreStore, { SupervisionTaskUpdate } from "../../FirestoreStore";
+import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
 
 export class SupervisionTaskUpdateSubscription<
@@ -30,14 +28,14 @@ export class SupervisionTaskUpdateSubscription<
   readonly dataSource: DocumentReference<RecordType>;
 
   constructor(firestoreStore: FirestoreStore, recordId: string) {
-    const collectionName = "clientUpdatesV2";
-    super(firestoreStore, collectionName, recordId);
+    const firestoreCollectionKey = "clientUpdatesV2";
+    super(firestoreStore, firestoreCollectionKey, recordId);
 
     this.dataSource = doc(
       firestoreStore.db,
-      collectionNames[collectionName],
+      FIRESTORE_COLLECTIONS_MAP[firestoreCollectionKey],
       recordId,
-      collectionNames.taskUpdates,
+      FIRESTORE_COLLECTIONS_MAP.taskUpdates,
       "supervision"
     ) as DocumentReference<RecordType>;
   }

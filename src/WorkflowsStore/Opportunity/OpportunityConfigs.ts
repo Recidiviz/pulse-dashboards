@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
 import { FeatureVariant, TenantId } from "../../RootStore/types";
 import { Opportunity, OpportunityTab } from "./types";
 import { usCaSupervisionLevelDowngradeConfig as usCaSupervisionLevelDowngrade } from "./UsCa/UsCaSupervisionLevelDowngradeOpportunity/config";
@@ -93,6 +92,7 @@ export type OpportunityConfig = {
   urlSection: string;
   featureVariant?: FeatureVariant;
   label: string;
+  firestoreCollection: string;
   snooze?: SnoozeConfig;
   customTabOrder?: OpportunityTab[];
   initialHeader?: string;

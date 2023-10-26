@@ -34,6 +34,7 @@ export const usTnCustodyLevelDowngradeConfig: OpportunityConfig = {
     opportunityText: "custody level downgrade",
     callToAction: "Review and update custody levels.",
   }),
+  firestoreCollection: "US_TN-custodyLevelDowngradeReferrals",
   snooze: {
     defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
   },

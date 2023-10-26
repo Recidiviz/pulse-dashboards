@@ -17,7 +17,8 @@
 
 import { collection, Query, query, where } from "firebase/firestore";
 
-import { collectionNames, LocationRecord } from "../../FirestoreStore";
+import { LocationRecord } from "../../FirestoreStore";
+import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
 import { RootStore } from "../../RootStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 
@@ -40,7 +41,10 @@ export class LocationSubscription extends FirestoreQuerySubscription<LocationRec
     ];
 
     return query(
-      collection(this.rootStore.firestoreStore.db, collectionNames.locations),
+      collection(
+        this.rootStore.firestoreStore.db,
+        FIRESTORE_COLLECTIONS_MAP.locations
+      ),
       ...constraints
     );
   }

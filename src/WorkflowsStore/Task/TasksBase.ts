@@ -21,7 +21,8 @@ import { action, computed, makeObservable } from "mobx";
 
 import { SnoozeTaskConfig } from "../../core/models/types";
 import { TaskValidationError } from "../../errors";
-import { CollectionName, SupervisionTaskUpdate } from "../../FirestoreStore";
+import { SupervisionTaskUpdate } from "../../FirestoreStore";
+import { FirestoreCollectionKey } from "../../FirestoreStore/types";
 import { RootStore } from "../../RootStore";
 import tenants from "../../tenants";
 import {
@@ -61,7 +62,7 @@ export abstract class TasksBase<
   constructor(
     rootStore: RootStore,
     person: PersonType,
-    collectionName: CollectionName,
+    firestoreCollectionKey: FirestoreCollectionKey,
     validateRecord?: ValidateFunction<TaskRecord>
   ) {
     makeObservable(this, {
@@ -79,7 +80,7 @@ export abstract class TasksBase<
 
     this.taskSubscription = new CollectionDocumentSubscription<TaskRecord>(
       this.rootStore.firestoreStore,
-      collectionName,
+      firestoreCollectionKey,
       person.recordId,
       undefined,
       validateRecord

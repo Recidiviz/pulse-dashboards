@@ -19,7 +19,7 @@ import { UsMeWorkReleaseReferralRecordRaw } from "../../src/WorkflowsStore/Oppor
 import { FixtureData } from "../workflowsFixtures";
 import { externalIdFunc } from "./utils";
 
-export const usMeWorkReleaseFixture: FixtureData<UsMeWorkReleaseReferralRecordRaw> =
+export const usMeWorkReleaseReferrals: FixtureData<UsMeWorkReleaseReferralRecordRaw> =
   {
     data: [
       {

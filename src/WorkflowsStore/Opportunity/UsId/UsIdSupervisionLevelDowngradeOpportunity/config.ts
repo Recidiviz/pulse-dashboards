@@ -34,6 +34,7 @@ export const usIdSupervisionLevelDowngradeConfig: OpportunityConfig = {
       "supervised at a level that does not match their latest risk score",
     callToAction: "Change their supervision level in Atlas",
   }),
+  firestoreCollection: "US_ID-supervisionLevelDowngrade",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 90,

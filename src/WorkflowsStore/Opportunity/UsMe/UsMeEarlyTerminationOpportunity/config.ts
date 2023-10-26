@@ -36,6 +36,7 @@ export const usMeEarlyTerminationConfig: OpportunityConfig = {
     callToAction:
       "Search for officers above to review clients who may be good candidates for early termination from probation.",
   }),
+  firestoreCollection: "US_ME-earlyTerminationReferrals",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 180,

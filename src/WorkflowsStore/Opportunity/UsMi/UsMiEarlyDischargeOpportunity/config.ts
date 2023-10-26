@@ -34,6 +34,7 @@ export const usMiEarlyDischargeConfig: OpportunityConfig = {
     callToAction:
       "Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",
   }),
+  firestoreCollection: "US_MI-earlyDischargeReferrals",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 90,

@@ -20,8 +20,11 @@
 import { Firestore } from "@google-cloud/firestore";
 import fs from "fs";
 
-import { collectionNames } from "../src/FirestoreStore";
-import { CollectionName, MilestonesMessage } from "../src/FirestoreStore/types";
+import { FIRESTORE_COLLECTIONS_MAP } from "../src/FirestoreStore/constants";
+import {
+  FirestoreCollectionKey,
+  MilestonesMessage,
+} from "../src/FirestoreStore/types";
 import { getMonthYearFromDate } from "../src/WorkflowsStore/utils";
 import { deleteCollection } from "./firestoreUtils";
 import { clientsData } from "./fixtures/clients";
@@ -40,7 +43,7 @@ import { usIdSupervisionTasksData } from "./fixtures/usIdSupervisionTasks";
 import { usMeEarlyTerminationReferralsFixture } from "./fixtures/usMeEarlyTerminationReferrals";
 import { usMeFurloughReleaseFixture } from "./fixtures/UsMeFurloughReleaseReferrals";
 import { usMeSCCPFixture } from "./fixtures/usMeSCCPReferrals";
-import { usMeWorkReleaseFixture } from "./fixtures/usMeWorkReleaseReferrals";
+import { usMeWorkReleaseReferrals } from "./fixtures/usMeWorkReleaseReferrals";
 import { UsMiClassificationReviewReferralsFixture } from "./fixtures/usMiClassificationReviewReferrals";
 import { usMiEarlyDischargeReferralsFixture } from "./fixtures/usMiEarlyDischargeReferrals";
 import { usMiMinimumTelephoneReportingReferralsFixture } from "./fixtures/usMiMinimumTelephoneReportingReferrals";
@@ -73,7 +76,7 @@ console.log(fsSettings);
 
 const db = new Firestore(fsSettings);
 
-const OPPORTUNITIES_WITH_JSON_FIXTURES: CollectionName[] = [
+const OPPORTUNITIES_WITH_JSON_FIXTURES: FirestoreCollectionKey[] = [
   "LSUReferrals",
   "earnedDischargeReferrals",
 ];
@@ -87,7 +90,10 @@ type Logger = {
   (...data: any[]): void;
 };
 
-const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
+// TODO: Move to OpportunityConfig
+const FIXTURES_TO_LOAD: Partial<
+  Record<FirestoreCollectionKey, FixtureData<any>>
+> = {
   clients: clientsData,
   residents: residentsData,
   staff: staffData,
@@ -102,7 +108,7 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
   usIdExpandedCRCReferrals,
   usIdSupervisionLevelDowngradeReferrals,
   usMeSCCPReferrals: usMeSCCPFixture,
-  usMeWorkReleaseReferrals: usMeWorkReleaseFixture,
+  usMeWorkReleaseReferrals,
   usMiEarlyDischargeReferrals: usMiEarlyDischargeReferralsFixture,
   usMiClassificationReviewReferrals: UsMiClassificationReviewReferralsFixture,
   usMiMinimumTelephoneReportingReferrals:
@@ -122,27 +128,27 @@ const FIXTURES_TO_LOAD: Partial<Record<CollectionName, FixtureData<any>>> = {
 // If we're writing to the real firestore, don't clobber the real data
 const collectionPrefix = FIREBASE_CREDENTIAL ? "DEMO" : null;
 
-function collectionName(c: keyof typeof collectionNames) {
+function generateCollectionName(c: FirestoreCollectionKey) {
   return collectionPrefix
-    ? `${collectionPrefix}_${collectionNames[c]}`
-    : collectionNames[c];
+    ? `${collectionPrefix}_${FIRESTORE_COLLECTIONS_MAP[c]}`
+    : FIRESTORE_COLLECTIONS_MAP[c];
 }
 
 export async function loadFixtures(logger: Logger): Promise<void> {
   for await (const [collStr, fixtureData] of Object.entries(FIXTURES_TO_LOAD)) {
-    const coll = collStr as CollectionName;
+    const coll = collStr as FirestoreCollectionKey;
     logger(`wiping existing ${coll} data ...`);
-    await deleteCollection(db, collectionName(coll));
+    await deleteCollection(db, generateCollectionName(coll));
 
     logger(`loading new ${coll} data...`);
     const bulkWriter = db.bulkWriter();
-
+    if (!fixtureData) throw new Error(`No fixture data for ${coll}`);
     // Iterate through each record
     fixtureData.data.forEach((record: any) => {
       const externalId = fixtureData.idFunc(record);
       bulkWriter.create(
         db
-          .collection(collectionName(coll))
+          .collection(generateCollectionName(coll))
           .doc(`${record.stateCode.toLowerCase()}_${externalId}`),
         record
       );
@@ -159,7 +165,7 @@ export async function loadOpportunityReferralFixtures(
 ): Promise<void> {
   for await (const opportunity of OPPORTUNITIES_WITH_JSON_FIXTURES) {
     logger(`wiping existing ${opportunity} referral data ...`);
-    await deleteCollection(db, collectionName(opportunity));
+    await deleteCollection(db, generateCollectionName(opportunity));
 
     logger(`loading new ${opportunity} referral data...`);
     const bulkWriter = db.bulkWriter();
@@ -173,7 +179,7 @@ export async function loadOpportunityReferralFixtures(
       const externalId = rawReferral.externalId ?? rawReferral.tdocId;
       bulkWriter.create(
         db
-          .collection(collectionName(opportunity))
+          .collection(generateCollectionName(opportunity))
           .doc(`${rawReferral.stateCode.toLowerCase()}_${externalId}`),
         rawReferral
       );
@@ -188,7 +194,7 @@ export async function loadOpportunityReferralFixtures(
 
 async function loadClientUpdatesV2(logger: Logger): Promise<void> {
   logger(`wiping existing clientUpdatesV2 data ...`);
-  await deleteCollection(db, collectionName("clientUpdatesV2"));
+  await deleteCollection(db, generateCollectionName("clientUpdatesV2"));
 
   const { milestonesMessages } = clientUpdatesV2Data;
 
@@ -200,9 +206,9 @@ async function loadClientUpdatesV2(logger: Logger): Promise<void> {
       const { externalId } = record;
       bulkWriter.create(
         db
-          .collection(collectionName("clientUpdatesV2"))
+          .collection(generateCollectionName("clientUpdatesV2"))
           .doc(externalId)
-          .collection(collectionName("milestonesMessages"))
+          .collection(generateCollectionName("milestonesMessages"))
           .doc(getMonthYearFromDate(new Date())),
         record
       );

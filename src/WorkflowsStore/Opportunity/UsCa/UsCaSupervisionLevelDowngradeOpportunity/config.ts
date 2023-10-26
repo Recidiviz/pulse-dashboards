@@ -35,4 +35,5 @@ export const usCaSupervisionLevelDowngradeConfig: OpportunityConfig = {
     callToAction:
       "Review clients who may be eligible for a Supervision Level Downgrade and complete the paperwork.",
   }),
+  firestoreCollection: "US_CA-supervisionLevelDowngrade",
 };

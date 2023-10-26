@@ -38,6 +38,7 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig = {
       "Review residents due for their annual reclassification " +
       "and update their custody level in TOMIS.",
   }),
+  firestoreCollection: "US_TN-annualReclassificationReferrals",
   snooze: {
     defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
   },

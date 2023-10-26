@@ -38,6 +38,7 @@ export const usMeSCCPConfig: OpportunityConfig = {
       "Search for case managers above to review residents in their unit who are approaching " +
       "SCCP eligibility and complete application paperwork.",
   }),
+  firestoreCollection: "US_ME-SCCPReferrals",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 180,

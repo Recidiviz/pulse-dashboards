@@ -33,6 +33,7 @@ export const usIdLSUConfig: OpportunityConfig = {
     opportunityText: `Limited Supervision Unit`,
     callToAction: `Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.`,
   }),
+  firestoreCollection: "US_ID-LSUReferrals",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 90,

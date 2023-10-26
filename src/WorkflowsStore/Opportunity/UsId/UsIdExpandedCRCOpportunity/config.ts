@@ -36,6 +36,7 @@ export const usIdExpandedCRCConfig: OpportunityConfig = {
     callToAction:
       "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
   }),
+  firestoreCollection: "US_ID-expandedCRCReferrals",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 30,

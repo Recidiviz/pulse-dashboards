@@ -35,6 +35,7 @@ export const usMeFurloughReleaseConfig: OpportunityConfig = {
     callToAction:
       "Search for case managers above to review residents on their caseload who are approaching standard furlough release eligibility and complete application paperwork.",
   }),
+  firestoreCollection: "US_ME-furloughReleaseReferrals",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 180,

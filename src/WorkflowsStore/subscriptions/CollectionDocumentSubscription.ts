@@ -17,10 +17,9 @@
 
 import { doc, DocumentData, DocumentReference } from "firebase/firestore";
 
-import FirestoreStore, {
-  CollectionName,
-  collectionNames,
-} from "../../FirestoreStore";
+import FirestoreStore from "../../FirestoreStore";
+import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
+import type { FirestoreCollectionKey } from "../../FirestoreStore/types";
 import { FirestoreDocumentSubscription } from "./FirestoreDocumentSubscription";
 import { TransformFunction, UpdateFunction, ValidateFunction } from "./types";
 
@@ -36,7 +35,7 @@ export class CollectionDocumentSubscription<
 
   constructor(
     firestoreStore: FirestoreStore,
-    collectionName: CollectionName,
+    firestoreCollectionKey: FirestoreCollectionKey,
     recordId: string,
     transformFn?: TransformFunction<RecordType>,
     validateFn?: ValidateFunction<RecordType>,
@@ -46,7 +45,7 @@ export class CollectionDocumentSubscription<
 
     this.dataSource = doc(
       firestoreStore.db,
-      collectionNames[collectionName],
+      FIRESTORE_COLLECTIONS_MAP[firestoreCollectionKey],
       recordId
     );
   }

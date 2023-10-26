@@ -33,6 +33,7 @@ export const usIdEarnedDischargeConfig: OpportunityConfig = {
     opportunityText: `earned discharge`,
     callToAction: `Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.`,
   }),
+  firestoreCollection: "US_ID-earnedDischargeReferrals",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 90,

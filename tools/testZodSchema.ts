@@ -20,16 +20,21 @@ import { ArgumentParser } from "argparse";
 import prompts from "prompts";
 import { z } from "zod";
 
-import { collectionNames } from "../src/FirestoreStore";
-import { usIdExpandedCRCSchema } from "../src/WorkflowsStore";
+import { FIRESTORE_COLLECTIONS_MAP } from "../src/FirestoreStore/constants";
+import {
+  FirestoreCollectionKey,
+  FirestoreOpportunityReferrals,
+} from "../src/FirestoreStore/types";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
 import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCa/UsCaSupervisionLevelDowngradeOpportunity/UsCaSupervisionLevelDowngradeReferralRecord";
 import { usIdCRCResidentWorkerSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCResidentWorkerOpportunity";
 import { usIdCRCWorkReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCWorkReleaseOpportunity";
+import { usIdExpandedCRCSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdExpandedCRCOpportunity/UsIdExpandedCRCReferralRecord";
 import { usIdPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdPastFTRDOpportunity/UsIdPastFTRDReferralRecord";
 import { usMeEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeEarlyTerminationOpportunity/UsMeEarlyTerminationReferralRecord";
 import { usMeFurloughReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeFurloughReleaseOpportunity/UsMeFurloughReleaseReferralRecord";
 import { usMeSCCPSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeSCCPOpportunity/UsMeSCCPReferralRecord";
+import { usMeWorkReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeWorkReleaseOpportunity/UsMeWorkReleaseReferralRecord";
 import { usMiClassificationReviewSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiClassificationReviewOpportunity/UsMiClassificationReviewReferralRecord";
 import { usMiEarlyDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiEarlyDischargeOpportunity/UsMiEarlyDischargeReferralRecord";
 import { usMiMinimumTelephoneReportingSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiMinimumTelephoneReportingOpportunity/UsMiMinimumTelephoneReportingReferralRecord";
@@ -42,8 +47,6 @@ import { usTnAnnualReclassificationReviewSchema } from "../src/WorkflowsStore/Op
 import { usTnCustodyLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnCustodyLevelDowngradeOpportunity/UsTnCustodyLevelDowngradeReferralRecord";
 import { usTnExpirationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnExpirationOpportunity/UsTnExpirationReferralRecord";
 import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSupervisionLevelDowngradeOpportunity/UsTnSupervisionLevelDowngradeReferralRecord";
-
-type CollectionName = keyof typeof collectionNames;
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
 
@@ -67,7 +70,8 @@ function getDb() {
 
 const db = getDb();
 
-const SCHEMAS = {
+// TODO: Add to the config
+const SCHEMAS: Partial<Record<FirestoreCollectionKey, z.ZodTypeAny>> = {
   compliantReportingReferrals: compliantReportingSchema,
   earlyTerminationReferrals: usNdEarlyTerminationSchema,
   pastFTRDReferrals: usIdPastFTRDSchema,
@@ -96,14 +100,18 @@ const SCHEMAS = {
   usMiEarlyDischargeReferrals: usMiEarlyDischargeSchema,
   usMiMinimumTelephoneReportingReferrals: usMiMinimumTelephoneReportingSchema,
   usTnAnnualReclassificationReferrals: usTnAnnualReclassificationReviewSchema,
-} satisfies Partial<Record<CollectionName, z.ZodTypeAny>>;
+  usMeWorkReleaseReferrals: usMeWorkReleaseSchema,
+};
 
 async function testCollection(
-  collectionName: keyof typeof SCHEMAS,
+  opportunityReferrals: FirestoreOpportunityReferrals,
   limit?: number
 ) {
-  const schema = SCHEMAS[collectionName];
-  const coll = db.collection(collectionNames[collectionName]);
+  const schema = SCHEMAS[opportunityReferrals];
+  if (!schema) {
+    throw new Error(`No schema found for ${opportunityReferrals}`);
+  }
+  const coll = db.collection(FIRESTORE_COLLECTIONS_MAP[opportunityReferrals]);
   const query = limit ? coll.limit(limit) : coll;
 
   let succeeded = 0;
@@ -122,11 +130,11 @@ async function testCollection(
 }
 
 async function automatic() {
-  Object.keys(SCHEMAS).forEach(async (collection) => {
-    const collectionName = collection as keyof typeof SCHEMAS;
-    const { failures, ...result } = await testCollection(collectionName);
+  Object.keys(SCHEMAS).forEach(async (schemaKey) => {
+    const opportunityReferrals = schemaKey as FirestoreOpportunityReferrals;
+    const { failures, ...result } = await testCollection(opportunityReferrals);
     // don't print failures so we don't leave PII in the github logs
-    console.log(collectionName, result);
+    console.log(opportunityReferrals, result);
     if (result.failed > 0) process.exit(1);
   });
 }
@@ -161,7 +169,7 @@ async function manual(args: Args) {
   }
 
   const { failures, ...result } = await testCollection(
-    collection as keyof typeof SCHEMAS,
+    collection as FirestoreOpportunityReferrals,
     limit
   );
 

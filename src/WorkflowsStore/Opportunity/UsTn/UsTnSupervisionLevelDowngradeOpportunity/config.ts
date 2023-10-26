@@ -34,6 +34,7 @@ export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig = {
       "supervised at a higher level than their latest risk score",
     callToAction: "Change their supervision level in TOMIS.",
   }),
+  firestoreCollection: "US_TN-supervisionLevelDowngrade",
   snooze: {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 90,
