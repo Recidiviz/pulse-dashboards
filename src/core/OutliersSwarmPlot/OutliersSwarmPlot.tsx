@@ -15,138 +15,61 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { autoUpdate, flip, offset, useFloating } from "@floating-ui/react-dom";
-import { spacing } from "@recidiviz/design-system";
-import { ascending } from "d3-array";
+import { Loading, spacing } from "@recidiviz/design-system";
 import { format } from "d3-format";
 import { scaleLinear } from "d3-scale";
 import { observer } from "mobx-react-lite";
 import { Fragment } from "react";
-import { SizeMeProps, withSize } from "react-sizeme";
 
-import { MetricWithConfig } from "../../OutliersStore/presenters/types";
-import { calculateSwarm } from "./calculateSwarm";
 import {
-  GOAL_COLORS,
-  HIGHLIGHT_DOT_RADIUS,
   MARGIN,
-  MAX_ASPECT_RATIO,
   SWARM_AREA_BOTTOM_OFFSET,
-  SWARM_AREA_TOP_OFFSET,
-  SWARM_DOT_RADIUS,
-  TARGET_LINE_WIDTH,
-} from "./constants";
+} from "../../OutliersStore/presenters/SwarmPresenter/constants";
+import { TARGET_LINE_WIDTH } from "./constants";
+import { HighlightedPoint } from "./HighlightedPoint";
 import {
   AxisLabel,
   AxisSpine,
-  HIGHLIGHT_MARK_STROKE,
-  HighlightLabel,
   Plot,
   PlotWrapper,
-  RateHighlightMark,
   TargetLabel,
   TargetLine,
   TickLine,
 } from "./styles";
 import { SwarmedCircleGroup } from "./SwarmedCircleGroup";
-import { InputPoint } from "./types";
+import { OutliersSwarmPlotWrappedProps } from "./types";
+import { formatTargetAndHighlight } from "./utils";
 
 const formatTickLabel = format(".0%");
-const formatTargetAndHighlight = format(".1%");
 
-function prepareChartData(metric: MetricWithConfig, width: number) {
-  const currentMetricData = metric.currentPeriodData;
-
-  const allValues = [
-    ...metric.benchmark.latestPeriodValues.map((o) => o.value),
-    currentMetricData.metricRate,
-  ].sort(ascending);
-
-  // round extrema to the nearest whole percentage point
-  const min = Math.floor(allValues[0] * 100) / 100;
-  const max = Math.ceil(allValues.slice(-1)[0] * 100) / 100;
-
-  // this is the function that converts rates to pixel values on the X axis
-  const xScale = scaleLinear()
-    .domain([min, max])
-    .range([MARGIN.left, width - MARGIN.right]);
-
-  // value we will use to contstrain the height of the chart
-  const maxSwarmHeight =
-    width * MAX_ASPECT_RATIO -
-    (SWARM_AREA_TOP_OFFSET + SWARM_AREA_BOTTOM_OFFSET);
-
-  const { swarmPoints, swarmSpread } = calculateSwarm(
-    [
-      ...metric.benchmark.latestPeriodValues.map(
-        ({ value, targetStatus }): InputPoint => ({
-          position: xScale(value),
-          targetStatus,
-          radius: SWARM_DOT_RADIUS,
-          opacity: 0.15,
-        })
-      ),
-      {
-        position: xScale(currentMetricData.metricRate),
-        // when calculating the swarm positions, give this point some extra breathing room
-        radius: HIGHLIGHT_DOT_RADIUS + HIGHLIGHT_MARK_STROKE.width,
-        opacity: 1,
-        targetStatus: currentMetricData.status,
-        highlight: true,
+export const OutliersSwarmPlotWrapped = observer(
+  function OutliersSwarmPlotWrapped({
+    presenter,
+  }: OutliersSwarmPlotWrappedProps) {
+    const {
+      width,
+      chartData,
+      isLoading,
+      metric: {
+        currentPeriodData: currentMetricData,
+        benchmark: { currentPeriodTarget: targetRate },
       },
-    ],
-    maxSwarmHeight
-  );
+    } = presenter;
 
-  // round off value to avoid a fractional pixel height
-  const chartHeight = Math.ceil(
-    SWARM_AREA_TOP_OFFSET + SWARM_AREA_BOTTOM_OFFSET + swarmSpread
-  );
+    if (isLoading) return <Loading />;
 
-  // swarm positions are relative to vertical center, so the layout will need this
-  const centerOfContentArea = SWARM_AREA_TOP_OFFSET + swarmSpread / 2;
-
-  // screen reader label, for accessibility
-  const chartLabel = `Swarm plot of all ${
-    metric.config.bodyDisplayName
-  }s in the state for ${
-    metric.benchmark.caseloadType
-  } caseloads, highlighting a value of ${formatTargetAndHighlight(
-    currentMetricData.metricRate
-  )}, which is far worse than the statewide rate of ${formatTargetAndHighlight(
-    metric.benchmark.currentPeriodTarget
-  )}. Other values in the chart range from ${formatTickLabel(
-    min
-  )} to ${formatTickLabel(max)}.`;
-
-  return { centerOfContentArea, chartHeight, chartLabel, swarmPoints, xScale };
-}
-
-// recalculating the swarm may be expensive so we throttle it a bit on resize
-const withSizeHOC = withSize({ refreshRate: 128 });
-
-type OutliersSwarmPlotProps = {
-  metric: MetricWithConfig;
-} & SizeMeProps;
-
-export const OutliersSwarmPlot = withSizeHOC(
-  observer(function OutliersSwarmPlot({
-    metric,
-    size,
-  }: OutliersSwarmPlotProps) {
-    const currentMetricData = metric.currentPeriodData;
-    // extract some nested values from props, for convenience
-    const targetRate = metric.benchmark.currentPeriodTarget;
-    // should always be defined in practice because we have not disabled the sizeme placeholder
-    const width = size.width ?? 0;
+    if (!chartData) return null;
 
     const {
       centerOfContentArea,
       chartHeight,
       chartLabel,
       swarmPoints,
-      xScale,
-    } = prepareChartData(metric, width);
+      scaleDomain,
+      scaleRange,
+    } = chartData;
+
+    const xScale = scaleLinear().domain(scaleDomain).range(scaleRange);
 
     const axisPositions = {
       targetStart: MARGIN.top,
@@ -159,13 +82,6 @@ export const OutliersSwarmPlot = withSizeHOC(
       max: width - MARGIN.right,
       target: xScale(targetRate),
     };
-
-    const highlightLabelProps = useFloating({
-      placement: "right",
-      middleware: [flip(), offset(5)],
-      open: true,
-      whileElementsMounted: autoUpdate,
-    });
 
     return (
       <PlotWrapper role="img" aria-label={chartLabel}>
@@ -219,24 +135,15 @@ export const OutliersSwarmPlot = withSizeHOC(
           />
 
           {/* highlighted officer */}
-          <g transform={`translate(0 ${centerOfContentArea})`}>
-            <RateHighlightMark
-              r={HIGHLIGHT_DOT_RADIUS}
-              // swarm is calculated such that the highlighted officer will be on the center line,
-              // so no Y offset is required here
-              cx={xScale(currentMetricData.metricRate)}
-              fill={GOAL_COLORS[currentMetricData.status]}
-              ref={highlightLabelProps.refs.setReference}
-            />
+          <g
+            transform={`translate(${xScale(
+              currentMetricData.metricRate
+            )} ${centerOfContentArea})`}
+          >
+            <HighlightedPoint currentMetricData={currentMetricData} />
           </g>
         </Plot>
-        <HighlightLabel
-          ref={highlightLabelProps.refs.setFloating}
-          style={highlightLabelProps.floatingStyles}
-        >
-          {formatTargetAndHighlight(currentMetricData.metricRate)}
-        </HighlightLabel>
       </PlotWrapper>
     );
-  })
+  }
 );

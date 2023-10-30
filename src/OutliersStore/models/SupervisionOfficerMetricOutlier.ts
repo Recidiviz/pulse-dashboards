@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { ascending } from "d3-array";
+import { ValuesType } from "utility-types";
 import { z } from "zod";
 
 import { dateStringSchema, targetStatusSchema } from "./schemaHelpers";
@@ -38,4 +39,8 @@ export type SupervisionOfficerMetricOutlier = z.infer<
 >;
 export type RawSupervisionOfficerMetricOutlier = z.input<
   typeof supervisionOfficerMetricOutlierSchema
+>;
+
+export type RateDatapoint = ValuesType<
+  SupervisionOfficerMetricOutlier["statusesOverTime"]
 >;

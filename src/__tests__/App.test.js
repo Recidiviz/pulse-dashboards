@@ -54,6 +54,7 @@ jest.mock("../core/PageVitals");
 jest.mock("../core/PageSystem");
 jest.mock("../core/PageImpact");
 jest.mock("../core/PageOutliers");
+jest.mock("../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker");
 
 describe("App tests", () => {
   const metadataField = `${METADATA_NAMESPACE}app_metadata`;

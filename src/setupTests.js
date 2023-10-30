@@ -18,6 +18,7 @@ import "@testing-library/jest-dom/extend-expect";
 import "@testing-library/react-hooks/dont-cleanup-after-each";
 import "jest-canvas-mock";
 
+import { ResizeObserver } from "@juggle/resize-observer";
 import { cleanup } from "@testing-library/react";
 import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
 import { configure } from "enzyme";
@@ -66,3 +67,5 @@ window.analytics = {
 window.scrollTo = () => {};
 
 window.prompt = () => {};
+
+window.ResizeObserver = ResizeObserver;

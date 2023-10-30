@@ -15,35 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { SwarmPoint } from "../../OutliersStore/presenters/SwarmPresenter/types";
-import { GOAL_COLORS } from "./constants";
+import { TargetStatus } from "../../models/schemaHelpers";
+import { MetricWithConfig } from "../types";
 
-type SwarmedCircleGroupProps = JSX.IntrinsicElements["g"] & {
-  swarmPoints: SwarmPoint[];
+export type ScaleParameter = [number, number];
+
+export type InputPoint = {
+  position: number;
+  radius: number;
+  targetStatus: TargetStatus;
+  opacity: number;
+  highlight?: boolean;
 };
 
-/**
- * renders an SVG `g` element containing `circle` elements in a swarmed layout
- */
-export function SwarmedCircleGroup({
-  swarmPoints,
-  ...gProps
-}: SwarmedCircleGroupProps) {
-  return (
-    <g {...gProps}>
-      {swarmPoints.map(
-        ({ targetStatus, radius, opacity, spreadOffset, position }, i) => (
-          <circle
-            // eslint-disable-next-line react/no-array-index-key
-            key={i}
-            r={radius}
-            cx={position}
-            cy={spreadOffset}
-            fill={GOAL_COLORS[targetStatus]}
-            fillOpacity={opacity}
-          />
-        )
-      )}
-    </g>
-  );
-}
+export type SwarmPoint = InputPoint & {
+  spreadOffset: number;
+};
+
+export type PreparedChartData = {
+  centerOfContentArea: number;
+  chartHeight: number;
+  chartLabel: string;
+  swarmPoints: SwarmPoint[];
+  scaleDomain: ScaleParameter;
+  scaleRange: ScaleParameter;
+};
+
+export type PrepareFn = (
+  metric: MetricWithConfig,
+  width: number
+) => PreparedChartData;
+
+export type SwarmLayout = {
+  prepareChartData: PrepareFn;
+};

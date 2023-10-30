@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,4 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { OutliersSwarmPlotContainer as OutliersSwarmPlot } from "./OutliersSwarmPlotContainer";
+import * as Comlink from "comlink";
+
+import { prepareChartData } from "./prepareChartData";
+import { SwarmLayout } from "./types";
+
+const preparer: SwarmLayout = { prepareChartData };
+
+Comlink.expose(preparer);

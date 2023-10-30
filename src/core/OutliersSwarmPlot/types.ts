@@ -15,16 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TargetStatus } from "../../OutliersStore/models/schemaHelpers";
+import { SwarmPresenter } from "../../OutliersStore/presenters/SwarmPresenter";
 
-export type InputPoint = {
-  position: number;
-  radius: number;
-  targetStatus: TargetStatus;
-  opacity: number;
-  highlight?: boolean;
-};
-
-export type SwarmPoint = InputPoint & {
-  spreadOffset: number;
+export type OutliersSwarmPlotWrappedProps = {
+  presenter: SwarmPresenter;
 };

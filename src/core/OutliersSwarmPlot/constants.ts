@@ -15,12 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { palette } from "@recidiviz/design-system";
 
 import { TargetStatus } from "../../OutliersStore/models/schemaHelpers";
 
-export const HIGHLIGHT_DOT_RADIUS = 10;
-export const SWARM_DOT_RADIUS = 6;
 export const TARGET_LINE_WIDTH = 3;
 
 // not part of the design system palette
@@ -30,16 +28,3 @@ export const GOAL_COLORS: Record<TargetStatus, string> = {
   FAR: palette.data.crimson1,
   MET: DATAVIZ_GRAY,
 };
-
-export const MARGIN = {
-  top: spacing.xxs,
-  bottom: spacing.xxs,
-  left: spacing.xxs + HIGHLIGHT_DOT_RADIUS,
-  right: spacing.xxs + HIGHLIGHT_DOT_RADIUS,
-};
-
-export const TARGET_LABEL_HEIGHT = 18;
-export const X_AXIS_HEIGHT = 16;
-export const SWARM_AREA_TOP_OFFSET = MARGIN.top + TARGET_LABEL_HEIGHT;
-export const SWARM_AREA_BOTTOM_OFFSET = MARGIN.bottom + X_AXIS_HEIGHT;
-export const MAX_ASPECT_RATIO = 0.5;

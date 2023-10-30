@@ -28,6 +28,9 @@ import OutliersSupervisorPage, {
 } from "../OutliersSupervisorPage";
 
 jest.mock("../../../components/StoreProvider");
+jest.mock(
+  "../../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker"
+);
 
 const useRootStoreMock = jest.mocked(useRootStore);
 

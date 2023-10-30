@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { targetStatusSchema } from "../../../OutliersStore/models/schemaHelpers";
+import { targetStatusSchema } from "../../../models/schemaHelpers";
 import { calculateSwarm } from "../calculateSwarm";
 import { InputPoint } from "../types";
 

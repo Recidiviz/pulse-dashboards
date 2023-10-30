@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,4 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { OutliersSwarmPlotContainer as OutliersSwarmPlot } from "./OutliersSwarmPlotContainer";
+import { spacing } from "@recidiviz/design-system";
+
+export const HIGHLIGHT_DOT_RADIUS = 10;
+export const HIGHLIGHT_MARK_STROKE_WIDTH = 2;
+export const SWARM_DOT_RADIUS = 6;
+
+export const MARGIN = {
+  top: spacing.xxs,
+  bottom: spacing.xxs,
+  left: spacing.xxs + HIGHLIGHT_DOT_RADIUS,
+  right: spacing.xxs + HIGHLIGHT_DOT_RADIUS,
+};
+
+const TARGET_LABEL_HEIGHT = 18;
+const X_AXIS_HEIGHT = 16;
+export const SWARM_AREA_TOP_OFFSET = MARGIN.top + TARGET_LABEL_HEIGHT;
+export const SWARM_AREA_BOTTOM_OFFSET = MARGIN.bottom + X_AXIS_HEIGHT;
+export const MAX_ASPECT_RATIO = 0.5;

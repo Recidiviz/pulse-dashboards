@@ -18,6 +18,7 @@ import { palette, typography } from "@recidiviz/design-system";
 import { Text } from "@visx/text";
 import styled from "styled-components/macro";
 
+import { HIGHLIGHT_MARK_STROKE_WIDTH } from "../../OutliersStore/presenters/SwarmPresenter/constants";
 import { TARGET_LINE_WIDTH } from "./constants";
 
 export const PlotWrapper = styled.div`
@@ -40,6 +41,7 @@ export const TargetLabel = styled(Text)`
 export const HighlightLabel = styled.div`
   ${typography.Sans18}
   color: ${palette.slate85};
+  pointer-events: none;
 `;
 
 export const AxisSpine = styled.line`
@@ -58,9 +60,7 @@ export const TickLine = styled.line`
   stroke-width: 1px;
 `;
 
-export const HIGHLIGHT_MARK_STROKE = { width: 2, color: palette.white };
-
 export const RateHighlightMark = styled.circle`
-  stroke: ${HIGHLIGHT_MARK_STROKE.color};
-  stroke-width: ${HIGHLIGHT_MARK_STROKE.width}px;
+  stroke: ${palette.white};
+  stroke-width: ${HIGHLIGHT_MARK_STROKE_WIDTH}px;
 `;

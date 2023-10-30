@@ -15,35 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { SwarmPoint } from "../../OutliersStore/presenters/SwarmPresenter/types";
-import { GOAL_COLORS } from "./constants";
+import * as Comlink from "comlink";
 
-type SwarmedCircleGroupProps = JSX.IntrinsicElements["g"] & {
-  swarmPoints: SwarmPoint[];
-};
+import { SwarmLayout } from "./types";
 
-/**
- * renders an SVG `g` element containing `circle` elements in a swarmed layout
- */
-export function SwarmedCircleGroup({
-  swarmPoints,
-  ...gProps
-}: SwarmedCircleGroupProps) {
-  return (
-    <g {...gProps}>
-      {swarmPoints.map(
-        ({ targetStatus, radius, opacity, spreadOffset, position }, i) => (
-          <circle
-            // eslint-disable-next-line react/no-array-index-key
-            key={i}
-            r={radius}
-            cx={position}
-            cy={spreadOffset}
-            fill={GOAL_COLORS[targetStatus]}
-            fillOpacity={opacity}
-          />
-        )
-      )}
-    </g>
+export function getSwarmLayoutWorker() {
+  return Comlink.wrap<SwarmLayout>(
+    new Worker(new URL("./swarmWorker", import.meta.url))
   );
 }

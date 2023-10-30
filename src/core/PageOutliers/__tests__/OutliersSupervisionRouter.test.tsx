@@ -23,6 +23,10 @@ import { OutliersStore } from "../../../OutliersStore/OutliersStore";
 import { outliersUrl } from "../../views";
 import { OutliersSupervisionRouter } from "../OutliersSupervisionRouter";
 
+jest.mock(
+  "../../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker"
+);
+
 function renderRouter(url?: string) {
   render(
     <StoreProvider>
