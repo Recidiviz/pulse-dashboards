@@ -191,7 +191,7 @@ const OutliersLinePlot: React.FC<OutliersLinePlotType> = ({ metric }) => {
                     : lineLegendIcon(palette.white80);
 
                   return (
-                    <div>
+                    <div key={`${data.value}_${data.date}`}>
                       {icon}
                       {formatPercent(data.value)}
                     </div>

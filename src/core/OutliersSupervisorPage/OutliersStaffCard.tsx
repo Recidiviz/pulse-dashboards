@@ -71,10 +71,10 @@ const CardBody = styled.div`
   width: 100%;
 `;
 
-const MetricSection = styled(Link)<{ hasBorder: boolean }>`
+const MetricSection = styled(Link)<{ $hasBorder: boolean }>`
   padding: ${rem(spacing.lg)};
-  border-top: ${({ hasBorder }) =>
-    hasBorder ? `1px solid ${palette.slate30}` : "none"};
+  border-top: ${({ $hasBorder }) =>
+    $hasBorder ? `1px solid ${palette.slate30}` : "none"};
   display: block;
 
   & + a {
@@ -140,7 +140,7 @@ const OutliersStaffCard: React.FC<OutliersStaffCardType> = ({
               metricId: metric.metricId,
             })}
             key={metric.metricId}
-            hasBorder={isTablet}
+            $hasBorder={isTablet}
           >
             <MetricHeader>
               <MetricTitle>{metric.metricId}</MetricTitle>

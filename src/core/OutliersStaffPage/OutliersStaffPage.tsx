@@ -50,9 +50,9 @@ import { OutliersSwarmPlot } from "../OutliersSwarmPlot";
 import { outliersUrl } from "../views";
 import { MetricEventsTable } from "./MetricEventsTable";
 
-const StyledTabs = styled(Tabs)<{ isMobile: boolean }>`
+const StyledTabs = styled(Tabs)<{ $isMobile: boolean }>`
   margin: 0 -1.5rem;
-  margin-bottom: -${({ isMobile }) => (isMobile ? 0 : rem(INTERCOM_HEIGHT))};
+  margin-bottom: -${({ $isMobile }) => ($isMobile ? 0 : rem(INTERCOM_HEIGHT))};
   display: flex;
   flex-direction: column;
   flex: auto;
@@ -68,12 +68,12 @@ const scrollShadowStyles = css`
   z-index: ${zindex.tooltip - 1};
 `;
 
-const StyledTabList = styled(TabList)<{ isMobile: boolean }>`
+const StyledTabList = styled(TabList)<{ $isMobile: boolean }>`
   display: block;
   padding: ${rem(spacing.md)} ${rem(spacing.sm)} 0;
   white-space: nowrap;
   overflow-x: auto;
-  ${({ isMobile }) => isMobile && `border-bottom: none`};
+  ${({ $isMobile }) => $isMobile && `border-bottom: none`};
 
   &::before {
     ${scrollShadowStyles}
@@ -83,7 +83,7 @@ const StyledTabList = styled(TabList)<{ isMobile: boolean }>`
       rgba(255, 255, 255, 0) 109.62%
     );
     left: 0;
-    opacity: ${({ isMobile }) => (isMobile ? 1 : 0)};
+    opacity: ${({ $isMobile }) => ($isMobile ? 1 : 0)};
   }
 
   &::after {
@@ -94,7 +94,7 @@ const StyledTabList = styled(TabList)<{ isMobile: boolean }>`
       rgba(255, 255, 255, 0) 109.62%
     );
     right: 0;
-    opacity: ${({ isMobile }) => (isMobile ? 1 : 0)};
+    opacity: ${({ $isMobile }) => ($isMobile ? 1 : 0)};
   }
 `;
 
@@ -173,13 +173,13 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   return (
     <OutliersPageLayout pageTitle={pageTitle} infoItems={infoItems}>
       <StyledTabs
-        isMobile={isMobile}
+        $isMobile={isMobile}
         selectedIndex={presenter.currentMetricIndex}
         // tab navigation is handled by router Link components,
         // so we don't actually have to maintain any tab state here
         onSelect={noop}
       >
-        <StyledTabList isMobile={isMobile}>
+        <StyledTabList $isMobile={isMobile}>
           {outlierOfficerData.outlierMetrics.map((metric) => (
             <StyledTab key={metric.metricId}>
               <Link

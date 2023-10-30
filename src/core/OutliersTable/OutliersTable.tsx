@@ -17,7 +17,7 @@
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem, rgba } from "polished";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Column, useFlexLayout, useTable } from "react-table";
 import List from "react-virtualized/dist/commonjs/List";
@@ -26,13 +26,12 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
-import getScrollBarWidth from "../../utils/getScrollBarWidth";
 
 const TABLE_ROW_SIZE = 50;
 const TABLE_MIN_WIDTH = 280;
 const TABLE_HIDE_COLUMN_WIDTH = 350;
 
-const Table = styled.table`
+const Table = styled.div`
   ${typography.Sans14};
   width: 100%;
   text-align: left;
@@ -40,23 +39,23 @@ const Table = styled.table`
   border: 1px solid ${palette.slate20};
 `;
 
-const TableHeader = styled.thead`
+const TableHeader = styled.div`
   color: ${palette.pine2};
 `;
 
-const TableBody = styled.tbody``;
+const TableBody = styled.div``;
 
-const TH = styled.th`
+const TH = styled.div`
   background: ${palette.marble3};
   padding: ${rem(spacing.md)};
 `;
 
-const TR = styled.tr`
+const TR = styled.div`
   display: flex;
   border-bottom: 1px solid ${palette.slate20};
 `;
 
-const TD = styled.td`
+const TD = styled.div`
   display: flex;
   align-items: center;
   padding: ${rem(spacing.md)};
@@ -96,7 +95,6 @@ const OutliersTable = <T extends object>({
   rowLinks,
   hiddenColumnId = "clientId",
 }: OutlierTableProps<T>) => {
-  const scrollBarSize = useMemo(() => getScrollBarWidth(), []);
   const { isMobile } = useIsMobile(true);
   const [isColumnHidden, hideColumn] = useState(false);
 
@@ -114,6 +112,16 @@ const OutliersTable = <T extends object>({
     },
     useFlexLayout
   );
+
+  const handleHideColumnWidth = useCallback((ref, width) => {
+    if (ref) {
+      if (width < TABLE_HIDE_COLUMN_WIDTH) {
+        hideColumn(true);
+      } else {
+        hideColumn(false);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     toggleHideColumn(hiddenColumnId, isColumnHidden || isMobile);
@@ -164,31 +172,23 @@ const OutliersTable = <T extends object>({
         })}
       >
         <AutoSizer>
-          {({ width }) => {
-            if (width < TABLE_HIDE_COLUMN_WIDTH) {
-              hideColumn(true);
-            } else {
-              hideColumn(false);
-            }
-
-            return (
-              <WindowScroller>
-                {({ height, isScrolling, onChildScroll, scrollTop }) => (
-                  <List
-                    autoHeight
-                    height={height}
-                    isScrolling={isScrolling}
-                    onScroll={onChildScroll}
-                    rowCount={rows.length}
-                    rowHeight={TABLE_ROW_SIZE}
-                    rowRenderer={RenderRow}
-                    scrollTop={scrollTop}
-                    width={width + scrollBarSize}
-                  />
-                )}
-              </WindowScroller>
-            );
-          }}
+          {({ width }) => (
+            <WindowScroller ref={(ref) => handleHideColumnWidth(ref, width)}>
+              {({ height, isScrolling, onChildScroll, scrollTop }) => (
+                <List
+                  autoHeight
+                  height={height}
+                  isScrolling={isScrolling}
+                  onScroll={onChildScroll}
+                  rowCount={rows.length}
+                  rowHeight={TABLE_ROW_SIZE}
+                  rowRenderer={RenderRow}
+                  scrollTop={scrollTop}
+                  width={width}
+                />
+              )}
+            </WindowScroller>
+          )}
         </AutoSizer>
       </TableBody>
     </Table>
