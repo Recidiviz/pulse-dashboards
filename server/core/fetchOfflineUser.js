@@ -53,6 +53,7 @@ function fetchOfflineUser({
       featureVariants: {
         responsiveRevamp: {},
         usTnExpiration: {},
+        enableSnooze: {},
       },
     },
   };
