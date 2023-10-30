@@ -18,6 +18,7 @@
 import { disableFetchMocks, enableFetchMocks } from "jest-fetch-mock";
 
 import { RootStore } from "../../../RootStore";
+import { ADVERSE_METRIC_IDS } from "../../models/offlineFixtures/constants";
 import {
   metricBenchmarksFixture,
   rawMetricBenchmarksFixture,
@@ -27,6 +28,10 @@ import {
   rawSupervisionOfficerFixture,
   supervisionOfficerFixture,
 } from "../../models/offlineFixtures/SupervisionOfficerFixture";
+import {
+  rawSupervisionOfficerMetricEventFixture,
+  supervisionOfficerMetricEventFixture,
+} from "../../models/offlineFixtures/SupervisionOfficerMetricEventFixture";
 import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
 import { OutliersStore } from "../../OutliersStore";
 import { OutliersAPIClient } from "../OutliersAPIClient";
@@ -136,5 +141,46 @@ describe("OutliersAPIClient", () => {
     );
 
     expect(response).toEqual(supervisionOfficerFixture);
+  });
+
+  it("supervisionOfficer calls the correct endpoint", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ officer: rawSupervisionOfficerFixture[0] })
+    );
+    await client.supervisionOfficer("any-hashed-id");
+    expect(fetchMock.mock.calls[0][0]).toEqual(
+      encodeURI(`${BASE_URL}/officer/any-hashed-id`)
+    );
+  });
+
+  it("supervisionOfficer parses the data", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ officer: rawSupervisionOfficerFixture[0] })
+    );
+    const response = await client.supervisionOfficer(
+      supervisionOfficerSupervisorsFixture[0].pseudonymizedId
+    );
+
+    expect(response).toEqual(supervisionOfficerFixture[0]);
+  });
+
+  it("supervisionOfficerMetricEvents calls the correct endpoint", async () => {
+    fetchMock.mockResponse(JSON.stringify({ events: [] }));
+    await client.supervisionOfficerMetricEvents("any-hashed-id", "metricID");
+    expect(fetchMock.mock.calls[0][0]).toEqual(
+      encodeURI(`${BASE_URL}/officer/any-hashed-id/events`)
+    );
+  });
+
+  it("supervisionOfficerMetricEvents parses the data", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ events: rawSupervisionOfficerMetricEventFixture })
+    );
+    const response = await client.supervisionOfficerMetricEvents(
+      supervisionOfficerSupervisorsFixture[0].externalId,
+      ADVERSE_METRIC_IDS.enum.incarceration_starts
+    );
+
+    expect(response).toEqual(supervisionOfficerMetricEventFixture);
   });
 });

@@ -25,7 +25,10 @@ import {
   SupervisionOfficer,
   supervisionOfficerSchema,
 } from "../models/SupervisionOfficer";
-import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
+import {
+  SupervisionOfficerMetricEvent,
+  supervisionOfficerMetricEventSchema,
+} from "../models/SupervisionOfficerMetricEvent";
 import {
   SupervisionOfficerSupervisor,
   supervisionOfficerSupervisorSchema,
@@ -94,31 +97,30 @@ export class OutliersAPIClient implements OutliersAPI {
     });
   }
 
-  /* eslint-disable class-methods-use-this */
-  async supervisionOfficer(officerId: string): Promise<SupervisionOfficer> {
-    const { supervisionOfficerFixture } = await import(
-      "../models/offlineFixtures/SupervisionOfficerFixture"
-    );
-
-    const officerFixture = supervisionOfficerFixture.find(
-      (o) => o.pseudonymizedId === officerId
-    );
-
-    if (!officerFixture)
-      throw new Error(`Officer ${officerId} not present in fixture data`);
-
-    return officerFixture;
+  supervisionOfficer(officerPseudoId: string): Promise<SupervisionOfficer> {
+    const endpoint = `outliers/${this.tenantId()}/officer/${officerPseudoId}`;
+    return callNewMetricsApi(
+      endpoint,
+      this.outliersStore.rootStore.getTokenSilently
+    ).then((fetchedData) => {
+      const officerData = fetchedData.officer as unknown;
+      return supervisionOfficerSchema.parse(officerData);
+    });
   }
 
-  async supervisionOfficerMetricEvents(
-    officerId: string,
+  supervisionOfficerMetricEvents(
+    officerPseudoId: string,
     metricId: string
   ): Promise<SupervisionOfficerMetricEvent[]> {
-    const { supervisionOfficerMetricEventFixture } = await import(
-      "../models/offlineFixtures/SupervisionOfficerMetricEventFixture"
-    );
-    return supervisionOfficerMetricEventFixture.filter(
-      (e) => e.metricId === metricId
-    );
+    const endpoint = `outliers/${this.tenantId()}/officer/${officerPseudoId}/events`;
+    return callNewMetricsApi(
+      endpoint,
+      this.outliersStore.rootStore.getTokenSilently
+    ).then((fetchedData) => {
+      const eventsData = fetchedData.events as Array<unknown>;
+      return eventsData.map((b) =>
+        supervisionOfficerMetricEventSchema.parse(b)
+      );
+    });
   }
 }
