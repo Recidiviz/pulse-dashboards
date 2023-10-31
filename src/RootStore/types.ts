@@ -118,6 +118,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         usTnExpirationSubmitToTomis: {},
         usMeFurloughRelease: {},
         usMeWorkRelease: {},
+        usTnAnnualReclassification: {},
       }
     : allFeatureVariants;
 
