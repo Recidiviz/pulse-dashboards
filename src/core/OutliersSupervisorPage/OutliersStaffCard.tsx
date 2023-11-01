@@ -28,6 +28,7 @@ import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { OutlierOfficerData } from "../../OutliersStore/presenters/types";
+import { toTitleCase } from "../../utils";
 import { OutliersSwarmPlot } from "../OutliersSwarmPlot";
 import { outliersUrl } from "../views";
 
@@ -71,26 +72,6 @@ const CardBody = styled.div`
   width: 100%;
 `;
 
-const MetricSection = styled(Link)<{ $hasBorder: boolean }>`
-  padding: ${rem(spacing.lg)};
-  border-top: ${({ $hasBorder }) =>
-    $hasBorder ? `1px solid ${palette.slate30}` : "none"};
-  display: block;
-
-  & + a {
-    border-top: 1px solid ${palette.slate30};
-    width: 100%;
-  }
-
-  &:hover {
-    background: #f9fafa;
-
-    & div[class*="MetricHint"] {
-      border-color: ${palette.signal.links};
-    }
-  }
-`;
-
 const MetricHeader = styled.div`
   display: flex;
   justify-content: space-between;
@@ -110,6 +91,26 @@ const MetricHint = styled.div`
   border-bottom: 1px solid transparent;
   & svg {
     margin-left: ${rem(spacing.sm)};
+  }
+`;
+
+const MetricSection = styled(Link)<{ $hasBorder: boolean }>`
+  padding: ${rem(spacing.lg)};
+  border-top: ${({ $hasBorder }) =>
+    $hasBorder ? `1px solid ${palette.slate30}` : "none"};
+  display: block;
+
+  & + a {
+    border-top: 1px solid ${palette.slate30};
+    width: 100%;
+  }
+
+  &:hover {
+    background: #f9fafa;
+
+    ${MetricHint} {
+      border-color: ${palette.signal.links};
+    }
   }
 `;
 
@@ -143,7 +144,7 @@ const OutliersStaffCard: React.FC<OutliersStaffCardType> = ({
             $hasBorder={isTablet}
           >
             <MetricHeader>
-              <MetricTitle>{metric.metricId}</MetricTitle>
+              <MetricTitle>{toTitleCase(metric.config.eventName)}</MetricTitle>
               <MetricHint>
                 See trends and cases
                 <Icon

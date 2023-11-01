@@ -114,6 +114,11 @@ describe("with unit data already hydrated", () => {
     expect(presenter.outlierOfficerData).toMatchSnapshot();
   });
 
+  test("has metricInfo", async () => {
+    expect(presenter.metricId).toEqual(testMetric.metricId);
+    expect(presenter.metricInfo).toBeDefined();
+  });
+
   test("has supervisorInfo", () => {
     expect(presenter.supervisorInfo).toBeDefined();
     expect(presenter.supervisorInfo).toEqual(
@@ -156,6 +161,12 @@ test("has outlierOfficerData", async () => {
 
   expect(presenter.outlierOfficerData).toBeDefined();
   expect(presenter.outlierOfficerData).toMatchSnapshot();
+});
+
+test("has metricInfo", async () => {
+  await presenter.hydrate();
+
+  expect(presenter.metricInfo?.name).toEqual(testMetric.metricId);
 });
 
 test("has supervisorInfo", async () => {

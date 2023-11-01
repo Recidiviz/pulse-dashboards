@@ -33,7 +33,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: ${rem(777)};
+  max-width: ${rem(666)};
   margin-top: ${rem(108)} !important;
   margin: 0 auto;
   text-align: center;

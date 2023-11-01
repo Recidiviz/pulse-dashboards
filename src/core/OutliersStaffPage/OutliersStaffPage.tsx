@@ -38,6 +38,7 @@ import { SupervisionOfficerDetailPresenter } from "../../OutliersStore/presenter
 import { formatDate, toTitleCase } from "../../utils";
 import ModelHydrator from "../ModelHydrator";
 import OutliersChartCard from "../OutliersChartCard";
+import OutliersEmptyPage from "../OutliersEmptyPage";
 import OutliersLinePlot from "../OutliersLinePlot";
 import { INTERCOM_HEIGHT } from "../OutliersNavLayout/OutliersNavLayout";
 import OutliersPageLayout from "../OutliersPageLayout";
@@ -140,11 +141,36 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
 }) {
   const { isMobile, isTablet } = useIsMobile(true);
 
-  const { outlierOfficerData, defaultMetricId, officerPseudoId, metricId } =
-    presenter;
+  const {
+    outlierOfficerData,
+    defaultMetricId,
+    officerPseudoId,
+    metricId,
+    metricInfo,
+  } = presenter;
+
+  const currentSupervisor = presenter.supervisorInfo;
+
+  // empty page where the staff member is not an outlier on any metrics
+  if (outlierOfficerData && !outlierOfficerData.outlierMetrics.length) {
+    const linkProps = currentSupervisor && {
+      linkText: `Go to ${currentSupervisor?.displayName}’s unit`,
+      link: outliersUrl("supervisionSupervisor", {
+        supervisorPseudoId: currentSupervisor?.pseudonymizedId,
+      }),
+    };
+
+    return (
+      <OutliersEmptyPage
+        headerText={`${outlierOfficerData.displayName} is not currently an outlier on any metrics.`}
+        {...linkProps}
+      />
+    );
+  }
 
   // if the presenter is hydrated, this stuff should never be missing in practice
-  if (!outlierOfficerData || !defaultMetricId) return <NotFound />;
+  if (!outlierOfficerData || !defaultMetricId || !metricInfo)
+    return <NotFound />;
 
   // if current metric is not set, we need to redirect to the default metric URL
   if (!metricId) {
@@ -158,9 +184,32 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     );
   }
 
-  const currentSupervisor = presenter.supervisorInfo;
-  const pageTitle = simplur`${outlierOfficerData.displayName} is an outlier on ${outlierOfficerData.outlierMetrics.length} metric[|s]`;
+  // empty page where the staff is not an outlier on the page the user landed at
+  if (
+    !outlierOfficerData.outlierMetrics.find(
+      (metric) => metric.metricId === metricInfo.name
+    )
+  ) {
+    const linkProps = {
+      linkText: "Navigate to their profile",
+      link: outliersUrl("supervisionStaff", {
+        officerPseudoId,
+      }),
+    };
 
+    return (
+      <OutliersEmptyPage
+        headerText={`${
+          outlierOfficerData.displayName
+        } is not currently an outlier on ${toTitleCase(
+          metricInfo.eventName
+        )}. They are an outlier on other metrics.`}
+        {...linkProps}
+      />
+    );
+  }
+
+  const pageTitle = simplur`${outlierOfficerData.displayName} is an outlier on ${outlierOfficerData.outlierMetrics.length} metric[|s]`;
   const infoItems = [
     {
       title: "caseload types",

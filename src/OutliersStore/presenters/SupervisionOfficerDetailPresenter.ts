@@ -20,6 +20,7 @@ import { flowResult, makeAutoObservable, runInAction } from "mobx";
 import { Hydratable } from "../../core/models/types";
 import { castToError } from "../../utils/castToError";
 import { OutliersAPI } from "../api/interface";
+import { MetricConfig } from "../models/MetricConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
@@ -72,7 +73,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
   }
 
   get defaultMetricId() {
-    return this.outlierOfficerData?.outlierMetrics[0].metricId;
+    return this.outlierOfficerData?.outlierMetrics[0]?.metricId;
   }
 
   get metricId() {
@@ -85,6 +86,12 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
         (m) => m.metricId === this.metricId
       ) ?? 0
     );
+  }
+
+  get metricInfo(): MetricConfig | undefined {
+    const metricId = this.metricId || this.defaultMetricId;
+    if (!metricId || !this.supervisionStore.adverseMetricConfigsById) return;
+    return this.supervisionStore.adverseMetricConfigsById.get(metricId);
   }
 
   get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
