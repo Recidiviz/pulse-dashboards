@@ -76,13 +76,13 @@ const Wrapper = styled.div`
 `;
 
 const StyledTooltip = styled(Tooltip)`
-  min-width: ${rem(100)};
+  min-width: ${rem(110)};
   position: relative;
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.xs)};
   padding: ${rem(spacing.md)};
-  transform: translateY(-115%);
+  transform: translateX(-50%) translateY(-115%);
 
   div {
     display: flex;
@@ -125,6 +125,15 @@ const getDateRange = (
     };
 
   return { beginDate, endDate };
+};
+
+const formatDateToYearRange = (date: Date): string => {
+  const previousYear = Number(formatDate(date, "yy")) - 1;
+
+  return `${formatDate(date, "MMM")} '${previousYear} - '${formatDate(
+    date,
+    "yy"
+  )}`;
 };
 
 type OutliersLinePlotType = {
@@ -183,7 +192,7 @@ const OutliersLinePlot: React.FC<OutliersLinePlotType> = ({ metric }) => {
           return (
             d.parentLine.key === 0 && (
               <StyledTooltip>
-                {formatDate(d.date, "MMM yy")}
+                {formatDateToYearRange(d.date)}
                 {/* eslint-disable-next-line react/no-unused-prop-types */}
                 {pickedPoints.map(({ data }: { data: Point }) => {
                   const icon = data.status
@@ -235,7 +244,7 @@ const OutliersLinePlot: React.FC<OutliersLinePlotType> = ({ metric }) => {
             orient: "bottom",
             // @ts-ignore
             tickValues: bottomTickValues,
-            tickFormat: (d: Date) => formatDate(d, "MMM yy"),
+            tickFormat: (d: Date) => formatDateToYearRange(d),
           },
         ]}
       />

@@ -45,7 +45,6 @@ const Subtitle = styled.div`
 
 const Content = styled.div`
   padding: ${rem(spacing.lg)} 0 ${rem(spacing.md)};
-  overflow-x: auto;
 `;
 
 type OutliersChartCardType = {

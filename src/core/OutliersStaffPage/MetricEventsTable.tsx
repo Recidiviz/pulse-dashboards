@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { ComponentType } from "react";
 import { Column } from "react-table";
+import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { SupervisionOfficerMetricEvent } from "../../OutliersStore/models/SupervisionOfficerMetricEvent";
@@ -27,6 +28,10 @@ import ModelHydrator from "../ModelHydrator";
 import OutliersChartCard from "../OutliersChartCard";
 import OutliersTable from "../OutliersTable";
 import { FullName } from "../types/personMetadata";
+
+const Wrapper = styled.div`
+  overflow-x: auto;
+`;
 
 type MetricEventsTableWrapperProps = {
   officerPseudoId: string;
@@ -105,10 +110,12 @@ export const MetricEventsTable = withPresenter(
         title={`List of ${toTitleCase(presenter.eventsLabel)}`}
         hasLegend={false}
       >
-        <OutliersTable<SupervisionOfficerMetricEvent>
-          data={presenter.officerMetricEvents}
-          columns={columns.map((c) => createTableColumn(c))}
-        />
+        <Wrapper>
+          <OutliersTable<SupervisionOfficerMetricEvent>
+            data={presenter.officerMetricEvents}
+            columns={columns.map((c) => createTableColumn(c))}
+          />
+        </Wrapper>
       </OutliersChartCard>
     );
   })
