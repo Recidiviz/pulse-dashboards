@@ -14,8 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import createAuth0Client from "@auth0/auth0-spa-js";
+import createAuth0Client, { User } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
+import { add } from "date-fns";
+import { runInAction } from "mobx";
 
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import {
@@ -24,15 +26,17 @@ import {
   PATHWAYS_SECTIONS,
 } from "../../core/views";
 import tenants from "../../tenants";
+import { isDemoMode } from "../../utils/isDemoMode";
 import isIE11 from "../../utils/isIE11";
 import RootStore from "..";
-import { TenantId } from "../types";
+import { FeatureVariant, TenantId } from "../types";
 import UserStore from "../UserStore";
 
 jest.mock("@auth0/auth0-spa-js");
 jest.mock("@sentry/react");
 jest.mock("firebase/firestore");
 jest.mock("../../utils/isIE11");
+jest.mock("../../utils/isDemoMode");
 
 const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
 
@@ -692,5 +696,189 @@ describe("recidivizAllowedStates", () => {
     });
     await store.authorize(mockHandleUrl);
     expect(store.recidivizAllowedStates).toEqual(["US_CA", "US_PA"]);
+  });
+});
+
+describe("feature variants", () => {
+  let store: UserStore;
+
+  type RawFeatureVariants = Partial<
+    Record<
+      FeatureVariant,
+      {
+        activeDate?: string;
+        variant?: string;
+      }
+    >
+  >;
+
+  function getMockUserObject({
+    featureVariants,
+    demoModeFeatureVariants,
+    stateCode = "US_XX",
+  }: {
+    featureVariants?: RawFeatureVariants;
+    demoModeFeatureVariants?: RawFeatureVariants;
+    stateCode?: string;
+  } = {}): User {
+    return {
+      email: "test@example.gov",
+      [`${METADATA_NAMESPACE}app_metadata`]: {
+        stateCode,
+        featureVariants,
+        demoModeFeatureVariants,
+      },
+    };
+  }
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    store = new UserStore({});
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  test("feature variants active by default for Recidiviz users", async () => {
+    runInAction(() => {
+      store.user = getMockUserObject({ stateCode: "RECIDIVIZ" });
+      store.userIsLoading = false;
+    });
+
+    expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
+      Object {
+        "CompliantReportingAlmostEligible": Object {},
+        "TEST": Object {},
+        "enableSnooze": Object {},
+        "responsiveRevamp": Object {},
+        "usCaEnableSMS": Object {},
+        "usIdCRC": Object {},
+        "usIdExpandedCRC": Object {},
+        "usMeFurloughRelease": Object {},
+        "usMeWorkRelease": Object {},
+        "usTnAnnualReclassification": Object {},
+        "usTnExpiration": Object {},
+        "usTnExpirationSubmitToTomis": Object {},
+      }
+    `);
+  });
+
+  test("recidiviz user with feature variant defined", async () => {
+    runInAction(() => {
+      store.user = getMockUserObject({
+        featureVariants: { TEST: {} },
+        stateCode: "RECIDIVIZ",
+      });
+      store.userIsLoading = false;
+    });
+
+    expect(store.activeFeatureVariants).toEqual({ TEST: {} });
+  });
+
+  test("no feature variants", async () => {
+    runInAction(() => {
+      store.user = getMockUserObject();
+      store.userIsLoading = false;
+    });
+
+    expect(store.activeFeatureVariants).toEqual({});
+  });
+
+  test("variant with no active date", async () => {
+    runInAction(() => {
+      store.user = getMockUserObject({
+        featureVariants: { TEST: { variant: "a" } },
+      });
+      store.userIsLoading = false;
+    });
+
+    expect(store.activeFeatureVariants).toEqual({
+      TEST: { variant: "a" },
+    });
+  });
+
+  test("variant with past active date", async () => {
+    runInAction(() => {
+      store.user = getMockUserObject({
+        featureVariants: {
+          TEST: {
+            activeDate: add(new Date(), { seconds: -1 }).toISOString(),
+          },
+        },
+      });
+      store.userIsLoading = false;
+    });
+
+    expect(store.activeFeatureVariants).toEqual({
+      TEST: {},
+    });
+  });
+
+  test("variant with future active date", async () => {
+    runInAction(() => {
+      store.user = getMockUserObject({
+        featureVariants: {
+          TEST: {
+            activeDate: add(new Date(), { seconds: 1 }).toISOString(),
+          },
+        },
+      });
+      store.userIsLoading = false;
+    });
+    expect(store.activeFeatureVariants).toEqual({});
+
+    // We check once a second to see if the feature variant is active now, and since we set it to be
+    // active 1 second in the future, the feature variant should become active if we advance time by 1
+    // second.
+    jest.advanceTimersByTime(1000);
+
+    expect(store.activeFeatureVariants).toEqual({
+      TEST: {},
+    });
+  });
+
+  test("demo mode with demo variant defined", () => {
+    const isDemoModeMock = isDemoMode as jest.Mock;
+    isDemoModeMock.mockReturnValue(true);
+
+    runInAction(() => {
+      store.user = getMockUserObject({
+        featureVariants: { TEST: { variant: "a" } },
+        demoModeFeatureVariants: { usMeWorkRelease: {} },
+      });
+      store.userIsLoading = false;
+    });
+
+    expect(store.activeFeatureVariants).toEqual({
+      usMeWorkRelease: {},
+    });
+  });
+
+  test("demo mode with demo variant not defined", () => {
+    const isDemoModeMock = jest.mocked(isDemoMode);
+    isDemoModeMock.mockReturnValue(true);
+
+    runInAction(() => {
+      store.user = getMockUserObject({ featureVariants: { TEST: {} } });
+      store.userIsLoading = false;
+    });
+
+    expect(store.activeFeatureVariants).toEqual({
+      TEST: {},
+    });
+  });
+
+  test("non-demo mode with demo variant defined", () => {
+    runInAction(() => {
+      store.user = getMockUserObject({
+        demoModeFeatureVariants: {
+          TEST: {},
+        },
+      });
+      store.userIsLoading = false;
+    });
+
+    expect(store.activeFeatureVariants).toEqual({});
   });
 });

@@ -36,13 +36,8 @@ const PageNavigation: React.FC = () => {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   const { page } = useCoreStore();
-  const {
-    userStore,
-    currentTenantId,
-    workflowsStore: {
-      featureVariants: { responsiveRevamp },
-    },
-  } = useRootStore();
+  const { userStore, currentTenantId } = useRootStore();
+  const { responsiveRevamp } = userStore.activeFeatureVariants;
   const currentView = pathname.split("/")[1];
   const navigationLayout = userStore.userAllowedNavigation;
   const pageOptions = navigationLayout[currentView] ?? [];

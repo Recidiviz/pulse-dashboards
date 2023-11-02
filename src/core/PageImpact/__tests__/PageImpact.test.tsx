@@ -72,14 +72,12 @@ describe("Impact Page", () => {
         isHydrated: true,
         page: "compliantReportingWorkflows",
       },
-      workflowsStore: {
-        featureVariants: {
-          responsiveRevamp: true,
-        },
-      },
       userStore: {
         userAllowedNavigation: {
           compliantReportingWorkflows: ["avgDailyPopulation"],
+        },
+        activeFeatureVariants: {
+          responsiveRevamp: true,
         },
       },
       tenantStore: {

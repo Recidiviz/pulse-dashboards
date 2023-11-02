@@ -17,7 +17,6 @@
  * =============================================================================
  */
 
-import { add } from "date-fns";
 import { difference } from "lodash";
 import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
@@ -33,7 +32,6 @@ import FirestoreStore, {
 import { RootStore } from "../../RootStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariant } from "../../RootStore/types";
-import { isDemoMode } from "../../utils/isDemoMode";
 import type { OpportunityType, WorkflowsStore } from "..";
 import {
   ineligibleClient,
@@ -130,7 +128,6 @@ jest.mock("../../tenants", () => ({
   __esModule: true,
   default: stateConfigs,
 }));
-jest.mock("../../utils/isDemoMode");
 
 let rootStore: RootStore;
 let workflowsStore: WorkflowsStore;
@@ -749,194 +746,6 @@ describe("hasOpportunities", () => {
         "compliantReporting",
       ])
     ).toBeTrue();
-  });
-});
-
-describe("feature variants", () => {
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
-  test("feature variants active by default for Recidiviz users", async () => {
-    runInAction(() => {
-      rootStore.userStore.user = {
-        email: "foo@example.com",
-        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-          stateCode: "RECIDIVIZ",
-          featureVariants: undefined,
-        },
-      };
-      rootStore.userStore.userIsLoading = false;
-    });
-
-    expect(workflowsStore.featureVariants).toMatchInlineSnapshot(`
-      Object {
-        "CompliantReportingAlmostEligible": Object {},
-        "TEST": Object {},
-        "enableSnooze": Object {},
-        "responsiveRevamp": Object {},
-        "usCaEnableSMS": Object {},
-        "usIdCRC": Object {},
-        "usIdExpandedCRC": Object {},
-        "usMeFurloughRelease": Object {},
-        "usMeWorkRelease": Object {},
-        "usTnAnnualReclassification": Object {},
-        "usTnExpiration": Object {},
-        "usTnExpirationSubmitToTomis": Object {},
-      }
-    `);
-  });
-
-  test("recidiviz user with feature variant defined", async () => {
-    runInAction(() => {
-      rootStore.userStore.user = {
-        email: "foo@example.com",
-        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-          stateCode: "RECIDIVIZ",
-          featureVariants: { TEST: {} },
-        },
-      };
-      rootStore.userStore.userIsLoading = false;
-    });
-
-    expect(workflowsStore.featureVariants).toEqual({ TEST: {} });
-  });
-
-  test("no feature variants", async () => {
-    runInAction(() => {
-      rootStore.userStore.user = {
-        email: mockOfficer.info.email,
-        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-          stateCode: mockOfficer.info.stateCode,
-        },
-      };
-      rootStore.userStore.userIsLoading = false;
-    });
-
-    expect(workflowsStore.featureVariants).toEqual({});
-  });
-
-  test("variant with no active date", async () => {
-    runInAction(() => {
-      rootStore.userStore.user = {
-        email: mockOfficer.info.email,
-        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-          stateCode: mockOfficer.info.stateCode,
-          featureVariants: { TEST: { variant: "a" } },
-        },
-      };
-      rootStore.userStore.userIsLoading = false;
-    });
-
-    expect(workflowsStore.featureVariants).toEqual({
-      TEST: { variant: "a" },
-    });
-  });
-
-  test("variant with past active date", async () => {
-    runInAction(() => {
-      rootStore.userStore.user = {
-        email: mockOfficer.info.email,
-        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-          stateCode: mockOfficer.info.stateCode,
-          featureVariants: {
-            TEST: {
-              activeDate: add(new Date(), { seconds: -1 }).toISOString(),
-            },
-          },
-        },
-      };
-      rootStore.userStore.userIsLoading = false;
-    });
-
-    expect(workflowsStore.featureVariants).toEqual({
-      TEST: {},
-    });
-  });
-
-  test("variant with future active date", async () => {
-    runInAction(() => {
-      rootStore.userStore.user = {
-        email: mockOfficer.info.email,
-        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-          stateCode: mockOfficer.info.stateCode,
-          featureVariants: {
-            TEST: {
-              activeDate: add(new Date(), { seconds: 1 }).toISOString(),
-            },
-          },
-        },
-      };
-      rootStore.userStore.userIsLoading = false;
-    });
-    expect(workflowsStore.featureVariants).toEqual({});
-
-    // We check once a second to see if the feature variant is active now, and since we set it to be
-    // active 1 second in the future, the feature variant should become active if we advance time by 1
-    // second.
-    jest.advanceTimersByTime(1000);
-
-    expect(workflowsStore.featureVariants).toEqual({
-      TEST: {},
-    });
-  });
-
-  test("demo mode with demo variant defined", () => {
-    const isDemoModeMock = isDemoMode as jest.Mock;
-    isDemoModeMock.mockReturnValue(true);
-    runInAction(() => {
-      rootStore.userStore.user = {
-        email: mockOfficer.info.email,
-        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-          stateCode: mockOfficer.info.stateCode,
-          featureVariants: { TEST: { variant: "a" } },
-          demoModeFeatureVariants: { usMeWorkRelease: {} },
-        },
-      };
-      rootStore.userStore.userIsLoading = false;
-    });
-
-    expect(workflowsStore.featureVariants).toEqual({
-      usMeWorkRelease: {},
-    });
-  });
-
-  test("demo mode with demo variant not defined", () => {
-    const isDemoModeMock = isDemoMode as jest.Mock;
-    isDemoModeMock.mockReturnValue(true);
-    runInAction(() => {
-      rootStore.userStore.user = {
-        email: mockOfficer.info.email,
-        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-          stateCode: mockOfficer.info.stateCode,
-          featureVariants: { TEST: {} },
-        },
-      };
-      rootStore.userStore.userIsLoading = false;
-    });
-
-    expect(workflowsStore.featureVariants).toEqual({
-      TEST: {},
-    });
-  });
-
-  test("non-demo mode with demo variant defined", () => {
-    runInAction(() => {
-      rootStore.userStore.user = {
-        email: mockOfficer.info.email,
-        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-          stateCode: mockOfficer.info.stateCode,
-          demoModeFeatureVariants: { TEST: {} },
-        },
-      };
-      rootStore.userStore.userIsLoading = false;
-    });
-
-    expect(workflowsStore.featureVariants).toEqual({});
   });
 });
 

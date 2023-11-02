@@ -44,8 +44,8 @@ const DashboardLayout: React.FC<Props> = ({ children }): React.ReactElement => {
   const { pathname } = useLocation();
   const currentView = pathname.split("/")[1];
   const {
-    workflowsStore: {
-      featureVariants: { responsiveRevamp },
+    userStore: {
+      activeFeatureVariants: { responsiveRevamp },
     },
   } = useRootStore();
 

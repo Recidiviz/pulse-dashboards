@@ -65,13 +65,11 @@ describe("CoreLayout tests", () => {
         userAllowedNavigation: {
           system: ["page1", "page2", "page3"],
         },
-      },
-      currentTenantId: "US_ID",
-      workflowsStore: {
-        featureVariants: {
+        activeFeatureVariants: {
           responsiveRevamp: {},
         },
       },
+      currentTenantId: "US_ID",
     };
     (useRootStore as jest.Mock).mockImplementation(() => rootStoreMock);
     coreStoreMock = {

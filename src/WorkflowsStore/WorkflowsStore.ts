@@ -38,7 +38,6 @@ import {
   values,
   when,
 } from "mobx";
-import { now } from "mobx-utils";
 
 import {
   Hydratable,
@@ -64,10 +63,6 @@ import {
   UserUpdateRecord,
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
-import {
-  defaultFeatureVariantsActive,
-  FeatureVariant,
-} from "../RootStore/types";
 import tenants from "../tenants";
 import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
@@ -134,6 +129,7 @@ export class WorkflowsStore implements Hydratable {
       rootStore: false,
       formatSupervisionLevel: false,
       hydrate: action,
+      setActivePage: action,
     });
 
     this.officersSubscription = new StaffSubscription(rootStore);
@@ -710,34 +706,8 @@ export class WorkflowsStore implements Hydratable {
    * All feature variants currently active for this user, taking into account
    * the activeDate for each feature and observing the current Date for reactivity
    */
-  get featureVariants(): Partial<Record<FeatureVariant, { variant?: string }>> {
-    if (this.rootStore.userStore.userIsLoading) {
-      return {};
-    }
-
-    const configuredFlags = Object.entries(
-      this.rootStore.userStore.featureVariants
-    );
-
-    // for internal users, if no feature are variants are set, use the configured defaults
-    if (
-      !configuredFlags.length &&
-      this.rootStore.userStore.stateCode === "RECIDIVIZ"
-    ) {
-      return defaultFeatureVariantsActive;
-    }
-    return configuredFlags.reduce(
-      (activeVariants, [variantName, variantInfo]) => {
-        if (!variantInfo) return activeVariants;
-
-        const { variant, activeDate } = variantInfo;
-        // check date once a minute so there isn't too much lag when we cross the threshold
-        if (activeDate && activeDate.getTime() > now(1000 * 60))
-          return activeVariants;
-        return { ...activeVariants, [variantName]: { variant } };
-      },
-      {}
-    );
+  get featureVariants() {
+    return this.rootStore.userStore.activeFeatureVariants;
   }
 
   /**

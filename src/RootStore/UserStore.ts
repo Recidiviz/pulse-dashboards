@@ -32,6 +32,7 @@ import {
   toJS,
   when,
 } from "mobx";
+import { now } from "mobx-utils";
 import qs from "qs";
 
 import { fetchImpersonatedUserAppMetadata } from "../api/fetchImpersonatedUserAppMetadata";
@@ -52,6 +53,7 @@ import { isOfflineMode } from "../utils/isOfflineMode";
 import { getAllowedMethodology } from "../utils/navigation";
 import type RootStore from ".";
 import {
+  defaultFeatureVariantsActive,
   FeatureVariant,
   FeatureVariantRecord,
   FeatureVariantValue,
@@ -389,7 +391,7 @@ export default class UserStore {
    * Returns which feature variants the user has access to, or when in the future they will have
    * access.
    */
-  get featureVariants(): FeatureVariantRecord {
+  private get featureVariantsConfig(): FeatureVariantRecord {
     const fvs = isDemoMode()
       ? this.userAppMetadata?.demoModeFeatureVariants ??
         this.userAppMetadata?.featureVariants
@@ -402,6 +404,37 @@ export default class UserStore {
       } as FeatureVariantValue;
       return acc as FeatureVariantRecord;
     }, {} as FeatureVariantRecord);
+  }
+
+  /**
+   * All feature variants currently active for this user, taking into account
+   * the activeDate for each feature and observing the current Date for reactivity
+   */
+  get activeFeatureVariants(): Partial<
+    Record<FeatureVariant, { variant?: string }>
+  > {
+    if (this.userIsLoading) {
+      return {};
+    }
+
+    const configuredFlags = Object.entries(this.featureVariantsConfig);
+
+    // for internal users, if no feature are variants are set, use the configured defaults
+    if (!configuredFlags.length && this.stateCode === "RECIDIVIZ") {
+      return defaultFeatureVariantsActive;
+    }
+    return configuredFlags.reduce(
+      (activeVariants, [variantName, variantInfo]) => {
+        if (!variantInfo) return activeVariants;
+
+        const { variant, activeDate } = variantInfo;
+        // check date once a minute so there isn't too much lag when we cross the threshold
+        if (activeDate && activeDate.getTime() > now(1000 * 60))
+          return activeVariants;
+        return { ...activeVariants, [variantName]: { variant } };
+      },
+      {}
+    );
   }
 
   /**

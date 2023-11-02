@@ -169,8 +169,8 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
   const view = pathname.split("/")[1];
   const { currentTenantId, userStore, tenantStore } = useCoreStore();
   const {
-    workflowsStore: {
-      featureVariants: { responsiveRevamp },
+    userStore: {
+      activeFeatureVariants: { responsiveRevamp },
     },
   } = useRootStore();
 
