@@ -16,12 +16,15 @@
 // =============================================================================
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import { NavigationBackButton } from "../NavigationBackButton";
 import { NavigationLayout } from "../NavigationLayout";
 
 export const INTERCOM_HEIGHT = 64;
@@ -55,17 +58,24 @@ const Main = styled.main<{
 const OutliersNavLayout: React.FC = ({ children }) => {
   const history = useHistory();
   const { isMobile } = useIsMobile(true);
+  const {
+    outliersStore: { supervisionStore },
+  } = useRootStore();
 
   return (
     <Wrapper>
-      <NavigationLayout
-        backButtonText="Back"
-        isFixed={isMobile}
-        onBackButtonClick={history.goBack}
-      />
+      <NavigationLayout />
+      {(supervisionStore?.supervisorPseudoId ||
+        supervisionStore?.officerPseudoId) && (
+        <div>
+          <NavigationBackButton action={{ onClick: history.goBack }}>
+            Back
+          </NavigationBackButton>
+        </div>
+      )}
       <Main isMobile={isMobile}>{children}</Main>
     </Wrapper>
   );
 };
 
-export default OutliersNavLayout;
+export default observer(OutliersNavLayout);

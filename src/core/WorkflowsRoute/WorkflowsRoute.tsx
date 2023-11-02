@@ -22,6 +22,7 @@ import { Redirect, Route, RouteProps, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { TenantId } from "../../RootStore/types";
+import { WorkflowsRouteParams } from "../../WorkflowsStore";
 import {
   isOpportunityTypeUrlForState,
   OPPORTUNITY_TYPE_FOR_URL_BY_STATE,
@@ -36,7 +37,7 @@ import { WORKFLOWS_PATHS, WorkflowsPage, workflowsUrl } from "../views";
 // react-router does not seem to export this type directly
 type RouterLocation = ReturnType<typeof useLocation>;
 
-function parseLocation(loc: RouterLocation) {
+function parseLocation(loc: RouterLocation): WorkflowsRouteParams {
   // slicing off empty string at 0 caused by leading slash,
   // and 1 which should always be "workflows"
   const [page, personId]: Array<string | undefined> = loc.pathname
@@ -59,6 +60,7 @@ const RouteSync = observer(function RouteSync({ children }) {
         const { page, personId } = parseLocation(loc);
         const { workflowsSupportedSystems, homepage } = workflowsStore;
         setRedirectPath(undefined);
+        workflowsStore.setActivePage({ page, personId });
 
         const isOpportunityPage =
           page && isOpportunityTypeUrlForState(currentTenantId, page);

@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans12, spacing, typography } from "@recidiviz/design-system";
+import {
+  palette,
+  Sans12,
+  spacing,
+  typography,
+  zindex,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
@@ -32,6 +38,7 @@ import {
 } from "../../WorkflowsStore/utils";
 import cssVars from "../CoreConstants.module.scss";
 import { SystemId } from "../models/types";
+import { NavigationBackButton } from "../NavigationBackButton";
 import { NavigationLayout } from "../NavigationLayout";
 import RecidivizLogo from "../RecidivizLogo";
 import { WorkflowsPage, workflowsUrl } from "../views";
@@ -122,6 +129,17 @@ const BrandedNavLink = styled(NavLink).attrs({ exact: true })`
   }
 `;
 
+const BackButtonWrapper = styled.div<{ $fixed: boolean }>`
+  ${(props) =>
+    props.$fixed
+      ? `
+          position: fixed;
+          top: 4rem;
+          z-index: ${zindex.tooltip - 2};
+        `
+      : ""}
+`;
+
 const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPage> = {
   SUPERVISION: "caseloadClients",
   INCARCERATION: "caseloadResidents",
@@ -138,45 +156,59 @@ export const WorkflowsNavLayout: React.FC = observer(
         workflowsSupportedSystems,
         featureVariants,
         homepage: workflowsHomepage,
+        activePageIsHomepage,
       },
     } = useRootStore();
-    const { isMobile } = useIsMobile(true);
+    const { isMobile, isLaptop } = useIsMobile(true);
 
     return (
       <Wrapper responsiveRevamp={!!featureVariants.responsiveRevamp}>
         {featureVariants.responsiveRevamp ? (
-          <NavigationLayout isMethodologyExternal>
-            <li>
-              <BrandedNavLink to={workflowsUrl(workflowsHomepage)}>
-                Home
-              </BrandedNavLink>
-            </li>
-            {allowSupervisionTasks && (
+          <>
+            <NavigationLayout isMethodologyExternal>
               <li>
-                <BrandedNavLink
-                  to={workflowsUrl("tasks")}
-                  onClick={() =>
-                    workflowsStore.updateActiveSystem("SUPERVISION")
-                  }
-                >
-                  Tasks
+                <BrandedNavLink to={workflowsUrl(workflowsHomepage)}>
+                  Home
                 </BrandedNavLink>
               </li>
-            )}
-
-            {workflowsSupportedSystems?.map((systemId: SystemId) => {
-              return (
-                <li key={systemId}>
+              {allowSupervisionTasks && (
+                <li>
                   <BrandedNavLink
-                    to={workflowsUrl(SYSTEM_ID_TO_PATH[systemId])}
-                    onClick={() => workflowsStore.updateActiveSystem(systemId)}
+                    to={workflowsUrl("tasks")}
+                    onClick={() =>
+                      workflowsStore.updateActiveSystem("SUPERVISION")
+                    }
                   >
-                    {toTitleCase(getJusticeInvolvedPersonTitle(systemId))}s
+                    Tasks
                   </BrandedNavLink>
                 </li>
-              );
-            })}
-          </NavigationLayout>
+              )}
+
+              {workflowsSupportedSystems?.map((systemId: SystemId) => {
+                return (
+                  <li key={systemId}>
+                    <BrandedNavLink
+                      to={workflowsUrl(SYSTEM_ID_TO_PATH[systemId])}
+                      onClick={() =>
+                        workflowsStore.updateActiveSystem(systemId)
+                      }
+                    >
+                      {toTitleCase(getJusticeInvolvedPersonTitle(systemId))}s
+                    </BrandedNavLink>
+                  </li>
+                );
+              })}
+            </NavigationLayout>
+            {!activePageIsHomepage && (
+              <BackButtonWrapper $fixed={!isLaptop}>
+                <NavigationBackButton
+                  action={{ url: workflowsUrl(workflowsHomepage) }}
+                >
+                  Home
+                </NavigationBackButton>
+              </BackButtonWrapper>
+            )}
+          </>
         ) : (
           <Sidebar>
             <Link

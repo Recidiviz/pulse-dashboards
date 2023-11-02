@@ -44,37 +44,12 @@ import { UserAvatar } from "./Avatar";
 import { useCoreStore } from "./CoreStoreProvider";
 import RecidivizLogo from "./RecidivizLogo/RecidivizLogo";
 import { WORKFLOWS_METHODOLOGY_URL } from "./utils/constants";
-import { DASHBOARD_VIEWS, OUTLIERS_PATHS, workflowsUrl } from "./views";
+import { DASHBOARD_VIEWS } from "./views";
 
 const Wrapper = styled.div``;
 
 const Banner = styled.div`
   height: 4rem;
-`;
-
-const BackButton = styled(Link)<{ $notFixed?: boolean }>`
-  position: ${({ $notFixed }) => ($notFixed ? "initial" : "fixed")};
-  ${typography.Sans14};
-  display: block;
-  min-width: 0;
-  min-height: 0;
-  top: 4rem;
-  text-decoration: none !important;
-  color: ${palette.slate85};
-  padding: ${rem(spacing.lg)};
-  padding-bottom: 0;
-  z-index: ${zindex.tooltip - 2};
-  transition: color ease 500ms;
-
-  &:hover,
-  &:focus {
-    color: ${palette.pine2};
-  }
-
-  & i {
-    font-size: 1rem;
-    margin-right: ${rem(spacing.md)};
-  }
 `;
 
 const NavContainer = styled.nav<{
@@ -201,6 +176,7 @@ const DrawerProfileMenu = styled.div`
         justify-self: center;
       }
     }
+  }
 `;
 
 type OptionalLinkProps = { enabled: boolean };
@@ -353,40 +329,26 @@ function AccountLink({ enabled }: OptionalLinkProps) {
   );
 }
 
-type BackButtonProps = {
-  backButtonLink?: string;
-  backButtonText?: string;
-  onBackButtonClick?: () => void;
-};
-
 type NavigationLayoutProps = {
   backgroundColor?: string;
   isFixed?: boolean;
   isMethodologyExternal?: boolean;
   children?: React.ReactNode;
-} & BackButtonProps;
+};
 
 export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
   function NavigationLayout({
     backgroundColor,
     isMethodologyExternal,
-    backButtonLink,
-    onBackButtonClick,
     children,
-    backButtonText = "Home",
     isFixed = true,
   }) {
     const { pathname } = useLocation();
-    const { isLaptop, isMobile } = useIsMobile(true);
+    const { isMobile } = useIsMobile(true);
     const [drawerIsOpen, setDrawerIsOpen] = React.useState(false);
 
     const view = pathname.split("/")[1];
-    const page = pathname.split("/")[2];
-    const {
-      currentTenantId,
-      userStore,
-      workflowsStore: { homepage: workflowsHomepage },
-    } = useRootStore();
+    const { currentTenantId, userStore } = useRootStore();
     const userAllowedNavigation = userStore?.userAllowedNavigation;
 
     if (!userAllowedNavigation || !currentTenantId) return null;
@@ -398,11 +360,6 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const enabledImpact =
       !!userAllowedNavigation.impact && userStore.isRecidivizUser;
     const enabledOutliers = !!userAllowedNavigation.insights;
-
-    const displayBackButton =
-      (view === DASHBOARD_VIEWS.workflows && page !== workflowsHomepage) ||
-      (view === DASHBOARD_VIEWS.outliers &&
-        pathname !== OUTLIERS_PATHS.supervisionSupervisorsList);
 
     const quickLinks = (
       <>
@@ -464,21 +421,6 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
           </NavMenu>
         </NavContainer>
         {!isMobile && isFixed && <Banner />}
-        {displayBackButton && (
-          <BackButton
-            $notFixed={isLaptop || !isFixed}
-            to={backButtonLink ?? workflowsUrl(workflowsHomepage)}
-            onClick={(event) => {
-              if (onBackButtonClick && !backButtonLink) {
-                event?.preventDefault();
-                onBackButtonClick();
-              }
-            }}
-          >
-            <i className="fa fa-angle-left" />
-            {backButtonText}
-          </BackButton>
-        )}
       </Wrapper>
     );
   }

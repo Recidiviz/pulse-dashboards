@@ -191,3 +191,8 @@ export type EligibilityStatus =
   | "opportunitiesEligible"
   | "opportunitiesAlmostEligible"
   | "opportunitiesDenied";
+
+/**
+ * Represents URL params for a workflows route
+ */
+export type WorkflowsRouteParams = { page?: string; personId?: string };

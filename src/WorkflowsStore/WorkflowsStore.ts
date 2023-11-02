@@ -86,7 +86,11 @@ import {
   UserSubscription,
 } from "./subscriptions";
 import { WorkflowsTasksStore } from "./Task/WorkflowsTasksStore";
-import { EligibilityStatus, JusticeInvolvedPerson } from "./types";
+import {
+  EligibilityStatus,
+  JusticeInvolvedPerson,
+  WorkflowsRouteParams,
+} from "./types";
 import { staffNameComparator } from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
@@ -121,6 +125,8 @@ export class WorkflowsStore implements Hydratable {
   workflowsTasksStore: WorkflowsTasksStore;
 
   activeSystem?: SystemId;
+
+  activePage: WorkflowsRouteParams = {};
 
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
@@ -879,5 +885,13 @@ export class WorkflowsStore implements Hydratable {
       userStore: { userHash },
     } = this.rootStore;
     return userHash;
+  }
+
+  setActivePage(params: WorkflowsRouteParams): void {
+    set(this.activePage, params);
+  }
+
+  get activePageIsHomepage(): boolean {
+    return this.activePage.page === this.homepage;
   }
 }

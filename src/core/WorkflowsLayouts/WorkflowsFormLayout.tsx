@@ -24,6 +24,7 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import cssVars from "../CoreConstants.module.scss";
+import { NavigationBackButton } from "../NavigationBackButton";
 import { NavigationLayout } from "../NavigationLayout";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { OpportunityDenialView } from "../OpportunityDenial";
@@ -33,7 +34,7 @@ import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRel
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
 import RecidivizLogo from "../RecidivizLogo";
-import { DASHBOARD_VIEWS } from "../views";
+import { DASHBOARD_VIEWS, workflowsUrl } from "../views";
 import { OpportunityProfile } from "../WorkflowsClientProfile/OpportunityProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
@@ -104,6 +105,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
       selectedOpportunityType: opportunityType,
       selectedPerson,
       featureVariants,
+      homepage,
     },
   } = useRootStore();
   const [currentView, setCurrentView] =
@@ -137,23 +139,25 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
       />
     );
 
-  const backButtonProps =
-    featureVariants.responsiveRevamp && currentView === "DENIAL"
-      ? {
-          onBackButtonClick: () => setCurrentView("OPPORTUNITY"),
-          backButtonText: "Back",
-        }
-      : undefined;
-
   const hydrated = (
     <Wrapper>
       <Sidebar>
         {featureVariants.responsiveRevamp ? (
-          <NavigationLayout
-            isMethodologyExternal
-            isFixed={false}
-            {...backButtonProps}
-          />
+          <>
+            <NavigationLayout isMethodologyExternal isFixed={false} />
+            {currentView === "OPPORTUNITY" && (
+              <NavigationBackButton action={{ url: workflowsUrl(homepage) }}>
+                Home
+              </NavigationBackButton>
+            )}
+            {currentView === "DENIAL" && (
+              <NavigationBackButton
+                action={{ onClick: () => setCurrentView("OPPORTUNITY") }}
+              >
+                Back
+              </NavigationBackButton>
+            )}
+          </>
         ) : (
           <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
             <Link to={`/${DASHBOARD_VIEWS.workflows}`}>
