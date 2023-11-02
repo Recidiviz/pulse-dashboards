@@ -20,7 +20,6 @@ import { Dictionary, mapKeys, toUpper } from "lodash";
 import { z } from "zod";
 
 import { FullName } from "../../core/types/personMetadata";
-import { generatePseudonymizedId } from "../../utils";
 
 export const targetStatusSchema = z.enum(["FAR", "NEAR", "MET"]);
 export type TargetStatus = z.infer<typeof targetStatusSchema>;
@@ -73,22 +72,5 @@ export function addDisplayName<T>(
     ]
       .filter((n) => Boolean(n))
       .join(" "),
-  };
-}
-
-export function addPseudonymizedId<T>(
-  obj: T & {
-    externalId: string;
-    pseudonymizedId?: string;
-  }
-) {
-  return {
-    ...obj,
-    pseudonymizedId:
-      obj.pseudonymizedId ??
-      generatePseudonymizedId({
-        externalId: obj.externalId,
-        stateCode: "US_MI",
-      }),
   };
 }
