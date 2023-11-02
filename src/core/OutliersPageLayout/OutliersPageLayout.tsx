@@ -17,10 +17,17 @@
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
+import { ReactNode } from "react";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { humanReadableTitleCase } from "../../utils";
+
+const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.lg)};
+`;
 
 export const Wrapper = styled.div<{
   isLaptop: boolean;
@@ -77,20 +84,23 @@ export const Sidebar = styled.div<{
   gap: ${rem(spacing.md)};
 `;
 
-type OutliersPageLayoutType = {
+type OutliersPageLayoutProps = {
   pageTitle: string;
   infoItems: { title: string; info: string | undefined | null }[];
+  contentsAboveTitle?: ReactNode;
 };
 
-const OutliersPageLayout: React.FC<OutliersPageLayoutType> = ({
+const OutliersPageLayout: React.FC<OutliersPageLayoutProps> = ({
   pageTitle,
   infoItems,
+  contentsAboveTitle,
   children,
 }) => {
   const { isMobile, isLaptop } = useIsMobile(true);
 
   return (
-    <>
+    <PageWrapper>
+      {contentsAboveTitle}
       <Wrapper isLaptop={isLaptop}>
         <Header>
           <Title isMobile={isMobile}>{pageTitle}</Title>
@@ -110,7 +120,7 @@ const OutliersPageLayout: React.FC<OutliersPageLayoutType> = ({
         </Header>
       </Wrapper>
       {children}
-    </>
+    </PageWrapper>
   );
 };
 

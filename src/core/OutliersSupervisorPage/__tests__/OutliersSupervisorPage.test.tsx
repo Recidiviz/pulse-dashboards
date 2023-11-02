@@ -19,7 +19,6 @@ import { BrowserRouter } from "react-router-dom";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { OutliersConfigFixture } from "../../../OutliersStore/models/offlineFixtures/OutliersConfigFixture";
-import { OutliersStore } from "../../../OutliersStore/OutliersStore";
 import { SupervisionOfficersPresenter } from "../../../OutliersStore/presenters/SupervisionOfficersPresenter";
 import { OutliersSupervisionStore } from "../../../OutliersStore/stores/OutliersSupervisionStore";
 import { RootStore } from "../../../RootStore";
@@ -40,10 +39,11 @@ afterEach(() => {
 
 describe("Hydrated Supervisor Page", () => {
   let presenter: SupervisionOfficersPresenter;
+  let store: OutliersSupervisionStore;
 
   beforeAll(async () => {
-    const store = new OutliersSupervisionStore(
-      new OutliersStore(new RootStore()),
+    store = new OutliersSupervisionStore(
+      new RootStore().outliersStore,
       OutliersConfigFixture
     );
     presenter = new SupervisionOfficersPresenter(store, "hashed-mdavis123");
@@ -94,6 +94,36 @@ describe("Hydrated Supervisor Page", () => {
     ].forEach((text) => {
       expect(screen.getByText(text)).toBeInTheDocument();
     });
+  });
+
+  test("renders back button", () => {
+    render(
+      <BrowserRouter>
+        <SupervisorPage presenter={presenter} />
+      </BrowserRouter>
+    );
+    expect(
+      screen.getByRole("link", { name: "Go to supervisors list" })
+    ).toBeInTheDocument();
+  });
+
+  test("does not render back button", () => {
+    store.outliersStore.rootStore.userStore.user = {
+      "test-metadata-namespace/app_metadata": {
+        role: "supervision_staff",
+        externalId: "mdavis123",
+        pseudonymizedId: "hashed-mdavis123",
+      },
+    };
+
+    render(
+      <BrowserRouter>
+        <SupervisorPage presenter={presenter} />
+      </BrowserRouter>
+    );
+    expect(
+      screen.queryByRole("link", { name: "Go to supervisors list" })
+    ).toBeNull();
   });
 });
 

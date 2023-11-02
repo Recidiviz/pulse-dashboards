@@ -16,15 +16,11 @@
 // =============================================================================
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
-import { useHistory } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { NavigationBackButton } from "../NavigationBackButton";
 import { NavigationLayout } from "../NavigationLayout";
 
 export const INTERCOM_HEIGHT = 64;
@@ -43,9 +39,7 @@ const Main = styled.main<{
   isMobile: boolean;
 }>`
   padding: ${({ isMobile }) =>
-    isMobile
-      ? `${rem(spacing.lg)} ${rem(spacing.md)}`
-      : `${rem(spacing.md)} ${rem(spacing.lg)}`};
+    isMobile ? `${rem(spacing.lg)} ${rem(spacing.md)}` : `${rem(spacing.lg)}`};
 
   /* leaving extra space for the Intercom button */
   padding-bottom: ${rem(INTERCOM_HEIGHT)};
@@ -56,26 +50,15 @@ const Main = styled.main<{
 `;
 
 const OutliersNavLayout: React.FC = ({ children }) => {
-  const history = useHistory();
   const { isMobile } = useIsMobile(true);
-  const {
-    outliersStore: { supervisionStore },
-  } = useRootStore();
 
   return (
     <Wrapper>
       <NavigationLayout />
-      {(supervisionStore?.supervisorPseudoId ||
-        supervisionStore?.officerPseudoId) && (
-        <div>
-          <NavigationBackButton action={{ onClick: history.goBack }}>
-            Back
-          </NavigationBackButton>
-        </div>
-      )}
+
       <Main isMobile={isMobile}>{children}</Main>
     </Wrapper>
   );
 };
 
-export default observer(OutliersNavLayout);
+export default OutliersNavLayout;

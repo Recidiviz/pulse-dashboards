@@ -28,8 +28,7 @@ const sharedStyles = css`
   display: block;
   min-height: 0;
   min-width: 0;
-  padding: ${rem(spacing.lg)};
-  padding-bottom: 0;
+  padding: 0;
   transition: color ease 500ms;
 
   &:hover,

@@ -23,6 +23,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficersPresenter } from "../../OutliersStore/presenters/SupervisionOfficersPresenter";
 import { getWelcomeText } from "../../utils";
 import ModelHydrator from "../ModelHydrator";
+import { NavigationBackButton } from "../NavigationBackButton";
 import OutliersEmptyPage from "../OutliersEmptyPage";
 import { OutliersStaffLegend } from "../OutliersLegend";
 import OutliersPageLayout from "../OutliersPageLayout";
@@ -31,6 +32,7 @@ import {
   Sidebar,
   Wrapper,
 } from "../OutliersPageLayout/OutliersPageLayout";
+import { outliersUrl } from "../views";
 import OutliersStaffCard from "./OutliersStaffCard";
 
 export const SupervisorPage = observer(function SupervisorPage({
@@ -40,7 +42,12 @@ export const SupervisorPage = observer(function SupervisorPage({
 }) {
   const { isLaptop } = useIsMobile(true);
 
-  const { supervisorInfo, outlierOfficersData, allOfficers } = presenter;
+  const {
+    supervisorInfo,
+    outlierOfficersData,
+    allOfficers,
+    supervisorIsCurrentUser,
+  } = presenter;
 
   const emptyPageHeaderText = `${getWelcomeText(
     supervisorInfo?.fullName.givenNames,
@@ -72,7 +79,19 @@ outlier officers in your unit."
   const pageTitle = simplur`${outlierOfficersData.length} of the ${allOfficers?.length} officer[|s] in your unit [is an|are] outlier[|s] on one or more metrics`;
 
   return (
-    <OutliersPageLayout pageTitle={pageTitle} infoItems={infoItems}>
+    <OutliersPageLayout
+      pageTitle={pageTitle}
+      infoItems={infoItems}
+      contentsAboveTitle={
+        !supervisorIsCurrentUser && (
+          <NavigationBackButton
+            action={{ url: outliersUrl("supervisionSupervisorsList") }}
+          >
+            Go to supervisors list
+          </NavigationBackButton>
+        )
+      }
+    >
       <Wrapper isLaptop={isLaptop}>
         <Sidebar isLaptop={isLaptop}>
           <OutliersStaffLegend note="Correctional officers are only compared with other officers with similar caseloads. An officer with a specialized caseload will not be compared to one with a general caseload." />

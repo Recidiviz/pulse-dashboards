@@ -78,6 +78,10 @@ const SidebarSection = styled.section<{
   }
 `;
 
+const BackButtonWrapper = styled.div`
+  padding-bottom: ${rem(spacing.lg)};
+`;
+
 const FormWrapper = styled.div``;
 
 const FormComponents = {
@@ -143,21 +147,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
     <Wrapper>
       <Sidebar>
         {featureVariants.responsiveRevamp ? (
-          <>
-            <NavigationLayout isMethodologyExternal isFixed={false} />
-            {currentView === "OPPORTUNITY" && (
-              <NavigationBackButton action={{ url: workflowsUrl(homepage) }}>
-                Home
-              </NavigationBackButton>
-            )}
-            {currentView === "DENIAL" && (
-              <NavigationBackButton
-                action={{ onClick: () => setCurrentView("OPPORTUNITY") }}
-              >
-                Back
-              </NavigationBackButton>
-            )}
-          </>
+          <NavigationLayout isMethodologyExternal isFixed={false} />
         ) : (
           <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
             <Link to={`/${DASHBOARD_VIEWS.workflows}`}>
@@ -166,6 +156,22 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
           </SidebarSection>
         )}
         <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
+          {featureVariants.responsiveRevamp && (
+            <BackButtonWrapper>
+              {currentView === "OPPORTUNITY" && (
+                <NavigationBackButton action={{ url: workflowsUrl(homepage) }}>
+                  Home
+                </NavigationBackButton>
+              )}
+              {currentView === "DENIAL" && (
+                <NavigationBackButton
+                  action={{ onClick: () => setCurrentView("OPPORTUNITY") }}
+                >
+                  Back
+                </NavigationBackButton>
+              )}
+            </BackButtonWrapper>
+          )}
           {sidebarContents}
         </SidebarSection>
       </Sidebar>

@@ -37,6 +37,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerDetailPresenter } from "../../OutliersStore/presenters/SupervisionOfficerDetailPresenter";
 import { formatDate, toTitleCase } from "../../utils";
 import ModelHydrator from "../ModelHydrator";
+import { NavigationBackButton } from "../NavigationBackButton";
 import OutliersChartCard from "../OutliersChartCard";
 import OutliersEmptyPage from "../OutliersEmptyPage";
 import OutliersLinePlot from "../OutliersLinePlot";
@@ -147,23 +148,21 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     officerPseudoId,
     metricId,
     metricInfo,
+    supervisorInfo,
   } = presenter;
 
-  const currentSupervisor = presenter.supervisorInfo;
-
+  const supervisorLinkProps = supervisorInfo && {
+    linkText: `Go to ${supervisorInfo.displayName || "supervisor"}'s unit`,
+    link: outliersUrl("supervisionSupervisor", {
+      supervisorPseudoId: supervisorInfo.pseudonymizedId,
+    }),
+  };
   // empty page where the staff member is not an outlier on any metrics
   if (outlierOfficerData && !outlierOfficerData.outlierMetrics.length) {
-    const linkProps = currentSupervisor && {
-      linkText: `Go to ${currentSupervisor?.displayName}’s unit`,
-      link: outliersUrl("supervisionSupervisor", {
-        supervisorPseudoId: currentSupervisor?.pseudonymizedId,
-      }),
-    };
-
     return (
       <OutliersEmptyPage
         headerText={`${outlierOfficerData.displayName} is not currently an outlier on any metrics.`}
-        {...linkProps}
+        {...supervisorLinkProps}
       />
     );
   }
@@ -216,11 +215,21 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       info: outlierOfficerData.caseloadType,
     },
     { title: "district", info: outlierOfficerData.district },
-    { title: "unit supervisor", info: currentSupervisor?.displayName },
+    { title: "unit supervisor", info: supervisorInfo?.displayName },
   ];
 
   return (
-    <OutliersPageLayout pageTitle={pageTitle} infoItems={infoItems}>
+    <OutliersPageLayout
+      pageTitle={pageTitle}
+      infoItems={infoItems}
+      contentsAboveTitle={
+        !!supervisorLinkProps && (
+          <NavigationBackButton action={{ url: supervisorLinkProps.link }}>
+            {supervisorLinkProps?.linkText}
+          </NavigationBackButton>
+        )
+      }
+    >
       <StyledTabs
         $isMobile={isMobile}
         selectedIndex={presenter.currentMetricIndex}

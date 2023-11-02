@@ -130,12 +130,15 @@ const BrandedNavLink = styled(NavLink).attrs({ exact: true })`
 `;
 
 const BackButtonWrapper = styled.div<{ $fixed: boolean }>`
+  padding: ${rem(spacing.lg)};
+  padding-bottom: 0;
   ${(props) =>
     props.$fixed
       ? `
-          position: fixed;
-          top: 4rem;
-          z-index: ${zindex.tooltip - 2};
+        
+        position: fixed;
+        top: 4rem;
+        z-index: ${zindex.tooltip - 2};
         `
       : ""}
 `;
