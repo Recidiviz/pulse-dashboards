@@ -59,7 +59,7 @@ describe("Hydrated Supervisor Page", () => {
 
     expect(
       screen.getByText(
-        "2 of the 3 officers in your unit are outliers on one or more metrics"
+        "2 of the 3 officers in Miles D Davis's unit are outliers on one or more metrics"
       )
     ).toBeInTheDocument();
   });
@@ -124,6 +124,20 @@ describe("Hydrated Supervisor Page", () => {
     expect(
       screen.queryByRole("link", { name: "Go to supervisors list" })
     ).toBeNull();
+  });
+
+  test("Renders the correct title if current user has supervision_staff role", () => {
+    render(
+      <BrowserRouter>
+        <SupervisorPage presenter={presenter} />
+      </BrowserRouter>
+    );
+
+    expect(
+      screen.getByText(
+        "2 of the 3 officers in your unit are outliers on one or more metrics"
+      )
+    ).toBeInTheDocument();
   });
 });
 

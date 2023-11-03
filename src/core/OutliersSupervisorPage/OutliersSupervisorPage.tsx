@@ -76,7 +76,11 @@ outlier officers in your unit."
     },
   ];
 
-  const pageTitle = simplur`${outlierOfficersData.length} of the ${allOfficers?.length} officer[|s] in your unit [is an|are] outlier[|s] on one or more metrics`;
+  const pageTitle = simplur`${outlierOfficersData.length} of the ${
+    allOfficers?.length
+  } officer[|s] in ${
+    supervisorIsCurrentUser ? "your" : `${supervisorInfo?.displayName}'s`
+  } unit [is an|are] outlier[|s] on one or more metrics`;
 
   return (
     <OutliersPageLayout
