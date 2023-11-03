@@ -19,6 +19,7 @@ import {
   RawSupervisionOfficerMetricEvent,
   supervisionOfficerMetricEventSchema,
 } from "../SupervisionOfficerMetricEvent";
+import { rawClientInfoFixture } from "./ClientInfoFixture";
 import { ADVERSE_METRIC_IDS } from "./constants";
 
 export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetricEvent[] =
@@ -27,119 +28,80 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2023-03-18",
       clientId: "707222",
-      clientName: {
-        givenNames: "Gary",
-        surname: "Alexander",
-      },
+      clientName: rawClientInfoFixture["707222"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2023-04-21",
       clientId: "205752",
-      clientName: {
-        givenNames: "Beau",
-        surname: "Riley",
-      },
+      clientName: rawClientInfoFixture["205752"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2023-06-07",
       clientId: "792381",
-      clientName: {
-        givenNames: "Deena",
-        surname: "Dunlap",
-      },
+      clientName: rawClientInfoFixture["792381"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2023-06-08",
       clientId: "869516",
-      clientName: {
-        givenNames: "Angelo",
-        surname: "Cohen",
-      },
+      clientName: rawClientInfoFixture["869516"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2023-03-21",
       clientId: "170571",
-      clientName: {
-        givenNames: "Ward",
-        surname: "Bradley",
-      },
+      clientName: rawClientInfoFixture["170571"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2023-06-05",
       clientId: "461718",
-      clientName: {
-        givenNames: "Janette",
-        surname: "Sosa",
-      },
+      clientName: rawClientInfoFixture["461718"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2022-12-27",
       clientId: "837771",
-      clientName: {
-        givenNames: "Nora",
-        surname: "Robbins",
-      },
+      clientName: rawClientInfoFixture["837771"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2022-11-24",
       clientId: "617754",
-      clientName: {
-        givenNames: "Jason",
-        surname: "Barton",
-      },
+      clientName: rawClientInfoFixture["617754"].clientName,
     },
 
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2022-12-24",
       clientId: "985771",
-      clientName: {
-        givenNames: "Nicholas",
-        surname: "Rhodes",
-      },
+      clientName: rawClientInfoFixture["985771"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2022-12-21",
       clientId: "326160",
-      clientName: {
-        givenNames: "Ethel",
-        surname: "Leonard",
-      },
+      clientName: rawClientInfoFixture["326160"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2022-12-24",
       clientId: "931890",
-      clientName: {
-        givenNames: "Ricardo",
-        surname: "Wood",
-      },
+      clientName: rawClientInfoFixture["931890"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2022-10-24",
       clientId: "930441",
-      clientName: {
-        givenNames: "Stanley",
-        surname: "Maxwell",
-      },
+      clientName: rawClientInfoFixture["930441"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2022-09-05",
       clientId: "564940",
-      clientName: {
-        givenNames: "Miguel",
-        surname: "Haynes",
-      },
+      clientName: rawClientInfoFixture["564940"].clientName,
     },
 
     {
@@ -147,107 +109,74 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2022-12-07",
       clientId: "144925",
-      clientName: {
-        givenNames: "Inez",
-        surname: "Griffith",
-      },
+      clientName: rawClientInfoFixture["144925"].clientName,
     },
     {
       metricId:
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2022-09-05",
       clientId: "283496",
-      clientName: {
-        givenNames: "Gerald",
-        surname: "Barber",
-      },
+      clientName: rawClientInfoFixture["283496"].clientName,
     },
     {
       metricId:
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2022-09-14",
       clientId: "334531",
-      clientName: {
-        givenNames: "Leroy",
-        surname: "Stone",
-      },
+      clientName: rawClientInfoFixture["334531"].clientName,
     },
     {
       metricId:
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2022-11-23",
       clientId: "840134",
-      clientName: {
-        givenNames: "Patrick",
-        surname: "Schneider",
-      },
+      clientName: rawClientInfoFixture["840134"].clientName,
     },
     {
       metricId:
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2022-10-17",
       clientId: "968048",
-      clientName: {
-        givenNames: "Violet",
-        surname: "Johnson",
-      },
+      clientName: rawClientInfoFixture["968048"].clientName,
     },
     {
       metricId:
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2022-11-23",
       clientId: "413899",
-      clientName: {
-        givenNames: "Warren",
-        surname: "Franklin",
-      },
+      clientName: rawClientInfoFixture["413899"].clientName,
     },
     {
       metricId:
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2022-12-11",
       clientId: "415630",
-      clientName: {
-        givenNames: "Alta",
-        surname: "Jackson",
-      },
+      clientName: rawClientInfoFixture["415630"].clientName,
     },
 
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2023-05-06",
       clientId: "235261",
-      clientName: {
-        givenNames: "Rosie",
-        surname: "Luna",
-      },
+      clientName: rawClientInfoFixture["235261"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2023-04-07",
       clientId: "531407",
-      clientName: {
-        givenNames: "Glenn",
-        surname: "Francis",
-      },
+      clientName: rawClientInfoFixture["531407"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2023-02-15",
       clientId: "436502",
-      clientName: {
-        givenNames: "Steve",
-        surname: "Schwartz",
-      },
+      clientName: rawClientInfoFixture["436502"].clientName,
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2023-05-14",
       clientId: "339710",
-      clientName: {
-        givenNames: "Bertha",
-        surname: "Figueroa",
-      },
+      clientName: rawClientInfoFixture["339710"].clientName,
     },
 
     {
@@ -255,70 +184,49 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2023-02-07",
       clientId: "803013",
-      clientName: {
-        givenNames: "Troy",
-        surname: "Rodgers",
-      },
+      clientName: rawClientInfoFixture["803013"].clientName,
     },
     {
       metricId:
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2023-06-24",
       clientId: "470308",
-      clientName: {
-        givenNames: "Leo",
-        surname: "Marshall",
-      },
+      clientName: rawClientInfoFixture["470308"].clientName,
     },
     {
       metricId:
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2023-01-18",
       clientId: "582059",
-      clientName: {
-        givenNames: "Shawn",
-        surname: "Romero",
-      },
+      clientName: rawClientInfoFixture["582059"].clientName,
     },
     {
       metricId:
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2023-01-06",
       clientId: "374673",
-      clientName: {
-        givenNames: "Jeremiah",
-        surname: "Walsh",
-      },
+      clientName: rawClientInfoFixture["374673"].clientName,
     },
     {
       metricId:
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2023-04-25",
       clientId: "128785",
-      clientName: {
-        givenNames: "Dorothy",
-        surname: "Luna",
-      },
+      clientName: rawClientInfoFixture["128785"].clientName,
     },
     {
       metricId:
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2023-01-18",
       clientId: "914408",
-      clientName: {
-        givenNames: "Viola",
-        surname: "Schultz",
-      },
+      clientName: rawClientInfoFixture["914408"].clientName,
     },
     {
       metricId:
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2023-03-20",
       clientId: "504894",
-      clientName: {
-        givenNames: "Marie",
-        surname: "Hudson",
-      },
+      clientName: rawClientInfoFixture["504894"].clientName,
     },
   ];
 

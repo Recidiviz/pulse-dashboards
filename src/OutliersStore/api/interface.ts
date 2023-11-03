@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ClientInfo } from "../models/ClientInfo";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { OutliersConfig } from "../models/OutliersConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
@@ -33,4 +34,5 @@ export interface OutliersAPI {
     officerPseudoId: string,
     metricId: string
   ): Promise<Array<SupervisionOfficerMetricEvent>>;
+  clientInfo(clientPseudoId: string): Promise<ClientInfo>;
 }

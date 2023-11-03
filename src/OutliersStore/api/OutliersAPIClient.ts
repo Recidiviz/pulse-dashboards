@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { callNewMetricsApi } from "../../api/metrics/metricsClient";
+import { ClientInfo } from "../models/ClientInfo";
 import {
   MetricBenchmark,
   metricBenchmarkSchema,
@@ -122,5 +123,21 @@ export class OutliersAPIClient implements OutliersAPI {
         supervisionOfficerMetricEventSchema.parse(b)
       );
     });
+  }
+
+  // TODO(#4307): Fetch real data from backend
+  // eslint-disable-next-line class-methods-use-this
+  async clientInfo(clientPseudoId: string): Promise<ClientInfo> {
+    const { clientInfoFixture } = await import(
+      "../models/offlineFixtures/ClientInfoFixture"
+    );
+
+    const clientInfo = clientInfoFixture[clientPseudoId];
+
+    if (!clientInfo) {
+      throw new Error(`Client ${clientPseudoId} not present in fixture data`);
+    }
+
+    return clientInfo;
   }
 }

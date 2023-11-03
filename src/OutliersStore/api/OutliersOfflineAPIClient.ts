@@ -16,6 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ClientInfo } from "../models/ClientInfo";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
@@ -90,5 +91,19 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
     return supervisionOfficerMetricEventFixture.filter(
       (e) => e.metricId === metricId
     );
+  }
+
+  async clientInfo(clientPseudoId: string): Promise<ClientInfo> {
+    const { clientInfoFixture } = await import(
+      "../models/offlineFixtures/ClientInfoFixture"
+    );
+
+    const clientInfo = clientInfoFixture[clientPseudoId];
+
+    if (!clientInfo) {
+      throw new Error(`Client ${clientPseudoId} not present in fixture data`);
+    }
+
+    return clientInfo;
   }
 }
