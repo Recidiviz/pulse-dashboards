@@ -116,6 +116,26 @@ test("hydrated benchmarks can be missing caseload types", async () => {
   });
 });
 
+test("caseload typebreakdowns enabled", async () => {
+  expect(store.areCaseloadTypeBreakdownsEnabled).toBeFalse();
+
+  await flowResult(store.hydrateMetricConfigs());
+  expect(store.areCaseloadTypeBreakdownsEnabled).toBeTrue();
+});
+
+test("caseload typebreakdowns not enabled", async () => {
+  expect(store.areCaseloadTypeBreakdownsEnabled).toBeFalse();
+
+  jest
+    .spyOn(OutliersOfflineAPIClient.prototype, "metricBenchmarks")
+    // this should be missing the SEX_OFFENSE caseload type for all metrics
+    .mockResolvedValue(metricBenchmarksFixture.slice(0, 3));
+
+  await flowResult(store.hydrateMetricConfigs());
+
+  expect(store.areCaseloadTypeBreakdownsEnabled).toBeFalse();
+});
+
 test("adverse metric configs", async () => {
   const additionalConfigsFixture = cloneDeep(OutliersConfigFixture);
   const favorableMetricConfig: ValuesType<OutliersConfig["metrics"]> = {

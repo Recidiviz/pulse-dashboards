@@ -102,6 +102,10 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     );
   }
 
+  get areCaseloadTypeBreakdownsEnabled() {
+    return this.supervisionStore.areCaseloadTypeBreakdownsEnabled;
+  }
+
   private get isOfficerHydrated() {
     return this.officerRecord !== undefined;
   }

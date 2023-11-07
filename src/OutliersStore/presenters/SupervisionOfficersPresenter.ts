@@ -117,6 +117,10 @@ export class SupervisionOfficersPresenter implements Hydratable {
     this.isLoading = loadingValue;
   }
 
+  get areCaseloadTypeBreakdownsEnabled() {
+    return this.supervisionStore.areCaseloadTypeBreakdownsEnabled;
+  }
+
   /**
    * Augments officer data with all necessary relationships fully hydrated.
    * It triggers an error state rather than returning a partial result, so that none of the UI

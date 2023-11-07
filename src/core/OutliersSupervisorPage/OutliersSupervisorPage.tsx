@@ -98,12 +98,26 @@ outlier agents in your unit."
     >
       <Wrapper isLaptop={isLaptop}>
         <Sidebar isLaptop={isLaptop}>
-          <OutliersStaffLegend note="Correctional agents are only compared with other officers with similar caseloads. An officer with a specialized caseload will not be compared to one with a general caseload." />
+          <OutliersStaffLegend
+            note={
+              presenter.areCaseloadTypeBreakdownsEnabled
+                ? "Correctional agents are only compared with other agents with similar caseloads. An agent with a specialized caseload will not be compared to one with a general caseload."
+                : undefined
+            }
+          />
         </Sidebar>
         <Body>
           {outlierOfficersData.map((officer) => {
             return (
-              <OutliersStaffCard key={officer.externalId} officer={officer} />
+              <OutliersStaffCard
+                key={officer.externalId}
+                officer={officer}
+                subtitle={
+                  (presenter.areCaseloadTypeBreakdownsEnabled &&
+                    officer.caseloadType) ||
+                  undefined
+                }
+              />
             );
           })}
         </Body>

@@ -74,6 +74,18 @@ export class OutliersSupervisionStore {
     this.benchmarksByMetricAndCaseloadType = benchmarksByMetricAndCaseloadType;
   }
 
+  private get allCaseloadTypes(): Set<string> {
+    return new Set(
+      ...Array.from(
+        this.benchmarksByMetricAndCaseloadType?.values() ?? []
+      ).flatMap((b) => b.keys())
+    );
+  }
+
+  get areCaseloadTypeBreakdownsEnabled(): boolean {
+    return this.allCaseloadTypes.size > 1;
+  }
+
   /**
    * Provides a mapping of all configured metrics, including nested benchmarks data.
    * If undefined, it is still awaiting hydration.

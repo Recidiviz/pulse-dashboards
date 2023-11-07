@@ -212,7 +212,10 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   const infoItems = [
     {
       title: "caseload types",
-      info: outlierOfficerData.caseloadType,
+      info:
+        (presenter.areCaseloadTypeBreakdownsEnabled &&
+          outlierOfficerData.caseloadType) ||
+        null,
     },
     { title: "region", info: outlierOfficerData.district },
     { title: "unit supervisor", info: supervisorInfo?.displayName },
