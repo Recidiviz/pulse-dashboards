@@ -22,13 +22,14 @@ import { scaleLinear } from "d3-scale";
 import { MetricWithConfig } from "../types";
 import { calculateSwarm } from "./calculateSwarm";
 import {
-  HIGHLIGHT_DOT_RADIUS,
+  HIGHLIGHT_DOT_RADIUS_LG,
+  HIGHLIGHT_DOT_RADIUS_SM,
   HIGHLIGHT_MARK_STROKE_WIDTH,
   MARGIN,
-  MAX_ASPECT_RATIO,
-  SWARM_AREA_BOTTOM_OFFSET,
   SWARM_AREA_TOP_OFFSET,
-  SWARM_DOT_RADIUS,
+  SWARM_DOT_RADIUS_LG,
+  SWARM_DOT_RADIUS_SM,
+  SWARM_SIZE_BREAKPOINT,
 } from "./constants";
 import { InputPoint, PrepareFn, ScaleParameter } from "./types";
 
@@ -37,7 +38,8 @@ const formatTargetAndHighlight = format(".1%");
 
 export const prepareChartData: PrepareFn = (
   metric: MetricWithConfig,
-  width: number
+  width: number,
+  height: number
 ) => {
   const currentMetricData = metric.currentPeriodData;
 
@@ -57,40 +59,37 @@ export const prepareChartData: PrepareFn = (
   const scaleRange: ScaleParameter = [MARGIN.left, width - MARGIN.right];
   const xScale = scaleLinear().domain(scaleDomain).range(scaleRange);
 
-  // value we will use to contstrain the height of the chart
-  const maxSwarmHeight =
-    width * MAX_ASPECT_RATIO -
-    (SWARM_AREA_TOP_OFFSET + SWARM_AREA_BOTTOM_OFFSET);
+  const highlightRadius =
+    width > SWARM_SIZE_BREAKPOINT
+      ? HIGHLIGHT_DOT_RADIUS_LG
+      : HIGHLIGHT_DOT_RADIUS_SM;
+  const backgroundRadius =
+    width > SWARM_SIZE_BREAKPOINT ? SWARM_DOT_RADIUS_LG : SWARM_DOT_RADIUS_SM;
 
-  const { swarmPoints, swarmSpread } = calculateSwarm(
+  const { swarmPoints } = calculateSwarm(
     [
       ...metric.benchmark.latestPeriodValues.map(
         ({ value, targetStatus }): InputPoint => ({
           position: xScale(value),
           targetStatus,
-          radius: SWARM_DOT_RADIUS,
+          radius: backgroundRadius,
           opacity: 0.15,
         })
       ),
       {
         position: xScale(currentMetricData.metricRate),
         // when calculating the swarm positions, give this point some extra breathing room
-        radius: HIGHLIGHT_DOT_RADIUS + HIGHLIGHT_MARK_STROKE_WIDTH,
+        radius: highlightRadius + HIGHLIGHT_MARK_STROKE_WIDTH,
         opacity: 1,
         targetStatus: currentMetricData.status,
         highlight: true,
       },
     ],
-    maxSwarmHeight
-  );
-
-  // round off value to avoid a fractional pixel height
-  const chartHeight = Math.ceil(
-    SWARM_AREA_TOP_OFFSET + SWARM_AREA_BOTTOM_OFFSET + swarmSpread
+    height
   );
 
   // swarm positions are relative to vertical center, so the layout will need this
-  const centerOfContentArea = SWARM_AREA_TOP_OFFSET + swarmSpread / 2;
+  const centerOfContentArea = SWARM_AREA_TOP_OFFSET + height / 2;
 
   // screen reader label, for accessibility
   const chartLabel = `Swarm plot of all ${
@@ -107,10 +106,11 @@ export const prepareChartData: PrepareFn = (
 
   return {
     centerOfContentArea,
-    chartHeight,
     chartLabel,
     swarmPoints,
     scaleDomain,
     scaleRange,
+    highlightRadius,
+    backgroundRadius,
   };
 };

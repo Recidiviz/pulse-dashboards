@@ -19,7 +19,7 @@ import { palette } from "@recidiviz/design-system";
 
 import { TargetStatus } from "../../OutliersStore/models/schemaHelpers";
 
-export const TARGET_LINE_WIDTH = 3;
+export const TARGET_LINE_WIDTH = 2;
 
 // not part of the design system palette
 const DATAVIZ_GRAY = "#BFCCD2";

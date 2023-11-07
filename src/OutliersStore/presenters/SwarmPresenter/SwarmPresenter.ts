@@ -20,6 +20,11 @@ import { makeAutoObservable, toJS } from "mobx";
 
 import { FlowMethod } from "../../types";
 import { MetricWithConfig } from "../types";
+import {
+  CHART_ASPECT_RATIO,
+  SWARM_AREA_BOTTOM_OFFSET,
+  SWARM_AREA_TOP_OFFSET,
+} from "./constants";
 import { getSwarmLayoutWorker } from "./getSwarmLayoutWorker";
 import { PreparedChartData, SwarmLayout } from "./types";
 
@@ -34,6 +39,22 @@ export class SwarmPresenter {
     makeAutoObservable(this);
   }
 
+  /**
+   * Height is of a fixed ratio to width
+   */
+  get chartHeight(): number {
+    // rounding up to avoid fractional pixel values
+    return Math.ceil(this.width * CHART_ASPECT_RATIO);
+  }
+
+  private get swarmHeight(): number {
+    return Math.max(
+      this.chartHeight - (SWARM_AREA_TOP_OFFSET + SWARM_AREA_BOTTOM_OFFSET),
+      // clamping this to zero to avoid nonsensical intermediate values that could cause HTML errors
+      0
+    );
+  }
+
   *prepareChartData(
     width: number
   ): FlowMethod<Comlink.Remote<SwarmLayout>["prepareChartData"], void> {
@@ -42,14 +63,16 @@ export class SwarmPresenter {
     // this presenter will only be loading when it is first constructed,
     // until the first time this method finishes.
 
+    this.width = width;
+
     const swarmLayout = getSwarmLayoutWorker();
 
     const preparedData = yield swarmLayout.prepareChartData(
       toJS(this.metric),
-      width
+      width,
+      this.swarmHeight
     );
 
-    this.width = width;
     this.chartData = preparedData;
     this.isLoading = false;
   }

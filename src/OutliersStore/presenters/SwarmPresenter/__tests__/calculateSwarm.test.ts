@@ -25,7 +25,7 @@ const DEFAULT_FILL_PROPS = {
   targetStatus: targetStatusSchema.enum.FAR,
 };
 
-test("placement without overlaps", () => {
+test("placement without fixed spread", () => {
   const testData: InputPoint[] = [
     { position: 2, radius: 5, ...DEFAULT_FILL_PROPS },
     { position: 4, radius: 5, ...DEFAULT_FILL_PROPS },
@@ -61,7 +61,7 @@ test("placement without overlaps", () => {
   `);
 });
 
-test("placement fits within max spread", () => {
+test("placement fits within fixed spread", () => {
   const testData: InputPoint[] = [
     { position: 2, radius: 5, ...DEFAULT_FILL_PROPS },
     { position: 4, radius: 5, ...DEFAULT_FILL_PROPS },
@@ -81,7 +81,7 @@ test("placement fits within max spread", () => {
           "opacity": 1,
           "position": 4,
           "radius": 5,
-          "spreadOffset": 9.797958971132712,
+          "spreadOffset": -9.797958971132712,
           "targetStatus": "FAR",
         },
         Object {
@@ -92,12 +92,12 @@ test("placement fits within max spread", () => {
           "targetStatus": "FAR",
         },
       ],
-      "swarmSpread": 29.595917942265423,
+      "swarmSpread": 100,
     }
   `);
 });
 
-test("placement constrained by max spread", () => {
+test("placement constrained by fixed spread", () => {
   const testData: InputPoint[] = [
     { position: 2, radius: 5, ...DEFAULT_FILL_PROPS },
     { position: 4, radius: 5, ...DEFAULT_FILL_PROPS },

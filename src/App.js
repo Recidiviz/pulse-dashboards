@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import "react-aspect-ratio/aspect-ratio.css";
 import "./assets/scripts/index";
 import "./assets/styles/index.scss";
 

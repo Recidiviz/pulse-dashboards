@@ -29,21 +29,19 @@ import { InputPoint, SwarmPoint } from "./types";
  *
  * These axes can be used interchangeably as x or y values.
  *
- * By default, `swarmSpread` will fit the entire swarm with no overlaps. If `maxSpread` is passed
- * and is less than this value, circles will overlap as needed to avoid exceeding `maxSpread`.
+ * By default, `swarmSpread` will fit the entire swarm with no overlaps. If `spread` is passed,
+ * then the final spread will be fixed to this value regardless of the size of the swarm.
+ * Circles will overlap as needed to avoid exceeding `spread`.
  */
-export function calculateSwarm(data: InputPoint[], maxSpread?: number) {
+export function calculateSwarm(data: InputPoint[], spread?: number) {
   const unconstrainedSwarmPoints: SwarmPoint[] = data
     .map(initializeSwarm)
     // points will be placed in this order
     .sort(sortSwarm)
     .reduce(placementReducer, []);
 
-  let swarmSpread = calculateRequiredSpread(unconstrainedSwarmPoints);
-
-  if (maxSpread) {
-    swarmSpread = Math.min(swarmSpread, maxSpread);
-  }
+  const swarmSpread =
+    spread ?? calculateRequiredSpread(unconstrainedSwarmPoints);
 
   const swarmPoints = unconstrainedSwarmPoints.map(
     handleOverflowingCircles(swarmSpread)

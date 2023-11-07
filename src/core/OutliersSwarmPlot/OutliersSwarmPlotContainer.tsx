@@ -18,11 +18,13 @@
 import { throttle } from "lodash";
 import { observer } from "mobx-react-lite";
 import { FC, useLayoutEffect, useRef } from "react";
+import { AspectRatio } from "react-aspect-ratio";
 import useMeasure from "react-use-measure";
 
 import { SwarmPresenter } from "../../OutliersStore/presenters/SwarmPresenter";
+import { CHART_ASPECT_RATIO } from "../../OutliersStore/presenters/SwarmPresenter/constants";
 import { MetricWithConfig } from "../../OutliersStore/presenters/types";
-import { OutliersSwarmPlotWrapped } from "./OutliersSwarmPlot";
+import { OutliersSwarmPlot } from "./OutliersSwarmPlot";
 import { OutliersSwarmPlotWrappedProps } from "./types";
 
 type OutliersSwarmPlotProps = { metric: MetricWithConfig };
@@ -33,7 +35,13 @@ const OutliersSwarmPlotContainer = observer(
 
     return (
       <PlotMeasurer presenter={presenter}>
-        <OutliersSwarmPlotWrapped presenter={presenter} />
+        <AspectRatio ratio={1 / CHART_ASPECT_RATIO}>
+          {/* because aspectRatio sets styles on its direct children,
+          don't pass it another component directly to avoid unexpected results */}
+          <div>
+            <OutliersSwarmPlot presenter={presenter} />
+          </div>
+        </AspectRatio>
       </PlotMeasurer>
     );
   }
@@ -46,7 +54,7 @@ function getThrottledUpdater() {
         presenter.prepareChartData(measuredWidth);
       }
     },
-    200
+    400
   );
 }
 

@@ -20,7 +20,10 @@ import { prepareChartData } from "../prepareChartData";
 
 export function getSwarmLayoutWorker() {
   return {
-    prepareChartData: async (metric: MetricWithConfig, width: number) =>
-      prepareChartData(metric, width),
+    prepareChartData: async (
+      metric: MetricWithConfig,
+      width: number,
+      height: number
+    ) => prepareChartData(metric, width, height),
   };
 }

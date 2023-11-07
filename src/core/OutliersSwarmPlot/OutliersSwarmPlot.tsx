@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { autoUpdate, flip, offset, useFloating } from "@floating-ui/react";
 import { Loading, spacing } from "@recidiviz/design-system";
 import { format } from "d3-format";
 import { scaleLinear } from "d3-scale";
@@ -24,14 +25,16 @@ import { Fragment } from "react";
 import {
   MARGIN,
   SWARM_AREA_BOTTOM_OFFSET,
+  SWARM_SIZE_BREAKPOINT,
 } from "../../OutliersStore/presenters/SwarmPresenter/constants";
-import { TARGET_LINE_WIDTH } from "./constants";
-import { HighlightedPoint } from "./HighlightedPoint";
+import { GOAL_COLORS, TARGET_LINE_WIDTH } from "./constants";
 import {
   AxisLabel,
   AxisSpine,
+  HighlightLabel,
   Plot,
   PlotWrapper,
+  RateHighlightMark,
   TargetLabel,
   TargetLine,
   TickLine,
@@ -42,108 +45,125 @@ import { formatTargetAndHighlight } from "./utils";
 
 const formatTickLabel = format(".0%");
 
-export const OutliersSwarmPlotWrapped = observer(
-  function OutliersSwarmPlotWrapped({
-    presenter,
-  }: OutliersSwarmPlotWrappedProps) {
-    const {
-      width,
-      chartData,
-      isLoading,
-      metric: {
-        currentPeriodData: currentMetricData,
-        benchmark: { currentPeriodTarget: targetRate },
-      },
-    } = presenter;
+export const OutliersSwarmPlot = observer(function OutliersSwarmPlot({
+  presenter,
+}: OutliersSwarmPlotWrappedProps) {
+  const {
+    width,
+    chartHeight,
+    chartData,
+    isLoading,
+    metric: {
+      currentPeriodData: currentMetricData,
+      benchmark: { currentPeriodTarget: targetRate },
+    },
+  } = presenter;
 
-    if (isLoading) return <Loading />;
+  const highlightLabelProps = useFloating({
+    placement: "right",
+    middleware: [flip(), offset(spacing.sm)],
+    open: true,
+    whileElementsMounted: autoUpdate,
+  });
 
-    if (!chartData) return null;
+  if (isLoading) return <Loading />;
 
-    const {
-      centerOfContentArea,
-      chartHeight,
-      chartLabel,
-      swarmPoints,
-      scaleDomain,
-      scaleRange,
-    } = chartData;
+  if (!chartData) return null;
 
-    const xScale = scaleLinear().domain(scaleDomain).range(scaleRange);
+  const {
+    centerOfContentArea,
+    chartLabel,
+    swarmPoints,
+    scaleDomain,
+    scaleRange,
+    highlightRadius,
+  } = chartData;
 
-    const axisPositions = {
-      targetStart: MARGIN.top,
-      tickStart: MARGIN.top,
-      tickEnd: chartHeight - SWARM_AREA_BOTTOM_OFFSET,
-      spine: chartHeight - SWARM_AREA_BOTTOM_OFFSET,
-      tickLabel: chartHeight - SWARM_AREA_BOTTOM_OFFSET + spacing.xs,
-      axisLabel: chartHeight - MARGIN.bottom,
-      min: MARGIN.left,
-      max: width - MARGIN.right,
-      target: xScale(targetRate),
-    };
+  const xScale = scaleLinear().domain(scaleDomain).range(scaleRange);
 
-    return (
-      <PlotWrapper role="img" aria-label={chartLabel}>
-        <Plot height={chartHeight}>
-          {/* axis */}
-          <AxisSpine
-            x1={axisPositions.min}
-            x2={axisPositions.max}
-            y1={axisPositions.spine}
-            y2={axisPositions.spine}
+  const axisPositions = {
+    targetStart: MARGIN.top,
+    tickStart: MARGIN.top,
+    tickEnd: chartHeight - SWARM_AREA_BOTTOM_OFFSET,
+    spine: chartHeight - SWARM_AREA_BOTTOM_OFFSET,
+    tickLabel: chartHeight - SWARM_AREA_BOTTOM_OFFSET + spacing.xs,
+    axisLabel: chartHeight - MARGIN.bottom,
+    min: MARGIN.left,
+    max: width - MARGIN.right,
+    target: xScale(targetRate),
+  };
+
+  return (
+    <PlotWrapper role="img" aria-label={chartLabel}>
+      <Plot height={chartHeight}>
+        {/* axis */}
+        <AxisSpine
+          x1={axisPositions.min}
+          x2={axisPositions.max}
+          y1={axisPositions.spine}
+          y2={axisPositions.spine}
+        />
+        {xScale.ticks(5).map((tick) => (
+          <Fragment key={tick}>
+            <AxisLabel
+              x={xScale(tick)}
+              y={axisPositions.tickLabel}
+              textAnchor="middle"
+              verticalAnchor="start"
+            >
+              {formatTickLabel(tick)}
+            </AxisLabel>
+            <TickLine
+              x1={xScale(tick)}
+              x2={xScale(tick)}
+              y1={axisPositions.tickStart}
+              y2={axisPositions.spine}
+            />
+          </Fragment>
+        ))}
+
+        {/* target */}
+        <TargetLine
+          x1={axisPositions.target}
+          x2={axisPositions.target}
+          y1={axisPositions.targetStart}
+          y2={axisPositions.tickEnd}
+        />
+        <TargetLabel
+          dx={TARGET_LINE_WIDTH + spacing.sm}
+          x={axisPositions.target}
+          y={axisPositions.targetStart}
+          verticalAnchor="start"
+        >
+          {formatTargetAndHighlight(targetRate)}
+        </TargetLabel>
+
+        {/* background swarm */}
+        <SwarmedCircleGroup
+          swarmPoints={swarmPoints.filter((d) => !d.highlight)}
+          transform={`translate(0 ${centerOfContentArea})`}
+        />
+
+        {/* highlighted officer */}
+        <g
+          transform={`translate(${xScale(
+            currentMetricData.metricRate
+          )} ${centerOfContentArea})`}
+        >
+          <RateHighlightMark
+            r={highlightRadius}
+            fill={GOAL_COLORS[currentMetricData.status]}
+            ref={highlightLabelProps.refs.setReference}
           />
-          {xScale.ticks(5).map((tick) => (
-            <Fragment key={tick}>
-              <AxisLabel
-                x={xScale(tick)}
-                y={axisPositions.tickLabel}
-                textAnchor="middle"
-                verticalAnchor="start"
-              >
-                {formatTickLabel(tick)}
-              </AxisLabel>
-              <TickLine
-                x1={xScale(tick)}
-                x2={xScale(tick)}
-                y1={axisPositions.tickStart}
-                y2={axisPositions.spine}
-              />
-            </Fragment>
-          ))}
-
-          {/* target */}
-          <TargetLine
-            x1={axisPositions.target}
-            x2={axisPositions.target}
-            y1={axisPositions.targetStart}
-            y2={axisPositions.tickEnd}
-          />
-          <TargetLabel
-            dx={TARGET_LINE_WIDTH + spacing.xxs}
-            x={axisPositions.target}
-            y={axisPositions.targetStart}
-            verticalAnchor="start"
-          >
-            {formatTargetAndHighlight(targetRate)}
-          </TargetLabel>
-
-          {/* background swarm */}
-          <SwarmedCircleGroup
-            swarmPoints={swarmPoints.filter((d) => !d.highlight)}
-            transform={`translate(0 ${centerOfContentArea})`}
-          />
-
-          {/* highlighted officer */}
-          <g
-            transform={`translate(${xScale(
-              currentMetricData.metricRate
-            )} ${centerOfContentArea})`}
-          >
-            <HighlightedPoint currentMetricData={currentMetricData} />
-          </g>
-        </Plot>
-      </PlotWrapper>
-    );
-  }
-);
+        </g>
+      </Plot>
+      <HighlightLabel
+        ref={highlightLabelProps.refs.setFloating}
+        style={highlightLabelProps.floatingStyles}
+        $size={width > SWARM_SIZE_BREAKPOINT ? "lg" : "sm"}
+      >
+        {formatTargetAndHighlight(currentMetricData.metricRate)}
+      </HighlightLabel>
+    </PlotWrapper>
+  );
+});

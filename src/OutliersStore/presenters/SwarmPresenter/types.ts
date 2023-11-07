@@ -34,16 +34,18 @@ export type SwarmPoint = InputPoint & {
 
 export type PreparedChartData = {
   centerOfContentArea: number;
-  chartHeight: number;
   chartLabel: string;
   swarmPoints: SwarmPoint[];
   scaleDomain: ScaleParameter;
   scaleRange: ScaleParameter;
+  highlightRadius: number;
+  backgroundRadius: number;
 };
 
 export type PrepareFn = (
   metric: MetricWithConfig,
-  width: number
+  width: number,
+  height: number
 ) => PreparedChartData;
 
 export type SwarmLayout = {

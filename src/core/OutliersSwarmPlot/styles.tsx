@@ -23,6 +23,7 @@ import { TARGET_LINE_WIDTH } from "./constants";
 
 export const PlotWrapper = styled.div`
   overflow: hidden;
+  position: relative;
 `;
 
 export const Plot = styled.svg`
@@ -34,12 +35,12 @@ export const AxisLabel = styled(Text)`
   fill: ${palette.slate60};
 `;
 export const TargetLabel = styled(Text)`
-  ${typography.Sans14}
-  fill: ${palette.slate60};
+  ${typography.Sans12}
+  fill: ${palette.slate85};
 `;
 
-export const HighlightLabel = styled.div`
-  ${typography.Sans18}
+export const HighlightLabel = styled.div<{ $size: "sm" | "lg" }>`
+  ${(props) => (props.$size === "lg" ? typography.Sans18 : typography.Sans14)}
   color: ${palette.slate85};
   pointer-events: none;
 `;
@@ -52,7 +53,7 @@ export const AxisSpine = styled.line`
 export const TargetLine = styled.line`
   stroke: ${palette.slate60};
   stroke-width: ${TARGET_LINE_WIDTH}px;
-  stroke-dasharray: 5 5;
+  stroke-dasharray: 6 6;
 `;
 
 export const TickLine = styled.line`

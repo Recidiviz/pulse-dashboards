@@ -17,19 +17,22 @@
 
 import { spacing } from "@recidiviz/design-system";
 
-export const HIGHLIGHT_DOT_RADIUS = 10;
+export const SWARM_SIZE_BREAKPOINT = 400;
+export const SWARM_DOT_RADIUS_LG = 6;
+export const SWARM_DOT_RADIUS_SM = 4;
+export const HIGHLIGHT_DOT_RADIUS_LG = 10;
+export const HIGHLIGHT_DOT_RADIUS_SM = 8;
 export const HIGHLIGHT_MARK_STROKE_WIDTH = 2;
-export const SWARM_DOT_RADIUS = 6;
 
 export const MARGIN = {
   top: spacing.xxs,
   bottom: spacing.xxs,
-  left: spacing.xxs + HIGHLIGHT_DOT_RADIUS,
-  right: spacing.xxs + HIGHLIGHT_DOT_RADIUS,
+  left: spacing.xxs + HIGHLIGHT_DOT_RADIUS_LG,
+  right: spacing.xxs + HIGHLIGHT_DOT_RADIUS_LG,
 };
 
 const TARGET_LABEL_HEIGHT = 18;
 const X_AXIS_HEIGHT = 16;
 export const SWARM_AREA_TOP_OFFSET = MARGIN.top + TARGET_LABEL_HEIGHT;
 export const SWARM_AREA_BOTTOM_OFFSET = MARGIN.bottom + X_AXIS_HEIGHT;
-export const MAX_ASPECT_RATIO = 0.5;
+export const CHART_ASPECT_RATIO = 0.35;

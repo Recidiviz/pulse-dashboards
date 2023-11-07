@@ -28,7 +28,9 @@ import { SwarmPresenter } from "../SwarmPresenter";
 // this will substitute a manual mock with the same underlying implementation
 jest.mock("../getSwarmLayoutWorker");
 
-test("prepareChartData", async () => {
+let presenter: SwarmPresenter;
+
+beforeEach(async () => {
   const store = new OutliersSupervisionStore(
     new RootStore().outliersStore,
     OutliersConfigFixture
@@ -40,8 +42,10 @@ test("prepareChartData", async () => {
     store
   );
 
-  const presenter = new SwarmPresenter(processedOfficerData.outlierMetrics[0]);
+  presenter = new SwarmPresenter(processedOfficerData.outlierMetrics[0]);
+});
 
+test("prepareChartData", async () => {
   expect(presenter.isLoading).toBeTrue();
   expect(presenter.chartData).toBeUndefined();
   expect(presenter.width).toBe(0);
@@ -51,4 +55,32 @@ test("prepareChartData", async () => {
   expect(presenter.width).toBe(300);
   expect(presenter.isLoading).toBeFalse();
   expect(presenter.chartData).toMatchSnapshot();
+});
+
+test("radii adjust to width", async () => {
+  await flowResult(presenter.prepareChartData(800));
+
+  expect(presenter.chartData?.backgroundRadius).toBe(6);
+  presenter.chartData?.swarmPoints
+    .slice(1)
+    .forEach((p) => expect(p.radius).toBe(6));
+
+  expect(presenter.chartData?.highlightRadius).toBe(10);
+  // this is larger because it includes a stroke width
+  expect(presenter.chartData?.swarmPoints[0].radius).toBe(12);
+
+  await flowResult(presenter.prepareChartData(400));
+
+  expect(presenter.chartData?.backgroundRadius).toBe(4);
+  presenter.chartData?.swarmPoints
+    .slice(1)
+    .forEach((p) => expect(p.radius).toBe(4));
+
+  expect(presenter.chartData?.highlightRadius).toBe(8);
+  expect(presenter.chartData?.swarmPoints[0].radius).toBe(10);
+});
+
+test("chart height", async () => {
+  await flowResult(presenter.prepareChartData(1000));
+  expect(presenter.chartHeight).toBe(350);
 });
