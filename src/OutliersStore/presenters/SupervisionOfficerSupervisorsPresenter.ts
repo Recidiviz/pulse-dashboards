@@ -80,7 +80,9 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
       values,
       map((dataset) => {
         return {
-          district: dataset[0].supervisionDistrict,
+          district: dataset[0].supervisionDistrict
+            ? `Region ${dataset[0].supervisionDistrict}`
+            : null,
           supervisors: dataset as SupervisionOfficerSupervisor[],
         };
       })
