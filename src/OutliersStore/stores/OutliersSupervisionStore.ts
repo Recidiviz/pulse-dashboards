@@ -76,32 +76,24 @@ export class OutliersSupervisionStore {
 
   /**
    * Provides a mapping of all configured metrics, including nested benchmarks data.
+   * If undefined, it is still awaiting hydration.
    */
   get metricConfigsById(): Map<string, MetricConfig> | undefined {
     const { benchmarksByMetricAndCaseloadType } = this;
     if (!benchmarksByMetricAndCaseloadType) return;
 
-    // we expect all metrics to be present; this is also handled downstream in the presenter,
-    // but for type safety we will verify here
-    try {
-      return index(
-        this.config.metrics.map((m): MetricConfig => {
-          const metricBenchmarksByCaseloadType =
-            benchmarksByMetricAndCaseloadType.get(m.name);
+    return index(
+      this.config.metrics.map((m): MetricConfig => {
+        const metricBenchmarksByCaseloadType =
+          benchmarksByMetricAndCaseloadType.get(m.name);
 
-          if (!metricBenchmarksByCaseloadType) {
-            throw new Error(`Missing benchmarks for ${m.name}`);
-          }
-          return {
-            ...m,
-            metricBenchmarksByCaseloadType,
-          };
-        }),
-        (m) => m.name
-      );
-    } catch {
-      return undefined;
-    }
+        return {
+          ...m,
+          metricBenchmarksByCaseloadType,
+        };
+      }),
+      (m) => m.name
+    );
   }
 
   /**

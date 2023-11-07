@@ -71,7 +71,12 @@ test("can hydrate benchmarks with missing metrics", async () => {
 
   await expect(flowResult(store.hydrateMetricConfigs())).toResolve();
 
-  expect(store.metricConfigsById).toBeUndefined();
+  const techsConfig = store.metricConfigsById?.get(
+    "incarceration_starts_technical_violation"
+  );
+  expect(techsConfig).toBeDefined();
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  expect(techsConfig!.metricBenchmarksByCaseloadType).toBeUndefined();
 });
 
 test("configs include benchmarks", async () => {

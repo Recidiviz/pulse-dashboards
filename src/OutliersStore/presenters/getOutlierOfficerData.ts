@@ -41,14 +41,16 @@ export function getOutlierOfficerData(
         metric.metricId
       );
       if (!metricConfig) {
-        throw new Error(
-          `Missing metric configuration and benchmark data for ${metric.metricId}`
-        );
+        throw new Error(`Missing metric configuration for ${metric.metricId}`);
+      }
+
+      const metricBenchmarks = metricConfig.metricBenchmarksByCaseloadType;
+      if (!metricBenchmarks) {
+        throw new Error(`Missing metric benchmark data for ${metric.metricId}`);
       }
 
       const caseloadType = officerData?.caseloadType || "ALL";
-      const benchmark =
-        metricConfig.metricBenchmarksByCaseloadType.get(caseloadType);
+      const benchmark = metricBenchmarks.get(caseloadType);
       if (!benchmark) {
         throw new Error(
           `Missing metric benchmark data for caseload type ${caseloadType} for ${metric.metricId}`

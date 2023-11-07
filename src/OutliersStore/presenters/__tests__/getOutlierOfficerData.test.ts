@@ -85,7 +85,7 @@ test("excludes current officer from the benchmark data points", async () => {
   expect(
     supervisionStore.adverseMetricConfigsById
       ?.get(matchingBenchmarkForOfficer.metricId)
-      ?.metricBenchmarksByCaseloadType.get(
+      ?.metricBenchmarksByCaseloadType?.get(
         matchingBenchmarkForOfficer.caseloadType
       )
       ?.latestPeriodValues.filter((d) => d.value === currentOutlierRate)
@@ -116,11 +116,26 @@ test("throws on missing config", async () => {
   await flowResult(supervisionStore.hydrateMetricConfigs());
 
   expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
-    `Missing metric configuration and benchmark data for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`
+    `Missing metric configuration for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`
   );
 });
 
-test("throws on missing benchmark", async () => {
+test("throws if benchmark data was not fully hydrated", async () => {
+  // this will be missing all benchmarks for the test metric
+  const benchmarks = metricBenchmarksFixture.slice(0, 1);
+  jest
+    .spyOn(OutliersOfflineAPIClient.prototype, "metricBenchmarks")
+    .mockResolvedValue(benchmarks);
+
+  await flowResult(supervisionStore.hydrateMetricConfigs());
+
+  expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
+    `Missing metric benchmark data for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`
+  );
+});
+
+test("throws on missing benchmark for required caseload type", async () => {
+  // this will be missing the matching caseload type for the test metric
   const benchmarks = [
     metricBenchmarksFixture[0],
     ...metricBenchmarksFixture.slice(2),

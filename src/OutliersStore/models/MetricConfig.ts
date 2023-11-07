@@ -21,5 +21,5 @@ import { MetricBenchmark } from "./MetricBenchmark";
 import { OutliersConfig } from "./OutliersConfig";
 
 export type MetricConfig = ValuesType<OutliersConfig["metrics"]> & {
-  metricBenchmarksByCaseloadType: Map<string, MetricBenchmark>;
+  metricBenchmarksByCaseloadType: Map<string, MetricBenchmark> | undefined;
 };
