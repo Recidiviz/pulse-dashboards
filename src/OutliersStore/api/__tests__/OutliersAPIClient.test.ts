@@ -168,7 +168,7 @@ describe("OutliersAPIClient", () => {
     fetchMock.mockResponse(JSON.stringify({ events: [] }));
     await client.supervisionOfficerMetricEvents("any-hashed-id", "metricID");
     expect(fetchMock.mock.calls[0][0]).toEqual(
-      encodeURI(`${BASE_URL}/officer/any-hashed-id/events`)
+      encodeURI(`${BASE_URL}/officer/any-hashed-id/events?metric_id=metricID`)
     );
   });
 

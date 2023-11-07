@@ -113,7 +113,7 @@ export class OutliersAPIClient implements OutliersAPI {
     officerPseudoId: string,
     metricId: string
   ): Promise<SupervisionOfficerMetricEvent[]> {
-    const endpoint = `outliers/${this.tenantId()}/officer/${officerPseudoId}/events`;
+    const endpoint = `outliers/${this.tenantId()}/officer/${officerPseudoId}/events?metric_id=${metricId}`;
     return callNewMetricsApi(
       endpoint,
       this.outliersStore.rootStore.getTokenSilently
