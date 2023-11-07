@@ -117,7 +117,7 @@ const SupervisorsList = observer(function SupervisorsList({
     )
   );
 
-  const pageTitle = simplur`${supervisorsWithOutliersCount} supervisor[|s] across the state have one or more outlier officers in their unit`;
+  const pageTitle = simplur`${supervisorsWithOutliersCount} supervisor[|s] across the state have one or more outlier agents in their unit`;
 
   return (
     <Wrapper isLaptop={isLaptop}>

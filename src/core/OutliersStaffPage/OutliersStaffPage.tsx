@@ -214,7 +214,7 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       title: "caseload types",
       info: outlierOfficerData.caseloadType,
     },
-    { title: "district", info: outlierOfficerData.district },
+    { title: "region", info: outlierOfficerData.district },
     { title: "unit supervisor", info: supervisorInfo?.displayName },
   ];
 

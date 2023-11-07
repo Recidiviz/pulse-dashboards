@@ -52,7 +52,7 @@ export const SupervisorPage = observer(function SupervisorPage({
   const emptyPageHeaderText = `${getWelcomeText(
     supervisorInfo?.fullName.givenNames,
     "Nice work"
-  )}! None of the officers in your unit are currently
+  )}! None of the agents in your unit are currently
 outliers on any metrics.`;
 
   if (!outlierOfficersData || outlierOfficersData.length === 0)
@@ -60,12 +60,12 @@ outliers on any metrics.`;
       <OutliersEmptyPage
         headerText={emptyPageHeaderText}
         callToActionText="Keep checking back – this page will update regularly to surface
-outlier officers in your unit."
+outlier agents in your unit."
       />
     );
 
   const infoItems = [
-    { title: "district", info: supervisorInfo?.supervisionDistrict },
+    { title: "region", info: supervisorInfo?.supervisionDistrict },
     {
       title: "unit supervisor",
       info: supervisorInfo?.displayName,
@@ -78,7 +78,7 @@ outlier officers in your unit."
 
   const pageTitle = simplur`${outlierOfficersData.length} of the ${
     allOfficers?.length
-  } officer[|s] in ${
+  } agent[|s] in ${
     supervisorIsCurrentUser ? "your" : `${supervisorInfo?.displayName}'s`
   } unit [is an|are] outlier[|s] on one or more metrics`;
 
@@ -98,7 +98,7 @@ outlier officers in your unit."
     >
       <Wrapper isLaptop={isLaptop}>
         <Sidebar isLaptop={isLaptop}>
-          <OutliersStaffLegend note="Correctional officers are only compared with other officers with similar caseloads. An officer with a specialized caseload will not be compared to one with a general caseload." />
+          <OutliersStaffLegend note="Correctional agents are only compared with other officers with similar caseloads. An officer with a specialized caseload will not be compared to one with a general caseload." />
         </Sidebar>
         <Body>
           {outlierOfficersData.map((officer) => {
