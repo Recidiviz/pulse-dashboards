@@ -102,6 +102,10 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     );
   }
 
+  get timePeriod(): string | undefined {
+    return this.supervisionStore?.benchmarksTimePeriod;
+  }
+
   get areCaseloadTypeBreakdownsEnabled() {
     return this.supervisionStore.areCaseloadTypeBreakdownsEnabled;
   }

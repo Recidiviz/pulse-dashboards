@@ -149,6 +149,7 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     metricId,
     metricInfo,
     supervisorInfo,
+    timePeriod,
   } = presenter;
 
   const supervisorLinkProps = supervisorInfo && {
@@ -219,6 +220,10 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     },
     { title: "region", info: outlierOfficerData.district },
     { title: "unit supervisor", info: supervisorInfo?.displayName },
+    {
+      title: "time period",
+      info: timePeriod,
+    },
   ];
 
   return (

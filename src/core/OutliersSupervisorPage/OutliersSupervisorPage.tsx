@@ -47,6 +47,7 @@ export const SupervisorPage = observer(function SupervisorPage({
     outlierOfficersData,
     allOfficers,
     supervisorIsCurrentUser,
+    timePeriod,
   } = presenter;
 
   const emptyPageHeaderText = `${getWelcomeText(
@@ -69,6 +70,10 @@ outlier agents in your unit."
     {
       title: "unit supervisor",
       info: supervisorInfo?.displayName,
+    },
+    {
+      title: "time period",
+      info: timePeriod,
     },
     {
       title: "staff",

@@ -152,6 +152,13 @@ export class SupervisionOfficersPresenter implements Hydratable {
   }
 
   /**
+   * Provides string with current time period
+   */
+  get timePeriod(): string | undefined {
+    return this.supervisionStore?.benchmarksTimePeriod;
+  }
+
+  /**
    * Provides a list of all officers that are in this supervisor's unit
    */
   get allOfficers(): SupervisionOfficer[] | undefined {

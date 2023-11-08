@@ -16,8 +16,11 @@
 // =============================================================================
 
 import { index } from "d3-array";
+import { uniq } from "lodash";
 import { makeAutoObservable, observable } from "mobx";
+import moment from "moment";
 
+import { formatDate } from "../../utils";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import { OutliersAPI } from "../api/interface";
 import { MetricBenchmark } from "../models/MetricBenchmark";
@@ -39,6 +42,8 @@ export class OutliersSupervisionStore {
   officerPseudoId?: string;
 
   metricId?: string;
+
+  latestBenchmarksDate?: Date;
 
   private allSupervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
 
@@ -71,7 +76,19 @@ export class OutliersSupervisionStore {
       (b) => b.caseloadType
     );
 
+    const latestBenchmarksDate = new Date(
+      Math.max(
+        ...uniq(
+          benchmarks
+            .map((b) => b.benchmarks.map((d) => d.endDate))
+            .flat(2)
+            .map((d) => d.getTime())
+        )
+      )
+    );
+
     this.benchmarksByMetricAndCaseloadType = benchmarksByMetricAndCaseloadType;
+    this.latestBenchmarksDate = latestBenchmarksDate;
   }
 
   private get allCaseloadTypes(): Set<string> {
@@ -156,6 +173,18 @@ export class OutliersSupervisionStore {
     if (this.currentSupervisorUser) return [this.currentSupervisorUser];
 
     return this.allSupervisionOfficerSupervisors;
+  }
+
+  get benchmarksTimePeriod(): string | undefined {
+    if (!this.latestBenchmarksDate) return;
+
+    const latestBenchmarkDateOneYearEarlier = moment(this.latestBenchmarksDate)
+      .subtract(1, "year")
+      .toDate();
+
+    return `${formatDate(latestBenchmarkDateOneYearEarlier)} - ${formatDate(
+      this.latestBenchmarksDate
+    )}`;
   }
 
   supervisionOfficerSupervisorByExternalId(

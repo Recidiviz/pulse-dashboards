@@ -65,6 +65,15 @@ test("supervisorInfo", async () => {
   expect(supervisorInfo).toMatchSnapshot();
 });
 
+test("timePeriod", async () => {
+  await presenter.hydrate();
+
+  const { timePeriod } = presenter;
+
+  expect(timePeriod).toBeDefined();
+  expect(timePeriod).toMatch("9/1/22 - 9/1/23");
+});
+
 test("hydration error in dependency", async () => {
   const err = new Error("fake error");
   jest

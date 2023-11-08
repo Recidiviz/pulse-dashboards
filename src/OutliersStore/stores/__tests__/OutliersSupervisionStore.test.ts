@@ -337,3 +337,9 @@ test("hydrate supervisionOfficerMetricEvents", async () => {
   expect(getTestEvents()).toBeDefined();
   expect(getTestEvents()).toMatchSnapshot();
 });
+
+test("hydrate latestBenchmarksDate", async () => {
+  await expect(flowResult(store.hydrateMetricConfigs())).toResolve();
+
+  expect(store.latestBenchmarksDate).toEqual(new Date(2023, 8, 1));
+});
