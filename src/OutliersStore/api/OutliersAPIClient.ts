@@ -15,12 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { differenceInDays, subDays } from "date-fns";
+
 import { callNewMetricsApi } from "../../api/metrics/metricsClient";
+import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import {
   MetricBenchmark,
   metricBenchmarkSchema,
 } from "../models/MetricBenchmark";
+import { LATEST_END_DATE } from "../models/offlineFixtures/constants";
 import { outliersConfigSchema } from "../models/OutliersConfig";
 import {
   SupervisionOfficer,
@@ -139,5 +143,25 @@ export class OutliersAPIClient implements OutliersAPI {
     }
 
     return clientInfo;
+  }
+
+  // TODO(#4307): Fetch real data from backend
+  // eslint-disable-next-line class-methods-use-this
+  async clientEvents(
+    clientPseudoId: string,
+    metricId: string,
+    endDate: Date
+  ): Promise<Array<ClientEvent>> {
+    const { clientEventFixture } = await import(
+      "../models/offlineFixtures/ClientEventFixture"
+    );
+
+    // adjust fixture dates relative to the input
+    const dateOffsetInDays = differenceInDays(LATEST_END_DATE, endDate);
+
+    return clientEventFixture.map((event) => ({
+      ...event,
+      eventDate: subDays(event.eventDate, dateOffsetInDays),
+    }));
   }
 }
