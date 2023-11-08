@@ -239,7 +239,9 @@ test("current user record requires external ID", () => {
       stateCode: "us_mi",
     });
 
-  expect(store.currentSupervisorUser).toBeUndefined();
+  expect(() => store.currentSupervisorUser).toThrow(
+    "Missing externalId or pseudonymizedId for supervisor user"
+  );
 });
 
 test("no current user record for non-supervisor", () => {

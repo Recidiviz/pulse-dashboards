@@ -21,6 +21,7 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import { Route, RouteProps, useLocation, useParams } from "react-router-dom";
 
+import { Error } from "../../components/HydrationStatus";
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import { OUTLIERS_PATHS, outliersUrl } from "../views";
@@ -51,19 +52,23 @@ const RouteSync = observer(function RouteSync({ children }) {
   }, [supervisionStore, loc, supervisorPseudoId, officerPseudoId, metricId]);
 
   // access controls that may short-circuit rendering
-  if (supervisionStore?.currentSupervisorUser) {
-    if (
-      // not allowed to access search page
-      loc.pathname === outliersUrl("supervisionSupervisorsList") ||
-      // not allowed to access someone else's supervisor report
-      (supervisorPseudoId &&
-        supervisorPseudoId !==
-          supervisionStore.currentSupervisorUser.pseudonymizedId)
-      // note that we can't do a similar check for the staff page because we may not know
-      // who supervises them yet; we rely on the backend access controls to catch this
-    ) {
-      return <NotFound />;
+  try {
+    if (supervisionStore?.currentSupervisorUser) {
+      if (
+        // not allowed to access search page
+        loc.pathname === outliersUrl("supervisionSupervisorsList") ||
+        // not allowed to access someone else's supervisor report
+        (supervisorPseudoId &&
+          supervisorPseudoId !==
+            supervisionStore?.currentSupervisorUser.pseudonymizedId)
+        // note that we can't do a similar check for the staff page because we may not know
+        // who supervises them yet; we rely on the backend access controls to catch this
+      ) {
+        return <NotFound />;
+      }
     }
+  } catch (error) {
+    return <Error />;
   }
 
   return <>{children}</>;

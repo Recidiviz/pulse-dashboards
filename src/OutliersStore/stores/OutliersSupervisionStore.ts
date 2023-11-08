@@ -148,20 +148,23 @@ export class OutliersSupervisionStore {
         // until metadata is extended with role subtypes,
         // this should be a safe proxy for distinguishing supervisors from leadership
         // (as long as no other line staff are granted access)
-        role === "supervision_staff" &&
-        // nothing will work without these ID values, so we can't construct a useful
-        // supervisor identity record if we didn't get them both from Auth0
-        externalId &&
-        pseudonymizedId
+        role === "supervision_staff"
       ) {
-        return {
-          externalId,
-          supervisionDistrict: district ?? null,
-          pseudonymizedId,
-          // unfortunately we don't reliably get anyone's name from auth0
-          fullName: {},
-          displayName: "",
-        };
+        if (externalId && pseudonymizedId) {
+          return {
+            externalId,
+            supervisionDistrict: district ?? null,
+            pseudonymizedId,
+            // unfortunately we don't reliably get anyone's name from auth0
+            fullName: {},
+            displayName: "",
+          };
+        }
+        // nothing will work without the pseudonymizedId or externalId, so we can't construct a useful
+        // supervisor identity record if we didn't get them both from Auth0
+        throw new Error(
+          "Missing externalId or pseudonymizedId for supervisor user"
+        );
       }
     }
   }
