@@ -22,10 +22,8 @@ import {
   ResidentRecord,
 } from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
-import {
-  SupervisionOpportunityType,
-  UsTnCustodyLevelDowngradeReferralRecord,
-} from "../..";
+import { UsTnCustodyLevelDowngradeReferralRecord } from "../..";
+import { SupervisionOpportunityType } from "../../OpportunityConfigs";
 import {
   CompliantReportingReferralRecord,
   CompliantReportingReferralRecordFull,

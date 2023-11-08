@@ -21,19 +21,22 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsCaSupervisionLevelDowngradeOpportunity } from "./UsCaSupervisionLevelDowngradeOpportunity";
 
-export const usCaSupervisionLevelDowngradeConfig: OpportunityConfig = {
-  stateCode: "US_CA",
-  urlSection: "supervisionLevelDowngrade",
-  label: "Supervision Level Downgrade",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] may be `,
-    opportunityText: "eligible for a supervision level downgrade",
-    callToAction:
-      "Review clients who may be eligible for a Supervision Level Downgrade and complete the paperwork.",
-  }),
-  firestoreCollection: "US_CA-supervisionLevelDowngrade",
-};
+export const usCaSupervisionLevelDowngradeConfig: OpportunityConfig<UsCaSupervisionLevelDowngradeOpportunity> =
+  {
+    systemType: "SUPERVISION",
+    stateCode: "US_CA",
+    urlSection: "supervisionLevelDowngrade",
+    label: "Supervision Level Downgrade",
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} client[|s] may be `,
+      opportunityText: "eligible for a supervision level downgrade",
+      callToAction:
+        "Review clients who may be eligible for a Supervision Level Downgrade and complete the paperwork.",
+    }),
+    firestoreCollection: "US_CA-supervisionLevelDowngrade",
+  };

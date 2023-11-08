@@ -21,8 +21,10 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsIdPastFTRDOpportunity } from "./UsIdPastFTRDOpportunity";
 
-export const usIdPastFTRDConfig: OpportunityConfig = {
+export const usIdPastFTRDConfig: OpportunityConfig<UsIdPastFTRDOpportunity> = {
+  systemType: "SUPERVISION",
   stateCode: "US_ID",
   urlSection: "pastFTRD",
   label: "Past FTRD",

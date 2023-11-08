@@ -20,25 +20,28 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsIdExpandedCRCOpportunity } from "./UsIdExpandedCRCOpportunity";
 
-export const usIdExpandedCRCConfig: OpportunityConfig = {
-  stateCode: "US_ID",
-  urlSection: "expandedCRC",
-  label: "Expanded CRC Program",
-  featureVariant: "usIdExpandedCRC",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} resident[|s] [is|are] `,
-    opportunityText:
-      "eligible for transfer to Expanded Community Reentry Centers.",
-    callToAction:
-      "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
-  }),
-  firestoreCollection: "US_ID-expandedCRCReferrals",
-  snooze: {
-    defaultSnoozeDays: 30,
-    maxSnoozeDays: 30,
-  },
-};
+export const usIdExpandedCRCConfig: OpportunityConfig<UsIdExpandedCRCOpportunity> =
+  {
+    systemType: "INCARCERATION",
+    stateCode: "US_ID",
+    urlSection: "expandedCRC",
+    label: "Expanded CRC Program",
+    featureVariant: "usIdExpandedCRC",
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} resident[|s] [is|are] `,
+      opportunityText:
+        "eligible for transfer to Expanded Community Reentry Centers.",
+      callToAction:
+        "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
+    }),
+    firestoreCollection: "US_ID-expandedCRCReferrals",
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 30,
+    },
+  };

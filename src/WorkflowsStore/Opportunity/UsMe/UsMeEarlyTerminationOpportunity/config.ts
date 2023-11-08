@@ -20,25 +20,28 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsMeEarlyTerminationOpportunity } from "./UsMeEarlyTerminationOpportunity";
 
-export const usMeEarlyTerminationConfig: OpportunityConfig = {
-  stateCode: "US_ME",
-  urlSection: "earlyTermination",
-  label: "Early Termination",
-  initialHeader:
-    "Search for officers above to review clients who may be good candidates for early termination from probation.",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] may be [a|] good candidate[|s] for `,
-    opportunityText: "Early Termination",
-    callToAction:
+export const usMeEarlyTerminationConfig: OpportunityConfig<UsMeEarlyTerminationOpportunity> =
+  {
+    systemType: "SUPERVISION",
+    stateCode: "US_ME",
+    urlSection: "earlyTermination",
+    label: "Early Termination",
+    initialHeader:
       "Search for officers above to review clients who may be good candidates for early termination from probation.",
-  }),
-  firestoreCollection: "US_ME-earlyTerminationReferrals",
-  snooze: {
-    defaultSnoozeDays: 30,
-    maxSnoozeDays: 180,
-  },
-};
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} client[|s] may be [a|] good candidate[|s] for `,
+      opportunityText: "Early Termination",
+      callToAction:
+        "Search for officers above to review clients who may be good candidates for early termination from probation.",
+    }),
+    firestoreCollection: "US_ME-earlyTerminationReferrals",
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 180,
+    },
+  };

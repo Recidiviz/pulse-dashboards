@@ -26,7 +26,7 @@ import { WorkflowsRouteParams } from "../../WorkflowsStore";
 import {
   isOpportunityTypeUrlForState,
   OPPORTUNITY_TYPE_FOR_URL_BY_STATE,
-} from "../../WorkflowsStore/Opportunity/types";
+} from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import {
   getSystemIdFromOpportunityType,
   getSystemIdFromPage,

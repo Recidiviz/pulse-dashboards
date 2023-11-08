@@ -22,24 +22,27 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsTnAnnualReclassificationReviewOpportunity } from "./UsTnAnnualReclassificationReviewOpportunity";
 
-export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig = {
-  stateCode: "US_TN",
-  urlSection: "annualReclassification",
-  label: "Annual Reclassification",
-  featureVariant: "usTnAnnualReclassification",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} resident[|s] [is|are] eligible `,
-    opportunityText: "for their annual reclassification",
-    callToAction:
-      "Review residents due for their annual reclassification " +
-      "and update their custody level in TOMIS.",
-  }),
-  firestoreCollection: "US_TN-annualReclassificationReferrals",
-  snooze: {
-    defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
-  },
-};
+export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig<UsTnAnnualReclassificationReviewOpportunity> =
+  {
+    systemType: "INCARCERATION",
+    stateCode: "US_TN",
+    urlSection: "annualReclassification",
+    label: "Annual Reclassification",
+    featureVariant: "usTnAnnualReclassification",
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} resident[|s] [is|are] eligible `,
+      opportunityText: "for their annual reclassification",
+      callToAction:
+        "Review residents due for their annual reclassification " +
+        "and update their custody level in TOMIS.",
+    }),
+    firestoreCollection: "US_TN-annualReclassificationReferrals",
+    snooze: {
+      defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+    },
+  };

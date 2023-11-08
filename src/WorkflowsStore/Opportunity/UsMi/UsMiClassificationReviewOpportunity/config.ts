@@ -21,24 +21,27 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsMiClassificationReviewOpportunity } from "./UsMiClassificationReviewOpportunity";
 
-export const usMiClassificationReviewConfig: OpportunityConfig = {
-  stateCode: "US_MI",
-  urlSection: "classificationReview",
-  label: "Classification Review",
-  snooze: {
-    // Ideal behavior is to calculate snooze until based on the date of the last classification review
-    // or when they are marked ineligible, whichever is earliest.
-    defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 180 }),
-  },
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] may be `,
-    opportunityText: "eligible for a supervision level downgrade",
-    callToAction:
-      "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",
-  }),
-  firestoreCollection: "US_MI-classificationReviewReferrals",
-};
+export const usMiClassificationReviewConfig: OpportunityConfig<UsMiClassificationReviewOpportunity> =
+  {
+    systemType: "SUPERVISION",
+    stateCode: "US_MI",
+    urlSection: "classificationReview",
+    label: "Classification Review",
+    snooze: {
+      // Ideal behavior is to calculate snooze until based on the date of the last classification review
+      // or when they are marked ineligible, whichever is earliest.
+      defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 180 }),
+    },
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} client[|s] may be `,
+      opportunityText: "eligible for a supervision level downgrade",
+      callToAction:
+        "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",
+    }),
+    firestoreCollection: "US_MI-classificationReviewReferrals",
+  };

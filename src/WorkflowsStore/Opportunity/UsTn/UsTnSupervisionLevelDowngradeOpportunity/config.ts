@@ -20,23 +20,26 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsTnSupervisionLevelDowngradeOpportunity } from "./UsTnSupervisionLevelDowngradeOpportunity";
 
-export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig = {
-  stateCode: "US_TN",
-  urlSection: "supervisionLevelDowngrade",
-  label: "Supervision Level Downgrade",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] may be `,
-    opportunityText:
-      "supervised at a higher level than their latest risk score",
-    callToAction: "Change their supervision level in TOMIS.",
-  }),
-  firestoreCollection: "US_TN-supervisionLevelDowngrade",
-  snooze: {
-    defaultSnoozeDays: 30,
-    maxSnoozeDays: 90,
-  },
-};
+export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig<UsTnSupervisionLevelDowngradeOpportunity> =
+  {
+    systemType: "SUPERVISION",
+    stateCode: "US_TN",
+    urlSection: "supervisionLevelDowngrade",
+    label: "Supervision Level Downgrade",
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} client[|s] may be `,
+      opportunityText:
+        "supervised at a higher level than their latest risk score",
+      callToAction: "Change their supervision level in TOMIS.",
+    }),
+    firestoreCollection: "US_TN-supervisionLevelDowngrade",
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 90,
+    },
+  };

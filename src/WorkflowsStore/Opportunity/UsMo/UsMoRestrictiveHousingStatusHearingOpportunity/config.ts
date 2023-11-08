@@ -21,27 +21,30 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsMoRestrictiveHousingStatusHearingOpportunity } from "./UsMoRestrictiveHousingStatusHearingOpportunity";
 
-export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig = {
-  stateCode: "US_MO",
-  urlSection: "restrictiveHousingStatusHearing",
-  label: "Restrictive Housing Status Hearing",
-  snooze: {
-    defaultSnoozeUntilFn: (snoozedOn: Date) => nextMonday(snoozedOn),
-  },
-  hydratedHeader: (count: number) => ({
-    fullText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} resident[|s] [is|are] currently in Restrictive Housing`,
-    opportunityText: "Restrictive Housing Status Hearing",
-    callToAction: "Conduct a Restrictive Housing Status Hearing",
-  }),
-  firestoreCollection: "US_MO-restrictiveHousingStatusHearingReferrals",
-  customTabOrder: [
-    "Overdue For Hearing",
-    "Missing Review Date",
-    "Upcoming Hearings",
-    "Overridden",
-  ],
-};
+export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig<UsMoRestrictiveHousingStatusHearingOpportunity> =
+  {
+    systemType: "INCARCERATION",
+    stateCode: "US_MO",
+    urlSection: "restrictiveHousingStatusHearing",
+    label: "Restrictive Housing Status Hearing",
+    snooze: {
+      defaultSnoozeUntilFn: (snoozedOn: Date) => nextMonday(snoozedOn),
+    },
+    hydratedHeader: (count: number) => ({
+      fullText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} resident[|s] [is|are] currently in Restrictive Housing`,
+      opportunityText: "Restrictive Housing Status Hearing",
+      callToAction: "Conduct a Restrictive Housing Status Hearing",
+    }),
+    firestoreCollection: "US_MO-restrictiveHousingStatusHearingReferrals",
+    customTabOrder: [
+      "Overdue For Hearing",
+      "Missing Review Date",
+      "Upcoming Hearings",
+      "Overridden",
+    ],
+  };

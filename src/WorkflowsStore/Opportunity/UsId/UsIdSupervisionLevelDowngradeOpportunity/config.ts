@@ -20,23 +20,26 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsIdSupervisionLevelDowngradeOpportunity } from "./UsIdSupervisionLevelDowngradeOpportunity";
 
-export const usIdSupervisionLevelDowngradeConfig: OpportunityConfig = {
-  stateCode: "US_ID",
-  urlSection: "supervisionLevelMismatch",
-  label: "Supervision Level Mismatch",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] [is|are] being `,
-    opportunityText:
-      "supervised at a level that does not match their latest risk score",
-    callToAction: "Change their supervision level in Atlas",
-  }),
-  firestoreCollection: "US_ID-supervisionLevelDowngrade",
-  snooze: {
-    defaultSnoozeDays: 30,
-    maxSnoozeDays: 90,
-  },
-};
+export const usIdSupervisionLevelDowngradeConfig: OpportunityConfig<UsIdSupervisionLevelDowngradeOpportunity> =
+  {
+    systemType: "SUPERVISION",
+    stateCode: "US_ID",
+    urlSection: "supervisionLevelMismatch",
+    label: "Supervision Level Mismatch",
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} client[|s] [is|are] being `,
+      opportunityText:
+        "supervised at a level that does not match their latest risk score",
+      callToAction: "Change their supervision level in Atlas",
+    }),
+    firestoreCollection: "US_ID-supervisionLevelDowngrade",
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 90,
+    },
+  };

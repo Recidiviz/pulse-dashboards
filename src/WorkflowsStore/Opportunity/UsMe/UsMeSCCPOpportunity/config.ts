@@ -20,8 +20,10 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsMeSCCPOpportunity } from "./UsMeSCCPOpportunity";
 
-export const usMeSCCPConfig: OpportunityConfig = {
+export const usMeSCCPConfig: OpportunityConfig<UsMeSCCPOpportunity> = {
+  systemType: "INCARCERATION",
   stateCode: "US_ME",
   urlSection: "SCCP",
   label: "Supervised Community Confinement Program",

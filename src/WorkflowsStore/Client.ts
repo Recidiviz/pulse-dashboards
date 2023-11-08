@@ -46,7 +46,6 @@ import {
   LSUOpportunity,
   Opportunity,
   OpportunityFactory,
-  SupervisionOpportunityType,
   UsCaSupervisionLevelDowngradeOpportunity,
   UsIdPastFTRDOpportunity,
   UsIdSupervisionLevelDowngradeOpportunity,
@@ -60,6 +59,7 @@ import {
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
+import { SupervisionOpportunityType } from "./Opportunity/OpportunityConfigs";
 import { SupervisionTaskInterface } from "./Task/types";
 import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
 import { JusticeInvolvedPerson } from "./types";

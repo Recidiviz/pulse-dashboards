@@ -14,7 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { SystemId } from "../../core/models/types";
 import { FeatureVariant, TenantId } from "../../RootStore/types";
+import { Client } from "../Client";
+import { Resident } from "../Resident";
+import { OpportunityBase } from "./OpportunityBase";
 import { Opportunity, OpportunityTab } from "./types";
 import { usCaSupervisionLevelDowngradeConfig as usCaSupervisionLevelDowngrade } from "./UsCa/UsCaSupervisionLevelDowngradeOpportunity/config";
 import { usIdEarnedDischargeConfig as earnedDischarge } from "./UsId/EarnedDischargeOpportunity/config";
@@ -87,7 +91,22 @@ export type OpportunityHydratedHeader =
   | OpportunityHeadersWithEligibilityTextType
   | OpportunityHeadersWithFullTextType;
 
-export type OpportunityConfig = {
+type ExtractPersonType<T> = T extends OpportunityBase<infer P, any, any>
+  ? P
+  : never;
+
+type ClientSystemType<T> = T extends Client
+  ? Extract<SystemId, "SUPERVISION">
+  : never;
+
+type ResidentSystemType<T> = T extends Resident
+  ? Extract<SystemId, "INCARCERATION">
+  : never;
+
+type SystemType<T> = ClientSystemType<T> | ResidentSystemType<T>;
+
+export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
+  systemType: SystemType<ExtractPersonType<OpportunityVariant>>;
   stateCode: TenantId;
   urlSection: string;
   featureVariant?: FeatureVariant;
@@ -99,11 +118,11 @@ export type OpportunityConfig = {
   hydratedHeader: (count: number) => OpportunityHydratedHeader;
 };
 
-export const US_CA_OPPORTUNITY_CONFIGS = {
+export const OPPORTUNITY_CONFIGS = {
+  /* US_CA */
   usCaSupervisionLevelDowngrade,
-} as const;
 
-export const US_ID_OPPORTUNITY_CONFIGS = {
+  /* US_ID */
   earnedDischarge,
   LSU,
   pastFTRD,
@@ -111,62 +130,133 @@ export const US_ID_OPPORTUNITY_CONFIGS = {
   usIdCRCResidentWorker,
   usIdCRCWorkRelease,
   usIdSupervisionLevelDowngrade,
-} as const;
 
-export const US_ME_OPPORTUNITY_CONFIGS = {
+  /* US_ME */
   usMeEarlyTermination,
   usMeFurloughRelease,
   usMeSCCP,
   usMeWorkRelease,
-} as const;
 
-export const US_MI_OPPORTUNITY_CONFIGS = {
+  /* US_MI */
   usMiClassificationReview,
   usMiEarlyDischarge,
   usMiMinimumTelephoneReporting,
   usMiPastFTRD,
   usMiSupervisionLevelDowngrade,
-} as const;
 
-export const US_MO_OPPORTUNITY_CONFIGS = {
+  /* US_MO */
   usMoRestrictiveHousingStatusHearing,
-} as const;
 
-export const US_ND_OPPORTUNITY_CONFIGS = {
+  /* US_ND */
   earlyTermination,
-} as const;
 
-export const US_TN_OPPORTUNITY_CONFIGS = {
+  /* US_TN */
   compliantReporting,
   usTnCustodyLevelDowngrade,
   usTnExpiration,
   supervisionLevelDowngrade,
   usTnAnnualReclassification,
-} as const;
-
-export const OPPORTUNITY_CONFIGS_BY_STATE = {
-  US_CA: US_CA_OPPORTUNITY_CONFIGS,
-  US_ID: US_ID_OPPORTUNITY_CONFIGS,
-  US_ME: US_ME_OPPORTUNITY_CONFIGS,
-  US_MI: US_MI_OPPORTUNITY_CONFIGS,
-  US_MO: US_MO_OPPORTUNITY_CONFIGS,
-  US_ND: US_ND_OPPORTUNITY_CONFIGS,
-  US_TN: US_TN_OPPORTUNITY_CONFIGS,
-} as const;
-
-export const OPPORTUNITY_CONFIGS = {
-  ...US_CA_OPPORTUNITY_CONFIGS,
-  ...US_ID_OPPORTUNITY_CONFIGS,
-  ...US_ME_OPPORTUNITY_CONFIGS,
-  ...US_MI_OPPORTUNITY_CONFIGS,
-  ...US_MO_OPPORTUNITY_CONFIGS,
-  ...US_ND_OPPORTUNITY_CONFIGS,
-  ...US_TN_OPPORTUNITY_CONFIGS,
 };
 
 export type OpportunityConfigMap = typeof OPPORTUNITY_CONFIGS;
 
+/**
+ * An {@link OpportunityType} represents the string and type representation of an {@link Opportunity}
+ */
 export type OpportunityType = keyof typeof OPPORTUNITY_CONFIGS;
+
+/**
+ * A {@link SupervisionOpportunityType} represents an opportunity
+ * that could be available to someone who is currently a {@link Client} under supervision.
+ *
+ * @see {@link SUPERVISION_OPPORTUNITY_TYPES} for a list of their related configurations.
+ */
+export type SupervisionOpportunityType = {
+  [key in keyof typeof OPPORTUNITY_CONFIGS]: typeof OPPORTUNITY_CONFIGS[key] extends OpportunityConfig<
+    infer T
+  >
+    ? T extends OpportunityBase<Client, any, any>
+      ? key
+      : never
+    : never;
+}[keyof typeof OPPORTUNITY_CONFIGS];
+
+/**
+ * An {@link IncarcerationOpportunityType} represents an opportunity
+ * that could be available to someone who is currently a {@link Resident} of
+ * a facility Location.
+ *
+ * @see {@link INCARCERATION_OPPORTUNITY_TYPES} for a list of their related configurations.
+ */
+export type IncarcerationOpportunityType = {
+  [key in keyof typeof OPPORTUNITY_CONFIGS]: typeof OPPORTUNITY_CONFIGS[key] extends OpportunityConfig<
+    infer T
+  >
+    ? T extends OpportunityBase<Resident, any, any>
+      ? key
+      : never
+    : never;
+}[keyof typeof OPPORTUNITY_CONFIGS];
+
+const getOpportunityTypesBySystemType = <T extends OpportunityType>(
+  type: typeof OPPORTUNITY_CONFIGS[T]["systemType"]
+) => {
+  return Object.keys(OPPORTUNITY_CONFIGS).filter(
+    (oppType) =>
+      OPPORTUNITY_CONFIGS[oppType as OpportunityType].systemType === type
+  ) as T[];
+};
+
+export const SUPERVISION_OPPORTUNITY_TYPES =
+  getOpportunityTypesBySystemType<SupervisionOpportunityType>("SUPERVISION");
+
+export const INCARCERATION_OPPORTUNITY_TYPES =
+  getOpportunityTypesBySystemType<IncarcerationOpportunityType>(
+    "INCARCERATION"
+  );
+
+type ConfigsByStateMapping = Record<
+  TenantId,
+  Record<OpportunityType, OpportunityConfig<Opportunity>>
+>;
+
+export const OPPORTUNITY_CONFIGS_BY_STATE: ConfigsByStateMapping =
+  Object.entries(OPPORTUNITY_CONFIGS).reduce(
+    (acc: Partial<ConfigsByStateMapping>, [oppType, config]) => ({
+      ...acc,
+      [config.stateCode]: {
+        ...acc[config.stateCode as TenantId],
+        [oppType]: config,
+      },
+    }),
+    {}
+  ) as ConfigsByStateMapping;
+
+type OppTypeForUrlByStateMapping = Record<
+  TenantId,
+  Record<OpportunityConfig<Opportunity>["urlSection"], OpportunityType>
+>;
+
+export const OPPORTUNITY_TYPE_FOR_URL_BY_STATE: Record<
+  TenantId,
+  Record<string, OpportunityType>
+> = Object.entries(OPPORTUNITY_CONFIGS).reduce(
+  (acc: Partial<OppTypeForUrlByStateMapping>, [oppType, config]) => ({
+    ...acc,
+    [config.stateCode]: {
+      ...acc[config.stateCode as TenantId],
+      [config.urlSection]: oppType,
+    },
+  }),
+  {}
+) as OppTypeForUrlByStateMapping;
+
+export function isOpportunityTypeUrlForState(
+  stateCode: TenantId,
+  s: string
+): boolean {
+  return s in (OPPORTUNITY_TYPE_FOR_URL_BY_STATE[stateCode] ?? {});
+}
 
 export const getStateOpportunityTypes = (
   stateCode: keyof typeof OPPORTUNITY_CONFIGS_BY_STATE

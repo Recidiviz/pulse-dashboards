@@ -21,21 +21,24 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsTnCustodyLevelDowngradeOpportunity } from "./UsTnCustodyLevelDowngradeOpportunity";
 
-export const usTnCustodyLevelDowngradeConfig: OpportunityConfig = {
-  stateCode: "US_TN",
-  urlSection: "custodyLevelDowngrade",
-  label: "Custody Level Downgrade",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} resident[|s] may be eligible for a`,
-    opportunityText: "custody level downgrade",
-    callToAction: "Review and update custody levels.",
-  }),
-  firestoreCollection: "US_TN-custodyLevelDowngradeReferrals",
-  snooze: {
-    defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
-  },
-};
+export const usTnCustodyLevelDowngradeConfig: OpportunityConfig<UsTnCustodyLevelDowngradeOpportunity> =
+  {
+    systemType: "INCARCERATION",
+    stateCode: "US_TN",
+    urlSection: "custodyLevelDowngrade",
+    label: "Custody Level Downgrade",
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} resident[|s] may be eligible for a`,
+      opportunityText: "custody level downgrade",
+      callToAction: "Review and update custody levels.",
+    }),
+    firestoreCollection: "US_TN-custodyLevelDowngradeReferrals",
+    snooze: {
+      defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+    },
+  };

@@ -19,13 +19,17 @@ import simplur from "simplur";
 
 import { ClientRecord } from "../../../FirestoreStore";
 import { FeatureVariant, TenantId } from "../../../RootStore/types";
+import { Client } from "../../Client";
+import { Resident } from "../../Resident";
+import { JusticeInvolvedPerson } from "../../types";
 import { dateToTimestamp } from "../../utils";
+import { OpportunityBase } from "../OpportunityBase";
 import {
   oppHeaderCountFormatter,
   OpportunityConfig,
-  OpportunityConfigMap,
   OpportunityType,
 } from "../OpportunityConfigs";
+import { Opportunity } from "../types";
 
 export const ineligibleClientRecord: ClientRecord = {
   recordId: "us_xx_001",
@@ -48,7 +52,20 @@ export const ineligibleClientRecord: ClientRecord = {
   personType: "CLIENT",
 };
 
-export const mockUsXxOppConfig: OpportunityConfig = {
+export const mockUsXxOpp: OpportunityType = "mockUsXxOpp" as OpportunityType;
+export const mockUsXxTwoOpp: OpportunityType =
+  "mockUsXxTwoOpp" as OpportunityType;
+
+export class TestOpportunity<
+  T extends JusticeInvolvedPerson
+> extends OpportunityBase<T, any, any> {
+  constructor(...[person, type, rootStore, ...args]: any[]) {
+    super(person, type, rootStore, ...args);
+  }
+}
+
+export const mockUsXxOppConfig: OpportunityConfig<TestOpportunity<Client>> = {
+  systemType: "SUPERVISION",
   stateCode: "US_XX" as TenantId,
   urlSection: "mockOpportunity",
   label: "Mock Opportunity",
@@ -70,8 +87,11 @@ export const mockUsXxOppConfig: OpportunityConfig = {
   firestoreCollection: "US_XX_mockOpportunity",
 };
 
-export const mockUsXxTwoOppConfig: OpportunityConfig = {
+export const mockUsXxTwoOppConfig: OpportunityConfig<
+  TestOpportunity<Resident>
+> = {
   ...mockUsXxOppConfig,
+  systemType: "INCARCERATION",
   hydratedHeader: (count: number) => ({
     fullText: simplur`${[count, oppHeaderCountFormatter]} client[|s] may be `,
     opportunityText: "on or past their expiration date",
@@ -80,11 +100,7 @@ export const mockUsXxTwoOppConfig: OpportunityConfig = {
   }),
 };
 
-export const mockUsXxOpp: OpportunityType = "mockUsXxOpp" as OpportunityType;
-export const mockUsXxTwoOpp: OpportunityType =
-  "mockUsXxTwoOpp" as OpportunityType;
-
 export const MOCK_OPPORTUNITY_CONFIGS = {
   [mockUsXxOpp]: mockUsXxOppConfig,
   [mockUsXxTwoOpp]: mockUsXxTwoOppConfig,
-} as OpportunityConfigMap;
+} as unknown as Record<OpportunityType, OpportunityConfig<Opportunity>>;

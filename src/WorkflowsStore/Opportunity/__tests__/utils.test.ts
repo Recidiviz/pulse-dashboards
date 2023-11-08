@@ -24,9 +24,11 @@ import {
 } from "../__fixtures__";
 import {
   OPPORTUNITY_CONFIGS,
+  OpportunityConfig,
   OpportunityHydratedHeader,
   OpportunityType,
 } from "../OpportunityConfigs";
+import { Opportunity } from "../types";
 import {
   generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,
@@ -65,7 +67,9 @@ describe("Generate header", () => {
 
   beforeAll(() => {
     // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
-    OPPORTUNITY_CONFIGS[mockUsXxOpp] = mockUsXxOppConfig;
+    (OPPORTUNITY_CONFIGS as Record<string, OpportunityConfig<Opportunity>>)[
+      mockUsXxOpp
+    ] = mockUsXxOppConfig;
   });
 
   afterAll(() => {
@@ -98,7 +102,7 @@ describe("Generate hydrated header", () => {
   beforeAll(() => {
     // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
     Object.entries(MOCK_OPPORTUNITY_CONFIGS).forEach(([key, value], index) => {
-      OPPORTUNITY_CONFIGS[key as OpportunityType] = value;
+      OPPORTUNITY_CONFIGS[key as OpportunityType] = value as never;
       hydratedHeaders.push(
         generateOpportunityHydratedHeader(key as OpportunityType, index)
       );

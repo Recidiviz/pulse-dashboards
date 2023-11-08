@@ -20,22 +20,26 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { CompliantReportingOpportunity } from "./CompliantReportingOpportunity";
 
-export const usTnCompliantReportingConfig: OpportunityConfig = {
-  stateCode: "US_TN",
-  urlSection: "compliantReporting",
-  label: "Compliant Reporting",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] may be eligible for `,
-    opportunityText: "Compliant Reporting",
-    callToAction: "Review and refer eligible clients for Compliant Reporting.",
-  }),
-  firestoreCollection: "compliantReportingReferrals",
-  snooze: {
-    defaultSnoozeDays: 30,
-    maxSnoozeDays: 90,
-  },
-};
+export const usTnCompliantReportingConfig: OpportunityConfig<CompliantReportingOpportunity> =
+  {
+    systemType: "SUPERVISION",
+    stateCode: "US_TN",
+    urlSection: "compliantReporting",
+    label: "Compliant Reporting",
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} client[|s] may be eligible for `,
+      opportunityText: "Compliant Reporting",
+      callToAction:
+        "Review and refer eligible clients for Compliant Reporting.",
+    }),
+    firestoreCollection: "compliantReportingReferrals",
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 90,
+    },
+  };

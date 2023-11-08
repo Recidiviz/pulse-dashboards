@@ -21,25 +21,28 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsTnExpirationOpportunity } from "./UsTnExpirationOpportunity";
 
-export const usTnExpirationConfig: OpportunityConfig = {
-  stateCode: "US_TN",
-  urlSection: "expiration",
-  label: "Expiration",
-  featureVariant: "usTnExpiration",
-  initialHeader:
-    "Search for officers above to review clients who may be on or past their supervision expiration date.",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] may be `,
-    opportunityText: "on or past their expiration date",
-    callToAction:
-      "Review these clients and complete their auto-generated TEPE Note.",
-  }),
-  firestoreCollection: "US_TN-expirationReferrals",
-  snooze: {
-    defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
-  },
-};
+export const usTnExpirationConfig: OpportunityConfig<UsTnExpirationOpportunity> =
+  {
+    systemType: "SUPERVISION",
+    stateCode: "US_TN",
+    urlSection: "expiration",
+    label: "Expiration",
+    featureVariant: "usTnExpiration",
+    initialHeader:
+      "Search for officers above to review clients who may be on or past their supervision expiration date.",
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} client[|s] may be `,
+      opportunityText: "on or past their expiration date",
+      callToAction:
+        "Review these clients and complete their auto-generated TEPE Note.",
+    }),
+    firestoreCollection: "US_TN-expirationReferrals",
+    snooze: {
+      defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+    },
+  };

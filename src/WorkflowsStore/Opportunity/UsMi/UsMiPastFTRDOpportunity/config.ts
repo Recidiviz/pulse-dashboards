@@ -21,8 +21,10 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsMiPastFTRDOpportunity } from "./UsMiPastFTRDOpportunity";
 
-export const usMiPastFTRDConfig: OpportunityConfig = {
+export const usMiPastFTRDConfig: OpportunityConfig<UsMiPastFTRDOpportunity> = {
+  systemType: "SUPERVISION",
   stateCode: "US_MI",
   urlSection: "pastFTRD",
   label: "Overdue for Discharge",

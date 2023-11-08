@@ -20,8 +20,10 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { LSUOpportunity } from "./LSUOpportunity";
 
-export const usIdLSUConfig: OpportunityConfig = {
+export const usIdLSUConfig: OpportunityConfig<LSUOpportunity> = {
+  systemType: "SUPERVISION",
   stateCode: "US_ID",
   urlSection: "LSU",
   label: "Limited Supervision Unit",

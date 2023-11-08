@@ -24,10 +24,8 @@ import { Client } from "../../../Client";
 import { OTHER_KEY } from "../../../utils";
 import { UsCaSupervisionLevelDowngradeForm } from "../../Forms/UsCaSupervisionLevelDowngradeForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import {
-  OpportunityRequirement,
-  SupervisionOpportunityType,
-} from "../../types";
+import { SupervisionOpportunityType } from "../../OpportunityConfigs";
+import { OpportunityRequirement } from "../../types";
 import {
   UsCaSupervisionLevelDowngradeReferralRecord,
   usCaSupervisionLevelDowngradeSchema,

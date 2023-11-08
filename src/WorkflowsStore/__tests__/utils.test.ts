@@ -19,9 +19,17 @@ import { add, parseISO, sub } from "date-fns";
 import { StaffFilter } from "../../core/models/types";
 import { CombinedUserRecord, StaffRecord } from "../../FirestoreStore/types";
 import {
+  INCARCERATION_OPPORTUNITY_TYPES,
+  IncarcerationOpportunityType,
+  OPPORTUNITY_CONFIGS,
+  SUPERVISION_OPPORTUNITY_TYPES,
+  SupervisionOpportunityType,
+} from "../Opportunity/OpportunityConfigs";
+import {
   filterByUserDistrict,
   fractionalDateBetweenTwoDates,
   getSnoozeUntilDate,
+  getSystemIdFromOpportunityType,
   snoozeUntilDateInTheFuture,
   staffNameComparator,
   usCaFilterByRoleSubtype,
@@ -295,5 +303,37 @@ describe("snoozeUntilDateInTheFuture", () => {
     expect(
       snoozeUntilDateInTheFuture(sub(new Date(), { days: 5 }))
     ).toBeFalse();
+  });
+});
+
+describe("can detect supervision vs. incarceration type", () => {
+  const listOfTypes = Object.keys(OPPORTUNITY_CONFIGS);
+  test("supervision", () => {
+    const arr = listOfTypes.filter(
+      (type) =>
+        getSystemIdFromOpportunityType(type as SupervisionOpportunityType) ===
+        "SUPERVISION"
+    );
+    expect(arr).toEqual(SUPERVISION_OPPORTUNITY_TYPES);
+  });
+
+  test("incarceration", () => {
+    const arr = listOfTypes.filter(
+      (type) =>
+        getSystemIdFromOpportunityType(type as IncarcerationOpportunityType) ===
+        "INCARCERATION"
+    );
+    expect(arr).toEqual(INCARCERATION_OPPORTUNITY_TYPES);
+  });
+
+  test("usTnCustodyLevelDowngrade is a incarceration type", () => {
+    expect(getSystemIdFromOpportunityType("usTnCustodyLevelDowngrade")).toBe(
+      "INCARCERATION"
+    );
+  });
+  test("usCaSupervisionLevelDowngrade is a supervision type", () => {
+    expect(
+      getSystemIdFromOpportunityType("usCaSupervisionLevelDowngrade")
+    ).toBe("SUPERVISION");
   });
 });

@@ -20,24 +20,28 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsIdCRCWorkReleaseOpportunity } from "./UsIdCRCWorkReleaseOpportunity";
 
-export const usIdCRCWorkReleaseConfig: OpportunityConfig = {
-  stateCode: "US_ID",
-  urlSection: "CRCWorkRelease",
-  label: "Work-release at Community Reentry Centers",
-  featureVariant: "usIdCRC",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} resident[|s] may be `,
-    opportunityText: "eligible for work-release at a Community Reentry Center",
-    callToAction:
-      "Review residents who may be eligible for work-release to a CRC and start their paperwork in ATLAS.",
-  }),
-  firestoreCollection: "US_ID-CRCWorkReleaseReferrals",
-  snooze: {
-    defaultSnoozeDays: 30,
-    maxSnoozeDays: 90,
-  },
-};
+export const usIdCRCWorkReleaseConfig: OpportunityConfig<UsIdCRCWorkReleaseOpportunity> =
+  {
+    systemType: "INCARCERATION",
+    stateCode: "US_ID",
+    urlSection: "CRCWorkRelease",
+    label: "Work-release at Community Reentry Centers",
+    featureVariant: "usIdCRC",
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} resident[|s] may be `,
+      opportunityText:
+        "eligible for work-release at a Community Reentry Center",
+      callToAction:
+        "Review residents who may be eligible for work-release to a CRC and start their paperwork in ATLAS.",
+    }),
+    firestoreCollection: "US_ID-CRCWorkReleaseReferrals",
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 90,
+    },
+  };

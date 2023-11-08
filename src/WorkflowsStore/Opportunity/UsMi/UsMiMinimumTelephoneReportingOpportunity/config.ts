@@ -20,24 +20,27 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsMiMinimumTelephoneReportingOpportunity } from "./UsMiMinimumTelephoneReportingOpportunity";
 
-export const usMiMinimumTelephoneReportingConfig: OpportunityConfig = {
-  stateCode: "US_MI",
-  urlSection: "minimumTelephoneReporting",
-  label: "Minimum Telephone Reporting",
-  hydratedHeader: (count: number) => ({
-    // TODO: Update the copy.
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] may be eligible for a downgrade to `,
-    opportunityText: "minimum telephone reporting",
-    callToAction:
-      "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",
-  }),
-  firestoreCollection: "US_MI-minimumTelephoneReporting",
-  snooze: {
-    defaultSnoozeDays: 30,
-    maxSnoozeDays: 90,
-  },
-};
+export const usMiMinimumTelephoneReportingConfig: OpportunityConfig<UsMiMinimumTelephoneReportingOpportunity> =
+  {
+    systemType: "SUPERVISION",
+    stateCode: "US_MI",
+    urlSection: "minimumTelephoneReporting",
+    label: "Minimum Telephone Reporting",
+    hydratedHeader: (count: number) => ({
+      // TODO: Update the copy.
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} client[|s] may be eligible for a downgrade to `,
+      opportunityText: "minimum telephone reporting",
+      callToAction:
+        "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",
+    }),
+    firestoreCollection: "US_MI-minimumTelephoneReporting",
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 90,
+    },
+  };

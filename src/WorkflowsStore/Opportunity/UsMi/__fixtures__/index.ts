@@ -18,7 +18,7 @@ import { parseISO } from "date-fns";
 
 import { ClientRecord } from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
-import { SupervisionOpportunityType } from "../../types";
+import { SupervisionOpportunityType } from "../../OpportunityConfigs";
 import {
   UsMiMinimumTelephoneReportingReferralRecord,
   UsMiPastFTRDReferralRecord,

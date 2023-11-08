@@ -20,24 +20,27 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsMiSupervisionLevelDowngradeOpportunity } from "./UsMiSupervisionLevelDowngradeOpportunity";
 
-export const usMiSupervisionLevelDowngradeConfig: OpportunityConfig = {
-  stateCode: "US_MI",
-  urlSection: "supervisionLevelMismatch",
-  label: "Supervision Level Mismatch",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] within their first 6 months of supervision [is|are] being `,
-    opportunityText:
-      "supervised at a level that does not match their latest risk score",
-    callToAction:
-      "Review clients whose supervision level does not match their risk level and change supervision levels in COMS.",
-  }),
-  firestoreCollection: "US_MI-supervisionLevelDowngrade",
-  snooze: {
-    defaultSnoozeDays: 30,
-    maxSnoozeDays: 90,
-  },
-};
+export const usMiSupervisionLevelDowngradeConfig: OpportunityConfig<UsMiSupervisionLevelDowngradeOpportunity> =
+  {
+    systemType: "SUPERVISION",
+    stateCode: "US_MI",
+    urlSection: "supervisionLevelMismatch",
+    label: "Supervision Level Mismatch",
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} client[|s] within their first 6 months of supervision [is|are] being `,
+      opportunityText:
+        "supervised at a level that does not match their latest risk score",
+      callToAction:
+        "Review clients whose supervision level does not match their risk level and change supervision levels in COMS.",
+    }),
+    firestoreCollection: "US_MI-supervisionLevelDowngrade",
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 90,
+    },
+  };

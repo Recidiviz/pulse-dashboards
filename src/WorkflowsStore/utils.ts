@@ -36,13 +36,10 @@ import {
   StaffRecord,
 } from "../FirestoreStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
-import { OpportunityType } from "./Opportunity/OpportunityConfigs";
 import {
-  INCARCERATION_OPPORTUNITY_TYPES,
-  IncarcerationOpportunityType,
-  SUPERVISION_OPPORTUNITY_TYPES,
-  SupervisionOpportunityType,
-} from "./Opportunity/types";
+  OPPORTUNITY_CONFIGS,
+  OpportunityType,
+} from "./Opportunity/OpportunityConfigs";
 
 /**
  * Returns a string of the month and year formatted as "MM_YYYY"
@@ -204,23 +201,7 @@ export function getJusticeInvolvedPersonTitle(
 export function getSystemIdFromOpportunityType(
   opportunityType: OpportunityType
 ): SystemId {
-  if (
-    SUPERVISION_OPPORTUNITY_TYPES.includes(
-      opportunityType as SupervisionOpportunityType
-    )
-  ) {
-    return "SUPERVISION";
-  }
-
-  if (
-    INCARCERATION_OPPORTUNITY_TYPES.includes(
-      opportunityType as IncarcerationOpportunityType
-    )
-  ) {
-    return "INCARCERATION";
-  }
-
-  throw new Error(`Unexpected OpportunityType: ${opportunityType}.`);
+  return OPPORTUNITY_CONFIGS[opportunityType].systemType;
 }
 
 export function getSystemIdFromPage(page: WorkflowsPage): SystemId | undefined {

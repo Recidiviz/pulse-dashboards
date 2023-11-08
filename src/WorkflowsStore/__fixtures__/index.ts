@@ -22,7 +22,7 @@ import {
   ResidentRecord,
   StaffRecord,
 } from "../../FirestoreStore";
-import { SupervisionOpportunityType } from "../Opportunity";
+import { SupervisionOpportunityType } from "../Opportunity/OpportunityConfigs";
 import { dateToTimestamp } from "../utils";
 
 export const mockOfficer: CombinedUserRecord = {

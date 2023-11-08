@@ -22,92 +22,27 @@ import {
   PersonUpdateRecord,
   ResidentRecord,
 } from "../FirestoreStore";
-import { Expect, Extends } from "../utils/typeUtils";
 import { Client } from "./Client";
 import {
-  CompliantReportingOpportunity,
-  EarnedDischargeOpportunity,
   IncarcerationOpportunityType,
-  LSUOpportunity,
-  SupervisionOpportunityType,
-  UsCaSupervisionLevelDowngradeOpportunity,
-  UsIdExpandedCRCOpportunity,
-  UsIdPastFTRDOpportunity,
-  UsIdSupervisionLevelDowngradeOpportunity,
-  UsMeEarlyTerminationOpportunity,
-  UsMeFurloughReleaseOpportunity,
-  UsMeSCCPOpportunity,
-  UsMeWorkReleaseOpportunity,
-  UsMiClassificationReviewOpportunity,
-  UsMiEarlyDischargeOpportunity,
-  UsMiMinimumTelephoneReportingOpportunity,
-  UsMiPastFTRDOpportunity,
-  UsMiSupervisionLevelDowngradeOpportunity,
-  UsMoRestrictiveHousingStatusHearingOpportunity,
-  UsNdEarlyTerminationOpportunity,
-  UsTnCustodyLevelDowngradeOpportunity,
-  UsTnExpirationOpportunity,
-  UsTnSupervisionLevelDowngradeOpportunity,
+  OPPORTUNITY_CONFIGS,
+  OpportunityConfig,
+  OpportunityType,
 } from "./Opportunity";
-import { OpportunityBase } from "./Opportunity/OpportunityBase";
-import { UsIdCRCResidentWorkerOpportunity } from "./Opportunity/UsId/UsIdCRCResidentWorkerOpportunity/UsIdCRCResidentWorkerOpportunity";
-import { UsIdCRCWorkReleaseOpportunity } from "./Opportunity/UsId/UsIdCRCWorkReleaseOpportunity";
-import { UsTnAnnualReclassificationReviewOpportunity } from "./Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
+import { SupervisionOpportunityType } from "./Opportunity/OpportunityConfigs";
 import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { SupervisionTaskInterface } from "./Task/types";
 
-export type SupervisionOpportunityMapping = {
-  earlyTermination?: UsNdEarlyTerminationOpportunity;
-  compliantReporting?: CompliantReportingOpportunity;
-  earnedDischarge?: EarnedDischargeOpportunity;
-  LSU?: LSUOpportunity;
-  pastFTRD?: UsIdPastFTRDOpportunity;
-  supervisionLevelDowngrade?: UsTnSupervisionLevelDowngradeOpportunity;
-  usIdSupervisionLevelDowngrade?: UsIdSupervisionLevelDowngradeOpportunity;
-  usMiSupervisionLevelDowngrade?: UsMiSupervisionLevelDowngradeOpportunity;
-  usMiClassificationReview?: UsMiClassificationReviewOpportunity;
-  usMiEarlyDischarge?: UsMiEarlyDischargeOpportunity;
-  usTnExpiration?: UsTnExpirationOpportunity;
-  usMeEarlyTermination?: UsMeEarlyTerminationOpportunity;
-  usMiMinimumTelephoneReporting?: UsMiMinimumTelephoneReportingOpportunity;
-  usMiPastFTRD?: UsMiPastFTRDOpportunity;
-  usCaSupervisionLevelDowngrade?: UsCaSupervisionLevelDowngradeOpportunity;
+type ExtractOpportunityFromConfig<T> = T extends OpportunityConfig<infer U>
+  ? U
+  : never;
+
+export type OpportunityMapping = {
+  [K in OpportunityType]?: ExtractOpportunityFromConfig<
+    typeof OPPORTUNITY_CONFIGS[K]
+  >;
 };
-// The following line will typecheck only if the keys of
-// SupervisionOpportunityMapping are exhaustive
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type CheckSupervisionOpportunityMappingType = Expect<
-  Extends<
-    Required<SupervisionOpportunityMapping>,
-    Record<SupervisionOpportunityType, OpportunityBase<Client, any, any>>
-  >
->;
-
-export type IncarcerationOpportunityMapping = {
-  usIdCRCResidentWorker?: UsIdCRCResidentWorkerOpportunity;
-  usIdCRCWorkRelease?: UsIdCRCWorkReleaseOpportunity;
-  usIdExpandedCRC?: UsIdExpandedCRCOpportunity;
-  usMeWorkRelease?: UsMeWorkReleaseOpportunity;
-  usMeSCCP?: UsMeSCCPOpportunity;
-  usMoRestrictiveHousingStatusHearing?: UsMoRestrictiveHousingStatusHearingOpportunity;
-  usTnCustodyLevelDowngrade?: UsTnCustodyLevelDowngradeOpportunity;
-  usMeFurloughRelease?: UsMeFurloughReleaseOpportunity;
-  usTnAnnualReclassification?: UsTnAnnualReclassificationReviewOpportunity;
-};
-
-// The following line will typecheck only if the keys of
-// IncarcerationOpportunityMapping are exhaustive
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type CheckIncarcerationOpportunityMappingType = Expect<
-  Extends<
-    Required<IncarcerationOpportunityMapping>,
-    Record<IncarcerationOpportunityType, OpportunityBase<Resident, any, any>>
-  >
->;
-
-export type OpportunityMapping = IncarcerationOpportunityMapping &
-  SupervisionOpportunityMapping;
 
 export type JusticeInvolvedPerson = {
   /**

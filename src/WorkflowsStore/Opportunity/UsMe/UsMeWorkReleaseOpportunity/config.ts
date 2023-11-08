@@ -20,26 +20,29 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { UsMeWorkReleaseOpportunity } from "./UsMeWorkReleaseOpportunity";
 
-export const usMeWorkReleaseConfig: OpportunityConfig = {
-  stateCode: "US_ME",
-  urlSection: "workRelease",
-  label: "Work Release",
-  featureVariant: "usMeWorkRelease",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] may be `,
-    opportunityText:
-      "eligible for the Community Transition Program (Work Release)",
-    callToAction:
-      "Search for case managers above to review residents on their caseload who are approaching " +
-      "Work Release eligibility and complete application paperwork.",
-  }),
-  firestoreCollection: "US_ME-workReleaseReferrals",
-  snooze: {
-    defaultSnoozeDays: 30,
-    maxSnoozeDays: 180,
-  },
-};
+export const usMeWorkReleaseConfig: OpportunityConfig<UsMeWorkReleaseOpportunity> =
+  {
+    systemType: "INCARCERATION",
+    stateCode: "US_ME",
+    urlSection: "workRelease",
+    label: "Work Release",
+    featureVariant: "usMeWorkRelease",
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} client[|s] may be `,
+      opportunityText:
+        "eligible for the Community Transition Program (Work Release)",
+      callToAction:
+        "Search for case managers above to review residents on their caseload who are approaching " +
+        "Work Release eligibility and complete application paperwork.",
+    }),
+    firestoreCollection: "US_ME-workReleaseReferrals",
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 180,
+    },
+  };

@@ -27,70 +27,9 @@ import {
   SharedSnoozeUpdate,
   UpdateLog,
 } from "../../FirestoreStore";
-import { TenantId } from "../../RootStore/types";
 import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
-import {
-  AutoSnoozeUntil,
-  OPPORTUNITY_CONFIGS,
-  OpportunityType,
-} from "./OpportunityConfigs";
-
-export const SUPERVISION_OPPORTUNITY_TYPES = [
-  "compliantReporting",
-  "earlyTermination",
-  "earnedDischarge",
-  "LSU",
-  "pastFTRD",
-  "supervisionLevelDowngrade",
-  "usIdSupervisionLevelDowngrade",
-  "usMiSupervisionLevelDowngrade",
-  "usMiClassificationReview",
-  "usMiEarlyDischarge",
-  "usTnExpiration",
-  "usMeEarlyTermination",
-  "usMiMinimumTelephoneReporting",
-  "usMiPastFTRD",
-  "usCaSupervisionLevelDowngrade",
-] as const;
-export type SupervisionOpportunityType =
-  typeof SUPERVISION_OPPORTUNITY_TYPES[number];
-
-export const INCARCERATION_OPPORTUNITY_TYPES = [
-  "usIdCRCResidentWorker",
-  "usIdCRCWorkRelease",
-  "usIdExpandedCRC",
-  "usMeWorkRelease",
-  "usMeSCCP",
-  "usMoRestrictiveHousingStatusHearing",
-  "usTnCustodyLevelDowngrade",
-  "usMeFurloughRelease",
-  "usTnAnnualReclassification",
-] as const;
-export type IncarcerationOpportunityType =
-  typeof INCARCERATION_OPPORTUNITY_TYPES[number];
-
-// We need to keep the state code since urls are not unique
-export const OPPORTUNITY_TYPE_FOR_URL_BY_STATE: Record<
-  TenantId,
-  Record<string, OpportunityType>
-> = Object.entries(OPPORTUNITY_CONFIGS).reduce(
-  (acc: any, [oppType, config]) => ({
-    ...acc,
-    [config.stateCode]: {
-      ...acc[config.stateCode],
-      [config.urlSection]: oppType,
-    },
-  }),
-  {}
-);
-
-export function isOpportunityTypeUrlForState(
-  stateCode: TenantId,
-  s: string
-): boolean {
-  return s in (OPPORTUNITY_TYPE_FOR_URL_BY_STATE[stateCode] ?? {});
-}
+import { AutoSnoozeUntil, OpportunityType } from "./OpportunityConfigs";
 
 export type OpportunityRequirement = {
   text: string;

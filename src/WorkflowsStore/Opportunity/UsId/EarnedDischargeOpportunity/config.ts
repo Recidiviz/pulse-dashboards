@@ -20,22 +20,25 @@ import {
   oppHeaderCountFormatter,
   OpportunityConfig,
 } from "../../OpportunityConfigs";
+import { EarnedDischargeOpportunity } from "./EarnedDischargeOpportunity";
 
-export const usIdEarnedDischargeConfig: OpportunityConfig = {
-  stateCode: "US_ID",
-  urlSection: "earnedDischarge",
-  label: "Earned Discharge",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] may be eligible for `,
-    opportunityText: `earned discharge`,
-    callToAction: `Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.`,
-  }),
-  firestoreCollection: "US_ID-earnedDischargeReferrals",
-  snooze: {
-    defaultSnoozeDays: 30,
-    maxSnoozeDays: 90,
-  },
-};
+export const usIdEarnedDischargeConfig: OpportunityConfig<EarnedDischargeOpportunity> =
+  {
+    systemType: "SUPERVISION",
+    stateCode: "US_ID",
+    urlSection: "earnedDischarge",
+    label: "Earned Discharge",
+    hydratedHeader: (count: number) => ({
+      eligibilityText: simplur`${[
+        count,
+        oppHeaderCountFormatter,
+      ]} client[|s] may be eligible for `,
+      opportunityText: `earned discharge`,
+      callToAction: `Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.`,
+    }),
+    firestoreCollection: "US_ID-earnedDischargeReferrals",
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 90,
+    },
+  };
