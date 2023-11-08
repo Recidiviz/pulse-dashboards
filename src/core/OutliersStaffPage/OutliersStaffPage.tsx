@@ -27,6 +27,7 @@ import {
 import { noop } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { useEffect } from "react";
 import { Link, Redirect } from "react-router-dom";
 import simplur from "simplur";
 import styled, { css } from "styled-components/macro";
@@ -135,7 +136,7 @@ const StyledTabPanel = styled(TabPanel)`
   }
 `;
 
-const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
+export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   presenter,
 }: {
   presenter: SupervisionOfficerDetailPresenter;
@@ -151,6 +152,10 @@ const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     supervisorInfo,
     timePeriod,
   } = presenter;
+
+  useEffect(() => {
+    presenter.trackViewed();
+  }, [presenter]);
 
   const supervisorLinkProps = supervisorInfo && {
     linkText: `Go to ${supervisorInfo.displayName || "supervisor"}'s unit`,

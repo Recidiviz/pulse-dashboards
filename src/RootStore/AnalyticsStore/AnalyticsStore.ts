@@ -39,6 +39,18 @@ import type RootStore from "..";
 
 const isAnalyticsEnabled = process.env.NODE_ENV !== "development";
 
+type SupervisorPageTrackingMetadata = {
+  supervisorPseudonymizedId: string;
+  viewedBy?: string;
+};
+
+type StaffPageTrackingMetadata = {
+  staffPseudonymizedId: string;
+  supervisorPseudonymizedId?: string;
+  viewedBy?: string;
+  numOutlierMetrics?: number;
+};
+
 type OpportunityTrackingMetadata = {
   justiceInvolvedPersonId: string;
   opportunityType: OpportunityType;
@@ -110,6 +122,16 @@ export default class AnalyticsStore {
       return;
     }
     window.analytics.track(eventName, fullMetadata);
+  }
+
+  trackOutliersSupervisorPageViewed(
+    metadata: SupervisorPageTrackingMetadata
+  ): void {
+    this.track("frontend.outliers_supervisor_page_viewed", metadata);
+  }
+
+  trackOutliersStaffPageViewed(metadata: StaffPageTrackingMetadata): void {
+    this.track("frontend.outliers_staff_page_viewed", metadata);
   }
 
   trackReferralFormViewed(metadata: OpportunityTrackingMetadata): void {

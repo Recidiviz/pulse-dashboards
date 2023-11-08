@@ -22,6 +22,8 @@ import { OutliersConfigFixture } from "../../../OutliersStore/models/offlineFixt
 import { SupervisionOfficersPresenter } from "../../../OutliersStore/presenters/SupervisionOfficersPresenter";
 import { OutliersSupervisionStore } from "../../../OutliersStore/stores/OutliersSupervisionStore";
 import { RootStore } from "../../../RootStore";
+import AnalyticsStore from "../../../RootStore/AnalyticsStore";
+import UserStore from "../../../RootStore/UserStore";
 import OutliersSupervisorPage, {
   SupervisorPage,
 } from "../OutliersSupervisorPage";
@@ -40,13 +42,14 @@ afterEach(() => {
 describe("Hydrated Supervisor Page", () => {
   let presenter: SupervisionOfficersPresenter;
   let store: OutliersSupervisionStore;
+  const pseudoId = "hashed-mdavis123";
 
   beforeAll(async () => {
     store = new OutliersSupervisionStore(
       new RootStore().outliersStore,
       OutliersConfigFixture
     );
-    presenter = new SupervisionOfficersPresenter(store, "hashed-mdavis123");
+    presenter = new SupervisionOfficersPresenter(store, pseudoId);
     await presenter?.hydrate();
   });
 
@@ -112,7 +115,7 @@ describe("Hydrated Supervisor Page", () => {
       "test-metadata-namespace/app_metadata": {
         role: "supervision_staff",
         externalId: "mdavis123",
-        pseudonymizedId: "hashed-mdavis123",
+        pseudonymizedId: pseudoId,
       },
     };
 
@@ -138,6 +141,27 @@ describe("Hydrated Supervisor Page", () => {
         "2 of the 3 agents in your unit are outliers on one or more metrics"
       )
     ).toBeInTheDocument();
+  });
+
+  test("analytics trackOutliersSupervisorPageViewed", () => {
+    jest.spyOn(AnalyticsStore.prototype, "trackOutliersSupervisorPageViewed");
+    jest
+      .spyOn(UserStore.prototype, "userPseudoId", "get")
+      .mockImplementation(() => pseudoId);
+
+    render(
+      <BrowserRouter>
+        <SupervisorPage presenter={presenter} />
+      </BrowserRouter>
+    );
+
+    expect(
+      store.outliersStore.rootStore.analyticsStore
+        .trackOutliersSupervisorPageViewed
+    ).toHaveBeenCalledWith({
+      supervisorPseudonymizedId: pseudoId,
+      viewedBy: pseudoId,
+    });
   });
 });
 

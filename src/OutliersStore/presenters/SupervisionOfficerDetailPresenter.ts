@@ -44,6 +44,20 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     makeAutoObservable(this);
   }
 
+  trackViewed(): void {
+    const { userPseudoId } =
+      this.supervisionStore.outliersStore.rootStore.userStore;
+
+    this.supervisionStore.outliersStore.rootStore.analyticsStore.trackOutliersStaffPageViewed(
+      {
+        staffPseudonymizedId: this.officerPseudoId,
+        supervisorPseudonymizedId: this.supervisorInfo?.pseudonymizedId,
+        viewedBy: userPseudoId,
+        numOutlierMetrics: this.outlierOfficerData?.outlierMetrics.length,
+      }
+    );
+  }
+
   private get areMetricsHydrated() {
     return this.supervisionStore.metricConfigsById !== undefined;
   }

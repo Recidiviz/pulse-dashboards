@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 import simplur from "simplur";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -49,6 +50,10 @@ export const SupervisorPage = observer(function SupervisorPage({
     supervisorIsCurrentUser,
     timePeriod,
   } = presenter;
+
+  useEffect(() => {
+    presenter.trackViewed();
+  }, [presenter]);
 
   const emptyPageHeaderText = `${getWelcomeText(
     supervisorInfo?.fullName.givenNames,

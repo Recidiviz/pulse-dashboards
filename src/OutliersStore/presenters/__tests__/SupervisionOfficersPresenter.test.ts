@@ -16,6 +16,8 @@
 // =============================================================================
 
 import { RootStore } from "../../../RootStore";
+import AnalyticsStore from "../../../RootStore/AnalyticsStore";
+import UserStore from "../../../RootStore/UserStore";
 import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
 import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConfigFixture";
 import { OutliersStore } from "../../OutliersStore";
@@ -25,6 +27,7 @@ import { SupervisionOfficersPresenter } from "../SupervisionOfficersPresenter";
 
 let store: OutliersSupervisionStore;
 let presenter: SupervisionOfficersPresenter;
+const pseudoId = "hashed-mdavis123";
 
 jest.mock("../getOutlierOfficerData", () => {
   const original = jest.requireActual(
@@ -39,12 +42,16 @@ const getOutlierOfficerDataMock = jest.mocked(getOutlierOfficerData);
 
 beforeEach(() => {
   jest.resetModules();
+  jest
+    .spyOn(UserStore.prototype, "userPseudoId", "get")
+    .mockImplementation(() => pseudoId);
+
   store = new OutliersSupervisionStore(
     new OutliersStore(new RootStore()),
     OutliersConfigFixture
   );
 
-  presenter = new SupervisionOfficersPresenter(store, "hashed-mdavis123");
+  presenter = new SupervisionOfficersPresenter(store, pseudoId);
 });
 
 afterEach(() => {
@@ -120,4 +127,19 @@ test("error assembling metrics data", async () => {
 
   expect(presenter.outlierOfficersData).toBeUndefined();
   expect(presenter.error).toEqual(err);
+});
+
+test("tracks events", async () => {
+  jest.spyOn(AnalyticsStore.prototype, "trackOutliersSupervisorPageViewed");
+
+  await presenter.hydrate();
+  presenter.trackViewed();
+
+  expect(
+    store.outliersStore.rootStore.analyticsStore
+      .trackOutliersSupervisorPageViewed
+  ).toHaveBeenCalledWith({
+    supervisorPseudonymizedId: pseudoId,
+    viewedBy: pseudoId,
+  });
 });

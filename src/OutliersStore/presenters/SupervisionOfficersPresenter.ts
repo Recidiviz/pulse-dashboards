@@ -174,4 +174,15 @@ export class SupervisionOfficersPresenter implements Hydratable {
         this.supervisionStore.currentSupervisorUser?.pseudonymizedId
     );
   }
+
+  trackViewed(): void {
+    const { userPseudoId } =
+      this.supervisionStore.outliersStore.rootStore.userStore;
+    this.supervisionStore.outliersStore.rootStore.analyticsStore.trackOutliersSupervisorPageViewed(
+      {
+        supervisorPseudonymizedId: this.supervisorPseudoId,
+        viewedBy: userPseudoId,
+      }
+    );
+  }
 }

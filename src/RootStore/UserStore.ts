@@ -311,6 +311,10 @@ export default class UserStore {
     return this.userAppMetadata?.userHash ?? "";
   }
 
+  get userPseudoId(): string | undefined {
+    return this.userAppMetadata?.pseudonymizedId;
+  }
+
   get userRole(): UserRole | undefined {
     return this.userAppMetadata?.role;
   }
