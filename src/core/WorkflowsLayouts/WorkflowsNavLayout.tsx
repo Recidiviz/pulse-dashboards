@@ -41,6 +41,7 @@ import { SystemId } from "../models/types";
 import { NavigationBackButton } from "../NavigationBackButton";
 import { NavigationLayout } from "../NavigationLayout";
 import RecidivizLogo from "../RecidivizLogo";
+import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { WorkflowsPage, workflowsUrl } from "../views";
 
 const Wrapper = styled.div<{ responsiveRevamp?: boolean }>`
@@ -152,6 +153,7 @@ const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPage> = {
 export const WorkflowsNavLayout: React.FC = observer(
   function WorkflowsNavLayout({ children }) {
     const {
+      currentTenantId,
       workflowsStore,
       workflowsStore: {
         opportunityTypes,
@@ -168,7 +170,11 @@ export const WorkflowsNavLayout: React.FC = observer(
       <Wrapper responsiveRevamp={!!featureVariants.responsiveRevamp}>
         {featureVariants.responsiveRevamp ? (
           <>
-            <NavigationLayout isMethodologyExternal>
+            <NavigationLayout
+              externalMethodologyUrl={
+                WORKFLOWS_METHODOLOGY_URL[currentTenantId]
+              }
+            >
               <li>
                 <BrandedNavLink to={workflowsUrl(workflowsHomepage)}>
                   Home

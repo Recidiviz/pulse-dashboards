@@ -187,6 +187,10 @@ export class OutliersSupervisionStore {
     )}`;
   }
 
+  get methodologyUrl(): string {
+    return this.config.learnMoreUrl;
+  }
+
   supervisionOfficerSupervisorByExternalId(
     supervisorId: string
   ): SupervisionOfficerSupervisor | undefined {

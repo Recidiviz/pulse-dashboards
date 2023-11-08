@@ -43,7 +43,6 @@ import { isOfflineMode } from "../utils/isOfflineMode";
 import { UserAvatar } from "./Avatar";
 import { useCoreStore } from "./CoreStoreProvider";
 import RecidivizLogo from "./RecidivizLogo/RecidivizLogo";
-import { WORKFLOWS_METHODOLOGY_URL } from "./utils/constants";
 import { DASHBOARD_VIEWS } from "./views";
 
 const Wrapper = styled.div``;
@@ -184,11 +183,11 @@ type OptionalLinkProps = { enabled: boolean };
 function MethodologyLink({
   currentTenantId,
   view,
-  external = false,
+  externalMethodologyUrl,
 }: {
   currentTenantId: TenantId;
   view: string;
-  external?: boolean;
+  externalMethodologyUrl?: string;
 }) {
   const { isMobile } = useIsMobile(true);
 
@@ -196,14 +195,14 @@ function MethodologyLink({
     <>
       {isMobile && <Icon kind={IconSVG.NeedsRiskAssessment} width={20} />}
       Methodology
-      {external && <Icon kind={IconSVG.Open} width={15} />}
+      {externalMethodologyUrl && <Icon kind={IconSVG.Open} width={15} />}
     </>
   );
 
-  if (view === DASHBOARD_VIEWS.workflows) {
+  if (externalMethodologyUrl) {
     return (
       <a
-        href={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
+        href={externalMethodologyUrl}
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -332,14 +331,14 @@ function AccountLink({ enabled }: OptionalLinkProps) {
 type NavigationLayoutProps = {
   backgroundColor?: string;
   isFixed?: boolean;
-  isMethodologyExternal?: boolean;
+  externalMethodologyUrl?: string;
   children?: React.ReactNode;
 };
 
 export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
   function NavigationLayout({
     backgroundColor,
-    isMethodologyExternal,
+    externalMethodologyUrl,
     children,
     isFixed = true,
   }) {
@@ -367,7 +366,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <MethodologyLink
           currentTenantId={currentTenantId}
           view={view}
-          external={isMethodologyExternal}
+          externalMethodologyUrl={externalMethodologyUrl}
         />
         <PathwaysLink enabled={enabledPathwaysPages} />
         <OperationsLink enabled={enableOperations} />

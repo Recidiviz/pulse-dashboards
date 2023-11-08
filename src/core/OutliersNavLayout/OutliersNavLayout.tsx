@@ -16,10 +16,12 @@
 // =============================================================================
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigationLayout } from "../NavigationLayout";
 
@@ -52,13 +54,19 @@ const Main = styled.main<{
 const OutliersNavLayout: React.FC = ({ children }) => {
   const { isMobile } = useIsMobile(true);
 
+  const {
+    outliersStore: { supervisionStore },
+  } = useRootStore();
+
   return (
     <Wrapper>
-      <NavigationLayout />
+      <NavigationLayout
+        externalMethodologyUrl={supervisionStore?.methodologyUrl}
+      />
 
       <Main isMobile={isMobile}>{children}</Main>
     </Wrapper>
   );
 };
 
-export default OutliersNavLayout;
+export default observer(OutliersNavLayout);

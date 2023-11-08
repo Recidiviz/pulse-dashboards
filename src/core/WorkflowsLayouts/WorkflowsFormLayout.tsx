@@ -34,6 +34,7 @@ import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRel
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
 import RecidivizLogo from "../RecidivizLogo";
+import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { DASHBOARD_VIEWS, workflowsUrl } from "../views";
 import { OpportunityProfile } from "../WorkflowsClientProfile/OpportunityProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
@@ -105,6 +106,7 @@ type FormSidebarView = "OPPORTUNITY" | "DENIAL";
 
 export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
   const {
+    currentTenantId,
     workflowsStore: {
       selectedOpportunityType: opportunityType,
       selectedPerson,
@@ -147,7 +149,10 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
     <Wrapper>
       <Sidebar>
         {featureVariants.responsiveRevamp ? (
-          <NavigationLayout isMethodologyExternal isFixed={false} />
+          <NavigationLayout
+            externalMethodologyUrl={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
+            isFixed={false}
+          />
         ) : (
           <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
             <Link to={`/${DASHBOARD_VIEWS.workflows}`}>
