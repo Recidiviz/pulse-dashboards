@@ -26,6 +26,7 @@ import {
   parseISO,
 } from "date-fns";
 import { Timestamp } from "firebase/firestore";
+import moment from "moment";
 
 import { StaffFilter, SystemId } from "../core/models/types";
 import { WORKFLOWS_SYSTEM_ID_TO_PAGE, WorkflowsPage } from "../core/views";
@@ -143,9 +144,12 @@ export function fractionalDateBetweenTwoDates(
   fractionalPortion: number
 ): Date | undefined {
   if (dateLeft && dateRight) {
-    const differenceInTime = dateRight.getTime() - dateLeft.getTime();
-    const fractionalTime = differenceInTime * fractionalPortion;
-    return new Date(dateLeft.getTime() + fractionalTime);
+    const diffInDays = moment(dateRight).diff(moment(dateLeft), "days");
+    const fractionOfDays = diffInDays * fractionalPortion;
+    const fractionalDate = moment(dateLeft)
+      .add(fractionOfDays, "days")
+      .toDate();
+    return fractionalDate;
   }
 }
 

@@ -98,26 +98,41 @@ test("staffNameComparator", () => {
 
 describe("fractionalDateBetweenTwoDates", () => {
   it("should return the date 1/2 between the two dates", () => {
-    const dateLeft = new Date("2023-01-01");
-    const dateRight = new Date("2023-12-31");
+    const dateLeft = new Date("2009-02-25");
+    const dateRight = new Date("2059-10-10");
+    const halfDate = new Date(2034, 5, 19);
 
-    const middleDate = new Date((dateLeft.getTime() + dateRight.getTime()) / 2);
     const fractionalDate = fractionalDateBetweenTwoDates(
       dateLeft,
       dateRight,
       0.5
     ); // 0.5 for half
 
-    expect(fractionalDate).toEqual(middleDate);
+    expect(fractionalDate).toEqual(halfDate);
   });
+
+  test.each([
+    ["2009-02-25", "2059-10-10", "2034-06-19"],
+    ["2023-08-03", "2024-03-18", "2023-11-25"],
+    ["2023-06-28", "2024-03-07", "2023-11-02"],
+    ["2023-05-12", "2023-09-17", "2023-07-15"],
+  ])(
+    "Calculates the half date correctly with timezones",
+    (dateLeft, dateRight, result) => {
+      const halfDate = fractionalDateBetweenTwoDates(
+        new Date(dateLeft),
+        new Date(dateRight),
+        0.5
+      );
+      expect(halfDate).toEqual(parseISO(result));
+    }
+  );
 
   it("should return the date 2/3 between the two dates", () => {
     const dateLeft = new Date("2023-01-01");
     const dateRight = new Date("2023-12-31");
 
-    const timeDifference = dateRight.getTime() - dateLeft.getTime();
-    const twoThirdsTime = dateLeft.getTime() + (2 / 3) * timeDifference;
-    const twoThirdsDate = new Date(twoThirdsTime);
+    const twoThirdsDate = new Date(2023, 8, 1);
     const fractionalDate = fractionalDateBetweenTwoDates(
       dateLeft,
       dateRight,
