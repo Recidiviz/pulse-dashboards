@@ -14,8 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { captureException } from "@sentry/react";
+import saveAs from "file-saver";
 import { debounce, isString, throttle } from "lodash";
 import { reaction } from "mobx";
+import PizZip from "pizzip";
 import { rem } from "polished";
 import * as React from "react";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
@@ -217,3 +220,19 @@ function useReactiveInput<
 }
 
 export { useReactiveInput };
+
+export const downloadZipFile = (
+  zipFilename: string,
+  files: { filename: string; fileContents: any }[]
+) => {
+  try {
+    const zip = new PizZip();
+    files.forEach(({ filename, fileContents }) => {
+      zip.file(filename, fileContents);
+    });
+    const blob = zip.generate({ type: "blob" });
+    saveAs(blob, zipFilename);
+  } catch (e) {
+    captureException(e);
+  }
+};

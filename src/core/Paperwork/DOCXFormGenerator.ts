@@ -34,7 +34,7 @@ export type FileGeneratorArgs = [
   formContents: DocxTemplateFormContents
 ];
 
-const renderDocument = (
+export const renderDocument = (
   formContents: DocxTemplateFormContents,
   template: ArrayBuffer,
   generatedType: GeneratedFileType
@@ -78,26 +78,35 @@ export const downloadSingle = async (
   return renderAndSaveDocument(fileName, formContents, template);
 };
 
-export const downloadMultipleZipped = async (
-  zipFileName: string,
+export const renderDocx = async (
+  ...[filename, stateCode, templateName, formContents, getTokenSilently]: [
+    ...FileGeneratorArgs,
+    UserStore["getTokenSilently"]
+  ]
+): Promise<{ filename: string; fileContents: any }> => {
+  const template = await fetchWorkflowsTemplates(
+    stateCode,
+    templateName,
+    getTokenSilently
+  );
+  return {
+    filename,
+    fileContents: renderDocument(formContents, template, "arraybuffer"),
+  };
+};
+
+export const renderMultipleDocx = async (
   fileInputs: FileGeneratorArgs[],
   getTokenSilently: UserStore["getTokenSilently"]
-): Promise<void> => {
-  const zip = new PizZip();
-
-  await Promise.all(
-    fileInputs.map(
-      async ([fileName, stateCode, templateName, formContents]) => {
-        const template = await fetchWorkflowsTemplates(
-          stateCode,
-          templateName,
-          getTokenSilently
-        );
-        const doc = renderDocument(formContents, template, "arraybuffer");
-        zip.file(fileName, doc);
-      }
-    )
+): Promise<
+  {
+    filename: string;
+    fileContents: any;
+  }[]
+> => {
+  const renderedDocs = await Promise.all(
+    fileInputs.map((fileInput) => renderDocx(...fileInput, getTokenSilently))
   );
 
-  saveAs(zip.generate({ type: "blob" }), zipFileName);
+  return renderedDocs;
 };

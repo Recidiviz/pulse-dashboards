@@ -23,7 +23,7 @@ import { UsCaSupervisionLevelDowngradeDraftData } from "../../WorkflowsStore/Opp
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import {
-  fillPDF,
+  fillAndSavePDF,
   fixRadioGroups,
   PDFFillerFunc,
 } from "../Paperwork/PDFFormFiller";
@@ -164,7 +164,7 @@ const FormUsCaSupervisionLeveDowngrade = observer(
           ?.formData;
       if (!formData) return;
 
-      await fillPDF(
+      await fillAndSavePDF(
         `${person?.displayName} - CDCR 1657.pdf`,
         "US_CA",
         "CDCR1657.pdf",

@@ -22,10 +22,11 @@ import { useRootStore } from "../../../../components/StoreProvider";
 import { Resident } from "../../../../WorkflowsStore/Resident";
 import {
   DocxTemplateFormContents,
-  downloadMultipleZipped,
   FileGeneratorArgs,
+  renderMultipleDocx,
 } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
+import { downloadZipFile } from "../../utils";
 import p1 from "./assets/p1.png";
 import p2 from "./assets/p2.png";
 import p3 from "./assets/p3.png";
@@ -63,11 +64,12 @@ const formDownloader = async (resident: Resident): Promise<void> => {
     ];
   });
 
-  await downloadMultipleZipped(
-    `${resident.displayName} SCCP Packet.zip`,
+  const documents = await renderMultipleDocx(
     fileInputs,
     resident.rootStore.getTokenSilently
   );
+
+  downloadZipFile(`${resident.displayName} SCCP Packet.zip`, documents);
 };
 
 export const FormSCCP = observer(function FormSCCP() {

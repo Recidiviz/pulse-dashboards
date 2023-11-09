@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/react";
 import { saveAs } from "file-saver";
 import type { PDFDocument, PDFForm } from "pdf-lib";
 
@@ -38,7 +39,6 @@ export type PDFFillerFunc = (
 // given PDF, run: `yarn pdfformfiller-boilerplate path/to/your.pdf`
 
 export async function fillPDF(
-  fileName: string,
   stateCode: string,
   templateName: string,
   fillerFunc: PDFFillerFunc,
@@ -56,6 +56,7 @@ export async function fillPDF(
 
   const set: SetFunc = (fieldName, value) => {
     const field = form.getField(fieldName); // If fieldName doesn't exist, this will throw
+
     if (field instanceof PDFTextField) {
       field.setText((value ?? "").toString());
     } else if (field instanceof PDFCheckBox) {
@@ -73,9 +74,31 @@ export async function fillPDF(
     }
   };
 
-  await fillerFunc(set, form, doc);
+  try {
+    await fillerFunc(set, form, doc);
+  } catch (e) {
+    captureException(e);
+  }
 
-  const blob = new Blob([await doc.save()]);
+  const pdfBytes = await doc.save();
+  return pdfBytes;
+}
+
+export async function fillAndSavePDF(
+  fileName: string,
+  stateCode: string,
+  templateName: string,
+  fillerFunc: PDFFillerFunc,
+  getTokenSilently: () => Promise<any>
+) {
+  const pdfBytes = await fillPDF(
+    stateCode,
+    templateName,
+    fillerFunc,
+    getTokenSilently
+  );
+
+  const blob = new Blob([pdfBytes]);
   saveAs(blob, fileName);
 }
 
