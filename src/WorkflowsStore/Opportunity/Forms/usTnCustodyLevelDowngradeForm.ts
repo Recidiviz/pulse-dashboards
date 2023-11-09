@@ -18,13 +18,7 @@ function formatViolationNotes(
   notes: { eventDate: Date; noteBody: string }[]
 ): string {
   return notes
-    .map(({ eventDate, noteBody }) => {
-      // TODO(#4041): Remove q6 and q7 note fallback
-      if (["A", "B", "C"].includes(noteBody)) {
-        return `${formatDate(eventDate)} - Class ${noteBody}`;
-      }
-      return `${formatDate(eventDate)} - ${noteBody}`;
-    })
+    .map(({ eventDate, noteBody }) => `${formatDate(eventDate)} - ${noteBody}`)
     .join(", ");
 }
 

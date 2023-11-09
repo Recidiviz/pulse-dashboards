@@ -232,26 +232,7 @@ describe("prefilledDataTransformer", () => {
     });
   });
 
-  // TODO(#4041): Remove q6 and q7 note fallback
-  test("formats q6Notes - old format", () => {
-    oppRecord.formInformation.q6Notes = [
-      {
-        noteBody: "C",
-        eventDate: new Date("2019-02-01"),
-      },
-      {
-        noteBody: "A",
-        eventDate: new Date("2020-02-01"),
-      },
-    ];
-
-    expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
-      ...baseResult,
-      q6Note: "2/1/19 - Class C, 2/1/20 - Class A",
-    });
-  });
-
-  test("formats q6Notes - new format", () => {
+  test("formats q6Notes", () => {
     oppRecord.formInformation.q6Notes = [
       {
         noteBody: "Class C Incident Details: Some details",
@@ -270,27 +251,7 @@ describe("prefilledDataTransformer", () => {
     });
   });
 
-  // TODO(#4041): Remove q6 and q7 note fallback
-  test("formats q7Notes - old format", () => {
-    // Identical to q6
-    oppRecord.formInformation.q7Notes = [
-      {
-        noteBody: "C",
-        eventDate: new Date("2019-02-01"),
-      },
-      {
-        noteBody: "A",
-        eventDate: new Date("2020-02-01"),
-      },
-    ];
-
-    expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
-      ...baseResult,
-      q7Note: "2/1/19 - Class C, 2/1/20 - Class A",
-    });
-  });
-
-  test("formats q7Notes - new format", () => {
+  test("formats q7Notes", () => {
     oppRecord.formInformation.q7Notes = [
       {
         noteBody: "Class C Incident Details: Some details",
