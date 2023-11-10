@@ -33,13 +33,14 @@ import p3 from "./assets/p3.png";
 import p4 from "./assets/p4.png";
 import p5 from "./assets/p5.png";
 import p6 from "./assets/p6.png";
+import p7 from "./assets/p7.png";
 
 const FormPreviewPage = styled.img`
   height: auto;
   width: 100%;
 `;
 
-const previewImages = [p1, p2, p3, p4, p5, p6];
+const previewImages = [p1, p2, p3, p4, p5, p6, p7];
 
 const formDownloader = async (resident: Resident): Promise<void> => {
   let contents: DocxTemplateFormContents;
