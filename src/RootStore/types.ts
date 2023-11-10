@@ -114,6 +114,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   process.env.REACT_APP_DEPLOY_ENV === "production"
     ? {
         CompliantReportingAlmostEligible: {},
+        responsiveRevamp: {},
         usTnExpiration: {},
         usTnExpirationSubmitToTomis: {},
         usMeFurloughRelease: {},
