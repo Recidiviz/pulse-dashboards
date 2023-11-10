@@ -67,7 +67,12 @@ import tenants from "../tenants";
 import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
-import { Opportunity, OpportunityTab } from "./Opportunity";
+import {
+  INCARCERATION_OPPORTUNITY_TYPES,
+  Opportunity,
+  OpportunityTab,
+  SUPERVISION_OPPORTUNITY_TYPES,
+} from "./Opportunity";
 import {
   OPPORTUNITY_CONFIGS,
   OpportunityType,
@@ -717,16 +722,26 @@ export class WorkflowsStore implements Hydratable {
     const {
       isHydrated,
       rootStore: { currentTenantId },
+      activeSystem,
+      featureVariants,
     } = this;
-    if (!isHydrated || !currentTenantId) return [];
+    if (!isHydrated || !currentTenantId || !activeSystem) return [];
 
     const opportunityTypes = tenants[currentTenantId]?.opportunityTypes ?? [];
+    const activeSystemFilters: Record<SystemId, Partial<OpportunityType>[]> = {
+      SUPERVISION: SUPERVISION_OPPORTUNITY_TYPES,
+      INCARCERATION: INCARCERATION_OPPORTUNITY_TYPES,
+      ALL: [], // ALL is a special case where we don't want to filter anything
+    };
 
     return opportunityTypes.filter((oppType: OpportunityType) => {
-      const gatingVariant = OPPORTUNITY_CONFIGS[oppType]?.featureVariant;
-      if (!gatingVariant) return true;
+      const isInSystem =
+        activeSystem === "ALL" ||
+        activeSystemFilters[activeSystem].includes(oppType);
+      if (!isInSystem) return false;
 
-      return this.featureVariants[gatingVariant];
+      const gatingVariant = OPPORTUNITY_CONFIGS[oppType]?.featureVariant;
+      return !gatingVariant || featureVariants[gatingVariant];
     });
   }
 

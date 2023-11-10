@@ -21,6 +21,7 @@ import { difference } from "lodash";
 import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
+import { SystemId } from "../../core/models/types";
 import FirestoreStore, {
   ClientRecord,
   CombinedUserRecord,
@@ -32,7 +33,12 @@ import FirestoreStore, {
 import { RootStore } from "../../RootStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariant } from "../../RootStore/types";
-import type { OpportunityType, WorkflowsStore } from "..";
+import type {
+  IncarcerationOpportunityType,
+  OpportunityType,
+  SupervisionOpportunityType,
+  WorkflowsStore,
+} from "..";
 import {
   ineligibleClient,
   lsuAlmostEligibleClient,
@@ -48,7 +54,9 @@ import {
 import { Client } from "../Client";
 import {
   CompliantReportingOpportunity,
+  INCARCERATION_OPPORTUNITY_TYPES,
   LSUOpportunity,
+  SUPERVISION_OPPORTUNITY_TYPES,
   UsNdEarlyTerminationOpportunity,
 } from "../Opportunity";
 import { OPPORTUNITY_CONFIGS } from "../Opportunity/OpportunityConfigs";
@@ -77,7 +85,12 @@ const testStateCodes = [
 type testStateCode = typeof testStateCodes[number];
 const stateConfigs: Record<testStateCode | "RECIDIVIZ", any> = {
   US_XX: {
-    opportunityTypes: ["compliantReporting", "LSU"],
+    opportunityTypes: [
+      "compliantReporting",
+      "LSU",
+      "usIdCRC",
+      "usIdExtendedCRC",
+    ],
     workflowsSupportedSystems: ["SUPERVISION"],
     availableStateCodes: ["US_XX"],
   },
@@ -904,12 +917,66 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
   const NON_GATED_OPPS = ["compliantReporting"];
   const TEST_GATED_OPP = "LSU" as OpportunityType;
   const TEST_FEAT_VAR = "TEST" as FeatureVariant;
+  const setupHydration = () =>
+    runInAction(() => {
+      rootStore.userStore.user = {
+        email: "foo@example.com",
+        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+          stateCode: "US_XX",
+          featureVariants: { [TEST_FEAT_VAR]: {} },
+        },
+      };
+      rootStore.userStore.userIsLoading = false;
+    });
   beforeEach(() => {
     runInAction(() => {
       // @ts-expect-error
       rootStore.tenantStore.currentTenantId = "US_XX";
       OPPORTUNITY_CONFIGS[TEST_GATED_OPP].featureVariant = TEST_FEAT_VAR;
     });
+  });
+
+  test("undefined active system results in no opportunity types", async () => {
+    jest
+      .spyOn(workflowsStore, "activeSystem", "get")
+      .mockReturnValue(undefined as unknown as SystemId);
+    await waitForHydration({ ...mockOfficer });
+    setupHydration();
+
+    expect(workflowsStore.opportunityTypes.sort()).toEqual([]);
+  });
+
+  test("active system filter should yield only opps that are in incarceration", async () => {
+    jest
+      .spyOn(workflowsStore, "activeSystem", "get")
+      .mockReturnValue("INCARCERATION");
+    await waitForHydration({ ...mockOfficer });
+
+    const oppTypes = workflowsStore.opportunityTypes;
+    expect(
+      oppTypes.every((oppType) =>
+        INCARCERATION_OPPORTUNITY_TYPES.includes(
+          oppType as IncarcerationOpportunityType
+        )
+      )
+    ).toBeTruthy();
+  });
+
+  test("active system filter should yield only opps that are in supervision", async () => {
+    jest
+      .spyOn(workflowsStore, "activeSystem", "get")
+      .mockReturnValue("SUPERVISION");
+    await waitForHydration({ ...mockOfficer });
+
+    const oppTypes = workflowsStore.opportunityTypes;
+    expect(
+      oppTypes.length > 0 &&
+        oppTypes.every((oppType) =>
+          SUPERVISION_OPPORTUNITY_TYPES.includes(
+            oppType as SupervisionOpportunityType
+          )
+        )
+    ).toBeTruthy();
   });
 
   test("gated opportunity is not enabled when feature variant is not set for current user", async () => {
@@ -919,16 +986,8 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
 
   test("gated opportunity is enabled when feature variant is set for current user", async () => {
     await waitForHydration({ ...mockOfficer });
-    runInAction(() => {
-      rootStore.userStore.user = {
-        email: "foo@example.com",
-        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-          stateCode: "US_XX",
-          featureVariants: { TEST: {} },
-        },
-      };
-      rootStore.userStore.userIsLoading = false;
-    });
+    setupHydration();
+
     expect(workflowsStore.opportunityTypes.sort()).toEqual([
       TEST_GATED_OPP,
       ...NON_GATED_OPPS,
