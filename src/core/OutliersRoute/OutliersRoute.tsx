@@ -28,7 +28,8 @@ import { OUTLIERS_PATHS, outliersUrl } from "../views";
 
 const RouteSync = observer(function RouteSync({ children }) {
   const routeParams: Record<string, string | undefined> = useParams();
-  const { supervisorPseudoId, officerPseudoId, metricId } = routeParams;
+  const { supervisorPseudoId, officerPseudoId, metricId, clientId } =
+    routeParams;
   const loc: Location = useLocation();
 
   const {
@@ -46,10 +47,11 @@ const RouteSync = observer(function RouteSync({ children }) {
         supervisionStore.setSupervisorPseudoId(supervisorPseudoId);
         supervisionStore.setOfficerPseudoId(officerPseudoId);
         supervisionStore.setMetricId(metricId);
+        supervisionStore.setClientId(clientId);
       }
     });
     syncParams();
-  }, [supervisionStore, loc, supervisorPseudoId, officerPseudoId, metricId]);
+  }, [supervisionStore, loc, supervisorPseudoId, officerPseudoId, metricId, clientId]);
 
   // access controls that may short-circuit rendering
   try {

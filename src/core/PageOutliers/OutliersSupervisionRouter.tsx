@@ -49,6 +49,9 @@ export const OutliersSupervisionRouter = () => {
         <OutliersRoute exact path={OUTLIERS_PATHS.supervisionStaffMetric}>
           <OutliersStaffPage />
         </OutliersRoute>
+        <OutliersRoute exact path={OUTLIERS_PATHS.supervisionClientDetail}>
+          <OutliersStaffPage />
+        </OutliersRoute>
         <NotFound />
       </Switch>
     </ModelHydrator>

@@ -187,3 +187,30 @@ test("supervisors restricted from supervisors list page", () => {
     screen.getByText("Page Not Found", { exact: false })
   ).toBeInTheDocument();
 });
+
+test("handles params for client detail page", () => {
+  const mockOfficerPseudoId = "123abc";
+  const mockMetricId = ADVERSE_METRIC_IDS.enum.incarceration_starts;
+  const mockClientId = "client123";
+  const mockOutcomeDate = "2023-05-14";
+
+  render(
+    <StaticRouter
+      location={outliersUrl("supervisionClientDetail", {
+        officerPseudoId: mockOfficerPseudoId,
+        metricId: mockMetricId,
+        clientId: mockClientId,
+        outcomeDate: mockOutcomeDate,
+      })}
+    >
+      <OutliersRoute path={OUTLIERS_PATHS.supervisionClientDetail}>
+        null
+      </OutliersRoute>
+    </StaticRouter>
+  );
+
+  expect(supervisionStore?.supervisorPseudoId).toBeUndefined();
+  expect(supervisionStore?.officerPseudoId).toBe(mockOfficerPseudoId);
+  expect(supervisionStore?.metricId).toBe(mockMetricId);
+  expect(supervisionStore?.clientId).toBe(mockClientId);
+});

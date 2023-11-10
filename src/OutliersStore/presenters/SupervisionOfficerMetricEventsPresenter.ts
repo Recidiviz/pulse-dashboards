@@ -19,6 +19,8 @@ import { descending } from "d3-array";
 import { flowResult, makeAutoObservable } from "mobx";
 
 import { Hydratable } from "../../core/models/types";
+import { outliersUrl } from "../../core/views";
+import { formatDateToISO } from "../../utils";
 import { castToError } from "../../utils/castToError";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
@@ -98,6 +100,27 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
     return (
       this.supervisionStore.metricConfigsById?.get(this.metricId)?.eventName ??
       ""
+    );
+  }
+
+  get clientId() {
+    return this.supervisionStore.clientId;
+  }
+
+  get clientDetailLinks(): Array<string> | undefined {
+    const { outliersClientDetail } =
+      this.supervisionStore.outliersStore.rootStore.userStore
+        .activeFeatureVariants;
+
+    if (!outliersClientDetail) return;
+
+    return Array.from(this.officerMetricEvents, (d) =>
+      outliersUrl("supervisionClientDetail", {
+        officerPseudoId: this.officerPseudoId,
+        metricId: this.metricId,
+        clientId: d.clientId,
+        outcomeDate: formatDateToISO(d.eventDate),
+      })
     );
   }
 }

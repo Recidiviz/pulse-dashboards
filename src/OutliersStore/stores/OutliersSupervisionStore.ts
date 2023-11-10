@@ -43,6 +43,8 @@ export class OutliersSupervisionStore {
 
   metricId?: string;
 
+  clientId?: string;
+
   latestBenchmarksDate?: Date;
 
   private allSupervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
@@ -254,6 +256,10 @@ export class OutliersSupervisionStore {
 
   setMetricId(metricId: string | undefined): void {
     this.metricId = metricId;
+  }
+
+  setClientId(clientId: string | undefined): void {
+    this.clientId = clientId;
   }
 
   /*

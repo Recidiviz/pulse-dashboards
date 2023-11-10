@@ -54,6 +54,7 @@ function fetchOfflineUser({
         responsiveRevamp: {},
         usTnExpiration: {},
         enableSnooze: {},
+        outliersClientDetail: {},
       },
     },
   };

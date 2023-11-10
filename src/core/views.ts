@@ -299,6 +299,7 @@ export const OUTLIERS_PATHS: Record<OutliersPage, string> = {
   supervisionSupervisor: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisor/:supervisorPseudoId`,
   supervisionStaff: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerPseudoId`,
   supervisionStaffMetric: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerPseudoId/adverse-outcome/:metricId`,
+  supervisionClientDetail: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerPseudoId/adverse-outcome/:metricId/client/:clientId/:outcomeDate`,
 };
 
 export type OutliersPage = keyof typeof OUTLIERS_PAGES;
@@ -309,6 +310,7 @@ export const OUTLIERS_PAGES = {
   supervisionSupervisorsList: "supervisionSupervisorsList",
   supervisionStaff: "supervisionStaff",
   supervisionStaffMetric: "supervisionStaffMetric",
+  supervisionClientDetail: "supervisionClientDetail",
 } as const;
 
 type OutliersRouteParams = {
@@ -328,6 +330,15 @@ export function outliersUrl(
 export function outliersUrl(
   routeName: "supervisionStaffMetric",
   params: { officerPseudoId: string; metricId: string }
+): string;
+export function outliersUrl(
+  routeName: "supervisionClientDetail",
+  params: {
+    officerPseudoId: string;
+    metricId: string;
+    clientId: string;
+    outcomeDate: string;
+  }
 ): string;
 
 export function outliersUrl(

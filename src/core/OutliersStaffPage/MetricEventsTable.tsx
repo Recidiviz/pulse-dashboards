@@ -26,6 +26,7 @@ import { SupervisionOfficerMetricEventsPresenter } from "../../OutliersStore/pre
 import { formatDate, toTitleCase } from "../../utils";
 import ModelHydrator from "../ModelHydrator";
 import OutliersChartCard from "../OutliersChartCard";
+import OutliersClientDetailPanel from "../OutliersClientDetailsPanel";
 import OutliersTable from "../OutliersTable";
 import { FullName } from "../types/personMetadata";
 
@@ -105,18 +106,24 @@ const createTableColumn = (column: Column) => {
 
 export const MetricEventsTable = withPresenter(
   observer(function MetricEventsTable({ presenter }: MetricEventsTableProps) {
+    const { officerMetricEvents, eventsLabel, clientDetailLinks } = presenter;
+
     return (
-      <OutliersChartCard
-        title={`List of ${toTitleCase(presenter.eventsLabel)}`}
-        hasLegend={false}
-      >
-        <Wrapper>
-          <OutliersTable<SupervisionOfficerMetricEvent>
-            data={presenter.officerMetricEvents}
-            columns={columns.map((c) => createTableColumn(c))}
-          />
-        </Wrapper>
-      </OutliersChartCard>
+      <>
+        <OutliersChartCard
+          title={`List of ${toTitleCase(eventsLabel)}`}
+          hasLegend={false}
+        >
+          <Wrapper>
+            <OutliersTable<SupervisionOfficerMetricEvent>
+              data={officerMetricEvents}
+              columns={columns.map((c) => createTableColumn(c))}
+              rowLinks={clientDetailLinks}
+            />
+          </Wrapper>
+        </OutliersChartCard>
+        <OutliersClientDetailPanel presenter={presenter} />
+      </>
     );
   })
 );
