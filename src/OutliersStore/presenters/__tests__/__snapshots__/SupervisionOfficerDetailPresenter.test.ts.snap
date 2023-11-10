@@ -4,7 +4,7 @@ exports[`has outlierOfficerData 1`] = `
 Object {
   "caseloadType": "SEX_OFFENSE",
   "displayName": "Duke Ellington",
-  "district": "D1",
+  "district": "Region D1",
   "externalId": "so1",
   "fullName": Object {
     "givenNames": "Duke",
@@ -453,7 +453,7 @@ exports[`with unit data already hydrated has outlierOfficerData 1`] = `
 Object {
   "caseloadType": "SEX_OFFENSE",
   "displayName": "Duke Ellington",
-  "district": "D1",
+  "district": "Region D1",
   "externalId": "so1",
   "fullName": Object {
     "givenNames": "Duke",

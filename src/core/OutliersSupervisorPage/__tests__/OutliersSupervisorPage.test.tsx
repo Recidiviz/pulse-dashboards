@@ -79,7 +79,7 @@ describe("Hydrated Supervisor Page", () => {
     );
 
     [
-      "D1",
+      "Region D1",
       "Miles D Davis",
       "Duke Ellington, Chet Baker, Louis Armstrong",
     ].forEach((text) => {
@@ -95,7 +95,7 @@ describe("Hydrated Supervisor Page", () => {
     );
 
     [
-      "D1",
+      "Region D1",
       "Miles D Davis",
       "Duke Ellington, Chet Baker, Louis Armstrong",
     ].forEach((text) => {

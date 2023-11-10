@@ -25,7 +25,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
     {
       fullName: { givenNames: "Miles", middleNames: "D", surname: "Davis" },
       externalId: "mdavis123",
-      supervisionDistrict: "D1",
+      supervisionDistrict: "Region D1",
       pseudonymizedId: "hashed-mdavis123",
       hasOutliers: true,
     },

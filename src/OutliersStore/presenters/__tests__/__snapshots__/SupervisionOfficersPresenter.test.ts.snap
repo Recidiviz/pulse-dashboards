@@ -5,7 +5,7 @@ Array [
   Object {
     "caseloadType": "SEX_OFFENSE",
     "displayName": "Duke Ellington",
-    "district": "D1",
+    "district": "Region D1",
     "externalId": "so1",
     "fullName": Object {
       "givenNames": "Duke",
@@ -451,7 +451,7 @@ Array [
   Object {
     "caseloadType": "GENERAL_OR_OTHER",
     "displayName": "Louis Armstrong",
-    "district": "D1",
+    "district": "Region D1",
     "externalId": "so3",
     "fullName": Object {
       "givenNames": "Louis",
@@ -1920,6 +1920,6 @@ Object {
   },
   "hasOutliers": true,
   "pseudonymizedId": "hashed-mdavis123",
-  "supervisionDistrict": "D1",
+  "supervisionDistrict": "Region D1",
 }
 `;

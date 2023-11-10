@@ -79,9 +79,15 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
       groupBy((d: SupervisionOfficerSupervisor) => d.supervisionDistrict),
       values,
       map((dataset) => {
+        const { supervisionDistrict } = dataset[0];
         return {
-          district: dataset[0].supervisionDistrict
-            ? `Region ${dataset[0].supervisionDistrict}`
+          district: supervisionDistrict
+            ? // TODO(#4320): Clean this up once corresponding BE change is in prod
+              `${
+                !supervisionDistrict.toLowerCase().startsWith("region")
+                  ? "Region "
+                  : ""
+              }${supervisionDistrict}`
             : null,
           supervisors: dataset as SupervisionOfficerSupervisor[],
         };

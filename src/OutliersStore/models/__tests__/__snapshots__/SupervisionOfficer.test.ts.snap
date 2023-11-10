@@ -4,7 +4,7 @@ exports[`transformations 1`] = `
 Object {
   "caseloadType": "SEX_OFFENSE",
   "displayName": "Duke Ellington",
-  "district": "D1",
+  "district": "Region D1",
   "externalId": "so1",
   "fullName": Object {
     "givenNames": "Duke",
@@ -71,7 +71,7 @@ exports[`transformations 2`] = `
 Object {
   "caseloadType": "GENERAL_OR_OTHER",
   "displayName": "Chet Baker",
-  "district": "D1",
+  "district": "Region D1",
   "externalId": "so2",
   "fullName": Object {
     "givenNames": "Chet",
@@ -87,7 +87,7 @@ exports[`transformations 3`] = `
 Object {
   "caseloadType": "GENERAL_OR_OTHER",
   "displayName": "Louis Armstrong",
-  "district": "D1",
+  "district": "Region D1",
   "externalId": "so3",
   "fullName": Object {
     "givenNames": "Louis",
