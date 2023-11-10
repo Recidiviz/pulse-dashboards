@@ -19,6 +19,7 @@ import { configure } from "mobx";
 
 import { RootStore } from "../../../../RootStore";
 import AnalyticsStore from "../../../../RootStore/AnalyticsStore";
+import UserStore from "../../../../RootStore/UserStore";
 import { Client } from "../../../Client";
 import { formatFacilityHousingUnit } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -35,6 +36,9 @@ class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {}
 
 function createTestUnit() {
   rootStore = new RootStore();
+  rootStore.userStore = {
+    isRecidivizUser: false,
+  } as UserStore;
   client = {
     pseudonymizedId: "TEST123",
     rootStore,

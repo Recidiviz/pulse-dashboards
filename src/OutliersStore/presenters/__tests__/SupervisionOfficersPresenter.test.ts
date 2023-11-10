@@ -46,6 +46,10 @@ beforeEach(() => {
     .spyOn(UserStore.prototype, "userPseudoId", "get")
     .mockImplementation(() => pseudoId);
 
+  jest
+    .spyOn(UserStore.prototype, "isRecidivizUser", "get")
+    .mockImplementation(() => false);
+
   store = new OutliersSupervisionStore(
     new OutliersStore(new RootStore()),
     OutliersConfigFixture

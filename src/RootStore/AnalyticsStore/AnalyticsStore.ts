@@ -26,6 +26,7 @@ import { SearchType } from "../../core/models/types";
 import { MilestonesTab } from "../../core/WorkflowsMilestones/MilestonesCaseloadView";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { DeclineReason } from "../../FirestoreStore";
+import { isDemoMode } from "../../utils/isDemoMode";
 import {
   OpportunityStatus,
   OpportunityTab,
@@ -37,7 +38,8 @@ import {
 } from "../../WorkflowsStore/Task/types";
 import type RootStore from "..";
 
-const isAnalyticsEnabled = process.env.NODE_ENV !== "development";
+const isAnalyticsDisabled =
+  isDemoMode() || !["staging", "production"].includes(process.env.NODE_ENV);
 
 type SupervisorPageTrackingMetadata = {
   supervisorPseudonymizedId: string;
@@ -82,7 +84,11 @@ export default class AnalyticsStore {
   }
 
   get disableAnalytics(): boolean {
-    return this.rootStore.isImpersonating || !isAnalyticsEnabled;
+    const {
+      isImpersonating,
+      userStore: { isRecidivizUser },
+    } = this.rootStore;
+    return isImpersonating || isAnalyticsDisabled || isRecidivizUser;
   }
 
   identify(userId: string): void {

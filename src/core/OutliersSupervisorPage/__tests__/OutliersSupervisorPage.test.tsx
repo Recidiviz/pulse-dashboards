@@ -33,6 +33,10 @@ jest.mock(
   "../../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker"
 );
 
+jest
+  .spyOn(UserStore.prototype, "isRecidivizUser", "get")
+  .mockImplementation(() => false);
+
 const useRootStoreMock = jest.mocked(useRootStore);
 
 afterEach(() => {
@@ -185,7 +189,11 @@ describe("Outliers Supervisor Page", () => {
   });
 
   test("renders loading indicator", () => {
-    render(<OutliersSupervisorPage />);
+    render(
+      <BrowserRouter>
+        <OutliersSupervisorPage />
+      </BrowserRouter>
+    );
 
     expect(screen.getByText("Loading data...")).toBeInTheDocument();
   });
@@ -195,7 +203,11 @@ describe("Outliers Supervisor Page", () => {
       throw new Error("There was an error");
     });
 
-    render(<OutliersSupervisorPage />);
+    render(
+      <BrowserRouter>
+        <OutliersSupervisorPage />
+      </BrowserRouter>
+    );
 
     expect(
       screen.getByText("Sorry, we’re having trouble loading this page")

@@ -61,7 +61,7 @@ process.env = {
 
 // mock analytics configuration
 window.analytics = {
-  track: () => {},
+  track: jest.fn(),
 };
 
 window.scrollTo = () => {};

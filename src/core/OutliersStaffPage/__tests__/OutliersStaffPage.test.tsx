@@ -44,6 +44,11 @@ describe("Hydrated Staff Page", () => {
     jest
       .spyOn(UserStore.prototype, "userPseudoId", "get")
       .mockImplementation(() => supervisorPseudoId);
+
+    jest
+      .spyOn(UserStore.prototype, "isRecidivizUser", "get")
+      .mockImplementation(() => false);
+
     store = new OutliersSupervisionStore(
       new RootStore().outliersStore,
       OutliersConfigFixture
