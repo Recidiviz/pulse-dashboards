@@ -441,6 +441,7 @@ export class WorkflowsStore implements Hydratable {
 
     const roleAllowedSystems: Record<UserRole, SystemId[]> = {
       supervision_staff: ["SUPERVISION"],
+      supervision_leadership: ["SUPERVISION"],
       facilities_staff: ["INCARCERATION"],
       leadership_role: ["SUPERVISION", "INCARCERATION"],
     };

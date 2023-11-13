@@ -70,6 +70,7 @@ export const SYSTEM_ID_TO_CASELOAD_FIELD = {
 
 export type UserRole =
   | "supervision_staff"
+  | "supervision_leadership"
   | "facilities_staff"
   | "leadership_role";
 

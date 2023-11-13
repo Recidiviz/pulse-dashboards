@@ -246,7 +246,8 @@ export function usCaFilterByRoleSubtype(
   // no role (for recidiviz + offline users), let them search for anyone.
   if (
     !user.info.roleSubtype &&
-    (!user.info.role || user.info.role === "leadership_role")
+    (!user.info.role ||
+      ["leadership_role", "supervision_leadership"].includes(user.info.role))
   ) {
     return undefined;
   }
