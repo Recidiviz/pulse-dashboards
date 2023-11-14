@@ -76,7 +76,7 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
       .optional(),
   }),
   formInformation: z.object({
-    sentenceStartDate: dateStringSchema,
+    sentenceStartDate: dateStringSchema.optional(),
   }),
   metadata: z
     .object({
