@@ -34,6 +34,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerMetricEventsPresenter } from "../../OutliersStore/presenters/SupervisionOfficerMetricEventsPresenter";
 import { outliersUrl } from "../views";
 import { OutliersClientCapsule } from "./OutliersClientCapsule";
+import OutliersClientDetails from "./OutliersClientDetails";
 
 export const StyledDrawerModal = styled(DrawerModal)<{
   isMobile: boolean;
@@ -56,7 +57,6 @@ export const StyledDrawerModal = styled(DrawerModal)<{
 const ModalHeader = styled.div`
   display: flex;
   padding: ${rem(spacing.lg)} ${rem(spacing.md)};
-  text-align: right;
   z-index: 10;
   border-bottom: 1px solid ${palette.slate10};
 
@@ -72,8 +72,7 @@ const ModalFooter = styled.div`
 `;
 
 const Content = styled.div`
-  overflow-x: auto;
-  padding: ${rem(spacing.lg)} ${rem(spacing.md)};
+  overflow-y: auto;
 `;
 
 const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
@@ -88,16 +87,23 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
     },
   } = useRootStore();
 
-  const { officerPseudoId, metricId, clientId, officerMetricEvents } =
-    presenter;
+  const {
+    officerPseudoId,
+    metricId,
+    clientId,
+    officerMetricEvents,
+    eventsLabel,
+  } = presenter;
 
   const [modalIsOpen, setModalIsOpen] = useState(Boolean(clientId));
+  const [isRedirect, setIsRedirect] = useState(false);
 
   useEffect(() => {
     setModalIsOpen(Boolean(clientId));
+    setIsRedirect(false);
   }, [clientId]);
 
-  if (!outliersClientDetail || !modalIsOpen) {
+  if (!outliersClientDetail || isRedirect) {
     return (
       <Redirect
         to={outliersUrl("supervisionStaffMetric", {
@@ -109,28 +115,30 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
   }
 
   // TODO Update this once client presenter is implemented
-  const currentClient = officerMetricEvents.find(
-    (d) => d.clientId === clientId
-  );
-  const clientName = `${currentClient?.clientName.givenNames} ${currentClient?.clientName.surname}`;
+  const currentEvent = officerMetricEvents.find((d) => d.clientId === clientId);
+  const clientName = `${currentEvent?.clientName.givenNames} ${currentEvent?.clientName.surname}`;
 
   return (
     <StyledDrawerModal
       isOpen={modalIsOpen}
       onRequestClose={() => setModalIsOpen(false)}
+      // this is necessary for drawer to smoothly close
+      onAfterClose={() => setIsRedirect(true)}
       width={650}
       isMobile={isMobile}
     >
       <ModalHeader>
         <OutliersClientCapsule
           clientName={clientName}
-          clientId={currentClient?.clientId}
+          clientId={currentEvent?.clientId}
         />
         <Button kind="link" onClick={() => setModalIsOpen(false)}>
           <Icon kind="Close" size="14" color={palette.pine2} />
         </Button>
       </ModalHeader>
-      <Content>TBD</Content>
+      <Content>
+        <OutliersClientDetails event={currentEvent} eventsLabel={eventsLabel} />
+      </Content>
       <ModalFooter>
         <img height={15} src={lanternLogo} alt="Lantern" />
       </ModalFooter>

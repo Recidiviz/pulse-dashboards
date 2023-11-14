@@ -145,7 +145,9 @@ const OutliersTable = <T extends object>({
       );
 
       return rowLinks ? (
-        <StyledLink to={rowLinks[index]}>{rowViz}</StyledLink>
+        <StyledLink key={index} to={rowLinks[index]}>
+          {rowViz}
+        </StyledLink>
       ) : (
         rowViz
       );
