@@ -38,20 +38,26 @@ const createPageCopyFile = async (
     const rows = await pageCopySheet.getRows();
 
     const enabledRows = rows.filter((row) =>
-      PathwaysPageIdList.includes(row["Page ID"])
+      PathwaysPageIdList.includes(row.get("Page ID"))
     );
 
     const content = Object.fromEntries(
       enabledRows.map((row) => [
-        row["Page ID"],
+        row.get("Page ID"),
         {
-          ...(row.Title ? { title: row.Title } : {}),
-          ...(row.Summary
-            ? { summary: convertCurlyQuotesToStraight(row.Summary) }
+          ...(row.get("Title") ? { title: row.get("Title") } : {}),
+          ...(row.get("Summary")
+            ? { summary: convertCurlyQuotesToStraight(row.get("Summary")) }
             : {}),
-          ...(row.Sections ? { sections: JSON.parse(row.Sections) } : {}),
-          ...(row.Methodology
-            ? { methodology: convertCurlyQuotesToStraight(row.Methodology) }
+          ...(row.get("Sections")
+            ? { sections: JSON.parse(row.get("Sections")) }
+            : {}),
+          ...(row.get("Methodology")
+            ? {
+                methodology: convertCurlyQuotesToStraight(
+                  row.get("Methodology")
+                ),
+              }
             : {}),
         },
       ])

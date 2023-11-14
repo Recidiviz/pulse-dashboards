@@ -39,18 +39,24 @@ const createMetricCopyFile = async (
 
     const content = Object.fromEntries(
       rows.map((row) => [
-        row["Metric ID"],
+        row.get("Metric ID"),
         {
-          ...(row.Title ? { title: row.Title } : {}),
-          ...(row.Note ? { note: convertCurlyQuotesToStraight(row.Note) } : {}),
-          ...(row.Methodology
-            ? { methodology: convertCurlyQuotesToStraight(row.Methodology) }
+          ...(row.get("Title") ? { title: row.get("Title") } : {}),
+          ...(row.get("Note")
+            ? { note: convertCurlyQuotesToStraight(row.get("Note")) }
             : {}),
-          ...(row["X-Axis title"]
-            ? { chartXAxisTitle: row["X-Axis title"] }
+          ...(row.get("Methodology")
+            ? {
+                methodology: convertCurlyQuotesToStraight(
+                  row.get("Methodology")
+                ),
+              }
             : {}),
-          ...(row["Y-Axis title"]
-            ? { chartYAxisTitle: row["Y-Axis title"] }
+          ...(row.get("X-Axis title")
+            ? { chartXAxisTitle: row.get("X-Axis title") }
+            : {}),
+          ...(row.get("Y-Axis title")
+            ? { chartYAxisTitle: row.get("Y-Axis title") }
             : {}),
         },
       ])

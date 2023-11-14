@@ -17,6 +17,7 @@
  * =============================================================================
  */
 
+import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 
 import createMetricCopyFile from "./createMetricCopyFile";
@@ -32,15 +33,22 @@ const STATES_WITH_COPY_OVERRIDES = [
 ];
 
 const syncContentWithSheet = async () => {
-  const doc = new GoogleSpreadsheet(process.env.CONTENT_SHEET_ID);
+  const SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+  ];
 
   const clientEmail = process.env.SHEET_API_SERVICE_ACCOUNT || "";
   const privateKey = process.env.SHEET_API_SERVICE_ACCOUNT_KEY || "";
+  const docId = process.env.CONTENT_SHEET_ID || "";
 
-  await doc.useServiceAccountAuth({
-    client_email: clientEmail,
-    private_key: privateKey.replace(/\\n/gm, "\n"),
+  const jwt = new JWT({
+    email: clientEmail,
+    key: privateKey.replace(/\\\\n/gm, "\n"),
+    scopes: SCOPES,
   });
+
+  const doc = new GoogleSpreadsheet(docId, jwt);
 
   await doc.loadInfo();
   await createPageCopyFile(doc);
