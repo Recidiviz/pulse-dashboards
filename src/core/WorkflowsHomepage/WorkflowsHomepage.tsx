@@ -32,17 +32,10 @@ import OpportunityTypeSummary from "./OpportunityTypeSummary";
 function getSelectOpportunitiesText(
   opportunityTypes: OpportunityType[]
 ): string {
-  const topTwoOpportunities = opportunityTypes.slice(0, 2);
-  let selectOpportunityText = `${
-    OPPORTUNITY_CONFIGS[topTwoOpportunities[0]].label
-  }`;
-
-  if (topTwoOpportunities.length > 1) {
-    selectOpportunityText += ` and ${
-      OPPORTUNITY_CONFIGS[topTwoOpportunities[1]].label
-    }`;
-  }
-  return selectOpportunityText;
+  const labels = opportunityTypes
+    .slice(0, 2)
+    .map((ot) => OPPORTUNITY_CONFIGS[ot].label);
+  return labels.join(" and ");
 }
 
 const WorkflowsHomepage = observer(
