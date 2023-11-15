@@ -42,6 +42,11 @@ export const rawClientEventFixture: Array<RawClientEvent> = [
         "COMPLY WITH ALCOHOL AND DRUG TESTING ORDERED BY FIELD AGENT",
     },
   },
+  {
+    metricId: "treatment_completion",
+    eventDate: "2023-05-22",
+    attributes: null,
+  },
 ];
 
 export const clientEventFixture: Array<ClientEvent> = rawClientEventFixture.map(

@@ -25,5 +25,10 @@ Array [
     "eventDate": 2023-05-01T00:00:00.000Z,
     "metricId": "violations",
   },
+  Object {
+    "attributes": null,
+    "eventDate": 2023-05-22T00:00:00.000Z,
+    "metricId": "treatment_completion",
+  },
 ]
 `;

@@ -27,7 +27,7 @@ import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
 
-const TABLE_ROW_SIZE = 50;
+const DEFAULT_TABLE_ROW_SIZE = 50;
 const TABLE_MIN_WIDTH = 280;
 const TABLE_HIDE_COLUMN_WIDTH = 350;
 
@@ -36,7 +36,8 @@ const Table = styled.div`
   width: 100%;
   text-align: left;
   color: ${palette.slate85};
-  border: 1px solid ${palette.slate20};
+  border: 1px solid ${palette.slate10};
+  border-bottom: 0;
 `;
 
 const TableHeader = styled.div`
@@ -50,15 +51,24 @@ const TH = styled.div`
   padding: ${rem(spacing.md)};
 `;
 
-const TR = styled.div`
+const TR = styled.div<{ transformToMobile?: boolean }>`
   display: flex;
-  border-bottom: 1px solid ${palette.slate20};
+  border-bottom: 1px solid ${palette.slate10};
+
+  ${({ transformToMobile }) =>
+    transformToMobile &&
+    `flex-direction: column; gap: ${rem(spacing.xxs)}; padding: ${rem(
+      spacing.md
+    )};`}
 `;
 
-const TD = styled.div`
+const TD = styled.div<{ transformToMobile?: boolean }>`
   display: flex;
   align-items: center;
-  padding: ${rem(spacing.md)};
+  padding: ${({ transformToMobile }) =>
+    transformToMobile ? 0 : rem(spacing.md)};
+
+  ${({ transformToMobile }) => transformToMobile && `width: 100% !important;`}
 `;
 
 const Text = styled.div`
@@ -68,11 +78,6 @@ const Text = styled.div`
 const StyledLink = styled(Link)`
   color: inherit !important;
 
-  &:last-child {
-    ${TR} {
-      border: none;
-    }
-  }
   &:hover ${TR} {
     background: ${rgba(palette.signal.highlight, 0.05)};
   }
@@ -87,13 +92,19 @@ type OutlierTableProps<T extends object> = {
   columns: Column[];
   rowLinks?: string[];
   hiddenColumnId?: string;
+  rowSize?: number;
+  transformToMobile?: boolean;
+  scrollElement?: any;
 };
 
 const OutliersTable = <T extends object>({
   data,
   columns,
   rowLinks,
+  scrollElement,
   hiddenColumnId = "clientId",
+  rowSize = DEFAULT_TABLE_ROW_SIZE,
+  transformToMobile = false,
 }: OutlierTableProps<T>) => {
   const { isMobile } = useIsMobile(true);
   const [isColumnHidden, hideColumn] = useState(false);
@@ -133,10 +144,16 @@ const OutliersTable = <T extends object>({
       prepareRow(row);
 
       const rowViz = (
-        <TR {...row.getRowProps({ style })}>
+        <TR
+          transformToMobile={transformToMobile}
+          {...row.getRowProps({ style })}
+        >
           {row.cells.map((cell) => {
             return (
-              <TD {...cell.getCellProps()}>
+              <TD
+                transformToMobile={transformToMobile}
+                {...cell.getCellProps()}
+              >
                 <Text>{cell.render("Cell")}</Text>
               </TD>
             );
@@ -152,30 +169,35 @@ const OutliersTable = <T extends object>({
         rowViz
       );
     },
-    [prepareRow, rows, rowLinks]
+    [prepareRow, rows, rowLinks, transformToMobile]
   );
 
   return (
     <Table {...getTableProps({ style: { minWidth: TABLE_MIN_WIDTH } })}>
-      <TableHeader>
-        {headerGroups.map((headerGroup) => (
-          <TR {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column) => (
-              <TH {...column.getHeaderProps()}>{column.render("title")}</TH>
-            ))}
-          </TR>
-        ))}
-      </TableHeader>
+      {!transformToMobile && (
+        <TableHeader>
+          {headerGroups.map((headerGroup) => (
+            <TR {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => (
+                <TH {...column.getHeaderProps()}>{column.render("title")}</TH>
+              ))}
+            </TR>
+          ))}
+        </TableHeader>
+      )}
       <TableBody
         {...getTableBodyProps({
           style: {
-            height: rows.length * TABLE_ROW_SIZE,
+            height: rows.length * rowSize,
           },
         })}
       >
         <AutoSizer>
           {({ width }) => (
-            <WindowScroller ref={(ref) => handleHideColumnWidth(ref, width)}>
+            <WindowScroller
+              ref={(ref) => handleHideColumnWidth(ref, width)}
+              scrollElement={scrollElement || window}
+            >
               {({ height, isScrolling, onChildScroll, scrollTop }) => (
                 <List
                   autoHeight
@@ -183,7 +205,7 @@ const OutliersTable = <T extends object>({
                   isScrolling={isScrolling}
                   onScroll={onChildScroll}
                   rowCount={rows.length}
-                  rowHeight={TABLE_ROW_SIZE}
+                  rowHeight={rowSize}
                   rowRenderer={RenderRow}
                   scrollTop={scrollTop}
                   width={width}

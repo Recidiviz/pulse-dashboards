@@ -24,7 +24,7 @@ import {
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -35,6 +35,7 @@ import { SupervisionOfficerMetricEventsPresenter } from "../../OutliersStore/pre
 import { outliersUrl } from "../views";
 import { OutliersClientCapsule } from "./OutliersClientCapsule";
 import OutliersClientDetails from "./OutliersClientDetails";
+import OutliersClientEventsTable from "./OutliersClientEventsTable";
 
 export const StyledDrawerModal = styled(DrawerModal)<{
   isMobile: boolean;
@@ -98,6 +99,9 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
   const [modalIsOpen, setModalIsOpen] = useState(Boolean(clientId));
   const [isRedirect, setIsRedirect] = useState(false);
 
+  const [scrollElement, setScrollElement] = useState(null);
+  const scrollElementRef = useRef(null);
+
   useEffect(() => {
     setModalIsOpen(Boolean(clientId));
     setIsRedirect(false);
@@ -121,6 +125,7 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
   return (
     <StyledDrawerModal
       isOpen={modalIsOpen}
+      onAfterOpen={() => setScrollElement(scrollElementRef.current)}
       onRequestClose={() => setModalIsOpen(false)}
       // this is necessary for drawer to smoothly close
       onAfterClose={() => setIsRedirect(true)}
@@ -136,8 +141,12 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
           <Icon kind="Close" size="14" color={palette.pine2} />
         </Button>
       </ModalHeader>
-      <Content>
+      <Content ref={scrollElementRef}>
         <OutliersClientDetails event={currentEvent} eventsLabel={eventsLabel} />
+        <OutliersClientEventsTable
+          event={currentEvent}
+          scrollElement={scrollElement}
+        />
       </Content>
       <ModalFooter>
         <img height={15} src={lanternLogo} alt="Lantern" />

@@ -26,12 +26,12 @@ import { rawClientInfoFixture } from "../../OutliersStore/models/offlineFixtures
 import { SupervisionOfficerMetricEvent } from "../../OutliersStore/models/SupervisionOfficerMetricEvent";
 import { formatWorkflowsDate, toTitleCase } from "../../utils";
 
+const Wrapper = styled.div``;
+
 const DetailsSection = styled.div`
   padding: ${rem(spacing.lg)} ${rem(spacing.md)};
-`;
 
-const Wrapper = styled.div`
-  ${DetailsSection}:not(:last-child) {
+  &:not(:last-child) {
     border-bottom: 1px solid ${palette.slate10};
   }
 `;
