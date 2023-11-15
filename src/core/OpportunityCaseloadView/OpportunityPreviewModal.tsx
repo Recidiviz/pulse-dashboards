@@ -20,7 +20,7 @@ import { useState } from "react";
 import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityDenialView } from "../OpportunityDenial";
-import { OpportunityProfile } from "../WorkflowsClientProfile/OpportunityProfile";
+import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 
 type OpportunityCaseloadProps = {

@@ -18,7 +18,7 @@
 import { DocumentData } from "firebase/firestore";
 
 import { Hydratable } from "../../core/models/types";
-import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
+import { OpportunityProfileModuleName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import {
   AutoSnoozeUpdate,
   Denial,

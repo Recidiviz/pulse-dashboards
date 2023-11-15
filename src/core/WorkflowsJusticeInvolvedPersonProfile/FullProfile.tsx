@@ -31,20 +31,20 @@ import { usePersonTracking } from "../hooks/usePersonTracking";
 import { ProfileCapsule } from "../PersonCapsules";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { PreviewTasks } from "../WorkflowsTasks/PreviewTasks";
-import ClientDetailsInput from "./ClientDetailsInput";
-import { Divider } from "./common";
 import {
   ClientEmployer,
   ClientHousing,
   FinesAndFees,
   Milestones,
-  PartialTime,
-  ResidentHousing,
   SpecialConditions,
-} from "./Details";
+} from "./ClientDetailSidebarComponents";
+import ClientDetailsInput from "./ClientDetailsInput";
 import { OpportunitiesAccordion } from "./OpportunitiesAccordion";
+import { PartialTime } from "./PartialTime";
 import { PreferredContact } from "./PreferredContact";
+import { ResidentHousing } from "./ResidentDetailSidebarComponents/ResidentHousing";
 import { IncarcerationProgress, SupervisionProgress } from "./SentenceProgress";
+import { Divider } from "./styles";
 import {
   ClientProfileProps,
   PersonProfileProps,

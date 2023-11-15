@@ -22,27 +22,31 @@ import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
-import { Divider } from "./common";
 import {
-  CaseNotes,
   ClientEmployer,
   ClientHousing,
   ClientProfileDetails,
   Contact,
   FinesAndFees,
-  Incarceration,
   Milestones,
-  ResidentHousing,
   SpecialConditions,
   Supervision,
-  UsMiEarlyDischargeIcDetails,
-  UsMoIncarceration,
-  UsMoRestrictiveHousing,
-  UsTnCommonlyUsedOverrideCodes,
-} from "./Details";
+} from "./ClientDetailSidebarComponents";
 import { Heading } from "./Heading";
 import { AccordionSection, AccordionWrapper } from "./OpportunitiesAccordion";
+import {
+  CaseNotes,
+  UsMiEarlyDischargeIcDetails,
+  UsMoIncarceration,
+} from "./OpportunityDetailSidebarComponents";
 import { OpportunityModule } from "./OpportunityModule";
+import {
+  Incarceration,
+  ResidentHousing,
+  UsMoRestrictiveHousing,
+  UsTnCommonlyUsedOverrideCodes,
+} from "./ResidentDetailSidebarComponents";
+import { Divider } from "./styles";
 
 type OpportunitySidebarProfileProps = {
   opportunity?: Opportunity;

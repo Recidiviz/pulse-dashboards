@@ -16,7 +16,7 @@
 // =============================================================================
 import { computed, makeObservable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsClientProfile/OpportunityProfile";
+import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { formatDate } from "../../../../utils/formatStrings";
 import { Resident } from "../../../Resident";

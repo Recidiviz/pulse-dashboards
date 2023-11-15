@@ -26,7 +26,7 @@ import {
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable, when } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
+import { OpportunityProfileModuleName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import {
   AutoSnoozeUpdate,
   Denial,

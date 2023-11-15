@@ -1,6 +1,6 @@
 /*
  * Recidiviz - a data platform for criminal justice reform
- * Copyright (C) 2022 Recidiviz, Inc.
+ * Copyright (C) 2023 Recidiviz, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,12 @@
  * =============================================================================
  *
  */
+
 import { render, screen } from "@testing-library/react";
 import { parseISO } from "date-fns";
 
-import { Opportunity, OpportunityCaseNote } from "../../../WorkflowsStore";
-import { CaseNotes } from "../Details";
+import { Opportunity, OpportunityCaseNote } from "../../../../WorkflowsStore";
+import { CaseNotes } from "../CaseNotes";
 
 describe("CaseNotes tests", () => {
   it("can display notes for multiple criteria", () => {

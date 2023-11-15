@@ -29,8 +29,9 @@ import styled from "styled-components/macro";
 
 import { Opportunity } from "../../WorkflowsStore";
 import { useStatusColors } from "../utils/workflowsUtils";
-import { InfoButton, InfoTooltipWrapper } from "./common";
+import { InfoButton } from "./InfoButton";
 import { OpportunityRecommendedLanguageModal } from "./OpportunityRecommendedLanguageModal";
+import { InfoTooltipWrapper } from "./styles";
 
 const Wrapper = styled.ul<{ alert?: boolean }>`
   ${typography.Sans14}

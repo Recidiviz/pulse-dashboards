@@ -25,7 +25,7 @@ import {
   formatPhoneNumber,
   optionalFieldToDate,
 } from "../../WorkflowsStore/utils";
-import { Heading } from "../WorkflowsClientProfile/Heading";
+import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import WorkflowsPreviewModalContext from "../WorkflowsPreviewModal/WorkflowsPreviewModalContext";
 import Banner from "./Banner";
 import OpportunityAvailableCTA from "./OpportunityAvailableCTA";

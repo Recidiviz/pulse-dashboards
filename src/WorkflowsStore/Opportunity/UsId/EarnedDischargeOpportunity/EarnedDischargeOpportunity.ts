@@ -18,7 +18,7 @@
 import { cloneDeep } from "lodash";
 import { computed, makeObservable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsClientProfile/OpportunityProfile";
+import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { OTHER_KEY } from "../../../utils";

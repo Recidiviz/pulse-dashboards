@@ -21,7 +21,7 @@ import { mapValues } from "lodash";
 import { makeObservable, toJS } from "mobx";
 
 import { formatRelativeToNow } from "../../../../core/utils/timePeriod";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsClientProfile/OpportunityProfile";
+import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import {
   FeatureGateError,
   OpportunityValidationError,

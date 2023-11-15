@@ -17,7 +17,7 @@
 
 import { computed, makeObservable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsClientProfile/OpportunityProfile";
+import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";

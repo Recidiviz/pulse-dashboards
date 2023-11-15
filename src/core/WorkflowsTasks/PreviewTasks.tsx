@@ -22,7 +22,7 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { PersonProfileProps } from "../WorkflowsClientProfile/types";
+import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
 import { SnoozeTaskDropdown } from "./SnoozeTaskDropdown";
 import { TaskItemDivider } from "./TaskPreviewModal";

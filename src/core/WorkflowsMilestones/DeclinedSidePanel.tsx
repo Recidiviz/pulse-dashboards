@@ -21,7 +21,7 @@ import styled from "styled-components/macro";
 import { ReactComponent as GrayAlert } from "../../assets/static/images/grayAlert.svg";
 import { Client } from "../../WorkflowsStore";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
-import { Heading } from "../WorkflowsClientProfile/Heading";
+import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import Banner from "./Banner";
 import { DECLINED_REASONS_MAP } from "./DeclineMessage";

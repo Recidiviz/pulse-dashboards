@@ -31,7 +31,7 @@ import styled, { css } from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { PersonInitialsAvatar } from "../Avatar";
-import { Separator } from "../WorkflowsClientProfile/common";
+import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 
 export type JusticeInvolvedPersonCapsuleProps = {
   avatarSize: "md" | "lg";

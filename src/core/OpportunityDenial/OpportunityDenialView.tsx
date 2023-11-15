@@ -31,11 +31,11 @@ import { Opportunity } from "../../WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { getSnoozeUntilDate, OTHER_KEY } from "../../WorkflowsStore/utils";
 import { OtherReasonInput } from "../sharedComponents";
-import { Heading } from "../WorkflowsClientProfile/Heading";
+import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import {
   buildDenialReasonsListText,
   buildResurfaceText,
-} from "../WorkflowsClientProfile/MarkedIneligibleReasons";
+} from "../WorkflowsJusticeInvolvedPersonProfile/MarkedIneligibleReasons";
 import {
   ActionButton,
   MenuItem,

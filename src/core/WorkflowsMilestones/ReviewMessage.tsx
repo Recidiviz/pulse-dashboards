@@ -21,7 +21,7 @@ import { Dispatch, SetStateAction } from "react";
 import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
 import { formatPhoneNumber } from "../../WorkflowsStore/utils";
-import { Heading } from "../WorkflowsClientProfile/Heading";
+import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { NEW_MILESTONES_SIDE_PANEL_VIEW } from "./NewMilestonesSidePanel";
 import {
   ActionButton,

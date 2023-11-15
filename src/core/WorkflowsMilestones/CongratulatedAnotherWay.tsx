@@ -19,7 +19,7 @@ import { useContext } from "react";
 import { ReactComponent as GreenCheckmark } from "../../assets/static/images/greenCheckmark.svg";
 import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
 import { Client } from "../../WorkflowsStore";
-import { Heading } from "../WorkflowsClientProfile/Heading";
+import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import WorkflowsPreviewModalContext from "../WorkflowsPreviewModal/WorkflowsPreviewModalContext";
 import Banner from "./Banner";
 import OpportunityAvailableCTA from "./OpportunityAvailableCTA";

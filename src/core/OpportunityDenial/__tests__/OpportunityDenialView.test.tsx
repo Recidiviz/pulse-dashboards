@@ -26,7 +26,7 @@ import { mockOpportunity } from "../../__tests__/testUtils";
 import { OpportunityDenialView } from "../OpportunityDenialView";
 
 jest.mock("../../../components/StoreProvider");
-jest.mock("../../WorkflowsClientProfile/Heading", () => ({
+jest.mock("../../WorkflowsJusticeInvolvedPersonProfile/Heading", () => ({
   Heading: () => <div>Mock Person Heading</div>,
 }));
 

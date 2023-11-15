@@ -17,15 +17,80 @@
 
 import {
   Button,
-  Icon,
   palette,
   spacing,
   TooltipTrigger,
+  typography,
 } from "@recidiviz/design-system";
 import { rem } from "polished";
-import React from "react";
 import styled from "styled-components/macro";
 
+export const DetailsSection = styled.dl``;
+
+export const DetailsBorderedSection = styled(DetailsSection)`
+  border-top: 1px solid ${palette.slate10};
+  border-bottom: 1px solid ${palette.slate10};
+  margin: 0 -${rem(spacing.md)};
+  padding: 0 ${rem(spacing.md)};
+  background: ${palette.marble2};
+
+  & + hr {
+    display: none;
+  }
+`;
+
+export const DetailsHeading = styled.dt`
+  ${typography.Sans14}
+  color: ${palette.pine1};
+  margin-bottom: ${rem(spacing.sm)};
+  margin-top: ${rem(spacing.md)};
+`;
+
+export const DetailsList = styled.dl``;
+
+export const MilestonesList = styled.dl`
+  align-items: center;
+  display: flex;
+  gap: ${rem(spacing.sm)};
+  margin-bottom: ${rem(spacing.xs)};
+`;
+
+export const MilestonesItem = styled.span``;
+
+export const DetailsSubheading = styled.dt`
+  ${typography.Sans14}
+  color: rgba(53, 83, 98, 0.5);
+  margin-bottom: ${rem(spacing.xs)};
+`;
+const DetailsContent = styled.dd`
+  ${typography.Sans14}
+  color: rgba(53, 83, 98, 0.9);
+`;
+
+export const SpecialConditionsCopy = styled.div`
+  ${typography.Body12}
+`;
+
+export const CaseNoteTitle = styled.span`
+  font-weight: 700;
+`;
+
+export const CaseNoteDate = styled.span`
+  color: ${palette.slate60};
+`;
+
+export type EmptySpecialConditionCopy = {
+  parole: string;
+  probation: string;
+};
+
+export const SecureDetailsContent = styled(DetailsContent).attrs({
+  className: "fs-exclude",
+})``;
+
+export const SecureDetailsList = styled(DetailsList).attrs({
+  className: "fs-exclude",
+})``;
 export const PillButton = styled(Button).attrs({ kind: "secondary" })<{
   active?: boolean;
 }>`
@@ -68,24 +133,3 @@ export const Divider = styled.hr`
     display: none;
   }
 `;
-
-const InfoLink = styled.a`
-  color: ${palette.slate30};
-
-  &:hover,
-  &:focus {
-    color: ${palette.slate60};
-  }
-`;
-
-export function InfoButton({
-  infoUrl,
-}: {
-  infoUrl: string | undefined;
-}): React.ReactElement {
-  return (
-    <InfoLink href={infoUrl} target="_blank" rel="noreferrer">
-      <Icon kind="Info" size={12} />
-    </InfoLink>
-  );
-}

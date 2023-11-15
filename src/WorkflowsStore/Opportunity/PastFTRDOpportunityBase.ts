@@ -18,7 +18,7 @@
 import { differenceInDays } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../core/WorkflowsClientProfile/OpportunityProfile";
+import { OpportunityProfileModuleName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { TransformFunction, ValidateFunction } from "../subscriptions";

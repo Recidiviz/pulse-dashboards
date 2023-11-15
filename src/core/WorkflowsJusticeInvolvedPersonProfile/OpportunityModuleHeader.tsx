@@ -24,7 +24,7 @@ import { Opportunity } from "../../WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { EligibilityStatus } from "../OpportunityStatus";
 import { useStatusColors } from "../utils/workflowsUtils";
-import { Separator } from "./common";
+import { Separator } from "./styles";
 
 const TitleText = styled(Sans16)`
   color: ${palette.pine1};

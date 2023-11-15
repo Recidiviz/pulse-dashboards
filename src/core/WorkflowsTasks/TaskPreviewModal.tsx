@@ -18,7 +18,6 @@
 import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -26,9 +25,9 @@ import {
   Contact,
   Milestones,
   Supervision,
-} from "../WorkflowsClientProfile/Details";
-import { Heading } from "../WorkflowsClientProfile/Heading";
-import { OpportunitiesAccordion } from "../WorkflowsClientProfile/OpportunitiesAccordion";
+} from "../WorkflowsJusticeInvolvedPersonProfile";
+import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
+import { OpportunitiesAccordion } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitiesAccordion";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import { PreviewTasks } from "./PreviewTasks";
 

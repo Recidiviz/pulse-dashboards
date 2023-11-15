@@ -23,7 +23,7 @@ import React from "react";
 import { useRootStore } from "../../components/StoreProvider";
 import tenants from "../../tenants";
 import { toTitleCase } from "../../utils";
-import { PillButton } from "../WorkflowsClientProfile/common";
+import { PillButton } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 
 const CaseloadTypeSelect = observer(
   function CaseloadTypeSelect(): React.ReactElement | null {

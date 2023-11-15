@@ -29,7 +29,8 @@ import styled from "styled-components/macro";
 
 import { formatWorkflowsDate } from "../../utils";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
-import { Incarceration, Supervision } from "./Details";
+import { Supervision } from "./ClientDetailSidebarComponents/Supervision";
+import { Incarceration } from "./ResidentDetailSidebarComponents/Incarceration";
 import { ClientProfileProps, ResidentProfileProps } from "./types";
 
 const Wrapper = styled.div``;

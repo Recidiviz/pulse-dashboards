@@ -19,7 +19,7 @@ import dedent from "dedent";
 import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsClientProfile/OpportunityProfile";
+import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { formatAsCurrency, formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
 import { OTHER_KEY } from "../../../utils";

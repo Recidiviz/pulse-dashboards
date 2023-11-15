@@ -36,10 +36,10 @@ import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease"
 import RecidivizLogo from "../RecidivizLogo";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { DASHBOARD_VIEWS, workflowsUrl } from "../views";
-import { OpportunityProfile } from "../WorkflowsClientProfile/OpportunityProfile";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
+import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import WorkflowsLSUForm from "../WorkflowsLSUForm";
 import WorkflowsUsCaSupervisionLevelDowngradeForm from "../WorkflowsUsCaSupervisionLevelDowngradeForm";
 import WorkflowsUsTnCustodyLevelDowngradeForm from "../WorkflowsUsTnCustodyLevelDowngradeForm";

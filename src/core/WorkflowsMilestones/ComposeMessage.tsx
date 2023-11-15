@@ -22,7 +22,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import { TextMessageStatuses } from "../../FirestoreStore";
 import { Client } from "../../WorkflowsStore";
 import { validatePhoneNumber } from "../../WorkflowsStore/utils";
-import { Heading } from "../WorkflowsClientProfile/Heading";
+import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { ClientMilestones } from "./MilestonesCaseloadView";
 import { NEW_MILESTONES_SIDE_PANEL_VIEW } from "./NewMilestonesSidePanel";
 import PhoneNumberInput from "./PhoneNumberInput";

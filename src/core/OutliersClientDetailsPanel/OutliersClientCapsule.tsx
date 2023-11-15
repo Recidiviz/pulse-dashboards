@@ -20,7 +20,7 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { PersonInitialsAvatar } from "../Avatar";
-import { Separator } from "../WorkflowsClientProfile/common";
+import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 
 const Wrapper = styled.div`
   align-items: center;

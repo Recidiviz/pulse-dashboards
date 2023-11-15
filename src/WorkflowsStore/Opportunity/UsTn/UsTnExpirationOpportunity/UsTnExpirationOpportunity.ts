@@ -19,7 +19,7 @@ import { differenceInDays } from "date-fns";
 import { makeObservable } from "mobx";
 import simplur from "simplur";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsClientProfile/OpportunityProfile";
+import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import {
   ExternalRequestUpdate,
   ExternalSystemRequestStatus,

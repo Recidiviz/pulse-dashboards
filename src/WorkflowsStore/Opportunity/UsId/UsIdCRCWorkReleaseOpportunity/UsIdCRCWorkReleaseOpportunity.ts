@@ -18,7 +18,7 @@
 import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsClientProfile/OpportunityProfile";
+import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
