@@ -37,6 +37,7 @@ import { AccordionSection, AccordionWrapper } from "./OpportunitiesAccordion";
 import {
   CaseNotes,
   UsMiEarlyDischargeIcDetails,
+  UsMiRecommendedSupervisionLevel,
   UsMoIncarceration,
 } from "./OpportunityDetailSidebarComponents";
 import { OpportunityModule } from "./OpportunityModule";
@@ -69,6 +70,14 @@ const ClientDetailSidebarComponents = {
 
 type ClientDetailComponentName = keyof typeof ClientDetailSidebarComponents;
 
+const OpportunityDetailSidebarComponents = {
+  UsMiEarlyDischargeIcDetails,
+  CaseNotes,
+  UsMoRestrictiveHousing,
+  UsTnCommonlyUsedOverrideCodes,
+  UsMiRecommendedSupervisionLevel,
+};
+
 const ResidentDetailSidebarComponents = {
   Incarceration,
   ResidentHousing,
@@ -76,13 +85,6 @@ const ResidentDetailSidebarComponents = {
 };
 
 type ResidentDetailComponentName = keyof typeof ResidentDetailSidebarComponents;
-
-const OpportunityDetailSidebarComponents = {
-  UsMiEarlyDischargeIcDetails,
-  CaseNotes,
-  UsMoRestrictiveHousing,
-  UsTnCommonlyUsedOverrideCodes,
-};
 
 export function DetailsSection({
   hasDivider,

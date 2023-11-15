@@ -21,6 +21,7 @@ import { makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
+import { formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
 import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -37,6 +38,7 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
   readonly hideUnknownCaseNoteDates = true;
 
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
+    "UsMiRecommendedSupervisionLevel",
     "ClientProfileDetails",
     "CaseNotes",
   ];
@@ -57,15 +59,14 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
 
-    const { recommendedSupervisionLevel } = this.record.metadata;
-
-    const recommendedLevelText = recommendedSupervisionLevel
-      ? `. Recommended supervision level: ${recommendedSupervisionLevel}`
-      : "";
+    const { eligibleDate } =
+      this.record.eligibleCriteria.usMiClassificationReviewPastDueDate;
 
     return [
       {
-        text: `Client is eligible for a classification review based on their supervision start date and last classification review date${recommendedLevelText}`,
+        text: `Recommended classification review date, based on supervision start date and last classification review date, is ${formatWorkflowsDate(
+          eligibleDate
+        )}`,
         tooltip:
           "Classification reviews shall be completed after six months of active supervision […] " +
           "Subsequent classification reviews shall be scheduled at six-month intervals.",
