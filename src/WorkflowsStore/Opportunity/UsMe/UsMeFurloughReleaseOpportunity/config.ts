@@ -16,10 +16,7 @@
 // =============================================================================
 import simplur from "simplur";
 
-import {
-  oppHeaderCountFormatter,
-  OpportunityConfig,
-} from "../../OpportunityConfigs";
+import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMeFurloughReleaseOpportunity } from "./UsMeFurloughReleaseOpportunity";
 
 export const usMeFurloughReleaseConfig: OpportunityConfig<UsMeFurloughReleaseOpportunity> =
@@ -29,11 +26,8 @@ export const usMeFurloughReleaseConfig: OpportunityConfig<UsMeFurloughReleaseOpp
     urlSection: "furloughRelease",
     label: "Furlough Program",
     featureVariant: "usMeFurloughRelease",
-    hydratedHeader: (count: number) => ({
-      eligibilityText: simplur`${[
-        count,
-        oppHeaderCountFormatter,
-      ]} resident[|s] may be eligible for the `,
+    hydratedHeader: (formattedCount) => ({
+      eligibilityText: simplur`${formattedCount} resident[|s] may be eligible for the `,
       opportunityText: "Furlough Program",
       callToAction:
         "Search for case managers above to review residents on their caseload who are approaching standard furlough release eligibility and complete application paperwork.",

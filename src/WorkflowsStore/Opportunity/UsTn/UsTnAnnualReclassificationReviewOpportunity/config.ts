@@ -18,10 +18,7 @@
 import { add } from "date-fns";
 import simplur from "simplur";
 
-import {
-  oppHeaderCountFormatter,
-  OpportunityConfig,
-} from "../../OpportunityConfigs";
+import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./UsTnAnnualReclassificationReviewOpportunity";
 
 export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig<UsTnAnnualReclassificationReviewOpportunity> =
@@ -31,11 +28,8 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig<UsTnAnnua
     urlSection: "annualReclassification",
     label: "Annual Reclassification",
     featureVariant: "usTnAnnualReclassification",
-    hydratedHeader: (count: number) => ({
-      eligibilityText: simplur`${[
-        count,
-        oppHeaderCountFormatter,
-      ]} resident[|s] [is|are] eligible `,
+    hydratedHeader: (formattedCount) => ({
+      eligibilityText: simplur`${formattedCount} resident[|s] [is|are] eligible `,
       opportunityText: "for their annual reclassification",
       callToAction:
         "Review residents due for their annual reclassification " +

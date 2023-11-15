@@ -16,10 +16,7 @@
 // =============================================================================
 import simplur from "simplur";
 
-import {
-  oppHeaderCountFormatter,
-  OpportunityConfig,
-} from "../../OpportunityConfigs";
+import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsIdExpandedCRCOpportunity } from "./UsIdExpandedCRCOpportunity";
 
 export const usIdExpandedCRCConfig: OpportunityConfig<UsIdExpandedCRCOpportunity> =
@@ -29,11 +26,8 @@ export const usIdExpandedCRCConfig: OpportunityConfig<UsIdExpandedCRCOpportunity
     urlSection: "expandedCRC",
     label: "Expanded CRC Program",
     featureVariant: "usIdExpandedCRC",
-    hydratedHeader: (count: number) => ({
-      eligibilityText: simplur`${[
-        count,
-        oppHeaderCountFormatter,
-      ]} resident[|s] [is|are] `,
+    hydratedHeader: (formattedCount) => ({
+      eligibilityText: simplur`${formattedCount} resident[|s] [is|are] `,
       opportunityText:
         "eligible for transfer to Expanded Community Reentry Centers.",
       callToAction:

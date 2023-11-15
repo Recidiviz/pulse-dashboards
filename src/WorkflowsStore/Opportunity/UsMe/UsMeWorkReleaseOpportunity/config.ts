@@ -16,10 +16,7 @@
 // =============================================================================
 import simplur from "simplur";
 
-import {
-  oppHeaderCountFormatter,
-  OpportunityConfig,
-} from "../../OpportunityConfigs";
+import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMeWorkReleaseOpportunity } from "./UsMeWorkReleaseOpportunity";
 
 export const usMeWorkReleaseConfig: OpportunityConfig<UsMeWorkReleaseOpportunity> =
@@ -29,11 +26,8 @@ export const usMeWorkReleaseConfig: OpportunityConfig<UsMeWorkReleaseOpportunity
     urlSection: "workRelease",
     label: "Work Release",
     featureVariant: "usMeWorkRelease",
-    hydratedHeader: (count: number) => ({
-      eligibilityText: simplur`${[
-        count,
-        oppHeaderCountFormatter,
-      ]} client[|s] may be `,
+    hydratedHeader: (formattedCount) => ({
+      eligibilityText: simplur`${formattedCount} client[|s] may be `,
       opportunityText:
         "eligible for the Community Transition Program (Work Release)",
       callToAction:

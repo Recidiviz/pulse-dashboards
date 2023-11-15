@@ -89,11 +89,24 @@ export const generateOpportunityInitialHeader = (
   );
 };
 
+export type CountFormatter = [
+  count: number,
+  formatter: (quantity: number) => string | number
+];
+
+/** Formatter for opportunity headers */
+const hydratedHeaderFormatter = (quantity: number): string | number => {
+  return quantity === 0 ? "Some" : quantity;
+};
+
 export const generateOpportunityHydratedHeader = (
   opportunityType: OpportunityType,
   count: number
 ): OpportunityHydratedHeader => {
-  return OPPORTUNITY_CONFIGS[opportunityType].hydratedHeader(count);
+  return OPPORTUNITY_CONFIGS[opportunityType].hydratedHeader([
+    count,
+    hydratedHeaderFormatter,
+  ]);
 };
 
 export const transformCaseNotes = (

@@ -16,10 +16,7 @@
 // =============================================================================
 import simplur from "simplur";
 
-import {
-  oppHeaderCountFormatter,
-  OpportunityConfig,
-} from "../../OpportunityConfigs";
+import { OpportunityConfig } from "../../OpportunityConfigs";
 import { CompliantReportingOpportunity } from "./CompliantReportingOpportunity";
 
 export const usTnCompliantReportingConfig: OpportunityConfig<CompliantReportingOpportunity> =
@@ -28,11 +25,8 @@ export const usTnCompliantReportingConfig: OpportunityConfig<CompliantReportingO
     stateCode: "US_TN",
     urlSection: "compliantReporting",
     label: "Compliant Reporting",
-    hydratedHeader: (count: number) => ({
-      eligibilityText: simplur`${[
-        count,
-        oppHeaderCountFormatter,
-      ]} client[|s] may be eligible for `,
+    hydratedHeader: (formattedCount) => ({
+      eligibilityText: simplur`${formattedCount} client[|s] may be eligible for `,
       opportunityText: "Compliant Reporting",
       callToAction:
         "Review and refer eligible clients for Compliant Reporting.",

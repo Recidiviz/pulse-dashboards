@@ -16,10 +16,7 @@
 // =============================================================================
 import simplur from "simplur";
 
-import {
-  oppHeaderCountFormatter,
-  OpportunityConfig,
-} from "../../OpportunityConfigs";
+import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMiEarlyDischargeOpportunity } from "./UsMiEarlyDischargeOpportunity";
 
 export const usMiEarlyDischargeConfig: OpportunityConfig<UsMiEarlyDischargeOpportunity> =
@@ -28,11 +25,8 @@ export const usMiEarlyDischargeConfig: OpportunityConfig<UsMiEarlyDischargeOppor
     stateCode: "US_MI",
     urlSection: "earlyDischarge",
     label: "Early Discharge",
-    hydratedHeader: (count: number) => ({
-      eligibilityText: simplur`${[
-        count,
-        oppHeaderCountFormatter,
-      ]} client[|s] may be `,
+    hydratedHeader: (formattedCount) => ({
+      eligibilityText: simplur`${formattedCount} client[|s] may be `,
       opportunityText: "eligible for early discharge",
       callToAction:
         "Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",

@@ -17,10 +17,7 @@
 import { add } from "date-fns";
 import simplur from "simplur";
 
-import {
-  oppHeaderCountFormatter,
-  OpportunityConfig,
-} from "../../OpportunityConfigs";
+import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsIdPastFTRDOpportunity } from "./UsIdPastFTRDOpportunity";
 
 export const usIdPastFTRDConfig: OpportunityConfig<UsIdPastFTRDOpportunity> = {
@@ -30,11 +27,8 @@ export const usIdPastFTRDConfig: OpportunityConfig<UsIdPastFTRDOpportunity> = {
   label: "Past FTRD",
   initialHeader:
     "Search for officers above to review clients whose full-term release date is near or has passed.",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] [is|are] nearing or `,
+  hydratedHeader: (formattedCount) => ({
+    eligibilityText: simplur`${formattedCount} client[|s] [is|are] nearing or `,
     opportunityText: "past their full-term release date",
     callToAction:
       "Review clients who are nearing or past their full-term release date and email clerical to move them to history.",

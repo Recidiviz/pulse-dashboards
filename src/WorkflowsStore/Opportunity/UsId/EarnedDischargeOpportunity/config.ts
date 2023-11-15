@@ -16,10 +16,7 @@
 // =============================================================================
 import simplur from "simplur";
 
-import {
-  oppHeaderCountFormatter,
-  OpportunityConfig,
-} from "../../OpportunityConfigs";
+import { OpportunityConfig } from "../../OpportunityConfigs";
 import { EarnedDischargeOpportunity } from "./EarnedDischargeOpportunity";
 
 export const usIdEarnedDischargeConfig: OpportunityConfig<EarnedDischargeOpportunity> =
@@ -28,11 +25,8 @@ export const usIdEarnedDischargeConfig: OpportunityConfig<EarnedDischargeOpportu
     stateCode: "US_ID",
     urlSection: "earnedDischarge",
     label: "Earned Discharge",
-    hydratedHeader: (count: number) => ({
-      eligibilityText: simplur`${[
-        count,
-        oppHeaderCountFormatter,
-      ]} client[|s] may be eligible for `,
+    hydratedHeader: (formattedCount) => ({
+      eligibilityText: simplur`${formattedCount} client[|s] may be eligible for `,
       opportunityText: `earned discharge`,
       callToAction: `Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.`,
     }),

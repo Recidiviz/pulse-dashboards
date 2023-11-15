@@ -24,11 +24,7 @@ import { Resident } from "../../Resident";
 import { JusticeInvolvedPerson } from "../../types";
 import { dateToTimestamp } from "../../utils";
 import { OpportunityBase } from "../OpportunityBase";
-import {
-  oppHeaderCountFormatter,
-  OpportunityConfig,
-  OpportunityType,
-} from "../OpportunityConfigs";
+import { OpportunityConfig, OpportunityType } from "../OpportunityConfigs";
 import { Opportunity } from "../types";
 
 export const ineligibleClientRecord: ClientRecord = {
@@ -75,11 +71,8 @@ export const mockUsXxOppConfig: OpportunityConfig<TestOpportunity<Client>> = {
   snooze: {
     defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
   },
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] may be `,
+  hydratedHeader: (formattedCount) => ({
+    eligibilityText: simplur`${formattedCount} client[|s] may be `,
     opportunityText: "on or past their expiration date",
     callToAction:
       "Review these clients and complete their auto-generated TEPE Note.",
@@ -92,8 +85,8 @@ export const mockUsXxTwoOppConfig: OpportunityConfig<
 > = {
   ...mockUsXxOppConfig,
   systemType: "INCARCERATION",
-  hydratedHeader: (count: number) => ({
-    fullText: simplur`${[count, oppHeaderCountFormatter]} client[|s] may be `,
+  hydratedHeader: (formattedCount) => ({
+    fullText: simplur`${formattedCount} client[|s] may be `,
     opportunityText: "on or past their expiration date",
     callToAction:
       "Review these clients and complete their auto-generated TEPE Note.",

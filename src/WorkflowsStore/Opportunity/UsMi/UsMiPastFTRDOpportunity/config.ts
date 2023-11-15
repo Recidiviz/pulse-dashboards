@@ -17,10 +17,7 @@
 import { add } from "date-fns";
 import simplur from "simplur";
 
-import {
-  oppHeaderCountFormatter,
-  OpportunityConfig,
-} from "../../OpportunityConfigs";
+import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMiPastFTRDOpportunity } from "./UsMiPastFTRDOpportunity";
 
 export const usMiPastFTRDConfig: OpportunityConfig<UsMiPastFTRDOpportunity> = {
@@ -28,11 +25,8 @@ export const usMiPastFTRDConfig: OpportunityConfig<UsMiPastFTRDOpportunity> = {
   stateCode: "US_MI",
   urlSection: "pastFTRD",
   label: "Overdue for Discharge",
-  hydratedHeader: (count: number) => ({
-    eligibilityText: simplur`${[
-      count,
-      oppHeaderCountFormatter,
-    ]} client[|s] [is|are] nearing or `,
+  hydratedHeader: (formattedCount) => ({
+    eligibilityText: simplur`${formattedCount} client[|s] [is|are] nearing or `,
     opportunityText: "past their full-term release date",
     callToAction:
       "Review clients who are nearing or past their full-term release date and complete discharges in COMS.",

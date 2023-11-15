@@ -16,10 +16,7 @@
 // =============================================================================
 import simplur from "simplur";
 
-import {
-  oppHeaderCountFormatter,
-  OpportunityConfig,
-} from "../../OpportunityConfigs";
+import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMiMinimumTelephoneReportingOpportunity } from "./UsMiMinimumTelephoneReportingOpportunity";
 
 export const usMiMinimumTelephoneReportingConfig: OpportunityConfig<UsMiMinimumTelephoneReportingOpportunity> =
@@ -28,15 +25,11 @@ export const usMiMinimumTelephoneReportingConfig: OpportunityConfig<UsMiMinimumT
     stateCode: "US_MI",
     urlSection: "minimumTelephoneReporting",
     label: "Minimum Telephone Reporting",
-    hydratedHeader: (count: number) => ({
-      // TODO: Update the copy.
-      eligibilityText: simplur`${[
-        count,
-        oppHeaderCountFormatter,
-      ]} client[|s] may be eligible for a downgrade to `,
+    hydratedHeader: (formattedCount) => ({
+      eligibilityText: simplur`${formattedCount} client[|s] may be eligible for downgrade to a `,
       opportunityText: "minimum telephone reporting",
       callToAction:
-        "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",
+        "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in OMNI.",
     }),
     firestoreCollection: "US_MI-minimumTelephoneReporting",
     snooze: {

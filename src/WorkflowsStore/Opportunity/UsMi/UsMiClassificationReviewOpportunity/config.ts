@@ -17,10 +17,7 @@
 import { add } from "date-fns";
 import simplur from "simplur";
 
-import {
-  oppHeaderCountFormatter,
-  OpportunityConfig,
-} from "../../OpportunityConfigs";
+import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMiClassificationReviewOpportunity } from "./UsMiClassificationReviewOpportunity";
 
 export const usMiClassificationReviewConfig: OpportunityConfig<UsMiClassificationReviewOpportunity> =
@@ -34,11 +31,8 @@ export const usMiClassificationReviewConfig: OpportunityConfig<UsMiClassificatio
       // or when they are marked ineligible, whichever is earliest.
       defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 180 }),
     },
-    hydratedHeader: (count: number) => ({
-      eligibilityText: simplur`${[
-        count,
-        oppHeaderCountFormatter,
-      ]} client[|s] may be `,
+    hydratedHeader: (formattedCount) => ({
+      eligibilityText: simplur`${formattedCount} client[|s] may be `,
       opportunityText: "eligible for a supervision level downgrade",
       callToAction:
         "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",

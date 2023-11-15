@@ -17,10 +17,7 @@
 
 import simplur from "simplur";
 
-import {
-  oppHeaderCountFormatter,
-  OpportunityConfig,
-} from "../../OpportunityConfigs";
+import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsCaSupervisionLevelDowngradeOpportunity } from "./UsCaSupervisionLevelDowngradeOpportunity";
 
 export const usCaSupervisionLevelDowngradeConfig: OpportunityConfig<UsCaSupervisionLevelDowngradeOpportunity> =
@@ -29,11 +26,8 @@ export const usCaSupervisionLevelDowngradeConfig: OpportunityConfig<UsCaSupervis
     stateCode: "US_CA",
     urlSection: "supervisionLevelDowngrade",
     label: "Supervision Level Downgrade",
-    hydratedHeader: (count: number) => ({
-      eligibilityText: simplur`${[
-        count,
-        oppHeaderCountFormatter,
-      ]} client[|s] may be `,
+    hydratedHeader: (formattedCount) => ({
+      eligibilityText: simplur`${formattedCount} client[|s] may be `,
       opportunityText: "eligible for a supervision level downgrade",
       callToAction:
         "Review clients who may be eligible for a Supervision Level Downgrade and complete the paperwork.",

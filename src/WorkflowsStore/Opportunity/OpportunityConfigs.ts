@@ -44,11 +44,7 @@ import { UsTnAnnualReclassificationReviewConfig as usTnAnnualReclassification } 
 import { usTnCustodyLevelDowngradeConfig as usTnCustodyLevelDowngrade } from "./UsTn/UsTnCustodyLevelDowngradeOpportunity/config";
 import { usTnExpirationConfig as usTnExpiration } from "./UsTn/UsTnExpirationOpportunity/config";
 import { usTnSupervisionLevelDowngradeConfig as supervisionLevelDowngrade } from "./UsTn/UsTnSupervisionLevelDowngradeOpportunity/config";
-
-/** Formatter for opportunity headers */
-export const oppHeaderCountFormatter = (quantity: number): string | number => {
-  return quantity === 0 ? "Some" : quantity;
-};
+import { CountFormatter } from "./utils";
 
 /** Auto refers to users who have a default snooze until set.
  * defaultSnoozeUntilFn is used to calculate the default snooze until,
@@ -115,7 +111,7 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   snooze?: SnoozeConfig;
   customTabOrder?: OpportunityTab[];
   initialHeader?: string;
-  hydratedHeader: (count: number) => OpportunityHydratedHeader;
+  hydratedHeader: (formattedCount: CountFormatter) => OpportunityHydratedHeader;
 };
 
 export const OPPORTUNITY_CONFIGS = {
