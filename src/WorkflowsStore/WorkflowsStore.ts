@@ -514,11 +514,6 @@ export class WorkflowsStore implements Hydratable {
     return undefined;
   }
 
-  get hasMultipleOpportunities(): boolean {
-    const { opportunityTypes } = this;
-    return !!(opportunityTypes && opportunityTypes.length > 1);
-  }
-
   get caseloadPersons(): JusticeInvolvedPerson[] {
     const personTypeMatchesActiveSystem = (p: JusticeInvolvedPerson) =>
       this.activeSystem === "ALL" ||

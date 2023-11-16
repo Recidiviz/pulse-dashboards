@@ -102,17 +102,15 @@ const RouteSync = observer(function RouteSync({ children }) {
           // (it is mixing observable and unobservable dependencies, which could lead
           // to unpredictable or undesirable re-renders)
           runInAction(() => {
-            const { hasMultipleOpportunities, opportunityTypes } =
-              workflowsStore;
-
-            if (hasMultipleOpportunities) {
-              setRedirectPath(workflowsUrl(homepage));
-            } else {
+            const { opportunityTypes } = workflowsStore;
+            if (opportunityTypes.length === 1) {
               setRedirectPath(
                 workflowsUrl("opportunityClients", {
                   opportunityType: opportunityTypes[0],
                 })
               );
+            } else {
+              setRedirectPath(workflowsUrl(homepage));
             }
           });
         }
