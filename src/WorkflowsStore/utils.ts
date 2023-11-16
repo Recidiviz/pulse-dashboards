@@ -145,7 +145,7 @@ export function fractionalDateBetweenTwoDates(
 ): Date | undefined {
   if (dateLeft && dateRight) {
     const diffInDays = moment(dateRight).diff(moment(dateLeft), "days");
-    const fractionOfDays = diffInDays * fractionalPortion;
+    const fractionOfDays = Math.floor(diffInDays * fractionalPortion);
     const fractionalDate = moment(dateLeft)
       .add(fractionOfDays, "days")
       .toDate();
