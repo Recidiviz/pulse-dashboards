@@ -17,11 +17,12 @@
 
 import { parseISO } from "date-fns";
 
-import { transformCompliantReportingReferral } from "../CompliantReportingOpportunity";
+import {
+  CompliantReportingReferralRecordFullRaw,
+  transformCompliantReportingReferral,
+} from "../CompliantReportingOpportunity";
 
-// TODO(#3587): Make this a CompliantReportingReferralRecordFullRaw once the
-// remaining new schema fields are added to the schema.
-const rawRecordOldSchema = {
+const rawRecordOldSchema: CompliantReportingReferralRecordFullRaw = {
   stateCode: "US_TN",
   poFirstName: "TEST",
   poLastName: "OFFICER1",
@@ -223,7 +224,7 @@ test("transform record, old + new format, almost eligible in both", () => {
   expect(transformedRecord?.ineligibleCriteria).toEqual(ineligibleCriteria);
 });
 
-test("transform record, old + new format, almost eligible in old only", () => {
+test("transform record, old + new format, almost eligible but for fines/fees in old only", () => {
   const rawRecord = {
     ...rawRecordOldSchemaAlmostEligible,
 
@@ -244,16 +245,12 @@ test("transform record, old + new format, almost eligible in old only", () => {
   };
 
   const transformedRecord = transformCompliantReportingReferral(rawRecord);
+  expect(transformedRecord?.eligibleCriteria.usTnFinesFeesEligible).toEqual(
+    rawRecord.eligibleCriteria.usTnFinesFeesEligible
+  );
   expect(
-    transformedRecord?.eligibleCriteria.usTnFinesFeesEligible
+    transformedRecord?.ineligibleCriteria.usTnFinesFeesEligible
   ).toBeUndefined();
-  expect(transformedRecord?.ineligibleCriteria.usTnFinesFeesEligible).toEqual({
-    hasFinesFeesBalanceBelow500: { amountOwed: 0 },
-    hasPayments3ConsecutiveMonths: {
-      amountOwed: 0,
-      consecutiveMonthlyPayments: 0,
-    },
-  });
 });
 
 test("transform record, old + new format, almost eligible but for sanctions in old only", () => {
@@ -367,7 +364,7 @@ test("transform record, old + new format, almost eligible but for recent rejecti
   });
 });
 
-test("transform record, old + new format, almost eligible in new only", () => {
+test("transform record, old + new format, almost eligible but for fines/fees in new only", () => {
   const rawRecord = {
     ...rawRecordOldSchema,
 
@@ -388,16 +385,9 @@ test("transform record, old + new format, almost eligible in new only", () => {
 
   const transformedRecord = transformCompliantReportingReferral(rawRecord);
   expect(
-    transformedRecord?.ineligibleCriteria.usTnFinesFeesEligible
+    transformedRecord?.eligibleCriteria.usTnFinesFeesEligible
   ).toBeUndefined();
-  expect(transformedRecord?.eligibleCriteria.usTnFinesFeesEligible).toEqual({
-    hasFinesFeesBalanceBelow500: { amountOwed: 0 },
-    hasPayments3ConsecutiveMonths: {
-      amountOwed: 0,
-      consecutiveMonthlyPayments: 0,
-    },
-    hasPermanentFinesFeesExemption: {
-      currentExemptions: ["SSDB", "SSDB"],
-    },
-  });
+  expect(transformedRecord?.ineligibleCriteria.usTnFinesFeesEligible).toEqual(
+    rawRecord.ineligibleCriteria.usTnFinesFeesEligible
+  );
 });

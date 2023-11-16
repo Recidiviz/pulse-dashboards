@@ -15,65 +15,72 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { parseISO } from "date-fns";
-import { Required as RequireKeys } from "utility-types";
+import { Optional, Required as RequireKeys } from "utility-types";
 
-import { ClientRecord } from "../../../../FirestoreStore";
+import {
+  ClientRecord,
+  TnCompliantReportingRefactorNewFields,
+} from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
 import { UsNdEarlyTerminationReferralRecord } from "../UsNdEarlyTerminationOpportunity";
 
-export const usNdEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> =
-  {
-    personType: "CLIENT",
-    recordId: "us_nd_110",
-    personName: {
-      givenNames: "JAMIE",
-      surname: "JONES",
+export const usNdEarlyTerminationEligibleClientRecord: Optional<
+  RequireKeys<ClientRecord>,
+  keyof TnCompliantReportingRefactorNewFields
+> = {
+  personType: "CLIENT",
+  recordId: "us_nd_110",
+  personName: {
+    givenNames: "JAMIE",
+    surname: "JONES",
+  },
+  personExternalId: "110",
+  displayId: "d110",
+  pseudonymizedId: "p110",
+  district: "DISTRICT A",
+  stateCode: "US_ND",
+  officerId: "OFFICER3",
+  supervisionType: "PROBATION",
+  supervisionLevel: "MEDIUM",
+  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  address: "123 Bedrock Lane",
+  phoneNumber: "5555555678",
+  expirationDate: dateToTimestamp("2024-12-31"),
+  allEligibleOpportunities: ["earlyTermination"],
+  supervisionStartDate: "2020-02-22",
+  currentBalance: 0,
+  lastPaymentAmount: 125.75,
+  lastPaymentDate: dateToTimestamp("2022-01-03"),
+  specialConditions: [],
+  boardConditions: [],
+  currentEmployers: [
+    {
+      name: "Tire store",
+      address: "456 Bedrock Lane",
     },
-    personExternalId: "110",
-    displayId: "d110",
-    pseudonymizedId: "p110",
-    district: "DISTRICT A",
-    stateCode: "US_ND",
-    officerId: "OFFICER3",
-    supervisionType: "PROBATION",
-    supervisionLevel: "MEDIUM",
-    supervisionLevelStart: dateToTimestamp("2019-12-20"),
-    address: "123 Bedrock Lane",
-    phoneNumber: "5555555678",
-    expirationDate: dateToTimestamp("2024-12-31"),
-    allEligibleOpportunities: ["earlyTermination"],
-    supervisionStartDate: "2020-02-22",
-    currentBalance: 0,
-    lastPaymentAmount: 125.75,
-    lastPaymentDate: dateToTimestamp("2022-01-03"),
-    specialConditions: [],
-    boardConditions: [],
-    currentEmployers: [
-      {
-        name: "Tire store",
-        address: "456 Bedrock Lane",
-      },
-    ],
-    milestones: [
-      {
-        text: "8 months without a violation",
-        type: "MONTHS_WITHOUT_VIOLATION",
-      },
-      {
-        text: "15 months on supervision",
-        type: "MONTHS_ON_SUPERVISION",
-      },
-    ],
-    emailAddress: "jamie@example.com",
-  };
-export const usNdEarlyTerminationAlmostEligibleClientRecord: RequireKeys<ClientRecord> =
-  {
-    ...usNdEarlyTerminationEligibleClientRecord,
-    recordId: "us_nd_111",
-    personExternalId: "111",
-    displayId: "d111",
-    pseudonymizedId: "p111",
-  };
+  ],
+  milestones: [
+    {
+      text: "8 months without a violation",
+      type: "MONTHS_WITHOUT_VIOLATION",
+    },
+    {
+      text: "15 months on supervision",
+      type: "MONTHS_ON_SUPERVISION",
+    },
+  ],
+  emailAddress: "jamie@example.com",
+};
+export const usNdEarlyTerminationAlmostEligibleClientRecord: Optional<
+  RequireKeys<ClientRecord>,
+  keyof TnCompliantReportingRefactorNewFields
+> = {
+  ...usNdEarlyTerminationEligibleClientRecord,
+  recordId: "us_nd_111",
+  personExternalId: "111",
+  displayId: "d111",
+  pseudonymizedId: "p111",
+};
 
 export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRecord =
   {

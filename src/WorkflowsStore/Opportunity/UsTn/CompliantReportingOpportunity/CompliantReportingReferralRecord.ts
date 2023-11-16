@@ -331,15 +331,19 @@ export const transformCompliantReportingReferral: TransformFunction<
     typeof compliantReportingSchema.shape.ineligibleCriteria
   > = {};
 
-  if (
-    finesFeesEligible !== "ineligible" &&
-    !eligibleCriteria.usTnFinesFeesEligible
-  ) {
-    // If the legacy-style data tells us they're eligible but the new style doesn't, set the new
-    // fields to match what the legacy data is telling us.
+  if (eligibleCriteria.usTnFinesFeesEligible) {
+    newEligibleCriteria.usTnFinesFeesEligible =
+      eligibleCriteria.usTnFinesFeesEligible;
+  } else if (ineligibleCriteria.usTnFinesFeesEligible) {
+    newIneligibleCriteria.usTnFinesFeesEligible =
+      ineligibleCriteria.usTnFinesFeesEligible;
+  }
+  // If they don't have new-style data, fill it in from the old style
+  else if (!paymentNeeded) {
     newEligibleCriteria.usTnFinesFeesEligible = {
       hasFinesFeesBalanceBelow500: {
-        amountOwed: 0, // Nothing in the copy or form looks at the actual value so it can be anything
+        // Nothing in the copy or form looks at the actual value except to compare to 500, so it can be anything
+        amountOwed: finesFeesEligible === "low_balance" ? 0 : 600,
       },
       hasPayments3ConsecutiveMonths: {
         amountOwed: 0, // same
@@ -351,9 +355,7 @@ export const transformCompliantReportingReferral: TransformFunction<
         },
       }),
     };
-  } else if (paymentNeeded && !ineligibleCriteria.usTnFinesFeesEligible) {
-    // If the legacy-style data tells us they're almost eligible but the new style doesn't, set the
-    // new fields to match what the legacy data is telling us.
+  } else {
     newIneligibleCriteria.usTnFinesFeesEligible = {
       hasFinesFeesBalanceBelow500: {
         amountOwed: 0, // Nothing in the copy or form looks at the actual value so it can be anything
@@ -363,16 +365,6 @@ export const transformCompliantReportingReferral: TransformFunction<
         consecutiveMonthlyPayments: 0, // same
       },
     };
-  } else {
-    // if the old and new eligibility match each other, keep both
-    if (eligibleCriteria.usTnFinesFeesEligible) {
-      newEligibleCriteria.usTnFinesFeesEligible =
-        eligibleCriteria.usTnFinesFeesEligible;
-    }
-    if (ineligibleCriteria.usTnFinesFeesEligible) {
-      newIneligibleCriteria.usTnFinesFeesEligible =
-        ineligibleCriteria.usTnFinesFeesEligible;
-    }
   }
 
   if (!seriousSanctionsEligibilityDate) {

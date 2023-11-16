@@ -219,9 +219,12 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     this.address = record.address || UNKNOWN;
     this.rawPhoneNumber = record.phoneNumber;
     this.expirationDate = optionalFieldToDate(record.expirationDate);
-    this.currentBalance = record.currentBalance;
-    this.lastPaymentDate = optionalFieldToDate(record.lastPaymentDate);
-    this.lastPaymentAmount = record.lastPaymentAmount;
+    this.currentBalance = record.currentBalanceNew ?? record.currentBalance;
+    this.lastPaymentDate = optionalFieldToDate(
+      record.lastPaymentDateNew ?? record.lastPaymentDate
+    );
+    this.lastPaymentAmount =
+      record.lastPaymentAmountNew ?? record.lastPaymentAmount;
     this.probationSpecialConditions = record.specialConditions;
     this.paroleSpecialConditions = record.boardConditions ?? [];
     this.supervisionStartDate = optionalFieldToDate(

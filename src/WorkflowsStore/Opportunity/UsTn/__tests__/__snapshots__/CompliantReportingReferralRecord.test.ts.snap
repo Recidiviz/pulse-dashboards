@@ -89,7 +89,7 @@ Object {
   "eligibleCriteria": Object {
     "usTnFinesFeesEligible": Object {
       "hasFinesFeesBalanceBelow500": Object {
-        "amountOwed": 0,
+        "amountOwed": 600,
       },
       "hasPayments3ConsecutiveMonths": Object {
         "amountOwed": 0,

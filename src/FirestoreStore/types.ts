@@ -196,6 +196,15 @@ export type ClientRecord = JusticeInvolvedPersonRecord & {
   currentEmployers?: ClientEmployer[];
   milestones?: Milestone[];
   emailAddress?: string;
+} & TnCompliantReportingRefactorNewFields;
+
+// "new" fields for TN compliant reporting refactor.
+// These come from the same data source as the TES version of the CR query, and ensure we have
+// consistency between the data in the opportunity record and the client record.
+export type TnCompliantReportingRefactorNewFields = {
+  currentBalanceNew?: number;
+  lastPaymentAmountNew?: number;
+  lastPaymentDateNew?: Timestamp | string;
 };
 
 /**
