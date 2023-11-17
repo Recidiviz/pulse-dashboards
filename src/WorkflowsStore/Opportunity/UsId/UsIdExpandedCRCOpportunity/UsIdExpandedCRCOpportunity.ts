@@ -22,9 +22,9 @@ import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeI
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
-import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "../../utils";
+import { UsIdCRCOpportunityBase } from "../UsIdOpportunityBase";
 import {
   notServingForSexualOffenseCopy,
   usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy,
@@ -99,10 +99,7 @@ const DENIAL_REASONS_MAP = {
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
-export class UsIdExpandedCRCOpportunity extends OpportunityBase<
-  Resident,
-  UsIdExpandedCRCReferralRecord
-> {
+export class UsIdExpandedCRCOpportunity extends UsIdCRCOpportunityBase<UsIdExpandedCRCReferralRecord> {
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "Incarceration",
     "CaseNotes",

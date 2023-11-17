@@ -21,9 +21,9 @@ import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
-import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import { CriteriaCopy, hydrateCriteria } from "../../utils";
+import { UsIdCRCOpportunityBase } from "../UsIdOpportunityBase";
 import {
   custodyLevelIsMinimumCopy,
   notServingForSexualOffenseCopy,
@@ -83,10 +83,7 @@ const DENIAL_REASONS_MAP = {
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
-export class UsIdCRCWorkReleaseOpportunity extends OpportunityBase<
-  Resident,
-  UsIdCRCWorkReleaseReferralRecord
-> {
+export class UsIdCRCWorkReleaseOpportunity extends UsIdCRCOpportunityBase<UsIdCRCWorkReleaseReferralRecord> {
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "Incarceration",
     "CaseNotes",
