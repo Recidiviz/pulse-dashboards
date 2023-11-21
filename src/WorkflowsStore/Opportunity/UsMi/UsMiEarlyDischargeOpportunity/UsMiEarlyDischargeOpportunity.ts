@@ -207,6 +207,7 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
       "ORDERED TREATMENT: Has not completed all required treatment",
     "EXCLUDED OFFENSE":
       "EXCLUDED OFFENSE: On parole for an offense resulting in death or serious bodily injury or an offense involving the discharge of a firearm",
+    COURT: "County Judge declined client for consideration",
     [OTHER_KEY]: "Other: please specify a reason",
   };
 

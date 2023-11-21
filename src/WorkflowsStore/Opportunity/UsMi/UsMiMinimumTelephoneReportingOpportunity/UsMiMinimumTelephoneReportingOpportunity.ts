@@ -94,6 +94,7 @@ const DENIAL_REASONS_MAP = {
     "Designated as Reentry Project for Offenders with Special Needs (RPOSN - D-47)",
   "HIGH PROFILE":
     "Currently serving for an offense that resulted in the death of a person or a high-profile case with adverse community reaction (requires Max or higher based on risk score)",
+  COURT: "County Judge declined client for consideration",
   [OTHER_KEY]: "Other, please specify a reason",
 };
 
