@@ -91,3 +91,12 @@ export function getOutlierOfficerData(
     }),
   };
 }
+
+export function getDistrictWithoutLabel(
+  district: string | null | undefined,
+  label: string
+): string | undefined {
+  return district?.toUpperCase().startsWith(label.toUpperCase())
+    ? district.toUpperCase().split(`${label.toUpperCase()} `)[1]
+    : district ?? undefined;
+}

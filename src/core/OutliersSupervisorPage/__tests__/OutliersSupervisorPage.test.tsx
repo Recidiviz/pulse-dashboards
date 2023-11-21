@@ -66,7 +66,7 @@ describe("Hydrated Supervisor Page", () => {
 
     expect(
       screen.getByText(
-        "2 of the 3 agents in Miles D Davis's unit are outliers on one or more metrics"
+        "2 of the 3 officers in Miles D Davis's team are outliers on one or more metrics"
       )
     ).toBeInTheDocument();
   });
@@ -79,7 +79,7 @@ describe("Hydrated Supervisor Page", () => {
     );
 
     [
-      "Region D1",
+      "D1",
       "Miles D Davis",
       "Duke Ellington, Chet Baker, Louis Armstrong",
     ].forEach((text) => {
@@ -95,7 +95,7 @@ describe("Hydrated Supervisor Page", () => {
     );
 
     [
-      "Region D1",
+      "D1",
       "Miles D Davis",
       "Duke Ellington, Chet Baker, Louis Armstrong",
     ].forEach((text) => {
@@ -142,7 +142,7 @@ describe("Hydrated Supervisor Page", () => {
 
     expect(
       screen.getByText(
-        "2 of the 3 agents in your unit are outliers on one or more metrics"
+        "2 of the 3 officers in your team are outliers on one or more metrics"
       )
     ).toBeInTheDocument();
   });

@@ -36,6 +36,7 @@ import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerDetailPresenter } from "../../OutliersStore/presenters/SupervisionOfficerDetailPresenter";
+import { getDistrictWithoutLabel } from "../../OutliersStore/presenters/utils";
 import { formatDate, toTitleCase } from "../../utils";
 import ModelHydrator from "../ModelHydrator";
 import { NavigationBackButton } from "../NavigationBackButton";
@@ -151,6 +152,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     metricInfo,
     supervisorInfo,
     timePeriod,
+    labels,
   } = presenter;
 
   useEffect(() => {
@@ -158,7 +160,9 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   }, [presenter]);
 
   const supervisorLinkProps = supervisorInfo && {
-    linkText: `Go to ${supervisorInfo.displayName || "supervisor"}'s unit`,
+    linkText: `Go to ${
+      supervisorInfo.displayName || labels.supervisionSupervisorLabel
+    }'s ${labels.supervisionUnitLabel}`,
     link: outliersUrl("supervisionSupervisor", {
       supervisorPseudoId: supervisorInfo.pseudonymizedId,
     }),
@@ -223,8 +227,17 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
           outlierOfficerData.caseloadType) ||
         null,
     },
-    { title: "region", info: outlierOfficerData.district },
-    { title: "unit supervisor", info: supervisorInfo?.displayName },
+    {
+      title: labels.supervisionDistrictLabel,
+      info: getDistrictWithoutLabel(
+        outlierOfficerData.district,
+        labels.supervisionDistrictLabel
+      ),
+    },
+    {
+      title: `${labels.supervisionUnitLabel} ${labels.supervisionSupervisorLabel}`,
+      info: supervisorInfo?.displayName,
+    },
     {
       title: "time period",
       info: timePeriod,

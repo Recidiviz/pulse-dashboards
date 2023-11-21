@@ -25,16 +25,14 @@ import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConf
 import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
 import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
 import { OutliersSupervisionStore } from "../../stores/OutliersSupervisionStore";
-import { getOutlierOfficerData } from "../getOutlierOfficerData";
 import { SupervisionOfficerDetailPresenter } from "../SupervisionOfficerDetailPresenter";
+import { getOutlierOfficerData } from "../utils";
 
 let store: OutliersSupervisionStore;
 const pseudoId = "hashed-mdavis123";
 
-jest.mock("../getOutlierOfficerData", () => {
-  const original = jest.requireActual(
-    "../getOutlierOfficerData"
-  ).getOutlierOfficerData;
+jest.mock("../utils", () => {
+  const original = jest.requireActual("../utils").getOutlierOfficerData;
   return {
     getOutlierOfficerData: jest.fn().mockImplementation(original),
   };

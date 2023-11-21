@@ -30,7 +30,7 @@ import { supervisionOfficerFixture } from "../../models/offlineFixtures/Supervis
 import { SupervisionOfficer } from "../../models/SupervisionOfficer";
 import { OutliersStore } from "../../OutliersStore";
 import { OutliersSupervisionStore } from "../../stores/OutliersSupervisionStore";
-import { getOutlierOfficerData } from "../getOutlierOfficerData";
+import { getOutlierOfficerData } from "../utils";
 
 let officerData: SupervisionOfficer;
 let supervisionStore: OutliersSupervisionStore;

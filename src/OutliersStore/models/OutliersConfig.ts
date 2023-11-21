@@ -19,6 +19,11 @@ import { z } from "zod";
 
 export const outliersConfigSchema = z.object({
   supervisionOfficerLabel: z.string(),
+  supervisionDistrictLabel: z.string(),
+  supervisionDistrictManagerLabel: z.string(),
+  supervisionJiiLabel: z.string(),
+  supervisionSupervisorLabel: z.string(),
+  supervisionUnitLabel: z.string(),
   learnMoreUrl: z.string(),
   metrics: z.array(
     z.object({
@@ -27,6 +32,12 @@ export const outliersConfigSchema = z.object({
       titleDisplayName: z.string(),
       bodyDisplayName: z.string(),
       eventName: z.string(),
+    })
+  ),
+  clientEvents: z.array(
+    z.object({
+      displayName: z.string(),
+      name: z.string(),
     })
   ),
 });

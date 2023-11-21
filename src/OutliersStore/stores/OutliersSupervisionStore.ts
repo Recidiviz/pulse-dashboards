@@ -30,6 +30,7 @@ import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import type { OutliersStore } from "../OutliersStore";
+import { ConfigLabels } from "../presenters/types";
 import { FlowMethod, StringMap2D } from "../types";
 
 export class OutliersSupervisionStore {
@@ -194,6 +195,18 @@ export class OutliersSupervisionStore {
 
   get methodologyUrl(): string {
     return this.config.learnMoreUrl;
+  }
+
+  get labels(): ConfigLabels {
+    return {
+      supervisionOfficerLabel: this.config.supervisionOfficerLabel,
+      supervisionDistrictLabel: this.config.supervisionDistrictLabel,
+      supervisionDistrictManagerLabel:
+        this.config.supervisionDistrictManagerLabel,
+      supervisionJiiLabel: this.config.supervisionJiiLabel,
+      supervisionSupervisorLabel: this.config.supervisionSupervisorLabel,
+      supervisionUnitLabel: this.config.supervisionUnitLabel,
+    };
   }
 
   supervisionOfficerSupervisorByExternalId(

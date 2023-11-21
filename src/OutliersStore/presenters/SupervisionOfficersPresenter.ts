@@ -22,8 +22,8 @@ import { castToError } from "../../utils/castToError";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
-import { getOutlierOfficerData } from "./getOutlierOfficerData";
-import { OutlierOfficerData } from "./types";
+import { ConfigLabels, OutlierOfficerData } from "./types";
+import { getOutlierOfficerData } from "./utils";
 
 export class SupervisionOfficersPresenter implements Hydratable {
   error?: Error | undefined;
@@ -173,6 +173,10 @@ export class SupervisionOfficersPresenter implements Hydratable {
       this.supervisorPseudoId ===
         this.supervisionStore.currentSupervisorUser?.pseudonymizedId
     );
+  }
+
+  get labels(): ConfigLabels {
+    return this.supervisionStore.labels;
   }
 
   trackViewed(): void {

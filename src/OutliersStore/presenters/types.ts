@@ -19,6 +19,7 @@ import { ValuesType } from "utility-types";
 
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
+import { OutliersConfig } from "../models/OutliersConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricOutlier } from "../models/SupervisionOfficerMetricOutlier";
 
@@ -34,3 +35,12 @@ export type MetricWithConfig = SupervisionOfficerMetricOutlier & {
   config: Omit<MetricConfig, "metricBenchmarksByCaseloadType">;
   benchmark: MetricBenchmark & { currentPeriodTarget: number };
 };
+export type ConfigLabels = Pick<
+  OutliersConfig,
+  | "supervisionOfficerLabel"
+  | "supervisionDistrictLabel"
+  | "supervisionDistrictManagerLabel"
+  | "supervisionJiiLabel"
+  | "supervisionSupervisorLabel"
+  | "supervisionUnitLabel"
+>;

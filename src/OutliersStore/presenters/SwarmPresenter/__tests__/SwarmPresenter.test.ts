@@ -21,7 +21,7 @@ import { RootStore } from "../../../../RootStore";
 import { OutliersConfigFixture } from "../../../models/offlineFixtures/OutliersConfigFixture";
 import { supervisionOfficerFixture } from "../../../models/offlineFixtures/SupervisionOfficerFixture";
 import { OutliersSupervisionStore } from "../../../stores/OutliersSupervisionStore";
-import { getOutlierOfficerData } from "../../getOutlierOfficerData";
+import { getOutlierOfficerData } from "../../utils";
 import { SwarmPresenter } from "../SwarmPresenter";
 
 // jest does not support Web Workers;

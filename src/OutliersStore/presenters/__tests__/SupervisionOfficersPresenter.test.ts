@@ -22,17 +22,15 @@ import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
 import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConfigFixture";
 import { OutliersStore } from "../../OutliersStore";
 import { OutliersSupervisionStore } from "../../stores/OutliersSupervisionStore";
-import { getOutlierOfficerData } from "../getOutlierOfficerData";
 import { SupervisionOfficersPresenter } from "../SupervisionOfficersPresenter";
+import { getOutlierOfficerData } from "../utils";
 
 let store: OutliersSupervisionStore;
 let presenter: SupervisionOfficersPresenter;
 const pseudoId = "hashed-mdavis123";
 
-jest.mock("../getOutlierOfficerData", () => {
-  const original = jest.requireActual(
-    "../getOutlierOfficerData"
-  ).getOutlierOfficerData;
+jest.mock("../utils", () => {
+  const original = jest.requireActual("../utils").getOutlierOfficerData;
   return {
     getOutlierOfficerData: jest.fn().mockImplementation(original),
   };

@@ -25,6 +25,7 @@ import { Hydratable } from "../../core/models/types";
 import { castToError } from "../../utils/castToError";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
+import { ConfigLabels } from "./types";
 
 export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
   isLoading?: boolean;
@@ -81,14 +82,7 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
       map((dataset) => {
         const { supervisionDistrict } = dataset[0];
         return {
-          district: supervisionDistrict
-            ? // TODO(#4320): Clean this up once corresponding BE change is in prod
-              `${
-                !supervisionDistrict.toLowerCase().startsWith("region")
-                  ? "Region "
-                  : ""
-              }${supervisionDistrict}`
-            : null,
+          district: supervisionDistrict,
           supervisors: dataset as SupervisionOfficerSupervisor[],
         };
       })
@@ -97,5 +91,9 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
 
   get supervisorsWithOutliersCount(): number {
     return this.allSupervisorsWithOutliers?.length ?? 0;
+  }
+
+  get labels(): ConfigLabels {
+    return this.supervisionStore.labels;
   }
 }

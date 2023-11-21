@@ -20,6 +20,11 @@ import { ADVERSE_METRIC_IDS } from "./constants";
 
 export const OutliersConfigFixture: OutliersConfig = {
   supervisionOfficerLabel: "officer",
+  supervisionDistrictLabel: "region",
+  supervisionDistrictManagerLabel: "district manager",
+  supervisionJiiLabel: "client",
+  supervisionSupervisorLabel: "supervisor",
+  supervisionUnitLabel: "team",
   learnMoreUrl: "https://recidiviz.org",
   metrics: [
     {
@@ -42,6 +47,16 @@ export const OutliersConfigFixture: OutliersConfig = {
       titleDisplayName: "Technical Incarceration Rate",
       eventName: "technical incarcerations",
       outcomeType: "ADVERSE",
+    },
+  ],
+  clientEvents: [
+    {
+      displayName: "Violations",
+      name: "violations",
+    },
+    {
+      displayName: "Sanctions",
+      name: "violation_responses",
     },
   ],
 };

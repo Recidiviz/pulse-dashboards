@@ -25,8 +25,8 @@ import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
 import { FlowMethod } from "../types";
-import { getOutlierOfficerData } from "./getOutlierOfficerData";
-import { OutlierOfficerData } from "./types";
+import { ConfigLabels, OutlierOfficerData } from "./types";
+import { getOutlierOfficerData } from "./utils";
 
 export class SupervisionOfficerDetailPresenter implements Hydratable {
   error?: Error | undefined;
@@ -114,6 +114,10 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     return this.supervisionStore.supervisionOfficerSupervisorByExternalId(
       supervisorExternalId
     );
+  }
+
+  get labels(): ConfigLabels {
+    return this.supervisionStore.labels;
   }
 
   get timePeriod(): string | undefined {

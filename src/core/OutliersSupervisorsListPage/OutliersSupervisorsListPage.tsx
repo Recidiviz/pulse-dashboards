@@ -89,8 +89,11 @@ const SupervisorsList = observer(function SupervisorsList({
 }) {
   const { isMobile, isLaptop } = useIsMobile(true);
 
-  const { supervisorsWithOutliersByDistrict, supervisorsWithOutliersCount } =
-    presenter;
+  const {
+    supervisorsWithOutliersByDistrict,
+    supervisorsWithOutliersCount,
+    labels,
+  } = presenter;
 
   const districtViz = supervisorsWithOutliersByDistrict.map(
     ({ district, supervisors }) => (
@@ -117,7 +120,7 @@ const SupervisorsList = observer(function SupervisorsList({
     )
   );
 
-  const pageTitle = simplur`${supervisorsWithOutliersCount} supervisor[|s] across the state have one or more outlier agents in their unit`;
+  const pageTitle = simplur`${supervisorsWithOutliersCount} ${labels.supervisionSupervisorLabel}[|s] across the state have one or more outlier ${labels.supervisionOfficerLabel}s in their ${labels.supervisionUnitLabel}`;
 
   return (
     <Wrapper isLaptop={isLaptop}>

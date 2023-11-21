@@ -22,6 +22,7 @@ import simplur from "simplur";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficersPresenter } from "../../OutliersStore/presenters/SupervisionOfficersPresenter";
+import { getDistrictWithoutLabel } from "../../OutliersStore/presenters/utils";
 import { getWelcomeText } from "../../utils";
 import ModelHydrator from "../ModelHydrator";
 import { NavigationBackButton } from "../NavigationBackButton";
@@ -49,6 +50,7 @@ export const SupervisorPage = observer(function SupervisorPage({
     allOfficers,
     supervisorIsCurrentUser,
     timePeriod,
+    labels,
   } = presenter;
 
   useEffect(() => {
@@ -58,22 +60,29 @@ export const SupervisorPage = observer(function SupervisorPage({
   const emptyPageHeaderText = `${getWelcomeText(
     supervisorInfo?.fullName.givenNames,
     "Nice work"
-  )}! None of the agents in your unit are currently
-outliers on any metrics.`;
+  )}! None of the ${labels.supervisionOfficerLabel}s in your ${
+    labels.supervisionUnitLabel
+  } are currently outliers on any metrics.`;
 
   if (!outlierOfficersData || outlierOfficersData.length === 0)
     return (
       <OutliersEmptyPage
         headerText={emptyPageHeaderText}
-        callToActionText="Keep checking back – this page will update regularly to surface
-outlier agents in your unit."
+        callToActionText={`Keep checking back – this page will update regularly to surface
+outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel}.`}
       />
     );
 
   const infoItems = [
-    { title: "region", info: supervisorInfo?.supervisionDistrict },
     {
-      title: "unit supervisor",
+      title: labels.supervisionDistrictLabel,
+      info: getDistrictWithoutLabel(
+        supervisorInfo?.supervisionDistrict,
+        labels.supervisionDistrictLabel
+      ),
+    },
+    {
+      title: `${labels.supervisionUnitLabel} ${labels.supervisionSupervisorLabel}`,
       info: supervisorInfo?.displayName,
     },
     {
@@ -88,9 +97,11 @@ outlier agents in your unit."
 
   const pageTitle = simplur`${outlierOfficersData.length} of the ${
     allOfficers?.length
-  } agent[|s] in ${
+  } ${labels.supervisionOfficerLabel}[|s] in ${
     supervisorIsCurrentUser ? "your" : `${supervisorInfo?.displayName}'s`
-  } unit [is an|are] outlier[|s] on one or more metrics`;
+  } ${
+    labels.supervisionUnitLabel
+  } [is an|are] outlier[|s] on one or more metrics`;
 
   return (
     <OutliersPageLayout
@@ -101,7 +112,7 @@ outlier agents in your unit."
           <NavigationBackButton
             action={{ url: outliersUrl("supervisionSupervisorsList") }}
           >
-            Go to supervisors list
+            Go to {labels.supervisionSupervisorLabel}s list
           </NavigationBackButton>
         )
       }
@@ -111,7 +122,7 @@ outlier agents in your unit."
           <OutliersStaffLegend
             note={
               presenter.areCaseloadTypeBreakdownsEnabled
-                ? "Correctional agents are only compared with other agents with similar caseloads. An agent with a specialized caseload will not be compared to one with a general caseload."
+                ? `Correctional ${labels.supervisionOfficerLabel}s are only compared with other ${labels.supervisionOfficerLabel}s with similar caseloads. An ${labels.supervisionOfficerLabel} with a specialized caseload will not be compared to one with a general caseload.`
                 : undefined
             }
           />
