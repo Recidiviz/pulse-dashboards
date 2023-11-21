@@ -24,7 +24,7 @@ import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
 import { OpportunityRequirement } from "../../types";
 import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "../../utils";
-import { UsIdCRCOpportunityBase } from "../UsIdOpportunityBase";
+import { UsIdCRCOpportunityBase } from "../UsIdCRCOpportunityBase";
 import {
   notServingForSexualOffenseCopy,
   usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy,

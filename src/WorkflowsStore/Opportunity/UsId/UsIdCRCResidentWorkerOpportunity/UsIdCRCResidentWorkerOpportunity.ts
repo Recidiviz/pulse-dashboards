@@ -23,7 +23,7 @@ import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
 import { OpportunityRequirement } from "../../types";
 import { CriteriaCopy, hydrateCriteria } from "../../utils";
-import { UsIdCRCOpportunityBase } from "../UsIdOpportunityBase";
+import { UsIdCRCOpportunityBase } from "../UsIdCRCOpportunityBase";
 import {
   custodyLevelIsMinimumCopy,
   notServingForSexualOffenseCopy,
