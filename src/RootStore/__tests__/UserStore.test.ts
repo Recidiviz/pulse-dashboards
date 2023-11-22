@@ -697,6 +697,27 @@ describe("recidivizAllowedStates", () => {
     await store.authorize(mockHandleUrl);
     expect(store.recidivizAllowedStates).toEqual(["US_CA", "US_PA"]);
   });
+
+  test("does not filter by allowedStates if in demo mode", async () => {
+    const allowedStates = ["US_CA", "US_TN"];
+
+    const isDemoModeMock = isDemoMode as jest.Mock;
+    isDemoModeMock.mockReturnValue(true);
+
+    mockIsAuthenticated.mockResolvedValue(true);
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      [metadataField]: { stateCode: "RECIDIVIZ", allowedStates },
+    });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: mockRootStore,
+    });
+    await store.authorize(mockHandleUrl);
+    expect(store.recidivizAllowedStates).toEqual(
+      tenants.RECIDIVIZ.availableStateCodes
+    );
+  });
 });
 
 describe("feature variants", () => {
