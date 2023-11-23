@@ -56,6 +56,7 @@ const US_TN_CONFIG: TenantConfig = {
     },
   },
   navigation: {
+    insights: [OUTLIERS_PAGES.supervision],
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
@@ -113,7 +114,6 @@ const US_TN_CONFIG: TenantConfig = {
       IMPACT_SECTIONS.avgPopulationCompliantReporting,
       IMPACT_SECTIONS.avgDailyPopulation,
     ],
-    insights: [OUTLIERS_PAGES.supervision],
   },
   pagesWithRestrictions: [
     "libertyToPrison",

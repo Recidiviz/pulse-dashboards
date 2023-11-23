@@ -52,6 +52,7 @@ const US_MI_CONFIG: TenantConfig = {
   },
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   navigation: {
+    insights: [OUTLIERS_PAGES.supervision],
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],
     system: [PATHWAYS_PAGES.prison],
     libertyToPrison: [
@@ -98,7 +99,6 @@ const US_MI_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countByRace,
     ],
     "id-methodology": ["system"],
-    insights: [OUTLIERS_PAGES.supervision],
   },
   pagesWithRestrictions: ["prison"],
   tableColumns: enabledTableColumns[pathways.US_MI],
