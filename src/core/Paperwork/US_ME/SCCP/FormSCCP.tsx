@@ -34,13 +34,16 @@ import p4 from "./assets/p4.png";
 import p5 from "./assets/p5.png";
 import p6 from "./assets/p6.png";
 import p7 from "./assets/p7.png";
+import p8 from "./assets/p8.png";
+import p9 from "./assets/p9.png";
+import p10 from "./assets/p10.png";
 
 const FormPreviewPage = styled.img`
   height: auto;
   width: 100%;
 `;
 
-const previewImages = [p1, p2, p3, p4, p5, p6, p7];
+const previewImages = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10];
 
 const formDownloader = async (resident: Resident): Promise<void> => {
   let contents: DocxTemplateFormContents;
@@ -56,6 +59,7 @@ const formDownloader = async (resident: Resident): Promise<void> => {
     "SCCP_warrantless_searches",
     "SCCP_extradition_waiver",
     "SCCP_disclosure",
+    "SCCP_agreement",
   ].map((filename) => {
     return [
       `${resident.displayName} ${filename}.docx`,
