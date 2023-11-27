@@ -18,10 +18,10 @@ import React from "react";
 
 import { UsMiClassificationReviewReferralRecord } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiClassificationReviewOpportunity";
 import {
-  DetailsBorderedSection,
   DetailsHeading,
-  DetailsList,
+  DetailsSection,
   SecureDetailsContent,
+  Separator,
 } from "../../styles";
 import { OpportunityProfileProps } from "../../types";
 
@@ -39,15 +39,15 @@ export function UsMiRecommendedSupervisionLevel({
   if (!recommendedSupervisionLevel) return null;
 
   return (
-    <DetailsBorderedSection>
-      <DetailsHeading>Recommended Supervision Level</DetailsHeading>
-      <DetailsList>
-        <SecureDetailsContent>
-          Client is eligible for a classification review based on their
-          supervision start date and last classification review date.
-          Recommended supervision level: {recommendedSupervisionLevel}
-        </SecureDetailsContent>
-      </DetailsList>
-    </DetailsBorderedSection>
+    <DetailsSection>
+      <DetailsHeading>
+        Recommended Supervision Level <Separator> • </Separator>
+        {recommendedSupervisionLevel}
+      </DetailsHeading>
+      <SecureDetailsContent>
+        Client is eligible for a classification review based on their
+        supervision start date and last classification review date.
+      </SecureDetailsContent>
+    </DetailsSection>
   );
 }
