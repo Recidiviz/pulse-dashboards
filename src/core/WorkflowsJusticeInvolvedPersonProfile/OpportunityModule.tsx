@@ -23,7 +23,7 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
 import { desktopLinkGate } from "../desktopLinkGate";
@@ -94,9 +94,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     hideHeader = false,
     onDenialButtonClick = () => null,
   }) {
-    const {
-      workflowsStore: { featureVariants },
-    } = useRootStore();
+    const { responsiveRevamp } = useFeatureVariants();
     const { isLaptop } = useIsMobile(true);
 
     useEffect(() => {
@@ -113,13 +111,10 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         : undefined);
 
     return (
-      <Wrapper
-        responsiveRevamp={!!featureVariants.responsiveRevamp}
-        {...colors}
-      >
+      <Wrapper responsiveRevamp={!!responsiveRevamp} {...colors}>
         {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}
         <CriteriaList opportunity={opportunity} />
-        {!!featureVariants.responsiveRevamp && showDenialButton && (
+        {!!responsiveRevamp && showDenialButton && (
           <MarkedIneligibleReasons
             opportunity={opportunity}
             snoozeUntil={snoozeUntil}
@@ -127,9 +122,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
           />
         )}
         {(formDownloadButton || showDenialButton || formLinkButton) && (
-          <ActionButtons
-            isMobile={!!featureVariants.responsiveRevamp && isLaptop}
-          >
+          <ActionButtons isMobile={!!responsiveRevamp && isLaptop}>
             {formLinkButton && opportunity?.form && (
               <Link
                 to={workflowsUrl("opportunityAction", {
@@ -141,7 +134,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                   className="NavigateToFormButton"
                   buttonFill={colors.buttonFill}
                   onClick={
-                    featureVariants.responsiveRevamp
+                    responsiveRevamp
                       ? desktopLinkGate({
                           headline: "Referral Unavailable in Mobile View",
                         })
@@ -163,11 +156,11 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                 </FormActionButton>
               </div>
             )}
-            {featureVariants.responsiveRevamp
+            {responsiveRevamp
               ? showDenialButton &&
                 onDenialButtonClick && (
                   <MenuButton
-                    responsiveRevamp={!!featureVariants.responsiveRevamp}
+                    responsiveRevamp={!!responsiveRevamp}
                     opportunity={opportunity}
                     onDenialButtonClick={onDenialButtonClick}
                   />

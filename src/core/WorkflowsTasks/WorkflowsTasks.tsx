@@ -31,7 +31,10 @@ import React, { ReactNode } from "react";
 import simplur from "simplur";
 import styled, { FlattenSimpleInterpolation } from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
@@ -138,12 +141,8 @@ type TaskListItemProps = {
 
 const TaskListItem: React.FC<TaskListItemProps> = observer(
   function TaskListItem({ person, task }: TaskListItemProps) {
-    const {
-      workflowsStore,
-      workflowsStore: {
-        featureVariants: { responsiveRevamp },
-      },
-    } = useRootStore();
+    const { workflowsStore } = useRootStore();
+    const { responsiveRevamp } = useFeatureVariants();
     const { isMobile } = useIsMobile(true);
     const orderedTasks = person.supervisionTasks?.orderedTasks ?? [];
     const readyOrderedTasks = person.supervisionTasks?.readyOrderedTasks ?? [];
@@ -182,12 +181,8 @@ const TaskListItem: React.FC<TaskListItemProps> = observer(
 
 const NeedListItem: React.FC<TaskListItemProps> = observer(
   function NeedListItem({ person, task }: TaskListItemProps) {
-    const {
-      workflowsStore,
-      workflowsStore: {
-        featureVariants: { responsiveRevamp },
-      },
-    } = useRootStore();
+    const { workflowsStore } = useRootStore();
+    const { responsiveRevamp } = useFeatureVariants();
     const orderedTasks = person.supervisionTasks?.orderedTasks ?? [];
 
     return (

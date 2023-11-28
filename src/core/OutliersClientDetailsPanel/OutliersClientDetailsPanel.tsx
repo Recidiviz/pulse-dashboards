@@ -29,7 +29,7 @@ import { Redirect } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import lanternLogo from "../../assets/static/images/lantern_logo.png";
-import { useRootStore } from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerMetricEventsPresenter } from "../../OutliersStore/presenters/SupervisionOfficerMetricEventsPresenter";
 import { outliersUrl } from "../views";
@@ -82,11 +82,7 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
   presenter: SupervisionOfficerMetricEventsPresenter;
 }) {
   const { isMobile } = useIsMobile(true);
-  const {
-    userStore: {
-      activeFeatureVariants: { outliersClientDetail },
-    },
-  } = useRootStore();
+  const { outliersClientDetail } = useFeatureVariants();
 
   const {
     officerPseudoId,

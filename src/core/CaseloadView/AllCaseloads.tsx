@@ -22,7 +22,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { pluralizeWord, toTitleCase } from "../../utils";
 import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
@@ -77,13 +80,13 @@ function Caseload({
 }
 
 export const AllCaseloads = observer(function AllCaseloads() {
+  const { responsiveRevamp } = useFeatureVariants();
   const {
     workflowsStore: {
       caseloadPersons,
       selectedSearchables,
       workflowsSearchFieldTitle,
       justiceInvolvedPersonTitle,
-      featureVariants,
     },
   } = useRootStore();
 
@@ -102,7 +105,7 @@ export const AllCaseloads = observer(function AllCaseloads() {
             but fall back to an empty array for type safety */}
           <Caseload
             persons={caseloads[searchable.searchId] ?? []}
-            isResponsiveRevamp={!!featureVariants.responsiveRevamp}
+            isResponsiveRevamp={!!responsiveRevamp}
           />
         </React.Fragment>
       ))}
@@ -120,7 +123,7 @@ export const AllCaseloads = observer(function AllCaseloads() {
         />
       }
       hydrated={
-        !featureVariants.responsiveRevamp ? (
+        !responsiveRevamp ? (
           allCaseloadsViz
         ) : (
           <WorkflowsResults

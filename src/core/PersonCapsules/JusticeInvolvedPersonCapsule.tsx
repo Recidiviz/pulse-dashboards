@@ -28,7 +28,7 @@ import { rem } from "polished";
 import React from "react";
 import styled, { css } from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { PersonInitialsAvatar } from "../Avatar";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
@@ -112,11 +112,7 @@ export const JusticeInvolvedPersonCapsule = observer(
     hideTooltip = false,
     nameHoverState = true,
   }: JusticeInvolvedPersonCapsuleProps): JSX.Element {
-    const {
-      workflowsStore: {
-        featureVariants: { responsiveRevamp },
-      },
-    } = useRootStore();
+    const { responsiveRevamp } = useFeatureVariants();
 
     const IdentityEl = SIZES.identity[textSize];
     const StatusEl = SIZES.status[textSize];

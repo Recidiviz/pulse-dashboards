@@ -23,7 +23,10 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { PATHWAYS_TENANTS } from "../../RootStore/TenantStore/pathwaysTenants";
 import { getMethodologyCopy, getPageCopy } from "../content";
@@ -37,7 +40,7 @@ const PageNavigation: React.FC = () => {
   const { pathname } = useLocation();
   const { page } = useCoreStore();
   const { userStore, currentTenantId } = useRootStore();
-  const { responsiveRevamp } = userStore.activeFeatureVariants;
+  const { responsiveRevamp } = useFeatureVariants();
   const currentView = pathname.split("/")[1];
   const navigationLayout = userStore.userAllowedNavigation;
   const pageOptions = navigationLayout[currentView] ?? [];

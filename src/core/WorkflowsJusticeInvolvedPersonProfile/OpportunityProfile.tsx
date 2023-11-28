@@ -20,7 +20,10 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import {
   ClientEmployer,
@@ -121,13 +124,9 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
     onDenialButtonClick = () => null,
     opportunity,
   }) {
+    const { responsiveRevamp } = useFeatureVariants();
     const {
-      workflowsStore: {
-        selectedPerson,
-        selectedClient,
-        selectedResident,
-        featureVariants,
-      },
+      workflowsStore: { selectedPerson, selectedClient, selectedResident },
     } = useRootStore();
 
     if (!opportunity || !selectedPerson) {
@@ -136,9 +135,9 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
     return (
       <article>
         <Heading person={selectedPerson} />
-        {featureVariants.responsiveRevamp ? (
+        {responsiveRevamp ? (
           <AccordionWrapper
-            $responsiveRevamp={!!featureVariants.responsiveRevamp}
+            $responsiveRevamp={!!responsiveRevamp}
             allowZeroExpanded
             preExpanded={[opportunity.type]}
           >
@@ -166,7 +165,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
             return (
               <DetailsSection
                 key={componentName}
-                hasDivider={!!featureVariants.responsiveRevamp}
+                hasDivider={!!responsiveRevamp}
               >
                 <Component client={selectedClient} />
               </DetailsSection>
@@ -182,7 +181,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
             return (
               <DetailsSection
                 key={componentName}
-                hasDivider={!!featureVariants.responsiveRevamp}
+                hasDivider={!!responsiveRevamp}
               >
                 <Component resident={selectedResident} />
               </DetailsSection>
@@ -197,7 +196,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
             return (
               <DetailsSection
                 key={componentName}
-                hasDivider={!!featureVariants.responsiveRevamp}
+                hasDivider={!!responsiveRevamp}
               >
                 <Component opportunity={opportunity} />
               </DetailsSection>

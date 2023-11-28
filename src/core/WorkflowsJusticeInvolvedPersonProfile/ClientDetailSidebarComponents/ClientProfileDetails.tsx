@@ -17,7 +17,7 @@
 
 import React from "react";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import { useFeatureVariants } from "../../../components/StoreProvider";
 import { Divider } from "../styles";
 import { ClientProfileProps } from "../types";
 import { Contact } from "./Contact";
@@ -27,18 +27,16 @@ import { Supervision } from "./Supervision";
 export function ClientProfileDetails({
   client,
 }: ClientProfileProps): React.ReactElement {
-  const {
-    workflowsStore: { featureVariants },
-  } = useRootStore();
+  const { responsiveRevamp } = useFeatureVariants();
 
   return (
     <>
       <Supervision client={client} />
-      {featureVariants.responsiveRevamp && <Divider />}
+      {responsiveRevamp && <Divider />}
       {client.profileMilestones.length > 0 && (
         <>
           <Milestones client={client} />
-          {featureVariants.responsiveRevamp && <Divider />}
+          {responsiveRevamp && <Divider />}
         </>
       )}
       <Contact client={client} />

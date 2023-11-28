@@ -17,14 +17,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-import { useRootStore } from "../components/StoreProvider";
+import { useFeatureVariants, useRootStore } from "../components/StoreProvider";
 
 const useDisplayPageNavigation = (): boolean => {
   const { userStore } = useRootStore();
   const { pathname } = useLocation();
+  const { responsiveRevamp } = useFeatureVariants();
   const view = pathname.split("/")[1];
   const navigationLayout = userStore.userAllowedNavigation;
-  const { responsiveRevamp } = userStore.activeFeatureVariants;
+
   const pageOptions = useMemo(
     () => navigationLayout[view] ?? [],
     [navigationLayout, view]

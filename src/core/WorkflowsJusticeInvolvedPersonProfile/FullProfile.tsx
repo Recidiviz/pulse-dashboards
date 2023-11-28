@@ -22,7 +22,10 @@ import { rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { toTitleCase } from "../../utils";
 import { Client } from "../../WorkflowsStore";
@@ -304,8 +307,10 @@ function ContactDetails({
 
 export const FullProfile = observer(
   function FullProfile(): React.ReactElement | null {
+    const { responsiveRevamp } = useFeatureVariants();
+
     const {
-      workflowsStore: { selectedPerson: person, featureVariants },
+      workflowsStore: { selectedPerson: person },
     } = useRootStore();
     const { isTablet, isMobile } = useIsMobile(true);
 
@@ -317,41 +322,36 @@ export const FullProfile = observer(
 
     return (
       <WorkflowsNavLayout>
-        <Wrapper
-          isMobile={isMobile}
-          responsiveRevamp={!!featureVariants.responsiveRevamp}
-        >
+        <Wrapper isMobile={isMobile} responsiveRevamp={!!responsiveRevamp}>
           <Header
-            isMobile={!!featureVariants.responsiveRevamp && isTablet}
-            responsiveRevamp={!!featureVariants.responsiveRevamp}
+            isMobile={!!responsiveRevamp && isTablet}
+            responsiveRevamp={!!responsiveRevamp}
           >
             <ProfileCapsule
               avatarSize="lg"
               person={person}
-              textSize={featureVariants.responsiveRevamp ? "sm" : "lg"}
+              textSize={responsiveRevamp ? "sm" : "lg"}
               hideTooltip
               nameHoverState={false}
             />
             <ContactDetails
               person={person}
-              responsiveRevamp={!!featureVariants.responsiveRevamp}
-              isMobile={!!featureVariants.responsiveRevamp && isTablet}
+              responsiveRevamp={!!responsiveRevamp}
+              isMobile={!!responsiveRevamp && isTablet}
             />
           </Header>
           <Content
-            isMobile={!!featureVariants.responsiveRevamp && isTablet}
-            responsiveRevamp={!!featureVariants.responsiveRevamp}
+            isMobile={!!responsiveRevamp && isTablet}
+            responsiveRevamp={!!responsiveRevamp}
           >
             <div className="ProfileDetails">
               <AdditionalDetails
-                responsiveRevamp={!!featureVariants.responsiveRevamp}
+                responsiveRevamp={!!responsiveRevamp}
                 person={person}
               />
             </div>
             <div>
-              <SectionHeading
-                responsiveRevamp={!!featureVariants.responsiveRevamp}
-              >
+              <SectionHeading responsiveRevamp={!!responsiveRevamp}>
                 Opportunities
               </SectionHeading>
               <OpportunitiesAccordion person={person} formLinkButton />

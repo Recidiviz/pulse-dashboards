@@ -18,7 +18,7 @@
 import { Dropdown, DropdownMenu, palette } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
 import { DenialMenuOptions } from "./DenialMenuOptions";
@@ -56,9 +56,8 @@ export function OpportunityDenialDropdown({
 }: {
   opportunity: Opportunity;
 }): JSX.Element | null {
-  const {
-    workflowsStore: { featureVariants: responsiveRevamp },
-  } = useRootStore();
+  const { responsiveRevamp } = useFeatureVariants();
+
   const { isMobile } = useIsMobile(true);
 
   return (

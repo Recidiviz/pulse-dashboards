@@ -22,7 +22,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import cssVars from "../CoreConstants.module.scss";
 import { NavigationBackButton } from "../NavigationBackButton";
 import { NavigationLayout } from "../NavigationLayout";
@@ -105,12 +108,12 @@ export type OpportunityFormComponentName = keyof typeof FormComponents;
 type FormSidebarView = "OPPORTUNITY" | "DENIAL";
 
 export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
+  const { responsiveRevamp } = useFeatureVariants();
   const {
     currentTenantId,
     workflowsStore: {
       selectedOpportunityType: opportunityType,
       selectedPerson,
-      featureVariants,
       homepage,
     },
   } = useRootStore();
@@ -131,7 +134,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
     : null;
 
   const sidebarContents =
-    currentView === "DENIAL" && !!featureVariants.responsiveRevamp ? (
+    currentView === "DENIAL" && !!responsiveRevamp ? (
       <OpportunityDenialView
         opportunity={opportunity}
         onSubmit={() => setCurrentView("OPPORTUNITY")}
@@ -148,20 +151,20 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
   const hydrated = (
     <Wrapper>
       <Sidebar>
-        {featureVariants.responsiveRevamp ? (
+        {responsiveRevamp ? (
           <NavigationLayout
             externalMethodologyUrl={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
             isFixed={false}
           />
         ) : (
-          <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
+          <SidebarSection responsiveRevamp={!!responsiveRevamp}>
             <Link to={`/${DASHBOARD_VIEWS.workflows}`}>
               <RecidivizLogo />
             </Link>
           </SidebarSection>
         )}
-        <SidebarSection responsiveRevamp={!!featureVariants.responsiveRevamp}>
-          {featureVariants.responsiveRevamp && (
+        <SidebarSection responsiveRevamp={!!responsiveRevamp}>
+          {responsiveRevamp && (
             <BackButtonWrapper>
               {currentView === "OPPORTUNITY" && (
                 <NavigationBackButton action={{ url: workflowsUrl(homepage) }}>

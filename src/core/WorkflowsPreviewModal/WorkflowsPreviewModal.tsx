@@ -25,7 +25,10 @@ import { rem } from "polished";
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import useModalTimeoutDismissal from "./hooks/useModalTimeoutDismissal";
 import WorkflowsPreviewModalContext from "./WorkflowsPreviewModalContext";
@@ -103,10 +106,8 @@ export function WorkflowsPreviewModal({
   onClose = () => null,
   clearSelectedPersonOnClose = true,
 }: PreviewModalProps): JSX.Element {
-  const {
-    workflowsStore,
-    workflowsStore: { featureVariants },
-  } = useRootStore();
+  const { responsiveRevamp } = useFeatureVariants();
+  const { workflowsStore } = useRootStore();
   const { isMobile } = useIsMobile(true);
   const CLOSE_TIMEOUT_MS = 1000;
   const WIDTH_REVAMP = 480;
@@ -142,14 +143,10 @@ export function WorkflowsPreviewModal({
         workflowsStore.updateSelectedPerson(undefined)
       }
       closeTimeoutMS={CLOSE_TIMEOUT_MS}
-      width={
-        featureVariants.responsiveRevamp && !isMobile
-          ? WIDTH_REVAMP
-          : WIDTH_DEFAULT
-      }
-      isMobile={isMobile && !!featureVariants.responsiveRevamp}
+      width={responsiveRevamp && !isMobile ? WIDTH_REVAMP : WIDTH_DEFAULT}
+      isMobile={isMobile && !!responsiveRevamp}
     >
-      <ModalControls responsiveRevamp={!!featureVariants.responsiveRevamp}>
+      <ModalControls responsiveRevamp={!!responsiveRevamp}>
         {onBackClick && (
           <Button
             className="WorkflowsPreviewModal__back"
@@ -170,7 +167,7 @@ export function WorkflowsPreviewModal({
       <WorkflowsPreviewModalContext.Provider value={contextValue}>
         <Wrapper
           className="WorkflowsPreviewModal"
-          responsiveRevamp={!!featureVariants.responsiveRevamp}
+          responsiveRevamp={!!responsiveRevamp}
         >
           {pageContent}
         </Wrapper>

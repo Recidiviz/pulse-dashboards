@@ -28,7 +28,10 @@ import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { toTitleCase } from "../../utils";
 import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
@@ -152,6 +155,7 @@ const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPage> = {
 
 export const WorkflowsNavLayout: React.FC = observer(
   function WorkflowsNavLayout({ children }) {
+    const { responsiveRevamp } = useFeatureVariants();
     const {
       currentTenantId,
       workflowsStore,
@@ -159,7 +163,6 @@ export const WorkflowsNavLayout: React.FC = observer(
         opportunityTypes,
         allowSupervisionTasks,
         workflowsSupportedSystems,
-        featureVariants,
         homepage: workflowsHomepage,
         activePageIsHomepage,
       },
@@ -167,8 +170,8 @@ export const WorkflowsNavLayout: React.FC = observer(
     const { isMobile, isLaptop } = useIsMobile(true);
 
     return (
-      <Wrapper responsiveRevamp={!!featureVariants.responsiveRevamp}>
-        {featureVariants.responsiveRevamp ? (
+      <Wrapper responsiveRevamp={!!responsiveRevamp}>
+        {responsiveRevamp ? (
           <>
             <NavigationLayout
               externalMethodologyUrl={
@@ -296,8 +299,8 @@ export const WorkflowsNavLayout: React.FC = observer(
           </Sidebar>
         )}
         <Main
-          responsiveRevamp={!!featureVariants.responsiveRevamp}
-          isMobile={!!featureVariants.responsiveRevamp && isMobile}
+          responsiveRevamp={!!responsiveRevamp}
+          isMobile={!!responsiveRevamp && isMobile}
         >
           {children}
         </Main>

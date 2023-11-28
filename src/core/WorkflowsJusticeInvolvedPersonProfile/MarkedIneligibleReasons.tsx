@@ -20,7 +20,7 @@ import { format } from "date-fns";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { TextLink } from "../WorkflowsMilestones/styles";
 
@@ -76,11 +76,8 @@ const MarkedIneligibleReasons: React.FC<{
   snoozeUntil,
   denialReasons,
 }) {
-  const {
-    workflowsStore: {
-      featureVariants: { enableSnooze },
-    },
-  } = useRootStore();
+  const { enableSnooze } = useFeatureVariants();
+
   if (!denialReasons || !enableSnooze) return null;
 
   const handleUndoClick = async () => {

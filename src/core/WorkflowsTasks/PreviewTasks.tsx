@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
@@ -86,11 +86,7 @@ export const PreviewTasks = observer(function PreviewTasks({
   person,
   showSnoozeDropdown,
 }: PersonProfileProps & { showSnoozeDropdown: boolean }) {
-  const {
-    workflowsStore: {
-      featureVariants: { responsiveRevamp },
-    },
-  } = useRootStore();
+  const { responsiveRevamp } = useFeatureVariants();
   const { isMobile } = useIsMobile(true);
 
   const tasks = person.supervisionTasks?.orderedTasks ?? [];

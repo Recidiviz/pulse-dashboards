@@ -18,7 +18,7 @@
 import { palette } from "@recidiviz/design-system";
 import { rgba } from "polished";
 
-import { useRootStore } from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import type { Opportunity } from "../../WorkflowsStore";
 
 export const OPPORTUNITY_STATUS_COLORS = {
@@ -82,9 +82,7 @@ export type StatusPalette =
   typeof OPPORTUNITY_STATUS_COLORS[keyof typeof OPPORTUNITY_STATUS_COLORS];
 
 export function useStatusColors(opportunity: Opportunity): StatusPalette {
-  const {
-    workflowsStore: { featureVariants },
-  } = useRootStore();
+  const { responsiveRevamp } = useFeatureVariants();
 
   if (opportunity.isAlert) {
     if (opportunity?.reviewStatus === "DENIED") {
@@ -104,7 +102,7 @@ export function useStatusColors(opportunity: Opportunity): StatusPalette {
     return OPPORTUNITY_STATUS_COLORS.almostEligible;
   }
 
-  return featureVariants.responsiveRevamp
+  return responsiveRevamp
     ? OPPORTUNITY_STATUS_COLORS.responsiveRevamp
     : OPPORTUNITY_STATUS_COLORS.eligible;
 }

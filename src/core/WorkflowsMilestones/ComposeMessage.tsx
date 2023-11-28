@@ -18,7 +18,10 @@
 import { observer } from "mobx-react-lite";
 import { Dispatch, SetStateAction, useState } from "react";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { TextMessageStatuses } from "../../FirestoreStore";
 import { Client } from "../../WorkflowsStore";
 import { validatePhoneNumber } from "../../WorkflowsStore/utils";
@@ -48,12 +51,9 @@ const ComposeMessageView = observer(function ComposeMessageView({
   client,
   setCurrentView,
 }: ComposeMessageProps): JSX.Element {
-  const {
-    analyticsStore,
-    workflowsStore: {
-      featureVariants: { usCaEnableSMS },
-    },
-  } = useRootStore();
+  const { usCaEnableSMS } = useFeatureVariants();
+  const { analyticsStore } = useRootStore();
+
   const [disableReviewButton, setDisableReviewButton] = useState(
     !validatePhoneNumber(client.milestonesPhoneNumber)
   );

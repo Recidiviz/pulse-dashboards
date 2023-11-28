@@ -18,7 +18,10 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import simplur from "simplur";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { getWelcomeText, pluralizeWord } from "../../utils";
 import { OpportunityType } from "../../WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
@@ -41,6 +44,7 @@ function getSelectOpportunitiesText(
 const WorkflowsHomepage = observer(
   function WorkflowsHomepage(): React.ReactElement | null {
     const { workflowsStore } = useRootStore();
+    const { responsiveRevamp } = useFeatureVariants();
 
     const {
       selectedSearchIds,
@@ -50,7 +54,6 @@ const WorkflowsHomepage = observer(
       workflowsSearchFieldTitle,
       supportsMultipleSystems,
       justiceInvolvedPersonTitle,
-      featureVariants,
     } = workflowsStore;
 
     const initialCallToAction = supportsMultipleSystems
@@ -99,7 +102,7 @@ const WorkflowsHomepage = observer(
       return null;
     });
 
-    const hydrated = featureVariants.responsiveRevamp ? (
+    const hydrated = responsiveRevamp ? (
       <WorkflowsResults headerText={hydratedCallToAction}>
         {opportunitySummaries}
       </WorkflowsResults>

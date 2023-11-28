@@ -15,19 +15,50 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { reaction } from "mobx";
 import PropTypes from "prop-types";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import { OutliersStore } from "../../OutliersStore/OutliersStore";
 import store, { RootStore } from "../../RootStore";
+import { FeatureVariantRecord } from "../../RootStore/types";
 import type UserStore from "../../RootStore/UserStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
 
-const StoreContext = React.createContext<undefined | RootStore>(undefined);
+type StoreContextType = {
+  store: RootStore;
+  featureVariants: FeatureVariantRecord;
+};
+
+const StoreContext = React.createContext<undefined | StoreContextType>(
+  undefined
+);
 
 const StoreProvider: React.FC = ({ children }) => {
+  const { userStore } = store;
+  const [featureVariants, setFeatureVariants] = useState<FeatureVariantRecord>(
+    userStore.activeFeatureVariants
+  );
+
+  useEffect(() => {
+    const disposer = reaction(
+      () => userStore.activeFeatureVariants,
+      (activeFeatureVariants: FeatureVariantRecord) => {
+        setFeatureVariants(activeFeatureVariants);
+      }
+    );
+
+    return () => disposer();
+  }, [userStore]);
+
+  const contextValue = useMemo(() => {
+    return { store, featureVariants };
+  }, [featureVariants]);
+
   return (
-    <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
+    <StoreContext.Provider value={contextValue}>
+      {children}
+    </StoreContext.Provider>
   );
 };
 
@@ -51,10 +82,18 @@ export function useRootStore(): PartiallyTypedRootStore {
   if (context === undefined) {
     throw new Error("useRootStore must be used within a StoreProvider");
   }
-  return context;
+  return context.store;
 }
 
 export function useUserStore(): UserStore {
   const { userStore } = useRootStore();
   return userStore;
+}
+
+export function useFeatureVariants(): FeatureVariantRecord {
+  const context = useContext(StoreContext);
+  if (!context) {
+    throw new Error("useFeatureVariants must be used within a StoreProvider");
+  }
+  return context.featureVariants;
 }

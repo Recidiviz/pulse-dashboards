@@ -28,7 +28,10 @@ import {
 } from "react-accessible-accordion";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { OpportunityDenialView } from "../OpportunityDenial";
@@ -140,22 +143,18 @@ export const AccordionSection = observer(function AccordionSection({
   formLinkButton?: boolean;
   onDenialButtonClick?: () => void;
 }) {
-  const {
-    workflowsStore: { featureVariants },
-  } = useRootStore();
+  const { responsiveRevamp } = useFeatureVariants();
   const colors = useStatusColors(opportunity);
 
   return (
     <OpportunityWrapper className="ProfileOpportunityItem" {...colors}>
       <AccordionItem uuid={opportunity.type}>
         <AccordionItemHeading>
-          <AccordionButton
-            $responsiveRevamp={!!featureVariants.responsiveRevamp}
-          >
+          <AccordionButton $responsiveRevamp={!!responsiveRevamp}>
             <OpportunityModuleHeader opportunity={opportunity} />
           </AccordionButton>
         </AccordionItemHeading>
-        <AccordionBody $responsiveRevamp={!!featureVariants.responsiveRevamp}>
+        <AccordionBody $responsiveRevamp={!!responsiveRevamp}>
           <OpportunityModule
             hideHeader
             opportunity={opportunity}
@@ -177,13 +176,10 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
   hideEmpty?: boolean;
   formLinkButton?: boolean;
 }) {
+  const { responsiveRevamp } = useFeatureVariants();
   const {
     workflowsStore,
-    workflowsStore: {
-      featureVariants,
-      opportunityTypes,
-      selectedOpportunityOnFullProfile,
-    },
+    workflowsStore: { opportunityTypes, selectedOpportunityOnFullProfile },
   } = useRootStore();
 
   const opportunities = sortBy(
@@ -201,7 +197,7 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
   );
 
   const hydrated =
-    opportunities.length === 1 && !featureVariants.responsiveRevamp ? (
+    opportunities.length === 1 && !responsiveRevamp ? (
       <div className="ProfileOpportunityItem">
         <OpportunityModule
           opportunity={opportunities[0]}
@@ -210,7 +206,7 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
       </div>
     ) : (
       <AccordionWrapper
-        $responsiveRevamp={!!featureVariants.responsiveRevamp}
+        $responsiveRevamp={!!responsiveRevamp}
         allowZeroExpanded
         preExpanded={opportunities.length ? [opportunities[0].type] : [0]}
       >

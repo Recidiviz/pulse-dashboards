@@ -19,7 +19,11 @@ import { mount } from "enzyme";
 import { StaticRouter } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 
-import { useRootStore, useUserStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+  useUserStore,
+} from "../../../components/StoreProvider";
 import RootStore from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore/TenantStore";
 import CoreStore from "../../CoreStore";
@@ -46,6 +50,12 @@ let tenantStore: TenantStore;
 let rootStoreMock: any;
 let coreStoreMock: any;
 
+const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
+const useRootStoreMock = useRootStore as jest.Mock;
+const useCoreStoreMock = useCoreStore as jest.Mock;
+const useUserStoreMock = useUserStore as jest.Mock;
+const useQueryParamsMock = useQueryParams as jest.Mock;
+
 describe("CoreLayout tests", () => {
   const renderPageNavigation = () => {
     return mount(
@@ -65,13 +75,13 @@ describe("CoreLayout tests", () => {
         userAllowedNavigation: {
           system: ["page1", "page2", "page3"],
         },
-        activeFeatureVariants: {
-          responsiveRevamp: {},
-        },
       },
       currentTenantId: "US_ID",
     };
-    (useRootStore as jest.Mock).mockImplementation(() => rootStoreMock);
+
+    useRootStoreMock.mockReturnValue(rootStoreMock);
+    useFeatureVariantsMock.mockReturnValue({ responsiveRevamp: {} });
+
     coreStoreMock = {
       page: "page1",
       vitalsStore,
@@ -80,13 +90,13 @@ describe("CoreLayout tests", () => {
       filtersStore,
       tenantStore,
     };
-    (useCoreStore as jest.Mock).mockImplementation(() => coreStoreMock);
-    (useUserStore as jest.Mock).mockReturnValue({
+    useCoreStoreMock.mockReturnValue(coreStoreMock);
+    useUserStoreMock.mockReturnValue({
       user: {
         name: "Test",
       },
     });
-    (useQueryParams as jest.Mock).mockReturnValue(["query", jest.fn()]);
+    useQueryParamsMock.mockReturnValue(["query", jest.fn()]);
   });
 
   afterAll(() => {

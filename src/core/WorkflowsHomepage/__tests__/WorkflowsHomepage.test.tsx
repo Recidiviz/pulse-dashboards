@@ -18,7 +18,10 @@
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { OpportunityType } from "../../../WorkflowsStore";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import WorkflowsHomepage from "..";
@@ -31,6 +34,7 @@ jest.mock("../../CaseloadSelect", () => ({
 }));
 
 const useRootStoreMock = useRootStore as jest.Mock;
+const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
 
 const baseWorkflowsStoreMock = {
   opportunitiesLoaded: () => false,
@@ -42,12 +46,10 @@ const baseWorkflowsStoreMock = {
   user: { info: { givenNames: "Recidiviz" } },
   workflowsSearchFieldTitle: "officer",
   justiceInvolvedPersonTitle: "client",
-  featureVariants: {
-    responsiveRevamp: {},
-  },
   rootStore: {
     currentTenantId: "US_XX",
   },
+  homepage: "home",
 };
 
 describe("WorkflowsHomepage", () => {
@@ -55,6 +57,9 @@ describe("WorkflowsHomepage", () => {
     // @ts-expect-error
     mockOpportunity.person.recordId = "1";
     jest.resetAllMocks();
+    useFeatureVariantsMock.mockReturnValue({
+      responsiveRevamp: true,
+    });
   });
 
   afterEach(() => {

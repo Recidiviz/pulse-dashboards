@@ -19,7 +19,10 @@ import { render, screen } from "@testing-library/react";
 import { runInAction } from "mobx";
 import { BrowserRouter } from "react-router-dom";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { RootStore } from "../../../RootStore";
 import { eligibleClient } from "../../../WorkflowsStore/__fixtures__";
 import { Client } from "../../../WorkflowsStore/Client";
@@ -30,6 +33,7 @@ jest.mock("firebase/firestore");
 jest.mock("../../../components/StoreProvider");
 
 const useRootStoreMock = useRootStore as jest.Mock;
+const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
 
 const baseRootStoreMock = {
   userStore: { userSurname: "Smith", userFullName: "Firstname Smith" },
@@ -40,9 +44,6 @@ const baseRootStoreMock = {
     caseloadLoaded: () => false,
     justiceInvolvedPersonTitle: "client",
     allowSupervisionTasks: false,
-    featureVariants: {
-      responsiveRevamp: {},
-    },
   },
   firestoreStore: {
     db: jest.fn(),
@@ -54,7 +55,7 @@ describe("MilestonesSidePanel", () => {
     jest.resetAllMocks();
     // Quiet errors during test runs
     jest.spyOn(console, "error").mockImplementation();
-
+    useFeatureVariantsMock.mockReturnValue({ responsiveRevamp: {} });
     useRootStoreMock.mockReturnValue({
       ...baseRootStoreMock,
       workflowsStore: {

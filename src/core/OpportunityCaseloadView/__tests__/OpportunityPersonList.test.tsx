@@ -17,7 +17,10 @@
 
 import { render, screen } from "@testing-library/react";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { Client } from "../../../WorkflowsStore/Client";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { OpportunityPersonList } from "../OpportunityPersonList";
@@ -26,6 +29,7 @@ jest.mock("../../../components/StoreProvider");
 jest.mock("../../../hooks/useHydrateOpportunities");
 
 const useRootStoreMock = useRootStore as jest.Mock;
+const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
 
 const baseWorkflowsStoreMock = {
   opportunityTypes: ["earlyTermination"],
@@ -34,9 +38,6 @@ const baseWorkflowsStoreMock = {
   selectedOpportunityType: "earlyTermination",
   justiceInvolvedPersonTitle: "client",
   workflowsSearchFieldTitle: "officer",
-  featureVariants: {
-    responsiveRevamp: {},
-  },
   opportunitiesByTab: {
     earlyTermination: [],
   },
@@ -47,6 +48,7 @@ const baseWorkflowsStoreMock = {
 
 beforeEach(() => {
   jest.resetAllMocks();
+  useFeatureVariantsMock.mockReturnValue({ responsiveRevamp: {} });
 });
 
 test("initial", () => {

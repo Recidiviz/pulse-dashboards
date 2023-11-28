@@ -24,7 +24,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 
 import IE11Banner from "../components/IE11Banner";
-import { useRootStore } from "../components/StoreProvider";
+import { useFeatureVariants } from "../components/StoreProvider";
 import useIntercom from "../hooks/useIntercom";
 import useIsMobile from "../hooks/useIsMobile";
 import CoreStoreProvider from "./CoreStoreProvider";
@@ -43,11 +43,7 @@ const DashboardLayout: React.FC<Props> = ({ children }): React.ReactElement => {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   const currentView = pathname.split("/")[1];
-  const {
-    userStore: {
-      activeFeatureVariants: { responsiveRevamp },
-    },
-  } = useRootStore();
+  const { responsiveRevamp } = useFeatureVariants();
 
   return (
     <CoreStoreProvider>

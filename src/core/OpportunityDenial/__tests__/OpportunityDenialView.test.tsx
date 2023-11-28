@@ -19,7 +19,10 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import timekeeper from "timekeeper";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { Opportunity } from "../../../WorkflowsStore";
 import { OTHER_KEY } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
@@ -31,6 +34,7 @@ jest.mock("../../WorkflowsJusticeInvolvedPersonProfile/Heading", () => ({
 }));
 
 const useRootStoreMock = useRootStore as jest.Mock;
+const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
 
 function renderElement(opportunity: Opportunity) {
   render(
@@ -47,11 +51,11 @@ function getCheckbox(reason: string) {
 describe("OpportunityDenialView", () => {
   beforeEach(() => {
     timekeeper.freeze("2023-10-5");
+    useFeatureVariantsMock.mockReturnValue({
+      enableSnooze: true,
+    });
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
-        featureVariants: {
-          enableSnooze: {},
-        },
         currentUserEmail: "mock-email",
       },
     });
@@ -326,11 +330,7 @@ describe("OpportunityDenialView", () => {
   describe("enableSnooze featureVariant is not set", () => {
     beforeEach(() => {
       jest.resetAllMocks();
-      useRootStoreMock.mockReturnValue({
-        workflowsStore: {
-          featureVariants: {},
-        },
-      });
+      useFeatureVariantsMock.mockReturnValue({});
     });
 
     it("does not show the slider even if config is set", () => {

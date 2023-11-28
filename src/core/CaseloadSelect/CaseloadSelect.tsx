@@ -46,7 +46,10 @@ import { IndicatorProps } from "react-select/src/components/indicators";
 import { MultiValueRemoveProps } from "react-select/src/components/MultiValue";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import { Searchable } from "../models/types";
@@ -248,7 +251,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
 }: CaseloadSelectProps) {
   const { workflowsStore, analyticsStore } = useRootStore();
   const { isMobile } = useIsMobile(true);
-
+  const { responsiveRevamp } = useFeatureVariants();
   const {
     availableSearchables,
     selectedSearchables,
@@ -256,7 +259,6 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     supportsMultipleSystems,
     searchType,
     activeSystem,
-    featureVariants: { responsiveRevamp },
     selectedSearchIds,
   } = workflowsStore;
 

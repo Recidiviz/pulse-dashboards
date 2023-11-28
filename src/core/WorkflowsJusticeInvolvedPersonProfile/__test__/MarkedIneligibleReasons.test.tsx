@@ -18,7 +18,7 @@
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import { useFeatureVariants } from "../../../components/StoreProvider";
 import { OTHER_KEY } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import MarkedIneligibleReasons, {
@@ -29,7 +29,7 @@ import MarkedIneligibleReasons, {
 
 jest.mock("../../../components/StoreProvider");
 
-const useRootStoreMock = useRootStore as jest.Mock;
+const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
 
 describe("buildDenialReasonsListText", () => {
   test("override opportunities", () => {
@@ -116,13 +116,7 @@ describe("buildResurfaceText", () => {
 
 describe("MarkedIneligibleReasons", () => {
   beforeEach(() => {
-    useRootStoreMock.mockReturnValue({
-      workflowsStore: {
-        featureVariants: {
-          enableSnooze: {},
-        },
-      },
-    });
+    useFeatureVariantsMock.mockReturnValue({ enableSnooze: {} });
     render(
       <BrowserRouter>
         <MarkedIneligibleReasons

@@ -22,7 +22,10 @@ import { useEffect, useMemo, useState } from "react";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import {
@@ -55,19 +58,20 @@ export const PersonList = styled.ul`
 `;
 
 export const OpportunityPersonList = observer(function OpportunityPersonList() {
+  const { responsiveRevamp } = useFeatureVariants();
   const {
     workflowsStore: {
       selectedOpportunityType: opportunityType,
       selectedSearchIds,
       justiceInvolvedPersonTitle,
       workflowsSearchFieldTitle,
-      featureVariants: { responsiveRevamp },
       opportunitiesByTab,
       allOpportunitiesByType,
       selectedPerson,
     },
     analyticsStore,
   } = useRootStore();
+
   const { isMobile } = useIsMobile(true);
 
   const displayTabs = useMemo(() => {

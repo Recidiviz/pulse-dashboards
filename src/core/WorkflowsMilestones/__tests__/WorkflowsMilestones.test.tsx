@@ -18,7 +18,10 @@
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { RootStore } from "../../../RootStore";
 import {
   eligibleClient,
@@ -36,6 +39,7 @@ jest.mock("../../CaseloadSelect", () => ({
 }));
 
 const useRootStoreMock = useRootStore as jest.Mock;
+const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
 
 const mockGetMilestonesClientsByStatus = (mockClients: Client[]) => {
   return () => mockClients;
@@ -54,9 +58,6 @@ const baseWorkflowsStoreMock = {
     allowSupervisionTasks: false,
   },
   getMilestonesClientsByStatus: () => [],
-  featureVariants: {
-    responsiveRevamp: {},
-  },
 };
 
 describe("WorkflowsMilestones", () => {
@@ -64,6 +65,7 @@ describe("WorkflowsMilestones", () => {
     jest.resetAllMocks();
     // Quiet errors during test runs
     jest.spyOn(console, "error").mockImplementation();
+    useFeatureVariantsMock.mockReturnValue({ responsiveRevamp: {} });
   });
 
   afterEach(() => {

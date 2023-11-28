@@ -28,7 +28,7 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import {
   generateOpportunityHydratedHeader,
@@ -161,11 +161,8 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   opportunities: Opportunity[];
   opportunityType: OpportunityType;
 }): React.ReactElement | null {
-  const {
-    workflowsStore: {
-      featureVariants: { responsiveRevamp },
-    },
-  } = useRootStore();
+  const { responsiveRevamp } = useFeatureVariants();
+
   const { isMobile } = useIsMobile(true);
 
   const defaultAvatarsShown = responsiveRevamp ? 4 : 3;

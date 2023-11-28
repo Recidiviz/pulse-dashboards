@@ -25,7 +25,7 @@ import styled from "styled-components/macro";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Slider from "../../components/Slider";
-import { useRootStore } from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { formatDateToISO } from "../../utils";
 import { Opportunity } from "../../WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
@@ -112,16 +112,13 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     opportunity?.autoSnooze?.snoozeUntil
   );
 
-  const {
-    workflowsStore: { featureVariants },
-  } = useRootStore();
+  const { enableSnooze } = useFeatureVariants();
 
   if (!opportunity) return null;
 
   const snoozeConfig = OPPORTUNITY_CONFIGS[opportunity.type].snooze;
 
-  const snoozeEnabled =
-    featureVariants.enableSnooze && snoozeConfig !== undefined;
+  const snoozeEnabled = enableSnooze && snoozeConfig !== undefined;
 
   const maxManualSnoozeDays = snoozeConfig?.maxSnoozeDays;
 

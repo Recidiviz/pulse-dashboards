@@ -23,7 +23,7 @@ import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import { ReactComponent as MethodologyLogo } from "../../assets/static/images/methodology.svg";
-import { useRootStore } from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { TenantId } from "../../RootStore/types";
 import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
@@ -168,11 +168,7 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
   const { pathname } = useLocation();
   const view = pathname.split("/")[1];
   const { currentTenantId, userStore, tenantStore } = useCoreStore();
-  const {
-    userStore: {
-      activeFeatureVariants: { responsiveRevamp },
-    },
-  } = useRootStore();
+  const { responsiveRevamp } = useFeatureVariants();
 
   const navigationLayout = userStore.userAllowedNavigation;
   if (!navigationLayout || !currentTenantId) return <div />;

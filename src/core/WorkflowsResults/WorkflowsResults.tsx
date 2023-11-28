@@ -20,7 +20,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 
 const WorkflowsResultsWrapper = styled.div<{
@@ -73,11 +73,7 @@ function WorkflowsResults({
   callToActionText,
   children,
 }: WorkflowsResultsProps): React.ReactElement | null {
-  const {
-    workflowsStore: {
-      featureVariants: { responsiveRevamp },
-    },
-  } = useRootStore();
+  const { responsiveRevamp } = useFeatureVariants();
   const { isMobile } = useIsMobile(true);
 
   return (

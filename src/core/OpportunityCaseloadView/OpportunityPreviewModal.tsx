@@ -17,7 +17,7 @@
 
 import { useState } from "react";
 
-import { useRootStore } from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityDenialView } from "../OpportunityDenial";
 import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
@@ -32,16 +32,15 @@ type OPPORTUNITY_SIDE_PANEL_VIEW = "OPPORTUNITY_PREVIEW" | "MARK_INELIGIBLE";
 export function OpportunityPreviewModal({
   opportunity,
 }: OpportunityCaseloadProps): JSX.Element | null {
-  const {
-    workflowsStore: { featureVariants },
-  } = useRootStore();
+  const { responsiveRevamp } = useFeatureVariants();
+
   const [currentView, setCurrentView] = useState<OPPORTUNITY_SIDE_PANEL_VIEW>(
     "OPPORTUNITY_PREVIEW"
   );
 
   if (!opportunity) return null;
 
-  if (!featureVariants.responsiveRevamp) {
+  if (!responsiveRevamp) {
     return (
       <WorkflowsPreviewModal
         isOpen={!!opportunity}
