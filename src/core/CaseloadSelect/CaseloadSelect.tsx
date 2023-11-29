@@ -93,6 +93,13 @@ const buildSelectOption = (record: Searchable): SelectOption => {
   return { label: record.searchLabel, value: record.searchId };
 };
 
+const DistricIndicatorsWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  row-gap: ${rem(spacing.xs)};
+`;
+
 const DistrictIndicator = observer(function DistrictIndicator() {
   const {
     workflowsStore: { districtsFilteredBy },
@@ -101,28 +108,49 @@ const DistrictIndicator = observer(function DistrictIndicator() {
   if (!districtsFilteredBy) return null;
 
   return (
-    <>
+    <DistricIndicatorsWrapper>
       {districtsFilteredBy.map((district) => (
         <ValuePill key={district}>
           {district.match(/^\d/) ? `D${district}` : district}&nbsp;
           <Icon kind="Place" size={12} color={palette.slate60} />
         </ValuePill>
       ))}
-    </>
+    </DistricIndicatorsWrapper>
   );
 });
 
-function IndicatorsContainer({
-  children,
-  ...props
-}: IndicatorContainerProps<SelectOption, true>) {
-  return (
-    <components.IndicatorsContainer {...props}>
-      {children}
-      <DistrictIndicator />
-    </components.IndicatorsContainer>
-  );
-}
+const IndicatorsWrapper = styled.div<{
+  isMobile: boolean;
+  hasDistricts: boolean;
+}>`
+  display: flex;
+  flex-basis: ${({ isMobile, hasDistricts }) =>
+    isMobile || !hasDistricts ? "initial" : "60%"};
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: end;
+  row-gap: ${rem(spacing.sm)};
+  margin-top: ${({ isMobile }) => (isMobile ? rem(spacing.md) : 0)};
+`;
+
+const Indicators = (isMobile: boolean) =>
+  function IndicatorsContainer({
+    children,
+  }: IndicatorContainerProps<SelectOption, true>) {
+    const {
+      workflowsStore: { districtsFilteredBy },
+    } = useRootStore();
+
+    return (
+      <IndicatorsWrapper
+        isMobile={isMobile}
+        hasDistricts={Boolean(districtsFilteredBy)}
+      >
+        {children}
+        <DistrictIndicator />
+      </IndicatorsWrapper>
+    );
+  };
 
 const Option = ({ children, ...props }: OptionProps<SelectOption, true>) => {
   return (
@@ -270,7 +298,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   const customComponents: SelectComponentsConfig<SelectOption, true> = {
     ClearIndicator: ClearAll(searchTitle),
     DropdownIndicator: null,
-    IndicatorsContainer,
+    IndicatorsContainer: Indicators(isMobile),
     MultiValueRemove: ValueRemover,
     Option,
     MultiValue,
