@@ -107,11 +107,18 @@ export abstract class FirestoreDocumentSubscription<
    */
   updateData(snapshot: DocumentSnapshot): void {
     try {
-      this.updateRecord(snapshot.data({ serverTimestamps: "estimate" }));
+      const snapshotData = snapshot.data({ serverTimestamps: "estimate" });
 
-      const record = this.transformRecord(
-        snapshot.data({ serverTimestamps: "estimate" })
-      );
+      if (!snapshotData) {
+        this.data = undefined;
+        this.isHydrated = true;
+        this.isLoading = false;
+        return;
+      }
+
+      this.updateRecord(snapshotData);
+
+      const record = this.transformRecord(snapshotData);
 
       if (record !== undefined) this.validateRecord(record);
 

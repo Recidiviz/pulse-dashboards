@@ -671,13 +671,6 @@ describe("updateOpportunityEligibility", () => {
     );
   });
 
-  test("when there's no record", async () => {
-    await testUpdateFn(record);
-    expect(
-      root.firestoreStore.deleteOpportunityDenialAndSnooze
-    ).not.toHaveBeenCalled();
-  });
-
   test("when there's no denial reasons", async () => {
     record = { recordId: mockRecordId };
     await testUpdateFn(record);

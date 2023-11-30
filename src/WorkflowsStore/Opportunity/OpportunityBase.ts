@@ -75,14 +75,10 @@ export function updateOpportunityEligibility(
   recordId: string,
   rootStore: RootStore
 ) {
-  return async (record: DocumentData | undefined) => {
+  return async (record: DocumentData) => {
     // If the record is eligible, then no update is needed.
-    const denialReasons = record?.denial?.reasons ?? [];
-    if (
-      !record ||
-      !denialReasons.length ||
-      (!record.autoSnooze && !record.manualSnooze)
-    ) {
+    const denialReasons = record.denial?.reasons ?? [];
+    if (!denialReasons.length || (!record.autoSnooze && !record.manualSnooze)) {
       return;
     }
 

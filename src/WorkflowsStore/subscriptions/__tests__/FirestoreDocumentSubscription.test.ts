@@ -140,6 +140,23 @@ test("handles empty response gracefully", () => {
   expect(sub.data).toBeUndefined();
 });
 
+test("does not throw an error for undefined records when transformFn provided", () => {
+  const mockData = undefined;
+  const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
+  const transformFn = (rawRecord: DocumentData) => {
+    if (rawRecord === undefined)
+      throw new Error("rawRecord should not be undefined");
+    else return rawRecord;
+  };
+
+  sub = new TestSubscription(transformFn);
+
+  sub.subscribe();
+
+  mockReceive(mockData);
+  expect(sub.error).toBeUndefined();
+});
+
 test("passes empty object through instead of detecting as falsy", () => {
   const mockData = {};
   const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
