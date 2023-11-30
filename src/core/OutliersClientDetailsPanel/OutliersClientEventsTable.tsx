@@ -74,7 +74,10 @@ const createTableColumn = (column: Column) => {
       return {
         ...column,
         Cell: ({ value }: { value: any }) => {
-          if (!value) return "—";
+          if (!value)
+            return (
+              <Description>NO ADDITIONAL INFORMATION AVAILABLE</Description>
+            );
 
           if (value.code)
             return (
