@@ -19,6 +19,9 @@ Description here
 
 Closes #XXXX
 
+Resolve Sentry issue:
+Fixes RECIDIVIZ-PULSE-DASHBOARD-[XXX]
+
 ## Checklists
 
 ### Development
