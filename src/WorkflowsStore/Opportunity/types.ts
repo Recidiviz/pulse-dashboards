@@ -127,6 +127,7 @@ export interface Opportunity<
   compare: (other: Opportunity) => number;
   showEligibilityStatus: (component: Component) => boolean;
   readonly portionServedRequirement?: string[];
+  readonly DenialConfirmationModal?: React.ComponentType<DenialConfirmationModalProps>;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";
@@ -147,3 +148,13 @@ export type OpportunityTab =
   | "Overdue For Hearing"
   | "Missing Review Date"
   | "Upcoming Hearings";
+
+export type DenialConfirmationModalProps = {
+  opportunity: Opportunity;
+  reasons: string[];
+  otherReason: string;
+  snoozeUntilDate?: Date;
+  showModal: boolean;
+  onCloseFn: () => any;
+  onSuccessFn: () => any;
+};

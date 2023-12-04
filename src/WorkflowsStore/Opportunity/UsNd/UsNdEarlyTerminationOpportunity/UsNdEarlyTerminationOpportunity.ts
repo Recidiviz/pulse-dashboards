@@ -17,6 +17,7 @@
 
 import { computed, makeObservable } from "mobx";
 
+import { DocstarsDenialModal } from "../../../../core/OpportunityDenial/UsNd/DocstarsDenialModal";
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
@@ -77,6 +78,8 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
   opportunityProfileModules: OpportunityProfileModuleName[] = [
     "ClientProfileDetails",
   ];
+
+  readonly DenialConfirmationModal = DocstarsDenialModal;
 
   constructor(client: Client) {
     super(

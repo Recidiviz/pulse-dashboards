@@ -23,7 +23,10 @@ import {
   useFeatureVariants,
   useRootStore,
 } from "../../../components/StoreProvider";
-import { Opportunity } from "../../../WorkflowsStore";
+import {
+  DenialConfirmationModalProps,
+  Opportunity,
+} from "../../../WorkflowsStore";
 import { OTHER_KEY } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { OpportunityDenialView } from "../OpportunityDenialView";
@@ -413,6 +416,75 @@ describe("OpportunityDenialView", () => {
           screen.getByTestId("OpportunityDenialView__button")
         ).toBeEnabled();
       });
+    });
+  });
+
+  describe("Confirmation Modal", () => {
+    it("submits directly if there's no modal", () => {
+      const opp = {
+        ...mockOpportunity,
+        denialReasonsMap: {
+          CODE: "Denial reason",
+        },
+        denial: {
+          reasons: ["CODE"],
+        },
+      };
+
+      jest.spyOn(opp, "deleteOpportunityDenialAndSnooze");
+
+      renderElement(opp);
+
+      // Get the form in a state where it's been modified and the reasons list is empty
+      // because that's the easiest path in submitDenial() to mock.
+      const checkbox = getCheckbox("CODE");
+      if (checkbox) fireEvent.click(checkbox);
+
+      fireEvent.click(screen.getByTestId("OpportunityDenialView__button"));
+
+      expect(
+        jest.mocked(opp.deleteOpportunityDenialAndSnooze).mock.calls
+      ).toHaveLength(1);
+    });
+
+    it("opens the modal and doesn't immediately submit", () => {
+      const opp = {
+        ...mockOpportunity,
+        denialReasonsMap: {
+          CODE: "Denial reason",
+        },
+        denial: {
+          reasons: ["CODE"],
+        },
+        DenialConfirmationModal: ({
+          showModal,
+        }: DenialConfirmationModalProps) => (
+          <div data-testid="stub-modal">
+            {showModal ? "MODAL SHOWN" : "MODAL NOT SHOWN"}
+          </div>
+        ),
+      };
+
+      jest.spyOn(opp, "deleteOpportunityDenialAndSnooze");
+
+      renderElement(opp);
+
+      // Get the form in a state where it's been modified and the reasons list is empty
+      // because that's the easiest path in submitDenial() to mock.
+      const checkbox = getCheckbox("CODE");
+      if (checkbox) fireEvent.click(checkbox);
+
+      expect(screen.getByTestId("stub-modal")).toHaveTextContent(
+        "MODAL NOT SHOWN"
+      );
+
+      fireEvent.click(screen.getByTestId("OpportunityDenialView__button"));
+
+      expect(screen.getByTestId("stub-modal")).toHaveTextContent("MODAL SHOWN");
+
+      expect(
+        jest.mocked(opp.deleteOpportunityDenialAndSnooze).mock.calls
+      ).toHaveLength(0);
     });
   });
 });

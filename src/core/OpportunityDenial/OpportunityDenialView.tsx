@@ -100,7 +100,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const [reasons, setReasons] = useState<string[]>(
     opportunity?.denial?.reasons ?? []
   );
-  const [otherReason, setOtherReason] = useState<string | undefined>(
+  const [otherReason, setOtherReason] = useState<string>(
     opportunity?.denial?.otherReason ?? ""
   );
 
@@ -113,6 +113,8 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   );
 
   const { enableSnooze } = useFeatureVariants();
+
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   if (!opportunity) return null;
 
@@ -128,7 +130,11 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const sliderDays = (snoozeForDays || defaultManualSnoozeDays) ?? 0;
 
-  const handleSubmit = async () => {
+  const { DenialConfirmationModal } = opportunity;
+
+  const submitDenial = async () => {
+    setShowConfirmationModal(false);
+
     if (reasons.length === 0) {
       await opportunity.deleteOpportunityDenialAndSnooze();
       return;
@@ -144,6 +150,14 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       }
     }
     onSubmit();
+  };
+
+  const handleSave = () => {
+    if (DenialConfirmationModal) {
+      setShowConfirmationModal(true);
+    } else {
+      submitDenial();
+    }
   };
 
   const handleSliderChange = async (value: number) => {
@@ -265,10 +279,21 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         data-testid="OpportunityDenialView__button"
         disabled={disableSaveButton}
         width="117px"
-        onClick={handleSubmit}
+        onClick={handleSave}
       >
         Save
       </ActionButton>
+      {DenialConfirmationModal ? (
+        <DenialConfirmationModal
+          opportunity={opportunity}
+          reasons={reasons}
+          otherReason={otherReason}
+          snoozeUntilDate={snoozeUntilDate}
+          showModal={showConfirmationModal}
+          onCloseFn={() => setShowConfirmationModal(false)}
+          onSuccessFn={submitDenial}
+        />
+      ) : null}
     </SidePanelContents>
   );
 });
