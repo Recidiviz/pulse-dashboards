@@ -24,9 +24,7 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
     externalId: "RES003",
     formReclassificationDueDate: "2024-01-01",
     eligibleCriteria: {
-      usTnAtLeast12MonthsSinceLatestAssessment: {
-        mostRecentAssessmentDate: "2020-01-01",
-      },
+      usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
       custodyLevelComparedToRecommended: {
         custodyLevel: "MINIMUM",
@@ -82,9 +80,7 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
     externalId: "RES004",
     formReclassificationDueDate: "2024-02-01",
     eligibleCriteria: {
-      usTnAtLeast12MonthsSinceLatestAssessment: {
-        mostRecentAssessmentDate: "2021-01-01",
-      },
+      usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
       custodyLevelComparedToRecommended: {
         custodyLevel: "MINIMUM",

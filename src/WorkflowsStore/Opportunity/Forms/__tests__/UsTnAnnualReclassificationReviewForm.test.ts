@@ -88,9 +88,7 @@ function createTestUnit() {
       statusAtHearingSeg: "GEN",
     },
     eligibleCriteria: {
-      usTnAtLeast12MonthsSinceLatestAssessment: {
-        mostRecentAssessmentDate: new Date("2020-01-01"),
-      },
+      usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
       custodyLevelComparedToRecommended: {
         custodyLevel: "MINIMUM",

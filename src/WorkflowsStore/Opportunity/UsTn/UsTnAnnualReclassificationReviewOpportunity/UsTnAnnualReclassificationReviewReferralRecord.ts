@@ -27,25 +27,17 @@ import { formInformationSchema as formInformation } from "../UsTnSharedCriteria"
 export const usTnAnnualReclassificationReviewSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: z.object({
-      usTnAtLeast12MonthsSinceLatestAssessment: z
-        .object({
-          // TODO(#4091) test property for congruency with database after schema change.
-          mostRecentAssessmentDate: dateStringSchema,
-        })
-        .nullable(),
+      usTnAtLeast12MonthsSinceLatestAssessment: z.null(),
       custodyLevelIsNotMax: z.null(),
       custodyLevelComparedToRecommended: z.object({
-        // TODO (#4091) remove nullable once missing property is fixed.
         custodyLevel: z
           .string()
           .nullable()
           .transform((custodyLevel) => custodyLevel ?? "NOT YET CLASSIFIED"),
-        // TODO(#4091) remove nullable once missing property is fixed.
         recommendedCustodyLevel: z.string().nullable(),
       }),
     }),
     ineligibleCriteria: z.object({}),
-    // TODO(#4091) remove `partial()` once undefined qScores (i.e. q1Score, q2Score, ..., q9Score) are fixed on the data side.
     formInformation: formInformation.partial(),
     formReclassificationDueDate: dateStringSchema.optional(),
   })

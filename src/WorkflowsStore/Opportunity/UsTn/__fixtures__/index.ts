@@ -404,9 +404,7 @@ export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclas
     externalId:
       UsTnAnnualReclassificationEligibleResidentRecord.personExternalId,
     eligibleCriteria: {
-      usTnAtLeast12MonthsSinceLatestAssessment: {
-        mostRecentAssessmentDate: parseISO("2020-01-01"),
-      },
+      usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
       custodyLevelComparedToRecommended: {
         custodyLevel: "MINIMUM",
@@ -467,9 +465,7 @@ export const UsTnAnnualReclassificationReferralRecordFixture02: UsTnAnnualReclas
     externalId:
       UsTnAnnualReclassificationEligibleResidentRecord.personExternalId,
     eligibleCriteria: {
-      usTnAtLeast12MonthsSinceLatestAssessment: {
-        mostRecentAssessmentDate: parseISO("2021-01-01"),
-      },
+      usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
       custodyLevelComparedToRecommended: {
         custodyLevel: "MEDIUM",
