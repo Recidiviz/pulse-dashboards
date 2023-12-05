@@ -106,6 +106,7 @@ function createTestUnit() {
 const baseResult: PartialFormData = {
   date: "2/29/20",
   institutionName: "facility1",
+  recommendationFacilityAssignment: "facility1",
   lastCafDate: "4/2/19",
   lastCafTotal: "20",
   latestClassificationDate: "4/3/19",

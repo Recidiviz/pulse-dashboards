@@ -57,6 +57,7 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
       residentFullName: this.person.displayName,
       omsId: this.person.externalId,
       institutionName: this.person.facilityId,
+      recommendationFacilityAssignment: this.person.facilityId,
       date: formatDate(new Date()),
     };
     if (record) {
