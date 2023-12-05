@@ -15,10 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import {
+  Icon,
+  palette,
+  spacing,
+  TooltipTrigger,
+} from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
+import { toTitleCase } from "../../utils";
 import { GOAL_COLORS } from "../OutliersSwarmPlot/constants";
 
 const LegendWrapper = styled.div<{ direction: "row" | "column" }>`
@@ -29,9 +36,15 @@ const LegendWrapper = styled.div<{ direction: "row" | "column" }>`
   flex-wrap: wrap;
 `;
 
-const LegendItem = styled.div`
+const LegendItem = styled.div<{ hoverable?: boolean }>`
   display: flex;
   align-items: center;
+
+  ${({ hoverable }) =>
+    hoverable &&
+    `&:hover {
+    cursor: pointer;
+  }`}
 `;
 
 const LegendText = styled.div`
@@ -71,11 +84,13 @@ export const defaultLegendItems = [
   {
     label: "Far worse than statewide rate",
     icon: circleLegendIcon(GOAL_COLORS.FAR),
+    tooltip:
+      "$OFFICER_LABEL has a rate over 1 Interquartile Range above the statewide rate",
   },
 ];
 
 type OutliersLegendType = {
-  items?: { label: string; icon: JSX.Element }[];
+  items?: { label: string; icon: JSX.Element; tooltip?: string }[];
   direction?: "row" | "column";
 };
 
@@ -83,14 +98,43 @@ const OutliersLegend: React.FC<OutliersLegendType> = ({
   items = defaultLegendItems,
   direction = "column",
 }) => {
+  const {
+    outliersStore: { supervisionStore },
+  } = useRootStore();
+
+  const supervisionOfficerLabel =
+    supervisionStore?.labels.supervisionOfficerLabel || "officer";
+
   return (
     <LegendWrapper direction={direction}>
       {items.map((item) => {
-        return (
-          <LegendItem key={item.label}>
+        const hasTooltip = Boolean(item.tooltip);
+
+        const legendItemViz = (
+          <LegendItem key={item.label} hoverable={hasTooltip}>
             {item.icon}
-            <LegendText>{item.label}</LegendText>
+            <LegendText>
+              {item.label}&ensp;
+              {hasTooltip && (
+                <Icon kind="Info" size={12} color={palette.slate60} />
+              )}
+            </LegendText>
           </LegendItem>
+        );
+
+        return hasTooltip ? (
+          <TooltipTrigger
+            key={item.label}
+            contents={item.tooltip?.replace(
+              "$OFFICER_LABEL",
+              toTitleCase(supervisionOfficerLabel)
+            )}
+            maxWidth={300}
+          >
+            {legendItemViz}
+          </TooltipTrigger>
+        ) : (
+          legendItemViz
         );
       })}
     </LegendWrapper>

@@ -15,13 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import {
+  palette,
+  spacing,
+  TooltipTrigger,
+  typography,
+} from "@recidiviz/design-system";
 import { rem } from "polished";
 import { ReactNode } from "react";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { humanReadableTitleCase } from "../../utils";
+import { humanReadableTitleCase, pluralizeWord } from "../../utils";
 
 const PageWrapper = styled.div`
   display: flex;
@@ -48,6 +54,14 @@ const Title = styled.div<{
   color: ${palette.pine2};
   margin-bottom: ${rem(spacing.md)};
 `;
+
+const HighlightedText = styled.span`
+  border-bottom: 2px dashed ${palette.pine2};
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 const InfoSection = styled.div<{
   isMobile: boolean;
 }>`
@@ -88,22 +102,49 @@ type OutliersPageLayoutProps = {
   pageTitle: string;
   infoItems: { title: string; info: string | undefined | null }[];
   contentsAboveTitle?: ReactNode;
+  textToHighlight?: string;
 };
 
 const OutliersPageLayout: React.FC<OutliersPageLayoutProps> = ({
   pageTitle,
   infoItems,
   contentsAboveTitle,
+  textToHighlight = "outlier",
   children,
 }) => {
   const { isMobile, isLaptop } = useIsMobile(true);
+
+  const {
+    outliersStore: { supervisionStore },
+  } = useRootStore();
+
+  const supervisionOfficerLabel =
+    supervisionStore?.labels.supervisionOfficerLabel || "officer";
+
+  const hasHighlightedSubstring = pageTitle.includes(textToHighlight);
+  const textToHighlightPlural = pluralizeWord(textToHighlight);
+  const outlierSubstring = pageTitle.includes(textToHighlightPlural)
+    ? textToHighlightPlural
+    : textToHighlight;
+  const [pageTitleStart, pageTitleEnd] = pageTitle.split(outlierSubstring);
 
   return (
     <PageWrapper>
       {contentsAboveTitle}
       <Wrapper isLaptop={isLaptop}>
         <Header>
-          <Title isMobile={isMobile}>{pageTitle}</Title>
+          <Title isMobile={isMobile}>
+            {pageTitleStart}
+            {hasHighlightedSubstring && (
+              <TooltipTrigger
+                contents={`Outliers means the ${supervisionOfficerLabel} has a rate over 1 Interquartile Range above the statewide rate.`}
+                maxWidth={310}
+              >
+                <HighlightedText>{outlierSubstring}</HighlightedText>
+              </TooltipTrigger>
+            )}
+            {pageTitleEnd}
+          </Title>
           {infoItems.length > 0 && (
             <InfoSection isMobile={isMobile}>
               {infoItems.map(

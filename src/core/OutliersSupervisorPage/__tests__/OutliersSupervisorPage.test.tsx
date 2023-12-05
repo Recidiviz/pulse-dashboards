@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { render, screen } from "@testing-library/react";
+import { configure } from "mobx";
 import { BrowserRouter } from "react-router-dom";
 
 import { useRootStore } from "../../../components/StoreProvider";
@@ -39,20 +40,29 @@ jest
 
 const useRootStoreMock = jest.mocked(useRootStore);
 
+beforeEach(() => {
+  configure({ safeDescriptors: false });
+});
+
 afterEach(() => {
   jest.resetAllMocks();
+  configure({ safeDescriptors: true });
 });
 
 describe("Hydrated Supervisor Page", () => {
   let presenter: SupervisionOfficersPresenter;
+  let rootStore: RootStore;
   let store: OutliersSupervisionStore;
   const pseudoId = "hashed-mdavis123";
 
-  beforeAll(async () => {
+  beforeEach(async () => {
+    rootStore = new RootStore();
     store = new OutliersSupervisionStore(
-      new RootStore().outliersStore,
+      rootStore.outliersStore,
       OutliersConfigFixture
     );
+    rootStore.outliersStore.supervisionStore = store;
+    useRootStoreMock.mockReturnValue(rootStore);
     presenter = new SupervisionOfficersPresenter(store, pseudoId);
     await presenter?.hydrate();
   });
@@ -64,11 +74,13 @@ describe("Hydrated Supervisor Page", () => {
       </BrowserRouter>
     );
 
-    expect(
-      screen.getByText(
-        "2 of the 3 officers in Miles D Davis's team are outliers on one or more metrics"
-      )
-    ).toBeInTheDocument();
+    [
+      "2 of the 3 officers in Miles D Davis's team are",
+      "outliers",
+      "on one or more metrics",
+    ].forEach((text) => {
+      expect(screen.getByText(text, { exact: false })).toBeInTheDocument();
+    });
   });
 
   test("Renders the info items", () => {
@@ -134,24 +146,33 @@ describe("Hydrated Supervisor Page", () => {
   });
 
   test("Renders the correct title if current user has supervision_staff role", () => {
+    store.outliersStore.rootStore.userStore.user = {
+      "test-metadata-namespace/app_metadata": {
+        role: "supervision_staff",
+        externalId: "mdavis123",
+        pseudonymizedId: pseudoId,
+      },
+    };
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
       </BrowserRouter>
     );
 
-    expect(
-      screen.getByText(
-        "2 of the 3 officers in your team are outliers on one or more metrics"
-      )
-    ).toBeInTheDocument();
+    [
+      "2 of the 3 officers in your team are",
+      "outliers",
+      "on one or more metrics",
+    ].forEach((text) => {
+      expect(screen.getByText(text, { exact: false })).toBeInTheDocument();
+    });
   });
 
   test("analytics trackOutliersSupervisorPageViewed", () => {
     jest.spyOn(AnalyticsStore.prototype, "trackOutliersSupervisorPageViewed");
     jest
-      .spyOn(UserStore.prototype, "userPseudoId", "get")
-      .mockImplementation(() => pseudoId);
+      .spyOn(rootStore.userStore, "userPseudoId", "get")
+      .mockReturnValue(pseudoId);
 
     render(
       <BrowserRouter>

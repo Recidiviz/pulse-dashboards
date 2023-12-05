@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { palette } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import {
   CardContent,
@@ -31,6 +33,18 @@ const LegendNote = styled.div`
   max-width: ${rem(400)};
 `;
 
+const MethodologyLinkContainer = styled.div`
+  flex-basis: 100%;
+
+  a {
+    color: ${palette.signal.links} !important;
+    border-bottom: 1px solid transparent;
+    &:hover {
+      border-bottom: 1px solid ${palette.signal.links};
+    }
+  }
+`;
+
 type OutliersStaffLegendType = {
   note?: string;
 };
@@ -38,13 +52,24 @@ type OutliersStaffLegendType = {
 const OutliersStaffLegend: React.FC<OutliersStaffLegendType> = ({ note }) => {
   const { isLaptop } = useIsMobile(true);
 
+  const {
+    outliersStore: { supervisionStore },
+  } = useRootStore();
+
+  const methodologyUrl = supervisionStore?.methodologyUrl;
+
   return (
     <CardWrapper noFlex isSticky={!isLaptop}>
       <CardHeader hasBorder={false}>
         <CardTitle>Legend</CardTitle>
-        <CardContent noFlex={!note}>
+        <CardContent noFlex={!note && !methodologyUrl}>
           <OutliersLegend />
           {note && <LegendNote>Note: {note}</LegendNote>}
+          {methodologyUrl && (
+            <MethodologyLinkContainer>
+              <a href={methodologyUrl}>Methodology</a>
+            </MethodologyLinkContainer>
+          )}
         </CardContent>
       </CardHeader>
     </CardWrapper>
