@@ -15,4 +15,4 @@ Feature: Login as a Workflows user and see the homepage
         Examples:
             | stateCode | searchValue   | numOpportunities | opportunityType                     | opportunityUrlFragment          |
             | US_TN     | Test Officer1 | 3                | compliantReporting                  | compliantReporting              |
-            | US_ID     | Test Officer4 | 3                | pastFTRD                            | pastFTRD                        |
+            | US_ID     | Test Officer4 | 4                | pastFTRD                            | pastFTRD                        |

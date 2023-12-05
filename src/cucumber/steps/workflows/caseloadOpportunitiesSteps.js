@@ -86,12 +86,15 @@ Then("I should see {int} tabs listed", async (numTabs) => {
   expect(items.length).toEqual(numTabs);
 });
 
-Then("I should see the person status update", async () => {
-  const status = await $(".WorkflowsStatus");
-  await status.waitForExist();
-  const text = await status.getText();
-  const expectedStatus =
-    /Viewed on \d{1,2}\/\d{1,2}\/\d{1,2} by notarealemail@recidiviz.org/;
+Then(
+  "I should see the status update for the person with external id {string}",
+  async (externalId) => {
+    const status = await $(`.WorkflowsStatus__${externalId}`);
+    await status.waitForExist();
+    const text = await status.getText();
+    const expectedStatus =
+      /Viewed on \d{1,2}\/\d{1,2}\/\d{1,2} by notarealemail@recidiviz.org/;
 
-  expect(text).toEqual(expect.stringMatching(expectedStatus));
-});
+    expect(text).toEqual(expect.stringMatching(expectedStatus));
+  }
+);

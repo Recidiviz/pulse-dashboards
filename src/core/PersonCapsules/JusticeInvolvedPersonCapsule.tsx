@@ -137,7 +137,11 @@ export const JusticeInvolvedPersonCapsule = observer(
               </>
             )}
           </IdentityEl>
-          <StatusEl className="WorkflowsStatus fs-exclude">{status}</StatusEl>
+          <StatusEl
+            className={`WorkflowsStatus__${person.externalId} fs-exclude`}
+          >
+            {status}
+          </StatusEl>
         </PersonInfo>
       </Wrapper>
     );
