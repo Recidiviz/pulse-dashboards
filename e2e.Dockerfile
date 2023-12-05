@@ -7,7 +7,7 @@
 # > docker tag firebase-tools-react danrecidiviz/firebase-tools-react:latest
 # > docker push danrecidiviz/firebase-tools-react:latest
 
-FROM andreysenov/firebase-tools:latest-node-16
+FROM andreysenov/firebase-tools:latest-node-lts
 WORKDIR /home/node
 USER node
 ENV PATH="/home/node/.yarn/bin:$PATH"

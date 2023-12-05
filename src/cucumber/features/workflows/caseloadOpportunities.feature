@@ -48,7 +48,7 @@ Feature: View a list of people on the opportunity page
         And I click on the person "<personName>"
         Then I should see a preview of the opportunity for "<personName>"
         When I exit the preview modal
-        Then I should see the status update for the person with external id "<externalId"
+        Then I should see the status update for the person with external id "<externalId>"
 
         Examples:
             | stateCode | searchValue   | personName   | externalId | opportunityType |
