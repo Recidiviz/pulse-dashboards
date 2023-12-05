@@ -4,7 +4,7 @@ Feature: Login as a Workflows user and see the homepage
         And see the Workflows Homepage
 
     Scenario Outline: Searching for opportunities
-        Given I am logged in as a "<stateCode>" user
+        Given I am a "<stateCode>" user on the "home" page
         Then I should see the homepage welcome message
         When I select "<searchValue>" from the dropdown
         Then I should see <numOpportunities> opportunities listed
@@ -16,4 +16,3 @@ Feature: Login as a Workflows user and see the homepage
             | stateCode | searchValue   | numOpportunities | opportunityType                     | opportunityUrlFragment          |
             | US_TN     | Test Officer1 | 3                | compliantReporting                  | compliantReporting              |
             | US_ID     | Test Officer4 | 3                | pastFTRD                            | pastFTRD                        |
-            | US_MO     | Facility #1   | 1                | usMoRestrictiveHousingStatusHearing | restrictiveHousingStatusHearing |

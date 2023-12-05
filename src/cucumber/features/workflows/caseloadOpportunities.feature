@@ -12,7 +12,7 @@ Feature: View a list of people on the opportunity page
 
         Examples:
             | stateCode | searchValue   | numPeople | opportunityType                     | opportunityName     |
-            | US_TN     | Test Officer1 | 3         | compliantReporting                  | Compliant Reporting |
+            | US_ID     | Test Officer6 | 3         | earnedDischarge                     | earned discharge    |
             | US_MO     | Facility #1   | 1         | usMoRestrictiveHousingStatusHearing | Restrictive Housing |
 
     Scenario Outline: Searching for multiple caseloads
@@ -25,7 +25,6 @@ Feature: View a list of people on the opportunity page
 
         Examples:
             | stateCode | searchValue   | secondSearchValue | numPeople | numTabs | opportunityType                     |
-            | US_TN     | Test Officer1 | Test Officer2     | 3         | 2       | compliantReporting                  |
             | US_MO     | Facility #1   | Facility #2       | 1         | 3       | usMoRestrictiveHousingStatusHearing |
 
     Scenario Outline: Navigating to a form for an opportunity
@@ -39,8 +38,8 @@ Feature: View a list of people on the opportunity page
 
 
         Examples:
-            | stateCode | searchValue   | opportunityType    | buttonText         |
-            | US_TN     | Test Officer1 | compliantReporting | Auto-fill referral |
+            | stateCode | searchValue   | opportunityType   | buttonText      |
+            | US_ID     | Test Officer4 | LSU               | Generate Chrono |
 
     Scenario Outline: Opening the preview modal for an opportunity
         Given I am logged in as a "<stateCode>" user
@@ -52,5 +51,5 @@ Feature: View a list of people on the opportunity page
         Then I should see the person status update
 
         Examples:
-            | stateCode | searchValue   | personName   | opportunityType    |
-            | US_TN     | Test Officer1 | Linet Hansen | compliantReporting |
+            | stateCode | searchValue   | personName   | opportunityType |
+            | US_ID     | Test Officer4 | Betty Rubble  | LSU             |
