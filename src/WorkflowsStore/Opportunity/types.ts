@@ -23,6 +23,7 @@ import {
   AutoSnoozeUpdate,
   Denial,
   ExternalRequestUpdate,
+  ExternalSystemRequestStatus,
   ManualSnoozeUpdate,
   SharedSnoozeUpdate,
   UpdateLog,
@@ -96,6 +97,7 @@ export interface Opportunity<
   snoozedOnDate: Date | undefined;
   isSnoozed: boolean;
   snoozeForDays?: number;
+  omsSnoozeStatus?: ExternalSystemRequestStatus;
   deleteOpportunityDenialAndSnooze: () => Promise<void>;
   lastViewed: UpdateLog | undefined;
   setLastViewed: () => void;

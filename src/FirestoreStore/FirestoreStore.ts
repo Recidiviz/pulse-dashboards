@@ -52,7 +52,7 @@ import { UserAppMetadata } from "../RootStore/types";
 import UserStore from "../RootStore/UserStore";
 import { isDemoMode } from "../utils/isDemoMode";
 import { isOfflineMode } from "../utils/isOfflineMode";
-import { UsTnExpirationOpportunity } from "../WorkflowsStore";
+import { Opportunity, UsTnExpirationOpportunity } from "../WorkflowsStore";
 import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
 import { OpportunityType } from "../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { SupervisionTaskType } from "../WorkflowsStore/Task/types";
@@ -240,7 +240,7 @@ export default class FirestoreStore {
    * All updates to the `clientUpdatesV2` collection should utilitize this method, which first adds the `stateCode` to the person document,
    * then updates the update document.
    */
-  updateClientUpdatesV2Document(
+  async updateClientUpdatesV2Document(
     documentType: string,
     recordId: string,
     docRef: DocumentReference<DocumentData>,
@@ -257,10 +257,10 @@ export default class FirestoreStore {
     }
 
     // First add the state code to the `clientUpdatesV2 document
-    this.updatePerson(recordId, { stateCode: recordId.slice(0, 5) });
+    await this.updatePerson(recordId, { stateCode: recordId.slice(0, 5) });
 
     // Then update the document with the actual update
-    this.updateDocument(documentType, recordId, docRef, update);
+    await this.updateDocument(documentType, recordId, docRef, update);
   }
 
   // Function to add an update in `clientUpdatesV2`. All JusticeInvolvedPerson updates (both Clients and Residents)
@@ -531,6 +531,36 @@ export default class FirestoreStore {
       recordId,
       contactNoteUpdate
     );
+  }
+
+  async updateOmsSnoozeStatus(
+    opportunity: Opportunity,
+    currentUserEmail: string,
+    userStateCode: string,
+    recordId: string,
+    snoozeUntil: string,
+    submittedTimestamp: Timestamp,
+    status: ExternalSystemRequestStatus,
+    error?: string
+  ) {
+    // Ignore recidiviz and non-state users in prod
+    if (
+      process.env.REACT_APP_DEPLOY_ENV === "production" &&
+      userStateCode !== opportunity.person.stateCode
+    )
+      return;
+
+    return this.updateOpportunity(opportunity.type, recordId, {
+      omsSnooze: {
+        status,
+        submitted: {
+          by: currentUserEmail,
+          date: submittedTimestamp,
+        },
+        snoozeUntil,
+        ...(error !== undefined && { error }),
+      },
+    });
   }
 
   async deleteOpportunityDenialAndSnooze(

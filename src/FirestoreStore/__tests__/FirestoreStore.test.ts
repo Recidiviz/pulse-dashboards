@@ -219,7 +219,7 @@ describe("FirestoreStore", () => {
       store = new FirestoreStore({ rootStore: mockRootStore });
     });
 
-    test("updateSupervisionTask", () => {
+    test("updateSupervisionTask", async () => {
       const taskUpdate: SupervisionTaskUpdate = {
         homeVisit: {
           snoozedBy: "test@test.org",
@@ -227,7 +227,7 @@ describe("FirestoreStore", () => {
           snoozedOn: "2023-01-01",
         },
       };
-      store.updateSupervisionTask("homeVisit", "us_ca_123", taskUpdate);
+      await store.updateSupervisionTask("homeVisit", "us_ca_123", taskUpdate);
 
       expect(mockSetDoc.mock.calls).toEqual([
         [
@@ -247,8 +247,8 @@ describe("FirestoreStore", () => {
       ]);
     });
 
-    test("deleteOpportunityDenialAndSnooze", () => {
-      store.deleteOpportunityDenialAndSnooze("LSU", "us_id_123");
+    test("deleteOpportunityDenialAndSnooze", async () => {
+      await store.deleteOpportunityDenialAndSnooze("LSU", "us_id_123");
       expect(mockDoc.mock.calls).toEqual([
         [
           undefined,
@@ -280,13 +280,18 @@ describe("FirestoreStore", () => {
       ]);
     });
 
-    test("updateOpportunityAutoSnooze", () => {
+    test("updateOpportunityAutoSnooze", async () => {
       const update = {
         snoozeUntil: "2024-01-01",
         snoozedBy: "test-email",
         snoozedOn: "2023-11-10",
       };
-      store.updateOpportunityAutoSnooze("LSU", "us_id_123", update, false);
+      await store.updateOpportunityAutoSnooze(
+        "LSU",
+        "us_id_123",
+        update,
+        false
+      );
       expect(mockDoc.mock.calls).toEqual([
         [
           undefined,
@@ -314,13 +319,13 @@ describe("FirestoreStore", () => {
       ]);
     });
 
-    test("updateOpportunityAutoSnooze with delete", () => {
+    test("updateOpportunityAutoSnooze with delete", async () => {
       const update = {
         snoozeUntil: "2024-01-01",
         snoozedBy: "test-email",
         snoozedOn: "2023-11-10",
       };
-      store.updateOpportunityAutoSnooze("LSU", "us_id_123", update, true);
+      await store.updateOpportunityAutoSnooze("LSU", "us_id_123", update, true);
       expect(mockDoc.mock.calls).toEqual([
         [
           undefined,
@@ -348,13 +353,18 @@ describe("FirestoreStore", () => {
       ]);
     });
 
-    test("updateOpportunityManualSnooze", () => {
+    test("updateOpportunityManualSnooze", async () => {
       const update = {
         snoozeForDays: 10,
         snoozedBy: "test-email",
         snoozedOn: "2023-11-10",
       };
-      store.updateOpportunityManualSnooze("LSU", "us_id_123", update, false);
+      await store.updateOpportunityManualSnooze(
+        "LSU",
+        "us_id_123",
+        update,
+        false
+      );
       expect(mockDoc.mock.calls).toEqual([
         [
           undefined,
@@ -382,13 +392,18 @@ describe("FirestoreStore", () => {
       ]);
     });
 
-    test("updateOpportunityManualSnooze", () => {
+    test("updateOpportunityManualSnooze", async () => {
       const update = {
         snoozeForDays: 10,
         snoozedBy: "test-email",
         snoozedOn: "2023-11-10",
       };
-      store.updateOpportunityManualSnooze("LSU", "us_id_123", update, true);
+      await store.updateOpportunityManualSnooze(
+        "LSU",
+        "us_id_123",
+        update,
+        true
+      );
       expect(mockDoc.mock.calls).toEqual([
         [
           undefined,
@@ -416,12 +431,15 @@ describe("FirestoreStore", () => {
       ]);
     });
 
-    test("updateMilestonesMessages", () => {
+    test("updateMilestonesMessages", async () => {
       const milestonesMessagesUpdate: PartialWithFieldValue<MilestonesMessage> =
         {
           status: "IN_PROGRESS",
         };
-      store.updateMilestonesMessages("us_ca_123", milestonesMessagesUpdate);
+      await store.updateMilestonesMessages(
+        "us_ca_123",
+        milestonesMessagesUpdate
+      );
       expect(mockDoc.mock.calls).toEqual([
         [
           undefined,
@@ -449,7 +467,7 @@ describe("FirestoreStore", () => {
       ]);
     });
 
-    test("updateOpportunity", () => {
+    test("updateOpportunity", async () => {
       const opportunityUpdate: PartialWithFieldValue<
         OpportunityUpdateWithForm<Record<string, any>>
       > = {
@@ -457,7 +475,7 @@ describe("FirestoreStore", () => {
           update: {},
         },
       };
-      store.updateOpportunity("LSU", "us_id_123", opportunityUpdate);
+      await store.updateOpportunity("LSU", "us_id_123", opportunityUpdate);
       expect(mockDoc.mock.calls).toEqual([
         [
           undefined,

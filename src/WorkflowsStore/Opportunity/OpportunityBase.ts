@@ -254,6 +254,10 @@ export abstract class OpportunityBase<
     return !!snoozeUntil && snoozeUntilDateInTheFuture(snoozeUntil);
   }
 
+  get omsSnoozeStatus() {
+    return this.updates?.omsSnooze?.status;
+  }
+
   get lastViewed(): UpdateLog | undefined {
     return this.updates?.lastViewed;
   }

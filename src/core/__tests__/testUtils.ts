@@ -17,14 +17,19 @@
 
 import { AutoSnoozeUpdate, ManualSnoozeUpdate } from "../../FirestoreStore";
 import { Client, Opportunity } from "../../WorkflowsStore";
+import { OTHER_KEY } from "../../WorkflowsStore/utils";
 
 export const mockOpportunity: Opportunity<Client> = {
   record: {},
   almostEligible: false,
-  person: { displayPreferredName: "Client Name" } as Client,
+  person: {
+    displayPreferredName: "Client Name",
+    recordId: "123",
+    stateCode: "US_OZ",
+  } as Client,
   defaultEligibility: "ELIGIBLE",
   denial: undefined,
-  denialReasonsMap: {},
+  denialReasonsMap: { CODE: "Denial Code", [OTHER_KEY]: "Other" },
   lastViewed: undefined,
   hydrate: () => undefined,
   isHydrated: true,
