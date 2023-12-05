@@ -387,7 +387,10 @@ describe("canAccessRestrictedPage", () => {
       authSettings: testAuthSettings,
       rootStore: {
         currentTenantId: tenantId,
-      } as typeof RootStore,
+        firestoreStore: {
+          authenticate: jest.fn(),
+        },
+      } as unknown as typeof RootStore,
     });
     await store.authorize(mockHandleUrl);
 

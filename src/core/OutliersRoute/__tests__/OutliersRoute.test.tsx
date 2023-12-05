@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { render, screen } from "@testing-library/react";
-import { configure } from "mobx";
+import { configure, observable } from "mobx";
 import { StaticRouter } from "react-router-dom";
 
 import { useRootStore } from "../../../components/StoreProvider";
@@ -35,7 +35,8 @@ let supervisionStore: OutliersSupervisionStore;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
-  const { outliersStore } = new RootStore();
+  const rootStore = new RootStore();
+  const { outliersStore } = rootStore;
 
   supervisionStore = new OutliersSupervisionStore(
     outliersStore,
@@ -43,7 +44,12 @@ beforeEach(() => {
   );
   outliersStore.supervisionStore = supervisionStore;
 
-  useRootStoreMock.mockReturnValue({ outliersStore });
+  useRootStoreMock.mockReturnValue(rootStore);
+  jest.spyOn(rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
+    pseudonymizedId: "hashed-abc123",
+    routes: observable({ insights: true }),
+    stateCode: "us_mi",
+  });
 });
 
 afterEach(() => {
@@ -85,13 +91,17 @@ test("handles params for supervision supervisor page", () => {
 });
 
 test("supervisor restricted from another supervisor's page", () => {
-  jest.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
-    displayName: "",
-    fullName: {},
-    externalId: "abc123",
-    supervisionDistrict: null,
-    pseudonymizedId: "hashed-abc123",
-  });
+  jest
+    .spyOn(
+      supervisionStore.outliersStore.rootStore.userStore,
+      "userAppMetadata",
+      "get"
+    )
+    .mockReturnValue({
+      pseudonymizedId: "hashed-abc123",
+      routes: observable({ insights: true }),
+      stateCode: "us_mi",
+    });
 
   render(
     <StaticRouter
@@ -167,13 +177,17 @@ test("handles params for supervision supervisors list page", async () => {
 });
 
 test("supervisors restricted from supervisors list page", () => {
-  jest.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
-    displayName: "",
-    fullName: {},
-    externalId: "abc123",
-    supervisionDistrict: null,
-    pseudonymizedId: "hashed-abc123",
-  });
+  jest
+    .spyOn(
+      supervisionStore.outliersStore.rootStore.userStore,
+      "userAppMetadata",
+      "get"
+    )
+    .mockReturnValue({
+      pseudonymizedId: "hashed-abc123",
+      routes: observable({ insights: true }),
+      stateCode: "us_mi",
+    });
 
   render(
     <StaticRouter location={outliersUrl("supervisionSupervisorsList")}>

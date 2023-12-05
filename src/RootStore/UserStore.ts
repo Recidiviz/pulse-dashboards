@@ -345,8 +345,8 @@ export default class UserStore {
     const routePermissions = entries(this.userAppMetadata?.routes);
     const routes: RoutePermission[] = routePermissions.map(
       ([fullRoute, permission]: RoutePermission) => {
-        const [view, page] = fullRoute.split("_");
-        const route = page ?? view;
+        const urlComponents = fullRoute.split("_");
+        const route = urlComponents.at(-1);
         return [route, permission];
       }
     );
@@ -464,8 +464,6 @@ export default class UserStore {
     const allowed = navigation;
     if (!allowed) return {};
 
-    if (this.isRecidivizUser) return allowed;
-
     if (this.stateCode === "CSG") {
       delete allowed.workflows;
     }
@@ -506,6 +504,8 @@ export default class UserStore {
   }
 
   getRoutePermission(route: string): boolean {
+    if (this.isRecidivizUser) return true;
+
     const routePermission = this.routes.find((r) => r[0] === route);
     // If the route does not exist in the RoutePermissions object, default to false;
     if (!routePermission) return false;

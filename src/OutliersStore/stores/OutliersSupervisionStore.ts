@@ -21,7 +21,6 @@ import { makeAutoObservable, observable } from "mobx";
 import moment from "moment";
 
 import { formatDate } from "../../utils";
-import { isOfflineMode } from "../../utils/isOfflineMode";
 import { OutliersAPI } from "../api/interface";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
@@ -141,9 +140,13 @@ export class OutliersSupervisionStore {
     );
   }
 
+  get userCanAccessAllSupervisors(): boolean {
+    const { userStore } = this.outliersStore.rootStore;
+    return userStore.getRoutePermission("supervisors-list");
+  }
+
   get currentSupervisorUser(): SupervisionOfficerSupervisor | undefined {
     const { userAppMetadata } = this.outliersStore.rootStore.userStore;
-    if (isOfflineMode()) return undefined;
 
     if (userAppMetadata) {
       const { role, externalId, district, pseudonymizedId } = userAppMetadata;

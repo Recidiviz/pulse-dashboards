@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { cloneDeep } from "lodash";
-import { configure, flowResult } from "mobx";
+import { configure, flowResult, observable } from "mobx";
 import { ValuesType } from "utility-types";
 
 import { RootStore } from "../../../RootStore";
@@ -203,6 +203,42 @@ test("hydrate supervisionOfficers for supervisor", async () => {
   expect(
     store.officersBySupervisorPseudoId.get(testSupervisorPseudoId)
   ).toEqual(expect.arrayContaining(supervisionOfficerFixture.slice(0, 2)));
+});
+
+test("userCanAccessAllSupervisors with missing route", () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      pseudonymizedId: "hashed-abc123",
+      routes: observable({ insights: true }),
+      stateCode: "us_mi",
+    });
+
+  expect(store.userCanAccessAllSupervisors).toBeFalse();
+});
+
+test("userCanAccessAllSupervisors with false route", () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      pseudonymizedId: "hashed-abc123",
+      routes: observable({ "insights_supervision_supervisors-list": false }),
+      stateCode: "us_mi",
+    });
+
+  expect(store.userCanAccessAllSupervisors).toBeFalse();
+});
+
+test("userCanAccessAllSupervisors with true route", () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      pseudonymizedId: "hashed-abc123",
+      routes: observable({ "insights_supervision_supervisors-list": true }),
+      stateCode: "us_mi",
+    });
+
+  expect(store.userCanAccessAllSupervisors).toBeTrue();
 });
 
 test("current user record for supervisor except offline mode", () => {

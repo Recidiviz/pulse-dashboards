@@ -16,33 +16,53 @@
 // =============================================================================
 
 import { render, screen } from "@testing-library/react";
+import { configure } from "mobx";
 import { StaticRouter } from "react-router-dom";
 
-import StoreProvider from "../../../components/StoreProvider";
+import { useRootStore } from "../../../components/StoreProvider";
+import { OutliersConfigFixture } from "../../../OutliersStore/models/offlineFixtures/OutliersConfigFixture";
 import { OutliersStore } from "../../../OutliersStore/OutliersStore";
+import { OutliersSupervisionStore } from "../../../OutliersStore/stores/OutliersSupervisionStore";
+import { RootStore } from "../../../RootStore";
 import { outliersUrl } from "../../views";
 import { OutliersSupervisionRouter } from "../OutliersSupervisionRouter";
 
 jest.mock(
   "../../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker"
 );
+jest.mock("../../../components/StoreProvider");
+
+const useRootStoreMock = useRootStore as jest.Mock;
+
+let outliersStore: OutliersStore;
+
+beforeEach(() => {
+  configure({ safeDescriptors: false });
+  const rootStore = new RootStore();
+  outliersStore = rootStore.outliersStore;
+
+  useRootStoreMock.mockReturnValue(rootStore);
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
+  configure({ safeDescriptors: true });
+});
 
 function renderRouter(url?: string) {
   render(
-    <StoreProvider>
-      <StaticRouter location={url}>
-        <OutliersSupervisionRouter />
-      </StaticRouter>
-    </StoreProvider>
+    <StaticRouter location={url}>
+      <OutliersSupervisionRouter />
+    </StaticRouter>
   );
 }
 
 test("hydrates", () => {
-  jest.spyOn(OutliersStore.prototype, "hydrateSupervisionStore");
+  jest.spyOn(outliersStore, "hydrateSupervisionStore");
 
   renderRouter();
 
-  expect(OutliersStore.prototype.hydrateSupervisionStore).toHaveBeenCalled();
+  expect(outliersStore.hydrateSupervisionStore).toHaveBeenCalled();
 });
 
 test("invalid route", async () => {
@@ -56,6 +76,13 @@ test("invalid route", async () => {
 });
 
 test("valid route", async () => {
+  outliersStore.supervisionStore = new OutliersSupervisionStore(
+    outliersStore,
+    OutliersConfigFixture
+  );
+  jest
+    .spyOn(outliersStore.supervisionStore, "userCanAccessAllSupervisors", "get")
+    .mockReturnValue(true);
   renderRouter(outliersUrl("supervisionSupervisorsList"));
 
   expect(
