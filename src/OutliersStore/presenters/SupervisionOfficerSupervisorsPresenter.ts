@@ -76,7 +76,7 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
     district: string | null;
     supervisors: Array<SupervisionOfficerSupervisor>;
   }> {
-    return pipe(
+    const result = pipe(
       groupBy((d: SupervisionOfficerSupervisor) => d.supervisionDistrict),
       values,
       map((dataset) => {
@@ -87,6 +87,23 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
         };
       })
     )(this.allSupervisorsWithOutliers ?? []);
+
+    result.map(({ supervisors }) =>
+      supervisors.sort((a, b) => a.displayName.localeCompare(b.displayName))
+    );
+
+    result.sort((a, b) => {
+      if (!a.district) return 1;
+      if (!b.district) return -1;
+
+      return a.district
+        .toLowerCase()
+        .localeCompare(b.district.toLowerCase(), "en", {
+          numeric: true,
+        });
+    });
+
+    return result;
   }
 
   get supervisorsWithOutliersCount(): number {

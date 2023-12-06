@@ -72,6 +72,95 @@ test("supervisors with outliers data", async () => {
   });
 });
 
+test("districts ordered correctly", async () => {
+  await presenter.hydrate();
+  presenter.allSupervisors.push(
+    {
+      supervisionDistrict: "REGION 7",
+      externalId: "testid1",
+      displayName: "Test Name",
+      fullName: {
+        givenNames: "Test",
+        surname: "Name",
+      },
+      hasOutliers: true,
+      pseudonymizedId: "hashed-testid1",
+    },
+    {
+      supervisionDistrict: "REGION 4B",
+      externalId: "testid2",
+      displayName: "Test Name",
+      fullName: {
+        givenNames: "Test",
+        surname: "Name",
+      },
+      hasOutliers: true,
+      pseudonymizedId: "hashed-testid2",
+    },
+    {
+      supervisionDistrict: "REGION 1",
+      externalId: "testid3",
+      displayName: "Test Name",
+      fullName: {
+        givenNames: "Test",
+        surname: "Name",
+      },
+      hasOutliers: true,
+      pseudonymizedId: "hashed-testid3",
+    },
+    {
+      supervisionDistrict: "REGION 10 - CENTRAL",
+      externalId: "testid4",
+      displayName: "Test Name",
+      fullName: {
+        givenNames: "Test",
+        surname: "Name",
+      },
+      hasOutliers: true,
+      pseudonymizedId: "hashed-testid4",
+    },
+    {
+      supervisionDistrict: "REGION 4A",
+      externalId: "testid5",
+      displayName: "Test Name",
+      fullName: {
+        givenNames: "Test",
+        surname: "Name",
+      },
+      hasOutliers: true,
+      pseudonymizedId: "hashed-testid6",
+    },
+    {
+      supervisionDistrict: "REGION 10 - WEST",
+      externalId: "testid6",
+      displayName: "Test Name",
+      fullName: {
+        givenNames: "Test",
+        surname: "Name",
+      },
+      hasOutliers: true,
+      pseudonymizedId: "hashed-testid6",
+    }
+  );
+  const orderedDistrictList = [
+    "REGION 1",
+    "REGION 4A",
+    "REGION 4B",
+    "REGION 7",
+    "REGION 10 - CENTRAL",
+    "REGION 10 - WEST",
+    "Region D1",
+    null,
+  ];
+  expect(
+    Array.from(
+      presenter.supervisorsWithOutliersByDistrict.map(
+        ({ district }) => district
+      )
+    )
+  ).toEqual(orderedDistrictList);
+});
+
 test("supervisors with outliers count", async () => {
   await presenter.hydrate();
   expect(presenter.supervisorsWithOutliersCount).toMatchInlineSnapshot(`2`);
