@@ -27,7 +27,7 @@ export const RedirectHome: React.FC = ({ ...rest }) => {
   const allowedPaths = getPathsFromNavigation(
     userStore.userAllowedNavigation ?? {}
   );
-  return <Redirect {...rest} exact from="/" to={allowedPaths[0]} />;
+  return <Redirect {...rest} exact to={allowedPaths[0]} />;
 };
 
 export default observer(RedirectHome);

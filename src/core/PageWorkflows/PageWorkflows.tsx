@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React, { useEffect } from "react";
-import { Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
@@ -30,7 +30,7 @@ import WorkflowsHomepage from "../WorkflowsHomepage";
 import { FullProfile } from "../WorkflowsJusticeInvolvedPersonProfile";
 import { WorkflowsFormLayout } from "../WorkflowsLayouts";
 import WorkflowsMilestones from "../WorkflowsMilestones/WorkflowsMilestones";
-import WorkflowsRoute from "../WorkflowsRoute";
+import WorkflowsRoute from "../WorkflowsRoute/WorkflowsRoute";
 import { WorkflowsTasks } from "../WorkflowsTasks";
 
 const IE11Warning = styled.div`
@@ -67,16 +67,26 @@ const PageWorkflows: React.FC = () => {
   return (
     <ModelHydrator model={workflowsStore}>
       <Switch>
-        <WorkflowsRoute exact path={workflowsRoute({ routeName: "home" })}>
-          <WorkflowsHomepage />
-        </WorkflowsRoute>
-        <WorkflowsRoute
+        <Route
+          exact
+          path={workflowsRoute({ routeName: "home" })}
+          render={() => (
+            <WorkflowsRoute>
+              <WorkflowsHomepage />
+            </WorkflowsRoute>
+          )}
+        />
+
+        <Route
           exact
           path={workflowsRoute({ routeName: "milestones" })}
-        >
-          <WorkflowsMilestones />
-        </WorkflowsRoute>
-        <WorkflowsRoute
+          render={() => (
+            <WorkflowsRoute>
+              <WorkflowsMilestones />
+            </WorkflowsRoute>
+          )}
+        />
+        <Route
           exact
           path={[
             workflowsRoute({
@@ -84,10 +94,13 @@ const PageWorkflows: React.FC = () => {
             }),
             workflowsRoute({ routeName: "residentProfile" }),
           ]}
-        >
-          <FullProfile />
-        </WorkflowsRoute>
-        <WorkflowsRoute
+          render={() => (
+            <WorkflowsRoute>
+              <FullProfile />
+            </WorkflowsRoute>
+          )}
+        />
+        <Route
           exact
           path={[
             workflowsRoute({
@@ -95,34 +108,50 @@ const PageWorkflows: React.FC = () => {
             }),
             workflowsRoute({ routeName: "caseloadResidents" }),
           ]}
-        >
-          <CaseloadView />
-        </WorkflowsRoute>
-        <WorkflowsRoute
+          render={() => (
+            <WorkflowsRoute>
+              <CaseloadView />
+            </WorkflowsRoute>
+          )}
+        />
+        <Route
           exact
           path={workflowsRoute({
             routeName: "tasks",
           })}
-        >
-          <WorkflowsTasks />
-        </WorkflowsRoute>
-        <WorkflowsRoute
+          render={() => (
+            <WorkflowsRoute>
+              <WorkflowsTasks />
+            </WorkflowsRoute>
+          )}
+        />
+        <Route
           exact
           path={workflowsRoute({
             routeName: "opportunityClients",
           })}
-        >
-          <OpportunityCaseloadView />
-        </WorkflowsRoute>
-        <WorkflowsRoute
+          render={() => (
+            <WorkflowsRoute>
+              <OpportunityCaseloadView />
+            </WorkflowsRoute>
+          )}
+        />
+        <Route
           exact
           path={workflowsRoute({
             routeName: "opportunityAction",
           })}
-        >
-          <WorkflowsFormLayout />
-        </WorkflowsRoute>
-        <WorkflowsRoute exact path={WORKFLOWS_PATHS.workflows} />
+          render={() => (
+            <WorkflowsRoute>
+              <WorkflowsFormLayout />
+            </WorkflowsRoute>
+          )}
+        />
+        <Route
+          exact
+          path={WORKFLOWS_PATHS.workflows}
+          render={() => <WorkflowsRoute />}
+        />
         <NotFound />
       </Switch>
     </ModelHydrator>

@@ -16,7 +16,7 @@
 // =============================================================================
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { Route, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import NotFound from "./components/NotFound";
 import { useRootStore } from "./components/StoreProvider";
@@ -26,22 +26,17 @@ import {
 } from "./utils/navigation";
 
 interface ProtectedRouteProps {
-  component: React.FC;
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  component: Component,
-  ...rest
-}) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { userStore } = useRootStore();
   const { pathname } = useLocation();
   const allowedPaths = getPathsFromNavigation(userStore.userAllowedNavigation);
-  if (!allowedPaths.includes(getPathWithoutParams(pathname))) {
-    return <NotFound />;
-  }
-  return (
-    <Route {...rest} render={(props) => <Component {...rest} {...props} />} />
+  return allowedPaths.includes(getPathWithoutParams(pathname)) ? (
+    children
+  ) : (
+    <NotFound />
   );
 };
 

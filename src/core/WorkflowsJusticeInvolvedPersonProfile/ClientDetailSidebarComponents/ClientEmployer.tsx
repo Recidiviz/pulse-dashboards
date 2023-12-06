@@ -39,7 +39,7 @@ export function ClientEmployer({
         <DetailsList>
           {employers.map((employer) => {
             return (
-              <div key={employer.name}>
+              <div key={`${client.externalId}-${employer.name}`}>
                 <DetailsSubheading>Employer</DetailsSubheading>
                 <SecureDetailsContent>
                   {employer.name}

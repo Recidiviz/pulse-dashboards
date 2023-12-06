@@ -67,11 +67,9 @@ initI18n();
 
 const SHARED_VIEWS = ["", "profile"];
 
-// prettier-ignore
 function App() {
   useEffect(() => {
     if (isDemoMode()) {
-
       const demoDate = new Date("2022-03-22T10:30:00");
       tk.travel(demoDate); // Freeze time to the desired date and time
     }
@@ -82,34 +80,84 @@ function App() {
       }
     };
   }, []);
-  return (<StoreProvider>
+  return (
+    <StoreProvider>
       <Router>
         <SentryErrorBoundary>
           <QueryParamProvider ReactRouterRoute={Route}>
             <Switch>
-              <Route path="/verify" component={VerificationNeeded} />
+              <Route path="/verify">
+                <VerificationNeeded />
+              </Route>
               <AuthWall>
-                <DashboardLayout tenantIds={DASHBOARD_TENANTS} views={Object.values(DASHBOARD_VIEWS).concat(SHARED_VIEWS)}>
+                <DashboardLayout
+                  tenantIds={DASHBOARD_TENANTS}
+                  views={Object.values(DASHBOARD_VIEWS).concat(SHARED_VIEWS)}
+                >
                   <Switch>
-                    <ProtectedRoute path={DASHBOARD_PATHS.system} component={PageSystem} />
-                    <ProtectedRoute path={DASHBOARD_PATHS.operations} component={PageVitals} />
-                    <ProtectedRoute path={DASHBOARD_PATHS.methodology} component={PageMethodology} />
-                    <ProtectedRoute path={DASHBOARD_PATHS.outliers} component={PageOutliers} />
-                    <Redirect from={`${WORKFLOWS_PATHS.workflows}/:opportunityType/:clientId/preview`} to={WORKFLOWS_PATHS.clientProfile} />
-                    <ProtectedRoute path={WORKFLOWS_PATHS.workflows} component={PageWorkflows} />
-                    <ProtectedRoute path={IMPACT_PATHS.impact} component={PageImpact} />
-                    <Route path="/profile" component={Profile} />
-                    <Redirect from="/system" to="/system/prison" />
-                    <RedirectHome />
+                    <Route path={DASHBOARD_PATHS.system}>
+                      <ProtectedRoute>
+                        <PageSystem />
+                      </ProtectedRoute>
+                    </Route>
+                    <Route path={DASHBOARD_PATHS.operations}>
+                      <ProtectedRoute>
+                        <PageVitals />
+                      </ProtectedRoute>
+                    </Route>
+                    <Route path={DASHBOARD_PATHS.methodology}>
+                      <ProtectedRoute>
+                        <PageMethodology />
+                      </ProtectedRoute>
+                    </Route>
+                    <Route path={DASHBOARD_PATHS.outliers}>
+                      <ProtectedRoute>
+                        <PageOutliers />
+                      </ProtectedRoute>
+                    </Route>
+                    <Route
+                      path={`${WORKFLOWS_PATHS.workflows}/:opportunityType/:clientId/preview`}
+                      render={() => (
+                        <Redirect to={WORKFLOWS_PATHS.clientProfile} />
+                      )}
+                    />
+                    <Route path={WORKFLOWS_PATHS.workflows}>
+                      <ProtectedRoute>
+                        <PageWorkflows />
+                      </ProtectedRoute>
+                    </Route>
+                    <Route path={IMPACT_PATHS.impact}>
+                      <ProtectedRoute>
+                        <PageImpact />
+                      </ProtectedRoute>
+                    </Route>
+                    <Route path="/profile">
+                      <Profile />
+                    </Route>
+                    <Route
+                      path="/system"
+                      render={() => <Redirect to="/system/prison" />}
+                    />
+                    <Route path="/" render={() => <RedirectHome />} />
                     <NotFound />
                   </Switch>
                 </DashboardLayout>
 
-                <LanternLayout tenantIds={LANTERN_TENANTS} views={Object.values(LANTERN_VIEWS).concat(SHARED_VIEWS)}>
+                <LanternLayout
+                  tenantIds={LANTERN_TENANTS}
+                  views={Object.values(LANTERN_VIEWS).concat(SHARED_VIEWS)}
+                >
                   <Switch>
-                    <Route path="/community/revocations" component={Revocations} />
-                    <Route path="/profile" component={Profile} />
-                    <Redirect from="/revocations" to="/community/revocations" />
+                    <Route path="/community/revocations">
+                      <Revocations />
+                    </Route>
+                    <Route path="/profile">
+                      <Profile />
+                    </Route>
+                    <Route
+                      path="/revocations"
+                      render={() => <Redirect to="/community/revocations" />}
+                    />
                     <NotFound />
                   </Switch>
                 </LanternLayout>
@@ -119,7 +167,8 @@ function App() {
           </QueryParamProvider>
         </SentryErrorBoundary>
       </Router>
-    </StoreProvider>)
+    </StoreProvider>
+  );
 }
 
 export default App;

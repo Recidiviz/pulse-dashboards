@@ -18,7 +18,7 @@
 import { autorun, runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
-import { Redirect, Route, RouteProps, useLocation } from "react-router-dom";
+import { Redirect, RouteProps, useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { TenantId } from "../../RootStore/types";
@@ -65,13 +65,12 @@ const RouteSync = observer(function RouteSync({ children }) {
         const isOpportunityPage =
           page && isOpportunityTypeUrlForState(currentTenantId, page);
 
-        // sync location data into the store
+        /* 1. Update activeSystem and selectedOpportunityType */
         if (isOpportunityPage) {
           const opportunityType =
             OPPORTUNITY_TYPE_FOR_URL_BY_STATE[currentTenantId as TenantId][
               page
             ];
-          // Update active system based on opportunity route
           workflowsStore.updateActiveSystem(
             getSystemIdFromOpportunityType(opportunityType)
           );
@@ -86,6 +85,8 @@ const RouteSync = observer(function RouteSync({ children }) {
           if (activeSystem) workflowsStore.updateActiveSystem(activeSystem);
           workflowsStore.updateSelectedOpportunityType(undefined);
         }
+
+        /* 2. Update selectedPerson if there is a personId */
         // updateSelectedPerson relies on the active system, so set it after the above
         workflowsStore.updateSelectedPerson(personId).catch(() => {
           if (isOpportunityPage) {
@@ -96,6 +97,7 @@ const RouteSync = observer(function RouteSync({ children }) {
           }
         });
 
+        /* 3. Redirect to first available opportunity page if only 1 opportunity or homepage for multiple */
         if (!page) {
           // we aren't actually mutating any observables here,
           // but we just don't want the access tracked in this effect
@@ -121,7 +123,6 @@ const RouteSync = observer(function RouteSync({ children }) {
   if (notFound) {
     return <Redirect to={WORKFLOWS_PATHS.workflows404} />;
   }
-
   if (redirectPath) {
     return <Redirect to={redirectPath} />;
   }
@@ -131,12 +132,8 @@ const RouteSync = observer(function RouteSync({ children }) {
 /**
  * Wraps a react-router Route to sync route data to the Workflows datastore.
  */
-const WorkflowsRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
-  return (
-    <Route {...rest}>
-      <RouteSync>{children}</RouteSync>
-    </Route>
-  );
+const WorkflowsRoute: React.FC<RouteProps> = ({ children }) => {
+  return <RouteSync>{children}</RouteSync>;
 };
 
 export default WorkflowsRoute;
