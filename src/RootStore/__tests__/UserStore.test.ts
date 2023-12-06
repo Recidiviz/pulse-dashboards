@@ -348,6 +348,111 @@ describe("getRoutePermission", () => {
     await store.authorize(mockHandleUrl);
     expect(store.getRoutePermission("operations")).toBe(false);
   });
+
+  describe("workflows permissions", () => {
+    let store: UserStore;
+    beforeEach(() => {
+      mockIsAuthenticated.mockResolvedValue(true);
+
+      store = new UserStore({
+        authSettings: testAuthSettings,
+      });
+    });
+
+    test("legacy route", async () => {
+      const tenantMetadata = {
+        [metadataField]: {
+          stateCode: "US_MO",
+          routes: {
+            workflows: true,
+          },
+        },
+      };
+      mockGetUser.mockResolvedValue({
+        email_verified: true,
+        ...tenantMetadata,
+      });
+      await store.authorize(mockHandleUrl);
+
+      expect(store.getRoutePermission("workflows")).toBeTrue();
+    });
+
+    test("supervision and incarceration", async () => {
+      const tenantMetadata = {
+        [metadataField]: {
+          stateCode: "US_MO",
+          routes: {
+            workflowsSupervision: true,
+            workflowsFacilities: true,
+          },
+        },
+      };
+      mockGetUser.mockResolvedValue({
+        email_verified: true,
+        ...tenantMetadata,
+      });
+      await store.authorize(mockHandleUrl);
+
+      expect(store.getRoutePermission("workflows")).toBeTrue();
+    });
+
+    test("supervision only", async () => {
+      const tenantMetadata = {
+        [metadataField]: {
+          stateCode: "US_MO",
+          routes: {
+            workflowsSupervision: true,
+            workflowsFacilities: false,
+          },
+        },
+      };
+      mockGetUser.mockResolvedValue({
+        email_verified: true,
+        ...tenantMetadata,
+      });
+      await store.authorize(mockHandleUrl);
+
+      expect(store.getRoutePermission("workflows")).toBeTrue();
+    });
+
+    test("incarceration only", async () => {
+      const tenantMetadata = {
+        [metadataField]: {
+          stateCode: "US_MO",
+          routes: {
+            workflowsSupervision: false,
+            workflowsFacilities: true,
+          },
+        },
+      };
+      mockGetUser.mockResolvedValue({
+        email_verified: true,
+        ...tenantMetadata,
+      });
+      await store.authorize(mockHandleUrl);
+
+      expect(store.getRoutePermission("workflows")).toBeTrue();
+    });
+
+    test("no access", async () => {
+      const tenantMetadata = {
+        [metadataField]: {
+          stateCode: "US_MO",
+          routes: {
+            workflowsSupervision: false,
+            workflowsFacilities: false,
+          },
+        },
+      };
+      mockGetUser.mockResolvedValue({
+        email_verified: true,
+        ...tenantMetadata,
+      });
+      await store.authorize(mockHandleUrl);
+
+      expect(store.getRoutePermission("workflows")).toBeFalse();
+    });
+  });
 });
 
 describe("canAccessRestrictedPage", () => {

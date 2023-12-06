@@ -506,7 +506,14 @@ export default class UserStore {
   getRoutePermission(route: string): boolean {
     if (this.isRecidivizUser) return true;
 
-    const routePermission = this.routes.find((r) => r[0] === route);
+    const routePermission = this.routes.find(
+      (r) =>
+        r[0] === route ||
+        // special case for the "workflows" route:
+        // there are actual multiple "routes" in the config that control the same URL route.
+        // if any of them are true then the route should be permitted
+        (route === "workflows" && r[0].startsWith("workflows") && r[1])
+    );
     // If the route does not exist in the RoutePermissions object, default to false;
     if (!routePermission) return false;
     return routePermission[1];
