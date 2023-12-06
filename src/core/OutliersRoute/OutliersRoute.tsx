@@ -19,7 +19,7 @@ import { Location } from "history";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
-import { Route, RouteProps, useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
@@ -67,15 +67,10 @@ const RouteSync = observer(function RouteSync({ children }) {
 });
 
 /**
- * Wraps a react-router Route to sync route data to the Outliers datastore.
+ * Syncs route data to the Outliers datastore.
  */
-export const OutliersRoute: React.FC<Omit<RouteProps, "component">> = ({
+export const OutliersRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
-  ...rest
 }) => {
-  return (
-    <Route {...rest}>
-      <RouteSync>{children}</RouteSync>
-    </Route>
-  );
+  return <RouteSync>{children}</RouteSync>;
 };

@@ -17,7 +17,7 @@
 
 import { render, screen } from "@testing-library/react";
 import { configure, observable } from "mobx";
-import { StaticRouter } from "react-router-dom";
+import { Route, StaticRouter } from "react-router-dom";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { ADVERSE_METRIC_IDS } from "../../../OutliersStore/models/offlineFixtures/constants";
@@ -60,7 +60,9 @@ afterEach(() => {
 test("handles params for supervision home page", () => {
   render(
     <StaticRouter location={outliersUrl("supervision")}>
-      <OutliersRoute path={OUTLIERS_PATHS.supervision}>null</OutliersRoute>
+      <Route path={OUTLIERS_PATHS.supervision}>
+        <OutliersRoute>null</OutliersRoute>
+      </Route>
     </StaticRouter>
   );
 
@@ -81,9 +83,9 @@ test("handles params for supervision supervisor page", () => {
         supervisorPseudoId: mockSupervisorPseudoId,
       })}
     >
-      <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisor}>
-        null
-      </OutliersRoute>
+      <Route path={OUTLIERS_PATHS.supervisionSupervisor}>
+        <OutliersRoute>null</OutliersRoute>
+      </Route>
     </StaticRouter>
   );
 
@@ -109,9 +111,9 @@ test("supervisor restricted from another supervisor's page", () => {
         supervisorPseudoId: "456xyz",
       })}
     >
-      <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisor}>
-        null
-      </OutliersRoute>
+      <Route path={OUTLIERS_PATHS.supervisionSupervisor}>
+        <OutliersRoute>null</OutliersRoute>
+      </Route>
     </StaticRouter>
   );
 
@@ -129,7 +131,9 @@ test("handles params for supervision officer page", () => {
         officerPseudoId: mockOfficerPseudoId,
       })}
     >
-      <OutliersRoute path={OUTLIERS_PATHS.supervisionStaff}>null</OutliersRoute>
+      <Route path={OUTLIERS_PATHS.supervisionStaff}>
+        <OutliersRoute>null</OutliersRoute>
+      </Route>
     </StaticRouter>
   );
 
@@ -148,9 +152,9 @@ test("handles params for supervision officer metric page", () => {
         metricId: mockMetricId,
       })}
     >
-      <OutliersRoute path={OUTLIERS_PATHS.supervisionStaffMetric}>
-        null
-      </OutliersRoute>
+      <Route path={OUTLIERS_PATHS.supervisionStaffMetric}>
+        <OutliersRoute>null</OutliersRoute>
+      </Route>
     </StaticRouter>
   );
 
@@ -162,9 +166,9 @@ test("handles params for supervision officer metric page", () => {
 test("handles params for supervision supervisors list page", async () => {
   render(
     <StaticRouter location={outliersUrl("supervisionSupervisorsList")}>
-      <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisorsList}>
-        null
-      </OutliersRoute>
+      <Route path={OUTLIERS_PATHS.supervisionSupervisorsList}>
+        <OutliersRoute>null</OutliersRoute>
+      </Route>
     </StaticRouter>
   );
 
@@ -191,9 +195,9 @@ test("supervisors restricted from supervisors list page", () => {
 
   render(
     <StaticRouter location={outliersUrl("supervisionSupervisorsList")}>
-      <OutliersRoute path={OUTLIERS_PATHS.supervisionSupervisorsList}>
-        null
-      </OutliersRoute>
+      <Route path={OUTLIERS_PATHS.supervisionSupervisorsList}>
+        <OutliersRoute>null</OutliersRoute>
+      </Route>
     </StaticRouter>
   );
 
@@ -217,9 +221,9 @@ test("handles params for client detail page", () => {
         outcomeDate: mockOutcomeDate,
       })}
     >
-      <OutliersRoute path={OUTLIERS_PATHS.supervisionClientDetail}>
-        null
-      </OutliersRoute>
+      <Route path={OUTLIERS_PATHS.supervisionClientDetail}>
+        <OutliersRoute>null</OutliersRoute>
+      </Route>
     </StaticRouter>
   );
 

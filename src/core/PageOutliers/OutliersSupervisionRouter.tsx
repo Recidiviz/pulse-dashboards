@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
@@ -30,28 +30,42 @@ import { OUTLIERS_PATHS } from "../views";
 
 export const OutliersSupervisionRouter = () => {
   const { outliersStore } = useRootStore();
-
   return (
     <ModelHydrator model={new SupervisionPresenter(outliersStore)}>
       <Switch>
-        <OutliersRoute exact path={OUTLIERS_PATHS.supervision}>
-          <OutliersSupervisionHome />
-        </OutliersRoute>
-        <OutliersRoute exact path={OUTLIERS_PATHS.supervisionSupervisorsList}>
-          <OutliersSupervisorsListPage />
-        </OutliersRoute>
-        <OutliersRoute exact path={OUTLIERS_PATHS.supervisionSupervisor}>
-          <OutliersSupervisorPage />
-        </OutliersRoute>
-        <OutliersRoute exact path={OUTLIERS_PATHS.supervisionStaff}>
-          <OutliersStaffPage />
-        </OutliersRoute>
-        <OutliersRoute exact path={OUTLIERS_PATHS.supervisionStaffMetric}>
-          <OutliersStaffPage />
-        </OutliersRoute>
-        <OutliersRoute exact path={OUTLIERS_PATHS.supervisionClientDetail}>
-          <OutliersStaffPage />
-        </OutliersRoute>
+        <Route exact path={OUTLIERS_PATHS.supervision}>
+          <OutliersRoute>
+            <OutliersSupervisionHome />
+          </OutliersRoute>
+        </Route>
+
+        <Route exact path={OUTLIERS_PATHS.supervisionSupervisorsList}>
+          <OutliersRoute>
+            <OutliersSupervisorsListPage />
+          </OutliersRoute>
+        </Route>
+        <Route exact path={OUTLIERS_PATHS.supervisionSupervisor}>
+          <OutliersRoute>
+            <OutliersSupervisorPage />
+          </OutliersRoute>
+        </Route>
+        <Route exact path={OUTLIERS_PATHS.supervisionStaff}>
+          <OutliersRoute>
+            <OutliersStaffPage />
+          </OutliersRoute>
+        </Route>
+        <Route
+          exact
+          path={[
+            OUTLIERS_PATHS.supervisionStaff,
+            OUTLIERS_PATHS.supervisionStaffMetric,
+            OUTLIERS_PATHS.supervisionClientDetail,
+          ]}
+        >
+          <OutliersRoute>
+            <OutliersStaffPage />
+          </OutliersRoute>
+        </Route>
         <NotFound />
       </Switch>
     </ModelHydrator>

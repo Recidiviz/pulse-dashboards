@@ -31,10 +31,10 @@ const PageOutliers: React.FC = () => {
   return (
     <OutliersNavLayout>
       <Switch>
-        <Redirect
+        <Route
           exact
-          from={DASHBOARD_PATHS.outliers}
-          to={OUTLIERS_PATHS.supervision}
+          path={DASHBOARD_PATHS.outliers}
+          render={() => <Redirect to={OUTLIERS_PATHS.supervision} />}
         />
         <Route path={OUTLIERS_PATHS.supervision}>
           <OutliersSupervisionRouter />
