@@ -16,7 +16,6 @@
 // =============================================================================
 
 import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/tracing";
 import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
@@ -37,7 +36,7 @@ function SentryErrorBoundary({
       environment: process.env.REACT_APP_SENTRY_ENV,
       dsn: process.env.REACT_APP_SENTRY_DSN,
       integrations: [
-        new BrowserTracing({
+        new Sentry.BrowserTracing({
           routingInstrumentation: Sentry.reactRouterV5Instrumentation(history),
         }),
       ],
