@@ -21,9 +21,8 @@ import pluralize from "pluralize";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { RawClientInfo } from "../../OutliersStore/models/ClientInfo";
-import { rawClientInfoFixture } from "../../OutliersStore/models/offlineFixtures/ClientInfoFixture";
-import { SupervisionOfficerMetricEvent } from "../../OutliersStore/models/SupervisionOfficerMetricEvent";
+import { ClientInfo } from "../../OutliersStore/models/ClientInfo";
+import { SupervisionDetails } from "../../OutliersStore/presenters/types";
 import { formatWorkflowsDate, toTitleCase } from "../../utils";
 
 const Wrapper = styled.div``;
@@ -68,7 +67,7 @@ const DetailContent = styled.div`
 function ClientDetails({
   client,
 }: {
-  client: RawClientInfo;
+  client: ClientInfo;
 }): React.ReactElement | null {
   const { raceOrEthnicity, gender, birthdate } = client;
 
@@ -80,18 +79,24 @@ function ClientDetails({
       <DetailsList>
         <Detail>
           <DetailTitle>Race / Ethnicity</DetailTitle>
-          <DetailContent>{toTitleCase(raceOrEthnicity)}</DetailContent>
+          <DetailContent>
+            {raceOrEthnicity ? toTitleCase(raceOrEthnicity) : "Unknown"}
+          </DetailContent>
         </Detail>
 
         <Detail>
           <DetailTitle>Gender</DetailTitle>
-          <DetailContent>{toTitleCase(gender)}</DetailContent>
+          <DetailContent>
+            {gender ? toTitleCase(gender) : "Unknown"}
+          </DetailContent>
         </Detail>
 
         <Detail>
           <DetailTitle>Age</DetailTitle>
           <DetailContent>
-            {moment().diff(moment(birthdate), "years")} years
+            {birthdate
+              ? `${moment().diff(moment(birthdate), "years")} years`
+              : "Unknown"}
           </DetailContent>
         </Detail>
       </DetailsList>
@@ -99,27 +104,27 @@ function ClientDetails({
   );
 }
 
-function SupervisionDetails({
-  client,
-  event,
+function ClientSupervisionDetails({
+  supervisionDetails,
   eventsLabel,
+  outcomeDate,
 }: {
-  client: RawClientInfo;
-  event: SupervisionOfficerMetricEvent;
+  supervisionDetails?: SupervisionDetails;
   eventsLabel: string;
+  outcomeDate: Date;
 }): React.ReactElement | null {
-  const { supervisionStart, supervisionType, officerAssignmentStart } = client;
-
-  if (!client) return null;
+  if (!supervisionDetails) return null;
 
   return (
     <DetailsSection>
       <DetailsHeading>Supervision Details</DetailsHeading>
       <DetailsList direction="column">
         <Detail>
-          <DetailTitle>{toTitleCase(supervisionType)} Start Date</DetailTitle>
+          <DetailTitle>
+            {toTitleCase(supervisionDetails.supervisionType)} Start Date
+          </DetailTitle>
           <DetailContent>
-            {formatWorkflowsDate(new Date(supervisionStart))}
+            {formatWorkflowsDate(supervisionDetails.supervisionStartDate)}
           </DetailContent>
         </Detail>
 
@@ -128,13 +133,13 @@ function SupervisionDetails({
             {/* TODO(#4357) Read singular label from config */}
             Date of {toTitleCase(pluralize.singular(eventsLabel))}
           </DetailTitle>
-          <DetailContent>{formatWorkflowsDate(event.eventDate)}</DetailContent>
+          <DetailContent>{formatWorkflowsDate(outcomeDate)}</DetailContent>
         </Detail>
 
         <Detail>
           <DetailTitle>Assigned to Officer</DetailTitle>
           <DetailContent>
-            {formatWorkflowsDate(new Date(officerAssignmentStart))}
+            {formatWorkflowsDate(supervisionDetails.officerAssignmentDate)}
           </DetailContent>
         </Detail>
       </DetailsList>
@@ -144,24 +149,24 @@ function SupervisionDetails({
 
 type OutliersClientDetailsType = {
   eventsLabel: string;
-  event?: SupervisionOfficerMetricEvent;
+  supervisionDetails?: SupervisionDetails;
+  client: ClientInfo;
+  outcomeDate: Date;
 };
 
 const OutliersClientDetails: React.FC<OutliersClientDetailsType> = ({
   eventsLabel,
-  event,
+  supervisionDetails,
+  client,
+  outcomeDate,
 }) => {
-  if (!event) return null;
-
-  const client = rawClientInfoFixture[event.clientId];
-
   return (
     <Wrapper>
       <ClientDetails client={client} />
-      <SupervisionDetails
+      <ClientSupervisionDetails
         eventsLabel={eventsLabel}
-        event={event}
-        client={client}
+        supervisionDetails={supervisionDetails}
+        outcomeDate={outcomeDate}
       />
     </Wrapper>
   );

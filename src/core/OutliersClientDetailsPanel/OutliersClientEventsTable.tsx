@@ -21,8 +21,7 @@ import { Column } from "react-table";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
-import { rawClientEventFixture } from "../../OutliersStore/models/offlineFixtures/ClientEventFixture";
-import { SupervisionOfficerMetricEvent } from "../../OutliersStore/models/SupervisionOfficerMetricEvent";
+import { ClientEvent } from "../../OutliersStore/models/ClientEvent";
 import { formatDate, humanReadableTitleCase } from "../../utils";
 import OutliersTable from "../OutliersTable";
 
@@ -108,23 +107,21 @@ const createTableColumn = (column: Column) => {
 
 type OutliersClientEventsTableType = {
   scrollElement: React.ReactNode;
-  event?: SupervisionOfficerMetricEvent;
+  events: ClientEvent[];
 };
 
 const OutliersClientEventsTable: React.FC<OutliersClientEventsTableType> = ({
   scrollElement,
-  event,
+  events,
 }) => {
   const { isMobile } = useIsMobile(true);
-  const clientEvents = rawClientEventFixture;
-
-  if (!event) return null;
+  if (!events) return null;
 
   return (
     <Wrapper>
       <Title>Record of Events</Title>
       <OutliersTable
-        data={clientEvents}
+        data={events}
         columns={columns.map((c) => createTableColumn(c))}
         rowSize={isMobile ? 110 : 76}
         transformToMobile={isMobile}

@@ -113,7 +113,6 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
 
   async clientEvents(
     clientPseudoId: string,
-    metricId: string,
     endDate: Date
   ): Promise<Array<ClientEvent>> {
     const { clientEventFixture } = await import(

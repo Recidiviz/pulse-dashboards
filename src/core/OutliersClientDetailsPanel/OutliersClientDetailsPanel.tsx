@@ -24,14 +24,19 @@ import {
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useEffect, useRef, useState } from "react";
+import { ComponentType, useEffect, useRef, useState } from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import lanternLogo from "../../assets/static/images/lantern_logo.png";
-import { useFeatureVariants } from "../../components/StoreProvider";
+import NotFound from "../../components/NotFound";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { SupervisionOfficerMetricEventsPresenter } from "../../OutliersStore/presenters/SupervisionOfficerMetricEventsPresenter";
+import { SupervisionClientDetailPresenter } from "../../OutliersStore/presenters/SupervisionClientDetailPresenter";
+import ModelHydrator from "../ModelHydrator";
 import { outliersUrl } from "../views";
 import { OutliersClientCapsule } from "./OutliersClientCapsule";
 import OutliersClientDetails from "./OutliersClientDetails";
@@ -76,27 +81,62 @@ const Content = styled.div`
   overflow-y: auto;
 `;
 
+type OutliersClientDetailsPanelProps = {
+  presenter: SupervisionClientDetailPresenter;
+};
+
+function withPresenter(
+  Component: ComponentType<OutliersClientDetailsPanelProps>
+) {
+  return observer(function OutliersClientDetailsPanelWrapper() {
+    const {
+      outliersStore: { supervisionStore },
+    } = useRootStore();
+    if (!supervisionStore) return null;
+    const { clientId, metricId, officerPseudoId, outcomeDate } =
+      supervisionStore;
+    if (!clientId || !metricId || !officerPseudoId || !outcomeDate) return null;
+
+    const presenter = new SupervisionClientDetailPresenter(
+      supervisionStore,
+      officerPseudoId,
+      clientId,
+      metricId,
+      outcomeDate
+    );
+    return (
+      <ModelHydrator model={presenter}>
+        <Component presenter={presenter} />
+      </ModelHydrator>
+    );
+  });
+}
+
 const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
   presenter,
-}: {
-  presenter: SupervisionOfficerMetricEventsPresenter;
-}) {
+}: OutliersClientDetailsPanelProps) {
   const { isMobile } = useIsMobile(true);
   const { outliersClientDetail } = useFeatureVariants();
 
   const {
+    clientInfo,
+    clientEvents,
+    supervisionDetails,
+    clientId,
     officerPseudoId,
     metricId,
-    clientId,
-    officerMetricEvents,
     eventsLabel,
+    outcomeDate,
   } = presenter;
-
   const [modalIsOpen, setModalIsOpen] = useState(Boolean(clientId));
   const [isRedirect, setIsRedirect] = useState(false);
 
   const [scrollElement, setScrollElement] = useState(null);
   const scrollElementRef = useRef(null);
+
+  useEffect(() => {
+    presenter.trackViewed();
+  }, [presenter]);
 
   useEffect(() => {
     setModalIsOpen(Boolean(clientId));
@@ -114,9 +154,7 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
     );
   }
 
-  // TODO Update this once client presenter is implemented
-  const currentEvent = officerMetricEvents.find((d) => d.clientId === clientId);
-  const clientName = `${currentEvent?.clientName.givenNames} ${currentEvent?.clientName.surname}`;
+  if (!clientInfo || !clientEvents) return <NotFound />;
 
   return (
     <StyledDrawerModal
@@ -129,18 +167,20 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
       isMobile={isMobile}
     >
       <ModalHeader>
-        <OutliersClientCapsule
-          clientName={clientName}
-          clientId={currentEvent?.clientId}
-        />
+        <OutliersClientCapsule clientInfo={clientInfo} />
         <Button kind="link" onClick={() => setModalIsOpen(false)}>
           <Icon kind="Close" size="14" color={palette.pine2} />
         </Button>
       </ModalHeader>
       <Content ref={scrollElementRef}>
-        <OutliersClientDetails event={currentEvent} eventsLabel={eventsLabel} />
+        <OutliersClientDetails
+          client={clientInfo}
+          supervisionDetails={supervisionDetails}
+          eventsLabel={eventsLabel}
+          outcomeDate={outcomeDate}
+        />
         <OutliersClientEventsTable
-          event={currentEvent}
+          events={clientEvents}
           scrollElement={scrollElement}
         />
       </Content>
@@ -151,4 +191,4 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
   );
 });
 
-export default OutliersClientDetailsPanel;
+export default withPresenter(OutliersClientDetailsPanel);

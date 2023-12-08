@@ -149,7 +149,6 @@ export class OutliersAPIClient implements OutliersAPI {
   // eslint-disable-next-line class-methods-use-this
   async clientEvents(
     clientPseudoId: string,
-    metricId: string,
     endDate: Date
   ): Promise<Array<ClientEvent>> {
     const { clientEventFixture } = await import(

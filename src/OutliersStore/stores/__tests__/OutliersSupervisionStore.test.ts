@@ -15,17 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { parseISO } from "date-fns";
 import { cloneDeep } from "lodash";
 import { configure, flowResult, observable } from "mobx";
 import { ValuesType } from "utility-types";
 
 import { RootStore } from "../../../RootStore";
+import { formatDate } from "../../../utils";
 import { isOfflineMode } from "../../../utils/isOfflineMode";
 import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
-import { CASELOAD_TYPE_IDS } from "../../models/offlineFixtures/constants";
+import {
+  CASELOAD_TYPE_IDS,
+  LATEST_END_DATE,
+} from "../../models/offlineFixtures/constants";
 import { metricBenchmarksFixture } from "../../models/offlineFixtures/MetricBenchmarkFixture";
 import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConfigFixture";
 import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
+import { supervisionOfficerMetricEventFixture } from "../../models/offlineFixtures/SupervisionOfficerMetricEventFixture";
 import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
 import { OutliersConfig } from "../../models/OutliersConfig";
 import { OutliersStore } from "../../OutliersStore";
@@ -379,5 +385,50 @@ test("hydrate supervisionOfficerMetricEvents", async () => {
 test("hydrate latestBenchmarksDate", async () => {
   await expect(flowResult(store.hydrateMetricConfigs())).toResolve();
 
-  expect(store.latestBenchmarksDate).toEqual(new Date(2023, 8, 1));
+  expect(store.latestBenchmarksDate).toEqual(LATEST_END_DATE);
+});
+
+test("hydrate clientEvents", async () => {
+  const testClientPseudoId = supervisionOfficerMetricEventFixture[0].clientId;
+  const outcomeDateString = formatDate(LATEST_END_DATE, "yyyy-MM-dd");
+  store.setOutcomeDate(outcomeDateString);
+
+  function getTestEvents() {
+    if (!store.outcomeDate) return undefined;
+
+    return store.clientEventsByClientPseudoIdAndOutcomeDate
+      .get(testClientPseudoId)
+      ?.get(store.outcomeDate.toISOString());
+  }
+
+  expect(getTestEvents()).toBeUndefined();
+
+  await flowResult(
+    store.hydrateClientEventsForClient(
+      testClientPseudoId,
+      parseISO(outcomeDateString)
+    )
+  );
+
+  expect(getTestEvents()).toBeDefined();
+  expect(getTestEvents()).toMatchSnapshot();
+});
+
+test("hydrate clientInfo", async () => {
+  const testClientPseudoId = supervisionOfficerMetricEventFixture[0].clientId;
+
+  function getTestInfo() {
+    return store.clientInfoByClientPseudoId.get(testClientPseudoId);
+  }
+  expect(getTestInfo()).toBeUndefined();
+
+  await flowResult(store.hydrateClientInfoForClient(testClientPseudoId));
+
+  expect(getTestInfo()).toBeDefined();
+  expect(getTestInfo()).toMatchSnapshot();
+});
+
+test("setOutcomeDate", async () => {
+  store.setOutcomeDate("2023-05-14");
+  expect(store.outcomeDate?.toISOString()).toEqual("2023-05-14T00:00:00.000Z");
 });

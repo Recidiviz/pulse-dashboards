@@ -17,17 +17,28 @@
 
 import { z } from "zod";
 
-import { dateStringSchema, fullNameSchema } from "./schemaHelpers";
+import {
+  addDisplayName,
+  dateStringSchema,
+  fullNameSchema,
+} from "./schemaHelpers";
 
-export const clientInfoSchema = z.object({
-  clientName: fullNameSchema,
-  raceOrEthnicity: z.string(),
-  gender: z.string(),
-  birthdate: dateStringSchema,
-  supervisionStart: dateStringSchema,
-  supervisionType: z.string(),
-  officerAssignmentStart: dateStringSchema,
-});
+export const clientInfoSchema = z
+  .object({
+    clientName: fullNameSchema,
+    clientId: z.string(),
+    pseudonymizedClientId: z.string(),
+    raceOrEthnicity: z.string().nullable(),
+    gender: z.string().nullable(),
+    birthdate: dateStringSchema.nullable(),
+  })
+  .transform(({ clientName, ...rest }) => {
+    return {
+      fullName: clientName,
+      ...rest,
+    };
+  })
+  .transform(addDisplayName);
 
 export type ClientInfo = z.infer<typeof clientInfoSchema>;
 export type RawClientInfo = z.input<typeof clientInfoSchema>;

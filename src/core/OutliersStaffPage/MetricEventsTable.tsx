@@ -26,7 +26,7 @@ import { SupervisionOfficerMetricEventsPresenter } from "../../OutliersStore/pre
 import { formatDate, toTitleCase } from "../../utils";
 import ModelHydrator from "../ModelHydrator";
 import OutliersChartCard from "../OutliersChartCard";
-import OutliersClientDetailPanel from "../OutliersClientDetailsPanel";
+import OutliersClientDetailsPanel from "../OutliersClientDetailsPanel";
 import OutliersTable from "../OutliersTable";
 import { FullName } from "../types/personMetadata";
 
@@ -122,7 +122,7 @@ export const MetricEventsTable = withPresenter(
             />
           </Wrapper>
         </OutliersChartCard>
-        <OutliersClientDetailPanel presenter={presenter} />
+        <OutliersClientDetailsPanel />
       </>
     );
   })

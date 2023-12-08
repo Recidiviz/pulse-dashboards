@@ -27,8 +27,13 @@ import { OUTLIERS_PATHS, outliersUrl } from "../views";
 
 const RouteSync = observer(function RouteSync({ children }) {
   const routeParams: Record<string, string | undefined> = useParams();
-  const { supervisorPseudoId, officerPseudoId, metricId, clientId } =
-    routeParams;
+  const {
+    supervisorPseudoId,
+    officerPseudoId,
+    metricId,
+    clientId,
+    outcomeDate,
+  } = routeParams;
   const loc: Location = useLocation();
 
   const {
@@ -48,10 +53,11 @@ const RouteSync = observer(function RouteSync({ children }) {
         supervisionStore.setOfficerPseudoId(officerPseudoId);
         supervisionStore.setMetricId(metricId);
         supervisionStore.setClientId(clientId);
+        supervisionStore.setOutcomeDate(outcomeDate);
       }
     });
     syncParams();
-  }, [supervisionStore, loc, supervisorPseudoId, officerPseudoId, metricId, clientId]);
+  }, [supervisionStore, loc, supervisorPseudoId, officerPseudoId, metricId, clientId, outcomeDate]);
 
   if (
     !supervisionStore?.userCanAccessAllSupervisors &&

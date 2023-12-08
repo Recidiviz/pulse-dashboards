@@ -24,6 +24,12 @@ export const supervisionOfficerMetricEventSchema = z.object({
   eventDate: dateStringSchema,
   clientId: z.string(),
   clientName: fullNameSchema,
+  pseudonymizedClientId: z.string(),
+  officerAssignmentDate: dateStringSchema,
+  officerAssignmentEndDate: dateStringSchema.nullable(),
+  supervisionStartDate: dateStringSchema,
+  supervisionEndDate: dateStringSchema.nullable(),
+  supervisionType: z.string(),
 });
 
 export type SupervisionOfficerMetricEvent = z.infer<

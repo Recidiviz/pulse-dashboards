@@ -29,48 +29,104 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-03-18",
       clientId: "707222",
       clientName: rawClientInfoFixture["707222"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["707222"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2023-04-21",
       clientId: "205752",
       clientName: rawClientInfoFixture["205752"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["205752"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: null,
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: null,
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2023-06-07",
       clientId: "792381",
       clientName: rawClientInfoFixture["792381"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["792381"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: null,
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: null,
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2023-06-08",
       clientId: "869516",
       clientName: rawClientInfoFixture["869516"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["869516"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2023-03-21",
       clientId: "170571",
       clientName: rawClientInfoFixture["170571"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["170571"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2023-06-05",
       clientId: "461718",
       clientName: rawClientInfoFixture["461718"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["461718"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2022-12-27",
       clientId: "837771",
       clientName: rawClientInfoFixture["837771"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["837771"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
       eventDate: "2022-11-24",
       clientId: "617754",
       clientName: rawClientInfoFixture["617754"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["617754"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
 
     {
@@ -78,30 +134,65 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-12-24",
       clientId: "985771",
       clientName: rawClientInfoFixture["985771"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["985771"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2022-12-21",
       clientId: "326160",
       clientName: rawClientInfoFixture["326160"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["326160"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2022-12-24",
       clientId: "931890",
       clientName: rawClientInfoFixture["931890"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["931890"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2022-10-24",
       clientId: "930441",
       clientName: rawClientInfoFixture["930441"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["930441"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2022-09-05",
       clientId: "564940",
       clientName: rawClientInfoFixture["564940"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["564940"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
 
     {
@@ -110,6 +201,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-12-07",
       clientId: "144925",
       clientName: rawClientInfoFixture["144925"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["144925"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId:
@@ -117,6 +215,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-09-05",
       clientId: "283496",
       clientName: rawClientInfoFixture["283496"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["283496"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId:
@@ -124,6 +229,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-09-14",
       clientId: "334531",
       clientName: rawClientInfoFixture["334531"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["334531"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId:
@@ -131,6 +243,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-11-23",
       clientId: "840134",
       clientName: rawClientInfoFixture["840134"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["840134"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId:
@@ -138,6 +257,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-10-17",
       clientId: "968048",
       clientName: rawClientInfoFixture["968048"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["968048"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId:
@@ -145,6 +271,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-11-23",
       clientId: "413899",
       clientName: rawClientInfoFixture["413899"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["413899"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId:
@@ -152,6 +285,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2022-12-11",
       clientId: "415630",
       clientName: rawClientInfoFixture["415630"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["415630"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
 
     {
@@ -159,24 +299,52 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-05-06",
       clientId: "235261",
       clientName: rawClientInfoFixture["235261"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["235261"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2023-04-07",
       clientId: "531407",
       clientName: rawClientInfoFixture["531407"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["531407"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2023-02-15",
       clientId: "436502",
       clientName: rawClientInfoFixture["436502"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["436502"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
       eventDate: "2023-05-14",
       clientId: "339710",
       clientName: rawClientInfoFixture["339710"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["339710"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
 
     {
@@ -185,6 +353,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-02-07",
       clientId: "803013",
       clientName: rawClientInfoFixture["803013"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["803013"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId:
@@ -192,6 +367,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-06-24",
       clientId: "470308",
       clientName: rawClientInfoFixture["470308"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["470308"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId:
@@ -199,6 +381,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-01-18",
       clientId: "582059",
       clientName: rawClientInfoFixture["582059"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["582059"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId:
@@ -206,6 +395,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-01-06",
       clientId: "374673",
       clientName: rawClientInfoFixture["374673"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["374673"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId:
@@ -213,6 +409,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-04-25",
       clientId: "128785",
       clientName: rawClientInfoFixture["128785"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["128785"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId:
@@ -220,6 +423,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-01-18",
       clientId: "914408",
       clientName: rawClientInfoFixture["914408"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["914408"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
     {
       metricId:
@@ -227,6 +437,13 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       eventDate: "2023-03-20",
       clientId: "504894",
       clientName: rawClientInfoFixture["504894"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["504894"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "PAROLE",
     },
   ];
 

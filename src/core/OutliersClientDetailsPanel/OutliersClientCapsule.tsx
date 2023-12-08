@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { ClientInfo } from "../../OutliersStore/models/ClientInfo";
 import { PersonInitialsAvatar } from "../Avatar";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 
@@ -29,7 +30,7 @@ const Wrapper = styled.div`
   grid-template-columns: auto 1fr;
 `;
 
-const ClientInfo = styled.div`
+const ClientDetail = styled.div`
   ${typography.Sans18};
 `;
 
@@ -42,22 +43,20 @@ const ClientId = styled.span`
 `;
 
 type OutliersClientCapsuleProps = {
-  clientName: string;
-  clientId?: string;
+  clientInfo: ClientInfo;
 };
 
 export const OutliersClientCapsule = observer(function OutliersClientCapsule({
-  clientName,
-  clientId,
+  clientInfo,
 }: OutliersClientCapsuleProps): JSX.Element {
   return (
     <Wrapper>
-      <PersonInitialsAvatar name={clientName} />
-      <ClientInfo>
-        <ClientName>{clientName}</ClientName>
+      <PersonInitialsAvatar name={clientInfo.displayName} />
+      <ClientDetail>
+        <ClientName>{clientInfo.displayName}</ClientName>
         <Separator> • </Separator>
-        <ClientId>{clientId}</ClientId>
-      </ClientInfo>
+        <ClientId>{clientInfo.clientId}</ClientId>
+      </ClientDetail>
     </Wrapper>
   );
 });

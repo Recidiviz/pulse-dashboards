@@ -53,6 +53,13 @@ type StaffPageTrackingMetadata = {
   numOutlierMetrics?: number;
 };
 
+type ClientPageTrackingMetadata = {
+  // TODO (#4448) Change this to required once clientPseudoId is in the url
+  clientPseudonymizedId?: string;
+  outcomeDate: Date;
+  viewedBy?: string;
+};
+
 type OpportunityTrackingMetadata = {
   justiceInvolvedPersonId: string;
   opportunityType: OpportunityType;
@@ -138,6 +145,10 @@ export default class AnalyticsStore {
 
   trackOutliersStaffPageViewed(metadata: StaffPageTrackingMetadata): void {
     this.track("frontend.outliers_staff_page_viewed", metadata);
+  }
+
+  trackOutliersClientPageViewed(metadata: ClientPageTrackingMetadata): void {
+    this.track("frontend.outliers_client_page_viewed", metadata);
   }
 
   trackReferralFormViewed(metadata: OpportunityTrackingMetadata): void {

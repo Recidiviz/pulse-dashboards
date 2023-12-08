@@ -16,12 +16,15 @@
 // =============================================================================
 
 import { index } from "d3-array";
+import { parseISO } from "date-fns";
 import { uniq } from "lodash";
 import { makeAutoObservable, observable } from "mobx";
 import moment from "moment";
 
 import { formatDate } from "../../utils";
 import { OutliersAPI } from "../api/interface";
+import { ClientEvent } from "../models/ClientEvent";
+import { ClientInfo } from "../models/ClientInfo";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
 import { OutliersConfig } from "../models/OutliersConfig";
@@ -45,6 +48,8 @@ export class OutliersSupervisionStore {
 
   clientId?: string;
 
+  outcomeDate?: Date;
+
   latestBenchmarksDate?: Date;
 
   private allSupervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
@@ -52,6 +57,11 @@ export class OutliersSupervisionStore {
   metricEventsByOfficerPseudoIdAndMetricId: StringMap2D<
     Array<SupervisionOfficerMetricEvent>
   > = new Map();
+
+  clientEventsByClientPseudoIdAndOutcomeDate: StringMap2D<Array<ClientEvent>> =
+    new Map();
+
+  clientInfoByClientPseudoId: Map<string, ClientInfo> = new Map();
 
   constructor(
     public readonly outliersStore: OutliersStore,
@@ -278,6 +288,10 @@ export class OutliersSupervisionStore {
     this.clientId = clientId;
   }
 
+  setOutcomeDate(dateString: string | undefined): void {
+    this.outcomeDate = dateString ? parseISO(dateString) : undefined;
+  }
+
   /*
    * Fetches events data for the specified officer and metric.
    */
@@ -308,5 +322,51 @@ export class OutliersSupervisionStore {
         metricsMap
       );
     }
+  }
+
+  /*
+   * Fetches events specified client and outcome date.
+   */
+  *hydrateClientEventsForClient(
+    clientPseudoId: string,
+    outcomeDate: Date
+  ): FlowMethod<OutliersAPI["clientEvents"], void> {
+    if (
+      this.clientEventsByClientPseudoIdAndOutcomeDate
+        .get(clientPseudoId)
+        ?.has(outcomeDate.toISOString())
+    )
+      return;
+
+    const clientEventsData = yield this.outliersStore.apiClient.clientEvents(
+      clientPseudoId,
+      outcomeDate
+    );
+
+    const metricsMap =
+      this.clientEventsByClientPseudoIdAndOutcomeDate.get(clientPseudoId) ??
+      new Map();
+    metricsMap.set(outcomeDate.toISOString(), clientEventsData);
+    if (!this.clientEventsByClientPseudoIdAndOutcomeDate.has(clientPseudoId)) {
+      this.clientEventsByClientPseudoIdAndOutcomeDate.set(
+        clientPseudoId,
+        metricsMap
+      );
+    }
+  }
+
+  /*
+   * Fetches profile info for  specified client.
+   */
+  *hydrateClientInfoForClient(
+    clientPseudoId: string
+  ): FlowMethod<OutliersAPI["clientInfo"], void> {
+    if (this.clientInfoByClientPseudoId.get(clientPseudoId)) return;
+
+    const clientInfo = yield this.outliersStore.apiClient.clientInfo(
+      clientPseudoId
+    );
+
+    this.clientInfoByClientPseudoId.set(clientPseudoId, clientInfo);
   }
 }

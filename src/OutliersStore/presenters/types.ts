@@ -21,6 +21,7 @@ import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
 import { OutliersConfig } from "../models/OutliersConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
+import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerMetricOutlier } from "../models/SupervisionOfficerMetricOutlier";
 
 // This type represents the state of fully hydrated data
@@ -43,4 +44,8 @@ export type ConfigLabels = Pick<
   | "supervisionJiiLabel"
   | "supervisionSupervisorLabel"
   | "supervisionUnitLabel"
+>;
+export type SupervisionDetails = Pick<
+  SupervisionOfficerMetricEvent,
+  "supervisionStartDate" | "supervisionType" | "officerAssignmentDate"
 >;

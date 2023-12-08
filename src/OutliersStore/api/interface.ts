@@ -38,7 +38,6 @@ export interface OutliersAPI {
   clientInfo(clientPseudoId: string): Promise<ClientInfo>;
   clientEvents(
     clientPseudoId: string,
-    metricId: string,
     endDate: Date
   ): Promise<Array<ClientEvent>>;
 }

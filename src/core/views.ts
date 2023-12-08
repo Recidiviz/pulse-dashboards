@@ -328,10 +328,6 @@ export function outliersUrl(
   params: { officerPseudoId: string }
 ): string;
 export function outliersUrl(
-  routeName: "supervisionStaffMetric",
-  params: { officerPseudoId: string; metricId: string }
-): string;
-export function outliersUrl(
   routeName: "supervisionClientDetail",
   params: {
     officerPseudoId: string;
@@ -339,6 +335,10 @@ export function outliersUrl(
     clientId: string;
     outcomeDate: string;
   }
+): string;
+export function outliersUrl(
+  routeName: "supervisionStaffMetric",
+  params: { officerPseudoId: string; metricId: string }
 ): string;
 
 export function outliersUrl(
