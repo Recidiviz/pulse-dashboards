@@ -34,7 +34,10 @@ export class SupervisionPresenter implements Hydratable {
   }
 
   get isHydrated() {
-    return this.outliersStore.supervisionStore !== undefined;
+    return (
+      this.outliersStore.supervisionStore !== undefined &&
+      this.outliersStore.supervisionStore.userInfo !== undefined
+    );
   }
 
   async hydrate(): Promise<void> {
@@ -43,6 +46,7 @@ export class SupervisionPresenter implements Hydratable {
 
     try {
       await flowResult(this.outliersStore.hydrateSupervisionStore());
+      await flowResult(this.outliersStore.supervisionStore?.hydrateUserInfo());
       this.setIsLoading(false);
     } catch (e) {
       this.setError(castToError(e));

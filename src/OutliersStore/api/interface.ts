@@ -22,9 +22,11 @@ import { OutliersConfig } from "../models/OutliersConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
+import { UserInfo } from "../models/UserInfo";
 
 export interface OutliersAPI {
   init(): Promise<OutliersConfig>;
+  userInfo(userPseudoId: string): Promise<UserInfo>;
   metricBenchmarks(): Promise<Array<MetricBenchmark>>;
   supervisionOfficerSupervisors(): Promise<Array<SupervisionOfficerSupervisor>>;
   officersForSupervisor(

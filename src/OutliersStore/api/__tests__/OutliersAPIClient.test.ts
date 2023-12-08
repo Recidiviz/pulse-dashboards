@@ -33,6 +33,12 @@ import {
   supervisionOfficerMetricEventFixture,
 } from "../../models/offlineFixtures/SupervisionOfficerMetricEventFixture";
 import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
+import {
+  leadershipUserInfoFixture,
+  rawLeadershipUserInfoFixture,
+  rawSupervisorUserInfoFixture,
+  supervisorUserInfoFixture,
+} from "../../models/offlineFixtures/UserInfoFixture";
 import { OutliersStore } from "../../OutliersStore";
 import { OutliersAPIClient } from "../OutliersAPIClient";
 
@@ -78,6 +84,27 @@ describe("OutliersAPIClient", () => {
     fetchMock.mockResponse(JSON.stringify({ config: OutliersConfigFixture }));
     const response = await client.init();
     expect(response).toEqual(OutliersConfigFixture);
+  });
+
+  it("userInfo calls the correct endpoint", async () => {
+    fetchMock.mockResponse(JSON.stringify(rawSupervisorUserInfoFixture));
+    const pseudoId = "fake-pseudo-id";
+    await client.userInfo(pseudoId);
+    expect(fetchMock.mock.calls[0][0]).toEqual(
+      encodeURI(`${BASE_URL}/user-info/${pseudoId}`)
+    );
+  });
+
+  it("userInfo parses the data for supervisor", async () => {
+    fetchMock.mockResponse(JSON.stringify(rawSupervisorUserInfoFixture));
+    const response = await client.userInfo("fake-pseudo-id");
+    expect(response).toEqual(supervisorUserInfoFixture);
+  });
+
+  it("userInfo parses the data for leadership", async () => {
+    fetchMock.mockResponse(JSON.stringify(rawLeadershipUserInfoFixture));
+    const response = await client.userInfo("fake-pseudo-id");
+    expect(response).toEqual(leadershipUserInfoFixture);
   });
 
   it("supervisionOfficerSupervisors calls the correct endpoint", async () => {

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { render, screen } from "@testing-library/react";
-import { configure } from "mobx";
+import { configure, flowResult } from "mobx";
 import { BrowserRouter } from "react-router-dom";
 
 import { useRootStore } from "../../../components/StoreProvider";
@@ -53,7 +53,7 @@ describe("Hydrated Supervisor Page", () => {
   let presenter: SupervisionOfficersPresenter;
   let rootStore: RootStore;
   let store: OutliersSupervisionStore;
-  const pseudoId = "hashed-mdavis123";
+  const supervisorPseudoId = "hashed-mdavis123";
 
   beforeEach(async () => {
     rootStore = new RootStore();
@@ -63,7 +63,7 @@ describe("Hydrated Supervisor Page", () => {
     );
     rootStore.outliersStore.supervisionStore = store;
     useRootStoreMock.mockReturnValue(rootStore);
-    presenter = new SupervisionOfficersPresenter(store, pseudoId);
+    presenter = new SupervisionOfficersPresenter(store, supervisorPseudoId);
     await presenter?.hydrate();
   });
 
@@ -126,14 +126,15 @@ describe("Hydrated Supervisor Page", () => {
     ).toBeInTheDocument();
   });
 
-  test("does not render back button", () => {
+  test("does not render back button when viewer is supervisor", async () => {
     store.outliersStore.rootStore.userStore.user = {
       "test-metadata-namespace/app_metadata": {
-        role: "supervision_staff",
+        stateCode: "us_mi",
         externalId: "mdavis123",
-        pseudonymizedId: pseudoId,
+        pseudonymizedId: supervisorPseudoId,
       },
     };
+    await flowResult(store.hydrateUserInfo());
 
     render(
       <BrowserRouter>
@@ -145,14 +146,15 @@ describe("Hydrated Supervisor Page", () => {
     ).toBeNull();
   });
 
-  test("Renders the correct title if current user has supervision_staff role", () => {
+  test("Renders the correct title if current user is supervisor", async () => {
     store.outliersStore.rootStore.userStore.user = {
       "test-metadata-namespace/app_metadata": {
-        role: "supervision_staff",
+        stateCode: "us_mi",
         externalId: "mdavis123",
-        pseudonymizedId: pseudoId,
+        pseudonymizedId: supervisorPseudoId,
       },
     };
+    await flowResult(store.hydrateUserInfo());
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
@@ -172,7 +174,7 @@ describe("Hydrated Supervisor Page", () => {
     jest.spyOn(AnalyticsStore.prototype, "trackOutliersSupervisorPageViewed");
     jest
       .spyOn(rootStore.userStore, "userPseudoId", "get")
-      .mockReturnValue(pseudoId);
+      .mockReturnValue(supervisorPseudoId);
 
     render(
       <BrowserRouter>
@@ -184,8 +186,8 @@ describe("Hydrated Supervisor Page", () => {
       store.outliersStore.rootStore.analyticsStore
         .trackOutliersSupervisorPageViewed
     ).toHaveBeenCalledWith({
-      supervisorPseudonymizedId: pseudoId,
-      viewedBy: pseudoId,
+      supervisorPseudonymizedId: supervisorPseudoId,
+      viewedBy: supervisorPseudoId,
     });
   });
 });

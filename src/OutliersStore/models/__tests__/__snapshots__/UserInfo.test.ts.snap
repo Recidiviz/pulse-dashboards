@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`leadership transformation 1`] = `
+Object {
+  "entity": null,
+  "role": null,
+}
+`;
+
+exports[`supervisor transformation 1`] = `
+Object {
+  "entity": Object {
+    "displayName": "Miles D Davis",
+    "externalId": "mdavis123",
+    "fullName": Object {
+      "givenNames": "Miles",
+      "middleNames": "D",
+      "surname": "Davis",
+    },
+    "hasOutliers": true,
+    "pseudonymizedId": "hashed-mdavis123",
+    "supervisionDistrict": "Region D1",
+  },
+  "role": "supervision_officer_supervisor",
+}
+`;

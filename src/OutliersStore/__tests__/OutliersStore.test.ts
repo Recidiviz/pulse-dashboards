@@ -46,3 +46,10 @@ test("automatically reset when state code changes", async () => {
   store.rootStore.tenantStore.setCurrentTenantId("US_MI");
   expect(store.supervisionStore).toBeUndefined();
 });
+
+test("automatically reset when user changes", async () => {
+  await flowResult(store.hydrateSupervisionStore());
+  expect(store.supervisionStore).toBeDefined();
+  store.rootStore.userStore.user = {};
+  expect(store.supervisionStore).toBeUndefined();
+});

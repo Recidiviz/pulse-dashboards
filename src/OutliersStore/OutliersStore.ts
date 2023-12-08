@@ -40,9 +40,14 @@ export class OutliersStore {
 
     makeAutoObservable(this);
 
-    // reset the store for each new tenant
+    // reset the store for each new tenant and if the current user changes (such as via impersonation)
     reaction(
-      () => this.rootStore.currentTenantId,
+      () => {
+        return {
+          tenant: this.rootStore.currentTenantId,
+          user: this.rootStore.userStore.user,
+        };
+      },
       () => {
         runInAction(() => this.reset());
       }

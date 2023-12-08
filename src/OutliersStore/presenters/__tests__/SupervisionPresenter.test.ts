@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { configure } from "mobx";
+
 import { RootStore } from "../../../RootStore";
 import { OutliersStore } from "../../OutliersStore";
 import { SupervisionPresenter } from "../SupervisionPresenter";
@@ -23,15 +25,26 @@ let store: OutliersStore;
 let presenter: SupervisionPresenter;
 
 beforeEach(() => {
+  configure({ safeDescriptors: false });
   store = new RootStore().outliersStore;
   presenter = new SupervisionPresenter(store);
 });
 
 afterEach(() => {
   jest.restoreAllMocks();
+  configure({ safeDescriptors: true });
 });
 
 test("hydrate", async () => {
+  jest
+    .spyOn(store.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      role: "supervision_staff",
+      externalId: "abc123",
+      pseudonymizedId: "hashed-mdavis123",
+      district: "District One",
+      stateCode: "us_mi",
+    });
   jest.spyOn(OutliersStore.prototype, "hydrateSupervisionStore");
 
   expect(presenter.isHydrated).toBeFalse();
@@ -45,6 +58,11 @@ test("hydrate", async () => {
   expect(presenter.isHydrated).toBeTrue();
   expect(store.hydrateSupervisionStore).toHaveBeenCalled();
   expect(presenter.isLoading).toBeFalse();
+
+  // For some reason creating a spy of hydrateUserInfo does not work so this serves the same purpose
+  expect(store.supervisionStore).toBeDefined();
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  expect(store.supervisionStore!.userInfo).toBeDefined();
 });
 
 test("hydration error", async () => {

@@ -31,12 +31,15 @@ import { OutliersConfig } from "../models/OutliersConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
+import { UserInfo } from "../models/UserInfo";
 import type { OutliersStore } from "../OutliersStore";
 import { ConfigLabels } from "../presenters/types";
 import { FlowMethod, StringMap2D } from "../types";
 
 export class OutliersSupervisionStore {
   private benchmarksByMetricAndCaseloadType?: StringMap2D<MetricBenchmark>;
+
+  userInfo?: UserInfo;
 
   officersBySupervisorPseudoId: Map<string, SupervisionOfficer[]> = new Map();
 
@@ -103,6 +106,36 @@ export class OutliersSupervisionStore {
     this.latestBenchmarksDate = latestBenchmarksDate;
   }
 
+  *hydrateUserInfo(): FlowMethod<OutliersAPI["userInfo"], void> {
+    if (this.userInfo) return;
+
+    const { userAppMetadata, isRecidivizUser, stateCode } =
+      this.outliersStore.rootStore.userStore;
+
+    // Recidiviz and CSG users might not have pseudonymizedIds, but should have an experience
+    // similar to leadership users.
+    if (isRecidivizUser || stateCode === "CSG") {
+      this.userInfo = {
+        entity: null,
+        role: null,
+      };
+      return;
+    }
+
+    if (!userAppMetadata) {
+      throw new Error("Missing app_metadata for user");
+    }
+
+    const { pseudonymizedId } = userAppMetadata;
+
+    if (!pseudonymizedId) {
+      throw new Error("Missing pseudonymizedId for user");
+    }
+    this.userInfo = yield this.outliersStore.apiClient.userInfo(
+      pseudonymizedId
+    );
+  }
+
   private get allCaseloadTypes(): Set<string> {
     return new Set(
       ...Array.from(
@@ -156,32 +189,8 @@ export class OutliersSupervisionStore {
   }
 
   get currentSupervisorUser(): SupervisionOfficerSupervisor | undefined {
-    const { userAppMetadata } = this.outliersStore.rootStore.userStore;
-
-    if (userAppMetadata) {
-      const { role, externalId, district, pseudonymizedId } = userAppMetadata;
-      if (
-        // until metadata is extended with role subtypes,
-        // this should be a safe proxy for distinguishing supervisors from leadership
-        // (as long as no other line staff are granted access)
-        role === "supervision_staff"
-      ) {
-        if (externalId && pseudonymizedId) {
-          return {
-            externalId,
-            supervisionDistrict: district ?? null,
-            pseudonymizedId,
-            // unfortunately we don't reliably get anyone's name from auth0
-            fullName: {},
-            displayName: "",
-          };
-        }
-        // nothing will work without the pseudonymizedId or externalId, so we can't construct a useful
-        // supervisor identity record if we didn't get them both from Auth0
-        throw new Error(
-          "Missing externalId or pseudonymizedId for supervisor user"
-        );
-      }
+    if (this.userInfo?.role === "supervision_officer_supervisor") {
+      return this.userInfo.entity;
     }
   }
 

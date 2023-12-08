@@ -22,7 +22,6 @@ import { ValuesType } from "utility-types";
 
 import { RootStore } from "../../../RootStore";
 import { formatDate } from "../../../utils";
-import { isOfflineMode } from "../../../utils/isOfflineMode";
 import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
 import {
   CASELOAD_TYPE_IDS,
@@ -35,17 +34,20 @@ import { supervisionOfficerMetricEventFixture } from "../../models/offlineFixtur
 import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
 import { OutliersConfig } from "../../models/OutliersConfig";
 import { OutliersStore } from "../../OutliersStore";
+import { SupervisionPresenter } from "../../presenters/SupervisionPresenter";
 import { OutliersSupervisionStore } from "../OutliersSupervisionStore";
 
 let store: OutliersSupervisionStore;
 
-beforeEach(() => {
+beforeEach(async () => {
   jest.resetModules();
   configure({ safeDescriptors: false });
-  store = new OutliersSupervisionStore(
-    new OutliersStore(new RootStore()),
-    OutliersConfigFixture
-  );
+  const outliersStore = new OutliersStore(new RootStore());
+  const presenter = new SupervisionPresenter(outliersStore);
+  await presenter.hydrate();
+  if (outliersStore.supervisionStore) {
+    store = outliersStore.supervisionStore;
+  }
 });
 
 afterEach(() => {
@@ -247,42 +249,81 @@ test("userCanAccessAllSupervisors with true route", () => {
   expect(store.userCanAccessAllSupervisors).toBeTrue();
 });
 
-test("current user record for supervisor except offline mode", () => {
+test("userCanAccessAllSupervisors with missing route", () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      pseudonymizedId: "hashed-abc123",
+      routes: observable({ insights: true }),
+      stateCode: "us_mi",
+    });
+
+  expect(store.userCanAccessAllSupervisors).toBeFalse();
+});
+
+test("userCanAccessAllSupervisors with false route", () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      pseudonymizedId: "hashed-abc123",
+      routes: observable({ "insights_supervision_supervisors-list": false }),
+      stateCode: "us_mi",
+    });
+
+  expect(store.userCanAccessAllSupervisors).toBeFalse();
+});
+
+test("userCanAccessAllSupervisors with true route", () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      pseudonymizedId: "hashed-abc123",
+      routes: observable({ "insights_supervision_supervisors-list": true }),
+      stateCode: "us_mi",
+    });
+
+  expect(store.userCanAccessAllSupervisors).toBeTrue();
+});
+
+test("current user record for supervisor=", async () => {
   jest
     .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
     .mockReturnValue({
       role: "supervision_staff",
       externalId: "abc123",
-      pseudonymizedId: "hashed-abc123",
+      pseudonymizedId: "hashed-mdavis123",
       district: "District One",
       stateCode: "us_mi",
     });
-
-  if (isOfflineMode()) expect(store.currentSupervisorUser).toBeUndefined();
+  await flowResult(store.hydrateUserInfo());
 
   expect(store.currentSupervisorUser).toBeDefined();
   expect(store.currentSupervisorUser).toMatchInlineSnapshot(`
     Object {
-      "displayName": "",
-      "externalId": "abc123",
-      "fullName": Object {},
-      "pseudonymizedId": "hashed-abc123",
-      "supervisionDistrict": "District One",
+      "displayName": "Miles D Davis",
+      "externalId": "mdavis123",
+      "fullName": Object {
+        "givenNames": "Miles",
+        "middleNames": "D",
+        "surname": "Davis",
+      },
+      "hasOutliers": true,
+      "pseudonymizedId": "hashed-mdavis123",
+      "supervisionDistrict": "Region D1",
     }
   `);
 });
 
-test("current user record requires external ID", () => {
+test("hydrateUserInfo requires pseudo ID", async () => {
   jest
     .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
     .mockReturnValue({
-      role: "supervision_staff",
       district: "District One",
       stateCode: "us_mi",
     });
 
-  expect(() => store.currentSupervisorUser).toThrow(
-    "Missing externalId or pseudonymizedId for supervisor user"
+  await expect(() => store.hydrateUserInfo()).rejects.toThrow(
+    "Missing pseudonymizedId for user"
   );
 });
 
@@ -298,43 +339,50 @@ test("no current user record for non-supervisor", () => {
   expect(store.currentSupervisorUser).toBeUndefined();
 });
 
-test("hydrate supervisors list with current user", () => {
+test("hydrate supervisors list with current user", async () => {
   jest
     .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
     .mockReturnValue({
       role: "supervision_staff",
       externalId: "abc123",
-      pseudonymizedId: "hashed-abc123",
+      pseudonymizedId: "hashed-mdavis123",
       district: "District One",
       stateCode: "us_mi",
     });
+  await flowResult(store.hydrateUserInfo());
 
   expect(store.supervisionOfficerSupervisors).toBeDefined();
   expect(store.supervisionOfficerSupervisors).toMatchInlineSnapshot(`
     Array [
       Object {
-        "displayName": "",
-        "externalId": "abc123",
-        "fullName": Object {},
-        "pseudonymizedId": "hashed-abc123",
-        "supervisionDistrict": "District One",
+        "displayName": "Miles D Davis",
+        "externalId": "mdavis123",
+        "fullName": Object {
+          "givenNames": "Miles",
+          "middleNames": "D",
+          "surname": "Davis",
+        },
+        "hasOutliers": true,
+        "pseudonymizedId": "hashed-mdavis123",
+        "supervisionDistrict": "Region D1",
       },
     ]
   `);
 });
 
-test("current supervisor user does not hydrate via API", async () => {
+test("current supervisor user does not hydrate via supervisors API", async () => {
   jest
     .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
     .mockReturnValue({
       role: "supervision_staff",
       externalId: "abc123",
-      pseudonymizedId: "hashed-abc123",
+      pseudonymizedId: "hashed-mdavis123",
       district: "District One",
       stateCode: "us_mi",
     });
 
   jest.spyOn(store.outliersStore.apiClient, "supervisionOfficerSupervisors");
+  await flowResult(store.hydrateUserInfo());
 
   await expect(
     flowResult(store.hydrateSupervisionOfficerSupervisors())

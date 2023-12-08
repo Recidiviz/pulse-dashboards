@@ -22,9 +22,11 @@ import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { LATEST_END_DATE } from "../models/offlineFixtures/constants";
+import { leadershipUserInfoFixture } from "../models/offlineFixtures/UserInfoFixture";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
+import { UserInfo } from "../models/UserInfo";
 import type { OutliersStore } from "../OutliersStore";
 import { OutliersAPI } from "./interface";
 
@@ -38,6 +40,24 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
     ).OutliersConfigFixture;
 
     return config;
+  }
+
+  async userInfo(userPseudoId: string): Promise<UserInfo> {
+    const { supervisionOfficerSupervisorsFixture } = await import(
+      "../models/offlineFixtures/SupervisionOfficerSupervisor"
+    );
+    const matchingSupervisor = supervisionOfficerSupervisorsFixture.find(
+      (supervisor) => supervisor.pseudonymizedId === userPseudoId
+    );
+
+    if (matchingSupervisor) {
+      return {
+        role: "supervision_officer_supervisor",
+        entity: matchingSupervisor,
+      };
+    }
+
+    return leadershipUserInfoFixture;
   }
 
   async metricBenchmarks(): Promise<MetricBenchmark[]> {

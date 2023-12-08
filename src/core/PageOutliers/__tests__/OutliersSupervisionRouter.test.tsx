@@ -42,6 +42,11 @@ beforeEach(() => {
   outliersStore = rootStore.outliersStore;
 
   useRootStoreMock.mockReturnValue(rootStore);
+  jest.spyOn(rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
+    externalId: "user",
+    pseudonymizedId: "hashed-user",
+    stateCode: "us_mi",
+  });
 });
 
 afterEach(() => {

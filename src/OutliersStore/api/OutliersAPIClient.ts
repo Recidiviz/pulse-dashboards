@@ -38,6 +38,7 @@ import {
   SupervisionOfficerSupervisor,
   supervisionOfficerSupervisorSchema,
 } from "../models/SupervisionOfficerSupervisor";
+import { UserInfo, userInfoSchema } from "../models/UserInfo";
 import type { OutliersStore } from "../OutliersStore";
 import { OutliersAPI } from "./interface";
 
@@ -61,6 +62,15 @@ export class OutliersAPIClient implements OutliersAPI {
     ).then((fetchedData) => {
       return outliersConfigSchema.parse(fetchedData.config);
     });
+  }
+
+  async userInfo(userPseudoId: string): Promise<UserInfo> {
+    const endpoint = `outliers/${this.tenantId()}/user-info/${userPseudoId}`;
+    const fetchedData = await callNewMetricsApi(
+      endpoint,
+      this.outliersStore.rootStore.getTokenSilently
+    );
+    return userInfoSchema.parse(fetchedData);
   }
 
   metricBenchmarks(): Promise<MetricBenchmark[]> {
