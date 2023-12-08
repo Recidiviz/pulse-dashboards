@@ -19,6 +19,7 @@ import { makeAutoObservable, when } from "mobx";
 import { StaffFilter } from "../../core/models/types";
 import { CombinedUserRecord } from "../../FirestoreStore";
 import tenants from "../../tenants";
+import { StaffFilterFunction } from "../../WorkflowsStore";
 import type RootStore from "..";
 import { LanternMethodology, LanternTenants, TenantId } from "../types";
 import UserStore from "../UserStore";
@@ -48,14 +49,16 @@ function getTenantIdFromUser(userStore: UserStore): TenantId | undefined {
   return storageStateCode;
 }
 
-function defaultStaffFilterFunction(user: CombinedUserRecord) {
+const defaultStaffFilterFunction: StaffFilterFunction = (
+  user: CombinedUserRecord
+) => {
   return user.updates?.overrideDistrictIds
     ? ({
         filterField: "district",
         filterValues: user.updates.overrideDistrictIds,
       } as StaffFilter)
     : undefined;
-}
+};
 
 export default class TenantStore {
   rootStore;
@@ -136,9 +139,7 @@ export default class TenantStore {
    * unless they have override districts set, in which case they can only search within the
    * override districts.
    */
-  get workflowsStaffFilterFn(): (
-    user: CombinedUserRecord
-  ) => StaffFilter | undefined {
+  get workflowsStaffFilterFn(): StaffFilterFunction {
     if (!this.currentTenantId) return defaultStaffFilterFunction;
 
     return (

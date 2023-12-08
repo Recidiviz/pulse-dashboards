@@ -59,6 +59,9 @@ describe("StaffSubscription tests", () => {
       firestoreStore: {
         db: jest.fn(),
       },
+      userStore: {
+        activeFeatureVariants: {},
+      },
     }) as unknown as RootStore;
     sub = new StaffSubscription(rootStoreMock);
   });

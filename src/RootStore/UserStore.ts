@@ -54,6 +54,7 @@ import { isOfflineMode } from "../utils/isOfflineMode";
 import { getAllowedMethodology } from "../utils/navigation";
 import type RootStore from ".";
 import {
+  ActiveFeatureVariantRecord,
   defaultFeatureVariantsActive,
   FeatureVariant,
   FeatureVariantRecord,
@@ -419,9 +420,7 @@ export default class UserStore {
    * All feature variants currently active for this user, taking into account
    * the activeDate for each feature and observing the current Date for reactivity
    */
-  get activeFeatureVariants(): Partial<
-    Record<FeatureVariant, { variant?: string }>
-  > {
+  get activeFeatureVariants(): ActiveFeatureVariantRecord {
     if (this.userIsLoading) {
       return {};
     }

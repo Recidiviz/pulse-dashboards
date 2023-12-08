@@ -507,7 +507,10 @@ export class WorkflowsStore implements Hydratable {
     if (!this.user) return undefined;
 
     const { filterField, filterValues } =
-      this.rootStore.tenantStore.workflowsStaffFilterFn(this.user) ?? {};
+      this.rootStore.tenantStore.workflowsStaffFilterFn(
+        this.user,
+        this.rootStore.userStore.activeFeatureVariants
+      ) ?? {};
     if (filterField === "district") {
       return filterValues;
     }

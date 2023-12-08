@@ -17,7 +17,6 @@
 
 import {
   ClientRecord,
-  CombinedUserRecord,
   MilestoneType,
   ResidentRecord,
   StaffRecord,
@@ -25,7 +24,11 @@ import {
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { FeatureVariant, TenantId } from "../../RootStore/types";
-import { JusticeInvolvedPerson, OpportunityType } from "../../WorkflowsStore";
+import {
+  JusticeInvolvedPerson,
+  OpportunityType,
+  StaffFilterFunction,
+} from "../../WorkflowsStore";
 import { Task } from "../../WorkflowsStore/Task/Task";
 import {
   SupervisionTaskRecord,
@@ -82,9 +85,7 @@ export type TenantConfig = {
   };
   milestoneTypes?: MilestoneType[];
   pathwaysNameOverride?: "Pathways" | "System-Level Trends";
-  workflowsStaffFilterFn?: (
-    user: CombinedUserRecord
-  ) => StaffFilter | undefined;
+  workflowsStaffFilterFn?: StaffFilterFunction;
 };
 
 /**

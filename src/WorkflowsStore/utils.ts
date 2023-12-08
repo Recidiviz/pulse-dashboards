@@ -28,7 +28,7 @@ import {
 import { Timestamp } from "firebase/firestore";
 import moment from "moment";
 
-import { StaffFilter, SystemId } from "../core/models/types";
+import { SystemId } from "../core/models/types";
 import { WORKFLOWS_SYSTEM_ID_TO_PAGE, WorkflowsPage } from "../core/views";
 import {
   AutoSnoozeUpdate,
@@ -36,11 +36,13 @@ import {
   ManualSnoozeUpdate,
   StaffRecord,
 } from "../FirestoreStore/types";
+import { ActiveFeatureVariantRecord } from "../RootStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
 import {
   OPPORTUNITY_CONFIGS,
   OpportunityType,
 } from "./Opportunity/OpportunityConfigs";
+import { StaffFilterFunction } from "./types";
 
 /**
  * Returns a string of the month and year formatted as "MM_YYYY"
@@ -220,9 +222,12 @@ export function getSystemIdFromPage(page: WorkflowsPage): SystemId | undefined {
   }
 }
 
-export function filterByUserDistrict(
-  user: CombinedUserRecord
-): StaffFilter | undefined {
+export const filterByUserDistrict: StaffFilterFunction = (
+  user: CombinedUserRecord,
+  featureVariants: ActiveFeatureVariantRecord
+) => {
+  if (featureVariants.supervisionUnrestrictedSearch) return;
+
   let filterValues = user.updates?.overrideDistrictIds;
 
   if (!filterValues?.length) {
@@ -237,11 +242,15 @@ export function filterByUserDistrict(
     filterField: "district",
     filterValues,
   };
-}
+};
 
-export function usCaFilterByRoleSubtype(
-  user: CombinedUserRecord
-): StaffFilter | undefined {
+export const usCaFilterByRoleSubtype: StaffFilterFunction = (
+  user: CombinedUserRecord,
+  featureVariants: ActiveFeatureVariantRecord
+) => {
+  if (featureVariants.supervisionUnrestrictedSearch) return;
+
+  // TODO(#4431): remove this and only check the feature variant
   // If we don't have a staff record for the user and we've listed them as leadership or they have
   // no role (for recidiviz + offline users), let them search for anyone.
   if (
@@ -270,8 +279,8 @@ export function usCaFilterByRoleSubtype(
   }
 
   // Parole Agent supervisors only get access to their own unit (district in our schema)
-  return filterByUserDistrict(user);
-}
+  return filterByUserDistrict(user, featureVariants);
+};
 
 /* Returns the snooze until date from either the auto or manual snooze updates. */
 export function getSnoozeUntilDate({

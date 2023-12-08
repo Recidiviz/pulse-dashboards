@@ -52,8 +52,10 @@ export class StaffSubscription extends FirestoreQuerySubscription<StaffRecord> {
     }
 
     if (user) {
-      const staffFilter =
-        this.rootStore.tenantStore.workflowsStaffFilterFn(user);
+      const staffFilter = this.rootStore.tenantStore.workflowsStaffFilterFn(
+        user,
+        this.rootStore.userStore.activeFeatureVariants
+      );
       if (staffFilter) {
         constraints.push(
           where(staffFilter.filterField, "in", staffFilter.filterValues)

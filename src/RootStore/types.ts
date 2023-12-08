@@ -77,6 +77,7 @@ export type UserAppMetadata = {
 export type FeatureVariant =
   | "TEST"
   | "enableSnooze"
+  | "supervisionUnrestrictedSearch"
   | "CompliantReportingAlmostEligible"
   | "usMeWorkRelease"
   | "usMeFurloughRelease"
@@ -98,6 +99,9 @@ export type FeatureVariantValue = { activeDate?: Date; variant?: string };
  */
 export type FeatureVariantMapping = Record<FeatureVariant, FeatureVariantValue>;
 export type FeatureVariantRecord = Partial<FeatureVariantMapping>;
+export type ActiveFeatureVariantRecord = Partial<
+  Record<FeatureVariant, Omit<FeatureVariantValue, "activeDate">>
+>;
 const allFeatureVariants: FeatureVariantMapping = {
   TEST: {},
   CompliantReportingAlmostEligible: {},
@@ -113,8 +117,9 @@ const allFeatureVariants: FeatureVariantMapping = {
   enableSnooze: {},
   outliersClientDetail: {},
   usNdWriteToDocstars: {},
+  supervisionUnrestrictedSearch: {},
 };
-export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
+export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
   process.env.REACT_APP_DEPLOY_ENV === "production"
     ? {
         CompliantReportingAlmostEligible: {},
@@ -124,6 +129,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         usMeFurloughRelease: {},
         usMeWorkRelease: {},
         usTnAnnualReclassification: {},
+        supervisionUnrestrictedSearch: {},
       }
     : allFeatureVariants;
 

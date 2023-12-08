@@ -15,13 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { StaffFilter } from "../core/models/types";
 import { FullName } from "../core/types/personMetadata";
 import {
   ClientRecord,
+  CombinedUserRecord,
   JusticeInvolvedPersonRecord,
   PersonUpdateRecord,
   ResidentRecord,
 } from "../FirestoreStore";
+import { ActiveFeatureVariantRecord } from "../RootStore/types";
 import { Client } from "./Client";
 import {
   IncarcerationOpportunityType,
@@ -131,3 +134,8 @@ export type EligibilityStatus =
  * Represents URL params for a workflows route
  */
 export type WorkflowsRouteParams = { page?: string; personId?: string };
+
+export type StaffFilterFunction = (
+  user: CombinedUserRecord,
+  featureVariants: ActiveFeatureVariantRecord
+) => StaffFilter | undefined;

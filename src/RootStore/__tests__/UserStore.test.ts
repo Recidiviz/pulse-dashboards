@@ -882,6 +882,7 @@ describe("feature variants", () => {
         "enableSnooze": Object {},
         "outliersClientDetail": Object {},
         "responsiveRevamp": Object {},
+        "supervisionUnrestrictedSearch": Object {},
         "usCaEnableSMS": Object {},
         "usIdCRC": Object {},
         "usIdExpandedCRC": Object {},
