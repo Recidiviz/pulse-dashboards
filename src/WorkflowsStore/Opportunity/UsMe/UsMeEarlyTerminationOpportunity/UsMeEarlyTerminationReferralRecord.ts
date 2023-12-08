@@ -24,35 +24,66 @@ import {
   opportunitySchemaBase,
 } from "../../schemaHelpers";
 
-const criteria = z.object({
-  usMePaidAllOwedRestitution: NullCoalesce(
-    {},
-    z.object({ amountOwed: z.number().optional() })
-  ).optional(),
-  noConvictionWithin6Months: NullCoalesce(
-    {},
-    z
-      .object({
-        latestConvictions: z.array(z.string()).optional(),
-      })
-      .optional()
-  ).optional(),
-  usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: z.object({
-    eligibleDate: dateStringSchema,
-  }),
-  onMediumSupervisionLevelOrLower: z.object({ supervisionLevel: z.string() }),
-  usMeNoPendingViolationsWhileSupervised: NullCoalesce(
-    {},
-    z
-      .object({
-        currentStatus: z.string().optional(),
-        violationDate: dateStringSchema.optional(),
-      })
-      .optional()
-  ).optional(),
-});
+const usMePaidAllOwedRestitution = NullCoalesce(
+  {},
+  z.object({ amountOwed: z.number().optional() })
+).optional();
+
+const eligibleCriteria = z
+  .object({
+    usMePaidAllOwedRestitution,
+    noConvictionWithin6Months: NullCoalesce(
+      {},
+      z
+        .object({
+          latestConvictions: z.array(z.string()).optional(),
+        })
+        .optional()
+    ).optional(),
+    usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: z.object({
+      eligibleDate: dateStringSchema,
+    }),
+    usMeNoPendingViolationsWhileSupervised: NullCoalesce(
+      {},
+      z
+        .object({
+          currentStatus: z.string().optional(),
+          violationDate: dateStringSchema.optional(),
+        })
+        .optional()
+    ).optional(),
+  })
+  // TODO(#4484): Remove deprecated `onMediumSupervisionLevelOrLower` criterion from Early Discharge
+  .and(
+    z.union([
+      z.object({
+        onMediumSupervisionLevelOrLower: z.object({
+          supervisionLevel: z.string(),
+        }),
+        supervisionLevelIsMediumOrLower: z.undefined(),
+      }),
+      z.object({
+        onMediumSupervisionLevelOrLower: z.undefined(),
+        supervisionLevelIsMediumOrLower: z.object({
+          supervisionLevel: z.string(),
+        }),
+      }),
+    ])
+  )
+  .transform(
+    ({
+      onMediumSupervisionLevelOrLower,
+      supervisionLevelIsMediumOrLower,
+      ...rest
+    }) => ({
+      supervisionLevelIsMediumOrLower:
+        supervisionLevelIsMediumOrLower ?? onMediumSupervisionLevelOrLower,
+      ...rest,
+    })
+  );
 
 const ineligibleCriteria = z.object({
+  usMePaidAllOwedRestitution,
   usMeNoPendingViolationsWhileSupervised: z
     .object({
       currentStatus: z.string(),
@@ -64,12 +95,8 @@ const ineligibleCriteria = z.object({
 
 export const usMeEarlyTerminationSchema = opportunitySchemaBase
   .extend({
-    eligibleCriteria: criteria,
-    ineligibleCriteria: criteria
-      .pick({
-        usMePaidAllOwedRestitution: true,
-      })
-      .merge(ineligibleCriteria),
+    eligibleCriteria,
+    ineligibleCriteria,
   })
   .merge(caseNotesSchema);
 

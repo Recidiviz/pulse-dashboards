@@ -26,7 +26,7 @@ const defaultEligibleCriteria = {
   usMeSupervisionIsNotIcIn: null,
   usMePaidAllOwedRestitution: null,
   noConvictionWithin6Months: null,
-  onMediumSupervisionLevelOrLower: {
+  supervisionLevelIsMediumOrLower: {
     supervisionLevel: "MEDIUM",
   },
   usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
@@ -103,6 +103,22 @@ test("transform record with null pending violation criteria", () => {
     eligibleCriteria: {
       ...defaultEligibleCriteria,
       usMeNoPendingViolationsWhileSupervised: null,
+    },
+    ineligibleCriteria: {},
+  };
+
+  expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
+});
+
+// TODO(#4484): Remove deprecated `onMediumSupervisionLevelOrLower` criterion from Early Discharge
+test("transform record with old criterion: onMediumSupervisionLevelOrLower", () => {
+  const rawRecord: UsMeEarlyTerminationReferralRecordRaw = {
+    stateCode: "US_ME",
+    externalId: "abc123",
+    eligibleCriteria: {
+      ...omit(defaultEligibleCriteria, "supervisionLevelIsMediumOrLower"),
+      onMediumSupervisionLevelOrLower:
+        defaultEligibleCriteria.supervisionLevelIsMediumOrLower,
     },
     ineligibleCriteria: {},
   };

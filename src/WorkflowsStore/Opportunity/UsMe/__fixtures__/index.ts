@@ -381,7 +381,7 @@ export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRec
       usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
         eligibleDate: parseISO("2024-04-03"),
       },
-      onMediumSupervisionLevelOrLower: {
+      supervisionLevelIsMediumOrLower: {
         supervisionLevel: "MEDIUM",
       },
       usMeNoPendingViolationsWhileSupervised: {},
@@ -407,7 +407,7 @@ export const usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord: UsMeEa
       usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
         eligibleDate: parseISO("2024-04-03"),
       },
-      onMediumSupervisionLevelOrLower: {
+      supervisionLevelIsMediumOrLower: {
         supervisionLevel: "MEDIUM",
       },
       usMeNoPendingViolationsWhileSupervised: {},
@@ -438,7 +438,7 @@ export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarl
       usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
         eligibleDate: parseISO("2024-04-03"),
       },
-      onMediumSupervisionLevelOrLower: {
+      supervisionLevelIsMediumOrLower: {
         supervisionLevel: "MEDIUM",
       },
     },

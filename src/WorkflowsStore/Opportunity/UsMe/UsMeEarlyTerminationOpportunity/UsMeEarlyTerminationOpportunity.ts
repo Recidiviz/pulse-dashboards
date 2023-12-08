@@ -56,7 +56,7 @@ const CRITERIA: Record<
       with the court for early termination of probation.`,
   },
   usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {},
-  onMediumSupervisionLevelOrLower: {},
+  supervisionLevelIsMediumOrLower: {},
   usMeNoPendingViolationsWhileSupervised: {},
 };
 
@@ -122,7 +122,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
       eligibleCriteria: {
         usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart,
         noConvictionWithin6Months,
-        onMediumSupervisionLevelOrLower,
+        supervisionLevelIsMediumOrLower,
         usMePaidAllOwedRestitution,
         usMeNoPendingViolationsWhileSupervised,
       },
@@ -139,10 +139,10 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
       });
     }
 
-    if (onMediumSupervisionLevelOrLower?.supervisionLevel) {
+    if (supervisionLevelIsMediumOrLower?.supervisionLevel) {
       requirements.push({
-        text: `Currently on ${onMediumSupervisionLevelOrLower?.supervisionLevel.toLowerCase()}`,
-        tooltip: CRITERIA.onMediumSupervisionLevelOrLower.tooltip,
+        text: `Currently on ${supervisionLevelIsMediumOrLower?.supervisionLevel.toLowerCase()}`,
+        tooltip: CRITERIA.supervisionLevelIsMediumOrLower.tooltip,
       });
     }
 
